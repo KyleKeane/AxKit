@@ -27,6 +27,14 @@ public static partial class QuestionReader
     [GeneratedRegex(@"^←.*→$")]
     private static partial Regex QuestionTabsRegex();
 
+    // Since Claude Code 2.1.316 a header row instead: "Questions: Colour (answered), Fruit", and each question's own
+    // row starts with "> " (the several-questions-claude2.1.316 fixture).
+    [GeneratedRegex(@"^Questions: (.+)$")]
+    private static partial Regex QuestionsHeaderRegex();
+
+    /// <summary>The row over the questions of one call, either shape: it ends the question upwards and numbers it.</summary>
+    private static bool IsQuestionsRow(string line) => QuestionTabsRegex().IsMatch(line) || QuestionsHeaderRegex().IsMatch(line);
+
     /// <summary>
     /// The question whose prompt row (the row the cursor sits on) is <paramref name="promptRow"/>, or null when
     /// that row is not a prompt row. <paramref name="rows"/> are the screen's rows, top to bottom.
@@ -118,12 +126,13 @@ public static partial class QuestionReader
 
             if (EndsBlock(line))
             {
-                step = QuestionTabsRegex().IsMatch(line) ? Step(line) : null;
+                step = IsQuestionsRow(line) ? Step(line) : null;
                 break;
             }
 
             blanks = 0;
-            text.Add(line);
+            // The "> " that marks a question's row since 2.1.316 (its own, and each one the review lists) is not read.
+            text.Add(line.StartsWith("> ", StringComparison.Ordinal) ? line[2..] : line);
             first = row;
             if (CheckBoxRegex().IsMatch(rows[row]) || line.StartsWith("Permission Required:", StringComparison.Ordinal))
             {
@@ -166,13 +175,21 @@ public static partial class QuestionReader
         (key, below) is ("y", "n") || (int.TryParse(key, out var a) && a >= 1 && int.TryParse(below, out var b) && a + 1 == b);
 
     /// <summary>
-    /// The number and count of the question under a tab row ("←   ☒ Colour   ☐ Fruit   ✔ Submit   →"): the tab row
-    /// marks answered questions ☒ and not the current one, and Claude asks them in order, so the current one is the
-    /// first ☐. Null when all are ticked: the review, under the Submit tab.
+    /// The number and count of the question under the questions row. The tab row ("←   ☒ Colour   ☐ Fruit   ✔ Submit   →")
+    /// marks answered questions ☒ and not the current one; the header row ("Questions: Colour (answered), Fruit") says
+    /// "(answered)" after each one answered. Claude asks them in order, so the current one is the first not answered.
+    /// Null when all are: the review.
     /// </summary>
-    private static (int, int)? Step(string tabRow)
+    private static (int, int)? Step(string questionsRow)
     {
-        var tabs = tabRow.Where(c => c is '☐' or '☒').ToList();
+        if (QuestionsHeaderRegex().Match(questionsRow) is { Success: true } header)
+        {
+            var names = header.Groups[1].Value.Split(", ");
+            var current = Array.FindIndex(names, name => !name.EndsWith(" (answered)", StringComparison.Ordinal)) + 1;
+            return current > 0 ? (current, names.Length) : null;
+        }
+
+        var tabs = questionsRow.Where(c => c is '☐' or '☒').ToList();
         var number = tabs.IndexOf('☐') + 1;
         return number > 0 ? (number, tabs.Count) : null;
     }
@@ -184,7 +201,7 @@ public static partial class QuestionReader
     /// </summary>
     private static bool EndsBlock(string line)
     {
-        if (QuestionTabsRegex().IsMatch(line) || ScreenReader.IsTabRow(line) || LineClassifier.IsChrome(line) || LineClassifier.IsBarePrompt(line) || LineClassifier.IsDraftRow(line))
+        if (IsQuestionsRow(line) || ScreenReader.IsTabRow(line) || LineClassifier.IsChrome(line) || LineClassifier.IsBarePrompt(line) || LineClassifier.IsDraftRow(line))
         {
             return true;
         }

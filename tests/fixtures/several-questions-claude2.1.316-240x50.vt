@@ -1,0 +1,94 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h]0;✳ Claude CodeClaude Code v2.1.316
+Haiku 5.5 · Claude Ultra
+C:\Temp\axclaude-fixture
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q[?u]7501;?[?2004h$  Please use the AskUserQuestion tool once, with two questions in the same call. First question, header Colour: which colour do you prefer, options red, green, blue. Second question, header Fruit, with multiSelect set to true: which       
+fruits do you like, options apple, banana, cherry. After I answer, reply with my answers in one short sentence.]133;A;redraw=0]0;◐ Claude Code[?25l[5;1Hyou: Please use the AskUserQuestion tool once, with two questions in the same call. First question, header Colour: which colour do you prefer, options red, green, blue. Second question, header Fruit, with multiSelect set to true: which     
+fruits do you like, options apple, banana, cherry. After I answer, reply with my answers in one short sentence.[K
+Orbiting…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◑ Claude Code]0;◑ AskUserQuestion tool test[?25l[7;1HTransmogrifying…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◐ AskUserQuestion tool test[?25l[9;1H$[K
+[K[9;2H[?25h]0;✳ AskUserQuestion tool test[?25l[7;1HQuestions: Colour, Fruit[K
+> Which colour do you prefer?[K
+1. Red — Red[K
+2. Green — Green
+3. Blue — Blue
+4. Other
+5. Chat about this
+Select with numbers [1-5]. Then Enter to submit or Escape to cancel:[1C[?25h[?2004h 2[?25l[7;1HQuestions: Colour (answered), Fruit[K
+> Which fruits do you like?[K
+1. Apple — Apple[K
+2. Banana — Banana[K
+3. Cherry — Cherry[K
+4. Other[K
+Select with numbers [1-4] (comma- or space-separated for several). Then Enter to Submit or Escape to cancel:[K
+[K[13;110H[?25h 1,3[?25l[7;1HQuestions: Colour (answered), Fruit (answered)[K
+> Which fruits do you like?[K
+1. (selected) Apple — Apple[K
+2. Banana — Banana[K
+3. (selected) Cherry — Cherry[K
+4. Other[K
+Select with numbers [1-4] (comma- or space-separated for several). Then Enter to Submit, bare Enter for defaults, or Escape to cancel:[K[1C[?25h[?25l[8;1HReview your answers[K
+> Which colour do you prefer?[K
+→ Green[K
+> Which fruits do you like?[K
+→ Apple, Cherry[K
+Ready to submit your answers?[K
+y. Submit answers
+n. Cancel
+Enter y/n:[1C[?25h y]0;◐ AskUserQuestion tool test[?25l[7;1HTransmogrifying…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K[10;2H[?25h[?25l[7;1H●  User answered Claude's questions:[K
+· Which colour do you prefer? → Green[K
+· Which fruits do you like? → Apple, Cherry[K
+Transmogrifying…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+effort: medium · /effort
+$[?25h]133;C]133;D[?25l[10;1Hclaude: You prefer green, and you like apples and cherries.[K
+Brewed for 3s · done 12:46 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$]0;✳ AskUserQuestion tool test[?25h[?25l[12;1H/exit                         Exit the CLI[K
+/context                      Visualize current context usage as a colored grid[K
+/usage-credits                Configure usage credits or request them from your admin when you hit a limit[K[37;1H$  /exit[?25h]0;◐ AskUserQuestion tool test[?25l[12;1Hyou: /exit[K
+Shimmying…[K
+Tip: Use /statusline to set up a custom status line that will display beneath the input box[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[17;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume e0bcd886-5703-48ec-b65d-16c1d7344bfa
+]0;]133;A;redraw=0]133;C]133;D]0;✳ AskUserQuestion tool test[?9001l[?1004l

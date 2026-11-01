@@ -170,6 +170,25 @@ public class QuestionTests
     }
 
     [Fact]
+    public void Several_questions_under_the_header_row_of_2_1_316_are_read_and_numbered_the_same()
+    {
+        // Claude Code 2.1.316 draws "Questions: Colour (answered), Fruit" over each question in place of the tab row and
+        // starts each question's row with "> " (found by the NVDA pass of 2026-10-31: the first question was named
+        // "Questions: Colour, Fruit. Which colour do you prefer?" and no "Next question" followed its answer).
+        var (_, seen) = QuestionsIn("several-questions-claude2.1.316-240x50.vt");
+        Assert.Equal(["Which colour do you prefer?", "Which fruits do you like?", "Review your answers"], seen.Select(q => q.Title));
+        Assert.Equal((1, 2), seen[0].Step);
+        Assert.Equal((2, 2), seen[1].Step);
+        Assert.True(seen[1].AllowsSeveral);
+
+        // The review lists each question with its answer, without the "> " marks, and has no number.
+        var review = seen[2];
+        Assert.Null(review.Step);
+        Assert.Equal(["Which colour do you prefer?", "→ Green", "Which fruits do you like?", "→ Apple, Cherry", "Ready to submit your answers?"], review.Text);
+        Assert.Equal(["y", "n"], review.Options.Select(o => o.Key));
+    }
+
+    [Fact]
     public void Answers_wrapped_over_several_rows_are_whole_answers()
     {
         // Answers 1 to 3 are longer than the 120-column console and wrap onto the rows under them; they used to end
