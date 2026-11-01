@@ -24,6 +24,12 @@ expect said ! checked
 # Enter connects: the repository opens on its Changes list.
 keys enter
 expect focus Changes, 1 file
+# About, Licence ends with what was agreed to on this computer (AX-11.8): this one, with the date and the version.
+menu Licence
+expect state What you have agreed to on this computer
+expect state axGIT, Git,
+keys escape
+expect focus Changes, 1 file
 close
 
 # The second start asks nothing.

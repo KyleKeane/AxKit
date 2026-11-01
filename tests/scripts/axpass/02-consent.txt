@@ -1,0 +1,31 @@
+# axPass: the reminder before the first master password goes to KeePassXC's tool (docs/axit/SPEC.md AX-11.4, AX-11.5;
+# the Owed list of docs/axit/nvda-test-record.md). Needs KeePassXC installed, as 01 does. A fresh run's home has no
+# consent, so the reminder comes before the unlock notice. With --nvda (nvda-pass.ps1) every expected line must be
+# spoken by NVDA too.
+file home\Axit\axpass.json {"checkForUpdates": false, "lockMinutes": 0}
+file twice.txt test-master-1\ntest-master-1\n
+file once.txt test-master-1\n
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" db-create -q -p test.kdbx < twice.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" mkdir -q test.kdbx Email < once.txt
+start pass {temp}\test.kdbx
+
+expect said Before axPass connects to KeePassXC
+keys tab
+expect said I understand that axPass
+keys enter
+expect said ! Check the box first
+keys space
+expect said ! checked
+# Enter connects: the unlock notice follows, and the password opens the database.
+keys enter
+expect state Unlock test
+expect focus Type the master password to unlock test
+type test-master-1
+keys enter
+expect said ! test, 1 item, Email, group, 0 items
+close
+
+# The second start asks nothing: the unlock notice comes first.
+start pass {temp}\test.kdbx
+expect state Unlock test
+refuse said Before axPass

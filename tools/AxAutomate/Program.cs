@@ -140,6 +140,7 @@ internal static class Program
 
         var report = new StringBuilder($"# AxAutomate report\n\n{DateTime.Now:yyyy-MM-dd HH:mm}, {exe}\n\n");
         var failed = new List<string>();
+        var notHeard = new List<string>();
         var clock = Stopwatch.StartNew();
         foreach (var script in scripts)
         {
@@ -152,6 +153,10 @@ internal static class Program
             if (!ok)
             {
                 failed.Add(name);
+                if (log.Contains("NVDA did not speak", StringComparison.Ordinal))
+                {
+                    notHeard.Add(name);
+                }
             }
         }
 
@@ -166,6 +171,16 @@ internal static class Program
             HandsOff.Say("NVDA tests finished. The keyboard is yours.");
         }
 
+        var summary = failed.Count == 0
+            ? $"PASS: {scripts.Count} script(s), {clock.Elapsed.TotalSeconds:0} s"
+            : $"FAILED: {failed.Count} of {scripts.Count} script(s): {string.Join(", ", failed)}";
+        if (notHeard.Count > 0)
+        {
+            // The window said it and NVDA did not speak it: the NVDA tier's own finding, told apart from the window's.
+            summary += $"\nNVDA did not speak what the window said in {notHeard.Count} of them: {string.Join(", ", notHeard)}";
+        }
+
+        report.Append(summary).Append('\n');
         if (reportPath is not null)
         {
             File.WriteAllText(reportPath, report.ToString(), new UTF8Encoding(false));
@@ -184,9 +199,7 @@ internal static class Program
         }
 
         Console.WriteLine();
-        Console.WriteLine(failed.Count == 0
-            ? $"PASS: {scripts.Count} script(s), {clock.Elapsed.TotalSeconds:0} s"
-            : $"FAILED: {failed.Count} of {scripts.Count} script(s): {string.Join(", ", failed)}");
+        Console.WriteLine(summary);
         return failed.Count;
     }
 
@@ -354,20 +367,28 @@ internal sealed class Run(string exe, string temp)
                 _current.WaitForFocus();
                 if (Nvda)
                 {
-                    Native.AllowSetForegroundWindow(_current.ProcessId);
-                    _current.Send("activate");
-                    // NVDA reads a window that comes to the front, and an announcement made meanwhile is lost under that
-                    // reading: the first step waits until the window is in front and NVDA has finished with it.
-                    InFront();
-                    Speech.WaitForQuiet(1500);
+                    BringToFront(_current);
                 }
 
                 return (true, $"process {_current.ProcessId}");
             case "use":
                 _current = _windows[int.Parse(rest) - 1];
+                if (Nvda)
+                {
+                    BringToFront(_current);
+                }
+
                 return (true, null);
             case "launch":
-                return Window.Launch(exe, rest, Nvda ? null : DesktopName, _home);
+                var launched = Window.Launch(exe, rest, Nvda ? null : DesktopName, _home);
+                if (Nvda)
+                {
+                    // The open window took the hand-over and brought itself to the front: NVDA reads it first.
+                    InFront();
+                    Speech.WaitForQuiet(1500);
+                }
+
+                return launched;
             case "adopt":
                 return Adopt();
             case "allow":
@@ -580,6 +601,20 @@ internal sealed class Run(string exe, string temp)
     }
 
     /// <summary>
+    /// The NVDA tier: a window to the front, and NVDA done reading it, before any key or expectation of its own. NVDA
+    /// reads a window that comes to the front whole and ignores the announcements of a window behind another program's,
+    /// so a start, use or adopt brings its window up and waits (announcements were lost under the reading, and a script's
+    /// second window said things NVDA never spoke, 2026-10-31).
+    /// </summary>
+    private void BringToFront(Window window)
+    {
+        Native.AllowSetForegroundWindow(window.ProcessId);
+        window.Send("activate");
+        InFront();
+        Speech.WaitForQuiet(1500);
+    }
+
+    /// <summary>
     /// The NVDA tier: whether a window of this run is in front, bringing the current one back (up to 3 s) when another
     /// program's is, such as the user's own window after a test window closed.
     /// </summary>
@@ -614,22 +649,26 @@ internal sealed class Run(string exe, string temp)
     }
 
     /// <summary>
-    /// The NVDA tier's second half of <c>expect said</c> (2026-10-31): what the window announced or focused, NVDA must
-    /// speak too, within 5 s, so that every app script is an NVDA check when run with --nvda. The timeline's marks go
-    /// first ("! ", "→ ", "· "); a sound ("♪") is not speech and passes as it is.
+    /// The NVDA tier's second half of <c>expect said</c> (2026-10-31): what the window announced, NVDA must speak too,
+    /// within 5 s, so that every app script is an NVDA check when run with --nvda. An announcement ("! " or no mark) is
+    /// matched whole; a focus move ("→ Name (Role): value") by its name alone, since NVDA says the role and the value in
+    /// its own words; a value ("· ") and a sound ("♪ ") are not speech of the window's and pass as they are.
     /// </summary>
     private (bool, string?) Heard(string text, string detail)
     {
-        var words = text;
-        foreach (var mark in new[] { "! ", "→ ", "· " })
+        if (text.StartsWith("· ", StringComparison.Ordinal) || text.StartsWith('♪'))
         {
-            if (words.StartsWith(mark, StringComparison.Ordinal))
-            {
-                words = words[mark.Length..];
-            }
+            return (true, detail);
         }
 
-        if (words.StartsWith('♪') || words.Trim().Length == 0)
+        var words = text.StartsWith("! ", StringComparison.Ordinal) ? text[2..] : text;
+        if (text.StartsWith("→ ", StringComparison.Ordinal))
+        {
+            var role = text.IndexOf(" (", StringComparison.Ordinal);
+            words = role > 2 ? text[2..role] : text[2..];
+        }
+
+        if (words.Trim().Length == 0)
         {
             return (true, detail);
         }
@@ -746,6 +785,11 @@ internal sealed class Run(string exe, string temp)
                 _windows.Add(window);
                 _current = window;
                 window.WaitForFocus();
+                if (Nvda)
+                {
+                    BringToFront(window);
+                }
+
                 return (true, $"process {window.ProcessId}");
             }
 

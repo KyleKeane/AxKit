@@ -134,8 +134,9 @@ The assistant runs this tier itself to hear a change as NVDA speaks it, in the s
    same lines as `tools/nvda-capture`'s (a changed add-on is copied by the user and NVDA restarted). Nothing else of
    NVDA's is needed: not the Speech Viewer, not the user's own plugins in `%APPDATA%\nvda\globalPlugins` or the
    scratchpad.
-2. Build `Axit.exe` and the runner into scratch folders (never the running app's `bin`), and write the script in
-   `tests/nvda-scripts`; a first run without `--nvda` on the test desktop finds the focus order and the texts without
+2. Build `Axit.exe` and the runner into scratch folders (never the running app's `bin`; `nvda-pass.ps1` does both),
+   and write the steps into the app's script in `tests/scripts/<app>`, or into a script of `tests/nvda-scripts` for
+   what only NVDA shows; a first run without `--nvda` on the test desktop finds the focus order and the texts without
    taking the machine.
 3. Ask the user through the question tool to step away, saying how long. The answer is the go: the run starts at once.
 4. The run records "Running NVDA tests. Please do not touch the keyboard or mouse." in Windows' own voice (SAPI, not
@@ -148,7 +149,7 @@ The assistant runs this tier itself to hear a change as NVDA speaks it, in the s
    `[cancel]` where NVDA cut its speech (a key press does). The capture is on only during the run and its log is
    deleted after it.
 
-The first such run, the consent reminder's check box (`tests/nvda-scripts/axterminal-consent-checkbox.txt`), heard NVDA say
+The first such run, the consent reminder's check box (its steps now in `tests/scripts/axterminal/07-consent.txt`), heard NVDA say
 "checked" and "not checked" once each after the fix of AX-8.8.
 
 ### The NVDA pass of every app: `nvda-pass.ps1` (2026-10-31)
@@ -156,9 +157,11 @@ The first such run, the consent reminder's check box (`tests/nvda-scripts/axterm
 The NVDA test plans the user used to run by ear are run by the assistant: `.\nvda-pass.ps1 [<app>] [-NoBuild]` builds
 into `%TEMP%\axit-nvda`, gathers `tests/scripts/<app>` (every app without a name) and the scripts of
 `tests/nvda-scripts` whose names start with the app's, and runs them with `--nvda`. Under `--nvda` every
-`expect said` is an NVDA check as well: what the window announced or focused must also be spoken by NVDA within 5 s
-(the timeline's marks dropped; a sound passes as it is), and the step's line ends with "|| NVDA: " and what NVDA
-said. So the app scripts, written from the plans, are the plans as heard; a step only NVDA can show (a cancellation,
+`expect said` is an NVDA check as well: what the window announced must also be spoken by NVDA within 5 s, a focus
+move by the control's name (NVDA says the role and the value in its own words), while a value and a sound are not
+speech of the window's and pass as they are; the step's line ends with "|| NVDA: " and what NVDA said, and the run's
+last lines name the scripts where NVDA did not speak what the window said, apart from the window's own failures.
+"Spoken" means NVDA started the text: a key press cuts speech, and `[cancel]` in what NVDA said marks where. So the app scripts, written from the plans, are the plans as heard; a step only NVDA can show (a cancellation,
 the order of speech, a state NVDA reads from the control) goes into `tests/nvda-scripts` as `<app>-<what>.txt` with
 `expect spoken` and `refuse spoken`. The report is `%TEMP%\axit-nvda\report.md`; the console shows the result lines.
 
@@ -166,8 +169,9 @@ Two things the first full pass taught (2026-10-31): a key is sent only while a w
 runner brings the current one back, and fails the step rather than type into the user's own window, which the
 foreground reached between scripts); and the navigation keys go with the extended flag and their scan codes, since
 without it Home, End, the arrows and the page keys are the numeric keypad's, which NVDA keeps for its review cursor.
-After a window starts, the first step waits until NVDA has finished reading it. `-Skip axClaude` leaves out the
-slowest app, whose replies need the network.
+A `start`, `use` or `adopt` brings its window to the front and waits until NVDA has finished reading it: NVDA reads a
+window that comes up whole, and ignores what a window behind another program's announces, so a script's second
+window must be `use`d before its steps. `-Skip axClaude` leaves out the slowest app, whose replies need the network.
 
 When to run it: after a change to focus, keys, announcements or an edit control (the app's alone), and the whole pass
 before a merge or a release, in place of asking the user for a pass by ear. A pass is written into

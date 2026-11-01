@@ -8,7 +8,7 @@ Add a section under this one, above the earlier passes, so that the newest comes
 
 ## 2026-10-31: the consent box's state, by the assistant (branch `licence`, after c634215)
 
-Run by the assistant through the NVDA tier (`tests/nvda-scripts/axterminal-consent-checkbox.txt`, `docs/axit/automation.md`
+Run by the assistant through the NVDA tier (a script since folded into `tests/scripts/axterminal/07-consent.txt`, `docs/axit/automation.md`
 section 3), the user away at its question; NVDA's speech read from the capture add-on. The user had reported that
 Space in the box said nothing.
 
@@ -21,17 +21,19 @@ Space in the box said nothing.
 
 ## Owed: access layers and consent (the branch `licence`, 2026-10-29, `docs/axit/SPEC.md` AX-11)
 
-Not run yet; before the branch merges:
+Scripted since 2026-10-31 and heard through `nvda-pass.ps1` (`docs/axit/automation.md` section 3): the access layers'
+names in every list (the Axit menu and Show in steps of the apps' scripts); the reminders of axClaude
+(`axclaude/15-consent.txt`), axTerminal (`axterminal/07-consent.txt`: the first shell's, then Command Prompt's from a
+new session, each shell its own consent), axGIT (`axgit/06-consent.txt`, with About,
+Licence ending in what was agreed to) and axPass (`axpass/02-consent.txt`), each with the title, Tab to the box, Enter
+before checking saying "Check the box first", Space checking, Enter connecting, and the second start asking nothing;
+and the AI tools' pairing notice with its box (`mcp/01-read-and-pair.txt`).
 
-- The titles: each access layer's window title, New window, Open windows, Recently closed and Show in read "axClaude, access layer for Claude Code" and the like, after a separator below the standalone apps; F1 starts with the same line for the four.
-- The consent notice (axGIT's first open and axTerminal's first shell are scripts since 2026-10-31,
-  `tests/scripts/axgit/06-consent.txt` and `tests/scripts/axterminal/07-consent.txt`, heard through `nvda-pass.ps1`): axClaude's first start, axTerminal's first start of Windows PowerShell and of Command Prompt, axGIT's first open and first fetch to github.com, axPass's first unlock and New database. Each: the title "Before <app> connects to <program>", the text, Tab to "check box, not checked, I understand that …", Enter before checking says "Check the box first", Space checks, Enter connects; only two buttons, Connect and Not now; Not now leaves the line said in the spec. The second start asks nothing.
-- Install it now in each app: "Before <app> installs <program>" with Install, then the installer.
-- The AI tools' pairing notice: Allow before checking says "Check the box first"; Enter is still Deny.
-- The update notice: the terms sentence first, and the buttons "I accept all terms, install and restart" and "… install and close" (axClaude plan steps 138 to 140, axDown's update steps).
-- About, Licence: NOTICE.md opens with "What this is", and ends with "What you have agreed to on this computer", its lines, or "Nothing yet."
-- axClaude: /login says "Sent. You are signing in to Anthropic …"; axGIT: the first fetch of a window says "Connecting to github.com; …" and the result is still heard.
+Still by ear, before the branch merges:
 
+- Install it now in each app: "Before <app> installs <program>" with Install, then the installer (needs a computer without the program).
+- The update notice: the terms sentence first, and the buttons "I accept all terms, install and restart" and "… install and close" (axClaude plan steps 138 to 140, axDown's update steps; needs a release newer than the build).
+- axClaude: /login says "Sent. You are signing in to Anthropic …"; axGIT: the first fetch to github.com asks the server's reminder, and a later window says "Connecting to github.com; …" with the result still heard (needs a remote on the network).
 ## 2026-10-25: every owed pass (main acae61f, released as 3.7.4)
 
 Run by the user from the checkout on the branch `inventory` (acae61f), the result given as "all nvda tests are complete"; NVDA

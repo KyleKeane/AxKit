@@ -19,6 +19,24 @@ expect said ! checked
 # Enter connects: the shell starts and says Ready.
 keys enter
 expect said Ready
+
+# Each shell is its own consent: a new session with Command Prompt asks its reminder, then starts.
+keys ctrl+n
+expect state "notice":"New session"
+keys tab
+expect focus folder..."}
+keys tab
+expect focus "role":"RadioButton"
+keys down
+expect focus "value":"Command Prompt"}
+keys enter
+expect said Before axTerminal connects to Command Prompt
+keys tab
+expect said I understand that axTerminal
+keys space
+expect said ! checked
+keys enter
+expect said Ready
 close
 
 # The second start asks nothing and starts the shell.

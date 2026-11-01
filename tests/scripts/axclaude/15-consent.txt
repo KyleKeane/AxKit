@@ -1,0 +1,27 @@
+# axClaude: the reminder before Claude Code first starts (docs/axit/SPEC.md AX-11.4, AX-11.5; the Owed list of
+# docs/axit/nvda-test-record.md). A fresh run's home has no consent, so the reminder comes before Claude starts; Connect
+# starts it, and Claude's own trust question follows. With --nvda (nvda-pass.ps1) every expected line must be spoken by
+# NVDA too.
+file home\Axit\axclaude.json {"checkForUpdates":false}
+mkdir fresh
+start claude {temp}\fresh -- --model haiku
+
+expect said Before axClaude connects to Claude Code
+keys tab
+expect said I understand that axClaude
+keys enter
+expect said ! Check the box first
+keys space
+expect said ! checked
+# Enter connects: Claude starts and asks whether to trust the folder.
+keys enter
+expect said trust
+wait 1500
+keys enter
+expect said Ready
+close
+
+# The second start asks nothing: Claude starts at once.
+start claude {temp}\fresh -- --model haiku
+expect said Ready
+refuse said Before axClaude
