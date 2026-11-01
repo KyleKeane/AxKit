@@ -102,6 +102,7 @@ public sealed class OverlayPanel : Panel
     private readonly ProgressBar _progress = new();
     private readonly ListBox _matches = new();
     private readonly AxitCheckBox _consent = new();
+    private Notice? _consented;
     private OverlayInput? _inputSpec;
     private Control? _custom;
     private string? _headLine;
@@ -180,6 +181,8 @@ public sealed class OverlayPanel : Panel
         _consent.Padding = new Padding(0, 6, 0, 0);
         _consent.TabIndex = 4;
         _consent.Visible = false;
+        // The notice whose box is checked, so that the same notice shown again (after Ctrl+F in it) keeps the check.
+        _consent.CheckedChanged += (_, _) => _consented = _consent.Checked ? Shown : null;
 
         // Docked controls are laid out from the last in the collection to the first: the buttons take the bottom,
         // the progress bar and the check box the strips above them, the title the top, the field the strip under the
@@ -356,11 +359,11 @@ public sealed class OverlayPanel : Panel
             _progress.Style = ProgressBarStyle.Marquee;
         }
 
-        _consent.Checked = false;
+        _consent.Checked = ReferenceEquals(notice, _consented);
         _consent.Visible = notice.Consent is not null;
         _consent.Text = notice.Consent ?? string.Empty;
         _consent.AccessibleName = notice.Consent ?? string.Empty;
-        _consent.Height = (_consent.Font.Height * 3) + 12;
+        _consent.Height = ConsentHeight();
 
         _inputRow.Visible = input is not null;
         if (input is not null)
@@ -413,6 +416,15 @@ public sealed class OverlayPanel : Panel
                 CancelButton = button;
             }
         }
+    }
+
+    /// <summary>Three lines of the consent's text, which wraps, in the panel's font; again when the text size changes while the notice shows.</summary>
+    private int ConsentHeight() => (Font.Height * 3) + 12;
+
+    protected override void OnFontChanged(EventArgs e)
+    {
+        base.OnFontChanged(e);
+        _consent.Height = ConsentHeight();
     }
 
     /// <summary>The progress bar of a <see cref="Notice.Progress"/> notice: 0 to 100, or a marquee while the total is unknown (below 0).</summary>

@@ -39,8 +39,9 @@ public sealed class ListTests
             foreach (var line in File.ReadLines(file))
             {
                 number++;
-                // "ListBox _list = new()", "ListBox Matches { get; } = new()", "new ListBox()", "new CheckedListBox()": a plain list box made.
-                if (Regex.IsMatch(line, @"\b(Checked)?ListBox\s+_\w+\s*=\s*new\b|\b(Checked)?ListBox\s+\w+\s*\{\s*get;\s*\}\s*=\s*new\b|\bnew\s+(Checked)?ListBox\s*\("))
+                // "ListBox _list = new()", "ListBox list = new()", "ListBox Matches { get; } = new()", "new ListBox()",
+                // "new CheckedListBox { … }": a plain list box made.
+                if (Regex.IsMatch(line, @"\b(?:Checked)?ListBox\s+\w+\s*(?:\{\s*get;\s*\}\s*)?=\s*new\b|\bnew\s+(?:Checked)?ListBox\s*[({]"))
                 {
                     offenders.Add($"{relative}:{number}: {line.Trim()}");
                 }

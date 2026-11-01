@@ -22,7 +22,14 @@ public sealed partial class GitForm
         }
 
         var remote = GitRemote.NameOf(_repo.Upstream);
-        var url = await GitRunner.RunAsync(_root, GitRemote.UrlArguments(remote), GitRunner.Short, overrides: _overrides);
+        // The window's one way of running git (AG-1.5): git gone since the repository opened, or a command still
+        // running, is handled there, not here (review, 2026-11-01).
+        var url = await RunGitAsync(GitRemote.UrlArguments(remote), GitRunner.Short, "remote");
+        if (url is null)
+        {
+            return;
+        }
+
         var host = url.Ok ? GitRemote.Host(url.Output) : null;
         if (host is null)
         {
@@ -30,19 +37,18 @@ public sealed partial class GitForm
             return;
         }
 
-        if (Consent.Given(AppPaths.ConsentFile, AppName, host))
+        if (!HasConsent(ConsentTarget.Server(host), () => Do(command), () => Announce($"Not connected to {host}", true)))
         {
-            // AX-11.6: git may ask for a sign-in to the server (its credential helper's own window); whose account that
-            // is, said the first time this window reaches each server, not on every command.
-            if (_reminded.Add(host))
-            {
-                Announce($"Connecting to {host}; if Git asks you to sign in, the account is between you and {host}", true);
-            }
-
-            await command();
             return;
         }
 
-        WithConsent(ConsentTarget.Server(host), () => Do(command), () => Announce($"Not connected to {host}", true));
+        // AX-11.6: git may ask for a sign-in to the server (its credential helper's own window); whose account that is,
+        // said the first time this window reaches each server, not on every command.
+        if (_reminded.Add(host))
+        {
+            Announce($"Connecting to {host}; if Git asks you to sign in, the account is between you and {host}", true);
+        }
+
+        await command();
     }
 }

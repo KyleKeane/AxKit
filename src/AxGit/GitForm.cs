@@ -220,10 +220,8 @@ public sealed partial class GitForm : AxitForm
 
     private async Task StartAsync(string? path)
     {
-        if (!Consent.Given(AppPaths.ConsentFile, AppName, ConsentTarget.Git.Program))
-        {
-            // Bundle AX-11.5: Git runs nothing before the user's consent; Connect opens the repository.
-            WithConsent(ConsentTarget.Git, () => Do(() => StartAsync(path)), () =>
+        // Bundle AX-11.5: Git runs nothing before the user's consent; Connect opens the repository.
+        if (!HasConsent(ConsentTarget.Git, () => Do(() => StartAsync(path)), () =>
             {
                 if (_root is null)
                 {
@@ -231,7 +229,8 @@ public sealed partial class GitForm : AxitForm
                 }
 
                 Announce("Not connected to Git. Ctrl+O opens a repository", true);
-            });
+            }))
+        {
             return;
         }
 

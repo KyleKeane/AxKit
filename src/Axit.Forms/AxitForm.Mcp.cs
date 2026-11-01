@@ -223,10 +223,7 @@ public abstract partial class AxitForm
         try
         {
             McpAccess.ForgetAll();
-            foreach (var item in Consent.Read(AppPaths.ConsentFile).Where(item => item.App == McpConsentApp))
-            {
-                Consent.Withdraw(AppPaths.ConsentFile, item.App, item.Target);
-            }
+            Consent.WithdrawAll(AppPaths.ConsentFile, McpConsentApp);
 
             Announce("AI tools forgotten: each asks again before it reads anything", true);
         }

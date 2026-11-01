@@ -379,10 +379,9 @@ public sealed partial class PassForm : ItemForm
             return;
         }
 
-        if (!Consent.Given(AppPaths.ConsentFile, AppName, ConsentTarget.KeePassXC.Program))
+        // Bundle AX-11.5: before the first master password goes to KeePassXC's tool.
+        if (!HasConsent(ConsentTarget.KeePassXC, () => ShowUnlock(refused), () => Announce("Not connected to KeePassXC. Enter unlocks", true)))
         {
-            // Bundle AX-11.5: before the first master password goes to KeePassXC's tool.
-            WithConsent(ConsentTarget.KeePassXC, () => ShowUnlock(refused), () => Announce("Not connected to KeePassXC. Enter unlocks", true));
             return;
         }
 

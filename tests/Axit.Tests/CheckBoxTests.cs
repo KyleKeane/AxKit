@@ -26,8 +26,9 @@ public sealed class CheckBoxTests
             foreach (var line in File.ReadLines(file))
             {
                 number++;
-                // "CheckBox _box = new()", "CheckBox Box { get; } = new()", "new CheckBox()": a plain check box made.
-                if (Regex.IsMatch(line, @"(?<!Axit)\bCheckBox\s+_\w+\s*=\s*new\b|(?<!Axit)\bCheckBox\s+\w+\s*\{\s*get;\s*\}\s*=\s*new\b|\bnew\s+CheckBox\s*\("))
+                // "CheckBox _box = new()", "CheckBox box = new()", "CheckBox Box { get; } = new()", "new CheckBox()",
+                // "new CheckBox { … }": a plain check box made. "AxitCheckBox" has no word boundary before "CheckBox".
+                if (Regex.IsMatch(line, @"\bCheckBox\s+\w+\s*(?:\{\s*get;\s*\}\s*)?=\s*new\b|\bnew\s+CheckBox\s*[({]"))
                 {
                     offenders.Add($"{relative}:{number}: {line.Trim()}");
                 }

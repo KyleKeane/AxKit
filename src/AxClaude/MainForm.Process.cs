@@ -80,14 +80,13 @@ internal sealed partial class MainForm
             return;
         }
 
-        if (!Consent.Given(AppPaths.ConsentFile, AppName, ConsentTarget.ClaudeCode.Program))
-        {
-            // Bundle AX-11.4: the first connection to Claude Code waits for the user's consent; Connect starts it.
-            WithConsent(ConsentTarget.ClaudeCode, StartClaude, () =>
+        // Bundle AX-11.4: the first connection to Claude Code waits for the user's consent; Connect starts it.
+        if (!HasConsent(ConsentTarget.ClaudeCode, StartClaude, () =>
             {
                 _model.AddSystemLine("Not connected to Claude Code. Press Ctrl+Shift+R to connect.");
                 UpdateStatus();
-            });
+            }))
+        {
             return;
         }
 

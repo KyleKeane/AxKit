@@ -68,12 +68,15 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
         $"the terms of {host}",
         $"https://{host}/");
 
-    /// <summary>An AI tool paired with Axit's windows (AX-9, docs/axit/mcp.md): it reads what the windows show.</summary>
+    /// <summary>
+    /// An AI tool paired with Axit's windows (AX-9, docs/axit/mcp.md): it reads what the windows show. Any program may
+    /// pair, so its maker's terms have no one address here (an earlier version named Anthropic's for every tool).
+    /// </summary>
     public static ConsentTarget AiTool(string name) => new(
         name,
         $"{name} reads what Axit's windows show and can open apps; what it does with what it reads is under its own terms, and it may send it to its maker's service.",
         $"the terms of {name}'s maker",
-        "https://www.anthropic.com/legal");
+        string.Empty);
 }
 
 /// <summary>The shape of the file: one list, oldest first.</summary>
@@ -110,6 +113,13 @@ public static class Consent
     {
         Write(file, Read(file).Where(item => !Same(item, app, target)));
         Log.Info($"Consent withdrawn: {app}, {target}");
+    }
+
+    /// <summary>Every agreement of one app taken back in one write (Forget AI tools, docs/axit/mcp.md).</summary>
+    public static void WithdrawAll(string file, string app)
+    {
+        Write(file, Read(file).Where(item => !string.Equals(item.App, app, StringComparison.OrdinalIgnoreCase)));
+        Log.Info($"Consents withdrawn: {app}");
     }
 
     /// <summary>"axClaude, Claude Code, 29 October 2026, Axit 3.8.0"; "Update to Axit 3.8.0, 29 October 2026".</summary>

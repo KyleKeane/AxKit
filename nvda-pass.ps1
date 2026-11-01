@@ -45,6 +45,10 @@ if (-not (Get-Process nvda -ErrorAction SilentlyContinue)) {
     Write-Host 'NVDA is not running.'
     exit 2
 }
+# Compared line by line, not by hash: the installed copy may differ in its line endings alone.
+if (Compare-Object (Get-Content $capture) (Get-Content (Join-Path $root 'tools\nvda-capture\globalPlugins\axitCapture.py'))) {
+    Write-Host 'The installed capture add-on differs from tools\nvda-capture: copy the folder to %APPDATA%\nvda\addons\axitCapture and restart NVDA. Running with the installed one.'
+}
 
 if (-not $NoBuild) {
     Write-Host 'Building Axit and the runner into the scratch folder...'
@@ -75,9 +79,11 @@ Get-ChildItem (Join-Path $root 'tests\nvda-scripts') -Filter *.txt |
     Copy-Item -Destination $nvdaOnly
 
 $report = Join-Path $work 'report.md'
-& $runner $scripts --exe $exe --nvda --report $report 2>&1 |
+# The runner's error output is not redirected: under $ErrorActionPreference = 'Stop', Windows PowerShell 5.1 would turn
+# its first line into a terminating error and end this script before the summary (the root CLAUDE.md's 2>&1 gotcha).
+& $runner $scripts --exe $exe --nvda --report $report |
     ForEach-Object { "$_" } |
-    Where-Object { $_ -match '^(==|FAIL|PASS|FAILED|NVDA tier)' -or $_ -match '^\s*(FAIL|failed)' } |
+    Where-Object { $_ -match '^(==|FAIL|PASS|FAILED|NVDA tier|NVDA did not)' -or $_ -match '^\s*(FAIL|failed)' } |
     ForEach-Object { $_ -replace '[A-Za-z]:(\\\\|\\)Users(\\\\|\\)[^\\"\s]+', '%USERPROFILE%' }
 $code = $LASTEXITCODE
 Write-Host 'Report: %TEMP%\axit-nvda\report.md'

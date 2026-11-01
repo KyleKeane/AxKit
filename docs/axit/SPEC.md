@@ -634,7 +634,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   - **Install it now** (AX-2.9): before an installer runs, the same notice for the program it installs, titled
     "Before <app> installs <program>", with **Install** in place of Connect; its acceptance counts for the app's first
     connection, so the user agrees once, in the step they were already taking.
-  The notice is the window base's (`AxitForm.WithConsent`), the programs' words and addresses `Axit.Core/ConsentTarget`.
+  The notice is the window base's (`AxitForm.HasConsent`, the one check: true goes on, false has shown the reminder, whose Connect runs the caller again), the programs' words and addresses `Axit.Core/ConsentTarget`.
   A custom shell has no address for its terms: its notice says so.
 - AX-11.6 **Reminders at sign-in.** One line says whose account it is, without a check box: axClaude, on sending
   `/login`: "You are signing in to Anthropic through Claude Code; the account and its terms are between you and

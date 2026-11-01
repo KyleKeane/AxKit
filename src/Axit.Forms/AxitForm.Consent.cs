@@ -10,19 +10,21 @@ namespace Axit.Forms;
 public abstract partial class AxitForm
 {
     /// <summary>
-    /// Runs <paramref name="connect"/> at once when the user has agreed to <paramref name="target"/> for this app before;
-    /// otherwise asks first: Connect (Enter, once the box is checked) records the agreement and connects, Not now
-    /// (Escape) runs <paramref name="notNow"/>, which says how to connect later.
+    /// True when the user has agreed to <paramref name="target"/> for this app, so that the caller goes on. Otherwise the
+    /// reminder is shown and false comes back: Connect (Enter, once the box is checked) records the agreement and runs
+    /// <paramref name="connect"/>, the caller itself, which then comes through here and goes on; Not now (Escape) runs
+    /// <paramref name="notNow"/>, which says how to connect later. One check, here; a caller that checked first as well
+    /// had made this one dead (review, 2026-11-01).
     /// </summary>
-    protected void WithConsent(ConsentTarget target, Action connect, Action notNow)
+    protected bool HasConsent(ConsentTarget target, Action connect, Action notNow)
     {
         if (Consent.Given(AppPaths.ConsentFile, AppName, target.Program))
         {
-            connect();
-            return;
+            return true;
         }
 
         ShowNotice(ConsentNotice(target, $"Before {AppName} connects to {target.Program}", "&Connect", connect, notNow));
+        return false;
     }
 
     /// <summary>

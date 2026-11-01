@@ -29,6 +29,21 @@ public sealed class ConsentTests
     }
 
     [Fact]
+    public void Every_agreement_of_one_app_is_withdrawn_in_one_write()
+    {
+        // Forget AI tools (docs/axit/mcp.md): every paired tool's agreement goes, the other apps' stay, the file written once.
+        var file = TempFile();
+        Consent.Record(file, "AI tools", "Claude Code", "3.8.0", new DateTime(2026, 10, 29));
+        Consent.Record(file, "AI tools", "Another tool", "3.8.0", new DateTime(2026, 10, 30));
+        Consent.Record(file, "axGIT", "Git", "3.8.0", new DateTime(2026, 10, 31));
+
+        Consent.WithdrawAll(file, "ai tools");
+        var left = Assert.Single(Consent.Read(file));
+        Assert.Equal("axGIT", left.App);
+        Directory.Delete(Path.GetDirectoryName(file)!, recursive: true);
+    }
+
+    [Fact]
     public void A_damaged_file_means_nothing_was_agreed()
     {
         var file = TempFile();
