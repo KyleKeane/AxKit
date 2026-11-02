@@ -19,9 +19,9 @@ public sealed class ConsentTests
         Assert.False(Consent.Given(file, "axTerminal", "Command Prompt"));
 
         // Agreeing again replaces the first record rather than adding a second.
-        Consent.Record(file, "axTerminal", "PowerShell", "3.8.1", new DateTime(2026, 11, 2));
+        Consent.Record(file, "axTerminal", "PowerShell", "4.0.1", new DateTime(2026, 11, 2));
         var only = Assert.Single(Consent.Read(file));
-        Assert.Equal("3.8.1", only.Version);
+        Assert.Equal("4.0.1", only.Version);
 
         Consent.Withdraw(file, "axTerminal", "PowerShell");
         Assert.False(Consent.Given(file, "axTerminal", "PowerShell"));

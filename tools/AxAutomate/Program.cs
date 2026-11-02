@@ -735,7 +735,9 @@ internal sealed class Run(string exe, string temp)
             return spoken is null ? (true, null) : (false, "NVDA said: " + spoken);
         }
 
-        var bad = Current.Pending().FirstOrDefault(e => e.Spoken.Contains(text, StringComparison.OrdinalIgnoreCase));
+        // Of the kind the mark names (Window.Wanted): a refused text never fails on a sound of the same name left over.
+        var (fits, words) = Window.Wanted(text);
+        var bad = Current.Pending().FirstOrDefault(e => fits(e) && !Current.StaleSound(e) && e.Spoken.Contains(words, StringComparison.OrdinalIgnoreCase));
         if (bad is null && Current.WithinLast(text))
         {
             return (false, "said later in the last announcement matched");
@@ -1033,7 +1035,21 @@ internal sealed class Window : IDisposable
     /// <summary>The events the last text expectation took, where a neighbour that came the other way round is found.</summary>
     private List<int> _lastBatch = [];
 
+    /// <summary>When the last text expectation's match happened: a sound from well before it is stale (<see cref="Stale"/>).</summary>
+    private long _lastTextMs;
+
     private bool _closing;
+
+    /// <summary>
+    /// A sound more than a second older than the last text matched: text expectations do not take the sounds before
+    /// them, so a sound from an earlier step would wait there for a later expectation of the same name (a question's
+    /// chime answered a later "♪ Notice" at once, and the keys went before the question came, 2026-11-01). The second
+    /// keeps a sound that came just before its text, as the ready ping does.
+    /// </summary>
+    private bool Stale(Event sound) => sound.Ms < _lastTextMs - 1000;
+
+    /// <summary>For a refusal: a sound left over from an earlier step is no failure.</summary>
+    public bool StaleSound(Event e) => e.Kind == "sound" && Stale(e);
 
     private Window(Process process, int connectMs = 30_000)
     {
@@ -1185,12 +1201,14 @@ internal sealed class Window : IDisposable
     {
         Fetch();
         var sound = text.StartsWith('♪');
-        if (!sound && _lastSay >= 0 && _all[_lastSay].Kind == "say")
+        var (fits, words) = Wanted(text);
+        // An announcement only: what the user typed into a field is a value, not something said as one.
+        if (!sound && _lastSay >= 0 && _all[_lastSay].Kind == "say" && fits(_all[_lastSay]))
         {
-            var within = _all[_lastSay].Spoken.IndexOf(text, _lastSayEnd, StringComparison.OrdinalIgnoreCase);
+            var within = _all[_lastSay].Spoken.IndexOf(words, _lastSayEnd, StringComparison.OrdinalIgnoreCase);
             if (within >= 0)
             {
-                _lastSayEnd = within + text.Length;
+                _lastSayEnd = within + words.Length;
                 return new Taken([_all[_lastSay]], Within: true);
             }
         }
@@ -1203,16 +1221,23 @@ internal sealed class Window : IDisposable
                 continue;
             }
 
+            if (sound && Stale(_all[i]))
+            {
+                _taken.Add(i);
+                continue;
+            }
+
             indices.Add(i);
-            var at = _all[i].Spoken.IndexOf(text, StringComparison.OrdinalIgnoreCase);
+            var at = fits(_all[i]) ? _all[i].Spoken.IndexOf(words, StringComparison.OrdinalIgnoreCase) : -1;
             if (at >= 0)
             {
                 _taken.UnionWith(indices);
                 if (!sound)
                 {
                     _lastSay = i;
-                    _lastSayEnd = at + text.Length;
+                    _lastSayEnd = at + words.Length;
                     _lastBatch = indices;
+                    _lastTextMs = _all[i].Ms;
                 }
 
                 return new Taken(indices.Select(index => _all[index]).ToList(), Within: false);
@@ -1225,7 +1250,7 @@ internal sealed class Window : IDisposable
         {
             foreach (var i in _lastBatch)
             {
-                if (_all[i].Spoken.Contains(text, StringComparison.OrdinalIgnoreCase))
+                if (fits(_all[i]) && _all[i].Spoken.Contains(words, StringComparison.OrdinalIgnoreCase))
                 {
                     return new Taken([_all[i]], Within: false);
                 }
@@ -1235,9 +1260,43 @@ internal sealed class Window : IDisposable
         return null;
     }
 
+    /// <summary>
+    /// What an expectation's text asks for: its mark names the kind of event ("♪ " a sound, "! " an interrupting
+    /// announcement, "→ " a focus move, "· " a value; none, anything but a sound), and the rest is the words to find in
+    /// it. The mark is a kind, not the start of the text: "Sent" with "Background music on" joined to it reads
+    /// "! Sent. Background music on" (AX-7.3), and "! Background music on" must still find it.
+    /// </summary>
+    public static (Func<Event, bool> Fits, string Words) Wanted(string text)
+    {
+        if (text.StartsWith('♪'))
+        {
+            return (e => e.Kind == "sound", text.TrimStart('♪', ' '));
+        }
+
+        if (text.StartsWith("! ", StringComparison.Ordinal))
+        {
+            return (e => e.Kind == "say" && e.Interrupt, text[2..]);
+        }
+
+        if (text.StartsWith("→ ", StringComparison.Ordinal))
+        {
+            return (e => e.Kind == "focus", text[2..]);
+        }
+
+        if (text.StartsWith("· ", StringComparison.Ordinal))
+        {
+            return (e => e.Kind == "value", text[2..]);
+        }
+
+        return (e => e.Kind != "sound", text);
+    }
+
     /// <summary>Whether the text comes later in the announcement the last expectation matched: a refusal looks there too.</summary>
-    public bool WithinLast(string text) =>
-        _lastSay >= 0 && _all[_lastSay].Kind == "say" && _all[_lastSay].Spoken.IndexOf(text, _lastSayEnd, StringComparison.OrdinalIgnoreCase) >= 0;
+    public bool WithinLast(string text)
+    {
+        var (fits, words) = Wanted(text);
+        return _lastSay >= 0 && _all[_lastSay].Kind == "say" && fits(_all[_lastSay]) && _all[_lastSay].Spoken.IndexOf(words, _lastSayEnd, StringComparison.OrdinalIgnoreCase) >= 0;
+    }
 
     public List<Event> TakeAll()
     {
@@ -1245,6 +1304,7 @@ internal sealed class Window : IDisposable
         _taken.UnionWith(Enumerable.Range(0, _all.Count));
         _lastSay = -1;
         _lastBatch = [];
+        _lastTextMs = _all.Count > 0 ? _all[^1].Ms : _lastTextMs;
         return pending;
     }
 

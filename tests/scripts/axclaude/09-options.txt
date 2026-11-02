@@ -119,7 +119,8 @@ menu Speak replies: first lines
 expect said Speak replies: first lines
 type Reply with two lines: the word first, then on the next line the word second.
 keys enter
-expect said first
+# The reply's first line, not the message typed above, which holds both words.
+expect said claude: first
 refuse said second
 expect said Done
 # Ctrl+Shift+R: nothing of the conversation is spoken again, "Ready", and the next reply is spoken.

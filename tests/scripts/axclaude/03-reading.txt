@@ -52,7 +52,9 @@ keys enter
 expect said Done
 keys ctrl+3
 expect said Output 2
-keys down down
+# c, the next Claude reply line, rather than two Downs: a reply of one wrapped paragraph has one line, and the second
+# Down landed on the empty line after it (seen with Haiku, 2026-11-01).
+keys c
 keys l
 expect said ! Line
 keys enter

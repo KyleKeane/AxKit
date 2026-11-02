@@ -52,9 +52,10 @@ wait 3000
 # in the field, still working.
 type Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.
 keys enter
-expect said ♪ Notice
-wait 1500
-keys 1 enter
+# Claude Code asks before the Bash command on most runs, not on all: answered when it does.
+try said ♪ Notice
+iffound wait 1500
+iffound keys 1 enter
 wait 2000
 expect state Claude: working
 keys alt+f4

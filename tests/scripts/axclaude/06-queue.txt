@@ -17,10 +17,11 @@ wait 3000
 type Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.
 keys enter
 expect said Sent
-expect said ♪ Notice
-wait 1500
-keys 1 enter
-expect said Sent: 1
+# Claude Code asks before the Bash command on most runs, not on all: answered when it does.
+try said ♪ Notice
+iffound wait 1500
+iffound keys 1 enter
+iffound expect said Sent: 1
 wait 2000
 expect state Claude: working
 type Reply with the single word second.
@@ -70,10 +71,11 @@ keys ctrl+1
 type Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.
 keys enter
 expect said Sent
-expect said ♪ Notice
-wait 1500
-keys 1 enter
-expect said Sent: 1
+# Claude Code asks before the Bash command on most runs, not on all: answered when it does.
+try said ♪ Notice
+iffound wait 1500
+iffound keys 1 enter
+iffound expect said Sent: 1
 wait 2000
 expect state Claude: working
 type Reply with the single word fourth.
