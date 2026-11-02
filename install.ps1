@@ -461,7 +461,7 @@ if (-not $NoContextMenu) {
         New-Item -Path $menu.Key -Force | Out-Null
         # The entries made again from nothing: New-Item -Force keeps an existing key's children, and the in-place update,
         # which removes no installation, would otherwise leave an earlier version's entries beside the new ones (their
-        # names gained an order number in 3.8.0, so every app would have shown twice; found in review, 2026-11-01).
+        # names gained an order number in 4.0.0, so every app would have shown twice; found in review, 2026-11-01).
         Remove-Item -LiteralPath (Join-Path $menu.Key 'shell') -Recurse -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -LiteralPath $menu.Key -Name 'MUIVerb' -Value 'Open with Axit'
         Set-ItemProperty -LiteralPath $menu.Key -Name 'Icon' -Value "`"$exe`",0"

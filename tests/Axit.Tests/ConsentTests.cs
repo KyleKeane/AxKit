@@ -13,7 +13,7 @@ public sealed class ConsentTests
         var file = TempFile();
         Assert.False(Consent.Given(file, "axTerminal", "PowerShell"));
 
-        Consent.Record(file, "axTerminal", "PowerShell", "3.8.0", new DateTime(2026, 10, 29));
+        Consent.Record(file, "axTerminal", "PowerShell", "4.0.0", new DateTime(2026, 10, 29));
         Assert.True(Consent.Given(file, "axTerminal", "PowerShell"));
         Assert.True(Consent.Given(file, "AXTERMINAL", "powershell"));
         Assert.False(Consent.Given(file, "axTerminal", "Command Prompt"));
@@ -33,9 +33,9 @@ public sealed class ConsentTests
     {
         // Forget AI tools (docs/axit/mcp.md): every paired tool's agreement goes, the other apps' stay, the file written once.
         var file = TempFile();
-        Consent.Record(file, "AI tools", "Claude Code", "3.8.0", new DateTime(2026, 10, 29));
-        Consent.Record(file, "AI tools", "Another tool", "3.8.0", new DateTime(2026, 10, 30));
-        Consent.Record(file, "axGIT", "Git", "3.8.0", new DateTime(2026, 10, 31));
+        Consent.Record(file, "AI tools", "Claude Code", "4.0.0", new DateTime(2026, 10, 29));
+        Consent.Record(file, "AI tools", "Another tool", "4.0.0", new DateTime(2026, 10, 30));
+        Consent.Record(file, "axGIT", "Git", "4.0.0", new DateTime(2026, 10, 31));
 
         Consent.WithdrawAll(file, "ai tools");
         var left = Assert.Single(Consent.Read(file));
@@ -75,10 +75,10 @@ public sealed class ConsentTests
     public void Each_agreement_reads_as_one_line()
     {
         Assert.Equal(
-            "axClaude, Claude Code, 29 October 2026, Axit 3.8.0",
-            Consent.Line(new ConsentRecord("axClaude", "Claude Code", "3.8.0", new DateTime(2026, 10, 29))));
+            "axClaude, Claude Code, 29 October 2026, Axit 4.0.0",
+            Consent.Line(new ConsentRecord("axClaude", "Claude Code", "4.0.0", new DateTime(2026, 10, 29))));
         Assert.Equal(
-            "Update to Axit 3.8.0, 29 October 2026",
-            Consent.Line(new ConsentRecord(Consent.UpdateApp, "Axit 3.8.0", "3.7.6", new DateTime(2026, 10, 29))));
+            "Update to Axit 4.0.0, 29 October 2026",
+            Consent.Line(new ConsentRecord(Consent.UpdateApp, "Axit 4.0.0", "3.7.6", new DateTime(2026, 10, 29))));
     }
 }

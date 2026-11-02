@@ -4,7 +4,7 @@ namespace Axit.Core;
 
 /// <summary>
 /// One thing the user agreed to (AX-11.5): an access layer's first connection to a program (App "axClaude", Target
-/// "Claude Code"), or the terms of an update (App <see cref="Consent.UpdateApp"/>, Target "Axit 3.8.0"), with Axit's
+/// "Claude Code"), or the terms of an update (App <see cref="Consent.UpdateApp"/>, Target "Axit 4.0.0"), with Axit's
 /// version at the time and the date.
 /// </summary>
 public sealed record ConsentRecord(string App, string Target, string Version, DateTime When);
@@ -122,7 +122,7 @@ public static class Consent
         Log.Info($"Consents withdrawn: {app}");
     }
 
-    /// <summary>"axClaude, Claude Code, 29 October 2026, Axit 3.8.0"; "Update to Axit 3.8.0, 29 October 2026".</summary>
+    /// <summary>"axClaude, Claude Code, 29 October 2026, Axit 4.0.0"; "Update to Axit 4.0.0, 29 October 2026".</summary>
     public static string Line(ConsentRecord item)
     {
         var date = item.When.ToString("d MMMM yyyy", CultureInfo.InvariantCulture);

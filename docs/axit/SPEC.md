@@ -652,7 +652,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
 - AX-11.8 **About.** About, Version lists the apps in the two kinds ("Standalone apps, which need only Windows: axFile,
   … Access layers, which only show and pass on the work of a program you install, under its maker's terms: axClaude
   for Claude Code, …"). About, Licence (AX-9.9) is `NOTICE.md` followed by "What you have agreed to on this computer",
-  one line each ("axClaude, Claude Code, 29 October 2026, Axit 3.8.0"; "Update to Axit 3.8.0, 29 October 2026"),
+  one line each ("axClaude, Claude Code, 29 October 2026, Axit 4.0.0"; "Update to Axit 4.0.0, 29 October 2026"),
   "Nothing yet." when empty, and how to be asked again: delete consent.json in the settings folder. No menu of its
   own (2026-10-31: a Consents submenu with Withdraw was built on 2026-10-29 and folded in here, to keep the controls
   few).

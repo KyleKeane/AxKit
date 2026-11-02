@@ -38,8 +38,8 @@ public sealed class BundleAboutTests
     {
         Assert.EndsWith("delete consent.json in " + Path.GetDirectoryName(AppPaths.ConsentFile) + ".\n", BundleAbout.LicenceWithAgreements([]));
         Assert.Contains("Nothing yet.", BundleAbout.LicenceWithAgreements([]));
-        var text = BundleAbout.LicenceWithAgreements([new ConsentRecord("axClaude", "Claude Code", "3.8.0", new DateTime(2026, 10, 31))]);
-        Assert.Contains("- axClaude, Claude Code, 31 October 2026, Axit 3.8.0", text);
+        var text = BundleAbout.LicenceWithAgreements([new ConsentRecord("axClaude", "Claude Code", "4.0.0", new DateTime(2026, 10, 31))]);
+        Assert.Contains("- axClaude, Claude Code, 31 October 2026, Axit 4.0.0", text);
     }
 
     [Fact]

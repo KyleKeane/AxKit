@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.8.0
+## 4.0.0
 
 - Axit: Axit says plainly what it is: the tools its maker uses every day as a blind scientist, shared in case they help others, not a product or a service, with no support and no warranty. The README, the guides, the installer and `NOTICE.md` say so, and the notes about each tool read as reminders.
 - Axit: Axit is now under the GNU Affero General Public License, version 3 only, instead of MIT (versions up to 3.7.6 stay MIT). `NOTICE.md`, in the zip and in every window under Axit menu, About, Licence, has the licence's additional terms (no warranty, no liability, attribution kept, changed versions marked and given a name and icons of their own, no use of the author's name to promote them, indemnification) and a reminder for each tool.
