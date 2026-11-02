@@ -6,6 +6,55 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-01: every app but axClaude, by the assistant through nvda-pass.ps1 (branch `licence`, 13f4209 and e590b5d)
+
+Run by the assistant with NVDA listening (`docs/axit/automation.md` section 3), the user away at its question: every
+announcement, focus move and sound a script expects was also heard from NVDA, through the capture add-on. NVDA with
+the oneCore synthesizer (its version not readable from the protected process), Windows 11 Pro 10.0.26200. 56 scripts,
+every app's `tests/scripts` folder but axClaude's and the NVDA-only script of `tests/nvda-scripts`: all 56 passed, 55
+in the one run and axGIT's 04 on its rerun after a fix to the runner's matching (two neighbours in either order).
+axClaude's 17 scripts are still to run with NVDA; they need the network and about 45 minutes.
+
+| App | Scripts | Result |
+|---|---|---|
+| axCalc | 01 | Passed |
+| axClip | 01 | Passed |
+| axDown | ten scripts, 01 to 08 | Passed |
+| axFile | seven scripts, 01 to 07 | Passed |
+| axGIT | 01 to 06, the reminder among them | Passed (04 on its rerun) |
+| axJSON | 01 to 04 | Passed |
+| axMedia | five scripts, 01 to 04 | Passed |
+| axPass | 01 and 02, the reminder | Passed |
+| axPreview | five scripts, 01 to 04 | Passed |
+| axProcess | 01 and 02 | Passed |
+| axStart | 01 | Passed |
+| axTask | 01 to 03 | Passed |
+| axTerminal | seven scripts, 01 to 07, the reminders among them | Passed |
+| The AI tools, with the pairing reminder | mcp 01 | Passed |
+| NVDA-only | axdown-notices | Passed |
+
+What the pass found and what was done, in the order found; the hidden-desktop tier sees none of these:
+
+- axTerminal: "Done" after a command's last line and "Ready" after a shell's banner were never spoken, since NVDA
+  drops a notification that reaches it while the one before still waits its turn. The word is now said with the
+  frame's speech as one announcement (AT-5.1), and the bundle says two non-interrupting announcements within a third
+  of a second as one (AX-7.3).
+- axMedia: "No sound or video files in …" and "Cannot play …" as the window opened were never spoken, since NVDA
+  ignores a window that is not in front, and a window started by a program in the background comes up behind. What a
+  window says before its first activation now waits half a second past it (AX-7.3).
+- axClaude: Claude Code 2.1.316 draws several questions in one call under a "Questions:" row; the first was named
+  "Questions: Colour, Fruit. Which colour do you prefer?" and nothing said "Next question" (found by the same pass's
+  hidden-desktop run; fixed with the `several-questions-claude2.1.316` fixture).
+- axClip: one of three copies made by clip.exe in quick succession was missed once; a copy with no text yet is now
+  read again (CP-3.3).
+- The runner: the navigation keys went as the numeric keypad's, which NVDA keeps for its review cursor; keys reached
+  the user's own window between scripts; a window behind another's, or not yet activated, said things NVDA never
+  spoke; a key sent while NVDA was still at the one before was lost; two neighbours come in either order. All in
+  `docs/axit/automation.md` section 3.
+
+Not heard by this pass and still the user's by ear: the Owed section above, sound and video quality, the Start menu
+and Explorer, and how a change feels to use.
+
 ## 2026-10-31: the consent box's state, by the assistant (branch `licence`, after c634215)
 
 Run by the assistant through the NVDA tier (a script since folded into `tests/scripts/axterminal/07-consent.txt`, `docs/axit/automation.md`
@@ -21,7 +70,8 @@ Space in the box said nothing.
 
 ## Owed: access layers and consent (the branch `licence`, 2026-10-29, `docs/axit/SPEC.md` AX-11)
 
-Scripted since 2026-10-31 and heard through `nvda-pass.ps1` (`docs/axit/automation.md` section 3): the access layers'
+Scripted since 2026-10-31 and heard through `nvda-pass.ps1` (`docs/axit/automation.md` section 3; passed 2026-11-01,
+the entry below): the access layers'
 names in every list (the Axit menu and Show in steps of the apps' scripts); the reminders of axClaude
 (`axclaude/15-consent.txt`), axTerminal (`axterminal/07-consent.txt`: the first shell's, then Command Prompt's from a
 new session, each shell its own consent), axGIT (`axgit/06-consent.txt`, with About,
