@@ -33,3 +33,6 @@ captures/
 ## AxClaude's own saved files and logs
 axclaude-*.txt
 *.log
+
+# The maintainer's private notes, never published
+docs/background_info/
