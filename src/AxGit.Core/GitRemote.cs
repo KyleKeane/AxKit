@@ -37,14 +37,13 @@ public static class GitRemote
             var end = rest.IndexOfAny(['/', '?']);
             var authority = end < 0 ? rest : rest[..end];
             var at = authority.LastIndexOf('@');
-            var host = at < 0 ? authority : authority[(at + 1)..];
-            var colon = host.IndexOf(':');
-            host = colon < 0 ? host : host[..colon];
+            var host = WithoutPort(at < 0 ? authority : authority[(at + 1)..]);
             return host.Length == 0 ? null : host.ToLowerInvariant();
         }
 
-        // scp-like: [user@]host:path
-        var separator = url.IndexOf(':');
+        // scp-like: [user@]host:path, the host an IPv6 literal in brackets perhaps, whose colons are its own.
+        var close = url.StartsWith('[') || url.Contains("@[", StringComparison.Ordinal) ? url.IndexOf(']') : -1;
+        var separator = url.IndexOf(':', close < 0 ? 0 : close);
         if (separator > 0)
         {
             var authority = url[..separator];
@@ -54,5 +53,18 @@ public static class GitRemote
         }
 
         return null;
+    }
+
+    /// <summary>The host without its port: "[2001:db8::1]" keeps its brackets and its colons (review, 2026-11-02).</summary>
+    private static string WithoutPort(string host)
+    {
+        if (host.StartsWith('['))
+        {
+            var close = host.IndexOf(']');
+            return close < 0 ? host : host[..(close + 1)];
+        }
+
+        var colon = host.IndexOf(':');
+        return colon < 0 ? host : host[..colon];
     }
 }

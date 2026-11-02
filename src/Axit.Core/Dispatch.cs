@@ -222,6 +222,9 @@ public static class Dispatch
     /// <summary>The app of a verb.</summary>
     public static App Of(string verb) => Apps.First(app => app.Verb == verb);
 
+    /// <summary>The app of a name as shown and spoken ("axDown", any case), null for a name no app has; the one place a name is matched (review, 2026-11-02).</summary>
+    public static App? ByName(string name) => Apps.FirstOrDefault(app => string.Equals(app.Name, name, StringComparison.OrdinalIgnoreCase));
+
     /// <summary>
     /// The path an app is started on from a file or a folder in hand (AX-9.10, axFile AF-4.9): the path itself when the
     /// app opens its kind, the folder of a file for an app that opens folders only, null for a folder given to an app

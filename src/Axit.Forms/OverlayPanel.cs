@@ -102,7 +102,13 @@ public sealed class OverlayPanel : Panel
     private readonly ProgressBar _progress = new();
     private readonly ListBox _matches = new();
     private readonly AxitCheckBox _consent = new();
-    private Notice? _consented;
+
+    /// <summary>The consent sentence whose box the user checked, kept for the same notice shown again after Ctrl+F (a new record each time, so by its text); cleared when the notice is answered.</summary>
+    private string? _consentedText;
+
+    /// <summary>Inside Populate, where the box is set by the panel, not the user.</summary>
+    private bool _populating;
+
     private OverlayInput? _inputSpec;
     private Control? _custom;
     private string? _headLine;
@@ -181,8 +187,14 @@ public sealed class OverlayPanel : Panel
         _consent.Padding = new Padding(0, 6, 0, 0);
         _consent.TabIndex = 4;
         _consent.Visible = false;
-        // The notice whose box is checked, so that the same notice shown again (after Ctrl+F in it) keeps the check.
-        _consent.CheckedChanged += (_, _) => _consented = _consent.Checked ? Shown : null;
+        // The user's check remembered by the sentence, so that the same notice shown again (after Ctrl+F in it) keeps it.
+        _consent.CheckedChanged += (_, _) =>
+        {
+            if (!_populating)
+            {
+                _consentedText = _consent.Checked ? Shown?.Consent : null;
+            }
+        };
 
         // Docked controls are laid out from the last in the collection to the first: the buttons take the bottom,
         // the progress bar and the check box the strips above them, the title the top, the field the strip under the
@@ -359,7 +371,9 @@ public sealed class OverlayPanel : Panel
             _progress.Style = ProgressBarStyle.Marquee;
         }
 
-        _consent.Checked = ReferenceEquals(notice, _consented);
+        _populating = true;
+        _consent.Checked = notice.Consent is not null && notice.Consent == _consentedText;
+        _populating = false;
         _consent.Visible = notice.Consent is not null;
         _consent.Text = notice.Consent ?? string.Empty;
         _consent.AccessibleName = notice.Consent ?? string.Empty;
@@ -515,6 +529,12 @@ public sealed class OverlayPanel : Panel
         {
             // The window's control is not ready (no folder chosen yet): it said so and took the focus.
             return;
+        }
+
+        // The consent notice answered, either way: the next one of the same words starts unchecked.
+        if (Shown?.Consent is not null)
+        {
+            _consentedText = null;
         }
 
         Chosen?.Invoke(choice);

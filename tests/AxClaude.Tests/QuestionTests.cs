@@ -189,6 +189,21 @@ public class QuestionTests
     }
 
     [Fact]
+    public void A_comma_in_a_question_header_does_not_miscount_the_questions()
+    {
+        // The header row is counted by its "(answered)" marks: "Size, colour" is one question (review, 2026-11-02).
+        string[] rows = ["Questions: Size, colour (answered), Fruit", "> Which fruits do you like?", "1. Apple", "2. Banana", "Select with numbers [1-2]. Then Enter to submit or Escape to cancel:"];
+        var fruit = QuestionReader.Read(rows, 4)!;
+        Assert.Equal("Which fruits do you like?", fruit.Title);
+        Assert.Equal((2, 2), fruit.Step);
+
+        string[] review = ["Questions: Size, colour (answered), Fruit (answered)", "Review your answers", "> Size, colour", "→ Large, red", "> Which fruits do you like?", "→ Apple", "Ready to submit your answers?", "y. Submit answers", "n. Cancel", "Enter y/n:"];
+        var last = QuestionReader.Read(review, 9)!;
+        Assert.Equal("Review your answers", last.Title);
+        Assert.Null(last.Step);
+    }
+
+    [Fact]
     public void Answers_wrapped_over_several_rows_are_whole_answers()
     {
         // Answers 1 to 3 are longer than the 120-column console and wrap onto the rows under them; they used to end

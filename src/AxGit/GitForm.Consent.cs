@@ -37,16 +37,18 @@ public sealed partial class GitForm
             return;
         }
 
-        if (!HasConsent(ConsentTarget.Server(host), () => Do(command), () => Announce($"Not connected to {host}", true)))
+        // Connect comes through here again, so that the first connection gets the sign-in line below (review, 2026-11-02).
+        if (!HasConsent(ConsentTarget.Server(host), () => Do(() => ToServerAsync(command)), () => Announce($"Not connected to {host}", true)))
         {
             return;
         }
 
         // AX-11.6: git may ask for a sign-in to the server (its credential helper's own window); whose account that is,
-        // said the first time this window reaches each server, not on every command.
+        // said the first time this window reaches each server, not on every command. Not interrupting: the command's
+        // own result, which is, would otherwise cut it short on a fast server.
         if (_reminded.Add(host))
         {
-            Announce($"Connecting to {host}; if Git asks you to sign in, the account is between you and {host}", true);
+            Announce($"Connecting to {host}; if Git asks you to sign in, the account is between you and {host}", false);
         }
 
         await command();

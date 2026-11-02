@@ -67,7 +67,7 @@ public static class AppMessage
     /// </summary>
     public static bool Send(string appName, string verb, IReadOnlyList<string> paths)
     {
-        if (Dispatch.Apps.FirstOrDefault(app => string.Equals(app.Name, appName, StringComparison.OrdinalIgnoreCase)) is not { } app)
+        if (Dispatch.ByName(appName) is not { } app)
         {
             return false;
         }

@@ -184,9 +184,12 @@ public static partial class QuestionReader
     {
         if (QuestionsHeaderRegex().Match(questionsRow) is { Success: true } header)
         {
-            var names = header.Groups[1].Value.Split(", ");
-            var current = Array.FindIndex(names, name => !name.EndsWith(" (answered)", StringComparison.Ordinal)) + 1;
-            return current > 0 ? (current, names.Length) : null;
+            // Counted by the "(answered)" marks, not by the commas, since a header may hold one ("Size, colour"): the
+            // names after the last mark are still to answer, the first of them current; none left is the review.
+            var parts = header.Groups[1].Value.Split(" (answered)");
+            var answered = parts.Length - 1;
+            var rest = parts[^1].TrimStart(',', ' ');
+            return rest.Length == 0 ? null : (answered + 1, answered + rest.Split(", ").Length);
         }
 
         var tabs = questionsRow.Where(c => c is '☐' or '☒').ToList();

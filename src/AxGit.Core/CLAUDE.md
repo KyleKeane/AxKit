@@ -18,6 +18,7 @@ git -C <repo> branch --list --format=%(refname:short)%09%(HEAD)%09%(upstream:sho
 - `GitLog` and `Commit` (AG-4): the tab-separated log to records, `Label`, `ShowArguments`.
 - `GitBranches` and `Branch` (AG-5): the branch list to records with the upstream state (a detached HEAD, which git lists in parentheses, left out), `Label`, `SwitchArguments`, `CreateArguments`.
 - `GitSettings` (AG-8.1): the settings file, as `EditorSettings` is for the editors, with the recent repositories.
+- `GitRemote` (bundle AX-11.5, 2026-10-29): the remote a branch's upstream names (`NameOf`), `git remote get-url`'s arguments, and `Host`, the host of a remote's address for the server's consent (https, ssh with a user and a port, the scp form, an IPv6 literal in brackets kept whole; null for a path or a share, which reaches no one else's service). Tested in `GitRemoteTests`.
 
 ## Gotchas already learned
 

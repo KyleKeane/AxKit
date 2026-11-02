@@ -24,8 +24,10 @@ public abstract partial class AxitForm
     /// Installs <paramref name="program"/>: a progress notice, the installer run, the PATH read again, then
     /// <paramref name="installed"/> asked; true runs <paramref name="then"/> after "Git is installed", false says what
     /// happened with the program's page to open. Without a way to install it here (no winget), the page opens at once.
+    /// <paramref name="target"/> is what the consent is recorded for, the program's own unless the caller connects to it
+    /// under another name (axTerminal installs Git for Windows as its shell "Git Bash").
     /// </summary>
-    protected void InstallProgram(ProgramInstall program, Func<bool> installed, Action then)
+    protected void InstallProgram(ProgramInstall program, Func<bool> installed, Action then, ConsentTarget? target = null)
     {
         if (_installing is { Exited.IsCompleted: false } running)
         {
@@ -35,10 +37,10 @@ public abstract partial class AxitForm
 
         // The consent of AX-11.4 in the step the user is already taking (AX-11.5): agreed here, it counts for the app's
         // first connection to the program too, so the user is asked once.
-        if (!Consent.Given(AppPaths.ConsentFile, AppName, program.Name))
+        target ??= ConsentTarget.For(program.Name);
+        if (!HasConsent(target, $"Before {AppName} installs {program.Name}", "&Install",
+                () => InstallProgram(program, installed, then, target), () => Announce($"{program.Name} not installed", true)))
         {
-            ShowNotice(ConsentNotice(ConsentTarget.For(program.Name), $"Before {AppName} installs {program.Name}", "&Install",
-                () => InstallProgram(program, installed, then), () => Announce($"{program.Name} not installed", true)));
             return;
         }
 
@@ -96,7 +98,7 @@ public abstract partial class AxitForm
 
             ShowNotice(new Notice(program.Name + " was not installed", why + " Its download page installs it by hand.",
             [
-                new OverlayChoice("&Try again", () => InstallProgram(program, installed, then)),
+                new OverlayChoice("&Try again", () => InstallProgram(program, installed, then, target)),
                 new OverlayChoice("&Open the download page", () => OpenUrl(program.Page), StaysOpen: true),
                 OverlayChoice.Close,
             ]));

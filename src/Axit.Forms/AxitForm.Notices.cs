@@ -203,7 +203,13 @@ public abstract partial class AxitForm
     {
         if (_beforeActivation is { } held)
         {
+            // The last few only: a window left behind for an hour says what is recent, not its whole backlog.
             held.Add((text, interrupt));
+            if (held.Count > 4)
+            {
+                held.RemoveAt(0);
+            }
+
             return true;
         }
 
@@ -250,9 +256,11 @@ public abstract partial class AxitForm
             if (_beforeActivation is { } held)
             {
                 _beforeActivation = null;
-                foreach (var (text, interrupt) in held)
+                if (held.Count > 0)
                 {
-                    Announce(text, interrupt);
+                    // As one notification: raised one after another, an interrupting one would cancel the one before it
+                    // (review, 2026-11-02); it interrupts when any of them would have.
+                    Raise(Sentence(held.Select(h => h.Text)), held.Any(h => h.Interrupt));
                 }
             }
         };

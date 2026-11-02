@@ -46,7 +46,7 @@ if (-not (Get-Process nvda -ErrorAction SilentlyContinue)) {
     exit 2
 }
 # Compared line by line, not by hash: the installed copy may differ in its line endings alone.
-if (Compare-Object (Get-Content $capture) (Get-Content (Join-Path $root 'tools\nvda-capture\globalPlugins\axitCapture.py'))) {
+if (Compare-Object @(Get-Content $capture) @(Get-Content (Join-Path $root 'tools\nvda-capture\globalPlugins\axitCapture.py'))) {
     Write-Host 'The installed capture add-on differs from tools\nvda-capture: copy the folder to %APPDATA%\nvda\addons\axitCapture and restart NVDA. Running with the installed one.'
 }
 

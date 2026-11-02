@@ -54,7 +54,7 @@ public abstract partial class AxitForm : Form
     protected string AppName { get; }
 
     /// <summary>The app's name as the user meets it (AX-11.2): "axClaude, access layer for Claude Code" for an access layer, the name alone otherwise; window titles end with it.</summary>
-    protected string AppTitle => Dispatch.Apps.FirstOrDefault(app => string.Equals(app.Name, AppName, StringComparison.OrdinalIgnoreCase))?.Title ?? AppName;
+    protected string AppTitle => Dispatch.ByName(AppName)?.Title ?? AppName;
 
     /// <summary>The app's settings as the base needs them: the font, the update check and the window's place.</summary>
     protected WindowSettings Settings { get; }

@@ -50,7 +50,7 @@ public static class RecentlyClosed
     public static string Title(ClosedItem item)
     {
         // The app as the user meets it, an access layer with its keyword (AX-11.2).
-        var app = Dispatch.Apps.FirstOrDefault(a => string.Equals(a.Name, item.App, StringComparison.OrdinalIgnoreCase))?.Title ?? item.App;
+        var app = Dispatch.ByName(item.App)?.Title ?? item.App;
         if (item.Path.Length == 0)
         {
             // An app that holds no file (axProcess): its window by its name.

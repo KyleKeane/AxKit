@@ -37,6 +37,10 @@ param(
     [Parameter(Mandatory = $true, Position = 3)] [ValidateSet('Nothing', 'Folders', 'Files', 'FilesAndFolders')] [string]$Opens,
     # The Start menu's description: the name, a comma, what the app is.
     [string]$Description,
+    # For an app of the group AccessLayers: the program it works through, "Claude Code"; its title is then
+    # "<name>, access layer for <program>" in every list (AX-11.1), its description starts with that title and a colon,
+    # and its Dispatch.Apps line carries AccessLayerFor, which DispatchTests asks for.
+    [string]$AccessLayerFor,
     # The name of its code (folders, classes, icon): "Ax" and the rest of the name unless given.
     [string]$Project,
     # The letters of its requirements in its SPEC.md, AC for axCalc: the first two letters after "ax" unless given.
@@ -64,6 +68,9 @@ $what = if ($Description) { $Description } else { "$Name, a new app of the bundl
 if (-not $what.StartsWith("$Name, ")) { throw "The description starts with the name and a comma: '$Name, what it is'" }
 $what = $what.Substring($Name.Length + 2)
 $Description = "$Name, $what"
+if (($Group -eq 'AccessLayers') -ne [bool]$AccessLayerFor) { throw "An app of the group AccessLayers names its program with -AccessLayerFor, and no other app does." }
+$title = if ($AccessLayerFor) { "$Name, access layer for $AccessLayerFor" } else { $Name }
+if ($AccessLayerFor) { $Description = "${title}: $what" }
 
 foreach ($app in $existing) {
     if ($app.Name -eq $Name -or $app.Verb -eq $Verb -or $app.Project -eq $Project) { throw "$($app.Name) already has that name, verb or project ($($app.Verb), $($app.Project))." }
@@ -670,7 +677,8 @@ Edit-TextFile 'src\Axit.Core\Dispatch.cs' {
     foreach ($entry in [regex]::Matches($text.Substring($start, $end - $start), '(?m)^        new\("[^"]+", \w+, "\w+", AppGroup\.(\w+),')) {
         if ([array]::IndexOf($groups, $entry.Groups[1].Value) -gt $rank) { $at = $start + $entry.Index; break }
     }
-    $line = "        new(`"$Name`", $constant, `"$Project`", AppGroup.$Group, Opens.$Opens)$nl        {$nl            Description = `"$Description`", Icon = new(`"$IconLetters`", $($IconRgb -join ', ')),$nl        },$nl"
+    $layer = if ($AccessLayerFor) { " AccessLayerFor = `"$AccessLayerFor`"," } else { '' }
+    $line = "        new(`"$Name`", $constant, `"$Project`", AppGroup.$Group, Opens.$Opens)$nl        {$nl            Description = `"$Description`",$layer Icon = new(`"$IconLetters`", $($IconRgb -join ', ')),$nl        },$nl"
     $text = $text.Insert($at, $line)
     # The usage text: the verb in the first line, the app's line before the paths, its console command.
     $text = [regex]::Replace($text, '(Usage: Axit \[[^\]]*)\]', "`$1|$Verb]")
@@ -719,11 +727,11 @@ Edit-TextFile 'docs\axit\SPEC.md' {
     # Section 3: a draft entry after the last app's.
     $section = $text.IndexOf("$nl## 4. ")
     if ($section -lt 0) { return $text }
-    return $text.Insert($section - $nl.Length, "$nl- **$Name** ($today, draft from tools/new-app.ps1): ``Axit.exe $Verb $argumentText``, Start entry ``Axit $Name``, command ``$lower``: $what. Specification ``docs/$lower/SPEC.md``, guide ``docs/$lower/user-guide.md``, test plan ``docs/$lower/nvda-test-plan.md``.")
+    return $text.Insert($section - $nl.Length, "$nl- **$title** ($today, draft from tools/new-app.ps1): ``Axit.exe $Verb $argumentText``, Start entry ``Axit $Name``, command ``$lower``: $what. Specification ``docs/$lower/SPEC.md``, guide ``docs/$lower/user-guide.md``, test plan ``docs/$lower/nvda-test-plan.md``.")
 }
 
-Edit-TextFile 'README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+\*\*: .*' "- **$Name**: $what." }
-Edit-TextFile 'docs\axit\README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+\*\* is .*' "- **$Name** is $what." }
+Edit-TextFile 'README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+[^*]*\*\*: .*' "- **$title**: $what." }
+Edit-TextFile 'docs\axit\README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+[^*]*\*\* is .*' "- **$title** is $what." }
 Edit-TextFile 'CLAUDE.md' {
     param($text, $nl)
     $map = "- **$Name**: window code in ``src/$Project`` (notes: ``src/$Project/CLAUDE.md``), pure code in ``src/$Project.Core`` (notes: ``src/$Project.Core/CLAUDE.md``), tests in ``tests/$Project.Tests``, documents in ``docs/$lower/`` (``SPEC.md``, ``user-guide.md``, ``nvda-test-plan.md``). In $Name's code and documents, `"SPEC.md`" means ``docs/$lower/SPEC.md``."
@@ -757,7 +765,8 @@ $written | Sort-Object -Unique | ForEach-Object { Write-Host "  $_" }
 Write-Host @"
 
 Drafts to rewrite in real words: the lines of $Name in README.md, docs\axit\README.md, docs\axit\SPEC.md section 3,
-the root CLAUDE.md map and CHANGELOG.md; Description in its Dispatch.Apps entry; the documents in docs\$lower.
+the root CLAUDE.md map and CHANGELOG.md; Description in its Dispatch.Apps entry; the documents in docs\$lower;
+for an access layer, the list of them in tests\Axit.Tests\DispatchTests.cs and its line in PRIVACY.md.
 
 Still by hand:
   - Dispatch.Apps: ShowIn: true for an app that works in a folder (then DispatchTests' Show in list), Explorer,

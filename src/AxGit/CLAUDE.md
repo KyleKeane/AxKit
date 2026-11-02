@@ -14,11 +14,12 @@ dotnet test tests/AxGit.Tests/AxGit.Tests.csproj
 ## Where things are
 
 - `AxGitApp`: the entry point `Run` that Axit's `Program` calls (bundle AX-1.7), one call into `Axit.Forms/AppHost.Run` with the one folder or file of the command line, the settings and the window; the log (`axgit.log`), the crash handling, `--help` and `--version` are the host's.
-- `GitForm`: the window (SPEC.md AG-2), in four partial files since 2026-10-24:
+- `GitForm`: the window (SPEC.md AG-2), in five partial files since 2026-10-29:
   - `GitForm.cs` (the controls, the menus, the hooks, the keys, the repository);
   - `GitForm.Run.cs` (running git);
   - `GitForm.Views.cs` (the views, the details, the status bar);
-  - `GitForm.Commands.cs` (changes, history, branches).
+  - `GitForm.Commands.cs` (changes, history, branches);
+  - `GitForm.Consent.cs` (bundle AX-11.5, AX-11.6: `ToServerAsync`, the consent before the first fetch, pull or push that reaches a server, by the remote's host through `GitRemote`, and the sign-in line the first time a window reaches each server; the consent before the first repository is in `StartAsync`, both through the base's `HasConsent`).
   - The menus and keys (AG-6.1, AG-6.2) as one command list (`docs/axit/app-kit.md` AK-2) from `BundleKeys` and `AxGitKeys`:
     - each menu item and its key one `Add(menu, new Command(...))` (wrapped in `Git` when it runs git);
     - the keys with no item (Tab between the list and the details, find, Enter on a commit, and File Explorer, whose item the base's Show in submenu is made around) `AddKey`;

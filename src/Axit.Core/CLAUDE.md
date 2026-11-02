@@ -10,7 +10,12 @@ another project on its second use, the bullet says so.
   menu, Open in Axit, the Show in submenus and the inventory test; `Of` (an app by its verb), `PathFor` (the path an
   app is started on from a file or folder in hand), `EditorOf`.
 - `BundleInfo`: the version, read from the executable.
-- `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `Axit` folders.
+- `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `Axit` folders; `ConsentFile`.
+- `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
+  for the bundle, `%APPDATA%\Axit\consent.json`: `Given`, `Record` (a file that cannot be written is logged and the
+  window keeps the agreement for its session), `Withdraw`, `WithdrawAll` (Forget AI tools), `Line` for About, Licence;
+  the targets' words and addresses (`ClaudeCode`, `Git`, `KeePassXC`, `Shell` per shell, `Server` per host, `AiTool`,
+  `For` from an installed program's name, which throws for a name it does not know). Tested in `ConsentTests`.
 - `SettingsFile` (AX-5.2, AX-5.3): how every app's settings file is read and written, an unreadable one copied to
   `.bad` once, and the take-over of an old file.
 - `WindowSettings` (AX-6.5): the base of every app's settings class, the font, the update check and the window's

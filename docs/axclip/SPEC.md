@@ -73,8 +73,9 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
   `Clipboard Viewer Ignore`, or `CanIncludeInClipboardHistory` with the value 0 (CP-D2).
 - CP-3.2 A text that is in the history already moves to the top instead of being added again. At most 200 items; the
   oldest goes.
-- CP-3.3 A clipboard another program holds open is read again after 100 ms, up to three times; a copy that cannot be
-  read then is left out and logged ("The clipboard could not be read").
+- CP-3.3 A clipboard another program holds open, or one with no text on it yet (a program that empties it and fills it
+  in two steps; one of three quick copies was missed once, 2026-11-01), is read again after 100 ms, up to three times;
+  a copy that cannot be read then is left out and logged ("The clipboard could not be read").
 - CP-3.4 Options, Keep history between runs (off at first): on, the history is written to `axclip.json` when the window
   hides and when the process ends, and read at the next start; off, the file holds none, and turning it off empties the
   file's history at once.

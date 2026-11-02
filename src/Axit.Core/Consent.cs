@@ -33,13 +33,18 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
         "KeePassXC's licence",
         "https://keepassxc.org/");
 
-    /// <summary>The target of a program Install it now installs (<see cref="ProgramInstall"/>'s name), so that agreeing there counts for the first connection.</summary>
+    /// <summary>
+    /// The target of a program Install it now installs (<see cref="ProgramInstall"/>'s name), so that agreeing there
+    /// counts for the first connection. A shell installed for axTerminal passes its own target (Git for Windows is
+    /// "Git Bash" there, not "Git"); an unknown name is a mistake, never Windows' terms by default (review, 2026-11-02).
+    /// </summary>
     public static ConsentTarget For(string program) => program switch
     {
         "Claude Code" => ClaudeCode,
         "Git" => Git,
         "KeePassXC" => KeePassXC,
-        _ => Shell(program),
+        "PowerShell 7" => Shell("PowerShell 7"),
+        _ => throw new ArgumentException($"No consent target for the program {program}", nameof(program)),
     };
 
     /// <summary>A shell of axTerminal by its name as ShellLauncher says it: each is its own consent (AX-11.5). A custom shell has no address for its terms.</summary>
@@ -101,25 +106,31 @@ public static class Consent
 
     public static bool Given(string file, string app, string target) => Read(file).Any(item => Same(item, app, target));
 
-    /// <summary>Keeps the agreement, replacing an earlier one for the same app and program. A file that cannot be written is logged: the user is then asked again next time.</summary>
+    /// <summary>Keeps the agreement, replacing an earlier one for the same app and program. A file that cannot be written is logged: the user is then asked again next time (the window keeps the agreement for the session).</summary>
     public static void Record(string file, string app, string target, string version, DateTime when)
     {
         var items = Read(file).Where(item => !Same(item, app, target)).Append(new ConsentRecord(app, target, version, when));
-        Write(file, items);
-        Log.Info($"Consent recorded: {app}, {target}, Axit {version}");
+        if (Write(file, items))
+        {
+            Log.Info($"Consent recorded: {app}, {target}, Axit {version}");
+        }
     }
 
     public static void Withdraw(string file, string app, string target)
     {
-        Write(file, Read(file).Where(item => !Same(item, app, target)));
-        Log.Info($"Consent withdrawn: {app}, {target}");
+        if (Write(file, Read(file).Where(item => !Same(item, app, target))))
+        {
+            Log.Info($"Consent withdrawn: {app}, {target}");
+        }
     }
 
     /// <summary>Every agreement of one app taken back in one write (Forget AI tools, docs/axit/mcp.md).</summary>
     public static void WithdrawAll(string file, string app)
     {
-        Write(file, Read(file).Where(item => !string.Equals(item.App, app, StringComparison.OrdinalIgnoreCase)));
-        Log.Info($"Consents withdrawn: {app}");
+        if (Write(file, Read(file).Where(item => !string.Equals(item.App, app, StringComparison.OrdinalIgnoreCase))))
+        {
+            Log.Info($"Consents withdrawn: {app}");
+        }
     }
 
     /// <summary>"axClaude, Claude Code, 29 October 2026, Axit 4.0.0"; "Update to Axit 4.0.0, 29 October 2026".</summary>
@@ -129,15 +140,17 @@ public static class Consent
         return item.App == UpdateApp ? $"Update to {item.Target}, {date}" : $"{item.App}, {item.Target}, {date}, Axit {item.Version}";
     }
 
-    private static void Write(string file, IEnumerable<ConsentRecord> items)
+    private static bool Write(string file, IEnumerable<ConsentRecord> items)
     {
         try
         {
             SettingsFile.Save(file, new ConsentList { Items = [.. items] });
+            return true;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             Log.Error("The consent file was not written", ex);
+            return false;
         }
     }
 

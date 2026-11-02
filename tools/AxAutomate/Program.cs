@@ -690,8 +690,11 @@ internal sealed class Run(string exe, string temp)
         // NVDA's order and the window's differ by a step now and then: a notice closing announces "Not found" and then
         // gives the focus back, and NVDA says the focus first. What the last check took is looked at again, so that two
         // neighbours may come in either order.
-        if (_lastHeard.Any(line => line.Contains(words, StringComparison.OrdinalIgnoreCase)))
+        var before = _lastHeard.FindIndex(line => line.Contains(words, StringComparison.OrdinalIgnoreCase));
+        if (before >= 0)
         {
+            // Spent: a repeated expectation must hear NVDA again (review, 2026-11-02).
+            _lastHeard.RemoveAt(before);
             return (true, detail + " || NVDA: with the one before");
         }
 
@@ -701,7 +704,8 @@ internal sealed class Run(string exe, string temp)
         {
             if (_speech.Take(words) is { } heard)
             {
-                _lastHeard = heard;
+                // What came before the match, for a neighbour said in the other order; the match itself is spent.
+                _lastHeard = heard.Take(heard.Count - 1).Where(h => h != "[cancel]").ToList();
                 var spoken = string.Join(" | ", heard.Where(h => h != "[cancel]"));
                 return until.ElapsedMilliseconds <= 5_000
                     ? (true, detail + " || NVDA: " + spoken)
@@ -1205,8 +1209,9 @@ internal sealed class Window : IDisposable
         Fetch();
         var sound = text.StartsWith('♪');
         var (fits, words) = Wanted(text);
-        // An announcement only: what the user typed into a field is a value, not something said as one.
-        if (!sound && _lastSay >= 0 && _all[_lastSay].Kind == "say" && fits(_all[_lastSay]))
+        // An announcement only, and words to find: what the user typed into a field is a value, not something said as
+        // one, and a bare "!" (any interrupting announcement) must find a new one, since "" is found anywhere.
+        if (!sound && words.Length > 0 && _lastSay >= 0 && _all[_lastSay].Kind == "say" && fits(_all[_lastSay]))
         {
             var within = _all[_lastSay].Spoken.IndexOf(words, _lastSayEnd, StringComparison.OrdinalIgnoreCase);
             if (within >= 0)
@@ -1248,13 +1253,16 @@ internal sealed class Window : IDisposable
         }
 
         // Two neighbours in either order: the text in what the last expectation took counts too (a Fetch and a Pull
-        // pressed at once say "Working…" and "Fetched" in the order the keys' pace decides, 2026-11-01).
-        if (!sound)
+        // pressed at once say "Working…" and "Fetched" in the order the keys' pace decides, 2026-11-01). Never the event
+        // that expectation matched itself, and each neighbour once: a repeated expectation must find a new event, or a
+        // window that fell silent on the second press would pass (review, 2026-11-02).
+        if (!sound && words.Length > 0)
         {
-            foreach (var i in _lastBatch)
+            foreach (var i in _lastBatch.Where(i => i != _lastSay).ToList())
             {
                 if (fits(_all[i]) && _all[i].Spoken.Contains(words, StringComparison.OrdinalIgnoreCase))
                 {
+                    _lastBatch.Remove(i);
                     return new Taken([_all[i]], Within: false);
                 }
             }
@@ -1299,7 +1307,7 @@ internal sealed class Window : IDisposable
     public bool WithinLast(string text)
     {
         var (fits, words) = Wanted(text);
-        return _lastSay >= 0 && _all[_lastSay].Kind == "say" && fits(_all[_lastSay]) && _all[_lastSay].Spoken.IndexOf(words, _lastSayEnd, StringComparison.OrdinalIgnoreCase) >= 0;
+        return words.Length > 0 && _lastSay >= 0 && _all[_lastSay].Kind == "say" && fits(_all[_lastSay]) && _all[_lastSay].Spoken.IndexOf(words, _lastSayEnd, StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
     public List<Event> TakeAll()

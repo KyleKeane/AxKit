@@ -13,7 +13,7 @@ namespace Axit.Forms;
 public abstract partial class AxitForm
 {
     /// <summary>The app's verb (<see cref="Dispatch.Apps"/>), which decides whether the window is read at all (<see cref="McpTools.NeverRead"/>).</summary>
-    private string? AppVerb => Dispatch.Apps.FirstOrDefault(app => string.Equals(app.Name, AppName, StringComparison.OrdinalIgnoreCase))?.Verb;
+    private string? AppVerb => Dispatch.ByName(AppName)?.Verb;
 
     /// <summary>The window's commands for <c>axit_window_commands</c>.</summary>
     internal IReadOnlyList<Command> CommandList => _commands;
@@ -128,6 +128,13 @@ public abstract partial class AxitForm
         if (AutomationEnvironment.Requested)
         {
             Announce("Not in a test run: Claude Code's settings are the user's", true);
+            return;
+        }
+
+        // AX-11.5: this runs Claude Code's program too (claude mcp add), so the same agreement comes first, under this
+        // window's app (review, 2026-11-02).
+        if (!HasConsent(ConsentTarget.ClaudeCode, AddToClaudeCode, () => Announce("Axit not added to Claude Code", true)))
+        {
             return;
         }
 
@@ -261,7 +268,7 @@ public abstract partial class AxitForm
         var target = ConsentTarget.AiTool(name);
         var text = $"{name} asks to use Axit. It runs as {program}.\n\n"
             + "It can read what the Axit windows show (their text, lists and status) and open apps. It cannot change or delete anything, and it never reads axPass or axClip.\n\n"
-            + $"A reminder: Axit is only the access layer here. {target.Work}\n\n"
+            + $"A reminder: Axit is only an access layer here. {target.Work}\n\n"
             + "To allow it, check the box, then Allow. Options, General, Forget AI tools takes this back.";
         ShowNotice(new Notice($"{name} asks to use Axit", text,
         [
@@ -291,7 +298,7 @@ public abstract partial class AxitForm
         ])
         {
             Unprompted = true,
-            Consent = $"I understand that Axit is only an access layer for {name}, and that following the terms of {name} is up to me",
+            Consent = ConsentBox("Axit", name),
         });
         // The window closing refuses; the handler goes with the answer, so that requests do not pile handlers up.
         FormClosedEventHandler refuse = (_, _) => answer.TrySetResult(false);

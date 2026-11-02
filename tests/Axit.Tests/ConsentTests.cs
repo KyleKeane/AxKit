@@ -67,6 +67,8 @@ public sealed class ConsentTests
         }
 
         Assert.Same(ConsentTarget.ClaudeCode, ConsentTarget.For("Claude Code"));
+        // A program with no target is a mistake, never Windows' terms by default (review, 2026-11-02).
+        Assert.Throws<ArgumentException>(() => ConsentTarget.For("Nothing"));
         Assert.Equal("github.com", ConsentTarget.Server("github.com").Program);
         Assert.Empty(ConsentTarget.Shell("Custom shell").TermsUrl);
     }

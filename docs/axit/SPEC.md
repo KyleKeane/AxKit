@@ -631,6 +631,10 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
     database.
   - The AI tools (AX-9, `docs/axit/mcp.md`): the pairing notice (MC-6.4) carries the check box, which Allow needs;
     Deny stays its default. Forget AI tools withdraws these consents with the pairings.
+  - Every window, Axit menu, AI tools, Add Axit to Claude Code (MC-6.8): it runs Claude Code's program (`claude mcp
+    add`), so the agreement for Claude Code comes first, under the window's own app (2026-11-02).
+  - A program installed from Install it now (AX-2.9) is agreed to in the same step, under the name the app connects to
+    it by (axTerminal installs Git for Windows as its shell Git Bash), so that the connection asks nothing more.
   - **Install it now** (AX-2.9): before an installer runs, the same notice for the program it installs, titled
     "Before <app> installs <program>", with **Install** in place of Connect; its acceptance counts for the app's first
     connection, so the user agrees once, in the step they were already taking.

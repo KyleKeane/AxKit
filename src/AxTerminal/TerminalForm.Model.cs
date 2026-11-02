@@ -40,10 +40,11 @@ internal sealed partial class TerminalForm
         _finished = null;
         if (speech is not null || word is not null)
         {
-            Announce(speech is null ? word! : word is null ? speech : $"{speech}. {word}", false);
+            // One full stop between them: a shell's line may end with its own.
+            Announce(speech is null ? word! : word is null ? speech : $"{speech.TrimEnd('.', ' ')}. {word}", false);
         }
 
-        // The sound after the word, as it always was: a script hearing "Ready" and then the ping relies on the order.
+        // The sound at once; the text may wait a moment to be joined to another (AX-7.3), so the ping can come first.
         if (word == "Ready")
         {
             if (_settings.SoundOnBell)

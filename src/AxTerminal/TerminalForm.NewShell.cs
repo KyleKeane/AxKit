@@ -111,13 +111,13 @@ internal sealed partial class TerminalForm
         Relaunch($"Switched to {ShellLauncher.Describe(kind)} in {_folder}", clearTranscript: false);
     }
 
-    /// <summary>Session, Switch shell, Install (AT-1.2a): the shell's program installed on the user's command (bundle AX-2.9), then switched to.</summary>
+    /// <summary>Session, Switch shell, Install (AT-1.2a): the shell's program installed on the user's command (bundle AX-2.9), then switched to; the agreement is the shell's own (AX-11.5), so that the switch asks nothing more.</summary>
     private void InstallShell(ProgramInstall program, ShellKind kind) =>
         InstallProgram(program, () => ShellLauncher.Find(kind) is not null, () =>
         {
             LookUpShells();
             SwitchShell(kind);
-        });
+        }, Axit.Core.ConsentTarget.Shell(ShellLauncher.Describe(kind)));
 
     /// <summary>The bundle's folder picker (one of the few separate windows, AX-7.2), on the folder or the user's profile; null when it was cancelled.</summary>
     private string? PickFolder(string? start) =>
