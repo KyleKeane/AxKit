@@ -173,7 +173,107 @@ public abstract partial class AxitForm
         ShowError("Error", message);
     }
 
-    /// <summary>Speaks without moving the focus (AX-7.3): on the notice while one shows, since the window's controls are hidden then, and on <see cref="AnnounceSource"/> otherwise.</summary>
-    protected bool Announce(string text, bool interrupt) =>
-        NoticeOpen ? Overlay.Announce(text, interrupt) : Announcer.Raise(AnnounceSource, text, interrupt);
+    /// <summary>
+    /// What was announced before the window was first activated, said on the activation, in order (AX-7.1): NVDA
+    /// ignores the announcements of a window that is not in front, and a window started by a program in the background
+    /// (a hand-over, the test runner) comes up behind until it is activated; what it said as it opened was lost (heard
+    /// by the NVDA pass, 2026-11-01). Null once the window has been activated.
+    /// </summary>
+    private List<(string Text, bool Interrupt)>? _beforeActivation = [];
+
+    /// <summary>Half a second after the first activation: NVDA's foreground change and the notifications reach it by different roads, and a notification raised at the activation itself still found the window in the background.</summary>
+    private readonly System.Windows.Forms.Timer _activationSay = new() { Interval = 500 };
+
+    /// <summary>
+    /// Announcements that do not interrupt, raised within <see cref="JoinMs"/> of the one before, go as one (AX-7.3):
+    /// NVDA drops a notification that reaches it while the one before still waits its turn (the NVDA pass of 2026-11-01:
+    /// a shell's "Ready" after its banner, a player's "Playing" after "Cannot play"). An interrupting one goes at once,
+    /// with what waited in front of it, so that nothing is lost.
+    /// </summary>
+    private readonly List<string> _joining = [];
+
+    private readonly System.Windows.Forms.Timer _joinSay = new() { Interval = JoinMs };
+
+    private const int JoinMs = 300;
+
+    private long _lastRaiseTick = long.MinValue / 2;
+
+    /// <summary>Speaks without moving the focus (AX-7.3): on the notice while one shows, since the window's controls are hidden then, and on <see cref="AnnounceSource"/> otherwise; before the first activation, kept for it; close on the heels of the one before, joined to it.</summary>
+    protected bool Announce(string text, bool interrupt)
+    {
+        if (_beforeActivation is { } held)
+        {
+            held.Add((text, interrupt));
+            return true;
+        }
+
+        if (interrupt)
+        {
+            _joinSay.Stop();
+            var whole = _joining.Count == 0 ? text : Sentence(_joining.Append(text));
+            _joining.Clear();
+            return Raise(whole, true);
+        }
+
+        if (_joining.Count > 0 || Environment.TickCount64 - _lastRaiseTick < JoinMs)
+        {
+            // The timer runs from the first piece that waits, never restarted: a steady trickle is said every third of
+            // a second, not held until it stops ("Ready. Sent. before. Done" came out as one, 2026-11-01).
+            _joining.Add(text);
+            if (!_joinSay.Enabled)
+            {
+                _joinSay.Start();
+            }
+
+            return true;
+        }
+
+        return Raise(text, false);
+    }
+
+    /// <summary>Wires the two timers; called once from the constructor.</summary>
+    private void WireAnnouncing()
+    {
+        _joinSay.Tick += (_, _) =>
+        {
+            _joinSay.Stop();
+            if (_joining.Count > 0)
+            {
+                var whole = Sentence(_joining);
+                _joining.Clear();
+                Raise(whole, false);
+            }
+        };
+        _activationSay.Tick += (_, _) =>
+        {
+            _activationSay.Stop();
+            if (_beforeActivation is { } held)
+            {
+                _beforeActivation = null;
+                foreach (var (text, interrupt) in held)
+                {
+                    Announce(text, interrupt);
+                }
+            }
+        };
+    }
+
+    private bool Raise(string text, bool interrupt)
+    {
+        _lastRaiseTick = Environment.TickCount64;
+        return NoticeOpen ? Overlay.Announce(text, interrupt) : Announcer.Raise(AnnounceSource, text, interrupt);
+    }
+
+    /// <summary>"hello. Done": the pieces without their own trailing full stops, joined by one.</summary>
+    private static string Sentence(IEnumerable<string> pieces) =>
+        string.Join(". ", pieces.Select(piece => piece.TrimEnd('.', ' ')).Where(piece => piece.Length > 0));
+
+    /// <summary>The first activation: what waited for it is said half a second on, so that NVDA has the window in front when the notifications arrive.</summary>
+    private void SayWhatWaitedForActivation()
+    {
+        if (_beforeActivation is not null && !_activationSay.Enabled)
+        {
+            _activationSay.Start();
+        }
+    }
 }

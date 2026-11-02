@@ -18,8 +18,8 @@ silence ch\gamma.wav 30000
 
 # Step 4 (second half, AM-1.2, AM-D3): an add with no axMedia window open opens one with the queue and nothing
 # playing; an add says nothing in axMedia (axFile says it).
-# Shown without activation, that window has no focused control, so the channel's list and focus answers are empty;
-# the queue is read through Ctrl+I instead, which the window takes from anywhere.
+# The app shows that window without activation; the runner activates it, as the user's switching to it would (every
+# started window is, since 2026-11-01), and the queue is read through Ctrl+I, which the window takes from anywhere.
 start media --add {temp}\ch
 expect state "title":"axMedia"
 expect quiet 1000

@@ -211,7 +211,9 @@ keys escape
 keys ctrl+z
 expect said ! Undone: 2 items restored
 
-# 6.7 F1 in the Actions list, Escape: the focus back in the Actions list.
+# 6.7 F1 in the Actions list, Escape: the focus back in the Actions list. A moment first: the undo's pane is still
+# going when Tab comes right after "Undone" (the NVDA tier's slower keys found it, 2026-11-01).
+wait 500
 keys tab
 expect focus "name":"Actions"
 keys f1

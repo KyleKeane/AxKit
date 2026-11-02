@@ -216,6 +216,13 @@ public sealed class ClipForm : HotkeyForm
         {
             if (!Clipboard.ContainsText())
             {
+                // A program may empty the clipboard and fill it in two steps: no text yet is read again as a held
+                // clipboard is, then let go (the NVDA pass missed one of three copies made by clip.exe, 2026-11-01).
+                if (attempt < ReadAttempts)
+                {
+                    throw new ExternalException("No text on the clipboard yet");
+                }
+
                 return;
             }
 

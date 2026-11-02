@@ -249,7 +249,10 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   carried `0` or no code (Command Prompt), "Failed, exit code 1" with the same chime when it carried another
   (PowerShell gives `-1` for an error of its own: "Failed"). Nothing for a bare Enter on an empty field: the shell
   gives a `D` without a code and no command was sent. "Sent" has the sent note; the chimes are axClaude's
-  (`soundOnBell`, axClaude FR-7.3), the ready ping with "Ready" when the first prompt appears after a start.
+  (`soundOnBell`, axClaude FR-7.3), the ready ping with "Ready" when the first prompt appears after a start. The word
+  waits for the frame that ends the command, or the banner, and is said with that frame's speech as one notification
+  ("hello. Done"; "… All rights reserved.. Ready"), since NVDA drops the second of two raised back to back; alone after
+  half a second when no frame comes (the NVDA pass of 2026-11-01 heard "Done" and Command Prompt's "Ready" go unspoken).
 - AT-5.2 **Tick** (`clickOnNewLine`, axClaude FR-7.8): one tick for a frame that adds a visible line; no tool tick,
   since nothing here is a tool call.
 - AT-5.3 **Speak output** (`outputSpeech`: `none` or `all` (default); Options → Speech → Speak output: none | all

@@ -318,10 +318,16 @@ internal sealed class AutomationChannel : IMessageFilter
     /// <summary>The NVDA tier (docs/axit/automation.md, tier 3): the window to the front, so that NVDA follows it and the keyboard reaches it; only on the user's desktop, at the user's word.</summary>
     private object Activate()
     {
+        // The thread's own activation first: on the test desktop, where no foreground is to be had, it is what fires
+        // OnActivated, so that the window says what it kept for its first activation (AX-7.3, 2026-11-01).
+        SetActiveWindow(_form.Handle);
         _form.Activate();
         SetForegroundWindow(_form.Handle);
         return new { ok = GetForegroundWindow() == _form.Handle };
     }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern nint SetActiveWindow(nint hWnd);
 
     private object Close()
     {

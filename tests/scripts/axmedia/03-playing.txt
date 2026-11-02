@@ -118,10 +118,11 @@ expect said ! Nothing playing
 close
 wait 2000
 mkdir q
-silence q\s1.wav 3000
-silence q\s2.wav 3000
-silence q\s3.wav 3000
-silence q\s4.wav 3000
+# Five seconds each: the NVDA tier waits for NVDA after a start, and three-second files had moved on by Ctrl+Q.
+silence q\s1.wav 5000
+silence q\s2.wav 5000
+silence q\s3.wav 5000
+silence q\s4.wav 5000
 start media {temp}\q
 expect said ! Playing s1.wav
 wait 300

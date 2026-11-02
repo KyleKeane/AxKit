@@ -173,6 +173,27 @@ A `start`, `use` or `adopt` brings its window to the front and waits until NVDA 
 window that comes up whole, and ignores what a window behind another program's announces, so a script's second
 window must be `use`d before its steps. `-Skip axClaude` leaves out the slowest app, whose replies need the network.
 
+What a step that the window passed and NVDA failed ("|| NVDA did not speak it") has meant so far, in this order of
+likelihood: two notifications raised back to back, of which NVDA drops the second (axTerminal's "Done" after the
+command's last line, its "Ready" after a shell's banner; the fix is one notification, AX-7.3); an announcement made
+before the window was activated, which NVDA ignores (axMedia's "No sound or video files" as it opened; since
+2026-11-01 `AxitForm.Announce` keeps it for the activation); a window behind another program's (the script's second
+window, not `use`d). "NVDA spoke it only after N s" means NVDA was slow, not silent: the step fails, and the cause is
+worth a look at what NVDA was reading. A failure with the keys at fault reads "no window of the run is in front".
+
+How the keys and the matching are paced to NVDA (2026-11-01): a key goes as fingers press it, the modifiers a moment
+before it and let go a moment after, and the next key waits until NVDA has started to say something for this one (at
+most 400 ms), since NVDA takes the keys it has scripts for off the hook (Ctrl with an arrow, Home, End) and sends them
+on itself, and one of two sent in the same instant was lost now and then. An `expect said` matches the sounds and the
+speech as two streams, since a sound plays at once while its text may wait to be joined to another (AX-7.3); a text
+later in the announcement the last expectation matched counts ("Sent. hello. Done" answers Sent, then Done); and what
+NVDA said for the step before counts for a step whose order NVDA turns round (a notice closing says "Not found" and
+then gives the focus back; NVDA says the focus first).
+
+Side effects of the tier on the user's own session: axClip's script puts three test texts on the real clipboard (the
+last stays there), and axPass's leaves the copies to the pass by ear for the same reason; the windows of the run come
+to the front of the user's desktop and go again.
+
 When to run it: after a change to focus, keys, announcements or an edit control (the app's alone), and the whole pass
 before a merge or a release, in place of asking the user for a pass by ear. A pass is written into
 `docs/axit/nvda-test-record.md` as "run by the assistant through nvda-pass.ps1" with the commit. What stays the

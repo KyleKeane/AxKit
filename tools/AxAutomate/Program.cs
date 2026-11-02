@@ -40,7 +40,10 @@
 //   expect mcp <text>         waits up to 60 s for an answer holding the text (a refusal reads "error: ...")
 //   refuse mcp <text>         fails when an answer waiting holds the text after 2 s (an axPass window listed)
 //   expect said <text>        waits up to 60 s until the timeline holds the text (an announcement, "♪ Edge" for a
-//                             sound, "→ Conversation" for a focus move); takes it and what came before it
+//                             sound, "→ Conversation" for a focus move); takes it and what came before it in its
+//                             stream: the sounds are one stream, the rest another, since a sound plays at once while
+//                             its text may wait to be joined to another (AX-7.3); a text later in the announcement the
+//                             last expectation matched counts too ("Sent. hello. Done" answers Sent, then Done)
 //   expect focus|state|list|text|commands <text>   waits up to 10 s until that answer holds the text
 //   refuse said <text>        fails when the timeline holds the text within 2 s (what must not be said)
 //   refuse focus|state|list|text|commands <text>   fails when that answer holds the text after 2 s
@@ -153,7 +156,7 @@ internal static class Program
             if (!ok)
             {
                 failed.Add(name);
-                if (log.Contains("NVDA did not speak", StringComparison.Ordinal))
+                if (log.Contains("|| NVDA did not speak", StringComparison.Ordinal) || log.Contains("|| NVDA spoke it only after", StringComparison.Ordinal))
                 {
                     notHeard.Add(name);
                 }
@@ -303,6 +306,9 @@ internal static class Program
     }
 }
 
+/// <summary>What an expectation took: the events, and whether the text was found later in the announcement the last one matched.</summary>
+internal sealed record Taken(List<Event> Events, bool Within);
+
 /// <summary>One event of a window's timeline: when, and what (an announcement, a sound, a focus move, a value change).</summary>
 internal sealed record Event(long Ms, string Kind, string Text, bool Interrupt)
 {
@@ -328,6 +334,10 @@ internal sealed class Run(string exe, string temp)
     private readonly List<Window> _windows = [];
     private readonly nint _desktop = Nvda ? 0 : Native.CreateDesktopW(DesktopName, 0, 0, 0, 0x10000000, 0);
     private readonly Speech _speech = new();
+
+    /// <summary>What NVDA said up to the last heard check's match (<see cref="Heard"/>).</summary>
+    private List<string> _lastHeard = [];
+
     private readonly List<string> _allowed = [];
     private readonly string _home = Path.Combine(temp, "home");
     private Window? _current;
@@ -365,19 +375,11 @@ internal sealed class Run(string exe, string temp)
                 _current = Window.Start(exe, rest, Nvda ? null : DesktopName, _home);
                 _windows.Add(_current);
                 _current.WaitForFocus();
-                if (Nvda)
-                {
-                    BringToFront(_current);
-                }
-
+                BringToFront(_current);
                 return (true, $"process {_current.ProcessId}");
             case "use":
                 _current = _windows[int.Parse(rest) - 1];
-                if (Nvda)
-                {
-                    BringToFront(_current);
-                }
-
+                BringToFront(_current);
                 return (true, null);
             case "launch":
                 var launched = Window.Launch(exe, rest, Nvda ? null : DesktopName, _home);
@@ -573,8 +575,9 @@ internal sealed class Run(string exe, string temp)
             {
                 if (window.Take(text) is { } taken)
                 {
-                    var detail = $"{clock.ElapsedMilliseconds} ms: {string.Join(" | ", taken.Select(e => e.Spoken))}";
-                    return Nvda ? Heard(text, detail) : (true, detail);
+                    var detail = $"{clock.ElapsedMilliseconds} ms: {string.Join(" | ", taken.Events.Select(e => e.Spoken))}";
+                    // Later in the announcement the last expectation matched: NVDA was heard for that one already.
+                    return Nvda && !taken.Within ? Heard(taken.Events[^1], text, detail) : (true, detail);
                 }
 
                 seen = string.Join(" | ", window.Pending().Select(e => e.Spoken));
@@ -601,17 +604,22 @@ internal sealed class Run(string exe, string temp)
     }
 
     /// <summary>
-    /// The NVDA tier: a window to the front, and NVDA done reading it, before any key or expectation of its own. NVDA
-    /// reads a window that comes to the front whole and ignores the announcements of a window behind another program's,
-    /// so a start, use or adopt brings its window up and waits (announcements were lost under the reading, and a script's
-    /// second window said things NVDA never spoke, 2026-10-31).
+    /// A window activated, as the user's switching to it would, before any key or expectation of its own: a start, use
+    /// or adopt. On the test desktop that is the window's own thread's activation, which is what makes it say what it
+    /// kept for its first activation (AX-7.3); on the user's desktop (the NVDA tier) it is the foreground, and NVDA done
+    /// reading the window, since NVDA reads a window that comes up whole and ignores the announcements of a window behind
+    /// another program's (announcements were lost under the reading, and a script's second window said things NVDA never
+    /// spoke, 2026-10-31).
     /// </summary>
     private void BringToFront(Window window)
     {
         Native.AllowSetForegroundWindow(window.ProcessId);
         window.Send("activate");
-        InFront();
-        Speech.WaitForQuiet(1500);
+        if (Nvda)
+        {
+            InFront();
+            Speech.WaitForQuiet(1500);
+        }
     }
 
     /// <summary>
@@ -650,22 +658,25 @@ internal sealed class Run(string exe, string temp)
 
     /// <summary>
     /// The NVDA tier's second half of <c>expect said</c> (2026-10-31): what the window announced, NVDA must speak too,
-    /// within 5 s, so that every app script is an NVDA check when run with --nvda. An announcement ("! " or no mark) is
-    /// matched whole; a focus move ("→ Name (Role): value") by its name alone, since NVDA says the role and the value in
-    /// its own words; a value ("· ") and a sound ("♪ ") are not speech of the window's and pass as they are.
+    /// within 5 s, so that every app script is an NVDA check when run with --nvda. By the kind of the event the
+    /// expectation matched: an announcement must be heard with the expectation's words; a focus move by the control's
+    /// name alone, since NVDA says the role and the value in its own words; a value or a sound is not speech of the
+    /// window's and passes as it is (a value the script expects by its text had failed here, 2026-11-01).
     /// </summary>
-    private (bool, string?) Heard(string text, string detail)
+    private (bool, string?) Heard(Event matched, string text, string detail)
     {
-        if (text.StartsWith("· ", StringComparison.Ordinal) || text.StartsWith('♪'))
+        string words;
+        switch (matched.Kind)
         {
-            return (true, detail);
-        }
-
-        var words = text.StartsWith("! ", StringComparison.Ordinal) ? text[2..] : text;
-        if (text.StartsWith("→ ", StringComparison.Ordinal))
-        {
-            var role = text.IndexOf(" (", StringComparison.Ordinal);
-            words = role > 2 ? text[2..role] : text[2..];
+            case "say":
+                words = text.StartsWith("! ", StringComparison.Ordinal) ? text[2..] : text;
+                break;
+            case "focus":
+                var role = matched.Text.IndexOf(" (", StringComparison.Ordinal);
+                words = role > 0 ? matched.Text[..role] : matched.Text;
+                break;
+            default:
+                return (true, detail);
         }
 
         if (words.Trim().Length == 0)
@@ -673,18 +684,31 @@ internal sealed class Run(string exe, string temp)
             return (true, detail);
         }
 
+        // NVDA's order and the window's differ by a step now and then: a notice closing announces "Not found" and then
+        // gives the focus back, and NVDA says the focus first. What the last check took is looked at again, so that two
+        // neighbours may come in either order.
+        if (_lastHeard.Any(line => line.Contains(words, StringComparison.OrdinalIgnoreCase)))
+        {
+            return (true, detail + " || NVDA: with the one before");
+        }
+
+        // Five seconds is the mark; ten more tell a slow NVDA from a silent one, the step failed all the same.
         var until = Stopwatch.StartNew();
-        while (until.ElapsedMilliseconds < 5_000)
+        while (until.ElapsedMilliseconds < 15_000)
         {
             if (_speech.Take(words) is { } heard)
             {
-                return (true, detail + " || NVDA: " + string.Join(" | ", heard.Where(h => h != "[cancel]")));
+                _lastHeard = heard;
+                var spoken = string.Join(" | ", heard.Where(h => h != "[cancel]"));
+                return until.ElapsedMilliseconds <= 5_000
+                    ? (true, detail + " || NVDA: " + spoken)
+                    : (false, $"{detail} || NVDA spoke it only after {until.ElapsedMilliseconds / 1000} s: {spoken}");
             }
 
             Thread.Sleep(100);
         }
 
-        return (false, $"{detail} || NVDA did not speak it within 5 s; it said: {string.Join(" | ", _speech.Pending())}");
+        return (false, $"{detail} || NVDA did not speak it within 15 s; it said: {string.Join(" | ", _speech.Pending())}");
     }
 
     private (bool, string?) Refuse(string rest)
@@ -712,6 +736,11 @@ internal sealed class Run(string exe, string temp)
         }
 
         var bad = Current.Pending().FirstOrDefault(e => e.Spoken.Contains(text, StringComparison.OrdinalIgnoreCase));
+        if (bad is null && Current.WithinLast(text))
+        {
+            return (false, "said later in the last announcement matched");
+        }
+
         return bad is null ? (true, null) : (false, $"said at {bad.Ms} ms: {bad.Spoken}");
     }
 
@@ -785,11 +814,7 @@ internal sealed class Run(string exe, string temp)
                 _windows.Add(window);
                 _current = window;
                 window.WaitForFocus();
-                if (Nvda)
-                {
-                    BringToFront(window);
-                }
-
+                BringToFront(window);
                 return (true, $"process {window.ProcessId}");
             }
 
@@ -859,9 +884,24 @@ internal sealed class Run(string exe, string temp)
         {
             foreach (var file in Directory.GetFiles(logs, "*.log"))
             {
-                foreach (var line in File.ReadAllLines(file).Where(line => line.Contains(" ERROR ", StringComparison.Ordinal) && !_allowed.Any(allowed => line.Contains(allowed, StringComparison.OrdinalIgnoreCase))))
+                var lines = File.ReadAllLines(file);
+                for (var i = 0; i < lines.Length; i++)
                 {
-                    problems.Add($"{Path.GetFileName(file)}: {line}");
+                    var line = lines[i];
+                    if (!line.Contains(" ERROR ", StringComparison.Ordinal) || _allowed.Any(allowed => line.Contains(allowed, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
+
+                    // An exception's own lines follow its ERROR line without a time stamp: in the report, so that a
+                    // crash can be read without the run's log, which goes with its folder (2026-11-01).
+                    var problem = new StringBuilder($"{Path.GetFileName(file)}: {line}");
+                    for (var j = i + 1; j < lines.Length && j <= i + 8 && lines[j].Length > 0 && !char.IsDigit(lines[j][0]); j++)
+                    {
+                        problem.Append(" / ").Append(lines[j].Trim());
+                    }
+
+                    problems.Add(problem.ToString());
                 }
             }
         }
@@ -905,6 +945,30 @@ internal sealed class Speech
             }
 
             Thread.Sleep(200);
+        }
+    }
+
+    public static long LogLength() => File.Exists(LogPath) ? new FileInfo(LogPath).Length : 0;
+
+    /// <summary>
+    /// After a key of the NVDA tier: until NVDA has started to say something for it (the log longer than
+    /// <paramref name="lengthBefore"/>), at most <paramref name="maxMs"/>, as a user listens before the next key. A key
+    /// sent while NVDA was still at the one before was lost now and then (the second of two Ctrl+Right presses, a
+    /// Ctrl+Down after Ctrl+Up; 2026-11-01).
+    /// </summary>
+    public static void SettleAfterKey(long lengthBefore, int maxMs)
+    {
+        var clock = Stopwatch.StartNew();
+        while (clock.ElapsedMilliseconds < maxMs)
+        {
+            if (LogLength() != lengthBefore)
+            {
+                // A moment more once it spoke, for the key itself to land in the window.
+                Thread.Sleep(80);
+                return;
+            }
+
+            Thread.Sleep(30);
         }
     }
 
@@ -957,7 +1021,15 @@ internal sealed class Window : IDisposable
     private readonly StreamReader _reader;
     private readonly StreamWriter _writer;
     private readonly List<Event> _all = [];
-    private int _taken;
+
+    /// <summary>The events an expectation has taken, by their index in <see cref="_all"/>: the speech and the sounds are two streams (<see cref="Take"/>).</summary>
+    private readonly HashSet<int> _taken = [];
+
+    /// <summary>The announcement the last text expectation matched and where its match ended: the next may match later in the same one, two things said as one (AX-7.3).</summary>
+    private int _lastSay = -1;
+
+    private int _lastSayEnd;
+
     private bool _closing;
 
     private Window(Process process, int connectMs = 30_000)
@@ -1086,27 +1158,75 @@ internal sealed class Window : IDisposable
     public List<Event> Pending()
     {
         Fetch();
-        return _all.GetRange(_taken, _all.Count - _taken);
-    }
-
-    /// <summary>The first pending event that holds the text, with every pending event before it; null when none does.</summary>
-    public List<Event>? Take(string text)
-    {
-        var pending = Pending();
-        var at = pending.FindIndex(e => e.Spoken.Contains(text, StringComparison.OrdinalIgnoreCase));
-        if (at < 0)
+        var pending = new List<Event>();
+        for (var i = 0; i < _all.Count; i++)
         {
-            return null;
+            if (!_taken.Contains(i))
+            {
+                pending.Add(_all[i]);
+            }
         }
 
-        _taken += at + 1;
-        return pending.GetRange(0, at + 1);
+        return pending;
     }
+
+    /// <summary>
+    /// The first pending event that holds the text, with every pending event of its stream before it, all taken; null
+    /// when none does. The sounds ("♪ …") and the rest are two streams (2026-11-01): a sound plays at once while the
+    /// text it goes with may wait to be joined to another (AX-7.3), so their order is not the window's to promise, and a
+    /// text expectation never takes a sound, nor a sound expectation a text. A text found later in the announcement the
+    /// last expectation matched counts too (<see cref="Taken.Within"/>): "Sent. hello. Done" answers "Sent" and then
+    /// "Done", as it does for a listener.
+    /// </summary>
+    public Taken? Take(string text)
+    {
+        Fetch();
+        var sound = text.StartsWith('♪');
+        if (!sound && _lastSay >= 0 && _all[_lastSay].Kind == "say")
+        {
+            var within = _all[_lastSay].Spoken.IndexOf(text, _lastSayEnd, StringComparison.OrdinalIgnoreCase);
+            if (within >= 0)
+            {
+                _lastSayEnd = within + text.Length;
+                return new Taken([_all[_lastSay]], Within: true);
+            }
+        }
+
+        var indices = new List<int>();
+        for (var i = 0; i < _all.Count; i++)
+        {
+            if (_taken.Contains(i) || (_all[i].Kind == "sound") != sound)
+            {
+                continue;
+            }
+
+            indices.Add(i);
+            var at = _all[i].Spoken.IndexOf(text, StringComparison.OrdinalIgnoreCase);
+            if (at >= 0)
+            {
+                _taken.UnionWith(indices);
+                if (!sound)
+                {
+                    _lastSay = i;
+                    _lastSayEnd = at + text.Length;
+                }
+
+                return new Taken(indices.Select(index => _all[index]).ToList(), Within: false);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>Whether the text comes later in the announcement the last expectation matched: a refusal looks there too.</summary>
+    public bool WithinLast(string text) =>
+        _lastSay >= 0 && _all[_lastSay].Kind == "say" && _all[_lastSay].Spoken.IndexOf(text, _lastSayEnd, StringComparison.OrdinalIgnoreCase) >= 0;
 
     public List<Event> TakeAll()
     {
         var pending = Pending();
-        _taken = _all.Count;
+        _taken.UnionWith(Enumerable.Range(0, _all.Count));
+        _lastSay = -1;
         return pending;
     }
 
@@ -1342,19 +1462,32 @@ internal static class Native
                 _ => throw new ArgumentException($"unknown modifier {part}"),
             }).ToList();
             var key = VirtualKey(parts[^1]);
-            var inputs = new List<INPUT>();
-            inputs.AddRange(modifiers.Select(vk => Key(vk, up: false)));
-            inputs.Add(Key(key, up: false));
-            inputs.Add(Key(key, up: true));
-            inputs.AddRange(Enumerable.Reverse(modifiers).Select(vk => Key(vk, up: true)));
-            SendInput((uint)inputs.Count, [.. inputs], Marshal.SizeOf<INPUT>());
-            Thread.Sleep(150);
+            var before = Speech.LogLength();
+            // As fingers do it: the modifiers held a moment before the key, the key held a moment, the modifiers let go
+            // after; NVDA takes the keys it has scripts for (Ctrl with an arrow moves by word or paragraph) off the
+            // hook and sends them on itself, and one of two in the same instant was lost now and then (2026-11-01).
+            Send(modifiers.Select(vk => Key(vk, up: false)));
+            Send([Key(key, up: false)]);
+            Send([Key(key, up: true)]);
+            Send(Enumerable.Reverse(modifiers).Select(vk => Key(vk, up: true)));
+            Speech.SettleAfterKey(before, 400);
+        }
+    }
+
+    private static void Send(IEnumerable<INPUT> inputs)
+    {
+        var batch = inputs.ToArray();
+        if (batch.Length > 0)
+        {
+            SendInput((uint)batch.Length, batch, Marshal.SizeOf<INPUT>());
+            Thread.Sleep(30);
         }
     }
 
     /// <summary>Characters as typed, each a Unicode key press, each only while a window of the run is in front.</summary>
     public static void Type(string text, Func<bool> inFront)
     {
+        var before = Speech.LogLength();
         foreach (var c in text)
         {
             if (!inFront())
@@ -1370,6 +1503,8 @@ internal static class Native
             SendInput(2, inputs, Marshal.SizeOf<INPUT>());
             Thread.Sleep(20);
         }
+
+        Speech.SettleAfterKey(before, 400);
     }
 
     [DllImport("user32.dll")]

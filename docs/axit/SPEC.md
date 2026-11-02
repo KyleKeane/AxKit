@@ -695,7 +695,11 @@ These are the rules of `docs/axclaude/SPEC.md` that are not about Claude; app sp
   find walk them (asked 2026-10-23).
 - AX-7.3 The caret never moves except as the direct result of the user's own command. The result of a navigation
   command is announced through a UI Automation notification, joined into one notification when several things arrive
-  at once. Nothing speaks on a plain arrow key; information is given on demand.
+  at once. Nothing speaks on a plain arrow key; information is given on demand. Two notifications raised back to back
+  are not both spoken (NVDA drops the second), so what a window has to say at one moment goes as one. What a window
+  announces before it has been activated for the first time waits for the activation and is said then, in order
+  (`AxitForm.Announce`, 2026-11-01): NVDA ignores a window that is not in front, and a window started by a program in
+  the background comes up behind until it is activated, so what it said as it opened was lost.
   A paste into an editable text, by Ctrl+V, Shift+Insert or an Edit menu's Paste, is said once the control has done it
   (2026-10-25, the user's ask: the edit control's own paste is silent): "Pasted", "Pasted, 3 lines" for several into a
   text of several lines, "Nothing to paste as text" when the clipboard holds none; never the text itself, which may be a

@@ -19,7 +19,7 @@ WinForms code every app of the bundle uses (`docs/axit/SPEC.md` AX-6.2, AX-6.4).
     - `ChooseFolder` (the Windows folder picker), `OpenUrl`, `OpenInExplorer` (a folder opened, a file selected; `select: true` selects a folder too), `OpenSettingsFile`, `CopyDiagnostics`;
     - `OpenBarMenu` (Shift+F10, the Applications key and a right click: the bar's menu with a letter, posted as Alt and the letter once the keys that asked are up, so that NVDA reads its first item; from axFile on its second use, axProcess, 2026-10-24).
   - `AxitForm.Notices.cs`:
-    - `ShowNotice`, `CloseNotice`, `ShowError`, `Fail`, `Announce` (on the notice while one shows, on `AnnounceSource` otherwise; not virtual);
+    - `ShowNotice`, `CloseNotice`, `ShowError`, `Fail`, `Announce` (on the notice while one shows, on `AnnounceSource` otherwise; before the window's first activation kept and said half a second after it, since NVDA ignores a window that is not in front; a non-interrupting one within 300 ms of the one before joined to it into one notification, since NVDA drops a notification that reaches it while the one before still waits its turn (both heard by the NVDA pass of 2026-11-01), AX-7.3; not virtual);
     - and the one focus rule:
       - `_focusBeforeNotice` is the innermost focused control when the first notice of a chain opens (`FocusedControl`);
       - `_chaining` is set around a button's action so that a notice the action opens neither remembers the focus again nor calls `OnNoticeOpened` a second time;

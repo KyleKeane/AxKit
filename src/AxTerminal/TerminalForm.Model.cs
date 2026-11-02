@@ -18,40 +18,50 @@ internal sealed partial class TerminalForm
             Sounds.Click();
         }
 
-        if (arrival.Speech is { } speech)
-        {
-            Announce(speech, false);
-        }
-
-        SayFinished();
+        SayWithFinished(arrival.Speech);
     }
 
-    /// <summary>"Done" or "Failed" of the command that ended, waiting for the frame that ends it to be spoken first.</summary>
+    /// <summary>"Ready", "Done" or "Failed", waiting for the frame that ends it to be spoken first; then said with that frame's speech as one announcement.</summary>
     private string? _finished;
 
-    /// <summary>Half a second at most for that frame; then the word goes anyway.</summary>
+    /// <summary>Half a second at most for that frame; then the word goes alone.</summary>
     private readonly System.Windows.Forms.Timer _finishedLate = new() { Interval = 500 };
 
-    private void SayFinished()
+    /// <summary>
+    /// The frame's speech and the word that waits, as one announcement: NVDA drops the second of two notifications
+    /// raised back to back (src/AxClaude/CLAUDE.md), so "Done" after a command's last line, and "Ready" after a shell's
+    /// banner, were never spoken while each was its own (heard by the NVDA pass, 2026-11-01). Done and Failed bring the
+    /// chime and the attention signals; Ready has its ping from <see cref="OnReady"/>.
+    /// </summary>
+    private void SayWithFinished(string? speech)
     {
         _finishedLate.Stop();
-        if (_finished is { } word)
+        var word = _finished;
+        _finished = null;
+        if (speech is not null || word is not null)
         {
-            _finished = null;
-            Announce(word, false);
+            Announce(speech is null ? word! : word is null ? speech : $"{speech}. {word}", false);
+        }
+
+        // The sound after the word, as it always was: a script hearing "Ready" and then the ping relies on the order.
+        if (word == "Ready")
+        {
+            if (_settings.SoundOnBell)
+            {
+                Sounds.Ready();
+            }
+        }
+        else if (word is not null)
+        {
             Signal(question: false);
         }
     }
 
-    /// <summary>The first prompt of a run (AT-5.1): "Ready" with its ping.</summary>
+    /// <summary>The first prompt of a run (AT-5.1): "Ready" with its ping, after the banner's last line.</summary>
     private void OnReady()
     {
-        Announce("Ready", false);
-        if (_settings.SoundOnBell)
-        {
-            Sounds.Ready();
-        }
-
+        _finished = "Ready";
+        StartFinishedLate();
         UpdateStatus();
     }
 
@@ -63,6 +73,11 @@ internal sealed partial class TerminalForm
         // line final: the word waits for that frame's speech (OnTranscriptChanged), so that Speak output: all lines
         // says the last line before "Done", not after it (found by tools/AxAutomate, 2026-10-23).
         _finished = code is null or 0 ? "Done" : code == -1 ? "Failed" : $"Failed, exit code {code}";
+        StartFinishedLate();
+    }
+
+    private void StartFinishedLate()
+    {
         if (!_finishedLate.Enabled)
         {
             _finishedLate.Tick -= OnFinishedLate;
@@ -71,7 +86,7 @@ internal sealed partial class TerminalForm
         }
     }
 
-    private void OnFinishedLate(object? sender, EventArgs e) => SayFinished();
+    private void OnFinishedLate(object? sender, EventArgs e) => SayWithFinished(null);
 
     /// <summary>
     /// AT-5.4: while a command runs and output has stopped for two seconds, a cursor row that ends like a question

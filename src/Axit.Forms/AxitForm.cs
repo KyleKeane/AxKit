@@ -44,6 +44,7 @@ public abstract partial class AxitForm : Form
         Size = new Size(900, 600);
         StartPosition = FormStartPosition.WindowsDefaultLocation;
         Overlay.Chosen += OnNoticeChoice;
+        WireAnnouncing();
         _paletteSpeak.Tick += (_, _) => SayFirstPaletteMatch();
         _checkItem.Click += (_, _) => CheckForUpdates(manual: true);
         _updateItem.Click += (_, _) => OfferKnownUpdate();
@@ -349,6 +350,7 @@ public abstract partial class AxitForm : Form
     {
         _altCarriedOverUntil = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0 ? Environment.TickCount64 + AltCarriedOverMs : 0;
         base.OnActivated(e);
+        SayWhatWaitedForActivation();
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]

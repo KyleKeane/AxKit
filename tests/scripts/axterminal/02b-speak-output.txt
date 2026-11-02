@@ -13,8 +13,8 @@ menu Speak output: all lines
 expect said Speak output: all lines
 type Get-ChildItem
 keys enter
-expect said listed.txt
-expect said Done
+# The listing's last line and "Done" as one announcement (AT-5.1, since 2026-11-01), then the chime.
+expect said listed.txt. Done
 expect said ♪ Done
 menu Speak output: none
 expect said Speak output: none
