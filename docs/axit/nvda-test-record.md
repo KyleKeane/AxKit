@@ -6,6 +6,27 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-01, later: axClaude, by the assistant through nvda-pass.ps1 (branch `licence`, 1339f6f to 6cedc57)
+
+Run by the assistant with NVDA listening, as below, with Claude Code 2.1.316 and `--model haiku`: the 17 scripts of
+`tests/scripts/axclaude`, the reminder of AX-11.4 among them (15-consent). All 17 passed: 14 in the one run, three on
+their reruns after what they found was fixed:
+
+- 12-questions: the runner's own `expect said !` (any interrupting announcement) had nothing for NVDA to be heard
+  with; the runner now takes "!" alone as that.
+- 05-modes: a Ctrl+C sent in the first moment of a turn did not hold on Claude Code 2.1.316, which went on by itself a
+  few seconds later, while one sent once Claude is responding does (the probe confirmed Ctrl+Shift+C reaches Claude
+  and makes it ready); the script now interrupts once "Responding" has been said. Claude Code also does not ask before
+  a Bash command on every run; the scripts answer the question when it comes.
+- 04-headings: Ctrl+Alt+H never reached the window, with Ctrl+Alt+P fine. Not NVDA (its input help named the key with
+  no command of its own) and not Axit: Windows Magnifier was running, and it keeps Ctrl+Alt+H and K for its reading
+  and Ctrl+Alt+L and M for its views, system-wide. With Magnifier closed the script passed; the user guide says so, and
+  the plan's old "Ctrl+Alt+L and Ctrl+Alt+M: nothing" had the same cause. A deleted NVDA plugin of the user's own,
+  which bound Ctrl+Alt+H as well, was the first thing found and removed.
+
+Still the user's by ear for axClaude: /login's line (AX-11.6), the update notice's terms (needs a release newer than
+the build), and the steps the scripts leave manual (the Start menu, Copy diagnostics on the clipboard, /model).
+
 ## 2026-11-01: every app but axClaude, by the assistant through nvda-pass.ps1 (branch `licence`, 13f4209 and e590b5d)
 
 Run by the assistant with NVDA listening (`docs/axit/automation.md` section 3), the user away at its question: every

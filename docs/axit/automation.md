@@ -179,7 +179,11 @@ command's last line, its "Ready" after a shell's banner; the fix is one notifica
 before the window was activated, which NVDA ignores (axMedia's "No sound or video files" as it opened; since
 2026-11-01 `AxitForm.Announce` keeps it for the activation); a window behind another program's (the script's second
 window, not `use`d). "NVDA spoke it only after N s" means NVDA was slow, not silent: the step fails, and the cause is
-worth a look at what NVDA was reading. A failure with the keys at fault reads "no window of the run is in front".
+worth a look at what NVDA was reading. A failure with the keys at fault reads "no window of the run is in front". A
+key the window never answered, with NVDA naming it in its input help (`keys nvda+1` before and after it) and no command
+of its own, is taken by another program's hook or hotkey: Windows Magnifier keeps Ctrl+Alt+H, K, L and M while it
+runs (2026-11-01); `Get-Process Magnify` tells, and a `RegisterHotKey` probe tells for registered hotkeys. A failed
+`expect said` prints what NVDA said meanwhile, which is where such a program shows first.
 
 How the keys and the matching are paced to NVDA (2026-11-01): a key goes as fingers press it, the modifiers a moment
 before it and let go a moment after, and the next key waits until NVDA has started to say something for this one (at
