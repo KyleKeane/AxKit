@@ -1030,6 +1030,9 @@ internal sealed class Window : IDisposable
 
     private int _lastSayEnd;
 
+    /// <summary>The events the last text expectation took, where a neighbour that came the other way round is found.</summary>
+    private List<int> _lastBatch = [];
+
     private bool _closing;
 
     private Window(Process process, int connectMs = 30_000)
@@ -1209,9 +1212,23 @@ internal sealed class Window : IDisposable
                 {
                     _lastSay = i;
                     _lastSayEnd = at + text.Length;
+                    _lastBatch = indices;
                 }
 
                 return new Taken(indices.Select(index => _all[index]).ToList(), Within: false);
+            }
+        }
+
+        // Two neighbours in either order: the text in what the last expectation took counts too (a Fetch and a Pull
+        // pressed at once say "Working…" and "Fetched" in the order the keys' pace decides, 2026-11-01).
+        if (!sound)
+        {
+            foreach (var i in _lastBatch)
+            {
+                if (_all[i].Spoken.Contains(text, StringComparison.OrdinalIgnoreCase))
+                {
+                    return new Taken([_all[i]], Within: false);
+                }
             }
         }
 
@@ -1227,6 +1244,7 @@ internal sealed class Window : IDisposable
         var pending = Pending();
         _taken.UnionWith(Enumerable.Range(0, _all.Count));
         _lastSay = -1;
+        _lastBatch = [];
         return pending;
     }
 

@@ -186,9 +186,10 @@ before it and let go a moment after, and the next key waits until NVDA has start
 most 400 ms), since NVDA takes the keys it has scripts for off the hook (Ctrl with an arrow, Home, End) and sends them
 on itself, and one of two sent in the same instant was lost now and then. An `expect said` matches the sounds and the
 speech as two streams, since a sound plays at once while its text may wait to be joined to another (AX-7.3); a text
-later in the announcement the last expectation matched counts ("Sent. hello. Done" answers Sent, then Done); and what
-NVDA said for the step before counts for a step whose order NVDA turns round (a notice closing says "Not found" and
-then gives the focus back; NVDA says the focus first).
+later in the announcement the last expectation matched counts ("Sent. hello. Done" answers Sent, then Done); two
+neighbours may come in either order, on the window's side (a Fetch and a Pull pressed at once say "Working…" and
+"Fetched" in the order the keys' pace decides) and on NVDA's (a notice closing says "Not found" and then gives the
+focus back; NVDA says the focus first), since what the last expectation took is looked at again.
 
 Side effects of the tier on the user's own session: axClip's script puts three test texts on the real clipboard (the
 last stays there), and axPass's leaves the copies to the pass by ear for the same reason; the windows of the run come
