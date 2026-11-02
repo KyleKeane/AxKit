@@ -600,7 +600,10 @@ internal sealed class Run(string exe, string temp)
             Thread.Sleep(100);
         }
 
-        return (false, $"not within {timeout / 1000} s; seen: {seen}");
+        // What NVDA said meanwhile tells where a key went when the window never answered it (a menu opened, NVDA's own
+        // command, another program's hotkey).
+        var meanwhile = Nvda ? $"; NVDA said meanwhile: {string.Join(" | ", _speech.Pending().Where(h => h != "[cancel]"))}" : string.Empty;
+        return (false, $"not within {timeout / 1000} s; seen: {seen}{meanwhile}");
     }
 
     /// <summary>
@@ -669,7 +672,7 @@ internal sealed class Run(string exe, string temp)
         switch (matched.Kind)
         {
             case "say":
-                words = text.StartsWith("! ", StringComparison.Ordinal) ? text[2..] : text;
+                words = Window.Wanted(text).Words;
                 break;
             case "focus":
                 var role = matched.Text.IndexOf(" (", StringComparison.Ordinal);
@@ -1273,9 +1276,10 @@ internal sealed class Window : IDisposable
             return (e => e.Kind == "sound", text.TrimStart('♪', ' '));
         }
 
-        if (text.StartsWith("! ", StringComparison.Ordinal))
+        if (text == "!" || text.StartsWith("! ", StringComparison.Ordinal))
         {
-            return (e => e.Kind == "say" && e.Interrupt, text[2..]);
+            // "!" alone: any interrupting announcement (a question's name, whatever it is); nothing for NVDA to be heard with.
+            return (e => e.Kind == "say" && e.Interrupt, text.Length > 2 ? text[2..] : string.Empty);
         }
 
         if (text.StartsWith("→ ", StringComparison.Ordinal))
@@ -1537,6 +1541,9 @@ internal static class Native
                 "ctrl" => (ushort)0x11,
                 "shift" => (ushort)0x10,
                 "alt" => (ushort)0x12,
+                // NVDA's own modifier, Insert in its desktop layout: "nvda+1" turns input help on and off, which names
+                // what NVDA does with the next key (a probe, 2026-11-01).
+                "nvda" or "insert" => (ushort)0x2D,
                 _ => throw new ArgumentException($"unknown modifier {part}"),
             }).ToList();
             var key = VirtualKey(parts[^1]);
@@ -1615,6 +1622,7 @@ internal static class Native
             "space" => 0x20,
             "backspace" => 0x08,
             "delete" => 0x2E,
+            "insert" => 0x2D,
             "up" => 0x26,
             "down" => 0x28,
             "left" => 0x25,

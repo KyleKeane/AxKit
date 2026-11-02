@@ -98,13 +98,18 @@ type Write a story of 1500 words about a lighthouse keeper.
 keys enter
 expect said Sent
 expect state Claude: working
+# Interrupted once Claude is responding, as a listener would: a Ctrl+C in the first moment of a turn did not hold on
+# Claude Code 2.1.316, which went on by itself a few seconds later, while one during the reply does (2026-11-01).
+expect said Responding
 menu Ctrl+C
 expect state Claude: ready
-wait 2000
+wait 4000
+expect state Claude: ready
 type Write a story of 1500 words about a lighthouse keeper.
 keys enter
 expect said Sent
 expect state Claude: working
+expect said Responding
 keys ctrl+shift+c
 expect state Claude: ready
 # Step 7 sends /model, which this run never does (choosing a model there saves it as the user's default): left manual.
