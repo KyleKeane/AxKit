@@ -9,76 +9,95 @@
   script then runs install.ps1 from publish\win-x64 on this machine (Start menu entries, File Explorer entries and
   the console commands; see install.ps1 -? for details and -Uninstall).
 
+  The release workflow calls it twice (docs/axit/code-signing.md): -NoInstall -NoZip builds the folder, Axit.exe is
+  signed for Windows in it, then -ZipOnly zips the folder as it is. Neither installs anything.
+
 .EXAMPLE
-  .\publish.ps1              # build the zip and install here
-  .\publish.ps1 -NoInstall   # build the zip only
+  .\publish.ps1                    # build the zip and install here
+  .\publish.ps1 -NoInstall         # build the zip only
+  .\publish.ps1 -NoInstall -NoZip  # build publish\win-x64 only
+  .\publish.ps1 -ZipOnly           # zip publish\win-x64 as it is
 
   If PowerShell refuses to run scripts: powershell -ExecutionPolicy Bypass -File .\publish.ps1
 #>
 [CmdletBinding()]
 param(
-    [switch]$NoInstall
+    [switch]$NoInstall,
+    [switch]$NoZip,
+    [switch]$ZipOnly
 )
 
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
 $out = Join-Path $root 'publish\win-x64'
-
-# A fresh output folder: an earlier publish may have left files behind (AxClaude.exe from before the bundle), and
-# everything in the folder goes into the zip.
-if (Test-Path $out) { Remove-Item $out -Recurse -Force }
-
-Write-Host "Publishing Axit (Release, win-x64, self-contained, single file)..."
-dotnet publish "$root\src\Axit\Axit.csproj" -c Release -r win-x64 --self-contained `
-    -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=none `
-    -o $out -nologo -v q
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Publish failed."
-    exit $LASTEXITCODE
-}
-
 $exe = Join-Path $out 'Axit.exe'
-# The apps' icons for their Start menu and File Explorer entries, next to the executable (a project item would be
-# bundled into the single file): every .ico of src\Axit, so that a new app's icon is never left out (3.0.0 shipped
-# without axTerminal's when the list was kept by hand).
-Get-ChildItem (Join-Path $root 'src\Axit') -Filter '*.ico' | Copy-Item -Destination $out -Force
-Copy-Item (Join-Path $root 'install.ps1') $out -Force
-Copy-Item (Join-Path $root 'install.cmd') $out -Force
-Copy-Item (Join-Path $root 'LICENSE') $out -Force
-# The terms of the licence's section 7 and the disclaimer, the Licence notice of About (NOTICE.md).
-Copy-Item (Join-Path $root 'NOTICE.md') $out -Force
-# What Axit sends anywhere, and the notices of what it contains (PRIVACY.md, THIRD-PARTY-NOTICES.md), beside the licence.
-Copy-Item (Join-Path $root 'PRIVACY.md') $out -Force
-Copy-Item (Join-Path $root 'THIRD-PARTY-NOTICES.md') $out -Force
-# The bundle's guide: install, the apps, update, remove. Each app's own guide is inside it, under Help.
-Copy-Item (Join-Path $root 'docs\axit\README.md') (Join-Path $out 'README.md') -Force
-Get-ChildItem $out -Filter '*.pdb' | Remove-Item -Force
-# The list of apps (Axit.exe apps, AX-1.4) in the zip as apps.json, which install.ps1 reads when the program cannot
-# answer on the machine it installs on (3.7.1's update failed so on one machine, 2026-10-24). Asked of the program
-# just built, so that it is that version's list; a program that cannot answer here fails the publish.
-$start = New-Object System.Diagnostics.ProcessStartInfo $exe
-$start.Arguments = 'apps'
-$start.UseShellExecute = $false
-$start.RedirectStandardOutput = $true
-$start.CreateNoWindow = $true
-$process = [System.Diagnostics.Process]::Start($start)
-$listing = $process.StandardOutput.ReadToEnd()
-$process.WaitForExit()
-if ($process.ExitCode -ne 0 -or -not $listing.Trim().StartsWith('[')) {
-    Write-Host "Axit.exe apps did not answer (exit code $($process.ExitCode)); the zip was not made."
-    exit 1
+
+if ($ZipOnly) {
+    # The folder of an earlier -NoZip run, with Axit.exe signed in place: nothing is built or copied again.
+    if (-not (Test-Path $exe)) {
+        Write-Host "Nothing to zip: $exe is not there. Run publish.ps1 -NoInstall -NoZip first."
+        exit 1
+    }
+} else {
+    # A fresh output folder: an earlier publish may have left files behind (AxClaude.exe from before the bundle), and
+    # everything in the folder goes into the zip.
+    if (Test-Path $out) { Remove-Item $out -Recurse -Force }
+
+    Write-Host "Publishing Axit (Release, win-x64, self-contained, single file)..."
+    dotnet publish "$root\src\Axit\Axit.csproj" -c Release -r win-x64 --self-contained `
+        -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=none `
+        -o $out -nologo -v q
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Publish failed."
+        exit $LASTEXITCODE
+    }
+
+    # The apps' icons for their Start menu and File Explorer entries, next to the executable (a project item would be
+    # bundled into the single file): every .ico of src\Axit, so that a new app's icon is never left out (3.0.0 shipped
+    # without axTerminal's when the list was kept by hand).
+    Get-ChildItem (Join-Path $root 'src\Axit') -Filter '*.ico' | Copy-Item -Destination $out -Force
+    Copy-Item (Join-Path $root 'install.ps1') $out -Force
+    Copy-Item (Join-Path $root 'install.cmd') $out -Force
+    Copy-Item (Join-Path $root 'LICENSE') $out -Force
+    # The terms of the licence's section 7 and the disclaimer, the Licence notice of About (NOTICE.md).
+    Copy-Item (Join-Path $root 'NOTICE.md') $out -Force
+    # What Axit sends anywhere, and the notices of what it contains (PRIVACY.md, THIRD-PARTY-NOTICES.md), beside the licence.
+    Copy-Item (Join-Path $root 'PRIVACY.md') $out -Force
+    Copy-Item (Join-Path $root 'THIRD-PARTY-NOTICES.md') $out -Force
+    # The bundle's guide: install, the apps, update, remove. Each app's own guide is inside it, under Help.
+    Copy-Item (Join-Path $root 'docs\axit\README.md') (Join-Path $out 'README.md') -Force
+    Get-ChildItem $out -Filter '*.pdb' | Remove-Item -Force
+    # The list of apps (Axit.exe apps, AX-1.4) in the zip as apps.json, which install.ps1 reads when the program cannot
+    # answer on the machine it installs on (3.7.1's update failed so on one machine, 2026-10-24). Asked of the program
+    # just built, so that it is that version's list; a program that cannot answer here fails the publish.
+    $start = New-Object System.Diagnostics.ProcessStartInfo $exe
+    $start.Arguments = 'apps'
+    $start.UseShellExecute = $false
+    $start.RedirectStandardOutput = $true
+    $start.CreateNoWindow = $true
+    $process = [System.Diagnostics.Process]::Start($start)
+    $listing = $process.StandardOutput.ReadToEnd()
+    $process.WaitForExit()
+    if ($process.ExitCode -ne 0 -or -not $listing.Trim().StartsWith('[')) {
+        Write-Host "Axit.exe apps did not answer (exit code $($process.ExitCode)); the zip was not made."
+        exit 1
+    }
+    [System.IO.File]::WriteAllText((Join-Path $out 'apps.json'), $listing)
+    Write-Host ("Published {0} ({1:N1} MB)" -f $exe, ((Get-Item $exe).Length / 1MB))
+
+    if ($NoZip) {
+        exit 0
+    }
 }
-[System.IO.File]::WriteAllText((Join-Path $out 'apps.json'), $listing)
 
 $version = (Get-Item $exe).VersionInfo.FileVersion
 if ($version -match '^(\d+\.\d+\.\d+)') { $version = $Matches[1] }
 $zip = Join-Path $root "publish\Axit-$version-win-x64.zip"
 if (Test-Path $zip) { Remove-Item $zip -Force }
 Compress-Archive -Path (Join-Path $out '*') -DestinationPath $zip
-Write-Host ("Published {0} ({1:N1} MB)" -f $exe, ((Get-Item $exe).Length / 1MB))
 Write-Host ("Zip for sending: {0} ({1:N1} MB)" -f $zip, ((Get-Item $zip).Length / 1MB))
 
-if ($NoInstall) {
+if ($NoInstall -or $ZipOnly) {
     exit 0
 }
 
