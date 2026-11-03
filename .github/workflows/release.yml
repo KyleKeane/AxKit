@@ -1,9 +1,12 @@
 # Builds the zip that publish.ps1 builds locally and attaches it to a draft GitHub release, with install.cmd on its own
-# so it can be downloaded alone and install the latest release. The release stays a draft: release.ps1, on the
-# maintainer's machine, signs the zip with the release key, which never reaches GitHub, uploads the signature and
-# publishes the release (docs/axit/SPEC.md AX-3.4; docs/axit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps
-# install only a signed zip. Started by pushing a version tag, which release.ps1 does, or by hand from the Actions tab
-# (or `gh workflow run release.yml -f tag=v1.0.1`) for a tag that already exists.
+# so it can be downloaded alone and install the latest release. Three jobs: build tests and publishes with a token that
+# can only read; sign has Axit.exe signed for Windows by SignPath Foundation (free code signing for open-source
+# projects, docs/axit/code-signing.md), waits for the maintainer's approval of that signing, and then makes the zip;
+# draft uploads and attests. The release stays a draft: release.ps1, on the maintainer's machine, signs the zip with
+# the release key, which never reaches GitHub, uploads the signature and publishes the release (docs/axit/SPEC.md
+# AX-3.4; docs/axit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps install only a signed zip. Started by
+# pushing a version tag, which release.ps1 does, or by hand from the Actions tab (or `gh workflow run release.yml -f
+# tag=v1.0.1`) for a tag that already exists.
 name: Release
 
 on:
@@ -19,11 +22,15 @@ on:
 permissions: {}
 
 jobs:
-  # Tests and builds with a token that can only read: the test code and its packages never hold one that writes (S-30).
+  # Tests and builds with a token that can only read: the test code and its packages never hold one that writes, and
+  # never see the signing token (S-30).
   build:
     runs-on: windows-2025
     permissions:
       contents: read
+    outputs:
+      # The artifact SignPath signs; the sign job names it by this id.
+      unsigned-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -59,9 +66,10 @@ jobs:
       - name: Test
         run: dotnet test Axit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true
 
+      # The folder only; the sign job zips it once Axit.exe is signed.
       - name: Publish
         shell: pwsh
-        run: .\publish.ps1 -NoInstall
+        run: .\publish.ps1 -NoInstall -NoZip
 
       - name: Release notes from CHANGELOG.md
         shell: pwsh
@@ -76,6 +84,82 @@ jobs:
           Add-Content -Path notes.md -Value "`nCode signing policy, privacy and governance: https://github.com/KyleKeane/Axit#code-signing-policy, https://github.com/KyleKeane/Axit/blob/main/PRIVACY.md and https://github.com/KyleKeane/Axit/blob/main/GOVERNANCE.md" -Encoding utf8
           "$env:TAG" | Set-Content -Path tag.txt -Encoding ascii
 
+      # Axit.exe alone, for SignPath: a GitHub artifact is a zip, so SignPath's artifact configuration is a zip with
+      # Axit.exe at its root (docs/axit/code-signing.md section 2).
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        id: unsigned
+        with:
+          name: unsigned
+          path: publish/win-x64/Axit.exe
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: build
+          path: |
+            publish/win-x64/
+            install.cmd
+            notes.md
+            tag.txt
+          if-no-files-found: error
+
+  # Has Axit.exe signed and makes the zip. SignPath fetches the unsigned artifact from this run, checks where it was
+  # built (origin verification), waits for the maintainer's approval, signs with SignPath Foundation's certificate and
+  # hands the signed file back. The API token is the "release" environment's secret, so only this environment's runs
+  # (main and v* tags) can submit, and the tests and their packages never run beside it (S-30).
+  sign:
+    needs: build
+    runs-on: windows-2025
+    environment: release
+    permissions:
+      contents: read
+      # SignPath reads this run and downloads the unsigned artifact with the job's token.
+      actions: read
+    steps:
+      # For publish.ps1 -ZipOnly; the folder comes from the build job.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          persist-credentials: false
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: build
+
+      - name: Have Axit.exe signed by SignPath
+        uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3.0
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: Axit
+          signing-policy-slug: release-signing
+          github-artifact-id: ${{ needs.build.outputs.unsigned-artifact-id }}
+          wait-for-completion: true
+          # The maintainer approves the signing by hand (the code signing policy); an hour to do so.
+          wait-for-completion-timeout-in-seconds: 3600
+          # The signed artifact, extracted: signed\Axit.exe.
+          output-artifact-directory: signed
+
+      # Nothing is zipped unless Windows itself finds the signature valid (ReleaseWorkflowTests keeps this order).
+      - name: Check the signature, then make the zip
+        shell: pwsh
+        run: |
+          if (-not (Test-Path signed\Axit.exe)) {
+            Write-Host "SignPath returned no Axit.exe. No zip was made."
+            exit 1
+          }
+          Copy-Item signed\Axit.exe publish\win-x64\Axit.exe -Force
+          $signature = Get-AuthenticodeSignature publish\win-x64\Axit.exe
+          if ($signature.Status -ne 'Valid') {
+            Write-Host "Axit.exe is not validly signed: $($signature.Status), $($signature.StatusMessage). No zip was made."
+            exit 1
+          }
+          Write-Host "Axit.exe is signed by $($signature.SignerCertificate.Subject), timestamped by $($signature.TimeStamperCertificate.Subject)."
+          # The release page and the update notice say who signed the program, by the name Windows shows as its publisher.
+          $signer = $signature.SignerCertificate.GetNameInfo([System.Security.Cryptography.X509Certificates.X509NameType]::SimpleName, $false)
+          Add-Content -Path notes.md -Value "`nAxit.exe in this release is signed for Windows by $signer; Windows shows that name as the publisher. Free code signing provided by SignPath.io, certificate by SignPath Foundation (https://github.com/KyleKeane/Axit/blob/main/docs/axit/code-signing.md)." -Encoding utf8
+          .\publish.ps1 -ZipOnly
+
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release
@@ -86,9 +170,9 @@ jobs:
             tag.txt
           if-no-files-found: error
 
-  # Uploads what the build made to a draft release, and attests where it was built; runs no code of the repository.
+  # Uploads what the sign job made to a draft release, and attests where it was built; runs no code of the repository.
   draft:
-    needs: build
+    needs: sign
     runs-on: ubuntu-latest
     permissions:
       contents: write
