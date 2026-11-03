@@ -1,4 +1,4 @@
-# Code signing for Windows (prepared 2026-10-25, not set up yet)
+# Code signing for Windows (SignPath Foundation; prepared 2026-10-25, the workflow built 2026-11-03)
 
 Why: Windows 11's Smart App Control blocks a program that carries no Authenticode signature and that Microsoft's cloud
 does not know yet. Every Axit release is a new program file, so on a computer where Smart App Control is on, an update
@@ -7,9 +7,15 @@ computer). Axit's own release key (`tools/release-key.ps1`, AX-3.4) signs the zi
 not know that key and never checks it. Since 3.7.5 a blocked update stops before it changes anything (AX-3.6). The
 lasting fix is an Authenticode signature on `Axit.exe`, which Smart App Control accepts.
 
-The plan: **SignPath Foundation**, which signs open-source projects for free with its own certificate, from the
-project's GitHub build. The paid alternative is Microsoft's cloud signing service (about $10 a month after an identity
-check); the workflow step would differ, the rest of this plan would not.
+The way: **SignPath Foundation**, which signs open-source projects for free with its own certificate, from the
+project's GitHub build, after an application and a review of the project. The signature names SignPath Foundation as
+the publisher, and the maintainer approves every release's signing by hand, which is the Foundation's condition and
+the project's code signing policy (section 3). The alternatives, a paid signing service or a certificate on a hardware
+token, cost money every year and put the maintainer's legal name on the signature; none is in use.
+
+**Status (2026-11-03):** the repository side is built on the branch `signing` (section 4) and merges once SignPath has
+accepted the project and section 2 is done; `main` releases unsigned until then. Next is the application (section 2,
+step 2, the user's). Once the sign job has passed on a release, this paragraph goes.
 
 ## 1. Does Axit qualify (SignPath Foundation's terms, read 2026-10-25)
 
@@ -26,22 +32,71 @@ check); the workflow step would differ, the rest of this plan would not.
 | Multi-factor sign-in for every team member on SignPath and GitHub | The user turns it on for GitHub and for SignPath (`GOVERNANCE.md` commits to it) |
 | Roles: authors, reviewers, approvers | Done: `GOVERNANCE.md` and the README's code signing policy (the maintainer, all three) |
 | A "Code signing policy" on the home page and the release pages | Done: the README's section, linked from every release page's notes (the release workflow); its one sentence about SignPath changes once they accept |
-| Product name and version in the file's metadata, the same on every build | `src/Axit/Axit.csproj`: `<Product>Axit</Product>`, `<Version>` set by `release.ps1` |
-| Built from source by an automated build; each release approved by hand | The release workflow builds the tag; the maintainer approves each signing in SignPath's web page |
+| Product name and version in the file's metadata, the same on every build | `src/Axit/Axit.csproj`: `<Product>Axit</Product>`, `<Version>` set by `release.ps1`; the artifact configuration (section 2) holds the product name to "Axit" |
+| Built from source by an automated build; each release approved by hand | The release workflow builds the tag on GitHub's own runners; SignPath checks the build's origin; the maintainer approves each signing in SignPath |
 
 Nothing found that disqualifies Axit; SignPath decides on the application.
 
-## 2. What the user does (once)
+## 2. Setting it up (the user does the marked steps; Claude the rest)
 
-1. Turn on two-factor sign-in on GitHub, if not on yet (the audit's open item S-36).
-2. Apply at SignPath Foundation (signpath.org, Apply) for the project `KyleKeane/Axit`, an AGPL-3.0-licensed bundle of
-   accessible Windows apps built by GitHub Actions. Their review takes days to weeks.
-3. Once accepted: in SignPath, add the predefined GitHub.com trusted build system to the organisation and link it to
-   the project; make a signing policy (for example `release-signing`) with the maintainer as approver; make an
-   artifact configuration that signs `Axit.exe` with the metadata restrictions Product "Axit" and the version.
-4. In SignPath, make an API token for a user with submitter rights; in the GitHub repository's settings, add it as the
-   secret `SIGNPATH_API_TOKEN`, and the organisation id as the variable `SIGNPATH_ORGANIZATION_ID`.
-5. Tell Claude in this repository "SignPath is set up", and it does section 4.
+SignPath's own side has no command line: its web app (app.signpath.io) is where steps 3 and 4 happen, once. The
+GitHub side is `gh`. Nothing of this is needed on a second development computer: the signing happens in GitHub
+Actions, and a release from another computer needs only what AX-3.4 already needs there (the release key, `gh` signed
+in).
+
+1. **Two-factor sign-in on GitHub** (the user), if not on yet (the audit's open item S-36).
+2. **Apply** (the user, in a browser): signpath.org, Apply, for the project https://github.com/KyleKeane/Axit, an
+   AGPL-3.0-only bundle of accessible Windows apps for a blind developer, built by GitHub Actions
+   (`.github/workflows/release.yml`), released on GitHub since 1.0.0, with the code signing policy in its README
+   (section 3). SignPath's review takes days to weeks; the answer comes by e-mail with an invitation to an
+   organisation of the project's own in SignPath, with SignPath Foundation's certificate in it.
+3. **The SignPath side** (the user, in app.signpath.io; the names are the ones the workflow uses):
+   1. Multi-factor sign-in on the SignPath account (the Foundation's condition).
+   2. Trusted Build Systems (top menu), Add predefined, GitHub.com.
+   3. Projects, add a project: name Axit, slug `Axit` (the workflow's `project-slug`), Repository URL
+      `https://github.com/KyleKeane/Axit` (origin verification reads it). In the project, Trusted build systems,
+      Link, GitHub.com.
+   4. An artifact configuration, custom XML (the default one of the project):
+      ```xml
+      <artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+        <zip-file>
+          <pe-file path="Axit.exe" product-name="Axit">
+            <authenticode-sign />
+          </pe-file>
+        </zip-file>
+      </artifact-configuration>
+      ```
+      A GitHub artifact is a zip; the build job uploads `Axit.exe` alone as the artifact `unsigned`, so the zip has
+      the file at its root. `product-name` holds the file's product name to "Axit", as the terms ask. A version
+      restriction (`product-version="${version}"` with a `<parameters>` block) would need the workflow to pass the
+      version in the action's `parameters` input; not done, the tag names the version.
+   5. A signing policy: name Release signing, slug `release-signing` (the workflow's `signing-policy-slug`), purpose
+      release, SignPath Foundation's certificate, the approval process on with the maintainer as approver and one
+      approval required, Verify origin on, allowed branch names `main` and `v*` (a release runs on a tag push, and
+      GitHub reports the tag's name as the run's branch; if origin verification refuses a tag build, the pattern is
+      widened in SignPath, nothing changes here).
+   6. A CI user (Users; for example `axit-ci`), made the policy's submitter: with trusted build system verification,
+      no interactive user may submit. Its API token (My profile, Generate token) is shown once; it goes to step 4.
+4. **The GitHub side** (Claude, from PowerShell on the maintainer's computer; the user pastes the token):
+   ```
+   gh api -X PUT repos/KyleKeane/Axit/environments/release -F "deployment_branch_policy[protected_branches]=false" -F "deployment_branch_policy[custom_branch_policies]=true"
+   gh api -X POST repos/KyleKeane/Axit/environments/release/deployment-branch-policies -f name=main -f type=branch
+   gh api -X POST repos/KyleKeane/Axit/environments/release/deployment-branch-policies -f "name=v*" -f type=tag
+   gh variable set SIGNPATH_ORGANIZATION_ID --repo KyleKeane/Axit --body <the organisation's id, from its page in SignPath>
+   gh secret set SIGNPATH_API_TOKEN --env release --repo KyleKeane/Axit
+   ```
+   The environment `release`, which only the branch `main` and tags `v*` may use, exists since 2026-11-03 (the
+   first three lines answer with the environment and each policy as made). The last line, run by the user, asks for
+   the value: paste the token and press Enter, so that it never passes through Claude's session. `gh secret list
+   --env release` and `gh variable list` then show the two names. The organisation id is not a secret; it is kept
+   out of this repository all the same, as every id is.
+5. **The first signed release** (Claude; the user approves): merge `signing` into `main`, take the Status paragraph
+   out of this page, release with `release.ps1`. The sign job submits the request and waits up to an hour; SignPath
+   e-mails the maintainer a link to the request, where Approve is. Then the zip, the draft, and `release.ps1`
+   signs and publishes as before. A failed or refused signing leaves no zip, no draft and nothing published; once the
+   cause is fixed, `gh workflow run release.yml -f tag=v<version>` runs the workflow again for the same tag, which
+   builds afresh and submits a new request. Last, on the second computer with Smart App Control on: Update and
+   restart, no block.
 
 ## 3. The code signing policy (in `README.md` since 2026-10-25; the first paragraph's wording once accepted)
 
@@ -54,29 +109,49 @@ Nothing found that disqualifies Axit; SignPath decides on the application.
 > Anthropic as Claude Code does. Nothing else leaves the computer: Axit sends no other data to any networked system
 > unless the user asks it to.
 
-## 4. What changes in the repository (Claude does this after section 2)
+## 4. How a release is signed (`.github/workflows/release.yml`, built 2026-11-03)
 
-- `.github/workflows/release.yml`, in the build job after `publish.ps1 -NoInstall`, before the zip is used:
-  1. upload `publish/win-x64/Axit.exe` alone as a workflow artifact (`actions/upload-artifact`, pinned to a commit
-     hash as the others are);
-  2. `signpath/github-action-submit-signing-request` (pinned to a commit hash of its v3), with `api-token`,
-     `organization-id`, `project-slug: Axit`, `signing-policy-slug: release-signing`, `github-artifact-id` from the
-     upload, `wait-for-completion: true` and `output-artifact-directory`; the job waits for the maintainer's approval
-     in SignPath;
-  3. the signed `Axit.exe` put back into `publish/win-x64`, checked with `Get-AuthenticodeSignature` (status Valid,
-     signer SignPath Foundation), and the zip and `apps.json` made again from it (`publish.ps1` gains a `-ZipOnly`
-     switch for this, or the zip step moves after the signing);
-  4. the job's token stays read-only (S-30); the SignPath step needs only its own API token.
-- `release.ps1` and `tools/sign-release.ps1`: unchanged in order: the draft is made after the Authenticode signing,
-  and the release key still signs the zip, as the apps' updater checks (AX-3.4). The release waits for the
-  maintainer's approval in SignPath before the draft exists, so `release.ps1`'s wait for the workflow covers it.
-- `docs/axit/SPEC.md` AX-3.4 says the program is Authenticode-signed by SignPath Foundation; the audit's open item
-  closes; `README.md`, `SECURITY.md` and the release notes gain section 3.
-- A test in `tests/Axit.Tests` that `release.yml` signs before it zips (reading the workflow, as `LayoutTests` reads
-  the sources), so that a later edit cannot zip an unsigned program.
-- The first signed release is checked on the second computer: Smart App Control on, Update and restart, no block.
+Three jobs. **build** (a token that can only read, S-30) tests, runs `publish.ps1 -NoInstall -NoZip`, which builds
+`publish/win-x64` without zipping it, writes the release notes, uploads `publish/win-x64/Axit.exe` alone as the
+artifact `unsigned` (the one SignPath signs; its id is the job's output) and the folder with `install.cmd`, `notes.md`
+and `tag.txt` as the artifact `build`. **sign** (environment `release`; a job of its own, so that the tests and their
+packages never run beside the API token) checks the repository out for `publish.ps1`, downloads `build`, and runs
+`signpath/github-action-submit-signing-request` with the token, the organisation id, the project `Axit`, the policy
+`release-signing` and the `unsigned` artifact's id; SignPath fetches the artifact from the run, verifies its origin,
+waits for the maintainer's approval (the job waits up to an hour), signs, and the action puts the signed file in
+`signed\Axit.exe`. The job copies it over `publish/win-x64/Axit.exe`, checks it with `Get-AuthenticodeSignature`,
+stops unless Windows finds the signature Valid, writes the signer's name into the release notes, runs
+`publish.ps1 -ZipOnly` and uploads the artifact `release`. **draft** uploads it to a draft release and attests the
+build's provenance, as before. Every action is pinned to a commit; `tests/Axit.Tests/ReleaseWorkflowTests.cs` keeps
+the order (publish, upload unsigned, sign, check, zip, draft), the pins, and the token in the sign job alone.
 
-## 5. Until then
+`release.ps1` and `tools/sign-release.ps1` are unchanged: the release key still signs the zip, which is what the apps'
+updater and `install.cmd` check (AX-3.4). `release.ps1`'s wait for the workflow covers the wait for the approval.
+
+On a user's computer, nothing changes except that Windows now finds a signature on `Axit.exe`, with SignPath
+Foundation as the publisher: Smart App Control and SmartScreen read it; Axit itself makes no new network contact. The
+update from an unsigned version to the first signed one goes through the old version's installer, which copies the
+new, signed program; Windows checks that file when it starts.
+
+## 5. If it breaks
+
+- The sign job fails on origin verification: the project's Repository URL, the policy's allowed branch names (a tag
+  build reports the tag's name) or a run not on GitHub's own runners; SignPath's request page says which.
+- It fails on the artifact configuration: `Axit.exe` is not at the zip's root (the `unsigned` upload changed) or its
+  product name is no longer "Axit" (`src/Axit/Axit.csproj`).
+- It times out: nobody approved within the hour. Approve, or run the workflow again for the tag (section 2, step 5).
+- It fails to sign in: the API token was revoked or its CI user lost the submitter role; a new token, pasted with
+  `gh secret set SIGNPATH_API_TOKEN --env release`.
+- It fails at `Get-AuthenticodeSignature`: look at the status it printed before relaxing anything.
+- Once a year, in the longevity check (`docs/axit/longevity.md`): the sign job of the last release passed; the
+  environment, the secret and the variable are still there; SignPath's terms have not changed under the project.
+- Leaving the service: the sign job of the workflow is the one piece that knows it; another signer takes its place
+  there, and the check and the zip after it stay.
+- Users on versions up to 4.0.0 whose Smart App Control is on may still be refused the update to the first signed
+  release, when Smart App Control blocks the old installer's copy of the new file; the update stops cleanly (AX-3.6)
+  and the zip installs by hand from the release page, where Windows checks the signed program.
+
+## 6. Until then
 
 - Users whose Smart App Control is off or in evaluation update as before.
 - Users whose Smart App Control is on may be refused an update; since 3.7.5 the update stops cleanly with the reason,

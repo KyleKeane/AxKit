@@ -22,11 +22,11 @@ copies are the releases on this repository's releases page. Contributions come u
 
 - **Authors** may commit changes to `main` without another review. Today only the maintainer.
 - **Reviewers** review every change from anyone else, a pull request, before it is merged. Today the maintainer.
-- **Approvers** approve every release before it is published and, once code signing is in place, every signing
-  request (`docs/axit/code-signing.md`). Today the maintainer.
+- **Approvers** approve every release before it is published and, in SignPath, the signing of its program
+  (`docs/axit/code-signing.md`). Today the maintainer.
 
 A new role holder is added here, in a commit of its own, before they act in that role. Every role holder signs in to
-GitHub, and to the signing service once there is one, with two-factor authentication.
+GitHub, and to SignPath, where the signings are approved, with two-factor authentication.
 
 ## How decisions are made
 

@@ -199,8 +199,9 @@ Open:
 - **Code signing for Windows** (2026-10-25): Smart App Control blocked 3.7.1's and 3.7.4's new `Axit.exe` on the
   maintainer's second computer ("An Application Control policy has blocked this file"), since the program carries no
   Authenticode signature (the release key signs the zip for the apps, which Windows does not know). The installer stops
-  cleanly since 3.7.5. The fix is an Authenticode signature on every release; the plan is SignPath Foundation's free
-  signing for open-source projects, `docs/axit/code-signing.md`, which the user applies for.
+  cleanly since 3.7.5. The fix is an Authenticode signature on every release: the release workflow's sign job, built
+  2026-11-03, has SignPath Foundation sign it (free signing for open-source projects, `docs/axit/code-signing.md`),
+  which the user applies for; closes with the first signed release.
 - An outside review by a security professional (section 5).
 ## 3b. The review of 3.7.x (2026-10-25)
 

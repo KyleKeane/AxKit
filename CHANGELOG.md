@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.0
+
+- Axit: `Axit.exe` is signed for Windows (Authenticode) by SignPath Foundation, free code signing provided by SignPath.io for open-source projects, in the release workflow before the zip is built and approved by hand for each release, so that Windows' Smart App Control accepts an update instead of blocking it ("An Application Control policy has blocked this file" on 3.7.1 and 3.7.4). Releases up to 4.0.0 carried no such signature. For developers: the workflow signs in a job of its own, whose API token is the `release` environment's secret, and zips nothing Windows does not find validly signed (`docs/axit/code-signing.md`; `publish.ps1 -NoZip` and `-ZipOnly`; `ReleaseWorkflowTests` keeps the order and the pinned actions).
+
 ## 4.0.0
 
 - Axit: Axit says plainly what it is: the tools its maker uses every day as a blind scientist, shared in case they help others, not a product or a service, with no support and no warranty. The README, the guides, the installer and `NOTICE.md` say so, and the notes about each tool read as reminders.

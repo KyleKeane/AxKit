@@ -55,7 +55,7 @@ Axit collects nothing: no telemetry, no analytics, no accounts. On its own it ma
 
 Every release is built by GitHub Actions from this repository's source, with GitHub's attestation of where it was built, and approved by the maintainer before it is published. Its zip is signed with Axit's release key, which never leaves the maintainer's computer; the installed apps and `install.cmd` install nothing whose signature does not check ([docs/axit/SPEC.md](docs/axit/SPEC.md) AX-3.4).
 
-Windows code signing of `Axit.exe` (Authenticode, which Windows' Smart App Control checks) has been prepared for SignPath Foundation's free signing of open-source projects ([docs/axit/code-signing.md](docs/axit/code-signing.md)). Once SignPath accepts the project, this section reads: free code signing provided by SignPath.io, certificate by SignPath Foundation; every release's `Axit.exe` then carries that signature, and each signing is approved by hand.
+**Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).** From 4.1.0, every release's `Axit.exe` carries that Windows signature (Authenticode, which Windows' Smart App Control checks), made by the release workflow before the zip is built and approved by hand for each release ([docs/axit/code-signing.md](docs/axit/code-signing.md)); Windows names SignPath Foundation as the publisher. Releases up to 4.0.0 carry no such signature, and Smart App Control may refuse them.
 
 Team and roles ([GOVERNANCE.md](GOVERNANCE.md)): Dr. Kyle Keane (www.kylekeane.com), author, reviewer and approver.
 

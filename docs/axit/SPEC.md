@@ -271,6 +271,13 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   signature checks against the public half in `Axit.Core/Updates/ReleaseSigning`; `install.cmd` alone does the same
   check in Windows PowerShell, into a folder of a random name. A release without a signature is never installed by
   the apps. Losing the key means one release installed by hand with a new key's public half in it.
+  **Signed for Windows** (SignPath Foundation; `docs/axit/code-signing.md`): the release workflow has `Axit.exe`
+  signed with an Authenticode signature by SignPath Foundation's certificate, free code signing for open-source
+  projects, which Windows' Smart App Control accepts: a job of its own uploads the unsigned program as an artifact,
+  SignPath verifies where it was built, the maintainer approves the signing by hand, and the job zips nothing unless
+  Windows finds the returned file's signature valid (`tests/Axit.Tests/ReleaseWorkflowTests.cs` keeps the order; the
+  API token is the `release` environment's secret, which only `main` and `v*` tags can use). The release key signs the
+  zip as before.
 
 ### AX-4 Releases
 
