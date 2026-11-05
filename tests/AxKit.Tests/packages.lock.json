@@ -4,12 +4,12 @@
     "net10.0-windows7.0": {
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
-        "requested": "[17.14.1, )",
-        "resolved": "17.14.1",
-        "contentHash": "HJKqKOE+vshXra2aEHpi2TlxYX7Z9VFYkr+E5rwEvHC8eIXiyO+K9kNm8vmNom3e2rA56WqxU+/N9NJlLGXsJQ==",
+        "requested": "[18.11.0, )",
+        "resolved": "18.11.0",
+        "contentHash": "xf/bR0LNkhK0SnadDRlZIQmC4sac5Wk0e1WAdiQjRN3MSo6gQ9M2c4c1XRNnVGjfOvckh704W5CJ19AL0/Xsdg==",
         "dependencies": {
-          "Microsoft.CodeCoverage": "17.14.1",
-          "Microsoft.TestPlatform.TestHost": "17.14.1"
+          "Microsoft.CodeCoverage": "18.11.0",
+          "Microsoft.TestPlatform.TestHost": "18.11.0"
         }
       },
       "xunit": {
@@ -25,33 +25,27 @@
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
-        "requested": "[3.1.4, )",
-        "resolved": "3.1.4",
-        "contentHash": "5mj99LvCqrq3CNi06xYdyIAXOEh+5b33F2nErCzI5zWiDdLHXiPXEWFSUAF8zlIv0ZWqjZNCwHTQeAPYbF3pCg=="
+        "requested": "[4.0.1, )",
+        "resolved": "4.0.1",
+        "contentHash": "8CoAaZkniVekR1ycJyxn+hOz+6ZQCDPcoIsIs6ujd4WyFcBMlxGNU15Qb8Uxd4iO4UmOuETb0M6vzBbwX/mfLA=="
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
-        "resolved": "17.14.1",
-        "contentHash": "pmTrhfFIoplzFVbhVwUquT+77CbGH+h4/3mBpdmIlYtBi9nAB+kKI6dN3A/nV4DFi3wLLx/BlHIPK+MkbQ6Tpg=="
+        "resolved": "18.11.0",
+        "contentHash": "MhN9wpvL1Es4hfIYslrsVgIsUdDFxuOBTbAl9mGIMvFo8PP5CLf4DrGdNrfwWSyn0lqi6sssm+I/qkkLL3MU+g=="
       },
       "Microsoft.TestPlatform.ObjectModel": {
         "type": "Transitive",
-        "resolved": "17.14.1",
-        "contentHash": "xTP1W6Mi6SWmuxd3a+jj9G9UoC850WGwZUps1Wah9r1ZxgXhdJfj1QqDLJkFjHDCvN42qDL2Ps5KjQYWUU0zcQ=="
+        "resolved": "18.11.0",
+        "contentHash": "BXBHYnwSOljKute8UYCMXOLAdB7awxEMppPSpqOF1ZxLD/W/OH+vTBgFaXA7q0aditJTVXSMVenel+wOkEIyNg=="
       },
       "Microsoft.TestPlatform.TestHost": {
         "type": "Transitive",
-        "resolved": "17.14.1",
-        "contentHash": "d78LPzGKkJwsJXAQwsbJJ7LE7D1wB+rAyhHHAaODF+RDSQ0NgMjDFkSA1Djw18VrxO76GlKAjRUhl+H8NL8Z+Q==",
+        "resolved": "18.11.0",
+        "contentHash": "AKjwKpyRBwoQFQmpcchtoYlfJEBlaY/40uxBRi+qXP4NR7xT8t+XTJtOyEyumfvfJcH5pASs75LwNdXYRr4XNA==",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.14.1",
-          "Newtonsoft.Json": "13.0.3"
+          "Microsoft.TestPlatform.ObjectModel": "18.11.0"
         }
-      },
-      "Newtonsoft.Json": {
-        "type": "Transitive",
-        "resolved": "13.0.3",
-        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
       "xunit.abstractions": {
         "type": "Transitive",
@@ -93,7 +87,7 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
-      "axcalc": {
+      "axCalc": {
         "type": "Project",
         "dependencies": {
           "AxCalc.Core": "[1.0.0, )",
@@ -107,7 +101,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axclaude": {
+      "axClaude": {
         "type": "Project",
         "dependencies": {
           "AxClaude.Core": "[1.0.0, )",
@@ -121,7 +115,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axclip": {
+      "axClip": {
         "type": "Project",
         "dependencies": {
           "AxClip.Core": "[1.0.0, )",
@@ -135,14 +129,14 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axdown": {
+      "axDown": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",
           "AxKit.Forms": "[1.0.0, )"
         }
       },
-      "axfile": {
+      "axFile": {
         "type": "Project",
         "dependencies": {
           "AxFile.Core": "[1.0.0, )",
@@ -156,7 +150,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axgit": {
+      "axGIT": {
         "type": "Project",
         "dependencies": {
           "AxGit.Core": "[1.0.0, )",
@@ -165,6 +159,20 @@
         }
       },
       "axgit.core": {
+        "type": "Project",
+        "dependencies": {
+          "AxKit.Core": "[1.0.0, )"
+        }
+      },
+      "axJSON": {
+        "type": "Project",
+        "dependencies": {
+          "AxJSON.Core": "[1.0.0, )",
+          "AxKit.Core": "[1.0.0, )",
+          "AxKit.Forms": "[1.0.0, )"
+        }
+      },
+      "axjson.core": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )"
@@ -179,26 +187,12 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axjson": {
+      "axMedia": {
         "type": "Project",
         "dependencies": {
-          "AxJSON.Core": "[1.0.0, )",
           "AxKit.Core": "[1.0.0, )",
-          "AxKit.Forms": "[1.0.0, )"
-        }
-      },
-      "axjson.core": {
-        "type": "Project",
-        "dependencies": {
-          "AxKit.Core": "[1.0.0, )"
-        }
-      },
-      "axmedia": {
-        "type": "Project",
-        "dependencies": {
-          "AxMedia.Core": "[1.0.0, )",
-          "AxKit.Core": "[1.0.0, )",
-          "AxKit.Forms": "[1.0.0, )"
+          "AxKit.Forms": "[1.0.0, )",
+          "AxMedia.Core": "[1.0.0, )"
         }
       },
       "axmedia.core": {
@@ -207,12 +201,12 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axpass": {
+      "axPass": {
         "type": "Project",
         "dependencies": {
-          "AxPass.Core": "[1.0.0, )",
           "AxKit.Core": "[1.0.0, )",
-          "AxKit.Forms": "[1.0.0, )"
+          "AxKit.Forms": "[1.0.0, )",
+          "AxPass.Core": "[1.0.0, )"
         }
       },
       "axpass.core": {
@@ -221,12 +215,12 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axpreview": {
+      "axPreview": {
         "type": "Project",
         "dependencies": {
-          "AxPreview.Core": "[1.0.0, )",
           "AxKit.Core": "[1.0.0, )",
-          "AxKit.Forms": "[1.0.0, )"
+          "AxKit.Forms": "[1.0.0, )",
+          "AxPreview.Core": "[1.0.0, )"
         }
       },
       "axpreview.core": {
@@ -235,12 +229,12 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axprocess": {
+      "axProcess": {
         "type": "Project",
         "dependencies": {
-          "AxProcess.Core": "[1.0.0, )",
           "AxKit.Core": "[1.0.0, )",
-          "AxKit.Forms": "[1.0.0, )"
+          "AxKit.Forms": "[1.0.0, )",
+          "AxProcess.Core": "[1.0.0, )"
         }
       },
       "axprocess.core": {
@@ -249,12 +243,12 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axstart": {
+      "axStart": {
         "type": "Project",
         "dependencies": {
-          "AxStart.Core": "[1.0.0, )",
           "AxKit.Core": "[1.0.0, )",
-          "AxKit.Forms": "[1.0.0, )"
+          "AxKit.Forms": "[1.0.0, )",
+          "AxStart.Core": "[1.0.0, )"
         }
       },
       "axstart.core": {
@@ -263,12 +257,12 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axtask": {
+      "axTask": {
         "type": "Project",
         "dependencies": {
-          "AxTask.Core": "[1.0.0, )",
           "AxKit.Core": "[1.0.0, )",
-          "AxKit.Forms": "[1.0.0, )"
+          "AxKit.Forms": "[1.0.0, )",
+          "AxTask.Core": "[1.0.0, )"
         }
       },
       "axtask.core": {
@@ -277,12 +271,12 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axterminal": {
+      "axTerminal": {
         "type": "Project",
         "dependencies": {
-          "AxTerminal.Core": "[1.0.0, )",
           "AxKit.Core": "[1.0.0, )",
-          "AxKit.Forms": "[1.0.0, )"
+          "AxKit.Forms": "[1.0.0, )",
+          "AxTerminal.Core": "[1.0.0, )"
         }
       },
       "axterminal.core": {
