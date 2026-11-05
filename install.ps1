@@ -23,8 +23,10 @@
       folder; a removal leaves the PATH, since the folder may hold other programs' commands).
   It also lists axKit in Settings, Apps (Add or remove programs), whose Uninstall runs install.cmd -Uninstall.
   -Uninstall removes all of that. The settings in %APPDATA%\AxKit and the logs in %LOCALAPPDATA%\AxKit stay.
-  An installation of axClaude 1.x, from before the bundle, is removed completely first; its settings file stays in
-  %APPDATA%\AxClaude, and axClaude copies it on its first start under axKit.
+  An installation of Axit, the bundle's name up to 4.0.0, or of axClaude 1.x, from before the bundle, is removed
+  completely first (AX-2.6). What Axit kept in %APPDATA%\Axit and %LOCALAPPDATA%\Axit moves into the AxKit folders the
+  first time an app starts (AX-5.4); axClaude 1.x's settings file stays in %APPDATA%\AxClaude, and axClaude copies it
+  on its first start.
 
 .EXAMPLE
   .\install.ps1                 # install or update
@@ -38,7 +40,7 @@
   The apps' own Update (the axKit menu) runs the downloaded version's copy of this script as
     install.ps1 -InPlace -LogFile <file>
   while the app keeps running (AX-2.8): the new files are written over the old ones, what earlier versions left goes
-  (their File Explorer entries, axClaude 1.x's folder and entries, files this version does not ship), and the
+  (their File Explorer entries, Axit's and axClaude 1.x's folders and entries, files this version does not ship), and the
   running AxKit.exe is renamed AxKit.old.exe first, since a running program file can be renamed but not overwritten;
   the app then starts the new version itself, and the next start removes the old file. Copies before 2.3.0 call
     install.ps1 -WaitForProcess <pid> [-Start <folder> [-ContinueConversation]] [-StartFile <file>] -LogFile <file>
@@ -174,7 +176,7 @@ foreach ($entry in ($listingJson | ConvertFrom-Json)) {
     $iconFile = "$($entry.project).ico"
     # Title is the name as the user meets it, "axClaude, access layer for Claude Code" (AX-11.2); AccessLayer puts the app
     # after the standalone apps in File Explorer's submenu (AX-11.3).
-    $app = @{ Name = $entry.name; Title = $(if ($entry.title) { $entry.title } else { $entry.name }); AccessLayer = [bool]$entry.accessLayer
+    $app = @{ Name = $entry.name; Project = $entry.project; Title = $(if ($entry.title) { $entry.title } else { $entry.name }); AccessLayer = [bool]$entry.accessLayer
         Verb = $entry.verb; Description = $entry.description; Opens = @($entry.explorer)
         Icon = if (Test-Path -LiteralPath (Join-Path $source $iconFile)) { Join-Path $target $iconFile } else { $exe } }
     if (@($entry.types).Count -gt 0) { $app.Types = @($entry.types) }
@@ -184,8 +186,6 @@ foreach ($entry in ($listingJson | ConvertFrom-Json)) {
 # The places that follow from the name.
 foreach ($app in $apps) {
     $app.Start = Join-Path $programs "axKit $($app.Title).lnk"
-    # The entry by the name alone, as versions up to 3.7.6 made it for every app.
-    $app.OldStart = Join-Path $programs "axKit $($app.Name).lnk"
     $app.Shim = Join-Path $bin ($app.Name.ToLower() + '.cmd')
     $app.ProgId = "AxKit.$($app.Name)"
     # Windows' Open with lists one program per program file, so an app with file types has a hard link of AxKit.exe
@@ -203,35 +203,55 @@ $menus = @(
     @{ Key = "$classes\*\shell\AxKit"; Opens = 'files'; Argument = '%1' }
 )
 
-# What earlier versions put on the machine: one entry per app in File Explorer's menus, before the submenu (up to
-# 2.13.0), and axClaude 1.x under its own names; the rest of 1.x's places are the same as axKit's.
-$oldMenuKeys = @("$classes\Directory\shell\AxClaude", "$classes\Directory\Background\shell\AxClaude",
-    "$classes\Directory\shell\AxGit", "$classes\Directory\Background\shell\AxGit",
-    "$classes\Directory\shell\AxTerminal", "$classes\Directory\Background\shell\AxTerminal", "$classes\*\shell\AxDown")
-$oldTarget = Join-Path $env:LOCALAPPDATA 'Programs\AxClaude'
-$oldExe = Join-Path $oldTarget 'AxClaude.exe'
-$oldAppsKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\AxClaude'
-$oldStartMenu = Join-Path $programs 'AxClaude.lnk'
-# Open with values of earlier versions that this one does not write again: axPreview's own file types up to 3.7.1,
-# every file since.
-$oldOpenWith = @{ 'AxKit.axPreview' = @('.txt', '.md', '.markdown', '.log', '.json') }
-function Remove-OldOpenWith {
-    foreach ($progId in $oldOpenWith.Keys) {
-        foreach ($extension in $oldOpenWith[$progId]) {
-            $key = "$classes\$extension\OpenWithProgids"
-            if ((Test-Path -LiteralPath $key) -and (Get-ItemProperty -LiteralPath $key).PSObject.Properties[$progId]) {
-                Remove-ItemProperty -LiteralPath $key -Name $progId
-            }
+# What the bundle's earlier names put on the machine (AX-2.6), all of it removed by an install or an uninstall: Axit,
+# the bundle's name up to 4.0.0 (axKit since 2026-11-05, B-16), whose places are this version's under the old name,
+# with the Start menu entries by title (4.0.0), by name (up to 3.7.6) and by project (up to 2.x, "Axit AxClaude");
+# and axClaude 1.x, the first app alone, with one entry per app in File Explorer's menus (up to 2.13.0). A ProgID's
+# Open with values live inside the file types' keys (Remove-OldOpenWith); Axit's axPreview had its own file types up
+# to 3.7.1 and every file since.
+$earlier = @(
+    @{ Name = 'Axit'; Target = Join-Path $env:LOCALAPPDATA 'Programs\Axit'; Exe = 'Axit.exe'
+        AppsKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Axit'
+        StartMenu = @($apps | ForEach-Object { "Axit $($_.Title).lnk"; "Axit $($_.Name).lnk"; "Axit $($_.Project).lnk" } | Select-Object -Unique | ForEach-Object { Join-Path $programs $_ })
+        MenuKeys = @("$classes\Directory\shell\Axit", "$classes\Directory\Background\shell\Axit", "$classes\*\shell\Axit")
+        ProgIds = @($apps | Where-Object { $_.OpenWith } | ForEach-Object { "Axit.$($_.Name)" })
+        Shims = @(Join-Path $bin 'axit.cmd'); RunValues = @('Axit axStart', 'Axit axClip') },
+    @{ Name = 'axClaude'; Target = Join-Path $env:LOCALAPPDATA 'Programs\AxClaude'; Exe = 'AxClaude.exe'
+        AppsKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\AxClaude'
+        StartMenu = @(Join-Path $programs 'AxClaude.lnk')
+        MenuKeys = @("$classes\Directory\shell\AxClaude", "$classes\Directory\Background\shell\AxClaude",
+            "$classes\Directory\shell\AxGit", "$classes\Directory\Background\shell\AxGit",
+            "$classes\Directory\shell\AxTerminal", "$classes\Directory\Background\shell\AxTerminal", "$classes\*\shell\AxDown")
+        ProgIds = @(); Shims = @(); RunValues = @() }
+)
+$oldPreviewTypes = @('.txt', '.md', '.markdown', '.log', '.json')
+# Everything but the folder that an earlier name left: its Apps entry, Start menu entries, File Explorer keys, ProgIDs
+# and console commands, as paths and registry paths.
+$earlierPlaces = @($earlier | ForEach-Object { $_.AppsKey; $_.StartMenu; $_.MenuKeys; $_.Shims; @($_.ProgIds | ForEach-Object { "$classes\$_" }) })
+
+# A ProgID's values taken out of the file types' Open with keys.
+function Remove-OpenWithValues([string]$progId, [string[]]$extensions) {
+    foreach ($extension in $extensions) {
+        $key = "$classes\$extension\OpenWithProgids"
+        if ((Test-Path -LiteralPath $key) -and (Get-ItemProperty -LiteralPath $key).PSObject.Properties[$progId]) {
+            Remove-ItemProperty -LiteralPath $key -Name $progId
         }
     }
 }
+function Remove-OldOpenWith {
+    foreach ($app in ($apps | Where-Object { $_.OpenWith })) {
+        $types = @($app.OpenWith) + $(if ($app.Name -eq 'axPreview') { $oldPreviewTypes } else { @() })
+        Remove-OpenWithValues "Axit.$($app.Name)" $types
+    }
+}
 
-# Everything an installation puts on the machine, this version's and the earlier ones', so that one removal clears
+# Everything an installation puts on the machine, this version's and the earlier names', so that one removal clears
 # all of them. The Open with values live inside the file types' own keys and are removed one by one
 # (Remove-Installation).
-$places = @($target, $oldTarget, $appsKey, $oldAppsKey, $oldStartMenu) + @($menus | ForEach-Object { $_.Key }) + $oldMenuKeys +
+$places = @($target, $appsKey) + @($menus | ForEach-Object { $_.Key }) +
     @($apps | Where-Object { $_.OpenWith } | ForEach-Object { "$classes\$($_.ProgId)" }) +
-    @($apps | ForEach-Object { $_.Start; $_.OldStart } | Select-Object -Unique) + @(Join-Path $bin 'axkit.cmd') + @($apps | ForEach-Object { $_.Shim })
+    @($apps | ForEach-Object { $_.Start }) + @(Join-Path $bin 'axkit.cmd') + @($apps | ForEach-Object { $_.Shim }) +
+    @($earlier | ForEach-Object { $_.Target }) + $earlierPlaces
 
 function Get-Version([string]$path) {
     (Get-Item $path).VersionInfo.FileVersion -replace '^(\d+\.\d+\.\d+).*', '$1'
@@ -248,8 +268,9 @@ $background = @(
 )
 function Stop-Background {
     foreach ($app in $background) {
-        $running = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe'" -ErrorAction SilentlyContinue |
-            Where-Object { $_.CommandLine -match ('^"?[^"]*\\AxKit[^"\\]*\.exe"?\s+' + $app.Verb + '(\s|$)') })
+        # Under the old name too: an Axit.exe from sign-in holds its folder and its hotkey.
+        $running = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe' OR Name = 'Axit.exe'" -ErrorAction SilentlyContinue |
+            Where-Object { $_.CommandLine -match ('^"?[^"]*\\(AxKit|Axit)[^"\\]*\.exe"?\s+' + $app.Verb + '(\s|$)') })
         foreach ($process in $running) {
             try { Stop-Process -Id $process.ProcessId -Force -ErrorAction Stop; Wait-Process -Id $process.ProcessId -Timeout 10 -ErrorAction SilentlyContinue } catch { }
         }
@@ -275,8 +296,9 @@ function Start-Background {
 }
 
 function Test-Running {
-    $names = @('AxKit', 'axClaude') + @($linkNames | ForEach-Object { [IO.Path]::GetFileNameWithoutExtension($_) })
-    [bool](Get-Process -Name $names -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq $exe -or $_.Path -eq $oldExe -or ($_.Path -and (Split-Path -Parent $_.Path) -eq $target) })
+    $names = @('AxKit') + @($earlier | ForEach-Object { [IO.Path]::GetFileNameWithoutExtension($_.Exe) }) + @($linkNames | ForEach-Object { [IO.Path]::GetFileNameWithoutExtension($_) })
+    $exes = @($exe) + @($earlier | ForEach-Object { Join-Path $_.Target $_.Exe })
+    [bool](Get-Process -Name $names -ErrorAction SilentlyContinue | Where-Object { $exes -contains $_.Path -or ($_.Path -and (Split-Path -Parent $_.Path) -eq $target) })
 }
 
 # An app's Open with link (AX-2.3), made again on every install so that it is the AxKit.exe just written: one still
@@ -302,7 +324,7 @@ function Set-OpenWithLink($app) {
 # Windows can hold the executable for a moment after the app exits, so a folder is tried again for a few seconds.
 # Registry paths go through -LiteralPath: the file keys have a * in them, which PowerShell would otherwise expand.
 function Remove-Installation {
-    foreach ($folder in $target, $oldTarget) {
+    foreach ($folder in @($target) + @($earlier | ForEach-Object { $_.Target })) {
         for ($attempt = 1; Test-Path -LiteralPath $folder; $attempt++) {
             try { Remove-Item -LiteralPath $folder -Recurse -Force }
             catch {
@@ -314,19 +336,13 @@ function Remove-Installation {
     foreach ($item in $places) {
         if (Test-Path -LiteralPath $item) { Remove-Item -LiteralPath $item -Recurse -Force }
     }
-    foreach ($app in $background) {
-        $value = "AxKit $($app.Name)"
+    foreach ($value in @($background | ForEach-Object { "AxKit $($_.Name)" }) + @($earlier | ForEach-Object { $_.RunValues })) {
         if ((Test-Path -LiteralPath $runKey) -and (Get-ItemProperty -LiteralPath $runKey).PSObject.Properties[$value]) {
             Remove-ItemProperty -LiteralPath $runKey -Name $value
         }
     }
     foreach ($app in ($apps | Where-Object { $_.OpenWith })) {
-        foreach ($extension in $app.OpenWith) {
-            $openWith = "$classes\$extension\OpenWithProgids"
-            if ((Test-Path -LiteralPath $openWith) -and (Get-ItemProperty -LiteralPath $openWith).PSObject.Properties[$app.ProgId]) {
-                Remove-ItemProperty -LiteralPath $openWith -Name $app.ProgId
-            }
-        }
+        Remove-OpenWithValues $app.ProgId $app.OpenWith
     }
     Remove-OldOpenWith
 }
@@ -352,8 +368,8 @@ if (-not (Test-Path -LiteralPath $sourceExe)) {
 Stop-Background
 $sameFolder = [string]::Equals((Resolve-Path $source).Path.TrimEnd('\'), $target.TrimEnd('\'), [StringComparison]::OrdinalIgnoreCase)
 if (-not $sameFolder) {
-    # A previous installation, of axKit or of axClaude 1.x, is removed completely first, so nothing of it stays
-    # behind; then this one is installed fresh. The older updaters come here too, after the running app has closed.
+    # A previous installation, of axKit, of Axit or of axClaude 1.x, is removed completely first, so nothing of it
+    # stays behind; then this one is installed fresh. The older updaters come here too, after the running app has closed.
     # In place (-InPlace, the apps' own update) the app keeps running: the files are written over the old ones, the
     # running program file is renamed, since it can be renamed but not overwritten or deleted, and what earlier
     # versions left goes afterwards, so that an update leaves the machine as a fresh install would.
@@ -364,9 +380,10 @@ if (-not $sameFolder) {
             exit 1
         }
 
-        $what = if (Test-Path -LiteralPath $exe) { 'axKit ' + (Get-Version $exe) }
-            elseif (Test-Path -LiteralPath $oldExe) { 'axClaude ' + (Get-Version $oldExe) }
-            else { 'what is left of an earlier installation' }
+        $what = 'what is left of an earlier installation'
+        foreach ($program in @(@{ Name = 'axKit'; Path = $exe }) + @($earlier | ForEach-Object { @{ Name = $_.Name; Path = Join-Path $_.Target $_.Exe } })) {
+            if (Test-Path -LiteralPath $program.Path) { $what = "$($program.Name) " + (Get-Version $program.Path); break }
+        }
         Say "Removing $what before installing..."
         Remove-Installation
     }
@@ -388,12 +405,16 @@ if (-not $sameFolder) {
     }
 
     if ($InPlace) {
-        # What earlier versions left and this one does not write again: axClaude 1.x's folder, Apps entry and Start
-        # menu entry, and files in the folder this version does not ship (the program file moved aside goes at the
-        # next start). The File Explorer entries of earlier versions go below, with the menu.
-        foreach ($item in $oldTarget, $oldAppsKey, $oldStartMenu) {
+        # What earlier names and versions left and this one does not write again: their folders, Apps entries, Start
+        # menu entries, console commands, ProgIDs, File Explorer keys and sign-in values, and files in the folder this
+        # version does not ship (the program file moved aside goes at the next start).
+        foreach ($item in @($earlier | ForEach-Object { $_.Target }) + $earlierPlaces) {
             if (Test-Path -LiteralPath $item) { try { Remove-Item -LiteralPath $item -Recurse -Force } catch { } }
         }
+        foreach ($value in @($earlier | ForEach-Object { $_.RunValues })) {
+            if ((Test-Path -LiteralPath $runKey) -and (Get-ItemProperty -LiteralPath $runKey).PSObject.Properties[$value]) { Remove-ItemProperty -LiteralPath $runKey -Name $value }
+        }
+        Remove-OldOpenWith
         foreach ($stale in Get-ChildItem -LiteralPath $target -File | Where-Object { $files -notcontains $_.Name -and $linkNames -notcontains $_.Name -and $_.Name -notlike '*.old*.exe' }) {
             try { Remove-Item -LiteralPath $stale.FullName -Force } catch { }
         }
@@ -437,7 +458,7 @@ if (-not $NoStartMenu) {
     foreach ($app in $apps) {
         # Removed first: a file written over one of the same name keeps the old one's capitals, and the shortcut's
         # name is what the Start menu shows and NVDA reads ("axKit axClaude", once "axKit AxClaude").
-        Remove-Item -LiteralPath $app.Start, $app.OldStart -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath $app.Start -ErrorAction SilentlyContinue
         $link = $shell.CreateShortcut($app.Start)
         $link.TargetPath = $exe
         $link.Arguments = $app.Verb
@@ -453,7 +474,7 @@ if (-not $NoContextMenu) {
     # SubCommands, and the entries are verbs under its shell subkey. AppliesTo keeps an entry to the file types it
     # names (Advanced Query Syntax, as Windows' own verbs do). The entries of earlier versions go first, on every
     # path through here, the in-place update's included.
-    foreach ($key in $oldMenuKeys) {
+    foreach ($key in @($earlier | ForEach-Object { $_.MenuKeys })) {
         if (Test-Path -LiteralPath $key) { Remove-Item -LiteralPath $key -Recurse -Force }
     }
 

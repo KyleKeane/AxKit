@@ -8,6 +8,8 @@ The tools I use every day as a blind scientist, working with the NVDA screen rea
 
 They are Windows apps in one program with one installer and one updater. Every app is made of native Windows controls that NVDA reads reliably, works without a mouse, says the result of each command once, and keeps its questions and errors inside its own window.
 
+axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commercial product carries that name; the old repository address, github.com/KyleKeane/Axit, redirects here. An installed Axit does not update into axKit by itself: close its windows and run `install.cmd` from the [latest release](https://github.com/KyleKeane/AxKit/releases/latest), which removes Axit and installs axKit, and your settings come along ([docs/axkit/README.md](docs/axkit/README.md), Install).
+
 ## The apps
 
 ### Standalone apps: Windows only, with the network off

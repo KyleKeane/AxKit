@@ -14,7 +14,8 @@ use, unchanged. One installer, one updater, one version, one changelog, one rele
 
 ## Decisions taken
 
-1. The GitHub repository was renamed `KyleKeane/AxKit` with 2.0.0; the old address redirects.
+1. The GitHub repository was renamed `KyleKeane/Axit` with 2.0.0, and `KyleKeane/AxKit` with 5.0.0, when the bundle
+   became axKit (2026-11-05, bundle SPEC B-16); the old addresses redirect.
 2. `axkit` with no argument starts axClaude on the current folder.
 3. axClaude 1.7.0 was released first as a bridge: its updater accepts a download whose program file is not
    `AxClaude.exe`, so installed copies could update into axKit.

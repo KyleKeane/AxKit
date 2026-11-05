@@ -35,6 +35,8 @@ internal static class Program
         // First of all: a test run's variables read and taken out of the environment, so that nothing this process
         // starts inherits them (security audit S-11).
         AutomationEnvironment.Capture();
+        // The folders of Axit, the bundle's name up to 4.0.0, taken over before anything reads a setting (AX-5.4).
+        AppPaths.TakeOverOldFolders();
         ApplicationConfiguration.Initialize();
         // AX-7.7: the windows are light or dark as Windows is; a high contrast theme takes over as it always has.
         Application.SetColorMode(SystemColorMode.System);

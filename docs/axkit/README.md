@@ -32,7 +32,7 @@ This puts axKit in your Programs folder (`%LOCALAPPDATA%\Programs\AxKit`) and ad
 
 The install also registers the apps that open files as programs Windows knows: axDown for `.md`, `.markdown` and `.txt`, axJSON for `.json`, axMedia for the sound and video kinds, axPreview for `.txt`, `.md`, `.markdown`, `.log` and `.json`. They appear under Windows' own `Open with`, and you can make one the program that opens a kind when you press Enter on a file, in axFile or in File Explorer: Settings, Apps, Default apps, the app, then the kind; or right-click a file, Open with, Choose another app, the app, Always. Windows does not let a program set that for itself, so axKit never does.
 
-If you had axClaude installed before axKit existed, the installer removes it first and axClaude takes over your settings the first time it starts.
+axKit was called Axit up to 4.0.0. If you have Axit installed, close its windows and run `install.cmd` from the release page: it removes Axit completely (its folder, Start menu entries, File Explorer entries, console commands, sign-in entries and Apps entry) and installs axKit, and the first app you start moves your settings, recently closed list, consents, AI tools' pairings and logs from the Axit folders to the AxKit folders. Axit's own Update cannot make this step, since it looks for a release's files under the old repository address. If you had axClaude installed before the bundle existed, the installer removes it first too, and axClaude takes over its settings the first time it starts.
 
 ## Start
 
@@ -47,7 +47,7 @@ If you had axClaude installed before axKit existed, the installer removes it fir
 
 ## Update
 
-Each app offers new versions itself (axKit menu, Check for updates and Update to). You can also run `install.cmd` again. Either way the old version is removed completely first and the new one is installed fresh. Your settings stay.
+Each app offers new versions itself (axKit menu, Check for updates and Update to). You can also run `install.cmd` again. Either way the old version is removed completely first and the new one is installed fresh. Your settings stay. An installed Axit, up to 4.0.0, is the one exception: its Update cannot reach axKit, and `install.cmd` is the way (see Install).
 
 ## Privacy
 

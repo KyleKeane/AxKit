@@ -43,6 +43,73 @@ public static class AppPaths
     public static string InstalledExe => Path.Combine(InstallFolder, "AxKit.exe");
 
     /// <summary>
+    /// The first start after the rename (docs/axkit/SPEC.md AX-5.4, B-16): what Axit, the bundle's name up to 4.0.0,
+    /// kept in <c>%APPDATA%\Axit</c> and <c>%LOCALAPPDATA%\Axit</c> moves into the AxKit folders, so that every app
+    /// finds its settings, the recently closed list, the consents, the AI tools' pairings and their key, and the logs
+    /// as they were. Never in a test run, whose folders are its own.
+    /// </summary>
+    public static void TakeOverOldFolders()
+    {
+        if (AutomationEnvironment.Home is not null)
+        {
+            return;
+        }
+
+        foreach (var folder in new[] { Environment.SpecialFolder.ApplicationData, Environment.SpecialFolder.LocalApplicationData })
+        {
+            var root = Environment.GetFolderPath(folder);
+            TakeOverFolder(Path.Combine(root, "Axit"), Path.Combine(root, "AxKit"));
+        }
+    }
+
+    /// <summary>
+    /// Moves what <paramref name="oldFolder"/> holds into <paramref name="folder"/>: a file the new folder lacks is
+    /// moved, a file it has stays, a subfolder is taken over the same way, and the old folder goes once it is empty;
+    /// nothing when it does not exist. Entry by entry, so that a start that could not move everything (a file the old
+    /// program still held) finishes the next time.
+    /// </summary>
+    public static void TakeOverFolder(string oldFolder, string folder)
+    {
+        if (!Directory.Exists(oldFolder))
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(folder);
+            foreach (var entry in Directory.GetFileSystemEntries(oldFolder))
+            {
+                var destination = Path.Combine(folder, Path.GetFileName(entry));
+                if (Directory.Exists(entry))
+                {
+                    if (Directory.Exists(destination))
+                    {
+                        TakeOverFolder(entry, destination);
+                    }
+                    else
+                    {
+                        Directory.Move(entry, destination);
+                    }
+                }
+                else if (!File.Exists(destination))
+                {
+                    File.Move(entry, destination);
+                }
+            }
+
+            if (Directory.GetFileSystemEntries(oldFolder).Length == 0)
+            {
+                Directory.Delete(oldFolder);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Log.Error($"{oldFolder} could not be moved into {folder}; it is tried again at the next start", ex);
+        }
+    }
+
+    /// <summary>
     /// The folder the settings, the recently closed list and the logs live under: the user's, or a test run's own
     /// (<see cref="AutomationEnvironment.Home"/>), so that its windows neither read nor write the user's files
     /// (docs/axkit/automation.md); a run's folder counts only with the run's secret (security audit S-11).

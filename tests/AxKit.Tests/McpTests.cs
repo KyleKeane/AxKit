@@ -170,7 +170,9 @@ public sealed class McpTests
     [Fact]
     public void Claude_Code_gets_this_AxKit_for_every_folder_an_earlier_entry_removed_first()
     {
-        Assert.Equal(["mcp", "remove", "--scope", "user", "axkit"], McpClaudeCode.RemoveArguments());
+        Assert.Equal(["mcp", "remove", "--scope", "user", "axkit"], McpClaudeCode.RemoveArguments(McpClaudeCode.ServerName));
+        // The entry of up to 4.0.0, when the bundle was Axit, goes the same way (B-16).
+        Assert.Equal(["mcp", "remove", "--scope", "user", "axit"], McpClaudeCode.RemoveArguments(McpClaudeCode.OldServerName));
         Assert.Equal(["mcp", "add", "--scope", "user", "axkit", "--", @"D:\AxKit\AxKit.exe", "mcp"], McpClaudeCode.AddArguments(@"D:\AxKit\AxKit.exe"));
         Assert.Equal("claude mcp add --scope user axkit -- \"D:\\AxKit\\AxKit.exe\" mcp", McpClaudeCode.AddCommandLine(@"D:\AxKit\AxKit.exe"));
     }

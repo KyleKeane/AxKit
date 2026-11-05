@@ -184,9 +184,17 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   and `AxKit.exe <verb>`. They work from cmd and from PowerShell.
 - AX-2.5 Settings, Apps lists one entry, `axKit`, with the version, the publisher and an Uninstall that runs
   `install.cmd -Uninstall`.
-- AX-2.6 Installing over an existing axClaude installation (any version) removes it completely first: its folder,
-  Start entry, `axclaude.cmd`, registry keys and Apps entry. The installer says what it found. The axClaude settings
-  file is left where it is; the app copies it on its first start (AX-5.2).
+- AX-2.6 Installing over an installation of an earlier name removes it completely first: Axit, the bundle's name up to
+  4.0.0 (B-16): its folder `%LOCALAPPDATA%\Programs\Axit`, its Start menu entries (`Axit <App>` by title, by name or by
+  project, as the versions made them), `axit.cmd`, the `Open with Axit` keys, the ProgIDs `Axit.<App>` with their Open
+  with values, the sign-in values `Axit axStart` and `Axit axClip`, and its Apps entry; and axClaude 1.x (any version):
+  its folder, Start entry, `axclaude.cmd`, registry keys and Apps entry. The installer says what it found, and stops an
+  `Axit.exe` running in the background as it stops `AxKit.exe`. Axit's settings and logs move on the first start
+  (AX-5.4); the axClaude settings file is left where it is, and the app copies it on its first start (AX-5.2). An
+  installed Axit up to 4.0.0 cannot take the update to axKit itself: its updater accepts a release's files only under
+  the old repository address, which GitHub rewrites to the new one once the repository is renamed (B-16), so its update
+  notice shows these release notes and its download fails with "no Windows zip attached"; the way over is
+  `install.cmd` from the release page, with the Axit windows closed.
 - AX-2.7 The hand-over parameters stay: `install.ps1 -WaitForProcess <pid> -Start <folder> [-ContinueConversation]
   -LogFile <file>` installs after that process ends and starts axClaude on the folder, as the 1.7.0 updater expects.
   `-StartFile <file>` starts axDown on the file the same way; nothing is renamed. Copies up to 2.2.0 update
@@ -319,6 +327,13 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   its own plain record of properties. A file that is not valid JSON (a typo after Options → Developer → Open settings file) is
   copied to `<app>.json.bad` before the defaults are used, and the error names the copy: the app saves its settings
   soon after loading, which would otherwise write the defaults over every other setting in the file.
+- AX-5.4 The first start after the rename (B-16, 5.0.0) moves what Axit, the bundle's name up to 4.0.0, kept in
+  `%APPDATA%\Axit` and `%LOCALAPPDATA%\Axit` into the AxKit folders (`AppPaths.TakeOverOldFolders`, called by `Program`
+  before anything reads a setting), entry by entry: a file the new folder lacks is moved, one it has stays, a subfolder
+  is taken over the same way, and the old folder goes once it is empty, so that a start that could not move everything
+  (a file the old program still held) finishes the next time. The settings, the recently closed list, the consents,
+  the AI tools' pairings and their key, the logs and the audit log all come along. Never in a test run. Tested in
+  `AppPathsTests`.
 
 ### AX-6 Shared pieces
 
@@ -871,17 +886,17 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   `<App>App.Run(args)`. One process shows one window; that keeps the apps apart for the taskbar, Alt+Tab and NVDA.
 - **B-3 Shared code moves on the second use, unchanged.** Nothing is generalised on a guess, and moving code as it is
   kept axClaude's behaviour identical when it became one app of the bundle (G5).
-- **B-4 Names.** The bundle is axKit; the apps keep their names; Start entries are `axKit <App>` so that the bundle
-  name groups them and the app name is still a word that search matches.
+- **B-4 Names.** The bundle is axKit (Axit from 2.0.0 to 4.0.0, B-16); the apps keep their names; Start entries are
+  `axKit <App>` so that the bundle name groups them and the app name is still a word that search matches.
 - **B-5 Settings and logs per app, under `AxKit`.** One folder for the bundle, one file per app, so an app's settings
   code knows only its own record. The old axClaude settings file is copied, not moved, so a return to 1.7.0 still
   finds it.
 - **B-6 A bridge release before the rename.** The 1.6.0 updater finds a release's zip by its `-win-x64.zip` ending
   but refuses a download without `AxClaude.exe`. 1.7.0 relaxes that check, so every installed copy can take the 2.0.0
   update instead of failing with an error.
-- **B-7 The GitHub repository is renamed to `axKit` with the 2.0.0 release.** GitHub redirects the old web and API
-  addresses, so installed 1.7.0 copies still find the releases; `UpdateCheck.Repository`, the installer and the
-  guides then name the new address.
+- **B-7 The GitHub repository is renamed with the 2.0.0 release**, to `Axit` then and to `AxKit` with 5.0.0 (B-16).
+  GitHub redirects the old web and API addresses, so installed 1.7.0 copies still find the releases;
+  `UpdateCheck.Repository`, the installer and the guides then name the new address.
 - **B-8 `axkit` without an argument starts axClaude on the current folder.** That is what `axclaude` does today, and a
   console inside a project is where the command is typed. The usage text is one `--help` away.
 - **B-9 No silent default program.** Windows protects the user's choice of default program; an installer cannot set
@@ -913,12 +928,26 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   The bundle is to have a shared database as well, which the service and the apps share. The service's design (how it
   reaches Claude, what it may change in a window, the database) is a specification of its own, not yet written
   (`docs/axkit/plan.md`).
+- **B-16 The bundle is axKit (2026-11-05, 5.0.0).** Axit, its name from 2.0.0 to 4.0.0, is a commercial product's name
+  elsewhere, so the bundle took a new one before applying for code signing (`docs/axkit/code-signing.md`): ax, the
+  prefix every app carries, and kit, the kit of them; checked free of software products, packages, GitHub names and
+  trademarks. Written axKit where it is shown, spoken or written, as the apps are (axClaude), and AxKit in code,
+  files, paths, namespaces, registry names and the program file (`AxKit.exe`), as the apps' code is (AxClaude): the
+  console command `axkit`, the settings folders `%APPDATA%\AxKit` and `%LOCALAPPDATA%\AxKit`, the Explorer submenu
+  `Open with axKit`, the MCP server `axkit` with the tools `axkit_…`, the repository `KyleKeane/AxKit` (the old address
+  redirects). The rename was one pass over every file, path and name, and the version a major one, 5.0.0: the program
+  file, the install folder and the zip's name changed, so an installed Axit cannot update into it on its own (AX-2.6)
+  and is installed over with `install.cmd`, its settings moving on the first start (AX-5.4). B-6 had a bridge release
+  for 1.7.0; none could serve here, since the updater of 4.0.0 trusts a release's files only under the old repository
+  address, which GitHub rewrites for every release once the repository is renamed. The recorded fixtures keep the
+  name of the folder they were recorded in.
 
 ## 7. Status
 
-- 2.0.0 (2026-10-02): the bundle. `AxKit.exe` with axClaude unchanged inside it and axDown new; `AxKit.Core` and
-  `AxKit.Forms`; the installer, publish and release scripts for the bundle; the repository renamed `KyleKeane/AxKit`.
-  Preceded by axClaude 1.7.0, the bridge (B-6). Both apps checked with NVDA by the user before the release.
+- 2.0.0 (2026-10-02): the bundle, called Axit until 5.0.0 (B-16; the names below are today's). `AxKit.exe` with
+  axClaude unchanged inside it and axDown new; `AxKit.Core` and `AxKit.Forms`; the installer, publish and release
+  scripts for the bundle; the repository renamed `KyleKeane/Axit`. Preceded by axClaude 1.7.0, the bridge (B-6). Both
+  apps checked with NVDA by the user before the release.
 - 2.1.0: the key tables (`AxClaudeKeys`, `AxDownKeys`, `BundleKeys`) with the collision test (AX-8); heading
   navigation in axDown. 2.1.1: axDown's window spoken on opening (`AccessibleRole.Window`).
 - 2.2.0: the update notice with I accept all terms, install and restart, I accept all terms, install and close, and a progress bar for the download.
@@ -965,3 +994,6 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   the shared projects, the tests asked for, and the longevity items that needed no account (the Windows APIs
   listed in 5.4, the actions pinned, the installer off the GitHub API and putting the commands on the PATH, Claude
   Code's version logged, the release rules, the lock files). Not yet checked with NVDA (the review's section 9).
+- 5.0.0 (2026-11-05): the bundle renamed axKit (B-16): every name, file, path and document in one pass, the
+  installer's removal of an Axit installation (AX-2.6), the folders taken over on the first start (AX-5.4), the
+  repository `KyleKeane/AxKit`.
