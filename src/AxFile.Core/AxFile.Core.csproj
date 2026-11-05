@@ -2,14 +2,14 @@
 
   <!-- axFile's pure code (docs/axfile/SPEC.md §5): a folder's entries, the file operations and their undo, the Actions
        list's lines, the archives, the path completion, the settings; no window. The player and the media rules left
-       for AxMedia.Core and Axit.Core on 2026-10-22. -->
+       for AxMedia.Core and AxKit.Core on 2026-10-22. -->
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxFile.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
   </ItemGroup>
 
 </Project>

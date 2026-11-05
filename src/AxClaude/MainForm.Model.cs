@@ -1,8 +1,8 @@
 using System.Text;
 using AxClaude.Core.Transcript;
-using Axit.Core;
-using Axit.Core.Transcript;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Core.Transcript;
+using AxKit.Forms;
 
 namespace AxClaude;
 
@@ -291,7 +291,7 @@ internal sealed partial class MainForm
     private void UpdateFolderUi()
     {
         // FR-8.4: the folder's name, then its full path in parentheses, so that the name comes first in speech and
-        // two folders of one name are still told apart in Alt+Tab and in the Axit menu; announcements use the name.
+        // two folders of one name are still told apart in Alt+Tab and in the axKit menu; announcements use the name.
         Text = _folder is null ? AppTitle : $"{PathName.Of(_folder)} ({_folder}) - {AppTitle}";
         SetStatus(StateLabel.Text ?? string.Empty, _folder ?? "No project folder");
     }

@@ -2,7 +2,7 @@
 # from inside the window. Every window after the first is started with --new, since a start otherwise hands its file
 # to the open window (AP-1.2).
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\Axit\axpreview.json {"checkForUpdates": false}
+file home\AxKit\axpreview.json {"checkForUpdates": false}
 file notes.md # Notes\n\nOne two three.
 run powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; New-Item -ItemType Directory -Force 'docx\word' | Out-Null; [IO.File]::WriteAllText('docx\word\document.xml', '<w:document xmlns:w=''http://schemas.openxmlformats.org/wordprocessingml/2006/main''><w:body><w:p><w:pPr><w:pStyle w:val=''Heading1''/></w:pPr><w:r><w:t>Install</w:t></w:r></w:p><w:p><w:r><w:t>Run the installer.</w:t></w:r></w:p></w:body></w:document>'); [IO.Compression.ZipFile]::CreateFromDirectory('docx', 'report.docx'); [IO.Compression.ZipFile]::CreateFromDirectory('docx', 'bundle.zip')"
 run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('song.mp3', [byte[]](73,68,51,3,0,0,0,0,0,0))"

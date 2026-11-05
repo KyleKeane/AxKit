@@ -2,7 +2,7 @@
 
 The files for this plan are in `manual_tests/axgit`, made and reset by `.\manual_tests\prepare.ps1 axgit`; its `_main.md` says which folder or file each section uses.
 
-Run with NVDA before a release, on a repository with a remote (the Axit repository itself does), after `run-axgit.ps1 C:\path\to\repo` (or `.\run.ps1 -App git <repo>`). Make a scratch change first: edit a file, create a new one. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axgit/SPEC.md` (AG-n.m).
+Run with NVDA before a release, on a repository with a remote (the axKit repository itself does), after `run-axgit.ps1 C:\path\to\repo` (or `.\run.ps1 -App git <repo>`). Make a scratch change first: edit a file, create a new one. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axgit/SPEC.md` (AG-n.m).
 
 ## 1. Start (AG-1, AG-2)
 
@@ -41,11 +41,11 @@ Run with NVDA before a release, on a repository with a remote (the Axit reposito
 4. Ctrl+Shift+F: the status bar says "Working: fetch…" (NVDA+End), then "Fetched". Ctrl+Shift+L: "Pulled" or "Already up to date". Ctrl+Shift+H on a branch with nothing to push: "Pushed" or git's "Everything up-to-date" read as "Pushed". With the network off, Ctrl+Shift+F: the notice "Fetch failed" with git's message.
 5. Press Ctrl+Shift+F and at once Ctrl+Shift+L: "Working…" for the second; the first finishes on its own.
 
-## 5. Text, notices, the Axit menu (AG-2.4, AG-6)
+## 5. Text, notices, the axKit menu (AG-2.4, AG-6)
 
 1. In the details after a diff, Ctrl+F: the Find notice; type a word from the diff, Enter: the match selected in the details and read; F3: the next, and after the last match the first again; a word with no match: "Not found". Ctrl+Home, Page Down: a screen down; Ctrl+Down: the next paragraph.
 2. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 3. F1: the Keyboard shortcuts notice; Escape closes it. Help, User guide: this guide; Escape.
-4. Alt+A: the Axit menu with New window, Recently closed, Open windows, Open windows by type, Close all windows, Check for updates, About. About, Version: "Axit <version>" and axGIT named among the apps.
+4. Alt+A: the axKit menu with New window, Recently closed, Open windows, Open windows by type, Close all windows, Check for updates, About. About, Version: "axKit <version>" and axGIT named among the apps.
 5. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the repository and the log's end.
 6. Close the window and start axGIT without a folder: it opens on the same repository (the last one); Repository, Open recent repository lists it as "1. <name> (<path>)".

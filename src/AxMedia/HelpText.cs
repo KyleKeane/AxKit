@@ -1,9 +1,9 @@
 using System.Reflection;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxMedia;
 
-/// <summary>The texts axMedia shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>Axit.Core.BundleAbout</c>).</summary>
+/// <summary>The texts axMedia shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>AxKit.Core.BundleAbout</c>).</summary>
 public static class HelpText
 {
     /// <summary>The F1 text (SPEC.md AM-5.3): a first line naming the text's own keys, then one Markdown heading per group (bundle AX-7.2): the bundle-wide keys, then axMedia's own. The first line and the bundle's section come from <c>BundleHelp</c>.</summary>

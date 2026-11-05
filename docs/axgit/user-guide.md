@@ -1,19 +1,19 @@
 # axGIT user guide
 
-**axGIT, access layer for Git.** axGIT only shows what Git does and passes your commands to it; Git, which you install, does the work, and a fetch, pull or push reaches the server your repository's remote names, under its terms. Before axGIT first runs Git, and before the first fetch, pull or push to each server, it shows a short reminder with a check box: you confirm that axGIT is only an access layer and that following those terms is up to you. Axit menu, About, Licence has these reminders and what you agreed to.
+**axGIT, access layer for Git.** axGIT only shows what Git does and passes your commands to it; Git, which you install, does the work, and a fetch, pull or push reaches the server your repository's remote names, under its terms. Before axGIT first runs Git, and before the first fetch, pull or push to each server, it shows a short reminder with a check box: you confirm that axGIT is only an access layer and that following those terms is up to you. axKit menu, About, Licence has these reminders and what you agreed to.
 
 axGIT is a git manager for one repository, made for screen reader users. One window shows one repository: a list of its changed files, its log or its branches, a text with the details of what you pick, and a status bar with the branch. Everything it does, it does with the git program you already have, so its messages are git's own.
 
 ## Install
 
-axGIT is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) gives you a Start menu entry `Axit axGIT`, a console command `axgit`, and axGIT in the `Open with Axit` submenu when you right-click a folder in File Explorer. You also need git itself, from https://git-scm.com; if it is missing, axGIT says so when it starts.
+axGIT is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axGIT`, a console command `axgit`, and axGIT in the `Open with axKit` submenu when you right-click a folder in File Explorer. You also need git itself, from https://git-scm.com; if it is missing, axGIT says so when it starts.
 
 ## Start
 
 - From axClaude: Session, Show current folder in, axGIT (Alt+S, I, G). axGIT opens on the repository that holds the project folder.
 - From axDown or axJSON: File, Show current file in, axGIT (Alt+F, I, G). axGIT opens on the repository that holds the file.
-- From the Start menu, `Axit axGIT`, or the console: `axgit C:\my\project`. Without a folder, axGIT opens the last repository you had, or asks for one with Repository, Open repository (Ctrl+O).
-- To go back: Alt+A, O lists the open Axit windows, most recent first, so Alt+A, O, 1 is the window you came from. From axGIT, Repository, Show current repository in, axClaude opens a new axClaude on the repository, axTerminal a shell there, axFile the folder's files, and File Explorer (Ctrl+W) shows the folder.
+- From the Start menu, `axKit axGIT`, or the console: `axgit C:\my\project`. Without a folder, axGIT opens the last repository you had, or asks for one with Repository, Open repository (Ctrl+O).
+- To go back: Alt+A, O lists the open axKit windows, most recent first, so Alt+A, O, 1 is the window you came from. From axGIT, Repository, Show current repository in, axClaude opens a new axClaude on the repository, axTerminal a shell there, axFile the folder's files, and File Explorer (Ctrl+W) shows the folder.
 
 The window is named after the repository's folder: "myproject - axGIT".
 
@@ -56,24 +56,24 @@ axGIT does not merge, rebase or resolve conflicts. For those, use the terminal o
 - **Branches**: Switch to branch (Enter), New branch (Ctrl+N), Fetch, Pull, Push.
 - **View**: Changes, Log, Branches.
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Axit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
+- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
 - **Help**: Keyboard shortcuts (F1), this guide, Git resources.
 
 ## Settings
 
-Everything you change is kept in `%APPDATA%\Axit\axgit.json`: the font and text size, the update check and the recent repositories. Options, Developer, Open settings file opens it in axJSON.
+Everything you change is kept in `%APPDATA%\AxKit\axgit.json`: the font and text size, the update check and the recent repositories. Options, Developer, Open settings file opens it in axJSON.
 
 ## Updates
 
-axGIT checks for a newer Axit when it starts and offers it in a notice; the Axit menu has Check for updates at any time. One update brings every app of Axit up to date.
+axGIT checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
-axGIT's log is `%LOCALAPPDATA%\Axit\logs\axgit.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. "Git was not found" means git is not on your PATH: install it from https://git-scm.com and start axGIT again. "Not a git repository" means the folder you gave is not inside one; Open repository (Ctrl+O) takes another.
+axGIT's log is `%LOCALAPPDATA%\AxKit\logs\axgit.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. "Git was not found" means git is not on your PATH: install it from https://git-scm.com and start axGIT again. "Not a git repository" means the folder you gave is not inside one; Open repository (Ctrl+O) takes another.
 
 ## About axGIT
 
-axGIT is one app of Axit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Axit menu's About names the version and the licence.
+axGIT is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
 
 ## Disclaimer
 

@@ -1,10 +1,10 @@
 using AxPass.Core;
-using Axit.Forms;
+using AxKit.Forms;
 
 namespace AxPass;
 
 /// <summary>
-/// axPass's entry point inside Axit (docs/axit/SPEC.md AX-1.7): <c>Axit.exe pass [&lt;database&gt;]</c> calls
+/// axPass's entry point inside axKit (docs/axkit/SPEC.md AX-1.7): <c>AxKit.exe pass [&lt;database&gt;]</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one path of the command line, the
 /// settings and <see cref="PassForm"/>.
 /// </summary>
@@ -13,7 +13,7 @@ public static class AxPassApp
     public const string Name = "axPass";
 
     public const string Usage = """
-        Usage: Axit pass [<database>]
+        Usage: axKit pass [<database>]
                axpass [<database>]  the same, as the installed console command
 
           <database>        a KeePass database (.kdbx); without one, the database of the last run

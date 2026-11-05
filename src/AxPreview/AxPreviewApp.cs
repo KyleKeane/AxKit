@@ -1,12 +1,12 @@
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 using AxPreview.Core;
 
 namespace AxPreview;
 
 /// <summary>
-/// axPreview's entry point inside Axit (docs/axit/SPEC.md AX-1.7; SPEC.md AP-1.1, AP-1.2): <c>Axit.exe preview
-/// [&lt;file&gt;] [--new]</c> calls <see cref="Run"/>, which hands the text editor shell (<c>Axit.Forms.TextEditorForm</c>)
+/// axPreview's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AP-1.1, AP-1.2): <c>AxKit.exe preview
+/// [&lt;file&gt;] [--new]</c> calls <see cref="Run"/>, which hands the text editor shell (<c>AxKit.Forms.TextEditorForm</c>)
 /// what axPreview is: the editor shell read-only (AP-D4), with axDown's navigation keys, the viewer's own keys and
 /// texts, and the rule that refuses a file that is not text. With a file and an open axPreview window, the file is
 /// handed to that window (<see cref="AppMessage"/>) and no window of this process opens.
@@ -16,7 +16,7 @@ public static class AxPreviewApp
     public const string Name = "axPreview";
 
     public const string Usage = """
-        Usage: Axit preview [<file>] [--new]
+        Usage: axKit preview [<file>] [--new]
                axpreview [<file>]  the same, as the installed console command
 
           <file>            the file to read; without one, an empty window

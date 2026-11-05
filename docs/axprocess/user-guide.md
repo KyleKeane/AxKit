@@ -4,7 +4,7 @@ axProcess shows what runs on your computer, made for screen reader users: the ru
 
 ## Install
 
-axProcess is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) gives you a Start menu entry `Axit axProcess` and a console command `axprocess`. Any Axit window starts one too: Alt+A, New window, axProcess.
+axProcess is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axProcess` and a console command `axprocess`. Any axKit window starts one too: Alt+A, New window, axProcess.
 
 ## Start
 
@@ -39,24 +39,24 @@ The Startup view is for reading: axProcess does not turn startup programs on or 
 Only the menu of the view you are in can be opened; the other two are unavailable, so that you never end a process from the services or the reverse.
 - **View**: Processes (Ctrl+1), Services (Ctrl+2), Startup (Ctrl+3), Sort processes by.
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Axit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
+- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
 - **Help**: Keyboard shortcuts (F1), this guide, Windows resources.
 
 ## Settings
 
-axProcess keeps the font, the text size, the update check, the window's place and the order of the Processes view in `%APPDATA%\Axit\axprocess.json`. Options, Developer, Open settings file opens it in axJSON.
+axProcess keeps the font, the text size, the update check, the window's place and the order of the Processes view in `%APPDATA%\AxKit\axprocess.json`. Options, Developer, Open settings file opens it in axJSON.
 
 ## Updates
 
-axProcess checks for a newer Axit when it starts and offers it in a notice; the Axit menu has Check for updates at any time. One update brings every app of Axit up to date.
+axProcess checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
-axProcess's log is `%LOCALAPPDATA%\Axit\logs\axprocess.log`; it names every process you ended and every service you started or stopped. Options, Developer, Copy diagnostics copies its end with the versions, for a bug report.
+axProcess's log is `%LOCALAPPDATA%\AxKit\logs\axprocess.log`; it names every process you ended and every service you started or stopped. Options, Developer, Copy diagnostics copies its end with the versions, for a bug report.
 
 ## About axProcess
 
-axProcess is one app of Axit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Axit menu's About names the version and the licence.
+axProcess is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
 
 ## Disclaimer
 

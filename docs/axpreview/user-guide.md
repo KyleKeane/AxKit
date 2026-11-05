@@ -4,16 +4,16 @@ axPreview is a viewer for one text file, made for screen reader users: the file'
 
 ## Install
 
-axPreview is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) gives you a Start menu entry `Axit axPreview`, a console command `axpreview`, axPreview in the `Open with Axit` submenu when you right-click any file in File Explorer, and axPreview under Windows' own `Open with` for every kind of file, so that you can make it the program that opens a kind when you press Enter on one: Settings, Apps, Default apps, axPreview, or right-click a file, Open with, Choose another app, axPreview, Always. Windows lets only you set that, never a program.
+axPreview is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axPreview`, a console command `axpreview`, axPreview in the `Open with axKit` submenu when you right-click any file in File Explorer, and axPreview under Windows' own `Open with` for every kind of file, so that you can make it the program that opens a kind when you press Enter on one: Settings, Apps, Default apps, axPreview, or right-click a file, Open with, Choose another app, axPreview, Always. Windows lets only you set that, never a program.
 
 ## Start
 
 - From axFile: Shift+Enter on a file, or the entry's menu (Shift+F10), Preview. The axPreview window opens on the file and comes to the front; Alt+A, O, 1 goes back to axFile. Enter on a file in axFile opens it in the program you have made its default in Windows, which can be axPreview.
-- File Explorer: right-click a file, open `Open with Axit` and choose axPreview; or double-click it once axPreview is its default program.
-- Start menu: `Axit axPreview`. Press the Windows key and type `axp`. The window opens empty, "Untitled"; Ctrl+O opens a file.
+- File Explorer: right-click a file, open `Open with axKit` and choose axPreview; or double-click it once axPreview is its default program.
+- Start menu: `axKit axPreview`. Press the Windows key and type `axp`. The window opens empty, "Untitled"; Ctrl+O opens a file.
 - Console: `axpreview C:\notes\README.md`.
 
-axPreview keeps one window: a file opened from axFile, File Explorer or the console while an axPreview window is open goes into that window rather than opening another; File, Open recent lists the last ten. A second window is the Axit menu's New window, Ctrl+N, or `--new` on the console.
+axPreview keeps one window: a file opened from axFile, File Explorer or the console while an axPreview window is open goes into that window rather than opening another; File, Open recent lists the last ten. A second window is the axKit menu's New window, Ctrl+N, or `--new` on the console.
 
 The window is named after the file: "README.md - axPreview". NVDA reads the title, then "README.md, read only, edit, multi line" and the first line. The status bar (NVDA+End) has the file's name on the left and "Line 12, Column 4 · UTF-8 · CRLF" on the right.
 
@@ -40,27 +40,27 @@ Under the text is the Details list: Tab or F6 moves there and back. It has every
 
 ## Menus
 
-- **File**: New window (Ctrl+N), Open (Ctrl+O), Open recent, Reload (F5), the way on (Ctrl+E: Edit in axDown or axJSON for a text, Play in axMedia for a sound or video, Open in Windows' program for anything else), Open with (the Axit apps for the file, Windows' program, or Choose another program…, Windows' own list, whose Always makes one the default), Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
+- **File**: New window (Ctrl+N), Open (Ctrl+O), Open recent, Reload (F5), the way on (Ctrl+E: Edit in axDown or axJSON for a text, Play in axMedia for a sound or video, Open in Windows' program for anything else), Open with (the axKit apps for the file, Windows' program, or Choose another program…, Windows' own list, whose Always makes one the default), Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
 - **Navigate**: Find (Ctrl+F), Find next (F3), Find previous (Shift+F3), Go to line (Ctrl+G), Next and Previous (heading, heading level 1 to 6, link, list, list item, block quote, table).
 - **Options**: Text (word wrap, font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Axit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
+- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
 - **Help**: Keyboard shortcuts (F1), this guide, Markdown resources.
 
 ## Settings
 
-Everything you change is kept in `%APPDATA%\Axit\axpreview.json`: word wrap, the recent files, the font and text size, the update check. Options, Developer, Open settings file opens it in axJSON.
+Everything you change is kept in `%APPDATA%\AxKit\axpreview.json`: word wrap, the recent files, the font and text size, the update check. Options, Developer, Open settings file opens it in axJSON.
 
 ## Updates
 
-axPreview checks for a newer Axit when it starts and offers it in a notice; the Axit menu has Check for updates at any time. One update brings every app of Axit up to date.
+axPreview checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
-axPreview's log is `%LOCALAPPDATA%\Axit\logs\axpreview.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. A file that could not be read is reported in a notice with Windows' message.
+axPreview's log is `%LOCALAPPDATA%\AxKit\logs\axpreview.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. A file that could not be read is reported in a notice with Windows' message.
 
 ## About axPreview
 
-axPreview is one app of Axit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Axit menu's About names the version and the licence.
+axPreview is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
 
 ## Disclaimer
 

@@ -4,15 +4,15 @@ axFile is a file manager for one folder, made for screen reader users. One windo
 
 ## Install
 
-axFile is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) gives you a Start menu entry `Axit axFile`, a console command `axfile`, and axFile in the `Open with Axit` submenu when you right-click a folder or a file in File Explorer. The same install registers axDown, axJSON, axMedia and axPreview as programs for their kinds of file, so that you can make any of them the program Enter uses: Settings, Apps, Default apps, the app, or right-click a file, Open with, Choose another app, the app, Always. Windows lets only you set that; no program can.
+axFile is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axFile`, a console command `axfile`, and axFile in the `Open with axKit` submenu when you right-click a folder or a file in File Explorer. The same install registers axDown, axJSON, axMedia and axPreview as programs for their kinds of file, so that you can make any of them the program Enter uses: Settings, Apps, Default apps, the app, or right-click a file, Open with, Choose another app, the app, Always. Windows lets only you set that; no program can.
 
 ## Start
 
-- Start menu: `Axit axFile`. Press the Windows key and type `axf`. axFile opens the folder you had last, or your profile folder the first time.
+- Start menu: `axKit axFile`. Press the Windows key and type `axf`. axFile opens the folder you had last, or your profile folder the first time.
 - Console: `axfile C:\Music\Dune`, or `axfile C:\Music\Dune\03.mp3` to open the folder with that file selected.
-- File Explorer: right-click a folder or a file, open `Open with Axit` and choose axFile.
+- File Explorer: right-click a folder or a file, open `Open with axKit` and choose axFile.
 - From axClaude: Session, Show current folder in, axFile (Alt+S, I, F). From axDown, axJSON or axPreview: File, Show current file in, axFile (the file's folder, the file selected). From axGIT: Repository, Show current repository in, axFile. From axTerminal: Session, Show current folder in, axFile. From axMedia: Queue, Show current file in, axFile. Each opens a new axFile window.
-- To go back: Alt+A, O lists the open Axit windows, most recent first, so Alt+A, O, 1 is the window you came from. From axFile, Folder, Show current folder in offers File Explorer (Ctrl+W), axClaude, axTerminal and axGIT on the folder you are in.
+- To go back: Alt+A, O lists the open axKit windows, most recent first, so Alt+A, O, 1 is the window you came from. From axFile, Folder, Show current folder in offers File Explorer (Ctrl+W), axClaude, axTerminal and axGIT on the folder you are in.
 
 The window is named after the folder: "Dune - axFile". The list is named with its count, "24 items", so that the folder is not read twice, and NVDA reads the entry you are on. The status bar (NVDA+End) has the newest line of the Actions list on the left, "Copied 3 items", and the folder's full path on the right.
 
@@ -67,37 +67,37 @@ Under the folder list sits a second list, "Actions", from the moment the window 
 
 ## The entry's menu, and what Windows does for you
 
-**Alt+I**, Shift+F10, the Applications key or a right click opens the entry's menu, the Item menu of the menu bar. It is one flat list in File Explorer's order: Open, Open with, Open in Axit, Preview, Play folder in axMedia, Add to axMedia's queue; Cut, Copy, Paste; Rename, Delete; New folder, New text file, Move to folder, Compress to zip, Extract here; Copy path, Show in File Explorer, Information, Properties; Windows menu.
+**Alt+I**, Shift+F10, the Applications key or a right click opens the entry's menu, the Item menu of the menu bar. It is one flat list in File Explorer's order: Open, Open with, Open in axKit, Preview, Play folder in axMedia, Add to axMedia's queue; Cut, Copy, Paste; Rename, Delete; New folder, New text file, Move to folder, Compress to zip, Extract here; Copy path, Show in File Explorer, Information, Properties; Windows menu.
 
-- **Open in Axit** starts with Editor (Ctrl+E), axDown or axJSON by the file's type, then lists every app of the bundle that opens a file or a folder, in the Axit menu's groups: axDown, axJSON, axPreview and axPass open the file, axMedia plays it with its folder's other media files after it (or a folder's files), axGIT the repository that holds the entry, axClaude, axTerminal and axTask the folder (the entry's folder, for a file), axFile a new window on the folder. "Not a file" when an editor or the viewer is chosen on a folder.
-- **Open with** holds the ways outside Axit. **Windows default** opens the entry with the program Windows has for it, a folder in File Explorer; when Windows has none it asks which program, in the Windows dialog, as File Explorer does; Enter does the same. **Choose a program...** always asks which program, in that dialog, and runs it. Under those, your own programs and scripts, "1. Notepad++ (C:\Program Files\Notepad++\notepad++.exe)", and "No programs of your own yet" before you add one. **Add a program** opens the Windows file picker on programs and scripts (`.exe`, `.cmd`, `.bat`, `.ps1`, `.py`; All files for anything else), then asks for the name the menu shows, with the file's name filled in; "Added Notepad++". **Remove a program** lists them; choose one to take it off, "Removed Notepad++". Choosing a program runs it on the entry, or on every selected entry at once, each path an argument, in the entry's folder; "Started Notepad++". A PowerShell script runs through `powershell.exe -File` with the paths after it; a batch file or a Python script runs as Windows runs it. A script of yours that takes files as arguments is a command of axFile this way.
+- **Open in axKit** starts with Editor (Ctrl+E), axDown or axJSON by the file's type, then lists every app of the bundle that opens a file or a folder, in the axKit menu's groups: axDown, axJSON, axPreview and axPass open the file, axMedia plays it with its folder's other media files after it (or a folder's files), axGIT the repository that holds the entry, axClaude, axTerminal and axTask the folder (the entry's folder, for a file), axFile a new window on the folder. "Not a file" when an editor or the viewer is chosen on a folder.
+- **Open with** holds the ways outside axKit. **Windows default** opens the entry with the program Windows has for it, a folder in File Explorer; when Windows has none it asks which program, in the Windows dialog, as File Explorer does; Enter does the same. **Choose a program...** always asks which program, in that dialog, and runs it. Under those, your own programs and scripts, "1. Notepad++ (C:\Program Files\Notepad++\notepad++.exe)", and "No programs of your own yet" before you add one. **Add a program** opens the Windows file picker on programs and scripts (`.exe`, `.cmd`, `.bat`, `.ps1`, `.py`; All files for anything else), then asks for the name the menu shows, with the file's name filled in; "Added Notepad++". **Remove a program** lists them; choose one to take it off, "Removed Notepad++". Choosing a program runs it on the entry, or on every selected entry at once, each path an argument, in the entry's folder; "Started Notepad++". A PowerShell script runs through `powershell.exe -File` with the paths after it; a batch file or a Python script runs as Windows runs it. A script of yours that takes files as arguments is a command of axFile this way.
 - **Properties** (Alt+Enter, as in File Explorer) shows the Properties sheet of the file or the folder.
 - **Windows menu...** shows the full Windows menu for the entry, the one File Explorer shows, with every installed program's entries: Send to, an archiver, a cloud drive. Its first item is selected when it opens; Escape closes it. That menu is Windows' own, so its contents change with what you install; axFile's own menu does not.
 
 ## Menus
 
 - **Folder**: New window (Ctrl+N), Open folder (Ctrl+O), Open recent folder, Favorites (your pinned folders, Add or remove this folder Ctrl+D), Drives (your drives by number, This PC, Eject this drive, Drive properties), Go to folder (Ctrl+G or Alt+D), Up one level (Backspace), Refresh (F5), Undo (Ctrl+Z, named after what it would undo), Actions, Sort by (Name, Date, Size), Filter (Ctrl+Shift+F), Show current folder in (File Explorer Ctrl+W, axClaude, axGIT, axTerminal), Exit.
-- **Item**: Open (Enter), Open with (Windows default, Choose a program, your own programs with Add a program and Remove a program), Open in Axit (Editor Ctrl+E and every app), Preview (Shift+Enter), Play folder in axMedia (Ctrl+Enter), Add to axMedia's queue (Ctrl+Shift+Q), Cut Ctrl+X, Copy Ctrl+C, Paste Ctrl+V, Rename F2, Delete, New folder Ctrl+Shift+N, New text file Ctrl+Shift+T, Move to folder, Compress to zip, Extract here, Copy path Ctrl+Shift+C, Show in File Explorer Ctrl+Shift+W, Information Ctrl+I, Properties Alt+Enter, Windows menu. The same menu opens on the entry with Shift+F10, the Applications key or a right click; Ctrl+I inside the context menu says the entry.
+- **Item**: Open (Enter), Open with (Windows default, Choose a program, your own programs with Add a program and Remove a program), Open in axKit (Editor Ctrl+E and every app), Preview (Shift+Enter), Play folder in axMedia (Ctrl+Enter), Add to axMedia's queue (Ctrl+Shift+Q), Cut Ctrl+X, Copy Ctrl+C, Paste Ctrl+V, Rename F2, Delete, New folder Ctrl+Shift+N, New text file Ctrl+Shift+T, Move to folder, Compress to zip, Extract here, Copy path Ctrl+Shift+C, Show in File Explorer Ctrl+Shift+W, Information Ctrl+I, Properties Alt+Enter, Windows menu. The same menu opens on the entry with Shift+F10, the Applications key or a right click; Ctrl+I inside the context menu says the entry.
 - **Selection**: Select all (Ctrl+A), Deselect all (Ctrl+Shift+A), Select or deselect this entry (Space), Select to here (Shift+Space), then Cut, Copy, Delete, Move to folder, Compress to zip, Add to axMedia's queue and Copy paths on the selected entries alone.
 - **Options**: Text (font and size), General (the update check, hidden files, files starting with a period), Developer (the settings file, diagnostics).
-- **Axit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
+- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
 - **Help**: Keyboard shortcuts (F1), this guide, File resources.
 
 ## Settings
 
-Everything you change is kept in `%APPDATA%\Axit\axfile.json`: the last folder, the recent folders, the favorites, the sort order, the font and text size, the update check, your custom programs (`programs`, a name and a path each), and the two switches of Options, General (`showHidden`, `showDotFiles`). Options, Developer, Open settings file opens it in axJSON. The player's settings of earlier versions are axMedia's now, in `axmedia.json`.
+Everything you change is kept in `%APPDATA%\AxKit\axfile.json`: the last folder, the recent folders, the favorites, the sort order, the font and text size, the update check, your custom programs (`programs`, a name and a path each), and the two switches of Options, General (`showHidden`, `showDotFiles`). Options, Developer, Open settings file opens it in axJSON. The player's settings of earlier versions are axMedia's now, in `axmedia.json`.
 
 ## Updates
 
-axFile checks for a newer Axit when it starts and offers it in a notice; the Axit menu has Check for updates at any time. One update brings every app of Axit up to date.
+axFile checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
-axFile's log is `%LOCALAPPDATA%\Axit\logs\axfile.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. "Folder not found" means the folder is gone or the drive unplugged; axFile shows the nearest folder above it that exists. "Failed: Access denied" means Windows does not let your account change that place.
+axFile's log is `%LOCALAPPDATA%\AxKit\logs\axfile.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. "Folder not found" means the folder is gone or the drive unplugged; axFile shows the nearest folder above it that exists. "Failed: Access denied" means Windows does not let your account change that place.
 
 ## About axFile
 
-axFile is one app of Axit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Axit menu's About names the version and the licence.
+axFile is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
 
 ## Disclaimer
 

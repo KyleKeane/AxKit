@@ -1,10 +1,10 @@
 # axCalc — Specification
 
-axCalc is an app of the Axit bundle (`docs/axit/SPEC.md`): a calculator as one field and a history, for a blind
+axCalc is an app of the axKit bundle (`docs/axkit/SPEC.md`): a calculator as one field and a history, for a blind
 developer who uses the NVDA screen reader. Built 2026-10-23 on the branch `axcalc` (the long run of that day,
-`docs/axit/plan.md`), not yet heard under NVDA. The document is kept in step with the code (a behaviour change
+`docs/axkit/plan.md`), not yet heard under NVDA. The document is kept in step with the code (a behaviour change
 updates it in the same commit). Requirements are numbered `AC-n.m` and decisions `AC-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the Axit menu), are cited by number and not repeated. In axCalc's code and
+(accessibility), AX-8 (keys) and AX-9 (the axKit menu), are cited by number and not repeated. In axCalc's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -29,7 +29,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 
 ## 3. Scenarios
 
-1. Start axCalc (Start menu, `axcalc`, or the Axit menu's New window): NVDA reads "Calculator - axCalc window",
+1. Start axCalc (Start menu, `axcalc`, or the axKit menu's New window): NVDA reads "Calculator - axCalc window",
    then "Expression, edit". Type `1920*1080*4`, Enter: "8294400". The history's first line is `1920*1080*4 = 8294400`.
 2. Type `*2`, Enter: "16588800": an expression that starts with an operator continues from the last answer.
 3. Ctrl+I: "16588800, hex FD 2000, binary 1111 1101 0010 0000 0000 0000, octal 77220000".
@@ -42,7 +42,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 
 ### AC-1 Launch
 
-- AC-1.1 `Axit.exe calc`; the console command `axcalc`; the Start menu entry "Axit axCalc". No File Explorer entry: a
+- AC-1.1 `AxKit.exe calc`; the console command `axcalc`; the Start menu entry "axKit axCalc". No File Explorer entry: a
   calculator opens nothing. A path or any other argument is reported with the usage text (`AppHost`).
 - AC-1.2 `AxCalcApp.Run(args)` is the entry point (AX-1.7): the host's log (`axcalc.log`), crash handling, `--help`
   and `--version`, the settings (`axcalc.json`), then `CalcForm`.
@@ -55,7 +55,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
   the expression field, a single-line edit named "Expression"; the status bar. Tab and Shift+Tab move between the
   history and the field, and so do Ctrl+Tab, Ctrl+Shift+Tab and F6 (AX-8.2). A notice takes the place of both while it
   shows (AX-6.4). The focus starts in the field.
-- AC-2.2 The title is "Calculator - axCalc" (the ending the Axit menu reads, AX-9), with the window's role (AX-7.1):
+- AC-2.2 The title is "Calculator - axCalc" (the ending the axKit menu reads, AX-9), with the window's role (AX-7.1):
   NVDA says "Calculator - axCalc window".
 - AC-2.3 The status bar's left label is the last answer ("Answer 8294400", "No answer yet"); the right one the angle
   unit and the number of variables ("Degrees, 1 variable"). No AccessibleName, no Spring (`StatusLayout`).
@@ -135,7 +135,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 - AC-7.1 Menus (AX-6): **Calculator (C):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal |
   Binary | Octal) | Answer in other bases Ctrl+I | Say the last answer Ctrl+Q | ─ | Variables | Clear variables… | ─ |
   Save history… Ctrl+S | Clear history… Ctrl+Shift+Delete | ─ | Exit Alt+F4. **Options (O):** Angles ▸ (Degrees ✓ |
-  Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Axit (A)** (AX-9). **Help (H):**
+  Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **axKit (A)** (AX-9). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Calculator resources ▸ (Floating point explained). Every item has a
   mnemonic (AX-7.4).
 - AC-7.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (the history as a
@@ -157,11 +157,11 @@ diagnostics announcements. Nothing is spoken on an arrow key.
 
 ### AC-9 Settings
 
-- AC-9.1 `%APPDATA%\Axit\axcalc.json` (AX-5.3; `CalcSettings`): `fontFamily`, `fontSize`, `fontBold`,
+- AC-9.1 `%APPDATA%\AxKit\axcalc.json` (AX-5.3; `CalcSettings`): `fontFamily`, `fontSize`, `fontBold`,
   `checkForUpdates`, `window`, `degrees` (true), `keepHistory` (true), `history` (the entries, oldest first, at most
   500: `expression` and `answer`), `variables` (name to value). With Keep history off the file holds no history and no
   variables, and the window starts empty.
-- AC-9.2 The log is `%LOCALAPPDATA%\Axit\logs\axcalc.log`: the start, the exit and errors; never an expression or an
+- AC-9.2 The log is `%LOCALAPPDATA%\AxKit\logs\axcalc.log`: the start, the exit and errors; never an expression or an
   answer.
 
 ## 5. Architecture
@@ -169,14 +169,14 @@ diagnostics announcements. Nothing is spoken on an arrow key.
 ```
 src/AxCalc.Core/    class library (net10.0): Calculator (the evaluator: a tokenizer and a recursive descent
                     parser over doubles, the variables, the last answer, the angle unit), NumberText (an answer's
-                    text and its other bases), CalcEntry (one history line), CalcSettings; references Axit.Core
+                    text and its other bases), CalcEntry (one history line), CalcSettings; references AxKit.Core
 src/AxCalc/         class library (net10.0-windows): AxCalcApp (Run, Usage), CalcForm (the window), AxCalcKeys,
-                    HelpText (F1 text, the embedded guide); references AxCalc.Core, Axit.Core, Axit.Forms
+                    HelpText (F1 text, the embedded guide); references AxCalc.Core, AxKit.Core, AxKit.Forms
 tests/AxCalc.Tests/ CalculatorTests, NumberTextTests, CalcSettingsTests
 docs/axcalc/        this spec, user-guide.md (embedded), nvda-test-plan.md
 ```
 
-`CalcForm` derives from the bundle's window base, `Axit.Forms/AxitForm` (AX-6.5), which holds the notices, the
+`CalcForm` derives from the bundle's window base, `AxKit.Forms/AxKitForm` (AX-6.5), which holds the notices, the
 fonts, the window's place, find and the update flow.
 
 ## 6. Design decisions
@@ -189,7 +189,7 @@ fonts, the window's place, find and the update flow.
   left until asked, so that the first version is a parser of a few hundred lines that a smaller model can change
   (B-10). Hexadecimal, binary and octal come in as literals and as a reading key, which covers most of the need.
 - **AC-D4 One history in the settings file.** A calculator's history is small and personal; it lives in the settings
-  file so that there is one file to read or delete, in the plain JSON every Axit file is (B-15). Two windows open at
+  file so that there is one file to read or delete, in the plain JSON every axKit file is (B-15). Two windows open at
   once each keep their own while they run, and the last one closed wins, as with every other setting.
 - **AC-D5 The arrow keys stay the field's.** Up in the field recalling the last expression is what many calculators
   do; the bundle's rule is that arrows never pull text into a field (the user's, 2026-10-20), so the way back is the

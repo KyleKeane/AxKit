@@ -1,7 +1,7 @@
 # axDown, test plan section 3 (Files), driven from inside the window (docs/axdown/nvda-test-plan.md).
 # The files are made here with their encodings, and checked byte by byte after a save through PowerShell.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\Axit\axdown.json {"checkForUpdates": false}
+file home\AxKit\axdown.json {"checkForUpdates": false}
 file plain.txt Plain text file, line 1.\nLine 2 of the plain text file.\nLine 3: nothing special here.\nLine 4, the last line.
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('bom.md', '# UTF-8 with a byte order mark' + [char]10 + [char]10 + 'LF line endings only.', (New-Object Text.UTF8Encoding $true))"
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('wide.txt', 'UTF-16 little endian text.' + [char]13 + [char]10 + 'Saved, it stays UTF-16.', [Text.Encoding]::Unicode)"

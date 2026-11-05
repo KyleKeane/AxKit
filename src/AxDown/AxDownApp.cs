@@ -1,17 +1,17 @@
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxDown;
 
 /// <summary>
-/// axDown's entry point inside Axit (docs/axit/SPEC.md AX-1.7; SPEC.md AD-1.4): <c>Axit.exe down [&lt;file&gt;]</c>
-/// calls <see cref="Run"/>, which hands the editor shell (<c>Axit.Forms.EditorHost</c>, <c>TextEditorForm</c>) what
+/// axDown's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AD-1.4): <c>AxKit.exe down [&lt;file&gt;]</c>
+/// calls <see cref="Run"/>, which hands the editor shell (<c>AxKit.Forms.EditorHost</c>, <c>TextEditorForm</c>) what
 /// axDown is: its name and verb, its settings file, its file types, its texts, its Markdown keys and its resources.
 /// </summary>
 public static class AxDownApp
 {
     public const string Usage = """
-        Usage: Axit down [<file>]
+        Usage: axKit down [<file>]
                axdown [<file>]  the same, as the installed console command
 
           <file>            the file to open; a path that does not exist yet is a new document with that name

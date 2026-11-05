@@ -1,11 +1,11 @@
 using AxMedia.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxMedia;
 
 /// <summary>
-/// axMedia's entry point inside Axit (docs/axit/SPEC.md AX-1.7; SPEC.md AM-1.1, AM-1.2): <c>Axit.exe media [&lt;file or
+/// axMedia's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AM-1.1, AM-1.2): <c>AxKit.exe media [&lt;file or
 /// folder&gt;...] [--add] [--new]</c> calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/>. With
 /// paths and an open axMedia window, the paths are handed to that window (<see cref="AppMessage"/>) and no window of
 /// this process opens; otherwise <see cref="MediaForm"/> opens on them.
@@ -15,7 +15,7 @@ public static class AxMediaApp
     public const string Name = "axMedia";
 
     public const string Usage = """
-        Usage: Axit media [<file or folder>...] [--add] [--new]
+        Usage: axKit media [<file or folder>...] [--add] [--new]
                axmedia [<file or folder>...]  the same, as the installed console command
 
           <file>            played, with its folder's other sound and video files after it

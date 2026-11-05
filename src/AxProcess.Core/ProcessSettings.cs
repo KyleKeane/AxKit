@@ -1,9 +1,9 @@
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxProcess.Core;
 
 /// <summary>
-/// Everything axProcess remembers between runs (SPEC.md PR-7.1), in <c>%APPDATA%\Axit\axprocess.json</c> through the
+/// Everything axProcess remembers between runs (SPEC.md PR-7.1), in <c>%APPDATA%\AxKit\axprocess.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font, the update check and the window's place from
 /// <see cref="WindowSettings"/>, and the order of the Processes view.
 /// </summary>

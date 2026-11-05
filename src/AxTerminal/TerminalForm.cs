@@ -1,6 +1,6 @@
 using AxTerminal.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxTerminal;
 

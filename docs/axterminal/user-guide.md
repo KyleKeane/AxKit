@@ -1,8 +1,8 @@
 # axTerminal user guide
 
-**axTerminal, access layer for your shell.** axTerminal only shows what your shell prints and passes your commands to it; the shell, and every command you type, does the work, with your rights. Before axTerminal first starts each shell (PowerShell, Command Prompt, Git Bash, PowerShell 7, those that come with Windows included) it shows a short reminder with a check box: you confirm that axTerminal is only an access layer and that following the shell's terms is up to you. Axit menu, About, Licence has these reminders and what you agreed to.
+**axTerminal, access layer for your shell.** axTerminal only shows what your shell prints and passes your commands to it; the shell, and every command you type, does the work, with your rights. Before axTerminal first starts each shell (PowerShell, Command Prompt, Git Bash, PowerShell 7, those that come with Windows included) it shows a short reminder with a check box: you confirm that axTerminal is only an access layer and that following the shell's terms is up to you. axKit menu, About, Licence has these reminders and what you agreed to.
 
-axTerminal is a terminal for a blind developer who uses a screen reader: a shell (PowerShell by default) runs in a hidden console, and everything it prints comes into a plain text window, one line at a time, the way axClaude shows Claude Code. You type a command in a field at the bottom, press Enter, and the command and what it printed stand in the text under their own Input and Output lines, so that the keys you know from axClaude find them again. When a command is done you hear it, and whether it failed. It is one of the apps of Axit and shares its installation, updates and the Axit menu with them.
+axTerminal is a terminal for a blind developer who uses a screen reader: a shell (PowerShell by default) runs in a hidden console, and everything it prints comes into a plain text window, one line at a time, the way axClaude shows Claude Code. You type a command in a field at the bottom, press Enter, and the command and what it printed stand in the text under their own Input and Output lines, so that the keys you know from axClaude find them again. When a command is done you hear it, and whether it failed. It is one of the apps of axKit and shares its installation, updates and the axKit menu with them.
 
 ## What you need
 
@@ -12,13 +12,13 @@ axTerminal is a terminal for a blind developer who uses a screen reader: a shell
 
 ## Install
 
-Axit's installer installs axTerminal with the other apps: see the Axit guide (Alt+A, About, Axit guide) or the README that came with the download. It adds the Start menu entry `Axit axTerminal`, the console command `axterminal` and axTerminal in the `Open with Axit` submenu on folders in File Explorer.
+axKit's installer installs axTerminal with the other apps: see the axKit guide (Alt+A, About, axKit guide) or the README that came with the download. It adds the Start menu entry `axKit axTerminal`, the console command `axterminal` and axTerminal in the `Open with axKit` submenu on folders in File Explorer.
 
 ## Start
 
-- Start menu: `Axit axTerminal`. Press the Windows key and type `axt`.
+- Start menu: `axKit axTerminal`. Press the Windows key and type `axt`.
 - Console: `axterminal`, or `axterminal C:\src\myproject` to start the shell in that folder.
-- File Explorer: right-click a folder, open `Open with Axit` and choose axTerminal.
+- File Explorer: right-click a folder, open `Open with axKit` and choose axTerminal.
 - From axClaude: Session, Show current folder in, axTerminal. From axDown or axJSON: File, Show current file in, axTerminal (the file's folder). From axGIT: Repository, Show current repository in, axTerminal. From axFile: Folder, Show current folder in, axTerminal. Each opens a new axTerminal window.
 
 The window opens with the command field focused. When the shell's first prompt appears you hear "Ready" with a short ping. The status bar shows the state on the left (Idle, or Running with the command) and the shell's prompt on the right, which is where you are. The title is the name of the current folder and the shell. Ctrl+P says the current folder, the full path.
@@ -73,26 +73,26 @@ Clear transcript (Ctrl+L) empties the window; the shell's own `cls` clears only 
 
 ## Menus
 
-Alt opens the menu bar. Session: new session, the recent folders, the recent folders in a new window (this one stays as it is), switch shell, restart, clear, say current folder (Ctrl+P), Show current folder in (File Explorer, axClaude, axGIT, axFile), export the transcript as a Markdown file (Ctrl+S), exit. Shell: interrupt, Escape, the keys, the recent commands, send without recording, what is running. Navigate: the field, the terminal, the latest output, find, the bookmarks. Options: Sounds (the chimes, the ticks, background music while a command runs, Ctrl+Space), Speech (speak output, say when a program asks), When a command is done (the taskbar flash, the louder alert for the background), Text (time stamps, markers in the text, the font and size), General, Developer. Axit: the bundle's menu. Help: the shortcuts (F1), this guide, shell resources.
+Alt opens the menu bar. Session: new session, the recent folders, the recent folders in a new window (this one stays as it is), switch shell, restart, clear, say current folder (Ctrl+P), Show current folder in (File Explorer, axClaude, axGIT, axFile), export the transcript as a Markdown file (Ctrl+S), exit. Shell: interrupt, Escape, the keys, the recent commands, send without recording, what is running. Navigate: the field, the terminal, the latest output, find, the bookmarks. Options: Sounds (the chimes, the ticks, background music while a command runs, Ctrl+Space), Speech (speak output, say when a program asks), When a command is done (the taskbar flash, the louder alert for the background), Text (time stamps, markers in the text, the font and size), General, Developer. axKit: the bundle's menu. Help: the shortcuts (F1), this guide, shell resources.
 
 ## Settings
 
-Every option in the menus is saved as you change it, in `%APPDATA%\Axit\axterminal.json`, which Options, Developer, Open settings file opens in axJSON. The console is 240 columns by 50 rows; `ptyColumns` and `ptyRows` in the file change it.
+Every option in the menus is saved as you change it, in `%APPDATA%\AxKit\axterminal.json`, which Options, Developer, Open settings file opens in axJSON. The console is 240 columns by 50 rows; `ptyColumns` and `ptyRows` in the file change it.
 
 ## Updates
 
-Alt+A, Check for updates asks GitHub for a newer Axit; Update to installs it and starts axTerminal again with a new shell in the same folder. Options, General, Check for updates at start turns the check at start off.
+Alt+A, Check for updates asks GitHub for a newer axKit; Update to installs it and starts axTerminal again with a new shell in the same folder. Options, General, Check for updates at start turns the check at start off.
 
 ## If something goes wrong
 
 - "PowerShell 7 was not found": Ctrl+N and choose Windows PowerShell or Command Prompt, or install PowerShell 7.
 - Nothing is spoken when a command ends: the shell gives no marks (a custom shell, or a shell started inside the shell). Ctrl+Q says what the window knows.
 - A program took the whole screen (an editor, a pager): press q and Enter, or Ctrl+Shift+C. axTerminal shows such programs row by row and is not meant for them.
-- Options, Developer, Record raw stream writes everything the shell prints to a file, for a bug report; Copy diagnostics copies the state and the last log lines. The log is `%LOCALAPPDATA%\Axit\logs\axterminal.log`; it never holds a command or a line of output.
+- Options, Developer, Record raw stream writes everything the shell prints to a file, for a bug report; Copy diagnostics copies the state and the last log lines. The log is `%LOCALAPPDATA%\AxKit\logs\axterminal.log`; it never holds a command or a line of output.
 
 ## About axTerminal
 
-axTerminal is part of Axit, made by Dr. Kyle Keane, www.kylekeane.com, free under the GNU AGPL 3 licence. Alt+A, About has the version, the licence and the Axit guide.
+axTerminal is part of axKit, made by Dr. Kyle Keane, www.kylekeane.com, free under the GNU AGPL 3 licence. Alt+A, About has the version, the licence and the axKit guide.
 
 ## Disclaimer
 

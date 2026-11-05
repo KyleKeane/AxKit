@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-  Generates the icons in src\Axit: one per app of Dispatch.Apps (src\Axit.Core\Dispatch.cs), <Project>.ico with the
+  Generates the icons in src\AxKit: one per app of Dispatch.Apps (src\AxKit.Core\Dispatch.cs), <Project>.ico with the
   letters and the colour of the app's Icon there (AxClaude.ico, the letters Ax on dark blue, is also the icon of
-  Axit.exe), rounded squares at the usual Windows sizes.
+  AxKit.exe), rounded squares at the usual Windows sizes.
 
 .DESCRIPTION
   Uses System.Drawing only, so it runs on any Windows machine. The 256 pixel image is stored PNG-compressed, the
@@ -23,7 +23,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 # $PSScriptRoot is not set while parameter defaults are evaluated in Windows PowerShell 5.1.
-$iconFolder = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) '..\src\Axit'
+$iconFolder = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) '..\src\AxKit'
 
 function New-IconBitmap([int]$size, [string]$text, [System.Drawing.Color]$color) {
     $bmp = New-Object System.Drawing.Bitmap $size, $size, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
@@ -129,7 +129,7 @@ if ($Out) {
 } else {
     # Every app of Dispatch.Apps with its Icon, the letters and the colour (tools/apps.ps1 reads them off Dispatch.cs).
     . (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) 'apps.ps1')
-    foreach ($app in Get-AxitApps (Join-Path $iconFolder '..\..')) {
+    foreach ($app in Get-AxKitApps (Join-Path $iconFolder '..\..')) {
         if (-not $app.Icon) { throw "$($app.Name) has no Icon in Dispatch.Apps." }
         Write-Icon ([System.IO.Path]::GetFullPath((Join-Path $iconFolder "$($app.Project).ico"))) $app.Icon.Letters $app.Icon.Rgb
     }

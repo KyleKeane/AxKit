@@ -1,7 +1,7 @@
-# Axit
+# axKit
 
-[![Build](https://github.com/KyleKeane/Axit/actions/workflows/build.yml/badge.svg)](https://github.com/KyleKeane/Axit/actions/workflows/build.yml)
-[![Latest release](https://img.shields.io/github/v/release/KyleKeane/Axit?label=release)](https://github.com/KyleKeane/Axit/releases/latest)
+[![Build](https://github.com/KyleKeane/AxKit/actions/workflows/build.yml/badge.svg)](https://github.com/KyleKeane/AxKit/actions/workflows/build.yml)
+[![Latest release](https://img.shields.io/github/v/release/KyleKeane/AxKit?label=release)](https://github.com/KyleKeane/AxKit/releases/latest)
 [![Licence: AGPL-3.0-only](https://img.shields.io/badge/licence-AGPL--3.0--only-blue)](LICENSE)
 
 The tools I use every day as a blind scientist, working with the NVDA screen reader, shared in case they help someone else. They are personal tools, not a product or a service: nothing is sold, and there is no support and no warranty ([NOTICE.md](NOTICE.md)).
@@ -30,36 +30,36 @@ They are Windows apps in one program with one installer and one updater. Every a
 - **axTerminal, access layer for your shell**: PowerShell, Command Prompt or Git Bash as a transcript in axClaude's kind of window.
 - **axPass, access layer for KeePassXC**: a KeePass password database, read and changed by ear: groups and entries in the same two panes, the password never spoken, copied with Ctrl+C and cleared from the clipboard after 30 seconds. It runs KeePassXC's own command-line tool, so KeePassXC must be installed.
 
-The apps reach each other: axFile hands a file to axMedia or axPreview, every window can show its folder in the others, and the Axit menu in every window lists the open windows and starts any app.
+The apps reach each other: axFile hands a file to axMedia or axPreview, every window can show its folder in the others, and the axKit menu in every window lists the open windows and starts any app.
 
 ## Install
 
-Download `install.cmd`, or the zip, from the [latest release](https://github.com/KyleKeane/Axit/releases/latest) and run it; no administrator rights are needed. It adds Start menu entries ("Axit axClaude" and the others), commands such as `axfile` and `axdown`, and an "Open with Axit" submenu in File Explorer. Installed copies offer each new release themselves: Axit menu, Check for updates. `docs/axit/README.md` is the README inside the zip, with the rest.
+Download `install.cmd`, or the zip, from the [latest release](https://github.com/KyleKeane/AxKit/releases/latest) and run it; no administrator rights are needed. It adds Start menu entries ("axKit axClaude" and the others), commands such as `axfile` and `axdown`, and an "Open with axKit" submenu in File Explorer. Installed copies offer each new release themselves: axKit menu, Check for updates. `docs/axkit/README.md` is the README inside the zip, with the rest.
 
 Needs Windows 10 1809 or later. axClaude also needs [Claude Code](https://code.claude.com/docs/en/setup); every other app works offline.
 
-## Privacy, and what Axit works with
+## Privacy, and what axKit works with
 
-Axit collects nothing: no telemetry, no analytics, no accounts. On its own it makes one network request, the update check, which asks GitHub for the latest release when a window starts and can be turned off (Options, General, Check for updates at start). Everything else happens only when you ask:
+axKit collects nothing: no telemetry, no analytics, no accounts. On its own it makes one network request, the update check, which asks GitHub for the latest release when a window starts and can be turned off (Options, General, Check for updates at start). Everything else happens only when you ask:
 
 - **axClaude, access layer for Claude Code** runs Claude Code, Anthropic's program, which you install; what you type goes to Anthropic through it, under Anthropic's terms.
 - **axGIT, access layer for Git** runs your git, which reaches your repository's remotes when you fetch, pull or push.
 - **axTerminal, access layer for your shell** runs your own shells; **axPass** runs KeePassXC's command-line tool, on your computer.
 - **Install it now**, when an app needs Git, KeePassXC, PowerShell 7 or Claude Code, installs it through Windows' winget or Anthropic's installer, when you choose.
-- **The AI tools** (off unless you turn them on) let an AI tool you pair, such as Claude Code, read Axit's windows through local pipes, never the network.
+- **The AI tools** (off unless you turn them on) let an AI tool you pair, such as Claude Code, read axKit's windows through local pipes, never the network.
 - Help menus and links open in your browser.
 
-[PRIVACY.md](PRIVACY.md) says all of it in full, per app, with what stays on your computer. It is also in the zip and in every window: Axit menu, About, Privacy.
+[PRIVACY.md](PRIVACY.md) says all of it in full, per app, with what stays on your computer. It is also in the zip and in every window: axKit menu, About, Privacy.
 
 ## Code signing policy
 
-Every release is built by GitHub Actions from this repository's source, with GitHub's attestation of where it was built, and approved by the maintainer before it is published. Its zip is signed with Axit's release key, which never leaves the maintainer's computer; the installed apps and `install.cmd` install nothing whose signature does not check ([docs/axit/SPEC.md](docs/axit/SPEC.md) AX-3.4).
+Every release is built by GitHub Actions from this repository's source, with GitHub's attestation of where it was built, and approved by the maintainer before it is published. Its zip is signed with axKit's release key, which never leaves the maintainer's computer; the installed apps and `install.cmd` install nothing whose signature does not check ([docs/axkit/SPEC.md](docs/axkit/SPEC.md) AX-3.4).
 
-**Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).** From 4.1.0, every release's `Axit.exe` carries that Windows signature (Authenticode, which Windows' Smart App Control checks), made by the release workflow before the zip is built and approved by hand for each release ([docs/axit/code-signing.md](docs/axit/code-signing.md)); Windows names SignPath Foundation as the publisher. Releases up to 4.0.0 carry no such signature, and Smart App Control may refuse them.
+**Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).** From 4.1.0, every release's `AxKit.exe` carries that Windows signature (Authenticode, which Windows' Smart App Control checks), made by the release workflow before the zip is built and approved by hand for each release ([docs/axkit/code-signing.md](docs/axkit/code-signing.md)); Windows names SignPath Foundation as the publisher. Releases up to 4.0.0 carry no such signature, and Smart App Control may refuse them.
 
 Team and roles ([GOVERNANCE.md](GOVERNANCE.md)): Dr. Kyle Keane (www.kylekeane.com), author, reviewer and approver.
 
-Privacy: Axit transfers no information to other networked systems unless the user asks it to, except the update check above, which the user can turn off ([PRIVACY.md](PRIVACY.md)).
+Privacy: axKit transfers no information to other networked systems unless the user asks it to, except the update check above, which the user can turn off ([PRIVACY.md](PRIVACY.md)).
 
 ## Build and run
 
@@ -72,7 +72,7 @@ Needs the .NET 10 SDK, and NVDA for the manual checks.
 .\run.ps1 -NoBuild                       # start without building
 ```
 
-There is a `run-ax<app>.ps1` for each app. Close a running Axit before building: the build writes into the folder it runs from. If PowerShell refuses to run scripts: `powershell -ExecutionPolicy Bypass -File .\run.ps1`.
+There is a `run-ax<app>.ps1` for each app. Close a running axKit before building: the build writes into the folder it runs from. If PowerShell refuses to run scripts: `powershell -ExecutionPolicy Bypass -File .\run.ps1`.
 
 ## Test
 
@@ -82,7 +82,7 @@ There is a `run-ax<app>.ps1` for each app. Close a running Axit before building:
 .\manual_tests\prepare.ps1 # the files of the NVDA test passes, made new
 ```
 
-The unit tests cover everything that needs no window. What a window does is checked with NVDA, following each app's `docs/<app>/nvda-test-plan.md` on the files in `manual_tests/<app>`; each folder's `_main.md` says which section uses what. Every pass is written down in `docs/axit/nvda-test-record.md`, by step, version and commit.
+The unit tests cover everything that needs no window. What a window does is checked with NVDA, following each app's `docs/<app>/nvda-test-plan.md` on the files in `manual_tests/<app>`; each folder's `_main.md` says which section uses what. Every pass is written down in `docs/axkit/nvda-test-record.md`, by step, version and commit.
 
 ## Release
 
@@ -91,30 +91,30 @@ The unit tests cover everything that needs no window. What a window does is chec
 gh run watch               # follows the workflow that builds and publishes the release
 ```
 
-Add a `## 3.4.0` section to `CHANGELOG.md` first: it becomes the release notes, which the apps show in their update notice. The Release workflow tests, builds the self-contained `Axit.exe`, and publishes the zip and `install.cmd`; the Build workflow tests every push to every branch. `.\publish.ps1` makes the same zip locally and installs it for this user.
+Add a `## 3.4.0` section to `CHANGELOG.md` first: it becomes the release notes, which the apps show in their update notice. The Release workflow tests, builds the self-contained `AxKit.exe`, and publishes the zip and `install.cmd`; the Build workflow tests every push to every branch. `.\publish.ps1` makes the same zip locally and installs it for this user.
 
-Without GitHub Actions (a runner image or an action changed under the workflow, or the workflow is gone): `.\publish.ps1 -NoInstall` builds the zip into `publish\`; `.\tools\release-notes.ps1 -Version 3.4.0 > notes.md` takes the notes from the changelog; `gh release create v3.4.0 publish\Axit-3.4.0-win-x64.zip install.cmd --title "Axit 3.4.0" --notes-file notes.md --draft` and `gh release edit v3.4.0 --draft=false` publish it, the draft first so that no app downloads a half-uploaded zip. The practices that keep the repository stable over the years are `docs/axit/longevity.md`.
+Without GitHub Actions (a runner image or an action changed under the workflow, or the workflow is gone): `.\publish.ps1 -NoInstall` builds the zip into `publish\`; `.\tools\release-notes.ps1 -Version 3.4.0 > notes.md` takes the notes from the changelog; `gh release create v3.4.0 publish\AxKit-3.4.0-win-x64.zip install.cmd --title "axKit 3.4.0" --notes-file notes.md --draft` and `gh release edit v3.4.0 --draft=false` publish it, the draft first so that no app downloads a half-uploaded zip. The practices that keep the repository stable over the years are `docs/axkit/longevity.md`.
 
 ## Where things are
 
-- `src/Axit`: the program. `src/Axit.Core` and `src/Axit.Forms`: the pieces the apps share.
+- `src/AxKit`: the program. `src/AxKit.Core` and `src/AxKit.Forms`: the pieces the apps share.
 - `src/<App>` and `src/<App>.Core`: each app's window and its pure code. Each folder has a `CLAUDE.md` with its notes.
 - `tests/`: the unit tests, one project per app, and the recorded console fixtures.
 - `docs/<app>/`: each app's `SPEC.md`, `user-guide.md` (Help, User guide in the app) and `nvda-test-plan.md`. The specifications are the source of truth.
-- `docs/axit/`: the bundle's `SPEC.md` (launch, install, update, release, the accessibility and modularity rules), `plan.md`, `adding-an-app.md`, the test record, `review-2026-10-23.md` (the review of the code and documents, what was fixed and what is proposed), `inventory-2026-10-24.md` (the copies, dead code and drift, what was cleaned up and what is open) and `longevity.md` (the practices that keep the repository stable for years, with its calendar).
+- `docs/axkit/`: the bundle's `SPEC.md` (launch, install, update, release, the accessibility and modularity rules), `plan.md`, `adding-an-app.md`, the test record, `review-2026-10-23.md` (the review of the code and documents, what was fixed and what is proposed), `inventory-2026-10-24.md` (the copies, dead code and drift, what was cleaned up and what is open) and `longevity.md` (the practices that keep the repository stable for years, with its calendar).
 - `manual_tests/`: the script that makes the files for the NVDA passes.
 - `CLAUDE.md`: the map and the rules for working on this repository with Claude Code.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Report a bug or an idea with the [issue forms](https://github.com/KyleKeane/Axit/issues/new/choose); report a security problem privately, as [SECURITY.md](SECURITY.md) says. How the project is run and what its maintainer commits to: [GOVERNANCE.md](GOVERNANCE.md); how people treat each other here: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report a bug or an idea with the [issue forms](https://github.com/KyleKeane/AxKit/issues/new/choose); report a security problem privately, as [SECURITY.md](SECURITY.md) says. How the project is run and what its maintainer commits to: [GOVERNANCE.md](GOVERNANCE.md); how people treat each other here: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Licence
 
-Axit is free software by Dr. Kyle Keane (www.kylekeane.com) under the GNU Affero General Public License, version 3 only ([LICENSE](LICENSE)), with the additional terms of its section 7 in [NOTICE.md](NOTICE.md). Use it, study it, change it and share it. A changed version that is shared, or offered to people over a network, must offer its full source under the same licence, say that it is changed and by whom, keep the line "Based on Axit by Dr. Kyle Keane", and carry a name and icons of its own: the names Axit and its apps' names are not licensed. Versions up to 3.7.6 were released under the MIT licence.
+axKit is free software by Dr. Kyle Keane (www.kylekeane.com) under the GNU Affero General Public License, version 3 only ([LICENSE](LICENSE)), with the additional terms of its section 7 in [NOTICE.md](NOTICE.md). Use it, study it, change it and share it. A changed version that is shared, or offered to people over a network, must offer its full source under the same licence, say that it is changed and by whom, keep the line "Based on axKit by Dr. Kyle Keane", and carry a name and icons of its own: the names axKit and its apps' names are not licensed. Versions up to 3.7.6 were released under the MIT licence.
 
-**Shared as they are.** These are personal tools, given away without charge, with no warranty and no support. If you use them, you do so at your own risk, as I do; keep backups. [NOTICE.md](NOTICE.md) has the licence's terms in full and a reminder for each tool; every window shows it under Axit menu, About, Licence.
+**Shared as they are.** These are personal tools, given away without charge, with no warranty and no support. If you use them, you do so at your own risk, as I do; keep backups. [NOTICE.md](NOTICE.md) has the licence's terms in full and a reminder for each tool; every window shows it under axKit menu, About, Licence.
 
-My copies are on this repository's [releases page](https://github.com/KyleKeane/Axit/releases), signed as the code signing policy above says.
+My copies are on this repository's [releases page](https://github.com/KyleKeane/AxKit/releases), signed as the code signing policy above says.
 
-Axit is an independent project, not affiliated with or endorsed by Anthropic, NV Access, Microsoft or KeePassXC. What the program carries from others, the .NET runtime and Windows Forms under MIT among it: [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+axKit is an independent project, not affiliated with or endorsed by Anthropic, NV Access, Microsoft or KeePassXC. What the program carries from others, the .NET runtime and Windows Forms under MIT among it: [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

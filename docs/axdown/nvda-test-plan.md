@@ -9,12 +9,12 @@ letter), and a `long.md` with headings and lines longer than the window.
 
 ## 1. Install and start
 
-1. `.\publish.ps1` installs Axit. Press the Windows key, type `axd`: "Axit axDown" is offered; Enter opens an
+1. `.\publish.ps1` installs axKit. Press the Windows key, type `axd`: "axKit axDown" is offered; Enter opens an
    empty window. NVDA reads the title "Untitled - axDown" and then "Untitled edit multi line".
-2. Right-click `plain.txt` in File Explorer: the "Open with Axit" submenu lists axDown, and not axJSON; Enter on
+2. Right-click `plain.txt` in File Explorer: the "Open with axKit" submenu lists axDown, and not axJSON; Enter on
    axDown opens the file. "Open with"
    lists axDown for `.md`, `.markdown` and `.txt`.
-3. In a console: `axdown plain.txt` opens it; `axit plain.txt` opens it in axDown, `axit <folder>` opens axClaude;
+3. In a console: `axdown plain.txt` opens it; `axkit plain.txt` opens it in axDown, `axkit <folder>` opens axClaude;
    `axdown missing.md` opens an empty document named `missing.md`.
 4. Two files from Explorer give two windows; Alt+Tab names both.
 
@@ -82,15 +82,15 @@ letter), and a `long.md` with headings and lines longer than the window.
 
 1. Alt opens the menu; every item is read with its shortcut; Escape closes without changing the text.
 2. F1 opens the shortcuts notice, its first line naming the text's own keys; Page Down and Page Up move a screen of
-   its text, Ctrl+Down and Ctrl+Up a paragraph; h and Ctrl+H alike: "In every window of Axit, heading level 2" (the first section),
+   its text, Ctrl+Down and Ctrl+Up a paragraph; h and Ctrl+H alike: "In every window of axKit, heading level 2" (the first section),
    Shift+H back; Ctrl+F, type `wrap`, Enter: the shortcuts text is back with "wrap" selected and NVDA reads the
    line, F3: the next line with it, Ctrl+F then Escape: the text is back where it was; Escape closes the notice and
    the focus is back in the editor at the same place.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
-   as in the editor, "No next table" when there is none; Axit, About, Version names the version of Axit, the nine apps
-   and the folders; About, Licence, Attribution and Axit guide open their notices, Escape closes each.
-4. Alt+A: the Axit menu with New window, Recently closed, Open windows, Open windows by type, Close all windows, Check
-   for updates and About (bundle AX-9); About, Axit on GitHub: the browser opens the repository page. With a second
+   as in the editor, "No next table" when there is none; axKit, About, Version names the version of axKit, the nine apps
+   and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
+4. Alt+A: the axKit menu with New window, Recently closed, Open windows, Open windows by type, Close all windows, Check
+   for updates and About (bundle AX-9); About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+A, B, D there
    lists both windows, the current one checked; Alt+A, N, D starts a new Untitled window. Alone, Open windows holds
    "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+A, R reads "1. plain.txt
@@ -105,26 +105,26 @@ letter), and a `long.md` with headings and lines longer than the window.
    moment "Word wrap, …, 1 of 1"; Down: the low note, then "Word wrap, …, 1 of 1" again; Enter: the palette closes, NVDA is back in the editor at the same place, and
    "Word wrap, checked" (or "not checked") is said; Options shows the item changed. Ctrl+Shift+P, type `xyz`:
    "No commands match xyz"; Enter says it again and the palette stays; Escape: back in the editor, nothing run.
-   Ctrl+Shift+P, `save as`, Enter: the Save as picker opens. Alt+A, P (Axit, Command palette, the menu's first item) opens it too. Recent files and the
-   Axit menu's window lists are not in it; Alt+A, New window, axDown is ("axDown, Axit, New window").
+   Ctrl+Shift+P, `save as`, Enter: the Save as picker opens. Alt+A, P (axKit, Command palette, the menu's first item) opens it too. Recent files and the
+   axKit menu's window lists are not in it; Alt+A, New window, axDown is ("axDown, axKit, New window").
 
 ## 7. Updates and uninstall
 
-1. Axit, "Check for updates (Axit <version>)..." names the version you have and reports in a notice either way; Axit, About, Version names it too
-   and "Latest release on GitHub: Axit <version>" with the releases page.
-2. With an older build installed (set `<Version>` in `src/Axit/Axit.csproj` below the latest release, `.\publish.ps1`,
-   set it back), open a file: the notice "Update to Axit <newest>" opens by itself with four buttons. Escape (Later):
-   the Axit menu has "Update to Axit <newest>..." below Check for updates, and Check for updates asks GitHub again and opens
-   the notice once more. Enter (I accept all terms, install and restart): the notice "Updating to Axit <newest>" with a progress bar that
+1. axKit, "Check for updates (axKit <version>)..." names the version you have and reports in a notice either way; axKit, About, Version names it too
+   and "Latest release on GitHub: axKit <version>" with the releases page.
+2. With an older build installed (set `<Version>` in `src/AxKit/AxKit.csproj` below the latest release, `.\publish.ps1`,
+   set it back), open a file: the notice "Update to axKit <newest>" opens by itself with four buttons. Escape (Later):
+   the axKit menu has "Update to axKit <newest>..." below Check for updates, and Check for updates asks GitHub again and opens
+   the notice once more. Enter (I accept all terms, install and restart): the notice "Updating to axKit <newest>" with a progress bar that
    NVDA reports by its progress bar settings; "Downloaded. Installing" at about 80 percent, then "Installed.
-   Restarting"; axDown closes and comes back on the same file (or empty, as it was), Axit, About, Version naming the newest
+   Restarting"; axDown closes and comes back on the same file (or empty, as it was), axKit, About, Version naming the newest
    version. Again with the older build: Escape during the download says "Update cancelled" and keeps the version;
    I accept all terms, install and close says "Installed. Closing" and axDown does not come back; the Start menu entry is the newest
    version. With unsaved changes, I accept all terms, install and restart: the "Save changes?" question; Escape (Cancel): "Update
    installed. It starts with the next axDown", the window stays; a later Exit with Don't save closes without
    starting axDown again.
-3. Settings, Apps, Axit, Uninstall removes axDown's Start entry, its file menu entries, Open with, and `axdown.cmd`
-   together with everything else of Axit; `%APPDATA%\Axit\axdown.json` stays.
+3. Settings, Apps, axKit, Uninstall removes axDown's Start entry, its file menu entries, Open with, and `axdown.cmd`
+   together with everything else of axKit; `%APPDATA%\AxKit\axdown.json` stays.
 
 ## 8. Navigation (from the version with section 9 of the spec)
 

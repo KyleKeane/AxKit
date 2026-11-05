@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-  The release signing key (docs/axit/security-audit-2026-10-24.md S-27, the user's decision): makes it, signs a
+  The release signing key (docs/axkit/security-audit-2026-10-24.md S-27, the user's decision): makes it, signs a
   release's zip with it, and prints its public half.
 
 .DESCRIPTION
   An ECDSA P-256 key that lives only on the maintainer's machine, never on GitHub: its private half is kept in
-  %LOCALAPPDATA%\Axit-release\release-key.bin, encrypted for the Windows account that made it (DPAPI), so that a copy
+  %LOCALAPPDATA%\AxKit-release\release-key.bin, encrypted for the Windows account that made it (DPAPI), so that a copy
   of the file is useless elsewhere. release.ps1 signs every release's zip with it before the release is published;
-  the updater (Axit.Core/Updates/ReleaseSigning) and install.cmd refuse a zip whose signature does not check against
+  the updater (AxKit.Core/Updates/ReleaseSigning) and install.cmd refuse a zip whose signature does not check against
   the public half built into them. A stolen GitHub account cannot sign. Losing the key means one release installed
   by hand with a new key's public half in it.
 
@@ -16,8 +16,8 @@
 .EXAMPLE
   .\tools\release-key.ps1 new                          # once: makes the key, prints the public half for ReleaseSigning.cs
   .\tools\release-key.ps1 public                       # the public half again
-  .\tools\release-key.ps1 sign publish\Axit-3.7.0-win-x64.zip    # writes Axit-3.7.0-win-x64.zip.sig next to it
-  .\tools\release-key.ps1 verify publish\Axit-3.7.0-win-x64.zip  # checks the .sig against the public half
+  .\tools\release-key.ps1 sign publish\AxKit-3.7.0-win-x64.zip    # writes AxKit-3.7.0-win-x64.zip.sig next to it
+  .\tools\release-key.ps1 verify publish\AxKit-3.7.0-win-x64.zip  # checks the .sig against the public half
 #>
 [CmdletBinding()]
 param(
@@ -32,9 +32,9 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Security
 Add-Type -AssemblyName System.Core
-$keyFolder = Join-Path $env:LOCALAPPDATA 'Axit-release'
+$keyFolder = Join-Path $env:LOCALAPPDATA 'AxKit-release'
 $keyFile = Join-Path $keyFolder 'release-key.bin'
-$entropy = [Text.Encoding]::UTF8.GetBytes('Axit release signing key')
+$entropy = [Text.Encoding]::UTF8.GetBytes('AxKit release signing key')
 
 function Get-PrivateKey {
     if (-not (Test-Path -LiteralPath $keyFile)) {
@@ -75,7 +75,7 @@ switch ($Command) {
         [IO.File]::WriteAllBytes($keyFile, [Security.Cryptography.ProtectedData]::Protect($private, $entropy, 'CurrentUser'))
         [Array]::Clear($private, 0, $private.Length)
         Write-Host "Made the release key: $keyFile (readable only by this Windows account)."
-        Write-Host "Its public half, for src\Axit.Core\Updates\ReleaseSigning.cs and install.cmd:"
+        Write-Host "Its public half, for src\AxKit.Core\Updates\ReleaseSigning.cs and install.cmd:"
         Write-Output (Get-PublicText $key)
     }
     'public' {

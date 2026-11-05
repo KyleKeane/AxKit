@@ -93,13 +93,13 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
-      "axit.core": {
+      "axkit.core": {
         "type": "Project"
       },
       "axstart.core": {
         "type": "Project",
         "dependencies": {
-          "Axit.Core": "[1.0.0, )"
+          "AxKit.Core": "[1.0.0, )"
         }
       }
     }

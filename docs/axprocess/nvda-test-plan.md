@@ -13,9 +13,9 @@ Run with NVDA before a release, after `run-axprocess.ps1` (or `.\run.ps1 -App pr
 7. Home, then Up: the low edge sound, nothing spoken. End, then Down: the same.
 8. Tab: "Services, N. <service>"; Tab: "Startup, N. <entry>"; Tab: "Processes, N. <process>". Shift+Tab: "Startup, …".
 9. On a process, Shift+F10: the Process menu opens and NVDA reads "Details Enter". Escape. Ctrl+2, Shift+F10: the Service menu; Ctrl+3, Shift+F10: the Startup menu. The Applications key does the same.
-9a. In the Processes view, Alt, then Right along the bar: Computer, Process, View, Options, Axit, Help; Service and Startup are passed over. Ctrl+2, Alt, Right: Computer, Service, View…
+9a. In the Processes view, Alt, then Right along the bar: Computer, Process, View, Options, axKit, Help; Service and Startup are passed over. Ctrl+2, Alt, Right: Computer, Service, View…
 9b. Type `svc`: the first process starting with svc; `s` again after a pause: the next name starting with s; Shift+S: back to the one before.
-10. Close axProcess, then in another Axit window Alt+A, R: "1. axProcess" is in Recently closed; Enter starts it.
+10. Close axProcess, then in another axKit window Alt+A, R: "1. axProcess" is in Recently closed; Enter starts it.
 7. Alt+F4 closes the window without a question.
 
 ## 2. Processes (PR-3)
@@ -26,7 +26,7 @@ Run with NVDA before a release, after `run-axprocess.ps1` (or `.\run.ps1 -App pr
 4. Ctrl+E on Notepad: axFile opens on its folder with notepad.exe selected.
 5. Delete on Notepad: the notice "End Notepad (process N)?" with "Anything unsaved in it is lost."; Escape: nothing happens. Delete, Enter: "Ended Notepad"; the list no longer holds it.
 6. Delete on a system process (System, or svchost): the question, then Enter: "Could not end …: access is denied. It may need administrator rights".
-7. Find axProcess's own item (Ctrl+F, `Axit`; the one whose ID is this window's), Delete: "That is this window: close it with Alt+F4" if it is this process, otherwise the question (another Axit window).
+7. Find axProcess's own item (Ctrl+F, `axKit`; the one whose ID is this window's), Delete: "That is this window: close it with Alt+F4" if it is this process, otherwise the question (another axKit window).
 8. Ctrl+C: "Copied"; paste in axDown: the line.
 
 ## 3. Services (PR-4)
@@ -42,10 +42,10 @@ Run with NVDA before a release, after `run-axprocess.ps1` (or `.\run.ps1 -App pr
 2. Enter: the details, "Command …", "Set in …", "Enabled", "Program …"; Show program in axFile opens axFile on it.
 3. An entry turned off in Task Manager's Startup apps reads "disabled".
 
-## 5. Text, notices, the Axit menu (PR-6)
+## 5. Text, notices, the axKit menu (PR-6)
 
 1. Ctrl+S: "Nothing to save here. F5 refreshes, Delete ends a process".
 2. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.
 3. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape.
-4. Alt+A: the Axit menu; About, Version names axProcess among the apps.
+4. Alt+A: the axKit menu; About, Version names axProcess among the apps.
 5. Ctrl+Shift+P, type `summary`, Enter: the summary is said.

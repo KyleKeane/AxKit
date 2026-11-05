@@ -4,9 +4,9 @@ axStart is a program launcher, made for screen reader users: one key from anywhe
 
 ## Install and start
 
-axStart is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) starts axStart in the background and makes it start again each time you sign in to Windows. It has no window and no taskbar button until you press its hotkey, **Ctrl+Shift+Space**.
+axStart is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) starts axStart in the background and makes it start again each time you sign in to Windows. It has no window and no taskbar button until you press its hotkey, **Ctrl+Shift+Space**.
 
-You can also start it from the Start menu, `Axit axStart`, or the console, `axstart`: the search field comes up, and axStart keeps running afterwards. Starting it again while it runs just brings up the field.
+You can also start it from the Start menu, `axKit axStart`, or the console, `axstart`: the search field comes up, and axStart keeps running afterwards. Starting it again while it runs just brings up the field.
 
 ## Finding and starting a program
 
@@ -33,7 +33,7 @@ How matching works: every word you type must be in the name, in any order, with 
 - **Options, Hotkey**: press the key you want to bring axStart up, with Ctrl, Alt or the Windows key in it, then Enter. "Hotkey Ctrl+Alt+K" when it is set; "Ctrl+Alt+K is taken by another program" when another program holds it, and the old key stays. If the hotkey is taken when axStart starts, axStart shows itself once with a notice saying so, so that you can choose another.
 - **Options, General, Start with Windows** (on): axStart starts in the background when you sign in.
 - **Options, General, Say the first match while typing** (on): turn it off and axStart says nothing while you type; Ctrl+I says the match on demand.
-- **Options, Text**: the font and its size, as in every Axit window.
+- **Options, Text**: the font and its size, as in every axKit window.
 
 ## Ending axStart
 
@@ -43,20 +43,20 @@ axStart, **Quit axStart** ends it until the next sign-in or the next time you st
 
 - **axStart**: Start (Enter), Start as administrator (Ctrl+Shift+Enter), Open file location (Ctrl+O), Information (Ctrl+I), Refresh programs (F5), Hide (Escape), Quit axStart.
 - **Options**: Hotkey, Text, General (Start with Windows, Say the first match while typing, Check for updates at start), Developer.
-- **Axit**: the other Axit apps, the open windows, Check for updates and About, as in every Axit window.
+- **axKit**: the other axKit apps, the open windows, Check for updates and About, as in every axKit window.
 - **Help**: Keyboard shortcuts (F1), User guide, Windows resources.
 
 ## Updates
 
-axStart offers a new Axit release as every Axit window does. An update stops axStart and starts it again in the background.
+axStart offers a new axKit release as every axKit window does. An update stops axStart and starts it again in the background.
 
 ## If something goes wrong
 
-- **The hotkey does nothing**: axStart may not be running. Start it from the Start menu, `Axit axStart`. If the field comes up with a notice that the hotkey is taken, choose another in Options, Hotkey.
+- **The hotkey does nothing**: axStart may not be running. Start it from the Start menu, `axKit axStart`. If the field comes up with a notice that the hotkey is taken, choose another in Options, Hotkey.
 - **A program is missing**: axStart lists what the Start menu's All apps list has. Press F5 to read it again.
 - **A program will not start**: axStart says why, in Windows' words, and stays open.
-- The log is in `%LOCALAPPDATA%\Axit\logs\axstart.log`; it never holds the names of the programs you start.
+- The log is in `%LOCALAPPDATA%\AxKit\logs\axstart.log`; it never holds the names of the programs you start.
 
 ## About
 
-axStart is an app of the Axit bundle by Dr. Kyle Keane (www.kylekeane.com), released under the GNU AGPL 3 licence. Axit menu, About has the version, the licence and the full disclaimer.
+axStart is an app of the axKit bundle by Dr. Kyle Keane (www.kylekeane.com), released under the GNU AGPL 3 licence. axKit menu, About has the version, the licence and the full disclaimer.

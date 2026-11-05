@@ -1,4 +1,4 @@
-using Axit.Core;
+using AxKit.Core;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;

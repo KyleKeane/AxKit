@@ -1,6 +1,6 @@
 using AxClaude.Core.Pty;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxClaude;
 

@@ -5,15 +5,15 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <!-- As the executable runs (src/Axit/Axit.csproj): a test that passes only with the globalization data hides a
+    <!-- As the executable runs (src/AxKit/AxKit.csproj): a test that passes only with the globalization data hides a
          defect of the shipped program (TextMatch.Fold relied on string.Normalize, which does nothing without the
          data; found 2026-10-23). -->
     <InvariantGlobalization>true</InvariantGlobalization>
     <!-- A lock file per test project (packages.lock.json, committed), so that a test run years from now restores
-         exactly the packages that run today (docs/axit/longevity.md 3.12); Dependabot moves the lock files with the packages. -->
+         exactly the packages that run today (docs/axkit/longevity.md 3.12); Dependabot moves the lock files with the packages. -->
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <!-- In CI the lock files are the law: a package that does not match them fails the restore (security audit S-34). -->
     <RestoreLockedMode Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreLockedMode>
@@ -29,7 +29,7 @@
   <!-- What the test projects share (tests/Shared): a temporary folder that goes with the test, the fixture folder. -->
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Shared\*.cs" Link="Shared\%(Filename)%(Extension)" />
-    <Using Include="Axit.TestShared" />
+    <Using Include="AxKit.TestShared" />
   </ItemGroup>
 
 </Project>

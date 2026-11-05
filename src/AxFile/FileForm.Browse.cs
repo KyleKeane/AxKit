@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using AxFile.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxFile;
 
@@ -531,7 +531,7 @@ public sealed partial class FileForm
         for (var i = 0; i < drives.Count; i++)
         {
             var drive = drives[i];
-            items.Add(new ToolStripMenuItem(AxitWindows.Label(i, drive.Name), null, (_, _) => Do(() => ShowFolderAsync(drive.Path, null, remember: true))));
+            items.Add(new ToolStripMenuItem(AxKitWindows.Label(i, drive.Name), null, (_, _) => Do(() => ShowFolderAsync(drive.Path, null, remember: true))));
         }
 
         items.Add(new ToolStripSeparator());
@@ -695,7 +695,7 @@ public sealed partial class FileForm
             return;
         }
 
-        AxitMenu.Start(entry.IsFolder ? Dispatch.AxFile : Dispatch.AxPreview, entry.Path);
+        AxKitMenu.Start(entry.IsFolder ? Dispatch.AxFile : Dispatch.AxPreview, entry.Path);
     }
 
     /// <summary>Backspace, Alt+Up, Folder → Up one level: the parent with the folder just left selected; This PC with the drive selected from a drive's root (AF-3.10); "Top" at This PC.</summary>

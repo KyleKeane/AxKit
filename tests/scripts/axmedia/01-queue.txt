@@ -2,13 +2,13 @@
 # Every sound is the runner's silence; nothing reaches the speakers. The names start with letters so that a typed
 # letter has something to jump to; the queue's order is name order: alpha, beta, delta, gamma.
 
-# The run's own settings (AXIT_HOME): no update check at start, which goes to the network and logs an ERROR when
+# The run's own settings (AXKIT_HOME): no update check at start, which goes to the network and logs an ERROR when
 # the network cannot be reached, failing the run.
-file home\Axit\axmedia.json {"checkForUpdates":false}
+file home\AxKit\axmedia.json {"checkForUpdates":false}
 
 # Step 1: no path, an empty queue; the list reads "Queue is empty", and every command on that line says so.
 start media
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axit/app-kit.md AK-2.4).
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
 expect focus Queue is empty
 expect state "title":"axMedia"

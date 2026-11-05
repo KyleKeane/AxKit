@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using AxClaude.Core.Transcript;
-using Axit.Core.Transcript;
-using Axit.Core.Pty;
+using AxKit.Core.Transcript;
+using AxKit.Core.Pty;
 
 namespace AxClaude.Tests;
 

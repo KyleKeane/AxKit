@@ -6,7 +6,7 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 
 ## 1. Start (AT-1, AT-2)
 
-- `axterminal C:\src\myproject` (or Start menu, Axit axTerminal): NVDA says the window ("myproject - axTerminal window"), then "Command, edit, multi line". After a moment: the ping and "Ready".
+- `axterminal C:\src\myproject` (or Start menu, axKit axTerminal): NVDA says the window ("myproject - axTerminal window"), then "Command, edit, multi line". After a moment: the ping and "Ready".
 - Ctrl+2: "Terminal". The first lines: a system line "Shell started: Windows PowerShell in …" and, with NVDA running, PowerShell's line that it turned PSReadLine off. No prompt row anywhere. Ctrl+1: "Command".
 - NVDA+End (the status bar): "Idle" and the prompt text "PS C:\src\myproject>".
 - Ctrl+Q: "Idle, PS C:\src\myproject>".
@@ -36,11 +36,11 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 - Session, Open recent folder: the folders as "1. name (path)"; Enter on one: a new session there.
 - `exit`, Enter: "The shell ended"; the system line; Enter in the field: "The shell ended. Ctrl+Shift+R starts it again"; Ctrl+Shift+R: "Ready".
 
-## 4. Text, notices, the Axit menu (AT-4, AT-6)
+## 4. Text, notices, the axKit menu (AT-4, AT-6)
 
 - `cls`, Enter: "Done"; the lines before stay; `echo after`, Enter: "after" at the end. Ctrl+L: "Cleared"; the terminal is empty; the next command's lines come as the first.
 - m on a line: "Bookmark 1 added"; k from the top: "Bookmark 1, …". Ctrl+F, text, Enter: the line; F3: the next; "Not found" otherwise.
 - Ctrl+S: the file picker with a name `axterminal-<date>.md` in the current folder; save: "Exported"; the file holds the Input and Output lines as Markdown headings.
 - F1: the shortcuts as a notice; h moves by its headings; Escape closes it. Help, User guide likewise.
 - Alt+F4 while `Start-Sleep 30` runs: the notice "A command is still running"; Escape keeps it; Alt+F4, Enter: closes.
-- Alt+A: the Axit menu as in every window; New window lists axTerminal; Open windows by type has an axTerminal submenu.
+- Alt+A: the axKit menu as in every window; New window lists axTerminal; Open windows by type has an axTerminal submenu.

@@ -1,11 +1,11 @@
 using AxFile.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxFile;
 
 /// <summary>
-/// axFile's entry point inside Axit (docs/axit/SPEC.md AX-1.7; SPEC.md AF-1.2): <c>Axit.exe file [&lt;folder or file&gt;]</c>
+/// axFile's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AF-1.2): <c>AxKit.exe file [&lt;folder or file&gt;]</c>
 /// calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one path of the command line,
 /// the settings and <see cref="FileForm"/>.
 /// </summary>
@@ -14,7 +14,7 @@ public static class AxFileApp
     public const string Name = "axFile";
 
     public const string Usage = """
-        Usage: Axit file [<folder or file>]
+        Usage: axKit file [<folder or file>]
                axfile [<folder or file>]  the same, as the installed console command
 
           <folder or file>  the folder to list; a file opens its folder with the file selected. Without one, the last folder opened

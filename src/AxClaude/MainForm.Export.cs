@@ -1,5 +1,5 @@
 using AxClaude.Core.Privacy;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxClaude;
 

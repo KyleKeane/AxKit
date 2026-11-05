@@ -1,6 +1,6 @@
 using AxMedia.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxMedia;
 
@@ -10,16 +10,16 @@ namespace AxMedia;
 /// the transport keys work from anywhere in the window. The engine is <see cref="MediaPlayer"/>, its events posted
 /// back to this thread; the queue is <see cref="PlayQueue"/>. A start with paths while this window is open arrives as
 /// a hand-over message (AM-1.2, <see cref="AppMessage"/>) in <see cref="WndProc"/>. The notices, the fonts, the
-/// window's place, the update flow, find and the announcements are the bundle's window base (<see cref="AxitForm"/>).
-/// Grown from axFile's player and queue pane (docs/axit/axfile-split.md).
+/// window's place, the update flow, find and the announcements are the bundle's window base (<see cref="AxKitForm"/>).
+/// Grown from axFile's player and queue pane (docs/axkit/axfile-split.md).
 /// </summary>
-public sealed partial class MediaForm : AxitForm
+public sealed partial class MediaForm : AxKitForm
 {
     private readonly MediaSettings _settings;
     private readonly HandOver? _start;
     private readonly MenuStrip _menu = new();
     private readonly ToolStripMenuItem _recentItem = new("Open &recent");
-    private readonly AxitList _list = new();
+    private readonly AxKitList _list = new();
     private readonly Panel _video = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _stateLabel;
@@ -45,7 +45,7 @@ public sealed partial class MediaForm : AxitForm
         // A start on one file is named after it from the first moment, so that NVDA reads the file's window as it opens (AM-2.3).
         Text = start is { Verb: AppMessage.Play, Paths: [var only] } && File.Exists(only) ? $"{Path.GetFileName(only)} - {AxMediaApp.Name}" : AxMediaApp.Name;
 
-        // ---- menus and keys (AM-5.1, AM-5.2): one command list (docs/axit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (AM-5.1, AM-5.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
         // Queue is the thing worked on, in the standard order of a first menu (bundle AX-6): New and Open with the
         // recent list, the items on the file, Show current file in, Exit. Enter, Delete and Space act in the list
         // only (AM-5.2); in a notice's field they are the field's own, and in the list returning true keeps it from dinging.
@@ -108,8 +108,8 @@ public sealed partial class MediaForm : AxitForm
             ("Free &codecs in the Microsoft Store", "https://apps.microsoft.com/search?query=media+extensions"),
         ]);
 
-        // The bundle's Axit menu (AX-9) sits before Help in every window and ends with the update items and About.
-        _menu.Items.AddRange([queue, play, options, CreateAxitMenu(), help]);
+        // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
+        _menu.Items.AddRange([queue, play, options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         // ---- the list (AM-2.1): the one control; its own keys stay native ----
@@ -267,7 +267,7 @@ public sealed partial class MediaForm : AxitForm
         var (queue, start) = await Task.Run(() => MediaFolder.Queue(message.Paths));
         if (queue.Count == 0)
         {
-            AxitMenu.Activate(Handle);
+            AxKitMenu.Activate(Handle);
             Announce($"No sound or video files in {Describe(message.Paths)}", true);
             return;
         }
@@ -276,7 +276,7 @@ public sealed partial class MediaForm : AxitForm
         FillList();
         _list.SelectedIndex = start;
         PlayCurrent(prompted: true);
-        AxitMenu.Activate(Handle);
+        AxKitMenu.Activate(Handle);
         RememberPath(message.Paths);
     }
 
@@ -380,8 +380,8 @@ public sealed partial class MediaForm : AxitForm
         RecentMenu.Fill(_recentItem, _settings.Recent, path => File.Exists(path) || Directory.Exists(path), PathName.Of, "&No recent files or folders",
             target => AddPaths([target], Directory.Exists(target) ? $"No sound or video files in {PathName.Of(target)}" : null));
 
-    /// <summary>Queue → New window (Ctrl+N): another axMedia window, empty; the Axit menu's New window does the same (AX-9).</summary>
-    private void NewWindow() => AxitMenu.Start(Dispatch.AxMedia, null);
+    /// <summary>Queue → New window (Ctrl+N): another axMedia window, empty; the axKit menu's New window does the same (AX-9).</summary>
+    private void NewWindow() => AxKitMenu.Start(Dispatch.AxMedia, null);
 
     /// <summary>The file in hand (AM-1.4): the one playing or paused, else the one under the selection; null with an empty queue.</summary>
     private string? FileInHand =>

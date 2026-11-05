@@ -1,9 +1,9 @@
 # axPass, the window
 
-The WinForms side of axPass: one KeePass database in the item apps' shared window, `Axit.Forms/ItemForm` (the
+The WinForms side of axPass: one KeePass database in the item apps' shared window, `AxKit.Forms/ItemForm` (the
 navigator and the detail pane, the moves, the shared keys, every field command). The pure code (KeePassXC's tool as a
 process, its output read into groups, entries and fields, a field's change into the tool's options, the settings) is
-`src/AxPass.Core`, with its own `CLAUDE.md`. The shared shape is `docs/axit/item-apps.md` (IA-n.m); axPass's own spec
+`src/AxPass.Core`, with its own `CLAUDE.md`. The shared shape is `docs/axkit/item-apps.md` (IA-n.m); axPass's own spec
 is `docs/axpass/SPEC.md` ("SPEC.md" below), with the format and what the tool does in `docs/axpass/kdbx-notes.md`; the
 guide `docs/axpass/user-guide.md` is embedded by `AxPass.csproj`; the manual test plan is `docs/axpass/nvda-test-plan.md`.
 
@@ -11,16 +11,16 @@ guide `docs/axpass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
 
 ```
 .\manual_tests\prepare.ps1 axpass                 # the test database, password test-master-1 (needs KeePassXC)
-.\run-axpass.ps1 manual_tests\axpass\test.kdbx    # build Axit and start axPass on it (run.ps1 -App pass)
+.\run-axpass.ps1 manual_tests\axpass\test.kdbx    # build AxKit and start axPass on it (run.ps1 -App pass)
 .\test.ps1 AxPass                                 # the tests in Release, as CI runs them
 ```
 
 ## Where things are
 
-- `AxPassApp`: the entry point `Run`, one call into `Axit.Forms/AppHost.Run` with the one database of the command line.
+- `AxPassApp`: the entry point `Run`, one call into `AxKit.Forms/AppHost.Run` with the one database of the command line.
 - `PassForm.cs`: the window on `ItemForm`: the menus (File; Group, Entry and Field, only the one for the selection
-  enabled by `ItemForm` from `SelectionMenus` and `SelectionMenusAvailable` (unlocked); Options with Lock after and the tool's place; Axit; Help), axPass's own keys
-  as commands of the window's one command list (`Add`, `AddKey`; docs/axit/app-kit.md AK-2; each before
+  enabled by `ItemForm` from `SelectionMenus` and `SelectionMenusAvailable` (unlocked); Options with Lock after and the tool's place; axKit; Help), axPass's own keys
+  as commands of the window's one command list (`Add`, `AddKey`; docs/axkit/app-kit.md AK-2; each before
   `ItemForm`'s shared keys, so that Enter unlocks a locked window before it opens; a command that acts anywhere has
   `When = NotRenaming`, so that the rename box keeps its keys), the levels from the `PassTree` (`ReadLevel`, `EnterList`,
   `LeaveList`; a group's key ends in a slash, so that a group and an entry of one name differ), the detail (`DetailOf`;
@@ -34,7 +34,7 @@ guide `docs/axpass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
   runs a `Step` keeps), the password's notices (`ChangeSpecial`, Generate, typed twice, `edit -p`), the copies (the
   user name by axPass, the password by the tool's `clip` with its 30-second clear, `KeePassCli.StartLasting`), the URL,
   the database's picker and `db-create`, the tool's place.
-- `AxPassKeys`: the window's keys, `Axit.Forms/ItemKeys.All` and its own; `All` feeds the collision test.
+- `AxPassKeys`: the window's keys, `AxKit.Forms/ItemKeys.All` and its own; `All` feeds the collision test.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules

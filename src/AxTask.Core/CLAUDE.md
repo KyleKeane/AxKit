@@ -1,7 +1,7 @@
 # AxTask.Core, the pure code
 
 Everything of axTask that needs no window, unit tested in `tests/AxTask.Tests` over temporary folders. The item
-format is `docs/axit/item-apps.md` (IA-n.m), shared with axPass; axTask's own rules are `docs/axtask/SPEC.md` (TK-n.m).
+format is `docs/axkit/item-apps.md` (IA-n.m), shared with axPass; axTask's own rules are `docs/axtask/SPEC.md` (TK-n.m).
 The window is `src/AxTask`, with its own `CLAUDE.md`.
 
 ## Commands
@@ -13,8 +13,8 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 ## Where things are
 
 - The item format itself (`ItemDocument`, `ItemField`, `FieldTypes`, `Parsed`: an item or a list's `list.json` as JSON
-  kept whole, every change a new document; the types read out and typed) is `Axit.Core`'s since axPass, its second
-  use (IA-D5), with its tests in `tests/Axit.Tests`.
+  kept whole, every change a new document; the types read out and typed) is `AxKit.Core`'s since axPass, its second
+  use (IA-D5), with its tests in `tests/AxKit.Tests`.
 - `ItemFolder` and `ItemFile`, `FolderLevel`, `TopLevel` (IA-4, IA-D4, TK-3a, TK-D4): a list's items (`Read`; a
   folder inside a list, hidden and dot entries left out, what is not an item counted), the top folder's lists and the
   Archive's (`ReadTop`), a list's section (`SectionOf`, from the `SectionField` of its details), `ReadItem` (with the text read, for

@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axJSON's window side, as a class library inside Axit.exe (docs/axit/SPEC.md AX-1.7): the app as data for the
+  <!-- axJSON's window side, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7): the app as data for the
        editor shell, its key table and its texts; the pure code is AxJSON.Core. -->
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)-windows</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>axJSON</RootNamespace>
     <AssemblyName>axJSON</AssemblyName>
@@ -11,8 +11,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AxJSON.Core\AxJSON.Core.csproj" />
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
-    <ProjectReference Include="..\Axit.Forms\Axit.Forms.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Forms\AxKit.Forms.csproj" />
   </ItemGroup>
 
   <ItemGroup>

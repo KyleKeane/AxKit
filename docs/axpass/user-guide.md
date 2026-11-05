@@ -1,9 +1,9 @@
 # axPass user guide
 
-**axPass, access layer for KeePassXC.** axPass only shows what KeePassXC's command-line tool reads and passes your changes and your master password to it; KeePassXC, which you install, does all the encryption, under its own licence. Before axPass first unlocks or makes a database it shows a short reminder with a check box: you confirm that axPass is only an access layer and that following KeePassXC's terms is up to you. Axit menu, About, Licence has these reminders and what you agreed to.
+**axPass, access layer for KeePassXC.** axPass only shows what KeePassXC's command-line tool reads and passes your changes and your master password to it; KeePassXC, which you install, does all the encryption, under its own licence. Before axPass first unlocks or makes a database it shows a short reminder with a check box: you confirm that axPass is only an access layer and that following KeePassXC's terms is up to you. axKit menu, About, Licence has these reminders and what you agreed to.
 
 axPass opens a KeePass password database (a `.kdbx` file) in a window that NVDA reads well: its groups and entries
-on the left, the selected entry's fields on the right. It is part of Axit, a bundle of apps for people who use a
+on the left, the selected entry's fields on the right. It is part of axKit, a bundle of apps for people who use a
 screen reader. It reads and writes the database through KeePassXC's own command-line tool, so KeePassXC must be
 installed; axPass never decrypts the file itself.
 
@@ -11,8 +11,8 @@ installed; axPass never decrypts the file itself.
 
 - Install KeePassXC from https://keepassxc.org/, or in a console: `winget install KeePassXCTeam.KeePassXC`.
 - A database made by KeePass, KeePassXC or KeePassium opens in axPass, and the other way round.
-- Start menu: `Axit axPass`. Console: `axpass`, or `axpass C:\Vault\mine.kdbx`. In File Explorer, a `.kdbx` file's
-  Open with Axit menu has axPass.
+- Start menu: `axKit axPass`. Console: `axpass`, or `axpass C:\Vault\mine.kdbx`. In File Explorer, a `.kdbx` file's
+  Open with axKit menu has axPass.
 
 ## Unlocking and locking
 
@@ -78,8 +78,8 @@ in a password field rather than in the notes.
 
 ## About
 
-axPass is part of Axit by Dr. Kyle Keane, www.kylekeane.com. KeePassXC is a separate project; axPass only runs its
-command-line tool. Axit, About has the licence and the version.
+axPass is part of axKit by Dr. Kyle Keane, www.kylekeane.com. KeePassXC is a separate project; axPass only runs its
+command-line tool. axKit, About has the licence and the version.
 
 ## Disclaimer
 

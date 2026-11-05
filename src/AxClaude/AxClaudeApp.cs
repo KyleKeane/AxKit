@@ -1,11 +1,11 @@
 using AxClaude.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxClaude;
 
 /// <summary>
-/// axClaude's entry point inside Axit (docs/axit/SPEC.md AX-1.7): <c>Axit.exe claude [arguments]</c> calls
+/// axClaude's entry point inside axKit (docs/axkit/SPEC.md AX-1.7): <c>AxKit.exe claude [arguments]</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with axClaude's own command line
 /// (<see cref="StartupOptions"/>), the take-over of the 1.x settings file, the settings and <see cref="MainForm"/>.
 /// </summary>
@@ -25,7 +25,7 @@ public static class AxClaudeApp
                 return null;
             }
 
-            // AX-5.2: the first start under Axit takes over the settings of axClaude 1.x.
+            // AX-5.2: the first start under axKit takes over the settings of axClaude 1.x.
             try
             {
                 AppSettings.TakeOverOldFile();

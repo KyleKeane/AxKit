@@ -1,4 +1,4 @@
-# What can ship code to every installed copy is reviewed by the maintainer (docs/axit/security-audit-2026-10-24.md S-36):
+# What can ship code to every installed copy is reviewed by the maintainer (docs/axkit/security-audit-2026-10-24.md S-36):
 # the workflows, the installer and the release scripts, and the updater with the release key's public half.
 /.github/                       @KyleKeane
 /install.ps1                    @KyleKeane
@@ -7,4 +7,4 @@
 /release.ps1                    @KyleKeane
 /tools/release-key.ps1          @KyleKeane
 /tools/sign-release.ps1         @KyleKeane
-/src/Axit.Core/Updates/         @KyleKeane
+/src/AxKit.Core/Updates/         @KyleKeane

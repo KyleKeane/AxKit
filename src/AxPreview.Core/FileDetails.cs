@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxPreview.Core;
 

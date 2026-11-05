@@ -4,7 +4,7 @@ axClip keeps a history of the text you copy, made for screen reader users. It ru
 
 ## Install
 
-axClip is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) gives you a Start menu entry `Axit axClip` and a console command `axclip`, and starts axClip in the background; it then starts with Windows, unless you turn that off in its Options, General.
+axClip is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axClip` and a console command `axclip`, and starts axClip in the background; it then starts with Windows, unless you turn that off in its Options, General.
 
 ## Using it
 
@@ -32,7 +32,7 @@ The history is kept in memory only: it is gone when axClip ends, unless you turn
 
 - **axClip**: Paste (Enter), Copy without pasting (Shift+Enter), Read in full (Ctrl+Q), Remove (Delete), Clear history (Ctrl+Shift+Delete), Hide (Escape), Quit axClip.
 - **Options**: Hotkey, Pause recording (Ctrl+P), Keep history between runs, Text (font and size), General (the update check, Start with Windows, Say the first match while typing), Developer (the settings file, diagnostics).
-- **Axit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
+- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
 - **Help**: Keyboard shortcuts (F1), this guide, Windows resources.
 
 ## The hotkey
@@ -41,19 +41,19 @@ Options, Hotkey: press the new key with Ctrl, Alt or the Windows key, then Enter
 
 ## Settings
 
-axClip keeps the font, the text size, the update check, the hotkey, Start with Windows, Say the first match while typing and Keep history between runs in `%APPDATA%\Axit\axclip.json`, and the history there too while you keep it. Options, Developer, Open settings file opens it in axJSON.
+axClip keeps the font, the text size, the update check, the hotkey, Start with Windows, Say the first match while typing and Keep history between runs in `%APPDATA%\AxKit\axclip.json`, and the history there too while you keep it. Options, Developer, Open settings file opens it in axJSON.
 
 ## Updates
 
-axClip checks for a newer Axit when it starts and offers it in a notice; the Axit menu has Check for updates at any time. One update brings every app of Axit up to date; axClip is started again after it, and its history starts empty unless you keep it.
+axClip checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date; axClip is started again after it, and its history starts empty unless you keep it.
 
 ## If something goes wrong
 
-axClip's log is `%LOCALAPPDATA%\Axit\logs\axclip.log`. If Enter does not paste, the program you were in did not come back to the front in time, or it runs as administrator, where Windows does not let axClip press keys: the text is on the clipboard, so press Ctrl+V there yourself.
+axClip's log is `%LOCALAPPDATA%\AxKit\logs\axclip.log`. If Enter does not paste, the program you were in did not come back to the front in time, or it runs as administrator, where Windows does not let axClip press keys: the text is on the clipboard, so press Ctrl+V there yourself.
 
 ## About axClip
 
-axClip is one app of Axit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Axit menu's About names the version and the licence.
+axClip is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
 
 ## Disclaimer
 

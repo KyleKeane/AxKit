@@ -1,6 +1,6 @@
 using System.Text;
 using AxTerminal.Core;
-using Axit.Core.Transcript;
+using AxKit.Core.Transcript;
 
 namespace AxTerminal.Tests;
 

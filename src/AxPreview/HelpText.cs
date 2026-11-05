@@ -1,9 +1,9 @@
 using System.Reflection;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxPreview;
 
-/// <summary>The texts axPreview shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>Axit.Core.BundleAbout</c>).</summary>
+/// <summary>The texts axPreview shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>AxKit.Core.BundleAbout</c>).</summary>
 public static class HelpText
 {
     /// <summary>The F1 text (SPEC.md AP-3.3): a first line naming the text's own keys, then one Markdown heading per group (bundle AX-7.2): the bundle-wide keys, then axPreview's own. The first line and the bundle's section come from <c>BundleHelp</c>.</summary>
@@ -18,7 +18,7 @@ public static class HelpText
           Ctrl+O: open any file to read. Ctrl+N: a new axPreview window
           F5: read the file again; coming back to the window after another program changed it does the same by itself
           Ctrl+E: go on with the file: a text in its editor, axDown, or axJSON for a .json file; a sound or video in axMedia; anything else in the program Windows has for it
-          File, Open with: the Axit apps for the file, Windows' program, or Windows' own list of programs, whose Always makes one the default
+          File, Open with: the axKit apps for the file, Windows' program, or Windows' own list of programs, whose Always makes one the default
           Ctrl+W: show the file in File Explorer
           Ctrl+G: go to a line; the field also says where you are, like "Go to line (now line 12, column 4)"
           l: say the line, "Line 12 of 40"

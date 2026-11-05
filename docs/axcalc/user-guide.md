@@ -4,7 +4,7 @@ axCalc is a calculator made for screen reader users: one field to type an expres
 
 ## Install
 
-axCalc is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) gives you a Start menu entry `Axit axCalc` and a console command `axcalc`. Any Axit window starts one too: Alt+A, New window, axCalc.
+axCalc is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axCalc` and a console command `axcalc`. Any axKit window starts one too: Alt+A, New window, axCalc.
 
 ## Start
 
@@ -34,7 +34,7 @@ Angles are in degrees unless you choose Options, Angles, Radians.
 
 ## The history
 
-The newest line is at the bottom, so Up from the end reads back from the latest. axCalc keeps the history and your variables between runs, in plain text in its settings file (`%APPDATA%\Axit\axcalc.json`); Calculator, Clear history empties it. In the history:
+The newest line is at the bottom, so Up from the end reads back from the latest. axCalc keeps the history and your variables between runs, in plain text in its settings file (`%APPDATA%\AxKit\axcalc.json`); Calculator, Clear history empties it. In the history:
 
 - **Enter** puts the line's expression back in the field, to change it and press Enter again.
 - **Ctrl+Shift+C** copies the line's answer. In the field, it copies the last answer.
@@ -48,24 +48,24 @@ The newest line is at the bottom, so Up from the end reads back from the latest.
 
 - **Calculator**: Answer (Enter), Copy answer (Ctrl+Shift+C), Copy answer in, Answer in other bases (Ctrl+I), Say the last answer (Ctrl+Q), Variables, Clear variables, Save history (Ctrl+S), Clear history (Ctrl+Shift+Delete), Exit.
 - **Options**: Angles (Degrees, Radians), Keep history between runs, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Axit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
+- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
 - **Help**: Keyboard shortcuts (F1), this guide, Calculator resources.
 
 ## Settings
 
-Everything axCalc keeps is in `%APPDATA%\Axit\axcalc.json`: the font and text size, the angle unit, the update check, and the history and variables while Keep history is on. Options, Developer, Open settings file opens it in axJSON.
+Everything axCalc keeps is in `%APPDATA%\AxKit\axcalc.json`: the font and text size, the angle unit, the update check, and the history and variables while Keep history is on. Options, Developer, Open settings file opens it in axJSON.
 
 ## Updates
 
-axCalc checks for a newer Axit when it starts and offers it in a notice; the Axit menu has Check for updates at any time. One update brings every app of Axit up to date.
+axCalc checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
-axCalc's log is `%LOCALAPPDATA%\Axit\logs\axcalc.log`; it never holds what you calculated. Options, Developer, Copy diagnostics copies its end with the versions, for a bug report.
+axCalc's log is `%LOCALAPPDATA%\AxKit\logs\axcalc.log`; it never holds what you calculated. Options, Developer, Copy diagnostics copies its end with the versions, for a bug report.
 
 ## About axCalc
 
-axCalc is one app of Axit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Axit menu's About names the version and the licence.
+axCalc is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
 
 ## Disclaimer
 

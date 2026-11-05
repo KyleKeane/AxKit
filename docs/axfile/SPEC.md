@@ -1,11 +1,11 @@
 # axFile — Specification
 
-axFile is an app of the Axit bundle (`docs/axit/SPEC.md`): a file manager for one folder, for a blind developer who
+axFile is an app of the axKit bundle (`docs/axkit/SPEC.md`): a file manager for one folder, for a blind developer who
 uses the NVDA screen reader. Specified 2026-10-18 and built as a first draft 2026-10-19; on 2026-10-22 the player it
 had carried became axMedia and the preview pane axPreview, so that axFile is file operations and management only
-(section 8; `docs/axit/axfile-split.md`). The document is kept in step with the code (a behaviour change updates it in
+(section 8; `docs/axkit/axfile-split.md`). The document is kept in step with the code (a behaviour change updates it in
 the same commit). Requirements are numbered `AF-n.m` and decisions `AF-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the Axit menu), are cited by number and not repeated. In axFile's code and
+(accessibility), AX-8 (keys) and AX-9 (the axKit menu), are cited by number and not repeated. In axFile's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -40,7 +40,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
 
 ## 3. Scenarios
 
-1. Start menu, "Axit axFile": the last folder opens, the list focused; NVDA reads "24 items, list, 01 Chapter
+1. Start menu, "axKit axFile": the last folder opens, the list focused; NVDA reads "24 items, list, 01 Chapter
    1.mp3, 1 of 24". Up: one short low note, nothing moves. Down twice, Enter: the file opens in the program Windows has
    for `.mp3`, axMedia when the user has made it so, with the folder's other chapters after it. Backspace: "Music, 8
    items, Dune, folder".
@@ -64,9 +64,9 @@ folder of the file or project in hand, and sends back. It works entirely offline
 
 ### AF-1 Launch
 
-- AF-1.1 `Axit.exe file [<folder or file>]` (a file opens its folder with the file selected); the console command
-  `axfile`; the Start menu entry "Axit axFile"; axFile under "Open with Axit" on folders and on files in File
-  Explorer (AX-2.3). A folder or file given alone to `Axit.exe` still means axClaude or an editor (AX-1.2); axFile is
+- AF-1.1 `AxKit.exe file [<folder or file>]` (a file opens its folder with the file selected); the console command
+  `axfile`; the Start menu entry "axKit axFile"; axFile under "Open with axKit" on folders and on files in File
+  Explorer (AX-2.3). A folder or file given alone to `AxKit.exe` still means axClaude or an editor (AX-1.2); axFile is
   always named by its verb. Without a path: the last folder opened, or the user's profile folder.
 - AF-1.2 `AxFileApp.Run(args)` is the entry point (AX-1.7), one call into `AppHost.Run` with the log name `axfile`,
   the usage text, the settings (`axfile.json`) and the window. The process moves its working directory to the
@@ -77,10 +77,10 @@ folder of the file or project in hand, and sends back. It works entirely offline
 - AF-1.3 **To and from the other windows.** axClaude's Session → Show current folder in ▸ **axFile**, the editors'
   File → Show current file in ▸ **axFile** (the file's folder, the file selected), axGIT's Repository → Show current
   repository in ▸ **axFile**, axTerminal's Session → Show current folder in ▸ **axFile** and axMedia's Queue → Show
-  current file in ▸ **axFile** each start a new axFile window (`AxitMenu.Start`, found again in the Axit menu, AX-9.3).
+  current file in ▸ **axFile** each start a new axFile window (`AxKitMenu.Start`, found again in the axKit menu, AX-9.3).
   From axFile, Folder → Show current folder in ▸ **File Explorer** (Ctrl+W), **axClaude**, **axTerminal**, **axGIT** (bundle AX-9.10);
   Item → **Show in File Explorer** (Ctrl+Shift+W) opens File Explorer with the selected entry selected; Item → Open in
-  Axit ▸ **Editor** (Ctrl+E) opens the selected file in axJSON for `.json` and axDown for anything else
+  axKit ▸ **Editor** (Ctrl+E) opens the selected file in axJSON for `.json` and axDown for anything else
   (`Dispatch.EditorOf`, the bundle's one rule), whatever Enter would do with it; Item → **Preview** (Shift+Enter) and the axMedia items
   are AF-5.
 
@@ -122,7 +122,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   start is NVDA's own reading of the window, the list and its entry, and an undo says what it undid instead (AF-4.14).
 - AF-3.2 **Enter** on a file opens it with the program the user has made its default in Windows (`ShellExecute`, as
   Enter in File Explorer; AF-D2); when Windows has none, the Windows dialog that picks a program, as File Explorer
-  shows it (AF-4.7). The Axit apps register as programs for their kinds when Axit is installed (AX-2.3), so that
+  shows it (AF-4.7). The axKit apps register as programs for their kinds when axKit is installed (AX-2.3), so that
   axDown, axJSON, axMedia or axPreview can be chosen there (the guide says how; an installer cannot set a default).
   **Shift+Enter** on a file opens it in axPreview to read (Item → Preview; AF-5.3); on a folder it is File
   Explorer's Shift+Enter, the folder in a new axFile window. **Ctrl+E** opens a file in its editor (AF-1.3).
@@ -142,7 +142,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   read on a task (`PathCompletion` in the pure code, tested). **New window** (Ctrl+N, File Explorer's key; Folder →
   New window): another axFile window on the folder shown, through the bundle's starter (AX-9.2), so that two folders
   can be worked between; Ctrl+N is the other windows' New session, New document and New branch, and a new window of
-  any app is the Axit menu's (AX-9).
+  any app is the axKit menu's (AX-9).
 - AF-3.4 **Refresh** (F5) reads the folder again keeping the selection by name; "Refreshed". Coming back to the window
   after another program changed the folder refreshes it the same way, silently (the list is a view and holds nothing
   unsaved; axDown AD-3.6 is the editors' rule).
@@ -153,10 +153,10 @@ folder of the file or project in hand, and sends back. It works entirely offline
   first entry whose name starts with it is selected, searched from the entry in hand and round the end, NVDA reading
   it; a new prefix begins after a second's pause and is searched from the next entry on; a run of the same letter ("a",
   "aa") cycles through the names starting with it, from the next entry on, as File Explorer does, while any other
-  prefix is searched whole, so that a name with a doubled letter inside it ("aab") is found (`Axit.Core/TypeAhead`,
+  prefix is searched whole, so that a name with a doubled letter inside it ("aab") is found (`AxKit.Core/TypeAhead`,
   tested, the bundle's since 2026-10-24, AX-8.6; until 2026-10-23 the doubled letter made the one-letter cycle); Shift
   with a letter searches the same way backwards (2026-10-24); the edge earcon when no name starts with it (both lists are
-  the bundle's `AxitList` since 2026-10-24, which has the type-ahead and the edge earcon built in). The Actions
+  the bundle's `AxKitList` since 2026-10-24, which has the type-ahead and the edge earcon built in). The Actions
   list takes typed letters the same way. The list box's own
   one-letter jump gives way to this (`OnListKeyPress`); Space is the selection's key (AF-3.7), so a name is typed up
   to its first space. At the ends, where a key moves nothing, the window sounds the **edge earcon** rather than
@@ -225,7 +225,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   order leaves the letter order alone, and the commands that need a folder say "Choose a drive first" (New folder,
   Paste, Rename, Delete, Cut, Copy, Ctrl+D, Play folder, Add to queue, Show current folder in ▸ the other apps); Show
   current folder in ▸ File Explorer opens File Explorer's own This PC. The other items of the entry's menu work on a
-  drive as on a folder (Open in Axit ▸, Show in File Explorer, Properties, Windows menu…).
+  drive as on a folder (Open in axKit ▸, Show in File Explorer, Properties, Windows menu…).
 - AF-3.11 **The Drives menu** (asked 2026-10-21, for moving things to a stick and taking it out): **Folder → Drives ▸**
   (its own menu on Alt+D until 2026-10-22, when it became a submenu at the user's ask and Alt+D went to Go to folder,
   AF-3.3) lists the ready drives as "1. Local Disk (C:)" (AX-9.5), each opening the drive's root and joining the
@@ -303,7 +303,7 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   menu, the same items in the same order, on the selected entry (a right click selects the entry under it first, as
   File Explorer does). It is the window's own menu, fixed, with mnemonics and listed in F1, not the shell's (AF-D8).
   Its shape (AF-6.1; reshaped 2026-10-21 at the user's ask for File Explorer's plain words and one flat list): Open,
-  Open with ▸, Open in Axit ▸, Preview, Play folder in axMedia, Add to axMedia's queue | Cut, Copy, Paste | Rename,
+  Open with ▸, Open in axKit ▸, Preview, Play folder in axMedia, Add to axMedia's queue | Cut, Copy, Paste | Rename,
   Delete | New folder…, New text file, Move to folder…, Compress to zip, Extract here | Copy path, Show in File
   Explorer, Information, Properties | Windows menu…. There is one menu, the bar's Item menu, the standard drop-down
   (AX-6.6); the list has no context menu of its own (AF-D13).
@@ -328,7 +328,7 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   longer than a second; after a move the clipboard is cleared, as File Explorer does. "Nothing to paste" without
   files on the clipboard; "Already in this folder" for a cut entry pasted where it is; "Already pasting" for a cut
   whose files a paste is still moving (AF-4.5).
-- AF-4.9 **Open in Axit ▸**: one item per app of the bundle that opens a path (`Dispatch.Apps` whose `Opens` is not
+- AF-4.9 **Open in axKit ▸**: one item per app of the bundle that opens a path (`Dispatch.Apps` whose `Opens` is not
   Nothing: the utilities, axStart, axClip, axCalc and axProcess, take none), in the bundle's groups with their
   separators (AX-9.2), a new window of that app on the entry by what it opens (`Dispatch.PathFor`): axDown, axJSON,
   axPreview and axPass on the file ("Not a file" on a folder), axMedia on the file with its folder's media files after
@@ -352,7 +352,7 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   (`ShellExecute` with the arguments, so a batch file and a script whose type has a program registered run too);
   "Started <name>", or "Failed: <reason>" when it cannot start (the file gone, no program for the type). The list is
   refilled each time the submenu opens, so two windows see each other's additions after a restart only (the settings
-  are the window's, AF-8.1). It is the shape the user-defined shells of axTerminal are to take (docs/axit/plan.md):
+  are the window's, AF-8.1). It is the shape the user-defined shells of axTerminal are to take (docs/axkit/plan.md):
   a list in the app's settings, added through the file picker and a notice for the name, removed from a submenu.
   `UserPrograms` in `AxFile.Core` is tested; the menu and the start are the window's.
 - AF-4.12 **Compress to zip, Extract here** (the Item menu; asked 2026-10-21), through .NET's own `ZipFile`, no
@@ -399,9 +399,9 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
 
 ### AF-5 Sound, video and reading: the hand-overs
 
-axFile plays nothing and shows no text (G3, AF-D2): it starts the app on the paths, as the Axit menu starts a window,
+axFile plays nothing and shows no text (G3, AF-D2): it starts the app on the paths, as the axKit menu starts a window,
 and the started process finds its open window and hands the paths over with the bundle's window message
-(`Axit.Forms/AppMessage`; axMedia AM-1.2, axPreview AP-1.2). Nothing of it is on the network (G6).
+(`AxKit.Forms/AppMessage`; axMedia AM-1.2, axPreview AP-1.2). Nothing of it is on the network (G6).
 
 - AF-5.1 **Play folder in axMedia** (Ctrl+Enter in the list; the Item menu): axMedia on the folder shown, its sound
   and video files in name order from the first, the axMedia window in front; "No sound or video files here" when the
@@ -425,7 +425,7 @@ and the started process finds its open window and hands the paths over with the 
   (AF-9.1) | ─ | Sort by ▸ (Name ✓ | Date | Size) | Filter… Ctrl+Shift+F | ─ | Show current folder in ▸ (File Explorer
   Ctrl+W | axClaude | axTerminal | axGIT) | ─ | Exit Alt+F4. **Item (I):** Open Enter | Open with ▸ (Windows default |
   Choose a program… | ─ | 1. name (path) … or No programs of your own yet | Add a program… | Remove a program ▸) |
-  Open in Axit ▸ (Editor Ctrl+E | ─ | axClaude | axTerminal | axGIT | ─ | axFile | axDown | axJSON | axPreview | axMedia | ─ | axTask | axPass) |
+  Open in axKit ▸ (Editor Ctrl+E | ─ | axClaude | axTerminal | axGIT | ─ | axFile | axDown | axJSON | axPreview | axMedia | ─ | axTask | axPass) |
   Preview Shift+Enter | Play folder in axMedia Ctrl+Enter | Add to axMedia's queue Ctrl+Shift+Q | ─ | Cut Ctrl+X |
   Copy Ctrl+C | Paste Ctrl+V | ─ | Rename F2 | Delete Delete | ─ | New folder… Ctrl+Shift+N | New text file
   Ctrl+Shift+T | Move to folder… | Compress to zip | Extract here | ─ | Copy path Ctrl+Shift+C | Show in File
@@ -435,7 +435,7 @@ and the started process finds its open window and hands the paths over with the 
   Compress to zip | Add to axMedia's queue Ctrl+Shift+Q | Copy path Ctrl+Shift+C (AF-3.7; the operations on the marks
   alone). **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) |
   General ▸ (Check for updates at start ✓ | Show hidden files and folders | Show files and folders starting with a
-  period) | Developer ▸ (Open settings file | Copy diagnostics). **Axit (A)** (AX-9). **Help (H):** Keyboard
+  period) | Developer ▸ (Open settings file | Copy diagnostics). **axKit (A)** (AX-9). **Help (H):** Keyboard
   shortcuts F1 | User guide | ─ | File resources ▸ (Keyboard shortcuts in Windows, the Microsoft page, in the
   browser). Every item has a mnemonic (AX-7.4).
 - AF-6.2 Keys (AX-8). Bundle-wide: F1, the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between
@@ -483,13 +483,13 @@ and a typed name no entry starts with (AF-3.6).
 
 ### AF-8 Settings, log, status
 
-- AF-8.1 `%APPDATA%\Axit\axfile.json` (AX-5.3; `FileSettings` on `WindowSettings`): `lastFolder`, `recentFolders`
+- AF-8.1 `%APPDATA%\AxKit\axfile.json` (AX-5.3; `FileSettings` on `WindowSettings`): `lastFolder`, `recentFolders`
   (ten), `favorites` (the pinned folders in the order added, AF-3.9; blanks and repeats dropped), `showHidden` off,
   `showDotFiles` off (AF-2.2), `sortBy` name (`name`, `date` or `size`, AF-3.8), `programs` (the user's own, each a
   `name` and a `path`, AF-4.11; an entry without either is dropped), and the window base's font, update check and
   window fields. The player's keys of an older file (`speed`, `seekSeconds`, `sayEachFile`) are axMedia's now
   (`axmedia.json`, with its own defaults) and are ignored here.
-- AF-8.2 The log is `%LOCALAPPDATA%\Axit\logs\axfile.log`: the start, the exit, the errors of the operations with
+- AF-8.2 The log is `%LOCALAPPDATA%\AxKit\logs\axfile.log`: the start, the exit, the errors of the operations with
   Windows' message; no names of files or folders.
 
 ### AF-9 The Actions list
@@ -501,7 +501,7 @@ and a typed name no entry starts with (AF-3.6).
   later leaves Tab and Shift+Tab with nowhere to go), hidden only while a notice shows; a third of the window at
   most; **Tab**, **Shift+Tab**, **Ctrl+Tab**, **Ctrl+Shift+Tab** and **F6** move between the folder list and it
   (AX-8.2), **Escape** in it goes back to the folder list, Folder → **Actions** puts the focus in it. One list, not tabs: NVDA reads a list and its place in it, and the two lists are reached with the
-  keys every Axit window uses for its controls (AF-D1). Each command's result is one announcement on the list that has
+  keys every axKit window uses for its controls (AF-D1). Each command's result is one announcement on the list that has
   the focus (AF-7); nothing is spoken on an arrow key (AF-D7). The newest line is the status bar's left text (AF-2.3).
 - AF-9.2 **The lines.** Three sections, each a header line ("Running", "Operations", "Selection") over its lines, a
   section present only while it has lines (asked 2026-10-22; AF-D11): **Running**, the operations under way, pinned at
@@ -555,13 +555,13 @@ src/AxFile.Core/    class library (net10.0): FolderListing (a folder's entries a
                     ActionEntry (the Actions list's lines and states, the limits), Marks and MarkChange (the marks on the
                     shown entries and the Shift range, each key one change; AF-3.7), RecycleBin (the $I records),
                     UserPrograms and UserProgram (the user's own programs; AF-4.11), Archives (a zip from entries, a
-                    zip into a new folder, free names; AF-4.12), FileSettings; references Axit.Core (MediaFiles for
+                    zip into a new folder, free names; AF-4.12), FileSettings; references AxKit.Core (MediaFiles for
                     the hand-over counts, NaturalOrder, Dispatch for the editor's verb)
-src/AxFile/         class library (net10.0-windows): AxFileApp (Run, Usage), FileForm (the window, on AxitForm, in
+src/AxFile/         class library (net10.0-windows): AxFileApp (Run, Usage), FileForm (the window, on AxKitForm, in
                     four partial files: the controls, menus, hooks and keys; Browse; Operations; Actions), AxFileKeys,
                     HelpText (F1 text, the embedded guide), Shell (Windows' own ways with an entry: the
                     Open with dialog, the Properties sheet, the shell's context menu through IShellFolder and
-                    IContextMenu, Eject, the Recycle Bin's Restore; AF-4.7); references AxFile.Core, Axit.Core, Axit.Forms
+                    IContextMenu, Eject, the Recycle Bin's Restore; AF-4.7); references AxFile.Core, AxKit.Core, AxKit.Forms
 tests/AxFile.Tests/ FolderListingTests, MarksTests, FileOperationsTests, UndoTests, ArchivesTests, PathCompletionTests, ActionLogTests,
                     UserProgramsTests and FileSettingsTests over temporary folders (the
                     Recycle Bin is not exercised), ActionLogTests, UserProgramsTests, FileSettingsTests
@@ -571,7 +571,7 @@ docs/axfile/        this spec, user-guide.md (embedded), nvda-test-plan.md
 `FileForm` derives from the window base (AX-6.5): the notices, the fonts, the window's place, find in a list and the
 update flow are the base's. The folder reads and the operations run on background tasks, the shell's delete on a
 single-threaded-apartment thread of its own (AX-7.5). The player seam, the queue and the text rule live in AxMedia.Core
-and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Axit.Core` on their second use.
+and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `AxKit.Core` on their second use.
 
 ## 6. Design decisions
 
@@ -584,7 +584,7 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
   this window (the first AF-D2: a folder's files are a playlist and the list was already here). The user's direction
   of 2026-10-22: axFile is file operations and management only; playing is axMedia's and viewing axPreview's, each an
   app with a tight hand-over; and Enter on a file opens it in the program the user has made its default in Windows,
-  exactly as a double click in File Explorer does, the Axit apps registering as programs for their kinds so that they
+  exactly as a double click in File Explorer does, the axKit apps registering as programs for their kinds so that they
   can be chosen there (an installer cannot set a default: Windows lets only the user). The costs are known and
   accepted: a second window for the sound, and a Windows setting to make before Enter plays in axMedia. The gains:
   one player for the whole bundle, a viewer with the whole window and the editors' keys, a file manager with one job,
@@ -654,7 +654,7 @@ AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the
 - Built 2026-10-19 as a first draft, on the branch `axfile`: the window, the four operations, the player on MFPlay, the
   wiring into the bundle, the tests of the pure code, the guide and the test plan.
 - 2026-10-20: the entry's menu (AF-4.6) and Windows' own ways (AF-4.7, AF-D8); File operations with cut, copy and
-  paste (AF-4.8), the rename in place (AF-4.2), Open in Axit ▸ (AF-4.9), Enter's fallback to the Open with dialog
+  paste (AF-4.8), the rename in place (AF-4.2), Open in axKit ▸ (AF-4.9), Enter's fallback to the Open with dialog
   (AF-3.2, AF-4.7), Ctrl+I inside the open menu (AF-4.10).
 - Released as 3.1.0 on 2026-10-21; the user's NVDA pass of the whole test plan passed the same day.
 - 2026-10-21, after the release: the one item of an empty folder (AF-2.2), Ctrl+N (AF-3.3), the selection with Space
@@ -664,11 +664,11 @@ AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the
   menu as one flat list (AF-4.6, AX-6.6), the Drives menu (AF-3.11); then the queue pane, Undo (AF-4.14), the preview
   pane, the lookalike guard (AF-4.2) and the Shift range (AF-3.7); released in 3.2.0, 3.2.1 and 3.2.2. Not yet checked
   with NVDA from Ctrl+N on.
-- 2026-10-22: the split, on the branch `split` (`docs/axit/axfile-split.md`): the player became axMedia and the
+- 2026-10-22: the split, on the branch `split` (`docs/axkit/axfile-split.md`): the player became axMedia and the
   preview axPreview; Enter follows Windows' default program (AF-D2); the pane became the Actions list (AF-9, AF-D3)
   with Enter to the action's place and Ctrl+Z on a line, at the user's ask; the Player menu, its keys, the video area,
   the queue and the settings `speed`, `seekSeconds` and `sayEachFile` left the window; `MediaFiles` and `NaturalOrder`
-  moved to `Axit.Core`. The window shrank by a third. Not yet checked with NVDA (test plan sections 3.14, 4 and 6).
+  moved to `AxKit.Core`. The window shrank by a third. Not yet checked with NVDA (test plan sections 3.14, 4 and 6).
 - 2026-10-22, later: the operations side by side (AF-4.5), at the user's ask: a second paste chooses its names around
   a running one, a cut on its way says "Already pasting", a compress takes its name at once; the process's working
   directory moved off the user's folders (AF-1.2) and Windows' "being used by another process" said with its cause,
@@ -690,4 +690,4 @@ AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the
 - 2026-10-22, later: Escape deselects (AF-3.7); Left and Right as a tree's keys and completion in the Go to folder
   field (AF-3.1, AF-3.3, AF-D12), at the user's ask; then the Drives menu as a submenu of Folder and Alt+D for Go to
   folder (AF-3.11, AF-6.1). Not yet checked with NVDA (test plan 1.4b, 1.7, 1.12a, 3.7a).
-- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axit/nvda-test-record.md`.
+- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axkit/nvda-test-record.md`.

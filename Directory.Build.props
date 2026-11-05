@@ -1,10 +1,10 @@
 <Project>
 
   <PropertyGroup>
-    <!-- The .NET version of every project, built into each TargetFramework ($(AxitDotNet) or $(AxitDotNet)-windows),
+    <!-- The .NET version of every project, built into each TargetFramework ($(AxKitDotNet) or $(AxKitDotNet)-windows),
          so that the move to the next LTS is this line, global.json and a run of the tests. .NET 10 is supported until
-         November 2028 (docs/axit/longevity.md). -->
-    <AxitDotNet>net10.0</AxitDotNet>
+         November 2028 (docs/axkit/longevity.md). -->
+    <AxKitDotNet>net10.0</AxKitDotNet>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
@@ -18,7 +18,7 @@
   <!-- Every project is Windows code: the WinForms ones say so by their framework, and this attribute says it for the
        pure ones (they call Windows through P/Invoke and COM: ConPTY, the shell, MFPlay) and for the tests. The analyzer
        then knows it; CA1416 warned on their Marshal and Thread calls and was silenced in .editorconfig until 2026-10-23
-       (docs/axit/longevity.md 3.7). -->
+       (docs/axkit/longevity.md 3.7). -->
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.Versioning.SupportedOSPlatformAttribute">
       <_Parameter1>windows</_Parameter1>

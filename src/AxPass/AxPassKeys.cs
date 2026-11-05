@@ -1,10 +1,10 @@
-using Axit.Forms;
+using AxKit.Forms;
 
 namespace AxPass;
 
 /// <summary>
 /// axPass's window-specific keys (SPEC.md PW-7; bundle AX-8): the item apps' shared keys (<see cref="ItemKeys"/>,
-/// docs/axit/item-apps.md IA-3) and axPass's own, KeePass's usual ones where it has them (Ctrl+B, Ctrl+C, Ctrl+U,
+/// docs/axkit/item-apps.md IA-3) and axPass's own, KeePass's usual ones where it has them (Ctrl+B, Ctrl+C, Ctrl+U,
 /// Ctrl+L). A key is changed here or in <see cref="ItemKeys"/> and nowhere else.
 /// </summary>
 public static class AxPassKeys

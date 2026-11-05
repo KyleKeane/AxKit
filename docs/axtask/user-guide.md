@@ -1,11 +1,11 @@
 # axTask user guide
 
 axTask keeps tasks and lists as a folder of small files, one file per item, and shows them the way axFile shows a
-folder. It is part of Axit, a bundle of apps for people who use a screen reader; it was built for and with NVDA.
+folder. It is part of axKit, a bundle of apps for people who use a screen reader; it was built for and with NVDA.
 
 ## Start
 
-- Start menu: `Axit axTask`. Console: `axtask`, or `axtask C:\my\tasks` for a folder of your own.
+- Start menu: `axKit axTask`. Console: `axtask`, or `axtask C:\my\tasks` for a folder of your own.
 - The first time, axTask uses the folder `Tasks` in your Documents folder. Folder, Top folder chooses another.
 - axTask opens on the list you had open last.
 
@@ -83,7 +83,7 @@ tasks of the Work list due within a week:
 
 ```json
 {
-  "format": "axit-filter 1",
+  "format": "axkit-filter 1",
   "match": "all",
   "conditions": [
     { "field": "Done", "is": false },
@@ -104,7 +104,7 @@ Each item is a JSON file named after its title, a list of fields each with a tit
 
 ```json
 {
-  "format": "axit-item 1",
+  "format": "axkit-item 1",
   "fields": [
     { "title": "Title", "type": "text", "value": "Fix the tap" },
     { "title": "Done", "type": "check", "value": false },
@@ -129,7 +129,7 @@ F1 lists every key. Shift+F10 or the Applications key opens the menu of the sele
 
 ## About
 
-axTask is part of Axit by Dr. Kyle Keane, www.kylekeane.com. Axit, About has the licence and the version.
+axTask is part of axKit by Dr. Kyle Keane, www.kylekeane.com. axKit, About has the licence and the version.
 
 ## Disclaimer
 

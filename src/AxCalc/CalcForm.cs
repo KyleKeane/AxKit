@@ -1,6 +1,6 @@
 using AxCalc.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxCalc;
 
@@ -8,15 +8,15 @@ namespace AxCalc;
 /// axCalc's window (SPEC.md AC-2): a menu bar, the history as a list, the expression field under it, and a status bar
 /// with the last answer. Enter in the field answers in one announcement; the history keeps every answer to read back,
 /// copy and recall. The evaluator is <see cref="Calculator"/> in the Core; the notices, the fonts, the window's place,
-/// find and the update flow are the bundle's window base (<see cref="AxitForm"/>).
+/// find and the update flow are the bundle's window base (<see cref="AxKitForm"/>).
 /// </summary>
-public sealed class CalcForm : AxitForm
+public sealed class CalcForm : AxKitForm
 {
     private readonly CalcSettings _settings;
     private readonly Calculator _calculator = new();
     private readonly List<CalcEntry> _entries = [];
     private readonly MenuStrip _menu = new();
-    private readonly AxitList _history = new();
+    private readonly AxKitList _history = new();
     private readonly TextBox _field = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _answerLabel;
@@ -38,7 +38,7 @@ public sealed class CalcForm : AxitForm
         _entries.AddRange(settings.History);
         _calculator.Answer = _entries.Count > 0 ? _entries[^1].Value : null;
 
-        // ---- menus and keys (AC-7.1, AC-7.2): one command list (docs/axit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (AC-7.1, AC-7.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
         var calculator = new ToolStripMenuItem("&Calculator");
         Add(calculator, new Command("&Answer", AxCalcKeys.Act, Evaluate) { When = () => _field.Focused, Mark = CommandMark.Read });
         Add(calculator, new Command("&Copy answer", AxCalcKeys.CopyAnswer, CopyAnswer));
@@ -78,8 +78,8 @@ public sealed class CalcForm : AxitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Calculator &resources",
             [("&Floating point explained", "https://floating-point-gui.de")]);
 
-        // The bundle's Axit menu (AX-9) sits before Help in every window.
-        _menu.Items.AddRange([calculator, options, CreateAxitMenu(), help]);
+        // The bundle's axKit menu (AX-9) sits before Help in every window.
+        _menu.Items.AddRange([calculator, options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         // The keys without a menu item: between the history and the field, find in the history, and the keys that

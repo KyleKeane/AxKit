@@ -1,8 +1,8 @@
 # axClip — Specification
 
-axClip is an app of the Axit bundle (`docs/axit/SPEC.md`): a clipboard history behind a hotkey, for a blind developer
+axClip is an app of the axKit bundle (`docs/axkit/SPEC.md`): a clipboard history behind a hotkey, for a blind developer
 who uses the NVDA screen reader. Built 2026-10-23 on the branch `axclip` (the long run of that day,
-`docs/axit/plan.md`), not yet heard under NVDA. It runs as axStart does, a background process with one hidden window,
+`docs/axkit/plan.md`), not yet heard under NVDA. It runs as axStart does, a background process with one hidden window,
 and that window is the bundle's `HotkeyForm`, which came out of axStart for it. The document is kept in step with the
 code. Requirements are numbered `CP-n.m` and decisions `CP-Dn`; the bundle's rules, AX-7, AX-8 and AX-9, are cited
 by number and not repeated; axStart's specification (`docs/axstart/SPEC.md`, AS-n.m) is cited for what the two share.
@@ -39,11 +39,11 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 
 ### CP-1 Launch, the background, the hotkey
 
-- CP-1.1 `Axit.exe clip [--hidden]`; the console command `axclip`; the Start menu entry "Axit axClip". One axClip runs
-  at a time (the mutex `Local\Axit.AxClip`); a second start shows the running one's window (AS-1.2), or with
+- CP-1.1 `AxKit.exe clip [--hidden]`; the console command `axclip`; the Start menu entry "axKit axClip". One axClip runs
+  at a time (the mutex `Local\AxKit.AxClip`); a second start shows the running one's window (AS-1.2), or with
   `--hidden` just ends. Without `--hidden` the window shows at once.
-- CP-1.2 Start with Windows (a setting, on at first): the value "Axit axClip" under the user's Run key,
-  `"…\Axit.exe" clip --hidden`, written only by the installed program (`SignInStart`, AS-1.3). The installer stops
+- CP-1.2 Start with Windows (a setting, on at first): the value "axKit axClip" under the user's Run key,
+  `"…\AxKit.exe" clip --hidden`, written only by the installed program (`SignInStart`, AS-1.3). The installer stops
   axClip before it changes anything and starts it again, hidden, after an install when the setting is on (AS-1.5).
 - CP-1.3 The hotkey is Windows+Alt+V at first (CP-D1); Options, Hotkey… chooses another the way axStart's does (AS-4.2),
   and a hotkey another program holds is said in a notice with the window shown (AS-4.3).
@@ -58,7 +58,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
   number of items kept on the left and "Recording" or "Paused" on the right.
 - CP-2.2 The window shows centred on the screen of the program in front, the field empty and the newest item selected.
 - CP-2.3 Typing narrows the list to the items that hold every word typed, case and accents ignored
-  (`Axit.Core/TextMatch`), newest first; after a pause of 300 ms the first match is said with the count, "<label>, 1
+  (`AxKit.Core/TextMatch`), newest first; after a pause of 300 ms the first match is said with the count, "<label>, 1
   of 2", or "Nothing in the clipboard history matches <text>" (a setting, Say the first match while typing, on).
 - CP-2.4 Down and Up move through the matches, Ctrl+Home and Ctrl+End to the first and the last, Page Down and Page Up
   by a screen; each says "<label>, <n> of <count>"; at an end the edge sound plays and the item is said again (AS-3.3).
@@ -99,7 +99,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 - CP-5.1 Menus (AX-6): **AxClip (C):** Paste Enter | Copy without pasting Shift+Enter | Read in full Ctrl+Q | Remove
   Delete | Clear history… Ctrl+Shift+Delete | ─ | Hide Escape | Quit axClip. **Options (O):** Hotkey… | Pause
   recording Ctrl+P ✓ | Keep history between runs ✓ | Text ▸ | General ▸ (Check for updates at start | Start with
-  Windows ✓ | Say the first match while typing ✓) | Developer ▸. **Axit (A)** (AX-9). **Help (H):** Keyboard
+  Windows ✓ | Say the first match while typing ✓) | Developer ▸. **axKit (A)** (AX-9). **Help (H):** Keyboard
   shortcuts F1 | User guide | ─ | Windows resources ▸ (Clipboard in Windows). Every item has a mnemonic.
 - CP-5.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Page Up, Page Down, Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific
   (`AxClipKeys`): Down, Up, Ctrl+Home, Ctrl+End, Enter, Shift+Enter, Ctrl+Q, Delete, Ctrl+Shift+Delete, Ctrl+P, Escape.
@@ -110,13 +110,13 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 
 ### CP-6 Settings, announcements, log
 
-- CP-6.1 `%APPDATA%\Axit\axclip.json` (AX-5.3; `ClipSettings`): `fontFamily`, `fontSize`, `fontBold`,
+- CP-6.1 `%APPDATA%\AxKit\axclip.json` (AX-5.3; `ClipSettings`): `fontFamily`, `fontSize`, `fontBold`,
   `checkForUpdates`, `hotkey` (`Windows+Alt+V`), `startWithWindows` (true), `sayFirstMatch` (true), `keepHistory`
-  (false), `protectedHistory` (the items, newest first, only while Keep history is on, as JSON of `text` and `copied`, the time, encrypted for the Windows account with DPAPI, `Axit.Core/UserSecret`, so that the file elsewhere shows nothing; security audit S-21; Clear history also removes a `.bad` copy of the file).
+  (false), `protectedHistory` (the items, newest first, only while Keep history is on, as JSON of `text` and `copied`, the time, encrypted for the Windows account with DPAPI, `AxKit.Core/UserSecret`, so that the file elsewhere shows nothing; security audit S-21; Clear history also removes a `.bad` copy of the file).
 - CP-6.2 Announcements (AX-7.3): the matches as in CP-2.3 and CP-2.4; "Copied"; "Removed"; "Clipboard history
   cleared"; "Recording paused"; "Recording"; "The clipboard history is empty"; the Hotkey notice's words (AS-4.2);
   the bundle's. Nothing is said when the window hides, and nothing when a copy is kept.
-- CP-6.3 The log is `%LOCALAPPDATA%\Axit\logs\axclip.log`: the start, the hotkey, the showing and hiding, a paste or a
+- CP-6.3 The log is `%LOCALAPPDATA%\AxKit\logs\axclip.log`: the start, the hotkey, the showing and hiding, a paste or a
   paste left undone, errors; never a copied text.
 
 ## 5. Architecture
@@ -125,9 +125,9 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 src/AxClip.Core/    class library (net10.0): ClipEntry (one item: the text, the time, the label), ClipHistory (the
                     items newest first: add with the move to the top and the limit, remove, clear, find),
                     ClipPolicy (whether a copy is kept, from the formats it carries), ClipSettings; references
-                    Axit.Core (Hotkey, TextMatch, SettingsFile)
+                    AxKit.Core (Hotkey, TextMatch, SettingsFile)
 src/AxClip/         class library (net10.0-windows): AxClipApp (Run, Usage, the mutex), ClipForm (the window on
-                    Axit.Forms/HotkeyForm: the listener, the field and the list, the paste), AxClipKeys, HelpText
+                    AxKit.Forms/HotkeyForm: the listener, the field and the list, the paste), AxClipKeys, HelpText
 tests/AxClip.Tests/ ClipHistoryTests, ClipPolicyTests, ClipSettingsTests
 docs/axclip/        this spec, user-guide.md (embedded), nvda-test-plan.md
 ```

@@ -82,15 +82,15 @@ NVDA uses on web pages.
 
 ## 4. Links and images
 
-An inline link puts the text in square brackets and the address in parentheses: [the Axit repository on
-GitHub](https://github.com/KyleKeane/Axit). A bare address stands on its own: https://github.com/KyleKeane/Axit.
+An inline link puts the text in square brackets and the address in parentheses: [the axKit repository on
+GitHub](https://github.com/KyleKeane/AxKit). A bare address stands on its own: https://github.com/KyleKeane/AxKit.
 
-A reference link puts a label in a second pair of brackets, [like this][axit], and the address once at the end of
+A reference link puts a label in a second pair of brackets, [like this][axkit], and the address once at the end of
 the document or section:
 
-[axit]: https://github.com/KyleKeane/Axit
+[axkit]: https://github.com/KyleKeane/AxKit
 
-An image is a link with an exclamation mark in front: ![the Axit icon](AxDown.ico). axDown shows the text, not the
+An image is a link with an exclamation mark in front: ![the axKit icon](AxDown.ico). axDown shows the text, not the
 image. Links are the structure behind Ctrl+K.
 
 ## 5. Block quotes
@@ -118,7 +118,7 @@ A table is a row of cells separated by vertical bars, a row of dashes that sets 
 | Ctrl+Plus, Ctrl+Minus | Larger and smaller text | Bundle |
 | F1 | The keyboard shortcuts | Bundle |
 
-NVDA reads a table row as one line of text here, bars and all; Ctrl+T moves between tables. The Kind column says where each key is defined: bundle-wide keys are the same in every window of Axit,
+NVDA reads a table row as one line of text here, bars and all; Ctrl+T moves between tables. The Kind column says where each key is defined: bundle-wide keys are the same in every window of axKit,
 axDown's own keys are axDown's alone.
 
 ## 7. Code
@@ -176,9 +176,9 @@ change now and listen to the title with NVDA+T, then undo it with Ctrl+Z.
 ## 11. Text size, fonts and updates
 
 Ctrl+Plus and Ctrl+Minus make the text larger and smaller and say the new size; Options, Text, Font opens the Windows font
-dialog; Options, Text, Windows text size goes back to the system's. All of it is remembered in `%APPDATA%\Axit\axdown.json`.
+dialog; Options, Text, Windows text size goes back to the system's. All of it is remembered in `%APPDATA%\AxKit\axdown.json`.
 
-New versions of Axit are published on GitHub, and every app of Axit updates together. When axDown starts, it asks
+New versions of axKit are published on GitHub, and every app of axKit updates together. When axDown starts, it asks
 GitHub once whether there is a newer one; if there is, a notice opens with Update and restart, Update and close,
 Open release page and Later. One progress bar covers the download and the installation, reported by NVDA the way it
 reports any progress bar, and after Update and restart axDown comes back on this very file.

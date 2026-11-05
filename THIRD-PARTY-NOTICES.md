@@ -1,10 +1,10 @@
 # Third-party notices
 
-Axit's own code is under the GNU Affero General Public License, version 3 only, in `LICENSE`, with the terms in `NOTICE.md`. Axit uses no third-party packages. What it contains from others:
+axKit's own code is under the GNU Affero General Public License, version 3 only, in `LICENSE`, with the terms in `NOTICE.md`. axKit uses no third-party packages. What it contains from others:
 
 ## .NET and Windows Forms
 
-`Axit.exe` is a self-contained .NET program: it carries the .NET runtime and Windows Forms inside it, unchanged, as
+`AxKit.exe` is a self-contained .NET program: it carries the .NET runtime and Windows Forms inside it, unchanged, as
 Microsoft publishes them.
 
 - .NET runtime: <https://github.com/dotnet/runtime>
@@ -42,17 +42,17 @@ The .NET runtime itself includes components under other open-source licences, li
 
 ## Unicode character data
 
-The table of wide characters in `src/Axit.Core/Vt/Wcwidth.cs`, which tells how many columns a character takes in a
+The table of wide characters in `src/AxKit.Core/Vt/Wcwidth.cs`, which tells how many columns a character takes in a
 console, is derived from the Unicode Character Database (East Asian Width), © Unicode, Inc., used under the Unicode
 License v3: <https://www.unicode.org/license.txt>.
 
-## Programs Axit works with, not part of it
+## Programs axKit works with, not part of it
 
-Axit runs, but does not contain, programs the user installs: Claude Code (Anthropic), git, KeePassXC's command-line
+axKit runs, but does not contain, programs the user installs: Claude Code (Anthropic), git, KeePassXC's command-line
 tool, PowerShell, and the user's own shells and programs. Each is under its maker's licence and terms; `PRIVACY.md`
-says when Axit runs each one.
+says when axKit runs each one.
 
 ## Tools used only to build and test
 
 The tests use xunit and the .NET test SDK (Apache 2.0 and MIT), and GitHub Actions builds the releases with
-GitHub's own actions (MIT). None of them is shipped in `Axit.exe` or the zip.
+GitHub's own actions (MIT). None of them is shipped in `AxKit.exe` or the zip.

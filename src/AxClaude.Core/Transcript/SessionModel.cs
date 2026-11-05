@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Axit.Core.Transcript;
+using AxKit.Core.Transcript;
 
 namespace AxClaude.Core.Transcript;
 

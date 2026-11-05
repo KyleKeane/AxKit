@@ -4,16 +4,16 @@ axMedia is a player for sound and video files, made for screen reader users. One
 
 ## Install
 
-axMedia is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) gives you a Start menu entry `Axit axMedia`, a console command `axmedia`, axMedia in the `Open with Axit` submenu when you right-click a sound or video file in File Explorer, and axMedia under Windows' own `Open with` for those files, so that you can make it the program that opens them when you press Enter on one: Settings, Apps, Default apps, axMedia, or right-click a file, Open with, Choose another app, axMedia, Always. Windows lets only you set that, never a program.
+axMedia is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axMedia`, a console command `axmedia`, axMedia in the `Open with axKit` submenu when you right-click a sound or video file in File Explorer, and axMedia under Windows' own `Open with` for those files, so that you can make it the program that opens them when you press Enter on one: Settings, Apps, Default apps, axMedia, or right-click a file, Open with, Choose another app, axMedia, Always. Windows lets only you set that, never a program.
 
 ## Start
 
-- From axFile: Enter on a sound or video file, once axMedia is its default program in Windows; otherwise the entry's menu (Shift+F10), Open in Axit, axMedia. Either way the file plays with the folder's other sound and video files after it, in name order, and the axMedia window comes to the front. axFile's Ctrl+Enter plays the whole folder here from the first file; Ctrl+Shift+Q adds the entry, or the selected entries, to the end of the queue without taking you out of axFile, "Added 24 to axMedia's queue".
-- File Explorer: right-click a sound or video file, open `Open with Axit` and choose axMedia; or double-click it once axMedia is its default program.
-- Start menu: `Axit axMedia`. Press the Windows key and type `axm`. The window opens with an empty queue; Ctrl+O adds files.
+- From axFile: Enter on a sound or video file, once axMedia is its default program in Windows; otherwise the entry's menu (Shift+F10), Open in axKit, axMedia. Either way the file plays with the folder's other sound and video files after it, in name order, and the axMedia window comes to the front. axFile's Ctrl+Enter plays the whole folder here from the first file; Ctrl+Shift+Q adds the entry, or the selected entries, to the end of the queue without taking you out of axFile, "Added 24 to axMedia's queue".
+- File Explorer: right-click a sound or video file, open `Open with axKit` and choose axMedia; or double-click it once axMedia is its default program.
+- Start menu: `axKit axMedia`. Press the Windows key and type `axm`. The window opens with an empty queue; Ctrl+O adds files.
 - Console: `axmedia C:\Music\Dune\03.mp3` (the file with the folder's others after it), `axmedia C:\Music\Dune` (the folder from the first file), `axmedia a.mp3 b.mp3` (those, in order), `axmedia --add C:\Music\More` (added to the end of the queue, nothing starts).
 
-axMedia keeps one window: a file opened from axFile, File Explorer or the console while an axMedia window is open goes into that window, replacing its queue (or added to it, for an add), rather than opening another. A second window is the Axit menu's New window, or Ctrl+N, or `--new` on the console.
+axMedia keeps one window: a file opened from axFile, File Explorer or the console while an axMedia window is open goes into that window, replacing its queue (or added to it, for an add), rather than opening another. A second window is the axKit menu's New window, or Ctrl+N, or `--new` on the console.
 
 The window is named after the file playing: "03 Chapter 3.mp3 - axMedia", or "axMedia" while nothing plays. The status bar (NVDA+End) has what is playing and the time on the left, "Playing 03 Chapter 3.mp3 12:40 / 45:30", and the place and the speed on the right, "3 of 12, speed 1.25".
 
@@ -48,24 +48,24 @@ The volume is Windows' own: your keyboard's volume keys work from anywhere. A vi
 - **Queue**: New window (Ctrl+N), Open files (Ctrl+O), Open folder (Ctrl+Shift+O), Open recent, Play (Enter), Remove (Delete), Clear queue, Information (Ctrl+I), Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
 - **Play**: Pause or resume (Space), Next file, Previous file, Forward 15 seconds, Back 15 seconds, Go to time (Ctrl+T), Faster, Slower, Normal speed, Say each file as it starts, What is playing (Ctrl+Q).
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Axit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
+- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
 - **Help**: Keyboard shortcuts (F1), this guide, Media resources.
 
 ## Settings
 
-Everything you change is kept in `%APPDATA%\Axit\axmedia.json`: the speed, Say each file as it starts, the recent files and folders, the font and text size, the update check, and one setting with no menu item: `seekSeconds` (what Ctrl+Left and Ctrl+Right move by, 15). Options, Developer, Open settings file opens it in axJSON.
+Everything you change is kept in `%APPDATA%\AxKit\axmedia.json`: the speed, Say each file as it starts, the recent files and folders, the font and text size, the update check, and one setting with no menu item: `seekSeconds` (what Ctrl+Left and Ctrl+Right move by, 15). Options, Developer, Open settings file opens it in axJSON.
 
 ## Updates
 
-axMedia checks for a newer Axit when it starts and offers it in a notice; the Axit menu has Check for updates at any time. One update brings every app of Axit up to date.
+axMedia checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
-axMedia's log is `%LOCALAPPDATA%\Axit\logs\axmedia.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. "Cannot play …: this kind of file is not supported" means Windows has no decoder for the file; the Microsoft Store has free ones for OGG, Opus and several video formats.
+axMedia's log is `%LOCALAPPDATA%\AxKit\logs\axmedia.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. "Cannot play …: this kind of file is not supported" means Windows has no decoder for the file; the Microsoft Store has free ones for OGG, Opus and several video formats.
 
 ## About axMedia
 
-axMedia is one app of Axit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Axit menu's About names the version and the licence.
+axMedia is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
 
 ## Disclaimer
 

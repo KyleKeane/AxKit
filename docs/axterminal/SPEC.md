@@ -1,11 +1,11 @@
 # axTerminal — Specification
 
-axTerminal is an app of the Axit bundle (`docs/axit/SPEC.md`): a terminal for a shell, shown the way axClaude shows
+axTerminal is an app of the axKit bundle (`docs/axkit/SPEC.md`): a terminal for a shell, shown the way axClaude shows
 Claude Code, for a blind developer who uses the NVDA screen reader. Specified and built 2026-10-18, released in
-3.0.0, and the whole test plan passed under NVDA on 2026-10-22 (the record: `docs/axit/nvda-test-record.md`; what
+3.0.0, and the whole test plan passed under NVDA on 2026-10-22 (the record: `docs/axkit/nvda-test-record.md`; what
 each release brought is section 8). The document is kept in step with the code (a behaviour change updates it in
 the same commit). Requirements are numbered `AT-n.m` and decisions `AT-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the Axit menu), and axClaude's requirements (`docs/axclaude/SPEC.md`, cited as
+(accessibility), AX-8 (keys) and AX-9 (the axKit menu), and axClaude's requirements (`docs/axclaude/SPEC.md`, cited as
 "axClaude FR-n.m" and "axClaude Dn") are cited by number and not repeated. In axTerminal's code and documents,
 "SPEC.md" means this file.
 
@@ -61,8 +61,8 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 
 ### AT-1 Launch and the shell
 
-- AT-1.1 `Axit.exe terminal [<folder>]`; the console command `axterminal`; the Start menu entry "Axit axTerminal";
-  axTerminal under "Open with Axit" on folders in File Explorer (AX-2.3). A folder given alone to `Axit.exe` still
+- AT-1.1 `AxKit.exe terminal [<folder>]`; the console command `axterminal`; the Start menu entry "axKit axTerminal";
+  axTerminal under "Open with axKit" on folders in File Explorer (AX-2.3). A folder given alone to `AxKit.exe` still
   means axClaude (AX-1.2); axTerminal is always named by its verb. Without a folder: the process's current folder
   (the Start menu entry starts it in the user's profile folder, as the shells do).
 - AT-1.2a **Only the shells there are** (the user's ask, 2026-10-24): the New session notice and Switch shell list the
@@ -81,7 +81,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 - AT-1.3 **Integration marks.** The window asks the shell to mark its prompt the way Windows Terminal's shell
   integration does (OSC 133 `A` the prompt starts, `B` the prompt ends and the command begins, `D;<exit code>` the
   previous command finished; OSC 9;9 the current directory), without touching the user's profile. Every mark ends in
-  `;axit=<secret>`, a random secret made for each start of the shell (`ShellLauncher.NewNonce`, the model's
+  `;axkit=<secret>`, a random secret made for each start of the shell (`ShellLauncher.NewNonce`, the model's
   `MarkNonce`): a mark without it, printed by a program or found in a file's text, is ignored, and the directory
   counts only right after the prompt's own A mark and only for a folder on this computer (security audit S-37, S-38;
   VS Code's terminal does the same with its own marks). The shells are started so: PowerShell starts
@@ -285,7 +285,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   Background music while a command runs Ctrl+Space) | Speech ▸ (Speak output: none ○ | Speak output: all lines ○ |
   ─ | Say when a program asks ✓) | When a command is done ▸ (Flash the taskbar button ✓ | Louder alert when the window
   is in the background) | Text ▸ (Time stamps | Markers in the text ✓ | ─ | Font… | Larger text | Smaller text | Windows text size) | General
-  ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream | Copy diagnostics). **Axit
+  ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream | Copy diagnostics). **axKit
   (A)** (AX-9). **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Shell resources ▸ (PowerShell documentation |
   Windows Terminal shell integration | Bash manual). Every item has a mnemonic (AX-7.4).
   The first menu is Session, as in axClaude, since what it holds is the shell in its folder, the thing the window
@@ -316,13 +316,13 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
 
 ### AT-8 Settings, log, status
 
-- AT-8.1 `%APPDATA%\Axit\axterminal.json` (AX-5.3; `TerminalSettings` on the bundle's `ConsoleSettings`, the console
+- AT-8.1 `%APPDATA%\AxKit\axterminal.json` (AX-5.3; `TerminalSettings` on the bundle's `ConsoleSettings`, the console
   fields shared with axClaude under the same names, on `WindowSettings`): `shell` (`pwsh`,
   `powershell`, `cmd`, `bash`, `custom`), `customShell`, `lastFolder`, `recentFolders` (ten), `ptyColumns` 240, `ptyRows` 50,
   `soundOnBell` on, `clickOnNewLine` on, `workingMusic` off, `backgroundAlert` off, `flashTaskbar` on, `outputSpeech`
   `none`, `announceQuestions` on, `markerTimeStamps` off, `showMarkers` on, `joinWrappedLines` on, `maxTranscriptLines` 20000, and the
   window base's font, update check and window fields. Unknown or out-of-range values fall back to the defaults.
-- AT-8.2 The log is `%LOCALAPPDATA%\Axit\logs\axterminal.log`: the shell's start with its command line and folder,
+- AT-8.2 The log is `%LOCALAPPDATA%\AxKit\logs\axterminal.log`: the shell's start with its command line and folder,
   its exit code, restarts, errors; never a command or a line of output (a command can hold a secret). Options →
   Developer → Record raw stream writes the console stream to a `.vt` file in the PtyCapture format for a fixture
   (axClaude FR-13), read back only through the redacting dump (bundle rule 6).
@@ -330,7 +330,7 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
 ## 5. Architecture
 
 ```
-src/Axit.Core/Pty, Vt, Transcript  from AxClaude.Core, moved on this second use (B-3) with the namespaces of their
+src/AxKit.Core/Pty, Vt, Transcript  from AxClaude.Core, moved on this second use (B-3) with the namespaces of their
                           folders, unchanged apart from one seam: Pty/PtyHost, Pty/StreamRecorder; Vt/VtParser,
                           Vt/Screen (gains the OSC 133 and 9;9 events, and PullRowText), Vt/Wcwidth; Transcript/Line,
                           LineKind, TranscriptMirror, Utterance; and LineStore, the part of SessionModel that holds the
@@ -339,22 +339,22 @@ src/Axit.Core/Pty, Vt, Transcript  from AxClaude.Core, moved on this second use 
                           had copied: the UTF-8 decoder and Feed, the parser and the screen (NewScreen, to which each
                           model attaches its own handlers), EndFrame, the bookmarks, the cap and the Changed and Bell
                           events. Tested where they were (axClaude's fixtures, the shell fixtures).
-src/Axit.Forms/TranscriptView  from axClaude, its quick-key table given by the window as data (the QuickKey records with
+src/AxKit.Forms/TranscriptView  from axClaude, its quick-key table given by the window as data (the QuickKey records with
                           the window's keys) instead of read from AxClaudeKeys; axClaude hands it its own table.
 src/AxTerminal.Core/      class library (net10.0): ShellLauncher (find the shells, the command line with the prompt
                           snippet or the PROMPT variable, the environment), TerminalModel (on LineStore: frames to lines,
                           the prompt rows from the marks, the running state and the exit code, the exchange blocks, system
                           lines, bookmarks, the join flag, the cap; the parts of SessionModel that are not Claude's, written
                           again against the shell fixtures rather than carved out of it), CommandHistory, TerminalSettings;
-                          references Axit.Core
+                          references AxKit.Core
 src/AxTerminal/           class library (net10.0-windows): AxTerminalApp (Run, Usage), TerminalForm (the window, on
-                          Axit.Forms/ConsoleForm since 2026-10-23, the console window shared with axClaude, which owns
+                          AxKit.Forms/ConsoleForm since 2026-10-23, the console window shared with axClaude, which owns
                           the view, the field, the control area, the status bar, the pty bridge, the writes, the
                           recording, the export, find, the signals and the music; in partial files by section: the
                           hooks and the key switch, the menus and the status, the field and the sending, the process,
                           what the model reports, New session, Switch shell and the folders), AxTerminalKeys (with
                           Transcript, the view's keys as data), HelpText (F1 text, the embedded guide); references
-                          AxTerminal.Core, Axit.Core, Axit.Forms
+                          AxTerminal.Core, AxKit.Core, AxKit.Forms
 tests/AxTerminal.Tests/   fixtures recorded with tools/PtyCapture of powershell, cmd and bash under the launcher's command
                           line (a dir, a failing command, a y/n prompt, a multi-line command, cls, exit): golden
                           transcripts, the state at the end and the codes of the commands, the same transcript
@@ -367,7 +367,7 @@ The data flow and the threading are axClaude's (axClaude §7.2, §7.3): the read
 thread, which owns the parser, the screen and the model; a frame ends at `ESC[?25h` or after 100 ms of quiet; the view
 applies the mirror's edits and maps the caret; writes go through the paced queue. The order of the work, one commit
 each (bundle AX-6.3): the `LineStore` seam in `Screen` and `SessionModel` with axClaude's tests green; the move of the
-Core pieces; the parser's two events; `TranscriptView` to `Axit.Forms` with its table as data; `AxTerminal.Core` with
+Core pieces; the parser's two events; `TranscriptView` to `AxKit.Forms` with its table as data; `AxTerminal.Core` with
 its fixtures; the window; the wiring, the installer and the documents (`adding-an-app.md`); axClaude's spec §7.1 and
 its notes record what moved.
 
@@ -431,10 +431,10 @@ its notes record what moved.
 ## 8. Status
 
 - Planned 2026-10-18 at the user's ask, with axFile (`docs/axfile/SPEC.md`), AxKeePassium (axPass since 2026-10-23) and AxCryptomator
-  (`docs/axit/plan.md`).
+  (`docs/axkit/plan.md`).
 - Built the same day as a first draft, in the order of §5: the `LineStore` seam and the moves into the shared
   projects (axClaude's tests unchanged), the marks as events, the view with its keys as data, `AxTerminal.Core` with
   the recorded sessions (Windows PowerShell 5.1 and cmd, then Git Bash in 3.0.0, `tests/fixtures/shell-*`), the window, the wiring. AT-1
   to AT-8 as described above, the git exclude left out (AT-4.7). Not yet heard under NVDA:
   `docs/axterminal/nvda-test-plan.md` is to run before a release names it more than a first draft.
-- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axit/nvda-test-record.md`.
+- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axkit/nvda-test-record.md`.

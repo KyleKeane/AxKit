@@ -3,29 +3,29 @@
 # window then logs an ERROR, which fails the run after its steps.
 mkdir upd
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
-file home\Axit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 start claude {temp}\upd -- --model haiku
 expect said trust
 wait 1500
 keys enter
 expect said Ready
-# Step 1, on the newest version: Axit, Check for updates: the notice "Check for updates" says this is the newest
-# version and names it; Escape closes it. The Axit menu's item names the version in use and no Update item follows it.
-# About, Version: "Axit <version>" first and "Latest release on GitHub: Axit <version> (this version)".
-expect commands Check for updates (Axit 3.
-# (That no "Update to Axit" item follows it cannot be checked: the runner has no refuse for the command list.)
-menu Check for updates (Axit
+# Step 1, on the newest version: axKit, Check for updates: the notice "Check for updates" says this is the newest
+# version and names it; Escape closes it. The axKit menu's item names the version in use and no Update item follows it.
+# About, Version: "axKit <version>" first and "Latest release on GitHub: axKit <version> (this version)".
+expect commands Check for updates (axKit 3.
+# (That no "Update to axKit" item follows it cannot be checked: the runner has no refuse for the command list.)
+menu Check for updates (axKit
 expect state "notice":"Check for updates"
 expect state newest
-expect state Axit 3.
+expect state axKit 3.
 keys escape
 expect state "notice":null
 menu Version
-expect state "noticeText":"Axit 3.
+expect state "noticeText":"axKit 3.
 expect state (this version)
 keys escape
 # Step 2, with the network off (flight mode), changes the user's machine: left manual.
-# Steps 3 to 6 install an older build and update it in place: they change the installed Axit, left manual. Options,
+# Steps 3 to 6 install an older build and update it in place: they change the installed axKit, left manual. Options,
 # General, "Check for updates at start" off, then a start: nothing said, About, Version says "not checked yet":
 menu Check for updates at start
 close

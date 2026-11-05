@@ -6,7 +6,7 @@ Start with `.\run-axgit.ps1 manual_tests\axgit\scratch-repository-with-changes`.
 
 ## scratch-repository-with-changes
 
-A repository of its own, apart from Axit's, with five commits on `main`, a second branch and a remote. Its Changes list holds:
+A repository of its own, apart from axKit's, with five commits on `main`, a second branch and a remote. Its Changes list holds:
 
 - `tracked-change-me.txt`: modified, unstaged. Space stages it; Enter shows its diff with one added line.
 - `tracked-discard-my-change.txt`: modified, unstaged. Delete discards the change (section 3, step 6).

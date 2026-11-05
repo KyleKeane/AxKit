@@ -1,17 +1,17 @@
-// AxAutomate: runs scripts of user steps against Axit's windows through their automation channel
-// (docs/axit/automation.md, tier 2). The windows are started on a desktop of the runner's own ("axit-tests"), so that
+// AxAutomate: runs scripts of user steps against axKit's windows through their automation channel
+// (docs/axkit/automation.md, tier 2). The windows are started on a desktop of the runner's own ("axkit-tests"), so that
 // they never take the user's keyboard or foreground; the keys go into each window's own message queue, the sounds are
-// recorded and not played, and the windows keep their settings and logs in the run's own folder (AXIT_HOME).
+// recorded and not played, and the windows keep their settings and logs in the run's own folder (AXKIT_HOME).
 //
 // Usage:
-//   AxAutomate <script or folder of scripts> [--exe <Axit.exe> | --build] [--report <file.md>] [--keep]
-//   --build      builds src\Axit in Release into the run's own folder first (the running app's bin is never touched)
-//   --exe        the Axit.exe to drive (default: src\Axit\bin\Release\net10.0-windows\Axit.exe)
+//   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep]
+//   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
+//   --exe        the AxKit.exe to drive (default: src\AxKit\bin\Release\net10.0-windows\AxKit.exe)
 //   --report     writes every script's steps and its whole timeline, with times, to a Markdown file
 //   --nvda       the NVDA tier (tier 3): the windows open on the user's own desktop and come to the front, the keys go
 //                through SendInput as a keyboard's do, and NVDA's speech is read from its capture add-on
 //                (tools/nvda-capture). It takes over the machine: only at the user's word, with the user away.
-//   --keep       keeps %TEMP%\axit-automate\<process id>, the run's folder ({temp} in a script), with its logs
+//   --keep       keeps %TEMP%\axkit-automate\<process id>, the run's folder ({temp} in a script), with its logs
 //   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}; the exit code
 //   is the number of scripts that failed.
 //
@@ -20,10 +20,10 @@
 //   file <name> <text>        a file {temp}\<name> holding the text (\n for a new line); "<name>" in quotes with a space
 //   silence <name> <ms>       a silent WAV file {temp}\<name> of that length, for axMedia without a sound
 //   run <command line>        a command through cmd.exe in {temp}, waited for up to 60 s (git init, git commit ...)
-//   start <arguments>         Axit.exe with these arguments, on the test desktop; the window becomes the current one
-//   launch <arguments>        Axit.exe on the test desktop without waiting for a window: a start that hands over to an
+//   start <arguments>         AxKit.exe with these arguments, on the test desktop; the window becomes the current one
+//   launch <arguments>        AxKit.exe on the test desktop without waiting for a window: a start that hands over to an
 //                             open window (axMedia, axPreview) and ends; waits up to 30 s for the process to end
-//   adopt                     waits up to 15 s for an Axit window the app itself started (Ctrl+N, New window, Show
+//   adopt                     waits up to 15 s for an axKit window the app itself started (Ctrl+N, New window, Show
 //                             in) and makes it the current one; it is closed at the end like the others
 //   use <n>                   the n-th window started in the script (from 1) becomes the current one
 //   keys <key> ...            key presses: ctrl+shift+p, escape, down, enter, f1, alt+f4 ...
@@ -34,9 +34,9 @@
 //                             commands, the window's state (title, notice and its text, status bar), the focus
 //   check commands            fails when the window's command list has a problem: a key the F1 text does not name, a
 //                             command that never runs because an earlier one takes its key everywhere (app-kit AK-2.4)
-//   mcp start                 (after a start) the runner becomes an MCP client: Axit.exe mcp as its child, with the
-//                             run's settings and key (docs/axit/mcp.md MC-6)
-//   mcp call <tool> [<json>]  sends a tools/call without waiting; {window} is the id the last axit_windows answer named
+//   mcp start                 (after a start) the runner becomes an MCP client: AxKit.exe mcp as its child, with the
+//                             run's settings and key (docs/axkit/mcp.md MC-6)
+//   mcp call <tool> [<json>]  sends a tools/call without waiting; {window} is the id the last axkit_windows answer named
 //   expect mcp <text>         waits up to 60 s for an answer holding the text (a refusal reads "error: ...")
 //   refuse mcp <text>         fails when an answer waiting holds the text after 2 s (an axPass window listed)
 //   expect said <text>        waits up to 60 s until the timeline holds the text (an announcement, "♪ Edge" for a
@@ -75,7 +75,7 @@ internal static class Program
     {
         if (args.Length == 0)
         {
-            Console.Error.WriteLine("Usage: AxAutomate <script or folder> [--exe <Axit.exe> | --build] [--report <file.md>] [--keep]");
+            Console.Error.WriteLine("Usage: AxAutomate <script or folder> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep]");
             return 2;
         }
 
@@ -102,7 +102,7 @@ internal static class Program
 
         // The process id and the time: a reused process id never meets an old folder (git's read-only objects in it
         // stopped a run once).
-        var root = Path.Combine(Path.GetTempPath(), "axit-automate", $"{Environment.ProcessId}-{DateTime.Now:HHmmss}");
+        var root = Path.Combine(Path.GetTempPath(), "axkit-automate", $"{Environment.ProcessId}-{DateTime.Now:HHmmss}");
         Directory.CreateDirectory(root);
         var repository = FindRepository();
         if (build)
@@ -114,11 +114,11 @@ internal static class Program
             }
         }
 
-        exe ??= Path.Combine(repository, "src", "Axit", "bin", "Release", "net10.0-windows", "Axit.exe");
+        exe ??= Path.Combine(repository, "src", "AxKit", "bin", "Release", "net10.0-windows", "AxKit.exe");
         exe = Path.GetFullPath(exe);
         if (!File.Exists(exe))
         {
-            Console.Error.WriteLine($"Axit.exe not found: {exe}. Use --build, or --exe with a built Axit.exe.");
+            Console.Error.WriteLine($"AxKit.exe not found: {exe}. Use --build, or --exe with a built AxKit.exe.");
             return 2;
         }
 
@@ -273,7 +273,7 @@ internal static class Program
     {
         for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
         {
-            if (File.Exists(Path.Combine(dir.FullName, "Axit.sln")))
+            if (File.Exists(Path.Combine(dir.FullName, "AxKit.sln")))
             {
                 return dir.FullName;
             }
@@ -282,11 +282,11 @@ internal static class Program
         return Environment.CurrentDirectory;
     }
 
-    /// <summary>src\Axit in Release into a folder of the run's, never into the running app's bin.</summary>
+    /// <summary>src\AxKit in Release into a folder of the run's, never into the running app's bin.</summary>
     private static string? Build(string repository, string output)
     {
-        Console.WriteLine($"Building Axit into {output} ...");
-        var start = new ProcessStartInfo("dotnet", ["build", Path.Combine(repository, "src", "Axit", "Axit.csproj"), "-c", "Release", "-o", output, "--nologo", "-v", "q"])
+        Console.WriteLine($"Building axKit into {output} ...");
+        var start = new ProcessStartInfo("dotnet", ["build", Path.Combine(repository, "src", "AxKit", "AxKit.csproj"), "-c", "Release", "-o", output, "--nologo", "-v", "q"])
         {
             UseShellExecute = false,
             RedirectStandardOutput = true,
@@ -302,7 +302,7 @@ internal static class Program
             return null;
         }
 
-        return Path.Combine(output, "Axit.exe");
+        return Path.Combine(output, "AxKit.exe");
     }
 }
 
@@ -326,7 +326,7 @@ internal sealed record Event(long Ms, string Kind, string Text, bool Interrupt)
 internal sealed class Run(string exe, string temp)
 {
     /// <summary>A desktop of the run's own: runs side by side never share one (a window closing in another run could activate one of this run's).</summary>
-    private static readonly string DesktopName = $"axit-tests-{Environment.ProcessId}";
+    private static readonly string DesktopName = $"axkit-tests-{Environment.ProcessId}";
 
     /// <summary>The NVDA tier: the user's own desktop, the foreground, real keyboard input, NVDA's speech.</summary>
     public static bool Nvda { get; set; }
@@ -424,7 +424,7 @@ internal sealed class Run(string exe, string temp)
                 var gap = call.IndexOf(' ');
                 return (true, _broker.Call(gap < 0 ? call : call[..gap], gap < 0 ? string.Empty : call[(gap + 1)..]));
             case "check" when rest == "commands":
-                // The window's command list (docs/axit/app-kit.md AK-2.4): every key in the F1 text, none shadowed.
+                // The window's command list (docs/axkit/app-kit.md AK-2.4): every key in the F1 text, none shadowed.
                 var problems = Current.Send("problems");
                 return (problems.Contains("\"problems\":[]", StringComparison.Ordinal), problems);
             case "spoken":
@@ -805,7 +805,7 @@ internal sealed class Run(string exe, string temp)
         || answer.Replace("\\\"", "\"").Replace("\\\\", "\\").Contains(text, StringComparison.OrdinalIgnoreCase)
         || Flattened(answer).Contains(text, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>A window the app started (it inherits the run's automation variables): the newest Axit process with a pipe that is not one of the run's.</summary>
+    /// <summary>A window the app started (it inherits the run's automation variables): the newest axKit process with a pipe that is not one of the run's.</summary>
     private (bool, string?) Adopt()
     {
         var clock = Stopwatch.StartNew();
@@ -830,7 +830,7 @@ internal sealed class Run(string exe, string temp)
             Thread.Sleep(200);
         }
 
-        return (false, "no new Axit window within 15 s");
+        return (false, "no new axKit window within 15 s");
     }
 
     /// <summary>Every window's whole timeline, for the report.</summary>
@@ -888,7 +888,7 @@ internal sealed class Run(string exe, string temp)
             Native.CloseDesktop(_desktop);
         }
 
-        var logs = Path.Combine(_home, "Axit", "logs");
+        var logs = Path.Combine(_home, "AxKit", "logs");
         if (Directory.Exists(logs))
         {
             foreach (var file in Directory.GetFiles(logs, "*.log"))
@@ -922,8 +922,8 @@ internal sealed class Run(string exe, string temp)
 /// <summary>What NVDA spoke, from the capture add-on's log (tools/nvda-capture): "speak" lines, and "[cancel]" where NVDA cut its speech.</summary>
 internal sealed class Speech
 {
-    public static readonly string FlagPath = Path.Combine(Path.GetTempPath(), "axit-nvda-capture.on");
-    public static readonly string LogPath = Path.Combine(Path.GetTempPath(), "axit-nvda-speech.log");
+    public static readonly string FlagPath = Path.Combine(Path.GetTempPath(), "axkit-nvda-capture.on");
+    public static readonly string LogPath = Path.Combine(Path.GetTempPath(), "axkit-nvda-speech.log");
     private readonly List<string> _all = [];
     // Each script's reader starts where the log ends, so that one script never matches what NVDA said in the one before.
     private long _read = File.Exists(LogPath) ? new FileInfo(LogPath).Length : 0;
@@ -1022,7 +1022,7 @@ internal sealed class Speech
     }
 }
 
-/// <summary>One Axit process on the test desktop, its automation pipe and its timeline.</summary>
+/// <summary>One axKit process on the test desktop, its automation pipe and its timeline.</summary>
 internal sealed class Window : IDisposable
 {
     private readonly Process _process;
@@ -1062,7 +1062,7 @@ internal sealed class Window : IDisposable
     {
         _process = process;
         // CurrentUserOnly: the pipe must be the user's own, never one another program made under the same name.
-        _pipe = new NamedPipeClientStream(".", $"axit-auto-{process.Id}", PipeDirection.InOut, PipeOptions.CurrentUserOnly);
+        _pipe = new NamedPipeClientStream(".", $"axkit-auto-{process.Id}", PipeDirection.InOut, PipeOptions.CurrentUserOnly);
         // The window opens its pipe when it first shows.
         _pipe.Connect(connectMs);
         _reader = new StreamReader(_pipe, new UTF8Encoding(false));
@@ -1120,7 +1120,7 @@ internal sealed class Window : IDisposable
         }
     }
 
-    /// <summary>An Axit process the run did not start, joined through its pipe; null when it has none (yet).</summary>
+    /// <summary>An axKit process the run did not start, joined through its pipe; null when it has none (yet).</summary>
     public static Window? Attach(Process process)
     {
         try
@@ -1154,9 +1154,9 @@ internal sealed class Window : IDisposable
     private static int Create(string exe, string arguments, string? desktop, string home)
     {
         // The run's secret (security audit S-11): the windows open their channel to a client that sends it first.
-        Environment.SetEnvironmentVariable("AXIT_AUTOMATION", Secret);
+        Environment.SetEnvironmentVariable("AXKIT_AUTOMATION", Secret);
         // The run's own settings, logs and recently closed list, never the user's (AppPaths).
-        Environment.SetEnvironmentVariable("AXIT_HOME", home);
+        Environment.SetEnvironmentVariable("AXKIT_HOME", home);
         var startup = new Native.STARTUPINFO { cb = Marshal.SizeOf<Native.STARTUPINFO>(), lpDesktop = desktop is null ? null : "WinSta0\\" + desktop };
         var commandLine = new StringBuilder($"\"{exe}\" {arguments}");
         if (!Native.CreateProcessW(null, commandLine, 0, 0, false, 0, 0, null, ref startup, out var info))
@@ -1391,7 +1391,7 @@ internal sealed class Window : IDisposable
 /// </summary>
 internal static class HandsOff
 {
-    private static readonly string WavePath = Path.Combine(Path.GetTempPath(), "axit-nvda-hands-off.wav");
+    private static readonly string WavePath = Path.Combine(Path.GetTempPath(), "axkit-nvda-hands-off.wav");
 
     /// <summary>
     /// The warning recorded once into a wave file in Windows' voice, with a pause after it, and played in a loop for

@@ -1,8 +1,8 @@
-# axClaude: the reminder before Claude Code first starts (docs/axit/SPEC.md AX-11.4, AX-11.5; the Owed list of
-# docs/axit/nvda-test-record.md). A fresh run's home has no consent, so the reminder comes before Claude starts; Connect
+# axClaude: the reminder before Claude Code first starts (docs/axkit/SPEC.md AX-11.4, AX-11.5; the Owed list of
+# docs/axkit/nvda-test-record.md). A fresh run's home has no consent, so the reminder comes before Claude starts; Connect
 # starts it, and Claude's own trust question follows. With --nvda (nvda-pass.ps1) every expected line must be spoken by
 # NVDA too.
-file home\Axit\axclaude.json {"checkForUpdates":false}
+file home\AxKit\axclaude.json {"checkForUpdates":false}
 mkdir fresh
 start claude {temp}\fresh -- --model haiku
 

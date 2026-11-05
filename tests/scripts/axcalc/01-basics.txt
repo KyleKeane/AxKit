@@ -1,10 +1,10 @@
 # axCalc: the field, the answer, the history and its keys (docs/axcalc/nvda-test-plan.md; SPEC AC-3 to AC-6). Every
-# key here is a command of the window's one list (docs/axit/app-kit.md AK-2), so this script is also the check that the
+# key here is a command of the window's one list (docs/axkit/app-kit.md AK-2), so this script is also the check that the
 # list does what the key switch did before it.
-file home\Axit\axcalc.json {"checkForUpdates": false, "keepHistory": false}
+file home\AxKit\axcalc.json {"checkForUpdates": false, "keepHistory": false}
 
 start calc
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axit/app-kit.md AK-2.4).
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
 expect focus Expression
 

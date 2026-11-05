@@ -1,4 +1,4 @@
-namespace Axit.TestShared;
+namespace AxKit.TestShared;
 
 /// <summary>The recorded fixtures under tests/fixtures. Compiled into every test project through tests/Directory.Build.props.</summary>
 internal static class Fixtures

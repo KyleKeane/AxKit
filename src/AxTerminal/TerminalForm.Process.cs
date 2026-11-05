@@ -1,6 +1,6 @@
 using AxTerminal.Core;
-using Axit.Core.Pty;
-using Axit.Forms;
+using AxKit.Core.Pty;
+using AxKit.Forms;
 
 namespace AxTerminal;
 
@@ -30,7 +30,7 @@ internal sealed partial class TerminalForm
         }
 
         // Bundle AX-11.5: each shell asks once before its first start, those that come with Windows included.
-        var target = Axit.Core.ConsentTarget.Shell(ShellLauncher.Describe(_shell));
+        var target = AxKit.Core.ConsentTarget.Shell(ShellLauncher.Describe(_shell));
         if (!HasConsent(target, StartShell, () => _model.AddSystemLine($"Not connected to {target.Program}. Press Ctrl+N to start a shell.")))
         {
             return;

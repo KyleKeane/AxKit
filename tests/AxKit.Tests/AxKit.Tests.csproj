@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The bundle's tests: the shared pure code, the layout rules, and the key tables of every window (AX-8.4), which
+       is why this project references the window projects; LayoutTests constrains src/, not tests/. -->
+  <PropertyGroup>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <!-- Every project of src but the executable (docs/axkit/app-kit.md AK-4.1), so that a new app's key table is in reach
+       of KeyTests by being there. -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\*\*.csproj" Exclude="..\..\src\AxKit\AxKit.csproj" />
+  </ItemGroup>
+
+</Project>

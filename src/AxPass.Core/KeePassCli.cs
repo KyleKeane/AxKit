@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Text;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxPass.Core;
 
@@ -71,7 +71,7 @@ public static class KeePassCli
             info.ArgumentList.Add(argument);
         }
 
-        // The bundle's run (Axit.Core/ProcessRun, 2026-10-25): the password lines on standard input, each ended by a
+        // The bundle's run (AxKit.Core/ProcessRun, 2026-10-25): the password lines on standard input, each ended by a
         // line feed, the outputs read meanwhile, the tool ended with what it started after the timeout.
         var result = ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs));
         return result.TimedOut

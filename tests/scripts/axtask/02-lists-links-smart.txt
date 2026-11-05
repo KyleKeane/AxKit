@@ -1,10 +1,10 @@
 # axTask: a list's details, plain lists and checklists, links, smart lists, a change on disk (docs/axtask/nvda-test-plan.md
-# sections 1.8, 2.4, 2.8 to 2.10, 3 and 4; docs/axit/item-apps.md IA-4.3, IA-5.5, IA-D3; SPEC TK-4, TK-5).
-file home\Axit\axtask.json {"checkForUpdates": false}
-file "tasks\Home\Fix the tap.json" {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": "2099-10-30"}, {"title": "Waits on", "type": "link", "value": ""}]}
-file "tasks\Home\Water plants.json" {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Water plants"}, {"title": "Done", "type": "check", "value": true}]}
-file tasks\Shopping\Milk.json {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
-file tasks\Shopping\Washer.json {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
+# sections 1.8, 2.4, 2.8 to 2.10, 3 and 4; docs/axkit/item-apps.md IA-4.3, IA-5.5, IA-D3; SPEC TK-4, TK-5).
+file home\AxKit\axtask.json {"checkForUpdates": false}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": "2099-10-30"}, {"title": "Waits on", "type": "link", "value": ""}]}
+file "tasks\Home\Water plants.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Water plants"}, {"title": "Done", "type": "check", "value": true}]}
+file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
+file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
 
 start task {temp}\tasks
 expect focus Smart lists, section, 1 smart list
@@ -108,7 +108,7 @@ expect said ! Done tasks shown
 
 # 3.2 A smart list with a condition not understood shows nothing and says so.
 file tasks\Odd.filter.json {"conditions": [{"field": "Due", "soon": true}]}
-file tasks\Soon.filter.json {"format": "axit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}, {"field": "Due", "before": "2099-11-30"}]}
+file tasks\Soon.filter.json {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}, {"field": "Due", "before": "2099-11-30"}]}
 keys left
 keys f5
 keys home

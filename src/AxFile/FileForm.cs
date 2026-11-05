@@ -1,6 +1,6 @@
 using AxFile.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxFile;
 
@@ -9,11 +9,11 @@ namespace AxFile;
 /// actions yet" until the first operation), and a status bar with the newest action and the folder's path. Enter is the verb (G2): a
 /// folder opens in the list, a file in the program Windows has for it; Shift+Enter reads a file in axPreview. The
 /// folder reads and the operations run on background tasks. The notices, the fonts, the window's place, the update
-/// flow and the announcements are the bundle's window base (<see cref="AxitForm"/>). The window is in four files:
+/// flow and the announcements are the bundle's window base (<see cref="AxKitForm"/>). The window is in four files:
 /// this one (the controls, the menus, the hooks, the keys), Browse (the folder, the list and the selection),
 /// Operations (the operations and the ways out) and Actions (the Actions list and the hand-overs to axMedia).
 /// </summary>
-public sealed partial class FileForm : AxitForm
+public sealed partial class FileForm : AxKitForm
 {
     private readonly FileSettings _settings;
     private readonly string? _startPath;
@@ -22,7 +22,7 @@ public sealed partial class FileForm : AxitForm
     private readonly ToolStripMenuItem _favoritesItem = new("Fa&vorites");
     private readonly ToolStripMenuItem _drivesMenu = new("Driv&es");
     private readonly List<(SortBy By, ToolStripMenuItem Item)> _sortItems = [];
-    private readonly AxitList _list = new();
+    private readonly AxKitList _list = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _stateLabel;
     private readonly ToolStripStatusLabel _pathLabel;
@@ -36,7 +36,7 @@ public sealed partial class FileForm : AxitForm
         _startPath = path;
         Text = AxFileApp.Name;
 
-        // ---- menus and keys (AF-6.1, AF-6.2): one command list (docs/axit/app-kit.md AK-2), each key from the tables;
+        // ---- menus and keys (AF-6.1, AF-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables;
         // a key's When is where it acts: the folder list (InList), the Actions list (InPane) or anywhere ----
         // Folder is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
         // folders, the ways around, Show current folder in, Exit.
@@ -162,8 +162,8 @@ public sealed partial class FileForm : AxitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "File &resources",
             [("&Keyboard shortcuts in Windows", "https://support.microsoft.com/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec")]);
 
-        // The bundle's Axit menu (AX-9) sits before Help in every window and ends with the update items and About.
-        _menu.Items.AddRange([folder, item, select, options, CreateAxitMenu(), help]);
+        // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
+        _menu.Items.AddRange([folder, item, select, options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         // ---- the list (AF-2.1, AF-2.2): the main control; its own keys stay native (AF-3.6) ----
@@ -222,7 +222,7 @@ public sealed partial class FileForm : AxitForm
     /// <summary>
     /// The entry's menu (AF-4.6, AF-6.1), filled for the menu bar and again for the list's context menu: one flat
     /// list in File Explorer's order and words, with two submenus for the ways to open (Open with: Windows and the
-    /// user's programs, AF-4.7, AF-4.11; Open in Axit: the bundle's apps, AF-4.9), and the hand-overs to axPreview
+    /// user's programs, AF-4.7, AF-4.11; Open in axKit: the bundle's apps, AF-4.9), and the hand-overs to axPreview
     /// and axMedia (AF-3.2, AF-5). Filled once, so that each command is registered once; only Open with is refilled as it opens.
     /// </summary>
     private void FillItemMenu(ToolStripMenuItem menu)
@@ -232,13 +232,13 @@ public sealed partial class FileForm : AxitForm
         CommandPalette.FilledOnOpening(openWith).DropDownOpening += (_, _) => FillOpenWith(openWith);
         FillOpenWith(openWith);
         menu.DropDownItems.Add(openWith);
-        var axit = new ToolStripMenuItem("Open in &Axit");
-        Add(axit, new Command("&Editor", AxFileKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
-        axit.DropDownItems.Add(new ToolStripSeparator());
-        // Every app that opens a path (AF-4.9), by group as in the Axit menu.
-        AxitMenu.AddApps(axit.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing), app => new ToolStripMenuItem(AxitWindows.AppLabel(app), null, (_, _) => OpenInAxit(app)));
+        var axkit = new ToolStripMenuItem("Open in &axKit");
+        Add(axkit, new Command("&Editor", AxFileKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
+        axkit.DropDownItems.Add(new ToolStripSeparator());
+        // Every app that opens a path (AF-4.9), by group as in the axKit menu.
+        AxKitMenu.AddApps(axkit.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing), app => new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => OpenInAxKit(app)));
 
-        menu.DropDownItems.Add(axit);
+        menu.DropDownItems.Add(axkit);
         Add(menu, new Command("Pr&eview", AxFileKeys.Preview, OpenInPreview) { When = InList, Mark = CommandMark.Open });
         Add(menu, new Command("Play folder in AxMe&dia", AxFileKeys.PlayFolder, PlayFolder) { When = InList, Mark = CommandMark.Open });
         Add(menu, new Command("Add to axMedia's &queue", AxFileKeys.AddToQueue, AddToQueue) { When = InList, Mark = CommandMark.Open });

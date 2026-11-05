@@ -3,7 +3,7 @@ namespace AxProcess;
 /// <summary>
 /// axProcess's window-specific keys (SPEC.md PR-6.2; bundle AX-8). A key is changed here and nowhere else: the menu
 /// items, the commands of <c>ProcessForm</c> and the F1 text read this table. The bundle-wide keys
-/// (F1, the palette, find, Ctrl+S, text size) are <c>Axit.Forms.BundleKeys</c>. Enter and Delete act in the list.
+/// (F1, the palette, find, Ctrl+S, text size) are <c>AxKit.Forms.BundleKeys</c>. Enter and Delete act in the list.
 /// </summary>
 public static class AxProcessKeys
 {

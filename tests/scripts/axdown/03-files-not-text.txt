@@ -1,7 +1,7 @@
 # axDown, test plan section 3 step 9 (a file that is not text), apart from 03-files.txt: the window logs the refused
 # file as an ERROR, and the runner fails a run with an ERROR in its logs (see the report), so this script fails after its steps.
 allow error is not a text file
-file home\Axit\axdown.json {"checkForUpdates": false}
+file home\AxKit\axdown.json {"checkForUpdates": false}
 run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('image.png', [byte[]](137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82))"
 
 # 3.9: a file that is not text: a notice names the problem; Escape closes it; the window stays on an empty Untitled.

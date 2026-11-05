@@ -1,6 +1,6 @@
 # axJSON, test plan section 3 (Format, AJ-2.3), driven from inside the window (docs/axjson/nvda-test-plan.md).
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\Axit\axjson.json {"checkForUpdates": false}
+file home\AxKit\axjson.json {"checkForUpdates": false}
 file one-line.json {"model":"opus","permissions":{"allow":["Bash","Read"],"deny":[]},"count":3,"on":true}
 file broken.json {\n  "model": "opus"\n  "permissions": { "allow": ["Bash", "Read"], "deny": [], },\n  "count": 3,\n  "on": true\n}
 file missing-value.json {\n  "model": "opus",\n  "permissions": { "allow": ["Bash", "Read"], "deny": [] },\n  "count": ,\n  "on": true\n}

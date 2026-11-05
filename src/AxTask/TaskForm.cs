@@ -1,11 +1,11 @@
 using AxTask.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxTask;
 
 /// <summary>
-/// axTask's window (docs/axit/item-apps.md IA-2), on the item apps' shared window <see cref="ItemForm"/>, which holds
+/// axTask's window (docs/axkit/item-apps.md IA-2), on the item apps' shared window <see cref="ItemForm"/>, which holds
 /// the panes, the moves between levels, the shared keys and every field command. This class holds what is axTask's:
 /// the levels of a folder of lists (the top with All tasks and the smart lists, a list, a smart list's items), what
 /// the detail pane shows for each, its menus and its own keys. The commands and the one way a file changes are in
@@ -33,7 +33,7 @@ public sealed partial class TaskForm : ItemForm
     {
         _settings = settings;
 
-        // ---- menus and keys: one command list (docs/axit/app-kit.md AK-2), each key from the tables (TK-7) ----
+        // ---- menus and keys: one command list (docs/axkit/app-kit.md AK-2), each key from the tables (TK-7) ----
         // The shared keys (ItemKeys) are ItemForm's commands, registered after these by PlaceControls; the items here
         // for them only show them. A key in a second menu is an item showing it too: its command is the first menu's.
         // The first menu holds what every pane has; List and Item act on the navigator's selection, Field on the
@@ -93,7 +93,7 @@ public sealed partial class TaskForm : ItemForm
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Item &resources", [("&JSON", "https://www.json.org/json-en.html")]);
 
-        _menu.Items.AddRange([file, _listMenu, _itemMenu, _fieldMenu, view, options, CreateAxitMenu(), help]);
+        _menu.Items.AddRange([file, _listMenu, _itemMenu, _fieldMenu, view, options, CreateAxKitMenu(), help]);
         SelectionMenus(_listMenu, _itemMenu, _fieldMenu);
         PlaceControls(_menu);
 
@@ -316,7 +316,7 @@ public sealed partial class TaskForm : ItemForm
             AddSection(rows, "User lists", custom: false, plain.Select(ListRow).ToList(), "list");
         }
 
-        foreach (var section in bySection.Keys.Where(key => key.Length > 0).OrderBy(key => key, Axit.Core.NaturalOrder.Instance))
+        foreach (var section in bySection.Keys.Where(key => key.Length > 0).OrderBy(key => key, AxKit.Core.NaturalOrder.Instance))
         {
             AddSection(rows, section, custom: true, bySection[section].Select(ListRow).ToList(), "list");
         }

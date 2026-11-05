@@ -1,6 +1,6 @@
-using Axit.Core;
-using Axit.Core.Transcript;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Core.Transcript;
+using AxKit.Forms;
 
 namespace AxTerminal;
 
@@ -8,7 +8,7 @@ namespace AxTerminal;
 /// axTerminal's window-specific keys (SPEC.md AT-6.2; bundle AX-8). A key is changed here and nowhere else: the
 /// window's commands with their menu items and the terminal's quick keys (<see cref="Transcript"/>) read this table, and
 /// the F1 text in <c>HelpText</c> names the same keys. The bundle-wide keys (F1, the controls, find, save, text size,
-/// the page and paragraph keys) are <c>Axit.Forms.BundleKeys</c>; the collision test in <c>tests/Axit.Tests</c> fails
+/// the page and paragraph keys) are <c>AxKit.Forms.BundleKeys</c>; the collision test in <c>tests/AxKit.Tests</c> fails
 /// when a key here equals one of those or when a key appears twice.
 /// </summary>
 public static class AxTerminalKeys

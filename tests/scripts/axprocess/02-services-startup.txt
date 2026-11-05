@@ -1,6 +1,6 @@
 # axProcess: the Services and Startup views (docs/axprocess/nvda-test-plan.md sections 3 and 4; SPEC PR-4, PR-5).
 # Read only: no service is started or stopped here, since a run with administrator rights would do it for real.
-file home\Axit\axprocess.json {"checkForUpdates": false}
+file home\AxKit\axprocess.json {"checkForUpdates": false}
 start process
 # The first read done: the status bar says "Reading…" until then, and a view key meanwhile says "Working…" (PR-2.3).
 expect state "status":["Processes,

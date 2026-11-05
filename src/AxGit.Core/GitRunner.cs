@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxGit.Core;
 
@@ -98,7 +98,7 @@ public static class GitRunner
         info.Environment["LC_ALL"] = "C.UTF-8";
         info.Environment["GIT_PAGER"] = "cat";
 
-        // The run is the bundle's (Axit.Core/ProcessRun, since 2026-10-25): the reads under the timeout as well as the
+        // The run is the bundle's (AxKit.Core/ProcessRun, since 2026-10-25): the reads under the timeout as well as the
         // wait, since a program git started that outlives it (an agent, a hook's daemon) keeps the pipes open after git
         // has exited, and a read with no end would hang the window; whether git itself had finished is taken before
         // the kill (until 2026-10-23 it was read after, so every timeout read as the open-pipe case).

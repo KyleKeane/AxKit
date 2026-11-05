@@ -1,6 +1,6 @@
 using AxTerminal.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxTerminal;
 
@@ -117,7 +117,7 @@ internal sealed partial class TerminalForm
         {
             LookUpShells();
             SwitchShell(kind);
-        }, Axit.Core.ConsentTarget.Shell(ShellLauncher.Describe(kind)));
+        }, AxKit.Core.ConsentTarget.Shell(ShellLauncher.Describe(kind)));
 
     /// <summary>The bundle's folder picker (one of the few separate windows, AX-7.2), on the folder or the user's profile; null when it was cancelled.</summary>
     private string? PickFolder(string? start) =>

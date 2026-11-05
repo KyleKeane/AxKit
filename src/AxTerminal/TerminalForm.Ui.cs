@@ -1,6 +1,6 @@
 using AxTerminal.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxTerminal;
 
@@ -11,7 +11,7 @@ internal sealed partial class TerminalForm
     private void BuildMenus()
     {
         // The menus (SPEC.md AT-6.1), every mnemonic unique within its menu; each item with a key is a command of the
-        // window's one list (docs/axit/app-kit.md AK-2), its key from the table. Session, the shell in its folder, is the
+        // window's one list (docs/axkit/app-kit.md AK-2), its key from the table. Session, the shell in its folder, is the
         // thing worked on, in the standard order of a first menu (bundle AX-6): New, the recent folders, the slot the
         // editors have Save in, Show current folder in, the export, Exit.
         var session = new ToolStripMenuItem("&Session");
@@ -121,7 +121,7 @@ internal sealed partial class TerminalForm
             ("&Bash manual", "https://www.gnu.org/software/bash/manual/"),
         ]);
 
-        MenuBar.Items.AddRange([session, shell, navigate, options, CreateAxitMenu(), help]);
+        MenuBar.Items.AddRange([session, shell, navigate, options, CreateAxKitMenu(), help]);
     }
 
     /// <summary>Options → Speech → Speak output: a mode (AT-5.3): speech starts with what arrives next.</summary>
@@ -139,7 +139,7 @@ internal sealed partial class TerminalForm
         Announce(MenuText.Plain(SpeechChoices.First(c => c.Mode == mode).Text), true);
     }
 
-    /// <summary>The title is the current directory's name (AT-2.3), which the Axit menu lists the window by.</summary>
+    /// <summary>The title is the current directory's name (AT-2.3), which the axKit menu lists the window by.</summary>
     private void UpdateTitle()
     {
         var text = $"{PathName.Of(CurrentDirectory)} - {ShellLauncher.Describe(_shell)} - {AppTitle}";

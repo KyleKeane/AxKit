@@ -1,5 +1,5 @@
 using System.IO.Compression;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxPreview.Core;
 

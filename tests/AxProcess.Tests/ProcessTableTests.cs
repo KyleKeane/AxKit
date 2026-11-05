@@ -1,4 +1,4 @@
-using Axit.Core;
+using AxKit.Core;
 using AxProcess.Core;
 
 namespace AxProcess.Tests;

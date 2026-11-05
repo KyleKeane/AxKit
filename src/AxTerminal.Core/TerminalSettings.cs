@@ -1,4 +1,4 @@
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxTerminal.Core;
 
@@ -10,7 +10,7 @@ public enum OutputSpeechMode
 }
 
 /// <summary>
-/// Everything axTerminal remembers between runs (SPEC.md AT-8.1), in <c>%APPDATA%\Axit\axterminal.json</c> through
+/// Everything axTerminal remembers between runs (SPEC.md AT-8.1), in <c>%APPDATA%\AxKit\axterminal.json</c> through
 /// the bundle's <see cref="SettingsFile"/>: the shell, the last folder and the speech options here; the console size,
 /// the recent folders, the sounds, the signals and the transcript options from <see cref="ConsoleSettings"/>, shared
 /// with axClaude; the font, the update check and the window's place from <see cref="WindowSettings"/>. A missing or

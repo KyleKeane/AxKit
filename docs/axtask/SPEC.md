@@ -1,8 +1,8 @@
 # axTask — Specification
 
-axTask is an app of the Axit bundle (`docs/axit/SPEC.md`): tasks and lists as a folder of small JSON files, for a
+axTask is an app of the axKit bundle (`docs/axkit/SPEC.md`): tasks and lists as a folder of small JSON files, for a
 blind developer who uses the NVDA screen reader. It is an item app: its window, keys, field types and file format are
-the shared ones of `docs/axit/item-apps.md` (cited as IA-n.m and not repeated), and this document holds only what is
+the shared ones of `docs/axkit/item-apps.md` (cited as IA-n.m and not repeated), and this document holds only what is
 axTask's own. Written 2026-10-24 and built the same day on the branch `axtask`, not yet heard under NVDA; it takes the place of axList (`docs/axlist/SPEC.md`, branch
 `axlist`, never merged). Requirements are numbered `TK-n.m` and decisions `TK-Dn`. In axTask's code and documents,
 "SPEC.md" means this file.
@@ -76,7 +76,7 @@ its fields in the detail pane. Space marks a task done.
 
 ```json
 {
-  "format": "axit-filter 1",
+  "format": "axkit-filter 1",
   "match": "all",
   "conditions": [
     { "field": "Done", "is": false },

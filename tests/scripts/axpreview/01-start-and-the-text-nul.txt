@@ -4,7 +4,7 @@
 # script fails after its steps.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
 allow error is not a text file
-file home\Axit\axpreview.json {"checkForUpdates": false}
+file home\AxKit\axpreview.json {"checkForUpdates": false}
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('nul-later.txt', ('A line of text.' + [char]13 + [char]10) * 700 + [char]0 + 'after the NUL')"
 
 # 9a manual: Ctrl+O is the Windows file picker, so the file is given at the start of a window of its own, which has
