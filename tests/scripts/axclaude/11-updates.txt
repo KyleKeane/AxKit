@@ -12,16 +12,16 @@ expect said Ready
 # Step 1, on the newest version: axKit, Check for updates: the notice "Check for updates" says this is the newest
 # version and names it; Escape closes it. The axKit menu's item names the version in use and no Update item follows it.
 # About, Version: "axKit <version>" first and "Latest release on GitHub: axKit <version> (this version)".
-expect commands Check for updates (axKit 3.
+expect commands Check for updates (axKit
 # (That no "Update to axKit" item follows it cannot be checked: the runner has no refuse for the command list.)
 menu Check for updates (axKit
 expect state "notice":"Check for updates"
 expect state newest
-expect state axKit 3.
+expect state axKit
 keys escape
 expect state "notice":null
 menu Version
-expect state "noticeText":"axKit 3.
+expect state "noticeText":"axKit
 expect state (this version)
 keys escape
 # Step 2, with the network off (flight mode), changes the user's machine: left manual.

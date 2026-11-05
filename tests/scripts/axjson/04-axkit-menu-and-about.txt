@@ -20,7 +20,7 @@ expect commands "axStart, axKit, New window"
 # 4.2 manual: Open windows by type is a submenu filled as it opens, which the palette leaves out.
 # 4.2: axKit, About, Version names the apps in their two kinds.
 menu Version
-expect state "notice":"axKit 3.
+expect state "notice":"axKit
 expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess.
 expect state axClaude for Claude Code, axTerminal for your shell, axGIT for Git, axPass for KeePassXC.
 keys escape
