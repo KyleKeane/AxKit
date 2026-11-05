@@ -1,6 +1,6 @@
 using System.Reflection;
 using AxClaude.Core.Pty;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxClaude;
 

@@ -17,4 +17,4 @@ The folder for the rest of the plan: `notes.md` to ask Claude to change ("add a 
 ## Not in a folder
 
 - Section 10, Claude Code missing: `.\run-axclaude.ps1 manual_tests\axclaude\project-for-conversations --claude C:\nowhere\claude.exe`.
-- Section 13, the Axit menu: open axDown on `manual_tests\axdown\notes.md` beside axClaude.
+- Section 13, the axKit menu: open axDown on `manual_tests\axdown\notes.md` beside axClaude.

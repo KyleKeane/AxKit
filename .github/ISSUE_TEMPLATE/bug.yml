@@ -1,5 +1,5 @@
 name: Bug report
-description: Something an Axit app does wrong, or something NVDA reads wrong.
+description: Something an axKit app does wrong, or something NVDA reads wrong.
 labels: [bug]
 body:
   - type: markdown
@@ -25,14 +25,14 @@ body:
         - axPass
         - axCalc
         - axClip
-        - The bundle (install, update, the Axit menu)
+        - The bundle (install, update, the axKit menu)
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Axit version
-      description: Axit menu, About, Version.
+      label: axKit version
+      description: axKit menu, About, Version.
       placeholder: "3.4.0"
     validations:
       required: true
@@ -45,7 +45,7 @@ body:
     id: step
     attributes:
       label: Test plan step, if one covers it
-      description: The step in docs/<app>/nvda-test-plan.md, such as "axFile 1.13". docs/axit/nvda-test-record.md says when it last passed.
+      description: The step in docs/<app>/nvda-test-plan.md, such as "axFile 1.13". docs/axkit/nvda-test-record.md says when it last passed.
   - type: textarea
     id: steps
     attributes:

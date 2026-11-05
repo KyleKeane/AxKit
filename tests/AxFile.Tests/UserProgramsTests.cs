@@ -29,7 +29,7 @@ public sealed class UserProgramsTests
     {
         var info = UserPrograms.StartInfo(new UserProgram("tidy", @"C:\tools\tidy.ps1"), [@"C:\docs\a.txt"]);
         // S-1: Windows PowerShell by its full path, never a powershell.exe in the entry's folder.
-        Assert.Equal(Axit.Core.SystemPrograms.PowerShell, info.FileName);
+        Assert.Equal(AxKit.Core.SystemPrograms.PowerShell, info.FileName);
         Assert.True(Path.IsPathFullyQualified(info.FileName));
         Assert.Equal(["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", @"C:\tools\tidy.ps1", @"C:\docs\a.txt"], info.ArgumentList);
         Assert.Equal(@"C:\docs", info.WorkingDirectory);

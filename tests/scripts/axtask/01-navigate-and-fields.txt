@@ -1,16 +1,16 @@
 # axTask: the navigator, the detail pane and every change to a field (docs/axtask/nvda-test-plan.md sections 1 and 2;
-# docs/axit/item-apps.md IA-2, IA-3, IA-5). A scratch folder of lists; findstr checks what reached the file.
-file home\Axit\axtask.json {"checkForUpdates": false}
-file "tasks\Home\Fix the tap.json" {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Start", "type": "date", "value": ""}, {"title": "Due", "type": "date", "value": "2099-10-30"}]}
-file "tasks\Home\Water plants.json" {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Water plants"}, {"title": "Done", "type": "check", "value": true}]}
+# docs/axkit/item-apps.md IA-2, IA-3, IA-5). A scratch folder of lists; findstr checks what reached the file.
+file home\AxKit\axtask.json {"checkForUpdates": false}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Start", "type": "date", "value": ""}, {"title": "Due", "type": "date", "value": "2099-10-30"}]}
+file "tasks\Home\Water plants.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Water plants"}, {"title": "Done", "type": "check", "value": true}]}
 file tasks\Home\notes.txt not an item
-file tasks\Shopping\Milk.json {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
-file tasks\Shopping\Washer.json {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
-file "tasks\Course plan\Week one.json" {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Week one"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
+file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
+file "tasks\Course plan\Week one.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Week one"}, {"title": "Done", "type": "check", "value": false}]}
 
 # 1.1 The top level in sections (TK-3a): Smart lists with All tasks, then User lists; Ctrl+Up and Ctrl+Down between them.
 start task {temp}\tasks
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axit/app-kit.md AK-2.4).
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
 expect state Lists - axTask
 expect focus Smart lists, section, 1 smart list

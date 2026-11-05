@@ -1,11 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxClip.Core;
 
 /// <summary>
-/// Everything axClip remembers between runs (SPEC.md CP-6.1), in <c>%APPDATA%\Axit\axclip.json</c> through the
+/// Everything axClip remembers between runs (SPEC.md CP-6.1), in <c>%APPDATA%\AxKit\axclip.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font and the update check from <see cref="WindowSettings"/>, the hotkey,
 /// Start with Windows, Say the first match while typing, Keep history between runs, and the history only while that
 /// is on (CP-D2).

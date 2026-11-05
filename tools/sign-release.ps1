@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Signs a draft release with the release key and publishes it (docs/axit/SPEC.md AX-3.4; security audit S-27).
+  Signs a draft release with the release key and publishes it (docs/axkit/SPEC.md AX-3.4; security audit S-27).
 
 .DESCRIPTION
   release.ps1 calls it after pushing the tag; it can be run alone for a draft already on GitHub. It
@@ -23,7 +23,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $tag = "v$Version"
-$repo = 'KyleKeane/Axit'
+$repo = 'KyleKeane/AxKit'
 if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw "The version must be three numbers, like 1.0.1 (got '$Version')." }
 
 Write-Host "Waiting for the release workflow of $tag..."
@@ -40,10 +40,10 @@ $draft = gh release view $tag --repo $repo --json isDraft --jq .isDraft
 if (-not $draft) { throw "No release for $tag was found on GitHub: look at the draft's tag name there (gh release list)." }
 if ($draft -ne 'true') { throw "Release $tag is not a draft: it was published without its signature. Look at it on GitHub before anything else." }
 
-$folder = Join-Path $env:TEMP ("axit-sign-" + [guid]::NewGuid().ToString('N'))
+$folder = Join-Path $env:TEMP ("axkit-sign-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $folder | Out-Null
 try {
-    $name = "Axit-$Version-win-x64.zip"
+    $name = "AxKit-$Version-win-x64.zip"
     gh release download $tag --repo $repo --pattern $name --dir $folder
     if ($LASTEXITCODE -ne 0) { throw "The draft's $name could not be downloaded." }
     $zip = Join-Path $folder $name

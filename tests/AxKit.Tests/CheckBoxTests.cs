@@ -1,0 +1,40 @@
+using System.Text.RegularExpressions;
+
+namespace AxKit.Tests;
+
+/// <summary>
+/// Every check box is the bundle's <c>AxKit.Forms/AxKitCheckBox</c> (docs/axkit/SPEC.md AX-8.8), which says its new state
+/// when the user toggles it, so that a new app gets that by making the box and nothing else. Read off the sources, as
+/// <see cref="ListTests"/> reads the lists: a plain <c>CheckBox</c> made anywhere in <c>src</c> fails here.
+/// </summary>
+public sealed class CheckBoxTests
+{
+    [Fact]
+    public void Every_check_box_is_the_bundles_check_box()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var offenders = new List<string>();
+        foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
+        {
+            var relative = Path.GetRelativePath(root, file);
+            if (relative.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"))
+            {
+                continue;
+            }
+
+            var number = 0;
+            foreach (var line in File.ReadLines(file))
+            {
+                number++;
+                // "CheckBox _box = new()", "CheckBox box = new()", "CheckBox Box { get; } = new()", "new CheckBox()",
+                // "new CheckBox { … }": a plain check box made. "AxKitCheckBox" has no word boundary before "CheckBox".
+                if (Regex.IsMatch(line, @"\bCheckBox\s+\w+\s*(?:\{\s*get;\s*\}\s*)?=\s*new\b|\bnew\s+CheckBox\s*[({]"))
+                {
+                    offenders.Add($"{relative}:{number}: {line.Trim()}");
+                }
+            }
+        }
+
+        Assert.True(offenders.Count == 0, "A plain CheckBox where the bundle's AxKitCheckBox belongs (its state said on a toggle, AX-8.8): " + string.Join("; ", offenders));
+    }
+}

@@ -1,4 +1,4 @@
-// QaRun: an automated quality check of axClaude's console pipeline without windows (docs/axit/plan.md, automated
+// QaRun: an automated quality check of axClaude's console pipeline without windows (docs/axkit/plan.md, automated
 // quality checks). It starts several Claude Code sessions at once, each in a fresh test folder, through the app's own
 // pieces (PtyHost, ClaudeLauncher's command line and environment, SessionModel), and walks each the way a user does:
 // the trust prompt answered, a message sent and its reply awaited, /exit. The model is chosen on Claude's command
@@ -9,16 +9,16 @@
 //
 // Usage:
 //   QaRun [--sessions N] [--model haiku] [--message <text>] [--claude <path>] [--keep]
-//   (defaults: 3 sessions, haiku, "Reply with the single word hello."; the folders are %TEMP%\axit-qa\session-N,
+//   (defaults: 3 sessions, haiku, "Reply with the single word hello."; the folders are %TEMP%\axkit-qa\session-N,
 //   made new each run and removed afterwards unless --keep)
 
 using System.Diagnostics;
 using System.Text;
-using Axit.Core;
+using AxKit.Core;
 using AxClaude.Core.Pty;
 using AxClaude.Core.Transcript;
-using Axit.Core.Pty;
-using Axit.Core.Transcript;
+using AxKit.Core.Pty;
+using AxKit.Core.Transcript;
 
 namespace QaRun;
 
@@ -55,7 +55,7 @@ internal static class Program
             return 2;
         }
 
-        var root = Path.Combine(Path.GetTempPath(), "axit-qa");
+        var root = Path.Combine(Path.GetTempPath(), "axkit-qa");
         var runs = Enumerable.Range(1, sessions).Select(n => new Session(n, Path.Combine(root, $"session-{n}"), claude, model, message)).ToList();
         var clock = Stopwatch.StartNew();
         // Staggered by half a second, as a user opening windows one after another would be.

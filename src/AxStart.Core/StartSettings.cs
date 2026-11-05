@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxStart.Core;
 
 /// <summary>
-/// Everything axStart remembers between runs (SPEC.md AS-5.1), in <c>%APPDATA%\Axit\axstart.json</c> through the
+/// Everything axStart remembers between runs (SPEC.md AS-5.1), in <c>%APPDATA%\AxKit\axstart.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font and the update check from <see cref="WindowSettings"/> (the window's
 /// place is not used: the window is centred), plus the hotkey, Start with Windows, Say the first match while typing,
 /// and how often axStart started each program, for the order of the matches. A missing or unreadable file falls back

@@ -1,6 +1,6 @@
 # axPass: the KeePass format and the command-line tool, from their sources
 
-Notes for the axPass specification that is still to be written (`docs/axit/plan.md`, axPass). Read on 2026-10-23
+Notes for the axPass specification that is still to be written (`docs/axkit/plan.md`, axPass). Read on 2026-10-23
 from three pages; each fact below is what a page says, and what the pages leave open is listed as open, not filled in
 from memory. Check the pages again before the spec is written: the format is KeePass's, the tool KeePassXC's, and
 both change.

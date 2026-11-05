@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Builds Axit and starts axGIT: run.ps1 with -App git. Every other argument goes through unchanged. Without a path it
+  Builds axKit and starts axGIT: run.ps1 with -App git. Every other argument goes through unchanged. Without a path it
   opens the last repository axGIT had.
 
 .EXAMPLE

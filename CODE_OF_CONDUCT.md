@@ -1,6 +1,6 @@
 # Code of conduct
 
-Axit is made for and with people who use screen readers. Everyone who takes part, in issues, pull requests,
+axKit is made for and with people who use screen readers. Everyone who takes part, in issues, pull requests,
 discussions or anywhere the project is represented, is expected to:
 
 - be respectful and patient, with newcomers above all;
@@ -15,7 +15,7 @@ private information, and deliberately disrupting the project.
 ## Reporting
 
 Report a problem privately to the maintainer through GitHub's private vulnerability reporting
-(<https://github.com/KyleKeane/Axit/security/advisories/new>), marking it as a conduct report, or through the contact
+(<https://github.com/KyleKeane/AxKit/security/advisories/new>), marking it as a conduct report, or through the contact
 on www.kylekeane.com. Reports are read in confidence, and the reporter is never exposed.
 
 ## What happens

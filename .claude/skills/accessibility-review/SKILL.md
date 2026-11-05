@@ -1,6 +1,6 @@
 ---
 name: accessibility-review
-description: Review a change to a window of Axit (axClaude under src/AxClaude, axDown under src/AxDown, the shared pieces under src/Axit.Forms) for NVDA regressions against the bundle's accessibility rules (docs/axit/SPEC.md AX-7) and the app's own specification, before it is committed. Use after editing anything under those folders or when asked to check accessibility.
+description: Review a change to a window of axKit (axClaude under src/AxClaude, axDown under src/AxDown, the shared pieces under src/AxKit.Forms) for NVDA regressions against the bundle's accessibility rules (docs/axkit/SPEC.md AX-7) and the app's own specification, before it is committed. Use after editing anything under those folders or when asked to check accessibility.
 ---
 
 # Accessibility review

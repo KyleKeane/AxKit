@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxFile.Core;
 

@@ -1,11 +1,11 @@
 # axTask: the top level's sections (docs/axtask/SPEC.md TK-3a, TK-D4, TK-D5): a list moved to a section of the user's
 # own with Ctrl+M, a new section, the Section field, a new list joining the selected section, the Archived lists
 # section, Ctrl+Up and Ctrl+Down across them, a folder inside a list not shown.
-file home\Axit\axtask.json {"checkForUpdates": false}
-file tasks\Home\Tap.json {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Tap"}, {"title": "Done", "type": "check", "value": false}]}
-file tasks\Shopping\Milk.json {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
-file tasks\Work\Report.json {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Report"}, {"title": "Done", "type": "check", "value": false}]}
-file tasks\Work\Nested\Hidden.json {"format": "axit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Hidden"}]}
+file home\AxKit\axtask.json {"checkForUpdates": false}
+file tasks\Home\Tap.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Tap"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
+file tasks\Work\Report.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Report"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Work\Nested\Hidden.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Hidden"}]}
 
 start task {temp}\tasks
 expect focus Smart lists, section, 1 smart list

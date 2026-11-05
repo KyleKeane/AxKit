@@ -1,0 +1,68 @@
+using System.Xml.Linq;
+
+namespace AxKit.Tests;
+
+/// <summary>
+/// The project references point one way (docs/axkit/SPEC.md 5.1, M2): the shared projects (<c>AxKit.*</c>) reference
+/// nothing of the apps, an app never references another app, and an app's <c>.Core</c> never references its window.
+/// Only <c>axKit</c>, the executable, may reference everything. Read off the project files, so a wrong reference fails
+/// here before it is felt.
+/// </summary>
+public sealed class LayoutTests
+{
+    [Fact]
+    public void References_point_one_way()
+    {
+        var root = RepositoryRoot();
+        var problems = new List<string>();
+        foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.csproj", SearchOption.AllDirectories))
+        {
+            var project = Path.GetFileNameWithoutExtension(file);
+            if (project == "AxKit")
+            {
+                continue;
+            }
+
+            foreach (var element in XDocument.Load(file).Descendants("ProjectReference"))
+            {
+                var reference = Path.GetFileNameWithoutExtension((string?)element.Attribute("Include") ?? "");
+                if (project.StartsWith("AxKit.", StringComparison.Ordinal))
+                {
+                    if (!reference.StartsWith("AxKit.", StringComparison.Ordinal))
+                    {
+                        problems.Add($"{project} references {reference}: a shared project references nothing of the apps.");
+                    }
+                }
+                else if (!reference.StartsWith("AxKit.", StringComparison.Ordinal) && AppOf(reference) != AppOf(project))
+                {
+                    problems.Add($"{project} references {reference}: an app never references another app.");
+                }
+                else if (project.EndsWith(".Core", StringComparison.Ordinal) && reference == AppOf(project))
+                {
+                    problems.Add($"{project} references {reference}: a Core project never references its window.");
+                }
+                else if (project.EndsWith(".Core", StringComparison.Ordinal) && reference == "AxKit.Forms")
+                {
+                    problems.Add($"{project} references {reference}: a Core project needs no window and references AxKit.Core alone.");
+                }
+            }
+        }
+
+        Assert.Empty(problems);
+    }
+
+    /// <summary><c>AxDown.Core</c> and <c>axDown</c> are both the app axDown.</summary>
+    private static string AppOf(string project) =>
+        project.EndsWith(".Core", StringComparison.Ordinal) ? project[..^".Core".Length] : project;
+
+    internal static string RepositoryRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AxKit.sln")))
+        {
+            dir = dir.Parent;
+        }
+
+        return dir?.FullName ?? throw new InvalidOperationException("AxKit.sln not found above the test directory.");
+    }
+}

@@ -2,8 +2,8 @@
 # A second axPreview start hands its file to the open window and ends (AP-1.2), so every window after the first is
 # started with --new.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\Axit\axpreview.json {"checkForUpdates": false}
-file README.md # Readme for the preview tests\n\nThis file has headings, links, lists, a block quote and a table, for the navigation keys.\n\n## Install\n\nRun the installer and follow the steps. Check for an update now and then: the word update is here for the find test.\n\n## Links\n\nThe project page is [Axit on GitHub](https://github.com/KyleKeane/Axit). A bare address: https://www.example.com.\n\n## A list\n\n- first item of the list\n- second item of the list\n- third item of the list\n\n## A quote\n\n> A block quote, for Ctrl+Q.\n\n## A table\n\n| Key | What it does |\n| --- | --- |\n| Ctrl+H | next heading |\n| Ctrl+K | next link |\n\n## Last heading\n\nThe last line of the readme. Another update is mentioned here, for F3.
+file home\AxKit\axpreview.json {"checkForUpdates": false}
+file README.md # Readme for the preview tests\n\nThis file has headings, links, lists, a block quote and a table, for the navigation keys.\n\n## Install\n\nRun the installer and follow the steps. Check for an update now and then: the word update is here for the find test.\n\n## Links\n\nThe project page is [axKit on GitHub](https://github.com/KyleKeane/AxKit). A bare address: https://www.example.com.\n\n## A list\n\n- first item of the list\n- second item of the list\n- third item of the list\n\n## A quote\n\n> A block quote, for Ctrl+Q.\n\n## A table\n\n| Key | What it does |\n| --- | --- |\n| Ctrl+H | next heading |\n| Ctrl+K | next link |\n\n## Last heading\n\nThe last line of the readme. Another update is mentioned here, for F3.
 file plain.txt Plain text file, line 1.\nLine 2 of the plain text file.\nLine 3: nothing special here.\nLine 4, the last line.
 file app.log 2026-10-22 09:00:01 INFO  The log file starts.\n2026-10-22 09:00:02 INFO  Line 2 of the log.\n2026-10-22 09:00:05 INFO  The last line of the log.
 file data.json {\n  "model": "opus"\n}
@@ -12,13 +12,13 @@ run powershell -NoProfile -Command "[IO.File]::WriteAllText('too-large.txt', ('a
 
 # 1.1: README.md: the title, the text named after the file with its first line; nothing else spoken.
 start preview {temp}\README.md
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axit/app-kit.md AK-2.4).
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
 expect state "title":"README.md - axPreview"
 expect focus {"name":"README.md","role":"Text","value":"# Readme for the preview tests"}
 expect quiet 1000
 # 1.1 manual: the menu bar (Alt) needs the foreground; its menus as the palette reads them: File, Navigate, Options,
-# Axit, Help, and no Edit menu (the runner has no refuse for the commands, so the absence is not checked).
+# axKit, Help, and no Edit menu (the runner has no refuse for the commands, so the absence is not checked).
 expect commands "New window, File, Ctrl\u002BN"
 expect commands "Reload, File, F5"
 expect commands "Find, Navigate, Ctrl\u002BF"
@@ -71,7 +71,7 @@ expect said ! Readme for the preview tests, heading level 1
 keys ctrl+2 ctrl+2
 expect said ! Links, heading level 2
 keys ctrl+home ctrl+k
-expect said ! Axit on GitHub, link
+expect said ! axKit on GitHub, link
 keys ctrl+k
 expect said ! https://www.example.com, link
 keys ctrl+l

@@ -126,5 +126,5 @@ public sealed class PlayQueue
 
     /// <summary>The status bar's right text (AM-2.2): "3 of 12, speed 1.25"; empty with nothing playing.</summary>
     public string PlaceText(double speed) =>
-        Playing < 0 ? string.Empty : $"{Playing + 1} of {_paths.Count}, {Axit.Core.MediaFiles.SpeedText(speed).ToLowerInvariant()}";
+        Playing < 0 ? string.Empty : $"{Playing + 1} of {_paths.Count}, {AxKit.Core.MediaFiles.SpeedText(speed).ToLowerInvariant()}";
 }

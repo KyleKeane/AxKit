@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-  Runs every test project of Axit in the Release configuration, the way GitHub Actions runs them.
+  Runs every test project of axKit in the Release configuration, the way GitHub Actions runs them.
 
 .DESCRIPTION
   The test projects are found under tests\ (every *.Tests.csproj), so a new app's tests are included without an edit
-  here. They run one by one, never through the solution: the solution would build src\Axit into the bin\Debug that a
-  running Axit holds open. Release is what the workflows build, and only Release treats warnings as errors
+  here. They run one by one, never through the solution: the solution would build src\AxKit into the bin\Debug that a
+  running axKit holds open. Release is what the workflows build, and only Release treats warnings as errors
   (Directory.Build.props), so a test that passes in Debug can still stop a release; 3.3.0 was lost that way.
   release.ps1 and run.ps1 -Test call this script. Exit code 0 when every project passed, otherwise the first failure's.
 
@@ -15,7 +15,7 @@
 #>
 [CmdletBinding()]
 param(
-    # One app's tests alone, by the folder name without ".Tests" (axFile, Axit, axClaude, ...).
+    # One app's tests alone, by the folder name without ".Tests" (axFile, axKit, axClaude, ...).
     [Parameter(Position = 0)]
     [string]$Only = ''
 )

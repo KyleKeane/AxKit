@@ -21,8 +21,8 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
 ## 1. Start
 
 1. Start axJSON from the Start menu: NVDA reads "Untitled - axJSON window", then "Untitled edit multi line".
-2. `axjson settings.json` in a console, and `axit settings.json`: both open axJSON on the file, "settings.json - axJSON window".
-3. In File Explorer, right-click `settings.json`: the Open with Axit submenu lists axDown and axJSON, and axJSON opens
+2. `axjson settings.json` in a console, and `axkit settings.json`: both open axJSON on the file, "settings.json - axJSON window".
+3. In File Explorer, right-click `settings.json`: the Open with axKit submenu lists axDown and axJSON, and axJSON opens
    the file; on a `.txt` file the submenu lists axDown only. Windows' own Open with lists axJSON for `.json`.
 4. The file flows are the shell's: run axDown's section 3, step 7 (a file changed by another program) on a `.json`
    file once; the announcements name the file.
@@ -55,7 +55,7 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
    text is unchanged. Edit, Format does the same as the key.
 4. Ctrl+Shift+F on an already formatted file: "Already formatted", nothing changes, and the title shows no star.
 
-## 4. The Axit menu and About
+## 4. The axKit menu and About
 
 1. Alt+A, N: New window lists every app of the bundle; Alt+A, N, J starts a new axJSON window.
 2. Alt+A, B: Open windows by type lists axJSON (n) with this window checked. Alt+A, About, Version names the nine apps.

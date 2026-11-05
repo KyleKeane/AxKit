@@ -1,8 +1,8 @@
 # axPass — Specification
 
-axPass is an app of the Axit bundle (`docs/axit/SPEC.md`): a KeePass password database (`.kdbx`) read and changed in
+axPass is an app of the axKit bundle (`docs/axkit/SPEC.md`): a KeePass password database (`.kdbx`) read and changed in
 a window NVDA reads well, for a blind developer who uses the NVDA screen reader. It is an item app: its window, keys
-and field types are the shared ones of `docs/axit/item-apps.md` (cited as IA-n.m and not repeated), and section 6
+and field types are the shared ones of `docs/axkit/item-apps.md` (cited as IA-n.m and not repeated), and section 6
 there is the one table of where axPass and axTask differ. This document holds only what is axPass's own. Written
 2026-10-24 at the user's ask ("start building both apps"), before the engine has been run on this computer (the
 format and the tool are in `docs/axpass/kdbx-notes.md`). Requirements are numbered `PW-n.m` and decisions `PW-Dn`. In
@@ -58,7 +58,7 @@ forgets the master password and shows only the notice that asks for it.
 
 ## 5. The engine (PW-D1)
 
-- **PW-5.1** `keepassxc-cli.exe`, found in KeePassXC's install folder first (Program Files, which only an administrator can write), then at a path the user sets (Options) or on the PATH, those two only when Windows finds the file signed by a publisher it trusts (`Axit.Core/Signatures`; security audit S-19: a program planted where the user can write would receive the master password).
+- **PW-5.1** `keepassxc-cli.exe`, found in KeePassXC's install folder first (Program Files, which only an administrator can write), then at a path the user sets (Options) or on the PATH, those two only when Windows finds the file signed by a publisher it trusts (`AxKit.Core/Signatures`; security audit S-19: a program planted where the user can write would receive the master password).
   Without it, the notice "KeePassXC is not installed" offers Install KeePassXC now (bundle AX-2.9, one
   administrator prompt) and its download page; once installed, the unlock notice follows.
 - **PW-5.2** One process per command, the database's path and the entry's path as arguments, the master password as
@@ -67,7 +67,7 @@ forgets the master password and shows only the notice that asks for it.
   fields, `clip` for the copies, `add`, `edit`, `mkdir`, `mv`, `rm`, `generate`, `db-create`.
 - **PW-5.3** Every command runs off the UI thread (bundle rule 3); the panes say "Reading mine…" while the list is read.
 - **PW-5.4** A copy of the password (Ctrl+C) reads that one password from the tool at the moment of the key
-  (`show -s -a Password <entry>`) and puts it on the clipboard marked private (`Axit.Forms/PrivateClipboard`: the
+  (`show -s -a Password <entry>`) and puts it on the clipboard marked private (`AxKit.Forms/PrivateClipboard`: the
   formats password managers set, so that Windows clipboard history, the cloud clipboard and axClip keep no copy), then
   clears it after 30 seconds, when the window locks and when it closes, unless something else was copied meanwhile
   (the clipboard's sequence number, never a second read of the password). The user name (Ctrl+B) goes the same way,
@@ -140,4 +140,4 @@ On top of IA-3, in `AxPassKeys`:
 ## 10. Status
 
 Built 2026-10-24 on the branch `axtask`, after KeePassXC 2.8.0 was installed and its tool tried (kdbx-notes 8); not yet
-heard under NVDA. axTask's window and the item format moved to `Axit.Forms/ItemForm` and `Axit.Core` first (IA-D5).
+heard under NVDA. axTask's window and the item format moved to `AxKit.Forms/ItemForm` and `AxKit.Core` first (IA-D5).

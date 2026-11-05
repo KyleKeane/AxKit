@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using AxGit.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxGit;
 

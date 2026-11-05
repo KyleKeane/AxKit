@@ -1,5 +1,5 @@
 using AxStart.Core;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxStart.Tests;
 

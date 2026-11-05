@@ -2,7 +2,7 @@
 # Every app folder is emptied except its _main.md, then filled again. Git ignores everything made here.
 # Usage: .\manual_tests\prepare.ps1            (all apps)
 #        .\manual_tests\prepare.ps1 axfile     (one app: axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axtask, axpass)
-# Close the Axit windows that have these files open first: a file in use cannot be replaced.
+# Close the axKit windows that have these files open first: a file in use cannot be replaced.
 
 param([string]$App = '')
 
@@ -131,7 +131,7 @@ Run the installer and follow the steps. Check for an update now and then: the wo
 
 ## Links
 
-The project page is [Axit on GitHub](https://github.com/KyleKeane/Axit). A bare address: https://www.kylekeane.com.
+The project page is [axKit on GitHub](https://github.com/KyleKeane/AxKit). A bare address: https://www.kylekeane.com.
 
 ## A list
 
@@ -191,7 +191,7 @@ $brokenJson = @'
 
 $changeCmd = @'
 @echo off
-rem Adds one line to the file named on the next line, as another program would. Run it while the file is open in Axit.
+rem Adds one line to the file named on the next line, as another program would. Run it while the file is open in axKit.
 echo Another line, added by the cmd file.>> "%~dp0{0}"
 echo Added a line to {0}.
 '@
@@ -397,7 +397,7 @@ function Write-Item([string]$path, [string]$title, [string]$done, [string]$due, 
     if ($done -ne '') { $fields += "    { ""title"": ""Done"", ""type"": ""check"", ""value"": $done }" }
     if ($due -ne '-') { $fields += "    { ""title"": ""Start"", ""type"": ""date"", ""value"": """" }"; $fields += "    { ""title"": ""Due"", ""type"": ""date"", ""value"": ""$due"" }" }
     if ($extra -ne '') { $fields += $extra }
-    Write-Text $path ("{`r`n  ""format"": ""axit-item 1"",`r`n  ""fields"": [`r`n" + ($fields -join ",`r`n") + "`r`n  ]`r`n}`r`n")
+    Write-Text $path ("{`r`n  ""format"": ""axkit-item 1"",`r`n  ""fields"": [`r`n" + ($fields -join ",`r`n") + "`r`n  ]`r`n}`r`n")
 }
 
 function Build-AxTask([string]$d) {
@@ -405,7 +405,7 @@ function Build-AxTask([string]$d) {
     $house = New-Folder (Join-Path $t 'Home')
     $shop = New-Folder (Join-Path $t 'Shopping')
     $plan = New-Folder (Join-Path $t 'Course plan')
-    Write-Text (Join-Path $plan 'list.json') "{`r`n  ""format"": ""axit-list 1"",`r`n  ""fields"": [`r`n    { ""title"": ""Section"", ""type"": ""text"", ""value"": ""Work"" },`r`n    { ""title"": ""Notes"", ""type"": ""longtext"", ""value"": """" }`r`n  ]`r`n}`r`n"
+    Write-Text (Join-Path $plan 'list.json') "{`r`n  ""format"": ""axkit-list 1"",`r`n  ""fields"": [`r`n    { ""title"": ""Section"", ""type"": ""text"", ""value"": ""Work"" },`r`n    { ""title"": ""Notes"", ""type"": ""longtext"", ""value"": """" }`r`n  ]`r`n}`r`n"
     Write-Item (Join-Path $house 'Fix the tap.json') 'Fix the tap' 'false' '2026-10-30'
     Write-Item (Join-Path $house 'Water plants.json') 'Water plants' 'true' '2026-10-20'
     Write-Item (Join-Path $shop 'Milk.json') 'Milk' '' '-'
@@ -439,7 +439,7 @@ function Build-AxDown([string]$d) {
     Write-Text (Join-Path $d 'change-me-on-disk.txt') "Open me, then run the cmd file next to me.`nLine 2."
     Write-ChangeCmd $d 'change-me-on-disk.txt'
     Write-Bytes (Join-Path $d 'not-text-image.png') ([byte[]](137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13) * 32)
-    Write-Text (Join-Path $d 'notes.md') "# Notes`n`nThe file the Axit menu steps open, close and reopen."
+    Write-Text (Join-Path $d 'notes.md') "# Notes`n`nThe file the axKit menu steps open, close and reopen."
 }
 
 function Build-AxJson([string]$d) {
@@ -447,7 +447,7 @@ function Build-AxJson([string]$d) {
     Write-Text (Join-Path $d 'broken.json') $brokenJson
     Write-Text (Join-Path $d 'one-line-format-me.json') '{"model":"opus","permissions":{"allow":["Bash","Read"],"deny":[]},"count":3,"on":true}'
     Write-Text (Join-Path $d 'already-formatted.json') "{`n  `"name`": `"formatted`",`n  `"items`": [`n    1,`n    2`n  ]`n}`n"
-    Write-Text (Join-Path $d 'notes.txt') 'A text file: Open with Axit lists axDown alone for it.'
+    Write-Text (Join-Path $d 'notes.txt') 'A text file: Open with axKit lists axDown alone for it.'
     Write-ChangeCmd $d 'settings.json'
 }
 
@@ -466,7 +466,7 @@ function Build-AxGit([string]$d) {
     $mail = 'tester' + '@' + 'example.invalid'
     git init -q --bare -b main $remote
     git init -q -b main $repo
-    git -C $repo config user.name 'Axit tester'
+    git -C $repo config user.name 'axKit tester'
     git -C $repo config user.email $mail
     Write-Text (Join-Path $repo 'README.md') "# Scratch repository`n`nFor the axGIT tests."
     Write-Text (Join-Path $repo 'settings.json') $settingsJson

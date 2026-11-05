@@ -1,9 +1,9 @@
 using AxClaude.Core;
 using AxClaude.Core.Pty;
 using AxClaude.Core.Transcript;
-using Axit.Core;
-using Axit.Core.Transcript;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Core.Transcript;
+using AxKit.Forms;
 
 namespace AxClaude;
 
@@ -203,7 +203,7 @@ internal sealed partial class MainForm : ConsoleForm
 
     /// <summary>
     /// The one key of the window's own that is no command: the Ctrl+O guard, a key sent to Claude only in one state of
-    /// its screen. Every other key is a command of the menus (<c>MainForm.Ui.cs</c>, docs/axit/app-kit.md AK-2), run by
+    /// its screen. Every other key is a command of the menus (<c>MainForm.Ui.cs</c>, docs/axkit/app-kit.md AK-2), run by
     /// the base after this; the console window's read to the end runs before it.
     /// </summary>
     protected override bool ProcessConsoleKey(Keys keyData)

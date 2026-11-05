@@ -1,8 +1,8 @@
-# axPass: the reminder before the first master password goes to KeePassXC's tool (docs/axit/SPEC.md AX-11.4, AX-11.5;
-# the Owed list of docs/axit/nvda-test-record.md). Needs KeePassXC installed, as 01 does. A fresh run's home has no
+# axPass: the reminder before the first master password goes to KeePassXC's tool (docs/axkit/SPEC.md AX-11.4, AX-11.5;
+# the Owed list of docs/axkit/nvda-test-record.md). Needs KeePassXC installed, as 01 does. A fresh run's home has no
 # consent, so the reminder comes before the unlock notice. With --nvda (nvda-pass.ps1) every expected line must be
 # spoken by NVDA too.
-file home\Axit\axpass.json {"checkForUpdates": false, "lockMinutes": 0}
+file home\AxKit\axpass.json {"checkForUpdates": false, "lockMinutes": 0}
 file twice.txt test-master-1\ntest-master-1\n
 file once.txt test-master-1\n
 run "C:\Program Files\KeePassXC\keepassxc-cli.exe" db-create -q -p test.kdbx < twice.txt

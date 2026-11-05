@@ -6,7 +6,7 @@
 # Manual (2.3): the same from axGIT, axTerminal and axMedia.
 # Manual (2.4): Enter on axTerminal starts a shell; Ctrl+W and Ctrl+Shift+W start File Explorer.
 # What can be checked from inside: the Folder menu's Show current folder in submenu holds its four items (2.4).
-file home\Axit\axfile.json {"checkForUpdates": false}
+file home\AxKit\axfile.json {"checkForUpdates": false}
 file here\a.txt A file to stand on.
 start file {temp}\here
 expect focus "value":"a.txt"

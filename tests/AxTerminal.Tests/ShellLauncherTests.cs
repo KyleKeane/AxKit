@@ -8,8 +8,8 @@ public sealed class ShellLauncherTests
     [Fact]
     public void Command_prompt_gets_the_marks_around_its_prompt()
     {
-        Assert.Equal("$e]133;D;axit=n0$e\\$e]133;A;axit=n0$e\\$e]9;9;$P$e\\$P$G$e]133;B;axit=n0$e\\", ShellLauncher.CommandPromptWithMarks(null, "n0"));
-        Assert.Equal("$e]133;D;axit=n0$e\\$e]133;A;axit=n0$e\\$e]9;9;$P$e\\$P$_$G$e]133;B;axit=n0$e\\", ShellLauncher.CommandPromptWithMarks("$P$_$G", "n0"));
+        Assert.Equal("$e]133;D;axkit=n0$e\\$e]133;A;axkit=n0$e\\$e]9;9;$P$e\\$P$G$e]133;B;axkit=n0$e\\", ShellLauncher.CommandPromptWithMarks(null, "n0"));
+        Assert.Equal("$e]133;D;axkit=n0$e\\$e]133;A;axkit=n0$e\\$e]9;9;$P$e\\$P$_$G$e]133;B;axkit=n0$e\\", ShellLauncher.CommandPromptWithMarks("$P$_$G", "n0"));
         var env = ShellLauncher.BuildEnvironment(ShellKind.CommandPrompt);
         Assert.StartsWith("$e]133;D", env["PROMPT"]);
         Assert.Equal("cat", env["GIT_PAGER"]);
@@ -46,7 +46,7 @@ public sealed class ShellLauncherTests
         var command = ShellLauncher.BuildEnvironment(ShellKind.GitBash)["PROMPT_COMMAND"];
         Assert.Equal(ShellLauncher.BashPromptCommand, command);
         // The exit code is read before anything else can change it; the marks and the directory follow; B goes on PS1.
-        Assert.StartsWith("__axit_code=$?;", command);
+        Assert.StartsWith("__axkit_code=$?;", command);
         Assert.Contains("133;D;%s", command);
         Assert.Contains("133;A", command);
         Assert.Contains("9;9;%s", command);

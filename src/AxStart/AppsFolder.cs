@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AxStart.Core;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxStart;
 

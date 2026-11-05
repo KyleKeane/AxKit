@@ -77,9 +77,9 @@ public sealed class GitStatusTests
     [Fact]
     public void A_clean_tree_a_detached_head_and_no_upstream_are_said_as_such()
     {
-        var clean = GitStatus.Parse("# branch.oid abc\n# branch.head axit\n");
+        var clean = GitStatus.Parse("# branch.oid abc\n# branch.head axkit\n");
         Assert.Equal("Changes, no changes", clean.ListName);
-        Assert.Equal("axit · no upstream · 0 changed, 0 staged", clean.StatusText);
+        Assert.Equal("axkit · no upstream · 0 changed, 0 staged", clean.StatusText);
 
         var detached = GitStatus.Parse("# branch.oid abc\n# branch.head (detached)\n1 .M N... 100644 100644 100644 a b x.txt\n");
         Assert.Null(detached.Branch);

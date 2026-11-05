@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace AxAutomate;
 
 /// <summary>
-/// The runner as an MCP client (docs/axit/mcp.md MC-6): <c>Axit.exe mcp</c> started as its child, as an AI client
+/// The runner as an MCP client (docs/axkit/mcp.md MC-6): <c>AxKit.exe mcp</c> started as its child, as an AI client
 /// starts it, with the run's variables, so that it reads the run's settings and key. <c>mcp call</c> sends without
 /// waiting, so that a script can answer the pairing notice in the window while the call waits; <c>expect mcp</c> takes
 /// the first answer line holding the text. The last window id an answer named is <c>{window}</c> in the next call.
@@ -17,7 +17,7 @@ internal sealed partial class Broker : IDisposable
     private readonly object _gate = new();
     private int _id;
 
-    /// <summary>The window id of the last <c>axit_windows</c> answer taken, for <c>{window}</c>.</summary>
+    /// <summary>The window id of the last <c>axkit_windows</c> answer taken, for <c>{window}</c>.</summary>
     public string? WindowId { get; private set; }
 
     private Broker(Process process)
@@ -49,7 +49,7 @@ internal sealed partial class Broker : IDisposable
         };
         start.ArgumentList.Add("mcp");
         // The run's secret and folder, which the windows were started with: the broker reads the run's mcp.json and key.
-        foreach (var name in new[] { "AXIT_AUTOMATION", "AXIT_HOME" })
+        foreach (var name in new[] { "AXKIT_AUTOMATION", "AXKIT_HOME" })
         {
             if (Environment.GetEnvironmentVariable(name) is { } value)
             {
@@ -151,7 +151,7 @@ internal sealed partial class Broker : IDisposable
         _process.Dispose();
     }
 
-    // axit_windows' text: "window": "0123456789abcdef".
+    // axkit_windows' text: "window": "0123456789abcdef".
     [GeneratedRegex("""
         "window": "([0-9a-f]{16})"
         """)]

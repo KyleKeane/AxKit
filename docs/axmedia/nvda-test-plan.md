@@ -17,12 +17,12 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 ## 2. The hand-over (AM-1.2, AM-1.3)
 
-1. With an axMedia window open, in axFile on the chapters folder, Shift+F10, A, M (Open in Axit, axMedia) on the third chapter: the axMedia window comes to the front, NVDA reads its title and "Queue, 12 items list, <third> (playing), 3 of 12", "Playing <third>", the sound starts; the queue is the folder's files, the third playing. No second window opened (Alt+A, O lists one axMedia).
+1. With an axMedia window open, in axFile on the chapters folder, Shift+F10, A, M (Open in axKit, axMedia) on the third chapter: the axMedia window comes to the front, NVDA reads its title and "Queue, 12 items list, <third> (playing), 3 of 12", "Playing <third>", the sound starts; the queue is the folder's files, the third playing. No second window opened (Alt+A, O lists one axMedia).
 1a. In axFile, Shift+F10, A, M on a chapter and at once the same on another: "Playing <the second>", the second plays, and nothing says the first could not be played.
 2. Back in axFile (Alt+A, O, 1), Ctrl+Enter: "Playing <first>" in axMedia, in front again, the queue the whole folder from the first.
 3. In axFile, Space on two folders with media, Ctrl+Shift+Q: "Added 24 to axMedia's queue", the focus stays in axFile, the sound goes on; Alt+Tab to axMedia: the queue holds the folder's files, then the 24; Ctrl+Shift+Q on a text file in axFile: "No sound or video files to add".
 4. Close the axMedia window. In axFile, Shift+F10, A, M on a chapter: a new axMedia window opens and plays it with the folder after it. Close it again; in axFile, Ctrl+Shift+Q on a folder: "Added 12 to axMedia's queue", the focus stays in axFile, and Alt+A, O lists a new axMedia window behind, with the queue and nothing playing.
-5. Make axMedia the default program for `.mp3` (Settings, Apps, Default apps, axMedia, or Open with, Always): Enter on a chapter in axFile plays it in axMedia, the window in front; in File Explorer, Enter on a chapter does the same; right-click a chapter, Open with Axit, axMedia: the same. Set the default back if wanted.
+5. Make axMedia the default program for `.mp3` (Settings, Apps, Default apps, axMedia, or Open with, Always): Enter on a chapter in axFile plays it in axMedia, the window in front; in File Explorer, Enter on a chapter does the same; right-click a chapter, Open with axKit, axMedia: the same. Set the default back if wanted.
 6. Console: `axmedia C:\path\to\03.mp3`: the open window takes it and comes to the front; `axmedia --add C:\path\to\folder`: appended, the console command returns, the focus stays where it was; `axmedia --new C:\path\to\03.mp3`: a second window.
 
 ## 3. Playing (AM-4)
@@ -38,9 +38,9 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 8. Enter on a file Windows cannot decode (an `.opus` without the Store codec): "Cannot play <name>: …" and the next plays. Ctrl+O and pick the `.txt` (All files): "Added 1"; Enter on it: "Cannot play <name>: …", the next plays.
 9. Alt+Tab to another program while a file plays, let it end: "Playing <next>" from the background, or silence with the setting off; the sound carries on. Ctrl+W: File Explorer with the playing file selected. Queue, Show current file in, axFile: axFile on the folder with the file selected. Alt+F4 on axMedia: the sound stops.
 
-## 4. Text, notices, the Axit menu (AM-5)
+## 4. Text, notices, the axKit menu (AM-5)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
-3. Alt+A: the Axit menu with New window (axMedia among the apps), Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Open windows by type, Close all windows, Check for updates, About.
+3. Alt+A: the axKit menu with New window (axMedia among the apps), Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Open windows by type, Close all windows, Check for updates, About.
 4. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the queue, the player's state and the log's end.

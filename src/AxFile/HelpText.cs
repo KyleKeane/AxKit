@@ -1,9 +1,9 @@
 using System.Reflection;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxFile;
 
-/// <summary>The texts axFile shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>Axit.Core.BundleAbout</c>).</summary>
+/// <summary>The texts axFile shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>AxKit.Core.BundleAbout</c>).</summary>
 public static class HelpText
 {
     /// <summary>The F1 text (SPEC.md AF-6.3): a first line naming the text's own keys, then one Markdown heading per group (bundle AX-7.2): the bundle-wide keys, then axFile's own by what they do. The first line and the bundle's section come from <c>BundleHelp</c>.</summary>
@@ -27,7 +27,7 @@ public static class HelpText
           Shift+Enter: read the file in axPreview; a folder opens in a new axFile window
           Ctrl+E: edit the file in axDown, or axJSON for a .json file
           Ctrl+Enter: play the folder's sound and video files in axMedia. Ctrl+Shift+Q: add the entry, or the selected entries, to axMedia's queue, staying here
-          Alt+I, Shift+F10 or the Applications key: the entry's menu, one list in File Explorer's order, with Open with (Windows default, Choose a program, your own programs), Open in Axit (every app) and Windows menu, the full Windows menu for the entry.
+          Alt+I, Shift+F10 or the Applications key: the entry's menu, one list in File Explorer's order, with Open with (Windows default, Choose a program, your own programs), Open in axKit (every app) and Windows menu, the full Windows menu for the entry.
           Alt+Enter: the entry's Properties, the Windows sheet
 
         ## Selecting

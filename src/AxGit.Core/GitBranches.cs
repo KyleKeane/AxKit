@@ -3,7 +3,7 @@ namespace AxGit.Core;
 /// <summary>One local branch (SPEC.md AG-5.1): its name, whether it is checked out, its upstream and how far they are apart.</summary>
 public sealed record Branch(string Name, bool Current, string? Upstream, int Ahead, int Behind, bool Gone = false)
 {
-    /// <summary>"main, current, origin/main, 1 ahead"; "axit, no upstream"; "old, origin/old gone".</summary>
+    /// <summary>"main, current, origin/main, 1 ahead"; "axkit, no upstream"; "old, origin/old gone".</summary>
     public string Label
     {
         get

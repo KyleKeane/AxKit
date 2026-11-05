@@ -4,12 +4,12 @@
        pipe, its output read into groups, entries and fields, a field's change into the tool's arguments, the
        settings; no window. -->
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxPass.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
   </ItemGroup>
 
 </Project>

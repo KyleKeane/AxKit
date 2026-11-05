@@ -1,7 +1,7 @@
 # Builds the zip that publish.ps1 builds locally and attaches it to a draft GitHub release, with install.cmd on its own
 # so it can be downloaded alone and install the latest release. The release stays a draft: release.ps1, on the
 # maintainer's machine, signs the zip with the release key, which never reaches GitHub, uploads the signature and
-# publishes the release (docs/axit/SPEC.md AX-3.4; docs/axit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps
+# publishes the release (docs/axkit/SPEC.md AX-3.4; docs/axkit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps
 # install only a signed zip. Started by pushing a version tag, which release.ps1 does, or by hand from the Actions tab
 # (or `gh workflow run release.yml -f tag=v1.0.1`) for a tag that already exists.
 name: Release
@@ -30,7 +30,7 @@ jobs:
           ref: ${{ github.event.inputs.tag || github.ref }}
           persist-credentials: false
 
-      # The SDK band is global.json's, the one place it is set (docs/axit/longevity.md).
+      # The SDK band is global.json's, the one place it is set (docs/axkit/longevity.md).
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
@@ -48,16 +48,16 @@ jobs:
             exit 1
           }
           $version = $tag.Substring(1)
-          $projectVersion = (Select-Xml -Path src/Axit/Axit.csproj -XPath '/Project/PropertyGroup/Version').Node.InnerText
+          $projectVersion = (Select-Xml -Path src/AxKit/AxKit.csproj -XPath '/Project/PropertyGroup/Version').Node.InnerText
           if ($projectVersion -ne $version) {
-            Write-Host "Tag $tag does not match <Version>$projectVersion</Version> in Axit.csproj. Release with release.ps1, which sets both."
+            Write-Host "Tag $tag does not match <Version>$projectVersion</Version> in AxKit.csproj. Release with release.ps1, which sets both."
             exit 1
           }
           "TAG=$tag" >> $env:GITHUB_ENV
           "VERSION=$version" >> $env:GITHUB_ENV
 
       - name: Test
-        run: dotnet test Axit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true
+        run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true
 
       - name: Publish
         shell: pwsh
@@ -67,20 +67,20 @@ jobs:
         shell: pwsh
         run: |
           .\tools\release-notes.ps1 -Version $env:VERSION | Set-Content -Path notes.md -Encoding utf8
-          # The SDK that built this release, so that a rebuild years later knows what to reproduce (docs/axit/longevity.md).
+          # The SDK that built this release, so that a rebuild years later knows what to reproduce (docs/axkit/longevity.md).
           Add-Content -Path notes.md -Value "`nBuilt with the .NET SDK $(dotnet --version)." -Encoding utf8
           # The terms of this release, which installing it accepts (AX-11.7): the update notice shows these notes.
-          Add-Content -Path notes.md -Value "`nAxit is a set of personal tools shared as they are, not a product or a service. Installing this release means accepting its licence, https://github.com/KyleKeane/Axit/blob/$env:TAG/LICENSE, and the reminders in NOTICE.md, https://github.com/KyleKeane/Axit/blob/$env:TAG/NOTICE.md." -Encoding utf8
+          Add-Content -Path notes.md -Value "`naxKit is a set of personal tools shared as they are, not a product or a service. Installing this release means accepting its licence, https://github.com/KyleKeane/AxKit/blob/$env:TAG/LICENSE, and the reminders in NOTICE.md, https://github.com/KyleKeane/AxKit/blob/$env:TAG/NOTICE.md." -Encoding utf8
           # Every release page links the code signing policy, the privacy page and the governance, as the signing
-          # service's terms ask of the download pages (docs/axit/code-signing.md).
-          Add-Content -Path notes.md -Value "`nCode signing policy, privacy and governance: https://github.com/KyleKeane/Axit#code-signing-policy, https://github.com/KyleKeane/Axit/blob/main/PRIVACY.md and https://github.com/KyleKeane/Axit/blob/main/GOVERNANCE.md" -Encoding utf8
+          # service's terms ask of the download pages (docs/axkit/code-signing.md).
+          Add-Content -Path notes.md -Value "`nCode signing policy, privacy and governance: https://github.com/KyleKeane/AxKit#code-signing-policy, https://github.com/KyleKeane/AxKit/blob/main/PRIVACY.md and https://github.com/KyleKeane/AxKit/blob/main/GOVERNANCE.md" -Encoding utf8
           "$env:TAG" | Set-Content -Path tag.txt -Encoding ascii
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release
           path: |
-            publish/Axit-*-win-x64.zip
+            publish/AxKit-*-win-x64.zip
             install.cmd
             notes.md
             tag.txt
@@ -99,10 +99,10 @@ jobs:
         with:
           name: release
 
-      # Provenance: gh attestation verify <zip> --repo KyleKeane/Axit tells this workflow built it (S-31).
+      # Provenance: gh attestation verify <zip> --repo KyleKeane/AxKit tells this workflow built it (S-31).
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
-          subject-path: 'publish/Axit-*-win-x64.zip'
+          subject-path: 'publish/AxKit-*-win-x64.zip'
 
       - name: Create the draft release
         env:
@@ -115,7 +115,7 @@ jobs:
             echo "tag.txt does not hold a version tag."
             exit 1
           fi
-          zip=$(ls publish/Axit-*-win-x64.zip)
+          zip=$(ls publish/AxKit-*-win-x64.zip)
           # A published release's files are never replaced (S-31); a draft's are, when the workflow runs again.
           if draft=$(gh release view "$tag" --json isDraft --jq .isDraft 2>/dev/null); then
             if [ "$draft" != "true" ]; then
@@ -124,6 +124,6 @@ jobs:
             fi
             gh release upload "$tag" "$zip" install.cmd --clobber
           else
-            gh release create "$tag" "$zip" install.cmd --title "Axit ${tag#v}" --notes-file notes.md --draft
+            gh release create "$tag" "$zip" install.cmd --title "axKit ${tag#v}" --notes-file notes.md --draft
           fi
           echo "Draft $tag is up. release.ps1 signs it and publishes it."

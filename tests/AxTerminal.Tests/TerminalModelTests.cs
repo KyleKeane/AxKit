@@ -1,5 +1,5 @@
 using AxTerminal.Core;
-using Axit.Core.Transcript;
+using AxKit.Core.Transcript;
 using static AxTerminal.Tests.TestHelpers;
 
 namespace AxTerminal.Tests;
@@ -312,7 +312,7 @@ public sealed class TerminalModelTests
         var finished = new List<int?>();
         model.CommandFinished += finished.Add;
         string Own(string? code, string directory) =>
-            $"{Esc}]133;D;{(code is null ? string.Empty : code + ";")}axit=s3cret{Bel}{Esc}]133;A;axit=s3cret{Bel}{Esc}]9;9;\"{directory}\"{Bel}PS {directory}> {Esc}]133;B;axit=s3cret{Bel}";
+            $"{Esc}]133;D;{(code is null ? string.Empty : code + ";")}axkit=s3cret{Bel}{Esc}]133;A;axkit=s3cret{Bel}{Esc}]9;9;\"{directory}\"{Bel}PS {directory}> {Esc}]133;B;axkit=s3cret{Bel}";
 
         Feed(model, Own(null, "C:\\src"));
         model.EndFrame();

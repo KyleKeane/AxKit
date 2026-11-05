@@ -4,11 +4,11 @@
 # NVDA's own reading of the window's name on opening is tier 3 (NVDA in the loop); here the title is checked.
 mkdir myproject
 # The run's own settings: no update check, which would go to the network and log an ERROR when it fails.
-file home\Axit\axterminal.json {"checkForUpdates": false}
+file home\AxKit\axterminal.json {"checkForUpdates": false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
-file home\Axit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 start terminal {temp}\myproject
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axit/app-kit.md AK-2.4).
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
 # Step 1: the window and the field; after a moment the ping and "Ready".
 expect focus Command

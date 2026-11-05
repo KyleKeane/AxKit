@@ -1,12 +1,12 @@
 # axStart: the search field, the match keys and the commands that stay inside the window (docs/axstart/nvda-test-plan.md;
-# SPEC AS-3, AS-5.3). Every key here is a command of the window's one list (docs/axit/app-kit.md AK-2), the match keys
+# SPEC AS-3, AS-5.3). Every key here is a command of the window's one list (docs/axkit/app-kit.md AK-2), the match keys
 # HotkeyForm's, so this script is also the check that the list does what the key switch did before it. The hotkey is
 # one nobody uses, so that the run never takes the user's; Start with Windows stays on, which a development build
 # never writes (SignInStart), since off would remove the user's own sign-in value.
-file home\Axit\axstart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
+file home\AxKit\axstart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
 
 start start
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axit/app-kit.md AK-2.4).
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
 expect focus Search programs
 

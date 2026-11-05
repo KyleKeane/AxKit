@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
 using AxClip.Core;
-using Axit.Core;
-using Axit.Forms;
-using static Axit.Forms.User32;
+using AxKit.Core;
+using AxKit.Forms;
+using static AxKit.Forms.User32;
 
 namespace AxClip;
 
@@ -43,7 +43,7 @@ public sealed class ClipForm : HotkeyForm
         _settings = settings;
         _history = new ClipHistory(settings.History);
 
-        // ---- menus and keys (CP-2.4, CP-5.1, CP-5.2): one command list (docs/axit/app-kit.md AK-2), each key from the
+        // ---- menus and keys (CP-2.4, CP-5.1, CP-5.2): one command list (docs/axkit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----
         AddMatchKeys(AxClipKeys.NextMatch, AxClipKeys.PreviousMatch, AxClipKeys.FirstMatch, AxClipKeys.LastMatch);
         var clip = new ToolStripMenuItem("ax&Clip");
@@ -82,7 +82,7 @@ public sealed class ClipForm : HotkeyForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Windows &resources",
             [("&Clipboard in Windows", "https://support.microsoft.com/windows/clipboard-in-windows-c436501e-985d-1c8d-97ea-fe46ddf338c6")]);
 
-        _menu.Items.AddRange([clip, options, CreateAxitMenu(), help]);
+        _menu.Items.AddRange([clip, options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         // ---- the field and the items (CP-2.1, AS-D2): HotkeyForm's, named here ----

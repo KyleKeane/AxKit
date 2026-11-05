@@ -1,7 +1,7 @@
 using AxClaude.Core.Pty;
 using AxClaude.Core.Transcript;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxClaude;
 
@@ -12,7 +12,7 @@ internal sealed partial class MainForm
     private void BuildMenus()
     {
         // The menus (FR-10): short, grouped by what the items are about, every mnemonic unique within its menu; each
-        // item with a key is a command of the window's one list (docs/axit/app-kit.md AK-2), its key from the table.
+        // item with a key is a command of the window's one list (docs/axkit/app-kit.md AK-2), its key from the table.
         // Session is the thing worked on, as axDown's File is: the session, where Claude runs, what the window holds.
         var session = new ToolStripMenuItem("&Session");
         Add(session, new Command("&New session...", AxClaudeKeys.NewSession, NewSession) { Mark = CommandMark.Act });
@@ -130,10 +130,10 @@ internal sealed partial class MainForm
             ("&Install or update Claude Code", ClaudeLauncher.InstallUrl),
         ]);
 
-        // The bundle's Axit menu (AX-9) sits before Help in every window and ends with the update items and About
-        // (AX-3.1, FR-1.10): Check for updates names the version in use and asks GitHub every time; Update to Axit n
+        // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About
+        // (AX-3.1, FR-1.10): Check for updates names the version in use and asks GitHub every time; Update to axKit n
         // stands below it while a newer release is known; About is the bundle's sections, shown as this window's notices.
-        MenuBar.Items.AddRange([session, claude, navigate, options, CreateAxitMenu(), help]);
+        MenuBar.Items.AddRange([session, claude, navigate, options, CreateAxKitMenu(), help]);
     }
 
     /// <summary>Options → Speech → Speak replies: a mode (FR-7.4): speech starts with what arrives next.</summary>

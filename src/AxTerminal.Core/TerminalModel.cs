@@ -1,5 +1,5 @@
-using Axit.Core;
-using Axit.Core.Transcript;
+using AxKit.Core;
+using AxKit.Core.Transcript;
 
 namespace AxTerminal.Core;
 
@@ -44,7 +44,7 @@ public sealed class TerminalModel : LineStore
     private bool _directoryExpected;
 
     /// <summary>
-    /// The session's secret (security audit S-37): set, every mark must end in <c>;axit=&lt;secret&gt;</c>, as the
+    /// The session's secret (security audit S-37): set, every mark must end in <c>;axkit=&lt;secret&gt;</c>, as the
     /// shell's own prompt prints it (<see cref="ShellLauncher.NewNonce"/>); null for a custom shell and for the recorded
     /// fixtures, whose marks are taken as they come.
     /// </summary>
@@ -281,7 +281,7 @@ public sealed class TerminalModel : LineStore
         string? code;
         if (MarkNonce is { } nonce)
         {
-            var suffix = "axit=" + nonce;
+            var suffix = "axkit=" + nonce;
             if (rest is null || !(rest == suffix || rest.EndsWith(";" + suffix, StringComparison.Ordinal)))
             {
                 _directoryExpected = false;

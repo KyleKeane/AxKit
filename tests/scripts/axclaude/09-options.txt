@@ -1,9 +1,9 @@
 # axClaude, docs/axclaude/nvda-test-plan.md section 9: options and diagnostics; with it the sounds of section 8
 # steps 6 to 8, by name on the timeline (the run records sounds and plays none: how they sound is for the ear).
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
-file home\Axit\axclaude.json {"checkForUpdates":false}
+file home\AxKit\axclaude.json {"checkForUpdates":false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
-file home\Axit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir opts
 # Step 3: the raw stream recorded from the start (--record, the command line's form of Options, Developer, Record raw
 # stream; the menu item's file picker is a Windows dialog, left manual).
@@ -209,10 +209,10 @@ keys ctrl+end h
 expect said ! No next heading
 keys escape
 expect state "notice":null
-# Axit, About, Version: "Axit <version>", the nine apps, the latest release, the folders; Licence; Attribution; the
-# Axit guide with h by heading (Install, Start, Update, Remove, About).
+# axKit, About, Version: "axKit <version>", the nine apps, the latest release, the folders; Licence; Attribution; the
+# axKit guide with h by heading (Install, Start, Update, Remove, About).
 menu Version
-expect state "noticeText":"Axit 3.
+expect state "noticeText":"axKit 3.
 expect state axClaude
 expect state axStart
 expect state Latest release on GitHub
@@ -224,8 +224,8 @@ keys escape
 menu Attribution
 expect state "notice":"Attribution"
 keys escape
-menu Axit guide
-expect focus "value":"# Axit
+menu axKit guide
+expect focus "value":"# axKit
 keys h
 expect said Install, heading level 2
 keys h

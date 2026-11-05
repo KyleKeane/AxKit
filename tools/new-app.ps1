@@ -1,24 +1,24 @@
 <#
 .SYNOPSIS
   Adds a new app to the bundle: its folders, a first window, its documents and every registration place a script can
-  write (docs/axit/app-kit.md AK-1.2, docs/axit/adding-an-app.md), and prints the places left to write by hand.
+  write (docs/axkit/app-kit.md AK-1.2, docs/axkit/adding-an-app.md), and prints the places left to write by hand.
 
 .DESCRIPTION
   Run it from a clean working tree on a branch of its own; review the result with git diff, then build and run the tests
   (test.ps1). It writes:
     - src\<Project> (the window: <Project>.csproj, <Project>App.cs, <Project>Keys.cs, <Short>Form.cs on the window
-      base AxitForm, HelpText.cs, CLAUDE.md), src\<Project>.Core (<Short>Settings.cs, <Short>Lines.cs, CLAUDE.md) and
+      base AxKitForm, HelpText.cs, CLAUDE.md), src\<Project>.Core (<Short>Settings.cs, <Short>Lines.cs, CLAUDE.md) and
       tests\<Project>.Tests, all modelled on axCalc, the smallest app;
     - docs\<lower>\SPEC.md, user-guide.md and nvda-test-plan.md as stubs, run-<lower>.ps1, and
       tests\scripts\<lower>\01-start.txt for tools\AxAutomate;
-    - the app's line in Dispatch.Apps with its verb constant and its usage line (src\Axit.Core\Dispatch.cs), its line
+    - the app's line in Dispatch.Apps with its verb constant and its usage line (src\AxKit.Core\Dispatch.cs), its line
       in Program.cs's table, the KeyTests entries, the app order DispatchTests expects, the solution's three projects,
-      the icon (tools\make-icon.ps1), Axit.csproj's description, the issue forms' choices, the verb and the taskbar
-      id in docs\axit\SPEC.md AX-1.1 and AX-1.6;
-    - drafts, to be rewritten in real words, of the app's line in README.md, docs\axit\README.md, docs\axit\SPEC.md
+      the icon (tools\make-icon.ps1), AxKit.csproj's description, the issue forms' choices, the verb and the taskbar
+      id in docs\axkit\SPEC.md AX-1.1 and AX-1.6;
+    - drafts, to be rewritten in real words, of the app's line in README.md, docs\axkit\README.md, docs\axkit\SPEC.md
       section 3, the root CLAUDE.md map and CHANGELOG.md.
-  What reads Dispatch.Apps needs nothing: the installer (Axit.exe apps), run.ps1, make-icon.ps1, the project
-  references (a glob), the Axit menu and the other lists of the windows.
+  What reads Dispatch.Apps needs nothing: the installer (AxKit.exe apps), run.ps1, make-icon.ps1, the project
+  references (a glob), the axKit menu and the other lists of the windows.
 
 .EXAMPLE
   .\tools\new-app.ps1 axList list Organise Files -Description 'axList, lists of plain lines'
@@ -28,10 +28,10 @@
 param(
     # The app's name as shown and spoken, "ax" and a capital: axList.
     [Parameter(Mandatory = $true, Position = 0)] [string]$Name,
-    # What Axit.exe takes: list.
+    # What AxKit.exe takes: list.
     [Parameter(Mandatory = $true, Position = 1)] [string]$Verb,
-    # Its group in the Axit menu (AX-9.2): Files, Organise, Utilities, or AccessLayers for an app that works through a
-    # program Axit does not include (AX-11.1; its line in Dispatch.Apps then needs AccessLayerFor, which a test asks for).
+    # Its group in the axKit menu (AX-9.2): Files, Organise, Utilities, or AccessLayers for an app that works through a
+    # program axKit does not include (AX-11.1; its line in Dispatch.Apps then needs AccessLayerFor, which a test asks for).
     [Parameter(Mandatory = $true, Position = 2)] [ValidateSet('Files', 'Organise', 'Utilities', 'AccessLayers')] [string]$Group,
     # What it opens from a path: Nothing, Folders, Files or FilesAndFolders.
     [Parameter(Mandatory = $true, Position = 3)] [ValidateSet('Nothing', 'Folders', 'Files', 'FilesAndFolders')] [string]$Opens,
@@ -53,13 +53,13 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) '..')).ProviderPath
 . (Join-Path $root 'tools\apps.ps1')
-$existing = @(Get-AxitApps $root)
+$existing = @(Get-AxKitApps $root)
 
 # ---- the names ----
 if ($Name -cnotmatch '^ax[A-Z][A-Za-z0-9]*$') { throw "The name is 'ax' and a capital, as axList: $Name" }
 if ($Verb -cnotmatch '^[a-z][a-z0-9]*$') { throw "The verb is lower-case letters and digits, as list: $Verb" }
 if (-not $Project) { $Project = 'Ax' + $Name.Substring(2) }
-if ($Project -cnotmatch '^Ax[A-Z][A-Za-z0-9]*$' -or $Project -like 'Axit*') { throw "The project name is 'Ax' and a capital, not Axit: $Project" }
+if ($Project -cnotmatch '^Ax[A-Z][A-Za-z0-9]*$' -or $Project -like 'AxKit*') { throw "The project name is 'Ax' and a capital, not AxKit: $Project" }
 $short = $Project.Substring(2)
 $lower = $Project.ToLowerInvariant()
 $constant = $Project
@@ -75,7 +75,7 @@ if ($AccessLayerFor) { $Description = "${title}: $what" }
 foreach ($app in $existing) {
     if ($app.Name -eq $Name -or $app.Verb -eq $Verb -or $app.Project -eq $Project) { throw "$($app.Name) already has that name, verb or project ($($app.Verb), $($app.Project))." }
 }
-if ($Verb -in 'axit', 'mcp', 'apps') { throw "$Verb is the bundle's own verb." }
+if ($Verb -in 'axkit', 'mcp', 'apps') { throw "$Verb is the bundle's own verb." }
 foreach ($folder in "src\$Project", "src\$Project.Core", "tests\$Project.Tests", "docs\$lower") {
     if (Test-Path (Join-Path $root $folder)) { throw "$folder already exists." }
 }
@@ -140,10 +140,10 @@ function Add-AfterLast([string]$text, [string]$nl, [string]$pattern, [string]$li
 New-TextFile "src\$Project\$Project.csproj" @'
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- {{Name}}'s window side, as a class library inside Axit.exe (docs/axit/SPEC.md AX-1.7): the window, its key table
+  <!-- {{Name}}'s window side, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7): the window, its key table
        and its texts; the pure code is {{Project}}.Core. -->
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)-windows</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>{{Project}}</RootNamespace>
     <AssemblyName>{{Name}}</AssemblyName>
@@ -151,8 +151,8 @@ New-TextFile "src\$Project\$Project.csproj" @'
 
   <ItemGroup>
     <ProjectReference Include="..\{{Project}}.Core\{{Project}}.Core.csproj" />
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
-    <ProjectReference Include="..\Axit.Forms\Axit.Forms.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Forms\AxKit.Forms.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -166,12 +166,12 @@ New-TextFile "src\$Project\$Project.csproj" @'
 if ($Opens -eq 'Nothing') {
     New-TextFile "src\$Project\${Project}App.cs" @'
 using {{Project}}.Core;
-using Axit.Forms;
+using AxKit.Forms;
 
 namespace {{Project}};
 
 /// <summary>
-/// {{Name}}'s entry point inside Axit (docs/axit/SPEC.md AX-1.7): <c>Axit.exe {{Verb}}</c> calls <see cref="Run"/>, one
+/// {{Name}}'s entry point inside axKit (docs/axkit/SPEC.md AX-1.7): <c>AxKit.exe {{Verb}}</c> calls <see cref="Run"/>, one
 /// call into the bundle's <see cref="AppHost"/> with the settings and <see cref="{{Short}}Form"/>. It takes no path;
 /// any argument is reported with the usage text.
 /// </summary>
@@ -180,7 +180,7 @@ public static class {{Project}}App
     public const string Name = "{{Name}}";
 
     public const string Usage = """
-        Usage: Axit {{Verb}}
+        Usage: AxKit {{Verb}}
                {{lower}}            the same, as the installed console command
 
           --help, --version  this text, or the version
@@ -203,12 +203,12 @@ public static class {{Project}}App
 } else {
     New-TextFile "src\$Project\${Project}App.cs" @'
 using {{Project}}.Core;
-using Axit.Forms;
+using AxKit.Forms;
 
 namespace {{Project}};
 
 /// <summary>
-/// {{Name}}'s entry point inside Axit (docs/axit/SPEC.md AX-1.7): <c>Axit.exe {{Verb}} [&lt;{{OpensWhat}}&gt;]</c> calls
+/// {{Name}}'s entry point inside axKit (docs/axkit/SPEC.md AX-1.7): <c>AxKit.exe {{Verb}} [&lt;{{OpensWhat}}&gt;]</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one path of the command line, the
 /// settings and <see cref="{{Short}}Form"/>.
 /// </summary>
@@ -217,7 +217,7 @@ public static class {{Project}}App
     public const string Name = "{{Name}}";
 
     public const string Usage = """
-        Usage: Axit {{Verb}} {{Args}}
+        Usage: AxKit {{Verb}} {{Args}}
                {{lower}} {{Args}}  the same, as the installed console command
 
           <{{OpensWhat}}>  what {{Name}} opens; without one, nothing
@@ -245,7 +245,7 @@ namespace {{Project}};
 /// <summary>
 /// {{Name}}'s window-specific keys (SPEC.md {{P}}-7; bundle AX-8). A key is changed here and nowhere else: the menu
 /// items, the commands of <c>{{Short}}Form</c> and the F1 text read this table. The bundle-wide keys (F1, the palette,
-/// the control keys, find, Ctrl+S, text size) are <c>Axit.Forms.BundleKeys</c>. None yet.
+/// the control keys, find, Ctrl+S, text size) are <c>AxKit.Forms.BundleKeys</c>. None yet.
 /// </summary>
 public static class {{Project}}Keys
 {
@@ -256,20 +256,20 @@ public static class {{Project}}Keys
 
 New-TextFile "src\$Project\${short}Form.cs" @'
 using {{Project}}.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace {{Project}};
 
 /// <summary>
-/// {{Name}}'s window (SPEC.md {{P}}-2): a menu bar and one list, on the bundle's window base (<see cref="AxitForm"/>),
+/// {{Name}}'s window (SPEC.md {{P}}-2): a menu bar and one list, on the bundle's window base (<see cref="AxKitForm"/>),
 /// which holds the notices, the fonts, the window's place, find and the update flow. A first draft from
 /// tools/new-app.ps1; axCalc's <c>CalcForm</c> is the small example of a window grown from here.
 /// </summary>
-public sealed class {{Short}}Form : AxitForm
+public sealed class {{Short}}Form : AxKitForm
 {
     private readonly MenuStrip _menu = new();
-    private readonly AxitList _list = new();
+    private readonly AxKitList _list = new();
     private readonly IReadOnlyList<string> _lines;
 
     public {{Short}}Form(string? path, {{Short}}Settings settings, string? settingsError)
@@ -278,7 +278,7 @@ public sealed class {{Short}}Form : AxitForm
         _lines = {{Short}}Lines.For(path);
         Text = {{Short}}Lines.Title(path) + " - " + {{Project}}App.Name;
 
-        // ---- menus and keys ({{P}}-7): one command list (docs/axit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys ({{P}}-7): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
         var first = new ToolStripMenuItem("&{{Short}}");
         first.DropDownItems.Add(CreateExitItem());
 
@@ -289,10 +289,10 @@ public sealed class {{Short}}Form : AxitForm
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         var help = CreateHelpMenu(HelpText.UserGuide, "{{Name}} &resources",
-            [("&Adding an app to Axit", "https://github.com/KyleKeane/Axit/blob/main/docs/axit/adding-an-app.md")]);
+            [("&Adding an app to axKit", "https://github.com/KyleKeane/AxKit/blob/main/docs/axkit/adding-an-app.md")]);
 
-        // The bundle's Axit menu (AX-9) sits before Help in every window.
-        _menu.Items.AddRange([first, options, CreateAxitMenu(), help]);
+        // The bundle's axKit menu (AX-9) sits before Help in every window.
+        _menu.Items.AddRange([first, options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         AddKey(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(_list, () => _lines)) { Mark = CommandMark.Read });
@@ -342,24 +342,24 @@ public sealed class {{Short}}Form : AxitForm
 
 New-TextFile "src\$Project\HelpText.cs" @'
 using System.Reflection;
-using Axit.Core;
+using AxKit.Core;
 
 namespace {{Project}};
 
-/// <summary>The texts {{Name}} shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>Axit.Core.BundleAbout</c>).</summary>
+/// <summary>The texts {{Name}} shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>AxKit.Core.BundleAbout</c>).</summary>
 public static class HelpText
 {
     /// <summary>The F1 text (SPEC.md {{P}}-7): a first line naming the text's own keys, then one Markdown heading per group (bundle AX-7.2): the bundle-wide keys, then {{Name}}'s own.</summary>
     public const string Shortcuts = """
         In this text: h and Shift+H move by heading, 1 to 6 by level. Ctrl+F finds, F3 and Shift+F3 the next and the previous match
 
-        ## In every window of Axit
+        ## In every window of axKit
           F1: this list
           Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it
           Ctrl+F: find a line in the list. F3 and Shift+F3: next or previous match
           Ctrl+Plus, Ctrl+Minus: bigger or smaller text
           Alt: the menu. Alt+F4: close {{Name}}
-          Alt+A: the Axit menu: the command palette, a new window of any app, the files and folders closed lately, the open Axit windows, most recent first (Alt+A, O, 1 is the one you were in last) and by type, Close all windows, the AI tools, Check for updates, and About
+          Alt+A: the axKit menu: the command palette, a new window of any app, the files and folders closed lately, the open axKit windows, most recent first (Alt+A, O, 1 is the one you were in last) and by type, Close all windows, the AI tools, Check for updates, and About
 
         ## {{Name}}
           Up and Down: the lines of the list
@@ -378,14 +378,14 @@ The WinForms side of {{Name}}: one list and the bundle's notices, on the window 
 ## Commands
 
 ```
-.\run-{{lower}}.ps1                  # build Axit and start {{Name}} (run.ps1 -App {{Verb}})
+.\run-{{lower}}.ps1                  # build axKit and start {{Name}} (run.ps1 -App {{Verb}})
 .\test.ps1 {{Project}}                 # the tests in Release, as CI runs them
 ```
 
 ## Where things are
 
-- `{{Project}}App`: the entry point `Run` that Axit's `Program` calls (bundle AX-1.7), one call into `Axit.Forms/AppHost.Run`.
-- `{{Short}}Form`: the window (SPEC.md {{P}}-2) on the bundle's window base (`Axit.Forms/AxitForm`); its commands are `Add` and `AddKey` calls (docs/axit/app-kit.md AK-2).
+- `{{Project}}App`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run`.
+- `{{Short}}Form`: the window (SPEC.md {{P}}-2) on the bundle's window base (`AxKit.Forms/AxKitForm`); its commands are `Add` and `AddKey` calls (docs/axkit/app-kit.md AK-2).
 - `{{Project}}Keys`: the window's keys (bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
@@ -406,24 +406,24 @@ New-TextFile "src\$Project.Core\$Project.Core.csproj" @'
 
   <!-- {{Name}}'s pure code (docs/{{lower}}/SPEC.md section 5): no window. -->
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>{{Project}}.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
   </ItemGroup>
 
 </Project>
 '@
 
 New-TextFile "src\$Project.Core\${short}Settings.cs" @'
-using Axit.Core;
+using AxKit.Core;
 
 namespace {{Project}}.Core;
 
 /// <summary>
-/// Everything {{Name}} remembers between runs (SPEC.md {{P}}-9), in <c>%APPDATA%\Axit\{{lower}}.json</c> through the
+/// Everything {{Name}} remembers between runs (SPEC.md {{P}}-9), in <c>%APPDATA%\AxKit\{{lower}}.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font, the update check and the window's place from <see cref="WindowSettings"/>.
 /// </summary>
 public sealed class {{Short}}Settings : WindowSettings
@@ -537,12 +537,12 @@ New-TextFile "docs\$lower\SPEC.md" @'
 # {{Name}} specification
 
 Status: first draft written by `tools/new-app.ps1` on {{Date}}; nothing below is decided yet. Requirements are
-numbered {{P}}-n.m. The bundle's rules are `docs/axit/SPEC.md` (AX-7 accessibility, AX-8 keys); "SPEC.md" in
+numbered {{P}}-n.m. The bundle's rules are `docs/axkit/SPEC.md` (AX-7 accessibility, AX-8 keys); "SPEC.md" in
 {{Name}}'s code means this file.
 
 ## 1. Summary
 
-{{Name}}: {{What}}. `Axit.exe {{Verb}} {{Args}}`, Start entry `Axit {{Name}}`, command `{{lower}}`.
+{{Name}}: {{What}}. `AxKit.exe {{Verb}} {{Args}}`, Start entry `axKit {{Name}}`, command `{{lower}}`.
 
 ## 2. Goals and non-goals
 
@@ -552,7 +552,7 @@ numbered {{P}}-n.m. The bundle's rules are `docs/axit/SPEC.md` (AX-7 accessibili
 
 ### {{P}}-1 Start
 
-- {{P}}-1.1 `Axit.exe {{Verb}}` starts {{Name}} (bundle AX-1.1).
+- {{P}}-1.1 `AxKit.exe {{Verb}}` starts {{Name}} (bundle AX-1.1).
 
 ### {{P}}-2 The window
 
@@ -566,11 +566,11 @@ Every key is bundle-wide (AX-8) or window-specific, in `{{Project}}Keys`. None o
 
 ### {{P}}-9 Settings
 
-- {{P}}-9.1 `%APPDATA%\Axit\{{lower}}.json`: the window base's settings.
+- {{P}}-9.1 `%APPDATA%\AxKit\{{lower}}.json`: the window base's settings.
 
 ## 5. Architecture
 
-The window is `src/{{Project}}` on `Axit.Forms/AxitForm`; the pure code is `src/{{Project}}.Core`, tested in
+The window is `src/{{Project}}` on `AxKit.Forms/AxKitForm`; the pure code is `src/{{Project}}.Core`, tested in
 `tests/{{Project}}.Tests`.
 
 ## 6. Decisions
@@ -587,7 +587,7 @@ New-TextFile "docs\$lower\user-guide.md" @'
 
 ## Install
 
-{{Name}} is part of Axit. Installing Axit (see the Axit guide in the Axit menu, About) gives you a Start menu entry `Axit {{Name}}` and a console command `{{lower}}`. Any Axit window starts one too: Alt+A, New window, {{Name}}.
+{{Name}} is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit {{Name}}` and a console command `{{lower}}`. Any axKit window starts one too: Alt+A, New window, {{Name}}.
 
 ## Start
 
@@ -601,7 +601,7 @@ Options, Text sets the font and its size; Options, General the update check.
 
 ## Updates
 
-The Axit menu, Check for updates.
+The axKit menu, Check for updates.
 
 ## If something goes wrong
 
@@ -609,11 +609,11 @@ Options, Developer, Copy diagnostics copies what helps a bug report.
 
 ## About
 
-The Axit menu, About.
+The axKit menu, About.
 
 ## Disclaimer
 
-{{Name}} comes with no warranty; see the licence in the Axit menu, About.
+{{Name}} comes with no warranty; see the licence in the axKit menu, About.
 '@
 
 New-TextFile "docs\$lower\nvda-test-plan.md" @'
@@ -630,8 +630,8 @@ Run with NVDA before a release, after `run-{{lower}}.ps1` (or `.\run.ps1 -App {{
 
 New-TextFile "tests\scripts\$lower\01-start.txt" @'
 # {{Name}}: the window at start, F1 and its commands (docs/{{lower}}/nvda-test-plan.md section 1), run by
-# tools/AxAutomate on a desktop of its own (docs/axit/automation.md).
-file home\Axit\{{lower}}.json {"checkForUpdates": false}
+# tools/AxAutomate on a desktop of its own (docs/axkit/automation.md).
+file home\AxKit\{{lower}}.json {"checkForUpdates": false}
 
 start {{Verb}}
 check commands
@@ -647,7 +647,7 @@ $runOpens = if ($opensWhat) { "  .\run-{{lower}}.ps1 C:\some\path            # b
 New-TextFile "run-$lower.ps1" (@'
 <#
 .SYNOPSIS
-  Builds Axit and starts {{Name}}: run.ps1 with -App {{Verb}}. Every other argument goes through unchanged.
+  Builds axKit and starts {{Name}}: run.ps1 with -App {{Verb}}. Every other argument goes through unchanged.
 
 .EXAMPLE
   .\run-{{lower}}.ps1                          # build and start {{Name}}
@@ -660,12 +660,12 @@ exit $LASTEXITCODE
 '@)
 
 # ---- the icon ----
-& (Join-Path $root 'tools\make-icon.ps1') -Out (Join-Path $root "src\Axit\$Project.ico") -Text $IconLetters -Rgb $IconRgb | Out-Null
-$written.Add("src\Axit\$Project.ico")
+& (Join-Path $root 'tools\make-icon.ps1') -Out (Join-Path $root "src\AxKit\$Project.ico") -Text $IconLetters -Rgb $IconRgb | Out-Null
+$written.Add("src\AxKit\$Project.ico")
 
 # ---- the registration places ----
 $groups = 'Files', 'Organise', 'Utilities', 'AccessLayers'
-Edit-TextFile 'src\Axit.Core\Dispatch.cs' {
+Edit-TextFile 'src\AxKit.Core\Dispatch.cs' {
     param($text, $nl)
     # The verb constant, after the last app's.
     $text = Add-AfterLast $text $nl '^    public const string Ax\w+ = "[^"]*";' "    public const string $constant = `"$Verb`";"
@@ -681,37 +681,37 @@ Edit-TextFile 'src\Axit.Core\Dispatch.cs' {
     $line = "        new(`"$Name`", $constant, `"$Project`", AppGroup.$Group, Opens.$Opens)$nl        {$nl            Description = `"$Description`",$layer Icon = new(`"$IconLetters`", $($IconRgb -join ', ')),$nl        },$nl"
     $text = $text.Insert($at, $line)
     # The usage text: the verb in the first line, the app's line before the paths, its console command.
-    $text = [regex]::Replace($text, '(Usage: Axit \[[^\]]*)\]', "`$1|$Verb]")
-    $usageLine = ("          Axit $Verb $argumentText").TrimEnd()
+    $text = [regex]::Replace($text, '(Usage: AxKit \[[^\]]*)\]', "`$1|$Verb]")
+    $usageLine = ("          axKit $Verb $argumentText").TrimEnd()
     $usageLine = $(if ($usageLine.Length -ge 38) { $usageLine + ' ' } else { $usageLine.PadRight(38) }) + "$Name, $what"
-    $paths = $text.IndexOf('          Axit <folder>  ')
-    if ($paths -lt 0) { throw 'The usage line "Axit <folder>" was not found in Dispatch.cs.' }
+    $paths = $text.IndexOf('          AxKit <folder>  ')
+    if ($paths -lt 0) { throw 'The usage line "axKit <folder>" was not found in Dispatch.cs.' }
     $text = $text.Insert($paths, $usageLine + $nl)
     $text = [regex]::Replace($text, ' and (\w+) stand for ', ", `$1 and $lower stand for ")
-    $text = [regex]::Replace($text, ' and (Axit \w+)\.(\r?)$', ", `$1 and Axit $Verb.`$2", 'Multiline')
+    $text = [regex]::Replace($text, ' and (AxKit \w+)\.(\r?)$', ", `$1 and AxKit $Verb.`$2", 'Multiline')
     return $text
 }
 
-Edit-TextFile 'src\Axit\Program.cs' {
+Edit-TextFile 'src\AxKit\Program.cs' {
     param($text, $nl)
     $text = Add-AfterLast $text $nl '^using Ax\w+;' "using $Project;"
     return Add-AfterLast $text $nl '^        \[Dispatch\.\w+\] = \w+App\.Run,' "        [Dispatch.$constant] = ${Project}App.Run,"
 }
 
-Edit-TextFile 'tests\Axit.Tests\KeyTests.cs' {
+Edit-TextFile 'tests\AxKit.Tests\KeyTests.cs' {
     param($text, $nl)
     $text = Add-AfterLast $text $nl '^            \["[^"]+"\] = \w+\.\w+Keys\.All,' "            [`"$Name`"] = $Project.${Project}Keys.All,"
     return Add-AfterLast $text $nl '^        \["[^"]+"\] = \w+\.HelpText\.Shortcuts,' "        [`"$Name`"] = $Project.HelpText.Shortcuts,"
 }
 
 # The order of the apps DispatchTests expects, read again from Dispatch.Apps.
-$order = (@(Get-AxitApps $root) | ForEach-Object { "`"$($_.Name)`"" }) -join ', '
-Edit-TextFile 'tests\Axit.Tests\DispatchTests.cs' {
+$order = (@(Get-AxKitApps $root) | ForEach-Object { "`"$($_.Name)`"" }) -join ', '
+Edit-TextFile 'tests\AxKit.Tests\DispatchTests.cs' {
     param($text, $nl)
     return [regex]::Replace($text, 'Assert\.Equal\(\["ax[^\]]*\], Dispatch\.Apps\.Select\(a => a\.Name\)\);', "Assert.Equal([$order], Dispatch.Apps.Select(a => a.Name));")
 }
 
-Edit-TextFile 'src\Axit\Axit.csproj' {
+Edit-TextFile 'src\AxKit\AxKit.csproj' {
     param($text, $nl)
     return [regex]::Replace($text, ', and ([^<]*)</Description>', ", `$1, and $Description</Description>")
 }
@@ -720,18 +720,18 @@ foreach ($form in '.github\ISSUE_TEMPLATE\bug.yml', '.github\ISSUE_TEMPLATE\idea
     Edit-TextFile $form { param($text, $nl) Add-AfterLast $text $nl '^        - ax\w+' "        - $Name" }
 }
 
-Edit-TextFile 'docs\axit\SPEC.md' {
+Edit-TextFile 'docs\axkit\SPEC.md' {
     param($text, $nl)
     $text = [regex]::Replace($text, '(- AX-1\.1 The first argument may be a verb naming an app: [^\r\n]*?`)( \(the one list is)', "`$1, ``$Verb```$2")
-    $text = [regex]::Replace($text, '(`Axit\.Ax\w+`)\), so the', "`$1, ``Axit.$Project``), so the")
+    $text = [regex]::Replace($text, '(`AxKit\.Ax\w+`)\), so the', "`$1, ``AxKit.$Project``), so the")
     # Section 3: a draft entry after the last app's.
     $section = $text.IndexOf("$nl## 4. ")
     if ($section -lt 0) { return $text }
-    return $text.Insert($section - $nl.Length, "$nl- **$title** ($today, draft from tools/new-app.ps1): ``Axit.exe $Verb $argumentText``, Start entry ``Axit $Name``, command ``$lower``: $what. Specification ``docs/$lower/SPEC.md``, guide ``docs/$lower/user-guide.md``, test plan ``docs/$lower/nvda-test-plan.md``.")
+    return $text.Insert($section - $nl.Length, "$nl- **$title** ($today, draft from tools/new-app.ps1): ``AxKit.exe $Verb $argumentText``, Start entry ``axKit $Name``, command ``$lower``: $what. Specification ``docs/$lower/SPEC.md``, guide ``docs/$lower/user-guide.md``, test plan ``docs/$lower/nvda-test-plan.md``.")
 }
 
 Edit-TextFile 'README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+[^*]*\*\*: .*' "- **$title**: $what." }
-Edit-TextFile 'docs\axit\README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+[^*]*\*\* is .*' "- **$title** is $what." }
+Edit-TextFile 'docs\axkit\README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+[^*]*\*\* is .*' "- **$title** is $what." }
 Edit-TextFile 'CLAUDE.md' {
     param($text, $nl)
     $map = "- **$Name**: window code in ``src/$Project`` (notes: ``src/$Project/CLAUDE.md``), pure code in ``src/$Project.Core`` (notes: ``src/$Project.Core/CLAUDE.md``), tests in ``tests/$Project.Tests``, documents in ``docs/$lower/`` (``SPEC.md``, ``user-guide.md``, ``nvda-test-plan.md``). In $Name's code and documents, `"SPEC.md`" means ``docs/$lower/SPEC.md``."
@@ -755,29 +755,29 @@ Edit-TextFile 'CHANGELOG.md' {
 
 # ---- the solution ----
 foreach ($projectFile in "src\$Project.Core\$Project.Core.csproj", "src\$Project\$Project.csproj", "tests\$Project.Tests\$Project.Tests.csproj") {
-    dotnet sln (Join-Path $root 'Axit.sln') add (Join-Path $root $projectFile) | Out-Null
+    dotnet sln (Join-Path $root 'AxKit.sln') add (Join-Path $root $projectFile) | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "dotnet sln add $projectFile failed." }
 }
-$written.Add('Axit.sln')
+$written.Add('AxKit.sln')
 
 Write-Host "Added $Name (verb $Verb, project $Project, group $Group, opens $Opens, icon $IconLetters on $($IconRgb -join ',')). Written:"
 $written | Sort-Object -Unique | ForEach-Object { Write-Host "  $_" }
 Write-Host @"
 
-Drafts to rewrite in real words: the lines of $Name in README.md, docs\axit\README.md, docs\axit\SPEC.md section 3,
+Drafts to rewrite in real words: the lines of $Name in README.md, docs\axkit\README.md, docs\axkit\SPEC.md section 3,
 the root CLAUDE.md map and CHANGELOG.md; Description in its Dispatch.Apps entry; the documents in docs\$lower;
-for an access layer, the list of them in tests\Axit.Tests\DispatchTests.cs and its line in PRIVACY.md.
+for an access layer, the list of them in tests\AxKit.Tests\DispatchTests.cs and its line in PRIVACY.md.
 
 Still by hand:
   - Dispatch.Apps: ShowIn: true for an app that works in a folder (then DispatchTests' Show in list), Explorer,
     Types, OpenWith and TypeName for File Explorer and Open with, and a rule in Dispatch.Decide if a path alone
     should open $Name (AX-1.2).
   - The root CLAUDE.md: $Name in the opening paragraph and in the Commands paragraph (run.ps1's -App values, the
-    run-*.ps1 list); docs\axit\SPEC.md's summary sentence; docs\axit\README.md's Start entries and commands; run.ps1's
-    examples; install.ps1's header comment; docs\axit\plan.md's Still to come, if $Name was there.
+    run-*.ps1 list); docs\axkit\SPEC.md's summary sentence; docs\axkit\README.md's Start entries and commands; run.ps1's
+    examples; install.ps1's header comment; docs\axkit\plan.md's Still to come, if $Name was there.
   - A background app (a hotkey, as axStart and axClip): install.ps1's `$background table and run.ps1's restart.
   - KeyTests: the known keys and the overrides, when the window's keys meet another window's.
-  - The first build writes tests\$Project.Tests\packages.lock.json and changes tests\Axit.Tests\packages.lock.json:
+  - The first build writes tests\$Project.Tests\packages.lock.json and changes tests\AxKit.Tests\packages.lock.json:
     commit both with the rest.
   - Then: dotnet build, .\test.ps1, the accessibility-review skill, the NVDA test plan.
 "@

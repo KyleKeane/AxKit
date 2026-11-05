@@ -1,27 +1,27 @@
 # axTask, the window
 
-The WinForms side of axTask: the navigator and the detail pane, each the bundle's `AxitList`, a status bar, the
+The WinForms side of axTask: the navigator and the detail pane, each the bundle's `AxKitList`, a status bar, the
 bundle's notices. The pure code (the item format, the field values, the folder, the changes with their undo, the links,
 the tasks and the smart lists, the settings) is `src/AxTask.Core`, with its own `CLAUDE.md`. The shared shape of the
-item apps is `docs/axit/item-apps.md` (IA-n.m); axTask's own spec is `docs/axtask/SPEC.md` ("SPEC.md" below); the guide
+item apps is `docs/axkit/item-apps.md` (IA-n.m); axTask's own spec is `docs/axtask/SPEC.md` ("SPEC.md" below); the guide
 `docs/axtask/user-guide.md` is embedded by `AxTask.csproj`; the manual test plan is `docs/axtask/nvda-test-plan.md`.
 The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
 ```
-.\run-axtask.ps1 manual_tests\axtask\tasks   # build Axit and start axTask on the test folder (run.ps1 -App task)
+.\run-axtask.ps1 manual_tests\axtask\tasks   # build AxKit and start axTask on the test folder (run.ps1 -App task)
 .\test.ps1 AxTask                            # the tests in Release, as CI runs them
 ```
 
 ## Where things are
 
-- `AxTaskApp`: the entry point `Run`, one call into `Axit.Forms/AppHost.Run` with the one folder or item file.
+- `AxTaskApp`: the entry point `Run`, one call into `AxKit.Forms/AppHost.Run` with the one folder or item file.
 - The panes, the moves between levels, the shared keys and every field command are the item apps' shared window,
-  `Axit.Forms/ItemForm` (since axPass, its second use); `TaskForm` derives from it and fills in what is axTask's.
+  `AxKit.Forms/ItemForm` (since axPass, its second use); `TaskForm` derives from it and fills in what is axTask's.
 - `TaskForm.cs`: the menus (Folder; List, Item and Field, only the one for the selection enabled by `ItemForm` from `SelectionMenus`;
-  View, Options, Axit, Help) with axTask's own keys as commands of the window's one command list (`Add`, each key's`r
-  command at its first menu item; docs/axit/app-kit.md AK-2), the levels of the folder (`Start`, `EnterList`,
+  View, Options, axKit, Help) with axTask's own keys as commands of the window's one command list (`Add`, each key's`r
+  command at its first menu item; docs/axkit/app-kit.md AK-2), the levels of the folder (`Start`, `EnterList`,
   `LeaveList`, which goes straight back to the top, `ShowAllTasks`, `ReadLevel` with the rows' `Tag`: an `ItemFile`, a
   `SmartList`, a `SectionTag` on a header, `ArchivedItemsTag`, or nothing for a list; the top level in sections is
   `ReadSections`, TK-3a) and the detail (`DetailOf`, with a `FileSource` to save to; a link read by `SpokenValue`).
@@ -29,7 +29,7 @@ The bundle rules are in the root `CLAUDE.md`.
   the panes filled, its words said), `CheckFresh` (the file still as shown, IA-5.5), `SaveFields` (the shared field
   commands' change, written), `MoveToSection` and `SetSection` (TK-3a.3), `NewList` in the selected row's section, the link's notice (`ChangeSpecial`). Rename and Archive add `Links.AfterMove`'s writes,
   so links follow what moved.
-- `AxTaskKeys`: the window's keys, `Axit.Forms/ItemKeys.All` and its own; `All` feeds the collision test and the F1 text names the same keys.
+- `AxTaskKeys`: the window's keys, `AxKit.Forms/ItemKeys.All` and its own; `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules

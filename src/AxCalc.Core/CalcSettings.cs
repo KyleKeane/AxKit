@@ -1,9 +1,9 @@
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxCalc.Core;
 
 /// <summary>
-/// Everything axCalc remembers between runs (SPEC.md AC-9.1), in <c>%APPDATA%\Axit\axcalc.json</c> through the
+/// Everything axCalc remembers between runs (SPEC.md AC-9.1), in <c>%APPDATA%\AxKit\axcalc.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font, the update check and the window's place from
 /// <see cref="WindowSettings"/>, the angle unit, and, while Keep history is on, the history and the variables.
 /// </summary>

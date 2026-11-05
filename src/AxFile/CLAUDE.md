@@ -1,19 +1,19 @@
 # axFile, the window
 
-The WinForms side of axFile: one list with a folder's entries, the Actions list always under it ("No actions yet" until the first operation), a status bar, the bundle's notices. The pure code (the folder's entries, the operations, the Actions list's lines, the settings) is `src/AxFile.Core`, with its own `CLAUDE.md`. The spec is `docs/axfile/SPEC.md` ("SPEC.md" below); the guide `docs/axfile/user-guide.md` is embedded by `AxFile.csproj` for Help → User guide; the manual test plan is `docs/axfile/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`. The player and the preview pane this window carried until 2026-10-22 are axMedia and axPreview now (`docs/axit/axfile-split.md`); axFile hands over to them and plays and shows nothing itself.
+The WinForms side of axFile: one list with a folder's entries, the Actions list always under it ("No actions yet" until the first operation), a status bar, the bundle's notices. The pure code (the folder's entries, the operations, the Actions list's lines, the settings) is `src/AxFile.Core`, with its own `CLAUDE.md`. The spec is `docs/axfile/SPEC.md` ("SPEC.md" below); the guide `docs/axfile/user-guide.md` is embedded by `AxFile.csproj` for Help → User guide; the manual test plan is `docs/axfile/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`. The player and the preview pane this window carried until 2026-10-22 are axMedia and axPreview now (`docs/axkit/axfile-split.md`); axFile hands over to them and plays and shows nothing itself.
 
 ## Commands
 
 ```
-.\run-axfile.ps1 C:\Music\Dune    # build Axit and start axFile on the folder (run.ps1 -App file); a file selects itself in its folder
+.\run-axfile.ps1 C:\Music\Dune    # build AxKit and start axFile on the folder (run.ps1 -App file); a file selects itself in its folder
 .\run-axfile.ps1                  # the last folder opened
-dotnet build Axit.sln
+dotnet build AxKit.sln
 dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
 ```
 
 ## Where things are
 
-- `AxFileApp`: the entry point `Run` that Axit's `Program` calls (bundle AX-1.7), one call into `Axit.Forms/AppHost.Run` with the one folder or file of the command line, the settings and the window; the log (`axfile.log`), the crash handling, `--help` and `--version` are the host's. It moves the process's working directory to the program's folder (AF-1.2): a folder that is a process's current directory cannot be renamed or moved (Windows' "being used by another process"), and the apps started from here inherit the working directory.
+- `AxFileApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run` with the one folder or file of the command line, the settings and the window; the log (`axfile.log`), the crash handling, `--help` and `--version` are the host's. It moves the process's working directory to the program's folder (AF-1.2): a folder that is a process's current directory cannot be renamed or moved (Windows' "being used by another process"), and the apps started from here inherit the working directory.
 - `FileForm`, in six partial files (`FileForm.Completion.cs`, the Go to folder field's completion, out of Browse, and `FileForm.Programs.cs`, the user's own programs and Windows' own ways, out of Operations, since 2026-10-24).
   - `FileForm.cs`:
     - the controls (the folder list, the rename box as a child of the list, AF-4.2, the status bar);
@@ -23,7 +23,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
       - `FillOpenWith` in Operations fills Open with ▸ on each opening;
     - the hooks the window base asks for;
     - `WndProc` (the shell menu's messages forwarded to `Shell`);
-    - the command list (docs/axit/app-kit.md AK-2):
+    - the command list (docs/axkit/app-kit.md AK-2):
       - each menu item with a key is `Add(menu, new Command(...))`, a key with no item `AddKey`, its `When` where it acts, `InList` or `InPane`, its `Mark` for MCP;
       - no `ProcessWindowKey` since 2026-10-24, the base running the list;
       - the Selection menu's operations on the marks only show the Item menu's keys, the File Explorer item of Show current folder in only shows Ctrl+W, and Ctrl+D is a key of its own beside the Favorites submenu, refilled as it opens;
@@ -61,15 +61,15 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
     - refresh (F5, and silently on activation when the folder's write time moved);
     - find (the base's `ShowFindInList` and `FindInList` over the entries' names);
     - information, and `FolderAnnouncement`;
-    - Type-ahead (AF-3.6) and the edge earcon are the bundle's list's, `Axit.Forms/AxitList`, since 2026-10-24; the folder list gives it the shown entries' names.
+    - Type-ahead (AF-3.6) and the edge earcon are the bundle's list's, `AxKit.Forms/AxKitList`, since 2026-10-24; the folder list gives it the shown entries' names.
   - `FileForm.Operations.cs`:
     - `Undo` (the newest undoable line of the Actions list) and `UndoAction` (one line taken back, AF-4.14, AF-9.3: `FileOperations.CheckUndo` on a task, `_actions.NotUndone` with the reason when it refuses, then `Shell.Undelete` for a delete or `FileOperations.UndoAsync`, `_actions.Undone`, the folder shown with the entry selected and "Undone: …" said; the Folder menu's item is renamed from `ActionLog.MenuText` as the menu opens);
     - new folder, new text file (`NewFile`: the file made, shown and selected, then `Rename(wholeName: true)`, AF-4.1), move into new folder (AF-4.13);
-    - the rename in place (the box is the bundle's, `AxitList.BeginRename`, AX-8.7, since 2026-10-24) (`Rename`, `CommitRename`; the box, its keys and `EndRename` are `AxitList`'s);
+    - the rename in place (the box is the bundle's, `AxKitList.BeginRename`, AX-8.7, since 2026-10-24) (`Rename`, `CommitRename`; the box, its keys and `EndRename` are `AxKitList`'s);
     - delete (on the marked entries in one shell operation, `NameAfter` choosing what to select next);
     - copy path, cut, copy and paste through the clipboard (`CopyOrCut`, `Paste`, AF-4.8);
-    - the File Explorer and the other apps' windows (`NewWindow`, `OpenIn` on the folder, `OpenInAxit` on the entry, AF-4.9);
-    - open in editor (`Axit.Core/Dispatch.EditorOf`);
+    - the File Explorer and the other apps' windows (`NewWindow`, `OpenIn` on the folder, `OpenInAxKit` on the entry, AF-4.9);
+    - open in editor (`AxKit.Core/Dispatch.EditorOf`);
     - open with Windows (the Open with dialog when Windows has no program);
     - zip files (AF-4.12: `Compress` and `Extract` through `RunArchiveWork`);
     - the user's own programs (AF-4.11), and Windows' own ways with the entry (AF-4.7): `OpenWith`, `ShowProperties`, `ShowWindowsMenu`.
@@ -80,7 +80,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
       - `_inFlight` holds the paths the running pastes and moves are writing or moving away, so that `Paste` chooses its names around them (`FileOperations.Destinations` with the reserved paths) and a cut still on its way says "Already pasting", or pastes the files that are not and counts the ones that are;
       - the set is read on the UI thread, snapshotted for the task, and cleared in the runner's `finally`.
   - `FileForm.Actions.cs` (AF-9, 2026-10-22):
-    - the Actions list, an `AxitList` named "Actions" docked under the folder list from the start, "No actions yet" as its one line until the first operation (hidden only while a notice shows; the base's focus rule gives a notice's focus back to it), a third of the window (`FitPane`);
+    - the Actions list, an `AxKitList` named "Actions" docked under the folder list from the start, "No actions yet" as its one line until the first operation (hidden only while a notice shows; the base's focus rule gives a notice's focus back to it), a third of the window (`FitPane`);
     - `_actions`, the `AxFile.Core.ActionLog`;
     - `FillPane`:
       - the rows from `ActionLog.Rows`, each line changed in place while the count is the same, so that the selection stays and only the changed line moves under NVDA, the running line the user is on left alone while it is the same entry on the same row, `_paneRows`;
@@ -102,18 +102,18 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
 - `AxFileKeys`: the window's keys (SPEC.md AF-6.2; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 - The Item menu has no context-menu copy (AF-D13, 2026-10-23): `ShowItemMenu` (Operations) is the window base's `OpenBarMenu('I')` since 2026-10-24, which waits until Shift, F10 and the Applications key are up, then posts `SC_KEYMENU` and the letter I, as Alt and I typed, so that WinForms opens the bar's Item drop-down from the keyboard and NVDA reads its first item. The list's own `ContextMenuStrip` (the former `ItemMenu`) was silent the first time it opened however it was shown; a mnemonic inside the `SC_KEYMENU` message opened Folder; with the keys still down F10 closed the menu and the letter was Shift+I.
-- `Shell` (SPEC.md AF-4.7, AF-D8): the things Windows does with an entry (its Open with dialog is `Axit.Forms/WindowsOpenWith` since 2026-10-24, axPreview using it too), on the UI thread apart from `Undelete`, which the window runs through `FileOperations.OnShellThreadAsync`: `Properties` (`ShellExecuteExW` with the verb `properties`), `ShowMenu` (the shell's context menu: `SHParseDisplayName`, `SHBindToParent`, `IShellFolder.GetUIObjectOf`, `IContextMenu.QueryContextMenu` into a popup of `CreatePopupMenu`, `TrackPopupMenuEx` with the command returned, `InvokeCommand`), `Eject` (the same menu built for a drive, the item whose `GetCommandString` verb is `eject` invoked through `FindVerb` and `Invoke`, AF-3.11), `Undelete` (AF-4.14: the Recycle Bin bound as a shell folder from `SHGetKnownFolderIDList`, its items enumerated with `IEnumIDList`, each one's `$R` parsing name read through `GetDisplayNameOf` and `StrRetToBufW` and its record through `AxFile.Core.RecycleBin`, the items whose original path is wanted, the latest deletion of each, given to `GetUIObjectOf` together and the verb `undelete` invoked once), and `ForwardMenuMessage`, which the window's `WndProc` calls so that the shell fills its submenus (`IContextMenu2`/`3.HandleMenuMsg`). The interfaces are declared in vtable order with `PreserveSig`.
+- `Shell` (SPEC.md AF-4.7, AF-D8): the things Windows does with an entry (its Open with dialog is `AxKit.Forms/WindowsOpenWith` since 2026-10-24, axPreview using it too), on the UI thread apart from `Undelete`, which the window runs through `FileOperations.OnShellThreadAsync`: `Properties` (`ShellExecuteExW` with the verb `properties`), `ShowMenu` (the shell's context menu: `SHParseDisplayName`, `SHBindToParent`, `IShellFolder.GetUIObjectOf`, `IContextMenu.QueryContextMenu` into a popup of `CreatePopupMenu`, `TrackPopupMenuEx` with the command returned, `InvokeCommand`), `Eject` (the same menu built for a drive, the item whose `GetCommandString` verb is `eject` invoked through `FindVerb` and `Invoke`, AF-3.11), `Undelete` (AF-4.14: the Recycle Bin bound as a shell folder from `SHGetKnownFolderIDList`, its items enumerated with `IEnumIDList`, each one's `$R` parsing name read through `GetDisplayNameOf` and `StrRetToBufW` and its record through `AxFile.Core.RecycleBin`, the items whose original path is wanted, the latest deletion of each, given to `GetUIObjectOf` together and the verb `undelete` invoked once), and `ForwardMenuMessage`, which the window's `WndProc` calls so that the shell fills its submenus (`IContextMenu2`/`3.HandleMenuMsg`). The interfaces are declared in vtable order with `PreserveSig`.
 
 ## Rules
 
-1. Every control gets an `AccessibleName`; the folder list is named with its count alone, the folder being the title (AF-2.1); the Actions list is "Actions" and is always there, "No actions yet" until the first operation (AF-9.1); nothing speaks on a plain arrow key that moves, and a key that cannot move, or a typed name nothing starts with, sounds the bundle's edge earcon (AF-3.6, `AxitList`, `Sounds.Edge`); a change of folder says the folder, its count and the entry (AF-3.1, `FolderAnnouncement`, which cuts short NVDA's own reading of the new selection); a command's result is one announcement (AF-7), on the list that has the focus, or on the notice while one shows. Nothing is spoken for a line of the Actions list arriving or changing.
+1. Every control gets an `AccessibleName`; the folder list is named with its count alone, the folder being the title (AF-2.1); the Actions list is "Actions" and is always there, "No actions yet" until the first operation (AF-9.1); nothing speaks on a plain arrow key that moves, and a key that cannot move, or a typed name nothing starts with, sounds the bundle's edge earcon (AF-3.6, `AxKitList`, `Sounds.Edge`); a change of folder says the folder, its count and the entry (AF-3.1, `FolderAnnouncement`, which cuts short NVDA's own reading of the new selection); a command's result is one announcement (AF-7), on the list that has the focus, or on the notice while one shows. Nothing is spoken for a line of the Actions list arriving or changing.
 2. The folder reads and the operations never run on the UI thread: `Task.Run` for the reads, the rename and the new folder, a thread of its own for the shell's delete, copy, move and Restore.
 3. No second window (bundle AX-7.2): questions and errors are notices; the folder picker, File Explorer and the shell's own dialogs and menu are the system's own windows. Playing and reading are other apps' windows, started with the paths (AF-D2).
 4. Run the `accessibility-review` skill on a change here before committing, and check it with NVDA following the test plan.
 
 ## Gotchas already learned
 
-- Enter in a list (`AxitList`, a `ListBox`) reaches `ProcessCmdKey` as `Keys.Return`; handled there with a `_list.Focused` check, and returning true keeps the list from dinging. Backspace, Space, F2 and Delete are the same; Shift+Enter arrives as `Keys.Shift | Keys.Return`.
+- Enter in a list (`AxKitList`, a `ListBox`) reaches `ProcessCmdKey` as `Keys.Return`; handled there with a `_list.Focused` check, and returning true keeps the list from dinging. Backspace, Space, F2 and Delete are the same; Shift+Enter arrives as `Keys.Shift | Keys.Return`.
 - A read that comes back after the user has moved on is dropped (`_reads`): a slow folder would otherwise overwrite a faster one chosen later.
 - "The process cannot access the file because it is being used by another process" on renaming a folder is a process whose current directory the folder is (a terminal or an app started in it; probed 2026-10-22), not an open handle: an open enumeration of the folder's contents does not block a rename on Windows 11, and an open file inside gives "Access to the path is denied" instead. axFile holds nothing (every enumeration is a `foreach`, the shell objects are released at once, the file operation has no owner window); `FileOperations.Message` says what the two codes mean.
 - The Actions list is a bottom-docked list, always visible (it was hidden until the first operation, which left Tab with nowhere to go); the docking order in `Controls.AddRange` puts it between the folder list and the status bar.

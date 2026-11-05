@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axFile's window side, as a class library inside Axit.exe (docs/axit/SPEC.md AX-1.7): the window, its key table
+  <!-- axFile's window side, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7): the window, its key table
        and its texts; the pure code is AxFile.Core. -->
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)-windows</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>axFile</RootNamespace>
     <AssemblyName>axFile</AssemblyName>
@@ -11,8 +11,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AxFile.Core\AxFile.Core.csproj" />
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
-    <ProjectReference Include="..\Axit.Forms\Axit.Forms.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Forms\AxKit.Forms.csproj" />
   </ItemGroup>
 
   <ItemGroup>

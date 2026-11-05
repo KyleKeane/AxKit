@@ -2,7 +2,7 @@ i want word wrap.
 
 
 
-I want to hear the new line character when itype it, but this might be an nvda issue not axit.
+I want to hear the new line character when itype it, but this might be an nvda issue not axkit.
 
 
 

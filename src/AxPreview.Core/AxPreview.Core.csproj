@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!-- axPreview's pure code (docs/axpreview/SPEC.md §6): whether a file reads as text; no window. The window is the
-       text editor shell in Axit.Forms, read-only. -->
+       text editor shell in AxKit.Forms, read-only. -->
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxPreview.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
   </ItemGroup>
 
 </Project>

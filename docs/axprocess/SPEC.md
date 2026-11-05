@@ -1,10 +1,10 @@
 # axProcess — Specification
 
-axProcess is an app of the Axit bundle (`docs/axit/SPEC.md`): what runs on the computer, as lists, for a blind
+axProcess is an app of the axKit bundle (`docs/axkit/SPEC.md`): what runs on the computer, as lists, for a blind
 developer who uses the NVDA screen reader. Built 2026-10-23 on the branch `axprocess` (the long run of that day,
-`docs/axit/plan.md`), not yet heard under NVDA. The document is kept in step with the code (a behaviour change updates
+`docs/axkit/plan.md`), not yet heard under NVDA. The document is kept in step with the code (a behaviour change updates
 it in the same commit). Requirements are numbered `PR-n.m` and decisions `PR-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the Axit menu), are cited by number and not repeated. In axProcess's code and
+(accessibility), AX-8 (keys) and AX-9 (the axKit menu), are cited by number and not repeated. In axProcess's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -30,7 +30,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
 
 ## 3. Scenarios
 
-1. Start axProcess (Start menu, `axprocess`, the Axit menu): "This computer - axProcess window", then "Processes, 214
+1. Start axProcess (Start menu, `axprocess`, the axKit menu): "This computer - axProcess window", then "Processes, 214
    list, chrome, 1.2 GB, 3% CPU, process 9120, 1 of 214": the list sorted by memory, the largest first.
 2. Down to a program that hangs, Delete: the notice "End notepad (process 4410)? Anything unsaved in it is lost." with
    End process and Cancel; Enter: "Ended notepad"; the list is read again.
@@ -43,11 +43,11 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
 
 ### PR-1 Launch
 
-- PR-1.1 `Axit.exe process`; the console command `axprocess`; the Start menu entry "Axit axProcess". No File Explorer
+- PR-1.1 `AxKit.exe process`; the console command `axprocess`; the Start menu entry "axKit axProcess". No File Explorer
   entry. Any argument is reported with the usage text (`AppHost`).
 - PR-1.2 `AxProcessApp.Run(args)` is the entry point (AX-1.7): the host's log (`axprocess.log`), crash handling,
   `--help` and `--version`, the settings (`axprocess.json`), then `ProcessForm`.
-- PR-1.4 Closing the window puts axProcess in the Axit menu's Recently closed list, by its name, since it holds no file
+- PR-1.4 Closing the window puts axProcess in the axKit menu's Recently closed list, by its name, since it holds no file
   (AX-9.4); Enter there starts it again.
 - PR-1.3 axProcess runs as the user, never elevated. What Windows refuses to a user (ending a system process,
   starting most services) is said as such (PR-3.3, PR-4.3).
@@ -74,7 +74,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
 ### PR-3 Processes
 
 - PR-3.1 Each process is "<name>, <memory>, <n>% CPU, process <id>": the name without `.exe`, the working set
-  ("350 MB", "350.4 MB", "1.2 GB", "900 KB": the bundle's `Axit.Core/FileSize`, one decimal from megabytes up, since 2026-10-25, the format every app says sizes in; whole megabytes before), the processor use over one second, rounded to a whole percent of the whole computer
+  ("350 MB", "350.4 MB", "1.2 GB", "900 KB": the bundle's `AxKit.Core/FileSize`, one decimal from megabytes up, since 2026-10-25, the format every app says sizes in; whole megabytes before), the processor use over one second, rounded to a whole percent of the whole computer
   ("0% CPU" for an idle one; left out for a process Windows does not let the user measure), and the process ID.
 - PR-3.2 Sort by ▸ Memory (the default), Processor, Name (View menu; the choice is kept, PR-7.1). Memory and processor
   sort the largest first; ties go by name.
@@ -88,7 +88,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
   processor use, the program file, the start time and the number of threads, each on its own line, those Windows lets
   the user read; with the buttons End process, Show program in axFile and Close (the default and the cancel button).
 - PR-3.5 Ctrl+E, or Process → Show program in axFile, opens axFile on the program file's folder with the file selected
-  (`AxitMenu.Start`); "Windows does not say where <name>'s program is" when it cannot be read.
+  (`AxKitMenu.Start`); "Windows does not say where <name>'s program is" when it cannot be read.
 
 ### PR-4 Services
 
@@ -122,7 +122,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
   of the view shown is enabled, the other two not, so that a process command is never at hand among the services and
   the reverse (the user's ask, 2026-10-24): the bar's arrows pass over a disabled menu and the command palette leaves
   its items out. **View (V):** Processes Ctrl+1 | Services Ctrl+2 | Startup Ctrl+3 | ─ | Sort processes by ▸
-  (Memory ✓ | Processor | Name). **Options (O):** Text ▸ | General ▸ | Developer ▸. **Axit (A)** (AX-9). **Help (H):**
+  (Memory ✓ | Processor | Name). **Options (O):** Text ▸ | General ▸ | Developer ▸. **axKit (A)** (AX-9). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Task Manager | Services). Every item has a mnemonic
   (AX-7.4). Shift+F10, the Applications key and a right click in the list open the view's menu from the bar, as Alt and its letter open it, so that NVDA reads its first item (the window base's `OpenBarMenu`,
   axFile's AF-D13; 2026-10-24).
@@ -137,7 +137,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
 
 ### PR-7 Settings, announcements, log
 
-- PR-7.1 `%APPDATA%\Axit\axprocess.json` (AX-5.3; `ProcessSettings`): `fontFamily`, `fontSize`, `fontBold`,
+- PR-7.1 `%APPDATA%\AxKit\axprocess.json` (AX-5.3; `ProcessSettings`): `fontFamily`, `fontSize`, `fontBold`,
   `checkForUpdates`, `window`, `sortBy` (`memory`, `processor` or `name`).
 - PR-7.2 Announcements, one UI Automation notification each (AX-7.3): the view's name with the selected item;
   "Refreshed: <name>"; "Working…"; the summary; "Ended <name>", "<name> has already ended", the refusals of PR-3.3;
@@ -145,7 +145,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
   "Sorted by memory", "Sorted by processor", "Sorted by name"; "Copied"; "Nothing selected"; "Processes view first:
   Ctrl+1", "Services view first: Ctrl+2"; "Not found" (find); the bundle's text size and diagnostics announcements.
   Nothing is spoken on an arrow key.
-- PR-7.3 The log is `%LOCALAPPDATA%\Axit\logs\axprocess.log`: the start, the exit, every process ended and every
+- PR-7.3 The log is `%LOCALAPPDATA%\AxKit\logs\axprocess.log`: the start, the exit, every process ended and every
   service started or stopped by its name, and errors.
 
 ## 5. Architecture
@@ -156,9 +156,9 @@ src/AxProcess.Core/    class library (net10.0): ProcessTable (the samples, the p
                        by P/Invoke: the list, start, stop, the wait) with ServiceRow, StartupList (the Run keys and
                        the Startup folders) with StartupEntry and CommandLine (the program of a command),
                        SystemInfo (the memory, a process's program file and details, by P/Invoke) with
-                       SystemTimes (the processors' busy share), ProcessSettings; references Axit.Core
+                       SystemTimes (the processors' busy share), ProcessSettings; references AxKit.Core
 src/AxProcess/         class library (net10.0-windows): AxProcessApp (Run, Usage), ProcessForm (the window),
-                       AxProcessKeys, HelpText; references AxProcess.Core, Axit.Core, Axit.Forms
+                       AxProcessKeys, HelpText; references AxProcess.Core, AxKit.Core, AxKit.Forms
 tests/AxProcess.Tests/ ProcessTableTests, ServiceAndStartupTests (labels, order, the processor arithmetic, the
                        command parsing, the StartupApproved bytes, and a read of this computer's lists)
 docs/axprocess/        this spec, user-guide.md (embedded), nvda-test-plan.md

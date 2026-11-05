@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using AxGit.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxGit;
 
@@ -11,9 +11,9 @@ namespace AxGit;
 /// for the details (a diff, a commit, what git answered), and a status bar with the branch. Every action is one git
 /// command run on a background task (AG-D6); the result is one announcement, or a notice with git's whole answer.
 /// The notices, the fonts, the window's place, the update flow and find are the bundle's window base
-/// (<see cref="AxitForm"/>).
+/// (<see cref="AxKitForm"/>).
 /// </summary>
-public sealed partial class GitForm : AxitForm
+public sealed partial class GitForm : AxKitForm
 {
     private enum View
     {
@@ -31,7 +31,7 @@ public sealed partial class GitForm : AxitForm
     private readonly string? _startPath;
     private readonly MenuStrip _menu = new();
     private readonly ToolStripMenuItem _recentItem = new("Open &recent repository");
-    private readonly AxitList _list = new();
+    private readonly AxKitList _list = new();
     private readonly TextBox _details = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _stateLabel;
@@ -62,7 +62,7 @@ public sealed partial class GitForm : AxitForm
         _startPath = path;
         Text = "No repository - " + AppTitle;
 
-        // ---- menus and keys (AG-6.1, AG-6.2): one command list (docs/axit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (AG-6.1, AG-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
         // Repository is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
         // repositories, then the slot the editors have Save in (Refresh here), then the extras, then Exit. The keys act
         // while a menu item is disabled, as before: the command says what stops it.
@@ -116,8 +116,8 @@ public sealed partial class GitForm : AxitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Git &resources",
             [("&git-scm.com", "https://git-scm.com"), ("&Pro Git, the book", "https://git-scm.com/book/en/v2")]);
 
-        // The bundle's Axit menu (AX-9) sits before Help in every window and ends with the update items and About.
-        _menu.Items.AddRange([repository, changes, branches, view, options, CreateAxitMenu(), help]);
+        // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
+        _menu.Items.AddRange([repository, changes, branches, view, options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         // The keys without a menu item: between the list and the details, find in the details, Enter on a commit.
@@ -404,6 +404,6 @@ public sealed partial class GitForm : AxitForm
         }
 
         var path = Path.Combine(_root, file.Path.Replace('/', Path.DirectorySeparatorChar));
-        AxitMenu.Start(Dispatch.EditorOf(path), path);
+        AxKitMenu.Start(Dispatch.EditorOf(path), path);
     }
 }

@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using AxProcess.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxProcess;
 
@@ -10,9 +10,9 @@ namespace AxProcess;
 /// axProcess's window (SPEC.md PR-2): a menu bar, one list with three views (Processes, Services, Startup) and a status
 /// bar. Every read runs on a background task (AX-7.5) and nothing refreshes by itself (PR-D2); Enter shows an item's
 /// details as a notice with what can be done to it. The notices, the fonts, the window's place, find and the update
-/// flow are the bundle's window base (<see cref="AxitForm"/>).
+/// flow are the bundle's window base (<see cref="AxKitForm"/>).
 /// </summary>
-public sealed class ProcessForm : AxitForm
+public sealed class ProcessForm : AxKitForm
 {
     private enum View
     {
@@ -26,7 +26,7 @@ public sealed class ProcessForm : AxitForm
 
     private readonly ProcessSettings _settings;
     private readonly MenuStrip _menu = new();
-    private readonly AxitList _list = new();
+    private readonly AxKitList _list = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _nameLabel;
     private readonly ToolStripStatusLabel _memoryLabel;
@@ -54,7 +54,7 @@ public sealed class ProcessForm : AxitForm
         _settings = settings;
         Text = "This computer - " + AxProcessApp.Name;
 
-        // ---- menus and keys (PR-6.1, PR-6.2): one command list (docs/axit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (PR-6.1, PR-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
         // The first menu holds what every view has (AX-6: the thing worked on, then Exit); each view has a menu of its
         // own, and only the menu of the view shown is enabled, so that a process command is never at hand among the
         // services (the user's ask, 2026-10-24; UpdateViewMenus). The keys act whichever menu is enabled, as before:
@@ -109,8 +109,8 @@ public sealed class ProcessForm : AxitForm
             ("&Services", "https://learn.microsoft.com/en-us/windows/win32/services/services"),
         ]);
 
-        // The bundle's Axit menu (AX-9) sits before Help in every window.
-        _menu.Items.AddRange([computer, _processMenu, _serviceMenu, _startupMenu, view, options, CreateAxitMenu(), help]);
+        // The bundle's axKit menu (AX-9) sits before Help in every window.
+        _menu.Items.AddRange([computer, _processMenu, _serviceMenu, _startupMenu, view, options, CreateAxKitMenu(), help]);
         UpdateViewMenus();
         MainMenuStrip = _menu;
 
@@ -515,7 +515,7 @@ public sealed class ProcessForm : AxitForm
             return;
         }
 
-        AxitMenu.Start(Dispatch.AxFile, path);
+        AxKitMenu.Start(Dispatch.AxFile, path);
     }
 
     private void CopyLine()

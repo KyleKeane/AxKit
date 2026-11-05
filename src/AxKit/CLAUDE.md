@@ -1,0 +1,9 @@
+# axKit, the executable
+
+The one program file of the bundle (`docs/axkit/SPEC.md` AX-1, B-1, B-2). `Program.Main` calls `ApplicationConfiguration.Initialize()`, asks `AxKit.Core/Dispatch` which app the command line means, sets the app's taskbar id and calls that app's `Run` (`AxClaudeApp.Run`, `AxDownApp.Run`, `AxJSONApp.Run`, `AxGitApp.Run`, `AxTerminalApp.Run`, `AxFileApp.Run`, `AxMediaApp.Run`, `AxPreviewApp.Run`, `AxStartApp.Run`; `tests/AxKit.Tests/InventoryTests` checks that every app of `Dispatch.Apps` has its call here and its places elsewhere). Everything after, including the crash handling and the log, belongs to the app. The icons live here; `tools/make-icon.ps1` draws them.
+
+`<Version>` in `AxKit.csproj` is the bundle's version (`release.ps1` sets it); `AxKit.Core/BundleInfo.Version` reads it from the executable. The WinForms application settings (`ApplicationHighDpiMode`, visual styles, `InvariantGlobalization`) are here because only an executable project generates `ApplicationConfiguration`.
+
+Started under any name but `AxKit.exe` (the installer's Open with links, `axDown.exe` and the like, hard links of `AxKit.exe`; bundle AX-2.3), `Program` first starts the `AxKit.exe` beside it with the same arguments and ends, so that every window runs as `AxKit.exe`: `ThisProgram`, the window lists and the AI tools tell this program by its path and name.
+
+`Program` deletes any `*.old*.exe` next to the program file at startup: an update installed in place (`install.ps1 -InPlace`, bundle AX-2.8) renames the running program file to that, since a running file can be renamed but not overwritten or deleted. A running `AxKit.exe` locks `src/AxKit/bin`; build elsewhere to check a change (`dotnet build src/AxKit -o <scratch dir>`). The message boxes in `Program` are the only ones allowed in the bundle: no window exists yet when they show (AX-7.2).

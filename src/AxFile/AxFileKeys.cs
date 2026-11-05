@@ -3,7 +3,7 @@ namespace AxFile;
 /// <summary>
 /// axFile's window-specific keys (SPEC.md AF-6.2; bundle AX-8). A key is changed here and nowhere else: the menu
 /// items, the window's command list (<c>FileForm</c>, app-kit AK-2) and the F1 text read this table. The bundle-wide keys
-/// (F1, the control keys, find, Ctrl+S, text size) are <c>Axit.Forms.BundleKeys</c>. Enter, Backspace, Space, F2,
+/// (F1, the control keys, find, Ctrl+S, text size) are <c>AxKit.Forms.BundleKeys</c>. Enter, Backspace, Space, F2,
 /// Delete, Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+F10 and the Applications key act in the folder list
 /// only; in the Actions list Enter, Ctrl+Z, Ctrl+I and Escape act on its line; in a notice's field or the rename box
 /// they are the field's own.
@@ -98,7 +98,7 @@ public static class AxFileKeys
     /// <summary>The newest operation of this window taken back (AF-4.14); in the Actions list, the line under the selection (AF-9.3).</summary>
     public const Keys Undo = Keys.Control | Keys.Z;
 
-    /// <summary>In either list, at the first entry: the edge earcon (AF-3.6; the bundle's `AxitList` since 2026-10-24); the list's own key everywhere else. In the Go to folder field: the previous completion (AF-3.3).</summary>
+    /// <summary>In either list, at the first entry: the edge earcon (AF-3.6; the bundle's `AxKitList` since 2026-10-24); the list's own key everywhere else. In the Go to folder field: the previous completion (AF-3.3).</summary>
     public const Keys FirstItem = Keys.Up;
 
     /// <summary>The Go to folder field's previous completion (AF-3.3): the same key as <see cref="FirstItem"/>, in the field.</summary>

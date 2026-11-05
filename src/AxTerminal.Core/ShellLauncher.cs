@@ -1,5 +1,5 @@
 using System.Text;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxTerminal.Core;
 
@@ -32,8 +32,8 @@ public static class ShellLauncher
     /// backtick-e escape is PowerShell 7 only.
     /// </summary>
     public const string PromptSnippet = """
-        $global:__AxitPrompt = $function:prompt
-        $global:__AxitHistoryId = -1
+        $global:__AxKitPrompt = $function:prompt
+        $global:__AxKitHistoryId = -1
         function global:prompt {
             $ok = $?
             $e = [char]27
@@ -41,9 +41,9 @@ public static class ShellLauncher
             $last = Get-History -Count 1
             $lastId = if ($null -ne $last) { $last.Id } else { 0 }
             $out = ''
-            if ($global:__AxitHistoryId -ne -1) {
+            if ($global:__AxKitHistoryId -ne -1) {
                 $code = $null
-                if ($lastId -ne $global:__AxitHistoryId) {
+                if ($lastId -ne $global:__AxKitHistoryId) {
                     if ($ok) { $code = 0 }
                     else {
                         $code = -1
@@ -53,13 +53,13 @@ public static class ShellLauncher
                         } catch { $code = -1 }
                     }
                 }
-                if ($null -ne $code) { $out += "$e]133;D;$code;axit=AXITNONCE$b" } else { $out += "$e]133;D;axit=AXITNONCE$b" }
+                if ($null -ne $code) { $out += "$e]133;D;$code;axkit=AXKITNONCE$b" } else { $out += "$e]133;D;axkit=AXKITNONCE$b" }
             }
-            $global:__AxitHistoryId = $lastId
+            $global:__AxKitHistoryId = $lastId
             $loc = $executionContext.SessionState.Path.CurrentLocation.Path
-            $out += "$e]133;A;axit=AXITNONCE$b$e]9;9;`"$loc`"$b"
-            $text = if ($global:__AxitPrompt) { & $global:__AxitPrompt } else { "PS $loc> " }
-            $out += "$text$e]133;B;axit=AXITNONCE$b"
+            $out += "$e]133;A;axkit=AXKITNONCE$b$e]9;9;`"$loc`"$b"
+            $text = if ($global:__AxKitPrompt) { & $global:__AxKitPrompt } else { "PS $loc> " }
+            $out += "$text$e]133;B;axkit=AXKITNONCE$b"
             $out
         }
         $global:ProgressPreference = 'SilentlyContinue'
@@ -74,21 +74,21 @@ public static class ShellLauncher
     /// user's that sets PROMPT_COMMAND itself replaces this, and the shell then runs without marks, as a custom one.
     /// </summary>
     public const string BashPromptCommand =
-        "__axit_code=$?; __axit_dir=$PWD; "
-        + "case \"$__axit_dir\" in /[A-Za-z]/*) __axit_dir=\"${__axit_dir:1:1}:${__axit_dir:2}\"; __axit_dir=${__axit_dir^};; "
-        + "/[A-Za-z]) __axit_dir=\"${__axit_dir:1:1}:/\"; __axit_dir=${__axit_dir^};; "
-        + "*) __axit_dir=$(cygpath -w \"$__axit_dir\" 2>/dev/null || printf %s \"$__axit_dir\");; esac; "
-        + "__axit_dir=${__axit_dir//\\//\\\\}; "
-        + "if [ -n \"$__axit_ran\" ]; then printf '\\033]133;D;%s;axit=AXITNONCE\\007' \"$__axit_code\"; fi; __axit_ran=1; "
-        + "printf '\\033]133;A;axit=AXITNONCE\\007\\033]9;9;%s\\007' \"$__axit_dir\"; "
-        + "case \"$PS1\" in *'133;B'*) ;; *) PS1=\"$PS1\"'\\[\\033]133;B;axit=AXITNONCE\\007\\]';; esac";
+        "__axkit_code=$?; __axkit_dir=$PWD; "
+        + "case \"$__axkit_dir\" in /[A-Za-z]/*) __axkit_dir=\"${__axkit_dir:1:1}:${__axkit_dir:2}\"; __axkit_dir=${__axkit_dir^};; "
+        + "/[A-Za-z]) __axkit_dir=\"${__axkit_dir:1:1}:/\"; __axkit_dir=${__axkit_dir^};; "
+        + "*) __axkit_dir=$(cygpath -w \"$__axkit_dir\" 2>/dev/null || printf %s \"$__axkit_dir\");; esac; "
+        + "__axkit_dir=${__axkit_dir//\\//\\\\}; "
+        + "if [ -n \"$__axkit_ran\" ]; then printf '\\033]133;D;%s;axkit=AXKITNONCE\\007' \"$__axkit_code\"; fi; __axkit_ran=1; "
+        + "printf '\\033]133;A;axkit=AXKITNONCE\\007\\033]9;9;%s\\007' \"$__axkit_dir\"; "
+        + "case \"$PS1\" in *'133;B'*) ;; *) PS1=\"$PS1\"'\\[\\033]133;B;axkit=AXKITNONCE\\007\\]';; esac";
 
     /// <summary>
     /// The place of the session's secret in the marks (security audit S-37): every mark the shell's own prompt prints
-    /// ends in <c>;axit=&lt;secret&gt;</c>, which <see cref="NewNonce"/> makes for each start and the model asks for, so
+    /// ends in <c>;axkit=&lt;secret&gt;</c>, which <see cref="NewNonce"/> makes for each start and the model asks for, so
     /// that a mark in a program's output or a file's text, which cannot know the secret, is ignored.
     /// </summary>
-    public const string NonceToken = "AXITNONCE";
+    public const string NonceToken = "AXKITNONCE";
 
     /// <summary>A new secret for one start of the shell: 128 random bits as hexadecimal.</summary>
     public static string NewNonce() => Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(16));
@@ -247,7 +247,7 @@ public static class ShellLauncher
     public static string CommandPromptWithMarks(string? current, string nonce = NonceToken)
     {
         var text = string.IsNullOrWhiteSpace(current) ? "$P$G" : current;
-        return $"$e]133;D;axit={nonce}$e\\$e]133;A;axit={nonce}$e\\$e]9;9;$P$e\\" + text + $"$e]133;B;axit={nonce}$e\\";
+        return $"$e]133;D;axkit={nonce}$e\\$e]133;A;axkit={nonce}$e\\$e]9;9;$P$e\\" + text + $"$e]133;B;axkit={nonce}$e\\";
     }
 
     private static string Quote(string path) => path.Contains(' ') ? $"\"{path}\"" : path;

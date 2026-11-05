@@ -1,5 +1,5 @@
 using System.Reflection;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxTerminal;
 

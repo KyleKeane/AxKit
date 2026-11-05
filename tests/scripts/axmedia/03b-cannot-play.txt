@@ -7,7 +7,7 @@
 # the file picker; left to the NVDA pass.
 allow error The file could not be played
 
-file home\Axit\axmedia.json {"checkForUpdates":false}
+file home\AxKit\axmedia.json {"checkForUpdates":false}
 mkdir c
 file c\a-broken.mp3 this is not a sound
 silence c\b-good.wav 30000

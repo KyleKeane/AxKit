@@ -1,13 +1,13 @@
-using Axit.Forms;
+using AxKit.Forms;
 
 namespace AxDown;
 
 /// <summary>
 /// axDown's window-specific keys (SPEC.md AD-5; bundle AX-8). The editor shell's keys (new, open, save as, go to line,
-/// word wrap, show in File Explorer) are <c>Axit.Forms.EditorKeys</c>, the same in every editor window; the Markdown
-/// navigation keys of SPEC.md §9 are <c>Axit.Forms.MarkdownKeys</c>, shared with axPreview; <see cref="All"/> includes
-/// both. The bundle-wide keys (F1, find, save, text size, the controls) are <c>Axit.Forms.BundleKeys</c>. The collision
-/// test in <c>tests/Axit.Tests</c> fails when a key here equals one of those.
+/// word wrap, show in File Explorer) are <c>AxKit.Forms.EditorKeys</c>, the same in every editor window; the Markdown
+/// navigation keys of SPEC.md §9 are <c>AxKit.Forms.MarkdownKeys</c>, shared with axPreview; <see cref="All"/> includes
+/// both. The bundle-wide keys (F1, find, save, text size, the controls) are <c>AxKit.Forms.BundleKeys</c>. The collision
+/// test in <c>tests/AxKit.Tests</c> fails when a key here equals one of those.
 /// </summary>
 public static class AxDownKeys
 {

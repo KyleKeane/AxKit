@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using AxTask.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxTask;
 
@@ -150,7 +150,7 @@ public sealed partial class TaskForm
             _folder = TopFolder;
             if (Commit(new Step([FileChange.Write(path, null, SmartList.NewFileText())], "Made the smart list " + name.Trim()), path))
             {
-                AxitMenu.Start(Dispatch.AxJSON, path);
+                AxKitMenu.Start(Dispatch.AxJSON, path);
             }
         }, typed =>
         {
@@ -400,10 +400,10 @@ public sealed partial class TaskForm
         switch (SelectedRow())
         {
             case { Tag: ItemFile item }:
-                AxitMenu.Start(Dispatch.AxJSON, item.Path);
+                AxKitMenu.Start(Dispatch.AxJSON, item.Path);
                 return;
             case { Tag: SmartList { Path: { } filter } }:
-                AxitMenu.Start(Dispatch.AxJSON, filter);
+                AxKitMenu.Start(Dispatch.AxJSON, filter);
                 return;
             case { Tag: SmartList }:
                 Announce("All tasks is built in: List, New smart list makes one to change", true);
@@ -412,7 +412,7 @@ public sealed partial class TaskForm
                 var listFile = Path.Combine(row.Key, ItemDocument.ListFile);
                 if (File.Exists(listFile))
                 {
-                    AxitMenu.Start(Dispatch.AxJSON, listFile);
+                    AxKitMenu.Start(Dispatch.AxJSON, listFile);
                 }
                 else
                 {
@@ -428,7 +428,7 @@ public sealed partial class TaskForm
 
     /// <summary>Ctrl+E: the selection's file or folder in axFile; the folder shown when nothing is selected.</summary>
     private void ShowInAxFile() =>
-        AxitMenu.Start(Dispatch.AxFile, SelectedRow() is { } row && row.Tag is not SmartList { Path: null } ? row.Key : _smart is null ? _folder : TopFolder);
+        AxKitMenu.Start(Dispatch.AxFile, SelectedRow() is { } row && row.Tag is not SmartList { Path: null } ? row.Key : _smart is null ? _folder : TopFolder);
 
     private void ChooseTopFolder()
     {

@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxFile.Core;
 
@@ -21,7 +21,7 @@ public static class UserPrograms
         System.IO.Path.GetExtension(path).ToLowerInvariant() is ".bat" or ".cmd";
 
     /// <summary>
-    /// A target a batch program must not be given (docs/axit/security-audit-2026-10-24.md S-3): a name holding one of
+    /// A target a batch program must not be given (docs/axkit/security-audit-2026-10-24.md S-3): a name holding one of
     /// cmd.exe's special characters, which would run what follows as a command; null when every target is safe or the
     /// program is no batch file.
     /// </summary>

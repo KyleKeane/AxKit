@@ -1,39 +1,39 @@
-# The AI tools' first stage (docs/axit/mcp.md MC-6): off by default, turned on from the menu, a client paired in the
+# The AI tools' first stage (docs/axkit/mcp.md MC-6): off by default, turned on from the menu, a client paired in the
 # window, the reads, the refusals, off again. The runner is the MCP client (mcp start, mcp call, expect mcp); it never
-# calls axit_open on an app it may open, which would start a window on the user's own desktop.
-file home\Axit\axdown.json {"checkForUpdates": false}
+# calls axkit_open on an app it may open, which would start a window on the user's own desktop.
+file home\AxKit\axdown.json {"checkForUpdates": false}
 file notes.md First line of the notes.\nSecond line, for the AI tools.
 start down {temp}\notes.md
 
 # MC-6.1: off until the user turns it on; every call is refused before anything else.
 mcp start
-mcp call axit_windows
-expect mcp error: Axit's AI tools access is off
+mcp call axkit_windows
+expect mcp error: axKit's AI tools access is off
 
-# On from the Axit menu, AI tools: asked once. The default turns it on and adds Axit to Claude Code, which a test run
+# On from the axKit menu, AI tools: asked once. The default turns it on and adds axKit to Claude Code, which a test run
 # never does (the user's Claude Code settings), and says so; or, without Claude Code here, Turn on alone.
-menu Let AI tools read and open Axit
+menu Let AI tools read and open axKit
 expect state "notice":"Turn on AI tools?"
 keys enter
 expect said AI tools on
 try said Not in a test run
 
 # MC-6.4: a client not paired is asked about in the window; Deny is the default, so Escape refuses.
-mcp call axit_windows
-expect state "notice":"axAutomate asks to use Axit"
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
 wait 1500
 keys escape
 expect mcp error: The user did not allow axAutomate
 
 # A Deny holds for a minute: asked again at once, the client is refused without a notice.
-mcp call axit_windows
+mcp call axkit_windows
 expect mcp not asked again within a minute
-refuse state asks to use Axit
+refuse state asks to use axKit
 
 # A new session of the client (a new broker) is asked again; Allow pairs, and the call that waited goes on.
 mcp start
-mcp call axit_windows
-expect state "notice":"axAutomate asks to use Axit"
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
 wait 1500
 # The focus is on the notice's text; Tab moves to the reminder's box (AX-11.4), Space checks it, Tab to Allow.
 keys tab
@@ -43,42 +43,42 @@ expect said ! checked
 keys tab
 expect focus &Allow
 keys enter
-expect said axAutomate may read Axit
+expect said axAutomate may read axKit
 expect mcp "app": "axDown"
 
-# MC-6.5: the reads, by the id axit_windows gave.
-mcp call axit_window_text {"window":"{window}"}
+# MC-6.5: the reads, by the id axkit_windows gave.
+mcp call axkit_window_text {"window":"{window}"}
 expect mcp First line of the notes.
-mcp call axit_window_state {"window":"{window}"}
+mcp call axkit_window_state {"window":"{window}"}
 expect mcp notes.md
-mcp call axit_window_commands {"window":"{window}"}
+mcp call axkit_window_commands {"window":"{window}"}
 expect mcp "label": "Save as..."
-mcp call axit_apps
+mcp call axkit_apps
 expect mcp "verb": "pass"
-mcp call axit_window_said {"window":"{window}"}
-expect mcp axAutomate may read Axit
+mcp call axkit_window_said {"window":"{window}"}
+expect mcp axAutomate may read axKit
 
 # MC-4.1: an axPass window serves no pipe, so it is never listed.
-file home\Axit\axpass.json {"checkForUpdates": false}
+file home\AxKit\axpass.json {"checkForUpdates": false}
 start pass
 use 1
-mcp call axit_windows
+mcp call axkit_windows
 refuse mcp axPass
 expect mcp "title": "notes.md - axDown"
 
 # The refusals: an app that starts a program, a window that is not there, a path that is not a full one.
-mcp call axit_open {"app":"claude"}
+mcp call axkit_open {"app":"claude"}
 expect mcp error: axClaude starts a program
-mcp call axit_window_text {"window":"0000000000000000"}
+mcp call axkit_window_text {"window":"0000000000000000"}
 expect mcp error: No such window
-mcp call axit_open {"app":"down","path":"notes.md"}
+mcp call axkit_open {"app":"down","path":"notes.md"}
 expect mcp error: The path must be a full path
 
 # MC-6.6: every call in the log, by its tool.
-run findstr /c:"axit_window_text" home\Axit\mcp-audit.log
+run findstr /c:"axkit_window_text" home\AxKit\mcp-audit.log
 
 # Off again from the menu: the next call is refused at once.
-menu Let AI tools read and open Axit
+menu Let AI tools read and open axKit
 expect said AI tools off
-mcp call axit_windows
-expect mcp error: Axit's AI tools access is off
+mcp call axkit_windows
+expect mcp error: axKit's AI tools access is off

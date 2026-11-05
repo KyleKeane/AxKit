@@ -4,7 +4,7 @@ Run with NVDA before a release, on the files of `manual_tests/axtask` (made and 
 `.\manual_tests\prepare.ps1 axtask`), after `.\run-axtask.ps1 manual_tests\axtask\tasks`, never on the folder of your
 real tasks. The folder holds the lists `Home` (`Fix the tap`, due 2026-10-30; `Water plants`, done) and `Shopping`
 (`Milk`, a plain item; `Washer`), and `Course plan` (`Week one`) in the section Work. Every step says what NVDA should read; a step
-that reads differently is a defect. The specifications are `docs/axit/item-apps.md` (IA-n.m) and
+that reads differently is a defect. The specifications are `docs/axkit/item-apps.md` (IA-n.m) and
 `docs/axtask/SPEC.md` (TK-n.m).
 
 ## 1. Start and moving (IA-2, IA-3)

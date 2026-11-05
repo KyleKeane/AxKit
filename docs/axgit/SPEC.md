@@ -1,11 +1,11 @@
 # axGIT — Specification
 
-axGIT is the fourth app of the Axit bundle (`docs/axit/SPEC.md`): a git manager for one repository, for a blind
-developer who uses the NVDA screen reader. Built 2026-10-18 and released in Axit 2.12.0; the whole test plan passed under NVDA on
-2026-10-22 (the record: `docs/axit/nvda-test-record.md`); what each release brought is section 8. The document is kept
+axGIT is the fourth app of the axKit bundle (`docs/axkit/SPEC.md`): a git manager for one repository, for a blind
+developer who uses the NVDA screen reader. Built 2026-10-18 and released in axKit 2.12.0; the whole test plan passed under NVDA on
+2026-10-22 (the record: `docs/axkit/nvda-test-record.md`); what each release brought is section 8. The document is kept
 in step with the code (a behaviour change updates it in the same commit).
 Requirements are numbered `AG-n.m` and decisions `AG-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and
-AX-9 (the Axit menu), are cited by number and not repeated. In axGIT's code and documents, "SPEC.md" means this file.
+AX-9 (the axKit menu), are cited by number and not repeated. In axGIT's code and documents, "SPEC.md" means this file.
 
 ## 1. Summary
 
@@ -49,7 +49,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
    line; Ctrl+Tab back to the list.
 3. Ctrl+2: "Log, 200 commits. 3a1f2c0 2026-10-18 Kyle: Release 2.11.0, 1 of 200". Enter: the commit's files and
    message in the details.
-4. Ctrl+3: "Branches, 2. main, current, origin/main, 1 ahead". Down, Enter on `axit`: "Switched to axit". Ctrl+Shift+H:
+4. Ctrl+3: "Branches, 2. main, current, origin/main, 1 ahead". Down, Enter on `axkit`: "Switched to axkit". Ctrl+Shift+H:
    "Pushed".
 5. In axDown on `docs/plan.md`, Alt+F, I, G: axGIT on the repository that holds the file. Ctrl+1 shows it among the
    changes if it changed.
@@ -58,8 +58,8 @@ opens in the editor for its type (AG-1.4, AG-D1).
 
 ### AG-1 Launch
 
-- AG-1.1 `Axit.exe git [<folder or file>]`; the console command `axgit`; the Start menu entry "Axit axGIT"; axGIT under
-  "Open with Axit" on folders in File Explorer (AX-2.3). A folder or file given alone to `Axit.exe` still means axClaude or an editor
+- AG-1.1 `AxKit.exe git [<folder or file>]`; the console command `axgit`; the Start menu entry "axKit axGIT"; axGIT under
+  "Open with axKit" on folders in File Explorer (AX-2.3). A folder or file given alone to `AxKit.exe` still means axClaude or an editor
   (AX-1.2); axGIT is always named by its verb.
 - AG-1.2 The repository is the one that holds the path: `git rev-parse --show-toplevel` from the folder (or the file's
   folder). Without a path, the last repository opened, or none: the window opens with "No repository" and Open
@@ -70,7 +70,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   `--version`, the settings (`axgit.json`), then `GitForm`.
 - AG-1.4 **To and from the other windows.** axClaude's Session → Show current folder in ▸ **axGIT** starts axGIT on
   the project folder (axClaude FR-8.2); axDown's and axJSON's File → Show current file in ▸ **axGIT** on the file
-  (axDown AD-4.1). Each is a new window, a new process (`AxitMenu.Start`), found again in the Axit menu's Open windows
+  (axDown AD-4.1). Each is a new window, a new process (`AxKitMenu.Start`), found again in the axKit menu's Open windows
   (AX-9.3). From axGIT, Repository → Show current repository in ▸ **File Explorer** (Ctrl+W), ▸ **axClaude**
   (a new axClaude on the repository's folder), ▸ **axTerminal** (a shell there, docs/axterminal/SPEC.md AT-1.5) and
   ▸ **axFile** (the folder listed, docs/axfile/SPEC.md AF-1.3), and Changes → **Open file in editor** (Ctrl+E) opens
@@ -177,7 +177,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   Discard changes… Delete | ─ | Commit… Ctrl+Enter. **Branches (B):** Switch to branch Enter | New branch… Ctrl+N |
   ─ | Fetch Ctrl+Shift+F | Pull Ctrl+Shift+L | Push Ctrl+Shift+H. **View (V):** Changes Ctrl+1 | Log Ctrl+2 |
   Branches Ctrl+3. **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text
-  size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Axit (A)**
+  size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **axKit (A)**
   (AX-9). **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Git resources ▸ (git-scm.com | Pro Git book).
   Every item has a mnemonic (AX-7.4).
 - AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
@@ -206,10 +206,10 @@ one). A failure that git explains in one line is announced as "Failed: <line>"; 
 
 ### AG-8 Settings, status
 
-- AG-8.1 `%APPDATA%\Axit\axgit.json` (AX-5.3; `GitSettings`): `fontFamily`, `fontSize`, `fontBold`,
+- AG-8.1 `%APPDATA%\AxKit\axgit.json` (AX-5.3; `GitSettings`): `fontFamily`, `fontSize`, `fontBold`,
   `checkForUpdates`, `recentRepositories` (ten, newest first), `window`. The defaults are the Windows font, the update
   check on, no repositories.
-- AG-8.2 The log is `%LOCALAPPDATA%\Axit\logs\axgit.log`: every git command by its subcommand ("git commit") with its
+- AG-8.2 The log is `%LOCALAPPDATA%\AxKit\logs\axgit.log`: every git command by its subcommand ("git commit") with its
   exit code and duration, never its arguments (a commit's message, the paths; until 2026-10-23 the whole argument
   list was logged) nor its output beyond the first line of an error. A git command that cannot end (a program it
   started keeps its output open) is cut off at the timeout like one that hangs, with what was read so far (AG-1.5).
@@ -220,24 +220,24 @@ one). A failure that git explains in one line is announced as "Failed: <line>"; 
 src/AxGit.Core/   class library (net10.0): GitRunner (git.exe as a process: arguments in, exit code and texts out,
                   async, with the repository and the environment), GitStatus (porcelain v2 to ChangedFile records and
                   the branch state), GitLog (the log lines to Commit records), GitBranches (the branch lines to Branch
-                  records), GitSettings; references Axit.Core
+                  records), GitSettings; references AxKit.Core
 src/AxGit/        class library (net10.0-windows): AxGitApp (Run, Usage), GitForm (the window), AxGitKeys, HelpText
-                  (F1 text, the embedded user guide); references AxGit.Core, Axit.Core, Axit.Forms
+                  (F1 text, the embedded user guide); references AxGit.Core, AxKit.Core, AxKit.Forms
 tests/AxGit.Tests/ GitStatusTests, GitLogTests, GitBranchesTests, GitRunnerTests (the argument list and the settings):
                   the parsers and the labels, from recorded git output, no git process
 docs/axgit/       this spec, user-guide.md (embedded), nvda-test-plan.md
 ```
 
-`GitForm` derives from the bundle's window base, `Axit.Forms/AxitForm` (bundle AX-6.5), which holds the notice flow,
+`GitForm` derives from the bundle's window base, `AxKit.Forms/AxKitForm` (bundle AX-6.5), which holds the notice flow,
 the fonts, the window's place, find and the update flow; the base was made from the editor shell when axGIT would
 have been the third copy of them.
 
 ## 6. Design decisions
 
 - **AG-D1 A window per repository, reached from where the user is.** One window holds one thing (bundle B-2), so a
-  repository gets a window named after it, and the Axit menu finds it again. The worry was a window detached from
+  repository gets a window named after it, and the axKit menu finds it again. The worry was a window detached from
   the file or folder under work; the answer is the way in and out: the "Show current … in ▸" submenus the other
-  windows already keep for an Axit app beside File Explorer open axGIT on the repository of the folder or file the
+  windows already keep for an axKit app beside File Explorer open axGIT on the repository of the folder or file the
   user is in, and axGIT's own submenu sends back. Inside axClaude or the editors it would have been a Git menu three
   times over with a second set of lists in windows built around one thing; and in axClaude much of it can be asked of
   Claude, so axGIT's worth is the quick, deterministic read of a repository without spending a turn.
@@ -265,7 +265,7 @@ have been the third copy of them.
 
 - First draft on 2026-10-18, released in 2.12.0 the same day: AG-1 to AG-8 built; heard under NVDA by the user:
   the start from axClaude and axDown, the three views, a diff, staging and unstaging, the notices, Ctrl+E into
-  axDown, and the way back through the Axit menu; `docs/axgit/nvda-test-plan.md` sections 3.5 to 4.5 (commit,
+  axDown, and the way back through the axKit menu; `docs/axgit/nvda-test-plan.md` sections 3.5 to 4.5 (commit,
   discard, branches, fetch, pull, push) are still to run. The window moved onto the bundle's window base the same
   day (AX-6.5).
-- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axit/nvda-test-record.md`.
+- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axkit/nvda-test-record.md`.

@@ -1,10 +1,10 @@
 using AxClip.Core;
-using Axit.Forms;
+using AxKit.Forms;
 
 namespace AxClip;
 
 /// <summary>
-/// axClip's entry point inside Axit (docs/axit/SPEC.md AX-1.7; SPEC.md CP-1.1): <c>Axit.exe clip [--hidden]</c> calls
+/// axClip's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md CP-1.1): <c>AxKit.exe clip [--hidden]</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/>. One axClip runs at a time, held by a named
 /// mutex: a start while it runs hands "show" to its hidden window (<see cref="AppMessage"/>) and ends, or with
 /// --hidden just ends; otherwise <see cref="ClipForm"/> runs, hidden with --hidden. As axStart's (AS-1.2).
@@ -14,7 +14,7 @@ public static class AxClipApp
     public const string Name = "axClip";
 
     public const string Usage = """
-        Usage: Axit clip [--hidden]
+        Usage: axKit clip [--hidden]
                axclip               the same, as the installed console command
 
           (nothing)         axClip's search field, in front; axClip then keeps running and its hotkey brings it back
@@ -42,7 +42,7 @@ public static class AxClipApp
                 }
             }
 
-            _one = new Mutex(initiallyOwned: true, @"Local\Axit.AxClip", out var first);
+            _one = new Mutex(initiallyOwned: true, @"Local\AxKit.AxClip", out var first);
             if (!first)
             {
                 _one.Dispose();

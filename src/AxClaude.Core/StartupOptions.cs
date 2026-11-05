@@ -1,9 +1,9 @@
 namespace AxClaude.Core;
 
 /// <summary>
-/// Command line: <c>Axit claude [&lt;folder&gt;] [--project &lt;folder&gt;] [--claude &lt;path&gt;] [--cols N] [--rows N] [--no-ax]
-/// [--record &lt;file.vt&gt;] [-- claude arguments]</c> (the console command <c>axclaude</c> stands for <c>Axit claude</c>;
-/// a folder alone also reaches here, docs/axit/SPEC.md AX-1). Values not given fall back to the settings file.
+/// Command line: <c>axKit claude [&lt;folder&gt;] [--project &lt;folder&gt;] [--claude &lt;path&gt;] [--cols N] [--rows N] [--no-ax]
+/// [--record &lt;file.vt&gt;] [-- claude arguments]</c> (the console command <c>axclaude</c> stands for <c>axKit claude</c>;
+/// a folder alone also reaches here, docs/axkit/SPEC.md AX-1). Values not given fall back to the settings file.
 /// <see cref="ClaudeArgs"/> is null when no <c>--</c> was given (the window then uses <c>--continue</c>, FR-9.1) and
 /// empty after a bare <c>--</c>.
 /// </summary>
@@ -17,7 +17,7 @@ public sealed record StartupOptions(
     IReadOnlyList<string>? ClaudeArgs)
 {
     public const string Usage = """
-        Usage: Axit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [-- claude arguments]
+        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [-- claude arguments]
                axclaude ...  the same, as the installed console command
 
           <folder>            the project folder (default: the current folder, or the last one used)

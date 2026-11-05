@@ -1,10 +1,10 @@
 using AxProcess.Core;
-using Axit.Forms;
+using AxKit.Forms;
 
 namespace AxProcess;
 
 /// <summary>
-/// axProcess's entry point inside Axit (docs/axit/SPEC.md AX-1.7; SPEC.md PR-1.2): <c>Axit.exe process</c> calls
+/// axProcess's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md PR-1.2): <c>AxKit.exe process</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the settings and <see cref="ProcessForm"/>.
 /// It takes no path; any argument is reported with the usage text.
 /// </summary>
@@ -13,7 +13,7 @@ public static class AxProcessApp
     public const string Name = "axProcess";
 
     public const string Usage = """
-        Usage: Axit process
+        Usage: axKit process
                axprocess         the same, as the installed console command
 
           --help, --version  this text, or the version

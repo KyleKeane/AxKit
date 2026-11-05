@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using static Axit.Forms.User32;
+using static AxKit.Forms.User32;
 
 namespace AxFile;
 

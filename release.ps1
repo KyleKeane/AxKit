@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Releases a new version of Axit, the bundle axClaude is one app of: sets the version, commits, tags and pushes. GitHub Actions then builds, tests,
+  Releases a new version of axKit, the bundle axClaude is one app of: sets the version, commits, tags and pushes. GitHub Actions then builds, tests,
   publishes the zip and creates the GitHub release that installed copies update themselves from.
 
 .DESCRIPTION
@@ -10,14 +10,14 @@
     2. checks the "## <version>" section: it is not empty, and every bullet starts with its app or apps ("- axFile: ",
        "- axDown, axJSON: ") or with "- For developers: ",
     3. runs every test project in Release, as the workflows do (test.ps1),
-    4. sets <Version> in src/Axit/Axit.csproj,
+    4. sets <Version> in src/AxKit/AxKit.csproj,
     5. commits CHANGELOG.md and the project file as "Release <version>" and tags v<version>,
     6. pushes main, waits for its build to pass on GitHub (gh run watch), then pushes the tag: a tag never goes up on
        a commit whose build failed there,
     7. waits for the tag's release workflow, which leaves a draft release, then signs its zip with the release key
-       on this machine and publishes it (tools/sign-release.ps1; docs/axit/SPEC.md AX-3.4). The apps install only a
+       on this machine and publishes it (tools/sign-release.ps1; docs/axkit/SPEC.md AX-3.4). The apps install only a
        signed zip, so a release is never published without this step.
-  When it is done, the release is at https://github.com/KyleKeane/Axit/releases and the apps offer it as an update.
+  When it is done, the release is at https://github.com/KyleKeane/AxKit/releases and the apps offer it as an update.
 
 .EXAMPLE
   .\release.ps1 1.0.1
@@ -33,7 +33,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
-$project = Join-Path $root 'src\Axit\Axit.csproj'
+$project = Join-Path $root 'src\AxKit\AxKit.csproj'
 $changelog = Join-Path $root 'CHANGELOG.md'
 $tag = "v$Version"
 
@@ -82,8 +82,8 @@ if (-not (Select-String -Path $changelog -Pattern ('^## ' + [regex]::Escape($Ver
 }
 
 # The section is the release notes and the update notice: it says something, and every bullet names its app or apps,
-# or is for developers, so that a reader of the notes knows where a change is (docs/axit/longevity.md 3.11). The
-# apps are the folders of docs/ (axit among them, for the bundle), matched without regard to case; the notes come
+# or is for developers, so that a reader of the notes knows where a change is (docs/axkit/longevity.md 3.11). The
+# apps are the folders of docs/ (axkit among them, for the bundle), matched without regard to case; the notes come
 # from tools/release-notes.ps1, the script the release workflow runs, which fails on an empty section.
 try {
     $notes = & (Join-Path $root 'tools\release-notes.ps1') -Version $Version -Path $changelog
@@ -117,10 +117,10 @@ if ($updated -eq $xml -and $xml -notmatch "<Version>$([regex]::Escape($Version))
 # Not Set-Content -Encoding utf8: in Windows PowerShell 5.1 that writes a byte order mark.
 [IO.File]::WriteAllText($project, $updated, (New-Object System.Text.UTF8Encoding($false)))
 
-git -C $root add -- CHANGELOG.md src/Axit/Axit.csproj
+git -C $root add -- CHANGELOG.md src/AxKit/AxKit.csproj
 git -C $root commit -q -m "Release $Version"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-git -C $root tag -a $tag -m "Axit $Version"
+git -C $root tag -a $tag -m "axKit $Version"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host "Committed and tagged $tag."
 
@@ -160,7 +160,7 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
 
 git -C $root push -q origin $tag
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-Write-Host "Pushed the tag. GitHub Actions is building the draft release: https://github.com/KyleKeane/Axit/actions"
+Write-Host "Pushed the tag. GitHub Actions is building the draft release: https://github.com/KyleKeane/AxKit/actions"
 
 # AX-3.4 (security audit S-27): the draft is signed here, with the key that never leaves this machine, and only then
 # published; the apps install nothing unsigned.

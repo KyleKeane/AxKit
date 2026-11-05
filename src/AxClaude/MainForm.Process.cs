@@ -1,7 +1,7 @@
 using AxClaude.Core.Pty;
-using Axit.Core;
-using Axit.Core.Pty;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Core.Pty;
+using AxKit.Forms;
 
 namespace AxClaude;
 

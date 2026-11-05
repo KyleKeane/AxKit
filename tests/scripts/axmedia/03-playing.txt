@@ -2,7 +2,7 @@
 # Every sound is the runner's silence. Whether the sound starts, stops, jumps or keeps its pitch is for the ear and
 # stays with the NVDA pass; here the announcements, the list, the title and the status bar are checked.
 
-file home\Axit\axmedia.json {"checkForUpdates":false}
+file home\AxKit\axmedia.json {"checkForUpdates":false}
 mkdir p
 silence p\first.wav 60000
 silence p\second.wav 60000

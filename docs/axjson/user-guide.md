@@ -1,16 +1,16 @@
 # axJSON user guide
 
-axJSON is a small editor for JSON files, part of Axit, made for working with a screen reader: one plain text field with the whole file in it, keys that jump through the file by its structure, and a Format command that lays the file out and repairs the small things that make JSON invalid. It opens one file in one window. The structured view with a field per value is planned for a later version.
+axJSON is a small editor for JSON files, part of axKit, made for working with a screen reader: one plain text field with the whole file in it, keys that jump through the file by its structure, and a Format command that lays the file out and repairs the small things that make JSON invalid. It opens one file in one window. The structured view with a field per value is planned for a later version.
 
 ## Install
 
-Axit installs all its apps at once; see the Axit guide (Axit menu, About, Axit guide). axJSON is "Axit axJSON" in the Start menu, `axjson` in a console, and "Open with" for `.json` files in File Explorer.
+axKit installs all its apps at once; see the axKit guide (axKit menu, About, axKit guide). axJSON is "axKit axJSON" in the Start menu, `axjson` in a console, and "Open with" for `.json` files in File Explorer.
 
 ## Start
 
-- Start menu: Axit axJSON opens an empty document.
-- Console: `axjson settings.json` opens that file; so does `axit settings.json`, since a `.json` file means axJSON.
-- File Explorer: right-click a `.json` file, Open with Axit, axJSON; or Windows' own Open with, axJSON.
+- Start menu: axKit axJSON opens an empty document.
+- Console: `axjson settings.json` opens that file; so does `axkit settings.json`, since a `.json` file means axJSON.
+- File Explorer: right-click a `.json` file, Open with axKit, axJSON; or Windows' own Open with, axJSON.
 
 ## Write and read
 
@@ -58,25 +58,25 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 - **Edit**: Undo, Redo, Cut, Copy, Paste, Select all, Format (Ctrl+Shift+F).
 - **Navigate**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Key, Object, Array, Item and Error.
 - **Options**: Text (Word wrap, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axjson.json in a new axJSON window, and Copy diagnostics).
-- **Axit**: the bundle's menu, the same in every Axit window: New window, Recently closed, Open windows, Open windows by type, Close all windows, Check for updates, Update to the newest version while one is known, and About.
+- **axKit**: the bundle's menu, the same in every axKit window: New window, Recently closed, Open windows, Open windows by type, Close all windows, Check for updates, Update to the newest version while one is known, and About.
 - **Help**: Keyboard shortcuts (F1), this guide, JSON resources (the JSON syntax page and Claude Code's settings documentation, in your browser).
 
 ## Settings
 
-axJSON remembers the font, the text size, word wrap, the recent files and the window's place in `%APPDATA%\Axit\axjson.json`. Options, Developer, Open settings file opens it in a new axJSON window.
+axJSON remembers the font, the text size, word wrap, the recent files and the window's place in `%APPDATA%\AxKit\axjson.json`. Options, Developer, Open settings file opens it in a new axJSON window.
 
 ## Updates
 
-New versions of Axit are published on GitHub, and every app of Axit updates together. When axJSON starts, it asks GitHub once whether there is a newer one; if there is, a notice opens with four buttons. I accept all terms, install and restart downloads and installs the new version, then closes axJSON (asking first about unsaved changes) and starts the new version on the same file; I accept all terms, install and close installs it and closes without starting it again. Later keeps the version you have, and Axit, Update to Axit n offers it until you take it. Axit, Check for updates asks at any time. Axit, About, Version names the version you have and the latest release on GitHub.
+New versions of axKit are published on GitHub, and every app of axKit updates together. When axJSON starts, it asks GitHub once whether there is a newer one; if there is, a notice opens with four buttons. I accept all terms, install and restart downloads and installs the new version, then closes axJSON (asking first about unsaved changes) and starts the new version on the same file; I accept all terms, install and close installs it and closes without starting it again. Later keeps the version you have, and axKit, Update to axKit n offers it until you take it. axKit, Check for updates asks at any time. axKit, About, Version names the version you have and the latest release on GitHub.
 
 ## If something goes wrong
 
 - A file that cannot be opened, is not text, or is larger than 32 MB, is reported in a notice; the window stays open, empty and untitled, so that saving cannot write over the file.
-- An error from axJSON is a notice inside the window. Escape closes it. Options, Developer, Copy diagnostics puts the version, the paths and the last log lines on the clipboard for a bug report; the log is in `%LOCALAPPDATA%\Axit\logs\axjson.log`.
+- An error from axJSON is a notice inside the window. Escape closes it. Options, Developer, Copy diagnostics puts the version, the paths and the last log lines on the clipboard for a bug report; the log is in `%LOCALAPPDATA%\AxKit\logs\axjson.log`.
 
 ## About axJSON
 
-axJSON is part of Axit, made by Dr. Kyle Keane, www.kylekeane.com. It is free software under the GNU AGPL 3 (the `LICENSE` file next to the program), with the terms in `NOTICE.md` (Axit menu, About, Licence): use it, study it, change it and share it; a changed version that is shared gives its source under the same licence and carries a name of its own.
+axJSON is part of axKit, made by Dr. Kyle Keane, www.kylekeane.com. It is free software under the GNU AGPL 3 (the `LICENSE` file next to the program), with the terms in `NOTICE.md` (axKit menu, About, Licence): use it, study it, change it and share it; a changed version that is shared gives its source under the same licence and carries a name of its own.
 
 ## Disclaimer
 

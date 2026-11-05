@@ -1,5 +1,5 @@
 using AxTerminal.Core;
-using Axit.Forms;
+using AxKit.Forms;
 
 namespace AxTerminal;
 

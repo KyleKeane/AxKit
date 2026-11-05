@@ -6,7 +6,7 @@
 # Manual (4.3): Ctrl+Shift+Q on two folders with media and Shift+F10, Q on a chapter start axMedia (behind this window).
 # Manual (4.4): Shift+F10, A, M on a chapter or a folder and A, P on README.md start axMedia or axPreview.
 # Manual (4.5): Enter with axMedia or axPreview made the default program needs Windows' Default apps.
-file home\Axit\axfile.json {"checkForUpdates": false}
+file home\AxKit\axfile.json {"checkForUpdates": false}
 file hand\README.md # Read me\nA text to read.
 file hand\plain.txt A plain text.
 file hand\no-media-here\only-text.txt Ctrl+Enter here says No sound or video files here.
@@ -35,8 +35,8 @@ expect said ! No sound or video files to add
 menu Add to axMedia's queue, Item
 expect said ! No sound or video files to add
 
-# 4.4 Open in Axit, axPreview on a folder: "Not a file".
+# 4.4 Open in axKit, axPreview on a folder: "Not a file".
 keys home
 expect focus "value":"a-folder-for-not-a-file, folder"
-menu axPreview, Item, Open in Axit
+menu axPreview, Item, Open in axKit
 expect said ! Not a file

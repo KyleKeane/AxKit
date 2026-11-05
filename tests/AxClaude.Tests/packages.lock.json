@@ -96,10 +96,10 @@
       "axclaude.core": {
         "type": "Project",
         "dependencies": {
-          "Axit.Core": "[1.0.0, )"
+          "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axit.core": {
+      "axkit.core": {
         "type": "Project"
       }
     }

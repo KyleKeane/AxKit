@@ -1,9 +1,9 @@
 # axClaude, docs/axclaude/nvda-test-plan.md section 2: dialogs and plain conversation.
 # Options, Questions, "Answer from a list" off for steps 1 and 2, set in the run's own settings file before the start;
 # the update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
-file home\Axit\axclaude.json {"checkForUpdates":false,"questionNotices":false}
+file home\AxKit\axclaude.json {"checkForUpdates":false,"questionNotices":false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
-file home\Axit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir plain
 start claude {temp}\plain -- --model haiku
 # Step 1: the trust prompt as plain lines in the conversation, read with Down Arrow.
@@ -183,7 +183,7 @@ expect focus Message to Claude
 # Fails on this build: the second line of the message ("Answer in one line.") stands between the blank line and the
 # reply, and the mode line and "Removed 1 invisible character · review and press Enter to send" end the conversation.
 close
-file home\Axit\axclaude.json {"checkForUpdates":false}
+file home\AxKit\axclaude.json {"checkForUpdates":false}
 mkdir fast
 start claude {temp}\fast -- --model haiku
 expect said trust

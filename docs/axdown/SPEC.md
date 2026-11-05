@@ -1,7 +1,7 @@
 # axDown — Specification
 
-axDown is the second app of the Axit bundle (`docs/axit/SPEC.md`): a barebones editor for Markdown and plain text files
-for a blind developer who uses the NVDA screen reader. Everything in sections 4 and 9 is built and checked with NVDA (the record: `docs/axit/nvda-test-record.md`). The
+axDown is the second app of the axKit bundle (`docs/axkit/SPEC.md`): a barebones editor for Markdown and plain text files
+for a blind developer who uses the NVDA screen reader. Everything in sections 4 and 9 is built and checked with NVDA (the record: `docs/axkit/nvda-test-record.md`). The
 document is kept in step with the code (a behaviour change updates it in the same commit). Requirements are numbered
 `AD-n.m` and decisions `AD-Dn`. The bundle's rules that every app follows, AX-7 (accessibility) and AX-8 (keys), are
 cited by number and not repeated.
@@ -35,9 +35,9 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 
 ## 3. Scenarios
 
-- S1 Open from File Explorer: right-click `notes.md`, Open with Axit, axDown; the window opens with the caret at the start
+- S1 Open from File Explorer: right-click `notes.md`, Open with axKit, axDown; the window opens with the caret at the start
   and NVDA reads the editor's name, which is the file's name.
-- S2 Start empty: Start menu, Axit axDown; an empty document named Untitled; type; Ctrl+S asks for a name.
+- S2 Start empty: Start menu, axKit axDown; an empty document named Untitled; type; Ctrl+S asks for a name.
 - S3 Edit and save: arrows and NVDA's reading keys to move, type, Ctrl+S; "Saved" is spoken, the title loses its
   changed mark.
 - S4 Find: Ctrl+F, type, Enter lands on the match and NVDA reads its line; F3 for the next one; "Not found" when
@@ -45,22 +45,22 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 - S5 Go to a line: Ctrl+G; the field is named with the current line and column; type a number, Enter.
 - S6 Leave with unsaved changes: Alt+F4; a notice asks Save, Don't save or Cancel; Enter saves.
 - S7 The file changed on disk while open: Ctrl+S warns and asks before writing over it.
-- S8 Console: `axdown notes.md`, or `axit notes.md`; `axdown new.md` opens an empty document that gets the name on
+- S8 Console: `axdown notes.md`, or `axkit notes.md`; `axdown new.md` opens an empty document that gets the name on
   the first save.
 
 ## 4. Functional requirements
 
 ### AD-1 Launch
 
-- AD-1.1 `Axit.exe down [<file>]`; the console command `axdown` stands for `Axit down`, and a file alone given to
-  `Axit.exe` or `axit` reaches here (AX-1). `--help` and `--version` answer as in axClaude (FR-9.5 there).
+- AD-1.1 `AxKit.exe down [<file>]`; the console command `axdown` stands for `AxKit down`, and a file alone given to
+  `AxKit.exe` or `axkit` reaches here (AX-1). `--help` and `--version` answer as in axClaude (FR-9.5 there).
 - AD-1.2 With an existing file, it is opened (AD-3). With a path that does not exist, the document is empty and has
   that name; the file is created on the first save. Without a file, the document is empty and called Untitled.
 - AD-1.3 One window, one document (AD-D3). A second file opens a second window, as File Explorer does.
 - AD-1.4 `AxDownApp.Run(args)` is the entry point (AX-1.7): one call into the editor shell's `EditorHost.Run` with
   axDown's `EditorApp` (its name, verb, settings file, file types, F1 text, guide, Markdown keys and resources),
   which names the log, reads the settings (AD-8), opens the shell's `TextEditorForm` and owns the crash handling.
-  The window was axDown's own `EditorForm` until axJSON, the second editor, when it moved to `Axit.Forms` (AX-6.3).
+  The window was axDown's own `EditorForm` until axJSON, the second editor, when it moved to `AxKit.Forms` (AX-6.3).
 
 ### AD-2 The editor
 
@@ -88,7 +88,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   announcement is "Undone" or "Redone", "Nothing to undo" or "Nothing to redo" at the ends (the line is read on
   demand through Go to line, AD-6.4). Save does not clear the history, so a save can be undone past; Open, New and
   the window's close end it: nothing reaches back into an earlier file, window or session, which is the user's
-  rule. The history is pure code, `Axit.Core/EditHistory`, tested: each step holds the changed span's position, the
+  rule. The history is pure code, `AxKit.Core/EditHistory`, tested: each step holds the changed span's position, the
   text removed and the text inserted, found from the text before and after a change by the common prefix and
   suffix, the caret settling which of equal places it was when the texts allow several ("a" typed next to an "a");
   a change made by a typed key (a character, Backspace, Delete) at the open run's caret joins the run, any other
@@ -144,14 +144,14 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   open with an empty, untitled document, so that Save cannot write the empty editor over the file (Save as names a
   new one). A missing file opens as an empty document of that name, created by the first save.
 - AD-3.8 Open, New and Exit check for unsaved changes first (AD-6.1).
-- AD-3.9 All of this is pure code in `Axit.Core/TextDocument` (shared since axJSON; bytes in, text plus encoding plus line ending out,
+- AD-3.9 All of this is pure code in `AxKit.Core/TextDocument` (shared since axJSON; bytes in, text plus encoding plus line ending out,
   and back), unit tested for every encoding and line ending case, with the window only calling it.
 
 ### AD-4 Commands and menus
 
 - AD-4.1 File, shaped as axClaude's Session menu: New (Ctrl+N), Open… (Ctrl+O), Open recent file ▸ (the last ten
   files opened or saved under a name, newest first, those that still exist, kept in the settings, each as its number, a
-  full stop, the file's name and its full path, "1. notes.md (C:\notes\notes.md)", the Axit menu's shape, AX-9.5; choosing one opens it
+  full stop, the file's name and its full path, "1. notes.md (C:\notes\notes.md)", the axKit menu's shape, AX-9.5; choosing one opens it
   in this window after the unsaved-changes question; "No recent files", an item that does nothing, when there are
   none, AX-9.5); then Save (Ctrl+S), Save as… (Ctrl+Shift+S), where every Windows program has them (the standard
   order of a File menu, shared with axClaude's Session menu, whose Save slot is empty, 2.11.0); then Show current file in ▸
@@ -173,22 +173,22 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 - AD-4.4 Help: Keyboard shortcuts (F1), User guide, Markdown resources ▸ (Markdown basics, `https://commonmark.org/help/`;
   GitHub Flavored Markdown, `https://github.github.com/gfm/`; in the browser), as axClaude's Help has Claude Code
   resources; the app's own items only.
-- AD-4.5 Axit: the bundle's menu (AX-9), between Options and Help, the same in every window of Axit: New window (axClaude,
-  axDown), Recently closed (the last ten files and folders any Axit window held, AX-9.4; axDown adds its file when the
-  window closes or opens another); Open windows (the other open Axit windows, most recently used first), Open windows
-  by type (axClaude and axDown, that app's windows, this one checked), Close all windows (every Axit window closes as
-  on Alt+F4, asking about unsaved changes where there are any); Check for updates (Axit n) and, while a newer release
-  is known, Update to Axit n, as axClaude has them (FR-1.10 there, the bundle's `Updater`, AX-3: I accept all terms, install and restart,
+- AD-4.5 axKit: the bundle's menu (AX-9), between Options and Help, the same in every window of axKit: New window (axClaude,
+  axDown), Recently closed (the last ten files and folders any axKit window held, AX-9.4; axDown adds its file when the
+  window closes or opens another); Open windows (the other open axKit windows, most recently used first), Open windows
+  by type (axClaude and axDown, that app's windows, this one checked), Close all windows (every axKit window closes as
+  on Alt+F4, asking about unsaved changes where there are any); Check for updates (axKit n) and, while a newer release
+  is known, Update to axKit n, as axClaude has them (FR-1.10 there, the bundle's `Updater`, AX-3: I accept all terms, install and restart,
   I accept all terms, install and close, Open release page, Later; one progress bar for the download and the in-place install, Cancel
   during the download; after I accept all terms, install and restart axDown starts the new version itself, on the file or empty), and
-  About, the bundle's sections (AX-9.9: Version, Licence, Attribution, Axit guide, Axit on GitHub). Enter on a window
+  About, the bundle's sections (AX-9.9: Version, Licence, Attribution, axKit guide, axKit on GitHub). Enter on a window
   brings it to the front, on a closed file opens it in a new window.
-- AD-4.6 Every menu item has a mnemonic and a shortcut or a shortcut text (AX-7.1); the Axit menu's window items,
+- AD-4.6 Every menu item has a mnemonic and a shortcut or a shortcut text (AX-7.1); the axKit menu's window items,
   made when it opens, have their number as the mnemonic and no shortcut.
 
 ### AD-5 Keys
 
-Every key is bundle-wide (the same in every window of Axit, `Axit.Forms/BundleKeys`) or window-specific
+Every key is bundle-wide (the same in every window of axKit, `AxKit.Forms/BundleKeys`) or window-specific
 (`axDown/AxDownKeys`) (AX-8). The table is the spec of `AxDownKeys`; the F1 text reads from it.
 
 Bundle-wide (AX-8.2): F1 shortcuts; Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move between the window's
@@ -240,9 +240,9 @@ its name (the file's) and the first line.
 
 ### AD-8 Settings
 
-`%APPDATA%\Axit\axdown.json` through the bundle's `SettingsFile` (AX-5): `fontFamily` (null = system), `fontSize`
+`%APPDATA%\AxKit\axdown.json` through the bundle's `SettingsFile` (AX-5): `fontFamily` (null = system), `fontSize`
 (0 = system), `fontBold`, `wordWrap` (true), `checkForUpdates` (true), `recentFiles` (the last ten files opened or saved under a name, newest first, AD-4.1), `window` (placement). A plain class,
-`EditorSettings`, in `Axit.Core` (shared since axJSON, each editor app with its own file), with the sanity checks after loading as `AppSettings` has.
+`EditorSettings`, in `AxKit.Core` (shared since axJSON, each editor app with its own file), with the sanity checks after loading as `AppSettings` has.
 
 ### AD-9 Status bar
 
@@ -257,13 +257,13 @@ reads it with NVDA+End; nothing is spoken automatically.
 
 ### AD-11 Errors and diagnostics
 
-As axClaude's FR-13: an exception in a handler is logged to `%LOCALAPPDATA%\Axit\logs\axdown.log` and shown as a
+As axClaude's FR-13: an exception in a handler is logged to `%LOCALAPPDATA%\AxKit\logs\axdown.log` and shown as a
 notice; Options, Developer, Copy diagnostics puts the version, the paths and the log's tail on the clipboard.
 
 ## 5. User interface
 
 ```
-| File  Edit  Navigate  Options  Axit  Help                         |
+| File  Edit  Navigate  Options  AxKit  Help                         |
 | notes.md (multi-line edit, the whole file)                        |
 |                                                                   |
 | notes.md, unsaved changes | Line 12, Column 4 · UTF-8 · CRLF      |
@@ -277,17 +277,17 @@ size 500×300; the system font and colours, light or dark as Windows is (AX-7.7)
 
 ```
 src/AxDown/        class library (net10.0-windows): AxDownApp (Run, and axDown's EditorApp record), AxDownKeys,
-                   HelpText (F1 text, the embedded user guide); references Axit.Core, Axit.Forms
-src/Axit.Forms/    TextEditorForm (the window), EditorApp, EditorKeys, EditorHost: the text editor shell, axDown's
+                   HelpText (F1 text, the embedded user guide); references AxKit.Core, AxKit.Forms
+src/AxKit.Forms/    TextEditorForm (the window), EditorApp, EditorKeys, EditorHost: the text editor shell, axDown's
                    window until axJSON, shared since (AX-6.2, AX-6.3)
-src/Axit.Core/     TextDocument (read and write with encoding and line ending), EditorSettings and MarkdownOutline,
-                   axDown's pure code, shared since the second use (AX-6.3); tests in tests/Axit.Tests
+src/AxKit.Core/     TextDocument (read and write with encoding and line ending), EditorSettings and MarkdownOutline,
+                   axDown's pure code, shared since the second use (AX-6.3); tests in tests/AxKit.Tests
 docs/axdown/       this spec, user-guide.md (embedded, Help, User guide), nvda-test-plan.md
 ```
 
 Shared pieces axDown uses (AX-6): `OverlayPanel` and `Notice`,
 `ControlArea` (the Go to line field), `EditKeys` (the page and paragraph keys), `Announcer`, `StatusLayout`, the font handling, `Sounds` (the notice chime),
-`BundleKeys`; from `Axit.Core`: `SettingsFile`, `AppPaths`, `Log`, `Updater`, `BundleInfo`.
+`BundleKeys`; from `AxKit.Core`: `SettingsFile`, `AppPaths`, `Log`, `Updater`, `BundleInfo`.
 
 Data flow: `TextDocument.Read(path)` gives text, encoding, mark and line ending; the form puts the text in the
 control; `document.Write(path, text)` writes it back with the encoding, the mark and the line ending it was read with. No background thread: files
@@ -321,11 +321,11 @@ are read and written on the UI thread (a 32 MB file is the ceiling, AD-3.7).
 - **AD-D8 No file watching.** The changed-on-disk check at save time catches the case that loses work; a watcher
   would speak at the wrong moments and add a thread.
 - **AD-D9 Open with, not the default.** axDown registers for `.md`, `.markdown` and `.txt` and is in the Open
-  with Axit submenu of every file; Windows decides defaults (AX B-9).
+  with axKit submenu of every file; Windows decides defaults (AX B-9).
 
 ## 8. Testing
 
-Unit tests (xunit, `tests/Axit.Tests`, where axDown's shared pure code is tested): `TextDocumentTests` with byte arrays for UTF-8 with and without a mark,
+Unit tests (xunit, `tests/AxKit.Tests`, where axDown's shared pure code is tested): `TextDocumentTests` with byte arrays for UTF-8 with and without a mark,
 UTF-16 LE and BE with marks, Windows-1252, `\r\n`, `\n`, `\r` and no line ending, round trips that reproduce the
 bytes, a new document's defaults; `EditorSettingsTests` (AD-8) and `EditHistoryTests` (AD-2.5); `TextJumpsTests`
 and `MarkdownOutlineTests` for the navigation keys (§9). The window has no automated tests; `docs/axdown/nvda-test-plan.md` covers it, and
@@ -333,7 +333,7 @@ the off-screen probe approach of axClaude checks layout and keys without disturb
 
 ## 9. Markdown navigation (headings since 2.1.0, the rest since 2.9.0)
 
-- `Axit.Core/MarkdownOutline` (the bundle's since its second use, AX-6.1): from the text and a caret position, the next and previous element of each kind, outside
+- `AxKit.Core/MarkdownOutline` (the bundle's since its second use, AX-6.1): from the text and a caret position, the next and previous element of each kind, outside
   fenced code blocks (` ``` ` or `~~~`); pure, tested. Headings: a line of one to six `#` followed by a space (or
   hashes alone), after at most three spaces; the text without the marks and closing hashes, and the level, which the
   level keys filter by. Links: `[text](target)`, `[text][ref]`, `<https://…>` and bare addresses starting with
@@ -364,12 +364,12 @@ the off-screen probe approach of axClaude checks layout and keys without disturb
   in-place update (bundle AX-2.8, AX-3.2) run by the user with NVDA from an older build and no file open: one progress
   bar through download and install, "Installed. Restarting", axDown back empty as it was (test plan 7.2).
 - 2.9.0 (2026-10-18): the rest of section 9 (heading levels, links, lists, list items, block quotes, tables; the Next
-  and Previous submenus), the navigation keys in every notice text, the Axit menu (bundle AX-9), and the menus in
+  and Previous submenus), the navigation keys in every notice text, the axKit menu (bundle AX-9), and the menus in
   axClaude's shape (AD-4: Open recent file, Show current file in, Options with Text and Developer, Markdown resources);
   checked by the user with NVDA (test plan sections 3, 5, 6, 7 and 8).
-- 2.9.1 (2026-10-18): the window moved to `Axit.Forms` as the text editor shell shared with axJSON (AD-1.4, AX-6.3);
+- 2.9.1 (2026-10-18): the window moved to `AxKit.Forms` as the text editor shell shared with axJSON (AD-1.4, AX-6.3);
   axDown is its `EditorApp` record, its Markdown keys and its texts. Nothing changed for the user.
 - 2026-10-21: undo and redo over a history of the window's own specified at the user's ask (AD-2.5), for axDown and axJSON
-  alike through the shared shell, and built the same day (`Axit.Core/EditHistory` with its tests; Ctrl+Z, Ctrl+Y and
+  alike through the shared shell, and built the same day (`AxKit.Core/EditHistory` with its tests; Ctrl+Z, Ctrl+Y and
   Ctrl+Shift+Z in the shell; Edit → Undo and Redo); the NVDA pass (test plan 2.2 and 2.6) is still to run.
-- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axit/nvda-test-record.md`.
+- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axkit/nvda-test-record.md`.

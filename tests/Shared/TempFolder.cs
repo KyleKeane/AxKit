@@ -1,4 +1,4 @@
-namespace Axit.TestShared;
+namespace AxKit.TestShared;
 
 /// <summary>
 /// A fresh folder under the temporary path for one test or one test class ("&lt;prefix&gt;-&lt;guid&gt;"), made at once and

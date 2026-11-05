@@ -1,11 +1,11 @@
 # axStart — Specification
 
-axStart is an app of the Axit bundle (`docs/axit/SPEC.md`): a program launcher for a blind developer who uses the
+axStart is an app of the axKit bundle (`docs/axkit/SPEC.md`): a program launcher for a blind developer who uses the
 NVDA screen reader. Specified and built 2026-10-22 at the user's ask, released in 3.4.0 before its NVDA pass (section
 9): "the windows launcher has become very
 bloated and i want a quick global key i hit to then search for a program to launch". The document is kept in step with
 the code (a behaviour change updates it in the same commit). Requirements are numbered `AS-n.m` and
-decisions `AS-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and AX-9 (the Axit menu), are cited by
+decisions `AS-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and AX-9 (the axKit menu), are cited by
 number and not repeated. In axStart's code and documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -48,14 +48,14 @@ taskbar. It works entirely offline (bundle G6).
 
 ### AS-1 Launch, the background process, the hand-over
 
-- AS-1.1 `Axit.exe start [--hidden]`: the background process, the window shown at once unless `--hidden` (the
-  sign-in start). Start menu entry `Axit axStart`, console command `axstart`, the Axit menu's New window ▸ axStart
-  (AX-9). No path is taken; axStart is not in File Explorer's Open with Axit submenu.
+- AS-1.1 `AxKit.exe start [--hidden]`: the background process, the window shown at once unless `--hidden` (the
+  sign-in start). Start menu entry `axKit axStart`, console command `axstart`, the axKit menu's New window ▸ axStart
+  (AX-9). No path is taken; axStart is not in File Explorer's Open with axKit submenu.
 - AS-1.2 **One axStart.** A start while axStart runs hands over to the running one, which shows its window, and ends
   (the bundle's `AppMessage`, `docs/axmedia/SPEC.md` AM-1.3, with a new verb `show`); with `--hidden` it ends without
   showing anything.
-- AS-1.3 **Start with Windows** (Options → General, a setting, on by default): the value `Axit axStart` under the
-  user's Run key (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`), `"<installed Axit.exe>" start --hidden`,
+- AS-1.3 **Start with Windows** (Options → General, a setting, on by default): the value `axKit axStart` under the
+  user's Run key (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`), `"<installed AxKit.exe>" start --hidden`,
   written or removed when the setting flips and checked at each start; only the installed program writes it, naming
   itself, so a development build never puts itself, or an older installed copy that does not know `start`, into the
   sign-in. The installer stops axStart before an install or a removal
@@ -82,7 +82,7 @@ taskbar. It works entirely offline (bundle G6).
   order: a name that starts with the text first, then one whose word starts with it, then any other match; within
   each (placed by the text's first word, so that `win power` sits with the names starting with `win`), the programs
   started from axStart more often first, then by name in File Explorer's order
-  (`Axit.Core/NaturalOrder`). An empty field matches every program, the most started first.
+  (`AxKit.Core/NaturalOrder`). An empty field matches every program, the most started first.
 - AS-2.3 **Starting** (Enter): the selected match, or the first when the selection was never moved, through the shell
   (`ShellExecuteEx` on `shell:AppsFolder\<parsing name>`), so that a packaged app starts as the Start menu starts it;
   the window hides first, so that the program comes up in front. Ctrl+Shift+Enter starts it as administrator (the
@@ -147,14 +147,14 @@ taskbar. It works entirely offline (bundle G6).
 
 ### AS-5 Settings, menus, keys, texts
 
-- AS-5.1 `%APPDATA%\Axit\axstart.json` (AX-5.3): `hotkey` (the key as text, "Ctrl+Shift+Space"), `startWithWindows`
+- AS-5.1 `%APPDATA%\AxKit\axstart.json` (AX-5.3): `hotkey` (the key as text, "Ctrl+Shift+Space"), `startWithWindows`
   (on), `sayFirstMatch` (on), `starts` (each program's display name and how often axStart started it, for the order),
   and the window base's font, update check and window fields (the place is saved as every window's and never
   restored: the window is centred each time it shows).
 - AS-5.2 Menus (AX-6): **axStart (S):** Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
   Ctrl+O | Information Ctrl+I | ─ | Refresh programs F5 | ─ | Hide Escape | Quit axStart. **Options (O):** Hotkey… | Text ▸ (Font… |
   Larger text | Smaller text | Windows text size) | General ▸ (Start with Windows ✓ | Say the first match while typing
-  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Axit (A)** (AX-9).
+  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **axKit (A)** (AX-9).
   **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
   item has a mnemonic (AX-7.4).
 - AS-5.3 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+Plus, Ctrl+Minus, Ctrl+S ("Nothing to save here", the
@@ -169,7 +169,7 @@ taskbar. It works entirely offline (bundle G6).
   location for <name>", "Hotkey <key>", "<key> is taken by another program", "Text size n", "Nothing to save here"
   (Ctrl+S). The notices: Hotkey…, the
   hotkey taken at start, Keyboard shortcuts, User guide, About, the update notice.
-- AS-5.5 The log is `%LOCALAPPDATA%\Axit\logs\axstart.log`: the start, the hotkey registered or refused, the count of
+- AS-5.5 The log is `%LOCALAPPDATA%\AxKit\logs\axstart.log`: the start, the hotkey registered or refused, the count of
   programs read, a start that failed with Windows' message, each showing and each hiding with its reason (Escape, the
   hotkey, a program started, or the process that came to the front, by its program file's name: the one name logged,
   for a hide nobody asked for, 2026-10-22); never the names of the programs started.
@@ -185,21 +185,21 @@ the screen's width and twelve lines of the list high.
 ```
 src/AxStart.Core/    class library (net10.0): ProgramEntry (display name, parsing name, kind, target, from what the
                      shell gives), ProgramMatch (the matching and the order of AS-2.2), StartSettings; references
-                     Axit.Core (whose Hotkey is a key as text and back with the rule of AS-4.2, and whose SignInStart
+                     AxKit.Core (whose Hotkey is a key as text and back with the rule of AS-4.2, and whose SignInStart
                      is the Run key's value; both axStart's until axClip, 2026-10-23)
 src/AxStart/         class library (net10.0-windows): AxStartApp (Run, Usage, the one-instance hand-over), StartForm
-                     (the window, on Axit.Forms' HotkeyForm, which holds the hotkey, the hiding and the foreground:
+                     (the window, on AxKit.Forms' HotkeyForm, which holds the hotkey, the hiding and the foreground:
                      the field with its KeyDown hook, the list, the menus, the keys), AppsFolder (the shell's
                      Applications folder read through IShellItem and IEnumShellItems, and the start through the
-                     shell), AxStartKeys, HelpText; references AxStart.Core, Axit.Core, Axit.Forms
+                     shell), AxStartKeys, HelpText; references AxStart.Core, AxKit.Core, AxKit.Forms
 tests/AxStart.Tests/ ProgramMatchTests (the order, the words, accents, the kinds), StartSettingsTests (the settings);
-                     the hotkey's text both ways and its refusals are tests/Axit.Tests' HotkeyTests
+                     the hotkey's text both ways and its refusals are tests/AxKit.Tests' HotkeyTests
 docs/axstart/        this spec, user-guide.md (embedded), nvda-test-plan.md
 ```
 
-`Axit.Forms/AppMessage` gains the verb `show` and `SendTo`, a hand-over to a window the caller found: axStart's is
-hidden, so the Axit menu's list of visible windows does not have it, and the starting process finds it by its title
-and program (`StartForm.FindRunning`), one axStart being held by the mutex `Local\Axit.AxStart`. The installer stops
+`AxKit.Forms/AppMessage` gains the verb `show` and `SendTo`, a hand-over to a window the caller found: axStart's is
+hidden, so the axKit menu's list of visible windows does not have it, and the starting process finds it by its title
+and program (`StartForm.FindRunning`), one axStart being held by the mutex `Local\AxKit.AxStart`. The installer stops
 axStart before it changes anything, starts it hidden afterwards, and its removal deletes the Run value.
 
 ## 7. Design decisions

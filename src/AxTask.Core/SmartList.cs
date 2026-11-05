@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 using System.Text.Json;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxTask.Core;
 
@@ -11,7 +11,7 @@ namespace AxTask.Core;
 /// </summary>
 public sealed class SmartList
 {
-    public const string Format = "axit-filter 1";
+    public const string Format = "axkit-filter 1";
     public const string AllTasksName = "All tasks";
 
     private readonly JsonArray _conditions;
@@ -59,7 +59,7 @@ public sealed class SmartList
 
         return Directory.GetFiles(top, "*" + ItemFolder.FilterExtension)
             .Select(Read)
-            .OrderBy(list => list.Name, Axit.Core.NaturalOrder.Instance)
+            .OrderBy(list => list.Name, AxKit.Core.NaturalOrder.Instance)
             .ToList();
     }
 
@@ -69,7 +69,7 @@ public sealed class SmartList
         var name = System.IO.Path.GetFileName(path)[..^ItemFolder.FilterExtension.Length];
         try
         {
-            if (JsonNode.Parse(Axit.Core.TextDocument.Read(path).Text, documentOptions: new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip }) is not JsonObject root
+            if (JsonNode.Parse(AxKit.Core.TextDocument.Read(path).Text, documentOptions: new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip }) is not JsonObject root
                 || root["conditions"] is not JsonArray conditions)
             {
                 return Broken(name, path, "no list of conditions");
@@ -132,11 +132,11 @@ public sealed class SmartList
             Func<ItemFile, int> missing = item => item.Document.IndexOf(key) is var i && i >= 0 && Sortable(item.Document.Fields[i]) is { Length: > 0 } ? 0 : 1;
             Func<ItemFile, string> value = item => item.Document.IndexOf(key) is var i && i >= 0 ? Sortable(item.Document.Fields[i]) : string.Empty;
             ordered = ordered is null
-                ? items.OrderBy(missing).ThenBy(value, Axit.Core.NaturalOrder.Instance)
-                : ordered.ThenBy(missing).ThenBy(value, Axit.Core.NaturalOrder.Instance);
+                ? items.OrderBy(missing).ThenBy(value, AxKit.Core.NaturalOrder.Instance)
+                : ordered.ThenBy(missing).ThenBy(value, AxKit.Core.NaturalOrder.Instance);
         }
 
-        return (ordered ?? items.OrderBy(ItemFolder.NameOf, Axit.Core.NaturalOrder.Instance)).ToList();
+        return (ordered ?? items.OrderBy(ItemFolder.NameOf, AxKit.Core.NaturalOrder.Instance)).ToList();
     }
 
     private static string Sortable(ItemField field) => field.Type switch

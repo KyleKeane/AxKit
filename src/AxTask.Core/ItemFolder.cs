@@ -1,4 +1,4 @@
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxTask.Core;
 
@@ -11,7 +11,7 @@ public sealed record FolderLevel(IReadOnlyList<ItemFile> Items, int NotShown);
 /// <summary>The top folder (TK-3a): its lists by name, the Archive's lists, how many items the Archive holds of its own, and what is not shown (items kept in the top folder itself, files that are not filters).</summary>
 public sealed record TopLevel(IReadOnlyList<string> Lists, IReadOnlyList<string> ArchivedLists, int ArchivedItems, int NotShown);
 /// <summary>
-/// The folder of lists on disk (docs/axit/item-apps.md IA-4): a list is a folder, its details <c>list.json</c> in it,
+/// The folder of lists on disk (docs/axkit/item-apps.md IA-4): a list is a folder, its details <c>list.json</c> in it,
 /// an item a JSON file named after its Title. The archive is the top folder's <c>Archive</c> list (IA-D4), and the
 /// smart lists are the top folder's <c>.filter.json</c> files (TK-5.2).
 /// </summary>

@@ -2,7 +2,7 @@
 # The files are those of manual_tests/prepare.ps1 axfile (file-operations, undo-ctrl-z), made in {temp}.
 # Not here: every step that puts something on the clipboard (Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+Shift+C, the Selection
 # menu's Cut, Copy and Copy paths): the test desktop shares the system clipboard with the user.
-file home\Axit\axfile.json {"checkForUpdates": false}
+file home\AxKit\axfile.json {"checkForUpdates": false}
 file ops\a.txt The a.txt of the rename and copy steps.
 file ops\rename-me.txt F2 on me.
 file ops\move-into-new-folder-1.txt Move me.
@@ -164,7 +164,7 @@ expect focus "value":"a.txt"
 
 # 3.7 Manual: the entry's menu as a context menu (Shift+F10, the Applications key) and the menu bar (Alt+I, 3.7a, 3.7b's
 # Alt+S) cannot be opened from the channel; the items and their order are the menu's, checked through the palette's list.
-expect commands "Open, Item, Enter","Editor, Item, Open in Axit, Ctrl\u002BE"
+expect commands "Open, Item, Enter","Editor, Item, Open in axKit, Ctrl\u002BE"
 expect commands "Preview, Item, Shift\u002BEnter","Play folder in axMedia, Item, Ctrl\u002BEnter","Add to axMedia\u0027s queue, Item, Ctrl\u002BShift\u002BQ","Cut, Item, Ctrl\u002BX","Copy, Item, Ctrl\u002BC","Paste, Item, Ctrl\u002BV","Rename, Item, F2","Delete, Item, Delete","New folder, Item, Ctrl\u002BShift\u002BN","New text file, Item, Ctrl\u002BShift\u002BT","Move to folder, Item","Compress to zip, Item","Extract here, Item","Copy path, Item, Ctrl\u002BShift\u002BC","Show in File Explorer, Item, Ctrl\u002BShift\u002BW","Information, Item, Ctrl\u002BI","Properties, Item, Alt\u002BEnter","Windows menu, Item"
 # 3.7b The Selection menu: its items, and its operations never fall back to the current entry.
 expect commands "Select all, Selection, Ctrl\u002BA","Deselect all, Selection, Ctrl\u002BShift\u002BA","Select or deselect this entry, Selection, Space","Select to here, Selection, Shift\u002BSpace","Cut, Selection, Ctrl\u002BX","Copy, Selection, Ctrl\u002BC","Delete, Selection, Delete","Move to folder, Selection","Compress to zip, Selection","Add to axMedia\u0027s queue, Selection, Ctrl\u002BShift\u002BQ","Copy paths, Selection, Ctrl\u002BShift\u002BC"
@@ -181,12 +181,12 @@ menu Deselect all, Selection
 expect said ! None selected
 # Manual (3.7b): Alt+S, C "Copied 2 items" writes the clipboard. Manual (3.8): Ctrl+I inside the open context menu.
 
-# 3.9 Open in Axit on a folder: "Not a file" for the apps that take a file (nothing starts).
+# 3.9 Open in axKit on a folder: "Not a file" for the apps that take a file (nothing starts).
 keys home
 expect focus "value":"bundle, folder"
-menu axDown, Item, Open in Axit
+menu axDown, Item, Open in axKit
 expect said ! Not a file
-menu axPreview, Item, Open in Axit
+menu axPreview, Item, Open in axKit
 expect said ! Not a file
 # Manual (3.9): D on a .txt file and T on a folder start axDown and axTerminal, windows outside this one.
 # Manual (3.10, 3.11, 3.12): Properties, Choose a program, the Windows menu and Open with's own programs are Windows'

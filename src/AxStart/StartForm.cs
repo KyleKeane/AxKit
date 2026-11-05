@@ -1,6 +1,6 @@
 using AxStart.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxStart;
 
@@ -11,7 +11,7 @@ namespace AxStart;
 /// Escape, Alt+F4 and the focus going to another program hide it again. Only Quit axStart ends
 /// the process. The hidden window with its hotkey, its showing and hiding and the rule of the foreground are the
 /// bundle's background window (<see cref="HotkeyForm"/>, since axClip, 2026-10-23); the notices, the fonts, the update
-/// flow and the announcements are the window base under it (<see cref="AxitForm"/>).
+/// flow and the announcements are the window base under it (<see cref="AxKitForm"/>).
 /// </summary>
 public sealed class StartForm : HotkeyForm
 {
@@ -28,7 +28,7 @@ public sealed class StartForm : HotkeyForm
     {
         _settings = settings;
 
-        // ---- menus and keys (AS-3.3, AS-5.2, AS-5.3): one command list (docs/axit/app-kit.md AK-2), each key from the
+        // ---- menus and keys (AS-3.3, AS-5.2, AS-5.3): one command list (docs/axkit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----
         AddMatchKeys(AxStartKeys.NextMatch, AxStartKeys.PreviousMatch, AxStartKeys.FirstMatch, AxStartKeys.LastMatch);
         var start = new ToolStripMenuItem("ax&Start");
@@ -62,8 +62,8 @@ public sealed class StartForm : HotkeyForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Windows &resources",
             [("&Keyboard shortcuts in Windows", "https://support.microsoft.com/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec")]);
 
-        // The bundle's Axit menu (AX-9) sits before Help in every window.
-        _menu.Items.AddRange([start, options, CreateAxitMenu(), help]);
+        // The bundle's axKit menu (AX-9) sits before Help in every window.
+        _menu.Items.AddRange([start, options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         // ---- the field and the matches (AS-3.1, AS-D2): HotkeyForm's, named here ----
@@ -250,7 +250,7 @@ public sealed class StartForm : HotkeyForm
         }
 
         HideWindow(giveBack: false);
-        AxitMenu.Start(Dispatch.AxFile, target);
+        AxKitMenu.Start(Dispatch.AxFile, target);
         Do(GiveForegroundBackLaterAsync);
     }
 

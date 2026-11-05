@@ -1,9 +1,9 @@
 # axClaude, docs/axclaude/nvda-test-plan.md section 10: Claude Code missing, and the installer.
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
 allow error Claude Code was not found
-file home\Axit\axclaude.json {"checkForUpdates":false}
+file home\AxKit\axclaude.json {"checkForUpdates":false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
-file home\Axit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir gone
 # Step 1: a claude.exe that does not exist: the notice "Claude Code was not found" in the conversation's place, the
 # focus in its text, read from its first line; Down: the path tried, the install command, the way back.
@@ -42,7 +42,7 @@ keys ctrl+shift+r
 expect state "notice":"Claude Code was not found"
 keys escape
 expect state "notice":null
-# Steps 2 and 3, publish.ps1, the installer, the Start menu, Explorer's "Open with Axit" and the uninstaller change
+# Steps 2 and 3, publish.ps1, the installer, the Start menu, Explorer's "Open with axKit" and the uninstaller change
 # the user's machine: left manual.
 # (This run ends with a failure after its steps: the window logs "Claude Code was not found" as an ERROR, which the
 # runner counts as a failure of any run; the runner has no way to expect a logged error.)

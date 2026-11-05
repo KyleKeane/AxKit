@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>$(AxitDotNet)</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxAutomate</RootNamespace>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>

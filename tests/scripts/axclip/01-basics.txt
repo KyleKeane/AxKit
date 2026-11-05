@@ -1,15 +1,15 @@
 # axClip: the search field, the match keys and the commands that stay inside the window (docs/axclip/nvda-test-plan.md;
-# SPEC CP-2, CP-4, CP-5.2). Every key here is a command of the window's one list (docs/axit/app-kit.md AK-2), the match
+# SPEC CP-2, CP-4, CP-5.2). Every key here is a command of the window's one list (docs/axkit/app-kit.md AK-2), the match
 # keys HotkeyForm's, so this script is also the check that the list does what the key switch did before it. The hotkey
 # is one nobody uses, so that the run never takes the user's; Start with Windows stays on, which a development build
 # never writes (SignInStart), since off would remove the user's own sign-in value.
 #
 # The test desktop shares the clipboard with the user's session: the script copies three texts of its own, which stay
 # on the clipboard after the run, and every step filters on them, so that nothing the user copies is ever said here.
-file home\Axit\axclip.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F10", "sayFirstMatch": false}
+file home\AxKit\axclip.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F10", "sayFirstMatch": false}
 
 start clip
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axit/app-kit.md AK-2.4).
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
 expect focus Search the clipboard
 

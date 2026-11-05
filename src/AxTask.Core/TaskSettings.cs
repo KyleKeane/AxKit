@@ -1,9 +1,9 @@
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxTask.Core;
 
 /// <summary>
-/// Everything axTask remembers between runs (SPEC.md TK-7), in <c>%APPDATA%\Axit\axtask.json</c> through the
+/// Everything axTask remembers between runs (SPEC.md TK-7), in <c>%APPDATA%\AxKit\axtask.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font, the update check and the window's place from
 /// <see cref="WindowSettings"/>, the top folder, the list open last, and whether done tasks are hidden.
 /// </summary>

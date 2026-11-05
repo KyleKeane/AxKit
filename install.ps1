@@ -1,14 +1,14 @@
 <#
 .SYNOPSIS
-  Installs Axit for the current user, or removes it with -Uninstall. No administrator rights are needed.
+  Installs axKit for the current user, or removes it with -Uninstall. No administrator rights are needed.
 
 .DESCRIPTION
-  Run it from the folder that holds Axit.exe: the extracted zip, or publish\win-x64 after publish.ps1.
-  Axit is one program with several apps inside (docs/axit/SPEC.md AX-2). It copies Axit to
-  %LOCALAPPDATA%\Programs\Axit and creates the ways to start each app, all from the list of apps that Axit.exe apps
+  Run it from the folder that holds AxKit.exe: the extracted zip, or publish\win-x64 after publish.ps1.
+  axKit is one program with several apps inside (docs/axkit/SPEC.md AX-2). It copies axKit to
+  %LOCALAPPDATA%\Programs\AxKit and creates the ways to start each app, all from the list of apps that AxKit.exe apps
   prints (Dispatch.Apps; $apps below):
-    - a Start menu entry per app, "Axit axClaude", "Axit axDown" and so on (type axit in the Start menu to list them),
-    - one submenu in File Explorer's right-click menu, "Open with Axit", on folders (and on a folder's background) and
+    - a Start menu entry per app, "axKit axClaude", "axKit axDown" and so on (type axkit in the Start menu to list them),
+    - one submenu in File Explorer's right-click menu, "Open with axKit", on folders (and on a folder's background) and
       on files, listing the apps that open what was right-clicked: axClaude, axGIT, axTerminal and axFile on folders,
       axDown, axFile and axPreview on every file, axJSON on .json files, axMedia on sound and video files; and axDown
       under Windows' own "Open with" for .md, .markdown and .txt, axJSON for .json, axMedia for the sound and video
@@ -17,14 +17,14 @@
     - axStart, the program launcher, and axClip, the clipboard history, running in the background from sign-in (a value
       under the user's Run key that each writes itself): they are stopped before an install or a removal, and started
       again, hidden, after an install,
-    - the console commands axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc, axclip and axit (a folder
+    - the console commands axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc, axclip and axkit (a folder
       opens axClaude, a file axDown, a .json file axJSON, a sound or video file axMedia): one-line shims in
       %USERPROFILE%\.local\bin, put on the user's PATH when it is not there yet (Claude Code's installer uses the same
       folder; a removal leaves the PATH, since the folder may hold other programs' commands).
-  It also lists Axit in Settings, Apps (Add or remove programs), whose Uninstall runs install.cmd -Uninstall.
-  -Uninstall removes all of that. The settings in %APPDATA%\Axit and the logs in %LOCALAPPDATA%\Axit stay.
+  It also lists axKit in Settings, Apps (Add or remove programs), whose Uninstall runs install.cmd -Uninstall.
+  -Uninstall removes all of that. The settings in %APPDATA%\AxKit and the logs in %LOCALAPPDATA%\AxKit stay.
   An installation of axClaude 1.x, from before the bundle, is removed completely first; its settings file stays in
-  %APPDATA%\AxClaude, and axClaude copies it on its first start under Axit.
+  %APPDATA%\AxClaude, and axClaude copies it on its first start under axKit.
 
 .EXAMPLE
   .\install.ps1                 # install or update
@@ -35,14 +35,14 @@
   install.cmd, next to this script, runs it with the execution policy bypassed: double-click it, or install.cmd -Uninstall.
   Downloaded on its own from the releases page, install.cmd fetches the latest release and runs this script from it.
 
-  The apps' own Update (the Axit menu) runs the downloaded version's copy of this script as
+  The apps' own Update (the axKit menu) runs the downloaded version's copy of this script as
     install.ps1 -InPlace -LogFile <file>
   while the app keeps running (AX-2.8): the new files are written over the old ones, what earlier versions left goes
   (their File Explorer entries, axClaude 1.x's folder and entries, files this version does not ship), and the
-  running Axit.exe is renamed Axit.old.exe first, since a running program file can be renamed but not overwritten;
+  running AxKit.exe is renamed AxKit.old.exe first, since a running program file can be renamed but not overwritten;
   the app then starts the new version itself, and the next start removes the old file. Copies before 2.3.0 call
     install.ps1 -WaitForProcess <pid> [-Start <folder> [-ContinueConversation]] [-StartFile <file>] -LogFile <file>
-  after they have closed; those parameters stay (AX-2.7), which is also how axClaude 1.7.0 becomes Axit.
+  after they have closed; those parameters stay (AX-2.7), which is also how axClaude 1.7.0 becomes axKit.
 #>
 [CmdletBinding()]
 param(
@@ -71,7 +71,7 @@ function Say([string]$text) {
 trap {
     # Where it failed, so that the log and the app's notice say which step it was (until 3.7.2, the message alone).
     $where = if ($_.InvocationInfo -and $_.InvocationInfo.ScriptLineNumber) { " (install.ps1 line $($_.InvocationInfo.ScriptLineNumber): $($_.InvocationInfo.Line.Trim()))" } else { '' }
-    Say "Axit was not installed: $($_.Exception.Message)$where"
+    Say "axKit was not installed: $($_.Exception.Message)$where"
     exit 1
 }
 
@@ -79,26 +79,26 @@ if ($WaitForProcess) {
     Say "Waiting for the app (process $WaitForProcess) to close..."
     try { Wait-Process -Id $WaitForProcess -Timeout 120 -ErrorAction Stop } catch { }
     if (Get-Process -Id $WaitForProcess -ErrorAction SilentlyContinue) {
-        Say "The app is still running after two minutes. The update was not installed; start it from the Axit menu again."
+        Say "The app is still running after two minutes. The update was not installed; start it from the axKit menu again."
         exit 1
     }
 }
 
 $source = Split-Path -Parent $MyInvocation.MyCommand.Path
-$target = Join-Path $env:LOCALAPPDATA 'Programs\Axit'
-$exe = Join-Path $target 'Axit.exe'
+$target = Join-Path $env:LOCALAPPDATA 'Programs\AxKit'
+$exe = Join-Path $target 'AxKit.exe'
 $bin = Join-Path $env:USERPROFILE '.local\bin'
 $programs = [Environment]::GetFolderPath('Programs')
 $classes = 'HKCU:\Software\Classes'
 # The entry in Settings, Apps (Add or remove programs) for this user; its Uninstall runs install.cmd -Uninstall.
-$appsKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Axit'
+$appsKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\AxKit'
 
-# The apps (AX-2), from the program itself: Axit.exe apps prints Dispatch.Apps (src/Axit.Core/Dispatch.cs) as JSON,
-# so a new app of the bundle needs nothing here (docs/axit/app-kit.md AK-4.1). The installation keeps that listing as
+# The apps (AX-2), from the program itself: AxKit.exe apps prints Dispatch.Apps (src/AxKit.Core/Dispatch.cs) as JSON,
+# so a new app of the bundle needs nothing here (docs/axkit/app-kit.md AK-4.1). The installation keeps that listing as
 # apps.json, which an uninstall reads when the program next to it cannot be run. Per app: Name, which gives the Start
-# menu entry "Axit <Name>", the console command <name> and the ProgID Axit.<Name>. Verb: what Axit.exe takes. Icon:
+# menu entry "axKit <Name>", the console command <name> and the ProgID AxKit.<Name>. Verb: what AxKit.exe takes. Icon:
 # the file the Start menu entry and the File Explorer entries show, <Project>.ico. Opens: what the app opens from
-# File Explorer's "Open with Axit" submenu (AX-2.3): 'folders' (a folder, and a folder's background), 'files', or
+# File Explorer's "Open with axKit" submenu (AX-2.3): 'folders' (a folder, and a folder's background), 'files', or
 # both. Types: the file types a files entry is shown on; every file when absent. OpenWith: the file types the app is
 # registered as a program for, under Windows' own "Open with" and in Settings, Default apps (B-9), with the TypeName
 # that Windows shows for them.
@@ -107,18 +107,18 @@ $listingFile = 'apps.json'
 # The first line of every installation's log, before any step that can fail: what is installed on what, for a report
 # when something goes wrong.
 if (-not $Uninstall) {
-    $newExe = Join-Path $source 'Axit.exe'
-    $newVersion = if (Test-Path -LiteralPath $newExe) { (Get-Item -LiteralPath $newExe).VersionInfo.FileVersion } else { 'with no Axit.exe beside install.ps1' }
-    Say "Installing Axit $newVersion$(if ($InPlace) { ' in place, the app running' }) on Windows $([Environment]::OSVersion.Version), PowerShell $($PSVersionTable.PSVersion)"
-    # What the installation changes and what Axit sends, said before anything is changed (docs/axit/code-signing.md: the
+    $newExe = Join-Path $source 'AxKit.exe'
+    $newVersion = if (Test-Path -LiteralPath $newExe) { (Get-Item -LiteralPath $newExe).VersionInfo.FileVersion } else { 'with no AxKit.exe beside install.ps1' }
+    Say "Installing axKit $newVersion$(if ($InPlace) { ' in place, the app running' }) on Windows $([Environment]::OSVersion.Version), PowerShell $($PSVersionTable.PSVersion)"
+    # What the installation changes and what axKit sends, said before anything is changed (docs/axkit/code-signing.md: the
     # signing service's rule that system changes come with a warning and a privacy statement is shown at installation).
-    Say "It installs for your Windows account only, without administrator rights: the program in $target, Start menu entries, console commands in $bin (added to your PATH), File Explorer's Open with Axit and Open with entries, axStart and axClip at sign-in, and an entry in Settings, Apps that uninstalls all of it."
-    Say "Privacy: Axit collects nothing and has no telemetry. On its own it only asks GitHub for the latest release when a window starts; Options, General, Check for updates at start turns that off. PRIVACY.md beside the program says everything Axit contacts and when."
-    Say "Axit is a set of personal tools, shared as they are under the GNU AGPL 3: not a product or a service, with no support and no warranty. Keep backups of what matters. NOTICE.md beside the program has the licence and the reminders."
+    Say "It installs for your Windows account only, without administrator rights: the program in $target, Start menu entries, console commands in $bin (added to your PATH), File Explorer's Open with axKit and Open with entries, axStart and axClip at sign-in, and an entry in Settings, Apps that uninstalls all of it."
+    Say "Privacy: axKit collects nothing and has no telemetry. On its own it only asks GitHub for the latest release when a window starts; Options, General, Check for updates at start turns that off. PRIVACY.md beside the program says everything axKit contacts and when."
+    Say "axKit is a set of personal tools, shared as they are under the GNU AGPL 3: not a product or a service, with no support and no warranty. Keep backups of what matters. NOTICE.md beside the program has the licence and the reminders."
 }
 
 function Get-AppListing {
-    $program = Join-Path $source 'Axit.exe'
+    $program = Join-Path $source 'AxKit.exe'
     $json = $null
     $reason = $null
     if (Test-Path -LiteralPath $program) {
@@ -152,7 +152,7 @@ function Get-AppListing {
             # this file", Smart App Control): installing it would leave a program that cannot start, so nothing is
             # changed and the running version stays. An uninstall goes on with apps.json, which it only reads.
             if (-not $Uninstall) {
-                throw "Windows will not run the new Axit.exe ($($_.Exception.Message)), so nothing was changed and this version stays. On Windows 11 this is most often Smart App Control, which blocks a program that is not code-signed"
+                throw "Windows will not run the new AxKit.exe ($($_.Exception.Message)), so nothing was changed and this version stays. On Windows 11 this is most often Smart App Control, which blocks a program that is not code-signed"
             }
             $reason = "it could not be run: $($_.Exception.Message)"
             $json = $null
@@ -162,10 +162,10 @@ function Get-AppListing {
     }
     $saved = Join-Path $source $listingFile
     if (-not $json -and (Test-Path -LiteralPath $saved)) {
-        Say "Axit.exe apps did not answer ($reason); the list of apps is read from $listingFile instead."
+        Say "AxKit.exe apps did not answer ($reason); the list of apps is read from $listingFile instead."
         $json = Get-Content -LiteralPath $saved -Raw
     }
-    if (-not $json) { throw "the list of apps could not be read from $program (Axit.exe apps): $reason, and there is no $listingFile beside it" }
+    if (-not $json) { throw "the list of apps could not be read from $program (AxKit.exe apps): $reason, and there is no $listingFile beside it" }
     return $json
 }
 $listingJson = Get-AppListing
@@ -183,28 +183,28 @@ foreach ($entry in ($listingJson | ConvertFrom-Json)) {
 }
 # The places that follow from the name.
 foreach ($app in $apps) {
-    $app.Start = Join-Path $programs "Axit $($app.Title).lnk"
+    $app.Start = Join-Path $programs "axKit $($app.Title).lnk"
     # The entry by the name alone, as versions up to 3.7.6 made it for every app.
-    $app.OldStart = Join-Path $programs "Axit $($app.Name).lnk"
+    $app.OldStart = Join-Path $programs "axKit $($app.Name).lnk"
     $app.Shim = Join-Path $bin ($app.Name.ToLower() + '.cmd')
-    $app.ProgId = "Axit.$($app.Name)"
-    # Windows' Open with lists one program per program file, so an app with file types has a hard link of Axit.exe
-    # under its own name for its ProgID; started so, the program hands its arguments to Axit.exe (src/Axit/Program.cs).
+    $app.ProgId = "AxKit.$($app.Name)"
+    # Windows' Open with lists one program per program file, so an app with file types has a hard link of AxKit.exe
+    # under its own name for its ProgID; started so, the program hands its arguments to AxKit.exe (src/AxKit/Program.cs).
     $app.Link = Join-Path $target "$($app.Name).exe"
 }
 $linkNames = @($apps | Where-Object { $_.OpenWith } | ForEach-Object { Split-Path -Leaf $_.Link })
 
-# File Explorer's "Open with Axit" submenu (AX-2.3): on folders, on a folder's background and on files, each listing
+# File Explorer's "Open with axKit" submenu (AX-2.3): on folders, on a folder's background and on files, each listing
 # the apps whose Opens says so, in the order of their names. The registry shows an app only where it belongs, so
 # no app has to check the path it is given.
 $menus = @(
-    @{ Key = "$classes\Directory\shell\Axit"; Opens = 'folders'; Argument = '%1' },
-    @{ Key = "$classes\Directory\Background\shell\Axit"; Opens = 'folders'; Argument = '%V' },
-    @{ Key = "$classes\*\shell\Axit"; Opens = 'files'; Argument = '%1' }
+    @{ Key = "$classes\Directory\shell\AxKit"; Opens = 'folders'; Argument = '%1' },
+    @{ Key = "$classes\Directory\Background\shell\AxKit"; Opens = 'folders'; Argument = '%V' },
+    @{ Key = "$classes\*\shell\AxKit"; Opens = 'files'; Argument = '%1' }
 )
 
 # What earlier versions put on the machine: one entry per app in File Explorer's menus, before the submenu (up to
-# 2.13.0), and axClaude 1.x under its own names; the rest of 1.x's places are the same as Axit's.
+# 2.13.0), and axClaude 1.x under its own names; the rest of 1.x's places are the same as axKit's.
 $oldMenuKeys = @("$classes\Directory\shell\AxClaude", "$classes\Directory\Background\shell\AxClaude",
     "$classes\Directory\shell\AxGit", "$classes\Directory\Background\shell\AxGit",
     "$classes\Directory\shell\AxTerminal", "$classes\Directory\Background\shell\AxTerminal", "$classes\*\shell\AxDown")
@@ -214,7 +214,7 @@ $oldAppsKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\AxClaud
 $oldStartMenu = Join-Path $programs 'AxClaude.lnk'
 # Open with values of earlier versions that this one does not write again: axPreview's own file types up to 3.7.1,
 # every file since.
-$oldOpenWith = @{ 'Axit.axPreview' = @('.txt', '.md', '.markdown', '.log', '.json') }
+$oldOpenWith = @{ 'AxKit.axPreview' = @('.txt', '.md', '.markdown', '.log', '.json') }
 function Remove-OldOpenWith {
     foreach ($progId in $oldOpenWith.Keys) {
         foreach ($extension in $oldOpenWith[$progId]) {
@@ -231,7 +231,7 @@ function Remove-OldOpenWith {
 # (Remove-Installation).
 $places = @($target, $oldTarget, $appsKey, $oldAppsKey, $oldStartMenu) + @($menus | ForEach-Object { $_.Key }) + $oldMenuKeys +
     @($apps | Where-Object { $_.OpenWith } | ForEach-Object { "$classes\$($_.ProgId)" }) +
-    @($apps | ForEach-Object { $_.Start; $_.OldStart } | Select-Object -Unique) + @(Join-Path $bin 'axit.cmd') + @($apps | ForEach-Object { $_.Shim })
+    @($apps | ForEach-Object { $_.Start; $_.OldStart } | Select-Object -Unique) + @(Join-Path $bin 'axkit.cmd') + @($apps | ForEach-Object { $_.Shim })
 
 function Get-Version([string]$path) {
     (Get-Item $path).VersionInfo.FileVersion -replace '^(\d+\.\d+\.\d+).*', '$1'
@@ -248,8 +248,8 @@ $background = @(
 )
 function Stop-Background {
     foreach ($app in $background) {
-        $running = @(Get-CimInstance Win32_Process -Filter "Name = 'Axit.exe'" -ErrorAction SilentlyContinue |
-            Where-Object { $_.CommandLine -match ('^"?[^"]*\\Axit[^"\\]*\.exe"?\s+' + $app.Verb + '(\s|$)') })
+        $running = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe'" -ErrorAction SilentlyContinue |
+            Where-Object { $_.CommandLine -match ('^"?[^"]*\\AxKit[^"\\]*\.exe"?\s+' + $app.Verb + '(\s|$)') })
         foreach ($process in $running) {
             try { Stop-Process -Id $process.ProcessId -Force -ErrorAction Stop; Wait-Process -Id $process.ProcessId -Timeout 10 -ErrorAction SilentlyContinue } catch { }
         }
@@ -260,7 +260,7 @@ function Stop-Background {
 function Start-Background {
     foreach ($app in $background) {
         # Not when the user turned Start with Windows off in the app's settings.
-        $settingsFile = Join-Path $env:APPDATA "Axit\$($app.Settings)"
+        $settingsFile = Join-Path $env:APPDATA "AxKit\$($app.Settings)"
         if (Test-Path -LiteralPath $settingsFile) {
             try { if ((Get-Content -LiteralPath $settingsFile -Raw | ConvertFrom-Json).startWithWindows -eq $false) { continue } } catch { }
         }
@@ -275,11 +275,11 @@ function Start-Background {
 }
 
 function Test-Running {
-    $names = @('Axit', 'axClaude') + @($linkNames | ForEach-Object { [IO.Path]::GetFileNameWithoutExtension($_) })
+    $names = @('AxKit', 'axClaude') + @($linkNames | ForEach-Object { [IO.Path]::GetFileNameWithoutExtension($_) })
     [bool](Get-Process -Name $names -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq $exe -or $_.Path -eq $oldExe -or ($_.Path -and (Split-Path -Parent $_.Path) -eq $target) })
 }
 
-# An app's Open with link (AX-2.3), made again on every install so that it is the Axit.exe just written: one still
+# An app's Open with link (AX-2.3), made again on every install so that it is the AxKit.exe just written: one still
 # running is the old program file and is renamed aside as the program file is, for the next start to remove.
 function Set-OpenWithLink($app) {
     if (Test-Path -LiteralPath $app.Link) {
@@ -293,7 +293,7 @@ function Set-OpenWithLink($app) {
         New-Item -ItemType HardLink -Path $app.Link -Target $exe -ErrorAction Stop | Out-Null
         return $app.Link
     } catch {
-        # A drive without hard links: the ProgID names Axit.exe, and Windows' Open with lists only one of these apps.
+        # A drive without hard links: the ProgID names AxKit.exe, and Windows' Open with lists only one of these apps.
         return $exe
     }
 }
@@ -315,7 +315,7 @@ function Remove-Installation {
         if (Test-Path -LiteralPath $item) { Remove-Item -LiteralPath $item -Recurse -Force }
     }
     foreach ($app in $background) {
-        $value = "Axit $($app.Name)"
+        $value = "AxKit $($app.Name)"
         if ((Test-Path -LiteralPath $runKey) -and (Get-ItemProperty -LiteralPath $runKey).PSObject.Properties[$value]) {
             Remove-ItemProperty -LiteralPath $runKey -Name $value
         }
@@ -335,24 +335,24 @@ if ($Uninstall) {
     # A running app holds its folder: then nothing is removed, so the Apps entry and install.cmd stay to try again.
     Stop-Background
     if (Test-Running) {
-        Say "Axit is still running, so nothing was removed. Close it and uninstall again."
+        Say "axKit is still running, so nothing was removed. Close it and uninstall again."
         exit 1
     }
 
     Remove-Installation
-    Say "Axit was removed. Settings in $env:APPDATA\Axit and the logs in $env:LOCALAPPDATA\Axit were kept."
+    Say "axKit was removed. Settings in $env:APPDATA\AxKit and the logs in $env:LOCALAPPDATA\AxKit were kept."
     exit 0
 }
 
-$sourceExe = Join-Path $source 'Axit.exe'
+$sourceExe = Join-Path $source 'AxKit.exe'
 if (-not (Test-Path -LiteralPath $sourceExe)) {
-    Say "Axit.exe was not found next to this script in $source."
+    Say "AxKit.exe was not found next to this script in $source."
     exit 1
 }
 Stop-Background
 $sameFolder = [string]::Equals((Resolve-Path $source).Path.TrimEnd('\'), $target.TrimEnd('\'), [StringComparison]::OrdinalIgnoreCase)
 if (-not $sameFolder) {
-    # A previous installation, of Axit or of axClaude 1.x, is removed completely first, so nothing of it stays
+    # A previous installation, of axKit or of axClaude 1.x, is removed completely first, so nothing of it stays
     # behind; then this one is installed fresh. The older updaters come here too, after the running app has closed.
     # In place (-InPlace, the apps' own update) the app keeps running: the files are written over the old ones, the
     # running program file is renamed, since it can be renamed but not overwritten or deleted, and what earlier
@@ -360,11 +360,11 @@ if (-not $sameFolder) {
     $found = @($places | Where-Object { Test-Path -LiteralPath $_ })
     if ($found -and -not $InPlace) {
         if (Test-Running) {
-            Say "Axit is still running, so nothing was changed. Close it and run this again."
+            Say "axKit is still running, so nothing was changed. Close it and run this again."
             exit 1
         }
 
-        $what = if (Test-Path -LiteralPath $exe) { 'Axit ' + (Get-Version $exe) }
+        $what = if (Test-Path -LiteralPath $exe) { 'axKit ' + (Get-Version $exe) }
             elseif (Test-Path -LiteralPath $oldExe) { 'axClaude ' + (Get-Version $oldExe) }
             else { 'what is left of an earlier installation' }
         Say "Removing $what before installing..."
@@ -372,15 +372,15 @@ if (-not $sameFolder) {
     }
 
     New-Item -ItemType Directory -Force $target | Out-Null
-    $files = @('Axit.exe', 'README.md', 'LICENSE', 'NOTICE.md', 'PRIVACY.md', 'THIRD-PARTY-NOTICES.md', 'install.ps1', 'install.cmd', $listingFile) + @($apps | ForEach-Object { Split-Path -Leaf $_.Icon }) | Select-Object -Unique
+    $files = @('AxKit.exe', 'README.md', 'LICENSE', 'NOTICE.md', 'PRIVACY.md', 'THIRD-PARTY-NOTICES.md', 'install.ps1', 'install.cmd', $listingFile) + @($apps | ForEach-Object { Split-Path -Leaf $_.Icon }) | Select-Object -Unique
     foreach ($name in $files) {
         $file = Join-Path $source $name
         if (-not (Test-Path -LiteralPath $file)) { continue }
         $destination = Join-Path $target $name
-        if ($InPlace -and $name -eq 'Axit.exe' -and (Test-Path -LiteralPath $destination)) {
-            $old = Join-Path $target 'Axit.old.exe'
+        if ($InPlace -and $name -eq 'AxKit.exe' -and (Test-Path -LiteralPath $destination)) {
+            $old = Join-Path $target 'AxKit.old.exe'
             if (Test-Path -LiteralPath $old) { try { Remove-Item -LiteralPath $old -Force } catch { } }
-            if (Test-Path -LiteralPath $old) { $old = Join-Path $target ('Axit.old.' + (Get-Date -Format 'HHmmss') + '.exe') }
+            if (Test-Path -LiteralPath $old) { $old = Join-Path $target ('AxKit.old.' + (Get-Date -Format 'HHmmss') + '.exe') }
             Move-Item -LiteralPath $destination -Destination $old -Force
             Say "Moved the running program file aside as $(Split-Path -Leaf $old); the next start removes it."
         }
@@ -408,13 +408,13 @@ if (-not $sameFolder) {
 try { Get-ChildItem $target -File | Unblock-File -ErrorAction Stop } catch { }
 
 New-Item -ItemType Directory -Force $bin | Out-Null
-Set-Content -Path (Join-Path $bin 'axit.cmd') -Value @('@echo off', "`"$exe`" %*") -Encoding ascii
+Set-Content -Path (Join-Path $bin 'axkit.cmd') -Value @('@echo off', "`"$exe`" %*") -Encoding ascii
 foreach ($app in $apps) {
     Set-Content -Path $app.Shim -Value @('@echo off', "`"$exe`" $($app.Verb) %*") -Encoding ascii
 }
 
 # The commands work in a console only when their folder is on the PATH. Claude Code's installer puts it there; without
-# Claude Code (docs/axit/SPEC.md G6) this install does, in the user's PATH, which needs no rights. The registry value
+# Claude Code (docs/axkit/SPEC.md G6) this install does, in the user's PATH, which needs no rights. The registry value
 # is read as it is stored (unexpanded) and written back as an expandable string, so that an entry like
 # %USERPROFILE%\... stays one; [Environment]::SetEnvironmentVariable would expand them all into a plain string. The
 # removal leaves the PATH as it is: the folder may hold other programs' commands.
@@ -428,15 +428,15 @@ if ($onPath -notcontains $bin.TrimEnd('\')) {
     # Running programs (Explorer, so that a console opened from the Start menu from now on has the folder) learn of
     # the change from the settings-change message, which [Environment]::SetEnvironmentVariable sends after any write,
     # the removal of a value that does not exist included: that is this line's whole effect.
-    [Environment]::SetEnvironmentVariable('AXIT_PATH_CHANGED', $null, 'User')
-    Say "Added $entry to your PATH: a console opened from now on finds the axit commands."
+    [Environment]::SetEnvironmentVariable('AXKIT_PATH_CHANGED', $null, 'User')
+    Say "Added $entry to your PATH: a console opened from now on finds the axkit commands."
 }
 
 if (-not $NoStartMenu) {
     $shell = New-Object -ComObject WScript.Shell
     foreach ($app in $apps) {
         # Removed first: a file written over one of the same name keeps the old one's capitals, and the shortcut's
-        # name is what the Start menu shows and NVDA reads ("Axit axClaude", once "Axit AxClaude").
+        # name is what the Start menu shows and NVDA reads ("axKit axClaude", once "axKit AxClaude").
         Remove-Item -LiteralPath $app.Start, $app.OldStart -ErrorAction SilentlyContinue
         $link = $shell.CreateShortcut($app.Start)
         $link.TargetPath = $exe
@@ -463,7 +463,7 @@ if (-not $NoContextMenu) {
         # which removes no installation, would otherwise leave an earlier version's entries beside the new ones (their
         # names gained an order number in 4.0.0, so every app would have shown twice; found in review, 2026-11-01).
         Remove-Item -LiteralPath (Join-Path $menu.Key 'shell') -Recurse -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -LiteralPath $menu.Key -Name 'MUIVerb' -Value 'Open with Axit'
+        Set-ItemProperty -LiteralPath $menu.Key -Name 'MUIVerb' -Value 'Open with axKit'
         Set-ItemProperty -LiteralPath $menu.Key -Name 'Icon' -Value "`"$exe`",0"
         Set-ItemProperty -LiteralPath $menu.Key -Name 'SubCommands' -Value ''
         # File Explorer orders the entries by their keys' names: "1 axFile" for a standalone app, "2 axClaude" for an
@@ -516,29 +516,29 @@ $uninstallCmd = Join-Path $target 'install.cmd'
 $appsUninstall = if (Test-Path -LiteralPath $uninstallCmd) { "`"$uninstallCmd`" -Uninstall" }
     else { "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$(Join-Path $target 'install.ps1')`" -Uninstall" }
 $entries = [ordered]@{
-    DisplayName = 'Axit'
+    DisplayName = 'axKit'
     DisplayVersion = (Get-Version $exe)
     Publisher = 'Dr. Kyle Keane'
     DisplayIcon = "`"$exe`",0"
     InstallLocation = $target
     UninstallString = $appsUninstall
-    URLInfoAbout = 'https://github.com/KyleKeane/Axit'
+    URLInfoAbout = 'https://github.com/KyleKeane/AxKit'
 }
 foreach ($name in $entries.Keys) { Set-ItemProperty -LiteralPath $appsKey -Name $name -Value $entries[$name] }
 foreach ($name in 'NoModify', 'NoRepair') { New-ItemProperty -LiteralPath $appsKey -Name $name -Value 1 -PropertyType DWord -Force | Out-Null }
 New-ItemProperty -LiteralPath $appsKey -Name 'EstimatedSize' -Value ([int]((Get-Item $exe).Length / 1KB)) -PropertyType DWord -Force | Out-Null
 
 $names = @($apps | ForEach-Object { $_.Name })
-Say "Installed Axit to $target"
-Say "Settings, Apps: Axit, with Uninstall"
-if (-not $NoStartMenu) { Say "Start menu: $(($names | ForEach-Object { "Axit $_" }) -join ', ') (press the Windows key and type axit to list them)" }
+Say "Installed axKit to $target"
+Say "Settings, Apps: axKit, with Uninstall"
+if (-not $NoStartMenu) { Say "Start menu: $(($names | ForEach-Object { "axKit $_" }) -join ', ') (press the Windows key and type axkit to list them)" }
 if (-not $NoContextMenu) {
     $onFolders = @($apps | Where-Object { $_.Opens -contains 'folders' } | ForEach-Object { $_.Name }) -join ', '
     $onFiles = @($apps | Where-Object { $_.Opens -contains 'files' } | ForEach-Object { if ($_.Types) { "$($_.Name) on $($_.Types -join ', ')" } else { "$($_.Name) on every file" } }) -join ', '
     $openWith = @($apps | Where-Object { $_.OpenWith } | ForEach-Object { "$($_.Name) for $(if ($_.OpenWith -contains '*') { 'every file' } else { $_.OpenWith -join ', ' })" }) -join '; '
-    Say "File Explorer: Open with Axit in the right-click menu: $onFolders on folders; $onFiles. Under Open with: $openWith"
+    Say "File Explorer: Open with axKit in the right-click menu: $onFolders on folders; $onFiles. Under Open with: $openWith"
 }
-Say "Console: $(($names | ForEach-Object { $_.ToLower() }) -join ', '), each taking a folder or file, or axit <folder or file> (shims in $bin)"
+Say "Console: $(($names | ForEach-Object { $_.ToLower() }) -join ', '), each taking a folder or file, or axkit <folder or file> (shims in $bin)"
 if (-not (($env:Path -split ';') -contains $bin)) {
     Say "Note: $bin is not on PATH in this console. Open a new console, or add it, before using the commands."
 }

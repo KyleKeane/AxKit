@@ -1,9 +1,9 @@
 using System.Reflection;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxGit;
 
-/// <summary>The texts axGIT shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>Axit.Core.BundleAbout</c>).</summary>
+/// <summary>The texts axGIT shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>AxKit.Core.BundleAbout</c>).</summary>
 public static class HelpText
 {
     /// <summary>The F1 text (SPEC.md AG-6.3): a first line naming the text's own keys, then one Markdown heading per group (bundle AX-7.2): the bundle-wide keys, axGIT's own, the controls' own. The first line and the bundle's section come from <c>BundleHelp</c>.</summary>

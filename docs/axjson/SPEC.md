@@ -1,8 +1,8 @@
 # axJSON — Specification
 
-axJSON is the third app of the Axit bundle (`docs/axit/SPEC.md`): an editor for JSON files for a blind developer who
+axJSON is the third app of the axKit bundle (`docs/axkit/SPEC.md`): an editor for JSON files for a blind developer who
 uses the NVDA screen reader. Raw mode (AJ-1, AJ-2, AJ-4) is built and checked with NVDA (the record:
-`docs/axit/nvda-test-record.md`); structured mode (AJ-3) is specified and not built (AJ-D3). The document is kept in step with the code (a behaviour
+`docs/axkit/nvda-test-record.md`); structured mode (AJ-3) is specified and not built (AJ-D3). The document is kept in step with the code (a behaviour
 change updates it in the same commit). Requirements are numbered `AJ-n.m` and decisions `AJ-Dn`; the bundle's rules,
 AX-7 (accessibility) and AX-8 (keys), and the editor shell's, axDown's AD-n in `docs/axdown/SPEC.md`, are cited by
 number and not repeated. In axJSON's code and documents, "SPEC.md" means this file.
@@ -47,8 +47,8 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
 
 ### AJ-1 Launch
 
-- AJ-1.1 `Axit.exe json [<file>]`; the console command `axjson`; the Start menu entry "Axit axJSON"; axJSON under Open
-  with for `.json` in File Explorer (B-9: never the default). A `.json` file given to `Axit.exe` or `axit` alone
+- AJ-1.1 `AxKit.exe json [<file>]`; the console command `axjson`; the Start menu entry "axKit axJSON"; axJSON under Open
+  with for `.json` in File Explorer (B-9: never the default). A `.json` file given to `AxKit.exe` or `axkit` alone
   reaches here (AX-1.2); any other file is axDown's.
 - AJ-1.2 One window, one document, as axDown (AD-1.3).
 - AJ-1.3 `AxJSONApp.Run(args)` is the entry point (AX-1.7): one call into the editor shell's `EditorHost.Run` with
@@ -58,7 +58,7 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
 ### AJ-2 Raw mode
 
 - AJ-2.1 The editor, files, find, go to line, line and column on demand, the unsaved-changes and changed-on-disk
-  questions, the notices, the settings, the status bar, the title and the Axit menu are the editor shell's exactly as
+  questions, the notices, the settings, the status bar, the title and the axKit menu are the editor shell's exactly as
   axDown's AD-2 to AD-11 describe them, with "axJSON" where they say "axDown".
 - AJ-2.2 Structure keys, window-specific (`AxJSONKeys`), Ctrl with a letter for the next element of that kind and
   Ctrl+Shift for the previous one (axDown's convention, AD-5): **K** key, **J** object, **L** array, **I** item,
@@ -95,7 +95,7 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
   reached with Tab and Shift+Tab, grouped by object. Kinds: text (EDIT), number (EDIT, checked on leaving), boolean
   (check box), choice (a list of the template's values), list (a list box with Add, Edit, Remove), object (a group,
   or a button that opens the group in place).
-- AJ-3.2 Templates in code for the files the bundle's users have: Claude Code's `settings.json` and `.mcp.json`, Axit's
+- AJ-3.2 Templates in code for the files the bundle's users have: Claude Code's `settings.json` and `.mcp.json`, axKit's
   own settings files; a generic form from the keys for everything else. A template is matched by file name and by the
   keys found.
 - AJ-3.3 Leaving the form writes the values back into the text at their places, keeping the file's formatting around
@@ -122,10 +122,10 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
 
 ```
 src/AxJSON.Core/   class library (net10.0): JsonScanner (tokens, forgiving), JsonParser and JsonTree (the tree, the
-                   repairs, the first problem), JsonOutline (the elements for the keys, Axit.Core.Element), JsonFormat
+                   repairs, the first problem), JsonOutline (the elements for the keys, AxKit.Core.Element), JsonFormat
 src/AxJSON/        class library (net10.0-windows): AxJSONApp (Run, and axJSON's EditorApp record), AxJSONKeys,
-                   HelpText (F1 text, the embedded user guide); references AxJSON.Core, Axit.Core, Axit.Forms
-src/Axit.Forms/    TextEditorForm, EditorApp, EditorKeys, EditorHost: the text editor shell, shared with axDown
+                   HelpText (F1 text, the embedded user guide); references AxJSON.Core, AxKit.Core, AxKit.Forms
+src/AxKit.Forms/    TextEditorForm, EditorApp, EditorKeys, EditorHost: the text editor shell, shared with axDown
 tests/AxJSON.Tests/ JsonOutlineTests, JsonFormatTests
 docs/axjson/       this spec, user-guide.md (embedded), nvda-test-plan.md
 ```
@@ -149,7 +149,7 @@ edit control holds it, every input is accepted without an exception, and the rep
   axJSON the shell plus JSON plus Format, so that one app's folders hold everything about its file type. What differs
   per type is small and is the seam that existed already: the outline that finds the elements, the key pairs
   (`TextJump`), the Navigate menu made from them, and the type's own commands. Tabs for several files in one window
-  were considered and dropped (B-14): one file per window, and the Axit menu (AX-9) lists the open windows.
+  were considered and dropped (B-14): one file per window, and the axKit menu (AX-9) lists the open windows.
 - **AJ-D5 The letters.** A letter keeps its meaning where the concept exists in both editors: L is a list in axDown and
   an array here, I an item in both. A letter with no counterpart is the type's own: K is a key here (a link in axDown,
   NVDA's letter; JSON has no links), E the error. O is Open in every editor window, so an object is J, the letter of
@@ -173,4 +173,4 @@ edit control holds it, every input is accepted without an exception, and the rep
 - 2026-10-21: undo and redo specified (AJ-2.5), the shared shell's history as in axDown, and the structured mode's changes
   as steps of it (AJ-3.5); AJ-2.5 built the same day with axDown's (Ctrl+Z, Ctrl+Y, Edit → Undo and Redo; the NVDA pass,
   test plan 3.1, is still to run), AJ-3.5 comes with the structured mode.
-- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axit/nvda-test-record.md`.
+- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axkit/nvda-test-record.md`.

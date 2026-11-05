@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace AxGit.Core;
 
 /// <summary>
-/// A repository's own programs (SPEC.md AG-1.6; docs/axit/security-audit-2026-10-24.md S-2). A repository that comes in
+/// A repository's own programs (SPEC.md AG-1.6; docs/axkit/security-audit-2026-10-24.md S-2). A repository that comes in
 /// an archive, on a USB stick or a share brings its own <c>.git/config</c> and <c>.git/hooks</c>, which git obeys: a
 /// file monitor run by <c>git status</c>, diff and filter programs, hooks on commit and switch, an ssh command on fetch.
 /// axGIT reads which of these the repository names (reading the configuration runs nothing) and, until the user trusts
@@ -19,7 +19,7 @@ public static partial class GitTrust
 
     /// <summary>
     /// A hooks folder that holds nothing: git looks for <c>NUL\pre-commit</c> and finds no file, on every Windows
-    /// (a folder of Axit's own could be filled by another program).
+    /// (a folder of axKit's own could be filled by another program).
     /// </summary>
     public const string NoHooks = "NUL";
 

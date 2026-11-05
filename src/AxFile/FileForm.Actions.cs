@@ -1,6 +1,6 @@
 using AxFile.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxFile;
 
@@ -18,7 +18,7 @@ public sealed partial class FileForm
     /// <summary>The one line of the Actions list before the first operation (AF-9.1), so that the list is never empty (AX-9.5).</summary>
     private const string NoActionsText = "No actions yet";
 
-    private readonly AxitList _pane = new();
+    private readonly AxKitList _pane = new();
     private readonly ActionLog _actions = new();
 
     /// <summary>The entry on each row of the list as last filled (null on a header line), so that a line moved to another row is told from one changed in place, and the line the user is on is known once the log has changed.</summary>
@@ -232,7 +232,7 @@ public sealed partial class FileForm
             return;
         }
 
-        AxitMenu.Start(Dispatch.AxMedia, folder);
+        AxKitMenu.Start(Dispatch.AxMedia, folder);
     }
 
     /// <summary>
@@ -262,7 +262,7 @@ public sealed partial class FileForm
                 return;
             }
 
-            AxitMenu.StartWith(Dispatch.AxMedia, [.. targets.Select(target => target.Path), "--add"]);
+            AxKitMenu.StartWith(Dispatch.AxMedia, [.. targets.Select(target => target.Path), "--add"]);
             Announce($"Added {count} to axMedia's queue", true);
         });
     }

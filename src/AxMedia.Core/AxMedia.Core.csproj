@@ -3,12 +3,12 @@
   <!-- axMedia's pure code (docs/axmedia/SPEC.md §6): the player seam over Windows' media stack, the queue, a folder's
        media files, the settings; no window. -->
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxMedia.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
   </ItemGroup>
 
 </Project>

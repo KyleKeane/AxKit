@@ -1,5 +1,5 @@
 using AxTask.Core;
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxTask.Tests;
 
@@ -62,7 +62,7 @@ public sealed class FolderTests : IDisposable
     public void ASmartListFilters()
     {
         File.WriteAllText(Path.Combine(_top.Path, "Work soon.filter.json"), """
-            { "format": "axit-filter 1", "match": "all",
+            { "format": "axkit-filter 1", "match": "all",
               "conditions": [ { "field": "Done", "is": false }, { "list": "Work" }, { "field": "Due", "before": "+7" } ] }
             """);
         File.WriteAllText(Path.Combine(_top.Path, "Odd.filter.json"), """{ "conditions": [ { "field": "Due", "soon": true } ] }""");

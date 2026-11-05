@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Builds Axit and starts axClip: run.ps1 with -App clip. Every other argument goes through unchanged.
+  Builds axKit and starts axClip: run.ps1 with -App clip. Every other argument goes through unchanged.
 
 .EXAMPLE
   .\run-axclip.ps1                          # build and start axClip

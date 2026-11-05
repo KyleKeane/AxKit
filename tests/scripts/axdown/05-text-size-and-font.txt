@@ -3,7 +3,7 @@
 # Larger text and Smaller text, which the keys stand for.
 # The sizes assume the Windows system font at 9 points, which a run's fresh settings start from.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\Axit\axdown.json {"checkForUpdates": false}
+file home\AxKit\axdown.json {"checkForUpdates": false}
 file size.md # Text size\n\nA line of text.
 
 start down {temp}\size.md

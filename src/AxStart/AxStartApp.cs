@@ -1,11 +1,11 @@
 using AxStart.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxStart;
 
 /// <summary>
-/// axStart's entry point inside Axit (docs/axit/SPEC.md AX-1.7; SPEC.md AS-1.1, AS-1.2): <c>Axit.exe start
+/// axStart's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AS-1.1, AS-1.2): <c>AxKit.exe start
 /// [--hidden]</c> calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/>. One axStart runs at a
 /// time, held by a named mutex: a start while it runs hands "show" to its hidden window (<see cref="AppMessage"/>)
 /// and ends, or with --hidden just ends; otherwise <see cref="StartForm"/> runs, hidden with --hidden.
@@ -15,7 +15,7 @@ public static class AxStartApp
     public const string Name = "axStart";
 
     public const string Usage = """
-        Usage: Axit start [--hidden]
+        Usage: axKit start [--hidden]
                axstart              the same, as the installed console command
 
           (nothing)         axStart's search field, in front; axStart then keeps running and its hotkey brings the field back
@@ -43,7 +43,7 @@ public static class AxStartApp
                 }
             }
 
-            _one = new Mutex(initiallyOwned: true, @"Local\Axit.AxStart", out var first);
+            _one = new Mutex(initiallyOwned: true, @"Local\AxKit.AxStart", out var first);
             if (!first)
             {
                 // AS-1.2: one axStart; the running one shows its field, unless this start only wanted it running.

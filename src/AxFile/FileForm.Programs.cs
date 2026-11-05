@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using AxFile.Core;
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxFile;
 
@@ -33,7 +33,7 @@ public sealed partial class FileForm
         for (var i = 0; i < programs.Count; i++)
         {
             var program = programs[i];
-            menu.DropDownItems.Add(new ToolStripMenuItem(AxitWindows.Label(i, $"{program.Name} ({program.Path})"), null, (_, _) => RunProgram(program)));
+            menu.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, $"{program.Name} ({program.Path})"), null, (_, _) => RunProgram(program)));
         }
 
         menu.DropDownItems.Add(new ToolStripMenuItem("&Add a program...", null, (_, _) => AddProgram()));
@@ -46,7 +46,7 @@ public sealed partial class FileForm
         for (var i = 0; i < programs.Count; i++)
         {
             var program = programs[i];
-            remove.DropDownItems.Add(new ToolStripMenuItem(AxitWindows.Label(i, program.Name), null, (_, _) => RemoveProgram(program)));
+            remove.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, program.Name), null, (_, _) => RemoveProgram(program)));
         }
 
         menu.DropDownItems.Add(remove);

@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(AxitDotNet)-windows</TargetFramework>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>axDown</RootNamespace>
     <AssemblyName>axDown</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Axit.Core\Axit.Core.csproj" />
-    <ProjectReference Include="..\Axit.Forms\Axit.Forms.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Forms\AxKit.Forms.csproj" />
   </ItemGroup>
 
   <ItemGroup>

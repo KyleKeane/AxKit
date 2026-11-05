@@ -1,19 +1,19 @@
-using Axit.Core;
-using Axit.Forms;
+using AxKit.Core;
+using AxKit.Forms;
 using AxJSON.Core;
 
 namespace AxJSON;
 
 /// <summary>
-/// axJSON's entry point inside Axit (docs/axit/SPEC.md AX-1.7; SPEC.md AJ-1): <c>Axit.exe json [&lt;file&gt;]</c>
-/// calls <see cref="Run"/>, which hands the editor shell (<c>Axit.Forms.EditorHost</c>, <c>TextEditorForm</c>) what
+/// axJSON's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AJ-1): <c>AxKit.exe json [&lt;file&gt;]</c>
+/// calls <see cref="Run"/>, which hands the editor shell (<c>AxKit.Forms.EditorHost</c>, <c>TextEditorForm</c>) what
 /// axJSON is: its name and verb, its settings file, its file types, its texts, its JSON keys, its resources and its
 /// Format command (AJ-D4).
 /// </summary>
 public static class AxJSONApp
 {
     public const string Usage = """
-        Usage: Axit json [<file>]
+        Usage: axKit json [<file>]
                axjson [<file>]  the same, as the installed console command
 
           <file>            the file to open; a path that does not exist yet is a new document with that name

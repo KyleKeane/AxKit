@@ -1,9 +1,9 @@
-using Axit.Core;
+using AxKit.Core;
 
 namespace AxPass.Core;
 
 /// <summary>
-/// Everything axPass remembers between runs (SPEC.md PW-4), in <c>%APPDATA%\Axit\axpass.json</c> through the bundle's
+/// Everything axPass remembers between runs (SPEC.md PW-4), in <c>%APPDATA%\AxKit\axpass.json</c> through the bundle's
 /// <see cref="SettingsFile"/>: the font, the update check and the window's place from <see cref="WindowSettings"/>, the
 /// database open last, where KeePassXC's tool is when it is not where it installs, and the minutes before the window
 /// locks itself. Never the master password nor anything from the database.

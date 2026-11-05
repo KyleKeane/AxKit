@@ -4,7 +4,7 @@ Files and folders for the NVDA test passes, one folder per app. Each app folder 
 
 ## Before a pass
 
-1. Close the Axit windows that have files from here open.
+1. Close the axKit windows that have files from here open.
 2. In PowerShell, from the repository: `.\manual_tests\prepare.ps1`. It takes a few seconds.
 3. It empties every app folder except its `_main.md` and makes all the files again. Run it again after any test that renamed, deleted or moved something, and the folder is as new. `.\manual_tests\prepare.ps1 axfile` does one app alone.
 

@@ -1,22 +1,22 @@
 <#
 .SYNOPSIS
-  The apps of the bundle, read off Dispatch.Apps in src\Axit.Core\Dispatch.cs, for the scripts that run before a
-  build or without one: run.ps1, tools\make-icon.ps1 and tools\new-app.ps1 (docs/axit/app-kit.md AK-4.1).
+  The apps of the bundle, read off Dispatch.Apps in src\AxKit.Core\Dispatch.cs, for the scripts that run before a
+  build or without one: run.ps1, tools\make-icon.ps1 and tools\new-app.ps1 (docs/axkit/app-kit.md AK-4.1).
 
 .DESCRIPTION
-  Dot-source it, then call Get-AxitApps with the repository's root. Each app is an object with Name (as shown,
+  Dot-source it, then call Get-AxKitApps with the repository's root. Each app is an object with Name (as shown,
   "axGIT"), Verb ("git"), Project ("AxGit"), Group, Opens (Nothing, Folders, Files, FilesAndFolders) and Icon
   (Letters, Rgb), in the order of Dispatch.Apps. It reads the lines as Dispatch.cs writes them: each entry starts
   with new("name", Constant, "Project", AppGroup.X, Opens.Y on a line of its own, and its Icon = new("Ab", r, g, b)
   follows before the next entry. The installer runs without the source and reads the same list from the program,
-  Axit.exe apps.
+  AxKit.exe apps.
 
 .EXAMPLE
-  . .\tools\apps.ps1; Get-AxitApps . | Format-Table Name, Verb, Project
+  . .\tools\apps.ps1; Get-AxKitApps . | Format-Table Name, Verb, Project
 #>
 
-function Get-AxitApps([string]$Root) {
-    $file = Join-Path $Root 'src\Axit.Core\Dispatch.cs'
+function Get-AxKitApps([string]$Root) {
+    $file = Join-Path $Root 'src\AxKit.Core\Dispatch.cs'
     $text = [System.IO.File]::ReadAllText((Resolve-Path -LiteralPath $file).ProviderPath)
 
     # The verbs are constants: public const string AxGit = "git";
