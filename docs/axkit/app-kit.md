@@ -61,7 +61,7 @@ After the kit:
   `Program.cs` (one table, verb to `Run`, the taskbar id from the project name); `install.ps1` through `AxKit.exe
   apps`, which prints the list as JSON (AX-1.4), since the installer runs from the zip without the source, with the
   listing kept as `apps.json` for an uninstall that cannot run the program; `run.ps1` and `make-icon.ps1` off
-  `Dispatch.cs` itself through `tools/apps.ps1`, since they run before a build; the project references of `axKit` and
+  `Dispatch.cs` itself through `tools/apps.ps1`, since they run before a build; the project references of `AxKit` and
   `AxKit.Tests`, by a glob over `src`. `tools/new-app.ps1` writes the rest of a new app's places: the folders and a
   first window (one list on `AxKitForm`), the documents as stubs, the run and AxAutomate scripts, the icon, the
   `Dispatch.Apps` entry with its verb and usage, the line in `Program.cs`, the `KeyTests` and `DispatchTests`

@@ -10,7 +10,9 @@ another project on its second use, the bullet says so.
   menu, Open in axKit, the Show in submenus and the inventory test; `Of` (an app by its verb), `PathFor` (the path an
   app is started on from a file or folder in hand), `EditorOf`.
 - `BundleInfo`: the version, read from the executable.
-- `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `axKit` folders; `ConsentFile`.
+- `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `AxKit` folders; `ConsentFile`;
+  `TakeOverOldFolders` (AX-5.4, 2026-11-05), the Axit folders of up to 4.0.0 moved into them on the first start, entry
+  by entry through `TakeOverFolder`, tested in `AppPathsTests`.
 - `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
   for the bundle, `%APPDATA%\AxKit\consent.json`: `Given`, `Record` (a file that cannot be written is logged and the
   window keeps the agreement for its session), `Withdraw`, `WithdrawAll` (Forget AI tools), `Line` for About, Licence;

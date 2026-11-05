@@ -19,7 +19,7 @@ expect said Ready
 expect commands axDown, axKit, New window
 expect commands axClaude, access layer for Claude Code, axKit, New window
 expect commands Close all windows, axKit
-expect commands Check for updates (axKit 3.
+expect commands Check for updates (axKit
 expect commands Version, axKit, About
 expect commands Licence, axKit, About
 expect commands Attribution, axKit, About

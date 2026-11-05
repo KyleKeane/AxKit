@@ -9,10 +9,10 @@ file a.md # Updates
 start down {temp}\a.md
 expect focus a.md
 # 7.1: axKit, "Check for updates (axKit <version>)..." names the version.
-expect commands "Check for updates (axKit 3.
+expect commands "Check for updates (axKit
 # 7.1: About, Version names it too, and the latest release once a check has asked GitHub.
 menu Version
-expect state "notice":"axKit 3.
+expect state "notice":"axKit
 expect state Latest release on GitHub: not checked yet
 keys escape
 expect focus a.md

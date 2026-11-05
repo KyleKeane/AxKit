@@ -212,7 +212,7 @@ expect state "notice":null
 # axKit, About, Version: "axKit <version>", the nine apps, the latest release, the folders; Licence; Attribution; the
 # axKit guide with h by heading (Install, Start, Update, Remove, About).
 menu Version
-expect state "noticeText":"axKit 3.
+expect state "noticeText":"axKit
 expect state axClaude
 expect state axStart
 expect state Latest release on GitHub

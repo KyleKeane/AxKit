@@ -395,7 +395,7 @@ While a notice shows: Tab / Shift+Tab between text, field and buttons; Enter the
 | An answer, in the control area | `Sent: 2, Green` (after Other, `Sent: tulip`), ending `. Next question`, `. Review next` or `. Your words next` when more follows; `Cancelled`; `Saved`; `Question closed` when Claude closed it by itself; `Tick one with Space`; `Closed` when Enter on a screen's line or Escape closes the screen; `Type an answer` |
 | Copy install command | `Copied. Paste it into PowerShell` |
 | Update found at startup | the update notice opens, and a system line is added; `Update n in the axKit menu` only when another notice is open |
-| I accept all terms, install and restart, I accept all terms, install and close | the notice `Updating to AxKit n` with the progress bar (NVDA's own reporting); `Downloaded. Installing`; `Installed. Restarting` or `Installed. Closing`; Cancel: `Update cancelled`, or `Installing, this cannot be cancelled now`; Keep working: `Update installed. It starts with the next axClaude` |
+| I accept all terms, install and restart, I accept all terms, install and close | the notice `Updating to axKit n` with the progress bar (NVDA's own reporting); `Downloaded. Installing`; `Installed. Restarting` or `Installed. Closing`; Cancel: `Update cancelled`, or `Installing, this cannot be cancelled now`; Keep working: `Update installed. It starts with the next axClaude` |
 
 ## 7. Architecture
 

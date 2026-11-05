@@ -10,6 +10,9 @@ public static class McpClaudeCode
     /// <summary>The name axKit has among Claude Code's MCP servers.</summary>
     public const string ServerName = "axkit";
 
+    /// <summary>The name up to 4.0.0, when the bundle was Axit (docs/axkit/SPEC.md B-16): an entry under it goes when this one is added.</summary>
+    public const string OldServerName = "axit";
+
     /// <summary>
     /// Claude Code's program: <c>claude.exe</c> on the PATH's full folders or in its installer's folder, or npm's
     /// <c>claude.cmd</c>; null when it is not installed.
@@ -30,8 +33,8 @@ public static class McpClaudeCode
         return SystemPrograms.OnPath("claude.cmd");
     }
 
-    /// <summary>Claude Code's arguments that remove an earlier entry of axKit's, for every folder.</summary>
-    public static IReadOnlyList<string> RemoveArguments() => ["mcp", "remove", "--scope", "user", ServerName];
+    /// <summary>Claude Code's arguments that remove an earlier entry of axKit's by its name (<see cref="ServerName"/>, <see cref="OldServerName"/>), for every folder.</summary>
+    public static IReadOnlyList<string> RemoveArguments(string name) => ["mcp", "remove", "--scope", "user", name];
 
     /// <summary>Claude Code's arguments that add this AxKit.exe with the argument <c>mcp</c>, for every folder.</summary>
     public static IReadOnlyList<string> AddArguments(string axkitExe) => ["mcp", "add", "--scope", "user", ServerName, "--", axkitExe, "mcp"];

@@ -19,7 +19,7 @@ the review of what the script wrote and for the steps it leaves.
 ## 1. Decide
 
 - The name (`AxThing`), the verb `AxKit.exe` takes (`thing`), the console command (`axthing`), the Start menu entry
-  (`AxKit AxThing`), what in File Explorer opens it (a folder, a file, file types), and what it holds (so that
+  (`axKit AxThing`), what in File Explorer opens it (a folder, a file, file types), and what it holds (so that
   `Dispatch` can route a path to it, if a path means this app).
 - What is in version one and what waits. Barebones first (axDown AD-D2).
 

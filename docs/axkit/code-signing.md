@@ -147,7 +147,7 @@ new, signed program; Windows checks that file when it starts.
   environment, the secret and the variable are still there; SignPath's terms have not changed under the project.
 - Leaving the service: the sign job of the workflow is the one piece that knows it; another signer takes its place
   there, and the check and the zip after it stay.
-- Users on versions up to 4.0.0 whose Smart App Control is on may still be refused the update to the first signed
+- Users on versions up to 5.0.0 whose Smart App Control is on may still be refused the update to the first signed
   release, when Smart App Control blocks the old installer's copy of the new file; the update stops cleanly (AX-3.6)
   and the zip installs by hand from the release page, where Windows checks the signed program.
 

@@ -150,7 +150,9 @@ public abstract partial class AxKitForm
         Announce("Adding axKit to Claude Code", true);
         Do(async () =>
         {
-            await Task.Run(() => RunClaude(claude, McpClaudeCode.RemoveArguments()));
+            // The entries of before go first, the one under the bundle's old name too; either may be missing.
+            await Task.Run(() => RunClaude(claude, McpClaudeCode.RemoveArguments(McpClaudeCode.OldServerName)));
+            await Task.Run(() => RunClaude(claude, McpClaudeCode.RemoveArguments(McpClaudeCode.ServerName)));
             var (code, output) = await Task.Run(() => RunClaude(claude, McpClaudeCode.AddArguments(exe)));
             if (IsDisposed)
             {

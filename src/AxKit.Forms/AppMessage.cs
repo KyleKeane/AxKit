@@ -40,7 +40,7 @@ public static class AppMessage
     private const uint TimeoutMs = 5000;
 
     /// <summary>Marks a message as the bundle's, so that another program's WM_COPYDATA is left alone: the letters AXKIT.</summary>
-    private static readonly nint Signature = 0x41584954;
+    private static readonly nint Signature = unchecked((nint)0x41584B4954L);
 
     /// <summary>Whether a verb brings the window to the front (the window does it itself, once the paths are applied): everything but an add, which leaves the user where they are (AM-D3).</summary>
     public static bool TakesFocus(string verb) => !string.Equals(verb, Add, StringComparison.Ordinal);

@@ -30,7 +30,7 @@ expect focus "value":"docs, folder"
 expect commands "axFile, axKit, New window"
 expect commands "Close all windows, axKit"
 menu Version, axKit, About
-expect state axKit 3.
+expect state axKit
 keys escape
 expect focus "value":"docs, folder"
 # Manual (5.3): Recently closed, Open windows and Open windows by type are filled as the menu opens (not in the palette).

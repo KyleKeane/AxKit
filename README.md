@@ -8,6 +8,8 @@ The tools I use every day as a blind scientist, working with the NVDA screen rea
 
 They are Windows apps in one program with one installer and one updater. Every app is made of native Windows controls that NVDA reads reliably, works without a mouse, says the result of each command once, and keeps its questions and errors inside its own window.
 
+axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commercial product carries that name; the old repository address, github.com/KyleKeane/Axit, redirects here. An installed Axit does not update into axKit by itself: close its windows and run `install.cmd` from the [latest release](https://github.com/KyleKeane/AxKit/releases/latest), which removes Axit and installs axKit, and your settings come along ([docs/axkit/README.md](docs/axkit/README.md), Install).
+
 ## The apps
 
 ### Standalone apps: Windows only, with the network off
@@ -55,7 +57,7 @@ axKit collects nothing: no telemetry, no analytics, no accounts. On its own it m
 
 Every release is built by GitHub Actions from this repository's source, with GitHub's attestation of where it was built, and approved by the maintainer before it is published. Its zip is signed with axKit's release key, which never leaves the maintainer's computer; the installed apps and `install.cmd` install nothing whose signature does not check ([docs/axkit/SPEC.md](docs/axkit/SPEC.md) AX-3.4).
 
-**Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).** From 4.1.0, every release's `AxKit.exe` carries that Windows signature (Authenticode, which Windows' Smart App Control checks), made by the release workflow before the zip is built and approved by hand for each release ([docs/axkit/code-signing.md](docs/axkit/code-signing.md)); Windows names SignPath Foundation as the publisher. Releases up to 4.0.0 carry no such signature, and Smart App Control may refuse them.
+**Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).** From 5.1.0, every release's `AxKit.exe` carries that Windows signature (Authenticode, which Windows' Smart App Control checks), made by the release workflow before the zip is built and approved by hand for each release ([docs/axkit/code-signing.md](docs/axkit/code-signing.md)); Windows names SignPath Foundation as the publisher. Releases up to 5.0.0 carry no such signature, and Smart App Control may refuse them.
 
 Team and roles ([GOVERNANCE.md](GOVERNANCE.md)): Dr. Kyle Keane (www.kylekeane.com), author, reviewer and approver.
 

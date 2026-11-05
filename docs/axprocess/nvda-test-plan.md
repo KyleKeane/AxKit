@@ -26,7 +26,7 @@ Run with NVDA before a release, after `run-axprocess.ps1` (or `.\run.ps1 -App pr
 4. Ctrl+E on Notepad: axFile opens on its folder with notepad.exe selected.
 5. Delete on Notepad: the notice "End Notepad (process N)?" with "Anything unsaved in it is lost."; Escape: nothing happens. Delete, Enter: "Ended Notepad"; the list no longer holds it.
 6. Delete on a system process (System, or svchost): the question, then Enter: "Could not end …: access is denied. It may need administrator rights".
-7. Find axProcess's own item (Ctrl+F, `axKit`; the one whose ID is this window's), Delete: "That is this window: close it with Alt+F4" if it is this process, otherwise the question (another axKit window).
+7. Find axProcess's own item (Ctrl+F, `AxKit`; the one whose ID is this window's), Delete: "That is this window: close it with Alt+F4" if it is this process, otherwise the question (another axKit window).
 8. Ctrl+C: "Copied"; paste in axDown: the line.
 
 ## 3. Services (PR-4)
