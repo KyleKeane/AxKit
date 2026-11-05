@@ -1,12 +1,12 @@
 # Changelog
 
-## 5.0.0
+## 5.0.0 - 2026-11-05
 
 - axKit: the bundle is called axKit, not Axit: a commercial product carries the old name. The program file is `AxKit.exe`, the install folder `%LOCALAPPDATA%\Programs\AxKit`, the Start menu entries `axKit axClaude` and so on, the File Explorer submenu `Open with axKit`, the console command `axkit`, the settings and logs `%APPDATA%\AxKit` and `%LOCALAPPDATA%\AxKit`, the menu in every window the axKit menu, and the repository github.com/KyleKeane/AxKit, where the old address redirects. The apps and their names are unchanged.
 - axKit: an installed Axit, up to 4.0.0, cannot install this update itself: its updater takes a release's files only from the old repository address, which GitHub now rewrites, so its update notice ends with "The release has no Windows zip attached". Close the Axit windows, download `install.cmd` from this release's page (Open release page in that notice) and run it: it removes Axit completely, folder, Start menu entries, File Explorer entries, console commands, sign-in entries and Apps entry, and installs axKit; the first app you start then moves your settings, recently closed list, consents, AI tools' pairings and logs from the Axit folders to the AxKit folders. Axit's entry among Claude Code's MCP servers, `axit`, goes when you add axKit to Claude Code (axKit menu, AI tools).
 - For developers: every project, namespace, folder, class, script, workflow, document, test and automation script was renamed in one pass (`AxKit.sln`, `src/AxKit`, `AxKit.Core`, `AxKit.Forms`, `tests/AxKit.Tests`, `docs/axkit`, `AxKitForm`, `AxKitList`, `AxKitMenu`); the automation variables are `AXKIT_AUTOMATION` and `AXKIT_HOME`, the NVDA add-on `axkitCapture`, the release key's folder `%LOCALAPPDATA%\AxKit-release`, the MCP server `axkit` with the tools `axkit_apps`, `axkit_windows`, `axkit_window_text` and the rest, and the hand-over marker between windows the letters AXKIT. The recorded fixtures keep the name of the folder they were recorded in. The decision and its reasons: bundle SPEC B-16; the installer's removal of Axit: AX-2.6; the folders' move: AX-5.4.
 
-## 4.0.0
+## 4.0.0 - 2026-11-02
 
 - axKit: axKit says plainly what it is: the tools its maker uses every day as a blind scientist, shared in case they help others, not a product or a service, with no support and no warranty. The README, the guides, the installer and `NOTICE.md` say so, and the notes about each tool read as reminders.
 - axKit: axKit is now under the GNU Affero General Public License, version 3 only, instead of MIT (versions up to 3.7.6 stay MIT). `NOTICE.md`, in the zip and in every window under axKit menu, About, Licence, has the licence's additional terms (no warranty, no liability, attribution kept, changed versions marked and given a name and icons of their own, no use of the author's name to promote them, indemnification) and a reminder for each tool.
