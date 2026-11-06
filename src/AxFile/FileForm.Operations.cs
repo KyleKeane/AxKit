@@ -704,6 +704,8 @@ public sealed partial class FileForm
         {
             try
             {
+                // Outside call, program, Windows: opens File Explorer on This PC when the user asks for the current
+                // folder in File Explorer while at the drives level; Windows' own program by its full path.
                 Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, "shell:MyComputerFolder") { UseShellExecute = false })?.Dispose();
             }
             catch (Exception ex) when (ex is Win32Exception or InvalidOperationException)
@@ -785,6 +787,9 @@ public sealed partial class FileForm
     {
         try
         {
+            // Outside call, program, Windows: opens the selected file or folder with the program Windows has for it, as
+            // Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with
+            // dialog follows.
             Process.Start(new ProcessStartInfo(entry.Path) { UseShellExecute = true })?.Dispose();
         }
         catch (Win32Exception ex) when (ex.NativeErrorCode == ErrorNoAssociation)

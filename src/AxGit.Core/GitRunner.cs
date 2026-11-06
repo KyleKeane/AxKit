@@ -105,6 +105,9 @@ public static class GitRunner
         ProcessResult result;
         try
         {
+            // Outside call, program, Git: runs the user's installed git on the repository for one command and reads
+            // what it prints, one process per command, its terminal prompts off; fetch, pull and push reach the
+            // repository's remotes, every other command works on disk (AX-11.11).
             result = await ProcessRun.RunAsync(info, [], timeout, cancellation);
         }
         catch (Win32Exception ex)

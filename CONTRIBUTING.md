@@ -44,7 +44,9 @@ Small commits with imperative subject lines; `main` is always releasable, and la
 - Every change from someone other than the maintainer is reviewed before it is merged; the roles are in
   `GOVERNANCE.md`.
 - A change that makes axKit contact anything new over the network, or start a program it did not start before,
-  updates `PRIVACY.md` in the same pull request.
+  updates `PRIVACY.md` in the same pull request, gives the line that makes the call its `Outside call, <kind>, <what is
+  reached>:` comment, and runs `tools/outside-calls.ps1` so that `docs/axkit/outside-calls.md` lists it (bundle SPEC
+  B-17); the build fails otherwise.
 - Everyone here follows `CODE_OF_CONDUCT.md`.
 
 ## Releases

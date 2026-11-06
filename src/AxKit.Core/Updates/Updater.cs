@@ -61,6 +61,8 @@ public static class Updater
         var version = release.Version.ToString(3);
         var folder = Path.Combine(Folder, version);
         Directory.CreateDirectory(Folder);
+        // Outside call, network, GitHub: downloads the release's signature file from this repository's release page,
+        // the only address the updater accepts; it is checked against the zip before anything is installed (AX-3.4).
         var signature = await Http.GetStringAsync(release.SignatureUrl, cancellation).ConfigureAwait(false);
         // Nothing earlier is kept or reused: earlier downloads are about 45 MB each, and a folder from before could
         // have been changed since it was checked.
@@ -81,6 +83,9 @@ public static class Updater
 
         var zip = Path.Combine(Folder, $"AxKit-{version}{UpdateCheck.ZipSuffix}");
         using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+        // Outside call, network, GitHub: downloads the release's zip from this repository's release page, hashed as it
+        // arrives; it is installed only if the hash matches GitHub's digest of the file and the release key's signature
+        // (AX-3.4).
         using (var response = await Http.GetAsync(release.ZipUrl, HttpCompletionOption.ResponseHeadersRead, cancellation).ConfigureAwait(false))
         {
             response.EnsureSuccessStatusCode();
@@ -173,6 +178,8 @@ public static class Updater
         start.ArgumentList.Add(LogPath);
 
         var output = new StringBuilder();
+        // Outside call, program, Windows: runs the downloaded version's install.ps1 in Windows PowerShell, by its full
+        // path, to install the update for this user while the app keeps running (AX-2.8).
         using var process = Process.Start(start) ?? throw new InvalidOperationException("PowerShell could not be started.");
         process.OutputDataReceived += (_, e) =>
         {
@@ -224,6 +231,8 @@ public static class Updater
 
         try
         {
+            // Outside call, program, axKit: starts the installed AxKit.exe again after an update, with the window's own
+            // arguments, so that the user comes back to the same app (Update and restart).
             Process.Start(start)?.Dispose();
             Log.Info($"Started the installed {AppPaths.InstalledExe} with: {string.Join(" ", arguments)}");
         }
@@ -248,6 +257,8 @@ public static class Updater
 
     private static HttpClient CreateClient()
     {
+        // Outside call, network, GitHub: the one HTTP client of axKit, for the update check and the two downloads: ten
+        // minutes for a large zip, the User-Agent "AxKit/<version>"; no other code makes a network request (AX-11.11).
         var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("AxKit", BundleInfo.Version));
         return client;

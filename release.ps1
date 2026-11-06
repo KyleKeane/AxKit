@@ -9,9 +9,10 @@
     1. fetches origin and stops if origin/main has commits that main here does not (skipped with -NoPush),
     2. checks the "## <version>" section: it is not empty, and every bullet starts with its app or apps ("- axFile: ",
        "- axDown, axJSON: ") or with "- For developers: ",
-    3. runs every test project in Release, as the workflows do (test.ps1),
+    3. writes docs/axkit/outside-calls.md from the sources (tools/outside-calls.ps1; a call without its explanation
+       stops here, docs/axkit/SPEC.md B-17) and runs every test project in Release, as the workflows do (test.ps1),
     4. sets <Version> in src/AxKit/AxKit.csproj,
-    5. commits CHANGELOG.md and the project file as "Release <version>" and tags v<version>,
+    5. commits CHANGELOG.md, the project file and docs/axkit/outside-calls.md as "Release <version>" and tags v<version>,
     6. pushes main, waits for its build to pass on GitHub (gh run watch), then pushes the tag: a tag never goes up on
        a commit whose build failed there,
     7. waits for the tag's release workflow, which leaves a draft release, then signs its zip with the release key
@@ -64,9 +65,10 @@ if (-not $NoPush) {
     }
 }
 
-$dirty = @(git -C $root status --porcelain) | Where-Object { $_ -and ($_.Substring(3) -ne 'CHANGELOG.md') }
+$generated = @('CHANGELOG.md', 'docs/axkit/outside-calls.md')
+$dirty = @(git -C $root status --porcelain) | Where-Object { $_ -and ($generated -notcontains $_.Substring(3)) }
 if ($dirty.Count -gt 0) {
-    Write-Host "Commit or stash these first; only CHANGELOG.md may be uncommitted:"
+    Write-Host "Commit or stash these first; only CHANGELOG.md and docs/axkit/outside-calls.md may be uncommitted:"
     $dirty | ForEach-Object { Write-Host "  $_" }
     exit 1
 }
@@ -100,6 +102,14 @@ if ($unnamed.Count -gt 0) {
     exit 1
 }
 
+# The page of everything axKit reaches outside its process, written from the sources and committed with the release
+# (docs/axkit/SPEC.md B-17): a call without its explanation stops the release here.
+& (Join-Path $root 'tools\outside-calls.ps1')
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Every outside call needs its comment first. Nothing was changed."
+    exit $LASTEXITCODE
+}
+
 # The tests as GitHub Actions runs them: every test project, in Release (test.ps1).
 Write-Host "Running the tests..."
 & (Join-Path $root 'test.ps1')
@@ -117,7 +127,7 @@ if ($updated -eq $xml -and $xml -notmatch "<Version>$([regex]::Escape($Version))
 # Not Set-Content -Encoding utf8: in Windows PowerShell 5.1 that writes a byte order mark.
 [IO.File]::WriteAllText($project, $updated, (New-Object System.Text.UTF8Encoding($false)))
 
-git -C $root add -- CHANGELOG.md src/AxKit/AxKit.csproj
+git -C $root add -- CHANGELOG.md src/AxKit/AxKit.csproj docs/axkit/outside-calls.md
 git -C $root commit -q -m "Release $Version"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 git -C $root tag -a $tag -m "axKit $Version"

@@ -50,6 +50,9 @@ public static class McpBroker
             return result;
         });
 
+        // Outside call, pipe, AI tools: the standard input of the MCP server process ("AxKit.exe mcp"), on which the
+        // paired AI tool, Claude Code, sends its requests; the answers go back on standard output; on this computer,
+        // never over the network.
         using var input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(false));
         using var output = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true, NewLine = "\n" };
         while (input.ReadLine() is { } line)
@@ -225,6 +228,9 @@ public static class McpBroker
         try
         {
             // Identification only: the window may learn who connected, never act as this user.
+            // Outside call, pipe, AI tools: connects to one axKit window's pipe to ask it what it shows, for the AI
+            // tool's request; the broker first checks that the pipe's server is this very program file
+            // (docs/axkit/mcp.md MC-6.3).
             using var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification);
             pipe.Connect(2000);
             if (UserPipe.ServerOf(pipe) is not { } server || !ThisProgram.Runs(server))
@@ -288,6 +294,9 @@ public static class McpBroker
             start.ArgumentList.Add(argument);
         }
 
+        // Outside call, program, axKit: starts an axKit app for the AI tool axkit_open, this very program file with a
+        // checked verb and path, through the shell so that the new window inherits none of the broker's pipes
+        // (docs/axkit/mcp.md MC-6).
         using var process = Process.Start(start);
         return new McpResult(process is null ? "The app did not start." : $"Opened {string.Join(" ", arguments)}.", process is null);
     }

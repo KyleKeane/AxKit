@@ -203,6 +203,9 @@ public abstract partial class AxKitForm
 
         try
         {
+            // Outside call, program, Claude Code: runs the user's Claude Code without a window for "claude mcp add" and
+            // "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axkit/mcp.md
+            // MC-6.8).
             using var process = System.Diagnostics.Process.Start(start);
             if (process is null)
             {

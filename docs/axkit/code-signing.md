@@ -104,10 +104,14 @@ in).
 > Team: Dr. Kyle Keane (www.kylekeane.com): author, reviewer and approver. Every release is built from this repository
 > by GitHub Actions and approved by hand before it is signed.
 >
-> **Privacy.** axKit asks GitHub for the latest release at start, to offer updates; this is a setting (Options, General,
-> Check for updates at start) and can be turned off. axClaude runs Claude Code, the user's own program, which talks to
-> Anthropic as Claude Code does. Nothing else leaves the computer: axKit sends no other data to any networked system
-> unless the user asks it to.
+> **Privacy.** axKit transfers no information to other networked systems unless the user asks it to, except the update
+> check, which the user can turn off (Options, General, Check for updates at start). In full: axKit's own code makes
+> HTTPS requests to GitHub alone, for the update check (`api.github.com`, the version in the User-Agent header) and the
+> update the user chooses (the release's zip and signature from `github.com`, checked before they are installed). Its
+> access layers start Claude Code, git, the user's shell and KeePassXC's tool as child processes on the computer, and
+> those programs use the network as they would without axKit, under their makers' terms, on the user's command and
+> after the user's consent: Claude Code talks to Anthropic, git reaches the repository's remotes on fetch, pull and
+> push, the shell's commands reach what they reach, KeePassXC's tool nothing.
 
 ## 4. How a release is signed (`.github/workflows/release.yml`, built 2026-11-03)
 

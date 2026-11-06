@@ -166,6 +166,8 @@ public static class ServiceManager
 
     /// <summary>Starts the service and waits for it to run.</summary>
     public static ServiceResult Start(string name) => Control(name, ServiceStartAccess, ServiceState.Running, service =>
+        // Outside call, program, Windows: starts a Windows service the user chose in axProcess (Services view, Start),
+        // through the Service Control Manager; Windows runs the service's own program.
         StartService(service, 0, null) ? 0 : Marshal.GetLastWin32Error(), ErrorAlreadyRunning);
 
     /// <summary>Stops the service and waits for it to stop.</summary>

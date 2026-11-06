@@ -124,6 +124,9 @@ public static class UpdateCheck
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, LatestReleaseApi);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+        // Outside call, network, GitHub: asks GitHub for the latest release of this repository, so that the window can
+        // say when a newer axKit exists; one GET with the version in the User-Agent header and nothing else about the
+        // user; off when the user turns the update check off, run by hand from Check for updates (AX-3, PRIVACY.md).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.NotFound)
         {

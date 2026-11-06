@@ -82,6 +82,9 @@ internal sealed class McpChannel
         {
             try
             {
+                // Outside call, pipe, AI tools: the window's own named pipe, which only this Windows account may open,
+                // where the MCP server asks the window what it shows while the AI tools are on; each connection must
+                // answer the challenge with the paired key.
                 using var pipe = NamedPipeServerStreamAcl.Create(_name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());
                 pipe.WaitForConnection();
                 failures = 0;

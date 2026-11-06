@@ -664,6 +664,9 @@ public abstract partial class AxKitForm : Form
     {
         try
         {
+            // Outside call, program, Windows: opens a web page in the user's default browser through the Windows shell,
+            // for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches
+            // nothing.
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
         catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or IOException)
@@ -678,6 +681,8 @@ public abstract partial class AxKitForm : Form
         var arguments = !select && Directory.Exists(path) ? $"\"{path}\"" : $"/select,\"{path}\"";
         try
         {
+            // Outside call, program, Windows: opens File Explorer on a folder, or with a file selected, for Show in
+            // File Explorer; Windows' own program by its full path.
             Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, arguments) { UseShellExecute = false })?.Dispose();
         }
         catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)

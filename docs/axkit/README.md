@@ -1,6 +1,6 @@
 # axKit
 
-axKit is the set of tools I use every day as a blind scientist, shared in case they help someone else: personal tools, not a product or a service, with no support and no warranty. It is one Windows program that holds several apps for people who use a screen reader. It is made for NVDA and works with any screen reader that reads ordinary Windows text fields. Each app has its own window, its own Start menu entry, its place in File Explorer's Open with axKit submenu and its own console command, and all of them share this one installation and update together.
+axKit is the set of tools I use every day as a blind scientist, shared in case they help someone else: personal tools, not a product or a service, with no support and no warranty. It is one Windows program that holds several apps for people who use a screen reader. It is made for NVDA and works with any screen reader that reads ordinary Windows text fields. Each app has its own window, its own Start menu entry, its place in File Explorer's Open with axKit submenu and its own console command, and all of them share this one installation and update together. More apps come as I find another thing worth doing by ear.
 
 The apps come in two kinds. Standalone apps need only Windows and work with the network off:
 
@@ -53,7 +53,7 @@ Every release is built by GitHub from the project's source and signed twice: the
 
 ## Privacy
 
-axKit collects nothing and has no telemetry. On its own it makes one network request: when a window starts, it asks GitHub for the latest release, which Options, General, Check for updates at start turns off. Everything else, Claude Code in axClaude, git's remotes in axGIT, the installers of Install it now, links you open, happens only when you ask. `PRIVACY.md` next to the program says all of it, and every window shows it: axKit menu, About, Privacy.
+axKit collects nothing and has no telemetry. Its own code makes network requests in one place, the updater, over HTTPS to GitHub only: the update check when a window starts, one request for the latest release that carries the version you have and nothing else about you (Options, General, Check for updates at start turns it off), and, when you choose Update, the download of the release's zip and its signature from the release page, installed only if both check. The access layers reach the network only through the program each runs as a child process on your computer: axClaude's Claude Code talks to Anthropic with your account; axGIT's git reaches your repository's remotes on fetch, pull and push alone, on your command and after your consent for that server; axTerminal's shell does what the commands you type do; axPass's KeePassXC tool has no network feature. Install it now runs winget or Anthropic's installer only when you choose; links open in your browser. `PRIVACY.md` next to the program says all of it, and every window shows it: axKit menu, About, Privacy. The repository's `docs/axkit/outside-calls.md` lists every network request, program start and pipe in the code, by what it reaches, with its file, line and purpose, written from the sources at every release.
 
 ## Remove
 

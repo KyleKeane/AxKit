@@ -101,6 +101,9 @@ public sealed class PtyHost : IDisposable
             bool created;
             try
             {
+                // Outside call, program, Claude Code, Shells: the one place a program is started in a ConPTY pseudo
+                // console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read
+                // from the console and the user's keys are written to it.
                 created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,
                     Native.EXTENDED_STARTUPINFO_PRESENT | Native.CREATE_UNICODE_ENVIRONMENT,
                     environmentBlock, options.WorkingDirectory, ref startup, out host._process);
