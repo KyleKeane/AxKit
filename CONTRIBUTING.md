@@ -5,6 +5,7 @@ axKit is built for people who use a screen reader, and every change is judged by
 ## Before you change anything
 
 - Read the app's specification, `docs/<app>/SPEC.md`, and the bundle's, `docs/axkit/SPEC.md`. They are the source of truth: a change of behaviour changes the specification in the same commit.
+- Set the tools up as `docs/axkit/development-environment.md` says: the .NET SDK, Git, the GitHub CLI, NVDA with the `axkitCapture` add-on, and what each is for here.
 - Open an issue first for anything larger than a fix, so that the behaviour can be agreed before the code.
 
 ## How a change is made
