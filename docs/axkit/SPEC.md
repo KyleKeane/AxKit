@@ -282,13 +282,15 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   signature checks against the public half in `AxKit.Core/Updates/ReleaseSigning`; `install.cmd` alone does the same
   check in Windows PowerShell, into a folder of a random name. A release without a signature is never installed by
   the apps. Losing the key means one release installed by hand with a new key's public half in it.
-  **Signed for Windows** (SignPath Foundation; `docs/axkit/code-signing.md`): the release workflow has `AxKit.exe`
-  signed with an Authenticode signature by SignPath Foundation's certificate, free code signing for open-source
-  projects, which Windows' Smart App Control accepts: a job of its own uploads the unsigned program as an artifact,
-  SignPath verifies where it was built, the maintainer approves the signing by hand, and the job zips nothing unless
-  Windows finds the returned file's signature valid (`tests/AxKit.Tests/ReleaseWorkflowTests.cs` keeps the order; the
-  API token is the `release` environment's secret, which only `main` and `v*` tags can use). The release key signs the
-  zip as before.
+  **Signed for Windows** (Azure Artifact Signing, 2026-11-06; `docs/axkit/code-signing.md`): the release workflow has
+  `AxKit.exe` signed with an Authenticode signature through Microsoft's signing service, with a certificate Microsoft
+  issues for each signing in the maintainer's verified name, which Windows' Smart App Control accepts: a job of its
+  own signs in to Azure with the run's OpenID Connect token as an identity that holds the signer role on the signing
+  account and nothing else (no secret is stored anywhere; the identity's ids are the `release` environment's secrets,
+  which only `main` and `v*` tags can use), signs, and zips nothing unless Windows finds the signature valid. The
+  repository variable `AZURE_CERTIFICATE_PROFILE` names the certificate profile and is the switch: a release made with
+  it unset says in its notes that the program is unsigned (`tests/AxKit.Tests/ReleaseWorkflowTests.cs` keeps the
+  order, the switch and the notice). The release key signs the zip as before.
 
 ### AX-4 Releases
 

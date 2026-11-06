@@ -5,8 +5,8 @@ namespace AxKit.Tests;
 /// <summary>
 /// The release workflow has AxKit.exe signed for Windows before it zips it, in a job of its own (docs/axkit/SPEC.md
 /// AX-3.4; docs/axkit/code-signing.md). Read off .github/workflows/release.yml, as <see cref="LayoutTests"/> reads the
-/// sources, so that a later edit cannot zip an unsigned program or put the signing token beside the tests and their
-/// packages (security audit S-30).
+/// sources, so that a later edit cannot zip an unsigned program unnoticed or put the signing identity's ids beside the
+/// tests and their packages (security audit S-30).
 /// </summary>
 public sealed class ReleaseWorkflowTests
 {
@@ -28,21 +28,27 @@ public sealed class ReleaseWorkflowTests
         var draft = Index("\n  draft:");
         // The run lines, with their ".\": a comment may name the scripts earlier.
         var publish = Index(".\\publish.ps1 -NoInstall -NoZip");
-        var unsigned = Index("name: unsigned");
-        var signing = Index("uses: signpath/github-action-submit-signing-request@");
+        var login = Index("uses: azure/login@");
+        var signing = Index("uses: azure/artifact-signing-action@");
         var check = Index("Get-AuthenticodeSignature publish\\win-x64\\AxKit.exe");
         var zip = Index(".\\publish.ps1 -ZipOnly");
 
-        Assert.True(build < publish && publish < unsigned && unsigned < sign, "the build job publishes the folder without zipping it and uploads the unsigned AxKit.exe");
-        Assert.True(sign < signing && signing < check && check < zip && zip < draft, "the sign job signs, checks the signature, then zips");
+        Assert.True(build < publish && publish < sign, "the build job publishes the folder without zipping it");
+        Assert.True(sign < login && login < signing && signing < check && check < zip && zip < draft, "the sign job signs in, signs, checks the signature, then zips");
         Assert.Contains("-ne 'Valid'", text[check..zip], StringComparison.Ordinal);
 
-        // The signing token is the sign job's alone: the build job, which runs the tests and their packages, never
-        // sees it, and only the "release" environment's runs can present it.
-        Assert.DoesNotContain("SIGNPATH_API_TOKEN", text[build..sign], StringComparison.Ordinal);
+        // The switch: the certificate profile's name turns both signing steps on, and a release made without it says
+        // in its notes that the program is unsigned.
         var signJob = text[sign..draft];
+        Assert.Equal(2, Regex.Matches(signJob, @"if: vars\.AZURE_CERTIFICATE_PROFILE != ''").Count);
+        Assert.Contains("carries no Windows signature", text[check..zip], StringComparison.Ordinal);
+
+        // The identity's ids are the sign job's alone: the build job, which runs the tests and their packages, uses no
+        // secret at all, and only the "release" environment's runs get the token that becomes the identity.
+        Assert.DoesNotContain("secrets.", text[build..sign], StringComparison.Ordinal);
         Assert.Contains("environment: release", signJob, StringComparison.Ordinal);
-        Assert.Contains("secrets.SIGNPATH_API_TOKEN", signJob, StringComparison.Ordinal);
+        Assert.Contains("id-token: write", signJob, StringComparison.Ordinal);
+        Assert.Contains("secrets.AZURE_CLIENT_ID", signJob, StringComparison.Ordinal);
         Assert.Contains("needs: sign", text[draft..], StringComparison.Ordinal);
     }
 

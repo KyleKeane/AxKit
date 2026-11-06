@@ -1,14 +1,11 @@
 # Changelog
 
-## 5.1.0
-
-- axKit: `AxKit.exe` is signed for Windows (Authenticode) by SignPath Foundation, free code signing provided by SignPath.io for open-source projects, in the release workflow before the zip is built and approved by hand for each release, so that Windows' Smart App Control accepts an update instead of blocking it ("An Application Control policy has blocked this file" on 3.7.1 and 3.7.4). Releases up to 5.0.0 carried no such signature. For developers: the workflow signs in a job of its own, whose API token is the `release` environment's secret, and zips nothing Windows does not find validly signed (`docs/axkit/code-signing.md`; `publish.ps1 -NoZip` and `-ZipOnly`; `ReleaseWorkflowTests` keeps the order and the pinned actions).
-
 ## 5.0.1
 
 - axKit: `PRIVACY.md`, the README, `SECURITY.md` and the bundle spec say exactly how axKit meets the network: its own code makes requests in the updater alone, over HTTPS to GitHub (the update check, a setting, and the download you choose, accepted from this repository's release address only); an access layer reaches the network only through the program it runs as a child process on your computer (Claude Code talks to Anthropic, git reaches a remote on fetch, pull and push alone, your shell's commands reach what they reach, KeePassXC's tool nothing).
 - axKit: `docs/axkit/outside-calls.md`, a page written from the sources at every release: everything axKit reaches outside its own process, GitHub, Claude Code, git, the shells, KeePassXC's tool, the installers, Windows, the programs you choose, axKit itself and the AI tools' pipes, with what each is, where it is, how axKit reaches it and its documentation, and every call in the code under it with its app, file, line, function and purpose. The README links to it under Transparency and self-audit.
 - For developers: every network request, program start and pipe in `src` carries an `Outside call, <kind>, <what is reached>:` comment; `tools/outside-calls.ps1` writes the page from them, `build.yml` fails on a call without one or a stale page, and `release.ps1` writes and commits the page with each release (bundle SPEC B-17, AX-11.11).
+- For developers: the release workflow can sign `AxKit.exe` for Windows (Authenticode) through Microsoft's Azure Artifact Signing, so that Windows' Smart App Control accepts an update instead of blocking it ("An Application Control policy has blocked this file" on 3.7.1 and 3.7.4): a job of its own signs in to Azure with the run's OpenID Connect token as an identity that holds the signer role alone, signs with a certificate Microsoft issues for each signing in the maintainer's verified name, and zips nothing Windows does not find validly signed. The repository variable `AZURE_CERTIFICATE_PROFILE` is the switch, off until the maintainer's identity validation and the certificate profile are through, and a release made with it off says in its notes that the program is unsigned (`docs/axkit/code-signing.md`; `publish.ps1 -NoZip` and `-ZipOnly`; `ReleaseWorkflowTests` keeps the order, the switch and the pinned actions). `docs/axkit/development-environment.md` lists every tool of the development computer, how it is installed, signed in and checked, and the order to set a new computer up in.
 
 ## 5.0.0 - 2026-11-05
 
@@ -33,7 +30,7 @@
 ## 3.7.6 - 2026-10-25
 
 - axKit: a privacy page says everything axKit contacts over the network and when, the programs it runs, and what stays on your computer; it is in the zip, on GitHub and in every window (axKit menu, About, Privacy), and the installer says it before it changes anything, with what it changes. About, Third-party notices names the .NET runtime and Windows Forms the program carries, under their MIT licence.
-- For developers: the repository's governance (`GOVERNANCE.md`: roles, how releases are made, the maintainer's commitments), a code of conduct, the code signing policy in the README and every release page, how contributions are licensed in `CONTRIBUTING.md`, and the plan for free Windows code signing through SignPath Foundation (`docs/axkit/code-signing.md`).
+- For developers: the repository's governance (`GOVERNANCE.md`: roles, how releases are made, the maintainer's commitments), a code of conduct, the code signing policy in the README and every release page, how contributions are licensed in `CONTRIBUTING.md`, and the plan for Windows code signing (`docs/axkit/code-signing.md`).
 
 ## 3.7.5 - 2026-10-25
 

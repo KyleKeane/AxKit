@@ -1,108 +1,126 @@
-# Code signing for Windows (SignPath Foundation; prepared 2026-10-25, the workflow built 2026-11-03)
+# Code signing for Windows (Azure Artifact Signing; prepared 2026-10-25, the workflow built 2026-11-03, on Azure since 2026-11-06)
 
 Why: Windows 11's Smart App Control blocks a program that carries no Authenticode signature and that Microsoft's cloud
 does not know yet. Every axKit release is a new program file, so on a computer where Smart App Control is on, an update
 can be refused ("An Application Control policy has blocked this file"; 3.7.1 and 3.7.4 on the maintainer's second
 computer). axKit's own release key (`tools/release-key.ps1`, AX-3.4) signs the zip for the apps' updater; Windows does
 not know that key and never checks it. Since 3.7.5 a blocked update stops before it changes anything (AX-3.6). The
-lasting fix is an Authenticode signature on `AxKit.exe`, which Smart App Control accepts.
+lasting fix is an Authenticode signature on `AxKit.exe` from a certificate authority Windows trusts, which Smart App
+Control accepts.
 
-The way: **SignPath Foundation**, which signs open-source projects for free with its own certificate, from the
-project's GitHub build, after an application and a review of the project. The signature names SignPath Foundation as
-the publisher, and the maintainer approves every release's signing by hand, which is the Foundation's condition and
-the project's code signing policy (section 3). The alternatives, a paid signing service or a certificate on a hardware
-token, cost money every year and put the maintainer's legal name on the signature; none is in use.
+The way: **Azure Artifact Signing**, Microsoft's signing service (Trusted Signing, before its rename). Microsoft checks
+the maintainer's identity once, against a government ID, and from then on issues, for each signing, a certificate from
+its own certificate authority in the maintainer's verified name, valid for a few days, and signs in its cloud: the
+private key never exists outside Microsoft's hardware, so there is no key to keep, lose or steal. Windows trusts that
+authority, Smart App Control accepts the signed program, and Windows shows the maintainer's name, Dr. Kyle Keane, as
+the publisher. The service is paid, the Basic tier at about ten dollars a month with a monthly allowance of signatures,
+and it signs from GitHub Actions without a person present. The maintainer chose it on 2026-11-06, after the free
+signing service for open-source projects planned on 2026-10-25 declined the project's application, over the other
+routes: a commercial certificate with a cloud key costs about three hundred dollars a year; a cheap open-source
+certificate keeps its key behind a phone app, so a person must be present at every signing; a certificate on a USB
+token cannot sign from GitHub Actions at all.
 
-**Status (2026-11-03):** the repository side is built on the branch `signing` (section 4) and merges once SignPath has
-accepted the project and section 2 is done; `main` releases unsigned until then. Next is the application (section 2,
-step 2, the user's). Once the sign job has passed on a release, this paragraph goes.
+**Status (2026-11-06):** section 1 exists and section 2's steps 1 to 4 are done: the Azure side has identities that
+can only sign, and the release workflow signs when the repository variable `AZURE_CERTIFICATE_PROFILE` is set, and
+until then releases unsigned, saying so in the notes. Left: the identity validation (step 5; the first attempt failed
+on 2026-11-06), the certificate profile (step 6), the variable (step 7), the development computer's sign-in (step 8)
+and the first signed release (step 9). Once that release is out, this paragraph goes.
 
-## 1. Does axKit qualify (SignPath Foundation's terms, read 2026-10-25)
+## 1. What exists, and who can do what
 
-| Condition | axKit |
-|---|---|
-| An OSI-approved licence, no commercial dual licensing | The GNU AGPL 3 only (`LICENSE`) since 2026-10-29, MIT before; the terms in `NOTICE.md` are those its section 7 allows. The contributor licence in `CONTRIBUTING.md` lets the copyright holder relicense; no other edition is sold today, and one sold later would need a new look at this condition |
-| Only open-source components, no proprietary code of the maintainer's | Yes: no packages; the .NET runtime inside the single file is Microsoft's, already signed by Microsoft |
-| Actively maintained, already released in the form to be signed | Yes: releases since 1.0.0, the zip on GitHub |
-| Functionality described on the download page | The release page and `README.md` |
-| Own project: the signing team develops it and owns the repository | Yes (the maintainer) |
-| No hacking tools, nothing that circumvents security measures | Yes. axKit installs per user, never elevated; the AI tools are off until the user turns them on |
-| Privacy: data sent elsewhere needs a privacy policy shown at install, and a way to turn it off | Done 2026-10-25: `PRIVACY.md` (every network contact and outside program, per app), in the zip, in every window (About, Privacy), summarised in the README, and said by the installer before it changes anything; the update check has its setting |
-| System changes come with clear warnings; uninstall is provided | Done: the installer's first lines say every place it writes before it writes them; Settings, Apps has Uninstall (AX-2.5) |
-| Multi-factor sign-in for every team member on SignPath and GitHub | The user turns it on for GitHub and for SignPath (`GOVERNANCE.md` commits to it) |
-| Roles: authors, reviewers, approvers | Done: `GOVERNANCE.md` and the README's code signing policy (the maintainer, all three) |
-| A "Code signing policy" on the home page and the release pages | Done: the README's section, linked from every release page's notes (the release workflow); its one sentence about SignPath changes once they accept |
-| Product name and version in the file's metadata, the same on every build | `src/AxKit/AxKit.csproj`: `<Product>axKit</Product>`, `<Version>` set by `release.ps1`; the artifact configuration (section 2) holds the product name to "axKit" |
-| Built from source by an automated build; each release approved by hand | The release workflow builds the tag on GitHub's own runners; SignPath checks the build's origin; the maintainer approves each signing in SignPath |
+The rule: the maintainer's own Azure account, which owns the subscription and can spend money, is used in a browser
+only, for the few administrative steps, and is never left signed in on a computer where an AI assistant works. Signing
+is done by identities that hold one role, on one resource, and nothing else.
 
-Nothing found that disqualifies axKit; SignPath decides on the application.
+| What | Where | Who may touch it |
+|---|---|---|
+| The Azure subscription: pay as you go, with a billing account of type Individual, which the identity validation requires | The maintainer's Azure account is its Owner and the only holder of a billing role | The maintainer, in the Azure portal |
+| The signing account `axkit-code-signing`, Basic tier, in the resource group `azure-signup-rg`, East US, endpoint `https://eus.codesigning.azure.net/`: a passive resource with no identity of its own | The subscription | Made by the maintainer in the portal; its certificate profiles need the Owner |
+| The role Artifact Signing Identity Verifier, on the signing account alone | The maintainer's account | Lets the portal's New identity validation button work, nothing else |
+| The GitHub Actions identity: an app registration named "axKit release signing" with no password and no certificate; one federated credential, issuer `https://token.actions.githubusercontent.com`, subject `repo:KyleKeane/AxKit:environment:release`, audience `api://AzureADTokenExchange`; the role Artifact Signing Certificate Profile Signer on the signing account alone; no directory role | Microsoft Entra ID of the maintainer's tenant | Only a run of this repository's release workflow in the `release` environment (branch `main` and tags `v*`) can become it, by exchanging the run's OpenID Connect token; it can sign and nothing else |
+| The user `axkit-signer` (display name "axKit signer"), in the same tenant, with the same signer role alone and no directory role | What the development computer's Azure CLI is signed in as | The maintainer and the assistant on that computer: `az` can sign and read the signing account, and cannot make, change or see anything else, nor spend |
+| The three ids `azure/login` needs, `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID` | Secrets of the GitHub environment `release` | The sign job alone; the build job, which runs the tests and their packages, never sees them (S-30). They are ids, not credentials: without the federated credential's match they open nothing |
+| The repository variable `AZURE_CERTIFICATE_PROFILE` | GitHub, at the repository | Names the certificate profile and is the switch: unset, the workflow skips signing and the release notes say the program is unsigned |
+
+What none of the signing identities can do: make or change a resource, read the subscription beyond the signing
+account, see or change billing, or run an identity validation. The one cost a signer can cause is signatures beyond
+the Basic tier's monthly allowance; a budget alert on the subscription (Cost Management) is the maintainer's option.
+Every id of the account, the tenant, the subscription and the identities stays out of this repository, as every id
+does; the names above are resource names, not ids.
 
 ## 2. Setting it up (the user does the marked steps; Claude the rest)
 
-SignPath's own side has no command line: its web app (app.signpath.io) is where steps 3 and 4 happen, once. The
-GitHub side is `gh`. Nothing of this is needed on a second development computer: the signing happens in GitHub
-Actions, and a release from another computer needs only what AX-3.4 already needs there (the release key, `gh` signed
-in).
+Nothing of this is needed on a second development computer: the signing happens in GitHub Actions, and a release from
+another computer needs only what AX-3.4 already needs there (the release key, `gh` signed in). The Azure CLI on a
+development computer is for reading the signing account, and for signing a file by hand if that is ever needed, as
+`axkit-signer` (`docs/axkit/development-environment.md`).
 
 1. **Two-factor sign-in on GitHub** (the user), if not on yet (the audit's open item S-36).
-2. **Apply** (the user, in a browser): signpath.org, Apply, for the project https://github.com/KyleKeane/AxKit, an
-   AGPL-3.0-only bundle of accessible Windows apps for a blind developer, built by GitHub Actions
-   (`.github/workflows/release.yml`), released on GitHub since 1.0.0, with the code signing policy in its README
-   (section 3). SignPath's review takes days to weeks; the answer comes by e-mail with an invitation to an
-   organisation of the project's own in SignPath, with SignPath Foundation's certificate in it.
-3. **The SignPath side** (the user, in app.signpath.io; the names are the ones the workflow uses):
-   1. Multi-factor sign-in on the SignPath account (the Foundation's condition).
-   2. Trusted Build Systems (top menu), Add predefined, GitHub.com.
-   3. Projects, add a project: name axKit, slug `AxKit` (the workflow's `project-slug`), Repository URL
-      `https://github.com/KyleKeane/AxKit` (origin verification reads it). In the project, Trusted build systems,
-      Link, GitHub.com.
-   4. An artifact configuration, custom XML (the default one of the project):
-      ```xml
-      <artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
-        <zip-file>
-          <pe-file path="AxKit.exe" product-name="axKit">
-            <authenticode-sign />
-          </pe-file>
-        </zip-file>
-      </artifact-configuration>
-      ```
-      A GitHub artifact is a zip; the build job uploads `AxKit.exe` alone as the artifact `unsigned`, so the zip has
-      the file at its root. `product-name` holds the file's product name to "axKit", as the terms ask. A version
-      restriction (`product-version="${version}"` with a `<parameters>` block) would need the workflow to pass the
-      version in the action's `parameters` input; not done, the tag names the version.
-   5. A signing policy: name Release signing, slug `release-signing` (the workflow's `signing-policy-slug`), purpose
-      release, SignPath Foundation's certificate, the approval process on with the maintainer as approver and one
-      approval required, Verify origin on, allowed branch names `main` and `v*` (a release runs on a tag push, and
-      GitHub reports the tag's name as the run's branch; if origin verification refuses a tag build, the pattern is
-      widened in SignPath, nothing changes here).
-   6. A CI user (Users; for example `axkit-ci`), made the policy's submitter: with trusted build system verification,
-      no interactive user may submit. Its API token (My profile, Generate token) is shown once; it goes to step 4.
-4. **The GitHub side** (Claude, from PowerShell on the maintainer's computer; the user pastes the token):
+2. **The Azure account** (the user; done 2026-11-06): an Azure account with a pay-as-you-go subscription (not a free
+   trial, which the service refuses) whose billing account is of type Individual, with the legal name and sold-to
+   address as on the government ID; the resource provider `Microsoft.CodeSigning` registered; an Artifact Signing
+   account `axkit-code-signing`, Basic, East US, made in the portal. Individuals must be in the United States or
+   Canada.
+3. **The Azure CLI on the development computer** (Claude; done): `winget install --id Microsoft.AzureCLI --source winget`,
+   then `az extension add --name artifact-signing`.
+4. **The identities and their roles** (done 2026-11-06 by a script the user ran himself as the Owner, since the
+   assistant's permission layer refuses role grants and identity creation, rightly). What it did, for a repetition:
    ```
-   gh api -X PUT repos/KyleKeane/AxKit/environments/release -F "deployment_branch_policy[protected_branches]=false" -F "deployment_branch_policy[custom_branch_policies]=true"
-   gh api -X POST repos/KyleKeane/AxKit/environments/release/deployment-branch-policies -f name=main -f type=branch
-   gh api -X POST repos/KyleKeane/AxKit/environments/release/deployment-branch-policies -f "name=v*" -f type=tag
-   gh variable set SIGNPATH_ORGANIZATION_ID --repo KyleKeane/AxKit --body <the organisation's id, from its page in SignPath>
-   gh secret set SIGNPATH_API_TOKEN --env release --repo KyleKeane/AxKit
+   az role assignment create --assignee-object-id <the owner's object id> --assignee-principal-type User --role "Artifact Signing Identity Verifier" --scope <the signing account's id>
+   az ad app create --display-name "axKit release signing" --sign-in-audience AzureADMyOrg
+   az ad sp create --id <the app's client id>
+   az ad app federated-credential create --id <the app's client id> --parameters federated-credential.json
+   az role assignment create --assignee-object-id <the service principal's object id> --assignee-principal-type ServicePrincipal --role "Artifact Signing Certificate Profile Signer" --scope <the signing account's id>
+   az ad user create --display-name "axKit signer" --user-principal-name axkit-signer@<the tenant's domain> --password <a first password, changed at the first sign-in> --force-change-password-next-sign-in true
+   az role assignment create --assignee-object-id <the user's object id> --assignee-principal-type User --role "Artifact Signing Certificate Profile Signer" --scope <the signing account's id>
+   gh secret set AZURE_CLIENT_ID --env release --repo KyleKeane/AxKit --body <the app's client id>
+   gh secret set AZURE_TENANT_ID --env release --repo KyleKeane/AxKit --body <the tenant id>
+   gh secret set AZURE_SUBSCRIPTION_ID --env release --repo KyleKeane/AxKit --body <the subscription id>
    ```
-   The environment `release`, which only the branch `main` and tags `v*` may use, exists since 2026-11-03 (the
-   first three lines answer with the environment and each policy as made). The last line, run by the user, asks for
-   the value: paste the token and press Enter, so that it never passes through Claude's session. `gh secret list
-   --env release` and `gh variable list` then show the two names. The organisation id is not a secret; it is kept
-   out of this repository all the same, as every id is.
-5. **The first signed release** (Claude; the user approves): merge `signing` into `main`, take the Status paragraph
-   out of this page, release with `release.ps1`. The sign job submits the request and waits up to an hour; SignPath
-   e-mails the maintainer a link to the request, where Approve is. Then the zip, the draft, and `release.ps1`
-   signs and publishes as before. A failed or refused signing leaves no zip, no draft and nothing published; once the
-   cause is fixed, `gh workflow run release.yml -f tag=v<version>` runs the workflow again for the same tag, which
-   builds afresh and submits a new request. Last, on the second computer with Smart App Control on: Update and
-   restart, no block.
+   `federated-credential.json` is `{"name":"github-release-environment","issuer":"https://token.actions.githubusercontent.com","subject":"repo:KyleKeane/AxKit:environment:release","audiences":["api://AzureADTokenExchange"]}`.
+   The signing account's id is `az artifact-signing show --name axkit-code-signing --resource-group azure-signup-rg --query id -o tsv`.
+   The environment `release`, which only the branch `main` and tags `v*` may use, exists since 2026-11-03. To check
+   what the identities hold: `az role assignment list --scope <the signing account's id>` lists the three roles above,
+   and `az role assignment list --assignee <object id> --all` for each identity shows that one role and nothing at
+   the subscription.
+5. **Identity validation** (the user, in the portal, as the Owner; Public Trust, Individual): in the signing account,
+   Identity validations; the dropdown from Organization to Individual; New identity, Public; the form takes the
+   billing account's name and address, read only, so they are corrected there first if they differ from the ID; the
+   primary e-mail is the one the Microsoft account signs in with. Then the e-mailed link (it expires after seven days
+   and is not resent): sign in with that address, Get verified through the ID verifier (AU10TIX), a PIN from the
+   e-mail, a phone number, a QR code to the phone, photos of both sides of the ID, a face check, the Verified ID added
+   to Microsoft Authenticator and presented back in the browser (Verifiable Credential, Share). The portal row turns
+   Completed. A failed attempt is deleted, its Verified ID removed from Authenticator, and a new request made; the
+   causes Microsoft lists are the face check, and a name or an address that differs from the ID. The first attempt
+   failed on 2026-11-06.
+6. **The certificate profile** (the Owner: the user in the portal, or Claude with the user signed in as the Owner for
+   this one command and signed out after): name `axkit-release`, type Public Trust, on the completed identity
+   validation, with the street address and the postal code left out of the certificate's subject:
+   ```
+   az artifact-signing certificate-profile create --account-name axkit-code-signing --resource-group azure-signup-rg --name axkit-release --profile-type PublicTrust --identity-validation-id <from the portal's row> --include-street-address false --include-postal-code false
+   ```
+   The subject is then the maintainer's name, city, state and country, which is what Windows shows.
+7. **The switch** (Claude): `gh variable set AZURE_CERTIFICATE_PROFILE --repo KyleKeane/AxKit --body axkit-release`.
+   From the next release on, the sign job signs.
+8. **The development computer's sign-in** (the user, on his word): `az logout`, then `az login --use-device-code` as
+   `axkit-signer`; the command prints a page and a code, and the first sign-in sets a new password and registers
+   Microsoft Authenticator. Check: `az account show --query user.name -o tsv` names `axkit-signer`, and
+   `az role assignment list --assignee <its object id> --all` shows the signer role alone. From then on nothing on
+   that computer can do more on Azure than sign. The Owner signs in again only in a browser, or for one command on
+   the maintainer's word, and is signed out after.
+9. **The first signed release** (Claude; the user approves): release with `release.ps1` as always. The sign job signs
+   in, signs, checks and zips; the notes name the signer; `release.ps1` signs the zip and publishes as before. A
+   failed signing leaves no zip, no draft and nothing published; once the cause is fixed,
+   `gh workflow run release.yml -f tag=v<version>` runs the workflow again for the same tag. Last, on the second
+   computer with Smart App Control on: Update and restart, no block. That release's `CHANGELOG.md` section says that
+   releases from it on are signed, and this page's Status paragraph goes.
 
-## 3. The code signing policy (in `README.md` since 2026-10-25; the first paragraph's wording once accepted)
+## 3. The code signing policy (in `README.md` since 2026-10-25)
 
-> **Code signing policy.** Free code signing provided by SignPath.io, certificate by SignPath Foundation.
-> Team: Dr. Kyle Keane (www.kylekeane.com): author, reviewer and approver. Every release is built from this repository
-> by GitHub Actions and approved by hand before it is signed.
+> **Code signing policy.** Windows code signing through Microsoft's Azure Artifact Signing, in the release workflow,
+> with a certificate Microsoft issues for each signing in the maintainer's verified name, by an identity that can sign
+> and do nothing else. Team: Dr. Kyle Keane (www.kylekeane.com): author, reviewer and approver. Every release is built
+> from this repository by GitHub Actions and approved by the maintainer before it is published.
 >
 > **Privacy.** axKit transfers no information to other networked systems unless the user asks it to, except the update
 > check, which the user can turn off (Options, General, Check for updates at start). In full: axKit's own code makes
@@ -113,47 +131,52 @@ in).
 > after the user's consent: Claude Code talks to Anthropic, git reaches the repository's remotes on fetch, pull and
 > push, the shell's commands reach what they reach, KeePassXC's tool nothing.
 
-## 4. How a release is signed (`.github/workflows/release.yml`, built 2026-11-03)
+## 4. How a release is signed (`.github/workflows/release.yml`)
 
 Three jobs. **build** (a token that can only read, S-30) tests, runs `publish.ps1 -NoInstall -NoZip`, which builds
-`publish/win-x64` without zipping it, writes the release notes, uploads `publish/win-x64/AxKit.exe` alone as the
-artifact `unsigned` (the one SignPath signs; its id is the job's output) and the folder with `install.cmd`, `notes.md`
-and `tag.txt` as the artifact `build`. **sign** (environment `release`; a job of its own, so that the tests and their
-packages never run beside the API token) checks the repository out for `publish.ps1`, downloads `build`, and runs
-`signpath/github-action-submit-signing-request` with the token, the organisation id, the project `AxKit`, the policy
-`release-signing` and the `unsigned` artifact's id; SignPath fetches the artifact from the run, verifies its origin,
-waits for the maintainer's approval (the job waits up to an hour), signs, and the action puts the signed file in
-`signed\AxKit.exe`. The job copies it over `publish/win-x64/AxKit.exe`, checks it with `Get-AuthenticodeSignature`,
-stops unless Windows finds the signature Valid, writes the signer's name into the release notes, runs
-`publish.ps1 -ZipOnly` and uploads the artifact `release`. **draft** uploads it to a draft release and attests the
-build's provenance, as before. Every action is pinned to a commit; `tests/AxKit.Tests/ReleaseWorkflowTests.cs` keeps
-the order (publish, upload unsigned, sign, check, zip, draft), the pins, and the token in the sign job alone.
+`publish/win-x64` without zipping it, writes the release notes, and uploads the folder with `install.cmd`, `notes.md`
+and `tag.txt` as the artifact `build`. **sign** (environment `release`, with `id-token: write`; a job of its own, so
+that the tests and their packages never run beside the identity's ids) checks the repository out for `publish.ps1`,
+downloads `build` and, when `AZURE_CERTIFICATE_PROFILE` is set, runs `azure/login` with the three ids (GitHub issues
+the run an OpenID Connect token for the `release` environment; Azure exchanges it for the GitHub Actions identity,
+because that identity's federated credential names this repository and that environment; no secret is stored
+anywhere) and `azure/artifact-signing-action` with the endpoint, the account, the profile, `publish/win-x64` filtered
+to `exe`, SHA-256 and Microsoft's timestamp server `http://timestamp.acs.microsoft.com` (the certificate lives days;
+the timestamp keeps the signature valid after it). The job then checks `publish/win-x64/AxKit.exe` with
+`Get-AuthenticodeSignature`, stops unless Windows finds the signature Valid, writes the signer's name into the release
+notes, runs `publish.ps1 -ZipOnly` and uploads the artifact `release`. With the variable unset it skips the two signing
+steps and writes into the notes that the program carries no Windows signature. **draft** uploads the artifact to a
+draft release and attests the build's provenance, as before. Every action is pinned to a commit;
+`tests/AxKit.Tests/ReleaseWorkflowTests.cs` keeps the order (publish, sign in, sign, check, zip, draft), the pins, the
+switch on both signing steps, the unsigned notice, and the ids in the sign job alone.
 
 `release.ps1` and `tools/sign-release.ps1` are unchanged: the release key still signs the zip, which is what the apps'
-updater and `install.cmd` check (AX-3.4). `release.ps1`'s wait for the workflow covers the wait for the approval.
+updater and `install.cmd` check (AX-3.4).
 
-On a user's computer, nothing changes except that Windows now finds a signature on `AxKit.exe`, with SignPath
-Foundation as the publisher: Smart App Control and SmartScreen read it; axKit itself makes no new network contact. The
+On a user's computer, nothing changes except that Windows now finds a signature on `AxKit.exe`, with the maintainer's
+name as the publisher: Smart App Control and SmartScreen read it; axKit itself makes no new network contact. The
 update from an unsigned version to the first signed one goes through the old version's installer, which copies the
 new, signed program; Windows checks that file when it starts.
 
 ## 5. If it breaks
 
-- The sign job fails on origin verification: the project's Repository URL, the policy's allowed branch names (a tag
-  build reports the tag's name) or a run not on GitHub's own runners; SignPath's request page says which.
-- It fails on the artifact configuration: `AxKit.exe` is not at the zip's root (the `unsigned` upload changed) or its
-  product name is no longer "axKit" (`src/AxKit/AxKit.csproj`).
-- It times out: nobody approved within the hour. Approve, or run the workflow again for the tag (section 2, step 5).
-- It fails to sign in: the API token was revoked or its CI user lost the submitter role; a new token, pasted with
-  `gh secret set SIGNPATH_API_TOKEN --env release`.
+- `azure/login` fails: the federated credential's subject must read exactly `repo:KyleKeane/AxKit:environment:release`
+  (a run outside that environment, or a renamed repository, gets no token), the environment's branch policies must
+  still be `main` and `v*`, and the three secrets must be there (`gh secret list --env release`).
+- The signing step fails: the variable names a profile that does not exist or is disabled (the portal's Certificate
+  profiles shows its status; an identity validation that lapsed disables it, and is renewed as in section 2, step 5),
+  the identity lost its role (`az role assignment list --scope <the signing account's id>`), or the account's
+  endpoint changed; the step's log says which.
 - It fails at `Get-AuthenticodeSignature`: look at the status it printed before relaxing anything.
+- The subscription stops paying: the account is disabled and signing fails; the Azure portal says so.
 - Once a year, in the longevity check (`docs/axkit/longevity.md`): the sign job of the last release passed; the
-  environment, the secret and the variable are still there; SignPath's terms have not changed under the project.
-- Leaving the service: the sign job of the workflow is the one piece that knows it; another signer takes its place
-  there, and the check and the zip after it stay.
-- Users on versions up to 5.0.0 whose Smart App Control is on may still be refused the update to the first signed
-  release, when Smart App Control blocks the old installer's copy of the new file; the update stops cleanly (AX-3.6)
-  and the zip installs by hand from the release page, where Windows checks the signed program.
+  identities hold their one role and nothing more; the environment, the secrets and the variable are still there; the
+  service's price and terms have not changed under the project.
+- Leaving the service: the two signing steps of the sign job are the one piece that knows it; another signer takes
+  their place, and the check and the zip after them stay.
+- Users on versions up to the last unsigned one whose Smart App Control is on may still be refused the update to the
+  first signed release, when Smart App Control blocks the old installer's copy of the new file; the update stops
+  cleanly (AX-3.6) and the zip installs by hand from the release page, where Windows checks the signed program.
 
 ## 6. Until then
 

@@ -60,7 +60,7 @@ The access layers meet the network only through the program each runs, as a chil
 
 Every release is built by GitHub Actions from this repository's source, with GitHub's attestation of where it was built, and approved by the maintainer before it is published. Its zip is signed with axKit's release key, which never leaves the maintainer's computer; the installed apps and `install.cmd` install nothing whose signature does not check ([docs/axkit/SPEC.md](docs/axkit/SPEC.md) AX-3.4).
 
-**Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).** From 5.1.0, every release's `AxKit.exe` carries that Windows signature (Authenticode, which Windows' Smart App Control checks), made by the release workflow before the zip is built and approved by hand for each release ([docs/axkit/code-signing.md](docs/axkit/code-signing.md)); Windows names SignPath Foundation as the publisher. Releases up to 5.0.0 carry no such signature, and Smart App Control may refuse them.
+**Windows code signing through Microsoft's [Azure Artifact Signing](https://learn.microsoft.com/azure/artifact-signing/).** From the first release whose notes say so, every release's `AxKit.exe` carries an Authenticode signature, which Windows' Smart App Control checks, made in the release workflow before the zip is built, with a certificate Microsoft issues for each signing in the maintainer's verified name, by an identity that can sign and do nothing else ([docs/axkit/code-signing.md](docs/axkit/code-signing.md)); Windows names Dr. Kyle Keane as the publisher, and every release's notes say whether its `AxKit.exe` is signed. Releases up to 5.0.0 carry no such signature, and Smart App Control may refuse them.
 
 Team and roles ([GOVERNANCE.md](GOVERNANCE.md)): Dr. Kyle Keane (www.kylekeane.com), author, reviewer and approver.
 
@@ -70,7 +70,7 @@ Transparency and self-audit: [PRIVACY.md](PRIVACY.md) says what axKit sends and 
 
 ## Build and run
 
-Needs the .NET 10 SDK, and NVDA for the manual checks.
+Needs the .NET 10 SDK, and NVDA for the manual checks. Every tool of the development computer, how it is installed, signed in and checked, and the order to set a new computer up in: [docs/axkit/development-environment.md](docs/axkit/development-environment.md).
 
 ```
 .\run-axfile.ps1 C:\path\to\folder       # build, then start axFile on that folder
