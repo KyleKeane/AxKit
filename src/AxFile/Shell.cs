@@ -63,6 +63,8 @@ internal static class Shell
             File = path,
             Show = SwShowNormal,
         };
+        // Outside call, program, Windows: shows Windows' Properties sheet for the entry (Alt+Enter), the shell's own
+        // window, through the shell's verb "properties".
         if (ShellExecuteExW(ref info))
         {
             return null;
@@ -108,6 +110,9 @@ internal static class Shell
                 X = at.X,
                 Y = at.Y,
             };
+            // Outside call, program, Windows: runs the item the user picked in the Windows menu, the shell's own
+            // context menu for the entry (More from Windows); what it does is the shell's or an installed shell
+            // extension's.
             var hr = ((IContextMenu)parts.Handler).InvokeCommand(ref info);
             return hr < 0 && hr != ErrorCancelled ? Reason(hr) : null;
         }
@@ -315,6 +320,9 @@ internal static class Shell
             VerbW = (nint)(id - IdFirst),
             Show = SwShowNormal,
         };
+        // Outside call, program, Windows: runs one command of the shell's own menu for an entry or a drive without
+        // showing the menu: the Windows operations axFile's items stand for (the shell's cut, copy and paste; Eject for
+        // a drive).
         var hr = contextMenu.InvokeCommand(ref info);
         return hr < 0 && hr != ErrorCancelled ? Reason(hr) : null;
     }

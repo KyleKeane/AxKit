@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.1
+
+- axKit: `PRIVACY.md`, the README, `SECURITY.md` and the bundle spec say exactly how axKit meets the network: its own code makes requests in the updater alone, over HTTPS to GitHub (the update check, a setting, and the download you choose, accepted from this repository's release address only); an access layer reaches the network only through the program it runs as a child process on your computer (Claude Code talks to Anthropic, git reaches a remote on fetch, pull and push alone, your shell's commands reach what they reach, KeePassXC's tool nothing).
+- axKit: `docs/axkit/outside-calls.md`, a page written from the sources at every release: everything axKit reaches outside its own process, GitHub, Claude Code, git, the shells, KeePassXC's tool, the installers, Windows, the programs you choose, axKit itself and the AI tools' pipes, with what each is, where it is, how axKit reaches it and its documentation, and every call in the code under it with its app, file, line, function and purpose. The README links to it under Transparency and self-audit.
+- For developers: every network request, program start and pipe in `src` carries an `Outside call, <kind>, <what is reached>:` comment; `tools/outside-calls.ps1` writes the page from them, `build.yml` fails on a call without one or a stale page, and `release.ps1` writes and commits the page with each release (bundle SPEC B-17, AX-11.11).
+
 ## 5.0.0 - 2026-11-05
 
 - axKit: the bundle is called axKit, not Axit: a commercial product carries the old name. The program file is `AxKit.exe`, the install folder `%LOCALAPPDATA%\Programs\AxKit`, the Start menu entries `axKit axClaude` and so on, the File Explorer submenu `Open with axKit`, the console command `axkit`, the settings and logs `%APPDATA%\AxKit` and `%LOCALAPPDATA%\AxKit`, the menu in every window the axKit menu, and the repository github.com/KyleKeane/AxKit, where the old address redirects. The apps and their names are unchanged.

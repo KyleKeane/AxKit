@@ -89,6 +89,8 @@ public static class ClaudeLauncher
         {
             // The bundle's run (AxKit.Core/ProcessRun, 2026-10-25): both pipes read to their end, so that a full one
             // cannot hold Claude, and a program Claude started that keeps them open is covered by the timeout.
+            // Outside call, program, Claude Code: runs the user's Claude Code once with --version, without a window, so
+            // that axClaude knows which Claude Code it found and that it runs.
             var result = await ProcessRun.RunAsync(start, [], timeout).ConfigureAwait(false);
             if (result.TimedOut)
             {

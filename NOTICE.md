@@ -140,7 +140,9 @@ browser, or a file you choose to hand to another program.
 ## Access layers: through another program or service
 
 These apps are access layers: axKit shows what the other program does and passes your commands to it. The other program
-does the work, under its maker's terms. Each needs that program installed by you; axKit does not include it.
+does the work, under its maker's terms, and reaches the network itself, as it would without axKit; axKit starts it on
+your computer and talks to it there, never over the network. Each needs that program installed by you; axKit does not
+include it.
 
 - **axClaude, access layer for Claude Code** works through **Claude Code**, Anthropic's program, and through it **Anthropic's service**, under your
   own Anthropic account.

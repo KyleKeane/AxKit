@@ -116,6 +116,9 @@ public abstract partial class AxKitForm
         Process? process;
         try
         {
+            // Outside call, program, Installers: runs the installer of a missing program the user chose in Install it
+            // now (AX-2.9): Windows' own winget from its own source for Git, KeePassXC and PowerShell 7, or Anthropic's
+            // installer script for Claude Code in Windows PowerShell; each downloads the maker's installer.
             process = Process.Start(info);
         }
         catch (System.ComponentModel.Win32Exception ex)

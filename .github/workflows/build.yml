@@ -21,6 +21,10 @@ jobs:
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
+      - name: Outside calls are listed
+        # Every network request, program start and pipe in src carries its explanation, and docs/axkit/outside-calls.md
+        # is what the sources give (docs/axkit/SPEC.md B-17).
+        run: ./tools/outside-calls.ps1 -Check
       - name: Build and test
         # ContinuousIntegrationBuild: deterministic paths; the test packages restore exactly as their lock files say (S-34).
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true

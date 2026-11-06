@@ -73,6 +73,9 @@ public static class KeePassCli
 
         // The bundle's run (AxKit.Core/ProcessRun, 2026-10-25): the password lines on standard input, each ended by a
         // line feed, the outputs read meanwhile, the tool ended with what it started after the timeout.
+        // Outside call, program, KeePassXC: runs the user's installed keepassxc-cli.exe for one command on the
+        // database, the master password on its standard input, and reads what it prints; the tool has no network
+        // feature.
         var result = ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs));
         return result.TimedOut
             ? new CliResult(-1, string.Empty, $"KeePassXC's tool took over {TimeoutMs / 1000} seconds and was ended")
@@ -101,6 +104,9 @@ public static class KeePassCli
             info.ArgumentList.Add(argument);
         }
 
+        // Outside call, program, KeePassXC: starts keepassxc-cli.exe for a command that keeps running (clip, which
+        // clears the clipboard itself after its seconds, PW-5.4), the password on its standard input; left to end by
+        // itself.
         var process = Process.Start(info) ?? throw new IOException("KeePassXC's tool did not start");
         var error = process.StandardError.ReadToEndAsync();
         foreach (var line in input)

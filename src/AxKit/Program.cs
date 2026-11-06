@@ -123,6 +123,9 @@ internal static class Program
             start.ArgumentList.Add(arg);
         }
 
+        // Outside call, program, axKit: starts AxKit.exe itself with the same arguments when this process was started
+        // under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe
+        // (AX-2.3).
         using var started = System.Diagnostics.Process.Start(start);
         if (started is not null)
         {

@@ -34,24 +34,27 @@ axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commerc
 
 The apps reach each other: axFile hands a file to axMedia or axPreview, every window can show its folder in the others, and the axKit menu in every window lists the open windows and starts any app.
 
+The set grows as I find another thing worth doing by ear. `docs/axkit/plan.md` ("Still to come") lists what has been asked for or suggested and not built yet, and `docs/axkit/adding-an-app.md` says how an app is added; every new app follows the same rules, and whatever it reaches outside axKit enters the same lists.
+
 ## Install
 
 Download `install.cmd`, or the zip, from the [latest release](https://github.com/KyleKeane/AxKit/releases/latest) and run it; no administrator rights are needed. It adds Start menu entries ("axKit axClaude" and the others), commands such as `axfile` and `axdown`, and an "Open with axKit" submenu in File Explorer. Installed copies offer each new release themselves: axKit menu, Check for updates. `docs/axkit/README.md` is the README inside the zip, with the rest.
 
-Needs Windows 10 1809 or later. axClaude also needs [Claude Code](https://code.claude.com/docs/en/setup); every other app works offline.
+Needs Windows 10 1809 or later. axClaude also needs [Claude Code](https://code.claude.com/docs/en/setup). The standalone apps work with the network off; an access layer reaches it only through the program it runs, as the next section says.
 
 ## Privacy, and what axKit works with
 
-axKit collects nothing: no telemetry, no analytics, no accounts. On its own it makes one network request, the update check, which asks GitHub for the latest release when a window starts and can be turned off (Options, General, Check for updates at start). Everything else happens only when you ask:
+axKit collects nothing: no telemetry, no analytics, no crash reports, no accounts. Its own code makes network requests in one place, the updater, over HTTPS to GitHub only: the update check when a window starts (one request for the latest release, with the version in the User-Agent header and nothing else about you; Options, General, Check for updates at start turns it off) and, when you choose Update, the release's zip and signature, accepted from this repository's release address only and checked before they are installed. No other code in axKit makes a network request or listens for one.
 
-- **axClaude, access layer for Claude Code** runs Claude Code, Anthropic's program, which you install; what you type goes to Anthropic through it, under Anthropic's terms.
-- **axGIT, access layer for Git** runs your git, which reaches your repository's remotes when you fetch, pull or push.
-- **axTerminal, access layer for your shell** runs your own shells; **axPass** runs KeePassXC's command-line tool, on your computer.
-- **Install it now**, when an app needs Git, KeePassXC, PowerShell 7 or Claude Code, installs it through Windows' winget or Anthropic's installer, when you choose.
-- **The AI tools** (off unless you turn them on) let an AI tool you pair, such as Claude Code, read axKit's windows through local pipes, never the network.
-- Help menus and links open in your browser.
+The access layers meet the network only through the program each runs, as a child process on your computer, through a pseudo console or pipes, never over the network; that program uses the network as it would without axKit, under its maker's terms, on your command:
 
-[PRIVACY.md](PRIVACY.md) says all of it in full, per app, with what stays on your computer. It is also in the zip and in every window: axKit menu, About, Privacy.
+- **axClaude, access layer for Claude Code** runs `claude --ax-screen-reader`; Claude Code talks to Anthropic's service with your account, its own update check included.
+- **axGIT, access layer for Git** runs your git; fetch, pull and push reach your repository's remotes, after your consent for that server; every other command works on disk.
+- **axTerminal, access layer for your shell** runs PowerShell, Command Prompt, Git Bash or PowerShell 7; your commands reach whatever they reach.
+- **axPass, access layer for KeePassXC** runs `keepassxc-cli.exe` on your database file; the tool has no network feature.
+- **Install it now** runs Windows' winget from its own source, or Anthropic's installer script for Claude Code, only when you choose; **the AI tools** (off unless you turn them on) read axKit's windows through named pipes on your computer; Help menus and links open in your browser.
+
+[PRIVACY.md](PRIVACY.md) says all of it in full, with what stays on your computer; it is also in the zip and in every window: axKit menu, About, Privacy. [docs/axkit/outside-calls.md](docs/axkit/outside-calls.md) is the exhaustive list behind both, written from the sources: everything axKit reaches outside its own process, with every call's file, line and purpose.
 
 ## Code signing policy
 
@@ -61,7 +64,9 @@ Windows code signing of `AxKit.exe` (Authenticode, which Windows' Smart App Cont
 
 Team and roles ([GOVERNANCE.md](GOVERNANCE.md)): Dr. Kyle Keane (www.kylekeane.com), author, reviewer and approver.
 
-Privacy: axKit transfers no information to other networked systems unless the user asks it to, except the update check above, which the user can turn off ([PRIVACY.md](PRIVACY.md)).
+Privacy: axKit transfers no information to other networked systems unless the user asks it to, except the update check above, which the user can turn off. Its own code makes HTTPS requests to GitHub alone, for that check and the update the user chooses; its access layers start Claude Code, git, the user's shell and KeePassXC's tool as child processes on the computer, which use the network as they would without axKit, under their makers' terms, on the user's command and after the user's consent ([PRIVACY.md](PRIVACY.md)).
+
+Transparency and self-audit: [PRIVACY.md](PRIVACY.md) says what axKit sends and runs, for the user; [SECURITY.md](SECURITY.md) what matters for security and how to report; [GOVERNANCE.md](GOVERNANCE.md) who decides; and [docs/axkit/outside-calls.md](docs/axkit/outside-calls.md) is the exhaustive list of everything axKit reaches outside its own process, every network request, program start and pipe in the code, by what it reaches (GitHub, Claude Code, Git, the shells, KeePassXC, the installers, Windows, the programs you choose, axKit itself, the AI tools' pipes), with what each is, how axKit reaches it and its documentation, and each call's file, line, function and purpose. `tools/outside-calls.ps1` writes that page from the sources, checks it on every push and writes it again at every release; a call without its explanation fails the build.
 
 ## Build and run
 

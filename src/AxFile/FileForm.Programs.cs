@@ -71,6 +71,8 @@ public sealed partial class FileForm
 
         try
         {
+            // Outside call, program, User programs: starts a program the user added to Open with on the selected
+            // entries; the user's own program, by the path they gave, a script through Windows PowerShell.
             Process.Start(UserPrograms.StartInfo(program, paths))?.Dispose();
             Announce($"Started {program.Name}", true);
         }

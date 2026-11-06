@@ -18,6 +18,8 @@ public static class WindowsOpenWith
     public static string? Show(nint owner, string path)
     {
         var info = new OpenAsInfo { File = path, Flags = OaifAllowRegistration | OaifRegisterExt | OaifExec };
+        // Outside call, program, Windows: shows Windows' own Open with dialog for a file, and Windows runs the program
+        // the user picks in it (axFile's and axPreview's Open with, Choose another program).
         var hr = SHOpenWithDialog(owner, in info);
         return hr < 0 && hr != ErrorCancelled ? Marshal.GetExceptionForHR(hr)?.Message ?? $"error 0x{hr:X8}" : null;
     }

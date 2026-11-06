@@ -168,6 +168,8 @@ public sealed partial class TextEditorForm
 
         try
         {
+            // Outside call, program, Windows: opens the viewed file with the program Windows has for it (axPreview's
+            // Open with Windows default, AP-7.3), through the Windows shell; never a file that would run (S-46).
             Process.Start(new ProcessStartInfo(path) { UseShellExecute = true })?.Dispose();
         }
         catch (Win32Exception ex) when (ex.NativeErrorCode == 1155)

@@ -110,6 +110,8 @@ public static class AppsFolder
                 info.WorkingDirectory = folder;
             }
 
+            // Outside call, program, User programs: starts the program the user picked in axStart, by its name in the
+            // shell's Applications folder as the Start menu does, or its target file as administrator when asked.
             Process.Start(info)?.Dispose();
             return null;
         }

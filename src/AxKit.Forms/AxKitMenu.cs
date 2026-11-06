@@ -215,6 +215,8 @@ public sealed class AxKitMenu : ToolStripMenuItem
 
         try
         {
+            // Outside call, program, axKit: starts another window of axKit from the axKit menu (New window, Show
+            // current folder in, Open in axKit): this very program file with the app's verb and path.
             Process.Start(info)?.Dispose();
         }
         catch (System.ComponentModel.Win32Exception ex)

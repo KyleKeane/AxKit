@@ -46,6 +46,8 @@ public abstract partial class ConsoleForm
         PtyHost? host = null;
         try
         {
+            // Outside call, program, Claude Code, Shells: starts the window's program in a pseudo console: "claude
+            // --ax-screen-reader" for axClaude, the chosen shell for axTerminal.
             host = PtyHost.Start(options, OnData, OnExited);
         }
         catch (Exception ex)

@@ -27,10 +27,13 @@ manager: `docs/axkit/plan.md`) and follow the same pattern without changes to th
 - **G4 Plain code.** Zero third-party runtime dependencies, as axClaude always had, and no coding paradigm that a
   smaller model would struggle to edit: plain classes, static methods, one obvious way to do each thing.
 - **G5 Nothing breaks.** axClaude behaves as released; every commit builds and passes the tests, and a change to a window is checked with NVDA before it is released.
-- **G6 Local first.** Every app has its full utility with the network off; axClaude is the one exception, since
-  Claude Code is a service. The update check (AX-3) is the only call a window makes on its own, a setting that can be
-  off, and a network failure is never more than a missing update. Any AI help in the other apps is one shared,
-  optional service (B-15), never a dependency of a feature that works without it.
+- **G6 Local first.** Every standalone app has its full utility with the network off. An access layer has the utility
+  of its program: axGIT's and axPass's work on the disk, axTerminal's is the commands typed, and axClaude's needs
+  Claude Code's service, so axClaude is the one app that needs the network. axKit's own code makes network requests in
+  the updater alone (AX-3), over HTTPS to GitHub: the update check, a setting that can be off, and the download the
+  user chooses; a network failure is never more than a missing update. An access layer reaches the network only
+  through the program it runs (AX-11.11). Any AI help in the other apps is one shared, optional service (B-15), never
+  a dependency of a feature that works without it.
 
 Non-goals: a plugin system or loading apps from separate files (apps are compiled in); more than one window per
 process; an installer that needs administrator rights; setting Windows default programs silently (Windows does not
@@ -685,6 +688,20 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   read back to their app (`AxKitWindowsTests`); `Consent` records, reads, withdraws and takes a damaged file as nothing
   agreed (`ConsentTests`); the servers' hosts (`GitRemoteTests`); every program Install it now offers has its
   consent target with an address (`ConsentTests`).
+- AX-11.11 **How an access layer meets the network (2026-11-05).** An access layer starts its program as a child
+  process of the window (Claude Code and the shells in a ConPTY pseudo console, git and `keepassxc-cli.exe` as
+  processes with their standard streams on pipes) and talks to it over that pseudo console or those pipes, on the
+  computer, never over the network. The program's network use is its own, as from a terminal: Claude Code talks to
+  Anthropic's service and checks for its own updates; git reaches a remote on fetch, pull and push alone (AX-11.5 asks
+  the server's consent first; its credential helper may ask for a sign-in in its own window, AX-11.6); a shell's
+  commands reach what they reach; KeePassXC's tool has no network feature. axKit does not see, record or change that
+  traffic; it reads what the program prints and passes on what the user types. axKit's own code makes network requests
+  in the updater alone (AX-3), over HTTPS to GitHub: the update check and the download the user chooses, which the
+  updater takes only from this repository's release address; nothing else in the code makes a network request or
+  listens for one, and the remaining addresses in the code are the Help menus' links, opened in the browser, and the
+  installers' (AX-2.9: winget from its own source, Anthropic's installer script). `PRIVACY.md`, `README.md`,
+  `docs/axkit/README.md` and `SECURITY.md` say this in these terms, and a change here changes them in the same commit;
+  `docs/axkit/outside-calls.md` lists every such call in the code, written from the sources (B-17).
 
 ### AX-7 Accessibility rules every app follows
 
@@ -920,9 +937,10 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   The axKit menu (AX-9) gives the one thing tabs give, a list of what is open in one place, by recency and by app;
   Windows' own order of its windows is the recency, so nothing is stored or kept in step, and Alt+Tab is unchanged.
 - **B-15 Local first; AI help is one shared, optional service (2026-10-18).** The apps are tools over files, folders,
-  repositories and a shell on the user's machine, and they stay useful on a plane or behind a firewall: every app but
-  axClaude works entirely offline, every network connection can be disabled without loss of the app's utility, and
-  the update check is the only call a window makes on its own (G6). AI-based editing and feedback, asked for first as
+  repositories and a shell on the user's machine, and they stay useful on a plane or behind a firewall: every
+  standalone app works entirely offline, the access layers work offline except for what their programs reach on the
+  user's command (AX-11.11), every network request of axKit's own can be turned off without loss of any app's utility,
+  and the update check is the only call a window makes on its own (G6). AI-based editing and feedback, asked for first as
   a feature of axDown, are not built into any one app: they are a shared service every app can call from inside its
   window to get things done there, written once and optional, so that the apps stay plain and complete without it.
   The bundle is to have a shared database as well, which the service and the apps share. The service's design (how it
@@ -941,6 +959,26 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   for 1.7.0; none could serve here, since the updater of 4.0.0 trusts a release's files only under the old repository
   address, which GitHub rewrites for every release once the repository is renamed. The recorded fixtures keep the
   name of the folder they were recorded in.
+- **B-17 Every outside call is listed from the sources (2026-11-05).** Everything axKit reaches outside its own
+  process, the network requests of its own code, the programs it starts and the pipes it opens, is on one page,
+  `docs/axkit/outside-calls.md`, written by `tools/outside-calls.ps1` and never by hand: by what is reached (GitHub,
+  Claude Code, Git, the shells, KeePassXC, the installers, Windows, the user's programs, axKit itself, the AI tools'
+  pipes, the test automation's pipe), each with what it is, where it is (the program file or the endpoint), how axKit
+  reaches it, what it may reach in turn and its documentation, then every call under it with its app, file and line,
+  the function it stands in, the function it calls and what the call does for the user; and the functions themselves,
+  where each is defined and used, and what is watched for and not used. The script finds the calls by the functions
+  that reach outside (.NET's HttpClient, Process.Start, the bundle's ProcessRun and PtyHost, Windows' CreateProcess,
+  ShellExecuteEx, IContextMenu.InvokeCommand, SHOpenWithDialog and StartService, the named pipes, the MCP server's
+  standard input) in every `.cs` file under `src`, and reads each call's explanation from the comment it carries, on
+  the line above it or at its end: `// Outside call, <kind>, <what is reached>: <what it does and why>`, the kind one
+  of network, program and pipe, what is reached a key of the script's table (several, separated by commas, for a
+  shared piece). A call without that comment, with the wrong kind or with an unknown key fails the script; `build.yml`
+  runs it with `-Check` on every push, which also fails when the page is not what the sources give; `release.ps1`
+  writes the page before the tests and commits it with the release, so it is exact at every tag. A new way of
+  reaching outside joins the script's table of functions, a new program or service its table of targets, in the same
+  commit as the code. Why: the user asked (2026-11-05) for the interface between axKit and the programs and services
+  it works through to be defined, audited and watched automatically, so that a call added later cannot go unlisted;
+  `PRIVACY.md`, `SECURITY.md` and the README stay the plain-language statements and link to the page (AX-11.11, G6).
 
 ## 7. Status
 

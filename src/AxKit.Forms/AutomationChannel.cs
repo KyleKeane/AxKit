@@ -119,6 +119,9 @@ internal sealed class AutomationChannel : IMessageFilter
         {
             try
             {
+                // Outside call, pipe, Test automation: the window's pipe of an automated test run only
+                // (AXKIT_AUTOMATION, set by tools/AxAutomate), which only this account may open, so that the test tool
+                // can drive the window; never opened in normal use (docs/axkit/automation.md).
                 using var pipe = NamedPipeServerStreamAcl.Create($"axkit-auto-{Environment.ProcessId}", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());
                 pipe.WaitForConnection();
                 using var reader = new StreamReader(pipe, new UTF8Encoding(false));
