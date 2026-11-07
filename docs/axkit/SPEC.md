@@ -30,8 +30,10 @@ manager: `docs/axkit/plan.md`) and follow the same pattern without changes to th
 - **G6 Local first.** Every standalone app has its full utility with the network off. An access layer has the utility
   of its program: axGIT's and axPass's work on the disk, axTerminal's is the commands typed, and axClaude's needs
   Claude Code's service, so axClaude is the one app that needs the network. axKit's own code makes network requests in
-  the updater alone (AX-3), over HTTPS to GitHub: the update check, a setting that can be off, and the download the
-  user chooses; a network failure is never more than a missing update. An access layer reaches the network only
+  two places, both over HTTPS to GitHub: the updater (AX-3), the update check, a setting that can be off, and the
+  download the user chooses; and the report sender (AX-12, docs/axkit/reports.md), only when the user sends a report
+  (F4), the report saved on the computer first. A network failure is never more than a missing update or a report that
+  waits for the next. An access layer reaches the network only
   through the program it runs (AX-11.11). Any AI help in the other apps is one shared, optional service (B-15), never
   a dependency of a feature that works without it.
 
@@ -706,12 +708,38 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   the server's consent first; its credential helper may ask for a sign-in in its own window, AX-11.6); a shell's
   commands reach what they reach; KeePassXC's tool has no network feature. axKit does not see, record or change that
   traffic; it reads what the program prints and passes on what the user types. axKit's own code makes network requests
-  in the updater alone (AX-3), over HTTPS to GitHub: the update check and the download the user chooses, which the
-  updater takes only from this repository's release address; nothing else in the code makes a network request or
+  in two places (AX-12, 2026-11-07), over HTTPS to GitHub: the updater (AX-3), the update check and the download the
+  user chooses, which the updater takes only from this repository's release address; and the report sender
+  (docs/axkit/reports.md RP-6), which posts a report the user sends as an issue of the reports repository and reads
+  that repository's blocklist first, only on the user's Enter; nothing else in the code makes a network request or
   listens for one, and the remaining addresses in the code are the Help menus' links, opened in the browser, and the
   installers' (AX-2.9: winget from its own source, Anthropic's installer script). `PRIVACY.md`, `README.md`,
   `docs/axkit/README.md` and `SECURITY.md` say this in these terms, and a change here changes them in the same commit;
   `docs/axkit/outside-calls.md` lists every such call in the code, written from the sources (B-17).
+
+### AX-12 Reports from every window
+
+The design is `docs/axkit/reports.md` (RP-n, 2026-11-07); this section fixes what the bundle promises.
+
+- AX-12.1 **F4 in every window** (`BundleKeys.Report`, AX-8.2) and the axKit menu's Send a report… open the notice
+  "Report to axKit" with the window's own fields (`ReportControls`): the user's words first and focused, Enter sends,
+  Shift+Enter breaks a line; then the kind (Feedback, Bug, Feature request), the app and version, the window's last
+  twenty actions and announcements (`RecentActions`), where the focus was by name and place and never by text, the
+  log's last lines and a title, every prefilled field redacted (`Redaction`) and editable. Your reports opens the
+  Reports list in axTask.
+- AX-12.2 **Saved first, sent second.** Enter writes the report as an item of the axTask list `%APPDATA%\AxKit\reports`
+  (RP-5), then sends it and every unsent one, oldest first, as an issue of the reports repository `KyleKeane/AxKit-reports`
+  over GitHub's REST API (RP-6). Nothing is sent at a window's start; the unsent go with the next report and when Your
+  reports opens (RP-6.7). Escape with words typed keeps a draft.
+- AX-12.3 **axKit's own reporter account.** The issue is posted by a machine account of the maintainer's whose token
+  the release build carries and which can reach that repository's issues alone (RP-6.2); every report ends with the
+  install's random reporter id and the version (RP-6.3). A blocklist in that repository, read before a send, the
+  repository's own workflow, and the token's revocation at a release are the levers against abuse (RP-6.4); a report
+  that cannot go stays saved, and the notice offers it for copying and GitHub's own form (RP-6.5).
+- AX-12.4 **Consent once** (AX-11.4's shape): before the first report goes, a notice says that it becomes a public
+  issue under axKit's account with nothing that names the user, with the check box; recorded in `consent.json` under
+  the app name "axKit" and listed in About, Licence (RP-6.6). The report sender is the second place axKit's own code
+  meets the network, beside the updater (G6, AX-11.11, `PRIVACY.md`).
 
 ### AX-7 Accessibility rules every app follows
 

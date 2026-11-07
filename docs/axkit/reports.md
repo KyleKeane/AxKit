@@ -121,10 +121,12 @@ levers are built now.
 - **RP-6.2 The reporter token.** A fine-grained personal access token of a machine user of the maintainer's
   (`axkit-reporter`, the one machine account GitHub allows a person), with access to the reports repository alone and
   the permission Issues: read and write, nothing else: a leaked token can file, edit, label and close issues there, and
-  nothing anywhere else (RP-D8). It is never in the source: `release.yml` reads it from the repository secret
-  `AXKIT_REPORTER_TOKEN` and writes it into the build (`Reports.Token`, a constant filled at publish time, stored split
-  and recombined at run time so that it is not a plain string in the file; this slows a reader down and stops no one,
-  and the page says so). A build without the secret (a developer's build, a fork's) has no token: its sender says
+  nothing anywhere else (RP-D8). It is never in the source: `release.yml`'s sign job, the "release" environment, which runs no test package, reads it
+  from that environment's secret `AXKIT_REPORTER_TOKEN` and has `publish.ps1` write it, mixed with a fixed key and as
+  base64, into `src/AxKit.Core/Reports/reporter.token` (`tools/reporter-token.ps1`), a file git ignores, which the
+  build embeds when it exists and which the script removes again; `ReporterToken` reads it back at run time. The mixing
+  keeps the token from a glance at the program file and stops nobody who looks for it, and this page says so. The build
+  job, which runs the tests and their packages, never sees the token (S-30, `ReleaseWorkflowTests`). A build without the secret (a developer's build, a fork's) has no token: its sender says
   "This build cannot send reports" and offers RP-6.5's two buttons. GitHub's terms ask that credentials be kept
   confidential; the machine user with one repository and one permission is the closest a token in a program comes to
   that, and a revocation by GitHub costs one release (RP-6.4). The setup page `docs/axkit/reports-setup.md` records

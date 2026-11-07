@@ -11,6 +11,9 @@
     <EmbeddedResource Include="../../NOTICE.md" LogicalName="Notice.md" />
     <EmbeddedResource Include="../../PRIVACY.md" LogicalName="Privacy.md" />
     <EmbeddedResource Include="../../THIRD-PARTY-NOTICES.md" LogicalName="ThirdPartyNotices.md" />
+    <!-- The reporter account's token for the reports (docs/axkit/reports.md RP-6.2): written by publish.ps1 from the
+         release secret through tools/reporter-token.ps1, ignored by git, embedded only when it is there. -->
+    <EmbeddedResource Include="Reports/reporter.token" LogicalName="AxKit.Core.ReporterToken" Condition="Exists('Reports/reporter.token')" />
   </ItemGroup>
 
 </Project>

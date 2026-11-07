@@ -133,11 +133,13 @@ development computer is for reading the signing account, and for signing a file 
 
 ## 4. How a release is signed (`.github/workflows/release.yml`)
 
-Three jobs. **build** (a token that can only read, S-30) tests, runs `publish.ps1 -NoInstall -NoZip`, which builds
-`publish/win-x64` without zipping it, writes the release notes, and uploads the folder with `install.cmd`, `notes.md`
-and `tag.txt` as the artifact `build`. **sign** (environment `release`, with `id-token: write`; a job of its own, so
-that the tests and their packages never run beside the identity's ids) checks the repository out for `publish.ps1`,
-downloads `build` and, when `AZURE_CERTIFICATE_PROFILE` is set, runs `azure/login` with the three ids (GitHub issues
+Three jobs. **build** (a token that can only read, S-30) tests, writes the release notes, and uploads `install.cmd`,
+`notes.md` and `tag.txt` as the artifact `build`. **sign** (environment `release`, with `id-token: write`; a job of its
+own, so that the tests and their packages never run beside the identity's ids or the reporter token) checks the
+repository out, sets the SDK up, downloads `build`, runs `publish.ps1 -NoInstall -NoZip`, which builds `publish/win-x64`
+without zipping it, with the reports' reporter token from the environment's secret `AXKIT_REPORTER_TOKEN` written into
+the build (docs/axkit/reports.md RP-6.2, docs/axkit/reports-setup.md; since 2026-11-07, when publishing moved here from
+the build job for that token) and, when `AZURE_CERTIFICATE_PROFILE` is set, runs `azure/login` with the three ids (GitHub issues
 the run an OpenID Connect token for the `release` environment; Azure exchanges it for the GitHub Actions identity,
 because that identity's federated credential names this repository and that environment; no secret is stored
 anywhere) and `azure/artifact-signing-action` with the endpoint, the account, the profile, `publish/win-x64` filtered

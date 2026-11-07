@@ -34,5 +34,8 @@ captures/
 axclaude-*.txt
 *.log
 
+## The reporter account's token, written by publish.ps1 for a release build only (docs/axkit/reports.md RP-6.2)
+src/AxKit.Core/Reports/reporter.token
+
 # The maintainer's private notes, never published
 docs/background_info/

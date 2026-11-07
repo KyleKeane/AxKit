@@ -1,6 +1,6 @@
 name: Idea
 description: A feature, a key, or a change to how an app reads.
-labels: [idea]
+labels: [feature]
 body:
   - type: dropdown
     id: app
