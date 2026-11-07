@@ -65,7 +65,7 @@ public sealed partial class TaskForm
         AskText("New item", $"In {(AtTop ? "the top folder" : Path.GetFileName(folder))}.", "Title:", "Title", string.Empty, "&Add", title =>
         {
             var template = TaskRules.TemplateOf(ItemFolder.ReadList(folder));
-            var path = ItemFolder.FreePath(folder, ItemFolder.FileStem(title), ".json");
+            var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json");
             Commit(new Step([FileChange.Write(path, null, ItemDocument.NewItem(title, template).ToText())], "Added " + title), path);
         }, typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
     }
@@ -215,7 +215,7 @@ public sealed partial class TaskForm
 
         var renamed = item.Document.WithTitle(title);
         var folder = Path.GetDirectoryName(item.Path)!;
-        var to = ItemFolder.FreePath(folder, ItemFolder.FileStem(title), ".json", own: item.Path);
+        var to = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json", own: item.Path);
         var parts = new List<FileChange> { FileChange.Write(item.Path, item.Text, renamed.ToText()) };
         if (!to.Equals(item.Path, StringComparison.Ordinal))
         {
@@ -252,8 +252,8 @@ public sealed partial class TaskForm
 
         var archive = ItemFolder.ArchiveFolder(TopFolder);
         var to = row.IsList
-            ? ItemFolder.FreePath(archive, Path.GetFileName(row.Key), string.Empty)
-            : ItemFolder.FreePath(archive, Path.GetFileNameWithoutExtension(row.Key), ".json");
+            ? ItemFiles.FreePath(archive, Path.GetFileName(row.Key), string.Empty)
+            : ItemFiles.FreePath(archive, Path.GetFileNameWithoutExtension(row.Key), ".json");
         var parts = new List<FileChange> { FileChange.Move(row.Key, to) };
         parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopFolder), row.Key, to));
         if (row.Tag is not ItemFile item || CheckFresh(item.Path, item.Text))

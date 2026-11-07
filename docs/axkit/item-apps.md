@@ -122,7 +122,9 @@ A folder. Its details are `list.json` in it, the same shape as an item, never sh
 
 - **IA-4.5** An item's file is named after its Title, with the characters Windows forbids replaced by a space, and
   `.json`: `Fix the tap.json`. Two items with one title are `Fix the tap.json` and `Fix the tap - 2.json`, axFile's
-  rule. Changing the Title renames the file, and the links to it are changed with it (IA-D3).
+  rule. Changing the Title renames the file, and the links to it are changed with it (IA-D3). The rule is
+  `AxKit.Core/ItemFiles` (`FileStem`, `FreePath`) since the bundle's reports list used it too (2026-11-07,
+  docs/axkit/reports.md RP-5.1).
 - **IA-4.6** A file that is not JSON, or not an item, is not shown; the status bar counts them ("2 files not shown").
 
 ## 5. Changing a field

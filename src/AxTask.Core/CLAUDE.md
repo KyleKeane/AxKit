@@ -18,8 +18,9 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `ItemFolder` and `ItemFile`, `FolderLevel`, `TopLevel` (IA-4, IA-D4, TK-3a, TK-D4): a list's items (`Read`; a
   folder inside a list, hidden and dot entries left out, what is not an item counted), the top folder's lists and the
   Archive's (`ReadTop`), a list's section (`SectionOf`, from the `SectionField` of its details), `ReadItem` (with the text read, for
-  `CheckFresh`), `ReadList`, `NameOf`, `FileStem` and `FreePath` (IA-4.5), `RefusedListName`, `AllItems` (the Archive
-  left out), `ArchiveFolder`, `IsArchive`, `ListName`, `LinkTo` and `Resolve` (IA-D3).
+  `CheckFresh`), `ReadList`, `NameOf`, `RefusedListName`, `AllItems` (the Archive
+  left out), `ArchiveFolder`, `IsArchive`, `ListName`, `LinkTo` and `Resolve` (IA-D3). `FileStem` and `FreePath`
+  (IA-4.5) are `AxKit.Core/ItemFiles` since their second use, the reports list (2026-11-07).
 - `Changes`, `Step` and `FileChange` (IA-5.4): a change as parts, writes and moves, `Apply`, `CheckUndo` (every path
   as the step left it), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,
