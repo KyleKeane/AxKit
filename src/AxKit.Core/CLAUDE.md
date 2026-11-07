@@ -135,6 +135,13 @@ another project on its second use, the bullet says so.
 - `ItemDocument`, `ItemField`, `FieldTypes` and `Parsed` (docs/axkit/item-apps.md IA-4; from AxTask.Core, axPass,
   2026-10-24): the item apps' format, an item as a list of fields of a title, a type and a value kept whole as JSON,
   the types read out and typed (dates as tomorrow or +3).
+- `ItemFiles` (IA-4.5; from AxTask.Core's `ItemFolder` on its second use, the reports list, 2026-11-07): `FileStem`,
+  the file name a Title gives, and `FreePath`, a free name beside the taken ones ("name - 2.json").
+- `Reports/` (docs/axkit/reports.md, 2026-11-07): `Report` with `ReportKind`, `ReportKinds` (the names, the GitHub
+  labels, `Parse`) and `ReportStatus` (Draft, Not sent yet with its reason, Sent, `AwaitsSending`); `ReportFiles`, the
+  Reports list as an axTask folder (the template, `ListText` with the action keys, `ToItem`, `FromItem`, `Save`,
+  `Write`, `WithStatus`, `WithSent`, `Unsent`); `ReportBody`, the issue's Markdown with the reporter line last and
+  `ParseReporterLine`. Tested in `ReportsTests`.
 - `MediaFiles` (docs/axmedia/SPEC.md AM-4; from AxFile.Core, axMedia, 2026-10-22): the rules of sound and video files
   that need no engine, the extension sets with `IsMedia`, the time format and the typed time, the speed steps.
 
