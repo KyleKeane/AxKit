@@ -43,7 +43,8 @@ the restart by the app itself (2.3.0).
 
 - Reports (asked 2026-11-07, specified in `docs/axkit/reports.md`, not built): F4 in every window opens a report with
   the last actions and the focus filled in, three kinds (feedback, bug, feature request), saved as an axTask item
-  first and sent to GitHub as an issue over its REST API as the user's own account, unsent ones going with the next;
+  first and sent to GitHub as an issue of a reports repository over its REST API through axKit's own reporter account,
+  nothing to sign in to, a reporter id per install and a blocklist against abuse, unsent ones going with the next;
   "Your reports" in the axKit menu; in axTask, GitHub lists of the repository's issues and Ctrl+1 to Ctrl+9 as the
   user's own actions on a list's items (set fields, move, open), All tasks moving to Ctrl+0. The maintainer's
   `docs/feature_requests` folder becomes issues when it is built. Its open questions are the page's section 11.

@@ -17,12 +17,13 @@ TK and IA material and moves into those specs when built.
   menu has it as "Report a bug or an idea…" and, beside it, "Your reports", which opens the list of reports in axTask;
   the command palette lists both (AX-10.2).
 - **Saved first, sent second.** Enter writes the report as an item of the axTask list `Reports` under the user's axKit
-  data folder, then sends it to GitHub as an issue of this repository over GitHub's REST API, as the user's own GitHub
-  account. No network, no sign-in or a refusal leaves the item marked "Not sent yet", and it goes with the next report
-  or when the list is opened (RP-D3).
-- **One sign-in, once.** GitHub takes issues only from an account. The first send shows the consent notice (AX-11.4)
-  and then GitHub's device sign-in: a short code to type on github.com/login/device, which the notice opens. The token
-  is kept on this computer, protected as the MCP key is, and forgotten from the axKit menu.
+  data folder, then sends it to GitHub as an issue of the reports repository over GitHub's REST API, through axKit's
+  own reporter account, whose token ships inside the executable: nothing to sign in to (RP-D2). No network or a refusal
+  leaves the item marked "Not sent yet", and it goes with the next report or when the list is opened (RP-D3).
+- **Nothing to sign in to, and a way to cut off abuse.** Every report carries the install's reporter id, a random id
+  made on first use. A blocklist the sender reads before sending, the reports repository's own workflow, and the
+  token's revocation and rotation at a release let the maintainer stop nonsense from one install or one version
+  (RP-6.4). A version whose token was revoked says so and offers the report for copying and GitHub's own form.
 - **axTask shows it all.** The Reports list is an ordinary axTask list with a template, so the user reads, edits and
   deletes reports as items. The maintainer's lists of the repository's issues are axTask lists too (GitHub lists,
   section 7), and Ctrl+1 to Ctrl+9 run the actions the user assigned to that list (section 8): make it a bug, close it,
@@ -64,8 +65,8 @@ one announcement per move:
 8. **Send** (Enter anywhere but a multi-line field, the notice's default button) and **Cancel** (Escape).
 
 - **RP-3.1 What is said.** Opening: "Report to axKit" and the first field's name, as every notice. Sending: "Sent as
-  issue 12" with the done chime; or "Saved; not sent yet, no network. It goes with the next report"; or "Saved; sign in
-  to GitHub to send it", which opens the sign-in (section 6). Escape with words typed: "Kept as a draft in Your
+  issue 12" with the done chime; or "Saved; not sent yet, no network. It goes with the next report"; or, when this
+  build or version cannot send (RP-6.4, RP-6.5), the notice that says why, with Copy report and Open GitHub's form. Escape with words typed: "Kept as a draft in Your
   reports" (RP-D6); with none: "Cancelled".
 - **RP-3.2 Nothing is lost.** The report is written to the Reports list before any network is touched, so a failed send
   is a saved item with its reason in the Status field, and a crash mid-way leaves the file.
@@ -82,9 +83,10 @@ one announcement per move:
   docs/axkit/mcp.md section 5) put only their command names in the ring, not their announcements.
 - **RP-4.3 Redaction.** Every prefilled field goes through `Redaction` (AxKit.Core, S-20) before it is shown: the
   account's paths read `<user>`, an e-mail address `<email>`. The user reads what will be sent.
-- **RP-4.4 Public.** An issue is public on GitHub under the user's GitHub name; the consent notice says so in its
-  first line (section 6), and the form's title row says "public issue" after the first time: "Report to axKit (a
-  public issue on GitHub)".
+- **RP-4.4 Public.** An issue is public on GitHub, posted by axKit's reporter account with the install's reporter id
+  and nothing that names the user; the consent notice says so in its first line (section 6), and the form's title row
+  says "public issue" after the first time: "Report to axKit (a public issue on GitHub)". A user who wants an answer
+  writes how to reach them in the report, knowing it is public; the form never asks for it.
 
 ## 5. Saving: the Reports list
 
@@ -94,61 +96,93 @@ one announcement per move:
 - **RP-5.2 The fields** (the template's order): Title; Kind (text: Feedback, Bug or Feature request); Report (text, the
   user's words); App (text, as RP-3 item 3); Where (text); Actions (text, one action per line); Log (text); Created
   (date and time); Status (text: Draft, Not sent yet, or Sent, with the reason after a colon when not sent: "Not sent
-  yet: no network", "Not sent yet: GitHub said 401, sign in again"); Issue (link, the issue's web address once sent);
+  yet: no network", "Not sent yet: this version can no longer send reports, update axKit", "Not sent yet: blocked"); Issue (link, the issue's web address once sent);
   Number (number, the issue's).
 - **RP-5.3 Editing.** Until it is sent, every field edited in axTask goes into the issue as edited. After, edits stay
   local; the Issue link opens the issue in the browser (a link whose value is a web address opens in the browser, an
   addition to IA-4.2's link type). Delete archives as any item (IA-D4) and never touches GitHub.
 
-## 6. Sending: GitHub's REST API, the user's account
+## 6. Sending: GitHub's REST API, axKit's own reporter account
 
-- **RP-6.1 The request.** `POST https://api.github.com/repos/KyleKeane/AxKit/issues` with the title, the body and one
-  label from the kind (`feedback`, `bug`, `feature`), `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`,
-  `X-GitHub-Api-Version: 2022-11-28`. The answer's number and web address go into the item (Status "Sent"). The body is
-  Markdown: the user's words first; then "### Context" with App and version and Where the focus was; "### Last actions"
-  as a code block; the log lines inside a `<details>` block titled "Log lines"; last, "Sent from axKit 5.1.0 with F4".
-  The labels `feedback` and `feature` are created in the repository; the issue forms (`.github/ISSUE_TEMPLATE`) move from
-  `idea` to `feature`, so the browser's reports and the window's carry the same labels, and recategorising is changing
-  the label (section 7).
-- **RP-6.2 Sign-in** is GitHub's device flow (RFC 8628) for an OAuth app the maintainer registers ("axKit reports",
-  device flow on, scope `public_repo`; its client id is public and lives in the code, a setup page like
-  `docs/axkit/code-signing.md` records the registration). `POST https://github.com/login/device/code` gives the user
-  code and the verification address; the notice "Sign in to GitHub" shows "The code is ABCD-1234. Enter it on
-  github.com/login/device, which opens now; this notice closes by itself when GitHub confirms", with Copy code and
-  Cancel; the browser opens on the address; the window polls `POST https://github.com/login/oauth/access_token` at
-  GitHub's interval until the token comes or the user cancels. The token is written to `%LOCALAPPDATA%\AxKit\github.token`
-  protected for this Windows account as `mcp.key` is (`UserSecret`), never into a settings file. "Forget GitHub
-  sign-in" in the axKit menu, beside "Forget AI tools", deletes it (and a 401 from GitHub says to sign in again).
-- **RP-6.3 No account.** GitHub takes issues from accounts only, in the browser too. The sign-in notice has a third
-  button, "Create a GitHub account", which opens github.com/signup; the report waits as "Not sent yet: not signed in".
-- **RP-6.4 Consent** (AX-11.4, AX-11.5): before the first sign-in, the consent notice for GitHub, a new
-  `ConsentTarget.GitHubReports`: "Reports go to GitHub as public issues of axKit's repository under your GitHub name;
-  the account and its terms are between you and GitHub" with the check box; recorded in `consent.json` with its date,
-  shown in About, Licence, withdrawn by "Forget AI tools" like the others.
-- **RP-6.5 When sending runs.** Right after a report is saved, and then every "Not sent yet" item of the list, oldest
+GitHub takes issues from signed-in accounts only, in the browser as in its API, and a sign-in would keep many people
+from reporting at all (the user, 2026-11-07). So the sender signs in as axKit itself: a reporter account of the
+maintainer's, whose token travels inside the executable. That token can be extracted by anyone who takes the trouble,
+which is why it can do little, why every report names its install, and why the maintainer can revoke it and block an
+install or a version at any time (RP-6.2 to RP-6.4). The protocols for a compromise are settled when one happens; the
+levers are built now.
+
+- **RP-6.1 The request.** `POST https://api.github.com/repos/KyleKeane/AxKit-reports/issues` with the title, the body
+  and one label from the kind (`feedback`, `bug`, `feature`), `Authorization: Bearer <reporter token>`,
+  `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2022-11-28`. The answer's number and web address go into
+  the item (Status "Sent"). The body is Markdown: the user's words first; then "### Context" with App and version and
+  Where the focus was; "### Last actions" as a code block; the log lines inside a `<details>` block titled "Log lines";
+  last, one line the workflow and the maintainer filter on: "Sent from axKit 5.1.0 with F4; reporter a1b2c3d4-…". The
+  labels exist in the reports repository; recategorising is changing the label (section 7).
+- **RP-6.2 The reporter token.** A fine-grained personal access token of a machine user of the maintainer's
+  (`axkit-reporter`, the one machine account GitHub allows a person), with access to the reports repository alone and
+  the permission Issues: read and write, nothing else: a leaked token can file, edit, label and close issues there, and
+  nothing anywhere else (RP-D8). It is never in the source: `release.yml` reads it from the repository secret
+  `AXKIT_REPORTER_TOKEN` and writes it into the build (`Reports.Token`, a constant filled at publish time, stored split
+  and recombined at run time so that it is not a plain string in the file; this slows a reader down and stops no one,
+  and the page says so). A build without the secret (a developer's build, a fork's) has no token: its sender says
+  "This build cannot send reports" and offers RP-6.5's two buttons. GitHub's terms ask that credentials be kept
+  confidential; the machine user with one repository and one permission is the closest a token in a program comes to
+  that, and a revocation by GitHub costs one release (RP-6.4). The setup page `docs/axkit/reports-setup.md` records
+  the account, the repository, the token's scope and the secret, as `code-signing.md` does for signing.
+- **RP-6.3 The reporter id.** A random GUID made on the first report and kept in `%APPDATA%\AxKit\reports.json`,
+  in every report's last line. It names the install, not the person: no account, no name, no hardware id, and
+  deleting the file gives a new one. The maintainer filters and, if need be, blocks by it (RP-6.4). `PRIVACY.md` says
+  so.
+- **RP-6.4 Abuse: the levers.** Three, cheapest first. The **blocklist**, `blocklist.json` in the reports repository
+  (`https://raw.githubusercontent.com/KyleKeane/AxKit-reports/main/blocklist.json`, a list of reporter ids and of
+  axKit versions), fetched by the sender before a send and kept a day: a listed install or version does not send and
+  says "Reports from this install are blocked; see the reports repository". The **workflow** in the reports repository
+  (`issues: opened`) reads the last line of every new issue and closes and locks one from a blocked id or version at
+  once, so the lever holds even against a sender that skips the blocklist. The **token**: revoked on GitHub and
+  replaced, the secret updated, a release made; every earlier version gets GitHub's 401 and says "This version can no
+  longer send reports: update axKit from the Help menu, or copy the report", with RP-6.5's buttons. Revoking also at
+  least once a year goes into `docs/axkit/longevity.md`'s yearly check. One report per thirty seconds per install, from
+  the sender's side, keeps a stuck key from flooding.
+- **RP-6.5 When sending cannot happen.** The report is saved whatever happens (RP-3.2). The notice that says why has
+  two buttons: **Copy report** (the whole body to the clipboard, to paste anywhere) and **Open GitHub's form** (the
+  browser on the reports repository's new-issue form, prefilled by its query string, which needs the user's own GitHub
+  account). No e-mail route: an address cannot live in the repository (`PrivacyTests`, bundle rule 6), and the user
+  chose the token over it.
+- **RP-6.6 Consent** (AX-11.4, AX-11.5): before the first send, the consent notice for GitHub, a new
+  `ConsentTarget.GitHubReports`: "Reports go to GitHub as public issues of axKit's reports repository, posted by axKit's
+  own account with a random id of this install and nothing that names you; what you write is public, and GitHub's
+  terms apply to it" with the check box; recorded in `consent.json` with its date, shown in About, Licence, withdrawn
+  by "Forget AI tools" like the others.
+- **RP-6.7 When sending runs.** Right after a report is saved, and then every "Not sent yet" item of the list, oldest
   first; when "Your reports" opens the list from the axKit menu (axTask says "2 reports sent" or the reason); never at
   a window's start: a standalone app stays off the network until the user acts, the update check being the bundle's
   one automatic request (G6, AX-3). Each send has a ten-second limit; its reason, in a few words, goes into Status.
-- **RP-6.6 The rule changes, in one commit with the code** (bundle rule 8, B-15, G6, AX-11.11, `PRIVACY.md`,
+- **RP-6.8 The rule changes, in one commit with the code** (bundle rule 8, B-15, G6, AX-11.11, `PRIVACY.md`,
   `README.md`, `docs/axkit/README.md`, `SECURITY.md`): axKit's own code makes network requests in two places, the
   updater and the report sender, both over HTTPS to GitHub, the report sender only when the user acts (RP-D2). The
-  three endpoints carry `Outside call, network, GitHub:` comments and appear on `docs/axkit/outside-calls.md` (B-17).
-  The security audit gets entries for the token file and the redaction of what is sent.
+  two endpoints (the issue, the blocklist) carry `Outside call, network, GitHub:` comments and appear on
+  `docs/axkit/outside-calls.md` (B-17). The security audit gets entries for the token in the build, the reporter id
+  and the redaction of what is sent.
 
 ## 7. The maintainer's side: GitHub lists in axTask
 
-- **RP-7.1 A GitHub list** is an axTask list whose `list.json` has `"github": {"repository": "KyleKeane/AxKit",
+- **RP-7.1 A GitHub list** is an axTask list whose `list.json` has `"github": {"repository": "KyleKeane/AxKit-reports",
   "state": "open"}`. Opening it, and F5, fill it from `GET /repos/{repository}/issues?state=open&per_page=100` (paged,
-  pull requests left out) with the user's token: one item per issue with Title, Number, Kind (the label among feedback,
-  bug and feature, else "unlabelled"), State, Opened (date), By (the GitHub login), Updated, Issue (link), Body (text)
-  and Notes (text, local, never sent, kept across refreshes by Number). Items whose issue GitHub no longer returns move
-  to the list's archive (IA-D4). The refresh says "Issues, 14 items, 2 new".
+  pull requests left out), with no token: a public repository's issues are read without one, sixty requests an hour,
+  enough for a list. One item per issue with Title, Number, Kind (the label among feedback, bug and feature, else
+  "unlabelled"), State, Opened (date), Reporter (the reporter id from the body's last line, or the GitHub login of an
+  issue filed in the browser), Version (from the same line), Updated, Issue (link), Body (text) and Notes (text,
+  local, never sent, kept across refreshes by Number). Items whose issue GitHub no longer returns move to the list's
+  archive (IA-D4). The refresh says "Issues, 14 items, 2 new". A second list with `"state": "closed"` shows the rest.
 - **RP-7.2 Actions on an item** (the Item menu, and the action keys of section 8): Make it a bug, Make it a feature
   request, Make it feedback (`PATCH` the labels), Close, Reopen (`PATCH` the state), Comment… (a notice with a field,
-  `POST` a comment), Open on GitHub (the browser), Open in axClaude (axClaude on the repository's folder with the issue
+  `POST` a comment), Block this reporter and Block this version (a line added to `blocklist.json` through the contents
+  API, RP-6.4), Open on GitHub (the browser), Open in axClaude (axClaude on the code repository's folder with the issue
   as the message field's text, "Issue 12: <title>" and the body, not sent, for the user to read and send: the issues
-  made actionable). A change refused by GitHub (403: the account cannot change this repository's issues) is said and
-  nothing changes locally.
+  made actionable). The actions use the **user's own token**, never the reporter's: List menu → "GitHub account…" takes
+  a fine-grained token of the user's once (Issues and Contents on the reports repository), kept protected as
+  `mcp.key` is (`UserSecret`), forgotten from the same menu; without one the actions say "Set your GitHub token in the
+  List menu first". A change refused by GitHub (403) is said and nothing changes locally.
 - **RP-7.3 The maintainer's folder.** `docs/feature_requests` (the lists Features and Bugs) becomes GitHub issues: the
   assistant creates one issue per item, labelled by its list, through `gh` once, and the folder goes, its README
   replaced by one line pointing to the issues and to this page. GitHub's issues are the tracker from then on, for the
@@ -188,18 +222,30 @@ one announcement per move:
 ## 9. Privacy and safety
 
 - Everything sent is in fields the user can read and change before Enter (RP-3), redacted first (RP-4.3), never the
-  text of an edit field or a conversation (RP-4.2). The token has the `public_repo` scope and lives in one protected
-  file (RP-6.2); "Forget GitHub sign-in" removes it. An issue is public (RP-4.4), said at consent and in the form's
-  title. The sender touches the network only on the user's action (RP-6.5). `PrivacyTests` keeps the repository free
-  of what a report may contain, since nothing of a report is committed.
+  text of an edit field or a conversation (RP-4.2). Nothing names the user: the reporter account is axKit's, the
+  reporter id is a random id of the install (RP-6.3). An issue is public (RP-4.4), said at consent and in the form's
+  title. The sender touches the network only on the user's action (RP-6.7). The reporter token can reach one
+  repository's issues and nothing else, and is revoked and replaced at will (RP-6.2, RP-6.4); the maintainer's own
+  token stays on the maintainer's computer (RP-7.2). `PrivacyTests` keeps the repository free of what a report may
+  contain, since nothing of a report is committed, and the token never enters the source (RP-6.2).
 
 ## 10. Decisions
 
 - **RP-D1 GitHub's issues are the tracker for everyone** (the user, 2026-11-07), the maintainer's folder included
   (RP-7.3). Until then GitHub waited for users (`docs/feature_requests/README.md`, 2026-11-06).
-- **RP-D2 Sent by axKit's own code over GitHub's REST API** (the user, 2026-11-07: a feature for all users, as an allowed
-  network action), not through the GitHub CLI, a second program every user would have to install and sign in to. The
-  report sender is the bundle's second network service beside the updater, and only the user's action starts it.
+- **RP-D2 Sent by axKit's own code over GitHub's REST API, as axKit's own reporter account** (the user, 2026-11-07,
+  twice: a feature for all users, as an allowed network action, not through the GitHub CLI, a second program every
+  user would have to install and sign in to; then no sign-in at all, since a sign-in "will make it impossible for
+  many people": the token in the executable, a reporter id per install, and the protocols for a compromise settled if
+  one comes, the levers built now, RP-6.4). The report sender is the bundle's second network service beside the
+  updater, and only the user's action starts it. Weighed and set aside: GitHub's device sign-in (the hurdle), e-mail
+  (an address cannot be in the repository, and one more program to pass through), a relay the maintainer runs (a
+  service to keep alive for decades, and nonsense straight into the issues).
+- **RP-D8 A reports repository of its own**, `KyleKeane/AxKit-reports`: the reporter token can reach its issues alone,
+  so a leak or a flood never touches the code repository, whose issues stay for contributors; the maintainer triages
+  in the reports repository and transfers what becomes work with GitHub's own Transfer issue.
+- **RP-D9 The fallback is copying and GitHub's form**, offered by the notice that says why a send cannot happen
+  (RP-6.5); nothing is ever lost (RP-3.2).
 - **RP-D3 Saved first, sent second** (the user): a report is an item on disk before any request, unsent ones go with
   the next, and nothing is sent at a window's start.
 - **RP-D4 F4, bundle-wide**; Ctrl+P is three windows' own (RP-2.1).
@@ -214,8 +260,11 @@ one announcement per move:
 - Whether the Reports list also appears in axTask's top level under a fixed "axKit" section, or through the menu only.
 - The menu's words: "Report a bug or an idea…" or "Feedback…" ("Report…" alone is too close to axClaude's feedback
   drafts).
-- The OAuth app: registered under the maintainer's GitHub account, device flow on, scope `public_repo`; the client id
-  into the code and a setup page.
+- The names: the machine user `axkit-reporter` and the repository `AxKit-reports`, both to be made under the
+  maintainer's account (RP-6.2, RP-D8), or the code repository's own issues after all, accepting that a leaked token
+  reaches them.
+- Whether blocking by reporter id should also be offered to the user as a way to see what was sent from their
+  install: the reports repository's issues searched for the id (a link in the Reports list's `list.json`).
 
 ## 12. Build order
 
@@ -223,8 +272,13 @@ one announcement per move:
 2. `Reports` in AxKit.Core: the folder, the template, the item writer and the body as Markdown (RP-5, RP-6.1); tested.
 3. The notice, F4, the menu items, the palette and F1 words (RP-2, RP-3); the accessibility review; the NVDA step in
    the bundle section of one app's plan and `tests/nvda-scripts`.
-4. `GitHub` in AxKit.Core: the device flow, create, list and patch, with recorded answers as fixtures (RP-6.2, RP-7.1).
-5. The sender with its retry, the consent target, the token file, the rule changes and the pages (RP-6.4 to RP-6.6).
-6. axTask: GitHub lists, the action keys and their notice, Ctrl+0 (RP-7, RP-8); TK-7 and IA-3 updated.
-7. The labels, the issue forms' label, the maintainer's folder to issues (RP-6.1, RP-7.3).
-8. Released as 5.1.0, after the NVDA passes.
+4. `GitHub` in AxKit.Core: create an issue, read the blocklist, list issues, patch labels and state, add a comment,
+   write the blocklist, with recorded answers as fixtures (RP-6.1, RP-6.4, RP-7.1, RP-7.2).
+5. The reports repository, the machine user, its token and the secret, the workflow that closes blocked reports, the
+   token's place in the build (`release.yml`), the setup page (RP-6.2 to RP-6.4).
+6. The sender with its retry, the reporter id, the consent target, the fallback buttons, the rule changes and the
+   pages (RP-6.3, RP-6.5 to RP-6.8).
+7. axTask: GitHub lists, the action keys and their notice, the user's token, Ctrl+0 (RP-7, RP-8); TK-7 and IA-3 updated.
+8. The labels, the issue forms (a bug form and an idea form in the reports repository too), the maintainer's folder
+   to issues (RP-6.1, RP-7.3).
+9. Released as 5.1.0, after the NVDA passes.
