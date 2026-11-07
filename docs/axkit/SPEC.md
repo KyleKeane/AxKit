@@ -430,7 +430,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   starting at the first line or at a line with text directly after a blank line, and Ctrl+Shift+Up and
   Ctrl+Shift+Down the selection grown to there, as in Word (`EditKeys.Paragraph`; the EDIT control's own keys scroll a
   row and leave the caret where it is, as Notepad's do, which a screen reader, reading at the caret after the key,
-  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
+  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axkit/reports.md RP-2.1, 2026-11-07); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
 - AX-8.3 Window-specific keys are defined once per window, in one table (`AxClaudeKeys`, `AxDownKeys`, `AxJSONKeys`, `AxGitKeys`, `AxTerminalKeys`, `AxFileKeys`, `AxMediaKeys`, `AxPreviewKeys`, `AxStartKeys`, `AxProcessKeys`, `AxTaskKeys`, `AxPassKeys`, `AxCalcKeys`, `AxClipKeys`), as constants
   with names that say what the key does. Changing a key is a change to that one line: the menu item and the key
   handler read the table, and the F1 text names the same keys and is changed with it. Single-letter quick keys
@@ -475,7 +475,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - AX-9.1 Every window has an **axKit** menu (mnemonic A) between its own menus and Help, the same in every window: one
   class, `AxKit.Forms/AxKitMenu`, which the window constructs with its Command palette item, its two update items, its
   latest-release state and its notice method. In order: Command palette… (P, AX-10; the bundle's own command, so it
-  sits in the bundle's menu, asked 2026-10-23); a separator; New window ▸ and Recently closed ▸; a separator; Open
+  sits in the bundle's menu, asked 2026-10-23); Send a report… (S, F4) and Your reports (Y, the Reports list in
+  axTask; docs/axkit/reports.md RP-2.2, 2026-11-07); a separator; New window ▸ and Recently closed ▸; a separator; Open
   windows ▸, Open windows by type ▸ and Close all windows; a separator; AI tools ▸ (I, `mcp.md` MC-6.1: the bundle's
   own settings live here, an app's Options hold only the app's); Check for updates, Update to (while a newer
   release is known) and About ▸ (AX-9.9). The lists are filled each time the menu opens, so that they show the

@@ -35,9 +35,9 @@ TK and IA material and moves into those specs when built.
   asked about, is three windows' own (axClip's pause, axMedia's pause, axTerminal's say-folder), and Ctrl+Shift+P is
   the palette; so F4, bundle-wide. `BundleKeys.Report = Keys.F4`, named "Report" in the keys table; `KeyTests` keeps the
   windows off it.
-- **RP-2.2 The axKit menu** (AX-9) gets, after the command palette item: "&Report a bug or an idea…" with F4 shown, and
-  "Your &reports", which opens `%APPDATA%\AxKit\reports` in axTask (a new axTask window, or the open one on that folder,
-  through `Dispatch`), then a separator. Both carry their words into every window's palette and F1 text through the
+- **RP-2.2 The axKit menu** (AX-9) gets, after the command palette item: "&Send a report…" with F4 shown (S: R is
+  Recently closed's letter, B is Open windows by type's), and "&Your reports", which opens `%APPDATA%\AxKit\reports` in
+  axTask (a new axTask window through `AxKitMenu.Start`, the folder and its `list.json` made first), then a separator. Both carry their words into every window's palette and F1 text through the
   window base; nothing is added to an app's own menus.
 - **RP-2.3 While a notice shows,** F4 does nothing, as every window key (AX-6.5). The report's recent actions record
   the notice that showed last, so a problem with a notice is reported after closing it.
@@ -50,8 +50,8 @@ one announcement per move:
 1. **"Type your report; Enter sends it, Shift+Enter starts a new line"**: a multi-line field, focused when the notice
    opens, empty. Enter sends (the message field's rule, axClaude D11); Shift+Enter a line break. Enter on an empty field:
    the edge earcon and "Type a few words first".
-2. **"Kind"**: a list of three, Feedback (selected), Bug, Feature request; type-to-find and the number keys of the list
-   reach them (AX-8.6). Changing it says the kind.
+2. **"Kind"**: a list of three, Feedback (selected), Bug, Feature request; type-to-find reaches them (AX-8.6). NVDA
+   reads the selected kind as the list moves, and the app adds nothing (AX-7).
 3. **"App and version"**: read-only text, "axClaude 5.0.1, Windows 11 build 26200, NVDA 2025.3" (NVDA's version from
    its running process, "NVDA not running" otherwise; the window's title after it, redacted).
 4. **"What you were doing: the last actions"**: a multi-line field, editable, filled with the window's last twenty

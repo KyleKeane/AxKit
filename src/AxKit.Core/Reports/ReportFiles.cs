@@ -127,11 +127,8 @@ public static class ReportFiles
         return Set(item, NumberField, number.ToString(System.Globalization.CultureInfo.InvariantCulture));
     }
 
-    /// <summary>
-    /// Writes a report into the folder (RP-5.1): the folder and its <c>list.json</c> made when missing, the item named
-    /// after its title beside the taken names; the item's path.
-    /// </summary>
-    public static string Save(Report report, string status, string folder)
+    /// <summary>The folder and its <c>list.json</c>, made when missing (RP-5.1): before a report is written, and before axTask opens the list.</summary>
+    public static void EnsureList(string folder)
     {
         Directory.CreateDirectory(folder);
         var list = Path.Combine(folder, ItemDocument.ListFile);
@@ -139,7 +136,15 @@ public static class ReportFiles
         {
             File.WriteAllText(list, ListText(), Utf8);
         }
+    }
 
+    /// <summary>
+    /// Writes a report into the folder (RP-5.1): the folder and its <c>list.json</c> made when missing, the item named
+    /// after its title beside the taken names; the item's path.
+    /// </summary>
+    public static string Save(Report report, string status, string folder)
+    {
+        EnsureList(folder);
         var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(report.Title), ".json");
         File.WriteAllText(path, ToItem(report, status).ToText(), Utf8);
         return path;

@@ -457,6 +457,9 @@ public abstract partial class AxKitForm : Form
             case BundleKeys.CommandPalette:
                 ShowCommandPalette();
                 return true;
+            case BundleKeys.Report:
+                ShowReport();
+                return true;
             case BundleKeys.Save:
                 SaveCommand();
                 return true;

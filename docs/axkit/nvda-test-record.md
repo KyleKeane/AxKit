@@ -89,6 +89,12 @@ Space in the box said nothing.
 | Space: "checked", once | Passed |
 | Space again: "not checked", once | Passed |
 
+## Owed: reports from every window (the branch `reports`, 2026-11-07, `docs/axkit/reports.md`)
+
+Section 13 step 0 of `docs/axclaude/nvda-test-plan.md`: F4, the notice's fields in Tab order with their names, the
+kind read by NVDA alone, the saved report and the draft in Your reports, the two menu items. To be scripted for
+`nvda-pass.ps1` and heard by the user, in axClaude and in one standalone app (axDown), before the branch merges.
+
 ## Owed: axClaude, `/clear` empties the window (2026-11-07, `docs/axclaude/SPEC.md` FR-8.8)
 
 Section 2 step 9 of `docs/axclaude/nvda-test-plan.md`, new with the change: "Sent" then "Conversation cleared" spoken, the
