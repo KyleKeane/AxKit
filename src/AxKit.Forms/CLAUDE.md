@@ -13,6 +13,7 @@ WinForms code every app of the bundle uses (`docs/axkit/SPEC.md` AX-6.2, AX-6.4)
       - `Add(menu, command)` makes the item and handles the key, `Add(command)` the same for an item the window places itself, the first of `CreateShowInMenu` or one in a context menu, `AddKey` a key with no item;
       - the first command whose key matches and whose `When` holds runs, in registration order;
       - `Commands` for the palette and MCP;
+      - `Run` records a command in `Recent` (`AxKit.Core.RecentActions`, docs/axkit/reports.md RP-4.1: the last twenty commands, announcements and notices of the window, for a report; axPass's and axClip's windows record no announcements) and runs it;
     - `Do` (a command's task; an escaped exception becomes a notice, since an exception out of an awaited task would otherwise be unobserved);
     - the window's place (`RestoreWindow`, saved on closing), `SaveSettings`;
     - `ShowSystemDialog` with `DialogShowing` (every Windows dialog goes through it, since a dialog's closing activates the window; the editors and axFile wait on activation while it is set);

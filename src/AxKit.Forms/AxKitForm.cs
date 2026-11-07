@@ -493,7 +493,26 @@ public abstract partial class AxKitForm : Form
             _commands.Add(command);
         }
 
-        return Item(command.Label, command.Run, command.Key);
+        return Item(command.Label, () => Run(command), command.Key);
+    }
+
+    /// <summary>
+    /// The window's last actions for a report (docs/axkit/reports.md RP-4.1): every command run by key, menu or palette,
+    /// what the window said, and the notices it showed; twenty at most.
+    /// </summary>
+    protected internal RecentActions Recent { get; } = new();
+
+    /// <summary>Runs a command and records it: "Find, Ctrl+F", the label without its mnemonic and the key as the menu shows it.</summary>
+    private void Run(Command command)
+    {
+        var text = MenuText.Plain(command.Label);
+        if (command.Key != Keys.None)
+        {
+            text += ", " + BundleKeys.Text(command.Key).TrimEnd('.');
+        }
+
+        Recent.Add(RecentActionKind.Command, text, DateTime.UtcNow);
+        command.Run();
     }
 
     /// <summary>A command that is a key and no menu item (Tab between a window's panes, a list's Enter).</summary>
@@ -548,7 +567,7 @@ public abstract partial class AxKitForm : Form
         {
             if (command.Key == keyData && (command.When?.Invoke() ?? true))
             {
-                command.Run();
+                Run(command);
                 return true;
             }
         }

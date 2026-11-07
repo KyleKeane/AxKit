@@ -38,6 +38,10 @@ another project on its second use, the bullet says so.
   all the window keys in axClaude and axTerminal, whose heading is "Anywhere") and returns the first line naming the
   text's keys and the section with F1, the palette, the app's lines, the text size, the menu with Alt+F4 (`altF4` when
   it does more than close the app) and `AxKitMenuLine`; each `HelpText.Shortcuts` adds its own sections after it.
+- `RecentActions` with `RecentActionKind` (docs/axkit/reports.md RP-4.1, 2026-11-07): the last twenty actions of one
+  window for a report, the commands run, what it said and the notices it showed, each with its time; `Lines(now)`
+  gives the report's lines oldest first ("12 s ago: Find, Ctrl+F", "12 s ago, said: 3 matches") and `Age` the ages as
+  people say them. The window base fills one (`AxKitForm.Recent`). Tested in `RecentActionsTests`.
 
 ## Paths, windows and lists
 
