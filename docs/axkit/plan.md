@@ -182,15 +182,20 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
   business.
 - **axTask** (redesigned 2026-10-24 at the user's direction, built and merged the same day after its NVDA pass: `docs/axtask/SPEC.md`, with the
   shape it shares with axPass in `docs/axkit/item-apps.md`): lists as folders and each item a JSON file of typed fields
-  (title, type, value), a navigator like axFile's and a detail pane, All tasks and smart lists. It replaces the first
-  design below, built as axList (Markdown lists) on the branch `axlist`, which stays as a record and is not merged.
-- **AxList and AxTask, the first design** (asked 2026-10-23; placeholder names). AxList: a
-  list manager for things to remember, with bullet, numbered and checkbox lists; later, links between items for
-  mind maps, curriculum planning, recall in plain language and structured storage. AxTask: the checkbox lists as a
-  task manager, with reminders, automations and smart lists (saved filters). Perhaps one app at first, split when the
-  task side grows. Other names considered: AxNotes, AxTodo. The rule the user set for both: plain text files on disk
-  (Markdown lists, one file per list) with a clear, documented format, so that an AI system or a script can read and
-  change them as easily as the app does; no database the user cannot open in axDown.
+  (title, type, value), a navigator like axFile's and a detail pane, All tasks and smart lists. It took the place of
+  the first design below, built as axList (Markdown lists) on the branch `axlist` on 2026-10-23 and 24.
+- **axList** (asked 2026-10-23 as AxList, with AxTask, placeholder names; the user keeps the two in view as separate
+  apps, 2026-11-06): a list manager for things to remember and to arrange, with bullet, numbered and checkbox lists
+  nested in plain Markdown files, one file per list; later, links between items for mind maps, curriculum planning,
+  recall in plain language and structured storage. The spec is written, `docs/axlist/SPEC.md`, with its guide and test
+  plan, brought from the branch into `main` on 2026-11-06 with the bundle's current names; its section 10 holds what to
+  settle with the user before the build (what a checkbox item means beside axTask, whether the Tasks view across lists
+  stays, the first step of links). Nothing is built on `main`; the branch's draft code is the tag `archive/axlist-draft`,
+  and the branch is gone. AxTask, as first asked, was the checkbox lists as a task manager with reminders, automations
+  and smart lists, perhaps one app with AxList at first; it became axTask above. Other names considered: AxNotes,
+  AxTodo. The rule the user set for both: plain text files on disk with a clear, documented format, so that an AI
+  system or a script can read and change them as easily as the app does; no database the user cannot open in axDown
+  (axTask's JSON files meet it one way, axList's Markdown another).
 - **An anywhere, anytime helper** (asked 2026-10-23, high priority for the user; placeholder name AxAsk): one key
   from anywhere, as axStart's, opens a field for a question about the user's own files: an index of the folders the
   user allows, kept as plain files, and answers drawn from it (retrieval over the index, RAG) through the shared AI
@@ -237,7 +242,7 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
      Outlook), so it waits until the small apps have proved their patterns.
   Not planned: a full browser (a web view, B-10; AxWeb above is a reader) and a PDF reader (Windows has no built-in
   way to pull text from a PDF; axOCR covers scanned pages).
-- **The bundle's list in the branches' apps** (AX-8.6, 2026-10-24): axCalc's history became `AxKit.Forms/AxKitList` at its merge (AC-5.7); axList's list would too if its branch were ever merged.
+- **The bundle's list in the branches' apps** (AX-8.6, 2026-10-24): axCalc's history became `AxKit.Forms/AxKitList` at its merge (AC-5.7); axList's draft used the bundle's list since 2026-10-24, and its spec asks for it (LI-2.1).
 - The order the user set: the spec, then the infrastructure, then the build; axTerminal first, since its
   infrastructure is the moves; axFile next; the two engines verified before their specs are written.
 
