@@ -182,7 +182,11 @@ new, signed program; Windows checks that file when it starts.
 
 - Users whose Smart App Control is off or in evaluation update as before.
 - Users whose Smart App Control is on may be refused an update; since 3.7.5 the update stops cleanly with the reason,
-  and they stay on their version, or turn Smart App Control off (Windows Security, App and browser control), which
-  Windows cannot turn on again without a reset.
+  and they stay on their version, or turn Smart App Control off (Windows Security, App and browser control). It has
+  to stay off while an unsigned axKit is in use: it checks the program at every start, not at the install, has no
+  exception for one program, and accepts only a signature from a certificate authority in Microsoft's Trusted Root
+  Program, so a certificate the user makes and installs on their own computer changes nothing (Microsoft's Smart App
+  Control pages, 2026-11-07). Turning it off was a one-way switch until a reset; Microsoft's FAQ says recent Windows
+  updates let it be turned on again. SmartScreen and Defender keep working with it off.
 - After a release, `AxKit.exe` can be submitted to Microsoft's file submission page as a developer's file wrongly
   blocked, which can build its reputation sooner; per release, and not certain.
