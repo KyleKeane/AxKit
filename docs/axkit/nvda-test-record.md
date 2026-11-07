@@ -94,7 +94,9 @@ Space in the box said nothing.
 Section 2 step 9 of `docs/axclaude/nvda-test-plan.md`, new with the change: "Sent" then "Conversation cleared" spoken, the
 one System line left, the session name gone from the status bar, the next block "# Input 1" with no blank line above
 it. Built against the `clear` fixture (Claude Code 2.1.319); to be run through `nvda-pass.ps1 axclaude` once a script
-for it exists, and heard by the user in a real session.
+for it exists, and heard by the user in a real session. The same day, section 12 step 4b: one question under
+2.1.319's `Question: Colour` header, named by the question alone and not by the reply's last line (the `one-question`
+fixture); the user heard the fault in a real session, the fix is to be heard the same way.
 
 ## Owed: access layers and consent (the branch `licence`, 2026-10-29, `docs/axkit/SPEC.md` AX-11)
 

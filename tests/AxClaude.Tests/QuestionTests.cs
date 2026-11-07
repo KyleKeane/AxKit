@@ -189,6 +189,20 @@ public class QuestionTests
     }
 
     [Fact]
+    public void One_question_under_its_header_row_of_2_1_319_is_read_without_the_reply_above_it()
+    {
+        // Claude Code 2.1.319 draws "Question: Colour" over a single question, right under the reply's rows (found by
+        // the user on 2026-11-07: the question was named by the reply's last line, read on past a header the reader
+        // did not know). No review follows one question.
+        var (_, seen) = QuestionsIn("one-question-claude2.1.319-240x50.vt");
+        var question = Assert.Single(seen);
+        Assert.Equal("Which colour do you prefer?", question.Title);
+        Assert.Empty(question.Text);
+        Assert.Null(question.Step);
+        Assert.Equal(["1", "2", "3", "4", "5"], question.Options.Select(o => o.Key));
+    }
+
+    [Fact]
     public void A_comma_in_a_question_header_does_not_miscount_the_questions()
     {
         // The header row is counted by its "(answered)" marks: "Size, colour" is one question (review, 2026-11-02).

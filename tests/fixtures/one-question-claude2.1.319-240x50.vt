@@ -1,0 +1,83 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h]0;✳ Claude CodeClaude Code v2.1.319
+Haiku 5.5 · Claude Ultra
+C:\Temp\axclaude-fixture
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q[?u]7501;?$  First write two short sentences on two lines saying that you are about to ask me something. Then use the AskUserQuestion tool once, with one question, header Colour: which colour do you prefer, options red, green, blue. After I answer,  
+reply with my answer in one short sentence.]133;A;redraw=0]0;◐ Claude Code[?25l[5;1Hyou: First write two short sentences on two lines saying that you are about to ask me something. Then use the AskUserQuestion tool once, with one question, header Colour: which colour do you prefer, options red, green, blue. After I answer,
+ reply with my answer in one short sentence.[K
+Flibbertigibbeting…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◐ Colour preference question[?25l[7;1HImprovising…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[7;1Hclaude: I am about to ask you a question.[K
+This is a single colour preference question.[K
+Improvising…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◑ Colour preference question]0;✳ Colour preference question[?25l[9;1HQuestion: Colour[K
+> Which colour do you prefer?[K
+1. Red — Red as your preferred colour[K
+2. Green — Green as your preferred colour[K
+3. Blue — Blue as your preferred colour
+4. Other
+5. Chat about this
+Select with numbers [1-5]. Then Enter to submit or Escape to cancel:[1C[?25h 2]0;◑ Colour preference question[?25l[9;1HImprovising…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K[12;2H[?25h[?25l[9;1H●  User answered Claude's questions:[K
+· Which colour do you prefer? → Green[K
+Improvising…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]133;C]133;D[?25l[11;1Hclaude: You prefer green.[K
+Crunched for 2s · done 12:07 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$]0;✳ Colour preference question[?25h  y]133;A;redraw=0]0;◑ Colour preference question[?25l[13;1Hyou: y[K
+Ionizing…[K
+Tip: Use /theme to change the color theme[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+effort: medium · /effort
+$[?25h]133;C]133;D[?25l[14;1Hclaude: Got it. Is there anything you'd like me to do next?[K
+Churned for 0s · done 12:07 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[K]0;✳ Colour preference question[?25h[?25l[16;1H/exit                         Exit the CLI[K
+/context                      Visualize current context usage as a colored grid[K
+/usage-credits                Configure usage credits or request them from your admin when you hit a limit[K[41;1H$  /exit[?25h]0;◑ Colour preference question[?1006l[?1003l[?1002l[?1000l[?25l[16;1Hyou: /exit[K
+Shenaniganing…[K
+Tip: Send messages to Claude while it works to steer Claude in real-time[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[21;2H[?25h[>4m[?2031l[?2004l[?1016l[2m
+Resume this session with:
+claude --ax-screen-reader --model haiku --resume 74ba6be7-b1b0-45ba-bac7-fb219188aef4
+]0;]133;A;redraw=0[22m]133;C]133;D]0;✳ Colour preference question[?9001l[?1004l

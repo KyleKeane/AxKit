@@ -1,0 +1,17 @@
+[Screen Reader Mode: on via flag]
+Claude Code v2.1.319
+Haiku 5.5 · Claude Ultra
+C:\Temp\axclaude-fixture
+you: First write two short sentences on two lines saying that you are about to ask me something. Then use the AskUserQuestion tool once, with one question, header Colour: which colour do you prefer, options red, green, blue. After I answer, reply with my answer in one short sentence.
+claude: I am about to ask you a question.
+This is a single colour preference question.
+●  User answered Claude's questions:
+· Which colour do you prefer? → Green
+claude: You prefer green.
+Crunched for 2s · done 12:07 PM
+you: y
+claude: Got it. Is there anything you'd like me to do next?
+Churned for 0s · done 12:07 PM
+you: /exit
+Resume this session with:
+claude --ax-screen-reader --model haiku --resume 74ba6be7-b1b0-45ba-bac7-fb219188aef4

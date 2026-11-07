@@ -3,6 +3,7 @@
 ## 5.0.2
 
 - axClaude: `/clear` empties the window again. Claude Code 2.1.319 no longer erases the screen in screen reader mode when it clears the conversation; it only echoes `you: /clear`, so the window kept every line and said nothing. The window now empties its conversation when that echo arrives, as New session does, with Claude running on, says "Conversation cleared", and starts the empty conversation with one System line saying that `/resume` brings the previous one back (`docs/axclaude/SPEC.md` FR-8.8).
+- axClaude: a single question of Claude's is named by its own row again. Claude Code 2.1.319 draws `Question: Colour` over one question, a header axClaude did not know, so it read on into Claude's text above the header, and the question took that text's last line as its name and the question itself as its text. The `one-question` fixture records the shape (`docs/axclaude/claude-screens.md`).
 
 ## 5.0.1
 

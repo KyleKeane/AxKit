@@ -32,8 +32,14 @@ public static partial class QuestionReader
     [GeneratedRegex(@"^Questions: (.+)$")]
     private static partial Regex QuestionsHeaderRegex();
 
-    /// <summary>The row over the questions of one call, either shape: it ends the question upwards and numbers it.</summary>
-    private static bool IsQuestionsRow(string line) => QuestionTabsRegex().IsMatch(line) || QuestionsHeaderRegex().IsMatch(line);
+    // One question alone has "Question: Colour" over its row since 2.1.319 (the one-question-claude2.1.319 fixture):
+    // the same header with nothing to count. Unknown until 2026-11-07, the reader read on past it into the reply's rows
+    // above, and the reply's last line named the question.
+    [GeneratedRegex(@"^Question: .+$")]
+    private static partial Regex QuestionHeaderRegex();
+
+    /// <summary>The row over the questions of one call, any shape: it ends the question upwards and numbers it.</summary>
+    private static bool IsQuestionsRow(string line) => QuestionTabsRegex().IsMatch(line) || QuestionsHeaderRegex().IsMatch(line) || QuestionHeaderRegex().IsMatch(line);
 
     /// <summary>
     /// The question whose prompt row (the row the cursor sits on) is <paramref name="promptRow"/>, or null when
