@@ -147,7 +147,12 @@ another project on its second use, the bullet says so.
   `WriteBlocklistAsync` (the contents API, the file's sha read first), `NewIssueFormUrl` (the browser's form,
   prefilled), `ReasonOf` (an exception as a few words for the Status field); `GitHubException` with its `Reason`;
   `Blocklist` (`Parse`, `Blocks`, `ToJson`, `WithReporter`, `WithVersion`); `IssueCreated`, `IssueInfo`. Tested in
-  `GitHubIssuesTests` against canned answers.
+  `GitHubIssuesTests` against canned answers. `ReportSender` (RP-6.3 to RP-6.7): `ReporterId` (made once, kept in
+  `AppPaths.ReportsFile` as `ReportSettings`), `SendUnsentAsync` (no token: every item says so; the blocklist read
+  before a send and kept a day; the half-minute gap; each item posted and marked Sent with its issue, or marked with
+  the reason; the first failure stops the run), `SendOutcome`; `ReporterToken` (RP-6.2): the token the release build
+  embeds from `Reports/reporter.token`, `Encode` and `Decode` (the mixing `tools/reporter-token.ps1` repeats), null in
+  a build without it. Tested in `ReportSenderTests`.
 - `AxKitHttp` (AX-11.11, 2026-11-07): the one HTTP client of axKit's own code, the updater's and the report sender's,
   with the User-Agent `AxKit/<version>`; from `Updater.CreateClient` on its second use.
 - `MediaFiles` (docs/axmedia/SPEC.md AM-4; from AxFile.Core, axMedia, 2026-10-22): the rules of sound and video files

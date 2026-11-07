@@ -1,6 +1,8 @@
 # Reports: a bug, a feature request or feedback from any window
 
-Specified 2026-11-07 at the user's ask; not built. The user's words, in short: one simple keystroke in every window
+Specified 2026-11-07 at the user's ask; built the same day on the branch `reports`, section 12's steps 1 to 7
+(`CHANGELOG.md` 5.1.0); step 8, the reports repository, the reporter account and the token, is `reports-setup.md`,
+and the NVDA passes are owed before the branch merges (`nvda-test-record.md`). The user's words, in short: one simple keystroke in every window
 opens a report with the last few actions and the current focus already in it; the user either types their idea and
 presses Enter, or Tabs through every field to review and add what makes the report unambiguous to act on; three
 kinds, feedback, bug and feature request, recategorised later as needed; a feature for every user of axKit, not the
@@ -218,8 +220,9 @@ levers are built now.
 - **RP-8.3 Shown everywhere a command is.** The Item menu lists the assigned actions with their keys, so the palette and
   F1 list them (AX-10.2); the names are the user's.
 - **RP-8.4 All tasks moves to Ctrl+0** (TK-7), so the nine digits are free for actions in every list (RP-D7).
-- **RP-8.5 Defaults.** The Reports list's template (RP-5.1) and a GitHub list's `list.json` come with the keys above;
-  an ordinary list has none until the user sets them.
+- **RP-8.5 Defaults.** A GitHub list's `list.json` comes with the keys above (1 to 3 the kinds, 4 Close, 5 Open on
+  GitHub, 6 Open in axClaude); the Reports list's (RP-5.1) with 1 to 3 the kinds and 4 Open on GitHub, since its items
+  are the user's own reports; an ordinary list has none until the user sets them.
 
 ## 9. Privacy and safety
 

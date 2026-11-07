@@ -93,7 +93,11 @@ Space in the box said nothing.
 
 Section 13 step 0 of `docs/axclaude/nvda-test-plan.md`: F4, the notice's fields in Tab order with their names, the
 kind read by NVDA alone, the saved report and the draft in Your reports, the two menu items. To be scripted for
-`nvda-pass.ps1` and heard by the user, in axClaude and in one standalone app (axDown), before the branch merges.
+`nvda-pass.ps1` and heard by the user, in axClaude and in one standalone app (axDown), before the branch merges. With
+them, section 5 of `docs/axtask/nvda-test-plan.md`: the action keys (Ctrl+1 to Ctrl+9, All tasks on Ctrl+0, List →
+Action keys), a GitHub list made, read and acted on, the token notice's protected field, Open in axClaude with
+`--message`; and the sending itself once the reports repository and the token exist (`docs/axkit/reports-setup.md`):
+"Sent as issue N", the consent notice first, the cannot-send notice of a build without the token.
 
 ## Owed: axClaude, `/clear` empties the window (2026-11-07, `docs/axclaude/SPEC.md` FR-8.8)
 
