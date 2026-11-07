@@ -1,0 +1,10 @@
+{
+  "format": "axkit-item 1",
+  "fields": [
+    { "title": "Title", "type": "text", "value": "New file in a new window" },
+    { "title": "Done", "type": "check", "value": false },
+    { "title": "App", "type": "text", "value": "axDown, axJSON" },
+    { "title": "Asked", "type": "date", "value": "2026-11-05" },
+    { "title": "Notes", "type": "longtext", "value": "I want a way to create a new file in a new window. At present I can use the New menu, but New swaps the content of the current window, I think." }
+  ]
+}

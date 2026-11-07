@@ -1,0 +1,13 @@
+{
+  "format": "axkit-list 1",
+  "fields": [
+    { "title": "Section", "type": "text", "value": "" },
+    { "title": "Notes", "type": "longtext", "value": "What the maintainer wants axKit to do that it does not do yet. One item per ask; Done when it is built." }
+  ],
+  "new item": [
+    { "title": "Done", "type": "check", "value": false },
+    { "title": "App", "type": "text", "value": "" },
+    { "title": "Asked", "type": "date", "value": "" },
+    { "title": "Notes", "type": "longtext", "value": "" }
+  ]
+}
