@@ -130,6 +130,13 @@ internal sealed partial class MainForm : ConsoleForm
             StartRecording(record);
         }
 
+        // --message (FR-9.2): the text in the message field, for the user to read and send; axTask's Open in axClaude on an issue.
+        if (_options.Message is { Length: > 0 } message)
+        {
+            Input.Text = message.ReplaceLineEndings("\r\n");
+            Input.SelectionStart = 0;
+        }
+
         if (_folder is null && PickFolder(null) is { } chosen)
         {
             SetFolder(chosen);

@@ -116,6 +116,27 @@ Each item is a JSON file named after its title, a list of fields each with a tit
 A list is a folder in the top folder; its details are `list.json` in it, its section among them. Ctrl+J opens the item, the list's details or a smart list in
 axJSON; Ctrl+E shows it in axFile. Anything axTask does not know in a file is kept as it is.
 
+## Action keys: Ctrl+1 to Ctrl+9
+
+Every list can give the number keys actions of its own. List, Action keys lists the nine keys; Enter on one asks a
+name, what the key does and its value: set fields to values ("Kind: Bug", "Done: done"), move the item to another
+list, or open something (a field holding a web address, or an app such as axJSON for the item's file). From then on
+Ctrl+1 to Ctrl+9 do that to the item selected, and the Item menu's Action keys submenu names them. Ctrl+Z takes a set
+or a move back. All tasks is Ctrl+0.
+
+## GitHub lists
+
+List, New GitHub list asks for a repository as owner/name and makes a list of its open issues, read from GitHub when
+the list opens and on F5, with no account needed. Each issue is an item: its number, kind, state, who reported it, the
+axKit version when it came from axKit, the address, the body, and Notes, which are yours and stay. The Item menu's
+GitHub submenu changes an issue as your own GitHub account: make it a bug, a feature request or feedback, close or
+reopen it, comment, block a reporter or a version of axKit that sends nonsense, open it on GitHub, or open it in
+axClaude with the issue in the message field. For that, List, GitHub account takes a token of your GitHub account
+once (a fine-grained token with Issues and Contents on the reports repository), kept protected on this computer. A new
+GitHub list comes with action keys: Ctrl+1 to Ctrl+3 the kinds, Ctrl+4 Close, Ctrl+5 Open on GitHub, Ctrl+6 Open in
+axClaude. axKit's own reports arrive in the maintainer's reports repository this way; `docs/axkit/reports.md` tells
+the whole story.
+
 ## Keys
 
 F1 lists every key. Shift+F10 or the Applications key opens the menu of the selection.

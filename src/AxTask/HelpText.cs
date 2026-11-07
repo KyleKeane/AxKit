@@ -25,7 +25,8 @@ public static class HelpText
           Ctrl+M on a list: move it to a section, or to a new one; its Section field in the detail pane does the same
           F2: rename in place: a box over the line, Enter keeps the new name, Escape the old. Delete: move to the Archive; Ctrl+Z brings it back
           Ctrl+Q: read every field of the item
-          Ctrl+1: All tasks, every task not done
+          Ctrl+0: All tasks, every task not done
+          Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9: the list's own action keys on the item selected, set in List, Action keys: fields set, the item moved to a list, or something opened; the Item menu's Action keys submenu names them
           Ctrl+Shift+D: hide or show the done tasks of a list
           Shift+F10 or the Applications key: the menu of the selection
 
@@ -37,9 +38,13 @@ public static class HelpText
           Ctrl+Q: read the field's whole value
           Escape, Tab or Shift+Tab: back to the navigator
 
+        ## GitHub lists
+          List, New GitHub list makes a list of a repository's open issues, read from GitHub when it opens and on F5; your Notes on each issue stay
+          Item, GitHub: make it a bug, a feature request or feedback, close, reopen, comment, block the reporter or the version, open on GitHub, open in axClaude, as your own GitHub account (List, GitHub account, a token pasted once)
+
         ## Everywhere in axTask
           Ctrl+Z: undo the last change
-          F5: read the folder again
+          F5: read the folder again, and a GitHub list from GitHub
           Ctrl+J: open the item, the list's details or the smart list in axJSON
           Ctrl+E: show it in axFile
           Ctrl+S: nothing to save here; every change is written at once

@@ -14,16 +14,18 @@ public sealed record StartupOptions(
     int? Columns,
     int? Rows,
     string? RecordPath,
-    IReadOnlyList<string>? ClaudeArgs)
+    IReadOnlyList<string>? ClaudeArgs,
+    string? Message = null)
 {
     public const string Usage = """
-        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [-- claude arguments]
+        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [--message <text>] [-- claude arguments]
                axclaude ...  the same, as the installed console command
 
           <folder>            the project folder (default: the current folder, or the last one used)
           --claude <path>     claude.exe or claude.cmd to run (default: found on PATH or in the usual install folders)
           --cols N, --rows N  size of the hidden console Claude writes to (default 240 by 50)
           --record <file.vt>  record the raw console stream for a bug report
+          --message <text>    put the text into the message field, not sent (axTask's Open in axClaude on an issue)
           --no-ax             start Claude without --ax-screen-reader (testing only)
           -- ...              everything after -- goes to claude, for example -- --resume <id> or -- --permission-mode plan
                               (default: --continue, the last conversation in the folder; a bare -- starts a new one)
@@ -35,6 +37,7 @@ public sealed record StartupOptions(
         string? folder = null;
         string? claude = null;
         string? record = null;
+        string? message = null;
         var noAx = false;
         int? columns = null;
         int? rows = null;
@@ -63,6 +66,9 @@ public sealed record StartupOptions(
                     break;
                 case "--record":
                     record = Path.GetFullPath(Next(args, ref i));
+                    break;
+                case "--message":
+                    message = Next(args, ref i);
                     break;
                 case "--no-ax":
                     noAx = true;
@@ -103,7 +109,7 @@ public sealed record StartupOptions(
             }
         }
 
-        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs);
+        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message);
     }
 
     private static string Next(string[] args, ref int i)

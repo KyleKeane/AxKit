@@ -113,6 +113,28 @@ public sealed class ItemDocument
 
     public ItemDocument WithValue(int index, JsonNode? value) => Change(fields => ((JsonObject)fields[index]!)["value"] = value?.DeepClone());
 
+    /// <summary>
+    /// A key of the file's root beyond the format, the fields and the template, kept as the file has it (IA-4.1): a
+    /// list's action keys and its GitHub settings (docs/axkit/reports.md RP-7.1, RP-8.1). Null for none.
+    /// </summary>
+    public JsonNode? Extra(string key) => _root[key];
+
+    /// <summary>The root key set, or removed with null; the fields as they were.</summary>
+    public ItemDocument WithExtra(string key, JsonNode? value)
+    {
+        var root = (JsonObject)_root.DeepClone();
+        if (value is null)
+        {
+            root.Remove(key);
+        }
+        else
+        {
+            root[key] = value.DeepClone();
+        }
+
+        return new ItemDocument(root);
+    }
+
     public ItemDocument WithTitle(string title)
     {
         var index = IndexOf(TitleField);
