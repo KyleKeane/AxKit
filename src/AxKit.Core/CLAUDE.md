@@ -141,7 +141,15 @@ another project on its second use, the bullet says so.
   labels, `Parse`) and `ReportStatus` (Draft, Not sent yet with its reason, Sent, `AwaitsSending`); `ReportFiles`, the
   Reports list as an axTask folder (the template, `ListText` with the action keys, `ToItem`, `FromItem`, `Save`,
   `Write`, `WithStatus`, `WithSent`, `Unsent`); `ReportBody`, the issue's Markdown with the reporter line last and
-  `ParseReporterLine`. Tested in `ReportsTests`.
+  `ParseReporterLine`. Tested in `ReportsTests`. `GitHubIssues` (RP-6, RP-7), GitHub's REST API as the reports use
+  it, the client handed in: `CreateAsync` (an issue as the reporter account), `ReadBlocklistAsync` (404 is an empty
+  list), `ListAsync` (paged, pull requests left out, a token optional), `PatchAsync`, `CommentAsync`,
+  `WriteBlocklistAsync` (the contents API, the file's sha read first), `NewIssueFormUrl` (the browser's form,
+  prefilled), `ReasonOf` (an exception as a few words for the Status field); `GitHubException` with its `Reason`;
+  `Blocklist` (`Parse`, `Blocks`, `ToJson`, `WithReporter`, `WithVersion`); `IssueCreated`, `IssueInfo`. Tested in
+  `GitHubIssuesTests` against canned answers.
+- `AxKitHttp` (AX-11.11, 2026-11-07): the one HTTP client of axKit's own code, the updater's and the report sender's,
+  with the User-Agent `AxKit/<version>`; from `Updater.CreateClient` on its second use.
 - `MediaFiles` (docs/axmedia/SPEC.md AM-4; from AxFile.Core, axMedia, 2026-10-22): the rules of sound and video files
   that need no engine, the extension sets with `IsMedia`, the time format and the typed time, the speed steps.
 
