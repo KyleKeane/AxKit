@@ -44,6 +44,7 @@ the app follows its spec, the plan's step reads as below.
 7a. Paragraph keys in the field. Type `one`, Shift+Enter twice, `two`, Shift+Enter, `three`, Shift+Enter twice, `four`: three paragraphs, the second of two lines. Ctrl+Home, then Ctrl+Down reads "two", then "four", then "four" again as the caret reaches the end of the message. Ctrl+Up reads "four" (its start), then "two", then "one", then "one" again. End, then Ctrl+Shift+Up: NVDA says "selected" with "four"; Ctrl+Shift+Down: "unselected four". The app says nothing. Ctrl+A, Delete.
 
 8. F1: in the shortcuts text, Page Down moves a screen of lines and Page Up back; Ctrl+Down reads the next section's heading line ("## Message field", "## Conversation"), Ctrl+Up the one before; Escape closes the notice.
+9. With two exchanges in the conversation, type `/clear`, Enter: "Sent", then "Conversation cleared". Ctrl+Home: the first line is "System: Conversation cleared by /clear; the previous one stays on disk, and /resume brings it back", with nothing above it and nothing below it; the status bar's session name is gone. Send a message: its block is "# Input 1" again and the reply follows under it; `h` from the top stops at that heading with no blank line before it.
 
 ## 3. Reading while output arrives
 

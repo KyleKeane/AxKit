@@ -32,6 +32,49 @@ public class SessionModelTests
     }
 
     [Fact]
+    public void The_echo_of_clear_empties_the_conversation_and_counts_from_one_again()
+    {
+        // Recorded with 2.1.319 (the clear fixture, FR-8.8): /clear draws its you: row over the first row of the last
+        // exchange, the mode line and the prompt under it, blanks the rest, and prints nothing that says the
+        // conversation was cleared.
+        // Claude's header stays on the top row throughout, as in the recording: its live block never starts at the
+        // home position, which the model reads as a repaint.
+        var model = new SessionModel(80, 10);
+        var announced = new List<string>();
+        model.Announcement += announced.Add;
+        Feed(model, $"{Esc}[?25lClaude Code v2.1.319\r\nauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        Assert.True(model.Send("hi"));
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hyou: hi{Esc}[K\r\nclaude: hello{Esc}[K\r\nBaked for 1s · done 2:47 PM{Esc}[K\r\nauto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        Assert.Equal("Claude Code v2.1.319", Visible(model)[0]);
+        Assert.Equal("claude: hello", Visible(model)[6]);
+
+        Assert.False(model.Send("/clear"));
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hyou: /clear{Esc}[K\r\nauto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K\r\n{Esc}[K\r\n{Esc}[K\r\n{Esc}[K{Esc}[4;2H{Esc}[?25h");
+        const string cleared = "System: Conversation cleared by /clear; the previous one stays on disk, and /resume brings it back";
+        Assert.Equal([cleared], Visible(model));
+        Assert.Equal(["Conversation cleared"], announced);
+        Assert.Equal(0, model.ExchangeCount);
+        Assert.False(model.PromptPending);
+
+        // Claude draws the next exchange from the row under its echo and never rewrites the rows above: no blank
+        // lines come back at the top, and the blocks count from 1 again.
+        Assert.True(model.Send("again"));
+        Feed(model, $"{Esc}[?25l{Esc}[3;1Hyou: again{Esc}[K\r\nclaude: again{Esc}[K\r\nauto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        Assert.Equal([cleared, "# Input 1", "again", "", "# Output 1 Reply from Claude", "", "claude: again"], Visible(model));
+    }
+
+    [Fact]
+    public void A_you_clear_row_elsewhere_than_above_the_live_block_clears_nothing()
+    {
+        // Text alone never proves Claude's state: a you: /clear quoted in a tool result stays where it is (FR-8.8).
+        var model = new SessionModel(80, 10);
+        Feed(model, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        Assert.True(model.Send("hi"));
+        Feed(model, $"{Esc}[?25l{Esc}[1;1Hyou: hi{Esc}[K\r\ntool: the log said{Esc}[K\r\nyou: /clear{Esc}[K\r\nclaude: done{Esc}[K\r\nauto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        Assert.Equal(["# Input 1", "hi", "", "# Output 1 Reply from Claude", "", "tool: the log said", "you: /clear", "claude: done"], Visible(model));
+    }
+
+    [Fact]
     public void The_mode_line_and_spinner_stay_hidden_when_the_cursor_sits_on_the_mode_line()
     {
         // A full screen: Claude parks the cursor on the mode line in the bottom row while it works (recorded

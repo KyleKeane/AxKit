@@ -72,7 +72,7 @@ Keys that go straight to Claude Code:
 
 Anything that starts with a slash is a Claude Code command. Type `/help` and press Enter for the list. Some useful ones:
 
-- `/clear` starts a new conversation. `/compact` shortens the current one to free up space.
+- `/clear` starts a new conversation with an empty context. The window empties too, says "Conversation cleared", and starts with one "System:" line saying that `/resume` brings the previous conversation back. `/compact` shortens the current one to free up space.
 - `/model` picks the model. `/permissions` changes what Claude may do without asking. `/config` has the other settings.
 - `/resume` goes back to an earlier conversation. `/cost` and `/status` show usage and the session state.
 - `/exit` ends the Claude Code session. The window stays open; Ctrl+Shift+R starts Claude again.

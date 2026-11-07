@@ -1,0 +1,31 @@
+mark
+wait 8000 Enter y/n:
+iffound sleep 500
+iffound send y
+iffound sleep 500
+iffound send \r
+mark
+quiet 2500 30000
+send Reply with the single word hello.
+sleep 150
+send \r
+mark
+wait 90000 \x07
+quiet 2000 20000
+mark
+send /clear
+sleep 300
+send \r
+mark
+quiet 2500 20000
+mark
+send Reply with the single word again.
+sleep 150
+send \r
+mark
+wait 90000 \x07
+quiet 2000 20000
+send /exit
+sleep 300
+send \r
+exit 15000

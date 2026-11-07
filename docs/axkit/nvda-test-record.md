@@ -89,6 +89,13 @@ Space in the box said nothing.
 | Space: "checked", once | Passed |
 | Space again: "not checked", once | Passed |
 
+## Owed: axClaude, `/clear` empties the window (2026-11-07, `docs/axclaude/SPEC.md` FR-8.8)
+
+Section 2 step 9 of `docs/axclaude/nvda-test-plan.md`, new with the change: "Sent" then "Conversation cleared" spoken, the
+one System line left, the session name gone from the status bar, the next block "# Input 1" with no blank line above
+it. Built against the `clear` fixture (Claude Code 2.1.319); to be run through `nvda-pass.ps1 axclaude` once a script
+for it exists, and heard by the user in a real session.
+
 ## Owed: access layers and consent (the branch `licence`, 2026-10-29, `docs/axkit/SPEC.md` AX-11)
 
 Scripted since 2026-10-31 and heard through `nvda-pass.ps1` (`docs/axkit/automation.md` section 3; passed 2026-11-01,

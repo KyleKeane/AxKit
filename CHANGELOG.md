@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.2
+
+- axClaude: `/clear` empties the window again. Claude Code 2.1.319 no longer erases the screen in screen reader mode when it clears the conversation; it only echoes `you: /clear`, so the window kept every line and said nothing. The window now empties its conversation when that echo arrives, as New session does, with Claude running on, says "Conversation cleared", and starts the empty conversation with one System line saying that `/resume` brings the previous one back (`docs/axclaude/SPEC.md` FR-8.8).
+
 ## 5.0.1
 
 - axKit: `PRIVACY.md`, the README, `SECURITY.md` and the bundle spec say exactly how axKit meets the network: its own code makes requests in the updater alone, over HTTPS to GitHub (the update check, a setting, and the download you choose, accepted from this repository's release address only); an access layer reaches the network only through the program it runs as a child process on your computer (Claude Code talks to Anthropic, git reaches a remote on fetch, pull and push alone, your shell's commands reach what they reach, KeePassXC's tool nothing).

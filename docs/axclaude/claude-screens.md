@@ -101,7 +101,8 @@ In a repository the branch row `  ● main` can sit between the mode line and th
 
 ## None: the session changes or ends
 
-- `/clear`, `/compact`, `/exit`, `/logout`, `/plan`, `/branch`, `/fork`, `/background`, `/subtask`, `/teleport` (docs only). Several act at once and some start work that costs tokens; none was opened.
+- `/clear` (recorded with 2.1.319, 2026-11-07, the `clear` fixture): the completion row `/clear  Start a new session with empty context; previous session stays on disk (resumable with /resume)`; Enter prints `you: /clear`, draws the mode line and the prompt again, blanks the rows below and sets the title back to `✳ Claude Code`. Nothing says the conversation was cleared, so the window empties its own and says so (SPEC.md FR-8.8).
+- `/compact`, `/exit`, `/logout`, `/plan`, `/branch`, `/fork`, `/background`, `/subtask`, `/teleport` (docs only). Several act at once and some start work that costs tokens; none was opened.
 
 ## None: another program opens
 

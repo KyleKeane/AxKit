@@ -80,7 +80,7 @@ public sealed class Line
     public bool JoinedToPrevious { get; set; }
 
     public bool Committed { get; set; }
-    public bool Hidden => ChromeHidden || EchoHidden || ReplayHidden || RepaintHidden;
+    public bool Hidden => ChromeHidden || EchoHidden || ReplayHidden || RepaintHidden || ClearedHidden;
     /// <summary>
     /// A line of the app's own (a marker, a printed message line or blank line, a system line, a bookmark, the record
     /// of a question), plus Claude's one <c>[Screen Reader Mode: …]</c> row, which is classified System as well: not
@@ -100,6 +100,14 @@ public sealed class Line
     /// already shows, often worded differently. Shown once a later frame writes something else on its row.
     /// </summary>
     public bool RepaintHidden { get; set; }
+
+    /// <summary>
+    /// Made for a row above Claude's cursor when the conversation was emptied on <c>/clear</c> (axClaude FR-8.8):
+    /// Claude goes on drawing below those rows and, in screen reader mode, never rewrites them, so the lines the
+    /// screen would make for them with the next frame would read as blank lines at the top of the emptied window.
+    /// Shown once a later frame writes something on the row.
+    /// </summary>
+    public bool ClearedHidden { get; set; }
 
     /// <summary>The line is a row of the screen still, so it may be rewritten; false once its row scrolled off or was let go.</summary>
     public bool OnScreen => Row is not null;

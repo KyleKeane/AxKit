@@ -1,0 +1,87 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h]0;✳ Claude CodeClaude Code v2.1.319
+Haiku 5.5 · Claude Ultra
+C:\Temp\axclaude-fixture
+Updated to latest. Got 20 features, 109 bugfixes, and 42 other changes.
+code.claude.com/docs/en/changelog for details
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q[?u]7501;?[?2004h  Reply with the single word hello.]133;A;redraw=0]0;◐ Claude Code[?25l[7;1Hyou: Reply with the single word hello.[K
+Perambulating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◐ Hello greeting[?25l[8;1HElucidating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[8;1Hclaude: hello[K
+Elucidating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[?25h]133;C]133;D]0;✳ Hello greeting[?25l[9;1HCrunched for 0s · done 11:26 AM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[K[?25h[?25l[11;1H$[K
+[K[11;2H[?25h[?25l[10;1H/clear                        Start a new session with empty context; previous session stays on disk (resumable with /resume)[K
+[K[35;1H$  /clear[?25h]133;A;redraw=0]133;C]133;D]0;✳ Claude Code[?25l[7;1Hyou: /clear[K
+auto mode on (shift+tab to cycle)[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[9;2H[?25h  Reply with the single word again.]0;◐ Claude Code[?25l[8;1Hyou: Reply with the single word again.[K
+Doodling…[K
+Tip: Share Claude Code and earn $10 in usage credits · /passes
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+$[?25h]133;A;redraw=0]0;◐ Single word reply]133;C]133;D[?25l[9;1Hclaude: again[K
+Churned for 0s · done 11:26 AM[K
+auto mode on (shift+tab to cycle)[K
+$[K]0;✳ Single word reply[?25h[?25l[11;1H/exit                         Exit the CLI[K
+/context                      Visualize current context usage as a colored grid[K
+/usage-credits                Configure usage credits or request them from your admin when you hit a limit[36;1H$  /exit[?25h]0;◐ Single word reply[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l[?25l[11;1Hyou: /exit[K
+Nebulizing…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[2m
+Resume this session with:[22m[K[2m
+claude --ax-screen-reader --model haiku --resume 190e9eb8-f69d-43d7-a976-5a1b2291ed60[22m[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[17;1H]0;[?25h]133;A;redraw=0]133;C]133;D]0;✳ Single word reply[?9001l[?1004l

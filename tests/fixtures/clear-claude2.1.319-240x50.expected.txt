@@ -1,0 +1,10 @@
+System: Conversation cleared by /clear; the previous one stays on disk, and /resume brings it back
+you: Reply with the single word again.
+claude: again
+Churned for 0s · done 11:26 AM
+you: /exit
+Nebulizing…
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+$
+Resume this session with:
+claude --ax-screen-reader --model haiku --resume 190e9eb8-f69d-43d7-a976-5a1b2291ed60

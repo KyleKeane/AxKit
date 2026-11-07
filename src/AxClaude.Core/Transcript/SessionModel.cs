@@ -535,6 +535,38 @@ public sealed partial class SessionModel : LineStore
         StartRun();
     }
 
+    /// <summary>
+    /// Empties the conversation when Claude has emptied its own (<c>/clear</c>, FR-8.8), with Claude running on:
+    /// every line goes, the messages held for an echo with them, the exchange blocks and bookmarks count from 1
+    /// again, and the session name is forgotten with the conversation it named. In screen reader mode Claude prints
+    /// nothing about it, so the window says so itself: a System line, the first line of the emptied conversation,
+    /// and the spoken "Conversation cleared". Claude goes on drawing where its cursor stands and never rewrites the
+    /// rows above it; the lines the screen would make for those rows when the next frame lands below them would
+    /// read as blank lines, so they are made here, after the System line, and hidden until a frame writes on one
+    /// (<see cref="Line.ClearedHidden"/>).
+    /// </summary>
+    private void ClearConversation()
+    {
+        _screen.DetachRows();
+        _lines.Clear();
+        _pending.Clear();
+        _runBoundary = null;
+        _responseStartedFor = null;
+        _anchor = null;
+        _banner = null;
+        ExchangeCount = 0;
+        ResetBookmarks();
+        QueuedMessages = 0;
+        SessionName = null;
+        AddSystemLine("Conversation cleared by /clear; the previous one stays on disk, and /resume brings it back");
+        for (var r = 0; r < _screen.CursorRow; r++)
+        {
+            _screen.EnsureLine(r).ClearedHidden = true;
+        }
+
+        Announcement?.Invoke("Conversation cleared");
+    }
+
     private void StartRun()
     {
         AttachScreen();
@@ -591,6 +623,7 @@ public sealed partial class SessionModel : LineStore
         line.EchoHandled = false;
         line.ReplayHidden &= HideReplay;
         line.RepaintHidden &= _repainting;
+        line.ClearedHidden = false;
     }
 
     // ---- internals ----
@@ -1054,6 +1087,15 @@ public sealed partial class SessionModel : LineStore
             }
 
             return _lines.LastIndexOf(block[^1]);
+        }
+
+        // The echo of /clear, the first row above the live block, where Claude prints the command it takes up (a
+        // you: /clear quoted in a tool result or replayed at startup stands elsewhere): Claude has emptied its
+        // conversation, so the window empties its own (FR-8.8; recorded with 2.1.319, the clear fixture).
+        if (line.Text == "you: /clear" && _lines.LastIndexOf(line) == AnchorIndex() - 1)
+        {
+            ClearConversation();
+            return _lines.Count;
         }
 
         return index;
