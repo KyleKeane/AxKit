@@ -100,8 +100,12 @@ Application separately under Open with, so the hard links of `AxKit.exe` that `i
 ### 3.3 Extensions
 
 - File types, per app, as `install.ps1` registers them today (axDown `.md`, `.markdown`, `.txt`; axJSON `.json`;
-  axMedia the sound and video types; and so on from `apps.json`), each with a verb, "Open with axDown", running the
-  app on the file (`down "%1"`). That replaces the files part of File Explorer's Open with axKit submenu (AX-2.3).
+  axMedia the sound and video types; axPass `.kdbx`; from `apps.json`), so that Windows' Open with lists the app on
+  them. A package declares a file type once (makeappx refuses a second, found 2026-11-08), so a type belongs to the
+  first app of the list that has it, and axPreview, whose Open with says every file, declares none: Windows has no
+  package form of "every file", and the files part of File Explorer's Open with axKit submenu (AX-2.3, which showed
+  axDown and axPreview on any file) has none either. axPreview is reached from axFile (Shift+Enter), from a window's
+  Show in submenu and from a shell (`axpreview <file>`).
 - Folders: the submenu on a folder and a folder's background has no plain manifest equivalent. A packaged app's
   entries there (`desktop4:FileExplorerContextMenus`) need a COM server, an `IExplorerCommand` DLL, which this round
   does not build (section 8). In the Store build a folder is opened from axFile, from axStart's search, or from a
@@ -310,6 +314,14 @@ by `msstore submission updateMetadata`.
 
 Answered in phase 1 (items 1 and 9) and in the first packaging test of phase 3 (the rest); the answers are written
 here when known.
+
+Known on 2026-11-08 evening, from building the package (`publish.ps1 -Msix`, 46.6 MB, the manifest accepted by
+makeappx's schema check): `uap10:Parameters` on an Application element passes the schema (its behaviour is item 3);
+a startup task carries no arguments of its own, so each app that starts at sign-in has a hidden entry
+("AxStartSignIn", `AppListEntry="none"`) with the task, and the program reads the entry's id when Windows passes
+nothing (`Dispatch.WithApplicationVerb`), which also settles item 5 whatever Windows does with an alias's parameters;
+a file type is declared once per package (3.3). The registration test needs Developer Mode on this computer and the
+user away from the keyboard, since the apps' windows open.
 
 1. Where Partner Center shows the Seller ID (expected under Account settings, with the account identifiers).
 2. `msstore publish --inputFile AxKit.msix --appId <id>` accepts a package not built from one of the CLI's project
