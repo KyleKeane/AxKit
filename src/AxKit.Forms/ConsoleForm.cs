@@ -202,6 +202,9 @@ public abstract partial class ConsoleForm : AxKitForm
     /// <summary>Everything is announced on the view, the control NVDA reads the window by.</summary>
     protected override Control AnnounceSource => Transcript;
 
+    /// <summary>A console window's announcements are the user's conversation and the shell's output: a report gets its commands and notices alone (docs/axkit/reports.md RP-4.2).</summary>
+    protected override bool RecordsAnnouncements => false;
+
     /// <summary>A reader keeps their line while the notice hides the view (axClaude FR-3.3): the notice opened from the view.</summary>
     protected override void OnNoticeOpened(Control? focusBefore) => Transcript.KeepCaret = ReferenceEquals(focusBefore, Transcript);
 

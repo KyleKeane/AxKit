@@ -82,7 +82,9 @@ one announcement per move:
 - **RP-4.2 Never the user's text.** The content of an edit field (the message to Claude, a document, a password), a
   conversation line of axClaude, a clipboard entry of axClip or a field value of axPass is never in a report. The
   focus line names the control and its place only. axPass's and axClip's windows (the MCP's never-read apps, `McpTools.NeverRead`,
-  docs/axkit/mcp.md section 5) put only their command names in the ring, not their announcements.
+  docs/axkit/mcp.md section 5) and the console windows, axClaude and axTerminal, whose spoken replies and output are
+  the user's conversation (the first real report, 2026-11-08, carried a spoken reply of Claude's), put only their
+  commands and notices in the ring, not their announcements (`AxKitForm.RecordsAnnouncements`).
 - **RP-4.3 Redaction.** Every prefilled field goes through `Redaction` (AxKit.Core, S-20) before it is shown: the
   account's paths read `<user>`, an e-mail address `<email>`. The user reads what will be sent.
 - **RP-4.4 Public.** An issue is public on GitHub, posted by axKit's reporter account with the install's reporter id

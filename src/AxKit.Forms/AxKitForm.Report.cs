@@ -262,24 +262,52 @@ public abstract partial class AxKitForm
         }
     }
 
-    /// <summary>"NVDA 2025.3" from its running process, "NVDA running" when the version cannot be read, "NVDA not running".</summary>
+    /// <summary>
+    /// "NVDA 2025.3" from its running process, or, since NVDA runs with rights that hide its module from the window,
+    /// from the installed nvda.exe under Program Files; "NVDA running" when neither tells the version; "NVDA not running".
+    /// </summary>
     private static string NvdaVersion()
     {
+        bool running;
+        string? version = null;
         try
         {
             using var nvda = Process.GetProcessesByName("nvda").FirstOrDefault();
-            if (nvda is null)
-            {
-                return "NVDA not running";
-            }
-
-            var version = nvda.MainModule?.FileVersionInfo.ProductVersion;
-            return string.IsNullOrWhiteSpace(version) ? "NVDA running" : "NVDA " + version.Trim();
+            running = nvda is not null;
+            version = nvda?.MainModule?.FileVersionInfo.ProductVersion;
         }
         catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception or NotSupportedException)
         {
-            return "NVDA running";
+            running = true;
         }
+
+        if (!running)
+        {
+            return "NVDA not running";
+        }
+
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            foreach (var folder in new[] { Environment.SpecialFolder.ProgramFilesX86, Environment.SpecialFolder.ProgramFiles })
+            {
+                var exe = Path.Combine(Environment.GetFolderPath(folder), "NVDA", "nvda.exe");
+                if (File.Exists(exe))
+                {
+                    try
+                    {
+                        version = FileVersionInfo.GetVersionInfo(exe).ProductVersion;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        version = null;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return string.IsNullOrWhiteSpace(version) ? "NVDA running" : "NVDA " + version.Trim();
     }
 
     private static string Redact(string text) => Redaction.Redact(text);

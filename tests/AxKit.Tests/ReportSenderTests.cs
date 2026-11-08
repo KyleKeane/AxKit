@@ -164,6 +164,7 @@ public sealed class ReportSenderTests : IDisposable
         Assert.Equal(token, ReporterToken.Decode(" " + encoded + "\r\n"));
         Assert.Null(ReporterToken.Decode(string.Empty));
         Assert.Null(ReporterToken.Decode("not base64!"));
-        Assert.Null(ReporterToken.Token);
+        // ReporterToken.Token itself is the build's: null in a build without the file, the token on a computer where
+        // tools/reporter-token.ps1 wrote it; neither is asserted, since the tests run on both.
     }
 }

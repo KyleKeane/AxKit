@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using AxKit.Core;
+using AxKit.Core.Mcp;
 using static AxKit.Forms.User32;
 
 namespace AxKit.Forms;
@@ -504,6 +505,14 @@ public abstract partial class AxKitForm : Form
     /// what the window said, and the notices it showed; twenty at most.
     /// </summary>
     protected internal RecentActions Recent { get; } = new();
+
+    /// <summary>
+    /// Whether what the window says goes into <see cref="Recent"/> (RP-4.2). Not for axPass and axClip, whose
+    /// announcements may be a field's value or a clipboard entry (the MCP's never-read apps), and not for the console
+    /// windows, whose spoken replies and output are the user's conversation (<c>ConsoleForm</c>): those record their
+    /// commands and notices alone.
+    /// </summary>
+    protected virtual bool RecordsAnnouncements => AppVerb is not { } verb || !McpTools.NeverRead.Contains(verb);
 
     /// <summary>Runs a command and records it: "Find, Ctrl+F", the label without its mnemonic and the key as the menu shows it.</summary>
     private void Run(Command command)

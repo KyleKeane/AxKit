@@ -724,7 +724,8 @@ The design is `docs/axkit/reports.md` (RP-n, 2026-11-07); this section fixes wha
 - AX-12.1 **F4 in every window** (`BundleKeys.Report`, AX-8.2) and the axKit menu's Send a report… open the notice
   "Report to axKit" with the window's own fields (`ReportControls`): the user's words first and focused, Enter sends,
   Shift+Enter breaks a line; then the kind (Feedback, Bug, Feature request), the app and version, the window's last
-  twenty actions and announcements (`RecentActions`), where the focus was by name and place and never by text, the
+  twenty actions (`RecentActions`: its commands and notices, and its announcements in the apps whose announcements
+  never carry the user's content, so not in axClaude, axTerminal, axPass and axClip), where the focus was by name and place and never by text, the
   log's last lines and a title, every prefilled field redacted (`Redaction`) and editable. Your reports opens the
   Reports list in axTask.
 - AX-12.2 **Saved first, sent second.** Enter writes the report as an item of the axTask list `%APPDATA%\AxKit\reports`
