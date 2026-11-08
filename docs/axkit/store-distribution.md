@@ -401,6 +401,16 @@ reach the apps (item 7 and item 3 done; 3.4 says so).
     Store page protocol opens the listing.
 12. The App Certification Kit passes on the self-contained .NET publish.
 
+The first submission of 2026-11-09, driven through `tools/EdgeDrive` (store-setup.md section 6), answered the rest
+and added three findings: the Store's package validation allows eight entries per package and no hidden one (3.2;
+the first package, with seventeen, was refused, and 5.2.1 carries the eight); Windows gives a process started
+through a console command the command's own path as its command line's first word, which .NET's
+`GetCommandLineArgs` hides, so `PackageIdentity.CommandLineProgram` reads `GetCommandLineW` (measured: a bare
+`axcalc.exe` opened axClaude until then, axCalc after); and a Start menu entry starts its app in Windows' System32
+folder, which axClaude took for the project until FR-8.1 learned that Windows' own folders are never one (the
+measurement left System32 as the maintainer's remembered folder for an hour; put right by hand). Item 12, the App
+Certification Kit, was not run: the Store's own validation is the check that counts, and it ran.
+
 ## 8. Not in this round
 
 The folder context menu's COM server (`desktop4:FileExplorerContextMenus` with an `IExplorerCommand` server, in C#

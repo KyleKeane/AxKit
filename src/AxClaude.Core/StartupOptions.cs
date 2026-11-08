@@ -92,10 +92,10 @@ public sealed record StartupOptions(
         if (folder is null)
         {
             // Started from a console inside a project: use that folder. Started from Explorer or a shortcut
-            // the current directory is the app's own folder, which is never a project.
+            // the current directory is the app's own folder, started from a Start menu entry of the Store's package
+            // it is Windows' System32 folder (measured 2026-11-09); neither is ever a project.
             var current = Path.GetFullPath(Environment.CurrentDirectory);
-            var appDirectory = Path.GetFullPath(AppContext.BaseDirectory);
-            if (!string.Equals(TrimSeparator(current), TrimSeparator(appDirectory), StringComparison.OrdinalIgnoreCase))
+            if (!IsNeverAProject(current))
             {
                 folder = current;
             }
@@ -133,4 +133,24 @@ public sealed record StartupOptions(
     }
 
     private static string TrimSeparator(string path) => path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+    /// <summary>
+    /// A folder that is never a project, whatever started the app there (docs/axclaude/SPEC.md FR-8.1): the app's own
+    /// folder (Explorer and the zip's shortcuts start it there) and Windows' own, the Windows folder and System32 (a
+    /// Start menu entry of the Store's package starts it there). Neither is taken from the current directory nor
+    /// kept as the last project folder.
+    /// </summary>
+    public static bool IsNeverAProject(string folder)
+    {
+        var path = TrimSeparator(Path.GetFullPath(folder));
+        foreach (var never in new[] { AppContext.BaseDirectory, Environment.GetFolderPath(Environment.SpecialFolder.Windows), Environment.SystemDirectory })
+        {
+            if (!string.IsNullOrEmpty(never) && string.Equals(path, TrimSeparator(Path.GetFullPath(never)), StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

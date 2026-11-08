@@ -16,6 +16,17 @@ public class StartupOptionsTests
         Assert.Null(StartupOptions.Parse([Folder]).ClaudeArgs);
     }
 
+    /// <summary>FR-8.1: the app's own folder and Windows' own are never taken as the project, from the current directory or from the remembered folder.</summary>
+    [Fact]
+    public void Windows_own_folders_and_the_apps_own_are_never_a_project()
+    {
+        Assert.True(StartupOptions.IsNeverAProject(Environment.SystemDirectory));
+        Assert.True(StartupOptions.IsNeverAProject(Environment.SystemDirectory.ToLowerInvariant() + "\\"));
+        Assert.True(StartupOptions.IsNeverAProject(Environment.GetFolderPath(Environment.SpecialFolder.Windows)));
+        Assert.True(StartupOptions.IsNeverAProject(AppContext.BaseDirectory));
+        Assert.False(StartupOptions.IsNeverAProject(Folder));
+    }
+
     [Fact]
     public void The_folder_is_made_absolute_and_must_exist()
     {
