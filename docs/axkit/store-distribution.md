@@ -1,0 +1,344 @@
+# axKit in the Microsoft Store: MSIX, the Store and winget
+
+A plan written on 2026-11-08, the day the Partner Center account was opened, from Microsoft's documentation as read
+that day (section 9) and the repository at 5.1.1. Nothing of it is built yet. Section 4 lists the decisions that are
+the maintainer's; section 7 lists what the documentation did not say and the first packaging test must answer. The
+work follows the bundle's order: specification first, then infrastructure, then code, then the NVDA pass, then the
+release. The code runs on a branch, `store`, and merges when the Store copy has passed its NVDA checks.
+
+## 1. Why, in one paragraph
+
+Today axKit is a zip with `install.ps1` and an updater of its own (AX-2, AX-3). Windows 11's Smart App Control blocks
+a program file that carries no Authenticode signature, so every update is a risk on such a computer, and Azure
+Artifact Signing was set up for that (`docs/axkit/code-signing.md`), its identity check still pending. The Microsoft
+Store removes the problem at the root: the Store re-signs every package with Microsoft's own certificate after
+certification, so a Store copy of axKit passes Smart App Control with no certificate of ours; the Store installs,
+updates and uninstalls it; and Windows Package Manager's `msstore` source makes `winget install` the command-line
+path, with no manifest of ours to keep. The price: axKit ships as an MSIX package, which changes how it is installed
+and what it may write where (section 3), and the first publication goes through Partner Center's website by hand
+(section 2).
+
+## 2. What runs from the command line and what does not
+
+Partner Center's programmatic side, the Microsoft Store submission API and the Microsoft Store Developer CLI
+(`msstore`) built on it, authenticates only as a Microsoft Entra application: a tenant ID, a client ID and a key, with
+the application given the Manager role in Partner Center. Neither accepts a personal Microsoft account's sign-in; the
+CLI's documentation says so in as many words ("don't use your MSA"). The account axKit publishes from is a personal
+Microsoft account, so it is the sign-in for Partner Center's website and nothing else: it never goes into a file, a
+script or a session.
+
+By hand, in Partner Center's website, signed in with that account, once (phase 1, about an hour) and once more for
+the first submission (phase 6):
+
+1. Associate a Microsoft Entra tenant with the Partner Center account: Account settings, Tenants, Associate
+   Microsoft Entra ID. The tenant of the Azure signing work serves, or Partner Center creates one at no charge. The
+   account's owner can do it; being the tenant's global administrator is not needed for the association.
+2. Add a Microsoft Entra application: Account settings, User management, Microsoft Entra applications, Create (or
+   Add an existing one), the Manager role, then Add new key. The key is shown once, on that page only.
+3. Read off the Tenant ID and the Client ID from the application's page, and the Seller ID from Account settings
+   (its exact place: section 7).
+4. Reserve the product name: Apps and games, New product, MSIX or PWA app, name axKit. The CLI cannot create an app.
+   Then read the package identity from the product's Product management, Product identity (View app identity
+   details): Package/Identity/Name, Package/Identity/Publisher and PublisherDisplayName. These are not secrets; they
+   go into the manifest, letter for letter (the Store compares them case-sensitively).
+5. The first submission. The submission API cannot be used before one submission of the app exists in Partner Center
+   with the age ratings questionnaire answered, and the CLI's documentation says the first publication must go
+   through Partner Center. I prepare every text, image and the package (phase 5); the uploads, the questionnaire and
+   the Submit button are clicks in the browser.
+6. A submission changed in Partner Center can no longer be continued by the API, so after the first one, changes go
+   through the command line only.
+
+From the command line and from GitHub Actions, with the four values as secrets, everything else: building the
+package, checking it, uploading and submitting each new version, reading its status, keeping the listing's texts and
+images, and the winget path, which needs nothing from us once the listing is live.
+
+Secrets: the key and the IDs are typed into `gh secret set <NAME>` (which prompts for the value and hides it) and into
+`msstore reconfigure` (which prompts the same way), in the maintainer's own terminal, never into the chat (the token
+of 5.1.0). The CLI keeps them in Windows' credential store.
+
+## 3. The shape of the Store build
+
+### 3.1 One package
+
+`AxKit.msix`, x64, made from a folder publish (every file of the self-contained app as a file; the package is the
+single file now) by `makeappx pack /h SHA256` from the Windows SDK, which the GitHub runners have. Identity Name and
+Publisher come from Partner Center; the version is `<Version>` of `AxKit.csproj` with `.0` appended, since the Store
+reserves the fourth part and requires 0; PublisherDisplayName as Partner Center shows it. `TargetDeviceFamily
+Windows.Desktop`, minimum `10.0.19041.0` (Windows 10 version 2004, May 2020: the `uap10` manifest namespace the
+per-app parameters need; the unpackaged build keeps 1809, SPEC 5.4). Capabilities: `runFullTrust` alone, the one every
+packaged desktop app declares. The package is uploaded unsigned; the Store signs it after certification. The manifest
+is written by a script from `apps.json`, the list of apps `publish.ps1` already writes next to the exe for
+`install.ps1`, so the apps are declared in one place (B-10).
+
+### 3.2 One Application per app
+
+Every app is its own `<Application>` running `AxKit.exe`, its verb in the `uap10:Parameters` attribute (`claude`,
+`down`, `json`, …), with the display name of today's Start menu entry, `axKit axClaude` and so on (AX-2.2), its own
+icon as PNG assets (44, 150, 310 by 150 and the 50 by 50 store logo, at the scales the Store asks for) made by
+`tools/make-icon.ps1` from the same letters and colours, and the package's own logo AxClaude's Ax. Windows lists each
+Application separately under Open with, so the hard links of `AxKit.exe` that `install.ps1` makes for it go.
+
+### 3.3 Extensions
+
+- File types, per app, as `install.ps1` registers them today (axDown `.md`, `.markdown`, `.txt`; axJSON `.json`;
+  axMedia the sound and video types; and so on from `apps.json`), each with a verb, "Open with axDown", running the
+  app on the file (`down "%1"`). That replaces the files part of File Explorer's Open with axKit submenu (AX-2.3).
+- Folders: the submenu on a folder and a folder's background has no plain manifest equivalent. A packaged app's
+  entries there (`desktop4:FileExplorerContextMenus`) need a COM server, an `IExplorerCommand` DLL, which this round
+  does not build (section 8). In the Store build a folder is opened from axFile, from axStart's search, or from a
+  shell with `axkit claude <folder>`.
+- An app execution alias, `axkit.exe` on PATH, in place of the `.cmd` shims in `%USERPROFILE%\.local\bin`
+  (AX-2.4), so `axkit down notes.md` works from any shell; one alias per app (`axdown.exe`) if an alias on an
+  Application with parameters passes them on (section 7).
+- Startup tasks (`windows.startupTask`) for axStart and axClip, in place of the Run key values `SignInStart`
+  writes: a packaged process's writes under HKCU go to a private hive, so a Run value written from inside the package
+  would never run. Windows lists the tasks under Settings, Apps, Startup, where the user turns them on and off; the
+  Store build's own "Start at sign-in" setting opens that page (`ms-settings:startupapps`) and says so. Whether a
+  task can carry `start --hidden`: section 7.
+
+### 3.4 Virtualization, accepted
+
+A packaged desktop app's new files and folders under AppData Local and Roaming are redirected to a private folder of
+the package; its writes under HKCU are copied to a private hive; its package folder is read-only. Hence:
+
+- axKit's own files (`AxKit.Core/AppPaths`: settings, logs, reports, the MCP key and audit) land in the private
+  folder, which Windows removes with the package (policy 10.2.7, clean uninstall). Files that already exist under
+  `%APPDATA%\AxKit` from an unpackaged install stay readable and modifiable from the package; new files are private.
+  A development copy and the Store copy on one computer therefore share what existed before the Store copy's first
+  start and diverge in new files. Acceptable; written into AX-5.
+- The capability that turns virtualization off, `unvirtualizedResources`, is restricted and, in Microsoft's words,
+  designed for certain desktop PC games published by Microsoft and its partners. The plan does not rely on it.
+- Child processes must behave as they do outside axKit: the shells of axTerminal, Claude Code in axClaude, git,
+  KeePassXC's tool, winget and the makers' installers of Install it now all keep state under AppData (PowerShell's
+  history, Claude Code's and winget's files). Windows has the way out: a process created with the thread attribute
+  `PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY` set to `PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_ENABLE_PROCESS_TREE`
+  runs outside the package, with its whole process tree. `AxKit.Core/Pty/PtyHost` already builds a thread attribute
+  list for ConPTY, so the console programs get the attribute there; the other starts go through one small
+  `CreateProcess` wrapper with the same attribute. Verified in the first packaging test (section 7).
+- `Environment.ProcessPath` lies under `C:\Program Files\WindowsApps\<package>\` and changes with every update, so
+  whatever records the exe's path for later use records the alias `%LOCALAPPDATA%\Microsoft\WindowsApps\axkit.exe`
+  in the Store build: the MCP command line written into Claude Code's settings (`AxKitForm.Mcp.cs`), `SignInStart`
+  and `AppPaths.InstalledExe`.
+
+### 3.5 What the Store build turns off
+
+A process with package identity (`GetCurrentPackageFullName` succeeds; one P/Invoke, listed in SPEC 5.4) makes no
+update check, downloads nothing and never offers Update to; Check for updates says that the Microsoft Store keeps
+axKit current and offers to open axKit's Store page (`ms-windows-store://pdp/?productid=<Store ID>`: a program start,
+with its Outside call comment and a row in `tools/outside-calls.ps1`, B-17). The installer, the Run key, the File
+Explorer registry keys, the shims and the Settings, Apps entry are not written: the package provides all of them. The
+release key's check of the zip is not needed. Everything else is the same code at the same version; About names the
+Store as where this copy came from.
+
+### 3.6 The listing
+
+Name axKit; category Developer tools; price Free; every market; visibility "Make this product available and
+discoverable in the Microsoft Store", which the winget path needs. The description begins with the dependencies
+(policy 10.2.4: a dependency on software that is not integrated is disclosed at the beginning of the description;
+10.2.3 forbids offering to install software that does not enhance the product, and Git, Claude Code, KeePassXC and
+PowerShell 7 are what axGIT, axClaude, axPass and axTerminal exist for, each offered from its maker only when it is
+missing, AX-2.9), then `README.md`'s first paragraph, then one line per app under features, then a sentence that
+axClaude shows the output of Claude Code, a live generative AI (policy 11.16 asks for the disclosure in the listing, a
+note in the submission and a means to report content: the F4 report, AX-12). Privacy policy: `PRIVACY.md` on GitHub,
+required for every desktop app (10.5.1). Website www.kylekeane.com; support contact the reports repository's issues
+page. Screenshots: PNG, 1366 by 768 or larger, up to ten, one per app's window, made by `tools/AxAutomate` on its own
+desktop (a screenshot step to add), captions under 200 characters. Store logo 300 by 300 (one page calls it
+mandatory, another strongly recommended: provided). Age ratings: the IARC questionnaire answered truthfully; axTerminal
+and axClaude reach the internet without a filter, so a rating above 3+ is likely and does not matter for a developer
+tool. Additional licence terms: AGPL-3.0-only with its link. The texts live in `docs/axkit/store-listing.md`, the
+source of truth the listing is pasted from and, later, pushed from by the CLI.
+
+### 3.7 winget
+
+Once the listing is live, `winget search axKit -s msstore` shows the Store ID and `winget install <Store ID> -s
+msstore` installs; the exact line goes into `README.md`, and the Store page's link into the updater's notice.
+Microsoft's pages do not state the conditions under which a Store app appears in the `msstore` source; the current
+catalogue suggests free, publicly listed apps. Checked on the day the listing goes live (section 7). A manifest in the
+community repository `winget-pkgs` (`KyleKeane.axKit`) is a second, later path for computers where the Store source
+is disabled (section 8).
+
+### 3.8 The GitHub path
+
+GitHub releases continue: the tag, the notes, the source, and the zip with `install.ps1` as the developer's and the
+Store-less computer's path, with its updater unchanged (AX-3). The Store copy is the one offered to users: `README.md`
+leads with winget and the Store. The code signing of the exe: decision 4.4.
+
+## 4. Decisions for the maintainer
+
+The recommendation comes first in each.
+
+- 4.1 One path for users. The Store (and winget) is the install path `README.md` offers; the zip stays as the
+  developer's and the fallback path. Or: two equal paths, both documented and both tested every release.
+- 4.2 Virtualization accepted, children break away (3.4). Or: apply for `unvirtualizedResources` with a
+  justification, and risk the certification on it.
+- 4.3 The folder context menu is absent from the Store build for now (3.3). Or: build the COM server first (section
+  8), weeks more before the first submission.
+- 4.4 Azure Artifact Signing stays until the first Store release is installed and checked, then retires: the
+  Store's signature replaces it for users, and the zip goes unsigned as it does today while the variable is unset.
+  Or: keep both, the exe signed in the zip as well.
+- 4.5 Start at sign-in in the Store build is Windows' own Startup page (3.3). Or: a toggle inside axKit through the
+  WinRT startup task API, which needs the Windows SDK projection, a targeting pack, against the zero-package rule.
+- 4.6 The clicks in Partner Center are the maintainer's, with NVDA, from my step lists (phase 1 and 6). Or: I drive
+  the browser through the Chrome extension while he is signed in and watching; file uploads stay his either way.
+- 4.7 The publisher display name is public on the listing. Kyle Keane, as the licence identity, is the expected
+  value.
+
+## 5. The steps, in order
+
+### Phase 1: Partner Center (the maintainer, in the browser, about an hour; can start now)
+
+1. Check that the account's identity verification is complete and the account is in good standing (Account
+   settings); nothing publishes before it is.
+2. Steps 1 to 4 of section 2: the tenant, the Entra application with the Manager role and its key, the Tenant ID,
+   Client ID and Seller ID, the name axKit, the package identity values.
+3. In his own terminal: `winget install "Microsoft Store Developer CLI"` (it needs the .NET 9 Desktop Runtime,
+   `winget install Microsoft.DotNet.DesktopRuntime.9`; a development tool, recorded in
+   `docs/axkit/development-environment.md`), then `msstore reconfigure`, answering its prompts, then `msstore apps
+   list`, which must show axKit. Then `gh secret set` for the four values (names in phase 7).
+4. The package identity values go to me in a message or a file: they are public.
+
+Gate: `msstore apps list` shows axKit.
+
+### Phase 2: Specification (me, one session)
+
+`docs/axkit/SPEC.md`: AX-2 gains the Store installation (the package, its Applications, extensions and what it
+replaces, 3.1 to 3.3), AX-3 the packaged build's update behaviour (3.5), AX-4 the submission in the release (phase 7),
+AX-5 the private AppData of the packaged copy (3.4), 5.4 the two new APIs (`GetCurrentPackageFullName`, the desktop
+app policy attribute), B-17 the Store page start. `PRIVACY.md`, `README.md`, `docs/axkit/README.md` and `SECURITY.md`
+name winget and the Store and say that the Store copy never downloads an update itself. `CHANGELOG.md` gets its
+section. `docs/axkit/development-environment.md` gains the Windows SDK's `makeappx` (its path), Developer Mode for
+the loose registration, and the CLI with its runtime. `docs/axkit/plan.md` points here. One commit per document.
+
+### Phase 3: Packaging infrastructure (me, one session, branch `store`)
+
+1. `tools/make-manifest.ps1`: `apps.json` in, `AppxManifest.xml` out, with the identity values as parameters and the
+   version from the csproj. A test compares the manifest's Applications with `Dispatch.Apps`.
+2. `tools/make-icon.ps1 -Png`: the package assets per app.
+3. `publish.ps1 -Msix`: the folder publish, the manifest, the assets, `makeappx pack`, into `publish\AxKit.msix`.
+4. The development loop: `Add-AppxPackage -Register publish\win-x64-msix\AppxManifest.xml` registers the loose
+   folder as the package without a signature (Developer Mode on). The first packaging test runs every item of section
+   7 and records the answers there.
+5. `appcert.exe` (the Windows App Certification Kit, deprecated but still running) on the package, once, for the
+   Store's own kind of check.
+6. `build.yml` builds the package on every push and keeps it as an artifact, with placeholder identity values.
+
+Gate: the loose package starts every app from the Start menu, and section 7 has its answers.
+
+### Phase 4: Code (me, one to two sessions, branch `store`)
+
+1. `AxKit.Core/Packaged.cs`: the detection, false in tests and in `run.ps1` builds.
+2. The updater off and the Store page on (3.5); About names the Store.
+3. `SignInStart`: nothing written when packaged; the setting opens the Startup page (4.5).
+4. The alias path wherever the exe's path is recorded (3.4).
+5. The breakaway attribute in `PtyHost` and a `ProcessStarter` for the other children, with the same Outside call
+   comments the starts carry today.
+6. The accessibility review skill on every changed text, `test.ps1`, one commit per step.
+
+### Phase 5: Listing materials (me, half a session)
+
+`docs/axkit/store-listing.md` with every text of 3.6; the screenshots and the store logo into `publish\store\`
+(ignored by git except the page).
+
+### Phase 6: The first submission (the maintainer in the browser with my lists, then me)
+
+1. Upload `publish\AxKit.msix` (built from the `store` branch at the next version), paste the texts, upload the
+   images, set the properties and declarations (3.6; `runFullTrust` is noted on the Submission options page, the
+   live generative AI is noted there too), answer the age ratings, submit.
+2. Certification takes days (no figure in the documentation); a rejection comes with the policy number, I fix the
+   text or the package and the resubmission goes the same way.
+3. Live: on this computer, `winget install <Store ID> -s msstore` next to the development copy; the NVDA pass of
+   every app's plan on the Store copy, plus the Store items (Start menu entries, Windows search, the alias, the
+   startup tasks after a sign-in, the file verbs, Check for updates, where the settings landed), recorded in
+   `docs/axkit/nvda-test-record.md`. Then `store` merges to `main`.
+
+### Phase 7: The release process (me, one session)
+
+`release.ps1` builds the package too; `release.yml` gains a `store` job after the draft: the CLI from its GitHub
+action pinned by commit as the other actions are (or installed by winget on the runner), `msstore publish
+--inputFile AxKit.msix --appId <id>` with the secrets `PARTNER_CENTER_TENANT_ID`, `PARTNER_CENTER_SELLER_ID`,
+`PARTNER_CENTER_CLIENT_ID` and `PARTNER_CENTER_CLIENT_SECRET`, then `msstore submission status` until certified or
+failed, the result in the run's summary. If the CLI will not take a package built outside its project types (section
+7), the same job runs a plain PowerShell script against the submission API instead (`Invoke-RestMethod`: a token from
+`login.microsoftonline.com/<tenant>/oauth2/token` with the resource `https://manage.devcenter.microsoft.com`, create
+the submission, upload the zip to its upload URL, update, commit, poll; Microsoft's StoreBroker module shows the
+shape). The GitHub release is published as today; the Store listing follows when certified. `docs/axkit/store-setup.md`
+records the account, the application, the secrets and the runbook as `reports-setup.md` does for the reports; this
+page keeps the plan and its decisions. `tools/outside-calls.ps1` runs; the memory notes change.
+
+### Phase 8: Later
+
+arm64 in a bundle with x64; the community winget manifest; the folder context menu's COM server; retiring Azure
+Artifact Signing (4.4); retiring `install.ps1` once the Store path has carried a few releases; listing changes pushed
+by `msstore submission updateMetadata`.
+
+## 6. Risks and what is done about them
+
+- The name axKit is taken in the Store: reserved first, in phase 1; the fallback name is decided then.
+- The account's verification is incomplete and a submission cannot be published: checked first in phase 1.
+- Certification rejects on a policy: the usual ones are the privacy policy, the dependency sentence, the AI
+  disclosure and the restricted capability note, all covered in 3.6; each resubmission costs days, so the first
+  submission is checked against the policy list before it goes.
+- A manifest feature does not do what the plan assumes (the parameters, the startup task's arguments, the alias):
+  section 7 answers each in the loose package before any code depends on it, and 3.3 names the fallback of each.
+- A child program misbehaves inside the package: the breakaway attribute is tested on every kind of child in
+  section 7; the last resort is the restricted capability of 4.2.
+- Two copies on the development computer: a development axMedia and a Store axMedia both answer an `AppMessage`
+  hand-over. Acceptable on that computer only; the plans test one copy at a time.
+- The Store copy needs Windows 10 version 2004; the zip keeps 1809. Stated in the listing and in SPEC 5.4.
+- The CLI needs a .NET 9 runtime on the development computer, outside the bundle's zero-dependency rule, which is
+  about axKit's own code; recorded as a development tool.
+
+## 7. To verify (the documentation does not say)
+
+Answered in phase 1 (items 1 and 9) and in the first packaging test of phase 3 (the rest); the answers are written
+here when known.
+
+1. Where Partner Center shows the Seller ID (expected under Account settings, with the account identifiers).
+2. `msstore publish --inputFile AxKit.msix --appId <id>` accepts a package not built from one of the CLI's project
+   types (the option is documented without a restriction; every example passes a project folder).
+3. Several Application elements on one executable with different `uap10:Parameters`: each starts its app from the
+   Start menu, Windows search finds them by the start of each word as today, Open with lists them.
+4. A startup task with arguments (`start --hidden`), and whether `Enabled="true"` starts it at the next sign-in once
+   the app has run.
+5. An execution alias on an Application with parameters: whether `axdown.exe notes.md` reaches `AxKit.exe down
+   notes.md`.
+6. File type verbs with `%1` appear in the classic menu (Shift+F10, Show more options) and in Windows 11's menu.
+7. Children break away: in axTerminal's PowerShell a file written under `$env:LOCALAPPDATA` appears in the real
+   folder and the history is the user's own; Claude Code in axClaude sees its own settings; git and KeePassXC's tool
+   work in axGIT and axPass; Install it now's winget works.
+8. Settings across the development copy and the Store copy behave as 3.4 says.
+9. The CLI's GitHub action exists and is pinned by commit; otherwise the runner installs the CLI by winget.
+10. axKit appears in winget's `msstore` source within a day of going live, and the exact install line.
+11. `GetCurrentPackageFullName` returns the package full name in the loose package and error 15700 unpackaged; the
+    Store page protocol opens the listing.
+12. The App Certification Kit passes on the self-contained .NET publish.
+
+## 8. Not in this round
+
+The folder context menu's COM server (`desktop4:FileExplorerContextMenus` with an `IExplorerCommand` server, in C#
+through NativeAOT or in C++, either a new kind of project), arm64, the community winget manifest, a Store copy with
+`unvirtualizedResources`, and any paid listing.
+
+## 9. Sources, read 2026-11-08
+
+- Microsoft Store Developer CLI: https://learn.microsoft.com/windows/apps/publish/msstore-dev-cli/overview and
+  https://learn.microsoft.com/windows/apps/publish/msstore-dev-cli/commands
+- The submission API: https://learn.microsoft.com/windows/uwp/monetize/create-and-manage-submissions-using-windows-store-services
+- Tenants and applications in Partner Center:
+  https://learn.microsoft.com/windows/apps/publish/partner-center/associate-existing-azure-ad-tenant-with-partner-center-account
+  and https://learn.microsoft.com/windows/apps/publish/partner-center/manage-azure-ad-applications-in-partner-center
+- Packaging a desktop app by hand: https://learn.microsoft.com/windows/msix/desktop/desktop-to-uwp-manual-conversion,
+  https://learn.microsoft.com/windows/msix/desktop/desktop-to-uwp-behind-the-scenes,
+  https://learn.microsoft.com/windows/msix/package/create-app-package-with-makeappx-tool,
+  https://learn.microsoft.com/uwp/schemas/appxpackage/uapmanifestschema/element-application,
+  https://learn.microsoft.com/windows/apps/package-and-deploy/app-capability-declarations
+- Package requirements of the Store: https://learn.microsoft.com/windows/apps/publish/publish-your-app/msix/app-package-requirements
+- The submission and its listing: https://learn.microsoft.com/windows/apps/publish/publish-your-app/msix/create-app-submission,
+  https://learn.microsoft.com/windows/apps/publish/publish-your-app/msix/screenshots-and-images,
+  https://learn.microsoft.com/windows/apps/publish/publish-your-app/msix/age-ratings
+- Store policies, version 7.20 of 2026-09-15: https://learn.microsoft.com/windows/apps/publish/store-policies
+- The developer account: https://learn.microsoft.com/windows/apps/publish/partner-center/open-a-developer-account
+- winget: https://learn.microsoft.com/windows/package-manager/winget/install and
+  https://learn.microsoft.com/windows/package-manager/winget/source
+- The desktop app policy attribute: `UpdateProcThreadAttribute`,
+  https://learn.microsoft.com/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute
