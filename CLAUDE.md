@@ -51,6 +51,7 @@ Specifications are the source of truth: `docs/axkit/SPEC.md` for the bundle (lau
 - The Bash tool mangles backslashes inside heredocs: use the Write tool for source files. A PowerShell one-liner sent through the Bash tool loses its backticks to command substitution; `-replace` is case-insensitive, so a mangled pattern once turned every capital N of a file into n. Run PowerShell through the PowerShell tool.
 - Windows PowerShell 5.1: `$PSScriptRoot` is empty while parameter defaults are evaluated, and a function that returns a byte array unrolls it unless written `return , $bytes`.
 - PowerShell variable names are case-insensitive and a script's parameters are variables: a local `$msix` is the `-Msix` switch, and a local `$apps` is the `[string]$Apps` parameter, which turns the array assigned to it into one string (publish.ps1 and tools/make-manifest.ps1, 2026-11-08). Name every local unlike every parameter.
+- Windows PowerShell 5.1 reads a script without a byte order mark as ANSI, and the repository's scripts carry no mark: a script stays ASCII, since a non-ASCII character becomes several (an ellipsis in `tools/store-submit.ps1` made the release notes three characters too long, 2026-11-09). Write `...`, not the one-character ellipsis.
 
 ## Manual verification
 
