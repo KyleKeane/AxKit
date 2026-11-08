@@ -91,13 +91,17 @@ packaged desktop app declares. The package is uploaded unsigned; the Store signs
 is written by a script from `apps.json`, the list of apps `publish.ps1` already writes next to the exe for
 `install.ps1`, so the apps are declared in one place (B-10).
 
-### 3.2 One Application per app
+### 3.2 Eight entries (the Store's limit, found 2026-11-09)
 
-Every app is its own `<Application>` running `AxKit.exe`, its verb in the `uap10:Parameters` attribute (`claude`,
-`down`, `json`, …), with the display name of today's Start menu entry, `axKit axClaude` and so on (AX-2.2), its own
-icon as PNG assets (44, 150, 310 by 150 and the 50 by 50 store logo, at the scales the Store asks for) made by
-`tools/make-icon.ps1` from the same letters and colours, and the package's own logo AxClaude's Ax. Windows lists each
-Application separately under Open with, so the hard links of `AxKit.exe` that `install.ps1` makes for it go.
+The first design gave every app its own `<Application>` and three hidden ones; the Store's package validation refused
+it: at most eight entries per package, and a hidden entry (`AppListEntry="none"`) is a "headless app" that needs a
+waiver. So the package has eight entries, the apps marked `StoreEntry` in `Dispatch.Apps` (axClaude, axDown, axFile,
+axTerminal, axGIT, axTask, axStart, axClip), each running `AxKit.exe`, named as today's Start menu entries (AX-2.2),
+with its own icon as PNG assets (44 and 150, and the 50 by 50 store logo) made by `tools/make-icon.ps1`. The axClaude
+entry is first, with the id `AxKit` and no parameters: it starts axClaude as a bare `AxKit.exe` does, and it carries
+every app's console command and the file types of the six apps without an entry; the other seven carry their verb as
+parameters. The six (axJSON, axMedia, axPreview, axProcess, axPass, axCalc) are reached by their command, by a file of
+their kind, by the axKit menu's New window and from axFile. SPEC AX-13.2 has the whole.
 
 ### 3.3 Extensions
 
@@ -112,16 +116,20 @@ Application separately under Open with, so the hard links of `AxKit.exe` that `i
   entries there (`desktop4:FileExplorerContextMenus`) need a COM server, an `IExplorerCommand` DLL, which this round
   does not build (section 8). In the Store build a folder is opened from axFile, from axStart's search, or from a
   shell with `axkit claude <folder>`.
-- An app execution alias, `axkit.exe` on PATH, in place of the `.cmd` shims in `%USERPROFILE%\.local\bin`
-  (AX-2.4), so `axkit down notes.md` works from any shell, and one alias per app (`axdown.exe`): measured on
-  2026-11-08, `axdown.exe <file>` opens the file in axDown and `axkit.exe preview <file>` in axPreview.
+- The console commands as app execution aliases on PATH, in place of the `.cmd` shims in `%USERPROFILE%\.local\bin`
+  (AX-2.4): `axkit.exe` and one per app (`axdown.exe`), all on the first entry, since Windows gives the started
+  process the command's own path as the first word of its command line (measured 2026-11-09:
+  `"…\WindowsApps\axdown.exe"`), which `Dispatch.VerbOfProgramName` reads the app off; measured on 2026-11-08,
+  `axdown.exe <file>` opens the file in axDown and `axkit.exe preview <file>` in axPreview.
 - Startup tasks (`windows.startupTask`) for axStart and axClip, in place of the Run key values `SignInStart`
   writes: a packaged process's writes under HKCU go to a private hive, so a Run value written from inside the package
   would never run. Windows lists the tasks under Settings, Apps, Startup, where the user turns them on and off; the
   Store build's own Start with Windows item opens that page (`ms-settings:startupapps`) and says so
-  (`HotkeyForm.StartWithWindowsItem`). A startup task carries no arguments of its own, so each sits on a hidden entry
-  (`AxStartSignIn`) whose parameters are `start --hidden`, and the program reads the entry's id as well (3.2); measured
-  on 2026-11-08: both apps start hidden with `--hidden` from their entries.
+  (`HotkeyForm.StartWithWindowsItem`). The first design put each task on a hidden entry whose parameters were
+  `start --hidden` (measured 2026-11-08: both apps started hidden from them); the Store allows no hidden entry, so
+  since 2026-11-09 each task sits on its app's own entry with `<verb> --hidden` as the task's own parameters
+  (`uap10:Parameters` on the extension, which makeappx's schema accepts); whether Windows passes them at sign-in is
+  the Store copy's pass (section 7).
 
 ### 3.4 Virtualization, accepted
 

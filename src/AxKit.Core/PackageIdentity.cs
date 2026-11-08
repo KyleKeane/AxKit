@@ -44,6 +44,33 @@ public static class PackageIdentity
     /// </summary>
     public static string? ProgramPath => IsPackaged ? AliasPath : Environment.ProcessPath;
 
+    /// <summary>
+    /// The first word of the command line as Windows holds it (<c>GetCommandLineW</c>): the console command's own
+    /// path when the process was started through one (<c>"…\WindowsApps\axcalc.exe"</c>, AX-13.2), which .NET's
+    /// <see cref="Environment.GetCommandLineArgs"/> replaces by the program file's path. Quoted or up to the first
+    /// space; null when empty.
+    /// </summary>
+    public static string? CommandLineProgram
+    {
+        get
+        {
+            var line = Marshal.PtrToStringUni(GetCommandLineW())?.TrimStart();
+            if (string.IsNullOrEmpty(line))
+            {
+                return null;
+            }
+
+            if (line[0] == '"')
+            {
+                var end = line.IndexOf('"', 1);
+                return end > 1 ? line[1..end] : line[1..];
+            }
+
+            var space = line.IndexOf(' ');
+            return space < 0 ? line : line[..space];
+        }
+    }
+
     private static string? ReadFullName()
     {
         uint length = 0;
@@ -87,4 +114,7 @@ public static class PackageIdentity
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
     private static extern int GetCurrentApplicationUserModelId(ref uint applicationUserModelIdLength, StringBuilder? applicationUserModelId);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    private static extern IntPtr GetCommandLineW();
 }

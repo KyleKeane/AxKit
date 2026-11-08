@@ -762,21 +762,32 @@ The design is `docs/axkit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   certification, which Smart App Control accepts. The version is the bundle's with `.0` appended; the fourth part is
   the Store's. The package needs Windows 10 version 2004 (10.0.19041, the `uap10` manifest namespace); the zip keeps
   1809 (5.4). Its one capability is `runFullTrust`.
-- AX-13.2 **The entries.** One `<Application>` per app of `Dispatch.Apps`, all running `AxKit.exe` with the verb as the
-  entry's parameters (`uap10:Parameters`, which Windows passes; measured 2026-11-08), named as AX-2.2's Start menu
-  entries (`axKit axClaude, access layer for Claude Code`), each with its own images, so that Windows search finds them
-  as before. Each entry carries a console alias, `<name>.exe` (`axdown.exe`), on the PATH through the user's
-  WindowsApps folder, in place of AX-2.4's `.cmd` shims; a hidden entry `AxKit` carries `axkit.exe`, which takes a verb
-  as `AxKit.exe` does. An app with Open with types (AX-2.3's last column) declares them as its file type association,
-  so that Windows' Open with lists it on them; a type is declared once per package, by the first app of the list that
-  has it, and axPreview, whose Open with says every file, declares none: a package cannot claim every file, and
-  AX-2.3's submenu (the apps on folders, axDown and axPreview on any file) has no form in a package without a COM server,
-  which this copy does not have. Each app with `AtSignIn` (axStart, axClip) has a hidden entry `<Project>SignIn` with
-  `<verb> --hidden` as its parameters and a startup task, which Windows lists under Settings, Apps, Startup.
+- AX-13.2 **The entries.** The Store allows eight `<Application>` entries per package and no hidden one (its package
+  validation of 2026-11-09: "declares 17 apps, which is more than the limit of 8", and `AppListEntry="none"` needs a
+  waiver the account has not), so the package has eight entries, the apps marked `StoreEntry` in `Dispatch.Apps`
+  (axClaude, axDown, axFile, axTerminal, axGIT, axTask, axStart, axClip; the maintainer's choice, changed there and
+  nowhere else; `DispatchTests` keeps the count), all running `AxKit.exe`, named as AX-2.2's Start menu entries
+  (`axKit axClaude, access layer for Claude Code`), each with its own images, so that Windows search finds them as
+  before. The axClaude entry comes first, has the id `AxKit` and no parameters, so that it starts axClaude as
+  `AxKit.exe` does with nothing (AX-1.3), and carries what the whole bundle needs: every app's console command,
+  `axkit.exe` and `<name>.exe` for all fourteen (`axdown.exe`, `axcalc.exe`), on the PATH through the user's
+  WindowsApps folder in place of AX-2.4's `.cmd` shims, and the file types of the apps without an entry. Windows gives
+  a process started through a command the command's own path as the first word of its command line (measured
+  2026-11-09: `"…\WindowsApps\axdown.exe"`), so `Dispatch.VerbOfProgramName` reads the app off it, and a file opened
+  with a type of the first entry reaches its app by its kind (AX-1.2). Every other entry runs `AxKit.exe` with its verb
+  as the entry's parameters (`uap10:Parameters`, which Windows passes; measured 2026-11-08), and an app with Open with
+  types (AX-2.3's last column) declares them under its own entry, so that Windows' Open with lists it on them; a type
+  is declared once per package, by the first app of the list that has it, and axPreview, whose Open with says every
+  file, declares none: a package cannot claim every file, and AX-2.3's submenu (the apps on folders, axDown and
+  axPreview on any file) has no form in a package without a COM server, which this copy does not have. Each app with
+  `AtSignIn` (axStart, axClip) carries a startup task on its entry with `<verb> --hidden` as the task's own
+  parameters, which Windows lists under Settings, Apps, Startup. The six apps without an entry (axJSON, axMedia,
+  axPreview, axProcess, axPass, axCalc) are reached by their command, by a file of their kind, by the axKit menu's New
+  window in any window and from axFile; axStart lists the Start menu's programs and so knows the eight.
   `AxKit.Core/PackageIdentity` tells whether the process runs from the package (`GetCurrentPackageFullName`) and which
-  entry started it (`GetCurrentApplicationUserModelId`); `Dispatch.WithApplicationVerb` puts the entry's verb first when
-  the command line carries none (a Start entry, a file opened with the app, an alias, a startup task), so that the
-  dispatch holds whether or not Windows passes the parameters (AX-1.8; tested in `DispatchTests`).
+  entry started it (`GetCurrentApplicationUserModelId`); `Dispatch.WithApplicationVerb` puts the verb first when the
+  command line carries none, the command's name before the entry's, nothing for the first entry, so that the dispatch
+  holds whether or not Windows passes the parameters (AX-1.8; tested in `DispatchTests`).
 - AX-13.3 **No updater.** The Store installs, updates and uninstalls the package. The Store's copy makes no update check
   at start, has no Check for updates at start setting (Options, General), downloads nothing and never shows Update to.
   Check for updates (axKit menu) still asks GitHub for the latest release, so that About, Version and the notice can say
@@ -1013,10 +1024,12 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
 - **UI Automation notifications** (`AccessibleObject.RaiseAutomationNotification`, WinForms over
   `UiaRaiseNotificationEvent`, in `src/AxKit.Forms/Announcer.cs`): everything the apps say (AX-7.3). Windows 10
   1709 and later; NVDA has read them since 2018.
-- **The package identity**, `kernel32` (`GetCurrentPackageFullName`, `GetCurrentApplicationUserModelId` in
-  `src/AxKit.Core/PackageIdentity.cs`): whether this process runs from the MSIX package, the Store's copy, and which of
-  the package's entries started it (AX-13.2). Windows 8 and later; stable. Without them every copy would behave as
-  the zip's, which is the fallback.
+- **The package identity**, `kernel32` (`GetCurrentPackageFullName`, `GetCurrentApplicationUserModelId`,
+  `GetCommandLineW` in `src/AxKit.Core/PackageIdentity.cs`): whether this process runs from the MSIX package, the
+  Store's copy, which of the package's entries started it, and the console command it was started through, the
+  command line's first word as Windows holds it, which .NET replaces by the program file's path (AX-13.2). Windows 8
+  and later, the command line as old as Windows; stable. Without them every copy would behave as the zip's, which is
+  the fallback.
 
 ## 6. Design decisions
 

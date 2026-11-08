@@ -105,6 +105,14 @@ internal static class Program
                     await page.PressAsync(Arg(args, 1));
                     Console.WriteLine($"Pressed {Arg(args, 1)}");
                     return 0;
+                case "dialog":
+                {
+                    // A JavaScript dialog (confirm, alert) holds the page and every evaluation with it: accept or dismiss it.
+                    var accept = args.Length < 2 || args[1] != "dismiss";
+                    await page.CallAsync("Page.handleJavaScriptDialog", new JsonObject { ["accept"] = accept });
+                    Console.WriteLine(accept ? "Dialog accepted" : "Dialog dismissed");
+                    return 0;
+                }
                 case "dropxy":
                 {
                     // A file dropped on the page at viewport coordinates, as a user drags one from File Explorer: for an

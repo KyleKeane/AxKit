@@ -42,9 +42,13 @@ internal static class Program
         Application.SetColorMode(SystemColorMode.System);
         DeleteOldProgramFiles();
 
-        // The Store's copy (docs/axkit/store-distribution.md 3.2): started from one of the package's entries, the
-        // entry's app is the verb when the command line carries none.
-        args = Dispatch.WithApplicationVerb(args, PackageIdentity.ApplicationId);
+        // The Store's copy (AX-13.2): started through one of the package's console commands (axdown.exe, whose path
+        // is the command line's first word) or from one of its entries, that app is the verb when the command line
+        // carries none.
+        if (PackageIdentity.IsPackaged)
+        {
+            args = Dispatch.WithApplicationVerb(args, PackageIdentity.ApplicationId, PackageIdentity.CommandLineProgram);
+        }
         var launch = Dispatch.Decide(args);
         if (launch.Error is not null)
         {

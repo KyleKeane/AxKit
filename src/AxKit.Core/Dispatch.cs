@@ -45,6 +45,13 @@ public sealed record App(string Name, string Verb, string Project, AppGroup Grou
     public bool AtSignIn { get; init; }
 
     /// <summary>
+    /// Whether the Store's package has a Start menu entry for the app (docs/axkit/SPEC.md AX-13.2): the Store allows
+    /// eight per package and no hidden one (measured 2026-11-09), so these are the maintainer's eight; every other app
+    /// is reached by its console command, by a file of its kind, by the axKit menu's New window and from axFile.
+    /// </summary>
+    public bool StoreEntry { get; init; }
+
+    /// <summary>
     /// The program an access layer works through ("Claude Code"), empty for a standalone app (AX-11.1): an app that
     /// starts or talks to a program axKit does not include is an access layer, in <see cref="AppGroup.AccessLayers"/>.
     /// </summary>
@@ -136,11 +143,11 @@ public static class Dispatch
     [
         new("axFile", AxFile, "AxFile", AppGroup.Files, Opens.FilesAndFolders, ShowIn: true)
         {
-            Description = "axFile, a file manager for one folder", Icon = new("Af", 90, 50, 130),
+            Description = "axFile, a file manager for one folder", Icon = new("Af", 90, 50, 130), StoreEntry = true,
         },
         new("axDown", AxDown, "AxDown", AppGroup.Files, Opens.Files)
         {
-            Description = "axDown, a plain editor for Markdown and text files", Icon = new("Ad", 31, 110, 70),
+            Description = "axDown, a plain editor for Markdown and text files", Icon = new("Ad", 31, 110, 70), StoreEntry = true,
             OpenWith = [".md", ".markdown", ".txt"], TypeName = "Text document (axDown)",
         },
         new("axJSON", AxJSON, "AxJSON", AppGroup.Files, Opens.Files)
@@ -161,15 +168,15 @@ public static class Dispatch
         },
         new("axTask", AxTask, "AxTask", AppGroup.Organise, Opens.Folders)
         {
-            Description = "axTask, tasks and lists", Icon = new("Ak", 30, 120, 80),
+            Description = "axTask, tasks and lists", Icon = new("Ak", 30, 120, 80), StoreEntry = true,
         },
         new("axStart", AxStart, "AxStart", AppGroup.Utilities, Opens.Nothing)
         {
-            Description = "axStart, a program launcher behind a hotkey", Icon = new("As", 150, 90, 20), AtSignIn = true,
+            Description = "axStart, a program launcher behind a hotkey", Icon = new("As", 150, 90, 20), AtSignIn = true, StoreEntry = true,
         },
         new("axClip", AxClip, "AxClip", AppGroup.Utilities, Opens.Nothing)
         {
-            Description = "axClip, a clipboard history behind a hotkey", Icon = new("Ab", 160, 50, 50), AtSignIn = true,
+            Description = "axClip, a clipboard history behind a hotkey", Icon = new("Ab", 160, 50, 50), AtSignIn = true, StoreEntry = true,
         },
         new("axCalc", AxCalc, "AxCalc", AppGroup.Utilities, Opens.Nothing)
         {
@@ -181,15 +188,15 @@ public static class Dispatch
         },
         new("axClaude", AxClaude, "AxClaude", AppGroup.AccessLayers, Opens.Folders, ShowIn: true)
         {
-            AccessLayerFor = "Claude Code", Description = "axClaude, access layer for Claude Code: its conversation as plain text", Icon = new("Ax", 31, 78, 121),
+            AccessLayerFor = "Claude Code", Description = "axClaude, access layer for Claude Code: its conversation as plain text", Icon = new("Ax", 31, 78, 121), StoreEntry = true,
         },
         new("axTerminal", AxTerminal, "AxTerminal", AppGroup.AccessLayers, Opens.Folders, ShowIn: true)
         {
-            AccessLayerFor = "your shell", Description = "axTerminal, access layer for your shell: PowerShell, Command Prompt or Git Bash as a transcript", Icon = new("At", 40, 40, 40),
+            AccessLayerFor = "your shell", Description = "axTerminal, access layer for your shell: PowerShell, Command Prompt or Git Bash as a transcript", Icon = new("At", 40, 40, 40), StoreEntry = true,
         },
         new("axGIT", AxGit, "AxGit", AppGroup.AccessLayers, Opens.FilesAndFolders, ShowIn: true)
         {
-            AccessLayerFor = "Git", Description = "axGIT, access layer for Git: one repository's changes, log and branches", Icon = new("Ag", 110, 40, 40), Explorer = Opens.Folders,
+            AccessLayerFor = "Git", Description = "axGIT, access layer for Git: one repository's changes, log and branches", Icon = new("Ag", 110, 40, 40), Explorer = Opens.Folders, StoreEntry = true,
         },
         new("axPass", AxPass, "AxPass", AppGroup.AccessLayers, Opens.Files)
         {
@@ -223,6 +230,7 @@ public static class Dispatch
             openWith = app.OpenWith,
             typeName = app.TypeName,
             atSignIn = app.AtSignIn,
+            storeEntry = app.StoreEntry,
         }),
         new JsonSerializerOptions { WriteIndented = true });
 
@@ -282,28 +290,33 @@ public static class Dispatch
         Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase) ? AxJSON : AxDown;
 
     /// <summary>
-    /// The arguments with the verb of the package entry this process was started from put first (the Store's copy,
-    /// docs/axkit/store-distribution.md 3.2; <see cref="PackageIdentity.ApplicationId"/>): the entry "AxDown" means
-    /// down, "AxStartSignIn" means start --hidden (tools/make-manifest.ps1 names the entries after the projects).
-    /// Nothing changes without an entry, for the bundle's own entry ("AxKit", the axkit command), for an entry that
-    /// names no app, or when the arguments already begin with a verb or a word of the bundle's, since Windows may pass
-    /// the entry's own parameters as well.
+    /// The verb of a console command's name (AX-13.2): the Store's package starts every app's command (<c>axdown.exe</c>)
+    /// through one entry, and Windows gives the process the command's own path as the first word of its command line,
+    /// so the name says which app was meant. Null for <c>axkit</c>, <c>AxKit</c> and any other name.
     /// </summary>
-    public static string[] WithApplicationVerb(string[] args, string? applicationId)
+    public static string? VerbOfProgramName(string? programPath)
     {
-        if (string.IsNullOrEmpty(applicationId))
+        if (string.IsNullOrEmpty(programPath))
         {
-            return args;
+            return null;
         }
 
-        const string signIn = "SignIn";
-        var hidden = applicationId.EndsWith(signIn, StringComparison.Ordinal);
-        var project = hidden ? applicationId[..^signIn.Length] : applicationId;
-        if (Apps.FirstOrDefault(app => app.Project == project) is not { } entry)
-        {
-            return args;
-        }
+        var name = Path.GetFileNameWithoutExtension(programPath);
+        return Apps.FirstOrDefault(app => string.Equals(app.Name, name, StringComparison.OrdinalIgnoreCase))?.Verb;
+    }
 
+    /// <summary>
+    /// The arguments with the verb the Store's package means put first (docs/axkit/SPEC.md AX-13.2): the console
+    /// command's name when the process was started through one (<paramref name="programPath"/>, the command line's
+    /// first word, <see cref="VerbOfProgramName"/>), else the package entry's (<paramref name="applicationId"/>,
+    /// <see cref="PackageIdentity.ApplicationId"/>: the entry "AxDown" means down; tools/make-manifest.ps1 names the
+    /// entries after the projects). Nothing changes for the entry "AxKit", the first entry, which carries every
+    /// command and the file types of the apps without an entry and lets <see cref="Decide"/> read the arguments as
+    /// outside the package; nor when the arguments already begin with a verb or a word of the bundle's, since Windows
+    /// may pass the entry's own parameters as well.
+    /// </summary>
+    public static string[] WithApplicationVerb(string[] args, string? applicationId, string? programPath = null)
+    {
         if (args.Length > 0)
         {
             var first = args[0];
@@ -316,14 +329,9 @@ public static class Dispatch
             }
         }
 
-        var result = new List<string> { entry.Verb };
-        if (hidden && !args.Contains("--hidden"))
-        {
-            result.Add("--hidden");
-        }
-
-        result.AddRange(args);
-        return [.. result];
+        var verb = VerbOfProgramName(programPath)
+            ?? (string.IsNullOrEmpty(applicationId) ? null : Apps.FirstOrDefault(app => app.Project == applicationId)?.Verb);
+        return verb is null ? args : [verb, .. args];
     }
 
     public static Launch Decide(string[] args)

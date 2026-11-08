@@ -22,20 +22,46 @@ public sealed class DispatchTests
     {
         Assert.Equal(["down"], Dispatch.WithApplicationVerb([], "AxDown"));
         Assert.Equal(["down", "notes.md"], Dispatch.WithApplicationVerb(["notes.md"], "AxDown"));
-        Assert.Equal(["start", "--hidden"], Dispatch.WithApplicationVerb([], "AxStartSignIn"));
-        Assert.Equal(["clip", "--hidden"], Dispatch.WithApplicationVerb([], "AxClipSignIn"));
+        Assert.Equal(["start"], Dispatch.WithApplicationVerb([], "AxStart"));
 
         // Windows passed the entry's own parameters as well: nothing is added twice.
         Assert.Equal(["down", "notes.md"], Dispatch.WithApplicationVerb(["down", "notes.md"], "AxDown"));
-        Assert.Equal(["start", "--hidden"], Dispatch.WithApplicationVerb(["start", "--hidden"], "AxStartSignIn"));
+        Assert.Equal(["start", "--hidden"], Dispatch.WithApplicationVerb(["start", "--hidden"], "AxStart"));
         Assert.Equal(["Down", "notes.md"], Dispatch.WithApplicationVerb(["Down", "notes.md"], "AxDown"));
 
-        // The bundle's own entry, no entry, an unknown entry, or a word of the bundle's first: the command line as it is.
+        // The first entry ("AxKit"), no entry, an unknown entry, or a word of the bundle's first: the command line as it is.
         Assert.Equal(["down", "notes.md"], Dispatch.WithApplicationVerb(["down", "notes.md"], "AxKit"));
+        Assert.Equal(["notes.md"], Dispatch.WithApplicationVerb(["notes.md"], "AxKit"));
         Assert.Equal(["notes.md"], Dispatch.WithApplicationVerb(["notes.md"], null));
         Assert.Equal(["notes.md"], Dispatch.WithApplicationVerb(["notes.md"], "Nothing"));
         Assert.Equal(["--version"], Dispatch.WithApplicationVerb(["--version"], "AxDown"));
         Assert.Equal(["apps"], Dispatch.WithApplicationVerb(["apps"], "AxDown"));
+    }
+
+    /// <summary>The console commands of the Store's package all run through its first entry; the command's own name, the command line's first word, says the app (AX-13.2).</summary>
+    [Fact]
+    public void ConsoleCommandNameGivesTheVerbBeforeTheEntryDoes()
+    {
+        Assert.Equal("json", Dispatch.VerbOfProgramName(@"D:\WindowsApps\axjson.exe"));
+        Assert.Equal("git", Dispatch.VerbOfProgramName("AXGIT.EXE"));
+        Assert.Null(Dispatch.VerbOfProgramName(@"D:\WindowsApps\axkit.exe"));
+        Assert.Null(Dispatch.VerbOfProgramName(@"C:\Program Files\WindowsApps\axKit.axKit_5.2.1.0_x64__abc\AxKit.exe"));
+        Assert.Null(Dispatch.VerbOfProgramName(null));
+
+        Assert.Equal(["json", "data.json"], Dispatch.WithApplicationVerb(["data.json"], "AxKit", @"C:\WindowsApps\axjson.exe"));
+        Assert.Equal(["calc"], Dispatch.WithApplicationVerb([], "AxKit", @"C:\WindowsApps\axcalc.exe"));
+        Assert.Equal(["data.json"], Dispatch.WithApplicationVerb(["data.json"], "AxKit", @"C:\WindowsApps\axkit.exe"));
+        // The command's name wins over the entry it hangs on.
+        Assert.Equal(["media", "song.mp3"], Dispatch.WithApplicationVerb(["song.mp3"], "AxDown", @"C:\WindowsApps\axmedia.exe"));
+    }
+
+    [Fact]
+    public void TheStoreHasAtMostEightEntriesAndAxClaudeIsOne()
+    {
+        var entries = Dispatch.Apps.Where(app => app.StoreEntry).ToList();
+        Assert.InRange(entries.Count, 1, 8);
+        Assert.Contains(entries, app => app.Verb == Dispatch.AxClaude);
+        Assert.All(Dispatch.Apps.Where(app => app.AtSignIn), app => Assert.True(app.StoreEntry, $"{app.Name} starts at sign-in and needs its entry for the startup task"));
     }
 
     [Fact]

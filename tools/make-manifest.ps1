@@ -2,25 +2,26 @@
 .SYNOPSIS
   Writes the MSIX package manifest, AppxManifest.xml, for publish.ps1 -Msix from the apps' listing (AxKit.exe apps,
   apps.json), so that the package declares the apps from the same list as everything else (docs/axkit/SPEC.md B-10,
-  docs/axkit/store-distribution.md section 3).
+  AX-13.2; docs/axkit/store-distribution.md section 3).
 
 .DESCRIPTION
-  One <Application> per app, all running AxKit.exe: its Start menu name "axKit <title>" as install.ps1 gives it, its
-  icon from Assets\<Project>\, its verb as the command line Windows passes when the entry is started
-  (uap10:Parameters), a console command <name>.exe (axdown.exe) as an app execution alias, and, for an app with file
-  types, their association so that Windows' Open with lists the app on them. Two kinds of hidden entries follow, out
-  of the apps list: "AxKit", the bundle's own command axkit.exe, which takes a verb as AxKit.exe does; and
-  "<Project>SignIn" for every app that starts at sign-in (atSignIn in the listing), carrying its startup task, which
-  Windows lists under Settings, Apps, Startup. The program tells the entry it was started from by its application id
-  (AxKit.Core.PackageIdentity, Dispatch.WithApplicationVerb), so the verb is known even where Windows passes no
-  parameters.
+  The Store allows eight <Application> entries per package and no hidden one (its validation of 2026-11-09: "more than
+  the limit of 8", and AppListEntry="none" needs a waiver), so the entries are the apps marked storeEntry in the
+  listing (Dispatch.Apps), eight at most. The axClaude entry comes first, has the id AxKit and no parameters, so that
+  it starts axClaude as AxKit.exe does with nothing (AX-1.3) and carries what the whole bundle needs: every app's
+  console command (axkit.exe, axclaude.exe, axdown.exe ...; the program tells the app by the command's own name,
+  Dispatch.VerbOfProgramName) and the file types of the apps that have no entry (the program tells the app by the
+  file's kind, AX-1.2). Every other entry runs AxKit.exe with its verb as parameters (uap10:Parameters, which Windows
+  passes), with its own name, images and file types; an app that starts at sign-in carries its startup task with
+  "<verb> --hidden" as the task's parameters. Windows lists the entries in the Start menu as "axKit <title>" and the
+  tasks under Settings, Apps, Startup.
 
-  The identity values are the Store's for axKit (Partner Center, Product identity, 2026-11-08) and are not secrets:
-  they are in every copy of the package. The version is the bundle's with .0 appended, the fourth part being the
-  Store's. The minimum Windows is 10.0.19041 (version 2004), the first with the uap10 manifest namespace.
+  The identity values are the Store's for axKit (Partner Center, Product identity, 2026-11-08) and are not secrets.
+  The version is the bundle's with .0 appended, the fourth part being the Store's. The minimum Windows is 10.0.19041
+  (version 2004), the first with the uap10 manifest namespace.
 
 .EXAMPLE
-  .\tools\make-manifest.ps1 -Apps publish\msix\package\apps.json -Out publish\msix\package\AppxManifest.xml -Version 5.2.0
+  .\tools\make-manifest.ps1 -Apps publish\msix\apps.json -Out publish\msix\package\AppxManifest.xml -Version 5.2.1
 #>
 [CmdletBinding()]
 param(
@@ -43,21 +44,29 @@ if ($Version -notmatch '^\d+\.\d+\.\d+$') {
 $listing = @(Get-Content -LiteralPath $Apps -Raw -Encoding UTF8 | ConvertFrom-Json | ForEach-Object { $_ })
 if ($listing.Count -eq 0) { throw "$Apps lists no apps." }
 
+$entries = @($listing | Where-Object { $_.storeEntry })
+if ($entries.Count -eq 0) { throw 'No app is marked storeEntry; the package needs at least one entry.' }
+if ($entries.Count -gt 8) { throw "The Store allows eight entries per package; $($entries.Count) apps are marked storeEntry." }
+$firstEntry = $entries | Where-Object { $_.verb -eq 'claude' } | Select-Object -First 1
+if (-not $firstEntry) { $firstEntry = $entries[0] }
+$otherEntries = @($entries | Where-Object { $_.verb -ne $firstEntry.verb })
+foreach ($app in $listing | Where-Object { $_.atSignIn -and -not $_.storeEntry }) {
+    throw "$($app.name) starts at sign-in and needs an entry for its startup task: mark it storeEntry."
+}
+
 function Esc([string]$text) { return [System.Security.SecurityElement]::Escape($text) }
 
 $lines = New-Object System.Collections.Generic.List[string]
 function Line([string]$text) { $lines.Add($text) }
 
 # One <Application>: the entry's id, what the Start menu shows, its assets folder, the command line Windows passes
-# (empty for none), whether the app list shows it, and its extensions as lines already indented by eight spaces.
-function Add-Application([string]$id, [string]$displayName, [string]$description, [string]$assets, [string]$parameters, [bool]$listed, [string[]]$extensions) {
+# (empty for none), and its extensions as lines already indented by eight spaces.
+function Add-Application([string]$id, [string]$displayName, [string]$description, [string]$assets, [string]$parameters, [string[]]$extensions) {
     $open = "    <Application Id=`"$(Esc $id)`" Executable=`"AxKit.exe`" uap10:RuntimeBehavior=`"packagedClassicApp`" uap10:TrustLevel=`"mediumIL`""
     if ($parameters) { $open += " uap10:Parameters=`"$(Esc $parameters)`"" }
     Line "$open>"
-    $visual = "      <uap:VisualElements DisplayName=`"$(Esc $displayName)`" Description=`"$(Esc $description)`" BackgroundColor=`"transparent`"" +
-        " Square150x150Logo=`"Assets\$assets\Square150x150Logo.png`" Square44x44Logo=`"Assets\$assets\Square44x44Logo.png`""
-    if (-not $listed) { $visual += ' AppListEntry="none"' }
-    Line "$visual />"
+    Line ("      <uap:VisualElements DisplayName=`"$(Esc $displayName)`" Description=`"$(Esc $description)`" BackgroundColor=`"transparent`"" +
+        " Square150x150Logo=`"Assets\$assets\Square150x150Logo.png`" Square44x44Logo=`"Assets\$assets\Square44x44Logo.png`" />")
     if ($extensions.Count -gt 0) {
         Line '      <Extensions>'
         foreach ($extension in $extensions) { Line $extension }
@@ -66,14 +75,12 @@ function Add-Application([string]$id, [string]$displayName, [string]$description
     Line '    </Application>'
 }
 
-function Alias-Extension([string]$alias) {
-    return @(
-        '        <uap5:Extension Category="windows.appExecutionAlias" Executable="AxKit.exe" EntryPoint="Windows.FullTrustApplication">',
-        '          <uap5:AppExecutionAlias>',
-        "            <uap5:ExecutionAlias Alias=`"$(Esc $alias)`" />",
-        '          </uap5:AppExecutionAlias>',
-        '        </uap5:Extension>'
-    )
+# The console commands of one entry: one extension, one alias each.
+function Alias-Extension([string[]]$aliases) {
+    $result = @('        <uap5:Extension Category="windows.appExecutionAlias" Executable="AxKit.exe" EntryPoint="Windows.FullTrustApplication">', '          <uap5:AppExecutionAlias>')
+    foreach ($alias in $aliases) { $result += "            <uap5:ExecutionAlias Alias=`"$(Esc $alias)`" />" }
+    $result += @('          </uap5:AppExecutionAlias>', '        </uap5:Extension>')
+    return $result
 }
 
 function FileTypes-Extension([string]$ftaName, [string]$typeName, [string[]]$types) {
@@ -84,17 +91,15 @@ function FileTypes-Extension([string]$ftaName, [string]$typeName, [string[]]$typ
         '            <uap:SupportedFileTypes>'
     )
     foreach ($type in $types) { $result += "              <uap:FileType>$(Esc $type)</uap:FileType>" }
-    $result += @(
-        '            </uap:SupportedFileTypes>',
-        '          </uap3:FileTypeAssociation>',
-        '        </uap:Extension>'
-    )
+    $result += @('            </uap:SupportedFileTypes>', '          </uap3:FileTypeAssociation>', '        </uap:Extension>')
     return $result
 }
 
-function StartupTask-Extension([string]$taskId, [string]$displayName) {
+# The startup task of an app that runs from sign-in: its own parameters, since the task starts the app with none of
+# the entry's (a hidden entry per task was the first design; the Store allows no hidden entry).
+function StartupTask-Extension([string]$taskId, [string]$displayName, [string]$parameters) {
     return @(
-        '        <desktop:Extension Category="windows.startupTask" Executable="AxKit.exe" EntryPoint="Windows.FullTrustApplication">',
+        "        <desktop:Extension Category=`"windows.startupTask`" Executable=`"AxKit.exe`" EntryPoint=`"Windows.FullTrustApplication`" uap10:Parameters=`"$(Esc $parameters)`">",
         "          <desktop:StartupTask TaskId=`"$(Esc $taskId)`" Enabled=`"true`" DisplayName=`"$(Esc $displayName)`" />",
         '        </desktop:Extension>'
     )
@@ -103,6 +108,17 @@ function StartupTask-Extension([string]$taskId, [string]$displayName) {
 # A package declares a file type once (makeappx refuses a second), so the first app of the list keeps a type two apps
 # share, and an app whose Open with says every file ("*", axPreview) declares none: a package cannot claim every file.
 $declared = New-Object 'System.Collections.Generic.HashSet[string]'
+function Types-Of($app) {
+    $types = @($app.openWith | Where-Object { $_ -and $_ -ne '*' } | ForEach-Object { $_.ToLowerInvariant() } | Sort-Object -Unique | Where-Object { -not $declared.Contains($_) })
+    foreach ($type in $types) { [void]$declared.Add($type) }
+    return $types
+}
+function FileTypes-Of($app) {
+    $types = Types-Of $app
+    if ($types.Count -eq 0) { return @() }
+    $typeName = if ($app.typeName) { $app.typeName } else { "File ($($app.name))" }
+    return FileTypes-Extension ("$($app.name)".ToLowerInvariant() + '-files') $typeName $types
+}
 
 Line '<?xml version="1.0" encoding="utf-8"?>'
 Line '<!-- Written by tools/make-manifest.ps1 from the apps listing (AxKit.exe apps); a change is made there, never here. -->'
@@ -133,28 +149,23 @@ Line '    <rescap:Capability Name="runFullTrust" />'
 Line '  </Capabilities>'
 Line '  <Applications>'
 
-foreach ($app in $listing) {
+# The other entries first in the walk, so that their file types are declared under them; the first entry is written
+# first all the same, carrying every command and the types of the apps without an entry.
+$otherBlocks = @{}
+foreach ($app in $otherEntries) {
     $extensions = @()
-    $extensions += Alias-Extension ("$($app.name)".ToLowerInvariant() + '.exe')
-    $types = @($app.openWith | Where-Object { $_ -and $_ -ne '*' } | ForEach-Object { $_.ToLowerInvariant() } | Sort-Object -Unique | Where-Object { -not $declared.Contains($_) })
-    foreach ($type in $types) { [void]$declared.Add($type) }
-    if ($types.Count -gt 0) {
-        $typeName = if ($app.typeName) { $app.typeName } else { "File ($($app.name))" }
-        $extensions += FileTypes-Extension ("$($app.name)".ToLowerInvariant() + '-files') $typeName $types
-    }
-    Add-Application $app.project "axKit $($app.title)" $app.description $app.project $app.verb $true $extensions
+    $extensions += FileTypes-Of $app
+    if ($app.atSignIn) { $extensions += StartupTask-Extension $app.project "axKit $($app.name)" "$($app.verb) --hidden" }
+    $otherBlocks[$app.verb] = $extensions
 }
-
-# The bundle's own command, axkit.exe, with no verb of its own: AxKit.exe reads the verb from the command line as it
-# does outside the package. Hidden from the app list; it carries the bundle's icon.
-$bundle = $listing | Where-Object { $_.verb -eq 'claude' } | Select-Object -First 1
-if (-not $bundle) { $bundle = $listing[0] }
-Add-Application 'AxKit' 'axKit' 'axKit, the command that starts any app by its verb' $bundle.project '' $false (Alias-Extension 'axkit.exe')
-
-# The apps that start at sign-in, each as a hidden entry with its startup task: started from it, the program knows
-# the verb and --hidden from the entry's id when Windows passes no parameters.
-foreach ($app in $listing | Where-Object { $_.atSignIn }) {
-    Add-Application "$($app.project)SignIn" "axKit $($app.name) at sign-in" "$($app.name), started hidden at sign-in" $app.project "$($app.verb) --hidden" $false (StartupTask-Extension $app.project "axKit $($app.name)")
+$firstExtensions = @()
+$firstExtensions += Alias-Extension (@('axkit.exe') + @($listing | ForEach-Object { "$($_.name)".ToLowerInvariant() + '.exe' }))
+$firstExtensions += FileTypes-Of $firstEntry
+foreach ($app in $listing | Where-Object { -not $_.storeEntry }) { $firstExtensions += FileTypes-Of $app }
+if ($firstEntry.atSignIn) { $firstExtensions += StartupTask-Extension $firstEntry.project "axKit $($firstEntry.name)" "$($firstEntry.verb) --hidden" }
+Add-Application 'AxKit' "axKit $($firstEntry.title)" $firstEntry.description $firstEntry.project '' $firstExtensions
+foreach ($app in $otherEntries) {
+    Add-Application $app.project "axKit $($app.title)" $app.description $app.project $app.verb $otherBlocks[$app.verb]
 }
 
 Line '  </Applications>'
@@ -163,4 +174,4 @@ Line '</Package>'
 $folder = Split-Path -Parent ([System.IO.Path]::GetFullPath($Out))
 if ($folder -and -not (Test-Path $folder)) { New-Item -ItemType Directory -Force $folder | Out-Null }
 [System.IO.File]::WriteAllText([System.IO.Path]::GetFullPath($Out), (($lines -join "`r`n") + "`r`n"), (New-Object System.Text.UTF8Encoding $false))
-Write-Host "Wrote $Out for $Name $Version.0: $($listing.Count) apps, $(@($listing | Where-Object { $_.atSignIn }).Count) at sign-in."
+Write-Host "Wrote $Out for $Name $Version.0: $($entries.Count) entries for $($listing.Count) apps, $(@($listing | Where-Object { $_.atSignIn }).Count) startup tasks, $($declared.Count) file types."
