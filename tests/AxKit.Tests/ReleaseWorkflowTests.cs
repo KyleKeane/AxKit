@@ -62,6 +62,23 @@ public sealed class ReleaseWorkflowTests
         Assert.Contains("needs: sign", text[draft..], StringComparison.Ordinal);
     }
 
+    /// <summary>The Store submission (AX-13.6): on a published release, behind the STORE_SUBMIT switch, in the release environment, with the three secrets and the published package, never a rebuild.</summary>
+    [Fact]
+    public void The_store_submission_runs_on_a_published_release_behind_its_switch()
+    {
+        var text = File.ReadAllText(Path.Combine(WorkflowsFolder, "store.yml"));
+        Assert.Contains("types: [published]", text, StringComparison.Ordinal);
+        Assert.Contains("if: vars.STORE_SUBMIT == 'on'", text, StringComparison.Ordinal);
+        Assert.Contains("environment: release", text, StringComparison.Ordinal);
+        Assert.Contains("secrets.PARTNER_CENTER_TENANT_ID", text, StringComparison.Ordinal);
+        Assert.Contains("secrets.PARTNER_CENTER_CLIENT_ID", text, StringComparison.Ordinal);
+        Assert.Contains("secrets.PARTNER_CENTER_CLIENT_SECRET", text, StringComparison.Ordinal);
+        Assert.Contains("gh release download", text, StringComparison.Ordinal);
+        Assert.Contains("./tools/store-submit.ps1 -Package", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("publish.ps1", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("contents: write", text, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void Every_action_is_pinned_to_a_commit()
     {

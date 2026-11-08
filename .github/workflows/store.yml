@@ -1,0 +1,63 @@
+# Posts a published release's Store package to Partner Center (docs/axkit/store-setup.md section 4; docs/axkit/SPEC.md
+# AX-13.6). Runs when a GitHub release is published, which release.ps1 does after signing the zip, or by hand for a tag
+# from the Actions tab, and only while the repository variable STORE_SUBMIT is "on": unset, nothing here runs and the
+# Store is untouched. The package is the release's own AxKit-<version>.msix, the file GitHub attested, never a rebuild.
+# tools/store-submit.ps1 creates the submission as a copy of the last published one, replaces the package, sets
+# What's new from the release's notes, uploads and commits, and waits until the Store has taken it in; the "release"
+# environment holds the Partner Center application's three secrets, which only main and v* tags may use. Certification
+# then runs at Microsoft's for hours or days, and the Store updates every installed copy by itself.
+name: Store
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The published release to submit, for example v5.2.1'
+        required: true
+
+# Nothing by default; the job asks for what it needs.
+permissions: {}
+
+jobs:
+  submit:
+    if: vars.STORE_SUBMIT == 'on'
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The release's package and notes, as published; the tag is checked before it reaches a command (S-32).
+      - name: Download the release's package and notes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG_INPUT: ${{ github.event.inputs.tag }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          tag="${TAG_INPUT:-$RELEASE_TAG}"
+          if ! [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Not a version tag: $tag"
+            exit 1
+          fi
+          mkdir -p store
+          gh release download "$tag" --pattern 'AxKit-*.msix' --dir store
+          gh release view "$tag" --json body --jq .body > store/notes.md
+          ls -l store
+
+      - name: Submit to Partner Center
+        shell: pwsh
+        env:
+          PARTNER_CENTER_TENANT_ID: ${{ secrets.PARTNER_CENTER_TENANT_ID }}
+          PARTNER_CENTER_CLIENT_ID: ${{ secrets.PARTNER_CENTER_CLIENT_ID }}
+          PARTNER_CENTER_CLIENT_SECRET: ${{ secrets.PARTNER_CENTER_CLIENT_SECRET }}
+        run: |
+          $package = Get-ChildItem store -Filter 'AxKit-*.msix' | Select-Object -First 1
+          if (-not $package) { Write-Host 'The release has no AxKit-<version>.msix.'; exit 1 }
+          ./tools/store-submit.ps1 -Package $package.FullName -Notes store/notes.md
