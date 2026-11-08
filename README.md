@@ -38,7 +38,9 @@ The set grows as I find another thing worth doing by ear. `docs/axkit/plan.md` (
 
 ## Install
 
-Download `install.cmd`, or the zip, from the [latest release](https://github.com/KyleKeane/AxKit/releases/latest) and run it; no administrator rights are needed. It adds Start menu entries ("axKit axClaude" and the others), commands such as `axfile` and `axdown`, and an "Open with axKit" submenu in File Explorer. Installed copies offer each new release themselves: axKit menu, Check for updates. `docs/axkit/README.md` is the README inside the zip, with the rest.
+From the Microsoft Store, once its listing is live (the first submission is under way, 2026-11-08): `winget install 9PK01L2K5000 -s msstore` in any terminal, or the Store's page, https://apps.microsoft.com/detail/9PK01L2K5000. The Store signs the package with Microsoft's certificate, which Smart App Control accepts, installs it for your account, and keeps it current by itself; Check for updates in any window says where your copy stands. The Store's copy has the Start menu entries ("axKit axClaude" and the others), the commands (`axkit`, `axdown`, `axfile` and the rest) and Windows' Open with for the apps' file types; File Explorer's "Open with axKit" submenu is the zip's alone ([docs/axkit/SPEC.md](docs/axkit/SPEC.md) AX-13).
+
+Without the Store: download `install.cmd`, or the zip, from the [latest release](https://github.com/KyleKeane/AxKit/releases/latest) and run it; no administrator rights are needed. It adds the same Start menu entries and commands, and an "Open with axKit" submenu in File Explorer. Installed copies offer each new release themselves: axKit menu, Check for updates. `docs/axkit/README.md` is the README inside the zip, with the rest.
 
 Needs Windows 10 1809 or later. axClaude also needs [Claude Code](https://code.claude.com/docs/en/setup). The standalone apps work with the network off; an access layer reaches it only through the program it runs, as the next section says.
 

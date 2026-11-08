@@ -19,7 +19,11 @@ requests, the first a setting; the report sender's only when you send a report:
   `Accept: application/vnd.github+json`. It carries the version you have and, as every web request does, your network
   address; nothing else. GitHub's privacy statement applies to it:
   <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>. Turn it off in any window:
-  Options, General, Check for updates at start. You can still check by hand (axKit menu, Check for updates).
+  Options, General, Check for updates at start. You can still check by hand (axKit menu, Check for updates). A copy
+  installed from the Microsoft Store makes no check at start and has no such setting; Check for updates by hand makes
+  the same one request, and its notice opens axKit's page in the Store app, which is Microsoft's and runs under
+  Microsoft's privacy statement, <https://privacy.microsoft.com/privacystatement>, as the Store's own updating of the
+  package does. That copy downloads nothing itself.
 - **The update you choose.** axKit downloads the release's zip and its signature from
   `https://github.com/KyleKeane/AxKit/releases/download/`, the only address the updater accepts a download from (a
   release whose files are elsewhere is reported as having no Windows zip). It installs the zip only if its SHA-256
