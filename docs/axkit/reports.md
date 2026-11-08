@@ -120,10 +120,13 @@ levers are built now.
   Where the focus was; "### Last actions" as a code block; the log lines inside a `<details>` block titled "Log lines";
   last, one line the workflow and the maintainer filter on: "Sent from axKit 5.1.0 with F4; reporter a1b2c3d4-…". The
   labels exist in the reports repository; recategorising is changing the label (section 7).
-- **RP-6.2 The reporter token.** A fine-grained personal access token of a machine user of the maintainer's
-  (`axkit-reporter`, the one machine account GitHub allows a person), with access to the reports repository alone and
-  the permission Issues: read and write, nothing else: a leaked token can file, edit, label and close issues there, and
-  nothing anywhere else (RP-D8). It is never in the source: `release.yml`'s sign job, the "release" environment, which runs no test package, reads it
+- **RP-6.2 The reporter token.** A fine-grained personal access token of the maintainer's own GitHub account, with
+  access to the reports repository alone and the permission Issues: read and write, nothing else: a leaked token can
+  file, edit, label and close issues there, and nothing anywhere else (RP-D8). The issues it posts carry the
+  maintainer's name as their author and the reporter line as their truth. (A reporter account of its own was the first
+  thought; GitHub lets a fine-grained token reach only its own account's repositories, so such an account would need a
+  classic token, which reaches everything it can see, or an organization; `reports-setup.md` section 1 says so, and an
+  organization can come later without a change to the code.) It is never in the source: `release.yml`'s sign job, the "release" environment, which runs no test package, reads it
   from that environment's secret `AXKIT_REPORTER_TOKEN` and has `publish.ps1` write it, mixed with a fixed key and as
   base64, into `src/AxKit.Core/Reports/reporter.token` (`tools/reporter-token.ps1`), a file git ignores, which the
   build embeds when it exists and which the script removes again; `ReporterToken` reads it back at run time. The mixing

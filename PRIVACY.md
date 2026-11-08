@@ -33,7 +33,7 @@ requests, the first a setting; the report sender's only when you send a report:
   blocked. The issue holds exactly what the report notice showed you and let you edit: your words, the kind, the
   app and version with Windows' build and NVDA's version, the window's title, the window's last twenty actions and
   announcements, where the focus was (a control's name and place, never its text), the log's last lines, and a title;
-  paths of your account read `<user>` before you see them. It is posted by axKit's own GitHub account, not yours, and
+  paths of your account read `<user>` before you see them. It is posted with the maintainer's reporter token, never with an account of yours, and
   carries a random id of this install (`%APPDATA%\AxKit\reports.json`; delete the file for a new one), which names
   the install and nothing else; it carries no name, e-mail address or account of yours unless you write one into the
   report. The first report asks your agreement once. A report that cannot be sent (no network, a blocked install, a
