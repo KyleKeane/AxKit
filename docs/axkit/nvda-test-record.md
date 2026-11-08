@@ -92,7 +92,8 @@ Space in the box said nothing.
 ## Owed: reports from every window (the branch `reports`, 2026-11-07, `docs/axkit/reports.md`)
 
 Section 13 step 0 of `docs/axclaude/nvda-test-plan.md`: F4, the notice's fields in Tab order with their names, the
-kind read by NVDA alone, the saved report and the draft in Your reports, the two menu items. To be scripted for
+kind read by NVDA alone, the saved report and the draft in Your reports, the two menu items. Scripted as
+`tests/scripts/axclaude/16-report.txt` and `tests/scripts/axtask/04-action-keys.txt` (2026-11-08), to be run through
 `nvda-pass.ps1` and heard by the user, in axClaude and in one standalone app (axDown), before the branch merges. With
 them, section 5 of `docs/axtask/nvda-test-plan.md`: the action keys (Ctrl+1 to Ctrl+9, All tasks on Ctrl+0, List →
 Action keys), a GitHub list made, read and acted on, the token notice's protected field, Open in axClaude with

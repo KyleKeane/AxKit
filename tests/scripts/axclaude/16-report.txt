@@ -1,0 +1,67 @@
+# axClaude, docs/axclaude/nvda-test-plan.md section 13 step 0: a report from the window (docs/axkit/reports.md RP-2, RP-3,
+# RP-6.6, RP-D6). The run's own home has no agreement to the reports yet, so Enter asks it, and Not now leaves the
+# report saved and unsent: nothing reaches GitHub from a test run.
+file home\AxKit\axclaude.json {"checkForUpdates":false}
+# The access layer's reminder agreed to already (AX-11.5): this script is about the report.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir report
+start claude {temp}\report -- --model haiku
+try said trust
+iffound wait 1500
+iffound keys enter
+expect said Ready
+expect focus Message to Claude
+# F4: the notice, the words field focused and named as an instruction; Enter with nothing typed is refused.
+keys f4
+expect state "notice":"Report to axKit"
+expect focus Type your report; Enter sends it, Shift+Enter starts a new line
+keys enter
+expect said ♪ Edge
+expect said Type a few words first
+expect focus Type your report
+type The list loses my place
+# Tab through the fields in their order (RP-3): the kind NVDA reads itself, the app line, the actions, the focus, the
+# log lines, the title filled from the first line typed, then the two buttons.
+keys tab
+expect focus Kind
+expect focus Feedback
+keys tab
+expect focus App and version
+expect focus axClaude
+keys tab
+expect focus What you were doing: the last actions
+keys tab
+expect focus Where the focus was
+expect focus Message to Claude
+keys tab
+expect focus Log lines, the last twenty
+keys tab
+expect focus Title
+expect focus The list loses my place
+keys tab
+expect focus Send
+keys tab
+expect focus Cancel
+# Back in the words field, Enter saves the report; the first one asks the agreement (RP-6.6); Not now keeps it unsent.
+keys shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab
+expect focus Type your report
+keys enter
+expect state "notice":"Before the first report goes"
+keys escape
+expect said Saved; not sent yet. It goes with the next report once you agree
+expect focus Message to Claude
+# Escape with nothing typed cancels; with words typed it keeps a draft (RP-D6).
+keys f4
+expect state "notice":"Report to axKit"
+keys escape
+expect said Cancelled
+expect focus Message to Claude
+keys f4
+expect focus Type your report
+type Draft words
+keys escape
+expect said Kept as a draft in Your reports
+expect focus Message to Claude
+# The two items of the axKit menu, by their palette names (RP-2.2).
+expect commands Send a report, axKit
+expect commands Your reports, axKit
