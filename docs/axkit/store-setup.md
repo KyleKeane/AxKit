@@ -24,14 +24,20 @@ As `reports-setup.md` does for the reports: no secret is written here, only wher
 Everything here is in the Partner Center website, signed in with the account that reserved axKit. The values you
 copy are not secrets except the key, which you type into prompts only, never into a chat.
 
-1. Open https://partner.microsoft.com/dashboard. Press the gear icon at the upper right, then Account settings.
-2. In the settings menu choose Tenants, then "Associate Microsoft Entra ID with your Partner Center account". Sign in
-   with the Azure account you made for the code signing (its tenant is the one), then Confirm. If Partner Center
-   offers to create a new tenant instead, that is fine too: it costs nothing.
-3. Back in Account settings choose User management, then the tab "Microsoft Entra applications", then "Add Microsoft
-   Entra application". Choose "Create Microsoft Entra application". Name it `axKit release`, reply URL and app id URI
-   as Partner Center suggests (any values work; the application is never signed in to interactively). Under "Roles
-   applicable to developer programs" tick Manager. Press Create.
+1. Open https://partner.microsoft.com/dashboard. Press the gear icon (Settings) at the upper right, then Account
+   settings. The Account settings page has a navigation on its left side with headings; the first heading is
+   Organization profile, and its entries include Legal info, Identifiers and Tenants (Microsoft's pages of 2026 give
+   this path: Account settings, Organization profile, Tenants). With NVDA, Insert+F7 lists the page's links; typing
+   "ten" lands on Tenants. If the heading is collapsed, press Enter on Organization profile first.
+2. The Tenants page has two tabs, Partner and Developer. On the Developer tab press Associate (the Windows pages
+   call the button "Associate Microsoft Entra ID with your Partner Center account"). Sign in with the Azure account
+   you made for the code signing (its tenant is the one), then Confirm. If the page offers Create instead, a new
+   tenant costs nothing and serves as well. If the navigation has no Tenants entry at all, read me the entries you
+   do see under Organization profile, and we look together.
+3. Back in Account settings choose User management in the left navigation, then the tab "Microsoft Entra
+   applications", then "Add Microsoft Entra application". Choose "Create Microsoft Entra application". Name it
+   `axKit release`, reply URL and app id URI as Partner Center suggests (any values work; the application is never
+   signed in to interactively). Under "Roles applicable to developer programs" tick Manager. Press Create.
 4. Open the application you just created in that list. Copy its Tenant ID and Client ID; both can go into the chat.
 5. On the same page press "Add new key". Partner Center shows the key once. Do not close the page yet.
 6. In your own terminal, in the repository's folder, run `.\tools\store-credentials.ps1` and answer its three
