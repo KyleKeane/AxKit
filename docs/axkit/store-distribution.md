@@ -288,13 +288,16 @@ Gate: the loose package starts every app from the Start menu, and section 7 has 
 `docs/axkit/store-listing.md` with every text of 3.6; the screenshots and the store logo into `publish\store\`
 (ignored by git except the page).
 
-### Phase 6: The first submission (the maintainer in the browser with my lists, then me)
+### Phase 6: The first submission (step 1 done 2026-11-08, by tools/EdgeDrive; steps 2 and 3 open)
 
-1. Upload `publish\AxKit.msix` (built from the `store` branch at the next version), paste the texts, upload the
-   images, set the properties and declarations (3.6; `runFullTrust` is noted on the Submission options page, the
-   live generative AI is noted there too), answer the age ratings, submit.
-2. Certification takes days (no figure in the documentation); a rejection comes with the policy number, I fix the
-   text or the package and the resubmission goes the same way.
+1. Done: Submission 1 holds `AxKit-5.2.1.msix` (the 5.2.1 release's package from GitHub), the texts of
+   `store-listing.md`, the six screenshots with captions and the 300 pixel logo, the properties and declarations
+   (3.6; the `runFullTrust` reason on the Submission options page, the live generative AI in the notes for
+   certification), the age ratings (3+), and was submitted for certification on 2026-11-08 (`store-setup.md`
+   sections 3 and 8). The maintainer signed in; the rest was driven through `tools/EdgeDrive` (store-setup.md
+   section 6), since the account has no API route (section 2 there).
+2. Certification usually takes hours, up to three business days (the overview page says so); a rejection comes with
+   the policy number, I fix the text or the package and the resubmission goes the same way.
 3. Live: on this computer, `winget install <Store ID> -s msstore` next to the development copy; the NVDA pass of
    every app's plan on the Store copy, plus the Store items (Start menu entries, Windows search, the alias, the
    startup tasks after a sign-in, the file verbs, Check for updates, where the settings landed), recorded in
@@ -409,7 +412,12 @@ through a console command the command's own path as its command line's first wor
 `axcalc.exe` opened axClaude until then, axCalc after); and a Start menu entry starts its app in Windows' System32
 folder, which axClaude took for the project until FR-8.1 learned that Windows' own folders are never one (the
 measurement left System32 as the maintainer's remembered folder for an hour; put right by hand). Item 12, the App
-Certification Kit, was not run: the Store's own validation is the check that counts, and it ran.
+Certification Kit, was not run: the Store's own validation is the check that counts, and it ran. Two more from the
+listing and the submission (2026-11-08): the Submission options page asks for the reason behind `runFullTrust` in a
+box of its own (Restricted capabilities, 500 characters) and stays Incomplete without it, so the sentence is in
+`store-listing.md`; and Edge treats every page as hidden while the computer's session is locked, which made the
+website's uploads, deletes and saves land minutes late and several at once until Edge was started with occlusion
+tracking and background throttling off (the switches in store-setup.md section 6).
 
 ## 8. Not in this round
 

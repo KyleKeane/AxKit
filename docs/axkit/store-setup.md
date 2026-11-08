@@ -60,13 +60,14 @@ copy are not secrets except the key, which you type into prompts only, never int
 8. Now close the key's page. Tell me; I run `tools\store-submit.ps1 -Status`, which reads axKit's state from
    Partner Center with the three values and proves them.
 
-## 3. Your steps: the first submission (about an hour, once)
+## 3. The first submission (done 2026-11-08 through tools/EdgeDrive; the steps kept as the record of what a submission holds)
 
 Microsoft requires the first publication to go through Partner Center's website; every later one goes from the
-command line (section 4). The texts are `store-listing.md`: for each field, tell me its name and I put the text on
-your clipboard, then paste. The files to upload are in the repository's `publish\store` folder (the six screenshots,
-`1-axdown.png` to `6-axprocess.png`) and `publish\msix` (the logo `StoreLogo-300.png`); I tell you each full path
-when you reach the field.
+command line (section 4) once the account has the API route, and through section 6's tool until then. The first
+submission (Submission 1, `AxKit-5.2.1.msix`, "In certification" since 2026-11-08, Pacific time) was made by the
+assistant with `tools/EdgeDrive` while the maintainer was away, every section as below; he only signed in. The texts
+are `store-listing.md`; the files to upload are in the repository's `publish\store` folder (the six screenshots,
+`1-axdown.png` to `6-axprocess.png`) and `publish\msix` (the logo `StoreLogo-300.png`).
 
 1. In Partner Center open Apps and games, then axKit, then "Start your submission". The submission is a list of
    sections; each has a Save button, and the last page has the Submit button. They can be done in any order and over
@@ -79,14 +80,17 @@ when you reach the field.
 5. Store listings, English (United States): Description; What's new in this version; Product features, one per
    field; Screenshots, the six files; Store logos, the 300 pixel file; Search terms; Copyright and trademark info;
    Additional license terms; Developed by. Save. (The texts come from me, field by field.)
-6. Packages: upload the package file, the `AxKit-5.2.0.msix` of the 5.2.0 release on GitHub (released 2026-11-08;
-   it carries the reporter token the local build lacks), which I downloaded into the repository's `publish\store`
-   folder; I tell you its full path when you reach the field. Partner Center then asks for the restricted capability
-   `runFullTrust`: paste the sentence from `store-listing.md`, Submission options. Save.
-7. Submission options: Notes for certification, the text from `store-listing.md`; Publishing hold options, "Publish
-   this submission as soon as it passes certification". Save.
-8. Press Submit to the Store. Tell me. Certification takes from hours to days; I read the state (section 5) and, if
-   it fails, fix what it names and we submit again.
+6. Packages: upload the package file, the `AxKit-<version>.msix` of the release on GitHub (it carries the reporter
+   token the local build lacks), downloaded into the repository's `publish\store` folder; the first submission
+   carries `AxKit-5.2.1.msix` (the 5.2.0 package, with seventeen entries, was refused: section 6). Save.
+7. Submission options: Publishing hold options, "Publish this submission as soon as it passes certification"; under
+   Restricted capabilities the page asks why the package needs `runFullTrust`: the sentence from `store-listing.md`,
+   Submission options, in the box (500 characters at most; the section stays Incomplete without it). Save. The notes
+   for certification are on the Additional Testing Information page (Supplemental info in the left list), saved by
+   the floppy icon beside its title.
+8. Press "Submit for certification" on the product's overview once every section says Complete. Certification takes
+   from hours to three business days; the state is on the overview (section 8) and, if it fails, the policy it names
+   is fixed and the next submission goes the same way.
 
 ## 4. How a release reaches the Store once the API route is open (built, switched off)
 
@@ -118,25 +122,52 @@ Section 6 is the plan to take these clicks off your hands.
 
 The website is driven from this computer by `tools/EdgeDrive`, a small C# program with no package that speaks the
 DevTools protocol to a Microsoft Edge window, one command per run (the commands are listed at the top of its
-`Program.cs`: `targets`, `open`, `nav`, `text`, `find`, `click`, `clickxy`, `focus`, `type`, `press`, `upload`,
-`dropxy`, `shot`, `wait`, `eval`, `evalfile`). The window is Edge started on a profile of its own, since Edge refuses
-debugging on the everyday profile:
+`Program.cs`: `targets`, `open`, `use`, `nav`, `text`, `find`, `click`, `clickxy`, `focus`, `type`, `press`,
+`upload`, `dropxy`, `front`, `close`, `dialog`, `shot`, `wait`, `eval`, `evalfile`, and `call` for any other method of
+the protocol with its parameters as JSON). The window is Edge started on a profile of its own, since Edge refuses
+debugging on the everyday profile, with the switches that keep its pages awake:
 
-    msedge.exe --user-data-dir="%LOCALAPPDATA%\AxKit-release\edge-profile" --remote-debugging-port=9222 https://partner.microsoft.com/dashboard
+    msedge.exe --user-data-dir="%LOCALAPPDATA%\AxKit-release\edge-profile" --remote-debugging-port=9222 --disable-features=CalculateNativeWinOcclusion,IntensiveWakeUpThrottling --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows https://partner.microsoft.com/dashboard
 
-The maintainer signs in to Partner Center in that window once, with his own second factor; the profile keeps the
-session, and no password is ever handled by the tool. While the port is open, any program of this account could
-drive that window, so it is opened for the work and closed after. What the first submission taught (2026-11-09):
+The switches matter: Edge treats every page as hidden while the computer's session is locked (the maintainer away
+from the keyboard is exactly when the tool runs) and throttles its timers to one tick a minute, so uploads, deletes
+and saves seemed ignored and happened minutes later, in a heap; with the switches the page stays visible and acts at
+once (found 2026-11-08). The maintainer signs in to Partner Center in that window once, with his own second factor;
+the profile keeps the session, and no password is ever handled by the tool. While the port is open, any program of
+this account could drive that window, so it is opened for the work and closed after (`call Browser.close '{}'`; the
+`close` command closes one tab, and closing the last tab ends Edge with it, which cost a sign-in once). What the
+first submission taught (2026-11-08):
 Partner Center is an Angular application of web components (`he-button`, `he-select`, `he-checkbox`, `he-option`)
 inside shadow roots, so every search of the page walks the shadow roots; a synthetic click serves most controls, but
 state the page must register (the age ratings' radios, the IARC terms box) needs a real click (`clickxy`, a mouse
 event at the control's place); a button's disabled attribute lags behind what the page shows, so a screenshot
 (`shot`) decides; the age ratings questionnaire renders its follow-up questions ten to thirty seconds after an
-answer, and loses every answer when the page is left before Save; a file set on the upload field is ignored, and a
-file dropped on the "Drag your packages here" area (`dropxy`, a drag event carrying the file's path) uploads. A
-release's upload is section 5's five steps done with these commands; a script for them follows once a second
-submission has shown that the pages hold still. The API route of section 4 replaces all of it the day the account
-gets the option.
+answer, and loses every answer when the page is left before Save; a file set on the upload field is taken late or not at all, and a
+file dropped on the "Drag your packages here" area (`dropxy`, drag events carrying the file's path, as a hand drags:
+enter, moves, drop) uploads, so drop once and wait for the page's "Uploading" line before anything else, since every
+drop that seemed ignored uploaded too and the same package then stands twice (the Store refuses a duplicate; Delete
+the extra). The page's Delete link acts but shows the result only after a reload. A JavaScript confirm holds the page
+and every evaluation until `dialog accept`. The Additional Testing Information page saves through the floppy icon
+beside its title ("Save description"), which a script click presses. The package's validation runs for several
+minutes after the upload and names its errors and warnings under the package. The Store listing page (2026-11-08):
+its text fields are plain Angular controls, set by a script (value, then an `input` event) from the texts of
+`store-listing.md`; Product features grow one field per press of "Add more" (`feature-0` onwards); the screenshot
+card's file input (the first `input[type=file]` of the page, under `clear-upload-card`) takes one file through
+`upload` at once while the page is visible, and every uploaded image gets a file input of its own in front of it,
+so the card's input is found again before each file; a file dropped with `dropxy` on that card lands three times and
+opens in a tab of its own, which hides the listing page behind it, so screenshots go through the input, never a
+drop; each image's caption is "Add image caption", a textarea `captionTextArea` and its OK; the keyword picker is an
+`he-select` with `freeform` and `multiple`: a keyword typed into its inner input and Enter makes a chip, but the
+page's form reads the picker only on its `he-blur` event, so a real click elsewhere (`clickxy` on another field)
+after the last keyword is what saves them, a chip is removed by the remove button inside the chip's own shadow root
+(removing the element from the page leaves the keyword in the form), and an unfinished word left in the input
+glues itself to the next keyword, so the input is emptied first; the logo goes to the "1:1 App tile icon" input (the
+file input whose card text says 300 x 300). The page's Save, and the Submission options' Save, land on the product's
+overview when they succeed, so a saved page is reopened to check it. "Submit for certification" on the overview
+needs every section Complete; it takes the submission to "In certification" at once and shows a satisfaction survey,
+dismissed by its Cancel. A release's upload is section 5's five steps done with these commands; a script for them
+follows once a second submission has shown that the pages hold still. The API route of section 4 replaces all of
+it the day the account gets the option.
 
 ## 7. The support request for the API route
 
@@ -148,6 +179,14 @@ this account, or say that an Individual account cannot have them. The answer dec
 
 ## 8. Reading the state, and when something fails
 
+- Where things stand: Submission 1 (`AxKit-5.2.1.msix`, every section Complete: Free in all markets, Developer
+  tools, the accessibility and generative AI declarations, 3+/Everyone, the English listing with six screenshots
+  and their captions, seven keywords and the 300 pixel logo, publish as soon as certified, the `runFullTrust`
+  reason) was submitted for certification on 2026-11-08 in the afternoon, Pacific time. The overview page
+  (`https://partner.microsoft.com/en-us/dashboard/products/9PK01L2K5000/overview`) shows the step it is at:
+  Pre-processing, Certification, Publishing; certification usually takes hours, up to three business days. When it
+  is live: `winget install 9PK01L2K5000 -s msstore` on this computer beside the development copy, then the NVDA pass
+  of the Store copy (`store-distribution.md`, phase 6, step 3).
 - `.\tools\store-submit.ps1 -Status` prints the last published and the pending submission with its status and the
   Store's error and warning codes, once the API route is open; until then the same is in Partner Center under the
   product's overview.

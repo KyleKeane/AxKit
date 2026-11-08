@@ -105,6 +105,23 @@ internal static class Program
                     await page.PressAsync(Arg(args, 1));
                     Console.WriteLine($"Pressed {Arg(args, 1)}");
                     return 0;
+                case "front":
+                    // The tab brought to the front: Edge throttles and sleeps a background tab, and an upload in it crawls.
+                    await page.CallAsync("Page.bringToFront");
+                    Console.WriteLine("Brought to front");
+                    return 0;
+                case "call":
+                {
+                    // Any protocol method with its parameters as JSON, for what the commands above do not cover; the answer as JSON.
+                    var parameters = args.Length > 2 ? JsonNode.Parse(args[2]) as JsonObject : null;
+                    Console.WriteLine((await page.CallAsync(Arg(args, 1), parameters)).ToJsonString());
+                    return 0;
+                }
+                case "close":
+                    // The tab closed; a file dropped past an upload area opens in a tab of its own, which hides the page behind it.
+                    await page.CallAsync("Page.close");
+                    Console.WriteLine("Closed");
+                    return 0;
                 case "dialog":
                 {
                     // A JavaScript dialog (confirm, alert) holds the page and every evaluation with it: accept or dismiss it.

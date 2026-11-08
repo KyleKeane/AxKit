@@ -145,4 +145,12 @@ package's images: the letters Ax on dark blue, the bundle's icon).
   `runFullTrust` because the apps are a Windows Forms desktop application that starts those programs and reads the
   console they run in. axClaude shows the output of a live generative AI, Claude Code, under the user's own Anthropic
   account.
-- Restricted capabilities: `runFullTrust`, a Windows Forms desktop application packaged as MSIX.
+- Restricted capabilities, the box "Why do you need the runFullTrust capability, and how will it be used in your
+  product?" (500 characters at most; the section stays Incomplete without it): runFullTrust: axKit is a Windows Forms
+  desktop application packaged as MSIX; it starts the user's programs (Claude Code, git, a shell, KeePassXC's tool)
+  and reads the pseudo console they run in, which needs full trust.
+- The notes for certification are entered on the Additional Testing Information page (Supplemental info), not on
+  the Submission options page, which only points there.
+
+Entered as above in Submission 1 on 2026-11-08 (`store-setup.md` section 8); the keywords stand in the order screen
+reader, accessible, Claude Code, Markdown editor, git manager, terminal, NVDA.
