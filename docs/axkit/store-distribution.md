@@ -69,6 +69,14 @@ of 5.1.0). The CLI keeps them in Windows' credential store.
 
 ## 3. The shape of the Store build
 
+### 3.0 The product's identity (reserved 2026-11-08)
+
+Package/Identity/Name `axKit.axKit`; Package/Identity/Publisher `CN=F1B55F68-5EAE-4338-B94B-73044EAE40DA`;
+Package/Properties/PublisherDisplayName `axKit` (the account's public publisher name, so the Store shows axKit as the
+publisher, not a person); Store ID `9PK01L2K5000`. Hence the Store page `ms-windows-store://pdp/?productid=9PK01L2K5000`,
+the web page https://apps.microsoft.com/detail/9PK01L2K5000 and the install line `winget install 9PK01L2K5000 -s msstore`.
+None of these is a secret; they are in the package, where everyone reads them.
+
 ### 3.1 One package
 
 `AxKit.msix`, x64, made from a folder publish (every file of the self-contained app as a file; the package is the
@@ -191,8 +199,7 @@ The recommendation comes first in each.
   WinRT startup task API, which needs the Windows SDK projection, a targeting pack, against the zero-package rule.
 - 4.6 The clicks in Partner Center are the maintainer's, with NVDA, from my step lists (phase 1 and 6). Or: I drive
   the browser through the Chrome extension while he is signed in and watching; file uploads stay his either way.
-- 4.7 The publisher display name is public on the listing. Kyle Keane, as the licence identity, is the expected
-  value.
+- 4.7 The publisher display name is public on the listing; the account's is axKit (3.0), settled.
 
 ## 5. The steps, in order
 
