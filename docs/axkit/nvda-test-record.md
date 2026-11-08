@@ -6,6 +6,39 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-08: the reports, by the assistant through nvda-pass.ps1 (branch `reports`, ec166c0)
+
+Run by the assistant with NVDA 2025.3.3 listening, the user away at its question, with Claude Code 2.1.319 and
+`--model haiku`, Windows 11 Pro 10.0.26200: `nvda-pass.ps1 axClaude` (18 scripts) and `nvda-pass.ps1 axTask` (4). The
+two scripts of this branch passed whole, every announcement also heard from NVDA:
+
+- `axclaude/16-report.txt` (plan section 13 step 0): F4 and "Report to axKit", the words field named as an instruction
+  and focused, Enter on it empty refused with the edge sound and "Type a few words first", the fields in Tab order
+  (Kind with Feedback read by NVDA alone, App and version naming axClaude, the actions, Where the focus was naming the
+  message field, the log lines, Title holding the first line typed, Send, Cancel), Enter saving and asking the
+  agreement, Not now leaving it unsent, Escape cancelling with nothing typed and keeping a draft with words, the two
+  menu items by their names. The sending itself, "Sent as issue N", was heard by the user in a real session the same
+  day (issues 5 and 6 of the reports repository).
+- `axtask/04-action-keys.txt` (plan section 5): Ctrl+1 outside a list and Ctrl+3 without an action refused with the
+  edge sound and their sentences, Ctrl+0 to All tasks, Ctrl+1 setting Done and Ctrl+Z taking it back, Ctrl+2 moving
+  the item to Later and back, the Item menu's Action keys naming the list's actions, List → Action keys making Ctrl+4
+  as "Finish" through its three notices, the token notice's protected field, New GitHub list refusing a bare name and
+  making "AxKit-reports issues", which read its six issues from GitHub as it opened, Open in axClaude asking for the
+  folder.
+
+Three other scripts failed, none from this branch:
+
+- `axclaude/04-headings.txt` step 303, Ctrl+Alt+H: Windows Magnifier was running again and keeps the key (the entry of
+  2026-11-01 below); to rerun with Magnifier closed.
+- `axclaude/12-questions.txt` step 139, `/tasks` with nothing running: Claude Code 2.1.319 showed it as a question
+  (the trill "Question", "Claude asks"), no longer as the information screen 2.1.309 to 2.1.316 showed (FR-2.11). To
+  record with the record-fixture skill and settle on `main`: a change of Claude Code's, not of this branch.
+- `axtask/01-navigate-and-fields.txt` step 104: the letters "Hig" of "High, Low" typed into the new field's options
+  were lost between the Type list and the options field ("h, Low" reached the list), a timing of the NVDA tier's
+  typing after Enter; passed on 2026-11-01. To rerun; a `wait` after that Enter if it repeats.
+
+Still the user's by ear: a report sent from a standalone app (axDown), and "Your reports" opening axTask on the list.
+
 ## 2026-11-01, later: axClaude, by the assistant through nvda-pass.ps1 (branch `licence`, 1339f6f to 6cedc57)
 
 Run by the assistant with NVDA listening, as below, with Claude Code 2.1.316 and `--model haiku`: the 17 scripts of
@@ -89,16 +122,11 @@ Space in the box said nothing.
 | Space: "checked", once | Passed |
 | Space again: "not checked", once | Passed |
 
-## Owed: reports from every window (the branch `reports`, 2026-11-07, `docs/axkit/reports.md`)
+## Owed: the reports, what the scripts leave (2026-11-08, `docs/axkit/reports.md`)
 
-Section 13 step 0 of `docs/axclaude/nvda-test-plan.md`: F4, the notice's fields in Tab order with their names, the
-kind read by NVDA alone, the saved report and the draft in Your reports, the two menu items. Scripted as
-`tests/scripts/axclaude/16-report.txt` and `tests/scripts/axtask/04-action-keys.txt` (2026-11-08), to be run through
-`nvda-pass.ps1` and heard by the user, in axClaude and in one standalone app (axDown), before the branch merges. With
-them, section 5 of `docs/axtask/nvda-test-plan.md`: the action keys (Ctrl+1 to Ctrl+9, All tasks on Ctrl+0, List →
-Action keys), a GitHub list made, read and acted on, the token notice's protected field, Open in axClaude with
-`--message`; and the sending itself once the reports repository and the token exist (`docs/axkit/reports-setup.md`):
-"Sent as issue N", the consent notice first, the cannot-send notice of a build without the token.
+The pass of 2026-11-08 below covered the two scripts. Still to hear: a report sent from a standalone app (axDown's F4),
+"Your reports" opening axTask on the list, the cannot-send notice of a build without the token with its Copy report and
+Open GitHub's form, and the GitHub actions of axTask with the user's own token (Make it a bug, Close, Comment, Block).
 
 ## Owed: axClaude, `/clear` empties the window (2026-11-07, `docs/axclaude/SPEC.md` FR-8.8)
 
