@@ -320,8 +320,27 @@ makeappx's schema check): `uap10:Parameters` on an Application element passes th
 a startup task carries no arguments of its own, so each app that starts at sign-in has a hidden entry
 ("AxStartSignIn", `AppListEntry="none"`) with the task, and the program reads the entry's id when Windows passes
 nothing (`Dispatch.WithApplicationVerb`), which also settles item 5 whatever Windows does with an alias's parameters;
-a file type is declared once per package (3.3). The registration test needs Developer Mode on this computer and the
-user away from the keyboard, since the apps' windows open.
+a file type is declared once per package (3.3).
+
+The registration test of the same evening (the loose folder registered with Developer Mode on, the user away; the
+package removed again afterwards, cleanly: no Start entry, no alias left) answered items 3 to 7 and 11:
+
+- Windows lists fourteen Start entries, "axKit axCalc" to "axKit axTerminal, access layer for your shell", with the
+  hidden entries absent; the AxCalc entry starts axCalc from the package (item 3).
+- The aliases `axkit.exe`, `axdown.exe` and the rest are on the PATH under `%LOCALAPPDATA%\Microsoft\WindowsApps`;
+  `axdown.exe <file>` opened the file in axDown and `axkit.exe preview <file>` in axPreview (item 5).
+- Every declared file type carries the package's progid under its Open with list (`.md`, `.txt`, `.markdown` axDown's,
+  `.json` axJSON's, `.mp3` axMedia's, `.kdbx` axPass's); the menu itself is for the NVDA pass (item 6).
+- The hidden sign-in entries start their apps hidden with `--hidden` (axClip ran so; axStart handed over to the
+  development copy already running and ended, which is its single-instance rule). Whether Windows lists the two tasks
+  under Settings, Apps, Startup, and runs them at sign-in: the Store copy's pass (item 4).
+- A child process started inside the package is virtualized: a write under `%LOCALAPPDATA%` and under `%APPDATA%`
+  landed in the package's `LocalCache\Local` and `LocalCache\Roaming`, not in the user's folders. So the shells, Claude
+  Code and the other children need the breakaway attribute of 3.4, which is the next code change (item 7). The apps
+  themselves wrote their logs into the user's existing `%LOCALAPPDATA%\AxKit\logs` files in place, as 3.4 expects of
+  existing files.
+- Package detection and the entry's id gave the right app in every start, whether Windows passed the entry's
+  parameters or not; the two cannot be told apart from outside and need not be (item 11).
 
 1. Where Partner Center shows the Seller ID (expected under Account settings, with the account identifiers).
 2. `msstore publish --inputFile AxKit.msix --appId <id>` accepts a package not built from one of the CLI's project
