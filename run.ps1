@@ -91,6 +91,9 @@ if (-not $NoBuild) {
     Write-Host "Building axKit..."
     dotnet build "$root\src\AxKit\AxKit.csproj" -c Debug -nologo -v q
     $built = $LASTEXITCODE
+    # The compiler server ends with the build instead of idling for ten minutes on several hundred megabytes
+    # (Directory.Build.rsp ends the MSBuild nodes; 2026-11-08).
+    dotnet build-server shutdown | Out-Null
     foreach ($verb in @($background | ForEach-Object Verb | Sort-Object -Unique)) {
         if (Test-Path $exe) {
             Write-Host "Starting axKit $verb again, hidden."

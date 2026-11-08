@@ -87,6 +87,27 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 
 ## 5. Gotchas of this computer, and keeping it current
 
+- The computer is a Hyper-V virtual machine with 7 GB of memory, seven logical processors and no graphics adapter
+  (Hyper-V Video and the Remote Display Adapter of the enhanced session), so the Desktop Window Manager composes every
+  frame on the CPU. Measured on 2026-11-08: dwm idles at nothing and costs about a third of a core while the user
+  types or reads, since every repaint runs a full-screen pass in software at the enhanced session's 2880 by 1800
+  pixels, with the Magnifier's colour inversion and NVDA's focus highlight (a full-screen layered window) on top of
+  it; dwm had used 68 hours of CPU in seven days. What keeps it light, in order of effect: a smaller display in the
+  Connect dialog of Hyper-V Manager (the Display configuration slider, "Save my settings"; 1280 by 800 is a quarter
+  of the pixels), the Magnifier closed (Win+Esc) unless it is wanted, NVDA's Vision settings without the focus
+  highlight unless it is wanted, and the user's visual effects off (transparency, animations, fades and shadows,
+  a solid-colour background; set on 2026-11-08 through `SystemParametersInfo` and the user's registry, "Adjust for
+  best performance" with font smoothing kept). GPU partitioning on the host (`Add-VMGpuPartitionAdapter`) would make
+  dwm hardware-accelerated and is the structural fix.
+- Memory on the same computer: a build leaves six MSBuild nodes and the Roslyn compiler server idle for ten to fifteen
+  minutes, about 1 GB together; `Directory.Build.rsp` ends the nodes with the build and the scripts run
+  `dotnet build-server shutdown` after theirs (run it after a bare `dotnet build`). Edge's startup boost kept seven
+  Edge processes resident with no window (460 MB), and the Start menu's web search kept six WebView2 processes under
+  SearchHost (450 MB): the first is off in Edge's own files and its sign-in entry, both are off for good through the
+  Edge and Explorer policies, which an administrator sets (the user-level Policies keys are protected from the user).
+  With 7 GB Windows runs every service in a process of its own (89 service hosts, 1.2 GB); raising
+  `SvcHostSplitThresholdInKB` above the installed memory groups them again after a restart. Defender exclusions for
+  the build processes and the `bin` and `obj` folders take Defender out of every build. SysMain and DiagTrack can go.
 - Windows Magnifier, when it runs, takes Ctrl+Alt+H, K, L and M, which axClaude's reading keys use; check for
   `Magnify.exe` before an NVDA run of axClaude.
 - `az` is a batch file: a `--query` with parentheses and no spaces, such as `length(@)`, is torn apart by `cmd`; put a

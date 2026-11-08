@@ -1,0 +1,5 @@
+# Read by MSBuild for every build under this folder (dotnet build, test, publish), as if typed on the command line.
+# The worker nodes a parallel build starts exit when the build ends, instead of waiting fifteen minutes for the next
+# one: on the development computer (7 GB) six idle nodes held 700 MB after every build (2026-11-08). The scripts also
+# run `dotnet build-server shutdown` after their builds, which ends the Roslyn compiler server, kept ten minutes otherwise.
+-nodeReuse:false

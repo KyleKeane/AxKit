@@ -60,6 +60,8 @@ if ($ZipOnly) {
         $published = $LASTEXITCODE
     } finally {
         & $tokenTool -Remove
+        # The compiler server ends with the build instead of idling for ten minutes (Directory.Build.rsp; 2026-11-08).
+        dotnet build-server shutdown | Out-Null
     }
     if ($published -ne 0) {
         Write-Host "Publish failed."

@@ -34,13 +34,19 @@ if ($Only -ne '') {
     }
 }
 
-foreach ($project in $projects) {
-    Write-Host "Testing $($project.BaseName)..."
-    dotnet test $project.FullName --configuration Release --nologo -v q
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "$($project.BaseName) failed."
-        exit $LASTEXITCODE
+try {
+    foreach ($project in $projects) {
+        Write-Host "Testing $($project.BaseName)..."
+        dotnet test $project.FullName --configuration Release --nologo -v q
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "$($project.BaseName) failed."
+            exit $LASTEXITCODE
+        }
     }
+} finally {
+    # The build servers (the compiler server, any MSBuild node) end with the run instead of idling for minutes on
+    # several hundred megabytes, whichever way the run ended (Directory.Build.rsp; 2026-11-08).
+    dotnet build-server shutdown | Out-Null
 }
 
 Write-Host "All $($projects.Count) test projects passed."
