@@ -31,8 +31,12 @@ public static class GitHubIssues
     public const int PageSize = 100;
     public const int MaxPages = 10;
 
-    /// <summary>The address of an issue form's body may be this long at most: longer reports are cut in the browser's form, never in the issue the sender posts.</summary>
-    public const int FormBodyLength = 6000;
+    /// <summary>
+    /// The whole address of the browser's form may be this long at most: the Windows shell hands a longer one to the
+    /// browser cut off (the user's browser opened a page that did not load, 2026-11-07), so the body is cut to fit, the
+    /// user's words first; the issue the sender posts is never cut.
+    /// </summary>
+    public const int FormUrlLength = 2000;
 
     public static string IssuesApi(string repository) => $"https://api.github.com/repos/{repository}/issues";
 
@@ -40,11 +44,30 @@ public static class GitHubIssues
 
     public static string BlocklistApi(string repository) => $"https://api.github.com/repos/{repository}/contents/blocklist.json";
 
-    /// <summary>The browser's new-issue form of the repository, prefilled (RP-6.5), for a user with a GitHub account of their own.</summary>
+    /// <summary>
+    /// The browser's new-issue form of the repository, prefilled (RP-6.5), for a user with a GitHub account of their own:
+    /// the title, the label and as much of the body as keeps the address within <see cref="FormUrlLength"/>, the
+    /// user's words coming first in it; a cut body ends by saying where the rest is.
+    /// </summary>
     public static string NewIssueFormUrl(string repository, string title, string body, string label)
     {
-        var cut = body.Length > FormBodyLength ? body[..FormBodyLength].TrimEnd() + "\n\n(cut here: the rest is in the report saved on your computer)" : body;
-        return $"https://github.com/{repository}/issues/new?title={Uri.EscapeDataString(title)}&labels={Uri.EscapeDataString(label)}&body={Uri.EscapeDataString(cut)}";
+        var head = $"https://github.com/{repository}/issues/new?title={Uri.EscapeDataString(title)}&labels={Uri.EscapeDataString(label)}&body=";
+        const string note = "\n\n(cut: the rest is in the report saved on your computer, axKit menu, Your reports)";
+        var text = body.Trim();
+        var encoded = Uri.EscapeDataString(text);
+        if (head.Length + encoded.Length <= FormUrlLength)
+        {
+            return head + encoded;
+        }
+
+        var room = Math.Max(0, FormUrlLength - head.Length - Uri.EscapeDataString(note).Length);
+        var cut = text;
+        while (cut.Length > 0 && Uri.EscapeDataString(cut).Length > room)
+        {
+            cut = cut[..Math.Max(0, cut.Length - Math.Max(1, cut.Length / 10))].TrimEnd();
+        }
+
+        return head + Uri.EscapeDataString(cut + note);
     }
 
     /// <summary>Creates an issue as the token's account (RP-6.1): the title, the Markdown body and one label.</summary>

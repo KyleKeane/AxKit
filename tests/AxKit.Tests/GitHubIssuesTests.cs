@@ -172,8 +172,11 @@ public sealed class GitHubIssuesTests
     {
         var url = GitHubIssues.NewIssueFormUrl(Repository, "A title", "Line one\nLine two", "feedback");
         Assert.StartsWith("https://github.com/KyleKeane/AxKit-reports/issues/new?title=A%20title&labels=feedback&body=Line%20one%0ALine%20two", url);
-        var longUrl = GitHubIssues.NewIssueFormUrl(Repository, "t", new string('x', GitHubIssues.FormBodyLength + 500), "bug");
-        Assert.Contains("cut%20here", longUrl);
-        Assert.True(longUrl.Length < GitHubIssues.FormBodyLength + 400);
+        // A long body is cut so that the whole address stays within what the Windows shell hands a browser whole.
+        var words = string.Join(' ', Enumerable.Repeat("my words", 600));
+        var longUrl = GitHubIssues.NewIssueFormUrl(Repository, "t", words + "\n\n### Context\n\n- App: axFile", "bug");
+        Assert.True(longUrl.Length <= GitHubIssues.FormUrlLength, longUrl.Length.ToString());
+        Assert.StartsWith("https://github.com/KyleKeane/AxKit-reports/issues/new?title=t&labels=bug&body=my%20words", longUrl);
+        Assert.EndsWith(Uri.EscapeDataString("(cut: the rest is in the report saved on your computer, axKit menu, Your reports)"), longUrl);
     }
 }

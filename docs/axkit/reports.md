@@ -150,7 +150,9 @@ levers are built now.
 - **RP-6.5 When sending cannot happen.** The report is saved whatever happens (RP-3.2). The notice that says why has
   two buttons: **Copy report** (the whole body to the clipboard, to paste anywhere) and **Open GitHub's form** (the
   browser on the reports repository's new-issue form, prefilled by its query string, which needs the user's own GitHub
-  account). No e-mail route: an address cannot live in the repository (`PrivacyTests`, bundle rule 6), and the user
+  account; the whole address is kept within 2000 characters, the user's words first and a note where the rest is, since
+  the Windows shell handed a longer one to the browser cut off and the page did not load, found by the user
+  2026-11-07). No e-mail route: an address cannot live in the repository (`PrivacyTests`, bundle rule 6), and the user
   chose the token over it.
 - **RP-6.6 Consent** (AX-11.4, AX-11.5): before the first send, the consent notice for GitHub, a new
   `ConsentTarget.GitHubReports`: "Reports go to GitHub as public issues of axKit's reports repository, posted by axKit's
