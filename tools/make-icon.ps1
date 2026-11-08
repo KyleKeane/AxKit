@@ -12,12 +12,14 @@
 .EXAMPLE
   .\tools\make-icon.ps1                                   # every icon
   .\tools\make-icon.ps1 -Out x.ico -Text Ab -Rgb 90,40,120  # one icon of your own
+  .\tools\make-icon.ps1 -Png publish\msix\package\Assets    # the MSIX package's images (publish.ps1 -Msix runs this)
 #>
 [CmdletBinding()]
 param(
     [string]$Out,
     [string]$Text = 'Ax',
-    [int[]]$Rgb = @(31, 78, 121)
+    [int[]]$Rgb = @(31, 78, 121),
+    [string]$Png
 )
 
 $ErrorActionPreference = 'Stop'
@@ -124,7 +126,34 @@ function Write-Icon([string]$out, [string]$text, [int[]]$rgb) {
     Write-Host ("Wrote {0} ({1:N0} bytes, sizes {2})" -f $out, (Get-Item $out).Length, ($sizes -join ', '))
 }
 
-if ($Out) {
+# One image of the MSIX package (docs/axkit/store-distribution.md 3.2): the same drawing as the icon's, at one size,
+# as a PNG file, the folder made when it is missing.
+function Write-Png([string]$out, [int]$size, [string]$text, [int[]]$rgb) {
+    $color = [System.Drawing.Color]::FromArgb(255, $rgb[0], $rgb[1], $rgb[2])
+    $folder = Split-Path -Parent $out
+    if (-not (Test-Path $folder)) { New-Item -ItemType Directory -Force $folder | Out-Null }
+    $bmp = New-IconBitmap $size $text $color
+    $bmp.Save($out, [System.Drawing.Imaging.ImageFormat]::Png)
+    $bmp.Dispose()
+}
+
+if ($Png) {
+    # The package's images, as tools/make-manifest.ps1 names them: per app Assets\<Project>\Square44x44Logo.png and
+    # Square150x150Logo.png at those sizes, and the package's own Assets\StoreLogo.png, 50 pixels, the bundle's icon
+    # (axClaude's letters). Plain names at the 100 % sizes, which need no resource index; Windows scales them.
+    . (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) 'apps.ps1')
+    $apps = @(Get-AxKitApps (Join-Path $iconFolder '..\..'))
+    $folder = [System.IO.Path]::GetFullPath($Png)
+    foreach ($app in $apps) {
+        if (-not $app.Icon) { throw "$($app.Name) has no Icon in Dispatch.Apps." }
+        Write-Png (Join-Path $folder "$($app.Project)\Square44x44Logo.png") 44 $app.Icon.Letters $app.Icon.Rgb
+        Write-Png (Join-Path $folder "$($app.Project)\Square150x150Logo.png") 150 $app.Icon.Letters $app.Icon.Rgb
+    }
+    $bundle = $apps | Where-Object { $_.Verb -eq 'claude' } | Select-Object -First 1
+    if (-not $bundle) { $bundle = $apps[0] }
+    Write-Png (Join-Path $folder 'StoreLogo.png') 50 $bundle.Icon.Letters $bundle.Icon.Rgb
+    Write-Host "Wrote the package's images for $($apps.Count) apps and the store logo into $folder"
+} elseif ($Out) {
     Write-Icon ([System.IO.Path]::GetFullPath($Out)) $Text $Rgb
 } else {
     # Every app of Dispatch.Apps with its Icon, the letters and the colour (tools/apps.ps1 reads them off Dispatch.cs).
