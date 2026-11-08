@@ -126,8 +126,15 @@ internal static class Program
                     }
 
                     JsonObject Data() => new() { ["items"] = new JsonArray(), ["files"] = files.DeepClone(), ["dragOperationsMask"] = 1 };
-                    await page.CallAsync("Input.dispatchDragEvent", new JsonObject { ["type"] = "dragEnter", ["x"] = x, ["y"] = y, ["data"] = Data() });
-                    await page.CallAsync("Input.dispatchDragEvent", new JsonObject { ["type"] = "dragOver", ["x"] = x, ["y"] = y, ["data"] = Data() });
+                    // As a hand drags: enter, a few moves over the area, then the drop, with the pauses a page's handlers expect.
+                    await page.CallAsync("Input.dispatchDragEvent", new JsonObject { ["type"] = "dragEnter", ["x"] = x - 20, ["y"] = y - 10, ["data"] = Data() });
+                    await Task.Delay(150);
+                    for (var step = 0; step < 4; step++)
+                    {
+                        await page.CallAsync("Input.dispatchDragEvent", new JsonObject { ["type"] = "dragOver", ["x"] = x - 15 + step * 5, ["y"] = y - 8 + step * 2, ["data"] = Data() });
+                        await Task.Delay(120);
+                    }
+
                     await page.CallAsync("Input.dispatchDragEvent", new JsonObject { ["type"] = "drop", ["x"] = x, ["y"] = y, ["data"] = Data() });
                     Console.WriteLine($"Dropped {files.Count} file(s) at {x}, {y}");
                     return 0;
