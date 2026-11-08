@@ -25,19 +25,19 @@ Calls (11):
 
 - **shared by every app**, `src/AxKit.Core/AxKitHttp.cs:19`, in `AxKitHttp.Create`, by `new HttpClient`: the one HTTP client of axKit, for the update check, the two downloads and the reports; no other code makes a network request (AX-11.11).
   Code: `var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:58`, in `GitHubIssues.CreateAsync`, by `HttpClient.SendAsync`: posts a report as an issue of the reports repository, as axKit's own reporter account, with what the user read and edited in the report notice and the install's random reporter id; only when the user sends a report (docs/axkit/reports.md RP-6.1, PRIVACY.md).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:81`, in `GitHubIssues.CreateAsync`, by `HttpClient.SendAsync`: posts a report as an issue of the reports repository, as axKit's own reporter account, with what the user read and edited in the report notice and the install's random reporter id; only when the user sends a report (docs/axkit/reports.md RP-6.1, PRIVACY.md).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:70`, in `GitHubIssues.ReadBlocklistAsync`, by `HttpClient.SendAsync`: reads the reports repository's blocklist before a report is sent, so that a blocked install or version sends nothing; one GET with the version in the User-Agent and nothing else about the user (docs/axkit/reports.md RP-6.4).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:93`, in `GitHubIssues.ReadBlocklistAsync`, by `HttpClient.SendAsync`: reads the reports repository's blocklist before a report is sent, so that a blocked install or version sends nothing; one GET with the version in the User-Agent and nothing else about the user (docs/axkit/reports.md RP-6.4).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:89`, in `GitHubIssues.ListAsync`, by `HttpClient.SendAsync`: lists the issues of a repository for a GitHub list of axTask, page by page, when the user opens or refreshes the list (docs/axkit/reports.md RP-7.1).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:112`, in `GitHubIssues.ListAsync`, by `HttpClient.SendAsync`: lists the issues of a repository for a GitHub list of axTask, page by page, when the user opens or refreshes the list (docs/axkit/reports.md RP-7.1).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:129`, in `GitHubIssues.PatchAsync`, by `HttpClient.SendAsync`: changes an issue's labels or state as the user's own account, from an action on an item of a GitHub list in axTask (docs/axkit/reports.md RP-7.2).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:152`, in `GitHubIssues.PatchAsync`, by `HttpClient.SendAsync`: changes an issue's labels or state as the user's own account, from an action on an item of a GitHub list in axTask (docs/axkit/reports.md RP-7.2).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:139`, in `GitHubIssues.CommentAsync`, by `HttpClient.SendAsync`: adds the user's comment to an issue as the user's own account, from an action on an item of a GitHub list in axTask (docs/axkit/reports.md RP-7.2).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:162`, in `GitHubIssues.CommentAsync`, by `HttpClient.SendAsync`: adds the user's comment to an issue as the user's own account, from an action on an item of a GitHub list in axTask (docs/axkit/reports.md RP-7.2).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:151`, in `GitHubIssues.WriteBlocklistAsync`, by `HttpClient.SendAsync`: reads the blocklist file's version before writing it, as the user's own account, from Block this reporter or Block this version in axTask (docs/axkit/reports.md RP-7.2).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:174`, in `GitHubIssues.WriteBlocklistAsync`, by `HttpClient.SendAsync`: reads the blocklist file's version before writing it, as the user's own account, from Block this reporter or Block this version in axTask (docs/axkit/reports.md RP-7.2).
   Code: `using var found = await http.SendAsync(read, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:172`, in `GitHubIssues.WriteBlocklistAsync`, by `HttpClient.SendAsync`: writes the reports repository's blocklist as the user's own account, from Block this reporter or Block this version in axTask (docs/axkit/reports.md RP-6.4, RP-7.2).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:195`, in `GitHubIssues.WriteBlocklistAsync`, by `HttpClient.SendAsync`: writes the reports repository's blocklist as the user's own account, from Block this reporter or Block this version in axTask (docs/axkit/reports.md RP-6.4, RP-7.2).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/Updates/UpdateCheck.cs:130`, in `UpdateCheck.FetchLatestAsync`, by `HttpClient.SendAsync`: asks GitHub for the latest release of this repository, so that the window can say when a newer axKit exists; one GET with the version in the User-Agent header and nothing else about the user; off when the user turns the update check off, run by hand from Check for updates (AX-3, PRIVACY.md).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
@@ -145,9 +145,9 @@ Calls (11):
   Code: `var hr = contextMenu.InvokeCommand(ref info);`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
   Code: `using var process = Process.Start(start) ?? throw new InvalidOperationException("PowerShell could not be started.");`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:692`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:701`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
   Code: `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:708`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:717`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, arguments) { UseShellExecute = false })?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/TextEditorForm.Viewer.cs:173`, in `TextEditorForm.OpenInWindowsProgram`, by `Process.Start`: opens the viewed file with the program Windows has for it (axPreview's Open with Windows default, AP-7.3), through the Windows shell; never a file that would run (S-46).
   Code: `Process.Start(new ProcessStartInfo(path) { UseShellExecute = true })?.Dispose();`
@@ -232,13 +232,13 @@ Defined in .NET, System.Net.Http: the framework's HTTP client.
 
 Used in 8 places:
 
-- `src/AxKit.Core/Reports/GitHubIssues.cs:58`, in `GitHubIssues.CreateAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:70`, in `GitHubIssues.ReadBlocklistAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:89`, in `GitHubIssues.ListAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:129`, in `GitHubIssues.PatchAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:139`, in `GitHubIssues.CommentAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:151`, in `GitHubIssues.WriteBlocklistAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:172`, in `GitHubIssues.WriteBlocklistAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs:81`, in `GitHubIssues.CreateAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs:93`, in `GitHubIssues.ReadBlocklistAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs:112`, in `GitHubIssues.ListAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs:152`, in `GitHubIssues.PatchAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs:162`, in `GitHubIssues.CommentAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs:174`, in `GitHubIssues.WriteBlocklistAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs:195`, in `GitHubIssues.WriteBlocklistAsync`, for GitHub.
 - `src/AxKit.Core/Updates/UpdateCheck.cs:130`, in `UpdateCheck.FetchLatestAsync`, for GitHub.
 
 ### HttpClient.GetAsync, network
@@ -276,8 +276,8 @@ Used in 15 places:
 - `src/AxFile/FileForm.Programs.cs:76`, in `FileForm.RunProgram`, for User programs.
 - `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, for axKit.
-- `src/AxKit.Forms/AxKitForm.cs:692`, in `AxKitForm.OpenUrl`, for Windows.
-- `src/AxKit.Forms/AxKitForm.cs:708`, in `AxKitForm.OpenInExplorer`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs:701`, in `AxKitForm.OpenUrl`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs:717`, in `AxKitForm.OpenInExplorer`, for Windows.
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/AxKitForm.Mcp.cs:209`, in `AxKitForm.RunClaude`, for Claude Code.
 - `src/AxKit.Forms/AxKitMenu.cs:227`, in `AxKitMenu.StartWith`, for axKit.
