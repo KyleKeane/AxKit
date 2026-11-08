@@ -365,8 +365,22 @@ $utf8 = New-Object System.Text.UTF8Encoding($false)
 
 if ($Check) {
     $existing = if (Test-Path -LiteralPath $documentPath) { [IO.File]::ReadAllText($documentPath) } else { '' }
+    $pageLines = ($existing -replace "`r`n", "`n") -split "`n"
+    $sourceLines = ($text -replace "`r`n", "`n") -split "`n"
     if (($existing -replace "`r`n", "`n") -cne ($text -replace "`r`n", "`n")) {
         Write-Host "docs/axkit/outside-calls.md is not what the sources give. Run tools/outside-calls.ps1 and commit the page."
+        # The first line that differs, so that a run elsewhere (CI's PowerShell 7 against a Windows PowerShell page) says what it saw.
+        $count = [Math]::Max($pageLines.Count, $sourceLines.Count)
+        for ($i = 0; $i -lt $count; $i++) {
+            $page = if ($i -lt $pageLines.Count) { $pageLines[$i] } else { '(no line)' }
+            $source = if ($i -lt $sourceLines.Count) { $sourceLines[$i] } else { '(no line)' }
+            if ($page -cne $source) {
+                Write-Host "First difference at line $($i + 1):"
+                Write-Host "  page:    $page"
+                Write-Host "  sources: $source"
+                break
+            }
+        }
         exit 1
     }
     Write-Host "docs/axkit/outside-calls.md is current: $($hits.Count) outside calls, each with its explanation."
