@@ -33,6 +33,13 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
         "KeePassXC's licence",
         "https://keepassxc.org/");
 
+    /// <summary>The reports (docs/axkit/reports.md RP-6.6): GitHub, where a report becomes a public issue; recorded under the app name "axKit", since every window sends the same way.</summary>
+    public static readonly ConsentTarget GitHubReports = new(
+        "GitHub",
+        "A report goes to GitHub as a public issue of axKit's reports repository, posted with the maintainer's reporter token, never with an account of yours, and carrying a random id of this install and nothing that names you; what you write in it is public.",
+        "GitHub's terms and privacy statement",
+        "https://docs.github.com/site-policy");
+
     /// <summary>
     /// The target of a program Install it now installs (<see cref="ProgramInstall"/>'s name), so that agreeing there
     /// counts for the first connection. A shell installed for axTerminal passes its own target (Git for Windows is

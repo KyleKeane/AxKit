@@ -53,6 +53,13 @@ public sealed class AxKitMenu : ToolStripMenuItem
         about.DropDownItems.Add(new ToolStripMenuItem("axKit on Git&Hub", null, (_, _) => owner.OpenUrl(UpdateCheck.RepositoryPage)));
 
         DropDownItems.Add(commandPalette);
+        // Reports (docs/axkit/reports.md RP-2.2): the report itself, with its bundle key shown, and the list of them in axTask.
+        var report = new ToolStripMenuItem("&Send a report...", null, (_, _) => owner.ShowReport())
+        {
+            ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
+        };
+        DropDownItems.Add(report);
+        DropDownItems.Add(new ToolStripMenuItem("&Your reports", null, (_, _) => owner.OpenReports()));
         DropDownItems.Add(new ToolStripSeparator());
         DropDownItems.Add(newWindow);
         // The lists made as the menu opens; the command palette leaves them out (AX-10.2).

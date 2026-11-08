@@ -1,6 +1,8 @@
 # Reports: a bug, a feature request or feedback from any window
 
-Specified 2026-11-07 at the user's ask; not built. The user's words, in short: one simple keystroke in every window
+Specified 2026-11-07 at the user's ask; built the same day on the branch `reports`, section 12's steps 1 to 7
+(`CHANGELOG.md` 5.1.0); step 8, the reports repository, the reporter account and the token, is `reports-setup.md`,
+and the NVDA passes are owed before the branch merges (`nvda-test-record.md`). The user's words, in short: one simple keystroke in every window
 opens a report with the last few actions and the current focus already in it; the user either types their idea and
 presses Enter, or Tabs through every field to review and add what makes the report unambiguous to act on; three
 kinds, feedback, bug and feature request, recategorised later as needed; a feature for every user of axKit, not the
@@ -35,9 +37,9 @@ TK and IA material and moves into those specs when built.
   asked about, is three windows' own (axClip's pause, axMedia's pause, axTerminal's say-folder), and Ctrl+Shift+P is
   the palette; so F4, bundle-wide. `BundleKeys.Report = Keys.F4`, named "Report" in the keys table; `KeyTests` keeps the
   windows off it.
-- **RP-2.2 The axKit menu** (AX-9) gets, after the command palette item: "&Report a bug or an idea…" with F4 shown, and
-  "Your &reports", which opens `%APPDATA%\AxKit\reports` in axTask (a new axTask window, or the open one on that folder,
-  through `Dispatch`), then a separator. Both carry their words into every window's palette and F1 text through the
+- **RP-2.2 The axKit menu** (AX-9) gets, after the command palette item: "&Send a report…" with F4 shown (S: R is
+  Recently closed's letter, B is Open windows by type's), and "&Your reports", which opens `%APPDATA%\AxKit\reports` in
+  axTask (a new axTask window through `AxKitMenu.Start`, the folder and its `list.json` made first), then a separator. Both carry their words into every window's palette and F1 text through the
   window base; nothing is added to an app's own menus.
 - **RP-2.3 While a notice shows,** F4 does nothing, as every window key (AX-6.5). The report's recent actions record
   the notice that showed last, so a problem with a notice is reported after closing it.
@@ -50,8 +52,8 @@ one announcement per move:
 1. **"Type your report; Enter sends it, Shift+Enter starts a new line"**: a multi-line field, focused when the notice
    opens, empty. Enter sends (the message field's rule, axClaude D11); Shift+Enter a line break. Enter on an empty field:
    the edge earcon and "Type a few words first".
-2. **"Kind"**: a list of three, Feedback (selected), Bug, Feature request; type-to-find and the number keys of the list
-   reach them (AX-8.6). Changing it says the kind.
+2. **"Kind"**: a list of three, Feedback (selected), Bug, Feature request; type-to-find reaches them (AX-8.6). NVDA
+   reads the selected kind as the list moves, and the app adds nothing (AX-7).
 3. **"App and version"**: read-only text, "axClaude 5.0.1, Windows 11 build 26200, NVDA 2025.3" (NVDA's version from
    its running process, "NVDA not running" otherwise; the window's title after it, redacted).
 4. **"What you were doing: the last actions"**: a multi-line field, editable, filled with the window's last twenty
@@ -80,7 +82,9 @@ one announcement per move:
 - **RP-4.2 Never the user's text.** The content of an edit field (the message to Claude, a document, a password), a
   conversation line of axClaude, a clipboard entry of axClip or a field value of axPass is never in a report. The
   focus line names the control and its place only. axPass's and axClip's windows (the MCP's never-read apps, `McpTools.NeverRead`,
-  docs/axkit/mcp.md section 5) put only their command names in the ring, not their announcements.
+  docs/axkit/mcp.md section 5) and the console windows, axClaude and axTerminal, whose spoken replies and output are
+  the user's conversation (the first real report, 2026-11-08, carried a spoken reply of Claude's), put only their
+  commands and notices in the ring, not their announcements (`AxKitForm.RecordsAnnouncements`).
 - **RP-4.3 Redaction.** Every prefilled field goes through `Redaction` (AxKit.Core, S-20) before it is shown: the
   account's paths read `<user>`, an e-mail address `<email>`. The user reads what will be sent.
 - **RP-4.4 Public.** An issue is public on GitHub, posted by axKit's reporter account with the install's reporter id
@@ -118,13 +122,18 @@ levers are built now.
   Where the focus was; "### Last actions" as a code block; the log lines inside a `<details>` block titled "Log lines";
   last, one line the workflow and the maintainer filter on: "Sent from axKit 5.1.0 with F4; reporter a1b2c3d4-…". The
   labels exist in the reports repository; recategorising is changing the label (section 7).
-- **RP-6.2 The reporter token.** A fine-grained personal access token of a machine user of the maintainer's
-  (`axkit-reporter`, the one machine account GitHub allows a person), with access to the reports repository alone and
-  the permission Issues: read and write, nothing else: a leaked token can file, edit, label and close issues there, and
-  nothing anywhere else (RP-D8). It is never in the source: `release.yml` reads it from the repository secret
-  `AXKIT_REPORTER_TOKEN` and writes it into the build (`Reports.Token`, a constant filled at publish time, stored split
-  and recombined at run time so that it is not a plain string in the file; this slows a reader down and stops no one,
-  and the page says so). A build without the secret (a developer's build, a fork's) has no token: its sender says
+- **RP-6.2 The reporter token.** A fine-grained personal access token of the maintainer's own GitHub account, with
+  access to the reports repository alone and the permission Issues: read and write, nothing else: a leaked token can
+  file, edit, label and close issues there, and nothing anywhere else (RP-D8). The issues it posts carry the
+  maintainer's name as their author and the reporter line as their truth. (A reporter account of its own was the first
+  thought; GitHub lets a fine-grained token reach only its own account's repositories, so such an account would need a
+  classic token, which reaches everything it can see, or an organization; `reports-setup.md` section 1 says so, and an
+  organization can come later without a change to the code.) It is never in the source: `release.yml`'s sign job, the "release" environment, which runs no test package, reads it
+  from that environment's secret `AXKIT_REPORTER_TOKEN` and has `publish.ps1` write it, mixed with a fixed key and as
+  base64, into `src/AxKit.Core/Reports/reporter.token` (`tools/reporter-token.ps1`), a file git ignores, which the
+  build embeds when it exists and which the script removes again; `ReporterToken` reads it back at run time. The mixing
+  keeps the token from a glance at the program file and stops nobody who looks for it, and this page says so. The build
+  job, which runs the tests and their packages, never sees the token (S-30, `ReleaseWorkflowTests`). A build without the secret (a developer's build, a fork's) has no token: its sender says
   "This build cannot send reports" and offers RP-6.5's two buttons. GitHub's terms ask that credentials be kept
   confidential; the machine user with one repository and one permission is the closest a token in a program comes to
   that, and a revocation by GitHub costs one release (RP-6.4). The setup page `docs/axkit/reports-setup.md` records
@@ -146,7 +155,9 @@ levers are built now.
 - **RP-6.5 When sending cannot happen.** The report is saved whatever happens (RP-3.2). The notice that says why has
   two buttons: **Copy report** (the whole body to the clipboard, to paste anywhere) and **Open GitHub's form** (the
   browser on the reports repository's new-issue form, prefilled by its query string, which needs the user's own GitHub
-  account). No e-mail route: an address cannot live in the repository (`PrivacyTests`, bundle rule 6), and the user
+  account; the whole address is kept within 2000 characters, the user's words first and a note where the rest is, since
+  the Windows shell handed a longer one to the browser cut off and the page did not load, found by the user
+  2026-11-07). No e-mail route: an address cannot live in the repository (`PrivacyTests`, bundle rule 6), and the user
   chose the token over it.
 - **RP-6.6 Consent** (AX-11.4, AX-11.5): before the first send, the consent notice for GitHub, a new
   `ConsentTarget.GitHubReports`: "Reports go to GitHub as public issues of axKit's reports repository, posted by axKit's
@@ -216,8 +227,9 @@ levers are built now.
 - **RP-8.3 Shown everywhere a command is.** The Item menu lists the assigned actions with their keys, so the palette and
   F1 list them (AX-10.2); the names are the user's.
 - **RP-8.4 All tasks moves to Ctrl+0** (TK-7), so the nine digits are free for actions in every list (RP-D7).
-- **RP-8.5 Defaults.** The Reports list's template (RP-5.1) and a GitHub list's `list.json` come with the keys above;
-  an ordinary list has none until the user sets them.
+- **RP-8.5 Defaults.** A GitHub list's `list.json` comes with the keys above (1 to 3 the kinds, 4 Close, 5 Open on
+  GitHub, 6 Open in axClaude); the Reports list's (RP-5.1) with 1 to 3 the kinds and 4 Open on GitHub, since its items
+  are the user's own reports; an ordinary list has none until the user sets them.
 
 ## 9. Privacy and safety
 

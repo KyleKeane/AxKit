@@ -43,13 +43,27 @@ if ($ZipOnly) {
     # everything in the folder goes into the zip.
     if (Test-Path $out) { Remove-Item $out -Recurse -Force }
 
+    # The reporter account's token for the reports (docs/axkit/reports.md RP-6.2), from the release secret when it is
+    # set: written into the file the build embeds, and removed again whatever the build did, so that it never stays.
+    $tokenTool = Join-Path $root 'tools\reporter-token.ps1'
+    if (-not [string]::IsNullOrWhiteSpace($env:AXKIT_REPORTER_TOKEN)) {
+        & $tokenTool -Token $env:AXKIT_REPORTER_TOKEN
+    } else {
+        Write-Host "No AXKIT_REPORTER_TOKEN in the environment: this build cannot send reports (docs/axkit/reports.md RP-6.2)."
+    }
+
     Write-Host "Publishing axKit (Release, win-x64, self-contained, single file)..."
-    dotnet publish "$root\src\AxKit\AxKit.csproj" -c Release -r win-x64 --self-contained `
-        -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=none `
-        -o $out -nologo -v q
-    if ($LASTEXITCODE -ne 0) {
+    try {
+        dotnet publish "$root\src\AxKit\AxKit.csproj" -c Release -r win-x64 --self-contained `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=none `
+            -o $out -nologo -v q
+        $published = $LASTEXITCODE
+    } finally {
+        & $tokenTool -Remove
+    }
+    if ($published -ne 0) {
         Write-Host "Publish failed."
-        exit $LASTEXITCODE
+        exit $published
     }
 
     # The apps' icons for their Start menu and File Explorer entries, next to the executable (a project item would be

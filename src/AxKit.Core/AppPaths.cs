@@ -33,6 +33,18 @@ public static class AppPaths
     public static string LogsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "logs");
 
+    /// <summary>The user's reports as an axTask list (docs/axkit/reports.md RP-5.1): one item per report, sent or not.</summary>
+    public static string ReportsFolder { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "reports");
+
+    /// <summary>The reports' own settings (RP-6.3): the install's reporter id, and the blocklist last read.</summary>
+    public static string ReportsFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "reports.json");
+
+    /// <summary>The user's own GitHub token for axTask's GitHub lists (docs/axkit/reports.md RP-7.2), kept with DPAPI as the MCP key is; never roamed.</summary>
+    public static string GitHubTokenFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "github.token");
+
     public static string UpdatesFolder { get; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AxKit", "updates");
 

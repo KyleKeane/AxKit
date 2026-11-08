@@ -38,6 +38,10 @@ another project on its second use, the bullet says so.
   all the window keys in axClaude and axTerminal, whose heading is "Anywhere") and returns the first line naming the
   text's keys and the section with F1, the palette, the app's lines, the text size, the menu with Alt+F4 (`altF4` when
   it does more than close the app) and `AxKitMenuLine`; each `HelpText.Shortcuts` adds its own sections after it.
+- `RecentActions` with `RecentActionKind` (docs/axkit/reports.md RP-4.1, 2026-11-07): the last twenty actions of one
+  window for a report, the commands run, what it said and the notices it showed, each with its time; `Lines(now)`
+  gives the report's lines oldest first ("12 s ago: Find, Ctrl+F", "12 s ago, said: 3 matches") and `Age` the ages as
+  people say them. The window base fills one (`AxKitForm.Recent`). Tested in `RecentActionsTests`.
 
 ## Paths, windows and lists
 
@@ -131,6 +135,26 @@ another project on its second use, the bullet says so.
 - `ItemDocument`, `ItemField`, `FieldTypes` and `Parsed` (docs/axkit/item-apps.md IA-4; from AxTask.Core, axPass,
   2026-10-24): the item apps' format, an item as a list of fields of a title, a type and a value kept whole as JSON,
   the types read out and typed (dates as tomorrow or +3).
+- `ItemFiles` (IA-4.5; from AxTask.Core's `ItemFolder` on its second use, the reports list, 2026-11-07): `FileStem`,
+  the file name a Title gives, and `FreePath`, a free name beside the taken ones ("name - 2.json").
+- `Reports/` (docs/axkit/reports.md, 2026-11-07): `Report` with `ReportKind`, `ReportKinds` (the names, the GitHub
+  labels, `Parse`) and `ReportStatus` (Draft, Not sent yet with its reason, Sent, `AwaitsSending`); `ReportFiles`, the
+  Reports list as an axTask folder (the template, `ListText` with the action keys, `ToItem`, `FromItem`, `Save`,
+  `Write`, `WithStatus`, `WithSent`, `Unsent`); `ReportBody`, the issue's Markdown with the reporter line last and
+  `ParseReporterLine`. Tested in `ReportsTests`. `GitHubIssues` (RP-6, RP-7), GitHub's REST API as the reports use
+  it, the client handed in: `CreateAsync` (an issue as the reporter account), `ReadBlocklistAsync` (404 is an empty
+  list), `ListAsync` (paged, pull requests left out, a token optional), `PatchAsync`, `CommentAsync`,
+  `WriteBlocklistAsync` (the contents API, the file's sha read first), `NewIssueFormUrl` (the browser's form,
+  prefilled), `ReasonOf` (an exception as a few words for the Status field); `GitHubException` with its `Reason`;
+  `Blocklist` (`Parse`, `Blocks`, `ToJson`, `WithReporter`, `WithVersion`); `IssueCreated`, `IssueInfo`. Tested in
+  `GitHubIssuesTests` against canned answers. `ReportSender` (RP-6.3 to RP-6.7): `ReporterId` (made once, kept in
+  `AppPaths.ReportsFile` as `ReportSettings`), `SendUnsentAsync` (no token: every item says so; the blocklist read
+  before a send and kept a day; the half-minute gap; each item posted and marked Sent with its issue, or marked with
+  the reason; the first failure stops the run), `SendOutcome`; `ReporterToken` (RP-6.2): the token the release build
+  embeds from `Reports/reporter.token`, `Encode` and `Decode` (the mixing `tools/reporter-token.ps1` repeats), null in
+  a build without it. Tested in `ReportSenderTests`.
+- `AxKitHttp` (AX-11.11, 2026-11-07): the one HTTP client of axKit's own code, the updater's and the report sender's,
+  with the User-Agent `AxKit/<version>`; from `Updater.CreateClient` on its second use.
 - `MediaFiles` (docs/axmedia/SPEC.md AM-4; from AxFile.Core, axMedia, 2026-10-22): the rules of sound and video files
   that need no engine, the extension sets with `IsMedia`, the time format and the typed time, the speed steps.
 

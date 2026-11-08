@@ -13,10 +13,15 @@ public static class AxTaskKeys
     public const Keys OpenInAxJson = Keys.Control | Keys.J;
     public const Keys ShowInAxFile = Keys.Control | Keys.E;
     public const Keys HideDone = Keys.Control | Keys.Shift | Keys.D;
-    public const Keys AllTasks = Keys.Control | Keys.D1;
+
+    /// <summary>All tasks; Ctrl+0 since the digits 1 to 9 became the list's action keys (docs/axkit/reports.md RP-8.4, 2026-11-07).</summary>
+    public const Keys AllTasks = Keys.Control | Keys.D0;
 
     /// <summary>On a list among the sections: its section chosen (TK-3a.3).</summary>
     public const Keys MoveToSection = Keys.Control | Keys.M;
+
+    /// <summary>Ctrl+1 to Ctrl+9: the action the list's <c>list.json</c> assigns to the digit (RP-8.1).</summary>
+    public static Keys ActionKey(int digit) => Keys.Control | (Keys)((int)Keys.D0 + digit);
 
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
@@ -27,5 +32,6 @@ public static class AxTaskKeys
         ("Hide or show done tasks", HideDone),
         ("All tasks", AllTasks),
         ("Move the list to a section", MoveToSection),
+        .. Enumerable.Range(1, 9).Select(digit => ($"Action key {digit}", ActionKey(digit))),
     ];
 }

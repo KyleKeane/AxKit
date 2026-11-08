@@ -9,9 +9,10 @@ purpose.
 
 ## What axKit sends over the network on its own
 
-axKit's own code makes network requests in one place, the updater (`src/AxKit.Core/Updates`), over HTTPS, to GitHub
-only. No other code in axKit makes a network request or listens for one; the other addresses in the code are the Help
-menus' links and the installers' addresses below. Two requests, the first a setting:
+axKit's own code makes network requests in two places, the updater (`src/AxKit.Core/Updates`) and the report sender
+(`src/AxKit.Core/Reports`), over HTTPS, to GitHub only. No other code in axKit makes a network request or listens for
+one; the other addresses in the code are the Help menus' links and the installers' addresses below. The updater's two
+requests, the first a setting; the report sender's only when you send a report:
 
 - **The update check.** When an axKit window starts, it asks GitHub for the latest release of this repository: one GET
   of `https://api.github.com/repos/KyleKeane/AxKit/releases/latest` with the headers `User-Agent: AxKit/<version>` and
@@ -24,6 +25,22 @@ menus' links and the installers' addresses below. Two requests, the first a sett
   release whose files are elsewhere is reported as having no Windows zip). It installs the zip only if its SHA-256
   digest matches GitHub's digest of the file and the signature made with axKit's release key (ECDSA P-256), and only for
   your Windows account, without administrator rights.
+- **A report you send** (F4 in any window, or axKit menu, Send a report; `docs/axkit/reports.md`). Your report is
+  saved on your computer first, as an item of the axTask list under axKit menu, Your reports. Then it is posted as a
+  public issue of the reports repository, `https://github.com/KyleKeane/AxKit-reports`, with one `POST` to
+  `https://api.github.com/repos/KyleKeane/AxKit-reports/issues`, after one `GET` of that repository's
+  `blocklist.json` from `raw.githubusercontent.com`, which says whether reports from this install or version are
+  blocked. The issue holds exactly what the report notice showed you and let you edit: your words, the kind, the
+  app and version with Windows' build and NVDA's version, the window's title, the window's last twenty actions (its commands, the notices it showed and,
+  in the apps whose announcements never carry your content, what it announced; axClaude, axTerminal, axPass and axClip
+  record no announcements), where the focus was (a control's name and place, never its text), the log's last lines, and a title;
+  paths of your account read `<user>` before you see them. It is posted with the maintainer's reporter token, never with an account of yours, and
+  carries a random id of this install (`%APPDATA%\AxKit\reports.json`; delete the file for a new one), which names
+  the install and nothing else; it carries no name, e-mail address or account of yours unless you write one into the
+  report. The first report asks your agreement once. A report that cannot be sent (no network, a blocked install, a
+  build without the sending token) stays in Your reports as "Not sent yet" with the reason, and goes with the next
+  one; the notice then also offers to copy the report or to open GitHub's own form in your browser. GitHub's privacy
+  statement applies to what is posted: <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>.
 
 ## What axKit does on the network only when you ask
 

@@ -98,15 +98,15 @@ public sealed class FolderTests : IDisposable
     [InlineData("a/b: c?", "a b c")]
     [InlineData("  ", "Untitled")]
     [InlineData("Ends with.", "Ends with")]
-    public void FileNamesComeFromTheTitle(string title, string stem) => Assert.Equal(stem, ItemFolder.FileStem(title));
+    public void FileNamesComeFromTheTitle(string title, string stem) => Assert.Equal(stem, ItemFiles.FileStem(title));
 
     [Fact]
     public void ATakenNameGetsANumber()
     {
         var home = Path.Combine(_top.Path, "Home");
-        Assert.Equal(Path.Combine(home, "Fix the tap - 2.json"), ItemFolder.FreePath(home, "Fix the tap", ".json"));
+        Assert.Equal(Path.Combine(home, "Fix the tap - 2.json"), ItemFiles.FreePath(home, "Fix the tap", ".json"));
         var own = Path.Combine(home, "Fix the tap.json");
-        Assert.Equal(own, ItemFolder.FreePath(home, "Fix the tap", ".json", own));
+        Assert.Equal(own, ItemFiles.FreePath(home, "Fix the tap", ".json", own));
         Assert.Equal("There is a list called home here already", ItemFolder.RefusedListName(_top.Path, "home"));
         Assert.NotNull(ItemFolder.RefusedListName(_top.Path, "a/b"));
         Assert.Null(ItemFolder.RefusedListName(_top.Path, "Garden"));

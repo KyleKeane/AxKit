@@ -18,6 +18,7 @@ public sealed class BundleHelpTests
                 "## In every window of axKit",
                 "  F1: this list",
                 "  Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it",
+                "  F4: report a bug, an idea or feedback to axKit's maintainer: type your words and press Enter; Tab reviews the kind and what the window adds before you send",
                 "  Tab: between the list and the field",
                 "  Ctrl+S: save the thing",
                 "  Ctrl+Plus, Ctrl+Minus: bigger or smaller text",

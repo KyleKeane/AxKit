@@ -115,9 +115,46 @@ On top of IA-3:
 | Ctrl+J | anywhere | open the item, the list's `list.json` or the smart list in axJSON |
 | Ctrl+E | anywhere | show the file or folder in axFile |
 | Ctrl+Shift+D | navigator | hide or show done tasks in this list |
-| Ctrl+1 | anywhere | to All tasks |
+| Ctrl+0 | anywhere | to All tasks (Ctrl+1 until 2026-11-07, when the digits became the action keys, TK-7a.1) |
+| Ctrl+1 to Ctrl+9 | anywhere, in a list | the list's action key on the item selected (TK-7a.1) |
 | Ctrl+Up, Ctrl+Down | navigator | the section before or after (TK-3a.2) |
 | Ctrl+M | navigator, on a list | move the list to a section (TK-3a.3) |
+
+## 7a. Action keys and GitHub lists (2026-11-07)
+
+The design is `docs/axkit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules axTask keeps:
+
+- **TK-7a.1 Action keys.** Ctrl+1 to Ctrl+9 run the action the list's `list.json` assigns to the digit under `"keys"`
+  (RP-8.1), on the item selected in the navigator: `set` writes fields to values as one undo step (a field the item
+  lacks is added, with the value's type), `move` moves the item to a list by a path relative to this one, the links
+  following (IA-D3), `open` opens a field's web address in the browser, an app by its verb on the item's file
+  (`axjson`, `axfile`), or `axclaude` on an issue (TK-7a.3). A digit without an action: the edge earcon and "No action
+  on Ctrl+3 in this list; List menu, Action keys sets one"; outside a list, "Action keys act in a list: open one
+  first". List → Action keys… lists the nine keys ("Ctrl+1. Make it a bug", "Ctrl+3. not set"); Enter on one asks the
+  name (empty removes the key), what it does (set, move, open) and the value, and writes `list.json` as one undo step
+  (RP-8.2). The Item menu's Action keys submenu shows the nine with the names the list gives them, so the palette and
+  F1 list them (RP-8.3). All tasks moved to Ctrl+0 for them (RP-8.4).
+- **TK-7a.2 A GitHub list** is a list whose `list.json` has `"github": {"repository": "owner/name", "state": "open"}`
+  (`GitHubList.Of`), made by List → New GitHub list… in the top folder as "<name> issues" (RP-7.1). When it opens,
+  once per visit, and on F5, the repository's issues in that state are read from GitHub without an account
+  (`GitHubIssues.ListAsync`, off the UI thread), and the folder is brought up to them (`GitHubList.Refresh`): one
+  item per issue, named "<number> <title>.json", with Number, Kind (the label among feedback, bug and feature, else
+  "unlabelled"), State, Opened, Reporter (the reporter id of a report sent from axKit, or the GitHub login), Version,
+  Updated, Issue (the web address), Body and Notes, which is the user's and stays across refreshes; an item whose
+  issue GitHub no longer returns goes to the Archive. The refresh is a mirror, not a step: nothing to undo. It says
+  "Issues, 14 items, 2 new"; a failure says "GitHub not read: no network; the list shows what was read last".
+- **TK-7a.3 The GitHub actions** (Item → GitHub, and the action keys a new GitHub list comes with: Ctrl+1 to Ctrl+3
+  the kinds, Ctrl+4 Close, Ctrl+5 Open on GitHub, Ctrl+6 Open in axClaude): Make it a bug, a feature request or
+  feedback (the issue's labels), Close and Reopen (its state), Comment… (a notice with a field), Block this reporter
+  and Block this version (the reports repository's `blocklist.json`, RP-6.4), Open on GitHub (the browser), Open in
+  axClaude (axClaude started on the folder `"folder"` under `"github"` names, with `--message` putting "Issue 12:
+  <title>" and the body into its message field, unsent; without the folder, it says to set it). A set of Kind or
+  State in a GitHub list goes to GitHub first, as the user's own account, and the file changes only when GitHub took
+  it; a refusal is said ("Not changed: GitHub refused (403)…") and nothing changes locally (RP-7.2).
+- **TK-7a.4 The user's token.** List → GitHub account… takes a fine-grained token of the user's own GitHub account in
+  a hidden field, kept protected for the Windows account in `%LOCALAPPDATA%\AxKit\github.token` (`UserSecret`); Forget
+  GitHub account removes it. Reading a public repository's issues needs none; every action does, and says "Set your
+  GitHub token in the List menu first" without one.
 
 ## 8. Decisions
 

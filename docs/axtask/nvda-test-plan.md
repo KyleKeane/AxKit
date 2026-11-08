@@ -59,3 +59,13 @@ that reads differently is a defect. The specifications are `docs/axkit/item-apps
 2. Shift+F10 in each pane: its menu (List, Item or Field) opens and NVDA reads its first item.
 3. F1: the keys; Help, User guide: this guide. Alt+A, About, Version names axTask.
 4. Close and start again without a folder: the list you had.
+
+## 5. Action keys and GitHub lists (TK-7a, docs/axkit/reports.md RP-7, RP-8)
+
+1. In a list, Ctrl+3: the edge sound and "No action on Ctrl+3 in this list; List menu, Action keys sets one". At the top level, Ctrl+1: the edge sound and "Action keys act in a list: open one first". Ctrl+0: "All tasks" (Ctrl+1 until 5.1.0).
+2. List menu, Action keys: the list "Keys" with nine lines, "Ctrl+1. not set" to "Ctrl+9. not set", the full stop a pause after the digit. Enter on the first: "Ctrl+1" and a Name field; type "Done", Enter; the list "What" with "Set fields to values" first; Enter; the Fields field; type "Done: done", Enter: "Ctrl+1: Done, sets Done: done". Ctrl+Z: "Undone: Ctrl+1: Done, sets Done: done".
+3. Set Ctrl+1 again as in step 2, then on a task not done, Ctrl+1: "Done: Done: done" and the row reads done. Ctrl+Z takes it back. Item menu, Action keys: the first item reads "Done Ctrl+1." and the others "Not set Ctrl+2." to "Not set Ctrl+9.".
+4. List menu, Action keys, Enter on Ctrl+2, name "Later", "Move the item to a list", the list's name of another list: Ctrl+2 on an item: "Later: <item> moved to <list>", the item gone from this list and in the other; Ctrl+Z brings it back.
+5. List menu, New GitHub list: "Repository:"; type "KyleKeane" and Enter: "Type the repository as owner/name"; type "KyleKeane/AxKit-reports", Enter: "Made AxKit-reports issues", the list selected. Right: the list opens, "AxKit-reports issues, empty: Ctrl+N adds an item" at once, then, when GitHub has answered, "AxKit-reports issues, N items, N new" and the items by "<title>"; with the network off instead: "GitHub not read: no network; the list shows what was read last".
+6. In the GitHub list, Tab: the fields Number, Kind, State, Opened, Reporter, Version, Updated, Issue, Body, Notes. Item menu, GitHub, Make it a bug without a token: "Set your GitHub token in the List menu first: GitHub account". List menu, GitHub account: the notice with a protected field "Paste your GitHub token"; Escape. Ctrl+5 (Open on GitHub, a default key of the list): the issue opens in the browser.
+7. Item menu, GitHub, Open in axClaude without a folder in list.json: "Set the code repository's folder first". With `"folder"` set in list.json (Ctrl+J, axJSON): a new axClaude window on that folder, its message field holding "Issue N: <title>" and the body, not sent.

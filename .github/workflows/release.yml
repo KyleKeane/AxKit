@@ -1,7 +1,8 @@
 # Builds the zip that publish.ps1 builds locally and attaches it to a draft GitHub release, with install.cmd on its own
-# so it can be downloaded alone and install the latest release. Three jobs: build tests and publishes with a token that
-# can only read; sign has AxKit.exe signed for Windows through Microsoft's Azure Artifact Signing, by an identity that
-# can sign and do nothing else (docs/axkit/code-signing.md), and then makes the zip; draft uploads and attests. The
+# so it can be downloaded alone and install the latest release. Three jobs: build tests with a token that can only
+# read; sign publishes the folder with the reporter token of the reports (docs/axkit/reports.md RP-6.2), has AxKit.exe
+# signed for Windows through Microsoft's Azure Artifact Signing, by an identity that can sign and do nothing else
+# (docs/axkit/code-signing.md), and then makes the zip; draft uploads and attests. The
 # release stays a draft: release.ps1, on the maintainer's machine, signs the zip with the release key, which never
 # reaches GitHub, uploads the signature and publishes the release (docs/axkit/SPEC.md AX-3.4;
 # docs/axkit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps install only a signed zip. Started by pushing a
@@ -22,8 +23,8 @@ on:
 permissions: {}
 
 jobs:
-  # Tests and builds with a token that can only read: the test code and its packages never hold one that writes, and
-  # never see the signing identity's ids (S-30).
+  # Tests with a token that can only read: the test code and its packages never hold one that writes, and never see
+  # the signing identity's ids or the reporter token (S-30); the sign job, the "release" environment, publishes.
   build:
     runs-on: windows-2025
     permissions:
@@ -63,11 +64,6 @@ jobs:
       - name: Test
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true
 
-      # The folder only; the sign job zips it once AxKit.exe is signed.
-      - name: Publish
-        shell: pwsh
-        run: .\publish.ps1 -NoInstall -NoZip
-
       - name: Release notes from CHANGELOG.md
         shell: pwsh
         run: |
@@ -84,13 +80,12 @@ jobs:
         with:
           name: build
           path: |
-            publish/win-x64/
             install.cmd
             notes.md
             tag.txt
           if-no-files-found: error
 
-  # Signs AxKit.exe for Windows and makes the zip. The job signs in to Azure with the run's own OpenID Connect token
+  # Publishes the folder, signs AxKit.exe for Windows and makes the zip. The job signs in to Azure with the run's own OpenID Connect token
   # (azure/login, no stored secret): GitHub issues that token only to runs of the "release" environment (main and v*
   # tags), and Azure exchanges it only for the identity whose federated credential names this repository and that
   # environment. The identity holds one role, Artifact Signing Certificate Profile Signer, on the signing account alone,
@@ -108,15 +103,28 @@ jobs:
       # The OpenID Connect token azure/login exchanges for the signing identity.
       id-token: write
     steps:
-      # For publish.ps1 -ZipOnly; the folder comes from the build job.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
           persist-credentials: false
 
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: global.json
+
+      # The notes, the tag and install.cmd from the build job, whose tests passed.
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
+
+      # The folder only, zipped below once AxKit.exe is signed. The reporter token of the reports (docs/axkit/reports.md
+      # RP-6.2) goes into the build from the "release" environment's secret, so that only this job, which runs no test
+      # package, ever holds it; without the secret the build cannot send reports and its notice says so.
+      - name: Publish
+        shell: pwsh
+        env:
+          AXKIT_REPORTER_TOKEN: ${{ secrets.AXKIT_REPORTER_TOKEN }}
+        run: .\publish.ps1 -NoInstall -NoZip
 
       - name: Sign in to Azure as the signing identity
         if: vars.AZURE_CERTIFICATE_PROFILE != ''

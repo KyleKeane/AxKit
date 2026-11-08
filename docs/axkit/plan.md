@@ -46,8 +46,10 @@ the restart by the app itself (2.3.0).
   first and sent to GitHub as an issue of a reports repository over its REST API through axKit's own reporter account,
   nothing to sign in to, a reporter id per install and a blocklist against abuse, unsent ones going with the next;
   "Your reports" in the axKit menu; in axTask, GitHub lists of the repository's issues and Ctrl+1 to Ctrl+9 as the
-  user's own actions on a list's items (set fields, move, open), All tasks moving to Ctrl+0. The maintainer's
-  `docs/feature_requests` folder becomes issues when it is built. Its open questions are the page's section 11.
+  user's own actions on a list's items (set fields, move, open), All tasks moving to Ctrl+0. Built the same day on the
+  branch `reports` (CHANGELOG 5.1.0); the reports repository `KyleKeane/AxKit-reports` exists with the maintainer's
+  former `docs/feature_requests` items as its first issues; the reporter account, its token and the release secret
+  (`docs/axkit/reports-setup.md`) and the NVDA passes are what is left before the merge.
 - axClaude's open items are in `docs/axclaude/SPEC.md` §12 To do, the one list for them.
 - The text editor window is shared since axJSON (2026-10-18: `AxKit.Forms/TextEditorForm` with `EditorApp`,
   `EditorKeys`, `EditorHost`; axDown and axJSON are records over it). The window base `AxKit.Forms/AxKitForm` (AX-6.5)

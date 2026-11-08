@@ -15,7 +15,7 @@ namespace AxKit.Core.Updates;
 /// </summary>
 public static class Updater
 {
-    private static readonly HttpClient Http = CreateClient();
+    private static readonly HttpClient Http = AxKitHttp.Client;
 
     public static string Folder { get; } = AppPaths.UpdatesFolder;
 
@@ -254,13 +254,4 @@ public static class Updater
 
     private static bool IsComplete(string folder) =>
         File.Exists(Path.Combine(folder, "install.ps1")) && Directory.Exists(folder) && Directory.GetFiles(folder, "*.exe").Length > 0;
-
-    private static HttpClient CreateClient()
-    {
-        // Outside call, network, GitHub: the one HTTP client of axKit, for the update check and the two downloads: ten
-        // minutes for a large zip, the User-Agent "AxKit/<version>"; no other code makes a network request (AX-11.11).
-        var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
-        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("AxKit", BundleInfo.Version));
-        return client;
-    }
 }

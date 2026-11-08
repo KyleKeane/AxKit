@@ -18,8 +18,9 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `ItemFolder` and `ItemFile`, `FolderLevel`, `TopLevel` (IA-4, IA-D4, TK-3a, TK-D4): a list's items (`Read`; a
   folder inside a list, hidden and dot entries left out, what is not an item counted), the top folder's lists and the
   Archive's (`ReadTop`), a list's section (`SectionOf`, from the `SectionField` of its details), `ReadItem` (with the text read, for
-  `CheckFresh`), `ReadList`, `NameOf`, `FileStem` and `FreePath` (IA-4.5), `RefusedListName`, `AllItems` (the Archive
-  left out), `ArchiveFolder`, `IsArchive`, `ListName`, `LinkTo` and `Resolve` (IA-D3).
+  `CheckFresh`), `ReadList`, `NameOf`, `RefusedListName`, `AllItems` (the Archive
+  left out), `ArchiveFolder`, `IsArchive`, `ListName`, `LinkTo` and `Resolve` (IA-D3). `FileStem` and `FreePath`
+  (IA-4.5) are `AxKit.Core/ItemFiles` since their second use, the reports list (2026-11-07).
 - `Changes`, `Step` and `FileChange` (IA-5.4): a change as parts, writes and moves, `Apply`, `CheckUndo` (every path
   as the step left it), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,
@@ -29,6 +30,15 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `SmartList` (TK-5): All tasks and the `.filter.json` files: `InFolder`, `Read` (a file not understood is a smart
   list that shows nothing, with `NotUnderstood`), `Items`, `Matches`, `NewFileText`.
 - `TaskSettings`: the top folder, the list open last, whether done tasks are hidden.
+- `ActionKeys` and `ListAction` (docs/axkit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
+  `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Make it a bug"), `ApplySet`
+  (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines); an
+  action is `set`, `move` or `open`, with `Described`. Tested in `ActionKeysTests`.
+- `GitHubList` and `GitHubListSettings` (RP-7.1, TK-7a.2): a list whose `list.json` has `"github"`: `Of`, `IsRepository`,
+  `NewList` (the template, the settings, the default action keys), `Template`, `ToItem` (an issue as an item, the
+  reporter id and the version from the body's last line), `NumberOf`, `FileStem` ("12 title"), `Refresh` (the
+  `FileChange`s that bring the folder up to the issues, Notes kept, the gone archived), `KindName`, `LabelOf`,
+  `SpokenRefresh`. The issues come from `AxKit.Core.Reports.GitHubIssues`. Tested in `GitHubListTests`.
 
 ## Gotchas
 

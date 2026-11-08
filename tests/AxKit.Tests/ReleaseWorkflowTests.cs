@@ -33,8 +33,11 @@ public sealed class ReleaseWorkflowTests
         var check = Index("Get-AuthenticodeSignature publish\\win-x64\\AxKit.exe");
         var zip = Index(".\\publish.ps1 -ZipOnly");
 
-        Assert.True(build < publish && publish < sign, "the build job publishes the folder without zipping it");
+        // The sign job, the "release" environment, publishes: the reporter token of the reports goes into that build
+        // (docs/axkit/reports.md RP-6.2), and the build job, which runs the tests and their packages, never holds it.
+        Assert.True(build < sign && sign < publish && publish < login, "the build job tests; the sign job publishes the folder before signing it");
         Assert.True(sign < login && login < signing && signing < check && check < zip && zip < draft, "the sign job signs in, signs, checks the signature, then zips");
+        Assert.Contains("secrets.AXKIT_REPORTER_TOKEN", text[sign..publish], StringComparison.Ordinal);
         Assert.Contains("-ne 'Valid'", text[check..zip], StringComparison.Ordinal);
 
         // The switch: the certificate profile's name turns both signing steps on, and a release made without it says

@@ -30,6 +30,7 @@ public abstract partial class AxKitForm
     protected internal void ShowNotice(Notice notice)
     {
         _paletteSpeak.Stop();
+        Recent.Add(RecentActionKind.Notice, notice.Title, DateTime.UtcNow);
         if (notice.Unprompted && NoticeChime)
         {
             Sounds.Notice();
@@ -201,6 +202,13 @@ public abstract partial class AxKitForm
     /// <summary>Speaks without moving the focus (AX-7.3): on the notice while one shows, since the window's controls are hidden then, and on <see cref="AnnounceSource"/> otherwise; before the first activation, kept for it; close on the heels of the one before, joined to it.</summary>
     protected bool Announce(string text, bool interrupt)
     {
+        // For a report (docs/axkit/reports.md RP-4.2): a window whose announcements may carry the user's content records
+        // its commands and notices alone (RecordsAnnouncements).
+        if (RecordsAnnouncements)
+        {
+            Recent.Add(RecentActionKind.Said, text, DateTime.UtcNow);
+        }
+
         if (_beforeActivation is { } held)
         {
             // The last few only: a window left behind for an hour says what is recent, not its whole backlog.
