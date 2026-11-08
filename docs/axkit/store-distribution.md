@@ -6,6 +6,17 @@ the maintainer's; section 7 lists what the documentation did not say and the fir
 work follows the bundle's order: specification first, then infrastructure, then code, then the NVDA pass, then the
 release. The code runs on a branch, `store`, and merges when the Store copy has passed its NVDA checks.
 
+## 0. The short version (chosen 2026-11-08)
+
+The maintainer found the full plan too much to take in at once and asked for the simplest way. It is this, and the
+recommended option of every decision in section 4 is taken as decided. First, the maintainer reserves the name axKit in
+Partner Center and reads off the three identity values of section 2 step 4 (ten minutes, the steps given one at a time).
+Then I build the package, the listing texts and the screenshots and check them with NVDA (phases 2 to 5, nothing
+needed from him). Then one submission by hand in the browser, step by step with me (phase 6, about an hour): upload
+the file, paste the texts, answer the age questionnaire, submit. Then Microsoft certifies (days) and `winget install`
+works. The tenant, the Entra application and its key (section 2 steps 1 to 3) and the release job (phase 7) wait until
+the Store copy is live and he wants releases to upload themselves; until then a release is one more upload by hand.
+
 ## 1. Why, in one paragraph
 
 Today axKit is a zip with `install.ps1` and an updater of its own (AX-2, AX-3). Windows 11's Smart App Control blocks
