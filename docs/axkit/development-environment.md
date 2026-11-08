@@ -36,8 +36,17 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
   credential store, and git pushes through Git Credential Manager with the same account. The repository
   `KyleKeane/AxKit` has the environment `release`, which only the branch `main` and tags `v*` may use, with the
   secrets `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID`, and, once signing is on, the repository
-  variable `AZURE_CERTIFICATE_PROFILE` (`docs/axkit/code-signing.md`). `gh secret list --env release` and
-  `gh variable list` show the names.
+  variable `AZURE_CERTIFICATE_PROFILE` (`docs/axkit/code-signing.md`); for the Store, the secrets
+  `PARTNER_CENTER_TENANT_ID`, `PARTNER_CENTER_CLIENT_ID` and `PARTNER_CENTER_CLIENT_SECRET` and, once the first
+  publication is live, the repository variable `STORE_SUBMIT` (`docs/axkit/store-setup.md`). `gh secret list --env
+  release` and `gh variable list` show the names.
+- **Partner Center**: the maintainer's personal Microsoft account, in a browser only (the name reservation, the first
+  submission, anything the API cannot do; `docs/axkit/store-setup.md` sections 2 and 3). The automation speaks as the
+  Microsoft Entra application `axKit release`, which holds the Manager role on the Partner Center account and nothing
+  in Azure: its tenant id, client id and key are the `release` environment's secrets above and, for a run by hand,
+  `%LOCALAPPDATA%\AxKit-release\store-credentials.xml`, written by `tools/store-credentials.ps1` with the key
+  encrypted for the Windows account; `tools/store-submit.ps1 -Status` proves them. A new key is made in Partner
+  Center (the application's page, Add new key) and put in both places; the old one is removed there.
 - **Azure**: `az login --use-device-code` as `axkit-signer`, the user that holds the signer role on the signing account
   and nothing else; the tokens live in `%USERPROFILE%\.azure`. The subscription's Owner, the maintainer's own account,
   is used in a browser, and signed in to `az` only on the maintainer's word for one administrative command, then
@@ -64,6 +73,7 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 | Automated checks and Claude sessions | `tools/AxAutomate <script>`, `tools/QaRun` | .NET SDK, Claude Code with `--model haiku` |
 | Publish and install locally | `publish.ps1 [-NoInstall]`, `install.ps1 [-Uninstall]` | .NET SDK; not on the development computer, which keeps no installed copy |
 | The MSIX package for the Store | `publish.ps1 -Msix` | .NET SDK, `tools/make-manifest.ps1`, `tools/make-icon.ps1 -Png`, makeappx (Windows Kits, or `tools/sdk` through `tools/get-sdk-tools.ps1`). A local test registers the published folder as the package, `Add-AppxPackage -Register publishmsixpackageAppxManifest.xml`, which needs Developer Mode (Settings, System, For developers); `Remove-AppxPackage` removes it |
+| The Store submission | By itself: `store.yml` when a release is published and `STORE_SUBMIT` is on. By hand: `tools/store-submit.ps1 -Package <msix> -Notes <file>`; `-Status` reads the state; `-DryRun` sends nothing | PowerShell, HTTPS to Partner Center's submission API with the credentials of section 2 (`docs/axkit/store-setup.md` sections 4 and 5) |
 | Release | `release.ps1 <version>` after a `## <version>` section in `CHANGELOG.md` | git, gh, `test.ps1`, `tools/outside-calls.ps1`, the .NET SDK; then GitHub Actions (`release.yml`: build, sign, draft) and `tools/sign-release.ps1` with gh and the release key |
 | The Windows signature on `AxKit.exe` | Nothing local: the release workflow's sign job, in Azure, when `AZURE_CERTIFICATE_PROFILE` is set | GitHub Actions, azure/login, azure/artifact-signing-action |
 | Azure administration | The maintainer in the Azure portal; `az` as the Owner only on the maintainer's word | Browser; Azure CLI |

@@ -809,10 +809,20 @@ The design is `docs/axkit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   discoverable; its texts in `docs/axkit/store-listing.md`) begins with the programs the access layers need (Store
   policy 10.2.4), discloses that axClaude shows the output of a live generative AI (11.16; the F4 report is the means
   to report content, AX-12) and links `PRIVACY.md` (10.5.1). The release workflow builds the package beside the zip and
-  attaches it to the draft release (`ReleaseWorkflowTests` keeps it); the maintainer uploads it to Partner Center
-  (`docs/axkit/store-distribution.md`, phases 6 and 7) until the submission runs from the command line. `winget install
-  9PK01L2K5000 -s msstore` (`StoreListing.WingetCommand`) installs the Store's copy. The zip of AX-2 and AX-3 stays, for
-  developers and for a computer without the Store.
+  attaches it to the draft release (`ReleaseWorkflowTests` keeps it). The first publication goes through Partner
+  Center's website by hand, as Microsoft requires (`docs/axkit/store-setup.md` section 3); every later one goes by
+  itself: when a GitHub release is published and the repository variable `STORE_SUBMIT` is `on`, the workflow
+  `store.yml` downloads that release's attested `AxKit-<version>.msix`, never a rebuild, and `tools/store-submit.ps1`
+  posts it to Partner Center through Microsoft's submission API over HTTPS with the Partner Center application's
+  three secrets of the `release` environment (a new submission as a copy of the last published one, the old package
+  marked for deletion and the new one added, What's new from the release notes, the zip uploaded to the address the
+  API gives, the commit, then the wait until the Store has taken it in or refused it, the result in the run's
+  summary); the same script reads the state (`-Status`) and runs by hand with the credentials
+  `tools/store-credentials.ps1` keeps encrypted for the maintainer's account (`store-setup.md` sections 4 to 6;
+  `ReleaseWorkflowTests` keeps the switch, the environment and the secrets' names). Certification runs at Microsoft's
+  afterwards and the Store updates every installed copy by itself. `winget install 9PK01L2K5000 -s msstore`
+  (`StoreListing.WingetCommand`) installs the Store's copy. The zip of AX-2 and AX-3 stays, for developers and for a
+  computer without the Store.
 
 ### AX-7 Accessibility rules every app follows
 

@@ -14,8 +14,10 @@ Partner Center and reads off the three identity values of section 2 step 4 (ten 
 Then I build the package, the listing texts and the screenshots and check them with NVDA (phases 2 to 5, nothing
 needed from him). Then one submission by hand in the browser, step by step with me (phase 6, about an hour): upload
 the file, paste the texts, answer the age questionnaire, submit. Then Microsoft certifies (days) and `winget install`
-works. The tenant, the Entra application and its key (section 2 steps 1 to 3) and the release job (phase 7) wait until
-the Store copy is live and he wants releases to upload themselves; until then a release is one more upload by hand.
+works. The tenant, the Entra application and its key (section 2 steps 1 to 3) were first deferred; on 2026-11-09 the
+maintainer asked for the automated publishing as soon as possible, so they are part one of his steps
+(`store-setup.md` section 2), the workflow `store.yml` and `tools/store-submit.ps1` are built, and the switch
+`STORE_SUBMIT` is turned on once the first publication is live.
 
 ## 1. Why, in one paragraph
 
@@ -218,8 +220,11 @@ the Store copy's Check for updates, About and Start with Windows; `build.yml` bu
 `publish\msix\StoreLogo-300.png` and six screenshots in `publish\store` (`tools/store-screenshots.ps1`, retaken from a
 demo folder under the Public profile after the first set showed the maintainer's folder path; axTerminal's and
 axGIT's come with `-WithAccessLayers` once he has connected them here, axClaude's by hand); phase 6
-waits for the maintainer; phase 7's command-line submission waits for section 0's second step. The registration and
-probe tests of section 7 passed; the NVDA pass of the Store copy comes with phase 6.
+waits for the maintainer (his steps are `store-setup.md` section 3); phase 7 is built (`store.yml` on a published
+release behind the variable `STORE_SUBMIT`, `tools/store-submit.ps1` against the submission API,
+`tools/store-credentials.ps1` for the maintainer's copy of the credentials; the Partner Center application is his
+steps in `store-setup.md` section 2, and the first real run is the release after the first publication). The
+registration and probe tests of section 7 passed; the NVDA pass of the Store copy comes with phase 6.
 
 ### Phase 1: Partner Center (the maintainer, in the browser, about an hour; can start now)
 
@@ -287,19 +292,24 @@ Gate: the loose package starts every app from the Start menu, and section 7 has 
    startup tasks after a sign-in, the file verbs, Check for updates, where the settings landed), recorded in
    `docs/axkit/nvda-test-record.md`. Then `store` merges to `main`.
 
-### Phase 7: The release process (me, one session)
+### Phase 7: The release process (built 2026-11-09)
 
-`release.ps1` builds the package too; `release.yml` gains a `store` job after the draft: the CLI from its GitHub
-action pinned by commit as the other actions are (or installed by winget on the runner), `msstore publish
---inputFile AxKit.msix --appId <id>` with the secrets `PARTNER_CENTER_TENANT_ID`, `PARTNER_CENTER_SELLER_ID`,
-`PARTNER_CENTER_CLIENT_ID` and `PARTNER_CENTER_CLIENT_SECRET`, then `msstore submission status` until certified or
-failed, the result in the run's summary. If the CLI will not take a package built outside its project types (section
-7), the same job runs a plain PowerShell script against the submission API instead (`Invoke-RestMethod`: a token from
-`login.microsoftonline.com/<tenant>/oauth2/token` with the resource `https://manage.devcenter.microsoft.com`, create
-the submission, upload the zip to its upload URL, update, commit, poll; Microsoft's StoreBroker module shows the
-shape). The GitHub release is published as today; the Store listing follows when certified. `docs/axkit/store-setup.md`
-records the account, the application, the secrets and the runbook as `reports-setup.md` does for the reports; this
-page keeps the plan and its decisions. `tools/outside-calls.ps1` runs; the memory notes change.
+Decided for the plain script over the Store Developer CLI: the CLI needs a .NET 9 runtime of its own, its documentation
+leaves open whether it takes a package built outside its project types, and the submission API it wraps has been
+Microsoft's documented interface since 2017. So: `release.yml` builds the package beside the zip and attaches it to
+the draft; `release.ps1` publishes as before; and the new workflow `store.yml`, on a published release and only while
+the repository variable `STORE_SUBMIT` is `on`, downloads the release's attested `AxKit-<version>.msix` and runs
+`tools/store-submit.ps1` in the `release` environment with the secrets `PARTNER_CENTER_TENANT_ID`,
+`PARTNER_CENTER_CLIENT_ID` and `PARTNER_CENTER_CLIENT_SECRET` (no Seller ID: the API does not use one). The script
+takes a token from `login.microsoftonline.com/<tenant>/oauth2/token` for the resource
+`https://manage.devcenter.microsoft.com`, reads the application, refuses to run over a pending submission unless told
+to replace it, creates the submission (a copy of the last published one), marks the old package for deletion and adds
+the new, sets What's new from the release notes (1500 characters at most), uploads the zip to the submission's upload
+address, commits, and polls the status until the Store has taken it in or refused it. `-Status` reads the state;
+`-DryRun` shapes a submission without the network, which is how it was checked before any credentials existed.
+`docs/axkit/store-setup.md` records the account, the application, the secrets and the runbook as `reports-setup.md`
+does for the reports; this page keeps the plan and its decisions. The first real run: the first release after the
+first publication is live, watched by hand (`gh run watch`, then `-Status`).
 
 ### Phase 8: Later
 
