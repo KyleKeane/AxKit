@@ -28,3 +28,7 @@ jobs:
       - name: Build and test
         # ContinuousIntegrationBuild: deterministic paths; the test packages restore exactly as their lock files say (S-34).
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true
+      - name: Build the Store package
+        # The MSIX package of the Microsoft Store (docs/axkit/SPEC.md AX-13): the manifest from the apps listing must
+        # pass makeappx's schema check on every push, not first at a release. The runner has the Windows SDK.
+        run: ./publish.ps1 -Msix

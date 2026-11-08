@@ -173,11 +173,21 @@ jobs:
           }
           .\publish.ps1 -ZipOnly
 
+      # The MSIX package for the Microsoft Store (docs/axkit/SPEC.md AX-13), unsigned, since the Store signs it after
+      # certification: attached to the release for the maintainer's upload to Partner Center (docs/axkit/store-distribution.md
+      # phase 6). Built after the zip so that neither build touches the other's folder; the same reporter token goes in.
+      - name: Build the Store package
+        shell: pwsh
+        env:
+          AXKIT_REPORTER_TOKEN: ${{ secrets.AXKIT_REPORTER_TOKEN }}
+        run: .\publish.ps1 -Msix
+
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release
           path: |
             publish/AxKit-*-win-x64.zip
+            publish/AxKit-*.msix
             install.cmd
             notes.md
             tag.txt
@@ -196,10 +206,12 @@ jobs:
         with:
           name: release
 
-      # Provenance: gh attestation verify <zip> --repo KyleKeane/AxKit tells this workflow built it (S-31).
+      # Provenance: gh attestation verify <zip or msix> --repo KyleKeane/AxKit tells this workflow built it (S-31).
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
-          subject-path: 'publish/AxKit-*-win-x64.zip'
+          subject-path: |
+            publish/AxKit-*-win-x64.zip
+            publish/AxKit-*.msix
 
       - name: Create the draft release
         env:
@@ -213,14 +225,15 @@ jobs:
             exit 1
           fi
           zip=$(ls publish/AxKit-*-win-x64.zip)
+          msix=$(ls publish/AxKit-*.msix)
           # A published release's files are never replaced (S-31); a draft's are, when the workflow runs again.
           if draft=$(gh release view "$tag" --json isDraft --jq .isDraft 2>/dev/null); then
             if [ "$draft" != "true" ]; then
               echo "Release $tag is already published; its files are not replaced."
               exit 1
             fi
-            gh release upload "$tag" "$zip" install.cmd --clobber
+            gh release upload "$tag" "$zip" "$msix" install.cmd --clobber
           else
-            gh release create "$tag" "$zip" install.cmd --title "axKit ${tag#v}" --notes-file notes.md --draft
+            gh release create "$tag" "$zip" "$msix" install.cmd --title "axKit ${tag#v}" --notes-file notes.md --draft
           fi
           echo "Draft $tag is up. release.ps1 signs it and publishes it."

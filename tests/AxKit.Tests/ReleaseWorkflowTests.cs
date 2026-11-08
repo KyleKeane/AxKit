@@ -32,11 +32,18 @@ public sealed class ReleaseWorkflowTests
         var signing = Index("uses: azure/artifact-signing-action@");
         var check = Index("Get-AuthenticodeSignature publish\\win-x64\\AxKit.exe");
         var zip = Index(".\\publish.ps1 -ZipOnly");
+        var package = Index(".\\publish.ps1 -Msix");
 
         // The sign job, the "release" environment, publishes: the reporter token of the reports goes into that build
         // (docs/axkit/reports.md RP-6.2), and the build job, which runs the tests and their packages, never holds it.
         Assert.True(build < sign && sign < publish && publish < login, "the build job tests; the sign job publishes the folder before signing it");
         Assert.True(sign < login && login < signing && signing < check && check < zip && zip < draft, "the sign job signs in, signs, checks the signature, then zips");
+
+        // The Store's package (AX-13.6) is built after the zip, in the same job, and attached to the draft with it.
+        Assert.True(zip < package && package < draft, "the sign job builds the Store package after the zip");
+        Assert.Contains("publish/AxKit-*.msix", text[package..draft], StringComparison.Ordinal);   // the release artifact carries it
+        Assert.Contains("publish/AxKit-*.msix", text[draft..], StringComparison.Ordinal);           // attested and uploaded with the zip
+        Assert.Contains("\"$msix\"", text[draft..], StringComparison.Ordinal);
         Assert.Contains("secrets.AXKIT_REPORTER_TOKEN", text[sign..publish], StringComparison.Ordinal);
         Assert.Contains("-ne 'Valid'", text[check..zip], StringComparison.Ordinal);
 
