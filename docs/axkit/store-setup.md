@@ -114,14 +114,29 @@ Packages, the file uploaded, the old package removed from the list, Save; What's
 listings, the release's notes pasted (I put them on your clipboard); Submit to the Store. The Store does the rest.
 Section 6 is the plan to take these clicks off your hands.
 
-## 6. Automating the website (to be built after the first submission)
+## 6. Automating the website: tools/EdgeDrive (built 2026-11-09, used for the first submission)
 
-The website can be driven from this computer: Microsoft Edge opened with its debugging port on the maintainer's
-own signed-in profile, so that no password or second factor is ever handled, and a small tool of the repository
-speaking the DevTools protocol to it (open the submission page, set the file on the upload field, press Save and
-Submit, read the result), run by hand after a release and later by `release.ps1`. It is built after the first
-submission has shown the pages as they are, and it breaks whenever Microsoft changes them, when the five steps of
-section 5 are the way again. The API route of section 4 replaces it the day the account gets the option.
+The website is driven from this computer by `tools/EdgeDrive`, a small C# program with no package that speaks the
+DevTools protocol to a Microsoft Edge window, one command per run (the commands are listed at the top of its
+`Program.cs`: `targets`, `open`, `nav`, `text`, `find`, `click`, `clickxy`, `focus`, `type`, `press`, `upload`,
+`dropxy`, `shot`, `wait`, `eval`, `evalfile`). The window is Edge started on a profile of its own, since Edge refuses
+debugging on the everyday profile:
+
+    msedge.exe --user-data-dir="%LOCALAPPDATA%\AxKit-release\edge-profile" --remote-debugging-port=9222 https://partner.microsoft.com/dashboard
+
+The maintainer signs in to Partner Center in that window once, with his own second factor; the profile keeps the
+session, and no password is ever handled by the tool. While the port is open, any program of this account could
+drive that window, so it is opened for the work and closed after. What the first submission taught (2026-11-09):
+Partner Center is an Angular application of web components (`he-button`, `he-select`, `he-checkbox`, `he-option`)
+inside shadow roots, so every search of the page walks the shadow roots; a synthetic click serves most controls, but
+state the page must register (the age ratings' radios, the IARC terms box) needs a real click (`clickxy`, a mouse
+event at the control's place); a button's disabled attribute lags behind what the page shows, so a screenshot
+(`shot`) decides; the age ratings questionnaire renders its follow-up questions ten to thirty seconds after an
+answer, and loses every answer when the page is left before Save; a file set on the upload field is ignored, and a
+file dropped on the "Drag your packages here" area (`dropxy`, a drag event carrying the file's path) uploads. A
+release's upload is section 5's five steps done with these commands; a script for them follows once a second
+submission has shown that the pages hold still. The API route of section 4 replaces all of it the day the account
+gets the option.
 
 ## 7. The support request for the API route
 

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Drives a Microsoft Edge window over its DevTools protocol for the Store's website (docs/axkit/store-setup.md
+       section 6): a development tool, never part of axKit. No package: HTTP, WebSocket and JSON are the framework's. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>EdgeDrive</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+</Project>
