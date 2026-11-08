@@ -89,16 +89,20 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 
 - The computer is a Hyper-V virtual machine with 7 GB of memory, seven logical processors and no graphics adapter
   (Hyper-V Video and the Remote Display Adapter of the enhanced session), so the Desktop Window Manager composes every
-  frame on the CPU. Measured on 2026-11-08: dwm idles at nothing and costs about a third of a core while the user
-  types or reads, since every repaint runs a full-screen pass in software at the enhanced session's 2880 by 1800
-  pixels, with the Magnifier's colour inversion and NVDA's focus highlight (a full-screen layered window) on top of
-  it; dwm had used 68 hours of CPU in seven days. What keeps it light, in order of effect: a smaller display in the
-  Connect dialog of Hyper-V Manager (the Display configuration slider, "Save my settings"; 1280 by 800 is a quarter
-  of the pixels), the Magnifier closed (Win+Esc) unless it is wanted, NVDA's Vision settings without the focus
-  highlight unless it is wanted, and the user's visual effects off (transparency, animations, fades and shadows,
-  a solid-colour background; set on 2026-11-08 through `SystemParametersInfo` and the user's registry, "Adjust for
-  best performance" with font smoothing kept). GPU partitioning on the host (`Add-VMGpuPartitionAdapter`) would make
-  dwm hardware-accelerated and is the structural fix.
+  frame on the CPU, at the enhanced session's 2880 by 1800 pixels. Measured on 2026-11-08 from the process's own
+  clock (the `\Process(dwm)` performance counter named the wrong one of the two dwm processes and read zero): with the
+  Windows Magnifier running in full-screen mode at 100 percent with colours inverted, dwm used 70 to 90 percent of one
+  core all the time, the screen static or not, and had used 68 hours of CPU in seven days; the Magnifier's own process
+  used nothing, since full-screen magnification is done inside dwm. Closing the Magnifier (Win+Esc) brought dwm to
+  about a quarter of a core at once; what is left is the enhanced session's own display pipeline and NVDA's focus
+  highlight (a full-screen layered window, Vision settings), not yet told apart. Stopping the caret from blinking
+  changed nothing. What keeps it light, in order of effect: no full-screen Magnifier unless it is wanted (Win+Plus
+  brings it back), a smaller display in the Connect dialog of Hyper-V Manager (the Display configuration slider,
+  "Save my settings"; 1280 by 800 is a quarter of the pixels), NVDA's Vision settings without the focus highlight
+  unless it is wanted, and the user's visual effects off (transparency, animations, fades and shadows, a solid-colour
+  background; set on 2026-11-08 through `SystemParametersInfo` and the user's registry, "Adjust for best performance"
+  with font smoothing kept). GPU partitioning on the host (`Add-VMGpuPartitionAdapter`) would make dwm
+  hardware-accelerated and is the structural fix.
 - Memory on the same computer: a build leaves six MSBuild nodes and the Roslyn compiler server idle for ten to fifteen
   minutes, about 1 GB together; `Directory.Build.rsp` ends the nodes with the build and the scripts run
   `dotnet build-server shutdown` after theirs (run it after a bare `dotnet build`). Edge's startup boost kept seven
