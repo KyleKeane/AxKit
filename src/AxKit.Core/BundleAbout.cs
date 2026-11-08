@@ -15,6 +15,7 @@ public static class BundleAbout
     /// <param name="latestRelease">The window's latest-release state: "axKit 2.9.0 (this version)", "not checked yet", "checking…".</param>
     public static string Version(string latestRelease) =>
         $"axKit {BundleInfo.Version}.\n" +
+        (PackageIdentity.IsPackaged ? $"Installed from the Microsoft Store, which keeps it current by itself (the package {PackageIdentity.FullName}; {StoreListing.WebUrl}).\n" : string.Empty) +
         $"Standalone apps, which need only Windows: {string.Join(", ", Dispatch.Apps.Where(app => !app.IsAccessLayer).Select(app => app.Name))}.\n" +
         $"Access layers, which only show and pass on the work of a program you install, under its maker's terms: {string.Join(", ", Dispatch.Apps.Where(app => app.IsAccessLayer).Select(app => $"{app.Name} for {app.AccessLayerFor}"))}. About, Licence has the reminders and what you have agreed to.\n" +
         "The axKit guide below says what each app is.\n\n" +

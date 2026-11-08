@@ -71,7 +71,7 @@ public sealed class ClipForm : HotkeyForm
         }));
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu(
-            Toggle("&Start with Windows", _settings.StartWithWindows, v =>
+            StartWithWindowsItem(AxClipApp.Name, _settings.StartWithWindows, v =>
             {
                 _settings.StartWithWindows = v;
                 SignInStart.Apply(AxClipApp.Name, Dispatch.AxClip, v);

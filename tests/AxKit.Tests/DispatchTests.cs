@@ -43,6 +43,10 @@ public sealed class DispatchTests
     {
         Assert.False(PackageIdentity.IsPackaged);
         Assert.Null(PackageIdentity.ApplicationId);
+        Assert.Equal(Environment.ProcessPath, PackageIdentity.ProgramPath);
+        Assert.EndsWith(@"\Microsoft\WindowsApps\axkit.exe", PackageIdentity.AliasPath);
+        Assert.Equal("ms-windows-store://pdp/?productid=9PK01L2K5000", StoreListing.PageUri);
+        Assert.Equal("winget install 9PK01L2K5000 -s msstore", StoreListing.WingetCommand);
     }
 
     [Fact]

@@ -15,7 +15,10 @@ another project on its second use, the bullet says so.
 - `PackageIdentity` (2026-11-08): whether this process runs from the MSIX package, the Store's copy (`IsPackaged`,
   `FullName`), and the id of the package entry that started it (`ApplicationId`), through kernel32's
   `GetCurrentPackageFullName` and `GetCurrentApplicationUserModelId`; null and false outside a package, as in the
-  tests and the zip's copy.
+  tests and the zip's copy; `AliasPath` and `ProgramPath`, the path recorded for later use (the package's `axkit.exe`
+  alias in the Store's copy, the process path otherwise), since the package folder changes with every update.
+- `StoreListing` (AX-13, 2026-11-08): the Store ID and the addresses made from it (the Store page `ms-windows-store:`,
+  the web page, the `winget install` line).
 - `BundleInfo`: the version, read from the executable.
 - `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `AxKit` folders; `ConsentFile`;
   `TakeOverOldFolders` (AX-5.4, 2026-11-05), the Axit folders of up to 4.0.0 moved into them on the first start, entry
@@ -110,7 +113,7 @@ another project on its second use, the bullet says so.
 ## Background apps
 
 - `SignInStart` (docs/axstart/SPEC.md AS-1.3; from axStart, axClip, 2026-10-23): a background app's value under the
-  user's Run key, "axKit <app>" with `"…\AxKit.exe" <verb> --hidden`, written only by the installed program. Named so
+  user's Run key, "axKit <app>" with `"…\AxKit.exe" <verb> --hidden`, written only by the installed program, and not at all by the Store's copy, where `OpenWindowsStartupSettings` opens Windows' Startup apps page instead (AX-13.4, 2026-11-08). Named so
   since axProcess has a `StartupEntry` of its own, an entry of the startup list.
 - `Hotkey` (docs/axstart/SPEC.md AS-4; from AxStart.Core, axClip, 2026-10-23): a system-wide key as `RegisterHotKey`
   takes it, its text both ways ("Ctrl+Shift+Space", any order and case on reading), `Refusal` (Ctrl, Alt or the

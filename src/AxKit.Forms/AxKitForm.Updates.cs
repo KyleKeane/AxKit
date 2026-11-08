@@ -78,6 +78,18 @@ public abstract partial class AxKitForm
             : newer ? $"axKit {version} (newer than this one)"
             : release.Version == UpdateCheck.ParseVersion(BundleInfo.Version) ? $"axKit {version} (this version)"
             : $"axKit {version} (older than this build)";
+        if (PackageIdentity.IsPackaged)
+        {
+            // AX-13.3: the Store's copy downloads and installs nothing itself; the Microsoft Store does, by itself, and
+            // its page shows Update as soon as it has the release. Only a manual check shows anything.
+            if (manual)
+            {
+                ShowStoreUpdateNotice(release, newer);
+            }
+
+            return;
+        }
+
         if (newer)
         {
             _update = release;
@@ -105,6 +117,49 @@ public abstract partial class AxKitForm
                 $"You have the newest version, axKit {BundleInfo.Version}.\n" +
                 (release is null ? "No release is published yet.\n" : string.Empty) +
                 $"Releases: {UpdateCheck.ReleasesPage}"));
+        }
+    }
+
+    /// <summary>
+    /// The Store's copy's answer to Check for updates (AX-13.3): what GitHub has against this version, that the Microsoft
+    /// Store installs it by itself, and the Store page to open for it now; the release page as well when there is a release.
+    /// </summary>
+    private void ShowStoreUpdateNotice(ReleaseInfo? release, bool newer)
+    {
+        var version = release?.Version.ToString(3);
+        var text = newer
+            ? $"You have axKit {BundleInfo.Version}. axKit {version} is out.\n" +
+              "This copy of axKit comes from the Microsoft Store, which installs its updates by itself, usually within a day of a release, with nothing to press. " +
+              "To have it now, open axKit in the Microsoft Store and press Update there once the Store shows it.\n\n" +
+              (release!.Notes.Length > 0 ? release.Notes + "\n\n" : string.Empty) +
+              $"Releases: {UpdateCheck.ReleasesPage}"
+            : $"You have the newest version, axKit {BundleInfo.Version}.\n" +
+              (release is null ? "No release is published yet.\n" : string.Empty) +
+              "This copy of axKit comes from the Microsoft Store, which keeps it current by itself.\n" +
+              $"Releases: {UpdateCheck.ReleasesPage}";
+        List<OverlayChoice> choices = [new OverlayChoice("Open axKit in the Microsoft &Store", OpenStorePage, StaysOpen: true)];
+        if (release is not null)
+        {
+            choices.Add(ReleasePageChoice(release));
+        }
+
+        choices.Add(OverlayChoice.Close);
+        ShowNotice(new Notice("Check for updates", text, [.. choices]));
+    }
+
+    /// <summary>axKit's page in the Microsoft Store app (<see cref="StoreListing.PageUri"/>), where Update appears when the Store has a newer version.</summary>
+    private void OpenStorePage()
+    {
+        try
+        {
+            // Outside call, program, Windows: opens axKit's page in the Microsoft Store app through the Windows shell (the
+            // ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(StoreListing.PageUri) { UseShellExecute = true });
+        }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
+        {
+            Log.Error("The Microsoft Store page could not be opened", ex);
+            Announce("The Microsoft Store could not be opened", true);
         }
     }
 

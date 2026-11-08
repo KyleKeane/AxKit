@@ -37,6 +37,26 @@ public abstract class HotkeyForm : AxKitForm
     private bool _capturing;
     private bool _quitting;
 
+    /// <summary>
+    /// Options, General's Start with Windows for a background app: the toggle that writes the Run key through
+    /// <see cref="SignInStart.Apply"/>, or, in the Store's copy, where the package's startup task decides and Windows
+    /// lists it under Settings, Apps, Startup (docs/axkit/SPEC.md AX-13.4), an item that opens that page and says so.
+    /// </summary>
+    protected ToolStripMenuItem StartWithWindowsItem(string appName, bool on, Action<bool> flip)
+    {
+        if (!PackageIdentity.IsPackaged)
+        {
+            return Toggle("&Start with Windows", on, flip);
+        }
+
+        return new ToolStripMenuItem("&Start with Windows (Windows Settings)...", null, (_, _) =>
+        {
+            Announce(SignInStart.OpenWindowsStartupSettings()
+                ? $"Windows Settings, Startup apps, is open: turn axKit {appName} on or off there"
+                : "Windows Settings could not be opened. Settings, Apps, Startup is where axKit " + appName + " is turned on or off", true);
+        });
+    }
+
     /// <param name="hidden">Started with --hidden, as at sign-in: the window stays hidden until the hotkey.</param>
     protected HotkeyForm(string appName, WindowSettings settings, string settingsPath, string? settingsError, bool hidden)
         : base(appName, settings, settingsPath, settingsError)

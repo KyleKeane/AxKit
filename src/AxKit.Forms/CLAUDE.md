@@ -31,7 +31,7 @@ WinForms code every app of the bundle uses (`docs/axkit/SPEC.md` AX-6.2, AX-6.4)
     - `ShowFindInList` with `FindInList` (the next item whose name holds the text, wrapping once; from axFile on its second use, axMedia, 2026-10-22);
     - and `ShowFindInNotice` with `FindInNotice` (Ctrl+F, F3 and Shift+F3 while a notice shows, AX-7.2: the Find notice in the notice's place, then the notice shown again from `Overlay.Shown` with the match selected in `Overlay.Body`).
   - `AxKitForm.Fonts.cs`: `TextFont`, `ApplyTextFont`, `ChangeTextSize`, `UseSystemFont`, `ChooseFont`.
-  - `AxKitForm.Updates.cs` (AX-3): `CheckForUpdates` (the state for About, Version set first, then one notice or announcement), the update notice, `InstallUpdate` behind one progress notice, the restart arguments kept for `OnFormClosing`, `KeepWorkingAfterUpdate`.
+  - `AxKitForm.Updates.cs` (AX-3): `CheckForUpdates` (the state for About, Version set first, then one notice or announcement), the update notice, `InstallUpdate` behind one progress notice, the restart arguments kept for `OnFormClosing`, `KeepWorkingAfterUpdate`. In the Store's copy (`PackageIdentity.IsPackaged`, AX-13.3, 2026-11-08) the check never runs at start, `CreateGeneralMenu` has no Check for updates at start toggle, and a manual check ends in `ShowStoreUpdateNotice` (where the copy stands, Open axKit in the Microsoft Store through `OpenStorePage`, the release page) instead of the update notice; nothing is downloaded.
   - `AxKitForm.Palette.cs` (AX-10): the command palette, below.
   - `AxKitForm.Install.cs` (AX-2.9, 2026-10-24): `InstallProgram`, the Install it now of a missing program's notice:
     - a progress notice saying whether Windows will ask for an administrator's yes;
@@ -53,6 +53,7 @@ WinForms code every app of the bundle uses (`docs/axkit/SPEC.md` AX-6.2, AX-6.4)
   - `HideWindow` and `GiveForegroundBack` (the one rule of the foreground) with `GiveForegroundBackLaterAsync`, the hide when another program but NVDA comes to the front;
   - `ShowHotkeyNotice` and its capture;
   - `FindRunning` (a second start's search by the title);
+  - `StartWithWindowsItem` (AX-13.4, 2026-11-08): Options, General's Start with Windows for both apps, the toggle that writes the Run key through `SignInStart.Apply`, or in the Store's copy an item that opens Windows' Startup apps page (`SignInStart.OpenWindowsStartupSettings`) and says to turn the app on or off there;
   - `ForegroundBefore` is the window a paste goes to.
   - The search field over the matches is here too since 2026-10-24 (both apps had it line for line):
     - `SearchField` and `Matches` (never focused, AS-D2), `ShowMatches`;

@@ -30,6 +30,20 @@ public static class PackageIdentity
     /// </summary>
     public static string? ApplicationId => ApplicationIdValue.Value;
 
+    /// <summary>
+    /// The package's console command, <c>axkit.exe</c> in the user's WindowsApps folder, which starts this program with
+    /// package identity from anywhere (the manifest's app execution alias): the path to record for later use, since the
+    /// program file's own path, under <c>C:\Program Files\WindowsApps\</c>, changes with every update.
+    /// </summary>
+    public static string AliasPath =>
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WindowsApps", "axkit.exe");
+
+    /// <summary>
+    /// How another program starts this one: the alias in the Store's copy, the program file itself otherwise (the AI
+    /// tools' command line, AxKitForm.Mcp.cs). Null when the process path is unknown outside a package.
+    /// </summary>
+    public static string? ProgramPath => IsPackaged ? AliasPath : Environment.ProcessPath;
+
     private static string? ReadFullName()
     {
         uint length = 0;

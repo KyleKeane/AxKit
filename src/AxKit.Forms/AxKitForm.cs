@@ -217,7 +217,12 @@ public abstract partial class AxKitForm : Form
     protected ToolStripMenuItem CreateGeneralMenu(params ToolStripItem[] own)
     {
         var menu = new ToolStripMenuItem("&General");
-        menu.DropDownItems.Add(Toggle("Check for &updates at start", Settings.CheckForUpdates, v => Settings.CheckForUpdates = v));
+        if (!PackageIdentity.IsPackaged)
+        {
+            // The Store's copy makes no check at start (AX-13.3), so it has no setting for one.
+            menu.DropDownItems.Add(Toggle("Check for &updates at start", Settings.CheckForUpdates, v => Settings.CheckForUpdates = v));
+        }
+
         menu.DropDownItems.AddRange(own);
         return menu;
     }
@@ -315,8 +320,9 @@ public abstract partial class AxKitForm : Form
             SettingsNotRead(error);
         }
 
-        // Never in a test run (docs/axkit/automation.md): a network call, and a logged error when it fails.
-        if (Settings.CheckForUpdates && !BundleInfo.IsDevelopmentBuild && !AutomationChannel.Requested)
+        // Never in a test run (docs/axkit/automation.md): a network call, and a logged error when it fails. Never in the
+        // Store's copy, which the Microsoft Store keeps current and which asks GitHub only on Check for updates (AX-13.3).
+        if (Settings.CheckForUpdates && !BundleInfo.IsDevelopmentBuild && !AutomationChannel.Requested && !PackageIdentity.IsPackaged)
         {
             CheckForUpdates(manual: false);
         }

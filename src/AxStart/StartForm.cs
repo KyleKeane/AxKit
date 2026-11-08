@@ -51,7 +51,7 @@ public sealed class StartForm : HotkeyForm
         options.DropDownItems.Add(new ToolStripMenuItem("&Hotkey...", null, (_, _) => ShowHotkeyNotice()));
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu(
-            Toggle("&Start with Windows", _settings.StartWithWindows, v =>
+            StartWithWindowsItem(AxStartApp.Name, _settings.StartWithWindows, v =>
             {
                 _settings.StartWithWindows = v;
                 SignInStart.Apply(AxStartApp.Name, Dispatch.AxStart, v);

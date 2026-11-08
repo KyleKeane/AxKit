@@ -80,7 +80,7 @@ public abstract partial class AxKitForm
             + "and to open apps. They cannot change or delete anything, and they never read axPass or axClip. Each tool asks you "
             + "once, in an axKit window, before it reads anything, and every call is written in the log (AI tools, Read the log).\n\n"
             + (claude is null
-                ? "Claude Code was not found here, so Turn on only; then add axKit to your AI tool with this command line:\n\n" + McpClaudeCode.AddCommandLine(Environment.ProcessPath!)
+                ? "Claude Code was not found here, so Turn on only; then add axKit to your AI tool with this command line:\n\n" + McpClaudeCode.AddCommandLine(PackageIdentity.ProgramPath!)
                 : "Turn on and add to Claude Code also adds axKit to Claude Code for every folder; a new Claude session can then use it.");
         List<OverlayChoice> choices = claude is null
             ? [new OverlayChoice("&Turn on", () => TurnMcpOn(addToClaude: false), IsDefault: true)]
@@ -142,11 +142,11 @@ public abstract partial class AxKitForm
         {
             ShowNotice(Notice.Plain("Claude Code was not found",
                 "Claude Code is not installed here, or not where axKit looks (the PATH, and your .local\\bin folder). Add axKit to your AI tool with this command line:\n\n"
-                + McpClaudeCode.AddCommandLine(Environment.ProcessPath!)));
+                + McpClaudeCode.AddCommandLine(PackageIdentity.ProgramPath!)));
             return;
         }
 
-        var exe = Environment.ProcessPath!;
+        var exe = PackageIdentity.ProgramPath!;
         Announce("Adding axKit to Claude Code", true);
         Do(async () =>
         {

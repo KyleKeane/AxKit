@@ -29,7 +29,7 @@ dotnet build AxKit.sln
   - the hotkey (`Register`, `ShowHotkeyNotice` with the field's `KeyHook` `OnHotkeyField`, `CaptureKey`, `ApplyHotkey`);
   - the base's `Do` runs the reads.
 - `AppsFolder` (AS-2.1, AS-2.3, AS-D1): the shell's Applications folder read on an STA thread of its own (`SHCreateItemFromParsingName("shell:AppsFolder")`, `BindToHandler` with `BHID_EnumItems`, `IEnumShellItems`, each item's normal display name and parent-relative parsing name, `SHGetKnownFolderPath` for a known folder's id), and `Start` through `Process.Start` with the shell on `shell:AppsFolder\<parsing name>`, or the program file itself with `runas`; ERROR_CANCELLED (the user's No at Windows' prompt) is no error.
-- `SignInStart` (AS-1.3, AS-D6) is `AxKit.Core`'s since axClip (2026-10-23): the value "axKit axStart" under the user's Run key, naming the installed program only.
+- `SignInStart` (AS-1.3, AS-D6) is `AxKit.Core`'s since axClip (2026-10-23): the value "axKit axStart" under the user's Run key, naming the installed program only. In the Store's copy (bundle AX-13.4, 2026-11-08) nothing is written: the package's startup task runs axStart hidden at sign-in, Windows lists it under Settings, Apps, Startup, and Options, General's item (`HotkeyForm.StartWithWindowsItem`) opens that page instead of the toggle.
 - `AxStartKeys`: the window's keys (AS-5.3; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys. Page Up and Page Down are the bundle's keys, commands with the match keys from `HotkeyForm.AddMatchKeys`.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 

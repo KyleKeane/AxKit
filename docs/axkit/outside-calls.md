@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 11 network requests, 25 program starts and 4 pipes, in 24 files, under the 11 headings below.
+Today: 11 network requests, 27 program starts and 4 pipes, in 26 files, under the 11 headings below.
 
 ## What axKit reaches
 
@@ -126,12 +126,12 @@ Calls (1):
 #### Windows
 
 - **What**: Windows itself: the shell (File Explorer's parts) and Windows' own programs by their full paths.
-- **How**: ShellExecute with a file (the shell opens it with the program Windows has for it, or shows its Open with dialog), a web address (the default browser) or the verb `properties`; the shell's context menu interface IContextMenu for the Windows menu and the shell's own commands; the Open with dialog `SHOpenWithDialog`; `explorer.exe` for File Explorer; `powershell.exe` for the installer's `install.ps1`; the Service Control Manager to start a service.
+- **How**: ShellExecute with a file (the shell opens it with the program Windows has for it, or shows its Open with dialog), a web address (the default browser) or the verb `properties`; the shell's context menu interface IContextMenu for the Windows menu and the shell's own commands; the Open with dialog `SHOpenWithDialog`; `explorer.exe` for File Explorer; `ms-windows-store:` for axKit's page in the Microsoft Store app and `ms-settings:` for Windows' Startup apps page in the Settings app (the Store's copy, AX-13); `powershell.exe` for the installer's `install.ps1`; the Service Control Manager to start a service.
 - **What it reaches**: nothing on the network by itself; the browser, the program Windows picks for a file, a shell extension or a service then act on their own.
 - **Documentation**: https://learn.microsoft.com/windows/win32/shell/launch; https://learn.microsoft.com/windows/win32/api/shobjidl_core/nn-shobjidl_core-icontextmenu; https://learn.microsoft.com/windows/win32/services/starting-a-service.
 - **Apps**: every window (links, Show in File Explorer, updates); axFile; axPreview; axProcess.
 
-Calls (11):
+Calls (13):
 
 - **axFile**, `src/AxFile/FileForm.Operations.cs:709`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, "shell:MyComputerFolder") { UseShellExecute = false })?.Dispose();`
@@ -143,12 +143,16 @@ Calls (11):
   Code: `var hr = ((IContextMenu)parts.Handler).InvokeCommand(ref info);`
 - **axFile**, `src/AxFile/Shell.cs:326`, in `Shell.Invoke`, by `IContextMenu.InvokeCommand (Windows)`: runs one command of the shell's own menu for an entry or a drive without showing the menu: the Windows operations axFile's items stand for (the shell's cut, copy and paste; Eject for a drive).
   Code: `var hr = contextMenu.InvokeCommand(ref info);`
+- **shared by every app**, `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, by `Process.Start`: opens Windows' Startup apps page in the Settings app through the Windows shell (the ms-settings: address), from the Store's copy's Start with Windows item (AX-13.4).
+  Code: `Process.Start(new ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true })?.Dispose();`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
   Code: `using var process = Process.Start(start) ?? throw new InvalidOperationException("PowerShell could not be started.");`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:701`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:707`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
   Code: `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:717`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:723`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, arguments) { UseShellExecute = false })?.Dispose();`
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.Updates.cs:157`, in `AxKitForm.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
+  Code: `System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(StoreListing.PageUri) { UseShellExecute = true });`
 - **shared by every app**, `src/AxKit.Forms/TextEditorForm.Viewer.cs:173`, in `TextEditorForm.OpenInWindowsProgram`, by `Process.Start`: opens the viewed file with the program Windows has for it (axPreview's Open with Windows default, AP-7.3), through the Windows shell; never a file that would run (S-46).
   Code: `Process.Start(new ProcessStartInfo(path) { UseShellExecute = true })?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/WindowsOpenWith.cs:23`, in `WindowsOpenWith.Show`, by `SHOpenWithDialog (Windows)`: shows Windows' own Open with dialog for a file, and Windows runs the program the user picks in it (axFile's and axPreview's Open with, Choose another program).
@@ -269,17 +273,19 @@ Used in 1 place:
 
 Defined in .NET, System.Diagnostics: starts a program, through the Windows shell when UseShellExecute is set.
 
-Used in 15 places:
+Used in 17 places:
 
 - `src/AxFile/FileForm.Operations.cs:709`, in `FileForm.ShowFolderInExplorer`, for Windows.
 - `src/AxFile/FileForm.Operations.cs:793`, in `FileForm.OpenWithWindows`, for Windows.
 - `src/AxFile/FileForm.Programs.cs:76`, in `FileForm.RunProgram`, for User programs.
+- `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, for axKit.
-- `src/AxKit.Forms/AxKitForm.cs:701`, in `AxKitForm.OpenUrl`, for Windows.
-- `src/AxKit.Forms/AxKitForm.cs:717`, in `AxKitForm.OpenInExplorer`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs:707`, in `AxKitForm.OpenUrl`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs:723`, in `AxKitForm.OpenInExplorer`, for Windows.
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/AxKitForm.Mcp.cs:209`, in `AxKitForm.RunClaude`, for Claude Code.
+- `src/AxKit.Forms/AxKitForm.Updates.cs:157`, in `AxKitForm.OpenStorePage`, for Windows.
 - `src/AxKit.Forms/AxKitMenu.cs:227`, in `AxKitMenu.StartWith`, for axKit.
 - `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:173`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
