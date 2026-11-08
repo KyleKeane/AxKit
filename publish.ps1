@@ -12,11 +12,20 @@
   The release workflow calls it twice (docs/axkit/code-signing.md): -NoInstall -NoZip builds the folder, AxKit.exe is
   signed for Windows in it, then -ZipOnly zips the folder as it is. Neither installs anything.
 
+  -Msix builds the MSIX package for the Microsoft Store instead (docs/axkit/store-distribution.md 3.1): a folder
+  publish into publish\msix\package (every file as a file; the package is the single file), AppxManifest.xml from the
+  apps listing (tools\make-manifest.ps1), the images (tools\make-icon.ps1 -Png), then makeappx from the Windows SDK
+  (Windows Kits when the SDK is installed, as on the GitHub runners; otherwise tools\get-sdk-tools.ps1 fetches
+  Microsoft's packaging tools once into tools\sdk) into publish\AxKit-<version>.msix. Unsigned: the Store signs it
+  after certification. A local test registers the folder as the package, with Developer Mode on:
+  Add-AppxPackage -Register publish\msix\package\AppxManifest.xml; Remove-AppxPackage removes it. Nothing is installed.
+
 .EXAMPLE
   .\publish.ps1                    # build the zip and install here
   .\publish.ps1 -NoInstall         # build the zip only
   .\publish.ps1 -NoInstall -NoZip  # build publish\win-x64 only
   .\publish.ps1 -ZipOnly           # zip publish\win-x64 as it is
+  .\publish.ps1 -Msix              # build the MSIX package for the Store
 
   If PowerShell refuses to run scripts: powershell -ExecutionPolicy Bypass -File .\publish.ps1
 #>
@@ -24,13 +33,102 @@
 param(
     [switch]$NoInstall,
     [switch]$NoZip,
-    [switch]$ZipOnly
+    [switch]$ZipOnly,
+    [switch]$Msix
 )
 
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
 $out = Join-Path $root 'publish\win-x64'
 $exe = Join-Path $out 'AxKit.exe'
+
+# The reporter account's token for the reports (docs/axkit/reports.md RP-6.2), from the release secret when it is
+# set: written into the file the build embeds before a publish, and removed again whatever the build did, so that it
+# never stays.
+$tokenTool = Join-Path $root 'tools\reporter-token.ps1'
+function Set-ReporterToken {
+    if (-not [string]::IsNullOrWhiteSpace($env:AXKIT_REPORTER_TOKEN)) {
+        & $tokenTool -Token $env:AXKIT_REPORTER_TOKEN
+    } else {
+        Write-Host "No AXKIT_REPORTER_TOKEN in the environment: this build cannot send reports (docs/axkit/reports.md RP-6.2)."
+    }
+}
+
+# The list of apps (AxKit.exe apps, AX-1.4) as JSON, asked of the program just built, so that it is that version's
+# list; a program that cannot answer here fails the publish. install.ps1 reads it as apps.json when the program cannot
+# answer on the machine it installs on (3.7.1's update failed so on one machine, 2026-10-24); tools\make-manifest.ps1
+# builds the package's manifest from it.
+function Get-AppsListing([string]$program) {
+    $start = New-Object System.Diagnostics.ProcessStartInfo $program
+    $start.Arguments = 'apps'
+    $start.UseShellExecute = $false
+    $start.RedirectStandardOutput = $true
+    $start.CreateNoWindow = $true
+    $process = [System.Diagnostics.Process]::Start($start)
+    $listing = $process.StandardOutput.ReadToEnd()
+    $process.WaitForExit()
+    if ($process.ExitCode -ne 0 -or -not $listing.Trim().StartsWith('[')) {
+        Write-Host "AxKit.exe apps did not answer (exit code $($process.ExitCode)); nothing was made."
+        exit 1
+    }
+    return $listing
+}
+
+# The bundle's version as the program file carries it, major.minor.patch.
+function Get-ProgramVersion([string]$program) {
+    $version = (Get-Item $program).VersionInfo.FileVersion
+    if ($version -match '^(\d+\.\d+\.\d+)') { $version = $Matches[1] }
+    return $version
+}
+
+# makeappx.exe: the newest Windows SDK under Windows Kits, else the tools tools\get-sdk-tools.ps1 keeps (fetched once).
+function Find-MakeAppx {
+    $kits = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10\bin'
+    $found = Get-ChildItem $kits -Directory -Filter '10.*' -ErrorAction SilentlyContinue |
+        Sort-Object { [version]$_.Name } -Descending |
+        ForEach-Object { Join-Path $_.FullName 'x64\makeappx.exe' } |
+        Where-Object { Test-Path $_ } |
+        Select-Object -First 1
+    if ($found) { return $found }
+    return (& (Join-Path $root 'tools\get-sdk-tools.ps1') | Select-Object -Last 1)
+}
+
+if ($Msix) {
+    $package = Join-Path $root 'publish\msix\package'
+    if (Test-Path $package) { Remove-Item $package -Recurse -Force }
+    Set-ReporterToken
+    Write-Host "Publishing axKit for the package (Release, win-x64, self-contained, one file per file)..."
+    try {
+        dotnet publish "$root\src\AxKit\AxKit.csproj" -c Release -r win-x64 --self-contained `
+            -p:PublishSingleFile=false -p:DebugType=none `
+            -o $package -nologo -v q
+        $published = $LASTEXITCODE
+    } finally {
+        & $tokenTool -Remove
+        dotnet build-server shutdown | Out-Null
+    }
+    if ($published -ne 0) {
+        Write-Host "Publish failed."
+        exit $published
+    }
+    Get-ChildItem $package -Filter '*.pdb' | Remove-Item -Force
+    $packageExe = Join-Path $package 'AxKit.exe'
+    $version = Get-ProgramVersion $packageExe
+    $appsFile = Join-Path $root 'publish\msix\apps.json'
+    [System.IO.File]::WriteAllText($appsFile, (Get-AppsListing $packageExe))
+    & (Join-Path $root 'tools\make-manifest.ps1') -Apps $appsFile -Out (Join-Path $package 'AppxManifest.xml') -Version $version
+    & (Join-Path $root 'tools\make-icon.ps1') -Png (Join-Path $package 'Assets')
+    $makeappx = Find-MakeAppx
+    $packageFile = Join-Path $root "publish\AxKit-$version.msix"
+    if (Test-Path $packageFile) { Remove-Item $packageFile -Force }
+    & $makeappx pack /o /h SHA256 /d $package /p $packageFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "makeappx failed (exit code $LASTEXITCODE); the package was not made."
+        exit $LASTEXITCODE
+    }
+    Write-Host ("Package: {0} ({1:N1} MB), from {2}" -f $packageFile, ((Get-Item $packageFile).Length / 1MB), $package)
+    exit 0
+}
 
 if ($ZipOnly) {
     # The folder of an earlier -NoZip run, with AxKit.exe signed in place: nothing is built or copied again.
@@ -43,15 +141,7 @@ if ($ZipOnly) {
     # everything in the folder goes into the zip.
     if (Test-Path $out) { Remove-Item $out -Recurse -Force }
 
-    # The reporter account's token for the reports (docs/axkit/reports.md RP-6.2), from the release secret when it is
-    # set: written into the file the build embeds, and removed again whatever the build did, so that it never stays.
-    $tokenTool = Join-Path $root 'tools\reporter-token.ps1'
-    if (-not [string]::IsNullOrWhiteSpace($env:AXKIT_REPORTER_TOKEN)) {
-        & $tokenTool -Token $env:AXKIT_REPORTER_TOKEN
-    } else {
-        Write-Host "No AXKIT_REPORTER_TOKEN in the environment: this build cannot send reports (docs/axkit/reports.md RP-6.2)."
-    }
-
+    Set-ReporterToken
     Write-Host "Publishing axKit (Release, win-x64, self-contained, single file)..."
     try {
         dotnet publish "$root\src\AxKit\AxKit.csproj" -c Release -r win-x64 --self-contained `
@@ -83,22 +173,8 @@ if ($ZipOnly) {
     # The bundle's guide: install, the apps, update, remove. Each app's own guide is inside it, under Help.
     Copy-Item (Join-Path $root 'docs\axkit\README.md') (Join-Path $out 'README.md') -Force
     Get-ChildItem $out -Filter '*.pdb' | Remove-Item -Force
-    # The list of apps (AxKit.exe apps, AX-1.4) in the zip as apps.json, which install.ps1 reads when the program cannot
-    # answer on the machine it installs on (3.7.1's update failed so on one machine, 2026-10-24). Asked of the program
-    # just built, so that it is that version's list; a program that cannot answer here fails the publish.
-    $start = New-Object System.Diagnostics.ProcessStartInfo $exe
-    $start.Arguments = 'apps'
-    $start.UseShellExecute = $false
-    $start.RedirectStandardOutput = $true
-    $start.CreateNoWindow = $true
-    $process = [System.Diagnostics.Process]::Start($start)
-    $listing = $process.StandardOutput.ReadToEnd()
-    $process.WaitForExit()
-    if ($process.ExitCode -ne 0 -or -not $listing.Trim().StartsWith('[')) {
-        Write-Host "AxKit.exe apps did not answer (exit code $($process.ExitCode)); the zip was not made."
-        exit 1
-    }
-    [System.IO.File]::WriteAllText((Join-Path $out 'apps.json'), $listing)
+    # The list of apps in the zip as apps.json, for install.ps1.
+    [System.IO.File]::WriteAllText((Join-Path $out 'apps.json'), (Get-AppsListing $exe))
     Write-Host ("Published {0} ({1:N1} MB)" -f $exe, ((Get-Item $exe).Length / 1MB))
 
     if ($NoZip) {
@@ -106,8 +182,7 @@ if ($ZipOnly) {
     }
 }
 
-$version = (Get-Item $exe).VersionInfo.FileVersion
-if ($version -match '^(\d+\.\d+\.\d+)') { $version = $Matches[1] }
+$version = Get-ProgramVersion $exe
 $zip = Join-Path $root "publish\AxKit-$version-win-x64.zip"
 if (Test-Path $zip) { Remove-Item $zip -Force }
 Compress-Archive -Path (Join-Path $out '*') -DestinationPath $zip
