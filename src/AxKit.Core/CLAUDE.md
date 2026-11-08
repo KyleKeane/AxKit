@@ -8,7 +8,14 @@ another project on its second use, the bullet says so.
 - `Dispatch` (AX-1): which app a command line starts; `Apps`, each app's name, verb, project, `AppGroup`, what it
   `Opens` and whether Show in offers it, in the order every list of apps shows (AX-9.2), the one source of the axKit
   menu, Open in axKit, the Show in submenus and the inventory test; `Of` (an app by its verb), `PathFor` (the path an
-  app is started on from a file or folder in hand), `EditorOf`.
+  app is started on from a file or folder in hand), `EditorOf`; `AtSignIn` marks the apps that run from sign-in
+  (axStart, axClip) for the installer and the package; `WithApplicationVerb` (docs/axkit/store-distribution.md 3.2,
+  2026-11-08) puts the verb of the package entry a process was started from first ("AxDown" is down, "AxStartSignIn"
+  is start --hidden; tools/make-manifest.ps1 names the entries) when the command line carries none.
+- `PackageIdentity` (2026-11-08): whether this process runs from the MSIX package, the Store's copy (`IsPackaged`,
+  `FullName`), and the id of the package entry that started it (`ApplicationId`), through kernel32's
+  `GetCurrentPackageFullName` and `GetCurrentApplicationUserModelId`; null and false outside a package, as in the
+  tests and the zip's copy.
 - `BundleInfo`: the version, read from the executable.
 - `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `AxKit` folders; `ConsentFile`;
   `TakeOverOldFolders` (AX-5.4, 2026-11-05), the Axit folders of up to 4.0.0 moved into them on the first start, entry

@@ -39,6 +39,12 @@ public sealed record App(string Name, string Verb, string Project, AppGroup Grou
     public string TypeName { get; init; } = "";
 
     /// <summary>
+    /// Whether the app runs in the background from sign-in (axStart, axClip; docs/axstart/SPEC.md AS-1.3): the
+    /// installer's value under the Run key, and the package's startup task (tools/make-manifest.ps1).
+    /// </summary>
+    public bool AtSignIn { get; init; }
+
+    /// <summary>
     /// The program an access layer works through ("Claude Code"), empty for a standalone app (AX-11.1): an app that
     /// starts or talks to a program axKit does not include is an access layer, in <see cref="AppGroup.AccessLayers"/>.
     /// </summary>
@@ -159,11 +165,11 @@ public static class Dispatch
         },
         new("axStart", AxStart, "AxStart", AppGroup.Utilities, Opens.Nothing)
         {
-            Description = "axStart, a program launcher behind a hotkey", Icon = new("As", 150, 90, 20),
+            Description = "axStart, a program launcher behind a hotkey", Icon = new("As", 150, 90, 20), AtSignIn = true,
         },
         new("axClip", AxClip, "AxClip", AppGroup.Utilities, Opens.Nothing)
         {
-            Description = "axClip, a clipboard history behind a hotkey", Icon = new("Ab", 160, 50, 50),
+            Description = "axClip, a clipboard history behind a hotkey", Icon = new("Ab", 160, 50, 50), AtSignIn = true,
         },
         new("axCalc", AxCalc, "AxCalc", AppGroup.Utilities, Opens.Nothing)
         {
@@ -216,6 +222,7 @@ public static class Dispatch
             types = app.Types,
             openWith = app.OpenWith,
             typeName = app.TypeName,
+            atSignIn = app.AtSignIn,
         }),
         new JsonSerializerOptions { WriteIndented = true });
 
@@ -273,6 +280,51 @@ public static class Dispatch
     /// </summary>
     public static string EditorOf(string path) =>
         Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase) ? AxJSON : AxDown;
+
+    /// <summary>
+    /// The arguments with the verb of the package entry this process was started from put first (the Store's copy,
+    /// docs/axkit/store-distribution.md 3.2; <see cref="PackageIdentity.ApplicationId"/>): the entry "AxDown" means
+    /// down, "AxStartSignIn" means start --hidden (tools/make-manifest.ps1 names the entries after the projects).
+    /// Nothing changes without an entry, for the bundle's own entry ("AxKit", the axkit command), for an entry that
+    /// names no app, or when the arguments already begin with a verb or a word of the bundle's, since Windows may pass
+    /// the entry's own parameters as well.
+    /// </summary>
+    public static string[] WithApplicationVerb(string[] args, string? applicationId)
+    {
+        if (string.IsNullOrEmpty(applicationId))
+        {
+            return args;
+        }
+
+        const string signIn = "SignIn";
+        var hidden = applicationId.EndsWith(signIn, StringComparison.Ordinal);
+        var project = hidden ? applicationId[..^signIn.Length] : applicationId;
+        if (Apps.FirstOrDefault(app => app.Project == project) is not { } entry)
+        {
+            return args;
+        }
+
+        if (args.Length > 0)
+        {
+            var first = args[0];
+            if (Apps.Any(app => string.Equals(first, app.Verb, StringComparison.OrdinalIgnoreCase))
+                || IsHelpFlag(first) || first == "--version"
+                || string.Equals(first, Mcp, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(first, Listing, StringComparison.OrdinalIgnoreCase))
+            {
+                return args;
+            }
+        }
+
+        var result = new List<string> { entry.Verb };
+        if (hidden && !args.Contains("--hidden"))
+        {
+            result.Add("--hidden");
+        }
+
+        result.AddRange(args);
+        return [.. result];
+    }
 
     public static Launch Decide(string[] args)
     {

@@ -16,6 +16,46 @@ public sealed class DispatchTests
         Assert.Null(launch.Error);
     }
 
+    /// <summary>The Store's copy: the package entry a process was started from gives the verb (docs/axkit/store-distribution.md 3.2).</summary>
+    [Fact]
+    public void PackageEntryGivesTheVerbWhenTheCommandLineHasNone()
+    {
+        Assert.Equal(["down"], Dispatch.WithApplicationVerb([], "AxDown"));
+        Assert.Equal(["down", "notes.md"], Dispatch.WithApplicationVerb(["notes.md"], "AxDown"));
+        Assert.Equal(["start", "--hidden"], Dispatch.WithApplicationVerb([], "AxStartSignIn"));
+        Assert.Equal(["clip", "--hidden"], Dispatch.WithApplicationVerb([], "AxClipSignIn"));
+
+        // Windows passed the entry's own parameters as well: nothing is added twice.
+        Assert.Equal(["down", "notes.md"], Dispatch.WithApplicationVerb(["down", "notes.md"], "AxDown"));
+        Assert.Equal(["start", "--hidden"], Dispatch.WithApplicationVerb(["start", "--hidden"], "AxStartSignIn"));
+        Assert.Equal(["Down", "notes.md"], Dispatch.WithApplicationVerb(["Down", "notes.md"], "AxDown"));
+
+        // The bundle's own entry, no entry, an unknown entry, or a word of the bundle's first: the command line as it is.
+        Assert.Equal(["down", "notes.md"], Dispatch.WithApplicationVerb(["down", "notes.md"], "AxKit"));
+        Assert.Equal(["notes.md"], Dispatch.WithApplicationVerb(["notes.md"], null));
+        Assert.Equal(["notes.md"], Dispatch.WithApplicationVerb(["notes.md"], "Nothing"));
+        Assert.Equal(["--version"], Dispatch.WithApplicationVerb(["--version"], "AxDown"));
+        Assert.Equal(["apps"], Dispatch.WithApplicationVerb(["apps"], "AxDown"));
+    }
+
+    [Fact]
+    public void TestsRunOutsideAPackage()
+    {
+        Assert.False(PackageIdentity.IsPackaged);
+        Assert.Null(PackageIdentity.ApplicationId);
+    }
+
+    [Fact]
+    public void ListingSaysWhichAppsStartAtSignIn()
+    {
+        var listing = System.Text.Json.JsonDocument.Parse(Dispatch.ListingJson());
+        var atSignIn = listing.RootElement.EnumerateArray()
+            .Where(app => app.GetProperty("atSignIn").GetBoolean())
+            .Select(app => app.GetProperty("verb").GetString()!)
+            .ToArray();
+        Assert.Equal([Dispatch.AxStart, Dispatch.AxClip], atSignIn);
+    }
+
     [Fact]
     public void VerbNamesTheAppAndPassesTheRestOn()
     {
