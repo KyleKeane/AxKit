@@ -135,6 +135,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   in the window as a notice, or in a message box when no window exists yet), the start and exit lines in the log,
   `--help` and `--version`, and runs the window the app makes from the rest of its arguments (`AppHost.OnePath`
   for an app that takes one file or folder, `AppHost.BadCommandLine` for the rest).
+- AX-1.8 In the Store's copy (AX-13), a process started from one of the package's entries takes the entry's verb when
+  the command line carries none (`Dispatch.WithApplicationVerb` with `PackageIdentity.ApplicationId`, before `Decide`).
 
 ### AX-2 Installation
 
@@ -231,6 +233,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   default button: Enter is Close, as the key line says (the first default of a notice is its Enter, OverlayPanel).
   The end closes only its own progress notice; a failure while the user is in another notice is announced, not shown
   over it. The installer's output is read under the same deadline, so a helper left running cannot hold it.
+- AX-2.10 The Microsoft Store's copy installs nothing of the above itself: its package declares the Start menu entries,
+  the console aliases, the file types and the startup tasks, and the Store installs, updates and removes it (AX-13).
 
 ### AX-3 Updates
 
@@ -293,6 +297,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   repository variable `AZURE_CERTIFICATE_PROFILE` names the certificate profile and is the switch: a release made with
   it unset says in its notes that the program is unsigned (`tests/AxKit.Tests/ReleaseWorkflowTests.cs` keeps the
   order, the switch and the notice). The release key signs the zip as before.
+- AX-3.7 The Store's copy has no updater: the Microsoft Store installs its updates, signed with Microsoft's
+  certificate, and Check for updates there says where the copy stands and opens the Store page (AX-13.3).
 
 ### AX-4 Releases
 
@@ -348,6 +354,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (a file the old program still held) finishes the next time. The settings, the recently closed list, the consents,
   the AI tools' pairings and their key, the logs and the audit log all come along. Never in a test run. Tested in
   `AppPathsTests`.
+- AX-5.5 In the Store's copy the same paths are Windows' to redirect: a new file under AppData lands in the package's
+  private folder and goes with the package when it is uninstalled, an existing one is modified in place (AX-13.5).
 
 ### AX-6 Shared pieces
 
@@ -742,6 +750,70 @@ The design is `docs/axkit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   the app name "axKit" and listed in About, Licence (RP-6.6). The report sender is the second place axKit's own code
   meets the network, beside the updater (G6, AX-11.11, `PRIVACY.md`).
 
+### AX-13 The Microsoft Store copy
+
+- AX-13.1 **One package.** axKit also ships as an MSIX package through the Microsoft Store (`docs/axkit/store-distribution.md`,
+  2026-11-08): the Store ID 9PK01L2K5000 (`AxKit.Core/StoreListing`), the identity `axKit.axKit`, the publisher
+  `CN=F1B55F68-5EAE-4338-B94B-73044EAE40DA`, the publisher display name axKit, as Partner Center gave them. `publish.ps1
+  -Msix` builds it: a folder publish (every file as a file), `AppxManifest.xml` written by `tools/make-manifest.ps1` from
+  the apps listing (AX-1.4), the images by `tools/make-icon.ps1 -Png`, packed by the Windows SDK's `makeappx` (Windows
+  Kits, or the tools `tools/get-sdk-tools.ps1` fetches into `tools/sdk` from Microsoft's package, their signatures
+  checked) into `publish\AxKit-<version>.msix`, unsigned: the Store signs it with Microsoft's certificate after
+  certification, which Smart App Control accepts. The version is the bundle's with `.0` appended; the fourth part is
+  the Store's. The package needs Windows 10 version 2004 (10.0.19041, the `uap10` manifest namespace); the zip keeps
+  1809 (5.4). Its one capability is `runFullTrust`.
+- AX-13.2 **The entries.** One `<Application>` per app of `Dispatch.Apps`, all running `AxKit.exe` with the verb as the
+  entry's parameters (`uap10:Parameters`, which Windows passes; measured 2026-11-08), named as AX-2.2's Start menu
+  entries (`axKit axClaude, access layer for Claude Code`), each with its own images, so that Windows search finds them
+  as before. Each entry carries a console alias, `<name>.exe` (`axdown.exe`), on the PATH through the user's
+  WindowsApps folder, in place of AX-2.4's `.cmd` shims; a hidden entry `AxKit` carries `axkit.exe`, which takes a verb
+  as `AxKit.exe` does. An app with Open with types (AX-2.3's last column) declares them as its file type association,
+  so that Windows' Open with lists it on them; a type is declared once per package, by the first app of the list that
+  has it, and axPreview, whose Open with says every file, declares none: a package cannot claim every file, and
+  AX-2.3's submenu (the apps on folders, axDown and axPreview on any file) has no form in a package without a COM server,
+  which this copy does not have. Each app with `AtSignIn` (axStart, axClip) has a hidden entry `<Project>SignIn` with
+  `<verb> --hidden` as its parameters and a startup task, which Windows lists under Settings, Apps, Startup.
+  `AxKit.Core/PackageIdentity` tells whether the process runs from the package (`GetCurrentPackageFullName`) and which
+  entry started it (`GetCurrentApplicationUserModelId`); `Dispatch.WithApplicationVerb` puts the entry's verb first when
+  the command line carries none (a Start entry, a file opened with the app, an alias, a startup task), so that the
+  dispatch holds whether or not Windows passes the parameters (AX-1.8; tested in `DispatchTests`).
+- AX-13.3 **No updater.** The Store installs, updates and uninstalls the package. The Store's copy makes no update check
+  at start, has no Check for updates at start setting (Options, General), downloads nothing and never shows Update to.
+  Check for updates (axKit menu) still asks GitHub for the latest release, so that About, Version and the notice can say
+  where this copy stands; the notice says that the Microsoft Store installs updates by itself, usually within a day of
+  a release, and offers Open axKit in the Microsoft Store (`ms-windows-store://pdp/?productid=9PK01L2K5000`, where
+  Update appears as soon as the Store has the release), Open release page and Close. About, Version names the Store and
+  the package. `install.ps1`, the Run key, the File Explorer keys, the shims and the Settings, Apps entry are not
+  written, the package providing their equivalents; `Program.DeleteOldProgramFiles` does nothing outside the install
+  folder; the release key's check of the zip does not apply.
+- AX-13.4 **Start with Windows** is Windows' own page in the Store's copy: `SignInStart.Apply` writes nothing (a Run
+  value written by a packaged process goes to the package's private registry and would never run), and the Options,
+  General item of axStart and axClip opens Settings, Apps, Startup (`ms-settings:startupapps`,
+  `SignInStart.OpenWindowsStartupSettings`, `HotkeyForm.StartWithWindowsItem`) and says to turn the app on or off there.
+- AX-13.5 **AppData and the programs axKit starts.** A packaged desktop app's new files under AppData Local and Roaming
+  land in the package's private folder (`%LOCALAPPDATA%\Packages\axKit.axKit_<hash>\LocalCache`), its writes under HKCU
+  in a private hive, and its package folder is read-only (measured 2026-11-08). So axKit's own files of AX-5 go with the
+  package when it is uninstalled; a file that already exists under `%APPDATA%\AxKit` from an unpackaged install stays
+  readable and is modified in place, a new one is private, and a development copy and the Store copy on one computer
+  share only what existed before the Store copy's first start. The programs axKit starts run outside the package, as
+  the children of a packaged desktop app do by default (measured 2026-11-08 with a probe started as a package entry:
+  Windows reports no package for a child started by `CreateProcess`, by .NET's `Process.Start` or through the shell, and
+  their AppData writes land in the user's folders): Claude Code and the shells in the pseudo console, git, KeePassXC's
+  tool, winget and the installers, the programs the user starts from axStart and axFile, and the browser all behave as
+  they do without axKit. A child that runs a program file of the package keeps the identity (New window, the AI tools'
+  window). `PackageIdentity.ProgramPath` is the path recorded for later use in the Store's copy, the alias
+  `%LOCALAPPDATA%\Microsoft\WindowsApps\axkit.exe`, since the package folder changes with every update (the AI tools'
+  `claude mcp add` command line, AxKitForm.Mcp.cs). The capability that turns virtualization off,
+  `unvirtualizedResources`, is restricted to games and not used.
+- AX-13.6 **The listing and the release.** The listing (name axKit, category Developer tools, free, every market,
+  discoverable; its texts in `docs/axkit/store-listing.md`) begins with the programs the access layers need (Store
+  policy 10.2.4), discloses that axClaude shows the output of a live generative AI (11.16; the F4 report is the means
+  to report content, AX-12) and links `PRIVACY.md` (10.5.1). The release workflow builds the package beside the zip and
+  attaches it to the draft release (`ReleaseWorkflowTests` keeps it); the maintainer uploads it to Partner Center
+  (`docs/axkit/store-distribution.md`, phases 6 and 7) until the submission runs from the command line. `winget install
+  9PK01L2K5000 -s msstore` (`StoreListing.WingetCommand`) installs the Store's copy. The zip of AX-2 and AX-3 stays, for
+  developers and for a computer without the Store.
+
 ### AX-7 Accessibility rules every app follows
 
 These are the rules of `docs/axclaude/SPEC.md` that are not about Claude; app specifications refer to them by number.
@@ -931,6 +1003,10 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
 - **UI Automation notifications** (`AccessibleObject.RaiseAutomationNotification`, WinForms over
   `UiaRaiseNotificationEvent`, in `src/AxKit.Forms/Announcer.cs`): everything the apps say (AX-7.3). Windows 10
   1709 and later; NVDA has read them since 2018.
+- **The package identity**, `kernel32` (`GetCurrentPackageFullName`, `GetCurrentApplicationUserModelId` in
+  `src/AxKit.Core/PackageIdentity.cs`): whether this process runs from the MSIX package, the Store's copy, and which of
+  the package's entries started it (AX-13.2). Windows 8 and later; stable. Without them every copy would behave as
+  the zip's, which is the fallback.
 
 ## 6. Design decisions
 
