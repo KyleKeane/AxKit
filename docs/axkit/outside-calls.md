@@ -187,7 +187,7 @@ Calls (4):
   Code: `Process.Start(info)?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axkit/mcp.md MC-6).
   Code: `using var process = Process.Start(start);`
-- **shared by every app**, `src/AxKit/Program.cs:129`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
+- **shared by every app**, `src/AxKit/Program.cs:132`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
 
 ### Pipes
@@ -283,7 +283,7 @@ Used in 15 places:
 - `src/AxKit.Forms/AxKitMenu.cs:227`, in `AxKitMenu.StartWith`, for axKit.
 - `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:173`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
-- `src/AxKit/Program.cs:129`, in `Program.StartedAsOpenWithLink`, for axKit.
+- `src/AxKit/Program.cs:132`, in `Program.StartedAsOpenWithLink`, for axKit.
 - `src/AxPass.Core/KeePassCli.cs:110`, in `KeePassCli.StartLasting`, for KeePassXC.
 - `src/AxStart/AppsFolder.cs:115`, in `AppsFolder.Start`, for User programs.
 
