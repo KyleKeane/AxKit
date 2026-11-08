@@ -152,7 +152,9 @@ if ($Png) {
     $bundle = $apps | Where-Object { $_.Verb -eq 'claude' } | Select-Object -First 1
     if (-not $bundle) { $bundle = $apps[0] }
     Write-Png (Join-Path $folder 'StoreLogo.png') 50 $bundle.Icon.Letters $bundle.Icon.Rgb
-    Write-Host "Wrote the package's images for $($apps.Count) apps and the store logo into $folder"
+    # The listing's own logo, 300 pixels, for Partner Center (docs/axkit/store-listing.md): beside the package, not in it.
+    Write-Png (Join-Path (Split-Path -Parent $folder) 'StoreLogo-300.png') 300 $bundle.Icon.Letters $bundle.Icon.Rgb
+    Write-Host "Wrote the package's images for $($apps.Count) apps and the store logo into $folder, and the listing's 300 pixel logo beside it"
 } elseif ($Out) {
     Write-Icon ([System.IO.Path]::GetFullPath($Out)) $Text $Rgb
 } else {
