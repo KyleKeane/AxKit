@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.1
+
+- axKit: the token with which reports are posted to GitHub was replaced on 2026-11-08, hours after 5.1.0 went out. A report sent from 5.1.0 is refused by GitHub from now on: the notice says the token was revoked and offers the report for copying and GitHub's own form, and the report stays under axKit menu, Your reports, as "Not sent yet", going with the next report once this update is in. Nothing else changed.
+- For developers: rotating the token is three steps and a release: a new fine-grained token on the reports repository (issues: read and write), `gh secret set AXKIT_REPORTER_TOKEN --env release` from a file that is deleted afterwards, and `tools/reporter-token.ps1 -Token` for the development builds; the old token's build keeps failing with 401, which the sender reports as revoked (`docs/axkit/reports-setup.md`).
+
 ## 5.1.0
 
 - axKit: F4 in every window, or axKit menu, Send a report, opens a report to axKit's maintainer: type your words and press Enter, or Tab through what the window adds and edit it (the kind: feedback, a bug or a feature request; the app and version with Windows and NVDA; the window's last twenty actions and announcements; where the focus was, by name and place, never its text; the log's last lines; a title). The report is saved on your computer first, as an item of the axTask list under axKit menu, Your reports, then posted to GitHub as a public issue of the reports repository `KyleKeane/AxKit-reports`, by axKit's own account with a random id of your install and nothing that names you; your agreement is asked once. No network or a refusal leaves it "Not sent yet" with the reason, and it goes with the next report or when Your reports opens; Escape with words typed keeps a draft. A build without the sending token, a blocked install or a revoked token say so and offer the report for copying and GitHub's own form. `PRIVACY.md` says exactly what travels (`docs/axkit/reports.md`).
