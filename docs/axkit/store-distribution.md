@@ -214,8 +214,10 @@ State on 2026-11-08 night, branch `store`: phase 1's name and identity are done 
 and the CLI wait, section 0); phases 2, 3 and 4 are built (SPEC AX-13 and its cross-references in AX-1, AX-2, AX-3,
 AX-5 and 5.4; `publish.ps1 -Msix` with its three tools; `PackageIdentity`, `StoreListing`, `Dispatch.WithApplicationVerb`,
 the Store copy's Check for updates, About and Start with Windows; `build.yml` builds the package on every push and
-`release.yml` attaches it to the draft release); phase 5's texts are `store-listing.md` and its logo
-`publish\msix\StoreLogo-300.png`, the screenshots waiting for an away-window (`tools/store-screenshots.ps1`); phase 6
+`release.yml` attaches it to the draft release); phase 5 is `store-listing.md`, its logo
+`publish\msix\StoreLogo-300.png` and six screenshots in `publish\store` (`tools/store-screenshots.ps1`, retaken from a
+demo folder under the Public profile after the first set showed the maintainer's folder path; axTerminal's and
+axGIT's come with `-WithAccessLayers` once he has connected them here, axClaude's by hand); phase 6
 waits for the maintainer; phase 7's command-line submission waits for section 0's second step. The registration and
 probe tests of section 7 passed; the NVDA pass of the Store copy comes with phase 6.
 

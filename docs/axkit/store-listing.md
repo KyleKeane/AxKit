@@ -112,19 +112,22 @@ Kyle Keane (the account's publisher display name is axKit).
 
 ### Screenshots (PNG, 1366 by 768 or larger, up to ten; captions under 200 characters)
 
-One per app's window, maximised, the whole screen (1920 by 1200 on the development computer), taken by
-`tools/store-screenshots.ps1` while the maintainer is away from the keyboard (`store-distribution.md` phase 5), into
-`publish\store\`; the captions, in the files' order:
+One per app's window at 1920 by 1200, cropped to the window's visible frame, taken by `tools/store-screenshots.ps1`
+while the maintainer is away from the keyboard (`store-distribution.md` phase 5), into `publish\store\`. The files the
+windows show live in a demo folder under the Public profile for the minutes of the run, since a status bar prints the
+folder's path and an account's name is personal data; checked by eye against that before the upload (2026-11-08: the
+first run had the maintainer's folder in axFile's status bar and was retaken). The captions, in the files' order:
 
-1. axDown with a Markdown file: "axDown: a Markdown file, moved through by heading, link and list."
+1. axDown with the axKit guide: "axDown: a Markdown file, moved through by heading, link and list."
 2. axFile with a folder and its Actions list: "axFile: one folder, and every action listed to undo."
-3. axTerminal with a transcript: "axTerminal: a shell as a transcript, each command's output found by a key."
-4. axGIT with a repository's changes: "axGIT: one repository's changes, log and branches."
-5. axTask with a list: "axTask: tasks and lists as small files, with typed fields."
-6. axJSON with a JSON file: "axJSON: a JSON file, moved through by key, with a Format command."
-7. axCalc with its history: "axCalc: one expression field and a history list."
-8. axProcess with its list: "axProcess: the processes, services and startup programs as one list."
+3. axTask with a list: "axTask: tasks and lists as small files, with typed fields."
+4. axJSON with a JSON file: "axJSON: a JSON file, moved through by key, with a Format command."
+5. axCalc with its history: "axCalc: one expression field and a history list."
+6. axProcess with its list: "axProcess: the processes, services and startup programs as one list."
 
+Two more come with `-WithAccessLayers`, once the maintainer has connected the two on this computer (until then they
+show their consent reminder): axTerminal, "axTerminal: a shell as a transcript, each command's output found by a key",
+and axGIT, "axGIT: one repository's changes, log and branches", the latter by hand on a repository of his choosing.
 axClaude's shot, "axClaude: a Claude Code conversation as plain text, one line per key", is taken by hand on a
 conversation of the maintainer's choosing, since the script would start a Claude Code session on his account.
 

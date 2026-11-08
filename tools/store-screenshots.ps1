@@ -6,18 +6,23 @@
 
 .DESCRIPTION
   Starts the Release program of the package folder (publish\msix\package\AxKit.exe, built by publish.ps1 -Msix) once per
-  shot, unpackaged, waits for the window, maximises it, captures the screen at its real size (the process is made DPI
-  aware first, so a 150 % screen is captured in full pixels), closes the window and goes on. The Store wants PNG of
-  1366 by 768 or larger; the screen must be at least that. axClaude is left out, since it would start a Claude Code
-  session on the maintainer's account; axMedia too, since it plays. The captions are in store-listing.md.
+  shot, unpackaged, waits for the window, puts it at the top left at 1920 by 1200 and captures that rectangle in real
+  pixels (the process is made DPI aware first), closes the window and goes on. The Store wants PNG of 1366 by 768 or
+  larger. axClaude is left out, since it would start a Claude Code session on the maintainer's account; axMedia too,
+  since it plays; axGIT and axTerminal only with -WithAccessLayers, once the user has connected them on this computer,
+  since until then they show their consent reminder. The captions are in store-listing.md.
 
 .EXAMPLE
-  .\tools\store-screenshots.ps1          # after publish.ps1 -Msix; the user away
+  .\tools\store-screenshots.ps1                     # after publish.ps1 -Msix; the user away
+  .\tools\store-screenshots.ps1 -WithAccessLayers   # axTerminal and axGIT too, after their first Connect here
 #>
 [CmdletBinding()]
 param(
     [string]$Exe = (Join-Path (Split-Path -Parent $PSScriptRoot) 'publish\msix\package\AxKit.exe'),
-    [string]$Out = (Join-Path (Split-Path -Parent $PSScriptRoot) 'publish\store')
+    [string]$Out = (Join-Path (Split-Path -Parent $PSScriptRoot) 'publish\store'),
+    # axGIT and axTerminal too: they show their consent reminder instead of the app until the user has connected once
+    # on this computer, so they are taken only when asked, after that.
+    [switch]$WithAccessLayers
 )
 
 $ErrorActionPreference = 'Stop'
@@ -27,34 +32,52 @@ Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -Namespace Shots -Name Native -MemberDefinition @'
 [DllImport("user32.dll")] public static extern bool SetProcessDPIAware();
-[DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+[DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
 [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+[StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }
+[DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr hWnd, int attribute, out RECT rect, int size);
 '@
 [void][Shots.Native]::SetProcessDPIAware()
+# The window is put at the top left at this size and that rectangle alone is captured: it leaves out whatever Windows
+# draws at the screen's bottom right (an activation watermark on a computer that has none), and it is the Store's
+# minimum and more.
+$width = 1920
+$height = 1200
 $screen = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
-if ($screen.Width -lt 1366 -or $screen.Height -lt 768) { throw "The screen is $($screen.Width) by $($screen.Height); the Store wants 1366 by 768 or more." }
+if ($screen.Width -lt $width -or $screen.Height -lt $height) { throw "The screen is $($screen.Width) by $($screen.Height); the shots need $width by $height." }
 New-Item -ItemType Directory -Force $Out | Out-Null
 
-# The test files: manual_tests\prepare.ps1 makes them (git ignores all but the script and the _main.md files).
-& (Join-Path $root 'manual_tests\prepare.ps1') axdown | Out-Null
+# The files the shots show live in a demo folder under the Public profile, never under the maintainer's own: a window's
+# status bar prints the folder's path, and an account's name is personal data (bundle rule 6). The folder is made
+# afresh from the repository's pages and the prepared test files and removed at the end.
+$demo = Join-Path $env:PUBLIC 'axKit demo'
+if (Test-Path $demo) { Remove-Item $demo -Recurse -Force }
+New-Item -ItemType Directory -Force (Join-Path $demo 'Tasks') | Out-Null
+foreach ($page in 'README.md', 'CHANGELOG.md', 'PRIVACY.md', 'NOTICE.md', 'GOVERNANCE.md', 'LICENSE', 'global.json') {
+    Copy-Item (Join-Path $root $page) $demo
+}
+Copy-Item (Join-Path $root 'docs\axkit\README.md') (Join-Path $demo 'axKit guide.md')
 & (Join-Path $root 'manual_tests\prepare.ps1') axjson | Out-Null
 & (Join-Path $root 'manual_tests\prepare.ps1') axtask | Out-Null
-$markdown = Get-ChildItem (Join-Path $root 'manual_tests\axdown') -Filter '*.md' -File | Where-Object { $_.Name -ne '_main.md' } | Select-Object -First 1
-$json = Get-ChildItem (Join-Path $root 'manual_tests\axjson') -Filter '*.json' -File | Select-Object -First 1
-if (-not $markdown) { $markdown = Get-Item (Join-Path $root 'docs\axkit\README.md') }
-if (-not $json) { $json = Get-Item (Join-Path $root 'global.json') }
+$json = Get-ChildItem (Join-Path $root 'manual_tests\axjson') -Filter '*.json' -File | Sort-Object Length -Descending | Select-Object -First 1
+if ($json) { Copy-Item $json.FullName $demo; $jsonName = $json.Name } else { $jsonName = 'global.json' }
+Copy-Item (Join-Path $root 'manual_tests\axtask\*') (Join-Path $demo 'Tasks') -Recurse -Force
+# The repository as a git repository is the maintainer's folder; the access layers' shots take the demo folder, which
+# git does not know, so axGIT shows its "no repository" state unless the maintainer points it elsewhere by hand.
 
 # One shot per line: the file's number and name, the verb, the argument, and the seconds to wait for the window to settle.
 $shots = @(
-    @{ Name = '1-axdown'; Verb = 'down'; Argument = $markdown.FullName; Settle = 3 },
-    @{ Name = '2-axfile'; Verb = 'file'; Argument = $root; Settle = 3 },
-    @{ Name = '3-axterminal'; Verb = 'terminal'; Argument = $root; Settle = 6 },
-    @{ Name = '4-axgit'; Verb = 'git'; Argument = $root; Settle = 5 },
-    @{ Name = '5-axtask'; Verb = 'task'; Argument = (Join-Path $root 'manual_tests\axtask'); Settle = 3 },
-    @{ Name = '6-axjson'; Verb = 'json'; Argument = $json.FullName; Settle = 3 },
-    @{ Name = '7-axcalc'; Verb = 'calc'; Argument = ''; Settle = 3 },
-    @{ Name = '8-axprocess'; Verb = 'process'; Argument = ''; Settle = 5 }
+    @{ Name = '1-axdown'; Verb = 'down'; Argument = (Join-Path $demo 'axKit guide.md'); Settle = 3 },
+    @{ Name = '2-axfile'; Verb = 'file'; Argument = $demo; Settle = 3 },
+    @{ Name = '3-axtask'; Verb = 'task'; Argument = (Join-Path $demo 'Tasks'); Settle = 3 },
+    @{ Name = '4-axjson'; Verb = 'json'; Argument = (Join-Path $demo $jsonName); Settle = 3 },
+    @{ Name = '5-axcalc'; Verb = 'calc'; Argument = ''; Settle = 3 },
+    @{ Name = '6-axprocess'; Verb = 'process'; Argument = ''; Settle = 5 }
 )
+if ($WithAccessLayers) {
+    $shots += @{ Name = '7-axterminal'; Verb = 'terminal'; Argument = $demo; Settle = 6 }
+    $shots += @{ Name = '8-axgit'; Verb = 'git'; Argument = $demo; Settle = 5 }
+}
 
 function Wait-Window([int[]]$before) {
     for ($i = 0; $i -lt 40; $i++) {
@@ -71,19 +94,28 @@ foreach ($shot in $shots) {
     Start-Process -FilePath $Exe -ArgumentList $arguments | Out-Null
     $process = Wait-Window $before
     if (-not $process) { Write-Host "$($shot.Name): no window appeared"; continue }
-    [void][Shots.Native]::ShowWindow($process.MainWindowHandle, 3)   # SW_MAXIMIZE
+    [void][Shots.Native]::MoveWindow($process.MainWindowHandle, $screen.Left, $screen.Top, $width, $height, $true)
     [void][Shots.Native]::SetForegroundWindow($process.MainWindowHandle)
     Start-Sleep -Seconds $shot.Settle
-    $bitmap = New-Object System.Drawing.Bitmap $screen.Width, $screen.Height
+    # The window's visible frame (DWMWA_EXTENDED_FRAME_BOUNDS, 9): the rectangle given to MoveWindow includes an
+    # invisible border on three sides, behind which another window would show.
+    $frame = New-Object Shots.Native+RECT
+    if ([Shots.Native]::DwmGetWindowAttribute($process.MainWindowHandle, 9, [ref]$frame, [System.Runtime.InteropServices.Marshal]::SizeOf($frame)) -ne 0) {
+        $frame.Left = $screen.Left; $frame.Top = $screen.Top; $frame.Right = $screen.Left + $width; $frame.Bottom = $screen.Top + $height
+    }
+    $shotWidth = $frame.Right - $frame.Left
+    $shotHeight = $frame.Bottom - $frame.Top
+    $bitmap = New-Object System.Drawing.Bitmap $shotWidth, $shotHeight
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-    $graphics.CopyFromScreen($screen.Left, $screen.Top, 0, 0, $bitmap.Size)
+    $graphics.CopyFromScreen($frame.Left, $frame.Top, 0, 0, $bitmap.Size)
     $graphics.Dispose()
     $file = Join-Path $Out "$($shot.Name).png"
     $bitmap.Save($file, [System.Drawing.Imaging.ImageFormat]::Png)
     $bitmap.Dispose()
-    Write-Host ("{0}: {1} ({2} by {3}, '{4}')" -f $shot.Name, $file, $screen.Width, $screen.Height, $process.MainWindowTitle)
+    Write-Host ("{0}: {1} ({2} by {3}, '{4}')" -f $shot.Name, $file, $shotWidth, $shotHeight, $process.MainWindowTitle)
     [void]$process.CloseMainWindow()
     if (-not $process.WaitForExit(5000)) { Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue }
     Start-Sleep -Seconds 1
 }
+Remove-Item $demo -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "Screenshots in $Out; the captions are in docs/axkit/store-listing.md."
