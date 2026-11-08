@@ -19,7 +19,19 @@ As `reports-setup.md` does for the reports: no secret is written here, only wher
 - The switch: the repository variable `STORE_SUBMIT`, set to `on` once the first publication is live. Unset, no
   workflow touches the Store.
 
-## 2. Your steps, part one: the automation's account (about twenty minutes, once)
+## 2. The automation's account: not offered to this account (2026-11-09)
+
+Microsoft's submission API, and the Store Developer CLI on top of it, speak to Partner Center only as a Microsoft
+Entra application with the Manager role on the account, added under Account settings, User management, Microsoft
+Entra applications, after a tenant is associated under Account settings, Organization profile, Tenants. On
+2026-11-09 the maintainer's Individual account showed no Tenants entry at all, and a report of October 2026 by another
+developer with an Individual account (MicrosoftDocs/windows-dev-docs issue 6153, unanswered) shows the Microsoft Entra
+applications tab and the developer-program roles missing even after a tenant was associated. Microsoft's pages say
+Entra sign-in is for Company accounts and that an Individual account cannot be changed into one. So the API route is
+built (section 4, `store.yml`, `tools/store-submit.ps1`) and kept switched off, ready for the day the account gets the
+option (a support request to Partner Center asking for it is section 7); until then every release reaches the Store
+as section 5 says, by an upload on the website, which is to be automated from this computer (section 6). The steps
+below are what the option needs, kept for that day.
 
 Everything here is in the Partner Center website, signed in with the account that reserved axKit. The values you
 copy are not secrets except the key, which you type into prompts only, never into a chat.
@@ -48,7 +60,7 @@ copy are not secrets except the key, which you type into prompts only, never int
 8. Now close the key's page. Tell me; I run `tools\store-submit.ps1 -Status`, which reads axKit's state from
    Partner Center with the three values and proves them.
 
-## 3. Your steps, part two: the first submission (about an hour, once)
+## 3. Your steps: the first submission (about an hour, once)
 
 Microsoft requires the first publication to go through Partner Center's website; every later one goes from the
 command line (section 4). The texts are `store-listing.md`: for each field, tell me its name and I put the text on
@@ -67,16 +79,16 @@ when you reach the field.
 5. Store listings, English (United States): Description; What's new in this version; Product features, one per
    field; Screenshots, the six files; Store logos, the 300 pixel file; Search terms; Copyright and trademark info;
    Additional license terms; Developed by. Save. (The texts come from me, field by field.)
-6. Packages: upload the package file. It is the `AxKit-5.2.0.msix` of the 5.2.0 release on GitHub, which I make on
-   your word (it carries the reporter token the local build lacks); I download it for you and tell you its path.
-   Partner Center then asks for the restricted capability `runFullTrust`: paste the sentence from `store-listing.md`,
-   Submission options. Save. Leave this section for last if the release is not out yet.
+6. Packages: upload the package file, the `AxKit-5.2.0.msix` of the 5.2.0 release on GitHub (released 2026-11-08;
+   it carries the reporter token the local build lacks), which I downloaded into the repository's `publish\store`
+   folder; I tell you its full path when you reach the field. Partner Center then asks for the restricted capability
+   `runFullTrust`: paste the sentence from `store-listing.md`, Submission options. Save.
 7. Submission options: Notes for certification, the text from `store-listing.md`; Publishing hold options, "Publish
    this submission as soon as it passes certification". Save.
 8. Press Submit to the Store. Tell me. Certification takes from hours to days; I read the state (section 5) and, if
    it fails, fix what it names and we submit again.
 
-## 4. How a release reaches the Store once both parts are done
+## 4. How a release reaches the Store once the API route is open (built, switched off)
 
 `release.ps1 <version>` works as before: the tests, the version, the tag, the workflow, the signed zip, the published
 GitHub release. When the release is published and `STORE_SUBMIT` is `on`, the workflow `store.yml` runs in the
@@ -93,10 +105,37 @@ The same script by hand, with the credentials kept by `tools/store-credentials.p
 `.\tools\store-submit.ps1 -Package publish\AxKit-5.2.1.msix -Notes notes.md` submits, `-Status` reads the state, and
 `-DryRun` shapes the submission without touching the network.
 
-## 5. Reading the state, and when something fails
+## 5. How a release reaches the Store today: the upload on the website
+
+Until section 4 can run, a release is `release.ps1 <version>` as before, and then five steps on the website, which
+take about five minutes: the release's `AxKit-<version>.msix` downloaded from its GitHub page (I do that and name
+the path), then in Partner Center: Apps and games, axKit, "Update" (a new submission, a copy of the last one),
+Packages, the file uploaded, the old package removed from the list, Save; What's new in this version under Store
+listings, the release's notes pasted (I put them on your clipboard); Submit to the Store. The Store does the rest.
+Section 6 is the plan to take these clicks off your hands.
+
+## 6. Automating the website (to be built after the first submission)
+
+The website can be driven from this computer: Microsoft Edge opened with its debugging port on the maintainer's
+own signed-in profile, so that no password or second factor is ever handled, and a small tool of the repository
+speaking the DevTools protocol to it (open the submission page, set the file on the upload field, press Save and
+Submit, read the result), run by hand after a release and later by `release.ps1`. It is built after the first
+submission has shown the pages as they are, and it breaks whenever Microsoft changes them, when the five steps of
+section 5 are the way again. The API route of section 4 replaces it the day the account gets the option.
+
+## 7. The support request for the API route
+
+A request to Partner Center's support (Help and support, in the dashboard's upper right), in the maintainer's words:
+the account is an Individual developer account with the product axKit (Store ID 9PK01L2K5000); it needs the Microsoft
+Store submission API for its releases; Account settings shows no Tenants entry and no Microsoft Entra applications
+tab; please enable the tenant association and the Microsoft Entra applications with the developer-program roles for
+this account, or say that an Individual account cannot have them. The answer decides between sections 4 and 6.
+
+## 8. Reading the state, and when something fails
 
 - `.\tools\store-submit.ps1 -Status` prints the last published and the pending submission with its status and the
-  Store's error and warning codes; the same is in Partner Center under the product's overview.
+  Store's error and warning codes, once the API route is open; until then the same is in Partner Center under the
+  product's overview.
 - A failed certification names the policy; the fix goes into the next release (or, for a listing text, into
   `store-listing.md` and the next submission).
 - A submission changed by hand in Partner Center can no longer be touched by the API: the script says so; delete that
@@ -105,9 +144,11 @@ The same script by hand, with the credentials kept by `tools/store-credentials.p
   running the workflow again from the Actions tab (`store.yml`, Run workflow, the tag) once the Store is free.
 - To stop the automation, remove the variable: `gh variable delete STORE_SUBMIT`. The releases go on as before.
 
-## 6. Security
+## 9. Security
 
-The application can do what the Manager role allows on Partner Center and nothing else in Azure; it holds no
-subscription role. Its key is in the `release` environment, which only `main` and `v*` tags may use, and in the
-maintainer's protected file; it never enters a build, a log or the chat. Rotating it is: Add new key in Partner
-Center, the three commands of section 2 steps 6 and 7 again, and the old key removed on the application's page.
+The application of section 2, when it exists, can do what the Manager role allows on Partner Center and nothing
+else in Azure; it holds no subscription role. Its key is in the `release` environment, which only `main` and `v*`
+tags may use, and in the maintainer's protected file; it never enters a build, a log or the chat. Rotating it is: Add
+new key in Partner Center, the three commands of section 2 steps 6 and 7 again, and the old key removed on the
+application's page. The website automation of section 6 holds no credential at all: it drives the maintainer's own
+signed-in browser on this computer, and nothing else can.
