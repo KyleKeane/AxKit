@@ -111,13 +111,15 @@ Application separately under Open with, so the hard links of `AxKit.exe` that `i
   does not build (section 8). In the Store build a folder is opened from axFile, from axStart's search, or from a
   shell with `axkit claude <folder>`.
 - An app execution alias, `axkit.exe` on PATH, in place of the `.cmd` shims in `%USERPROFILE%\.local\bin`
-  (AX-2.4), so `axkit down notes.md` works from any shell; one alias per app (`axdown.exe`) if an alias on an
-  Application with parameters passes them on (section 7).
+  (AX-2.4), so `axkit down notes.md` works from any shell, and one alias per app (`axdown.exe`): measured on
+  2026-11-08, `axdown.exe <file>` opens the file in axDown and `axkit.exe preview <file>` in axPreview.
 - Startup tasks (`windows.startupTask`) for axStart and axClip, in place of the Run key values `SignInStart`
   writes: a packaged process's writes under HKCU go to a private hive, so a Run value written from inside the package
   would never run. Windows lists the tasks under Settings, Apps, Startup, where the user turns them on and off; the
-  Store build's own "Start at sign-in" setting opens that page (`ms-settings:startupapps`) and says so. Whether a
-  task can carry `start --hidden`: section 7.
+  Store build's own Start with Windows item opens that page (`ms-settings:startupapps`) and says so
+  (`HotkeyForm.StartWithWindowsItem`). A startup task carries no arguments of its own, so each sits on a hidden entry
+  (`AxStartSignIn`) whose parameters are `start --hidden`, and the program reads the entry's id as well (3.2); measured
+  on 2026-11-08: both apps start hidden with `--hidden` from their entries.
 
 ### 3.4 Virtualization, accepted
 
@@ -131,17 +133,19 @@ the package; its writes under HKCU are copied to a private hive; its package fol
   start and diverge in new files. Acceptable; written into AX-5.
 - The capability that turns virtualization off, `unvirtualizedResources`, is restricted and, in Microsoft's words,
   designed for certain desktop PC games published by Microsoft and its partners. The plan does not rely on it.
-- Child processes must behave as they do outside axKit: the shells of axTerminal, Claude Code in axClaude, git,
-  KeePassXC's tool, winget and the makers' installers of Install it now all keep state under AppData (PowerShell's
-  history, Claude Code's and winget's files). Windows has the way out: a process created with the thread attribute
-  `PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY` set to `PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_ENABLE_PROCESS_TREE`
-  runs outside the package, with its whole process tree. `AxKit.Core/Pty/PtyHost` already builds a thread attribute
-  list for ConPTY, so the console programs get the attribute there; the other starts go through one small
-  `CreateProcess` wrapper with the same attribute. Verified in the first packaging test (section 7).
+- The programs axKit starts behave as they do outside axKit, without any code for it. Measured on 2026-11-08 with a
+  probe that Windows started as an entry of the package (section 7): a child it created by `CreateProcess`, by .NET's
+  `Process.Start` and through the shell each ran with no package identity, and their writes under `%LOCALAPPDATA%`
+  and `%APPDATA%` landed in the user's folders, not in the package's. That is Windows' default for the children of a
+  packaged desktop app (the `PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY` attribute exists to change it, and is not
+  needed). So the shells of axTerminal, Claude Code in axClaude, git, KeePassXC's tool, winget and the installers, the
+  programs the user starts from axStart and axFile, and the browser all keep their own files where they always were.
+  A child that runs a program file of the package keeps the identity (measured the same way), which is what New
+  window and the AI tools' window start rely on.
 - `Environment.ProcessPath` lies under `C:\Program Files\WindowsApps\<package>\` and changes with every update, so
   whatever records the exe's path for later use records the alias `%LOCALAPPDATA%\Microsoft\WindowsApps\axkit.exe`
-  in the Store build: the MCP command line written into Claude Code's settings (`AxKitForm.Mcp.cs`), `SignInStart`
-  and `AppPaths.InstalledExe`.
+  in the Store build (`PackageIdentity.ProgramPath`): the MCP command line written into Claude Code's settings
+  (`AxKitForm.Mcp.cs`). `SignInStart` writes nothing in that copy (3.3).
 
 ### 3.5 What the Store build turns off
 
@@ -188,24 +192,32 @@ leads with winget and the Store. The code signing of the exe: decision 4.4.
 
 ## 4. Decisions for the maintainer
 
-The recommendation comes first in each.
+The recommendation came first in each; on 2026-11-08 the maintainer took the recommended option of every one
+(section 0), and 4.4 alone stays open until the first Store release is checked.
 
 - 4.1 One path for users. The Store (and winget) is the install path `README.md` offers; the zip stays as the
-  developer's and the fallback path. Or: two equal paths, both documented and both tested every release.
-- 4.2 Virtualization accepted, children break away (3.4). Or: apply for `unvirtualizedResources` with a
-  justification, and risk the certification on it.
-- 4.3 The folder context menu is absent from the Store build for now (3.3). Or: build the COM server first (section
-  8), weeks more before the first submission.
+  developer's and the fallback path. Taken.
+- 4.2 Virtualization accepted; the children run outside the package by Windows' default, measured (3.4), so neither
+  the breakaway attribute nor `unvirtualizedResources` is needed. Settled by measurement.
+- 4.3 The folder context menu is absent from the Store build for now (3.3). Taken; the COM server is section 8.
 - 4.4 Azure Artifact Signing stays until the first Store release is installed and checked, then retires: the
   Store's signature replaces it for users, and the zip goes unsigned as it does today while the variable is unset.
-  Or: keep both, the exe signed in the zip as well.
-- 4.5 Start at sign-in in the Store build is Windows' own Startup page (3.3). Or: a toggle inside axKit through the
-  WinRT startup task API, which needs the Windows SDK projection, a targeting pack, against the zero-package rule.
-- 4.6 The clicks in Partner Center are the maintainer's, with NVDA, from my step lists (phase 1 and 6). Or: I drive
-  the browser through the Chrome extension while he is signed in and watching; file uploads stay his either way.
+  Or: keep both, the exe signed in the zip as well. Open.
+- 4.5 Start at sign-in in the Store build is Windows' own Startup page (3.3), built as `HotkeyForm.StartWithWindowsItem`.
+  Taken.
+- 4.6 The clicks in Partner Center are the maintainer's, with NVDA, from my step lists (phase 1 and 6). Taken.
 - 4.7 The publisher display name is public on the listing; the account's is axKit (3.0), settled.
 
 ## 5. The steps, in order
+
+State on 2026-11-08 night, branch `store`: phase 1's name and identity are done (3.0; the tenant, the Entra application
+and the CLI wait, section 0); phases 2, 3 and 4 are built (SPEC AX-13 and its cross-references in AX-1, AX-2, AX-3,
+AX-5 and 5.4; `publish.ps1 -Msix` with its three tools; `PackageIdentity`, `StoreListing`, `Dispatch.WithApplicationVerb`,
+the Store copy's Check for updates, About and Start with Windows; `build.yml` builds the package on every push and
+`release.yml` attaches it to the draft release); phase 5's texts are `store-listing.md` and its logo
+`publish\msix\StoreLogo-300.png`, the screenshots waiting for an away-window (`tools/store-screenshots.ps1`); phase 6
+waits for the maintainer; phase 7's command-line submission waits for section 0's second step. The registration and
+probe tests of section 7 passed; the NVDA pass of the Store copy comes with phase 6.
 
 ### Phase 1: Partner Center (the maintainer, in the browser, about an hour; can start now)
 
@@ -334,11 +346,18 @@ package removed again afterwards, cleanly: no Start entry, no alias left) answer
 - The hidden sign-in entries start their apps hidden with `--hidden` (axClip ran so; axStart handed over to the
   development copy already running and ended, which is its single-instance rule). Whether Windows lists the two tasks
   under Settings, Apps, Startup, and runs them at sign-in: the Store copy's pass (item 4).
-- A child process started inside the package is virtualized: a write under `%LOCALAPPDATA%` and under `%APPDATA%`
-  landed in the package's `LocalCache\Local` and `LocalCache\Roaming`, not in the user's folders. So the shells, Claude
-  Code and the other children need the breakaway attribute of 3.4, which is the next code change (item 7). The apps
-  themselves wrote their logs into the user's existing `%LOCALAPPDATA%\AxKit\logs` files in place, as 3.4 expects of
-  existing files.
+- A process the test itself placed inside the package (`Invoke-CommandInDesktopPackage`) was virtualized: its writes
+  under `%LOCALAPPDATA%` and `%APPDATA%` landed in the package's `LocalCache`. That was the wrong question, answered
+  by the probe below. The apps themselves wrote their logs into the user's existing `%LOCALAPPDATA%\AxKit\logs` files
+  in place, as 3.4 expects of existing files.
+
+The probe of the same night (a small windowless program, `BreakawayProbe`, added as a hidden entry to a copy of the
+manifest and started as Windows starts an entry, `shell:AppsFolder`, then removed with the package) answered items 3
+and 7 for good: the probe ran with the package's identity and received the entry's `uap10:Parameters` as its command
+line; the children it created by `CreateProcess`, by `Process.Start` and through the shell each had no package
+identity (`GetPackageFullName` empty) and wrote their marker files into the user's AppData folders; a child that ran a
+program file of the package kept the identity. So no breakaway code is needed, and the hidden entries' parameters
+reach the apps (item 7 and item 3 done; 3.4 says so).
 - Package detection and the entry's id gave the right app in every start, whether Windows passed the entry's
   parameters or not; the two cannot be told apart from outside and need not be (item 11).
 

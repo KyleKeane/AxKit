@@ -41,7 +41,7 @@ the restart by the app itself (2.3.0).
 
 ## Still to come
 
-- **The Microsoft Store, MSIX and winget** (asked 2026-11-08, the day the Partner Center account was opened; planned in `store-distribution.md`, not built): axKit as one MSIX package the Store signs, installs and updates, one Application per app, the Store page in place of the updater in that copy, `winget install` from the Store source as the command-line path, the zip kept for developers; the account work by hand in Partner Center once, every release from the command line through the Store Developer CLI; the decisions still open are its section 4.
+- **The Microsoft Store, MSIX and winget** (asked 2026-11-08, the day the Partner Center account was opened; planned in `store-distribution.md`; built on branch `store` the same day, SPEC AX-13, the first submission pending): axKit as one MSIX package the Store signs, installs and updates, one Application per app, the Store page in place of the updater in that copy, `winget install` from the Store source as the command-line path, the zip kept for developers; the account work by hand in Partner Center once, every release from the command line through the Store Developer CLI; the decisions still open are its section 4.
 - Reports (asked 2026-11-07, specified in `docs/axkit/reports.md`, not built): F4 in every window opens a report with
   the last actions and the focus filled in, three kinds (feedback, bug, feature request), saved as an axTask item
   first and sent to GitHub as an issue of a reports repository over its REST API through axKit's own reporter account,
