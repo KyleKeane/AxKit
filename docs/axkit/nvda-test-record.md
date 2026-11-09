@@ -71,6 +71,19 @@ of F1 in axCalc, axClip and axClaude, `.\hello` in Command Prompt, a zip of 1,00
 File missing in axDown, the focus after a Windows dialog as an NVDA-only script) and by axFile's `a?b` steps, which
 the full run already had; those steps ran in the second full pass below, with the theme (`docs/axkit/theme.md`) and
 File, New window in the editors (`axdown/10-theme.txt`, `axdown/03-files.txt`).
+## 2026-11-09, later still: the Say all hold of the transcript views, by the assistant (branch `say-all`, unreleased)
+
+Run after 5.4.0 with NVDA 2025.3.3 listening, the user still away: the new NVDA-only script
+`tests/nvda-scripts/axclaude-say-all.txt` against the branch's build (axClaude FR-3.3: output held for 4 s after a caret
+move that neither a key nor the view made, NVDA's Say all moving the caret as it reads). A first reply of forty lines,
+then a second of 120 lines asked for, and NVDA+A (Say all in the laptop layout, which this computer uses) from the top of
+the conversation 1.5 s after Enter. The script passed: NVDA read the banner, the first input and, after the second
+turn's Responding and Done, the first reply's lines on; every one of the 120 lines was in the text at the end, no error
+in the log. What the capture cannot settle is whether the reading went on uncut through the streaming itself: for 20 s
+after the first input NVDA's log shows nothing spoken, then the window's Responding and Done (which interrupt speech,
+as they always have) and the reading again. So the change is merged for the user to hear by ear, unreleased: start a
+long reply, NVDA+A from the top, and say whether the reading now holds (before, it cut off with "Could not clone
+range"); the window's own Responding and Done still interrupt it, which is a separate question.
 ## 2026-11-09, later: axPreview's picture reader, by the assistant through nvda-pass.ps1 (branch `ocr`, 95092f0)
 
 Run after the release of 5.3.0 with NVDA 2025.3.3 listening, the user still away: `nvda-pass.ps1 axPreview` from the

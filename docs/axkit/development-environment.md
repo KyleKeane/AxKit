@@ -146,9 +146,10 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
   while Claude streams (value-change and text-selection-change, the caret kept on the reader's line), so the window is
   not slow; the collision is inherent to reading a document that is being written. axClaude already holds output for
   250 ms after a key press and while a selection stands (`TranscriptView`), but a Say all has no key press to hang the
-  hold on, so it is not covered. A change there (holding output a moment while a Say all is in flight) is possible but
-  touches the announcement and caret path, which must be heard with NVDA before it ships (SPEC AX-7.6), so it is left
-  for a session with the user present. What helps the user now: close and reopen NVDA when speech starts dropping (it
+  hold on, so it was not covered until 2026-11-09, when the view started to hold output for 4 s after a caret move that
+  neither a key nor the view made (the EM_SETSEL message NVDA sends as its Say all reads on; axClaude FR-3.3): output
+  waits while the reading goes on and comes once it has stopped. Heard by the NVDA tier that night
+  (`tests/nvda-scripts/axclaude-say-all.txt`); how it feels over a long reading is the user's to say. What helps besides: close and reopen NVDA when speech starts dropping (it
   clears the synth's memory), and New session or a fresh window keeps the transcript from growing toward its
   20 000-line cap, which NVDA re-reads. The structural fix is more memory for the VM or a 64-bit screen reader.
 - `az` is a batch file: a `--query` with parentheses and no spaces, such as `length(@)`, is torn apart by `cmd`; put a

@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.5.0
+
+- axClaude, axTerminal: while NVDA reads the conversation or the terminal continuously (Say all), the output waits, and comes four seconds after the reading stops; before, a line arriving mid-sentence changed the text under NVDA and cut the reading off. A key press ends the wait at once, as it always did.
+
 ## 5.4.0
 
 - axPreview: a picture shows the text Windows' own reader finds in it, a second or two after it opens, one line per line of the picture under a line naming it, with "Text read: N lines" said once; File, Read the clipboard's picture (Ctrl+Shift+V) does the same for the picture on the clipboard, which Alt+PrintScreen puts there from the window in front and PrintScreen from the whole screen, saved beside axPreview's logs; nothing leaves the computer. Windows PowerShell runs the reader (`Windows.Media.Ocr`) from a small script of axPreview's, so axKit stays free of the Windows SDK (`docs/axpreview/SPEC.md` AP-D11). Before, a picture only said that it was one.

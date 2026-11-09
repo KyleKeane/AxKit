@@ -26,6 +26,17 @@ public sealed class TranscriptView : TextBox
     /// </summary>
     private const int NavigationHoldMs = 250;
 
+    /// <summary>
+    /// How long output is held back after the caret was moved by something other than a key or the view itself: NVDA's
+    /// continuous reading (Say all) moves the caret from sentence to sentence as it reads, a second or more apart, and
+    /// output applied between two of its moves changed the text under the range it was reading and cut the reading off
+    /// (docs/axkit/development-environment.md section 5; axClaude FR-3.3, 2026-11-09). Output waits while the reading
+    /// goes on and comes this long after it stops; a key press ends the wait as it always did.
+    /// </summary>
+    private const int ReaderHoldMs = 4000;
+
+    private const int EM_SETSEL = 0x00B1;
+
     /// <summary>The window's keys for the view: the quick keys and the rest (AX-8.3), given once at construction.</summary>
     private readonly TranscriptKeys _keys;
 
@@ -38,6 +49,12 @@ public sealed class TranscriptView : TextBox
     private IReadOnlyList<Line>? _pending;
     private IReadOnlyList<Line>? _lines;
     private long _lastKeyTick = long.MinValue / 2;
+
+    /// <summary>When the caret was last moved from outside the view (<see cref="WndProc"/>): the screen reader's own move.</summary>
+    private long _lastReaderTick = long.MinValue / 2;
+
+    /// <summary>Set while the view moves the selection itself (<see cref="OwnSelect"/>), so that its own selection message is never taken for the reader's.</summary>
+    private bool _applying;
 
     /// <param name="keys">The window's keys for the view, from its key table.</param>
     /// <param name="accessibleName">What NVDA calls the view: "Conversation" in axClaude, "Terminal" in axTerminal.</param>
@@ -153,14 +170,21 @@ public sealed class TranscriptView : TextBox
     public void Sync(IReadOnlyList<Line> lines)
     {
         _lines = lines;
-        var sinceKey = Environment.TickCount64 - _lastKeyTick;
-        if (Focused && (sinceKey < NavigationHoldMs || SelectionLength > 0))
+        var now = Environment.TickCount64;
+        var sinceKey = now - _lastKeyTick;
+        var sinceReader = now - _lastReaderTick;
+        var keyHold = sinceKey < NavigationHoldMs;
+        var readerHold = sinceReader < ReaderHoldMs && !keyHold;
+        if (Focused && (keyHold || readerHold || SelectionLength > 0))
         {
             _pending = lines;
             _hold.Stop();
-            // The rest of the hold after a key; a whole hold while a selection holds the output, since only a key,
-            // which restarts the hold, changes that (the remainder went to 1 ms and spun the UI thread until 2026-10-23).
-            _hold.Interval = sinceKey < NavigationHoldMs ? (int)Math.Max(1, NavigationHoldMs - sinceKey) : NavigationHoldMs;
+            // The rest of the hold after a key, or after the reader's last move; a whole hold while a selection holds the
+            // output, since only a key, which restarts the hold, changes that (the remainder went to 1 ms and spun the UI
+            // thread until 2026-10-23).
+            _hold.Interval = keyHold ? (int)Math.Max(1, NavigationHoldMs - sinceKey)
+                : readerHold ? (int)Math.Max(1, ReaderHoldMs - sinceReader)
+                : NavigationHoldMs;
             _hold.Start();
             return;
         }
@@ -189,7 +213,7 @@ public sealed class TranscriptView : TextBox
         {
             foreach (var edit in update.Edits)
             {
-                Select(edit.Start, edit.OldLength);
+                OwnSelect(edit.Start, edit.OldLength);
                 SelectedText = edit.Text;
             }
 
@@ -198,11 +222,11 @@ public sealed class TranscriptView : TextBox
                 // The caret stays on the transcript line and column it was on (FR-3.3), wherever that line moved.
                 var start = update.MapPosition(selectionStart);
                 var end = update.MapPosition(selectionEnd);
-                Select(start, Math.Max(0, end - start));
+                OwnSelect(start, Math.Max(0, end - start));
             }
             else if (_mirror.LineCount > 0)
             {
-                Select(_mirror.StartAt(_mirror.LineCount - 1), 0);
+                OwnSelect(_mirror.StartAt(_mirror.LineCount - 1), 0);
             }
         }
         finally
@@ -261,6 +285,35 @@ public sealed class TranscriptView : TextBox
         base.OnGotFocus(e);
         // Output that arrived while the view was unfocused moved the caret without the view following (Sync).
         ScrollCaretIntoView();
+    }
+
+    /// <summary>The view's own move of the selection, told apart from the screen reader's in <see cref="WndProc"/>.</summary>
+    private void OwnSelect(int start, int length)
+    {
+        _applying = true;
+        try
+        {
+            Select(start, length);
+        }
+        finally
+        {
+            _applying = false;
+        }
+    }
+
+    /// <summary>
+    /// A selection set from outside the view, outside a key's hold, is the screen reader's: NVDA's Say all moves the
+    /// caret as it reads. Output then waits for the reading (<see cref="ReaderHoldMs"/>). The view's own moves go through
+    /// <see cref="OwnSelect"/>; a key's go within its hold.
+    /// </summary>
+    protected override void WndProc(ref Message m)
+    {
+        if (m.Msg == EM_SETSEL && !_applying && Focused && Environment.TickCount64 - _lastKeyTick >= NavigationHoldMs)
+        {
+            _lastReaderTick = Environment.TickCount64;
+        }
+
+        base.WndProc(ref m);
     }
 
     /// <summary>
@@ -536,12 +589,12 @@ public sealed class TranscriptView : TextBox
             RememberJump();
         }
 
-        Select(_mirror.StartAt(index) + _mirror.RenderedColumn(index, column), 0);
+        OwnSelect(_mirror.StartAt(index) + _mirror.RenderedColumn(index, column), 0);
         ScrollCaretIntoView();
         if (!Announce(prefix + SpokenText(index, whole: false), true))
         {
             // No UI Automation notifications: select the line so the screen reader reports the selection.
-            Select(_mirror.StartAt(index), _mirror.RenderedColumn(index, _mirror.TextAt(index).Length));
+            OwnSelect(_mirror.StartAt(index), _mirror.RenderedColumn(index, _mirror.TextAt(index).Length));
         }
     }
 

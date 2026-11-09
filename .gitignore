@@ -32,6 +32,8 @@ captures/
 
 ## AxClaude's own saved files and logs
 axclaude-*.txt
+# The NVDA-only scripts of axClaude are named after the app too (tests/nvda-scripts/<app>-<what>.txt, docs/axkit/automation.md).
+!tests/nvda-scripts/axclaude-*.txt
 *.log
 
 ## The reporter account's token, written by publish.ps1 for a release build only (docs/axkit/reports.md RP-6.2)
