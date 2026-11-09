@@ -79,7 +79,10 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   is made in the New session notice and the Switch shell submenu (AT-1.6)
   and remembered in the settings (`shell`, `customShell`) for the next window. The shell starts in the folder with the
   window's environment plus `TERM=xterm-256color` for the programs that look, and `GIT_PAGER=cat` and `GH_PAGER=cat`,
-  which switch git's and the GitHub CLI's pager off (AT-D7); nothing is taken out of the environment.
+  which switch git's and the GitHub CLI's pager off (AT-D7); nothing is taken out of the environment. The shell also
+  inherits Windows' switch `NoDefaultCurrentDirectoryInExePath`, which axKit sets for itself at start (bundle security
+  audit S-1, the user's choice of 2026-11-09): in Command Prompt a program in the current folder is run as `.\name`, as
+  PowerShell has always asked, and a `git.exe` planted in a downloaded repository never answers to `git`.
 - AT-1.3 **Integration marks.** The window asks the shell to mark its prompt the way Windows Terminal's shell
   integration does (OSC 133 `A` the prompt starts, `B` the prompt ends and the command begins, `D;<exit code>` the
   previous command finished; OSC 9;9 the current directory), without touching the user's profile. Every mark ends in

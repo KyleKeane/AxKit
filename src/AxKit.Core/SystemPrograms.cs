@@ -23,6 +23,17 @@ public static class SystemPrograms
     /// <summary>Windows PowerShell 5.1, the one every Windows has.</summary>
     public static string PowerShell => Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe");
 
+    /// <summary>Windows' switch that keeps the current folder out of a program search by bare name: cmd.exe and Windows' own search read it.</summary>
+    public const string NoCurrentFolderSearch = "NoDefaultCurrentDirectoryInExePath";
+
+    /// <summary>
+    /// Sets <see cref="NoCurrentFolderSearch"/> for this process, and so for every process it starts, which inherit
+    /// the environment (S-1, the user's choice of 2026-11-09): in axTerminal's Command Prompt a program in the current
+    /// folder is run as <c>.\name</c>, as PowerShell has always asked, and a <c>git.exe</c> planted in a downloaded
+    /// repository never answers to <c>git</c>. The executable's <c>Main</c> calls it first.
+    /// </summary>
+    public static void KeepCurrentFolderOffSearches() => Environment.SetEnvironmentVariable(NoCurrentFolderSearch, "1");
+
     /// <summary>The characters cmd.exe acts on in an argument, quoted or not (the BatBadBut class of bug; S-3, from axFile's UserPrograms on its second use, the AI tools' claude.cmd, S-53, 2026-10-25).</summary>
     public static readonly char[] CmdSpecials = ['&', '|', '<', '>', '^', '%', '!', '(', ')', ',', ';', '=', '"'];
 

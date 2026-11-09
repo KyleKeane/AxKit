@@ -35,6 +35,9 @@ internal static class Program
         // First of all: a test run's variables read and taken out of the environment, so that nothing this process
         // starts inherits them (security audit S-11).
         AutomationEnvironment.Capture();
+        // And the current folder kept out of every program search by bare name, in this process and in the shells and
+        // programs it starts (S-1).
+        SystemPrograms.KeepCurrentFolderOffSearches();
         // The folders of Axit, the bundle's name up to 4.0.0, taken over before anything reads a setting (AX-5.4).
         AppPaths.TakeOverOldFolders();
         ApplicationConfiguration.Initialize();

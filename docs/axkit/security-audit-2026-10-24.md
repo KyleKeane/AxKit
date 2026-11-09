@@ -166,7 +166,7 @@ Fixed on the branch `security`, one commit per finding or close set, each with i
 
 | Findings | Commit | What |
 |---|---|---|
-| S-1, S-3 | e777871 | programs by full path; the PATH searched in its full folders only (`SystemPrograms`); batch programs refused cmd's special characters; on 2026-11-09 axTerminal's cmd from System32 alone, `ComSpec` no longer read |
+| S-1, S-3 | e777871 | programs by full path; the PATH searched in its full folders only (`SystemPrograms`); batch programs refused cmd's special characters; on 2026-11-09 axTerminal's cmd from System32 alone, `ComSpec` no longer read, and `NoDefaultCurrentDirectoryInExePath` set first thing in `Program.Main` (`SystemPrograms.KeepCurrentFolderOffSearches`), so the shells and programs axKit starts skip the current folder too |
 | S-2 | 3a61de4 | git's file monitor and `ext::` always off, no diff programs; a repository's own programs set aside until trusted (axGIT AG-1.6) |
 | S-11, S-12 | 07091d6 | the channel's run secret, taken out of the environment; the pipe for the user alone; password fields read "protected" |
 | S-13 | 7ee6136 | a hand-over only to a window of this very `AxKit.exe`; the receiver's side accepted (a program of the user's could open the path itself) |
@@ -231,9 +231,9 @@ path, parser, pipe and log line again and closed these, each on the branch `cons
 | S-56 | low | the automation channel read a client's first line with no length cap before the secret check, where the MCP channel capped at 64 KB; now both read through `UserPipe.ReadLine` |
 | S-57 | low | S-42's rule, text from outside shown with its hidden characters made visible, reached three lists; `AxKitList.Fill` fills every list of that kind now, so the viewer's details follow it too |
 
-Left for the user (the inventory's section 11): S-1's `NoDefaultCurrentDirectoryInExePath`, which never landed in
-`Program.cs`; a `list.json` `open` action that may start Claude Code or a shell, which the MCP tool refuses; a cap on a
-zip's entries in axPreview; S-53's refusal in axClaude's own `claude.cmd` command lines.
+Left for the user (the inventory's section 11, decided on 2026-11-09): a `list.json` `open` action that may start
+Claude Code or a shell, which the MCP tool refuses; a cap on a zip's entries in axPreview; S-53's refusal in axClaude's
+own `claude.cmd` command lines. S-1's `NoDefaultCurrentDirectoryInExePath` is set since that day (the table's row).
 
 The review's notes, unconfirmed: Windows' property handlers run inside axPreview's process for the Details list (a
 third-party handler that crashes on a malformed file ends it; a hung one is left after five seconds), as they run
