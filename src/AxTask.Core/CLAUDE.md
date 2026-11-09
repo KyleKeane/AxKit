@@ -26,7 +26,7 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,
   both the links to it and the links it holds), `Spoken` ("missing: name"), `Remap`.
 - `TaskRules` (TK-4): Done, Start and Due, `DefaultTemplate`, `TemplateOf`, `IsTask`, `IsDone`, `Due`, `Summary`,
-  `WithDone`, `WithoutDone`, `TemplateWithDone`, `Ordered`.
+  `WithDone`, `WithoutDone`, `TemplateWithDone`, `DoneIndex`.
 - `SmartList` (TK-5): All tasks and the `.filter.json` files: `InFolder`, `Read` (a file not understood is a smart
   list that shows nothing, with `NotUnderstood`), `Items`, `Matches`, `NewFileText`.
 - `TaskSettings`: the top folder, the list open last, whether done tasks are hidden.

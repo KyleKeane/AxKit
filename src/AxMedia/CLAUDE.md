@@ -25,7 +25,7 @@ dotnet test tests/AxMedia.Tests/AxMedia.Tests.csproj
     - `FillList` (the lines changed in place while the count is the same, so that the selection stays and only the changed line moves under NVDA; the list named with its count);
     - `AddPaths` (Open files, Open folder, a recent item: "Added n"), `FillRecent`;
     - `PlaySelected`, `RemoveSelected`, `ClearQueue`, `SayInformation`;
-    - `CurrentFile` (the playing file, or the selected one) for `ShowInExplorer` and `OpenInAxFile`;
+    - `CurrentFile` (the playing file, or the selected one) for `ShowInExplorer` and the base's Show current file in submenu;
   - the player:
     - the engine made on first use with the video area's handle, `PlayCurrent`;
     - the events (`OnStarted`, `OnEnded`, `OnFailed`, `MoveOn`, `StopPlayback`);

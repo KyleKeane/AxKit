@@ -41,7 +41,8 @@ another project on its second use, the bullet says so.
   `AxKit.Forms/HotkeyForm` reads it without knowing the app.
 - `Log`: one file per app; each app calls `Log.UseApp` first thing in its `Run`.
 - `Updates/UpdateCheck` (the latest GitHub release: JSON parsing, version comparison; the repository name lives here)
-  and `Updates/Updater` (the download and the hand-over to `install.ps1`, AX-3).
+  and `Updates/Updater` (the download and the hand-over to `install.ps1`, AX-3); `Updates/ReleaseSigning`, the release
+  key's public half and the check of a zip's signature before anything is installed (AX-3.4, S-27).
 - `Audio/WaveTone`: the chimes, the ticks and the working music as WAV bytes, generated in code; no media files ship.
 - `BundleAbout` (AX-9.9): the About sections of the bundle, each a notice's title and text: Version (with the window's
   latest-release state), Licence, Attribution, and the axKit guide, `docs/axkit/README.md` embedded by
@@ -100,7 +101,10 @@ another project on its second use, the bullet says so.
 - `ProgramInstall` (AX-2.9, 2026-10-24): the programs an app needs and Windows lacks (Git, KeePassXC, Claude Code, PowerShell 7), each with its winget id or its maker's own installer and its download page; `StartInfo` (the install without a window, every question answered; Windows PowerShell by its full path), `Winget` (only Windows' own, never one on the PATH, S-10) with `WingetArguments` (`--source winget`), `RefreshPath` (the PATH read again from Windows after an install); the PATH is searched through `SystemPrograms.OnPath`. Tested in `ProgramInstallTests`.
 - `AutomationEnvironment` (S-11): a test run's secret and folder, read once in `Main` and taken out of the environment; only a new axKit window of the run gets them (`PassTo`).
 - `ProcessRun` and `ProcessResult` (2026-10-25; from axGIT's `GitRunner`, Claude Code's version check and axPass's `KeePassCli` on their third use, inventory item 3): a program run without a window to its end under a time limit, input lines then closed, both outputs read under the limit, the whole tree ended on a timeout, `Finished` telling whether the program itself had ended (git's case of a child holding the pipes). Tested in `ProcessRunTests`; the callers' own tests cover their cases.
-- `DangerousFiles` (S-46, 2026-10-25): whether a file's kind runs when opened, Windows' own `AssocIsDangerous`; a viewer never opens such a file through Windows.
+$1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, its bidi and zero-width characters made
+  visible; `AxKit.Forms/AxKitList.Fill` applies it to every list it fills.
+- `Signatures` (S-19): whether a program file carries a valid Authenticode signature (`WinVerifyTrust`, the file alone,
+  no network), asked before a secret is handed to a program found outside an administrator's folders; axPass's tool.
 - `Redaction` (S-20; from AxClaude.Core on its second use, Copy diagnostics): e-mail addresses, the account's paths, pipe names, ids and the account name replaced by placeholders, for text to be shown or shared.
 
 ## The AI tools (docs/axkit/mcp.md MC-6, 2026-10-24)
@@ -110,6 +114,8 @@ another project on its second use, the bullet says so.
   `%LOCALAPPDATA%\AxKit\mcp.key` through `UserSecret`, `NewChallenge`, `Proof` and `Proves` (HMAC-SHA256).
 - `Mcp/McpProtocol`: MCP's JSON-RPC as the broker speaks it, one line in, one line out, the tools from two functions;
   `Text` reads a string a client sent without trusting its type. `McpTool` and `McpResult`.
+- `Mcp/McpClaudeCode` (MC-6.8): where Claude Code is, and the `claude mcp add` and `remove` command lines that
+  register this AxKit.exe for every folder of the user; the window runs them (`AxKit.Forms/AxKitForm.Mcp.cs`).
 - `Mcp/McpTools`: the first stage's tools, `NeverRead` (axPass, axClip) and `NeverOpened` (axClaude, axTerminal),
   and `OpenArguments`, the check of `axkit_open`'s app and path. `Mcp/McpAudit` (one line a call, the arguments
   hashed) and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).
@@ -168,7 +174,7 @@ another project on its second use, the bullet says so.
   embeds from `Reports/reporter.token`, `Encode` and `Decode` (the mixing `tools/reporter-token.ps1` repeats), null in
   a build without it. Tested in `ReportSenderTests`.
 - `AxKitHttp` (AX-11.11, 2026-11-07): the one HTTP client of axKit's own code, the updater's and the report sender's,
-  with the User-Agent `AxKit/<version>`; from `Updater.CreateClient` on its second use.
+  with the User-Agent `AxKit/<version>`; from the updater on its second use.
 - `MediaFiles` (docs/axmedia/SPEC.md AM-4; from AxFile.Core, axMedia, 2026-10-22): the rules of sound and video files
   that need no engine, the extension sets with `IsMedia`, the time format and the typed time, the speed steps.
 
@@ -201,7 +207,7 @@ Every piece is tested in `tests/AxKit.Tests`, one `<Piece>Tests.cs` file per pie
 `VtScreenOperationTests` and `ScreenMarkTests` for the screen); the transcript pieces are tested further in
 `tests/AxClaude.Tests`, where the recorded fixtures drive them. The same project holds the bundle's own checks of the
 sources: `LayoutTests` (the project references point one way, M2), `InventoryTests` (every app in every place it must
-be), `KeyTests` (no window key equals a bundle key, AX-8.4), `ListTests` and `MenuTests`.
+be), `KeyTests` (no window key equals a bundle key, AX-8.4), `ListTests`, `MenuTests`, `CheckBoxTests` and `ReleaseWorkflowTests` (the workflows' shape).
 
 ## Gotchas
 

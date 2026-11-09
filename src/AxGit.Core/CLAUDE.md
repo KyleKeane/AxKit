@@ -17,6 +17,7 @@ git -C <repo> branch --list --format=%(refname:short)%09%(HEAD)%09%(upstream:sho
 - `GitStatus` and `ChangedFile`, `RepositoryStatus` (SPEC.md AG-3.1): porcelain v2 to records; the item's `Label` ("Modified src/Foo.cs, unstaged"), the list's name, the status bar text, and the argument lists for Space (`StageArguments`), Enter (`DiffArguments`) and Delete (`DiscardArguments`), so that the window knows no git syntax. `Unquote` undoes git's C-style quoting of odd paths.
 - `GitLog` and `Commit` (AG-4): the tab-separated log to records, `Label`, `ShowArguments`.
 - `GitBranches` and `Branch` (AG-5): the branch list to records with the upstream state (a detached HEAD, which git lists in parentheses, left out), `Label`, `SwitchArguments`, `CreateArguments`.
+- `GitTrust` (AG-1.6; security audit S-2): a repository's own programs, the file monitor, diff and filter programs, hooks and the ssh command its `.git/config` names, read without running anything and each set to nothing on every git command until the user trusts the repository.
 - `GitSettings` (AG-8.1): the settings file, as `EditorSettings` is for the editors, with the recent repositories.
 - `GitRemote` (bundle AX-11.5, 2026-10-29): the remote a branch's upstream names (`NameOf`), `git remote get-url`'s arguments, and `Host`, the host of a remote's address for the server's consent (https, ssh with a user and a port, the scp form, an IPv6 literal in brackets kept whole; null for a path or a share, which reaches no one else's service). Tested in `GitRemoteTests`.
 
