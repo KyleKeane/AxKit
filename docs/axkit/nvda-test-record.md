@@ -71,6 +71,17 @@ of F1 in axCalc, axClip and axClaude, `.\hello` in Command Prompt, a zip of 1,00
 File missing in axDown, the focus after a Windows dialog as an NVDA-only script) and by axFile's `a?b` steps, which
 the full run already had; those steps ran in the second full pass below, with the theme (`docs/axkit/theme.md`) and
 File, New window in the editors (`axdown/10-theme.txt`, `axdown/03-files.txt`).
+## 2026-11-09, later: axPreview's picture reader, by the assistant through nvda-pass.ps1 (branch `ocr`, 95092f0)
+
+Run after the release of 5.3.0 with NVDA 2025.3.3 listening, the user still away: `nvda-pass.ps1 axPreview` from the
+branch `ocr`, its five scripts, with the picture steps new in `04-details-and-kinds.txt` (docs/axpreview/SPEC.md
+AP-7.2 item 4): a picture drawn by the script opened, NVDA reading "text.png is a picture (PNG). Reading its text with
+Windows' own reader..." and then "Text read: 2 lines", the text's first line naming the picture, Ctrl+Down to "Hello
+from axKit" and Down to "Second line 2026", "Text lines: 2" in the Details list; then Ctrl+Shift+V with the same
+picture on the clipboard, "Text read: 2 lines" again and the title naming the saved `clipboard-<date>-<time>.png`.
+Four scripts passed in the one run; the fourth's first attempt expected the first page's text by focus, which under
+NVDA the finished page had replaced by the time the start had been read (the step dropped: the first page is the unit
+tests' to check, `PictureTextTests`), and it passed whole on its rerun (34 s). Released in 5.4.0.
 ## 2026-11-08: the reports, by the assistant through nvda-pass.ps1 (branch `reports`, ec166c0)
 
 Run by the assistant with NVDA 2025.3.3 listening, the user away at its question, with Claude Code 2.1.319 and
