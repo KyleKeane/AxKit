@@ -33,7 +33,11 @@ param([switch]$Status)
 # into an exception. Here every git call is followed by a look at its exit code instead.
 $ErrorActionPreference = 'Continue'
 
-$parent = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+# The siblings sit beside the main checkout. From a worktree (the cleanup run works in one under the scratchpad), the
+# common git directory names that checkout; without git's answer, the folder above this script's repository is used.
+$common = (& git -C $PSScriptRoot rev-parse --path-format=absolute --git-common-dir 2>$null | Select-Object -First 1)
+$checkout = if ($common) { Split-Path $common -Parent } else { Split-Path $PSScriptRoot -Parent }
+$parent = Split-Path $checkout -Parent
 $script:failed = $false
 
 function Invoke-Git {
