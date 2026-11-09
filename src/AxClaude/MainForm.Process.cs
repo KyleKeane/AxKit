@@ -66,14 +66,14 @@ internal sealed partial class MainForm
         }
 
         var configured = _options.ClaudePath ?? _settings.ClaudePath;
-        var claude = ClaudeLauncher.Find(configured);
+        var claude = ClaudeCodeProgram.Find(configured);
         if (claude is null)
         {
             // FR-1.9: say where the app looked, offer the install command, or let the user point at claude.exe.
             Log.Error("Claude Code was not found");
             _model.AddSystemLine("Claude Code was not found. Install it, then press Ctrl+Shift+R.");
             UpdateStatus();
-            ShowClaudeNotFound(ClaudeLauncher.Candidates(configured));
+            ShowClaudeNotFound(ClaudeCodeProgram.Candidates(configured));
             return;
         }
 
@@ -132,12 +132,12 @@ internal sealed partial class MainForm
     private bool ClaudeInstalled()
     {
         var configured = _options.ClaudePath ?? _settings.ClaudePath;
-        if (ClaudeLauncher.Find(configured) is not null)
+        if (ClaudeCodeProgram.Find(configured) is not null)
         {
             return true;
         }
 
-        if (configured is null || ClaudeLauncher.Find(null) is null)
+        if (configured is null || ClaudeCodeProgram.Find(null) is null)
         {
             return false;
         }

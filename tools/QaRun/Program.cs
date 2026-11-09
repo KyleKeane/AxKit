@@ -48,7 +48,7 @@ internal static class Program
         }
 
         Console.OutputEncoding = Encoding.UTF8;
-        claude = ClaudeLauncher.Find(claude);
+        claude = ClaudeCodeProgram.Find(claude);
         if (claude is null)
         {
             Console.Error.WriteLine("Claude Code was not found.");

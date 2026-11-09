@@ -6,61 +6,13 @@ using AxKit.Core;
 
 namespace AxClaude.Core.Pty;
 
-/// <summary>Finds the Claude Code executable and builds the command line and environment for it.</summary>
+/// <summary>Builds the command line and the environment for Claude Code, which <c>AxKit.Core/ClaudeCodeProgram</c> finds (FR-1.2).</summary>
 public static class ClaudeLauncher
 {
     /// <summary>The native Windows installer, as documented at <see cref="InstallUrl"/>; one source with the Install Claude Code now button (<c>ProgramInstall.ClaudeCode</c>).</summary>
     public static string InstallCommand => ProgramInstall.ClaudeCode.PowerShellCommand!;
 
     public static string InstallUrl => ProgramInstall.ClaudeCode.Page;
-
-    /// <summary>
-    /// The places searched for Claude Code, in order (FR-1.2): the explicit path when one is given, otherwise
-    /// <c>claude.exe</c> or <c>claude.cmd</c> in every PATH folder, the native installer's folder and the npm folder.
-    /// </summary>
-    public static IReadOnlyList<string> Candidates(string? explicitPath)
-    {
-        if (!string.IsNullOrWhiteSpace(explicitPath))
-        {
-            return [explicitPath];
-        }
-
-        var candidates = new List<string>();
-        // Only the PATH's full folders: a relative entry would be the current folder (S-1).
-        foreach (var directory in SystemPrograms.PathFolders())
-        {
-            foreach (var name in new[] { "claude.exe", "claude.cmd" })
-            {
-                candidates.Add(Path.Combine(directory, name));
-            }
-        }
-
-        var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        candidates.Add(Path.Combine(profile, ".local", "bin", "claude.exe"));
-        candidates.Add(Path.Combine(appData, "npm", "claude.cmd"));
-        return candidates;
-    }
-
-    public static string? Find(string? explicitPath)
-    {
-        foreach (var candidate in Candidates(explicitPath))
-        {
-            try
-            {
-                if (File.Exists(candidate))
-                {
-                    return candidate;
-                }
-            }
-            catch (ArgumentException)
-            {
-                // A PATH entry with characters that are not allowed in a path.
-            }
-        }
-
-        return null;
-    }
 
     public static string BuildCommandLine(string claudePath, IEnumerable<string> arguments)
     {

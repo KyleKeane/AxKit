@@ -58,7 +58,7 @@ Calls (11):
 
 Calls (4):
 
-- **axClaude**, `src/AxClaude.Core/Pty/ClaudeLauncher.cs:94`, in `ClaudeLauncher.VersionAsync`, by `ProcessRun.RunAsync`: runs the user's Claude Code once with --version, without a window, so that axClaude knows which Claude Code it found and that it runs.
+- **axClaude**, `src/AxClaude.Core/Pty/ClaudeLauncher.cs:46`, in `ClaudeLauncher.VersionAsync`, by `ProcessRun.RunAsync`: runs the user's Claude Code once with --version, without a window, so that axClaude knows which Claude Code it found and that it runs.
   Code: `var result = await ProcessRun.RunAsync(start, [], timeout).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
   Code: `created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,`
@@ -304,7 +304,7 @@ Defined in this repository, `src/AxKit.Core/ProcessRun.cs:23` (`public static as
 
 Used in 2 places:
 
-- `src/AxClaude.Core/Pty/ClaudeLauncher.cs:94`, in `ClaudeLauncher.VersionAsync`, for Claude Code.
+- `src/AxClaude.Core/Pty/ClaudeLauncher.cs:46`, in `ClaudeLauncher.VersionAsync`, for Claude Code.
 - `src/AxGit.Core/GitRunner.cs:111`, in `GitRunner.RunAsync`, for Git.
 
 ### PtyHost.Start, program

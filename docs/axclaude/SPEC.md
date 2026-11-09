@@ -129,7 +129,7 @@ Everything listed is built.
 ### FR-1 Launch and process hosting
 
 - FR-1.1: Create a ConPTY of a fixed size (default 240×50, settings `ptyColumns` / `ptyRows`) and start `claude.exe --ax-screen-reader` in the project folder with the extra arguments from the command line.
-- FR-1.2: Locate `claude`: an explicit path (`--claude <path>`, else the `claudePath` setting) is the only place tried; without one, `claude.exe`/`claude.cmd` in every `PATH` folder, then `%USERPROFILE%\.local\bin\claude.exe`, then `%APPDATA%\npm\claude.cmd`. A `.cmd` shim runs through `cmd.exe /d /s /c`. Nothing found: the notice of FR-1.9, the window stays open.
+- FR-1.2: Locate `claude`: an explicit path (`--claude <path>`, else the `claudePath` setting) is the only place tried; without one, `claude.exe`/`claude.cmd` in every `PATH` folder, then `%USERPROFILE%\.local\bin\claude.exe`, then `%APPDATA%\npm\claude.cmd` (`AxKit.Core/ClaudeCodeProgram`, the one search, shared with the AI tools registration since 2026-11-09, bundle mcp.md MC-6.8). A `.cmd` shim runs through `cmd.exe /d /s /c`. Nothing found: the notice of FR-1.9, the window stays open.
 - FR-1.3: The child environment is the current environment minus every `CLAUDE*` variable, plus `TERM=xterm-256color`, `CLAUDE_AX_STARTUP_QUIET_MS=0`, `CLAUDE_AX_PREPARK_MS=0`, `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`.
 - FR-1.4: Clear the app's own standard handles around `CreateProcess` (§4.5).
 - FR-1.5: Console output is read on a background thread and handed to the UI thread in batches (§7.3); never read on the UI thread. Writes go through one serialized writer.
@@ -404,7 +404,7 @@ While a notice shows: Tab / Shift+Tab between text, field and buttons; Enter the
 
 ```
 src/AxClaude.Core/        class library (net10.0), no WinForms
-  Pty/        ClaudeLauncher (find claude, command line, environment, claude --version)
+  Pty/        ClaudeLauncher (command line, environment, claude --version; claude is found by AxKit.Core/ClaudeCodeProgram)
   Transcript/ SessionModel (on the bundle's LineStore), LineClassifier, Arrivals (the tick and the spoken replies),
               Question (the Question and QuestionOption records), QuestionReader, ScreenReader (ClaudeScreen, ScreenKey),
               QuestionRouter, SlashCommands (what Claude waits on, D33), ScreenActions (what a screen's keys do in the area), FeedbackDraftWatch

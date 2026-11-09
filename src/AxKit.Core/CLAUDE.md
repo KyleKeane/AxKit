@@ -114,8 +114,12 @@ $1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, it
   `%LOCALAPPDATA%\AxKit\mcp.key` through `UserSecret`, `NewChallenge`, `Proof` and `Proves` (HMAC-SHA256).
 - `Mcp/McpProtocol`: MCP's JSON-RPC as the broker speaks it, one line in, one line out, the tools from two functions;
   `Text` reads a string a client sent without trusting its type. `McpTool` and `McpResult`.
-- `Mcp/McpClaudeCode` (MC-6.8): where Claude Code is, and the `claude mcp add` and `remove` command lines that
-  register this AxKit.exe for every folder of the user; the window runs them (`AxKit.Forms/AxKitForm.Mcp.cs`).
+- `ClaudeCodeProgram` (axClaude FR-1.2, MC-6.8; from `AxClaude.Core/ClaudeLauncher` on its second use, 2026-11-09):
+  where Claude Code is, `Candidates` (an explicit path alone, else `claude.exe` and `claude.cmd` in every full PATH
+  folder, the installer's `.local\bin`, npm's folder; a PATH text can stand in for the process's in tests) and `Find`
+  (the first that exists). Tested in `ClaudeCodeProgramTests`.
+- `Mcp/McpClaudeCode` (MC-6.8): the `claude mcp add` and `remove` command lines that register this AxKit.exe for every
+  folder of the user; the window runs them on the Claude Code `ClaudeCodeProgram` finds (`AxKit.Forms/AxKitForm.Mcp.cs`).
 - `Mcp/McpTools`: the first stage's tools, `NeverRead` (axPass, axClip) and `NeverOpened` (axClaude, axTerminal),
   and `OpenArguments`, the check of `axkit_open`'s app and path. `Mcp/McpAudit` (one line a call, the arguments
   hashed) and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).

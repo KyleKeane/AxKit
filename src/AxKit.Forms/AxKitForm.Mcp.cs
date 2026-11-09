@@ -72,7 +72,7 @@ public abstract partial class AxKitForm
             return;
         }
 
-        var claude = McpClaudeCode.Find();
+        var claude = ClaudeCodeProgram.Find(null);
         var text = "AI tools such as Claude Code may then ask to read what the axKit windows show (their text, lists and status) "
             + "and to open apps. They cannot change or delete anything, and they never read axPass or axClip. Each tool asks you "
             + "once, in an axKit window, before it reads anything, and every call is written in the log (AI tools, Read the log).\n\n"
@@ -135,10 +135,10 @@ public abstract partial class AxKitForm
             return;
         }
 
-        if (McpClaudeCode.Find() is not { } claude)
+        if (ClaudeCodeProgram.Find(null) is not { } claude)
         {
             ShowNotice(Notice.Plain("Claude Code was not found",
-                "Claude Code is not installed here, or not where axKit looks (the PATH, and your .local\\bin folder). Add axKit to your AI tool with this command line:\n\n"
+                "Claude Code is not installed here, or not where axKit looks (the PATH, your .local\\bin folder and npm's folder, where axClaude looks too). Add axKit to your AI tool with this command line:\n\n"
                 + McpClaudeCode.AddCommandLine(PackageIdentity.ProgramPath!)));
             return;
         }
