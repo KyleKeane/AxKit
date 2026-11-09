@@ -81,10 +81,11 @@ the restart by the app itself (2.3.0).
 - **AI help as one shared, optional service; local first** (the user's direction, 2026-10-18; bundle G6, B-15).
   AI-based editing and feedback tools are not axDown's own: they are one service every app can call from inside its
   window to get things done there, written once and optional, so that each app has its full utility without it and
-  offline. The bundle is to have a shared database as well, which the service and the apps share. Its specification,
-  not yet written, has to settle what the database holds and where it lives, how the service reaches Claude (Claude
-  Code as axClaude runs it, or the API), what the service may change in a window and how the user sees and undoes
-  it, and the one switch that turns every network use off.
+  offline. The bundle was to have a shared database as well, which the service and the apps share. Specified
+  2026-11-09 in `ai-help.md` (AH-n.m), to be read by the user before the build: Claude Code in its print mode with
+  read-only tools over the folders the user allows, never the API (AH-D1); no database, since Claude Code reads the
+  files itself (AH-D2); the service answers and a window applies a change as its own undo step (AH-D3); one question,
+  one answer (AH-D4); off by default behind one switch in the axKit menu (AH-D5); AxAsk and AxSee as its first apps.
 - **A command palette in every window** (the user's ask, 2026-10-21; specified 2026-10-22 as bundle SPEC AX-10,
   Ctrl+Shift+P at the user's choice, built on the branch `palette`): one key opens a field with a list under it;
   typing narrows the list to the window's menu commands by name, each with its key named as a reminder, and in axFile
