@@ -194,7 +194,6 @@ public sealed partial class GitForm : AxKitForm
         _details.Font = font;
     }
 
-    protected override IReadOnlyList<string> RestartArguments() => _root is null ? [Dispatch.AxGit] : [Dispatch.AxGit, _root];
 
     protected override string UpdateRestartText => $"closes {AxGitApp.Name}, installs it and starts it again on the same repository";
 

@@ -117,7 +117,6 @@ public sealed partial class TaskForm : ItemForm
 
     protected override string Shortcuts => HelpText.Shortcuts;
 
-    protected override IReadOnlyList<string> RestartArguments() => [Dispatch.AxTask, TopFolder];
 
     protected override IEnumerable<string> DiagnosticsLines => [$"Level: {(_smart is not null ? "smart list" : AtTop ? "top" : "list")}, {Rows.Count} rows"];
 

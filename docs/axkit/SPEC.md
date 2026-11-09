@@ -405,7 +405,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (AX-7.1) and the common part of the key switch (the text size keys everywhere, F1, the palette, Ctrl+S). A
   window adds its controls (the `Overlay` first) and fills in the hooks: the F1 text, what to hide for a notice and
   what to show after, the control the focus falls back to after one (`FocusTarget`), whether the chime follows a
-  setting, what gets the font, how the new version starts it again (`RestartArguments`, `UpdateRestartText`), what
+  setting, what gets the font, how the new version starts it again (`RestartArguments`, by default the app's verb and `PathInHand`; `UpdateRestartText`), what
   to note of an update (`UpdateNoted`), its diagnostics lines, the control its announcements are raised on
   (`AnnounceSource`), its own palette entries (`PaletteEntries`, AX-10.5), what Ctrl+S does (`SaveCommand`;
   "Nothing to save here" by default), what it does with a hand-over (`TakeHandOver`), how it reports a settings file

@@ -135,7 +135,6 @@ public sealed partial class PassForm : ItemForm
 
     protected override string Shortcuts => HelpText.Shortcuts;
 
-    protected override IReadOnlyList<string> RestartArguments() => _database is null ? [Dispatch.AxPass] : [Dispatch.AxPass, _database];
 
     // Never the password, nor anything of the database but whether one is open.
     protected override IEnumerable<string> DiagnosticsLines => [$"A database open: {_database is not null}, unlocked: {_password is not null}, the tool found: {ToolPath() is not null}"];

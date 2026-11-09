@@ -126,8 +126,6 @@ internal sealed partial class TerminalForm : ConsoleForm
             $"axterminal-{DateTime.Now:yyyy-MM-dd-HHmm}.md", "md",
             Directory.Exists(CurrentDirectory) ? CurrentDirectory : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 
-    /// <summary>How the new version starts after Update and restart: a shell in the current directory.</summary>
-    protected override IReadOnlyList<string> RestartArguments() => [Dispatch.AxTerminal, CurrentDirectory];
 
     protected override string UpdateRestartText => "closes axTerminal, installs it and starts it again with a new shell in the same folder";
 
@@ -142,7 +140,6 @@ internal sealed partial class TerminalForm : ConsoleForm
     /// <summary>The shell's current directory, for the bundle's Recently closed list (AX-9.4).</summary>
     protected override string? PathInHand => CurrentDirectory;
 
-    protected override string Verb => Dispatch.AxTerminal;
 
     /// <summary>The shell's current directory as its 9;9 mark reported it, or the folder it started in.</summary>
     private string CurrentDirectory => _model.Directory ?? _folder;

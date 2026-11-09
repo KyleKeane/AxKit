@@ -72,7 +72,7 @@ the base's. The rest of this section is for a window of a new kind.
   command's task, the hand-over from a starting process, the diagnostics and the common keys. Pass the app's name,
   its settings (a class derived from `AxKit.Core/WindowSettings`), the settings path and the settings error to the
   base; add `Overlay` to the controls first; fill in the hooks (`Shortcuts`, `HideForNotice`, `ShowAfterNotice`,
-  `FocusTarget`, `ApplyFont`, `RestartArguments`, `UpdateRestartText`, `ProcessWindowKey`, and the optional ones
+  `FocusTarget`, `ApplyFont`, `ProcessWindowKey`, and the optional ones `RestartArguments` (the app's verb and `PathInHand` by default), `UpdateRestartText`,
   `NoticeChime`, `OnNoticeOpened`, `OnNoticeClosed`, `UpdateNoted`, `DiagnosticsLines`, `AnnounceSource`,
   `PaletteEntries`, `SaveCommand`, `TakeHandOver`, `SettingsNotRead`, `Fail`, `CopyDiagnostics`). Use the other
   shared pieces, never a copy: `ControlArea` for a field or a list in the input's place, `EditKeys` for an edit

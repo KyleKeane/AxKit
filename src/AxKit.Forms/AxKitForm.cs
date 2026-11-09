@@ -104,8 +104,11 @@ public abstract partial class AxKitForm : Form
     /// <summary>Gives the window's controls the text font; the notice gets it from the base.</summary>
     protected abstract void ApplyFont(Font font);
 
-    /// <summary>How the installed new version starts this window again after Update and restart: the verb and what it holds (AX-3.2).</summary>
-    protected abstract IReadOnlyList<string> RestartArguments();
+    /// <summary>
+    /// How the installed new version starts this window again after Update and restart (AX-3.2): the app's verb and
+    /// the path in hand when there is one, every window's case but axClaude's (<c>--continue</c> after a sent message).
+    /// </summary>
+    protected virtual IReadOnlyList<string> RestartArguments() => PathInHand is { Length: > 0 } path ? [AppVerb, path] : [AppVerb];
 
     /// <summary>What Update and restart does to this window, in the update notice: "closes axDown (asking first…), installs it and starts it again on the same file".</summary>
     protected virtual string UpdateRestartText => $"closes {AppName}, installs it and starts it again";
@@ -518,7 +521,7 @@ public abstract partial class AxKitForm : Form
     /// windows, whose spoken replies and output are the user's conversation (<c>ConsoleForm</c>): those record their
     /// commands and notices alone.
     /// </summary>
-    protected virtual bool RecordsAnnouncements => AppVerb is not { } verb || !McpTools.NeverRead.Contains(verb);
+    protected virtual bool RecordsAnnouncements => !McpTools.NeverRead.Contains(AppVerb);
 
     /// <summary>Runs a command and records it: "Find, Ctrl+F", the label without its mnemonic and the key as the menu shows it.</summary>
     private void Run(Command command)

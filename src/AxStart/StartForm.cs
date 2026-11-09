@@ -105,9 +105,6 @@ public sealed class StartForm : HotkeyForm
         Matches.Font = font;
     }
 
-    protected override IReadOnlyList<string> RestartArguments() => [Dispatch.AxStart];
-
-    protected override string UpdateRestartText => $"closes {AxStartApp.Name}, installs it and starts it again";
 
     protected override IEnumerable<string> DiagnosticsLines =>
     [

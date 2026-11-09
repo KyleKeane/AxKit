@@ -71,7 +71,6 @@ internal sealed partial class MainForm
         }
     }
 
-    protected override string Verb => Dispatch.AxClaude;
 
     /// <summary>The project folder, for the bundle's Recently closed list (AX-9.4).</summary>
     protected override string? PathInHand => _folder;

@@ -172,7 +172,6 @@ public sealed class ProcessForm : AxKitForm
 
     protected override void ApplyFont(Font font) => _list.Font = font;
 
-    protected override IReadOnlyList<string> RestartArguments() => [Dispatch.AxProcess];
 
     protected override IEnumerable<string> DiagnosticsLines =>
         [$"View: {_view}, {Current.Labels.Count} items, sorted by {ProcessTable.SortName(_settings.SortBy)}"];

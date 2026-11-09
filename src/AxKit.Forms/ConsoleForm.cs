@@ -191,8 +191,6 @@ public abstract partial class ConsoleForm : AxKitForm
     /// <summary>Open recent folder (axClaude FR-8.1, axTerminal AT-1.5): the program again in that folder.</summary>
     protected abstract void SwitchFolder(string folder);
 
-    /// <summary>The app's verb on the command line (<c>Dispatch.AxClaude</c>, <c>Dispatch.AxTerminal</c>), for a folder opened in a new window.</summary>
-    protected abstract string Verb { get; }
 
     /// <summary>The window's own keys that are no command (axClaude's Ctrl+O guard), after read to the end and before the command list.</summary>
     protected virtual bool ProcessConsoleKey(Keys keyData) => false;
@@ -483,7 +481,7 @@ public abstract partial class ConsoleForm : AxKitForm
             return;
         }
 
-        AxKitMenu.Start(Verb, folder);
+        AxKitMenu.Start(AppVerb, folder);
         Announce($"Opening {PathName.Of(folder)} in a new window", false);
     }
 }

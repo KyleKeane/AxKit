@@ -120,7 +120,6 @@ public sealed class ClipForm : HotkeyForm
         Matches.Font = font;
     }
 
-    protected override IReadOnlyList<string> RestartArguments() => [Dispatch.AxClip];
 
     protected override IEnumerable<string> DiagnosticsLines =>
     [

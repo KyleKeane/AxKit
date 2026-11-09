@@ -305,9 +305,6 @@ public sealed partial class FileForm : AxKitForm
         FitPane();
     }
 
-    /// <summary>The restart after an update: on the folder shown; without one at This PC, which is no path (AF-3.10; the new window said it does not exist until 2026-10-23).</summary>
-    protected override IReadOnlyList<string> RestartArguments() => RealFolder is { } folder ? [Dispatch.AxFile, folder] : [Dispatch.AxFile];
-
     protected override string UpdateRestartText => $"closes {AxFileApp.Name}, installs it and starts it again on the same folder";
 
     protected override IEnumerable<string> DiagnosticsLines =>

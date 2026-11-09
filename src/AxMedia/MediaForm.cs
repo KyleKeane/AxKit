@@ -173,8 +173,6 @@ public sealed partial class MediaForm : AxKitForm
 
     protected override void ApplyFont(Font font) => _list.Font = font;
 
-    /// <summary>After Update and restart: the file in hand again, with its folder (AM-1.1); an empty window otherwise.</summary>
-    protected override IReadOnlyList<string> RestartArguments() => FileInHand is { } path ? [Dispatch.AxMedia, path] : [Dispatch.AxMedia];
 
     protected override string UpdateRestartText => $"closes {AxMediaApp.Name}, installs it and starts it again on the file playing";
 

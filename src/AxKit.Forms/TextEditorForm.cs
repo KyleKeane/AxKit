@@ -311,7 +311,6 @@ public sealed partial class TextEditorForm : AxKitForm
         _area.FitHeight();
     }
 
-    protected override IReadOnlyList<string> RestartArguments() => _path is null ? [_app.Verb] : [_app.Verb, _path];
 
     protected override string UpdateRestartText => _app.ReadOnly
         ? $"closes {_app.Name}, installs it and starts it again on the same file"

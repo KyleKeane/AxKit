@@ -12,8 +12,8 @@ namespace AxKit.Forms;
 /// </summary>
 public abstract partial class AxKitForm
 {
-    /// <summary>The app's verb (<see cref="Dispatch.Apps"/>), which decides whether the window is read at all (<see cref="McpTools.NeverRead"/>).</summary>
-    private string? AppVerb => Dispatch.ByName(AppName)?.Verb;
+    /// <summary>The app's verb (<see cref="Dispatch.Apps"/>): the command line's word for this window, and what decides whether the window is read at all (<see cref="McpTools.NeverRead"/>). Every window's app is listed there (InventoryTests).</summary>
+    protected string AppVerb => Dispatch.ByName(AppName)?.Verb ?? throw new InvalidOperationException($"{AppName} is not an app of Dispatch.Apps");
 
     /// <summary>The window's commands for <c>axkit_window_commands</c>.</summary>
     internal IReadOnlyList<Command> CommandList => _commands;
@@ -26,10 +26,7 @@ public abstract partial class AxKitForm
 
     private void StartMcp()
     {
-        if (AppVerb is { } verb)
-        {
-            McpChannel.Start(this, verb);
-        }
+        McpChannel.Start(this, AppVerb);
     }
 
     /// <summary>What the pipe's <c>state</c> reads (MC-6.5): the title, the notice and its text, the status bar, the focused control and its value.</summary>

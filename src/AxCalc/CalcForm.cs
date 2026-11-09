@@ -151,7 +151,6 @@ public sealed class CalcForm : AxKitForm
         _field.Font = font;
     }
 
-    protected override IReadOnlyList<string> RestartArguments() => [Dispatch.AxCalc];
 
     protected override IEnumerable<string> DiagnosticsLines =>
         [$"History: {_entries.Count} entries, {_calculator.Variables.Count} variables, {(_calculator.Degrees ? "degrees" : "radians")}"];

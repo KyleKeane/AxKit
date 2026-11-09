@@ -226,7 +226,7 @@ public abstract partial class AxKitForm
         }
 
         var name = control.AccessibleName is { Length: > 0 } accessible ? accessible : control.Name is { Length: > 0 } own ? own : control.GetType().Name;
-        var secret = AppVerb is { } verb && McpTools.NeverRead.Contains(verb) || WindowReading.IsSecret(control);
+        var secret = McpTools.NeverRead.Contains(AppVerb) || WindowReading.IsSecret(control);
         switch (control)
         {
             case TextBoxBase box:
