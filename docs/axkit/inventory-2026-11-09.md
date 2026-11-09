@@ -29,12 +29,12 @@ automated scripts (`tools\AxAutomate` on `tests\scripts`) and `publish.ps1 -NoIn
 | 0 | The branch and the worktree; this plan written and committed; a tracker item in the management lists | done |
 | 1 | The baseline gate: 1,125 tests green, the Release build with no warning, the outside-calls page current, every script parsing; the unused-code analyzers run once (IDE0005 58, CA1859 42, CA1822 14, CA1812 4, IDE0060 4; IDE0051 and IDE0052 none) | done |
 | 2 | The sweep: five read-only passes in parallel (the shared window pieces and the windows' own code; the pure code and its tests; the three window families and the list windows side by side; hacks and the attack surface; the drift of notes, specs and scripts), written up under the session's `scratchpad\inventory`, verified by the assistant before anything is changed, and condensed into sections 2 to 8 here with the ranked work list of section 9 | done |
-| 3 | Unused code (3.1), one project at a time, shared projects last | running |
-| 4 | Copies to fold (3.2), the lowest risk first, each piece moved in a commit of its own with every note that named it | to do |
-| 5 | Hacks to make plain (3.3), only the ones whose reason is understood from the code or the notes | to do |
-| 6 | Attack surface (3.4), each finding with a test, added to the audit as S-54 onwards | to do |
-| 7 | Drift: notes, specs and scripts brought back to the code, no behaviour touched | to do |
-| 8 | The final gate, the report (`cleanup-run-report.md`), the branch pushed, the tracker items for what needs the user, the NVDA sections worth hearing again, and the recommendation of what to do next | to do |
+| 3 | Unused code (3.1), one project at a time, shared projects last | done |
+| 4 | Copies to fold (3.2), the lowest risk first, each piece moved in a commit of its own with every note that named it | done; the medium-risk pieces left (W15, W16, W21) |
+| 5 | Hacks to make plain (3.3), only the ones whose reason is understood from the code or the notes | done; one for the user (the asks poll) |
+| 6 | Attack surface (3.4), each finding with a test, added to the audit as S-54 onwards | done: S-54 to S-57; three questions for the user |
+| 7 | Drift: notes, specs and scripts brought back to the code, no behaviour touched | done |
+| 8 | The final gate, the report (`cleanup-run-report.md`), the branch pushed, the tracker items for what needs the user, the NVDA sections worth hearing again, and the recommendation of what to do next | running |
 
 A phase that runs long is cut, not rushed: whatever is left of it goes to section 9 as open, with its reason.
 
@@ -267,35 +267,34 @@ In the order of the work; the state column is kept as the day goes. "W" numbers 
 |---|---|---|---|
 | 1 | Remove the using lines nothing needs | 5 | done, a27f6b0 |
 | 2 | Drop two parameters nothing reads | 5 | done, 2a9a127 |
-| 3 | Twelve members and types private or internal; `ConsoleForm.Post` private; `KeePassCli.StartLasting` gone with its note fixed | 5 | to do |
-| 4 | `RestartArguments` by default from `PathInHand`; `ConsoleForm.Verb` and axStart's `UpdateRestartText` go | F2 | to do |
-| 5 | `Notice.Ask` for the yes-or-cancel notices | F5 | to do |
-| 6 | `SetStatus` on the base | F3 | to do |
-| 7 | `PlaceControls` on the base | F4 | to do |
-| 8 | `Failed`, `SetTitle`, `AddFindInListKeys`, `OpenMenuOnRightClick`: small base helpers | F16, F17, F20, F13 | to do |
-| 9 | Small folds in `AxKit.Core`: JSON text, item dates, the WindowsApps folder, the PATH parser, the file head, the share test, the recent constants | C5, C6, C9, C10, C18, C20, C21 | to do |
-| 10 | The free-name loops onto `ItemFiles.FreePath` | C4 | to do |
-| 11 | `TextSniff` reads the editors' types from `Dispatch` | C15 | to do |
-| 12 | `HotkeySettings` in `AxKit.Core`; `HotkeyForm` takes what axStart and axClip wrote twice | C3, F11 | to do |
-| 13 | `ChoiceItems` for the one-checked menus | F6 | to do |
-| 14 | `AskText` on the base, the six same-behaving copies folded | F1 | to do |
-| 15 | `ListViews` for axGIT and axProcess | F7 | to do |
-| 16 | The console windows' folder and session frame on `ConsoleForm` | F10 | to do |
-| 17 | One Claude Code locator | C1 | to do |
-| 18 | `ShellLauncher` through `SystemPrograms` (PowerShell), its `FindOnPath` gone | C8 | to do |
-| 19 | `AxKitList.Fill` (S-54 reaches two more lists) | F12 | to do |
-| 20 | Copy report through `CopyText` | F9 | to do |
-| 21 | First focus in the base's `OnShown` | F15 | to do, after the channel's order is checked |
-| 22 | `Chime` on `Notice` in place of axClaude's flag | 6 | to do |
-| 23 | One-line reasons on the catches and the posts that lack one | 6 | to do |
-| 24 | S-54 to S-57 with their tests; the audit's hand-over sentence | 7 | to do |
-| 25 | Notes back to the code; the eight unnamed files named; the history stamps that only repeat the changelog | 8 | to do |
-| 26 | Specs back to the code | 8 | to do |
-| 27 | Scripts: the stale comments, `release.ps1`'s prefixes, the `$PSScriptRoot` note narrowed | 8 | to do |
-| 28 | A test that pins the notes' identifiers to the code | 8 | to do |
-| 29 | The cheap tests: the three settings round trips, `UserSecret`, `Signatures`, a `PtyHost` smoke, `GitNotFoundException` | 10 | to do |
-| 30 | `MatchSpeaker` shared by `HotkeyForm` and the palette | F18 | if time allows |
-
+| 3 | Twelve members and types private or internal; `ConsoleForm.Post` private; `KeePassCli.StartLasting` gone with its note fixed | 5 | done, b27ced4 |
+| 4 | `RestartArguments` by default from `PathInHand`; `ConsoleForm.Verb` and axStart's `UpdateRestartText` go | F2 | done, b5af56c |
+| 5 | `Notice.Ask` for the yes-or-cancel notices | F5 | done, 42cc6f5 |
+| 6 | `SetStatus` on the base | F3 | left: nine windows read their two labels by name, so a pair object would touch every one for two lines each |
+| 7 | `PlaceControls` on the base | F4 | done, 9490e8e |
+| 8 | `Failed`, `SetTitle`, `AddFindInListKeys`, `OpenMenuOnRightClick`: small base helpers | F16, F17, F20, F13 | done, 9490e8e |
+| 9 | Small folds in `AxKit.Core`: JSON text, item dates, the WindowsApps folder, the PATH parser, the file head, the share test, the recent constants | C5, C6, C9, C10, C18, C20, C21 | done, 680ff97 |
+| 10 | The free-name loops onto `ItemFiles.FreePath` | C4 | done, 16b84a0 |
+| 11 | `TextSniff` reads the editors' types from `Dispatch` | C15 | done, 680ff97 (with W9) |
+| 12 | `HotkeySettings` in `AxKit.Core`; `HotkeyForm` takes what axStart and axClip wrote twice | C3, F11 | done, f5890a7 |
+| 13 | `ChoiceItems` for the one-checked menus | F6 | done, 59aeeb0 |
+| 14 | `AskText` on the base, the six same-behaving copies folded | F1 | done, b9bd4c5 (six of eight; axFile's two stay, section 11) |
+| 15 | `ListViews` for axGIT and axProcess | F7 | left: the two flows share a shape but differ in their loads, fills and first-read words; the shared piece would be hooks for fifteen lines |
+| 16 | The console windows' folder and session frame on `ConsoleForm` | F10 | left: medium risk and both console plans to hear again; a session of its own |
+| 17 | One Claude Code locator | C1 | left for the user (section 11, item 7) |
+| 18 | `ShellLauncher` through `SystemPrograms` (PowerShell), its `FindOnPath` gone | C8 | done, 915fdc0 (ComSpec left, section 11) |
+| 19 | `AxKitList.Fill` (S-54 reaches two more lists) | F12 | done, 339c04c (four of five; the hotkey windows' matches list is a plain list box by design, AS-D2) |
+| 20 | Copy report through `CopyText` | F9 | done, 72ecdf4 |
+| 21 | First focus in the base's `OnShown` | F15 | left: the automation channel's start order was not checked in time |
+| 22 | `Chime` on `Notice` in place of axClaude's flag | 6 | done, 9399ee9 |
+| 23 | One-line reasons on the catches and the posts that lack one | 6 | done, e249e49 |
+| 24 | S-54 to S-57 with their tests; the audit's hand-over sentence | 7 | done, 1b501ab, 1f522c8, de78fe3 (S-54 to S-56; S-57 with W19) |
+| 25 | Notes back to the code; the eight unnamed files named; the history stamps that only repeat the changelog | 8 | done, 2cdb06b, e5c61a4, 13319b1 |
+| 26 | Specs back to the code | 8 | done, 2cdb06b, e5c61a4, 13319b1 |
+| 27 | Scripts: the stale comments, `release.ps1`'s prefixes, the `$PSScriptRoot` note narrowed | 8 | done, 2cdb06b, e5c61a4, 13319b1 |
+| 28 | A test that pins the notes' identifiers to the code | 8 | left: the sweep's scan is the shape of the test, with an allow list of .NET names as its cost |
+| 29 | The cheap tests: the three settings round trips, `UserSecret`, `Signatures`, a `PtyHost` smoke, `GitNotFoundException` | 10 | done, 87b6250 |
+| 30 | `MatchSpeaker` shared by `HotkeyForm` and the palette | F18 | left |
 ## 10. Tests
 
 1,125 tests at the baseline. Of the seventy-three Core types named in no test file, forty-four are exercised through
@@ -330,7 +329,28 @@ Cleanups and fixes that would change what is heard or done, each one line to dec
 
 ## 12. NVDA sections worth hearing again
 
-(Filled as the work goes: the test plan sections a moved piece touches.)
+Nothing a user hears was meant to change, and the tests say the words are the same; these are the steps of the test
+plans that a moved piece now runs, for one pass by ear before the merge (`nvda-pass.ps1 <app>` runs each app's
+scripts; the rest by hand):
+
+- Every window's title as it opens and changes (`SetTitle`): axGIT ("No repository", the repository's name), axFile
+  (the folder's name), axMedia (the file playing), axProcess, axCalc, the editors (the document's name with the
+  unsaved star), axTask and axPass, axClaude (the folder's name and path).
+- The yes-or-cancel questions (`Notice.Ask`): axCalc's Clear the history and Clear the variables, axClip's Clear the
+  clipboard history, axFile's Delete, axGIT's Discard, axProcess's End process, axPass's Delete for good and Move the
+  group (Enter is Cancel there), axClaude's Close and Force Claude to restart, axTerminal's close, restart and switch.
+- The one-field notices (`AskText`): axGIT's Commit and New branch, axFile's Filter, axMedia's Go to time (a wrong
+  time keeps the notice), axTask's GitHub account (a hidden field).
+- The one-checked menus (`ChoiceItems`): axFile's Sort by, axProcess's Sort processes by, axClaude's Speak replies,
+  axTerminal's Speak output, axPass's Lock after, axCalc's Angles.
+- The lists filled anew (`AxKitList.Fill`): axFile's folder list on a folder change and a filter, the navigator of
+  axTask and axPass on every level, axPreview's Details list, the views of axGIT and axProcess with the selection
+  kept across a refresh.
+- axStart and axClip: the hotkey registered at start, Options (Hotkey..., Start with Windows, Say the first match while
+  typing), the Hide and Quit items.
+- axClaude: an information screen's notice (no chime).
+- axCalc, axMedia, axProcess: Ctrl+F, F3 and Shift+F3 in the list.
+- Copy report on a held clipboard says the base's failure notice, where it was a crash.
 
 ## 13. What to do next
 
