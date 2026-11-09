@@ -42,7 +42,7 @@ Three menus name three targets, so you never switch modes: **Item** (Alt+I, or S
 
 ## File operations
 
-- **Ctrl+Shift+N**, New folder: a notice asks for the name; Enter makes it in the current folder, selects it and says "Created notes".
+- **Ctrl+Shift+N**, New folder: a notice asks for the name; Enter makes it in the current folder, selects it and says "Created notes". A name Windows cannot take, or one that reads the same as a name already there, is said and the notice stays for you to put it right.
 - **Ctrl+Shift+T**, New text file: an empty "New file.txt" is made and the rename box opens on it with the whole name selected, so type the name you want, extension included, `notes.md`, and press Enter; Escape keeps "New file.txt".
 - **Move to folder** (in the entry's menu): a notice asks for the folder. Down and Up complete it from what you typed, as in Go to folder, folders only; a folder that exists, here or by its path, takes the entry, or the selected entries, and any other name is a new folder made here. "Moved 3 items into notes", with the folder selected. Like Compress to zip, without the compression.
 - **F2**, Rename: a box opens over the entry with its name, the part before the extension selected, so typing replaces the name and keeps the extension; Enter renames, "Renamed to Notes", and Escape keeps the old name. Leaving the box keeps it too. A name already in the folder is refused, "Failed: There is already an entry named …", and so is one that would only sound the same, "Reads the same as notes.md, which is already here": Windows tells a trailing space, a different kind of space or an invisible character apart, but you would hear one name twice.

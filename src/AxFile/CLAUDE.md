@@ -64,7 +64,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
     - Type-ahead (AF-3.6) and the edge earcon are the bundle's list's, `AxKit.Forms/AxKitList`, since 2026-10-24; the folder list gives it the shown entries' names.
   - `FileForm.Operations.cs`:
     - `Undo` (the newest undoable line of the Actions list) and `UndoAction` (one line taken back, AF-4.14, AF-9.3: `FileOperations.CheckUndo` on a task, `_actions.NotUndone` with the reason when it refuses, then `Shell.Undelete` for a delete or `FileOperations.UndoAsync`, `_actions.Undone`, the folder shown with the entry selected and "Undone: …" said; the Folder menu's item is renamed from `ActionLog.MenuText` as the menu opens);
-    - new folder, new text file (`NewFile`: the file made, shown and selected, then `Rename(wholeName: true)`, AF-4.1), move into new folder (AF-4.13);
+    - new folder (`NewFolder`, the base's `AskText` with `CheckNewName` as its refusal, so the notice stays on a bad name, AF-4.1; Add a program in `FileForm.Programs.cs` the same way), new text file (`NewFile`: the file made, shown and selected, then `Rename(wholeName: true)`, AF-4.1), move into new folder (AF-4.13);
     - the rename in place (the box is the bundle's, `AxKitList.BeginRename`, AX-8.7, since 2026-10-24) (`Rename`, `CommitRename`; the box, its keys and `EndRename` are `AxKitList`'s);
     - delete (on the marked entries in one shell operation, `NameAfter` choosing what to select next);
     - copy path, cut, copy and paste through the clipboard (`CopyOrCut`, `Paste`, AF-4.8);

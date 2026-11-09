@@ -217,7 +217,11 @@ public sealed partial class FileForm
 
     // ---- new entries (AF-4.1, AF-4.13) ----
 
-    /// <summary>Item → New folder… (Ctrl+Shift+N, AF-4.1): the name in a notice, the folder made and selected, "Created <name>".</summary>
+    /// <summary>
+    /// Item → New folder… (Ctrl+Shift+N, AF-4.1): the name in a notice, the folder made and selected, "Created <name>".
+    /// A refused name (the name rules, a lookalike) is said and the notice stays, as every one-field notice does
+    /// (the base's <c>AskText</c>; until 2026-11-09 the notice closed and the problem was announced after it).
+    /// </summary>
     private void NewFolder()
     {
         if (!TryFolder(out var folder))
@@ -225,25 +229,14 @@ public sealed partial class FileForm
             return;
         }
 
-        ShowNotice(new Notice("New folder", string.Empty,
-        [
-            new OverlayChoice("&Create", () =>
+        AskText("New folder", string.Empty, "Name:", "Name", string.Empty, "&Create",
+            typed =>
             {
-                var name = Overlay.InputText.Trim();
-                if (CheckNewName(name) is { } problem)
-                {
-                    Announce(problem, true);
-                    return;
-                }
-
+                var name = typed.Trim();
                 Do(() => RunAtOnceAsync(folder, "New folder failed", () =>
                     new Outcome($"Created {name}", new Operation(OperationKind.NewFolder, [], [FileOperations.CreateFolder(folder, name)]), name)));
-            }, IsDefault: true),
-            new OverlayChoice("C&ancel", IsCancel: true),
-        ])
-        {
-            Input = new OverlayInput("Name:", "Name", string.Empty, "Type a name"),
-        });
+            },
+            typed => CheckNewName(typed.Trim()), emptyMessage: "Type a name", cancel: "C&ancel");
     }
 
     /// <summary>

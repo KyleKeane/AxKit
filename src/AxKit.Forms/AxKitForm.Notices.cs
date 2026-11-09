@@ -181,8 +181,8 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
-    /// A notice with one field (item-apps IA-5.1; axGIT's Commit and New branch, axFile's Filter, axMedia's Go to time
-    /// and axTask's GitHub account since 2026-11-09): <paramref name="refused"/>, when given, is asked before the button
+    /// A notice with one field (item-apps IA-5.1; axGIT's Commit and New branch, axFile's Filter, New folder and Add a
+    /// program, axMedia's Go to time and axTask's GitHub account since 2026-11-09): <paramref name="refused"/>, when given, is asked before the button
     /// acts, its reason said and the notice kept; then <paramref name="act"/> with the text, the notice closed. A field
     /// that may be left empty passes <paramref name="required"/> false; <paramref name="emptyMessage"/> is what an empty
     /// required field says; <paramref name="hidden"/> makes a password field; <paramref name="cancel"/> is the cancel's

@@ -24,6 +24,14 @@ expect focus "name":"Name"
 keys enter
 expect said Type a name
 expect state "notice":"New folder"
+# A refused name is said and the notice stays (AF-4.1, 2026-11-09).
+type a?b
+keys enter
+expect said ! A name cannot contain
+expect state "notice":"New folder"
+keys backspace
+keys backspace
+keys backspace
 type notes
 keys enter
 expect said ! Created notes

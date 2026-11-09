@@ -247,7 +247,10 @@ folder of the file or project in hand, and sends back. It works entirely offline
 Every operation here is one line of the Actions list (AF-9) as well as its announcement.
 
 - AF-4.1 **New folder…** (Ctrl+Shift+N): the notice "New folder" with the field "Name" and the buttons Create and
-  Cancel; Create makes it in the current folder, selects it and says "Created <name>". **New text file**
+  Cancel; Create makes it in the current folder, selects it and says "Created <name>". A name refused by AF-4.2's rules
+  (the characters, `.` and `..`, a lookalike) is said and the notice stays, so that it can be put right, as every
+  one-field notice of the bundle does (`AskText`; until 2026-11-09 the notice closed and the problem was announced
+  after it). **New text file**
   (Ctrl+Shift+T; asked 2026-10-21): an empty file "New file.txt" ("New file - 2.txt" when that is taken,
   `FileOperations.CreateFile`, tested) is made in the current folder and selected, and the rename box (AF-4.2) opens
   on it at once with the whole name selected, not the stem alone, so that the name typed with its extension
@@ -343,7 +346,8 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   and **Remove a program ▸**. Add a program… opens the
   Windows file picker on programs and scripts (`.exe`, `.cmd`, `.bat`, `.ps1`, `.py`; every file behind the second
   filter), then the notice "Add a program" with the field "Name" holding the file's name without its extension and
-  the buttons Add and Cancel; "Added <name>". Remove a program ▸ lists them by name; choosing one takes it off,
+  the buttons Add and Cancel; "Added <name>"; a blank name says "Type a name" and the notice stays (`AskText`,
+  2026-11-09). Remove a program ▸ lists them by name; choosing one takes it off,
   "Removed <name>". Choosing a program runs it once on the selected entries, or the current one (AF-3.7), every path
   an argument, in the first entry's folder: a `.ps1` through Windows PowerShell by its full path (`-NoProfile
   -ExecutionPolicy Bypass -File <script>`), since Windows opens a script file in an editor; a `.bat` or `.cmd` program

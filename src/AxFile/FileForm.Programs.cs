@@ -80,7 +80,11 @@ public sealed partial class FileForm
         }
     }
 
-    /// <summary>Add a program…: the Windows file picker on programs and scripts, then the notice "Add a program" with the field "Name" holding the file's name; "Added <name>".</summary>
+    /// <summary>
+    /// Add a program…: the Windows file picker on programs and scripts, then the notice "Add a program" with the field
+    /// "Name" holding the file's name; "Added <name>". A blank name is said and the notice stays, as every one-field
+    /// notice does (the base's <c>AskText</c>; until 2026-11-09 the notice closed first).
+    /// </summary>
     private void AddProgram()
     {
         using var dialog = new OpenFileDialog
@@ -96,26 +100,15 @@ public sealed partial class FileForm
             return;
         }
 
-        ShowNotice(new Notice("Add a program", $"The name the menu shows for {chosen}.",
-        [
-            new OverlayChoice("&Add", () =>
+        AskText("Add a program", $"The name the menu shows for {chosen}.", "Name:", "Name", UserPrograms.DefaultName(chosen), "&Add",
+            typed =>
             {
-                var name = Overlay.InputText.Trim();
-                if (name.Length == 0)
-                {
-                    Announce("Type a name", true);
-                    return;
-                }
-
+                var name = typed.Trim();
                 _settings.Programs.Add(new UserProgram(name, chosen));
                 SaveSettings();
                 Announce($"Added {name}", true);
-            }, IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ])
-        {
-            Input = new OverlayInput("Name:", "Name", UserPrograms.DefaultName(chosen), "Type a name"),
-        });
+            },
+            typed => typed.Trim().Length == 0 ? "Type a name" : null, emptyMessage: "Type a name");
     }
 
     /// <summary>Remove a program ▸ one program: taken off the list; "Removed <name>".</summary>
