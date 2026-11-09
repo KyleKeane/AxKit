@@ -90,7 +90,9 @@ public class PrivacyTests
 
             foreach (var file in Directory.EnumerateFiles(dir))
             {
-                if (!binary.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase))
+                // In a worktree, .git is a file naming the main checkout's path: git's own, never committed.
+                if (!binary.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase)
+                    && !skipped.Contains(Path.GetFileName(file), StringComparer.OrdinalIgnoreCase))
                 {
                     yield return file;
                 }

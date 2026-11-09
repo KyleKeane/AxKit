@@ -35,6 +35,10 @@ if ($Only -ne '') {
 }
 
 try {
+    # The runner writes a failing test to stderr; when this script's output is redirected (a log, a gate run), Windows
+    # PowerShell would turn that line into a terminating error under Stop and end the run at the first failure. The
+    # exit code below is the check.
+    $ErrorActionPreference = 'Continue'
     foreach ($project in $projects) {
         Write-Host "Testing $($project.BaseName)..."
         dotnet test $project.FullName --configuration Release --nologo -v q
