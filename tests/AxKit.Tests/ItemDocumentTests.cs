@@ -115,6 +115,23 @@ public class ItemDocumentTests
     }
 
     [Fact]
+    public void AWrittenTemplateKeepsItsValuesAndANewItemStartsWithThem()
+    {
+        // Until 2026-11-09 the written template emptied every value, so a GitHub list's new items had no kind or state.
+        var written = ItemDocument.Parse(ItemDocument.NewList(
+        [
+            new("Kind", FieldTypes.Choice, JsonValue.Create("unlabelled"), ["Bug", "unlabelled"]),
+            new("Done", FieldTypes.Check, JsonValue.Create(false), []),
+        ]).ToText());
+        Assert.Equal("unlabelled", FieldTypes.TextOf(written.Template[0].Value));
+        Assert.Equal(["Bug", "unlabelled"], written.Template[0].Options);
+        Assert.False(FieldTypes.IsTrue(written.Template[1].Value));
+        var item = ItemDocument.NewItem("Issue 7", written.Template);
+        Assert.Equal("unlabelled", FieldTypes.TextOf(item.Fields[item.IndexOf("Kind")].Value));
+        Assert.Equal("Bug", FieldTypes.TextOf(ItemDocument.Parse(written.WithTemplate([new("Kind", FieldTypes.Choice, JsonValue.Create("Bug"), ["Bug"])]).ToText()).Template[0].Value));
+    }
+
+    [Fact]
     public void KeepsTextAsWritten()
     {
         var item = ItemDocument.NewItem("Café & \"quotes\" <tag>", []);

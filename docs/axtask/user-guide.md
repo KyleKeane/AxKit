@@ -70,7 +70,7 @@ In the detail pane:
   - a link takes the title of the item it points to, in any list.
 - Ctrl+N adds a field after the selected one: its title, then its type from a list; a choice then asks its options.
 - F2 renames the field in place, Delete removes it, Alt+Up and Alt+Down move it. The Title field stays.
-- Item, Use these fields for new items gives the list's new items the fields of the item selected.
+- Item, Use these fields for new items gives the list's new items the fields of the item selected, emptied.
 
 Every change is written to the file at once, and Ctrl+Z takes back the last ones, one at a time. If another program
 changed the file since axTask showed it, axTask reads it again and says so instead of writing over it.

@@ -143,7 +143,9 @@ The design is `docs/axkit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules a
   "unlabelled"), State, Opened, Reporter (the reporter id of a report sent from axKit, or the GitHub login), Version,
   Updated, Issue (the web address), Body and Notes, which is the user's and stays across refreshes; an item whose
   issue GitHub no longer returns goes to the Archive. The refresh is a mirror, not a step: nothing to undo. It says
-  "Issues, 14 items, 2 new"; a failure says "GitHub not read: no network; the list shows what was read last".
+  "Issues, 14 items, 2 new"; a failure says "GitHub not read: no network; the list shows what was read last". An item
+  made by Ctrl+N in the list starts as "unlabelled" and "open", the template's values (IA-4.3; a list made before
+  2026-11-09 carries empty values in its `list.json`, which Ctrl+J puts right).
 - **TK-7a.3 The GitHub actions** (Item → GitHub, and the action keys a new GitHub list comes with: Ctrl+1 to Ctrl+3
   the kinds, Ctrl+4 Close, Ctrl+5 Open on GitHub, Ctrl+6 Open in axClaude): Make it a bug, a feature request or
   feedback (the issue's labels), Close and Reopen (its state), Comment… (a notice with a field), Block this reporter

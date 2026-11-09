@@ -305,7 +305,11 @@ public sealed partial class TaskForm
         var listFile = Path.Combine(folder, ItemDocument.ListFile);
         var list = ItemFolder.ReadItem(listFile);
         var details = list?.Document ?? ItemDocument.NewList(TaskRules.DefaultTemplate);
-        var template = item.Document.Fields.Where(field => !field.Title.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase)).ToList();
+        // The item's values are its own, not the template's: emptied here (the written template keeps its values since 2026-11-09).
+        var template = item.Document.Fields
+            .Where(field => !field.Title.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
+            .Select(field => new ItemField(field.Title, field.Type, FieldTypes.Empty(field.Type), field.Options))
+            .ToList();
         var name = folder.Equals(TopFolder, StringComparison.OrdinalIgnoreCase) ? "the top folder" : Path.GetFileName(folder);
         Commit(new Step([FileChange.Write(listFile, list?.Text, details.WithTemplate(template).ToText())],
             template.Count == 0 ? $"New items in {name} get only a title" : $"New items in {name} get: {string.Join(", ", template.Select(field => field.Title))}"), SelectedKey());

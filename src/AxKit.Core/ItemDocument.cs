@@ -194,12 +194,18 @@ public sealed class ItemDocument
         return new ItemDocument(root);
     }
 
+    /// <summary>
+    /// The template as <c>list.json</c> carries it, every field with the value given, which a new item then starts with
+    /// (IA-4.3; a GitHub list's "unlabelled" and "open", the Reports list's Feedback and Draft). Until 2026-11-09 every
+    /// value was emptied here, so a list written by the app gave new items empty fields; axTask's Use these fields for
+    /// new items empties the values itself, since an item's own values are not a template's.
+    /// </summary>
     private static JsonArray TemplateArray(IReadOnlyList<ItemField> template)
     {
         var array = new JsonArray();
         foreach (var field in template.Where(field => !field.Title.Equals(TitleField, StringComparison.OrdinalIgnoreCase)))
         {
-            array.Add(FieldObject(field.Title, field.Type, FieldTypes.Empty(field.Type), field.Options));
+            array.Add(FieldObject(field.Title, field.Type, field.Value?.DeepClone(), field.Options));
         }
 
         return array;

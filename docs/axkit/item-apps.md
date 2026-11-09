@@ -114,8 +114,10 @@ A folder. Its details are `list.json` in it, the same shape as an item, never sh
 }
 ```
 
-- **IA-4.3** `new item` is the list's template: a new item gets a Title and these fields. The detail pane on a list
-  shows the list's fields, then one line "Fields of a new item: Done, Due" that Enter opens to change the template.
+- **IA-4.3** `new item` is the list's template: a new item gets a Title and these fields, with the values they carry
+  (a check's `false`, a choice's starting value; since 2026-11-09, before which the template the app wrote emptied
+  every value). The detail pane on a list shows the list's fields, then one line "Fields of a new item: Done, Due" that
+  Enter opens to change the template; Use these fields for new items takes an item's fields with their values emptied.
 - **IA-4.4** A folder without `list.json` is a list with no details and an empty template (axTask fills its own
   default, its spec). The file is written the first time the user changes a detail.
 

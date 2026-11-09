@@ -97,9 +97,9 @@ one announcement per move:
 - **RP-5.1 The folder.** `%APPDATA%\AxKit\reports` is an axTask list (docs/axkit/item-apps.md section 4): `list.json`
   with the template below, written when the folder is first made, and one JSON file per report, named after its Title
   (IA-4.5). axTask opens it as any folder; the axKit menu's "Your reports" opens it (RP-2.2). axJSON opens any item.
-- **RP-5.2 The fields** (the template's order): Title; Kind (text: Feedback, Bug or Feature request); Report (text, the
-  user's words); App (text, as RP-3 item 3); Where (text); Actions (text, one action per line); Log (text); Created
-  (date and time); Status (text: Draft, Not sent yet, or Sent, with the reason after a colon when not sent: "Not sent
+- **RP-5.2 The fields** (the template's order): Title; Kind (choice: Feedback, the template's value, Bug or Feature
+  request); Report (text, the user's words); App (text, as RP-3 item 3); Where (text); Actions (text, one action per
+  line); Log (text); Created (date and time); Status (text, Draft as the template's value: Draft, Not sent yet, or Sent, with the reason after a colon when not sent: "Not sent
   yet: no network", "Not sent yet: this version can no longer send reports, update axKit", "Not sent yet: blocked"); Issue (link, the issue's web address once sent);
   Number (number, the issue's).
 - **RP-5.3 Editing.** Until it is sent, every field edited in axTask goes into the issue as edited. After, edits stay

@@ -158,7 +158,9 @@ $1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, it
   deltas at most, the oldest dropped.
 - `ItemDocument`, `ItemField`, `FieldTypes` and `Parsed` (docs/axkit/item-apps.md IA-4; from AxTask.Core, axPass,
   2026-10-24): the item apps' format, an item as a list of fields of a title, a type and a value kept whole as JSON,
-  the types read out and typed (dates as tomorrow or +3).
+  the types read out and typed (dates as tomorrow or +3); a list's template (`NewList`, `WithTemplate`) is written
+  with its values, which a new item starts with (IA-4.3; emptied until 2026-11-09, so `ReportFiles.ListText` wrote
+  its own and a GitHub list's new items had no kind or state).
 - `ItemFiles` (IA-4.5; from AxTask.Core's `ItemFolder` on its second use, the reports list, 2026-11-07): `FileStem`,
   the file name a Title gives, and `FreePath`, a free name beside the taken ones ("name - 2.json").
 - `Reports/` (docs/axkit/reports.md, 2026-11-07): `Report` with `ReportKind`, `ReportKinds` (the names, the GitHub

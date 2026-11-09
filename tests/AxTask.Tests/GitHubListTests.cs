@@ -28,8 +28,12 @@ public sealed class GitHubListTests : IDisposable
     public void A_new_list_carries_the_repository_the_template_and_the_default_keys()
     {
         var list = GitHubList.NewList("KyleKeane/AxKit-reports", "open", @"C:\src\axit");
-        var settings = GitHubList.Of(ItemDocument.Parse(list.ToText()));
+        var written = ItemDocument.Parse(list.ToText());
+        var settings = GitHubList.Of(written);
         Assert.NotNull(settings);
+        // The written template keeps its values (2026-11-09): a Ctrl+N item in the list starts as unlabelled and open.
+        Assert.Equal(GitHubList.Unlabelled, FieldTypes.TextOf(written.Template.First(f => f.Title == GitHubList.KindField).Value));
+        Assert.Equal(GitHubList.OpenState, FieldTypes.TextOf(written.Template.First(f => f.Title == GitHubList.StateField).Value));
         Assert.Equal("KyleKeane/AxKit-reports", settings.Repository);
         Assert.Equal("open", settings.State);
         Assert.Equal(@"C:\src\axit", settings.Folder);

@@ -38,43 +38,23 @@ public static class ReportFiles
         new(NumberField, FieldTypes.Number, JsonValue.Create(string.Empty), []),
     ];
 
-    /// <summary>The list's <c>list.json</c> (RP-5.1, RP-8.5): what the list is, the template, and the action keys for the kinds and the issue.</summary>
+    /// <summary>
+    /// The list's <c>list.json</c> (RP-5.1, RP-8.5): what the list is, the template with its values (Feedback, Draft),
+    /// and the action keys for the kinds and the issue; a list as <see cref="ItemDocument.NewList"/> writes one (until
+    /// 2026-11-09 written by hand here, because the written template emptied its values).
+    /// </summary>
     public static string ListText()
     {
-        var template = new JsonArray();
-        foreach (var field in Template)
+        var list = ItemDocument.NewList(Template);
+        list = list.WithValue(list.IndexOf("Notes"), JsonValue.Create(
+            "Your reports to axKit's maintainer, from F4 in any window: each one is saved here first, then sent to GitHub as a public issue; Status says whether it went, and Issue is its address once it has. Delete removes a report from this list only."));
+        return list.WithExtra("keys", new JsonObject
         {
-            var node = new JsonObject { ["title"] = field.Title, ["type"] = field.Type, ["value"] = field.Value?.DeepClone() };
-            if (field.Options.Count > 0)
-            {
-                node["options"] = new JsonArray(field.Options.Select(option => (JsonNode)JsonValue.Create(option)).ToArray());
-            }
-
-            template.Add(node);
-        }
-
-        var root = new JsonObject
-        {
-            ["format"] = ItemDocument.ListFormat,
-            ["fields"] = new JsonArray
-            {
-                new JsonObject
-                {
-                    ["title"] = "Notes",
-                    ["type"] = FieldTypes.LongText,
-                    ["value"] = "Your reports to axKit's maintainer, from F4 in any window: each one is saved here first, then sent to GitHub as a public issue; Status says whether it went, and Issue is its address once it has. Delete removes a report from this list only.",
-                },
-            },
-            ["new item"] = template,
-            ["keys"] = new JsonObject
-            {
-                ["1"] = Key("Make it a bug", KindField, ReportKinds.Name(ReportKind.Bug)),
-                ["2"] = Key("Make it a feature request", KindField, ReportKinds.Name(ReportKind.Feature)),
-                ["3"] = Key("Make it feedback", KindField, ReportKinds.Name(ReportKind.Feedback)),
-                ["4"] = new JsonObject { ["name"] = "Open on GitHub", ["open"] = IssueField },
-            },
-        };
-        return root.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }).ReplaceLineEndings("\r\n") + "\r\n";
+            ["1"] = Key("Make it a bug", KindField, ReportKinds.Name(ReportKind.Bug)),
+            ["2"] = Key("Make it a feature request", KindField, ReportKinds.Name(ReportKind.Feature)),
+            ["3"] = Key("Make it feedback", KindField, ReportKinds.Name(ReportKind.Feedback)),
+            ["4"] = new JsonObject { ["name"] = "Open on GitHub", ["open"] = IssueField },
+        }).ToText();
 
         static JsonObject Key(string name, string field, string value) =>
             new() { ["name"] = name, ["set"] = new JsonObject { [field] = value } };

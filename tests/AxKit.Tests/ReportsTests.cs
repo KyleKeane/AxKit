@@ -116,6 +116,8 @@ public sealed class ReportsTests
             var list = ItemDocument.Parse(File.ReadAllText(Path.Combine(folder, ItemDocument.ListFile)));
             Assert.True(list.HasTemplate);
             Assert.Equal(ReportFiles.Template.Select(f => f.Title), list.Template.Select(f => f.Title));
+            Assert.Equal(ReportKinds.Name(ReportKind.Feedback), FieldTypes.TextOf(list.Template.First(f => f.Title == ReportFiles.KindField).Value));
+            Assert.Equal(ReportStatus.Draft, FieldTypes.TextOf(list.Template.First(f => f.Title == ReportFiles.StatusField).Value));
             Assert.Contains("\"keys\"", File.ReadAllText(Path.Combine(folder, ItemDocument.ListFile)));
 
             // The unsent ones, and only those, oldest first.
