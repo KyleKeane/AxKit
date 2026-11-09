@@ -23,7 +23,8 @@ public static class AppHost
             Log.Error("Unhandled exception on a background thread", e.ExceptionObject as Exception);
 
         // The program path tells a development build from the installed one when both write to the same log.
-        Log.Info($"{name} {BundleInfo.Version} starting on .NET {Environment.Version} from {Environment.ProcessPath ?? "(unknown)"} as process {Environment.ProcessId}, arguments: {string.Join(" ", args)}");
+        // The --message text is logged as its length alone (S-54): it may be a stranger's words from GitHub, and the log's tail goes into reports.
+        Log.Info($"{name} {BundleInfo.Version} starting on .NET {Environment.Version} from {Environment.ProcessPath ?? "(unknown)"} as process {Environment.ProcessId}, arguments: {CommandLineText.ForLog(args)}");
 
         if (args.Length == 1 && Dispatch.IsHelpFlag(args[0]))
         {
