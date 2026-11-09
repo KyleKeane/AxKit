@@ -203,7 +203,10 @@ and an error naming a file that could not be opened.
      written as Markdown headings ("# ", "## ") where the document marks them, a slide as "## Slide 3" followed by
      its text, so that Ctrl+H and the level keys move by heading and slide; tables as their cells separated by tabs.
   3. **Zip archive** (`.zip` and any file that starts as one): the listing, one entry to a line, the path, the
-     unpacked size and the date ("docs/SPEC.md, 41 KB, 2026-10-24 14:02"), folders first.
+     unpacked size and the date ("docs/SPEC.md, 41 KB, 2026-10-24 14:02"), in File Explorer's order of names, a folder
+     entry as "docs/, folder". The first 1,000 entries, then one line "and N more" (2026-11-09; every entry before,
+     and an archive of tens of thousands filled the window); the Contents group says "Shown: the first 1,000 entries"
+     then, and its counts are of every entry.
   4. **Picture, sound, video:** a short text that names the kind and says that its details are in the pane below, and
      for sound and video that Ctrl+E plays it in axMedia; the content of these kinds is not text and their readable
      strings are noise.

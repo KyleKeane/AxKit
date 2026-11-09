@@ -2,6 +2,7 @@
 
 ## 5.2.2
 
+- axPreview: a zip lists its first 1,000 entries, then one line "and N more"; the Details list says "Shown: the first 1,000 entries" and still counts them all. Before, an archive of tens of thousands of entries filled the window.
 - axTask: a list's template keeps the values it is given, so a new item starts with them: in a GitHub list "unlabelled" and "open", in Your reports Feedback and Draft. Before, the template the app wrote emptied every value, and Ctrl+N in a GitHub list made an item with no kind or state; a GitHub list made before this version carries the empty values in its `list.json`, which Ctrl+J puts right. Use these fields for new items still takes an item's fields emptied.
 - axTask, axPass: Ctrl+Tab, Ctrl+Shift+Tab and F6 switch between the navigator and the detail pane from either one, as in every other window; Tab, Shift+Tab, Enter and Escape work as before. The guides said Ctrl+1 for All tasks; it is Ctrl+0.
 - axTerminal: after Update and restart, Keep running in the closing question keeps the installed update for the next start and says "Update installed. It starts with the next axTerminal", as axClaude's Keep working does; the notice also says that Close anyway starts the updated axTerminal. Before, Keep running dropped the restart without a word.

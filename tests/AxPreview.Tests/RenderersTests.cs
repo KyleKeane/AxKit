@@ -120,6 +120,22 @@ public sealed class RenderersTests : IDisposable
         Assert.StartsWith("docs/b10.txt, 1 byte, ", lines[2]);
         Assert.Contains("Files: 2", rendered.Contents);
         Assert.Contains("Folders: 1", rendered.Contents);
+        Assert.DoesNotContain(rendered.Contents, line => line.StartsWith("Shown:", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void A_huge_zip_lists_its_first_thousand_entries_and_counts_the_rest()
+    {
+        var parts = Enumerable.Range(1, ZipListing.MaxEntries + 3).Select(n => ($"f{n:D5}.txt", "x")).ToArray();
+        var rendered = Renderers.Render(Zip("huge.zip", parts));
+        var lines = Lines(rendered);
+        Assert.Equal(ZipListing.MaxEntries + 1, lines.Length);
+        Assert.StartsWith("f00001.txt, 1 byte, ", lines[0]);
+        Assert.StartsWith($"f{ZipListing.MaxEntries:D5}.txt, 1 byte, ", lines[^2]);
+        Assert.Equal("and 3 more", lines[^1]);
+        Assert.Contains($"Entries: {ZipListing.MaxEntries + 3:N0}", rendered.Contents);
+        Assert.Contains($"Shown: the first {ZipListing.MaxEntries:N0} entries", rendered.Contents);
+        Assert.Contains($"Files: {ZipListing.MaxEntries + 3:N0}", rendered.Contents);
     }
 
     [Fact]

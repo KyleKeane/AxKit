@@ -232,8 +232,9 @@ path, parser, pipe and log line again and closed these, each on the branch `cons
 | S-57 | low | S-42's rule, text from outside shown with its hidden characters made visible, reached three lists; `AxKitList.Fill` fills every list of that kind now, so the viewer's details follow it too |
 
 Left for the user (the inventory's section 11, decided on 2026-11-09): a `list.json` `open` action that may start
-Claude Code or a shell, which the MCP tool refuses; a cap on a zip's entries in axPreview; S-53's refusal in axClaude's
-own `claude.cmd` command lines. S-1's `NoDefaultCurrentDirectoryInExePath` is set since that day (the table's row).
+Claude Code or a shell, which the MCP tool refuses; S-53's refusal in axClaude's own `claude.cmd` command lines. Done
+since that day: S-1's `NoDefaultCurrentDirectoryInExePath` (the table's row) and the cap on a zip's entries in
+axPreview (the first 1,000, then "and N more", AP-7.2).
 
 The review's notes, unconfirmed: Windows' property handlers run inside axPreview's process for the Details list (a
 third-party handler that crashes on a malformed file ends it; a hung one is left after five seconds), as they run
