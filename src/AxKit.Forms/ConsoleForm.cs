@@ -68,7 +68,8 @@ public abstract partial class ConsoleForm : AxKitForm
         Input.TabIndex = 0;
         // The bundle's page and paragraph keys (axClaude FR-2.1): the control's own keys do nothing while the text fits, or scroll a row and leave the caret.
         Input.KeyDown += EditKeys.Handle;
-        // A frame and the name line, so that the field is told from the view on screen; the frame is nothing to NVDA.
+        // A frame, a colour of its own and the name line over it, so that the active field is told from the read-only
+        // view on screen (both are the white Window colour otherwise); none of this is anything to NVDA.
         Input.BorderStyle = BorderStyle.FixedSingle;
         _inputName.Text = inputName;
         _inputName.AutoEllipsis = true;
@@ -77,6 +78,8 @@ public abstract partial class ConsoleForm : AxKitForm
         _inputName.Padding = new Padding(4, 0, 0, 0);
         _inputName.Dock = DockStyle.Bottom;
         Input.VisibleChanged += (_, _) => _inputName.Visible = Input.Visible;
+        ApplyFieldColors();
+        SystemColorsChanged += (_, _) => ApplyFieldColors();
 
         // What the program waits on, or a list of the window's own, takes the field's place (axClaude D33), one control at a time.
         Area.TabIndex = 0;
@@ -233,7 +236,7 @@ public abstract partial class ConsoleForm : AxKitForm
     {
         Transcript.Font = font;
         Input.Font = font;
-        _inputName.Font = font;
+        _inputName.Font = new Font(font, FontStyle.Bold);
         _inputName.Height = TextRenderer.MeasureText("Wg", font).Height + 6;
         Area.Font = font;
         FitBottom();
@@ -251,6 +254,21 @@ public abstract partial class ConsoleForm : AxKitForm
         Input.Height = Math.Max(line + 8, Math.Min(line * 3 + 8, ClientSize.Height / 3));
         Area.MinimumHeight = Input.Height;
         Area.FitHeight();
+    }
+
+    /// <summary>
+    /// The field and its name line in colours of their own (2026-11-08), so the active field is a clearly separate
+    /// region from the read-only conversation above it, which both share the white Window colour otherwise: a tinted
+    /// field and a deeper band behind the name. The tints are picked for the current theme (a light or a dark Window
+    /// colour), and re-applied when the theme changes; the text keeps the system's own colour for contrast.
+    /// </summary>
+    private void ApplyFieldColors()
+    {
+        var dark = SystemColors.Window.GetBrightness() < 0.5;
+        Input.BackColor = dark ? Color.FromArgb(0x33, 0x38, 0x40) : Color.FromArgb(0xEA, 0xF0, 0xFA);
+        Input.ForeColor = SystemColors.WindowText;
+        _inputName.BackColor = dark ? Color.FromArgb(0x23, 0x27, 0x2D) : Color.FromArgb(0xD2, 0xDD, 0xEF);
+        _inputName.ForeColor = SystemColors.WindowText;
     }
 
     /// <summary>The update's steps as system lines in the transcript (axClaude FR-1.10).</summary>

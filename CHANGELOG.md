@@ -2,7 +2,7 @@
 
 ## 5.2.2
 
-- axClaude, axTerminal: the field at the bottom of the window is told from the view on screen: a frame, and a line over it with its name ("Message to Claude", "Command"), as a question's list has the question over it. Nothing changes for NVDA, which names the field as before. A larger text (Options, Text) makes the lines taller and nothing else: the field stays three lines of its font and never takes more than a third of the window, the conversation keeps the rest, and a longer message wraps and scrolls inside the field. A sighted helper had taken the white field under the white conversation for more of the conversation (2026-11-08).
+- axClaude, axTerminal: the field at the bottom of the window is told from the view on screen: a frame, a tinted background of its own so it reads as a separate region from the white conversation, and a header band over it with its name ("Message to Claude", "Command"), as a question's list has the question over it. The tints follow the light or dark theme. Nothing changes for NVDA, which names the field as before. A larger text (Options, Text) makes the lines taller and nothing else: the field stays three lines of its font and never takes more than a third of the window, the conversation keeps the rest, and a longer message wraps and scrolls inside the field. A sighted helper had taken the white field under the white conversation for more of the conversation (2026-11-08).
 
 ## 5.2.1
 

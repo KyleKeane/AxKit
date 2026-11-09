@@ -141,8 +141,8 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 
 - AT-2.1 From the top: the menu bar; the transcript, a read-only word-wrapped text named "Terminal", the same view as
   axClaude's conversation (`TranscriptView`, axClaude FR-3.1); the command field "Command", three rows of its font high
-  and never more than a third of the window, framed and under a line that shows its name on screen, in the place of
-  axClaude's message field (axClaude §6.1); the status bar. A notice takes the place of the view and the field (AX-6.4); the
+  and never more than a third of the window, framed, with a tinted background of its own and under a header band that
+  shows its name on screen, in the place of axClaude's message field (axClaude §6.1); the status bar. A notice takes the place of the view and the field (AX-6.4); the
   recent commands list (AT-3.6) takes the field's place while it shows.
 - AT-2.2 Focus: Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 toggle between the view and the bottom control
   (bundle AX-8.2); Ctrl+1 the field, Ctrl+2 the view, Ctrl+3 the view at the latest output marker, from anywhere, each
