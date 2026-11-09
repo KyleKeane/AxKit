@@ -48,7 +48,7 @@ requests, the first a setting; the report sender's only when you send a report:
 
 ## What axKit does on the network only when you ask
 
-The access layers (axClaude, axGIT, axTerminal, axPass) are the other way axKit meets the network. An access layer
+The access layers (axClaude, axGIT, axTerminal, axPass, axMCP) are the other way axKit meets the network. An access layer
 starts a program you installed as a child process of its window and talks to it through a pseudo console or pipes on
 your computer, never over the network; that program uses the network as it would without axKit, under its maker's
 terms, and axKit neither sees nor changes that traffic: it reads what the program prints and passes on what you type.
@@ -70,6 +70,12 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   in a pseudo console. What the commands you type do, on your computer and on any network they reach, is up to them.
 - **axPass, access layer for KeePassXC** runs `keepassxc-cli.exe`, KeePassXC's command-line tool, on your database
   file, with your master password on a pipe. The tool has no network feature.
+- **axMCP, access layer for MCP servers** starts an MCP server you choose, from Claude Code's configuration
+  (`%USERPROFILE%\.claude.json`, a folder's `.mcp.json`, which axMCP reads and never writes) or from your own list, as a
+  child process on this computer, and talks to it on its standard input and output; the first time, after your
+  agreement. The server is its maker's program: it does whatever it was built to do, on this computer and on any
+  network it reaches, with your rights, under its maker's terms. Remote servers (http, sse) are listed and not
+  started; axMCP itself makes no network request.
 - **Install it now.** When an app needs a program that is missing (Git, KeePassXC, Claude Code, PowerShell 7), its
   notice offers to install it, and does so only when you choose to. Git (`Git.Git`), KeePassXC
   (`KeePassXCTeam.KeePassXC`) and PowerShell 7 (`Microsoft.PowerShell`) come through Windows' own package manager,

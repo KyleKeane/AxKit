@@ -254,7 +254,7 @@ public sealed class DispatchTests
         Assert.Equal(Dispatch.AxJSON, Dispatch.Decide(["json", "x.json"]).App);
         Assert.Equal(["x.json"], Dispatch.Decide(["JSON", "x.json"]).Arguments);
         Assert.Contains("AxKit json", Dispatch.Usage);
-        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axClaude", "axTerminal", "axGIT", "axPass"], Dispatch.Apps.Select(a => a.Name));
+        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axClaude", "axTerminal", "axGIT", "axPass", "axMCP"], Dispatch.Apps.Select(a => a.Name));
     }
 
     [Fact]
@@ -353,7 +353,7 @@ public sealed class DispatchTests
         }
 
         Assert.Equal(
-            ["axClaude", "axTerminal", "axGIT", "axPass"],
+            ["axClaude", "axTerminal", "axGIT", "axPass", "axMCP"],
             Dispatch.Apps.Where(app => app.IsAccessLayer).Select(app => app.Name));
         Assert.Equal(AppGroup.AccessLayers, Enum.GetValues<AppGroup>().Max());
     }

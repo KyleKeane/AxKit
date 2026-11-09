@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- axMCP's window side, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7): the window, its key table
+       and its texts; the pure code is AxMCP.Core. -->
+  <PropertyGroup>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>AxMCP</RootNamespace>
+    <AssemblyName>axMCP</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AxMCP.Core\AxMCP.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Forms\AxKit.Forms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Help, User guide shows this file. -->
+    <EmbeddedResource Include="..\..\docs\axmcp\user-guide.md" LogicalName="UserGuide.md" />
+  </ItemGroup>
+
+</Project>

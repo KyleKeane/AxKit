@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- axMCP's pure code (docs/axmcp/SPEC.md section 5): no window. -->
+  <PropertyGroup>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
+    <RootNamespace>AxMCP.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+  </ItemGroup>
+
+</Project>

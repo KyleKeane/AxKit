@@ -25,6 +25,7 @@ body:
         - axPass
         - axCalc
         - axClip
+        - axMCP
         - The bundle (install, update, the axKit menu)
     validations:
       required: true

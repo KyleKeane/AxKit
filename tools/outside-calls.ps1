@@ -68,6 +68,12 @@ $targets = @(
         @('What it reaches', 'nothing on the network: the tool has no network feature; it reads and writes the database file.'),
         @('Documentation', 'https://keepassxc.org/docs/KeePassXC_UserGuide#_command_line_tool; docs/axpass/kdbx-notes.md.'),
         @('Apps', 'axPass, access layer for KeePassXC.')) }
+    @{ Key = 'MCP servers'; Kind = 'program'; Lines = @(
+        @('What', 'the MCP server the user starts in axMCP: a program defined in Claude Code''s configuration (`%USERPROFILE%\.claude.json`, a folder''s `.mcp.json`, read and never written) or in axMCP''s own list, by the command line that definition gives.'),
+        @('How', 'a child process without a window, the Model Context Protocol''s JSON-RPC one line per message on its standard input and output, its standard error to axMCP''s log, the environment variables of its definition added; stopped by closing its input, then ending its process tree after two seconds.'),
+        @('What it reaches', 'whatever the server''s maker built it to reach, on this computer and on any network, with the user''s rights, after the user''s consent for that server (AX-11.4). Remote servers (http, sse) are listed and never started by this version (docs/axmcp/SPEC.md MP-D2).'),
+        @('Documentation', 'https://modelcontextprotocol.io/specification; https://code.claude.com/docs/en/mcp; docs/axmcp/SPEC.md.'),
+        @('Apps', 'axMCP, access layer for MCP servers.')) }
     @{ Key = 'Installers'; Kind = 'program'; Lines = @(
         @('What', 'the installers of Install it now (AX-2.9), run only when the user chooses to install a program an app needs and Windows lacks: Windows'' own winget (`%LOCALAPPDATA%\Microsoft\WindowsApps\winget.exe`, never one on the PATH) for Git (`Git.Git`), KeePassXC (`KeePassXCTeam.KeePassXC`) and PowerShell 7 (`Microsoft.PowerShell`); Windows PowerShell running Anthropic''s installer script for Claude Code.'),
         @('How', '`winget install --id <id> --exact --source winget --silent --accept-package-agreements --accept-source-agreements --disable-interactivity`, without a window, its output read; `powershell.exe` running `irm https://claude.ai/install.ps1 | iex`.'),
