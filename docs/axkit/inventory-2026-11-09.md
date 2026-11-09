@@ -34,7 +34,7 @@ automated scripts (`tools\AxAutomate` on `tests\scripts`) and `publish.ps1 -NoIn
 | 5 | Hacks to make plain (3.3), only the ones whose reason is understood from the code or the notes | done; one for the user (the asks poll) |
 | 6 | Attack surface (3.4), each finding with a test, added to the audit as S-54 onwards | done: S-54 to S-57; three questions for the user |
 | 7 | Drift: notes, specs and scripts brought back to the code, no behaviour touched | done |
-| 8 | The final gate, the report (`cleanup-run-report.md`), the branch pushed, the tracker items for what needs the user, the NVDA sections worth hearing again, and the recommendation of what to do next | running |
+| 8 | The final gate, the report (`cleanup-run-report.md`), the branch pushed, the tracker items for what needs the user, the NVDA sections worth hearing again, and the recommendation of what to do next | done |
 
 A phase that runs long is cut, not rushed: whatever is left of it goes to section 9 as open, with its reason.
 

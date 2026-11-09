@@ -146,8 +146,8 @@ expect focus Milk
 keys space
 expect said ! Not a task
 
-# 1.7 Ctrl+1: All tasks, the soonest due first, each with its list.
-keys ctrl+1
+# 1.7 Ctrl+0: All tasks (Ctrl+1 until 2026-11-07, TK-7a.1), the soonest due first, each with its list.
+keys ctrl+0
 expect said ! All tasks, 4 items, Fix the sink, due 
 keys left
 expect focus All tasks, 4 not done

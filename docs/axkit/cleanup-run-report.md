@@ -14,7 +14,18 @@ nothing they hear changed, by construction and by the tests; section 5 lists the
 | `tools\outside-calls.ps1` | the page current | the page current (rewritten four times for lines that moved; 41 calls in 26 files, `KeePassCli.StartLasting`'s gone with the method) |
 | Every PowerShell script parses | yes | yes |
 | The unused-code analyzers (IDE0051, IDE0052, IDE0059, IDE0060, IDE0005, CA1812, CA1822, CA1823, CA1859) | 58 IDE0005, 4 IDE0060, 14 CA1822, 4 CA1812, 42 CA1859; no unused private member | IDE0005 and IDE0060 at zero; CA1822, CA1812 and CA1859 left on purpose (section 3) |
-| `tools\AxAutomate` on `tests\scripts`, `publish.ps1 -NoInstall` | not run at the baseline | section 6 of the inventory page records the final run |
+| `tools\AxAutomate` on `tests\scripts` (74 scripts, every app and the AI tools, Claude on `--model haiku`) | not run at the baseline | 70 passed; the four that did not are below, none a change of the branch |
+| `publish.ps1 -NoInstall` in the worktree | not run at the baseline | the self-contained `AxKit.exe` and the zip with `AxKit.exe`, `install.ps1`, `install.cmd`, `apps.json`, `README.md`, `LICENSE` (23 entries) |
+
+The four scripts that failed in the final run, each read to its first failing step: `axtask\01-navigate-and-fields.txt`
+still pressed Ctrl+1 for All tasks, which moved to Ctrl+0 on 2026-11-07 (TK-7a.1); the script says Ctrl+0 now and
+passes (one commit of this run). `axclaude\12-questions.txt` expects `/tasks` to open an information screen, and Claude
+Code 2.1.319 shows it as a question list ("Claude asks"); the same script fails the same way on `main`, built apart
+from the running app, so it is Claude Code's screen that moved, not the branch (the tracker has it). `axclaude\16-report.txt`
+expects the first report's consent and gets "This build cannot send reports": the worktree's build has no reporter
+token file, which git ignores (the development build of the main checkout has it). `axstart\01-basics.txt` timed out
+starting axStart: the user's own axStart was running, and a second start hands over to the first and ends (AS-1.2), as
+the notes warn.
 
 Every commit passed the first four checks before it was made (the gate script of the run, outside the repository,
 ran them on the worktree; a failing one was fixed before the commit, never committed and patched).
