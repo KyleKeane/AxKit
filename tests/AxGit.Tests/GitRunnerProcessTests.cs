@@ -25,6 +25,13 @@ public sealed class GitRunnerProcessTests : IDisposable
     }
 
     [Fact]
+    public async Task A_missing_git_is_said_as_such()
+    {
+        GitRunner.Program = Path.Combine(_dir.Path, "no-such-git.exe");
+        await Assert.ThrowsAsync<GitNotFoundException>(() => GitRunner.RunAsync(null, ["--version"], GitRunner.Short));
+    }
+
+    [Fact]
     public async Task The_output_and_the_exit_code_come_back()
     {
         Fake("echo hello\r\necho oops 1>&2\r\nexit /b 3");
