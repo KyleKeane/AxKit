@@ -58,11 +58,7 @@ public static class HelpText
           Three sections, each under a header line: Running, the operations under way; Operations, the ones done; Selection, the changes of the selection in this folder. Newest last in each
           One line per operation: "Renamed notes.md to todo.md", "Copied 3 items", "Compressing, 40 of 120 files" while it runs, "Failed: …", "…, undone" once taken back. One per change of the selection: "Selected notes.md", "Selected 5 items", "Deselected all, 3 items"
           Enter: go to where it happened, the folder list on the entry it made, moved or selected. Ctrl+Z: undo this line, whatever its place; Ctrl+Z in the folder list undoes operations only. Ctrl+I: its section, number and time, "Operations, 3 of 12, 21:04"
-
-        ## Notices
-          axFile's questions, errors and help texts appear inside the window, in place of the lists.
-          Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6 and Ctrl+F work as in this one
-        """;
+        """ + BundleHelp.NoticesSection("axFile", "the lists");
 
     /// <summary>docs/axfile/user-guide.md, embedded by AxFile.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axfile/user-guide.md");

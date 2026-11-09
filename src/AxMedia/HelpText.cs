@@ -31,11 +31,7 @@ public static class HelpText
           Ctrl+Q: what is playing, where it is, and the speed
           Play, Say each file as it starts: the next file's name said when the queue moves on, the one thing axMedia says on its own
           The volume is Windows' own: your keyboard's volume keys
-
-        ## Notices
-          axMedia's questions, errors and help texts appear inside the window, in place of the list.
-          Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6 and Ctrl+F work as in this one
-        """;
+        """ + BundleHelp.NoticesSection("axMedia", "the list");
 
     /// <summary>docs/axmedia/user-guide.md, embedded by AxMedia.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axmedia/user-guide.md");

@@ -33,7 +33,7 @@ public static class HelpText
           Functions: sqrt, cbrt, abs, exp, ln, log, log2, sin, cos, tan, asin, acos, atan, floor, ceil, trunc, round, min, max, hypot
           Names: pi, e, ans (the last answer); name = 5 sets a variable
           Starting with an operator continues from the last answer: *2 doubles it. A leading minus is a negative number
-        """;
+        """ + BundleHelp.NoticesSection("axCalc", "the field and the history");
 
     /// <summary>docs/axcalc/user-guide.md, embedded by AxCalc.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axcalc/user-guide.md");

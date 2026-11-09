@@ -867,7 +867,9 @@ These are the rules of `docs/axclaude/SPEC.md` that are not about Claude; app sp
   brings the notice back with the match selected and the focus in its text (Cancel brings it back as it was); F3 and
   Shift+F3 find the next and the previous match there, "Not found" when there is none. The F1 texts are written under
   Markdown headings, one per group of keys, with a first line naming the text's own keys, so that the letters and the
-  find walk them (asked 2026-10-23).
+  find walk them (asked 2026-10-23), and every text ends with the bundle's Notices section, where the app's notices
+  appear and a notice's keys, the same words in every window (`BundleHelp.NoticesSection`, 2026-11-09; five texts had a
+  shorter section or none).
 - AX-7.3 The caret never moves except as the direct result of the user's own command. The result of a navigation
   command is announced through a UI Automation notification, joined into one notification when several things arrive
   at once. Nothing speaks on a plain arrow key; information is given on demand. Two notifications raised back to back

@@ -56,11 +56,7 @@ public static class HelpText
           Backspace: back to the line you jumped from
           Shift+arrows: select; Ctrl+C: copy the selection ("Copied"); Ctrl+A: select all
           Escape: clear the selection, else go to the command field
-
-        ## Notices
-          axTerminal's questions, errors and help texts appear inside the window, in place of the terminal.
-          Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6 and Ctrl+F work as in this one
-        """;
+        """ + BundleHelp.NoticesSection("axTerminal", "the terminal");
 
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axterminal/user-guide.md");
 }

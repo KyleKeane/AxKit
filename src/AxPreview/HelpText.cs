@@ -45,11 +45,7 @@ public static class HelpText
           Arrow keys and letters: move through the lines
           Ctrl+C: copy the line's value, without its name
           Enter on the Folder line: the folder in axFile, the file selected
-
-        ## Notices
-          axPreview's errors and help texts appear inside the window, in place of the text.
-          Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6, the Navigate keys and Ctrl+F work as in this one
-        """;
+        """ + BundleHelp.NoticesSection("axPreview", "the text", navigateMenu: true);
 
     /// <summary>docs/axpreview/user-guide.md, embedded by AxPreview.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axpreview/user-guide.md");

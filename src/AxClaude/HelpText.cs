@@ -71,14 +71,10 @@ public static class HelpText
           Enter: answer. Escape: cancel the question, or go back a step
           The message field comes back when Claude has your answer
 
-        ## Notices
-          axClaude's questions, errors and help texts appear inside the window, in place of the conversation.
-          Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6 and Ctrl+F work as in this one
-
         ## Claude Code itself
           Type /help in the message field and press Enter for Claude Code's own commands.
           The Help menu opens the Claude Code documentation in your browser.
-        """;
+        """ + BundleHelp.NoticesSection("axClaude", "the conversation");
 
     /// <summary>docs/axclaude/user-guide.md, embedded in the executable at build time.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axclaude/user-guide.md");

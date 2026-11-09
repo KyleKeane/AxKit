@@ -58,4 +58,17 @@ public static class BundleHelp
         text.Append("\r\n");
         return text.ToString();
     }
+
+    /// <summary>
+    /// The Notices section every F1 text ends with (AX-7.2; the same words in every window since 2026-11-09, when five
+    /// texts had a shorter one or none): where the app's notices appear, and a notice's keys. It starts with the blank
+    /// line that parts it from the app's last section and ends without a line break, as the texts do.
+    /// </summary>
+    /// <param name="app">The app's name.</param>
+    /// <param name="inPlaceOf">What a notice covers: "the conversation", "the text", "the lists".</param>
+    /// <param name="navigateMenu">Whether the Navigate menu's keys work in a notice's text too (the editors with that menu).</param>
+    public static string NoticesSection(string app, string inPlaceOf, bool navigateMenu = false) =>
+        "\r\n\r\n## Notices\r\n"
+        + $"  {app}'s questions, errors and help texts appear inside the window, in place of {inPlaceOf}.\r\n"
+        + $"  Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6{(navigateMenu ? ", the Navigate keys" : string.Empty)} and Ctrl+F work as in this one";
 }

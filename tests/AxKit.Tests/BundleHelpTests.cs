@@ -76,5 +76,16 @@ public sealed class BundleHelpTests
         }
 
         Assert.Equal(4, texts.Count(text => Dispatch.Apps.Any(app => app.IsAccessLayer && Lines(text)[1].StartsWith(app.Title + ": ", StringComparison.Ordinal))));
+
+        // Every text ends with the bundle's Notices section, the same words in every window (AX-7.2, 2026-11-09).
+        foreach (var text in texts)
+        {
+            var lines = Lines(text);
+            Assert.Equal("## Notices", lines.Last(line => line.StartsWith("## ", StringComparison.Ordinal)));
+            Assert.Equal("", lines[Array.IndexOf(lines, "## Notices") - 1]);
+            Assert.Contains("'s questions, errors and help texts appear inside the window, in place of ", lines[^2]);
+            Assert.StartsWith("  Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6", lines[^1]);
+            Assert.EndsWith(" and Ctrl+F work as in this one", lines[^1]);
+        }
     }
 }

@@ -42,11 +42,7 @@ public static class HelpText
           Ctrl+O: open another database
           Ctrl+Z: undo the last change. F5: read the database again
           Ctrl+S: nothing to save here; every change is written to the database at once, by KeePassXC's tool
-
-        ## Notices
-          The master password, a field's new value and every question appear inside the window, in place of the panes.
-          Tab moves between the field and the buttons. Enter chooses the main button. Escape closes the notice
-        """;
+        """ + BundleHelp.NoticesSection("axPass", "the panes");
 
     /// <summary>docs/axpass/user-guide.md, embedded by AxPass.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axpass/user-guide.md");

@@ -349,21 +349,15 @@ namespace {{Project}};
 /// <summary>The texts {{Name}} shows as notices: the keyboard shortcuts (F1) and the user guide; About is the bundle's (<c>AxKit.Core.BundleAbout</c>).</summary>
 public static class HelpText
 {
-    /// <summary>The F1 text (SPEC.md {{P}}-7): a first line naming the text's own keys, then one Markdown heading per group (bundle AX-7.2): the bundle-wide keys, then {{Name}}'s own.</summary>
-    public const string Shortcuts = """
-        In this text: h and Shift+H move by heading, 1 to 6 by level. Ctrl+F finds, F3 and Shift+F3 the next and the previous match
-
-        ## In every window of axKit
-          F1: this list
-          Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it
-          Ctrl+F: find a line in the list. F3 and Shift+F3: next or previous match
-          Ctrl+Plus, Ctrl+Minus: bigger or smaller text
-          Alt: the menu. Alt+F4: close {{Name}}
-          Alt+A: the axKit menu: the command palette, a new window of any app, the files and folders closed lately, the open axKit windows, most recent first (Alt+A, O, 1 is the one you were in last) and by type, Close all windows, the AI tools, Check for updates, and About
-
+    /// <summary>The F1 text (SPEC.md {{P}}-7): a first line naming the text's own keys, then one Markdown heading per group (bundle AX-7.2): the bundle-wide keys, then {{Name}}'s own, then the bundle's Notices section. The first line, the bundle's section and the Notices section come from <c>BundleHelp</c>.</summary>
+    public static readonly string Shortcuts = BundleHelp.Section(
+        "{{Name}}",
+        [
+            "Ctrl+F: find a line in the list. F3 and Shift+F3: next or previous match",
+        ]) + """
         ## {{Name}}
           Up and Down: the lines of the list
-        """;
+        """ + BundleHelp.NoticesSection("{{Name}}", "the list");
 
     /// <summary>docs/{{lower}}/user-guide.md, embedded by {{Project}}.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/{{lower}}/user-guide.md");

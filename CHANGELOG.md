@@ -2,6 +2,7 @@
 
 ## 5.2.2
 
+- axKit: every window's F1 text ends with the same Notices section, where that window's notices appear and a notice's keys (Tab, Enter, Escape, the heading letters and Ctrl+F in its text); axProcess, axTask and axPass had a shorter one and axCalc and axClip none. In axClaude's text the section now comes after Claude Code itself.
 - axKit: after a Windows dialog (Open, Save as, the folder and font pickers) the focus goes back to the control that had it, OK or cancel alike, in every window; before, each window did its own, the editors' Open put it back only after OK and their Save as only after cancel, and some windows left it where Windows put it.
 - axKit: Show current folder in and Show current file in say "Folder missing" or "File missing" in every window when the path is gone, and start nothing, File Explorer included; axClaude and axTerminal said it before, the other windows started the app on the gone path or File Explorer on its parent folder.
 - axFile: New folder and Add a program keep their notice open when the name is refused (a character Windows forbids, a name that reads the same as one already there, a blank name), with the reason spoken, so you put the name right in place, as every other one-field notice of axKit does. Before, the notice closed and the reason was announced after it.

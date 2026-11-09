@@ -38,11 +38,7 @@ public static class HelpText
           Shift with any of them, or Ctrl+A: select. Ctrl+C, Ctrl+X, Ctrl+V: copy, cut, paste
           Ctrl+Z: undo the last change, as far back as the file was opened here. Ctrl+Y or Ctrl+Shift+Z: redo
           Enter: a new line. Tab: a tab character
-
-        ## Notices
-          axDown's questions, errors and help texts appear inside the window, in place of the text.
-          Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6, the Navigate keys and Ctrl+F work as in this one
-        """;
+        """ + BundleHelp.NoticesSection("axDown", "the text", navigateMenu: true);
 
     /// <summary>docs/axdown/user-guide.md, embedded in the executable at build time.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axdown/user-guide.md");

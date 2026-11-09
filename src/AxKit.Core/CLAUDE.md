@@ -48,7 +48,7 @@ another project on its second use, the bullet says so.
   latest-release state), Licence, Attribution, and the axKit guide, `docs/axkit/README.md` embedded by
   `AxKit.Core.csproj` as `AxKitGuide.md`, read through `EmbeddedText`, which every app's `HelpText.UserGuide` uses for
   its own guide.
-- `BundleHelp` (docs/axkit/app-kit.md AK-2.3, AX-7.2; 2026-10-24): the start of every F1 text, written once: `Section`
+- `BundleHelp` (docs/axkit/app-kit.md AK-2.3, AX-7.2; 2026-10-24): the start and the end of every F1 text, written once (`NoticesSection`, the Notices section every text ends with, the same words in every window since 2026-11-09, with the app's name and what its notices cover): `Section`
   takes the app's name and its own lines of the section (what Tab moves between, what Ctrl+F finds, what Ctrl+S does;
   all the window keys in axClaude and axTerminal, whose heading is "Anywhere") and returns the first line naming the
   text's keys and the section with F1, the palette, the app's lines, the text size, the menu with Alt+F4 (`altF4` when

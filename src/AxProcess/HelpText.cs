@@ -27,11 +27,7 @@ public static class HelpText
           Ctrl+C: copy the line
           Ctrl+S: nothing to save here; axProcess says so
           View, Sort processes by: memory, processor or name
-
-        ## Notices
-          The details and the questions appear inside the window, in place of the list.
-          Tab moves between the text and the buttons. Enter chooses the main button. Escape closes the notice
-        """;
+        """ + BundleHelp.NoticesSection("axProcess", "the list");
 
     /// <summary>docs/axprocess/user-guide.md, embedded by AxProcess.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axprocess/user-guide.md");

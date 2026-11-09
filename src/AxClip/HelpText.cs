@@ -23,7 +23,7 @@ public static class HelpText
           Delete: remove the item. Ctrl+Shift+Delete: clear the history, after a question
           Ctrl+P: pause recording, or record again
           Escape: hide axClip
-        """;
+        """ + BundleHelp.NoticesSection("axClip", "the list");
 
     /// <summary>docs/axclip/user-guide.md, embedded by AxClip.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axclip/user-guide.md");

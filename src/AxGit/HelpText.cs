@@ -35,11 +35,7 @@ public static class HelpText
           Page Up, Page Down: one screen up or down, or the first or last line
           Ctrl+Up, Ctrl+Down: the previous or next paragraph (the first line after a blank line)
           Shift with any of them, or Ctrl+A: select. Ctrl+C: copy
-
-        ## Notices
-          axGIT's questions, errors and help texts appear inside the window, in place of the list and the details.
-          Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6 and Ctrl+F work as in this one
-        """;
+        """ + BundleHelp.NoticesSection("axGIT", "the list and the details");
 
     /// <summary>docs/axgit/user-guide.md, embedded by AxGit.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axgit/user-guide.md");

@@ -27,11 +27,7 @@ public static class HelpText
           Ctrl+O: the program file's folder in axFile, the file selected
           F5: read the list of programs again
           Escape: hide axStart at once and return where you were; the field is empty the next time
-
-        ## Notices
-          axStart's questions, errors and help texts appear inside the window, in place of the field.
-          Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6 and Ctrl+F work as in this one
-        """;
+        """ + BundleHelp.NoticesSection("axStart", "the field");
 
     /// <summary>docs/axstart/user-guide.md, embedded by AxStart.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axstart/user-guide.md");

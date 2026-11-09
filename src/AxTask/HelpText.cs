@@ -48,11 +48,7 @@ public static class HelpText
           Ctrl+J: open the item, the list's details or the smart list in axJSON
           Ctrl+E: show it in axFile
           Ctrl+S: nothing to save here; every change is written at once
-
-        ## Notices
-          A field's new value, a new item and every question appear inside the window, in place of the panes.
-          Tab moves between the field and the buttons. Enter chooses the main button. Escape closes the notice
-        """;
+        """ + BundleHelp.NoticesSection("axTask", "the panes");
 
     /// <summary>docs/axtask/user-guide.md, embedded by AxTask.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axtask/user-guide.md");
