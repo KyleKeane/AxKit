@@ -82,6 +82,18 @@ keys right
 expect focus AxKit-reports issues
 try said AxKit-reports issues,
 try said GitHub not read
+# Ctrl+N in a GitHub list: the new item starts with the template's values, unlabelled and open (IA-4.3, 2026-11-09).
+keys ctrl+n
+expect state "notice":"New item"
+type Test issue
+keys enter
+expect said Added Test issue
+keys tab
+keys down
+expect focus Kind, choice, unlabelled
+keys down
+expect focus State, text, open
+keys escape
 # Step 7: Open in axClaude needs the folder in list.json; without an issue selected it asks for one first.
 menu Open in axClaude
 try said Set the code repository's folder first

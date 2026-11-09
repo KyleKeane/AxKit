@@ -57,6 +57,16 @@ expect focus URL, text, https://mail.example.com
 # 2.4 The row reads its user name once read.
 keys escape
 expect focus Gmail, sam
+# The bundle's pane keys from either pane (AX-8.2, item-apps.md, 2026-11-09): Ctrl+Tab to the fields, Ctrl+Shift+Tab
+# back, F6 there and back.
+keys ctrl+tab
+expect focus Title
+keys ctrl+shift+tab
+expect focus Gmail, sam
+keys f6
+expect focus Title
+keys f6
+expect focus Gmail, sam
 
 # 4.1 A user name changed, and undone.
 keys tab

@@ -5,6 +5,7 @@
 file home\AxKit\axpreview.json {"checkForUpdates": false}
 file notes.md # Notes\n\nOne two three.
 run powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; New-Item -ItemType Directory -Force 'docx\word' | Out-Null; [IO.File]::WriteAllText('docx\word\document.xml', '<w:document xmlns:w=''http://schemas.openxmlformats.org/wordprocessingml/2006/main''><w:body><w:p><w:pPr><w:pStyle w:val=''Heading1''/></w:pPr><w:r><w:t>Install</w:t></w:r></w:p><w:p><w:r><w:t>Run the installer.</w:t></w:r></w:p></w:body></w:document>'); [IO.Compression.ZipFile]::CreateFromDirectory('docx', 'report.docx'); [IO.Compression.ZipFile]::CreateFromDirectory('docx', 'bundle.zip')"
+run powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; New-Item -ItemType Directory -Force 'big' | Out-Null; 1..1001 | ForEach-Object { [IO.File]::WriteAllText(('big\' + $_ + '.txt'), 'x') }; [IO.Compression.ZipFile]::CreateFromDirectory('big', 'big.zip')"
 run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('song.mp3', [byte[]](73,68,51,3,0,0,0,0,0,0))"
 run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('tool.bin', [byte[]](0,1,2) + [Text.Encoding]::ASCII.GetBytes('Readable inside') + [byte[]](0,0,7))"
 
@@ -50,6 +51,16 @@ expect focus word/document.xml,
 keys tab
 type file
 expect focus "value":"Files: 1"
+
+# A zip of more than 1,000 entries lists the first 1,000 and one line "and N more"; the Details list says what is shown
+# (2026-11-09).
+start preview --new {temp}\big.zip
+expect focus .txt
+keys ctrl+end
+expect focus and 1 more
+keys tab
+type shown
+expect focus "value":"Shown: the first 1,000 entries"
 
 # 5.8: a sound file says what it is and that Ctrl+E plays it; the item is named so.
 start preview --new {temp}\song.mp3

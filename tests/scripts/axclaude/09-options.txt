@@ -180,6 +180,13 @@ expect state "notice":"Find"
 keys escape
 expect state "notice":"Keyboard shortcuts"
 expect focus Keyboard shortcuts
+# The text ends with Claude Code itself and then the Notices section every window has (2026-11-09): Ctrl+End, then
+# Shift+H back twice.
+keys ctrl+end
+keys shift+h
+expect said ! Notices, heading level 2
+keys shift+h
+expect said ! Claude Code itself, heading level 2
 # Tab: the Close button; Tab again: the text. NVDA+End reading the status bar is NVDA's (manual). Escape closes it and
 # the focus is back in the message field, where F1 was pressed.
 keys tab

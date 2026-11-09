@@ -74,6 +74,15 @@ expect said ♪ Edge
 # Enter (Paste into the program in front) and Shift+Enter (Copy without pasting) put an item on the clipboard and
 # act outside the window: not run here, they stay for the NVDA plan.
 
+# F1: the shortcuts end with the Notices section every window of axKit has (2026-11-09); Escape closes the text and the
+# focus is back in the field.
+keys f1
+expect state "notice":"Keyboard shortcuts"
+expect text Notices
+keys escape
+expect state "notice":null
+expect focus Search the clipboard
+
 # Escape hides the window whatever the field holds; a second start shows it again with the field empty.
 keys escape
 launch clip

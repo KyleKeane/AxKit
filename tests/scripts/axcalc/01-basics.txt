@@ -52,3 +52,10 @@ keys ctrl+f
 expect state "notice":"Find"
 keys escape
 expect state "notice":null
+
+# F1: the shortcuts end with the Notices section every window of axKit has (2026-11-09); Escape closes the text.
+keys f1
+expect state "notice":"Keyboard shortcuts"
+expect text Notices
+keys escape
+expect state "notice":null

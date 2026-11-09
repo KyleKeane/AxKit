@@ -45,6 +45,21 @@ expect said Done
 expect said ♪ Done
 # Command Prompt gives no exit code: "Done", never "Failed".
 refuse said Failed
+# A program in the current folder is run as .\name since 2026-11-09 (NoDefaultCurrentDirectoryInExePath, security audit
+# S-1): the bare name is not found, .\hello runs it.
+file myproject\hello.cmd @echo planted
+type hello
+keys enter
+expect said Done
+keys ctrl+2
+expect text not recognized
+keys ctrl+1
+type .\hello
+keys enter
+expect said Done
+keys ctrl+2
+expect text planted
+keys ctrl+1
 # The Switch shell submenu with Command Prompt checked (the palette's list carries the check), then Windows PowerShell.
 expect commands Command Prompt, Session, Switch shell, checked
 menu Windows PowerShell
