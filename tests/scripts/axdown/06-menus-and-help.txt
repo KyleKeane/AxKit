@@ -111,11 +111,11 @@ keys ctrl+shift+p
 expect state "notice":"Command palette"
 expect focus Search commands
 keys down
-expect said ! Open, File, Ctrl+O, 2 of
+expect said ! New window, File, Ctrl+Shift+N, 2 of
 keys down
-expect said ! Save, File, Ctrl+S, 3 of
+expect said ! Open, File, Ctrl+O, 3 of
 keys up
-expect said ! Open, File, Ctrl+O, 2 of
+expect said ! New window, File, Ctrl+Shift+N, 2 of
 # Ctrl+Home at the first match: the low note and the first match again.
 keys up ctrl+home
 expect said ! New, File, Ctrl+N, 1 of

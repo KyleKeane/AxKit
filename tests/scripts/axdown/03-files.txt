@@ -50,7 +50,7 @@ adopt
 expect state Untitled - axDown
 expect focus {"name":"Untitled","role":"Text","value":""}
 close
-use 1
+use 4
 expect state plain.txt - axDown
 # 3.4: Ctrl+N with unsaved changes: the question; Escape cancels and the text stays; Enter saves, then Untitled.
 type Added.

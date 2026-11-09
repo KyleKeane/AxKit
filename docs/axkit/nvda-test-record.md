@@ -28,6 +28,44 @@ axClaude's `/clear` and one-question header in its scripts. The three that faile
   the run ended that process for the script and started it again from the same program file after; passed whole
   (22 s).
 
+### The second full pass, from `main` after the merges (be88c50)
+
+`nvda-pass.ps1` again from `main` once the branches `improvements` and `axmcp` were merged there (13:12 to 13:50), 79
+scripts: the 75 of the first pass with the steps added for the twelve changes, axDown's `09-show-in-missing.txt` and
+`10-theme.txt`, axMCP's `01-start.txt` against its fake server, and the NVDA-only `axdown-dialog-focus.txt`. 71 passed
+whole, every announcement also spoken by NVDA, among them: axPass's `a?b` and pane keys; File missing from axDown;
+the Notices section at the end of F1 in axCalc and axClip and after Claude Code itself in axClaude; a zip of 1,001
+entries in axPreview ("and 1 more", "Shown: the first 1,000 entries"); the focus back in axDown's text after Ctrl+O
+and Escape; `/tasks` as the list and the token-less report notice in axClaude; the theme items of axDown
+(`10-theme.txt` apart from one expectation below); and the whole of axMCP (the servers in sections, the fake started
+with its counts said, the tool's arguments as fields, a required argument refused, the call and its result notice,
+Ctrl+J in axJSON, the resource read, Stop). Eight failed, and what each was:
+
+- `axdown/03-files.txt` step 49, Ctrl+Shift+N: a fault of the night's New window: it passed the viewer's `--new`
+  option to axDown, which refused it ("Unknown option --new"); fixed in the commit after the pass, the option going to
+  the viewer alone.
+- `axdown/06-menus-and-help.txt` step 67 and `axjson/04-axkit-menu-and-about.txt` step 25: the About text now ends its
+  access layers with "axMCP for MCP servers"; the scripts expected the old sentence.
+- `axdown/10-theme.txt` step 14: the theme file's first line is its brace; the step expected the format name there.
+- `axpass/01-unlock-read-change.txt` step 63: Ctrl+Tab brought the pane back on the field it had (URL), as the item
+  apps keep it; the step expected the first field.
+- `axtask/04-action-keys.txt` step 93: a new issue item's fields start with Title and Number before Kind; the step was
+  one Down short. The item did start as unlabelled and open, as the change says.
+- `axterminal/03-shells-and-folders.txt` step 61: the planted `hello.cmd` was written beside the session's folder, not
+  in it; the bare name was refused as the change says, `.\hello` found nothing.
+- `axstart/01-basics.txt`: the user's own axStart was running again (started again after its first rerun), so the
+  script's start found another program's window; the script passed whole on its rerun an hour before on the same
+  code.
+
+The seven scripts were rerun with the fixes. The first rerun taught one thing about the runner: the failed Ctrl+Shift+N
+had left the refused axDown process alive with its notice in front, outside the run that started it, and the four
+scripts that followed could not bring their windows to the front ("no window of the run is in front"); the leftover
+ended by hand, the reruns went on (an item for the runner is in the priorities list). The reruns (13:55 to 14:20): with
+the fault fixed (e54dd65) and the expectations put right, `axjson/04`, `axpass/01`, `axtask/04`, `axterminal/03` and all
+fourteen axDown scripts passed whole, every announcement spoken by NVDA, two axDown scripts needing a second look at
+what the New window item moved: `use 4` for the window the files script comes back to, and the palette's second entry.
+So every script of the bundle passed on `main` at the release of 5.3.0, axStart's on its rerun of the same hour.
+
 The twelve changes themselves are heard by steps added in 9c03533 (axPass's pane keys, the Notices section at the end
 of F1 in axCalc, axClip and axClaude, `.\hello` in Command Prompt, a zip of 1,001 entries, Ctrl+N in a GitHub list,
 File missing in axDown, the focus after a Windows dialog as an NVDA-only script) and by axFile's `a?b` steps, which
