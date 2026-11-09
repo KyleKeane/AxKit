@@ -50,6 +50,12 @@ public sealed record ViewerPage(AxKit.Core.TextDocument Document, string Kind, I
 {
     /// <summary>A text file shown as itself, whose status bar names its encoding and line ending.</summary>
     public bool IsText => WayOut == ViewerWayOut.Editor;
+
+    /// <summary>The finished page of a renderer that answers in two steps (AP-7.1): awaited by the shell off its thread and shown in this page's place while the same file is open; null for a page that is whole.</summary>
+    public Func<CancellationToken, Task<ViewerPage>>? Later { get; init; }
+
+    /// <summary>What the shell says once when a finished page arrives; null for nothing.</summary>
+    public string? Said { get; init; }
 }
 
 /// <summary>A command of an editor app on the whole text (AJ-2.3): its menu label with a mnemonic, its key from the app's table, and the function that rewrites the text.</summary>

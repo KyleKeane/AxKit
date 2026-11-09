@@ -135,6 +135,7 @@ public sealed partial class TextEditorForm
         UpdateTitle();
         UpdateStatus();
         ReadDetails();
+        StartLaterPage(page);
         Log.Info(path is null ? "New document" : $"Opened {path}: {page?.Kind ?? "text"}, {_document.EncodingName}, {_document.LineEndingName}");
     }
 

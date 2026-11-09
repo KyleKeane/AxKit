@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.4.0
+
+- axPreview: a picture shows the text Windows' own reader finds in it, a second or two after it opens, one line per line of the picture under a line naming it, with "Text read: N lines" said once; File, Read the clipboard's picture (Ctrl+Shift+V) does the same for the picture on the clipboard, which Alt+PrintScreen puts there from the window in front and PrintScreen from the whole screen, saved beside axPreview's logs; nothing leaves the computer. Windows PowerShell runs the reader (`Windows.Media.Ocr`) from a small script of axPreview's, so axKit stays free of the Windows SDK (`docs/axpreview/SPEC.md` AP-D11). Before, a picture only said that it was one.
+
 ## 5.2.2
 
 - axMCP: a new app, access layer for MCP servers (`docs/axmcp/SPEC.md`): the MCP servers Claude Code knows on this computer (its configuration and a folder's `.mcp.json`) and your own, in axTask's kind of window; Right on a server starts it as a child process, the first time after your agreement, and shows its Tools, Resources and Prompts; Tab on a tool reads its arguments as typed fields made from its schema, Enter fills one, Ctrl+Enter calls it and the result opens as a notice text, Ctrl+J as JSON in axJSON; Enter on a resource reads it; Ctrl+N adds a server of your own, Ctrl+Shift+S stops one. Remote servers (http) are listed and not started in this version, since they would be a network use of axKit's own.

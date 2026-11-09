@@ -17,6 +17,7 @@ public static class HelpText
         ## axPreview
           Ctrl+O: open any file to read. Ctrl+N: a new axPreview window
           F5: read the file again; coming back to the window after another program changed it does the same by itself
+          Ctrl+Shift+V: read the picture on the clipboard: it is saved beside axPreview's logs and its text read by Windows' own reader. Alt+PrintScreen puts the window in front on the clipboard, PrintScreen the whole screen
           Ctrl+E: go on with the file: a text in its editor, axDown, or axJSON for a .json file; a sound or video in axMedia; anything else in the program Windows has for it
           File, Open with: the axKit apps for the file, Windows' program, or Windows' own list of programs, whose Always makes one the default
           Ctrl+W: show the file in File Explorer
@@ -34,7 +35,7 @@ public static class HelpText
           Ctrl+S: nothing to save here; axPreview says so
 
         ## The text
-          What any file shows: a text file its text; a Word document, a PowerPoint presentation or an OpenDocument text its text, with its headings and slides as headings; a zip its list of files; a picture, sound or video what it is; any other file the readable text inside it
+          What any file shows: a text file its text; a Word document, a PowerPoint presentation or an OpenDocument text its text, with its headings and slides as headings; a zip its list of files; a picture the text Windows' own reader finds in it, a second or two after it opens; a sound or video what it is; any other file the readable text inside it
           Arrow keys, Home, End, Ctrl+Home, Ctrl+End, Ctrl+Left, Ctrl+Right: move as in any text
           Page Up, Page Down: one screen up or down, or the first or last line
           Ctrl+Up, Ctrl+Down: the previous or next paragraph (the first line after a blank line)

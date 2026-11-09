@@ -47,16 +47,22 @@ public static class AxPreviewApp
         Details: FileDetails.Lines);
 
     /// <summary>The file through the renderer that takes it (SPEC.md AP-7), as the shell's page.</summary>
-    private static ViewerPage Page(string path)
+    private static ViewerPage Page(string path) => ToPage(Renderers.Render(path));
+
+    /// <summary>A rendering as the shell's page, its finished page the same way when it has one (AP-7.1).</summary>
+    private static ViewerPage ToPage(Rendered rendered)
     {
-        var rendered = Renderers.Render(path);
         var wayOut = rendered.WayOut switch
         {
             WayOut.Editor => ViewerWayOut.Editor,
             WayOut.Player => ViewerWayOut.Player,
             _ => ViewerWayOut.Windows,
         };
-        return new ViewerPage(rendered.Document, rendered.Kind, rendered.Contents, wayOut);
+        return new ViewerPage(rendered.Document, rendered.Kind, rendered.Contents, wayOut)
+        {
+            Said = rendered.Said,
+            Later = rendered.Later is { } later ? async cancellation => ToPage(await later(cancellation).ConfigureAwait(true)) : null,
+        };
     }
 
     public static void Run(string[] args) =>

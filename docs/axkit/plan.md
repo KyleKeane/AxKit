@@ -242,9 +242,10 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
      pastes, a key reads an item in full. The Windows clipboard history (Windows+V) reads poorly with NVDA.
   2. **axOCR**, text from a screenshot, an image file or the window in front, through Windows' offline OCR engine
      (`Windows.Media.Ocr`), the text opened in axPreview: images, scanned PDFs, dialogs that read badly, screenshots
-     people send. To agree first: the engine needs the Windows SDK target in the project file (a Microsoft reference
-     pack, not a NuGet package) against the no-dependencies rule. The local counterpart of AxSee above, which
-     describes a screen through the AI service.
+     people send. Built 2026-11-09 as axPreview's picture renderer and its Read the clipboard's picture command
+     (`docs/axpreview/SPEC.md` AP-7.2 item 4, AP-D11), not as an app: Windows PowerShell, which every Windows ships,
+     loads the engine itself, so no SDK target was needed; Alt+PrintScreen and the clipboard command give the window in
+     front. The local counterpart of AxSee above, which describes a screen through the AI service.
   3. **axHTTP**, a REST client: requests with a history, the reply as a transcript, a JSON body opened in axJSON.
      Postman and the like are web views. .NET's own HTTP client; the second app with network use after axClaude, only
      on the user's command.

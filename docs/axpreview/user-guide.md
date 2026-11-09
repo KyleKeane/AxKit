@@ -32,7 +32,7 @@ The text is the one control. Arrow keys, Home, End, Ctrl+Home, Ctrl+End, Ctrl+Le
 - **Ctrl+Shift+W** turns word wrap off and on (Options, Text); the caret stays where it was.
 - **Ctrl+S** says "Nothing to save here": nothing is ever changed, so nothing is ever lost.
 
-Every file opens. A text file, up to 32 MB, shows its text: the editors' kinds always, a log, a script, a file without an extension. A Word document, a PowerPoint presentation or an OpenDocument text shows its text, its headings and slides as headings, so that Ctrl+H moves through them. A zip shows its list of files, the first thousand of a huge one and then how many more. A picture, a sound or a video says what it is. Any other file shows the readable text inside it. A text file over 32 MB gives "Too large".
+Every file opens. A text file, up to 32 MB, shows its text: the editors' kinds always, a log, a script, a file without an extension. A Word document, a PowerPoint presentation or an OpenDocument text shows its text, its headings and slides as headings, so that Ctrl+H moves through them. A zip shows its list of files, the first thousand of a huge one and then how many more. A picture shows the text Windows' own reader finds in it, a second or two after it opens, one line per line of the picture (nothing of it leaves your computer); File, Read the clipboard's picture (Ctrl+Shift+V) does the same for a picture on the clipboard, which Alt+PrintScreen puts there from the window in front and PrintScreen from the whole screen, so a dialog that reads badly is read as text. A sound or a video says what it is. Any other file shows the readable text inside it. A text file over 32 MB gives "Too large".
 
 ## The Details list
 

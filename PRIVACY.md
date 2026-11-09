@@ -114,6 +114,9 @@ call.
 ## Programs axKit runs
 
 axKit starts only Windows' own programs by their full paths (PowerShell for the installer, File Explorer, cmd for
+Windows PowerShell also runs axPreview's own small script when a picture opens there, which asks Windows' text reader
+(`Windows.Media.Ocr`, part of Windows) for the text in the picture: the reading happens on this computer and nothing
+leaves it.
 batch files), the programs you installed and chose (Claude Code, git, your shells, KeePassXC's tool, the programs of
 Open with), and itself. It never runs anything with administrator rights; an installer you choose in Install it now
 may ask Windows for them, and Windows asks you.
