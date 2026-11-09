@@ -126,6 +126,26 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
   the build processes and the `bin` and `obj` folders take Defender out of every build. SysMain and DiagTrack can go.
 - Windows Magnifier, when it runs, takes Ctrl+Alt+H, K, L and M, which axClaude's reading keys use; check for
   `Magnify.exe` before an NVDA run of axClaude.
+- NVDA's speech pausing on this computer (looked into 2026-11-08, no fault found in axKit's code): two separate
+  causes, both outside axKit's control. First, NVDA 2025.3.3 is a 32-bit process (`nvda.exe` is not
+  large-address-aware, so a 2 GB address-space ceiling) and sat around 840 MB of private bytes; its OneCore speech
+  driver threw `Exception in OcSpeech::speak: bad allocation` (`build\x86\localWin10\oneCoreSpeech.cpp`, in `%TEMP%\nvda.log`)
+  more than once, which drops the utterance being spoken and reads as a pause. With the VM's 7 GB of memory and about
+  1.8 GB free, paging under load (`\Memory\Pages/sec` spiked to ~570) makes it worse; the memory levers in this
+  section (no full-screen Magnifier, a smaller display, Edge and SearchHost off) leave NVDA more room. Second, NVDA's
+  continuous reading (Say all) over axClaude's live transcript aborts with `RuntimeError: Could not clone range` and
+  `[WinError 1775] A null context handle` (UIA, `speech\sayAll.pyc` `updateCaret`) when Claude's output arrives and
+  moves the caret while NVDA is reading it: NVDA moves the caret to follow its reading, the incoming output moves it
+  too, and the two collide and cut the utterance. Measured against axClaude: the transcript control answers NVDA in
+  under 8 ms (`WM_GETTEXTLENGTH` round trips, median 0.4 ms), and it raises about four accessibility events a second
+  while Claude streams (value-change and text-selection-change, the caret kept on the reader's line), so the window is
+  not slow; the collision is inherent to reading a document that is being written. axClaude already holds output for
+  250 ms after a key press and while a selection stands (`TranscriptView`), but a Say all has no key press to hang the
+  hold on, so it is not covered. A change there (holding output a moment while a Say all is in flight) is possible but
+  touches the announcement and caret path, which must be heard with NVDA before it ships (SPEC AX-7.6), so it is left
+  for a session with the user present. What helps the user now: close and reopen NVDA when speech starts dropping (it
+  clears the synth's memory), and New session or a fresh window keeps the transcript from growing toward its
+  20 000-line cap, which NVDA re-reads. The structural fix is more memory for the VM or a 64-bit screen reader.
 - `az` is a batch file: a `--query` with parentheses and no spaces, such as `length(@)`, is torn apart by `cmd`; put a
   space in the expression or count in PowerShell. A PowerShell string with `$name:` in it is a parse error; write
   `${name}:`.
