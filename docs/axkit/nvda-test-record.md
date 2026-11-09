@@ -122,6 +122,20 @@ Space in the box said nothing.
 | Space: "checked", once | Passed |
 | Space again: "not checked", once | Passed |
 
+## Owed: the twelve decided changes (the branch `improvements`, 2026-11-09, `docs/axkit/inventory-2026-11-09.md` section 11)
+
+The branch's twelve commits each change something heard, and none has been heard yet. Once, with NVDA: axFile's New
+folder with `a?b` as the name (the notice stays, the reason spoken; `tests/scripts/axfile/03-operations.txt` 3.1 has
+it); Show current folder in on a folder deleted meanwhile ("Folder missing", nothing starts) and an editor's Show
+current file in on a file gone ("File missing"); F1 in axCalc, axClip, axProcess, axTask and axPass (the Notices
+section at the end, two lines) and in axClaude (after Claude Code itself); Ctrl+O then Escape in axDown and Ctrl+O in
+axGIT (the focus back where it was); axTask and axPass Ctrl+Tab, Ctrl+Shift+Tab and F6 between the panes
+(`tests/scripts/axtask/01-navigate-and-fields.txt` 1.5 presses them); axTerminal's Command Prompt (`.\name` for a
+program in the current folder); axTerminal's closing question after an update (Keep running: "Update installed. It
+starts with the next axTerminal"); axTask Ctrl+N in a GitHub list (the item starts as unlabelled and open); axPreview
+on a zip of more than 1,000 entries ("and N more" as the last line, "Shown: the first 1,000 entries" in the details).
+The one search for Claude Code and cmd's source change nothing heard.
+
 ## Owed: the reports, what the scripts leave (2026-11-08, `docs/axkit/reports.md`)
 
 The pass of 2026-11-08 below covered the two scripts. Still to hear: a report sent from a standalone app (axDown's F4),

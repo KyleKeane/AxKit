@@ -308,22 +308,22 @@ the notes; none pins a note's identifiers to the code (W28).
 Cleanups and fixes that would change what is heard or done, decided with the user on 2026-11-09; the answer ends each line:
 
 1. axFile's New folder and Add a program keep their notice open on a refused name (as `AskText` does elsewhere) instead
-   of closing and announcing the problem (F1). Decided: yes.
-2. "Folder missing" or "File missing" in every Show-in window on a gone path, as axClaude says today (F8). Decided: yes.
-3. The F1 texts' Notices section the same in every window: five texts gain or lengthen it (F14). Decided: yes.
+   of closing and announcing the problem (F1). Decided: yes. Built in 3c10c1b (branch improvements).
+2. "Folder missing" or "File missing" in every Show-in window on a gone path, as axClaude says today (F8). Decided: yes. Built in 9c85afa.
+3. The F1 texts' Notices section the same in every window: five texts gain or lengthen it (F14). Decided: yes. Built in 97ede32.
 4. The focus after a Windows dialog put back by one rule; the editor's Open (only on OK) and Save as (only on cancel)
-   become alike (F19). Decided: yes, the focus always back where it was.
+   become alike (F19). Decided: yes, the focus always back where it was. Built in 461003e.
 5. axTerminal's closing question: "Keep running" calls `KeepWorkingAfterUpdate` as axClaude's does, so a pending update
-   restart is dropped and "Update installed" is said (F21; a fault today). Decided: yes.
-6. Ctrl+Tab, Ctrl+Shift+Tab and F6 in axTask and axPass as in every other window (F22; AX-8 says they are bundle-wide). Decided: yes.
-7. The AI tools registration finds an npm-only Claude Code, as axClaude does (C1). Decided: yes.
+   restart is dropped and "Update installed" is said (F21; a fault today). Decided: yes. Built in f336e22.
+6. Ctrl+Tab, Ctrl+Shift+Tab and F6 in axTask and axPass as in every other window (F22; AX-8 says they are bundle-wide). Decided: yes. Built in 17c916f.
+7. The AI tools registration finds an npm-only Claude Code, as axClaude does (C1). Decided: yes. Built in ac8b12a.
 8. cmd for axTerminal from `SystemPrograms.Cmd` alone, no longer from `ComSpec` (C8; S-1's intent against a user's
-   deliberate `ComSpec`). Decided: yes, System32 alone.
+   deliberate `ComSpec`). Decided: yes, System32 alone. Built in 1f5d17e.
 9. `list.json`'s template keeps the values given (C13): a new item in a GitHub list starts as "unlabelled" and "open";
-   the hand-written `list.json` of the Reports list goes. Decided: yes.
-10. S-1's `NoDefaultCurrentDirectoryInExePath` set for the process (children inherit it), or the audit amended. Decided: the switch set.
-11. A `list.json` `open` action that would start claude or a terminal on a shared folder refused, as the MCP tool does. Decided, narrowed: an action starts either app on a folder of this computer, since the user presses the key, and refuses a folder off it (a share or a mapped drive, S-5's rule), spoken.
-12. A cap on a zip's entries in axPreview, "and N more" after it. Decided: yes.
+   the hand-written `list.json` of the Reports list goes. Decided: yes. Built in e0b7df4.
+10. S-1's `NoDefaultCurrentDirectoryInExePath` set for the process (children inherit it), or the audit amended. Decided: the switch set. Built in 55523df.
+11. A `list.json` `open` action that would start claude or a terminal on a shared folder refused, as the MCP tool does. Decided, narrowed: an action starts either app on a folder of this computer, since the user presses the key, and refuses a folder off it (a share or a mapped drive, S-5's rule), spoken. Built in e2386ff.
+12. A cap on a zip's entries in axPreview, "and N more" after it. Decided: yes. Built in 00fc490.
 13. axTerminal's `_asks` poll as a one-shot quiet timer (AT-5.4 heard again). Decided: no, left to the assistant and left as it is: the half-second tick is a few comparisons and one row read, and a one-shot timer would have to be restarted on every output batch; the simpler piece is the robust one.
 14. Delete the branch `cleanup` on GitHub (section 0). Done by the user on 2026-11-09.
 
