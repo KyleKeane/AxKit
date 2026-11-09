@@ -160,12 +160,15 @@ wait 1500
 keys 4 enter
 expect said Sent: 4, Other. Your words next
 expect focus You chose Other. Your answer
-type tulip
+# A long answer, a hundred characters: every character must reach Claude (SPEC.md section 12, the bug of 2026-10-02,
+# when most of such an answer was dropped; the keystrokes are paced since). The transcript's record of the answer and
+# the reply hold its last words.
+type tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early
 keys enter
-expect said Sent: tulip
+expect said Sent: tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early
 expect said Done
 keys ctrl+2 ctrl+end
-expect text ulip
+expect text bees arrive early
 keys ctrl+1
 wait 2000
 type Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.

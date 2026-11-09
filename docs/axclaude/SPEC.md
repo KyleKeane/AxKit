@@ -618,7 +618,7 @@ To do:
   silence), and whether a question list or a notice had just been shown or disposed. Possible mitigation if it
   recurs: an Options choice to speak announcements through the selection fallback (FR-7.6) instead of notifications,
   since the app cannot tell that a notification went unspoken (the call succeeds either way).
-- [ ] **Bug (2026-10-02, queued with the one above):** an own-words answer (the Other field) of about a hundred characters arrived at Claude with most characters dropped ("PLSE E DAU NA ML C KS…"). The answer goes one keystroke per character with Enter at the end (FR-2 notes, the `other-answer` fixture checked short answers only); Claude's answer field loses keys sent at that pace. Fix: pace the keystrokes (a few milliseconds apart, or wait for each echo), or find the write size Claude's field accepts without treating it as a paste. Until then, long answers are safer typed as a message.
+- [x] **Bug (2026-10-02, queued with the one above):** an own-words answer (the Other field) of about a hundred characters arrived at Claude with most characters dropped ("PLSE E DAU NA ML C KS…"). The answer goes one keystroke per character with Enter at the end (FR-2 notes); the keystrokes have been paced since (60 ms apart, `TypeAnswer`). Checked 2026-11-09 with Claude Code 2.1.321: a hundred-character answer in `tests/scripts/axclaude/12-questions.txt` step 9 arrived whole, Claude's record and its reply repeating every word; the step stays in the script as the guard.
 - 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axkit/nvda-test-record.md`.
 
 ## Appendix A — Control sequences the screen model handles
