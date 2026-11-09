@@ -78,8 +78,17 @@ public abstract partial class ConsoleForm : AxKitForm
         _inputName.Padding = new Padding(4, 0, 0, 0);
         _inputName.Dock = DockStyle.Bottom;
         Input.VisibleChanged += (_, _) => _inputName.Visible = Input.Visible;
-        ApplyFieldColors();
-        SystemColorsChanged += (_, _) => ApplyFieldColors();
+        // Their colours are the theme's classes field and band (docs/axkit/theme.md TH-2), painted by the window base
+        // with every other control; the defaults are the tints of 2026-11-08.
+        ThemePainter.Mark(Input, ThemePainter.Field);
+        ThemePainter.Mark(_inputName, ThemePainter.Band);
+        Area.ControlAdded += (_, e) =>
+        {
+            if (e.Control is { } added)
+            {
+                PaintTheme(added);
+            }
+        };
 
         // What the program waits on, or a list of the window's own, takes the field's place (axClaude D33), one control at a time.
         Area.TabIndex = 0;
@@ -254,20 +263,6 @@ public abstract partial class ConsoleForm : AxKitForm
         Area.FitHeight();
     }
 
-    /// <summary>
-    /// The field and its name line in colours of their own (2026-11-08), so the active field is a clearly separate
-    /// region from the read-only conversation above it, which both share the white Window colour otherwise: a tinted
-    /// field and a deeper band behind the name. The tints are picked for the current theme (a light or a dark Window
-    /// colour), and re-applied when the theme changes; the text keeps the system's own colour for contrast.
-    /// </summary>
-    private void ApplyFieldColors()
-    {
-        var dark = SystemColors.Window.GetBrightness() < 0.5;
-        Input.BackColor = dark ? Color.FromArgb(0x33, 0x38, 0x40) : Color.FromArgb(0xEA, 0xF0, 0xFA);
-        Input.ForeColor = SystemColors.WindowText;
-        _inputName.BackColor = dark ? Color.FromArgb(0x23, 0x27, 0x2D) : Color.FromArgb(0xD2, 0xDD, 0xEF);
-        _inputName.ForeColor = SystemColors.WindowText;
-    }
 
     /// <summary>The update's steps as system lines in the transcript (axClaude FR-1.10).</summary>
     protected override void UpdateNoted(string message) => Model.AddSystemLine(message);

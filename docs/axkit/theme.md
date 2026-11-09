@@ -118,7 +118,7 @@ What each class paints, in every window, by the control's kind, so that a new ap
 
 ### TH-3 When it is applied
 
-- TH-3.1 By the window base (`AxKitForm`), once the window's controls exist (`OnShown`), over the whole control tree;
+- TH-3.1 By the window base (`AxKitForm`), once the window's controls exist and before its first paint (`OnLoad`), over the whole control tree;
   again when a notice opens (its controls are new) and when the control area changes (the console windows'); and on
   Options, Theme, Reload.
 - TH-3.2 When the window is activated and the file's write time changed since it was read, the file is read and
@@ -127,19 +127,21 @@ What each class paints, in every window, by the control's kind, so that a new ap
 - TH-3.3 With Windows' high contrast on (`SystemInformation.HighContrast`) the theme is not applied: high contrast is
   Windows' own accessibility choice, and a theme over it would undo it (TH-D4).
 - TH-3.4 Applying a theme moves no focus, selects nothing and announces nothing (AX-7.3). Reload alone speaks: "Theme
-  reloaded", or "Theme reloaded: N values not understood, …", or "No theme file: Options, Theme, Edit theme file makes
-  one".
+  reloaded", or "Theme reloaded: N values not understood, …", or "No theme file: Options, Text, Theme, Edit theme file
+  makes one", or "No theme: the file is not a theme file; the log says why".
 
 ### TH-4 The menu
 
-Options, Theme ▸ in every window, from the base, after Text and before General:
+Options, Text, Theme ▸ in every window, from the base (the one Options submenu every window builds from the base, so
+that no window has a line of its own for it):
 
 - **Edit theme file**: writes the complete template (TH-1.2) when the file does not exist, then opens it in a new axJSON
   window, as Options, Developer, Open settings file does.
 - **Reload theme**: TH-3.4.
-- **Theme on**: a checked item, `enabled`; toggling writes the file (and makes it from the template when there is none).
+- **Theme on**: a checked item, `enabled`; toggling writes the file (and makes it from the template when there is none)
+  and says "Theme on" or "Theme off".
 
-No key of its own: three menu items, reached by the menu, by the palette (AX-10) or by Alt, O, T. F1 names nothing new.
+No key of its own: three menu items, reached by the menu, by the palette (AX-10) or by Alt, O, T, H. F1 names nothing new.
 
 ### TH-5 Tests
 
@@ -160,8 +162,11 @@ No key of its own: three menu items, reached by the menu, by the palette (AX-10)
 - `AxKit.Forms/ThemePainter.cs`: `Apply(Control root, Theme theme)`, one walk over the tree deciding each control's
   class by its type (`TranscriptView` before `TextBox`, the console field by a tag the console window sets, a notice's
   panel by type, `MenuStrip`, `StatusStrip`, `Button`, `AxKitList`, `ListBox`, `TextBox`, the rest `window`), and the
-  caption through `User32`/`DwmSetWindowAttribute`. A `system` class is left untouched: the painter never writes a
-  system colour back, since a Windows app theme change must keep working (AX-7.7).
+  caption through `DwmSetWindowAttribute`. A `system` class gets the class's default, which is what the control had
+  before themes existed (the Window colour for texts and lists, the console tints for the field and its band, the
+  ambient colour for surfaces and labels), so that a value turned back to `system` is seen at the next reload and a
+  Windows app theme change repaints the defaults (`SystemColorsChanged`); `Mark` names a control's class when its type
+  does not (the console field, its band, axMedia's video surface as `fixed`).
 - `AxKitForm`: the Options, Theme items, the file stamp check on `Activated`, the calls to the painter (TH-3.1).
 - `ConsoleForm.ApplyFieldColors`: today's two tints become the `field` and `band` defaults the painter uses for
   `system`, so that the console windows look as they do in 5.2.2 without a theme.

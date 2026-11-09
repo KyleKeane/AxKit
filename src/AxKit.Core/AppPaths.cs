@@ -18,6 +18,10 @@ public static class AppPaths
     public static string ConsentFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "consent.json");
 
+    /// <summary>The theme (docs/axkit/theme.md TH-1.1): a colour or "system" for every class of object the windows draw; one file for the bundle.</summary>
+    public static string ThemeFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "theme.json");
+
     /// <summary>The AI tools' access (docs/axkit/mcp.md MC-6.1): on or off, and the clients the user paired.</summary>
     public static string McpFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "mcp.json");

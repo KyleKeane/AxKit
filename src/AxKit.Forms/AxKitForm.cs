@@ -46,6 +46,8 @@ public abstract partial class AxKitForm : Form
         StartPosition = FormStartPosition.WindowsDefaultLocation;
         Overlay.Chosen += OnNoticeChoice;
         WireAnnouncing();
+        // A Windows app theme change repaints every class from the theme's defaults (docs/axkit/theme.md TH-3).
+        SystemColorsChanged += (_, _) => PaintTheme(this);
         _paletteSpeak.Tick += (_, _) => SayFirstPaletteMatch();
         _checkItem.Click += (_, _) => CheckForUpdates(manual: true);
         _updateItem.Click += (_, _) => OfferKnownUpdate();
@@ -221,7 +223,7 @@ public abstract partial class AxKitForm : Form
     /// <summary>The last item of every first menu (AX-6): Exit, closing the window as Alt+F4 does, which is Windows' own key.</summary>
     protected ToolStripMenuItem CreateExitItem() => new("E&xit", null, (_, _) => Close()) { ShortcutKeyDisplayString = "Alt+F4" };
 
-    /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Font…, Larger text, Smaller text, Windows text size.</summary>
+    /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Font…, Larger text, Smaller text, Windows text size, and the Theme submenu (docs/axkit/theme.md TH-4).</summary>
     protected ToolStripMenuItem CreateTextMenu(params ToolStripItem[] own)
     {
         var menu = new ToolStripMenuItem("&Text");
@@ -235,6 +237,8 @@ public abstract partial class AxKitForm : Form
         menu.DropDownItems.Add(Item("&Larger text", () => ChangeTextSize(1), BundleKeys.LargerText));
         menu.DropDownItems.Add(Item("S&maller text", () => ChangeTextSize(-1), BundleKeys.SmallerText));
         menu.DropDownItems.Add(new ToolStripMenuItem("Windows &text size", null, (_, _) => UseSystemFont()));
+        menu.DropDownItems.Add(new ToolStripSeparator());
+        menu.DropDownItems.Add(CreateThemeMenu());
         return menu;
     }
 
@@ -319,6 +323,14 @@ public abstract partial class AxKitForm : Form
 
     // ---- the window ----
 
+    /// <summary>The theme onto the controls before the first paint (docs/axkit/theme.md TH-3.1).</summary>
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        LoadTheme();
+        PaintTheme(this);
+    }
+
     /// <summary>The first showing: a settings file that could not be read is reported, then the update check runs when the setting says (AX-3.1).</summary>
     protected override void OnShown(EventArgs e)
     {
@@ -383,6 +395,7 @@ public abstract partial class AxKitForm : Form
         _altCarriedOverUntil = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0 ? Environment.TickCount64 + AltCarriedOverMs : 0;
         base.OnActivated(e);
         SayWhatWaitedForActivation();
+        PaintThemeIfChanged();
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]

@@ -24,6 +24,12 @@ another project on its second use, the bullet says so.
   `TakeOverOldFolders` (AX-5.4, 2026-11-05), the Axit folders of up to 4.0.0 moved into them on the first start, entry
   by entry through `TakeOverFolder`, tested in `AppPathsTests`.
 - `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
+- `Theme` with `ThemeColor` (docs/axkit/theme.md, 2026-11-09): the theme file `%APPDATA%\AxKit\theme.json`, one for the
+  bundle, a colour (`#RRGGBB`) or `system` for every class of object the windows draw (`Classes`, `Keys`); `Load` and
+  `Read` give the theme or null with the reason, `Template` the whole file with `system` everywhere, `SetEnabled` writes
+  the switch and keeps every other key; values not understood are `system` and listed. Colours are integers here, so
+  the project stays off the desktop assemblies. Tested in `ThemeTests`, which also fails on a colour named outside
+  `AxKit.Forms/ThemePainter.cs` and axMedia's video surface (TH-5.2).
   for the bundle, `%APPDATA%\AxKit\consent.json`: `Given`, `Record` (a file that cannot be written is logged and the
   window keeps the agreement for its session), `Withdraw`, `WithdrawAll` (Forget AI tools), `Line` for About, Licence;
   the targets' words and addresses (`ClaudeCode`, `Git`, `KeePassXC`, `Shell` per shell, `Server` per host, `AiTool`,

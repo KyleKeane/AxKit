@@ -44,6 +44,7 @@ public abstract partial class AxKitForm
 
         NoticeOpen = true;
         Overlay.Populate(notice);
+        PaintTheme(Overlay);
         Overlay.Visible = true;
         Overlay.BringToFront();
         AcceptButton = Overlay.DefaultButton;

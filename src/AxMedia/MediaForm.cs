@@ -127,6 +127,7 @@ public sealed partial class MediaForm : AxKitForm
         // The one colour an app sets (AX-7.7, AM-2.4): a video surface is black everywhere, so that a picture's
         // letterbox is not the window's colour (decided 2026-10-23).
         _video.BackColor = Color.Black;
+        ThemePainter.Mark(_video, ThemePainter.Fixed);
         _video.TabStop = false;
         _video.AccessibleName = "Video";
         _video.AccessibleRole = AccessibleRole.Graphic;
