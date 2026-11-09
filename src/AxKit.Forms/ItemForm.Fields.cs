@@ -350,31 +350,4 @@ public abstract partial class ItemForm
             SaveFields(_shown, result.Document, result.Said, selectField);
         }
     }
-
-    /// <summary>
-    /// A notice with one field (IA-5.1): <paramref name="refused"/> asked before the button acts, its reason said and
-    /// the notice kept; then <paramref name="act"/> with the text. A field that may be left empty passes
-    /// <paramref name="required"/> false.
-    /// </summary>
-    protected void AskText(string title, string text, string label, string name, string initial, string button, Action<string> act, Func<string, string?> refused, bool required = true)
-    {
-        ShowNotice(new Notice(title, text,
-        [
-            new OverlayChoice(button, () => act(Overlay.InputText), IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ])
-        {
-            Input = new OverlayInput(label, name, initial, "Type something first", Required: required),
-            Accepts = () =>
-            {
-                if (refused(Overlay.InputText) is { } why)
-                {
-                    Announce(why, true);
-                    return false;
-                }
-
-                return true;
-            },
-        });
-    }
 }

@@ -295,14 +295,8 @@ public sealed partial class FileForm
             return;
         }
 
-        ShowNotice(new Notice("Filter", "Only the entries whose name contains the text are listed; empty clears the filter.",
-        [
-            new OverlayChoice("&Filter", () => ApplyFilter(Overlay.InputText.Trim()), IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ])
-        {
-            Input = new OverlayInput("Name contains:", "Name contains", _filter, string.Empty, Required: false),
-        });
+        AskText("Filter", "Only the entries whose name contains the text are listed; empty clears the filter.", "Name contains:", "Name contains", _filter, "&Filter",
+            typed => ApplyFilter(typed.Trim()), required: false, emptyMessage: string.Empty);
     }
 
     /// <summary>The filter set and the list made again, the entry kept when it still shows; the list's new name and the entry are said, "3 of 24 items, filter chap, Chapter 1.mp3", or "Filter cleared" when it is emptied.</summary>

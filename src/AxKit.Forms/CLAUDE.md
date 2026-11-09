@@ -20,7 +20,7 @@ WinForms code every app of the bundle uses (`docs/axkit/SPEC.md` AX-6.2, AX-6.4)
     - `ChooseFolder` (the Windows folder picker), `OpenUrl`, `OpenInExplorer` (a folder opened, a file selected; `select: true` selects a folder too), `OpenSettingsFile`, `CopyDiagnostics`;
     - `OpenBarMenu` (Shift+F10, the Applications key and a right click: the bar's menu with a letter, posted as Alt and the letter once the keys that asked are up, so that NVDA reads its first item; from axFile on its second use, axProcess, 2026-10-24).
   - `AxKitForm.Notices.cs`:
-    - `ShowNotice`, `CloseNotice`, `ShowError`, `Fail`, `Announce` (on the notice while one shows, on `AnnounceSource` otherwise; before the window's first activation kept and said half a second after it, since NVDA ignores a window that is not in front; a non-interrupting one within 300 ms of the one before joined to it into one notification, since NVDA drops a notification that reaches it while the one before still waits its turn (both heard by the NVDA pass of 2026-11-01), AX-7.3; not virtual);
+    - `ShowNotice`, `CloseNotice`, `ShowError`, `Fail`, `Failed` (one line said, more shown), `AskText` (a notice with one field: the label, the initial text, the button, a check of the typed text that keeps the notice with its reason, a hidden field for a password; from `ItemForm` on its sixth copy, 2026-11-09), `Announce` (on the notice while one shows, on `AnnounceSource` otherwise; before the window's first activation kept and said half a second after it, since NVDA ignores a window that is not in front; a non-interrupting one within 300 ms of the one before joined to it into one notification, since NVDA drops a notification that reaches it while the one before still waits its turn (both heard by the NVDA pass of 2026-11-01), AX-7.3; not virtual);
     - and the one focus rule:
       - `_focusBeforeNotice` is the innermost focused control when the first notice of a chain opens (`FocusedControl`);
       - `_chaining` is set around a button's action so that a notice the action opens neither remembers the focus again nor calls `OnNoticeOpened` a second time;
@@ -135,7 +135,7 @@ WinForms code every app of the bundle uses (`docs/axkit/SPEC.md` AX-6.2, AX-6.4)
     - and `FillDetail` (silently, on every selection change, from the app's `DetailOf`; the field selected kept while the same `ItemDetail.Key` shows).
   - `ItemForm.Fields.cs`:
     - every field command (`CheckField`, `ChangeField` by type, with the app's `ChangeSpecial` for its own types and the Title's change through `RenameItem`; `NewField`, `RenameField`, `RemoveField`, `MoveField`, refused with the app's `FieldsFixed`; `ReadAll`), each a new `ItemDocument` handed to the app's `SaveFields`;
-    - and the notices both apps use (`AskText`, `ChooseFromList`).
+    - and `ChooseFromList`, the list notice both apps use (`AskText`, the one-field notice, is the base's since 2026-11-09, `AxKitForm.Notices.cs`).
   - The app fills in:
     - the levels (`ReadLevel`, `EnterList`, `LeaveList`);
     - the detail (`DetailOf`, `SpokenValue`);

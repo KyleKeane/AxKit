@@ -184,36 +184,29 @@ public sealed partial class GitForm
             return;
         }
 
-        ShowNotice(new Notice($"Commit {staged} staged {(staged == 1 ? "file" : "files")}", string.Empty,
-        [
-            new OverlayChoice("&Commit", () =>
-            {
-                var message = Overlay.InputText.Trim();
-                Do(async () =>
-                {
-                    var result = await RunGitAsync(["commit", "-m", message], GitRunner.Short, "commit");
-                    if (result is null)
-                    {
-                        return;
-                    }
-
-                    if (!result.Ok)
-                    {
-                        Failed("Commit failed", result);
-                        return;
-                    }
-
-                    var hash = CommitHashRegex().Match(result.Output);
-                    Announce(hash.Success ? $"Committed {hash.Groups[1].Value}" : "Committed", true);
-                    Stale(View.Log, View.Branches);
-                    await RefreshAsync(announce: false);
-                });
-            }, IsDefault: true),
-            new OverlayChoice("C&ancel", IsCancel: true),
-        ])
+        AskText($"Commit {staged} staged {(staged == 1 ? "file" : "files")}", string.Empty, "Message:", "Message", string.Empty, "&Commit", typed =>
         {
-            Input = new OverlayInput("Message:", "Message", string.Empty, "Type the commit message"),
-        });
+            var message = typed.Trim();
+            Do(async () =>
+            {
+                var result = await RunGitAsync(["commit", "-m", message], GitRunner.Short, "commit");
+                if (result is null)
+                {
+                    return;
+                }
+
+                if (!result.Ok)
+                {
+                    Failed("Commit failed", result);
+                    return;
+                }
+
+                var hash = CommitHashRegex().Match(result.Output);
+                Announce(hash.Success ? $"Committed {hash.Groups[1].Value}" : "Committed", true);
+                Stale(View.Log, View.Branches);
+                await RefreshAsync(announce: false);
+            });
+        }, emptyMessage: "Type the commit message", cancel: "C&ancel");
     }
 
     // "[main 3a1f2c0] Subject" on the first line of git commit's output.
@@ -292,35 +285,28 @@ public sealed partial class GitForm
             return;
         }
 
-        ShowNotice(new Notice("New branch", "A new branch from the current commit, checked out at once.",
-        [
-            new OverlayChoice("C&reate", () =>
-            {
-                var name = Overlay.InputText.Trim();
-                Do(async () =>
-                {
-                    var result = await RunGitAsync(GitBranches.CreateArguments(name), GitRunner.Short, "new branch");
-                    if (result is null)
-                    {
-                        return;
-                    }
-
-                    if (!result.Ok)
-                    {
-                        Failed("New branch failed", result);
-                        return;
-                    }
-
-                    Announce($"Switched to {name}", true);
-                    Stale(View.Log, View.Branches);
-                    await RefreshAsync(announce: false);
-                });
-            }, IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ])
+        AskText("New branch", "A new branch from the current commit, checked out at once.", "Name:", "Name", string.Empty, "C&reate", typed =>
         {
-            Input = new OverlayInput("Name:", "Name", string.Empty, "Type the branch name"),
-        });
+            var name = typed.Trim();
+            Do(async () =>
+            {
+                var result = await RunGitAsync(GitBranches.CreateArguments(name), GitRunner.Short, "new branch");
+                if (result is null)
+                {
+                    return;
+                }
+
+                if (!result.Ok)
+                {
+                    Failed("New branch failed", result);
+                    return;
+                }
+
+                Announce($"Switched to {name}", true);
+                Stale(View.Log, View.Branches);
+                await RefreshAsync(announce: false);
+            });
+        }, emptyMessage: "Type the branch name");
     }
 
     private async Task FetchAsync()

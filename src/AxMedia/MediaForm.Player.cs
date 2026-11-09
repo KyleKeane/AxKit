@@ -208,30 +208,16 @@ public sealed partial class MediaForm
             return;
         }
 
-        ShowNotice(new Notice("Go to time", "Minutes and seconds, 12:40; with hours, 1:02:10; or seconds alone, 750.",
-        [
-            new OverlayChoice("&Go", () =>
-            {
-                if (MediaFiles.ParseTime(Overlay.InputText) is not { } time)
-                {
-                    // The notice stays for another try (plan section 3 step 2; it closed until 2026-10-23).
-                    Announce("Not a time", true);
-                    return;
-                }
-
-                CloseNotice(null);
-                if (_player is { } player)
-                {
-                    var reached = player.Seek(time);
-                    UpdateStatusBar();
-                    Announce(MediaFiles.FormatTime(reached), true);
-                }
-            }, IsDefault: true, StaysOpen: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ])
+        // A text that is no time keeps the notice for another try (plan section 3 step 2; it closed until 2026-10-23).
+        AskText("Go to time", "Minutes and seconds, 12:40; with hours, 1:02:10; or seconds alone, 750.", "Time:", "Time", string.Empty, "&Go", typed =>
         {
-            Input = new OverlayInput("Time:", "Time", string.Empty, "Type a time"),
-        });
+            if (_player is { } player && MediaFiles.ParseTime(typed) is { } time)
+            {
+                var reached = player.Seek(time);
+                UpdateStatusBar();
+                Announce(MediaFiles.FormatTime(reached), true);
+            }
+        }, refused: typed => MediaFiles.ParseTime(typed) is null ? "Not a time" : null, emptyMessage: "Type a time");
     }
 
     /// <summary>Ctrl+Q: what plays, where it is and how fast; "Nothing playing" otherwise.</summary>

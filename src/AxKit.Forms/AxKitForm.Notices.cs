@@ -180,6 +180,36 @@ public abstract partial class AxKitForm
         }
     }
 
+    /// <summary>
+    /// A notice with one field (item-apps IA-5.1; axGIT's Commit and New branch, axFile's Filter, axMedia's Go to time
+    /// and axTask's GitHub account since 2026-11-09): <paramref name="refused"/>, when given, is asked before the button
+    /// acts, its reason said and the notice kept; then <paramref name="act"/> with the text, the notice closed. A field
+    /// that may be left empty passes <paramref name="required"/> false; <paramref name="emptyMessage"/> is what an empty
+    /// required field says; <paramref name="hidden"/> makes a password field; <paramref name="cancel"/> is the cancel's
+    /// label where &C is the button's.
+    /// </summary>
+    protected void AskText(string title, string text, string label, string name, string initial, string button, Action<string> act, Func<string, string?>? refused = null, bool required = true, string emptyMessage = "Type something first", bool hidden = false, string cancel = "&Cancel")
+    {
+        ShowNotice(new Notice(title, text,
+        [
+            new OverlayChoice(button, () => act(Overlay.InputText), IsDefault: true),
+            new OverlayChoice(cancel, IsCancel: true),
+        ])
+        {
+            Input = new OverlayInput(label, name, initial, emptyMessage, Required: required, Hidden: hidden),
+            Accepts = refused is null ? null : () =>
+            {
+                if (refused(Overlay.InputText) is { } why)
+                {
+                    Announce(why, true);
+                    return false;
+                }
+
+                return true;
+            },
+        });
+    }
+
     /// <summary>An error the user must see: logged and shown as a notice; a console window adds a system line.</summary>
     protected virtual void Fail(string message)
     {

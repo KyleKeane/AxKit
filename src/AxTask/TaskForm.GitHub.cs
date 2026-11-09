@@ -416,12 +416,11 @@ public sealed partial class TaskForm
     /// <summary>List, GitHub account: a fine-grained token of the user's, pasted once into a hidden field (RP-7.2).</summary>
     private void SetGitHubAccount()
     {
-        ShowNotice(new Notice("GitHub account",
+        AskText("GitHub account",
             "A fine-grained token of your own GitHub account, for the GitHub actions: Issues read and write, and Contents read and write for the blocklist, on the reports repository alone. It is kept protected for your Windows account in " + Path.GetDirectoryName(AppPaths.GitHubTokenFile) + ", never sent anywhere but to GitHub.",
-        [
-            new OverlayChoice("&Keep", () =>
+            "Token:", "Paste your GitHub token", string.Empty, "&Keep", typed =>
             {
-                var token = Overlay.InputText.Trim();
+                var token = typed.Trim();
                 try
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(AppPaths.GitHubTokenFile)!);
@@ -432,12 +431,7 @@ public sealed partial class TaskForm
                 {
                     Fail("The token could not be kept: " + ex.Message);
                 }
-            }, IsDefault: true),
-            new OverlayChoice("Cancel", IsCancel: true),
-        ])
-        {
-            Input = new OverlayInput("Token:", "Paste your GitHub token", string.Empty, "Paste the token first", Hidden: true),
-        });
+            }, emptyMessage: "Paste the token first", hidden: true, cancel: "Cancel");
     }
 
     private void ForgetGitHubAccount()
