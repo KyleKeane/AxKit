@@ -147,7 +147,7 @@ public sealed class ItemDocument
     public ItemDocument WithField(int after, string title, string type, IReadOnlyList<string> options) =>
         Change(fields =>
         {
-            var field = FieldObject(title, type, FieldTypes.Empty(type, options), options);
+            var field = FieldObject(title, type, FieldTypes.Empty(type), options);
             if (after < 0 || after >= fields.Count - 1)
             {
                 fields.Add(field);
@@ -199,7 +199,7 @@ public sealed class ItemDocument
         var array = new JsonArray();
         foreach (var field in template.Where(field => !field.Title.Equals(TitleField, StringComparison.OrdinalIgnoreCase)))
         {
-            array.Add(FieldObject(field.Title, field.Type, FieldTypes.Empty(field.Type, field.Options), field.Options));
+            array.Add(FieldObject(field.Title, field.Type, FieldTypes.Empty(field.Type), field.Options));
         }
 
         return array;

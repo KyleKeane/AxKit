@@ -1,5 +1,5 @@
-using System.Text.Json.Nodes;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using AxKit.Core;
 
 namespace AxTask.Core;
@@ -109,7 +109,7 @@ public sealed class SmartList
         }
 
         var items = ItemFolder.AllItems(top).Where(item => Matches(item, top, today));
-        return Order(items, today);
+        return Order(items);
     }
 
     public bool Matches(ItemFile item, string top, DateOnly today)
@@ -123,7 +123,7 @@ public sealed class SmartList
         return _any ? results.Any(held => held) : results.All(held => held);
     }
 
-    private IReadOnlyList<ItemFile> Order(IEnumerable<ItemFile> items, DateOnly today)
+    private IReadOnlyList<ItemFile> Order(IEnumerable<ItemFile> items)
     {
         IOrderedEnumerable<ItemFile>? ordered = null;
         foreach (var key in _order)

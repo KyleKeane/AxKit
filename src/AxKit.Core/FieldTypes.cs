@@ -44,7 +44,7 @@ public static class FieldTypes
     public static bool Known(string type) => All.Contains(type) || type is UserName or Password;
 
     /// <summary>The empty value of a type (IA-4.2): false for a check, an empty string otherwise.</summary>
-    public static JsonNode? Empty(string type, IReadOnlyList<string> options) => type == Check ? JsonValue.Create(false) : JsonValue.Create(string.Empty);
+    public static JsonNode? Empty(string type) => type == Check ? JsonValue.Create(false) : JsonValue.Create(string.Empty);
 
     /// <summary>The value read out (IA-4.2): "30 October 2026, Friday", "done", the first line of a long text; "empty" for nothing.</summary>
     public static string Spoken(ItemField field, Func<string, string>? link = null)
