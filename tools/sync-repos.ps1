@@ -33,6 +33,13 @@ param([switch]$Status)
 # into an exception. Here every git call is followed by a look at its exit code instead.
 $ErrorActionPreference = 'Continue'
 
+# git gives a hook's process GIT_DIR and its kin. Inherited, they point every git call below at the repository whose
+# hook is running, whatever folder -C names: the first push from a worktree committed the code repository's index as
+# the management lists and pushed it (2026-11-09). They are removed here, so that -C alone says which repository.
+foreach ($name in 'GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_COMMON_DIR', 'GIT_PREFIX', 'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES', 'GIT_NAMESPACE') {
+    [Environment]::SetEnvironmentVariable($name, $null)
+}
+
 # The siblings sit beside the main checkout. From a worktree (the cleanup run works in one under the scratchpad), the
 # common git directory names that checkout; without git's answer, the folder above this script's repository is used.
 $common = (& git -C $PSScriptRoot rev-parse --path-format=absolute --git-common-dir 2>$null | Select-Object -First 1)
@@ -53,6 +60,22 @@ function Sync-Sibling {
     $path = Join-Path $parent $Name
     if (-not (Test-Path -LiteralPath (Join-Path $path '.git'))) {
         Write-Host "${Name}: not beside this repository, skipped."
+        return
+    }
+
+    # Two proofs before anything is touched: git answers for this very folder, and origin is the repository of that
+    # name. Either failing means a wrong repository would be committed and pushed; nothing is done instead.
+    [void](Invoke-Git $path @('rev-parse', '--show-toplevel'))
+    $top = ($script:gitOutput -join '').Trim()
+    if (-not $top -or [IO.Path]::GetFullPath($top).TrimEnd('\') -ine [IO.Path]::GetFullPath($path).TrimEnd('\')) {
+        Write-Host "${Name}: git answers for '$top', not for $path. Nothing was changed."
+        $script:failed = $true
+        return
+    }
+    [void](Invoke-Git $path @('remote', 'get-url', 'origin'))
+    if (($script:gitOutput -join '') -notmatch [regex]::Escape($Name)) {
+        Write-Host "${Name}: origin is '$($script:gitOutput -join '')', not a repository of that name. Nothing was changed."
+        $script:failed = $true
         return
     }
 

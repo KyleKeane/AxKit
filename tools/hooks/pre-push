@@ -7,5 +7,8 @@
 # printed and never stops the push: this hook always exits 0. Kept with LF line endings (.gitattributes): sh does not
 # read CRLF.
 root=$(git rev-parse --show-toplevel)
+# git hands a hook GIT_DIR and its kin; the sync must not inherit them, or every git call of its own would act on this
+# repository whatever folder it names (the script drops them too).
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_PREFIX
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/sync-repos.ps1" </dev/null
 exit 0
