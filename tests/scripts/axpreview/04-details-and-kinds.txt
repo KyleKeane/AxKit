@@ -62,6 +62,32 @@ keys tab
 type shown
 expect focus "value":"Shown: the first 1,000 entries"
 
+# 5.8a: a picture with two lines of text, drawn here: first what it is, then, when Windows' reader answers, its text
+# under the line naming it, said once; the Contents group counts the lines (AP-7.2 item 4, 2026-11-09).
+run powershell -NoProfile -Command "Add-Type -AssemblyName System.Drawing; $b = New-Object System.Drawing.Bitmap 640, 160; $g = [System.Drawing.Graphics]::FromImage($b); $g.Clear([System.Drawing.Color]::White); $f = New-Object System.Drawing.Font 'Segoe UI', 32; $g.DrawString('Hello from axKit', $f, [System.Drawing.Brushes]::Black, 16, 20); $g.DrawString('Second line 2026', $f, [System.Drawing.Brushes]::Black, 16, 84); $b.Save('text.png', [System.Drawing.Imaging.ImageFormat]::Png)"
+start preview --new {temp}\text.png
+# The first page (what the picture is, its text being read) shows for the second the reader takes; under NVDA the start
+# waits for the window to be read, by which time the text is there, so the first page is the unit tests' to check.
+expect said ! Text read: 2 lines
+expect focus "value":"text.png, picture (PNG): the text Windows
+# The first line wraps, so Down goes by row; Ctrl+Down is the next paragraph, the text's first line.
+keys ctrl+down
+expect focus Hello from axKit
+keys down
+expect focus Second line 2026
+keys tab
+type text l
+expect focus "value":"Text lines: 2"
+# Ctrl+Shift+V reads the picture on the clipboard, saved beside the logs under a dated name. The test desktop shares the
+# clipboard with the user's session, so the same picture goes there first (as axClip's script leaves texts there).
+run powershell -NoProfile -STA -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('text.png'))"
+keys ctrl+shift+v
+expect said ! Text read: 2 lines
+expect state clipboard-
+# The focus stays in the Details list, where it was; Shift+Tab to the text, whose first line names the saved file.
+keys shift+tab
+expect focus "value":"clipboard-
+
 # 5.8: a sound file says what it is and that Ctrl+E plays it; the item is named so.
 start preview --new {temp}\song.mp3
 expect focus song.mp3 is a sound file (MP3).

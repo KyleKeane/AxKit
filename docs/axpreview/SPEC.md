@@ -121,7 +121,8 @@ it, so that every file shows something and the details say what it is.
 
 ### AP-3 Menus, keys, texts
 
-- AP-3.1 Menus (AX-6): **File (F):** New window Ctrl+N | Open… Ctrl+O | Open recent ▸ | ─ | Reload F5 | ─ | Edit in
+- AP-3.1 Menus (AX-6): **File (F):** New window Ctrl+N | Open… Ctrl+O | Open recent ▸ | ─ | Reload F5 | Read the
+  clipboard's picture Ctrl+Shift+V (AP-7.2 item 4) | ─ | Edit in
   axDown Ctrl+E (or Edit in axJSON, by the file) | Show current file in ▸ (File Explorer Ctrl+W | axClaude | axTerminal |
   axGIT | axFile, bundle AX-9.10) | ─ | Exit Alt+F4. No Edit menu: the control's own Ctrl+A and Ctrl+C work as they do. **Navigate (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… Ctrl+G | ─ |
   Next ▸ | Previous ▸ (Heading, Heading level 1 to 6, Link, List, List item, Block quote, Table). **Options (O):**
@@ -130,7 +131,7 @@ it, so that every file shows something and the details say what it is.
   Keyboard shortcuts F1 | User guide | ─ | Markdown resources ▸ (axDown's pages). Every item has a mnemonic (AX-7.4).
 - AP-3.2 Keys (AX-8). Bundle-wide: F1, the control keys (the text, or the Go to line field while it shows), Ctrl+F,
   F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up, Ctrl+Down with
-  Shift, Alt+F4. Window-specific (`AxPreviewKeys`): Ctrl+O, Ctrl+N (New window, AX-9), F5, Ctrl+E, Ctrl+W, Ctrl+G,
+  Shift, Alt+F4. Window-specific (`AxPreviewKeys`): Ctrl+O, Ctrl+N (New window, AX-9), F5, Ctrl+Shift+V, Ctrl+E, Ctrl+W, Ctrl+G,
   Ctrl+Shift+W, `l`, and the fourteen navigation keys of AP-2.3. Ctrl+H, Ctrl+I, Ctrl+J and Ctrl+M never reach the
   control as characters (axDown AD-5.1; a read-only control takes none, the guard stays for the sound of it). The
   collision test covers the table.
@@ -143,7 +144,10 @@ On opening, NVDA speaks the window ("README.md - axPreview window") and the text
 line") and its first line; nothing of axPreview's own. Afterwards, one UI Automation notification each on the text,
 or on the notice while one shows (AX-7.3): "Line n of m" (`l`, and after Go to line; "Not a line number"), "Install,
 heading level 2" and the other elements, "No next <kind>" / "No previous <kind>", "Not found", "Reloaded",
-"Reloaded, <name> changed on disk", "Word wrap on" / "Word wrap off", "Nothing to save here", "No file yet" (Ctrl+E,
+"Reloaded, <name> changed on disk", "Word wrap on" / "Word wrap off", "Nothing to save here", "Text read: N lines" /
+"No text found in the picture" / "Text not read: <why>" (a picture, when Windows' reader answers, AP-7.2 item 4), "No
+picture on the clipboard. Alt+PrintScreen copies the window in front; PrintScreen the whole screen" and "The clipboard
+is busy; try again" (Ctrl+Shift+V), "No file yet" (Ctrl+E,
 Ctrl+W, F5 and the ways out on Untitled), "Text size n", "Windows text size", "Copied diagnostics"; in the Details
 list (AP-6.3) "Copied", "The clipboard is busy; try again" and "Enter opens the Folder line in axFile". The notices:
 "Too large" ("Not a text file" until 2026-10-24, AP-7.5), Keyboard shortcuts, User guide, About, the update notice,
@@ -196,7 +200,10 @@ and an error naming a file that could not be opened.
 - AP-7.1 **One table** (`Renderers` in `AxPreview.Core`): each renderer has a name ("Text", "Zip archive"), the file
   types it takes by extension, an optional test of the first bytes (a zip's "PK"), and a function from the file to
   what the content pane shows, a text and the lines of the Contents group (AP-6.2). The first renderer that takes a file
-  shows it; the last takes every file. A new kind is one entry and its tests; nothing in the window changes.
+  shows it; the last takes every file. A new kind is one entry and its tests; nothing in the window changes. A renderer
+  may answer in two steps (2026-11-09): a first text at once and a function for the finished page (`Rendered.Later`),
+  which the shell awaits off its thread and shows in the first page's place while the same file is still open, the
+  caret at the first line, the status bar and the Details list read again, and the page's one sentence (`Said`) said.
 - AP-7.2 **The renderers of the first build**, in the table's order:
   1. **Text:** a file that reads as text by AP-2.2's rule, shown as before, with every key of AP-2.
   2. **Word document** (`.docx`), **PowerPoint** (`.pptx`), **OpenDocument text** (`.odt`): the document's text, a
@@ -208,9 +215,20 @@ and an error naming a file that could not be opened.
      entry as "docs/, folder". The first 1,000 entries, then one line "and N more" (2026-11-09; every entry before,
      and an archive of tens of thousands filled the window); the Contents group says "Shown: the first 1,000 entries"
      then, and its counts are of every entry.
-  4. **Picture, sound, video:** a short text that names the kind and says that its details are in the pane below, and
-     for sound and video that Ctrl+E plays it in axMedia; the content of these kinds is not text and their readable
-     strings are noise.
+  4. **Picture:** the text Windows' own reader finds in it (`Windows.Media.Ocr`, run through Windows PowerShell,
+     AP-D11; `PictureText`), in two steps: at once a line naming the picture and that its text is being read, with where
+     its details are and that Ctrl+E opens it in Windows' program; then, when the reader answers (a second or two), the
+     text one line per line of the picture under a first line naming the picture, and "Text read: N lines" said once;
+     "No text was found in <name>." for a picture without text; a reader that fails says why ("The text of <name> could
+     not be read: <why>"), a Windows without a recognition language where to add one. A picture larger than the reader
+     takes (2,600 pixels a side) is scaled down for it. The Contents group holds "Text lines: N". Nothing leaves the
+     computer. **File → Read the clipboard's picture (Ctrl+Shift+V)**: the picture on the clipboard, which Windows'
+     Alt+PrintScreen puts there from the window in front and PrintScreen from the whole screen, is saved as a PNG
+     beside axPreview's logs (`%LOCALAPPDATA%\AxKit\axpreview\clipboard-<date>-<time>.png`, kept) and opened here, so
+     that a dialog or a window that reads badly is read as text; "No picture on the clipboard" with those two keys
+     named when there is none. This is axOCR of `plan.md`, built as the viewer's picture renderer (AP-D11).
+     **Sound, video:** a short text that names the kind and says that its details are in the pane below and that Ctrl+E
+     plays it in axMedia; their content is not text and their readable strings are noise.
   5. **Anything else:** the readable text inside the file, the runs of four or more printable characters (ASCII and
      UTF-16) one to a line, under a first line "No preview for this kind yet; the readable text inside it follows.",
      from the first 32 MB of the file (the editors' limit), then "Shown from the first 32 MB." for a larger one. A
@@ -299,6 +317,15 @@ details' lines, AP-6), and the shell's read-only mode adds the Details list unde
   the level that avoids feature creep. The recommendation, taken: Ctrl+E's one way out and an Open with submenu, with
   Windows' dialog for any other program and for setting a default. A list of axKit's own would copy what Windows does
   accessibly already, and would disagree with it whenever the user changed one and not the other.
+- **AP-D11 Windows PowerShell hosts Windows' reader** (2026-11-09; the axOCR of `plan.md` became this). The text of a
+  picture comes from `Windows.Media.Ocr`, the engine every Windows 10 and 11 has, offline. Reaching it from .NET needs
+  the Windows SDK's projection assemblies in the program (a targeting pack, against B-10's rule), while Windows
+  PowerShell 5.1, which every Windows ships, loads WinRT types itself; so axPreview writes its one small script beside
+  its logs and runs it per picture through Windows PowerShell by its full path, as axPass runs KeePassXC's tool: no
+  dependency, the engine Microsoft's, nothing on the network, a process per picture that takes about a second. The
+  alternative, an axOCR app with a hotkey for the window in front, was judged a second place for the same text: Windows'
+  own Alt+PrintScreen and the clipboard command give it in this window. The renderer answers in two steps (AP-7.1) so
+  that the window never waits on the process (AX-7.5).
 
 ## 8. Testing
 
@@ -316,12 +343,16 @@ details' lines, AP-6), and the shell's read-only mode adds the Details list unde
 - The caret handed to the editor on Ctrl+E (a line argument for axDown and axJSON on the command line).
 - JSON's navigation keys in the viewer, once axJSON's outline is shared on this second use.
 - Other kinds: a PDF's text (Windows has no text API for PDF; a reader of its own is a larger piece), an Excel
-  workbook's sheets, an e-book's chapters (an EPUB is a zip of XHTML), a picture's text through axOCR (planned).
+  workbook's sheets, an e-book's chapters (an EPUB is a zip of XHTML).
 - Rendering on a task of its own: a renderer runs on the UI thread, as the text read always has; a large binary's
   readable text (up to 32 MB scanned) holds the window for a moment.
 - Markdown links followed (Enter on a link opening the browser or the linked file in this window).
 
 ## 10. Status
+
+- 2026-11-09 (the night run): a picture's text through Windows' reader (AP-7.2 item 4, AP-D11) and Read the
+  clipboard's picture (Ctrl+Shift+V); the renderer's two-step page (AP-7.1); `PictureTextTests`, the picture steps of
+  `tests/scripts/axpreview/04-details-and-kinds.txt`, run under NVDA through `nvda-pass.ps1 axPreview`.
 
 - 2026-10-22: specified at the user's ask, with the inventory of the split in `docs/axkit/axfile-split.md`.
 - 2026-10-22, later the same day, on the branch `split`: built as the editor shell's read-only mode (AP-D4), with

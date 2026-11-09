@@ -28,6 +28,9 @@ public sealed partial class TextEditorForm
     /// <summary>The details read last started, so that one coming back after another file was opened is dropped (AP-6.4).</summary>
     private int _detailsRead;
 
+    /// <summary>The finished page last awaited (<see cref="StartLaterPage"/>), so that one coming back after another file was opened is dropped.</summary>
+    private int _laterPage;
+
     /// <summary>The edit control as the viewer's text (AP-2.1): read-only, in the window's colours, Tab moving on to the Go to line field and the Details list.</summary>
     private void SetUpViewer()
     {
@@ -61,6 +64,7 @@ public sealed partial class TextEditorForm
     private void AddViewerFileItems(ToolStripMenuItem file)
     {
         Add(file, new Command("Re&load", EditorKeys.Reload, ReloadCommand));
+        Add(file, new Command("Read the clipboard's &picture", EditorKeys.ClipboardPicture, ReadClipboardPicture) { Mark = CommandMark.Open });
         file.DropDownItems.Add(new ToolStripSeparator());
         // The item's label follows the file's page (UpdateEditItem); the command's is the key table's, true for any.
         _editItem = Add(file, new Command("&Edit in the editor", EditorKeys.Edit, OpenInEditor) { Mark = CommandMark.Open });
@@ -119,6 +123,99 @@ public sealed partial class TextEditorForm
     {
         IReadOnlyList<string> arguments = _app.ReadOnly ? ["--new"] : [];
         AxKitMenu.StartWith(_app.Verb, arguments);
+    }
+
+    /// <summary>
+    /// A page that finishes later (AP-7.1; a picture's text, AP-7.2 item 4): awaited through the base's Do, then shown
+    /// in the first page's place while the same file is still open, the caret at the first line, the status and the
+    /// Details list read again, and the page's sentence said once. Nothing happens for a page that is whole.
+    /// </summary>
+    private void StartLaterPage(ViewerPage? page)
+    {
+        var awaited = ++_laterPage;
+        if (page?.Later is not { } later || _path is not { } path)
+        {
+            return;
+        }
+
+        Do(async () =>
+        {
+            using var limit = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+            ViewerPage finished;
+            try
+            {
+                finished = await later(limit.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            if (awaited != _laterPage || IsDisposed || !string.Equals(_path, path, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            _page = finished;
+            _document = finished.Document;
+            _loading = true;
+            _editor.Text = _document.Text;
+            _editor.Select(0, 0);
+            _editor.ClearUndo();
+            _loading = false;
+            _text = _editor.Text;
+            UpdateStatus();
+            UpdateEditItem();
+            ReadDetails();
+            if (finished.Said is { } said)
+            {
+                Announce(said, true);
+            }
+        });
+    }
+
+    /// <summary>
+    /// File → Read the clipboard's picture (Ctrl+Shift+V, AP-7.2 item 4): the picture on the clipboard, which Windows'
+    /// own Alt+PrintScreen puts there from the window in front and PrintScreen from the whole screen, saved as a PNG
+    /// beside axPreview's logs and opened here, where the picture renderer reads its text.
+    /// </summary>
+    private void ReadClipboardPicture()
+    {
+        Image? image;
+        try
+        {
+            image = Clipboard.ContainsImage() ? Clipboard.GetImage() : null;
+        }
+        catch (System.Runtime.InteropServices.ExternalException)
+        {
+            Announce("The clipboard is busy; try again", true);
+            return;
+        }
+
+        if (image is null)
+        {
+            Announce("No picture on the clipboard. Alt+PrintScreen copies the window in front; PrintScreen the whole screen", true);
+            return;
+        }
+
+        string path;
+        try
+        {
+            var folder = Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axpreview");
+            Directory.CreateDirectory(folder);
+            path = Path.Combine(folder, $"clipboard-{DateTime.Now:yyyyMMdd-HHmmss}.png");
+            using (image)
+            {
+                image.Save(path, System.Drawing.Imaging.ImageFormat.Png);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.ExternalException)
+        {
+            Fail("The clipboard's picture could not be saved: " + ex.Message);
+            return;
+        }
+
+        LoadDocument(path);
     }
 
     /// <summary>The viewer's File → Reload (F5, AP-2.4): the file read again, the caret kept on its line and column, "Reloaded".</summary>

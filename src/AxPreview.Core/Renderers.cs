@@ -18,6 +18,12 @@ public enum WayOut
 /// </summary>
 public sealed record Rendered(TextDocument Document, string Kind, IReadOnlyList<string> Contents, WayOut WayOut)
 {
+    /// <summary>The finished page of a renderer that answers in two steps (AP-7.1; a picture's text, AP-7.2 item 4): shown in this page's place when it comes, for the same file; null for a page that is whole.</summary>
+    public Func<CancellationToken, Task<Rendered>>? Later { get; init; }
+
+    /// <summary>What a finished page says once as it arrives ("Text read: 3 lines"); null for nothing.</summary>
+    public string? Said { get; init; }
+
     /// <summary>A rendered text of another kind than text: the lines joined with Windows line endings.</summary>
     public static Rendered Of(IEnumerable<string> lines, string kind, IReadOnlyList<string> contents, WayOut wayOut) =>
         new(TextDocument.FromBytes(Encoding.UTF8.GetBytes(string.Join("\r\n", lines))), kind, contents, wayOut);
@@ -44,7 +50,7 @@ public static class Renderers
     /// <summary>The first bytes read to choose a renderer, as many as the text rule looks at.</summary>
     private const int Head = 8192;
 
-    /// <summary>The picture kinds the media renderer names (their content is not text; Windows' details say what they are); before the renderers, which read it as they are made.</summary>
+    /// <summary>The picture kinds, whose text Windows' reader finds (<see cref="PictureText"/>, AP-7.2 item 4); before the renderers, which read it as they are made.</summary>
     public static readonly IReadOnlyList<string> PictureExtensions = [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tif", ".tiff", ".webp", ".heic", ".ico"];
 
     public static readonly Renderer Text = new("Text", Set(), (path, head) => TextSniff.IsText(head.Span, path), RenderText);
@@ -110,19 +116,24 @@ public static class Renderers
         ], WayOut.Editor);
     }
 
-    /// <summary>A picture, a sound or a video (AP-7.2, 4): what it is, where its details are, and for media where it plays.</summary>
+    /// <summary>A picture (AP-7.2, 4): its text through Windows' reader, in two steps (<see cref="PictureText"/>); a sound or a video: what it is, where its details are, and where it plays.</summary>
     private static Rendered RenderMedia(string path)
     {
         var name = Path.GetFileName(path);
         var extension = Path.GetExtension(path).TrimStart('.').ToUpperInvariant();
         var sound = MediaFiles.SoundExtensions.Contains(Path.GetExtension(path));
         var video = MediaFiles.VideoExtensions.Contains(Path.GetExtension(path));
-        var kind = sound ? "a sound file" : video ? "a video" : "a picture";
+        if (!sound && !video)
+        {
+            return PictureText.FirstPage(path);
+        }
+
+        var kind = sound ? "a sound file" : "a video";
         var lines = new List<string>
         {
             $"{name} is {kind} ({extension}). Its details are in the Details list below: Tab or F6 moves there.",
         };
-        lines.Add(sound || video ? "Ctrl+E plays it in axMedia." : "Ctrl+E opens it in the program Windows has for it.");
-        return Rendered.Of(lines, sound ? "Sound" : video ? "Video" : "Picture", [], sound || video ? WayOut.Player : WayOut.Windows);
+        lines.Add("Ctrl+E plays it in axMedia.");
+        return Rendered.Of(lines, sound ? "Sound" : "Video", [], WayOut.Player);
     }
 }

@@ -32,3 +32,7 @@ Review every recording before committing it: the session header names the accoun
 | `shell-bash5.2-240x50.vt` | 2026-10-18 from `C:\axit-fixture`, with `HOME` set to a folder whose `.config/git/git-prompt.sh` holds `PS1='$ '` | Git Bash 5.2 (Git for Windows) under axTerminal's launcher (`--shell bash --env HOME=…`) | `shell-bash.script` | axTerminal: the prompt with the marks through `PROMPT_COMMAND` (`D` with the exit code from the second prompt on, the 9;9 directory as a Windows path), `echo hello`, `(exit 3)` (`D;3`), `ls`, `read -p` answered with `y`, a three-line `for` loop with `> ` continuation rows, `clear` (home, erase, `ESC[3J`, then every row cleared), a bare Enter (`D` with the last code again), `exit` (bash prints `logout`). No personal data: the prompt is `$ `. |
 
 `*.vt.chunks.txt` next to a recording lists the chunk boundaries (`offset length elapsedMs`), so a test can replay a recording chunk by chunk with the app's timing and its `Send` calls: `ReplayTests` (`long-message`, `steering`), `QuestionTests` (`model-picker`, `permission-prompt`, `several-questions`, `other-answer`, `wrapped-answers`) and `FeedbackCardTests` (`feedback-card`). The `background` and `tasks-screen` chunk files are read by no test and stay as provenance.
+
+## Other fixtures
+
+- `picture-text.png` (2026-11-09): a picture drawn with two lines of text, "Hello from axKit" and "Second line 2026", for axPreview's picture renderer (`tests/AxPreview.Tests/PictureTextTests`): Windows' reader must find both lines when this Windows has a recognition language.
