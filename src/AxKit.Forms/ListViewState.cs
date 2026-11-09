@@ -1,5 +1,3 @@
-using AxKit.Core;
-
 namespace AxKit.Forms;
 
 /// <summary>
@@ -38,14 +36,8 @@ public sealed class ListViewState
     public void Remember(ListBox list) => SelectedKey = KeyAt(list.SelectedIndex) ?? SelectedKey;
 
     /// <summary>The list's items for this view, named with the view and the count, the selection on the kept key when it is still listed, else the first item.</summary>
-    public void FillInto(ListBox list)
+    public void FillInto(AxKitList list)
     {
-        list.BeginUpdate();
-        list.Items.Clear();
-        // S-42: text from outside (a commit's subject, a file's name) with its hidden characters made visible.
-        list.Items.AddRange(Labels.Select(label => (object)DisplayText.Visible(label)).ToArray());
-        list.EndUpdate();
-        list.AccessibleName = Name;
         var index = -1;
         for (var i = 0; SelectedKey is { } key && i < Keys.Count && index < 0; i++)
         {
@@ -55,9 +47,7 @@ public sealed class ListViewState
             }
         }
 
-        if (list.Items.Count > 0)
-        {
-            list.SelectedIndex = index >= 0 ? index : 0;
-        }
+        // S-42: text from outside (a commit's subject, a file's name) with its hidden characters made visible, by Fill.
+        list.Fill(Labels, Name, index);
     }
 }

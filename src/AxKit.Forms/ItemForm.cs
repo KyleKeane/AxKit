@@ -435,19 +435,8 @@ public abstract partial class ItemForm : AxKitForm
     {
         var (rows, name, title, place) = ReadLevel();
         _rows = [.. rows];
-        Navigator.BeginUpdate();
-        Navigator.Items.Clear();
-        // S-42: titles from a shared folder or database with their hidden characters made visible.
-        Navigator.Items.AddRange(_rows.Select(row => (object)DisplayText.Visible(row.Label)).ToArray());
-        Navigator.EndUpdate();
-        Navigator.AccessibleName = name;
-        Navigator.ResetTypeAhead();
-        if (_rows.Count > 0)
-        {
-            var index = select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase));
-            Navigator.SelectedIndex = Math.Max(0, index);
-        }
-
+        // S-42: titles from a shared folder or database with their hidden characters made visible, by Fill.
+        Navigator.Fill(_rows.Select(row => row.Label), name, select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase)));
         SetTitle(title);
         _nameLabel.Text = name;
         _placeLabel.Text = place;

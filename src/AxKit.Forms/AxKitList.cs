@@ -69,6 +69,31 @@ public class AxKitList : ListBox
         return false;
     }
 
+    /// <summary>
+    /// The list filled anew: the items from <paramref name="labels"/>, each with its hidden characters made visible
+    /// (S-42: text from outside is shown, never trusted), the name when one is given, the type-ahead started afresh,
+    /// and the selection on <paramref name="select"/> clamped into the list, nothing selected when it is empty. The
+    /// one way a list is filled (axFile's folder, the item apps' navigator, the viewer's details, the hotkey windows'
+    /// matches and the views of axGIT and axProcess, 2026-11-09); SetLines rewrites one in place.
+    /// </summary>
+    public void Fill(IEnumerable<string> labels, string? name, int select)
+    {
+        BeginUpdate();
+        Items.Clear();
+        Items.AddRange(labels.Select(label => (object)DisplayText.Visible(label)).ToArray());
+        EndUpdate();
+        if (name is not null)
+        {
+            AccessibleName = name;
+        }
+
+        ResetTypeAhead();
+        if (Items.Count > 0)
+        {
+            SelectedIndex = Math.Clamp(select, 0, Items.Count - 1);
+        }
+    }
+
     /// <summary>The next letter starts a new prefix: a window calls it when it fills the list anew (axFile's next folder).</summary>
     public void ResetTypeAhead()
     {

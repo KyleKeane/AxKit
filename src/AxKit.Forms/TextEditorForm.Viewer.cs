@@ -303,17 +303,7 @@ public sealed partial class TextEditorForm
         }
 
         var keep = _details.SelectedItem is string line ? DetailName(line) : null;
-        _details.BeginUpdate();
-        _details.Items.Clear();
-        foreach (var item in lines)
-        {
-            _details.Items.Add(item);
-        }
-
-        var index = keep is null ? -1 : lines.ToList().FindIndex(item => DetailName(item) == keep);
-        _details.SelectedIndex = lines.Count == 0 ? -1 : Math.Max(index, 0);
-        _details.EndUpdate();
-        _details.ResetTypeAhead();
+        _details.Fill(lines, null, keep is null ? 0 : lines.ToList().FindIndex(item => DetailName(item) == keep));
     }
 
     /// <summary>A detail's name, the text before its first ": "; a heading line's whole text.</summary>

@@ -252,26 +252,20 @@ public sealed partial class FileForm
     /// <summary>The list's items for the shown entries, named with the folder and the count; the selection by name, or the first entry.</summary>
     private void FillList(string? select)
     {
-        // A new list starts the type-ahead afresh (AF-3.6).
-        _list.ResetTypeAhead();
-        _list.BeginUpdate();
-        _list.Items.Clear();
-        _list.Items.AddRange(_shown.Select(entry => (object)ItemText(entry)).ToArray());
+        var lines = _shown.Select(ItemText).ToList();
         if (_shown.Count == 0)
         {
-            _list.Items.Add(_filter.Length > 0 ? NoMatchText : EmptyFolderText);
+            lines.Add(_filter.Length > 0 ? NoMatchText : EmptyFolderText);
         }
 
         if (_hidden > 0 || _dot > 0)
         {
             // AF-2.2: what the read left out, as the last line, so that the count is there when wanted.
-            _list.Items.Add(FolderListing.NotShownText(_hidden, _dot));
+            lines.Add(FolderListing.NotShownText(_hidden, _dot));
         }
 
-        _list.EndUpdate();
-        _list.AccessibleName = FolderListing.ListName(_shown.Count, _entries.Count, _filter);
-        var index = select is null ? -1 : IndexOfName(select);
-        _list.SelectedIndex = Math.Max(0, index);
+        // A new list starts the type-ahead afresh (AF-3.6).
+        _list.Fill(lines, FolderListing.ListName(_shown.Count, _entries.Count, _filter), select is null ? 0 : IndexOfName(select));
     }
 
     // ---- the order and the filter (AF-3.8) ----
