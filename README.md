@@ -42,6 +42,8 @@ From the Microsoft Store, once its listing is live (the first submission is unde
 
 Without the Store: download `install.cmd`, or the zip, from the [latest release](https://github.com/KyleKeane/AxKit/releases/latest) and run it; no administrator rights are needed. It adds the same Start menu entries and commands, and an "Open with axKit" submenu in File Explorer. Installed copies offer each new release themselves: axKit menu, Check for updates. `docs/axkit/README.md` is the README inside the zip, with the rest.
 
+Pick one of the two. A Store copy and a zip copy on the same computer are two installs with separate settings, and each updates from its own source: the Store copy from the Store, the zip copy from this repository's releases; neither knows about the other.
+
 Needs Windows 10 1809 or later. axClaude also needs [Claude Code](https://code.claude.com/docs/en/setup). The standalone apps work with the network off; an access layer reaches it only through the program it runs, as the next section says.
 
 ## Privacy, and what axKit works with
