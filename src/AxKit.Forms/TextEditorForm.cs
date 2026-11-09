@@ -98,7 +98,7 @@ public sealed partial class TextEditorForm : AxKitForm
         // Show current file in ▸ File Explorer and the other apps' windows on the file or its folder (AD-4.1).
         // axClaude and axTerminal on the file's folder, axGIT on the repository that holds it, axFile with the file selected.
         var explorer = new Command("File &Explorer", EditorKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
-        file.DropDownItems.Add(CreateShowInMenu("Show current file &in", Add(explorer), FileOrSay));
+        file.DropDownItems.Add(CreateShowInMenu("Show current file &in", Add(explorer), FileOrSay, FileMissing));
         file.DropDownItems.Add(new ToolStripSeparator());
         file.DropDownItems.Add(CreateExitItem());
 

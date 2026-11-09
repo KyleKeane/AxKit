@@ -82,7 +82,8 @@ it, so that every file shows something and the details say what it is.
 - AP-1.4 Ways out: File → Edit in axDown / Edit in axJSON (Ctrl+E; the editor by the file's kind, `.json` to axJSON,
   anything else to axDown, a new editor window on the file with the caret put on the viewer's line through the
   editor's own Go to line argument, §9 until the editors take one), Show current file in ▸ File Explorer (Ctrl+W),
-  axFile (the file selected in its folder), axGIT (the repository that holds it), axTerminal (its folder). The axKit
+  axFile (the file selected in its folder), axGIT (the repository that holds it), axTerminal (its folder); "File
+  missing" when the file is gone (bundle AX-9.10). The axKit
   menu (AX-9).
 
 ### AP-2 The text

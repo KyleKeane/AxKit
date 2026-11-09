@@ -2,6 +2,7 @@
 
 ## 5.2.2
 
+- axKit: Show current folder in and Show current file in say "Folder missing" or "File missing" in every window when the path is gone, and start nothing, File Explorer included; axClaude and axTerminal said it before, the other windows started the app on the gone path or File Explorer on its parent folder.
 - axFile: New folder and Add a program keep their notice open when the name is refused (a character Windows forbids, a name that reads the same as one already there, a blank name), with the reason spoken, so you put the name right in place, as every other one-field notice of axKit does. Before, the notice closed and the reason was announced after it.
 - axTask: an action key that opens the item in axTerminal or axClaude, and Open in axClaude, start their program only in a folder on a drive of this computer; on a network share or a mapped drive they say "Not started: axTerminal would run in a folder that is not on a drive of this computer" and start nothing, since a list's `list.json` may come from a list you did not write (security audit S-5). The editors and viewers open an item there as before.
 - axPreview: a zip lists its first 1,000 entries, then one line "and N more"; the Details list says "Shown: the first 1,000 entries" and still counts them all. Before, an archive of tens of thousands of entries filled the window.

@@ -154,9 +154,10 @@ public abstract partial class AxKitForm : Form
     /// window's File Explorer item, then every app of <see cref="Dispatch.Apps"/> that is offered there
     /// (<see cref="App.ShowIn"/>) but the window's own, in the bundle's order, each a new window on the file or folder
     /// <paramref name="place"/> gives (a folder's app gets a file's folder, <see cref="Dispatch.PathFor"/>).
-    /// <paramref name="place"/> says itself why there is none and returns null.
+    /// <paramref name="place"/> says itself why there is none and returns null; a path that is gone is said as
+    /// <paramref name="missing"/> (<see cref="FolderMissing"/> or <see cref="FileMissing"/>) and starts nothing.
     /// </summary>
-    protected ToolStripMenuItem CreateShowInMenu(string text, ToolStripMenuItem explorer, Func<string?> place)
+    protected ToolStripMenuItem CreateShowInMenu(string text, ToolStripMenuItem explorer, Func<string?> place, string missing)
     {
         var menu = new ToolStripMenuItem(text);
         menu.DropDownItems.Add(explorer);
@@ -164,7 +165,7 @@ public abstract partial class AxKitForm : Form
         {
             menu.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) =>
             {
-                if (place() is { } path && Dispatch.PathFor(app, path, Directory.Exists(path)) is { } target)
+                if (place() is { } path && !SaidMissing(path, missing) && Dispatch.PathFor(app, path, Directory.Exists(path)) is { } target)
                 {
                     AxKitMenu.Start(app.Verb, target);
                 }
@@ -172,6 +173,24 @@ public abstract partial class AxKitForm : Form
         }
 
         return menu;
+    }
+
+    /// <summary>What a Show in command says of a folder that is gone (AX-9.10): one wording in every window since 2026-11-09, axClaude's before.</summary>
+    protected const string FolderMissing = "Folder missing";
+
+    /// <summary>What a Show in command says of a file that is gone (AX-9.10).</summary>
+    protected const string FileMissing = "File missing";
+
+    /// <summary>Whether <paramref name="path"/> is gone, then said as <paramref name="missing"/>: a Show in command on it starts nothing (AX-9.10).</summary>
+    protected bool SaidMissing(string path, string missing)
+    {
+        if (Path.Exists(path))
+        {
+            return false;
+        }
+
+        Announce(missing, true);
+        return true;
     }
 
     /// <summary>A menu item whose key the window handles itself: the item only shows the key (AX-8).</summary>
@@ -733,9 +752,18 @@ public abstract partial class AxKitForm : Form
         }
     }
 
-    /// <summary>The path in File Explorer: a folder opened, a file selected in its folder; with <paramref name="select"/> a folder is selected in its parent too (axFile's Show in File Explorer on an entry).</summary>
-    protected void OpenInExplorer(string path, bool select = false)
+    /// <summary>
+    /// The path in File Explorer: a folder opened, a file selected in its folder; with <paramref name="select"/> a folder
+    /// is selected in its parent too (axFile's Show in File Explorer on an entry). A path that is gone is said as
+    /// <paramref name="missing"/> and File Explorer is not started (AX-9.10).
+    /// </summary>
+    protected void OpenInExplorer(string path, bool select = false, string missing = FolderMissing)
     {
+        if (SaidMissing(path, missing))
+        {
+            return;
+        }
+
         var arguments = !select && Directory.Exists(path) ? $"\"{path}\"" : $"/select,\"{path}\"";
         try
         {

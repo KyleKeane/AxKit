@@ -187,7 +187,7 @@ public sealed partial class TextEditorForm
             return;
         }
 
-        OpenInExplorer(_path);
+        OpenInExplorer(_path, missing: FileMissing);
     }
 
     /// <summary>File → Show current file in → axGIT, axFile (AD-4.1): a new window of that app on the file (the repository that holds it; the folder with the file selected).</summary>

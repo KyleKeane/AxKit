@@ -145,16 +145,7 @@ internal sealed partial class TerminalForm
         Relaunch($"New session: {ShellLauncher.Describe(_shell)} in {folder}", clearTranscript: true);
     }
 
-    /// <summary>Session → Show current folder in → File Explorer (Ctrl+W): the shell's current directory, one of the system's own windows.</summary>
-    private void ShowInExplorer()
-    {
-        if (!Directory.Exists(CurrentDirectory))
-        {
-            Announce("Folder missing", true);
-            return;
-        }
-
-        OpenInExplorer(CurrentDirectory);
-    }
+    /// <summary>Session → Show current folder in → File Explorer (Ctrl+W): the shell's current directory, one of the system's own windows; "Folder missing" is the base's (AX-9.10).</summary>
+    private void ShowInExplorer() => OpenInExplorer(CurrentDirectory);
 
 }

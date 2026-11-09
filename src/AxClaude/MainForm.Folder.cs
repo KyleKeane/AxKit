@@ -17,18 +17,12 @@ internal sealed partial class MainForm
         return _folder;
     }
 
-    /// <summary>Session → Show current folder in → File Explorer, Ctrl+W (FR-8.2): the folder in File Explorer, one of the system's own windows (D23).</summary>
+    /// <summary>Session → Show current folder in → File Explorer, Ctrl+W (FR-8.2): the folder in File Explorer, one of the system's own windows (D23); "Folder missing" is the base's (AX-9.10).</summary>
     private void ShowInExplorer()
     {
         if (_folder is null)
         {
             Announce("No project folder", true);
-            return;
-        }
-
-        if (!Directory.Exists(_folder))
-        {
-            Announce("Folder missing", true);
             return;
         }
 

@@ -708,7 +708,7 @@ public sealed partial class FileForm
         OpenInExplorer(_folder);
     }
 
-    /// <summary>Item → Show in File Explorer (Ctrl+Shift+W): File Explorer on the folder with the entry selected, a folder entry too.</summary>
+    /// <summary>Item → Show in File Explorer (Ctrl+Shift+W): File Explorer on the folder with the entry selected, a folder entry too; an entry gone meanwhile is said (AX-9.10).</summary>
     private void ShowItemInExplorer()
     {
         if (!TryEntry(out var entry))
@@ -716,7 +716,7 @@ public sealed partial class FileForm
             return;
         }
 
-        OpenInExplorer(entry.Path, select: true);
+        OpenInExplorer(entry.Path, select: true, missing: entry.IsFolder ? FolderMissing : FileMissing);
     }
 
     /// <summary>Folder → New window (Ctrl+N, AF-3.3): another axFile window on the folder shown, as File Explorer's Ctrl+N; without a folder, and at This PC, one that starts as this one did (AF-3.10).</summary>

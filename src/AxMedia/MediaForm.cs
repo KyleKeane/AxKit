@@ -65,7 +65,7 @@ public sealed partial class MediaForm : AxKitForm
         // AM-1.4: the ways out, on the file playing or the one under the selection; the File Explorer item is the
         // first of the submenu the base makes, so its command is made here and its key added to the list.
         var explorer = new Command("File &Explorer", AxMediaKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
-        queue.DropDownItems.Add(CreateShowInMenu("&Show current file in", Add(explorer), CurrentFile));
+        queue.DropDownItems.Add(CreateShowInMenu("&Show current file in", Add(explorer), CurrentFile, FileMissing));
         queue.DropDownItems.Add(new ToolStripSeparator());
         queue.DropDownItems.Add(CreateExitItem());
 
@@ -398,7 +398,7 @@ public sealed partial class MediaForm : AxKitForm
     {
         if (CurrentFile() is { } file)
         {
-            OpenInExplorer(file);
+            OpenInExplorer(file, missing: FileMissing);
         }
     }
 

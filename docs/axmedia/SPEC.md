@@ -83,7 +83,7 @@ top of the window. It works entirely offline (bundle G6).
   Hand-overs that arrive while one is being applied wait in a queue and apply in the order they came (one queue
   drained in turn since 2026-10-23; a chain of tasks before).
 - AM-1.4 Ways out: Show current file in ▸ File Explorer (Ctrl+W: the playing file, or the file under the selection,
-  selected in File Explorer), axClaude and axTerminal (in its folder), axGIT (the repository that holds it) and axFile
+  selected in File Explorer; "File missing" when it is gone, bundle AX-9.10), axClaude and axTerminal (in its folder), axGIT (the repository that holds it) and axFile
   (the same file selected in its folder, a new axFile window; `docs/axfile/SPEC.md` AF-1.1), the bundle's one submenu
   (AX-9.10). The axKit menu (AX-9).
 

@@ -78,8 +78,10 @@ folder of the file or project in hand, and sends back. It works entirely offline
   File → Show current file in ▸ **axFile** (the file's folder, the file selected), axGIT's Repository → Show current
   repository in ▸ **axFile**, axTerminal's Session → Show current folder in ▸ **axFile** and axMedia's Queue → Show
   current file in ▸ **axFile** each start a new axFile window (`AxKitMenu.Start`, found again in the axKit menu, AX-9.3).
-  From axFile, Folder → Show current folder in ▸ **File Explorer** (Ctrl+W), **axClaude**, **axTerminal**, **axGIT** (bundle AX-9.10);
-  Item → **Show in File Explorer** (Ctrl+Shift+W) opens File Explorer with the selected entry selected; Item → Open in
+  From axFile, Folder → Show current folder in ▸ **File Explorer** (Ctrl+W), **axClaude**, **axTerminal**, **axGIT** (bundle AX-9.10;
+  "Folder missing" when the folder shown is gone);
+  Item → **Show in File Explorer** (Ctrl+Shift+W) opens File Explorer with the selected entry selected ("Folder
+  missing" or "File missing" when the entry is gone); Item → Open in
   axKit ▸ **Editor** (Ctrl+E) opens the selected file in axJSON for `.json` and axDown for anything else
   (`Dispatch.EditorOf`, the bundle's one rule), whatever Enter would do with it; Item → **Preview** (Shift+Enter) and the axMedia items
   are AF-5.

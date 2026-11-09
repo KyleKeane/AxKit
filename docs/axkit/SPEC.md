@@ -559,7 +559,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (`Dispatch.PathFor`). The windows that hold a folder or a file have it: axClaude and axTerminal ("Show current folder
   in"), axGIT ("Show current repository in"), axFile ("Show current folder in"), the editors and axPreview ("Show
   current file in") and axMedia ("Show current file in"). With nothing in hand the window says why ("No project
-  folder", "No repository", "No file yet", the empty queue).
+  folder", "No repository", "No file yet", the empty queue). A path that is gone says "Folder missing" or "File
+  missing", by what the window holds, and starts nothing, File Explorer included (`SaidMissing`, `OpenInExplorer`;
+  one wording in every window since 2026-11-09, axClaude's and axTerminal's before, while the others started the app
+  on the gone path or File Explorer on its parent).
 
 - AX-6.6 **Menus are the standard ones.** A menu bar item's drop-down is the one WinForms makes for it; no window
   assigns a drop-down of its own (a `ContextMenuStrip` or any `ToolStripDropDown` set as `DropDown`). A hand-made

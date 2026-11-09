@@ -71,7 +71,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
 - AG-1.4 **To and from the other windows.** axClaude's Session → Show current folder in ▸ **axGIT** starts axGIT on
   the project folder (axClaude FR-8.2); axDown's and axJSON's File → Show current file in ▸ **axGIT** on the file
   (axDown AD-4.1). Each is a new window, a new process (`AxKitMenu.Start`), found again in the axKit menu's Open windows
-  (AX-9.3). From axGIT, Repository → Show current repository in ▸ **File Explorer** (Ctrl+W), ▸ **axClaude**
+  (AX-9.3). From axGIT, Repository → Show current repository in ▸ **File Explorer** (Ctrl+W; "Folder missing" when the repository's folder is gone, bundle AX-9.10), ▸ **axClaude**
   (a new axClaude on the repository's folder), ▸ **axTerminal** (a shell there, docs/axterminal/SPEC.md AT-1.5) and
   ▸ **axFile** (the folder listed, docs/axfile/SPEC.md AF-1.3), and Changes → **Open file in editor** (Ctrl+E) opens
   the selected file in axJSON for `.json` and axDown otherwise.
