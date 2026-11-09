@@ -42,6 +42,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 1. Open `bom.md`, change a letter, Ctrl+S: "Saved". A hex view shows the mark kept and LF endings only.
 2. Open `wide.txt`, edit, save: still UTF-16 LE with its mark. `ansi.txt`: the accented letter survives a save.
 3. Open `plain.txt`, Ctrl+S without a change: "Saved", the file unchanged byte for byte.
+4a. Ctrl+Shift+N: a second axDown window opens on Untitled, empty, and takes the focus; this window is unchanged. Close the new one.
 4. Ctrl+N with unsaved changes: the notice "Save changes to plain.txt?" with Save, Don't save, Cancel; Escape
    cancels and the text is still there; Enter saves and the document is empty, "Untitled".
 5. Ctrl+S on Untitled opens the Windows Save dialog; cancelling returns to the editor with the focus where it was.

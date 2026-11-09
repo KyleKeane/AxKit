@@ -44,6 +44,14 @@ keys ctrl+s
 expect said ! Saved
 run fc /b plain.txt plain.before
 
+# 3.4a: Ctrl+Shift+N: a new axDown window on Untitled, empty; this one is unchanged (AD-4.1, 2026-11-09).
+keys ctrl+shift+n
+adopt
+expect state Untitled - axDown
+expect focus {"name":"Untitled","role":"Text","value":""}
+close
+use 1
+expect state plain.txt - axDown
 # 3.4: Ctrl+N with unsaved changes: the question; Escape cancels and the text stays; Enter saves, then Untitled.
 type Added.
 keys ctrl+n

@@ -76,6 +76,7 @@ public sealed partial class TextEditorForm : AxKitForm
         else
         {
             Add(file, new Command("&New", EditorKeys.NewDocument, NewDocument));
+            Add(file, new Command("New &window", EditorKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
         }
 
         Add(file, new Command("&Open...", EditorKeys.Open, OpenFile) { Mark = CommandMark.Open });

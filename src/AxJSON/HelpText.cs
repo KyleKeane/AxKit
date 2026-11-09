@@ -16,6 +16,7 @@ public static class HelpText
         altF4: "close axJSON (asks first when there are unsaved changes)") + """
         ## axJSON
           Ctrl+N: new, empty document
+          Ctrl+Shift+N: a new, empty document in a new axJSON window; this one stays as it is
           Ctrl+O: open a file
           Ctrl+Shift+S: save under a new name
           Ctrl+W: show the current file in File Explorer

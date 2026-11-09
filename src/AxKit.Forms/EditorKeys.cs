@@ -8,6 +8,10 @@ namespace AxKit.Forms;
 public static class EditorKeys
 {
     public const Keys NewDocument = Keys.Control | Keys.N;
+
+    /// <summary>File → New window (AD-4.1, 2026-11-09, reports issue 2): an empty document in a new window of the app, this one left as it is; the viewer has it on Ctrl+N, where New has no meaning.</summary>
+    public const Keys NewWindow = Keys.Control | Keys.Shift | Keys.N;
+
     public const Keys Open = Keys.Control | Keys.O;
     public const Keys SaveAs = Keys.Control | Keys.Shift | Keys.S;
     public const Keys GoToLine = Keys.Control | Keys.G;
@@ -25,6 +29,7 @@ public static class EditorKeys
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
         ("New document", NewDocument),
+        ("New window", NewWindow),
         ("Open", Open),
         ("Save as", SaveAs),
         ("Show the file in File Explorer", ShowInExplorer),

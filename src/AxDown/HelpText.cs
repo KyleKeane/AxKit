@@ -17,6 +17,7 @@ public static class HelpText
         navigateMenu: true) + """
         ## axDown
           Ctrl+N: new, empty document
+          Ctrl+Shift+N: a new, empty document in a new axDown window; this one stays as it is
           Ctrl+O: open a file
           Ctrl+Shift+S: save under a new name
           Ctrl+W: show the current file in File Explorer
