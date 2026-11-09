@@ -303,7 +303,8 @@ public abstract class HotkeyForm : AxKitForm
         SignInStart.Apply(AppName, AppVerb, _settings.StartWithWindows);
         if (!Register(CurrentHotkey))
         {
-            // AS-4.3: never a window that cannot be reached.
+            // AS-4.3: never a window that cannot be reached. Posted: not inside the handle's creation, where Show would
+            // re-enter SetVisibleCore, whose first call only makes the handle.
             BeginInvoke(() =>
             {
                 ShowWindowInFront();
@@ -312,6 +313,7 @@ public abstract class HotkeyForm : AxKitForm
         }
         else if (!_hidden)
         {
+            // Posted for the same reason: Show inside the handle's creation would re-enter SetVisibleCore.
             BeginInvoke(() => ShowWindowInFront());
         }
     }

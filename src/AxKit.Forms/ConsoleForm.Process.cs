@@ -52,6 +52,8 @@ public abstract partial class ConsoleForm
         }
         catch (Exception ex)
         {
+            // ConPTY's start fails in several native ways (Win32Exception from Native.Error, EntryPointNotFoundException on
+            // an old Windows, IOException on the pipes); a type left out would crash the window instead of showing the notice.
             Log.Error($"{program} could not be started", ex);
             var reason = ex is EntryPointNotFoundException
                 ? "this version of Windows has no pseudo console. Windows 10 version 1809 or later is needed"

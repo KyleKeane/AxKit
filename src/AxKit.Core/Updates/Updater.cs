@@ -77,6 +77,7 @@ public static class Updater
             }
             catch (UnauthorizedAccessException)
             {
+                // A folder of another account's copy, or read-only: left for the next update.
             }
         }
 

@@ -49,6 +49,7 @@ public abstract partial class AxKitForm
             Custom = controls,
             Accepts = controls.Ready,
         });
+        // After the notice's own FocusStart, which lands on the field or the text, never on a Custom control's first field.
         BeginInvoke(controls.FocusWords);
     }
 

@@ -256,6 +256,7 @@ public sealed class MediaPlayer : IDisposable
         }
         catch (COMException)
         {
+            // The engine is going either way.
         }
 
         ReleaseItem();
@@ -344,6 +345,7 @@ public sealed class MediaPlayer : IDisposable
             }
             catch (Exception ex) when (ex is COMException or InvalidOperationException)
             {
+                // A released or dead item: nothing to free.
             }
         }
     }

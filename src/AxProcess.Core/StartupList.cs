@@ -150,6 +150,7 @@ public static class StartupList
         }
         catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or IOException)
         {
+            // The place is skipped; the others are listed.
         }
     }
 }

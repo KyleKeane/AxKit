@@ -173,6 +173,7 @@ public sealed class ClipForm : HotkeyForm
     {
         if (m.Msg == WM_CLIPBOARDUPDATE)
         {
+            // After the writer has let the clipboard go; one still held is read again after RetryMs, three times at most.
             BeginInvoke(() => ReadClipboard(1));
         }
 
@@ -421,6 +422,7 @@ public sealed class ClipForm : HotkeyForm
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
+                // The copy is gone or locked; the history is cleared either way.
             }
 
             Fill();

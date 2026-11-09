@@ -607,6 +607,7 @@ public sealed partial class FileForm
                     }
                     catch (ExternalException)
                     {
+                        // Another program holds the clipboard for a moment; a second paste then finds the files gone, as File Explorer's does.
                     }
                 }
 

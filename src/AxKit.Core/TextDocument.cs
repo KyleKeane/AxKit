@@ -180,6 +180,7 @@ public sealed record TextDocument(string Text, Encoding Encoding, bool ByteOrder
         }
         catch (Exception ex) when (ex is ArgumentException or NotSupportedException)
         {
+            // An unknown ANSI code page: falls through to 1252 below.
         }
 
         return Encoding.GetEncoding(1252);

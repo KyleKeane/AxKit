@@ -89,6 +89,7 @@ public static class SystemInfo
             }
             catch (Exception ex) when (ex is Win32Exception or NotSupportedException or InvalidOperationException)
             {
+                // A protected process gives neither; the line is left out.
             }
 
             try
@@ -97,6 +98,7 @@ public static class SystemInfo
             }
             catch (Exception ex) when (ex is Win32Exception or NotSupportedException or InvalidOperationException)
             {
+                // A protected process gives neither; the line is left out.
             }
         }
         catch (ArgumentException)

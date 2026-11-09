@@ -310,6 +310,7 @@ public static class FileOperations
             }
             catch (Exception ex)
             {
+                // The thread's exception goes to the awaiting task, as Task.Run would hand it on.
                 done.SetException(ex);
             }
         });
