@@ -69,6 +69,7 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 | Build and start one app | `run.ps1 -App <app> [<path>]`, `run-ax<app>.ps1` | .NET SDK, PowerShell. A running app locks its `bin`: a change is checked from a build elsewhere (`dotnet build <project> -o <scratch dir>`), and the development axStart runs from `src\AxKit\bin\Debug` on this computer, where no axKit is installed |
 | Tests | `test.ps1 [<App>]` | .NET SDK: every test project in Release, one by one, as the workflows do. Before every commit |
 | The outside-calls page | `tools/outside-calls.ps1` (`-Check`) | PowerShell; the sources' `Outside call` comments (SPEC B-17) |
+| The repositories beside this one | `tools/sync-repos.ps1` (`-Status`); git runs it on every push through `tools/hooks/pre-push` | git. `..\axkit-reports` (the clone of the public reports repository: the issue forms, the workflow, the blocklist) and `..\axkit-management` (the private repository of axTask's lists: the issues read from GitHub and the maintainer's priorities, `CLAUDE.md` rule 9) are fetched, the lists committed as one dated commit, pulled fast-forward and pushed; one line each, nothing forced, a sibling's trouble never stops the push. A clone without the two folders beside it skips them |
 | NVDA passes | `manual_tests/prepare.ps1 [<app>]`, then `nvda-pass.ps1 [<app>]` after the user has stepped away | NVDA with the add-on, `tools/AxAutomate`; takes the keyboard |
 | Automated checks and Claude sessions | `tools/AxAutomate <script>`, `tools/QaRun` | .NET SDK, Claude Code with `--model haiku` |
 | Publish and install locally | `publish.ps1 [-NoInstall]`, `install.ps1 [-Uninstall]` | .NET SDK; not on the development computer, which keeps no installed copy |
@@ -83,8 +84,12 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 1. Windows 11 with winget. Turn two-factor sign-in on for the GitHub account if it is not on yet.
 2. `winget install` of `Git.Git`, `GitHub.cli`, `Microsoft.DotNet.SDK.10`, `Microsoft.AzureCLI`, `NVAccess.NVDA`,
    `KeePassXCTeam.KeePassXC`; Claude Code with Anthropic's installer. Open a new shell.
-3. `git clone https://github.com/KyleKeane/AxKit` into a folder of the maintainer's choosing; `git config user.name`
-   and `git config user.email` with GitHub's no-reply address.
+3. `git clone https://github.com/KyleKeane/AxKit` into a folder of the maintainer's choosing, as `axkit`, and beside it
+   `git clone https://github.com/KyleKeane/AxKit-reports axkit-reports` and
+   `git clone https://github.com/KyleKeane/axkit-management` (private; the maintainer's account): the three folders of
+   axKit's development, which `tools/sync-repos.ps1` finds by name. In the code's clone, `git config user.name` and
+   `git config user.email` with GitHub's no-reply address, and `git config core.hooksPath tools/hooks`, so that every
+   push also syncs the two beside it (`release.ps1` refuses to run until it is set).
 4. `gh auth login` as the owner. `gh auth status` says so.
 5. `az extension add --name artifact-signing`; `az login --use-device-code` as `axkit-signer`. `az account show` names
    that user.

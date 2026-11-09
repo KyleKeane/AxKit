@@ -14,7 +14,8 @@
     4. sets <Version> in src/AxKit/AxKit.csproj,
     5. commits CHANGELOG.md, the project file and docs/axkit/outside-calls.md as "Release <version>" and tags v<version>,
     6. pushes main, waits for its build to pass on GitHub (gh run watch), then pushes the tag: a tag never goes up on
-       a commit whose build failed there,
+       a commit whose build failed there; each push also syncs the reports clone and the management lists beside the
+       repository through the pre-push hook (tools/sync-repos.ps1), which step 1 checks is installed,
     7. waits for the tag's release workflow, which leaves a draft release, then signs its zip with the release key
        on this machine and publishes it (tools/sign-release.ps1; docs/axkit/SPEC.md AX-3.4). The apps install only a
        signed zip, so a release is never published without this step.
@@ -61,6 +62,15 @@ if (-not $NoPush) {
     git -C $root merge-base --is-ancestor origin/main main
     if ($LASTEXITCODE -ne 0) {
         Write-Host "origin/main has commits that main here does not. Bring them in first (git pull --ff-only, or a merge), then run this again."
+        exit 1
+    }
+
+    # Every push of this repository also syncs the repositories beside it, the reports clone and the management lists
+    # (tools/sync-repos.ps1), through the pre-push hook, so that a release never leaves them behind. The hook is a
+    # setting of the clone, made once (docs/axkit/development-environment.md section 4).
+    $hooks = (git -C $root config --get core.hooksPath)
+    if ($hooks -ne 'tools/hooks') {
+        Write-Host "The pre-push hook is not installed in this clone. Run once: git config core.hooksPath tools/hooks (docs/axkit/development-environment.md section 4), then run this again."
         exit 1
     }
 }

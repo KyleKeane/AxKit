@@ -10,3 +10,6 @@
 
 # Batch files must keep Windows line endings: cmd.exe misreads some lines with LF alone.
 *.cmd text eol=crlf
+
+# git runs its hooks with sh, which does not read CRLF.
+tools/hooks/* text eol=lf
