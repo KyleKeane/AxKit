@@ -32,7 +32,7 @@ ran them on the worktree; a failing one was fixed before the commit, never commi
 
 ## 2. The commits, by section of `cleanup-run.md`
 
-The branch `consolidation`, cut from `main` at 3d180f1 and rebased onto 95324d4 (the sync fix); 29 commits.
+The branch `consolidation`, cut from `main` at 3d180f1 and rebased onto 95324d4 (the sync fix); 29 commits with the record of the final gate.
 
 The plan and the record: `724e297` the plan; `edeb5b4` the gate runs in a worktree (the privacy test skips a `.git`
 file; `test.ps1` goes on past a failing test under redirection); `11e3f59` the sweep's findings and the work list.
