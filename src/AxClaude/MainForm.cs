@@ -34,7 +34,7 @@ internal sealed partial class MainForm : ConsoleForm
 
     /// <summary>The per-frame pass behind the tick and the spoken replies (FR-7.8, FR-7.4).</summary>
     private readonly Arrivals _arrivals = new();
-    private readonly List<(ReplySpeechMode Mode, ToolStripMenuItem Item)> _replySpeechItems = [];
+    private ChoiceItems<ReplySpeechMode>? _replySpeechItems;
 
     /// <summary>The Speak replies choices of Options → Speech in menu order (FR-7.4); the text without its mnemonic is what the choice announces.</summary>
     private static readonly (ReplySpeechMode Mode, string Text)[] ReplySpeechChoices =

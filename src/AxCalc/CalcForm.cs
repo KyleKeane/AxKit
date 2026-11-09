@@ -21,8 +21,7 @@ public sealed class CalcForm : AxKitForm
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _answerLabel;
     private readonly ToolStripStatusLabel _unitLabel;
-    private readonly ToolStripMenuItem _degreesItem = new("&Degrees");
-    private readonly ToolStripMenuItem _radiansItem = new("&Radians");
+    private readonly ChoiceItems<bool> _angles;
 
     public CalcForm(CalcSettings settings, string? settingsError)
         : base(AxCalcApp.Name, settings, CalcSettings.DefaultPath, settingsError)
@@ -61,9 +60,7 @@ public sealed class CalcForm : AxKitForm
         // Options, as the other windows' (AX-6): the window's own submenus and items first, then Text, General, Developer.
         var options = new ToolStripMenuItem("&Options");
         var angles = new ToolStripMenuItem("&Angles");
-        _degreesItem.Click += (_, _) => SetDegrees(true);
-        _radiansItem.Click += (_, _) => SetDegrees(false);
-        angles.DropDownItems.AddRange([_degreesItem, _radiansItem]);
+        _angles = new ChoiceItems<bool>(angles, [(true, "&Degrees"), (false, "&Radians")], _calculator.Degrees, SetDegrees);
         options.DropDownItems.Add(angles);
         options.DropDownItems.Add(Toggle("&Keep history between runs", settings.KeepHistory, v =>
         {
@@ -408,11 +405,7 @@ public sealed class CalcForm : AxKitForm
         Announce(degrees ? "Degrees" : "Radians", true);
     }
 
-    private void UpdateAngles()
-    {
-        _degreesItem.Checked = _calculator.Degrees;
-        _radiansItem.Checked = !_calculator.Degrees;
-    }
+    private void UpdateAngles() => _angles.Check(_calculator.Degrees);
 
     /// <summary>The history and the variables into the settings file now: after a clear, which should not come back after a crash.</summary>
     private void SaveState()

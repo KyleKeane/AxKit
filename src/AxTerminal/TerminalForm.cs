@@ -21,7 +21,7 @@ internal sealed partial class TerminalForm : ConsoleForm
 
     private readonly TerminalSettings _settings;
     private readonly TerminalModel _model;
-    private readonly List<(OutputSpeechMode Mode, ToolStripMenuItem Item)> _speechItems = [];
+    private ChoiceItems<OutputSpeechMode>? _speechItems;
     private readonly List<(ShellKind Kind, ToolStripMenuItem Item)> _shellItems = [];
 
     /// <summary>

@@ -281,11 +281,7 @@ public sealed partial class FileForm
     {
         _settings.SortBy = by;
         SaveSettings();
-        foreach (var (sortBy, item) in _sortItems)
-        {
-            item.Checked = sortBy == by;
-        }
-
+        _sortItems.Check(by);
         Rearrange(CurrentEntry()?.Name);
         Announce("Sorted by " + FolderListing.SortName(by), true);
     }

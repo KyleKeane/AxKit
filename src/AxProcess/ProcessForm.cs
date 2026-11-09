@@ -32,7 +32,7 @@ public sealed class ProcessForm : AxKitForm
     private readonly ToolStripStatusLabel _memoryLabel;
     /// <summary>The three views of the list (PR-2.2), as axGIT's.</summary>
     private readonly ListViewState[] _views = [new(), new(), new()];
-    private readonly Dictionary<ProcessSort, ToolStripMenuItem> _sortItems = [];
+    private readonly ChoiceItems<ProcessSort> _sortItems;
     private readonly ToolStripMenuItem _processMenu = new("&Process");
     private readonly ToolStripMenuItem _serviceMenu = new("&Service");
     private readonly ToolStripMenuItem _startupMenu = new("S&tartup");
@@ -88,13 +88,7 @@ public sealed class ProcessForm : AxKitForm
         Add(view, new Command("Start&up", AxProcessKeys.ViewStartup, () => Do(() => ShowViewAsync(View.Startup))) { Mark = CommandMark.Open });
         view.DropDownItems.Add(new ToolStripSeparator());
         var sort = new ToolStripMenuItem("Sort processes &by");
-        foreach (var (choice, text) in new[] { (ProcessSort.Memory, "&Memory"), (ProcessSort.Processor, "&Processor"), (ProcessSort.Name, "&Name") })
-        {
-            var item = new ToolStripMenuItem(text, null, (_, _) => SetSort(choice)) { Checked = settings.SortBy == choice };
-            _sortItems[choice] = item;
-            sort.DropDownItems.Add(item);
-        }
-
+        _sortItems = new ChoiceItems<ProcessSort>(sort, [(ProcessSort.Memory, "&Memory"), (ProcessSort.Processor, "&Processor"), (ProcessSort.Name, "&Name")], settings.SortBy, SetSort);
         view.DropDownItems.Add(sort);
 
         // Options, as the other windows' (AX-6).
@@ -334,11 +328,7 @@ public sealed class ProcessForm : AxKitForm
     private void SetSort(ProcessSort sort)
     {
         _settings.SortBy = sort;
-        foreach (var (choice, item) in _sortItems)
-        {
-            item.Checked = choice == sort;
-        }
-
+        _sortItems.Check(sort);
         SaveSettings();
         if (_views[(int)View.Processes].Loaded)
         {

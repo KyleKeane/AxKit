@@ -93,13 +93,7 @@ internal sealed partial class TerminalForm
 
         // AT-5.3: one of two, shown checked like a radio group; the choice is announced, since the menu closes on it.
         var speech = new ToolStripMenuItem("S&peech");
-        foreach (var (mode, text) in SpeechChoices)
-        {
-            var item = new ToolStripMenuItem(text) { Checked = _settings.OutputSpeech == mode };
-            item.Click += (_, _) => SetOutputSpeech(mode);
-            speech.DropDownItems.Add(item);
-            _speechItems.Add((mode, item));
-        }
+        _speechItems = new ChoiceItems<OutputSpeechMode>(speech, SpeechChoices, _settings.OutputSpeech, SetOutputSpeech);
 
         speech.DropDownItems.Add(new ToolStripSeparator());
         speech.DropDownItems.Add(Toggle("Say &when a program asks", _settings.AnnounceQuestions, v => _settings.AnnounceQuestions = v));
@@ -128,11 +122,7 @@ internal sealed partial class TerminalForm
     private void SetOutputSpeech(OutputSpeechMode mode)
     {
         _settings.OutputSpeech = mode;
-        foreach (var (candidate, item) in _speechItems)
-        {
-            item.Checked = candidate == mode;
-        }
-
+        _speechItems?.Check(mode);
         // What is already there is not read out: the next frame's lines are the first spoken.
         _arrivals.Update(_model.Lines, _model.Running, speak: true);
         SaveSettings();

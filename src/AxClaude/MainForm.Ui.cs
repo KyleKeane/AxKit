@@ -76,13 +76,7 @@ internal sealed partial class MainForm
         // FR-7.4: the reply choices are one of three, shown checked like a radio group; the choice is announced, since
         // the menu closes on it. The tool: row of each call is spoken whatever the reply mode; it starts with what arrives next.
         var speech = new ToolStripMenuItem("S&peech");
-        foreach (var (mode, text) in ReplySpeechChoices)
-        {
-            var item = new ToolStripMenuItem(text) { Checked = _settings.ReplySpeech == mode };
-            item.Click += (_, _) => SetReplySpeech(mode);
-            speech.DropDownItems.Add(item);
-            _replySpeechItems.Add((mode, item));
-        }
+        _replySpeechItems = new ChoiceItems<ReplySpeechMode>(speech, ReplySpeechChoices, _settings.ReplySpeech, SetReplySpeech);
 
         speech.DropDownItems.Add(Toggle("Speak each &tool call", _settings.SpeakToolCalls, v =>
         {
@@ -140,11 +134,7 @@ internal sealed partial class MainForm
     private void SetReplySpeech(ReplySpeechMode mode)
     {
         _settings.ReplySpeech = mode;
-        foreach (var (candidate, item) in _replySpeechItems)
-        {
-            item.Checked = candidate == mode;
-        }
-
+        _replySpeechItems?.Check(mode);
         _arrivals.Skip(_model.Lines);
         SaveSettings();
         Announce(MenuText.Plain(ReplySpeechChoices.First(c => c.Mode == mode).Text), true);

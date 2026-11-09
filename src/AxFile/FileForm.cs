@@ -21,7 +21,7 @@ public sealed partial class FileForm : AxKitForm
     private readonly ToolStripMenuItem _recentItem = new("Open &recent folder");
     private readonly ToolStripMenuItem _favoritesItem = new("Fa&vorites");
     private readonly ToolStripMenuItem _drivesMenu = new("Driv&es");
-    private readonly List<(SortBy By, ToolStripMenuItem Item)> _sortItems = [];
+    private readonly ChoiceItems<SortBy> _sortItems;
     private readonly AxKitList _list = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _stateLabel;
@@ -71,13 +71,7 @@ public sealed partial class FileForm : AxKitForm
         folder.DropDownItems.Add(new ToolStripSeparator());
         // AF-3.8: the order, one checked item, and the filter.
         var sort = new ToolStripMenuItem("&Sort by");
-        foreach (var by in Enum.GetValues<SortBy>())
-        {
-            var sortItem = new ToolStripMenuItem("&" + char.ToUpperInvariant(by.ToString()[0]) + by.ToString()[1..], null, (_, _) => SetSort(by)) { Checked = _settings.SortBy == by };
-            _sortItems.Add((by, sortItem));
-            sort.DropDownItems.Add(sortItem);
-        }
-
+        _sortItems = new ChoiceItems<SortBy>(sort, Enum.GetValues<SortBy>().Select(by => (by, "&" + char.ToUpperInvariant(by.ToString()[0]) + by.ToString()[1..])), _settings.SortBy, SetSort);
         folder.DropDownItems.Add(sort);
         Add(folder, new Command("Fil&ter...", AxFileKeys.Filter, ShowFilterNotice));
         AddKey(new Command("Add to or remove from Favorites", AxFileKeys.Favorite, ToggleFavorite));

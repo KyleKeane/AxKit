@@ -91,22 +91,14 @@ public sealed partial class PassForm : ItemForm
         _fieldMenu.DropDownItems.Add(Item("Copy &password", CopyPassword, AxPassKeys.CopyPassword));
 
         var lockAfter = new ToolStripMenuItem("&Lock after");
-        foreach (var minutes in new[] { 5, 10, 30, 60, 0 })
+        ChoiceItems<int> lockChoices = null!;
+        lockChoices = new ChoiceItems<int>(lockAfter, new[] { 5, 10, 30, 60, 0 }.Select(minutes => (minutes, minutes == 0 ? "&Never" : $"&{minutes} minutes")), settings.LockMinutes, minutes =>
         {
-            var item = new ToolStripMenuItem(minutes == 0 ? "&Never" : $"&{minutes} minutes") { Checked = settings.LockMinutes == minutes, Tag = minutes };
-            item.Click += (_, _) =>
-            {
-                _settings.LockMinutes = minutes;
-                SaveSettings();
-                foreach (ToolStripMenuItem other in lockAfter.DropDownItems)
-                {
-                    other.Checked = (int)other.Tag! == minutes;
-                }
-
-                Announce(minutes == 0 ? "axPass locks only on Ctrl+L" : $"axPass locks after {minutes} minutes without a key", true);
-            };
-            lockAfter.DropDownItems.Add(item);
-        }
+            _settings.LockMinutes = minutes;
+            SaveSettings();
+            lockChoices.Check(minutes);
+            Announce(minutes == 0 ? "axPass locks only on Ctrl+L" : $"axPass locks after {minutes} minutes without a key", true);
+        });
 
         var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(lockAfter);
