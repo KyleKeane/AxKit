@@ -453,10 +453,6 @@ internal sealed partial class MainForm
     /// <summary>The notice that shows an information screen; null while none shows.</summary>
     private Notice? _screenNotice;
 
-    /// <summary>While an information screen's notice opens: its chime is the area's rule (<see cref="ShowScreenNotice"/>), not the notice's.</summary>
-    private bool _screenNoticeOpening;
-
-    protected override bool NoticeChime => base.NoticeChime && !_screenNoticeOpening;
 
     /// <summary>The notice of an information screen is the one showing (an error or an update offer may have replaced it).</summary>
     private bool ScreenNoticeOpen => _screenNotice is not null && NoticeOpen && ReferenceEquals(Overlay.Shown, _screenNotice);
@@ -590,6 +586,8 @@ internal sealed partial class MainForm
         var notice = new Notice(screen.Title, ScreenActions.NoticeText(screen), choices)
         {
             Unprompted = unprompted,
+            // The chime is the area's rule, not the notice's (FR-2.11).
+            Silent = true,
             // The hint row's letters typed in the text, as the buttons (c to copy, f to fork; FR-2.11).
             Letter = letter =>
             {
@@ -602,15 +600,7 @@ internal sealed partial class MainForm
                 return true;
             },
         };
-        _screenNoticeOpening = true;
-        try
-        {
-            ShowNotice(notice);
-        }
-        finally
-        {
-            _screenNoticeOpening = false;
-        }
+        ShowNotice(notice);
 
         _screenNotice = Overlay.Shown;
         _wait = new Wait(signature, Shown: true, summary);

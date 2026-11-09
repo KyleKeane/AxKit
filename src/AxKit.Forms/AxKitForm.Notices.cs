@@ -31,7 +31,7 @@ public abstract partial class AxKitForm
     {
         _paletteSpeak.Stop();
         Recent.Add(RecentActionKind.Notice, notice.Title, DateTime.UtcNow);
-        if (notice.Unprompted && NoticeChime)
+        if (notice.Unprompted && !notice.Silent && NoticeChime)
         {
             Sounds.Notice();
         }

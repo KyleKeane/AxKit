@@ -45,6 +45,9 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// <summary>Asked before the default button acts, when given: false keeps the notice open, the window having said why (no folder chosen yet).</summary>
     public Func<bool>? Accepts { get; init; }
 
+    /// <summary>An unprompted notice that brings no chime of its own, because the window sounds its own rule for it (axClaude's information screens).</summary>
+    public bool Silent { get; init; }
+
     /// <summary>A first line of the text that the window changes while the notice shows (the folder of New session, <see cref="OverlayPanel.SetHeadLine"/>); null for none.</summary>
     public string? HeadLine { get; init; }
 
