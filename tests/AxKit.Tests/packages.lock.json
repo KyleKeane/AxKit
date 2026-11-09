@@ -87,7 +87,7 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
-      "axCalc": {
+      "axcalc": {
         "type": "Project",
         "dependencies": {
           "AxCalc.Core": "[1.0.0, )",
@@ -101,7 +101,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axClaude": {
+      "axclaude": {
         "type": "Project",
         "dependencies": {
           "AxClaude.Core": "[1.0.0, )",
@@ -115,7 +115,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axClip": {
+      "axclip": {
         "type": "Project",
         "dependencies": {
           "AxClip.Core": "[1.0.0, )",
@@ -129,14 +129,14 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axDown": {
+      "axdown": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",
           "AxKit.Forms": "[1.0.0, )"
         }
       },
-      "axFile": {
+      "axfile": {
         "type": "Project",
         "dependencies": {
           "AxFile.Core": "[1.0.0, )",
@@ -150,7 +150,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axGIT": {
+      "axgit": {
         "type": "Project",
         "dependencies": {
           "AxGit.Core": "[1.0.0, )",
@@ -164,7 +164,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axJSON": {
+      "axjson": {
         "type": "Project",
         "dependencies": {
           "AxJSON.Core": "[1.0.0, )",
@@ -187,7 +187,21 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axMedia": {
+      "axmcp": {
+        "type": "Project",
+        "dependencies": {
+          "AxKit.Core": "[1.0.0, )",
+          "AxKit.Forms": "[1.0.0, )",
+          "AxMCP.Core": "[1.0.0, )"
+        }
+      },
+      "axmcp.core": {
+        "type": "Project",
+        "dependencies": {
+          "AxKit.Core": "[1.0.0, )"
+        }
+      },
+      "axmedia": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",
@@ -201,7 +215,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axPass": {
+      "axpass": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",
@@ -215,7 +229,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axPreview": {
+      "axpreview": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",
@@ -229,7 +243,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axProcess": {
+      "axprocess": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",
@@ -243,7 +257,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axStart": {
+      "axstart": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",
@@ -257,7 +271,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axTask": {
+      "axtask": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",
@@ -271,7 +285,7 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
-      "axTerminal": {
+      "axterminal": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )",

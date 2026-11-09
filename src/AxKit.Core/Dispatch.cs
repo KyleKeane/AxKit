@@ -118,6 +118,7 @@ public static class Dispatch
     public const string AxPass = "pass";
     public const string AxCalc = "calc";
     public const string AxClip = "clip";
+    public const string AxMCP = "mcpclient";
 
     /// <summary>Not an app: the executable answers <c>--help</c> and <c>--version</c>, or reports <see cref="Launch.Error"/>.</summary>
     public const string Bundle = "axkit";
@@ -203,6 +204,10 @@ public static class Dispatch
             AccessLayerFor = "KeePassXC", Description = "axPass, access layer for KeePassXC: a KeePass password database", Icon = new("Aw", 20, 40, 100),
             Types = [".kdbx"], OpenWith = [".kdbx"], TypeName = "KeePass database (axPass)",
         },
+        new("axMCP", AxMCP, "AxMCP", AppGroup.AccessLayers, Opens.Folders)
+        {
+            Description = "axMCP, access layer for MCP servers: the tools, resources and prompts of any MCP server on this computer, started and run by hand", AccessLayerFor = "MCP servers", Icon = new("Mc", 70, 60, 110),
+        },
     ];
 
     /// <summary>
@@ -253,7 +258,7 @@ public static class Dispatch
     };
 
     public const string Usage = """
-        Usage: AxKit [claude|down|json|git|terminal|file|media|preview|start|process|task|pass|calc|clip] [arguments]
+        Usage: AxKit [claude|down|json|git|terminal|file|media|preview|start|process|task|pass|calc|clip|mcpclient] [arguments]
 
           AxKit claude [<folder>] ...  axClaude, the front end for Claude Code (AxKit claude --help lists its options)
           AxKit down [<file>]          axDown, the text editor
@@ -269,6 +274,7 @@ public static class Dispatch
           AxKit pass [<database>]      axPass, a KeePass password database
           AxKit calc                   axCalc, the calculator
           AxKit clip [--hidden]        axClip, the clipboard history: its search field, or with --hidden running until its hotkey
+          AxKit mcpclient [<folder>]   axMCP, the MCP servers Claude Code knows and your own: their tools, resources and prompts, run by hand
           AxKit <folder>               the same as AxKit claude <folder>
           AxKit <file>                 the same as AxKit down <file>, AxKit json <file> for a .json file, AxKit pass <file> for a .kdbx file, or AxKit media <file> for a sound or video file
           AxKit                        axClaude on the current folder
@@ -276,7 +282,7 @@ public static class Dispatch
           AxKit apps                   the apps as JSON on standard output, for the installer and other scripts
           --help, --version           this text, or the version
 
-        The installed console commands axkit, axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc and axclip stand for AxKit, AxKit claude, AxKit down, AxKit json, AxKit git, AxKit terminal, AxKit file, AxKit media, AxKit preview, AxKit start, AxKit process, AxKit task, AxKit pass, AxKit calc and AxKit clip.
+        The installed console commands axkit, axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc, axclip and axmcp stand for AxKit, AxKit claude, AxKit down, AxKit json, AxKit git, AxKit terminal, AxKit file, AxKit media, AxKit preview, AxKit start, AxKit process, AxKit task, AxKit pass, AxKit calc, AxKit clip and AxKit mcpclient.
         """;
 
     /// <summary>Whether an argument asks for the usage text: the forms Windows and Unix programs take (the apps' hosts read it too).</summary>
