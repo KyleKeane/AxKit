@@ -261,8 +261,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   any other, a notice and the running version kept (2026-10-23: both escaped as a crash notice over the progress).
   The window's close for an installed update is a real close in every window, the one that otherwise hides on
   closing included (axStart, `ClosingForUpdate`). Each app's close
-  question after I accept all terms, install and restart (axClaude's Keep working, axDown's Cancel in the save question) keeps the window
-  on the old program file and says "Update installed. It starts with the next axClaude" (or axDown).
+  question after I accept all terms, install and restart (axClaude's Keep working, axTerminal's Keep running, axDown's Cancel in the save question) keeps the window
+  on the old program file and says "Update installed. It starts with the next axClaude" (or axTerminal, axDown).
 - AX-3.6 **A failed update's notice** (2026-10-24, the user's ask after 3.7.1's update failed on one machine with
   "the list of apps could not be read" and nothing more): what failed, then the details to send (the versions,
   Windows' version, and the installer's output or the error with its kind), with **Copy details** (D; the details on

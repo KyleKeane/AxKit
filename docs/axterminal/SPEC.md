@@ -138,7 +138,10 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   "The shell ended", the status `Shell ended`; Enter in the field then keeps its text and announces "The shell ended.
   Ctrl+Shift+R starts it again" (axClaude FR-2.1). Closing the window ends the shell and whatever runs in it; while a
   command runs the notice "A command is still running" asks first, with **Close anyway** (Enter) and **Keep running**
-  (Escape), as axClaude asks for Claude (axClaude FR-1.7); Close anyway terminates the command at once.
+  (Escape), as axClaude asks for Claude (axClaude FR-1.7); Close anyway terminates the command at once. After Update
+  and restart (bundle AX-3.5) the notice adds that the updated axTerminal starts again, and Keep running keeps the
+  window on the old program file and says "Update installed. It starts with the next axTerminal", as axClaude's Keep
+  working does (until 2026-11-09 it dropped the restart without a word).
 - AT-1.8 The console is 240 columns by 50 rows (`ptyColumns`, `ptyRows`; axClaude D9), so that programs wrap little;
   the window never resizes it.
 

@@ -43,4 +43,5 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 - Ctrl+S: the file picker with a name `axterminal-<date>.md` in the current folder; save: "Exported"; the file holds the Input and Output lines as Markdown headings.
 - F1: the shortcuts as a notice; h moves by its headings; Escape closes it. Help, User guide likewise.
 - Alt+F4 while `Start-Sleep 30` runs: the notice "A command is still running"; Escape keeps it; Alt+F4, Enter: closes.
+- After I accept all terms, install and restart (Help, Check for updates) while a command runs: the notice says the updated axTerminal starts again; Escape (Keep running): "Update installed. It starts with the next axTerminal", the command keeps running; the window closed later does not restart by itself.
 - Alt+A: the axKit menu as in every window; New window lists axTerminal; Open windows by type has an axTerminal submenu.

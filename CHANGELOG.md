@@ -2,6 +2,7 @@
 
 ## 5.2.2
 
+- axTerminal: after Update and restart, Keep running in the closing question keeps the installed update for the next start and says "Update installed. It starts with the next axTerminal", as axClaude's Keep working does; the notice also says that Close anyway starts the updated axTerminal. Before, Keep running dropped the restart without a word.
 - axTerminal: Command Prompt is started from Windows' own `cmd.exe` in System32, no longer from the `ComSpec` variable, which a program or a profile can point at another program (security audit S-1).
 - axKit: Turn on and add to Claude Code (axKit menu, AI tools) finds Claude Code where axClaude finds it, an install made through npm alone included, and the two no longer disagree on a computer with more than one copy (`AxKit.Core/ClaudeCodeProgram`, one search for both).
 - axKit: the current folder is kept out of every program search by bare name, in axKit and in the shells and programs it starts (Windows' `NoDefaultCurrentDirectoryInExePath` switch, security audit S-1). In axTerminal's Command Prompt a program in the current folder is run as `.\name`, as PowerShell has always asked, and a `git.exe` planted in a downloaded repository no longer answers to `git`.
