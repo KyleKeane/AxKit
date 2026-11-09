@@ -68,4 +68,15 @@ public sealed class ActionKeysTests
         Assert.Equal("Done: done, Kind: Bug, Size: 3", ActionKeys.SpokenSet(set));
         Assert.Null(ActionKeys.ParseSetLines("nothing"));
     }
+
+    [Fact]
+    public void An_open_action_never_starts_a_shell_or_Claude_Code_on_a_folder_off_this_computer()
+    {
+        // S-5's rule for the two apps that start a program where they open; the editors and viewers may open a share's file.
+        Assert.StartsWith("Not started: axTerminal", ActionKeys.OpenRefusal(Dispatch.AxTerminal, @"\\server\share\lists\Home\Fix the tap.json"));
+        Assert.StartsWith("Not started: axClaude", ActionKeys.OpenRefusal(Dispatch.AxClaude, @"\\server\share\code"));
+        Assert.Null(ActionKeys.OpenRefusal(Dispatch.AxJSON, @"\\server\share\lists\Home\Fix the tap.json"));
+        Assert.Null(ActionKeys.OpenRefusal(Dispatch.AxTerminal, Path.GetTempPath()));
+        Assert.Null(ActionKeys.OpenRefusal(Dispatch.AxClaude, Path.Combine(Path.GetTempPath(), "code")));
+    }
 }

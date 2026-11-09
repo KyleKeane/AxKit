@@ -33,7 +33,8 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `ActionKeys` and `ListAction` (docs/axkit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
   `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Make it a bug"), `ApplySet`
   (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines); an
-  action is `set`, `move` or `open`, with `Described`. Tested in `ActionKeysTests`.
+  action is `set`, `move` or `open`, with `Described`; `OpenRefusal` keeps an `open` of axClaude or axTerminal, and Open
+  in axClaude, off a folder that is not on a drive of this computer (S-5's rule, 2026-11-09). Tested in `ActionKeysTests`.
 - `GitHubList` and `GitHubListSettings` (RP-7.1, TK-7a.2): a list whose `list.json` has `"github"`: `Of`, `IsRepository`,
   `NewList` (the template, the settings, the default action keys), `Template`, `ToItem` (an issue as an item, the
   reporter id and the version from the body's last line), `NumberOf`, `FileStem` ("12 title"), `Refresh` (the

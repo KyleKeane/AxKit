@@ -188,4 +188,16 @@ public static class ActionKeys
         null => "empty",
         _ => value.ToJsonString().Trim('"'),
     };
+
+    /// <summary>
+    /// Why an open action must not start the app <paramref name="verb"/> on <paramref name="path"/>; null when it may.
+    /// axClaude and axTerminal start a program there (Claude Code, a shell), and a list.json may come from a list the
+    /// user did not write (a shared or synced folder, a cloned repository), so a folder off this computer, a share or a
+    /// mapped drive, is refused as S-5 refuses links there; the AI tools never start the two at all (McpTools), the
+    /// user's own key may, on this computer (the user's decision of 2026-11-09). Asking the drive's kind touches no network.
+    /// </summary>
+    public static string? OpenRefusal(string verb, string path) =>
+        verb is Dispatch.AxClaude or Dispatch.AxTerminal && !LocalPaths.IsLocal(path)
+            ? $"Not started: {Dispatch.Of(verb).Name} would run in a folder that is not on a drive of this computer"
+            : null;
 }

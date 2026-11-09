@@ -189,6 +189,13 @@ public sealed partial class TaskForm
 
         if (Dispatch.Apps.FirstOrDefault(known => known.Verb.Equals(open, StringComparison.OrdinalIgnoreCase)) is { } app)
         {
+            // A shell or Claude Code never on a folder off this computer (RP-8.1, S-5's rule; 2026-11-09).
+            if (ActionKeys.OpenRefusal(app.Verb, item.Path) is { } refused)
+            {
+                Announce(refused, true);
+                return;
+            }
+
             AxKitMenu.Start(app.Verb, item.Path);
             return;
         }
@@ -210,6 +217,13 @@ public sealed partial class TaskForm
         if (CurrentGitHub is not { Folder: { } folder })
         {
             Announce("Set the code repository's folder first: \"folder\" under \"github\" in this list's list.json (Ctrl+J)", true);
+            return;
+        }
+
+        // Before the folder is touched: a share is never asked whether it exists (S-5; 2026-11-09).
+        if (ActionKeys.OpenRefusal(Dispatch.AxClaude, folder) is { } refused)
+        {
+            Announce(refused, true);
             return;
         }
 

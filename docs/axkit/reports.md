@@ -220,7 +220,11 @@ levers are built now.
   One kind of action per key: `set` (fields to values, one undo step, IA-5.4), `move` (to a list by a path relative to
   this one, IA-D3), `open` (a field's link, or an app's verb on the item's file; in a GitHub list `axclaude` means
   RP-7.2's Open in axClaude). In a GitHub list a `set` of Kind or State is also sent to GitHub (RP-7.2). A key without
-  an entry: the edge earcon and "No action on Ctrl+3 in this list; List menu, Action keys sets one".
+  an entry: the edge earcon and "No action on Ctrl+3 in this list; List menu, Action keys sets one". An `open` of
+  `claude` or `terminal`, and Open in axClaude, start their program only in a folder on a drive of this computer: on
+  a share or a mapped drive the key says "Not started: axTerminal would run in a folder that is not on a drive of this
+  computer" and starts nothing, since a `list.json` may come from a list the user did not write (security audit S-5's
+  rule; the AI tools' `axkit_open` never starts the two at all, mcp.md; 2026-11-09).
 - **RP-8.2 Assigning them.** List menu → "Action keys…": a notice listing the nine keys with their names ("Ctrl+1.
   Make it a bug", the full stop as AX-8.5's pause); Enter on one opens its form: Name; What (Set fields, Move to a list,
   Open); the value; Delete clears it. Written into `list.json`, so axJSON (Ctrl+J) edits them too.

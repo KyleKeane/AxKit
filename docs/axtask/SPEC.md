@@ -129,7 +129,8 @@ The design is `docs/axkit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules a
   (RP-8.1), on the item selected in the navigator: `set` writes fields to values as one undo step (a field the item
   lacks is added, with the value's type), `move` moves the item to a list by a path relative to this one, the links
   following (IA-D3), `open` opens a field's web address in the browser, an app by its verb on the item's file
-  (`axjson`, `axfile`), or `axclaude` on an issue (TK-7a.3). A digit without an action: the edge earcon and "No action
+  (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1), or `axclaude` on an
+  issue (TK-7a.3). A digit without an action: the edge earcon and "No action
   on Ctrl+3 in this list; List menu, Action keys sets one"; outside a list, "Action keys act in a list: open one
   first". List → Action keys… lists the nine keys ("Ctrl+1. Make it a bug", "Ctrl+3. not set"); Enter on one asks the
   name (empty removes the key), what it does (set, move, open) and the value, and writes `list.json` as one undo step
@@ -151,7 +152,8 @@ The design is `docs/axkit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules a
   feedback (the issue's labels), Close and Reopen (its state), Comment… (a notice with a field), Block this reporter
   and Block this version (the reports repository's `blocklist.json`, RP-6.4), Open on GitHub (the browser), Open in
   axClaude (axClaude started on the folder `"folder"` under `"github"` names, with `--message` putting "Issue 12:
-  <title>" and the body into its message field, unsent; without the folder, it says to set it). A set of Kind or
+  <title>" and the body into its message field, unsent; without the folder, it says to set it; a folder off this
+  computer, a share or a mapped drive, is refused before it is touched, RP-8.1). A set of Kind or
   State in a GitHub list goes to GitHub first, as the user's own account, and the file changes only when GitHub took
   it; a refusal is said ("Not changed: GitHub refused (403)…") and nothing changes locally (RP-7.2).
 - **TK-7a.4 The user's token.** List → GitHub account… takes a fine-grained token of the user's own GitHub account in

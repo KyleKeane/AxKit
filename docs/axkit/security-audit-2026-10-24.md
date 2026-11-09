@@ -173,7 +173,7 @@ Fixed on the branch `security`, one commit per finding or close set, each with i
 | S-20, S-45 | 88a4c0f | Copy diagnostics redacted; `Redaction` in `AxKit.Core`; its e-mail pattern without backtracking |
 | S-9 | 127bec4 | a `.git` file's `gitdir` only on this computer |
 | S-7, S-8 | 69e3052 | the mark of the web kept on extracted files; links left out of a compressed folder |
-| S-5 | 1bffbbe | axTask links rooted or off this computer never opened |
+| S-5 | 1bffbbe | axTask links rooted or off this computer never opened; on 2026-11-09 an action key's or Open in axClaude's shell or Claude Code never on a folder off this computer (`ActionKeys.OpenRefusal`) |
 | S-4, S-6, S-15, S-18, S-19 | 5e332b1 | axPass: private clipboard (the user's decision), lock with Windows, a signed tool only, web addresses only, option-like names as paths |
 | S-27 to S-34 | c9adcf0 | signed releases (the user's decision): the key on the maintainer's machine, the draft workflow, the updater's and `install.cmd`'s checks, read-only build tokens, locked restore |
 | S-37, S-38 | 9dc315f | axTerminal's marks carry a per-session secret; the folder mark only after the prompt's own, on this computer |
@@ -231,10 +231,11 @@ path, parser, pipe and log line again and closed these, each on the branch `cons
 | S-56 | low | the automation channel read a client's first line with no length cap before the secret check, where the MCP channel capped at 64 KB; now both read through `UserPipe.ReadLine` |
 | S-57 | low | S-42's rule, text from outside shown with its hidden characters made visible, reached three lists; `AxKitList.Fill` fills every list of that kind now, so the viewer's details follow it too |
 
-Left for the user (the inventory's section 11, decided on 2026-11-09): a `list.json` `open` action that may start
-Claude Code or a shell, which the MCP tool refuses; S-53's refusal in axClaude's own `claude.cmd` command lines. Done
-since that day: S-1's `NoDefaultCurrentDirectoryInExePath` (the table's row) and the cap on a zip's entries in
-axPreview (the first 1,000, then "and N more", AP-7.2).
+Left for the user (the inventory's section 11, decided on 2026-11-09): S-53's refusal in axClaude's own `claude.cmd`
+command lines. Done since that day: S-1's `NoDefaultCurrentDirectoryInExePath` (the table's row), the cap on a zip's
+entries in axPreview (the first 1,000, then "and N more", AP-7.2), and a `list.json` `open` action's shell or Claude
+Code kept off a folder that is not on a drive of this computer (S-5's row; the user presses the key, so on this
+computer the two start, where the MCP tool never starts them).
 
 The review's notes, unconfirmed: Windows' property handlers run inside axPreview's process for the Details list (a
 third-party handler that crashes on a malformed file ends it; a hung one is left after five seconds), as they run
