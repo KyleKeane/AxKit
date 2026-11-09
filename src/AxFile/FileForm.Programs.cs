@@ -94,7 +94,6 @@ public sealed partial class FileForm
             CheckFileExists = true,
         };
         var chosen = ShowSystemDialog(dialog) == DialogResult.OK ? dialog.FileName : null;
-        _list.Select();
         if (chosen is null)
         {
             return;

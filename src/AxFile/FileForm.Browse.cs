@@ -736,7 +736,6 @@ public sealed partial class FileForm
     private void OpenFolderDialog()
     {
         var chosen = ChooseFolder("Choose the folder to show", _folder);
-        _list.Select();
         if (chosen is not null)
         {
             Do(() => ShowFolderAsync(chosen, null, remember: true));

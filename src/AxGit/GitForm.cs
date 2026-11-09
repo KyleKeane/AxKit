@@ -347,7 +347,6 @@ public sealed partial class GitForm : AxKitForm
     private void OpenRepositoryDialog()
     {
         var chosen = ChooseFolder("Choose a folder inside the repository", _root);
-        _list.Select();
         if (chosen is not null)
         {
             Do(() => StartAsync(chosen));

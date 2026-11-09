@@ -349,7 +349,6 @@ public sealed partial class MediaForm : AxKitForm
         }
 
         var chosen = ShowSystemDialog(dialog) == DialogResult.OK ? dialog.FileNames : [];
-        _list.Select();
         if (chosen.Length > 0)
         {
             AddPaths(chosen, null);
@@ -360,7 +359,6 @@ public sealed partial class MediaForm : AxKitForm
     private void OpenFolder()
     {
         var chosen = ChooseFolder("Choose the folder whose sound and video files to add");
-        _list.Select();
         if (chosen is not null)
         {
             AddPaths([chosen], $"No sound or video files in {PathName.Of(chosen)}");

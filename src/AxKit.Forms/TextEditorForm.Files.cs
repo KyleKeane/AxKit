@@ -212,7 +212,6 @@ public sealed partial class TextEditorForm
         if (ShowSystemDialog(dialog) == DialogResult.OK)
         {
             LoadDocument(dialog.FileName);
-            _editor.Select();
         }
     });
 
@@ -305,7 +304,6 @@ public sealed partial class TextEditorForm
 
         if (ShowSystemDialog(dialog) != DialogResult.OK)
         {
-            _editor.Select();
             return;
         }
 

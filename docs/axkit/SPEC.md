@@ -852,7 +852,11 @@ These are the rules of `docs/axclaude/SPEC.md` that are not about Claude; app sp
   with, Properties and Windows menu, docs/axfile/SPEC.md AF-4.7), are the only separate windows. The pickers are
   shown through the window base's `ShowSystemDialog`, which marks the window while one is up (`DialogShowing`),
   since a dialog's closing activates the window before the command that opened it has gone on (2026-10-23: the
-  editors said "Reloaded" in the middle of Save as, and axFile read its folder again).
+  editors said "Reloaded" in the middle of Save as, and axFile read its folder again), and which puts the focus back
+  on the control that had it when the dialog closes, OK or cancel alike, one rule for every window (2026-11-09; before,
+  each caller did its own, the editor's Open only after OK and its Save as only after cancel, some windows never). A
+  dialog opened from a notice's button leaves the focus to the notice (axClaude's Locate claude.exe, the New session
+  notice's Choose folder).
   A notice's text takes the heading letters in every window (`TextJump.HeadingLetters`, the default of
   `OverlayPanel.Jumps`; the letters of axClaude's transcript): h and Shift+H the next and the previous heading, 1 to 6
   and Shift with them a heading of that level, by the text's Markdown headings; an editor's notices take the editor's

@@ -710,9 +710,15 @@ public abstract partial class AxKitForm : Form
     /// </summary>
     protected bool DialogShowing { get; private set; }
 
-    /// <summary>Shows one of the Windows dialogs over this window, the only separate windows an app opens (AX-7.2), with <see cref="DialogShowing"/> set meanwhile.</summary>
+    /// <summary>
+    /// Shows one of the Windows dialogs over this window, the only separate windows an app opens (AX-7.2), with
+    /// <see cref="DialogShowing"/> set meanwhile, and puts the focus back where it was when the dialog closes, OK or
+    /// cancel alike, one rule for every window (2026-11-09; each caller did its own before, the editor's Open only after
+    /// OK and its Save as only after cancel). A dialog opened from a notice's button leaves the focus to the notice.
+    /// </summary>
     protected DialogResult ShowSystemDialog(CommonDialog dialog)
     {
+        var before = FocusedControl();
         DialogShowing = true;
         try
         {
@@ -721,6 +727,10 @@ public abstract partial class AxKitForm : Form
         finally
         {
             DialogShowing = false;
+            if (before is { IsDisposed: false, Visible: true, Enabled: true })
+            {
+                before.Select();
+            }
         }
     }
 
