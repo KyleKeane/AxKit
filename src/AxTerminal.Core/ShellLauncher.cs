@@ -144,9 +144,9 @@ public static class ShellLauncher
         switch (kind)
         {
             case ShellKind.PowerShell7:
-                return FindOnPath("pwsh.exe") ?? Existing(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "PowerShell", "7", "pwsh.exe"));
+                return SystemPrograms.OnPath("pwsh.exe") ?? Existing(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "PowerShell", "7", "pwsh.exe"));
             case ShellKind.WindowsPowerShell:
-                return Existing(Path.Combine(SystemRoot(), "System32", "WindowsPowerShell", "v1.0", "powershell.exe")) ?? FindOnPath("powershell.exe");
+                return Existing(SystemPrograms.PowerShell) ?? SystemPrograms.OnPath("powershell.exe");
             case ShellKind.CommandPrompt:
                 return Existing(Environment.GetEnvironmentVariable("ComSpec")) ?? Existing(Path.Combine(SystemRoot(), "System32", "cmd.exe"));
             case ShellKind.GitBash:
@@ -171,7 +171,7 @@ public static class ShellLauncher
             }
         }
 
-        if (FindOnPath("git.exe") is { } git && Path.GetDirectoryName(git) is { } dir)
+        if (SystemPrograms.OnPath("git.exe") is { } git && Path.GetDirectoryName(git) is { } dir)
         {
             return Existing(Path.GetFullPath(Path.Combine(dir, "..", "bin", "bash.exe")))
                 ?? Existing(Path.GetFullPath(Path.Combine(dir, "..", "..", "bin", "bash.exe")));
@@ -255,9 +255,4 @@ public static class ShellLauncher
     private static string SystemRoot() => Environment.GetEnvironmentVariable("SystemRoot") ?? @"C:\Windows";
 
     private static string? Existing(string? path) => path is not null && File.Exists(path) ? path : null;
-
-    private static string? FindOnPath(string file)
-    {
-        return SystemPrograms.OnPath(file);
-    }
 }
