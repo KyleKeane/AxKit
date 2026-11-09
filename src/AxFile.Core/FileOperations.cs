@@ -104,7 +104,7 @@ public static class FileOperations
     /// <summary>Makes an empty file in <paramref name="folder"/>, "New file.txt", or "New file - 2.txt" when that is taken (AF-4.1), and returns its path.</summary>
     public static string CreateFile(string folder)
     {
-        var path = FreeName(folder, "New file", ".txt");
+        var path = ItemFiles.FreePath(folder, "New file", ".txt");
         File.WriteAllBytes(path, []);
         return path;
     }
@@ -143,19 +143,6 @@ public static class FileOperations
     public static Task<string?> DeleteToRecycleBinAsync(IReadOnlyList<string> paths) =>
         RunShellOperationAsync(FO_DELETE, paths, null, "The deletion");
 
-    /// <summary>"name.ext", or "name - 2.ext", "name - 3.ext" when taken: the first path in <paramref name="folder"/> that nothing has, nor <paramref name="taken"/> holds (AF-4.8).</summary>
-    public static string FreeName(string folder, string stem, string extension, IEnumerable<string>? taken = null)
-    {
-        for (var n = 1; ; n++)
-        {
-            var name = n == 1 ? stem + extension : $"{stem} - {n}{extension}";
-            var path = Path.Combine(folder, name);
-            if (!File.Exists(path) && !Directory.Exists(path) && !(taken?.Contains(path, StringComparer.OrdinalIgnoreCase) ?? false))
-            {
-                return path;
-            }
-        }
-    }
 
     /// <summary>
     /// Where each source lands when copied or moved into <paramref name="folder"/> (AF-4.8): under its own name, or
@@ -174,8 +161,8 @@ public static class FileOperations
             if (File.Exists(path) || Directory.Exists(path) || taken.Contains(path, StringComparer.OrdinalIgnoreCase))
             {
                 path = isFolder
-                    ? FreeName(folder, name, string.Empty, taken)
-                    : FreeName(folder, Path.GetFileNameWithoutExtension(name), Path.GetExtension(name), taken);
+                    ? ItemFiles.FreePath(folder, name, string.Empty, taken: taken)
+                    : ItemFiles.FreePath(folder, Path.GetFileNameWithoutExtension(name), Path.GetExtension(name), taken: taken);
             }
 
             destinations.Add(path);

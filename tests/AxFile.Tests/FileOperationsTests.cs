@@ -1,4 +1,5 @@
 using AxFile.Core;
+using AxKit.Core;
 
 namespace AxFile.Tests;
 
@@ -244,10 +245,10 @@ public sealed class FileOperationsTests : IDisposable
     [Fact]
     public void A_free_name_adds_a_dash_and_a_number_and_destinations_avoid_each_other()
     {
-        Assert.Equal(Path.Combine(_folder.Path, "new.txt"), FileOperations.FreeName(_folder.Path, "new", ".txt"));
-        Assert.Equal(Path.Combine(_folder.Path, "notes - 2.md"), FileOperations.FreeName(_folder.Path, "notes", ".md"));
-        Assert.Equal(Path.Combine(_folder.Path, "docs - 2"), FileOperations.FreeName(_folder.Path, "docs", string.Empty));
-        Assert.Equal(Path.Combine(_folder.Path, "docs - 3"), FileOperations.FreeName(_folder.Path, "docs", string.Empty, [Path.Combine(_folder.Path, "docs - 2")]));
+        Assert.Equal(Path.Combine(_folder.Path, "new.txt"), ItemFiles.FreePath(_folder.Path, "new", ".txt"));
+        Assert.Equal(Path.Combine(_folder.Path, "notes - 2.md"), ItemFiles.FreePath(_folder.Path, "notes", ".md"));
+        Assert.Equal(Path.Combine(_folder.Path, "docs - 2"), ItemFiles.FreePath(_folder.Path, "docs", string.Empty));
+        Assert.Equal(Path.Combine(_folder.Path, "docs - 3"), ItemFiles.FreePath(_folder.Path, "docs", string.Empty, taken: [Path.Combine(_folder.Path, "docs - 2")]));
 
         var other = Path.Combine(_folder.Path, "docs", "notes.md");
         File.WriteAllText(other, "x");

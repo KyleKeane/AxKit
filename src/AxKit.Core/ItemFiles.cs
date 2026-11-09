@@ -19,8 +19,12 @@ public static class ItemFiles
         return stem.Length == 0 ? "Untitled" : stem;
     }
 
-    /// <summary>"name.json", or "name - 2.json" when taken (IA-4.5); <paramref name="own"/> is the item's own file, which never counts as taken.</summary>
-    public static string FreePath(string folder, string stem, string extension, string? own = null)
+    /// <summary>
+    /// "name.json", or "name - 2.json", "name - 3.json" when taken (IA-4.5; axFile's AF-4.8 and axPass's backups follow
+    /// the same rule): the first path in the folder that nothing has, nor <paramref name="taken"/> holds (the names an
+    /// operation under way will write); <paramref name="own"/> is the item's own file, which never counts as taken.
+    /// </summary>
+    public static string FreePath(string folder, string stem, string extension, string? own = null, IEnumerable<string>? taken = null)
     {
         for (var n = 1; ; n++)
         {
@@ -30,7 +34,7 @@ public static class ItemFiles
                 return own;
             }
 
-            if (!File.Exists(path) && !Directory.Exists(path))
+            if (!File.Exists(path) && !Directory.Exists(path) && !(taken?.Contains(path, StringComparer.OrdinalIgnoreCase) ?? false))
             {
                 return path;
             }

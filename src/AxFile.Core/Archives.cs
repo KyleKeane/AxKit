@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using AxKit.Core;
 
 namespace AxFile.Core;
 
@@ -22,7 +23,7 @@ public static class Archives
     public static string Compress(IReadOnlyList<string> sources, string folder, Action<int, int>? progress = null)
     {
         var stem = sources.Count == 1 ? System.IO.Path.GetFileNameWithoutExtension(sources[0]) : AxKit.Core.PathName.Of(folder);
-        var zip = FileOperations.FreeName(folder, stem.Length == 0 ? "archive" : stem, ".zip");
+        var zip = ItemFiles.FreePath(folder, stem.Length == 0 ? "archive" : stem, ".zip");
         File.WriteAllBytes(zip, []);
         var temporary = zip + ".tmp";
         var total = sources.Sum(CountFiles);
@@ -96,7 +97,7 @@ public static class Archives
     public static string Extract(string zip, string folder, Action<int, int>? progress = null)
     {
         var stem = System.IO.Path.GetFileNameWithoutExtension(zip);
-        var target = FileOperations.FreeName(folder, stem.Length == 0 ? "archive" : stem, string.Empty);
+        var target = ItemFiles.FreePath(folder, stem.Length == 0 ? "archive" : stem, string.Empty);
         using var archive = ZipFile.OpenRead(zip);
         var root = System.IO.Path.GetFullPath(target + System.IO.Path.DirectorySeparatorChar);
         var total = archive.Entries.Count(entry => !IsFolderEntry(entry));

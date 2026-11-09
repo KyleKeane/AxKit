@@ -1,4 +1,5 @@
 using System.Globalization;
+using AxKit.Core;
 
 namespace AxPass.Core;
 
@@ -24,12 +25,7 @@ public static class Backups
         var folder = FolderFor(database);
         Directory.CreateDirectory(folder);
         var stem = PassTree.DatabaseName(database) + " " + now.ToString(TimeFormat, CultureInfo.InvariantCulture);
-        var path = Path.Combine(folder, stem + ".kdbx");
-        for (var n = 2; File.Exists(path); n++)
-        {
-            path = Path.Combine(folder, $"{stem} - {n}.kdbx");
-        }
-
+        var path = ItemFiles.FreePath(folder, stem, ".kdbx");
         File.Copy(database, path);
         foreach (var old in List(database).Skip(Keep))
         {
