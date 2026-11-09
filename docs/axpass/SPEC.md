@@ -13,7 +13,8 @@ axPass's code and documents, "SPEC.md" means this file.
 An **access layer** for KeePassXC (bundle AX-11, 2026-10-29): titled "axPass, access layer for KeePassXC"; before the first unlock and before File, New database, the consent notice (AX-11.4); Not now says "Not connected to KeePassXC. Enter unlocks".
 
 One database per window. The navigator is its groups and entries, moved through as axTask moves through lists and
-items: Right into a group, Left back up, Enter or Tab to an entry's fields. An entry's fields are KeePass's own: Title,
+items: Right into a group, Left back up, Enter or Tab to an entry's fields (Ctrl+Tab, Ctrl+Shift+Tab and F6 switch the
+panes too, the bundle's keys, AX-8.2). An entry's fields are KeePass's own: Title,
 UserName, Password, URL and Notes, read "UserName, user name, sam" and "Password, password, hidden". Ctrl+B copies
 the user name and Ctrl+C the password, which the clipboard loses again after 30 seconds. Ctrl+L locks: the window
 forgets the master password and shows only the notice that asks for it.

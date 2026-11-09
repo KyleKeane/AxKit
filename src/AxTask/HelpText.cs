@@ -19,7 +19,7 @@ public static class HelpText
           Right: into a list or a smart list. On an item or a section's header, nothing: the edge sound
           Left or Backspace: back to the sections
           Enter: open: a list shows its items, an item moves to its fields
-          Tab: to the detail pane
+          Tab, Ctrl+Tab or F6: to the detail pane
           Space: done or not done, on a task
           Ctrl+N: a new item in this list. Ctrl+Shift+N: a new list, in the section of the line selected
           Ctrl+M on a list: move it to a section, or to a new one; its Section field in the detail pane does the same
@@ -36,7 +36,7 @@ public static class HelpText
           Enter: change the field. Space: done or not done, on a check
           Ctrl+N: a new field. F2: rename the field in place. Delete: remove it. Alt+Up, Alt+Down: move it
           Ctrl+Q: read the field's whole value
-          Escape, Tab or Shift+Tab: back to the navigator
+          Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
 
         ## GitHub lists
           List, New GitHub list makes a list of a repository's open issues, read from GitHub when it opens and on F5; your Notes on each issue stay

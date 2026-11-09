@@ -65,6 +65,15 @@ keys tab
 expect focus Due, date, 30 October 2099, Friday
 keys shift+tab
 expect focus Fix the tap, due 30 October 2099
+# The bundle's pane keys do the same from either pane (AX-8.2).
+keys ctrl+tab
+expect focus Due, date, 30 October 2099, Friday
+keys f6
+expect focus Fix the tap, due 30 October 2099
+keys ctrl+shift+tab
+expect focus Due, date, 30 October 2099, Friday
+keys escape
+expect focus Fix the tap, due 30 October 2099
 
 # 2.1 Space marks it done and not done, in the file too.
 keys space

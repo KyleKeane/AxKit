@@ -128,7 +128,7 @@ WinForms code every app of the bundle uses (`docs/axkit/SPEC.md` AX-6.2, AX-6.4)
 - `ItemForm` and `ItemKeys`, with the records `ItemRow`, `ItemDetail` and `ItemDetailLine` (docs/axkit/item-apps.md; from axTask on its second use, axPass, 2026-10-24): the item apps' window on `AxKitForm`.
   - `ItemForm.cs`:
     - the navigator and the detail pane (`Navigator`, `DetailPane`, each an `AxKitList`) in a `SplitContainer`, the status bar;
-    - `PlaceControls` with the app's menu bar, the commands of `ItemKeys` registered after the app's own (`AddSharedKeys`, called by `PlaceControls`);
+    - `PlaceControls` with the app's menu bar, the commands of `ItemKeys` registered after the app's own (`AddSharedKeys`, called by `PlaceControls`; the bundle's Ctrl+Tab, Ctrl+Shift+Tab and F6 switch the panes from either one, AX-8.2, 2026-11-09);
     - the levels (`Into`, `OpenSelected`, `UpLevel`, `AnnounceLevel`, `Refresh`);
     - `Fill` (the one place the navigator, its name, the title and the status bar are filled, from the app's `ReadLevel`);
     - and `FillDetail` (silently, on every selection change, from the app's `DetailOf`; the field selected kept while the same `ItemDetail.Key` shows).

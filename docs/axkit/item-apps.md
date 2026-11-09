@@ -42,6 +42,7 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | Left, Backspace | up a level | nothing |
 | Enter | open: a list opens its items; an item moves to its fields, as Tab (IA-D2) | change the field (section 5) |
 | Tab, Shift+Tab | to the detail pane | back to the navigator |
+| Ctrl+Tab, Ctrl+Shift+Tab, F6 | to the detail pane (the bundle's pane keys, AX-8.2, since 2026-11-09) | back to the navigator |
 | Escape | — | back to the navigator |
 | Ctrl+N | new item in this list | new field |
 | Ctrl+Shift+N | new list here | — |

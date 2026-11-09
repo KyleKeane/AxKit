@@ -29,8 +29,8 @@ installed; axPass never decrypts the file itself.
   Backspace back up; Right on an entry plays the edge sound. Enter opens: a group shows what is in it, an entry moves
   to its fields. Type the start of a name to jump to it.
 - **The detail pane**, on the right: the entry's fields, "Title, text, Gmail", "UserName, user name, sam",
-  "Password, password, hidden", "URL, text, …", "Notes, long text, …". Tab goes there; Escape, Tab or Shift+Tab come
-  back. A row reads its user name once the entry has been read.
+  "Password, password, hidden", "URL, text, …", "Notes, long text, …". Tab, Ctrl+Tab or F6 go there; Escape, Tab,
+  Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 come back. A row reads its user name once the entry has been read.
 
 The password is never spoken, never shown and never written anywhere by axPass.
 

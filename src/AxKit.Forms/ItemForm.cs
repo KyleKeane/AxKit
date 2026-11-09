@@ -236,6 +236,13 @@ public abstract partial class ItemForm : AxKitForm
         AddKey(new Command("New list", ItemKeys.NewList, NewList) { When = NotRenaming });
         AddKey(new Command("Read in full", ItemKeys.ReadAll, ReadAll) { When = NotRenaming, Mark = CommandMark.Read });
 
+        // The bundle's focus keys switch the panes from either one, as in every other window (AX-8.2; 2026-11-09, the
+        // item windows had Tab and Shift+Tab alone, which stay each pane's own below).
+        foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
+        {
+            AddKey(new Command("Switch between the navigator and the detail pane", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open });
+        }
+
         // The navigator's keys.
         AddKey(new Command("Into the list", ItemKeys.Into, Into) { When = InNavigator, Mark = CommandMark.Open });
         AddKey(new Command("Up a level", ItemKeys.Up, UpLevel) { When = InNavigator, Mark = CommandMark.Open });

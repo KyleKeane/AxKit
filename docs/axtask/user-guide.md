@@ -28,8 +28,8 @@ Two panes side by side, and a status bar.
   holds items, not other lists: your own sections group the lists instead.
 - Right on an item does nothing; you hear the edge sound, as in axFile on a file.
 - Enter opens: on a list it shows the list's items; on an item it moves you to the item's fields, as Tab does.
-- Tab goes to the detail pane. Escape, Tab or Shift+Tab come back to the navigator.
-- Ctrl+1 goes to All tasks from anywhere.
+- Tab, Ctrl+Tab or F6 go to the detail pane. Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 come back to the navigator.
+- Ctrl+0 goes to All tasks from anywhere.
 - At either end of a pane, Up or Down plays the edge sound.
 
 ## Sections of your own

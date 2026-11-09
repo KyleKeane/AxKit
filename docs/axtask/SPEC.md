@@ -14,7 +14,8 @@ A folder of lists: `Home\`, `Shopping\`, `Course plan\`, each item a file such a
 deep (TK-D4). The top level is in sections (TK-3a): **Smart lists** (All tasks, every task not done from every list
 by due date, and the saved filters), **User lists**, the user's own sections, and **Archived lists**; Ctrl+Up and
 Ctrl+Down move between them. Right or Enter goes into a list, Left back to the sections, Tab or Enter on an item to
-its fields in the detail pane. Space marks a task done.
+its fields in the detail pane (Ctrl+Tab, Ctrl+Shift+Tab and F6 switch the panes too, the bundle's keys, AX-8.2). Space
+marks a task done.
 
 ## 2. Goals and non-goals
 

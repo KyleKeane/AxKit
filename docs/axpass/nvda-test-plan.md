@@ -17,7 +17,7 @@ should read; a step that reads differently is a defect. The specifications are `
 ## 2. Moving and reading (IA-2, IA-3, PW-6)
 
 1. Right on Email: "Email, 1 item, Gmail". Right on Gmail: the edge sound. Left: back on Email.
-2. Enter on Gmail (or Tab): "Fields of Gmail", "Title, text, Gmail". Down: "UserName, user name, sam", "Password,
+2. Enter on Gmail (or Tab, Ctrl+Tab or F6, the bundle's pane keys): "Fields of Gmail", "Title, text, Gmail". Down: "UserName, user name, sam", "Password,
    password, hidden", "URL, text, https://mail.example.com", "Notes, long text, line one, and 1 more line".
 3. Ctrl+Q on Password: "Password, password, hidden". Escape; Ctrl+Q in the navigator: every field, the password
    "hidden".

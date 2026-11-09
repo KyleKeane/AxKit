@@ -19,7 +19,7 @@ public static class HelpText
           Left or Backspace: up a level
           Ctrl+Up, Ctrl+Down: the section before or after, on a level in sections (the other item apps'); here the edge sound
           Enter: open: a group shows what is in it, an entry moves to its fields. On a locked window, Enter unlocks
-          Tab: to the detail pane
+          Tab, Ctrl+Tab or F6: to the detail pane
           Ctrl+N: a new entry here. Ctrl+Shift+N: a new group here
           F2: rename the entry in place: a box over the line, Enter keeps the new title, Escape the old. Delete: move it to the Recycle Bin; Ctrl+Z brings it back
           Ctrl+M: move the entry to another group, chosen from a list
@@ -32,7 +32,7 @@ public static class HelpText
           Enter: change the field. On Password: type a new one twice, or Generate (Alt+G) makes one
           Ctrl+Q: read the field's whole value
           Ctrl+N, F2, Delete, Alt+Up, Alt+Down: the other item apps' field commands; here they say that an entry keeps KeePass's own fields
-          Escape, Tab or Shift+Tab: back to the navigator
+          Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
 
         ## Everywhere in axPass
           Ctrl+B: copy the user name
