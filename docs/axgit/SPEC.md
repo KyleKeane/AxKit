@@ -106,7 +106,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   view keeps its selection while the window is open, by the item's key (the file's path, the commit's hash, the
   branch's name), taken before the lists change (2026-10-23: taken after, two views with the same count swapped
   selections); F5 refreshes the view and the status bar the same way and says "Refreshed: <the list's name>". Each view is one
-  record in the window (`ViewState`: the list's name, the items, their keys, whether it has been read since it was
+  record in the window (`AxKit.Forms/ListViewState`, shared with axProcess: the list's name, the items, their keys, whether it has been read since it was
   last made stale, the selected key); the three records are the whole state of the list (2026-10-23).
 - AG-2.3 The title is `<repository folder name> - axGIT`, "No repository - axGIT" without one. The status bar's left
   label: the branch, then the upstream state when there is an upstream ("main · 2 ahead" / "main · 1 behind" / "main

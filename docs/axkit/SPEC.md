@@ -676,7 +676,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   - **Install it now** (AX-2.9): before an installer runs, the same notice for the program it installs, titled
     "Before <app> installs <program>", with **Install** in place of Connect; its acceptance counts for the app's first
     connection, so the user agrees once, in the step they were already taking.
-  The notice is the window base's (`AxKitForm.HasConsent`, the one check: true goes on, false has shown the reminder, whose Connect runs the caller again), the programs' words and addresses `AxKit.Core/ConsentTarget`.
+  The notice is the window base's (`AxKitForm.HasConsent`, the one check: true goes on, false has shown the reminder, whose Connect runs the caller again), the programs' words and addresses `ConsentTarget` in `AxKit.Core/Consent.cs`.
   A custom shell has no address for its terms: its notice says so.
 - AX-11.6 **Reminders at sign-in.** One line says whose account it is, without a check box: axClaude, on sending
   `/login`: "You are signing in to Anthropic through Claude Code; the account and its terms are between you and
@@ -893,13 +893,13 @@ src/AxKit.Core/       class library (net10.0), no WinForms, unit tested
 src/AxKit.Forms/      class library (net10.0-windows), WinForms pieces the apps use, among them the text editor shell
                      (TextEditorForm, EditorApp, EditorKeys, EditorHost)
 src/AxClaude/        class library (net10.0-windows): AxClaudeApp, MainForm, ... (axClaude's window)
-src/AxClaude.Core/   class library (net10.0): Vt, Transcript, Pty, Privacy, AppSettings (axClaude's pure code)
+src/AxClaude.Core/   class library (net10.0): Transcript (SessionModel and the readers), Pty/ClaudeLauncher, Privacy/GitExclude, AppSettings, StartupOptions (axClaude's pure code)
 src/AxDown/          class library (net10.0-windows): AxDownApp (its EditorApp), AxDownKeys, HelpText; the window is
                      the shell's, and its pure code (TextDocument, EditorSettings, MarkdownOutline) is AxKit.Core's
 src/AxJSON/          class library (net10.0-windows): AxJSONApp (its EditorApp), AxJSONKeys, HelpText (axJSON's app side)
 src/AxJSON.Core/     class library (net10.0): JsonScanner, JsonParser, JsonOutline, JsonFormat (axJSON's pure code)
 src/AxGit/           class library (net10.0-windows): AxGitApp, GitForm, AxGitKeys, HelpText (axGIT's window)
-src/AxGit.Core/      class library (net10.0): GitRunner, GitStatus, GitLog, GitBranches, GitSettings (axGIT's pure code)
+src/AxGit.Core/      class library (net10.0): GitRunner, GitStatus, GitLog, GitBranches, GitRemote, GitTrust, GitSettings (axGIT's pure code)
 src/AxTerminal/      class library (net10.0-windows): AxTerminalApp, TerminalForm, AxTerminalKeys, HelpText (axTerminal's window)
 src/AxTerminal.Core/ class library (net10.0): ShellLauncher, TerminalModel, TerminalSettings, … (axTerminal's pure code)
 src/AxFile/          class library (net10.0-windows): AxFileApp, FileForm, AxFileKeys, HelpText (axFile's window)
@@ -985,20 +985,25 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
 - **`StrCmpLogicalW`**, `shlwapi` (`src/AxKit.Core/NaturalOrder.cs`): Explorer's order of names, numbers compared as
   numbers, for axFile's entries and axMedia's queue. Stable; the fallback is a comparer of our own under the same
   tests.
-- **The EDIT control's messages**, `user32` (`SendMessage` and `GetCaretPos` in `src/AxKit.Forms/EditKeys.Page.cs`,
-  `EditKeys.Paragraph.cs` and `TranscriptView.cs`): line and caret positions and the scrolling of the views. As old as
-  Windows; WinForms' TextBox is the same control.
+- **The window calls more than one file makes**, `user32` (`SendMessage`, `PostMessage`, `SetForegroundWindow`,
+  `GetForegroundWindow`, `IsWindowVisible`, `GetWindowThreadProcessId`, `GetFocus` in `src/AxKit.Forms/User32.cs`,
+  declared once since 2026-10-24 and used through `using static`): the bullets below name the file whose call it is.
+  Stable.
+- **The EDIT control's messages**, `user32` (`GetCaretPos` in `src/AxKit.Forms/EditKeys.cs`, `SendMessage` from
+  `User32.cs`, `TranscriptView.cs`'s own `SendLineMessage`): line and caret positions and the scrolling of the views. As
+  old as Windows; WinForms' TextBox is the same control.
 - **`FlashWindowEx`**, `user32` (`src/AxKit.Forms/ConsoleForm.Signals.cs`): the taskbar flash when Claude or the
   shell wants attention while the window is in the background. Stable; without it the sounds remain.
-- **The window list**, `user32` (`EnumWindows`, `GetWindow`, `GetWindowText`, `GetWindowTextLength`,
-  `GetWindowThreadProcessId`, `IsIconic`, `IsWindowVisible`, `ShowWindow`, `SetForegroundWindow`, `PostMessage` in
-  `src/AxKit.Forms/AxKitMenu.cs`): the axKit menu's list of the bundle's windows and the switch to one. Stable.
-- **`WM_COPYDATA`**, `user32` (`SendMessageTimeoutW`, `AllowSetForegroundWindow`, `GetWindowThreadProcessId` in
-  `src/AxKit.Forms/AppMessage.cs`): the hand-over from a second start to the open window of axMedia or axPreview
-  (AX-7.2). Stable.
-- **`RegisterHotKey`**, `user32` (with `UnregisterHotKey`, `GetForegroundWindow`, `SetForegroundWindow`,
-  `FindWindowExW`, `IsWindow`, `IsWindowVisible`, `GetKeyState`, `GetWindowThreadProcessId` in
-  `src/AxStart/StartForm.cs`): axStart's system-wide key and the foreground given back (AS-4.1). Stable.
+- **The window list**, `user32` (`EnumWindows`, `GetWindow`, `GetWindowText`, `GetWindowTextLength`, `IsIconic`,
+  `ShowWindow` in `src/AxKit.Forms/AxKitMenu.cs`; `GetWindowThreadProcessId`, `IsWindowVisible`, `SetForegroundWindow`
+  and `PostMessage` from `User32.cs`): the axKit menu's list of the bundle's windows and the switch to one. Stable.
+- **`WM_COPYDATA`**, `user32` (`SendMessageTimeoutW`, `AllowSetForegroundWindow` in `src/AxKit.Forms/AppMessage.cs`;
+  `GetWindowThreadProcessId` from `User32.cs`): the hand-over from a second start to the open window of axMedia or
+  axPreview (AX-7.2). Stable.
+- **`RegisterHotKey`**, `user32` (with `UnregisterHotKey`, `FindWindowExW`, `IsWindow`, `GetKeyState` in
+  `src/AxKit.Forms/HotkeyForm.cs`; `GetForegroundWindow`, `SetForegroundWindow`, `IsWindowVisible`,
+  `GetWindowThreadProcessId` from `User32.cs`): axStart's and axClip's system-wide key and the foreground given back
+  (AS-4.1). Stable.
 - **`waveOut`**, `winmm` (`waveOutOpen`, `waveOutPrepareHeader`, `waveOutWrite`, `waveOutReset`,
   `waveOutUnprepareHeader`, `waveOutClose` in `src/AxKit.Forms/Sounds.cs`): the earcons, each a buffer queued behind
   the one playing. Legacy, kept by Windows for compatibility (`PlaySound` and .NET's `SoundPlayer` rest on it); the
@@ -1009,7 +1014,7 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
 - **The shell's folders and menus**, `shell32`, `shlwapi`, `user32` (`SHGetDesktopFolder`, `SHParseDisplayName`,
   `SHBindToParent`, `SHGetKnownFolderIDList`, `SHOpenWithDialog`, `ShellExecuteExW`, `StrRetToBufW`, the
   interfaces `IShellFolder` and `IContextMenu`, and the menu functions `CreatePopupMenu`, `TrackPopupMenuEx`,
-  `GetMenuItemCount`, `GetMenuItemID`, `DestroyMenu`, `PostMessageW` in `src/AxFile/Shell.cs`): an entry's Windows
+  `GetMenuItemCount`, `GetMenuItemID`, `DestroyMenu` in `src/AxFile/Shell.cs`, `PostMessage` from `User32.cs`): an entry's Windows
   menu, Open with, Properties, Eject (AF-4.7). Stable: the interfaces Explorer itself is built on.
 - **`shell:AppsFolder`**, `shell32` (`SHCreateItemFromParsingName`, `SHGetKnownFolderPath`, the interfaces
   `IShellItem` and `IEnumShellItems` in `src/AxStart/AppsFolder.cs`): the Start menu's programs for axStart

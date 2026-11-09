@@ -158,12 +158,12 @@ folder of the file or project in hand, and sends back. It works entirely offline
   with a letter searches the same way backwards (2026-10-24); the edge earcon when no name starts with it (both lists are
   the bundle's `AxKitList` since 2026-10-24, which has the type-ahead and the edge earcon built in). The Actions
   list takes typed letters the same way. The list box's own
-  one-letter jump gives way to this (`OnListKeyPress`); Space is the selection's key (AF-3.7), so a name is typed up
+  one-letter jump gives way to this (`AxKit.Forms/AxKitList`, AX-8.6); Space is the selection's key (AF-3.7), so a name is typed up
   to its first space. At the ends, where a key moves nothing, the window sounds the **edge earcon** rather than
   nothing (asked 2026-10-22, an earcon rather than words, since "First item" and the entry again were noise): one
   short low note (`Sounds.Edge`, A3 for 60 ms) on Up or Home at the first entry and Down or End at the last, in the
   folder list and the Actions list alike (`AxFileKeys.FirstItem`, `LastItem` and their seconds; the keys are the
-  list's own everywhere else, `AtEdge`). **Find** (Ctrl+F, the bundle's Find notice with the field "Name contains") selects the first entry
+  list's own everywhere else, `AxKitList`). **Find** (Ctrl+F, the bundle's Find notice with the field "Name contains") selects the first entry
   whose name holds the text, F3 and Shift+F3 the next and the previous. NVDA reads the selected entry; the app adds nothing.
 - AF-3.7 **Selection** (asked 2026-10-21). The list stays a single-selection list box, where the arrow keys choose
   the current entry (AF-3.6); the selection the operations act on is a set of marks on top of it. **Space** marks the

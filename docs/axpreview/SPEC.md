@@ -176,7 +176,7 @@ and an error naming a file that could not be opened.
      unpacked sizes; for a document, the paragraphs or slides; for any other file, how much readable text was found.
   3. **Windows:** every other property Windows' property system holds for the file, by its own display name and
      formatted as Windows formats it (`SHGetPropertyStoreFromParsingName`, `PSGetPropertyDescription`,
-     `PSFormatForDisplay`): a picture's dimensions and resolution, a sound's length, bit rate, artist and album, a
+     `PSFormatForDisplayAlloc`): a picture's dimensions and resolution, a sound's length, bit rate, artist and album, a
      video's frame size and rate, a document's author, title, pages and words, a program's version and company,
      whatever the kind's property handler gives. Empty values and the ones already listed above are left out.
 - AP-6.3 **Keys in the pane:** the list's own (the arrows, Home, End, type-ahead, the edge earcon); Ctrl+C copies the

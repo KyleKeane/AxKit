@@ -408,7 +408,7 @@ src/AxClaude.Core/        class library (net10.0), no WinForms
   Transcript/ SessionModel (on the bundle's LineStore), LineClassifier, Arrivals (the tick and the spoken replies),
               Question (the Question and QuestionOption records), QuestionReader, ScreenReader (ClaudeScreen, ScreenKey),
               QuestionRouter, SlashCommands (what Claude waits on, D33), ScreenActions (what a screen's keys do in the area), FeedbackDraftWatch
-  Privacy/    Redaction, GitExclude (D34)
+  Privacy/    GitExclude (D34; `Redaction` is the bundle's, `AxKit.Core/Redaction.cs`, since 2026-10-24)
   AppSettings.cs, StartupOptions.cs (the command line, FR-9)
 src/AxClaude/             class library (net10.0-windows), axClaude's window inside AxKit.exe: AxClaudeApp (the entry point
                           Run, one call into AxKit.Forms/AppHost.Run, which owns the crash handler, --help and

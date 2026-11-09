@@ -133,7 +133,7 @@ the base's. The rest of this section is for a window of a new kind.
   JSON, and keeps the listing as `apps.json` in the installation for an uninstall that cannot run the program. The
   Start menu entry, the shim, the submenu entries, the ProgID, the icon's copy, the removal and the `Say` lines all
   follow (AX-2.3). By hand: a background app's line in `$background`; a `-Start…` parameter for the updater if the
-  app should come back on what it had open, and the matching argument in `Updater.LaunchInstaller`; the header
+  app should come back on what it had open, and the matching argument in `Updater.StartInstalled`, the window's `RestartArguments()`; the header
   comment's list of commands.
 - `.github/ISSUE_TEMPLATE/bug.yml` and `idea.yml`: the app among the choices; `src/AxKit/AxKit.csproj`: the
   `<Description>`; `docs/axkit/SPEC.md`: the verb in AX-1.1 and the taskbar id in AX-1.6 **(script)**.
