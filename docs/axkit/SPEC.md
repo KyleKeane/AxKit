@@ -890,7 +890,9 @@ These are the rules of `docs/axclaude/SPEC.md` that are not about Claude; app sp
   `Application.SetColorMode(SystemColorMode.System)` before any window exists, so every window is light or dark as
   Windows is when the app starts, and a high contrast theme applies as it always has. No app sets a colour of its own,
   with one exception: axMedia's video area is black (AM-2.4), the colour of a video surface everywhere, so that a
-  picture's letterbox is not the window's colour (decided 2026-10-23).
+  picture's letterbox is not the window's colour (decided 2026-10-23). Since 2026-11-09 a theme file of the user's,
+  `%APPDATA%\AxKit\theme.json`, may give each class of object a colour of its own, applied by the window base alone
+  (`docs/axkit/theme.md`); without the file, or with `system` everywhere in it, nothing in this rule changes.
 
 ## 5. Architecture
 

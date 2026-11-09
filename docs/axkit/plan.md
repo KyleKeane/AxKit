@@ -91,6 +91,12 @@ the restart by the app itself (2.3.0).
   to the folder's entries as well; Enter runs the command or opens the entry. It is the window base's, fed by each
   window's menus, with axStart's matching shared; next to the AI service above, the second thing every app gets for
   free.
+- **Themes** (asked 2026-11-09, specified the same night in `theme.md`, to be built): one JSON file,
+  `%APPDATA%\AxKit\theme.json`, with a colour or `system` for every class of object the windows draw (the window,
+  the texts, the transcripts, the lists, the console field and its band, the notices, the status bar, the menus, the
+  buttons, the title bar), edited in axJSON from Options, Theme in every window, applied by the window base and read
+  again when it changes; without the file nothing changes (AX-7.7). For the sighted helpers and users with low vision;
+  the blind user loses nothing.
 - **A gutter for the transcript views** (the user's idea, 2026-10-19, agreed as a later bundle feature): two narrow
   columns to the left of a transcript, the line number and the jump letter of the line's kind (`i`, `o`, `h2`), for
   sighted helpers, drawn next to the view and never spoken, since in an edit control what is in the text is what NVDA
