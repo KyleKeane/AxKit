@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.2.2
+## 5.3.0
 
 - axMCP: a new app, access layer for MCP servers (`docs/axmcp/SPEC.md`): the MCP servers Claude Code knows on this computer (its configuration and a folder's `.mcp.json`) and your own, in axTask's kind of window; Right on a server starts it as a child process, the first time after your agreement, and shows its Tools, Resources and Prompts; Tab on a tool reads its arguments as typed fields made from its schema, Enter fills one, Ctrl+Enter calls it and the result opens as a notice text, Ctrl+J as JSON in axJSON; Enter on a resource reads it; Ctrl+N adds a server of your own, Ctrl+Shift+S stops one. Remote servers (http) are listed and not started in this version, since they would be a network use of axKit's own.
 - axDown, axJSON: File, New window (Ctrl+Shift+N) opens an empty document in a new window of the app and leaves this one as it is, as axPreview's File menu has it; asked as the reports repository's issue 2.
