@@ -24,7 +24,7 @@ public sealed record ProgramInstall(string Name, string? WingetId, string? Power
     /// winget, Windows' package manager (the App Installer), where Windows puts it for the user; null on a Windows
     /// without it. Never a winget.exe found on the PATH, which any folder there could hold (security audit S-10).
     /// </summary>
-    public static string? Winget()
+    private static string? Winget()
     {
         var apps = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WindowsApps", "winget.exe");
         return File.Exists(apps) ? apps : null;

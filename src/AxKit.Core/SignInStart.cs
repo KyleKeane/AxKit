@@ -16,7 +16,7 @@ public static class SignInStart
     private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
     /// <summary>The value's name for an app: "AxKit axStart".</summary>
-    public static string ValueName(string appName) => "AxKit " + appName;
+    private static string ValueName(string appName) => "AxKit " + appName;
 
     /// <summary>The value as the setting says: written when on and AxKit is installed, removed when off; nothing in the Store's copy.</summary>
     public static void Apply(string appName, string verb, bool on)

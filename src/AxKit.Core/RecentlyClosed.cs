@@ -4,7 +4,7 @@ namespace AxKit.Core;
 public sealed record ClosedItem(string App, string Path);
 
 /// <summary>The shape of the file: one list, the newest first.</summary>
-public sealed class RecentlyClosedList
+internal sealed class RecentlyClosedList
 {
     public List<ClosedItem> Items { get; set; } = [];
 }

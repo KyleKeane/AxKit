@@ -172,7 +172,7 @@ public abstract partial class ConsoleForm
     }
 
     /// <summary>Runs the action on the UI thread; false when the window is gone.</summary>
-    protected bool Post(Action action)
+    private bool Post(Action action)
     {
         if (IsDisposed || !IsHandleCreated)
         {

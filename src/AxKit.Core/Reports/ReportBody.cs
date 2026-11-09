@@ -48,7 +48,7 @@ public static partial class ReportBody
     }
 
     /// <summary>"Sent from axKit 5.1.0 with F4; reporter 6f1c…": the body's last line.</summary>
-    public static string ReporterLine(string version, Guid reporterId) => $"Sent from axKit {version.Trim()} with F4; reporter {reporterId:D}";
+    private static string ReporterLine(string version, Guid reporterId) => $"Sent from axKit {version.Trim()} with F4; reporter {reporterId:D}";
 
     /// <summary>The version and the reporter id of a body's last line, or null for a body that has none (an issue filed in the browser).</summary>
     public static (string Version, Guid ReporterId)? ParseReporterLine(string body)

@@ -122,7 +122,7 @@ public static class McpAccess
         && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(SealOf(key, settings)), Encoding.UTF8.GetBytes(settings.Seal));
 
     /// <summary>The key, made once: 32 random bytes kept with DPAPI for this user (MC-6.3).</summary>
-    public static void MakeKey()
+    private static void MakeKey()
     {
         if (ReadKey() is not null)
         {

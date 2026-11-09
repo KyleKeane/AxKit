@@ -74,7 +74,7 @@ public static class FieldTypes
     }
 
     /// <summary>"30 October 2026, Friday".</summary>
-    public static string SpokenDate(DateOnly date) => date.ToString("d MMMM yyyy, dddd", English);
+    private static string SpokenDate(DateOnly date) => date.ToString("d MMMM yyyy, dddd", English);
 
     /// <summary>"30 October": the short form of a row's summary (TK-4.3), with the year when it is not this one.</summary>
     public static string ShortDate(DateOnly date, DateOnly today) =>
@@ -185,7 +185,7 @@ public static class FieldTypes
     }
 
     /// <summary>A typed date and time: a date as <see cref="ParseDate"/> takes it, then a time (14:00, 9:30); a date alone is midnight.</summary>
-    public static System.DateTime? ParseDateTime(string typed, DateOnly today)
+    private static System.DateTime? ParseDateTime(string typed, DateOnly today)
     {
         var text = typed.Trim();
         var space = text.LastIndexOf(' ');

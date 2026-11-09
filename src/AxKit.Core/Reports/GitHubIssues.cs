@@ -38,11 +38,11 @@ public static class GitHubIssues
     /// </summary>
     public const int FormUrlLength = 2000;
 
-    public static string IssuesApi(string repository) => $"https://api.github.com/repos/{repository}/issues";
+    private static string IssuesApi(string repository) => $"https://api.github.com/repos/{repository}/issues";
 
-    public static string BlocklistUrl(string repository) => $"https://raw.githubusercontent.com/{repository}/main/blocklist.json";
+    private static string BlocklistUrl(string repository) => $"https://raw.githubusercontent.com/{repository}/main/blocklist.json";
 
-    public static string BlocklistApi(string repository) => $"https://api.github.com/repos/{repository}/contents/blocklist.json";
+    private static string BlocklistApi(string repository) => $"https://api.github.com/repos/{repository}/contents/blocklist.json";
 
     /// <summary>
     /// The browser's new-issue form of the repository, prefilled (RP-6.5), for a user with a GitHub account of their own:

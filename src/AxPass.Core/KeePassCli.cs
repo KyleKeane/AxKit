@@ -82,52 +82,6 @@ public static class KeePassCli
             : new CliResult(result.ExitCode, result.Output, result.Error);
     }
 
-    /// <summary>
-    /// Starts a command that goes on running (<c>clip</c>, which clears the clipboard itself after its seconds, PW-5.4)
-    /// and waits <paramref name="settleMs"/> for it: its result when it ended by then (a failure, most often), null
-    /// when it is still running as it should. The process is left to end by itself.
-    /// </summary>
-    public static CliResult? StartLasting(string cli, IReadOnlyList<string> arguments, IReadOnlyList<string> input, int settleMs)
-    {
-        var info = new ProcessStartInfo(cli)
-        {
-            UseShellExecute = false,
-            RedirectStandardInput = true,
-            RedirectStandardOutput = false,
-            RedirectStandardError = true,
-            CreateNoWindow = true,
-            StandardErrorEncoding = Encoding.UTF8,
-            StandardInputEncoding = new UTF8Encoding(false),
-        };
-        foreach (var argument in arguments)
-        {
-            info.ArgumentList.Add(argument);
-        }
-
-        // Outside call, program, KeePassXC: starts keepassxc-cli.exe for a command that keeps running (clip, which
-        // clears the clipboard itself after its seconds, PW-5.4), the password on its standard input; left to end by
-        // itself.
-        var process = Process.Start(info) ?? throw new IOException("KeePassXC's tool did not start");
-        var error = process.StandardError.ReadToEndAsync();
-        foreach (var line in input)
-        {
-            process.StandardInput.Write(line);
-            process.StandardInput.Write('\n');
-        }
-
-        process.StandardInput.Close();
-        if (!process.WaitForExit(settleMs))
-        {
-            process.EnableRaisingEvents = true;
-            process.Exited += (_, _) => process.Dispose();
-            return null;
-        }
-
-        var result = new CliResult(process.ExitCode, string.Empty, error.Result);
-        process.Dispose();
-        return result;
-    }
-
     /// <summary>The arguments of a command on a database: the command, -q (so that the password prompt goes nowhere), the options, the database, the rest.</summary>
     public static IReadOnlyList<string> On(string command, string database, IEnumerable<string>? options = null, params string[] rest) =>
         [command, "-q", .. options ?? [], database, .. rest.Select(AsPath)];

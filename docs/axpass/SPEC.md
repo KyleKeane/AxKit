@@ -64,7 +64,7 @@ forgets the master password and shows only the notice that asks for it.
 - **PW-5.2** One process per command, the database's path and the entry's path as arguments, the master password as
   the first line of standard input, `-q` so the prompt goes nowhere (read from the tool's source, kdbx-notes 7). The
   commands: `ls -R -f` for the groups and entries, `show` (without `-s`, so the password stays hidden) for an entry's
-  fields, `clip` for the copies, `add`, `edit`, `mkdir`, `mv`, `rm`, `generate`, `db-create`.
+  fields (and `show -s -a Password` for a copy, PW-5.4), `add`, `edit`, `mkdir`, `mv`, `rm`, `generate`, `db-create`.
 - **PW-5.3** Every command runs off the UI thread (bundle rule 3); the panes say "Reading mine…" while the list is read.
 - **PW-5.4** A copy of the password (Ctrl+C) reads that one password from the tool at the moment of the key
   (`show -s -a Password <entry>`) and puts it on the clipboard marked private (`AxKit.Forms/PrivateClipboard`: the

@@ -64,7 +64,7 @@ $targets = @(
         @('Apps', 'axTerminal, access layer for your shell.')) }
     @{ Key = 'KeePassXC'; Kind = 'program'; Lines = @(
         @('What', 'KeePassXC''s command-line tool, `keepassxc-cli.exe`, from the user''s installation of KeePassXC, found in its folder or on the PATH.'),
-        @('How', 'one process per command with the database''s path, the master password on its standard input, both outputs read under a time limit; `clip` is left running so that it clears the clipboard itself.'),
+        @('How', 'one process per command with the database''s path, the master password on its standard input, both outputs read under a time limit.'),
         @('What it reaches', 'nothing on the network: the tool has no network feature; it reads and writes the database file.'),
         @('Documentation', 'https://keepassxc.org/docs/KeePassXC_UserGuide#_command_line_tool; docs/axpass/kdbx-notes.md.'),
         @('Apps', 'axPass, access layer for KeePassXC.')) }

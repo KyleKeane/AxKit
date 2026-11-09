@@ -92,7 +92,7 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
 }
 
 /// <summary>The shape of the file: one list, oldest first.</summary>
-public sealed class ConsentList
+internal sealed class ConsentList
 {
     public List<ConsentRecord> Items { get; set; } = [];
 }

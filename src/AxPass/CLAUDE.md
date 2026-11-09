@@ -32,7 +32,7 @@ guide `docs/axpass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
 - `PassForm.Commands.cs`: `SaveFields` (`edit` with `EntryFields.EditOptions`), `RenameItem`, `RenameTo`, `DeleteRow`
   (`rm` with its `mv` back; a group or the Recycle Bin's entries after a question), `NewItem`, `NewList`, `Undo` (the
   runs a `Step` keeps), the password's notices (`ChangeSpecial`, Generate, typed twice, `edit -p`), the copies (the
-  user name by axPass, the password by the tool's `clip` with its 30-second clear, `KeePassCli.StartLasting`), the URL,
+  user name by axPass, the password read with `show -s -a Password` and put on the clipboard marked private by `AxKit.Forms/PrivateClipboard`, cleared after 30 seconds, PW-5.4), the URL,
   the database's picker and `db-create`, the tool's place.
 - `AxPassKeys`: the window's keys, `AxKit.Forms/ItemKeys.All` and its own; `All` feeds the collision test.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
@@ -49,5 +49,5 @@ guide `docs/axpass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
 
 - The tool's paths have no escape for a slash, so a title or a group name with one is refused, and `mv` moves entries
   only: a group in the Recycle Bin comes back in KeePassXC's own window.
-- `clip` runs for its 30 seconds; `StartLasting` waits 1.5 s for a failure and leaves it running.
+
 - A notice holds the window's own keys, so Generate is its button's Alt+G, not a window key.

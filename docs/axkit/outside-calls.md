@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 11 network requests, 27 program starts and 4 pipes, in 26 files, under the 11 headings below.
+Today: 11 network requests, 26 program starts and 4 pipes, in 26 files, under the 11 headings below.
 
 ## What axKit reaches
 
@@ -98,17 +98,15 @@ Calls (2):
 #### KeePassXC
 
 - **What**: KeePassXC's command-line tool, `keepassxc-cli.exe`, from the user's installation of KeePassXC, found in its folder or on the PATH.
-- **How**: one process per command with the database's path, the master password on its standard input, both outputs read under a time limit; `clip` is left running so that it clears the clipboard itself.
+- **How**: one process per command with the database's path, the master password on its standard input, both outputs read under a time limit.
 - **What it reaches**: nothing on the network: the tool has no network feature; it reads and writes the database file.
 - **Documentation**: https://keepassxc.org/docs/KeePassXC_UserGuide#_command_line_tool; docs/axpass/kdbx-notes.md.
 - **Apps**: axPass, access layer for KeePassXC.
 
-Calls (2):
+Calls (1):
 
 - **axPass**, `src/AxPass.Core/KeePassCli.cs:79`, in `KeePassCli.Run`, by `ProcessRun.Run`: runs the user's installed keepassxc-cli.exe for one command on the database, the master password on its standard input, and reads what it prints; the tool has no network feature.
   Code: `var result = ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs));`
-- **axPass**, `src/AxPass.Core/KeePassCli.cs:110`, in `KeePassCli.StartLasting`, by `Process.Start`: starts keepassxc-cli.exe for a command that keeps running (clip, which clears the clipboard itself after its seconds, PW-5.4), the password on its standard input; left to end by itself.
-  Code: `var process = Process.Start(info) ?? throw new IOException("KeePassXC's tool did not start");`
 
 #### Installers
 
@@ -273,7 +271,7 @@ Used in 1 place:
 
 Defined in .NET, System.Diagnostics: starts a program, through the Windows shell when UseShellExecute is set.
 
-Used in 17 places:
+Used in 16 places:
 
 - `src/AxFile/FileForm.Operations.cs:708`, in `FileForm.ShowFolderInExplorer`, for Windows.
 - `src/AxFile/FileForm.Operations.cs:792`, in `FileForm.OpenWithWindows`, for Windows.
@@ -290,7 +288,6 @@ Used in 17 places:
 - `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:173`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
 - `src/AxKit/Program.cs:136`, in `Program.StartedAsOpenWithLink`, for axKit.
-- `src/AxPass.Core/KeePassCli.cs:110`, in `KeePassCli.StartLasting`, for KeePassXC.
 - `src/AxStart/AppsFolder.cs:115`, in `AppsFolder.Start`, for User programs.
 
 ### ProcessRun.Run, program

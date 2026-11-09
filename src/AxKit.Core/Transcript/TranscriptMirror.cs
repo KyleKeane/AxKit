@@ -188,7 +188,7 @@ public sealed class TranscriptMirror
     /// The text that goes between a line and the one before it: a line break, or, for a line that continues a
     /// wrapped row, a single space (nothing when the line already starts with one).
     /// </summary>
-    public static string SeparatorBefore(Line line) =>
+    private static string SeparatorBefore(Line line) =>
         !line.JoinedToPrevious ? "\r\n" : line.Text.StartsWith(' ') ? string.Empty : " ";
 
     /// <summary>The visible lines as one text, the way the view shows them without reading breaks.</summary>
