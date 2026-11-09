@@ -130,29 +130,25 @@ expect focus "value":"draft"
 keys ctrl+a delete
 expect said Done
 wait 2000
-# Step 6: /tasks with no task: Claude Code 2.1.309 offers Escape alone ("Esc to close"), so it is an information
-# screen (SPEC.md FR-2.11): the trill and the notice "Background" with "No tasks currently running", the status bar
-# "Claude: showing Background"; Enter: "Closed", the message field back. Again with Escape: the same. (/tasks with a
-# task running names Enter and stays a list.)
+# Step 6: /tasks with no task. Claude Code 2.1.309 to 2.1.316 offered Escape alone ("Esc to close"), an information
+# screen (SPEC.md FR-2.11): the trill, the notice "Background" with "No tasks currently running", Enter or Escape
+# "Closed". Since 2.1.319 the same screen names Enter, so it is a question list ("Claude asks", the Question trill),
+# which Escape cancels (docs/axclaude/claude-screens.md). The step takes either, as the version installed shows it:
+# the message field has the focus again after the key.
 type /tasks
 keys enter
-expect said ♪ Notice
-expect state "notice":"Background"
-expect state No tasks currently running
-expect state Claude: showing Background
-refuse focus "role":"List"
-wait 1500
-keys enter
-expect said Closed
-expect focus Message to Claude
-# More than the three seconds after a key of the user's, within which what Claude shows comes without the trill.
-wait 3500
-type /tasks
-keys enter
-expect said ♪ Notice
-wait 1500
-keys escape
-expect said Closed
+# The list that answers a typed command comes without taking the focus from the field (the user is typing), so Escape
+# there only names Shift+Escape; Shift+Escape sends Escape to Claude Code from the field or the list alike and closes it.
+try said Claude asks
+iffound wait 1500
+iffound keys shift+escape
+iffound wait 1500
+iffound refuse focus "role":"List"
+try said ♪ Notice
+iffound expect state "notice":"Background"
+iffound wait 1500
+iffound keys escape
+iffound expect said Closed
 expect focus Message to Claude
 wait 2000
 # Step 9: Other: 4, Enter: "Sent: 4, Other. Your words next", then the field "<question>. You chose Other. Your

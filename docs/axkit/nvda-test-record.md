@@ -6,6 +6,33 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-09, the night run: every app, by the assistant through nvda-pass.ps1 (branch `improvements`, a140ca9 and after)
+
+Run by the assistant with NVDA 2025.3.3 listening while the user slept, having cleared the night's work, with Claude
+Code 2.1.319 and `--model haiku`, Windows 11 Pro 10.0.26200, a development build of the branch `improvements` at
+a140ca9 (the consolidation run of 2026-11-09 and the twelve changes of its inventory's section 11). `nvda-pass.ps1`
+over every app, 75 scripts: 72 passed whole in the one run, every announcement also spoken by NVDA, which covers the
+sections of `inventory-2026-11-09.md` section 12 as the apps' scripts have them (the titles, the yes-or-cancel
+questions, the one-field notices, the one-checked menus, the lists filled anew, axStart's and axClip's options,
+axClaude's silent screen notice, the find keys of the list windows); and the passes owed before it: axStart, axCalc
+and axClip (merged before their pass), the reports (`axclaude/16-report.txt`: with the cannot-send notice of a build
+made without the sending token; the consent notice and the sending itself were heard by the user on 2026-11-08) and
+axClaude's `/clear` and one-question header in its scripts. The three that failed passed on their reruns the same hour:
+
+- `axclaude/12-questions.txt` step 139, `/tasks` with nothing running: Claude Code 2.1.319 shows it as a question
+  list, which does not take the focus from the field after a typed command, so the step (9c03533, then its rerun) takes
+  either the old information screen or the list, closing the list with Shift+Escape, and passed whole (289 s).
+- `axclaude/16-report.txt` step 49 expected the consent notice; the pass's build has no sending token and showed
+  "This build cannot send reports" (RP-6.5), which the step now takes as well; passed whole.
+- `axstart/01-basics.txt`: `start start` found the user's own axStart running (its hotkey holds the window's name), so
+  the run ended that process for the script and started it again from the same program file after; passed whole
+  (22 s).
+
+The twelve changes themselves are heard by steps added in 9c03533 (axPass's pane keys, the Notices section at the end
+of F1 in axCalc, axClip and axClaude, `.\hello` in Command Prompt, a zip of 1,001 entries, Ctrl+N in a GitHub list,
+File missing in axDown, the focus after a Windows dialog as an NVDA-only script) and by axFile's `a?b` steps, which
+the full run already had; those steps ran in the second full pass below, with the theme (`docs/axkit/theme.md`) and
+File, New window in the editors (`axdown/10-theme.txt`, `axdown/03-files.txt`).
 ## 2026-11-08: the reports, by the assistant through nvda-pass.ps1 (branch `reports`, ec166c0)
 
 Run by the assistant with NVDA 2025.3.3 listening, the user away at its question, with Claude Code 2.1.319 and

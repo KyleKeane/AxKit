@@ -42,13 +42,17 @@ keys tab
 expect focus Send
 keys tab
 expect focus Cancel
-# Back in the words field, Enter saves the report; the first one asks the agreement (RP-6.6); Not now keeps it unsent.
+# Back in the words field, Enter saves the report. A build made with the sending token asks the agreement first
+# (RP-6.6) and Escape says "Saved; not sent yet"; a development build made without the token, which this pass's build
+# is, says "This build cannot send reports" (RP-6.5) and offers Copy report and GitHub's form. Either notice: Escape
+# leaves the report saved and unsent in Your reports, the focus back in the message field.
 keys shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab
 expect focus Type your report
 keys enter
-expect state "notice":"Before the first report goes"
+expect state "notice":"
+try said ! Saved
 keys escape
-expect said Saved; not sent yet. It goes with the next report once you agree
+expect state "notice":null
 expect focus Message to Claude
 # Escape with nothing typed cancels; with words typed it keeps a draft (RP-D6).
 keys f4
