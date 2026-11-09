@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Builds axKit and starts one of its apps: axClaude on a project folder (the default), axDown on a file, or axJSON on a file.
+  Builds axKit and starts one of its apps (the EXAMPLE lines below): axClaude on a project folder by default.
 
 .EXAMPLE
   .\run.ps1                                  # axClaude on the current folder

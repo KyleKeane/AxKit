@@ -4,7 +4,7 @@
   the bundle's README, zipped for sending, and installs it for the current user unless -NoInstall is given.
 
 .DESCRIPTION
-  Output: publish\win-x64\ (AxKit.exe, the apps' icons, install.cmd, install.ps1, README.md, LICENSE, PRIVACY.md, THIRD-PARTY-NOTICES.md, apps.json) and publish\AxKit-<version>-win-x64.zip.
+  Output: publish\win-x64\ (AxKit.exe, the apps' icons, install.cmd, install.ps1, README.md, LICENSE, NOTICE.md, PRIVACY.md, THIRD-PARTY-NOTICES.md, apps.json) and publish\AxKit-<version>-win-x64.zip.
   Send the zip to someone: they extract it and double-click install.cmd (see README.md inside). Without -NoInstall the
   script then runs install.ps1 from publish\win-x64 on this machine (Start menu entries, File Explorer entries and
   the console commands; see install.ps1 -? for details and -Uninstall).

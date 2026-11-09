@@ -95,15 +95,16 @@ if (-not (Select-String -Path $changelog -Pattern ('^## ' + [regex]::Escape($Ver
 
 # The section is the release notes and the update notice: it says something, and every bullet names its app or apps,
 # or is for developers, so that a reader of the notes knows where a change is (docs/axkit/longevity.md 3.11). The
-# apps are the folders of docs/ (axkit among them, for the bundle), matched without regard to case; the notes come
-# from tools/release-notes.ps1, the script the release workflow runs, which fails on an empty section.
+# apps are the folders of docs/ that hold a SPEC.md (axkit among them, for the bundle; never a private or planning
+# folder), matched without regard to case; the notes come from tools/release-notes.ps1, the script the release
+# workflow runs, which fails on an empty section.
 try {
     $notes = & (Join-Path $root 'tools\release-notes.ps1') -Version $Version -Path $changelog
 } catch {
     Write-Host $_.Exception.Message
     exit 1
 }
-$apps = @(Get-ChildItem (Join-Path $root 'docs') -Directory | ForEach-Object { $_.Name }) -join '|'
+$apps = @(Get-ChildItem (Join-Path $root 'docs') -Directory | Where-Object { Test-Path (Join-Path $_.FullName 'SPEC.md') } | ForEach-Object { $_.Name }) -join '|'
 $prefix = "^- (($apps)(, ($apps))*|For developers): "
 $unnamed = @($notes -split "`n" | Where-Object { $_ -match '^- ' -and $_ -notmatch $prefix })
 if ($unnamed.Count -gt 0) {
