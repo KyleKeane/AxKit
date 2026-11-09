@@ -1,7 +1,6 @@
 using AxClaude.Core;
 using AxClaude.Core.Pty;
 using AxClaude.Core.Transcript;
-using AxKit.Core;
 using AxKit.Core.Transcript;
 using AxKit.Forms;
 

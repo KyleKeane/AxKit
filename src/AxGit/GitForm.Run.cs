@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using AxGit.Core;
 using AxKit.Core;
 using AxKit.Forms;

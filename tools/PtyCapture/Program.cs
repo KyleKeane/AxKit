@@ -23,10 +23,10 @@
 
 using System.Diagnostics;
 using System.Text;
-using AxKit.Core;
 using AxClaude.Core.Pty;
-using AxTerminal.Core;
+using AxKit.Core;
 using AxKit.Core.Pty;
+using AxTerminal.Core;
 
 namespace PtyCapture;
 

@@ -1,5 +1,5 @@
-using AxTerminal.Core;
 using AxKit.Core.Transcript;
+using AxTerminal.Core;
 using static AxTerminal.Tests.TestHelpers;
 
 namespace AxTerminal.Tests;

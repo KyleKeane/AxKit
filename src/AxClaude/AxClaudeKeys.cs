@@ -1,4 +1,3 @@
-using AxKit.Core;
 using AxKit.Core.Transcript;
 using AxKit.Forms;
 

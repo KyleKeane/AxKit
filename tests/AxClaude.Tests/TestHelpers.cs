@@ -2,7 +2,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AxClaude.Core.Transcript;
 using AxKit.Core.Transcript;
-using AxKit.Core.Pty;
 
 namespace AxClaude.Tests;
 

@@ -1,7 +1,7 @@
 using System.Text;
 using AxClaude.Core.Transcript;
-using static AxClaude.Tests.TestHelpers;
 using AxKit.Core.Transcript;
+using static AxClaude.Tests.TestHelpers;
 
 namespace AxClaude.Tests;
 

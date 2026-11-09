@@ -1,5 +1,3 @@
-using AxKit.Core;
-
 namespace AxPass.Core;
 
 /// <summary>A group or an entry of the database: its full path ("Email/Gmail"), the group it is in ("Email"; empty at the top), its name.</summary>

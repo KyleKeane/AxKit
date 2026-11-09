@@ -14,9 +14,9 @@
 
 using System.Diagnostics;
 using System.Text;
-using AxKit.Core;
 using AxClaude.Core.Pty;
 using AxClaude.Core.Transcript;
+using AxKit.Core;
 using AxKit.Core.Pty;
 using AxKit.Core.Transcript;
 

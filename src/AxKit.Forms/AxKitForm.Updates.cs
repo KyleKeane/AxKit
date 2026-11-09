@@ -1,4 +1,3 @@
-using System.Net.Http;
 using AxKit.Core;
 using AxKit.Core.Updates;
 

@@ -1,4 +1,3 @@
-using AxClaude.Core.Pty;
 using AxKit.Core.Pty;
 
 namespace AxClaude.Tests;

@@ -1,6 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
 using AxFile.Core;
-using AxKit.Core;
 using AxKit.Forms;
 
 namespace AxFile;

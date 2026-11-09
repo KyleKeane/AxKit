@@ -1,7 +1,5 @@
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO.Compression;
 using System.Runtime.InteropServices;
 using AxFile.Core;
 using AxKit.Core;

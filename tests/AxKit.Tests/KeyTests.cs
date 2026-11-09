@@ -1,4 +1,3 @@
-using System.Windows.Forms;
 using AxKit.Forms;
 
 namespace AxKit.Tests;

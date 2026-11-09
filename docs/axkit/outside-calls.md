@@ -41,9 +41,9 @@ Calls (11):
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/Updates/UpdateCheck.cs:130`, in `UpdateCheck.FetchLatestAsync`, by `HttpClient.SendAsync`: asks GitHub for the latest release of this repository, so that the window can say when a newer axKit exists; one GET with the version in the User-Agent header and nothing else about the user; off when the user turns the update check off, run by hand from Check for updates (AX-3, PRIVACY.md).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:66`, in `Updater.DownloadAsync`, by `HttpClient.GetStringAsync`: downloads the release's signature file from this repository's release page, the only address the updater accepts; it is checked against the zip before anything is installed (AX-3.4).
+- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:65`, in `Updater.DownloadAsync`, by `HttpClient.GetStringAsync`: downloads the release's signature file from this repository's release page, the only address the updater accepts; it is checked against the zip before anything is installed (AX-3.4).
   Code: `var signature = await Http.GetStringAsync(release.SignatureUrl, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:89`, in `Updater.DownloadAsync`, by `HttpClient.GetAsync`: downloads the release's zip from this repository's release page, hashed as it arrives; it is installed only if the hash matches GitHub's digest of the file and the release key's signature (AX-3.4).
+- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:88`, in `Updater.DownloadAsync`, by `HttpClient.GetAsync`: downloads the release's zip from this repository's release page, hashed as it arrives; it is installed only if the hash matches GitHub's digest of the file and the release key's signature (AX-3.4).
   Code: `using (var response = await Http.GetAsync(release.ZipUrl, HttpCompletionOption.ResponseHeadersRead, cancellation).ConfigureAwait(false))`
 
 ### Programs
@@ -133,9 +133,9 @@ Calls (1):
 
 Calls (13):
 
-- **axFile**, `src/AxFile/FileForm.Operations.cs:709`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
+- **axFile**, `src/AxFile/FileForm.Operations.cs:708`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, "shell:MyComputerFolder") { UseShellExecute = false })?.Dispose();`
-- **axFile**, `src/AxFile/FileForm.Operations.cs:793`, in `FileForm.OpenWithWindows`, by `Process.Start`: opens the selected file or folder with the program Windows has for it, as Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with dialog follows.
+- **axFile**, `src/AxFile/FileForm.Operations.cs:792`, in `FileForm.OpenWithWindows`, by `Process.Start`: opens the selected file or folder with the program Windows has for it, as Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with dialog follows.
   Code: `Process.Start(new ProcessStartInfo(entry.Path) { UseShellExecute = true })?.Dispose();`
 - **axFile**, `src/AxFile/Shell.cs:68`, in `Shell.Properties`, by `ShellExecuteEx (Windows)`: shows Windows' Properties sheet for the entry (Alt+Enter), the shell's own window, through the shell's verb "properties".
   Code: `if (ShellExecuteExW(ref info))`
@@ -145,13 +145,13 @@ Calls (13):
   Code: `var hr = contextMenu.InvokeCommand(ref info);`
 - **shared by every app**, `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, by `Process.Start`: opens Windows' Startup apps page in the Settings app through the Windows shell (the ms-settings: address), from the Store's copy's Start with Windows item (AX-13.4).
   Code: `Process.Start(new ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true })?.Dispose();`
-- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
+- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:182`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
   Code: `using var process = Process.Start(start) ?? throw new InvalidOperationException("PowerShell could not be started.");`
 - **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:707`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
   Code: `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });`
 - **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:723`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, arguments) { UseShellExecute = false })?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Updates.cs:157`, in `AxKitForm.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
   Code: `System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(StoreListing.PageUri) { UseShellExecute = true });`
 - **shared by every app**, `src/AxKit.Forms/TextEditorForm.Viewer.cs:173`, in `TextEditorForm.OpenInWindowsProgram`, by `Process.Start`: opens the viewed file with the program Windows has for it (axPreview's Open with Windows default, AP-7.3), through the Windows shell; never a file that would run (S-46).
   Code: `Process.Start(new ProcessStartInfo(path) { UseShellExecute = true })?.Dispose();`
@@ -170,7 +170,7 @@ Calls (13):
 
 Calls (2):
 
-- **axFile**, `src/AxFile/FileForm.Programs.cs:76`, in `FileForm.RunProgram`, by `Process.Start`: starts a program the user added to Open with on the selected entries; the user's own program, by the path they gave, a script through Windows PowerShell.
+- **axFile**, `src/AxFile/FileForm.Programs.cs:74`, in `FileForm.RunProgram`, by `Process.Start`: starts a program the user added to Open with on the selected entries; the user's own program, by the path they gave, a script through Windows PowerShell.
   Code: `Process.Start(UserPrograms.StartInfo(program, paths))?.Dispose();`
 - **axStart**, `src/AxStart/AppsFolder.cs:115`, in `AppsFolder.Start`, by `Process.Start`: starts the program the user picked in axStart, by its name in the shell's Applications folder as the Start menu does, or its target file as administrator when asked.
   Code: `Process.Start(info)?.Dispose();`
@@ -185,7 +185,7 @@ Calls (2):
 
 Calls (4):
 
-- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
+- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:235`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
   Code: `Process.Start(start)?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/AxKitMenu.cs:227`, in `AxKitMenu.StartWith`, by `Process.Start`: starts another window of axKit from the axKit menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
   Code: `Process.Start(info)?.Dispose();`
@@ -223,7 +223,7 @@ Calls (3):
 
 Calls (1):
 
-- **shared by every app**, `src/AxKit.Forms/AutomationChannel.cs:125`, in `AutomationChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's pipe of an automated test run only (AXKIT_AUTOMATION, set by tools/AxAutomate), which only this account may open, so that the test tool can drive the window; never opened in normal use (docs/axkit/automation.md).
+- **shared by every app**, `src/AxKit.Forms/AutomationChannel.cs:123`, in `AutomationChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's pipe of an automated test run only (AXKIT_AUTOMATION, set by tools/AxAutomate), which only this account may open, so that the test tool can drive the window; never opened in normal use (docs/axkit/automation.md).
   Code: `using var pipe = NamedPipeServerStreamAcl.Create($"axkit-auto-{Environment.ProcessId}", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());`
 
 ## The functions that make these calls
@@ -251,7 +251,7 @@ Defined in .NET, System.Net.Http: the framework's HTTP client.
 
 Used in 1 place:
 
-- `src/AxKit.Core/Updates/Updater.cs:89`, in `Updater.DownloadAsync`, for GitHub.
+- `src/AxKit.Core/Updates/Updater.cs:88`, in `Updater.DownloadAsync`, for GitHub.
 
 ### HttpClient.GetStringAsync, network
 
@@ -259,7 +259,7 @@ Defined in .NET, System.Net.Http: the framework's HTTP client.
 
 Used in 1 place:
 
-- `src/AxKit.Core/Updates/Updater.cs:66`, in `Updater.DownloadAsync`, for GitHub.
+- `src/AxKit.Core/Updates/Updater.cs:65`, in `Updater.DownloadAsync`, for GitHub.
 
 ### new HttpClient, network
 
@@ -275,17 +275,17 @@ Defined in .NET, System.Diagnostics: starts a program, through the Windows shell
 
 Used in 17 places:
 
-- `src/AxFile/FileForm.Operations.cs:709`, in `FileForm.ShowFolderInExplorer`, for Windows.
-- `src/AxFile/FileForm.Operations.cs:793`, in `FileForm.OpenWithWindows`, for Windows.
-- `src/AxFile/FileForm.Programs.cs:76`, in `FileForm.RunProgram`, for User programs.
+- `src/AxFile/FileForm.Operations.cs:708`, in `FileForm.ShowFolderInExplorer`, for Windows.
+- `src/AxFile/FileForm.Operations.cs:792`, in `FileForm.OpenWithWindows`, for Windows.
+- `src/AxFile/FileForm.Programs.cs:74`, in `FileForm.RunProgram`, for User programs.
 - `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, for Windows.
-- `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, for Windows.
-- `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, for axKit.
+- `src/AxKit.Core/Updates/Updater.cs:182`, in `Updater.InstallInPlaceAsync`, for Windows.
+- `src/AxKit.Core/Updates/Updater.cs:235`, in `Updater.StartInstalled`, for axKit.
 - `src/AxKit.Forms/AxKitForm.cs:707`, in `AxKitForm.OpenUrl`, for Windows.
 - `src/AxKit.Forms/AxKitForm.cs:723`, in `AxKitForm.OpenInExplorer`, for Windows.
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/AxKitForm.Mcp.cs:209`, in `AxKitForm.RunClaude`, for Claude Code.
-- `src/AxKit.Forms/AxKitForm.Updates.cs:157`, in `AxKitForm.OpenStorePage`, for Windows.
+- `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, for Windows.
 - `src/AxKit.Forms/AxKitMenu.cs:227`, in `AxKitMenu.StartWith`, for axKit.
 - `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:173`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
@@ -373,7 +373,7 @@ Defined in .NET, System.IO.Pipes: opens a named pipe on this computer with an ac
 
 Used in 2 places:
 
-- `src/AxKit.Forms/AutomationChannel.cs:125`, in `AutomationChannel.Serve`, for Test automation.
+- `src/AxKit.Forms/AutomationChannel.cs:123`, in `AutomationChannel.Serve`, for Test automation.
 - `src/AxKit.Forms/McpChannel.cs:88`, in `McpChannel.Serve`, for AI tools.
 
 ### Console.OpenStandardInput, pipe
