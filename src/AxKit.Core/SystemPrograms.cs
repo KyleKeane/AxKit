@@ -17,6 +17,9 @@ public static class SystemPrograms
 
     public static string Cmd => Path.Combine(Environment.SystemDirectory, "cmd.exe");
 
+    /// <summary>Where Windows puts the aliases of packaged apps (<c>winget.exe</c>, the Store copy's <c>axkit.exe</c>), under the user's local application data.</summary>
+    public static string WindowsApps => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WindowsApps");
+
     /// <summary>Windows PowerShell 5.1, the one every Windows has.</summary>
     public static string PowerShell => Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe");
 
@@ -32,25 +35,12 @@ public static class SystemPrograms
     /// <summary>The same over a given PATH, for the tests.</summary>
     public static string? OnPath(string fileName, string? path)
     {
-        foreach (var entry in (path ?? string.Empty).Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        foreach (var folder in PathFolders(path))
         {
-            var folder = entry.Trim('"');
-            try
+            var candidate = Path.Combine(folder, fileName);
+            if (File.Exists(candidate))
             {
-                if (!Path.IsPathFullyQualified(folder))
-                {
-                    continue;
-                }
-
-                var candidate = Path.Combine(folder, fileName);
-                if (File.Exists(candidate))
-                {
-                    return candidate;
-                }
-            }
-            catch (ArgumentException)
-            {
-                // A PATH entry with characters a path cannot hold: skipped.
+                return candidate;
             }
         }
 
@@ -58,8 +48,11 @@ public static class SystemPrograms
     }
 
     /// <summary>The PATH's folders that are full paths, in order: where a program may be looked for.</summary>
-    public static IReadOnlyList<string> PathFolders() =>
-        (Environment.GetEnvironmentVariable("PATH") ?? string.Empty)
+    public static IReadOnlyList<string> PathFolders() => PathFolders(Environment.GetEnvironmentVariable("PATH"));
+
+    /// <summary>The same over a given PATH: its entries, quotes off, the ones that are full paths (an entry with characters a path cannot hold is skipped).</summary>
+    public static IReadOnlyList<string> PathFolders(string? path) =>
+        (path ?? string.Empty)
             .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Select(entry => entry.Trim('"'))
             .Where(folder => { try { return Path.IsPathFullyQualified(folder); } catch (ArgumentException) { return false; } })

@@ -10,7 +10,7 @@ namespace AxMedia.Core;
 /// </summary>
 public sealed class MediaSettings : WindowSettings
 {
-    public const int MaxRecent = 10;
+
 
     /// <summary>The one unprompted announcement: the name of the next file when the player moves on (AM-4.3, G5).</summary>
     public bool SayEachFile { get; set; } = true;
@@ -35,8 +35,8 @@ public sealed class MediaSettings : WindowSettings
 
     public override void Save(string path) => SettingsFile.Save(path, this);
 
-    /// <summary>Puts the path at the front of <see cref="Recent"/>, once, and keeps the list to <see cref="MaxRecent"/>.</summary>
-    public void Remember(string path) => RecentPaths.Remember(Recent, path, MaxRecent);
+    /// <summary>Puts the path at the front of <see cref="Recent"/>, once, and keeps the list to <see cref="RecentPaths.Max"/>.</summary>
+    public void Remember(string path) => RecentPaths.Remember(Recent, path, RecentPaths.Max);
 
     private void Sanitize()
     {
@@ -47,6 +47,6 @@ public sealed class MediaSettings : WindowSettings
             SeekSeconds = 15;
         }
 
-        Recent = RecentPaths.Sanitize(Recent, MaxRecent);
+        Recent = RecentPaths.Sanitize(Recent, RecentPaths.Max);
     }
 }

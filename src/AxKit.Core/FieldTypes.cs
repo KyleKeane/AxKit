@@ -110,7 +110,7 @@ public static class FieldTypes
                 }
 
                 return ParseDate(text, today) is { } date
-                    ? new Parsed(JsonValue.Create(date.ToString("yyyy-MM-dd", English)), null)
+                    ? new Parsed(JsonValue.Create(DateText(date)), null)
                     : new Parsed(null, $"Not a date: {text}. Type 2026-10-30, today, tomorrow, +3 or a weekday");
             case DateTime:
                 if (text.Length == 0)
@@ -119,7 +119,7 @@ public static class FieldTypes
                 }
 
                 return ParseDateTime(text, today) is { } moment
-                    ? new Parsed(JsonValue.Create(moment.ToString("yyyy-MM-dd'T'HH:mm", English)), null)
+                    ? new Parsed(JsonValue.Create(DateTimeText(moment)), null)
                     : new Parsed(null, $"Not a date and time: {text}. Type a date, a space and 14:00");
             case Choice:
                 if (options.FirstOrDefault(option => option.Equals(text, StringComparison.OrdinalIgnoreCase)) is { } chosen)
@@ -135,14 +135,23 @@ public static class FieldTypes
 
     public static bool IsTrue(JsonNode? value) => value is JsonValue v && v.TryGetValue<bool>(out var flag) && flag;
 
+    /// <summary>The text of a string value; empty for anything else (a number, a check, nothing).</summary>
     public static string TextOf(JsonNode? value) => value is JsonValue v && v.TryGetValue<string>(out var text) ? text : string.Empty;
+
+    /// <summary>The file's form of a date and of a date and time (IA-4.2): what <see cref="ReadDate"/> and <see cref="ReadDateTime"/> read back.</summary>
+    private const string DateFormat = "yyyy-MM-dd";
+    private const string DateTimeFormat = "yyyy-MM-dd'T'HH:mm";
+
+    public static string DateText(DateOnly date) => date.ToString(DateFormat, English);
+
+    public static string DateTimeText(System.DateTime moment) => moment.ToString(DateTimeFormat, English);
 
     /// <summary>A date field's value; null when it is empty or not a date.</summary>
     public static DateOnly? ReadDate(JsonNode? value) =>
-        DateOnly.TryParseExact(TextOf(value), "yyyy-MM-dd", English, DateTimeStyles.None, out var date) ? date : null;
+        DateOnly.TryParseExact(TextOf(value), DateFormat, English, DateTimeStyles.None, out var date) ? date : null;
 
     public static System.DateTime? ReadDateTime(JsonNode? value) =>
-        System.DateTime.TryParseExact(TextOf(value), ["yyyy-MM-dd'T'HH:mm", "yyyy-MM-dd'T'HH:mm:ss"], English, DateTimeStyles.None, out var moment) ? moment : null;
+        System.DateTime.TryParseExact(TextOf(value), [DateTimeFormat, "yyyy-MM-dd'T'HH:mm:ss"], English, DateTimeStyles.None, out var moment) ? moment : null;
 
     /// <summary>The day a typed date names; null when it names none.</summary>
     public static DateOnly? ParseDate(string typed, DateOnly today)

@@ -70,7 +70,7 @@ public static class UpdateCheck
                 return null;
             }
 
-            var tag = GetString(root, "tag_name");
+            var tag = JsonElements.GetString(root, "tag_name");
             if (tag is null || ParseVersion(tag) is not { } version)
             {
                 return null;
@@ -87,7 +87,7 @@ public static class UpdateCheck
                 {
                     // AX-3.4 (security audit S-27): only a file of this repository's releases, never an address
                     // elsewhere that an answer could name.
-                    if (GetString(asset, "name") is not { } name || GetString(asset, "browser_download_url") is not { } url || !url.StartsWith(DownloadPrefix, StringComparison.Ordinal))
+                    if (JsonElements.GetString(asset, "name") is not { } name || JsonElements.GetString(asset, "browser_download_url") is not { } url || !url.StartsWith(DownloadPrefix, StringComparison.Ordinal))
                     {
                         continue;
                     }
@@ -97,14 +97,14 @@ public static class UpdateCheck
                     {
                         zipUrl = url;
                         zipName = name;
-                        zipDigest = GetString(asset, "digest");
+                        zipDigest = JsonElements.GetString(asset, "digest");
                         zipSize = asset.TryGetProperty("size", out var size) && size.ValueKind == JsonValueKind.Number ? size.GetInt64() : 0;
                     }
                 }
             }
 
-            var notes = (GetString(root, "body") ?? string.Empty).Replace("\r\n", "\n").Trim();
-            return new ReleaseInfo(version, tag, notes, GetString(root, "html_url") ?? ReleasesPage, zipUrl, zipSize)
+            var notes = (JsonElements.GetString(root, "body") ?? string.Empty).Replace("\r\n", "\n").Trim();
+            return new ReleaseInfo(version, tag, notes, JsonElements.GetString(root, "html_url") ?? ReleasesPage, zipUrl, zipSize)
             {
                 ZipDigest = zipDigest,
                 SignatureUrl = zipName is not null && urls.TryGetValue(zipName + ReleaseSigning.SignatureSuffix, out var signature) ? signature : null,
@@ -136,7 +136,4 @@ public static class UpdateCheck
         response.EnsureSuccessStatusCode();
         return Parse(await response.Content.ReadAsStringAsync(cancellation).ConfigureAwait(false));
     }
-
-    private static string? GetString(JsonElement element, string name) =>
-        element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() : null;
 }

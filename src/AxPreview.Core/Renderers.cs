@@ -63,7 +63,7 @@ public static class Renderers
     /// <summary>The renderer that takes the file: the first of <see cref="All"/>, by its extension or its first bytes.</summary>
     public static Renderer For(string path)
     {
-        var head = ReadHead(path);
+        var head = TextSniff.ReadHead(path, Head);
         return All.First(renderer => renderer.Takes(path, head));
     }
 
@@ -87,13 +87,6 @@ public static class Renderers
 
     private static IReadOnlySet<string> Set(params string[] extensions) => new HashSet<string>(extensions, StringComparer.OrdinalIgnoreCase);
 
-    private static byte[] ReadHead(string path)
-    {
-        using var stream = File.OpenRead(path);
-        var bytes = new byte[Math.Min(stream.Length, Head)];
-        stream.ReadExactly(bytes);
-        return bytes;
-    }
 
     /// <summary>A zip's local file header, or the end record alone of an empty zip.</summary>
     private static bool IsZip(ReadOnlySpan<byte> head) =>

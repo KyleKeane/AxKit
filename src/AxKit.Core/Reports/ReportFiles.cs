@@ -21,7 +21,6 @@ public static class ReportFiles
     public const string IssueField = "Issue";
     public const string NumberField = "Number";
 
-    private const string CreatedFormat = "yyyy-MM-dd'T'HH:mm";
     private static readonly UTF8Encoding Utf8 = new(false);
 
     /// <summary>The template of a report item (RP-5.2), in the order the detail pane shows the fields.</summary>
@@ -91,7 +90,7 @@ public static class ReportFiles
         item = Set(item, WhereField, report.Where);
         item = Set(item, ActionsField, string.Join("\r\n", report.Actions));
         item = Set(item, LogField, string.Join("\r\n", report.Log));
-        item = Set(item, CreatedField, report.Created.ToString(CreatedFormat, System.Globalization.CultureInfo.InvariantCulture));
+        item = Set(item, CreatedField, FieldTypes.DateTimeText(report.Created));
         return Set(item, StatusField, status);
     }
 

@@ -26,7 +26,7 @@ public sealed record ProgramInstall(string Name, string? WingetId, string? Power
     /// </summary>
     private static string? Winget()
     {
-        var apps = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WindowsApps", "winget.exe");
+        var apps = Path.Combine(SystemPrograms.WindowsApps, "winget.exe");
         return File.Exists(apps) ? apps : null;
     }
 

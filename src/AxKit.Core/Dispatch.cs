@@ -289,6 +289,9 @@ public static class Dispatch
     public static string EditorOf(string path) =>
         Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase) ? AxJSON : AxDown;
 
+    /// <summary>The file types the two editors open (their Open with lists), so that a viewer knows what is text whatever its bytes say.</summary>
+    public static IEnumerable<string> EditorExtensions => Apps.Where(app => app.Verb is AxDown or AxJSON).SelectMany(app => app.OpenWith);
+
     /// <summary>
     /// The verb of a console command's name (AX-13.2): the Store's package starts every app's command (<c>axdown.exe</c>)
     /// through one entry, and Windows gives the process the command's own path as the first word of its command line,

@@ -61,14 +61,14 @@ public static partial class GitHubList
             return null;
         }
 
-        var repository = Text(github["repository"]);
+        var repository = FieldTypes.TextOf(github["repository"]).Trim();
         if (!RepositoryRegex().IsMatch(repository))
         {
             return null;
         }
 
-        var state = Text(github["state"]);
-        var folder = Text(github["folder"]);
+        var state = FieldTypes.TextOf(github["state"]).Trim();
+        var folder = FieldTypes.TextOf(github["folder"]).Trim();
         return new GitHubListSettings(repository, state.Length == 0 ? OpenState : state, folder.Length == 0 ? null : folder);
     }
 
@@ -117,10 +117,10 @@ public static partial class GitHubList
         item = Set(item, NumberField, JsonValue.Create(issue.Number));
         item = Set(item, KindField, JsonValue.Create(KindName(issue.Labels)));
         item = Set(item, StateField, JsonValue.Create(issue.State));
-        item = Set(item, OpenedField, JsonValue.Create(issue.CreatedAt == DateTime.MinValue ? string.Empty : issue.CreatedAt.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)));
+        item = Set(item, OpenedField, JsonValue.Create(issue.CreatedAt == DateTime.MinValue ? string.Empty : FieldTypes.DateText(DateOnly.FromDateTime(issue.CreatedAt))));
         item = Set(item, ReporterField, JsonValue.Create(reporter is { } r ? r.ReporterId.ToString("D") : issue.User));
         item = Set(item, VersionField, JsonValue.Create(reporter?.Version ?? string.Empty));
-        item = Set(item, UpdatedField, JsonValue.Create(issue.UpdatedAt == DateTime.MinValue ? string.Empty : issue.UpdatedAt.ToString("yyyy-MM-dd'T'HH:mm", System.Globalization.CultureInfo.InvariantCulture)));
+        item = Set(item, UpdatedField, JsonValue.Create(issue.UpdatedAt == DateTime.MinValue ? string.Empty : FieldTypes.DateTimeText(issue.UpdatedAt)));
         item = Set(item, IssueField, JsonValue.Create(issue.Url));
         item = Set(item, BodyField, JsonValue.Create(issue.Body.ReplaceLineEndings("\r\n")));
         return Set(item, NotesField, JsonValue.Create(notes));
@@ -204,7 +204,6 @@ public static partial class GitHubList
         return index < 0 ? item : item.WithValue(index, value);
     }
 
-    private static string Text(JsonNode? node) => node is JsonValue value && value.TryGetValue<string>(out var text) ? text.Trim() : string.Empty;
 
     [GeneratedRegex(@"^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/[A-Za-z0-9._-]+$")]
     private static partial Regex RepositoryRegex();

@@ -17,8 +17,22 @@ public static class TextSniff
 
     private const int Sample = 8192;
 
-    /// <summary>The kinds the editors open, text whatever their bytes say (axDown's and axJSON's).</summary>
-    public static readonly IReadOnlySet<string> TextExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".md", ".markdown", ".txt", ".json" };
+    /// <summary>The kinds the editors open, text whatever their bytes say: axDown's and axJSON's, from the apps listing.</summary>
+    public static readonly IReadOnlySet<string> TextExtensions = new HashSet<string>(Dispatch.EditorExtensions, StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The first bytes of a file, at most <paramref name="max"/>: what the sniffing and the renderers look at.</summary>
+    public static byte[] ReadHead(string path, int max)
+    {
+        using var stream = File.OpenRead(path);
+        return ReadHead(stream, max);
+    }
+
+    private static byte[] ReadHead(FileStream stream, int max)
+    {
+        var bytes = new byte[Math.Min(stream.Length, max)];
+        stream.ReadExactly(bytes);
+        return bytes;
+    }
 
     /// <summary>Whether the bytes read as text, by the rule above; <paramref name="path"/> for the extension.</summary>
     public static bool IsText(ReadOnlySpan<byte> bytes, string path)
@@ -68,8 +82,7 @@ public static class TextSniff
                 return null;
             }
 
-            var bytes = new byte[Sample];
-            stream.ReadExactly(bytes);
+            var bytes = ReadHead(stream, Sample);
             return IsText(bytes, path) ? new Refusal("Too large", $"{name} is {stream.Length:N0} bytes, over the {MaxBytes / (1024 * 1024)} MB a window can open.") : null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

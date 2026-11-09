@@ -234,11 +234,9 @@ public sealed class ItemDocument
             var options = field["options"] is JsonArray array
                 ? array.Select(option => option is JsonValue value && value.TryGetValue<string>(out var text) ? text : null).OfType<string>().ToList()
                 : [];
-            read.Add(new ItemField(Text(field["title"]), Text(field["type"]), field["value"], options));
+            read.Add(new ItemField(FieldTypes.TextOf(field["title"]), FieldTypes.TextOf(field["type"]), field["value"], options));
         }
 
         return read;
     }
-
-    private static string Text(JsonNode? node) => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : string.Empty;
 }

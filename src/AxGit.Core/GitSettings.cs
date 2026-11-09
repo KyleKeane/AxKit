@@ -9,7 +9,7 @@ namespace AxGit.Core;
 /// </summary>
 public sealed class GitSettings : WindowSettings
 {
-    public const int MaxRecentRepositories = 10;
+
 
     /// <summary>The repositories opened, newest first, for Repository → Open recent repository and the start without a path.</summary>
     public List<string> RecentRepositories { get; set; } = [];
@@ -31,13 +31,13 @@ public sealed class GitSettings : WindowSettings
 
     public override void Save(string path) => SettingsFile.Save(path, this);
 
-    /// <summary>Puts the repository at the front of <see cref="RecentRepositories"/>, once, and keeps the list to <see cref="MaxRecentRepositories"/>.</summary>
-    public void RememberRepository(string root) => RecentPaths.Remember(RecentRepositories, root, MaxRecentRepositories);
+    /// <summary>Puts the repository at the front of <see cref="RecentRepositories"/>, once, and keeps the list to <see cref="RecentPaths.Max"/>.</summary>
+    public void RememberRepository(string root) => RecentPaths.Remember(RecentRepositories, root, RecentPaths.Max);
 
     private void Sanitize()
     {
         SanitizeWindow();
-        RecentRepositories = RecentPaths.Sanitize(RecentRepositories, MaxRecentRepositories);
+        RecentRepositories = RecentPaths.Sanitize(RecentRepositories, RecentPaths.Max);
         TrustedRepositories = (TrustedRepositories ?? []).Where(path => !string.IsNullOrWhiteSpace(path)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
     }
 }

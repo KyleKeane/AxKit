@@ -1,4 +1,5 @@
 using AxGit.Core;
+using AxKit.Core;
 
 namespace AxGit.Tests;
 
@@ -35,7 +36,7 @@ public sealed class GitRunnerTests
         }
 
         settings.RememberRepository(@"c:\REPO11");
-        Assert.Equal(GitSettings.MaxRecentRepositories, settings.RecentRepositories.Count);
+        Assert.Equal(RecentPaths.Max, settings.RecentRepositories.Count);
         Assert.Equal(@"c:\REPO11", settings.RecentRepositories[0]);
         Assert.Equal(@"C:\repo10", settings.RecentRepositories[1]);
         Assert.DoesNotContain(@"C:\repo0", settings.RecentRepositories);

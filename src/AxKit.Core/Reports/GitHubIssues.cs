@@ -80,7 +80,7 @@ public static class GitHubIssues
         // when the user sends a report (docs/axkit/reports.md RP-6.1, PRIVACY.md).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
-        return new IssueCreated(Number(json.RootElement), GetString(json.RootElement, "html_url") ?? string.Empty);
+        return new IssueCreated(Number(json.RootElement), JsonElements.GetString(json.RootElement, "html_url") ?? string.Empty);
     }
 
     /// <summary>The blocklist of the reports repository (RP-6.4); empty when there is none yet (404).</summary>
@@ -175,7 +175,7 @@ public static class GitHubIssues
             if (found.StatusCode != HttpStatusCode.NotFound)
             {
                 var json = await ReadAsync(found, cancellation).ConfigureAwait(false);
-                sha = GetString(json.RootElement, "sha");
+                sha = JsonElements.GetString(json.RootElement, "sha");
             }
         }
 
@@ -258,7 +258,7 @@ public static class GitHubIssues
         {
             var text = await response.Content.ReadAsStringAsync(cancellation).ConfigureAwait(false);
             using var json = JsonDocument.Parse(text);
-            detail = GetString(json.RootElement, "message");
+            detail = JsonElements.GetString(json.RootElement, "message");
         }
         catch (Exception ex) when (ex is JsonException or HttpRequestException)
         {
@@ -275,34 +275,31 @@ public static class GitHubIssues
         {
             foreach (var label in labelArray.EnumerateArray())
             {
-                if (GetString(label, "name") is { } name)
+                if (JsonElements.GetString(label, "name") is { } name)
                 {
                     labels.Add(name);
                 }
             }
         }
 
-        var user = element.TryGetProperty("user", out var userElement) && userElement.ValueKind == JsonValueKind.Object ? GetString(userElement, "login") ?? string.Empty : string.Empty;
+        var user = element.TryGetProperty("user", out var userElement) && userElement.ValueKind == JsonValueKind.Object ? JsonElements.GetString(userElement, "login") ?? string.Empty : string.Empty;
         return new IssueInfo(
             Number(element),
-            GetString(element, "title") ?? string.Empty,
-            GetString(element, "body") ?? string.Empty,
-            GetString(element, "state") ?? "open",
+            JsonElements.GetString(element, "title") ?? string.Empty,
+            JsonElements.GetString(element, "body") ?? string.Empty,
+            JsonElements.GetString(element, "state") ?? "open",
             labels,
             user,
             Date(element, "created_at"),
             Date(element, "updated_at"),
-            GetString(element, "html_url") ?? string.Empty);
+            JsonElements.GetString(element, "html_url") ?? string.Empty);
     }
 
     private static int Number(JsonElement element) =>
         element.TryGetProperty("number", out var number) && number.ValueKind == JsonValueKind.Number ? number.GetInt32() : 0;
 
     private static DateTime Date(JsonElement element, string name) =>
-        DateTime.TryParse(GetString(element, name), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var date) ? date : DateTime.MinValue;
-
-    private static string? GetString(JsonElement element, string name) =>
-        element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() : null;
+        DateTime.TryParse(JsonElements.GetString(element, name), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var date) ? date : DateTime.MinValue;
 }
 
 /// <summary>

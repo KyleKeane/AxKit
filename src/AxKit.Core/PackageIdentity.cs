@@ -36,7 +36,7 @@ public static class PackageIdentity
     /// program file's own path, under <c>C:\Program Files\WindowsApps\</c>, changes with every update.
     /// </summary>
     public static string AliasPath =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WindowsApps", "axkit.exe");
+        Path.Combine(SystemPrograms.WindowsApps, "axkit.exe");
 
     /// <summary>
     /// How another program starts this one: the alias in the Store's copy, the program file itself otherwise (the AI
