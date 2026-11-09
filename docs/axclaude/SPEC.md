@@ -311,7 +311,7 @@ The Claude menu and its shortcuts send raw sequences (Appendix B), fixed in code
 
 ### 6.1 Layout
 
-Menu bar; the conversation (dock Fill); the message field (dock Bottom, three lines); the status bar. Minimum size 600×400. System font and colours throughout.
+Menu bar; the conversation (dock Fill); the message field (dock Bottom: three lines of the text font and never more than a third of the window, framed, under a line that shows its name on screen, as the control area shows the question over its control; 2026-11-08); the status bar. Minimum size 600×400. System font and colours throughout. The text size (Options → Text, bundle AX-8.2) changes the text alone: the lines grow, the conversation keeps the rest of the window, and a message past the field's rows wraps and scrolls inside it.
 
 ```
 | Session  Claude  Navigate  Options  AxKit  Help                    |
@@ -328,7 +328,7 @@ A notice (D23) takes the place of the conversation and the field, between the me
 | Control | Type | AccessibleName | Notes |
 | :-- | :-- | :-- | :-- |
 | Conversation | `TextBox` Multiline ReadOnly WordWrap ScrollBars=Vertical AcceptsTab=false HideSelection=false MaxLength=0 | "Conversation" | NVDA: "Conversation read only edit multi line". |
-| Message field | `TextBox` Multiline AcceptsReturn WordWrap, three lines | "Message to Claude" | No description: it would be read on every arrival. Enter is handled in the field's `KeyDown`. |
+| Message field | `TextBox` Multiline AcceptsReturn WordWrap ScrollBars=Vertical BorderStyle=FixedSingle, three lines of its font and at most a third of the window (`ConsoleForm.FitBottom`, on every font and size change), under a `Label` with its name for the eyes | "Message to Claude" | No description: it would be read on every arrival. Enter is handled in the field's `KeyDown`. The label is nothing to NVDA, which names the field by its AccessibleName; it follows the field's visibility, so the control area and a notice hide it with the field. |
 | Control area | `ControlArea` in the message field's place while Claude waits: one `ListBox` (a `CheckedListBox` when a question takes several) or one single-line `TextBox`, under a `Label` showing the name | the question: "Question 1 of 2: Which colour do you prefer?" | D33. One control at a time, new for every question, so NVDA reads the name each time the focus arrives; a list box and not a `ListView`, which NVDA announced as a table; `PreviewKeyDown` makes Enter and Escape input keys; from the field's height up to half the window, the list scrolling. |
 | Menu | `MenuStrip` | default | Every item has `ShortcutKeys` or `ShortcutKeyDisplayString`. |
 | Status | `StatusStrip`, two `ToolStripStatusLabel`s | none: the text is what NVDA+End reads | No `Spring` (such a label is placed outside the strip and not exposed). An item that does not fit is not exposed either, so `StatusLayout` gives the labels fixed widths when the texts do not both fit: the path is clipped first, down to a quarter, then the state; NVDA reads the full text. NVDA looks for a status bar at the bottom-left pixel of the window's UI Automation rectangle, which for WinForms includes the invisible resize border; `MainForm` reports its client area plus the title bar (`AxKit.Forms.WindowAccessibleObject`, `AccessibleRole.Window`). |

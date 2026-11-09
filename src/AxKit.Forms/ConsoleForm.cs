@@ -24,6 +24,13 @@ public abstract partial class ConsoleForm : AxKitForm
     private ToolStripMenuItem? _musicItem;
     private bool _closeConfirmed;
 
+    /// <summary>
+    /// The field's name over it, for the eyes (2026-11-08: a sighted helper took the white field under the white view
+    /// for more of the conversation), as the control area shows the question over its control. NVDA names the field by
+    /// its AccessibleName and never reads this line for it; the line comes and goes with the field.
+    /// </summary>
+    private readonly Label _inputName = new();
+
     /// <param name="model">The app's model on the bundle's <see cref="LineStore"/>, which the window feeds and shows; the app keeps its own typed reference.</param>
     /// <param name="keys">The window's keys for the view, from its table.</param>
     /// <param name="transcriptName">What NVDA calls the view: "Conversation", "Terminal".</param>
@@ -61,10 +68,19 @@ public abstract partial class ConsoleForm : AxKitForm
         Input.TabIndex = 0;
         // The bundle's page and paragraph keys (axClaude FR-2.1): the control's own keys do nothing while the text fits, or scroll a row and leave the caret.
         Input.KeyDown += EditKeys.Handle;
+        // A frame and the name line, so that the field is told from the view on screen; the frame is nothing to NVDA.
+        Input.BorderStyle = BorderStyle.FixedSingle;
+        _inputName.Text = inputName;
+        _inputName.AutoEllipsis = true;
+        _inputName.UseMnemonic = false;
+        _inputName.TextAlign = ContentAlignment.MiddleLeft;
+        _inputName.Padding = new Padding(4, 0, 0, 0);
+        _inputName.Dock = DockStyle.Bottom;
+        Input.VisibleChanged += (_, _) => _inputName.Visible = Input.Visible;
 
         // What the program waits on, or a list of the window's own, takes the field's place (axClaude D33), one control at a time.
         Area.TabIndex = 0;
-        SizeChanged += (_, _) => Area.FitHeight();
+        SizeChanged += (_, _) => FitBottom();
 
         // The bundle's status bar pair (no AccessibleName, no Spring; StatusLayout keeps both inside the strip).
         (StateLabel, PlaceLabel) = StatusLayout.Pair(StatusBar);
@@ -103,6 +119,8 @@ public abstract partial class ConsoleForm : AxKitForm
         // window adds its menu items to MenuBar after this constructor.
         Controls.Add(Overlay);
         Controls.Add(Transcript);
+        // Docked from the last added: the name line, added before the field, lands above it.
+        Controls.Add(_inputName);
         Controls.Add(Input);
         Controls.Add(Area);
         Controls.Add(StatusBar);
@@ -215,8 +233,22 @@ public abstract partial class ConsoleForm : AxKitForm
     {
         Transcript.Font = font;
         Input.Font = font;
-        Input.Height = TextRenderer.MeasureText("Wg", font).Height * 3 + 8;
+        _inputName.Font = font;
+        _inputName.Height = TextRenderer.MeasureText("Wg", font).Height + 6;
         Area.Font = font;
+        FitBottom();
+    }
+
+    /// <summary>
+    /// The bottom of the window after the font or the size changed: the field is three lines of its font and never more
+    /// than a third of the window, so a larger text makes the lines taller, the view keeps the rest, and a message past
+    /// the field's rows wraps and scrolls (the bundle's text size rule); the control area never goes below the field's
+    /// height, and never past half the window by its own rule.
+    /// </summary>
+    private void FitBottom()
+    {
+        var line = TextRenderer.MeasureText("Wg", Input.Font).Height;
+        Input.Height = Math.Max(line + 8, Math.Min(line * 3 + 8, ClientSize.Height / 3));
         Area.MinimumHeight = Input.Height;
         Area.FitHeight();
     }

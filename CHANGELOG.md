@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.2
+
+- axClaude, axTerminal: the field at the bottom of the window is told from the view on screen: a frame, and a line over it with its name ("Message to Claude", "Command"), as a question's list has the question over it. Nothing changes for NVDA, which names the field as before. A larger text (Options, Text) makes the lines taller and nothing else: the field stays three lines of its font and never takes more than a third of the window, the conversation keeps the rest, and a longer message wraps and scrolls inside the field. A sighted helper had taken the white field under the white conversation for more of the conversation (2026-11-08).
+
 ## 5.2.1
 
 - axKit: the Store package within the Store's rules, found at the first submission on 2026-11-09: a package may declare eight apps at most and no hidden one, so the Store's copy has eight Start menu entries (axClaude, axDown, axFile, axTerminal, axGIT, axTask, axStart and axClip), every app's console command on the first of them (`axkit`, `axdown` and the rest; the command's own name says the app), the file types of the other six apps on it too, and the sign-in tasks of axStart and axClip on their own entries. axJSON, axMedia, axPreview, axProcess, axPass and axCalc are reached by their command, by a file of their kind, by the axKit menu's New window and from axFile. Nothing changes for the zip's copy (SPEC AX-13.2).
