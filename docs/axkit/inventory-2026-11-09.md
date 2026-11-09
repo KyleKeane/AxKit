@@ -305,27 +305,27 @@ the notes; none pins a note's identifiers to the code (W28).
 
 ## 11. Needs the user
 
-Cleanups and fixes that would change what is heard or done, each one line to decide:
+Cleanups and fixes that would change what is heard or done, decided with the user on 2026-11-09; the answer ends each line:
 
 1. axFile's New folder and Add a program keep their notice open on a refused name (as `AskText` does elsewhere) instead
-   of closing and announcing the problem (F1).
-2. "Folder missing" or "File missing" in every Show-in window on a gone path, as axClaude says today (F8).
-3. The F1 texts' Notices section the same in every window: five texts gain or lengthen it (F14).
+   of closing and announcing the problem (F1). Decided: yes.
+2. "Folder missing" or "File missing" in every Show-in window on a gone path, as axClaude says today (F8). Decided: yes.
+3. The F1 texts' Notices section the same in every window: five texts gain or lengthen it (F14). Decided: yes.
 4. The focus after a Windows dialog put back by one rule; the editor's Open (only on OK) and Save as (only on cancel)
-   become alike (F19).
+   become alike (F19). Decided: yes, the focus always back where it was.
 5. axTerminal's closing question: "Keep running" calls `KeepWorkingAfterUpdate` as axClaude's does, so a pending update
-   restart is dropped and "Update installed" is said (F21; a fault today).
-6. Ctrl+Tab, Ctrl+Shift+Tab and F6 in axTask and axPass as in every other window (F22; AX-8 says they are bundle-wide).
-7. The AI tools registration finds an npm-only Claude Code, as axClaude does (C1).
+   restart is dropped and "Update installed" is said (F21; a fault today). Decided: yes.
+6. Ctrl+Tab, Ctrl+Shift+Tab and F6 in axTask and axPass as in every other window (F22; AX-8 says they are bundle-wide). Decided: yes.
+7. The AI tools registration finds an npm-only Claude Code, as axClaude does (C1). Decided: yes.
 8. cmd for axTerminal from `SystemPrograms.Cmd` alone, no longer from `ComSpec` (C8; S-1's intent against a user's
-   deliberate `ComSpec`).
+   deliberate `ComSpec`). Decided: yes, System32 alone.
 9. `list.json`'s template keeps the values given (C13): a new item in a GitHub list starts as "unlabelled" and "open";
-   the hand-written `list.json` of the Reports list goes.
-10. S-1's `NoDefaultCurrentDirectoryInExePath` set for the process (children inherit it), or the audit amended.
-11. A `list.json` `open` action that would start claude or a terminal on a shared folder refused, as the MCP tool does.
-12. A cap on a zip's entries in axPreview, "and N more" after it.
-13. axTerminal's `_asks` poll as a one-shot quiet timer (AT-5.4 heard again).
-14. Delete the branch `cleanup` on GitHub (section 0).
+   the hand-written `list.json` of the Reports list goes. Decided: yes.
+10. S-1's `NoDefaultCurrentDirectoryInExePath` set for the process (children inherit it), or the audit amended. Decided: the switch set.
+11. A `list.json` `open` action that would start claude or a terminal on a shared folder refused, as the MCP tool does. Decided, narrowed: an action starts either app on a folder of this computer, since the user presses the key, and refuses a folder off it (a share or a mapped drive, S-5's rule), spoken.
+12. A cap on a zip's entries in axPreview, "and N more" after it. Decided: yes.
+13. axTerminal's `_asks` poll as a one-shot quiet timer (AT-5.4 heard again). Decided: no, left to the assistant and left as it is: the half-second tick is a few comparisons and one row read, and a one-shot timer would have to be restarted on every output batch; the simpler piece is the robust one.
+14. Delete the branch `cleanup` on GitHub (section 0). Done by the user on 2026-11-09.
 
 ## 12. NVDA sections worth hearing again
 
