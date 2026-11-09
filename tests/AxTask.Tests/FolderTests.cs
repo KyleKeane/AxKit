@@ -98,6 +98,10 @@ public sealed class FolderTests : IDisposable
     [InlineData("a/b: c?", "a b c")]
     [InlineData("  ", "Untitled")]
     [InlineData("Ends with.", "Ends with")]
+    [InlineData("CON", "_CON")]
+    [InlineData("com1", "_com1")]
+    [InlineData("nul.txt", "_nul.txt")]
+    [InlineData("console", "console")]
     public void FileNamesComeFromTheTitle(string title, string stem) => Assert.Equal(stem, ItemFiles.FileStem(title));
 
     [Fact]

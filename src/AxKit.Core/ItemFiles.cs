@@ -6,7 +6,7 @@ namespace AxKit.Core;
 /// </summary>
 public static class ItemFiles
 {
-    /// <summary>The file name a Title gives (IA-4.5): the characters Windows forbids as spaces, no full stop at the end, "Untitled" for nothing.</summary>
+    /// <summary>The file name a Title gives (IA-4.5): the characters Windows forbids as spaces, no full stop at the end, "Untitled" for nothing, an underscore before a device name (S-55).</summary>
     public static string FileStem(string title)
     {
         var chars = title.Trim().Select(c => Path.GetInvalidFileNameChars().Contains(c) || char.IsControl(c) ? ' ' : c).ToArray();
@@ -16,8 +16,17 @@ public static class ItemFiles
             stem = stem[..120].TrimEnd('.', ' ');
         }
 
+        // Windows maps a name whose first part is a device's (con, nul, com1) to the device, whatever follows the dot:
+        // the file could not be written and every refresh failed on it (security audit S-55). An underscore in front.
+        if (Devices.Contains(stem.Split('.')[0].TrimEnd()))
+        {
+            stem = "_" + stem;
+        }
+
         return stem.Length == 0 ? "Untitled" : stem;
     }
+
+    private static readonly HashSet<string> Devices = new(["CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"], StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// "name.json", or "name - 2.json", "name - 3.json" when taken (IA-4.5; axFile's AF-4.8 and axPass's backups follow
