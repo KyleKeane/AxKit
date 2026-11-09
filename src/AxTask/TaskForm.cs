@@ -107,9 +107,6 @@ public sealed partial class TaskForm : ItemForm
         _menu.Items.AddRange([file, _listMenu, _itemMenu, _fieldMenu, view, options, CreateAxKitMenu(), help]);
         SelectionMenus(_listMenu, _itemMenu, _fieldMenu);
         PlaceControls(_menu);
-
-        ApplyTextFont();
-        RestoreWindow();
         Start(path);
     }
 

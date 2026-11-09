@@ -249,7 +249,7 @@ public sealed partial class MediaForm
     }
 
     /// <summary>The title (AM-2.3): "<name> - axMedia" while a file plays or is paused, "axMedia" otherwise; the axKit menu names the window by it.</summary>
-    private void UpdateTitle() => Text = PlayerActive && _queue.PlayingName is { } name ? $"{name} - {AxMediaApp.Name}" : AxMediaApp.Name;
+    private void UpdateTitle() => SetTitle(PlayerActive && _queue.PlayingName is { } name ? name : null);
 
     /// <summary>The status bar (AM-2.2): the state, the file and the time on the left while something plays; the place and the speed on the right.</summary>
     private void UpdateStatusBar()

@@ -124,8 +124,6 @@ public sealed partial class PassForm : ItemForm
 
         _lockTimer.Tick += (_, _) => LockWhenIdle();
         _clipboardTimer.Tick += (_, _) => ClearCopiedPassword();
-        ApplyTextFont();
-        RestoreWindow();
         _database = path is not null && File.Exists(path) ? Path.GetFullPath(path)
             : _settings.LastDatabase is { } last && File.Exists(last) ? last : null;
         Fill(select: null);

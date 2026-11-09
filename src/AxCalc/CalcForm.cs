@@ -28,7 +28,7 @@ public sealed class CalcForm : AxKitForm
         : base(AxCalcApp.Name, settings, CalcSettings.DefaultPath, settingsError)
     {
         _settings = settings;
-        Text = "Calculator - " + AxCalcApp.Name;
+        SetTitle("Calculator");
         _calculator.Degrees = settings.Degrees;
         foreach (var (name, value) in settings.Variables)
         {
@@ -80,7 +80,6 @@ public sealed class CalcForm : AxKitForm
 
         // The bundle's axKit menu (AX-9) sits before Help in every window.
         _menu.Items.AddRange([calculator, options, CreateAxKitMenu(), help]);
-        MainMenuStrip = _menu;
 
         // The keys without a menu item: between the history and the field, find in the history, and the keys that
         // act on what has the focus (AC-5.2; in the list they also keep it from dinging).
@@ -89,9 +88,7 @@ public sealed class CalcForm : AxKitForm
             AddKey(new Command("Switch between the history and the field", key, () => (_history.Focused ? (Control)_field : _history).Focus()) { Mark = CommandMark.Open });
         }
 
-        AddKey(new Command("Find in the history", BundleKeys.Find, () => ShowFindInList(_history, Labels)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(_history, Labels, 1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(_history, Labels, -1)) { Mark = CommandMark.Read });
+        AddFindInListKeys("history", _history, Labels);
         AddKey(new Command("Clear the field", AxCalcKeys.Back, ClearField) { When = () => _field.Focused });
         AddKey(new Command("Recall the entry", AxCalcKeys.Act, Recall) { When = () => _history.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Back to the field", AxCalcKeys.Back, () => _field.Focus()) { When = () => _history.Focused, Mark = CommandMark.Open });
@@ -116,10 +113,7 @@ public sealed class CalcForm : AxKitForm
 
         // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the field the
         // line above it, and the history (or the notice over both) what is left.
-        Controls.AddRange([Overlay, _history, _field, _status, _menu]);
-
-        ApplyTextFont();
-        RestoreWindow();
+        PlaceControls(_menu, _history, _field, _status);
         UpdateAngles();
         AfterChange();
     }

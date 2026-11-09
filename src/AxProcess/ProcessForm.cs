@@ -52,7 +52,7 @@ public sealed class ProcessForm : AxKitForm
         : base(AxProcessApp.Name, settings, ProcessSettings.DefaultPath, settingsError)
     {
         _settings = settings;
-        Text = "This computer - " + AxProcessApp.Name;
+        SetTitle("This computer");
 
         // ---- menus and keys (PR-6.1, PR-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
         // The first menu holds what every view has (AX-6: the thing worked on, then Exit); each view has a menu of its
@@ -112,13 +112,10 @@ public sealed class ProcessForm : AxKitForm
         // The bundle's axKit menu (AX-9) sits before Help in every window.
         _menu.Items.AddRange([computer, _processMenu, _serviceMenu, _startupMenu, view, options, CreateAxKitMenu(), help]);
         UpdateViewMenus();
-        MainMenuStrip = _menu;
 
         // The keys without a menu item: find in the list, and Tab, Shift+Tab and the menu keys in the list (returning
         // true there keeps it from dinging).
-        AddKey(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(_list, () => Current.Labels)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(_list, () => Current.Labels, 1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(_list, () => Current.Labels, -1)) { Mark = CommandMark.Read });
+        AddFindInListKeys("list", _list, () => Current.Labels);
         AddKey(new Command("Next view", AxProcessKeys.NextView, () => Do(() => ShowViewAsync(Cycled(1)))) { When = () => _list.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Previous view", AxProcessKeys.PreviousView, () => Do(() => ShowViewAsync(Cycled(-1)))) { When = () => _list.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Item menu", AxProcessKeys.ItemMenu, OpenViewMenu) { When = () => _list.Focused, Mark = CommandMark.Open });
@@ -129,27 +126,11 @@ public sealed class ProcessForm : AxKitForm
         _list.Dock = DockStyle.Fill;
         _list.TabIndex = 0;
         _list.AccessibleName = "Processes, reading";
-        _list.MouseDown += (_, e) =>
-        {
-            if (e.Button == MouseButtons.Right && _list.IndexFromPoint(e.Location) is var index && index >= 0)
-            {
-                _list.SelectedIndex = index;
-            }
-        };
-        _list.MouseUp += (_, e) =>
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                OpenViewMenu();
-            }
-        };
+        _list.OpenMenuOnRightClick(OpenViewMenu);
 
         (_nameLabel, _memoryLabel) = StatusLayout.Pair(_status);
 
-        Controls.AddRange([Overlay, _list, _status, _menu]);
-
-        ApplyTextFont();
-        RestoreWindow();
+        PlaceControls(_menu, _list, _status);
         UpdateStatusBar();
     }
 

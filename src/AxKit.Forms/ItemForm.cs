@@ -51,23 +51,8 @@ public abstract partial class ItemForm : AxKitForm
         DetailPane.Dock = DockStyle.Fill;
         DetailPane.TabIndex = 1;
         DetailPane.Names = () => _lines.Select(line => line.Field >= 0 && _shown.Document is { } document && line.Field < document.Fields.Count ? document.Fields[line.Field].Title : line.Line.Label).ToList();
-        foreach (var list in new[] { Navigator, DetailPane })
-        {
-            list.MouseDown += (_, e) =>
-            {
-                if (e.Button == MouseButtons.Right && list.IndexFromPoint(e.Location) is var index && index >= 0)
-                {
-                    list.SelectedIndex = index;
-                }
-            };
-            list.MouseUp += (_, e) =>
-            {
-                if (e.Button == MouseButtons.Right)
-                {
-                    OpenPaneMenu();
-                }
-            };
-        }
+        Navigator.OpenMenuOnRightClick(OpenPaneMenu);
+        DetailPane.OpenMenuOnRightClick(OpenPaneMenu);
 
         _split.Dock = DockStyle.Fill;
         _split.TabStop = false;
@@ -221,8 +206,7 @@ public abstract partial class ItemForm : AxKitForm
     protected void PlaceControls(MenuStrip menu)
     {
         menu.MenuActivate += (_, _) => UpdateMenus();
-        Controls.AddRange([Overlay, _split, _status, menu]);
-        MainMenuStrip = menu;
+        PlaceControls(menu, _split, _status);
         AddSharedKeys();
     }
 
@@ -464,7 +448,7 @@ public abstract partial class ItemForm : AxKitForm
             Navigator.SelectedIndex = Math.Max(0, index);
         }
 
-        Text = title + " - " + AppTitle;
+        SetTitle(title);
         _nameLabel.Text = name;
         _placeLabel.Text = place;
         StatusLayout.Fit(_status, _nameLabel, _placeLabel);

@@ -57,6 +57,9 @@ public abstract partial class AxKitForm : Form
     /// <summary>The app's name as the user meets it (AX-11.2): "axClaude, access layer for Claude Code" for an access layer, the name alone otherwise; window titles end with it.</summary>
     protected string AppTitle => Dispatch.ByName(AppName)?.Title ?? AppName;
 
+    /// <summary>The title (AX-11.2): what the window holds, " - " and the app's title; the app's title alone for nothing.</summary>
+    protected void SetTitle(string? first) => Text = first is null ? AppTitle : $"{first} - {AppTitle}";
+
     /// <summary>The app's settings as the base needs them: the font, the update check and the window's place.</summary>
     protected WindowSettings Settings { get; }
 
@@ -615,7 +618,22 @@ public abstract partial class AxKitForm : Form
 
     // ---- the window's place and the settings (AX-5, AX-7.6) ----
 
-    /// <summary>The window where it was last, when that place is still on a screen; the window calls it from its constructor.</summary>
+    /// <summary>
+    /// Places the window's controls once its constructor has made them: the notice panel first, so that it covers the
+    /// rest when it shows; <paramref name="body"/> in the window's own docking order (WinForms docks the last added
+    /// first, so the status bar comes last in it); the menu bar last; then the text font and the window's saved place.
+    /// A hidden window (HotkeyForm) places itself and adds its controls on its own; the console window adds its own,
+    /// one by one, for the order of the name line and the field.
+    /// </summary>
+    protected void PlaceControls(MenuStrip menu, params Control[] body)
+    {
+        Controls.AddRange([Overlay, .. body, menu]);
+        MainMenuStrip = menu;
+        ApplyTextFont();
+        RestoreWindow();
+    }
+
+    /// <summary>The window where it was last, when that place is still on a screen; <see cref="PlaceControls"/> calls it at the end of a window's constructor.</summary>
     protected void RestoreWindow()
     {
         if (Settings.Window is not { } placement)

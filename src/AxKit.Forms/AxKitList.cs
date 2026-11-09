@@ -76,6 +76,25 @@ public class AxKitList : ListBox
         _typedAt = 0;
     }
 
+    /// <summary>A right click selects the item under the mouse and, as the button comes up, opens the window's menu for it (axFile AF-4.6, axProcess, the item apps); the keyboard's way is the window's Shift+F10.</summary>
+    public void OpenMenuOnRightClick(Action open)
+    {
+        MouseDown += (_, e) =>
+        {
+            if (e.Button == MouseButtons.Right && IndexFromPoint(e.Location) is var index && index >= 0)
+            {
+                SelectedIndex = index;
+            }
+        };
+        MouseUp += (_, e) =>
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                open();
+            }
+        };
+    }
+
     /// <summary>Any move of the selection but the search's own (an arrow, a command, the list filled anew) starts a new search, as in File Explorer: a letter typed just after it never continues the letters before (found by axAutomate, 2026-10-24: "s", then keys, then "b" within the second searched "sb").</summary>
     protected override void OnSelectedIndexChanged(EventArgs e)
     {

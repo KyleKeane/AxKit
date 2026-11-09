@@ -167,6 +167,19 @@ public abstract partial class AxKitForm
         return multiline && lines > 1 ? $"Pasted, {lines} lines" : "Pasted";
     }
 
+    /// <summary>A failed command's reason: one announcement, "Failed: ...", when it is one line; a notice with all of it when it is more (axGIT AG-7, axFile AF-4.5).</summary>
+    protected void Failed(string title, string text)
+    {
+        if (text.Contains('\n'))
+        {
+            ShowNotice(Notice.Plain(title, text) with { Unprompted = true });
+        }
+        else
+        {
+            Announce("Failed: " + text, true);
+        }
+    }
+
     /// <summary>An error the user must see: logged and shown as a notice; a console window adds a system line.</summary>
     protected virtual void Fail(string message)
     {

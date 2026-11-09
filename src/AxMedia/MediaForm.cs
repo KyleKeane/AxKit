@@ -43,7 +43,7 @@ public sealed partial class MediaForm : AxKitForm
         _settings = settings;
         _start = start;
         // A start on one file is named after it from the first moment, so that NVDA reads the file's window as it opens (AM-2.3).
-        Text = start is { Verb: AppMessage.Play, Paths: [var only] } && File.Exists(only) ? $"{Path.GetFileName(only)} - {AxMediaApp.Name}" : AxMediaApp.Name;
+        SetTitle(start is { Verb: AppMessage.Play, Paths: [var only] } && File.Exists(only) ? Path.GetFileName(only) : null);
 
         // ---- menus and keys (AM-5.1, AM-5.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
         // Queue is the thing worked on, in the standard order of a first menu (bundle AX-6): New and Open with the
@@ -92,9 +92,7 @@ public sealed partial class MediaForm : AxKitForm
             AddKey(new Command("Back to the list", key, () => _list.Focus()) { Mark = CommandMark.Open });
         }
 
-        AddKey(new Command("Find in the queue", BundleKeys.Find, () => ShowFindInList(_list, Names)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(_list, Names, 1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(_list, Names, -1)) { Mark = CommandMark.Read });
+        AddFindInListKeys("queue", _list, Names);
 
         // Options, as the other windows' (AX-6).
         var options = new ToolStripMenuItem("&Options");
@@ -110,7 +108,6 @@ public sealed partial class MediaForm : AxKitForm
 
         // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
         _menu.Items.AddRange([queue, play, options, CreateAxKitMenu(), help]);
-        MainMenuStrip = _menu;
 
         // ---- the list (AM-2.1): the one control; its own keys stay native ----
         _list.IntegralHeight = false;
@@ -143,10 +140,7 @@ public sealed partial class MediaForm : AxKitForm
 
         // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the video
         // area the strip under the menu while it shows, and the list (or the notice over it) what is left.
-        Controls.AddRange([Overlay, _list, _video, _status, _menu]);
-
-        ApplyTextFont();
-        RestoreWindow();
+        PlaceControls(_menu, _list, _video, _status);
         UpdateStatusBar();
     }
 

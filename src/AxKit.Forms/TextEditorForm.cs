@@ -155,7 +155,6 @@ public sealed partial class TextEditorForm : AxKitForm
 
         // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
         _menu.Items.AddRange(edit is null ? [file, navigate, options, CreateAxKitMenu(), help] : [file, edit, navigate, options, CreateAxKitMenu(), help]);
-        MainMenuStrip = _menu;
 
         // The keys without a menu item: one main control, the editor, or the Go to line field while it shows; in the
         // viewer with its Details list, the text and the list in turn (AP-6.1); the viewer's line number. The keys the
@@ -226,10 +225,8 @@ public sealed partial class TextEditorForm : AxKitForm
         // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the viewer's
         // Details list the third above it (AP-6.1), the question area the strip above that, under the text, and the
         // editor (or the notice over it) what is left.
-        Controls.AddRange(_details is null ? [Overlay, _editor, _area, _status, _menu] : [Overlay, _editor, _area, _details, _status, _menu]);
-
-        ApplyTextFont();
-        RestoreWindow();
+        Control[] body = _details is null ? [_editor, _area, _status] : [_editor, _area, _details, _status];
+        PlaceControls(_menu, body);
         FitDetails();
         LoadDocument(path);
     }
@@ -540,7 +537,7 @@ public sealed partial class TextEditorForm : AxKitForm
 
     private void UpdateTitle()
     {
-        Text = (_changed ? "*" : string.Empty) + DocumentName + " - " + _app.Name;
+        SetTitle((_changed ? "*" : string.Empty) + DocumentName);
         _editor.AccessibleName = DocumentName;
         UpdateEditItem();
     }

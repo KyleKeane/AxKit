@@ -58,7 +58,7 @@ public sealed partial class GitForm : AxKitForm
     {
         _settings = settings;
         _startPath = path;
-        Text = "No repository - " + AppTitle;
+        SetTitle("No repository");
 
         // ---- menus and keys (AG-6.1, AG-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
         // Repository is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
@@ -116,7 +116,6 @@ public sealed partial class GitForm : AxKitForm
 
         // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
         _menu.Items.AddRange([repository, changes, branches, view, options, CreateAxKitMenu(), help]);
-        MainMenuStrip = _menu;
 
         // The keys without a menu item: between the list and the details, find in the details, Enter on a commit.
         foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
@@ -160,10 +159,7 @@ public sealed partial class GitForm : AxKitForm
 
         // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the list the
         // strip under the menu, and the details (or the notice over both) what is left.
-        Controls.AddRange([Overlay, _details, _list, _status, _menu]);
-
-        ApplyTextFont();
-        RestoreWindow();
+        PlaceControls(_menu, _details, _list, _status);
         UpdateStatusBar();
     }
 
@@ -287,7 +283,7 @@ public sealed partial class GitForm : AxKitForm
         _repo = RepositoryStatus.Empty;
         _commits = [];
         _branches = [];
-        Text = $"{PathName.Of(root)} - {AppTitle}";
+        SetTitle(PathName.Of(root));
         _settings.RememberRepository(root);
         SaveSettings();
         Log.Info($"Opened {root}");
@@ -341,7 +337,7 @@ public sealed partial class GitForm : AxKitForm
     {
         _root = null;
         _repo = RepositoryStatus.Empty;
-        Text = "No repository - " + AppTitle;
+        SetTitle("No repository");
         _list.Items.Clear();
         _list.AccessibleName = "No repository";
         UpdateStatusBar();

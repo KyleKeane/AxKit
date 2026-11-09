@@ -167,7 +167,7 @@ public sealed partial class FileForm
         _hidden = listing.Hidden;
         _dot = listing.Dot;
         _folderStamp = Stamp(folder);
-        Text = $"{PathName.Of(folder)} - {AxFileApp.Name}";
+        SetTitle(PathName.Of(folder));
         Rearrange(select);
         if (FolderListing.IsThisPC(folder))
         {

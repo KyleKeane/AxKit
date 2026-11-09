@@ -19,6 +19,14 @@ public abstract partial class AxKitForm
     protected void ShowFindInList(ListBox list, Func<IReadOnlyList<string>> names) =>
         ShowNotice(FindNotice("Name contains:", "Name contains", () => FindInList(list, names, 1)));
 
+    /// <summary>The three find keys of a list window (Ctrl+F, F3, Shift+F3) as commands without a menu item: "Find in the <paramref name="what"/>", Find next, Find previous, each under <paramref name="when"/>, read-only for the AI tools.</summary>
+    protected void AddFindInListKeys(string what, ListBox list, Func<IReadOnlyList<string>> names, Func<bool>? when = null)
+    {
+        AddKey(new Command("Find in the " + what, BundleKeys.Find, () => ShowFindInList(list, names)) { When = when, Mark = CommandMark.Read });
+        AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(list, names, 1)) { When = when, Mark = CommandMark.Read });
+        AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(list, names, -1)) { When = when, Mark = CommandMark.Read });
+    }
+
     /// <summary>
     /// The Find notice: one field with the last text selected, Find next (Enter) and Cancel (Escape). Find next keeps
     /// the field's text as <see cref="FindText"/> and runs <paramref name="search"/>; with <paramref name="staysOpen"/>

@@ -95,17 +95,6 @@ public sealed partial class GitForm
         });
     }
 
-    /// <summary>A failed command: one announcement when git said one line, a notice with everything it said otherwise (AG-7).</summary>
-    private void Failed(string title, GitResult result)
-    {
-        var text = result.AllText;
-        if (text.Contains('\n'))
-        {
-            ShowNotice(Notice.Plain(title, text) with { Unprompted = true });
-        }
-        else
-        {
-            Announce("Failed: " + result.FirstLine, true);
-        }
-    }
+    /// <summary>A failed command: one announcement when git said one line, a notice with everything it said otherwise (AG-7, the base's rule).</summary>
+    private void Failed(string title, GitResult result) => Failed(title, result.AllText);
 }

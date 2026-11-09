@@ -34,7 +34,7 @@ public sealed partial class FileForm : AxKitForm
     {
         _settings = settings;
         _startPath = path;
-        Text = AxFileApp.Name;
+        SetTitle(null);
 
         // ---- menus and keys (AF-6.1, AF-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables;
         // a key's When is where it acts: the folder list (InList), the Actions list (InPane) or anywhere ----
@@ -164,7 +164,6 @@ public sealed partial class FileForm : AxKitForm
 
         // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
         _menu.Items.AddRange([folder, item, select, options, CreateAxKitMenu(), help]);
-        MainMenuStrip = _menu;
 
         // ---- the list (AF-2.1, AF-2.2): the main control; its own keys stay native (AF-3.6) ----
         _list.IntegralHeight = false;
@@ -177,20 +176,7 @@ public sealed partial class FileForm : AxKitForm
         _list.Names = () => _shown.Select(entry => entry.Name).ToList();
         // AF-4.6, AF-D13: a right click opens the menu bar's Item menu on the entry under it, selected first as File
         // Explorer does; Shift+F10 and the Applications key open the same menu from their commands.
-        _list.MouseDown += (_, e) =>
-        {
-            if (e.Button == MouseButtons.Right && _list.IndexFromPoint(e.Location) is var index && index >= 0)
-            {
-                _list.SelectedIndex = index;
-            }
-        };
-        _list.MouseUp += (_, e) =>
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                ShowItemMenu();
-            }
-        };
+        _list.OpenMenuOnRightClick(ShowItemMenu);
 
         // ---- the Actions list (AF-9): always under the folder list, "No actions yet" until the first operation ----
         SetUpActions();
@@ -211,10 +197,7 @@ public sealed partial class FileForm : AxKitForm
 
         // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the Actions
         // list the strip above the status bar, and the folder list (or the notice over both) what is left.
-        Controls.AddRange([Overlay, _list, _pane, _status, _menu]);
-
-        ApplyTextFont();
-        RestoreWindow();
+        PlaceControls(_menu, _list, _pane, _status);
         FitPane();
         FillPane();
     }
@@ -349,18 +332,7 @@ public sealed partial class FileForm : AxKitForm
         base.WndProc(ref m);
     }
 
-    /// <summary>A failed operation is one announcement when the reason is one line, a notice otherwise (AF-4.5).</summary>
-    private void Failed(string title, string reason)
-    {
-        if (reason.Contains('\n'))
-        {
-            ShowNotice(Notice.Plain(title, reason) with { Unprompted = true });
-        }
-        else
-        {
-            Announce("Failed: " + reason, true);
-        }
-    }
+
 
     /// <summary>The status bar (AF-2.3): the newest file operation's line on the left (never a selection line), the folder's full path on the right.</summary>
     private void UpdateStatusBar()
