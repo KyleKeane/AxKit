@@ -431,27 +431,23 @@ public sealed class ClipForm : HotkeyForm
             return;
         }
 
-        ShowNotice(new Notice("Clear the clipboard history?", count == 1 ? "Its item cannot be brought back." : $"Its {count} items cannot be brought back.",
-        [
-            new OverlayChoice("C&lear", () =>
+        ShowNotice(Notice.Ask("Clear the clipboard history?", count == 1 ? "Its item cannot be brought back." : $"Its {count} items cannot be brought back.", "C&lear", () =>
+        {
+            _history.Clear();
+            _settings.Keep(_history.Items);
+            SaveSettings();
+            // S-21: a copy of an unreadable settings file kept for mending would still hold the old history.
+            try
             {
-                _history.Clear();
-                _settings.Keep(_history.Items);
-                SaveSettings();
-                // S-21: a copy of an unreadable settings file kept for mending would still hold the old history.
-                try
-                {
-                    File.Delete(SettingsPath + ".bad");
-                }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-                {
-                }
+                File.Delete(SettingsPath + ".bad");
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+            }
 
-                Fill();
-                Announce("Clipboard history cleared", true);
-            }, IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ]));
+            Fill();
+            Announce("Clipboard history cleared", true);
+        }));
     }
 
     // ---- the paste's keys (CP-D3) ----

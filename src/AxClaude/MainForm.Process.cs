@@ -32,12 +32,9 @@ internal sealed partial class MainForm
             state += $"Claude has work running in the background ({background}). ";
         }
 
-        ShowNotice(new Notice("Force Claude to restart?",
+        ShowNotice(Notice.Ask("Force Claude to restart?",
             state + "Restarting immediately quits Claude Code and terminates any processes it runs in the background, then starts it again in the same folder with the same options. The conversation stays in the window.",
-        [
-            new OverlayChoice("&Restart now", ForceRestart, IsDefault: true),
-            new OverlayChoice("&Keep Claude running", IsCancel: true),
-        ]));
+            "&Restart now", ForceRestart, "&Keep Claude running"));
     }
 
     private void ForceRestart()

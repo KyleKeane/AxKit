@@ -91,12 +91,9 @@ internal sealed partial class TerminalForm
     {
         if (ProcessRunning && _model.Running)
         {
-            ShowNotice(new Notice("Switch the shell?",
+            ShowNotice(Notice.Ask("Switch the shell?",
                 $"{_model.RunningCommand} is still running. Switching ends it and starts {ShellLauncher.Describe(kind)} in the same folder. The transcript stays in the window.",
-            [
-                new OverlayChoice("&Switch now", () => ForceSwitch(kind), IsDefault: true),
-                new OverlayChoice("&Keep it running", IsCancel: true),
-            ]));
+                "&Switch now", () => ForceSwitch(kind), "&Keep it running"));
             return;
         }
 

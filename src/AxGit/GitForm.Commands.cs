@@ -141,27 +141,23 @@ public sealed partial class GitForm
             return;
         }
 
-        ShowNotice(new Notice($"Discard the changes to {file.Path}?", "They cannot be brought back.",
-        [
-            new OverlayChoice("&Discard", () => Do(async () =>
+        ShowNotice(Notice.Ask($"Discard the changes to {file.Path}?", "They cannot be brought back.", "&Discard", () => Do(async () =>
+        {
+            var result = await RunGitAsync(file.DiscardArguments, GitRunner.Short, "discard");
+            if (result is null)
             {
-                var result = await RunGitAsync(file.DiscardArguments, GitRunner.Short, "discard");
-                if (result is null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (!result.Ok)
-                {
-                    Failed("Discard failed", result);
-                    return;
-                }
+            if (!result.Ok)
+            {
+                Failed("Discard failed", result);
+                return;
+            }
 
-                Announce($"Discarded {file.Path}", true);
-                await RefreshAsync(announce: false);
-            }), IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ]));
+            Announce($"Discarded {file.Path}", true);
+            await RefreshAsync(announce: false);
+        })));
     }
 
     /// <summary>Changes → Commit… (Ctrl+Enter, AG-3.5): the message in a notice, then git commit.</summary>

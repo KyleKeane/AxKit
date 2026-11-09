@@ -440,16 +440,12 @@ public sealed class ProcessForm : AxKitForm
         }
 
         var title = tree ? $"End {row.Name} and the processes it started?" : $"End {row.Name} (process {row.Id})?";
-        ShowNotice(new Notice(title, "Anything unsaved in it is lost.",
-        [
-            new OverlayChoice(tree ? "End process &tree" : "&End process", () => Do(async () =>
-            {
-                var said = await Task.Run(() => Kill(row, tree));
-                Announce(said, true);
-                await RefreshAsync(announce: false);
-            }), IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ]));
+        ShowNotice(Notice.Ask(title, "Anything unsaved in it is lost.", tree ? "End process &tree" : "&End process", () => Do(async () =>
+        {
+            var said = await Task.Run(() => Kill(row, tree));
+            Announce(said, true);
+            await RefreshAsync(announce: false);
+        })));
     }
 
     /// <summary>The end itself, off the UI thread: what to say about it. The ID must still be the same program's, since Windows reuses IDs.</summary>

@@ -193,13 +193,10 @@ internal sealed partial class MainForm : ConsoleForm
         var consequence = !RestartPending
             ? $"If you close now, {stops}."
             : $"If you close now, {stops} and the updated axClaude starts again.";
-        ShowNotice(new Notice("Close axClaude?",
+        ShowNotice(Notice.Ask("Close axClaude?",
             $"{state}. {consequence}\n" +
             "What is done so far is saved. Start axClaude again to carry on.",
-        [
-            new OverlayChoice("&Close anyway", CloseConfirmed, IsDefault: true),
-            new OverlayChoice("&Keep working", KeepWorkingAfterUpdate, IsCancel: true),
-        ]));
+            "&Close anyway", CloseConfirmed, "&Keep working", KeepWorkingAfterUpdate));
     }
 
     /// <summary>Claude is in the middle of a turn: working, waiting for an answer, or holding a message sent while it worked.</summary>

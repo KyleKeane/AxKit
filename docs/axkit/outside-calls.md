@@ -131,9 +131,9 @@ Calls (1):
 
 Calls (13):
 
-- **axFile**, `src/AxFile/FileForm.Operations.cs:708`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
+- **axFile**, `src/AxFile/FileForm.Operations.cs:704`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, "shell:MyComputerFolder") { UseShellExecute = false })?.Dispose();`
-- **axFile**, `src/AxFile/FileForm.Operations.cs:792`, in `FileForm.OpenWithWindows`, by `Process.Start`: opens the selected file or folder with the program Windows has for it, as Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with dialog follows.
+- **axFile**, `src/AxFile/FileForm.Operations.cs:788`, in `FileForm.OpenWithWindows`, by `Process.Start`: opens the selected file or folder with the program Windows has for it, as Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with dialog follows.
   Code: `Process.Start(new ProcessStartInfo(entry.Path) { UseShellExecute = true })?.Dispose();`
 - **axFile**, `src/AxFile/Shell.cs:68`, in `Shell.Properties`, by `ShellExecuteEx (Windows)`: shows Windows' Properties sheet for the entry (Alt+Enter), the shell's own window, through the shell's verb "properties".
   Code: `if (ShellExecuteExW(ref info))`
@@ -273,8 +273,8 @@ Defined in .NET, System.Diagnostics: starts a program, through the Windows shell
 
 Used in 16 places:
 
-- `src/AxFile/FileForm.Operations.cs:708`, in `FileForm.ShowFolderInExplorer`, for Windows.
-- `src/AxFile/FileForm.Operations.cs:792`, in `FileForm.OpenWithWindows`, for Windows.
+- `src/AxFile/FileForm.Operations.cs:704`, in `FileForm.ShowFolderInExplorer`, for Windows.
+- `src/AxFile/FileForm.Operations.cs:788`, in `FileForm.OpenWithWindows`, for Windows.
 - `src/AxFile/FileForm.Programs.cs:74`, in `FileForm.RunProgram`, for User programs.
 - `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs:182`, in `Updater.InstallInPlaceAsync`, for Windows.

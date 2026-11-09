@@ -130,22 +130,18 @@ public sealed partial class PassForm
         var question = forGood
             ? $"Delete {node.Name} for good? It is in the Recycle Bin, and nothing brings it back."
             : $"Move the group {node.Name} and its {Count(_tree.CountIn(node.Path), "item")} to the Recycle Bin? Ctrl+Z cannot bring a group back: KeePassXC's own window can.";
-        ShowNotice(new Notice(forGood ? "Delete for good" : "Move the group", question,
-        [
-            new OverlayChoice(forGood ? "&Delete" : "&Move", () => Do(async () =>
+        ShowNotice(Notice.Ask(forGood ? "Delete for good" : "Move the group", question, forGood ? "&Delete" : "&Move", () => Do(async () =>
+        {
+            var select = NeighbourKey();
+            if (await Cli(command, null, [node.Path]) is null)
             {
-                var select = NeighbourKey();
-                if (await Cli(command, null, [node.Path]) is null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                _entries.Remove(node.Path);
-                await ReloadAsync(select);
-                Announce(forGood ? $"Deleted {node.Name}" : $"Moved {node.Name} to the Recycle Bin", true);
-            })),
-            new OverlayChoice("&Cancel", IsDefault: true, IsCancel: true),
-        ]));
+            _entries.Remove(node.Path);
+            await ReloadAsync(select);
+            Announce(forGood ? $"Deleted {node.Name}" : $"Moved {node.Name} to the Recycle Bin", true);
+        }), cancelIsDefault: true));
     }
 
     /// <summary>

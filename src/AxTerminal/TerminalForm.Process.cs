@@ -75,12 +75,9 @@ internal sealed partial class TerminalForm
     {
         if (ProcessRunning && _model.Running)
         {
-            ShowNotice(new Notice("Restart the shell?",
+            ShowNotice(Notice.Ask("Restart the shell?",
                 $"{_model.RunningCommand} is still running. Restarting ends it and starts the shell again in the same folder. The transcript stays in the window.",
-            [
-                new OverlayChoice("&Restart now", ForceRestart, IsDefault: true),
-                new OverlayChoice("&Keep it running", IsCancel: true),
-            ]));
+                "&Restart now", ForceRestart, "&Keep it running"));
             return;
         }
 

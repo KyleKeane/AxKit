@@ -439,14 +439,10 @@ public sealed partial class FileForm
             ? targets.Any(target => target.IsFolder) ? "They go to the Recycle Bin, the folders with everything in them." : "They go to the Recycle Bin."
             : one.IsFolder ? "It goes to the Recycle Bin with everything in it." : "It goes to the Recycle Bin.";
         var paths = targets.Select(target => target.Path).ToList();
-        ShowNotice(new Notice($"Delete {what}?", text,
-        [
-            new OverlayChoice("&Delete", () => RunOperation(folder, $"Deleting {what}", "Deleting", "Delete failed", paths, async _ =>
-                await FileOperations.DeleteToRecycleBinAsync(paths) is { } reason
-                    ? Outcome.Failure(reason)
-                    : new Outcome($"Deleted {what}", new Operation(OperationKind.Delete, paths, []), next)), IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ]));
+        ShowNotice(Notice.Ask($"Delete {what}?", text, "&Delete", () => RunOperation(folder, $"Deleting {what}", "Deleting", "Delete failed", paths, async _ =>
+            await FileOperations.DeleteToRecycleBinAsync(paths) is { } reason
+                ? Outcome.Failure(reason)
+                : new Outcome($"Deleted {what}", new Operation(OperationKind.Delete, paths, []), next))));
     }
 
     /// <summary>The name to select once <paramref name="gone"/> are deleted: the first entry after the current one that stays, else the last one before it; null when none stays.</summary>

@@ -104,12 +104,9 @@ internal sealed partial class TerminalForm : ConsoleForm
             return false;
         }
 
-        ShowNotice(new Notice("A command is still running",
+        ShowNotice(Notice.Ask("A command is still running",
             $"{_model.RunningCommand} is still running. Closing the window ends the shell and the command with it.",
-        [
-            new OverlayChoice("&Close anyway", CloseConfirmed, IsDefault: true),
-            new OverlayChoice("&Keep running", IsCancel: true),
-        ]));
+            "&Close anyway", CloseConfirmed, "&Keep running"));
         return true;
     }
 

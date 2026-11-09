@@ -77,6 +77,18 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
 
     /// <summary>A read-only text with a Close button: help texts, About and errors.</summary>
     public static Notice Plain(string title, string text) => new(title, text, [OverlayChoice.Close]);
+
+    /// <summary>
+    /// A question with one verb and a way out: the verb's button runs <paramref name="act"/> and is the default, the
+    /// cancel button (Escape too) closes the notice and runs <paramref name="cancelled"/> when given. With
+    /// <paramref name="cancelIsDefault"/> Enter is the way out instead (axPass's deletions, PW-4.6).
+    /// </summary>
+    public static Notice Ask(string title, string text, string verb, Action act, string cancel = "&Cancel", Action? cancelled = null, bool cancelIsDefault = false) =>
+        new(title, text,
+        [
+            new OverlayChoice(verb, act, IsDefault: !cancelIsDefault),
+            new OverlayChoice(cancel, cancelled, IsDefault: cancelIsDefault, IsCancel: true),
+        ]);
 }
 
 /// <summary>

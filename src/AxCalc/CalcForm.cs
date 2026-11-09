@@ -325,18 +325,14 @@ public sealed class CalcForm : AxKitForm
         }
 
         var count = _entries.Count;
-        ShowNotice(new Notice("Clear the history?", count == 1 ? "The entry cannot be brought back." : $"The {count} entries cannot be brought back.",
-        [
-            new OverlayChoice("C&lear", () =>
-            {
-                _entries.Clear();
-                _history.Items.Clear();
-                AfterChange();
-                SaveState();
-                Announce("History cleared", true);
-            }, IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ]));
+        ShowNotice(Notice.Ask("Clear the history?", count == 1 ? "The entry cannot be brought back." : $"The {count} entries cannot be brought back.", "C&lear", () =>
+        {
+            _entries.Clear();
+            _history.Items.Clear();
+            AfterChange();
+            SaveState();
+            Announce("History cleared", true);
+        }));
     }
 
     /// <summary>Ctrl+S (AC-5.5): one entry per line through the Windows save dialog.</summary>
@@ -398,17 +394,13 @@ public sealed class CalcForm : AxKitForm
             return;
         }
 
-        ShowNotice(new Notice("Clear the variables?", count == 1 ? "The variable cannot be brought back." : $"The {count} variables cannot be brought back.",
-        [
-            new OverlayChoice("C&lear", () =>
-            {
-                _calculator.ClearVariables();
-                AfterChange();
-                SaveState();
-                Announce("Variables cleared", true);
-            }, IsDefault: true),
-            new OverlayChoice("&Cancel", IsCancel: true),
-        ]));
+        ShowNotice(Notice.Ask("Clear the variables?", count == 1 ? "The variable cannot be brought back." : $"The {count} variables cannot be brought back.", "C&lear", () =>
+        {
+            _calculator.ClearVariables();
+            AfterChange();
+            SaveState();
+            Announce("Variables cleared", true);
+        }));
     }
 
     // ---- settings and the status bar (AC-2.3, AC-9) ----
