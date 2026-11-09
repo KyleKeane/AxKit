@@ -198,11 +198,7 @@ public abstract partial class AxKitForm
         var body = ReportBody.Markdown(report, BundleInfo.Version, ReportSender.ReporterId(AppPaths.ReportsFile));
         ShowNotice(new Notice(title, text,
         [
-            new OverlayChoice("&Copy report", () =>
-            {
-                Clipboard.SetText(body.Replace("\n", "\r\n"));
-                Announce("Copied", true);
-            }, StaysOpen: true),
+            new OverlayChoice("&Copy report", () => CopyText(body.Replace("\n", "\r\n"), "Copied"), StaysOpen: true),
             new OverlayChoice("Open GitHub's &form", () => OpenUrl(GitHubIssues.NewIssueFormUrl(ReportSender.Repository, report.Title, body, ReportKinds.Label(report.Kind)))),
             OverlayChoice.Close,
         ]));
