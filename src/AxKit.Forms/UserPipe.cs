@@ -35,6 +35,32 @@ public static class UserPipe
         GetNamedPipeClientProcessId(pipe.SafePipeHandle.DangerousGetHandle(), out var id) ? id : null;
 
     /// <summary>The process that serves a pipe this process connected to; null when Windows cannot say.</summary>
+    /// <summary>
+    /// A line of the other end's, at most 64 KB (security audit S-56; from the MCP channel on its second use, the
+    /// automation channel): no request of either pipe is longer, and a longer one is not read into memory, whoever
+    /// sends it; null at the end of the stream or past the cap.
+    /// </summary>
+    public static string? ReadLine(StreamReader reader)
+    {
+        var line = new System.Text.StringBuilder();
+        while (reader.Read() is var c and >= 0)
+        {
+            if (c == '\n')
+            {
+                return line.ToString().TrimEnd('\r');
+            }
+
+            if (line.Length >= 65_536)
+            {
+                return null;
+            }
+
+            line.Append((char)c);
+        }
+
+        return line.Length > 0 ? line.ToString() : null;
+    }
+
     public static uint? ServerOf(NamedPipeClientStream pipe) =>
         GetNamedPipeServerProcessId(pipe.SafePipeHandle.DangerousGetHandle(), out var id) ? id : null;
 

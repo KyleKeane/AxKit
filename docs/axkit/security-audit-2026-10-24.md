@@ -85,7 +85,7 @@ State is **open**, **fixed (commit)**, or **decided** with the reason. Grouped b
 - **S-13, medium.** The hand-over message of a second start (`AppMessage`) is sent to a window found by process name
   and title, and trusted by the receiver. A program named `AxKit.exe` with such a window receives the paths the user
   opens; any program can hand axMedia or axPreview a network path, which authenticates to it. Fix: the sender checks
-  that the target's program file is its own; the receivers refuse network paths in a hand-over.
+  that the target's program file is its own; the receiver's side was accepted as it is (a program of the user's could open the path itself; the state row below).
 - **S-14, low.** axClip's paste checks the window in front 150 ms after hiding, then types; a narrow race. Accepted;
   the check is right and nothing is typed into a window the user did not come from.
 
@@ -220,6 +220,20 @@ on the branch `inventory`, one commit per finding or close set, with its tests:
 | S-51 | low | d6b38a4 | `*.old*.exe` deleted in whatever folder `AxKit.exe` ran from; now the installer's names in the installation folder only |
 | S-52 | low | 13cdc51 | more script hosts never paired (bash, sh, wsl, mintty, wt, OpenConsole, dotnet, perl, ruby, java, bun, deno); node stays for npm's Claude Code |
 | S-53 | low | 13cdc51 | the `claude.cmd` command line quoted only arguments with spaces; now every one, and cmd's special characters refused (`SystemPrograms.CmdSpecials`, axFile's S-3 list on its second use) |
+
+The consolidation run of 2026-11-09 (`docs/axkit/inventory-2026-11-09.md`, section 7) read every process start, outside
+path, parser, pipe and log line again and closed these, each on the branch `consolidation` with a test:
+
+| Finding | Severity | What |
+|---|---|---|
+| S-54 | medium-low | the start line of every log held the whole command line, so an issue's body handed to axClaude as `--message` (axTask's Open in axClaude) landed in `axclaude.log` and from there in the last lines of a report and Copy diagnostics; now the message is logged as its length (`AxKit.Core/CommandLineText`) |
+| S-55 | low | a title that is a Windows device name (`con`, `nul`, `com1` and kin) gave an item file Windows maps to the device, so the file could not be written and every refresh of the list failed on it; now such a stem gets an underscore in front (`ItemFiles.FileStem`, item-apps IA-4.5) |
+| S-56 | low | the automation channel read a client's first line with no length cap before the secret check, where the MCP channel capped at 64 KB; now both read through `UserPipe.ReadLine` |
+| S-57 | low | S-42's rule, text from outside shown with its hidden characters made visible, reached three lists; `AxKitList.Fill` fills every list of that kind now, so the viewer's details follow it too |
+
+Left for the user (the inventory's section 11): S-1's `NoDefaultCurrentDirectoryInExePath`, which never landed in
+`Program.cs`; a `list.json` `open` action that may start Claude Code or a shell, which the MCP tool refuses; a cap on a
+zip's entries in axPreview; S-53's refusal in axClaude's own `claude.cmd` command lines.
 
 The review's notes, unconfirmed: Windows' property handlers run inside axPreview's process for the Details list (a
 third-party handler that crashes on a malformed file ends it; a hung one is left after five seconds), as they run

@@ -125,7 +125,7 @@ internal sealed class AutomationChannel : IMessageFilter
                 using var reader = new StreamReader(pipe, new UTF8Encoding(false));
                 using var writer = new StreamWriter(pipe, new UTF8Encoding(false)) { AutoFlush = true };
                 // S-11: the runner proves the run's secret on its first line; any other client is let go.
-                if (!Proves(reader.ReadLine()))
+                if (!Proves(UserPipe.ReadLine(reader)))
                 {
                     Log.Info("Automation channel: a client without the run's secret was refused");
                     continue;
@@ -133,7 +133,7 @@ internal sealed class AutomationChannel : IMessageFilter
 
                 writer.WriteLine("{\"ok\":true}");
                 failures = 0;
-                while (reader.ReadLine() is { } line)
+                while (UserPipe.ReadLine(reader) is { } line)
                 {
                     string answer;
                     try
@@ -142,6 +142,7 @@ internal sealed class AutomationChannel : IMessageFilter
                     }
                     catch (Exception ex)
                     {
+                        // Whatever went wrong is the script's answer, never the end of the window.
                         answer = JsonSerializer.Serialize(new { error = ex.GetType().Name + ": " + ex.Message });
                     }
 

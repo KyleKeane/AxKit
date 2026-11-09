@@ -150,19 +150,19 @@ internal sealed class McpChannel
         // pipe of another user's copy of AxKit.exe cannot pass itself off as this user's window.
         var challenge = McpAccess.NewChallenge();
         writer.WriteLine(JsonSerializer.Serialize(new { challenge }, Plain));
-        if (!McpAccess.Proves(key, challenge, ReadLine(reader)))
+        if (!McpAccess.Proves(key, challenge, UserPipe.ReadLine(reader)))
         {
             Log.Info("AI tools' pipe: a client without the key was refused");
             return;
         }
 
-        if (ReadLine(reader) is not { Length: > 0 } theirs)
+        if (UserPipe.ReadLine(reader) is not { Length: > 0 } theirs)
         {
             return;
         }
 
         writer.WriteLine(McpAccess.Proof(key, theirs));
-        if (ReadLine(reader) is not { } line)
+        if (UserPipe.ReadLine(reader) is not { } line)
         {
             return;
         }
@@ -187,27 +187,6 @@ internal sealed class McpChannel
         writer.WriteLine(answer);
     }
 
-    /// <summary>A line of the client's, at most 64 KB: no request of this stage is longer, and a longer one is not read into memory.</summary>
-    private static string? ReadLine(StreamReader reader)
-    {
-        var line = new StringBuilder();
-        while (reader.Read() is var c and >= 0)
-        {
-            if (c == '\n')
-            {
-                return line.ToString().TrimEnd('\r');
-            }
-
-            if (line.Length >= 65_536)
-            {
-                return null;
-            }
-
-            line.Append((char)c);
-        }
-
-        return line.Length > 0 ? line.ToString() : null;
-    }
 
     /// <summary>Runs on the window's thread and waits at most <see cref="WindowWait"/>; a window that does not answer in time refuses the call.</summary>
     private T OnWindow<T>(Func<T> read)
