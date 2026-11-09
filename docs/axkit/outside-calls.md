@@ -131,9 +131,9 @@ Calls (1):
 
 Calls (13):
 
-- **axFile**, `src/AxFile/FileForm.Operations.cs:705`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
+- **axFile**, `src/AxFile/FileForm.Operations.cs:698`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, "shell:MyComputerFolder") { UseShellExecute = false })?.Dispose();`
-- **axFile**, `src/AxFile/FileForm.Operations.cs:789`, in `FileForm.OpenWithWindows`, by `Process.Start`: opens the selected file or folder with the program Windows has for it, as Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with dialog follows.
+- **axFile**, `src/AxFile/FileForm.Operations.cs:782`, in `FileForm.OpenWithWindows`, by `Process.Start`: opens the selected file or folder with the program Windows has for it, as Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with dialog follows.
   Code: `Process.Start(new ProcessStartInfo(entry.Path) { UseShellExecute = true })?.Dispose();`
 - **axFile**, `src/AxFile/Shell.cs:68`, in `Shell.Properties`, by `ShellExecuteEx (Windows)`: shows Windows' Properties sheet for the entry (Alt+Enter), the shell's own window, through the shell's verb "properties".
   Code: `if (ShellExecuteExW(ref info))`
@@ -145,9 +145,9 @@ Calls (13):
   Code: `Process.Start(new ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true })?.Dispose();`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
   Code: `using var process = Process.Start(start) ?? throw new InvalidOperationException("PowerShell could not be started.");`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:728`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:757`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
   Code: `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:744`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:782`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, arguments) { UseShellExecute = false })?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
   Code: `System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(StoreListing.PageUri) { UseShellExecute = true });`
@@ -273,14 +273,14 @@ Defined in .NET, System.Diagnostics: starts a program, through the Windows shell
 
 Used in 16 places:
 
-- `src/AxFile/FileForm.Operations.cs:705`, in `FileForm.ShowFolderInExplorer`, for Windows.
-- `src/AxFile/FileForm.Operations.cs:789`, in `FileForm.OpenWithWindows`, for Windows.
+- `src/AxFile/FileForm.Operations.cs:698`, in `FileForm.ShowFolderInExplorer`, for Windows.
+- `src/AxFile/FileForm.Operations.cs:782`, in `FileForm.OpenWithWindows`, for Windows.
 - `src/AxFile/FileForm.Programs.cs:74`, in `FileForm.RunProgram`, for User programs.
 - `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, for axKit.
-- `src/AxKit.Forms/AxKitForm.cs:728`, in `AxKitForm.OpenUrl`, for Windows.
-- `src/AxKit.Forms/AxKitForm.cs:744`, in `AxKitForm.OpenInExplorer`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs:757`, in `AxKitForm.OpenUrl`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs:782`, in `AxKitForm.OpenInExplorer`, for Windows.
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/AxKitForm.Mcp.cs:206`, in `AxKitForm.RunClaude`, for Claude Code.
 - `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, for Windows.
