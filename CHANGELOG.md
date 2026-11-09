@@ -2,6 +2,7 @@
 
 ## 5.2.2
 
+- axTerminal: Command Prompt is started from Windows' own `cmd.exe` in System32, no longer from the `ComSpec` variable, which a program or a profile can point at another program (security audit S-1).
 - axClaude, axTerminal: the field at the bottom of the window is told from the view on screen: a frame, a tinted background of its own so it reads as a separate region from the white conversation, and a header band over it with its name ("Message to Claude", "Command"), as a question's list has the question over it. The tints follow the light or dark theme. Nothing changes for NVDA, which names the field as before. A larger text (Options, Text) makes the lines taller and nothing else: the field stays three lines of its font and never takes more than a third of the window, the conversation keeps the rest, and a longer message wraps and scrolls inside the field. A sighted helper had taken the white field under the white conversation for more of the conversation (2026-11-08).
 - axTask, axPass: an item whose title is a Windows device name (con, nul, com1 and the like) could not be saved, and the list's refresh kept failing on it; its file now starts with an underscore (security audit S-55).
 - axClaude: the message text axTask hands over with Open in axClaude no longer lands in the log, and so not in a report's last lines or Copy diagnostics (S-54). Copy report on a clipboard another program holds says so instead of crashing.

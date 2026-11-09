@@ -166,7 +166,7 @@ Fixed on the branch `security`, one commit per finding or close set, each with i
 
 | Findings | Commit | What |
 |---|---|---|
-| S-1, S-3 | e777871 | programs by full path; the PATH searched in its full folders only (`SystemPrograms`); batch programs refused cmd's special characters |
+| S-1, S-3 | e777871 | programs by full path; the PATH searched in its full folders only (`SystemPrograms`); batch programs refused cmd's special characters; on 2026-11-09 axTerminal's cmd from System32 alone, `ComSpec` no longer read |
 | S-2 | 3a61de4 | git's file monitor and `ext::` always off, no diff programs; a repository's own programs set aside until trusted (axGIT AG-1.6) |
 | S-11, S-12 | 07091d6 | the channel's run secret, taken out of the environment; the pipe for the user alone; password fields read "protected" |
 | S-13 | 7ee6136 | a hand-over only to a window of this very `AxKit.exe`; the receiver's side accepted (a program of the user's could open the path itself) |

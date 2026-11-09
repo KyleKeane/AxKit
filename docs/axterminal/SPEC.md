@@ -70,7 +70,9 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   missing, are not listed; Switch shell offers "Install PowerShell 7…" and "Install Git, for Git Bash…" instead
   (bundle AX-2.9), and switches to the shell once it is installed.
 - AT-1.2 **The shell.** One of PowerShell 7 (`pwsh.exe`, found on the PATH or under `%ProgramFiles%\PowerShell\7`),
-  Windows PowerShell (`powershell.exe`), Command Prompt (`cmd.exe`), Git Bash (Git for Windows' `Git\bin\bash.exe`
+  Windows PowerShell (`powershell.exe`), Command Prompt (`cmd.exe` from System32 by its full path, never the `ComSpec`
+  variable, which a program or a profile can point at another program; bundle security audit S-1, the user's choice of
+  2026-11-09), Git Bash (Git for Windows' `Git\bin\bash.exe`
   under Program Files, Program Files (x86) or `%LOCALAPPDATA%\Programs`, or next to the `git.exe` on the PATH; never
   a `bash.exe` on the PATH, which in System32 is WSL's launcher; started `--login -i`, as Git's own shortcut does) or
   a custom command line; the default is PowerShell 7 when it is installed, otherwise Windows PowerShell. The choice

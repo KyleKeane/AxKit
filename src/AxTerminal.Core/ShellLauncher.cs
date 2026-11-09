@@ -148,7 +148,9 @@ public static class ShellLauncher
             case ShellKind.WindowsPowerShell:
                 return Existing(SystemPrograms.PowerShell) ?? SystemPrograms.OnPath("powershell.exe");
             case ShellKind.CommandPrompt:
-                return Existing(Environment.GetEnvironmentVariable("ComSpec")) ?? Existing(Path.Combine(SystemRoot(), "System32", "cmd.exe"));
+                // Windows' own cmd by its full path, never ComSpec, which a program or a profile can point at another
+                // program (security audit S-1; the user's choice of 2026-11-09).
+                return Existing(SystemPrograms.Cmd);
             case ShellKind.GitBash:
                 return FindGitBash();
             default:
@@ -251,8 +253,6 @@ public static class ShellLauncher
     }
 
     private static string Quote(string path) => path.Contains(' ') ? $"\"{path}\"" : path;
-
-    private static string SystemRoot() => Environment.GetEnvironmentVariable("SystemRoot") ?? @"C:\Windows";
 
     private static string? Existing(string? path) => path is not null && File.Exists(path) ? path : null;
 }

@@ -1,4 +1,5 @@
 using System.Text;
+using AxKit.Core;
 using AxTerminal.Core;
 
 namespace AxTerminal.Tests;
@@ -75,6 +76,26 @@ public sealed class ShellLauncherTests
         var cmd = ShellLauncher.BuildCommandLine(ShellKind.CommandPrompt);
         Assert.NotNull(cmd);
         Assert.EndsWith("cmd.exe", cmd, StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith(Environment.SystemDirectory, cmd.Trim('"'), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Command_prompt_comes_from_System32_whatever_ComSpec_says()
+    {
+        // S-1: ComSpec can be pointed at any program by a profile or a program that ran before; axTerminal never reads it.
+        var planted = Path.Combine(Path.GetTempPath(), "axkit-test-comspec-" + Guid.NewGuid().ToString("N") + ".exe");
+        var before = Environment.GetEnvironmentVariable("ComSpec");
+        try
+        {
+            File.WriteAllText(planted, "not cmd");
+            Environment.SetEnvironmentVariable("ComSpec", planted);
+            Assert.Equal(SystemPrograms.Cmd, ShellLauncher.Find(ShellKind.CommandPrompt));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("ComSpec", before);
+            File.Delete(planted);
+        }
     }
 
     [Fact]
