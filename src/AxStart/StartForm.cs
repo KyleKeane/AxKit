@@ -38,25 +38,12 @@ public sealed class StartForm : HotkeyForm
         Add(start, new Command("&Information", AxStartKeys.Information, SayInformation) { Mark = CommandMark.Read });
         start.DropDownItems.Add(new ToolStripSeparator());
         Add(start, new Command("&Refresh programs", AxStartKeys.Refresh, () => Do(() => RefreshAsync(announce: true))) { Mark = CommandMark.Read });
-        start.DropDownItems.Add(new ToolStripSeparator());
-        // AS-3.4: hidden at once, whatever the field holds (asked 2026-10-22); the next showing starts empty.
-        Add(start, new Command("&Hide", AxStartKeys.Hide, () =>
-        {
-            Log.Info("Hidden: Hide");
-            HideWindow();
-        }));
-        start.DropDownItems.Add(new ToolStripMenuItem("&Quit axStart", null, (_, _) => Quit()));
+        AddHideAndQuit(start, AxStartKeys.Hide);
 
         var options = new ToolStripMenuItem("&Options");
-        options.DropDownItems.Add(new ToolStripMenuItem("&Hotkey...", null, (_, _) => ShowHotkeyNotice()));
+        options.DropDownItems.Add(HotkeyItem());
         options.DropDownItems.Add(CreateTextMenu());
-        options.DropDownItems.Add(CreateGeneralMenu(
-            StartWithWindowsItem(AxStartApp.Name, _settings.StartWithWindows, v =>
-            {
-                _settings.StartWithWindows = v;
-                SignInStart.Apply(AxStartApp.Name, Dispatch.AxStart, v);
-            }),
-            Toggle("Say the first &match while typing", _settings.SayFirstMatch, v => _settings.SayFirstMatch = v)));
+        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem()));
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Windows &resources",
@@ -112,13 +99,6 @@ public sealed class StartForm : HotkeyForm
         $"Hotkey: {_settings.Key}, {(HotkeyRegistered ? "registered" : "not registered")}",
     ];
 
-    protected override Hotkey CurrentHotkey => _settings.Key;
-
-    protected override void KeepHotkey(Hotkey key)
-    {
-        _settings.HotkeyText = key.ToString();
-        SaveSettings();
-    }
 
     /// <summary>The field emptied (unless a start failed) and the window centred on the screen of the program that had the focus (AS-3.4).</summary>
     protected override void PrepareShowing(Rectangle area, bool keepText)
@@ -148,7 +128,6 @@ public sealed class StartForm : HotkeyForm
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
-        SignInStart.Apply(AxStartApp.Name, Dispatch.AxStart, _settings.StartWithWindows);
         Do(() => RefreshAsync(announce: false));
     }
 
@@ -162,7 +141,6 @@ public sealed class StartForm : HotkeyForm
 
     protected override string NothingSaid => Matches.Items.Count > 0 ? Matches.Items[0].ToString() ?? string.Empty : "No programs";
 
-    protected override bool SayFirstMatch => _settings.SayFirstMatch;
 
     protected override void Refill() => Fill(null);
 

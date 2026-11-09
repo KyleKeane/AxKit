@@ -35,6 +35,10 @@ another project on its second use, the bullet says so.
 - `ConsoleSettings` (AX-6.5, 2026-10-23): on `WindowSettings`, the base of axClaude's and axTerminal's classes: the
   console size, the recent folders (`RememberRecentFolder`), the sounds and the signals, the transcript options, with
   `SanitizeConsole`; the JSON names are the ones the two files had.
+- `HotkeySettings` (2026-11-09): on `WindowSettings`, the base of axStart's and axClip's classes: the hotkey as text
+  (`HotkeyText`, read as `Key`, the app's `DefaultHotkey` when the text is not a usable one), Start with Windows and
+  Say the first match while typing, with `SanitizeHotkey`; the JSON names are the ones the two files had.
+  `AxKit.Forms/HotkeyForm` reads it without knowing the app.
 - `Log`: one file per app; each app calls `Log.UseApp` first thing in its `Run`.
 - `Updates/UpdateCheck` (the latest GitHub release: JSON parsing, version comparison; the repository name lives here)
   and `Updates/Updater` (the download and the hand-over to `install.ps1`, AX-3).

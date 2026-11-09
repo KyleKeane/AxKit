@@ -10,8 +10,9 @@ namespace AxKit.Forms;
 /// registered on the window's handle shows it in front, and the window hides again on Escape, Alt+F4 and the focus
 /// going to another program. Only Quit ends the process. What is here moved unchanged: the first showing that only
 /// makes the handle, the hotkey and its notice, the showing and hiding with the one rule of the foreground, the hide
-/// when another program comes to the front, and the search for the running window. The app fills in its hotkey
-/// setting, the window's size and its controls on showing (<see cref="PrepareShowing"/>, <see cref="AfterShowing"/>).
+/// when another program comes to the front, and the search for the running window. The hotkey, Start with Windows
+/// and Say the first match are the app's <see cref="HotkeySettings"/>, read here (2026-11-09); the app fills in the
+/// window's size and its controls on showing (<see cref="PrepareShowing"/>, <see cref="AfterShowing"/>).
 /// </summary>
 public abstract class HotkeyForm : AxKitForm
 {
@@ -24,6 +25,7 @@ public abstract class HotkeyForm : AxKitForm
     private const int StartSettleMs = 3000;
 
     private readonly bool _hidden;
+    private readonly HotkeySettings _settings;
     private Hotkey? _registered;
 
     /// <summary>
@@ -42,26 +44,49 @@ public abstract class HotkeyForm : AxKitForm
     /// <see cref="SignInStart.Apply"/>, or, in the Store's copy, where the package's startup task decides and Windows
     /// lists it under Settings, Apps, Startup (docs/axkit/SPEC.md AX-13.4), an item that opens that page and says so.
     /// </summary>
-    protected ToolStripMenuItem StartWithWindowsItem(string appName, bool on, Action<bool> flip)
+    protected ToolStripMenuItem StartWithWindowsItem()
     {
         if (!PackageIdentity.IsPackaged)
         {
-            return Toggle("&Start with Windows", on, flip);
+            return Toggle("&Start with Windows", _settings.StartWithWindows, v =>
+            {
+                _settings.StartWithWindows = v;
+                SignInStart.Apply(AppName, AppVerb, v);
+            });
         }
 
         return new ToolStripMenuItem("&Start with Windows (Windows Settings)...", null, (_, _) =>
         {
             Announce(SignInStart.OpenWindowsStartupSettings()
-                ? $"Windows Settings, Startup apps, is open: turn axKit {appName} on or off there"
-                : "Windows Settings could not be opened. Settings, Apps, Startup is where axKit " + appName + " is turned on or off", true);
+                ? $"Windows Settings, Startup apps, is open: turn axKit {AppName} on or off there"
+                : "Windows Settings could not be opened. Settings, Apps, Startup is where axKit " + AppName + " is turned on or off", true);
         });
     }
 
+    /// <summary>Options, Hotkey... (AS-4.2): the notice that takes the next key.</summary>
+    protected ToolStripMenuItem HotkeyItem() => new("&Hotkey...", null, (_, _) => ShowHotkeyNotice());
+
+    /// <summary>Options, General's Say the first match while typing (AS-3.2, CP-2.3).</summary>
+    protected ToolStripMenuItem SayFirstMatchItem() => Toggle("Say the first &match while typing", _settings.SayFirstMatch, v => _settings.SayFirstMatch = v);
+
+    /// <summary>The end of the app's own menu: a separator, Hide with the app's key (AS-3.4: hidden at once, whatever the field holds; the next showing starts empty), and Quit, the one close that ends the process (AS-1.4).</summary>
+    protected void AddHideAndQuit(ToolStripMenuItem menu, Keys hideKey)
+    {
+        menu.DropDownItems.Add(new ToolStripSeparator());
+        Add(menu, new Command("&Hide", hideKey, () =>
+        {
+            Log.Info("Hidden: Hide");
+            HideWindow();
+        }));
+        menu.DropDownItems.Add(new ToolStripMenuItem($"&Quit {AppName}", null, (_, _) => Quit()));
+    }
+
     /// <param name="hidden">Started with --hidden, as at sign-in: the window stays hidden until the hotkey.</param>
-    protected HotkeyForm(string appName, WindowSettings settings, string settingsPath, string? settingsError, bool hidden)
+    protected HotkeyForm(string appName, HotkeySettings settings, string settingsPath, string? settingsError, bool hidden)
         : base(appName, settings, settingsPath, settingsError)
     {
         _hidden = hidden;
+        _settings = settings;
         // The title is the app's name alone: the second start finds the hidden window by it (FindRunning).
         Text = appName;
         ShowInTaskbar = false;
@@ -92,10 +117,14 @@ public abstract class HotkeyForm : AxKitForm
     // ---- what the app fills in ----
 
     /// <summary>The hotkey of the app's settings.</summary>
-    protected abstract Hotkey CurrentHotkey { get; }
+    protected Hotkey CurrentHotkey => _settings.Key;
 
     /// <summary>A new hotkey into the app's settings, saved.</summary>
-    protected abstract void KeepHotkey(Hotkey key);
+    private void KeepHotkey(Hotkey key)
+    {
+        _settings.HotkeyText = key.ToString();
+        SaveSettings();
+    }
 
     /// <summary>Before the window shows: its bounds on <paramref name="area"/>, the working area of the screen of the program that had the focus; the field emptied unless <paramref name="keepText"/>.</summary>
     protected abstract void PrepareShowing(Rectangle area, bool keepText);
@@ -123,8 +152,6 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>What is said when nothing matches: the line the list shows in place of the matches.</summary>
     protected abstract string NothingSaid { get; }
 
-    /// <summary>Whether the first match is said after the typing pauses (the app's setting, AS-3.2, CP-2.3).</summary>
-    protected abstract bool SayFirstMatch { get; }
 
     /// <summary>The matches made again from the field's text, through <see cref="ShowMatches"/>.</summary>
     protected abstract void Refill();
@@ -180,7 +207,7 @@ public abstract class HotkeyForm : AxKitForm
     {
         Refill();
         _speak.Stop();
-        if (SayFirstMatch && SearchField.Text.Trim().Length > 0)
+        if (_settings.SayFirstMatch && SearchField.Text.Trim().Length > 0)
         {
             _speak.Start();
         }
@@ -272,6 +299,8 @@ public abstract class HotkeyForm : AxKitForm
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
+        // AS-1.3: the Run key as the setting says, on every start (the installed program alone writes it; the Store's copy never).
+        SignInStart.Apply(AppName, AppVerb, _settings.StartWithWindows);
         if (!Register(CurrentHotkey))
         {
             // AS-4.3: never a window that cannot be reached.

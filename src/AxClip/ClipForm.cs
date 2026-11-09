@@ -52,16 +52,10 @@ public sealed class ClipForm : HotkeyForm
         Add(clip, new Command("&Read in full", AxClipKeys.ReadInFull, ReadInFull) { Mark = CommandMark.Read });
         Add(clip, new Command("Re&move", AxClipKeys.Remove, RemoveSelected));
         Add(clip, new Command("C&lear history...", AxClipKeys.ClearHistory, ClearHistory) { Mark = CommandMark.Act });
-        clip.DropDownItems.Add(new ToolStripSeparator());
-        Add(clip, new Command("&Hide", AxClipKeys.Hide, () =>
-        {
-            Log.Info("Hidden: Hide");
-            HideWindow();
-        }));
-        clip.DropDownItems.Add(new ToolStripMenuItem("&Quit axClip", null, (_, _) => Quit()));
+        AddHideAndQuit(clip, AxClipKeys.Hide);
 
         var options = new ToolStripMenuItem("&Options");
-        options.DropDownItems.Add(new ToolStripMenuItem("&Hotkey...", null, (_, _) => ShowHotkeyNotice()));
+        options.DropDownItems.Add(HotkeyItem());
         _pauseItem = Add(options, new Command("&Pause recording", AxClipKeys.PauseRecording, TogglePause));
         options.DropDownItems.Add(Toggle("&Keep history between runs", settings.KeepHistory, v =>
         {
@@ -70,13 +64,7 @@ public sealed class ClipForm : HotkeyForm
             _settings.Keep(_history.Items);
         }));
         options.DropDownItems.Add(CreateTextMenu());
-        options.DropDownItems.Add(CreateGeneralMenu(
-            StartWithWindowsItem(AxClipApp.Name, _settings.StartWithWindows, v =>
-            {
-                _settings.StartWithWindows = v;
-                SignInStart.Apply(AxClipApp.Name, Dispatch.AxClip, v);
-            }),
-            Toggle("Say the first &match while typing", _settings.SayFirstMatch, v => _settings.SayFirstMatch = v)));
+        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem()));
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Windows &resources",
@@ -127,13 +115,6 @@ public sealed class ClipForm : HotkeyForm
         $"Hotkey: {_settings.Key}, {(HotkeyRegistered ? "registered" : "not registered")}",
     ];
 
-    protected override Hotkey CurrentHotkey => _settings.Key;
-
-    protected override void KeepHotkey(Hotkey key)
-    {
-        _settings.HotkeyText = key.ToString();
-        SaveSettings();
-    }
 
     /// <summary>The field emptied and the window centred on the screen of the program that had the focus (CP-2.2).</summary>
     protected override void PrepareShowing(Rectangle area, bool keepText)
@@ -170,7 +151,6 @@ public sealed class ClipForm : HotkeyForm
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
-        SignInStart.Apply(AxClipApp.Name, Dispatch.AxClip, _settings.StartWithWindows);
         if (!AddClipboardFormatListener(Handle))
         {
             Log.Error("The clipboard listener could not be added");
@@ -317,7 +297,6 @@ public sealed class ClipForm : HotkeyForm
 
     protected override string NothingSaid => _history.Nothing(SearchField.Text);
 
-    protected override bool SayFirstMatch => _settings.SayFirstMatch;
 
     protected override void Refill() => Fill();
 

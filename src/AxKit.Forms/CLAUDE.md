@@ -53,13 +53,13 @@ WinForms code every app of the bundle uses (`docs/axkit/SPEC.md` AX-6.2, AX-6.4)
   - `HideWindow` and `GiveForegroundBack` (the one rule of the foreground) with `GiveForegroundBackLaterAsync`, the hide when another program but NVDA comes to the front;
   - `ShowHotkeyNotice` and its capture;
   - `FindRunning` (a second start's search by the title);
-  - `StartWithWindowsItem` (AX-13.4, 2026-11-08): Options, General's Start with Windows for both apps, the toggle that writes the Run key through `SignInStart.Apply`, or in the Store's copy an item that opens Windows' Startup apps page (`SignInStart.OpenWindowsStartupSettings`) and says to turn the app on or off there;
+  - the settings both apps share, `AxKit.Core/HotkeySettings` (2026-11-09): `CurrentHotkey` and the hotkey kept from the Hotkey notice, the Run key written at handle creation as Start with Windows says (`SignInStart.Apply`), and the menu items both apps place: `HotkeyItem`, `SayFirstMatchItem`, `AddHideAndQuit` (the separator, Hide with the app's key, Quit) and `StartWithWindowsItem` (AX-13.4, 2026-11-08: the toggle that writes the Run key, or in the Store's copy an item that opens Windows' Startup apps page, `SignInStart.OpenWindowsStartupSettings`, and says to turn the app on or off there);
   - `ForegroundBefore` is the window a paste goes to.
   - The search field over the matches is here too since 2026-10-24 (both apps had it line for line):
     - `SearchField` and `Matches` (never focused, AS-D2), `ShowMatches`;
     - the 300 ms timer that says the first match;
     - `AddMatchKeys` (six commands with the app's keys: Down, Up, Page Down, Page Up, first, last) and `SelectMatch` with the edge earcon.
-  - The app fills in `CurrentHotkey`, `KeepHotkey`, `PrepareShowing`, `AfterShowing`, `OnHiding`, and for the matches `MatchCount`, `SpokenMatch`, `NothingSaid`, `SayFirstMatch` and `Refill`.
+  - The app fills in `PrepareShowing`, `AfterShowing`, `OnHiding`, and for the matches `MatchCount`, `SpokenMatch`, `NothingSaid` and `Refill`.
   - The gotchas of the foreground are in `src/AxStart/CLAUDE.md`.
 - `ConsoleForm` (AX-6.5; docs/axterminal/SPEC.md AT-2; 2026-10-23, docs/axkit/review-2026-10-23.md 5.1): the window of a console app on `AxKitForm`, what axClaude's `MainForm` and axTerminal's `TerminalForm` had twice. One class in partial files.
   - `ConsoleForm.cs`:
