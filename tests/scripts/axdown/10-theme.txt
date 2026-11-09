@@ -11,7 +11,7 @@ expect said ! No theme file: Options, Text, Theme, Edit theme file makes one
 menu Edit theme file
 adopt
 expect state theme.json - axJSON
-expect focus "axkit-theme 1"
+expect text axkit-theme 1
 close
 use 1
 menu Reload theme

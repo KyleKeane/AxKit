@@ -90,6 +90,8 @@ keys enter
 expect said Added Test issue
 keys tab
 keys down
+expect focus Number, number
+keys down
 expect focus Kind, choice, unlabelled
 keys down
 expect focus State, text, open

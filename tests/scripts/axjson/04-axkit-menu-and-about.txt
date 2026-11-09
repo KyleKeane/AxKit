@@ -22,7 +22,7 @@ expect commands "axStart, axKit, New window"
 menu Version
 expect state "notice":"axKit
 expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess.
-expect state axClaude for Claude Code, axTerminal for your shell, axGIT for Git, axPass for KeePassXC.
+expect state axClaude for Claude Code, axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axMCP for MCP servers.
 keys escape
 expect state "notice":null
 expect focus settings.json

@@ -115,7 +115,7 @@ public sealed partial class TextEditorForm
     }
 
     /// <summary>File → New window (the viewer's Ctrl+N, AP-3.2; the editors' Ctrl+Shift+N, AD-4.1): another window of the app, empty, through the bundle's starter (AX-9); <c>--new</c> keeps it from handing over to this one.</summary>
-    private void NewWindow() => AxKitMenu.StartWith(_app.Verb, ["--new"]);
+    private void NewWindow() => AxKitMenu.StartWith(_app.Verb, _app.ReadOnly ? ["--new"] : []);
 
     /// <summary>The viewer's File → Reload (F5, AP-2.4): the file read again, the caret kept on its line and column, "Reloaded".</summary>
     private void ReloadCommand()

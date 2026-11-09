@@ -47,7 +47,7 @@ expect said ♪ Done
 refuse said Failed
 # A program in the current folder is run as .\name since 2026-11-09 (NoDefaultCurrentDirectoryInExePath, security audit
 # S-1): the bare name is not found, .\hello runs it.
-file myproject\hello.cmd @echo planted
+file work\myproject\hello.cmd @echo planted
 type hello
 keys enter
 expect said Done
