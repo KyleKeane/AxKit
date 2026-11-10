@@ -8,6 +8,8 @@ try said trust
 iffound wait 1500
 iffound keys enter
 expect said Ready
+# The field by its whole name: the trust question's list is still in the area for a moment after Ready (message.txt).
+expect focus "name":"Message to Claude"
 type Use your AskUserQuestion tool once, with two questions: which colour I prefer, red or blue, and which season I prefer, summer or winter.
 keys enter
 expect said ! Question 1 of 2
