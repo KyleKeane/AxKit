@@ -48,9 +48,10 @@ given once (AH-1.2) before it answers anything.
 
 ### HE-2 The window
 
-- HE-2.1 One field, "Ask Claude", with the caret always in it (axStart AS-D2), the list of earlier questions under
-  it, which never takes the focus (HE-3), a menu bar and a status bar; the title is the app's title (AX-11.2), by
-  which a second start finds it.
+- HE-2.1 One field, "Ask Claude", which has the caret when the window shows (axStart AS-D2), the list of earlier
+  questions under it, which Tab reaches (HE-3.4; until 5.6.0 it never took the focus, and "tab does nothing" was the
+  user's first finding), a menu bar and a status bar; the title is the app's title (AX-11.2), by which a second start
+  finds it.
 - HE-2.2 The status bar: "N questions kept" ("1 question kept"), or "AI help is off: axKit menu, AI help" while the
   switch is off.
 - HE-2.3 **Enter** asks the typed question (AH-6.4: the notice "Asking Claude" with Cancel, then "Claude says",
@@ -59,7 +60,9 @@ given once (AH-1.2) before it answers anything.
   with nothing kept, "Type a question first".
 - HE-2.4 The prompt (`AiPrompts.Anywhere`) names the program and the window title that were in front when the hotkey
   was pressed (`HotkeyForm.ForegroundBefore`, `WindowOwner`), so that "how do I do this here" has a here; the folders
-  Claude may read are the bundle's (AH-2.3), reachable from axHelp's first menu as from the axKit menu.
+  Claude may read are the bundle's (AH-2.3), reachable from axHelp's first menu as from the axKit menu, and so is
+  Claude's working folder (AH-2.1, AH-D6; 5.6.0), the folder Claude Code starts in, which axHelp, Claude's working
+  folder opens in axFile (the window hidden first, as Ctrl+O does in axDescribe) for a CLAUDE.md of the user's own.
 - HE-2.5 Escape hides the window at once, whatever the field holds, and the field is empty the next time (axStart
   AS-3.4); the focus going to another program hides it too (AS-3.5), unless a notice is open.
 - HE-2.6 axHelp, Forget the questions: a yes-or-keep notice, then the list emptied; nothing changes at Anthropic.
@@ -73,7 +76,13 @@ given once (AH-1.2) before it answers anything.
   type one and press Enter" as the list's one line when there is nothing.
 - HE-3.3 Down, Up, Page Down, Page Up, Ctrl+Home and Ctrl+End move the selection with the caret kept in the field
   (`HotkeyForm.AddMatchKeys`), each match said as "the question, n of m"; at an end the edge earcon and the match
-  again (AS-3.3). Say the first match while typing (Options, General) says the first match after a pause.
+  again (AS-3.3). **Nothing is said while a question is typed** (5.6.0: the list's one line, "No questions yet", came
+  300 ms into typing a question, which the user heard as "no questions, please ask one"); the file's `sayFirstMatch`
+  turns axStart's first-match speech back on, with no menu item for it here.
+- HE-3.4 **Tab** moves the focus to the list and **Shift+Tab** back to the field (`HotkeyForm.MatchesTakeFocus`,
+  5.6.0): in the list Down, Up, Page Down, Page Up, Home and End are the list's own, NVDA reads each question as the
+  selection reaches it, Enter shows the selected answer as from the field, and typing belongs to the field (no
+  type-to-find, so the list stays a plain `ListBox`, `ListTests`). Escape hides from the list too.
 
 ### HE-4 The hotkey
 
@@ -84,15 +93,17 @@ given once (AH-1.2) before it answers anything.
 ### HE-5 Settings
 
 - HE-5.1 `%APPDATA%\AxKit\axHelp.json` (`HelpSettings` on `HotkeySettings`): `hotkey`, `startWithWindows`,
-  `sayFirstMatch`, the font and the update check, and `exchanges` (question, answer, sessionId, when; ten).
+  `sayFirstMatch` (false here by default, HE-3.3), the font and the update check, and `exchanges` (question, answer,
+  sessionId, when; ten).
 - HE-5.2 AI help's own settings are the bundle's `ai-help.json` (AH-1.1), never here.
 
 ### HE-6 Keys
 
 Window-specific (`AxHelpKeys`): Down and Up the next and previous question; Page Down and Page Up a page (the
-bundle's keys, on the list here); Ctrl+Home and Ctrl+End the first and last; Enter ask; Escape hide. Bundle-wide
-(AX-8.2): F1, Ctrl+Shift+P, F4, Shift+F1 (a question about axHelp's own window), Ctrl+F in a notice's text, the
-text size keys, Alt and Alt+F4. The F1 text names them all (`HelpText.Shortcuts`).
+bundle's keys, on the list here); Ctrl+Home and Ctrl+End the first and last; Enter ask; Escape hide; Tab and
+Shift+Tab between the field and the list (Windows' own, HE-3.4). Bundle-wide (AX-8.2): F1, Ctrl+Shift+P, F4,
+Shift+F1 (a question about axHelp's own window), Ctrl+F in a notice's text, the text size keys, Alt and Alt+F4. The
+F1 text names them all (`HelpText.Shortcuts`).
 
 ### HE-7 Notices and announcements
 

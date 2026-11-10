@@ -56,8 +56,9 @@ a picture, or is gone, is refused before any window with the reason and the usag
 - DE-2.2 One picture, `%LOCALAPPDATA%\AxKit\axdescribe\last.png`, written over by the next and deleted when the
   process ends (Quit, the update, Windows' end) and by Forget the descriptions; a hide keeps it for Ctrl+O and the
   follow-ups.
-- DE-2.3 One field, "Ask about the picture", with the caret always in it, the list of earlier descriptions under it
-  (DE-3). **Enter** with a question typed asks it about the selected description's picture, in that description's
+- DE-2.3 One field, "Ask about the picture", which has the caret when the window shows, the list of earlier
+  descriptions under it (DE-3), which Tab reaches as axHelp's HE-3.4 (5.6.0). **Enter** with a question typed asks it
+  about the selected description's picture, in that description's
   session; with nothing typed, the selected description again, with its session for more; with nothing kept, the
   list's one line said.
 - DE-2.4 The status bar: "N descriptions kept" ("1 description kept"), or "AI help is off: axKit menu, AI help".
@@ -88,7 +89,8 @@ a picture, or is gone, is refused before any window with the reason and the usag
   no title; a file's name for a picture file); typing narrows the list to the labels holding every typed word
   (`TextMatch`); "No earlier description matches xyz" or "No descriptions yet: the hotkey describes the window in
   front, Ctrl+D a picture file" as the one line.
-- DE-3.3 The match keys as axHelp's HE-3.3, each said as "the label, n of m".
+- DE-3.3 The match keys as axHelp's HE-3.3, each said as "the label, n of m"; nothing is said while a question is
+  typed (the file's `sayFirstMatch`, off by default, no menu item); Tab into the list and Shift+Tab back as HE-3.4.
 
 ### DE-4 The hotkey
 
@@ -98,14 +100,16 @@ a picture, or is gone, is refused before any window with the reason and the usag
 ### DE-5 Settings
 
 - DE-5.1 `%APPDATA%\AxKit\axDescribe.json` (`DescribeSettings` on `HotkeySettings`): `hotkey`, `startWithWindows`,
-  `sayFirstMatch`, the font and the update check, `descriptions` (ten). AI help's own settings are `ai-help.json`.
+  `sayFirstMatch` (false here by default, DE-3.3), the font and the update check, `descriptions` (ten). AI help's
+  own settings are `ai-help.json`.
 
 ### DE-6 Keys
 
 Window-specific (`AxDescribeKeys`): Down and Up, Page Down and Page Up (the bundle's, on the list here), Ctrl+Home
 and Ctrl+End through the descriptions; Enter ask; Ctrl+D a picture file (DE-2.7; axFile's Ctrl+D is Favourites, a
-known difference in `KeyTests`); Ctrl+O the picture in axPreview; Escape hide. Bundle-wide (AX-8.2): F1,
-Ctrl+Shift+P, F4, Shift+F1, the text size keys, Alt and Alt+F4. The F1 text names them all.
+known difference in `KeyTests`); Ctrl+O the picture in axPreview; Escape hide; Tab and Shift+Tab between the field
+and the list (Windows' own, DE-3.3). Bundle-wide (AX-8.2): F1, Ctrl+Shift+P, F4, Shift+F1, the text size keys, Alt
+and Alt+F4. The F1 text names them all.
 
 ### DE-7 Notices and announcements
 

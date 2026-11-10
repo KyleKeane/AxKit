@@ -60,6 +60,12 @@ public sealed class HelpTests : IDisposable
         Assert.Null(error);
         Assert.Equal("Windows+Alt+H", settings.Key.ToString());
         Assert.Empty(settings.Exchanges);
+        // HE-3.3: nothing is said while a question is typed unless the file says so.
+        Assert.False(settings.SayFirstMatch);
+        Directory.CreateDirectory(_folder);
+        File.WriteAllText(path, "{ \"sayFirstMatch\": true }");
+        Assert.True(HelpSettings.Load(path, out _).SayFirstMatch);
+        File.Delete(path);
 
         settings.Remember("q", "a", "s", new DateTime(2026, 11, 9, 12, 0, 0));
         settings.Save(path);

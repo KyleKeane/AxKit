@@ -20,10 +20,11 @@ public static class HelpText
           AI help must be on: axKit menu, AI help, Let Claude help in the apps, once, in any axKit window
 
         ## In the field
-          The caret stays here: type a question about the selected description's picture and press Enter
+          Type a question about the selected description's picture and press Enter
           Down, Up: your earlier descriptions, newest first, each said with its time and the window's title; type part of a title to find one. Page Down, Page Up: a page of them
           Ctrl+Home, Ctrl+End: the first or the last. At the first or the last, a key that cannot move plays one short low note and says the description again
           Enter with nothing typed: the selected description again, and more can be asked about it
+          Tab: the list of your earlier descriptions itself, where Down and Up move and Enter shows the selected one again; Shift+Tab back to the field
           Ctrl+D: a picture file of yours described: choose it in the Windows file picker (a .png, .jpg, .jpeg, .gif or .webp file), and the description comes as for a window; axDescribe started with the file's path does the same
           Ctrl+O: the last picture in axPreview, which reads the text in it with Windows' own reader
           Escape: hide axDescribe at once and return where you were

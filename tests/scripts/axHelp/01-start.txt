@@ -18,6 +18,11 @@ expect state "status":["0 questions kept"
 keys down
 expect said ♪ Edge
 expect said ! No questions yet
+# 1.6 Tab reaches the list itself (HE-2.1), Shift+Tab the field again.
+keys tab
+expect focus Earlier questions, 0
+keys shift+tab
+expect focus Ask Claude
 
 # 2.1 A question: the waiting notice, then the answer as a notice, the text first.
 type what does ctrl shift w do
@@ -40,6 +45,15 @@ expect said ! what does ctrl shift w do, 1 of 1
 keys enter
 expect state Claude says
 keys escape
+expect focus Ask Claude
+# 3.4 In the list (Tab), Enter shows the selected answer too; Escape gives the list back, Shift+Tab the field.
+keys tab
+expect focus Earlier questions, 1
+keys enter
+expect state Claude says
+keys escape
+expect focus Earlier questions, 1
+keys shift+tab
 expect focus Ask Claude
 
 # 3.2 Typing part of it finds it; another text finds nothing.

@@ -30,13 +30,15 @@ public sealed class HelpForm : HotkeyForm
         var first = new ToolStripMenuItem("ax&Help");
         Add(first, new Command("&Ask", AxHelpKeys.Ask, Ask) { Mark = CommandMark.Act });
         first.DropDownItems.Add(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders()));
+        first.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenWorkingFolder()));
         first.DropDownItems.Add(new ToolStripMenuItem("Forget the &questions", null, (_, _) => ForgetQuestions()));
         AddHideAndQuit(first, AxHelpKeys.Hide);
 
+        // HE-3.3: no Say the first match item; nothing is said while a question is typed (the file's key turns it on).
         var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(HotkeyItem());
         options.DropDownItems.Add(CreateTextMenu());
-        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem()));
+        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem()));
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Claude &resources",
@@ -50,6 +52,8 @@ public sealed class HelpForm : HotkeyForm
         SearchField.AccessibleName = "Ask Claude";
         Matches.AccessibleName = "Earlier questions, 0";
         Matches.DoubleClick += (_, _) => Ask();
+        // HE-2.1: Tab reaches the list, where NVDA reads each question itself; Enter there shows its answer.
+        MatchesTakeFocus = true;
 
         // ---- the status bar (HE-2.2): whether AI help is on, and how many questions are kept ----
         (_stateLabel, _) = StatusLayout.Pair(_status);
@@ -166,6 +170,20 @@ public sealed class HelpForm : HotkeyForm
         }
 
         ShowAnswer(answer, []);
+    }
+
+    /// <summary>axHelp, Claude's working folder (ai-help.md AH-2.1): the folder Claude Code starts in, opened in axFile; the window hidden first so that axFile comes up in front.</summary>
+    private void OpenWorkingFolder()
+    {
+        if (!AiWorkingFolder(out var folder))
+        {
+            return;
+        }
+
+        Log.Info("Hidden: Claude's working folder opened in axFile");
+        HideWindow(giveBack: false);
+        AxKitMenu.Start(Dispatch.AxFile, folder);
+        Do(GiveForegroundBackLaterAsync);
     }
 
     private void ForgetQuestions()

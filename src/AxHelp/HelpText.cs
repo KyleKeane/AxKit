@@ -19,11 +19,12 @@ public static class HelpText
           AI help must be on: axKit menu, AI help, Let Claude help in the apps, once, in any axKit window
 
         ## In the question field
-          The caret stays here: type your question and press Enter. Claude answers in a notice; the arrows and the heading letters read it
+          Type your question and press Enter. Claude answers in a notice; the arrows and the heading letters read it
           In the answer: Tab to the field under it, type more and press Enter to ask about the same answer; Escape closes it
           Down, Up: your earlier questions, newest first, said with their place; type part of a question to find it. Page Down, Page Up: a page of them
           Ctrl+Home, Ctrl+End: the first or the last. At the first or the last, a key that cannot move plays one short low note and says the question again
           Enter with nothing typed: the selected earlier question's answer again, and more can be asked about it
+          Tab: the list of your earlier questions itself, where Down and Up move and Enter shows the selected answer; Shift+Tab back to the field
           Escape: hide axHelp at once and return where you were; the field is empty the next time
         """ + BundleHelp.NoticesSection("axHelp", "the field");
 

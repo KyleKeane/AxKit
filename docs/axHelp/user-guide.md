@@ -15,6 +15,10 @@ and logged in; if it is missing, the notice offers Install Claude Code now.
 Claude reads nothing of yours unless you allow a folder: axKit menu, AI help, Folders Claude may read, Add a folder.
 A question about a window or a screen needs no folder.
 
+Claude Code starts in a folder of its own, Documents, axKit Claude, made the first time it is needed: axHelp, Claude's
+working folder opens it in axFile. A file named CLAUDE.md there is Claude's standing instructions for every question
+("answer in two sentences", "I use Word 2024"), and Claude Code keeps its own notes and settings for axKit there.
+
 ## Bringing axHelp up
 
 axHelp runs in the background from sign-in (Options, General, Start with Windows). From any program, press
@@ -38,15 +42,16 @@ conversation with Claude. Copy puts the whole answer on the clipboard; Escape cl
 
 The list under the field keeps your last ten questions with their answers. Down and Up move through them, each said
 with its place ("how do I make a table of contents, 1 of 3"); type part of a question to find it. Enter with nothing
-typed brings the selected question's answer back, and you can ask more about it. axHelp, Forget the questions
-empties the list.
+typed brings the selected question's answer back, and you can ask more about it. Tab moves into the list itself, where
+Down and Up move, NVDA reads each question and Enter shows its answer; Shift+Tab returns to the field. Nothing is said
+while you type. axHelp, Forget the questions empties the list.
 
 ## Settings
 
-Options, Hotkey (the key), Text (the font and its size), General (Start with Windows, Say the first match while
-typing, the update check), Developer (the settings file `%APPDATA%\AxKit\axHelp.json`, diagnostics). The AI help
-settings, the switch, the folders and the model, are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached from the
-axKit menu in every window.
+Options, Hotkey (the key), Text (the font and its size), General (Start with Windows, the update check), Developer
+(the settings file `%APPDATA%\AxKit\axHelp.json`, diagnostics; `sayFirstMatch` there, off, is axStart's first-match
+speech while typing). The AI help settings, the switch, the folders, the model and Claude's working folder
+(`workingFolder`), are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached from the axKit menu in every window.
 
 ## If something goes wrong
 

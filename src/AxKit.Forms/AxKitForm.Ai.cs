@@ -30,8 +30,37 @@ public abstract partial class AxKitForm
         menu.DropDownItems.Add(on);
         menu.DropDownItems.Add(Item("&Ask about this window...", AskAboutThisWindow, BundleKeys.AskClaude));
         menu.DropDownItems.Add(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders()));
+        menu.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
         CommandPalette.RefreshedOnOpening(menu, () => on.Checked = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled);
         return menu;
+    }
+
+    /// <summary>
+    /// Claude Code's working folder (AH-2.1, AH-D6), made when it is missing: Documents\axKit Claude unless the settings
+    /// file names another; false, said, when it cannot be made.
+    /// </summary>
+    protected bool AiWorkingFolder(out string folder)
+    {
+        try
+        {
+            folder = AiSettings.Load(AiSettings.DefaultPath, out _).EnsureWorkingFolder();
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            Failed("AI help", "Claude's working folder could not be made: " + ex.Message);
+            folder = string.Empty;
+            return false;
+        }
+    }
+
+    /// <summary>axKit, AI help, Claude's working folder: the folder opened in axFile, where a CLAUDE.md of the user's gives Claude its standing instructions.</summary>
+    protected void OpenAiWorkingFolder()
+    {
+        if (AiWorkingFolder(out var folder))
+        {
+            AxKitMenu.Start(Dispatch.AxFile, folder);
+        }
     }
 
     /// <summary>On after the consent of AX-11.4 (AH-1.2), off at once; said either way.</summary>
@@ -138,7 +167,7 @@ public abstract partial class AxKitForm
     /// </summary>
     protected void AskClaude(string prompt, IReadOnlyList<string> extraFolders, string? resume, Action<AiAnswer> then)
     {
-        if (!AiReady(() => AskClaude(prompt, extraFolders, resume, then), out var settings, out var claude))
+        if (!AiReady(() => AskClaude(prompt, extraFolders, resume, then), out var settings, out var claude) || !AiWorkingFolder(out var workingFolder))
         {
             return;
         }
@@ -162,7 +191,7 @@ public abstract partial class AxKitForm
             AiAnswer answer;
             try
             {
-                answer = await AiRequest.AskAsync(claude, prompt, folders, settings.Model, resume, asking.Token);
+                answer = await AiRequest.AskAsync(claude, prompt, workingFolder, folders, settings.Model, resume, asking.Token);
             }
             catch (OperationCanceledException)
             {
@@ -216,9 +245,9 @@ public abstract partial class AxKitForm
     {
         var settings = AiSettings.Load(AiSettings.DefaultPath, out _);
         var list = settings.Folders.Count == 0
-            ? "No folders yet: Claude reads nothing of yours until you add one. A question about a window or a screen needs none."
+            ? "No folders yet: beyond its working folder, Claude reads nothing of yours until you add one. A question about a window or a screen needs none."
             : string.Join("\n", settings.Folders.Select((folder, index) => $"{index + 1}. {folder}"));
-        var text = "The folders Claude may read for a question, with everything in them, under your account; Claude Code starts in the first.\n" + list;
+        var text = $"The folders Claude may read for a question, with everything in them, under your account. Claude Code itself starts in its working folder, {settings.ResolvedWorkingFolder()}, where a CLAUDE.md of yours gives it standing instructions.\n" + list;
         var choices = new List<OverlayChoice> { new("&Add a folder...", AddAiFolder, IsDefault: true) };
         if (settings.Folders.Count > 0)
         {

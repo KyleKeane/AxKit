@@ -16,13 +16,9 @@ public static class AiRequest
     /// <summary>The three tools that read (AH-2.2); print mode refuses every other by itself.</summary>
     public const string Tools = "Read,Glob,Grep";
 
-    /// <summary>The folder Claude Code starts in (AH-2.1): the first of the folders that exists, or the user's profile.</summary>
-    public static string WorkingDirectory(IReadOnlyList<string> folders) =>
-        folders.FirstOrDefault(Directory.Exists) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
     /// <summary>
-    /// The arguments: print mode with a JSON answer, the read tools, every folder but the working one as
-    /// <c>--add-dir</c>, then the model and the session to resume when given.
+    /// The arguments: print mode with a JSON answer, the read tools, every allowed folder as <c>--add-dir</c> (but the
+    /// working one, which Claude Code has already), then the model and the session to resume when given.
     /// </summary>
     public static IReadOnlyList<string> Arguments(IReadOnlyList<string> folders, string workingDirectory, string? model, string? resume)
     {
@@ -48,17 +44,17 @@ public static class AiRequest
         return arguments;
     }
 
-    public static ProcessStartInfo StartInfo(string claude, IReadOnlyList<string> folders, string? model, string? resume)
+    /// <summary>The process: Claude Code started in <paramref name="workingFolder"/> (AH-2.1, <see cref="AiSettings.EnsureWorkingFolder"/>), the allowed folders added.</summary>
+    public static ProcessStartInfo StartInfo(string claude, string workingFolder, IReadOnlyList<string> folders, string? model, string? resume)
     {
-        var folder = WorkingDirectory(folders);
         var start = new ProcessStartInfo(claude)
         {
-            WorkingDirectory = folder,
+            WorkingDirectory = workingFolder,
             StandardInputEncoding = new UTF8Encoding(false),
             StandardOutputEncoding = Encoding.UTF8,
             StandardErrorEncoding = Encoding.UTF8,
         };
-        foreach (var argument in Arguments(folders, folder, model, resume))
+        foreach (var argument in Arguments(folders, workingFolder, model, resume))
         {
             start.ArgumentList.Add(argument);
         }
@@ -71,10 +67,10 @@ public static class AiRequest
     /// limit. Throws as <see cref="Process.Start()"/> does when the program cannot be started; a cancelled wait ends
     /// the process and throws <see cref="OperationCanceledException"/>.
     /// </summary>
-    public static async Task<AiAnswer> AskAsync(string claude, string prompt, IReadOnlyList<string> folders, string? model, string? resume, CancellationToken cancellation)
+    public static async Task<AiAnswer> AskAsync(string claude, string prompt, string workingFolder, IReadOnlyList<string> folders, string? model, string? resume, CancellationToken cancellation)
     {
-        var start = StartInfo(claude, folders, model, resume);
-        // Outside call, program, Claude Code: claude -p in the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
+        var start = StartInfo(claude, workingFolder, folders, model, resume);
+        // Outside call, program, Claude Code: claude -p in its working folder with the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
         var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);
         return result.TimedOut
             ? new AiAnswer("No answer in two minutes: Claude Code was ended. Ask again, or a shorter question.", true, null)

@@ -25,6 +25,12 @@ another project on its second use, the bullet says so.
   by entry through `TakeOverFolder`, tested in `AppPathsTests`; `OneAtATime` (2026-11-09), the name of the mutex that
   keeps one process of a background app (axStart, axClip, axHelp, axDescribe), marked with the run's folder in a test
   run so that the run's app and the user's own never count as one.
+- `Ai` (docs/axKit/ai-help.md, 2026-11-09): `AiSettings` (AH-1.1: `ai-help.json`, the switch, the folders Claude
+  may read, the model, `claudePath`, and `WorkingFolder` with `DefaultWorkingFolder`, `Documents\axKit Claude` or the
+  test run's home, `EnsureWorkingFolder`, AH-2.1, AH-D6, 5.6.0), `AiRequest` (the command line of `claude -p`, the
+  process started in the working folder with every allowed folder as `--add-dir`, the run with the prompt on standard
+  input), `AiAnswer` (the JSON result read), `AiPrompts` with `WindowContext` (the prompts: about this window, from
+  anywhere, a screen's picture, a picture file, a follow-up); tested in `AiTests`.
 - `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
 - `Theme` with `ThemeColor` (docs/axKit/theme.md, 2026-11-09): the theme file `%APPDATA%\AxKit\theme.json`, one for the
   bundle, a colour (`#RRGGBB`) or `system` for every class of object the windows draw (`Classes`, `Keys`); `Load` and

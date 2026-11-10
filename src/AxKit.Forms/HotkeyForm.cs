@@ -109,11 +109,18 @@ public abstract class HotkeyForm : AxKitForm
         SearchField.TabIndex = 0;
         SearchField.TextChanged += (_, _) => OnTyped();
 
-        // The matches: for the eyes and NVDA's object navigation, never the focus (AS-D2).
+        // The matches: for the eyes and NVDA's object navigation, never the focus (AS-D2), unless the app lets Tab
+        // reach them (MatchesTakeFocus).
         Matches.Dock = DockStyle.Fill;
         Matches.IntegralHeight = false;
         Matches.TabStop = false;
-        Matches.GotFocus += (_, _) => SearchField.Focus();
+        Matches.GotFocus += (_, _) =>
+        {
+            if (!Matches.TabStop)
+            {
+                SearchField.Focus();
+            }
+        };
 
         _speak.Tick += (_, _) =>
         {
@@ -174,8 +181,23 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>The one field, which always has the caret (AS-3.1, CP-2.1); the app names it.</summary>
     protected AxKitTextBox SearchField { get; } = new();
 
-    /// <summary>The matches under the field, never focused (AS-D2); the app names it in <see cref="ShowMatches"/>.</summary>
+    /// <summary>The matches under the field, never focused (AS-D2) unless <see cref="MatchesTakeFocus"/>; the app names it in <see cref="ShowMatches"/>.</summary>
     protected ListBox Matches { get; } = new();
+
+    /// <summary>
+    /// Whether Tab moves the focus from the field to the matches and Shift+Tab back (axHelp HE-2.1, axDescribe DE-2.3;
+    /// 2026-11-09, the user: "tab does nothing"). Off, the caret stays in the field and the list is for the eyes (axStart
+    /// AS-D2, axClip CP-2.1). In the focused list the list's own keys move the selection and NVDA reads each item itself
+    /// (the match keys act from the field alone); Enter acts on the selected item as from the field.
+    /// </summary>
+    protected bool MatchesTakeFocus
+    {
+        get => Matches.TabStop;
+        set => Matches.TabStop = value;
+    }
+
+    /// <summary>Where the match keys act: in the field; a focused list has its own keys.</summary>
+    private bool InField() => !Matches.Focused;
 
     /// <summary>The list made from <paramref name="labels"/>, or the one line <paramref name="nothing"/> when there are none, named <paramref name="name"/>, the selection on <paramref name="index"/>.</summary>
     protected void ShowMatches(IReadOnlyList<string> labels, string nothing, string name, int index)
@@ -200,12 +222,12 @@ public abstract class HotkeyForm : AxKitForm
     /// </summary>
     protected void AddMatchKeys(Keys next, Keys previous, Keys first, Keys last)
     {
-        AddKey(new Command("Next match", next, () => SelectMatch(Matches.SelectedIndex + 1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Previous match", previous, () => SelectMatch(Matches.SelectedIndex - 1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Page down", BundleKeys.PageDown, () => SelectMatch(Math.Min(Matches.SelectedIndex + MatchPage, MatchCount - 1))) { Mark = CommandMark.Read });
-        AddKey(new Command("Page up", BundleKeys.PageUp, () => SelectMatch(Math.Max(Matches.SelectedIndex - MatchPage, 0))) { Mark = CommandMark.Read });
-        AddKey(new Command("First match", first, () => SelectMatch(0)) { Mark = CommandMark.Read });
-        AddKey(new Command("Last match", last, () => SelectMatch(MatchCount - 1)) { Mark = CommandMark.Read });
+        AddKey(new Command("Next match", next, () => SelectMatch(Matches.SelectedIndex + 1)) { When = InField, Mark = CommandMark.Read });
+        AddKey(new Command("Previous match", previous, () => SelectMatch(Matches.SelectedIndex - 1)) { When = InField, Mark = CommandMark.Read });
+        AddKey(new Command("Page down", BundleKeys.PageDown, () => SelectMatch(Math.Min(Matches.SelectedIndex + MatchPage, MatchCount - 1))) { When = InField, Mark = CommandMark.Read });
+        AddKey(new Command("Page up", BundleKeys.PageUp, () => SelectMatch(Math.Max(Matches.SelectedIndex - MatchPage, 0))) { When = InField, Mark = CommandMark.Read });
+        AddKey(new Command("First match", first, () => SelectMatch(0)) { When = InField, Mark = CommandMark.Read });
+        AddKey(new Command("Last match", last, () => SelectMatch(MatchCount - 1)) { When = InField, Mark = CommandMark.Read });
     }
 
     /// <summary>How many matches the list shows at once: the step of Page Down and Page Up.</summary>

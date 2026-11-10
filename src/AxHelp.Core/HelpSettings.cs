@@ -17,6 +17,9 @@ public sealed class HelpSettings : HotkeySettings
     /// <summary>How many exchanges the list keeps (HE-3.1).</summary>
     public const int Kept = 10;
 
+    /// <summary>Nothing is said while a question is typed (HE-3.3; 2026-11-09: the user heard "No questions yet" in the middle of typing one); the file's <c>sayFirstMatch</c> turns it on.</summary>
+    public HelpSettings() => SayFirstMatch = false;
+
     /// <summary>Windows+Alt+H (HE-4.1).</summary>
     protected override Hotkey DefaultHotkey => new(Hotkey.Windows | Hotkey.Alt, 'H');
 

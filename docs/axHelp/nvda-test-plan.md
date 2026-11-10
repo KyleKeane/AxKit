@@ -15,6 +15,8 @@ and logged in, `run-axHelp.ps1` (or quit a running axHelp first, axHelp, Quit ax
 4. Start menu, axKit axHelp, while axHelp runs: the field comes up; no second axHelp starts.
 5. Options, Hotkey: "Press the key that brings axHelp up"; press Ctrl+Alt+Shift+F9, Enter: "Hotkey
    Ctrl+Alt+Shift+F9"; the new key brings it up; set it back.
+6. Tab: "Earlier questions, 0, list, No questions yet: type one and press Enter"; Shift+Tab: "Ask Claude, edit".
+   Type "what does" slowly: nothing is said between the letters (HE-3.3).
 
 ## 2. A question (HE-2.3, HE-2.4; real)
 
@@ -33,7 +35,9 @@ and logged in, `run-axHelp.ps1` (or quit a running axHelp first, axHelp, Quit ax
 1. Down: "what does ctrl shift w do in axdown, 1 of 1". Up: the low note and the same again.
 2. Type "ctrl": Down says the question, 1 of 1. Ctrl+A, type "zzqq", Down: the low note, "No earlier question matches
    zzqq".
-3. axHelp, Forget the questions: "Forget the questions?", Enter: "Questions forgotten"; Down: the low note, "No
+3. Before forgetting: Tab into the list: "Earlier questions, 1, list, what does ctrl shift w do in axdown, 1 of 1";
+   Enter: "Claude says" and the answer; Escape: the list again; Shift+Tab: the field (HE-3.4).
+4. axHelp, Forget the questions: "Forget the questions?", Enter: "Questions forgotten"; Down: the low note, "No
    questions yet: type one and press Enter".
 
 ## 4. Off, missing, consent (HE-7)

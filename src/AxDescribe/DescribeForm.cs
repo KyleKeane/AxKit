@@ -54,10 +54,11 @@ public sealed class DescribeForm : HotkeyForm
         first.DropDownItems.Add(new ToolStripMenuItem("Forget the &descriptions", null, (_, _) => ForgetDescriptions()));
         AddHideAndQuit(first, AxDescribeKeys.Hide);
 
+        // DE-3.3: no Say the first match item; nothing is said while a question is typed (the file's key turns it on).
         var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(HotkeyItem());
         options.DropDownItems.Add(CreateTextMenu());
-        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem()));
+        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem()));
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Claude &resources",
@@ -71,6 +72,8 @@ public sealed class DescribeForm : HotkeyForm
         SearchField.AccessibleName = "Ask about the picture";
         Matches.AccessibleName = "Earlier descriptions, 0";
         Matches.DoubleClick += (_, _) => Ask();
+        // DE-2.3: Tab reaches the list, where NVDA reads each description itself; Enter there shows it again.
+        MatchesTakeFocus = true;
 
         // ---- the status bar (DE-2.4) ----
         (_stateLabel, _) = StatusLayout.Pair(_status);

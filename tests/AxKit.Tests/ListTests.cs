@@ -14,8 +14,10 @@ public sealed class ListTests
     private static readonly IReadOnlyDictionary<string, string> Allowed = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
         // axStart's matches and axClip's items never take the focus: the caret stays in the search field
-        // (docs/axStart/SPEC.md AS-D2, docs/axClip/SPEC.md CP-2.1); the list is HotkeyForm's since 2026-10-24.
-        [Path.Combine("src", "AxKit.Forms", "HotkeyForm.cs")] = "never focused",
+        // (docs/axStart/SPEC.md AS-D2, docs/axClip/SPEC.md CP-2.1); the list is HotkeyForm's since 2026-10-24. axHelp
+        // and axDescribe let Tab reach it (MatchesTakeFocus, 2026-11-09), where typing still belongs to the field, so
+        // no type-to-find.
+        [Path.Combine("src", "AxKit.Forms", "HotkeyForm.cs")] = "the field's list; typing belongs to the field",
         // The command palette's matches under its field, never focused (AX-10).
         [Path.Combine("src", "AxKit.Forms", "OverlayPanel.cs")] = "never focused",
         // A question's answers: their letters are the screen's own keys (axClaude D33), not a search.

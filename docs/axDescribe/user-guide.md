@@ -42,7 +42,9 @@ editor window and a bar chart, drawn in code so that they hold nothing personal.
 
 The list under the field keeps the last ten descriptions, each by its time and the window's title ("14:02 notes.md -
 axDown") or the picture file's name. Down and Up move through them; type part of a title to find one. Enter with
-nothing typed brings the selected description back, and the field asks more about its picture. Ctrl+O opens the last
+nothing typed brings the selected description back, and the field asks more about its picture. Tab moves into the
+list itself, where Down and Up move, NVDA reads each description and Enter shows it again; Shift+Tab returns to the
+field. Nothing is said while you type. Ctrl+O opens the last
 picture of a window in axPreview, whose reader lists the words in it. axDescribe, Forget the descriptions empties
 the list and deletes that picture; your own files stay.
 

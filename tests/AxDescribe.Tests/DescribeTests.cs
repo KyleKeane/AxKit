@@ -56,6 +56,8 @@ public sealed class DescribeTests : IDisposable
         Assert.Null(error);
         Assert.Equal("Windows+Alt+S", settings.Key.ToString());
         Assert.Empty(settings.Descriptions);
+        // DE-3.3: nothing is said while a question is typed unless the file says so.
+        Assert.False(settings.SayFirstMatch);
 
         settings.Remember("Untitled - Notepad", "notepad", "An empty window.", "s", new DateTime(2026, 11, 9, 12, 0, 0));
         // A picture file of the user's (DE-2.7) keeps its path; a window's description has none.

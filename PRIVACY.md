@@ -77,8 +77,10 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   network it reaches, with your rights, under its maker's terms. Remote servers (http, sse) are listed and not
   started; axMCP itself makes no network request.
 - **AI help** (`docs/axKit/ai-help.md`; off until you turn it on in the axKit menu, after a reminder) runs `claude -p`,
-  Claude Code in its print mode, as a child process with read-only tools, once per question, and reads its answer from
-  its standard output. What goes to Claude Code and, through it, to Anthropic under your account and Anthropic's terms:
+  Claude Code in its print mode, as a child process with read-only tools, once per question, in a working folder of its
+  own (`Documents\axKit Claude` unless `ai-help.json` names another; Claude Code keeps its own notes and sessions for
+  the service there and reads a `CLAUDE.md` you write there), and reads its answer from its standard output. What goes
+  to Claude Code and, through it, to Anthropic under your account and Anthropic's terms:
   your question; for Shift+F1 in an axKit window, that window's name and title, the name and place of the control you
   are in, your last actions there, the window's keyboard shortcuts and its user guide, never the text of what you are
   working on; for **axHelp, access layer for Claude Code**, the name and title of the program that was in front; for

@@ -49,10 +49,12 @@ public sealed class AiTests
         var full = AiRequest.Arguments([@"C:\notes"], @"c:\NOTES", "haiku", "s1");
         Assert.Equal(["-p", "--output-format", "json", "--allowedTools", "Read,Glob,Grep", "--model", "haiku", "--resume", "s1"], full);
 
-        var start = AiRequest.StartInfo(@"C:\bin\claude.exe", [], null, null);
+        // Claude Code starts in its working folder (AH-2.1), which is never an --add-dir of its own.
+        var start = AiRequest.StartInfo(@"C:\bin\claude.exe", @"C:\work\claude", [@"C:\work\claude", @"C:\notes"], null, null);
         Assert.Equal(@"C:\bin\claude.exe", start.FileName);
-        Assert.Equal(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), start.WorkingDirectory);
+        Assert.Equal(@"C:\work\claude", start.WorkingDirectory);
         Assert.Equal("-p", start.ArgumentList[0]);
+        Assert.Equal(["--add-dir", @"C:\notes"], start.ArgumentList.Skip(5));
     }
 
     [Fact]
@@ -66,11 +68,16 @@ public sealed class AiTests
         Assert.Empty(missing.Folders);
         Assert.Null(missing.Model);
         Assert.Null(missing.ResolvedClaudePath());
+        // The working folder (AH-2.1, AH-D6): Documents\axKit Claude unless the file names one.
+        Assert.Null(missing.WorkingFolder);
+        Assert.Equal(AiSettings.DefaultWorkingFolder, missing.ResolvedWorkingFolder());
+        Assert.Equal("axKit Claude", Path.GetFileName(AiSettings.DefaultWorkingFolder));
 
         missing.Enabled = true;
         missing.Folders = [@"C:\notes", @" C:\notes ", string.Empty, @"C:\work"];
         missing.Model = " ";
         missing.ClaudePath = "fake-claude.cmd";
+        missing.WorkingFolder = " " + Path.Combine(temp.Path, "claude") + " ";
         missing.Save(path);
         var text = File.ReadAllText(path);
         Assert.Contains("\"enabled\": true", text);
@@ -81,6 +88,10 @@ public sealed class AiTests
         Assert.True(loaded.Enabled);
         Assert.Equal([@"C:\notes", @"C:\work"], loaded.Folders);
         Assert.Null(loaded.Model);
+        Assert.Equal(Path.Combine(temp.Path, "claude"), loaded.WorkingFolder);
+        Assert.False(Directory.Exists(loaded.ResolvedWorkingFolder()));
+        Assert.Equal(Path.Combine(temp.Path, "claude"), loaded.EnsureWorkingFolder());
+        Assert.True(Directory.Exists(Path.Combine(temp.Path, "claude")));
         Assert.Equal(Path.Combine(temp.Path, "fake-claude.cmd"), loaded.ResolvedClaudePath());
         Assert.Null(loaded.FindClaude());
         File.WriteAllText(Path.Combine(temp.Path, "fake-claude.cmd"), "@echo off");

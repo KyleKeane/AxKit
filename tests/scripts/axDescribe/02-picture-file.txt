@@ -30,6 +30,15 @@ keys tab
 expect focus Ask more about this answer
 keys escape
 expect focus Ask about the picture
+# Tab reaches the list itself (DE-2.3); Enter there shows the selected description; Shift+Tab the field.
+keys tab
+expect focus Earlier descriptions, 1
+keys enter
+expect state Claude says
+keys escape
+expect focus Earlier descriptions, 1
+keys shift+tab
+expect focus Ask about the picture
 
 # 4.2 Describe a picture file... (Ctrl+D) opens the Windows file picker: a separate window, not driven here; the NVDA
 # plan's step. The window's command list names it (check commands below).

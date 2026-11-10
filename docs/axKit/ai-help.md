@@ -56,9 +56,11 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 - AH-1.1 One setting for the bundle, in `%APPDATA%\AxKit\ai-help.json`: `enabled` (false by default), `folders` (the
   folders Claude may read, AH-2.3), `model` (empty for Claude Code's default), `claudePath` (Claude Code's program
   when it is not where axKit looks; a relative path is taken from the settings folder, which is how the automation's
-  fake stands in). axKit menu → AI help ▸ → Let Claude help in the apps (a checked item), Ask about this window…
-  (Shift+F1, AH-6), Folders Claude may read…, the same in every window (the axKit menu's shape, AX-9). The file is
-  read again at every use, so a switch in one window counts in every other at its next question.
+  fake stands in), `workingFolder` (Claude Code's working folder, AH-2.1; empty for `Documents\axKit Claude`). axKit
+  menu → AI help ▸ → Let Claude help in the apps (a checked item), Ask about this window… (Shift+F1, AH-6), Folders
+  Claude may read…, Claude's working folder (AH-2.1, opened in axFile), the same in every window (the axKit menu's
+  shape, AX-9). The file is read again at every use, so a switch in one window counts in every other at its next
+  question.
 - AH-1.2 Turning it on shows the consent notice of AX-11.4 for Claude Code, recorded under the app "AI help" and the
   target Claude Code (one agreement for the service, however many windows use it); the notice says what goes to
   Anthropic: the question, what the window gathered, and the files Claude reads in the allowed folders, under the
@@ -71,14 +73,19 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 
 - AH-2.1 Claude Code in print mode, one process per question (`ClaudeCodeProgram` finds it as axClaude does, after
   the file's `claudePath`): `claude -p --output-format json --allowedTools Read,Glob,Grep [--add-dir <folder>]…
-  [--model <model>] [--resume <session>]`, started without a window in the first allowed folder that exists (or the
-  user's profile folder when none), the other folders as `--add-dir`, its standard output read to the end under a time
-  limit (`ProcessRun`); the prompt goes on standard input, never on the command line (it may be long and may hold
+  [--model <model>] [--resume <session>]`, started without a window in **Claude's working folder** (AH-D6, 5.6.0:
+  `Documents\axKit Claude` unless the file's `workingFolder` names another, made when first needed,
+  `AiSettings.EnsureWorkingFolder`; axKit menu, AI help, Claude's working folder, and axHelp's first menu, open it in
+  axFile; a CLAUDE.md the user writes there is Claude's standing instructions, and Claude Code's own memory, settings
+  and sessions for the service live there; until 5.6.0 Claude Code started in the first allowed folder, or the user's
+  profile, so nothing of its own had a home), every allowed folder as `--add-dir`, its standard output read to the
+  end under a time limit (`ProcessRun`); the prompt goes on standard input, never on the command line (it may be long and may hold
   anything). `// Outside call, program, Claude Code` (B-17), the kind axClaude's calls already have.
 - AH-2.2 The tools allowed are the three that read (`Read`, `Glob`, `Grep`); print mode cannot ask for permissions, so
   anything else is refused by Claude Code itself: the service cannot write a file, run a command or reach the web.
 - AH-2.3 **Folders Claude may read**: the list of AH-1.1, chosen with the folder picker, each a line in a notice with
-  Add and Remove; the service passes them as `--add-dir` and starts in the first. A window's own file or folder is
+  Add and Remove, the notice naming Claude's working folder (AH-2.1) as the one it starts in; the service passes them
+  as `--add-dir`. A window's own file or folder is
   added for that call alone when the user asked about it (axDown's document, AxSee's screenshot file), so that the
   answer can read what the user pointed at without the folder being allowed for good.
 - AH-2.4 The answer is the JSON's `result` text; its `is_error` makes a notice "Claude could not answer" with the
@@ -174,6 +181,13 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   to reopen, which is the memory a user needs.
 - **AH-D5 Off by default, one switch.** The bundle's rule for everything that reaches a service (the AI tools, the
   update check, the reports): the user turns it on once, in a place every window shows.
+- **AH-D6 A working folder of Claude's own** (5.6.0; the user, 2026-11-09: axHelp "should be a simple chat helper
+  with its own default location for working directory to use all the claude code benefits"). Claude Code keeps what
+  it learns per working folder: a CLAUDE.md there is read into every question, its memory, its project settings and
+  its sessions live under that folder's name, and `--resume` finds a session from the folder it was made in. Starting
+  in the first allowed folder, or the user's profile, scattered that; one folder, `Documents\axKit Claude`, made when
+  first needed and opened from the menu, gathers it and gives the user one place to write Claude standing
+  instructions. The allowed folders stay what they were, `--add-dir` each.
 
 ## 7. The first two apps (built 2026-11-09)
 
@@ -221,3 +235,12 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   at sign-in in the GitHub install (the Run key, as axStart) and have no sign-in start in the Store's copy, where they
   are started from any window's New window and then keep running; which eight the Store shows is the user's to change
   in `Dispatch.Apps` (a priorities item holds the question).
+
+Later the same evening, after the first use (5.6.0):
+
+- **"when axhelp opens it should just let me type a question and get a response. presently it says no questions,
+  please ask one and tab does nothing"**: the list's one line, "No questions yet", was said 300 ms into typing a
+  question (Say the first match while typing, on by default from axStart); axHelp and axDescribe now say nothing while
+  typing (their `sayFirstMatch` is off by default, with no menu item; axStart and axClip keep theirs), and Tab reaches
+  the list of earlier questions, where NVDA reads each one and Enter shows its answer (`HotkeyForm.MatchesTakeFocus`).
+- **"its own default location for working directory to use all the claude code benefits"**: AH-D6.

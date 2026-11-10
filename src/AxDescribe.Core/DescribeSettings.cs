@@ -20,6 +20,9 @@ public sealed class DescribeSettings : HotkeySettings
     /// <summary>How many descriptions the list keeps (DE-3.1).</summary>
     public const int Kept = 10;
 
+    /// <summary>Nothing is said while a question is typed (DE-3.3, as axHelp's HE-3.3); the file's <c>sayFirstMatch</c> turns it on.</summary>
+    public DescribeSettings() => SayFirstMatch = false;
+
     /// <summary>Windows+Alt+S (DE-4.1).</summary>
     protected override Hotkey DefaultHotkey => new(Hotkey.Windows | Hotkey.Alt, 'S');
 

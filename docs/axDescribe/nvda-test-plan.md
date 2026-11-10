@@ -28,6 +28,9 @@ Claude; the steps marked "(real)" need the real one and are the user's by ear, w
    "Claude says" about that picture (real).
 4. Ctrl+O: axDescribe hides and axPreview opens on `last.png`, saying "Text read: N lines" after a moment, the words
    of the picture under the line naming it; Alt+F4.
+5. Windows+Alt+S, Escape; Tab: "Earlier descriptions, 2, list, 14:xx Untitled - Notepad, 1 of 2"; Down: the next
+   description read by NVDA; Enter: "Claude says" and that description; Escape: the list; Shift+Tab: the field. Type
+   "note" slowly: nothing is said between the letters (DE-3.3).
 
 ## 3. Forget, off, keys (DE-2.6, DE-7)
 
