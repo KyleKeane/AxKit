@@ -89,7 +89,8 @@ it, so that every file shows something and the details say what it is.
 ### AP-2 The text
 
 - AP-2.1 One read-only, multi-line EDIT control named with the file's name (axDown AD-2.1), word wrap on by default
-  (Options → Text → Word wrap, Ctrl+Shift+W, a setting), the caret on the first line when a file opens; the arrows,
+  (Options → Text → Word wrap, Ctrl+Shift+W; the bundle's one setting for the editors, in the theme file,
+  `docs/axkit/theme.md` TH-6), the caret on the first line when a file opens; the arrows,
   Home, End, Ctrl+Home, Ctrl+End, Ctrl+Left and Ctrl+Right, Shift with any of them, Ctrl+A and Ctrl+C are the
   control's own; Page Up and Page Down one screen (AX-8.2); Ctrl+Up and Ctrl+Down the previous and next paragraph,
   with Shift selecting to there (AX-8.2). Typing changes nothing and says nothing (the control is read-only).
@@ -156,7 +157,8 @@ and an error naming a file that could not be opened.
 ### AP-5 Settings, status bar, title, log
 
 - AP-5.1 `%APPDATA%\AxKit\axpreview.json` (AX-5.3; the editors' `EditorSettings`, since the viewer is the editor shell,
-  AP-D4): `wordWrap` on, `recentFiles` (ten), and the window base's font, update check and window fields.
+  AP-D4): `recentFiles` (ten), and the window base's font, update check and window fields; word wrap is the theme
+  file's since 5.5.0 (TH-6), a `wordWrap` key left here ignored.
 - AP-5.2 The status bar: the file's name on the left; "Line n, Column m · encoding · line ending" on the right, 300 ms
   after the last key (axDown AD-9). The title: "<name> - axPreview", "Untitled - axPreview" with no file.
 - AP-5.3 The log is `%LOCALAPPDATA%\AxKit\logs\axpreview.log`: the start, the exit, the files that could not be read

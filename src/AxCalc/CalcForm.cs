@@ -17,7 +17,7 @@ public sealed class CalcForm : AxKitForm
     private readonly List<CalcEntry> _entries = [];
     private readonly MenuStrip _menu = new();
     private readonly AxKitList _history = new();
-    private readonly TextBox _field = new();
+    private readonly AxKitTextBox _field = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _answerLabel;
     private readonly ToolStripStatusLabel _unitLabel;

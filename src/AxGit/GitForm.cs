@@ -30,7 +30,7 @@ public sealed partial class GitForm : AxKitForm
     private readonly MenuStrip _menu = new();
     private readonly ToolStripMenuItem _recentItem = new("Open &recent repository");
     private readonly AxKitList _list = new();
-    private readonly TextBox _details = new();
+    private readonly AxKitTextBox _details = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _stateLabel;
     private readonly ToolStripStatusLabel _pathLabel;
@@ -150,7 +150,6 @@ public sealed partial class GitForm : AxKitForm
         _details.Dock = DockStyle.Fill;
         _details.TabIndex = 1;
         _details.AccessibleName = "Details";
-        _details.KeyDown += (sender, e) => EditKeys.Handle(sender, e);
 
         // ---- the status bar (AG-2.3): the bundle's pair, no AccessibleName, no Spring ----
         (_stateLabel, _pathLabel) = StatusLayout.Pair(_status);

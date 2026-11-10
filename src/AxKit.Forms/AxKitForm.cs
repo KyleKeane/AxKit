@@ -46,7 +46,10 @@ public abstract partial class AxKitForm : Form
         StartPosition = FormStartPosition.WindowsDefaultLocation;
         Overlay.Chosen += OnNoticeChoice;
         WireAnnouncing();
-        // A Windows app theme change repaints every class from the theme's defaults (docs/axkit/theme.md TH-3).
+        // The theme file now, before the window's own constructor, which may take a display setting from it (TH-6);
+        // painted in OnLoad once the controls exist. A Windows app theme change repaints every class from the theme's
+        // defaults (docs/axkit/theme.md TH-3).
+        LoadTheme();
         SystemColorsChanged += (_, _) => PaintTheme(this);
         _paletteSpeak.Tick += (_, _) => SayFirstPaletteMatch();
         _checkItem.Click += (_, _) => CheckForUpdates(manual: true);
@@ -327,7 +330,6 @@ public abstract partial class AxKitForm : Form
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        LoadTheme();
         PaintTheme(this);
     }
 

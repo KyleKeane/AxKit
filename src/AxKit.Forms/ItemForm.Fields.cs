@@ -142,7 +142,7 @@ public abstract partial class ItemForm
     /// <summary>A long text (IA-4.2): a field of several lines; Enter makes a new line, Tab then Enter on Save keeps it.</summary>
     private void ChangeLongText(int index, ItemField field)
     {
-        var box = new TextBox
+        var box = new AxKitTextBox
         {
             Multiline = true,
             AcceptsReturn = true,
@@ -153,7 +153,6 @@ public abstract partial class ItemForm
             Text = FieldTypes.TextOf(field.Value).ReplaceLineEndings("\r\n"),
             Font = Navigator.Font,
         };
-        box.KeyDown += EditKeys.Handle;
         ShowNotice(new Notice("Change " + field.Title, "Enter makes a new line. Tab, then Enter on Save keeps the text.",
         [
             new OverlayChoice("&Save", () => SetValue(index, field, FieldTypes.Parse(FieldTypes.LongText, box.Text, [], DateOnly.FromDateTime(DateTime.Now)).Value), IsDefault: true),

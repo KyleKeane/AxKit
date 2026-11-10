@@ -20,7 +20,7 @@ public sealed partial class TextEditorForm : AxKitForm
     private readonly EditorSettings _settings;
     private readonly MenuStrip _menu = new();
     private readonly ToolStripMenuItem _recentFilesItem = new("Open &recent file");
-    private readonly TextBox _editor = new();
+    private readonly AxKitTextBox _editor = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _fileLabel;
     private readonly ToolStripStatusLabel _positionLabel;
@@ -146,7 +146,7 @@ public sealed partial class TextEditorForm : AxKitForm
         var options = new ToolStripMenuItem("&Options");
         var wordWrap = new Command("&Word wrap", EditorKeys.WordWrap, ToggleWordWrap);
         _wordWrapItem = Add(wordWrap);
-        _wordWrapItem.Checked = _settings.WordWrap;
+        _wordWrapItem.Checked = WordWrapPreference;
         options.DropDownItems.Add(CreateTextMenu(_wordWrapItem));
         options.DropDownItems.Add(CreateGeneralMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());
@@ -179,10 +179,10 @@ public sealed partial class TextEditorForm : AxKitForm
             SetUpViewer();
         }
 
-        _editor.WordWrap = _settings.WordWrap;
-        _editor.ScrollBars = _settings.WordWrap ? ScrollBars.Vertical : ScrollBars.Both;
+        // Word wrap is the bundle's one setting, in the theme file (docs/axkit/theme.md TH-6), read by the base before this.
+        _editor.WordWrap = WordWrapPreference;
+        _editor.ScrollBars = WordWrapPreference ? ScrollBars.Vertical : ScrollBars.Both;
         _editor.HideSelection = false;
-        _editor.MaxLength = 0;
         _editor.Dock = DockStyle.Fill;
         _editor.TabIndex = 0;
         // The window's own context menu in place of the EDIT control's, whose Undo reaches the control's buffer (AD-D1).
@@ -366,14 +366,7 @@ public sealed partial class TextEditorForm : AxKitForm
 
     private void OnEditorKeyDown(object? sender, KeyEventArgs e)
     {
-        // AD-2.3: the bundle's page and paragraph keys; the control's own do nothing while the text fits, or scroll a row and leave the caret.
-        EditKeys.Handle(sender, e);
-        if (e.Handled)
-        {
-            ScheduleStatus();
-            return;
-        }
-
+        // AD-2.3: the bundle's page and paragraph keys are the control's own (AxKitTextBox), after this handler; the status bar follows on KeyUp.
         if (e.Control && !e.Alt && e.KeyCode is Keys.H or Keys.I or Keys.J or Keys.M)
         {
             // AD-5.1: in an EDIT control these arrive as Backspace, Tab, line feed and Enter characters.
@@ -560,22 +553,42 @@ public sealed partial class TextEditorForm : AxKitForm
         StatusLayout.Fit(_status, _fileLabel, _positionLabel);
     }
 
-    // ---- word wrap (AD-2.4) ----
+    // ---- word wrap (AD-2.4): the bundle's one setting, in the theme file's display settings (docs/axkit/theme.md TH-6) ----
 
+    /// <summary>Options, Text, Word wrap (Ctrl+Shift+W): written into the theme file, so that every editor window takes it when next activated.</summary>
     private void ToggleWordWrap()
     {
-        // Changing WordWrap recreates the control's handle, which loses the caret; it is put back.
+        var on = !_editor.WordWrap;
+        if (SetWordWrapPreference(on) is { } problem)
+        {
+            Failed("Theme file", "The theme file could not be changed: " + problem);
+            return;
+        }
+
+        ApplyWordWrap(on);
+        Announce(on ? "Word wrap on" : "Word wrap off", true);
+    }
+
+    /// <summary>TH-6.2: the theme file changed under another window's Ctrl+Shift+W or in axJSON; the text follows it, the caret kept.</summary>
+    protected override void OnThemeChanged()
+    {
+        if (_editor.WordWrap != WordWrapPreference)
+        {
+            ApplyWordWrap(WordWrapPreference);
+        }
+    }
+
+    private void ApplyWordWrap(bool on)
+    {
+        // Changing WordWrap recreates the control's handle, which loses the caret; it is put back (AD-2.4).
         var start = _editor.SelectionStart;
         var length = _editor.SelectionLength;
-        _settings.WordWrap = !_settings.WordWrap;
         _loading = true;
-        _editor.WordWrap = _settings.WordWrap;
-        _editor.ScrollBars = _settings.WordWrap ? ScrollBars.Vertical : ScrollBars.Both;
+        _editor.WordWrap = on;
+        _editor.ScrollBars = on ? ScrollBars.Vertical : ScrollBars.Both;
         _loading = false;
         _editor.Select(start, length);
         _editor.ScrollToCaret();
-        _wordWrapItem.Checked = _settings.WordWrap;
-        SaveSettings();
-        Announce(_settings.WordWrap ? "Word wrap on" : "Word wrap off", true);
+        _wordWrapItem.Checked = on;
     }
 }

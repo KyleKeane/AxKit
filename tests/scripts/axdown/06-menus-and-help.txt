@@ -132,6 +132,9 @@ expect said Word wrap off
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 \u00B7
 expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW","Font
+# Back on: the setting is the run's theme file, which the scripts after this one share (docs/axkit/theme.md TH-6).
+keys ctrl+shift+w
+expect said ! Word wrap on
 # No match: "No commands match xyz"; Enter says it again and the palette stays; Escape: back, nothing run.
 keys ctrl+shift+p
 expect focus Search commands
