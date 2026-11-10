@@ -499,28 +499,33 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 
 - AX-9.1 Every window has an **axKit** menu (mnemonic A) between its own menus and Help, the same in every window: one
   class, `AxKit.Forms/AxKitMenu`, which the window constructs with its Command palette item, its two update items, its
-  latest-release state and its notice method. In order: Command palette… (P, AX-10; the bundle's own command, so it
-  sits in the bundle's menu, asked 2026-10-23); Send a report… (S, F4) and Your reports (Y, the Reports list in
-  axTask; docs/axKit/reports.md RP-2.2, 2026-11-07); a separator; New window ▸ and Recently closed ▸; a separator; Open
-  windows ▸, Open windows by type ▸ and Close all windows; a separator; AI help ▸ (H, `ai-help.md` AH-1.1: Let
-  Claude help in the apps, Ask about this window (Shift+F1), Folders Claude may read) and AI tools ▸ (I, `mcp.md`
-  MC-6.1: the bundle's own settings live here, an app's Options hold only the app's); Check for updates, Update to (while a newer
-  release is known) and About ▸ (AX-9.9). The lists are filled each time the menu opens, so that they show the
-  windows and the files of that moment.
+  latest-release state and its notice method. In order (5.6.0, 2026-11-09, the user: New window had become "hard to
+  find since it is below many other things"): New window ▸ (N), Open windows ▸ (O), Recently closed ▸ (R) and Close
+  all windows (W); a separator; Claude ▸ (C: everything of Claude in one submenu, `ai-help.md` AH-1.1: Use Claude in
+  axKit (U, the switch), Ask about this window… (A, Shift+F1), Folders Claude may read… (F), Claude's working folder
+  (W), a separator, AI tools ▸ (I, `mcp.md` MC-6.1); the bundle's own settings live here, an app's Options hold only
+  the app's); a separator; Command palette… (P, AX-10; the bundle's own command, so it sits in the bundle's menu, asked
+  2026-10-23), Send a report… (S, F4) and Your reports (Y, the Reports list in axTask; docs/axKit/reports.md RP-2.2,
+  2026-11-07); a separator; Check for updates (U), Update to (T, while a newer release is known) and About ▸ (A,
+  AX-9.9). The lists are filled each time the menu opens, so that they show the windows and the files of that moment.
+  Until 5.6.0 the palette and the reports came first, and Open windows by type ▸ (one submenu per app, that app's
+  windows with this one checked) stood after Open windows; it went for the menu's length, Open windows and the
+  window title saying where the user is.
 - AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
   after ax as the mnemonic. It starts `AxKit.exe <verb>` with no arguments: a new process and a new window (B-2), the
-  app starting as it does from its Start menu entry. The apps stand in four groups, a separator between them
+  app starting as it does from its Start menu entry. The apps stand in five groups, a separator between them
   (2026-10-24, the user's choice of a flat list over a submenu per group; since 2026-10-29 the access layers last,
-  AX-11.3): files (axFile, axDown, axJSON, axPreview, axMedia), one's own lists (axTask), utilities (axStart,
-  axClip, axCalc, axProcess), then the access layers, each by its title (axClaude, axTerminal, axGIT, axPass). Every list of apps in the windows has this order and these separators: New window, Open
-  windows by type, axFile's Open in axKit (`AxKitMenu.AddApps`). A new app is one line in `Dispatch.Apps`, with its
-  group, what it opens and whether Show in offers it; every list, Show in (AX-9.10) and Recently closed (AX-9.4)
-  follow from that line.
+  AX-11.3; since 5.6.0 the Claude apps as a group of their own, last of all, the user's ask of 2026-11-09 to "group
+  the claude related apps"): files (axFile, axDown, axJSON, axPreview, axMedia), one's own lists (axTask), utilities
+  (axStart, axClip, axCalc, axProcess), the other access layers, each by its title (axTerminal, axGIT, axPass), then
+  the Claude apps (axClaude, axMCP, axHelp, axDescribe). Every list of apps in the windows has this order and these
+  separators: New window, axFile's Open in axKit (`AxKitMenu.AddApps`). A new app is one line in `Dispatch.Apps`,
+  with its group, what it opens and whether Show in offers it; every list, Show in (AX-9.10) and Recently closed
+  (AX-9.4) follow from that line.
 - AX-9.3 **Open windows ▸** (O): every open window of the bundle's apps except this one, the most recently used first.
   The order is the one Windows keeps its top-level windows in, which is Alt+Tab's, so nothing is stored and Alt+A, O,
-  1 is always the window the user was in before this one. **Open windows by type ▸** (B) holds one submenu per app,
-  "axClaude (2)", "axDown (1)", the number being its open windows: that app's windows in the same order, this window
-  included and checked, so that the list also says where the user is.
+  1 is always the window the user was in before this one. (Open windows by type ▸, one submenu per app with that
+  app's windows and this one checked, stood here until 5.6.0, AX-9.1.)
 - AX-9.4 **Recently closed ▸** (R): the last ten files and folders a window of any app held when it closed or replaced
   them (axDown's file, axClaude's project folder), the newest first, each app and path once, those that still exist
   (checked as the menu opens for a path on a drive of this computer only, since a share or a mapped network drive
@@ -661,7 +666,8 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   with list, the installer's lines, the first line of each access layer's user guide and F1 text, both READMEs and
   `NOTICE.md`. The console commands (`axClaude`) and the verbs stay single words.
 - AX-11.3 **Grouped apart.** Every list of apps shows the standalone apps first, in their groups (AX-9.2), then the
-  access layers, with a separator before them (in File Explorer's submenu, the separator flag of its entry); the docs
+  access layers, with a separator before them (in File Explorer's submenu, the separator flag of its entry), the
+  Claude apps as the last group of all (`AppGroup.Claude`: axClaude, axMCP, axHelp, axDescribe; 5.6.0); the docs
   list them the same way under "Standalone apps" and "Access layers". `Dispatch.Apps` is in that order, and a test
   fails when an access layer stands before a standalone app.
 - AX-11.4 **The consent notice.** Before an access layer connects to a program or service for the first time, it shows

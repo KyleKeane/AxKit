@@ -57,16 +57,24 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   folders Claude may read, AH-2.3), `model` (empty for Claude Code's default), `claudePath` (Claude Code's program
   when it is not where axKit looks; a relative path is taken from the settings folder, which is how the automation's
   fake stands in), `workingFolder` (Claude Code's working folder, AH-2.1; empty for `Documents\axKit Claude`). axKit
-  menu → AI help ▸ → Let Claude help in the apps (a checked item), Ask about this window… (Shift+F1, AH-6), Folders
-  Claude may read…, Claude's working folder (AH-2.1, opened in axFile), the same in every window (the axKit menu's
-  shape, AX-9). The file is read again at every use, so a switch in one window counts in every other at its next
-  question.
+  menu → Claude ▸ → Use Claude in axKit (a checked item, the switch), Ask about this window… (Shift+F1, AH-6), Folders
+  Claude may read…, Claude's working folder (AH-2.1, opened in axFile), a separator, AI tools ▸ (`mcp.md` MC-6.1):
+  everything of Claude in one submenu, the same in every window (the axKit menu's shape, AX-9.1; until 5.6.0 an AI
+  help submenu and the AI tools stood side by side, and the switch was "Let Claude help in the apps"). The file is
+  read again at every use, so a switch in one window counts in every other at its next question.
 - AH-1.2 Turning it on shows the consent notice of AX-11.4 for Claude Code, recorded under the app "AI help" and the
   target Claude Code (one agreement for the service, however many windows use it); the notice says what goes to
   Anthropic: the question, what the window gathered, and the files Claude reads in the allowed folders, under the
   user's own account and Anthropic's terms.
-- AH-1.3 Off: every AI item of every window stays in its menu, and says "AI help is off: axKit menu, AI help, Let
-  Claude help in the apps" when chosen (AX-7.3: said, never a notice), so that the user learns where the switch is.
+- AH-1.3 Off: every AI item of every window stays in its menu, and **whatever asks for Claude while it is off turns it
+  on** (5.6.0; the user, 2026-11-09: "the ai help toggle process is confusing and should immediately open the consent
+  form"): Shift+F1, Enter in axHelp, axDescribe's hotkey or the switch itself opens the reminder of AH-1.2 at once
+  when the agreement is not recorded yet, and its Turn on records it, turns the switch on, says "Claude on" and goes on
+  with the ask that was in hand (the question field, the picture); with the agreement recorded, the switch goes on and
+  the ask goes on, "Claude on" said. Not now (Escape) leaves Claude off, "Claude stays off", nothing asked. Off from the
+  switch is "Claude off" (`AxKitForm.TurnOnAi`, `ToggleAiHelp`, `AiReady`). axHelp's and axDescribe's status bars say
+  "Claude is off; asking turns it on" while it is off. Until 5.6.0 every item said "AI help is off: axKit menu, AI help,
+  Let Claude help in the apps" and did nothing, which sent the user to a menu to find a switch to find a notice.
 - AH-1.4 Claude Code missing: the item says so and offers Install it now, as axClaude does (AX-2.9).
 
 ### AH-2 How the service reaches Claude
@@ -135,8 +143,9 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 ### AH-6 A question about this window (Shift+F1)
 
 - AH-6.1 **Shift+F1** in every window (`BundleKeys.AskClaude`, AX-8.2; Windows' own key for help about the thing in
-  front), and axKit menu → AI help → Ask about this window…: a notice with one field, "Your question about this
-  window", whose text says what Claude gets; Enter asks, Escape asks nothing. Off, missing and consent as AH-1.
+  front), and axKit menu → Claude → Ask about this window…: a notice with one field, "Your question about this
+  window", whose text says what Claude gets; Enter asks, Escape asks nothing. Off, missing and consent as AH-1 (off:
+  the reminder first, then the field, AH-1.3).
 - AH-6.2 **What the window sends** (`WindowContext`): the app's title (AX-11.2), the window's title, the focused
   control's name and place as the reports describe it (RP-4.2: never its text), the last actions of the window (the
   reports' list, redacted as a report is), the F1 text and the app's user guide (the one Help, User guide shows), so
@@ -153,7 +162,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 
 - `AxKit.Core/Ai/AiSettings` (AH-1.1), `AiRequest` (the command line and the process, AH-2), `AiAnswer` (the JSON
   read, with the session), `AiPrompts` with `WindowContext` (AH-4, AH-6.2).
-- `AxKit.Forms/AxKitForm.Ai.cs`: `CreateAiHelpMenu` (the axKit menu's submenu, AX-9), `AskAboutThisWindow` (Shift+F1,
+- `AxKit.Forms/AxKitForm.Ai.cs`: `CreateClaudeMenu` (the axKit menu's Claude submenu, AX-9.1, with the AI tools in it), `TurnOnAi` (AH-1.3), `AskAboutThisWindow` (Shift+F1,
   AH-6), `AskClaude(prompt, extraFolders, resume, then)` with the switch, the program and the consent checks and the
   waiting notice, `ShowAnswer(answer, extraFolders, closed)` with the follow-up field (AH-3.1, AH-6.3), the folders
   notice (AH-2.3); `ConsentTarget.AiHelp` and `HasConsent`'s app name for the one agreement (AH-1.2); `Notice.FocusText`
@@ -244,3 +253,15 @@ Later the same evening, after the first use (5.6.0):
   typing (their `sayFirstMatch` is off by default, with no menu item; axStart and axClip keep theirs), and Tab reaches
   the list of earlier questions, where NVDA reads each one and Enter shows its answer (`HotkeyForm.MatchesTakeFocus`).
 - **"its own default location for working directory to use all the claude code benefits"**: AH-D6.
+- **"the ai help toggle process is confusing and should immediately open the consent form to activate the service"**:
+  AH-1.3: any ask while Claude is off opens the reminder at once and goes on after Turn on; the switch is "Use Claude
+  in axKit", said as "Claude on" and "Claude off".
+- **"group the claude related apps in the axkit menu so that a user can either enable or disable the entire claude
+  suite and still use the axkit apps"**: one Claude submenu in the axKit menu holds the switch, the question, the
+  folders, the working folder and the AI tools (AX-9.1); the Claude apps (axClaude, axMCP, axHelp, axDescribe) stand
+  as the last group of New window and every list of apps (`AppGroup.Claude`, AX-9.2). The switch is AI help's: axClaude
+  itself, axMCP and the AI tools keep their own agreements and switches, since each is its own access layer and the
+  user turns each on knowingly; every other app of axKit works with all of them off (G2).
+- **"simplify the app menus and especially the axkit menu which is now hard to find the new window"**: the axKit menu's
+  order of AX-9.1 (New window first, Open windows by type gone); axHelp's and axDescribe's menus lost the first-match
+  item (HE-3.3). The other apps' menus are untouched here; a pass over them is a priorities item.

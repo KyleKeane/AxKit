@@ -248,7 +248,7 @@ public sealed class DescribeForm : HotkeyForm
             $"Earlier descriptions, {_matches.Count}", 0);
         _stateLabel.Text = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled
             ? $"{_settings.Descriptions.Count} {(_settings.Descriptions.Count == 1 ? "description" : "descriptions")} kept"
-            : "AI help is off: axKit menu, AI help";
+            : "Claude is off; asking turns it on";
     }
 
     private Description? Selected => Matches.SelectedIndex >= 0 && Matches.SelectedIndex < _matches.Count ? _matches[Matches.SelectedIndex] : null;

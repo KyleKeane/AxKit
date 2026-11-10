@@ -7,10 +7,10 @@ Anthropic account and Anthropic's terms, which are yours to follow.
 
 ## Before the first picture
 
-AI help is one switch for every axKit app: in any axKit window, Alt+A for the axKit menu, AI help, Let Claude help in
-the apps. The first time, a reminder says what goes to Anthropic (here, a picture of the window you point at); check
-the box and press Enter. Claude Code must be installed and logged in; if it is missing, the notice offers Install
-Claude Code now.
+Nothing to set up: press the hotkey. The first time, a reminder says what goes to Anthropic (here, a picture of the
+window you point at); Tab to the box, Space, and Enter on Turn on: "Claude on", and the picture is described. That
+turns Claude on for every axKit app; the switch is in any axKit window, Alt+A for the axKit menu, Claude, Use Claude
+in axKit. Claude Code must be installed and logged in; if it is missing, a notice offers Install Claude Code now.
 
 ## Describing the window in front
 
@@ -55,7 +55,7 @@ The AI help settings are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached f
 
 ## If something goes wrong
 
-"AI help is off": turn it on in the axKit menu. "The picture could not be taken": the window in front gave no
+"Claude is off; asking turns it on" in the status bar: press the hotkey and the reminder comes. "The picture could not be taken": the window in front gave no
 picture; try again with the window restored. "x is not a picture axDescribe can describe": only .png, .jpg, .jpeg,
 .gif and .webp files are read. "Claude could not answer": the notice holds Claude Code's own words.
 Options, Developer, Copy diagnostics copies what helps a bug report; F4 sends one.

@@ -42,5 +42,5 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
-3. Alt+A: the axKit menu with New window (axMedia among the apps), Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Open windows by type, Close all windows, Check for updates, About.
+3. Alt+A: the axKit menu with New window (axMedia among the apps), Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Claude, Command palette, Send a report, Your reports, Check for updates, About.
 4. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the queue, the player's state and the log's end.

@@ -90,7 +90,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
    as in the editor, "No next table" when there is none; axKit, About, Version names the version of axKit, the nine apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
-4. Alt+A: the axKit menu with New window, Recently closed, Open windows, Open windows by type, Close all windows, Check
+4. Alt+A: the axKit menu with New window, Open windows, Recently closed, Close all windows, Claude, Command palette, Send a report, Your reports, Check
    for updates and About (bundle AX-9); About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+A, B, D there
    lists both windows, the current one checked; Alt+A, N, D starts a new Untitled window. Alone, Open windows holds
@@ -149,11 +149,12 @@ letter), and a `long.md` with headings and lines longer than the window.
 The automated part is `tests/scripts/axDown/11-ask-claude.txt`, against a fake Claude; the steps marked "(real)" need
 Claude Code installed and logged in, and are the user's by ear.
 
-1. With AI help off (axKit menu, AI help, Let Claude help in the apps unchecked): Shift+F1 says "AI help is off: axKit
-   menu, AI help, Let Claude help in the apps" and opens nothing.
-2. Alt+A, H, L: the first time, the consent notice "Before Claude helps in the apps" is read, with the check box; Space
-   on the box says "checked"; Enter: "AI help on: Shift+F1 asks Claude about this window; axHelp and axDescribe answer
-   from anywhere".
+1. With Claude off (axKit menu, Claude, Use Claude in axKit unchecked) and no agreement recorded (delete `consent.json`
+   first, or read the step with the agreement remembered: Shift+F1 says "Claude on" and opens the question field):
+   Shift+F1 opens the reminder "Before Claude helps in axKit" at once, read with its check box; Escape: "Claude stays
+   off", the editor has the focus.
+2. Shift+F1 again: the reminder; Tab to the box, Space: "checked"; Enter: "Claude on", then the notice "Ask Claude
+   about this window" with its field.
 3. Shift+F1: the notice "Ask Claude about this window" is read, then "Your question about this window, edit". Type
    "how do I turn word wrap off" and Enter: "Asking Claude" as a notice; then "Claude says" and the answer, the focus
    on its text so that NVDA reads it from the top; Down reads it line by line (real: the answer names Ctrl+Shift+W).
@@ -161,6 +162,7 @@ Claude Code installed and logged in, and are the user's by ear.
    the same conversation (real). Tab twice: the Copy button; Enter: "Copied"; the notice stays. Escape: the editor has
    the focus again, on the same line as before.
 5. Shift+F1, then Escape: nothing asked, the editor has the focus.
-6. Alt+A, H, F: "Folders Claude may read", "No folders yet…"; Tab to Add a folder, Enter: the folder picker; Escape it:
-   the notice comes back; Escape closes it.
-7. Alt+A, H, L: "AI help off".
+6. Alt+A, C, F: "Folders Claude may read", "No folders yet…", the text naming Claude's working folder; Tab to Add a
+   folder, Enter: the folder picker; Escape it: the notice comes back; Escape closes it. Alt+A, C, W: axFile opens on
+   `Documents\axKit Claude`; Alt+F4.
+7. Alt+A, C, U: "Claude off"; Alt+A, C, U: "Claude on" (the agreement is remembered); Alt+A, C, U: "Claude off".

@@ -180,9 +180,9 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   resources; the app's own items only.
 - AD-4.5 axKit: the bundle's menu (AX-9), between Options and Help, the same in every window of axKit: New window (axClaude,
   axDown), Recently closed (the last ten files and folders any axKit window held, AX-9.4; axDown adds its file when the
-  window closes or opens another); Open windows (the other open axKit windows, most recently used first), Open windows
-  by type (axClaude and axDown, that app's windows, this one checked), Close all windows (every axKit window closes as
-  on Alt+F4, asking about unsaved changes where there are any); Check for updates (axKit n) and, while a newer release
+  window closes or opens another); Open windows (the other open axKit windows, most recently used first), Close all
+  windows (every axKit window closes as on Alt+F4, asking about unsaved changes where there are any); Claude (the
+  bundle's AI help in one submenu, bundle AX-9.1); Check for updates (axKit n) and, while a newer release
   is known, Update to axKit n, as axClaude has them (FR-1.10 there, the bundle's `Updater`, AX-3: I accept all terms, install and restart,
   I accept all terms, install and close, Open release page, Later; one progress bar for the download and the in-place install, Cancel
   during the download; after I accept all terms, install and restart axDown starts the new version itself, on the file or empty), and

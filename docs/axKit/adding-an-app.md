@@ -110,7 +110,7 @@ the base's. The rest of this section is for a window of a new kind.
   submenu should offer it on other things than it `Opens`, the `Types` that submenu shows it on, and the `OpenWith`
   types with their `TypeName`. The script writes the name, verb, project, group, opens, description and icon; the
   rest is by hand, as is a rule in `Decide` when a path alone should open the app (AX-1.2). The entry gives the app
-  its item under New window, its submenu in Open windows by type, its place in axFile's Open in axKit and the Show in
+  its item under New window, its place in axFile's Open in axKit and the Show in
   submenus, and its line in About, Version (AX-9.2) **(automatic)**; `DispatchTests` and `BundleAboutTests` cover
   every entry by themselves, and the app order `DispatchTests` expects is rewritten by the script.
 - `src/AxKit/Program.cs` **(script)**: the line `[Dispatch.AxThing] = AxThingApp.Run,` in `Runs`, and its `using`;

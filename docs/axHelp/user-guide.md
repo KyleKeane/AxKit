@@ -7,12 +7,13 @@ Anthropic account and Anthropic's terms, which are yours to follow.
 
 ## Before the first question
 
-AI help is one switch for every axKit app: in any axKit window, Alt+A for the axKit menu, AI help, Let Claude help in
-the apps. The first time, a reminder says what goes to Anthropic (your question, what the window gathers about
-itself, the files Claude reads in the folders you allow); check the box and press Enter. Claude Code must be installed
-and logged in; if it is missing, the notice offers Install Claude Code now.
+Nothing to set up: type your first question and press Enter. A reminder says what goes to Anthropic (your question,
+what the window gathers about itself, the files Claude reads in the folders you allow); Tab to the box, Space, and
+Enter on Turn on: "Claude on", and your question is asked. That turns Claude on for every axKit app; the switch is in
+any axKit window, Alt+A for the axKit menu, Claude, Use Claude in axKit. Claude Code must be installed and logged in;
+if it is missing, a notice offers Install Claude Code now.
 
-Claude reads nothing of yours unless you allow a folder: axKit menu, AI help, Folders Claude may read, Add a folder.
+Claude reads nothing of yours unless you allow a folder: axKit menu, Claude, Folders Claude may read, Add a folder.
 A question about a window or a screen needs no folder.
 
 Claude Code starts in a folder of its own, Documents, axKit Claude, made the first time it is needed: axHelp, Claude's
@@ -55,7 +56,7 @@ speech while typing). The AI help settings, the switch, the folders, the model a
 
 ## If something goes wrong
 
-"AI help is off": turn it on in the axKit menu. "Claude Code was not found": install it from the notice, or name its
+"Claude is off; asking turns it on" in the status bar: press Enter on a question and the reminder comes. "Claude Code was not found": install it from the notice, or name its
 program file as `claudePath` in `ai-help.json`. "Claude could not answer": the notice holds Claude Code's own words,
 such as a login that ran out; Claude Code's own `claude` command in a terminal shows the same. "No answer in two
 minutes": ask again, or a shorter question. Options, Developer, Copy diagnostics copies what helps a bug report;

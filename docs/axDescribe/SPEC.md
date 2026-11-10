@@ -13,7 +13,7 @@ reads and asks more about. A picture file of the user's own is described the sam
 descriptions stay in a list under a field. `AxKit.exe describe [--hidden | <picture>]`,
 Start entry `axKit axDescribe`, command `axDescribe`; a background process from sign-in, as axStart and axClip. It is
 an access layer (AX-11.1): Claude Code, Anthropic's program, does the work under the user's own account and
-Anthropic's terms; AI help must be on and the consent given once (AH-1.2). Its local counterpart is axPreview's
+Anthropic's terms; the first picture turns Claude on after the reminder (AH-1.2, AH-1.3). Its local counterpart is axPreview's
 reader of a picture's text (AP-D11), which Ctrl+O reaches.
 
 ## 2. Goals and non-goals
@@ -61,7 +61,8 @@ a picture, or is gone, is refused before any window with the reason and the usag
   about the selected description's picture, in that description's
   session; with nothing typed, the selected description again, with its session for more; with nothing kept, the
   list's one line said.
-- DE-2.4 The status bar: "N descriptions kept" ("1 description kept"), or "AI help is off: axKit menu, AI help".
+- DE-2.4 The status bar: "N descriptions kept" ("1 description kept"), or "Claude is off; asking turns it on" (AH-1.3:
+  the hotkey takes the picture, the reminder comes, Turn on describes it).
 - DE-2.5 **Ctrl+O** opens the last picture in axPreview (the window hidden first, so that axPreview comes up in
   front; the foreground given back after three seconds if nothing came), where Windows' own reader gives the text in
   it (AP-D11); "No picture yet: the hotkey takes one" when there is none.

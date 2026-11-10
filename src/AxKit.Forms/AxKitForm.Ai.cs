@@ -5,32 +5,37 @@ using AxKit.Core.Ai;
 namespace AxKit.Forms;
 
 /// <summary>
-/// AI help on this window (docs/axKit/ai-help.md AH-1, AH-3, AH-6; 2026-11-09): the axKit menu's AI help submenu
-/// with the one switch, Ask about this window and the folders Claude may read; Shift+F1, a question about this
-/// window with what the window knows about itself; the question run as Claude Code in print mode
-/// (<see cref="AiRequest"/>) behind a waiting notice; and the answer as a notice text with a field under it for a
-/// follow-up, which continues the same Claude session. axHelp and axDescribe call the same methods with their own
-/// prompts; no window has AI code of its own beyond what it gathers.
+/// AI help on this window (docs/axKit/ai-help.md AH-1, AH-3, AH-6; 2026-11-09): the axKit menu's Claude submenu
+/// with the one switch, Ask about this window, the folders Claude may read, Claude's working folder and the AI tools;
+/// Shift+F1, a question about this window with what the window knows about itself; the question run as Claude Code
+/// in print mode (<see cref="AiRequest"/>) behind a waiting notice; and the answer as a notice text with a field
+/// under it for a follow-up, which continues the same Claude session. Off, any ask turns Claude on through the
+/// reminder (AH-1.3). axHelp and axDescribe call the same methods with their own prompts; no window has AI code of
+/// its own beyond what it gathers.
 /// </summary>
 public abstract partial class AxKitForm
 {
     /// <summary>The app the agreement is recorded under (AH-1.2): one for the service, however many windows use it.</summary>
     private const string AiApp = "AI help";
 
-    private const string AiOff = "AI help is off: axKit menu, AI help, Let Claude help in the apps";
-
     private Func<string>? _userGuide;
     private CancellationTokenSource? _asking;
 
-    /// <summary>axKit, AI help ▸ (AH-1.1): the switch, read as the submenu opens since another window may have changed it; Ask about this window; the folders.</summary>
-    internal ToolStripMenuItem CreateAiHelpMenu()
+    /// <summary>
+    /// axKit, Claude ▸ (AH-1.1; AX-9.1, 5.6.0: everything of Claude in one submenu): the switch, read as the submenu
+    /// opens since another window may have changed it; Ask about this window; the folders; Claude's working folder;
+    /// the AI tools (docs/axKit/mcp.md MC-6.1).
+    /// </summary>
+    internal ToolStripMenuItem CreateClaudeMenu()
     {
-        var menu = new ToolStripMenuItem("AI &help");
-        var on = new ToolStripMenuItem("&Let Claude help in the apps", null, (_, _) => ToggleAiHelp());
+        var menu = new ToolStripMenuItem("&Claude");
+        var on = new ToolStripMenuItem("&Use Claude in axKit", null, (_, _) => ToggleAiHelp());
         menu.DropDownItems.Add(on);
         menu.DropDownItems.Add(Item("&Ask about this window...", AskAboutThisWindow, BundleKeys.AskClaude));
         menu.DropDownItems.Add(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders()));
         menu.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
+        menu.DropDownItems.Add(new ToolStripSeparator());
+        menu.DropDownItems.Add(CreateMcpMenu());
         CommandPalette.RefreshedOnOpening(menu, () => on.Checked = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled);
         return menu;
     }
@@ -63,7 +68,7 @@ public abstract partial class AxKitForm
         }
     }
 
-    /// <summary>On after the consent of AX-11.4 (AH-1.2), off at once; said either way.</summary>
+    /// <summary>The switch (AH-1.1): off at once, said; on through <see cref="TurnOnAi"/>.</summary>
     private void ToggleAiHelp()
     {
         var settings = AiSettings.Load(AiSettings.DefaultPath, out _);
@@ -72,21 +77,34 @@ public abstract partial class AxKitForm
             settings.Enabled = false;
             if (SaveAi(settings))
             {
-                Announce("AI help off", true);
+                Announce("Claude off", true);
             }
 
             return;
         }
 
-        if (!HasConsent(ConsentTarget.AiHelp, "Before Claude helps in the apps", "&Turn on", ToggleAiHelp, () => Announce("AI help stays off", true), AiApp))
+        TurnOnAi(() => { });
+    }
+
+    /// <summary>
+    /// Claude turned on (AH-1.2, AH-1.3; 5.6.0: whatever asked for Claude while it was off comes here, so that the
+    /// first ask is the reminder and not a refusal): the consent notice of AX-11.4 when the agreement is not recorded
+    /// yet (its Turn on records it and comes back here; Not now leaves Claude off and says so), then the switch on,
+    /// "Claude on", and <paramref name="then"/>, the ask that was in hand.
+    /// </summary>
+    private void TurnOnAi(Action then)
+    {
+        if (!HasConsent(ConsentTarget.AiHelp, "Before Claude helps in axKit", "&Turn on", () => TurnOnAi(then), () => Announce("Claude stays off", true), AiApp))
         {
             return;
         }
 
+        var settings = AiSettings.Load(AiSettings.DefaultPath, out _);
         settings.Enabled = true;
         if (SaveAi(settings))
         {
-            Announce("AI help on: Shift+F1 asks Claude about this window; axHelp and axDescribe answer from anywhere", true);
+            Announce("Claude on", true);
+            then();
         }
     }
 
@@ -105,9 +123,10 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
-    /// Whether a question can be asked now (AH-1.3, AH-1.4, AH-1.2): off is said; Claude Code missing is a notice with
-    /// Install it now; the consent is asked once for the service. False has said or shown why; <paramref name="retry"/>
-    /// is the caller again, run after an install or an agreement.
+    /// Whether a question can be asked now (AH-1.3, AH-1.4, AH-1.2): off turns Claude on, through the reminder the
+    /// first time, and asks again; Claude Code missing is a notice with Install it now; the consent is asked once for
+    /// the service. False has said or shown why, or has the ask in hand; <paramref name="retry"/> is the caller again,
+    /// run after the switch, an install or an agreement.
     /// </summary>
     private bool AiReady(Action retry, out AiSettings settings, out string claude)
     {
@@ -120,14 +139,14 @@ public abstract partial class AxKitForm
 
         if (!settings.Enabled)
         {
-            Announce(AiOff, true);
+            TurnOnAi(retry);
             return false;
         }
 
         if (settings.FindClaude() is not { } found)
         {
             ShowNotice(new Notice("Claude Code was not found",
-                "AI help runs Claude Code, Anthropic's program, which was not found on this computer. Install Claude Code now runs Claude Code's own installer for your account; Claude Code then asks you to log in the first time it runs. Or install it by hand from its page, or name its program file in the settings (axKit menu, AI help).",
+                "AI help runs Claude Code, Anthropic's program, which was not found on this computer. Install Claude Code now runs Claude Code's own installer for your account; Claude Code then asks you to log in the first time it runs. Or install it by hand from its page, or name its program file as claudePath in the settings file ai-help.json.",
             [
                 new OverlayChoice("&Install Claude Code now", () => InstallProgram(ProgramInstall.ClaudeCode, () => ClaudeCodeProgram.Find(null) is not null, retry, ConsentTarget.AiHelp)),
                 new OverlayChoice("&Open install instructions", () => OpenUrl(ProgramInstall.ClaudeCode.Page), StaysOpen: true),
@@ -137,7 +156,7 @@ public abstract partial class AxKitForm
         }
 
         claude = found;
-        return HasConsent(ConsentTarget.AiHelp, "Before Claude helps in the apps", "&Connect", retry, () => Announce("Not now: nothing was asked", true), AiApp);
+        return HasConsent(ConsentTarget.AiHelp, "Before Claude helps in axKit", "&Connect", retry, () => Announce("Not now: nothing was asked", true), AiApp);
     }
 
     /// <summary>Shift+F1 and axKit, AI help, Ask about this window (AH-6): one field for the question, then the answer.</summary>

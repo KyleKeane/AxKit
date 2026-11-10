@@ -46,6 +46,6 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 1. In the details after a diff, Ctrl+F: the Find notice; type a word from the diff, Enter: the match selected in the details and read; F3: the next, and after the last match the first again; a word with no match: "Not found". Ctrl+Home, Page Down: a screen down; Ctrl+Down: the next paragraph.
 2. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 3. F1: the Keyboard shortcuts notice; Escape closes it. Help, User guide: this guide; Escape.
-4. Alt+A: the axKit menu with New window, Recently closed, Open windows, Open windows by type, Close all windows, Check for updates, About. About, Version: "axKit <version>" and axGIT named among the apps.
+4. Alt+A: the axKit menu with New window, Open windows, Recently closed, Close all windows, Claude, Command palette, Send a report, Your reports, Check for updates, About. About, Version: "axKit <version>" and axGIT named among the apps.
 5. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the repository and the log's end.
 6. Close the window and start axGIT without a folder: it opens on the same repository (the last one); Repository, Open recent repository lists it as "1. <name> (<path>)".

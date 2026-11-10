@@ -58,4 +58,4 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
 ## 4. The axKit menu and About
 
 1. Alt+A, N: New window lists every app of the bundle; Alt+A, N, J starts a new axJSON window.
-2. Alt+A, B: Open windows by type lists axJSON (n) with this window checked. Alt+A, About, Version names the nine apps.
+2. Alt+A, O: Open windows lists the other axKit windows, most recent first. Alt+A, About, Version names every app.

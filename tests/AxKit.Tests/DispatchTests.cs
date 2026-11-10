@@ -257,7 +257,7 @@ public sealed class DispatchTests
         Assert.Equal(Dispatch.AxJSON, Dispatch.Decide(["json", "x.json"]).App);
         Assert.Equal(["x.json"], Dispatch.Decide(["JSON", "x.json"]).Arguments);
         Assert.Contains("AxKit json", Dispatch.Usage);
-        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axClaude", "axTerminal", "axGIT", "axPass", "axMCP", "axHelp", "axDescribe"], Dispatch.Apps.Select(a => a.Name));
+        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp", "axDescribe"], Dispatch.Apps.Select(a => a.Name));
     }
 
     [Fact]
@@ -337,13 +337,13 @@ public sealed class DispatchTests
         Assert.Equal(Enum.GetValues<AppGroup>(), groups.Distinct());
     }
 
-    /// <summary>AX-11.1 to AX-11.3: the access layers are the last group, each names its program in its title with the keyword, and a standalone app's title is its name.</summary>
+    /// <summary>AX-11.1 to AX-11.3: the access layers are the last two groups (the Claude apps last of all, AX-9.2), each names its program in its title with the keyword, and a standalone app's title is its name.</summary>
     [Fact]
     public void Access_layers_come_last_and_carry_the_keyword()
     {
         foreach (var app in Dispatch.Apps)
         {
-            Assert.Equal(app.Group == AppGroup.AccessLayers, app.IsAccessLayer);
+            Assert.Equal(app.Group is AppGroup.AccessLayers or AppGroup.Claude, app.IsAccessLayer);
             if (app.IsAccessLayer)
             {
                 Assert.Equal($"{app.Name}, access layer for {app.AccessLayerFor}", app.Title);
@@ -356,9 +356,10 @@ public sealed class DispatchTests
         }
 
         Assert.Equal(
-            ["axClaude", "axTerminal", "axGIT", "axPass", "axMCP", "axHelp", "axDescribe"],
+            ["axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp", "axDescribe"],
             Dispatch.Apps.Where(app => app.IsAccessLayer).Select(app => app.Name));
-        Assert.Equal(AppGroup.AccessLayers, Enum.GetValues<AppGroup>().Max());
+        Assert.Equal(["axClaude", "axMCP", "axHelp", "axDescribe"], Dispatch.Apps.Where(app => app.Group == AppGroup.Claude).Select(app => app.Name));
+        Assert.Equal(AppGroup.Claude, Enum.GetValues<AppGroup>().Max());
     }
 
     /// <summary>AX-9.10, AF-4.9: what an app is started on from a file or a folder in hand.</summary>
@@ -379,7 +380,7 @@ public sealed class DispatchTests
     [Fact]
     public void Show_in_offers_the_folder_apps()
     {
-        Assert.Equal(["axFile", "axClaude", "axTerminal", "axGIT"], Dispatch.Apps.Where(app => app.ShowIn).Select(app => app.Name));
+        Assert.Equal(["axFile", "axTerminal", "axGIT", "axClaude"], Dispatch.Apps.Where(app => app.ShowIn).Select(app => app.Name));
         Assert.All(Dispatch.Apps.Where(app => app.ShowIn), app => Assert.NotEqual(Opens.Files, app.Opens));
     }
 }

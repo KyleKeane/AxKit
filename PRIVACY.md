@@ -76,7 +76,8 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   agreement. The server is its maker's program: it does whatever it was built to do, on this computer and on any
   network it reaches, with your rights, under its maker's terms. Remote servers (http, sse) are listed and not
   started; axMCP itself makes no network request.
-- **AI help** (`docs/axKit/ai-help.md`; off until you turn it on in the axKit menu, after a reminder) runs `claude -p`,
+- **AI help** (`docs/axKit/ai-help.md`; off until your first question, when a reminder asks you to turn it on; the
+  switch is the axKit menu's Claude submenu, Use Claude in axKit) runs `claude -p`,
   Claude Code in its print mode, as a child process with read-only tools, once per question, in a working folder of its
   own (`Documents\axKit Claude` unless `ai-help.json` names another; Claude Code keeps its own notes and sessions for
   the service there and reads a `CLAUDE.md` you write there), and reads its answer from its standard output. What goes

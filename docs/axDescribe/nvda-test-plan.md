@@ -37,8 +37,9 @@ Claude; the steps marked "(real)" need the real one and are the user's by ear, w
 1. Windows+Alt+S, Escape; axDescribe, Forget the descriptions: "Forget the descriptions?", Enter: "Descriptions
    forgotten"; Down: the low note, "No descriptions yet: the hotkey describes the window in front, Ctrl+D a picture
    file". Ctrl+O: "No picture yet: the hotkey takes one".
-2. In another axKit window, AI help off; Windows+Alt+S: "AI help is off: axKit menu, AI help, Let Claude help in the
-   apps", the window shown with its field; turn it on again.
+2. In another axKit window, axKit menu, Claude, Use Claude in axKit (off): "Claude off". Windows+Alt+S: the picture is
+   taken, "Claude on" (the agreement is remembered) and "Asking Claude" as always; the status bar said "Claude is off;
+   asking turns it on" only while it was off.
 3. F1: the keyboard shortcuts, with the hotkey, Ctrl+D, Ctrl+O and the field's keys; Escape. axDescribe, Quit
    axDescribe: the process ends and `%LOCALAPPDATA%\AxKit\axDescribe\last.png` is gone.
 

@@ -58,7 +58,7 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 - **Edit**: Undo, Redo, Cut, Copy, Paste, Select all, Format (Ctrl+Shift+F).
 - **Navigate**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Key, Object, Array, Item and Error.
 - **Options**: Text (Word wrap, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axJSON.json in a new axJSON window, and Copy diagnostics).
-- **axKit**: the bundle's menu, the same in every axKit window: New window, Recently closed, Open windows, Open windows by type, Close all windows, Check for updates, Update to the newest version while one is known, and About.
+- **axKit**: the bundle's menu, the same in every axKit window: New window, Open windows, Recently closed, Close all windows, Claude (the switch, a question about this window, the folders, Claude's working folder, the AI tools), Command palette, Send a report, Your reports, Check for updates, Update to the newest version while one is known, and About.
 - **Help**: Keyboard shortcuts (F1), this guide, JSON resources (the JSON syntax page and Claude Code's settings documentation, in your browser).
 
 ## Settings

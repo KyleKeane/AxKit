@@ -13,7 +13,7 @@ public static class BundleHelp
     public const string InEveryWindow = "In every window of axKit";
 
     /// <summary>The axKit menu's line, the same in every F1 text (AX-9; <c>KeyTests</c> checks it whole).</summary>
-    public const string AxKitMenuLine = "Alt+A: the axKit menu: the command palette, a new window of any app, the files and folders closed lately, the open axKit windows, most recent first (Alt+A, O, 1 is the one you were in last) and by type, Close all windows, AI help, the AI tools, Check for updates, and About";
+    public const string AxKitMenuLine = "Alt+A: the axKit menu: a new window of any app, the open axKit windows, most recent first (Alt+A, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Claude (the switch, a question about this window, the folders Claude may read, Claude's working folder, the AI tools), the command palette, Send a report, Your reports, Check for updates, and About";
 
     /// <summary>
     /// The first line and the bundle's section, ending in a blank line so that the app's own sections follow. In the
@@ -47,7 +47,7 @@ public static class BundleHelp
         text.Append("  F1: this list\r\n");
         text.Append("  Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it\r\n");
         text.Append("  F4: report a bug, an idea or feedback to axKit's maintainer: type your words and press Enter; Tab reviews the kind and what the window adds before you send\r\n");
-        text.Append("  Shift+F1: ask Claude about this window, once AI help is on (axKit menu, AI help): type your question and press Enter; the answer is a notice, with a field under it to ask more\r\n");
+        text.Append("  Shift+F1: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more\r\n");
         foreach (var line in lines)
         {
             text.Append("  ").Append(line).Append("\r\n");

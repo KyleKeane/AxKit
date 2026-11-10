@@ -42,9 +42,10 @@ and logged in, `run-axHelp.ps1` (or quit a running axHelp first, axHelp, Quit ax
 
 ## 4. Off, missing, consent (HE-7)
 
-1. In another axKit window, axKit menu, AI help, Let Claude help in the apps (off): "AI help off". Windows+Alt+H,
-   type a question, Enter: "AI help is off: axKit menu, AI help, Let Claude help in the apps"; the status bar says so
-   too. Turn it on again: the consent is remembered, "AI help on: Shift+F1 asks Claude about this window; axHelp and
-   axDescribe answer from anywhere".
+1. In another axKit window, axKit menu, Claude, Use Claude in axKit (off): "Claude off". Windows+Alt+H: the status bar
+   (NVDA+End) says "Claude is off; asking turns it on"; type a question, Enter: "Claude on" (the agreement is
+   remembered), then "Asking Claude" and the answer (real). On a computer that never agreed, the reminder "Before
+   Claude helps in axKit" comes first: Tab to the box, Space ("checked"), Enter on Turn on: "Claude on" and the
+   question goes on; Escape in the reminder: "Claude stays off".
 2. F1: the keyboard shortcuts, with the hotkey and the field's keys; Escape.
 3. axHelp, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`).

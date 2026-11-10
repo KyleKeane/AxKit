@@ -12,8 +12,8 @@ in its print mode (through the bundle's AI help, ai-help.md AH-2), and the answe
 asks more about and closes. The last ten questions with their answers stay in a list under the field. `AxKit.exe
 help [--hidden]`, Start entry `axKit axHelp`, command `axHelp`; a background process from sign-in, as axStart and
 axClip (AX-13.4 in the Store's copy). It is an access layer (AX-11.1): Claude Code, Anthropic's program, does the
-work under the user's own account and Anthropic's terms; AI help must be on (axKit menu, AI help) and the consent
-given once (AH-1.2) before it answers anything.
+work under the user's own account and Anthropic's terms; the first question turns Claude on after the reminder
+(AH-1.2, AH-1.3), and the switch is axKit menu, Claude, Use Claude in axKit.
 
 ## 2. Goals and non-goals
 
@@ -32,7 +32,8 @@ given once (AH-1.2) before it answers anything.
   session answers. Escape, Escape: back in Word on the same line.
 - Windows+Alt+H, Down: "how do I make a table of contents in word, 1 of 1"; Enter: the answer again; Tab, a new
   follow-up in the same session.
-- AI help off: Enter says "AI help is off: axKit menu, AI help, Let Claude help in the apps" (AH-1.3).
+- Claude off: Enter opens the reminder "Before Claude helps in axKit"; Space on the box, Enter: "Claude on", then
+  "Asking Claude" and the answer (AH-1.3); the next time the agreement is remembered and Enter goes straight on.
 
 ## 4. Requirements
 
@@ -52,8 +53,8 @@ given once (AH-1.2) before it answers anything.
   questions under it, which Tab reaches (HE-3.4; until 5.6.0 it never took the focus, and "tab does nothing" was the
   user's first finding), a menu bar and a status bar; the title is the app's title (AX-11.2), by which a second start
   finds it.
-- HE-2.2 The status bar: "N questions kept" ("1 question kept"), or "AI help is off: axKit menu, AI help" while the
-  switch is off.
+- HE-2.2 The status bar: "N questions kept" ("1 question kept"), or "Claude is off; asking turns it on" while the
+  switch is off (AH-1.3).
 - HE-2.3 **Enter** asks the typed question (AH-6.4: the notice "Asking Claude" with Cancel, then "Claude says",
   AH-3.1, with the field for more, AH-6.3); the question and the answer join the list (HE-3.1) and the field is
   emptied. With nothing typed, Enter shows the selected earlier question's answer again, with its session for more;
@@ -108,8 +109,8 @@ F1 text names them all (`HelpText.Shortcuts`).
 ### HE-7 Notices and announcements
 
 "Asking Claude" with Cancel; "Claude says" with the answer, the field "Ask more about this answer", Ask more, Copy
-and Close; "Claude could not answer" with Claude Code's words; "AI help is off: axKit menu, AI help, Let Claude help
-in the apps"; "Claude Code was not found" with Install Claude Code now; the consent notice (AX-11.4) under the app
+and Close; "Claude could not answer" with Claude Code's words; "Claude on", "Claude stays off" (AH-1.3); "Claude Code
+was not found" with Install Claude Code now; the consent notice (AX-11.4) "Before Claude helps in axKit" under the app
 "AI help"; "the question, n of m" and the edge earcon on the list; "Type a question first"; "Cancelled";
 "Forget the questions?"; "Questions forgotten"; "Hotkey …" and "… is taken by another program" (AS-4).
 

@@ -60,7 +60,7 @@ Calls (5):
 
 - **axClaude**, `src/AxClaude.Core/Pty/ClaudeLauncher.cs:46`, in `ClaudeLauncher.VersionAsync`, by `ProcessRun.RunAsync`: runs the user's Claude Code once with --version, without a window, so that axClaude knows which Claude Code it found and that it runs.
   Code: `var result = await ProcessRun.RunAsync(start, [], timeout).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Ai/AiRequest.cs:78`, in `AiRequest.AskAsync`, by `ProcessRun.RunAsync`: claude -p in the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
+- **shared by every app**, `src/AxKit.Core/Ai/AiRequest.cs:74`, in `AiRequest.AskAsync`, by `ProcessRun.RunAsync`: claude -p in its working folder with the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
   Code: `var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
   Code: `created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,`
@@ -189,7 +189,7 @@ Calls (4):
 
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
   Code: `Process.Start(start)?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/AxKitMenu.cs:228`, in `AxKitMenu.StartWith`, by `Process.Start`: starts another window of axKit from the axKit menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
+- **shared by every app**, `src/AxKit.Forms/AxKitMenu.cs:217`, in `AxKitMenu.StartWith`, by `Process.Start`: starts another window of axKit from the axKit menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
   Code: `Process.Start(info)?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
   Code: `using var process = Process.Start(start);`
@@ -288,7 +288,7 @@ Used in 16 places:
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/AxKitForm.Mcp.cs:206`, in `AxKitForm.RunClaude`, for Claude Code.
 - `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, for Windows.
-- `src/AxKit.Forms/AxKitMenu.cs:228`, in `AxKitMenu.StartWith`, for axKit.
+- `src/AxKit.Forms/AxKitMenu.cs:217`, in `AxKitMenu.StartWith`, for axKit.
 - `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
 - `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, for axKit.
@@ -310,7 +310,7 @@ Used in 4 places:
 
 - `src/AxClaude.Core/Pty/ClaudeLauncher.cs:46`, in `ClaudeLauncher.VersionAsync`, for Claude Code.
 - `src/AxGit.Core/GitRunner.cs:111`, in `GitRunner.RunAsync`, for Git.
-- `src/AxKit.Core/Ai/AiRequest.cs:78`, in `AiRequest.AskAsync`, for Claude Code.
+- `src/AxKit.Core/Ai/AiRequest.cs:74`, in `AiRequest.AskAsync`, for Claude Code.
 - `src/AxPreview.Core/PictureText.cs:112`, in `PictureText.RecognizeAsync`, for Windows.
 
 ### PtyHost.Start, program

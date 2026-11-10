@@ -135,7 +135,7 @@ public sealed class HelpForm : HotkeyForm
             $"Earlier questions, {_matches.Count}", 0);
         _stateLabel.Text = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled
             ? $"{_settings.Exchanges.Count} {(_settings.Exchanges.Count == 1 ? "question" : "questions")} kept"
-            : "AI help is off: axKit menu, AI help";
+            : "Claude is off; asking turns it on";
     }
 
     /// <summary>Enter (HE-2.3): the typed question to Claude, with the program that was in front; with nothing typed, the selected earlier answer again.</summary>

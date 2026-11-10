@@ -38,8 +38,8 @@ TK and IA material and moves into those specs when built.
   the palette; so F4, bundle-wide. `BundleKeys.Report = Keys.F4`, named "Report" in the keys table; `KeyTests` keeps the
   windows off it.
 - **RP-2.2 The axKit menu** (AX-9) gets, after the command palette item: "&Send a report…" with F4 shown (S: R is
-  Recently closed's letter, B is Open windows by type's), and "&Your reports", which opens `%APPDATA%\AxKit\reports` in
-  axTask (a new axTask window through `AxKitMenu.Start`, the folder and its `list.json` made first), then a separator. Both carry their words into every window's palette and F1 text through the
+  Recently closed's letter), and "&Your reports", which opens `%APPDATA%\AxKit\reports` in
+  axTask (a new axTask window through `AxKitMenu.Start`, the folder and its `list.json` made first), then a separator (since 5.6.0 the three stand after the Claude submenu, AX-9.1). Both carry their words into every window's palette and F1 text through the
   window base; nothing is added to an app's own menus.
 - **RP-2.3 While a notice shows,** F4 does nothing, as every window key (AX-6.5). The report's recent actions record
   the notice that showed last, so a problem with a notice is reported after closing it.

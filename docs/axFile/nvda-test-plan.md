@@ -67,7 +67,7 @@ Run with NVDA before a release, on a folder with a few subfolders, text files an
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. Help, User guide: this guide; Escape.
-3. Alt+A: the axKit menu with New window (axFile among the apps), Recently closed (the folder of a closed axFile window), Open windows, Open windows by type, Close all windows, Check for updates, About. About, Version: "axKit <version>".
+3. Alt+A: the axKit menu with New window (axFile among the apps), Recently closed (the folder of a closed axFile window), Open windows, Close all windows, Claude, Command palette, Send a report, Your reports, Check for updates, About. About, Version: "axKit <version>".
 4. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the folder, the count of actions and the log's end.
 5. Close the window and start axFile without a folder: it opens on the same folder (the last one).
 6. The command palette (AF-3.12, bundle AX-10). Ctrl+Shift+P, type the start of a folder's name: after a moment "<name>,

@@ -82,8 +82,11 @@ public enum AppGroup
     /// <summary>Small tools for the whole computer: the launcher, the clipboard, the calculator, the processes.</summary>
     Utilities,
 
-    /// <summary>The apps that work through a program axKit does not include (AX-11.1): Claude Code, Git, the shells, KeePassXC. Always last.</summary>
+    /// <summary>The apps that work through a program axKit does not include (AX-11.1): Git, the shells, KeePassXC; after the standalone apps.</summary>
     AccessLayers,
+
+    /// <summary>The access layers for Claude Code and its MCP servers (AX-11.1): axClaude, axMCP, axHelp, axDescribe, one group so that everything of Claude stands together, last (AX-9.2, 5.6.0; the user's ask of 2026-11-09).</summary>
+    Claude,
 }
 
 /// <summary>What an app opens from a path: a file's app given a folder is refused, a folder's app given a file gets the file's folder.</summary>
@@ -189,10 +192,6 @@ public static class Dispatch
         {
             Description = "axProcess, the processes, services and startup programs", Icon = new("Ar", 120, 40, 90),
         },
-        new("axClaude", AxClaude, "AxClaude", AppGroup.AccessLayers, Opens.Folders, ShowIn: true)
-        {
-            AccessLayerFor = "Claude Code", Description = "axClaude, access layer for Claude Code: its conversation as plain text", Icon = new("Ax", 31, 78, 121), StoreEntry = true,
-        },
         new("axTerminal", AxTerminal, "AxTerminal", AppGroup.AccessLayers, Opens.Folders, ShowIn: true)
         {
             AccessLayerFor = "your shell", Description = "axTerminal, access layer for your shell: PowerShell, Command Prompt or Git Bash as a transcript", Icon = new("At", 40, 40, 40), StoreEntry = true,
@@ -206,15 +205,19 @@ public static class Dispatch
             AccessLayerFor = "KeePassXC", Description = "axPass, access layer for KeePassXC: a KeePass password database", Icon = new("Aw", 20, 40, 100),
             Types = [".kdbx"], OpenWith = [".kdbx"], TypeName = "KeePass database (axPass)",
         },
-        new("axMCP", AxMCP, "AxMCP", AppGroup.AccessLayers, Opens.Folders)
+        new("axClaude", AxClaude, "AxClaude", AppGroup.Claude, Opens.Folders, ShowIn: true)
+        {
+            AccessLayerFor = "Claude Code", Description = "axClaude, access layer for Claude Code: its conversation as plain text", Icon = new("Ax", 31, 78, 121), StoreEntry = true,
+        },
+        new("axMCP", AxMCP, "AxMCP", AppGroup.Claude, Opens.Folders)
         {
             Description = "axMCP, access layer for MCP servers: the tools, resources and prompts of any MCP server on this computer, started and run by hand", AccessLayerFor = "MCP servers", Icon = new("Mc", 70, 60, 110),
         },
-        new("axHelp", AxHelp, "AxHelp", AppGroup.AccessLayers, Opens.Nothing)
+        new("axHelp", AxHelp, "AxHelp", AppGroup.Claude, Opens.Nothing)
         {
             Description = "axHelp, access layer for Claude Code: a question to Claude from anywhere, behind a hotkey", AccessLayerFor = "Claude Code", Icon = new("Ah", 60, 90, 150), AtSignIn = true,
         },
-        new("axDescribe", AxDescribe, "AxDescribe", AppGroup.AccessLayers, Opens.Nothing)
+        new("axDescribe", AxDescribe, "AxDescribe", AppGroup.Claude, Opens.Nothing)
         {
             Description = "axDescribe, access layer for Claude Code: the window in front described by Claude, behind a hotkey", AccessLayerFor = "Claude Code", Icon = new("Ae", 130, 70, 110), AtSignIn = true,
         },

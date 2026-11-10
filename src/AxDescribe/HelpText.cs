@@ -17,7 +17,7 @@ public static class HelpText
           The hotkey, Windows+Alt+S unless you chose another in Options, Hotkey: from any program, a picture of the window in front goes to Claude, and its description comes as a notice, which the arrows and the heading letters read
           In the description: Tab to the field under it, type a question about the picture and press Enter; Escape closes it
           The same hotkey while axDescribe shows hides it again
-          AI help must be on: axKit menu, AI help, Let Claude help in the apps, once, in any axKit window
+          The first picture turns Claude on, after a reminder of what goes to Anthropic; the switch is axKit menu, Claude, Use Claude in axKit, in any axKit window
 
         ## In the field
           Type a question about the selected description's picture and press Enter
