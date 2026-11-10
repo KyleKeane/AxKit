@@ -51,7 +51,7 @@ WinForms code every app of the bundle uses (`docs/axKit/SPEC.md` AX-6.2, AX-6.4)
   - `ShowWindowInFront` (the foreground window kept in `_giveBackTo` when it is another program's, the app's `PrepareShowing` for its bounds and field, `Show`, `AxKitMenu.Activate`, the app's `AfterShowing`);
   - `HideWindow` and `GiveForegroundBack` (the one rule of the foreground) with `GiveForegroundBackLaterAsync`, the hide when another program but NVDA comes to the front;
   - `ShowHotkeyNotice` and its capture;
-  - `FindRunning` (a second start's search by the title);
+  - `FindRunning` (a second start's search by the title among the processes of this very program file, `ThisProgram.Runs`, 2026-11-09: a test run's hand-over never reaches the user's own window from another build);
   - the settings both apps share, `AxKit.Core/HotkeySettings` (2026-11-09): `CurrentHotkey` and the hotkey kept from the Hotkey notice, the Run key written at handle creation as Start with Windows says (`SignInStart.Apply`), and the menu items both apps place: `HotkeyItem`, `SayFirstMatchItem`, `AddHideAndQuit` (the separator, Hide with the app's key, Quit) and `StartWithWindowsItem` (AX-13.4, 2026-11-08: the toggle that writes the Run key, or in the Store's copy an item that opens Windows' Startup apps page, `SignInStart.OpenWindowsStartupSettings`, and says to turn the app on or off there);
   - `ForegroundBefore` is the window a paste goes to.
   - The search field over the matches is here too since 2026-10-24 (both apps had it line for line):

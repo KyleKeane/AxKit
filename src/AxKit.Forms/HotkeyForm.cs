@@ -280,34 +280,25 @@ public abstract class HotkeyForm : AxKitForm
 
     // ---- the window ----
 
-    /// <summary>For a starting process (AS-1.2): the hidden window of another process of this program with the title <paramref name="title"/>, which a second start hands "show" to; 0 when none.</summary>
+    /// <summary>
+    /// For a starting process (AS-1.2): the hidden window of another process of this very program file
+    /// (<see cref="ThisProgram.Runs"/>) with the title <paramref name="title"/>, which a second start hands "show" to;
+    /// 0 when none. The program file, not the process name (2026-11-09): the user's own axHelp from one build and a
+    /// test run's from another are two programs, and the test's hand-over must never show the user's window.
+    /// </summary>
     public static nint FindRunning(string title)
     {
         var process = (uint)Environment.ProcessId;
         for (var window = FindWindowExW(0, 0, null, title); window != 0; window = FindWindowExW(0, window, null, title))
         {
             GetWindowThreadProcessId(window, out var owner);
-            if (owner != process && OfThisProgram(owner))
+            if (owner != process && ThisProgram.Runs(owner))
             {
                 return window;
             }
         }
 
         return 0;
-    }
-
-    private static bool OfThisProgram(uint processId)
-    {
-        try
-        {
-            using var other = System.Diagnostics.Process.GetProcessById((int)processId);
-            using var self = System.Diagnostics.Process.GetCurrentProcess();
-            return string.Equals(other.ProcessName, self.ProcessName, StringComparison.OrdinalIgnoreCase);
-        }
-        catch (ArgumentException)
-        {
-            return false;
-        }
     }
 
     /// <summary>
