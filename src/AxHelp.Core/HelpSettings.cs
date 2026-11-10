@@ -60,18 +60,17 @@ public sealed class HelpSettings : HotkeySettings
 
     /// <summary>
     /// The arguments of <c>AxKit.exe claude</c> for the conversation (HE-2.1): the working folder, the title "axHelp",
-    /// the message for its field when there is one, then for Claude Code the folder's last conversation and the model.
+    /// the model on every start of Claude Code, and the message for its field when there is one; Claude Code continues the folder's last conversation, or starts one, as axClaude does by default (FR-9.1).
     /// </summary>
     public static IReadOnlyList<string> ConversationArguments(string folder, string model, string? message)
     {
-        var arguments = new List<string> { folder, "--title", "axHelp" };
+        var arguments = new List<string> { folder, "--title", "axHelp", "--model", model };
         if (message is not null)
         {
             arguments.Add("--message");
             arguments.Add(message);
         }
 
-        arguments.AddRange(["--", "--continue", "--model", model]);
         return arguments;
     }
 

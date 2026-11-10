@@ -27,7 +27,6 @@ body:
         - axClip
         - axMCP
         - axHelp
-        - axDescribe
         - The bundle (install, update, the axKit menu)
     validations:
       required: true

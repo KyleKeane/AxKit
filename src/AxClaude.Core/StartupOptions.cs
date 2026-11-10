@@ -16,10 +16,11 @@ public sealed record StartupOptions(
     string? RecordPath,
     IReadOnlyList<string>? ClaudeArgs,
     string? Message = null,
-    string? Title = null)
+    string? Title = null,
+    string? Model = null)
 {
     public const string Usage = """
-        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [--message <text>] [--title <text>] [-- claude arguments]
+        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [--message <text>] [--title <text>] [--model <name>] [-- claude arguments]
                axclaude ...  the same, as the installed console command
 
           <folder>            the project folder (default: the current folder, or the last one used)
@@ -28,6 +29,7 @@ public sealed record StartupOptions(
           --record <file.vt>  record the raw console stream for a bug report
           --message <text>    put the text into the message field, not sent (axTask's Open in axClaude on an issue, axHelp's screenshot)
           --title <text>      the window's title in place of the folder's (axHelp's conversation, titled axHelp)
+          --model <name>      Claude Code's model on every start of Claude in this window (axHelp's own model)
           --no-ax             start Claude without --ax-screen-reader (testing only)
           -- ...              everything after -- goes to claude, for example -- --resume <id> or -- --permission-mode plan
                               (default: --continue, the last conversation in the folder; a bare -- starts a new one)
@@ -41,6 +43,7 @@ public sealed record StartupOptions(
         string? record = null;
         string? message = null;
         string? title = null;
+        string? model = null;
         var noAx = false;
         int? columns = null;
         int? rows = null;
@@ -75,6 +78,9 @@ public sealed record StartupOptions(
                     break;
                 case "--title":
                     title = Next(args, ref i);
+                    break;
+                case "--model":
+                    model = Next(args, ref i);
                     break;
                 case "--no-ax":
                     noAx = true;
@@ -115,7 +121,7 @@ public sealed record StartupOptions(
             }
         }
 
-        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message, title);
+        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message, title, model);
     }
 
     private static string Next(string[] args, ref int i)

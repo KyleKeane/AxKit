@@ -17,7 +17,7 @@
     - axStart, the program launcher, and axClip, the clipboard history, running in the background from sign-in (a value
       under the user's Run key that each writes itself): they are stopped before an install or a removal, and started
       again, hidden, after an install,
-    - the console commands axClaude, axDown, axJSON, axGIT, axTerminal, axFile, axMedia, axPreview, axStart, axProcess, axTask, axPass, axCalc, axClip, axMCP, axHelp, axDescribe and axKit, each in the app's own case since 5.6.0, so that a screen reader says the name as it is (a folder
+    - the console commands axClaude, axDown, axJSON, axGIT, axTerminal, axFile, axMedia, axPreview, axStart, axProcess, axTask, axPass, axCalc, axClip, axMCP, axHelp and axKit, each in the app's own case since 5.6.0, so that a screen reader says the name as it is (a folder
       opens axClaude, a file axDown, a .json file axJSON, a sound or video file axMedia): one-line shims in
       %USERPROFILE%\.local\bin, put on the user's PATH when it is not there yet (Claude Code's installer uses the same
       folder; a removal leaves the PATH, since the folder may hold other programs' commands).
@@ -266,8 +266,9 @@ $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 $background = @(
     @{ Verb = 'start'; Name = 'axStart'; Settings = 'axStart.json'; What = 'the launcher'; Started = 'axStart, the launcher, runs in the background: Ctrl+Shift+Space, or the hotkey you chose, brings up its search field' },
     @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axClip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Windows+Alt+V, or the hotkey you chose, brings it up' },
-    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axHelp.json'; What = 'the question to Claude'; Started = 'axHelp, a question to Claude from anywhere, runs in the background: Windows+Alt+H, or the hotkey you chose, brings up its field once AI help is on' },
-    @{ Verb = 'describe'; Name = 'axDescribe'; Settings = 'axDescribe.json'; What = 'the screen described by Claude'; Started = 'axDescribe, the window in front described by Claude, runs in the background: Windows+Alt+S, or the hotkey you chose, describes it once AI help is on' }
+    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axHelp.json'; What = 'the conversation with Claude'; Started = 'axHelp runs in the background: Windows+Alt+H brings up your conversation with Claude, Windows+Alt+S puts a picture of the screen into it' },
+    # axDescribe merged into axHelp in 5.7.0: an older one is stopped for the installation and not started again.
+    @{ Verb = 'describe'; Name = 'axDescribe'; Settings = 'axDescribe.json'; What = 'the former screen description'; Started = ''; Former = $true }
 )
 function Stop-Background {
     foreach ($app in $background) {
@@ -283,6 +284,7 @@ function Stop-Background {
 
 function Start-Background {
     foreach ($app in $background) {
+        if ($app.Former) { continue }
         # Not when the user turned Start with Windows off in the app's settings.
         $settingsFile = Join-Path $env:APPDATA "AxKit\$($app.Settings)"
         if (Test-Path -LiteralPath $settingsFile) {

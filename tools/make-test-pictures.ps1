@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Draws the test pictures of axDescribe (docs/axDescribe/SPEC.md DE-8) into tests\fixtures\pictures: three PNG files
+  Draws the test pictures of axHelp's screenshots (docs/axHelp/SPEC.md HE-3) into tests\fixtures\pictures: three PNG files
   that look like what a screen shows, made in code so that nothing personal is in them and anyone can make them again.
 
 .DESCRIPTION

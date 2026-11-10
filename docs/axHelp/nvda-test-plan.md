@@ -1,51 +1,45 @@
 # axHelp NVDA test plan
 
-The manual checks of axHelp (`docs/axHelp/SPEC.md`, HE-n.m), run with NVDA before a release. Before starting: AI help
-on in any axKit window (Claude menu, Use Claude in axKit, the consent agreed), Claude Code installed
-and logged in, `run-axHelp.ps1` (or quit a running axHelp first, axHelp, Quit axHelp). The automated part is
-`tests/scripts/axHelp/01-start.txt`, which `nvda-pass.ps1 axHelp` runs with a fake Claude; the steps below with
-"(real)" need the real one and are the user's by ear.
+The manual checks of axHelp (`docs/axHelp/SPEC.md`, HE-n.m), run with NVDA before a release. Before starting: Claude
+Code installed and logged in, axClaude's agreement given, `run-axHelp.ps1` (or quit a running axHelp first, axHelp,
+Quit axHelp). The automated part is `tests/scripts/axHelp`, which `nvda-pass.ps1 axHelp` runs; the steps marked "(real)"
+need a real reply and a real screen and are the user's by ear.
 
-## 1. Bringing it up and putting it away (HE-1, HE-2.5, HE-4)
+## 1. axHelp's window (HE-1, HE-2.2)
 
-1. In Notepad, press Windows+Alt+H: NVDA says "axHelp, access layer for Claude Code window, Ask Claude, edit" and
-   nothing else. The status bar (NVDA+End) says "0 questions kept".
-2. Escape: axHelp is gone and Notepad has the focus again, on the same line.
-3. Windows+Alt+H while the field shows: it hides. Alt+Tab to another program: it hides.
-4. Start menu, axKit axHelp, while axHelp runs: the field comes up; no second axHelp starts.
-5. Options, Hotkey: "Press the key that brings axHelp up"; press Ctrl+Alt+Shift+F9, Enter: "Hotkey
-   Ctrl+Alt+Shift+F9"; the new key brings it up; set it back.
-6. Tab: "Earlier questions, 0, list, No questions yet: type one and press Enter"; Shift+Tab: "Ask Claude, edit".
-   Type "what does" slowly: nothing is said between the letters (HE-3.3).
+1. Start menu, axKit axHelp: NVDA says "axHelp hotkeys window", then "axHelp, edit, read only" and the first line
+   "axHelp: your conversation with Claude, from any program." Down reads the hotkeys as set.
+2. F1: the keyboard shortcuts, with the two hotkeys and Enter, Ctrl+D, Ctrl+O; Escape. Escape again: the window hides.
+3. Alt: the menu bar, axHelp, Options, Window, Claude, Help; Options, Conversation model: Fast (Haiku) checked.
 
-## 2. A question (HE-2.3, HE-2.4; real)
+## 2. The conversation (HE-2.1, HE-2.3, HE-2.4)
 
-1. Type "what does ctrl shift w do in axdown" and press Enter: "Asking Claude" is read as a notice; a few seconds
-   later "Claude says" and the answer, which names Ctrl+Shift+W and word wrap. Down reads it line by line; h moves by
-   heading if the answer has any.
-2. Tab: "Ask more about this answer, edit". Type "and in axjson?" and Enter: "Asking Claude", then a new "Claude
-   says" answering about axJSON, in the same conversation.
-3. Tab to Copy, Enter: "Copied"; the answer is on the clipboard (Ctrl+V in Notepad later).
-4. Escape: the field, empty, has the focus. The status bar says "1 question kept".
-5. Enter with nothing typed on the kept question (Down first): "Claude says" with the first answer again; Escape.
-6. Type a question and press Enter, then Escape at once during "Asking Claude": "Cancelled"; the field has the focus.
+1. In Notepad, press Windows+Alt+H: "axHelp window", then "Message to Claude, edit". The first time, axClaude's reminder
+   and Claude Code's trust question come first; answer them. `Documents\axKit Claude` now has CLAUDE.md and
+   `.claude\agents\agent.md`.
+2. Type "what is the capital of France", Enter: the reply, spoken by axClaude's Speak replies setting (real). Ctrl+3:
+   the reply. The status bar names the folder.
+3. Alt+Tab to Notepad, Windows+Alt+H: the same window, the reply still there; no second window starts (Window menu,
+   Open windows lists one "axHelp").
+4. In the conversation, "/model": the model is Haiku (real). Options, Conversation model in axHelp's window, Balanced:
+   "sonnet, from the conversation's next start". Close the conversation (Alt+F4), Windows+Alt+H: the conversation
+   continues on Sonnet (real). Set Fast again.
+5. "Make a folder named Test on my desktop": Claude hands it to its agent or asks before creating it (real); answer.
 
-## 3. The earlier questions (HE-3)
+## 3. Screenshots and pictures (HE-3)
 
-1. Down: "what does ctrl shift w do in axdown, 1 of 1". Up: the low note and the same again.
-2. Type "ctrl": Down says the question, 1 of 1. Ctrl+A, type "zzqq", Down: the low note, "No earlier question matches
-   zzqq".
-3. Before forgetting: Tab into the list: "Earlier questions, 1, list, what does ctrl shift w do in axdown, 1 of 1";
-   Enter: "Claude says" and the answer; Escape: the list again; Shift+Tab: the field (HE-3.4).
-4. axHelp, Forget the questions: "Forget the questions?", Enter: "Questions forgotten"; Down: the low note, "No
-   questions yet: type one and press Enter".
+1. In Notepad with a line typed, Windows+Alt+S: the conversation comes up, its field holding "Screenshot of "Untitled -
+   Notepad": <path> " with the caret at the end; Ctrl+V in Notepad later pastes the same path.
+2. Type "what does it say?", Enter: the reply reads the line (real).
+3. In axHelp's window, Ctrl+D: the Windows file picker, "Choose a picture to put into the conversation"; type the path of
+   `tests\fixtures\pictures\dialog.png`, Enter: the conversation's field holds "Picture dialog.png: <path> "; type "which
+   button is the default?", Enter (real: Yes).
+4. In a terminal, `axHelp <repository>\tests\fixtures\pictures\chart.png`: the conversation's field gets the chart's
+   path. `axHelp <repository>\README.md`: a message box "README.md is not a picture axHelp can pass to Claude".
+5. axHelp's window, Ctrl+O: axPreview opens on the newest screenshot and reads its text; Alt+F4.
+6. `axDescribe` in a terminal: axHelp's window comes up (the former verb, HE-1.4).
 
-## 4. Off, missing, consent (HE-7)
+## 4. Quit
 
-1. In another axKit window, Claude menu, Use Claude in axKit (off): "Claude off". Windows+Alt+H: the status bar
-   (NVDA+End) says "Claude is off; asking turns it on"; type a question, Enter: "Claude on" (the agreement is
-   remembered), then "Asking Claude" and the answer (real). On a computer that never agreed, the reminder "Before
-   Claude helps in axKit" comes first: Tab to the box, Space ("checked"), Enter on Turn on: "Claude on" and the
-   question goes on; Escape in the reminder: "Claude stays off".
-2. F1: the keyboard shortcuts, with the hotkey and the field's keys; Escape.
-3. axHelp, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`).
+1. axHelp, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`); the conversation window stays open, an
+   axClaude window of its own.

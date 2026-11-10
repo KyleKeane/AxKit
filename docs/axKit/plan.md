@@ -86,7 +86,7 @@ the restart by the app itself (2.3.0).
   mode with read-only tools over the folders the user allows, never the API (AH-D1); no database, since Claude Code
   reads the files itself (AH-D2); the service answers and a window applies a change as its own undo step (AH-D3); one
   question, one answer, with follow-ups in the same session and no transcript (AH-D4); off by default behind one
-  switch in the axKit menu (AH-D5). Built: Shift+F1 in every window (AH-6), axHelp and axDescribe (its section 7).
+  switch in the axKit menu (AH-D5). Built: Shift+F1 in every window (AH-6), axHelp and axDescribe (its section 7), merged in 5.7.0 into axHelp, two hotkeys into one conversation in axClaude (`docs/axHelp/SPEC.md`).
   Left for later (its section 8): axDown's and axJSON's AI items with Offer a change (AH-3.2), a path in an answer
   opened with Enter (AH-3.3).
 - **A command palette in every window** (the user's ask, 2026-10-21; specified 2026-10-22 as bundle SPEC AX-10,
@@ -220,9 +220,9 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
   2026-11-09 as **axHelp** (`docs/axHelp/SPEC.md`, `ai-help.md` section 7): one key from anywhere opens a field,
   Claude Code answers in its print mode over the folders the user allows, no index (AH-D2: Claude Code reads and
   searches the folders itself).
-- **Screen capture and description** (asked 2026-10-23; placeholder AxSee): built 2026-11-09 as **axDescribe**
-  (`docs/axDescribe/SPEC.md`): a key takes a picture of the window in front and Claude Code describes it, with a chat
-  about it in the same session. Still to come on that foundation: a parser that segments the screen into objects, and
+- **Screen capture and description** (asked 2026-10-23; placeholder AxSee): built 2026-11-09 as **axDescribe**, merged
+  in 5.7.0 into axHelp (`docs/axHelp/SPEC.md` HE-3): a key takes a picture of the window in front and puts it into
+  axHelp's conversation, where Claude Code describes it and answers about it. Still to come on that foundation: a parser that segments the screen into objects, and
   actions on them (move the mouse to an object, click it), an agent the user steers by speech and keys. The user's
   thought: these may be add-ons run from the launcher (AxRun, the user's word for axStart running scripts as well as
   programs) rather than apps, one simple place where all of them are on hand, each a script with a clear interface.

@@ -3,7 +3,7 @@
 # Shift+F1 asks Claude about this window and the answer is a notice with a field for more; the folders notice; off
 # again for the scripts after this one, which share the run's home. Claude is a fake in cmd in the run's own settings
 # folder, named by ai-help.json's relative claudePath, so the run never reaches Anthropic. No agreement is recorded
-# beforehand here, unlike axHelp's and axDescribe's scripts, so that the reminder's path runs.
+# beforehand here, unlike the scripts of earlier versions, so that the reminder's path runs.
 file home\AxKit\axDown.json {"checkForUpdates": false}
 file home\AxKit\ai-help.json {"enabled": false, "folders": [], "claudePath": "fake-claude.cmd"}
 file home\AxKit\consent.json {"items":[]}

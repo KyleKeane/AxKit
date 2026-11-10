@@ -74,7 +74,7 @@ public sealed class HelpTests : IDisposable
     [Fact]
     public void The_conversation_starts_on_the_working_folder_titled_axHelp_with_the_model()
     {
-        Assert.Equal([@"C:\w", "--title", "axHelp", "--", "--continue", "--model", "haiku"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null));
-        Assert.Equal([@"C:\w", "--title", "axHelp", "--message", "Screenshot: a.png ", "--", "--continue", "--model", "opus"], HelpSettings.ConversationArguments(@"C:\w", "opus", "Screenshot: a.png "));
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null));
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "opus", "--message", "Screenshot: a.png "], HelpSettings.ConversationArguments(@"C:\w", "opus", "Screenshot: a.png "));
     }
 }

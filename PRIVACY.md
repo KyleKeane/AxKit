@@ -84,12 +84,14 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   to Claude Code and, through it, to Anthropic under your account and Anthropic's terms:
   your question; for Shift+F1 in an axKit window, that window's name and title, the name and place of the control you
   are in, your last actions there, the window's keyboard shortcuts and its user guide, never the text of what you are
-  working on; for **axHelp, access layer for Claude Code**, the name and title of the program that was in front; for
-  **axDescribe, access layer for Claude Code**, a picture of the window in front, which Claude Code reads from one file
-  on this computer (`%LOCALAPPDATA%\AxKit\axDescribe\last.png`, written over by the next and deleted when axDescribe
-  ends), or a picture file of yours that you chose (Ctrl+D, or `axDescribe <picture>`), read where it is and never
-  copied; and the files Claude reads in the folders you listed under Folders Claude may read, none by default. axKit
-  keeps the answers only where you can see them: axHelp's and axDescribe's last ten in their settings files.
+  working on; and the files Claude reads in the folders you listed under Folders Claude may read, none by default.
+- **axHelp, access layer for Claude Code** is a conversation in axClaude (above) on Claude's working folder,
+  `Documents\axKit Claude`, started with a model of axHelp's own; what goes to Anthropic is what axClaude sends. Its
+  screenshot key takes a picture of the window in front into that folder's `screenshots` folder (the twenty newest are
+  kept) and puts its path on the clipboard and into the conversation's message field; Claude Code reads the picture
+  only when you send the message. A picture file of yours (Ctrl+D, or `axHelp <picture>`) is passed by its path and
+  read where it is. axHelp writes two files into that folder once, where they are missing: `CLAUDE.md`, Claude's
+  instructions, and `.claude\agents\agent.md`, a helper on the strongest model; both are yours to change.
 - **Install it now.** When an app needs a program that is missing (Git, KeePassXC, Claude Code, PowerShell 7), its
   notice offers to install it, and does so only when you choose to. Git (`Git.Git`), KeePassXC
   (`KeePassXCTeam.KeePassXC`) and PowerShell 7 (`Microsoft.PowerShell`) come through Windows' own package manager,

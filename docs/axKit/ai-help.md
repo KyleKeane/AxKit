@@ -198,7 +198,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   first needed and opened from the menu, gathers it and gives the user one place to write Claude standing
   instructions. The allowed folders stay what they were, `--add-dir` each.
 
-## 7. The first two apps (built 2026-11-09)
+## 7. The first two apps (built 2026-11-09; rebuilt as one in 5.7.0, section 10)
 
 - **axHelp**, access layer for Claude Code (asked 2026-10-23 as AxAsk; `docs/axHelp/SPEC.md`): on `HotkeyForm`, a
   hidden process from sign-in as axStart, hotkey Windows+Alt+H by default: one field "Ask Claude"; Enter asks with
@@ -265,3 +265,24 @@ Later the same evening, after the first use (5.6.0):
 - **"simplify the app menus and especially the axkit menu which is now hard to find the new window"**: the axKit menu's
   order of AX-9.1 (New window first, Open windows by type gone); axHelp's and axDescribe's menus lost the first-match
   item (HE-3.3). The other apps' menus are untouched here; a pass over them is a priorities item.
+
+## 10. axHelp as a conversation in axClaude (5.7.0, 2026-11-10)
+
+The user, after the first use: "make the ask claude interface simpler so that it is just like the axclaude without any
+of the buttons ... a seamless conversation ... leave it ongoing and then let the user clear it ... give that axhelp
+permissions to do things on the user's computer ... a global hotkey to take a screenshot ... drop it into the axhelp
+with a single keypress"; then, asked whether axDescribe should stay an app of its own, "merge axDescribe into axHelp";
+and on the model, "a very fast chat like experience ... that only spins up a better model if needed for agentic work".
+
+- axHelp is now two hotkeys into one conversation, and the conversation is an axClaude window (`docs/axHelp/SPEC.md`
+  HE-D1): Windows+Alt+H brings it up on Claude's working folder (AH-2.1), titled "axHelp", ongoing until the user
+  clears it; Windows+Alt+S puts a picture of the window in front into its message field. axDescribe leaves the bundle;
+  its verb still starts axHelp.
+- So axHelp is no longer a use of this service's print mode: the conversation is Claude Code in its interactive mode,
+  with axClaude's agreement and its permission questions, not read-only. Shift+F1 in every window (AH-6) stays this
+  service's, as section 4 has it.
+- The model is axHelp's own, given at the start (`--model`, fast by default), and a subagent on the strongest model in
+  the working folder takes the work of several steps (HE-2.3, HE-2.4); `/model` inside the conversation would change
+  Claude Code's saved default everywhere, which the guide says.
+- AiPrompts lost `Anywhere`, `Screen` and `Picture`, which only the two apps used; the working folder (AH-D6) is what
+  axHelp still takes from here.

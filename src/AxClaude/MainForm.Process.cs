@@ -100,6 +100,13 @@ internal sealed partial class MainForm
         }
 
         arguments.AddRange(ClaudeArgs);
+        // --model (FR-9.2): the window's own model on every start of Claude, the default --continue and its retry included (axHelp's conversation).
+        if (_options.Model is { Length: > 0 } model && !ClaudeArgs.Contains("--model"))
+        {
+            arguments.Add("--model");
+            arguments.Add(model);
+        }
+
         // The name Claude draws above its prompt (--name or -n), so that the model knows that row for chrome.
         var nameAt = ClaudeArgs.ToList().FindIndex(argument => argument is "--name" or "-n");
         _model.StartName = nameAt >= 0 && nameAt + 1 < ClaudeArgs.Count ? ClaudeArgs[nameAt + 1] : null;

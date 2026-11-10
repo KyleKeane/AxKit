@@ -20,8 +20,10 @@ public class StartupOptionsTests
     [Fact]
     public void A_message_and_a_title_are_taken_for_axHelps_conversation()
     {
-        var options = StartupOptions.Parse([Folder, "--title", "axHelp", "--message", "Screenshot: C:\\a.png"]);
+        var options = StartupOptions.Parse([Folder, "--title", "axHelp", "--model", "haiku", "--message", "Screenshot: C:\\a.png"]);
         Assert.Equal("axHelp", options.Title);
+        Assert.Equal("haiku", options.Model);
+        Assert.Null(options.ClaudeArgs);
         Assert.Equal("Screenshot: C:\\a.png", options.Message);
         Assert.Null(StartupOptions.Parse([Folder]).Title);
         Assert.Throws<ArgumentException>(() => StartupOptions.Parse([Folder, "--title"]));

@@ -64,7 +64,7 @@ expect focus a.md
 menu Version
 expect state "notice":"axKit
 expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess.
-expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axMCP for MCP servers, axHelp for Claude Code, axDescribe for Claude Code.
+expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axMCP for MCP servers, axHelp for Claude Code.
 expect state Settings: 
 expect state Logs: 
 keys escape

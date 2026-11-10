@@ -106,8 +106,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   Enter pastes into the program that was in front. Specification `docs/axClip/SPEC.md`, guide
   `docs/axClip/user-guide.md`, test plan `docs/axClip/nvda-test-plan.md`.
 - **axMCP** (asked and built 2026-11-09; an access layer, AX-11, for MCP servers): `AxKit.exe mcpclient [<folder>]`, Start entry `axKit axMCP`, command `axMCP`: the MCP servers Claude Code knows on this computer and the user's own, in the item apps' window (`item-apps.md`); a server started by hand as a child process on its standard input and output shows its tools, resources and prompts, a tool's arguments are the detail pane's fields, Ctrl+Enter calls it and the result is a notice text; remote servers are listed and not started (its MP-D2). Specification `docs/axMCP/SPEC.md`, guide `docs/axMCP/user-guide.md`, test plan `docs/axMCP/nvda-test-plan.md`.
-- **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; an access layer, AX-11, for Claude Code in its print mode; the first app of AI help, `ai-help.md`): `AxKit.exe help [--hidden]`, Start entry `axKit axHelp`, command `axHelp`: a background process from sign-in whose hotkey (Windows+Alt+H by default) brings up one field from any program; Enter asks Claude Code in its print mode, with the program in front named, and the answer is a notice with a field under it for more in the same session; the last ten questions with their answers in a list under the field. Specification `docs/axHelp/SPEC.md`, guide `docs/axHelp/user-guide.md`, test plan `docs/axHelp/nvda-test-plan.md`.
-- **axDescribe** (asked 2026-10-23 as AxSee, built 2026-11-09; an access layer, AX-11, for Claude Code in its print mode; `ai-help.md`): `AxKit.exe describe [--hidden]`, Start entry `axKit axDescribe`, command `axDescribe`: a background process whose hotkey (Windows+Alt+S by default) takes a picture of the window in front before its own window shows, has Claude Code read the file and describe it for a blind user, and shows the description as a notice with a field for more; Ctrl+O opens the picture in axPreview; the last ten descriptions in a list. Specification `docs/axDescribe/SPEC.md`, guide `docs/axDescribe/user-guide.md`, test plan `docs/axDescribe/nvda-test-plan.md`.
+- **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Windows+Alt+H, brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Windows+Alt+S, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
 
 ## 4. Functional requirements
 
@@ -524,7 +523,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   AX-11.3; since 5.6.0 the Claude apps as a group of their own, last of all, the user's ask of 2026-11-09 to "group
   the claude related apps"): files (axFile, axDown, axJSON, axPreview, axMedia), one's own lists (axTask), utilities
   (axStart, axClip, axCalc, axProcess), the other access layers, each by its title (axTerminal, axGIT, axPass), then
-  the Claude apps (axClaude, axMCP, axHelp, axDescribe). Every list of apps in the windows has this order and these
+  the Claude apps (axClaude, axMCP, axHelp). Every list of apps in the windows has this order and these
   separators: New window, axFile's Open in axKit (`WindowMenu.AddApps`). A new app is one line in `Dispatch.Apps`,
   with its group, what it opens and whether Show in offers it; every list, Show in (AX-9.10) and Recently closed
   (AX-9.4) follow from that line.
@@ -659,7 +658,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   another program does and passes the user's commands to it; that program does the work, under its maker's terms:
   axClaude for Claude Code (and through it Anthropic's service), axGIT for Git (and the servers of a repository's
   remotes), axTerminal for the user's shells (PowerShell, Command Prompt, Git Bash, PowerShell 7), axPass for
-  KeePassXC, axMCP for MCP servers, axHelp and axDescribe for Claude Code in its print mode (`ai-help.md`).
+  KeePassXC, axMCP for MCP servers, axHelp for Claude Code through axClaude (`docs/axHelp/SPEC.md`).
   `Dispatch.Apps` holds it: `App.AccessLayerFor`, the program's name ("Claude Code", "Git", "your shell",
   "KeePassXC"), empty for a standalone app. A new app that starts or talks to a program axKit does not include is an
   access layer.
@@ -673,7 +672,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   `NOTICE.md`. The console commands (`axClaude`) and the verbs stay single words.
 - AX-11.3 **Grouped apart.** Every list of apps shows the standalone apps first, in their groups (AX-9.2), then the
   access layers, with a separator before them (in File Explorer's submenu, the separator flag of its entry), the
-  Claude apps as the last group of all (`AppGroup.Claude`: axClaude, axMCP, axHelp, axDescribe; 5.6.0); the docs
+  Claude apps as the last group of all (`AppGroup.Claude`: axClaude, axMCP, axHelp; 5.6.0; axDescribe until 5.7.0); the docs
   list them the same way under "Standalone apps" and "Access layers". `Dispatch.Apps` is in that order, and a test
   fails when an access layer stands before a standalone app.
 - AX-11.4 **The consent notice.** Before an access layer connects to a program or service for the first time, it shows
@@ -814,10 +813,10 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   axPreview on any file) has no form in a package without a COM server, which this copy does not have. Each app with
   `AtSignIn` and an entry (axStart, axClip) carries a startup task on its entry with `<verb> --hidden` as the task's own
   parameters, which Windows lists under Settings, Apps, Startup; an app with `AtSignIn` and no entry (axHelp,
-  axDescribe, 2026-11-09, the eight being taken) has no startup task in the package: the Store's copy starts it from
+  2026-11-09, the eight being taken; axDescribe too until 5.7.0) has no startup task in the package: the Store's copy starts it from
   another window (its Start with Windows item says so, `HotkeyForm`), the GitHub install from the Run key as before,
-  and `DispatchTests` names the two so that a third is added on purpose. The apps without an entry (axJSON, axMedia,
-  axPreview, axProcess, axPass, axCalc, axMCP, axHelp, axDescribe) are reached by their command, by a file of their
+  and `DispatchTests` names it so that a second is added on purpose. The apps without an entry (axJSON, axMedia,
+  axPreview, axProcess, axPass, axCalc, axMCP, axHelp) are reached by their command, by a file of their
   kind, by the Window menu's New window in any window and from axFile; axStart lists the Start menu's programs and so
   knows the eight.
   `AxKit.Core/PackageIdentity` tells whether the process runs from the package (`GetCurrentPackageFullName`) and which

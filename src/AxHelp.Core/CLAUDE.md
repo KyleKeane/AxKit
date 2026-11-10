@@ -1,6 +1,6 @@
 # AxHelp.Core, the pure code
 
-Everything of axHelp that needs no window: the exchanges kept and the matches of the list. Unit tested in `tests/AxHelp.Tests`. The spec is `docs/axHelp/SPEC.md` ("SPEC.md" below); the window is `src/AxHelp`, with its own `CLAUDE.md`. AI help's own pure code (the settings, the request, the answer, the prompts) is the bundle's, `src/AxKit.Core/Ai`. The bundle rules are in the root `CLAUDE.md`.
+Everything of axHelp that needs no window: the settings, the conversation's command line, the files axHelp writes into Claude's working folder, and what counts as a picture file. Unit tested in `tests/AxHelp.Tests`. The spec is `docs/axHelp/SPEC.md` ("SPEC.md" below); the window is `src/AxHelp`, with its own `CLAUDE.md`. AI help's own pure code (the working folder among it) is the bundle's, `src/AxKit.Core/Ai`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
@@ -10,9 +10,11 @@ Everything of axHelp that needs no window: the exchanges kept and the matches of
 
 ## Where things are
 
-- `HelpSettings` with `HelpExchange` (SPEC.md HE-3.1, HE-5): on the bundle's `HotkeySettings` (the hotkey, Windows+Alt+H by default, Start with Windows, Say the first match); `Exchanges`, the last ten questions with their answers and sessions, newest first; `Remember` moves a question asked again to the front.
-- `HelpLines` (SPEC.md HE-3.2, HE-3.3): `Matches` (every typed word in the question, through the bundle's `TextMatch`), `Spoken`, the list's one line for nothing kept and for no match.
+- `HelpSettings` (SPEC.md HE-2.3, HE-4, HE-5): on the bundle's `HotkeySettings` (the conversation's hotkey, Windows+Alt+H by default, Start with Windows); `ScreenshotHotkeyText` with `ScreenshotKey` (Windows+Alt+S), `Model` (`FastModel`, haiku, by default) with the choices `Models`, `ScreenshotsKept`; `ConversationArguments` (the axClaude command line: the folder, `--title axHelp`, `--message`, then `-- --continue --model`).
+- `WorkingFolderFiles` (SPEC.md HE-2.4): `CLAUDE.md` and `.claude\agents\agent.md` (a subagent on opus), written into the working folder only where missing.
+- `PictureFile` (SPEC.md HE-3.3; axDescribe's until 5.7.0): `Kinds`, `Filter` for the Windows file picker, `IsPicture`, `Refusal`.
 
 ## Gotchas
 
-- A `HelpExchange` is a positional record: System.Text.Json fills it through its constructor, so the property names stay as they are (question, answer, sessionId, when in the file).
+- A settings file of 5.6.0 holds `exchanges`; System.Text.Json leaves an unknown property alone, so it still reads.
+

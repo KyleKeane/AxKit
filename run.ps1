@@ -75,11 +75,11 @@ $dotnet = ([xml](Get-Content (Join-Path $root 'Directory.Build.props') -Raw)).Pr
 $exe = Join-Path $root "src\AxKit\bin\Debug\$dotnet-windows\AxKit.exe"
 
 if (-not $NoBuild) {
-    # The background apps started from this build, axStart, axClip, axHelp and axDescribe, keep running after every
+    # The background apps started from this build, axStart, axClip and axHelp (and axDescribe before 5.7.0), keep running after every
     # window has closed, and hold the folder the build writes into: each is ended before the build and started again,
     # hidden, from the new one after, so that the hotkey runs the new code (asked 2026-10-23). axStart keeps no unsaved
-    # state; axClip's history is in memory unless it is kept, and starts empty again; axHelp and axDescribe keep
-    # their lists in their settings.
+    # state; axClip's history is in memory unless it is kept, and starts empty again; axHelp keeps
+    # its settings in its file.
     $background = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe'" |
         Where-Object { $_.ExecutablePath -eq $exe -and $_.CommandLine -match '\s(start|clip|help|describe)(\s|$)' } |
         ForEach-Object { [pscustomobject]@{ Id = $_.ProcessId; Verb = [regex]::Match($_.CommandLine, '\s(start|clip|help|describe)(\s|$)').Groups[1].Value } })

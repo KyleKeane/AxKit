@@ -42,9 +42,9 @@ including while the user works, because nothing takes the foreground.
 - **Its own files.** The runner sets `AXKIT_HOME` to a folder of the run's, under which the windows keep their
   settings, their logs and the recently closed list (`AppPaths`), so that a run neither reads nor writes the user's;
   the folder counts only together with the run's secret. The background apps' one-at-a-time mutex carries a mark of
-  that folder (`AppPaths.OneAtATime`), so that a run's axStart, axClip, axHelp or axDescribe never takes the user's
+  that folder (`AppPaths.OneAtATime`), so that a run's axStart, axClip or axHelp never takes the user's
   own, running from sign-in, for a second start and ends at once (which every axDescribe script did on 2026-11-09
-  while the user's axDescribe ran).
+  while the user's axDescribe ran; axDescribe is part of axHelp since 5.7.0).
 - **One named pipe per window**, `\\.\pipe\axkit-auto-<process id>`, for the current user alone and refused to
   clients over the network (its access list); the runner connects with `CurrentUserOnly`, so a pipe another program
   made under the name is refused. A pipe already taken ends the channel, never the window. One command per line, one

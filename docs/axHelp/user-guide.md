@@ -1,72 +1,77 @@
 # axHelp user guide
 
-axHelp, access layer for Claude Code, is a question to Claude from anywhere on your computer: one hotkey, one field,
-one answer, and a list of your last questions. It is part of axKit, made for screen reader users. axHelp only shows
-what Claude Code does and passes your question to it; Claude Code, Anthropic's program, answers under your own
-Anthropic account and Anthropic's terms, which are yours to follow.
+axHelp, access layer for Claude Code, is your conversation with Claude from anywhere on your computer: one hotkey
+brings it up, another drops a picture of the screen into it. It is part of axKit, made for screen reader users. axHelp
+only brings the conversation up and passes your words and pictures to Claude Code; Claude Code, Anthropic's program,
+answers and works under your own Anthropic account and Anthropic's terms, which are yours to follow.
 
-## Before the first question
-
-Nothing to set up: type your first question and press Enter. A reminder says what goes to Anthropic (your question,
-what the window gathers about itself, the files Claude reads in the folders you allow); Tab to the box, Space, and
-Enter on Turn on: "Claude on", and your question is asked. That turns Claude on for every axKit app; the switch is in
-any axKit window, Alt+A for the Claude menu, Use Claude in axKit. Claude Code must be installed and logged in;
-if it is missing, a notice offers Install Claude Code now.
-
-Claude reads nothing of yours unless you allow a folder: Claude menu, Folders Claude may read, Add a folder.
-A question about a window or a screen needs no folder.
-
-Claude Code starts in a folder of its own, Documents, axKit Claude, made the first time it is needed: axHelp, Claude's
-working folder opens it in axFile. A file named CLAUDE.md there is Claude's standing instructions for every question
-("answer in two sentences", "I use Word 2024"), and Claude Code keeps its own notes and settings for axKit there.
-
-## Bringing axHelp up
+## The conversation
 
 axHelp runs in the background from sign-in (Options, General, Start with Windows). From any program, press
-Windows+Alt+H: NVDA says "axHelp window, Ask Claude, edit". The same hotkey hides it again, and so does Escape; Alt+Tab
-to another program hides it too. Options, Hotkey chooses another key: press it with Ctrl, Alt or the Windows key,
-then Enter.
+Windows+Alt+H: an axClaude window titled axHelp comes up with the focus in its message field. Type and press Enter;
+the reply comes as in axClaude, and every key of axClaude reads it: h for headings, the reply keys, Ctrl+Home. Whether
+replies are spoken as they arrive is axClaude's setting, Options, Speech, Speak replies.
 
-Start menu, axKit axHelp, or the command `axHelp`, brings the field up as well; one axHelp runs at a time.
+It is one conversation that goes on: press Windows+Alt+H tomorrow and it is there, the earlier answers with it. To
+start afresh, Session, New session in that window. Claude Code's own `/resume` lists the earlier conversations of
+axHelp's folder.
 
-## Asking
+The first time, axClaude's reminder says what goes to Anthropic, and Claude Code asks whether to trust its folder:
+answer yes. Claude Code must be installed and logged in.
 
-Type your question and press Enter. axHelp says "Asking Claude" while Claude works (Escape stops the wait), then
-"Claude says" and the answer, which you read with the arrows, Page Down and the heading letters as any axKit notice;
-Ctrl+F finds in it. Claude knows which program was in front when you pressed the hotkey, so "how do I do this here"
-has a here.
+## Doing things on your computer
 
-Tab moves to the field under the answer: type more and press Enter to ask about the same answer, in the same
-conversation with Claude. Copy puts the whole answer on the clipboard; Escape closes it.
+Claude Code in the conversation can read files, change them and run commands, as in axClaude. It asks before each
+change: answer from the list that comes up. For work of several steps it hands over to its agent, which runs on a
+stronger model, and tells you so.
 
-## Your earlier questions
+## Pictures of the screen
 
-The list under the field keeps your last ten questions with their answers. Down and Up move through them, each said
-with its place ("how do I make a table of contents, 1 of 3"); type part of a question to find it. Enter with nothing
-typed brings the selected question's answer back, and you can ask more about it. Tab moves into the list itself, where
-Down and Up move, NVDA reads each question and Enter shows its answer; Shift+Tab returns to the field. Nothing is said
-while you type. axHelp, Forget the questions empties the list.
+Press Windows+Alt+S in any program: axHelp takes a picture of the window in front, the conversation comes up with
+"Screenshot of" and the picture's path in its message field, and the path is on the clipboard too. Type your question
+after it ("which button is the default?") and press Enter; with no question, Claude says what the window shows.
 
-## Settings
+A picture of your own goes the same way: in axHelp's window, Ctrl+D chooses it in the Windows file picker, or from a
+terminal, `axHelp C:\Pictures\garden.jpg`. Three test pictures come with axKit's source, in `tests\fixtures\pictures`.
 
-Options, Hotkey (the key), Text (the font and its size), General (Start with Windows, the update check), Developer
-(the settings file `%APPDATA%\AxKit\axHelp.json`, diagnostics; `sayFirstMatch` there, off, is axStart's first-match
-speech while typing). The AI help settings, the switch, the folders, the model and Claude's working folder
-(`workingFolder`), are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached from the Claude menu in every window.
+The screenshots are kept in axHelp's folder, the twenty newest; Ctrl+O in axHelp's window opens the newest in
+axPreview, which reads the text in it without Claude.
+
+## axHelp's folder and model
+
+Claude works in its own folder, Documents, axKit Claude (axHelp, Claude's working folder opens it in axFile). Its
+conversations, the permissions you give with "always" and its instructions stay there, apart from your projects. The
+file CLAUDE.md there holds Claude's standing instructions for axHelp, short spoken replies among them; change it as you
+like. The folder `.claude\agents` holds the agent.
+
+The conversation runs on the fast model by default. Options, Conversation model chooses Fast, Balanced or Strongest; it
+counts from the conversation's next start, so close the axHelp conversation window and press Windows+Alt+H. Choose the
+model here rather than with `/model` in the conversation: Claude Code saves `/model` as its default for every new
+session, axClaude's too.
+
+## axHelp's window
+
+Start menu, axKit axHelp, or the command `axHelp`, shows axHelp's own small window: one text that says what the two
+hotkeys do. Enter opens the conversation; Escape hides the window. axHelp, Quit axHelp ends axHelp.
+
+Options, Hotkey changes Windows+Alt+H. The screenshot's key is `screenshotHotkey` in the settings file
+(`%APPDATA%\AxKit\axHelp.json`, Options, Developer, Open settings file); start axHelp again after changing it.
+
+- **Window**, **Claude** and **Help**: the bundle's three menus, the same in every axKit window.
 
 ## If something goes wrong
 
-"Claude is off; asking turns it on" in the status bar: press Enter on a question and the reminder comes. "Claude Code was not found": install it from the notice, or name its
-program file as `claudePath` in `ai-help.json`. "Claude could not answer": the notice holds Claude Code's own words,
-such as a login that ran out; Claude Code's own `claude` command in a terminal shows the same. "No answer in two
-minutes": ask again, or a shorter question. Options, Developer, Copy diagnostics copies what helps a bug report;
-F4 sends one.
+"The screenshot could not be taken": the window in front gave no picture; try again with it restored. "x is not a
+picture axHelp can pass to Claude": only .png, .jpg, .jpeg, .gif and .webp files are read. Claude Code not found, or
+not logged in: the conversation says so, as axClaude does, with Install Claude Code now. Options, Developer, Copy
+diagnostics copies what helps a bug report; F4 sends one.
 
 ## About
 
-The Help, About: the version, the licence, the reminders about the programs axKit's access layers run.
+Help, About.
 
 ## Disclaimer
 
-axHelp comes with no warranty; see the licence in the Help, About. What you ask goes to Anthropic under your
-account and Anthropic's terms; axKit keeps your questions and answers only in your own settings file.
+axHelp comes with no warranty; see the licence in Help, About. What you type and the pictures you send go to Anthropic
+under your account and Anthropic's terms, and a screenshot shows whatever was on your screen: check what is in front
+before you press the key.
