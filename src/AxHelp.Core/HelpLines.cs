@@ -1,14 +1,23 @@
+using AxKit.Core;
+
 namespace AxHelp.Core;
 
-/// <summary>What axHelp's list shows (SPEC.md HE-2.1): a first draft, the path it was started on or a line that says there is none.</summary>
+/// <summary>The list under axHelp's field (SPEC.md HE-3): the earlier questions that match what is typed, and what is said of them.</summary>
 public static class HelpLines
 {
-    public const string NothingOpen = "Nothing open";
+    /// <summary>The list's one line while nothing was ever asked.</summary>
+    public const string None = "No questions yet: type one and press Enter";
 
-    /// <summary>The list's lines: never empty, so that the list always has a line to read (AX-8.6).</summary>
-    public static IReadOnlyList<string> For(string? path) => [path ?? NothingOpen];
+    /// <summary>The list's one line when no earlier question holds the typed words.</summary>
+    public static string NoMatch(string typed) => $"No earlier question matches {typed.Trim()}";
 
-    /// <summary>The window's title before " - axHelp": the file's or folder's name, or "Help".</summary>
-    public static string Title(string? path) =>
-        path is null ? "Help" : Path.GetFileName(Path.TrimEndingDirectorySeparator(path)) is { Length: > 0 } name ? name : path;
+    /// <summary>The exchanges whose question holds every word typed, newest first; all of them for nothing typed (HE-3.2).</summary>
+    public static IReadOnlyList<HelpExchange> Matches(IReadOnlyList<HelpExchange> exchanges, string typed)
+    {
+        var words = TextMatch.Words(typed);
+        return words.Count == 0 ? exchanges : exchanges.Where(exchange => TextMatch.Rank(TextMatch.Fold(exchange.Question), words) is not null).ToList();
+    }
+
+    /// <summary>"what does Ctrl+Shift+W do, 1 of 3": a match as the selection reaches it (HE-3.3).</summary>
+    public static string Spoken(HelpExchange exchange, int index, int count) => $"{exchange.Question}, {index + 1} of {count}";
 }

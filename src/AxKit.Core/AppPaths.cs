@@ -22,6 +22,10 @@ public static class AppPaths
     public static string ThemeFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "theme.json");
 
+    /// <summary>AI help (docs/axkit/ai-help.md AH-1.1): the switch, the folders Claude may read, the model; one file for the bundle.</summary>
+    public static string AiHelpFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "ai-help.json");
+
     /// <summary>The AI tools' access (docs/axkit/mcp.md MC-6.1): on or off, and the clients the user paired.</summary>
     public static string McpFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "mcp.json");

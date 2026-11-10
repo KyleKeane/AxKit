@@ -137,7 +137,7 @@ public sealed class KeyTests
     [Fact]
     public void Every_F1_text_names_the_AxKit_menu_and_its_first_items()
     {
-        const string line = "Alt+A: the axKit menu: the command palette, a new window of any app, the files and folders closed lately, the open axKit windows, most recent first (Alt+A, O, 1 is the one you were in last) and by type, Close all windows, the AI tools, Check for updates, and About";
+        const string line = "Alt+A: the axKit menu: the command palette, a new window of any app, the files and folders closed lately, the open axKit windows, most recent first (Alt+A, O, 1 is the one you were in last) and by type, Close all windows, AI help, the AI tools, Check for updates, and About";
         var missing = F1Texts.Where(pair => !pair.Value.Contains(line, StringComparison.Ordinal)).Select(pair => pair.Key).ToList();
         Assert.True(missing.Count == 0, "Without the axKit menu line: " + string.Join(", ", missing));
     }
@@ -146,7 +146,7 @@ public sealed class KeyTests
     [Fact]
     public void Every_F1_text_names_the_keys_every_window_has()
     {
-        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
+        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
         var missing = new List<string>();
         foreach (var (window, text) in F1Texts)
         {

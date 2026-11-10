@@ -212,11 +212,11 @@ public static class Dispatch
         },
         new("axHelp", AxHelp, "AxHelp", AppGroup.AccessLayers, Opens.Nothing)
         {
-            Description = "axHelp, access layer for Claude Code: a question from anywhere or about this window, answered by Claude", AccessLayerFor = "Claude Code", Icon = new("Ah", 80, 80, 120),
+            Description = "axHelp, access layer for Claude Code: a question to Claude from anywhere, behind a hotkey", AccessLayerFor = "Claude Code", Icon = new("Ah", 60, 90, 150), AtSignIn = true,
         },
         new("axDescribe", AxDescribe, "AxDescribe", AppGroup.AccessLayers, Opens.Nothing)
         {
-            Description = "axDescribe, access layer for Claude Code: the window in front described by Claude", AccessLayerFor = "Claude Code", Icon = new("Ae", 80, 80, 120),
+            Description = "axDescribe, access layer for Claude Code: the window in front described by Claude, behind a hotkey", AccessLayerFor = "Claude Code", Icon = new("Ae", 130, 70, 110), AtSignIn = true,
         },
     ];
 

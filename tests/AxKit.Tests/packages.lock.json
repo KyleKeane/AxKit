@@ -129,6 +129,20 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
+      "axdescribe": {
+        "type": "Project",
+        "dependencies": {
+          "AxDescribe.Core": "[1.0.0, )",
+          "AxKit.Core": "[1.0.0, )",
+          "AxKit.Forms": "[1.0.0, )"
+        }
+      },
+      "axdescribe.core": {
+        "type": "Project",
+        "dependencies": {
+          "AxKit.Core": "[1.0.0, )"
+        }
+      },
       "axdown": {
         "type": "Project",
         "dependencies": {
@@ -159,6 +173,20 @@
         }
       },
       "axgit.core": {
+        "type": "Project",
+        "dependencies": {
+          "AxKit.Core": "[1.0.0, )"
+        }
+      },
+      "axhelp": {
+        "type": "Project",
+        "dependencies": {
+          "AxHelp.Core": "[1.0.0, )",
+          "AxKit.Core": "[1.0.0, )",
+          "AxKit.Forms": "[1.0.0, )"
+        }
+      },
+      "axhelp.core": {
         "type": "Project",
         "dependencies": {
           "AxKit.Core": "[1.0.0, )"

@@ -264,7 +264,9 @@ function Get-Version([string]$path) {
 $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 $background = @(
     @{ Verb = 'start'; Name = 'axStart'; Settings = 'axstart.json'; What = 'the launcher'; Started = 'axStart, the launcher, runs in the background: Ctrl+Shift+Space, or the hotkey you chose, brings up its search field' },
-    @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axclip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Windows+Alt+V, or the hotkey you chose, brings it up' }
+    @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axclip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Windows+Alt+V, or the hotkey you chose, brings it up' },
+    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axhelp.json'; What = 'the question to Claude'; Started = 'axHelp, a question to Claude from anywhere, runs in the background: Windows+Alt+H, or the hotkey you chose, brings up its field once AI help is on' },
+    @{ Verb = 'describe'; Name = 'axDescribe'; Settings = 'axdescribe.json'; What = 'the screen described by Claude'; Started = 'axDescribe, the window in front described by Claude, runs in the background: Windows+Alt+S, or the hotkey you chose, describes it once AI help is on' }
 )
 function Stop-Background {
     foreach ($app in $background) {

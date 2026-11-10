@@ -1,12 +1,62 @@
-# axHelp: the window at start, F1 and its commands (docs/axhelp/nvda-test-plan.md section 1), run by
-# tools/AxAutomate on a desktop of its own (docs/axkit/automation.md).
-file home\AxKit\axhelp.json {"checkForUpdates": false}
+# axHelp: the field, a question answered, more about the answer, the question kept (docs/axhelp/nvda-test-plan.md
+# sections 1 to 3), run by tools/AxAutomate on a desktop of its own (docs/axkit/automation.md). Claude is a fake
+# in cmd, written here into the run's own settings folder, which ai-help.json names by a relative path (AH-1.1): it
+# swallows the prompt and prints one canned JSON answer, so the run never reaches Anthropic. The agreement for AI
+# help is recorded already (AX-11.5), as the other access layers' scripts do. The hotkey is one nobody uses.
+file home\AxKit\axhelp.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F9", "sayFirstMatch": false}
+file home\AxKit\ai-help.json {"enabled": true, "folders": [], "claudePath": "fake-claude.cmd"}
+file home\AxKit\consent.json {"items":[{"app":"AI help","target":"Claude Code","version":"0","when":"2026-11-09T00:00:00"}]}
+file home\AxKit\fake-claude.cmd @echo off\nmore > nul\necho {"type":"result","subtype":"success","is_error":false,"result":"The fake answer: Ctrl+Shift+W turns word wrap off and on.","session_id":"fake-1"}\n
 
 start help
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
-expect focus Help
-expect state "title":"Help - axHelp"
-keys f1
-expect state Keyboard shortcuts
+expect focus Ask Claude
+expect state "status":["0 questions kept"
+
+# 1.2 Nothing asked yet: the list's one line, said by the match keys with the edge.
+keys down
+expect said ♪ Edge
+expect said ! No questions yet
+
+# 2.1 A question: the waiting notice, then the answer as a notice, the text first.
+type what does ctrl shift w do
+keys enter
+expect state Claude says
+expect state The fake answer: Ctrl+Shift+W turns word wrap off and on.
+# 2.2 Tab reaches the field for more; Enter asks in the same session and the answer comes again.
+keys tab
+expect focus Ask more about this answer
+type and in axjson
+keys enter
+expect state Claude says
+# 2.3 Escape closes the answer; the field is empty and has the focus.
 keys escape
-expect focus Help
+expect focus "name":"Ask Claude","role":"Text","value":""
+
+# 3.1 The question is kept: Down selects it; Enter with nothing typed shows its answer again.
+keys down
+expect said ! what does ctrl shift w do, 1 of 1
+keys enter
+expect state Claude says
+keys escape
+expect focus Ask Claude
+
+# 3.2 Typing part of it finds it; another text finds nothing.
+type ctrl
+keys down
+expect said ! what does ctrl shift w do, 1 of 1
+keys ctrl+a
+type zzqq
+keys down
+expect said ♪ Edge
+expect said ! No earlier question matches zzqq
+
+# 1.3 Escape hides the window whatever the field holds; a second start shows it again with the field empty.
+keys escape
+launch help
+expect focus "name":"Ask Claude","role":"Text","value":""
+
+# Quit axHelp, the one close that ends the process.
+menu Quit axHelp
+expect closed

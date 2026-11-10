@@ -106,8 +106,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   Enter pastes into the program that was in front. Specification `docs/axclip/SPEC.md`, guide
   `docs/axclip/user-guide.md`, test plan `docs/axclip/nvda-test-plan.md`.
 - **axMCP** (asked and built 2026-11-09; an access layer, AX-11, for MCP servers): `AxKit.exe mcpclient [<folder>]`, Start entry `axKit axMCP`, command `axmcp`: the MCP servers Claude Code knows on this computer and the user's own, in the item apps' window (`item-apps.md`); a server started by hand as a child process on its standard input and output shows its tools, resources and prompts, a tool's arguments are the detail pane's fields, Ctrl+Enter calls it and the result is a notice text; remote servers are listed and not started (its MP-D2). Specification `docs/axmcp/SPEC.md`, guide `docs/axmcp/user-guide.md`, test plan `docs/axmcp/nvda-test-plan.md`.
-- **axHelp, access layer for Claude Code** (2026-11-09, draft from tools/new-app.ps1): `AxKit.exe help `, Start entry `axKit axHelp`, command `axhelp`: a question from anywhere or about this window, answered by Claude. Specification `docs/axhelp/SPEC.md`, guide `docs/axhelp/user-guide.md`, test plan `docs/axhelp/nvda-test-plan.md`.
-- **axDescribe, access layer for Claude Code** (2026-11-09, draft from tools/new-app.ps1): `AxKit.exe describe `, Start entry `axKit axDescribe`, command `axdescribe`: the window in front described by Claude. Specification `docs/axdescribe/SPEC.md`, guide `docs/axdescribe/user-guide.md`, test plan `docs/axdescribe/nvda-test-plan.md`.
+- **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; an access layer, AX-11, for Claude Code in its print mode; the first app of AI help, `ai-help.md`): `AxKit.exe help [--hidden]`, Start entry `axKit axHelp`, command `axhelp`: a background process from sign-in whose hotkey (Windows+Alt+H by default) brings up one field from any program; Enter asks Claude Code in its print mode, with the program in front named, and the answer is a notice with a field under it for more in the same session; the last ten questions with their answers in a list under the field. Specification `docs/axhelp/SPEC.md`, guide `docs/axhelp/user-guide.md`, test plan `docs/axhelp/nvda-test-plan.md`.
+- **axDescribe** (asked 2026-10-23 as AxSee, built 2026-11-09; an access layer, AX-11, for Claude Code in its print mode; `ai-help.md`): `AxKit.exe describe [--hidden]`, Start entry `axKit axDescribe`, command `axdescribe`: a background process whose hotkey (Windows+Alt+S by default) takes a picture of the window in front before its own window shows, has Claude Code read the file and describe it for a blind user, and shows the description as a notice with a field for more; Ctrl+O opens the picture in axPreview; the last ten descriptions in a list. Specification `docs/axdescribe/SPEC.md`, guide `docs/axdescribe/user-guide.md`, test plan `docs/axdescribe/nvda-test-plan.md`.
 
 ## 4. Functional requirements
 
@@ -360,7 +360,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 
 ### AX-6 Shared pieces
 
-- AX-6.1 `AxKit.Core` (pure, unit tested): `Dispatch` (with `Apps`, the name and verb of each app), `BundleInfo`, `AppPaths`, `Theme` (the theme file, `docs/axkit/theme.md`), `SettingsFile`, `WindowSettings` (what every window's settings hold, AX-6.5), `ConsoleSettings` (what the two console windows' settings hold besides: the console size, the recent folders, the sounds and signals, the transcript options; axClaude's and axTerminal's classes derive from it under the JSON names they had), `TextMatch` (a typed text against a name, AX-10.3) and `Accents` (the European letters taken apart and stripped without the globalization data: the executable runs with invariant globalization, where `string.Normalize` does nothing, and the test projects run the same way so that such a dependence fails in a test and not in the program; 2026-10-23),
+- AX-6.1 `AxKit.Core` (pure, unit tested): `Dispatch` (with `Apps`, the name and verb of each app), `BundleInfo`, `AppPaths`, `Theme` (the theme file, `docs/axkit/theme.md`), `Ai` (AI help: the settings, the request to Claude Code in print mode, the answer, the prompts; `docs/axkit/ai-help.md`), `SettingsFile`, `WindowSettings` (what every window's settings hold, AX-6.5), `ConsoleSettings` (what the two console windows' settings hold besides: the console size, the recent folders, the sounds and signals, the transcript options; axClaude's and axTerminal's classes derive from it under the JSON names they had), `TextMatch` (a typed text against a name, AX-10.3) and `Accents` (the European letters taken apart and stripped without the globalization data: the executable runs with invariant globalization, where `string.Normalize` does nothing, and the test projects run the same way so that such a dependence fails in a test and not in the program; 2026-10-23),
   `Log` (per-app file name), `Updates/` (`UpdateCheck`, the release check, and `Updater`, the download and the
   hand-over to `install.ps1`; neither needs a window), `Audio/WaveTone` (the sounds as WAV bytes), `Paragraphs` (the
   paragraph starts of a text, for Ctrl+Up and Ctrl+Down), `WindowPlacement`, `EmbeddedText` (the embedded guides),
@@ -441,7 +441,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   starting at the first line or at a line with text directly after a blank line, and Ctrl+Shift+Up and
   Ctrl+Shift+Down the selection grown to there, as in Word (`EditKeys.Paragraph`; the EDIT control's own keys scroll a
   row and leave the caret where it is, as Notepad's do, which a screen reader, reading at the caret after the key,
-  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axkit/reports.md RP-2.1, 2026-11-07); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
+  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axkit/reports.md RP-2.1, 2026-11-07); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axkit/ai-help.md` AH-6, 2026-11-09); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
 - AX-8.3 Window-specific keys are defined once per window, in one table (`AxClaudeKeys`, `AxDownKeys`, `AxJSONKeys`, `AxGitKeys`, `AxTerminalKeys`, `AxFileKeys`, `AxMediaKeys`, `AxPreviewKeys`, `AxStartKeys`, `AxProcessKeys`, `AxTaskKeys`, `AxPassKeys`, `AxCalcKeys`, `AxClipKeys`), as constants
   with names that say what the key does. Changing a key is a change to that one line: the menu item and the key
   handler read the table, and the F1 text names the same keys and is changed with it. Single-letter quick keys
@@ -488,8 +488,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   latest-release state and its notice method. In order: Command palette… (P, AX-10; the bundle's own command, so it
   sits in the bundle's menu, asked 2026-10-23); Send a report… (S, F4) and Your reports (Y, the Reports list in
   axTask; docs/axkit/reports.md RP-2.2, 2026-11-07); a separator; New window ▸ and Recently closed ▸; a separator; Open
-  windows ▸, Open windows by type ▸ and Close all windows; a separator; AI tools ▸ (I, `mcp.md` MC-6.1: the bundle's
-  own settings live here, an app's Options hold only the app's); Check for updates, Update to (while a newer
+  windows ▸, Open windows by type ▸ and Close all windows; a separator; AI help ▸ (H, `ai-help.md` AH-1.1: Let
+  Claude help in the apps, Ask about this window (Shift+F1), Folders Claude may read) and AI tools ▸ (I, `mcp.md`
+  MC-6.1: the bundle's own settings live here, an app's Options hold only the app's); Check for updates, Update to (while a newer
   release is known) and About ▸ (AX-9.9). The lists are filled each time the menu opens, so that they show the
   windows and the files of that moment.
 - AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
@@ -633,7 +634,8 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   another program does and passes the user's commands to it; that program does the work, under its maker's terms:
   axClaude for Claude Code (and through it Anthropic's service), axGIT for Git (and the servers of a repository's
   remotes), axTerminal for the user's shells (PowerShell, Command Prompt, Git Bash, PowerShell 7), axPass for
-  KeePassXC. `Dispatch.Apps` holds it: `App.AccessLayerFor`, the program's name ("Claude Code", "Git", "your shell",
+  KeePassXC, axMCP for MCP servers, axHelp and axDescribe for Claude Code in its print mode (`ai-help.md`).
+  `Dispatch.Apps` holds it: `App.AccessLayerFor`, the program's name ("Claude Code", "Git", "your shell",
   "KeePassXC"), empty for a standalone app. A new app that starts or talks to a program axKit does not include is an
   access layer.
 - AX-11.2 **The keyword.** An access layer's name is never shown alone: wherever the user meets it, it reads
@@ -784,10 +786,14 @@ The design is `docs/axkit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   is declared once per package, by the first app of the list that has it, and axPreview, whose Open with says every
   file, declares none: a package cannot claim every file, and AX-2.3's submenu (the apps on folders, axDown and
   axPreview on any file) has no form in a package without a COM server, which this copy does not have. Each app with
-  `AtSignIn` (axStart, axClip) carries a startup task on its entry with `<verb> --hidden` as the task's own
-  parameters, which Windows lists under Settings, Apps, Startup. The six apps without an entry (axJSON, axMedia,
-  axPreview, axProcess, axPass, axCalc) are reached by their command, by a file of their kind, by the axKit menu's New
-  window in any window and from axFile; axStart lists the Start menu's programs and so knows the eight.
+  `AtSignIn` and an entry (axStart, axClip) carries a startup task on its entry with `<verb> --hidden` as the task's own
+  parameters, which Windows lists under Settings, Apps, Startup; an app with `AtSignIn` and no entry (axHelp,
+  axDescribe, 2026-11-09, the eight being taken) has no startup task in the package: the Store's copy starts it from
+  another window (its Start with Windows item says so, `HotkeyForm`), the GitHub install from the Run key as before,
+  and `DispatchTests` names the two so that a third is added on purpose. The apps without an entry (axJSON, axMedia,
+  axPreview, axProcess, axPass, axCalc, axMCP, axHelp, axDescribe) are reached by their command, by a file of their
+  kind, by the axKit menu's New window in any window and from axFile; axStart lists the Start menu's programs and so
+  knows the eight.
   `AxKit.Core/PackageIdentity` tells whether the process runs from the package (`GetCurrentPackageFullName`) and which
   entry started it (`GetCurrentApplicationUserModelId`); `Dispatch.WithApplicationVerb` puts the verb first when the
   command line carries none, the command's name before the entry's, nothing for the first entry, so that the dispatch

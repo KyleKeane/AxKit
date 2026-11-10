@@ -50,8 +50,10 @@ if ($entries.Count -gt 8) { throw "The Store allows eight entries per package; $
 $firstEntry = $entries | Where-Object { $_.verb -eq 'claude' } | Select-Object -First 1
 if (-not $firstEntry) { $firstEntry = $entries[0] }
 $otherEntries = @($entries | Where-Object { $_.verb -ne $firstEntry.verb })
+# A startup task hangs on an entry (SPEC AX-13.2): an app that starts at sign-in without one, the eight being taken,
+# has no sign-in start in the Store's copy and is started from another window there (axHelp, axDescribe, 2026-11-09).
 foreach ($app in $listing | Where-Object { $_.atSignIn -and -not $_.storeEntry }) {
-    throw "$($app.name) starts at sign-in and needs an entry for its startup task: mark it storeEntry."
+    Write-Host "$($app.name) starts at sign-in but has no entry: no startup task in the package; it is started from another window."
 }
 
 function Esc([string]$text) { return [System.Security.SecurityElement]::Escape($text) }

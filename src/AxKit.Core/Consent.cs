@@ -21,6 +21,16 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
         "Anthropic's terms and privacy policy",
         "https://www.anthropic.com/legal");
 
+    /// <summary>
+    /// AI help (docs/axkit/ai-help.md AH-1.2): Claude Code in its print mode with read-only tools, recorded under the
+    /// app "AI help", one agreement for every window and for axHelp and axDescribe.
+    /// </summary>
+    public static readonly ConsentTarget AiHelp = new(
+        "Claude Code",
+        "Claude Code, Anthropic's program, answers under your own Anthropic account: your question, what the window gathered about itself (its name, its keyboard shortcuts and guide, the names of its controls and your last actions there, never the text of a document), a picture of the screen when you ask for one, and the files Claude reads in the folders you allowed go to Anthropic's service and use your account's usage or money. Here Claude Code runs with read-only tools: it changes no file and runs no command.",
+        "Anthropic's terms and privacy policy",
+        "https://www.anthropic.com/legal");
+
     public static readonly ConsentTarget Git = new(
         "Git",
         "Git, a program you install, does the work on your repository: its commands change, remove and publish work.",

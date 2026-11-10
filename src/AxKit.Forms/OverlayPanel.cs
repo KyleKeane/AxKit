@@ -78,6 +78,12 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// </summary>
     public string? Consent { get; init; }
 
+    /// <summary>
+    /// The focus starts in the text, not in the field, when the notice has both (an answer to read first, with a field
+    /// for a follow-up under it, docs/axkit/ai-help.md AH-6.3); Tab reaches the field. False, the default, puts it in the field.
+    /// </summary>
+    public bool FocusText { get; init; }
+
     /// <summary>A read-only text with a Close button: help texts, About and errors.</summary>
     public static Notice Plain(string title, string text) => new(title, text, [OverlayChoice.Close]);
 
@@ -395,6 +401,9 @@ public sealed class OverlayPanel : Panel
         _consent.Height = ConsentHeight();
 
         _inputRow.Visible = input is not null;
+        // The field before the text in the Tab order, as the Find and one-field notices read; after it when the notice
+        // is read first and the field asks more (Notice.FocusText): text, field, buttons.
+        _inputRow.TabIndex = notice.FocusText ? 3 : 1;
         if (input is not null)
         {
             _inputLabel.Text = input.Label;
@@ -469,10 +478,10 @@ public sealed class OverlayPanel : Panel
         _progress.Value = Math.Clamp(percent, 0, 100);
     }
 
-    /// <summary>Puts the focus where reading starts: in the text field when there is one, otherwise at the top of the text.</summary>
+    /// <summary>Puts the focus where reading starts: in the text field when there is one (unless the notice says the text first, <see cref="Notice.FocusText"/>), otherwise at the top of the text.</summary>
     public void FocusStart()
     {
-        if (_inputSpec is not null)
+        if (_inputSpec is not null && !(Shown is { FocusText: true } && _text.Visible))
         {
             _input.Select();
             return;

@@ -32,8 +32,8 @@ axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commerc
 - **axTerminal, access layer for your shell**: PowerShell, Command Prompt or Git Bash as a transcript in axClaude's kind of window.
 - **axPass, access layer for KeePassXC**: a KeePass password database, read and changed by ear: groups and entries in the same two panes, the password never spoken, copied with Ctrl+C and cleared from the clipboard after 30 seconds. It runs KeePassXC's own command-line tool, so KeePassXC must be installed.
 - **axMCP, access layer for MCP servers**: the MCP servers Claude Code knows on this computer, and your own, in one list; a server started by hand shows its tools, resources and prompts, a tool's arguments are fields you fill by ear, and the result reads as text. For trying a server before giving it to Claude Code, or running a tool without a turn of Claude's.
-- **axHelp, access layer for Claude Code**: a question from anywhere or about this window, answered by Claude.
-- **axDescribe, access layer for Claude Code**: the window in front described by Claude.
+- **axHelp, access layer for Claude Code**: a question to Claude from anywhere, behind a hotkey (Windows+Alt+H): one field, one answer as a notice with a field under it to ask more, your last ten questions in a list. Part of AI help (`docs/axkit/ai-help.md`), one optional switch for every axKit app, off until you turn it on; Shift+F1 in any axKit window asks Claude about that window.
+- **axDescribe, access layer for Claude Code**: the window in front described by Claude, behind a hotkey (Windows+Alt+S): a picture of the window goes to Claude Code, the description comes as a notice you can ask more about; Ctrl+O opens the picture in axPreview.
 
 The apps reach each other: axFile hands a file to axMedia or axPreview, every window can show its folder in the others, and the axKit menu in every window lists the open windows and starts any app.
 

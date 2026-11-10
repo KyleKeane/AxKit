@@ -269,6 +269,8 @@ public abstract partial class AxKitForm : Form
     /// <summary>Help: Keyboard shortcuts (F1, the base's key), User guide, then a submenu of pages opened in the browser. The command palette, updates and About are the axKit menu's.</summary>
     protected ToolStripMenuItem CreateHelpMenu(Func<string> userGuide, string resourcesLabel, IEnumerable<(string Label, string Url)> pages)
     {
+        // Kept for a question about this window (docs/axkit/ai-help.md AH-6.2), which gives Claude the guide to answer from.
+        _userGuide = userGuide;
         var help = new ToolStripMenuItem("&Help");
         help.DropDownItems.Add(Item("&Keyboard shortcuts", () => ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts)), BundleKeys.Shortcuts));
         help.DropDownItems.Add(new ToolStripMenuItem("User &guide", null, (_, _) => ShowNotice(Notice.Plain("User guide", userGuide()))));
@@ -504,6 +506,9 @@ public abstract partial class AxKitForm : Form
                 return true;
             case BundleKeys.Report:
                 ShowReport();
+                return true;
+            case BundleKeys.AskClaude:
+                AskAboutThisWindow();
                 return true;
             case BundleKeys.Save:
                 SaveCommand();

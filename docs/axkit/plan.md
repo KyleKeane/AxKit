@@ -82,10 +82,13 @@ the restart by the app itself (2.3.0).
   AI-based editing and feedback tools are not axDown's own: they are one service every app can call from inside its
   window to get things done there, written once and optional, so that each app has its full utility without it and
   offline. The bundle was to have a shared database as well, which the service and the apps share. Specified
-  2026-11-09 in `ai-help.md` (AH-n.m), to be read by the user before the build: Claude Code in its print mode with
-  read-only tools over the folders the user allows, never the API (AH-D1); no database, since Claude Code reads the
-  files itself (AH-D2); the service answers and a window applies a change as its own undo step (AH-D3); one question,
-  one answer (AH-D4); off by default behind one switch in the axKit menu (AH-D5); AxAsk and AxSee as its first apps.
+  2026-11-09 in `ai-help.md` (AH-n.m) and built the same evening once the user had read it: Claude Code in its print
+  mode with read-only tools over the folders the user allows, never the API (AH-D1); no database, since Claude Code
+  reads the files itself (AH-D2); the service answers and a window applies a change as its own undo step (AH-D3); one
+  question, one answer, with follow-ups in the same session and no transcript (AH-D4); off by default behind one
+  switch in the axKit menu (AH-D5). Built: Shift+F1 in every window (AH-6), axHelp and axDescribe (its section 7).
+  Left for later (its section 8): axDown's and axJSON's AI items with Offer a change (AH-3.2), a path in an answer
+  opened with Enter (AH-3.3).
 - **A command palette in every window** (the user's ask, 2026-10-21; specified 2026-10-22 as bundle SPEC AX-10,
   Ctrl+Shift+P at the user's choice, built on the branch `palette`): one key opens a field with a list under it;
   typing narrows the list to the window's menu commands by name, each with its key named as a reminder, and in axFile
@@ -213,17 +216,16 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
   AxTodo. The rule the user set for both: plain text files on disk with a clear, documented format, so that an AI
   system or a script can read and change them as easily as the app does; no database the user cannot open in axDown
   (axTask's JSON files meet it one way, axList's Markdown another).
-- **An anywhere, anytime helper** (asked 2026-10-23, high priority for the user; placeholder name AxAsk): one key
-  from anywhere, as axStart's, opens a field for a question about the user's own files: an index of the folders the
-  user allows, kept as plain files, and answers drawn from it (retrieval over the index, RAG) through the shared AI
-  service. The foundation comes first: the list of allowed folders, the index format, and the service's one switch
-  for network use (B-15).
-- **Screen capture and description** (asked 2026-10-23; placeholder AxSee): a key that takes a screenshot and sends it
-  to a vision API for a description and a chat about it, through the shared AI service. Later, on that foundation:
-  a parser that segments the screen into objects, and actions on them (move the mouse to an object, click it), an
-  agent the user steers by speech and keys. The user's thought: these may be add-ons run from the launcher (AxRun,
-  the user's word for axStart running scripts as well as programs) rather than apps, one simple place where all of
-  them are on hand, each a script with a clear interface.
+- **An anywhere, anytime helper** (asked 2026-10-23, high priority for the user; placeholder name AxAsk): built
+  2026-11-09 as **axHelp** (`docs/axhelp/SPEC.md`, `ai-help.md` section 7): one key from anywhere opens a field,
+  Claude Code answers in its print mode over the folders the user allows, no index (AH-D2: Claude Code reads and
+  searches the folders itself).
+- **Screen capture and description** (asked 2026-10-23; placeholder AxSee): built 2026-11-09 as **axDescribe**
+  (`docs/axdescribe/SPEC.md`): a key takes a picture of the window in front and Claude Code describes it, with a chat
+  about it in the same session. Still to come on that foundation: a parser that segments the screen into objects, and
+  actions on them (move the mouse to an object, click it), an agent the user steers by speech and keys. The user's
+  thought: these may be add-ons run from the launcher (AxRun, the user's word for axStart running scripts as well as
+  programs) rather than apps, one simple place where all of them are on hand, each a script with a clear interface.
 - **Automated quality checks** (asked 2026-10-23): runs that drive the apps the way a user does and check the
   result, so that a robustness question (several axClaude sessions at once, a model change, a message each) is a
   command rather than a manual pass. The first is `tools/QaRun`, which runs Claude sessions through the app's own

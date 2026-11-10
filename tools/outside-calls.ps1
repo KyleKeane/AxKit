@@ -46,10 +46,10 @@ $targets = @(
         @('Apps', 'every window (the updater and the report); axTask (the GitHub lists).')) }
     @{ Key = 'Claude Code'; Kind = 'program'; Lines = @(
         @('What', 'Claude Code, Anthropic''s command-line program, which the user installs: `claude.exe` of its native installer (`%USERPROFILE%\.local\bin`) or npm''s `claude.cmd`, found on the PATH or in those folders, or where the user pointed axClaude.'),
-        @('How', 'for a session, `claude --ax-screen-reader` in a ConPTY pseudo console (PtyHost): what it prints is read from the console and the user''s keys are written to it. For its version and for `claude mcp add` and `claude mcp remove`, a process without a window whose output is read.'),
+        @('How', 'for a session, `claude --ax-screen-reader` in a ConPTY pseudo console (PtyHost): what it prints is read from the console and the user''s keys are written to it. For its version and for `claude mcp add` and `claude mcp remove`, a process without a window whose output is read. For AI help (`docs/axkit/ai-help.md`), `claude -p --output-format json --allowedTools Read,Glob,Grep` once per question, the prompt on its standard input, the folders the user allowed as `--add-dir`, a follow-up with `--resume`; read-only tools, so it changes no file and runs no command.'),
         @('What it reaches', 'Anthropic''s service with the user''s account, and whatever else Claude Code does from a terminal, its own update check included, under Anthropic''s terms; axKit neither sees nor changes that traffic.'),
         @('Documentation', 'https://code.claude.com/docs/en/cli-reference and https://code.claude.com/docs/en/setup; Anthropic''s privacy policy, https://www.anthropic.com/legal/privacy.'),
-        @('Apps', 'axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window.')) }
+        @('Apps', 'axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window; AI help in every window (Shift+F1, axKit menu, AI help) and its apps axHelp and axDescribe, access layers for Claude Code.')) }
     @{ Key = 'Git'; Kind = 'program'; Lines = @(
         @('What', 'Git for Windows, the user''s `git.exe` on the PATH.'),
         @('How', 'one process per command, `git -C <repository> -c core.quotepath=false -c color.ui=never <command>`, with `GIT_TERMINAL_PROMPT=0`, `LC_ALL=C.UTF-8` and `GIT_PAGER=cat`; both outputs are read under a time limit.'),

@@ -16,6 +16,9 @@ public static class BundleKeys
     /// <summary>A report to axKit's maintainer, a bug, an idea or feedback (docs/axkit/reports.md RP-2.1).</summary>
     public const Keys Report = Keys.F4;
 
+    /// <summary>A question to Claude about this window, with what the window knows about itself (docs/axkit/ai-help.md AH-6); Windows' own key for help about the thing in front.</summary>
+    public const Keys AskClaude = Keys.Shift | Keys.F1;
+
     public const Keys NextControl = Keys.Control | Keys.Tab;
     public const Keys PreviousControl = Keys.Control | Keys.Shift | Keys.Tab;
     public const Keys NextControlAlso = Keys.F6;
@@ -54,6 +57,7 @@ public static class BundleKeys
         ("Keyboard shortcuts", Shortcuts),
         ("Command palette", CommandPalette),
         ("Report", Report),
+        ("Ask Claude about this window", AskClaude),
         ("Next control", NextControl),
         ("Previous control", PreviousControl),
         ("Next control (F6)", NextControlAlso),

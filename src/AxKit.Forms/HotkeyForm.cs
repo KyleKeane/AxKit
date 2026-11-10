@@ -42,7 +42,9 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>
     /// Options, General's Start with Windows for a background app: the toggle that writes the Run key through
     /// <see cref="SignInStart.Apply"/>, or, in the Store's copy, where the package's startup task decides and Windows
-    /// lists it under Settings, Apps, Startup (docs/axkit/SPEC.md AX-13.4), an item that opens that page and says so.
+    /// lists it under Settings, Apps, Startup (docs/axkit/SPEC.md AX-13.4), an item that opens that page and says so;
+    /// an app without an entry of its own in the package (AX-13.2: the eight are taken; axHelp, axDescribe) has no
+    /// startup task there, and its item says how it is started instead.
     /// </summary>
     protected ToolStripMenuItem StartWithWindowsItem()
     {
@@ -53,6 +55,12 @@ public abstract class HotkeyForm : AxKitForm
                 _settings.StartWithWindows = v;
                 SignInStart.Apply(AppName, AppVerb, v);
             });
+        }
+
+        if (Dispatch.ByName(AppName) is { StoreEntry: false })
+        {
+            return new ToolStripMenuItem("&Start with Windows (not in the Store's copy)", null, (_, _) =>
+                Announce($"The Store's copy has no sign-in start for {AppName}: the Store allows eight apps with startup tasks, and they are taken. Start {AppName} from any axKit window, axKit menu, New window; it then keeps running until Quit", true));
         }
 
         return new ToolStripMenuItem("&Start with Windows (Windows Settings)...", null, (_, _) =>

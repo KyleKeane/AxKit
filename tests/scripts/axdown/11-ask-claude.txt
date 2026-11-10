@@ -1,0 +1,52 @@
+# axDown: AI help in a window (docs/axkit/ai-help.md AH-1, AH-6): off is said; the switch on, with the agreement
+# recorded already (AX-11.5); Shift+F1 asks Claude about this window and the answer is a notice with a field for more;
+# the folders notice; off again for the scripts after this one, which share the run's home. Claude is a fake in cmd
+# in the run's own settings folder, named by ai-help.json's relative claudePath, so the run never reaches Anthropic.
+file home\AxKit\axdown.json {"checkForUpdates": false}
+file home\AxKit\ai-help.json {"enabled": false, "folders": [], "claudePath": "fake-claude.cmd"}
+file home\AxKit\consent.json {"items":[{"app":"AI help","target":"Claude Code","version":"0","when":"2026-11-09T00:00:00"}]}
+file home\AxKit\fake-claude.cmd @echo off\nmore > nul\necho {"type":"result","subtype":"success","is_error":false,"result":"The fake answer: Ctrl+Shift+W turns word wrap off and on.","session_id":"fake-3"}\n
+file notes.md # Notes\n\nA line.
+start down {temp}\notes.md
+expect focus notes.md
+
+# AH-1.3: off, every AI item says where the switch is.
+keys shift+f1
+expect said ! AI help is off: axKit menu, AI help, Let Claude help in the apps
+
+# AH-1.1: the switch, on at once since the agreement is recorded.
+menu Let Claude help in the apps
+expect said ! AI help on
+
+# AH-6.1: Shift+F1, the question field; Enter asks; the answer notice, the text first.
+keys shift+f1
+expect focus Your question about this window
+type how do I turn word wrap off
+keys enter
+expect state Claude says
+expect state The fake answer: Ctrl+Shift+W
+# AH-6.3: Tab to the field for more; Enter asks in the same session.
+keys tab
+expect focus Ask more about this answer
+type and back on
+keys enter
+expect state Claude says
+# Escape closes the answer; the focus is back in the text.
+keys escape
+expect focus notes.md
+
+# Escape in the question field asks nothing.
+keys shift+f1
+expect focus Your question about this window
+keys escape
+expect focus notes.md
+
+# AH-2.3: the folders notice, none yet.
+menu Folders Claude may read
+expect state No folders yet
+keys escape
+expect focus notes.md
+
+# Off again.
+menu Let Claude help in the apps
+expect said ! AI help off

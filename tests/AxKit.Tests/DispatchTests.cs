@@ -61,7 +61,10 @@ public sealed class DispatchTests
         var entries = Dispatch.Apps.Where(app => app.StoreEntry).ToList();
         Assert.InRange(entries.Count, 1, 8);
         Assert.Contains(entries, app => app.Verb == Dispatch.AxClaude);
-        Assert.All(Dispatch.Apps.Where(app => app.AtSignIn), app => Assert.True(app.StoreEntry, $"{app.Name} starts at sign-in and needs its entry for the startup task"));
+        // A startup task hangs on an entry (AX-13.2): the apps that start at sign-in without one, the eight being taken,
+        // have no sign-in start in the Store's copy and are started from another window there (AX-13.4; axHelp and
+        // axDescribe, 2026-11-09); a new such app is added here on purpose.
+        Assert.Equal(["axHelp", "axDescribe"], Dispatch.Apps.Where(app => app.AtSignIn && !app.StoreEntry).Select(app => app.Name));
     }
 
     [Fact]
@@ -83,7 +86,7 @@ public sealed class DispatchTests
             .Where(app => app.GetProperty("atSignIn").GetBoolean())
             .Select(app => app.GetProperty("verb").GetString()!)
             .ToArray();
-        Assert.Equal([Dispatch.AxStart, Dispatch.AxClip], atSignIn);
+        Assert.Equal([Dispatch.AxStart, Dispatch.AxClip, Dispatch.AxHelp, Dispatch.AxDescribe], atSignIn);
     }
 
     [Fact]
@@ -353,7 +356,7 @@ public sealed class DispatchTests
         }
 
         Assert.Equal(
-            ["axClaude", "axTerminal", "axGIT", "axPass", "axMCP"],
+            ["axClaude", "axTerminal", "axGIT", "axPass", "axMCP", "axHelp", "axDescribe"],
             Dispatch.Apps.Where(app => app.IsAccessLayer).Select(app => app.Name));
         Assert.Equal(AppGroup.AccessLayers, Enum.GetValues<AppGroup>().Max());
     }

@@ -69,7 +69,8 @@ public sealed class AxKitMenu : ToolStripMenuItem
         DropDownItems.Add(CommandPalette.FilledOnOpening(byType));
         DropDownItems.Add(new ToolStripMenuItem("&Close all windows", null, (_, _) => CloseAll()));
         DropDownItems.Add(new ToolStripSeparator());
-        // The bundle's own settings (docs/axkit/mcp.md MC-6.1): an app's Options hold only the app's.
+        // The bundle's own settings (docs/axkit/ai-help.md AH-1.1, docs/axkit/mcp.md MC-6.1): an app's Options hold only the app's.
+        DropDownItems.Add(owner.CreateAiHelpMenu());
         DropDownItems.Add(owner.CreateMcpMenu());
         DropDownItems.Add(checkForUpdates);
         DropDownItems.Add(updateTo);

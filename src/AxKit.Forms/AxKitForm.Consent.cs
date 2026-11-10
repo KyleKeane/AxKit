@@ -27,14 +27,16 @@ public abstract partial class AxKitForm
     protected bool HasConsent(ConsentTarget target, Action connect, Action notNow) =>
         HasConsent(target, $"Before {AppName} connects to {target.Program}", "&Connect", connect, notNow);
 
-    protected bool HasConsent(ConsentTarget target, string title, string button, Action connect, Action notNow)
+    /// <param name="app">The app the agreement is recorded under: this window's unless the caller is a service every window shares (AI help, docs/axkit/ai-help.md AH-1.2).</param>
+    protected bool HasConsent(ConsentTarget target, string title, string button, Action connect, Action notNow, string? app = null)
     {
-        if (_agreed.Contains(target.Program) || Consent.Given(AppPaths.ConsentFile, AppName, target.Program))
+        var who = app ?? AppName;
+        if (_agreed.Contains(who + "/" + target.Program) || Consent.Given(AppPaths.ConsentFile, who, target.Program))
         {
             return true;
         }
 
-        ShowNotice(ConsentNotice(target, title, button, connect, notNow));
+        ShowNotice(ConsentNotice(target, title, button, connect, notNow, who));
         return false;
     }
 
@@ -47,10 +49,11 @@ public abstract partial class AxKitForm
     /// terms, with their address when one is known, the check box, and two buttons. <paramref name="action"/> names the
     /// default button (Connect, Install), which records the agreement before it runs <paramref name="go"/>.
     /// </summary>
-    private Notice ConsentNotice(ConsentTarget target, string title, string action, Action go, Action notNow)
+    private Notice ConsentNotice(ConsentTarget target, string title, string action, Action go, Action notNow, string? app = null)
     {
+        var who = app ?? AppName;
         var text =
-            $"A reminder: {AppName} is only an access layer. It shows what {target.Program} does and passes your commands to it; {target.Program} is not part of axKit.\n" +
+            $"A reminder: {who} is only an access layer. It shows what {target.Program} does and passes your commands to it; {target.Program} is not part of axKit.\n" +
             $"{target.Work}\n" +
             $"Its terms are {target.Terms}, between you and its maker{(target.TermsUrl.Length > 0 ? ": " + target.TermsUrl : "; no address is known for them.")}\n" +
             "axKit is a set of personal tools shared as they are, not a product or a service (axKit menu, About, Licence).";
@@ -58,14 +61,14 @@ public abstract partial class AxKitForm
         [
             new OverlayChoice(action, () =>
             {
-                _agreed.Add(target.Program);
-                Consent.Record(AppPaths.ConsentFile, AppName, target.Program, BundleInfo.Version, DateTime.Now);
+                _agreed.Add(who + "/" + target.Program);
+                Consent.Record(AppPaths.ConsentFile, who, target.Program, BundleInfo.Version, DateTime.Now);
                 go();
             }, IsDefault: true),
             new OverlayChoice("&Not now", notNow, IsCancel: true),
         ])
         {
-            Consent = ConsentBox(AppTitle, target.Program),
+            Consent = ConsentBox(app ?? AppTitle, target.Program),
         };
     }
 }
