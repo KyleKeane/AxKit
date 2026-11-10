@@ -13,7 +13,7 @@ public sealed class AppPathsTests
     public void The_one_at_a_time_name_is_the_apps_under_the_users_home()
     {
         Assert.Equal(@"Local\AxKit.AxStart", AppPaths.OneAtATime("AxStart"));
-        Assert.Equal(@"Local\AxKit.AxDescribe", AppPaths.OneAtATime("AxDescribe"));
+        Assert.Equal(@"Local\AxKit.AxHelp", AppPaths.OneAtATime("AxHelp"));
     }
 
     [Fact]

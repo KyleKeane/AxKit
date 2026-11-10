@@ -1,11 +1,11 @@
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace AxDescribe;
+namespace AxHelp;
 
 /// <summary>
-/// The picture of a window (SPEC.md DE-2.1): what is on the screen inside the window's rectangle, as a PNG file,
-/// taken before axDescribe's own window shows so that nothing covers it. A window that gives no rectangle (gone,
+/// The picture of a window (docs/axHelp/SPEC.md HE-3.1; axDescribe's until 5.7.0): what is on the screen inside the window's rectangle, as a PNG file,
+/// taken by axHelp's screenshot hotkey while the window is still in front (docs/axHelp/SPEC.md HE-3.1). A window that gives no rectangle (gone,
 /// minimised, the desktop) means the whole screen it was on. The process is per-monitor DPI aware, so the rectangle
 /// and the copy are in the same physical pixels.
 /// </summary>

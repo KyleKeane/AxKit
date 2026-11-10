@@ -49,60 +49,6 @@ public static class AiPrompts
         return text.Append('\n').Append(Marker).Append('\n').Append(question.Trim()).ToString();
     }
 
-    /// <summary>axHelp's field (AH-7.1): the program in front when the hotkey was pressed, then the question.</summary>
-    public static string Anywhere(string? program, string? title, string question)
-    {
-        var text = new StringBuilder();
-        text.Append("You are the help of axKit, a set of accessible Windows apps for a blind developer who uses the NVDA screen reader. The user pressed a hotkey from whatever program they were in and typed a question; answer it from what you know and from the files in the folders open to you, if any. ");
-        text.Append("When the answer is a file of the user's, name its full path on a line of its own.\n");
-        text.Append(Reader).Append("\n\n");
-        if (!string.IsNullOrWhiteSpace(program) || !string.IsNullOrWhiteSpace(title))
-        {
-            text.Append("The program in front when the user asked: ").Append(string.IsNullOrWhiteSpace(program) ? "unknown" : program);
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                text.Append(", its window titled \"").Append(title).Append('"');
-            }
-
-            text.Append(".\n\n");
-        }
-
-        return text.Append(Marker).Append('\n').Append(question.Trim()).ToString();
-    }
-
-    /// <summary>axDescribe's hotkey (AH-7.2): the picture file to read, and what to say about it.</summary>
-    public static string Screen(string picturePath, string? program, string? title)
-    {
-        var text = new StringBuilder();
-        text.Append("You are the eyes of a blind user of Windows who uses the NVDA screen reader. Read the picture file at this path with your Read tool; it is a screenshot of the window that was in front when the user asked:\n");
-        text.Append(picturePath).Append('\n');
-        if (!string.IsNullOrWhiteSpace(program) || !string.IsNullOrWhiteSpace(title))
-        {
-            text.Append("The window belongs to ").Append(string.IsNullOrWhiteSpace(program) ? "an unknown program" : program);
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                text.Append(" and is titled \"").Append(title).Append('"');
-            }
-
-            text.Append(".\n");
-        }
-
-        text.Append('\n').Append(Reader).Append("\n\n");
-        text.Append("Describe the screenshot for the user: first what the window is and what it is for, in a sentence; then what it shows, from top to bottom, including any text that matters and any message, dialog or error; then the controls a keyboard user could reach, with their labels. Leave out decoration and colours unless they carry meaning. The user may ask more about it afterwards.");
-        return text.ToString();
-    }
-
-    /// <summary>axDescribe's picture file (AH-7.2, docs/axDescribe/SPEC.md DE-2.7): a file the user chose, read and described.</summary>
-    public static string Picture(string picturePath)
-    {
-        var text = new StringBuilder();
-        text.Append("You are the eyes of a blind user of Windows who uses the NVDA screen reader. Read the picture file at this path with your Read tool; the user chose this file and wants to know what is in it:\n");
-        text.Append(picturePath).Append('\n');
-        text.Append('\n').Append(Reader).Append("\n\n");
-        text.Append("Describe the picture for the user: first what kind of picture it is and what it shows, in a sentence (a photograph, a screenshot, a chart, a diagram, a scan of a page); then what is in it, from top to bottom, including any text that matters; for a screenshot, the controls a keyboard user could reach, with their labels; for a chart, the axes, the values and the trend. Leave out decoration and colours unless they carry meaning. The user may ask more about it afterwards.");
-        return text.ToString();
-    }
-
     /// <summary>A follow-up in the same session (AH-6.3): the user's words alone, since the session holds the rest.</summary>
     public static string FollowUp(string question) => question.Trim();
 }

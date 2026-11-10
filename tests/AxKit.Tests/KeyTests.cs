@@ -28,7 +28,6 @@ public sealed class KeyTests
             ["axClip"] = AxClip.AxClipKeys.All,
             ["axMCP"] = AxMCP.AxMCPKeys.All,
             ["axHelp"] = AxHelp.AxHelpKeys.All,
-            ["axDescribe"] = AxDescribe.AxDescribeKeys.All,
         };
 
     /// <summary>
@@ -102,7 +101,6 @@ public sealed class KeyTests
         ["axClip"] = AxClip.HelpText.Shortcuts,
         ["axMCP"] = AxMCP.HelpText.Shortcuts,
         ["axHelp"] = AxHelp.HelpText.Shortcuts,
-        ["axDescribe"] = AxDescribe.HelpText.Shortcuts,
     };
 
     /// <summary>

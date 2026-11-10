@@ -10,7 +10,7 @@ namespace AxKit.Forms;
 /// Shift+F1, a question about this window with what the window knows about itself; the question run as Claude Code
 /// in print mode (<see cref="AiRequest"/>) behind a waiting notice; and the answer as a notice text with a field
 /// under it for a follow-up, which continues the same Claude session. Off, any ask turns Claude on through the
-/// reminder (AH-1.3). axHelp and axDescribe call the same methods with their own prompts; no window has AI code of
+/// reminder (AH-1.3). axHelp uses only the working folder from here (its conversation is axClaude); no window has AI code of
 /// its own beyond what it gathers.
 /// </summary>
 public abstract partial class AxKitForm

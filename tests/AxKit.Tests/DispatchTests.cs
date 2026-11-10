@@ -62,9 +62,9 @@ public sealed class DispatchTests
         Assert.InRange(entries.Count, 1, 8);
         Assert.Contains(entries, app => app.Verb == Dispatch.AxClaude);
         // A startup task hangs on an entry (AX-13.2): the apps that start at sign-in without one, the eight being taken,
-        // have no sign-in start in the Store's copy and are started from another window there (AX-13.4; axHelp and
-        // axDescribe, 2026-11-09); a new such app is added here on purpose.
-        Assert.Equal(["axHelp", "axDescribe"], Dispatch.Apps.Where(app => app.AtSignIn && !app.StoreEntry).Select(app => app.Name));
+        // have no sign-in start in the Store's copy and are started from another window there (AX-13.4; axHelp,
+        // 2026-11-09); a new such app is added here on purpose.
+        Assert.Equal(["axHelp"], Dispatch.Apps.Where(app => app.AtSignIn && !app.StoreEntry).Select(app => app.Name));
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public sealed class DispatchTests
             .Where(app => app.GetProperty("atSignIn").GetBoolean())
             .Select(app => app.GetProperty("verb").GetString()!)
             .ToArray();
-        Assert.Equal([Dispatch.AxStart, Dispatch.AxClip, Dispatch.AxHelp, Dispatch.AxDescribe], atSignIn);
+        Assert.Equal([Dispatch.AxStart, Dispatch.AxClip, Dispatch.AxHelp], atSignIn);
     }
 
     [Fact]
@@ -257,7 +257,7 @@ public sealed class DispatchTests
         Assert.Equal(Dispatch.AxJSON, Dispatch.Decide(["json", "x.json"]).App);
         Assert.Equal(["x.json"], Dispatch.Decide(["JSON", "x.json"]).Arguments);
         Assert.Contains("AxKit json", Dispatch.Usage);
-        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp", "axDescribe"], Dispatch.Apps.Select(a => a.Name));
+        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp"], Dispatch.Apps.Select(a => a.Name));
     }
 
     [Fact]
@@ -356,9 +356,9 @@ public sealed class DispatchTests
         }
 
         Assert.Equal(
-            ["axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp", "axDescribe"],
+            ["axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp"],
             Dispatch.Apps.Where(app => app.IsAccessLayer).Select(app => app.Name));
-        Assert.Equal(["axClaude", "axMCP", "axHelp", "axDescribe"], Dispatch.Apps.Where(app => app.Group == AppGroup.Claude).Select(app => app.Name));
+        Assert.Equal(["axClaude", "axMCP", "axHelp"], Dispatch.Apps.Where(app => app.Group == AppGroup.Claude).Select(app => app.Name));
         Assert.Equal(AppGroup.Claude, Enum.GetValues<AppGroup>().Max());
     }
 

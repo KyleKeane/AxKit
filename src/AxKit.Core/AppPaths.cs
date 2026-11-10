@@ -63,10 +63,10 @@ public static class AppPaths
     public static string InstalledExe => Path.Combine(InstallFolder, "AxKit.exe");
 
     /// <summary>
-    /// The name of the mutex that keeps one process of a background app (axStart AS-1.2; axClip, axHelp, axDescribe)
+    /// The name of the mutex that keeps one process of a background app (axStart AS-1.2; axClip, axHelp)
     /// per home: <c>Local\AxKit.AxStart</c> for the user's, and with a mark of the run's folder for a test run
     /// (<see cref="AutomationEnvironment.Home"/>), so that the run's app and the user's own, which keeps running from
-    /// sign-in, never take each other for a second start (2026-11-09: the user's axDescribe made every test start end
+    /// sign-in, never take each other for a second start (2026-11-09: the user's axDescribe, now axHelp, made every test start end
     /// at once).
     /// </summary>
     public static string OneAtATime(string app)

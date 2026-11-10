@@ -135,7 +135,8 @@ internal sealed partial class MainForm : ConsoleForm
         if (_options.Message is { Length: > 0 } message)
         {
             Input.Text = message.ReplaceLineEndings("\r\n");
-            Input.SelectionStart = 0;
+            // The caret at the end, so that typing goes after the text (axHelp's screenshot path, then the question).
+            Input.SelectionStart = Input.Text.Length;
         }
 
         if (_folder is null && PickFolder(null) is { } chosen)
@@ -154,6 +155,20 @@ internal sealed partial class MainForm : ConsoleForm
     }
 
     /// <summary>FR-1.7: closing now would cut Claude off in the middle of a turn, or stop the work it runs in the background after the turn: the question first, inside the window (D23).</summary>
+    /// <summary>
+    /// A start's "message" (FR-9.2; axHelp's screenshot into its conversation, docs/axHelp/SPEC.md HE-3): the text
+    /// added to the message field on a line of its own, not sent, the caret at its end and the window in front, so
+    /// that the user types the question after it and presses Enter.
+    /// </summary>
+    protected override Action? TakeHandOver(HandOver message) =>
+        message.Verb == AppMessage.Message && message.Paths.Count == 1 ? () =>
+        {
+            Input.Text = Input.Text.Length == 0 ? message.Paths[0] : Input.Text.TrimEnd() + "\r\n" + message.Paths[0];
+            Input.SelectionStart = Input.Text.Length;
+            WindowMenu.Activate(Handle);
+            Input.Focus();
+        } : null;
+
     protected override bool AskBeforeClosing()
     {
         if (!ClaudeBusy && ClaudeBackground is null)

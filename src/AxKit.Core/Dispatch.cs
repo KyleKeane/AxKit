@@ -85,7 +85,7 @@ public enum AppGroup
     /// <summary>The apps that work through a program axKit does not include (AX-11.1): Git, the shells, KeePassXC; after the standalone apps.</summary>
     AccessLayers,
 
-    /// <summary>The access layers for Claude Code and its MCP servers (AX-11.1): axClaude, axMCP, axHelp, axDescribe, one group so that everything of Claude stands together, last (AX-9.2, 5.6.0; the user's ask of 2026-11-09).</summary>
+    /// <summary>The access layers for Claude Code and its MCP servers (AX-11.1): axClaude, axMCP, axHelp, one group so that everything of Claude stands together, last (AX-9.2, 5.6.0; the user's ask of 2026-11-09).</summary>
     Claude,
 }
 
@@ -123,7 +123,8 @@ public static class Dispatch
     public const string AxClip = "clip";
     public const string AxMCP = "mcpclient";
     public const string AxHelp = "help";
-    public const string AxDescribe = "describe";
+    /// <summary>axDescribe's verb until it merged into axHelp (5.7.0): still starts axHelp, so that a sign-in start or a script written for it works.</summary>
+    public const string FormerDescribe = "describe";
 
     /// <summary>Not an app: the executable answers <c>--help</c> and <c>--version</c>, or reports <see cref="Launch.Error"/>.</summary>
     public const string Bundle = "axkit";
@@ -215,11 +216,7 @@ public static class Dispatch
         },
         new("axHelp", AxHelp, "AxHelp", AppGroup.Claude, Opens.Nothing)
         {
-            Description = "axHelp, access layer for Claude Code: a question to Claude from anywhere, behind a hotkey", AccessLayerFor = "Claude Code", Icon = new("Ah", 60, 90, 150), AtSignIn = true,
-        },
-        new("axDescribe", AxDescribe, "AxDescribe", AppGroup.Claude, Opens.Nothing)
-        {
-            Description = "axDescribe, access layer for Claude Code: the window in front described by Claude, behind a hotkey", AccessLayerFor = "Claude Code", Icon = new("Ae", 130, 70, 110), AtSignIn = true,
+            Description = "axHelp, access layer for Claude Code: your conversation with Claude and a screenshot into it, from anywhere, behind two hotkeys", AccessLayerFor = "Claude Code", Icon = new("Ah", 60, 90, 150), AtSignIn = true,
         },
     ];
 
@@ -271,7 +268,7 @@ public static class Dispatch
     };
 
     public const string Usage = """
-        Usage: AxKit [claude|down|json|git|terminal|file|media|preview|start|process|task|pass|calc|clip|mcpclient|help|describe] [arguments]
+        Usage: AxKit [claude|down|json|git|terminal|file|media|preview|start|process|task|pass|calc|clip|mcpclient|help] [arguments]
 
           AxKit claude [<folder>] ...  axClaude, the front end for Claude Code (AxKit claude --help lists its options)
           AxKit down [<file>]          axDown, the text editor
@@ -288,16 +285,15 @@ public static class Dispatch
           AxKit calc                   axCalc, the calculator
           AxKit clip [--hidden]        axClip, the clipboard history: its search field, or with --hidden running until its hotkey
           AxKit mcpclient [<folder>]   axMCP, the MCP servers Claude Code knows and your own: their tools, resources and prompts, run by hand
-          AxKit help [--hidden]        axHelp, a question from anywhere, answered by Claude: its field, or with --hidden running until its hotkey
-          AxKit describe [--hidden | <picture>]  axDescribe, the window in front, or that picture file, described by Claude
+          AxKit help [--hidden | <picture>]  axHelp, your conversation with Claude from anywhere: its hotkeys; a picture file put into the conversation (AxKit describe is the same)
           AxKit <folder>               the same as AxKit claude <folder>
           AxKit <file>                 the same as AxKit down <file>, AxKit json <file> for a .json file, AxKit pass <file> for a .kdbx file, or AxKit media <file> for a sound or video file
           AxKit                        axClaude on the current folder
-          AxKit mcp                    the AI tools' server, for an MCP client to start (AxKit menu, AI tools)
+          AxKit mcp                    the AI tools' server, for an MCP client to start (Claude menu, AI tools)
           AxKit apps                   the apps as JSON on standard output, for the installer and other scripts
           --help, --version           this text, or the version
 
-        The installed console commands axkit, axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc, axclip, axmcp, axhelp and axdescribe stand for AxKit, AxKit claude, AxKit down, AxKit json, AxKit git, AxKit terminal, AxKit file, AxKit media, AxKit preview, AxKit start, AxKit process, AxKit task, AxKit pass, AxKit calc, AxKit clip, AxKit mcpclient, AxKit help and AxKit describe.
+        The installed console commands axkit, axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc, axclip, axmcp and axhelp stand for AxKit, AxKit claude, AxKit down, AxKit json, AxKit git, AxKit terminal, AxKit file, AxKit media, AxKit preview, AxKit start, AxKit process, AxKit task, AxKit pass, AxKit calc, AxKit clip, AxKit mcpclient and AxKit help.
         """;
 
     /// <summary>Whether an argument asks for the usage text: the forms Windows and Unix programs take (the apps' hosts read it too).</summary>
@@ -369,6 +365,11 @@ public static class Dispatch
         if (Apps.FirstOrDefault(app => string.Equals(first, app.Verb, StringComparison.OrdinalIgnoreCase)) is { } named)
         {
             return new Launch(named.Verb, args[1..]);
+        }
+
+        if (string.Equals(first, FormerDescribe, StringComparison.OrdinalIgnoreCase))
+        {
+            return new Launch(AxHelp, args[1..]);
         }
 
         if (IsHelpFlag(first) || first == "--version")

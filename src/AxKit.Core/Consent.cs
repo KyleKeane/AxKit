@@ -23,7 +23,7 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
 
     /// <summary>
     /// AI help (docs/axKit/ai-help.md AH-1.2): Claude Code in its print mode with read-only tools, recorded under the
-    /// app "AI help", one agreement for every window and for axHelp and axDescribe.
+    /// app "AI help", one agreement for every window (axHelp's conversation is axClaude's, under axClaude's own agreement).
     /// </summary>
     public static readonly ConsentTarget AiHelp = new(
         "Claude Code",

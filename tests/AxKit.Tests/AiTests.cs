@@ -114,23 +114,6 @@ public sealed class AiTests
         Assert.DoesNotContain("user guide:", withoutGuide);
         Assert.DoesNotContain("last things", withoutGuide);
 
-        var anywhere = AiPrompts.Anywhere("WINWORD", "report.docx - Word", "where did I save the budget?");
-        Assert.EndsWith(AiPrompts.Marker + "\nwhere did I save the budget?", anywhere);
-        Assert.Contains("WINWORD, its window titled \"report.docx - Word\"", anywhere);
-        Assert.DoesNotContain("program in front", AiPrompts.Anywhere(null, null, "q"));
-
-        var screen = AiPrompts.Screen(@"C:\pictures\last.png", "notepad", "Untitled - Notepad");
-        Assert.Contains(@"C:\pictures\last.png", screen);
-        Assert.Contains("notepad and is titled \"Untitled - Notepad\"", screen);
-        Assert.Contains(AiPrompts.Reader, screen);
-
-        // A picture file of the user's (axDescribe DE-2.7): the path, no window named, the kinds of picture considered.
-        var picture = AiPrompts.Picture(@"C:\pictures\chart.png");
-        Assert.Contains(@"C:\pictures\chart.png", picture);
-        Assert.Contains(AiPrompts.Reader, picture);
-        Assert.Contains("a chart", picture);
-        Assert.DoesNotContain("The window belongs to", picture);
-
         Assert.Equal("say more", AiPrompts.FollowUp(" say more "));
     }
 }

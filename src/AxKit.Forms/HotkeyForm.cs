@@ -43,7 +43,7 @@ public abstract class HotkeyForm : AxKitForm
     /// Options, General's Start with Windows for a background app: the toggle that writes the Run key through
     /// <see cref="SignInStart.Apply"/>, or, in the Store's copy, where the package's startup task decides and Windows
     /// lists it under Settings, Apps, Startup (docs/axKit/SPEC.md AX-13.4), an item that opens that page and says so;
-    /// an app without an entry of its own in the package (AX-13.2: the eight are taken; axHelp, axDescribe) has no
+    /// an app without an entry of its own in the package (AX-13.2: the eight are taken; axHelp) has no
     /// startup task there, and its item says how it is started instead.
     /// </summary>
     protected ToolStripMenuItem StartWithWindowsItem()
@@ -109,18 +109,11 @@ public abstract class HotkeyForm : AxKitForm
         SearchField.TabIndex = 0;
         SearchField.TextChanged += (_, _) => OnTyped();
 
-        // The matches: for the eyes and NVDA's object navigation, never the focus (AS-D2), unless the app lets Tab
-        // reach them (MatchesTakeFocus).
+        // The matches: for the eyes and NVDA's object navigation, never the focus (AS-D2).
         Matches.Dock = DockStyle.Fill;
         Matches.IntegralHeight = false;
         Matches.TabStop = false;
-        Matches.GotFocus += (_, _) =>
-        {
-            if (!Matches.TabStop)
-            {
-                SearchField.Focus();
-            }
-        };
+        Matches.GotFocus += (_, _) => SearchField.Focus();
 
         _speak.Tick += (_, _) =>
         {
@@ -181,23 +174,8 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>The one field, which always has the caret (AS-3.1, CP-2.1); the app names it.</summary>
     protected AxKitTextBox SearchField { get; } = new();
 
-    /// <summary>The matches under the field, never focused (AS-D2) unless <see cref="MatchesTakeFocus"/>; the app names it in <see cref="ShowMatches"/>.</summary>
+    /// <summary>The matches under the field, never focused (AS-D2); the app names it in <see cref="ShowMatches"/>.</summary>
     protected ListBox Matches { get; } = new();
-
-    /// <summary>
-    /// Whether Tab moves the focus from the field to the matches and Shift+Tab back (axHelp HE-2.1, axDescribe DE-2.3;
-    /// 2026-11-09, the user: "tab does nothing"). Off, the caret stays in the field and the list is for the eyes (axStart
-    /// AS-D2, axClip CP-2.1). In the focused list the list's own keys move the selection and NVDA reads each item itself
-    /// (the match keys act from the field alone); Enter acts on the selected item as from the field.
-    /// </summary>
-    protected bool MatchesTakeFocus
-    {
-        get => Matches.TabStop;
-        set => Matches.TabStop = value;
-    }
-
-    /// <summary>Where the match keys act: in the field; a focused list has its own keys.</summary>
-    private bool InField() => !Matches.Focused;
 
     /// <summary>The list made from <paramref name="labels"/>, or the one line <paramref name="nothing"/> when there are none, named <paramref name="name"/>, the selection on <paramref name="index"/>.</summary>
     protected void ShowMatches(IReadOnlyList<string> labels, string nothing, string name, int index)
@@ -222,12 +200,12 @@ public abstract class HotkeyForm : AxKitForm
     /// </summary>
     protected void AddMatchKeys(Keys next, Keys previous, Keys first, Keys last)
     {
-        AddKey(new Command("Next match", next, () => SelectMatch(Matches.SelectedIndex + 1)) { When = InField, Mark = CommandMark.Read });
-        AddKey(new Command("Previous match", previous, () => SelectMatch(Matches.SelectedIndex - 1)) { When = InField, Mark = CommandMark.Read });
-        AddKey(new Command("Page down", BundleKeys.PageDown, () => SelectMatch(Math.Min(Matches.SelectedIndex + MatchPage, MatchCount - 1))) { When = InField, Mark = CommandMark.Read });
-        AddKey(new Command("Page up", BundleKeys.PageUp, () => SelectMatch(Math.Max(Matches.SelectedIndex - MatchPage, 0))) { When = InField, Mark = CommandMark.Read });
-        AddKey(new Command("First match", first, () => SelectMatch(0)) { When = InField, Mark = CommandMark.Read });
-        AddKey(new Command("Last match", last, () => SelectMatch(MatchCount - 1)) { When = InField, Mark = CommandMark.Read });
+        AddKey(new Command("Next match", next, () => SelectMatch(Matches.SelectedIndex + 1)) { Mark = CommandMark.Read });
+        AddKey(new Command("Previous match", previous, () => SelectMatch(Matches.SelectedIndex - 1)) { Mark = CommandMark.Read });
+        AddKey(new Command("Page down", BundleKeys.PageDown, () => SelectMatch(Math.Min(Matches.SelectedIndex + MatchPage, MatchCount - 1))) { Mark = CommandMark.Read });
+        AddKey(new Command("Page up", BundleKeys.PageUp, () => SelectMatch(Math.Max(Matches.SelectedIndex - MatchPage, 0))) { Mark = CommandMark.Read });
+        AddKey(new Command("First match", first, () => SelectMatch(0)) { Mark = CommandMark.Read });
+        AddKey(new Command("Last match", last, () => SelectMatch(MatchCount - 1)) { Mark = CommandMark.Read });
     }
 
     /// <summary>How many matches the list shows at once: the step of Page Down and Page Up.</summary>
@@ -337,6 +315,13 @@ public abstract class HotkeyForm : AxKitForm
             // Posted for the same reason: Show inside the handle's creation would re-enter SetVisibleCore.
             BeginInvoke(() => ShowWindowInFront());
         }
+
+        // The app's second hotkey (axHelp's screenshot, docs/axHelp/SPEC.md HE-4): taken or not, logged; the app says it.
+        if (SecondHotkey is { } second)
+        {
+            _secondRegistered = RegisterHotKey(Handle, SecondHotkeyId, (uint)(second.Modifiers | MOD_NOREPEAT), (uint)second.Key);
+            Log.Info(_secondRegistered ? $"Second hotkey {second} registered" : $"The second hotkey {second} could not be registered");
+        }
     }
 
     protected override void OnHandleDestroyed(EventArgs e)
@@ -347,8 +332,36 @@ public abstract class HotkeyForm : AxKitForm
             _registered = null;
         }
 
+        if (_secondRegistered)
+        {
+            UnregisterHotKey(Handle, SecondHotkeyId);
+            _secondRegistered = false;
+        }
+
         base.OnHandleDestroyed(e);
     }
+
+    // ---- what an app may do with its hotkeys (axHelp, 2026-11-10) ----
+
+    private const int SecondHotkeyId = 2;
+    private bool _secondRegistered;
+
+    /// <summary>
+    /// The hotkey pressed while the window is not in front: true when the app did the hotkey's work itself and the
+    /// window stays as it is (axHelp brings its conversation up instead, HE-2.1); false, the default, shows the window.
+    /// </summary>
+    protected virtual bool OnHotkey() => false;
+
+    /// <summary>A second hotkey the app registers beside its own (axHelp's screenshot, HE-4.1), null for none; read once, when the window's handle is made.</summary>
+    protected virtual Hotkey? SecondHotkey => null;
+
+    /// <summary>The second hotkey pressed, from any program.</summary>
+    protected virtual void OnSecondHotkey()
+    {
+    }
+
+    /// <summary>Whether the second hotkey is registered, for the diagnostics and the window's text.</summary>
+    protected bool SecondHotkeyRegistered => _secondRegistered;
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
@@ -385,11 +398,17 @@ public abstract class HotkeyForm : AxKitForm
                 Log.Info("Hidden: the hotkey");
                 HideWindow();
             }
-            else
+            else if (!OnHotkey())
             {
                 ShowWindowInFront();
             }
 
+            return;
+        }
+
+        if (m.Msg == WM_HOTKEY && m.WParam == SecondHotkeyId)
+        {
+            OnSecondHotkey();
             return;
         }
 

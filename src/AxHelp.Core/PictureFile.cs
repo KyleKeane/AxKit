@@ -1,7 +1,7 @@
-namespace AxDescribe.Core;
+namespace AxHelp.Core;
 
 /// <summary>
-/// A picture file of the user's that axDescribe hands to Claude (SPEC.md DE-2.7): the kinds Claude Code's Read tool
+/// A picture file of the user's that axHelp puts into its conversation (SPEC.md HE-3.3): the kinds Claude Code's Read tool
 /// reads, the picker's filter made from them, and the reason a path is refused.
 /// </summary>
 public static class PictureFile
@@ -24,7 +24,7 @@ public static class PictureFile
 
     /// <summary>Why the path cannot be described, said as it is; null when it is a picture that exists.</summary>
     public static string? Refusal(string path) =>
-        !IsPicture(path) ? $"{Path.GetFileName(path)} is not a picture axDescribe can describe: {KindsSpoken}"
+        !IsPicture(path) ? $"{Path.GetFileName(path)} is not a picture axHelp can pass to Claude: {KindsSpoken}"
         : !File.Exists(path) ? $"{path} was not found"
         : null;
 }

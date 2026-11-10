@@ -2,7 +2,7 @@ using AxHelp.Core;
 
 namespace AxHelp.Tests;
 
-/// <summary>axHelp's pure code (docs/axHelp/SPEC.md HE-3, HE-5): the exchanges kept, the matches and the settings file.</summary>
+/// <summary>axHelp's pure code (docs/axHelp/SPEC.md HE-3.3, HE-5): the settings file with its two hotkeys and model, and the picture files it passes on.</summary>
 public sealed class HelpTests : IDisposable
 {
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "axhelp-tests-" + Guid.NewGuid().ToString("N"));
@@ -16,67 +16,65 @@ public sealed class HelpTests : IDisposable
     }
 
     [Fact]
-    public void The_last_ten_exchanges_are_kept_newest_first_and_a_question_asked_again_moves_up()
+    public void The_settings_round_trip_with_both_hotkeys_and_the_model()
     {
-        var settings = new HelpSettings();
-        for (var i = 0; i < 12; i++)
-        {
-            settings.Remember($"question {i}", $"answer {i}", $"s{i}", new DateTime(2026, 11, 9, 10, i, 0));
-        }
-
-        Assert.Equal(HelpSettings.Kept, settings.Exchanges.Count);
-        Assert.Equal("question 11", settings.Exchanges[0].Question);
-        Assert.Equal("question 2", settings.Exchanges[^1].Question);
-
-        settings.Remember("Question 5", "a new answer", "s5b", new DateTime(2026, 11, 9, 11, 0, 0));
-        Assert.Equal(HelpSettings.Kept, settings.Exchanges.Count);
-        Assert.Equal("Question 5", settings.Exchanges[0].Question);
-        Assert.Equal("a new answer", settings.Exchanges[0].Answer);
-        Assert.Equal("s5b", settings.Exchanges[0].SessionId);
-        Assert.Single(settings.Exchanges, exchange => exchange.Question.Equals("question 5", StringComparison.OrdinalIgnoreCase));
-    }
-
-    [Fact]
-    public void The_matches_hold_every_typed_word_and_nothing_typed_lists_them_all()
-    {
-        IReadOnlyList<HelpExchange> exchanges =
-        [
-            new("What does Ctrl+Shift+W do", "Word wrap.", "s1", DateTime.Now),
-            new("Where are my notes", "In C:\\notes.", null, DateTime.Now),
-        ];
-        Assert.Equal(2, HelpLines.Matches(exchanges, "  ").Count);
-        Assert.Equal(["Where are my notes"], HelpLines.Matches(exchanges, "notes").Select(e => e.Question));
-        Assert.Equal(["What does Ctrl+Shift+W do"], HelpLines.Matches(exchanges, "ctrl shift").Select(e => e.Question));
-        Assert.Empty(HelpLines.Matches(exchanges, "zzqq"));
-        Assert.Equal("What does Ctrl+Shift+W do, 1 of 2", HelpLines.Spoken(exchanges[0], 0, 2));
-        Assert.Equal("No earlier question matches zzqq", HelpLines.NoMatch(" zzqq "));
-    }
-
-    [Fact]
-    public void The_settings_round_trip_with_the_hotkey_default_and_the_exchanges()
-    {
+        Directory.CreateDirectory(_folder);
         var path = Path.Combine(_folder, "axHelp.json");
         var settings = HelpSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal("Windows+Alt+H", settings.Key.ToString());
-        Assert.Empty(settings.Exchanges);
-        // HE-3.3: nothing is said while a question is typed unless the file says so.
-        Assert.False(settings.SayFirstMatch);
-        Directory.CreateDirectory(_folder);
-        File.WriteAllText(path, "{ \"sayFirstMatch\": true }");
-        Assert.True(HelpSettings.Load(path, out _).SayFirstMatch);
-        File.Delete(path);
+        Assert.Equal("Windows+Alt+S", settings.ScreenshotKey.ToString());
+        Assert.Equal(HelpSettings.FastModel, settings.Model);
 
-        settings.Remember("q", "a", "s", new DateTime(2026, 11, 9, 12, 0, 0));
+        settings.ScreenshotHotkeyText = "Ctrl+Alt+Shift+F11";
+        settings.Model = "opus";
         settings.Save(path);
         var loaded = HelpSettings.Load(path, out error);
         Assert.Null(error);
-        Assert.Single(loaded.Exchanges);
-        Assert.Equal("q", loaded.Exchanges[0].Question);
-        Assert.Equal("s", loaded.Exchanges[0].SessionId);
-        Assert.Equal(new DateTime(2026, 11, 9, 12, 0, 0), loaded.Exchanges[0].When);
-        // The file writes "+" as + (System.Text.Json's default escaping), so the hotkey is checked as read back.
-        Assert.Equal("Windows+Alt+H", loaded.Key.ToString());
-        Assert.Contains("\"hotkey\":", File.ReadAllText(path));
+        Assert.Equal("Ctrl+Alt+Shift+F11", loaded.ScreenshotKey.ToString());
+        Assert.Equal("opus", loaded.Model);
+
+        // A file of 5.6.0, with its exchanges and an unusable key, still reads: the exchanges are left, the key falls back.
+        File.WriteAllText(path, """{ "screenshotHotkey": "nonsense", "model": " ", "exchanges": [ { "question": "q", "answer": "a" } ] }""");
+        var old = HelpSettings.Load(path, out error);
+        Assert.Null(error);
+        Assert.Equal("Windows+Alt+S", old.ScreenshotKey.ToString());
+        Assert.Equal(HelpSettings.FastModel, old.Model);
+    }
+
+    [Fact]
+    public void A_picture_file_is_one_of_the_kinds_claude_reads_and_anything_else_is_refused()
+    {
+        Assert.True(PictureFile.IsPicture(@"C:\pictures\chart.PNG"));
+        Assert.True(PictureFile.IsPicture("photo.jpeg"));
+        Assert.False(PictureFile.IsPicture("notes.txt"));
+        Assert.Equal("notes.txt is not a picture axHelp can pass to Claude: a .png, .jpg, .jpeg, .gif or .webp file", PictureFile.Refusal(@"C:\notes.txt"));
+
+        Directory.CreateDirectory(_folder);
+        var file = Path.Combine(_folder, "blocks.png");
+        Assert.Equal(file + " was not found", PictureFile.Refusal(file));
+        File.WriteAllBytes(file, [1]);
+        Assert.Null(PictureFile.Refusal(file));
+        Assert.Equal("Pictures (*.png, *.jpg, *.jpeg, *.gif, *.webp)|*.png;*.jpg;*.jpeg;*.gif;*.webp|All files (*.*)|*.*", PictureFile.Filter);
+    }
+
+    [Fact]
+    public void The_working_folders_two_files_are_written_once_and_the_users_own_are_kept()
+    {
+        Directory.CreateDirectory(_folder);
+        Assert.Equal(["CLAUDE.md", Path.Combine(".claude", "agents", "agent.md")], WorkingFolderFiles.WriteMissing(_folder));
+        Assert.Contains("model: opus", File.ReadAllText(Path.Combine(_folder, ".claude", "agents", "agent.md")));
+        Assert.StartsWith("---\r\nname: agent\r\n", File.ReadAllText(Path.Combine(_folder, ".claude", "agents", "agent.md")));
+
+        File.WriteAllText(Path.Combine(_folder, "CLAUDE.md"), "my own");
+        Assert.Empty(WorkingFolderFiles.WriteMissing(_folder));
+        Assert.Equal("my own", File.ReadAllText(Path.Combine(_folder, "CLAUDE.md")));
+    }
+
+    [Fact]
+    public void The_conversation_starts_on_the_working_folder_titled_axHelp_with_the_model()
+    {
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--", "--continue", "--model", "haiku"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null));
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--message", "Screenshot: a.png ", "--", "--continue", "--model", "opus"], HelpSettings.ConversationArguments(@"C:\w", "opus", "Screenshot: a.png "));
     }
 }

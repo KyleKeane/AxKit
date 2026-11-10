@@ -18,6 +18,16 @@ public class StartupOptionsTests
 
     /// <summary>FR-8.1: the app's own folder and Windows' own are never taken as the project, from the current directory or from the remembered folder.</summary>
     [Fact]
+    public void A_message_and_a_title_are_taken_for_axHelps_conversation()
+    {
+        var options = StartupOptions.Parse([Folder, "--title", "axHelp", "--message", "Screenshot: C:\\a.png"]);
+        Assert.Equal("axHelp", options.Title);
+        Assert.Equal("Screenshot: C:\\a.png", options.Message);
+        Assert.Null(StartupOptions.Parse([Folder]).Title);
+        Assert.Throws<ArgumentException>(() => StartupOptions.Parse([Folder, "--title"]));
+    }
+
+    [Fact]
     public void Windows_own_folders_and_the_apps_own_are_never_a_project()
     {
         Assert.True(StartupOptions.IsNeverAProject(Environment.SystemDirectory));

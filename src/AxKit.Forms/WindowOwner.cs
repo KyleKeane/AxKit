@@ -5,7 +5,7 @@ using static AxKit.Forms.User32;
 namespace AxKit.Forms;
 
 /// <summary>
-/// Whose window another program's is (2026-11-09, for axHelp and axDescribe, which tell Claude what was in front when
+/// Whose window another program's is (2026-11-09, for axHelp, which names the window in front in a screenshot when
 /// the hotkey was pressed, docs/axKit/ai-help.md AH-7): the program's name and the window's title, by the handle the
 /// hotkey window kept (<see cref="HotkeyForm.ForegroundBefore"/>); null for what cannot be read.
 /// </summary>

@@ -34,6 +34,9 @@ public static class AppMessage
     /// <summary>axStart: the hidden window shown with the focus in its field (docs/axStart/SPEC.md AS-1.2); no paths.</summary>
     public const string Show = "show";
 
+    /// <summary>axClaude: the one line after the verb put into the message field, not sent, and the window in front (axHelp's conversation, docs/axHelp/SPEC.md HE-2).</summary>
+    public const string Message = "message";
+
     private const int WM_COPYDATA = 0x004A;
     private const uint SMTO_NORMAL = 0x0000;
     private const uint SMTO_ABORTIFHUNG = 0x0002;

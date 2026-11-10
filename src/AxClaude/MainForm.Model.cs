@@ -292,7 +292,16 @@ internal sealed partial class MainForm
     {
         // FR-8.4: the folder's name, then its full path in parentheses, so that the name comes first in speech and
         // two folders of one name are still told apart in Alt+Tab and in the Window menu; announcements use the name.
-        SetTitle(_folder is null ? null : $"{PathName.Of(_folder)} ({_folder})");
+        // --title (FR-9.2): axHelp's conversation is titled "axHelp" alone, whatever its folder; the status bar keeps the folder.
+        if (_options.Title is { Length: > 0 } title)
+        {
+            Text = title;
+        }
+        else
+        {
+            SetTitle(_folder is null ? null : $"{PathName.Of(_folder)} ({_folder})");
+        }
+
         SetStatus(StateLabel.Text ?? string.Empty, _folder ?? "No project folder");
     }
 }
