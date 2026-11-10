@@ -6,6 +6,40 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-09, the evening: every app for 5.5.0, by the assistant through nvda-pass.ps1 (`main` 34d3db5)
+
+Run by the assistant with NVDA 2025.3.3 listening after the user stepped away at his word, Claude Code 2.1.322 and
+`--model haiku`, Windows 11 Pro 10.0.26200, a development build of `main` at 34d3db5, the state released as 5.5.0:
+the shared edit control of every window (`AxKitTextBox`, AX-8.9) and word wrap in the theme file (theme.md TH-6), the
+Azure signing retired, and AI help with axHelp and axDescribe (`ai-help.md`). `nvda-pass.ps1` over every app, 83
+scripts (the 80 of the full passes before plus `axdown/11-ask-claude.txt`, `axhelp/01-start.txt` and
+`axdescribe/01-start.txt`, each against the fake Claude of its script): 80 passed whole in the one run, every
+announcement also spoken by NVDA, which covers for this release: every field and text of every window typed into and
+read (the shared control under them all), the page and paragraph keys of the editors and the console fields, word
+wrap off and on in axDown and axPreview with the caret kept and the value written into the run's theme file
+(`axdown/02`, `06`, `10`, `axpreview/01`), the Shift+F1 line and the AI help entry of the axKit menu line in every
+window's F1 text (`check commands` in every script, the menu line in `KeyTests`), About, Version naming axHelp and
+axDescribe, and the AI help flows: off said, the switch, Shift+F1's question notice, the "Asking Claude" wait, the
+answer with the focus on its text, Tab to "Ask more about this answer", the second answer, the folders notice, axHelp's
+list of earlier questions with the match keys and the edge, axDescribe's kept description reopened, its follow-up, its
+list. Three did not pass in the run:
+
+- `axdescribe/01-start.txt` step 16: the script expected the hidden desktop's "The picture could not be taken" where
+  the user's desktop has a screen, so the picture was taken (of the axClaude window in front) and the fake described
+  it at once. The script now takes either path (`try said`, then `try state Claude says`) and passed on its rerun.
+- `axclaude/15-consent.txt` step 26: the window said "Ready" and NVDA, still reading the new window's title and field,
+  did not speak it within 15 s; a timing of the NVDA tier, seen before (2026-11-01). Passed whole on its rerun.
+- `axstart/01-basics.txt`: the user's own axStart runs from another program file, so the test's start found its window
+  and handed nothing over; the known environment failure of a bare runner, recorded in the priorities list. axStart's
+  shared pieces (the field, the list, the hotkey window) were heard through axClip, axHelp and axDescribe, which
+  passed.
+
+The two reruns took 45 s, the user away again at his word. Not heard by this pass and the user's by ear: a real
+question to Claude through Shift+F1 and axHelp (`docs/axhelp/nvda-test-plan.md`, the steps marked real), a real
+description of a window through axDescribe (`docs/axdescribe/nvda-test-plan.md` section 1), the hotkeys
+Windows+Alt+H and Windows+Alt+S from another program (the scripts use keys nobody holds and `launch`), how a long
+answer reads in the notice, and the Say all hold of the earlier entry.
+
 ## 2026-11-09, the night run: every app, by the assistant through nvda-pass.ps1 (branch `improvements`, a140ca9 and after)
 
 Run by the assistant with NVDA 2025.3.3 listening while the user slept, having cleared the night's work, with Claude
