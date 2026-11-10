@@ -289,15 +289,13 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   signature checks against the public half in `AxKit.Core/Updates/ReleaseSigning`; `install.cmd` alone does the same
   check in Windows PowerShell, into a folder of a random name. A release without a signature is never installed by
   the apps. Losing the key means one release installed by hand with a new key's public half in it.
-  **Signed for Windows** (Azure Artifact Signing, 2026-11-06; `docs/axkit/code-signing.md`): the release workflow has
-  `AxKit.exe` signed with an Authenticode signature through Microsoft's signing service, with a certificate Microsoft
-  issues for each signing in the maintainer's verified name, which Windows' Smart App Control accepts: a job of its
-  own signs in to Azure with the run's OpenID Connect token as an identity that holds the signer role on the signing
-  account and nothing else (no secret is stored anywhere; the identity's ids are the `release` environment's secrets,
-  which only `main` and `v*` tags can use), signs, and zips nothing unless Windows finds the signature valid. The
-  repository variable `AZURE_CERTIFICATE_PROFILE` names the certificate profile and is the switch: a release made with
-  it unset says in its notes that the program is unsigned (`tests/AxKit.Tests/ReleaseWorkflowTests.cs` keeps the
-  order, the switch and the notice). The release key signs the zip as before.
+  **Not signed for Windows.** `AxKit.exe` in the GitHub release carries no Authenticode signature, and every
+  release's notes say so (`tests/AxKit.Tests/ReleaseWorkflowTests.cs` keeps the sentence); Windows' Smart App
+  Control may refuse it, and an update it refuses stops without changing anything (AX-3.6). The signed copy of axKit
+  is the Microsoft Store's, which Microsoft signs after certification (AX-13; `docs/axkit/store-distribution.md`
+  4.4). Azure Artifact Signing was set up for the release workflow on 2026-11-06 and retired on 2026-11-09 before it
+  signed a release, on the user's decision to sign through the Store (`docs/axkit/code-signing.md`, the record). The
+  release key signs the zip as before.
 - AX-3.7 The Store's copy has no updater: the Microsoft Store installs its updates, signed with Microsoft's
   certificate, and Check for updates there says where the copy stands and opens the Store page (AX-13.3).
 

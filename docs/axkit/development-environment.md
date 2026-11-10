@@ -20,8 +20,7 @@ the new program until it is opened again (the PATH is read at start).
 | Windows PowerShell 5.1 | Every script of the repository: `run.ps1`, `test.ps1`, `publish.ps1`, `install.ps1`, `release.ps1`, `nvda-pass.ps1`, `manual_tests/prepare.ps1`, `tools/*.ps1`. Its pitfalls are in `CLAUDE.md` (Environment gotchas). PowerShell 7 is not needed; the workflows use it on GitHub's runners only | Comes with Windows | `$PSVersionTable.PSVersion` reads 5.1 |
 | .NET SDK 10 | Build, test and publish; the only build dependency (`GOVERNANCE.md`): no NuGet package in the apps, the test packages alone | `Microsoft.DotNet.SDK.10` | `dotnet --version` is `global.json`'s version or a later patch of its feature band (10.0.300 today, `rollForward: latestFeature`) |
 | Git, with Git Bash and Git Credential Manager | The repository; Git Bash is one of axTerminal's shells and the source of the `shell-*` fixtures | `Git.Git` | `git --version` (2.53); `git config user.email` is GitHub's no-reply address for the account, never a personal one; `git config credential.helper` reads `manager` |
-| GitHub CLI, `gh` | `release.ps1` (waits for the build, pushes the tag), `tools/sign-release.ps1` (downloads the draft, checks the attestation, uploads the signature, publishes), `gh run watch`, and the repository's environment, secrets and variables (`docs/axkit/code-signing.md`) | `GitHub.cli` | `gh --version` (2.96); `gh auth status` is signed in as the repository's owner, whose GitHub account has two-factor sign-in |
-| Azure CLI, `az`, with the extension `artifact-signing` | Reads the signing account, and would sign a file by hand if that were ever needed; the one-time setup of `docs/axkit/code-signing.md` section 2 was done with it. Not needed to build, test or release: the Windows signing runs in GitHub Actions | `Microsoft.AzureCLI`, then `az extension add --name artifact-signing` | `az version` (2.92); `az extension list` has `artifact-signing`; `az account show --query user.name -o tsv` names `axkit-signer`, the user that can only sign (code-signing.md section 1). The subscription's Owner is never left signed in here |
+| GitHub CLI, `gh` | `release.ps1` (waits for the build, pushes the tag), `tools/sign-release.ps1` (downloads the draft, checks the attestation, uploads the signature, publishes), `gh run watch`, and the repository's environment, secrets and variables (`docs/axkit/store-setup.md`) | `GitHub.cli` | `gh --version` (2.96); `gh auth status` is signed in as the repository's owner, whose GitHub account has two-factor sign-in |
 | NVDA, with the add-on `axkitCapture` | Every manual check; `nvda-pass.ps1` and `tools/AxAutomate --nvda` read what NVDA speaks through the add-on (`docs/axkit/automation.md` section 3). NVDA refuses to be started from the assistant's process, so the user starts it | `NVAccess.NVDA` (2025.3); the add-on is the folder `tools/nvda-capture` copied to `%APPDATA%\nvda\addons\axkitCapture`, then NVDA restarted | NVDA is running; `nvda-pass.ps1` stops with a message when the add-on is missing or differs from `tools/nvda-capture` |
 | Claude Code, `claude` | axClaude's program (`claude --ax-screen-reader` in a pseudo console), and the assistant that works in this repository from `CLAUDE.md`; `tools/QaRun` and `tools/AxAutomate` drive it without windows, always with `--model haiku`. axKit's MCP server is registered in it as `axkit` from any window's axKit menu, AI tools | Anthropic's installer, `irm https://claude.ai/install.ps1 \| iex`, into `%USERPROFILE%\.local\bin` (the folder axKit's console commands use too) | `claude --version` (2.1); `claude mcp list` names `axkit` once the AI tools are on |
 | KeePassXC, with `keepassxc-cli` | axPass's program, and its NVDA pass (`manual_tests/prepare.ps1 axPass` makes the test database) | `KeePassXCTeam.KeePassXC` (2.8) | `keepassxc-cli --version` |
@@ -35,11 +34,11 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 - **GitHub**: `gh auth login` (HTTPS, through the browser) as the repository's owner; `gh` keeps its token in Windows'
   credential store, and git pushes through Git Credential Manager with the same account. The repository
   `KyleKeane/AxKit` has the environment `release`, which only the branch `main` and tags `v*` may use, with the
-  secrets `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID`, and, once signing is on, the repository
-  variable `AZURE_CERTIFICATE_PROFILE` (`docs/axkit/code-signing.md`); for the Store, the secrets
+  secret `AXKIT_REPORTER_TOKEN` (`docs/axkit/reports-setup.md`) and, for the Store, the secrets
   `PARTNER_CENTER_TENANT_ID`, `PARTNER_CENTER_CLIENT_ID` and `PARTNER_CENTER_CLIENT_SECRET` and, once the first
   publication is live, the repository variable `STORE_SUBMIT` (`docs/axkit/store-setup.md`). `gh secret list --env
-  release` and `gh variable list` show the names.
+  release` and `gh variable list` show the names. (The three `AZURE_*` secrets of the retired signing were deleted on
+  2026-11-09, `docs/axkit/code-signing.md` section 7.)
 - **Partner Center**: the maintainer's personal Microsoft account, in a browser only (the name reservation, the first
   submission, anything the API cannot do; `docs/axkit/store-setup.md` sections 2 and 3). The automation speaks as the
   Microsoft Entra application `axKit release`, which holds the Manager role on the Partner Center account and nothing
@@ -47,20 +46,14 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
   `%LOCALAPPDATA%\AxKit-release\store-credentials.xml`, written by `tools/store-credentials.ps1` with the key
   encrypted for the Windows account; `tools/store-submit.ps1 -Status` proves them. A new key is made in Partner
   Center (the application's page, Add new key) and put in both places; the old one is removed there.
-- **Azure**: `az login --use-device-code` as `axkit-signer`, the user that holds the signer role on the signing account
-  and nothing else; the tokens live in `%USERPROFILE%\.azure`. The subscription's Owner, the maintainer's own account,
-  is used in a browser, and signed in to `az` only on the maintainer's word for one administrative command, then
-  `az logout`. The assistant's permission layer refuses role grants and identity creation; the maintainer runs such a
-  script himself.
 - **The release key**: `%LOCALAPPDATA%\AxKit-release\release-key.bin`, an ECDSA P-256 key encrypted for the Windows
   account that made it (`tools/release-key.ps1`; SPEC AX-3.4). `release.ps1` signs every release's zip with it; the
   public half is built into `AxKit.Core/Updates/ReleaseSigning` and `install.cmd`. A new computer gets it only by the
   maintainer's own copy; a copy of the file alone is useless under another account. Losing it means one release
   installed by hand with a new key's public half in it.
 - **Claude Code**: its own sign-in, the maintainer's Anthropic account.
-- **Windows**: the development computer's account is the maintainer's; a second computer, with Smart App Control on
-  and axKit installed by `install.cmd`, is where updates and the Windows signature are checked for real
-  (`docs/axkit/code-signing.md`).
+- **Windows**: the development computer's account is the maintainer's; a second computer, with Smart App Control on,
+  is where the Store's copy and its updates are checked for real (`docs/axkit/store-distribution.md`).
 
 ## 3. What runs where
 
@@ -75,14 +68,13 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 | Publish and install locally | `publish.ps1 [-NoInstall]`, `install.ps1 [-Uninstall]` | .NET SDK; not on the development computer, which keeps no installed copy |
 | The MSIX package for the Store | `publish.ps1 -Msix` | .NET SDK, `tools/make-manifest.ps1`, `tools/make-icon.ps1 -Png`, makeappx (Windows Kits, or `tools/sdk` through `tools/get-sdk-tools.ps1`). A local test registers the published folder as the package, `Add-AppxPackage -Register publishmsixpackageAppxManifest.xml`, which needs Developer Mode (Settings, System, For developers); `Remove-AppxPackage` removes it |
 | The Store submission | By itself: `store.yml` when a release is published and `STORE_SUBMIT` is on. By hand: `tools/store-submit.ps1 -Package <msix> -Notes <file>`; `-Status` reads the state; `-DryRun` sends nothing | PowerShell, HTTPS to Partner Center's submission API with the credentials of section 2 (`docs/axkit/store-setup.md` sections 4 and 5) |
-| Release | `release.ps1 <version>` after a `## <version>` section in `CHANGELOG.md` | git, gh, `test.ps1`, `tools/outside-calls.ps1`, the .NET SDK; then GitHub Actions (`release.yml`: build, sign, draft) and `tools/sign-release.ps1` with gh and the release key |
-| The Windows signature on `AxKit.exe` | Nothing local: the release workflow's sign job, in Azure, when `AZURE_CERTIFICATE_PROFILE` is set | GitHub Actions, azure/login, azure/artifact-signing-action |
-| Azure administration | The maintainer in the Azure portal; `az` as the Owner only on the maintainer's word | Browser; Azure CLI |
+| Release | `release.ps1 <version>` after a `## <version>` section in `CHANGELOG.md` | git, gh, `test.ps1`, `tools/outside-calls.ps1`, the .NET SDK; then GitHub Actions (`release.yml`: build, package, draft) and `tools/sign-release.ps1` with gh and the release key |
+| The Windows signature | None on the GitHub release's `AxKit.exe`; the Store signs its package after certification (`docs/axkit/store-distribution.md`). The Azure signing was retired on 2026-11-09 (`docs/axkit/code-signing.md` section 7) | Partner Center |
 
 ## 4. A new computer, in order
 
 1. Windows 11 with winget. Turn two-factor sign-in on for the GitHub account if it is not on yet.
-2. `winget install` of `Git.Git`, `GitHub.cli`, `Microsoft.DotNet.SDK.10`, `Microsoft.AzureCLI`, `NVAccess.NVDA`,
+2. `winget install` of `Git.Git`, `GitHub.cli`, `Microsoft.DotNet.SDK.10`, `NVAccess.NVDA`,
    `KeePassXCTeam.KeePassXC`; Claude Code with Anthropic's installer. Open a new shell.
 3. `git clone https://github.com/KyleKeane/AxKit` into a folder of the maintainer's choosing, as `axkit`, and beside it
    `git clone https://github.com/KyleKeane/AxKit-reports axkit-reports` and

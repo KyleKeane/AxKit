@@ -1,13 +1,14 @@
 # Builds the zip that publish.ps1 builds locally and attaches it to a draft GitHub release, with install.cmd on its own
 # so it can be downloaded alone and install the latest release. Three jobs: build tests with a token that can only
-# read; sign publishes the folder with the reporter token of the reports (docs/axkit/reports.md RP-6.2), has AxKit.exe
-# signed for Windows through Microsoft's Azure Artifact Signing, by an identity that can sign and do nothing else
-# (docs/axkit/code-signing.md), and then makes the zip; draft uploads and attests. The
-# release stays a draft: release.ps1, on the maintainer's machine, signs the zip with the release key, which never
-# reaches GitHub, uploads the signature and publishes the release (docs/axkit/SPEC.md AX-3.4;
-# docs/axkit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps install only a signed zip. Started by pushing a
-# version tag, which release.ps1 does, or by hand from the Actions tab (or `gh workflow run release.yml -f tag=v1.0.1`)
-# for a tag that already exists.
+# read; package publishes the folder with the reporter token of the reports (docs/axkit/reports.md RP-6.2), makes the
+# zip and the Store package; draft uploads and attests. The release stays a draft: release.ps1, on the maintainer's
+# machine, signs the zip with the release key, which never reaches GitHub, uploads the signature and publishes the
+# release (docs/axkit/SPEC.md AX-3.4; docs/axkit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps install only
+# a signed zip. AxKit.exe itself carries no Windows (Authenticode) signature: the signed copy of axKit is the Microsoft
+# Store's, which Microsoft signs after certification (AX-13; docs/axkit/store-distribution.md 4.4); the Azure Artifact
+# Signing steps that sat between the publish and the zip (2026-11-06) were retired on 2026-11-09 before they signed a
+# release (docs/axkit/code-signing.md). Started by pushing a version tag, which release.ps1 does, or by hand from the
+# Actions tab (or `gh workflow run release.yml -f tag=v1.0.1`) for a tag that already exists.
 name: Release
 
 on:
@@ -24,7 +25,7 @@ permissions: {}
 
 jobs:
   # Tests with a token that can only read: the test code and its packages never hold one that writes, and never see
-  # the signing identity's ids or the reporter token (S-30); the sign job, the "release" environment, publishes.
+  # the reporter token (S-30); the package job, the "release" environment, publishes.
   build:
     runs-on: windows-2025
     permissions:
@@ -85,23 +86,15 @@ jobs:
             tag.txt
           if-no-files-found: error
 
-  # Publishes the folder, signs AxKit.exe for Windows and makes the zip. The job signs in to Azure with the run's own OpenID Connect token
-  # (azure/login, no stored secret): GitHub issues that token only to runs of the "release" environment (main and v*
-  # tags), and Azure exchanges it only for the identity whose federated credential names this repository and that
-  # environment. The identity holds one role, Artifact Signing Certificate Profile Signer, on the signing account alone,
-  # so a run can sign and nothing else (docs/axkit/code-signing.md section 1). The ids azure/login takes are the
-  # environment's secrets: the build job, which runs the tests and their packages, never sees them (S-30). The
-  # repository variable AZURE_CERTIFICATE_PROFILE names the certificate profile and is the switch: unset, the two
-  # signing steps are skipped and the release notes say the program is unsigned; set, nothing is zipped unless Windows
-  # finds the signature valid.
-  sign:
+  # Publishes the folder, makes the zip and the Store package. The job runs in the "release" environment, which GitHub
+  # gives to runs of main and v* tags alone, so that only this job, which runs no test package, ever holds the
+  # environment's secret (the reporter token, S-30).
+  package:
     needs: build
     runs-on: windows-2025
     environment: release
     permissions:
       contents: read
-      # The OpenID Connect token azure/login exchanges for the signing identity.
-      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -117,60 +110,21 @@ jobs:
         with:
           name: build
 
-      # The folder only, zipped below once AxKit.exe is signed. The reporter token of the reports (docs/axkit/reports.md
-      # RP-6.2) goes into the build from the "release" environment's secret, so that only this job, which runs no test
-      # package, ever holds it; without the secret the build cannot send reports and its notice says so.
+      # The folder only, zipped below. The reporter token of the reports (docs/axkit/reports.md RP-6.2) goes into the
+      # build from the "release" environment's secret, so that only this job, which runs no test package, ever holds
+      # it; without the secret the build cannot send reports and its notice says so.
       - name: Publish
         shell: pwsh
         env:
           AXKIT_REPORTER_TOKEN: ${{ secrets.AXKIT_REPORTER_TOKEN }}
         run: .\publish.ps1 -NoInstall -NoZip
 
-      - name: Sign in to Azure as the signing identity
-        if: vars.AZURE_CERTIFICATE_PROFILE != ''
-        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      # Microsoft issues a certificate in the maintainer's verified name for this signing, from its own certificate
-      # authority, and signs in its cloud; the key never exists outside it. The signature is timestamped, since the
-      # certificate itself lives only days.
-      - name: Sign AxKit.exe with Azure Artifact Signing
-        if: vars.AZURE_CERTIFICATE_PROFILE != ''
-        uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
-        with:
-          endpoint: https://eus.codesigning.azure.net/
-          signing-account-name: axkit-code-signing
-          certificate-profile-name: ${{ vars.AZURE_CERTIFICATE_PROFILE }}
-          files-folder: ${{ github.workspace }}\publish\win-x64
-          files-folder-filter: exe
-          file-digest: SHA256
-          timestamp-rfc3161: http://timestamp.acs.microsoft.com
-          timestamp-digest: SHA256
-
-      # Nothing is zipped unless Windows itself finds the signature valid (ReleaseWorkflowTests keeps this order); with
-      # signing off, the notes say so, so that no release pretends otherwise.
-      - name: Check the signature, then make the zip
+      # The notes say that the program is unsigned and where the signed copy is, so that no release pretends otherwise
+      # (ReleaseWorkflowTests keeps the sentence).
+      - name: Make the zip
         shell: pwsh
-        env:
-          SIGNING: ${{ vars.AZURE_CERTIFICATE_PROFILE != '' }}
         run: |
-          $signature = Get-AuthenticodeSignature publish\win-x64\AxKit.exe
-          if ($env:SIGNING -eq 'true') {
-            if ($signature.Status -ne 'Valid') {
-              Write-Host "AxKit.exe is not validly signed: $($signature.Status), $($signature.StatusMessage). No zip was made."
-              exit 1
-            }
-            Write-Host "AxKit.exe is signed by $($signature.SignerCertificate.Subject), timestamped by $($signature.TimeStamperCertificate.Subject)."
-            # The release page and the update notice say who signed the program, by the name Windows shows as its publisher.
-            $signer = $signature.SignerCertificate.GetNameInfo([System.Security.Cryptography.X509Certificates.X509NameType]::SimpleName, $false)
-            Add-Content -Path notes.md -Value "`nAxKit.exe in this release is signed for Windows by $signer, through Microsoft's Azure Artifact Signing; Windows shows that name as the publisher (https://github.com/KyleKeane/AxKit/blob/main/docs/axkit/code-signing.md)." -Encoding utf8
-          } else {
-            Write-Host "AZURE_CERTIFICATE_PROFILE is not set: AxKit.exe goes out unsigned (signature status $($signature.Status))."
-            Add-Content -Path notes.md -Value "`nAxKit.exe in this release carries no Windows signature, and Windows' Smart App Control may refuse it; signed releases are being set up (https://github.com/KyleKeane/AxKit/blob/main/docs/axkit/code-signing.md)." -Encoding utf8
-          }
+          Add-Content -Path notes.md -Value "`nAxKit.exe in this release carries no Windows signature, and Windows' Smart App Control may refuse it; the signed copy of axKit is the Microsoft Store's (https://github.com/KyleKeane/AxKit/blob/main/docs/axkit/store-distribution.md)." -Encoding utf8
           .\publish.ps1 -ZipOnly
 
       # The MSIX package for the Microsoft Store (docs/axkit/SPEC.md AX-13), unsigned, since the Store signs it after
@@ -193,9 +147,9 @@ jobs:
             tag.txt
           if-no-files-found: error
 
-  # Uploads what the sign job made to a draft release, and attests where it was built; runs no code of the repository.
+  # Uploads what the package job made to a draft release, and attests where it was built; runs no code of the repository.
   draft:
-    needs: sign
+    needs: package
     runs-on: ubuntu-latest
     permissions:
       contents: write

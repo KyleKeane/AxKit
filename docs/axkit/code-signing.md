@@ -1,4 +1,13 @@
-# Code signing for Windows (Azure Artifact Signing; prepared 2026-10-25, the workflow built 2026-11-03, on Azure since 2026-11-06)
+# Code signing for Windows (Azure Artifact Signing; prepared 2026-10-25, the workflow built 2026-11-03, on Azure 2026-11-06, retired 2026-11-09)
+
+**Retired on 2026-11-09, the user's decision: "we will use the Windows Store for signing".** The Microsoft Store signs
+axKit's package with Microsoft's certificate after certification (`store-distribution.md`, decision 4.4), so the
+Authenticode signature this page set up is not needed, and it never signed a release: the identity validation was
+still pending, the variable was never set, and every release's notes said "carries no Windows signature". The release
+workflow's two signing steps, the `release` environment's three `AZURE_*` secrets and the development environment's
+Azure CLI are gone; the GitHub release's `AxKit.exe` stays unsigned, which it always was, and its notes now point at
+the Store's copy. This page is kept as the record of what was set up and, in section 7, of what the maintainer deletes
+on Azure. Nothing below it is current.
 
 Why: Windows 11's Smart App Control blocks a program that carries no Authenticode signature and that Microsoft's cloud
 does not know yet. Every axKit release is a new program file, so on a computer where Smart App Control is on, an update
@@ -20,11 +29,12 @@ routes: a commercial certificate with a cloud key costs about three hundred doll
 certificate keeps its key behind a phone app, so a person must be present at every signing; a certificate on a USB
 token cannot sign from GitHub Actions at all.
 
-**Status (2026-11-06):** section 1 exists and section 2's steps 1 to 4 are done: the Azure side has identities that
-can only sign, and the release workflow signs when the repository variable `AZURE_CERTIFICATE_PROFILE` is set, and
-until then releases unsigned, saying so in the notes. Left: the identity validation (step 5; the first attempt failed
-on 2026-11-06), the certificate profile (step 6), the variable (step 7), the development computer's sign-in (step 8)
-and the first signed release (step 9). Once that release is out, this paragraph goes.
+**Status (2026-11-06, the last before the retirement):** section 1 exists and section 2's steps 1 to 4 are done: the
+Azure side has identities that can only sign, and the release workflow signs when the repository variable
+`AZURE_CERTIFICATE_PROFILE` is set, and until then releases unsigned, saying so in the notes. Left: the identity
+validation (step 5; the first attempt failed on 2026-11-06), the certificate profile (step 6), the variable (step 7),
+the development computer's sign-in (step 8) and the first signed release (step 9). None of them happened: see the
+top of the page and section 7.
 
 ## 1. What exists, and who can do what
 
@@ -192,3 +202,23 @@ new, signed program; Windows checks that file when it starts.
   updates let it be turned on again. SmartScreen and Defender keep working with it off.
 - After a release, `AxKit.exe` can be submitted to Microsoft's file submission page as a developer's file wrongly
   blocked, which can build its reputation sooner; per release, and not certain.
+
+## 7. Retiring (2026-11-09)
+
+Done in the repository the same day: the two signing steps and the `id-token` permission out of `release.yml` (the
+job is `package` now), `ReleaseWorkflowTests` rewritten for it, the three `AZURE_*` secrets deleted from the `release`
+environment (`gh secret delete <name> --env release`), the Azure CLI out of `development-environment.md`, and the
+pages that said "from the first release whose notes say so" (`README.md`, `SECURITY.md`, `GOVERNANCE.md`,
+`docs/axkit/README.md`, SPEC AX-3.4) rewritten to say that the Store's copy is the signed one. No release was ever
+signed this way, so no user has a signed `AxKit.exe` to lose.
+
+Left to the maintainer, in the Azure portal, when convenient (nothing of it costs anything while it idles except the
+signing account's Basic tier, about ten dollars a month, which is the reason to do it soon):
+
+1. The Artifact Signing account `axkit-code-signing` (its resource group holds it alone): delete the resource group,
+   which takes the account, its certificate profile if one was made and the pending identity validation with it.
+2. Microsoft Entra ID: the application registration for the release workflow with its federated credential (the one
+   named for this repository and the `release` environment), and the user `axkit-signer`.
+3. The subscription, if it served this alone: cancel it, so that nothing bills; Azure keeps the account.
+4. `%USERPROFILE%\.azure` on the development computer (the CLI's tokens), and `winget uninstall Microsoft.AzureCLI`
+   if nothing else uses it.

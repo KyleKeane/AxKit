@@ -3,6 +3,7 @@
 ## 5.5.0
 
 - axClaude, axTerminal: while NVDA reads the conversation or the terminal continuously (Say all), the output waits, and comes four seconds after the reading stops; before, a line arriving mid-sentence changed the text under NVDA and cut the reading off. A key press ends the wait at once, as it always did.
+- For developers: the Windows signing of `AxKit.exe` through Azure Artifact Signing, set up in the release workflow on 2026-11-06 and never switched on, is retired: the Microsoft Store's copy of axKit is the one Microsoft signs, and the GitHub release's program stays unsigned, as it always was, its notes now pointing at the Store. The workflow's two signing steps, the three Azure secrets and the Azure CLI of the development computer are gone (`docs/axkit/code-signing.md` section 7 lists what is deleted on Azure).
 
 ## 5.4.0
 

@@ -210,9 +210,10 @@ The recommendation came first in each; on 2026-11-08 the maintainer took the rec
 - 4.2 Virtualization accepted; the children run outside the package by Windows' default, measured (3.4), so neither
   the breakaway attribute nor `unvirtualizedResources` is needed. Settled by measurement.
 - 4.3 The folder context menu is absent from the Store build for now (3.3). Taken; the COM server is section 8.
-- 4.4 Azure Artifact Signing stays until the first Store release is installed and checked, then retires: the
-  Store's signature replaces it for users, and the zip goes unsigned as it does today while the variable is unset.
-  Or: keep both, the exe signed in the zip as well. Open.
+- 4.4 Azure Artifact Signing retired on 2026-11-09, before the first Store release was checked, on the user's
+  decision ("we will use the Windows Store for signing"): the Store's signature is the one, and the zip's `AxKit.exe`
+  stays unsigned, as it always was, its notes pointing here. Settled; `docs/axkit/code-signing.md` section 7 has what
+  is deleted on Azure.
 - 4.5 Start at sign-in in the Store build is Windows' own Startup page (3.3), built as `HotkeyForm.StartWithWindowsItem`.
   Taken.
 - 4.6 The clicks in Partner Center are the maintainer's, with NVDA, from my step lists (phase 1 and 6). Taken.
@@ -324,9 +325,9 @@ first publication is live, watched by hand (`gh run watch`, then `-Status`).
 
 ### Phase 8: Later
 
-arm64 in a bundle with x64; the community winget manifest; the folder context menu's COM server; retiring Azure
-Artifact Signing (4.4); retiring `install.ps1` once the Store path has carried a few releases; listing changes pushed
-by `msstore submission updateMetadata`.
+arm64 in a bundle with x64; the community winget manifest; the folder context menu's COM server; retiring
+`install.ps1` once the Store path has carried a few releases; listing changes pushed by `msstore submission
+updateMetadata`.
 
 ## 6. Risks and what is done about them
 

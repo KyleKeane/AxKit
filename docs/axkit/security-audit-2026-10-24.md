@@ -200,9 +200,11 @@ Open:
   maintainer's second computer ("An Application Control policy has blocked this file"), since the program carries no
   Authenticode signature (the release key signs the zip for the apps, which Windows does not know). The installer stops
   cleanly since 3.7.5. The fix is an Authenticode signature on every release: the release workflow's sign job, built
-  2026-11-03 and moved to Microsoft's Azure Artifact Signing on 2026-11-06 (`docs/axkit/code-signing.md`), signs with
-  a certificate Microsoft issues in the maintainer's verified name, by an identity that can sign and do nothing else,
-  once the maintainer's identity validation is through; closes with the first signed release.
+  2026-11-03 and moved to Microsoft's Azure Artifact Signing on 2026-11-06 (`docs/axkit/code-signing.md`), was to sign
+  with a certificate Microsoft issues in the maintainer's verified name. Retired on 2026-11-09, unused: the signed
+  copy of axKit is the Microsoft Store's, which Microsoft signs after certification
+  (`docs/axkit/store-distribution.md` 4.4), and the GitHub release's program stays unsigned, its notes saying so.
+  Closes with the Store's copy live.
 - An outside review by a security professional (section 5).
 ## 3b. The review of 3.7.x (2026-10-25)
 

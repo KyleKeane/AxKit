@@ -22,12 +22,11 @@ copies are the releases on this repository's releases page. Contributions come u
 
 - **Authors** may commit changes to `main` without another review. Today only the maintainer.
 - **Reviewers** review every change from anyone else, a pull request, before it is merged. Today the maintainer.
-- **Approvers** approve every release before it is published; the Windows signing of its program happens in the
-  release workflow, in Microsoft's Azure Artifact Signing, by an identity that can sign and do nothing else
-  (`docs/axkit/code-signing.md`). Today the maintainer.
+- **Approvers** approve every release before it is published, and submit the Store's package, which Microsoft signs
+  after certification (`docs/axkit/store-setup.md`). Today the maintainer.
 
 A new role holder is added here, in a commit of its own, before they act in that role. Every role holder signs in to
-GitHub, and to the Azure account that owns the signing service, with two-factor authentication.
+GitHub, and to the Partner Center account that publishes the Store's copy, with two-factor authentication.
 
 ## How decisions are made
 
