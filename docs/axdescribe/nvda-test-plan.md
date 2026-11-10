@@ -13,7 +13,7 @@ in, `run-axdescribe.ps1` (or quit a running axDescribe first). The automated par
    and the menu bar. Down reads it line by line.
 2. Tab: "Ask more about this answer, edit"; type "is there a menu bar?", Enter: "Asking Claude", then a new "Claude
    says" about the same picture.
-3. Escape: "Ask about the picture, edit", the field empty; the status bar (NVDA+End) says "1 descriptions kept".
+3. Escape: "Ask about the picture, edit", the field empty; the status bar (NVDA+End) says "1 description kept".
 4. Escape: axDescribe hides and Notepad has the focus again.
 5. Windows+Alt+S on the desktop (Windows+D first): a description of the desktop and its icons.
 

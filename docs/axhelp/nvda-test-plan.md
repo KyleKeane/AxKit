@@ -24,7 +24,7 @@ and logged in, `run-axhelp.ps1` (or quit a running axHelp first, axHelp, Quit ax
 2. Tab: "Ask more about this answer, edit". Type "and in axjson?" and Enter: "Asking Claude", then a new "Claude
    says" answering about axJSON, in the same conversation.
 3. Tab to Copy, Enter: "Copied"; the answer is on the clipboard (Ctrl+V in Notepad later).
-4. Escape: the field, empty, has the focus. The status bar says "1 questions kept".
+4. Escape: the field, empty, has the focus. The status bar says "1 question kept".
 5. Enter with nothing typed on the kept question (Down first): "Claude says" with the first answer again; Escape.
 6. Type a question and press Enter, then Escape at once during "Asking Claude": "Cancelled"; the field has the focus.
 

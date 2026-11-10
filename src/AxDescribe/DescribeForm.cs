@@ -171,7 +171,7 @@ public sealed class DescribeForm : HotkeyForm
             _settings.Descriptions.Count == 0 ? DescribeLines.None : DescribeLines.NoMatch(SearchField.Text),
             $"Earlier descriptions, {_matches.Count}", 0);
         _stateLabel.Text = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled
-            ? $"{_settings.Descriptions.Count} descriptions kept"
+            ? $"{_settings.Descriptions.Count} {(_settings.Descriptions.Count == 1 ? "description" : "descriptions")} kept"
             : "AI help is off: axKit menu, AI help";
     }
 

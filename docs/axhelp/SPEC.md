@@ -51,7 +51,8 @@ given once (AH-1.2) before it answers anything.
 - HE-2.1 One field, "Ask Claude", with the caret always in it (axStart AS-D2), the list of earlier questions under
   it, which never takes the focus (HE-3), a menu bar and a status bar; the title is the app's title (AX-11.2), by
   which a second start finds it.
-- HE-2.2 The status bar: "N questions kept", or "AI help is off: axKit menu, AI help" while the switch is off.
+- HE-2.2 The status bar: "N questions kept" ("1 question kept"), or "AI help is off: axKit menu, AI help" while the
+  switch is off.
 - HE-2.3 **Enter** asks the typed question (AH-6.4: the notice "Asking Claude" with Cancel, then "Claude says",
   AH-3.1, with the field for more, AH-6.3); the question and the answer join the list (HE-3.1) and the field is
   emptied. With nothing typed, Enter shows the selected earlier question's answer again, with its session for more;

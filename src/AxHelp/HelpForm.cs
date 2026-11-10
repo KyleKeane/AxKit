@@ -130,7 +130,7 @@ public sealed class HelpForm : HotkeyForm
             _settings.Exchanges.Count == 0 ? HelpLines.None : HelpLines.NoMatch(SearchField.Text),
             $"Earlier questions, {_matches.Count}", 0);
         _stateLabel.Text = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled
-            ? $"{_settings.Exchanges.Count} questions kept"
+            ? $"{_settings.Exchanges.Count} {(_settings.Exchanges.Count == 1 ? "question" : "questions")} kept"
             : "AI help is off: axKit menu, AI help";
     }
 

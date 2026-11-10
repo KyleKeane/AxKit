@@ -143,3 +143,24 @@ letter), and a `long.md` with headings and lines longer than the window.
 7. Ctrl+Q: "Block quote, " and the first line; Ctrl+T: "Table with 3 rows and 2 columns" at the header line; nothing
    inside a fenced code block counts. Navigate, Next and Navigate, Previous list Link, List, List item, Block quote
    and Table with their keys.
+
+## 9. AI help: a question about this window (docs/axkit/ai-help.md AH-1, AH-6; 2026-11-09)
+
+The automated part is `tests/scripts/axdown/11-ask-claude.txt`, against a fake Claude; the steps marked "(real)" need
+Claude Code installed and logged in, and are the user's by ear.
+
+1. With AI help off (axKit menu, AI help, Let Claude help in the apps unchecked): Shift+F1 says "AI help is off: axKit
+   menu, AI help, Let Claude help in the apps" and opens nothing.
+2. Alt+A, H, L: the first time, the consent notice "Before Claude helps in the apps" is read, with the check box; Space
+   on the box says "checked"; Enter: "AI help on: Shift+F1 asks Claude about this window; axHelp and axDescribe answer
+   from anywhere".
+3. Shift+F1: the notice "Ask Claude about this window" is read, then "Your question about this window, edit". Type
+   "how do I turn word wrap off" and Enter: "Asking Claude" as a notice; then "Claude says" and the answer, the focus
+   on its text so that NVDA reads it from the top; Down reads it line by line (real: the answer names Ctrl+Shift+W).
+4. Tab: "Ask more about this answer, edit"; type "and back on?", Enter: "Asking Claude", then a new "Claude says" in
+   the same conversation (real). Tab twice: the Copy button; Enter: "Copied"; the notice stays. Escape: the editor has
+   the focus again, on the same line as before.
+5. Shift+F1, then Escape: nothing asked, the editor has the focus.
+6. Alt+A, H, F: "Folders Claude may read", "No folders yet…"; Tab to Add a folder, Enter: the folder picker; Escape it:
+   the notice comes back; Escape closes it.
+7. Alt+A, H, L: "AI help off".

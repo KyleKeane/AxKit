@@ -17,7 +17,7 @@ expect said ! The picture could not be taken
 expect focus Ask about the picture
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
 check commands
-expect state "status":["1 descriptions kept"
+expect state "status":["1 description kept"
 
 # 2.1 The kept description: Down says it with its time; Enter with nothing typed shows it again, the text first.
 keys down
