@@ -32,6 +32,7 @@ axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commerc
 - **axTerminal, access layer for your shell**: PowerShell, Command Prompt or Git Bash as a transcript in axClaude's kind of window.
 - **axPass, access layer for KeePassXC**: a KeePass password database, read and changed by ear: groups and entries in the same two panes, the password never spoken, copied with Ctrl+C and cleared from the clipboard after 30 seconds. It runs KeePassXC's own command-line tool, so KeePassXC must be installed.
 - **axMCP, access layer for MCP servers**: the MCP servers Claude Code knows on this computer, and your own, in one list; a server started by hand shows its tools, resources and prompts, a tool's arguments are fields you fill by ear, and the result reads as text. For trying a server before giving it to Claude Code, or running a tool without a turn of Claude's.
+- **axHelp, access layer for Claude Code**: a question from anywhere or about this window, answered by Claude.
 
 The apps reach each other: axFile hands a file to axMedia or axPreview, every window can show its folder in the others, and the axKit menu in every window lists the open windows and starts any app.
 

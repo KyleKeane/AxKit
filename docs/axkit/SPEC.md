@@ -106,12 +106,13 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   Enter pastes into the program that was in front. Specification `docs/axclip/SPEC.md`, guide
   `docs/axclip/user-guide.md`, test plan `docs/axclip/nvda-test-plan.md`.
 - **axMCP** (asked and built 2026-11-09; an access layer, AX-11, for MCP servers): `AxKit.exe mcpclient [<folder>]`, Start entry `axKit axMCP`, command `axmcp`: the MCP servers Claude Code knows on this computer and the user's own, in the item apps' window (`item-apps.md`); a server started by hand as a child process on its standard input and output shows its tools, resources and prompts, a tool's arguments are the detail pane's fields, Ctrl+Enter calls it and the result is a notice text; remote servers are listed and not started (its MP-D2). Specification `docs/axmcp/SPEC.md`, guide `docs/axmcp/user-guide.md`, test plan `docs/axmcp/nvda-test-plan.md`.
+- **axHelp, access layer for Claude Code** (2026-11-09, draft from tools/new-app.ps1): `AxKit.exe help `, Start entry `axKit axHelp`, command `axhelp`: a question from anywhere or about this window, answered by Claude. Specification `docs/axhelp/SPEC.md`, guide `docs/axhelp/user-guide.md`, test plan `docs/axhelp/nvda-test-plan.md`.
 
 ## 4. Functional requirements
 
 ### AX-1 Launch and dispatch
 
-- AX-1.1 The first argument may be a verb naming an app: `claude`, `down`, `json`, `git`, `terminal`, `file`, `media`, `preview`, `start`, `process`, `task`, `pass`, `calc`, `clip`, `mcpclient` (the one list is `Dispatch.Apps`). The rest of the arguments go to that app
+- AX-1.1 The first argument may be a verb naming an app: `claude`, `down`, `json`, `git`, `terminal`, `file`, `media`, `preview`, `start`, `process`, `task`, `pass`, `calc`, `clip`, `mcpclient`, `help` (the one list is `Dispatch.Apps`). The rest of the arguments go to that app
   unchanged, so `AxKit.exe claude C:\src --record x.vt` is what `AxClaude.exe C:\src --record x.vt` was.
 - AX-1.2 Without a verb, a first argument that is an existing folder goes to axClaude and an existing file to axDown,
   or to axJSON when its extension is `.json`, to axPass when it is `.kdbx`, or to axMedia when it is a sound or video
@@ -128,7 +129,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   installation keeps that listing as `apps.json`, which an uninstall reads when the program cannot be run.
 - AX-1.5 The dispatch is pure code in `AxKit.Core` (`Dispatch`): arguments in, app name and arguments out. It is unit
   tested and has no knowledge of the apps beyond their names.
-- AX-1.6 Each process sets a Windows application id before its window opens (`AxKit.AxClaude`, `AxKit.AxDown`, `AxKit.AxJSON`, `AxKit.AxGit`, `AxKit.AxTerminal`, `AxKit.AxFile`, `AxKit.AxMedia`, `AxKit.AxPreview`, `AxKit.AxStart`, `AxKit.AxProcess`, `AxKit.AxTask`, `AxKit.AxPass`, `AxKit.AxCalc`, `AxKit.AxClip`, `AxKit.AxMCP`), so the
+- AX-1.6 Each process sets a Windows application id before its window opens (`AxKit.AxClaude`, `AxKit.AxDown`, `AxKit.AxJSON`, `AxKit.AxGit`, `AxKit.AxTerminal`, `AxKit.AxFile`, `AxKit.AxMedia`, `AxKit.AxPreview`, `AxKit.AxStart`, `AxKit.AxProcess`, `AxKit.AxTask`, `AxKit.AxPass`, `AxKit.AxCalc`, `AxKit.AxClip`, `AxKit.AxMCP`, `AxKit.AxHelp`), so the
   taskbar shows the apps apart and Win+number keys reach the right one.
 - AX-1.7 An app is a class library with one entry point, `static void Run(string[] args)` on a class named
   `<App>App`, plus a `Usage` text. `AxKit`'s `Program` only dispatches; the entry point is one call into

@@ -1,0 +1,12 @@
+# axHelp: the window at start, F1 and its commands (docs/axhelp/nvda-test-plan.md section 1), run by
+# tools/AxAutomate on a desktop of its own (docs/axkit/automation.md).
+file home\AxKit\axhelp.json {"checkForUpdates": false}
+
+start help
+check commands
+expect focus Help
+expect state "title":"Help - axHelp"
+keys f1
+expect state Keyboard shortcuts
+keys escape
+expect focus Help

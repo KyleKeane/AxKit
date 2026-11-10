@@ -22,6 +22,7 @@ body:
         - axCalc
         - axClip
         - axMCP
+        - axHelp
         - The bundle, or a new app
     validations:
       required: true

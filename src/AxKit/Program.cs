@@ -15,6 +15,7 @@ using AxStart;
 using AxTask;
 using AxTerminal;
 using AxMCP;
+using AxHelp;
 
 namespace axKit;
 
@@ -107,6 +108,7 @@ internal static class Program
         [Dispatch.AxCalc] = AxCalcApp.Run,
         [Dispatch.AxClip] = AxClipApp.Run,
         [Dispatch.AxMCP] = AxMCPApp.Run,
+        [Dispatch.AxHelp] = AxHelpApp.Run,
     };
 
     /// <summary>

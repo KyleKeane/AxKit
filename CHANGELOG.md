@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- axHelp: a new app, a question from anywhere or about this window, answered by Claude.
+
 ## 5.5.0
 
 - axClaude, axTerminal: while NVDA reads the conversation or the terminal continuously (Say all), the output waits, and comes four seconds after the reading stops; before, a line arriving mid-sentence changed the text under NVDA and cut the reading off. A key press ends the wait at once, as it always did.
