@@ -1,30 +1,30 @@
-# axDescribe: the window, a kept description reopened, a question about its picture, the list, a picture that cannot
-# be taken (docs/axdescribe/nvda-test-plan.md sections 2 and 3), run by tools/AxAutomate on a desktop of its own
-# (docs/axkit/automation.md). The screen of that desktop cannot be copied (CopyFromScreen has no screen there, "The
-# handle is invalid"), so the start says that the picture could not be taken and asks nothing: the describing of a
-# real window is the NVDA plan's, by ear. One description is kept beforehand, so that the list, the reopening and the
-# follow-up run against the fake Claude, a cmd script in the run's own settings folder named by ai-help.json's relative
-# claudePath; it swallows the prompt and prints one canned JSON answer, so the run never reaches Anthropic. The hotkey
-# is one nobody uses.
+# axDescribe: a start, a kept description reopened, a question about its picture, the list (docs/axdescribe/nvda-test-plan.md
+# sections 2 and 3), run by tools/AxAutomate on a desktop of its own (docs/axkit/automation.md) and by nvda-pass.ps1 on
+# the user's. The two desktops differ at the start: the hidden one has no screen to copy (CopyFromScreen says "The
+# handle is invalid"), so the window says that the picture could not be taken and asks nothing; the user's has one, so
+# the picture is taken and the fake describes it at once. The script takes either path and meets in the notice "Claude
+# says". One description is kept beforehand, so that the reopening, the follow-up and the list run on both desktops.
+# Claude is a fake in cmd in the run's own settings folder, named by ai-help.json's relative claudePath; it swallows the
+# prompt and prints one canned JSON answer, so the run never reaches Anthropic. The hotkey is one nobody uses.
 file home\AxKit\axdescribe.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F10", "sayFirstMatch": false, "descriptions": [{"title": "Untitled - Notepad", "program": "notepad", "answer": "An empty Notepad window with a menu bar.", "sessionId": "kept-1", "when": "2026-11-09T14:02:00"}]}
 file home\AxKit\ai-help.json {"enabled": true, "folders": [], "claudePath": "fake-claude.cmd"}
 file home\AxKit\consent.json {"items":[{"app":"AI help","target":"Claude Code","version":"0","when":"2026-11-09T00:00:00"}]}
 file home\AxKit\fake-claude.cmd @echo off\nmore > nul\necho {"type":"result","subtype":"success","is_error":false,"result":"The fake answer about the picture: nothing is selected.","session_id":"fake-2"}\n
 
-# 3.1 A start on this desktop: the picture cannot be taken, said once; the window shows with its field.
 start describe
-expect said ! The picture could not be taken
-expect focus Ask about the picture
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
-check commands
-expect state "status":["1 description kept"
-
-# 2.1 The kept description: Down says it with its time; Enter with nothing typed shows it again, the text first.
-keys down
-expect said ! 14:02 Untitled - Notepad, 1 of 1
-keys enter
+# The hidden desktop (DE-7): said once, the field has the focus; the kept description is the one, Down says it with its
+# time, Enter with nothing typed shows it again, the text first (2.1).
+try said ! The picture could not be taken
+iffound expect focus Ask about the picture
+iffound expect state "status":["1 description kept"
+iffound keys down
+iffound expect said ! 14:02 Untitled - Notepad, 1 of 1
+iffound keys enter
+iffound expect state An empty Notepad window with a menu bar.
+# The user's desktop (DE-2.1): the picture taken and described by the fake, the notice open at once.
+try state Claude says
 expect state Claude says
-expect state An empty Notepad window with a menu bar.
+
 # 2.2 Tab reaches the field for more; Enter asks in the same session and the fake answers.
 keys tab
 expect focus Ask more about this answer
@@ -34,15 +34,17 @@ expect state Claude says
 expect state The fake answer about the picture
 keys escape
 expect focus "name":"Ask about the picture","role":"Text","value":""
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axkit/app-kit.md AK-2.4).
+check commands
 
-# 2.3 A question typed in the field asks about the selected description's picture.
+# 2.3 A question typed in the field asks about the selected description's picture, the newest when the words match none.
 type what colour is the background
 keys enter
 expect state Claude says
 keys escape
 expect focus "name":"Ask about the picture","role":"Text","value":""
 
-# 2.4 A text nothing matches: the match keys say so, with the edge; typing part of the title finds it.
+# 2.4 A text nothing matches: the match keys say so, with the edge; part of the kept title finds it.
 type zzqq
 keys down
 expect said ♪ Edge
@@ -52,8 +54,8 @@ type notepad
 keys down
 expect said ! 14:02 Untitled - Notepad, 1 of 1
 
-# Ctrl+O (the picture in axPreview) and the describing of a real window start outside this desktop: the NVDA plan's.
+# Ctrl+O (the picture in axPreview) starts a program outside the window: not run here, it stays for the NVDA plan.
 
-# Quit axDescribe, the one close that ends the process.
+# Quit axDescribe, the one close that ends the process; the picture goes with it.
 menu Quit axDescribe
 expect closed
