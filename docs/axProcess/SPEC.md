@@ -4,7 +4,7 @@ axProcess is an app of the axKit bundle (`docs/axKit/SPEC.md`): what runs on the
 developer who uses the NVDA screen reader. Built 2026-10-23 on the branch `axProcess` (the long run of that day,
 `docs/axKit/plan.md`), not yet heard under NVDA. The document is kept in step with the code (a behaviour change updates
 it in the same commit). Requirements are numbered `PR-n.m` and decisions `PR-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), are cited by number and not repeated. In axProcess's code and
+(accessibility), AX-8 (keys) and AX-9 (the Window, axKit and Help menus), are cited by number and not repeated. In axProcess's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -30,7 +30,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
 
 ## 3. Scenarios
 
-1. Start axProcess (Start menu, `axProcess`, the Window, Claude and Help menus): "This computer - axProcess window", then "Processes, 214
+1. Start axProcess (Start menu, `axProcess`, the Window, axKit and Help menus): "This computer - axProcess window", then "Processes, 214
    list, chrome, 1.2 GB, 3% CPU, process 9120, 1 of 214": the list sorted by memory, the largest first.
 2. Down to a program that hangs, Delete: the notice "End notepad (process 4410)? Anything unsaved in it is lost." with
    End process and Cancel; Enter: "Ended notepad"; the list is read again.
@@ -122,7 +122,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
   of the view shown is enabled, the other two not, so that a process command is never at hand among the services and
   the reverse (the user's ask, 2026-10-24): the bar's arrows pass over a disabled menu and the command palette leaves
   its items out. **View (V):** Processes Ctrl+1 | Services Ctrl+2 | Startup Ctrl+3 | ─ | Sort processes by ▸
-  (Memory ✓ | Processor | Name). **Options (O):** Text ▸ | General ▸ | Developer ▸. **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):**
+  (Memory ✓ | Processor | Name). **Options (O):** Text ▸ | General ▸ | Developer ▸. **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Task Manager | Services). Every item has a mnemonic
   (AX-7.4). Shift+F10, the Applications key and a right click in the list open the view's menu from the bar, as Alt and its letter open it, so that NVDA reads its first item (the window base's `OpenBarMenu`,
   axFile's AF-D13; 2026-10-24).

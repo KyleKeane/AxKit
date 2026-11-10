@@ -12,8 +12,8 @@ public static class BundleHelp
     /// <summary>The heading of the bundle's section in most windows.</summary>
     public const string InEveryWindow = "In every window of axKit";
 
-    /// <summary>The bundle's menus in one line, the same in every F1 text (AX-9.1: Window, Claude, Help; <c>KeyTests</c> checks it whole).</summary>
-    public const string BundleMenusLine = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the Claude menu: Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder, the AI tools. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About";
+    /// <summary>The bundle's menus in one line, the same in every F1 text (AX-9.1: Window, axKit, Help; <c>KeyTests</c> checks it whole).</summary>
+    public const string BundleMenusLine = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About";
 
     /// <summary>
     /// The first line and the bundle's section, ending in a blank line so that the app's own sections follow. In the

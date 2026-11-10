@@ -13,7 +13,7 @@ AI help is Claude Code, the program the user already has, asked one question at 
 window gathers what the user points at (a selection, the document, the folder in hand, a screenshot), the service
 runs Claude Code in its print mode as a child process with read-only tools over the folders the user allowed, and the
 answer comes back as a notice text the user reads with the bundle's keys, copies, or lets the window apply as one
-undoable change. Off by default; one switch in the Claude menu turns it on for every window; off, the first ask opens the reminder
+undoable change. Off by default; one switch in the axKit menu, Claude, turns it on for every window; off, the first ask opens the reminder
 and does nothing. No API key, no network code of axKit's own, no database: Claude Code reads the files itself.
 
 ## 2. Goals and non-goals
@@ -46,7 +46,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   answer names the file, found in the folders Claude may read; Down later brings the question back with its answer.
 - From anywhere, axDescribe's hotkey (Windows+Alt+S): a picture of the window in front goes to Claude; the
   description comes as a notice text; "is anything selected?" under it asks about the same picture.
-- AI help off: AI, Improve the selection says "AI help is off: Claude menu, Use Claude in axKit".
+- AI help off: AI, Improve the selection says "AI help is off: axKit menu, Claude, Use Claude in axKit".
 - Offline: "Claude Code could not reach Anthropic: …" as a notice, the document untouched.
 
 ## 4. Requirements
@@ -83,7 +83,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   the file's `claudePath`): `claude -p --output-format json --allowedTools Read,Glob,Grep [--add-dir <folder>]…
   [--model <model>] [--resume <session>]`, started without a window in **Claude's working folder** (AH-D6, 5.6.0:
   `Documents\axKit Claude` unless the file's `workingFolder` names another, made when first needed,
-  `AiSettings.EnsureWorkingFolder`; Claude menu, Claude's working folder, and axHelp's first menu, open it in
+  `AiSettings.EnsureWorkingFolder`; axKit menu, Claude, Claude's working folder, and axHelp's first menu, open it in
   axFile; a CLAUDE.md the user writes there is Claude's standing instructions, and Claude Code's own memory, settings
   and sessions for the service live there; until 5.6.0 Claude Code started in the first allowed folder, or the user's
   profile, so nothing of its own had a home), every allowed folder as `--add-dir`, its standard output read to the
@@ -143,7 +143,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 ### AH-6 A question about this window (Shift+F1)
 
 - AH-6.1 **Shift+F1** in every window (`BundleKeys.AskClaude`, AX-8.2; Windows' own key for help about the thing in
-  front), and Claude menu → Ask about this window…: a notice with one field, "Your question about this
+  front), and axKit menu → Claude → Ask about this window…: a notice with one field, "Your question about this
   window", whose text says what Claude gets; Enter asks, Escape asks nothing. Off, missing and consent as AH-1 (off:
   the reminder first, then the field, AH-1.3).
 - AH-6.2 **What the window sends** (`WindowContext`): the app's title (AX-11.2), the window's title, the focused
@@ -162,7 +162,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 
 - `AxKit.Core/Ai/AiSettings` (AH-1.1), `AiRequest` (the command line and the process, AH-2), `AiAnswer` (the JSON
   read, with the session), `AiPrompts` with `WindowContext` (AH-4, AH-6.2).
-- `AxKit.Forms/AxKitForm.Ai.cs`: `CreateClaudeMenu` (the Claude menu, AX-9.1, with the AI tools in it), `TurnOnAi` (AH-1.3), `AskAboutThisWindow` (Shift+F1,
+- `AxKit.Forms/AxKitForm.Ai.cs`: `CreateClaudeMenu` (axKit, Claude, AX-9.1, beside the AI tools), `TurnOnAi` (AH-1.3), `AskAboutThisWindow` (Shift+F1,
   AH-6), `AskClaude(prompt, extraFolders, resume, then)` with the switch, the program and the consent checks and the
   waiting notice, `ShowAnswer(answer, extraFolders, closed)` with the follow-up field (AH-3.1, AH-6.3), the folders
   notice (AH-2.3); `ConsentTarget.AiHelp` and `HasConsent`'s app name for the one agreement (AH-1.2); `Notice.FocusText`

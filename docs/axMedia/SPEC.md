@@ -6,7 +6,7 @@ that axFile had carried since 2026-10-19 (`docs/axFile/SPEC.md` AF-5) moved here
 operations and management only and playing, like viewing, is another app's with a tight hand-over (AM-D1). The
 document is kept in step with the code (a behaviour change updates it in the same commit).
 Requirements are numbered `AM-n.m` and decisions `AM-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and
-AX-9 (the Window, Claude and Help menus), are cited by number and not repeated. In axMedia's code and documents, "SPEC.md" means this
+AX-9 (the Window, axKit and Help menus), are cited by number and not repeated. In axMedia's code and documents, "SPEC.md" means this
 file. The inventory of the split of axFile, what leaves it, what is shared and what is new, with the order of the
 commits, is `docs/axKit/axfile-split.md`; axPreview (`docs/axPreview/SPEC.md`) is the other half of it.
 
@@ -159,7 +159,7 @@ top of the window. It works entirely offline (bundle G6).
   Explorer Ctrl+W | axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Play (P):** Pause or resume Space | Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
   Forward 15 seconds Ctrl+Right | Back 15 seconds Ctrl+Left | Go to time… Ctrl+T | ─ | Faster Ctrl+Shift+Period |
   Slower Ctrl+Shift+Comma | Normal speed | ─ | Say each file as it starts ✓ | What is playing Ctrl+Q. **Options (O):**
-  Text ▸ | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
+  Text ▸ | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
   page on Media Foundation; Free codecs in the Microsoft Store, a Store search for media extensions; each in the
   browser). Every item has a mnemonic (AX-7.4).
 - AM-5.2 Keys (AX-8). Bundle-wide: F1, the control keys (one control, so they stay in the list), Ctrl+F, F3, Shift+F3,

@@ -115,7 +115,7 @@ internal sealed partial class TerminalForm
             ("&Bash manual", "https://www.gnu.org/software/bash/manual/"),
         ]);
 
-        MenuBar.Items.AddRange([session, shell, navigate, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
+        MenuBar.Items.AddRange([session, shell, navigate, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
     }
 
     /// <summary>Options → Speech → Speak output: a mode (AT-5.3): speech starts with what arrives next.</summary>

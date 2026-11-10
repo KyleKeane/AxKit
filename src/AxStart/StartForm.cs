@@ -49,8 +49,8 @@ public sealed class StartForm : HotkeyForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Windows &resources",
             [("&Keyboard shortcuts in Windows", "https://support.microsoft.com/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec")]);
 
-        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
-        _menu.Items.AddRange([start, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
+        _menu.Items.AddRange([start, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         // ---- the field and the matches (AS-3.1, AS-D2): HotkeyForm's, named here ----

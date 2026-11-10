@@ -34,7 +34,7 @@ internal sealed partial class MainForm
         session.DropDownItems.Add(CreateExitItem());
 
         // What goes to Claude itself (FR-11); the raw sequences are fixed here and listed in Appendix B.
-        // "Claude Code" since 5.7.0: the bundle's Claude menu (AI help, AX-9.1) stands in the same bar; this one is the program.
+        // "Claude Code" since 5.7.0: the bundle's axKit menu holds a Claude submenu (AI help, AX-9.1); this menu is the program.
         var claude = new ToolStripMenuItem("Claude &Code");
         // The process first (FR-1.8), then the turn.
         Add(claude, new Command("Force Claude to res&tart", AxClaudeKeys.RestartClaude, RestartClaude) { Mark = CommandMark.Act });
@@ -125,10 +125,10 @@ internal sealed partial class MainForm
             ("&Install or update Claude Code", ClaudeLauncher.InstallUrl),
         ]);
 
-        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window; Help ends with the update
+        // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window; Help ends with the update
         // items and About (AX-3.1, FR-1.10): Check for updates names the version in use and asks GitHub every time; Update
         // to axKit n stands below it while a newer release is known; About is the bundle's sections, as this window's notices.
-        MenuBar.Items.AddRange([session, claude, navigate, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
+        MenuBar.Items.AddRange([session, claude, navigate, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
     }
 
     /// <summary>Options → Speech → Speak replies: a mode (FR-7.4): speech starts with what arrives next.</summary>

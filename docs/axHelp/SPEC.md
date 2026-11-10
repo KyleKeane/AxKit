@@ -117,7 +117,7 @@ agreement (AX-11.4) asked the first time.
 
 axHel&p (P, since H is Help): Open the conversation (Enter), Put a picture file into the conversation… (Ctrl+D), Open
 the last screenshot in axPreview (Ctrl+O), Claude's working folder, Hide (Escape), Quit axHelp. Options: Hotkey…,
-Conversation model ▸, Text ▸, General ▸ (Start with Windows), Developer ▸. Then the bundle's Window, Claude and Help
+Conversation model ▸, Text ▸, General ▸ (Start with Windows), Developer ▸. Then the bundle's Window, axKit and Help
 (AX-9.1). Bundle-wide keys (AX-8.2): F1, Ctrl+Shift+P, F4, Shift+F1, the text size keys, Alt and Alt+F4. The F1 text
 names them all (`HelpText.Shortcuts`).
 

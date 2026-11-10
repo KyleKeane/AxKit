@@ -90,7 +90,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
    as in the editor, "No next table" when there is none; axKit, About, Version names the version of axKit, the nine apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
-4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows; Alt+A: the Claude menu;
+4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows; Alt+A: the axKit menu with Claude, AI tools and Theme;
    Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds
@@ -149,7 +149,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 The automated part is `tests/scripts/axDown/11-ask-claude.txt`, against a fake Claude; the steps marked "(real)" need
 Claude Code installed and logged in, and are the user's by ear.
 
-1. With Claude off (Claude menu, Use Claude in axKit unchecked) and no agreement recorded (delete `consent.json`
+1. With Claude off (axKit menu, Claude, Use Claude in axKit unchecked) and no agreement recorded (delete `consent.json`
    first, or read the step with the agreement remembered: Shift+F1 says "Claude on" and opens the question field):
    Shift+F1 opens the reminder "Before Claude helps in axKit" at once, read with its check box; Escape: "Claude stays
    off", the editor has the focus.
@@ -162,7 +162,7 @@ Claude Code installed and logged in, and are the user's by ear.
    the same conversation (real). Tab twice: the Copy button; Enter: "Copied"; the notice stays. Escape: the editor has
    the focus again, on the same line as before.
 5. Shift+F1, then Escape: nothing asked, the editor has the focus.
-6. Alt+A, F: "Folders Claude may read", "No folders yet…", the text naming Claude's working folder; Tab to Add a
-   folder, Enter: the folder picker; Escape it: the notice comes back; Escape closes it. Alt+A, W: axFile opens on
+6. Alt+A, C, F: "Folders Claude may read", "No folders yet…", the text naming Claude's working folder; Tab to Add a
+   folder, Enter: the folder picker; Escape it: the notice comes back; Escape closes it. Alt+A, C, W: axFile opens on
    `Documents\axKit Claude`; Alt+F4.
-7. Alt+A, U: "Claude off"; Alt+A, U: "Claude on" (the agreement is remembered); Alt+A, U: "Claude off".
+7. Alt+A, C, U: "Claude off"; Alt+A, C, U: "Claude on" (the agreement is remembered); Alt+A, C, U: "Claude off".

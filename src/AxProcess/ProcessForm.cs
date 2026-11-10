@@ -103,8 +103,8 @@ public sealed class ProcessForm : AxKitForm
             ("&Services", "https://learn.microsoft.com/en-us/windows/win32/services/services"),
         ]);
 
-        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
-        _menu.Items.AddRange([computer, _processMenu, _serviceMenu, _startupMenu, view, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
+        _menu.Items.AddRange([computer, _processMenu, _serviceMenu, _startupMenu, view, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
         UpdateViewMenus();
 
         // The keys without a menu item: find in the list, and Tab, Shift+Tab and the menu keys in the list (returning

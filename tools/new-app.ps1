@@ -290,8 +290,8 @@ public sealed class {{Short}}Form : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "{{Name}} &resources",
             [("&Adding an app to axKit", "https://github.com/KyleKeane/AxKit/blob/main/docs/axKit/adding-an-app.md")]);
 
-        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
-        _menu.Items.AddRange([first, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
+        _menu.Items.AddRange([first, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         AddKey(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(_list, () => _lines)) { Mark = CommandMark.Read });

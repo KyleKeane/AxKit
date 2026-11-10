@@ -5,7 +5,7 @@ using AxKit.Core.Ai;
 namespace AxKit.Forms;
 
 /// <summary>
-/// AI help on this window (docs/axKit/ai-help.md AH-1, AH-3, AH-6; 2026-11-09): the Claude menu
+/// AI help on this window (docs/axKit/ai-help.md AH-1, AH-3, AH-6; 2026-11-09): the axKit menu's Claude
 /// with the one switch, Ask about this window, the folders Claude may read, Claude's working folder and the AI tools;
 /// Shift+F1, a question about this window with what the window knows about itself; the question run as Claude Code
 /// in print mode (<see cref="AiRequest"/>) behind a waiting notice; and the answer as a notice text with a field
@@ -22,15 +22,13 @@ public abstract partial class AxKitForm
     private CancellationTokenSource? _asking;
 
     /// <summary>
-    /// The Claude menu (AH-1.1; AX-9.1, 5.7.0: a menu of the bar in every window, a submenu of the axKit menu in
-    /// 5.6.0), in groups: the switch, read as the menu opens since another window may have changed it; the question,
-    /// Ask about this window; what Claude may read, the folders and Claude's working folder; and what Claude Code may
-    /// reach of axKit, the AI tools (docs/axKit/mcp.md MC-6.1). The mnemonic is A: C is an app's own menu in five
-    /// windows (axCalc, axClaude, axClip, axGIT, axProcess), and A was the axKit menu's.
+    /// axKit, Claude ▸ (AH-1.1; AX-9.1: a submenu of the axKit menu, beside the AI tools), in groups: the switch, read
+    /// as the menu opens since another window may have changed it; the question, Ask about this window; what Claude may
+    /// read, the folders and Claude's working folder.
     /// </summary>
-    protected ToolStripMenuItem CreateClaudeMenu()
+    internal ToolStripMenuItem CreateClaudeMenu()
     {
-        var menu = new ToolStripMenuItem("Cl&aude");
+        var menu = new ToolStripMenuItem("&Claude");
         var on = new ToolStripMenuItem("&Use Claude in axKit", null, (_, _) => ToggleAiHelp());
         menu.DropDownItems.Add(on);
         menu.DropDownItems.Add(new ToolStripSeparator());
@@ -38,8 +36,6 @@ public abstract partial class AxKitForm
         menu.DropDownItems.Add(new ToolStripSeparator());
         menu.DropDownItems.Add(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders()));
         menu.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
-        menu.DropDownItems.Add(new ToolStripSeparator());
-        menu.DropDownItems.Add(CreateMcpMenu());
         CommandPalette.RefreshedOnOpening(menu, () => on.Checked = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled);
         return menu;
     }

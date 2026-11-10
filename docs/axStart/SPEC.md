@@ -5,7 +5,7 @@ NVDA screen reader. Specified and built 2026-10-22 at the user's ask, released i
 9): "the windows launcher has become very
 bloated and i want a quick global key i hit to then search for a program to launch". The document is kept in step with
 the code (a behaviour change updates it in the same commit). Requirements are numbered `AS-n.m` and
-decisions `AS-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), are cited by
+decisions `AS-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and AX-9 (the Window, axKit and Help menus), are cited by
 number and not repeated. In axStart's code and documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -154,7 +154,7 @@ taskbar. It works entirely offline (bundle G6).
 - AS-5.2 Menus (AX-6): **axStart (S):** Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
   Ctrl+O | Information Ctrl+I | ─ | Refresh programs F5 | ─ | Hide Escape | Quit axStart. **Options (O):** Hotkey… | Text ▸ (Font… |
   Larger text | Smaller text | Windows text size) | General ▸ (Start with Windows ✓ | Say the first match while typing
-  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** and **Claude (A)** (AX-9.1).
+  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1).
   **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
   item has a mnemonic (AX-7.4).
 - AS-5.3 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+Plus, Ctrl+Minus, Ctrl+S ("Nothing to save here", the

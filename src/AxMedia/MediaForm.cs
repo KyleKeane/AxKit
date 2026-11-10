@@ -106,8 +106,8 @@ public sealed partial class MediaForm : AxKitForm
             ("Free &codecs in the Microsoft Store", "https://apps.microsoft.com/search?query=media+extensions"),
         ]);
 
-        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
-        _menu.Items.AddRange([queue, play, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
+        _menu.Items.AddRange([queue, play, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
 
         // ---- the list (AM-2.1): the one control; its own keys stay native ----
         _list.IntegralHeight = false;

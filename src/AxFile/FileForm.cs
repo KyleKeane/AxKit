@@ -156,8 +156,8 @@ public sealed partial class FileForm : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "File &resources",
             [("&Keyboard shortcuts in Windows", "https://support.microsoft.com/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec")]);
 
-        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
-        _menu.Items.AddRange([folder, item, select, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
+        _menu.Items.AddRange([folder, item, select, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
 
         // ---- the list (AF-2.1, AF-2.2): the main control; its own keys stay native (AF-3.6) ----
         _list.IntegralHeight = false;

@@ -77,7 +77,7 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   network it reaches, with your rights, under its maker's terms. Remote servers (http, sse) are listed and not
   started; axMCP itself makes no network request.
 - **AI help** (`docs/axKit/ai-help.md`; off until your first question, when a reminder asks you to turn it on; the
-  switch is the Claude menu, Use Claude in axKit) runs `claude -p`,
+  switch is the axKit menu, Claude, Use Claude in axKit) runs `claude -p`,
   Claude Code in its print mode, as a child process with read-only tools, once per question, in a working folder of its
   own (`Documents\axKit Claude` unless `ai-help.json` names another; Claude Code keeps its own notes and sessions for
   the service there and reads a `CLAUDE.md` you write there), and reads its answer from its standard output. What goes
@@ -106,7 +106,7 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
 
 ## The AI tools (off unless you turn them on)
 
-Claude menu, AI tools, Let AI tools read and open axKit. When it is on, an AI tool on your computer that you pair, such as
+axKit menu, AI tools, Let AI tools read and open axKit. When it is on, an AI tool on your computer that you pair, such as
 Claude Code, can read what axKit's windows show and open apps (`docs/axKit/mcp.md`). This happens through named pipes
 for your Windows account alone, never over the network; what the tool then does with what it read is under its own
 terms (Claude Code: Anthropic's). axPass and axClip are never read. Every call is written to `mcp-audit.log` on your

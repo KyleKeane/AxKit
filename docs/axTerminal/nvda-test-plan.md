@@ -36,7 +36,7 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 - Session, Open recent folder: the folders as "1. name (path)"; Enter on one: a new session there.
 - `exit`, Enter: "The shell ended"; the system line; Enter in the field: "The shell ended. Ctrl+Shift+R starts it again"; Ctrl+Shift+R: "Ready".
 
-## 4. Text, notices, the Window, Claude and Help menus (AT-4, AT-6)
+## 4. Text, notices, the Window, axKit and Help menus (AT-4, AT-6)
 
 - `cls`, Enter: "Done"; the lines before stay; `echo after`, Enter: "after" at the end. Ctrl+L: "Cleared"; the terminal is empty; the next command's lines come as the first.
 - m on a line: "Bookmark 1 added"; k from the top: "Bookmark 1, …". Ctrl+F, text, Enter: the line; F3: the next; "Not found" otherwise.

@@ -5,7 +5,7 @@ uses the NVDA screen reader. Specified 2026-10-18 and built as a first draft 202
 had carried became axMedia and the preview pane axPreview, so that axFile is file operations and management only
 (section 8; `docs/axKit/axfile-split.md`). The document is kept in step with the code (a behaviour change updates it in
 the same commit). Requirements are numbered `AF-n.m` and decisions `AF-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), are cited by number and not repeated. In axFile's code and
+(accessibility), AX-8 (keys) and AX-9 (the Window, axKit and Help menus), are cited by number and not repeated. In axFile's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -441,7 +441,7 @@ and the started process finds its open window and hands the paths over with the 
   Compress to zip | Add to axMedia's queue Ctrl+Shift+Q | Copy path Ctrl+Shift+C (AF-3.7; the operations on the marks
   alone). **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) |
   General ▸ (Check for updates at start ✓ | Show hidden files and folders | Show files and folders starting with a
-  period) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):** Keyboard
+  period) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):** Keyboard
   shortcuts F1 | User guide | ─ | File resources ▸ (Keyboard shortcuts in Windows, the Microsoft page, in the
   browser). Every item has a mnemonic (AX-7.4).
 - AF-6.2 Keys (AX-8). Bundle-wide: F1, the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between

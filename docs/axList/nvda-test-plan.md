@@ -55,7 +55,7 @@ its section 10.
 4. Ctrl+E on a list: axFile opens on its file.
 5. Options, Lists folder: the Windows folder picker; choose another folder: "Folder <name>. Lists, …".
 
-## 4. Text, notices, the Window, Claude and Help menus (LI-6)
+## 4. Text, notices, the Window, axKit and Help menus (LI-6)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape.

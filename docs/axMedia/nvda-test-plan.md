@@ -38,9 +38,9 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 8. Enter on a file Windows cannot decode (an `.opus` without the Store codec): "Cannot play <name>: …" and the next plays. Ctrl+O and pick the `.txt` (All files): "Added 1"; Enter on it: "Cannot play <name>: …", the next plays.
 9. Alt+Tab to another program while a file plays, let it end: "Playing <next>" from the background, or silence with the setting off; the sound carries on. Ctrl+W: File Explorer with the playing file selected. Queue, Show current file in, axFile: axFile on the folder with the file selected. Alt+F4 on axMedia: the sound stops.
 
-## 4. Text, notices, the Window, Claude and Help menus (AM-5)
+## 4. Text, notices, the Window, axKit and Help menus (AM-5)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
-3. Alt+W: the Window menu with New window (axMedia among the apps), Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows; Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+A: the Claude menu.
+3. Alt+W: the Window menu with New window (axMedia among the apps), Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows; Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
 4. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the queue, the player's state and the log's end.

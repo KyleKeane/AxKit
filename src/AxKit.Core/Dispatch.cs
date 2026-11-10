@@ -289,7 +289,7 @@ public static class Dispatch
           AxKit <folder>               the same as AxKit claude <folder>
           AxKit <file>                 the same as AxKit down <file>, AxKit json <file> for a .json file, AxKit pass <file> for a .kdbx file, or AxKit media <file> for a sound or video file
           AxKit                        axClaude on the current folder
-          AxKit mcp                    the AI tools' server, for an MCP client to start (Claude menu, AI tools)
+          AxKit mcp                    the AI tools' server, for an MCP client to start (axKit menu, AI tools)
           AxKit apps                   the apps as JSON on standard output, for the installer and other scripts
           --help, --version           this text, or the version
 

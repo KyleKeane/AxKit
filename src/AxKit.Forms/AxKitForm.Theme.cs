@@ -6,7 +6,7 @@ namespace AxKit.Forms;
 /// The theme on this window (docs/axKit/theme.md TH-3, TH-4): the file read as the window is made (so that a window's
 /// constructor can take a display setting from it, TH-6) and again when it has changed by the time the window is
 /// activated, painted by <see cref="ThemePainter"/> over the whole window, over a notice as it opens and over a control
-/// area as it fills; and the three items of Options, Text, Theme. Without a theme file every window is painted with the
+/// area as it fills; and the three items of axKit menu, Theme. Without a theme file every window is painted with the
 /// classes' defaults, which is what it was before (AX-7.7).
 /// </summary>
 public abstract partial class AxKitForm
@@ -46,10 +46,10 @@ public abstract partial class AxKitForm
     {
     }
 
-    /// <summary>Options, Text, Theme ▸: Edit theme file, Reload theme, Theme on (TH-4).</summary>
+    /// <summary>axKit, Theme ▸ (axKit menu, Theme until 5.7.0): Edit theme file, Reload theme, Theme on (TH-4).</summary>
     private ToolStripMenuItem CreateThemeMenu()
     {
-        var menu = new ToolStripMenuItem("T&heme");
+        var menu = new ToolStripMenuItem("&Theme");
         menu.DropDownItems.Add(new ToolStripMenuItem("&Edit theme file...", null, (_, _) => EditThemeFile()));
         menu.DropDownItems.Add(new ToolStripMenuItem("&Reload theme", null, (_, _) => ReloadTheme()));
         _themeOnItem.Click += (_, _) => ToggleTheme();
@@ -84,7 +84,7 @@ public abstract partial class AxKitForm
 
     private static DateTime ThemeStamp(string path) => File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
 
-    /// <summary>Options, Text, Theme, Reload theme (TH-3.4): the one time the theme speaks.</summary>
+    /// <summary>axKit menu, Theme, Reload theme (TH-3.4): the one time the theme speaks.</summary>
     private void ReloadTheme()
     {
         LoadTheme();
@@ -93,14 +93,14 @@ public abstract partial class AxKitForm
         var path = AppPaths.ThemeFile;
         Announce(_theme switch
         {
-            null when !File.Exists(path) => "No theme file: Options, Text, Theme, Edit theme file makes one",
+            null when !File.Exists(path) => "No theme file: axKit menu, Theme, Edit theme file makes one",
             null => "No theme: the file is not a theme file; the log says why",
             { NotUnderstood.Count: 0 } => "Theme reloaded",
             { NotUnderstood: var keys } => $"Theme reloaded: {keys.Count} {(keys.Count == 1 ? "value" : "values")} not understood, {string.Join(", ", keys)}",
         }, true);
     }
 
-    /// <summary>Options, Text, Theme, Edit theme file (TH-4): the template written when there is no file, then axJSON on it.</summary>
+    /// <summary>axKit menu, Theme, Edit theme file (TH-4): the template written when there is no file, then axJSON on it.</summary>
     private void EditThemeFile()
     {
         var path = AppPaths.ThemeFile;
@@ -121,7 +121,7 @@ public abstract partial class AxKitForm
         WindowMenu.Start(Dispatch.AxJSON, path);
     }
 
-    /// <summary>Options, Text, Theme, Theme on (TH-1.5): the file's switch, written; the template first when there is none.</summary>
+    /// <summary>axKit menu, Theme, Theme on (TH-1.5): the file's switch, written; the template first when there is none.</summary>
     private void ToggleTheme()
     {
         var on = _theme is not { Enabled: true };

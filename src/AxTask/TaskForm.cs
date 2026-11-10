@@ -104,7 +104,7 @@ public sealed partial class TaskForm : ItemForm
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Item &resources", [("&JSON", "https://www.json.org/json-en.html")]);
 
-        _menu.Items.AddRange([file, _listMenu, _itemMenu, _fieldMenu, view, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
+        _menu.Items.AddRange([file, _listMenu, _itemMenu, _fieldMenu, view, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
         SelectionMenus(_listMenu, _itemMenu, _fieldMenu);
         PlaceControls(_menu);
         Start(path);

@@ -400,7 +400,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   windows share and no app copies: the notice flow (`ShowNotice`, `CloseNotice`, `Fail`, `ShowError`; Alt, F10 and
   the window's shortcuts swallowed while a notice shows), `Announce`, the text font with its size keys and the
   Windows font picker (the choice said), the window's place and size, the settings saving and the notice for a
-  settings file that could not be read, the Window, Claude and Help menus with the
+  settings file that could not be read, the Window, axKit and Help menus with the
   update check, the update notice and the install in place (AX-3), find in a text box, in a list, in a transcript
   and in a notice's text (one Find notice, one last text), Copy diagnostics (the account's name, its paths, e-mail addresses and ids replaced by `Redaction`, since it is meant for a public bug report, security audit S-20), `OpenUrl`, `OpenInExplorer`, the
   Windows folder picker (`ChooseFolder`), `Do` (a command's task with an escaped exception turned into a notice),
@@ -494,18 +494,19 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (`docs/axKit/theme.md` TH-6). `TextBoxTests` fails on a plain `TextBox` and on a second subscription of the keys,
   which would move the caret twice.
 
-### AX-9 The bundle's menus: Window, Claude, Help
+### AX-9 The bundle's menus: Window, Options, axKit, Help
 
-- AX-9.1 Every window ends its menu bar with three menus of the bundle's, the same in every window and after the
-  app's own menus (5.7.0, 2026-11-10, the user: "organize things ... into clear categories of user intent", "make sure
-  these menus are inherited by all axKit apps"; until then one axKit menu held all of it). Each is built once in the
-  window base, so that no app has a copy:
-  - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`): New window ▸ (N), Open windows ▸ (O), Recently
-    closed ▸ (R) and Close all windows (C).
-  - **Claude** (A, since C is an app's own menu in five windows; `AxKitForm.CreateClaudeMenu`, `ai-help.md` AH-1.1),
-    in groups by what the user wants: Use Claude in axKit (U, the switch); Ask about this window… (A, Shift+F1);
-    Folders Claude may read… (F) and Claude's working folder (W); AI tools ▸ (I, `mcp.md` MC-6.1). The bundle's own
-    settings live here; an app's Options hold only the app's.
+- AX-9.1 Every window's menu bar is the app's own menus first, then four of the bundle's, in this order, the same in
+  every window and each built once in the window base, so that no app has a copy (5.7.0, 2026-11-10, the user:
+  "organize things ... into clear categories of user intent", "make sure these menus are inherited by all axKit
+  apps", then "navigate then windows then options then axkit then help"):
+  - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after the app's own menus (Navigate the last of them
+    where the app has one): New window ▸ (N), Open windows ▸ (O), Recently closed ▸ (R) and Close all windows (C).
+  - **Options** (O), the app's own settings (AX-6.4): its own submenus, then Text, General and Developer.
+  - **axKit** (A; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Claude ▸ (C;
+    `CreateClaudeMenu`, `ai-help.md` AH-1.1: Use Claude in axKit, the switch; Ask about this window…, Shift+F1; Folders
+    Claude may read… and Claude's working folder), AI tools ▸ (I; `mcp.md` MC-6.1) and Theme ▸ (T; `theme.md` TH-4,
+    Options, Text, Theme until 5.7.0). A new bundle-wide setting or action joins here, never an app's Options.
   - **Help** (H; `AxKitForm.CreateHelpMenu`, which the window calls with its guide and pages): Command palette… (P,
     Ctrl+Shift+P, AX-10), Keyboard shortcuts (K, F1), User guide (G), the app's resources ▸; Send a report… (S, F4)
     and Your reports (Y, docs/axKit/reports.md RP-2.2); Check for updates (U), Update to (T, while a newer release is
@@ -513,10 +514,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 
   The lists are filled each time the menu opens, so that they show the windows and the files of that moment. Two of
   the apps' own menus changed letter or name so that every menu of a bar is reached by one letter: axClaude's menu
-  for the program is "Claude Code" (C), and axHelp's first menu takes P. History: 5.6.0 had one axKit menu (A) with a
-  Claude submenu; until 5.6.0 the palette and the reports came first in it, and Open windows by type ▸ (one submenu
-  per app) stood after Open windows.
-- AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
+  for the program is "Claude Code" (C), and axHelp's first menu takes P. History: 5.6.0 had one axKit menu (A) holding
+  the window lists, a Claude submenu, the palette, the reports, the updates and About; until 5.6.0 Open windows by
+  type ▸ (one submenu per app) stood after Open windows.- AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
   after ax as the mnemonic. It starts `AxKit.exe <verb>` with no arguments: a new process and a new window (B-2), the
   app starting as it does from its Start menu entry. The apps stand in five groups, a separator between them
   (2026-10-24, the user's choice of a flat list over a submenu per group; since 2026-10-29 the access layers last,
@@ -611,7 +611,7 @@ name, so that a command is reached without knowing its menu or its key, and its 
   under it a list of the matches named "Commands, n" that never takes the focus, axStart's shape (docs/axStart/SPEC.md
   AS-3.1, AS-D2). Help → Command palette… (the first item of Help, AX-9.1) opens it too, so that it is found
   from the menus. While another notice shows, or in menu mode (AX-6.6), the key does nothing.
-- AX-10.2 **The entries** are the window's menu bar as it stands when the palette opens, the Window, Claude and Help menus
+- AX-10.2 **The entries** are the window's menu bar as it stands when the palette opens, the Window, axKit and Help menus
   included: every enabled item that does something when chosen, in menu order. An entry reads its name, then its menu
   path, then its key when it has one, then "checked" for a checked item: "Save as, File, Ctrl+Shift+S", "Larger text,
   Options, Text, Ctrl+Plus", "Word wrap, Edit, Ctrl+Shift+W, checked". The name is the item's text without its
@@ -700,7 +700,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
     database.
   - The AI tools (AX-9, `docs/axKit/mcp.md`): the pairing notice (MC-6.4) carries the check box, which Allow needs;
     Deny stays its default. Forget AI tools withdraws these consents with the pairings.
-  - Every window, Claude menu, AI tools, Add axKit to Claude Code (MC-6.8): it runs Claude Code's program (`claude mcp
+  - Every window, axKit menu, AI tools, Add axKit to Claude Code (MC-6.8): it runs Claude Code's program (`claude mcp
     add`), so the agreement for Claude Code comes first, under the window's own app (2026-11-02).
   - A program installed from Install it now (AX-2.9) is agreed to in the same step, under the name the app connects to
     it by (axTerminal installs Git for Windows as its shell Git Bash), so that the connection asks nothing more.

@@ -57,7 +57,7 @@ hotkeys do. Enter opens the conversation; Escape hides the window. axHelp, Quit 
 Options, Hotkey changes Windows+Alt+H. The screenshot's key is `screenshotHotkey` in the settings file
 (`%APPDATA%\AxKit\axHelp.json`, Options, Developer, Open settings file); start axHelp again after changing it.
 
-- **Window**, **Claude** and **Help**: the bundle's three menus, the same in every axKit window.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options between Window and axKit. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## If something goes wrong
 

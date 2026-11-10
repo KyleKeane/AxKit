@@ -42,7 +42,7 @@ Run with NVDA before a release, after `run-axProcess.ps1` (or `.\run.ps1 -App pr
 2. Enter: the details, "Command …", "Set in …", "Enabled", "Program …"; Show program in axFile opens axFile on it.
 3. An entry turned off in Task Manager's Startup apps reads "disabled".
 
-## 5. Text, notices, the Window, Claude and Help menus (PR-6)
+## 5. Text, notices, the Window, axKit and Help menus (PR-6)
 
 1. Ctrl+S: "Nothing to save here. F5 refreshes, Delete ends a process".
 2. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.

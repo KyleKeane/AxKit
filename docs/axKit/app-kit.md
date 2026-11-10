@@ -29,7 +29,7 @@ After the kit:
   `mcp.md` MC-3.1) and whether it is secret.
 - AK-2.2 `MenuSpec(Label, Items)`: a menu of commands, separators and submenus. A window describes its menus as specs.
 - AK-2.3 **The window base builds from them**: the menu bar with the bundle's frame (the first menu's standard shape
-  ending in Exit, Options with Text, General and Developer, the Window, Claude and Help menus); the key handling (`RunCommand`, one
+  ending in Exit, Options with Text, General and Developer, the Window, axKit and Help menus); the key handling (`RunCommand`, one
   loop over the commands in scope order, the window's own keys first, then the focused control's); the F1 text (the
   bundle's section, the app's commands from their help, a short hand-written paragraph for the controls' own keys);
   the command palette (it already reads the menus). Menu, key, F1, palette and MCP cannot disagree, since there is one

@@ -11,7 +11,7 @@ expect said trust
 wait 1500
 keys enter
 expect said Ready
-# Step 1: the Window, Claude and Help menus opened with Alt+W, Alt+A and Alt+H and read item by item needs a real menu (the foreground): left manual. What
+# Step 1: the Window, axKit and Help menus opened with Alt+W, Alt+A and Alt+H and read item by item needs a real menu (the foreground): left manual. What
 # it holds, through the command list: New window with an item per app, Close all windows, Check for updates naming the
 # version, and About with Version, Licence, Attribution, axKit guide and axKit on GitHub (which opens the browser on the
 # user's desktop: manual). Open windows, Open windows by type and Recently closed fill themselves as the menu opens,

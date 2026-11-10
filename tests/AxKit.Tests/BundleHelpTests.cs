@@ -35,7 +35,7 @@ public sealed class BundleHelpTests
     public void The_AxKit_menu_line_is_the_bundles_words()
     {
         Assert.Contains(
-            "  Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the Claude menu: Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder, the AI tools. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About\r\n",
+            "  Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About\r\n",
             BundleHelp.Section("axThing", []));
     }
 

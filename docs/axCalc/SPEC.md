@@ -4,7 +4,7 @@ axCalc is an app of the axKit bundle (`docs/axKit/SPEC.md`): a calculator as one
 developer who uses the NVDA screen reader. Built 2026-10-23 on the branch `axCalc` (the long run of that day,
 `docs/axKit/plan.md`), not yet heard under NVDA. The document is kept in step with the code (a behaviour change
 updates it in the same commit). Requirements are numbered `AC-n.m` and decisions `AC-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), are cited by number and not repeated. In axCalc's code and
+(accessibility), AX-8 (keys) and AX-9 (the Window, axKit and Help menus), are cited by number and not repeated. In axCalc's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -135,7 +135,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 - AC-7.1 Menus (AX-6): **Calculator (C):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal |
   Binary | Octal) | Answer in other bases Ctrl+I | Say the last answer Ctrl+Q | ─ | Variables | Clear variables… | ─ |
   Save history… Ctrl+S | Clear history… Ctrl+Shift+Delete | ─ | Exit Alt+F4. **Options (O):** Angles ▸ (Degrees ✓ |
-  Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):**
+  Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Calculator resources ▸ (Floating point explained). Every item has a
   mnemonic (AX-7.4).
 - AC-7.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (the history as a

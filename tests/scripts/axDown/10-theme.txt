@@ -7,7 +7,7 @@ file notes.md # Notes\n\nA line.
 start down {temp}\notes.md
 expect focus notes.md
 menu Reload theme
-expect said ! No theme file: Options, Text, Theme, Edit theme file makes one
+expect said ! No theme file: axKit menu, Theme, Edit theme file makes one
 menu Edit theme file
 adopt
 expect state theme.json - axJSON

@@ -8,7 +8,7 @@ namespace AxKit.Forms;
 
 /// <summary>
 /// The Window menu every window has (docs/axKit/SPEC.md AX-9; the axKit menu until 5.7.0, when the user asked for
-/// the bundle's menus by intent, Window, Claude and Help, 2026-11-10): New window (one item per app), Open windows
+/// the bundle's menus by intent, Window, axKit and Help, 2026-11-10): New window (one item per app), Open windows
 /// (the other windows of the bundle's apps, most recently used first), Recently closed (the bundle's list, AX-9.4)
 /// and Close all windows. The lists are filled each time the menu opens, the windows from what the system lists in Z
 /// order, which is Alt+Tab's order, so nothing about windows is stored. The lists and labels are

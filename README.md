@@ -34,7 +34,7 @@ axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commerc
 - **axMCP, access layer for MCP servers**: the MCP servers Claude Code knows on this computer, and your own, in one list; a server started by hand shows its tools, resources and prompts, a tool's arguments are fields you fill by ear, and the result reads as text. For trying a server before giving it to Claude Code, or running a tool without a turn of Claude's.
 - **axHelp, access layer for Claude Code**: your conversation with Claude from anywhere: Windows+Alt+H brings up an axClaude window titled axHelp, one conversation that goes on until you clear it, on a fast model of its own, where Claude Code can also do work on your computer, asking first; Windows+Alt+S puts a picture of the window in front into it, for a question about the screen. axDescribe, which described the screen, is part of axHelp since 5.7.0.
 
-The apps reach each other: axFile hands a file to axMedia or axPreview, every window can show its folder in the others, and the Claude menu in every window lists the open windows and starts any app.
+The apps reach each other: axFile hands a file to axMedia or axPreview, every window can show its folder in the others, and the Window menu in every window lists the open windows and starts any app.
 
 The set grows as I find another thing worth doing by ear. `docs/axKit/plan.md` ("Still to come") lists what has been asked for or suggested and not built yet, and `docs/axKit/adding-an-app.md` says how an app is added; every new app follows the same rules, and whatever it reaches outside axKit enters the same lists.
 

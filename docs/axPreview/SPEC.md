@@ -6,7 +6,7 @@ gained the night before (`docs/axFile/SPEC.md` AF-9.4) moves here and grows into
 is file operations and management only and viewing, like playing (`docs/axMedia/SPEC.md`), is another app's with a
 tight hand-over (AP-D1). The document is kept in step with the code (a behaviour change updates it in
 the same commit). Requirements are numbered `AP-n.m` and decisions `AP-Dn`; the bundle's rules, AX-7 (accessibility),
-AX-8 (keys) and AX-9 (the Window, Claude and Help menus), and axDown's (`docs/axDown/SPEC.md`, cited as "axDown AD-n.m") are cited by
+AX-8 (keys) and AX-9 (the Window, axKit and Help menus), and axDown's (`docs/axDown/SPEC.md`, cited as "axDown AD-n.m") are cited by
 number and not repeated. In axPreview's code and documents, "SPEC.md" means this file. The inventory of the split
 of axFile, of which this app is one part, is `docs/axKit/axfile-split.md`.
 
@@ -128,7 +128,7 @@ it, so that every file shows something and the details say what it is.
   axGIT | axFile, bundle AX-9.10) | ─ | Exit Alt+F4. No Edit menu: the control's own Ctrl+A and Ctrl+C work as they do. **Navigate (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… Ctrl+G | ─ |
   Next ▸ | Previous ▸ (Heading, Heading level 1 to 6, Link, List, List item, Block quote, Table). **Options (O):**
   Text ▸ (Word wrap Ctrl+Shift+W | ─ | Font… | Larger text | Smaller text | Windows text size) | General ▸ (Check for
-  updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):**
+  updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Markdown resources ▸ (axDown's pages). Every item has a mnemonic (AX-7.4).
 - AP-3.2 Keys (AX-8). Bundle-wide: F1, the control keys (the text, or the Go to line field while it shows), Ctrl+F,
   F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up, Ctrl+Down with

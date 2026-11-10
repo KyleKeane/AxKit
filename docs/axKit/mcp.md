@@ -33,15 +33,15 @@ and the command lists of `app-kit.md`, which are what the tools are made from. R
 
 ## 3. Pairing and authentication
 
-- MC-2.1 **Off by default.** Claude menu → AI tools → "Let AI tools read and open axKit" in every window (MC-6.1), one setting for the
+- MC-2.1 **Off by default.** axKit menu → AI tools → "Let AI tools read and open axKit" in every window (MC-6.1), one setting for the
   bundle. Off: the broker answers every call with "axKit's MCP access is off" and nothing else.
 - MC-2.2 **Pairing**: the first call of a client that is not paired shows a notice in the axKit window in front (or
   opens axStart's): "Claude Code asks to use axKit. It can: <the scopes asked>. Allow?", with Allow and Deny; Enter on
   Allow pairs, nothing else does. The client is recorded by its process's program file and its command line. The
   pairing key (256 bits) is kept for the user with DPAPI in `%LOCALAPPDATA%\AxKit\mcp.key`; each connection proves it by
   a challenge and HMAC, never by the key itself.
-- MC-2.3 **Forget**: Claude menu → AI tools → Forget AI tools lists the paired clients with what each may do; Delete forgets one.
-  Let AI tools read and open axKit, unchecked in the Claude menu, turns the setting off at once and ends every connection.
+- MC-2.3 **Forget**: axKit menu → AI tools → Forget AI tools lists the paired clients with what each may do; Delete forgets one.
+  Let AI tools read and open axKit, unchecked in the axKit menu's AI tools, turns the setting off at once and ends every connection.
 
 ## 4. Tools and what each may do
 
@@ -80,7 +80,7 @@ and the command lists of `app-kit.md`, which are what the tools are made from. R
 - MC-5.1 Every change or act tool run is announced in the window it acts on, as a user's command is, prefixed with the
   client's name: "Claude Code: deleted notes.md". Reads are silent, counted in the status bar ("AI read 3 times").
 - MC-5.2 The audit log, `%LOCALAPPDATA%\AxKit\mcp-audit.log`: the time, the client, the tool, a hash of the arguments
-  and their kinds, the result, whether the user confirmed. Claude menu → AI tools → Read the log opens it in
+  and their kinds, the result, whether the user confirmed. axKit menu → AI tools → Read the log opens it in
   axPreview.
 
 ## 7. The first stage as built (2026-10-24, the branch `app-kit`): read and open

@@ -63,11 +63,11 @@ Run with NVDA before a release, on a folder with a few subfolders, text files an
 4. Alt+I, A, M on a chapter: axMedia plays it with the folder's others after it, in front. Alt+I, A, P on `README.md`: axPreview shows it. On a folder, Alt+I, A, P: "Not a file"; Alt+I, A, M on a folder: axMedia plays the folder.
 5. Make axMedia the default program for `.mp3` (Settings, Apps, Default apps, axMedia, or Open with, Always): Enter on a chapter in axFile plays it in axMedia, the window in front. Make axPreview the default for `.log`: Enter on a `.log` shows it in axPreview. Set them back if wanted.
 
-## 5. Text, notices, the Window, Claude and Help menus (AF-6)
+## 5. Text, notices, the Window, axKit and Help menus (AF-6)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. Help, User guide: this guide; Escape.
-3. Alt+W: the Window menu with New window (axFile among the apps), Recently closed (the folder of a closed axFile window), Open windows, Close all windows; Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+A: the Claude menu. About, Version: "axKit <version>".
+3. Alt+W: the Window menu with New window (axFile among the apps), Recently closed (the folder of a closed axFile window), Open windows, Close all windows; Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme. About, Version: "axKit <version>".
 4. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the folder, the count of actions and the log's end.
 5. Close the window and start axFile without a folder: it opens on the same folder (the last one).
 6. The command palette (AF-3.12, bundle AX-10). Ctrl+Shift+P, type the start of a folder's name: after a moment "<name>,

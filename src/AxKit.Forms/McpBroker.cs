@@ -74,7 +74,7 @@ public static class McpBroker
         var settings = McpAccess.Load();
         if (!settings.Enabled)
         {
-            return new McpResult("axKit's AI tools access is off. The user turns it on in any axKit window: Claude menu, AI tools, Let AI tools read and open axKit.", true);
+            return new McpResult("axKit's AI tools access is off. The user turns it on in any axKit window: axKit menu, AI tools, Let AI tools read and open axKit.", true);
         }
 
         if (program is null)

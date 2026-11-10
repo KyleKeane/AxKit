@@ -132,12 +132,12 @@ What each class paints, in every window, by the control's kind, so that a new ap
 - TH-3.3 With Windows' high contrast on (`SystemInformation.HighContrast`) the theme is not applied: high contrast is
   Windows' own accessibility choice, and a theme over it would undo it (TH-D4).
 - TH-3.4 Applying a theme moves no focus, selects nothing and announces nothing (AX-7.3). Reload alone speaks: "Theme
-  reloaded", or "Theme reloaded: N values not understood, …", or "No theme file: Options, Text, Theme, Edit theme file
+  reloaded", or "Theme reloaded: N values not understood, …", or "No theme file: axKit menu, Theme, Edit theme file
   makes one", or "No theme: the file is not a theme file; the log says why".
 
 ### TH-4 The menu
 
-Options, Text, Theme ▸ in every window, from the base (the one Options submenu every window builds from the base, so
+axKit menu, Theme ▸ in every window, from the base (the one Options submenu every window builds from the base, so
 that no window has a line of its own for it):
 
 - **Edit theme file**: writes the complete template (TH-1.2) when the file does not exist, then opens it in a new axJSON
