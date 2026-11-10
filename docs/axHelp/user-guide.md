@@ -39,7 +39,7 @@ axPreview, which reads the text in it without Claude.
 
 ## axHelp's folder and model
 
-Claude works in its own folder, Documents, axKit Claude (axHelp, Claude's working folder opens it in axFile). Its
+Claude works in its own folder, Documents, axKit Claude (Session, Claude's working folder opens it in axFile). Its
 conversations, the permissions you give with "always" and its instructions stay there, apart from your projects. The
 file CLAUDE.md there holds Claude's standing instructions for axHelp, short spoken replies among them; change it as you
 like. The folder `.claude\agents` holds the agent.
@@ -52,7 +52,7 @@ session, axClaude's too.
 ## axHelp's window
 
 Start menu, axKit axHelp, or the command `axHelp`, shows axHelp's own small window: one text that says what the two
-hotkeys do. Enter opens the conversation; Escape hides the window. axHelp, Quit axHelp ends axHelp.
+hotkeys do. Enter opens the conversation; Escape hides the window. Session, Quit axHelp ends axHelp.
 
 Options, Hotkey changes Windows+Alt+H. The screenshot's key is `screenshotHotkey` in the settings file
 (`%APPDATA%\AxKit\axHelp.json`, Options, Developer, Open settings file); start axHelp again after changing it.

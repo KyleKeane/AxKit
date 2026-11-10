@@ -32,11 +32,11 @@ expect focus "value":"README.md"
 keys ctrl+shift+q
 expect said ! No sound or video files to add
 # The Item menu's command does the same.
-menu Add to axMedia's queue, Item
+menu Add to axMedia's queue, Operations
 expect said ! No sound or video files to add
 
 # 4.4 Open in axKit, axPreview on a folder: "Not a file".
 keys home
 expect focus "value":"a-folder-for-not-a-file, folder"
-menu axPreview, Item, Open in axKit
+menu axPreview, Operations, Open in axKit
 expect said ! Not a file

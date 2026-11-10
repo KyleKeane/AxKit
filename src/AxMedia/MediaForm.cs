@@ -49,7 +49,7 @@ public sealed partial class MediaForm : AxKitForm
         // Queue is the thing worked on, in the standard order of a first menu (bundle AX-6): New and Open with the
         // recent list, the items on the file, Show current file in, Exit. Enter, Delete and Space act in the list
         // only (AM-5.2); in a notice's field they are the field's own, and in the list returning true keeps it from dinging.
-        var queue = new ToolStripMenuItem("&Queue");
+        var queue = new ToolStripMenuItem("&Session");
         Add(queue, new Command("&New window", AxMediaKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
         Add(queue, new Command("&Open files...", AxMediaKeys.OpenFiles, OpenFiles) { Mark = CommandMark.Open });
         Add(queue, new Command("Open &folder...", AxMediaKeys.OpenFolder, OpenFolder) { Mark = CommandMark.Open });
@@ -70,7 +70,7 @@ public sealed partial class MediaForm : AxKitForm
         queue.DropDownItems.Add(CreateExitItem());
 
         // The menu item shows Space, the list's key; Ctrl+P pauses and resumes from anywhere in the window.
-        var play = new ToolStripMenuItem("&Play");
+        var play = new ToolStripMenuItem("O&perations");
         Add(play, new Command("P&ause or resume", AxMediaKeys.PauseResume, PauseResume) { When = () => _list.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Pause or resume", AxMediaKeys.PauseResumeAlso, PauseResume) { Mark = CommandMark.Open });
         Add(play, new Command("&Next file", AxMediaKeys.NextFile, () => MoveInQueue(1)) { Mark = CommandMark.Open });

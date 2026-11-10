@@ -31,7 +31,7 @@ public sealed class StartForm : HotkeyForm
         // ---- menus and keys (AS-3.3, AS-5.2, AS-5.3): one command list (docs/axKit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----
         AddMatchKeys(AxStartKeys.NextMatch, AxStartKeys.PreviousMatch, AxStartKeys.FirstMatch, AxStartKeys.LastMatch);
-        var start = new ToolStripMenuItem("ax&Start");
+        var start = new ToolStripMenuItem("&Session");
         Add(start, new Command("&Start", AxStartKeys.Start, () => StartSelected(administrator: false)) { Mark = CommandMark.Act });
         Add(start, new Command("Start as &administrator", AxStartKeys.StartAsAdministrator, () => StartSelected(administrator: true)) { Mark = CommandMark.Act });
         Add(start, new Command("Open file &location", AxStartKeys.OpenFileLocation, OpenFileLocation) { Mark = CommandMark.Open });

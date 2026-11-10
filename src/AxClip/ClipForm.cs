@@ -46,7 +46,7 @@ public sealed class ClipForm : HotkeyForm
         // ---- menus and keys (CP-2.4, CP-5.1, CP-5.2): one command list (docs/axKit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----
         AddMatchKeys(AxClipKeys.NextMatch, AxClipKeys.PreviousMatch, AxClipKeys.FirstMatch, AxClipKeys.LastMatch);
-        var clip = new ToolStripMenuItem("ax&Clip");
+        var clip = new ToolStripMenuItem("&Session");
         Add(clip, new Command("&Paste", AxClipKeys.Paste, Paste) { Mark = CommandMark.Act });
         Add(clip, new Command("&Copy without pasting", AxClipKeys.CopyOnly, CopyOnly));
         Add(clip, new Command("&Read in full", AxClipKeys.ReadInFull, ReadInFull) { Mark = CommandMark.Read });

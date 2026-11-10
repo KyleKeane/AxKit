@@ -19,7 +19,7 @@ public static class HelpText
           F5: read the file again; coming back to the window after another program changed it does the same by itself
           Ctrl+Shift+V: read the picture on the clipboard: it is saved beside axPreview's logs and its text read by Windows' own reader. Alt+PrintScreen puts the window in front on the clipboard, PrintScreen the whole screen
           Ctrl+E: go on with the file: a text in its editor, axDown, or axJSON for a .json file; a sound or video in axMedia; anything else in the program Windows has for it
-          File, Open with: the axKit apps for the file, Windows' program, or Windows' own list of programs, whose Always makes one the default
+          Session, Open with: the axKit apps for the file, Windows' program, or Windows' own list of programs, whose Always makes one the default
           Ctrl+W: show the file in File Explorer
           Ctrl+G: go to a line; the field also says where you are, like "Go to line (now line 12, column 4)"
           l: say the line, "Line 12 of 40"

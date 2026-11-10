@@ -41,7 +41,7 @@ Type the command in the field and press Enter. You hear "Sent" with a low note. 
 - Ctrl+Enter sends the text without recording it: no Input and Output lines, not in the recent commands, not in the log. Use it for a passphrase or a token a program asks for.
 - Ctrl+R lists the recent commands of this window, newest first; Enter puts one back in the field, Escape goes back to the field. Ctrl+Up brings back the previous command and Ctrl+Down the next one, each with two quick rising notes; past the newest, Ctrl+Down gives back what you had typed, or the last command you changed and left. The plain arrows only move the caret.
 - Enter on a line of the terminal copies that line into the field, to run it again or change it.
-- Ctrl+Shift+C interrupts (it sends Ctrl+C to the shell). Shift+Escape sends Escape. The Shell menu's Send key sends Up, Down or Ctrl+D for a program that wants them.
+- Ctrl+Shift+C interrupts (it sends Ctrl+C to the shell). Shift+Escape sends Escape. The Operations menu's Send key sends Up, Down or Ctrl+D for a program that wants them.
 - Escape in the field does nothing but remind you of those two keys.
 
 A program that asks a question (y/n, a passphrase) prints it as a line; when the output has been quiet for a couple of seconds and the last line ends like a question, you hear "Asks:" and the line, with the question chime. Type the answer in the field and press Enter. Ctrl+Q says what is running, for how long, and the prompt, at any time. "Asks:" is always the program's own line, never axTerminal asking: a program, or a file you print, can word a line to look like any question, a password prompt included, so answer only what you know the program you ran asks.

@@ -10,7 +10,7 @@ keys down down
 expect focus a.txt
 
 # Down completes among the folders alone (a.txt is left out); Up at the first: the low note, then the same.
-menu Move to folder, Item
+menu Move to folder, Operations
 expect state "notice":"Move to folder"
 expect focus "name":"Folder"
 type do
@@ -32,7 +32,7 @@ expect list "count":3
 # A folder into itself, and a path elsewhere that does not exist.
 keys home
 expect focus docs, folder
-menu Move to folder, Item
+menu Move to folder, Operations
 type docs
 keys enter
 expect said Cannot move a folder into itself

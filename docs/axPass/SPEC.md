@@ -10,7 +10,7 @@ axPass's code and documents, "SPEC.md" means this file.
 
 ## 1. Summary
 
-An **access layer** for KeePassXC (bundle AX-11, 2026-10-29): titled "axPass, access layer for KeePassXC"; before the first unlock and before File, New database, the consent notice (AX-11.4); Not now says "Not connected to KeePassXC. Enter unlocks".
+An **access layer** for KeePassXC (bundle AX-11, 2026-10-29): titled "axPass, access layer for KeePassXC"; before the first unlock and before Session, New database, the consent notice (AX-11.4); Not now says "Not connected to KeePassXC. Enter unlocks".
 
 One database per window. The navigator is its groups and entries, moved through as axTask moves through lists and
 items: Right into a group, Left back up, Enter or Tab to an entry's fields (Ctrl+Tab, Ctrl+Shift+Tab and F6 switch the
@@ -44,7 +44,7 @@ forgets the master password and shows only the notice that asks for it.
 ## 4. Opening, the password, locking
 
 - **PW-4.1** axPass opens the `.kdbx` file of its command line, or the one it had last, or asks with the Windows
-  file picker (File, Open, Ctrl+O). A new database is File, New: a file name, then the master password twice.
+  file picker (Session, Open, Ctrl+O). A new database is Session, New: a file name, then the master password twice.
 - **PW-4.2** The master password is asked in a notice whose field hides what is typed (the shared `OverlayInput`
   gains a hidden form for it). A wrong password says "The password does not open mine" and asks again.
 - **PW-4.3** Lock (Ctrl+L, after ten minutes without a key, a setting, and at once when Windows locks, the user switches or disconnects, or the computer sleeps, security audit S-18): the panes are cleared, the password
@@ -54,7 +54,7 @@ forgets the master password and shows only the notice that asks for it.
 - **PW-4.5 Backups** (asked 2026-10-24): before the first change after each unlock, the `.kdbx` file is copied as it
   is into a folder beside it, "mine backups" next to mine.kdbx (the user's choice, so that a synced database's backups
   sync too), named with the time ("mine 2026-10-24 15-30-05.kdbx"); the newest 20 are kept. A change is refused when
-  its backup cannot be made. File, Back up now makes one at once; File, Show backups in axFile opens the folder. A
+  its backup cannot be made. Session, Back up now makes one at once; Session, Show backups in axFile opens the folder. A
   backup opens like any database (Ctrl+O), with the master password it had then.
 
 ## 5. The engine (PW-D1)

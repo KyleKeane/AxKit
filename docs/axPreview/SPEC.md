@@ -122,7 +122,7 @@ it, so that every file shows something and the details say what it is.
 
 ### AP-3 Menus, keys, texts
 
-- AP-3.1 Menus (AX-6): **File (F):** New window Ctrl+N | Open… Ctrl+O | Open recent ▸ | ─ | Reload F5 | Read the
+- AP-3.1 Menus (AX-6): **Session (S):** New window Ctrl+N | Open… Ctrl+O | Open recent ▸ | ─ | Reload F5 | Read the
   clipboard's picture Ctrl+Shift+V (AP-7.2 item 4) | ─ | Edit in
   axDown Ctrl+E (or Edit in axJSON, by the file) | Show current file in ▸ (File Explorer Ctrl+W | axClaude | axTerminal |
   axGIT | axFile, bundle AX-9.10) | ─ | Exit Alt+F4. No Edit menu: the control's own Ctrl+A and Ctrl+C work as they do. **Navigate (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… Ctrl+G | ─ |
@@ -237,7 +237,7 @@ and an error naming a file that could not be opened.
      file with no readable text says so in one line, "No readable text was found in <name>."
 - AP-7.3 **The way out follows the renderer** (Ctrl+E, AP-1.4): Edit in axDown or axJSON for a text; Play in axMedia
   for sound and video; Open in Windows' program for everything else (the program Windows has for the kind, axFile's
-  Enter, and Windows' Open with dialog when it has none). The File menu's item is named after it as the file opens.
+  Enter, and Windows' Open with dialog when it has none). The Session menu's item is named after it as the file opens.
   A file whose kind runs when opened (a program, a script, a shortcut, an installer: Windows' own list,
   `AssocIsDangerous`, through `AxKit.Core/DangerousFiles`) is never handed to Windows to open, by Ctrl+E or by Open with's
   Windows' program: the notice "Not run from axPreview" says so and where to run it if trusted (security review S-46,
@@ -273,7 +273,7 @@ docs/axPreview/      this spec, user-guide.md (embedded), nvda-test-plan.md
 ```
 
 The window is `AxKit.Forms/TextEditorForm`, the text editor shell, in its read-only mode (AP-D4, decided at the build):
-`EditorApp.ReadOnly` turns the editor control read-only, drops the Edit menu, Save and the history, and adds the
+`EditorApp.ReadOnly` turns the editor control read-only, drops the Operations menu, Save and the history, and adds the
 viewer's commands (Reload, Edit in the editor, `l` for the line, the hand-over received through `AppMessage`); the
 settings are the editors' `EditorSettings` in `axPreview.json`. Nothing of the shell is copied; axDown and axJSON are
 unchanged. What the viewer adds to the shell is marked with the flag in the shell's code, the one place a change to

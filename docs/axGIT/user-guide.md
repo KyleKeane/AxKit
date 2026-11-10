@@ -12,8 +12,8 @@ axGIT is part of axKit. Installing axKit (see the axKit guide in the Help, About
 
 - From axClaude: Session, Show current folder in, axGIT (Alt+S, I, G). axGIT opens on the repository that holds the project folder.
 - From axDown or axJSON: File, Show current file in, axGIT (Alt+F, I, G). axGIT opens on the repository that holds the file.
-- From the Start menu, `axKit axGIT`, or the console: `axgit C:\my\project`. Without a folder, axGIT opens the last repository you had, or asks for one with Repository, Open repository (Ctrl+O).
-- To go back: Alt+W, O lists the open axKit windows, most recent first, so Alt+W, O, 1 is the window you came from. From axGIT, Repository, Show current repository in, axClaude opens a new axClaude on the repository, axTerminal a shell there, axFile the folder's files, and File Explorer (Ctrl+W) shows the folder.
+- From the Start menu, `axKit axGIT`, or the console: `axgit C:\my\project`. Without a folder, axGIT opens the last repository you had, or asks for one with Session, Open repository (Ctrl+O).
+- To go back: Alt+W, O lists the open axKit windows, most recent first, so Alt+W, O, 1 is the window you came from. From axGIT, Session, Show current repository in, axClaude opens a new axClaude on the repository, axTerminal a shell there, axFile the folder's files, and File Explorer (Ctrl+W) shows the folder.
 
 The window is named after the repository's folder: "myproject - axGIT".
 
@@ -51,8 +51,8 @@ axGIT does not merge, rebase or resolve conflicts. For those, use the terminal o
 
 ## Menus
 
-- **Repository**: Open repository (Ctrl+O), Open recent repository, Refresh (F5), Show current repository in (File Explorer Ctrl+W, axClaude, axTerminal, axFile), Exit.
-- **Changes**: Stage or unstage (Space), Stage all, Unstage all, Show diff (Enter), Open file in editor (Ctrl+E), Discard changes (Delete), Commit (Ctrl+Enter).
+- **Session**: Open repository (Ctrl+O), Open recent repository, Refresh (F5), Show current repository in (File Explorer Ctrl+W, axClaude, axTerminal, axFile), Exit.
+- **Operations**: Stage or unstage (Space), Stage all, Unstage all, Show diff (Enter), Open file in editor (Ctrl+E), Discard changes (Delete), Commit (Ctrl+Enter).
 - **Branches**: Switch to branch (Enter), New branch (Ctrl+N), Fetch, Pull, Push.
 - **View**: Changes, Log, Branches.
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).

@@ -3,7 +3,7 @@
 The manual checks of axStart (`docs/axStart/SPEC.md`), run with NVDA before a release. axStart needs no files of its
 own: it reads the Start menu's programs. Write each pass into `docs/axKit/nvda-test-record.md`, by step.
 
-Before starting: install the build (`publish.ps1`), or quit any running axStart (axStart, Quit axStart) and run
+Before starting: install the build (`publish.ps1`), or quit any running axStart (Session, Quit axStart) and run
 `.\run-axStart.ps1`. Have Notepad and Calculator installed (they are, on Windows 11).
 
 ## 1. Bringing it up and putting it away
@@ -55,4 +55,4 @@ Before starting: install the build (`publish.ps1`), or quit any running axStart 
 2. Uncheck it, sign out and in: the hotkey does nothing until axStart is started from the Start menu. Check it again.
 3. Options, General, Say the first match while typing off: typing says nothing; Ctrl+I says the match. On again.
 4. An update in place from another axKit window: afterwards Ctrl+Shift+Space still works (axStart was stopped and started again hidden).
-5. axStart, Quit axStart: the hotkey does nothing until axStart is started again.
+5. Session, Quit axStart: the hotkey does nothing until axStart is started again.

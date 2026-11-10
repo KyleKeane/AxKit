@@ -80,8 +80,8 @@ the app follows its spec, the plan's step reads as below.
 3. Type `1`, Enter: "Sent", then "Done" when the tool finishes.
 4. Ctrl+O once, on an idle prompt and again while Claude works: "Ctrl+O is off. For tool output, start with --verbose" Each time the conversation does not change (`l` gives the same count before and after), the status stays as it was and nothing else is spoken.
 5. Ask for something slow, then Escape in the message field while the status says "working": "Shift+Escape interrupts" and the status still says "working". Shift+Escape: the conversation gains Claude's interruption line and the status is "ready".
-6. Claude Code menu, Send key, Ctrl+C, and Ctrl+Shift+C from the message field: the same as Shift+Escape.
-7. With the same option off, type `/model`, Enter: "Claude asks" and, in the conversation, the numbered menu ending in a "Select with numbers" line. Claude Code menu, Send key, Down, then Up: the "(selected)" mark moves to another entry and back in the redrawn menu. Shift+Escape closes the menu without a change.
+6. Operations, Send key, Ctrl+C, and Ctrl+Shift+C from the message field: the same as Shift+Escape.
+7. With the same option off, type `/model`, Enter: "Claude asks" and, in the conversation, the numbered menu ending in a "Select with numbers" line. Operations, Send key, Down, then Up: the "(selected)" mark moves to another entry and back in the redrawn menu. Shift+Escape closes the menu without a change.
 
 ## 6. Sending while Claude works
 

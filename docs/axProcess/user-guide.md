@@ -31,7 +31,7 @@ The Startup view is for reading: axProcess does not turn startup programs on or 
 
 ## Menus
 
-- **Computer**: Refresh (F5), Summary (Ctrl+Q), Copy line (Ctrl+C), Exit.
+- **Session**: Refresh (F5), Summary (Ctrl+Q), Copy line (Ctrl+C), Exit.
 - **Process**: Details (Enter), End process (Delete), End process tree, Show program in axFile (Ctrl+E).
 - **Service**: Details (Enter), Start, Stop, Restart.
 - **Startup**: Details (Enter), Show program in axFile (Ctrl+E).

@@ -170,9 +170,9 @@ opens in the editor for its type (AG-1.4, AG-D1).
 
 ### AG-6 Menus, keys, texts
 
-- AG-6.1 Menus, in the standard order of a first menu (bundle AX-6): **Repository (R):** Open repository… Ctrl+O |
+- AG-6.1 Menus, in the standard order of a first menu (bundle AX-6): **Session (S):** Open repository… Ctrl+O |
   Open recent repository ▸ (ten, "1. name (path)", AX-9.5; "No recent repositories" when none) | ─ | Refresh F5 | ─ |
-  Show current repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Changes (C):** Stage or unstage
+  Show current repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Operations (P):** Stage or unstage
   Space | Stage all Ctrl+Shift+A | Unstage all Ctrl+Shift+U | ─ | Show diff Enter | Open file in editor Ctrl+E |
   Discard changes… Delete | ─ | Commit… Ctrl+Enter. **Branches (B):** Switch to branch Enter | New branch… Ctrl+N |
   ─ | Fetch Ctrl+Shift+F | Pull Ctrl+Shift+L | Push Ctrl+Shift+H. **View (V):** Changes Ctrl+1 | Log Ctrl+2 |

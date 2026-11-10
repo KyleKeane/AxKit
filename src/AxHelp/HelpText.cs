@@ -23,7 +23,7 @@ public static class HelpText
         [
             "Ctrl+S: nothing to save here; axHelp says so",
         ],
-        altF4: "hide axHelp (axHelp, Quit axHelp ends it)") + """
+        altF4: "hide axHelp (Session, Quit axHelp ends it)") + """
         ## From any program
           The conversation's hotkey, Windows+Alt+H unless you chose another in Options, Hotkey: the conversation with Claude, an axClaude window titled axHelp, the focus in its message field
           The screenshot's hotkey, Windows+Alt+S unless axHelp.json names another: a picture of the window in front, its path put into the conversation's message field and on the clipboard; type your question after it and press Enter

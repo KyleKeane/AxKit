@@ -6,7 +6,7 @@ folder. It is part of axKit, a bundle of apps for people who use a screen reader
 ## Start
 
 - Start menu: `axKit axTask`. Console: `axTask`, or `axtask C:\my\tasks` for a folder of your own.
-- The first time, axTask uses the folder `Tasks` in your Documents folder. Folder, Top folder chooses another.
+- The first time, axTask uses the folder `Tasks` in your Documents folder. Session, Top folder chooses another.
 - axTask opens on the list you had open last.
 
 ## The window

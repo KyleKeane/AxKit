@@ -49,7 +49,7 @@ agreement (AX-11.4) asked the first time.
 - HE-1.2 One axHelp at a time (a named mutex, `AppPaths.OneAtATime`): a second start hands "show", or "open" with its
   picture, to the running one's window (`AppMessage`), found by its title "axHelp hotkeys" (never "axHelp", which is the
   conversation's), and ends; with `--hidden` it just ends.
-- HE-1.3 Alt+F4 and Close all windows hide axHelp's window; axHelp, Quit axHelp ends the process. The conversation is an
+- HE-1.3 Alt+F4 and Close all windows hide axHelp's window; Session, Quit axHelp ends the process. The conversation is an
   axClaude window of its own and closes as any axClaude window.
 - HE-1.4 `AxKit.exe describe`, axDescribe's verb until 5.7.0, starts axHelp with the same arguments (`Dispatch.
   FormerDescribe`), so that an older sign-in start or script still works; axHelp removes axDescribe's Run value at its
@@ -115,7 +115,7 @@ agreement (AX-11.4) asked the first time.
 
 ### HE-6 Menus and keys
 
-axHel&p (P, since H is Help): Open the conversation (Enter), Put a picture file into the conversation… (Ctrl+D), Open
+Session (S): Open the conversation (Enter), Put a picture file into the conversation… (Ctrl+D), Open
 the last screenshot in axPreview (Ctrl+O), Claude's working folder, Hide (Escape), Quit axHelp. Options: Hotkey…,
 Conversation model ▸, Text ▸, General ▸ (Start with Windows), Developer ▸. Then the bundle's Window, axKit and Help
 (AX-9.1). Bundle-wide keys (AX-8.2): F1, Ctrl+Shift+P, F4, Shift+F1, the text size keys, Alt and Alt+F4. The F1 text

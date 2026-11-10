@@ -538,7 +538,7 @@ public sealed partial class PassForm
         ShowUnlock(null);
     }
 
-    /// <summary>File, New database: a file name from the Windows picker, then the master password twice; <c>db-create -p</c>.</summary>
+    /// <summary>Session, New database: a file name from the Windows picker, then the master password twice; <c>db-create -p</c>.</summary>
     private void NewDatabase()
     {
         if (ToolPath() is not { } cli)

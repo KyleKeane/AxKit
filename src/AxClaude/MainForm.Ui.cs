@@ -35,7 +35,7 @@ internal sealed partial class MainForm
 
         // What goes to Claude itself (FR-11); the raw sequences are fixed here and listed in Appendix B.
         // "Claude Code" since 5.7.0: the bundle's axKit menu holds a Claude submenu (AI help, AX-9.1); this menu is the program.
-        var claude = new ToolStripMenuItem("Claude &Code");
+        var claude = new ToolStripMenuItem("O&perations");
         // The process first (FR-1.8), then the turn.
         Add(claude, new Command("Force Claude to res&tart", AxClaudeKeys.RestartClaude, RestartClaude) { Mark = CommandMark.Act });
         claude.DropDownItems.Add(new ToolStripSeparator());

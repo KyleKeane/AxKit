@@ -16,7 +16,7 @@ public static class Palette
 {
     /// <summary>
     /// An entry's line: the name, the menus it is in, the key when it has one, "checked" when it is:
-    /// "Word wrap, Edit, Ctrl+Shift+W, checked".
+    /// "Word wrap, Operations, Ctrl+Shift+W, checked".
     /// </summary>
     public static string Text(string name, IEnumerable<string> path, string? key, bool isChecked)
     {
@@ -56,7 +56,7 @@ public static class Palette
         return matches.OrderBy(match => match.Rank).Select(match => match.Entry).ToList();
     }
 
-    /// <summary>What one match says (AX-10.4): "Save as, File, Ctrl+Shift+S, 1 of 3".</summary>
+    /// <summary>What one match says (AX-10.4): "Save as, Session, Ctrl+Shift+S, 1 of 3".</summary>
     public static string Spoken(PaletteEntry entry, int index, int count) => $"{entry.Text}, {index + 1} of {count}";
 
     /// <summary>What a text nothing matches says: "No commands match xyz".</summary>

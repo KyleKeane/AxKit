@@ -17,10 +17,10 @@ public static class HelpText
           Arrow keys, Home, End, Page Up, Page Down: through the entries. At the first or the last entry, a key that cannot move plays one short low note
           Type the start of a name, the letters within a second of each other: the first name starting with it, as in File Explorer; the same letter again, the next such name; Shift with a letter, the same backwards; the low note when no name starts with it
           Enter or Right Arrow on a folder: into it; Right on a file plays the low note and never opens it. Backspace, Left Arrow or Alt+Up: the folder above, the one you left selected; from a drive's top, This PC with the drives. Each says the folder, its count and the entry you land on: "docs, 5 items, plan.md"
-          Ctrl+G or Alt+D: go to a typed path, %USERPROFILE%\Downloads for instance; in its field, Down and Up complete the path from what you typed, "Documents, folder, 2 of 5", and Right at the end of a completed folder goes into it. Ctrl+O: the Windows folder picker. Folder, Open recent folder and Folder, Favorites: by number. Ctrl+D: add this folder to Favorites, or remove it
+          Ctrl+G or Alt+D: go to a typed path, %USERPROFILE%\Downloads for instance; in its field, Down and Up complete the path from what you typed, "Documents, folder, 2 of 5", and Right at the end of a completed folder goes into it. Ctrl+O: the Windows folder picker. Session, Open recent folder and Session, Favorites: by number. Ctrl+D: add this folder to Favorites, or remove it
           Ctrl+N: a new axFile window on this folder. F5: read the folder again
-          Ctrl+Shift+F: filter the list to the names containing a text, "3 of 24 items, filter chap"; Escape in the list clears it once nothing is selected. Folder, Sort by: name, date or size
-          Folder, Drives: the drives by number, This PC, Eject this drive, Drive properties
+          Ctrl+Shift+F: filter the list to the names containing a text, "3 of 24 items, filter chap"; Escape in the list clears it once nothing is selected. Session, Sort by: name, date or size
+          Session, Drives: the drives by number, This PC, Eject this drive, Drive properties
 
         ## Opening
           Enter on a file: the program Windows has for it (the one you made its default: axDown, axMedia, axPreview or any other), or the Windows dialog that picks one when there is none
@@ -44,17 +44,17 @@ public static class HelpText
           F2: rename in place, in a box over the entry with the name before the extension selected; Enter renames, Escape keeps the name. Delete: to the Recycle Bin, after a question
           Ctrl+X, Ctrl+C, Ctrl+V: cut, copy or paste as files, to and from File Explorer too; a pasted name already in the folder gets a number. Ctrl+Shift+C: copy the entry's full path, or every selected entry's, one per line
           In the entry's menu: Move to folder, Compress to zip, Extract here
-          Ctrl+Z: undo the newest operation that can be undone, one per press, the last twenty: a rename renamed back, a new folder or file removed while still empty, a move moved back, a paste's copies or a zip sent to the Recycle Bin, a delete restored from it. Folder, Undo names what it would undo
+          Ctrl+Z: undo the newest operation that can be undone, one per press, the last twenty: a rename renamed back, a new folder or file removed while still empty, a move moved back, a paste's copies or a zip sent to the Recycle Bin, a delete restored from it. Session, Undo names what it would undo
           Every operation runs on its own: a second paste, delete or zip can start while the first runs
 
         ## Information
           Ctrl+I: the entry's size and date; for a drive, the free space
-          Ctrl+Shift+W: show the entry in File Explorer. Ctrl+W: show the folder in File Explorer. Folder, Show current folder in: axClaude, axTerminal, axGIT
+          Ctrl+Shift+W: show the entry in File Explorer. Ctrl+W: show the folder in File Explorer. Session, Show current folder in: axClaude, axTerminal, axGIT
           NVDA+End: the status bar: the newest operation on the left, the folder's full path on the right
           Ctrl+S: nothing to save here; axFile says so
 
         ## The Actions list
-          Under the folder list, always; "No actions yet" until the first operation. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 moves between the two lists, Escape goes back to the folder list, Folder, Actions goes there
+          Under the folder list, always; "No actions yet" until the first operation. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 moves between the two lists, Escape goes back to the folder list, Session, Actions goes there
           Three sections, each under a header line: Running, the operations under way; Operations, the ones done; Selection, the changes of the selection in this folder. Newest last in each
           One line per operation: "Renamed notes.md to todo.md", "Copied 3 items", "Compressing, 40 of 120 files" while it runs, "Failed: …", "…, undone" once taken back. One per change of the selection: "Selected notes.md", "Selected 5 items", "Deselected all, 3 items"
           Enter: go to where it happened, the folder list on the entry it made, moved or selected. Ctrl+Z: undo this line, whatever its place; Ctrl+Z in the folder list undoes operations only. Ctrl+I: its section, number and time, "Operations, 3 of 12, 21:04"

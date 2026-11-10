@@ -33,7 +33,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    again the first, a third Ctrl+Z says "Nothing to undo"; Ctrl+Y twice puts both back, a third says "Nothing to
    redo". Paste a line (Ctrl+V) and type after it: Ctrl+Z takes the typed text, then the pasted line. Hold Backspace
    over a few words: one Ctrl+Z restores them all, the caret after them. Type, Ctrl+S ("Saved"), Ctrl+Z: the typing
-   is undone past the save and the title has its star again. Edit, Undo and Edit, Redo do the same as the keys. Alt+Backspace: "Undone" as Ctrl+Z (the undo of the window, not of the control); Shift+F10 in the text: the menu reads Undo, Redo, Cut, Copy, Paste, Select all.
+   is undone past the save and the title has its star again. Operations, Undo and Operations, Redo do the same as the keys. Alt+Backspace: "Undone" as Ctrl+Z (the undo of the window, not of the control); Shift+F10 in the text: the menu reads Undo, Redo, Cut, Copy, Paste, Select all.
    Open another file: Ctrl+Z says "Nothing to undo". Nothing but the announcement is spoken on any of these, and
    NVDA's arrow keys read the text as restored.
 
@@ -58,11 +58,11 @@ letter), and a `long.md` with headings and lines longer than the window.
 9. Open a locked file, or one that is not text (a `.png`): a notice names the problem; Escape closes it; the window
    stays open on an empty "Untitled" document, and Ctrl+S opens the Save dialog instead of writing over the file. A
    missing file opens as an empty document of that name, which Ctrl+S creates.
-10. File, Open recent file lists `plain.txt` and the other files opened or saved in this window as "1. plain.txt
+10. Session, Open recent file lists `plain.txt` and the other files opened or saved in this window as "1. plain.txt
     (<path>)", newest first;
     choosing one opens it, after the unsaved-changes question when there are changes; before any file, "No recent files",
     which NVDA reads and which does nothing on Enter.
-11. File, Show current file in, File Explorer (Ctrl+W): a File Explorer window opens with the file selected and NVDA
+11. Session, Show current file in, File Explorer (Ctrl+W): a File Explorer window opens with the file selected and NVDA
     reads its title; Alt+F4 closes it and the focus is back in axDown. On Untitled: "No file yet".
 
 ## 4. Find and go to line
@@ -95,13 +95,13 @@ letter), and a `long.md` with headings and lines longer than the window.
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds
    "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+W, R reads "1. plain.txt
-   (<path>) - axDown" and Enter opens it in a new window; File, Open on another file puts the one you left there too. Alt+W, C
+   (<path>) - axDown" and Enter opens it in a new window; Session, Open on another file puts the one you left there too. Alt+W, C
    (Close all windows) with unsaved changes in one window: that window asks "Save changes?" and the others close.
 5. Options, General, Check for updates at start: read as checked; Enter unchecks it. Options, Developer, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
    window on `axDown.json`. Help, Markdown resources, Markdown basics: the browser opens commonmark.org; GitHub
    Flavored Markdown opens its page.
 6. The command palette (bundle AX-10), with the caret in the middle of a line. Ctrl+Shift+P: "Command palette",
-   the field "Search commands"; Down: "Undo, Edit, Ctrl+Z, 2 of …" or the like, each Down the next command with its
+   the field "Search commands"; Down: "Undo, Operations, Ctrl+Z, 2 of …" or the like, each Down the next command with its
    menu and key, Up back; Ctrl+Home at the first match plays the low note and says the first match again. Type `wrap`: after a
    moment "Word wrap, …, 1 of 1"; Down: the low note, then "Word wrap, …, 1 of 1" again; Enter: the palette closes, NVDA is back in the editor at the same place, and
    "Word wrap, checked" (or "not checked") is said; Options shows the item changed. Ctrl+Shift+P, type `xyz`:

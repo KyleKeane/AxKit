@@ -34,7 +34,7 @@ public sealed class ProcessForm : AxKitForm
     private readonly ListViewState[] _views = [new(), new(), new()];
     private readonly ChoiceItems<ProcessSort> _sortItems;
     private readonly ToolStripMenuItem _processMenu = new("&Process");
-    private readonly ToolStripMenuItem _serviceMenu = new("&Service");
+    private readonly ToolStripMenuItem _serviceMenu = new("S&ervice");
     private readonly ToolStripMenuItem _startupMenu = new("S&tartup");
 
     private View _view = View.Processes;
@@ -59,7 +59,7 @@ public sealed class ProcessForm : AxKitForm
         // own, and only the menu of the view shown is enabled, so that a process command is never at hand among the
         // services (the user's ask, 2026-10-24; UpdateViewMenus). The keys act whichever menu is enabled, as before:
         // Enter and Ctrl+E are the first menu's command with the key, and each command finds the view shown.
-        var computer = new ToolStripMenuItem("&Computer");
+        var computer = new ToolStripMenuItem("&Session");
         Add(computer, new Command("&Refresh", AxProcessKeys.Refresh, () => Do(() => RefreshAsync(announce: true))) { Mark = CommandMark.Read });
         Add(computer, new Command("&Summary", AxProcessKeys.Summary, SaySummary) { Mark = CommandMark.Read });
         Add(computer, new Command("&Copy line", AxProcessKeys.CopyLine, CopyLine) { Mark = CommandMark.Read });
@@ -172,7 +172,7 @@ public sealed class ProcessForm : AxKitForm
     private View Cycled(int step) => (View)(((int)_view + step + 3) % 3);
 
     /// <summary>Shift+F10, the Applications key, a right click (PR-6.1): the view's menu from the bar, Process, Service or Startup.</summary>
-    private void OpenViewMenu() => OpenBarMenu(_view switch { View.Services => 'S', View.Startup => 'T', _ => 'P' });
+    private void OpenViewMenu() => OpenBarMenu(_view switch { View.Services => 'E', View.Startup => 'T', _ => 'P' });
 
     /// <summary>The menu of the view shown enabled, the other two not (PR-6.1): WinForms skips a disabled menu on the bar's arrows and the palette leaves its items out.</summary>
     private void UpdateViewMenus()

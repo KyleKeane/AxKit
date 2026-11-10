@@ -12,7 +12,7 @@ public static class HelpText
         [
             "Ctrl+S: nothing to save here; axStart says so",
         ],
-        altF4: "hide axStart (axStart, Quit axStart ends it)") + """
+        altF4: "hide axStart (Session, Quit axStart ends it)") + """
         ## Bringing axStart up
           The hotkey, Ctrl+Shift+Space unless you chose another in Options, Hotkey: from any program, the search field
           The same hotkey while axStart shows hides it again

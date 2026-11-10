@@ -38,7 +38,7 @@ public sealed partial class TaskForm : ItemForm
         // for them only show them. A key in a second menu is an item showing it too: its command is the first menu's.
         // The first menu holds what every pane has; List and Item act on the navigator's selection, Field on the
         // detail pane's, and only the menu of where the focus is and what is selected is enabled (UpdateRowMenus).
-        var file = new ToolStripMenuItem("&Folder");
+        var file = new ToolStripMenuItem("&Session");
         file.DropDownItems.Add(new ToolStripMenuItem("Top &folder...", null, (_, _) => ChooseTopFolder()));
         Add(file, new Command("&All tasks", AxTaskKeys.AllTasks, ShowAllTasks) { When = NotRenaming, Mark = CommandMark.Open });
         file.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh));

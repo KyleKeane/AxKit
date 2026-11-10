@@ -22,7 +22,7 @@ Long lines wrap at the window's edge, so Down Arrow reads one screen line at a t
 
 ## Files
 
-Ctrl+S saves and axDown says "Saved". A new document asks for a name first, with the Windows file dialog; Ctrl+Shift+S, Save as, asks every time. Ctrl+O opens another file in this window and Ctrl+N starts an empty one; both ask first if you have unsaved changes; Ctrl+Shift+N starts an empty document in a new axDown window and leaves this one as it is, as does closing the window: a notice says "Save changes to notes.md?" with Save, Don't save and Cancel; Enter saves, Escape cancels. File, Open recent file lists the last ten files you opened or saved; File, Show current file in, File Explorer (Ctrl+W) opens File Explorer with the file selected.
+Ctrl+S saves and axDown says "Saved". A new document asks for a name first, with the Windows file dialog; Ctrl+Shift+S, Save as, asks every time. Ctrl+O opens another file in this window and Ctrl+N starts an empty one; both ask first if you have unsaved changes; Ctrl+Shift+N starts an empty document in a new axDown window and leaves this one as it is, as does closing the window: a notice says "Save changes to notes.md?" with Save, Don't save and Cancel; Enter saves, Escape cancels. Session, Open recent file lists the last ten files you opened or saved; Session, Show current file in, File Explorer (Ctrl+W) opens File Explorer with the file selected.
 
 When another program changes the file while it is open here, for example Claude editing it while you are in axClaude, axDown notices when you come back to its window: with nothing unsaved it reloads the file, keeps your line, and says "Reloaded, notes.md changed on disk"; with unsaved changes it says "notes.md changed on disk; Save will ask", and Ctrl+S then offers Write over, Reload and lose mine, or Cancel.
 
@@ -46,8 +46,8 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the n
 
 ## Menus
 
-- **File**: New, Open, Open recent file (each as a number, the file's name and its full path), Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Edit**: Undo, Redo, Cut, Copy, Paste, Select all.
+- **Session**: New, Open, Open recent file (each as a number, the file's name and its full path), Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
+- **Operations**: Undo, Redo, Cut, Copy, Paste, Select all.
 - **Navigate**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Heading, Heading level 1 to 6, Link, List, List item, Block quote and Table.
 - **Options**: Text (Word wrap, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axDown.json in a new axJSON window, and Copy diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options between Window and axKit. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.

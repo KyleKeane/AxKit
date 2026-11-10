@@ -285,7 +285,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   folder ▸ (ten, "1. name (path)", AX-9.5) | Open recent folder in new window ▸ (the same list, a new axTerminal window on the one chosen, this one left as it is) | Switch shell ▸ (PowerShell 7 | Windows PowerShell | Command Prompt |
   Git Bash | Custom…) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder Ctrl+P |
   Show current folder in ▸ (File Explorer Ctrl+W | axClaude | axGIT | axFile), on the shell's current directory | ─ |
-  Export transcript… Ctrl+S | Exit Alt+F4. **Shell (E):** Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send
+  Export transcript… Ctrl+S | Exit Alt+F4. **Operations (P):** Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send
   key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent commands… Ctrl+R | Send without recording (Ctrl+Enter in the
   command field) | ─ | What is running Ctrl+Q. **Navigate (N):** axClaude's Navigate menu with the kinds the terminal
   has: Command field Ctrl+1 | Terminal Ctrl+2 | Latest output Ctrl+3 | ─ | Find… Ctrl+F | Find next F3 | Find

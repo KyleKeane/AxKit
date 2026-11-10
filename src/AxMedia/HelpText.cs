@@ -17,19 +17,19 @@ public static class HelpText
           Enter: play this file; the rest of the queue follows in order
           Delete: take this file out of the queue; the one playing goes on to the next
           Ctrl+I: the file's place, "3 of 12", and its position while it plays
-          Ctrl+O: add files with the Windows file picker, several at once. Ctrl+Shift+O: add a folder's sound and video files. Queue, Open recent lists the files and folders added lately by number
-          Queue, Clear queue: the queue emptied and the sound stopped
+          Ctrl+O: add files with the Windows file picker, several at once. Ctrl+Shift+O: add a folder's sound and video files. Session, Open recent lists the files and folders added lately by number
+          Session, Clear queue: the queue emptied and the sound stopped
           Ctrl+N: a new axMedia window
-          Ctrl+W: show the file in File Explorer. Queue, Show current file in, axFile: the file in its folder in axFile
+          Ctrl+W: show the file in File Explorer. Session, Show current file in, axFile: the file in its folder in axFile
           Ctrl+S: nothing to save here; axMedia says so
 
         ## Playing
           Space, or Ctrl+P from anywhere in the window: pause, or resume
           Ctrl+Right, Ctrl+Left: 15 seconds forward or back. Ctrl+T: go to a time, 12:40 or 1:02:10 or seconds
           Ctrl+Shift+Right, Ctrl+Shift+Left: the next or the previous file of the queue
-          Ctrl+Shift+Period, Ctrl+Shift+Comma: faster or slower by a quarter, the voice's pitch kept; Play, Normal speed goes back to 1
+          Ctrl+Shift+Period, Ctrl+Shift+Comma: faster or slower by a quarter, the voice's pitch kept; Operations, Normal speed goes back to 1
           Ctrl+Q: what is playing, where it is, and the speed
-          Play, Say each file as it starts: the next file's name said when the queue moves on, the one thing axMedia says on its own
+          Operations, Say each file as it starts: the next file's name said when the queue moves on, the one thing axMedia says on its own
           The volume is Windows' own: your keyboard's volume keys
         """ + BundleHelp.NoticesSection("axMedia", "the list");
 

@@ -116,8 +116,8 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
 
 ### PR-6 Menus, keys, texts
 
-- PR-6.1 Menus (AX-6): **Computer (C):** Refresh F5 | Summary Ctrl+Q | Copy line Ctrl+C | ─ | Exit Alt+F4. **Process
-  (P):** Details Enter | End process… Delete | End process tree… | Show program in axFile Ctrl+E. **Service (S):**
+- PR-6.1 Menus (AX-6): **Session (S):** Refresh F5 | Summary Ctrl+Q | Copy line Ctrl+C | ─ | Exit Alt+F4. **Process
+  (P):** Details Enter | End process… Delete | End process tree… | Show program in axFile Ctrl+E. **Service (E):**
   Details Enter | Start | Stop | Restart. **Startup (T):** Details Enter | Show program in axFile Ctrl+E. Only the menu
   of the view shown is enabled, the other two not, so that a process command is never at hand among the services and
   the reverse (the user's ask, 2026-10-24): the bar's arrows pass over a disabled menu and the command palette leaves

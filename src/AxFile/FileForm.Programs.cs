@@ -155,7 +155,7 @@ public sealed partial class FileForm
     }
 
     /// <summary>Shift+F10, the Applications key and a right click in the folder list (AF-4.6, AF-D13): the menu bar's Item menu, opened as Alt and I open it (the window base's <c>OpenBarMenu</c>).</summary>
-    private void ShowItemMenu() => OpenBarMenu('I');
+    private void ShowItemMenu() => OpenBarMenu('P');
 
     /// <summary>Item → Windows menu…: the shell's own menu for the entry, under it in the list, once the Item menu has closed.</summary>
     private void ShowWindowsMenu()

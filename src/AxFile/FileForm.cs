@@ -40,7 +40,7 @@ public sealed partial class FileForm : AxKitForm
         // a key's When is where it acts: the folder list (InList), the Actions list (InPane) or anywhere ----
         // Folder is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
         // folders, the ways around, Show current folder in, Exit.
-        var folder = new ToolStripMenuItem("&Folder");
+        var folder = new ToolStripMenuItem("&Session");
         Add(folder, new Command("&New window", AxFileKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
         Add(folder, new Command("&Open folder...", AxFileKeys.OpenFolder, OpenFolderDialog) { Mark = CommandMark.Open });
         CommandPalette.FilledOnOpening(_recentItem).DropDownOpening += (_, _) => FillRecent();
@@ -86,14 +86,14 @@ public sealed partial class FileForm : AxKitForm
         // Item is the entry's menu (AF-4.6): the bar's drop-down and the list's context menu, filled the same way, so
         // that the two are one menu. The bar's drop-down is the one WinForms makes (AX-6.6): a hand-made one loses
         // its owner item when it closes, and the bar then opens its neighbours' menus on Left and Right.
-        var item = new ToolStripMenuItem("&Item");
+        var item = new ToolStripMenuItem("O&perations");
         FillItemMenu(item);
 
         // Selection (AF-3.7): the marks on the list's entries, which the operations act on; the menu of the whole list
         // rather than of one entry, so it sits beside Item (asked 2026-10-21).
         // Selection (AF-3.7, AF-D10, 2026-10-22): the marks from anywhere, then the operations on them alone, which say
         // "None selected" rather than fall back to the current entry; Item is the entry, Folder the folder.
-        var select = new ToolStripMenuItem("&Selection");
+        var select = new ToolStripMenuItem("Se&lection");
         Add(select, new Command("Select &all", AxFileKeys.SelectAll, SelectAll) { When = InList });
         Add(select, new Command("&Deselect all", AxFileKeys.SelectNone, SelectNone) { When = InList });
         Add(select, new Command("Select or deselect this &entry", AxFileKeys.Select, ToggleSelection) { When = InList });

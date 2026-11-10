@@ -43,7 +43,7 @@ expect state Word document
 keys ctrl+end
 keys ctrl+shift+h
 expect said ! Install, heading level 1
-expect commands "Open in Windows\u0027 program, File, Ctrl\u002BE"
+expect commands "Open in Windows\u0027 program, Session, Ctrl\u002BE"
 
 # 5.7: a zip is its listing, its contents counted in the Details list.
 start preview --new {temp}\bundle.zip
@@ -91,7 +91,7 @@ expect focus "value":"clipboard-
 # 5.8: a sound file says what it is and that Ctrl+E plays it; the item is named so.
 start preview --new {temp}\song.mp3
 expect focus song.mp3 is a sound file (MP3).
-expect commands "Play in axMedia, File, Ctrl\u002BE"
+expect commands "Play in axMedia, Session, Ctrl\u002BE"
 
 # 5.9: any other file is its readable text, under the line that says so.
 start preview --new {temp}\tool.bin

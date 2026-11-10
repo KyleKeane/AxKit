@@ -25,9 +25,9 @@ The list is the one control, named with its count, "Queue, 12 items". Arrow keys
 - **Delete** takes the file out of the queue, "Removed 03 Chapter 3.mp3"; the one playing goes on to the next, or stops at the end.
 - **Ctrl+I** says the file's place, "03 Chapter 3.mp3, 3 of 12", and, while it plays, "playing, 12:52 of 45:30".
 - **Ctrl+F** finds the next file whose name contains the text; F3 and Shift+F3 the next and the previous match.
-- **Ctrl+O**, Open files: the Windows file picker on sound and video files, several at once; they are added to the end of the queue, "Added 3". Nothing starts playing by itself; Enter on one does. **Ctrl+Shift+O**, Open folder: the Windows folder picker; the folder's sound and video files are added in name order, "Added 12", or "No sound or video files in Dune". Queue, Open recent lists the files and folders added lately by number, "1. Dune (C:\Music\Dune)", so Alt+Q, R, 1 adds the first again.
-- Queue, Clear queue empties the queue and stops the sound, "Queue cleared".
-- **Ctrl+W** shows the file playing, or the one you are on, selected in File Explorer; Queue, Show current file in, axFile opens axFile on its folder with the file selected.
+- **Ctrl+O**, Open files: the Windows file picker on sound and video files, several at once; they are added to the end of the queue, "Added 3". Nothing starts playing by itself; Enter on one does. **Ctrl+Shift+O**, Open folder: the Windows folder picker; the folder's sound and video files are added in name order, "Added 12", or "No sound or video files in Dune". Session, Open recent lists the files and folders added lately by number, "1. Dune (C:\Music\Dune)", so Alt+S, R, 1 adds the first again.
+- Session, Clear queue empties the queue and stops the sound, "Queue cleared".
+- **Ctrl+W** shows the file playing, or the one you are on, selected in File Explorer; Session, Show current file in, axFile opens axFile on its folder with the file selected.
 - **Ctrl+N** opens a second axMedia window with an empty queue.
 
 ## Playing
@@ -35,18 +35,18 @@ The list is the one control, named with its count, "Queue, 12 items". Arrow keys
 - **Space**, or **Ctrl+P** from anywhere in the window, pauses, "Paused at 12:40", and resumes, "Playing".
 - **Ctrl+Right** and **Ctrl+Left** move 15 seconds forward or back and say the new position, "12:25".
 - **Ctrl+Shift+Right** and **Ctrl+Shift+Left** play the next or the previous file of the queue; "First file" and "End of queue" at the ends.
-- **Ctrl+Shift+Period** and **Ctrl+Shift+Comma** make it faster or slower by a quarter, between a half and three times: "Speed 1.25". The voice keeps its pitch. Play, Normal speed goes back to 1. The speed stays for the next file and the next window.
+- **Ctrl+Shift+Period** and **Ctrl+Shift+Comma** make it faster or slower by a quarter, between a half and three times: "Speed 1.25". The voice keeps its pitch. Operations, Normal speed goes back to 1. The speed stays for the next file and the next window.
 - **Ctrl+T** goes to a time: `12:40`, `1:02:10`, or `750` for seconds.
 - **Ctrl+Q** says what is playing: "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25", or "Nothing playing".
-- Play, Say each file as it starts (on by default) is the one thing axMedia says on its own: the next file's name when the queue moves on. Turn it off to hear nothing between chapters.
+- Operations, Say each file as it starts (on by default) is the one thing axMedia says on its own: the next file's name when the queue moves on. Turn it off to hear nothing between chapters.
 - Closing the window stops the sound; there is no Stop key, Space pauses.
 
 The volume is Windows' own: your keyboard's volume keys work from anywhere. A video's picture is drawn in an area at the top of the window while it plays; the keys are the same. The formats are whatever Windows decodes: MP3, WAV, WMA, M4A and M4B, AAC and FLAC are built in; OGG, Opus and some video formats need the free codec extensions from the Microsoft Store (Help, Media resources). A file Windows cannot play is said, "Cannot play clip.ogg: this kind of file is not supported", and the next plays.
 
 ## Menus
 
-- **Queue**: New window (Ctrl+N), Open files (Ctrl+O), Open folder (Ctrl+Shift+O), Open recent, Play (Enter), Remove (Delete), Clear queue, Information (Ctrl+I), Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
-- **Play**: Pause or resume (Space), Next file, Previous file, Forward 15 seconds, Back 15 seconds, Go to time (Ctrl+T), Faster, Slower, Normal speed, Say each file as it starts, What is playing (Ctrl+Q).
+- **Session**: New window (Ctrl+N), Open files (Ctrl+O), Open folder (Ctrl+Shift+O), Open recent, Play (Enter), Remove (Delete), Clear queue, Information (Ctrl+I), Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
+- **Operations**: Pause or resume (Space), Next file, Previous file, Forward 15 seconds, Back 15 seconds, Go to time (Ctrl+T), Faster, Slower, Normal speed, Say each file as it starts, What is playing (Ctrl+Q).
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options between Window and axKit. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 

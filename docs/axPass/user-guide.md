@@ -16,7 +16,7 @@ installed; axPass never decrypts the file itself.
 
 ## Unlocking and locking
 
-- axPass opens the database you had last, or Ctrl+O chooses one with the Windows file picker; File, New database
+- axPass opens the database you had last, or Ctrl+O chooses one with the Windows file picker; Session, New database
   makes one, asking its master password twice.
 - The notice "Unlock mine" asks the master password. Its field hides what you type; NVDA calls it protected.
 - A wrong password says "The password does not open mine" and asks again.
@@ -56,11 +56,11 @@ in a password field rather than in the notes.
   signs, then Enter. Ctrl+Z does not bring an old password back.
 - Every change is written to the database at once, by KeePassXC's tool; there is nothing to save.
 - Backups: before the first change after you unlock, axPass copies the database file into a folder beside it, called
-  "mine backups" for mine.kdbx, named with the date and time. The newest 20 are kept. File, Back up now makes one
-  whenever you like; File, Show backups in axFile opens the folder. To use one, open it with Ctrl+O and its master
+  "mine backups" for mine.kdbx, named with the date and time. The newest 20 are kept. Session, Back up now makes one
+  whenever you like; Session, Show backups in axFile opens the folder. To use one, open it with Ctrl+O and its master
   password; each is the encrypted file itself. A backup keeps what the database held then, under the master password
   it had then: after you change the master password, or delete an entry because it leaked, delete the older backups
-  too (File, Show backups in axFile).
+  too (Session, Show backups in axFile).
 - Ctrl+M moves the entry to another group, chosen from a list; Ctrl+Z moves it back.
 - Ctrl+N makes a new entry here, Ctrl+Shift+N a new group. F2 renames an entry in place: type the new title over the old and press Enter, or Escape. A title cannot hold a slash.
 - Delete moves an entry to the Recycle Bin group; Ctrl+Z brings it back. A group moves there after a question, and

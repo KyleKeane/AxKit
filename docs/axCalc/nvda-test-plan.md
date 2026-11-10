@@ -24,7 +24,7 @@ Run with NVDA before a release, after `run-axCalc.ps1` (or `.\run.ps1 -App calc`
 
 1. `255`, Enter, then Ctrl+I: "255, hex FF, binary 1111 1111, octal 377".
 2. `2.5`, Enter, Ctrl+I: "2.5 is not a whole number".
-3. `255`, Enter; Calculator, Copy answer in, Hexadecimal: "Copied 0xFF"; paste into axDown: `0xFF`.
+3. `255`, Enter; Session, Copy answer in, Hexadecimal: "Copied 0xFF"; paste into axDown: `0xFF`.
 
 ## 4. The history (AC-5)
 
@@ -35,7 +35,7 @@ Run with NVDA before a release, after `run-axCalc.ps1` (or `.\run.ps1 -App calc`
 5. Ctrl+F in the window: the Find notice; type `rate`, Enter: the line `rate = 1.25` selected and read; F3: the next match or the same again.
 6. Ctrl+S: the Windows save dialog; save as `calc-test.txt`: "Saved calc-test.txt". Open the file in axDown: one line per entry.
 7. Ctrl+Shift+Delete: the notice "Clear the history?" with "The N entries cannot be brought back."; Escape: nothing changes. Ctrl+Shift+Delete, Enter: "History cleared"; Shift+Tab: "History, empty".
-8. Calculator, Variables: the notice lists `rate = 1.25`. Calculator, Clear variables, Enter: "Variables cleared".
+8. Session, Variables: the notice lists `rate = 1.25`. Session, Clear variables, Enter: "Variables cleared".
 
 ## 5. Kept between runs (AC-9)
 

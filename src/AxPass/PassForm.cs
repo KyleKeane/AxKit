@@ -57,7 +57,7 @@ public sealed partial class PassForm : ItemForm
         // for them only show them. A key in a second menu is an item showing it too: its command is the first menu's.
         // Enter on a locked window unlocks it, before Enter opens (ItemForm's, later on the list).
         AddKey(new Command("Unlock", ItemKeys.Open, UnlockOrOpen) { When = () => _password is null && InNavigator(), Mark = CommandMark.Open });
-        var file = new ToolStripMenuItem("&File");
+        var file = new ToolStripMenuItem("&Session");
         Add(file, new Command("&Open database...", AxPassKeys.OpenDatabase, ChooseDatabase) { When = NotRenaming, Mark = CommandMark.Open });
         file.DropDownItems.Add(new ToolStripMenuItem("&New database...", null, (_, _) => NewDatabase()));
         Add(file, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming });
@@ -233,7 +233,7 @@ public sealed partial class PassForm : ItemForm
     {
         if (_database is null)
         {
-            return ([], "No database open: Ctrl+O opens one, File, New database makes one", "No database", string.Empty);
+            return ([], "No database open: Ctrl+O opens one, Session, New database makes one", "No database", string.Empty);
         }
 
         var name = PassTree.DatabaseName(_database);
@@ -538,7 +538,7 @@ public sealed partial class PassForm : ItemForm
         }
     }
 
-    /// <summary>File, Back up now (PW-4.5): a copy of the database in its backup folder at once.</summary>
+    /// <summary>Session, Back up now (PW-4.5): a copy of the database in its backup folder at once.</summary>
     private async Task BackUpNowAsync()
     {
         if (_database is not { } database)
@@ -558,7 +558,7 @@ public sealed partial class PassForm : ItemForm
         }
     }
 
-    /// <summary>File, Show backups in axFile: the backup folder, where a backup opens like any database (Ctrl+O).</summary>
+    /// <summary>Session, Show backups in axFile: the backup folder, where a backup opens like any database (Ctrl+O).</summary>
     private void ShowBackups()
     {
         if (_database is not { } database)
@@ -567,7 +567,7 @@ public sealed partial class PassForm : ItemForm
         }
         else if (!Directory.Exists(Backups.FolderFor(database)))
         {
-            Announce("No backups yet: the first change after unlocking makes one, or File, Back up now", true);
+            Announce("No backups yet: the first change after unlocking makes one, or Session, Back up now", true);
         }
         else
         {

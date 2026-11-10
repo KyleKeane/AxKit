@@ -93,7 +93,7 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
 
 - AJ-3.1 A form in place of the editor: for each key a labelled control named with the key and the template's label,
   reached with Tab and Shift+Tab, grouped by object. Kinds: text (EDIT), number (EDIT, checked on leaving), boolean
-  (check box), choice (a list of the template's values), list (a list box with Add, Edit, Remove), object (a group,
+  (check box), choice (a list of the template's values), list (a list box with Add, Operations, Remove), object (a group,
   or a button that opens the group in place).
 - AJ-3.2 Templates in code for the files the bundle's users have: Claude Code's `settings.json` and `.mcp.json`, axKit's
   own settings files; a generic form from the keys for everything else. A template is matched by file name and by the

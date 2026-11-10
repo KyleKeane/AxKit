@@ -20,7 +20,7 @@ Long lines wrap at the window's edge, so Down Arrow reads one screen line at a t
 
 ## Files
 
-Ctrl+S saves and axJSON says "Saved". A new document asks for a name first, with the Windows file dialog; Ctrl+Shift+S, Save as, asks every time. Ctrl+O opens another file in this window and Ctrl+N starts an empty one; both ask first if you have unsaved changes; Ctrl+Shift+N starts an empty document in a new axJSON window and leaves this one as it is, as does closing the window: a notice says "Save changes to settings.json?" with Save, Don't save and Cancel; Enter saves, Escape cancels. File, Open recent file lists the last ten files you opened or saved; File, Show current file in, File Explorer (Ctrl+W) opens File Explorer with the file selected.
+Ctrl+S saves and axJSON says "Saved". A new document asks for a name first, with the Windows file dialog; Ctrl+Shift+S, Save as, asks every time. Ctrl+O opens another file in this window and Ctrl+N starts an empty one; both ask first if you have unsaved changes; Ctrl+Shift+N starts an empty document in a new axJSON window and leaves this one as it is, as does closing the window: a notice says "Save changes to settings.json?" with Save, Don't save and Cancel; Enter saves, Escape cancels. Session, Open recent file lists the last ten files you opened or saved; Session, Show current file in, File Explorer (Ctrl+W) opens File Explorer with the file selected.
 
 When another program changes the file while it is open here, for example Claude editing it while you are in axClaude, axJSON notices when you come back to its window: with nothing unsaved it reloads the file, keeps your line, and says "Reloaded, settings.json changed on disk"; with unsaved changes it says "settings.json changed on disk; Save will ask", and Ctrl+S then offers Write over, Reload and lose mine, or Cancel.
 
@@ -46,7 +46,7 @@ Past the last one of a kind you hear "No next key" and the caret stays. The same
 
 ## Format
 
-Edit, Format (Ctrl+Shift+F) writes the file out again with two spaces per level and one key or item per line, keeping the order of the keys and the file's line endings, and says "Formatted". Small mistakes are repaired on the way and named: a comma after the last item, a missing comma between two items, single quotes, a key without quotes, and comments, so "Formatted, repaired: 1 trailing comma, 1 unquoted key". Anything else leaves the file as it is and names the line: "Not valid JSON: line 12, expected a value, found '}'". Format is one step for Undo (Ctrl+Z), and Redo (Ctrl+Y) formats again. The history reaches back to when the file was opened in this window, a run of typing being one step: "Undone", "Redone", "Nothing to undo", "Nothing to redo".
+Operations, Format (Ctrl+Shift+F) writes the file out again with two spaces per level and one key or item per line, keeping the order of the keys and the file's line endings, and says "Formatted". Small mistakes are repaired on the way and named: a comma after the last item, a missing comma between two items, single quotes, a key without quotes, and comments, so "Formatted, repaired: 1 trailing comma, 1 unquoted key". Anything else leaves the file as it is and names the line: "Not valid JSON: line 12, expected a value, found '}'". Format is one step for Undo (Ctrl+Z), and Redo (Ctrl+Y) formats again. The history reaches back to when the file was opened in this window, a run of typing being one step: "Undone", "Redone", "Nothing to undo", "Nothing to redo".
 
 ## Text size and fonts
 
@@ -54,8 +54,8 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 
 ## Menus
 
-- **File**: New, Open, Open recent file, Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Edit**: Undo, Redo, Cut, Copy, Paste, Select all, Format (Ctrl+Shift+F).
+- **Session**: New, Open, Open recent file, Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
+- **Operations**: Undo, Redo, Cut, Copy, Paste, Select all, Format (Ctrl+Shift+F).
 - **Navigate**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Key, Object, Array, Item and Error.
 - **Options**: Text (Word wrap, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axJSON.json in a new axJSON window, and Copy diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options between Window and axKit. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.

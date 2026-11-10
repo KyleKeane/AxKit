@@ -512,11 +512,21 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     and Your reports (Y, docs/axKit/reports.md RP-2.2); Check for updates (U), Update to (T, while a newer release is
     known) and About ▸ (A, AX-9.9).
 
-  The lists are filled each time the menu opens, so that they show the windows and the files of that moment. Two of
-  the apps' own menus changed letter or name so that every menu of a bar is reached by one letter: axClaude's menu
-  for the program is "Claude Code" (C), and axHelp's first menu takes P. History: 5.6.0 had one axKit menu (A) holding
-  the window lists, a Claude submenu, the palette, the reports, the updates and About; until 5.6.0 Open windows by
-  type ▸ (one submenu per app) stood after Open windows.- AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
+  The lists are filled each time the menu opens, so that they show the windows and the files of that moment.
+
+  The app's own menus begin the same way in every window (5.7.0, the user: "rename the first menu in all axkit windows
+  to be session and every second menu to be operations ... consistent across all apps"): the first is **Session**
+  (S), what the window holds and how it ends (open, save, recent, show in, exit; axClaude's and axTerminal's session,
+  axFile's folder, axGIT's repository, the editors' file, axMedia's queue, axPass's and axTask's database or folder,
+  axProcess's computer, axCalc's, axStart's, axClip's and axHelp's one menu), and the second, where there is one, is
+  **Operations** (P, since Options has O), what the app does to it (axClaude's Claude Code, axTerminal's shell,
+  axFile's item, axGIT's changes, the editors' edit, axMedia's play). The item apps (axTask, axPass, axMCP) and
+  axProcess keep their second menus named for what they act on, since those menus change with the focus or the view
+  (List, Item, Field; Process, Service, Startup) and are opened by their letters (Shift+F10); axMCP has no Session
+  menu, its first being one of those. Letters moved with the names: axFile's Selection is L, axProcess's Service E.
+  History: 5.6.0 had one axKit menu (A) holding the window lists, a Claude submenu, the palette, the reports, the
+  updates and About; until 5.6.0 Open windows by type ▸ (one submenu per app) stood after Open windows.
+- AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
   after ax as the mnemonic. It starts `AxKit.exe <verb>` with no arguments: a new process and a new window (B-2), the
   app starting as it does from its Start menu entry. The apps stand in five groups, a separator between them
   (2026-10-24, the user's choice of a flat list over a submenu per group; since 2026-10-29 the access layers last,

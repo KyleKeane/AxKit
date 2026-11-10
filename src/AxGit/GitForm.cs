@@ -64,7 +64,7 @@ public sealed partial class GitForm : AxKitForm
         // Repository is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
         // repositories, then the slot the editors have Save in (Refresh here), then the extras, then Exit. The keys act
         // while a menu item is disabled, as before: the command says what stops it.
-        var repository = new ToolStripMenuItem("&Repository");
+        var repository = new ToolStripMenuItem("&Session");
         Add(repository, new Command("&Open repository...", AxGitKeys.OpenRepository, OpenRepositoryDialog) { Mark = CommandMark.Open });
         CommandPalette.FilledOnOpening(_recentItem).DropDownOpening += (_, _) => FillRecent();
         FillRecent();
@@ -81,7 +81,7 @@ public sealed partial class GitForm : AxKitForm
 
         // Space, Enter and Delete act in the list only; in the details they are the control's own (AG-6.2). Enter acts
         // on the item of the view shown: Show diff, the commit (a key without an item), Switch to branch.
-        var changes = new ToolStripMenuItem("&Changes");
+        var changes = new ToolStripMenuItem("O&perations");
         Git(Add(changes, new Command("&Stage or unstage", AxGitKeys.StageToggle, () => Do(StageToggleAsync)) { When = () => _list.Focused }));
         Git(Add(changes, new Command("Stage &all", AxGitKeys.StageAll, () => Do(() => StageAllAsync(stage: true)))));
         Git(Add(changes, new Command("&Unstage all", AxGitKeys.UnstageAll, () => Do(() => StageAllAsync(stage: false)))));
@@ -264,7 +264,7 @@ public sealed partial class GitForm : AxKitForm
                 SetNoRepository();
             }
 
-            ShowNotice(Notice.Plain("Not a git repository", $"{target} is not inside a git repository. Repository, Open repository (Ctrl+O) takes another folder.") with { Unprompted = true });
+            ShowNotice(Notice.Plain("Not a git repository", $"{target} is not inside a git repository. Session, Open repository (Ctrl+O) takes another folder.") with { Unprompted = true });
             return;
         }
 

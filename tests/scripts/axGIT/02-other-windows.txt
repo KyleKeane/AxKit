@@ -22,19 +22,19 @@ run git -C repo -c user.name=Test -c user.email=none commit -q -m first
 # 2.4 axGIT's Repository, Show current repository in: File Explorer (Ctrl+W), axClaude, axTerminal, axFile.
 start git {temp}\repo
 expect focus Changes, no changes
-expect commands "File Explorer, Repository, Show current repository in, Ctrl
-expect commands "axClaude, access layer for Claude Code, Repository, Show current repository in"
-expect commands "axTerminal, access layer for your shell, Repository, Show current repository in"
-expect commands "axFile, Repository, Show current repository in"
+expect commands "File Explorer, Session, Show current repository in, Ctrl
+expect commands "axClaude, access layer for Claude Code, Session, Show current repository in"
+expect commands "axTerminal, access layer for your shell, Session, Show current repository in"
+expect commands "axFile, Session, Show current repository in"
 # 2.5 Ctrl+E with no file in the list says so and starts nothing.
 keys ctrl+e
 expect said ! No file selected
-expect commands "Open file in editor, Changes, Ctrl
+expect commands "Open file in editor, Operations, Ctrl
 
 # 2.3 axDown on a file of the repository: File, Show current file in, axGIT.
 start down {temp}\repo\notes.md
 expect focus notes.md
-expect commands "axGIT, access layer for Git, File, Show current file in"
+expect commands "axGIT, access layer for Git, Session, Show current file in"
 close
 
 # 2.1 axClaude on the repository: Session, Show current folder in, axGIT (Claude on Haiku; the trust question is

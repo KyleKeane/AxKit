@@ -60,7 +60,7 @@ internal sealed partial class TerminalForm
         session.DropDownItems.Add(CreateExitItem());
 
         // What goes to the shell itself (AT-3.5), and the field's extras.
-        var shell = new ToolStripMenuItem("Sh&ell");
+        var shell = new ToolStripMenuItem("O&perations");
         Add(shell, new Command("&Interrupt", AxTerminalKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
         Add(shell, new Command("Send &Escape", AxTerminalKeys.SendEscape, SendEscape) { Mark = CommandMark.Act });
         var sendKey = new ToolStripMenuItem("Send &key");

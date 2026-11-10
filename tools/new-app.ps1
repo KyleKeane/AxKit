@@ -278,7 +278,7 @@ public sealed class {{Short}}Form : AxKitForm
         Text = {{Short}}Lines.Title(path) + " - " + {{Project}}App.Name;
 
         // ---- menus and keys ({{P}}-7): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
-        var first = new ToolStripMenuItem("&{{Short}}");
+        var first = new ToolStripMenuItem("&Session");
         first.DropDownItems.Add(CreateExitItem());
 
         // Options, as the other windows' (AX-6): the window's own submenus and items first, then Text, General, Developer.

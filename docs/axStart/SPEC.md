@@ -151,7 +151,7 @@ taskbar. It works entirely offline (bundle G6).
   (on), `sayFirstMatch` (on), `starts` (each program's display name and how often axStart started it, for the order),
   and the window base's font, update check and window fields (the place is saved as every window's and never
   restored: the window is centred each time it shows).
-- AS-5.2 Menus (AX-6): **axStart (S):** Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
+- AS-5.2 Menus (AX-6): **Session (S):** Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
   Ctrl+O | Information Ctrl+I | ─ | Refresh programs F5 | ─ | Hide Escape | Quit axStart. **Options (O):** Hotkey… | Text ▸ (Font… |
   Larger text | Smaller text | Windows text size) | General ▸ (Start with Windows ✓ | Say the first match while typing
   ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1).

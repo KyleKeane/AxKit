@@ -47,8 +47,8 @@ should read; a step that reads differently is a defect. The specifications are `
    to Work". Ctrl+Z: "Undone: Moved Gmail personal to Work", back in Email.
 9. Every password field says what to do: "Type the master password to unlock test", "Type a new password for
    Gmail", "Re-enter the password for Gmail".
-10. After the first change, File, Show backups in axFile: the folder "test backups" with one copy named with the time.
-    File, Back up now: "Backed up: test …kdbx, in test backups".
+10. After the first change, Session, Show backups in axFile: the folder "test backups" with one copy named with the time.
+    Session, Back up now: "Backed up: test …kdbx, in test backups".
 
 ## 5. The rest
 

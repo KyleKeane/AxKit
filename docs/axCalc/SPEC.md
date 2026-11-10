@@ -82,7 +82,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
   leading operator is the error "No answer yet to continue from".
 - AC-3.6 `name = expression` sets a variable to the expression's value and answers "name = value"; the value is also
   the new last answer. The names of the constants, the functions and `ans` cannot be set ("Error: pi cannot be
-  changed"). Calculator, Variables lists them (AC-5.4).
+  changed"). Session, Variables lists them (AC-5.4).
 - AC-3.7 An answer is written in plain digits when it is a whole number under 10^15 (`8294400`, never `8294400.0`
   or `8.2944E+06`), otherwise with up to 15 significant digits (`0.333333333333333`, `6.02E+23`); `-0` is `0`.
 - AC-3.8 Errors, each spoken as "Error: …" with the field left as it was and nothing added to the history: "empty"
@@ -98,7 +98,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
   and the hexadecimal by four too, so that the reading has pauses. A negative whole number is the magnitude with a
   minus ("hex -FF"); an answer that is not a whole number, or is over 2^63, says "255.5 is not a whole number" or "too
   large for other bases".
-- AC-4.2 Calculator, Copy answer in ▸ Hexadecimal, Binary, Octal copies that form without spaces, with its prefix
+- AC-4.2 Session, Copy answer in ▸ Hexadecimal, Binary, Octal copies that form without spaces, with its prefix
   (`0xFF`, `0b11111111`, `0o377`), so that it pastes into code.
 
 ### AC-5 The history
@@ -109,10 +109,10 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 - AC-5.2 In the history: Enter puts the entry's expression into the field, the caret at its end, and moves the focus
   there; Ctrl+Shift+C copies the entry's answer ("Copied 8294400"); Delete removes the entry ("Removed"); Escape goes
   back to the field.
-- AC-5.3 Calculator, Clear history (Ctrl+Shift+Delete) asks "Clear the history? The N entries cannot be brought back."
-  with Clear and Cancel; Clear empties the list and says "History cleared". The variables stay; Calculator, Clear
+- AC-5.3 Session, Clear history (Ctrl+Shift+Delete) asks "Clear the history? The N entries cannot be brought back."
+  with Clear and Cancel; Clear empties the list and says "History cleared". The variables stay; Session, Clear
   variables removes them after the same kind of question.
-- AC-5.4 Calculator, Variables shows a notice listing each variable as "name = value", one per line, or "No
+- AC-5.4 Session, Variables shows a notice listing each variable as "name = value", one per line, or "No
   variables. Set one with name = value".
 - AC-5.5 Ctrl+S saves the history as a text file, one entry per line, through the Windows save dialog (AX-7.2), and
   says "Saved <file name>".
@@ -132,7 +132,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 
 ### AC-7 Menus, keys, texts
 
-- AC-7.1 Menus (AX-6): **Calculator (C):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal |
+- AC-7.1 Menus (AX-6): **Session (S):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal |
   Binary | Octal) | Answer in other bases Ctrl+I | Say the last answer Ctrl+Q | ─ | Variables | Clear variables… | ─ |
   Save history… Ctrl+S | Clear history… Ctrl+Shift+Delete | ─ | Exit Alt+F4. **Options (O):** Angles ▸ (Degrees ✓ |
   Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):**

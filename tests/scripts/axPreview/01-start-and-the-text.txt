@@ -19,8 +19,8 @@ expect focus {"name":"README.md","role":"Text","value":"# Readme for the preview
 expect quiet 1000
 # 1.1 manual: the menu bar (Alt) needs the foreground; its menus as the palette reads them: File, Navigate, Options,
 # axKit, Help, and no Edit menu (the runner has no refuse for the commands, so the absence is not checked).
-expect commands "New window, File, Ctrl\u002BN"
-expect commands "Reload, File, F5"
+expect commands "New window, Session, Ctrl\u002BN"
+expect commands "Reload, Session, F5"
 expect commands "Find, Navigate, Ctrl\u002BF"
 expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW, checked"
 expect commands "Keyboard shortcuts, Help, F1"
@@ -149,7 +149,7 @@ expect text An added line.
 # 1.10 manual: the reload on coming back to the window (Alt+Tab) needs its activation, which a test window never gets.
 
 # 1.11: on a .json file the File menu's item reads "Edit in axJSON Ctrl+E"; on README.md "Edit in axDown".
-expect commands "Edit in axDown, File, Ctrl\u002BE"
+expect commands "Edit in axDown, Session, Ctrl\u002BE"
 # 1.11 manual: Ctrl+E starts an editor window, and the Show current file in items start File Explorer, axGIT,
 # axTerminal and axFile, processes the runner does not reach (File Explorer on the user's desktop).
 
@@ -167,7 +167,7 @@ expect said ! No next heading
 start preview --new {temp}\tool.exe
 expect state "title":"tool.exe - axPreview"
 expect focus No readable text was found in tool.exe.
-expect commands "Open in Windows\u0027 program, File, Ctrl\u002BE"
+expect commands "Open in Windows\u0027 program, Session, Ctrl\u002BE"
 start preview --new {temp}\too-large.txt
 expect state "notice":"Too large"
 expect state too-large.txt is 34,000,000 bytes, over the 32 MB a window can open.
@@ -203,4 +203,4 @@ expect said ! No file yet
 # 1.11: on the .json file, "Edit in axJSON".
 start preview --new {temp}\data.json
 expect focus data.json
-expect commands "Edit in axJSON, File, Ctrl\u002BE"
+expect commands "Edit in axJSON, Session, Ctrl\u002BE"

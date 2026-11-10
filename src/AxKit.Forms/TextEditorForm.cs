@@ -68,7 +68,7 @@ public sealed partial class TextEditorForm : AxKitForm
         // recent files, then Save and Save as where every Windows program has them, then the extras, then Exit.
         // axClaude's Session menu has the same order with the Save slot empty and its export before Exit.
         // In the viewer (AP-3.2) the commands that write are not made at all, so that their keys do nothing there.
-        var file = new ToolStripMenuItem("&File");
+        var file = new ToolStripMenuItem("&Session");
         if (_app.ReadOnly)
         {
             Add(file, new Command("&New window", EditorKeys.NewDocument, NewWindow) { Mark = CommandMark.Open });
@@ -107,7 +107,7 @@ public sealed partial class TextEditorForm : AxKitForm
         ToolStripMenuItem? edit = null;
         if (!_app.ReadOnly)
         {
-            edit = new ToolStripMenuItem("&Edit");
+            edit = new ToolStripMenuItem("O&perations");
             Add(edit, _undo);
             Add(edit, _redo);
             AddKey(_redo with { Key = EditorKeys.RedoAlso });

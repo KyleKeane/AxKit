@@ -24,17 +24,17 @@ What you can type:
 - Numbers: `2.5`, `.5`, `6.02e23`; underscores as separators, `1_000_000`; hexadecimal `0xFF`, binary `0b1010`, octal `0o17`.
 - Functions, with their arguments in parentheses: `sqrt`, `cbrt`, `abs`, `exp`, `ln`, `log` (base 10), `log2`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `floor`, `ceil`, `trunc`, `round` (`round(3.14159, 2)` is 3.14), `min`, `max`, `hypot`.
 - Names: `pi`, `e`, and `ans` for the last answer.
-- Variables: `rate = 1.25` sets one; then `400 * rate` is 500. Calculator, Variables lists them.
+- Variables: `rate = 1.25` sets one; then `400 * rate` is 500. Session, Variables lists them.
 
 Angles are in degrees unless you choose Options, Angles, Radians.
 
 ## Other bases
 
-**Ctrl+I** says the answer in hexadecimal, binary and octal: "255, hex FF, binary 1111 1111, octal 377". The digits come in groups of four, so the reading has pauses. Calculator, Copy answer in, copies the answer as `0xFF`, `0b11111111` or `0o377`, ready to paste into code.
+**Ctrl+I** says the answer in hexadecimal, binary and octal: "255, hex FF, binary 1111 1111, octal 377". The digits come in groups of four, so the reading has pauses. Session, Copy answer in, copies the answer as `0xFF`, `0b11111111` or `0o377`, ready to paste into code.
 
 ## The history
 
-The newest line is at the bottom, so Up from the end reads back from the latest. axCalc keeps the history and your variables between runs, in plain text in its settings file (`%APPDATA%\AxKit\axCalc.json`); Calculator, Clear history empties it. In the history:
+The newest line is at the bottom, so Up from the end reads back from the latest. axCalc keeps the history and your variables between runs, in plain text in its settings file (`%APPDATA%\AxKit\axCalc.json`); Session, Clear history empties it. In the history:
 
 - **Enter** puts the line's expression back in the field, to change it and press Enter again.
 - **Ctrl+Shift+C** copies the line's answer. In the field, it copies the last answer.
@@ -42,11 +42,11 @@ The newest line is at the bottom, so Up from the end reads back from the latest.
 - **Delete** removes the line; **Escape** goes back to the field.
 - **Ctrl+F** finds a line by its text, F3 the next one.
 
-**Ctrl+S** saves the whole history as a text file, one line per answer. Calculator, Clear history (Ctrl+Shift+Delete) empties it after a question. The history and your variables are kept until next time, unless you turn off Options, Keep history between runs.
+**Ctrl+S** saves the whole history as a text file, one line per answer. Session, Clear history (Ctrl+Shift+Delete) empties it after a question. The history and your variables are kept until next time, unless you turn off Options, Keep history between runs.
 
 ## Menus
 
-- **Calculator**: Answer (Enter), Copy answer (Ctrl+Shift+C), Copy answer in, Answer in other bases (Ctrl+I), Say the last answer (Ctrl+Q), Variables, Clear variables, Save history (Ctrl+S), Clear history (Ctrl+Shift+Delete), Exit.
+- **Session**: Answer (Enter), Copy answer (Ctrl+Shift+C), Copy answer in, Answer in other bases (Ctrl+I), Say the last answer (Ctrl+Q), Variables, Clear variables, Save history (Ctrl+S), Clear history (Ctrl+Shift+Delete), Exit.
 - **Options**: Angles (Degrees, Radians), Keep history between runs, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options between Window and axKit. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 

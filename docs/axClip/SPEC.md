@@ -48,7 +48,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 - CP-1.3 The hotkey is Windows+Alt+V at first (CP-D1); Options, Hotkey… chooses another the way axStart's does (AS-4.2),
   and a hotkey another program holds is said in a notice with the window shown (AS-4.3).
 - CP-1.4 The window hides on Enter, Shift+Enter, Escape, Alt+F4 and another program coming to the front, and gives the
-  front back to the program that had it (AS-3.4, the bundle's `HotkeyForm`). Only axClip, Quit axClip ends the
+  front back to the program that had it (AS-3.4, the bundle's `HotkeyForm`). Only Session, Quit axClip ends the
   process, and with it the history unless it is kept (CP-3.4).
 
 ### CP-2 The window

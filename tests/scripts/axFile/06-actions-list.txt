@@ -29,7 +29,7 @@ expect said ♪ Edge
 keys escape
 expect focus "name":"6 items"
 # Folder, Actions: the focus in the Actions list; Shift+Tab: the folder list.
-menu Actions, Folder
+menu Actions, Session
 expect focus "name":"Actions"
 keys shift+tab
 expect focus "name":"6 items"
@@ -151,7 +151,7 @@ keys enter
 expect focus "value":"zip-two-files-1.txt"
 keys space shift+down
 expect focus "value":"zip-two-files-2.txt, selected"
-menu Compress to zip, Item
+menu Compress to zip, Operations
 expect said ! Compressed to act.zip
 keys tab
 expect focus "value":"Compressed to act.zip"

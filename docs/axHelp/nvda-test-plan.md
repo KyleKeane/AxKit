@@ -41,5 +41,5 @@ need a real reply and a real screen and are the user's by ear.
 
 ## 4. Quit
 
-1. axHelp, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`); the conversation window stays open, an
+1. Session, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`); the conversation window stays open, an
    axClaude window of its own.

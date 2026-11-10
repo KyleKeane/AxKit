@@ -146,7 +146,7 @@ top of the window. It works entirely offline (bundle G6).
   between 0.5 and 3 ("Speed 1.25"), Play → Normal speed back to 1, the speed kept in the settings for the next file
   and the next window; **Ctrl+T** Go to time…, the notice with the field "Time" (`12:40`, `1:02:10`, or `750` for
   seconds), the position reached, "12:40", when done; **Ctrl+Q** What is playing: "Playing <name>, 12:52 of 45:30, speed 1.25", "Paused …"
-  or "Nothing playing". "Say each file as it starts" (`sayEachFile`, default on; the Play menu) is the one
+  or "Nothing playing". "Say each file as it starts" (`sayEachFile`, default on; the Operations menu) is the one
   unprompted announcement (G5). The volume is Windows' own (AM-D6). Stop as a command is not offered: Space pauses,
   Clear queue stops.
 - AM-4.4 Closing the window stops the player.
@@ -154,9 +154,9 @@ top of the window. It works entirely offline (bundle G6).
 
 ### AM-5 Menus, keys, texts
 
-- AM-5.1 Menus (AX-6): **Queue (Q):** New window Ctrl+N | Open files… Ctrl+O | Open folder… Ctrl+Shift+O | Open
+- AM-5.1 Menus (AX-6): **Session (S):** New window Ctrl+N | Open files… Ctrl+O | Open folder… Ctrl+Shift+O | Open
   recent ▸ | ─ | Play Enter | Remove Delete | Clear queue | ─ | Information Ctrl+I | Show current file in ▸ (File
-  Explorer Ctrl+W | axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Play (P):** Pause or resume Space | Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
+  Explorer Ctrl+W | axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Operations (P):** Pause or resume Space | Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
   Forward 15 seconds Ctrl+Right | Back 15 seconds Ctrl+Left | Go to time… Ctrl+T | ─ | Faster Ctrl+Shift+Period |
   Slower Ctrl+Shift+Comma | Normal speed | ─ | Say each file as it starts ✓ | What is playing Ctrl+Q. **Options (O):**
   Text ▸ | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
