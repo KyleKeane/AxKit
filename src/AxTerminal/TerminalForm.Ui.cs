@@ -11,7 +11,7 @@ internal sealed partial class TerminalForm
     private void BuildMenus()
     {
         // The menus (SPEC.md AT-6.1), every mnemonic unique within its menu; each item with a key is a command of the
-        // window's one list (docs/axkit/app-kit.md AK-2), its key from the table. Session, the shell in its folder, is the
+        // window's one list (docs/axKit/app-kit.md AK-2), its key from the table. Session, the shell in its folder, is the
         // thing worked on, in the standard order of a first menu (bundle AX-6): New, the recent folders, the slot the
         // editors have Save in, Show current folder in, the export, Exit.
         var session = new ToolStripMenuItem("&Session");

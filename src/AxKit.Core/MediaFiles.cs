@@ -1,9 +1,9 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// The rules of sound and video files that need no engine (docs/axmedia/SPEC.md AM-4.1, AM-4.3, AM-4.5): which
+/// The rules of sound and video files that need no engine (docs/axMedia/SPEC.md AM-4.1, AM-4.3, AM-4.5): which
 /// files are media, the time format, the time a user types, and the speed steps. axMedia plays them and axFile asks
-/// which entries are media (docs/axfile/SPEC.md section 9), which is why they are the bundle's (AX-6.3; from
+/// which entries are media (docs/axFile/SPEC.md section 9), which is why they are the bundle's (AX-6.3; from
 /// AxFile.Core, 2026-10-22). Tested in <c>tests/AxKit.Tests</c>.
 /// </summary>
 public static class MediaFiles

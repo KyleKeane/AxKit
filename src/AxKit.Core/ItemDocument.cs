@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 
 namespace AxKit.Core;
 
-/// <summary>One field as the window shows it (docs/axkit/item-apps.md IA-4.1): its title, its type, its value as in the file, and a choice's options.</summary>
+/// <summary>One field as the window shows it (docs/axKit/item-apps.md IA-4.1): its title, its type, its value as in the file, and a choice's options.</summary>
 public sealed record ItemField(string Title, string Type, JsonNode? Value, IReadOnlyList<string> Options);
 
 /// <summary>
@@ -115,7 +115,7 @@ public sealed class ItemDocument
 
     /// <summary>
     /// A key of the file's root beyond the format, the fields and the template, kept as the file has it (IA-4.1): a
-    /// list's action keys and its GitHub settings (docs/axkit/reports.md RP-7.1, RP-8.1). Null for none.
+    /// list's action keys and its GitHub settings (docs/axKit/reports.md RP-7.1, RP-8.1). Null for none.
     /// </summary>
     public JsonNode? Extra(string key) => _root[key];
 

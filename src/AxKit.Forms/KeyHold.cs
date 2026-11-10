@@ -2,7 +2,7 @@ namespace AxKit.Forms;
 
 /// <summary>
 /// A hold on the keys that answer (Enter, Space, Escape, typed letters) for a moment after a control appears that the
-/// user did not ask for (docs/axkit/SPEC.md AX-6.4): a notice (<see cref="OverlayPanel"/>) or a question in the message
+/// user did not ask for (docs/axKit/SPEC.md AX-6.4): a notice (<see cref="OverlayPanel"/>) or a question in the message
 /// field's place (<see cref="ControlArea"/>) can open while the user types, and the next keys were meant for the
 /// message field; after an answer goes, a second Enter would send it twice. One second unless the caller says
 /// otherwise (axClaude holds for three seconds after an answer). The two panels kept a copy each until 2026-10-23.

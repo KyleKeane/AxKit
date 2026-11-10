@@ -1,8 +1,8 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// Where Claude Code's program is, for axClaude (docs/axclaude/SPEC.md FR-1.2) and for the AI tools registration
-/// (docs/axkit/mcp.md MC-6.8), one search since 2026-11-09 (from <c>AxClaude.Core/ClaudeLauncher</c> on its second
+/// Where Claude Code's program is, for axClaude (docs/axClaude/SPEC.md FR-1.2) and for the AI tools registration
+/// (docs/axKit/mcp.md MC-6.8), one search since 2026-11-09 (from <c>AxClaude.Core/ClaudeLauncher</c> on its second
 /// use; the registration had a shorter search of its own that missed an npm-only install). Pure but for the file
 /// lookups, and tested.
 /// </summary>

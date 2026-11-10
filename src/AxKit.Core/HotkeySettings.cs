@@ -4,7 +4,7 @@ namespace AxKit.Core;
 
 /// <summary>
 /// What the two background apps, axStart and axClip, remember beyond <see cref="WindowSettings"/>
-/// (docs/axstart/SPEC.md AS-5.1, docs/axclip/SPEC.md CP-6.1): the hotkey as text, Start with Windows and Say the first
+/// (docs/axStart/SPEC.md AS-5.1, docs/axClip/SPEC.md CP-6.1): the hotkey as text, Start with Windows and Say the first
 /// match while typing. Their shared window (<c>AxKit.Forms/HotkeyForm</c>) reads these without knowing the app; each
 /// app's settings class derives from it, names its default hotkey and adds its own, every property keeping the JSON
 /// name it had (the two files were written with the same names before the class existed, 2026-11-09).

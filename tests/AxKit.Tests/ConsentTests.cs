@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>What the user agreed to (docs/axkit/SPEC.md AX-11.5, AX-11.8): recorded once per app and program, withdrawn, and asked again when the file is missing or damaged.</summary>
+/// <summary>What the user agreed to (docs/axKit/SPEC.md AX-11.5, AX-11.8): recorded once per app and program, withdrawn, and asked again when the file is missing or damaged.</summary>
 public sealed class ConsentTests
 {
     private static string TempFile() => Path.Combine(Path.GetTempPath(), "axkit-tests", Guid.NewGuid().ToString("N"), "consent.json");
@@ -31,7 +31,7 @@ public sealed class ConsentTests
     [Fact]
     public void Every_agreement_of_one_app_is_withdrawn_in_one_write()
     {
-        // Forget AI tools (docs/axkit/mcp.md): every paired tool's agreement goes, the other apps' stay, the file written once.
+        // Forget AI tools (docs/axKit/mcp.md): every paired tool's agreement goes, the other apps' stay, the file written once.
         var file = TempFile();
         Consent.Record(file, "AI tools", "Claude Code", "4.0.0", new DateTime(2026, 10, 29));
         Consent.Record(file, "AI tools", "Another tool", "4.0.0", new DateTime(2026, 10, 30));

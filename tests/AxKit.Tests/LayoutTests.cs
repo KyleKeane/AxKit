@@ -3,7 +3,7 @@ using System.Xml.Linq;
 namespace AxKit.Tests;
 
 /// <summary>
-/// The project references point one way (docs/axkit/SPEC.md 5.1, M2): the shared projects (<c>AxKit.*</c>) reference
+/// The project references point one way (docs/axKit/SPEC.md 5.1, M2): the shared projects (<c>AxKit.*</c>) reference
 /// nothing of the apps, an app never references another app, and an app's <c>.Core</c> never references its window.
 /// Only <c>axKit</c>, the executable, may reference everything. Read off the project files, so a wrong reference fails
 /// here before it is felt.

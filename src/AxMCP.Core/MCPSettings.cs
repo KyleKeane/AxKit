@@ -13,7 +13,7 @@ public sealed class OwnServer
 }
 
 /// <summary>
-/// Everything axMCP remembers between runs (SPEC.md MP-8), in <c>%APPDATA%\AxKit\axmcp.json</c> through the bundle's
+/// Everything axMCP remembers between runs (SPEC.md MP-8), in <c>%APPDATA%\AxKit\axMCP.json</c> through the bundle's
 /// <see cref="SettingsFile"/>: the font, the update check and the window's place from <see cref="WindowSettings"/>, and
 /// the user's own servers. No environment variables: a token belongs in the user's own environment or in Claude Code's
 /// file, never here.
@@ -22,7 +22,7 @@ public sealed class MCPSettings : WindowSettings
 {
     public List<OwnServer> Servers { get; set; } = [];
 
-    public static string DefaultPath => AppPaths.SettingsFile("axmcp");
+    public static string DefaultPath => AppPaths.SettingsFile("axMCP");
 
     public static MCPSettings Load(string path, out string? error)
     {

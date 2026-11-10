@@ -3,7 +3,7 @@ using System.Text;
 
 namespace AxKit.Core.Mcp;
 
-/// <summary>A client the user allowed (docs/axkit/mcp.md MC-6.4): known by its program file; its name as it gave it, for display.</summary>
+/// <summary>A client the user allowed (docs/axKit/mcp.md MC-6.4): known by its program file; its name as it gave it, for display.</summary>
 public sealed record McpClient(string Program, string Name, string Paired);
 
 /// <summary>The shape of <see cref="AppPaths.McpFile"/>: off until the user turns it on, and the paired clients.</summary>
@@ -18,7 +18,7 @@ public sealed class McpSettings
 }
 
 /// <summary>
-/// Whether AI tools may use axKit, which clients, and with what key (docs/axkit/mcp.md MC-6.1, MC-6.3, MC-6.4): the
+/// Whether AI tools may use axKit, which clients, and with what key (docs/axKit/mcp.md MC-6.1, MC-6.3, MC-6.4): the
 /// bundle's one setting, read again at every connection so that turning it off in one window ends every client's
 /// access at its next call, and the key the broker answers the windows' challenges with. The file is written whole
 /// through <see cref="SettingsFile"/>, sealed with an HMAC under the key: a file whose seal does not check, written by

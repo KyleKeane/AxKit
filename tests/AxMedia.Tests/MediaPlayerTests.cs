@@ -2,7 +2,7 @@ using AxMedia.Core;
 
 namespace AxMedia.Tests;
 
-/// <summary>The player's reason texts (docs/axmedia/SPEC.md AM-4.1); the engine itself is checked by ear.</summary>
+/// <summary>The player's reason texts (docs/axMedia/SPEC.md AM-4.1); the engine itself is checked by ear.</summary>
 public sealed class MediaPlayerTests
 {
     [Fact]

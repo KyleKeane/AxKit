@@ -4,7 +4,7 @@ using AxKit.Core.Vt;
 namespace AxKit.Core.Transcript;
 
 /// <summary>
-/// The transcript of a console (docs/axterminal/SPEC.md AT-D6): the lines in order, the screen the program draws on
+/// The transcript of a console (docs/axTerminal/SPEC.md AT-D6): the lines in order, the screen the program draws on
 /// with the parser that feeds it (<see cref="Feed"/>, <see cref="NewScreen"/>), the bookmarks, the cap on the line
 /// count, and what the screen does to the lines: a line for a row that gets its first text, a committed line when
 /// its row scrolls off the top or is let go, a removed line when its row is discarded, and the new text of a

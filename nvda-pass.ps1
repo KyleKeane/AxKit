@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Runs the app scripts with NVDA listening: the NVDA test plans as the assistant runs them (docs/axkit/automation.md,
+  Runs the app scripts with NVDA listening: the NVDA test plans as the assistant runs them (docs/axKit/automation.md,
   section 3).
 
 .DESCRIPTION
@@ -15,7 +15,7 @@
 
 .EXAMPLE
   .\nvda-pass.ps1                 # every app's scripts and the NVDA-only scripts
-  .\nvda-pass.ps1 axCalc          # tests\scripts\axcalc, and the NVDA-only scripts whose names start with axcalc
+  .\nvda-pass.ps1 axCalc          # tests\scripts\axCalc, and the NVDA-only scripts whose names start with axcalc
   .\nvda-pass.ps1 -NoBuild axDown # the last build again
   .\nvda-pass.ps1 -Skip axClaude  # every app but axClaude
 #>
@@ -62,11 +62,11 @@ if (-not $NoBuild) {
 $scripts = Join-Path $work 'scripts'
 if (Test-Path $scripts) { Remove-Item $scripts -Recurse -Force }
 New-Item -ItemType Directory -Force $scripts | Out-Null
-$skipped = @($Skip | ForEach-Object { $_.ToLowerInvariant() })
+# The folders carry the apps' spoken names (axCalc, axDown; 5.6.0), matched whatever case is typed.
 $apps = @(Get-ChildItem (Join-Path $root 'tests\scripts') -Directory |
-    Where-Object { ($App -eq '' -or $_.Name -eq $App.ToLowerInvariant()) -and $_.Name -notin $skipped })
+    Where-Object { ($App -eq '' -or $_.Name -eq $App) -and $_.Name -notin $Skip })
 if ($App -ne '' -and $apps.Count -eq 0) {
-    Write-Host "No scripts in tests\scripts\$($App.ToLowerInvariant())."
+    Write-Host "No scripts in tests\scripts\$App."
     exit 1
 }
 foreach ($folder in $apps) {
@@ -75,7 +75,7 @@ foreach ($folder in $apps) {
 $nvdaOnly = Join-Path $scripts 'zz-nvda'
 New-Item -ItemType Directory -Force $nvdaOnly | Out-Null
 Get-ChildItem (Join-Path $root 'tests\nvda-scripts') -Filter *.txt |
-    Where-Object { $App -eq '' -or $_.Name.StartsWith($App.ToLowerInvariant()) } |
+    Where-Object { $App -eq '' -or $_.Name.StartsWith($App, [StringComparison]::OrdinalIgnoreCase) } |
     Copy-Item -Destination $nvdaOnly
 
 $report = Join-Path $work 'report.md'

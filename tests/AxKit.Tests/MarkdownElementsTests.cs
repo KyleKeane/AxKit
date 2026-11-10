@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>Links, lists and their items, block quotes and tables for the navigation keys (docs/axdown/SPEC.md §9): what counts, what is skipped, what is spoken, next and previous.</summary>
+/// <summary>Links, lists and their items, block quotes and tables for the navigation keys (docs/axDown/SPEC.md §9): what counts, what is skipped, what is spoken, next and previous.</summary>
 public sealed class MarkdownElementsTests
 {
     private static readonly string[] LinesOfText =

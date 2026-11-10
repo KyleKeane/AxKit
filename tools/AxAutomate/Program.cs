@@ -1,5 +1,5 @@
 // AxAutomate: runs scripts of user steps against axKit's windows through their automation channel
-// (docs/axkit/automation.md, tier 2). The windows are started on a desktop of the runner's own ("axkit-tests"), so that
+// (docs/axKit/automation.md, tier 2). The windows are started on a desktop of the runner's own ("axkit-tests"), so that
 // they never take the user's keyboard or foreground; the keys go into each window's own message queue, the sounds are
 // recorded and not played, and the windows keep their settings and logs in the run's own folder (AXKIT_HOME).
 //
@@ -35,7 +35,7 @@
 //   check commands            fails when the window's command list has a problem: a key the F1 text does not name, a
 //                             command that never runs because an earlier one takes its key everywhere (app-kit AK-2.4)
 //   mcp start                 (after a start) the runner becomes an MCP client: AxKit.exe mcp as its child, with the
-//                             run's settings and key (docs/axkit/mcp.md MC-6)
+//                             run's settings and key (docs/axKit/mcp.md MC-6)
 //   mcp call <tool> [<json>]  sends a tools/call without waiting; {window} is the id the last axkit_windows answer named
 //   expect mcp <text>         waits up to 60 s for an answer holding the text (a refusal reads "error: ...")
 //   refuse mcp <text>         fails when an answer waiting holds the text after 2 s (an axPass window listed)
@@ -424,7 +424,7 @@ internal sealed class Run(string exe, string temp)
                 var gap = call.IndexOf(' ');
                 return (true, _broker.Call(gap < 0 ? call : call[..gap], gap < 0 ? string.Empty : call[(gap + 1)..]));
             case "check" when rest == "commands":
-                // The window's command list (docs/axkit/app-kit.md AK-2.4): every key in the F1 text, none shadowed.
+                // The window's command list (docs/axKit/app-kit.md AK-2.4): every key in the F1 text, none shadowed.
                 var problems = Current.Send("problems");
                 return (problems.Contains("\"problems\":[]", StringComparison.Ordinal), problems);
             case "spoken":

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axDescribe's pure code (docs/axdescribe/SPEC.md section 5): no window. -->
+  <!-- axDescribe's pure code (docs/axDescribe/SPEC.md section 5): no window. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxDescribe.Core</RootNamespace>

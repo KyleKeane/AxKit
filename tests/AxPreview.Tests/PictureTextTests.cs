@@ -3,7 +3,7 @@ using AxPreview.Core;
 
 namespace AxPreview.Tests;
 
-/// <summary>A picture's text through Windows' reader (docs/axpreview/SPEC.md AP-7.2 item 4, AP-D11): the script and its run as pure code, and the reader itself on the fixture when this Windows has a language for it.</summary>
+/// <summary>A picture's text through Windows' reader (docs/axPreview/SPEC.md AP-7.2 item 4, AP-D11): the script and its run as pure code, and the reader itself on the fixture when this Windows has a language for it.</summary>
 public sealed class PictureTextTests
 {
     [Fact]

@@ -9,7 +9,7 @@ namespace AxKit.Forms;
 /// The read-only transcript view (axClaude's conversation, axTerminal's terminal). Mirrors the visible transcript
 /// lines into a native multi-line edit control with minimal edits, keeps the user's caret on the content it was on,
 /// and adds NVDA-style single-key navigation with the keys the window hands in (<see cref="TranscriptKeys"/>). It
-/// came from axClaude on its second use (docs/axterminal/SPEC.md §5); the requirement numbers below are axClaude's.
+/// came from axClaude on its second use (docs/axTerminal/SPEC.md §5); the requirement numbers below are axClaude's.
 /// </summary>
 public sealed class TranscriptView : AxKitTextBox
 {
@@ -30,7 +30,7 @@ public sealed class TranscriptView : AxKitTextBox
     /// How long output is held back after the caret was moved by something other than a key or the view itself: NVDA's
     /// continuous reading (Say all) moves the caret from sentence to sentence as it reads, a second or more apart, and
     /// output applied between two of its moves changed the text under the range it was reading and cut the reading off
-    /// (docs/axkit/development-environment.md section 5; axClaude FR-3.3, 2026-11-09). Output waits while the reading
+    /// (docs/axKit/development-environment.md section 5; axClaude FR-3.3, 2026-11-09). Output waits while the reading
     /// goes on and comes this long after it stops; a key press ends the wait as it always did.
     /// </summary>
     private const int ReaderHoldMs = 4000;

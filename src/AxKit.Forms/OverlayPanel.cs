@@ -21,7 +21,7 @@ public sealed record OverlayChoice(string Text, Action? Action = null, bool IsDe
 /// first and takes it by returning true (axFile's path completion on Down, Up and Right). <paramref name="Changed"/> is
 /// called on each change of the text, and <paramref name="ListName"/>, when given, shows a list under the field that
 /// never takes the focus, filled by the window with <see cref="OverlayPanel.SetMatches"/> (the command palette, AX-10).
-/// <paramref name="Hidden"/> hides what is typed, as a password field does (axPass's master password, docs/axpass/SPEC.md
+/// <paramref name="Hidden"/> hides what is typed, as a password field does (axPass's master password, docs/axPass/SPEC.md
 /// PW-4.2): the screen shows dots and NVDA reads the field as protected.
 /// </summary>
 public sealed record OverlayInput(string Label, string AccessibleName, string Initial, string EmptyMessage, bool Required = true, Func<Keys, bool>? KeyHook = null, Action? Changed = null, string? ListName = null, bool Hidden = false);
@@ -80,7 +80,7 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
 
     /// <summary>
     /// The focus starts in the text, not in the field, when the notice has both (an answer to read first, with a field
-    /// for a follow-up under it, docs/axkit/ai-help.md AH-6.3); Tab reaches the field. False, the default, puts it in the field.
+    /// for a follow-up under it, docs/axKit/ai-help.md AH-6.3); Tab reaches the field. False, the default, puts it in the field.
     /// </summary>
     public bool FocusText { get; init; }
 
@@ -306,7 +306,7 @@ public sealed class OverlayPanel : Panel
 
     /// <summary>
     /// The notice's text replaced while it shows, its buttons, the focus and, as far as the new text reaches, the
-    /// caret kept: axClaude's information screen as Claude redraws it (docs/axclaude/SPEC.md FR-2.11). <see cref="Shown"/>
+    /// caret kept: axClaude's information screen as Claude redraws it (docs/axClaude/SPEC.md FR-2.11). <see cref="Shown"/>
     /// then holds the new text.
     /// </summary>
     public void SetBody(string text)

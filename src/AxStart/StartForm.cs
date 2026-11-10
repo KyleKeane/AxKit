@@ -28,7 +28,7 @@ public sealed class StartForm : HotkeyForm
     {
         _settings = settings;
 
-        // ---- menus and keys (AS-3.3, AS-5.2, AS-5.3): one command list (docs/axkit/app-kit.md AK-2), each key from the
+        // ---- menus and keys (AS-3.3, AS-5.2, AS-5.3): one command list (docs/axKit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----
         AddMatchKeys(AxStartKeys.NextMatch, AxStartKeys.PreviousMatch, AxStartKeys.FirstMatch, AxStartKeys.LastMatch);
         var start = new ToolStripMenuItem("ax&Start");

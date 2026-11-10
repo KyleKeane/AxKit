@@ -2,7 +2,7 @@ using AxGit.Core;
 
 namespace AxGit.Tests;
 
-/// <summary>The Changes view read off git status --porcelain=v2 (docs/axgit/SPEC.md AG-3.1, AG-2.3), as git 2.47 prints it.</summary>
+/// <summary>The Changes view read off git status --porcelain=v2 (docs/axGIT/SPEC.md AG-3.1, AG-2.3), as git 2.47 prints it.</summary>
 public sealed class GitStatusTests
 {
     private const string Sample =

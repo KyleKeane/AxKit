@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axJSON's window side, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7): the app as data for the
+  <!-- axJSON's window side, as a class library inside AxKit.exe (docs/axKit/SPEC.md AX-1.7): the app as data for the
        editor shell, its key table and its texts; the pure code is AxJSON.Core. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <!-- Help, User guide shows this file. -->
-    <EmbeddedResource Include="..\..\docs\axjson\user-guide.md" LogicalName="UserGuide.md" />
+    <EmbeddedResource Include="..\..\docs\axJSON\user-guide.md" LogicalName="UserGuide.md" />
   </ItemGroup>
 
 </Project>

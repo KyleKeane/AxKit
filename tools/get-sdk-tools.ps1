@@ -3,7 +3,7 @@
   Fetches the Windows SDK's packaging tools (makeappx.exe, makepri.exe, signtool.exe and their libraries) into
   tools\sdk\<version>\x64 for publish.ps1 -Msix on a computer without the Windows SDK, from Microsoft's own package
   Microsoft.Windows.SDK.BuildTools on nuget.org, and checks Microsoft's signature on every program and library before
-  anything runs them (docs/axkit/store-distribution.md, docs/axkit/development-environment.md).
+  anything runs them (docs/axKit/store-distribution.md, docs/axKit/development-environment.md).
 
 .DESCRIPTION
   The version is pinned here, as the workflows pin their actions; a newer version is a change of this file. Nothing is

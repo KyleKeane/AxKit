@@ -5,7 +5,7 @@ namespace AxKit.Forms;
 /// <summary>
 /// Windows' "How do you want to open this file?" dialog, one of the system's own windows (AX-7.2): the program chosen
 /// runs the file, and the dialog's own "Always" makes it the default. From axFile's <c>Shell.OpenWith</c> on its
-/// second use, axPreview's Open with (docs/axpreview/SPEC.md AP-7.3, 2026-10-24).
+/// second use, axPreview's Open with (docs/axPreview/SPEC.md AP-7.3, 2026-10-24).
 /// </summary>
 public static class WindowsOpenWith
 {

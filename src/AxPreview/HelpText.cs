@@ -48,6 +48,6 @@ public static class HelpText
           Enter on the Folder line: the folder in axFile, the file selected
         """ + BundleHelp.NoticesSection("axPreview", "the text", navigateMenu: true);
 
-    /// <summary>docs/axpreview/user-guide.md, embedded by AxPreview.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axpreview/user-guide.md");
+    /// <summary>docs/axPreview/user-guide.md, embedded by AxPreview.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axPreview/user-guide.md");
 }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace AxKit.Core;
 
 /// <summary>
-/// The two variables a test run gives the windows it starts (docs/axkit/automation.md; security audit S-11):
+/// The two variables a test run gives the windows it starts (docs/axKit/automation.md; security audit S-11):
 /// <c>AXKIT_AUTOMATION</c>, the run's secret, which opens the window's automation channel to the runner alone, and
 /// <c>AXKIT_HOME</c>, the run's folder for the settings and logs. They are read once, as the process starts, and taken
 /// out of its environment at once, so that no program the window starts inherits them (a shell, Claude, git, the user's

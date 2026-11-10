@@ -4,7 +4,7 @@ using AxPass.Core;
 namespace AxPass;
 
 /// <summary>
-/// axPass's entry point inside axKit (docs/axkit/SPEC.md AX-1.7): <c>AxKit.exe pass [&lt;database&gt;]</c> calls
+/// axPass's entry point inside axKit (docs/axKit/SPEC.md AX-1.7): <c>AxKit.exe pass [&lt;database&gt;]</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one path of the command line, the
 /// settings and <see cref="PassForm"/>.
 /// </summary>
@@ -24,7 +24,7 @@ public static class AxPassApp
     {
         // Security audit S-23: a crash report of this process never carries its memory, which can hold a password.
         WerSetFlags(WerFaultReportingFlagNoHeap);
-        AppHost.Run(Name, "axpass", Usage, args, arguments =>
+        AppHost.Run(Name, "axPass", Usage, args, arguments =>
         {
             if (!AppHost.OnePath(Name, "database", Usage, arguments, out var path))
             {

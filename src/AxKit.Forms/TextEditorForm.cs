@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The text editor window every editor app of the bundle is (docs/axdown/SPEC.md §5, docs/axjson/SPEC.md AJ-D4):
+/// The text editor window every editor app of the bundle is (docs/axDown/SPEC.md §5, docs/axJSON/SPEC.md AJ-D4):
 /// a menu bar, one plain multi-line edit control named after the file, and a status bar, with the app's own name,
 /// file types, keys, texts and commands as data (<see cref="EditorApp"/>). The notices, the fonts, the window's
 /// place, the update flow and find are the bundle's window base (<see cref="AxKitForm"/>); the question area
@@ -63,7 +63,7 @@ public sealed partial class TextEditorForm : AxKitForm
         _undo = new Command("&Undo", EditorKeys.Undo, Undo);
         _redo = new Command("&Redo", EditorKeys.Redo, Redo);
 
-        // ---- menus and keys (AD-4, AD-5): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (AD-4, AD-5): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // File is the thing worked on, in the standard order of a File menu (AD-4.1, bundle AX-6): New, Open and the
         // recent files, then Save and Save as where every Windows program has them, then the extras, then Exit.
         // axClaude's Session menu has the same order with the Save slot empty and its export before Exit.
@@ -179,7 +179,7 @@ public sealed partial class TextEditorForm : AxKitForm
             SetUpViewer();
         }
 
-        // Word wrap is the bundle's one setting, in the theme file (docs/axkit/theme.md TH-6), read by the base before this.
+        // Word wrap is the bundle's one setting, in the theme file (docs/axKit/theme.md TH-6), read by the base before this.
         _editor.WordWrap = WordWrapPreference;
         _editor.ScrollBars = WordWrapPreference ? ScrollBars.Vertical : ScrollBars.Both;
         _editor.HideSelection = false;
@@ -553,7 +553,7 @@ public sealed partial class TextEditorForm : AxKitForm
         StatusLayout.Fit(_status, _fileLabel, _positionLabel);
     }
 
-    // ---- word wrap (AD-2.4): the bundle's one setting, in the theme file's display settings (docs/axkit/theme.md TH-6) ----
+    // ---- word wrap (AD-2.4): the bundle's one setting, in the theme file's display settings (docs/axKit/theme.md TH-6) ----
 
     /// <summary>Options, Text, Word wrap (Ctrl+Shift+W): written into the theme file, so that every editor window takes it when next activated.</summary>
     private void ToggleWordWrap()

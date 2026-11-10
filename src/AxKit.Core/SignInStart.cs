@@ -4,11 +4,11 @@ using Microsoft.Win32;
 namespace AxKit.Core;
 
 /// <summary>
-/// Start with Windows for a background app (docs/axstart/SPEC.md AS-1.3; from axStart on its second use, axClip,
+/// Start with Windows for a background app (docs/axStart/SPEC.md AS-1.3; from axStart on its second use, axClip,
 /// 2026-10-23): a value under the user's Run key, "AxKit axStart" with <c>"…\AxKit.exe" start --hidden</c>, made or
 /// removed when the app's setting flips and checked at each start. Only the installed program writes it, naming
 /// itself: a development build never puts itself, or an older installed copy, into the sign-in. The Store's copy
-/// writes nothing (docs/axkit/SPEC.md AX-13.4): its package declares a startup task per app, which Windows lists under
+/// writes nothing (docs/axKit/SPEC.md AX-13.4): its package declares a startup task per app, which Windows lists under
 /// Settings, Apps, Startup, where the user turns it on or off; <see cref="OpenWindowsStartupSettings"/> opens that page.
 /// </summary>
 public static class SignInStart

@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>The Actions list (docs/axfile/SPEC.md AF-9.2, AF-9.3): the lines in their sections, their states, where Enter goes, and the limits.</summary>
+/// <summary>The Actions list (docs/axFile/SPEC.md AF-9.2, AF-9.3): the lines in their sections, their states, where Enter goes, and the limits.</summary>
 public sealed class ActionLogTests
 {
     private static readonly string Folder = @"C:\work";

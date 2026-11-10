@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The programs an app may install on the user's command (docs/axkit/SPEC.md AX-2.9): only from their makers, with every question answered.</summary>
+/// <summary>The programs an app may install on the user's command (docs/axKit/SPEC.md AX-2.9): only from their makers, with every question answered.</summary>
 public class ProgramInstallTests
 {
     [Fact]

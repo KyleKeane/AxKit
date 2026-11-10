@@ -3,7 +3,7 @@ using AxKit.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>The operations over a temporary folder (docs/axfile/SPEC.md AF-4); the Recycle Bin itself is not exercised.</summary>
+/// <summary>The operations over a temporary folder (docs/axFile/SPEC.md AF-4); the Recycle Bin itself is not exercised.</summary>
 public sealed class FileOperationsTests : IDisposable
 {
     private readonly TempFolder _folder = new("axfile-ops");

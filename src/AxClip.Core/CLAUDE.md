@@ -1,6 +1,6 @@
 # AxClip.Core, the pure code
 
-Everything of axClip that needs no window. Unit tested in `tests/AxClip.Tests`. The spec is `docs/axclip/SPEC.md` ("SPEC.md" below); the window is `src/AxClip`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
+Everything of axClip that needs no window. Unit tested in `tests/AxClip.Tests`. The spec is `docs/axClip/SPEC.md` ("SPEC.md" below); the window is `src/AxClip`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 

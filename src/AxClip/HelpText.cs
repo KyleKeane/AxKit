@@ -25,6 +25,6 @@ public static class HelpText
           Escape: hide axClip
         """ + BundleHelp.NoticesSection("axClip", "the list");
 
-    /// <summary>docs/axclip/user-guide.md, embedded by AxClip.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axclip/user-guide.md");
+    /// <summary>docs/axClip/user-guide.md, embedded by AxClip.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axClip/user-guide.md");
 }

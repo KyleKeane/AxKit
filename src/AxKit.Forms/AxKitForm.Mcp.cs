@@ -6,7 +6,7 @@ using static AxKit.Forms.User32;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The window's part of the AI tools' access (docs/axkit/mcp.md MC-6): its pipe started as it first shows, the axKit
+/// The window's part of the AI tools' access (docs/axKit/mcp.md MC-6): its pipe started as it first shows, the axKit
 /// menu's AI tools submenu, what the pipe reads of the window, and the pairing notice. The pipe itself is
 /// <see cref="McpChannel"/>; the broker, which the AI client starts, is <see cref="McpBroker"/>.
 /// </summary>
@@ -201,7 +201,7 @@ public abstract partial class AxKitForm
         try
         {
             // Outside call, program, Claude Code: runs the user's Claude Code without a window for "claude mcp add" and
-            // "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axkit/mcp.md
+            // "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md
             // MC-6.8).
             using var process = System.Diagnostics.Process.Start(start);
             if (process is null)

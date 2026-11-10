@@ -3,7 +3,7 @@ using AxKit.Core;
 
 namespace AxGit.Tests;
 
-/// <summary>The pure parts of running git and the settings (docs/axgit/SPEC.md AG-1.5, AG-8.1); no git process here.</summary>
+/// <summary>The pure parts of running git and the settings (docs/axGIT/SPEC.md AG-1.5, AG-8.1); no git process here.</summary>
 public sealed class GitRunnerTests
 {
     [Fact]

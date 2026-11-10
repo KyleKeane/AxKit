@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Takes the Store listing's screenshots (docs/axkit/store-listing.md, docs/axkit/SPEC.md AX-13.6): each app's window
+  Takes the Store listing's screenshots (docs/axKit/store-listing.md, docs/axKit/SPEC.md AX-13.6): each app's window
   maximised on the files of manual_tests, the whole screen saved as a PNG into publish\store. Run only with the user
   away from the keyboard: the windows open in front and take the focus.
 
@@ -56,12 +56,12 @@ New-Item -ItemType Directory -Force (Join-Path $demo 'Tasks') | Out-Null
 foreach ($page in 'README.md', 'CHANGELOG.md', 'PRIVACY.md', 'NOTICE.md', 'GOVERNANCE.md', 'LICENSE', 'global.json') {
     Copy-Item (Join-Path $root $page) $demo
 }
-Copy-Item (Join-Path $root 'docs\axkit\README.md') (Join-Path $demo 'axKit guide.md')
+Copy-Item (Join-Path $root 'docs\axKit\README.md') (Join-Path $demo 'axKit guide.md')
 & (Join-Path $root 'manual_tests\prepare.ps1') axjson | Out-Null
 & (Join-Path $root 'manual_tests\prepare.ps1') axtask | Out-Null
-$json = Get-ChildItem (Join-Path $root 'manual_tests\axjson') -Filter '*.json' -File | Sort-Object Length -Descending | Select-Object -First 1
+$json = Get-ChildItem (Join-Path $root 'manual_tests\axJSON') -Filter '*.json' -File | Sort-Object Length -Descending | Select-Object -First 1
 if ($json) { Copy-Item $json.FullName $demo; $jsonName = $json.Name } else { $jsonName = 'global.json' }
-Copy-Item (Join-Path $root 'manual_tests\axtask\*') (Join-Path $demo 'Tasks') -Recurse -Force
+Copy-Item (Join-Path $root 'manual_tests\axTask\*') (Join-Path $demo 'Tasks') -Recurse -Force
 # The repository as a git repository is the maintainer's folder; the access layers' shots take the demo folder, which
 # git does not know, so axGIT shows its "no repository" state unless the maintainer points it elsewhere by hand.
 
@@ -118,4 +118,4 @@ foreach ($shot in $shots) {
     Start-Sleep -Seconds 1
 }
 Remove-Item $demo -Recurse -Force -ErrorAction SilentlyContinue
-Write-Host "Screenshots in $Out; the captions are in docs/axkit/store-listing.md."
+Write-Host "Screenshots in $Out; the captions are in docs/axKit/store-listing.md."

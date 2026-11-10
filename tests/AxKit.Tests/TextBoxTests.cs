@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace AxKit.Tests;
 
 /// <summary>
-/// Every edit control of the bundle is <c>AxKit.Forms/AxKitTextBox</c> (docs/axkit/SPEC.md AX-8.9), which has no
+/// Every edit control of the bundle is <c>AxKit.Forms/AxKitTextBox</c> (docs/axKit/SPEC.md AX-8.9), which has no
 /// length cap and the bundle's page and paragraph keys built in, so that a new field gets them by being made and
 /// nothing else. Read off the sources: a plain <c>TextBox</c> made in an app or the shared pieces fails here, and so
 /// does a second subscription of <c>EditKeys.Handle</c>, which would move the caret twice.

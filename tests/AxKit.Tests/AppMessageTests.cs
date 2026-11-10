@@ -2,7 +2,7 @@ using AxKit.Forms;
 
 namespace AxKit.Tests;
 
-/// <summary>The text form of the hand-over between a starting process and an app's open window (docs/axmedia/SPEC.md AM-1.3).</summary>
+/// <summary>The text form of the hand-over between a starting process and an app's open window (docs/axMedia/SPEC.md AM-1.3).</summary>
 public sealed class AppMessageTests
 {
     [Fact]

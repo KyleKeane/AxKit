@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axGIT's window side, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7): the window, its key table
+  <!-- axGIT's window side, as a class library inside AxKit.exe (docs/axKit/SPEC.md AX-1.7): the window, its key table
        and its texts; the pure code is AxGit.Core. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <!-- Help, User guide shows this file. -->
-    <EmbeddedResource Include="..\..\docs\axgit\user-guide.md" LogicalName="UserGuide.md" />
+    <EmbeddedResource Include="..\..\docs\axGIT\user-guide.md" LogicalName="UserGuide.md" />
   </ItemGroup>
 
 </Project>

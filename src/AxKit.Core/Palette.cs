@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// One line of the command palette (docs/axkit/SPEC.md AX-10.2): what the list shows and NVDA says, "Save as, File,
+/// One line of the command palette (docs/axKit/SPEC.md AX-10.2): what the list shows and NVDA says, "Save as, File,
 /// Ctrl+Shift+S", and what Enter does with it.
 /// </summary>
 public sealed record PaletteEntry(string Text, Action Run);

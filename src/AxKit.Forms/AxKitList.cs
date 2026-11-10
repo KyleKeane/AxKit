@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The bundle's list (docs/axkit/SPEC.md AX-8.6, 2026-10-24): a <see cref="ListBox"/> with what every list the user moves
+/// The bundle's list (docs/axKit/SPEC.md AX-8.6, 2026-10-24): a <see cref="ListBox"/> with what every list the user moves
 /// through has, built in, so that a window gets it by making an <c>AxKitList</c> and nothing else (<c>ListTests</c> fails
 /// on a plain list box in an app):
 /// <list type="bullet">

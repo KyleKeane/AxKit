@@ -1,11 +1,11 @@
 # axStart, the window
 
-The WinForms side of axStart, the program launcher: a background process from sign-in with one hidden window that a global hotkey shows, a search field with the caret always in it, the list of matches under it that never takes the focus, a status bar, the bundle's notices. The pure code (the entries, the matching, the hotkey as text, the settings) is `src/AxStart.Core`, with its own `CLAUDE.md`. The spec is `docs/axstart/SPEC.md` ("SPEC.md" below); the guide `docs/axstart/user-guide.md` is embedded by `AxStart.csproj` for Help → User guide; the manual test plan is `docs/axstart/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
+The WinForms side of axStart, the program launcher: a background process from sign-in with one hidden window that a global hotkey shows, a search field with the caret always in it, the list of matches under it that never takes the focus, a status bar, the bundle's notices. The pure code (the entries, the matching, the hotkey as text, the settings) is `src/AxStart.Core`, with its own `CLAUDE.md`. The spec is `docs/axStart/SPEC.md` ("SPEC.md" below); the guide `docs/axStart/user-guide.md` is embedded by `AxStart.csproj` for Help → User guide; the manual test plan is `docs/axStart/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
 ```
-.\run-axstart.ps1                 # build AxKit and start axStart with its field shown (run.ps1 -App start); quit an installed axStart first
+.\run-axStart.ps1                 # build AxKit and start axStart with its field shown (run.ps1 -App start); quit an installed axStart first
 dotnet build AxKit.sln
 .\test.ps1 axStart
 ```
@@ -15,7 +15,7 @@ dotnet build AxKit.sln
 - `AxStartApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7): `--hidden` read off the command line; the mutex `Local\AxKit.AxStart` held for the life of the process (SPEC.md AS-1.2); a second start finds the first's hidden window (`StartForm.FindRunning`: `FindWindowExW` by the title "axStart", the owner process of the same program name) and hands it `AppMessage.Show` through `AppMessage.SendTo`, or with `--hidden` just ends; otherwise one call into `AxKit.Forms/AppHost.Run` with the settings and the window.
 - `StartForm` (on `AxKit.Forms/HotkeyForm`, which holds the hidden window, the hotkey and its notice, the Run key, the showing and hiding with the rule of the foreground, the search field over the matches and the menu items both hotkey apps place; its bullet in `src/AxKit.Forms/CLAUDE.md` is the current description). `StartForm` keeps what is axStart's alone:
   - the controls (the status bar with the count of programs, AS-3.1; the field and the list are the base's, AS-D2), the menus (AS-5.2: Start, Start as administrator, Open file location, Information, Refresh programs, then the base's Hide and Quit, Hotkey..., Start with Windows and Say the first match), the hooks the window base asks for (`HideForNotice`, `ShowAfterNotice`, `FocusTarget`, `ApplyFont`, `DiagnosticsLines`);
-  - the commands and their keys as one list (docs/axkit/app-kit.md AK-2: `Add` for a menu item with its key, from `BundleKeys` and `AxStartKeys`; the match keys first through `HotkeyForm.AddMatchKeys`; no key switch);
+  - the commands and their keys as one list (docs/axKit/app-kit.md AK-2: `Add` for a menu item with its key, from `BundleKeys` and `AxStartKeys`; the match keys first through `HotkeyForm.AddMatchKeys`; no key switch);
   - the hooks of `HotkeyForm`: `PrepareShowing` (the field emptied unless a start failed, the window centred on the screen of the program that had the focus, AS-3.4), `AfterShowing` (the caret in the field, a fresh read of the programs, AS-2.1), `OnHandleCreated` (the base's, then the programs read);
   - the matches (`Fill` through `HotkeyForm.ShowMatches`, and the hooks `MatchCount`, `SpokenMatch`, `NothingSaid`, `Refill`; `RefreshAsync` reads the programs on a thread of their own);
   - the commands (`StartSelected`, hidden first; `OpenFileLocation` through `AxKitMenu.Start` with axFile's verb; `SayInformation`, `SayFirstOrNothing`);

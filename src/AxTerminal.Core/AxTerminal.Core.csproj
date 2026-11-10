@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- The bundle's shared pure code: the ConPTY host, the parser, the screen, the line store, the mirror, the settings file (docs/axkit/SPEC.md AX-6.1). -->
+    <!-- The bundle's shared pure code: the ConPTY host, the parser, the screen, the line store, the mirror, the settings file (docs/axKit/SPEC.md AX-6.1). -->
     <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
   </ItemGroup>
 

@@ -2,7 +2,7 @@ using AxMedia.Core;
 
 namespace AxMedia.Tests;
 
-/// <summary>A folder's media files and the queue a start makes (docs/axmedia/SPEC.md AM-1.1, AM-3.2, AM-D2), over a temporary folder.</summary>
+/// <summary>A folder's media files and the queue a start makes (docs/axMedia/SPEC.md AM-1.1, AM-3.2, AM-D2), over a temporary folder.</summary>
 public sealed class MediaFolderTests : IDisposable
 {
     private readonly TempFolder _folder = new("axmedia-folder");

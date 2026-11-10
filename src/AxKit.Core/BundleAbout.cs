@@ -3,8 +3,8 @@ using AxKit.Core.Updates;
 namespace AxKit.Core;
 
 /// <summary>
-/// The About submenu of the axKit menu (docs/axkit/SPEC.md AX-9.9), the same in every window: Version (with the
-/// window's latest-release state), Licence, Attribution and the axKit guide (docs/axkit/README.md, embedded by
+/// The About submenu of the axKit menu (docs/axKit/SPEC.md AX-9.9), the same in every window: Version (with the
+/// window's latest-release state), Licence, Attribution and the axKit guide (docs/axKit/README.md, embedded by
 /// AxKit.Core.csproj), each the text of a notice; axKit on GitHub is <see cref="UpdateCheck.RepositoryPage"/>. The
 /// Licence notice is NOTICE.md, the terms and the disclaimer; the LICENSE file beside it is the AGPL itself.
 /// </summary>
@@ -20,7 +20,7 @@ public static class BundleAbout
         $"Access layers, which only show and pass on the work of a program you install, under its maker's terms: {string.Join(", ", Dispatch.Apps.Where(app => app.IsAccessLayer).Select(app => $"{app.Name} for {app.AccessLayerFor}"))}. About, Licence has the reminders and what you have agreed to.\n" +
         "The axKit guide below says what each app is.\n\n" +
         $"Latest release on GitHub: {latestRelease}\nReleases: {UpdateCheck.ReleasesPage}\n\n" +
-        $"Settings: {Path.GetDirectoryName(AppPaths.RecentlyClosedFile)}, one file per app ({string.Join(", ", Dispatch.Apps.Select(app => app.Name.ToLowerInvariant() + ".json"))})\nLogs: {AppPaths.LogsFolder}";
+        $"Settings: {Path.GetDirectoryName(AppPaths.RecentlyClosedFile)}, one file per app ({string.Join(", ", Dispatch.Apps.Select(app => app.Name + ".json"))})\nLogs: {AppPaths.LogsFolder}";
 
     public const string LicenceTitle = "Licence";
 
@@ -58,6 +58,6 @@ public static class BundleAbout
 
     public const string GuideTitle = "axKit guide";
 
-    /// <summary>docs/axkit/README.md, the guide shipped in the zip: install, start, update, remove.</summary>
-    public static string Guide() => EmbeddedText.Read(typeof(BundleAbout).Assembly, "AxKitGuide.md", "docs/axkit/README.md");
+    /// <summary>docs/axKit/README.md, the guide shipped in the zip: install, start, update, remove.</summary>
+    public static string Guide() => EmbeddedText.Read(typeof(BundleAbout).Assembly, "AxKitGuide.md", "docs/axKit/README.md");
 }

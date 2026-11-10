@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace AxGit.Core;
 
 /// <summary>
-/// A repository's own programs (SPEC.md AG-1.6; docs/axkit/security-audit-2026-10-24.md S-2). A repository that comes in
+/// A repository's own programs (SPEC.md AG-1.6; docs/axKit/security-audit-2026-10-24.md S-2). A repository that comes in
 /// an archive, on a USB stick or a share brings its own <c>.git/config</c> and <c>.git/hooks</c>, which git obeys: a
 /// file monitor run by <c>git status</c>, diff and filter programs, hooks on commit and switch, an ssh command on fetch.
 /// axGIT reads which of these the repository names (reading the configuration runs nothing) and, until the user trusts

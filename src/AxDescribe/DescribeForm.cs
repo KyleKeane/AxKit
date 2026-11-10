@@ -8,14 +8,14 @@ namespace AxDescribe;
 /// <summary>
 /// axDescribe's window (SPEC.md DE-2, DE-3): the bundle's background window (<see cref="HotkeyForm"/>, as axStart and
 /// axClip). The hotkey takes a picture of the window in front before this one shows (<see cref="ScreenPicture"/>),
-/// asks Claude to describe it through the window base's AI help (<c>AxKitForm.Ai.cs</c>, docs/axkit/ai-help.md), and
+/// asks Claude to describe it through the window base's AI help (<c>AxKitForm.Ai.cs</c>, docs/axKit/ai-help.md), and
 /// shows the description as a notice with a field for more. Under the field, the earlier descriptions, which never
 /// take the focus. Nothing of AI help itself is here.
 /// </summary>
 public sealed class DescribeForm : HotkeyForm
 {
     /// <summary>The one picture, under the local AxKit folder beside the logs; written over by the next one, deleted when axDescribe ends (DE-2.2).</summary>
-    public static readonly string PicturePath = Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axdescribe", "last.png");
+    public static readonly string PicturePath = Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axDescribe", "last.png");
 
     private readonly DescribeSettings _settings;
     private readonly MenuStrip _menu = new();
@@ -29,7 +29,7 @@ public sealed class DescribeForm : HotkeyForm
     {
         _settings = settings;
 
-        // ---- menus and keys (DE-6): one command list (docs/axkit/app-kit.md AK-2), the match keys first ----
+        // ---- menus and keys (DE-6): one command list (docs/axKit/app-kit.md AK-2), the match keys first ----
         AddMatchKeys(AxDescribeKeys.NextMatch, AxDescribeKeys.PreviousMatch, AxDescribeKeys.FirstMatch, AxDescribeKeys.LastMatch);
         var first = new ToolStripMenuItem("ax&Describe");
         Add(first, new Command("&Ask about the picture", AxDescribeKeys.Ask, Ask) { Mark = CommandMark.Act });

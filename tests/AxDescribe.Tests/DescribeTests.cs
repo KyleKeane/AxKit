@@ -2,7 +2,7 @@ using AxDescribe.Core;
 
 namespace AxDescribe.Tests;
 
-/// <summary>axDescribe's pure code (docs/axdescribe/SPEC.md DE-3, DE-5): the descriptions kept, their labels and matches, the settings file.</summary>
+/// <summary>axDescribe's pure code (docs/axDescribe/SPEC.md DE-3, DE-5): the descriptions kept, their labels and matches, the settings file.</summary>
 public sealed class DescribeTests : IDisposable
 {
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "axdescribe-tests-" + Guid.NewGuid().ToString("N"));
@@ -42,7 +42,7 @@ public sealed class DescribeTests : IDisposable
         Assert.Equal("14:05 notepad", DescribeLines.Label(descriptions[1]));
         Assert.Equal(2, DescribeLines.Matches(descriptions, string.Empty).Count);
         Assert.Equal(["14:05 notepad"], DescribeLines.Matches(descriptions, "note").Where(d => d.Title.Length == 0).Select(DescribeLines.Label));
-        Assert.Equal(["notes.md - axDown"], DescribeLines.Matches(descriptions, "axdown").Select(d => d.Title));
+        Assert.Equal(["notes.md - axDown"], DescribeLines.Matches(descriptions, "axDown").Select(d => d.Title));
         Assert.Empty(DescribeLines.Matches(descriptions, "zzqq"));
         Assert.Equal("14:02 notes.md - axDown, 1 of 2", DescribeLines.Spoken(descriptions[0], 0, 2));
         Assert.Equal("No earlier description matches zzqq", DescribeLines.NoMatch(" zzqq "));
@@ -51,7 +51,7 @@ public sealed class DescribeTests : IDisposable
     [Fact]
     public void The_settings_round_trip_with_the_hotkey_default_and_the_descriptions()
     {
-        var path = Path.Combine(_folder, "axdescribe.json");
+        var path = Path.Combine(_folder, "axDescribe.json");
         var settings = DescribeSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal("Windows+Alt+S", settings.Key.ToString());

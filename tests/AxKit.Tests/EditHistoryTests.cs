@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The window's own undo and redo history (docs/axdown/SPEC.md AD-2.5).</summary>
+/// <summary>The window's own undo and redo history (docs/axDown/SPEC.md AD-2.5).</summary>
 public class EditHistoryTests
 {
     /// <summary>A change not made by a typed key: a paste, a cut, a command, a reload.</summary>

@@ -5,7 +5,7 @@ using AxKit.Forms;
 namespace AxFile;
 
 /// <summary>
-/// axFile's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AF-1.2): <c>AxKit.exe file [&lt;folder or file&gt;]</c>
+/// axFile's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md AF-1.2): <c>AxKit.exe file [&lt;folder or file&gt;]</c>
 /// calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one path of the command line,
 /// the settings and <see cref="FileForm"/>.
 /// </summary>
@@ -22,7 +22,7 @@ public static class AxFileApp
         """;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axfile", Usage, args, arguments =>
+        AppHost.Run(Name, "axFile", Usage, args, arguments =>
         {
             if (!AppHost.OnePath(Name, "folder or file", Usage, arguments, out var path))
             {

@@ -1,6 +1,6 @@
 # AxDescribe.Core, the pure code
 
-Everything of axDescribe that needs no window: the descriptions kept and the matches of the list. Unit tested in `tests/AxDescribe.Tests`. The spec is `docs/axdescribe/SPEC.md` ("SPEC.md" below); the window is `src/AxDescribe`, with its own `CLAUDE.md`. AI help's own pure code is the bundle's, `src/AxKit.Core/Ai`. The bundle rules are in the root `CLAUDE.md`.
+Everything of axDescribe that needs no window: the descriptions kept and the matches of the list. Unit tested in `tests/AxDescribe.Tests`. The spec is `docs/axDescribe/SPEC.md` ("SPEC.md" below); the window is `src/AxDescribe`, with its own `CLAUDE.md`. AI help's own pure code is the bundle's, `src/AxKit.Core/Ai`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 

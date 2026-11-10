@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  The release signing key (docs/axkit/security-audit-2026-10-24.md S-27, the user's decision): makes it, signs a
+  The release signing key (docs/axKit/security-audit-2026-10-24.md S-27, the user's decision): makes it, signs a
   release's zip with it, and prints its public half.
 
 .DESCRIPTION

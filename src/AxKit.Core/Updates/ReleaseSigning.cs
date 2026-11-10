@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 namespace AxKit.Core.Updates;
 
 /// <summary>
-/// The release signature (docs/axkit/security-audit-2026-10-24.md S-27; docs/axkit/SPEC.md AX-3.4, signed releases): every release's zip
+/// The release signature (docs/axKit/security-audit-2026-10-24.md S-27; docs/axKit/SPEC.md AX-3.4, signed releases): every release's zip
 /// is signed on the maintainer's machine with a key that never reaches GitHub (<c>tools/release-key.ps1</c>), and the
 /// updater installs a zip only when its signature, the asset "&lt;zip&gt;.sig", checks against the public half below.
 /// A stolen GitHub account or token can publish a release, but not sign one. ECDSA P-256 over the zip's SHA-256, the

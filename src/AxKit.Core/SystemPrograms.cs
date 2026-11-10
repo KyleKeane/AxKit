@@ -2,7 +2,7 @@ namespace AxKit.Core;
 
 /// <summary>
 /// The programs the apps start, found so that a file planted where axKit was started can never stand in for them
-/// (docs/axkit/security-audit-2026-10-24.md S-1). Windows starts a bare name ("git", "cmd.exe") from the current folder
+/// (docs/axKit/security-audit-2026-10-24.md S-1). Windows starts a bare name ("git", "cmd.exe") from the current folder
 /// before System32 and the PATH, and an app started from Explorer or a console keeps the folder it was started in: a
 /// downloaded repository, a folder of downloads. So Windows' own programs are named by their full path, and any other
 /// is looked for on the PATH by axKit itself, in folders that are full paths only (a relative entry, "." included,
@@ -17,7 +17,7 @@ public static class SystemPrograms
 
     public static string Cmd => Path.Combine(Environment.SystemDirectory, "cmd.exe");
 
-    /// <summary>Where Windows puts the aliases of packaged apps (<c>winget.exe</c>, the Store copy's <c>axkit.exe</c>), under the user's local application data.</summary>
+    /// <summary>Where Windows puts the aliases of packaged apps (<c>winget.exe</c>, the Store copy's <c>axKit.exe</c>), under the user's local application data.</summary>
     public static string WindowsApps => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WindowsApps");
 
     /// <summary>Windows PowerShell 5.1, the one every Windows has.</summary>

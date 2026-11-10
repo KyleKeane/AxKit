@@ -3,7 +3,7 @@ using System.Text;
 namespace AxKit.Core.Reports;
 
 /// <summary>
-/// The reporter account's token (docs/axkit/reports.md RP-6.2): never in the source, but embedded into a release
+/// The reporter account's token (docs/axKit/reports.md RP-6.2): never in the source, but embedded into a release
 /// build from the file <c>Reports/reporter.token</c>, which <c>publish.ps1</c> writes from the secret
 /// <c>AXKIT_REPORTER_TOKEN</c> through <c>tools/reporter-token.ps1</c> and removes again. The file holds the token
 /// mixed with a fixed key and written as base64: that keeps it from a glance at the program file and from nobody who

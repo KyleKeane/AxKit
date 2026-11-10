@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// One change to a text (docs/axdown/SPEC.md AD-2.5): at <paramref name="Start"/>, <paramref name="Removed"/> went
+/// One change to a text (docs/axDown/SPEC.md AD-2.5): at <paramref name="Start"/>, <paramref name="Removed"/> went
 /// out and <paramref name="Inserted"/> came in. Undoing it replaces the span of the inserted text with the removed
 /// text; redoing it the other way round. The window applies a step through the edit control's selection.
 /// </summary>
@@ -18,7 +18,7 @@ public sealed record EditStep(int Start, string Removed, string Inserted)
 }
 
 /// <summary>
-/// The history of a window's changes to its text, for Undo and Redo (docs/axdown/SPEC.md AD-2.5, docs/axjson/SPEC.md
+/// The history of a window's changes to its text, for Undo and Redo (docs/axDown/SPEC.md AD-2.5, docs/axJSON/SPEC.md
 /// AJ-2.5). The window records each change as the text before and after it (<see cref="Record"/>); the step is found
 /// by the common prefix and suffix, with the caret telling which of the equal places it was when the texts allow
 /// several. A run of typing, or of deleting backwards or forwards, is one step while each change comes from a key

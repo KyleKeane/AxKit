@@ -1,6 +1,6 @@
 # AxStart.Core, the pure code
 
-Everything of axStart that needs no window: the programs as entries, the matching and its order, the settings (the hotkey as text is `AxKit.Core/Hotkey`). Unit tested in `tests/AxStart.Tests`. The spec is `docs/axstart/SPEC.md` ("SPEC.md" below); the window is `src/AxStart`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
+Everything of axStart that needs no window: the programs as entries, the matching and its order, the settings (the hotkey as text is `AxKit.Core/Hotkey`). Unit tested in `tests/AxStart.Tests`. The spec is `docs/axStart/SPEC.md` ("SPEC.md" below); the window is `src/AxStart`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 

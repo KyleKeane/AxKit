@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axClaude's window, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7, B-2); src/AxKit is the executable. -->
+  <!-- axClaude's window, as a class library inside AxKit.exe (docs/axKit/SPEC.md AX-1.7, B-2); src/AxKit is the executable. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <!-- Help, User guide shows this file; publish.ps1 ships it next to the executable as README.md. -->
-    <EmbeddedResource Include="..\..\docs\axclaude\user-guide.md" LogicalName="UserGuide.md" />
+    <EmbeddedResource Include="..\..\docs\axClaude\user-guide.md" LogicalName="UserGuide.md" />
   </ItemGroup>
 
 </Project>

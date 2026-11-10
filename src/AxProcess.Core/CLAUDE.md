@@ -1,6 +1,6 @@
 # AxProcess.Core, the pure code
 
-Everything of axProcess that needs no window. Unit tested in `tests/AxProcess.Tests`: the labels, the order, the arithmetic and the parsing from data, and one read each of this computer's processes, services and startup list. The spec is `docs/axprocess/SPEC.md` ("SPEC.md" below); the window is `src/AxProcess`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
+Everything of axProcess that needs no window. Unit tested in `tests/AxProcess.Tests`: the labels, the order, the arithmetic and the parsing from data, and one read each of this computer's processes, services and startup list. The spec is `docs/axProcess/SPEC.md` ("SPEC.md" below); the window is `src/AxProcess`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 

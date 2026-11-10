@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>Where the apps' programs are found (docs/axkit/security-audit-2026-10-24.md S-1).</summary>
+/// <summary>Where the apps' programs are found (docs/axKit/security-audit-2026-10-24.md S-1).</summary>
 public sealed class SystemProgramsTests
 {
     [Fact]

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Writes docs\axkit\outside-calls.md, the page of everything axKit reaches outside its own process: the network
+Writes docs\axKit\outside-calls.md, the page of everything axKit reaches outside its own process: the network
 requests, the programs started and the pipes opened, by what is reached, with every call's place and purpose; or
 checks that the page is current (-Check).
 
@@ -24,7 +24,7 @@ exits with 1. A new way of reaching outside (a new API) is added to $functions; 
 
 -Check writes nothing and exits with 1 when a call has no comment or the page on disk is not what the sources give;
 then run the script without -Check and commit the page. build.yml runs the check on every push; release.ps1 runs the
-script without -Check before the tests and commits the page with the release (docs/axkit/SPEC.md B-17).
+script without -Check before the tests and commits the page with the release (docs/axKit/SPEC.md B-17).
 #>
 [CmdletBinding()]
 param([switch]$Check)
@@ -32,13 +32,13 @@ param([switch]$Check)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $sourceRoot = Join-Path $root 'src'
-$documentPath = Join-Path $root 'docs\axkit\outside-calls.md'
+$documentPath = Join-Path $root 'docs\axKit\outside-calls.md'
 
 # What axKit reaches, in the order the page lists it. Each has the key the comments name, its kind, and its lines, each
 # a label and a plain-language text; every address in them is where a reader checks the facts.
 $targets = @(
     @{ Key = 'GitHub'; Kind = 'network'; Lines = @(
-        @('What', 'GitHub, where this repository, its releases and the reports repository `KyleKeane/AxKit-reports` live. The one place axKit''s own code reaches over the network: the updater and the report sender (docs/axkit/reports.md).'),
+        @('What', 'GitHub, where this repository, its releases and the reports repository `KyleKeane/AxKit-reports` live. The one place axKit''s own code reaches over the network: the updater and the report sender (docs/axKit/reports.md).'),
         @('Where', 'The updater: `GET https://api.github.com/repos/KyleKeane/AxKit/releases/latest` (the latest release as JSON) and `GET https://github.com/KyleKeane/AxKit/releases/download/<tag>/<file>` (the release''s zip and its `.sig`, accepted from that one address only). The reports: `GET https://raw.githubusercontent.com/KyleKeane/AxKit-reports/main/blocklist.json` (the blocklist) and `POST https://api.github.com/repos/KyleKeane/AxKit-reports/issues` (a report as an issue, as axKit''s own reporter account). axTask''s GitHub lists: `GET https://api.github.com/repos/<repository>/issues` (the issues, no account), and as the user''s own account `PATCH .../issues/<n>`, `POST .../issues/<n>/comments` and `GET` and `PUT .../contents/blocklist.json`.'),
         @('How', '.NET''s HttpClient over HTTPS with the headers `User-Agent: AxKit/<version>` and `Accept: application/vnd.github+json`; the request carries the version and, as every web request does, the network address, nothing else about the user. A download is installed only when its SHA-256 matches GitHub''s digest of the file and the release key''s ECDSA P-256 signature (AX-3.4). A report carries what the user read and edited in the report notice, redacted, and the install''s random reporter id, never a name or an account (reports.md RP-4, RP-6.3); the reporter account''s token ships in the release build and can reach that repository''s issues alone (RP-6.2).'),
         @('When', 'the update check as a window starts (Options, General, Check for updates at start, a setting that can be off) or on axKit menu, Check for updates; the two downloads when the user chooses Update. A report when the user presses Enter on one (F4), the unsent ones with it and when Your reports opens; never at a window''s start (RP-6.7). The lists and the actions when the user opens, refreshes or acts on a GitHub list in axTask (RP-7).'),
@@ -46,7 +46,7 @@ $targets = @(
         @('Apps', 'every window (the updater and the report); axTask (the GitHub lists).')) }
     @{ Key = 'Claude Code'; Kind = 'program'; Lines = @(
         @('What', 'Claude Code, Anthropic''s command-line program, which the user installs: `claude.exe` of its native installer (`%USERPROFILE%\.local\bin`) or npm''s `claude.cmd`, found on the PATH or in those folders, or where the user pointed axClaude.'),
-        @('How', 'for a session, `claude --ax-screen-reader` in a ConPTY pseudo console (PtyHost): what it prints is read from the console and the user''s keys are written to it. For its version and for `claude mcp add` and `claude mcp remove`, a process without a window whose output is read. For AI help (`docs/axkit/ai-help.md`), `claude -p --output-format json --allowedTools Read,Glob,Grep` once per question, the prompt on its standard input, the folders the user allowed as `--add-dir`, a follow-up with `--resume`; read-only tools, so it changes no file and runs no command.'),
+        @('How', 'for a session, `claude --ax-screen-reader` in a ConPTY pseudo console (PtyHost): what it prints is read from the console and the user''s keys are written to it. For its version and for `claude mcp add` and `claude mcp remove`, a process without a window whose output is read. For AI help (`docs/axKit/ai-help.md`), `claude -p --output-format json --allowedTools Read,Glob,Grep` once per question, the prompt on its standard input, the folders the user allowed as `--add-dir`, a follow-up with `--resume`; read-only tools, so it changes no file and runs no command.'),
         @('What it reaches', 'Anthropic''s service with the user''s account, and whatever else Claude Code does from a terminal, its own update check included, under Anthropic''s terms; axKit neither sees nor changes that traffic.'),
         @('Documentation', 'https://code.claude.com/docs/en/cli-reference and https://code.claude.com/docs/en/setup; Anthropic''s privacy policy, https://www.anthropic.com/legal/privacy.'),
         @('Apps', 'axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window; AI help in every window (Shift+F1, axKit menu, AI help) and its apps axHelp and axDescribe, access layers for Claude Code.')) }
@@ -60,19 +60,19 @@ $targets = @(
         @('What', 'the user''s shell for axTerminal: Windows PowerShell (`powershell.exe`) and Command Prompt (`cmd.exe`), Windows'' own by their full paths; Git Bash (`Git\bin\bash.exe` of Git for Windows, never a bash.exe on the PATH); PowerShell 7 (`pwsh.exe` on the PATH or under Program Files).'),
         @('How', 'in a ConPTY pseudo console (PtyHost), as a terminal runs it, with axTerminal''s prompt marks handed in through the environment.'),
         @('What it reaches', 'whatever the commands the user types reach, with the user''s rights.'),
-        @('Documentation', 'https://learn.microsoft.com/windows/console/pseudoconsoles; docs/axterminal/SPEC.md.'),
+        @('Documentation', 'https://learn.microsoft.com/windows/console/pseudoconsoles; docs/axTerminal/SPEC.md.'),
         @('Apps', 'axTerminal, access layer for your shell.')) }
     @{ Key = 'KeePassXC'; Kind = 'program'; Lines = @(
         @('What', 'KeePassXC''s command-line tool, `keepassxc-cli.exe`, from the user''s installation of KeePassXC, found in its folder or on the PATH.'),
         @('How', 'one process per command with the database''s path, the master password on its standard input, both outputs read under a time limit.'),
         @('What it reaches', 'nothing on the network: the tool has no network feature; it reads and writes the database file.'),
-        @('Documentation', 'https://keepassxc.org/docs/KeePassXC_UserGuide#_command_line_tool; docs/axpass/kdbx-notes.md.'),
+        @('Documentation', 'https://keepassxc.org/docs/KeePassXC_UserGuide#_command_line_tool; docs/axPass/kdbx-notes.md.'),
         @('Apps', 'axPass, access layer for KeePassXC.')) }
     @{ Key = 'MCP servers'; Kind = 'program'; Lines = @(
         @('What', 'the MCP server the user starts in axMCP: a program defined in Claude Code''s configuration (`%USERPROFILE%\.claude.json`, a folder''s `.mcp.json`, read and never written) or in axMCP''s own list, by the command line that definition gives.'),
         @('How', 'a child process without a window, the Model Context Protocol''s JSON-RPC one line per message on its standard input and output, its standard error to axMCP''s log, the environment variables of its definition added; stopped by closing its input, then ending its process tree after two seconds.'),
-        @('What it reaches', 'whatever the server''s maker built it to reach, on this computer and on any network, with the user''s rights, after the user''s consent for that server (AX-11.4). Remote servers (http, sse) are listed and never started by this version (docs/axmcp/SPEC.md MP-D2).'),
-        @('Documentation', 'https://modelcontextprotocol.io/specification; https://code.claude.com/docs/en/mcp; docs/axmcp/SPEC.md.'),
+        @('What it reaches', 'whatever the server''s maker built it to reach, on this computer and on any network, with the user''s rights, after the user''s consent for that server (AX-11.4). Remote servers (http, sse) are listed and never started by this version (docs/axMCP/SPEC.md MP-D2).'),
+        @('Documentation', 'https://modelcontextprotocol.io/specification; https://code.claude.com/docs/en/mcp; docs/axMCP/SPEC.md.'),
         @('Apps', 'axMCP, access layer for MCP servers.')) }
     @{ Key = 'Installers'; Kind = 'program'; Lines = @(
         @('What', 'the installers of Install it now (AX-2.9), run only when the user chooses to install a program an app needs and Windows lacks: Windows'' own winget (`%LOCALAPPDATA%\Microsoft\WindowsApps\winget.exe`, never one on the PATH) for Git (`Git.Git`), KeePassXC (`KeePassXCTeam.KeePassXC`) and PowerShell 7 (`Microsoft.PowerShell`); Windows PowerShell running Anthropic''s installer script for Claude Code.'),
@@ -82,7 +82,7 @@ $targets = @(
         @('Apps', 'the access layer whose program is missing; axTerminal for PowerShell 7 and Git Bash.')) }
     @{ Key = 'Windows'; Kind = 'program'; Lines = @(
         @('What', 'Windows itself: the shell (File Explorer''s parts) and Windows'' own programs by their full paths.'),
-        @('How', 'ShellExecute with a file (the shell opens it with the program Windows has for it, or shows its Open with dialog), a web address (the default browser) or the verb `properties`; the shell''s context menu interface IContextMenu for the Windows menu and the shell''s own commands; the Open with dialog `SHOpenWithDialog`; `explorer.exe` for File Explorer; `ms-windows-store:` for axKit''s page in the Microsoft Store app and `ms-settings:` for Windows'' Startup apps page in the Settings app (the Store''s copy, AX-13); `powershell.exe` for the installer''s `install.ps1` and for axPreview''s own script that asks Windows'' text reader (`Windows.Media.Ocr`) for the text in a picture (docs/axpreview/SPEC.md AP-D11); the Service Control Manager to start a service.'),
+        @('How', 'ShellExecute with a file (the shell opens it with the program Windows has for it, or shows its Open with dialog), a web address (the default browser) or the verb `properties`; the shell''s context menu interface IContextMenu for the Windows menu and the shell''s own commands; the Open with dialog `SHOpenWithDialog`; `explorer.exe` for File Explorer; `ms-windows-store:` for axKit''s page in the Microsoft Store app and `ms-settings:` for Windows'' Startup apps page in the Settings app (the Store''s copy, AX-13); `powershell.exe` for the installer''s `install.ps1` and for axPreview''s own script that asks Windows'' text reader (`Windows.Media.Ocr`) for the text in a picture (docs/axPreview/SPEC.md AP-D11); the Service Control Manager to start a service.'),
         @('What it reaches', 'nothing on the network by itself; the browser, the program Windows picks for a file, a shell extension or a service then act on their own.'),
         @('Documentation', 'https://learn.microsoft.com/windows/win32/shell/launch; https://learn.microsoft.com/windows/win32/api/shobjidl_core/nn-shobjidl_core-icontextmenu; https://learn.microsoft.com/windows/win32/services/starting-a-service.'),
         @('Apps', 'every window (links, Show in File Explorer, updates); axFile; axPreview; axProcess.')) }
@@ -90,25 +90,25 @@ $targets = @(
         @('What', 'programs the user chose: one added to axFile''s Open with list, by the path the user gave (a script runs through Windows PowerShell); one picked in axStart, by its name in the shell''s Applications folder or its target file.'),
         @('How', 'started through the shell with the selected entries'' paths as arguments (axFile), or as the Start menu starts it, as administrator when the user asks (axStart).'),
         @('What it reaches', 'whatever the program does, with the user''s rights.'),
-        @('Documentation', 'docs/axfile/SPEC.md (Open with); docs/axstart/SPEC.md.'),
+        @('Documentation', 'docs/axFile/SPEC.md (Open with); docs/axStart/SPEC.md.'),
         @('Apps', 'axFile; axStart.')) }
     @{ Key = 'axKit'; Kind = 'program'; Lines = @(
         @('What', 'axKit itself, this very program file: a new window of an app, the restart under its own name when started through an Open with hard link, the restart after an update, a window the AI tool asked for.'),
         @('How', 'a new process of this program file (or the installed `AxKit.exe` after an update) with the app''s verb and path; a test run''s variables go only to a window of the run (S-11).'),
         @('What it reaches', 'nothing new: the same program.'),
-        @('Documentation', 'docs/axkit/SPEC.md AX-1, AX-2.3, AX-3, AX-9.'),
+        @('Documentation', 'docs/axKit/SPEC.md AX-1, AX-2.3, AX-3, AX-9.'),
         @('Apps', 'every window.')) }
     @{ Key = 'AI tools'; Kind = 'pipe'; Lines = @(
         @('What', 'the paired AI tool, Claude Code as an MCP client, which starts `AxKit.exe mcp` as its server once the user has turned the AI tools on and paired it (axKit menu, AI tools).'),
         @('How', 'MCP''s JSON-RPC, one line per message, on the server process''s standard input and output; the server asks the open windows over their named pipes (`AxKit-mcp-<user>-<random>`, this Windows account only, each connection answering a challenge with the paired key, HMAC-SHA256); every call is written to `mcp-audit.log` with its arguments hashed.'),
         @('What it reaches', 'nothing on the network: pipes on this computer. What the AI tool does with what it read is under its own terms. axPass and axClip are never read; axClaude and axTerminal are never opened.'),
-        @('Documentation', 'https://modelcontextprotocol.io/specification; docs/axkit/mcp.md.'),
+        @('Documentation', 'https://modelcontextprotocol.io/specification; docs/axKit/mcp.md.'),
         @('Apps', 'every window.')) }
     @{ Key = 'Test automation'; Kind = 'pipe'; Lines = @(
         @('What', 'tools/AxAutomate, the bundle''s own test driver, in an automated run only: a window started with the run''s secret (`AXKIT_AUTOMATION`) opens the pipe `axkit-auto-<process id>` for it. Never in normal use.'),
         @('How', 'a named pipe this Windows account alone may open; the run''s secret and folder go from the environment to the window''s memory at its start (S-11).'),
         @('What it reaches', 'nothing on the network.'),
-        @('Documentation', 'docs/axkit/automation.md.'),
+        @('Documentation', 'docs/axKit/automation.md.'),
         @('Apps', 'every window, in a test run.')) }
 )
 
@@ -300,7 +300,7 @@ foreach ($file in $files) {
 }
 
 if ($errors.Count -gt 0) {
-    Write-Host "Outside calls without a usable explanation (docs/axkit/outside-calls.md, tools/outside-calls.ps1):"
+    Write-Host "Outside calls without a usable explanation (docs/axKit/outside-calls.md, tools/outside-calls.ps1):"
     $errors | ForEach-Object { Write-Host "  $_" }
     exit 1
 }
@@ -374,7 +374,7 @@ if ($Check) {
     $pageLines = ($existing -replace "`r`n", "`n") -split "`n"
     $sourceLines = ($text -replace "`r`n", "`n") -split "`n"
     if (($existing -replace "`r`n", "`n") -cne ($text -replace "`r`n", "`n")) {
-        Write-Host "docs/axkit/outside-calls.md is not what the sources give. Run tools/outside-calls.ps1 and commit the page."
+        Write-Host "docs/axKit/outside-calls.md is not what the sources give. Run tools/outside-calls.ps1 and commit the page."
         # The first line that differs, so that a run elsewhere (CI's PowerShell 7 against a Windows PowerShell page) says what it saw.
         $count = [Math]::Max($pageLines.Count, $sourceLines.Count)
         for ($i = 0; $i -lt $count; $i++) {
@@ -389,10 +389,10 @@ if ($Check) {
         }
         exit 1
     }
-    Write-Host "docs/axkit/outside-calls.md is current: $($hits.Count) outside calls, each with its explanation."
+    Write-Host "docs/axKit/outside-calls.md is current: $($hits.Count) outside calls, each with its explanation."
     exit 0
 }
 
 [IO.File]::WriteAllText($documentPath, $text, $utf8)
-Write-Host "Wrote docs/axkit/outside-calls.md: $($hits.Count) outside calls in $fileCount files."
+Write-Host "Wrote docs/axKit/outside-calls.md: $($hits.Count) outside calls in $fileCount files."
 exit 0

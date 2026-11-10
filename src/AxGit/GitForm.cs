@@ -60,7 +60,7 @@ public sealed partial class GitForm : AxKitForm
         _startPath = path;
         SetTitle("No repository");
 
-        // ---- menus and keys (AG-6.1, AG-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (AG-6.1, AG-6.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // Repository is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
         // repositories, then the slot the editors have Save in (Refresh here), then the extras, then Exit. The keys act
         // while a menu item is disabled, as before: the command says what stops it.

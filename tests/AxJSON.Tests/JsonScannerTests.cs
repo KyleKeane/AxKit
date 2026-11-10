@@ -2,7 +2,7 @@ using AxJSON.Core;
 
 namespace AxJSON.Tests;
 
-/// <summary>The scanner on its own (docs/axjson/SPEC.md AJ-2.2, AJ-2.3): strings with their escapes and quotes, comments as repairs, and a lone slash as a token of its own.</summary>
+/// <summary>The scanner on its own (docs/axJSON/SPEC.md AJ-2.2, AJ-2.3): strings with their escapes and quotes, comments as repairs, and a lone slash as a token of its own.</summary>
 public sealed class JsonScannerTests
 {
     private static IReadOnlyList<Token> Tokens(string text) => JsonScanner.Scan(text).Tokens;

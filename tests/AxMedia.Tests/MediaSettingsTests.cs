@@ -2,7 +2,7 @@ using AxMedia.Core;
 
 namespace AxMedia.Tests;
 
-/// <summary>The settings file (docs/axmedia/SPEC.md AM-7.1): defaults, the recent list, and nonsense sanitized.</summary>
+/// <summary>The settings file (docs/axMedia/SPEC.md AM-7.1): defaults, the recent list, and nonsense sanitized.</summary>
 public sealed class MediaSettingsTests
 {
     [Fact]

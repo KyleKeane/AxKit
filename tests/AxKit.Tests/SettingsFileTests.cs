@@ -16,7 +16,7 @@ public sealed class SampleSettings
     public SampleKind Kind { get; set; }
 }
 
-/// <summary>The shared read-and-write pattern of a settings file (docs/axkit/SPEC.md AX-5.3) and the take-over of an old file (AX-5.2).</summary>
+/// <summary>The shared read-and-write pattern of a settings file (docs/axKit/SPEC.md AX-5.3) and the take-over of an old file (AX-5.2).</summary>
 public sealed class SettingsFileTests
 {
     private static string TempFolder() => Path.Combine(Path.GetTempPath(), "axkit-tests", Guid.NewGuid().ToString("N"));

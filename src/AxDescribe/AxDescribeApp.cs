@@ -4,7 +4,7 @@ using AxKit.Forms;
 namespace AxDescribe;
 
 /// <summary>
-/// axDescribe's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md DE-1): <c>AxKit.exe describe [--hidden]</c>
+/// axDescribe's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md DE-1): <c>AxKit.exe describe [--hidden]</c>
 /// calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/>. One axDescribe runs at a time, held by
 /// a named mutex, as axStart: a start while it runs hands "show" to its hidden window (<see cref="AppMessage"/>) and
 /// ends, or with --hidden just ends; otherwise <see cref="DescribeForm"/> runs, hidden with --hidden.
@@ -26,7 +26,7 @@ public static class AxDescribeApp
     private static Mutex? _one;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axdescribe", Usage, args, arguments =>
+        AppHost.Run(Name, "axDescribe", Usage, args, arguments =>
         {
             var hidden = false;
             foreach (var argument in arguments)

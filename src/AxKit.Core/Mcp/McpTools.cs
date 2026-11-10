@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 namespace AxKit.Core.Mcp;
 
 /// <summary>
-/// The tools of the first stage (docs/axkit/mcp.md MC-6.5): what they are called, what they say of themselves, and the
+/// The tools of the first stage (docs/axKit/mcp.md MC-6.5): what they are called, what they say of themselves, and the
 /// check of <c>axkit_open</c>'s arguments, which is pure and tested. Reading a window is the window's own work
 /// (<c>AxKit.Forms/McpChannel</c>); listing and opening are the broker's (<c>AxKit.Forms/McpBroker</c>).
 /// </summary>

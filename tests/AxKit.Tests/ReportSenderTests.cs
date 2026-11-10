@@ -5,7 +5,7 @@ using AxKit.Core.Reports;
 
 namespace AxKit.Tests;
 
-/// <summary>The sender over a Reports folder and canned GitHub answers (docs/axkit/reports.md RP-6), and the token's file form (RP-6.2).</summary>
+/// <summary>The sender over a Reports folder and canned GitHub answers (docs/axKit/reports.md RP-6), and the token's file form (RP-6.2).</summary>
 public sealed class ReportSenderTests : IDisposable
 {
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "axkit-tests", "sender-" + Guid.NewGuid().ToString("N"));

@@ -3,7 +3,7 @@ using AxKit.Core.Reports;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The fields of the notice "Report to axKit" (docs/axkit/reports.md RP-3), the window's own control under the notice's
+/// The fields of the notice "Report to axKit" (docs/axKit/reports.md RP-3), the window's own control under the notice's
 /// text: the user's words first and focused, then the kind, the app and version, the last actions, where the focus
 /// was, the log lines and the title, each named as an instruction, the window's context filled in and editable. The
 /// notice's buttons, Send and Cancel, follow in the Tab order.

@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>The shell's codes for a file operation as one line each (docs/axfile/SPEC.md AF-4.5), with Windows' own message for the low ones and a code for the rest.</summary>
+/// <summary>The shell's codes for a file operation as one line each (docs/axFile/SPEC.md AF-4.5), with Windows' own message for the low ones and a code for the rest.</summary>
 public sealed class ShellMessageTests
 {
     [Theory]

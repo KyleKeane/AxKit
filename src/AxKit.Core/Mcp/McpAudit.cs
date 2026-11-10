@@ -4,7 +4,7 @@ using System.Text;
 namespace AxKit.Core.Mcp;
 
 /// <summary>
-/// The record of every AI tool call (docs/axkit/mcp.md MC-5.2, MC-6.6): one line in <see cref="AppPaths.McpAuditFile"/>
+/// The record of every AI tool call (docs/axKit/mcp.md MC-5.2, MC-6.6): one line in <see cref="AppPaths.McpAuditFile"/>
 /// per call, with the time, the client, the tool, a short hash of the arguments (never the arguments themselves, which
 /// may name the user's files) and the result. A line that cannot be written is logged and the call goes on.
 /// </summary>

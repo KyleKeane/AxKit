@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace AxKit.Tests;
 
 /// <summary>
-/// A menu bar item's drop-down is the one WinForms makes (docs/axkit/SPEC.md AX-6.6): a hand-made drop-down assigned
+/// A menu bar item's drop-down is the one WinForms makes (docs/axKit/SPEC.md AX-6.6): a hand-made drop-down assigned
 /// to <c>DropDown</c> loses its owner item when it closes, after which the bar opens its neighbours' menus on Left and
 /// Right (found in axFile's Item menu, 2026-10-21). Read off the sources, so that the construct fails here before it
 /// is felt in a window.
@@ -37,7 +37,7 @@ public sealed class MenuTests
     }
 
     /// <summary>
-    /// A menu item names an app as the bundle spells it, the ax in lower case (docs/axkit/SPEC.md, the naming rule of
+    /// A menu item names an app as the bundle spells it, the ax in lower case (docs/axKit/SPEC.md, the naming rule of
     /// 2026-10-23): "ax&amp;GIT", never "Ax&amp;Git", which the Show current folder in submenus kept until 2026-10-24.
     /// </summary>
     [Fact]

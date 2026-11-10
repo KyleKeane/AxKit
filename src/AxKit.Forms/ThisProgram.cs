@@ -6,7 +6,7 @@ namespace AxKit.Forms;
 /// <summary>
 /// Whether another process runs this very program file (security audit S-13): asked of Windows by the process's image
 /// path, which a look-alike program cannot copy the way it can copy a window title or a pipe name. From
-/// <see cref="AppMessage"/> on its second use, the MCP pipes (docs/axkit/mcp.md MC-6.3), 2026-10-24.
+/// <see cref="AppMessage"/> on its second use, the MCP pipes (docs/axKit/mcp.md MC-6.3), 2026-10-24.
 /// </summary>
 public static class ThisProgram
 {

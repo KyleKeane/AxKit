@@ -1,7 +1,7 @@
-# The AI tools' first stage (docs/axkit/mcp.md MC-6): off by default, turned on from the menu, a client paired in the
+# The AI tools' first stage (docs/axKit/mcp.md MC-6): off by default, turned on from the menu, a client paired in the
 # window, the reads, the refusals, off again. The runner is the MCP client (mcp start, mcp call, expect mcp); it never
 # calls axkit_open on an app it may open, which would start a window on the user's own desktop.
-file home\AxKit\axdown.json {"checkForUpdates": false}
+file home\AxKit\axDown.json {"checkForUpdates": false}
 file notes.md First line of the notes.\nSecond line, for the AI tools.
 start down {temp}\notes.md
 
@@ -59,7 +59,7 @@ mcp call axkit_window_said {"window":"{window}"}
 expect mcp axAutomate may read axKit
 
 # MC-4.1: an axPass window serves no pipe, so it is never listed.
-file home\AxKit\axpass.json {"checkForUpdates": false}
+file home\AxKit\axPass.json {"checkForUpdates": false}
 start pass
 use 1
 mcp call axkit_windows

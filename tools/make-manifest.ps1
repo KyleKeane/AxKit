@@ -1,15 +1,15 @@
 <#
 .SYNOPSIS
   Writes the MSIX package manifest, AppxManifest.xml, for publish.ps1 -Msix from the apps' listing (AxKit.exe apps,
-  apps.json), so that the package declares the apps from the same list as everything else (docs/axkit/SPEC.md B-10,
-  AX-13.2; docs/axkit/store-distribution.md section 3).
+  apps.json), so that the package declares the apps from the same list as everything else (docs/axKit/SPEC.md B-10,
+  AX-13.2; docs/axKit/store-distribution.md section 3).
 
 .DESCRIPTION
   The Store allows eight <Application> entries per package and no hidden one (its validation of 2026-11-09: "more than
   the limit of 8", and AppListEntry="none" needs a waiver), so the entries are the apps marked storeEntry in the
   listing (Dispatch.Apps), eight at most. The axClaude entry comes first, has the id AxKit and no parameters, so that
   it starts axClaude as AxKit.exe does with nothing (AX-1.3) and carries what the whole bundle needs: every app's
-  console command (axkit.exe, axclaude.exe, axdown.exe ...; the program tells the app by the command's own name,
+  console command (axKit.exe, axClaude.exe, axDown.exe ...; the program tells the app by the command's own name,
   Dispatch.VerbOfProgramName) and the file types of the apps that have no entry (the program tells the app by the
   file's kind, AX-1.2). Every other entry runs AxKit.exe with its verb as parameters (uap10:Parameters, which Windows
   passes), with its own name, images and file types; an app that starts at sign-in carries its startup task with
@@ -161,7 +161,8 @@ foreach ($app in $otherEntries) {
     $otherBlocks[$app.verb] = $extensions
 }
 $firstExtensions = @()
-$firstExtensions += Alias-Extension (@('axkit.exe') + @($listing | ForEach-Object { "$($_.name)".ToLowerInvariant() + '.exe' }))
+# The aliases in the apps' own case (axDown.exe), the names a screen reader says as they are; Windows finds them typed any way.
+$firstExtensions += Alias-Extension (@('axKit.exe') + @($listing | ForEach-Object { "$($_.name).exe" }))
 $firstExtensions += FileTypes-Of $firstEntry
 foreach ($app in $listing | Where-Object { -not $_.storeEntry }) { $firstExtensions += FileTypes-Of $app }
 if ($firstEntry.atSignIn) { $firstExtensions += StartupTask-Extension $firstEntry.project "axKit $($firstEntry.name)" "$($firstEntry.verb) --hidden" }

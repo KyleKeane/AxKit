@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
-  <!-- Every project of src but the executable (docs/axkit/app-kit.md AK-4.1), so that a new app's key table is in reach
+  <!-- Every project of src but the executable (docs/axKit/app-kit.md AK-4.1), so that a new app's key table is in reach
        of KeyTests by being there. -->
   <ItemGroup>
     <ProjectReference Include="..\..\src\*\*.csproj" Exclude="..\..\src\AxKit\AxKit.csproj" />

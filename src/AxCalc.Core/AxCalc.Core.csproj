@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axCalc's pure code (docs/axcalc/SPEC.md §5): the evaluator, the answer's text and bases, the history entry, the
+  <!-- axCalc's pure code (docs/axCalc/SPEC.md §5): the evaluator, the answer's text and bases, the history entry, the
        settings; no window. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)</TargetFramework>

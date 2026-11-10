@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axMCP's pure code (docs/axmcp/SPEC.md section 5): no window. -->
+  <!-- axMCP's pure code (docs/axMCP/SPEC.md section 5): no window. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxMCP.Core</RootNamespace>

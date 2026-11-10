@@ -3,7 +3,7 @@ using AxProcess.Core;
 
 namespace AxProcess.Tests;
 
-/// <summary>The Processes view (docs/axprocess/SPEC.md PR-3): the processor use between two samples, the labels, the order, the summary.</summary>
+/// <summary>The Processes view (docs/axProcess/SPEC.md PR-3): the processor use between two samples, the labels, the order, the summary.</summary>
 public sealed class ProcessTableTests
 {
     private const long Mega = 1024 * 1024;

@@ -11,7 +11,7 @@ namespace AxMedia;
 /// back to this thread; the queue is <see cref="PlayQueue"/>. A start with paths while this window is open arrives as
 /// a hand-over message (AM-1.2, <see cref="AppMessage"/>) in <see cref="WndProc"/>. The notices, the fonts, the
 /// window's place, the update flow, find and the announcements are the bundle's window base (<see cref="AxKitForm"/>).
-/// Grown from axFile's player and queue pane (docs/axkit/axfile-split.md).
+/// Grown from axFile's player and queue pane (docs/axKit/axfile-split.md).
 /// </summary>
 public sealed partial class MediaForm : AxKitForm
 {
@@ -45,7 +45,7 @@ public sealed partial class MediaForm : AxKitForm
         // A start on one file is named after it from the first moment, so that NVDA reads the file's window as it opens (AM-2.3).
         SetTitle(start is { Verb: AppMessage.Play, Paths: [var only] } && File.Exists(only) ? Path.GetFileName(only) : null);
 
-        // ---- menus and keys (AM-5.1, AM-5.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (AM-5.1, AM-5.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // Queue is the thing worked on, in the standard order of a first menu (bundle AX-6): New and Open with the
         // recent list, the items on the file, Show current file in, Exit. Enter, Delete and Space act in the list
         // only (AM-5.2); in a notice's field they are the field's own, and in the list returning true keeps it from dinging.

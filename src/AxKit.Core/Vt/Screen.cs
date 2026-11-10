@@ -102,7 +102,7 @@ public sealed class Screen
     public event Action? Cleared;
 
     /// <summary>
-    /// A shell integration mark, OSC 133 (docs/axterminal/SPEC.md AT-1.3): the letter (A the prompt starts, B the
+    /// A shell integration mark, OSC 133 (docs/axTerminal/SPEC.md AT-1.3): the letter (A the prompt starts, B the
     /// command starts, C the output starts, D the command finished) and what follows the letter's semicolon (a D's
     /// exit code), or null. Claude Code emits C and D marks too; axClaude does not listen.
     /// </summary>
@@ -116,7 +116,7 @@ public sealed class Screen
 
     public Line? LineAt(int row) => _rows[row].Line;
 
-    /// <summary>The row the line is on now, or -1 when it is not on the screen (scrolled off, let go, or never a row's): a model that keeps a line from an earlier frame finds its row again by identity, since the rows move as the screen scrolls (docs/axterminal/SPEC.md AT-4.2).</summary>
+    /// <summary>The row the line is on now, or -1 when it is not on the screen (scrolled off, let go, or never a row's): a model that keeps a line from an earlier frame finds its row again by identity, since the rows move as the screen scrolls (docs/axTerminal/SPEC.md AT-4.2).</summary>
     public int RowOf(Line line)
     {
         for (var r = 0; r < Rows; r++)
@@ -384,7 +384,7 @@ public sealed class Screen
         }
         else if (code == "133" && payload.Length > 0)
         {
-            // A shell integration mark (docs/axterminal/SPEC.md AT-1.3): the letter, then what follows its semicolon.
+            // A shell integration mark (docs/axTerminal/SPEC.md AT-1.3): the letter, then what follows its semicolon.
             Mark?.Invoke(payload[0], payload.Length > 2 && payload[1] == ';' ? payload[2..] : null);
         }
         else if (code == "9" && payload.StartsWith("9;", StringComparison.Ordinal))

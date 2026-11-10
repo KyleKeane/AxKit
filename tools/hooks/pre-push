@@ -3,7 +3,7 @@
 # reports clone and the private management lists (tools/sync-repos.ps1), so that the lists and the clone go up with
 # the code and nobody has to remember to back them up. Installed once per clone with
 #     git config core.hooksPath tools/hooks
-# (docs/axkit/development-environment.md section 4; release.ps1 refuses to run without it). A sibling's trouble is
+# (docs/axKit/development-environment.md section 4; release.ps1 refuses to run without it). A sibling's trouble is
 # printed and never stops the push: this hook always exits 0. Kept with LF line endings (.gitattributes): sh does not
 # read CRLF.
 root=$(git rev-parse --show-toplevel)

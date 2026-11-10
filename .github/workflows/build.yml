@@ -6,7 +6,7 @@ on:
     branches: ['**']
   pull_request:
 
-# Read only: a build never writes to the repository (docs/axkit/security-audit-2026-10-24.md S-33).
+# Read only: a build never writes to the repository (docs/axKit/security-audit-2026-10-24.md S-33).
 permissions:
   contents: read
 
@@ -17,18 +17,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The SDK band is global.json's, the one place it is set (docs/axkit/longevity.md).
+      # The SDK band is global.json's, the one place it is set (docs/axKit/longevity.md).
       - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       - name: Outside calls are listed
-        # Every network request, program start and pipe in src carries its explanation, and docs/axkit/outside-calls.md
-        # is what the sources give (docs/axkit/SPEC.md B-17).
+        # Every network request, program start and pipe in src carries its explanation, and docs/axKit/outside-calls.md
+        # is what the sources give (docs/axKit/SPEC.md B-17).
         run: ./tools/outside-calls.ps1 -Check
       - name: Build and test
         # ContinuousIntegrationBuild: deterministic paths; the test packages restore exactly as their lock files say (S-34).
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true
       - name: Build the Store package
-        # The MSIX package of the Microsoft Store (docs/axkit/SPEC.md AX-13): the manifest from the apps listing must
+        # The MSIX package of the Microsoft Store (docs/axKit/SPEC.md AX-13): the manifest from the apps listing must
         # pass makeappx's schema check on every push, not first at a release. The runner has the Windows SDK.
         run: ./publish.ps1 -Msix

@@ -48,7 +48,7 @@ body:
     id: step
     attributes:
       label: Test plan step, if one covers it
-      description: The step in docs/<app>/nvda-test-plan.md, such as "axFile 1.13". docs/axkit/nvda-test-record.md says when it last passed.
+      description: The step in docs/<app>/nvda-test-plan.md, such as "axFile 1.13". docs/axKit/nvda-test-record.md says when it last passed.
   - type: textarea
     id: steps
     attributes:

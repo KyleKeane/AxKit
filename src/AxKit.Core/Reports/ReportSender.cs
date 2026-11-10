@@ -1,6 +1,6 @@
 namespace AxKit.Core.Reports;
 
-/// <summary>The reports' own settings (docs/axkit/reports.md RP-6.3): the install's reporter id, the blocklist last read, the last send.</summary>
+/// <summary>The reports' own settings (docs/axKit/reports.md RP-6.3): the install's reporter id, the blocklist last read, the last send.</summary>
 public sealed class ReportSettings
 {
     public Guid? ReporterId { get; set; }

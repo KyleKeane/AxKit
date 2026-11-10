@@ -1,7 +1,7 @@
 namespace AxKit.Forms;
 
 /// <summary>
-/// The keys that mean the same in every window of axKit (docs/axkit/SPEC.md AX-8.2). Every window reads them from
+/// The keys that mean the same in every window of axKit (docs/axKit/SPEC.md AX-8.2). Every window reads them from
 /// here, so a change is one line; a window's own keys live in its own table (<c>AxDownKeys</c>, <c>AxClaudeKeys</c>),
 /// and the collision test in <c>tests/AxKit.Tests</c> fails when a window key equals one of these. Tab and Shift+Tab,
 /// Alt+F4, Alt and F10 are Windows' own and need no constant.
@@ -13,10 +13,10 @@ public static class BundleKeys
     /// <summary>The command palette (AX-10): every command of the window's menus by name.</summary>
     public const Keys CommandPalette = Keys.Control | Keys.Shift | Keys.P;
 
-    /// <summary>A report to axKit's maintainer, a bug, an idea or feedback (docs/axkit/reports.md RP-2.1).</summary>
+    /// <summary>A report to axKit's maintainer, a bug, an idea or feedback (docs/axKit/reports.md RP-2.1).</summary>
     public const Keys Report = Keys.F4;
 
-    /// <summary>A question to Claude about this window, with what the window knows about itself (docs/axkit/ai-help.md AH-6); Windows' own key for help about the thing in front.</summary>
+    /// <summary>A question to Claude about this window, with what the window knows about itself (docs/axKit/ai-help.md AH-6); Windows' own key for help about the thing in front.</summary>
     public const Keys AskClaude = Keys.Shift | Keys.F1;
 
     public const Keys NextControl = Keys.Control | Keys.Tab;

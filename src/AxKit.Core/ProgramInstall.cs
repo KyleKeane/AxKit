@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace AxKit.Core;
 
 /// <summary>
-/// A program an app runs and Windows does not have (docs/axkit/SPEC.md AX-2.9, the user's ask of 2026-10-24): Git for
+/// A program an app runs and Windows does not have (docs/axKit/SPEC.md AX-2.9, the user's ask of 2026-10-24): Git for
 /// axGIT, KeePassXC for axPass, Claude Code for axClaude. Its name, how it installs (winget's package id, or its own
 /// installer's PowerShell command), and its download page for when neither can run. The install is only ever started
 /// by the user, from the notice that says the program is missing (bundle B-15: no network call of a window's own).

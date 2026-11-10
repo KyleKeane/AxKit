@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxFile.Core;
 
 /// <summary>
-/// Everything axFile remembers between runs (SPEC.md AF-8.1), in <c>%APPDATA%\AxKit\axfile.json</c> through the bundle's
+/// Everything axFile remembers between runs (SPEC.md AF-8.1), in <c>%APPDATA%\AxKit\axFile.json</c> through the bundle's
 /// <see cref="SettingsFile"/>: the font, the update check and the window's place from <see cref="WindowSettings"/>,
 /// plus the last folder, the recent folders, the favorites, whether hidden entries show, the sort order and the user's
 /// own programs. A missing or unreadable file falls back to the defaults; the player's keys of an older file (speed,
@@ -33,7 +33,7 @@ public sealed class FileSettings : WindowSettings
     /// <summary>The user's own programs and scripts of Open with a custom program ▸ (AF-4.11), in the order added.</summary>
     public List<UserProgram> Programs { get; set; } = [];
 
-    public static string DefaultPath => AppPaths.SettingsFile("axfile");
+    public static string DefaultPath => AppPaths.SettingsFile("axFile");
 
     public static FileSettings Load(string path, out string? error)
     {

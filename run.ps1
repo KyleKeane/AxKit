@@ -7,30 +7,30 @@
   .\run.ps1 C:\src\myproject                 # axClaude on that folder
   .\run.ps1 C:\src\myproject -- --resume     # extra arguments go to claude (default: --continue)
   .\run.ps1 C:\src\myproject -New            # a new conversation (PowerShell swallows a bare --)
-  .\run.ps1 -App down C:\notes\todo.md       # axDown on that file (run-axdown.ps1 says the same)
-  .\run.ps1 -App down                        # axDown with an empty document (run-axdown.ps1 opens the tutorial file instead)
-  .\run.ps1 -App json C:\x\settings.json     # axJSON on that file (run-axjson.ps1 says the same)
-  .\run.ps1 -App git C:\src\myproject        # axGIT on the repository that holds the folder (run-axgit.ps1 says the same)
-  .\run.ps1 -App terminal C:\src\myproject   # axTerminal with a shell in that folder (run-axterminal.ps1 says the same)
-  .\run.ps1 -App media C:\Music\Dune         # axMedia on the folder's sound and video files (run-axmedia.ps1 says the same)
-  .\run.ps1 -App preview C:\notes\README.md  # axPreview on the file, read-only (run-axpreview.ps1 says the same)
-  .\run.ps1 -App start                       # axStart, the launcher: its field shown; it keeps running (run-axstart.ps1 says the same)
-  .\run.ps1 -App process                     # axProcess (run-axprocess.ps1 says the same)
-  .\run.ps1 -App task C:\my\tasks            # axTask on a folder of lists (run-axtask.ps1 says the same)
-  .\run.ps1 -App pass C:\Vault\mine.kdbx     # axPass on a KeePass database (run-axpass.ps1 says the same)
-  .\run.ps1 -App calc                        # axCalc, the calculator (run-axcalc.ps1 says the same)
-  .\run.ps1 -App clip                        # axClip, the clipboard history (run-axclip.ps1 says the same)
+  .\run.ps1 -App down C:\notes\todo.md       # axDown on that file (run-axDown.ps1 says the same)
+  .\run.ps1 -App down                        # axDown with an empty document (run-axDown.ps1 opens the tutorial file instead)
+  .\run.ps1 -App json C:\x\settings.json     # axJSON on that file (run-axJSON.ps1 says the same)
+  .\run.ps1 -App git C:\src\myproject        # axGIT on the repository that holds the folder (run-axGIT.ps1 says the same)
+  .\run.ps1 -App terminal C:\src\myproject   # axTerminal with a shell in that folder (run-axTerminal.ps1 says the same)
+  .\run.ps1 -App media C:\Music\Dune         # axMedia on the folder's sound and video files (run-axMedia.ps1 says the same)
+  .\run.ps1 -App preview C:\notes\README.md  # axPreview on the file, read-only (run-axPreview.ps1 says the same)
+  .\run.ps1 -App start                       # axStart, the launcher: its field shown; it keeps running (run-axStart.ps1 says the same)
+  .\run.ps1 -App process                     # axProcess (run-axProcess.ps1 says the same)
+  .\run.ps1 -App task C:\my\tasks            # axTask on a folder of lists (run-axTask.ps1 says the same)
+  .\run.ps1 -App pass C:\Vault\mine.kdbx     # axPass on a KeePass database (run-axPass.ps1 says the same)
+  .\run.ps1 -App calc                        # axCalc, the calculator (run-axCalc.ps1 says the same)
+  .\run.ps1 -App clip                        # axClip, the clipboard history (run-axClip.ps1 says the same)
   .\run.ps1 -NoBuild                         # skip the build, just start
   .\run.ps1 -Test                            # run the unit tests instead (test.ps1: every test project, in Release)
 
-  run-axclaude.ps1, run-axdown.ps1, run-axjson.ps1, run-axgit.ps1, run-axterminal.ps1, run-axfile.ps1, run-axmedia.ps1, run-axpreview.ps1, run-axstart.ps1, run-axprocess.ps1, run-axtask.ps1, run-axpass.ps1, run-axcalc.ps1 and run-axclip.ps1 next to this script pass -App for you and take the same other arguments.
+  run-axClaude.ps1, run-axDown.ps1, run-axJSON.ps1, run-axGIT.ps1, run-axTerminal.ps1, run-axFile.ps1, run-axMedia.ps1, run-axPreview.ps1, run-axStart.ps1, run-axProcess.ps1, run-axTask.ps1, run-axPass.ps1, run-axCalc.ps1 and run-axClip.ps1 next to this script pass -App for you and take the same other arguments.
   If PowerShell refuses to run scripts: powershell -ExecutionPolicy Bypass -File .\run.ps1
   Close a running axKit window first: the build writes into the folder it holds open. axStart and axClip, which run in
   the background, are ended before the build and started again hidden after it.
 #>
 [CmdletBinding()]
 param(
-    # The app to start: the verb AxKit.exe takes (docs/axkit/SPEC.md AX-1), one of Dispatch.Apps' (src/AxKit.Core/Dispatch.cs,
+    # The app to start: the verb AxKit.exe takes (docs/axKit/SPEC.md AX-1), one of Dispatch.Apps' (src/AxKit.Core/Dispatch.cs,
     # read by tools/apps.ps1, so that a new app needs no line here). axClaude unless said otherwise.
     [string]$App = 'claude',
 

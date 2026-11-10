@@ -1,7 +1,7 @@
 namespace AxKit.Forms;
 
 /// <summary>
-/// One view of a window's one list (docs/axgit/SPEC.md AG-2.2, docs/axprocess/SPEC.md PR-2.2; from axGIT on its
+/// One view of a window's one list (docs/axGIT/SPEC.md AG-2.2, docs/axProcess/SPEC.md PR-2.2; from axGIT on its
 /// second use, axProcess, 2026-10-24): the list's name with its count, its items and their keys (a file's path, a
 /// commit's hash, a process's id), whether it has been read since it was last made stale, and the key of the item
 /// selected in it, kept while the window is open. A window holds one per view and fills its <see cref="AxKitList"/>

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axHelp's pure code (docs/axhelp/SPEC.md section 5): no window. -->
+  <!-- axHelp's pure code (docs/axHelp/SPEC.md section 5): no window. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxHelp.Core</RootNamespace>

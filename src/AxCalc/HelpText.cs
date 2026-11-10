@@ -35,6 +35,6 @@ public static class HelpText
           Starting with an operator continues from the last answer: *2 doubles it. A leading minus is a negative number
         """ + BundleHelp.NoticesSection("axCalc", "the field and the history");
 
-    /// <summary>docs/axcalc/user-guide.md, embedded by AxCalc.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axcalc/user-guide.md");
+    /// <summary>docs/axCalc/user-guide.md, embedded by AxCalc.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axCalc/user-guide.md");
 }

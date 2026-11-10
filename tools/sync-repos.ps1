@@ -11,7 +11,7 @@
 
 .DESCRIPTION
   The folders are found by name beside this repository, <parent>\axkit-reports and <parent>\axkit-management
-  (docs/axkit/development-environment.md section 4). For each one that exists:
+  (docs/axKit/development-environment.md section 4). For each one that exists:
     1. git fetch origin;
     2. axkit-management only: every change is committed as "Lists as of <date> <time>". axTask's files change on
        every refresh from GitHub, and that churn is a backup's job. axkit-reports is never committed here: a change to

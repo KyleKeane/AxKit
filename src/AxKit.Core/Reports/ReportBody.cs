@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace AxKit.Core.Reports;
 
 /// <summary>
-/// The issue's body as Markdown (docs/axkit/reports.md RP-6.1): the user's words first, the context, the last actions,
+/// The issue's body as Markdown (docs/axKit/reports.md RP-6.1): the user's words first, the context, the last actions,
 /// the log lines folded away, and one last line the workflow and the maintainer filter on, with the version and the
 /// install's reporter id.
 /// </summary>

@@ -10,7 +10,7 @@ using static AxKit.Forms.User32;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The automation channel of a window (docs/axkit/automation.md, tier 2): on only when the environment variable
+/// The automation channel of a window (docs/axKit/automation.md, tier 2): on only when the environment variable
 /// <c>AXKIT_AUTOMATION</c> is set, as the test runner sets it for the processes it starts on its own desktop. One named
 /// pipe, <c>axkit-auto-&lt;process id&gt;</c>, one command per line and one JSON answer per line: <c>keys</c>,
 /// <c>type</c>, <c>focus</c>, <c>text</c>, <c>said</c>, <c>state</c>, <c>menu</c>, <c>close</c>, <c>problems</c> (the command list's, AK-2.4). Keys are posted to the focused
@@ -119,7 +119,7 @@ internal sealed class AutomationChannel : IMessageFilter
             {
                 // Outside call, pipe, Test automation: the window's pipe of an automated test run only
                 // (AXKIT_AUTOMATION, set by tools/AxAutomate), which only this account may open, so that the test tool
-                // can drive the window; never opened in normal use (docs/axkit/automation.md).
+                // can drive the window; never opened in normal use (docs/axKit/automation.md).
                 using var pipe = NamedPipeServerStreamAcl.Create($"axkit-auto-{Environment.ProcessId}", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());
                 pipe.WaitForConnection();
                 using var reader = new StreamReader(pipe, new UTF8Encoding(false));
@@ -317,7 +317,7 @@ internal sealed class AutomationChannel : IMessageFilter
         return new { ok = true, command = entry.Text };
     }
 
-    /// <summary>The NVDA tier (docs/axkit/automation.md, tier 3): the window to the front, so that NVDA follows it and the keyboard reaches it; only on the user's desktop, at the user's word.</summary>
+    /// <summary>The NVDA tier (docs/axKit/automation.md, tier 3): the window to the front, so that NVDA follows it and the keyboard reaches it; only on the user's desktop, at the user's word.</summary>
     private object Activate()
     {
         // The thread's own activation first: on the test desktop, where no foreground is to be had, it is what fires

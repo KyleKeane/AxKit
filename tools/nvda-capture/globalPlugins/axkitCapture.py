@@ -1,4 +1,4 @@
-# axKit speech capture (docs/axkit/automation.md, tier 3): what NVDA speaks, and when it cancels speech, written to
+# axKit speech capture (docs/axKit/automation.md, tier 3): what NVDA speaks, and when it cancels speech, written to
 # %TEMP%\axkit-nvda-speech.log, one line each with the time, only while %TEMP%\axkit-nvda-capture.on exists, which the
 # test runner makes for its run and removes after it. Nothing the user hears in daily use is recorded.
 

@@ -29,6 +29,6 @@ public static class HelpText
           Escape: hide axStart at once and return where you were; the field is empty the next time
         """ + BundleHelp.NoticesSection("axStart", "the field");
 
-    /// <summary>docs/axstart/user-guide.md, embedded by AxStart.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axstart/user-guide.md");
+    /// <summary>docs/axStart/user-guide.md, embedded by AxStart.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axStart/user-guide.md");
 }

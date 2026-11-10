@@ -4,7 +4,7 @@ using System.Text;
 namespace AxKit.Core.Ai;
 
 /// <summary>
-/// One question to Claude Code in its print mode (docs/axkit/ai-help.md AH-2): the command line, the folder it runs
+/// One question to Claude Code in its print mode (docs/axKit/ai-help.md AH-2): the command line, the folder it runs
 /// in, and the run itself with the prompt on standard input, never on the command line (it is long and holds the
 /// user's words). One process per question; a follow-up resumes the session (AH-6.3).
 /// </summary>
@@ -74,7 +74,7 @@ public static class AiRequest
     public static async Task<AiAnswer> AskAsync(string claude, string prompt, IReadOnlyList<string> folders, string? model, string? resume, CancellationToken cancellation)
     {
         var start = StartInfo(claude, folders, model, resume);
-        // Outside call, program, Claude Code: claude -p in the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axkit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
+        // Outside call, program, Claude Code: claude -p in the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
         var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);
         return result.TimedOut
             ? new AiAnswer("No answer in two minutes: Claude Code was ended. Ask again, or a shorter question.", true, null)

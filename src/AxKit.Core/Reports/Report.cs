@@ -1,6 +1,6 @@
 namespace AxKit.Core.Reports;
 
-/// <summary>The three kinds of report (docs/axkit/reports.md RP-3 item 2), recategorised later on GitHub by their label.</summary>
+/// <summary>The three kinds of report (docs/axKit/reports.md RP-3 item 2), recategorised later on GitHub by their label.</summary>
 public enum ReportKind
 {
     Feedback,

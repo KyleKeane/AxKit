@@ -1,11 +1,11 @@
 # axTerminal, the window
 
-The WinForms side of axTerminal: axClaude's window around a shell, a transcript with NVDA-style single-key navigation and a command field at the bottom. The pure code (the launcher, the model, the arrivals, the history, the settings) is `src/AxTerminal.Core`, with its own `CLAUDE.md`; the console pieces (ConPTY, the parser, the screen, the line store, the mirror) are `src/AxKit.Core`'s and the view is `src/AxKit.Forms/TranscriptView`. The spec is `docs/axterminal/SPEC.md` ("SPEC.md" below); the guide `docs/axterminal/user-guide.md` is embedded by `AxTerminal.csproj` for Help → User guide; the manual test plan is `docs/axterminal/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
+The WinForms side of axTerminal: axClaude's window around a shell, a transcript with NVDA-style single-key navigation and a command field at the bottom. The pure code (the launcher, the model, the arrivals, the history, the settings) is `src/AxTerminal.Core`, with its own `CLAUDE.md`; the console pieces (ConPTY, the parser, the screen, the line store, the mirror) are `src/AxKit.Core`'s and the view is `src/AxKit.Forms/TranscriptView`. The spec is `docs/axTerminal/SPEC.md` ("SPEC.md" below); the guide `docs/axTerminal/user-guide.md` is embedded by `AxTerminal.csproj` for Help → User guide; the manual test plan is `docs/axTerminal/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
 ```
-.\run-axterminal.ps1 C:\src\myproject    # build AxKit and start axTerminal there (run.ps1 -App terminal; -NoBuild)
+.\run-axTerminal.ps1 C:\src\myproject    # build AxKit and start axTerminal there (run.ps1 -App terminal; -NoBuild)
 dotnet build src/AxTerminal/AxTerminal.csproj -o <scratch dir>   # while AxKit runs: never into src/AxKit/bin
 dotnet test tests/AxTerminal.Tests/AxTerminal.Tests.csproj
 ```
@@ -14,7 +14,7 @@ dotnet test tests/AxTerminal.Tests/AxTerminal.Tests.csproj
 
 - `TerminalForm` (on `AxKit.Forms/ConsoleForm`, the bundle's console window shared with axClaude since 2026-10-23, which owns the view, the field, the control area, the status bar pair, the pty bridge, the paced writes with their one pump, the recording, the export, find, the signals, the music, the focus keys, the bookmark toggle and the notice hooks; on `AxKitForm` under it, bundle AX-6.5), one class in partial files, one per section:
   - `TerminalForm.cs` (fields, the two constructors, `OnShown`, the closing question (Keep running keeps a pending update restart through the base's `KeepWorkingAfterUpdate`, AX-3.5), the hooks: `Working`, `SaveCommand` with the export, the diagnostics lines, `PathInHand`);
-  - `TerminalForm.Ui.cs` (the menus with their keys as one command list, `Add` and `AddKey` of `AxKitForm`, docs/axkit/app-kit.md AK-2: no key switch is left, the console window's read to the end aside; Speak output, the title, the status bar);
+  - `TerminalForm.Ui.cs` (the menus with their keys as one command list, `Add` and `AddKey` of `AxKitForm`, docs/axKit/app-kit.md AK-2: no key switch is left, the console window's read to the end aside; Speak output, the title, the status bar);
   - `TerminalForm.Input.cs` (the field's keys, sending with PowerShell's extra Enter through the base's queue, interrupt and Escape, Enter on a line, the recent commands in the control area);
   - `TerminalForm.Process.cs` (starting, stopping and restarting the shell around the base's `StartProcess` and `StopProcess`, the exit);
   - `TerminalForm.Model.cs` (what the model reports: the tick and the speech, Ready, Done or Failed with the base's signals, the "a program asks" heuristic, Ctrl+Q, Clear);

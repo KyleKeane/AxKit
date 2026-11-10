@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axPreview's app side, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7): what axPreview is, as
+  <!-- axPreview's app side, as a class library inside AxKit.exe (docs/axKit/SPEC.md AX-1.7): what axPreview is, as
        data for the text editor shell in AxKit.Forms (read-only), its key table and its texts; the pure code is
        AxPreview.Core. -->
   <PropertyGroup>
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <!-- Help, User guide shows this file. -->
-    <EmbeddedResource Include="..\..\docs\axpreview\user-guide.md" LogicalName="UserGuide.md" />
+    <EmbeddedResource Include="..\..\docs\axPreview\user-guide.md" LogicalName="UserGuide.md" />
   </ItemGroup>
 
 </Project>

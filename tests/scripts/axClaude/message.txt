@@ -1,0 +1,21 @@
+# axClaude: a fresh session with Haiku, a message, its reply and Done (docs/axClaude/nvda-test-plan.md sections 1 and 2).
+mkdir a
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+start claude {temp}\a -- --model haiku
+try said trust
+iffound wait 1500
+iffound keys enter
+expect said Ready
+expect focus Message
+type Reply with the single word hello.
+keys enter
+expect said Done
+keys ctrl+2
+expect focus Conversation
+keys ctrl+3
+expect said Output 1
+keys down down
+expect focus hello
+
+

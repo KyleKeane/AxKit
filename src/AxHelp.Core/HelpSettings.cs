@@ -6,7 +6,7 @@ namespace AxHelp.Core;
 public sealed record HelpExchange(string Question, string Answer, string? SessionId, DateTime When);
 
 /// <summary>
-/// Everything axHelp remembers between runs (SPEC.md HE-5), in <c>%APPDATA%\AxKit\axhelp.json</c> through the
+/// Everything axHelp remembers between runs (SPEC.md HE-5), in <c>%APPDATA%\AxKit\axHelp.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the hotkey, Start with Windows and Say the first match from
 /// <see cref="HotkeySettings"/>, the font and the update check from <see cref="WindowSettings"/>, and the last ten
 /// questions with their answers. The switch, the folders and the model of AI help itself are the bundle's
@@ -23,7 +23,7 @@ public sealed class HelpSettings : HotkeySettings
     /// <summary>The last questions with their answers, newest first.</summary>
     public List<HelpExchange> Exchanges { get; set; } = [];
 
-    public static string DefaultPath => AppPaths.SettingsFile("axhelp");
+    public static string DefaultPath => AppPaths.SettingsFile("axHelp");
 
     public static HelpSettings Load(string path, out string? error)
     {

@@ -5,7 +5,7 @@ using AxPass.Core;
 namespace AxPass;
 
 /// <summary>
-/// axPass's commands (docs/axpass/SPEC.md PW-4 to PW-7): each one or two runs of the tool, the list read again after,
+/// axPass's commands (docs/axPass/SPEC.md PW-4 to PW-7): each one or two runs of the tool, the list read again after,
 /// and for Ctrl+Z the runs that take it back. The field commands are the shared window's; they reach the database
 /// through <see cref="SaveFields"/>.
 /// </summary>

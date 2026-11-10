@@ -4,10 +4,10 @@
 
 .DESCRIPTION
   Run it from the folder that holds AxKit.exe: the extracted zip, or publish\win-x64 after publish.ps1.
-  axKit is one program with several apps inside (docs/axkit/SPEC.md AX-2). It copies axKit to
+  axKit is one program with several apps inside (docs/axKit/SPEC.md AX-2). It copies axKit to
   %LOCALAPPDATA%\Programs\AxKit and creates the ways to start each app, all from the list of apps that AxKit.exe apps
   prints (Dispatch.Apps; $apps below):
-    - a Start menu entry per app, "axKit axClaude", "axKit axDown" and so on (type axkit in the Start menu to list them),
+    - a Start menu entry per app, "axKit axClaude", "axKit axDown" and so on (type axKit in the Start menu to list them),
     - one submenu in File Explorer's right-click menu, "Open with axKit", on folders (and on a folder's background) and
       on files, listing the apps that open what was right-clicked: axClaude, axGIT, axTerminal and axFile on folders,
       axDown, axFile and axPreview on every file, axJSON on .json files, axMedia on sound and video files; and axDown
@@ -17,7 +17,7 @@
     - axStart, the program launcher, and axClip, the clipboard history, running in the background from sign-in (a value
       under the user's Run key that each writes itself): they are stopped before an install or a removal, and started
       again, hidden, after an install,
-    - the console commands axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc, axclip and axkit (a folder
+    - the console commands axClaude, axDown, axJSON, axGIT, axTerminal, axFile, axMedia, axPreview, axStart, axProcess, axTask, axPass, axCalc, axClip, axMCP, axHelp, axDescribe and axKit, each in the app's own case since 5.6.0, so that a screen reader says the name as it is (a folder
       opens axClaude, a file axDown, a .json file axJSON, a sound or video file axMedia): one-line shims in
       %USERPROFILE%\.local\bin, put on the user's PATH when it is not there yet (Claude Code's installer uses the same
       folder; a removal leaves the PATH, since the folder may hold other programs' commands).
@@ -96,7 +96,7 @@ $classes = 'HKCU:\Software\Classes'
 $appsKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\AxKit'
 
 # The apps (AX-2), from the program itself: AxKit.exe apps prints Dispatch.Apps (src/AxKit.Core/Dispatch.cs) as JSON,
-# so a new app of the bundle needs nothing here (docs/axkit/app-kit.md AK-4.1). The installation keeps that listing as
+# so a new app of the bundle needs nothing here (docs/axKit/app-kit.md AK-4.1). The installation keeps that listing as
 # apps.json, which an uninstall reads when the program next to it cannot be run. Per app: Name, which gives the Start
 # menu entry "axKit <Name>", the console command <name> and the ProgID AxKit.<Name>. Verb: what AxKit.exe takes. Icon:
 # the file the Start menu entry and the File Explorer entries show, <Project>.ico. Opens: what the app opens from
@@ -112,7 +112,7 @@ if (-not $Uninstall) {
     $newExe = Join-Path $source 'AxKit.exe'
     $newVersion = if (Test-Path -LiteralPath $newExe) { (Get-Item -LiteralPath $newExe).VersionInfo.FileVersion } else { 'with no AxKit.exe beside install.ps1' }
     Say "Installing axKit $newVersion$(if ($InPlace) { ' in place, the app running' }) on Windows $([Environment]::OSVersion.Version), PowerShell $($PSVersionTable.PSVersion)"
-    # What the installation changes and what axKit sends, said before anything is changed (docs/axkit/code-signing.md: the
+    # What the installation changes and what axKit sends, said before anything is changed (docs/axKit/code-signing.md: the
     # signing service's rule that system changes come with a warning and a privacy statement is shown at installation).
     Say "It installs for your Windows account only, without administrator rights: the program in $target, Start menu entries, console commands in $bin (added to your PATH), File Explorer's Open with axKit and Open with entries, axStart and axClip at sign-in, and an entry in Settings, Apps that uninstalls all of it."
     Say "Privacy: axKit collects nothing and has no telemetry. On its own it only asks GitHub for the latest release when a window starts; Options, General, Check for updates at start turns that off. PRIVACY.md beside the program says everything axKit contacts and when."
@@ -186,7 +186,8 @@ foreach ($entry in ($listingJson | ConvertFrom-Json)) {
 # The places that follow from the name.
 foreach ($app in $apps) {
     $app.Start = Join-Path $programs "axKit $($app.Title).lnk"
-    $app.Shim = Join-Path $bin ($app.Name.ToLower() + '.cmd')
+    # In the app's own case (axDown.cmd): what the user hears in a folder listing; Windows finds it typed any way.
+    $app.Shim = Join-Path $bin ($app.Name + '.cmd')
     $app.ProgId = "AxKit.$($app.Name)"
     # Windows' Open with lists one program per program file, so an app with file types has a hard link of AxKit.exe
     # under its own name for its ProgID; started so, the program hands its arguments to AxKit.exe (src/AxKit/Program.cs).
@@ -250,23 +251,23 @@ function Remove-OldOpenWith {
 # (Remove-Installation).
 $places = @($target, $appsKey) + @($menus | ForEach-Object { $_.Key }) +
     @($apps | Where-Object { $_.OpenWith } | ForEach-Object { "$classes\$($_.ProgId)" }) +
-    @($apps | ForEach-Object { $_.Start }) + @(Join-Path $bin 'axkit.cmd') + @($apps | ForEach-Object { $_.Shim }) +
+    @($apps | ForEach-Object { $_.Start }) + @(Join-Path $bin 'axKit.cmd') + @($apps | ForEach-Object { $_.Shim }) +
     @($earlier | ForEach-Object { $_.Target }) + $earlierPlaces
 
 function Get-Version([string]$path) {
     (Get-Item $path).VersionInfo.FileVersion -replace '^(\d+\.\d+\.\d+).*', '$1'
 }
 
-# axStart and axClip run in the background from sign-in (docs/axstart/SPEC.md AS-1.3, AS-1.5; docs/axclip/SPEC.md
+# axStart and axClip run in the background from sign-in (docs/axStart/SPEC.md AS-1.3, AS-1.5; docs/axClip/SPEC.md
 # CP-1.2): they are the apps that would always be running here, so they are stopped before anything is changed and
 # started again, hidden, afterwards. Their processes are told by their verbs; axStart holds nothing unsaved, axClip
 # writes a kept history as it ends. One table, the verb, the name, the settings file and what is said.
 $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 $background = @(
-    @{ Verb = 'start'; Name = 'axStart'; Settings = 'axstart.json'; What = 'the launcher'; Started = 'axStart, the launcher, runs in the background: Ctrl+Shift+Space, or the hotkey you chose, brings up its search field' },
-    @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axclip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Windows+Alt+V, or the hotkey you chose, brings it up' },
-    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axhelp.json'; What = 'the question to Claude'; Started = 'axHelp, a question to Claude from anywhere, runs in the background: Windows+Alt+H, or the hotkey you chose, brings up its field once AI help is on' },
-    @{ Verb = 'describe'; Name = 'axDescribe'; Settings = 'axdescribe.json'; What = 'the screen described by Claude'; Started = 'axDescribe, the window in front described by Claude, runs in the background: Windows+Alt+S, or the hotkey you chose, describes it once AI help is on' }
+    @{ Verb = 'start'; Name = 'axStart'; Settings = 'axStart.json'; What = 'the launcher'; Started = 'axStart, the launcher, runs in the background: Ctrl+Shift+Space, or the hotkey you chose, brings up its search field' },
+    @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axClip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Windows+Alt+V, or the hotkey you chose, brings it up' },
+    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axHelp.json'; What = 'the question to Claude'; Started = 'axHelp, a question to Claude from anywhere, runs in the background: Windows+Alt+H, or the hotkey you chose, brings up its field once AI help is on' },
+    @{ Verb = 'describe'; Name = 'axDescribe'; Settings = 'axDescribe.json'; What = 'the screen described by Claude'; Started = 'axDescribe, the window in front described by Claude, runs in the background: Windows+Alt+S, or the hotkey you chose, describes it once AI help is on' }
 )
 function Stop-Background {
     foreach ($app in $background) {
@@ -431,13 +432,13 @@ if (-not $sameFolder) {
 try { Get-ChildItem $target -File | Unblock-File -ErrorAction Stop } catch { }
 
 New-Item -ItemType Directory -Force $bin | Out-Null
-Set-Content -Path (Join-Path $bin 'axkit.cmd') -Value @('@echo off', "`"$exe`" %*") -Encoding ascii
+Set-Content -Path (Join-Path $bin 'axKit.cmd') -Value @('@echo off', "`"$exe`" %*") -Encoding ascii
 foreach ($app in $apps) {
     Set-Content -Path $app.Shim -Value @('@echo off', "`"$exe`" $($app.Verb) %*") -Encoding ascii
 }
 
 # The commands work in a console only when their folder is on the PATH. Claude Code's installer puts it there; without
-# Claude Code (docs/axkit/SPEC.md G6) this install does, in the user's PATH, which needs no rights. The registry value
+# Claude Code (docs/axKit/SPEC.md G6) this install does, in the user's PATH, which needs no rights. The registry value
 # is read as it is stored (unexpanded) and written back as an expandable string, so that an entry like
 # %USERPROFILE%\... stays one; [Environment]::SetEnvironmentVariable would expand them all into a plain string. The
 # removal leaves the PATH as it is: the folder may hold other programs' commands.
@@ -452,7 +453,7 @@ if ($onPath -notcontains $bin.TrimEnd('\')) {
     # the change from the settings-change message, which [Environment]::SetEnvironmentVariable sends after any write,
     # the removal of a value that does not exist included: that is this line's whole effect.
     [Environment]::SetEnvironmentVariable('AXKIT_PATH_CHANGED', $null, 'User')
-    Say "Added $entry to your PATH: a console opened from now on finds the axkit commands."
+    Say "Added $entry to your PATH: a console opened from now on finds the axKit commands."
 }
 
 if (-not $NoStartMenu) {
@@ -554,14 +555,14 @@ New-ItemProperty -LiteralPath $appsKey -Name 'EstimatedSize' -Value ([int]((Get-
 $names = @($apps | ForEach-Object { $_.Name })
 Say "Installed axKit to $target"
 Say "Settings, Apps: axKit, with Uninstall"
-if (-not $NoStartMenu) { Say "Start menu: $(($names | ForEach-Object { "axKit $_" }) -join ', ') (press the Windows key and type axkit to list them)" }
+if (-not $NoStartMenu) { Say "Start menu: $(($names | ForEach-Object { "axKit $_" }) -join ', ') (press the Windows key and type axKit to list them)" }
 if (-not $NoContextMenu) {
     $onFolders = @($apps | Where-Object { $_.Opens -contains 'folders' } | ForEach-Object { $_.Name }) -join ', '
     $onFiles = @($apps | Where-Object { $_.Opens -contains 'files' } | ForEach-Object { if ($_.Types) { "$($_.Name) on $($_.Types -join ', ')" } else { "$($_.Name) on every file" } }) -join ', '
     $openWith = @($apps | Where-Object { $_.OpenWith } | ForEach-Object { "$($_.Name) for $(if ($_.OpenWith -contains '*') { 'every file' } else { $_.OpenWith -join ', ' })" }) -join '; '
     Say "File Explorer: Open with axKit in the right-click menu: $onFolders on folders; $onFiles. Under Open with: $openWith"
 }
-Say "Console: $(($names | ForEach-Object { $_.ToLower() }) -join ', '), each taking a folder or file, or axkit <folder or file> (shims in $bin)"
+Say "Console: $($names -join ', '), each taking a folder or file, or axKit <folder or file> (shims in $bin)"
 if (-not (($env:Path -split ';') -contains $bin)) {
     Say "Note: $bin is not on PATH in this console. Open a new console, or add it, before using the commands."
 }

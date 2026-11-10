@@ -2,7 +2,7 @@ using AxClip.Core;
 
 namespace AxClip.Tests;
 
-/// <summary>The history (docs/axclip/SPEC.md CP-2.3, CP-2.5, CP-3), what a copy is kept for (CP-3.1) and the settings (CP-6.1).</summary>
+/// <summary>The history (docs/axClip/SPEC.md CP-2.3, CP-2.5, CP-3), what a copy is kept for (CP-3.1) and the settings (CP-6.1).</summary>
 public sealed class ClipHistoryTests
 {
     private static readonly DateTime Now = new(2026, 10, 23, 14, 0, 0, DateTimeKind.Local);
@@ -90,7 +90,7 @@ public sealed class ClipHistoryTests
     {
         using var temp = new TempFolder("axclip-tests");
         var folder = temp.Path;
-        var path = Path.Combine(folder, "axclip.json");
+        var path = Path.Combine(folder, "axClip.json");
         var settings = ClipSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal("Windows+Alt+V", settings.HotkeyText);

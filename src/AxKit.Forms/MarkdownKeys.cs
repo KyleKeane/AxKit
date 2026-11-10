@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The Markdown navigation keys of the text editor shell (docs/axdown/SPEC.md §9, AD-D7): NVDA's browse-mode letters
+/// The Markdown navigation keys of the text editor shell (docs/axDown/SPEC.md §9, AD-D7): NVDA's browse-mode letters
 /// with Ctrl for the next item, Ctrl+Shift for the previous. axDown and axPreview take the same table (from axDown on
 /// its second use, 2026-10-24), so that a file read in one and edited in the other is under the same keys (G2). A key
 /// is changed here and nowhere else.

@@ -1,19 +1,19 @@
 # axFile, the window
 
-The WinForms side of axFile: one list with a folder's entries, the Actions list always under it ("No actions yet" until the first operation), a status bar, the bundle's notices. The pure code (the folder's entries, the operations, the Actions list's lines, the settings) is `src/AxFile.Core`, with its own `CLAUDE.md`. The spec is `docs/axfile/SPEC.md` ("SPEC.md" below); the guide `docs/axfile/user-guide.md` is embedded by `AxFile.csproj` for Help → User guide; the manual test plan is `docs/axfile/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`. The player and the preview pane this window carried until 2026-10-22 are axMedia and axPreview now (`docs/axkit/axfile-split.md`); axFile hands over to them and plays and shows nothing itself.
+The WinForms side of axFile: one list with a folder's entries, the Actions list always under it ("No actions yet" until the first operation), a status bar, the bundle's notices. The pure code (the folder's entries, the operations, the Actions list's lines, the settings) is `src/AxFile.Core`, with its own `CLAUDE.md`. The spec is `docs/axFile/SPEC.md` ("SPEC.md" below); the guide `docs/axFile/user-guide.md` is embedded by `AxFile.csproj` for Help → User guide; the manual test plan is `docs/axFile/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`. The player and the preview pane this window carried until 2026-10-22 are axMedia and axPreview now (`docs/axKit/axfile-split.md`); axFile hands over to them and plays and shows nothing itself.
 
 ## Commands
 
 ```
-.\run-axfile.ps1 C:\Music\Dune    # build AxKit and start axFile on the folder (run.ps1 -App file); a file selects itself in its folder
-.\run-axfile.ps1                  # the last folder opened
+.\run-axFile.ps1 C:\Music\Dune    # build AxKit and start axFile on the folder (run.ps1 -App file); a file selects itself in its folder
+.\run-axFile.ps1                  # the last folder opened
 dotnet build AxKit.sln
 dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
 ```
 
 ## Where things are
 
-- `AxFileApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run` with the one folder or file of the command line, the settings and the window; the log (`axfile.log`), the crash handling, `--help` and `--version` are the host's. It moves the process's working directory to the program's folder (AF-1.2): a folder that is a process's current directory cannot be renamed or moved (Windows' "being used by another process"), and the apps started from here inherit the working directory.
+- `AxFileApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run` with the one folder or file of the command line, the settings and the window; the log (`axFile.log`), the crash handling, `--help` and `--version` are the host's. It moves the process's working directory to the program's folder (AF-1.2): a folder that is a process's current directory cannot be renamed or moved (Windows' "being used by another process"), and the apps started from here inherit the working directory.
 - `FileForm`, in six partial files (`FileForm.Completion.cs`, the Go to folder field's completion, out of Browse, and `FileForm.Programs.cs`, the user's own programs and Windows' own ways, out of Operations, since 2026-10-24).
   - `FileForm.cs`:
     - the controls (the folder list, the rename box as a child of the list, AF-4.2, the status bar);
@@ -23,7 +23,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
       - `FillOpenWith` in Operations fills Open with ▸ on each opening;
     - the hooks the window base asks for;
     - `WndProc` (the shell menu's messages forwarded to `Shell`);
-    - the command list (docs/axkit/app-kit.md AK-2):
+    - the command list (docs/axKit/app-kit.md AK-2):
       - each menu item with a key is `Add(menu, new Command(...))`, a key with no item `AddKey`, its `When` where it acts, `InList` or `InPane`, its `Mark` for MCP;
       - no `ProcessWindowKey` since 2026-10-24, the base running the list;
       - the Selection menu's operations on the marks only show the Item menu's keys, the File Explorer item of Show current folder in only shows Ctrl+W, and Ctrl+D is a key of its own beside the Favorites submenu, refilled as it opens;

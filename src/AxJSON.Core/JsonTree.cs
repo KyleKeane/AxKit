@@ -40,7 +40,7 @@ public sealed record JsonProblem(int Start, string Message);
 public sealed record JsonTree(JsonNode? Root, JsonProblem? Problem, IReadOnlyList<RepairKind> Repairs);
 
 /// <summary>
-/// Builds the tree of a JSON text from its tokens, forgivingly (docs/axjson/SPEC.md AJ-2.2, AJ-2.3): a trailing
+/// Builds the tree of a JSON text from its tokens, forgivingly (docs/axJSON/SPEC.md AJ-2.2, AJ-2.3): a trailing
 /// comma, a missing comma between members or items, a single-quoted string and an unquoted key are taken and
 /// counted as repairs; anything else stops the parse at the first problem, with what was built so far kept, so
 /// that the keys before the problem still navigate. Pure code, tested in <c>tests/AxJSON.Tests</c>.

@@ -5,12 +5,12 @@ using static AxKit.Forms.User32;
 
 namespace AxKit.Forms;
 
-/// <summary>What one process hands another's window (docs/axmedia/SPEC.md AM-1.3): a verb and the paths it is about.</summary>
+/// <summary>What one process hands another's window (docs/axMedia/SPEC.md AM-1.3): a verb and the paths it is about.</summary>
 public sealed record HandOver(string Verb, IReadOnlyList<string> Paths);
 
 /// <summary>
-/// The hand-over between a starting process and the open window of the same app (docs/axmedia/SPEC.md AM-1.2,
-/// AM-1.3, AM-D4; docs/axpreview/SPEC.md AP-1.2): an app that keeps one window (axMedia, axPreview) is started with
+/// The hand-over between a starting process and the open window of the same app (docs/axMedia/SPEC.md AM-1.2,
+/// AM-1.3, AM-D4; docs/axPreview/SPEC.md AP-1.2): an app that keeps one window (axMedia, axPreview) is started with
 /// paths, finds its newest open window through the same window list the axKit menu reads, hands the paths over with
 /// one <c>WM_COPYDATA</c> message carrying a text (the verb, then one path per line), and ends. For the verbs that
 /// take the focus it first lets the window's process bring itself to the front (<c>AllowSetForegroundWindow</c>,
@@ -31,7 +31,7 @@ public static class AppMessage
     /// <summary>axPreview: the one file shown.</summary>
     public const string Open = "open";
 
-    /// <summary>axStart: the hidden window shown with the focus in its field (docs/axstart/SPEC.md AS-1.2); no paths.</summary>
+    /// <summary>axStart: the hidden window shown with the focus in its field (docs/axStart/SPEC.md AS-1.2); no paths.</summary>
     public const string Show = "show";
 
     private const int WM_COPYDATA = 0x004A;
@@ -83,7 +83,7 @@ public static class AppMessage
 
     /// <summary>
     /// Hands the verb and the paths to one window found by the caller: axStart's, which is hidden and so not in the
-    /// axKit menu's list (docs/axstart/SPEC.md AS-1.2). True when the window took them.
+    /// axKit menu's list (docs/axStart/SPEC.md AS-1.2). True when the window took them.
     /// </summary>
     public static bool SendTo(nint target, string appName, string verb, IReadOnlyList<string> paths)
     {

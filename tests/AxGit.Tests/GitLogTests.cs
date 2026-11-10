@@ -2,7 +2,7 @@ using AxGit.Core;
 
 namespace AxGit.Tests;
 
-/// <summary>The Log view read off git log with axGIT's format (docs/axgit/SPEC.md AG-4).</summary>
+/// <summary>The Log view read off git log with axGIT's format (docs/axGIT/SPEC.md AG-4).</summary>
 public sealed class GitLogTests
 {
     [Fact]

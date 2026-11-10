@@ -11,7 +11,7 @@ public class GitExcludeTests
     {
         var once = GitExclude.Apply(GitDefault, on: true);
         Assert.StartsWith(GitDefault, once);
-        Assert.Contains("axclaude-*.vt\n", once);
+        Assert.Contains("axClaude-*.vt\n", once);
         Assert.EndsWith(GitExclude.BlockEnd + "\n", once);
         Assert.Same(once, GitExclude.Apply(once, on: true));
     }
@@ -34,7 +34,7 @@ public class GitExcludeTests
     {
         var on = GitExclude.Apply(GitDefault + "secret.txt\n", on: true);
         var off = GitExclude.Apply(on, on: false);
-        Assert.DoesNotContain("axclaude", off);
+        Assert.DoesNotContain("axClaude", off);
         Assert.Contains("secret.txt", off);
         Assert.Equal(off, GitExclude.Apply(off, on: false));
     }
@@ -48,10 +48,10 @@ public class GitExcludeTests
         Directory.CreateDirectory(Path.Combine(root, ".git"));
         var path = GitExclude.Update(root, on: true);
         Assert.Equal(Path.Combine(root, ".git", "info", "exclude"), path);
-        Assert.Contains("axclaude-*.txt", File.ReadAllText(path!));
+        Assert.Contains("axClaude-*.txt", File.ReadAllText(path!));
         Assert.Null(GitExclude.Update(root, on: true));
         GitExclude.Update(root, on: false);
-        Assert.DoesNotContain("axclaude", File.ReadAllText(path!));
+        Assert.DoesNotContain("axClaude", File.ReadAllText(path!));
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class GitExcludeTests
 
         var path = GitExclude.Update(worktree, on: true);
         Assert.Equal(Path.Combine(repoGit, "info", "exclude"), path);
-        Assert.Contains("axclaude-*.txt", File.ReadAllText(path!));
+        Assert.Contains("axClaude-*.txt", File.ReadAllText(path!));
     }
 
     [Fact]

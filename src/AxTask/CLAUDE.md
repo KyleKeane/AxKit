@@ -3,14 +3,14 @@
 The WinForms side of axTask: the navigator and the detail pane, each the bundle's `AxKitList`, a status bar, the
 bundle's notices. The pure code (the item format, the field values, the folder, the changes with their undo, the links,
 the tasks and the smart lists, the settings) is `src/AxTask.Core`, with its own `CLAUDE.md`. The shared shape of the
-item apps is `docs/axkit/item-apps.md` (IA-n.m); axTask's own spec is `docs/axtask/SPEC.md` ("SPEC.md" below); the guide
-`docs/axtask/user-guide.md` is embedded by `AxTask.csproj`; the manual test plan is `docs/axtask/nvda-test-plan.md`.
+item apps is `docs/axKit/item-apps.md` (IA-n.m); axTask's own spec is `docs/axTask/SPEC.md` ("SPEC.md" below); the guide
+`docs/axTask/user-guide.md` is embedded by `AxTask.csproj`; the manual test plan is `docs/axTask/nvda-test-plan.md`.
 The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
 ```
-.\run-axtask.ps1 manual_tests\axtask\tasks   # build AxKit and start axTask on the test folder (run.ps1 -App task)
+.\run-axTask.ps1 manual_tests\axTask\tasks   # build AxKit and start axTask on the test folder (run.ps1 -App task)
 .\test.ps1 AxTask                            # the tests in Release, as CI runs them
 ```
 
@@ -21,7 +21,7 @@ The bundle rules are in the root `CLAUDE.md`.
   `AxKit.Forms/ItemForm` (since axPass, its second use); `TaskForm` derives from it and fills in what is axTask's.
 - `TaskForm.cs`: the menus (Folder; List, Item and Field, only the one for the selection enabled by `ItemForm` from `SelectionMenus`;
   View, Options, axKit, Help) with axTask's own keys as commands of the window's one command list (`Add`, each key's`r
-  command at its first menu item; docs/axkit/app-kit.md AK-2), the levels of the folder (`Start`, `EnterList`,
+  command at its first menu item; docs/axKit/app-kit.md AK-2), the levels of the folder (`Start`, `EnterList`,
   `LeaveList`, which goes straight back to the top, `ShowAllTasks`, `ReadLevel` with the rows' `Tag`: an `ItemFile`, a
   `SmartList`, a `SectionTag` on a header, `ArchivedItemsTag`, or nothing for a list; the top level in sections is
   `ReadSections`, TK-3a) and the detail (`DetailOf`, with a `FileSource` to save to; a link read by `SpokenValue`).
@@ -29,7 +29,7 @@ The bundle rules are in the root `CLAUDE.md`.
   the panes filled, its words said), `CheckFresh` (the file still as shown, IA-5.5), `SaveFields` (the shared field
   commands' change, written), `MoveToSection` and `SetSection` (TK-3a.3), `NewList` in the selected row's section, the link's notice (`ChangeSpecial`). Rename and Archive add `Links.AfterMove`'s writes,
   so links follow what moved.
-- `TaskForm.GitHub.cs` (docs/axkit/reports.md RP-7, RP-8; SPEC.md TK-7a, 2026-11-07): the action keys (`RunActionKey` for Ctrl+1 to Ctrl+9 from the list's `list.json`: `SetFields` through `Commit`, in a GitHub list after GitHub took the Kind or State; `MoveItem`; `OpenTarget`, with `OpenInAxClaude` starting axClaude on the list's folder with `--message`, both through `ActionKeys.OpenRefusal`, which keeps a shell or Claude Code off a folder that is not on a drive of this computer, S-5), the Item menu's Action keys submenu with the names refreshed as it opens and the GitHub submenu (`PlaceGitHubMenus`), the GitHub list's refresh (`RefreshGitHubOnEnter` from `EnterList`, `RefreshGitHubAgain` from `BeforeRefresh`, `RefreshGitHub` off the UI thread through `Do`, the changes applied as a mirror, not a step), `NewGitHubList`, the GitHub actions (`SetKind`, `SetState`, `CommentOnIssue`, `Block`, each through `WithGitHubItem`, `WithGitHubToken` and `TryGitHubAsync`), the user's token (`UserToken`, `SetGitHubAccount` with a hidden field, `ForgetGitHubAccount`) and List → Action keys (`EditActionKeys`, `EditActionKey`, `WriteActionKey`).
+- `TaskForm.GitHub.cs` (docs/axKit/reports.md RP-7, RP-8; SPEC.md TK-7a, 2026-11-07): the action keys (`RunActionKey` for Ctrl+1 to Ctrl+9 from the list's `list.json`: `SetFields` through `Commit`, in a GitHub list after GitHub took the Kind or State; `MoveItem`; `OpenTarget`, with `OpenInAxClaude` starting axClaude on the list's folder with `--message`, both through `ActionKeys.OpenRefusal`, which keeps a shell or Claude Code off a folder that is not on a drive of this computer, S-5), the Item menu's Action keys submenu with the names refreshed as it opens and the GitHub submenu (`PlaceGitHubMenus`), the GitHub list's refresh (`RefreshGitHubOnEnter` from `EnterList`, `RefreshGitHubAgain` from `BeforeRefresh`, `RefreshGitHub` off the UI thread through `Do`, the changes applied as a mirror, not a step), `NewGitHubList`, the GitHub actions (`SetKind`, `SetState`, `CommentOnIssue`, `Block`, each through `WithGitHubItem`, `WithGitHubToken` and `TryGitHubAsync`), the user's token (`UserToken`, `SetGitHubAccount` with a hidden field, `ForgetGitHubAccount`) and List → Action keys (`EditActionKeys`, `EditActionKey`, `WriteActionKey`).
 - `AxTaskKeys`: the window's keys, `AxKit.Forms/ItemKeys.All` and its own (`ActionKey(digit)` for Ctrl+1 to Ctrl+9; All tasks is Ctrl+0); `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 

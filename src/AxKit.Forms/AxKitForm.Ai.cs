@@ -5,7 +5,7 @@ using AxKit.Core.Ai;
 namespace AxKit.Forms;
 
 /// <summary>
-/// AI help on this window (docs/axkit/ai-help.md AH-1, AH-3, AH-6; 2026-11-09): the axKit menu's AI help submenu
+/// AI help on this window (docs/axKit/ai-help.md AH-1, AH-3, AH-6; 2026-11-09): the axKit menu's AI help submenu
 /// with the one switch, Ask about this window and the folders Claude may read; Shift+F1, a question about this
 /// window with what the window knows about itself; the question run as Claude Code in print mode
 /// (<see cref="AiRequest"/>) behind a waiting notice; and the answer as a notice text with a field under it for a

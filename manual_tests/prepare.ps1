@@ -278,7 +278,7 @@ function Build-AxFile([string]$d) {
     # Enter, Ctrl+E and Windows' Open with (1.6, 3.10, 3.12).
     $open = New-Folder (Join-Path $d 'open-with-windows-and-editors')
     Write-Text (Join-Path $open 'markdown-for-enter-and-ctrl-e.md') "# A Markdown file`n`nEnter opens it in Windows' program for .md; Ctrl+E in axDown."
-    Write-Text (Join-Path $open 'json-ctrl-e-opens-axjson.json') $settingsJson
+    Write-Text (Join-Path $open 'json-ctrl-e-opens-axJSON.json') $settingsJson
     Write-Text (Join-Path $open 'text-for-notepad-1.txt') 'The first text file for your own program, Notepad.'
     Write-Text (Join-Path $open 'text-for-notepad-2.txt') 'The second text file for your own program, Notepad.'
     Write-Text (Join-Path $open 'type-nothing-opens.axtest') 'No program opens this type: Enter shows the Windows dialog that asks for one.'

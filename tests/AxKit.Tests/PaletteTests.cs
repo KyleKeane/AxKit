@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The command palette's lines and search (docs/axkit/SPEC.md AX-10.2, AX-10.3, AX-10.4).</summary>
+/// <summary>The command palette's lines and search (docs/axKit/SPEC.md AX-10.2, AX-10.3, AX-10.4).</summary>
 public sealed class PaletteTests
 {
     private static readonly IReadOnlyList<PaletteEntry> Entries =

@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// Starts a text editor app (docs/axkit/SPEC.md AX-1.7; docs/axdown/SPEC.md AD-1.4): <see cref="AppHost.Run"/> with
+/// Starts a text editor app (docs/axKit/SPEC.md AX-1.7; docs/axDown/SPEC.md AD-1.4): <see cref="AppHost.Run"/> with
 /// the one file of the command line, the app's settings and <see cref="TextEditorForm"/> on the app's
 /// <see cref="EditorApp"/>. <c>AxDownApp.Run</c> and <c>AxJSONApp.Run</c> are one call each into here.
 /// </summary>

@@ -4,9 +4,9 @@ namespace AxPass.Core;
 public sealed record PassNode(string Path, string Group, string Name, bool IsGroup);
 
 /// <summary>
-/// The database's groups and entries as <c>ls -R -f</c> lists them (docs/axpass/kdbx-notes.md section 8): one line per
+/// The database's groups and entries as <c>ls -R -f</c> lists them (docs/axPass/kdbx-notes.md section 8): one line per
 /// group and entry with its full path, a group ending in a slash, an empty group's line <c>group/[empty]</c>. The
-/// levels of the navigator come from it (docs/axpass/SPEC.md section 1).
+/// levels of the navigator come from it (docs/axPass/SPEC.md section 1).
 /// </summary>
 public sealed class PassTree
 {

@@ -33,7 +33,7 @@ public sealed record JsonError(int Start, int Line, string Message) : Element(St
 }
 
 /// <summary>
-/// The elements of a JSON text for the navigation keys (docs/axjson/SPEC.md AJ-2.2): keys, objects, arrays, items and
+/// The elements of a JSON text for the navigation keys (docs/axJSON/SPEC.md AJ-2.2): keys, objects, arrays, items and
 /// the first error, each in document order with next and previous from a caret position, in the shape
 /// <c>AxKit.Core.MarkdownOutline</c> has, so that the editor shell's <c>TextJump</c> takes them. Pure code, tested.
 /// </summary>

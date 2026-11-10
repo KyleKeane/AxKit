@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axTerminal's window, as a class library inside AxKit.exe (docs/axkit/SPEC.md AX-1.7, B-2); src/AxKit is the executable. -->
+  <!-- axTerminal's window, as a class library inside AxKit.exe (docs/axKit/SPEC.md AX-1.7, B-2); src/AxKit is the executable. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <!-- Help, User guide shows this file. -->
-    <EmbeddedResource Include="..\..\docs\axterminal\user-guide.md" LogicalName="UserGuide.md" />
+    <EmbeddedResource Include="..\..\docs\axTerminal\user-guide.md" LogicalName="UserGuide.md" />
   </ItemGroup>
 
 </Project>

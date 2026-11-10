@@ -9,15 +9,15 @@
     1. fetches origin and stops if origin/main has commits that main here does not (skipped with -NoPush),
     2. checks the "## <version>" section: it is not empty, and every bullet starts with its app or apps ("- axFile: ",
        "- axDown, axJSON: ") or with "- For developers: ",
-    3. writes docs/axkit/outside-calls.md from the sources (tools/outside-calls.ps1; a call without its explanation
-       stops here, docs/axkit/SPEC.md B-17) and runs every test project in Release, as the workflows do (test.ps1),
+    3. writes docs/axKit/outside-calls.md from the sources (tools/outside-calls.ps1; a call without its explanation
+       stops here, docs/axKit/SPEC.md B-17) and runs every test project in Release, as the workflows do (test.ps1),
     4. sets <Version> in src/AxKit/AxKit.csproj,
-    5. commits CHANGELOG.md, the project file and docs/axkit/outside-calls.md as "Release <version>" and tags v<version>,
+    5. commits CHANGELOG.md, the project file and docs/axKit/outside-calls.md as "Release <version>" and tags v<version>,
     6. pushes main, waits for its build to pass on GitHub (gh run watch), then pushes the tag: a tag never goes up on
        a commit whose build failed there; each push also syncs the reports clone and the management lists beside the
        repository through the pre-push hook (tools/sync-repos.ps1), which step 1 checks is installed,
     7. waits for the tag's release workflow, which leaves a draft release, then signs its zip with the release key
-       on this machine and publishes it (tools/sign-release.ps1; docs/axkit/SPEC.md AX-3.4). The apps install only a
+       on this machine and publishes it (tools/sign-release.ps1; docs/axKit/SPEC.md AX-3.4). The apps install only a
        signed zip, so a release is never published without this step.
   When it is done, the release is at https://github.com/KyleKeane/AxKit/releases and the apps offer it as an update.
 
@@ -67,18 +67,18 @@ if (-not $NoPush) {
 
     # Every push of this repository also syncs the repositories beside it, the reports clone and the management lists
     # (tools/sync-repos.ps1), through the pre-push hook, so that a release never leaves them behind. The hook is a
-    # setting of the clone, made once (docs/axkit/development-environment.md section 4).
+    # setting of the clone, made once (docs/axKit/development-environment.md section 4).
     $hooks = (git -C $root config --get core.hooksPath)
     if ($hooks -ne 'tools/hooks') {
-        Write-Host "The pre-push hook is not installed in this clone. Run once: git config core.hooksPath tools/hooks (docs/axkit/development-environment.md section 4), then run this again."
+        Write-Host "The pre-push hook is not installed in this clone. Run once: git config core.hooksPath tools/hooks (docs/axKit/development-environment.md section 4), then run this again."
         exit 1
     }
 }
 
-$generated = @('CHANGELOG.md', 'docs/axkit/outside-calls.md')
+$generated = @('CHANGELOG.md', 'docs/axKit/outside-calls.md')
 $dirty = @(git -C $root status --porcelain) | Where-Object { $_ -and ($generated -notcontains $_.Substring(3)) }
 if ($dirty.Count -gt 0) {
-    Write-Host "Commit or stash these first; only CHANGELOG.md and docs/axkit/outside-calls.md may be uncommitted:"
+    Write-Host "Commit or stash these first; only CHANGELOG.md and docs/axKit/outside-calls.md may be uncommitted:"
     $dirty | ForEach-Object { Write-Host "  $_" }
     exit 1
 }
@@ -94,7 +94,7 @@ if (-not (Select-String -Path $changelog -Pattern ('^## ' + [regex]::Escape($Ver
 }
 
 # The section is the release notes and the update notice: it says something, and every bullet names its app or apps,
-# or is for developers, so that a reader of the notes knows where a change is (docs/axkit/longevity.md 3.11). The
+# or is for developers, so that a reader of the notes knows where a change is (docs/axKit/longevity.md 3.11). The
 # apps are the folders of docs/ that hold a SPEC.md (axkit among them, for the bundle; never a private or planning
 # folder), matched without regard to case; the notes come from tools/release-notes.ps1, the script the release
 # workflow runs, which fails on an empty section.
@@ -114,7 +114,7 @@ if ($unnamed.Count -gt 0) {
 }
 
 # The page of everything axKit reaches outside its process, written from the sources and committed with the release
-# (docs/axkit/SPEC.md B-17): a call without its explanation stops the release here.
+# (docs/axKit/SPEC.md B-17): a call without its explanation stops the release here.
 & (Join-Path $root 'tools\outside-calls.ps1')
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Every outside call needs its comment first. Nothing was changed."
@@ -138,7 +138,7 @@ if ($updated -eq $xml -and $xml -notmatch "<Version>$([regex]::Escape($Version))
 # Not Set-Content -Encoding utf8: in Windows PowerShell 5.1 that writes a byte order mark.
 [IO.File]::WriteAllText($project, $updated, (New-Object System.Text.UTF8Encoding($false)))
 
-git -C $root add -- CHANGELOG.md src/AxKit/AxKit.csproj docs/axkit/outside-calls.md
+git -C $root add -- CHANGELOG.md src/AxKit/AxKit.csproj docs/axKit/outside-calls.md
 git -C $root commit -q -m "Release $Version"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 git -C $root tag -a $tag -m "axKit $Version"
@@ -183,7 +183,7 @@ git -C $root push -q origin $tag
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host "Pushed the tag. GitHub Actions is building the draft release: https://github.com/KyleKeane/AxKit/actions"
 # AX-13.6: once the release is published, store.yml posts its package to the Microsoft Store while STORE_SUBMIT is on.
-Write-Host "Once published, the Store workflow posts this release to Partner Center when the repository variable STORE_SUBMIT is on (docs/axkit/store-setup.md section 4): gh run watch, then .\tools\store-submit.ps1 -Status"
+Write-Host "Once published, the Store workflow posts this release to Partner Center when the repository variable STORE_SUBMIT is on (docs/axKit/store-setup.md section 4): gh run watch, then .\tools\store-submit.ps1 -Status"
 
 # AX-3.4 (security audit S-27): the draft is signed here, with the key that never leaves this machine, and only then
 # published; the apps install nothing unsigned.

@@ -4,7 +4,7 @@ namespace AxKit.Core;
 
 /// <summary>
 /// The bundle's version: <c>&lt;Version&gt;</c> in <c>src/AxKit/AxKit.csproj</c>, read from the executable, so every app
-/// shows the same number (docs/axkit/SPEC.md AX-3.1). "0.0.0" when there is no executable, as in a test host.
+/// shows the same number (docs/axKit/SPEC.md AX-3.1). "0.0.0" when there is no executable, as in a test host.
 /// </summary>
 public static class BundleInfo
 {

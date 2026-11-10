@@ -72,7 +72,7 @@ public static partial class LineClassifier
     private static partial Regex ListItemRegex();
 
     // The last row of the card Claude prints above its prompt when it has drafted feedback for Anthropic
-    // (docs/axclaude/claude-screens.md): "1 to review · 2 to send · 0 to dismiss". In screen reader mode those keys
+    // (docs/axClaude/claude-screens.md): "1 to review · 2 to send · 0 to dismiss". In screen reader mode those keys
     // do nothing (a typed digit lands in the prompt), so the row is interface, never conversation.
     [GeneratedRegex(@"^\d to review · \d to send · \d to dismiss$")]
     private static partial Regex FeedbackCardHintRegex();

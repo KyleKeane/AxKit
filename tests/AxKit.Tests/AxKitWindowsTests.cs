@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The window lists of the axKit menu (docs/axkit/SPEC.md AX-9): the app from a title, Open windows and each app's windows from the Z order, and the labels.</summary>
+/// <summary>The window lists of the axKit menu (docs/axKit/SPEC.md AX-9): the app from a title, Open windows and each app's windows from the Z order, and the labels.</summary>
 public sealed class AxKitWindowsTests
 {
     /// <summary>In Z order, the most recently used first; handle 3 is the bundle's own message box, no app's window.</summary>

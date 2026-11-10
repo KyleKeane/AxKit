@@ -3,7 +3,7 @@ using AxGit.Core;
 namespace AxGit.Tests;
 
 /// <summary>
-/// Running git as a process (docs/axgit/SPEC.md AG-1.5), against a fake git.cmd the test writes: the output and the
+/// Running git as a process (docs/axGIT/SPEC.md AG-1.5), against a fake git.cmd the test writes: the output and the
 /// exit code, the timeout that stops a command, and a program git started that keeps the output open after git has
 /// finished (the case of 2026-10-23, when a signing agent held the window at "Working").
 /// </summary>

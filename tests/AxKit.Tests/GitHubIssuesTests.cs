@@ -4,7 +4,7 @@ using AxKit.Core.Reports;
 
 namespace AxKit.Tests;
 
-/// <summary>GitHub's REST API as the reports use it (docs/axkit/reports.md RP-6, RP-7), against canned answers.</summary>
+/// <summary>GitHub's REST API as the reports use it (docs/axKit/reports.md RP-6, RP-7), against canned answers.</summary>
 public sealed class GitHubIssuesTests
 {
     private const string Repository = "KyleKeane/AxKit-reports";

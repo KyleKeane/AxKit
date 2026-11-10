@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// axKit's listing in the Microsoft Store (docs/axkit/store-distribution.md 3.0; reserved 2026-11-08): the Store ID and
+/// axKit's listing in the Microsoft Store (docs/axKit/store-distribution.md 3.0; reserved 2026-11-08): the Store ID and
 /// the addresses made from it. The Store's copy of axKit (<see cref="PackageIdentity.IsPackaged"/>) offers the Store
 /// page in place of the updater (AX-13), and the documents name the winget command.
 /// </summary>

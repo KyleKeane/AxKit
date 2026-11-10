@@ -93,7 +93,7 @@ public sealed class ActionEntry
 /// selection, each section in time order, newest last; the last fifty operations kept and the last twenty undoable,
 /// the last twenty selection lines kept and gone with the folder; all gone with the window. A running operation
 /// begins a line and ends it with its result or its failure; one that ran at once adds its line done. It replaced
-/// <c>OperationHistory</c> and the status lines of the queue pane on 2026-10-22 (docs/axkit/axfile-split.md).
+/// <c>OperationHistory</c> and the status lines of the queue pane on 2026-10-22 (docs/axKit/axfile-split.md).
 /// </summary>
 public sealed class ActionLog
 {

@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>Completion in the Go to folder field (docs/axfile/SPEC.md AF-3.3, AF-D12), over a temporary folder.</summary>
+/// <summary>Completion in the Go to folder field (docs/axFile/SPEC.md AF-3.3, AF-D12), over a temporary folder.</summary>
 public sealed class PathCompletionTests : IDisposable
 {
     private readonly TempFolder _folder = new("axfile-completion");

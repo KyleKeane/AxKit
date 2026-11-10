@@ -7,7 +7,7 @@ namespace AxKit.Forms;
 public sealed record ThemeMark(string Class);
 
 /// <summary>
-/// Paints a window from the theme (docs/axkit/theme.md TH-2, TH-3): one walk over the control tree, each control's class
+/// Paints a window from the theme (docs/axKit/theme.md TH-2, TH-3): one walk over the control tree, each control's class
 /// from its type or its <see cref="ThemeMark"/>, each class's two colours from the theme or, for <c>system</c> and for
 /// no theme at all, the class's default, which is what every window had before themes existed (AX-7.7). The caption
 /// goes through the desktop window manager (Windows 11; older Windows ignores the call). Nothing here moves the focus

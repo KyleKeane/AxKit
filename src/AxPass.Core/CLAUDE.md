@@ -2,7 +2,7 @@
 
 Everything of axPass that needs no window, unit tested in `tests/AxPass.Tests` (with one test that runs KeePassXC's
 tool on a throwaway database when KeePassXC is installed, and passes without running where it is not, as on the build
-servers). The spec is `docs/axpass/SPEC.md` (PW-n.m); what the tool prints and takes is `docs/axpass/kdbx-notes.md`
+servers). The spec is `docs/axPass/SPEC.md` (PW-n.m); what the tool prints and takes is `docs/axPass/kdbx-notes.md`
 section 8. The window is `src/AxPass`, with its own `CLAUDE.md`. The item format and the field types are `AxKit.Core`'s.
 
 ## Commands

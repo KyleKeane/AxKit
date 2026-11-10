@@ -1,9 +1,9 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// Where the bundle keeps its files (docs/axkit/SPEC.md AX-5.1): one folder for the bundle, one file per app. Settings
+/// Where the bundle keeps its files (docs/axKit/SPEC.md AX-5.1): one folder for the bundle, one file per app. Settings
 /// in <c>%APPDATA%\AxKit\&lt;app&gt;.json</c>, logs in <c>%LOCALAPPDATA%\AxKit\logs</c>, downloaded updates in
-/// <c>%LOCALAPPDATA%\AxKit\updates</c>. The files are named after the apps in lower case: <c>axclaude.json</c>, <c>axdown.log</c>.
+/// <c>%LOCALAPPDATA%\AxKit\updates</c>. The files are named after the apps in lower case: <c>axClaude.json</c>, <c>axDown.log</c>.
 /// </summary>
 public static class AppPaths
 {
@@ -18,15 +18,15 @@ public static class AppPaths
     public static string ConsentFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "consent.json");
 
-    /// <summary>The theme (docs/axkit/theme.md TH-1.1): a colour or "system" for every class of object the windows draw; one file for the bundle.</summary>
+    /// <summary>The theme (docs/axKit/theme.md TH-1.1): a colour or "system" for every class of object the windows draw; one file for the bundle.</summary>
     public static string ThemeFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "theme.json");
 
-    /// <summary>AI help (docs/axkit/ai-help.md AH-1.1): the switch, the folders Claude may read, the model; one file for the bundle.</summary>
+    /// <summary>AI help (docs/axKit/ai-help.md AH-1.1): the switch, the folders Claude may read, the model; one file for the bundle.</summary>
     public static string AiHelpFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "ai-help.json");
 
-    /// <summary>The AI tools' access (docs/axkit/mcp.md MC-6.1): on or off, and the clients the user paired.</summary>
+    /// <summary>The AI tools' access (docs/axKit/mcp.md MC-6.1): on or off, and the clients the user paired.</summary>
     public static string McpFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "mcp.json");
 
@@ -41,7 +41,7 @@ public static class AppPaths
     public static string LogsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "logs");
 
-    /// <summary>The user's reports as an axTask list (docs/axkit/reports.md RP-5.1): one item per report, sent or not.</summary>
+    /// <summary>The user's reports as an axTask list (docs/axKit/reports.md RP-5.1): one item per report, sent or not.</summary>
     public static string ReportsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "reports");
 
@@ -49,7 +49,7 @@ public static class AppPaths
     public static string ReportsFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "reports.json");
 
-    /// <summary>The user's own GitHub token for axTask's GitHub lists (docs/axkit/reports.md RP-7.2), kept with DPAPI as the MCP key is; never roamed.</summary>
+    /// <summary>The user's own GitHub token for axTask's GitHub lists (docs/axKit/reports.md RP-7.2), kept with DPAPI as the MCP key is; never roamed.</summary>
     public static string GitHubTokenFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "github.token");
 
@@ -63,7 +63,7 @@ public static class AppPaths
     public static string InstalledExe => Path.Combine(InstallFolder, "AxKit.exe");
 
     /// <summary>
-    /// The first start after the rename (docs/axkit/SPEC.md AX-5.4, B-16): what Axit, the bundle's name up to 4.0.0,
+    /// The first start after the rename (docs/axKit/SPEC.md AX-5.4, B-16): what Axit, the bundle's name up to 4.0.0,
     /// kept in <c>%APPDATA%\Axit</c> and <c>%LOCALAPPDATA%\Axit</c> moves into the AxKit folders, so that every app
     /// finds its settings, the recently closed list, the consents, the AI tools' pairings and their key, and the logs
     /// as they were. Never in a test run, whose folders are its own.
@@ -132,7 +132,7 @@ public static class AppPaths
     /// <summary>
     /// The folder the settings, the recently closed list and the logs live under: the user's, or a test run's own
     /// (<see cref="AutomationEnvironment.Home"/>), so that its windows neither read nor write the user's files
-    /// (docs/axkit/automation.md); a run's folder counts only with the run's secret (security audit S-11).
+    /// (docs/axKit/automation.md); a run's folder counts only with the run's secret (security audit S-11).
     /// </summary>
     private static string Home(Environment.SpecialFolder folder) =>
         AutomationEnvironment.Home ?? Environment.GetFolderPath(folder);

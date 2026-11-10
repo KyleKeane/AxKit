@@ -1,7 +1,7 @@
 namespace AxKit.Forms;
 
 /// <summary>
-/// What a window shows, read as NVDA reads it (docs/axkit/automation.md; docs/axkit/mcp.md MC-6.5): a control's value, a
+/// What a window shows, read as NVDA reads it (docs/axKit/automation.md; docs/axKit/mcp.md MC-6.5): a control's value, a
 /// list, a text, a hidden field as "protected" (security audit S-12). From the automation channel on its second use,
 /// the MCP channel, 2026-10-24. On the window's thread only.
 /// </summary>

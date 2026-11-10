@@ -3,7 +3,7 @@ using AxPreview.Core;
 
 namespace AxPreview.Tests;
 
-/// <summary>Whether a file reads as text (docs/axpreview/SPEC.md AP-2.2), over bytes and a temporary folder.</summary>
+/// <summary>Whether a file reads as text (docs/axPreview/SPEC.md AP-2.2), over bytes and a temporary folder.</summary>
 public sealed class TextSniffTests : IDisposable
 {
     private readonly TempFolder _folder = new("axpreview-sniff");

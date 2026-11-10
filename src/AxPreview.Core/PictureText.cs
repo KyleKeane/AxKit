@@ -54,7 +54,7 @@ public static class PictureText
     public const string NoLanguage = "Windows has no text recognition language installed. Settings, Time and language, Language and region: a language's options, then Optical character recognition (or Basic typing) adds one";
 
     /// <summary>The script beside axPreview's logs (AX-5.1), written by <see cref="EnsureScript"/>.</summary>
-    public static string ScriptPath => Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axpreview", "ocr.ps1");
+    public static string ScriptPath => Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axPreview", "ocr.ps1");
 
     /// <summary>The script on disk at <paramref name="path"/>, written when missing or different (a new version of axKit brings a new script).</summary>
     public static void EnsureScript(string path)

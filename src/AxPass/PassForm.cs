@@ -6,7 +6,7 @@ using AxPass.Core;
 namespace AxPass;
 
 /// <summary>
-/// axPass's window (docs/axpass/SPEC.md; the shape is docs/axkit/item-apps.md's), on the item apps' shared window
+/// axPass's window (docs/axPass/SPEC.md; the shape is docs/axKit/item-apps.md's), on the item apps' shared window
 /// <see cref="ItemForm"/>. This class holds what is axPass's: one KeePass database, its groups and entries from
 /// KeePassXC's tool (<see cref="KeePassCli"/>), the master password held while unlocked, the locks, the menus and its
 /// own keys. The commands are in <c>PassForm.Commands.cs</c>. Every run of the tool goes off the UI thread through
@@ -52,7 +52,7 @@ public sealed partial class PassForm : ItemForm
     {
         _settings = settings;
 
-        // ---- menus and keys: one command list (docs/axkit/app-kit.md AK-2), each key from the tables (PW-7) ----
+        // ---- menus and keys: one command list (docs/axKit/app-kit.md AK-2), each key from the tables (PW-7) ----
         // The shared keys (ItemKeys) are ItemForm's commands, registered after these by PlaceControls; the items here
         // for them only show them. A key in a second menu is an item showing it too: its command is the first menu's.
         // Enter on a locked window unlocks it, before Enter opens (ItemForm's, later on the list).

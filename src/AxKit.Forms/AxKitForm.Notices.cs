@@ -6,7 +6,7 @@ public abstract partial class AxKitForm
 {
     // ---- notices: the window's own dialogs, drawn inside the window (AX-7.2, AX-6.4) ----
     //
-    // The one focus rule (docs/axkit/SPEC.md AX-6.5): when the first notice of a chain opens, the control that has the
+    // The one focus rule (docs/axKit/SPEC.md AX-6.5): when the first notice of a chain opens, the control that has the
     // focus is remembered; a notice opened from a notice's button, or shown while one is open, continues the chain;
     // when the last one closes, that control gets the focus back if it is still there and visible, and the window's
     // FocusTarget otherwise. Nothing else decides where the focus goes, and no window writes its own version.
@@ -246,7 +246,7 @@ public abstract partial class AxKitForm
     /// <summary>Speaks without moving the focus (AX-7.3): on the notice while one shows, since the window's controls are hidden then, and on <see cref="AnnounceSource"/> otherwise; before the first activation, kept for it; close on the heels of the one before, joined to it.</summary>
     protected bool Announce(string text, bool interrupt)
     {
-        // For a report (docs/axkit/reports.md RP-4.2): a window whose announcements may carry the user's content records
+        // For a report (docs/axKit/reports.md RP-4.2): a window whose announcements may carry the user's content records
         // its commands and notices alone (RecordsAnnouncements).
         if (RecordsAnnouncements)
         {

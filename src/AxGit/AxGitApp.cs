@@ -4,7 +4,7 @@ using AxKit.Forms;
 namespace AxGit;
 
 /// <summary>
-/// axGIT's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AG-1.3): <c>AxKit.exe git [&lt;folder or file&gt;]</c>
+/// axGIT's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md AG-1.3): <c>AxKit.exe git [&lt;folder or file&gt;]</c>
 /// calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one path of the command line,
 /// the settings and <see cref="GitForm"/>.
 /// </summary>
@@ -21,7 +21,7 @@ public static class AxGitApp
         """;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axgit", Usage, args, arguments =>
+        AppHost.Run(Name, "axGIT", Usage, args, arguments =>
         {
             if (!AppHost.OnePath(Name, "folder or file", Usage, arguments, out var path))
             {

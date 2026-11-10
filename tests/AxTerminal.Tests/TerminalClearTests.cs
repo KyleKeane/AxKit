@@ -3,7 +3,7 @@ using static AxTerminal.Tests.TestHelpers;
 
 namespace AxTerminal.Tests;
 
-/// <summary>Clear transcript while a command runs (docs/axterminal/SPEC.md AT-3.4, AT-1.4): the command goes on, and what it prints next is seen.</summary>
+/// <summary>Clear transcript while a command runs (docs/axTerminal/SPEC.md AT-3.4, AT-1.4): the command goes on, and what it prints next is seen.</summary>
 public sealed class TerminalClearTests
 {
     private static string Prompt(string? code) =>

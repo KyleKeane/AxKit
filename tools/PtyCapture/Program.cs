@@ -85,7 +85,7 @@ internal static class Program
         Dictionary<string, string> environment;
         if (shell is not null)
         {
-            // A shell as axTerminal starts it (docs/axterminal/SPEC.md AT-1.2, AT-1.3).
+            // A shell as axTerminal starts it (docs/axTerminal/SPEC.md AT-1.2, AT-1.3).
             var kind = ShellLauncher.Parse(shell);
             if (ShellLauncher.BuildCommandLine(kind) is not { } shellLine)
             {

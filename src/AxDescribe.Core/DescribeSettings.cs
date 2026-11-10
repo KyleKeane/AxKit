@@ -6,7 +6,7 @@ namespace AxDescribe.Core;
 public sealed record Description(string Title, string? Program, string Answer, string? SessionId, DateTime When);
 
 /// <summary>
-/// Everything axDescribe remembers between runs (SPEC.md DE-5), in <c>%APPDATA%\AxKit\axdescribe.json</c> through the
+/// Everything axDescribe remembers between runs (SPEC.md DE-5), in <c>%APPDATA%\AxKit\axDescribe.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the hotkey, Start with Windows and Say the first match from
 /// <see cref="HotkeySettings"/>, the font and the update check from <see cref="WindowSettings"/>, and the last ten
 /// descriptions. The switch, the folders and the model of AI help itself are the bundle's (<c>AxKit.Core.Ai.AiSettings</c>).
@@ -22,7 +22,7 @@ public sealed class DescribeSettings : HotkeySettings
     /// <summary>The last descriptions, newest first.</summary>
     public List<Description> Descriptions { get; set; } = [];
 
-    public static string DefaultPath => AppPaths.SettingsFile("axdescribe");
+    public static string DefaultPath => AppPaths.SettingsFile("axDescribe");
 
     public static DescribeSettings Load(string path, out string? error)
     {

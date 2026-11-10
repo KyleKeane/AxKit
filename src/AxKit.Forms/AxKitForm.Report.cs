@@ -7,7 +7,7 @@ namespace AxKit.Forms;
 
 public abstract partial class AxKitForm
 {
-    // ---- reports: a bug, a feature request or feedback from any window (docs/axkit/reports.md) ----
+    // ---- reports: a bug, a feature request or feedback from any window (docs/axKit/reports.md) ----
 
     private const string ReportTitle = "Report to axKit";
 

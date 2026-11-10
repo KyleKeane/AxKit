@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>A menu item's or a button's text as spoken (docs/axkit/SPEC.md AX-6.4, AX-10.2): no mnemonic marker, no trailing dots.</summary>
+/// <summary>A menu item's or a button's text as spoken (docs/axKit/SPEC.md AX-6.4, AX-10.2): no mnemonic marker, no trailing dots.</summary>
 public sealed class MenuTextTests
 {
     [Theory]

@@ -50,6 +50,6 @@ public static class HelpText
           Ctrl+S: nothing to save here; every change is written at once
         """ + BundleHelp.NoticesSection("axTask", "the panes");
 
-    /// <summary>docs/axtask/user-guide.md, embedded by AxTask.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axtask/user-guide.md");
+    /// <summary>docs/axTask/user-guide.md, embedded by AxTask.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axTask/user-guide.md");
 }

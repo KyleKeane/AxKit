@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The rules of sound and video files that need no engine (docs/axmedia/SPEC.md AM-4.1, AM-4.3, AM-4.5).</summary>
+/// <summary>The rules of sound and video files that need no engine (docs/axMedia/SPEC.md AM-4.1, AM-4.3, AM-4.5).</summary>
 public sealed class MediaFilesTests
 {
     [Theory]

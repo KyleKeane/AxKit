@@ -1,18 +1,18 @@
 # axProcess, the window
 
-The WinForms side of axProcess: one list with three views (Processes, Services, Startup), a status bar, the bundle's notices. The pure code (the process table, the services, the startup list, the system's memory and times, the settings) is `src/AxProcess.Core`, with its own `CLAUDE.md`. The spec is `docs/axprocess/SPEC.md` ("SPEC.md" below); the guide `docs/axprocess/user-guide.md` is embedded by `AxProcess.csproj`; the manual test plan is `docs/axprocess/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
+The WinForms side of axProcess: one list with three views (Processes, Services, Startup), a status bar, the bundle's notices. The pure code (the process table, the services, the startup list, the system's memory and times, the settings) is `src/AxProcess.Core`, with its own `CLAUDE.md`. The spec is `docs/axProcess/SPEC.md` ("SPEC.md" below); the guide `docs/axProcess/user-guide.md` is embedded by `AxProcess.csproj`; the manual test plan is `docs/axProcess/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
 ```
-.\run-axprocess.ps1               # build AxKit and start axProcess (run.ps1 -App process)
+.\run-axProcess.ps1               # build AxKit and start axProcess (run.ps1 -App process)
 .\test.ps1 AxProcess              # the tests in Release, as CI runs them
 ```
 
 ## Where things are
 
 - `AxProcessApp`: the entry point `Run` (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run`; no arguments.
-- `ProcessForm`: the window (SPEC.md PR-2) on `AxKit.Forms/AxKitForm`. The views as `AxKit.Forms/ListViewState`, as axGIT's (the list's name, the labels, the keys: the process ID, the service's name, the startup entry's place and name; whether read; the selected key); `LoadAsync` reads one on a background task with `_busy` set ("Reading…" in the status bar, "Working…" for a second command); `ReadProcesses` takes two samples a second apart (PR-D3); `FillList` and `RememberSelection` keep the item across a refresh; `InView` says which view first. The commands: `ActAsync` (the details notice of the view's item), `EndProcess` and `Kill` (the question, then `Process.Kill` off the UI thread, the ID checked against the name since Windows reuses IDs), `ShowProgram` (axFile on the program file), `CopyLine`, `SaySummary`, `ShowServiceDetails` and `ControlService` (start, stop, restart through `ServiceManager` with its wait), `SetSort` (the rows put in order again without a read). The menus and keys are one command list (`docs/axkit/app-kit.md` AK-2): each menu item and its key one `Add(menu, new Command(...))`, the keys with no item (find, Tab and Shift+Tab, Shift+F10) `AddKey`, the list's keys with `When = () => _list.Focused`; the window has no `ProcessWindowKey` of its own.
+- `ProcessForm`: the window (SPEC.md PR-2) on `AxKit.Forms/AxKitForm`. The views as `AxKit.Forms/ListViewState`, as axGIT's (the list's name, the labels, the keys: the process ID, the service's name, the startup entry's place and name; whether read; the selected key); `LoadAsync` reads one on a background task with `_busy` set ("Reading…" in the status bar, "Working…" for a second command); `ReadProcesses` takes two samples a second apart (PR-D3); `FillList` and `RememberSelection` keep the item across a refresh; `InView` says which view first. The commands: `ActAsync` (the details notice of the view's item), `EndProcess` and `Kill` (the question, then `Process.Kill` off the UI thread, the ID checked against the name since Windows reuses IDs), `ShowProgram` (axFile on the program file), `CopyLine`, `SaySummary`, `ShowServiceDetails` and `ControlService` (start, stop, restart through `ServiceManager` with its wait), `SetSort` (the rows put in order again without a read). The menus and keys are one command list (`docs/axKit/app-kit.md` AK-2): each menu item and its key one `Add(menu, new Command(...))`, the keys with no item (find, Tab and Shift+Tab, Shift+F10) `AddKey`, the list's keys with `When = () => _list.Focused`; the window has no `ProcessWindowKey` of its own.
 - `AxProcessKeys`: the window's keys (SPEC.md PR-6.2; bundle AX-8); `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 

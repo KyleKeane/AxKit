@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>A folder's entries as the list shows them (docs/axfile/SPEC.md AF-2.2, AF-2.4, AF-3.1 to AF-3.3), over a temporary folder.</summary>
+/// <summary>A folder's entries as the list shows them (docs/axFile/SPEC.md AF-2.2, AF-2.4, AF-3.1 to AF-3.3), over a temporary folder.</summary>
 public sealed class FolderListingTests : IDisposable
 {
     private readonly TempFolder _folder = new("axfile-tests");

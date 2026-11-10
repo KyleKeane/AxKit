@@ -3,14 +3,14 @@ using System.Text.Json.Nodes;
 
 namespace AxKit.Core.Mcp;
 
-/// <summary>A tool as a client sees it (docs/axkit/mcp.md MC-6.5): its name, what it does, its arguments as a JSON schema.</summary>
+/// <summary>A tool as a client sees it (docs/axKit/mcp.md MC-6.5): its name, what it does, its arguments as a JSON schema.</summary>
 public sealed record McpTool(string Name, string Description, JsonObject InputSchema);
 
 /// <summary>What a tool call gives back: a text, and whether it is the reason it did not run.</summary>
 public sealed record McpResult(string Text, bool IsError = false);
 
 /// <summary>
-/// The Model Context Protocol as the broker speaks it (docs/axkit/mcp.md MC-1.1): JSON-RPC 2.0, one message per line on
+/// The Model Context Protocol as the broker speaks it (docs/axKit/mcp.md MC-1.1): JSON-RPC 2.0, one message per line on
 /// standard input and output. <see cref="Handle"/> takes one line and gives the line to answer, or null for a
 /// notification; the tools come from the broker through the two functions it is made with, so that this class holds
 /// no state of the apps and is tested on its own. Only what a tools server needs: <c>initialize</c>, <c>ping</c>,

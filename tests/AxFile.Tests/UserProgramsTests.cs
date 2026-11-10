@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>The user's own programs (docs/axfile/SPEC.md AF-4.11): the default name, and how each kind is started on the entries.</summary>
+/// <summary>The user's own programs (docs/axFile/SPEC.md AF-4.11): the default name, and how each kind is started on the entries.</summary>
 public sealed class UserProgramsTests
 {
     [Theory]

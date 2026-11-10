@@ -5,7 +5,7 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>
-/// A smart list (docs/axtask/SPEC.md TK-5.2): a saved filter, a <c>.filter.json</c> file in the top folder, or All
+/// A smart list (docs/axTask/SPEC.md TK-5.2): a saved filter, a <c>.filter.json</c> file in the top folder, or All
 /// tasks, the one built in (TK-D1). Its conditions are read once; <see cref="Matches"/> asks them of one item and
 /// <see cref="Items"/> of every item under the folder, the Archive left out.
 /// </summary>

@@ -4,7 +4,7 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>
-/// Links kept whole when an item or a list moves (docs/axkit/item-apps.md IA-D3): a rename, an archive, a list renamed
+/// Links kept whole when an item or a list moves (docs/axKit/item-apps.md IA-D3): a rename, an archive, a list renamed
 /// or archived. A link is a path from its item's folder, so both the links to what moved and the links held by what
 /// moved (whose folder may now be deeper) are written again.
 /// </summary>

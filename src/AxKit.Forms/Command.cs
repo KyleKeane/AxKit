@@ -1,6 +1,6 @@
 namespace AxKit.Forms;
 
-/// <summary>What a command does beyond reading its window, for the control of AI clients (docs/axkit/mcp.md MC-3.1).</summary>
+/// <summary>What a command does beyond reading its window, for the control of AI clients (docs/axKit/mcp.md MC-3.1).</summary>
 public enum CommandMark
 {
     /// <summary>Says or shows something; changes nothing.</summary>
@@ -17,7 +17,7 @@ public enum CommandMark
 }
 
 /// <summary>
-/// One command of a window (docs/axkit/app-kit.md AK-2): its menu label with its letter, its key from the window's key
+/// One command of a window (docs/axKit/app-kit.md AK-2): its menu label with its letter, its key from the window's key
 /// table (<see cref="Keys.None"/> for a command that has none), what runs, and where the key acts (<see cref="When"/>,
 /// null for anywhere in the window). The window makes its menu item and its key from this one record
 /// (<see cref="AxKitForm.Add"/>, <see cref="AxKitForm.AddKey"/>), so that the menu, the key and the command palette

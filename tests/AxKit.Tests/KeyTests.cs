@@ -3,7 +3,7 @@ using AxKit.Forms;
 namespace AxKit.Tests;
 
 /// <summary>
-/// The key tables (docs/axkit/SPEC.md AX-8.4): no window-specific key equals a bundle-wide key, no table repeats a
+/// The key tables (docs/axKit/SPEC.md AX-8.4): no window-specific key equals a bundle-wide key, no table repeats a
 /// key, and the keys two windows use for different actions are listed so that a collision between apps is seen
 /// before it is felt. The text a menu shows for a key (AX-8.5) is checked here too.
 /// </summary>
@@ -35,7 +35,7 @@ public sealed class KeyTests
     /// The window keys that take a bundle key's place on purpose, each with its spec line (bundle AX-8.4). axTerminal's
     /// command field: Ctrl+Up and Ctrl+Down go through the history instead of by paragraph (AT-3.9, the user's choice
     /// on 2026-10-23 over Up and Down on the field's first and last line). The item apps' navigator: the same keys go by
-    /// section (docs/axkit/item-apps.md IA-2.3a, the user's ask of 2026-10-24); a list has no paragraphs.
+    /// section (docs/axKit/item-apps.md IA-2.3a, the user's ask of 2026-10-24); a list has no paragraphs.
     /// </summary>
     private static readonly HashSet<(string Window, Keys Key)> Overrides =
     [

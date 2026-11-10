@@ -1,6 +1,6 @@
 # AxHelp.Core, the pure code
 
-Everything of axHelp that needs no window: the exchanges kept and the matches of the list. Unit tested in `tests/AxHelp.Tests`. The spec is `docs/axhelp/SPEC.md` ("SPEC.md" below); the window is `src/AxHelp`, with its own `CLAUDE.md`. AI help's own pure code (the settings, the request, the answer, the prompts) is the bundle's, `src/AxKit.Core/Ai`. The bundle rules are in the root `CLAUDE.md`.
+Everything of axHelp that needs no window: the exchanges kept and the matches of the list. Unit tested in `tests/AxHelp.Tests`. The spec is `docs/axHelp/SPEC.md` ("SPEC.md" below); the window is `src/AxHelp`, with its own `CLAUDE.md`. AI help's own pure code (the settings, the request, the answer, the prompts) is the bundle's, `src/AxKit.Core/Ai`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 

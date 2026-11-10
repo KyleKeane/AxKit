@@ -14,7 +14,7 @@ public static class GitExclude
     public const string BlockEnd = "# end axClaude";
 
     /// <summary>The patterns: every file axClaude offers to save starts with <c>axclaude-</c>.</summary>
-    public static readonly IReadOnlyList<string> Patterns = ["axclaude-*.vt", "axclaude-*.vt.chunks.txt", "axclaude-*.txt"];
+    public static readonly IReadOnlyList<string> Patterns = ["axClaude-*.vt", "axClaude-*.vt.chunks.txt", "axClaude-*.txt"];
 
     /// <summary>
     /// The exclude file's text with the block present (<paramref name="on"/>) or gone, everything else kept, with the

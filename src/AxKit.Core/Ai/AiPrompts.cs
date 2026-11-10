@@ -3,14 +3,14 @@ using System.Text;
 namespace AxKit.Core.Ai;
 
 /// <summary>
-/// What a window knows about itself for a question about it (docs/axkit/ai-help.md AH-6.2): the app, the window's
+/// What a window knows about itself for a question about it (docs/axKit/ai-help.md AH-6.2): the app, the window's
 /// title, the focused control's name and place, the F1 text, the user guide and the last actions; never the text of a
 /// document, which stays the user's.
 /// </summary>
 public sealed record WindowContext(string App, string Title, string Focus, string Shortcuts, string? Guide, IReadOnlyList<string> Recent);
 
 /// <summary>
-/// The prompts (docs/axkit/ai-help.md AH-4): one text each, in plain English, the user's own words last and unchanged
+/// The prompts (docs/axKit/ai-help.md AH-4): one text each, in plain English, the user's own words last and unchanged
 /// (AH-4.2), every one saying who reads the answer (AH-4.1).
 /// </summary>
 public static class AiPrompts

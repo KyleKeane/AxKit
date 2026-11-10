@@ -8,7 +8,7 @@ using AxMCP.Core;
 namespace AxMCP;
 
 /// <summary>
-/// axMCP's window (SPEC.md; the shape is docs/axkit/item-apps.md's), on the item apps' shared window <see cref="ItemForm"/>,
+/// axMCP's window (SPEC.md; the shape is docs/axKit/item-apps.md's), on the item apps' shared window <see cref="ItemForm"/>,
 /// which holds the panes, the moves between levels, the shared keys and every field command. This class holds what is
 /// axMCP's: the servers from Claude Code's files and the user's own list (MP-1), a server started as a child process
 /// and spoken to through <see cref="McpClient"/> (MP-2), its tools, resources and prompts as levels (MP-3 to MP-5), a
@@ -76,7 +76,7 @@ public sealed class MCPForm : ItemForm
         _settings = settings;
         _folder = folder is null ? null : Path.GetFullPath(folder);
 
-        // ---- menus and keys: one command list (docs/axkit/app-kit.md AK-2), each key from the tables (MP-6) ----
+        // ---- menus and keys: one command list (docs/axKit/app-kit.md AK-2), each key from the tables (MP-6) ----
         // The shared keys (ItemKeys) are ItemForm's commands, registered after these by PlaceControls; the items here
         // for them only show them. Enter on a resource reads it, before Enter opens (ItemForm's, later on the list).
         AddKey(new Command("Read the resource", ItemKeys.Open, ReadSelectedResource) { When = () => InNavigator() && SelectedRow()?.Tag is ServerResource, Mark = CommandMark.Open });
@@ -746,7 +746,7 @@ public sealed class MCPForm : ItemForm
             return;
         }
 
-        var path = Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axmcp", "last-result.json");
+        var path = Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axMCP", "last-result.json");
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);

@@ -10,7 +10,7 @@ public sealed record SessionPreset(string Text, IReadOnlyList<string> Arguments)
 /// with Custom last, and the free field under Custom, where Enter presses the notice's default button and
 /// Shift+Enter is a new line. The window makes it with its own wording, reads the choice from it when the notice is
 /// answered, and gives it the folder picker, the announcer, the notice's head line and its default button. Out of
-/// <see cref="OverlayPanel"/> since 2026-10-23 (docs/axkit/review-2026-10-23.md 5.6), where it sat because the panel
+/// <see cref="OverlayPanel"/> since 2026-10-23 (docs/axKit/review-2026-10-23.md 5.6), where it sat because the panel
 /// moved whole from axClaude.
 /// </summary>
 public sealed class SessionControls : FlowLayoutPanel

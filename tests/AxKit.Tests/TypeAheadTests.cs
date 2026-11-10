@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>Where letters typed in a list jump (docs/axfile/SPEC.md AF-3.6); from AxFile.Tests with the function, 2026-10-24.</summary>
+/// <summary>Where letters typed in a list jump (docs/axFile/SPEC.md AF-3.6); from AxFile.Tests with the function, 2026-10-24.</summary>
 public sealed class TypeAheadTests
 {
     [Fact]

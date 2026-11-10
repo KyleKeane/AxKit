@@ -3,7 +3,7 @@ using AxKit.Core.Updates;
 
 namespace AxKit.Tests;
 
-/// <summary>The About sections of the axKit menu (docs/axkit/SPEC.md AX-9.9): the version text names every app, from the one list, so that it never goes stale again (it named four of nine until 2026-10-23).</summary>
+/// <summary>The About sections of the axKit menu (docs/axKit/SPEC.md AX-9.9): the version text names every app, from the one list, so that it never goes stale again (it named four of nine until 2026-10-23).</summary>
 public sealed class BundleAboutTests
 {
     [Fact]
@@ -13,7 +13,7 @@ public sealed class BundleAboutTests
         foreach (var app in Dispatch.Apps)
         {
             Assert.Contains(app.Name, text);
-            Assert.Contains(app.Name.ToLowerInvariant() + ".json", text);
+            Assert.Contains(app.Name + ".json", text);
         }
 
         Assert.Contains("not checked yet", text);

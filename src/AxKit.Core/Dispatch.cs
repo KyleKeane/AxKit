@@ -16,7 +16,7 @@ public sealed record Launch(string App, string[] Arguments, string? Error = null
 /// separator between them); <paramref name="Opens"/> what it opens from a path; <paramref name="ShowIn"/> whether every
 /// window's Show current folder in submenu offers it (AX-9.10). Every list of apps in the windows reads these, so a new
 /// app is in the axKit menu, Open in axKit, the Show in submenus and Recently closed by its line in <see cref="Dispatch.Apps"/>.
-/// The properties below are for the scripts (docs/axkit/app-kit.md AK-4.1): the installer reads them through
+/// The properties below are for the scripts (docs/axKit/app-kit.md AK-4.1): the installer reads them through
 /// <c>AxKit.exe apps</c> (<see cref="Dispatch.Listing"/>), tools/make-icon.ps1 and run.ps1 off this file.
 /// </summary>
 public sealed record App(string Name, string Verb, string Project, AppGroup Group, Opens Opens, bool ShowIn = false)
@@ -39,13 +39,13 @@ public sealed record App(string Name, string Verb, string Project, AppGroup Grou
     public string TypeName { get; init; } = "";
 
     /// <summary>
-    /// Whether the app runs in the background from sign-in (axStart, axClip; docs/axstart/SPEC.md AS-1.3): the
+    /// Whether the app runs in the background from sign-in (axStart, axClip; docs/axStart/SPEC.md AS-1.3): the
     /// installer's value under the Run key, and the package's startup task (tools/make-manifest.ps1).
     /// </summary>
     public bool AtSignIn { get; init; }
 
     /// <summary>
-    /// Whether the Store's package has a Start menu entry for the app (docs/axkit/SPEC.md AX-13.2): the Store allows
+    /// Whether the Store's package has a Start menu entry for the app (docs/axKit/SPEC.md AX-13.2): the Store allows
     /// eight per package and no hidden one (measured 2026-11-09), so these are the maintainer's eight; every other app
     /// is reached by its console command, by a file of its kind, by the axKit menu's New window and from axFile.
     /// </summary>
@@ -96,7 +96,7 @@ public enum Opens
 }
 
 /// <summary>
-/// Decides which app <c>AxKit.exe</c> starts (docs/axkit/SPEC.md AX-1). The first argument may be a verb naming one of
+/// Decides which app <c>AxKit.exe</c> starts (docs/axKit/SPEC.md AX-1). The first argument may be a verb naming one of
 /// <see cref="Apps"/>; without one, a folder goes to AxClaude and a file to AxDown, AxJSON or AxMedia by its kind; an
 /// option (<c>--project</c>, a bare <c>--</c>) or no argument at all means AxClaude (B-8). <c>--help</c> and
 /// <c>--version</c> alone are answered by the bundle itself. Pure code: it only looks at the arguments and asks the
@@ -125,7 +125,7 @@ public static class Dispatch
     /// <summary>Not an app: the executable answers <c>--help</c> and <c>--version</c>, or reports <see cref="Launch.Error"/>.</summary>
     public const string Bundle = "axkit";
 
-    /// <summary>Not an app: the AI tools' broker, started by an MCP client and speaking to it on standard input and output (docs/axkit/mcp.md MC-1.1).</summary>
+    /// <summary>Not an app: the AI tools' broker, started by an MCP client and speaking to it on standard input and output (docs/axKit/mcp.md MC-1.1).</summary>
     public const string Mcp = "mcp";
 
     /// <summary>Not an app: the apps of <see cref="Apps"/> as JSON on standard output, for install.ps1 (AX-1.4, AX-2.3).</summary>
@@ -311,7 +311,7 @@ public static class Dispatch
     public static IEnumerable<string> EditorExtensions => Apps.Where(app => app.Verb is AxDown or AxJSON).SelectMany(app => app.OpenWith);
 
     /// <summary>
-    /// The verb of a console command's name (AX-13.2): the Store's package starts every app's command (<c>axdown.exe</c>)
+    /// The verb of a console command's name (AX-13.2): the Store's package starts every app's command (<c>axDown.exe</c>)
     /// through one entry, and Windows gives the process the command's own path as the first word of its command line,
     /// so the name says which app was meant. Null for <c>axkit</c>, <c>AxKit</c> and any other name.
     /// </summary>
@@ -327,7 +327,7 @@ public static class Dispatch
     }
 
     /// <summary>
-    /// The arguments with the verb the Store's package means put first (docs/axkit/SPEC.md AX-13.2): the console
+    /// The arguments with the verb the Store's package means put first (docs/axKit/SPEC.md AX-13.2): the console
     /// command's name when the process was started through one (<paramref name="programPath"/>, the command line's
     /// first word, <see cref="VerbOfProgramName"/>), else the package entry's (<paramref name="applicationId"/>,
     /// <see cref="PackageIdentity.ApplicationId"/>: the entry "AxDown" means down; tools/make-manifest.ps1 names the

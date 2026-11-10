@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The theme on this window (docs/axkit/theme.md TH-3, TH-4): the file read as the window is made (so that a window's
+/// The theme on this window (docs/axKit/theme.md TH-3, TH-4): the file read as the window is made (so that a window's
 /// constructor can take a display setting from it, TH-6) and again when it has changed by the time the window is
 /// activated, painted by <see cref="ThemePainter"/> over the whole window, over a notice as it opens and over a control
 /// area as it fills; and the three items of Options, Text, Theme. Without a theme file every window is painted with the

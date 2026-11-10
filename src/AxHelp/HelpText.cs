@@ -27,6 +27,6 @@ public static class HelpText
           Escape: hide axHelp at once and return where you were; the field is empty the next time
         """ + BundleHelp.NoticesSection("axHelp", "the field");
 
-    /// <summary>docs/axhelp/user-guide.md, embedded by AxHelp.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axhelp/user-guide.md");
+    /// <summary>docs/axHelp/user-guide.md, embedded by AxHelp.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axHelp/user-guide.md");
 }

@@ -3,7 +3,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>Zip files (docs/axfile/SPEC.md AF-4.12): what a compress holds, how it is named, and what an extract makes, over a temporary folder.</summary>
+/// <summary>Zip files (docs/axFile/SPEC.md AF-4.12): what a compress holds, how it is named, and what an extract makes, over a temporary folder.</summary>
 public sealed class ArchivesTests : IDisposable
 {
     private readonly TempFolder _folder = new("axfile-zip");

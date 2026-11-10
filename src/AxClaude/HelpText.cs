@@ -76,8 +76,8 @@ public static class HelpText
           The Help menu opens the Claude Code documentation in your browser.
         """ + BundleHelp.NoticesSection("axClaude", "the conversation");
 
-    /// <summary>docs/axclaude/user-guide.md, embedded in the executable at build time.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axclaude/user-guide.md");
+    /// <summary>docs/axClaude/user-guide.md, embedded in the executable at build time.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axClaude/user-guide.md");
 
     /// <summary>FR-1.9: where the app looked, the install command, and the ways back.</summary>
     public static string ClaudeNotFound(IReadOnlyList<string> candidates)

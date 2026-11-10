@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>The drives in completion and a drive's root as a typed path (docs/axfile/SPEC.md AF-3.3, AF-3.10).</summary>
+/// <summary>The drives in completion and a drive's root as a typed path (docs/axFile/SPEC.md AF-3.3, AF-3.10).</summary>
 public sealed class DrivesTests
 {
     private static string SystemRoot => Path.GetPathRoot(Environment.SystemDirectory)!;

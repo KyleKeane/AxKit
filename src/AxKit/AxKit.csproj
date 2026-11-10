@@ -24,7 +24,7 @@
        copies every one of them next to the executable, since a single-file publish would bundle a project item
        into the executable, and install.ps1 copies them on. -->
 
-  <!-- Every project of src: the apps' windows and their Cores, and the shared projects (docs/axkit/app-kit.md AK-4.1),
+  <!-- Every project of src: the apps' windows and their Cores, and the shared projects (docs/axKit/app-kit.md AK-4.1),
        so that a new app's projects are referenced by being there. -->
   <ItemGroup>
     <ProjectReference Include="..\*\*.csproj" Exclude="..\AxKit\AxKit.csproj" />

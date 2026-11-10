@@ -4,7 +4,7 @@ rem Next to install.ps1 (the extracted zip, or the installed folder) it runs tha
 rem for example: install.cmd -Uninstall. On its own, downloaded from the releases page, it finds the latest release
 rem through the page's own address (releases/latest leads to the release's page, whose address ends in the tag; not
 rem the GitHub API, which allows a network address sixty requests an hour), downloads the zip by its name and installs
-rem it, into a folder of a random name, only after the zip's signature checks against axKit's release key (its public half is in the line below; docs/axkit/security-audit-2026-10-24.md S-28). PowerShell runs with the execution policy bypassed for this one run only, over TLS 1.2 or later.
+rem it, into a folder of a random name, only after the zip's signature checks against axKit's release key (its public half is in the line below; docs/axKit/security-audit-2026-10-24.md S-28). PowerShell runs with the execution policy bypassed for this one run only, over TLS 1.2 or later.
 rem Everything is one block: cmd.exe reads a block whole before running it, so this file may be deleted while it runs
 rem (Uninstall from Settings, Apps runs it from the folder that the uninstall removes).
 setlocal

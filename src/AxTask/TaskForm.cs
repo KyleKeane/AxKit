@@ -5,7 +5,7 @@ using AxTask.Core;
 namespace AxTask;
 
 /// <summary>
-/// axTask's window (docs/axkit/item-apps.md IA-2), on the item apps' shared window <see cref="ItemForm"/>, which holds
+/// axTask's window (docs/axKit/item-apps.md IA-2), on the item apps' shared window <see cref="ItemForm"/>, which holds
 /// the panes, the moves between levels, the shared keys and every field command. This class holds what is axTask's:
 /// the levels of a folder of lists (the top with All tasks and the smart lists, a list, a smart list's items), what
 /// the detail pane shows for each, its menus and its own keys. The commands and the one way a file changes are in
@@ -33,7 +33,7 @@ public sealed partial class TaskForm : ItemForm
     {
         _settings = settings;
 
-        // ---- menus and keys: one command list (docs/axkit/app-kit.md AK-2), each key from the tables (TK-7) ----
+        // ---- menus and keys: one command list (docs/axKit/app-kit.md AK-2), each key from the tables (TK-7) ----
         // The shared keys (ItemKeys) are ItemForm's commands, registered after these by PlaceControls; the items here
         // for them only show them. A key in a second menu is an item showing it too: its command is the first menu's.
         // The first menu holds what every pane has; List and Item act on the navigator's selection, Field on the
@@ -60,7 +60,7 @@ public sealed partial class TaskForm : ItemForm
         _listMenu.DropDownItems.Add(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)));
         _listMenu.DropDownItems.Add(new ToolStripMenuItem("Remove Do&ne from every item", null, (_, _) => SwitchList(done: false)));
         _listMenu.DropDownItems.Add(new ToolStripSeparator());
-        // The action keys and the GitHub account (docs/axkit/reports.md RP-7.2, RP-8.2; TaskForm.GitHub.cs).
+        // The action keys and the GitHub account (docs/axKit/reports.md RP-7.2, RP-8.2; TaskForm.GitHub.cs).
         _listMenu.DropDownItems.Add(new ToolStripMenuItem("Action &keys...", null, (_, _) => EditActionKeys()));
         _listMenu.DropDownItems.Add(new ToolStripMenuItem("GitHub &account...", null, (_, _) => SetGitHubAccount()));
         _listMenu.DropDownItems.Add(new ToolStripMenuItem("Forget GitHub acco&unt", null, (_, _) => ForgetGitHubAccount()));

@@ -2,7 +2,7 @@ using AxKit.Core.Updates;
 
 namespace AxKit.Tests;
 
-/// <summary>A failed update's details to send (docs/axkit/SPEC.md AX-3.6): what went wrong, nothing that names the user.</summary>
+/// <summary>A failed update's details to send (docs/axKit/SPEC.md AX-3.6): what went wrong, nothing that names the user.</summary>
 public class UpdaterTests
 {
     [Fact]

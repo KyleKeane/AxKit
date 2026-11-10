@@ -1,10 +1,10 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// Everything an editor window remembers between runs (docs/axdown/SPEC.md AD-8), in <c>%APPDATA%\AxKit\axdown.json</c>
+/// Everything an editor window remembers between runs (docs/axDown/SPEC.md AD-8), in <c>%APPDATA%\AxKit\axDown.json</c>
 /// (or the app's own file) through the bundle's <see cref="SettingsFile"/>: the font, the update check and the
 /// window's place from <see cref="WindowSettings"/>, plus the recent files. Word wrap is the bundle's, in the theme
-/// file's display settings since 5.5.0 (docs/axkit/theme.md TH-6); a <c>wordWrap</c> key left in the file is ignored.
+/// file's display settings since 5.5.0 (docs/axKit/theme.md TH-6); a <c>wordWrap</c> key left in the file is ignored.
 /// A missing or unreadable file falls back to the defaults.
 /// </summary>
 public sealed class EditorSettings : WindowSettings

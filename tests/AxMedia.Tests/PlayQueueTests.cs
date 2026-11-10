@@ -2,7 +2,7 @@ using AxMedia.Core;
 
 namespace AxMedia.Tests;
 
-/// <summary>The queue (docs/axmedia/SPEC.md AM-3).</summary>
+/// <summary>The queue (docs/axMedia/SPEC.md AM-3).</summary>
 public class PlayQueueTests
 {
     private static readonly string[] Three = [@"C:\m\01 One.mp3", @"C:\m\02 Two.mp3", @"C:\m\03 Three.mp3"];

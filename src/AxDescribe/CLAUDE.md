@@ -1,13 +1,13 @@
 # axDescribe, the window
 
-The WinForms side of axDescribe: the window in front described by Claude, on the bundle's background window (`AxKit.Forms/HotkeyForm`, as axStart and axClip), the AI help itself being the window base's (`AxKit.Forms/AxKitForm.Ai.cs`, `docs/axkit/ai-help.md`). The pure code is `src/AxDescribe.Core`, with its own `CLAUDE.md`. The spec is `docs/axdescribe/SPEC.md` ("SPEC.md" below); the guide `docs/axdescribe/user-guide.md` is embedded by `AxDescribe.csproj` for Help, User guide; the manual test plan is `docs/axdescribe/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
+The WinForms side of axDescribe: the window in front described by Claude, on the bundle's background window (`AxKit.Forms/HotkeyForm`, as axStart and axClip), the AI help itself being the window base's (`AxKit.Forms/AxKitForm.Ai.cs`, `docs/axKit/ai-help.md`). The pure code is `src/AxDescribe.Core`, with its own `CLAUDE.md`. The spec is `docs/axDescribe/SPEC.md` ("SPEC.md" below); the guide `docs/axDescribe/user-guide.md` is embedded by `AxDescribe.csproj` for Help, User guide; the manual test plan is `docs/axDescribe/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
 ```
-.\run-axdescribe.ps1              # build axKit and start axDescribe (run.ps1 -App describe; a start describes what is in front)
+.\run-axDescribe.ps1              # build axKit and start axDescribe (run.ps1 -App describe; a start describes what is in front)
 .\test.ps1 AxDescribe             # the tests in Release, as CI runs them
-.\nvda-pass.ps1 axDescribe        # tests\scripts\axdescribe with NVDA listening, against the fake Claude
+.\nvda-pass.ps1 axDescribe        # tests\scripts\axDescribe with NVDA listening, against the fake Claude
 ```
 
 ## Where things are

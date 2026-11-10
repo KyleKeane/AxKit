@@ -4,7 +4,7 @@ using AxKit.Forms;
 namespace AxClip;
 
 /// <summary>
-/// axClip's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md CP-1.1): <c>AxKit.exe clip [--hidden]</c> calls
+/// axClip's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md CP-1.1): <c>AxKit.exe clip [--hidden]</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/>. One axClip runs at a time, held by a named
 /// mutex: a start while it runs hands "show" to its hidden window (<see cref="AppMessage"/>) and ends, or with
 /// --hidden just ends; otherwise <see cref="ClipForm"/> runs, hidden with --hidden. As axStart's (AS-1.2).
@@ -26,7 +26,7 @@ public static class AxClipApp
     private static Mutex? _one;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axclip", Usage, args, arguments =>
+        AppHost.Run(Name, "axClip", Usage, args, arguments =>
         {
             var hidden = false;
             foreach (var argument in arguments)

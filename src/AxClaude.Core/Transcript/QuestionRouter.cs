@@ -16,7 +16,7 @@ public enum QuestionDialog
 /// <summary>
 /// Decides how a question Claude waits on is presented (SPEC.md D33): as a list of answers in the control area (check
 /// boxes when it takes several), unless the slash command sent last opens more than a list (<see cref="CommandInteraction.Viewer"/>,
-/// <see cref="CommandInteraction.Panel"/>, docs/axclaude/claude-screens.md),
+/// <see cref="CommandInteraction.Panel"/>, docs/axClaude/claude-screens.md),
 /// in which case it stays in the message field. The question itself makes no difference.
 /// </summary>
 public static class QuestionRouter

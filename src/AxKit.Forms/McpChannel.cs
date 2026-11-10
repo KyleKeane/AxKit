@@ -9,7 +9,7 @@ using AxKit.Core.Mcp;
 namespace AxKit.Forms;
 
 /// <summary>
-/// A window's end of the AI tools' access (docs/axkit/mcp.md MC-6.2 to MC-6.5): one pipe per window,
+/// A window's end of the AI tools' access (docs/axKit/mcp.md MC-6.2 to MC-6.5): one pipe per window,
 /// <c>AxKit-mcp-&lt;user SID&gt;-&lt;random&gt;</c>, for the current user alone and never over the network. A connection is
 /// one request: the window checks that the client runs this very program file (the broker) and that the bundle's
 /// setting is on, sends a fresh challenge, takes the HMAC answer under the key, then reads one line and answers it on

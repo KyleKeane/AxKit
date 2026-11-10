@@ -31,7 +31,7 @@ public enum RepairKind
 }
 
 /// <summary>
-/// Splits a JSON text into tokens, forgivingly (docs/axjson/SPEC.md AJ-2.2, AJ-2.3): comments are skipped and
+/// Splits a JSON text into tokens, forgivingly (docs/axJSON/SPEC.md AJ-2.2, AJ-2.3): comments are skipped and
 /// counted as repairs, single-quoted strings and bare words are tokens too, so that the outline can read a file
 /// that is nearly JSON and the formatter can repair it. Pure code, tested in <c>tests/AxJSON.Tests</c>.
 /// </summary>

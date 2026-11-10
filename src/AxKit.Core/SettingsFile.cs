@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace AxKit.Core;
 
 /// <summary>
-/// How every app's settings file is read and written (docs/axkit/SPEC.md AX-5.3): JSON with camel-case keys and enum
+/// How every app's settings file is read and written (docs/axKit/SPEC.md AX-5.3): JSON with camel-case keys and enum
 /// names, comments and trailing commas tolerated. A missing or unreadable file gives the defaults and, when it was
 /// unreadable, an error text for the app to report once. Each app's settings class is a plain class of properties
 /// with defaults; it calls these two methods and does its own sanity checks after loading.
@@ -26,6 +26,8 @@ public static class SettingsFile
     public static T Load<T>(string path, out string? error) where T : class, new()
     {
         error = null;
+        // A file an earlier version left in another case takes the path's spelling (AX-5.1, 5.6.0).
+        FileCase.Match(path);
         if (!File.Exists(path))
         {
             return new T();

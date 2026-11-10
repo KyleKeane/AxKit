@@ -4,7 +4,7 @@ using AxKit.Core;
 namespace AxPass.Core;
 
 /// <summary>
-/// An entry's fields (docs/axpass/SPEC.md PW-6.1) as the item apps' document: <c>show</c>'s lines read into KeePass's
+/// An entry's fields (docs/axPass/SPEC.md PW-6.1) as the item apps' document: <c>show</c>'s lines read into KeePass's
 /// standard fields with their types, then any other attribute, read only. The password itself is never read: its
 /// field holds an empty value and reads "hidden" (PW-6.2). A change of the document becomes the arguments of
 /// <c>edit</c>.

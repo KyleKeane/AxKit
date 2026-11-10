@@ -37,7 +37,7 @@ public sealed class CalcForm : AxKitForm
         _entries.AddRange(settings.History);
         _calculator.Answer = _entries.Count > 0 ? _entries[^1].Value : null;
 
-        // ---- menus and keys (AC-7.1, AC-7.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (AC-7.1, AC-7.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         var calculator = new ToolStripMenuItem("&Calculator");
         Add(calculator, new Command("&Answer", AxCalcKeys.Act, Evaluate) { When = () => _field.Focused, Mark = CommandMark.Read });
         Add(calculator, new Command("&Copy answer", AxCalcKeys.CopyAnswer, CopyAnswer));

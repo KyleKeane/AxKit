@@ -3,7 +3,7 @@ using System.Text;
 namespace AxJSON.Core;
 
 /// <summary>
-/// Format (docs/axjson/SPEC.md AJ-2.3): the document written out again with two spaces of indentation, one member or
+/// Format (docs/axJSON/SPEC.md AJ-2.3): the document written out again with two spaces of indentation, one member or
 /// item per line, keys in double quotes and the file's line endings, after the repairs the parser makes (a trailing
 /// comma, a missing comma, a single-quoted string, an unquoted key, a comment). A document with a problem the parser
 /// cannot repair is left as it is, and the message names the line and what was expected. Pure code, tested.

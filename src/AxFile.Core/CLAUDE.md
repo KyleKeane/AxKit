@@ -1,6 +1,6 @@
 # AxFile.Core, the pure code
 
-Everything of axFile that needs no window: a folder's entries, the file operations with their undo, the Actions list's lines, the settings. Unit tested in `tests/AxFile.Tests` over temporary folders. The spec is `docs/axfile/SPEC.md` ("SPEC.md" below); the window is `src/AxFile`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`. The player seam and the queue went to `AxMedia.Core` and the text rule to `AxPreview.Core` on 2026-10-22 (`docs/axkit/axfile-split.md`); `MediaFiles` and `NaturalOrder` are `AxKit.Core`'s since the same day.
+Everything of axFile that needs no window: a folder's entries, the file operations with their undo, the Actions list's lines, the settings. Unit tested in `tests/AxFile.Tests` over temporary folders. The spec is `docs/axFile/SPEC.md` ("SPEC.md" below); the window is `src/AxFile`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`. The player seam and the queue went to `AxMedia.Core` and the text rule to `AxPreview.Core` on 2026-10-22 (`docs/axKit/axfile-split.md`); `MediaFiles` and `NaturalOrder` are `AxKit.Core`'s since the same day.
 
 ## Commands
 

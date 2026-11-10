@@ -12,7 +12,7 @@ internal sealed partial class MainForm
     private void BuildMenus()
     {
         // The menus (FR-10): short, grouped by what the items are about, every mnemonic unique within its menu; each
-        // item with a key is a command of the window's one list (docs/axkit/app-kit.md AK-2), its key from the table.
+        // item with a key is a command of the window's one list (docs/axKit/app-kit.md AK-2), its key from the table.
         // Session is the thing worked on, as axDown's File is: the session, where Claude runs, what the window holds.
         var session = new ToolStripMenuItem("&Session");
         Add(session, new Command("&New session...", AxClaudeKeys.NewSession, NewSession) { Mark = CommandMark.Act });

@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// The recent-path lists of the settings files (docs/axkit/SPEC.md AX-9.5: the "Open recent …" submenus, the last
+/// The recent-path lists of the settings files (docs/axKit/SPEC.md AX-9.5: the "Open recent …" submenus, the last
 /// repository or folder a window starts on): the newest first, each path once whatever its case, at most
 /// <see cref="Max"/>. Every app's settings class keeps its own list property, so that its file keeps its shape, and
 /// calls here for the two things done to such a list; until 2026-10-23 six classes wrote the same ten lines.

@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace AxKit.Core.Reports;
 
-/// <summary>An issue just created (docs/axkit/reports.md RP-6.1): its number and web address.</summary>
+/// <summary>An issue just created (docs/axKit/reports.md RP-6.1): its number and web address.</summary>
 public sealed record IssueCreated(int Number, string Url);
 
 /// <summary>An issue as the maintainer's lists read it (RP-7.1).</summary>
@@ -77,7 +77,7 @@ public static class GitHubIssues
         using var request = Request(HttpMethod.Post, IssuesApi(repository), token, payload);
         // Outside call, network, GitHub: posts a report as an issue of the reports repository, as axKit's own reporter
         // account, with what the user read and edited in the report notice and the install's random reporter id; only
-        // when the user sends a report (docs/axkit/reports.md RP-6.1, PRIVACY.md).
+        // when the user sends a report (docs/axKit/reports.md RP-6.1, PRIVACY.md).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
         return new IssueCreated(Number(json.RootElement), JsonElements.GetString(json.RootElement, "html_url") ?? string.Empty);
@@ -89,7 +89,7 @@ public static class GitHubIssues
         using var request = new HttpRequestMessage(HttpMethod.Get, BlocklistUrl(repository));
         // Outside call, network, GitHub: reads the reports repository's blocklist before a report is sent, so that a
         // blocked install or version sends nothing; one GET with the version in the User-Agent and nothing else about
-        // the user (docs/axkit/reports.md RP-6.4).
+        // the user (docs/axKit/reports.md RP-6.4).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.NotFound)
         {
@@ -108,7 +108,7 @@ public static class GitHubIssues
         {
             using var request = Request(HttpMethod.Get, $"{IssuesApi(repository)}?state={Uri.EscapeDataString(state)}&per_page={PageSize}&page={page}", token, null);
             // Outside call, network, GitHub: lists the issues of a repository for a GitHub list of axTask, page by page,
-            // when the user opens or refreshes the list (docs/axkit/reports.md RP-7.1).
+            // when the user opens or refreshes the list (docs/axKit/reports.md RP-7.1).
             using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
             var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
             var count = 0;
@@ -148,7 +148,7 @@ public static class GitHubIssues
 
         using var request = Request(HttpMethod.Patch, $"{IssuesApi(repository)}/{number}", token, payload);
         // Outside call, network, GitHub: changes an issue's labels or state as the user's own account, from an action on
-        // an item of a GitHub list in axTask (docs/axkit/reports.md RP-7.2).
+        // an item of a GitHub list in axTask (docs/axKit/reports.md RP-7.2).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         await ThrowOnErrorAsync(response, cancellation).ConfigureAwait(false);
     }
@@ -158,7 +158,7 @@ public static class GitHubIssues
     {
         using var request = Request(HttpMethod.Post, $"{IssuesApi(repository)}/{number}/comments", token, new JsonObject { ["body"] = body });
         // Outside call, network, GitHub: adds the user's comment to an issue as the user's own account, from an action on
-        // an item of a GitHub list in axTask (docs/axkit/reports.md RP-7.2).
+        // an item of a GitHub list in axTask (docs/axKit/reports.md RP-7.2).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         await ThrowOnErrorAsync(response, cancellation).ConfigureAwait(false);
     }
@@ -170,7 +170,7 @@ public static class GitHubIssues
         using (var read = Request(HttpMethod.Get, BlocklistApi(repository), token, null))
         {
             // Outside call, network, GitHub: reads the blocklist file's version before writing it, as the user's own
-            // account, from Block this reporter or Block this version in axTask (docs/axkit/reports.md RP-7.2).
+            // account, from Block this reporter or Block this version in axTask (docs/axKit/reports.md RP-7.2).
             using var found = await http.SendAsync(read, cancellation).ConfigureAwait(false);
             if (found.StatusCode != HttpStatusCode.NotFound)
             {
@@ -191,7 +191,7 @@ public static class GitHubIssues
 
         using var request = Request(HttpMethod.Put, BlocklistApi(repository), token, payload);
         // Outside call, network, GitHub: writes the reports repository's blocklist as the user's own account, from Block
-        // this reporter or Block this version in axTask (docs/axkit/reports.md RP-6.4, RP-7.2).
+        // this reporter or Block this version in axTask (docs/axKit/reports.md RP-6.4, RP-7.2).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         await ThrowOnErrorAsync(response, cancellation).ConfigureAwait(false);
     }

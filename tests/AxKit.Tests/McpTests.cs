@@ -4,7 +4,7 @@ using AxKit.Core.Mcp;
 
 namespace AxKit.Tests;
 
-/// <summary>The AI tools' first stage, its pure parts (docs/axkit/mcp.md MC-6): the protocol, the tools, the proof, the log, the limit.</summary>
+/// <summary>The AI tools' first stage, its pure parts (docs/axKit/mcp.md MC-6): the protocol, the tools, the proof, the log, the limit.</summary>
 public sealed class McpTests
 {
     private static McpProtocol Protocol(List<(string Tool, JsonObject Arguments)>? calls = null) =>

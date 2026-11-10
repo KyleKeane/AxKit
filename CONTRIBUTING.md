@@ -4,8 +4,8 @@ axKit is built for people who use a screen reader, and every change is judged by
 
 ## Before you change anything
 
-- Read the app's specification, `docs/<app>/SPEC.md`, and the bundle's, `docs/axkit/SPEC.md`. They are the source of truth: a change of behaviour changes the specification in the same commit.
-- Set the tools up as `docs/axkit/development-environment.md` says: the .NET SDK, Git, the GitHub CLI, NVDA with the `axkitCapture` add-on, and what each is for here.
+- Read the app's specification, `docs/<app>/SPEC.md`, and the bundle's, `docs/axKit/SPEC.md`. They are the source of truth: a change of behaviour changes the specification in the same commit.
+- Set the tools up as `docs/axKit/development-environment.md` says: the .NET SDK, Git, the GitHub CLI, NVDA with the `axkitCapture` add-on, and what each is for here.
 - Open an issue first for anything larger than a fix, so that the behaviour can be agreed before the code.
 
 ## How a change is made
@@ -19,7 +19,7 @@ axKit is built for people who use a screen reader, and every change is judged by
 ## Before you open a pull request
 
 1. `.\test.ps1`: every test project, in Release, as the Build workflow runs them.
-2. The steps of `docs/<app>/nvda-test-plan.md` that the change touches, with NVDA running, on the files `.\manual_tests\prepare.ps1` makes. Write the pass into `docs/axkit/nvda-test-record.md`, or list the steps in the pull request as not yet run.
+2. The steps of `docs/<app>/nvda-test-plan.md` that the change touches, with NVDA running, on the files `.\manual_tests\prepare.ps1` makes. Write the pass into `docs/axKit/nvda-test-record.md`, or list the steps in the pull request as not yet run.
 3. A line in `CHANGELOG.md` under the coming version, starting with the app: `axFile: …`, `axKit: …` for the bundle.
 4. The F1 text (`HelpText`), the user guide and the test plan saying the same as the specification.
 
@@ -46,7 +46,7 @@ Small commits with imperative subject lines; `main` is always releasable, and la
   `GOVERNANCE.md`.
 - A change that makes axKit contact anything new over the network, or start a program it did not start before,
   updates `PRIVACY.md` in the same pull request, gives the line that makes the call its `Outside call, <kind>, <what is
-  reached>:` comment, and runs `tools/outside-calls.ps1` so that `docs/axkit/outside-calls.md` lists it (bundle SPEC
+  reached>:` comment, and runs `tools/outside-calls.ps1` so that `docs/axKit/outside-calls.md` lists it (bundle SPEC
   B-17); the build fails otherwise.
 - Everyone here follows `CODE_OF_CONDUCT.md`.
 
@@ -54,4 +54,4 @@ Small commits with imperative subject lines; `main` is always releasable, and la
 
 Releases are made by the maintainer with `release.ps1` (README, Release). The version is one number for the whole bundle.
 
-The practices that keep the repository stable over the years, and the yearly check, are `docs/axkit/longevity.md`.
+The practices that keep the repository stable over the years, and the yearly check, are `docs/axKit/longevity.md`.

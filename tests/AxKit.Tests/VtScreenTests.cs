@@ -5,7 +5,7 @@ using Screen = AxKit.Core.Vt.Screen;
 namespace AxKit.Tests;
 
 /// <summary>
-/// The screen's rows and their lines (docs/axterminal/SPEC.md AT-4.1, AT-4.2): a line stays bound to its row as the
+/// The screen's rows and their lines (docs/axTerminal/SPEC.md AT-4.1, AT-4.2): a line stays bound to its row as the
 /// rows scroll, is found again by identity, and is committed when its row leaves the screen.
 /// </summary>
 public sealed class VtScreenTests
@@ -43,7 +43,7 @@ public sealed class VtScreenTests
         Assert.Equal("c", line.Text);
     }
 
-    /// <summary>Detached rows start blank (docs/axterminal/SPEC.md AT-4.4): a shorter rewrite reads the new text alone, and a row left alone comes back as a blank line, not as a copy of the old one.</summary>
+    /// <summary>Detached rows start blank (docs/axTerminal/SPEC.md AT-4.4): a shorter rewrite reads the new text alone, and a row left alone comes back as a blank line, not as a copy of the old one.</summary>
     [Fact]
     public void Detached_rows_keep_their_lines_text_and_start_blank()
     {

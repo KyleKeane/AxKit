@@ -9,7 +9,7 @@ namespace AxHelp;
 /// axHelp's window (SPEC.md HE-2, HE-3): the bundle's background window (<see cref="HotkeyForm"/>, as axStart and
 /// axClip), one field with the caret always in it and the list of earlier questions under it, which never takes the
 /// focus. Enter asks Claude what was typed, through the window base's AI help (<c>AxKitForm.Ai.cs</c>,
-/// docs/axkit/ai-help.md): the waiting notice, then the answer as a notice with a field for more. The program that
+/// docs/axKit/ai-help.md): the waiting notice, then the answer as a notice with a field for more. The program that
 /// was in front when the hotkey was pressed is named in the prompt (HE-2.4). Nothing of AI help itself is here.
 /// </summary>
 public sealed class HelpForm : HotkeyForm
@@ -25,7 +25,7 @@ public sealed class HelpForm : HotkeyForm
     {
         _settings = settings;
 
-        // ---- menus and keys (HE-6): one command list (docs/axkit/app-kit.md AK-2), the match keys first ----
+        // ---- menus and keys (HE-6): one command list (docs/axKit/app-kit.md AK-2), the match keys first ----
         AddMatchKeys(AxHelpKeys.NextMatch, AxHelpKeys.PreviousMatch, AxHelpKeys.FirstMatch, AxHelpKeys.LastMatch);
         var first = new ToolStripMenuItem("ax&Help");
         Add(first, new Command("&Ask", AxHelpKeys.Ask, Ask) { Mark = CommandMark.Act });

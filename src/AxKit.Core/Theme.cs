@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 
 namespace AxKit.Core;
 
-/// <summary>One colour of a theme (docs/axkit/theme.md TH-1.3): Windows' own colour for the class, or an RGB value.</summary>
+/// <summary>One colour of a theme (docs/axKit/theme.md TH-1.3): Windows' own colour for the class, or an RGB value.</summary>
 public readonly record struct ThemeColor(int? Rgb)
 {
     public static readonly ThemeColor System = new(null);
@@ -13,7 +13,7 @@ public readonly record struct ThemeColor(int? Rgb)
 }
 
 /// <summary>
-/// The theme file (docs/axkit/theme.md): <c>%APPDATA%\AxKit\theme.json</c>, one for the bundle, with a colour or
+/// The theme file (docs/axKit/theme.md): <c>%APPDATA%\AxKit\theme.json</c>, one for the bundle, with a colour or
 /// <c>system</c> for every class of object the windows draw (TH-2), and the display settings (TH-6: the editors' word
 /// wrap). Read here, painted by <c>AxKit.Forms.ThemePainter</c>. No file, or <c>system</c> everywhere, is no change at
 /// all (AX-7.7). Keys the bundle does not know are kept when the file is written again (TH-1.4); a value not understood

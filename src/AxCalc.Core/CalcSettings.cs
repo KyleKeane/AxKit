@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxCalc.Core;
 
 /// <summary>
-/// Everything axCalc remembers between runs (SPEC.md AC-9.1), in <c>%APPDATA%\AxKit\axcalc.json</c> through the
+/// Everything axCalc remembers between runs (SPEC.md AC-9.1), in <c>%APPDATA%\AxKit\axCalc.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font, the update check and the window's place from
 /// <see cref="WindowSettings"/>, the angle unit, and, while Keep history is on, the history and the variables.
 /// </summary>
@@ -22,7 +22,7 @@ public sealed class CalcSettings : WindowSettings
 
     public Dictionary<string, double> Variables { get; set; } = [];
 
-    public static string DefaultPath => AppPaths.SettingsFile("axcalc");
+    public static string DefaultPath => AppPaths.SettingsFile("axCalc");
 
     public static CalcSettings Load(string path, out string? error)
     {

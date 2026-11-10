@@ -4,7 +4,7 @@ using AxPass.Core;
 
 namespace AxPass.Tests;
 
-/// <summary>The tool's output read into groups, entries and fields, as KeePassXC 2.8.0 printed it on a test database (docs/axpass/kdbx-notes.md section 8).</summary>
+/// <summary>The tool's output read into groups, entries and fields, as KeePassXC 2.8.0 printed it on a test database (docs/axPass/kdbx-notes.md section 8).</summary>
 public class PassTests
 {
     private const string Listing = "Top entry\r\nCafé, ünïcode\r\nEmail/\r\nEmail/Gmail\r\nEmail/Work/\r\nEmail/Work/[empty]\r\nRecycle Bin/\r\nRecycle Bin/Old\r\n";

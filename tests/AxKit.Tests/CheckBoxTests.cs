@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace AxKit.Tests;
 
 /// <summary>
-/// Every check box is the bundle's <c>AxKit.Forms/AxKitCheckBox</c> (docs/axkit/SPEC.md AX-8.8), which says its new state
+/// Every check box is the bundle's <c>AxKit.Forms/AxKitCheckBox</c> (docs/axKit/SPEC.md AX-8.8), which says its new state
 /// when the user toggles it, so that a new app gets that by making the box and nothing else. Read off the sources, as
 /// <see cref="ListTests"/> reads the lists: a plain <c>CheckBox</c> made anywhere in <c>src</c> fails here.
 /// </summary>

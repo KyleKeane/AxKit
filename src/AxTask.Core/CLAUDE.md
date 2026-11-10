@@ -1,7 +1,7 @@
 # AxTask.Core, the pure code
 
 Everything of axTask that needs no window, unit tested in `tests/AxTask.Tests` over temporary folders. The item
-format is `docs/axkit/item-apps.md` (IA-n.m), shared with axPass; axTask's own rules are `docs/axtask/SPEC.md` (TK-n.m).
+format is `docs/axKit/item-apps.md` (IA-n.m), shared with axPass; axTask's own rules are `docs/axTask/SPEC.md` (TK-n.m).
 The window is `src/AxTask`, with its own `CLAUDE.md`.
 
 ## Commands
@@ -30,7 +30,7 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `SmartList` (TK-5): All tasks and the `.filter.json` files: `InFolder`, `Read` (a file not understood is a smart
   list that shows nothing, with `NotUnderstood`), `Items`, `Matches`, `NewFileText`.
 - `TaskSettings`: the top folder, the list open last, whether done tasks are hidden.
-- `ActionKeys` and `ListAction` (docs/axkit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
+- `ActionKeys` and `ListAction` (docs/axKit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
   `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Make it a bug"), `ApplySet`
   (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines); an
   action is `set`, `move` or `open`, with `Described`; `OpenRefusal` keeps an `open` of axClaude or axTerminal, and Open

@@ -7,7 +7,7 @@ using AxTask.Core;
 namespace AxTask;
 
 /// <summary>
-/// The GitHub lists and the action keys (docs/axkit/reports.md RP-7, RP-8): a list whose <c>list.json</c> names a
+/// The GitHub lists and the action keys (docs/axKit/reports.md RP-7, RP-8): a list whose <c>list.json</c> names a
 /// repository fills itself from the repository's issues when it opens and on F5; Ctrl+1 to Ctrl+9 run the actions a
 /// list's <c>list.json</c> assigns (set fields, move, open), and in a GitHub list a Kind or State set goes to GitHub as
 /// the user's own account first; the Item menu's GitHub submenu has the actions by name; the user's token is kept

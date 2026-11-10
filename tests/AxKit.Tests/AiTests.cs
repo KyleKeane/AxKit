@@ -2,7 +2,7 @@ using AxKit.Core.Ai;
 
 namespace AxKit.Tests;
 
-/// <summary>The pure parts of AI help (docs/axkit/ai-help.md AH-5): the settings file, the command line, the answer read, the prompts.</summary>
+/// <summary>The pure parts of AI help (docs/axKit/ai-help.md AH-5): the settings file, the command line, the answer read, the prompts.</summary>
 public sealed class AiTests
 {
     [Fact]

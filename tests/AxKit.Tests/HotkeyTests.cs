@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The hotkey as text both ways and the keys refused (docs/axstart/SPEC.md AS-4.2); from AxStart.Tests with the record, 2026-10-23.</summary>
+/// <summary>The hotkey as text both ways and the keys refused (docs/axStart/SPEC.md AS-4.2); from AxStart.Tests with the record, 2026-10-23.</summary>
 public sealed class HotkeyTests
 {
     [Fact]

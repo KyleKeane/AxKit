@@ -1,24 +1,24 @@
 # axMedia, the window
 
-The WinForms side of axMedia: one list with the queue, a video area shown only while a video plays, a status bar, the bundle's notices. The pure code (the player seam, the queue, a folder's media files, the settings) is `src/AxMedia.Core`, with its own `CLAUDE.md`. The spec is `docs/axmedia/SPEC.md` ("SPEC.md" below); the guide `docs/axmedia/user-guide.md` is embedded by `AxMedia.csproj` for Help → User guide; the manual test plan is `docs/axmedia/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`. The window grew out of axFile's player and queue pane on 2026-10-22 (`docs/axkit/axfile-split.md`).
+The WinForms side of axMedia: one list with the queue, a video area shown only while a video plays, a status bar, the bundle's notices. The pure code (the player seam, the queue, a folder's media files, the settings) is `src/AxMedia.Core`, with its own `CLAUDE.md`. The spec is `docs/axMedia/SPEC.md` ("SPEC.md" below); the guide `docs/axMedia/user-guide.md` is embedded by `AxMedia.csproj` for Help → User guide; the manual test plan is `docs/axMedia/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`. The window grew out of axFile's player and queue pane on 2026-10-22 (`docs/axKit/axfile-split.md`).
 
 ## Commands
 
 ```
-.\run-axmedia.ps1 C:\Music\Dune           # build AxKit and start axMedia on the folder's media files (run.ps1 -App media)
-.\run-axmedia.ps1 C:\Music\Dune\03.mp3    # the file, with the folder's other media files after it
-.\run-axmedia.ps1                         # an empty queue
+.\run-axMedia.ps1 C:\Music\Dune           # build AxKit and start axMedia on the folder's media files (run.ps1 -App media)
+.\run-axMedia.ps1 C:\Music\Dune\03.mp3    # the file, with the folder's other media files after it
+.\run-axMedia.ps1                         # an empty queue
 dotnet build AxKit.sln
 dotnet test tests/AxMedia.Tests/AxMedia.Tests.csproj
 ```
 
 ## Where things are
 
-- `AxMediaApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7): the paths, `--add` and `--new` read off the command line, then, with paths and an open axMedia window, one `AppMessage.Send` and no window of this process (SPEC.md AM-1.2); otherwise one call into `AxKit.Forms/AppHost.Run` with the settings and the window on a `HandOver`; the log (`axmedia.log`), the crash handling, `--help` and `--version` are the host's.
+- `AxMediaApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7): the paths, `--add` and `--new` read off the command line, then, with paths and an open axMedia window, one `AppMessage.Send` and no window of this process (SPEC.md AM-1.2); otherwise one call into `AxKit.Forms/AppHost.Run` with the settings and the window on a `HandOver`; the log (`axMedia.log`), the crash handling, `--help` and `--version` are the host's.
 - `MediaForm`, in two partial files since 2026-10-24 (`MediaForm.Player.cs` is playing, AM-4: the engine, the transport, the position, the engine's events):
   - the controls (the list, the video area, the status bar), the menus (AM-5.1);
   - the hooks the window base asks for (`TakeHandOver`: a hand-over message, answered by the base and queued through `Apply`, the queue drained in order by `DrainAsync`);
-  - the menus and the keys as one command list (`Add` and `AddKey` of the window base, docs/axkit/app-kit.md AK-2; each key from `BundleKeys` and `AxMediaKeys`; Enter, Delete and Space with `When = _list.Focused`; no `ProcessWindowKey` of its own);
+  - the menus and the keys as one command list (`Add` and `AddKey` of the window base, docs/axKit/app-kit.md AK-2; each key from `BundleKeys` and `AxMediaKeys`; Enter, Delete and Space with `When = _list.Focused`; no `ProcessWindowKey` of its own);
   - the base's `Do` runs every task (an escaped exception becomes a notice);
   - the queue:
     - `ApplyAsync` (a play replaces the queue through `MediaFolder.Queue` and plays with the playing file selected, an add appends through `MediaFolder.Expand` and says nothing, since axFile says it, AM-D3);

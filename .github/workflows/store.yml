@@ -1,4 +1,4 @@
-# Posts a published release's Store package to Partner Center (docs/axkit/store-setup.md section 4; docs/axkit/SPEC.md
+# Posts a published release's Store package to Partner Center (docs/axKit/store-setup.md section 4; docs/axKit/SPEC.md
 # AX-13.6). Runs when a GitHub release is published, which release.ps1 does after signing the zip, or by hand for a tag
 # from the Actions tab, and only while the repository variable STORE_SUBMIT is "on": unset, nothing here runs and the
 # Store is untouched. The package is the release's own AxKit-<version>.msix, the file GitHub attested, never a rebuild.

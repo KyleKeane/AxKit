@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axTask's pure code (docs/axtask/SPEC.md; the item format of docs/axkit/item-apps.md): an item's fields, their
+  <!-- axTask's pure code (docs/axTask/SPEC.md; the item format of docs/axKit/item-apps.md): an item's fields, their
        values, a folder of lists and items, the changes with their undo, the tasks and the smart lists, the settings;
        no window. -->
   <PropertyGroup>

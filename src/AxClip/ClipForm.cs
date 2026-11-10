@@ -43,7 +43,7 @@ public sealed class ClipForm : HotkeyForm
         _settings = settings;
         _history = new ClipHistory(settings.History);
 
-        // ---- menus and keys (CP-2.4, CP-5.1, CP-5.2): one command list (docs/axkit/app-kit.md AK-2), each key from the
+        // ---- menus and keys (CP-2.4, CP-5.1, CP-5.2): one command list (docs/axKit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----
         AddMatchKeys(AxClipKeys.NextMatch, AxClipKeys.PreviousMatch, AxClipKeys.FirstMatch, AxClipKeys.LastMatch);
         var clip = new ToolStripMenuItem("ax&Clip");

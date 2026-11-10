@@ -4,7 +4,7 @@ using AxStart.Core;
 namespace AxStart;
 
 /// <summary>
-/// axStart's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AS-1.1, AS-1.2): <c>AxKit.exe start
+/// axStart's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md AS-1.1, AS-1.2): <c>AxKit.exe start
 /// [--hidden]</c> calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/>. One axStart runs at a
 /// time, held by a named mutex: a start while it runs hands "show" to its hidden window (<see cref="AppMessage"/>)
 /// and ends, or with --hidden just ends; otherwise <see cref="StartForm"/> runs, hidden with --hidden.
@@ -26,7 +26,7 @@ public static class AxStartApp
     private static Mutex? _one;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axstart", Usage, args, arguments =>
+        AppHost.Run(Name, "axStart", Usage, args, arguments =>
         {
             var hidden = false;
             foreach (var argument in arguments)

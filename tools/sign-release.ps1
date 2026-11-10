@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Signs a draft release with the release key and publishes it (docs/axkit/SPEC.md AX-3.4; security audit S-27).
+  Signs a draft release with the release key and publishes it (docs/axKit/SPEC.md AX-3.4; security audit S-27).
 
 .DESCRIPTION
   release.ps1 calls it after pushing the tag; it can be run alone for a draft already on GitHub. It

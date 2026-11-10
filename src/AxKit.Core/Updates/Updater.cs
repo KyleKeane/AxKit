@@ -7,7 +7,7 @@ using System.Text;
 namespace AxKit.Core.Updates;
 
 /// <summary>
-/// The bundle's side of updating (docs/axkit/SPEC.md AX-3; axClaude's FR-1.10): asks GitHub for the latest release,
+/// The bundle's side of updating (docs/axKit/SPEC.md AX-3; axClaude's FR-1.10): asks GitHub for the latest release,
 /// downloads its zip into <c>%LOCALAPPDATA%\AxKit\updates\&lt;version&gt;</c>, runs that version's own install.ps1 in
 /// place while the app keeps running (the running program file is renamed, never overwritten, axClaude's D25), and
 /// starts the installed program file again when the app closes after Update and restart.
@@ -245,7 +245,7 @@ public static class Updater
 
     /// <summary>
     /// A download is complete when it has install.ps1 and a program file. The program file is not named: the
-    /// installer knows what to install, and 1.7.0 relied on this to update into axKit (docs/axkit/SPEC.md B-6).
+    /// installer knows what to install, and 1.7.0 relied on this to update into axKit (docs/axKit/SPEC.md B-6).
     /// </summary>
     /// <summary>Whether the zip's SHA-256 is the one GitHub recorded ("sha256:&lt;hex&gt;"); true when GitHub gave none, the signature being the check that counts.</summary>
     public static bool MatchesDigest(byte[] sha256, string? digest) =>

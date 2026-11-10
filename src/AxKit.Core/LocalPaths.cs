@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// Which paths a menu may ask the file system about as it opens (docs/axkit/SPEC.md AX-9.4, AX-9.5): a path on a
+/// Which paths a menu may ask the file system about as it opens (docs/axKit/SPEC.md AX-9.4, AX-9.5): a path on a
 /// drive of this computer answers at once, while a network share or a mapped network drive can take the network's
 /// timeout to answer, which no menu may wait for (2026-10-23: the recent lists checked every path, and an unreachable
 /// share stalled the menu). Pure, tested.

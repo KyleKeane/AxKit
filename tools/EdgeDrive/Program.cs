@@ -1,4 +1,4 @@
-// EdgeDrive: one command per run against a Microsoft Edge started with --remote-debugging-port (docs/axkit/store-setup.md
+// EdgeDrive: one command per run against a Microsoft Edge started with --remote-debugging-port (docs/axKit/store-setup.md
 // section 6). The current page target is kept in a small file, so that a sequence of runs works on one tab.
 //
 //   EdgeDrive targets                       the open pages: id, title, address

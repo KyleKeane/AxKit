@@ -5,7 +5,7 @@ namespace AxPreview;
 /// <summary>
 /// axPreview's window-specific keys (SPEC.md AP-3.2; bundle AX-8). The viewer's keys of the shell (new window, open,
 /// reload, edit in the editor, show in File Explorer, go to line, word wrap, the line number) are
-/// <c>AxKit.Forms.EditorKeys.Viewer</c>; the navigation letters are axDown's (docs/axdown/SPEC.md §9),
+/// <c>AxKit.Forms.EditorKeys.Viewer</c>; the navigation letters are axDown's (docs/axDown/SPEC.md §9),
 /// <c>AxKit.Forms.MarkdownKeys</c>, so that a file read here and edited there is under the same keys (G2);
 /// <see cref="All"/> includes both. The bundle-wide keys (F1, find, Ctrl+S, text size, the controls) are
 /// <c>AxKit.Forms.BundleKeys</c>.

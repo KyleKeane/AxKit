@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 namespace AxKit.Core.Reports;
 
 /// <summary>
-/// The user's reports as an axTask list (docs/axkit/reports.md RP-5): the folder, its <c>list.json</c> with the
+/// The user's reports as an axTask list (docs/axKit/reports.md RP-5): the folder, its <c>list.json</c> with the
 /// template and the action keys, and each report as one item file, written before anything is sent and read again
 /// for the unsent ones.
 /// </summary>

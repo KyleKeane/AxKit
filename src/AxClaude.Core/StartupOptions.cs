@@ -3,7 +3,7 @@ namespace AxClaude.Core;
 /// <summary>
 /// Command line: <c>axKit claude [&lt;folder&gt;] [--project &lt;folder&gt;] [--claude &lt;path&gt;] [--cols N] [--rows N] [--no-ax]
 /// [--record &lt;file.vt&gt;] [-- claude arguments]</c> (the console command <c>axclaude</c> stands for <c>axKit claude</c>;
-/// a folder alone also reaches here, docs/axkit/SPEC.md AX-1). Values not given fall back to the settings file.
+/// a folder alone also reaches here, docs/axKit/SPEC.md AX-1). Values not given fall back to the settings file.
 /// <see cref="ClaudeArgs"/> is null when no <c>--</c> was given (the window then uses <c>--continue</c>, FR-9.1) and
 /// empty after a bare <c>--</c>.
 /// </summary>
@@ -135,7 +135,7 @@ public sealed record StartupOptions(
     private static string TrimSeparator(string path) => path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
     /// <summary>
-    /// A folder that is never a project, whatever started the app there (docs/axclaude/SPEC.md FR-8.1): the app's own
+    /// A folder that is never a project, whatever started the app there (docs/axClaude/SPEC.md FR-8.1): the app's own
     /// folder (Explorer and the zip's shortcuts start it there) and Windows' own, the Windows folder and System32 (a
     /// Start menu entry of the Store's package starts it there). Neither is taken from the current directory nor
     /// kept as the last project folder.

@@ -1,6 +1,6 @@
 # AxCalc.Core, the pure code
 
-Everything of axCalc that needs no window. Unit tested in `tests/AxCalc.Tests`. The spec is `docs/axcalc/SPEC.md` ("SPEC.md" below); the window is `src/AxCalc`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
+Everything of axCalc that needs no window. Unit tested in `tests/AxCalc.Tests`. The spec is `docs/axCalc/SPEC.md` ("SPEC.md" below); the window is `src/AxCalc`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 

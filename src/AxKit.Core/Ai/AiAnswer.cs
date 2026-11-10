@@ -3,7 +3,7 @@ using System.Text.Json;
 namespace AxKit.Core.Ai;
 
 /// <summary>
-/// What Claude said (docs/axkit/ai-help.md AH-2.4): the text, whether Claude Code reported an error, and the session a
+/// What Claude said (docs/axKit/ai-help.md AH-2.4): the text, whether Claude Code reported an error, and the session a
 /// follow-up question resumes (AH-6.3).
 /// </summary>
 public sealed record AiAnswer(string Text, bool IsError, string? SessionId)

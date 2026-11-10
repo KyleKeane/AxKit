@@ -2,7 +2,7 @@ namespace AxKit.Core;
 
 /// <summary>
 /// What the two console windows, axClaude and axTerminal, remember between runs beyond <see cref="WindowSettings"/>
-/// (docs/axkit/SPEC.md AX-6.5): the console size, the recent folders, the sounds and the attention signals, and the
+/// (docs/axKit/SPEC.md AX-6.5): the console size, the recent folders, the sounds and the attention signals, and the
 /// transcript's options. Their shared window base (<c>AxKit.Forms/ConsoleForm</c>) reads these without knowing the
 /// app; each app's settings class derives from it and adds its own, every property keeping the JSON name it had
 /// (the two files were written with the same names before the class existed, 2026-10-23).

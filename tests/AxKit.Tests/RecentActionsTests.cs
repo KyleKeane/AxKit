@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The last actions of a window for a report (docs/axkit/reports.md RP-4.1).</summary>
+/// <summary>The last actions of a window for a report (docs/axKit/reports.md RP-4.1).</summary>
 public sealed class RecentActionsTests
 {
     private static readonly DateTime Now = new(2026, 11, 7, 12, 0, 0, DateTimeKind.Utc);

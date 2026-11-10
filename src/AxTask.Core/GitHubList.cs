@@ -5,7 +5,7 @@ using AxKit.Core.Reports;
 
 namespace AxTask.Core;
 
-/// <summary>What a GitHub list follows (docs/axkit/reports.md RP-7.1): the repository, the issues' state, and the code repository's folder for Open in axClaude.</summary>
+/// <summary>What a GitHub list follows (docs/axKit/reports.md RP-7.1): the repository, the issues' state, and the code repository's folder for Open in axClaude.</summary>
 public sealed record GitHubListSettings(string Repository, string State, string? Folder);
 
 /// <summary>
@@ -33,7 +33,7 @@ public static partial class GitHubList
     public const string ClosedState = "closed";
 
     /// <summary>Open in axClaude as an action key's target (RP-7.2, RP-8.1).</summary>
-    public const string AxClaudeTarget = "axclaude";
+    public const string AxClaudeTarget = "axClaude";
 
     /// <summary>The kinds an issue's label gives, and the value for none.</summary>
     public static IReadOnlyList<string> KindNames { get; } = [.. ReportKinds.Names, Unlabelled];
@@ -84,7 +84,7 @@ public static partial class GitHubList
         var list = ItemDocument.NewList(Template);
         list = list.WithValue(list.IndexOf(NotesField), JsonValue.Create(
             $"The {state} issues of {repository} on GitHub, read again when the list opens and on F5; Notes is yours and stays. "
-            + "The Item menu's GitHub actions and the Ctrl+number keys change an issue as your GitHub account (List menu, GitHub account). docs/axkit/reports.md RP-7."));
+            + "The Item menu's GitHub actions and the Ctrl+number keys change an issue as your GitHub account (List menu, GitHub account). docs/axKit/reports.md RP-7."));
         var github = new JsonObject { ["repository"] = repository, ["state"] = state };
         if (folder is not null)
         {

@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// A line of an item app's navigator (docs/axkit/item-apps.md IA-2.2): a list (or group, or smart list) Right goes
+/// A line of an item app's navigator (docs/axKit/item-apps.md IA-2.2): a list (or group, or smart list) Right goes
 /// into, or an item; its key for the selection (a path), its name for type-to-find, its words, and what the app keeps
 /// with it. A section's header (IA-2.3a) has <see cref="IsSection"/>: Ctrl+Up and Ctrl+Down go from one to the next.
 /// </summary>
@@ -20,11 +20,11 @@ public sealed record ItemDetailLine(string Label, Action? Enter = null);
 public sealed record ItemDetail(string Name, string? Key, ItemDocument? Document, IReadOnlyList<ItemDetailLine> Lines, object? Source = null);
 
 /// <summary>
-/// The window of an item app (docs/axkit/item-apps.md IA-2, IA-3, IA-5; from axTask on its second use, axPass,
+/// The window of an item app (docs/axKit/item-apps.md IA-2, IA-3, IA-5; from axTask on its second use, axPass,
 /// 2026-10-24): the navigator on the left, the detail pane on the right, each the bundle's <see cref="AxKitList"/>, a
 /// status bar, and the window's menu bar. This class holds what both apps do the same way: the panes, Right, Left and
 /// Enter through the levels, Tab between the panes, the keys of <see cref="ItemKeys"/> on the window's command list
-/// (docs/axkit/app-kit.md AK-2; registered after the app's own, so that the app's come first), the detail pane filled
+/// (docs/axKit/app-kit.md AK-2; registered after the app's own, so that the app's come first), the detail pane filled
 /// silently for the selection, and every field command with its notices (<c>ItemForm.Fields.cs</c>). The app fills in
 /// what a level holds (<see cref="ReadLevel"/>), how it goes in and out of a list, what the detail pane shows, and how
 /// a change is saved (<see cref="SaveFields"/>): a file for axTask, the KeePassXC tool for axPass.
@@ -210,7 +210,7 @@ public abstract partial class ItemForm : AxKitForm
         AddSharedKeys();
     }
 
-    // ---- keys (IA-3): one command list (docs/axkit/app-kit.md AK-2), the app's own first, then ItemKeys here ----
+    // ---- keys (IA-3): one command list (docs/axKit/app-kit.md AK-2), the app's own first, then ItemKeys here ----
 
     /// <summary>
     /// The rename box has its own keys (AX-8.7): Enter, Escape, Ctrl+Z on the typing. While it is open no command

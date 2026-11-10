@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// What every window of the bundle remembers between runs (docs/axkit/SPEC.md AX-5.3, AX-6.5): the text font, the
+/// What every window of the bundle remembers between runs (docs/axKit/SPEC.md AX-5.3, AX-6.5): the text font, the
 /// update check and the window's place. Each app's settings class derives from it and adds its own; the file keeps
 /// the app's shape, since every property serializes under its own name. The window base (<c>AxKit.Forms/AxKitForm</c>)
 /// reads and writes these without knowing the app.

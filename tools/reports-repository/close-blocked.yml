@@ -1,5 +1,5 @@
-# The reports repository's workflow (docs/axkit/reports.md RP-6.4; this file is copied to AxKit-reports as
-# .github/workflows/close-blocked.yml, docs/axkit/reports-setup.md). Every new issue's last line is read: a report from
+# The reports repository's workflow (docs/axKit/reports.md RP-6.4; this file is copied to AxKit-reports as
+# .github/workflows/close-blocked.yml, docs/axKit/reports-setup.md). Every new issue's last line is read: a report from
 # axKit ends "Sent from axKit <version> with F4; reporter <id>". When the id or the version stands in blocklist.json,
 # the issue is closed and locked with one comment, so that a blocked install or version is stopped even by a sender that
 # skipped the blocklist. Issues filed by people in the browser have no such line and are left alone. The repository's
@@ -42,7 +42,7 @@ jobs:
           blocked_version=$(jq -r --arg v "$version" '[.versions[]?] | index($v) != null' blocklist.json)
           if [ "$blocked_reporter" = "true" ] || [ "$blocked_version" = "true" ]; then
             echo "Blocked: reporter $reporter, version $version."
-            gh issue comment "$ISSUE_NUMBER" --body "Reports from this install or this version of axKit are blocked (blocklist.json of this repository, https://github.com/KyleKeane/AxKit/blob/main/docs/axkit/reports.md RP-6.4). This issue is closed."
+            gh issue comment "$ISSUE_NUMBER" --body "Reports from this install or this version of axKit are blocked (blocklist.json of this repository, https://github.com/KyleKeane/AxKit/blob/main/docs/axKit/reports.md RP-6.4). This issue is closed."
             gh issue close "$ISSUE_NUMBER" --reason "not planned"
             gh issue lock "$ISSUE_NUMBER" --reason spam
           else

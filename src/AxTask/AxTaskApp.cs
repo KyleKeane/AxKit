@@ -4,7 +4,7 @@ using AxTask.Core;
 namespace AxTask;
 
 /// <summary>
-/// axTask's entry point inside axKit (docs/axkit/SPEC.md AX-1.7): <c>AxKit.exe task [&lt;folder&gt;]</c> calls
+/// axTask's entry point inside axKit (docs/axKit/SPEC.md AX-1.7): <c>AxKit.exe task [&lt;folder&gt;]</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one path of the command line, the
 /// settings and <see cref="TaskForm"/>.
 /// </summary>
@@ -22,7 +22,7 @@ public static class AxTaskApp
         """;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axtask", Usage, args, arguments =>
+        AppHost.Run(Name, "axTask", Usage, args, arguments =>
         {
             if (!AppHost.OnePath(Name, "folder or item", Usage, arguments, out var path))
             {

@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>The settings file (docs/axfile/SPEC.md AF-8.1): defaults, the recent list, and nonsense sanitized.</summary>
+/// <summary>The settings file (docs/axFile/SPEC.md AF-8.1): defaults, the recent list, and nonsense sanitized.</summary>
 public sealed class FileSettingsTests
 {
     [Fact]

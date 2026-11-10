@@ -36,7 +36,7 @@ public sealed partial class FileForm : AxKitForm
         _startPath = path;
         SetTitle(null);
 
-        // ---- menus and keys (AF-6.1, AF-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables;
+        // ---- menus and keys (AF-6.1, AF-6.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables;
         // a key's When is where it acts: the folder list (InList), the Actions list (InPane) or anywhere ----
         // Folder is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
         // folders, the ways around, Show current folder in, Exit.

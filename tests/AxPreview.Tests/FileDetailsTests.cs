@@ -2,7 +2,7 @@ using AxPreview.Core;
 
 namespace AxPreview.Tests;
 
-/// <summary>The Details list (docs/axpreview/SPEC.md AP-6.2) over a temporary file.</summary>
+/// <summary>The Details list (docs/axPreview/SPEC.md AP-6.2) over a temporary file.</summary>
 public sealed class FileDetailsTests : IDisposable
 {
     private readonly TempFolder _folder = new("axpreview-details");

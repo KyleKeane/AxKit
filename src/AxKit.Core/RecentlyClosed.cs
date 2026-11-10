@@ -10,7 +10,7 @@ internal sealed class RecentlyClosedList
 }
 
 /// <summary>
-/// The Recently closed list of the axKit menu (docs/axkit/SPEC.md AX-9.4): the last ten files and folders the windows of
+/// The Recently closed list of the axKit menu (docs/axKit/SPEC.md AX-9.4): the last ten files and folders the windows of
 /// every app held when they closed or swapped them, in one file for the bundle (<see cref="AppPaths.RecentlyClosedFile"/>,
 /// AX-5.1). A window calls <see cref="Remember"/> when it closes or replaces its file; the menu calls <see cref="Load"/>
 /// when it opens. The file is written whole through <see cref="SettingsFile"/>; two windows closing in the same instant

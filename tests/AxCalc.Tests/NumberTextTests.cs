@@ -2,7 +2,7 @@ using AxCalc.Core;
 
 namespace AxCalc.Tests;
 
-/// <summary>An answer's text (docs/axcalc/SPEC.md AC-3.7), its other bases (AC-4) and its history line (AC-5.1).</summary>
+/// <summary>An answer's text (docs/axCalc/SPEC.md AC-3.7), its other bases (AC-4) and its history line (AC-5.1).</summary>
 public sealed class NumberTextTests
 {
     [Theory]

@@ -4,7 +4,7 @@ using System.Text;
 namespace AxKit.Core;
 
 /// <summary>
-/// Whether a name holds every word of a typed text, and how well (docs/axkit/SPEC.md AX-10.3; from AxStart.Core's
+/// Whether a name holds every word of a typed text, and how well (docs/axKit/SPEC.md AX-10.3; from AxStart.Core's
 /// <c>ProgramMatch</c> on its second use, the command palette, 2026-10-22). Case and accents are ignored. The rank is
 /// by the text's first word: 0 when the name starts with it, 1 when one of its words does, 2 otherwise, so that
 /// "win power" sits with the names starting with "win".

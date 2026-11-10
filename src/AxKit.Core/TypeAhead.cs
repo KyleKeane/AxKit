@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// Where letters typed in a list jump (docs/axkit/SPEC.md AX-8.6; docs/axfile/SPEC.md AF-3.6; from AxFile.Core's
+/// Where letters typed in a list jump (docs/axKit/SPEC.md AX-8.6; docs/axFile/SPEC.md AF-3.6; from AxFile.Core's
 /// <c>FolderListing</c> on its second use, axProcess, 2026-10-24), as File Explorer takes them: the first name that
 /// starts with the typed text, searched from the item in hand and round the end. A run of one letter ("a", "aa")
 /// cycles instead through the names starting with that letter, from the next item on, while any other prefix is

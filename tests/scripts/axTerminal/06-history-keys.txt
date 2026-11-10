@@ -1,0 +1,40 @@
+# axTerminal, Ctrl+Up and Ctrl+Down in the command field (AT-3.9, 2026-10-23): the recent list with the draft as its last item.
+file home\AxKit\axTerminal.json {"checkForUpdates": false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir myproject
+start terminal {temp}\myproject
+expect said Ready
+type echo one
+keys enter
+expect said Done
+type echo two
+keys enter
+expect said Done
+
+# Ctrl+Up goes back, the newest first, with the recall earcon; at the oldest the low note.
+type half
+keys ctrl+up
+expect said ! echo two
+keys ctrl+up
+expect said ! echo one
+keys ctrl+up
+expect said ♪ Edge
+
+# Ctrl+Down comes forward, and past the newest gives back what was typed.
+keys ctrl+down
+expect said ! echo two
+keys ctrl+down
+expect said ! half
+keys ctrl+down
+expect said ♪ Edge
+
+# A command changed and left becomes the last item: Ctrl+Down to the end gets it back.
+keys ctrl+up
+expect said ♪ Recall
+expect said ! echo two
+type  --x
+keys ctrl+up
+expect said ! echo one
+keys ctrl+down ctrl+down
+expect said ! echo two --x

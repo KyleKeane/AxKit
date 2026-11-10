@@ -4,7 +4,7 @@ using AxPreview.Core;
 
 namespace AxPreview.Tests;
 
-/// <summary>The renderer table's choice and each renderer (docs/axpreview/SPEC.md AP-7), over files made in a temporary folder.</summary>
+/// <summary>The renderer table's choice and each renderer (docs/axPreview/SPEC.md AP-7), over files made in a temporary folder.</summary>
 public sealed class RenderersTests : IDisposable
 {
     private readonly TempFolder _folder = new("axpreview-render");

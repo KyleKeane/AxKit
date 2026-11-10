@@ -2,7 +2,7 @@ using AxCalc.Core;
 
 namespace AxCalc.Tests;
 
-/// <summary>The expressions of docs/axcalc/SPEC.md AC-3: the notation, the precedence, the names, the errors.</summary>
+/// <summary>The expressions of docs/axCalc/SPEC.md AC-3: the notation, the precedence, the names, the errors.</summary>
 public sealed class CalculatorTests
 {
     private static string Answer(string expression, Calculator? calculator = null) => (calculator ?? new Calculator()).Evaluate(expression).Spoken;

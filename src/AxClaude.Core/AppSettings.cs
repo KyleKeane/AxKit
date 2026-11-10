@@ -5,7 +5,7 @@ using AxKit.Core;
 namespace AxClaude.Core;
 
 /// <summary>
-/// Everything the app remembers between runs. Stored as JSON in <c>%APPDATA%\AxKit\axclaude.json</c> (see SPEC.md
+/// Everything the app remembers between runs. Stored as JSON in <c>%APPDATA%\AxKit\axClaude.json</c> (see SPEC.md
 /// Appendix C) through the bundle's <see cref="SettingsFile"/>; the first start under axKit copies axClaude 1.x's
 /// <c>%APPDATA%\AxClaude\settings.json</c> there (<see cref="TakeOverOldFile"/>). A missing or unreadable file falls
 /// back to the defaults. The console fields (the size, the recent folders, the sounds, the signals, the transcript
@@ -53,13 +53,13 @@ public sealed class AppSettings : ConsoleSettings
     /// </summary>
     public bool KeepFilesOutOfGit { get; set; } = true;
 
-    public static string DefaultPath => AppPaths.SettingsFile("axclaude");
+    public static string DefaultPath => AppPaths.SettingsFile("axClaude");
 
     /// <summary>Where axClaude 1.x kept the file, before the axKit bundle.</summary>
     public static string OldPath =>
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "axClaude", "settings.json");
 
-    /// <summary>Copies the 1.x file to <see cref="DefaultPath"/> when there is one and no new file yet (docs/axkit/SPEC.md AX-5.2).</summary>
+    /// <summary>Copies the 1.x file to <see cref="DefaultPath"/> when there is one and no new file yet (docs/axKit/SPEC.md AX-5.2).</summary>
     public static void TakeOverOldFile() => SettingsFile.TakeOverOldFile(OldPath, DefaultPath);
 
     /// <summary>Loads the file, or returns defaults. <paramref name="error"/> describes an unreadable file.</summary>

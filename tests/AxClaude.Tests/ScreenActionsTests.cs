@@ -2,7 +2,7 @@ using AxClaude.Core.Transcript;
 
 namespace AxClaude.Tests;
 
-/// <summary>What the keys of a screen do in the control area (docs/axclaude/SPEC.md D33): the items, the leaving key, Enter on a line, the letters.</summary>
+/// <summary>What the keys of a screen do in the control area (docs/axClaude/SPEC.md D33): the items, the leaving key, Enter on a line, the letters.</summary>
 public sealed class ScreenActionsTests
 {
     private static readonly ScreenKey Up = new("\x1b[A", "Up", "select");

@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// Starts an app's window (docs/axkit/SPEC.md AX-1.7): the log, the crash handling, the start line in the log,
+/// Starts an app's window (docs/axKit/SPEC.md AX-1.7): the log, the crash handling, the start line in the log,
 /// <c>--help</c> and <c>--version</c>, then the window the app makes from its arguments, and the exit line. Every
 /// app's <c>Run</c> is one call into <see cref="Run"/>; what differs, the usage text and how the arguments become a
 /// window, comes as parameters. The message boxes here are the only ones allowed in the bundle: no window exists

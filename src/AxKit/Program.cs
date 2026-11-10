@@ -21,7 +21,7 @@ using AxDescribe;
 namespace axKit;
 
 /// <summary>
-/// The one entry point of the bundle (docs/axkit/SPEC.md AX-1). It decides which app the command line means and hands
+/// The one entry point of the bundle (docs/axKit/SPEC.md AX-1). It decides which app the command line means and hands
 /// the rest of the arguments to that app's <c>Run</c>; everything after, including the crash handling and the log,
 /// belongs to the app. A message box is used only here, where no window exists yet.
 /// </summary>
@@ -48,7 +48,7 @@ internal static class Program
         Application.SetColorMode(SystemColorMode.System);
         DeleteOldProgramFiles();
 
-        // The Store's copy (AX-13.2): started through one of the package's console commands (axdown.exe, whose path
+        // The Store's copy (AX-13.2): started through one of the package's console commands (axDown.exe, whose path
         // is the command line's first word) or from one of its entries, that app is the verb when the command line
         // carries none.
         if (PackageIdentity.IsPackaged)
@@ -70,7 +70,7 @@ internal static class Program
         }
         else if (launch.App == Dispatch.Mcp)
         {
-            // No window: MCP on standard input and output until the client closes it (docs/axkit/mcp.md MC-1.1).
+            // No window: MCP on standard input and output until the client closes it (docs/axKit/mcp.md MC-1.1).
             AxKit.Forms.McpBroker.Run();
         }
         else if (launch.App == Dispatch.Listing)

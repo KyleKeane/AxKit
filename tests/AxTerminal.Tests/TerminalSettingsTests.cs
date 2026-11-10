@@ -7,7 +7,7 @@ public sealed class TerminalSettingsTests
     [Fact]
     public void Missing_file_gives_the_defaults()
     {
-        var path = Path.Combine(Path.GetTempPath(), "axterminal-tests-" + Guid.NewGuid().ToString("N"), "axterminal.json");
+        var path = Path.Combine(Path.GetTempPath(), "axterminal-tests-" + Guid.NewGuid().ToString("N"), "axTerminal.json");
         var settings = TerminalSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Null(settings.Shell);
@@ -28,7 +28,7 @@ public sealed class TerminalSettingsTests
     {
         using var temp = new TempFolder("axterminal-tests");
         var dir = temp.Path;
-        var path = Path.Combine(dir, "axterminal.json");
+        var path = Path.Combine(dir, "axTerminal.json");
         File.WriteAllText(path, """{"shell":"fish","ptyColumns":3,"ptyRows":9000,"maxTranscriptLines":5,"recentFolders":["", "C:\\src"],"outputSpeech":7}""");
         var settings = TerminalSettings.Load(path, out var error);
         Assert.Null(error);

@@ -214,7 +214,7 @@ public static class Sounds
     /// <summary>A tiny typewriter-like tick: a line from Claude arrived.</summary>
     /// <summary>
     /// Every sound asked for, by its name ("Notice", "Edge", "Ready"): the automation channel's record
-    /// (docs/axkit/automation.md). In a test run the sounds are recorded and not played, so that a run on the test
+    /// (docs/axKit/automation.md). In a test run the sounds are recorded and not played, so that a run on the test
     /// desktop is silent on the user's speakers.
     /// </summary>
     public static event Action<string>? Played;

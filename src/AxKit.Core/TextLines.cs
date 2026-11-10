@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// Lines and columns of a text as an edit control holds it, with <c>\r\n</c> line ends (docs/axdown/SPEC.md AD-6.4,
+/// Lines and columns of a text as an edit control holds it, with <c>\r\n</c> line ends (docs/axDown/SPEC.md AD-6.4,
 /// AD-3.6): where the caret is, and where a line and column are, so that a caret put back after a reload lands on its
 /// line and never between a CR and its LF (2026-10-23; the window's own arithmetic before, which could). Pure, tested.
 /// </summary>

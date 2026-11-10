@@ -22,7 +22,7 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
         "https://www.anthropic.com/legal");
 
     /// <summary>
-    /// AI help (docs/axkit/ai-help.md AH-1.2): Claude Code in its print mode with read-only tools, recorded under the
+    /// AI help (docs/axKit/ai-help.md AH-1.2): Claude Code in its print mode with read-only tools, recorded under the
     /// app "AI help", one agreement for every window and for axHelp and axDescribe.
     /// </summary>
     public static readonly ConsentTarget AiHelp = new(
@@ -43,7 +43,7 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
         "KeePassXC's licence",
         "https://keepassxc.org/");
 
-    /// <summary>The reports (docs/axkit/reports.md RP-6.6): GitHub, where a report becomes a public issue; recorded under the app name "axKit", since every window sends the same way.</summary>
+    /// <summary>The reports (docs/axKit/reports.md RP-6.6): GitHub, where a report becomes a public issue; recorded under the app name "axKit", since every window sends the same way.</summary>
     public static readonly ConsentTarget GitHubReports = new(
         "GitHub",
         "A report goes to GitHub as a public issue of axKit's reports repository, posted with the maintainer's reporter token, never with an account of yours, and carrying a random id of this install and nothing that names you; what you write in it is public.",
@@ -91,7 +91,7 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
         $"https://{host}/");
 
     /// <summary>
-    /// An AI tool paired with axKit's windows (AX-9, docs/axkit/mcp.md): it reads what the windows show. Any program may
+    /// An AI tool paired with axKit's windows (AX-9, docs/axKit/mcp.md): it reads what the windows show. Any program may
     /// pair, so its maker's terms have no one address here (an earlier version named Anthropic's for every tool).
     /// </summary>
     public static ConsentTarget AiTool(string name) => new(
@@ -108,7 +108,7 @@ internal sealed class ConsentList
 }
 
 /// <summary>
-/// What the user has agreed to (docs/axkit/SPEC.md AX-11.4 to AX-11.8), in one file for the bundle
+/// What the user has agreed to (docs/axKit/SPEC.md AX-11.4 to AX-11.8), in one file for the bundle
 /// (<see cref="AppPaths.ConsentFile"/>). An access layer asks <see cref="Given"/> before it connects to a program and
 /// calls <see cref="Record"/> when the user checks the box and connects; About, Consents lists <see cref="Read"/> and
 /// <see cref="Withdraw"/> takes one back, so that the app asks again. A missing or damaged file means nothing was agreed,
@@ -141,7 +141,7 @@ public static class Consent
         }
     }
 
-    /// <summary>Every agreement of one app taken back in one write (Forget AI tools, docs/axkit/mcp.md).</summary>
+    /// <summary>Every agreement of one app taken back in one write (Forget AI tools, docs/axKit/mcp.md).</summary>
     public static void WithdrawAll(string file, string app)
     {
         if (Write(file, Read(file).Where(item => !string.Equals(item.App, app, StringComparison.OrdinalIgnoreCase))))

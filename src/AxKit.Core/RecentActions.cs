@@ -9,7 +9,7 @@ public enum RecentActionKind
 }
 
 /// <summary>
-/// The last actions of one window, for a report (docs/axkit/reports.md RP-4.1): the commands run by key, menu or
+/// The last actions of one window, for a report (docs/axKit/reports.md RP-4.1): the commands run by key, menu or
 /// palette, what the window announced, and the notices it showed; twenty at most, the oldest dropped. Pure: the window
 /// adds each entry with the time, and asks for the report's lines with the time now, so that the ages read "12 s ago".
 /// </summary>

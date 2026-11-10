@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxStart.Core;
 
 /// <summary>
-/// Everything axStart remembers between runs (SPEC.md AS-5.1), in <c>%APPDATA%\AxKit\axstart.json</c> through the
+/// Everything axStart remembers between runs (SPEC.md AS-5.1), in <c>%APPDATA%\AxKit\axStart.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font and the update check from <see cref="WindowSettings"/> (the window's
 /// place is not used: the window is centred), the hotkey, Start with Windows and Say the first match while typing
 /// from <see cref="HotkeySettings"/>, and how often axStart started each program, for the order of the matches. A
@@ -17,7 +17,7 @@ public sealed class StartSettings : HotkeySettings
     /// <summary>Each program's display name and how often axStart started it (AS-2.2).</summary>
     public Dictionary<string, int> Starts { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
-    public static string DefaultPath => AppPaths.SettingsFile("axstart");
+    public static string DefaultPath => AppPaths.SettingsFile("axStart");
 
     public static StartSettings Load(string path, out string? error)
     {

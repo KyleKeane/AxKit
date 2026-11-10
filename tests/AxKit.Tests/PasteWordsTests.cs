@@ -2,7 +2,7 @@ using AxKit.Forms;
 
 namespace AxKit.Tests;
 
-/// <summary>What a paste into a text says (docs/axkit/SPEC.md AX-7.3, 2026-10-25): never the text itself.</summary>
+/// <summary>What a paste into a text says (docs/axKit/SPEC.md AX-7.3, 2026-10-25): never the text itself.</summary>
 public class PasteWordsTests
 {
     [Fact]

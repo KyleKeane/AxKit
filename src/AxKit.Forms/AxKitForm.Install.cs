@@ -4,7 +4,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// Installing a program an app needs (docs/axkit/SPEC.md AX-2.9, 2026-10-24): from the notice that says the program is
+/// Installing a program an app needs (docs/axKit/SPEC.md AX-2.9, 2026-10-24): from the notice that says the program is
 /// missing, the window runs its installer without a window of its own, says what to expect, and checks again when it
 /// ends. Started by the user only; one at a time.
 /// </summary>

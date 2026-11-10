@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// A window's key pair for one kind of element in a text (docs/axkit/SPEC.md AX-7.2): the key for the next one, the key
+/// A window's key pair for one kind of element in a text (docs/axKit/SPEC.md AX-7.2): the key for the next one, the key
 /// for the previous one, the kind's name as spoken ("heading level 2", "key"), and the two functions that find the next
 /// and the previous element of the kind from a caret position in a text. <see cref="Markdown"/> makes the pair for a
 /// Markdown kind from <see cref="MarkdownOutline"/>; another outline, JSON's, brings its own functions. Each window
@@ -30,7 +30,7 @@ public sealed record TextJump(Keys Next, Keys Previous, string Name, Func<string
             (text, caret) => MarkdownOutline.Previous(kind, text, caret, level));
 
     // ---- the jump itself (was TextJumps, one type since 2026-10-25, inventory item 11) ----
-    // Moving through an edit control's text by its structure (docs/axkit/SPEC.md AX-7.2, axDown SPEC §9), the one
+    // Moving through an edit control's text by its structure (docs/axKit/SPEC.md AX-7.2, axDown SPEC §9), the one
     // implementation for every editor window and for every notice's text: the key pairs come from the window's table
     // (<see cref="TextJump"/>), the elements from the pair's own outline, and the result is one announcement, the
     // element's text, or "No next heading" and the like with the caret staying. Tested in <c>tests/AxKit.Tests</c>.

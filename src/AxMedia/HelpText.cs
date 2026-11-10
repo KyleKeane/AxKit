@@ -33,6 +33,6 @@ public static class HelpText
           The volume is Windows' own: your keyboard's volume keys
         """ + BundleHelp.NoticesSection("axMedia", "the list");
 
-    /// <summary>docs/axmedia/user-guide.md, embedded by AxMedia.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axmedia/user-guide.md");
+    /// <summary>docs/axMedia/user-guide.md, embedded by AxMedia.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axMedia/user-guide.md");
 }

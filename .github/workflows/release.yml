@@ -1,13 +1,13 @@
 # Builds the zip that publish.ps1 builds locally and attaches it to a draft GitHub release, with install.cmd on its own
 # so it can be downloaded alone and install the latest release. Three jobs: build tests with a token that can only
-# read; package publishes the folder with the reporter token of the reports (docs/axkit/reports.md RP-6.2), makes the
+# read; package publishes the folder with the reporter token of the reports (docs/axKit/reports.md RP-6.2), makes the
 # zip and the Store package; draft uploads and attests. The release stays a draft: release.ps1, on the maintainer's
 # machine, signs the zip with the release key, which never reaches GitHub, uploads the signature and publishes the
-# release (docs/axkit/SPEC.md AX-3.4; docs/axkit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps install only
+# release (docs/axKit/SPEC.md AX-3.4; docs/axKit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps install only
 # a signed zip. AxKit.exe itself carries no Windows (Authenticode) signature: the signed copy of axKit is the Microsoft
-# Store's, which Microsoft signs after certification (AX-13; docs/axkit/store-distribution.md 4.4); the Azure Artifact
+# Store's, which Microsoft signs after certification (AX-13; docs/axKit/store-distribution.md 4.4); the Azure Artifact
 # Signing steps that sat between the publish and the zip (2026-11-06) were retired on 2026-11-09 before they signed a
-# release (docs/axkit/code-signing.md). Started by pushing a version tag, which release.ps1 does, or by hand from the
+# release (docs/axKit/code-signing.md). Started by pushing a version tag, which release.ps1 does, or by hand from the
 # Actions tab (or `gh workflow run release.yml -f tag=v1.0.1`) for a tag that already exists.
 name: Release
 
@@ -36,7 +36,7 @@ jobs:
           ref: ${{ github.event.inputs.tag || github.ref }}
           persist-credentials: false
 
-      # The SDK band is global.json's, the one place it is set (docs/axkit/longevity.md).
+      # The SDK band is global.json's, the one place it is set (docs/axKit/longevity.md).
       - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
@@ -69,11 +69,11 @@ jobs:
         shell: pwsh
         run: |
           .\tools\release-notes.ps1 -Version $env:VERSION | Set-Content -Path notes.md -Encoding utf8
-          # The SDK that built this release, so that a rebuild years later knows what to reproduce (docs/axkit/longevity.md).
+          # The SDK that built this release, so that a rebuild years later knows what to reproduce (docs/axKit/longevity.md).
           Add-Content -Path notes.md -Value "`nBuilt with the .NET SDK $(dotnet --version)." -Encoding utf8
           # The terms of this release, which installing it accepts (AX-11.7): the update notice shows these notes.
           Add-Content -Path notes.md -Value "`naxKit is a set of personal tools shared as they are, not a product or a service. Installing this release means accepting its licence, https://github.com/KyleKeane/AxKit/blob/$env:TAG/LICENSE, and the reminders in NOTICE.md, https://github.com/KyleKeane/AxKit/blob/$env:TAG/NOTICE.md." -Encoding utf8
-          # Every release page links the code signing policy, the privacy page and the governance (docs/axkit/code-signing.md).
+          # Every release page links the code signing policy, the privacy page and the governance (docs/axKit/code-signing.md).
           Add-Content -Path notes.md -Value "`nCode signing policy, privacy and governance: https://github.com/KyleKeane/AxKit#code-signing-policy, https://github.com/KyleKeane/AxKit/blob/main/PRIVACY.md and https://github.com/KyleKeane/AxKit/blob/main/GOVERNANCE.md" -Encoding utf8
           "$env:TAG" | Set-Content -Path tag.txt -Encoding ascii
 
@@ -110,7 +110,7 @@ jobs:
         with:
           name: build
 
-      # The folder only, zipped below. The reporter token of the reports (docs/axkit/reports.md RP-6.2) goes into the
+      # The folder only, zipped below. The reporter token of the reports (docs/axKit/reports.md RP-6.2) goes into the
       # build from the "release" environment's secret, so that only this job, which runs no test package, ever holds
       # it; without the secret the build cannot send reports and its notice says so.
       - name: Publish
@@ -124,11 +124,11 @@ jobs:
       - name: Make the zip
         shell: pwsh
         run: |
-          Add-Content -Path notes.md -Value "`nAxKit.exe in this release carries no Windows signature, and Windows' Smart App Control may refuse it; the signed copy of axKit is the Microsoft Store's (https://github.com/KyleKeane/AxKit/blob/main/docs/axkit/store-distribution.md)." -Encoding utf8
+          Add-Content -Path notes.md -Value "`nAxKit.exe in this release carries no Windows signature, and Windows' Smart App Control may refuse it; the signed copy of axKit is the Microsoft Store's (https://github.com/KyleKeane/AxKit/blob/main/docs/axKit/store-distribution.md)." -Encoding utf8
           .\publish.ps1 -ZipOnly
 
-      # The MSIX package for the Microsoft Store (docs/axkit/SPEC.md AX-13), unsigned, since the Store signs it after
-      # certification: attached to the release for the maintainer's upload to Partner Center (docs/axkit/store-distribution.md
+      # The MSIX package for the Microsoft Store (docs/axKit/SPEC.md AX-13), unsigned, since the Store signs it after
+      # certification: attached to the release for the maintainer's upload to Partner Center (docs/axKit/store-distribution.md
       # phase 6). Built after the zip so that neither build touches the other's folder; the same reporter token goes in.
       - name: Build the Store package
         shell: pwsh

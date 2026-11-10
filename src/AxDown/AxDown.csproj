@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <!-- Help, User guide shows this file. -->
-    <EmbeddedResource Include="..\..\docs\axdown\user-guide.md" LogicalName="UserGuide.md" />
+    <EmbeddedResource Include="..\..\docs\axDown\user-guide.md" LogicalName="UserGuide.md" />
   </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@ namespace AxKit.Core;
 public sealed record Parsed(JsonNode? Value, string? Refused);
 
 /// <summary>
-/// The field types (docs/axkit/item-apps.md IA-4.2): their names in the file and as spoken, the empty value, how a value
+/// The field types (docs/axKit/item-apps.md IA-4.2): their names in the file and as spoken, the empty value, how a value
 /// is read out, and how a typed text becomes a value. Dates are read and typed in English whatever the system's
 /// language, since the program runs without the globalization data.
 /// </summary>
@@ -22,7 +22,7 @@ public static class FieldTypes
     public const string Choice = "choice";
     public const string Link = "link";
 
-    /// <summary>axPass's two (docs/axkit/item-apps.md section 6): a user name, read and typed as text; a password, never read out.</summary>
+    /// <summary>axPass's two (docs/axKit/item-apps.md section 6): a user name, read and typed as text; a password, never read out.</summary>
     public const string UserName = "username";
 
     public const string Password = "password";

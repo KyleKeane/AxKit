@@ -4,7 +4,7 @@ using AxTerminal.Core;
 namespace AxTerminal;
 
 /// <summary>
-/// axTerminal's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AT-1.5): <c>AxKit.exe terminal [&lt;folder&gt;]</c>
+/// axTerminal's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md AT-1.5): <c>AxKit.exe terminal [&lt;folder&gt;]</c>
 /// calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one folder of the command line,
 /// the settings and <see cref="TerminalForm"/>.
 /// </summary>
@@ -21,7 +21,7 @@ public static class AxTerminalApp
         """;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axterminal", Usage, args, arguments =>
+        AppHost.Run(Name, "axTerminal", Usage, args, arguments =>
         {
             if (!AppHost.OnePath(Name, "folder", Usage, arguments, out var path))
             {

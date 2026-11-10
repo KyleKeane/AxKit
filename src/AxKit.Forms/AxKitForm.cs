@@ -6,7 +6,7 @@ using static AxKit.Forms.User32;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The window every app of the bundle is built on (docs/axkit/SPEC.md AX-6.5): what the windows share and no app
+/// The window every app of the bundle is built on (docs/axKit/SPEC.md AX-6.5): what the windows share and no app
 /// copies. One class in partial files, one per section: this file (the hooks a window fills in, the menus every
 /// window has, the keys, the window's place, the settings, the ways out to the system), <c>AxKitForm.Notices.cs</c>
 /// (the notice flow with its one focus rule, and <see cref="Announce"/>), <c>AxKitForm.Find.cs</c> (find in a text
@@ -15,7 +15,7 @@ namespace AxKit.Forms;
 /// <c>AxKitForm.Palette.cs</c> (the command palette, AX-10). A window derives from it, adds its controls (the
 /// <see cref="Overlay"/> first, so that it docks over the rest), and fills in the hooks listed under "what the window
 /// fills in". It grew out of axDown's window (the editor shell) on the third copy, axGIT (2026-10-18); the notice and
-/// focus core was written again on 2026-10-23 (docs/axkit/review-2026-10-23.md, 5.3).
+/// focus core was written again on 2026-10-23 (docs/axKit/review-2026-10-23.md, 5.3).
 /// </summary>
 public abstract partial class AxKitForm : Form
 {
@@ -48,7 +48,7 @@ public abstract partial class AxKitForm : Form
         WireAnnouncing();
         // The theme file now, before the window's own constructor, which may take a display setting from it (TH-6);
         // painted in OnLoad once the controls exist. A Windows app theme change repaints every class from the theme's
-        // defaults (docs/axkit/theme.md TH-3).
+        // defaults (docs/axKit/theme.md TH-3).
         LoadTheme();
         SystemColorsChanged += (_, _) => PaintTheme(this);
         _paletteSpeak.Tick += (_, _) => SayFirstPaletteMatch();
@@ -226,7 +226,7 @@ public abstract partial class AxKitForm : Form
     /// <summary>The last item of every first menu (AX-6): Exit, closing the window as Alt+F4 does, which is Windows' own key.</summary>
     protected ToolStripMenuItem CreateExitItem() => new("E&xit", null, (_, _) => Close()) { ShortcutKeyDisplayString = "Alt+F4" };
 
-    /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Font…, Larger text, Smaller text, Windows text size, and the Theme submenu (docs/axkit/theme.md TH-4).</summary>
+    /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Font…, Larger text, Smaller text, Windows text size, and the Theme submenu (docs/axKit/theme.md TH-4).</summary>
     protected ToolStripMenuItem CreateTextMenu(params ToolStripItem[] own)
     {
         var menu = new ToolStripMenuItem("&Text");
@@ -272,7 +272,7 @@ public abstract partial class AxKitForm : Form
     /// <summary>Help: Keyboard shortcuts (F1, the base's key), User guide, then a submenu of pages opened in the browser. The command palette, updates and About are the axKit menu's.</summary>
     protected ToolStripMenuItem CreateHelpMenu(Func<string> userGuide, string resourcesLabel, IEnumerable<(string Label, string Url)> pages)
     {
-        // Kept for a question about this window (docs/axkit/ai-help.md AH-6.2), which gives Claude the guide to answer from.
+        // Kept for a question about this window (docs/axKit/ai-help.md AH-6.2), which gives Claude the guide to answer from.
         _userGuide = userGuide;
         var help = new ToolStripMenuItem("&Help");
         help.DropDownItems.Add(Item("&Keyboard shortcuts", () => ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts)), BundleKeys.Shortcuts));
@@ -289,7 +289,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// Shift+F10, the Applications key and a right click (docs/axfile/SPEC.md AF-D13; from axFile on its second use,
+    /// Shift+F10, the Applications key and a right click (docs/axFile/SPEC.md AF-D13; from axFile on its second use,
     /// axProcess, 2026-10-24): the menu bar's menu with the mnemonic <paramref name="letter"/>, opened as Alt and the
     /// letter open it, so that NVDA reads its first item; a context menu of its own never read its first item the first
     /// time it opened, however it was shown (2026-10-23). It waits until the keys that asked are up: F10 is itself the
@@ -328,7 +328,7 @@ public abstract partial class AxKitForm : Form
 
     // ---- the window ----
 
-    /// <summary>The theme onto the controls before the first paint (docs/axkit/theme.md TH-3.1).</summary>
+    /// <summary>The theme onto the controls before the first paint (docs/axKit/theme.md TH-3.1).</summary>
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
@@ -344,7 +344,7 @@ public abstract partial class AxKitForm : Form
         StartUpWork();
     }
 
-    /// <summary>What the automation channel reports for <c>state</c> (docs/axkit/automation.md): the title, the notice, the status bar's texts.</summary>
+    /// <summary>What the automation channel reports for <c>state</c> (docs/axKit/automation.md): the title, the notice, the status bar's texts.</summary>
     internal object AutomationState() => new
     {
         title = Text,
@@ -361,7 +361,7 @@ public abstract partial class AxKitForm : Form
             SettingsNotRead(error);
         }
 
-        // Never in a test run (docs/axkit/automation.md): a network call, and a logged error when it fails. Never in the
+        // Never in a test run (docs/axKit/automation.md): a network call, and a logged error when it fails. Never in the
         // Store's copy, which the Microsoft Store keeps current and which asks GitHub only on Check for updates (AX-13.3).
         if (Settings.CheckForUpdates && !BundleInfo.IsDevelopmentBuild && !AutomationChannel.Requested && !PackageIdentity.IsPackaged)
         {
@@ -521,7 +521,7 @@ public abstract partial class AxKitForm : Form
         return ProcessWindowKey(keyData) || RunCommandKey(keyData) || base.ProcessCmdKey(ref msg, keyData);
     }
 
-    // ---- the window's commands (docs/axkit/app-kit.md AK-2) ----
+    // ---- the window's commands (docs/axKit/app-kit.md AK-2) ----
 
     private readonly List<Command> _commands = [];
 
@@ -552,7 +552,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// The window's last actions for a report (docs/axkit/reports.md RP-4.1): every command run by key, menu or palette,
+    /// The window's last actions for a report (docs/axKit/reports.md RP-4.1): every command run by key, menu or palette,
     /// what the window said, and the notices it showed; twenty at most.
     /// </summary>
     protected internal RecentActions Recent { get; } = new();

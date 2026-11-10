@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   The apps of the bundle, read off Dispatch.Apps in src\AxKit.Core\Dispatch.cs, for the scripts that run before a
-  build or without one: run.ps1, tools\make-icon.ps1 and tools\new-app.ps1 (docs/axkit/app-kit.md AK-4.1).
+  build or without one: run.ps1, tools\make-icon.ps1 and tools\new-app.ps1 (docs/axKit/app-kit.md AK-4.1).
 
 .DESCRIPTION
   Dot-source it, then call Get-AxKitApps with the repository's root. Each app is an object with Name (as shown,

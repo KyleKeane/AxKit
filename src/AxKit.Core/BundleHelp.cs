@@ -3,7 +3,7 @@ using System.Text;
 namespace AxKit.Core;
 
 /// <summary>
-/// The start of every window's F1 text (docs/axkit/app-kit.md AK-2.3, bundle AX-7.2, AX-8.2): the first line naming
+/// The start of every window's F1 text (docs/axKit/app-kit.md AK-2.3, bundle AX-7.2, AX-8.2): the first line naming
 /// the text's own keys, then the section of the keys every window of axKit has, with the app's own lines in it, written
 /// once here. Each app's <c>HelpText.Shortcuts</c> is this followed by its own sections.
 /// </summary>

@@ -2,7 +2,7 @@ using AxProcess.Core;
 
 namespace AxProcess.Tests;
 
-/// <summary>The Services and Startup views (docs/axprocess/SPEC.md PR-4, PR-5): labels, the Service Control Manager's numbers, the StartupApproved bytes, the program of a command.</summary>
+/// <summary>The Services and Startup views (docs/axProcess/SPEC.md PR-4, PR-5): labels, the Service Control Manager's numbers, the StartupApproved bytes, the program of a command.</summary>
 public sealed class ServiceAndStartupTests
 {
     [Fact]

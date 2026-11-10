@@ -2,13 +2,13 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>axDown's settings file (docs/axdown/SPEC.md AD-8): round trip, defaults, sanity checks.</summary>
+/// <summary>axDown's settings file (docs/axDown/SPEC.md AD-8): round trip, defaults, sanity checks.</summary>
 public sealed class EditorSettingsTests
 {
     [Fact]
     public void Settings_round_trip_through_the_file()
     {
-        var path = Path.Combine(Path.GetTempPath(), "axdown-tests", Guid.NewGuid().ToString("N"), "axdown.json");
+        var path = Path.Combine(Path.GetTempPath(), "axdown-tests", Guid.NewGuid().ToString("N"), "axDown.json");
         try
         {
             var settings = new EditorSettings { FontFamily = "Consolas", FontSize = 14, FontBold = true, CheckForUpdates = false };
@@ -39,7 +39,7 @@ public sealed class EditorSettingsTests
     [Fact]
     public void Missing_file_gives_the_defaults()
     {
-        var settings = EditorSettings.Load(Path.Combine(Path.GetTempPath(), "axdown-tests", Guid.NewGuid().ToString("N"), "axdown.json"), out var error);
+        var settings = EditorSettings.Load(Path.Combine(Path.GetTempPath(), "axdown-tests", Guid.NewGuid().ToString("N"), "axDown.json"), out var error);
         Assert.Null(error);
         Assert.Null(settings.FontFamily);
         Assert.Equal(0, settings.FontSize);
@@ -51,7 +51,7 @@ public sealed class EditorSettingsTests
     public void Odd_values_are_put_right_after_loading()
     {
         using var temp = new TempFolder("axdown-tests");
-        var path = Path.Combine(temp.Path, "axdown.json");
+        var path = Path.Combine(temp.Path, "axDown.json");
         File.WriteAllText(path, "{ \"fontFamily\": \"  \", \"fontSize\": 500, \"window\": { \"width\": 10, \"height\": 10 }, \"recentFiles\": [\" \", \"C:\\\\work\\\\a.md\"] }");
         var settings = EditorSettings.Load(path, out var error);
         Assert.Null(error);
@@ -61,7 +61,7 @@ public sealed class EditorSettingsTests
         Assert.Equal([@"C:\work\a.md"], settings.RecentFiles);
     }
 
-    /// <summary>File → Open recent file (docs/axdown/SPEC.md AD-4.1): the newest first, each path once whatever its case, ten at most.</summary>
+    /// <summary>File → Open recent file (docs/axDown/SPEC.md AD-4.1): the newest first, each path once whatever its case, ten at most.</summary>
     [Fact]
     public void Recent_files_keep_the_newest_first_once_each_and_ten_at_most()
     {

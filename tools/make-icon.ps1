@@ -126,7 +126,7 @@ function Write-Icon([string]$out, [string]$text, [int[]]$rgb) {
     Write-Host ("Wrote {0} ({1:N0} bytes, sizes {2})" -f $out, (Get-Item $out).Length, ($sizes -join ', '))
 }
 
-# One image of the MSIX package (docs/axkit/store-distribution.md 3.2): the same drawing as the icon's, at one size,
+# One image of the MSIX package (docs/axKit/store-distribution.md 3.2): the same drawing as the icon's, at one size,
 # as a PNG file, the folder made when it is missing.
 function Write-Png([string]$out, [int]$size, [string]$text, [int[]]$rgb) {
     $color = [System.Drawing.Color]::FromArgb(255, $rgb[0], $rgb[1], $rgb[2])
@@ -152,7 +152,7 @@ if ($Png) {
     $bundle = $apps | Where-Object { $_.Verb -eq 'claude' } | Select-Object -First 1
     if (-not $bundle) { $bundle = $apps[0] }
     Write-Png (Join-Path $folder 'StoreLogo.png') 50 $bundle.Icon.Letters $bundle.Icon.Rgb
-    # The listing's own logo, 300 pixels, for Partner Center (docs/axkit/store-listing.md): beside the package folder
+    # The listing's own logo, 300 pixels, for Partner Center (docs/axKit/store-listing.md): beside the package folder
     # (publish\msix\StoreLogo-300.png), never inside it, where it would ship.
     Write-Png (Join-Path (Split-Path -Parent (Split-Path -Parent $folder)) 'StoreLogo-300.png') 300 $bundle.Icon.Letters $bundle.Icon.Rgb
     Write-Host "Wrote the package's images for $($apps.Count) apps and the store logo into $folder, and the listing's 300 pixel logo beside it"

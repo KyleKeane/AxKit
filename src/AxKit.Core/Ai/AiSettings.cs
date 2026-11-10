@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace AxKit.Core.Ai;
 
 /// <summary>
-/// AI help's one setting for the bundle (docs/axkit/ai-help.md AH-1.1), <c>%APPDATA%\AxKit\ai-help.json</c> through
+/// AI help's one setting for the bundle (docs/axKit/ai-help.md AH-1.1), <c>%APPDATA%\AxKit\ai-help.json</c> through
 /// <see cref="SettingsFile"/>: off by default; the folders Claude may read (AH-2.3); the model, empty for Claude Code's
 /// default; and Claude Code's program when it is not where axKit looks (<see cref="ClaudeCodeProgram"/>), a relative
 /// path taken from the settings folder (the automation's fake lives there). Read again at every use, since another

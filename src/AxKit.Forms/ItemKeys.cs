@@ -1,7 +1,7 @@
 namespace AxKit.Forms;
 
 /// <summary>
-/// The keys every item app's window shares (docs/axkit/item-apps.md IA-3; from axTask on its second use, axPass,
+/// The keys every item app's window shares (docs/axKit/item-apps.md IA-3; from axTask on its second use, axPass,
 /// 2026-10-24), handled by <see cref="ItemForm"/>. Each app's key table includes <see cref="All"/> and adds its own,
 /// as an editor's includes <c>EditorKeys</c>; a key is changed here for both apps.
 /// </summary>

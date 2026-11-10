@@ -9,7 +9,7 @@ namespace AxKit.Forms;
 /// </summary>
 public static class Announcer
 {
-    /// <summary>Every notification raised, with whether it interrupts: the automation channel's record of what was said (docs/axkit/automation.md).</summary>
+    /// <summary>Every notification raised, with whether it interrupts: the automation channel's record of what was said (docs/axKit/automation.md).</summary>
     public static event Action<string, bool>? Raised;
 
     public static bool Raise(Control source, string text, bool interrupt)

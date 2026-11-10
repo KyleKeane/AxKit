@@ -60,6 +60,6 @@ public static class HelpText
           Enter: go to where it happened, the folder list on the entry it made, moved or selected. Ctrl+Z: undo this line, whatever its place; Ctrl+Z in the folder list undoes operations only. Ctrl+I: its section, number and time, "Operations, 3 of 12, 21:04"
         """ + BundleHelp.NoticesSection("axFile", "the lists");
 
-    /// <summary>docs/axfile/user-guide.md, embedded by AxFile.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axfile/user-guide.md");
+    /// <summary>docs/axFile/user-guide.md, embedded by AxFile.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axFile/user-guide.md");
 }

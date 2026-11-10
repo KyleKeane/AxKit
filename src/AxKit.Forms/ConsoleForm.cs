@@ -4,10 +4,10 @@ using AxKit.Core.Transcript;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The window of a console app (docs/axkit/SPEC.md AX-6.5; docs/axterminal/SPEC.md AT-2): a program in a pseudo
+/// The window of a console app (docs/axKit/SPEC.md AX-6.5; docs/axTerminal/SPEC.md AT-2): a program in a pseudo
 /// console shown as a transcript with single-key navigation (<see cref="TranscriptView"/>), a multi-line field at
 /// the bottom (or the control area in its place), a status bar with two labels, and everything axClaude's window and
-/// axTerminal's window had twice until 2026-10-23 (docs/axkit/review-2026-10-23.md, 5.1): the pty bridge with its
+/// axTerminal's window had twice until 2026-10-23 (docs/axKit/review-2026-10-23.md, 5.1): the pty bridge with its
 /// inbox and quiet timer, the paced write queue with one pump, the recording, the export, the find, the signals and
 /// the music, the focus keys, the bookmark toggle, the notice hooks and the font. One class in partial files: this
 /// one (the controls, the hooks a console window fills in, the keys, the focus, the close), <c>ConsoleForm.Process.cs</c>
@@ -74,7 +74,7 @@ public abstract partial class ConsoleForm : AxKitForm
         _inputName.Padding = new Padding(4, 0, 0, 0);
         _inputName.Dock = DockStyle.Bottom;
         Input.VisibleChanged += (_, _) => _inputName.Visible = Input.Visible;
-        // Their colours are the theme's classes field and band (docs/axkit/theme.md TH-2), painted by the window base
+        // Their colours are the theme's classes field and band (docs/axKit/theme.md TH-2), painted by the window base
         // with every other control; the defaults are the tints of 2026-11-08.
         ThemePainter.Mark(Input, ThemePainter.Field);
         ThemePainter.Mark(_inputName, ThemePainter.Band);
@@ -226,7 +226,7 @@ public abstract partial class ConsoleForm : AxKitForm
     /// <summary>Everything is announced on the view, the control NVDA reads the window by.</summary>
     protected override Control AnnounceSource => Transcript;
 
-    /// <summary>A console window's announcements are the user's conversation and the shell's output: a report gets its commands and notices alone (docs/axkit/reports.md RP-4.2).</summary>
+    /// <summary>A console window's announcements are the user's conversation and the shell's output: a report gets its commands and notices alone (docs/axKit/reports.md RP-4.2).</summary>
     protected override bool RecordsAnnouncements => false;
 
     /// <summary>A reader keeps their line while the notice hides the view (axClaude FR-3.3): the notice opened from the view.</summary>

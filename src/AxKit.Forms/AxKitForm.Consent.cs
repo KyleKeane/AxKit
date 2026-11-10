@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The reminder before an access layer first connects to a program or service (docs/axkit/SPEC.md AX-11.4, AX-11.5):
+/// The reminder before an access layer first connects to a program or service (docs/axKit/SPEC.md AX-11.4, AX-11.5):
 /// a notice in the window with one check box and two buttons, once per app and program, kept in
 /// <see cref="AppPaths.ConsentFile"/>. Install it now (AX-2.9) and Add axKit to Claude Code ask the same way.
 /// </summary>
@@ -27,7 +27,7 @@ public abstract partial class AxKitForm
     protected bool HasConsent(ConsentTarget target, Action connect, Action notNow) =>
         HasConsent(target, $"Before {AppName} connects to {target.Program}", "&Connect", connect, notNow);
 
-    /// <param name="app">The app the agreement is recorded under: this window's unless the caller is a service every window shares (AI help, docs/axkit/ai-help.md AH-1.2).</param>
+    /// <param name="app">The app the agreement is recorded under: this window's unless the caller is a service every window shares (AI help, docs/axKit/ai-help.md AH-1.2).</param>
     protected bool HasConsent(ConsentTarget target, string title, string button, Action connect, Action notNow, string? app = null)
     {
         var who = app ?? AppName;

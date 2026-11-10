@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace AxKit.Forms;
 
 /// <summary>
-/// A secret on the clipboard (docs/axkit/security-audit-2026-10-24.md S-15; axPass PW-5.4): the text with the marks
+/// A secret on the clipboard (docs/axKit/security-audit-2026-10-24.md S-15; axPass PW-5.4): the text with the marks
 /// password managers set, which Windows clipboard history (Windows+V), the cloud clipboard and clipboard monitors such
 /// as axClip honour by keeping no copy: <c>ExcludeClipboardContentFromMonitorProcessing</c>,
 /// <c>CanIncludeInClipboardHistory</c> 0, <c>CanUploadToCloudClipboard</c> 0 and the older

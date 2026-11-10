@@ -2,7 +2,7 @@ using AxHelp.Core;
 
 namespace AxHelp.Tests;
 
-/// <summary>axHelp's pure code (docs/axhelp/SPEC.md HE-3, HE-5): the exchanges kept, the matches and the settings file.</summary>
+/// <summary>axHelp's pure code (docs/axHelp/SPEC.md HE-3, HE-5): the exchanges kept, the matches and the settings file.</summary>
 public sealed class HelpTests : IDisposable
 {
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "axhelp-tests-" + Guid.NewGuid().ToString("N"));
@@ -55,7 +55,7 @@ public sealed class HelpTests : IDisposable
     [Fact]
     public void The_settings_round_trip_with_the_hotkey_default_and_the_exchanges()
     {
-        var path = Path.Combine(_folder, "axhelp.json");
+        var path = Path.Combine(_folder, "axHelp.json");
         var settings = HelpSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal("Windows+Alt+H", settings.Key.ToString());

@@ -5,7 +5,7 @@ using AxKit.Forms;
 namespace AxJSON;
 
 /// <summary>
-/// axJSON's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AJ-1): <c>AxKit.exe json [&lt;file&gt;]</c>
+/// axJSON's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md AJ-1): <c>AxKit.exe json [&lt;file&gt;]</c>
 /// calls <see cref="Run"/>, which hands the editor shell (<c>AxKit.Forms.EditorHost</c>, <c>TextEditorForm</c>) what
 /// axJSON is: its name and verb, its settings file, its file types, its texts, its JSON keys, its resources and its
 /// Format command (AJ-D4).
@@ -24,7 +24,7 @@ public static class AxJSONApp
     public static readonly EditorApp App = new(
         Name: "axJSON",
         Verb: Dispatch.AxJSON,
-        SettingsName: "axjson",
+        SettingsName: "axJSON",
         FileFilter: "JSON files (*.json;*.jsonc)|*.json;*.jsonc|All files (*.*)|*.*",
         DefaultExtension: "json",
         Shortcuts: HelpText.Shortcuts,

@@ -3,8 +3,8 @@ using System.Net.Http.Headers;
 namespace AxKit.Core;
 
 /// <summary>
-/// The one HTTP client of axKit's own code (docs/axkit/SPEC.md AX-11.11, B-15): the updater's check and downloads
-/// (AX-3) and the report sender (docs/axkit/reports.md RP-6), both to GitHub over HTTPS and nothing else. Ten
+/// The one HTTP client of axKit's own code (docs/axKit/SPEC.md AX-11.11, B-15): the updater's check and downloads
+/// (AX-3) and the report sender (docs/axKit/reports.md RP-6), both to GitHub over HTTPS and nothing else. Ten
 /// minutes for a large zip; each call sets its own shorter limit through its cancellation. The User-Agent is
 /// "AxKit/&lt;version&gt;", and nothing else about the user travels in a header.
 /// </summary>

@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>Lines and columns of an edit control's text (docs/axdown/SPEC.md AD-6.4, AD-3.6): the caret's place, and a place put back.</summary>
+/// <summary>Lines and columns of an edit control's text (docs/axDown/SPEC.md AD-6.4, AD-3.6): the caret's place, and a place put back.</summary>
 public sealed class TextLinesTests
 {
     private const string Text = "ab\r\ncd\r\n\r\nefg";

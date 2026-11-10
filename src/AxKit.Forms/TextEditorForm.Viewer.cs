@@ -5,7 +5,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The viewer's own part of the editor shell (docs/axpreview/SPEC.md AP-D4): what the shell does only in its
+/// The viewer's own part of the editor shell (docs/axPreview/SPEC.md AP-D4): what the shell does only in its
 /// read-only mode, axPreview. The app names here (Edit in axDown, Edit in axJSON, the <c>.json</c> rule, Play in
 /// axMedia) are axPreview's rule of where a file goes on (AP-1.4, AP-7.3), written where the viewer lives rather than
 /// in the viewer's data, since the shell makes the menu items. In its own file since 2026-10-23 (review 5.6); the
@@ -201,7 +201,7 @@ public sealed partial class TextEditorForm
         string path;
         try
         {
-            var folder = Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axpreview");
+            var folder = Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axPreview");
             Directory.CreateDirectory(folder);
             path = Path.Combine(folder, $"clipboard-{DateTime.Now:yyyyMMdd-HHmmss}.png");
             using (image)

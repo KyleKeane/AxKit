@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// The file an item of an item app is (docs/axkit/item-apps.md IA-4.5): its name from its Title, and a free name beside
+/// The file an item of an item app is (docs/axKit/item-apps.md IA-4.5): its name from its Title, and a free name beside
 /// the taken ones. From AxTask.Core's <c>ItemFolder</c> on its second use, the reports list (2026-11-07), unchanged.
 /// </summary>
 public static class ItemFiles

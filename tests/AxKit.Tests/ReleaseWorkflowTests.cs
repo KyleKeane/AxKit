@@ -4,10 +4,10 @@ namespace AxKit.Tests;
 
 /// <summary>
 /// The release workflow publishes, zips and packages in a job of its own, the "release" environment's, after the tests
-/// (docs/axkit/SPEC.md AX-3.4), and says in every release's notes that the program carries no Windows signature. Read
+/// (docs/axKit/SPEC.md AX-3.4), and says in every release's notes that the program carries no Windows signature. Read
 /// off .github/workflows/release.yml, as <see cref="LayoutTests"/> reads the sources, so that a later edit cannot put
 /// the environment's secret beside the tests and their packages (security audit S-30) or drop the sentence. The
-/// Azure signing steps that sat here were retired on 2026-11-09 (docs/axkit/code-signing.md).
+/// Azure signing steps that sat here were retired on 2026-11-09 (docs/axKit/code-signing.md).
 /// </summary>
 public sealed class ReleaseWorkflowTests
 {
@@ -33,7 +33,7 @@ public sealed class ReleaseWorkflowTests
         var msix = Index(".\\publish.ps1 -Msix");
 
         // The package job, the "release" environment, publishes: the reporter token of the reports goes into that build
-        // (docs/axkit/reports.md RP-6.2), and the build job, which runs the tests and their packages, never holds it.
+        // (docs/axKit/reports.md RP-6.2), and the build job, which runs the tests and their packages, never holds it.
         Assert.True(build < package && package < publish && publish < zip && zip < draft, "the build job tests; the package job publishes the folder, then zips");
 
         // The Store's package (AX-13.6) is built after the zip, in the same job, and attached to the draft with it.

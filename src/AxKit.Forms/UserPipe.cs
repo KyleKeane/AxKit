@@ -8,7 +8,7 @@ namespace AxKit.Forms;
 /// <summary>
 /// A named pipe for the current user alone (security audit S-11): its access list lets this user's processes in and
 /// denies every client over the network; and which process is at the other end. From the automation channel on its
-/// second use, the MCP pipes (docs/axkit/mcp.md MC-6.2, MC-6.3), 2026-10-24.
+/// second use, the MCP pipes (docs/axKit/mcp.md MC-6.2, MC-6.3), 2026-10-24.
 /// </summary>
 public static class UserPipe
 {

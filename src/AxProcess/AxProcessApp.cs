@@ -4,7 +4,7 @@ using AxProcess.Core;
 namespace AxProcess;
 
 /// <summary>
-/// axProcess's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md PR-1.2): <c>AxKit.exe process</c> calls
+/// axProcess's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md PR-1.2): <c>AxKit.exe process</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the settings and <see cref="ProcessForm"/>.
 /// It takes no path; any argument is reported with the usage text.
 /// </summary>
@@ -20,7 +20,7 @@ public static class AxProcessApp
         """;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axprocess", Usage, args, arguments =>
+        AppHost.Run(Name, "axProcess", Usage, args, arguments =>
         {
             if (arguments.Length > 0)
             {

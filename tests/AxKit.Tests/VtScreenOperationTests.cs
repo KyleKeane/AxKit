@@ -5,7 +5,7 @@ using Screen = AxKit.Core.Vt.Screen;
 namespace AxKit.Tests;
 
 /// <summary>
-/// The screen's operations, one fact each (docs/axclaude/SPEC.md §7.5, docs/axterminal/SPEC.md AT-4): the scroll
+/// The screen's operations, one fact each (docs/axClaude/SPEC.md §7.5, docs/axTerminal/SPEC.md AT-4): the scroll
 /// region, inserted and deleted lines, the kinds of erase, a wide character at the last column, a combining mark, a
 /// home without an erase. The line identity across them is <see cref="VtScreenTests"/>.
 /// </summary>

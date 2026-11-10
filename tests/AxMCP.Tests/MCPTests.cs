@@ -6,7 +6,7 @@ using AxMCP.Core;
 
 namespace AxMCP.Tests;
 
-/// <summary>axMCP's pure code (docs/axmcp/SPEC.md): the servers from the three files, a command line split, a schema to fields and back, a result to text, and the client against a fake server in memory.</summary>
+/// <summary>axMCP's pure code (docs/axMCP/SPEC.md): the servers from the three files, a command line split, a schema to fields and back, a result to text, and the client against a fake server in memory.</summary>
 public sealed class MCPTests : IDisposable
 {
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "axmcp-tests-" + Guid.NewGuid().ToString("N"));
@@ -87,7 +87,7 @@ public sealed class MCPTests : IDisposable
     [Fact]
     public void A_missing_settings_file_gives_the_defaults_and_a_read_one_is_cleaned()
     {
-        var path = Path.Combine(_folder, "axmcp.json");
+        var path = Path.Combine(_folder, "axMCP.json");
         var settings = MCPSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Empty(settings.Servers);

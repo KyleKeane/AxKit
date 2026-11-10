@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The command palette's window side (docs/axkit/SPEC.md AX-10): the window's menu bar read into entries, and the
+/// The command palette's window side (docs/axKit/SPEC.md AX-10): the window's menu bar read into entries, and the
 /// marks on the submenus it leaves out or refreshes first. The notice and its keys are the window base's
 /// (<see cref="AxKitForm"/>); the lines and the search are <see cref="Palette"/>, tested.
 /// </summary>

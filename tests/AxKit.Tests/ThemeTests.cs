@@ -3,7 +3,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The theme file (docs/axkit/theme.md TH-1, TH-5): what is read, what is kept, and that no app paints a colour of its own.</summary>
+/// <summary>The theme file (docs/axKit/theme.md TH-1, TH-5): what is read, what is kept, and that no app paints a colour of its own.</summary>
 public sealed class ThemeTests
 {
     [Fact]
@@ -22,7 +22,7 @@ public sealed class ThemeTests
         Assert.Contains("\"display\": {", Theme.Template());
     }
 
-    /// <summary>docs/axkit/theme.md TH-6: the display settings, read whatever enabled says, written into a file with or without them.</summary>
+    /// <summary>docs/axKit/theme.md TH-6: the display settings, read whatever enabled says, written into a file with or without them.</summary>
     [Fact]
     public void Word_wrap_is_read_from_the_display_settings_and_written_beside_what_is_there()
     {
@@ -156,7 +156,7 @@ public sealed class ThemeTests
     [Fact]
     public void No_app_paints_a_colour_of_its_own()
     {
-        // docs/axkit/theme.md TH-5.2, bundle AX-7.7: a colour comes from the theme's classes, never from a window's code.
+        // docs/axKit/theme.md TH-5.2, bundle AX-7.7: a colour comes from the theme's classes, never from a window's code.
         var root = LayoutTests.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
@@ -178,6 +178,6 @@ public sealed class ThemeTests
             }
         }
 
-        Assert.True(offenders.Count == 0, "A colour set outside the theme's classes (docs/axkit/theme.md TH-5.2): " + string.Join("; ", offenders));
+        Assert.True(offenders.Count == 0, "A colour set outside the theme's classes (docs/axKit/theme.md TH-5.2): " + string.Join("; ", offenders));
     }
 }

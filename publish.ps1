@@ -9,10 +9,10 @@
   script then runs install.ps1 from publish\win-x64 on this machine (Start menu entries, File Explorer entries and
   the console commands; see install.ps1 -? for details and -Uninstall).
 
-  The release workflow calls it twice (docs/axkit/code-signing.md): -NoInstall -NoZip builds the folder, AxKit.exe is
+  The release workflow calls it twice (docs/axKit/code-signing.md): -NoInstall -NoZip builds the folder, AxKit.exe is
   signed for Windows in it, then -ZipOnly zips the folder as it is. Neither installs anything.
 
-  -Msix builds the MSIX package for the Microsoft Store instead (docs/axkit/store-distribution.md 3.1): a folder
+  -Msix builds the MSIX package for the Microsoft Store instead (docs/axKit/store-distribution.md 3.1): a folder
   publish into publish\msix\package (every file as a file; the package is the single file), AppxManifest.xml from the
   apps listing (tools\make-manifest.ps1), the images (tools\make-icon.ps1 -Png), then makeappx from the Windows SDK
   (Windows Kits when the SDK is installed, as on the GitHub runners; otherwise tools\get-sdk-tools.ps1 fetches
@@ -42,7 +42,7 @@ $root = $PSScriptRoot
 $out = Join-Path $root 'publish\win-x64'
 $exe = Join-Path $out 'AxKit.exe'
 
-# The reporter account's token for the reports (docs/axkit/reports.md RP-6.2), from the release secret when it is
+# The reporter account's token for the reports (docs/axKit/reports.md RP-6.2), from the release secret when it is
 # set: written into the file the build embeds before a publish, and removed again whatever the build did, so that it
 # never stays.
 $tokenTool = Join-Path $root 'tools\reporter-token.ps1'
@@ -50,7 +50,7 @@ function Set-ReporterToken {
     if (-not [string]::IsNullOrWhiteSpace($env:AXKIT_REPORTER_TOKEN)) {
         & $tokenTool -Token $env:AXKIT_REPORTER_TOKEN
     } else {
-        Write-Host "No AXKIT_REPORTER_TOKEN in the environment: this build cannot send reports (docs/axkit/reports.md RP-6.2)."
+        Write-Host "No AXKIT_REPORTER_TOKEN in the environment: this build cannot send reports (docs/axKit/reports.md RP-6.2)."
     }
 }
 
@@ -171,7 +171,7 @@ if ($ZipOnly) {
     Copy-Item (Join-Path $root 'PRIVACY.md') $out -Force
     Copy-Item (Join-Path $root 'THIRD-PARTY-NOTICES.md') $out -Force
     # The bundle's guide: install, the apps, update, remove. Each app's own guide is inside it, under Help.
-    Copy-Item (Join-Path $root 'docs\axkit\README.md') (Join-Path $out 'README.md') -Force
+    Copy-Item (Join-Path $root 'docs\axKit\README.md') (Join-Path $out 'README.md') -Force
     Get-ChildItem $out -Filter '*.pdb' | Remove-Item -Force
     # The list of apps in the zip as apps.json, for install.ps1.
     [System.IO.File]::WriteAllText((Join-Path $out 'apps.json'), (Get-AppsListing $exe))

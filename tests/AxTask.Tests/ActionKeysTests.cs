@@ -4,7 +4,7 @@ using AxTask.Core;
 
 namespace AxTask.Tests;
 
-/// <summary>The Ctrl+number action keys of a list (docs/axkit/reports.md RP-8).</summary>
+/// <summary>The Ctrl+number action keys of a list (docs/axKit/reports.md RP-8).</summary>
 public sealed class ActionKeysTests
 {
     private const string ListText = """

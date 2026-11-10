@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The Recently closed list of the axKit menu (docs/axkit/SPEC.md AX-9.4): the order, the doubles, the cap, the titles and the file.</summary>
+/// <summary>The Recently closed list of the axKit menu (docs/axKit/SPEC.md AX-9.4): the order, the doubles, the cap, the titles and the file.</summary>
 public sealed class RecentlyClosedTests
 {
     private static string TempFolder() => Path.Combine(Path.GetTempPath(), "axkit-tests", Guid.NewGuid().ToString("N"));

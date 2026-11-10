@@ -1,0 +1,10 @@
+# axDown: Show current file in on a file that is gone says "File missing" and starts nothing (bundle AX-9.10; one wording in
+# every window since 2026-11-09, where axDown started File Explorer on the folder before).
+file home\AxKit\axDown.json {"checkForUpdates": false}
+mkdir sub
+file sub\notes.md # Notes\n\nA line.
+start down {temp}\sub\notes.md
+expect focus notes.md
+run rmdir /s /q sub
+keys ctrl+w
+expect said ! File missing

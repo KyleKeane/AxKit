@@ -5,7 +5,7 @@ using AxKit.Core;
 namespace AxClip.Core;
 
 /// <summary>
-/// Everything axClip remembers between runs (SPEC.md CP-6.1), in <c>%APPDATA%\AxKit\axclip.json</c> through the
+/// Everything axClip remembers between runs (SPEC.md CP-6.1), in <c>%APPDATA%\AxKit\axClip.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font and the update check from <see cref="WindowSettings"/>, the hotkey,
 /// Start with Windows and Say the first match while typing from <see cref="HotkeySettings"/>, Keep history between
 /// runs, and the history only while that is on (CP-D2).
@@ -28,7 +28,7 @@ public sealed class ClipSettings : HotkeySettings
     [JsonPropertyName("protectedHistory")]
     public string? ProtectedHistory { get; set; }
 
-    public static string DefaultPath => AppPaths.SettingsFile("axclip");
+    public static string DefaultPath => AppPaths.SettingsFile("axClip");
 
     public static ClipSettings Load(string path, out string? error)
     {

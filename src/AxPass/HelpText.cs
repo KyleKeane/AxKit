@@ -44,6 +44,6 @@ public static class HelpText
           Ctrl+S: nothing to save here; every change is written to the database at once, by KeePassXC's tool
         """ + BundleHelp.NoticesSection("axPass", "the panes");
 
-    /// <summary>docs/axpass/user-guide.md, embedded by AxPass.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axpass/user-guide.md");
+    /// <summary>docs/axPass/user-guide.md, embedded by AxPass.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axPass/user-guide.md");
 }

@@ -12,14 +12,14 @@ Git ignores everything the script makes, so a test pass never changes the reposi
 
 ## The app folders
 
-- `axfile`: navigation with levels, type-ahead, hidden entries, filter and sort, selection, file operations, undo, the Actions list, the hand-overs to axMedia and axPreview.
-- `axmedia`: a first queue, a replacement queue, two folders to add, one long file with the time spoken every 5 seconds, two short files for the end of the queue, a video, files that cannot play.
-- `axpreview`: a readme with headings, links, a list, a quote and a table; plain text; a log; JSON; a binary file; a file over 32 MB.
-- `axdown`: the four encodings, a long Markdown file for every navigation key, a file to change on disk, a file that is not text.
-- `axjson`: a valid file, a broken file, a one-line file to format, a formatted file.
-- `axgit`: a scratch repository with history, a second branch, changes of every kind and its own local remote; a folder that is not a repository.
-- `axterminal`: a start folder with a subfolder and small scripts: a question, many lines, a long run, a failure.
-- `axclaude`: a folder Claude has never seen, an empty folder, a project folder.
+- `axFile`: navigation with levels, type-ahead, hidden entries, filter and sort, selection, file operations, undo, the Actions list, the hand-overs to axMedia and axPreview.
+- `axMedia`: a first queue, a replacement queue, two folders to add, one long file with the time spoken every 5 seconds, two short files for the end of the queue, a video, files that cannot play.
+- `axPreview`: a readme with headings, links, a list, a quote and a table; plain text; a log; JSON; a binary file; a file over 32 MB.
+- `axDown`: the four encodings, a long Markdown file for every navigation key, a file to change on disk, a file that is not text.
+- `axJSON`: a valid file, a broken file, a one-line file to format, a formatted file.
+- `axGIT`: a scratch repository with history, a second branch, changes of every kind and its own local remote; a folder that is not a repository.
+- `axTerminal`: a start folder with a subfolder and small scripts: a question, many lines, a long run, a failure.
+- `axClaude`: a folder Claude has never seen, an empty folder, a project folder.
 
 ## The sounds
 

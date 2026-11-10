@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>
-/// Everything axTask remembers between runs (SPEC.md TK-7), in <c>%APPDATA%\AxKit\axtask.json</c> through the
+/// Everything axTask remembers between runs (SPEC.md TK-7), in <c>%APPDATA%\AxKit\axTask.json</c> through the
 /// bundle's <see cref="SettingsFile"/>: the font, the update check and the window's place from
 /// <see cref="WindowSettings"/>, the top folder, the list open last, and whether done tasks are hidden.
 /// </summary>
@@ -17,7 +17,7 @@ public sealed class TaskSettings : WindowSettings
 
     public bool HideDone { get; set; }
 
-    public static string DefaultPath => AppPaths.SettingsFile("axtask");
+    public static string DefaultPath => AppPaths.SettingsFile("axTask");
 
     /// <summary>The top folder in use: the chosen one, or the default.</summary>
     public string TopFolder => Folder ?? ItemFolder.DefaultFolder;

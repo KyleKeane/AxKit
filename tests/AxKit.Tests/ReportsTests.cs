@@ -3,7 +3,7 @@ using AxKit.Core.Reports;
 
 namespace AxKit.Tests;
 
-/// <summary>A report as the form holds it, as an item of the Reports list and as an issue's body (docs/axkit/reports.md RP-3, RP-5, RP-6.1).</summary>
+/// <summary>A report as the form holds it, as an item of the Reports list and as an issue's body (docs/axKit/reports.md RP-3, RP-5, RP-6.1).</summary>
 public sealed class ReportsTests
 {
     private static readonly DateTime Created = new(2026, 11, 7, 14, 30, 0, DateTimeKind.Utc);

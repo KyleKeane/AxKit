@@ -1,7 +1,7 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// Rolling diagnostic log in <c>%LOCALAPPDATA%\AxKit\logs\&lt;app&gt;.log</c> (docs/axkit/SPEC.md AX-5.1; axClaude's
+/// Rolling diagnostic log in <c>%LOCALAPPDATA%\AxKit\logs\&lt;app&gt;.log</c> (docs/axKit/SPEC.md AX-5.1; axClaude's
 /// FR-13.2). Never throws. Each app names its file with <see cref="UseApp"/> as the first thing its Run does.
 /// </summary>
 public static class Log
@@ -11,11 +11,15 @@ public static class Log
 
     public static string Directory { get; } = AppPaths.LogsFolder;
 
-    /// <summary><c>axkit.log</c> until an app calls <see cref="UseApp"/>.</summary>
-    public static string FilePath { get; private set; } = Path.Combine(AppPaths.LogsFolder, "axkit.log");
+    /// <summary><c>axKit.log</c> until an app calls <see cref="UseApp"/>.</summary>
+    public static string FilePath { get; private set; } = Path.Combine(AppPaths.LogsFolder, "axKit.log");
 
-    /// <summary>Names the file after the app: <c>axclaude.log</c>, <c>axdown.log</c>.</summary>
-    public static void UseApp(string app) => FilePath = Path.Combine(Directory, app + ".log");
+    /// <summary>Names the file after the app: <c>axClaude.log</c>, <c>axDown.log</c>; a log an earlier version left in another case takes this spelling (AX-5.1, 5.6.0).</summary>
+    public static void UseApp(string app)
+    {
+        FilePath = Path.Combine(Directory, app + ".log");
+        FileCase.Match(FilePath);
+    }
 
     public static void Info(string message) => Write("INFO ", message);
 

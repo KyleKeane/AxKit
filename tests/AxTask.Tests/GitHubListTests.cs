@@ -4,7 +4,7 @@ using AxTask.Core;
 
 namespace AxTask.Tests;
 
-/// <summary>A GitHub list of axTask, the repository's issues as items (docs/axkit/reports.md RP-7.1).</summary>
+/// <summary>A GitHub list of axTask, the repository's issues as items (docs/axKit/reports.md RP-7.1).</summary>
 public sealed class GitHubListTests : IDisposable
 {
     private readonly string _top = Path.Combine(Path.GetTempPath(), "axkit-tests", "github-" + Guid.NewGuid().ToString("N"));

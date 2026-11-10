@@ -5,7 +5,7 @@ using AxPreview.Core;
 namespace AxPreview;
 
 /// <summary>
-/// axPreview's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AP-1.1, AP-1.2): <c>AxKit.exe preview
+/// axPreview's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md AP-1.1, AP-1.2): <c>AxKit.exe preview
 /// [&lt;file&gt;] [--new]</c> calls <see cref="Run"/>, which hands the text editor shell (<c>AxKit.Forms.TextEditorForm</c>)
 /// what axPreview is: the editor shell read-only (AP-D4), with axDown's navigation keys, the viewer's own keys and
 /// texts, and the rule that refuses a file that is not text. With a file and an open axPreview window, the file is
@@ -28,7 +28,7 @@ public static class AxPreviewApp
     public static readonly EditorApp App = new(
         Name: Name,
         Verb: Dispatch.AxPreview,
-        SettingsName: "axpreview",
+        SettingsName: "axPreview",
         FileFilter: "All files (*.*)|*.*|Text files (*.txt;*.md;*.markdown;*.log;*.json)|*.txt;*.md;*.markdown;*.log;*.json",
         DefaultExtension: "txt",
         Shortcuts: HelpText.Shortcuts,
@@ -66,7 +66,7 @@ public static class AxPreviewApp
     }
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axpreview", Usage, args, arguments =>
+        AppHost.Run(Name, "axPreview", Usage, args, arguments =>
         {
             var fresh = arguments.Contains("--new", StringComparer.Ordinal);
             if (!AppHost.OnePath(Name, "file", Usage, arguments.Where(argument => argument != "--new").ToArray(), out var path))

@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The recent-path lists every settings class keeps (docs/axkit/SPEC.md AX-9.5): the newest first, once each, ten at most, cleaned after loading.</summary>
+/// <summary>The recent-path lists every settings class keeps (docs/axKit/SPEC.md AX-9.5): the newest first, once each, ten at most, cleaned after loading.</summary>
 public sealed class RecentPathsTests
 {
     [Fact]

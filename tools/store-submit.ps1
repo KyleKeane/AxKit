@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   Posts a release's package to the Microsoft Store through Partner Center's submission API, or reads the Store's state
-  of axKit (docs/axkit/store-setup.md sections 4 and 5; docs/axkit/SPEC.md AX-13.6). Plain PowerShell and HTTPS, no
+  of axKit (docs/axKit/store-setup.md sections 4 and 5; docs/axKit/SPEC.md AX-13.6). Plain PowerShell and HTTPS, no
   module: the API is Microsoft's documented one, https://learn.microsoft.com/windows/uwp/monetize/manage-app-submissions.
 
 .DESCRIPTION
@@ -56,7 +56,7 @@ function Get-Credentials {
     }
     $file = Join-Path $env:LOCALAPPDATA 'AxKit-release\store-credentials.xml'
     if (-not (Test-Path $file)) {
-        throw "No credentials: set PARTNER_CENTER_TENANT_ID, PARTNER_CENTER_CLIENT_ID and PARTNER_CENTER_CLIENT_SECRET, or run tools\store-credentials.ps1 once (docs/axkit/store-setup.md section 2)."
+        throw "No credentials: set PARTNER_CENTER_TENANT_ID, PARTNER_CENTER_CLIENT_ID and PARTNER_CENTER_CLIENT_SECRET, or run tools\store-credentials.ps1 once (docs/axKit/store-setup.md section 2)."
     }
     $kept = Import-Clixml -LiteralPath $file
     $plain = [System.Runtime.InteropServices.Marshal]::PtrToStringUni([System.Runtime.InteropServices.Marshal]::SecureStringToGlobalAllocUnicode($kept.Secret))

@@ -54,7 +54,7 @@ public sealed class ProcessForm : AxKitForm
         _settings = settings;
         SetTitle("This computer");
 
-        // ---- menus and keys (PR-6.1, PR-6.2): one command list (docs/axkit/app-kit.md AK-2), each key from the tables ----
+        // ---- menus and keys (PR-6.1, PR-6.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // The first menu holds what every view has (AX-6: the thing worked on, then Exit); each view has a menu of its
         // own, and only the menu of the view shown is enabled, so that a process command is never at hand among the
         // services (the user's ask, 2026-10-24; UpdateViewMenus). The keys act whichever menu is enabled, as before:

@@ -1,13 +1,13 @@
 # axHelp, the window
 
-The WinForms side of axHelp: a question to Claude from anywhere, on the bundle's background window (`AxKit.Forms/HotkeyForm`, as axStart and axClip), the AI help itself being the window base's (`AxKit.Forms/AxKitForm.Ai.cs`, `docs/axkit/ai-help.md`). The pure code is `src/AxHelp.Core`, with its own `CLAUDE.md`. The spec is `docs/axhelp/SPEC.md` ("SPEC.md" below); the guide `docs/axhelp/user-guide.md` is embedded by `AxHelp.csproj` for Help, User guide; the manual test plan is `docs/axhelp/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
+The WinForms side of axHelp: a question to Claude from anywhere, on the bundle's background window (`AxKit.Forms/HotkeyForm`, as axStart and axClip), the AI help itself being the window base's (`AxKit.Forms/AxKitForm.Ai.cs`, `docs/axKit/ai-help.md`). The pure code is `src/AxHelp.Core`, with its own `CLAUDE.md`. The spec is `docs/axHelp/SPEC.md` ("SPEC.md" below); the guide `docs/axHelp/user-guide.md` is embedded by `AxHelp.csproj` for Help, User guide; the manual test plan is `docs/axHelp/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
 ```
-.\run-axhelp.ps1                  # build axKit and start axHelp in front (run.ps1 -App help; a running axHelp is ended and started again hidden)
+.\run-axHelp.ps1                  # build axKit and start axHelp in front (run.ps1 -App help; a running axHelp is ended and started again hidden)
 .\test.ps1 AxHelp                 # the tests in Release, as CI runs them
-.\nvda-pass.ps1 axHelp            # tests\scripts\axhelp with NVDA listening, against the fake Claude
+.\nvda-pass.ps1 axHelp            # tests\scripts\axHelp with NVDA listening, against the fake Claude
 ```
 
 ## Where things are

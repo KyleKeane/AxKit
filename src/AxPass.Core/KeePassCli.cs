@@ -14,8 +14,8 @@ public sealed record CliResult(int ExitCode, string Output, string Error)
 }
 
 /// <summary>
-/// KeePassXC's command-line tool (docs/axpass/SPEC.md PW-5, PW-D1; what it does was tried and is in
-/// docs/axpass/kdbx-notes.md section 8): one process per command, no window, the database's and the entry's paths as
+/// KeePassXC's command-line tool (docs/axPass/SPEC.md PW-5, PW-D1; what it does was tried and is in
+/// docs/axPass/kdbx-notes.md section 8): one process per command, no window, the database's and the entry's paths as
 /// arguments, the master password (and a new entry password, twice) as lines of standard input, never on the command
 /// line, in a file or in the environment. Blocking: the window runs it off the UI thread.
 /// </summary>

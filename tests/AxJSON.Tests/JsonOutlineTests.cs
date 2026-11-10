@@ -2,7 +2,7 @@ using AxJSON.Core;
 
 namespace AxJSON.Tests;
 
-/// <summary>The elements of a JSON text for the navigation keys (docs/axjson/SPEC.md AJ-2.2): what is found, where, and how it is spoken.</summary>
+/// <summary>The elements of a JSON text for the navigation keys (docs/axJSON/SPEC.md AJ-2.2): what is found, where, and how it is spoken.</summary>
 public sealed class JsonOutlineTests
 {
     private const string Settings = """

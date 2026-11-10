@@ -4,7 +4,7 @@ using AxKit.Core;
 namespace AxPass.Core;
 
 /// <summary>
-/// Copies of the database kept against a corrupted or wrongly changed file (docs/axpass/SPEC.md PW-4.5, the user's
+/// Copies of the database kept against a corrupted or wrongly changed file (docs/axPass/SPEC.md PW-4.5, the user's
 /// ask of 2026-10-24): the <c>.kdbx</c> file as it is, encrypted as it is, copied into a folder beside it ("mine
 /// backups" next to mine.kdbx, the user's choice, so that a synced database's backups sync too), named with the time,
 /// the newest <see cref="Keep"/> kept. A backup opens like any database, with the same master password.

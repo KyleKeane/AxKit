@@ -2,7 +2,7 @@
 .SYNOPSIS
   Keeps the Partner Center application's three values for tools/store-submit.ps1 on this computer: the tenant id, the
   client id and the key, typed at prompts and saved encrypted for this Windows account (Export-Clixml protects the
-  key with the account's data protection, as the release key is kept; docs/axkit/store-setup.md).
+  key with the account's data protection, as the release key is kept; docs/axKit/store-setup.md).
 
 .DESCRIPTION
   The file is %LOCALAPPDATA%\AxKit-release\store-credentials.xml, outside the repository. Nothing is ever printed
@@ -39,7 +39,7 @@ if ($Show) {
     exit 0
 }
 
-Write-Host "The Partner Center application's values (docs/axkit/store-setup.md): the Tenant ID and Client ID from the application's page under Account settings, User management, Microsoft Entra applications; the key from Add new key there, shown once."
+Write-Host "The Partner Center application's values (docs/axKit/store-setup.md): the Tenant ID and Client ID from the application's page under Account settings, User management, Microsoft Entra applications; the key from Add new key there, shown once."
 $tenant = (Read-Host 'Tenant ID').Trim()
 $client = (Read-Host 'Client ID').Trim()
 $secret = Read-Host 'Key (typed hidden)' -AsSecureString

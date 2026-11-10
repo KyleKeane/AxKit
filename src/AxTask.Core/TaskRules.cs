@@ -4,7 +4,7 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>
-/// What makes an item a task (docs/axtask/SPEC.md TK-4): a check field titled Done (TK-D2), with a Due date; the
+/// What makes an item a task (docs/axTask/SPEC.md TK-4): a check field titled Done (TK-D2), with a Due date; the
 /// default fields of a new item and the row's summary; All tasks' order is its smart list's (`SmartList.AllTasks`, TK-5.1).
 /// </summary>
 public static class TaskRules

@@ -11,7 +11,7 @@ namespace AxKit.Forms;
 public sealed record QuickKey(Keys Key, string Name, Func<Line, bool> Matches, Func<Line, Line, bool>? Previous = null, bool ReadsWhole = false);
 
 /// <summary>
-/// The keys of a transcript view, handed in by the window from its own key table (docs/axkit/SPEC.md AX-8.3), so that
+/// The keys of a transcript view, handed in by the window from its own key table (docs/axKit/SPEC.md AX-8.3), so that
 /// the view is the bundle's and the letters stay each window's: the quick keys (the bookmark and the response keys
 /// among them), the bookmark toggle (m), the line number (l), the way back from a jump (Backspace), Enter on a line,
 /// Escape and the copy of a selection; and the two keys the console window handles from anywhere, the bookmark from

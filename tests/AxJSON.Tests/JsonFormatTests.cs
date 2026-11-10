@@ -2,7 +2,7 @@ using AxJSON.Core;
 
 namespace AxJSON.Tests;
 
-/// <summary>Format (docs/axjson/SPEC.md AJ-2.3): the layout, the repairs and their announcement, and what is left alone.</summary>
+/// <summary>Format (docs/axJSON/SPEC.md AJ-2.3): the layout, the repairs and their announcement, and what is left alone.</summary>
 public sealed class JsonFormatTests
 {
     [Fact]

@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Drives a Microsoft Edge window over its DevTools protocol for the Store's website (docs/axkit/store-setup.md
+  <!-- Drives a Microsoft Edge window over its DevTools protocol for the Store's website (docs/axKit/store-setup.md
        section 6): a development tool, never part of axKit. No package: HTTP, WebSocket and JSON are the framework's. -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>

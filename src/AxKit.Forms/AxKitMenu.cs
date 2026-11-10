@@ -8,10 +8,10 @@ using static AxKit.Forms.User32;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The axKit menu every window has (docs/axkit/SPEC.md AX-9), one class for every window: the window's Command palette
+/// The axKit menu every window has (docs/axKit/SPEC.md AX-9), one class for every window: the window's Command palette
 /// item (AX-10); New window (one item per app) and Recently closed (the bundle's list, AX-9.4); Open windows (the
 /// other windows of the bundle's apps, most recently used first), Open windows by type (one submenu per app, the
-/// current window checked) and Close all windows; AI tools (the bundle's own setting, docs/axkit/mcp.md MC-6.1); the window's own Check for updates and Update to items, and About,
+/// current window checked) and Close all windows; AI tools (the bundle's own setting, docs/axKit/mcp.md MC-6.1); the window's own Check for updates and Update to items, and About,
 /// the bundle's sections (AX-9.9). The lists are filled
 /// each time the menu opens, the windows from what the system lists in Z order, which is Alt+Tab's order, so nothing
 /// about windows is stored. The lists and labels are <see cref="AxKitWindows"/> and <see cref="RecentlyClosed"/>, the
@@ -53,7 +53,7 @@ public sealed class AxKitMenu : ToolStripMenuItem
         about.DropDownItems.Add(new ToolStripMenuItem("axKit on Git&Hub", null, (_, _) => owner.OpenUrl(UpdateCheck.RepositoryPage)));
 
         DropDownItems.Add(commandPalette);
-        // Reports (docs/axkit/reports.md RP-2.2): the report itself, with its bundle key shown, and the list of them in axTask.
+        // Reports (docs/axKit/reports.md RP-2.2): the report itself, with its bundle key shown, and the list of them in axTask.
         var report = new ToolStripMenuItem("&Send a report...", null, (_, _) => owner.ShowReport())
         {
             ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
@@ -69,7 +69,7 @@ public sealed class AxKitMenu : ToolStripMenuItem
         DropDownItems.Add(CommandPalette.FilledOnOpening(byType));
         DropDownItems.Add(new ToolStripMenuItem("&Close all windows", null, (_, _) => CloseAll()));
         DropDownItems.Add(new ToolStripSeparator());
-        // The bundle's own settings (docs/axkit/ai-help.md AH-1.1, docs/axkit/mcp.md MC-6.1): an app's Options hold only the app's.
+        // The bundle's own settings (docs/axKit/ai-help.md AH-1.1, docs/axKit/mcp.md MC-6.1): an app's Options hold only the app's.
         DropDownItems.Add(owner.CreateAiHelpMenu());
         DropDownItems.Add(owner.CreateMcpMenu());
         DropDownItems.Add(checkForUpdates);

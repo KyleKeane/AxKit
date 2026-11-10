@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace AxKit.Tests;
 
 /// <summary>
-/// Every list the user moves through is the bundle's <c>AxKit.Forms/AxKitList</c> (docs/axkit/SPEC.md AX-8.6), which has
+/// Every list the user moves through is the bundle's <c>AxKit.Forms/AxKitList</c> (docs/axKit/SPEC.md AX-8.6), which has
 /// type-to-find with Shift backwards and the edge earcon built in, so that a new app gets them by making the list and
 /// nothing else. Read off the sources: a plain <c>ListBox</c> made in an app fails here, unless it is one of the lists
 /// below that never take a typed letter, each with its reason.
@@ -14,7 +14,7 @@ public sealed class ListTests
     private static readonly IReadOnlyDictionary<string, string> Allowed = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
         // axStart's matches and axClip's items never take the focus: the caret stays in the search field
-        // (docs/axstart/SPEC.md AS-D2, docs/axclip/SPEC.md CP-2.1); the list is HotkeyForm's since 2026-10-24.
+        // (docs/axStart/SPEC.md AS-D2, docs/axClip/SPEC.md CP-2.1); the list is HotkeyForm's since 2026-10-24.
         [Path.Combine("src", "AxKit.Forms", "HotkeyForm.cs")] = "never focused",
         // The command palette's matches under its field, never focused (AX-10).
         [Path.Combine("src", "AxKit.Forms", "OverlayPanel.cs")] = "never focused",

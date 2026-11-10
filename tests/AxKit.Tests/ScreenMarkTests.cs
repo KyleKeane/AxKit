@@ -5,7 +5,7 @@ using Screen = AxKit.Core.Vt.Screen;
 namespace AxKit.Tests;
 
 /// <summary>
-/// The screen reports a shell's integration marks and its current directory as events (docs/axterminal/SPEC.md
+/// The screen reports a shell's integration marks and its current directory as events (docs/axTerminal/SPEC.md
 /// AT-1.3): OSC 133 with its letter and what follows, OSC 9;9 with the path, quotes removed. A title OSC still
 /// raises the title event, and the text around the sequences lands on the rows as before.
 /// </summary>

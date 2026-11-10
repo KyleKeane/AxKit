@@ -4,7 +4,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The field commands of an item app's detail pane (docs/axkit/item-apps.md IA-5) and the notices they and the apps
+/// The field commands of an item app's detail pane (docs/axKit/item-apps.md IA-5) and the notices they and the apps
 /// use: every change makes a new document of the one shown and hands it to the app's <c>SaveFields</c>.
 /// </summary>
 public abstract partial class ItemForm

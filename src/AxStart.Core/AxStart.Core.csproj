@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- axStart's pure code (docs/axstart/SPEC.md §6): the programs as entries, the matching and its order, the hotkey
+  <!-- axStart's pure code (docs/axStart/SPEC.md §6): the programs as entries, the matching and its order, the hotkey
        as text, the settings; no window. -->
   <PropertyGroup>
     <TargetFramework>$(AxKitDotNet)</TargetFramework>

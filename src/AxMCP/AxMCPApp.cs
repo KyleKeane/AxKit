@@ -4,7 +4,7 @@ using AxKit.Forms;
 namespace AxMCP;
 
 /// <summary>
-/// axMCP's entry point inside axKit (docs/axkit/SPEC.md AX-1.7): <c>AxKit.exe mcpclient [&lt;folder&gt;]</c> calls
+/// axMCP's entry point inside axKit (docs/axKit/SPEC.md AX-1.7): <c>AxKit.exe mcpclient [&lt;folder&gt;]</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the one path of the command line, the
 /// settings and <see cref="MCPForm"/>.
 /// </summary>
@@ -21,7 +21,7 @@ public static class AxMCPApp
         """;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axmcp", Usage, args, arguments =>
+        AppHost.Run(Name, "axMCP", Usage, args, arguments =>
         {
             if (!AppHost.OnePath(Name, "folder", Usage, arguments, out var path))
             {

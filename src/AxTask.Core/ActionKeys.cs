@@ -5,7 +5,7 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>
-/// One action a Ctrl+number key runs on an item of a list (docs/axkit/reports.md RP-8.1): fields set to values, the
+/// One action a Ctrl+number key runs on an item of a list (docs/axKit/reports.md RP-8.1): fields set to values, the
 /// item moved to a list by a path relative to this one, or something opened (a field's link, or an app's verb on the
 /// item's file). One kind per key; the name is the user's.
 /// </summary>

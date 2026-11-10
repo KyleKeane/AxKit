@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxPass.Core;
 
 /// <summary>
-/// Everything axPass remembers between runs (SPEC.md PW-4), in <c>%APPDATA%\AxKit\axpass.json</c> through the bundle's
+/// Everything axPass remembers between runs (SPEC.md PW-4), in <c>%APPDATA%\AxKit\axPass.json</c> through the bundle's
 /// <see cref="SettingsFile"/>: the font, the update check and the window's place from <see cref="WindowSettings"/>, the
 /// database open last, where KeePassXC's tool is when it is not where it installs, and the minutes before the window
 /// locks itself. Never the master password nor anything from the database.
@@ -20,7 +20,7 @@ public sealed class PassSettings : WindowSettings
     /// <summary>Minutes without a key or a mouse move before the window locks (PW-4.3); 0 never.</summary>
     public int LockMinutes { get; set; } = DefaultLockMinutes;
 
-    public static string DefaultPath => AppPaths.SettingsFile("axpass");
+    public static string DefaultPath => AppPaths.SettingsFile("axPass");
 
     public static PassSettings Load(string path, out string? error)
     {

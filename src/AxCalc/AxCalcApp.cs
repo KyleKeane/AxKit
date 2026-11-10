@@ -4,7 +4,7 @@ using AxKit.Forms;
 namespace AxCalc;
 
 /// <summary>
-/// axCalc's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AC-1.2): <c>AxKit.exe calc</c> calls
+/// axCalc's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md AC-1.2): <c>AxKit.exe calc</c> calls
 /// <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/> with the settings and <see cref="CalcForm"/>.
 /// A calculator takes no path; any argument is reported with the usage text.
 /// </summary>
@@ -20,7 +20,7 @@ public static class AxCalcApp
         """;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axcalc", Usage, args, arguments =>
+        AppHost.Run(Name, "axCalc", Usage, args, arguments =>
         {
             if (arguments.Length > 0)
             {

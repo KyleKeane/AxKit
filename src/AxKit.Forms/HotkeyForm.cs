@@ -5,7 +5,7 @@ using static AxKit.Forms.User32;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The window of a background app that a global hotkey brings up (docs/axstart/SPEC.md AS-1, AS-3.4, AS-4; from
+/// The window of a background app that a global hotkey brings up (docs/axStart/SPEC.md AS-1, AS-3.4, AS-4; from
 /// axStart's StartForm on its second use, axClip, 2026-10-23): the process runs with the window hidden, the hotkey
 /// registered on the window's handle shows it in front, and the window hides again on Escape, Alt+F4 and the focus
 /// going to another program. Only Quit ends the process. What is here moved unchanged: the first showing that only
@@ -42,7 +42,7 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>
     /// Options, General's Start with Windows for a background app: the toggle that writes the Run key through
     /// <see cref="SignInStart.Apply"/>, or, in the Store's copy, where the package's startup task decides and Windows
-    /// lists it under Settings, Apps, Startup (docs/axkit/SPEC.md AX-13.4), an item that opens that page and says so;
+    /// lists it under Settings, Apps, Startup (docs/axKit/SPEC.md AX-13.4), an item that opens that page and says so;
     /// an app without an entry of its own in the package (AX-13.2: the eight are taken; axHelp, axDescribe) has no
     /// startup task there, and its item says how it is started instead.
     /// </summary>

@@ -3,7 +3,7 @@ using AxKit.Core.Updates;
 
 namespace AxKit.Tests;
 
-/// <summary>Signed releases (docs/axkit/SPEC.md AX-3.4; security audit S-27): what the updater accepts.</summary>
+/// <summary>Signed releases (docs/axKit/SPEC.md AX-3.4; security audit S-27): what the updater accepts.</summary>
 public sealed class ReleaseSigningTests
 {
     [Fact]

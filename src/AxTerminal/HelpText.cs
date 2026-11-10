@@ -58,5 +58,5 @@ public static class HelpText
           Escape: clear the selection, else go to the command field
         """ + BundleHelp.NoticesSection("axTerminal", "the terminal");
 
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axterminal/user-guide.md");
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axTerminal/user-guide.md");
 }

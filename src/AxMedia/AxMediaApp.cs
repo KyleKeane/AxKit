@@ -4,7 +4,7 @@ using AxMedia.Core;
 namespace AxMedia;
 
 /// <summary>
-/// axMedia's entry point inside axKit (docs/axkit/SPEC.md AX-1.7; SPEC.md AM-1.1, AM-1.2): <c>AxKit.exe media [&lt;file or
+/// axMedia's entry point inside axKit (docs/axKit/SPEC.md AX-1.7; SPEC.md AM-1.1, AM-1.2): <c>AxKit.exe media [&lt;file or
 /// folder&gt;...] [--add] [--new]</c> calls <see cref="Run"/>, one call into the bundle's <see cref="AppHost"/>. With
 /// paths and an open axMedia window, the paths are handed to that window (<see cref="AppMessage"/>) and no window of
 /// this process opens; otherwise <see cref="MediaForm"/> opens on them.
@@ -26,7 +26,7 @@ public static class AxMediaApp
         """;
 
     public static void Run(string[] args) =>
-        AppHost.Run(Name, "axmedia", Usage, args, arguments =>
+        AppHost.Run(Name, "axMedia", Usage, args, arguments =>
         {
             var paths = new List<string>();
             var add = false;

@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>The marks on a folder's entries (docs/axfile/SPEC.md AF-3.7, AF-9.2): each key's change, its line and its words.</summary>
+/// <summary>The marks on a folder's entries (docs/axFile/SPEC.md AF-3.7, AF-9.2): each key's change, its line and its words.</summary>
 public sealed class MarksTests
 {
     private static readonly IReadOnlyList<Entry> Shown = Entries("a.txt", "b.txt", "c.txt", "d.txt", "e.txt");

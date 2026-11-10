@@ -10,7 +10,7 @@ using AxKit.Core.Mcp;
 namespace AxKit.Forms;
 
 /// <summary>
-/// <c>AxKit.exe mcp</c> (docs/axkit/mcp.md MC-1.1, MC-6): the broker an AI client starts as its child and speaks MCP to
+/// <c>AxKit.exe mcp</c> (docs/axKit/mcp.md MC-1.1, MC-6): the broker an AI client starts as its child and speaks MCP to
 /// over standard input and output. It holds no window and no state of the apps: each tool call is a connection to one
 /// window's pipe (<see cref="McpChannel"/>), checked both ways (the window runs this very program file, the broker
 /// proves the key), or the broker's own work (the apps, the open windows, opening an app). Before any of it: the
@@ -230,7 +230,7 @@ public static class McpBroker
             // Identification only: the window may learn who connected, never act as this user.
             // Outside call, pipe, AI tools: connects to one axKit window's pipe to ask it what it shows, for the AI
             // tool's request; the broker first checks that the pipe's server is this very program file
-            // (docs/axkit/mcp.md MC-6.3).
+            // (docs/axKit/mcp.md MC-6.3).
             using var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification);
             pipe.Connect(2000);
             if (UserPipe.ServerOf(pipe) is not { } server || !ThisProgram.Runs(server))
@@ -296,7 +296,7 @@ public static class McpBroker
 
         // Outside call, program, axKit: starts an axKit app for the AI tool axkit_open, this very program file with a
         // checked verb and path, through the shell so that the new window inherits none of the broker's pipes
-        // (docs/axkit/mcp.md MC-6).
+        // (docs/axKit/mcp.md MC-6).
         using var process = Process.Start(start);
         return new McpResult(process is null ? "The app did not start." : $"Opened {string.Join(" ", arguments)}.", process is null);
     }

@@ -2,7 +2,7 @@
 
 axKit collects nothing. It has no telemetry, no analytics, no crash reporting, no accounts and no advertising. The
 developer receives no data from it, and has no server it could send data to. Everything below is checked against the
-code; a change to what axKit sends anywhere changes this page in the same commit. `docs/axkit/outside-calls.md` in the
+code; a change to what axKit sends anywhere changes this page in the same commit. `docs/axKit/outside-calls.md` in the
 repository is the exhaustive list behind this page, written from the sources: everything axKit reaches outside its own
 process, every network request, program start and pipe in the code, by what it reaches, with each call's file, line and
 purpose.
@@ -29,7 +29,7 @@ requests, the first a setting; the report sender's only when you send a report:
   release whose files are elsewhere is reported as having no Windows zip). It installs the zip only if its SHA-256
   digest matches GitHub's digest of the file and the signature made with axKit's release key (ECDSA P-256), and only for
   your Windows account, without administrator rights.
-- **A report you send** (F4 in any window, or axKit menu, Send a report; `docs/axkit/reports.md`). Your report is
+- **A report you send** (F4 in any window, or axKit menu, Send a report; `docs/axKit/reports.md`). Your report is
   saved on your computer first, as an item of the axTask list under axKit menu, Your reports. Then it is posted as a
   public issue of the reports repository, `https://github.com/KyleKeane/AxKit-reports`, with one `POST` to
   `https://api.github.com/repos/KyleKeane/AxKit-reports/issues`, after one `GET` of that repository's
@@ -76,7 +76,7 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   agreement. The server is its maker's program: it does whatever it was built to do, on this computer and on any
   network it reaches, with your rights, under its maker's terms. Remote servers (http, sse) are listed and not
   started; axMCP itself makes no network request.
-- **AI help** (`docs/axkit/ai-help.md`; off until you turn it on in the axKit menu, after a reminder) runs `claude -p`,
+- **AI help** (`docs/axKit/ai-help.md`; off until you turn it on in the axKit menu, after a reminder) runs `claude -p`,
   Claude Code in its print mode, as a child process with read-only tools, once per question, and reads its answer from
   its standard output. What goes to Claude Code and, through it, to Anthropic under your account and Anthropic's terms:
   your question; for Shift+F1 in an axKit window, that window's name and title, the name and place of the control you
@@ -101,7 +101,7 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
 ## The AI tools (off unless you turn them on)
 
 axKit menu, AI tools, Let AI tools read and open axKit. When it is on, an AI tool on your computer that you pair, such as
-Claude Code, can read what axKit's windows show and open apps (`docs/axkit/mcp.md`). This happens through named pipes
+Claude Code, can read what axKit's windows show and open apps (`docs/axKit/mcp.md`). This happens through named pipes
 for your Windows account alone, never over the network; what the tool then does with what it read is under its own
 terms (Claude Code: Anthropic's). axPass and axClip are never read. Every call is written to `mcp-audit.log` on your
 computer, with its arguments hashed. Forget AI tools removes every pairing; turning it off ends access at the next

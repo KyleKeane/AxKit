@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>Which paths a menu may check as it opens (docs/axkit/SPEC.md AX-9.4, AX-9.5): local ones, never a share.</summary>
+/// <summary>Which paths a menu may check as it opens (docs/axKit/SPEC.md AX-9.4, AX-9.5): local ones, never a share.</summary>
 public sealed class LocalPathsTests
 {
     [Fact]

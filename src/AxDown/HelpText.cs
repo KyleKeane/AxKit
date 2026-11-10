@@ -41,6 +41,6 @@ public static class HelpText
           Enter: a new line. Tab: a tab character
         """ + BundleHelp.NoticesSection("axDown", "the text", navigateMenu: true);
 
-    /// <summary>docs/axdown/user-guide.md, embedded in the executable at build time.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axdown/user-guide.md");
+    /// <summary>docs/axDown/user-guide.md, embedded in the executable at build time.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axDown/user-guide.md");
 }

@@ -37,6 +37,6 @@ public static class HelpText
           Shift with any of them, or Ctrl+A: select. Ctrl+C: copy
         """ + BundleHelp.NoticesSection("axGIT", "the list and the details");
 
-    /// <summary>docs/axgit/user-guide.md, embedded by AxGit.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axgit/user-guide.md");
+    /// <summary>docs/axGIT/user-guide.md, embedded by AxGit.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axGIT/user-guide.md");
 }

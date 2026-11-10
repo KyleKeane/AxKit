@@ -3,7 +3,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>Undo (docs/axfile/SPEC.md AF-4.14): the history, each operation's inverse over a temporary folder, and the Recycle Bin's records; the Recycle Bin itself is not exercised.</summary>
+/// <summary>Undo (docs/axFile/SPEC.md AF-4.14): the history, each operation's inverse over a temporary folder, and the Recycle Bin's records; the Recycle Bin itself is not exercised.</summary>
 public sealed class UndoTests : IDisposable
 {
     private readonly TempFolder _folder = new("axfile-undo");

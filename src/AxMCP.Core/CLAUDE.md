@@ -1,6 +1,6 @@
 # AxMCP.Core, the pure code
 
-Everything of axMCP that needs no window: the servers from Claude Code's files and the user's own list, the Model Context Protocol as a client over any reader and writer, a server as a process, a tool's schema to the item apps' fields and back, an answer to the notice's text. Unit tested in `tests/AxMCP.Tests` (the client against a fake server over two anonymous pipes). The spec is `docs/axmcp/SPEC.md` ("SPEC.md" below); the window is `src/AxMCP`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
+Everything of axMCP that needs no window: the servers from Claude Code's files and the user's own list, the Model Context Protocol as a client over any reader and writer, a server as a process, a tool's schema to the item apps' fields and back, an answer to the notice's text. Unit tested in `tests/AxMCP.Tests` (the client against a fake server over two anonymous pipes). The spec is `docs/axMCP/SPEC.md` ("SPEC.md" below); the window is `src/AxMCP`, with its own `CLAUDE.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 

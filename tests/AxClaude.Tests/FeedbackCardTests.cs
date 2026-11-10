@@ -5,7 +5,7 @@ namespace AxClaude.Tests;
 /// <summary>
 /// The feedback draft Claude Code queues by itself: the count on the mode line that opens /feedback, the card above the
 /// prompt whose keys do nothing in screen reader mode, and the /feedback screens that act on the draft
-/// (docs/axclaude/claude-screens.md, D33). The rows are the ones Claude Code 2.1.302 drew.
+/// (docs/axClaude/claude-screens.md, D33). The rows are the ones Claude Code 2.1.302 drew.
 /// </summary>
 public class FeedbackCardTests
 {

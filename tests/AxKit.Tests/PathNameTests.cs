@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The name of a path in a title or a label (docs/axkit/SPEC.md AX-9.5): the last part, or the drive's root itself.</summary>
+/// <summary>The name of a path in a title or a label (docs/axKit/SPEC.md AX-9.5): the last part, or the drive's root itself.</summary>
 public sealed class PathNameTests
 {
     [Theory]

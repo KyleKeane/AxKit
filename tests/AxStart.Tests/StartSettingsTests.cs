@@ -11,7 +11,7 @@ public sealed class StartSettingsTests
     {
         using var temp = new TempFolder("axstart-tests");
         var folder = temp.Path;
-        var path = Path.Combine(folder, "axstart.json");
+        var path = Path.Combine(folder, "axStart.json");
         var settings = StartSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal("Ctrl+Shift+Space", settings.HotkeyText);

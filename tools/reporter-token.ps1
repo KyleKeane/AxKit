@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Writes the reporter token's file for a release build (docs/axkit/reports.md RP-6.2).
+  Writes the reporter token's file for a release build (docs/axKit/reports.md RP-6.2).
 
 .DESCRIPTION
   src\AxKit.Core\Reports\reporter.token holds the reporter account's token mixed with a fixed key and written as

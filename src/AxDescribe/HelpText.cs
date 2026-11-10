@@ -28,6 +28,6 @@ public static class HelpText
           Escape: hide axDescribe at once and return where you were
         """ + BundleHelp.NoticesSection("axDescribe", "the field");
 
-    /// <summary>docs/axdescribe/user-guide.md, embedded by AxDescribe.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axdescribe/user-guide.md");
+    /// <summary>docs/axDescribe/user-guide.md, embedded by AxDescribe.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axDescribe/user-guide.md");
 }

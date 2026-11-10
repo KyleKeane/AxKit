@@ -29,6 +29,6 @@ public static class HelpText
           View, Sort processes by: memory, processor or name
         """ + BundleHelp.NoticesSection("axProcess", "the list");
 
-    /// <summary>docs/axprocess/user-guide.md, embedded by AxProcess.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axprocess/user-guide.md");
+    /// <summary>docs/axProcess/user-guide.md, embedded by AxProcess.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axProcess/user-guide.md");
 }

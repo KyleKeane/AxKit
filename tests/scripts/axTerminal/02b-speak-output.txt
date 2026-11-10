@@ -1,0 +1,20 @@
+# axTerminal, section 2 of docs/axTerminal/nvda-test-plan.md, step 9: Speak output (AT-5.3), in a script of its own
+# because it fails at present (seen 2026-10-23: the listing's last line comes after "Done", in an utterance of its own),
+# so that 02-commands.txt checks the rest of the section.
+mkdir myproject
+file home\AxKit\axTerminal.json {"checkForUpdates": false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file myproject\listed.txt x
+start terminal {temp}\myproject
+expect said ♪ Ready
+# Options, Speech, Speak output: all lines; Get-ChildItem: the lines as one utterance, then "Done"; back to none.
+menu Speak output: all lines
+expect said Speak output: all lines
+type Get-ChildItem
+keys enter
+# The listing's last line and "Done" as one announcement (AT-5.1, since 2026-11-01), then the chime.
+expect said listed.txt. Done
+expect said ♪ Done
+menu Speak output: none
+expect said Speak output: none

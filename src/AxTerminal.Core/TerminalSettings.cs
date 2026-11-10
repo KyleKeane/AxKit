@@ -10,7 +10,7 @@ public enum OutputSpeechMode
 }
 
 /// <summary>
-/// Everything axTerminal remembers between runs (SPEC.md AT-8.1), in <c>%APPDATA%\AxKit\axterminal.json</c> through
+/// Everything axTerminal remembers between runs (SPEC.md AT-8.1), in <c>%APPDATA%\AxKit\axTerminal.json</c> through
 /// the bundle's <see cref="SettingsFile"/>: the shell, the last folder and the speech options here; the console size,
 /// the recent folders, the sounds, the signals and the transcript options from <see cref="ConsoleSettings"/>, shared
 /// with axClaude; the font, the update check and the window's place from <see cref="WindowSettings"/>. A missing or
@@ -32,7 +32,7 @@ public sealed class TerminalSettings : ConsoleSettings
     /// <summary>"Asks: …" when a running program seems to wait on a question (AT-5.4).</summary>
     public bool AnnounceQuestions { get; set; } = true;
 
-    public static string DefaultPath => AppPaths.SettingsFile("axterminal");
+    public static string DefaultPath => AppPaths.SettingsFile("axTerminal");
 
     public static TerminalSettings Load(string path, out string? error)
     {

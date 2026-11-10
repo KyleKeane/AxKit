@@ -38,6 +38,6 @@ public static class HelpText
           Enter: a new line. Tab: a tab character
         """ + BundleHelp.NoticesSection("axJSON", "the text");
 
-    /// <summary>docs/axjson/user-guide.md, embedded by AxJSON.csproj.</summary>
-    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axjson/user-guide.md");
+    /// <summary>docs/axJSON/user-guide.md, embedded by AxJSON.csproj.</summary>
+    public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axJSON/user-guide.md");
 }

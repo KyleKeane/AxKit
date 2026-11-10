@@ -1,7 +1,7 @@
 namespace AxKit.Forms;
 
 /// <summary>
-/// The editor shell's keys (docs/axkit/SPEC.md AX-8.3; docs/axdown/SPEC.md AD-5), the same in every text editor window
+/// The editor shell's keys (docs/axKit/SPEC.md AX-8.3; docs/axDown/SPEC.md AD-5), the same in every text editor window
 /// of the bundle: each editor app's own table includes <see cref="All"/>, so that one table per window still holds
 /// every key and the collision test sees them. Handled in <see cref="TextEditorForm"/> and nowhere else.
 /// </summary>
@@ -40,7 +40,7 @@ public static class EditorKeys
         ("Word wrap", WordWrap),
     ];
 
-    // The viewer's keys (a read-only editor app, axPreview, docs/axpreview/SPEC.md AP-3.2): the shell handles them in
+    // The viewer's keys (a read-only editor app, axPreview, docs/axPreview/SPEC.md AP-3.2): the shell handles them in
     // read-only mode only, and the viewer's table includes Viewer instead of All.
 
     /// <summary>File → Reload: the file read again, the caret kept (AP-2.4).</summary>

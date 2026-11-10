@@ -3,7 +3,7 @@ using AxKit.Forms;
 
 namespace AxKit.Tests;
 
-/// <summary>The shared jump of an edit control's text by Markdown structure (docs/axkit/SPEC.md AX-7.2): the key pairs, the caret, what is announced, and the menu labels.</summary>
+/// <summary>The shared jump of an edit control's text by Markdown structure (docs/axKit/SPEC.md AX-7.2): the key pairs, the caret, what is announced, and the menu labels.</summary>
 public sealed class TextJumpsTests
 {
     private const string Text = "# One\r\n\r\ntext with a [link](https://x.org)\r\n\r\n## Two\r\n\r\n- item";

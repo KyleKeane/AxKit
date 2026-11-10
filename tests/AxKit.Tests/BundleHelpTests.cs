@@ -2,7 +2,7 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
-/// <summary>The first line and the bundle's section of every F1 text (docs/axkit/app-kit.md AK-2.3, AX-7.2).</summary>
+/// <summary>The first line and the bundle's section of every F1 text (docs/axKit/app-kit.md AK-2.3, AX-7.2).</summary>
 public sealed class BundleHelpTests
 {
     private static string[] Lines(string text) => text.Split("\r\n");
