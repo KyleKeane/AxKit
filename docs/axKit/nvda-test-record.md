@@ -6,6 +6,34 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-09, late evening: every app for 5.6.0, by the assistant through nvda-pass.ps1 (`main` a9de848)
+
+Run by the assistant with NVDA 2025.3.3 listening after the user stepped away at his word, Claude Code 2.1.322 and
+`--model haiku`, Windows 11 Pro 10.0.26200, a development build of `main` at a9de848, the state released as 5.6.0:
+every name a user hears in the app's own case (AX-5.1), axDescribe's picture file (DE-2.7) with the test pictures
+(DE-8), axHelp's and axDescribe's silent typing and Tab into the list (HE-3.3, HE-3.4), Claude's working folder
+(AH-2.1, AH-D6), the axKit menu's new order with the Claude submenu and without Open windows by type (AX-9.1), the
+Claude apps as the last group of every list (AX-9.2), and the reminder opened at once by any ask while Claude is off
+(AH-1.3). `nvda-pass.ps1` over every app, 84 scripts (the 83 of the evening's pass plus `axDescribe/02-picture-file.txt`):
+all 84 passed whole in the one run, 2264 s, every announcement also spoken by NVDA, which covers for this release:
+the axKit menu line of every window's F1 text (`check commands` in every script; the whole line in `KeyTests`), About,
+Version with the access layers in their new order (`axDown/06`, `axJSON/04`), Show current folder in with axClaude
+last (`axFile/02`), the reminder at once from Shift+F1 with Claude off and no agreement, Escape as "Claude stays off",
+Space on the box and Turn on as "Claude on" going straight on to the question field, the switch "Use Claude in axKit"
+as "Claude off" and "Claude on", the folders notice naming Claude's working folder (`axDown/11`), axHelp's Tab into
+the list and Shift+Tab back, Enter in the list showing the answer (`axHelp/01`), axDescribe's start on a picture file
+described at once with no picture of the screen taken, the description kept under the file's name, Tab into the list
+(`axDescribe/02`), and axDescribe's 01 on the user's desktop, where the picture is taken (the script's second path).
+The user's own axHelp, axDescribe and axStart kept running from their older build throughout: a test run's app holds a
+mutex of its own (`AppPaths.OneAtATime`) and a second start finds only a window of its own program file
+(`HotkeyForm.FindRunning`, `ThisProgram.Runs`), so the environment failure of the evening's `axstart/01` is gone.
+
+Not heard by this pass and the user's by ear: a real description of a test picture (`docs/axDescribe/nvda-test-plan.md`
+section 4, `tests/fixtures/pictures`), Ctrl+D's Windows file picker (a separate window the automation does not drive),
+a real question from axHelp with Claude Code starting in `Documents\axKit Claude`, how NVDA reads the focused list of
+earlier questions on Down (the automation hears the window, not NVDA's own reading of a list box), and the menus of
+the other apps, untouched by this release.
+
 ## 2026-11-09, the evening: every app for 5.5.0, by the assistant through nvda-pass.ps1 (`main` 34d3db5)
 
 Run by the assistant with NVDA 2025.3.3 listening after the user stepped away at his word, Claude Code 2.1.322 and
