@@ -148,7 +148,7 @@ public class AxKitList : ListBox
 
     // ---- the rename in place (AX-8.7; from axFile's AF-4.2 on its second use, axTask and axPass, 2026-10-24) ----
 
-    private TextBox? _renameBox;
+    private AxKitTextBox? _renameBox;
     private Action<string>? _renameCommit;
     private Action? _renameEnded;
 
@@ -171,7 +171,7 @@ public class AxKitList : ListBox
 
         if (_renameBox is null)
         {
-            _renameBox = new TextBox { Visible = false, AccessibleName = "New name", BorderStyle = BorderStyle.FixedSingle, Font = Font };
+            _renameBox = new AxKitTextBox { Visible = false, AccessibleName = "New name", BorderStyle = BorderStyle.FixedSingle, Font = Font };
             _renameBox.KeyDown += OnRenameKey;
             _renameBox.Leave += (_, _) => EndRename();
             Controls.Add(_renameBox);

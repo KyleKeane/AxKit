@@ -14,9 +14,10 @@ public readonly record struct ThemeColor(int? Rgb)
 
 /// <summary>
 /// The theme file (docs/axkit/theme.md): <c>%APPDATA%\AxKit\theme.json</c>, one for the bundle, with a colour or
-/// <c>system</c> for every class of object the windows draw (TH-2). Read here, painted by <c>AxKit.Forms.ThemePainter</c>.
-/// No file, or <c>system</c> everywhere, is no change at all (AX-7.7). Keys the bundle does not know are kept when the
-/// file is written again (TH-1.4); a value not understood is <c>system</c> and counted, for Reload's sentence.
+/// <c>system</c> for every class of object the windows draw (TH-2), and the display settings (TH-6: the editors' word
+/// wrap). Read here, painted by <c>AxKit.Forms.ThemePainter</c>. No file, or <c>system</c> everywhere, is no change at
+/// all (AX-7.7). Keys the bundle does not know are kept when the file is written again (TH-1.4); a value not understood
+/// is <c>system</c> and counted, for Reload's sentence.
 /// </summary>
 public sealed class Theme
 {
@@ -36,16 +37,20 @@ public sealed class Theme
 
     private readonly Dictionary<string, ThemeColor> _colors;
 
-    private Theme(bool enabled, string name, Dictionary<string, ThemeColor> colors, IReadOnlyList<string> notUnderstood)
+    private Theme(bool enabled, string name, bool wordWrap, Dictionary<string, ThemeColor> colors, IReadOnlyList<string> notUnderstood)
     {
         Enabled = enabled;
         Name = name;
+        WordWrap = wordWrap;
         _colors = colors;
         NotUnderstood = notUnderstood;
     }
 
-    /// <summary>TH-1.5: false keeps the file and paints nothing.</summary>
+    /// <summary>TH-1.5: false keeps the file and paints nothing of the colours; the display settings (TH-6) hold either way.</summary>
     public bool Enabled { get; }
+
+    /// <summary>TH-6.1: whether the editors wrap long lines, <c>display.wordWrap</c>; on when the file or the key is missing.</summary>
+    public bool WordWrap { get; }
 
     public string Name { get; }
 
@@ -131,7 +136,21 @@ public sealed class Theme
             }
         }
 
-        return new Theme(enabled, TextOf(root["name"]) ?? string.Empty, colors, notUnderstood);
+        // The display settings (TH-6), after the colours as the template has them; a value that is not true or false is on and counted.
+        var wordWrap = true;
+        if (root["display"] is JsonObject display && display["wordWrap"] is { } wrapNode)
+        {
+            if (wrapNode is JsonValue wrap && wrap.TryGetValue<bool>(out var wraps))
+            {
+                wordWrap = wraps;
+            }
+            else
+            {
+                notUnderstood.Add("display.wordWrap");
+            }
+        }
+
+        return new Theme(enabled, TextOf(root["name"]) ?? string.Empty, wordWrap, colors, notUnderstood);
     }
 
     /// <summary>A whole file with every class at <c>system</c> (TH-1.2), for Edit theme file when there is none.</summary>
@@ -149,6 +168,7 @@ public sealed class Theme
             ["enabled"] = true,
             ["name"] = "My theme",
             ["colors"] = colors,
+            ["display"] = new JsonObject { ["wordWrap"] = true },
         };
         return ToText(root);
     }
@@ -157,7 +177,21 @@ public sealed class Theme
     /// Writes <c>enabled</c> into the file, every other key kept as it is (TH-1.4, TH-1.5); the template first when
     /// there is no file. The reason when the file could not be changed (not JSON, not writable), null when it was.
     /// </summary>
-    public static string? SetEnabled(string path, bool enabled)
+    public static string? SetEnabled(string path, bool enabled) => Write(path, root => root["enabled"] = enabled);
+
+    /// <summary>Writes <c>display.wordWrap</c> (TH-6.1) the same way, the display object made when the file has none.</summary>
+    public static string? SetWordWrap(string path, bool wordWrap) => Write(path, root =>
+    {
+        if (root["display"] is not JsonObject display)
+        {
+            display = new JsonObject();
+            root["display"] = display;
+        }
+
+        display["wordWrap"] = wordWrap;
+    });
+
+    private static string? Write(string path, Action<JsonObject> change)
     {
         try
         {
@@ -176,7 +210,7 @@ public sealed class Theme
                 root = (JsonObject)JsonNode.Parse(Template())!;
             }
 
-            root["enabled"] = enabled;
+            change(root);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, ToText(root));
             return null;

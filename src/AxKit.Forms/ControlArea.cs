@@ -99,7 +99,7 @@ public sealed class ControlArea : Panel
     /// <summary>A one-line field named <paramref name="name"/>: Enter calls <paramref name="enter"/> with its text, Escape <paramref name="escape"/>.</summary>
     public void ShowField(string name, bool focus, bool hold, Action<string> enter, Action escape)
     {
-        var field = new TextBox { AccessibleName = name, Dock = DockStyle.Top };
+        var field = new AxKitTextBox { AccessibleName = name, Dock = DockStyle.Top };
         field.KeyDown += (_, e) =>
         {
             var answering = Answering(e);

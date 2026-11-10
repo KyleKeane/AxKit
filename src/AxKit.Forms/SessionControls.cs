@@ -22,7 +22,7 @@ public sealed class SessionControls : FlowLayoutPanel
     private readonly FlowLayoutPanel _presetList = new();
     private readonly FlowLayoutPanel _customRow = new();
     private readonly Label _customLabel = new();
-    private readonly TextBox _custom = new();
+    private readonly AxKitTextBox _custom = new();
     private readonly List<RadioButton> _presets = [];
     private readonly IReadOnlyList<SessionPreset> _specs;
     private readonly Func<string?, string?> _pickFolder;
@@ -123,7 +123,6 @@ public sealed class SessionControls : FlowLayoutPanel
                 accept();
             }
         };
-        _custom.KeyDown += EditKeys.Handle;
         _customRow.Controls.Add(_customLabel);
         _customRow.Controls.Add(_custom);
         Controls.AddRange([_chooseFolder, _presetGroup, _customRow]);

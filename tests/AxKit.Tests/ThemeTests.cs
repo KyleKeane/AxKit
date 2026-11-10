@@ -18,6 +18,38 @@ public sealed class ThemeTests
         Assert.Equal(22, Theme.Keys.Count);
         Assert.Contains("field.background", Theme.Keys);
         Assert.Contains("titleBar.foreground", Theme.Keys);
+        Assert.True(theme.WordWrap);
+        Assert.Contains("\"display\": {", Theme.Template());
+    }
+
+    /// <summary>docs/axkit/theme.md TH-6: the display settings, read whatever enabled says, written into a file with or without them.</summary>
+    [Fact]
+    public void Word_wrap_is_read_from_the_display_settings_and_written_beside_what_is_there()
+    {
+        var off = Theme.Read("""{ "format": "axkit-theme 1", "enabled": false, "display": { "wordWrap": false } }""", out var problem);
+        Assert.Null(problem);
+        Assert.False(off!.WordWrap);
+        Assert.False(off.Enabled);
+        Assert.True(Theme.Read("""{ "format": "axkit-theme 1" }""", out _)!.WordWrap);
+        var odd = Theme.Read("""{ "format": "axkit-theme 1", "colors": { "text.foreground": "red" }, "display": { "wordWrap": "no" } }""", out _);
+        Assert.True(odd!.WordWrap);
+        Assert.Equal(["text.foreground", "display.wordWrap"], odd.NotUnderstood);
+
+        var path = Path.Combine(Path.GetTempPath(), "axkit-tests", Guid.NewGuid().ToString("N"), "theme.json");
+        // No file: the template with the value as asked.
+        Assert.Null(Theme.SetWordWrap(path, false));
+        Assert.False(Theme.Load(path, out _)!.WordWrap);
+        Assert.True(Theme.Load(path, out _)!.Enabled);
+        // A file without a display object gets one; its colours and its own keys stay.
+        File.WriteAllText(path, """{ "format": "axkit-theme 1", "note": "mine", "colors": { "text.background": "#102030" } }""");
+        Assert.Null(Theme.SetWordWrap(path, false));
+        var written = File.ReadAllText(path);
+        Assert.Contains("\"note\": \"mine\"", written);
+        Assert.Contains("\"wordWrap\": false", written);
+        Assert.Equal(0x102030, Theme.Load(path, out _)!.Color("text.background").Rgb);
+        Assert.Null(Theme.SetWordWrap(path, true));
+        Assert.True(Theme.Load(path, out _)!.WordWrap);
+        Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
     }
 
     [Fact]

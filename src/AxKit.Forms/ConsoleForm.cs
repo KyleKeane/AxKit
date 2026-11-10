@@ -62,12 +62,8 @@ public abstract partial class ConsoleForm : AxKitForm
         Input.AcceptsTab = false;
         Input.WordWrap = true;
         Input.ScrollBars = ScrollBars.Vertical;
-        // The control's default of 32 767 characters cut a long paste short without a word (axClaude FR-2.1).
-        Input.MaxLength = 0;
         Input.Dock = DockStyle.Bottom;
         Input.TabIndex = 0;
-        // The bundle's page and paragraph keys (axClaude FR-2.1): the control's own keys do nothing while the text fits, or scroll a row and leave the caret.
-        Input.KeyDown += EditKeys.Handle;
         // A frame, a colour of its own and the name line over it, so that the active field is told from the read-only
         // view on screen (both are the white Window colour otherwise); none of this is anything to NVDA.
         Input.BorderStyle = BorderStyle.FixedSingle;
@@ -151,7 +147,7 @@ public abstract partial class ConsoleForm : AxKitForm
     protected TranscriptView Transcript { get; }
 
     /// <summary>The multi-line field at the bottom: the message to Claude, the command to the shell.</summary>
-    protected TextBox Input { get; } = new();
+    protected AxKitTextBox Input { get; } = new();
 
     /// <summary>What takes the field's place: Claude's question, the recent commands.</summary>
     protected ControlArea Area { get; } = new();

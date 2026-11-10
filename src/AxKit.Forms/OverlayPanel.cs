@@ -109,10 +109,10 @@ public sealed class OverlayPanel : Panel
     private readonly KeyHold _hold = new();
 
     private readonly Label _title = new();
-    private readonly TextBox _text = new();
+    private readonly AxKitTextBox _text = new();
     private readonly Panel _inputRow = new();
     private readonly Label _inputLabel = new();
-    private readonly TextBox _input = new();
+    private readonly AxKitTextBox _input = new();
     private readonly FlowLayoutPanel _buttons = new();
     private readonly ProgressBar _progress = new();
     private readonly ListBox _matches = new();
@@ -153,7 +153,6 @@ public sealed class OverlayPanel : Panel
         _text.ForeColor = SystemColors.WindowText;
         _text.Dock = DockStyle.Fill;
         _text.TabIndex = 2;
-        _text.KeyDown += EditKeys.Handle;
         _text.KeyDown += OnTextKeyDown;
 
         _inputLabel.AutoSize = true;
