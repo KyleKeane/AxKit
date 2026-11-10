@@ -63,6 +63,25 @@ public static class AppPaths
     public static string InstalledExe => Path.Combine(InstallFolder, "AxKit.exe");
 
     /// <summary>
+    /// The name of the mutex that keeps one process of a background app (axStart AS-1.2; axClip, axHelp, axDescribe)
+    /// per home: <c>Local\AxKit.AxStart</c> for the user's, and with a mark of the run's folder for a test run
+    /// (<see cref="AutomationEnvironment.Home"/>), so that the run's app and the user's own, which keeps running from
+    /// sign-in, never take each other for a second start (2026-11-09: the user's axDescribe made every test start end
+    /// at once).
+    /// </summary>
+    public static string OneAtATime(string app)
+    {
+        var name = @"Local\AxKit." + app;
+        if (AutomationEnvironment.Home is { } home)
+        {
+            var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(home.ToUpperInvariant()));
+            name += "." + Convert.ToHexString(hash, 0, 6);
+        }
+
+        return name;
+    }
+
+    /// <summary>
     /// The first start after the rename (docs/axKit/SPEC.md AX-5.4, B-16): what Axit, the bundle's name up to 4.0.0,
     /// kept in <c>%APPDATA%\Axit</c> and <c>%LOCALAPPDATA%\Axit</c> moves into the AxKit folders, so that every app
     /// finds its settings, the recently closed list, the consents, the AI tools' pairings and their key, and the logs

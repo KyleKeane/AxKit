@@ -1,4 +1,5 @@
 using AxHelp.Core;
+using AxKit.Core;
 using AxKit.Forms;
 
 namespace AxHelp;
@@ -42,7 +43,7 @@ public static class AxHelpApp
                 }
             }
 
-            _one = new Mutex(initiallyOwned: true, @"Local\AxKit.AxHelp", out var first);
+            _one = new Mutex(initiallyOwned: true, AppPaths.OneAtATime("AxHelp"), out var first);
             if (!first)
             {
                 _one.Dispose();

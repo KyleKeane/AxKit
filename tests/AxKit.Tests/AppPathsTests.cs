@@ -8,6 +8,14 @@ namespace AxKit.Tests;
 /// </summary>
 public sealed class AppPathsTests
 {
+    /// <summary>The background apps' one-at-a-time mutex (axStart AS-1.2): the user's name outside a test run, where the tests themselves run.</summary>
+    [Fact]
+    public void The_one_at_a_time_name_is_the_apps_under_the_users_home()
+    {
+        Assert.Equal(@"Local\AxKit.AxStart", AppPaths.OneAtATime("AxStart"));
+        Assert.Equal(@"Local\AxKit.AxDescribe", AppPaths.OneAtATime("AxDescribe"));
+    }
+
     [Fact]
     public void A_whole_folder_moves_when_the_new_one_is_missing_and_nothing_happens_without_an_old_one()
     {

@@ -1,4 +1,5 @@
 using AxClip.Core;
+using AxKit.Core;
 using AxKit.Forms;
 
 namespace AxClip;
@@ -42,7 +43,7 @@ public static class AxClipApp
                 }
             }
 
-            _one = new Mutex(initiallyOwned: true, @"Local\AxKit.AxClip", out var first);
+            _one = new Mutex(initiallyOwned: true, AppPaths.OneAtATime("AxClip"), out var first);
             if (!first)
             {
                 _one.Dispose();

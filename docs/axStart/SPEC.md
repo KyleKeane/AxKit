@@ -199,7 +199,8 @@ docs/axStart/        this spec, user-guide.md (embedded), nvda-test-plan.md
 
 `AxKit.Forms/AppMessage` gains the verb `show` and `SendTo`, a hand-over to a window the caller found: axStart's is
 hidden, so the axKit menu's list of visible windows does not have it, and the starting process finds it by its title
-and program (`StartForm.FindRunning`), one axStart being held by the mutex `Local\AxKit.AxStart`. The installer stops
+and program (`StartForm.FindRunning`), one axStart being held by the mutex `Local\AxKit.AxStart` (`AppPaths.OneAtATime`:
+with a mark of the run's folder in a test run, so that a run's axStart and the user's never count as one). The installer stops
 axStart before it changes anything, starts it hidden afterwards, and its removal deletes the Run value.
 
 ## 7. Design decisions

@@ -1,3 +1,4 @@
+using AxKit.Core;
 using AxKit.Forms;
 using AxStart.Core;
 
@@ -42,7 +43,7 @@ public static class AxStartApp
                 }
             }
 
-            _one = new Mutex(initiallyOwned: true, @"Local\AxKit.AxStart", out var first);
+            _one = new Mutex(initiallyOwned: true, AppPaths.OneAtATime("AxStart"), out var first);
             if (!first)
             {
                 // AS-1.2: one axStart; the running one shows its field, unless this start only wanted it running.

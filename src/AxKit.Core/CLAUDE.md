@@ -22,7 +22,9 @@ another project on its second use, the bullet says so.
 - `BundleInfo`: the version, read from the executable.
 - `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `AxKit` folders; `ConsentFile`;
   `TakeOverOldFolders` (AX-5.4, 2026-11-05), the Axit folders of up to 4.0.0 moved into them on the first start, entry
-  by entry through `TakeOverFolder`, tested in `AppPathsTests`.
+  by entry through `TakeOverFolder`, tested in `AppPathsTests`; `OneAtATime` (2026-11-09), the name of the mutex that
+  keeps one process of a background app (axStart, axClip, axHelp, axDescribe), marked with the run's folder in a test
+  run so that the run's app and the user's own never count as one.
 - `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
 - `Theme` with `ThemeColor` (docs/axKit/theme.md, 2026-11-09): the theme file `%APPDATA%\AxKit\theme.json`, one for the
   bundle, a colour (`#RRGGBB`) or `system` for every class of object the windows draw (`Classes`, `Keys`); `Load` and
