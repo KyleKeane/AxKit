@@ -1,0 +1,12 @@
+# axDescribe: the window at start, F1 and its commands (docs/axdescribe/nvda-test-plan.md section 1), run by
+# tools/AxAutomate on a desktop of its own (docs/axkit/automation.md).
+file home\AxKit\axdescribe.json {"checkForUpdates": false}
+
+start describe
+check commands
+expect focus Describe
+expect state "title":"Describe - axDescribe"
+keys f1
+expect state Keyboard shortcuts
+keys escape
+expect focus Describe

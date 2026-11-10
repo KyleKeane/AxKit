@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axDescribe: a new app, the window in front described by Claude.
 - axHelp: a new app, a question from anywhere or about this window, answered by Claude.
 
 ## 5.5.0
