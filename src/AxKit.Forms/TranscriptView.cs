@@ -11,7 +11,7 @@ namespace AxKit.Forms;
 /// and adds NVDA-style single-key navigation with the keys the window hands in (<see cref="TranscriptKeys"/>). It
 /// came from axClaude on its second use (docs/axterminal/SPEC.md §5); the requirement numbers below are axClaude's.
 /// </summary>
-public sealed class TranscriptView : TextBox
+public sealed class TranscriptView : AxKitTextBox
 {
     private const int WM_SETREDRAW = 0x000B;
     private const int EM_LINEINDEX = 0x00BB;

@@ -29,7 +29,7 @@ The text is the one control. Arrow keys, Home, End, Ctrl+Home, Ctrl+End, Ctrl+Le
 - **Ctrl+E** opens the file in axDown, or in axJSON for a `.json` file, a new editor window; File, Edit in axDown is the same item, named after the file's kind.
 - **Ctrl+W** shows the file in File Explorer; File, Show current file in also offers axClaude and axTerminal (in its folder), axGIT (the repository that holds it) and axFile (the file selected in its folder).
 - **Ctrl+O** opens another file with the Windows file picker; File, Open recent lists the last ten, "1. README.md (C:\notes\README.md)".
-- **Ctrl+Shift+W** turns word wrap off and on (Options, Text); the caret stays where it was.
+- **Ctrl+Shift+W** turns word wrap off and on (Options, Text); the caret stays where it was. The setting is one for every editor of axKit, kept in the theme file.
 - **Ctrl+S** says "Nothing to save here": nothing is ever changed, so nothing is ever lost.
 
 Every file opens. A text file, up to 32 MB, shows its text: the editors' kinds always, a log, a script, a file without an extension. A Word document, a PowerPoint presentation or an OpenDocument text shows its text, its headings and slides as headings, so that Ctrl+H moves through them. A zip shows its list of files, the first thousand of a huge one and then how many more. A picture shows the text Windows' own reader finds in it, a second or two after it opens, one line per line of the picture (nothing of it leaves your computer); File, Read the clipboard's picture (Ctrl+Shift+V) does the same for a picture on the clipboard, which Alt+PrintScreen puts there from the window in front and PrintScreen from the whole screen, so a dialog that reads badly is read as text. A sound or a video says what it is. Any other file shows the readable text inside it. A text file over 32 MB gives "Too large".
@@ -48,7 +48,7 @@ Under the text is the Details list: Tab or F6 moves there and back. It has every
 
 ## Settings
 
-Everything you change is kept in `%APPDATA%\AxKit\axpreview.json`: word wrap, the recent files, the font and text size, the update check. Options, Developer, Open settings file opens it in axJSON.
+Everything you change is kept in `%APPDATA%\AxKit\axpreview.json`: the recent files, the font and text size, the update check. Options, Developer, Open settings file opens it in axJSON. Word wrap is in the theme file instead (`%APPDATA%\AxKit\theme.json`), the same for every editor of axKit.
 
 ## Updates
 

@@ -64,8 +64,9 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 
 ### AD-2 The editor
 
-- AD-2.1 A `TextBox`: Multiline, AcceptsTab, AcceptsReturn, WordWrap as the setting says (on by default),
-  ScrollBars Vertical (Both while word wrap is off), HideSelection false, MaxLength 0. Its `AccessibleName` is the
+- AD-2.1 The bundle's edit control (`AxKitTextBox`, AX-8.9): Multiline, AcceptsTab, AcceptsReturn, WordWrap as the
+  theme file's display setting says (on by default; `docs/axkit/theme.md` TH-6, one value for axDown, axJSON and
+  axPreview since 5.5.0), ScrollBars Vertical (Both while word wrap is off), HideSelection false, MaxLength 0. Its `AccessibleName` is the
   file's name (`notes.md`), or Untitled, so that NVDA says the name when the focus arrives (AX-7.1).
 - AD-2.2 The text is the file's, with line endings normalised to `\r\n` for the control; the original line ending
   is remembered and written back (AD-3.4).
@@ -78,7 +79,9 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   which NVDA, reading at the caret after the key, reported as the same text again. NVDA reads the row the caret
   lands on or the selection change; the app says nothing.
 - AD-2.4 Turning word wrap off and on keeps the caret where it was. (WinForms recreates the control's handle on that
-  change and loses the position; the form saves `SelectionStart` and restores it, then scrolls to the caret.)
+  change and loses the position; the form saves `SelectionStart` and restores it, then scrolls to the caret.) Ctrl+Shift+W
+  writes the value into the theme file (TH-6.2); another editor window follows it when next activated, the caret kept
+  the same way.
 - AD-2.5 **Undo and redo** (specified and built 2026-10-21 at the user's ask; the control's own one-level Ctrl+Z
   before). The window keeps a history of its own of every change to the text since the file was opened in
   it: a run of typing is one step until a pause of a second or the caret leaves the run's end, a deletion the same;
@@ -243,8 +246,9 @@ its name (the file's) and the first line.
 ### AD-8 Settings
 
 `%APPDATA%\AxKit\axdown.json` through the bundle's `SettingsFile` (AX-5): `fontFamily` (null = system), `fontSize`
-(0 = system), `fontBold`, `wordWrap` (true), `checkForUpdates` (true), `recentFiles` (the last ten files opened or saved under a name, newest first, AD-4.1), `window` (placement). A plain class,
+(0 = system), `fontBold`, `checkForUpdates` (true), `recentFiles` (the last ten files opened or saved under a name, newest first, AD-4.1), `window` (placement). A plain class,
 `EditorSettings`, in `AxKit.Core` (shared since axJSON, each editor app with its own file), with the sanity checks after loading as `AppSettings` has.
+Word wrap is not here since 5.5.0: it is the bundle's, `display.wordWrap` in the theme file (`docs/axkit/theme.md` TH-6); a `wordWrap` key left from an earlier version is ignored.
 
 ### AD-9 Status bar
 

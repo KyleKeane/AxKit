@@ -16,7 +16,7 @@ axKit installs all its apps at once; see the axKit guide (axKit menu, About, axK
 
 The window is one text field named after the file, so NVDA reads it as any text: the arrow keys move, Ctrl+Home and Ctrl+End go to the ends, Page Up and Page Down move a screen, Ctrl+Up and Ctrl+Down move by paragraph. Nothing is spoken that you did not ask for.
 
-Long lines wrap at the window's edge, so Down Arrow reads one screen line at a time. Options, Text, Word wrap (Ctrl+Shift+W) turns that off, and each line of the file is then one line in the window.
+Long lines wrap at the window's edge, so Down Arrow reads one screen line at a time. Options, Text, Word wrap (Ctrl+Shift+W) turns that off, and each line of the file is then one line in the window. The setting is one for every editor of axKit, kept in the theme file (`%APPDATA%\AxKit\theme.json`, `display.wordWrap`); axDown and axPreview follow it the next time their window is active.
 
 ## Files
 
@@ -63,7 +63,7 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 
 ## Settings
 
-axJSON remembers the font, the text size, word wrap, the recent files and the window's place in `%APPDATA%\AxKit\axjson.json`. Options, Developer, Open settings file opens it in a new axJSON window.
+axJSON remembers the font, the text size, the recent files and the window's place in `%APPDATA%\AxKit\axjson.json`. Options, Developer, Open settings file opens it in a new axJSON window. Word wrap is in the theme file instead, the same for every editor of axKit.
 
 ## Updates
 

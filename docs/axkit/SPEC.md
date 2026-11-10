@@ -480,6 +480,13 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - AX-8.8 A check box says its new state when the user toggles it, "checked" or "not checked", as one announcement
   (2026-10-31: NVDA said nothing on Space in the consent notice's box). Built into `AxKit.Forms/AxKitCheckBox`, the one
   check box of the bundle; `CheckBoxTests` fails on a plain `CheckBox`.
+- AX-8.9 Every edit control of the bundle is `AxKit.Forms/AxKitTextBox` (2026-11-09; the user: "ensure the shared text
+  fields are all coming from a single component"): no length cap (the control's own 32 767 characters cut a long paste
+  short), and in a multi-line control the bundle's page and paragraph keys (AX-8.2) after the window's own handler, so
+  that a window's key on the same stroke comes first (axTerminal's Ctrl+Up is its history). Word wrap is the
+  control's, on, everywhere but the editors, which take it from the theme file's display settings
+  (`docs/axkit/theme.md` TH-6). `TextBoxTests` fails on a plain `TextBox` and on a second subscription of the keys,
+  which would move the caret twice.
 
 ### AX-9 The axKit menu
 

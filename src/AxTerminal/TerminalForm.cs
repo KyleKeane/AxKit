@@ -78,8 +78,6 @@ internal sealed partial class TerminalForm : ConsoleForm
         _model.Ready += OnReady;
         _model.CommandFinished += OnCommandFinished;
         _asks.Tick += (_, _) => CheckForQuestion();
-        // The field's own keys first, the bundle's edit keys from there (Ctrl+Up and Ctrl+Down are the history, AT-3.9).
-        Input.KeyDown -= EditKeys.Handle;
         Input.KeyDown += OnInputKeyDown;
         Transcript.LineChosen += CopyLineToField;
         BuildMenus();

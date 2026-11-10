@@ -3,10 +3,11 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The theme on this window (docs/axkit/theme.md TH-3, TH-4): the file read as the window loads and again when it has
-/// changed by the time the window is activated, painted by <see cref="ThemePainter"/> over the whole window, over a
-/// notice as it opens and over a control area as it fills; and the three items of Options, Text, Theme. Without a
-/// theme file every window is painted with the classes' defaults, which is what it was before (AX-7.7).
+/// The theme on this window (docs/axkit/theme.md TH-3, TH-4): the file read as the window is made (so that a window's
+/// constructor can take a display setting from it, TH-6) and again when it has changed by the time the window is
+/// activated, painted by <see cref="ThemePainter"/> over the whole window, over a notice as it opens and over a control
+/// area as it fills; and the three items of Options, Text, Theme. Without a theme file every window is painted with the
+/// classes' defaults, which is what it was before (AX-7.7).
 /// </summary>
 public abstract partial class AxKitForm
 {
@@ -17,6 +18,33 @@ public abstract partial class AxKitForm
 
     /// <summary>Paints <paramref name="root"/> from the theme; the whole window when it is this form.</summary>
     protected void PaintTheme(Control root) => ThemePainter.Apply(root, _theme);
+
+    /// <summary>TH-6.1: whether the editors wrap long lines, from the theme file's display settings; on without a file.</summary>
+    protected bool WordWrapPreference => _theme?.WordWrap ?? true;
+
+    /// <summary>
+    /// Writes the display setting into the theme file (the template first when there is none) and reads the file
+    /// back, so that this window's stamp is current; every other window takes it when next activated (TH-3.2). The
+    /// reason when the file could not be changed, null when it was.
+    /// </summary>
+    protected string? SetWordWrapPreference(bool on)
+    {
+        if (Theme.SetWordWrap(AppPaths.ThemeFile, on) is { } problem)
+        {
+            return problem;
+        }
+
+        LoadTheme();
+        return null;
+    }
+
+    /// <summary>
+    /// After the theme has been read again and painted (an activation with the file changed, Reload theme, Theme on):
+    /// a window that takes a display setting from it applies it here (the editors' word wrap, TH-6.2). Nothing by default.
+    /// </summary>
+    protected virtual void OnThemeChanged()
+    {
+    }
 
     /// <summary>Options, Text, Theme ▸: Edit theme file, Reload theme, Theme on (TH-4).</summary>
     private ToolStripMenuItem CreateThemeMenu()
@@ -50,6 +78,7 @@ public abstract partial class AxKitForm
         {
             LoadTheme();
             PaintTheme(this);
+            OnThemeChanged();
         }
     }
 
@@ -60,6 +89,7 @@ public abstract partial class AxKitForm
     {
         LoadTheme();
         PaintTheme(this);
+        OnThemeChanged();
         var path = AppPaths.ThemeFile;
         Announce(_theme switch
         {
@@ -103,6 +133,7 @@ public abstract partial class AxKitForm
 
         LoadTheme();
         PaintTheme(this);
+        OnThemeChanged();
         Announce(on ? "Theme on" : "Theme off", true);
     }
 }

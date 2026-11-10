@@ -12,7 +12,9 @@ gives each a colour, or the word `system` for Windows' own. Every window of the 
 whenever the file changes, and paints its controls from it. Without the file, or with every value `system`, the
 windows are exactly what they are today: Windows' colours, light or dark as Windows is, high contrast as Windows has
 it. The file is edited in axJSON (Options, Theme, Edit theme file in every window), so the user's own tools are the
-theme editor; there is no colour picker window. Nothing NVDA hears changes: a colour is drawing only.
+theme editor; there is no colour picker window. Nothing NVDA hears changes: a colour is drawing only. Since 5.5.0 the
+same file holds the display settings every window shares (section TH-6): the editors' word wrap, one value for axDown,
+axJSON and axPreview, written by Ctrl+Shift+W in any of them.
 
 Who it is for: the sighted helpers who read over a blind user's shoulder (the 2026-11-08 field tint came from one
 taking the white message field for more of the white conversation), and users with low vision who need their own
@@ -80,6 +82,9 @@ contrast. The blind user keeps Windows' colours and loses nothing.
     "button.foreground": "system",
     "titleBar.background": "system",
     "titleBar.foreground": "system"
+  },
+  "display": {
+    "wordWrap": true
   }
 }
 ```
@@ -146,19 +151,43 @@ No key of its own: three menu items, reached by the menu, by the palette (AX-10)
 ### TH-5 Tests
 
 - TH-5.1 `AxKit.Core/Theme` is tested: the template round trip, `system` and hex values, a bad value counted and
-  treated as `system`, an unknown key kept, a missing key as `system`, `enabled` false, a file that is not a theme.
+  treated as `system`, an unknown key kept, a missing key as `system`, `enabled` false, a file that is not a theme; the
+  display settings read, written into a file that has none and kept beside a user's own keys (TH-6).
 - TH-5.2 A repository test fails on a colour in an app's or the shared pieces' code outside the theme's own files:
   `Color.FromArgb`, `Color.<Name>`, `SystemColors.` and `BackColor =` or `ForeColor =` are allowed in
   `AxKit.Forms/Theme*.cs` and axMedia's video area alone (G4; the console field's tints move into the theme's defaults).
 - TH-5.3 A step in the automation scripts (axDown): Options, Theme, Edit theme file opens axJSON on `theme.json`
-  (`adopt`), Reload says "Theme reloaded". Nothing more for NVDA: no focus or announcement changes beyond that sentence.
+  (`adopt`), Reload says "Theme reloaded"; Ctrl+Shift+W says "Word wrap off" and the file then holds
+  `"wordWrap": false` (TH-6). Nothing more for NVDA: no focus or announcement changes beyond those sentences.
+
+### TH-6 Display settings
+
+The `display` object of the same file (2026-11-09, the user: one JSON with the adjustable display properties, "so that
+things like word wrap can be tweaked"): what every window shares of how it shows its text, apart from colours. Read
+whatever `enabled` says and under high contrast too, since none of it is a colour.
+
+- TH-6.1 `display.wordWrap` (true by default): whether the editors, axDown, axJSON and axPreview, wrap long lines at
+  the window's edge. Every other text of the bundle always wraps (a notice's text, a field, a transcript), since a line
+  past the edge there would be unreachable; the editors alone have the long lines, a table or a line of code, that a
+  user may want whole. One value for the three: it was a `wordWrap` key in each editor's own settings file until
+  5.5.0, and a toggle left off in axDown's read as lines cut at the window's edge (the reports repository's issue 4).
+- TH-6.2 Options, Text, Word wrap (Ctrl+Shift+W) in an editor writes the value into the file (the template first when
+  there is none) and applies it to its own text with the caret kept (axDown AD-2.4); every other editor window takes
+  it when next activated (TH-3.2), Reload theme at once, through the base's `OnThemeChanged`. Edited in axJSON like
+  any other value of the file.
+- TH-6.3 A value that is not `true` or `false` is on and counted for Reload's sentence, as a colour not understood is
+  (TH-1.4).
+- TH-6.4 Another display setting joins this object when a use comes, one that a helper or the user wants the same in
+  every window: one key, read by the base and taken by the windows it concerns through `OnThemeChanged`, never a
+  setting per app. A per-window setting (the font, each app's own since the texts differ) stays in the app's file.
 
 ## 5. Architecture
 
-- `AxKit.Core/Theme.cs`: the record (`Enabled`, `Name`, the colours as a map from class key to `ThemeColor`, which is
-  `System` or an ARGB integer), `Load(path)` returning the theme and the keys not understood, `Template()`,
-  `Save(path)` keeping unknown keys, `Classes` (the list of keys, one place), `ParseColor`. No WinForms type: the
-  colour is an integer, so that the project stays `net10.0` and tested.
+- `AxKit.Core/Theme.cs`: the record (`Enabled`, `Name`, `WordWrap`, the colours as a map from class key to
+  `ThemeColor`, which is `System` or an ARGB integer), `Load(path)` returning the theme and the keys not understood,
+  `Template()`, `SetEnabled` and `SetWordWrap` writing one value and keeping every other key, `Classes` (the list of
+  keys, one place), `ParseColor`. No WinForms type: the colour is an integer, so that the project stays `net10.0` and
+  tested.
 - `AxKit.Forms/ThemePainter.cs`: `Apply(Control root, Theme theme)`, one walk over the tree deciding each control's
   class by its type (`TranscriptView` before `TextBox`, the console field by a tag the console window sets, a notice's
   panel by type, `MenuStrip`, `StatusStrip`, `Button`, `AxKitList`, `ListBox`, `TextBox`, the rest `window`), and the
@@ -167,7 +196,10 @@ No key of its own: three menu items, reached by the menu, by the palette (AX-10)
   ambient colour for surfaces and labels), so that a value turned back to `system` is seen at the next reload and a
   Windows app theme change repaints the defaults (`SystemColorsChanged`); `Mark` names a control's class when its type
   does not (the console field, its band, axMedia's video surface as `fixed`).
-- `AxKitForm`: the Options, Theme items, the file stamp check on `Activated`, the calls to the painter (TH-3.1).
+- `AxKitForm`: the file read in the constructor (so that a window's own constructor can take a display setting from
+  it) and painted in `OnLoad`, the Options, Theme items, the file stamp check on `Activated`, the calls to the painter
+  (TH-3.1); `WordWrapPreference`, `SetWordWrapPreference` and the virtual `OnThemeChanged` for TH-6, which
+  `TextEditorForm` overrides to follow the file.
 - `ConsoleForm.ApplyFieldColors`: today's two tints become the `field` and `band` defaults the painter uses for
   `system`, so that the console windows look as they do in 5.2.2 without a theme.
 
@@ -182,6 +214,8 @@ Each step its own commit, the gate (`test.ps1`) green on each; the spec changes 
    (the bundle README's Settings section).
 5. Later, when heard in use: the selected row of lists (TH-D5), a second file beside the first that a helper can switch
    to (`theme.json` stays the one that is read).
+6. The display settings (TH-6), 2026-11-09: word wrap moved out of the three editors' settings files into the one
+   `display` object, with the shared edit control (bundle AX-8.9) in the same change.
 
 ## 7. Decisions
 
@@ -198,3 +232,7 @@ Each step its own commit, the gate (`test.ps1`) green on each; the spec changes 
   texts are what NVDA reads.
 - **TH-D6 Colours are integers in Core.** `System.Drawing.Color` would tie the pure project to the Windows desktop
   assemblies; `#RRGGBB` to an `int` and back is six lines and tested.
+- **TH-D7 Display settings in the theme file, not a file of their own and not per app.** The user asked for one JSON
+  of the adjustable display properties; the theme file is that file already, edited the same way, re-read on the same
+  activation check, and a second file would be a second place to look. No refresh key is added for it: the activation
+  check and Reload theme are the refresh, and Ctrl+R is axTerminal's recent commands.

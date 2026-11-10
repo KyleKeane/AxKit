@@ -10,13 +10,13 @@ namespace AxKit.Forms;
 /// </summary>
 public sealed class ReportControls : FlowLayoutPanel
 {
-    private readonly TextBox _words = new();
+    private readonly AxKitTextBox _words = new();
     private readonly AxKitList _kind = new();
-    private readonly TextBox _app = new();
-    private readonly TextBox _actions = new();
-    private readonly TextBox _where = new();
-    private readonly TextBox _log = new();
-    private readonly TextBox _title = new();
+    private readonly AxKitTextBox _app = new();
+    private readonly AxKitTextBox _actions = new();
+    private readonly AxKitTextBox _where = new();
+    private readonly AxKitTextBox _log = new();
+    private readonly AxKitTextBox _title = new();
     private readonly List<Control> _rows = [];
     private readonly Action<string> _say;
     private bool _titleTyped;
@@ -151,7 +151,6 @@ public sealed class ReportControls : FlowLayoutPanel
         box.AccessibleName = name;
         box.Text = text;
         box.Margin = new Padding(0);
-        box.KeyDown += EditKeys.Handle;
     }
 
     private static void MultiLine(TextBox box, string name, int rows, bool acceptsReturn)
@@ -163,7 +162,6 @@ public sealed class ReportControls : FlowLayoutPanel
         box.ScrollBars = ScrollBars.Vertical;
         box.Margin = new Padding(0);
         box.Height = box.Font.Height * rows + 8;
-        box.KeyDown += EditKeys.Handle;
     }
 
     private void LayoutRows()

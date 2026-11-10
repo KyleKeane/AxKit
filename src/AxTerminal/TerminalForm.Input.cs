@@ -33,11 +33,8 @@ internal sealed partial class TerminalForm
                 e.Handled = e.SuppressKeyPress = true;
                 Recall(_history.Newer(FieldText()));
                 break;
-            default:
-                // The bundle's page and paragraph keys (AX-8.2), after the field's own: Ctrl+Up and Ctrl+Down are the
-                // history here, Shift with them still selects by paragraph.
-                EditKeys.Handle(sender, e);
-                break;
+                // The bundle's page and paragraph keys (AX-8.2) are the field's own (AxKitTextBox), after this handler:
+                // Ctrl+Up and Ctrl+Down are the history here, Shift with them still selects by paragraph.
         }
     }
 

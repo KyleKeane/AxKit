@@ -3,16 +3,14 @@ namespace AxKit.Core;
 /// <summary>
 /// Everything an editor window remembers between runs (docs/axdown/SPEC.md AD-8), in <c>%APPDATA%\AxKit\axdown.json</c>
 /// (or the app's own file) through the bundle's <see cref="SettingsFile"/>: the font, the update check and the
-/// window's place from <see cref="WindowSettings"/>, plus word wrap and the recent files. A missing or unreadable
-/// file falls back to the defaults.
+/// window's place from <see cref="WindowSettings"/>, plus the recent files. Word wrap is the bundle's, in the theme
+/// file's display settings since 5.5.0 (docs/axkit/theme.md TH-6); a <c>wordWrap</c> key left in the file is ignored.
+/// A missing or unreadable file falls back to the defaults.
 /// </summary>
 public sealed class EditorSettings : WindowSettings
 {
-    public bool WordWrap { get; set; } = true;
-
     /// <summary>The last files opened or saved under a name, newest first, for File → Open recent file (AD-4.1); at most <see cref="RecentPaths.Max"/>.</summary>
     public List<string> RecentFiles { get; set; } = [];
-
 
     /// <summary>Loads the file, or returns defaults. <paramref name="error"/> describes an unreadable file.</summary>
     public static EditorSettings Load(string path, out string? error)

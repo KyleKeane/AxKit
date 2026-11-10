@@ -172,7 +172,7 @@ public abstract class HotkeyForm : AxKitForm
     private readonly System.Windows.Forms.Timer _speak = new() { Interval = SpeakDelayMs };
 
     /// <summary>The one field, which always has the caret (AS-3.1, CP-2.1); the app names it.</summary>
-    protected TextBox SearchField { get; } = new();
+    protected AxKitTextBox SearchField { get; } = new();
 
     /// <summary>The matches under the field, never focused (AS-D2); the app names it in <see cref="ShowMatches"/>.</summary>
     protected ListBox Matches { get; } = new();

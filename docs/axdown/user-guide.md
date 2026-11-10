@@ -18,7 +18,7 @@ Each file opens in its own window; Alt+Tab moves between them.
 
 The text is an ordinary Windows edit field, so NVDA's own keys read it: arrows for characters and lines, Ctrl+Left and Ctrl+Right for words, NVDA's say-all to read on from the caret, and so on. Type to write; Enter starts a new line; Tab types a tab. Ctrl+Z undoes the last change and Ctrl+Y does it again, as far back as the file was opened in this window: a run of typing is one step, a deletion the same, a paste or a cut one step each. axDown says "Undone" or "Redone", and "Nothing to undo" or "Nothing to redo" at the ends. Saving keeps the history; opening another file or a new document ends it. Page Up and Page Down move a screen at a time and reach the first and last line. Ctrl+Up and Ctrl+Down move to the previous and next paragraph, the first line after a blank line, and with Shift they select to there, as in Word.
 
-Long lines wrap at the window's edge, so Down Arrow reads one screen line at a time. Options, Text, Word wrap (Ctrl+Shift+W) turns that off: each line of the file is then one line in the window, however long, and axDown says "Word wrap off". Your place in the text is kept either way.
+Long lines wrap at the window's edge, so Down Arrow reads one screen line at a time. Options, Text, Word wrap (Ctrl+Shift+W) turns that off: each line of the file is then one line in the window, however long, and axDown says "Word wrap off". Your place in the text is kept either way. The setting is one for every editor of axKit: axJSON and axPreview follow it the next time their window is active, and it is kept in the theme file, `%APPDATA%\AxKit\theme.json`, as `display.wordWrap`.
 
 ## Files
 
@@ -55,7 +55,7 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the n
 
 ## Settings
 
-Everything you change is saved in `%APPDATA%\AxKit\axdown.json`: the font, the text size, word wrap, the recent files, the window's place and size, and whether axDown checks for updates when it starts.
+Everything you change is saved in `%APPDATA%\AxKit\axdown.json`: the font, the text size, the recent files, the window's place and size, and whether axDown checks for updates when it starts. Word wrap is in the theme file instead, the same for every editor of axKit.
 
 ## Updates
 
