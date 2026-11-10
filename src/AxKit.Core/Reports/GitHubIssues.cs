@@ -52,7 +52,7 @@ public static class GitHubIssues
     public static string NewIssueFormUrl(string repository, string title, string body, string label)
     {
         var head = $"https://github.com/{repository}/issues/new?title={Uri.EscapeDataString(title)}&labels={Uri.EscapeDataString(label)}&body=";
-        const string note = "\n\n(cut: the rest is in the report saved on your computer, axKit menu, Your reports)";
+        const string note = "\n\n(cut: the rest is in the report saved on your computer, Help, Your reports)";
         var text = body.Trim();
         var encoded = Uri.EscapeDataString(text);
         if (head.Length + encoded.Length <= FormUrlLength)

@@ -36,7 +36,7 @@ including while the user works, because nothing takes the foreground.
   only with a secret of 32 characters or more, and the client's first line must be that secret (compared in constant
   time), or the client is let go. `AxKit.Core/AutomationEnvironment` reads the variables once, as the process starts,
   and takes them out of its environment: a shell in axTerminal, Claude, git or the user's own programs never inherit
-  them; only a new axKit window of the same run gets them (`AxKitMenu.StartWith`). Without a secret, no pipe exists and
+  them; only a new axKit window of the same run gets them (`WindowMenu.StartWith`). Without a secret, no pipe exists and
   nothing is recorded. A window in a test run is shown without activation, so it never takes the keyboard from the
   user, and focus moves inside it with the thread's own active window.
 - **Its own files.** The runner sets `AXKIT_HOME` to a folder of the run's, under which the windows keep their

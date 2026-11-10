@@ -60,7 +60,7 @@ public abstract class HotkeyForm : AxKitForm
         if (Dispatch.ByName(AppName) is { StoreEntry: false })
         {
             return new ToolStripMenuItem("&Start with Windows (not in the Store's copy)", null, (_, _) =>
-                Announce($"The Store's copy has no sign-in start for {AppName}: the Store allows eight apps with startup tasks, and they are taken. Start {AppName} from any axKit window, axKit menu, New window; it then keeps running until Quit", true));
+                Announce($"The Store's copy has no sign-in start for {AppName}: the Store allows eight apps with startup tasks, and they are taken. Start {AppName} from any axKit window, Window menu, New window; it then keeps running until Quit", true));
         }
 
         return new ToolStripMenuItem("&Start with Windows (Windows Settings)...", null, (_, _) =>
@@ -421,7 +421,7 @@ public abstract class HotkeyForm : AxKitForm
         PrepareShowing(Screen.FromHandle(before).WorkingArea, keepText);
         Log.Info("Shown");
         Show();
-        AxKitMenu.Activate(Handle);
+        WindowMenu.Activate(Handle);
         AfterShowing();
     }
 

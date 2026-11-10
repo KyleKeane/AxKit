@@ -19,7 +19,7 @@ requests, the first a setting; the report sender's only when you send a report:
   `Accept: application/vnd.github+json`. It carries the version you have and, as every web request does, your network
   address; nothing else. GitHub's privacy statement applies to it:
   <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>. Turn it off in any window:
-  Options, General, Check for updates at start. You can still check by hand (axKit menu, Check for updates). A copy
+  Options, General, Check for updates at start. You can still check by hand (Help, Check for updates). A copy
   installed from the Microsoft Store makes no check at start and has no such setting; Check for updates by hand makes
   the same one request, and its notice opens axKit's page in the Store app, which is Microsoft's and runs under
   Microsoft's privacy statement, <https://privacy.microsoft.com/privacystatement>, as the Store's own updating of the
@@ -29,8 +29,8 @@ requests, the first a setting; the report sender's only when you send a report:
   release whose files are elsewhere is reported as having no Windows zip). It installs the zip only if its SHA-256
   digest matches GitHub's digest of the file and the signature made with axKit's release key (ECDSA P-256), and only for
   your Windows account, without administrator rights.
-- **A report you send** (F4 in any window, or axKit menu, Send a report; `docs/axKit/reports.md`). Your report is
-  saved on your computer first, as an item of the axTask list under axKit menu, Your reports. Then it is posted as a
+- **A report you send** (F4 in any window, or Help, Send a report; `docs/axKit/reports.md`). Your report is
+  saved on your computer first, as an item of the axTask list under Help, Your reports. Then it is posted as a
   public issue of the reports repository, `https://github.com/KyleKeane/AxKit-reports`, with one `POST` to
   `https://api.github.com/repos/KyleKeane/AxKit-reports/issues`, after one `GET` of that repository's
   `blocklist.json` from `raw.githubusercontent.com`, which says whether reports from this install or version are
@@ -77,7 +77,7 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   network it reaches, with your rights, under its maker's terms. Remote servers (http, sse) are listed and not
   started; axMCP itself makes no network request.
 - **AI help** (`docs/axKit/ai-help.md`; off until your first question, when a reminder asks you to turn it on; the
-  switch is the axKit menu's Claude submenu, Use Claude in axKit) runs `claude -p`,
+  switch is the Claude menu, Use Claude in axKit) runs `claude -p`,
   Claude Code in its print mode, as a child process with read-only tools, once per question, in a working folder of its
   own (`Documents\axKit Claude` unless `ai-help.json` names another; Claude Code keeps its own notes and sessions for
   the service there and reads a `CLAUDE.md` you write there), and reads its answer from its standard output. What goes
@@ -104,7 +104,7 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
 
 ## The AI tools (off unless you turn them on)
 
-axKit menu, AI tools, Let AI tools read and open axKit. When it is on, an AI tool on your computer that you pair, such as
+Claude menu, AI tools, Let AI tools read and open axKit. When it is on, an AI tool on your computer that you pair, such as
 Claude Code, can read what axKit's windows show and open apps (`docs/axKit/mcp.md`). This happens through named pipes
 for your Windows account alone, never over the network; what the tool then does with what it read is under its own
 terms (Claude Code: Anthropic's). axPass and axClip are never read. Every call is written to `mcp-audit.log` on your

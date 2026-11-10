@@ -68,7 +68,7 @@ the base's. The rest of this section is for a window of a new kind.
   `AxGitApp` is the example.
 - `ThingForm`: the window, derived from `AxKit.Forms/AxKitForm` (AX-6.5), which already holds the notice flow with
   its focus rule, `Announce`, the fonts, the window's place, the settings saving and the settings-not-read notice,
-  the axKit menu with the update flow, find in a text box, a list or a transcript, the folder picker, `Do` for a
+  the Window, Claude and Help menus with the update flow, find in a text box, a list or a transcript, the folder picker, `Do` for a
   command's task, the hand-over from a starting process, the diagnostics and the common keys. Pass the app's name,
   its settings (a class derived from `AxKit.Core/WindowSettings`), the settings path and the settings error to the
   base; add `Overlay` to the controls first; fill in the hooks (`Shortcuts`, `HideForNotice`, `ShowAfterNotice`,
@@ -79,10 +79,10 @@ the base's. The rest of this section is for a window of a new kind.
   control's page and paragraph keys, `StatusLayout` for two status labels, `Notice` records for every question and
   text of the window's own, `CreateExitItem` for the end of the first menu, `ChooseFolder` for the folder picker.
   `GitForm` is the smallest example.
-- The menu bar gets the bundle's axKit menu before Help, `CreateAxKitMenu()` from the base (AX-9), which places the
+- The menu bar ends with the bundle's three menus, `CreateWindowMenu()`, `CreateClaudeMenu()` and `CreateHelpMenu(...)` from the base (AX-9.1); Help places the
   window's Check for updates and Update to items and the bundle's About submenu (AX-9.9); Help holds the app's own
   items only; the window's title ends in ` - AxThing`,
-  which is how the axKit menu tells the apps' windows apart; Recently closed takes the window when it closes by itself
+  which is how the Window menu tells the apps' windows apart; Recently closed takes the window when it closes by itself
   (AX-9.4: by the app's name alone, or by the file or folder the window gives as `PathInHand`), and a window that
   swaps its file calls `RecentlyClosed.Remember` for the old one; it closes as on Alt+F4 when Close all windows posts
   `SC_CLOSE` (AX-9.8). A window that holds a file or a folder takes the bundle's Show in submenu,

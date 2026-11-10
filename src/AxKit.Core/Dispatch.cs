@@ -12,10 +12,10 @@ public sealed record Launch(string App, string[] Arguments, string? Error = null
 /// so that a screen reader says it as a word; 2026-10-23), which ends every title of its windows ("notes.md - axDown")
 /// and names its Start menu entry; <paramref name="Verb"/> starts it (AX-1.1); <paramref name="Project"/> is the name
 /// of its code (the folder src/AxClaude, the class AxClaudeApp, the icon AxClaude.ico), which keeps the C# spelling.
-/// <paramref name="Group"/> is its place among the apps (AX-9.2: the axKit menu's lists keep the groups together with a
+/// <paramref name="Group"/> is its place among the apps (AX-9.2: the Window menu's lists keep the groups together with a
 /// separator between them); <paramref name="Opens"/> what it opens from a path; <paramref name="ShowIn"/> whether every
 /// window's Show current folder in submenu offers it (AX-9.10). Every list of apps in the windows reads these, so a new
-/// app is in the axKit menu, Open in axKit, the Show in submenus and Recently closed by its line in <see cref="Dispatch.Apps"/>.
+/// app is in the Window menu, Open in axKit, the Show in submenus and Recently closed by its line in <see cref="Dispatch.Apps"/>.
 /// The properties below are for the scripts (docs/axKit/app-kit.md AK-4.1): the installer reads them through
 /// <c>AxKit.exe apps</c> (<see cref="Dispatch.Listing"/>), tools/make-icon.ps1 and run.ps1 off this file.
 /// </summary>
@@ -47,7 +47,7 @@ public sealed record App(string Name, string Verb, string Project, AppGroup Grou
     /// <summary>
     /// Whether the Store's package has a Start menu entry for the app (docs/axKit/SPEC.md AX-13.2): the Store allows
     /// eight per package and no hidden one (measured 2026-11-09), so these are the maintainer's eight; every other app
-    /// is reached by its console command, by a file of its kind, by the axKit menu's New window and from axFile.
+    /// is reached by its console command, by a file of its kind, by the Window menu's New window and from axFile.
     /// </summary>
     public bool StoreEntry { get; init; }
 
@@ -70,7 +70,7 @@ public sealed record App(string Name, string Verb, string Project, AppGroup Grou
 /// <summary>An app's icon: two letters in white on a rounded square of the colour.</summary>
 public sealed record AppIcon(string Letters, int Red, int Green, int Blue);
 
-/// <summary>The groups of the apps, in the axKit menu's order (AX-9.2): the standalone apps' groups, then the access layers (AX-11.3).</summary>
+/// <summary>The groups of the apps, in the Window menu's order (AX-9.2): the standalone apps' groups, then the access layers (AX-11.3).</summary>
 public enum AppGroup
 {
     /// <summary>Files and what is in them: the file manager, the editors, the viewer, the player.</summary>
@@ -140,7 +140,7 @@ public static class Dispatch
     /// <summary>
     /// The apps, in the order every list of the windows shows them, by group (AX-9.2, 2026-10-24), the standalone apps
     /// first and the access layers last (AX-11.3, a test keeps it so): one line here puts an
-    /// app in the axKit menu, axFile's Open in axKit, the Show in submenus and Recently closed, and with its properties in
+    /// app in the Window menu, axFile's Open in axKit, the Show in submenus and Recently closed, and with its properties in
     /// the installer's Start menu, File Explorer and Open with entries and the icon script. tools/new-app.ps1 writes a
     /// new app's line; each entry starts with <c>new("name", Verb, "Project", ...</c> on a line of its own, which the
     /// scripts read (tools/apps.ps1).

@@ -1,8 +1,8 @@
 # axTerminal user guide
 
-**axTerminal, access layer for your shell.** axTerminal only shows what your shell prints and passes your commands to it; the shell, and every command you type, does the work, with your rights. Before axTerminal first starts each shell (PowerShell, Command Prompt, Git Bash, PowerShell 7, those that come with Windows included) it shows a short reminder with a check box: you confirm that axTerminal is only an access layer and that following the shell's terms is up to you. axKit menu, About, Licence has these reminders and what you agreed to.
+**axTerminal, access layer for your shell.** axTerminal only shows what your shell prints and passes your commands to it; the shell, and every command you type, does the work, with your rights. Before axTerminal first starts each shell (PowerShell, Command Prompt, Git Bash, PowerShell 7, those that come with Windows included) it shows a short reminder with a check box: you confirm that axTerminal is only an access layer and that following the shell's terms is up to you. Help, About, Licence has these reminders and what you agreed to.
 
-axTerminal is a terminal for a blind developer who uses a screen reader: a shell (PowerShell by default) runs in a hidden console, and everything it prints comes into a plain text window, one line at a time, the way axClaude shows Claude Code. You type a command in a field at the bottom, press Enter, and the command and what it printed stand in the text under their own Input and Output lines, so that the keys you know from axClaude find them again. When a command is done you hear it, and whether it failed. It is one of the apps of axKit and shares its installation, updates and the axKit menu with them.
+axTerminal is a terminal for a blind developer who uses a screen reader: a shell (PowerShell by default) runs in a hidden console, and everything it prints comes into a plain text window, one line at a time, the way axClaude shows Claude Code. You type a command in a field at the bottom, press Enter, and the command and what it printed stand in the text under their own Input and Output lines, so that the keys you know from axClaude find them again. When a command is done you hear it, and whether it failed. It is one of the apps of axKit and shares its installation, updates and the Window, Claude and Help menus with them.
 
 ## What you need
 
@@ -12,7 +12,7 @@ axTerminal is a terminal for a blind developer who uses a screen reader: a shell
 
 ## Install
 
-axKit's installer installs axTerminal with the other apps: see the axKit guide (Alt+A, About, axKit guide) or the README that came with the download. It adds the Start menu entry `axKit axTerminal`, the console command `axTerminal` and axTerminal in the `Open with axKit` submenu on folders in File Explorer.
+axKit's installer installs axTerminal with the other apps: see the axKit guide (Alt+H, About, axKit guide) or the README that came with the download. It adds the Start menu entry `axKit axTerminal`, the console command `axTerminal` and axTerminal in the `Open with axKit` submenu on folders in File Explorer.
 
 ## Start
 
@@ -81,7 +81,7 @@ Every option in the menus is saved as you change it, in `%APPDATA%\AxKit\axTermi
 
 ## Updates
 
-Alt+A, Check for updates asks GitHub for a newer axKit; Update to installs it and starts axTerminal again with a new shell in the same folder. Options, General, Check for updates at start turns the check at start off.
+Alt+H, Check for updates asks GitHub for a newer axKit; Update to installs it and starts axTerminal again with a new shell in the same folder. Options, General, Check for updates at start turns the check at start off.
 
 ## If something goes wrong
 
@@ -92,7 +92,7 @@ Alt+A, Check for updates asks GitHub for a newer axKit; Update to installs it an
 
 ## About axTerminal
 
-axTerminal is part of axKit, made by Dr. Kyle Keane, www.kylekeane.com, free under the GNU AGPL 3 licence. Alt+A, About has the version, the licence and the axKit guide.
+axTerminal is part of axKit, made by Dr. Kyle Keane, www.kylekeane.com, free under the GNU AGPL 3 licence. Alt+H, About has the version, the licence and the axKit guide.
 
 ## Disclaimer
 

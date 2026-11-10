@@ -27,9 +27,9 @@ expect state "notice":null
 expect focus "value":"docs, folder"
 
 # 5.3 The axKit menu: New window with axFile among the apps, Close all windows, About's Version "axKit <version>".
-expect commands "axFile, axKit, New window"
-expect commands "Close all windows, axKit"
-menu Version, axKit, About
+expect commands "axFile, Window, New window"
+expect commands "Close all windows, Window"
+menu Version, Help, About
 expect state axKit
 keys escape
 expect focus "value":"docs, folder"

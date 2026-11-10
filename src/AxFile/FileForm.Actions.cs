@@ -232,7 +232,7 @@ public sealed partial class FileForm
             return;
         }
 
-        AxKitMenu.Start(Dispatch.AxMedia, folder);
+        WindowMenu.Start(Dispatch.AxMedia, folder);
     }
 
     /// <summary>
@@ -262,7 +262,7 @@ public sealed partial class FileForm
                 return;
             }
 
-            AxKitMenu.StartWith(Dispatch.AxMedia, [.. targets.Select(target => target.Path), "--add"]);
+            WindowMenu.StartWith(Dispatch.AxMedia, [.. targets.Select(target => target.Path), "--add"]);
             Announce($"Added {count} to axMedia's queue", true);
         });
     }

@@ -86,11 +86,11 @@ expect state "notice":null
 # 5.4 The axKit menu's commands; About, Version names the version and axGIT among the apps.
 # (Recently closed and Open windows fill themselves as the menu opens, and the menu bar's menu mode needs the
 # foreground: those two lists are manual.)
-expect commands axClaude, access layer for Claude Code, axKit, New window
-expect commands axGIT, access layer for Git, axKit, New window
-expect commands Close all windows, axKit
+expect commands axClaude, access layer for Claude Code, Window, New window
+expect commands axGIT, access layer for Git, Window, New window
+expect commands Close all windows, Window
 expect commands Check for updates
-expect commands Version, axKit, About
+expect commands Version, Help, About
 menu Version
 expect state "notice":"axKit 
 expect state axTerminal for your shell, axGIT for Git

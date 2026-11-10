@@ -10,7 +10,7 @@ mcp start
 mcp call axkit_windows
 expect mcp error: axKit's AI tools access is off
 
-# On from the axKit menu, AI tools: asked once. The default turns it on and adds axKit to Claude Code, which a test run
+# On from the Claude menu, AI tools: asked once. The default turns it on and adds axKit to Claude Code, which a test run
 # never does (the user's Claude Code settings), and says so; or, without Claude Code here, Turn on alone.
 menu Let AI tools read and open axKit
 expect state "notice":"Turn on AI tools?"

@@ -3,7 +3,7 @@
 # the runner did not start and so can neither drive nor close (it would stay behind on the test desktop), so these
 # steps are manual:
 # 2.1 Enter on axClaude's Session, Show current folder in, axGIT: a new axGIT window on the repository, focused.
-# 2.2 Alt+A, O, the open windows, most recent first, and Enter back to one: the list fills itself as the menu opens,
+# 2.2 Alt+W, O, the open windows, most recent first, and Enter back to one: the list fills itself as the menu opens,
 #     and switching windows needs the foreground.
 # 2.3 Enter on axDown's File, Show current file in, axGIT.
 # 2.4 Enter on axGIT's Repository, Show current repository in, axClaude.

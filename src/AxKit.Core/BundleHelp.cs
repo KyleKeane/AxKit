@@ -12,14 +12,14 @@ public static class BundleHelp
     /// <summary>The heading of the bundle's section in most windows.</summary>
     public const string InEveryWindow = "In every window of axKit";
 
-    /// <summary>The axKit menu's line, the same in every F1 text (AX-9; <c>KeyTests</c> checks it whole).</summary>
-    public const string AxKitMenuLine = "Alt+A: the axKit menu: a new window of any app, the open axKit windows, most recent first (Alt+A, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Claude (the switch, a question about this window, the folders Claude may read, Claude's working folder, the AI tools), the command palette, Send a report, Your reports, Check for updates, and About";
+    /// <summary>The bundle's menus in one line, the same in every F1 text (AX-9.1: Window, Claude, Help; <c>KeyTests</c> checks it whole).</summary>
+    public const string BundleMenusLine = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the Claude menu: Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder, the AI tools. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About";
 
     /// <summary>
     /// The first line and the bundle's section, ending in a blank line so that the app's own sections follow. In the
     /// section: F1, the command palette, the app's own <paramref name="lines"/> in their order (what Tab moves between,
     /// what Ctrl+F finds, what Ctrl+S does, and in axClaude and axTerminal all their window keys), the text size, the
-    /// menu with Alt+F4, the axKit menu. Lines are CRLF, as the notice's edit control shows them.
+    /// menu with Alt+F4, the bundle's menus. Lines are CRLF, as the notice's edit control shows them.
     /// </summary>
     /// <param name="app">The app's name, as in "Alt+F4: close axCalc".</param>
     /// <param name="lines">The app's lines of the section, without their indent.</param>
@@ -39,7 +39,7 @@ public static class BundleHelp
         // AX-11.2: an access layer says what it is before its keys.
         if (Dispatch.ByName(app) is { IsAccessLayer: true } layer)
         {
-            text.Append($"{layer.Title}: {layer.Name} only shows what {layer.AccessLayerFor} does and passes your commands to it; {layer.AccessLayerFor} does the work under its maker's terms, which are yours to follow. axKit menu, About, Licence has the reminders\r\n");
+            text.Append($"{layer.Title}: {layer.Name} only shows what {layer.AccessLayerFor} does and passes your commands to it; {layer.AccessLayerFor} does the work under its maker's terms, which are yours to follow. Help, About, Licence has the reminders\r\n");
         }
 
         text.Append("\r\n");
@@ -55,7 +55,7 @@ public static class BundleHelp
 
         text.Append("  Ctrl+Plus, Ctrl+Minus: bigger or smaller text\r\n");
         text.Append("  Alt: the menu. Alt+F4: ").Append(altF4 ?? "close " + app).Append("\r\n");
-        text.Append("  ").Append(AxKitMenuLine).Append("\r\n");
+        text.Append("  ").Append(BundleMenusLine).Append("\r\n");
         text.Append("\r\n");
         return text.ToString();
     }

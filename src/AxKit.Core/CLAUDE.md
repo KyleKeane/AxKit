@@ -69,7 +69,7 @@ another project on its second use, the bullet says so.
   takes the app's name and its own lines of the section (what Tab moves between, what Ctrl+F finds, what Ctrl+S does;
   all the window keys in axClaude and axTerminal, whose heading is "Anywhere") and returns the first line naming the
   text's keys and the section with F1, the palette, the app's lines, the text size, the menu with Alt+F4 (`altF4` when
-  it does more than close the app) and `AxKitMenuLine`; each `HelpText.Shortcuts` adds its own sections after it.
+  it does more than close the app) and `BundleMenusLine`; each `HelpText.Shortcuts` adds its own sections after it.
 - `RecentActions` with `RecentActionKind` (docs/axKit/reports.md RP-4.1, 2026-11-07): the last twenty actions of one
   window for a report, the commands run, what it said and the notices it showed, each with its time; `Lines(now)`
   gives the report's lines oldest first ("12 s ago: Find, Ctrl+F", "12 s ago, said: 3 matches") and `Age` the ages as
@@ -90,7 +90,7 @@ another project on its second use, the bullet says so.
 - `RecentlyClosed` (AX-9.4): the bundle's list of the last ten files and folders the windows held when they closed or
   swapped them, in `%APPDATA%\AxKit\recently-closed.json` through `SettingsFile`: `Remember` from a window, `Load` for
   the menu (entries whose path still exists), `Title` as "notes.md (C:\notes\notes.md) - axDown".
-- `AxKitWindows` (AX-9): the window lists of the axKit menu from the windows `AxKit.Forms.AxKitMenu` reads off the system
+- `AxKitWindows` (AX-9): the window lists of the axKit menu from the windows `AxKit.Forms.WindowMenu` reads off the system
   in Z order, which is recency: the app from a title's ending (" - axDown"), Open windows without the current window,
   each app's windows with it, and the item labels with the number as the mnemonic and a full stop as a pause
   ("&1. notes.md - axDown"; the apps' recent lists use the same `Label`).

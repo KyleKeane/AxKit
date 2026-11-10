@@ -64,8 +64,8 @@ public sealed class DescribeForm : HotkeyForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Claude &resources",
             [("&Claude Code", "https://code.claude.com/docs/en/overview")]);
 
-        // The bundle's axKit menu (AX-9) sits before Help in every window.
-        _menu.Items.AddRange([first, options, CreateAxKitMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
+        _menu.Items.AddRange([first, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
         MainMenuStrip = _menu;
 
         // ---- the field and the earlier descriptions (DE-2.3, DE-3): HotkeyForm's, named here ----
@@ -294,7 +294,7 @@ public sealed class DescribeForm : HotkeyForm
 
         Log.Info("Hidden: the picture opened in axPreview");
         HideWindow(giveBack: false);
-        AxKitMenu.Start(Dispatch.AxPreview, PicturePath);
+        WindowMenu.Start(Dispatch.AxPreview, PicturePath);
         Do(GiveForegroundBackLaterAsync);
     }
 

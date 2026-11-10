@@ -16,7 +16,7 @@ public static class HelpText
         ## Bringing axHelp up
           The hotkey, Windows+Alt+H unless you chose another in Options, Hotkey: from any program, the question field
           The same hotkey while axHelp shows hides it again
-          The first question turns Claude on, after a reminder of what goes to Anthropic; the switch is axKit menu, Claude, Use Claude in axKit, in any axKit window
+          The first question turns Claude on, after a reminder of what goes to Anthropic; the switch is Claude menu, Use Claude in axKit, in any axKit window
 
         ## In the question field
           Type your question and press Enter. Claude answers in a notice; the arrows and the heading letters read it

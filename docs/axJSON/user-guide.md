@@ -4,7 +4,7 @@ axJSON is a small editor for JSON files, part of axKit, made for working with a 
 
 ## Install
 
-axKit installs all its apps at once; see the axKit guide (axKit menu, About, axKit guide). axJSON is "axKit axJSON" in the Start menu, `axJSON` in a console, and "Open with" for `.json` files in File Explorer.
+axKit installs all its apps at once; see the axKit guide (Help, About, axKit guide). axJSON is "axKit axJSON" in the Start menu, `axJSON` in a console, and "Open with" for `.json` files in File Explorer.
 
 ## Start
 
@@ -58,8 +58,7 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 - **Edit**: Undo, Redo, Cut, Copy, Paste, Select all, Format (Ctrl+Shift+F).
 - **Navigate**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Key, Object, Array, Item and Error.
 - **Options**: Text (Word wrap, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axJSON.json in a new axJSON window, and Copy diagnostics).
-- **axKit**: the bundle's menu, the same in every axKit window: New window, Open windows, Recently closed, Close all windows, Claude (the switch, a question about this window, the folders, Claude's working folder, the AI tools), Command palette, Send a report, Your reports, Check for updates, Update to the newest version while one is known, and About.
-- **Help**: Keyboard shortcuts (F1), this guide, JSON resources (the JSON syntax page and Claude Code's settings documentation, in your browser).
+- **Window**, **Claude** and **Help**: the bundle's three menus, the same in every axKit window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. Claude (Alt+A) has the switch Use Claude in axKit, Ask about this window (Shift+F1), Folders Claude may read, Claude's working folder and the AI tools. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## Settings
 
@@ -76,7 +75,7 @@ New versions of axKit are published on GitHub, and every app of axKit updates to
 
 ## About axJSON
 
-axJSON is part of axKit, made by Dr. Kyle Keane, www.kylekeane.com. It is free software under the GNU AGPL 3 (the `LICENSE` file next to the program), with the terms in `NOTICE.md` (axKit menu, About, Licence): use it, study it, change it and share it; a changed version that is shared gives its source under the same licence and carries a name of its own.
+axJSON is part of axKit, made by Dr. Kyle Keane, www.kylekeane.com. It is free software under the GNU AGPL 3 (the `LICENSE` file next to the program), with the terms in `NOTICE.md` (Help, About, Licence): use it, study it, change it and share it; a changed version that is shared gives its source under the same licence and carries a name of its own.
 
 ## Disclaimer
 

@@ -4,7 +4,7 @@ axProcess shows what runs on your computer, made for screen reader users: the ru
 
 ## Install
 
-axProcess is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axProcess` and a console command `axProcess`. Any axKit window starts one too: Alt+A, New window, axProcess.
+axProcess is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axProcess` and a console command `axProcess`. Any axKit window starts one too: Alt+W, New window, axProcess.
 
 ## Start
 
@@ -39,8 +39,7 @@ The Startup view is for reading: axProcess does not turn startup programs on or 
 Only the menu of the view you are in can be opened; the other two are unavailable, so that you never end a process from the services or the reverse.
 - **View**: Processes (Ctrl+1), Services (Ctrl+2), Startup (Ctrl+3), Sort processes by.
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
-- **Help**: Keyboard shortcuts (F1), this guide, Windows resources.
+- **Window**, **Claude** and **Help**: the bundle's three menus, the same in every axKit window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. Claude (Alt+A) has the switch Use Claude in axKit, Ask about this window (Shift+F1), Folders Claude may read, Claude's working folder and the AI tools. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## Settings
 
@@ -48,7 +47,7 @@ axProcess keeps the font, the text size, the update check, the window's place an
 
 ## Updates
 
-axProcess checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
+axProcess checks for a newer axKit when it starts and offers it in a notice; the Help menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
@@ -56,7 +55,7 @@ axProcess's log is `%LOCALAPPDATA%\AxKit\logs\axProcess.log`; it names every pro
 
 ## About axProcess
 
-axProcess is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
+axProcess is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Help menu's About names the version and the licence.
 
 ## Disclaimer
 

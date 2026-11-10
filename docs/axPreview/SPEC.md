@@ -6,7 +6,7 @@ gained the night before (`docs/axFile/SPEC.md` AF-9.4) moves here and grows into
 is file operations and management only and viewing, like playing (`docs/axMedia/SPEC.md`), is another app's with a
 tight hand-over (AP-D1). The document is kept in step with the code (a behaviour change updates it in
 the same commit). Requirements are numbered `AP-n.m` and decisions `AP-Dn`; the bundle's rules, AX-7 (accessibility),
-AX-8 (keys) and AX-9 (the axKit menu), and axDown's (`docs/axDown/SPEC.md`, cited as "axDown AD-n.m") are cited by
+AX-8 (keys) and AX-9 (the Window, Claude and Help menus), and axDown's (`docs/axDown/SPEC.md`, cited as "axDown AD-n.m") are cited by
 number and not repeated. In axPreview's code and documents, "SPEC.md" means this file. The inventory of the split
 of axFile, of which this app is one part, is `docs/axKit/axfile-split.md`.
 
@@ -18,7 +18,7 @@ line, `l` for the line number, and for a Markdown file axDown's navigation keys 
 list items, block quotes, tables). Ctrl+E opens the same file in its editor, axDown or axJSON, for the one time in ten
 the reader wants to change something. The window is reached from axFile (Shift+Enter on a file, or Item → Preview),
 from File Explorer (Open with axKit on a file, and as the file's default program when the user makes it so), from the
-Start menu, the axKit menu and the command line; a file opened while an axPreview window is open goes into that window
+Start menu, the Window menu and the command line; a file opened while an axPreview window is open goes into that window
 rather than a new one (AP-1.2). It works entirely offline (bundle G6).
 
 Since the user's direction of 2026-10-24 axPreview is the general viewer, offered by Windows for every file type: two
@@ -35,7 +35,7 @@ it, so that every file shows something and the details say what it is.
 - **G2 Reading first.** Every key is a reading key; the editors' Ctrl letters work the same, so that a file read in
   axPreview and edited in axDown is the same text under the same keys.
 - **G3 One viewer.** axFile hands files to the axPreview window that is open; a second window is a deliberate act (the
-  axKit menu's New window).
+  Window menu's New window).
 - **G4 Every file, as text.** Text files in version one (3.3.1); since 2026-10-24 every kind, each through its
   renderer into the same read-only text (AP-D6), with the details pane beside it in the reading order (AP-6).
 - **G5 Nothing spoken unprompted** (AX-7.3).
@@ -48,7 +48,7 @@ it, so that every file shows something and the details say what it is.
 1. In axFile on a project, Shift+Enter on `README.md`: axPreview opens on it, the window in front: NVDA reads
    "README.md - axPreview window", then "README.md, read only edit, multi line" and the first line. Ctrl+H: "Install,
    heading level 2"; Ctrl+K: the next link; `l`: "Line 12 of 40"; Ctrl+F `update`, Enter: the match selected and its
-   line read. Escape does nothing here; Alt+Tab or the axKit menu goes back to axFile. Ctrl+E: axDown on the same
+   line read. Escape does nothing here; Alt+Tab or the Window menu goes back to axFile. Ctrl+E: axDown on the same
    file, the caret on the same line.
 2. Shift+Enter on `notes.txt` in axFile while axPreview is open on `README.md`: the same window shows `notes.txt`;
    "Open recent" lists both.
@@ -70,11 +70,11 @@ it, so that every file shows something and the details say what it is.
   every file, axPreview under Windows' own Open with for every file type (since 3.7.2, the general viewer to come,
   `docs/axKit/plan.md`; the text kinds `.txt`, `.md`, `.markdown`, `.log`, `.json` until then; type name
   "File (axPreview)"), so that the user can make it the default program for a kind in Windows'
-  settings (AP-D2), the axKit menu's New window (AX-9). A file alone on the command line keeps going to its editor
+  settings (AP-D2), the Window menu's New window (AX-9). A file alone on the command line keeps going to its editor
   (AX-1.2); the viewer is chosen by name or by Windows' association.
 - AP-1.2 **One viewer.** A start with a file, from axFile, from File Explorer or from the command line, hands the
   file to the axPreview window that is open, the most recent by Z order when there are several, brings it to the
-  front and ends; it opens a window of its own only when there is none, or with `--new` (the axKit menu's New window
+  front and ends; it opens a window of its own only when there is none, or with `--new` (the Window menu's New window
   passes it). axFile does nothing special: it starts the app on the file.
 - AP-1.3 **The hand-over** between the starting process and the open window is the bundle's `WM_COPYDATA` message
   (`AxKit.Forms/AppMessage`, `docs/axMedia/SPEC.md` AM-1.3) with the verb `open` and one path; the window answers
@@ -128,7 +128,7 @@ it, so that every file shows something and the details say what it is.
   axGIT | axFile, bundle AX-9.10) | ─ | Exit Alt+F4. No Edit menu: the control's own Ctrl+A and Ctrl+C work as they do. **Navigate (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… Ctrl+G | ─ |
   Next ▸ | Previous ▸ (Heading, Heading level 1 to 6, Link, List, List item, Block quote, Table). **Options (O):**
   Text ▸ (Word wrap Ctrl+Shift+W | ─ | Font… | Larger text | Smaller text | Windows text size) | General ▸ (Check for
-  updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **axKit (A)** (AX-9). **Help (H):**
+  updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Markdown resources ▸ (axDown's pages). Every item has a mnemonic (AX-7.4).
 - AP-3.2 Keys (AX-8). Bundle-wide: F1, the control keys (the text, or the Go to line field while it shows), Ctrl+F,
   F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up, Ctrl+Down with

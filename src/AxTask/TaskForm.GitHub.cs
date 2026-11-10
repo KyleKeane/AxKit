@@ -196,7 +196,7 @@ public sealed partial class TaskForm
                 return;
             }
 
-            AxKitMenu.Start(app.Verb, item.Path);
+            WindowMenu.Start(app.Verb, item.Path);
             return;
         }
 
@@ -240,7 +240,7 @@ public sealed partial class TaskForm
             text = text[..8000] + "\r\n(cut; the rest is in the item's Body field)";
         }
 
-        AxKitMenu.StartWith(Dispatch.AxClaude, [folder, "--message", text]);
+        WindowMenu.StartWith(Dispatch.AxClaude, [folder, "--message", text]);
     }
 
     // ---- the GitHub list itself (RP-7.1) ----

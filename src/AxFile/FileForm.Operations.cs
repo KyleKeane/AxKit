@@ -720,7 +720,7 @@ public sealed partial class FileForm
     }
 
     /// <summary>Folder → New window (Ctrl+N, AF-3.3): another axFile window on the folder shown, as File Explorer's Ctrl+N; without a folder, and at This PC, one that starts as this one did (AF-3.10).</summary>
-    private void NewWindow() => AxKitMenu.Start(Dispatch.AxFile, RealFolder);
+    private void NewWindow() => WindowMenu.Start(Dispatch.AxFile, RealFolder);
 
     /// <summary>
     /// Item → Open in axKit → one app (AF-4.9): a new window of it on the entry, by what the app opens
@@ -737,7 +737,7 @@ public sealed partial class FileForm
 
         if (Dispatch.PathFor(app, entry.Path, entry.IsFolder) is { } path)
         {
-            AxKitMenu.Start(app.Verb, path);
+            WindowMenu.Start(app.Verb, path);
         }
         else
         {
@@ -759,7 +759,7 @@ public sealed partial class FileForm
             return;
         }
 
-        AxKitMenu.Start(Dispatch.EditorOf(entry.Path), entry.Path);
+        WindowMenu.Start(Dispatch.EditorOf(entry.Path), entry.Path);
     }
 
     /// <summary>Item → Open with → Windows default (AF-4.7): the program Windows has for the entry, a folder in File Explorer, or the dialog that picks one.</summary>

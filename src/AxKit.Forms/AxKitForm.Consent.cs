@@ -56,7 +56,7 @@ public abstract partial class AxKitForm
             $"A reminder: {who} is only an access layer. It shows what {target.Program} does and passes your commands to it; {target.Program} is not part of axKit.\n" +
             $"{target.Work}\n" +
             $"Its terms are {target.Terms}, between you and its maker{(target.TermsUrl.Length > 0 ? ": " + target.TermsUrl : "; no address is known for them.")}\n" +
-            "axKit is a set of personal tools shared as they are, not a product or a service (axKit menu, About, Licence).";
+            "axKit is a set of personal tools shared as they are, not a product or a service (Help, About, Licence).";
         return new Notice(title, text,
         [
             new OverlayChoice(action, () =>

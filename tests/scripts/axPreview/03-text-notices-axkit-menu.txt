@@ -33,12 +33,12 @@ expect focus {"name":"README.md","role":"Text","value":"## Install"}
 
 # 3.3: the axKit menu as the palette reads it: New window with axPreview among the apps, Close all windows, Check for
 # updates, About.
-# 3.3 manual: Alt+A needs the menu bar's menu mode; Recently closed, Open windows and Open windows by type are
+# 3.3 manual: Alt+W needs the menu bar's menu mode; Recently closed, Open windows and Open windows by type are
 # submenus filled as they open, which the palette leaves out.
-expect commands "axPreview, axKit, New window"
-expect commands "Close all windows, axKit"
+expect commands "axPreview, Window, New window"
+expect commands "Close all windows, Window"
 expect commands "Check for updates (axKit
-expect commands "Version, axKit, About"
+expect commands "Version, Help, About"
 
 # 3.4 manual: Copy diagnostics writes the user's clipboard. Alt+F4 closes without a question: the runner cannot see a
 # window close, so here only no question shows after it.

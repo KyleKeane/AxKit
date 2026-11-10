@@ -156,8 +156,8 @@ public sealed partial class FileForm : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "File &resources",
             [("&Keyboard shortcuts in Windows", "https://support.microsoft.com/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec")]);
 
-        // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
-        _menu.Items.AddRange([folder, item, select, options, CreateAxKitMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
+        _menu.Items.AddRange([folder, item, select, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
 
         // ---- the list (AF-2.1, AF-2.2): the main control; its own keys stay native (AF-3.6) ----
         _list.IntegralHeight = false;
@@ -212,8 +212,8 @@ public sealed partial class FileForm : AxKitForm
         var axkit = new ToolStripMenuItem("Open in &axKit");
         Add(axkit, new Command("&Editor", AxFileKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
         axkit.DropDownItems.Add(new ToolStripSeparator());
-        // Every app that opens a path (AF-4.9), by group as in the axKit menu.
-        AxKitMenu.AddApps(axkit.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing), app => new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => OpenInAxKit(app)));
+        // Every app that opens a path (AF-4.9), by group as in the Window menu.
+        WindowMenu.AddApps(axkit.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing), app => new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => OpenInAxKit(app)));
 
         menu.DropDownItems.Add(axkit);
         Add(menu, new Command("Pr&eview", AxFileKeys.Preview, OpenInPreview) { When = InList, Mark = CommandMark.Open });

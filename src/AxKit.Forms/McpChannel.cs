@@ -136,7 +136,7 @@ internal sealed class McpChannel
                 _said.Clear();
             }
 
-            writer.WriteLine(JsonSerializer.Serialize(new { error = "axKit's AI tools access is off: axKit menu, AI tools, Let AI tools read and open axKit." }, Plain));
+            writer.WriteLine(JsonSerializer.Serialize(new { error = "axKit's AI tools access is off: Claude menu, AI tools, Let AI tools read and open axKit." }, Plain));
             return;
         }
 

@@ -9,7 +9,7 @@ Anthropic account and Anthropic's terms, which are yours to follow.
 
 Nothing to set up: press the hotkey. The first time, a reminder says what goes to Anthropic (here, a picture of the
 window you point at); Tab to the box, Space, and Enter on Turn on: "Claude on", and the picture is described. That
-turns Claude on for every axKit app; the switch is in any axKit window, Alt+A for the axKit menu, Claude, Use Claude
+turns Claude on for every axKit app; the switch is in any axKit window, Alt+A for the Claude menu, Use Claude
 in axKit. Claude Code must be installed and logged in; if it is missing, a notice offers Install Claude Code now.
 
 ## Describing the window in front
@@ -51,7 +51,7 @@ the list and deletes that picture; your own files stay.
 ## Settings
 
 Options, Hotkey, Text, General and Developer as in axHelp; the settings file is `%APPDATA%\AxKit\axDescribe.json`.
-The AI help settings are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached from the axKit menu in every window.
+The AI help settings are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached from the Claude menu in every window.
 
 ## If something goes wrong
 
@@ -62,9 +62,9 @@ Options, Developer, Copy diagnostics copies what helps a bug report; F4 sends on
 
 ## About
 
-The axKit menu, About.
+The Help, About.
 
 ## Disclaimer
 
-axDescribe comes with no warranty; see the licence in the axKit menu, About. The picture goes to Anthropic under your
+axDescribe comes with no warranty; see the licence in the Help, About. The picture goes to Anthropic under your
 account and Anthropic's terms, and may show whatever was on your screen: check what is in front before you press the key.

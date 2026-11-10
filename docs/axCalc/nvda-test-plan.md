@@ -42,9 +42,9 @@ Run with NVDA before a release, after `run-axCalc.ps1` (or `.\run.ps1 -App calc`
 1. Make two answers, close axCalc, start it again: the history holds them; Ctrl+Q says the last.
 2. Options, Keep history between runs (unchecked), close and start again: the history is empty.
 
-## 6. Text, notices, the axKit menu (AC-7)
+## 6. Text, notices, the Window, Claude and Help menus (AC-7)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.
 2. F1: the Keyboard shortcuts notice; h moves by heading; Escape closes it. Help, User guide: this guide; Escape.
-3. Alt+A: the axKit menu; New window lists axCalc; About, Version names axCalc among the apps.
+3. Alt+W: the Window menu; New window lists axCalc. Alt+H, About, Version names axCalc among the apps.
 4. Ctrl+Shift+P, type `bases`, Enter: the bases of the last answer are said.

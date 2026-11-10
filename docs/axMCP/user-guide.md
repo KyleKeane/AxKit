@@ -7,8 +7,8 @@ to for you.
 
 ## Install
 
-axMCP is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry
-`axKit axMCP` and a console command `axMCP`. Any axKit window starts one too: Alt+A, New window, axMCP.
+axMCP is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry
+`axKit axMCP` and a console command `axMCP`. Any axKit window starts one too: Alt+W, New window, axMCP.
 
 ## Start
 
@@ -62,7 +62,7 @@ kept, apart from the last result Ctrl+J writes beside the logs.
 
 ## Updates
 
-The axKit menu, Check for updates.
+The Help, Check for updates.
 
 ## If something goes wrong
 
@@ -72,9 +72,9 @@ again. A call that gets no answer in 60 seconds is given up and said.
 
 ## About
 
-The axKit menu, About.
+The Help, About.
 
 ## Disclaimer
 
-axMCP comes with no warranty; see the licence in the axKit menu, About. The servers are their makers' programs under
+axMCP comes with no warranty; see the licence in the Help, About. The servers are their makers' programs under
 their makers' terms; what a tool does when you call it is between you and that program.

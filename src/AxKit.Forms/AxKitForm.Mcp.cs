@@ -251,7 +251,7 @@ public abstract partial class AxKitForm
             return;
         }
 
-        AxKitMenu.Start(Dispatch.AxPreview, AppPaths.McpAuditFile);
+        WindowMenu.Start(Dispatch.AxPreview, AppPaths.McpAuditFile);
     }
     /// <summary>
     /// The pairing notice (MC-6.4), from the pipe's thread: "Claude Code asks to use axKit …", Allow and Deny. Deny is the

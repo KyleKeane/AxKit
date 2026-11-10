@@ -90,12 +90,12 @@ letter), and a `long.md` with headings and lines longer than the window.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
    as in the editor, "No next table" when there is none; axKit, About, Version names the version of axKit, the nine apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
-4. Alt+A: the axKit menu with New window, Open windows, Recently closed, Close all windows, Claude, Command palette, Send a report, Your reports, Check
-   for updates and About (bundle AX-9); About, axKit on GitHub: the browser opens the repository page. With a second
-   axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+A, B, D there
-   lists both windows, the current one checked; Alt+A, N, D starts a new Untitled window. Alone, Open windows holds
-   "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+A, R reads "1. plain.txt
-   (<path>) - axDown" and Enter opens it in a new window; File, Open on another file puts the one you left there too. Alt+A, C
+4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows; Alt+A: the Claude menu;
+   Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check
+   for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
+   axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds
+   "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+W, R reads "1. plain.txt
+   (<path>) - axDown" and Enter opens it in a new window; File, Open on another file puts the one you left there too. Alt+W, C
    (Close all windows) with unsaved changes in one window: that window asks "Save changes?" and the others close.
 5. Options, General, Check for updates at start: read as checked; Enter unchecks it. Options, Developer, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
    window on `axDown.json`. Help, Markdown resources, Markdown basics: the browser opens commonmark.org; GitHub
@@ -106,8 +106,8 @@ letter), and a `long.md` with headings and lines longer than the window.
    moment "Word wrap, …, 1 of 1"; Down: the low note, then "Word wrap, …, 1 of 1" again; Enter: the palette closes, NVDA is back in the editor at the same place, and
    "Word wrap, checked" (or "not checked") is said; Options shows the item changed. Ctrl+Shift+P, type `xyz`:
    "No commands match xyz"; Enter says it again and the palette stays; Escape: back in the editor, nothing run.
-   Ctrl+Shift+P, `save as`, Enter: the Save as picker opens. Alt+A, P (axKit, Command palette, the menu's first item) opens it too. Recent files and the
-   axKit menu's window lists are not in it; Alt+A, New window, axDown is ("axDown, axKit, New window").
+   Ctrl+Shift+P, `save as`, Enter: the Save as picker opens. Alt+H, P (Help, Command palette, the menu's first item) opens it too. Recent files and the
+   Window menu's lists are not in it; Alt+W, New window, axDown is ("axDown, Window, New window").
 
 ## 7. Updates and uninstall
 
@@ -115,7 +115,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    and "Latest release on GitHub: axKit <version>" with the releases page.
 2. With an older build installed (set `<Version>` in `src/AxKit/AxKit.csproj` below the latest release, `.\publish.ps1`,
    set it back), open a file: the notice "Update to axKit <newest>" opens by itself with four buttons. Escape (Later):
-   the axKit menu has "Update to axKit <newest>..." below Check for updates, and Check for updates asks GitHub again and opens
+   the Help menu has "Update to axKit <newest>..." below Check for updates, and Check for updates asks GitHub again and opens
    the notice once more. Enter (I accept all terms, install and restart): the notice "Updating to axKit <newest>" with a progress bar that
    NVDA reports by its progress bar settings; "Downloaded. Installing" at about 80 percent, then "Installed.
    Restarting"; axDown closes and comes back on the same file (or empty, as it was), axKit, About, Version naming the newest
@@ -149,7 +149,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 The automated part is `tests/scripts/axDown/11-ask-claude.txt`, against a fake Claude; the steps marked "(real)" need
 Claude Code installed and logged in, and are the user's by ear.
 
-1. With Claude off (axKit menu, Claude, Use Claude in axKit unchecked) and no agreement recorded (delete `consent.json`
+1. With Claude off (Claude menu, Use Claude in axKit unchecked) and no agreement recorded (delete `consent.json`
    first, or read the step with the agreement remembered: Shift+F1 says "Claude on" and opens the question field):
    Shift+F1 opens the reminder "Before Claude helps in axKit" at once, read with its check box; Escape: "Claude stays
    off", the editor has the focus.
@@ -162,7 +162,7 @@ Claude Code installed and logged in, and are the user's by ear.
    the same conversation (real). Tab twice: the Copy button; Enter: "Copied"; the notice stays. Escape: the editor has
    the focus again, on the same line as before.
 5. Shift+F1, then Escape: nothing asked, the editor has the focus.
-6. Alt+A, C, F: "Folders Claude may read", "No folders yet…", the text naming Claude's working folder; Tab to Add a
-   folder, Enter: the folder picker; Escape it: the notice comes back; Escape closes it. Alt+A, C, W: axFile opens on
+6. Alt+A, F: "Folders Claude may read", "No folders yet…", the text naming Claude's working folder; Tab to Add a
+   folder, Enter: the folder picker; Escape it: the notice comes back; Escape closes it. Alt+A, W: axFile opens on
    `Documents\axKit Claude`; Alt+F4.
-7. Alt+A, C, U: "Claude off"; Alt+A, C, U: "Claude on" (the agreement is remembered); Alt+A, C, U: "Claude off".
+7. Alt+A, U: "Claude off"; Alt+A, U: "Claude on" (the agreement is remembered); Alt+A, U: "Claude off".

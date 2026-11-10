@@ -4,7 +4,7 @@ axCalc is an app of the axKit bundle (`docs/axKit/SPEC.md`): a calculator as one
 developer who uses the NVDA screen reader. Built 2026-10-23 on the branch `axCalc` (the long run of that day,
 `docs/axKit/plan.md`), not yet heard under NVDA. The document is kept in step with the code (a behaviour change
 updates it in the same commit). Requirements are numbered `AC-n.m` and decisions `AC-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the axKit menu), are cited by number and not repeated. In axCalc's code and
+(accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), are cited by number and not repeated. In axCalc's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -29,7 +29,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 
 ## 3. Scenarios
 
-1. Start axCalc (Start menu, `axCalc`, or the axKit menu's New window): NVDA reads "Calculator - axCalc window",
+1. Start axCalc (Start menu, `axCalc`, or the Window menu's New window): NVDA reads "Calculator - axCalc window",
    then "Expression, edit". Type `1920*1080*4`, Enter: "8294400". The history's first line is `1920*1080*4 = 8294400`.
 2. Type `*2`, Enter: "16588800": an expression that starts with an operator continues from the last answer.
 3. Ctrl+I: "16588800, hex FD 2000, binary 1111 1101 0010 0000 0000 0000, octal 77220000".
@@ -55,7 +55,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
   the expression field, a single-line edit named "Expression"; the status bar. Tab and Shift+Tab move between the
   history and the field, and so do Ctrl+Tab, Ctrl+Shift+Tab and F6 (AX-8.2). A notice takes the place of both while it
   shows (AX-6.4). The focus starts in the field.
-- AC-2.2 The title is "Calculator - axCalc" (the ending the axKit menu reads, AX-9), with the window's role (AX-7.1):
+- AC-2.2 The title is "Calculator - axCalc" (the ending the Window menu reads, AX-9), with the window's role (AX-7.1):
   NVDA says "Calculator - axCalc window".
 - AC-2.3 The status bar's left label is the last answer ("Answer 8294400", "No answer yet"); the right one the angle
   unit and the number of variables ("Degrees, 1 variable"). No AccessibleName, no Spring (`StatusLayout`).
@@ -135,7 +135,7 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 - AC-7.1 Menus (AX-6): **Calculator (C):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal |
   Binary | Octal) | Answer in other bases Ctrl+I | Say the last answer Ctrl+Q | ─ | Variables | Clear variables… | ─ |
   Save history… Ctrl+S | Clear history… Ctrl+Shift+Delete | ─ | Exit Alt+F4. **Options (O):** Angles ▸ (Degrees ✓ |
-  Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **axKit (A)** (AX-9). **Help (H):**
+  Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Calculator resources ▸ (Floating point explained). Every item has a
   mnemonic (AX-7.4).
 - AC-7.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (the history as a

@@ -141,7 +141,7 @@ keys ctrl+q
 expect said ! Nothing playing
 
 # Step 8: Ctrl+N starts a second axMedia process the runner did not start and so cannot reach or close (it would be
-# left running on the test desktop), and Alt+A, O, 1 is menu mode; left to the NVDA pass. A second window by
+# left running on the test desktop), and Alt+W, O, 1 is menu mode; left to the NVDA pass. A second window by
 # --new is in 02-hand-over.txt.
 
 # AM-2.2: with nothing playing both status labels are empty. Last in the script, since it fails today: the label

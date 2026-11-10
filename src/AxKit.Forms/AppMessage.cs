@@ -11,7 +11,7 @@ public sealed record HandOver(string Verb, IReadOnlyList<string> Paths);
 /// <summary>
 /// The hand-over between a starting process and the open window of the same app (docs/axMedia/SPEC.md AM-1.2,
 /// AM-1.3, AM-D4; docs/axPreview/SPEC.md AP-1.2): an app that keeps one window (axMedia, axPreview) is started with
-/// paths, finds its newest open window through the same window list the axKit menu reads, hands the paths over with
+/// paths, finds its newest open window through the same window list the Window menu reads, hands the paths over with
 /// one <c>WM_COPYDATA</c> message carrying a text (the verb, then one path per line), and ends. For the verbs that
 /// take the focus it first lets the window's process bring itself to the front (<c>AllowSetForegroundWindow</c>,
 /// which this process may grant because the user's own command started it), so that the window activates itself
@@ -61,7 +61,7 @@ public static class AppMessage
     }
 
     /// <summary>
-    /// Hands the verb and the paths to the newest open window of the app (the first in Z order, as the axKit menu
+    /// Hands the verb and the paths to the newest open window of the app (the first in Z order, as the Window menu
     /// lists them); true when a window took them, so that the starting process can end without a window of its own.
     /// False when the app has no window, or the window did not answer within five seconds.
     /// </summary>
@@ -72,7 +72,7 @@ public static class AppMessage
             return false;
         }
 
-        var windows = AxKitWindows.Of(AxKitMenu.OpenWindows(), app);
+        var windows = AxKitWindows.Of(WindowMenu.OpenWindows(), app);
         if (windows.Count == 0)
         {
             return false;

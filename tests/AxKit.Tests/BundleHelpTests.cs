@@ -24,7 +24,7 @@ public sealed class BundleHelpTests
                 "  Ctrl+S: save the thing",
                 "  Ctrl+Plus, Ctrl+Minus: bigger or smaller text",
                 "  Alt: the menu. Alt+F4: close axThing",
-                "  " + BundleHelp.AxKitMenuLine,
+                "  " + BundleHelp.BundleMenusLine,
                 "",
                 "",
             ],
@@ -35,7 +35,7 @@ public sealed class BundleHelpTests
     public void The_AxKit_menu_line_is_the_bundles_words()
     {
         Assert.Contains(
-            "  Alt+A: the axKit menu: a new window of any app, the open axKit windows, most recent first (Alt+A, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Claude (the switch, a question about this window, the folders Claude may read, Claude's working folder, the AI tools), the command palette, Send a report, Your reports, Check for updates, and About\r\n",
+            "  Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the Claude menu: Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder, the AI tools. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About\r\n",
             BundleHelp.Section("axThing", []));
     }
 
@@ -69,7 +69,7 @@ public sealed class BundleHelpTests
             var lines = layer is null ? all : [all[0], .. all[2..]];
             Assert.StartsWith("## ", lines[2]);
             Assert.Equal("  F1: this list", lines[3]);
-            var axkitMenu = Array.IndexOf(lines, "  " + BundleHelp.AxKitMenuLine);
+            var axkitMenu = Array.IndexOf(lines, "  " + BundleHelp.BundleMenusLine);
             Assert.True(axkitMenu > 3, "No axKit menu line in the bundle section: " + lines[2]);
             Assert.StartsWith("  Alt: the menu. Alt+F4: ", lines[axkitMenu - 1]);
             Assert.Equal("", lines[axkitMenu + 1]);

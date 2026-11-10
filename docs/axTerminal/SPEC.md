@@ -5,7 +5,7 @@ Claude Code, for a blind developer who uses the NVDA screen reader. Specified an
 3.0.0, and the whole test plan passed under NVDA on 2026-10-22 (the record: `docs/axKit/nvda-test-record.md`; what
 each release brought is section 8). The document is kept in step with the code (a behaviour change updates it in
 the same commit). Requirements are numbered `AT-n.m` and decisions `AT-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the axKit menu), and axClaude's requirements (`docs/axClaude/SPEC.md`, cited as
+(accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), and axClaude's requirements (`docs/axClaude/SPEC.md`, cited as
 "axClaude FR-n.m" and "axClaude Dn") are cited by number and not repeated. In axTerminal's code and documents,
 "SPEC.md" means this file.
 
@@ -294,8 +294,8 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   Background music while a command runs Ctrl+Space) | Speech ▸ (Speak output: none ○ | Speak output: all lines ○ |
   ─ | Say when a program asks ✓) | When a command is done ▸ (Flash the taskbar button ✓ | Louder alert when the window
   is in the background) | Text ▸ (Time stamps | Markers in the text ✓ | ─ | Font… | Larger text | Smaller text | Windows text size) | General
-  ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream | Copy diagnostics). **axKit
-  (A)** (AX-9). **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Shell resources ▸ (PowerShell documentation |
+  ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream | Copy diagnostics). **Window (W)** and **Claude (A)**
+  (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Shell resources ▸ (PowerShell documentation |
   Windows Terminal shell integration | Bash manual). Every item has a mnemonic (AX-7.4).
   The first menu is Session, as in axClaude, since what it holds is the shell in its folder, the thing the window
   is about; Shell takes E, S being Session's.

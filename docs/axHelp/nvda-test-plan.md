@@ -1,7 +1,7 @@
 # axHelp NVDA test plan
 
 The manual checks of axHelp (`docs/axHelp/SPEC.md`, HE-n.m), run with NVDA before a release. Before starting: AI help
-on in any axKit window (axKit menu, AI help, Let Claude help in the apps, the consent agreed), Claude Code installed
+on in any axKit window (Claude menu, Use Claude in axKit, the consent agreed), Claude Code installed
 and logged in, `run-axHelp.ps1` (or quit a running axHelp first, axHelp, Quit axHelp). The automated part is
 `tests/scripts/axHelp/01-start.txt`, which `nvda-pass.ps1 axHelp` runs with a fake Claude; the steps below with
 "(real)" need the real one and are the user's by ear.
@@ -42,7 +42,7 @@ and logged in, `run-axHelp.ps1` (or quit a running axHelp first, axHelp, Quit ax
 
 ## 4. Off, missing, consent (HE-7)
 
-1. In another axKit window, axKit menu, Claude, Use Claude in axKit (off): "Claude off". Windows+Alt+H: the status bar
+1. In another axKit window, Claude menu, Use Claude in axKit (off): "Claude off". Windows+Alt+H: the status bar
    (NVDA+End) says "Claude is off; asking turns it on"; type a question, Enter: "Claude on" (the agreement is
    remembered), then "Asking Claude" and the answer (real). On a computer that never agreed, the reminder "Before
    Claude helps in axKit" comes first: Tab to the box, Space ("checked"), Enter on Turn on: "Claude on" and the

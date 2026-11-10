@@ -17,7 +17,7 @@ Today: 11 network requests, 28 program starts and 4 pipes, in 28 files, under th
 - **What**: GitHub, where this repository, its releases and the reports repository `KyleKeane/AxKit-reports` live. The one place axKit's own code reaches over the network: the updater and the report sender (docs/axKit/reports.md).
 - **Where**: The updater: `GET https://api.github.com/repos/KyleKeane/AxKit/releases/latest` (the latest release as JSON) and `GET https://github.com/KyleKeane/AxKit/releases/download/<tag>/<file>` (the release's zip and its `.sig`, accepted from that one address only). The reports: `GET https://raw.githubusercontent.com/KyleKeane/AxKit-reports/main/blocklist.json` (the blocklist) and `POST https://api.github.com/repos/KyleKeane/AxKit-reports/issues` (a report as an issue, as axKit's own reporter account). axTask's GitHub lists: `GET https://api.github.com/repos/<repository>/issues` (the issues, no account), and as the user's own account `PATCH .../issues/<n>`, `POST .../issues/<n>/comments` and `GET` and `PUT .../contents/blocklist.json`.
 - **How**: .NET's HttpClient over HTTPS with the headers `User-Agent: AxKit/<version>` and `Accept: application/vnd.github+json`; the request carries the version and, as every web request does, the network address, nothing else about the user. A download is installed only when its SHA-256 matches GitHub's digest of the file and the release key's ECDSA P-256 signature (AX-3.4). A report carries what the user read and edited in the report notice, redacted, and the install's random reporter id, never a name or an account (reports.md RP-4, RP-6.3); the reporter account's token ships in the release build and can reach that repository's issues alone (RP-6.2).
-- **When**: the update check as a window starts (Options, General, Check for updates at start, a setting that can be off) or on axKit menu, Check for updates; the two downloads when the user chooses Update. A report when the user presses Enter on one (F4), the unsent ones with it and when Your reports opens; never at a window's start (RP-6.7). The lists and the actions when the user opens, refreshes or acts on a GitHub list in axTask (RP-7).
+- **When**: the update check as a window starts (Options, General, Check for updates at start, a setting that can be off) or on Help, Check for updates; the two downloads when the user chooses Update. A report when the user presses Enter on one (F4), the unsent ones with it and when Your reports opens; never at a window's start (RP-6.7). The lists and the actions when the user opens, refreshes or acts on a GitHub list in axTask (RP-7).
 - **Documentation**: https://docs.github.com/en/rest/releases/releases#get-the-latest-release; https://docs.github.com/en/rest/issues/issues; https://docs.github.com/en/rest/repos/contents; GitHub's privacy statement, https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement.
 - **Apps**: every window (the updater and the report); axTask (the GitHub lists).
 
@@ -54,7 +54,7 @@ Calls (11):
 - **How**: for a session, `claude --ax-screen-reader` in a ConPTY pseudo console (PtyHost): what it prints is read from the console and the user's keys are written to it. For its version and for `claude mcp add` and `claude mcp remove`, a process without a window whose output is read. For AI help (`docs/axKit/ai-help.md`), `claude -p --output-format json --allowedTools Read,Glob,Grep` once per question, the prompt on its standard input, the folders the user allowed as `--add-dir`, a follow-up with `--resume`; read-only tools, so it changes no file and runs no command.
 - **What it reaches**: Anthropic's service with the user's account, and whatever else Claude Code does from a terminal, its own update check included, under Anthropic's terms; axKit neither sees nor changes that traffic.
 - **Documentation**: https://code.claude.com/docs/en/cli-reference and https://code.claude.com/docs/en/setup; Anthropic's privacy policy, https://www.anthropic.com/legal/privacy.
-- **Apps**: axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window; AI help in every window (Shift+F1, axKit menu, AI help) and its apps axHelp and axDescribe, access layers for Claude Code.
+- **Apps**: axClaude, access layer for Claude Code; Add axKit to Claude Code (Claude menu, AI tools) in every window; AI help in every window (Shift+F1, the Claude menu) and its apps axHelp and axDescribe, access layers for Claude Code.
 
 Calls (5):
 
@@ -147,9 +147,9 @@ Calls (14):
   Code: `Process.Start(new ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true })?.Dispose();`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
   Code: `using var process = Process.Start(start) ?? throw new InvalidOperationException("PowerShell could not be started.");`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:777`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:802`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
   Code: `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:802`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:827`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, arguments) { UseShellExecute = false })?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
   Code: `System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(StoreListing.PageUri) { UseShellExecute = true });`
@@ -189,10 +189,10 @@ Calls (4):
 
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
   Code: `Process.Start(start)?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/AxKitMenu.cs:217`, in `AxKitMenu.StartWith`, by `Process.Start`: starts another window of axKit from the axKit menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
-  Code: `Process.Start(info)?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
   Code: `using var process = Process.Start(start);`
+- **shared by every app**, `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
+  Code: `Process.Start(info)?.Dispose();`
 - **shared by every app**, `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
 
@@ -200,7 +200,7 @@ Calls (4):
 
 #### AI tools
 
-- **What**: the paired AI tool, Claude Code as an MCP client, which starts `AxKit.exe mcp` as its server once the user has turned the AI tools on and paired it (axKit menu, AI tools).
+- **What**: the paired AI tool, Claude Code as an MCP client, which starts `AxKit.exe mcp` as its server once the user has turned the AI tools on and paired it (Claude menu, AI tools).
 - **How**: MCP's JSON-RPC, one line per message, on the server process's standard input and output; the server asks the open windows over their named pipes (`AxKit-mcp-<user>-<random>`, this Windows account only, each connection answering a challenge with the paired key, HMAC-SHA256); every call is written to `mcp-audit.log` with its arguments hashed.
 - **What it reaches**: nothing on the network: pipes on this computer. What the AI tool does with what it read is under its own terms. axPass and axClip are never read; axClaude and axTerminal are never opened.
 - **Documentation**: https://modelcontextprotocol.io/specification; docs/axKit/mcp.md.
@@ -283,14 +283,14 @@ Used in 16 places:
 - `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, for axKit.
-- `src/AxKit.Forms/AxKitForm.cs:777`, in `AxKitForm.OpenUrl`, for Windows.
-- `src/AxKit.Forms/AxKitForm.cs:802`, in `AxKitForm.OpenInExplorer`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs:802`, in `AxKitForm.OpenUrl`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs:827`, in `AxKitForm.OpenInExplorer`, for Windows.
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/AxKitForm.Mcp.cs:206`, in `AxKitForm.RunClaude`, for Claude Code.
 - `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, for Windows.
-- `src/AxKit.Forms/AxKitMenu.cs:217`, in `AxKitMenu.StartWith`, for axKit.
 - `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
+- `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, for axKit.
 - `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, for axKit.
 - `src/AxStart/AppsFolder.cs:116`, in `AppsFolder.Start`, for User programs.
 

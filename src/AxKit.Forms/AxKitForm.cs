@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using AxKit.Core;
 using AxKit.Core.Mcp;
+using AxKit.Core.Updates;
 using static AxKit.Forms.User32;
 
 namespace AxKit.Forms;
@@ -56,7 +57,7 @@ public abstract partial class AxKitForm : Form
         _updateItem.Click += (_, _) => OfferKnownUpdate();
     }
 
-    /// <summary>The app's name, which ends the title of its windows and names them in the axKit menu.</summary>
+    /// <summary>The app's name, which ends the title of its windows and names them in the Window menu.</summary>
     protected string AppName { get; }
 
     /// <summary>The app's name as the user meets it (AX-11.2): "axClaude, access layer for Claude Code" for an access layer, the name alone otherwise; window titles end with it.</summary>
@@ -151,8 +152,8 @@ public abstract partial class AxKitForm : Form
 
     // ---- the menus every window has (AX-6.5, AX-9) ----
 
-    /// <summary>The bundle's axKit menu (AX-9) with this window's Command palette and update items; the window puts it before Help.</summary>
-    protected AxKitMenu CreateAxKitMenu() => new(this, Item("Command &palette...", ShowCommandPalette, BundleKeys.CommandPalette), _checkItem, _updateItem);
+    /// <summary>The Window menu (AX-9.1): New window, Open windows, Recently closed, Close all windows; the window puts it after its own menus, before the Claude menu and Help.</summary>
+    protected WindowMenu CreateWindowMenu() => new(this);
 
     /// <summary>
     /// The "Show current folder in" submenu of a window (AX-9.10; 2026-10-24 one builder for every window): the
@@ -172,7 +173,7 @@ public abstract partial class AxKitForm : Form
             {
                 if (place() is { } path && !SaidMissing(path, missing) && Dispatch.PathFor(app, path, Directory.Exists(path)) is { } target)
                 {
-                    AxKitMenu.Start(app.Verb, target);
+                    WindowMenu.Start(app.Verb, target);
                 }
             }));
         }
@@ -269,15 +270,20 @@ public abstract partial class AxKitForm : Form
         return menu;
     }
 
-    /// <summary>Help: Keyboard shortcuts (F1, the base's key), User guide, then a submenu of pages opened in the browser. The command palette, updates and About are the axKit menu's.</summary>
+    /// <summary>
+    /// Help (AX-9.1; 5.7.0, 2026-11-10: the user's help in one menu): Command palette… (Ctrl+Shift+P, AX-10),
+    /// Keyboard shortcuts (F1, the base's key), User guide, the app's pages in the browser; Send a report… (F4) and Your
+    /// reports (docs/axKit/reports.md RP-2.2); the window's Check for updates and Update to items (AX-3.1) and About,
+    /// the bundle's sections (AX-9.9, <see cref="BundleAbout"/>), each shown as a notice of this window.
+    /// </summary>
     protected ToolStripMenuItem CreateHelpMenu(Func<string> userGuide, string resourcesLabel, IEnumerable<(string Label, string Url)> pages)
     {
         // Kept for a question about this window (docs/axKit/ai-help.md AH-6.2), which gives Claude the guide to answer from.
         _userGuide = userGuide;
         var help = new ToolStripMenuItem("&Help");
+        help.DropDownItems.Add(Item("Command &palette...", ShowCommandPalette, BundleKeys.CommandPalette));
         help.DropDownItems.Add(Item("&Keyboard shortcuts", () => ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts)), BundleKeys.Shortcuts));
         help.DropDownItems.Add(new ToolStripMenuItem("User &guide", null, (_, _) => ShowNotice(Notice.Plain("User guide", userGuide()))));
-        help.DropDownItems.Add(new ToolStripSeparator());
         var resources = new ToolStripMenuItem(resourcesLabel);
         foreach (var (label, url) in pages)
         {
@@ -285,6 +291,25 @@ public abstract partial class AxKitForm : Form
         }
 
         help.DropDownItems.Add(resources);
+        help.DropDownItems.Add(new ToolStripSeparator());
+        // Reports (RP-2.2): the report itself, with its bundle key shown, and the list of them in axTask.
+        help.DropDownItems.Add(new ToolStripMenuItem("&Send a report...", null, (_, _) => ShowReport())
+        {
+            ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
+        });
+        help.DropDownItems.Add(new ToolStripMenuItem("&Your reports", null, (_, _) => OpenReports()));
+        help.DropDownItems.Add(new ToolStripSeparator());
+        help.DropDownItems.Add(_checkItem);
+        help.DropDownItems.Add(_updateItem);
+        var about = new ToolStripMenuItem("&About");
+        about.DropDownItems.Add(new ToolStripMenuItem("&Version", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.VersionTitle, BundleAbout.Version(LatestReleaseState)))));
+        about.DropDownItems.Add(new ToolStripMenuItem("&Licence", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.LicenceTitle, BundleAbout.LicenceWithAgreements(Consent.Read(AppPaths.ConsentFile))))));
+        about.DropDownItems.Add(new ToolStripMenuItem("&Attribution", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.AttributionTitle, BundleAbout.Attribution))));
+        about.DropDownItems.Add(new ToolStripMenuItem("&Privacy", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.PrivacyTitle, BundleAbout.Privacy()))));
+        about.DropDownItems.Add(new ToolStripMenuItem("Third-party &notices", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.NoticesTitle, BundleAbout.Notices()))));
+        about.DropDownItems.Add(new ToolStripMenuItem("axKit &guide", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.GuideTitle, BundleAbout.Guide()))));
+        about.DropDownItems.Add(new ToolStripMenuItem("axKit on Git&Hub", null, (_, _) => OpenUrl(UpdateCheck.RepositoryPage)));
+        help.DropDownItems.Add(about);
         return help;
     }
 
@@ -766,7 +791,7 @@ public abstract partial class AxKitForm : Form
         return ShowSystemDialog(dialog) == DialogResult.OK && dialog.SelectedPath.Length > 0 ? dialog.SelectedPath : null;
     }
 
-    /// <summary>A page in the default browser; a failure is a notice. The axKit menu, in this project, calls it for the repository page.</summary>
+    /// <summary>A page in the default browser; a failure is a notice. Help, About, axKit on GitHub calls it for the repository page.</summary>
     protected internal void OpenUrl(string url)
     {
         try
@@ -811,7 +836,7 @@ public abstract partial class AxKitForm : Form
     protected void OpenSettingsFile()
     {
         SaveSettings();
-        AxKitMenu.Start(Dispatch.AxJSON, SettingsPath);
+        WindowMenu.Start(Dispatch.AxJSON, SettingsPath);
     }
 
     /// <summary>Options → Developer → Copy diagnostics: the versions, the window's own lines and the end of the log, to the clipboard.</summary>

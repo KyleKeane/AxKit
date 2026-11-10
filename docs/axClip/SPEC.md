@@ -99,7 +99,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 - CP-5.1 Menus (AX-6): **AxClip (C):** Paste Enter | Copy without pasting Shift+Enter | Read in full Ctrl+Q | Remove
   Delete | Clear history… Ctrl+Shift+Delete | ─ | Hide Escape | Quit axClip. **Options (O):** Hotkey… | Pause
   recording Ctrl+P ✓ | Keep history between runs ✓ | Text ▸ | General ▸ (Check for updates at start | Start with
-  Windows ✓ | Say the first match while typing ✓) | Developer ▸. **axKit (A)** (AX-9). **Help (H):** Keyboard
+  Windows ✓ | Say the first match while typing ✓) | Developer ▸. **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):** Keyboard
   shortcuts F1 | User guide | ─ | Windows resources ▸ (Clipboard in Windows). Every item has a mnemonic.
 - CP-5.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Page Up, Page Down, Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific
   (`AxClipKeys`): Down, Up, Ctrl+Home, Ctrl+End, Enter, Shift+Enter, Ctrl+Q, Delete, Ctrl+Shift+Delete, Ctrl+P, Escape.

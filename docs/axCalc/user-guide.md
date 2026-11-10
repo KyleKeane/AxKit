@@ -4,7 +4,7 @@ axCalc is a calculator made for screen reader users: one field to type an expres
 
 ## Install
 
-axCalc is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axCalc` and a console command `axCalc`. Any axKit window starts one too: Alt+A, New window, axCalc.
+axCalc is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axCalc` and a console command `axCalc`. Any axKit window starts one too: Alt+W, New window, axCalc.
 
 ## Start
 
@@ -48,8 +48,7 @@ The newest line is at the bottom, so Up from the end reads back from the latest.
 
 - **Calculator**: Answer (Enter), Copy answer (Ctrl+Shift+C), Copy answer in, Answer in other bases (Ctrl+I), Say the last answer (Ctrl+Q), Variables, Clear variables, Save history (Ctrl+S), Clear history (Ctrl+Shift+Delete), Exit.
 - **Options**: Angles (Degrees, Radians), Keep history between runs, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
-- **Help**: Keyboard shortcuts (F1), this guide, Calculator resources.
+- **Window**, **Claude** and **Help**: the bundle's three menus, the same in every axKit window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. Claude (Alt+A) has the switch Use Claude in axKit, Ask about this window (Shift+F1), Folders Claude may read, Claude's working folder and the AI tools. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## Settings
 
@@ -57,7 +56,7 @@ Everything axCalc keeps is in `%APPDATA%\AxKit\axCalc.json`: the font and text s
 
 ## Updates
 
-axCalc checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
+axCalc checks for a newer axKit when it starts and offers it in a notice; the Help menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
@@ -65,7 +64,7 @@ axCalc's log is `%LOCALAPPDATA%\AxKit\logs\axCalc.log`; it never holds what you 
 
 ## About axCalc
 
-axCalc is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
+axCalc is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Help menu's About names the version and the licence.
 
 ## Disclaimer
 

@@ -80,12 +80,12 @@ public abstract partial class AxKitForm
                     1 => "1 report sent",
                     _ => $"{outcome.Sent} reports sent",
                 }, false);
-                AxKitMenu.Start(Dispatch.AxTask, AppPaths.ReportsFolder);
+                WindowMenu.Start(Dispatch.AxTask, AppPaths.ReportsFolder);
             });
             return;
         }
 
-        AxKitMenu.Start(Dispatch.AxTask, AppPaths.ReportsFolder);
+        WindowMenu.Start(Dispatch.AxTask, AppPaths.ReportsFolder);
     }
 
     /// <summary>Enter or Send: the report written into the Reports list first (RP-3.2), then sent with every unsent one (RP-6).</summary>

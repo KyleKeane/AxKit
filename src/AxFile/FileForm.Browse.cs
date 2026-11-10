@@ -679,7 +679,7 @@ public sealed partial class FileForm
             return;
         }
 
-        AxKitMenu.Start(entry.IsFolder ? Dispatch.AxFile : Dispatch.AxPreview, entry.Path);
+        WindowMenu.Start(entry.IsFolder ? Dispatch.AxFile : Dispatch.AxPreview, entry.Path);
     }
 
     /// <summary>Backspace, Alt+Up, Folder → Up one level: the parent with the folder just left selected; This PC with the drive selected from a drive's root (AF-3.10); "Top" at This PC.</summary>

@@ -84,8 +84,8 @@ keys escape
 expect state "notice":null
 expect focus a.md
 
-# 6.4 manual: the axKit menu's Open windows, Open windows by type and Recently closed are submenus filled as they open,
-# which the palette leaves out, and Alt+A needs the foreground; New window and Recently closed start processes the
+# 6.4 manual: the Window menu's Open windows, Open windows by type and Recently closed are submenus filled as they open,
+# which the palette leaves out, and Alt+W needs the foreground; New window and Recently closed start processes the
 # runner does not reach; Close all windows closes every axKit window on the desktop; axKit on GitHub opens the browser.
 
 # 6.5: Options, General, Check for updates at start, a checked item that says its new state.
@@ -147,7 +147,7 @@ keys escape
 expect state "notice":null
 expect focus a.md
 expect quiet 1000
-# 6.6 manual: save as, Enter opens the Windows Save as picker; Alt+A, P needs the menu bar's menu mode.
-# Recent files and the axKit menu's window lists are not in the palette; Alt+A, New window, axDown is.
+# 6.6 manual: save as, Enter opens the Windows Save as picker; Alt+H, P needs the menu bar's menu mode.
+# Recent files and the Window menu's window lists are not in the palette; Alt+W, New window, axDown is.
 # Not checked here: that they are absent, since the runner has no refuse for the commands (see the report).
-expect commands "axDown, axKit, New window"
+expect commands "axDown, Window, New window"

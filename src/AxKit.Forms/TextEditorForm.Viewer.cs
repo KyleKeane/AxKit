@@ -115,14 +115,14 @@ public sealed partial class TextEditorForm
         }
 
         // The starting process let this one come to the front (AppMessage); the user asked to read.
-        AxKitMenu.Activate(Handle);
+        WindowMenu.Activate(Handle);
     }
 
     /// <summary>File → New window (the viewer's Ctrl+N, AP-3.2; the editors' Ctrl+Shift+N, AD-4.1): another window of the app, empty, through the bundle's starter (AX-9); <c>--new</c> keeps it from handing over to this one.</summary>
     private void NewWindow()
     {
         IReadOnlyList<string> arguments = _app.ReadOnly ? ["--new"] : [];
-        AxKitMenu.StartWith(_app.Verb, arguments);
+        WindowMenu.StartWith(_app.Verb, arguments);
     }
 
     /// <summary>
@@ -245,10 +245,10 @@ public sealed partial class TextEditorForm
         switch (_page?.WayOut ?? ViewerWayOut.Editor)
         {
             case ViewerWayOut.Editor:
-                AxKitMenu.Start(Dispatch.EditorOf(_path), _path);
+                WindowMenu.Start(Dispatch.EditorOf(_path), _path);
                 break;
             case ViewerWayOut.Player:
-                AxKitMenu.Start(Dispatch.AxMedia, _path);
+                WindowMenu.Start(Dispatch.AxMedia, _path);
                 break;
             default:
                 OpenInWindowsProgram(_path);
@@ -316,11 +316,11 @@ public sealed partial class TextEditorForm
         var apps = Dispatch.Apps.Where(app => app.Verb != _app.Verb
             && (app.OpenWith.Any(type => type == "*" || string.Equals(type, extension, StringComparison.OrdinalIgnoreCase))
                 || (app.Verb == Dispatch.AxDown && _page is { IsText: true })));
-        // Numbered, the number the mnemonic and a full stop the pause, as the axKit menu's lists (AX-9).
+        // Numbered, the number the mnemonic and a full stop the pause, as the Window menu's lists (AX-9).
         var number = 0;
         foreach (var app in apps)
         {
-            _openWithItem.DropDownItems.Add(new ToolStripMenuItem($"&{++number}. {app.Title}", null, (_, _) => AxKitMenu.Start(app.Verb, path)));
+            _openWithItem.DropDownItems.Add(new ToolStripMenuItem($"&{++number}. {app.Title}", null, (_, _) => WindowMenu.Start(app.Verb, path)));
         }
 
         if (_openWithItem.DropDownItems.Count > 0)
@@ -437,7 +437,7 @@ public sealed partial class TextEditorForm
     {
         if (_details?.SelectedItem is string line && DetailName(line) == "Folder" && _path is { } path)
         {
-            AxKitMenu.Start(Dispatch.AxFile, path);
+            WindowMenu.Start(Dispatch.AxFile, path);
             return;
         }
 

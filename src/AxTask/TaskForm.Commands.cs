@@ -150,7 +150,7 @@ public sealed partial class TaskForm
             _folder = TopFolder;
             if (Commit(new Step([FileChange.Write(path, null, SmartList.NewFileText())], "Made the smart list " + name.Trim()), path))
             {
-                AxKitMenu.Start(Dispatch.AxJSON, path);
+                WindowMenu.Start(Dispatch.AxJSON, path);
             }
         }, typed =>
         {
@@ -404,10 +404,10 @@ public sealed partial class TaskForm
         switch (SelectedRow())
         {
             case { Tag: ItemFile item }:
-                AxKitMenu.Start(Dispatch.AxJSON, item.Path);
+                WindowMenu.Start(Dispatch.AxJSON, item.Path);
                 return;
             case { Tag: SmartList { Path: { } filter } }:
-                AxKitMenu.Start(Dispatch.AxJSON, filter);
+                WindowMenu.Start(Dispatch.AxJSON, filter);
                 return;
             case { Tag: SmartList }:
                 Announce("All tasks is built in: List, New smart list makes one to change", true);
@@ -416,7 +416,7 @@ public sealed partial class TaskForm
                 var listFile = Path.Combine(row.Key, ItemDocument.ListFile);
                 if (File.Exists(listFile))
                 {
-                    AxKitMenu.Start(Dispatch.AxJSON, listFile);
+                    WindowMenu.Start(Dispatch.AxJSON, listFile);
                 }
                 else
                 {
@@ -432,7 +432,7 @@ public sealed partial class TaskForm
 
     /// <summary>Ctrl+E: the selection's file or folder in axFile; the folder shown when nothing is selected.</summary>
     private void ShowInAxFile() =>
-        AxKitMenu.Start(Dispatch.AxFile, SelectedRow() is { } row && row.Tag is not SmartList { Path: null } ? row.Key : _smart is null ? _folder : TopFolder);
+        WindowMenu.Start(Dispatch.AxFile, SelectedRow() is { } row && row.Tag is not SmartList { Path: null } ? row.Key : _smart is null ? _folder : TopFolder);
 
     private void ChooseTopFolder()
     {

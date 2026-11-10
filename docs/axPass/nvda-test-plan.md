@@ -53,6 +53,6 @@ should read; a step that reads differently is a defect. The specifications are `
 ## 5. The rest
 
 1. Shift+F10 in each pane: its menu (Group, Entry or Field) opens and NVDA reads its first item.
-2. F1: the keys; Help, User guide: the guide. Alt+A, About, Version names axPass.
+2. F1: the keys; Help, User guide: the guide. Alt+H, About, Version names axPass.
 3. Options, Lock after, 5 minutes: "axPass locks after 5 minutes without a key"; wait five minutes away: locked.
 4. Close and start again: the unlock notice for the same database.

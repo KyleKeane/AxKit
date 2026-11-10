@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.7.0
+
+- axKit: the bundle's menus are now three, by what you want to do, the same in every app and after the app's own menus: **Window** (Alt+W: New window, Open windows, Recently closed, Close all windows), **Claude** (Alt+A: Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder, the AI tools) and **Help** (Alt+H: Command palette with Ctrl+Shift+P, Keyboard shortcuts with F1, User guide, the app's resources, Send a report with F4, Your reports, Check for updates, Update to, About). The axKit menu is gone; its items are in those three. In axClaude the app's own menu for the program is now called Claude Code, so that it is told from the bundle's Claude menu; axHelp's first menu takes the letter P, since H is Help.
+
 ## 5.6.0
 
 - axKit: the axKit menu is shorter and starts with the windows: New window, Open windows, Recently closed, Close all windows; then Claude, one submenu for everything of Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder, the AI tools); then Command palette, Send a report and Your reports; then Check for updates and About. Open windows by type is gone (Open windows and the window title say where you are). The Claude apps (axClaude, axMCP, axHelp, axDescribe) stand together as the last group of New window and of every list of apps.

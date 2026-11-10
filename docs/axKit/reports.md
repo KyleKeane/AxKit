@@ -8,7 +8,7 @@ presses Enter, or Tabs through every field to review and add what makes the repo
 kinds, feedback, bug and feature request, recategorised later as needed; a feature for every user of axKit, not the
 maintainer alone, so it goes to GitHub over its own API, is saved on the computer first and sent when there is a
 network, with anything unsent going along the next time; reviewed in axTask through a template, transparent; the
-list of reports and the report itself in the axKit menu; and in axTask, Ctrl+number keys the user assigns to actions
+list of reports and the report itself in the Help menu; and in axTask, Ctrl+number keys the user assigns to actions
 on the GitHub items (feature requests, bugs, feedback). Numbered RP-n for the bundle spec to cite; the axTask part is
 TK and IA material and moves into those specs when built.
 
@@ -37,9 +37,9 @@ TK and IA material and moves into those specs when built.
   asked about, is three windows' own (axClip's pause, axMedia's pause, axTerminal's say-folder), and Ctrl+Shift+P is
   the palette; so F4, bundle-wide. `BundleKeys.Report = Keys.F4`, named "Report" in the keys table; `KeyTests` keeps the
   windows off it.
-- **RP-2.2 The axKit menu** (AX-9) gets, after the command palette item: "&Send a report…" with F4 shown (S: R is
+- **RP-2.2 The Help menu** (AX-9.1; the axKit menu until 5.7.0) gets, after the command palette and the guide: "&Send a report…" with F4 shown (S: R is
   Recently closed's letter), and "&Your reports", which opens `%APPDATA%\AxKit\reports` in
-  axTask (a new axTask window through `AxKitMenu.Start`, the folder and its `list.json` made first), then a separator (since 5.6.0 the three stand after the Claude submenu, AX-9.1). Both carry their words into every window's palette and F1 text through the
+  axTask (a new axTask window through `WindowMenu.Start`, the folder and its `list.json` made first), then a separator (since 5.6.0 the three stand after the Claude submenu, AX-9.1). Both carry their words into every window's palette and F1 text through the
   window base; nothing is added to an app's own menus.
 - **RP-2.3 While a notice shows,** F4 does nothing, as every window key (AX-6.5). The report's recent actions record
   the notice that showed last, so a problem with a notice is reported after closing it.
@@ -96,7 +96,7 @@ one announcement per move:
 
 - **RP-5.1 The folder.** `%APPDATA%\AxKit\reports` is an axTask list (docs/axKit/item-apps.md section 4): `list.json`
   with the template below, written when the folder is first made, and one JSON file per report, named after its Title
-  (IA-4.5). axTask opens it as any folder; the axKit menu's "Your reports" opens it (RP-2.2). axJSON opens any item.
+  (IA-4.5). axTask opens it as any folder; the Help menu's "Your reports" opens it (RP-2.2). axJSON opens any item.
 - **RP-5.2 The fields** (the template's order): Title; Kind (choice: Feedback, the template's value, Bug or Feature
   request); Report (text, the user's words); App (text, as RP-3 item 3); Where (text); Actions (text, one action per
   line); Log (text); Created (date and time); Status (text, Draft as the template's value: Draft, Not sent yet, or Sent, with the reason after a colon when not sent: "Not sent
@@ -165,7 +165,7 @@ levers are built now.
   terms apply to it" with the check box; recorded in `consent.json` with its date, shown in About, Licence, withdrawn
   by "Forget AI tools" like the others.
 - **RP-6.7 When sending runs.** Right after a report is saved, and then every "Not sent yet" item of the list, oldest
-  first; when "Your reports" opens the list from the axKit menu (axTask says "2 reports sent" or the reason); never at
+  first; when "Your reports" opens the list from the Help menu (axTask says "2 reports sent" or the reason); never at
   a window's start: a standalone app stays off the network until the user acts, the update check being the bundle's
   one automatic request (G6, AX-3). Each send has a ten-second limit; its reason, in a few words, goes into Status.
 - **RP-6.8 The rule changes, in one commit with the code** (bundle rule 8, B-15, G6, AX-11.11, `PRIVACY.md`,

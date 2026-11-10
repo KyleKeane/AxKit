@@ -156,7 +156,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   window of the app, this window left as it is, the viewer's File menu's shape, AP-3.2; asked 2026-11-05 as the reports
   repository's issue 2, built 2026-11-09), Open… (Ctrl+O), Open recent file ▸ (the last ten
   files opened or saved under a name, newest first, those that still exist, kept in the settings, each as its number, a
-  full stop, the file's name and its full path, "1. notes.md (C:\notes\notes.md)", the axKit menu's shape, AX-9.5; choosing one opens it
+  full stop, the file's name and its full path, "1. notes.md (C:\notes\notes.md)", the Window menu's shape, AX-9.5; choosing one opens it
   in this window after the unsaved-changes question; "No recent files", an item that does nothing, when there are
   none, AX-9.5); then Save (Ctrl+S), Save as… (Ctrl+Shift+S), where every Windows program has them (the standard
   order of a File menu, shared with axClaude's Session menu, whose Save slot is empty, 2.11.0); then Show current file in ▸
@@ -188,7 +188,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   during the download; after I accept all terms, install and restart axDown starts the new version itself, on the file or empty), and
   About, the bundle's sections (AX-9.9: Version, Licence, Attribution, axKit guide, axKit on GitHub). Enter on a window
   brings it to the front, on a closed file opens it in a new window.
-- AD-4.6 Every menu item has a mnemonic and a shortcut or a shortcut text (AX-7.1); the axKit menu's window items,
+- AD-4.6 Every menu item has a mnemonic and a shortcut or a shortcut text (AX-7.1); the Window menu's items,
   made when it opens, have their number as the mnemonic and no shortcut.
 
 ### AD-5 Keys

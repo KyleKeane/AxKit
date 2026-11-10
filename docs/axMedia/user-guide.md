@@ -4,7 +4,7 @@ axMedia is a player for sound and video files, made for screen reader users. One
 
 ## Install
 
-axMedia is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit axMedia`, a console command `axMedia`, axMedia in the `Open with axKit` submenu when you right-click a sound or video file in File Explorer, and axMedia under Windows' own `Open with` for those files, so that you can make it the program that opens them when you press Enter on one: Settings, Apps, Default apps, axMedia, or right-click a file, Open with, Choose another app, axMedia, Always. Windows lets only you set that, never a program.
+axMedia is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axMedia`, a console command `axMedia`, axMedia in the `Open with axKit` submenu when you right-click a sound or video file in File Explorer, and axMedia under Windows' own `Open with` for those files, so that you can make it the program that opens them when you press Enter on one: Settings, Apps, Default apps, axMedia, or right-click a file, Open with, Choose another app, axMedia, Always. Windows lets only you set that, never a program.
 
 ## Start
 
@@ -13,7 +13,7 @@ axMedia is part of axKit. Installing axKit (see the axKit guide in the axKit men
 - Start menu: `axKit axMedia`. Press the Windows key and type `axm`. The window opens with an empty queue; Ctrl+O adds files.
 - Console: `axmedia C:\Music\Dune\03.mp3` (the file with the folder's others after it), `axmedia C:\Music\Dune` (the folder from the first file), `axmedia a.mp3 b.mp3` (those, in order), `axmedia --add C:\Music\More` (added to the end of the queue, nothing starts).
 
-axMedia keeps one window: a file opened from axFile, File Explorer or the console while an axMedia window is open goes into that window, replacing its queue (or added to it, for an add), rather than opening another. A second window is the axKit menu's New window, or Ctrl+N, or `--new` on the console.
+axMedia keeps one window: a file opened from axFile, File Explorer or the console while an axMedia window is open goes into that window, replacing its queue (or added to it, for an add), rather than opening another. A second window is the Window menu's New window, or Ctrl+N, or `--new` on the console.
 
 The window is named after the file playing: "03 Chapter 3.mp3 - axMedia", or "axMedia" while nothing plays. The status bar (NVDA+End) has what is playing and the time on the left, "Playing 03 Chapter 3.mp3 12:40 / 45:30", and the place and the speed on the right, "3 of 12, speed 1.25".
 
@@ -48,8 +48,7 @@ The volume is Windows' own: your keyboard's volume keys work from anywhere. A vi
 - **Queue**: New window (Ctrl+N), Open files (Ctrl+O), Open folder (Ctrl+Shift+O), Open recent, Play (Enter), Remove (Delete), Clear queue, Information (Ctrl+I), Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
 - **Play**: Pause or resume (Space), Next file, Previous file, Forward 15 seconds, Back 15 seconds, Go to time (Ctrl+T), Faster, Slower, Normal speed, Say each file as it starts, What is playing (Ctrl+Q).
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **axKit**: new windows of every app, the files and folders closed lately, the open windows, updates, About.
-- **Help**: Keyboard shortcuts (F1), this guide, Media resources.
+- **Window**, **Claude** and **Help**: the bundle's three menus, the same in every axKit window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. Claude (Alt+A) has the switch Use Claude in axKit, Ask about this window (Shift+F1), Folders Claude may read, Claude's working folder and the AI tools. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## Settings
 
@@ -57,7 +56,7 @@ Everything you change is kept in `%APPDATA%\AxKit\axMedia.json`: the speed, Say 
 
 ## Updates
 
-axMedia checks for a newer axKit when it starts and offers it in a notice; the axKit menu has Check for updates at any time. One update brings every app of axKit up to date.
+axMedia checks for a newer axKit when it starts and offers it in a notice; the Help menu has Check for updates at any time. One update brings every app of axKit up to date.
 
 ## If something goes wrong
 
@@ -65,7 +64,7 @@ axMedia's log is `%LOCALAPPDATA%\AxKit\logs\axMedia.log`; Options, Developer, Co
 
 ## About axMedia
 
-axMedia is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The axKit menu's About names the version and the licence.
+axMedia is one app of axKit, by Dr. Kyle Keane (www.kylekeane.com), GNU AGPL 3 licence. The Help menu's About names the version and the licence.
 
 ## Disclaimer
 

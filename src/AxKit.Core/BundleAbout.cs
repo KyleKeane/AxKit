@@ -3,7 +3,7 @@ using AxKit.Core.Updates;
 namespace AxKit.Core;
 
 /// <summary>
-/// The About submenu of the axKit menu (docs/axKit/SPEC.md AX-9.9), the same in every window: Version (with the
+/// The About submenu of the Help menu (docs/axKit/SPEC.md AX-9.9), the same in every window: Version (with the
 /// window's latest-release state), Licence, Attribution and the axKit guide (docs/axKit/README.md, embedded by
 /// AxKit.Core.csproj), each the text of a notice; axKit on GitHub is <see cref="UpdateCheck.RepositoryPage"/>. The
 /// Licence notice is NOTICE.md, the terms and the disclaimer; the LICENSE file beside it is the AGPL itself.

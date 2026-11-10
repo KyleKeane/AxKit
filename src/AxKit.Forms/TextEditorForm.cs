@@ -154,8 +154,8 @@ public sealed partial class TextEditorForm : AxKitForm
         // As axClaude's Claude Code resources: where the file format is explained, in the browser (AD-4.4).
         var help = CreateHelpMenu(_app.UserGuide, _app.ResourcesLabel, _app.Resources);
 
-        // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
-        _menu.Items.AddRange(edit is null ? [file, navigate, options, CreateAxKitMenu(), help] : [file, edit, navigate, options, CreateAxKitMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
+        _menu.Items.AddRange(edit is null ? [file, navigate, options, CreateWindowMenu(), CreateClaudeMenu(), help] : [file, edit, navigate, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
 
         // The keys without a menu item: one main control, the editor, or the Go to line field while it shows; in the
         // viewer with its Details list, the text and the list in turn (AP-6.1); the viewer's line number. The keys the

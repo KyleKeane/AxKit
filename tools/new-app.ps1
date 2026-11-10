@@ -18,7 +18,7 @@
     - drafts, to be rewritten in real words, of the app's line in README.md, docs\axKit\README.md, docs\axKit\SPEC.md
       section 3, the root CLAUDE.md map and CHANGELOG.md.
   What reads Dispatch.Apps needs nothing: the installer (AxKit.exe apps), run.ps1, make-icon.ps1, the project
-  references (a glob), the axKit menu and the other lists of the windows.
+  references (a glob), the Window menu and the other lists of the windows.
 
 .EXAMPLE
   .\tools\new-app.ps1 axList list Organise Files -Description 'axList, lists of plain lines'
@@ -30,7 +30,7 @@ param(
     [Parameter(Mandatory = $true, Position = 0)] [string]$Name,
     # What AxKit.exe takes: list.
     [Parameter(Mandatory = $true, Position = 1)] [string]$Verb,
-    # Its group in the axKit menu (AX-9.2): Files, Organise, Utilities, or AccessLayers for an app that works through a
+    # Its group in the Window menu (AX-9.2): Files, Organise, Utilities, or AccessLayers for an app that works through a
     # program axKit does not include (AX-11.1; its line in Dispatch.Apps then needs AccessLayerFor, which a test asks for).
     [Parameter(Mandatory = $true, Position = 2)] [ValidateSet('Files', 'Organise', 'Utilities', 'AccessLayers')] [string]$Group,
     # What it opens from a path: Nothing, Folders, Files or FilesAndFolders.
@@ -290,8 +290,8 @@ public sealed class {{Short}}Form : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "{{Name}} &resources",
             [("&Adding an app to axKit", "https://github.com/KyleKeane/AxKit/blob/main/docs/axKit/adding-an-app.md")]);
 
-        // The bundle's axKit menu (AX-9) sits before Help in every window.
-        _menu.Items.AddRange([first, options, CreateAxKitMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
+        _menu.Items.AddRange([first, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
         MainMenuStrip = _menu;
 
         AddKey(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(_list, () => _lines)) { Mark = CommandMark.Read });
@@ -580,7 +580,7 @@ New-TextFile "docs\$Name\user-guide.md" @'
 
 ## Install
 
-{{Name}} is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) gives you a Start menu entry `axKit {{Name}}` and a console command `{{Name}}`. Any axKit window starts one too: Alt+A, New window, {{Name}}.
+{{Name}} is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit {{Name}}` and a console command `{{Name}}`. Any axKit window starts one too: Alt+A, New window, {{Name}}.
 
 ## Start
 
@@ -594,7 +594,7 @@ Options, Text sets the font and its size; Options, General the update check.
 
 ## Updates
 
-The axKit menu, Check for updates.
+The Help, Check for updates.
 
 ## If something goes wrong
 
@@ -602,11 +602,11 @@ Options, Developer, Copy diagnostics copies what helps a bug report.
 
 ## About
 
-The axKit menu, About.
+The Help, About.
 
 ## Disclaimer
 
-{{Name}} comes with no warranty; see the licence in the axKit menu, About.
+{{Name}} comes with no warranty; see the licence in the Help, About.
 '@
 
 New-TextFile "docs\$Name\nvda-test-plan.md" @'

@@ -22,18 +22,18 @@ Run with NVDA before a release, on a folder with `README.md` (headings, links, a
 
 ## 2. The hand-over (AP-1.2, AP-1.3)
 
-1. With an axPreview window open on README.md, in axFile on the folder, Shift+Enter on `plain.txt`: the axPreview window comes to the front showing `plain.txt`, NVDA reads its title and the text; no second window (Alt+A, O lists one axPreview). Shift+F10, E (Preview) on `app.log`: the same.
+1. With an axPreview window open on README.md, in axFile on the folder, Shift+Enter on `plain.txt`: the axPreview window comes to the front showing `plain.txt`, NVDA reads its title and the text; no second window (Alt+W, O lists one axPreview). Shift+F10, E (Preview) on `app.log`: the same.
 2. Shift+Enter on the `.exe` in axFile: the axPreview window comes to the front with the notice "Not a text file" and keeps `app.log`. Without closing it, back in axFile, Shift+Enter on `plain.txt`: the notice is gone and the window shows `plain.txt`, NVDA reading its title and text.
 3. Shift+Enter on a folder in axFile: a new axFile window on that folder, not axPreview.
 4. Close the axPreview window; Shift+Enter on `README.md` in axFile: a new axPreview window opens on it.
 5. In File Explorer, right-click `README.md`, Open with axKit, axPreview: the open window takes it. Make axPreview the default for `.log` (Settings, Apps, Default apps, or Open with, Always): Enter on `app.log` in axFile and a double click in File Explorer open axPreview. Set the default back if wanted.
 6. Console: `axpreview C:\path\to\plain.txt`: the open window takes it and comes to the front; `axpreview --new C:\path\to\plain.txt`: a second window.
 
-## 3. Text, notices, the axKit menu (AP-3)
+## 3. Text, notices, the Window, Claude and Help menus (AP-3)
 
 1. Ctrl+Plus: "Text size 13" (or the next size), the caret where it was; Ctrl+Minus back. Options, Text, Font: the font picker; Escape.
 2. Help, User guide: this guide; Ctrl+H moves through its headings; Escape.
-3. Alt+A: the axKit menu with New window (axPreview among the apps), Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows, Claude, Command palette, Send a report, Your reports, Check for updates, About.
+3. Alt+W: the Window menu with New window (axPreview among the apps), Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows; Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+A: the Claude menu.
 4. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the file with its encoding and the log's end. Alt+F4 closes without a question.
 
 ## 5. The Details list and the kinds of file (AP-6, AP-7)

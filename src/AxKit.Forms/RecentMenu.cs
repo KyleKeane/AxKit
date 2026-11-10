@@ -3,7 +3,7 @@ using AxKit.Core;
 namespace AxKit.Forms;
 
 /// <summary>
-/// The "Open recent …" submenu every window has (axClaude FR-8.1, axDown AD-4.1, axGIT AG-6.1; the axKit menu's
+/// The "Open recent …" submenu every window has (axClaude FR-8.1, axDown AD-4.1, axGIT AG-6.1; the Window menu's
 /// shape, AX-9.5): the paths that still exist as "1. name (path)", with the number as the mnemonic, or one enabled
 /// item that says there are none, since a disabled item is skipped by the keyboard and NVDA would read nothing.
 /// </summary>
@@ -33,7 +33,7 @@ public static class RecentMenu
     /// <summary>
     /// An empty submenu gets one item that says so and does nothing, enabled (AX-9.5): WinForms skips disabled items
     /// when the keyboard moves through a menu, so a submenu of only a disabled "(none)" opened with nothing selected
-    /// and left the screen reader with nothing to read. The axKit menu's lists use it too.
+    /// and left the screen reader with nothing to read. The Window menu's lists use it too.
     /// </summary>
     public static void NoneWhenEmpty(ToolStripMenuItem menu, string text)
     {

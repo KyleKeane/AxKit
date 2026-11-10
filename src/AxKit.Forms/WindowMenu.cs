@@ -2,73 +2,39 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using AxKit.Core;
-using AxKit.Core.Updates;
 using static AxKit.Forms.User32;
 
 namespace AxKit.Forms;
 
 /// <summary>
-/// The axKit menu every window has (docs/axKit/SPEC.md AX-9), one class for every window, in the order of 5.6.0
-/// (2026-11-09, the user: New window was "below many other things"): New window (one item per app), Open windows (the
-/// other windows of the bundle's apps, most recently used first), Recently closed (the bundle's list, AX-9.4) and
-/// Close all windows; Claude, everything of Claude in one submenu (the switch, a question about this window, the
-/// folders, Claude's working folder, the AI tools; docs/axKit/ai-help.md AH-1.1, docs/axKit/mcp.md MC-6.1); the
-/// window's Command palette item (AX-10), Send a report and Your reports (docs/axKit/reports.md RP-2.2); the window's
-/// own Check for updates and Update to items, and About, the bundle's sections (AX-9.9). The lists are filled each
-/// time the menu opens, the windows from what the system lists in Z order, which is Alt+Tab's order, so nothing about
-/// windows is stored. The lists and labels are <see cref="AxKitWindows"/> and <see cref="RecentlyClosed"/>, the About
-/// texts <see cref="BundleAbout"/>, tested; the rest is checked with NVDA. Open windows by type (one submenu per app)
-/// was here until 5.6.0 and went for the menu's length.
+/// The Window menu every window has (docs/axKit/SPEC.md AX-9; the axKit menu until 5.7.0, when the user asked for
+/// the bundle's menus by intent, Window, Claude and Help, 2026-11-10): New window (one item per app), Open windows
+/// (the other windows of the bundle's apps, most recently used first), Recently closed (the bundle's list, AX-9.4)
+/// and Close all windows. The lists are filled each time the menu opens, the windows from what the system lists in Z
+/// order, which is Alt+Tab's order, so nothing about windows is stored. The lists and labels are
+/// <see cref="AxKitWindows"/> and <see cref="RecentlyClosed"/>, tested; the rest is checked with NVDA. The statics
+/// start a window of any app (<see cref="Start"/>, <see cref="StartWith"/>) and list and activate the bundle's windows
+/// (<see cref="OpenWindows"/>, <see cref="Activate"/>) for every caller. Open windows by type (one submenu per app) was
+/// here until 5.6.0; the command palette, the reports, the update items and About moved to Help in 5.7.0.
 /// </summary>
-public sealed class AxKitMenu : ToolStripMenuItem
+public sealed class WindowMenu : ToolStripMenuItem
 {
     private readonly AxKitForm _owner;
     private readonly ToolStripMenuItem _recentlyClosed = new("&Recently closed");
     private readonly ToolStripMenuItem _openWindows = new("&Open windows");
 
-    /// <param name="owner">The window: its handle is the one checked in the lists and closed last by Close all windows, its notices show the About sections (AX-7.2), and its latest-release state goes into About, Version.</param>
-    /// <param name="commandPalette">The window's Command palette item (AX-10.1), the menu's first.</param>
-    /// <param name="checkForUpdates">The window's Check for updates item (AX-3.1).</param>
-    /// <param name="updateTo">The window's Update to item, visible while a newer release is known.</param>
-    public AxKitMenu(AxKitForm owner, ToolStripMenuItem commandPalette, ToolStripMenuItem checkForUpdates, ToolStripMenuItem updateTo)
-        : base("&axKit")
+    /// <param name="owner">The window: its handle is the one checked in the lists and closed last by Close all windows.</param>
+    public WindowMenu(AxKitForm owner)
+        : base("&Window")
     {
         _owner = owner;
-        void ShowNotice(Notice notice) => owner.ShowNotice(notice);
         var newWindow = new ToolStripMenuItem("&New window");
         AddApps(newWindow.DropDownItems, Dispatch.Apps, app => new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => Start(app.Verb, null)));
-
-        var about = new ToolStripMenuItem("&About");
-        about.DropDownItems.Add(new ToolStripMenuItem("&Version", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.VersionTitle, BundleAbout.Version(owner.LatestReleaseState)))));
-        about.DropDownItems.Add(new ToolStripMenuItem("&Licence", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.LicenceTitle, BundleAbout.LicenceWithAgreements(Consent.Read(AppPaths.ConsentFile))))));
-        about.DropDownItems.Add(new ToolStripMenuItem("&Attribution", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.AttributionTitle, BundleAbout.Attribution))));
-        about.DropDownItems.Add(new ToolStripMenuItem("&Privacy", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.PrivacyTitle, BundleAbout.Privacy()))));
-        about.DropDownItems.Add(new ToolStripMenuItem("Third-party &notices", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.NoticesTitle, BundleAbout.Notices()))));
-        about.DropDownItems.Add(new ToolStripMenuItem("axKit &guide", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.GuideTitle, BundleAbout.Guide()))));
-        about.DropDownItems.Add(new ToolStripMenuItem("axKit on Git&Hub", null, (_, _) => owner.OpenUrl(UpdateCheck.RepositoryPage)));
-
-        // AX-9.1: the windows first, then Claude, then the bundle's commands, then the updates and About.
         DropDownItems.Add(newWindow);
         // The lists made as the menu opens; the command palette leaves them out (AX-10.2).
         DropDownItems.Add(CommandPalette.FilledOnOpening(_openWindows));
         DropDownItems.Add(CommandPalette.FilledOnOpening(_recentlyClosed));
-        DropDownItems.Add(new ToolStripMenuItem("Close all &windows", null, (_, _) => CloseAll()));
-        DropDownItems.Add(new ToolStripSeparator());
-        // Everything of Claude in one submenu (docs/axKit/ai-help.md AH-1.1, docs/axKit/mcp.md MC-6.1): the bundle's own settings, an app's Options hold only the app's.
-        DropDownItems.Add(owner.CreateClaudeMenu());
-        DropDownItems.Add(new ToolStripSeparator());
-        DropDownItems.Add(commandPalette);
-        // Reports (docs/axKit/reports.md RP-2.2): the report itself, with its bundle key shown, and the list of them in axTask.
-        var report = new ToolStripMenuItem("&Send a report...", null, (_, _) => owner.ShowReport())
-        {
-            ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
-        };
-        DropDownItems.Add(report);
-        DropDownItems.Add(new ToolStripMenuItem("&Your reports", null, (_, _) => owner.OpenReports()));
-        DropDownItems.Add(new ToolStripSeparator());
-        DropDownItems.Add(checkForUpdates);
-        DropDownItems.Add(updateTo);
-        DropDownItems.Add(about);
+        DropDownItems.Add(new ToolStripMenuItem("&Close all windows", null, (_, _) => CloseAll()));
         DropDownOpening += (_, _) => Fill();
         Fill();
     }
@@ -212,7 +178,7 @@ public sealed class AxKitMenu : ToolStripMenuItem
 
         try
         {
-            // Outside call, program, axKit: starts another window of axKit from the axKit menu (New window, Show
+            // Outside call, program, axKit: starts another window of axKit from the Window menu (New window, Show
             // current folder in, Open in axKit): this very program file with the app's verb and path.
             Process.Start(info)?.Dispose();
         }

@@ -118,7 +118,7 @@ public abstract partial class AxKitForm
             return;
         }
 
-        AxKitMenu.Start(Dispatch.AxJSON, path);
+        WindowMenu.Start(Dispatch.AxJSON, path);
     }
 
     /// <summary>Options, Text, Theme, Theme on (TH-1.5): the file's switch, written; the template first when there is none.</summary>

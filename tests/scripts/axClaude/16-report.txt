@@ -67,5 +67,5 @@ keys escape
 expect said Kept as a draft in Your reports
 expect focus Message to Claude
 # The two items of the axKit menu, by their palette names (RP-2.2).
-expect commands Send a report, axKit
-expect commands Your reports, axKit
+expect commands Send a report, Help
+expect commands Your reports, Help

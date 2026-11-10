@@ -27,7 +27,8 @@ public sealed class HelpForm : HotkeyForm
 
         // ---- menus and keys (HE-6): one command list (docs/axKit/app-kit.md AK-2), the match keys first ----
         AddMatchKeys(AxHelpKeys.NextMatch, AxHelpKeys.PreviousMatch, AxHelpKeys.FirstMatch, AxHelpKeys.LastMatch);
-        var first = new ToolStripMenuItem("ax&Help");
+        // P: H is the bundle's Help menu in the same bar (two menus on one letter left the second unreachable until 5.7.0).
+        var first = new ToolStripMenuItem("axHel&p");
         Add(first, new Command("&Ask", AxHelpKeys.Ask, Ask) { Mark = CommandMark.Act });
         first.DropDownItems.Add(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders()));
         first.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenWorkingFolder()));
@@ -44,8 +45,8 @@ public sealed class HelpForm : HotkeyForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Claude &resources",
             [("&Claude Code", "https://code.claude.com/docs/en/overview")]);
 
-        // The bundle's axKit menu (AX-9) sits before Help in every window.
-        _menu.Items.AddRange([first, options, CreateAxKitMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
+        _menu.Items.AddRange([first, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
         MainMenuStrip = _menu;
 
         // ---- the field and the earlier questions (HE-2.1, HE-3): HotkeyForm's, named here ----
@@ -182,7 +183,7 @@ public sealed class HelpForm : HotkeyForm
 
         Log.Info("Hidden: Claude's working folder opened in axFile");
         HideWindow(giveBack: false);
-        AxKitMenu.Start(Dispatch.AxFile, folder);
+        WindowMenu.Start(Dispatch.AxFile, folder);
         Do(GiveForegroundBackLaterAsync);
     }
 

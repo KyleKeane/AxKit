@@ -10,10 +10,10 @@ Anthropic account and Anthropic's terms, which are yours to follow.
 Nothing to set up: type your first question and press Enter. A reminder says what goes to Anthropic (your question,
 what the window gathers about itself, the files Claude reads in the folders you allow); Tab to the box, Space, and
 Enter on Turn on: "Claude on", and your question is asked. That turns Claude on for every axKit app; the switch is in
-any axKit window, Alt+A for the axKit menu, Claude, Use Claude in axKit. Claude Code must be installed and logged in;
+any axKit window, Alt+A for the Claude menu, Use Claude in axKit. Claude Code must be installed and logged in;
 if it is missing, a notice offers Install Claude Code now.
 
-Claude reads nothing of yours unless you allow a folder: axKit menu, Claude, Folders Claude may read, Add a folder.
+Claude reads nothing of yours unless you allow a folder: Claude menu, Folders Claude may read, Add a folder.
 A question about a window or a screen needs no folder.
 
 Claude Code starts in a folder of its own, Documents, axKit Claude, made the first time it is needed: axHelp, Claude's
@@ -52,7 +52,7 @@ while you type. axHelp, Forget the questions empties the list.
 Options, Hotkey (the key), Text (the font and its size), General (Start with Windows, the update check), Developer
 (the settings file `%APPDATA%\AxKit\axHelp.json`, diagnostics; `sayFirstMatch` there, off, is axStart's first-match
 speech while typing). The AI help settings, the switch, the folders, the model and Claude's working folder
-(`workingFolder`), are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached from the axKit menu in every window.
+(`workingFolder`), are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached from the Claude menu in every window.
 
 ## If something goes wrong
 
@@ -64,9 +64,9 @@ F4 sends one.
 
 ## About
 
-The axKit menu, About: the version, the licence, the reminders about the programs axKit's access layers run.
+The Help, About: the version, the licence, the reminders about the programs axKit's access layers run.
 
 ## Disclaimer
 
-axHelp comes with no warranty; see the licence in the axKit menu, About. What you ask goes to Anthropic under your
+axHelp comes with no warranty; see the licence in the Help, About. What you ask goes to Anthropic under your
 account and Anthropic's terms; axKit keeps your questions and answers only in your own settings file.

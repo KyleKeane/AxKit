@@ -57,7 +57,7 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
 
 1. Ctrl+Shift+D: "Done tasks hidden"; the list's name says "1 done hidden".
 2. Shift+F10 in each pane: its menu (List, Item or Field) opens and NVDA reads its first item.
-3. F1: the keys; Help, User guide: this guide. Alt+A, About, Version names axTask.
+3. F1: the keys; Help, User guide: this guide. Alt+H, About, Version names axTask.
 4. Close and start again without a folder: the list you had.
 
 ## 5. Action keys and GitHub lists (TK-7a, docs/axKit/reports.md RP-7, RP-8)

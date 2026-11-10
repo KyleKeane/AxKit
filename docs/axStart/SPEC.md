@@ -5,7 +5,7 @@ NVDA screen reader. Specified and built 2026-10-22 at the user's ask, released i
 9): "the windows launcher has become very
 bloated and i want a quick global key i hit to then search for a program to launch". The document is kept in step with
 the code (a behaviour change updates it in the same commit). Requirements are numbered `AS-n.m` and
-decisions `AS-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and AX-9 (the axKit menu), are cited by
+decisions `AS-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), are cited by
 number and not repeated. In axStart's code and documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -49,7 +49,7 @@ taskbar. It works entirely offline (bundle G6).
 ### AS-1 Launch, the background process, the hand-over
 
 - AS-1.1 `AxKit.exe start [--hidden]`: the background process, the window shown at once unless `--hidden` (the
-  sign-in start). Start menu entry `axKit axStart`, console command `axStart`, the axKit menu's New window ▸ axStart
+  sign-in start). Start menu entry `axKit axStart`, console command `axStart`, the Window menu's New window ▸ axStart
   (AX-9). No path is taken; axStart is not in File Explorer's Open with axKit submenu.
 - AS-1.2 **One axStart.** A start while axStart runs hands over to the running one, which shows its window, and ends
   (the bundle's `AppMessage`, `docs/axMedia/SPEC.md` AM-1.3, with a new verb `show`); with `--hidden` it ends without
@@ -154,8 +154,8 @@ taskbar. It works entirely offline (bundle G6).
 - AS-5.2 Menus (AX-6): **axStart (S):** Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
   Ctrl+O | Information Ctrl+I | ─ | Refresh programs F5 | ─ | Hide Escape | Quit axStart. **Options (O):** Hotkey… | Text ▸ (Font… |
   Larger text | Smaller text | Windows text size) | General ▸ (Start with Windows ✓ | Say the first match while typing
-  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **axKit (A)** (AX-9).
-  **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
+  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** and **Claude (A)** (AX-9.1).
+  **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
   item has a mnemonic (AX-7.4).
 - AS-5.3 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+Plus, Ctrl+Minus, Ctrl+S ("Nothing to save here", the
   window base's answer in a window without a document, AX-8.2), Page Up and Page Down (in the field,
@@ -198,7 +198,7 @@ docs/axStart/        this spec, user-guide.md (embedded), nvda-test-plan.md
 ```
 
 `AxKit.Forms/AppMessage` gains the verb `show` and `SendTo`, a hand-over to a window the caller found: axStart's is
-hidden, so the axKit menu's list of visible windows does not have it, and the starting process finds it by its title
+hidden, so the Window menu's list of visible windows does not have it, and the starting process finds it by its title
 and program file (`HotkeyForm.FindRunning`, `ThisProgram.Runs`: the same AxKit.exe, so that a test run's axStart and
 the user's own from another build never take each other's hand-over), one axStart being held by the mutex `Local\AxKit.AxStart` (`AppPaths.OneAtATime`:
 with a mark of the run's folder in a test run, so that a run's axStart and the user's never count as one). The installer stops

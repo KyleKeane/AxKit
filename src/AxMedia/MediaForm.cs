@@ -106,8 +106,8 @@ public sealed partial class MediaForm : AxKitForm
             ("Free &codecs in the Microsoft Store", "https://apps.microsoft.com/search?query=media+extensions"),
         ]);
 
-        // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
-        _menu.Items.AddRange([queue, play, options, CreateAxKitMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
+        _menu.Items.AddRange([queue, play, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
 
         // ---- the list (AM-2.1): the one control; its own keys stay native ----
         _list.IntegralHeight = false;
@@ -260,7 +260,7 @@ public sealed partial class MediaForm : AxKitForm
         var (queue, start) = await Task.Run(() => MediaFolder.Queue(message.Paths));
         if (queue.Count == 0)
         {
-            AxKitMenu.Activate(Handle);
+            WindowMenu.Activate(Handle);
             Announce($"No sound or video files in {Describe(message.Paths)}", true);
             return;
         }
@@ -269,7 +269,7 @@ public sealed partial class MediaForm : AxKitForm
         FillList();
         _list.SelectedIndex = start;
         PlayCurrent(prompted: true);
-        AxKitMenu.Activate(Handle);
+        WindowMenu.Activate(Handle);
         RememberPath(message.Paths);
     }
 
@@ -371,8 +371,8 @@ public sealed partial class MediaForm : AxKitForm
         RecentMenu.Fill(_recentItem, _settings.Recent, path => File.Exists(path) || Directory.Exists(path), PathName.Of, "&No recent files or folders",
             target => AddPaths([target], Directory.Exists(target) ? $"No sound or video files in {PathName.Of(target)}" : null));
 
-    /// <summary>Queue → New window (Ctrl+N): another axMedia window, empty; the axKit menu's New window does the same (AX-9).</summary>
-    private void NewWindow() => AxKitMenu.Start(Dispatch.AxMedia, null);
+    /// <summary>Queue → New window (Ctrl+N): another axMedia window, empty; the Window menu's New window does the same (AX-9).</summary>
+    private void NewWindow() => WindowMenu.Start(Dispatch.AxMedia, null);
 
     /// <summary>The file in hand (AM-1.4): the one playing or paused, else the one under the selection; null with an empty queue.</summary>
     private string? FileInHand =>

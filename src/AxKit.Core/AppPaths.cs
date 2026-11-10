@@ -10,7 +10,7 @@ public static class AppPaths
     public static string SettingsFile(string app) =>
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", app + ".json");
 
-    /// <summary>The bundle's one list of recently closed files and folders, for the axKit menu (AX-9.4).</summary>
+    /// <summary>The bundle's one list of recently closed files and folders, for the Window menu (AX-9.4).</summary>
     public static string RecentlyClosedFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "recently-closed.json");
 

@@ -18,7 +18,7 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 ## 2. From and to the other windows (AG-1.4)
 
 1. In axClaude on the repository, Alt+S, I: "Show current folder in submenu", Down: "File Explorer Ctrl+W", Down: "axTerminal", Down: "axGIT"; Enter: a new axGIT window on the repository, focused.
-2. Alt+A, O: the open windows, the axClaude window first; Enter goes back to it. Alt+A, O again, the axGIT window first now.
+2. Alt+W, O: the open windows, the axClaude window first; Enter goes back to it. Alt+W, O again, the axGIT window first now.
 3. In axDown on a file of the repository, Alt+F, I, G: axGIT on the repository that holds the file.
 4. In axGIT, Alt+R, I: "File Explorer Ctrl+W" and "axClaude"; Enter on axClaude: a new axClaude on the repository.
 5. In the Changes list on a `.md` file, Ctrl+E: axDown opens it; on a `.json` file, axJSON.
@@ -41,11 +41,11 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 4. Ctrl+Shift+F: the status bar says "Working: fetch…" (NVDA+End), then "Fetched". Ctrl+Shift+L: "Pulled" or "Already up to date". Ctrl+Shift+H on a branch with nothing to push: "Pushed" or git's "Everything up-to-date" read as "Pushed". With the network off, Ctrl+Shift+F: the notice "Fetch failed" with git's message.
 5. Press Ctrl+Shift+F and at once Ctrl+Shift+L: "Working…" for the second; the first finishes on its own.
 
-## 5. Text, notices, the axKit menu (AG-2.4, AG-6)
+## 5. Text, notices, the Window, Claude and Help menus (AG-2.4, AG-6)
 
 1. In the details after a diff, Ctrl+F: the Find notice; type a word from the diff, Enter: the match selected in the details and read; F3: the next, and after the last match the first again; a word with no match: "Not found". Ctrl+Home, Page Down: a screen down; Ctrl+Down: the next paragraph.
 2. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 3. F1: the Keyboard shortcuts notice; Escape closes it. Help, User guide: this guide; Escape.
-4. Alt+A: the axKit menu with New window, Open windows, Recently closed, Close all windows, Claude, Command palette, Send a report, Your reports, Check for updates, About. About, Version: "axKit <version>" and axGIT named among the apps.
+4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows; Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+A: the Claude menu. About, Version: "axKit <version>" and axGIT named among the apps.
 5. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the repository and the log's end.
 6. Close the window and start axGIT without a folder: it opens on the same repository (the last one); Repository, Open recent repository lists it as "1. <name> (<path>)".

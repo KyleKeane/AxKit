@@ -13,7 +13,7 @@ asks more about and closes. The last ten questions with their answers stay in a 
 help [--hidden]`, Start entry `axKit axHelp`, command `axHelp`; a background process from sign-in, as axStart and
 axClip (AX-13.4 in the Store's copy). It is an access layer (AX-11.1): Claude Code, Anthropic's program, does the
 work under the user's own account and Anthropic's terms; the first question turns Claude on after the reminder
-(AH-1.2, AH-1.3), and the switch is axKit menu, Claude, Use Claude in axKit.
+(AH-1.2, AH-1.3), and the switch is Claude menu, Use Claude in axKit.
 
 ## 2. Goals and non-goals
 

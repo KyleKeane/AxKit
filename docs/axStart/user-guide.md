@@ -4,7 +4,7 @@ axStart is a program launcher, made for screen reader users: one key from anywhe
 
 ## Install and start
 
-axStart is part of axKit. Installing axKit (see the axKit guide in the axKit menu, About) starts axStart in the background and makes it start again each time you sign in to Windows. It has no window and no taskbar button until you press its hotkey, **Ctrl+Shift+Space**.
+axStart is part of axKit. Installing axKit (see the axKit guide in the Help, About) starts axStart in the background and makes it start again each time you sign in to Windows. It has no window and no taskbar button until you press its hotkey, **Ctrl+Shift+Space**.
 
 You can also start it from the Start menu, `axKit axStart`, or the console, `axStart`: the search field comes up, and axStart keeps running afterwards. Starting it again while it runs just brings up the field.
 
@@ -43,8 +43,7 @@ axStart, **Quit axStart** ends it until the next sign-in or the next time you st
 
 - **axStart**: Start (Enter), Start as administrator (Ctrl+Shift+Enter), Open file location (Ctrl+O), Information (Ctrl+I), Refresh programs (F5), Hide (Escape), Quit axStart.
 - **Options**: Hotkey, Text, General (Start with Windows, Say the first match while typing, Check for updates at start), Developer.
-- **axKit**: the other axKit apps, the open windows, Check for updates and About, as in every axKit window.
-- **Help**: Keyboard shortcuts (F1), User guide, Windows resources.
+- **Window**, **Claude** and **Help**: the bundle's three menus, the same in every axKit window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. Claude (Alt+A) has the switch Use Claude in axKit, Ask about this window (Shift+F1), Folders Claude may read, Claude's working folder and the AI tools. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## Updates
 
@@ -59,4 +58,4 @@ axStart offers a new axKit release as every axKit window does. An update stops a
 
 ## About
 
-axStart is an app of the axKit bundle by Dr. Kyle Keane (www.kylekeane.com), released under the GNU AGPL 3 licence. axKit menu, About has the version, the licence and the full disclaimer.
+axStart is an app of the axKit bundle by Dr. Kyle Keane (www.kylekeane.com), released under the GNU AGPL 3 licence. Help, About has the version, the licence and the full disclaimer.

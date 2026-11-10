@@ -5,7 +5,7 @@ namespace AxKit.Forms;
 
 public abstract partial class AxKitForm
 {
-    // ---- updates (AX-3): the check, the offer in a notice and in the axKit menu, the install in place, the restart ----
+    // ---- updates (AX-3): the check, the offer in a notice and in the Help menu, the install in place, the restart ----
 
     private readonly ToolStripMenuItem _checkItem = new($"Check for &updates (axKit {BundleInfo.Version})...");
     private readonly ToolStripMenuItem _updateItem = new() { Visible = false };
@@ -15,7 +15,7 @@ public abstract partial class AxKitForm
     /// <summary>After Update and restart: how the installed new version is started when this window closes; null when nothing is to start.</summary>
     private string[]? _restartArguments;
 
-    /// <summary>What the last check found, for About, Version: "not checked yet", "checking...", "axKit 3.5.0 (newer than this one)"; the axKit menu, in this project, reads it.</summary>
+    /// <summary>What the last check found, for About, Version: "not checked yet", "checking...", "axKit 3.5.0 (newer than this one)"; the Help menu reads it.</summary>
     protected internal string LatestReleaseState { get; private set; } = "not checked yet";
 
     /// <summary>Update and restart was chosen and the update is installed: the new version starts when the window closes.</summary>
@@ -26,7 +26,7 @@ public abstract partial class AxKitForm
 
     /// <summary>
     /// AX-3: asks GitHub for the latest release, every time. The state for About, Version is set first; then one
-    /// thing is shown: a newer release in a notice (unprompted at startup, or said as "in the axKit menu" while a notice
+    /// thing is shown: a newer release in a notice (unprompted at startup, or said as "in the Help menu" while a notice
     /// is up), the newest version or a failure when the check was manual (axKit → Check for updates), nothing otherwise.
     /// </summary>
     protected async void CheckForUpdates(bool manual)
@@ -97,7 +97,7 @@ public abstract partial class AxKitForm
             Log.Info($"Update available: {release!.Tag}, zip {release.ZipUrl ?? "missing"}");
             if (!manual)
             {
-                UpdateNoted($"axKit {version} is available. axKit menu, Update to axKit {version}.");
+                UpdateNoted($"axKit {version} is available. Help, Update to axKit {version}.");
             }
         }
 
@@ -108,7 +108,7 @@ public abstract partial class AxKitForm
         }
         else if (newer)
         {
-            Announce($"Update {version} in the axKit menu", false);
+            Announce($"Update {version} in the Help menu", false);
         }
         else if (manual)
         {
@@ -171,7 +171,7 @@ public abstract partial class AxKitForm
         }
     }
 
-    /// <summary>While a check or an install runs, the two update items of the axKit menu are disabled, so that neither starts twice.</summary>
+    /// <summary>While a check or an install runs, the two update items of the Help menu are disabled, so that neither starts twice.</summary>
     private void SetUpdateBusy(bool busy)
     {
         _updateBusy = busy;
@@ -204,7 +204,7 @@ public abstract partial class AxKitForm
             (release.Notes.Length > 0 ? release.Notes + "\n\n" : string.Empty) +
             $"I accept all terms, install and restart downloads the new version, {UpdateRestartText}. I accept all terms, install and close installs without starting it again. " +
             $"A progress bar shows the download.{size}\n" +
-            "Later keeps this version; the axKit menu offers the update again.";
+            "Later keeps this version; the Help menu offers the update again.";
         ShowNotice(new Notice($"Update to axKit {version}", text,
         [
             new OverlayChoice("I &accept all terms, install and restart", () => AcceptAndInstall(release, restart: true), IsDefault: true),

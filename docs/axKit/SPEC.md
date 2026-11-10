@@ -245,7 +245,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   axClaude does (`docs/axClaude/SPEC.md` FR-1.10, D25): asked once at startup when the setting is on, a notice with
   the release notes and four buttons: I accept all terms, install and restart (Enter), I accept all terms, install and close, Open release page, Later
   (Escape). A development build (Debug, as `run.ps1` makes it) does not ask at startup, since its version is whatever
-  the working tree said when it was last built; Check for updates still asks. Every window's axKit menu ends with Check for updates (axKit <version>), always, naming the version in use
+  the working tree said when it was last built; Check for updates still asks. Every window's Help menu ends with Check for updates (axKit <version>), always, naming the version in use
   and asking GitHub again every time, Update to axKit <version> below it while a newer release is known, and About, the
   bundle's About in sections (AX-9.9, `AxKit.Core/BundleAbout`), the same in every window. Every text of the update
   flow names axKit, never an app: the version is the bundle's.
@@ -340,7 +340,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - AX-5.1 Each app has its own settings file, `%APPDATA%\AxKit\<app>.json` (`axClaude.json`, `axDown.json`), and its own
   log, `%LOCALAPPDATA%\AxKit\logs\<app>.log`, each line with the time, the level and the process id in brackets, so
   that two windows of one app writing one log can be told apart (2026-10-23). The updater's log is `%LOCALAPPDATA%\AxKit\logs\update.log`. The bundle
-  has one file of its own, `%APPDATA%\AxKit\recently-closed.json`, the Recently closed list of the axKit menu (AX-9.4).
+  has one file of its own, `%APPDATA%\AxKit\recently-closed.json`, the Recently closed list of the Window menu (AX-9.4).
   **Every file and folder name that carries an app's name is written in the app's own case** (5.6.0, the user's ask
   of 2026-11-10: NVDA reads an all-lower-case `axdown` oddly): the settings and log files (`axDown.json`,
   `axDown.log`), the console commands and the package's aliases (`axDown.cmd`, `axDown.exe`), the documents' folders
@@ -372,7 +372,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   hand-over to `install.ps1`; neither needs a window), `Audio/WaveTone` (the sounds as WAV bytes), `Paragraphs` (the
   paragraph starts of a text, for Ctrl+Up and Ctrl+Down), `WindowPlacement`, `EmbeddedText` (the embedded guides),
   `NaturalOrder` and `MediaFiles` (File Explorer's order of names, and the sound and video kinds with the time and
-  speed rules; from axFile on their second use, axMedia), `Palette` (the command palette's lines and search, AX-10), `MenuText` (a menu item's or a button's text as spoken: no mnemonic marker, no trailing dots; the palette, the notices' key line and the menu choices that announce themselves), `MarkdownOutline` (the headings, links, lists, block quotes and tables of a Markdown text, with next and previous from a caret position; axDown SPEC §9, shared since its second use), `AxKitWindows` (the window lists of the axKit menu from the windows the system names, AX-9), `RecentlyClosed` (the bundle's list of closed files and folders, AX-9.4), `RecentPaths` (what every settings class does to its recent list: the newest first, once, ten at most, cleaned after loading; AX-9.5), `PathName` (the name of a path for a title or a label: the last part, or a drive's root itself), `BundleAbout` (the About sections and the embedded axKit guide, AX-9.9), and the console-to-transcript pieces that came from axClaude on their second use, axTerminal (2026-10-18, docs/axTerminal/SPEC.md §5): `Pty/` (`PtyHost`, the ConPTY host, and `StreamRecorder`), `Vt/` (`VtParser`, `Screen`, `Wcwidth`) and `Transcript/` (`Line` and `LineKind`, `LineStore`, the base of each app's model: the lines the screen writes to, the decoder, the parser and the screen itself, the bookmarks and the cap, since 2026-10-23, `TranscriptMirror` and `Utterance`), tested in `tests/AxClaude.Tests` against its recordings.
+  speed rules; from axFile on their second use, axMedia), `Palette` (the command palette's lines and search, AX-10), `MenuText` (a menu item's or a button's text as spoken: no mnemonic marker, no trailing dots; the palette, the notices' key line and the menu choices that announce themselves), `MarkdownOutline` (the headings, links, lists, block quotes and tables of a Markdown text, with next and previous from a caret position; axDown SPEC §9, shared since its second use), `AxKitWindows` (the window lists of the Window menu from the windows the system names, AX-9), `RecentlyClosed` (the bundle's list of closed files and folders, AX-9.4), `RecentPaths` (what every settings class does to its recent list: the newest first, once, ten at most, cleaned after loading; AX-9.5), `PathName` (the name of a path for a title or a label: the last part, or a drive's root itself), `BundleAbout` (the About sections and the embedded axKit guide, AX-9.9), and the console-to-transcript pieces that came from axClaude on their second use, axTerminal (2026-10-18, docs/axTerminal/SPEC.md §5): `Pty/` (`PtyHost`, the ConPTY host, and `StreamRecorder`), `Vt/` (`VtParser`, `Screen`, `Wcwidth`) and `Transcript/` (`Line` and `LineKind`, `LineStore`, the base of each app's model: the lines the screen writes to, the decoder, the parser and the screen itself, the bookmarks and the cap, since 2026-10-23, `TranscriptMirror` and `Utterance`), tested in `tests/AxClaude.Tests` against its recordings.
 - AX-6.2 `AxKit.Forms` (WinForms, checked with NVDA; the pure parts, `AppMessage`'s text form, `BundleKeys.Text` and
   `TextJump`, have unit tests in `tests/AxKit.Tests`): `OverlayPanel` (the notices in the
   window, with the `Notice` record callers pass), `ControlArea` and `ListKeys` (a question's answers as a list or a
@@ -382,7 +382,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   control both), `Announcer` (the UI Automation notification, AX-7.1), `TextJump` (a window's key pairs for the kinds of element in a text and the jump itself on an edit control, used by every notice text and by axDown's editor, AX-7.2), `StatusLayout`, the font
   handling (text size and the font picker), `BundleKeys` (AX-8), `CommandPalette` (the menu bar read into the
   palette's entries, AX-10), `WindowAccessibleObject` (the window's client area as its UI Automation rectangle, so
-  that NVDA+End finds the status bar), `AxKitMenu` (the axKit menu every window has, AX-9), `RecentMenu` (the "Open recent …" submenus, AX-9.5), `AppMessage` (the hand-over from a starting process to the open window of an app that keeps one window, one `WM_COPYDATA` message with a verb and paths, found through the axKit menu's window list; axMedia and axPreview, docs/axMedia/SPEC.md AM-1.3, 2026-10-22; `SendTo` a window the caller found, axStart's hidden one, docs/axStart/SPEC.md AS-1.2), `TranscriptView` with `TranscriptKeys` and `QuickKey` (the read-only transcript of a console with its single-key navigation, the keys handed in by the window from its table; from axClaude on its second use, axTerminal, docs/axTerminal/SPEC.md §5),
+  that NVDA+End finds the status bar), `WindowMenu` (the Window menu every window has, AX-9.1), `RecentMenu` (the "Open recent …" submenus, AX-9.5), `AppMessage` (the hand-over from a starting process to the open window of an app that keeps one window, one `WM_COPYDATA` message with a verb and paths, found through the Window menu's window list; axMedia and axPreview, docs/axMedia/SPEC.md AM-1.3, 2026-10-22; `SendTo` a window the caller found, axStart's hidden one, docs/axStart/SPEC.md AS-1.2), `TranscriptView` with `TranscriptKeys` and `QuickKey` (the read-only transcript of a console with its single-key navigation, the keys handed in by the window from its table; from axClaude on its second use, axTerminal, docs/axTerminal/SPEC.md §5),
   and the text editor shell: `TextEditorForm` (the window every text editor app is: the file, the menus, find, go to
   line, the status bar, the notices, the fonts, the update flow; axDown's `EditorForm` until axJSON, the second
   editor), `EditorApp` (what differs between the editor apps, as data: name, verb, settings file, file types, F1 text,
@@ -401,7 +401,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   windows share and no app copies: the notice flow (`ShowNotice`, `CloseNotice`, `Fail`, `ShowError`; Alt, F10 and
   the window's shortcuts swallowed while a notice shows), `Announce`, the text font with its size keys and the
   Windows font picker (the choice said), the window's place and size, the settings saving and the notice for a
-  settings file that could not be read, the axKit menu with the
+  settings file that could not be read, the Window, Claude and Help menus with the
   update check, the update notice and the install in place (AX-3), find in a text box, in a list, in a transcript
   and in a notice's text (one Find notice, one last text), Copy diagnostics (the account's name, its paths, e-mail addresses and ids replaced by `Redaction`, since it is meant for a public bug report, security audit S-20), `OpenUrl`, `OpenInExplorer`, the
   Windows folder picker (`ChooseFolder`), `Do` (a command's task with an escaped exception turned into a notice),
@@ -495,22 +495,28 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (`docs/axKit/theme.md` TH-6). `TextBoxTests` fails on a plain `TextBox` and on a second subscription of the keys,
   which would move the caret twice.
 
-### AX-9 The axKit menu
+### AX-9 The bundle's menus: Window, Claude, Help
 
-- AX-9.1 Every window has an **axKit** menu (mnemonic A) between its own menus and Help, the same in every window: one
-  class, `AxKit.Forms/AxKitMenu`, which the window constructs with its Command palette item, its two update items, its
-  latest-release state and its notice method. In order (5.6.0, 2026-11-09, the user: New window had become "hard to
-  find since it is below many other things"): New window ▸ (N), Open windows ▸ (O), Recently closed ▸ (R) and Close
-  all windows (W); a separator; Claude ▸ (C: everything of Claude in one submenu, `ai-help.md` AH-1.1: Use Claude in
-  axKit (U, the switch), Ask about this window… (A, Shift+F1), Folders Claude may read… (F), Claude's working folder
-  (W), a separator, AI tools ▸ (I, `mcp.md` MC-6.1); the bundle's own settings live here, an app's Options hold only
-  the app's); a separator; Command palette… (P, AX-10; the bundle's own command, so it sits in the bundle's menu, asked
-  2026-10-23), Send a report… (S, F4) and Your reports (Y, the Reports list in axTask; docs/axKit/reports.md RP-2.2,
-  2026-11-07); a separator; Check for updates (U), Update to (T, while a newer release is known) and About ▸ (A,
-  AX-9.9). The lists are filled each time the menu opens, so that they show the windows and the files of that moment.
-  Until 5.6.0 the palette and the reports came first, and Open windows by type ▸ (one submenu per app, that app's
-  windows with this one checked) stood after Open windows; it went for the menu's length, Open windows and the
-  window title saying where the user is.
+- AX-9.1 Every window ends its menu bar with three menus of the bundle's, the same in every window and after the
+  app's own menus (5.7.0, 2026-11-10, the user: "organize things ... into clear categories of user intent", "make sure
+  these menus are inherited by all axKit apps"; until then one axKit menu held all of it). Each is built once in the
+  window base, so that no app has a copy:
+  - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`): New window ▸ (N), Open windows ▸ (O), Recently
+    closed ▸ (R) and Close all windows (C).
+  - **Claude** (A, since C is an app's own menu in five windows; `AxKitForm.CreateClaudeMenu`, `ai-help.md` AH-1.1),
+    in groups by what the user wants: Use Claude in axKit (U, the switch); Ask about this window… (A, Shift+F1);
+    Folders Claude may read… (F) and Claude's working folder (W); AI tools ▸ (I, `mcp.md` MC-6.1). The bundle's own
+    settings live here; an app's Options hold only the app's.
+  - **Help** (H; `AxKitForm.CreateHelpMenu`, which the window calls with its guide and pages): Command palette… (P,
+    Ctrl+Shift+P, AX-10), Keyboard shortcuts (K, F1), User guide (G), the app's resources ▸; Send a report… (S, F4)
+    and Your reports (Y, docs/axKit/reports.md RP-2.2); Check for updates (U), Update to (T, while a newer release is
+    known) and About ▸ (A, AX-9.9).
+
+  The lists are filled each time the menu opens, so that they show the windows and the files of that moment. Two of
+  the apps' own menus changed letter or name so that every menu of a bar is reached by one letter: axClaude's menu
+  for the program is "Claude Code" (C), and axHelp's first menu takes P. History: 5.6.0 had one axKit menu (A) with a
+  Claude submenu; until 5.6.0 the palette and the reports came first in it, and Open windows by type ▸ (one submenu
+  per app) stood after Open windows.
 - AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
   after ax as the mnemonic. It starts `AxKit.exe <verb>` with no arguments: a new process and a new window (B-2), the
   app starting as it does from its Start menu entry. The apps stand in five groups, a separator between them
@@ -519,11 +525,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   the claude related apps"): files (axFile, axDown, axJSON, axPreview, axMedia), one's own lists (axTask), utilities
   (axStart, axClip, axCalc, axProcess), the other access layers, each by its title (axTerminal, axGIT, axPass), then
   the Claude apps (axClaude, axMCP, axHelp, axDescribe). Every list of apps in the windows has this order and these
-  separators: New window, axFile's Open in axKit (`AxKitMenu.AddApps`). A new app is one line in `Dispatch.Apps`,
+  separators: New window, axFile's Open in axKit (`WindowMenu.AddApps`). A new app is one line in `Dispatch.Apps`,
   with its group, what it opens and whether Show in offers it; every list, Show in (AX-9.10) and Recently closed
   (AX-9.4) follow from that line.
 - AX-9.3 **Open windows ▸** (O): every open window of the bundle's apps except this one, the most recently used first.
-  The order is the one Windows keeps its top-level windows in, which is Alt+Tab's, so nothing is stored and Alt+A, O,
+  The order is the one Windows keeps its top-level windows in, which is Alt+Tab's, so nothing is stored and Alt+W, O,
   1 is always the window the user was in before this one. (Open windows by type ▸, one submenu per app with that
   app's windows and this one checked, stood here until 5.6.0, AX-9.1.)
 - AX-9.4 **Recently closed ▸** (R): the last ten files and folders a window of any app held when it closed or replaced
@@ -540,7 +546,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (AX-5.1), written whole by the window that closes or swaps (`AxKit.Core/RecentlyClosed`, through `SettingsFile`; two
   windows closing in the same instant leave the last writer's list). Nothing else about windows is stored.
 - AX-9.5 A window's or a file's item is its number, a full stop and a title, "1. notes.md (C:\notes\notes.md) - axDown":
-  the number is the mnemonic (1 to 9, then a to z), so that Alt+A, O, 1 or Alt+A, R, 1 acts without an arrow key, and
+  the number is the mnemonic (1 to 9, then a to z), so that Alt+W, O, 1 or Alt+W, R, 1 acts without an arrow key, and
   the full stop is a pause before the name (AX-8.5). A window's title is the window's own; a closed item's is the
   file's or folder's name, its full path in parentheses, and the app. The apps' own recent lists have the same shape,
   "1. myproject (C:\src\myproject)" (axClaude FR-8.5, axDown AD-4.1). Enter brings a window to the
@@ -552,15 +558,15 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   apart by the end of their title (" - axClaude", " - axDown"; AD-10, axClaude's `<folder> (<path>) - axClaude`); a window of
   none of the apps (the bundle's own message box, AX-1.4) is listed nowhere. The lists are pure code in
   `AxKit.Core/AxKitWindows` and `AxKit.Core/RecentlyClosed`, unit tested; only the listing and the switch (user32
-  `EnumWindows`, `SetForegroundWindow`) and the menu itself are in `AxKitMenu`.
-- AX-9.7 Only axKit's windows are listed; Alt+Tab stays the way to everything else. Alt+A is a menu mnemonic, not a key
+  `EnumWindows`, `SetForegroundWindow`) and the menu itself are in `WindowMenu`.
+- AX-9.7 Only axKit's windows are listed; Alt+Tab stays the way to everything else. Alt+W, Alt+A and Alt+H are menu mnemonics, not keys
   of the tables (AX-8); the F1 texts name it. A separator carries no text and NVDA passes over it; the groups are
   told apart by their names, not by headers, which would be one more stop on every pass through the menu.
 - AX-9.8 **Close all windows** (C) posts the close command Alt+F4 sends (`WM_SYSCOMMAND` `SC_CLOSE`) to every other
   open axKit window and then to this one; each window closes as it does on Alt+F4 and asks there what it would ask
   then (axDown's Save changes?, axClaude's Close axClaude? while Claude works), so nothing is lost without a question.
 - AX-9.9 **Check for updates (axKit n)…** (U) and **Update to axKit n…** (T, while a newer release is known) are the
-  window's own update items (AX-3.1), placed here by the window. **About ▸** (A) is the bundle's About in sections,
+  window's own update items (AX-3.1), at the end of Help with About. **About ▸** (A) is the bundle's About in sections,
   the same in every window (`AxKit.Core/BundleAbout`), each shown as a notice of the window: **Version** (V; the
   version, the apps, the latest release as the window knows it, the releases page, the settings and logs folders),
   **Licence** (L; `NOTICE.md`, embedded: the GNU AGPL 3 notice, the additional terms of its section 7, the warranty
@@ -604,9 +610,9 @@ name, so that a command is reached without knowing its menu or its key, and its 
 - AX-10.1 **Ctrl+Shift+P** (`BundleKeys.CommandPalette`, AX-8.2) in any window opens the palette as a notice of the
   window (AX-6.4, AX-7.2), titled "Command palette": one field named "Search commands" with the caret in it, and
   under it a list of the matches named "Commands, n" that never takes the focus, axStart's shape (docs/axStart/SPEC.md
-  AS-3.1, AS-D2). axKit → Command palette… (the first item of the axKit menu, AX-9.1) opens it too, so that it is found
+  AS-3.1, AS-D2). Help → Command palette… (the first item of Help, AX-9.1) opens it too, so that it is found
   from the menus. While another notice shows, or in menu mode (AX-6.6), the key does nothing.
-- AX-10.2 **The entries** are the window's menu bar as it stands when the palette opens, the axKit menu and Help
+- AX-10.2 **The entries** are the window's menu bar as it stands when the palette opens, the Window, Claude and Help menus
   included: every enabled item that does something when chosen, in menu order. An entry reads its name, then its menu
   path, then its key when it has one, then "checked" for a checked item: "Save as, File, Ctrl+Shift+S", "Larger text,
   Options, Text, Ctrl+Plus", "Word wrap, Edit, Ctrl+Shift+W, checked". The name is the item's text without its
@@ -660,7 +666,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
 - AX-11.2 **The keyword.** An access layer's name is never shown alone: wherever the user meets it, it reads
   "<name>, access layer for <program>" ("axClaude, access layer for Claude Code"), from one place,
   `App.Title` (the name alone for a standalone app; the phrase "access layer" is one constant). That is: the window
-  title (wherever the app's name stands in it today), the axKit menu's New
+  title (wherever the app's name stands in it today), the Window menu's New
   window, Open windows, Show current folder in and Recently closed lists, axFile's Open in axKit, the command palette,
   About, Version, the Start menu entry's name and description, File Explorer's Open with axKit submenu, Windows' Open
   with list, the installer's lines, the first line of each access layer's user guide and F1 text, both READMEs and
@@ -695,7 +701,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
     database.
   - The AI tools (AX-9, `docs/axKit/mcp.md`): the pairing notice (MC-6.4) carries the check box, which Allow needs;
     Deny stays its default. Forget AI tools withdraws these consents with the pairings.
-  - Every window, axKit menu, AI tools, Add axKit to Claude Code (MC-6.8): it runs Claude Code's program (`claude mcp
+  - Every window, Claude menu, AI tools, Add axKit to Claude Code (MC-6.8): it runs Claude Code's program (`claude mcp
     add`), so the agreement for Claude Code comes first, under the window's own app (2026-11-02).
   - A program installed from Install it now (AX-2.9) is agreed to in the same step, under the name the app connects to
     it by (axTerminal installs Git for Windows as its shell Git Bash), so that the connection asks nothing more.
@@ -755,7 +761,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
 
 The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes what the bundle promises.
 
-- AX-12.1 **F4 in every window** (`BundleKeys.Report`, AX-8.2) and the axKit menu's Send a report… open the notice
+- AX-12.1 **F4 in every window** (`BundleKeys.Report`, AX-8.2) and the Help menu's Send a report… open the notice
   "Report to axKit" with the window's own fields (`ReportControls`): the user's words first and focused, Enter sends,
   Shift+Enter breaks a line; then the kind (Feedback, Bug, Feature request), the app and version, the window's last
   twenty actions (`RecentActions`: its commands and notices, and its announcements in the apps whose announcements
@@ -812,7 +818,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   another window (its Start with Windows item says so, `HotkeyForm`), the GitHub install from the Run key as before,
   and `DispatchTests` names the two so that a third is added on purpose. The apps without an entry (axJSON, axMedia,
   axPreview, axProcess, axPass, axCalc, axMCP, axHelp, axDescribe) are reached by their command, by a file of their
-  kind, by the axKit menu's New window in any window and from axFile; axStart lists the Start menu's programs and so
+  kind, by the Window menu's New window in any window and from axFile; axStart lists the Start menu's programs and so
   knows the eight.
   `AxKit.Core/PackageIdentity` tells whether the process runs from the package (`GetCurrentPackageFullName`) and which
   entry started it (`GetCurrentApplicationUserModelId`); `Dispatch.WithApplicationVerb` puts the verb first when the
@@ -820,7 +826,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   holds whether or not Windows passes the parameters (AX-1.8; tested in `DispatchTests`).
 - AX-13.3 **No updater.** The Store installs, updates and uninstalls the package. The Store's copy makes no update check
   at start, has no Check for updates at start setting (Options, General), downloads nothing and never shows Update to.
-  Check for updates (axKit menu) still asks GitHub for the latest release, so that About, Version and the notice can say
+  Check for updates (Help menu) still asks GitHub for the latest release, so that About, Version and the notice can say
   where this copy stands; the notice says that the Microsoft Store installs updates by itself, usually within a day of
   a release, and offers Open axKit in the Microsoft Store (`ms-windows-store://pdp/?productid=9PK01L2K5000`, where
   Update appears as soon as the Store has the release), Open release page and Close. About, Version names the Store and
@@ -1033,8 +1039,8 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
 - **`FlashWindowEx`**, `user32` (`src/AxKit.Forms/ConsoleForm.Signals.cs`): the taskbar flash when Claude or the
   shell wants attention while the window is in the background. Stable; without it the sounds remain.
 - **The window list**, `user32` (`EnumWindows`, `GetWindow`, `GetWindowText`, `GetWindowTextLength`, `IsIconic`,
-  `ShowWindow` in `src/AxKit.Forms/AxKitMenu.cs`; `GetWindowThreadProcessId`, `IsWindowVisible`, `SetForegroundWindow`
-  and `PostMessage` from `User32.cs`): the axKit menu's list of the bundle's windows and the switch to one. Stable.
+  `ShowWindow` in `src/AxKit.Forms/WindowMenu.cs`; `GetWindowThreadProcessId`, `IsWindowVisible`, `SetForegroundWindow`
+  and `PostMessage` from `User32.cs`): the Window menu's list of the bundle's windows and the switch to one. Stable.
 - **`WM_COPYDATA`**, `user32` (`SendMessageTimeoutW`, `AllowSetForegroundWindow` in `src/AxKit.Forms/AppMessage.cs`;
   `GetWindowThreadProcessId` from `User32.cs`): the hand-over from a second start to the open window of axMedia or
   axPreview (AX-7.2). Stable.
@@ -1115,7 +1121,7 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   so. Tabs in one window were considered for an editor of several files (2026-10-18) and dropped: a tab needs a
   modified state of its own, a close of its own against the window's, a title and a status bar that follow it, and
   keys whose meaning changes with the tab under the user's fingers, the thing a screen reader user feels first (B-12).
-  The axKit menu (AX-9) gives the one thing tabs give, a list of what is open in one place, by recency and by app;
+  The Window menu (AX-9) gives the one thing tabs give, a list of what is open in one place, by recency and by app;
   Windows' own order of its windows is the recency, so nothing is stored or kept in step, and Alt+Tab is unchanged.
 - **B-15 Local first; AI help is one shared, optional service (2026-10-18).** The apps are tools over files, folders,
   repositories and a shell on the user's machine, and they stay useful on a plane or behind a firewall: every
@@ -1173,7 +1179,7 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
 - 2.3.0: the in-place install with one bar for download and install and the restart by the app itself (AX-2.8,
   AX-3.2); the user ran the full path from an older build with NVDA. 2.3.1: the documents pruned after the transition.
 - 2.9.0 (2026-10-18), developed on the branch `axkit` and checked with NVDA by the user: `MarkdownOutline` and
-  `TextJump` shared for axDown's letters and every notice text (AX-7.2); the axKit menu in every window (AX-9, B-14)
+  `TextJump` shared for axDown's letters and every notice text (AX-7.2); the bundle's menus in every window (AX-9, B-14)
   with About in sections and the embedded axKit guide; axClaude's Session menu and axDown's menus in the same shape;
   an enabled item in every empty list (AX-9.5).
 - 2.9.1 (2026-10-18): axJSON, raw mode (`docs/axJSON/SPEC.md`), on the text editor shell shared with axDown the same

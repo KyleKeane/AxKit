@@ -115,7 +115,7 @@ internal sealed partial class TerminalForm
             ("&Bash manual", "https://www.gnu.org/software/bash/manual/"),
         ]);
 
-        MenuBar.Items.AddRange([session, shell, navigate, options, CreateAxKitMenu(), help]);
+        MenuBar.Items.AddRange([session, shell, navigate, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
     }
 
     /// <summary>Options → Speech → Speak output: a mode (AT-5.3): speech starts with what arrives next.</summary>
@@ -129,7 +129,7 @@ internal sealed partial class TerminalForm
         Announce(MenuText.Plain(SpeechChoices.First(c => c.Mode == mode).Text), true);
     }
 
-    /// <summary>The title is the current directory's name (AT-2.3), which the axKit menu lists the window by.</summary>
+    /// <summary>The title is the current directory's name (AT-2.3), which the Window menu lists the window by.</summary>
     private void UpdateTitle()
     {
         var text = $"{PathName.Of(CurrentDirectory)} - {ShellLauncher.Describe(_shell)} - {AppTitle}";

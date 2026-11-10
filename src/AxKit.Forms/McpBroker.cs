@@ -74,7 +74,7 @@ public static class McpBroker
         var settings = McpAccess.Load();
         if (!settings.Enabled)
         {
-            return new McpResult("axKit's AI tools access is off. The user turns it on in any axKit window: axKit menu, AI tools, Let AI tools read and open axKit.", true);
+            return new McpResult("axKit's AI tools access is off. The user turns it on in any axKit window: Claude menu, AI tools, Let AI tools read and open axKit.", true);
         }
 
         if (program is null)
@@ -173,7 +173,7 @@ public static class McpBroker
 
     private sealed record OpenWindow(string Id, string Pipe, string App, string Title, long Handle);
 
-    /// <summary>The windows that serve a pipe, the most recently used first (the axKit menu's order).</summary>
+    /// <summary>The windows that serve a pipe, the most recently used first (the Window menu's order).</summary>
     private static List<OpenWindow> Windows(byte[] key)
     {
         var windows = new List<OpenWindow>();
@@ -197,7 +197,7 @@ public static class McpBroker
             }
         }
 
-        var order = AxKitMenu.OpenWindows().Select(window => (long)window.Handle).ToList();
+        var order = WindowMenu.OpenWindows().Select(window => (long)window.Handle).ToList();
         return [.. windows.OrderBy(window => order.IndexOf(window.Handle) is var i and >= 0 ? i : int.MaxValue)];
     }
 

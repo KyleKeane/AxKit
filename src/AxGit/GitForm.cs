@@ -114,8 +114,8 @@ public sealed partial class GitForm : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Git &resources",
             [("&git-scm.com", "https://git-scm.com"), ("&Pro Git, the book", "https://git-scm.com/book/en/v2")]);
 
-        // The bundle's axKit menu (AX-9) sits before Help in every window and ends with the update items and About.
-        _menu.Items.AddRange([repository, changes, branches, view, options, CreateAxKitMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
+        _menu.Items.AddRange([repository, changes, branches, view, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
 
         // The keys without a menu item: between the list and the details, find in the details, Enter on a commit.
         foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
@@ -395,6 +395,6 @@ public sealed partial class GitForm : AxKitForm
         }
 
         var path = Path.Combine(_root, file.Path.Replace('/', Path.DirectorySeparatorChar));
-        AxKitMenu.Start(Dispatch.EditorOf(path), path);
+        WindowMenu.Start(Dispatch.EditorOf(path), path);
     }
 }

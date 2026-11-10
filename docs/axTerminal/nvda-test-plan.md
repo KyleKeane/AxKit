@@ -31,12 +31,12 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 
 - Ctrl+N: the notice "New session", its text, "Folder: …", Choose folder button, the Shell group with the radio buttons and Custom, Start session and Cancel. Choose Command Prompt, Enter: "New session in …"; the window empties; "Ready"; the title ends "- Command Prompt - axTerminal"; `echo hello`, Enter: "Done" (no code). Alt+S, W: the Switch shell submenu, Command Prompt checked; choose Windows PowerShell: "Windows PowerShell", a system line, "Ready", the transcript kept.
 - Alt+S, W, G: "Git Bash", the status bar shows the prompt, ending in `$` (Git Bash's prompt is its whole PS1, "user@host MINGW64 /path $"), the title names the folder and Git Bash, nothing of the prompt in the terminal. `ls`, Enter: the listing, then "Done". `(exit 3)`, Enter: "Failed, exit code 3". `cd ..`, Enter: the title follows. Ctrl+Q: "Idle, Git Bash, $". Alt+S, W: back to the shell you had.
-- `cd ..`, Enter: the title and the status bar name the parent folder. Ctrl+P: its full path. Ctrl+W: File Explorer opens on it. Alt+S, I, C: axClaude opens on it; Alt+A, O, 1: back.
+- `cd ..`, Enter: the title and the status bar name the parent folder. Ctrl+P: its full path. Ctrl+W: File Explorer opens on it. Alt+S, I, C: axClaude opens on it; Alt+W, O, 1: back.
 - Ctrl+Shift+R while idle: "Restarting", a system line, "Ready", the transcript kept. While `Start-Sleep 30` runs: the notice "Restart the shell?"; Escape keeps it; again, Enter: restarts.
 - Session, Open recent folder: the folders as "1. name (path)"; Enter on one: a new session there.
 - `exit`, Enter: "The shell ended"; the system line; Enter in the field: "The shell ended. Ctrl+Shift+R starts it again"; Ctrl+Shift+R: "Ready".
 
-## 4. Text, notices, the axKit menu (AT-4, AT-6)
+## 4. Text, notices, the Window, Claude and Help menus (AT-4, AT-6)
 
 - `cls`, Enter: "Done"; the lines before stay; `echo after`, Enter: "after" at the end. Ctrl+L: "Cleared"; the terminal is empty; the next command's lines come as the first.
 - m on a line: "Bookmark 1 added"; k from the top: "Bookmark 1, …". Ctrl+F, text, Enter: the line; F3: the next; "Not found" otherwise.
@@ -44,4 +44,4 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 - F1: the shortcuts as a notice; h moves by its headings; Escape closes it. Help, User guide likewise.
 - Alt+F4 while `Start-Sleep 30` runs: the notice "A command is still running"; Escape keeps it; Alt+F4, Enter: closes.
 - After I accept all terms, install and restart (Help, Check for updates) while a command runs: the notice says the updated axTerminal starts again; Escape (Keep running): "Update installed. It starts with the next axTerminal", the command keeps running; the window closed later does not restart by itself.
-- Alt+A: the axKit menu as in every window; New window lists axTerminal among the access layers; Open windows lists the other axKit windows.
+- Alt+W: the Window menu as in every window; New window lists axTerminal among the access layers; Open windows lists the other axKit windows.

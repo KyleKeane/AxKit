@@ -472,7 +472,7 @@ public abstract partial class ConsoleForm : AxKitForm
             return;
         }
 
-        AxKitMenu.Start(AppVerb, folder);
+        WindowMenu.Start(AppVerb, folder);
         Announce($"Opening {PathName.Of(folder)} in a new window", false);
     }
 }

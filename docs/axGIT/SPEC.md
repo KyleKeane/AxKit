@@ -5,7 +5,7 @@ developer who uses the NVDA screen reader. Built 2026-10-18 and released in axKi
 2026-10-22 (the record: `docs/axKit/nvda-test-record.md`); what each release brought is section 8. The document is kept
 in step with the code (a behaviour change updates it in the same commit).
 Requirements are numbered `AG-n.m` and decisions `AG-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and
-AX-9 (the axKit menu), are cited by number and not repeated. In axGIT's code and documents, "SPEC.md" means this file.
+AX-9 (the Window, Claude and Help menus), are cited by number and not repeated. In axGIT's code and documents, "SPEC.md" means this file.
 
 ## 1. Summary
 
@@ -44,7 +44,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
 
 1. In axClaude on a project, Alt+S, I, G: axGIT opens on the repository, the Changes list focused: "Changes, 3 files.
    Modified src/Foo.cs, unstaged, 1 of 3". Space: "Staged src/Foo.cs". Ctrl+Enter, type the message, Enter:
-   "Committed 3a1f2c0". Alt+A, O, 1 back to axClaude.
+   "Committed 3a1f2c0". Alt+W, O, 1 back to axClaude.
 2. Enter on a changed file: the diff in the details text, the focus on its first line; Down Arrow reads it line by
    line; Ctrl+Tab back to the list.
 3. Ctrl+2: "Log, 200 commits. 3a1f2c0 2026-10-18 Kyle: Release 2.11.0, 1 of 200". Enter: the commit's files and
@@ -70,7 +70,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   `--version`, the settings (`axGIT.json`), then `GitForm`.
 - AG-1.4 **To and from the other windows.** axClaude's Session → Show current folder in ▸ **axGIT** starts axGIT on
   the project folder (axClaude FR-8.2); axDown's and axJSON's File → Show current file in ▸ **axGIT** on the file
-  (axDown AD-4.1). Each is a new window, a new process (`AxKitMenu.Start`), found again in the axKit menu's Open windows
+  (axDown AD-4.1). Each is a new window, a new process (`WindowMenu.Start`), found again in the Window menu's Open windows
   (AX-9.3). From axGIT, Repository → Show current repository in ▸ **File Explorer** (Ctrl+W; "Folder missing" when the repository's folder is gone, bundle AX-9.10), ▸ **axClaude**
   (a new axClaude on the repository's folder), ▸ **axTerminal** (a shell there, docs/axTerminal/SPEC.md AT-1.5) and
   ▸ **axFile** (the folder listed, docs/axFile/SPEC.md AF-1.3), and Changes → **Open file in editor** (Ctrl+E) opens
@@ -177,8 +177,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   Discard changes… Delete | ─ | Commit… Ctrl+Enter. **Branches (B):** Switch to branch Enter | New branch… Ctrl+N |
   ─ | Fetch Ctrl+Shift+F | Pull Ctrl+Shift+L | Push Ctrl+Shift+H. **View (V):** Changes Ctrl+1 | Log Ctrl+2 |
   Branches Ctrl+3. **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text
-  size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **axKit (A)**
-  (AX-9). **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Git resources ▸ (git-scm.com | Pro Git book).
+  size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Git resources ▸ (git-scm.com | Pro Git book).
   Every item has a mnemonic (AX-7.4).
 - AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
   "Nothing to save here. Space stages, Ctrl+Enter commits"), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
@@ -235,7 +234,7 @@ have been the third copy of them.
 ## 6. Design decisions
 
 - **AG-D1 A window per repository, reached from where the user is.** One window holds one thing (bundle B-2), so a
-  repository gets a window named after it, and the axKit menu finds it again. The worry was a window detached from
+  repository gets a window named after it, and the Window menu finds it again. The worry was a window detached from
   the file or folder under work; the answer is the way in and out: the "Show current … in ▸" submenus the other
   windows already keep for an axKit app beside File Explorer open axGIT on the repository of the folder or file the
   user is in, and axGIT's own submenu sends back. Inside axClaude or the editors it would have been a Git menu three

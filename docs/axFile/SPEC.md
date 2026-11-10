@@ -5,7 +5,7 @@ uses the NVDA screen reader. Specified 2026-10-18 and built as a first draft 202
 had carried became axMedia and the preview pane axPreview, so that axFile is file operations and management only
 (section 8; `docs/axKit/axfile-split.md`). The document is kept in step with the code (a behaviour change updates it in
 the same commit). Requirements are numbered `AF-n.m` and decisions `AF-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the axKit menu), are cited by number and not repeated. In axFile's code and
+(accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), are cited by number and not repeated. In axFile's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -77,7 +77,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
 - AF-1.3 **To and from the other windows.** axClaude's Session → Show current folder in ▸ **axFile**, the editors'
   File → Show current file in ▸ **axFile** (the file's folder, the file selected), axGIT's Repository → Show current
   repository in ▸ **axFile**, axTerminal's Session → Show current folder in ▸ **axFile** and axMedia's Queue → Show
-  current file in ▸ **axFile** each start a new axFile window (`AxKitMenu.Start`, found again in the axKit menu, AX-9.3).
+  current file in ▸ **axFile** each start a new axFile window (`WindowMenu.Start`, found again in the axKit menu, AX-9.3).
   From axFile, Folder → Show current folder in ▸ **File Explorer** (Ctrl+W), **axClaude**, **axTerminal**, **axGIT** (bundle AX-9.10;
   "Folder missing" when the folder shown is gone);
   Item → **Show in File Explorer** (Ctrl+Shift+W) opens File Explorer with the selected entry selected ("Folder
@@ -405,7 +405,7 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
 
 ### AF-5 Sound, video and reading: the hand-overs
 
-axFile plays nothing and shows no text (G3, AF-D2): it starts the app on the paths, as the axKit menu starts a window,
+axFile plays nothing and shows no text (G3, AF-D2): it starts the app on the paths, as the Window menu starts a window,
 and the started process finds its open window and hands the paths over with the bundle's window message
 (`AxKit.Forms/AppMessage`; axMedia AM-1.2, axPreview AP-1.2). Nothing of it is on the network (G6).
 
@@ -441,7 +441,7 @@ and the started process finds its open window and hands the paths over with the 
   Compress to zip | Add to axMedia's queue Ctrl+Shift+Q | Copy path Ctrl+Shift+C (AF-3.7; the operations on the marks
   alone). **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) |
   General ▸ (Check for updates at start ✓ | Show hidden files and folders | Show files and folders starting with a
-  period) | Developer ▸ (Open settings file | Copy diagnostics). **axKit (A)** (AX-9). **Help (H):** Keyboard
+  period) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):** Keyboard
   shortcuts F1 | User guide | ─ | File resources ▸ (Keyboard shortcuts in Windows, the Microsoft page, in the
   browser). Every item has a mnemonic (AX-7.4).
 - AF-6.2 Keys (AX-8). Bundle-wide: F1, the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between

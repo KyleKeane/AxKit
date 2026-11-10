@@ -55,7 +55,7 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
    text is unchanged. Edit, Format does the same as the key.
 4. Ctrl+Shift+F on an already formatted file: "Already formatted", nothing changes, and the title shows no star.
 
-## 4. The axKit menu and About
+## 4. The Window menu and About
 
-1. Alt+A, N: New window lists every app of the bundle; Alt+A, N, J starts a new axJSON window.
-2. Alt+A, O: Open windows lists the other axKit windows, most recent first. Alt+A, About, Version names every app.
+1. Alt+W, N: New window lists every app of the bundle; Alt+W, N, J starts a new axJSON window.
+2. Alt+W, O: Open windows lists the other axKit windows, most recent first. Alt+H, About, Version names every app.

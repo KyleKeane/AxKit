@@ -101,7 +101,7 @@ with its own icon as PNG assets (44 and 150, and the 50 by 50 store logo) made b
 entry is first, with the id `AxKit` and no parameters: it starts axClaude as a bare `AxKit.exe` does, and it carries
 every app's console command and the file types of the six apps without an entry; the other seven carry their verb as
 parameters. The six (axJSON, axMedia, axPreview, axProcess, axPass, axCalc) are reached by their command, by a file of
-their kind, by the axKit menu's New window and from axFile. SPEC AX-13.2 has the whole.
+their kind, by the Window menu's New window and from axFile. SPEC AX-13.2 has the whole.
 
 ### 3.3 Extensions
 

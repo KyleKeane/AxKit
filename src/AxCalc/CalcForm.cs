@@ -75,8 +75,8 @@ public sealed class CalcForm : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Calculator &resources",
             [("&Floating point explained", "https://floating-point-gui.de")]);
 
-        // The bundle's axKit menu (AX-9) sits before Help in every window.
-        _menu.Items.AddRange([calculator, options, CreateAxKitMenu(), help]);
+        // The bundle's menus (AX-9.1), Window, Claude and Help, end the bar in every window.
+        _menu.Items.AddRange([calculator, options, CreateWindowMenu(), CreateClaudeMenu(), help]);
 
         // The keys without a menu item: between the history and the field, find in the history, and the keys that
         // act on what has the focus (AC-5.2; in the list they also keep it from dinging).

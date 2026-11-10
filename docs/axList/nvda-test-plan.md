@@ -55,9 +55,9 @@ its section 10.
 4. Ctrl+E on a list: axFile opens on its file.
 5. Options, Lists folder: the Windows folder picker; choose another folder: "Folder <name>. Lists, …".
 
-## 4. Text, notices, the axKit menu (LI-6)
+## 4. Text, notices, the Window, Claude and Help menus (LI-6)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape.
-3. Alt+A: the axKit menu; About, Version names axList among the apps.
+3. Alt+H, About, Version names axList among the apps.
 4. Close axList and start it without a folder: it opens on the list you had, in the folder you had.

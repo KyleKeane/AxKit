@@ -8,7 +8,7 @@ public sealed record AxKitWindow(nint Handle, string Title)
 }
 
 /// <summary>
-/// The window lists of the axKit menu (docs/axKit/SPEC.md AX-9), pure: which windows go under Open windows and under
+/// The window lists of the Window menu (docs/axKit/SPEC.md AX-9), pure: which windows go under Open windows and under
 /// each app, and what an item says. The windows come in the order Windows keeps its top-level windows, the most recently used
 /// first, which is Alt+Tab's order, so recency needs nothing stored. Tested in <c>tests/AxKit.Tests</c>.
 /// </summary>

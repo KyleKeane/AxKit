@@ -9,7 +9,7 @@ axTask was designed anew as an item app, one JSON file of typed fields per task 
 to keep axList and axTask in view as two separate apps, so this document came into `main` from the branch, brought up
 to the bundle as it is today, and the branch's code was kept as the tag `archive/axlist-draft` (section 11). **Nothing
 of it is built on `main`.** Requirements are numbered `LI-n.m` and decisions `LI-Dn`; the bundle's rules, AX-7
-(accessibility), AX-8 (keys) and AX-9 (the axKit menu), are cited by number and not repeated. In axList's code and
+(accessibility), AX-8 (keys) and AX-9 (the Window, Claude and Help menus), are cited by number and not repeated. In axList's code and
 documents, "SPEC.md" means this file. Before the build, section 10 is to be settled with the user, and every citation
 of the bundle spec checked again.
 
@@ -169,7 +169,7 @@ headings: an item wants a space after its marker, a heading a space after its # 
   the view shown is enabled, the other two not, so that an item's command is never at hand among the lists (axProcess's
   way, 2026-10-24); Shift+F10, the Applications key and a right click in the list open it (the window base's
   `OpenBarMenu`). **View (V):** Lists Ctrl+1 | Items Ctrl+2 | Tasks Ctrl+3 | ─ | Hide done tasks Ctrl+Shift+D ✓.
-  **Options (O):** Text ▸ | General ▸ | Developer ▸. **axKit (A)** (AX-9). **Help (H):** Keyboard shortcuts F1 | User
+  **Options (O):** Text ▸ | General ▸ | Developer ▸. **Window (W)** and **Claude (A)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User
   guide | ─ | List resources ▸ (Markdown task lists). Every item has a mnemonic (AX-7.4). New list and New item are one
   key, Ctrl+N, by the view (the Lists view makes a list).
 - LI-6.5 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here: every

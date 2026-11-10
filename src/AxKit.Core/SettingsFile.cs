@@ -60,7 +60,7 @@ public static class SettingsFile
     /// <summary>
     /// The unreadable file copied next to itself as .bad for mending, since the app saves its settings soon after
     /// loading, which would write the defaults over the one typo. Once: not again while the copy is as new as the
-    /// file (the axKit menu reads the recently closed list at every opening; until 2026-10-23 it copied and logged
+    /// file (the Window menu reads the recently closed list at every opening; until 2026-10-23 it copied and logged
     /// each time). False when the copy is there already or cannot be made.
     /// </summary>
     private static bool KeepBadCopy(string path)
