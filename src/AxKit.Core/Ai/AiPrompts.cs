@@ -92,6 +92,17 @@ public static class AiPrompts
         return text.ToString();
     }
 
+    /// <summary>axDescribe's picture file (AH-7.2, docs/axDescribe/SPEC.md DE-2.7): a file the user chose, read and described.</summary>
+    public static string Picture(string picturePath)
+    {
+        var text = new StringBuilder();
+        text.Append("You are the eyes of a blind user of Windows who uses the NVDA screen reader. Read the picture file at this path with your Read tool; the user chose this file and wants to know what is in it:\n");
+        text.Append(picturePath).Append('\n');
+        text.Append('\n').Append(Reader).Append("\n\n");
+        text.Append("Describe the picture for the user: first what kind of picture it is and what it shows, in a sentence (a photograph, a screenshot, a chart, a diagram, a scan of a page); then what is in it, from top to bottom, including any text that matters; for a screenshot, the controls a keyboard user could reach, with their labels; for a chart, the axes, the values and the trend. Leave out decoration and colours unless they carry meaning. The user may ask more about it afterwards.");
+        return text.ToString();
+    }
+
     /// <summary>A follow-up in the same session (AH-6.3): the user's words alone, since the session holds the rest.</summary>
     public static string FollowUp(string question) => question.Trim();
 }

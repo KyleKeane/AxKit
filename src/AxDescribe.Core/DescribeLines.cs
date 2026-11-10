@@ -6,7 +6,7 @@ namespace AxDescribe.Core;
 public static class DescribeLines
 {
     /// <summary>The list's one line while nothing was described yet.</summary>
-    public const string None = "No descriptions yet: press the hotkey from the window to describe";
+    public const string None = "No descriptions yet: the hotkey describes the window in front, Ctrl+D a picture file";
 
     /// <summary>The list's one line when no earlier description matches the typed words.</summary>
     public static string NoMatch(string typed) => $"No earlier description matches {typed.Trim()}";

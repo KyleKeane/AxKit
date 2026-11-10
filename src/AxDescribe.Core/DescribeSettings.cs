@@ -2,8 +2,12 @@ using AxKit.Core;
 
 namespace AxDescribe.Core;
 
-/// <summary>One description (SPEC.md DE-3.1): the window's title and program, Claude's text, the session a follow-up resumes, when.</summary>
-public sealed record Description(string Title, string? Program, string Answer, string? SessionId, DateTime When);
+/// <summary>
+/// One description (SPEC.md DE-3.1): the window's title and program, Claude's text, the session a follow-up resumes,
+/// when; and for a picture file of the user's (DE-2.7) its path, which a follow-up's call gets as its folder, null for
+/// the one picture axDescribe takes of a window (a file written before 5.6.0 has no <c>picture</c> and reads as null).
+/// </summary>
+public sealed record Description(string Title, string? Program, string Answer, string? SessionId, DateTime When, string? Picture = null);
 
 /// <summary>
 /// Everything axDescribe remembers between runs (SPEC.md DE-5), in <c>%APPDATA%\AxKit\axDescribe.json</c> through the
@@ -33,10 +37,10 @@ public sealed class DescribeSettings : HotkeySettings
 
     public override void Save(string path) => SettingsFile.Save(path, this);
 
-    /// <summary>A new description at the front; ten kept.</summary>
-    public void Remember(string title, string? program, string answer, string? sessionId, DateTime when)
+    /// <summary>A new description at the front; ten kept. <paramref name="picture"/> is a described file's path (DE-2.7), null for a window.</summary>
+    public void Remember(string title, string? program, string answer, string? sessionId, DateTime when, string? picture = null)
     {
-        Descriptions.Insert(0, new Description(title, program, answer, sessionId, when));
+        Descriptions.Insert(0, new Description(title, program, answer, sessionId, when, picture));
         if (Descriptions.Count > Kept)
         {
             Descriptions.RemoveRange(Kept, Descriptions.Count - Kept);

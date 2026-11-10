@@ -12,8 +12,9 @@ The WinForms side of axDescribe: the window in front described by Claude, on the
 
 ## Where things are
 
-- `AxDescribeApp`: the entry point (bundle AX-1.7; SPEC.md DE-1): the mutex `Local\AxKit.AxDescribe`, `--hidden`, the hand-over of a second start, as `AxStartApp`.
-- `DescribeForm` (SPEC.md DE-2, DE-3): on `HotkeyForm`; `PrepareShowing` takes the picture of `ForegroundBefore` before the window shows (`TakePicture`, `ScreenPicture.Capture` into `PicturePath`) and keeps the program and title for `AfterShowing`, which asks through `AskClaude` with `AiPrompts.Screen` and the picture's folder as the call's folder; `Described` remembers and shows; `Ask` (Enter: a follow-up in the selected description's session, or the description again); `OpenPicture` (Ctrl+O, axPreview); `ForgetDescriptions`; `OnFormClosed` deletes the picture.
+- `AxDescribeApp`: the entry point (bundle AX-1.7; SPEC.md DE-1): the mutex `Local\AxKit.AxDescribe` (`AppPaths.OneAtATime`), `--hidden` or one picture file's path (DE-2.7: refused before any window when it is not a picture, `PictureFile.Refusal`), the hand-over of a second start ("show", or "open" with the picture), as `AxStartApp`.
+- `DescribeForm` (SPEC.md DE-2, DE-3): on `HotkeyForm`; `PrepareShowing` takes the picture of `ForegroundBefore` before the window shows (`TakePicture`, `ScreenPicture.Capture` into `PicturePath`), or takes the picture file waiting in `_file`, into `_pending`, a `Picture` record (the file, the program, the title; `IsFile`), for `AfterShowing`, whose `Describe` asks through `AskClaude` with `AiPrompts.Screen` or `AiPrompts.Picture` and the picture's folder as the call's folder; `Described` remembers (a file with its path) and shows; `Ask` (Enter: a follow-up in the selected description's session, or the description again, the call's folder the described file's or the one picture's); the picture file of DE-2.7: `ChooseFile` (Ctrl+D, the Windows file picker through `ShowSystemDialog`), `DescribeFile` (asked at once when the window is in front, else kept in `_file` for the next showing, which takes it in place of a picture of the screen), `TakeHandOver` for a start's "open"; `OpenPicture` (Ctrl+O, axPreview); `ForgetDescriptions`; `OnFormClosed` deletes the picture.
+- `PictureFile` is the Core's (the kinds, the filter, the refusal); the test pictures of DE-8 are `tests/fixtures/pictures`, drawn by `tools/make-test-pictures.ps1`.
 - `ScreenPicture` (DE-2.1, DE-D1): `GetWindowRect` and `Graphics.CopyFromScreen` into a PNG; the whole screen when the window gives no rectangle.
 - `AxDescribeKeys` (SPEC.md DE-6): the window's keys; `HelpText`: the F1 text and the embedded guide.
 
@@ -27,4 +28,4 @@ The WinForms side of axDescribe: the window in front described by Claude, on the
 ## Gotchas
 
 - `ShowWindowInFront` runs `PrepareShowing` for every showing, a second start's hand-over too: each takes a new picture and asks again, which is what "describe the window in front" means for a start; `keepText` (a start that failed, HotkeyForm) and an open notice skip it.
-- On the automation's test desktop nothing is in front: `GetWindowRect` fails or gives the desktop, and the whole screen is captured; the script's fake answer does not depend on the picture.
+- On the automation's test desktop nothing is in front: `GetWindowRect` fails or gives the desktop, and the whole screen is captured; the script's fake answer does not depend on the picture. A start with a picture file takes no picture of the screen, so `02-picture-file.txt` runs the same way on both desktops.

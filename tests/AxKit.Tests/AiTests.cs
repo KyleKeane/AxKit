@@ -113,6 +113,13 @@ public sealed class AiTests
         Assert.Contains("notepad and is titled \"Untitled - Notepad\"", screen);
         Assert.Contains(AiPrompts.Reader, screen);
 
+        // A picture file of the user's (axDescribe DE-2.7): the path, no window named, the kinds of picture considered.
+        var picture = AiPrompts.Picture(@"C:\pictures\chart.png");
+        Assert.Contains(@"C:\pictures\chart.png", picture);
+        Assert.Contains(AiPrompts.Reader, picture);
+        Assert.Contains("a chart", picture);
+        Assert.DoesNotContain("The window belongs to", picture);
+
         Assert.Equal("say more", AiPrompts.FollowUp(" say more "));
     }
 }

@@ -285,8 +285,8 @@ public static class Dispatch
           AxKit calc                   axCalc, the calculator
           AxKit clip [--hidden]        axClip, the clipboard history: its search field, or with --hidden running until its hotkey
           AxKit mcpclient [<folder>]   axMCP, the MCP servers Claude Code knows and your own: their tools, resources and prompts, run by hand
-          axKit help                  axHelp, a question from anywhere or about this window, answered by Claude
-          axKit describe              axDescribe, the window in front described by Claude
+          AxKit help [--hidden]        axHelp, a question from anywhere, answered by Claude: its field, or with --hidden running until its hotkey
+          AxKit describe [--hidden | <picture>]  axDescribe, the window in front, or that picture file, described by Claude
           AxKit <folder>               the same as AxKit claude <folder>
           AxKit <file>                 the same as AxKit down <file>, AxKit json <file> for a .json file, AxKit pass <file> for a .kdbx file, or AxKit media <file> for a sound or video file
           AxKit                        axClaude on the current folder

@@ -16,6 +16,9 @@ public static class AxDescribeKeys
     /// <summary>The typed question asked about the selected description's picture; with nothing typed, that description again.</summary>
     public const Keys Ask = Keys.Return;
 
+    /// <summary>A picture file of the user's chosen in the Windows file picker and described (DE-2.7).</summary>
+    public const Keys DescribeFile = Keys.Control | Keys.D;
+
     /// <summary>The last picture opened in axPreview, which reads the text in it.</summary>
     public const Keys OpenPicture = Keys.Control | Keys.O;
 
@@ -30,6 +33,7 @@ public static class AxDescribeKeys
         ("First match", FirstMatch),
         ("Last match", LastMatch),
         ("Ask", Ask),
+        ("Describe a picture file", DescribeFile),
         ("Open the picture", OpenPicture),
         ("Hide", Hide),
     ];

@@ -2,6 +2,7 @@
 
 ## 5.6.0
 
+- axDescribe: a picture file of your own is described as the window in front is: Ctrl+D (axDescribe, Describe a picture file) opens the Windows file picker on your Pictures folder, filtered to the kinds Claude Code reads (.png, .jpg, .jpeg, .gif, .webp), and the description comes as a notice with the field for more; `axDescribe <picture>` from a terminal, axFile or a script does the same, in the running axDescribe when there is one; the description is kept under the file's name. Three test pictures, drawn in code, come with the source in `tests/fixtures/pictures` (a save-changes dialog, an editor window, a bar chart) for trying it out; `tools/make-test-pictures.ps1` draws them again.
 - axKit: every file and folder name that carries an app's name is now written in the app's own case, as the apps are spoken: the settings and log files (`axDown.json`, `axDown.log`; a file left in lower case by an earlier version is renamed the first time it is read), the console commands and the Store package's aliases (`axDown.cmd`, `axDown.exe`), the documents' folders in the repository (`docs/axDown`), the test folders and the run scripts (`run-axDown.ps1`), and the installer's spoken lines. NVDA read an all-lower-case `axdown` oddly; Windows finds a file typed in any case, so nothing a user types changes.
 
 ## 5.5.0

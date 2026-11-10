@@ -83,8 +83,9 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   are in, your last actions there, the window's keyboard shortcuts and its user guide, never the text of what you are
   working on; for **axHelp, access layer for Claude Code**, the name and title of the program that was in front; for
   **axDescribe, access layer for Claude Code**, a picture of the window in front, which Claude Code reads from one file
-  on this computer (`%LOCALAPPDATA%\AxKit\axdescribe\last.png`, written over by the next and deleted when axDescribe
-  ends); and the files Claude reads in the folders you listed under Folders Claude may read, none by default. axKit
+  on this computer (`%LOCALAPPDATA%\AxKit\axDescribe\last.png`, written over by the next and deleted when axDescribe
+  ends), or a picture file of yours that you chose (Ctrl+D, or `axDescribe <picture>`), read where it is and never
+  copied; and the files Claude reads in the folders you listed under Folders Claude may read, none by default. axKit
   keeps the answers only where you can see them: axHelp's and axDescribe's last ten in their settings files.
 - **Install it now.** When an app needs a program that is missing (Git, KeePassXC, Claude Code, PowerShell 7), its
   notice offers to install it, and does so only when you choose to. Git (`Git.Git`), KeePassXC

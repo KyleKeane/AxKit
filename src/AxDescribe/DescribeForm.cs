@@ -7,32 +7,49 @@ namespace AxDescribe;
 
 /// <summary>
 /// axDescribe's window (SPEC.md DE-2, DE-3): the bundle's background window (<see cref="HotkeyForm"/>, as axStart and
-/// axClip). The hotkey takes a picture of the window in front before this one shows (<see cref="ScreenPicture"/>),
-/// asks Claude to describe it through the window base's AI help (<c>AxKitForm.Ai.cs</c>, docs/axKit/ai-help.md), and
-/// shows the description as a notice with a field for more. Under the field, the earlier descriptions, which never
-/// take the focus. Nothing of AI help itself is here.
+/// axClip). The hotkey takes a picture of the window in front before this one shows (<see cref="ScreenPicture"/>), or
+/// a picture file of the user's is taken as it is (DE-2.7: a start with its path, Ctrl+D); either is asked about
+/// through the window base's AI help (<c>AxKitForm.Ai.cs</c>, docs/axKit/ai-help.md), and the description shows as a
+/// notice with a field for more. Under the field, the earlier descriptions, which never take the focus. Nothing of AI
+/// help itself is here.
 /// </summary>
 public sealed class DescribeForm : HotkeyForm
 {
-    /// <summary>The one picture, under the local AxKit folder beside the logs; written over by the next one, deleted when axDescribe ends (DE-2.2).</summary>
+    /// <summary>The one picture of a window, under the local AxKit folder beside the logs; written over by the next one, deleted when axDescribe ends (DE-2.2).</summary>
     public static readonly string PicturePath = Path.Combine(Path.GetDirectoryName(AppPaths.LogsFolder)!, "axDescribe", "last.png");
+
+    /// <summary>
+    /// What a showing asks Claude about: the picture's file, and the window's program and title (DE-2.1), or for a
+    /// picture file of the user's (DE-2.7) its name under <see cref="PictureFile.Program"/>.
+    /// </summary>
+    private sealed record Picture(string File, string? Program, string? Title)
+    {
+        public static Picture OfFile(string path) => new(path, PictureFile.Program, Path.GetFileName(path));
+
+        /// <summary>A file of the user's, kept by its path, against the one picture axDescribe takes.</summary>
+        public bool IsFile => !string.Equals(File, PicturePath, StringComparison.OrdinalIgnoreCase);
+    }
 
     private readonly DescribeSettings _settings;
     private readonly MenuStrip _menu = new();
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _stateLabel;
     private IReadOnlyList<Description> _matches = [];
-    private (string? Program, string? Title)? _pending;
+    private Picture? _pending;
+    private Picture? _file;
 
-    public DescribeForm(bool hidden, DescribeSettings settings, string? settingsError)
+    /// <param name="picture">A picture file the start named (DE-2.7): described at the first showing in place of the window in front.</param>
+    public DescribeForm(bool hidden, DescribeSettings settings, string? settingsError, string? picture)
         : base(AxDescribeApp.Name, settings, DescribeSettings.DefaultPath, settingsError, hidden)
     {
         _settings = settings;
+        _file = picture is null ? null : Picture.OfFile(picture);
 
         // ---- menus and keys (DE-6): one command list (docs/axKit/app-kit.md AK-2), the match keys first ----
         AddMatchKeys(AxDescribeKeys.NextMatch, AxDescribeKeys.PreviousMatch, AxDescribeKeys.FirstMatch, AxDescribeKeys.LastMatch);
         var first = new ToolStripMenuItem("ax&Describe");
         Add(first, new Command("&Ask about the picture", AxDescribeKeys.Ask, Ask) { Mark = CommandMark.Act });
+        Add(first, new Command("Describe a picture &file...", AxDescribeKeys.DescribeFile, ChooseFile) { Mark = CommandMark.Open });
         Add(first, new Command("&Open the picture in axPreview", AxDescribeKeys.OpenPicture, OpenPicture) { Mark = CommandMark.Open });
         first.DropDownItems.Add(new ToolStripMenuItem("Forget the &descriptions", null, (_, _) => ForgetDescriptions()));
         AddHideAndQuit(first, AxDescribeKeys.Hide);
@@ -96,14 +113,16 @@ public sealed class DescribeForm : HotkeyForm
 
     /// <summary>
     /// Before the window shows (DE-2.1): the picture of the window in front, which is still in front at this moment,
-    /// taken into the one file; then the field emptied and the window centred on that screen (axStart AS-3.4).
+    /// taken into the one file, unless a picture file of the user's waits (DE-2.7); then the field emptied and the
+    /// window centred on that screen (axStart AS-3.4).
     /// </summary>
     protected override void PrepareShowing(Rectangle area, bool keepText)
     {
         if (!NoticeOpen && !keepText)
         {
             SearchField.Clear();
-            _pending = TakePicture();
+            _pending = _file ?? TakePicture();
+            _file = null;
         }
 
         Fill();
@@ -123,11 +142,15 @@ public sealed class DescribeForm : HotkeyForm
         if (_pending is { } picture)
         {
             _pending = null;
-            AskClaude(AiPrompts.Screen(PicturePath, picture.Program, picture.Title), [Path.GetDirectoryName(PicturePath)!], null, answer => Described(picture, answer));
+            Describe(picture);
         }
     }
 
-    private (string? Program, string? Title)? TakePicture()
+    /// <summary>A second start's "open" with a picture file (DE-2.7), through the base; "show" is the base's.</summary>
+    protected override Action? TakeHandOver(HandOver message) =>
+        message.Verb == AppMessage.Open && message.Paths.Count == 1 ? () => DescribeFile(message.Paths[0]) : base.TakeHandOver(message);
+
+    private Picture? TakePicture()
     {
         var window = ForegroundBefore;
         if (ScreenPicture.Capture(window, PicturePath) is { } problem)
@@ -139,19 +162,69 @@ public sealed class DescribeForm : HotkeyForm
         }
 
         Log.Info("Picture taken of the window in front");
-        return WindowOwner.Describe(window);
+        var (program, title) = WindowOwner.Describe(window);
+        return new Picture(PicturePath, program, title);
     }
 
-    private void Described((string? Program, string? Title) picture, AiAnswer answer)
+    /// <summary>Claude asked about the picture (DE-2.1, DE-2.7), its folder the one folder of the call (AH-2.3); the answer remembered and shown.</summary>
+    private void Describe(Picture picture) =>
+        AskClaude(picture.IsFile ? AiPrompts.Picture(picture.File) : AiPrompts.Screen(picture.File, picture.Program, picture.Title),
+            [FolderOf(picture.File)], null, answer => Described(picture, answer));
+
+    private void Described(Picture picture, AiAnswer answer)
     {
         if (!answer.IsError)
         {
-            _settings.Remember(picture.Title ?? string.Empty, picture.Program, answer.Text, answer.SessionId, DateTime.Now);
+            _settings.Remember(picture.Title ?? string.Empty, picture.Program, answer.Text, answer.SessionId, DateTime.Now, picture.IsFile ? picture.File : null);
             SaveSettings();
             Fill();
         }
 
-        ShowAnswer(answer, [Path.GetDirectoryName(PicturePath)!]);
+        ShowAnswer(answer, [FolderOf(picture.File)]);
+    }
+
+    private static string FolderOf(string file) => Path.GetDirectoryName(file) ?? file;
+
+    // ---- a picture file of the user's (DE-2.7) ----
+
+    /// <summary>Ctrl+D: the Windows file picker on the Pictures folder, then the chosen file described.</summary>
+    private void ChooseFile()
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Title = "Choose a picture for Claude to describe",
+            Filter = PictureFile.Filter,
+            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+            CheckFileExists = true,
+        };
+        if (ShowSystemDialog(dialog) == DialogResult.OK)
+        {
+            DescribeFile(dialog.FileName);
+        }
+    }
+
+    /// <summary>
+    /// A picture file described: from the picker, or handed over by a start with its path (which refused what is not a
+    /// picture before sending). The window in front asks at once; a hidden one shows first, the file in place of the
+    /// picture it would take.
+    /// </summary>
+    private void DescribeFile(string path)
+    {
+        if (PictureFile.Refusal(path) is { } refusal)
+        {
+            Announce(refusal, true);
+            return;
+        }
+
+        var picture = Picture.OfFile(path);
+        if (Visible && ContainsFocus)
+        {
+            Describe(picture);
+            return;
+        }
+
+        _file = picture;
+        ShowWindowInFront();
     }
 
     // ---- the earlier descriptions (DE-3) ----
@@ -180,7 +253,7 @@ public sealed class DescribeForm : HotkeyForm
     /// <summary>
     /// Enter (DE-2.3): the typed question about the selected description's picture, in its session, or about the
     /// newest when the typed words match no earlier description (the field is the filter too); with nothing typed,
-    /// the selected description again.
+    /// the selected description again. The call's folder is the picture's: a described file's (DE-2.7) or the one picture's.
     /// </summary>
     private void Ask()
     {
@@ -192,17 +265,18 @@ public sealed class DescribeForm : HotkeyForm
             return;
         }
 
+        var folder = FolderOf(description.Picture ?? PicturePath);
         if (question.Length == 0)
         {
-            ShowAnswer(new AiAnswer(description.Answer, false, description.SessionId), [Path.GetDirectoryName(PicturePath)!]);
+            ShowAnswer(new AiAnswer(description.Answer, false, description.SessionId), [folder]);
             return;
         }
 
-        AskClaude(AiPrompts.FollowUp(question), [Path.GetDirectoryName(PicturePath)!], description.SessionId, answer =>
+        AskClaude(AiPrompts.FollowUp(question), [folder], description.SessionId, answer =>
         {
             SearchField.Clear();
             Fill();
-            ShowAnswer(answer, [Path.GetDirectoryName(PicturePath)!]);
+            ShowAnswer(answer, [folder]);
         });
     }
 
@@ -229,7 +303,7 @@ public sealed class DescribeForm : HotkeyForm
             return;
         }
 
-        ShowNotice(Notice.Ask("Forget the descriptions?", $"The {_settings.Descriptions.Count} descriptions axDescribe keeps are deleted from this computer, and the last picture with them; nothing changes at Anthropic.", "&Forget", () =>
+        ShowNotice(Notice.Ask("Forget the descriptions?", $"The {_settings.Descriptions.Count} descriptions axDescribe keeps are deleted from this computer, and the last picture with them; your own picture files stay; nothing changes at Anthropic.", "&Forget", () =>
         {
             _settings.Descriptions.Clear();
             SaveSettings();

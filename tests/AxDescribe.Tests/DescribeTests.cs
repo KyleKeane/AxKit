@@ -58,14 +58,44 @@ public sealed class DescribeTests : IDisposable
         Assert.Empty(settings.Descriptions);
 
         settings.Remember("Untitled - Notepad", "notepad", "An empty window.", "s", new DateTime(2026, 11, 9, 12, 0, 0));
+        // A picture file of the user's (DE-2.7) keeps its path; a window's description has none.
+        settings.Remember("chart.png", PictureFile.Program, "A bar chart.", "s2", new DateTime(2026, 11, 9, 12, 5, 0), @"C:\pictures\chart.png");
         settings.Save(path);
         var loaded = DescribeSettings.Load(path, out error);
         Assert.Null(error);
-        Assert.Single(loaded.Descriptions);
-        Assert.Equal("Untitled - Notepad", loaded.Descriptions[0].Title);
-        Assert.Equal("s", loaded.Descriptions[0].SessionId);
+        Assert.Equal(2, loaded.Descriptions.Count);
+        Assert.Equal("chart.png", loaded.Descriptions[0].Title);
+        Assert.Equal(@"C:\pictures\chart.png", loaded.Descriptions[0].Picture);
+        Assert.Equal("Untitled - Notepad", loaded.Descriptions[1].Title);
+        Assert.Equal("s", loaded.Descriptions[1].SessionId);
+        Assert.Null(loaded.Descriptions[1].Picture);
         // The file writes "+" as + (System.Text.Json's default escaping), so the hotkey is checked as read back.
         Assert.Equal("Windows+Alt+S", loaded.Key.ToString());
         Assert.Contains("\"hotkey\":", File.ReadAllText(path));
+
+        // A file written before 5.6.0 has no picture: it reads as null.
+        File.WriteAllText(path, """{"descriptions": [{"title": "old", "program": null, "answer": "Text.", "sessionId": null, "when": "2026-11-09T12:00:00"}]}""");
+        var old = DescribeSettings.Load(path, out error);
+        Assert.Null(error);
+        Assert.Null(Assert.Single(old.Descriptions).Picture);
+    }
+
+    [Fact]
+    public void A_picture_file_is_one_of_the_kinds_claude_reads_and_anything_else_is_refused()
+    {
+        Assert.True(PictureFile.IsPicture(@"C:\pictures\chart.PNG"));
+        Assert.True(PictureFile.IsPicture("photo.jpeg"));
+        Assert.False(PictureFile.IsPicture("notes.txt"));
+        Assert.False(PictureFile.IsPicture("picture"));
+        Assert.Equal("notes.txt is not a picture axDescribe can describe: a .png, .jpg, .jpeg, .gif or .webp file", PictureFile.Refusal(@"C:\notes.txt"));
+
+        Directory.CreateDirectory(_folder);
+        var file = Path.Combine(_folder, "blocks.png");
+        Assert.Equal(file + " was not found", PictureFile.Refusal(file));
+        File.WriteAllBytes(file, [1]);
+        Assert.Null(PictureFile.Refusal(file));
+
+        Assert.Equal("Pictures (*.png, *.jpg, *.jpeg, *.gif, *.webp)|*.png;*.jpg;*.jpeg;*.gif;*.webp|All files (*.*)|*.*", PictureFile.Filter);
+        Assert.Equal("picture file", PictureFile.Program);
     }
 }

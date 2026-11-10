@@ -26,12 +26,25 @@ reads it to answer, as it reads any file you point it at.
 
 Options, Hotkey chooses another key: press it with Ctrl, Alt or the Windows key, then Enter.
 
+## Describing a picture file
+
+A picture of your own, a photo someone sent or a screenshot you saved, is described the same way. In axDescribe, press
+Ctrl+D (axDescribe, Describe a picture file): the Windows file picker opens on your Pictures folder, showing the kinds
+Claude reads, .png, .jpg, .jpeg, .gif and .webp; choose the file and press Enter. "Asking Claude", then "Claude says"
+and the description, with the field under it for more about the same picture. The description is kept in the list
+under the file's name. From a terminal, axFile or a script, `axDescribe C:\Pictures\garden.jpg` does the same, in the
+running axDescribe when there is one. Your file is only read; nothing copies, moves or deletes it.
+
+Three test pictures come with axKit's source, in `tests\fixtures\pictures`: a dialog asking to save a document, an
+editor window and a bar chart, drawn in code so that they hold nothing personal. They are for trying axDescribe out.
+
 ## Your earlier descriptions
 
 The list under the field keeps the last ten descriptions, each by its time and the window's title ("14:02 notes.md -
-axDown"). Down and Up move through them; type part of a title to find one. Enter with nothing typed brings the
-selected description back, and the field asks more about its picture. Ctrl+O opens the last picture in axPreview,
-whose reader lists the words in it. axDescribe, Forget the descriptions empties the list and deletes the picture.
+axDown") or the picture file's name. Down and Up move through them; type part of a title to find one. Enter with
+nothing typed brings the selected description back, and the field asks more about its picture. Ctrl+O opens the last
+picture of a window in axPreview, whose reader lists the words in it. axDescribe, Forget the descriptions empties
+the list and deletes that picture; your own files stay.
 
 ## Settings
 
@@ -41,7 +54,8 @@ The AI help settings are the bundle's, `%APPDATA%\AxKit\ai-help.json`, reached f
 ## If something goes wrong
 
 "AI help is off": turn it on in the axKit menu. "The picture could not be taken": the window in front gave no
-picture; try again with the window restored. "Claude could not answer": the notice holds Claude Code's own words.
+picture; try again with the window restored. "x is not a picture axDescribe can describe": only .png, .jpg, .jpeg,
+.gif and .webp files are read. "Claude could not answer": the notice holds Claude Code's own words.
 Options, Developer, Copy diagnostics copies what helps a bug report; F4 sends one.
 
 ## About
