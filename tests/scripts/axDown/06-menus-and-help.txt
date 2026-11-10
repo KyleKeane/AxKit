@@ -111,16 +111,16 @@ keys ctrl+shift+p
 expect state "notice":"Command palette"
 expect focus Search commands
 keys down
-expect said ! New window, File, Ctrl+Shift+N, 2 of
+expect said ! New window, Session, Ctrl+Shift+N, 2 of
 keys down
-expect said ! Open, File, Ctrl+O, 3 of
+expect said ! Open, Session, Ctrl+O, 3 of
 keys up
-expect said ! New window, File, Ctrl+Shift+N, 2 of
+expect said ! New window, Session, Ctrl+Shift+N, 2 of
 # Ctrl+Home at the first match: the low note and the first match again.
 keys up ctrl+home
-expect said ! New, File, Ctrl+N, 1 of
+expect said ! New, Session, Ctrl+N, 1 of
 expect said ♪ Edge
-expect said ! New, File, Ctrl+N, 1 of
+expect said ! New, Session, Ctrl+N, 1 of
 type wrap
 expect said ! Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1
 keys down
