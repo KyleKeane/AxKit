@@ -90,9 +90,9 @@ public sealed partial class TaskForm
     /// </summary>
     protected override void NewList()
     {
-        if (Gathered)
+        if (RefusedNewList() is { } why)
         {
-            Announce(_atProjects ? "A project's lists are made inside it: Right on a project first" : "Lists are made among the sections: Left first", true);
+            Announce(why, true);
             return;
         }
 
@@ -116,6 +116,11 @@ public sealed partial class TaskForm
             Commit(new Step([FileChange.WriteInNewFolder(listFile, details.ToText())], "Made " + trimmed), Path.Combine(folder, trimmed));
         }, typed => ItemFolder.RefusedListName(folder, typed) ?? (typed.Trim().Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase) ? "Archive is the archive's own name" : null));
     }
+
+    /// <summary>Why no list is made in the Projects level or the search's (TK-7b.3, TK-7b.4); null where lists are made.</summary>
+    private string? RefusedNewList() => !Gathered ? null
+        : _atProjects ? "A project's lists are made inside it: Right on a project first"
+        : "Lists are made among the sections: Left first";
 
     /// <summary>
     /// List, Move to section (Ctrl+M, TK-3a.3): the list's Section field set from a list of the sections there are,
@@ -343,6 +348,13 @@ public sealed partial class TaskForm
     /// <summary>Item, Use these fields for new items (IA-4.3): the item's fields, emptied, as its list's template.</summary>
     private void UseAsTemplate()
     {
+        if (SelectedRow() is { Tag: FoundItem })
+        {
+            // A list's template is changed where the list lives, as F2 and Delete change an item there (TK-7b.4).
+            Announce("Open it where it lives first: Enter", true);
+            return;
+        }
+
         if (SelectedRow() is not { Tag: ItemFile item })
         {
             Announce("Select an item whose fields new items should get", true);

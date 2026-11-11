@@ -473,6 +473,7 @@ public abstract partial class ItemForm : AxKitForm
             return;
         }
 
+        var selectedBefore = SelectedRow();
         _rows = [.. rows];
         Navigator.SetLines(_rows.Select(row => DisplayText.Visible(row.Label)).ToList());
         if (Navigator.AccessibleName != name)
@@ -484,7 +485,12 @@ public abstract partial class ItemForm : AxKitForm
         _nameLabel.Text = name;
         _placeLabel.Text = place;
         StatusLayout.Fit(_status, _nameLabel, _placeLabel);
-        FillDetail();
+        // The detail pane is made again only for a selected row whose words changed, and never under the user's focus
+        // in it: a refill of other rows leaves the field the user is on alone.
+        if (!DetailPane.Focused && SelectedRow() != selectedBefore)
+        {
+            FillDetail();
+        }
     }
 
     /// <summary>The selected row's key, for <see cref="Fill"/>.</summary>

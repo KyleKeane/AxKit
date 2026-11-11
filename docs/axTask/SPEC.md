@@ -180,14 +180,18 @@ and the AI tools over them are later (the priorities item of the request).
   own top folder: its lists show at the top already", "That is inside your own top folder: …", the notice kept; the
   folder picker's choice is refused the same way, said); an empty field opens the
   Windows folder picker. "Added Projects, looking for lists". Remove a project folder ▸ lists them as "1. Projects
-  (C:\…)", or one item "No project folders yet"; a choice says "Removed Projects". They are kept in axTask's settings
-  as `projectFolders`, full paths; none by default (TK-D6).
+  (C:\…)", or one item "No project folders yet"; a choice says "Removed Projects". When it removes the last one while
+  the Projects level or a project is shown, the window goes to the user's own top level and says so, "Removed
+  Projects. Lists, 3 lists" (TK-D10). They are kept in axTask's settings as `projectFolders`, full paths; none by
+  default (TK-D6).
 - **TK-7b.2 What is found.** A folder of lists, a folder holding at least one list (a folder with `list.json` at its
   top, or whose Archive holds one when every list was archived, so that an Archive is never a project of its own),
   under a project folder, the project folder itself included, to four folders down; hidden folders, `.git`,
   `node_modules`, `bin` and `obj` are never looked into, nor a folder of lists already found, nor the top folder or
   anything in it (TK-D7). The look runs off the UI thread at the start, on the way into Projects, on F5 at the top or
-  in Projects, and after a project folder is added or removed. When it ends, the Projects row or level is read again
+  in Projects, and after a project folder is added or removed. A list is recognised by its `list.json` alone: a
+  folder of lists whose lists were made by hand without one (axTask itself always writes it) is not found until one of
+  its lists has details (any change to a list's details writes the file). When it ends, the Projects row or level is read again
   only if what was found changed, nothing said: the selection stays, and a row whose words changed is rewritten in
   place ("Projects, looking for lists" becomes "Projects, 5 lists"); a level with other rows is filled again on the
   row selected. While a notice or a rename in place is open, the level is read again when the last notice closes.
@@ -199,10 +203,13 @@ and the AI tools over them are later (the priorities item of the request).
   there are none. Right or Enter on a project opens it as a top folder of its own, "tasks in alpha, 2 lists, Smart
   lists, section, 1 smart list": its sections, All tasks and smart lists, its Archive, every change and Ctrl+Z exactly
   as in the user's own folder (TK-D8). Left from a project's top goes back to Projects on it, and Left from Projects
-  to the top level on the Projects row. In the Projects level Ctrl+N, Ctrl+Shift+N, F2 and Delete make, rename and
-  move nothing and say why (Ctrl+N: "A project's items are made in its lists: Right on a project, then on a
-  list"); Ctrl+E shows a project's folder in axFile. A project is never remembered as the list open
-  last.
+  to the top level on the Projects row. In the Projects level Ctrl+N, Ctrl+Shift+N, List → New GitHub list, F2 and
+  Delete make, rename and move nothing and say why (Ctrl+N: "A project's items are made in its lists: Right on a
+  project, then on a list"; Ctrl+Shift+N and New GitHub list: "A project's lists are made inside it: Right on a
+  project first", and in the found level "Lists are made among the sections: Left first"); Ctrl+E shows a project's
+  folder in axFile. A project is never remembered as the list open last: while a project is shown, the list open
+  last of the user's own top folder stays as it was, so that the next start opens the user's own list, never a
+  project's list of the same name (TK-D10).
 - **TK-7b.4 The search across every list.** Ctrl+Shift+F, anywhere in the window, asks "Type the words to find in
   every list" (the last words typed, again). Every list of the user's own top folder and of every project is read off
   the UI thread, the Archive left out as All tasks leaves it, and an item holding every word in its Title or a text
@@ -215,8 +222,8 @@ and the AI tools over them are later (the priorities item of the request).
   lives (in its project, when it is in one) with the item selected: "Home, 1 item, Fix the tap"; Left, Backspace or
   Escape goes back where the search was started, the row selected then selected again. In the found level Tab shows
   the item's fields, which change as anywhere, and Space marks a task done in its own file, the selection staying on
-  it (done tasks stay in the found level, Hide done or not); F2, Delete and a link's change say "Open it where it lives
-  first", Ctrl+N "Items are made in a list: open the item where it lives first, Enter", the action keys "Action keys act in a list: open one first" (TK-D9).
+  it (done tasks stay in the found level, Hide done or not); F2, Delete, a link's change and Item → Use these fields
+  for new items say "Open it where it lives first", Ctrl+N "Items are made in a list: open the item where it lives first, Enter", the action keys "Action keys act in a list: open one first" (TK-D9).
 - **TK-7b.5 The top folder** is never moved or changed by any of this: a project is shown, entered and changed where
   it is, and the user's top folder stays the one in the settings.
 
@@ -254,6 +261,13 @@ and the AI tools over them are later (the priorities item of the request).
   file is changed in place for its fields and Done, but a rename, an archive, a link and an action key need the
   item's own folder of lists (its Archive, the links to it), so they say to open it where it lives first. All the
   words must be in the item, as a search box usually means.
+- **TK-D10 Leftovers of the project folders' review** (taken by the assistant on 2026-11-11, the user away, for the
+  user to confirm): Use these fields for new items on a found item refuses as F2 and Delete do, since it changes the
+  item's list, a thing of where the item lives, not of the item; New GitHub list refuses where New list does; the
+  last project folder removed leaves a project shown for the user's own top level, since nothing would lead back to
+  it; opening a list in a project leaves the list open last alone, while a found item opened in the user's own
+  folder is remembered as any list opened there; and a list without `list.json` is not looked for (TK-7b.2), since a
+  folder of plain folders is not told from any other folder of folders without it.
 
 ## 9. Open questions
 

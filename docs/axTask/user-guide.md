@@ -144,8 +144,10 @@ moving them.
 
 - Options, Project folders, Add a project folder: type the path of a folder that holds your projects, such as
   `D:\Projects`, and press Enter; or leave the field empty and press Enter to choose it with the Windows
-  folder picker. axTask looks four folders down in it for every folder that holds a list. Remove a project folder
-  takes one off. There are none until you add one. Your own top folder, or a folder inside it, is refused: its lists
+  folder picker. axTask looks four folders down in it for every folder that holds a list. A list is known by its
+  details file, `list.json`, which axTask writes for every list it makes; a list folder made by hand without one is
+  not found until you change one of its details. Remove a project folder takes one off; when you remove the last one
+  while you are in a project, you are taken back to your own lists. There are none until you add one. Your own top folder, or a folder inside it, is refused: its lists
   show at the top already.
 - While project folders are set, the top level starts with the line **Projects**, saying how many lists were found.
   The line starts as "Projects, looking for lists" and changes quietly when the look ends. Right shows the projects,
@@ -153,14 +155,15 @@ moving them.
   folder's path when that is shared too). A folder whose lists were all archived is shown as a project with 0 lists.
 - Right on a project opens it the way your own folder is shown: its sections, All tasks, smart lists and Archive.
   Everything you change there is changed in that project's files, and Ctrl+Z works as usual. Left from its sections
-  goes back to Projects, and Left again to your own lists.
+  goes back to Projects, and Left again to your own lists. Lists are made inside a project, not in the Projects
+  level. axTask starts again in the list of your own you had open last, never in a project's.
 - Ctrl+Shift+F finds words in every list, your own and every project's: type the words and press Enter. An item is
   found when its title or a text field holds every word, in capitals or not. axTask says "Searching every list" and
   then what it found; if you open another notice before the search ends, its result is dropped and the focus stays
   where you are: press Ctrl+Shift+F again, your words are kept. Each line says where the item lives:
   "Fix the tap, in tasks in alpha / Home". Right or Enter opens the item in its own list; Left or Escape goes back to
   where you searched from. Tab shows the found item's fields, and Space marks a task done, there and then; to rename,
-  archive or link it, open it where it lives first.
+  archive or link it, or to use its fields for new items, open it where it lives first.
 
 ## Keys
 
