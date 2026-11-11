@@ -180,6 +180,11 @@ whatever `enabled` says and under high contrast too, since none of it is a colou
 - TH-6.4 Another display setting joins this object when a use comes, one that a helper or the user wants the same in
   every window: one key, read by the base and taken by the windows it concerns through `OnThemeChanged`, never a
   setting per app. A per-window setting (the font, each app's own since the texts differ) stays in the app's file.
+- TH-6.5 `display.sayNewLine` (true by default; 2026-11-11, bundle AX-7.8, B-18): whether a line break typed into a
+  field is said, "new line", in every window. Options, Text, Say new line in any window writes it the same way as word
+  wrap (`Theme.SetSayNewLine`), says "Say new line on" or "Say new line off", and every other window takes it when next
+  activated (TH-3.2), its Text menu checked as it opens.
+  The template carries it beside `wordWrap`; a value that is not `true` or `false` is on and counted (TH-6.3).
 
 ## 5. Architecture
 

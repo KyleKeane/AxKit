@@ -152,6 +152,10 @@ $1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, it
 
 ## Text and the editors
 
+- `TypedLineBreak` (AX-7.8, 2026-11-11): whether a key put a line break into a field, from the text and selection as
+  the key went down and the text and caret after it (the selection replaced by a line break, an indent after it
+  allowed, the caret after that), and `Said`, "new line"; `AxKit.Forms/AxKitTextBox` asks it. The setting is the theme
+  file's `display.sayNewLine` (`Theme.SayNewLine`, `SetSayNewLine`, TH-6.5). Tested in `TypedLineBreakTests`.
 - `Paragraphs`: where Ctrl+Up and Ctrl+Down go in a text with `\r\n` line ends: the starts of its paragraphs, the
   first line or a line with text after a blank line, for `AxKit.Forms.EditKeys.Paragraph`.
 - `TextLines` (docs/axDown/SPEC.md AD-6.4, AD-3.6; 2026-10-23): the caret's line and column in an edit control's text,

@@ -55,6 +55,8 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
 
 ## 4. The rest
 
+- New line (bundle AX-7.8): in a long text field such as a list's Notes, Enter says "new line"; the steps are axDown's plan, step 2.5a.
+
 1. Ctrl+Shift+D: "Done tasks hidden"; the list's name says "1 done hidden".
 2. Shift+F10 in each pane: its menu (List, Item or Field) opens and NVDA reads its first item.
 3. F1: the keys; Help, User guide: this guide. Alt+H, About, Version names axTask.

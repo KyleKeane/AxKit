@@ -939,6 +939,18 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   picture's letterbox is not the window's colour (decided 2026-10-23). Since 2026-11-09 a theme file of the user's,
   `%APPDATA%\AxKit\theme.json`, may give each class of object a colour of its own, applied by the window base alone
   (`docs/axKit/theme.md`); without the file, or with `system` everywhere in it, nothing in this rule changes.
+- AX-7.8 A line break typed is said (2026-11-11; the reports repository's issue 1, the user: spoken everywhere, B-18).
+  NVDA says nothing for Enter, so in every field where a key puts a line break into the text, the editors of axDown
+  and axJSON, an item app's long text, axClaude's message and axTerminal's command with Shift+Enter, the report's
+  words, the New session notice's arguments, any field of several lines, the window says "new line" through its one
+  announcement (`AxKitForm.Announce`, not interrupting, so that NVDA's echo of the word just typed comes first). It is
+  said only when a line break went in: the field (`AxKitTextBox`) keeps its text and selection as Enter goes down and
+  compares them once the key is handled (`AxKit.Core.TypedLineBreak`), so Enter that sends a message, opens, presses a
+  notice's button or meets a read-only text says nothing of it, and a line break with an editor's indent after it
+  counts. One setting for every window, on by default: Options, Text, Say new line, in every window's menu, palette
+  and F1 text (`BundleHelp.Section`), kept in the theme file's display settings as `display.sayNewLine`
+  (`docs/axKit/theme.md` TH-6.5), so that a change in one window holds in all; it says "Say new line on" or "Say new
+  line off".
 
 ## 5. Architecture
 
@@ -1179,6 +1191,17 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   commit as the code. Why: the user asked (2026-11-05) for the interface between axKit and the programs and services
   it works through to be defined, audited and watched automatically, so that a call added later cannot go unlisted;
   `PRIVACY.md`, `SECURITY.md` and the README stay the plain-language statements and link to the page (AX-11.11, G6).
+- **B-18 "New line" is said by the field, in every window, behind one setting (2026-11-11).** The user's report 1 asked
+  to hear the line break as it is typed in axDown, and the user decided on 2026-11-11 that it is spoken everywhere a
+  key puts one into a text. Decisions taken on the user's word to use best judgement while away: it lives in
+  `AxKitTextBox`, the edit control under every field since 5.5.0, so that every field has it by being made and no
+  window repeats it; it is said by comparing the text before and after the key rather than by the key alone, since the
+  same Enter sends, opens or presses a button elsewhere; it goes through the window's one announcement and does not
+  interrupt; the words are "new line", lower case, NVDA's own word for a line break; the setting is on by default and
+  is one for the bundle, in the theme file's display settings beside the editors' word wrap (TH-6.4: a setting the user
+  wants the same in every window is a key there, never a setting per app), with its item in every window's Options,
+  Text, since it is about the text. Pasted text with line breaks is said by the paste's own sentence ("Pasted, 3
+  lines", AX-7.3), not as new lines.
 
 ## 7. Status
 

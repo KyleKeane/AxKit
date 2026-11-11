@@ -27,6 +27,8 @@ keys up
 keys enter
 type First line
 keys enter
+# AX-7.8: the line break typed is said; Enter on Save below is not one.
+expect said new line
 type Second line
 keys tab
 keys enter

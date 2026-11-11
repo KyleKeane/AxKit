@@ -39,6 +39,46 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
+    /// Options, Text, Say new line (AX-7.8, TH-6.5, 2026-11-11): one item in every window, the bundle's one setting
+    /// in the theme file's display settings, as the editors' word wrap is; checked from the file as the menu opens, so
+    /// that a change in another window shows here, in the menu and in the palette alike.
+    /// </summary>
+    private ToolStripMenuItem CreateSayNewLineItem(ToolStripMenuItem textMenu)
+    {
+        var item = new ToolStripMenuItem("Say &new line", null, (_, _) => ToggleSayNewLine()) { Checked = _theme?.SayNewLine ?? true };
+        CommandPalette.RefreshedOnOpening(textMenu, () => item.Checked = _theme?.SayNewLine ?? true);
+        return item;
+    }
+
+    private void ToggleSayNewLine()
+    {
+        var on = !(_theme?.SayNewLine ?? true);
+        if (Theme.SetSayNewLine(AppPaths.ThemeFile, on) is { } problem)
+        {
+            Failed("Theme file", "The theme file could not be changed: " + problem);
+            return;
+        }
+
+        LoadTheme();
+        Announce(on ? "Say new line on" : "Say new line off", true);
+    }
+
+    /// <summary>
+    /// A field of this window took a line break from a key (<see cref="AxKitTextBox"/>, AX-7.8): "new line" through
+    /// the window's one announcement, unless Say new line is off. It does not interrupt, so that NVDA's own echo of
+    /// the word just typed is still heard first.
+    /// </summary>
+    internal void SayTypedLineBreak()
+    {
+        // The file as read at the window's last activation (TH-3.2): the setting changes only from a menu of a window
+        // in front, so no file is touched on the key itself.
+        if (_theme?.SayNewLine ?? true)
+        {
+            Announce(TypedLineBreak.Said, false);
+        }
+    }
+
+    /// <summary>
     /// After the theme has been read again and painted (an activation with the file changed, Reload theme, Theme on):
     /// a window that takes a display setting from it applies it here (the editors' word wrap, TH-6.2). Nothing by default.
     /// </summary>

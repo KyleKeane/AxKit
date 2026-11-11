@@ -52,6 +52,29 @@ public sealed class ThemeTests
         Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
     }
 
+    /// <summary>TH-6.5, AX-7.8 (2026-11-11): Say new line, on without a file or a key, written beside the word wrap and every other key.</summary>
+    [Fact]
+    public void Say_new_line_is_on_by_default_and_written_beside_what_is_there()
+    {
+        Assert.True(Theme.Read("""{ "format": "axkit-theme 1" }""", out _)!.SayNewLine);
+        Assert.Contains("\"sayNewLine\": true", Theme.Template());
+        var odd = Theme.Read("""{ "format": "axkit-theme 1", "display": { "sayNewLine": 1 } }""", out _);
+        Assert.True(odd!.SayNewLine);
+        Assert.Equal(["display.sayNewLine"], odd.NotUnderstood);
+
+        var path = Path.Combine(Path.GetTempPath(), "axkit-tests", Guid.NewGuid().ToString("N"), "theme.json");
+        Assert.Null(Theme.SetSayNewLine(path, false));
+        Assert.False(Theme.Load(path, out _)!.SayNewLine);
+        Assert.True(Theme.Load(path, out _)!.WordWrap);
+        Assert.Null(Theme.SetWordWrap(path, false));
+        var both = Theme.Load(path, out _)!;
+        Assert.False(both.SayNewLine);
+        Assert.False(both.WordWrap);
+        Assert.Null(Theme.SetSayNewLine(path, true));
+        Assert.True(Theme.Load(path, out _)!.SayNewLine);
+        Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
+    }
+
     [Fact]
     public void A_hex_colour_is_read_system_in_any_case_and_a_bad_value_is_system_and_counted()
     {

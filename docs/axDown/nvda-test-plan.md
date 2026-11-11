@@ -29,6 +29,12 @@ letter), and a `long.md` with headings and lines longer than the window.
 4. Ctrl+Shift+W: "Word wrap off"; a long line is now one line; the caret stays on the same character. Again:
    "Word wrap on"; the caret stays.
 5. Ctrl+M, Ctrl+H, Ctrl+I, Ctrl+J insert nothing.
+5a. New line said (AD-2.8, bundle AX-7.8; `tests/scripts/axDown/12-say-new-line.txt`). At the end of a line, type a
+   word and press Enter: NVDA says the word, then "new line". Enter in the middle of a line: "new line". Options,
+   Text, Say new line: "Say new line off"; Enter makes a line and nothing is said. Again: "Say new line on", and
+   Enter says "new line" again. Arrow keys say nothing of it. In an item app's long text field (axTask, a list's
+   Notes), Enter says "new line"; Tab, then Enter on Save keeps the text and says no "new line". In axTerminal,
+   Shift+Enter in the command field says "new line" and Enter, which runs the command, does not.
 6. Undo and redo (AD-2.5). Type a word, wait two seconds, type another: Ctrl+Z removes the second word only, Ctrl+Z
    again the first, a third Ctrl+Z says "Nothing to undo"; Ctrl+Y twice puts both back, a third says "Nothing to
    redo". Paste a line (Ctrl+V) and type after it: Ctrl+Z takes the typed text, then the pasted line. Hold Backspace
