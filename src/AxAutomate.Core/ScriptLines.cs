@@ -31,14 +31,9 @@ public static class ScriptLines
     /// </summary>
     public static (IReadOnlyList<ScriptLine> Lines, string? Refusal) Prepare(Workflow workflow, bool nvda)
     {
-        if (workflow.Problem is { } problem)
+        if (CannotRun(workflow, nvda) is { } refusal)
         {
-            return ([], "not all understood: " + problem);
-        }
-
-        if (Unknown(workflow.Steps, nvda) is { } unknown)
-        {
-            return ([], unknown);
+            return ([], refusal);
         }
 
         if (workflow.Path.EndsWith(ScriptReader.Extension, StringComparison.OrdinalIgnoreCase))
@@ -54,6 +49,57 @@ public static class ScriptLines
         }
 
         return FromWorkflow(workflow);
+    }
+
+    /// <summary>
+    /// Why the workflow cannot run, from what was read alone (no file is read, so the window may ask it on its own
+    /// thread for every row): not all understood, an operation the engine does not know, a number that is not one, a
+    /// block the lines cannot say; null when it can run.
+    /// </summary>
+    public static string? CannotRun(Workflow workflow, bool nvda)
+    {
+        if (workflow.Problem is { } problem)
+        {
+            return "not all understood: " + problem;
+        }
+
+        if (Unknown(workflow.Steps, nvda) is { } unknown)
+        {
+            return unknown;
+        }
+
+        if (Flattened(workflow.Steps).Select(step => BadNumber(Line(step))).FirstOrDefault(bad => bad is not null) is { } bad)
+        {
+            return bad;
+        }
+
+        return workflow.Path.EndsWith(ScriptReader.Extension, StringComparison.OrdinalIgnoreCase) ? null : FromWorkflow(workflow).Refusal;
+    }
+
+    /// <summary>
+    /// A line whose operation takes a number (<c>wait</c>, <c>expect quiet</c>, <c>use</c>, <c>silence</c>'s length)
+    /// and does not hold one, said; null for every other line. The engine would otherwise fail on it mid-run.
+    /// </summary>
+    public static string? BadNumber(string line)
+    {
+        while (line.StartsWith("iffound ", StringComparison.Ordinal))
+        {
+            line = line[8..];
+        }
+
+        var space = line.IndexOf(' ');
+        var verb = space < 0 ? line : line[..space];
+        var rest = space < 0 ? string.Empty : line[(space + 1)..];
+        return verb switch
+        {
+            "wait" when !Whole(rest) => $"the step \"{line}\" needs a whole number of milliseconds",
+            "expect" when rest.StartsWith("quiet", StringComparison.Ordinal) && !Whole(rest.Length > 6 ? rest[6..] : string.Empty) => $"the step \"{line}\" needs a whole number of milliseconds",
+            "use" when !(Whole(rest) && int.Parse(rest, System.Globalization.CultureInfo.InvariantCulture) > 0) => $"the step \"{line}\" needs the window's number, 1 for the first",
+            "silence" when !(rest.Split(' ', 2) is [_, var ms] && Whole(ms)) => $"the step \"{line}\" needs a file name and a length in milliseconds",
+            _ => null,
+        };
+
+        static bool Whole(string text) => int.TryParse(text, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out _);
     }
 
     /// <summary>A script's lines as the runner reads them: every line but the blank ones and the comments, trimmed, numbered by its line.</summary>

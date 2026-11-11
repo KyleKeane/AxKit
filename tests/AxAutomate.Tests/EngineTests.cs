@@ -74,6 +74,46 @@ public sealed class EngineTests
     }
 
     [Fact]
+    public void A_step_whose_number_is_not_one_makes_the_workflow_unrunnable()
+    {
+        static string? Script(params string[] lines) => ScriptLines.CannotRun(ScriptReader.Parse(lines, "w", @"C:\w.txt"), nvda: false);
+        static string? Json(string steps) =>
+            ScriptLines.CannotRun(WorkflowFile.Parse($$"""{"format": "axkit-workflow 1", "steps": [{{steps}}]}""", "w", @"C:\w.workflow.json"), nvda: false);
+
+        Assert.Null(Script("start down", "wait 1500", "use 1", "silence a.wav 500", "expect quiet 2000", "close"));
+        Assert.Contains("wait 2s", Script("start down", "wait 2s"));
+        Assert.Contains("use first", Script("use first"));
+        Assert.Contains("use 0", Script("use 0"));
+        Assert.Contains("silence a.wav", Script("silence a.wav"));
+        Assert.Contains("expect quiet soon", Script("expect quiet soon"));
+        Assert.Contains("\"wait x\"", Script("try said x", "iffound wait x"));
+        Assert.Null(Json("""{"do": "wait", "ms": 1500}"""));
+        Assert.Contains("whole number of milliseconds", Json("""{"do": "wait"}"""));
+        Assert.Contains("whole number of milliseconds", ScriptLines.Prepare(WorkflowFile.Parse("""{"format": "axkit-workflow 1", "steps": [{"do": "wait", "ms": "soon"}]}""", "w", @"C:\w.workflow.json"), nvda: false).Refusal);
+        Assert.Null(ScriptLines.BadNumber("keys f5"));
+    }
+
+    [Fact]
+    public void A_bad_number_in_a_played_line_fails_the_step_and_never_throws()
+    {
+        // The engine's own check, for a line no reader checked (the command line plays a script's lines as they are).
+        var lines = new[] { new ScriptLine(1, "wait 2s", null), new ScriptLine(2, "wait 1", null) };
+        var temp = Path.Combine(Path.GetTempPath(), "axkit-engine-test-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(temp);
+        try
+        {
+            var result = ScriptRunner.Play(lines, Path.Combine(temp, "NoSuch.exe"), temp, output: _ => { }, hosted: true);
+            Assert.False(result.Ok);
+            Assert.Equal(1, result.Failed!.Line.Number);
+            Assert.Contains("needs a whole number", result.Failed.Detail);
+        }
+        finally
+        {
+            Directory.Delete(temp, recursive: true);
+        }
+    }
+
+    [Fact]
     public void Every_script_of_the_repository_can_run_from_the_window()
     {
         var root = AppContext.BaseDirectory;

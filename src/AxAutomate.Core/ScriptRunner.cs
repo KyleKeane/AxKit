@@ -32,9 +32,10 @@ public static class ScriptRunner
     /// Plays the lines with their own windows and folder (<paramref name="temp"/>, <c>{temp}</c> in a line). Each
     /// line's result goes to <paramref name="output"/> as the console shows it, and to <paramref name="stepEnded"/>
     /// (when given); <paramref name="stop"/> is asked before each line after the first, and a true ends the run there
-    /// (AU-4.4, Escape). <paramref name="hosted"/>: the run lives in axAutomate's window (<see cref="Run"/>).
+    /// (AU-4.4, Escape). <paramref name="hosted"/>: the run lives in axAutomate's window (<see cref="Run"/>);
+    /// <paramref name="begun"/> gets the run as it begins, for <see cref="Run.Abandon"/> when the window closes.
     /// </summary>
-    public static ScriptResult Play(IReadOnlyList<ScriptLine> lines, string exe, string temp, Action<string> output, Action<LineResult>? stepEnded = null, Func<bool>? stop = null, bool hosted = false)
+    public static ScriptResult Play(IReadOnlyList<ScriptLine> lines, string exe, string temp, Action<string> output, Action<LineResult>? stepEnded = null, Func<bool>? stop = null, bool hosted = false, Action<Run>? begun = null)
     {
         var log = new StringBuilder();
         var ok = true;
@@ -42,6 +43,7 @@ public static class ScriptRunner
         LineResult? failed = null;
         var problems = new List<string>();
         var run = new Run(exe, temp, hosted);
+        begun?.Invoke(run);
         try
         {
             for (var index = 0; index < lines.Count; index++)
@@ -63,8 +65,10 @@ public static class ScriptRunner
                 {
                     result = run.Step(line);
                 }
-                catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException or JsonException or ArgumentException)
+                catch (Exception ex)
                 {
+                    // Any exception fails the step and never the process: in axAutomate's window an escaped one would
+                    // end the user's app (a malformed number, a window gone mid-step).
                     result = (false, $"{ex.GetType().Name}: {ex.Message}");
                 }
 

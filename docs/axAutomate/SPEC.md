@@ -174,10 +174,19 @@ keys in place of its words on a line:
   failed step's row with "failed"; the detail pane gives "Last run: ..." with what the runner saw, on the workflow
   and on the failed step. The outcomes are the window's, kept until it closes.
 - AU-6b.4 Escape during a run stops it after the step going on ("Stopping after the current step"); outside a run,
-  Escape keeps its item-app meaning. Closing the window during a run stops it the same way: the run's thread keeps
-  the process until its windows are closed.
+  Escape keeps its item-app meaning. Closing the window during a run stops it the same way: the process waits up to
+  15 s for the run to close its windows, then ends the processes the run started (a step that waits up to 60 s, a
+  window that hangs), and ends; it never stays on without a window (checked 2026-11-11: gone within 35 s of closing
+  during a 40 s wait). The run's thread never ends the process: anything a step throws fails that workflow.
 - AU-6b.5 A workflow that cannot run (AU-3.3.2, AU-D7) says why on F5, "This workflow cannot run: ...", and its
-  details say "Cannot run: ..."; Operations, Run is unavailable on it, and Stop the run when nothing runs.
+  details say "Cannot run: ..."; Operations, Run is unavailable on it (in the command palette too), and Stop the run
+  when nothing runs. A step whose number is not one (`wait 2s`, `use first`, a `silence` without its length, a
+  `wait` of a workflow file without its milliseconds) makes the workflow unrunnable with the step said, as an unknown
+  operation does; whether a workflow can run is read from what the window holds, and every file a run reads is read
+  on the run's thread.
+- AU-6b.7 The run's windows never get the right to take the foreground: the window that runs is the user's
+  foreground app, and what a run's window hands to the shell (Explorer, a browser, Open with) lands on the user's own
+  desktop. The command line's NVDA tier, on the user's desktop, keeps giving it.
 - AU-6b.6 The report of AU-4.5 (Ctrl+R, every step with what was said and focused) is not built: the detail pane's
   "Last run" line holds what the runner saw at the failure.
 
@@ -221,7 +230,11 @@ keys in place of its words on a line:
   escapes, which every check of the bundle depends on. What the lines cannot say yet (an `otherwise` block, any other
   step that goes on when it fails, a block in a block) makes a workflow file unrunnable with the step said, as an
   unknown operation does (AU-3.3.2); the NVDA tier's steps (`expect spoken`, `refuse spoken`, `spoken`) run only from
-  the command line's `--nvda`. To reverse: a walker over `Workflow.Steps` that calls `Run.Step` per step.
+  the command line's `--nvda`. To reverse: a walker over `Workflow.Steps` that calls `Run.Step` per step. A
+  workflow file's values go into the lines as they are, so the line's own conventions apply to them: `{temp}` is the
+  run's folder and `\uXXXX` a character in any value, and in a `file` step's text a backslash followed by n is a new
+  line, so a text that holds one literally (`C:\notes`) cannot be written by a workflow file in this version; the
+  two formats are not yet equivalent there.
 - AU-D8 F5 runs (AU-4.4), so it is not the item apps' Refresh here: Refresh stays in the Session menu without a key,
   and a run reads its workflow's file again by itself (the assistant, 2026-11-11). Escape also stops a run, before its
   detail pane meaning, only while one goes on. To reverse: a key of its own for Refresh in `AxAutomateKeys`.

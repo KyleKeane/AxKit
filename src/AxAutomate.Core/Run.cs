@@ -48,7 +48,10 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         try
         {
             using var process = Process.GetProcessById(id);
-            _started[id] = process.StartTime;
+            lock (_started)
+            {
+                _started[id] = process.StartTime;
+            }
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception)
         {
@@ -81,7 +84,7 @@ public sealed class Run(string exe, string temp, bool hosted = false)
                 return (true, null);
             case "silence":
                 var parts = rest.Split(' ', 2);
-                WriteSilence(Path.Combine(temp, parts[0]), int.Parse(parts[1]));
+                WriteSilence(Path.Combine(temp, parts[0]), Number(parts.Length > 1 ? parts[1] : string.Empty, line));
                 return (true, null);
             case "run":
                 return RunCommand(rest);
@@ -92,7 +95,8 @@ public sealed class Run(string exe, string temp, bool hosted = false)
                 BringToFront(_current);
                 return (true, $"process {_current.ProcessId}");
             case "use":
-                _current = _windows[int.Parse(rest) - 1];
+                var number = Number(rest, line);
+                _current = number >= 1 && number <= _windows.Count ? _windows[number - 1] : throw new ArgumentException($"there is no window {number}; the run has {_windows.Count}");
                 BringToFront(_current);
                 return (true, null);
             case "launch":
@@ -111,7 +115,7 @@ public sealed class Run(string exe, string temp, bool hosted = false)
                 _allowed.Add(rest.StartsWith("error ", StringComparison.Ordinal) ? rest[6..] : rest);
                 return (true, null);
             case "wait":
-                Thread.Sleep(int.Parse(rest));
+                Thread.Sleep(Number(rest, line));
                 return (true, null);
             case "said":
                 return (true, string.Join(" | ", Current.TakeAll().Select(e => e.Spoken)));
@@ -181,6 +185,12 @@ public sealed class Run(string exe, string temp, bool hosted = false)
                 return (false, $"unknown step {verb}");
         }
     }
+
+    /// <summary>A step's number (milliseconds, a window's number); a step that holds none fails with its line said, as <see cref="ScriptLines.BadNumber"/> refuses it before a run.</summary>
+    private static int Number(string text, string line) =>
+        int.TryParse(text, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var number)
+            ? number
+            : throw new ArgumentException($"\"{line}\" needs a whole number, not \"{text}\"");
 
     /// <summary>A command through cmd.exe in the run's folder; its output is the step's detail.</summary>
     private (bool, string?) RunCommand(string commandLine)
@@ -276,7 +286,7 @@ public sealed class Run(string exe, string temp, bool hosted = false)
 
         if (what == "quiet")
         {
-            Thread.Sleep(int.Parse(text));
+            Thread.Sleep(Number(text, "expect " + rest));
             var said = window.Pending().Where(e => e.Kind == "say").ToList();
             window.TakeAll();
             return (said.Count == 0, said.Count == 0 ? null : "said: " + string.Join(" | ", said.Select(e => e.Spoken)));
@@ -332,7 +342,15 @@ public sealed class Run(string exe, string temp, bool hosted = false)
     /// </summary>
     private void BringToFront(Window window)
     {
-        Native.AllowSetForegroundWindow(window.ProcessId);
+        // Hosted, this process is the user's foreground app (the F5 just pressed): the right to take the foreground
+        // is never handed to the run's windows there, since what they hand to the shell (Explorer, a browser, Open
+        // with) lands on the user's own desktop and could take the focus from them. The activation on the run's desktop
+        // needs no foreground right.
+        if (!hosted || Nvda)
+        {
+            Native.AllowSetForegroundWindow(window.ProcessId);
+        }
+
         window.Send("activate");
         if (Nvda)
         {
@@ -597,12 +615,18 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         }
 
         var family = new HashSet<int>();
-        foreach (var (id, started) in _started)
+        KeyValuePair<int, DateTime>[] started;
+        lock (_started)
+        {
+            started = [.. _started];
+        }
+
+        foreach (var (id, startedAt) in started)
         {
             try
             {
                 using var process = Process.GetProcessById(id);
-                if (process.StartTime != started)
+                if (process.StartTime != startedAt)
                 {
                     continue;
                 }
@@ -617,6 +641,43 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         }
 
         return family;
+    }
+
+    /// <summary>
+    /// The window closed during a run and the run did not end within its wait (a step waiting, a window that hangs
+    /// without closing its pipe): every process the run started, still the one it started (its start time), ended with
+    /// its process tree, from any thread, so that the run's thread, its pipes broken, reaches its end and the process
+    /// can go. Never a process the run did not start. Returns how many it ended.
+    /// </summary>
+    public int Abandon()
+    {
+        KeyValuePair<int, DateTime>[] started;
+        lock (_started)
+        {
+            started = [.. _started];
+        }
+
+        var ended = 0;
+        foreach (var (id, startedAt) in started)
+        {
+            try
+            {
+                using var process = Process.GetProcessById(id);
+                if (process.HasExited || process.StartTime != startedAt)
+                {
+                    continue;
+                }
+
+                process.Kill(entireProcessTree: true);
+                ended++;
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception)
+            {
+                // Ended meanwhile, or not the user's to read: nothing of the run's.
+            }
+        }
+
+        return ended;
     }
 
     /// <summary>What the end of the run ended besides its own windows (<see cref="Sweep"/>), one line each for the report; no failure.</summary>

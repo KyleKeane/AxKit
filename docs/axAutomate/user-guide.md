@@ -60,10 +60,11 @@ workflows passed, 1 failed, 1 could not run".
 
 Afterwards the rows say how the last run went: "02-fails, workflow, 3 steps, failed at step 2", and inside it the step
 that failed ends with "failed". Tab on either gives "Last run:" with what the run saw. Escape during a run stops it
-after the step going on ("03-waits stopped"); closing the window stops it the same way.
+after the step going on ("03-waits stopped"), from either pane; closing the window stops it the same way, and its run's
+windows are gone within half a minute.
 
 A workflow this version cannot run says why when you press F5, for example one with "otherwise" steps; its details
-say "Cannot run". The checks that need NVDA listening run only in the NVDA pass, not from the window.
+say "Cannot run". So does one with a step whose number is not one, such as "wait 2s". The checks that need NVDA listening run only in the NVDA pass, not from the window.
 
 ## Keys
 

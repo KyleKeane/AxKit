@@ -28,6 +28,9 @@ public sealed partial class AutomateForm : ItemForm
 
     private IReadOnlyList<StepRow> _steps = [];
 
+    /// <summary>How many workflows the folder level shown holds, counted as its rows were filled, so that F5 and the menu need no second read.</summary>
+    private int _levelWorkflows;
+
     /// <summary>Run and Stop the run in the Operations menu, made available as the menu opens (<see cref="UpdateRunItems"/>).</summary>
     private readonly ToolStripMenuItem _runItem;
 
@@ -55,9 +58,10 @@ public sealed partial class AutomateForm : ItemForm
         _stepMenu.DropDownItems.Add(new ToolStripSeparator());
         _runItem = Add(_stepMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
         _stopItem = Add(_stepMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });
-        // Running keys only on what can run (AU-3.3.2): the items say so as the menu opens.
-        _stepMenu.DropDownOpening += (_, _) => UpdateRunItems();
-        FormClosed += (_, _) => _stopAsked = true;
+        // Running keys only on what can run (AU-3.3.2): the items say so as the menu opens, and the command palette
+        // reads them after the same refresh.
+        CommandPalette.RefreshedOnOpening(_stepMenu, UpdateRunItems);
+        FormClosed += (_, _) => AbandonOnClose();
 
         var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(CreateTextMenu());
@@ -112,6 +116,7 @@ public sealed partial class AutomateForm : ItemForm
         }
 
         var entries = WorkflowFolder.Read(folder);
+        _levelWorkflows = entries.Count(entry => !entry.IsFolder);
         var items = entries.Select(entry => entry.IsFolder
             ? new ItemRow(true, entry.Path, entry.Name, $"{entry.Name}, folder, {StepText.Count(WorkflowFolder.CountWorkflows(entry.Path), "workflow")}", entry)
             : WorkflowRow(entry)).ToList();
@@ -212,7 +217,7 @@ public sealed partial class AutomateForm : ItemForm
                     lines.Add(new ItemDetailLine("Not understood: " + problem));
                 }
 
-                lines.Add(ScriptLines.Prepare(workflow, nvda: false).Refusal is { } refusal
+                lines.Add(ScriptLines.CannotRun(workflow, nvda: false) is { } refusal
                     ? new ItemDetailLine("Cannot run: " + refusal)
                     : OutcomeLine(workflow.Path, null) ?? new ItemDetailLine("Not run yet"));
                 lines.Add(new ItemDetailLine("Right or Enter goes into its steps"));

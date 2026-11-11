@@ -10,6 +10,7 @@ file flows\02-fails.txt # A workflow that fails at its second step.\n\nstart dow
 file flows\03-waits.txt # A workflow that takes its time.\n\nstart down\nwait 3000\nwait 3000\nclose
 file flows\04-file.workflow.json {"format": "axkit-workflow 1", "title": "A workflow file", "steps": [{"do": "start", "arguments": "down"}, {"do": "close"}]}
 file flows\05-later.workflow.json {"format": "axkit-workflow 1", "title": "Later", "steps": [{"do": "start", "arguments": "down"}, {"do": "expect said", "text": "x", "otherwise": [{"do": "close"}]}]}
+file flows\06-bad.txt # A workflow whose wait holds no number: refused, and never the window's end.\n\nstart down\nwait 2s\nclose
 
 # 5.1 F5 at the folder's level runs every workflow of the folder, one after another; nothing is said for a step that
 # passes, a failing step is said as it ends, one line at each workflow's end and one at the run's.
@@ -17,14 +18,15 @@ start automate {temp}\flows
 check commands
 expect focus 01-passes, workflow, 4 steps
 keys f5
-expect said Running 5 workflows
+expect said Running 6 workflows
 expect said 01-passes passed, 4 steps
 expect said Step 2 failed: Expect the focus: Nothing like this. Not within 10 s
 expect said 02-fails failed at step 2
 expect said 03-waits passed, 4 steps
 expect said A workflow file passed, 2 steps
 expect said Later cannot run: step 2 has otherwise steps
-expect said Run finished: 3 of 5 workflows passed, 1 failed, 1 could not run
+expect said 06-bad cannot run: the step "wait 2s" needs a whole number of milliseconds
+expect said Run finished: 3 of 6 workflows passed, 1 failed, 2 could not run
 
 # 5.2 The rows carry the outcome, and the details what the runner saw.
 expect focus 01-passes, workflow, 4 steps, passed
@@ -54,5 +56,7 @@ expect focus 03-waits, workflow, 4 steps, stopped
 
 # 5.4 A workflow this version cannot run says why.
 keys end right f5
+expect said This workflow cannot run: the step "wait 2s" needs a whole number of milliseconds
+keys left up right f5
 expect said This workflow cannot run: step 2 has otherwise steps
 close

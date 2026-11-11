@@ -51,4 +51,5 @@ desktop; the window's run starts a further desktop of its own there, which works
    Run unavailable on it; Stop the run unavailable when nothing runs.
 5. By ear (the script cannot): during a folder run of `tests\scripts\axDown`, work in another program: nothing of the
    run appears, takes the focus or plays a sound; Alt+F4 on axAutomate during a run closes the window, and Task
-   Manager shows the run's AxKit.exe processes gone within a minute (the run ends after its current step).
+   Manager shows the run's AxKit.exe processes gone within half a minute (checked by a scratch script 2026-11-11); no
+   window of a run takes the focus from you, even one that opens a page or Explorer (none is handed the foreground).
