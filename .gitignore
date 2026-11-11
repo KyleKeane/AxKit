@@ -20,6 +20,8 @@ TestResults/
 
 ## Local Claude Code state (machine specific)
 .claude/settings.local.json
+# The agents' git worktrees (workflows with worktree isolation)
+.claude/worktrees/
 CLAUDE.local.md
 
 ## Ad-hoc ConPTY recordings, which hold everything on screen (/status prints the account's e-mail address).
