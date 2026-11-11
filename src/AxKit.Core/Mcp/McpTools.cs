@@ -164,6 +164,14 @@ public static class McpTools
             return ([app.Verb], null);
         }
 
+        // MC-D12 (2026-11-11): axTask started on a folder makes that folder its top folder and saves it, and the
+        // typed tools reach the top folder's lists: a client choosing it could read and write item files anywhere.
+        // So the tools open axTask only on the user's own top folder.
+        if (app.Verb == Dispatch.AxTask)
+        {
+            return (null, "axTask opens through the AI tools only on your own lists: call axkit_open with app task and no path; the user chooses its folder.");
+        }
+
         if (!Path.IsPathFullyQualified(path) || path.StartsWith(@"\\", StringComparison.Ordinal))
         {
             return (null, "The path must be a full path on this computer, such as C:\\work\\notes.md.");

@@ -150,7 +150,7 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   `axkit_window_list` (the focused list's items, or the window's first list), `axkit_window_text` (the focused text's
   lines, or the window's main text, at most 1 MB), `axkit_window_commands` (the window's command list: label, key,
   mark, and since 2026-11-11 the menus that hold it; MC-7 runs one) and `axkit_window_said` (what the window announced since the last call, the
-  last 50). `axkit_open` (`open`): an app by its verb, on a path or none, but axClaude and axTerminal, which start a program as they open (an act, MC-3.1); the path fully qualified, on this computer
+  last 50). `axkit_open` (`open`): an app by its verb, on a path or none, but axClaude and axTerminal, which start a program as they open (an act, MC-3.1), and axTask on a path (MC-D12: it would make the path its top folder); the path fully qualified, on this computer
   (`LocalPaths`), through no link (a junction or a symbolic link, which may lead to a share; asked part by part
   before anything follows it), existing, and of a kind the app opens (`Dispatch.PathFor`); started as
   `AxKit.exe <verb> <path>` with the arguments as a list, through ShellExecute on the program file itself, never through
@@ -335,7 +335,10 @@ to reverse:
   the act question of MC-7.3 is not asked; changing and deleting an item are not built.
 - MC-D12 **Only the window's own lists.** The lists of its top folder (the user's, from axTask's settings, even while
   a project is shown as the top) and of the projects it found under its project folders; a list named by a path
-  elsewhere is refused. axPass is never reachable (its windows serve no pipe, MC-6.2).
+  elsewhere is refused. axPass is never reachable (its windows serve no pipe, MC-6.2). So that a client never chooses
+  the top folder itself, `axkit_open` starts axTask only with no path, on the user's own top folder (a start on a
+  folder makes it the top and saves it): "axTask opens through the AI tools only on your own lists" (found at review,
+  2026-11-11).
 - MC-D13 **A field the template lacks is added**, after the others: long text for Notes or a value of several lines,
   text otherwise, so that "Notes" works in a list whose template has none (the default template has Done, Start and
   Due). A link, a password and a user name are never written by a tool.

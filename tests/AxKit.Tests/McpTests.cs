@@ -79,7 +79,9 @@ public sealed class McpTests
         Assert.Equal(["file", folder], Arguments("FILE", folder));
         Assert.Equal(["calc"], Arguments("calc", null));
         // A file given to an app that opens folders only: its folder (Dispatch.PathFor).
-        Assert.Equal(["task", Path.GetDirectoryName(file)!], Arguments("task", file));
+        Assert.Equal(["file", Path.GetDirectoryName(file)!], Arguments("file", file));
+        // axTask only on the user's own top folder (MC-D12).
+        Assert.Equal(["task"], Arguments("task", null));
     }
 
     [Theory]
@@ -92,6 +94,7 @@ public sealed class McpTests
     [InlineData("down", "FOLDER", "does not open a folder")]
     [InlineData("calc", "FOLDER", "does not open a folder")]
     [InlineData("down", @"C:\linked", "through a link")]
+    [InlineData("task", "FOLDER", "only on your own lists")]
     public void Open_refuses_with_a_reason(string verb, string? path, string reason)
     {
         var folder = Path.GetTempPath();
