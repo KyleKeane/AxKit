@@ -94,8 +94,11 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   notice saying what it allows, with **Turn on and add to Claude Code** (the default, when Claude Code is found),
   Turn on only, and Cancel; turning it on makes the key (MC-6.3). Adding to Claude Code (MC-6.8) runs Claude Code's
   own `claude mcp add` for this user's every folder with this very `AxKit.exe` and the argument `mcp`; without
-  Claude Code the notice gives that command line to copy. Turning it off needs no question and says "AI tools off".
-  "Forget AI tools" forgets every paired client at once; "Read the log" opens the audit log in axPreview. Off, every window refuses every
+  Claude Code the notice gives that command line to copy. Turning it off needs no question and says "AI tools off";
+  since 2026-11-11 it turns Let AI tools run commands (MC-7.2) off with it, and says so, so that turning the access on
+  again never brings running commands back unsaid.
+  "Forget AI tools" forgets every paired client at once and turns Let AI tools run commands off (every permission back,
+  MC-D9); "Read the log" opens the audit log in axPreview. Off, every window refuses every
   connection before anything else, so that turning it off in one window ends every client's access at its next call.
   The file carries a seal, HMAC-SHA256 of the setting and the clients under the key (MC-6.3); a file whose seal does
   not check, written by hand or by an AI tool's own file writing, reads as off with no clients, so that turning the
@@ -116,8 +119,12 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   call's answer and never ends the window's process or the broker.
 - MC-6.4 **Pairing**: a client is known by the program file of the broker's parent process (the client that started
   it), with the name it gives in `initialize` for display only. The first tool call of a client not paired asks the
-  newest axKit window: a notice "<name> asks to use axKit (<program>). It can read what the axKit windows show and open
-  apps; it cannot change or delete anything. Allow?", with Allow and Deny, and since 2026-10-29 (bundle AX-11.5) the
+  newest axKit window: a notice "<name> asks to use axKit", its text "<name> asks to use axKit. It runs as <program>.
+  It can read what the axKit windows show (their text, lists and status) and open apps. It runs a window's commands only
+  while AI tools, Let AI tools run commands is on, each said as it runs, and it never reads axPass or axClip." (until
+  2026-11-11 the text said "it cannot change or delete anything"; a client paired under those words keeps its pairing,
+  since running commands needs the second switch, off by default, which the user turns on with its own announcement,
+  MC-7.2), with Allow and Deny, and since 2026-10-29 (bundle AX-11.5) the
   text that axKit is only the access layer and the check box "I understand that axKit is only an access layer for
   <name>, and I take full responsibility for knowing and following the terms of <name>", which Allow needs (Deny stays
   the default), the consent kept in consent.json and withdrawn by Forget AI tools; the window flashing on the taskbar when it
@@ -174,7 +181,9 @@ axTask item made in a folder) are the next part.
   the item and every menu over it available and enabled): a key with no item, or an item disabled at the moment, is
   refused with its reason. It runs on the window's thread as its menu item would (`PerformClick`), posted so that the
   answer never waits on a command that shows a Windows dialog; the answer, after the window has been quiet for 0.7 s
-  or at most 2.5 s, gives what ran, what the window said meanwhile (as `axkit_window_said` reads it), the notice it
+  or at most 2.5 s, gives what ran (`ran`, only for a command the window took up and ran; `notRun` with the reason when
+  a notice, a dialog, the switch or a disabled item stopped it in between; `unknown` when the window had not taken it up
+  yet), what the window said meanwhile (as `axkit_window_said` reads it), the notice it
   now shows the user with its text, or that a Windows dialog waits for the user. The window's pipe answers it as
   every request (MC-6.3); the broker waits up to 25 s for it.
 - MC-7.2 **The switch**: axKit menu, AI tools, **Let AI tools run commands** (U), off by default, checked while on, one
@@ -192,21 +201,34 @@ axTask item made in a folder) are the next part.
   window asks it. A command marked **act** (app-kit's mark, MC-3.1: it deletes, moves, sends, starts or ends
   something outside the window) is asked of the user first, in the window: the notice "Claude asks to run Delete",
   its text naming the command's menus and what an act may do, unprompted with its chime, the window flashing on the
-  taskbar when it is not in front, **Deny** the default and Escape, **Run** running it once (and only while the switch is still on); after a Deny the window refuses an act's run without asking for a minute, as the pairing does; the tool's answer says
+  taskbar when it is not in front, **Deny** the default and Escape, **Run** running it once (and only while the switch,
+  read again off the window's thread, is still on and the item still available; otherwise "<command> not run:
+  <reason>" is said); after a Deny the window refuses an act's run without asking for a minute, as the pairing does; the tool's answer says
   "The window asks the user whether to run Delete". No key tool exists, so only the user's own key answers.
 - MC-7.4 **Never in axPass** (and axClip): their windows serve no pipe (MC-6.2), so they are not reachable at all;
   should one ever be, the window refuses with its reason ("axPass's commands are never run by AI tools: its windows
   hold passwords"), `McpRun.NeverRun`.
 - MC-7.5 **Heard**: as the command runs, the window says who ran it, "Claude ran Word wrap" ("Claude" for Claude Code
-  under any spelling of its client name, otherwise the name the pairing recorded, its hidden characters made visible,
+  by one of its own client names, `claude-code`, `Claude Code` or `claude` in any case, matched whole, so that
+  "Claudette" is said as Claudette; otherwise the name the pairing recorded, its hidden characters made visible,
   at most 40 characters), joined to the command's own words in one notification ("Claude ran Word wrap. Word wrap
   off", AX-7.3), so that the command's interrupting announcement never cuts it off; alone when the command says
-  nothing. The run is in the window's recent actions as a command is (reports RP-4.1), and every call is a line of
-  the audit log (MC-6.6).
+  nothing. NVDA does not speak the notifications of a window that is not in front, so a run in such a window also
+  plays the notice chime and flashes the window on the taskbar until the user comes to it; its words are then in the
+  window's recent actions and in `axkit_window_said`, not spoken. The run is in the window's recent actions as a
+  command is (reports RP-4.1), and every call is a line of the audit log (MC-6.6).
 - MC-7.6 **What a client can reach**: nothing it could not already read. The tool goes through the same pipe, the same
   proof of the key both ways and the same pairing as the reads; a window id is a pipe's random part; a window of
   another build or another user is never asked (MC-6.3). The broker checks the switch for its answer's words, and
-  the window checks it again from the sealed file at every run, which is the check that counts.
+  the window's process checks it again from the sealed file at every run (on the pipe's thread, so that the window's
+  thread never waits on the file, bundle rule 3), which is the check that counts. A command that would bring into a
+  window what the tools could not read before (axPreview's Read the clipboard's picture) is marked act, so it runs only
+  on the user's Run (MC-D7).
+- MC-7.8 **Never under the user's hands**: a command runs as its key would, so it may move the caret or the focus
+  (Navigate's jumps, Message field, Find). While the window is in front and the user pressed a key or moved the mouse
+  within the last 3 seconds (`GetLastInputInfo`), every run is refused: "The user is working in this window right
+  now ...; try again in a moment" (`McpRun.IsUserBusy`). A window behind is never typed in, so it runs there, heard as
+  MC-7.5 says.
 - MC-7.7 **Not in this part**: arguments for a command (a path, a name, a text: a command that needs one asks the
   user in its own notice), typed data tools without a window, the scopes per client and app of MC-3.1, "Allow for this
   session" (MC-3.3).
@@ -225,6 +247,22 @@ Decisions taken for the user while away (2026-11-11), each one line to reverse:
   run, since their meaning depends on the focus, which the client does not hold.
 - MC-D6 No new network contact and no new program start: the run is a command of the window, which may itself reach
   what the user's own command would (git's Push, Claude Code's restart), and an act command asks first.
+
+After the review of 2026-11-11:
+
+- MC-D7 **Every command states its mark, and a program start is an act.** `Command.Mark` still defaults to change,
+  but `tests/AxKit.Tests/CommandMarkTests` fails on a `new Command(...)` without a `Mark`, so a new command never runs
+  unasked by forgetting it; the same test pins the act commands that start a program or reach past the window:
+  axFile's Open (a file opens in its program, a script or a program run itself; a client that wants a folder opens
+  axFile on it with `axkit_open`), axHelp's Open the conversation and Put a picture file into the conversation (they
+  start Claude Code, as MC-6.5 refuses for `axkit_open`), axPreview's Read the clipboard's picture (MC-7.6), axGIT's
+  Stage or unstage, Stage all and Unstage all (the repository changes), axStart's Start, the console windows' New
+  session and restarts, axMCP's Call. Copies to the clipboard are act too (the user's clipboard is outside the window).
+- MC-D8 **An exception to AX-7.1's "the caret moves only on the user's own command"**: a run moves the caret or the
+  focus as the command's key would, since the user allowed it with the switch and hears who ran it; MC-7.8 keeps it
+  from happening under the user's hands. Said in the guide.
+- MC-D9 **Off and Forget take the switch with them**: turning the access off and Forget AI tools both turn Let AI
+  tools run commands off and say so; turning the access on again leaves it off.
 
 ## 9. Built in this order
 

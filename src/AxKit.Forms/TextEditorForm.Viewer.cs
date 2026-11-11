@@ -63,8 +63,8 @@ public sealed partial class TextEditorForm
     /// <summary>The viewer's File menu after Open and the recent files (AP-3.1): nothing is written, so the Save slot holds Reload and the ways on.</summary>
     private void AddViewerFileItems(ToolStripMenuItem file)
     {
-        Add(file, new Command("Re&load", EditorKeys.Reload, ReloadCommand));
-        Add(file, new Command("Read the clipboard's &picture", EditorKeys.ClipboardPicture, ReadClipboardPicture) { Mark = CommandMark.Open });
+        Add(file, new Command("Re&load", EditorKeys.Reload, ReloadCommand) { Mark = CommandMark.Change });
+        Add(file, new Command("Read the clipboard's &picture", EditorKeys.ClipboardPicture, ReadClipboardPicture) { Mark = CommandMark.Act });
         file.DropDownItems.Add(new ToolStripSeparator());
         // The item's label follows the file's page (UpdateEditItem); the command's is the key table's, true for any.
         _editItem = Add(file, new Command("&Edit in the editor", EditorKeys.Edit, OpenInEditor) { Mark = CommandMark.Open });

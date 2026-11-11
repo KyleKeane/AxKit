@@ -53,7 +53,7 @@ public sealed partial class TaskForm : ItemForm
         _listMenu.DropDownItems.Add(new ToolStripMenuItem("New Git&Hub list...", null, (_, _) => NewGitHubList()));
         _listMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename));
         _listMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete));
-        Add(_listMenu, new Command("Move to s&ection...", AxTaskKeys.MoveToSection, MoveToSection) { When = InNavigator });
+        Add(_listMenu, new Command("Move to s&ection...", AxTaskKeys.MoveToSection, MoveToSection) { When = InNavigator, Mark = CommandMark.Change });
         _listMenu.DropDownItems.Add(Item("Pre&vious section", () => JumpSection(-1), ItemKeys.PreviousSection));
         _listMenu.DropDownItems.Add(Item("Ne&xt section", () => JumpSection(1), ItemKeys.NextSection));
         _listMenu.DropDownItems.Add(new ToolStripSeparator());
@@ -94,7 +94,7 @@ public sealed partial class TaskForm : ItemForm
         _fieldMenu.DropDownItems.Add(Item("Move do&wn", () => MoveField(1), ItemKeys.MoveFieldDown));
 
         var view = new ToolStripMenuItem("&View");
-        _hideDoneItem = Add(view, new Command("&Hide done tasks", AxTaskKeys.HideDone, ToggleHideDone) { When = NotRenaming });
+        _hideDoneItem = Add(view, new Command("&Hide done tasks", AxTaskKeys.HideDone, ToggleHideDone) { When = NotRenaming, Mark = CommandMark.Change });
         _hideDoneItem.Checked = settings.HideDone;
 
         var options = new ToolStripMenuItem("&Options");

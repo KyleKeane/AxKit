@@ -40,7 +40,7 @@ public sealed class CalcForm : AxKitForm
         // ---- menus and keys (AC-7.1, AC-7.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         var calculator = new ToolStripMenuItem("&Session");
         Add(calculator, new Command("&Answer", AxCalcKeys.Act, Evaluate) { When = () => _field.Focused, Mark = CommandMark.Read });
-        Add(calculator, new Command("&Copy answer", AxCalcKeys.CopyAnswer, CopyAnswer));
+        Add(calculator, new Command("&Copy answer", AxCalcKeys.CopyAnswer, CopyAnswer) { Mark = CommandMark.Act });
         var copyIn = new ToolStripMenuItem("Copy answer &in");
         copyIn.DropDownItems.Add(new ToolStripMenuItem("&Hexadecimal", null, (_, _) => CopyCode(16)));
         copyIn.DropDownItems.Add(new ToolStripMenuItem("&Binary", null, (_, _) => CopyCode(2)));
@@ -86,10 +86,10 @@ public sealed class CalcForm : AxKitForm
         }
 
         AddFindInListKeys("history", _history, Labels);
-        AddKey(new Command("Clear the field", AxCalcKeys.Back, ClearField) { When = () => _field.Focused });
+        AddKey(new Command("Clear the field", AxCalcKeys.Back, ClearField) { When = () => _field.Focused, Mark = CommandMark.Change });
         AddKey(new Command("Recall the entry", AxCalcKeys.Act, Recall) { When = () => _history.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Back to the field", AxCalcKeys.Back, () => _field.Focus()) { When = () => _history.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Remove the entry", AxCalcKeys.Remove, RemoveEntry) { When = () => _history.Focused });
+        AddKey(new Command("Remove the entry", AxCalcKeys.Remove, RemoveEntry) { When = () => _history.Focused, Mark = CommandMark.Change });
 
         // ---- the history and the field (AC-2.1) ----
         _history.IntegralHeight = false;

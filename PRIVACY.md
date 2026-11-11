@@ -113,8 +113,8 @@ terms (Claude Code: Anthropic's). axPass and axClip are never read. A second swi
 commands, off unless you turn it on, lets a paired tool run a window's menu commands by name through the same pipes;
 each is said in the window as it runs, one that acts outside the window asks you first, and none answers a question the
 window asks you. It adds no network contact and no program of its own: a command does what it does when you run it. Every call is written to `mcp-audit.log` on your
-computer, with its arguments hashed. Forget AI tools removes every pairing; turning it off ends access at the next
-call.
+computer, with its arguments hashed. Forget AI tools removes every pairing and turns Let AI tools run commands off;
+turning the access off ends access at the next call and turns Let AI tools run commands off too.
 
 ## What stays on your computer
 

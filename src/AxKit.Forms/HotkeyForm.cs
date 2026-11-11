@@ -85,7 +85,7 @@ public abstract class HotkeyForm : AxKitForm
         {
             Log.Info("Hidden: Hide");
             HideWindow();
-        }));
+        }) { Mark = CommandMark.Change });
         menu.DropDownItems.Add(new ToolStripMenuItem($"&Quit {AppName}", null, (_, _) => Quit()));
     }
 

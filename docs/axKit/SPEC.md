@@ -508,7 +508,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - **axKit** (A; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Claude ▸ (C;
     `CreateClaudeMenu`, `ai-help.md` AH-1.1: Use Claude in axKit, the switch; Ask about this window…, Shift+F1; Folders
     Claude may read… and Claude's working folder), AI tools ▸ (I; `mcp.md` MC-6.1: Let AI tools read and open axKit, Let AI tools run commands (MC-7.2,
-    2026-11-11, `axkit_window_run`, a window's command run by its name, said in the window, an act one asked first),
+    2026-11-11, `axkit_window_run`, a window's command run by its name, said in the window, an act one asked first,
+    never in a window in front the user is typing in; turned off with the access and by Forget AI tools; a run may move
+    the caret or the focus as the command's key would, the one exception to AX-7's caret rule, `mcp.md` MC-7.8, MC-D8),
     Add axKit to Claude Code, Forget AI tools, Read the log) and Theme ▸ (T; `theme.md` TH-4,
     Options, Text, Theme until 5.7.0). A new bundle-wide setting or action joins here, never an app's Options.
   - **Help** (H; `AxKitForm.CreateHelpMenu`, which the window calls with its guide and pages): Command palette… (P,

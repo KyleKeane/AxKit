@@ -333,6 +333,11 @@ runner's desktop and pass. With NVDA, in axDown and axFile:
    name field focused; asked again, Escape says "New folder not run", and a third run within the minute asks nothing.
 6. A real Claude Code session, paired, asked to run a command of an axDown window: "Claude ran ..." heard (the user's,
    by ear: the runner cannot be Claude Code).
+7. (After the review of 2026-11-11.) In axFile with a file selected, a run of Open asks first ("axAutomate asks to run
+   Open"); Escape says "Open not run" and nothing opens. With the window in front, typing in it and a run within 3
+   seconds: refused, nothing moves. A run in an axDown window behind another: the notice chime and the taskbar flash,
+   no speech. Turning AI tools off says "... and Let AI tools run commands is off too", and on again the switch reads
+   not checked; Forget AI tools says the switch is off.
 
 ## Owed: the twelve decided changes (the branch `improvements`, 2026-11-09, `docs/axKit/inventory-2026-11-09.md` section 11)
 

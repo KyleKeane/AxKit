@@ -35,7 +35,8 @@ After the kit:
   the command palette (it already reads the menus). Menu, key, F1, palette and MCP cannot disagree, since there is one
   list.
 - AK-2.4 Tests from the data: every command's key is in the F1 text; letters are unique within a menu; no key equals a
-  bundle key; every act command is marked.
+  bundle key; every act command is marked (since 2026-11-11 every command states its mark, and the act commands that
+  start a program or reach past the window are pinned, `tests/AxKit.Tests/CommandMarkTests`, `mcp.md` MC-D7).
 
 ## 3. Archetypes
 

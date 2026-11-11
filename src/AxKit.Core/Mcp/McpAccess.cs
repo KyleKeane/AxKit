@@ -61,7 +61,30 @@ public static class McpAccess
     public static bool Enabled => Load().Enabled;
 
     /// <summary>MC-7.2: whether AI tools may run commands, read from the sealed file; false whenever the access itself is off.</summary>
-    public static bool RunsCommands => Load() is { Enabled: true, RunCommands: true };
+    public static bool RunsCommands => RunsCommandsIn(Load());
+
+    /// <summary>MC-7.2: whether these settings let AI tools run commands: the switch on and the access itself on.</summary>
+    public static bool RunsCommandsIn(McpSettings settings) => settings is { Enabled: true, RunCommands: true };
+
+    /// <summary>MC-6.1, MC-7.2: the access turned on or off; off turns the run switch off too, so that turning the access on again never brings back running commands unsaid.</summary>
+    public static McpSettings Switched(McpSettings settings, bool enabled)
+    {
+        settings.Enabled = enabled;
+        if (!enabled)
+        {
+            settings.RunCommands = false;
+        }
+
+        return settings;
+    }
+
+    /// <summary>MC-6.1, MC-7.2: Forget AI tools takes every permission back: every client forgotten and the run switch off.</summary>
+    public static McpSettings Forgotten(McpSettings settings)
+    {
+        settings.Clients = [];
+        settings.RunCommands = false;
+        return settings;
+    }
 
     /// <summary>MC-7.2: the switch Let AI tools run commands, written sealed; on makes the key first, as turning the access on does.</summary>
     public static void SetRunCommands(bool on)
@@ -84,9 +107,7 @@ public static class McpAccess
             MakeKey();
         }
 
-        var settings = Load();
-        settings.Enabled = enabled;
-        Save(settings);
+        Save(Switched(Load(), enabled));
     }
 
     /// <summary>The client paired for this program file, or null.</summary>
@@ -101,12 +122,10 @@ public static class McpAccess
         Save(settings);
     }
 
-    /// <summary>axKit → AI tools → Forget AI tools: every client forgotten, so that each must be allowed again.</summary>
+    /// <summary>axKit → AI tools → Forget AI tools: every client forgotten, so that each must be allowed again, and the run switch off (<see cref="Forgotten"/>).</summary>
     public static void ForgetAll()
     {
-        var settings = Load();
-        settings.Clients = [];
-        Save(settings);
+        Save(Forgotten(Load()));
     }
 
     /// <summary>The file written with its seal; without a key (the access never turned on) it is written off and empty.</summary>

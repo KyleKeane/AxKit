@@ -110,7 +110,7 @@ public static class McpBroker
             // MC-7: the switch asked here for the answer's words and again by the window, whose answer is the one that
             // counts; the client named as the pairing knows it, not as this session's initialize says.
             var current = McpAccess.Load();
-            if (!current.RunCommands)
+            if (!McpAccess.RunsCommandsIn(current))
             {
                 return new McpResult(McpRun.SwitchOff, true);
             }

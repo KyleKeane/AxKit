@@ -225,6 +225,50 @@ public sealed class McpTests
         Assert.NotEqual(oldSeal, before.Seal);
     }
 
+    [Fact]
+    public void Commands_run_only_while_the_access_and_the_switch_are_both_on()
+    {
+        Assert.False(McpAccess.RunsCommandsIn(new McpSettings()));
+        Assert.False(McpAccess.RunsCommandsIn(new McpSettings { Enabled = true }));
+        // The switch left on while the access is off counts for nothing.
+        Assert.False(McpAccess.RunsCommandsIn(new McpSettings { Enabled = false, RunCommands = true }));
+        Assert.True(McpAccess.RunsCommandsIn(new McpSettings { Enabled = true, RunCommands = true }));
+    }
+
+    [Fact]
+    public void Turning_the_access_off_turns_the_switch_off_and_on_again_leaves_it_off()
+    {
+        var settings = new McpSettings { Enabled = true, RunCommands = true };
+        McpAccess.Switched(settings, enabled: false);
+        Assert.False(settings.Enabled);
+        Assert.False(settings.RunCommands);
+        McpAccess.Switched(settings, enabled: true);
+        Assert.True(settings.Enabled);
+        Assert.False(McpAccess.RunsCommandsIn(settings));
+    }
+
+    [Fact]
+    public void Forget_takes_every_permission_back_the_switch_included()
+    {
+        var settings = new McpSettings { Enabled = true, RunCommands = true, Clients = [new McpClient(@"C:\Tools\claude.exe", "Claude Code", "2026-11-11 09:00")] };
+        McpAccess.Forgotten(settings);
+        Assert.Empty(settings.Clients);
+        Assert.False(settings.RunCommands);
+        // The access itself stays as the user set it: Forget is about the clients and what they were allowed.
+        Assert.True(settings.Enabled);
+    }
+
+    [Theory]
+    [InlineData(true, 0, true)]
+    [InlineData(true, 2999, true)]
+    [InlineData(true, 3000, false)]
+    [InlineData(false, 0, false)]
+    [InlineData(true, -1, false)]
+    public void A_run_waits_while_the_user_works_in_the_window_in_front(bool inFront, long idleMs, bool busy)
+    {
+        Assert.Equal(busy, McpRun.IsUserBusy(inFront, idleMs));
+    }
+
     private static readonly McpCommandName[] EditorCommands =
     [
         new("&Word wrap", "Options, Text"),
@@ -267,7 +311,10 @@ public sealed class McpTests
     [Theory]
     [InlineData("claude-code", "Claude")]
     [InlineData("Claude Code", "Claude")]
+    [InlineData("CLAUDE", "Claude")]
     [InlineData("axAutomate", "axAutomate")]
+    [InlineData("Claudette", "Claudette")]
+    [InlineData("claude-whatever", "claude-whatever")]
     [InlineData("", "An AI tool")]
     public void The_window_names_who_ran_a_command(string client, string speaker)
     {

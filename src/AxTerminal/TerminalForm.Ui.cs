@@ -56,7 +56,7 @@ internal sealed partial class TerminalForm
         session.DropDownItems.Add(switchShell);
         session.DropDownItems.Add(new ToolStripSeparator());
         Add(session, new Command("Res&tart shell", AxTerminalKeys.RestartShell, RestartShell) { Mark = CommandMark.Act });
-        Add(session, new Command("&Clear transcript", AxTerminalKeys.ClearTranscript, ClearTranscript));
+        Add(session, new Command("&Clear transcript", AxTerminalKeys.ClearTranscript, ClearTranscript) { Mark = CommandMark.Change });
         session.DropDownItems.Add(new ToolStripSeparator());
         Add(session, new Command("Say current fol&der", AxTerminalKeys.SayFolder, SayFolder) { Mark = CommandMark.Read });
         // AT-1.5: the way to the other windows, on the shell's current directory.

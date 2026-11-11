@@ -70,11 +70,26 @@ public static class McpRun
         return (named[0], null);
     }
 
-    /// <summary>Who ran it, as the user hears it (MC-7.5): "Claude" for Claude Code under any spelling of its name, the client's own name otherwise, its hidden characters made visible and at most 40 characters.</summary>
+    /// <summary>
+    /// The names Claude Code gives itself in MCP's <c>initialize</c>, which the window says as "Claude" (MC-7.5); matched
+    /// whole, so that a client that only starts with the word ("Claudette", "claude-whatever") is said by its own name.
+    /// </summary>
+    public static readonly IReadOnlyList<string> ClaudeCodeNames = ["claude-code", "Claude Code", "claude"];
+
+    /// <summary>How long after the user's last key or mouse move a window in front refuses a run (MC-7.8, MC-D8), so that no command moves the caret or the focus under the user's hands.</summary>
+    public const int UserBusyMs = 3000;
+
+    /// <summary>The refusal while the user works in the window (MC-7.8).</summary>
+    public const string UserBusy = "The user is working in this window right now (a key or the mouse within the last 3 seconds): commands run in a window in front only while the user pauses. Try again in a moment.";
+
+    /// <summary>MC-7.8: whether a run is refused because the user is working in the window: it is in front and the user's last input is more recent than <see cref="UserBusyMs"/>.</summary>
+    public static bool IsUserBusy(bool inFront, long idleMs) => inFront && idleMs >= 0 && idleMs < UserBusyMs;
+
+    /// <summary>Who ran it, as the user hears it (MC-7.5): "Claude" for Claude Code by one of its own names (<see cref="ClaudeCodeNames"/>, any case), the client's own name otherwise, its hidden characters made visible and at most 40 characters.</summary>
     public static string Speaker(string client)
     {
         var name = DisplayText.Visible(client.Trim());
-        if (name.StartsWith("claude", StringComparison.OrdinalIgnoreCase))
+        if (ClaudeCodeNames.Contains(name, StringComparer.OrdinalIgnoreCase))
         {
             return "Claude";
         }

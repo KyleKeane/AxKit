@@ -39,15 +39,17 @@ expect said axAutomate ran New folder
 expect focus Name
 keys escape
 
-# Asked again: Escape is Deny, the default; the command does not run.
-mcp call axkit_window_run {"window":"{window}","command":"New folder"}
-expect state "notice":"axAutomate asks to run New folder"
+# MC-D7: Open starts the file's program (a script or a program among them), so it is act and asked first too. Escape
+# is Deny, the default; nothing opens.
+mcp call axkit_window_run {"window":"{window}","command":"Open"}
+expect mcp The window asks the user whether to run Open
+expect state "notice":"axAutomate asks to run Open"
 wait 1500
 keys escape
-expect said New folder not run
-refuse said axAutomate ran New folder
+expect said Open not run
+refuse said axAutomate ran Open
 
-# After a Deny the window asks no more for a minute.
+# After a Deny the window asks no more for a minute, whatever the command.
 mcp call axkit_window_run {"window":"{window}","command":"New folder"}
 expect mcp error: The user denied running a command a moment ago
 refuse state asks to run

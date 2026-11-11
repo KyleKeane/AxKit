@@ -48,15 +48,15 @@ public sealed class ClipForm : HotkeyForm
         AddMatchKeys(AxClipKeys.NextMatch, AxClipKeys.PreviousMatch, AxClipKeys.FirstMatch, AxClipKeys.LastMatch);
         var clip = new ToolStripMenuItem("&Session");
         Add(clip, new Command("&Paste", AxClipKeys.Paste, Paste) { Mark = CommandMark.Act });
-        Add(clip, new Command("&Copy without pasting", AxClipKeys.CopyOnly, CopyOnly));
+        Add(clip, new Command("&Copy without pasting", AxClipKeys.CopyOnly, CopyOnly) { Mark = CommandMark.Act });
         Add(clip, new Command("&Read in full", AxClipKeys.ReadInFull, ReadInFull) { Mark = CommandMark.Read });
-        Add(clip, new Command("Re&move", AxClipKeys.Remove, RemoveSelected));
+        Add(clip, new Command("Re&move", AxClipKeys.Remove, RemoveSelected) { Mark = CommandMark.Change });
         Add(clip, new Command("C&lear history...", AxClipKeys.ClearHistory, ClearHistory) { Mark = CommandMark.Act });
         AddHideAndQuit(clip, AxClipKeys.Hide);
 
         var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(HotkeyItem());
-        _pauseItem = Add(options, new Command("&Pause recording", AxClipKeys.PauseRecording, TogglePause));
+        _pauseItem = Add(options, new Command("&Pause recording", AxClipKeys.PauseRecording, TogglePause) { Mark = CommandMark.Change });
         options.DropDownItems.Add(Toggle("&Keep history between runs", settings.KeepHistory, v =>
         {
             // CP-3.4: off, the file's history is emptied by the save that follows.

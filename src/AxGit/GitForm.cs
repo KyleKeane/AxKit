@@ -82,9 +82,9 @@ public sealed partial class GitForm : AxKitForm
         // Space, Enter and Delete act in the list only; in the details they are the control's own (AG-6.2). Enter acts
         // on the item of the view shown: Show diff, the commit (a key without an item), Switch to branch.
         var changes = new ToolStripMenuItem("O&perations");
-        Git(Add(changes, new Command("&Stage or unstage", AxGitKeys.StageToggle, () => Do(StageToggleAsync)) { When = () => _list.Focused }));
-        Git(Add(changes, new Command("Stage &all", AxGitKeys.StageAll, () => Do(() => StageAllAsync(stage: true)))));
-        Git(Add(changes, new Command("&Unstage all", AxGitKeys.UnstageAll, () => Do(() => StageAllAsync(stage: false)))));
+        Git(Add(changes, new Command("&Stage or unstage", AxGitKeys.StageToggle, () => Do(StageToggleAsync)) { When = () => _list.Focused, Mark = CommandMark.Act }));
+        Git(Add(changes, new Command("Stage &all", AxGitKeys.StageAll, () => Do(() => StageAllAsync(stage: true))) { Mark = CommandMark.Act }));
+        Git(Add(changes, new Command("&Unstage all", AxGitKeys.UnstageAll, () => Do(() => StageAllAsync(stage: false))) { Mark = CommandMark.Act }));
         changes.DropDownItems.Add(new ToolStripSeparator());
         Git(Add(changes, new Command("Show &diff", AxGitKeys.Act, () => Do(ShowDiffAsync)) { When = () => _list.Focused && _view == View.Changes, Mark = CommandMark.Read }));
         Add(changes, new Command("&Open file in editor", AxGitKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });

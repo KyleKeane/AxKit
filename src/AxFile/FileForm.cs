@@ -73,8 +73,8 @@ public sealed partial class FileForm : AxKitForm
         var sort = new ToolStripMenuItem("&Sort by");
         _sortItems = new ChoiceItems<SortBy>(sort, Enum.GetValues<SortBy>().Select(by => (by, "&" + char.ToUpperInvariant(by.ToString()[0]) + by.ToString()[1..])), _settings.SortBy, SetSort);
         folder.DropDownItems.Add(sort);
-        Add(folder, new Command("Fil&ter...", AxFileKeys.Filter, ShowFilterNotice));
-        AddKey(new Command("Add to or remove from Favorites", AxFileKeys.Favorite, ToggleFavorite));
+        Add(folder, new Command("Fil&ter...", AxFileKeys.Filter, ShowFilterNotice) { Mark = CommandMark.Change });
+        AddKey(new Command("Add to or remove from Favorites", AxFileKeys.Favorite, ToggleFavorite) { Mark = CommandMark.Change });
         folder.DropDownItems.Add(new ToolStripSeparator());
         // AF-1.3: the way to the other windows, on the folder shown. The base makes the submenu around its File
         // Explorer item, so the item only shows the key and the key is a command of its own.
@@ -94,17 +94,17 @@ public sealed partial class FileForm : AxKitForm
         // Selection (AF-3.7, AF-D10, 2026-10-22): the marks from anywhere, then the operations on them alone, which say
         // "None selected" rather than fall back to the current entry; Item is the entry, Folder the folder.
         var select = new ToolStripMenuItem("Se&lection");
-        Add(select, new Command("Select &all", AxFileKeys.SelectAll, SelectAll) { When = InList });
-        Add(select, new Command("&Deselect all", AxFileKeys.SelectNone, SelectNone) { When = InList });
-        Add(select, new Command("Select or deselect this &entry", AxFileKeys.Select, ToggleSelection) { When = InList });
-        Add(select, new Command("Select to &here", AxFileKeys.SelectTo, SelectToHere) { When = InList });
+        Add(select, new Command("Select &all", AxFileKeys.SelectAll, SelectAll) { When = InList, Mark = CommandMark.Change });
+        Add(select, new Command("&Deselect all", AxFileKeys.SelectNone, SelectNone) { When = InList, Mark = CommandMark.Change });
+        Add(select, new Command("Select or deselect this &entry", AxFileKeys.Select, ToggleSelection) { When = InList, Mark = CommandMark.Change });
+        Add(select, new Command("Select to &here", AxFileKeys.SelectTo, SelectToHere) { When = InList, Mark = CommandMark.Change });
         // The Shift ranges (AF-3.7), keys of the list with no menu item.
-        AddKey(new Command("Select to the next entry", AxFileKeys.SelectDown, () => ExtendSelection(_list.SelectedIndex + 1)) { When = InList });
-        AddKey(new Command("Select to the previous entry", AxFileKeys.SelectUp, () => ExtendSelection(_list.SelectedIndex - 1)) { When = InList });
-        AddKey(new Command("Select to the first entry", AxFileKeys.SelectToStart, () => ExtendSelection(0)) { When = InList });
-        AddKey(new Command("Select to the last entry", AxFileKeys.SelectToEnd, () => ExtendSelection(int.MaxValue)) { When = InList });
+        AddKey(new Command("Select to the next entry", AxFileKeys.SelectDown, () => ExtendSelection(_list.SelectedIndex + 1)) { When = InList, Mark = CommandMark.Change });
+        AddKey(new Command("Select to the previous entry", AxFileKeys.SelectUp, () => ExtendSelection(_list.SelectedIndex - 1)) { When = InList, Mark = CommandMark.Change });
+        AddKey(new Command("Select to the first entry", AxFileKeys.SelectToStart, () => ExtendSelection(0)) { When = InList, Mark = CommandMark.Change });
+        AddKey(new Command("Select to the last entry", AxFileKeys.SelectToEnd, () => ExtendSelection(int.MaxValue)) { When = InList, Mark = CommandMark.Change });
         // Escape: the marks cleared, else the filter (AF-3.7, AF-3.8); with neither, the key is left alone.
-        AddKey(new Command("Clear the selection or the filter", AxFileKeys.Clear, () => ClearSelectionOrFilter()) { When = () => InList() && (_marks.Count > 0 || _filter.Length > 0) });
+        AddKey(new Command("Clear the selection or the filter", AxFileKeys.Clear, () => ClearSelectionOrFilter()) { When = () => InList() && (_marks.Count > 0 || _filter.Length > 0), Mark = CommandMark.Change });
         select.DropDownItems.Add(new ToolStripSeparator());
         // The operations on the marks alone (AF-D10): their keys are the Item menu's commands, on the targets, which
         // are the marks while there are any; these items only show them.
@@ -204,7 +204,7 @@ public sealed partial class FileForm : AxKitForm
     /// </summary>
     private void FillItemMenu(ToolStripMenuItem menu)
     {
-        Add(menu, new Command("&Open", AxFileKeys.Open, OpenSelected) { When = InList, Mark = CommandMark.Open });
+        Add(menu, new Command("&Open", AxFileKeys.Open, OpenSelected) { When = InList, Mark = CommandMark.Act });
         var openWith = new ToolStripMenuItem("Open &with");
         CommandPalette.FilledOnOpening(openWith).DropDownOpening += (_, _) => FillOpenWith(openWith);
         FillOpenWith(openWith);

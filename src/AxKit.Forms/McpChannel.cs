@@ -30,6 +30,9 @@ internal sealed class McpChannel
 
     private static readonly JsonSerializerOptions Plain = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
+    /// <summary>A run's answer (MC-7.1) without the parts that do not apply.</summary>
+    private static readonly JsonSerializerOptions RunAnswer = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull };
+
     private readonly AxKitForm _form;
     private readonly string _name = Prefix + Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(8));
 
@@ -309,10 +312,13 @@ internal sealed class McpChannel
 
         try
         {
-            var (error, label, asked) = OnWindow(() => _form.McpRunCommand(name, menu, client));
+            // MC-7.6: the sealed switch read here, on the pipe's thread, so that the window's thread never waits on the file
+            // (bundle rule 3); the window refuses when it is off.
+            var allowed = McpAccess.RunsCommands;
+            var (error, label, asked, ticket) = OnWindow(() => _form.McpRunCommand(name, menu, client, allowed));
             if (error is not null)
             {
-                return JsonSerializer.Serialize(new { error }, Plain);
+                return JsonSerializer.Serialize(new { error }, RunAnswer);
             }
 
             var start = Environment.TickCount64;
@@ -336,23 +342,26 @@ internal sealed class McpChannel
 
             if (_form.IsDisposed)
             {
-                return JsonSerializer.Serialize(new { ran = asked ? null : label, said, closed = true }, Plain);
+                return JsonSerializer.Serialize(new { said, closed = "The window closed; whether the command ran is not known." }, RunAnswer);
             }
 
-            var (notice, noticeText, dialog) = OnWindow(_form.McpAfterRun);
+            var (notice, noticeText, dialog, ran, notRun) = OnWindow(() => _form.McpAfterRun(ticket));
             return JsonSerializer.Serialize(new
             {
-                ran = asked ? null : label,
+                // "ran" only for a run the window took up and ran (MC-7.1): never for one that a notice or the switch stopped.
+                ran = !asked && ran == true ? label : null,
+                notRun = !asked && ran == false ? $"{label} did not run: {notRun}." : null,
+                unknown = !asked && ran is null ? $"Whether {label} ran is not known yet: axkit_window_said tells." : null,
                 asked = asked ? $"The window asks the user whether to run {label}; the user answers there, and axkit_window_said tells what came of it." : null,
                 said,
                 notice,
                 noticeText,
                 dialog = dialog ? "The window shows the user a Windows dialog." : null,
-            }, Plain);
+            }, RunAnswer);
         }
         catch (InvalidOperationException) when (_form.IsDisposed)
         {
-            return JsonSerializer.Serialize(new { ran = name, closed = true }, Plain);
+            return JsonSerializer.Serialize(new { closed = "The window closed; whether the command ran is not known." }, RunAnswer);
         }
         finally
         {

@@ -28,6 +28,6 @@ public sealed record Command(string Label, Keys Key, Action Run)
     /// <summary>Whether the key acts now (the list has the focus, the field has it); the menu item always runs.</summary>
     public Func<bool>? When { get; init; }
 
-    /// <summary>What the command does beyond reading, for MCP; a change by default.</summary>
+    /// <summary>What the command does beyond reading, for MCP; a change by default, but every command made in <c>src</c> states it (<c>CommandMarkTests</c>, docs/axKit/mcp.md MC-D7), since only act is asked of the user before an AI tool runs it.</summary>
     public CommandMark Mark { get; init; } = CommandMark.Change;
 }

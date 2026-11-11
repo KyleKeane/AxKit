@@ -64,7 +64,7 @@ Calls (5):
   Code: `var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
   Code: `created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Mcp.cs:351`, in `AxKitForm.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.Mcp.cs:457`, in `AxKitForm.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
   Code: `using var process = System.Diagnostics.Process.Start(start);`
 - **shared by every app**, `src/AxKit.Forms/ConsoleForm.Process.cs:51`, in `ConsoleForm.StartProcess`, by `PtyHost.Start`: starts the window's program in a pseudo console: "claude --ax-screen-reader" for axClaude, the chosen shell for axTerminal.
   Code: `host = PtyHost.Start(options, OnData, OnExited);`
@@ -212,7 +212,7 @@ Calls (3):
   Code: `using var input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(false));`
 - **shared by every app**, `src/AxKit.Forms/McpBroker.cs:257`, in `McpBroker.Exchange`, by `new NamedPipeClientStream`: connects to one axKit window's pipe to ask it what it shows, for the AI tool's request; the broker first checks that the pipe's server is this very program file (docs/axKit/mcp.md MC-6.3).
   Code: `using var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification);`
-- **shared by every app**, `src/AxKit.Forms/McpChannel.cs:98`, in `McpChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where the MCP server asks the window what it shows while the AI tools are on; each connection must answer the challenge with the paired key.
+- **shared by every app**, `src/AxKit.Forms/McpChannel.cs:101`, in `McpChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where the MCP server asks the window what it shows while the AI tools are on; each connection must answer the challenge with the paired key.
   Code: `using var pipe = NamedPipeServerStreamAcl.Create(_name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());`
 
 #### Test automation
@@ -286,7 +286,7 @@ Used in 16 places:
 - `src/AxKit.Forms/AxKitForm.cs:826`, in `AxKitForm.OpenUrl`, for Windows.
 - `src/AxKit.Forms/AxKitForm.cs:851`, in `AxKitForm.OpenInExplorer`, for Windows.
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
-- `src/AxKit.Forms/AxKitForm.Mcp.cs:351`, in `AxKitForm.RunClaude`, for Claude Code.
+- `src/AxKit.Forms/AxKitForm.Mcp.cs:457`, in `AxKitForm.RunClaude`, for Claude Code.
 - `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, for Windows.
 - `src/AxKit.Forms/McpBroker.cs:323`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
@@ -377,7 +377,7 @@ Defined in .NET, System.IO.Pipes: opens a named pipe on this computer with an ac
 Used in 2 places:
 
 - `src/AxKit.Forms/AutomationChannel.cs:123`, in `AutomationChannel.Serve`, for Test automation.
-- `src/AxKit.Forms/McpChannel.cs:98`, in `McpChannel.Serve`, for AI tools.
+- `src/AxKit.Forms/McpChannel.cs:101`, in `McpChannel.Serve`, for AI tools.
 
 ### Console.OpenStandardInput, pipe
 

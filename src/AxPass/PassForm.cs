@@ -60,7 +60,7 @@ public sealed partial class PassForm : ItemForm
         var file = new ToolStripMenuItem("&Session");
         Add(file, new Command("&Open database...", AxPassKeys.OpenDatabase, ChooseDatabase) { When = NotRenaming, Mark = CommandMark.Open });
         file.DropDownItems.Add(new ToolStripMenuItem("&New database...", null, (_, _) => NewDatabase()));
-        Add(file, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming });
+        Add(file, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming, Mark = CommandMark.Change });
         file.DropDownItems.Add(new ToolStripMenuItem("&Back up now", null, (_, _) => Do(BackUpNowAsync)));
         file.DropDownItems.Add(new ToolStripMenuItem("Show backups in ax&File", null, (_, _) => ShowBackups()));
         // F5 and the item read the database again (item-apps.md: "read the folder again"); until 2026-10-24 the key
@@ -82,7 +82,7 @@ public sealed partial class PassForm : ItemForm
         _entryMenu.DropDownItems.Add(Item("Read in &full", ReadAll, ItemKeys.ReadAll));
         _entryMenu.DropDownItems.Add(Item("New &entry...", NewItem, ItemKeys.New));
         _entryMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename));
-        Add(_entryMenu, new Command("Move to a gr&oup...", AxPassKeys.MoveEntry, MoveEntry) { When = InNavigator });
+        Add(_entryMenu, new Command("Move to a gr&oup...", AxPassKeys.MoveEntry, MoveEntry) { When = InNavigator, Mark = CommandMark.Change });
         _entryMenu.DropDownItems.Add(Item("To the Recycle &Bin", () => WithRow(DeleteRow), ItemKeys.Delete));
 
         _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open));

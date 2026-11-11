@@ -231,9 +231,9 @@ public abstract partial class ItemForm : AxKitForm
         AddKey(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(Navigator, NavigatorLabels)) { When = NotRenaming, Mark = CommandMark.Read });
         AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(Navigator, NavigatorLabels, 1)) { When = NotRenaming, Mark = CommandMark.Read });
         AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(Navigator, NavigatorLabels, -1)) { When = NotRenaming, Mark = CommandMark.Read });
-        AddKey(new Command("Undo", ItemKeys.Undo, Undo) { When = NotRenaming });
+        AddKey(new Command("Undo", ItemKeys.Undo, Undo) { When = NotRenaming, Mark = CommandMark.Change });
         AddKey(new Command("Refresh", ItemKeys.Refresh, () => Refresh(announce: true)) { When = NotRenaming, Mark = CommandMark.Read });
-        AddKey(new Command("New list", ItemKeys.NewList, NewList) { When = NotRenaming });
+        AddKey(new Command("New list", ItemKeys.NewList, NewList) { When = NotRenaming, Mark = CommandMark.Change });
         AddKey(new Command("Read in full", ItemKeys.ReadAll, ReadAll) { When = NotRenaming, Mark = CommandMark.Read });
 
         // The bundle's focus keys switch the panes from either one, as in every other window (AX-8.2; 2026-11-09, the
@@ -252,24 +252,24 @@ public abstract partial class ItemForm : AxKitForm
         AddKey(new Command("Open", ItemKeys.Open, OpenSelected) { When = InNavigator, Mark = CommandMark.Open });
         AddKey(new Command("To the detail pane", ItemKeys.OtherPane, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
         AddKey(new Command("To the detail pane", ItemKeys.OtherPaneBack, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("Check", ItemKeys.Check, () => CheckInNavigator(SelectedRow())) { When = InNavigator });
-        AddKey(new Command("New item", ItemKeys.New, NewItem) { When = InNavigator });
-        AddKey(new Command("Rename", ItemKeys.Rename, RenameSelected) { When = InNavigator });
+        AddKey(new Command("Check", ItemKeys.Check, () => CheckInNavigator(SelectedRow())) { When = InNavigator, Mark = CommandMark.Change });
+        AddKey(new Command("New item", ItemKeys.New, NewItem) { When = InNavigator, Mark = CommandMark.Change });
+        AddKey(new Command("Rename", ItemKeys.Rename, RenameSelected) { When = InNavigator, Mark = CommandMark.Change });
         AddKey(new Command("Delete", ItemKeys.Delete, () => WithRow(DeleteRow)) { When = InNavigator, Mark = CommandMark.Act });
         AddKey(new Command("The selection's menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
         AddKey(new Command("The selection's menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
 
         // The detail pane's keys.
-        AddKey(new Command("Change the field", ItemKeys.Open, ChangeField) { When = InDetail });
+        AddKey(new Command("Change the field", ItemKeys.Open, ChangeField) { When = InDetail, Mark = CommandMark.Change });
         AddKey(new Command("To the navigator", ItemKeys.OtherPane, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
         AddKey(new Command("To the navigator", ItemKeys.OtherPaneBack, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
         AddKey(new Command("To the navigator", ItemKeys.Back, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
-        AddKey(new Command("Check the field", ItemKeys.Check, CheckField) { When = InDetail });
-        AddKey(new Command("New field", ItemKeys.New, NewField) { When = InDetail });
-        AddKey(new Command("Rename the field", ItemKeys.Rename, RenameField) { When = InDetail });
-        AddKey(new Command("Remove the field", ItemKeys.Delete, RemoveField) { When = InDetail });
-        AddKey(new Command("Move the field up", ItemKeys.MoveFieldUp, () => MoveField(-1)) { When = InDetail });
-        AddKey(new Command("Move the field down", ItemKeys.MoveFieldDown, () => MoveField(1)) { When = InDetail });
+        AddKey(new Command("Check the field", ItemKeys.Check, CheckField) { When = InDetail, Mark = CommandMark.Change });
+        AddKey(new Command("New field", ItemKeys.New, NewField) { When = InDetail, Mark = CommandMark.Change });
+        AddKey(new Command("Rename the field", ItemKeys.Rename, RenameField) { When = InDetail, Mark = CommandMark.Change });
+        AddKey(new Command("Remove the field", ItemKeys.Delete, RemoveField) { When = InDetail, Mark = CommandMark.Change });
+        AddKey(new Command("Move the field up", ItemKeys.MoveFieldUp, () => MoveField(-1)) { When = InDetail, Mark = CommandMark.Change });
+        AddKey(new Command("Move the field down", ItemKeys.MoveFieldDown, () => MoveField(1)) { When = InDetail, Mark = CommandMark.Change });
 
         // Nothing moves sideways in the field list: the edge sound, not the list box's own scroll.
         AddKey(new Command("Nothing sideways", ItemKeys.Into, Sounds.Edge) { When = InDetail, Mark = CommandMark.Read });
