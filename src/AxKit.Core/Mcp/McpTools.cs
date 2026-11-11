@@ -17,6 +17,7 @@ public static class McpTools
     public const string Commands = "axkit_window_commands";
     public const string Said = "axkit_window_said";
     public const string Open = "axkit_open";
+    public const string Run = "axkit_window_run";
 
     /// <summary>The apps that serve no pipe and so cannot be read (MC-4.1, MC-4.2): the password database and the clipboard history.</summary>
     public static readonly IReadOnlyList<string> NeverRead = [Dispatch.AxPass, Dispatch.AxClip];
@@ -41,8 +42,9 @@ public static class McpTools
         new(State, "One window's state: its title, its status bar, the notice it shows with its text, and the focused control with its value. A password field reads as protected.", Schema(("window", "The window's id from axkit_windows."))),
         new(List, "The items of the window's focused list, or of its first list, with the selected one.", Schema(("window", "The window's id from axkit_windows."))),
         new(Text, "The lines of the window's focused text, or of its main text (an editor's file, a viewer's, a transcript), at most 1 MB.", Schema(("window", "The window's id from axkit_windows."))),
-        new(Commands, "The window's commands as its menus and keys have them: the label, the key, and the mark (read, open, change, act). Listing only: running them comes later.", Schema(("window", "The window's id from axkit_windows."))),
+        new(Commands, "The window's commands as its menus and keys have them: the label, the menus that hold it, the key, and the mark (read, open, change, act). axkit_window_run runs one by its label.", Schema(("window", "The window's id from axkit_windows."))),
         new(Said, "What the window announced to the user since the last call, the last 50 announcements.", Schema(("window", "The window's id from axkit_windows."))),
+        new(Run, "Runs one command of a window, as its menu item would, by its label from axkit_window_commands, and gives what the window then said, or the question it now asks the user. Only while the user allows AI tools to run commands; never in axPass; never an answer to the window's question, which the user gives; a command that acts outside the window (marked act) asks the user first. The window says who ran it.", Require(Schema(("window", "The window's id from axkit_windows."), ("command", "The command's label as axkit_window_commands lists it, such as Word wrap."), ("menu", "Optional: the menus that hold it as axkit_window_commands lists them, such as Navigate, Next, when two commands share a label.")), "window", "command")),
         new(Open, "Opens an axKit app in a new window, on a file or folder of this computer or on nothing. The user sees and hears it open.", Schema(("app", "The app's verb from axkit_apps: down, file, git ..."), ("path", "Optional: the full path of a file or folder on this computer."))),
     ];
 
@@ -88,6 +90,13 @@ public static class McpTools
             schema["required"] = new JsonArray(arguments[0].Name);
         }
 
+        return schema;
+    }
+
+    /// <summary>The schema with these arguments required, where more than the first is.</summary>
+    private static JsonObject Require(JsonObject schema, params string[] names)
+    {
+        schema["required"] = new JsonArray([.. names.Select(name => (JsonNode)name)]);
         return schema;
     }
 

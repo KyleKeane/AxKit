@@ -140,6 +140,10 @@ $1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, it
 - `Mcp/McpTools`: the first stage's tools, `NeverRead` (axPass, axClip) and `NeverOpened` (axClaude, axTerminal),
   and `OpenArguments`, the check of `axkit_open`'s app and path. `Mcp/McpAudit` (one line a call, the arguments
   hashed) and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).
+- `Mcp/McpRun` with `McpCommandName` (MC-7, 2026-11-11): the pure rules of `axkit_window_run`, `NeverRun` (axPass,
+  axClip) with `AppRefusal`, `SwitchOff`, `Find` (a command by its label and, where two share one, its menus),
+  `Speaker`, `Said` ("Claude ran Word wrap") and `AskTitle`; the switch itself is `McpSettings.RunCommands`, sealed
+  (its " run" in the seal only while on, so older files still check), `McpAccess.RunsCommands` and `SetRunCommands`.
 
 ## Background apps
 
