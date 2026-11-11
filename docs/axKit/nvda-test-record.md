@@ -6,6 +6,25 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-11, the day's second push: every app, by the assistant through nvda-pass.ps1 (`main` 7b6e8f4 and the script fixes after it)
+
+Run by the assistant with NVDA 2025.3.3 listening while the user was away for the day (the user's word: "i will be
+away ... work autonomously"), Windows 11 Pro 10.0.26200, a development build of `main` after the merges of
+`push2/newline` (new line said in every field, AX-7.8), `push2/task-gather` (axTask's Projects and the search across
+every list, TK-7b), `push2/automate-run` (axAutomate's F5, AU-4.4, AU-6b) and `push2/mcp-run` (`axkit_window_run`,
+MC-7). `nvda-pass.ps1`, every app: 89 scripts, 86 passed whole on the first run, every announcement also spoken by
+NVDA. The three that failed were the scripts', not the apps': axDown `06-menus-and-help` expected the Text menu's
+commands without the new Say new line; `mcp/02-run-commands` and `mcp/03-run-asks-first` called the tool right after
+the pass's own keys, which are real input under NVDA, so the user-busy guard (MC-7.8) rightly refused. Fixed in the
+scripts (the expectation, and a 3.5 s pause before each run call); `nvda-pass.ps1 mcp` (3) and `nvda-pass.ps1 axDown`
+(16) then passed whole. Earlier the same day `axDown` and `axJSON` alone found the About text's list of standalone
+apps without axAutomate in two scripts (stale since axAutomate was added): fixed, then axJSON's 4 passed.
+
+Not heard by this pass, the user's by ear: how "new line" sounds after NVDA's echo of a typed word (axDown plan step
+2.5a); axTask's folder picker for a project folder (plan section 6 step 3); axAutomate plan 5.5 (a long run while the
+user works, closing the window mid-run); a real Claude Code session calling `axkit_window_run`, with the ask notice in
+a window behind; the menus opened with Alt and the arrows.
+
 ## 2026-11-11: axTerminal's shells of your own, by the assistant through nvda-pass.ps1 (branch `push/terminal-shells`, bec967e)
 
 Run by the assistant with NVDA 2025.3.3 listening after the user stepped away at the user's word, Windows 11 Pro
