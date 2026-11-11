@@ -190,8 +190,9 @@ and the AI tools over them are later (the priorities item of the request).
   `node_modules`, `bin` and `obj` are never looked into, nor a folder of lists already found, nor the top folder or
   anything in it (TK-D7). The look runs off the UI thread at the start, on the way into Projects, on F5 at the top or
   in Projects, and after a project folder is added or removed. A list is recognised by its `list.json` alone: a
-  folder of lists whose lists were made by hand without one (axTask itself always writes it) is not found until one of
-  its lists has details (any change to a list's details writes the file). When it ends, the Projects row or level is read again
+  folder of lists whose lists were all made by hand without one (axTask itself always writes it) is never found, and
+  so cannot be reached in axTask to change a list's details; it needs a `list.json` in one of its lists, made by
+  making one list in it with axTask (Session, Top folder on it, then Ctrl+Shift+N) or by adding the file. When it ends, the Projects row or level is read again
   only if what was found changed, nothing said: the selection stays, and a row whose words changed is rewritten in
   place ("Projects, looking for lists" becomes "Projects, 5 lists"); a level with other rows is filled again on the
   row selected. While a notice or a rename in place is open, the level is read again when the last notice closes.
@@ -207,9 +208,9 @@ and the AI tools over them are later (the priorities item of the request).
   Delete make, rename and move nothing and say why (Ctrl+N: "A project's items are made in its lists: Right on a
   project, then on a list"; Ctrl+Shift+N and New GitHub list: "A project's lists are made inside it: Right on a
   project first", and in the found level "Lists are made among the sections: Left first"); Ctrl+E shows a project's
-  folder in axFile. A project is never remembered as the list open last: while a project is shown, the list open
-  last of the user's own top folder stays as it was, so that the next start opens the user's own list, never a
-  project's list of the same name (TK-D10).
+  folder in axFile. A project is never remembered as the list open last, nor a found item opened (TK-7b.4): the list
+  open last of the user's own top folder stays as it was, so that the next start opens it, where before a project's
+  list opened from the search cleared it and the next start opened at the top (TK-D10).
 - **TK-7b.4 The search across every list.** Ctrl+Shift+F, anywhere in the window, asks "Type the words to find in
   every list" (the last words typed, again). Every list of the user's own top folder and of every project is read off
   the UI thread, the Archive left out as All tasks leaves it, and an item holding every word in its Title or a text
@@ -265,8 +266,9 @@ and the AI tools over them are later (the priorities item of the request).
   user to confirm): Use these fields for new items on a found item refuses as F2 and Delete do, since it changes the
   item's list, a thing of where the item lives, not of the item; New GitHub list refuses where New list does; the
   last project folder removed leaves a project shown for the user's own top level, since nothing would lead back to
-  it; opening a list in a project leaves the list open last alone, while a found item opened in the user's own
-  folder is remembered as any list opened there; and a list without `list.json` is not looked for (TK-7b.2), since a
+  it; opening a list in a project or a found item leaves the list open last alone, as the task
+  asked, a found item in the user's own folder included (the user's own place is the list open before the search);
+  and a list without `list.json` is not looked for (TK-7b.2), since a
   folder of plain folders is not told from any other folder of folders without it.
 
 ## 9. Open questions

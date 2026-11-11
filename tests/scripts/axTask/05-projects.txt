@@ -98,6 +98,12 @@ expect focus Title, text, Fix the tap
 keys shift+tab
 keys escape
 expect said ! Lists, 1 list, Projects
+# The user's own list open, so that it is the list open last (TK-7b.3).
+keys end
+expect focus Home, list, 1 item
+keys right
+expect said ! Home, 1 item, Buy a tap
+run powershell -NoProfile -Command "if (-not ((Get-Content 'home\AxKit\axTask.json' -Raw -ErrorAction Stop) -match 'lastList.:\s*.Home')) { exit 1 }"
 keys ctrl+shift+f
 keys ctrl+a
 type washer 15
@@ -109,6 +115,8 @@ menu Use these fields for new items
 expect said ! Open it where it lives first: Enter
 keys enter
 expect said ! Home, 1 item, Fix the tap
+# A project's list opened from the search leaves the user's own list open last as it was.
+run powershell -NoProfile -Command "if (-not ((Get-Content 'home\AxKit\axTask.json' -Raw -ErrorAction Stop) -match 'lastList.:\s*.Home')) { exit 1 }"
 keys left
 expect said ! tasks in alpha, 1 list, Home, list, 1 item
 
@@ -116,7 +124,7 @@ expect said ! tasks in alpha, 1 list, Home, list, 1 item
 # goes back to the user's own lists (TK-7b.1).
 keys right
 expect said ! Home, 1 item, Fix the tap
-run powershell -NoProfile -Command "if ((Get-Content 'home\AxKit\axTask.json' -Raw) -match 'lastList.:\s*.Home') { exit 1 }"
+run powershell -NoProfile -Command "if (-not ((Get-Content 'home\AxKit\axTask.json' -Raw -ErrorAction Stop) -match 'lastList.:\s*.Home')) { exit 1 }"
 menu 1. projects
 expect said ! Removed projects
 menu 1. more

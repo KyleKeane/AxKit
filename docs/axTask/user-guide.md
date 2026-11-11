@@ -145,8 +145,10 @@ moving them.
 - Options, Project folders, Add a project folder: type the path of a folder that holds your projects, such as
   `D:\Projects`, and press Enter; or leave the field empty and press Enter to choose it with the Windows
   folder picker. axTask looks four folders down in it for every folder that holds a list. A list is known by its
-  details file, `list.json`, which axTask writes for every list it makes; a list folder made by hand without one is
-  not found until you change one of its details. Remove a project folder takes one off; when you remove the last one
+  details file, `list.json`, which axTask writes for every list it makes; a project whose
+  lists were all made by hand without one is not found: make one list in it with axTask (Session, Top folder on its folder of lists, then
+  Ctrl+Shift+N), or add a `list.json` to one of
+  its lists. Remove a project folder takes one off; when you remove the last one
   while you are in a project, you are taken back to your own lists. There are none until you add one. Your own top folder, or a folder inside it, is refused: its lists
   show at the top already.
 - While project folders are set, the top level starts with the line **Projects**, saying how many lists were found.
@@ -156,7 +158,7 @@ moving them.
 - Right on a project opens it the way your own folder is shown: its sections, All tasks, smart lists and Archive.
   Everything you change there is changed in that project's files, and Ctrl+Z works as usual. Left from its sections
   goes back to Projects, and Left again to your own lists. Lists are made inside a project, not in the Projects
-  level. axTask starts again in the list of your own you had open last, never in a project's.
+  level. axTask starts again in the list of your own you had open last, never in a project's, even after you open an item the search found.
 - Ctrl+Shift+F finds words in every list, your own and every project's: type the words and press Enter. An item is
   found when its title or a text field holds every word, in capitals or not. axTask says "Searching every list" and
   then what it found; if you open another notice before the search ends, its result is dropped and the focus stays

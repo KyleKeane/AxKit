@@ -103,10 +103,10 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
 8. Ctrl+Shift+F, type `tap`, Enter: "Found tap, 2 items, Fix the tap, in tasks / Home" (your own lists first). Down:
    "Tap drips, in tasks in beta / Bugs". Tab: "Fields of Tap drips" and its Title. Shift+Tab, Escape: "Lists, 3 lists,
    Projects, 2 lists", where the search was started.
-9. Ctrl+Shift+F, type `washer 15`, Enter: "Found washer 15, 1 item, Fix the leak, in tasks in alpha / Home". F2: "Open
+9. Right on one of your own lists, so that it is the list open last. Ctrl+Shift+F, type `washer 15`, Enter: "Found washer 15, 1 item, Fix the leak, in tasks in alpha / Home". F2: "Open
    it where it lives first: Enter". Ctrl+N: "Items are made in a list: open the item where it lives first, Enter".
    Item, Use these fields for new items: "Open it where it lives first: Enter". Enter: "Home, 1 item, Fix the leak".
    Left: "tasks in alpha, 1 list, Home, list, 1 item".
 10. Right on Home again. Options, Project folders, Remove a project folder: "1. projects (...)"; Enter: "Removed
     projects. Lists, 3 lists": with no project folder left, the window is back in your own lists and the Projects line
-    is gone. Close axTask and start it again on the folder: it opens on your own lists, not in a project's Home.
+    is gone. Close axTask and start it again on the folder: it opens in that list of your own, the one open before the search, not in a project's Home.

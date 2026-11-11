@@ -337,7 +337,7 @@ public sealed partial class TaskForm
         _project = inHome ? null : found.Hit.Top;
         _projectName = inHome ? null : found.Hit.Place;
         _folder = Path.GetDirectoryName(found.Item.Path)!;
-        RememberLevel();
+        // TK-7b.3: a found item opened is never remembered as the list open last; the user's own place is kept.
         Fill(found.Item.Path);
         AnnounceLevel();
     }
