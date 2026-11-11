@@ -10,7 +10,7 @@ Start with `.\run-axPreview.ps1 manual_tests\axPreview\README.md`.
 - `plain.txt`: four lines; no headings. Section 1, step 8.
 - `app.log`: a log; it opens since its bytes read as text. Section 1, step 9.
 - `data.json`: on it, Alt+F reads "Edit in axJSON Ctrl+E". Section 1, step 11.
-- `binary-not-text.bin`: "Not a text file". Section 1, step 9, and section 2, step 2.
+- `binary-not-text.bin`: it opens, its text "No readable text was found in binary-not-text.bin.", the Details list under it ("Not a text file" until 2026-10-24). Section 1, step 9, and section 2, step 2.
 - `too-large-over-32-mb.txt`: about 35 MB of text, "Too large". Section 1, step 9.
 - `append-a-line-to-README.md.cmd`: run it (Enter on it in axFile, or double-click in File Explorer) while axPreview is in the background, then Alt+Tab back: "Reloaded, README.md changed on disk". Section 1, step 10.
 

@@ -49,7 +49,7 @@ public static class EditorKeys
     /// <summary>File → Edit in axDown or axJSON: the file in its editor, a new window (AP-1.4).</summary>
     public const Keys Edit = Keys.Control | Keys.E;
 
-    /// <summary>File → Read the clipboard's picture: the picture on the clipboard saved and opened, its text read (AP-7.2 item 4, 2026-11-09).</summary>
+    /// <summary>Session → Read the clipboard's picture: the picture on the clipboard saved and opened, its text read (AP-7.2 item 4, 2026-11-09).</summary>
     public const Keys ClipboardPicture = Keys.Control | Keys.Shift | Keys.V;
 
     /// <summary>In the text: the line said, "Line 12 of 40" (AP-2.3); a plain letter, which a read-only text has no use for.</summary>

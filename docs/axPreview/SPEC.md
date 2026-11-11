@@ -40,8 +40,9 @@ it, so that every file shows something and the details say what it is.
   renderer into the same read-only text (AP-D6), with the details pane beside it in the reading order (AP-6).
 - **G5 Nothing spoken unprompted** (AX-7.3).
 - **Non-goals.** Editing of any kind (Ctrl+E is the way out); pictures, sound or video shown or played (the details
-  say what they are; axMedia plays, axOCR is planned for the text in a picture); a rendering of Markdown (the text is
-  the text; the navigation keys are the structure); syntax colouring; tabs or a list of open files.
+  say what they are; axMedia plays; a picture's text is read by Windows' own reader, AP-7.2 item 4, AP-D11); a
+  rendering of Markdown (the text is the text; the navigation keys are the structure); syntax colouring; tabs or a list
+  of open files.
 
 ## 3. Scenarios
 
@@ -225,7 +226,7 @@ and an error naming a file that could not be opened.
      "No text was found in <name>." for a picture without text; a reader that fails says why ("The text of <name> could
      not be read: <why>"), a Windows without a recognition language where to add one. A picture larger than the reader
      takes (2,600 pixels a side) is scaled down for it. The Contents group holds "Text lines: N". Nothing leaves the
-     computer. **File → Read the clipboard's picture (Ctrl+Shift+V)**: the picture on the clipboard, which Windows'
+     computer. **Session → Read the clipboard's picture (Ctrl+Shift+V)**: the picture on the clipboard, which Windows'
      Alt+PrintScreen puts there from the window in front and PrintScreen from the whole screen, is saved as a PNG
      beside axPreview's logs (`%LOCALAPPDATA%\AxKit\axpreview\clipboard-<date>-<time>.png`, kept) and opened here, so
      that a dialog or a window that reads badly is read as text; "No picture on the clipboard" with those two keys
@@ -243,7 +244,7 @@ and an error naming a file that could not be opened.
   `AssocIsDangerous`, through `AxKit.Core/DangerousFiles`) is never handed to Windows to open, by Ctrl+E or by Open with's
   Windows' program: the notice "Not run from axPreview" says so and where to run it if trusted (security review S-46,
   2026-10-25); Choose another program stays, the user picking the program.
-  **File → Open with ▸** (the user's choice of 2026-10-24, over a list of defaults of axKit's own): the axKit apps that
+  **Session → Open with ▸** (the user's choice of 2026-10-24, over a list of defaults of axKit's own): the axKit apps that
   are programs for the file's type (their Open with types of `Dispatch.Apps`) and axDown for any text, numbered
   ("&1. axDown"), then Windows' program for it and Choose another program… (Windows' own dialog,
   `AxKit.Forms/WindowsOpenWith`). A choice opens the file once; a default is set where Windows keeps them, with that

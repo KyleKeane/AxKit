@@ -72,7 +72,7 @@ the restart by the app itself (2.3.0).
   `preview`, released in 3.7.2, "Not a text file" gone. The Open with table of axKit's own, file type to app, was
   decided against the same day (AP-D10, the user asking for the level that avoids feature creep): defaults stay
   Windows', set with its Open with dialog's Always or in Settings, Default apps, and axPreview has Ctrl+E's one way
-  on and File, Open with (AP-7.3), the axKit apps for the file, Windows' program and Windows' own list.
+  on and Session, Open with (AP-7.3), the axKit apps for the file, Windows' program and Windows' own list.
 - axDown and axJSON, a file changed outside the editor (asked and built 2026-10-18, AD-3.6): compared when the window
   becomes active again; reloaded with the caret kept when nothing is unsaved, said once otherwise, and Save offers
   Reload and lose mine. No watcher thread, no merging. A watcher for live reload while the window stays active is
