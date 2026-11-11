@@ -61,6 +61,16 @@ public sealed class ProjectsTests : IDisposable
     }
 
     [Fact]
+    public void Each_project_knows_the_project_folder_it_was_found_under()
+    {
+        var beta = Path.Combine(Root, "beta");
+        var found = Projects.Find([beta, Root], Top);
+        // TK-7b.3: a folder under two project folders shows under the first; the rest under the folder that found them.
+        Assert.Equal(beta, found.Single(project => project.Name == "tasks in beta").Root);
+        Assert.Equal(Root, found.Single(project => project.Name == "gamma").Root);
+    }
+
+    [Fact]
     public void A_search_finds_every_word_in_the_title_or_a_text_field_without_minding_case()
     {
         var places = new[] { (Top, "Tasks"), (Path.Combine(Root, "alpha", "tasks"), "tasks in alpha"), (Path.Combine(Root, "beta", "tasks"), "tasks in beta") };

@@ -3,7 +3,11 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>A folder of lists found under a project folder (SPEC.md TK-7b.2): where it is, the name it is shown by, and how many lists it holds.</summary>
-public sealed record TaskProject(string Path, string Name, int Lists);
+public sealed record TaskProject(string Path, string Name, int Lists)
+{
+    /// <summary>The project folder it was found under, as the settings hold it (TK-7b.3: the section it is shown in); empty when not known.</summary>
+    public string Root { get; init; } = string.Empty;
+}
 
 /// <summary>An item a search found (TK-7b.4): its file, the folder of lists it is in (the top folder or a project), and the words of its row.</summary>
 public sealed record SearchHit(string Path, string Top, string Place, string List, string Title)
@@ -36,14 +40,21 @@ public static class Projects
     public static IReadOnlyList<TaskProject> Find(IEnumerable<string> projectFolders, string top)
     {
         var found = new List<string>();
+        var rootOf = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (var root in projectFolders)
         {
+            var before = found.Count;
             Look(root, 0, top, found);
+            foreach (var path in found.Skip(before))
+            {
+                // A folder under two project folders belongs to the first that found it.
+                rootOf.TryAdd(path, root);
+            }
         }
 
         var distinct = found.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         var first = distinct.ToDictionary(path => path, path => NameOf(path, Shared(distinct, PathName.Of, path)), StringComparer.OrdinalIgnoreCase);
-        var projects = distinct.Select(path => new TaskProject(path, Shared(distinct, other => first[other], path) && Path.GetDirectoryName(path) is { } parent ? $"{first[path]} ({parent})" : first[path], ItemFolder.ReadTop(path).Lists.Count)).ToList();
+        var projects = distinct.Select(path => new TaskProject(path, Shared(distinct, other => first[other], path) && Path.GetDirectoryName(path) is { } parent ? $"{first[path]} ({parent})" : first[path], ItemFolder.ReadTop(path).Lists.Count) { Root = rootOf[path] }).ToList();
         projects.Sort((a, b) => NaturalOrder.Instance.Compare(a.Name, b.Name));
         return projects;
     }

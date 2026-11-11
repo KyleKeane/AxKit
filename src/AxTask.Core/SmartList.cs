@@ -5,9 +5,10 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>
-/// A smart list (docs/axTask/SPEC.md TK-5.2): a saved filter, a <c>.filter.json</c> file in the top folder, or All
-/// tasks, the one built in (TK-D1). Its conditions are read once; <see cref="Matches"/> asks them of one item and
-/// <see cref="Items"/> of every item under the folder, the Archive left out.
+/// A smart list (docs/axTask/SPEC.md TK-5.2): a saved filter, a <c>.filter.json</c> file in the top folder, or one
+/// built in: All tasks (TK-D1), the four by date (TK-5.4) and a mention or hashtag (TK-5.5). Its conditions are read
+/// once; <see cref="Matches"/> asks them of one item and <see cref="Items"/> of every item under the folder, the
+/// Archive left out.
 /// </summary>
 public sealed class SmartList
 {
@@ -18,7 +19,10 @@ public sealed class SmartList
     private readonly bool _any;
     private readonly IReadOnlyList<OrderKey> _order;
 
-    private SmartList(string name, string? path, JsonArray conditions, bool any, IReadOnlyList<OrderKey> order, string? notUnderstood)
+    /// <summary>A built-in list's own rule, asked after the conditions (TK-5.4, TK-5.5); null for a filter file and All tasks.</summary>
+    private readonly Func<ItemDocument, DateOnly, bool>? _rule;
+
+    private SmartList(string name, string? path, JsonArray conditions, bool any, IReadOnlyList<OrderKey> order, string? notUnderstood, Func<ItemDocument, DateOnly, bool>? rule = null, string? described = null)
     {
         Name = name;
         Path = path;
@@ -26,18 +30,58 @@ public sealed class SmartList
         _any = any;
         _order = order;
         NotUnderstood = notUnderstood;
+        _rule = rule;
+        Described = described;
     }
 
     public string Name { get; }
 
-    /// <summary>The filter's file; null for All tasks.</summary>
+    /// <summary>The filter's file; null for a built-in list (All tasks, the four by date, a mention or a hashtag).</summary>
     public string? Path { get; }
+
+    /// <summary>Whether the list is built in rather than a filter file of the user's.</summary>
+    public bool BuiltIn => Path is null;
+
+    /// <summary>What sets the list apart in the window: the filter's path, or "smart:" and a built-in list's name.</summary>
+    public string Key => Path ?? "smart:" + Name;
+
+    /// <summary>What a built-in list holds, one line for its details; null for a filter file.</summary>
+    public string? Described { get; }
 
     /// <summary>What in the file was not understood (TK-5.2); null when every condition is known. Such a list shows nothing.</summary>
     public string? NotUnderstood { get; }
 
+    private static JsonArray NotDone() => [new JsonObject { ["field"] = TaskRules.DoneField, ["is"] = false }];
+
+    private static readonly IReadOnlyList<OrderKey> SoonestFirst = [new(TaskRules.DueField), new(ItemDocument.TitleField)];
+
     /// <summary>TK-5.1: every task not done.</summary>
-    public static SmartList AllTasks { get; } = new(AllTasksName, null, [new JsonObject { ["field"] = TaskRules.DoneField, ["is"] = false }], any: false, [new(TaskRules.DueField), new(ItemDocument.TitleField)], null);
+    public static SmartList AllTasks { get; } = new(AllTasksName, null, NotDone(), any: false, SoonestFirst, null,
+        described: "Every task not done, in every list but the Archive, the soonest due first");
+
+    /// <summary>TK-5.4: the tasks not done whose Due date has passed.</summary>
+    public static SmartList Overdue { get; } = new("Overdue", null, NotDone(), any: false, SoonestFirst, null,
+        (item, today) => TaskRules.Due(item) is { } due && due < today, "Every task not done whose Due date has passed, the oldest first");
+
+    /// <summary>TK-5.4: the tasks not done due today.</summary>
+    public static SmartList DueToday { get; } = new("Due today", null, NotDone(), any: false, SoonestFirst, null,
+        (item, today) => TaskRules.Due(item) == today, "Every task not done that is due today");
+
+    /// <summary>TK-5.4: the tasks not done due from today to seven days on.</summary>
+    public static SmartList DueInSevenDays { get; } = new("Due in the next 7 days", null, NotDone(), any: false, SoonestFirst, null,
+        (item, today) => TaskRules.Due(item) is { } due && due >= today && due <= today.AddDays(7), "Every task not done due from today to seven days on, the soonest first");
+
+    /// <summary>TK-5.4: the tasks not done without a Due date.</summary>
+    public static SmartList NoDueDate { get; } = new("No due date", null, NotDone(), any: false, [new(ItemDocument.TitleField)], null,
+        (item, _) => TaskRules.Due(item) is null, "Every task not done that has no Due date, by title");
+
+    /// <summary>The built-in lists of the Smart lists section, in order (TK-5.1, TK-5.4).</summary>
+    public static IReadOnlyList<SmartList> BuiltIns { get; } = [AllTasks, Overdue, DueToday, DueInSevenDays, NoDueDate];
+
+    /// <summary>TK-5.5: the tasks not done whose words hold a mention or a hashtag, "@Sam" or "#store".</summary>
+    public static SmartList Tagged(string token) => new(token, null, NotDone(), any: false, SoonestFirst, null,
+        (item, _) => Tags.Has(Tags.TextOf(item), token),
+        $"Every task not done whose title or text holds {token}, the soonest due first");
 
     /// <summary>The text a new smart list starts from (TK-5.3): All tasks' conditions in a file of its own.</summary>
     public static string NewFileText() =>
@@ -125,6 +169,11 @@ public sealed class SmartList
 
     public bool Matches(ItemFile item, string top, DateOnly today)
     {
+        if (_rule is not null && !_rule(item.Document, today))
+        {
+            return false;
+        }
+
         if (_conditions.Count == 0)
         {
             return true;
