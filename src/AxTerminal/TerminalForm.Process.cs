@@ -20,7 +20,7 @@ internal sealed partial class TerminalForm
         // S-37: a new secret for this start; the model takes only marks that carry it (a custom shell prints none).
         var nonce = ShellLauncher.NewNonce();
         _model.MarkNonce = _shell == ShellKind.Custom ? null : nonce;
-        var commandLine = ShellLauncher.BuildCommandLine(_shell, _customShell, nonce);
+        var commandLine = ShellLauncher.BuildCommandLine(_shell, CustomLine, nonce);
         if (commandLine is null)
         {
             Fail(_shell == ShellKind.Custom
@@ -42,10 +42,11 @@ internal sealed partial class TerminalForm
         }
 
         _askedRow = null;
-        _model.AddSystemLine($"Shell started: {ShellLauncher.Describe(_shell)} in {_folder}");
+        _model.AddSystemLine($"Shell started: {ShellName} in {_folder}");
         _settings.RememberFolder(_folder);
         _settings.Shell = ShellLauncher.Key(_shell);
         _settings.CustomShell = _customShell;
+        _settings.UserShellName = _userShell?.Name;
         SaveSettings();
         _asks.Start();
         UpdateStatus();

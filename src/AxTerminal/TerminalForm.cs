@@ -57,6 +57,15 @@ internal sealed partial class TerminalForm : ConsoleForm
     private ShellKind _shell;
     private string? _customShell;
 
+    /// <summary>The user's own shell in use (AT-1.6a), when the shell is one: it starts as the custom shell does, with its own command line and name; null otherwise.</summary>
+    private UserShell? _userShell;
+
+    /// <summary>What the title, the system lines and Ctrl+Q call the shell in use: the user's shell by its name.</summary>
+    private string ShellName => _userShell?.Name ?? ShellLauncher.Describe(_shell);
+
+    /// <summary>The command line a custom shell starts with: the user's shell's, or the one typed under Custom.</summary>
+    private string? CustomLine => _userShell?.CommandLine ?? _customShell;
+
     /// <summary>The cursor row announced as a question, not announced again while it stays.</summary>
     private string? _askedRow;
 
@@ -74,6 +83,7 @@ internal sealed partial class TerminalForm : ConsoleForm
         _folder = folder ?? (settings.LastFolder is { } last && Directory.Exists(last) ? last : Environment.CurrentDirectory);
         _shell = settings.ShellKind;
         _customShell = settings.CustomShell;
+        _userShell = _shell == ShellKind.Custom ? settings.FindUserShell(settings.UserShellName) : null;
         LookUpShells();
         _model.Ready += OnReady;
         _model.CommandFinished += OnCommandFinished;
@@ -136,7 +146,7 @@ internal sealed partial class TerminalForm : ConsoleForm
 
     protected override IEnumerable<string> DiagnosticsLines =>
     [
-        $"Shell: {ShellLauncher.Describe(_shell)} ({ShellLauncher.BuildCommandLine(_shell, _customShell) ?? "(not found)"})",
+        $"Shell: {ShellName} ({ShellLauncher.BuildCommandLine(_shell, CustomLine) ?? "(not found)"})",
         $"Folder: {_folder}; current directory: {CurrentDirectory}",
         $"Console size: {_model.Columns}x{_model.Rows}",
         $"State: {StateLabel.Text}; prompt: {_model.Prompt ?? "(none yet)"}; marks: {_model.HasMarks}",

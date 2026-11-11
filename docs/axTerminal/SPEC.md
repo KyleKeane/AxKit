@@ -75,9 +75,9 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   2026-11-09), Git Bash (Git for Windows' `Git\bin\bash.exe`
   under Program Files, Program Files (x86) or `%LOCALAPPDATA%\Programs`, or next to the `git.exe` on the PATH; never
   a `bash.exe` on the PATH, which in System32 is WSL's launcher; started `--login -i`, as Git's own shortcut does) or
-  a custom command line; the default is PowerShell 7 when it is installed, otherwise Windows PowerShell. The choice
-  is made in the New session notice and the Switch shell submenu (AT-1.6)
-  and remembered in the settings (`shell`, `customShell`) for the next window. The shell starts in the folder with the
+  a custom command line, or one of the user's own shells (AT-1.6a); the default is PowerShell 7 when it is installed,
+  otherwise Windows PowerShell. The choice is made in the New session notice and the Switch shell submenu (AT-1.6)
+  and remembered in the settings (`shell`, `customShell`, `userShellName`) for the next window. The shell starts in the folder with the
   window's environment plus `TERM=xterm-256color` for the programs that look, and `GIT_PAGER=cat` and `GH_PAGER=cat`,
   which switch git's and the GitHub CLI's pager off (AT-D7); nothing is taken out of the environment. The shell also
   inherits Windows' switch `NoDefaultCurrentDirectoryInExePath`, which axKit sets for itself at start (bundle security
@@ -134,6 +134,23 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   announced. A command still running when a restart, a new session or a switch goes ahead is terminated at once
   with its shell, since the notice said so; an idle shell gets the two seconds of its console closing (axClaude
   FR-1.7; 2026-10-23).
+- AT-1.6a **The user's own shells** (2026-11-11; the shape of axFile's own programs, AF-4.11, docs/axKit/plan.md): a
+  list in the settings (`userShells`, each `{"name", "commandLine"}`, in the order added; one without a name or a
+  command line is dropped as the file is read), beside the one custom command line. Session → Switch shell ▸ lists
+  them after the built-in shells as "1. name (command line)" (AX-8.5), the one in use checked, and holds **Add a
+  shell…** and **Remove a shell ▸** after Custom…; the New session notice lists them as radio buttons after the
+  built-in shells and before Custom, the one in use selected. **Add a shell…** opens the notice "Add a shell" with the
+  field "Type the shell's name" and the buttons **Next** (Enter) and **Cancel** (Escape): a blank name says "Type a
+  name", a name a built-in shell or one of the user's already has (case ignored) says "A shell named <name> is already
+  there", and the notice stays; Next opens the notice "Add a shell" with the field "Type the command line that starts
+  it" ("The command line that starts <name>, as typed at a prompt, for example cmd.exe /k or pwsh -NoProfile…") and
+  **Add** (Enter): a blank line says "Type the command line" and the notice stays; Add keeps the shell and says "Added
+  <name>"; nothing is started. **Remove a shell ▸** lists them as "1. name" ("No shells of your own yet" when there are
+  none); one chosen is taken off the list and "Removed <name>" said; when it is the shell in use, that shell goes on
+  running and is the custom shell from then on, with the same command line. A user's shell starts as the custom shell
+  does (no snippet, no marks unless its prompt prints them, the reminder of the custom shell, AX-11.5), under its own
+  name in the title, the system lines (`Switched to <name> in …`, `Shell started: <name> in …`), Ctrl+Q and the
+  announcement of Switch shell; the name in use is remembered (`userShellName`) for the next window.
 - AT-1.7 **The shell ends** (`exit` typed, a crash): the system line `The shell ended with code 0`, the announcement
   "The shell ended", the status `Shell ended`; Enter in the field then keeps its text and announces "The shell ended.
   Ctrl+Shift+R starts it again" (axClaude FR-2.1). Closing the window ends the shell and whatever runs in it; while a
@@ -283,7 +300,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 
 - AT-6.1 Menus, in the standard order of a first menu (AX-6): **Session (S):** New session… Ctrl+N | Open recent
   folder ▸ (ten, "1. name (path)", AX-9.5) | Open recent folder in new window ▸ (the same list, a new axTerminal window on the one chosen, this one left as it is) | Switch shell ▸ (PowerShell 7 | Windows PowerShell | Command Prompt |
-  Git Bash | Custom…) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder Ctrl+P |
+  Git Bash | the user's shells, "1. name (command line)" | Custom… | Add a shell… | Remove a shell ▸, AT-1.6a) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder Ctrl+P |
   Show current folder in ▸ (File Explorer Ctrl+W | axClaude | axGIT | axFile), on the shell's current directory | ─ |
   Export transcript… Ctrl+S | Exit Alt+F4. **Operations (P):** Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send
   key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent commands… Ctrl+R | Send without recording (Ctrl+Enter in the
@@ -327,7 +344,8 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
 
 - AT-8.1 `%APPDATA%\AxKit\axTerminal.json` (AX-5.3; `TerminalSettings` on the bundle's `ConsoleSettings`, the console
   fields shared with axClaude under the same names, on `WindowSettings`): `shell` (`pwsh`,
-  `powershell`, `cmd`, `bash`, `custom`), `customShell`, `lastFolder`, `recentFolders` (ten), `ptyColumns` 240, `ptyRows` 50,
+  `powershell`, `cmd`, `bash`, `custom`), `customShell`, `userShells` (the user's own shells, `name` and
+  `commandLine` each, AT-1.6a), `userShellName` (the one in use, with `shell` `custom`), `lastFolder`, `recentFolders` (ten), `ptyColumns` 240, `ptyRows` 50,
   `soundOnBell` on, `clickOnNewLine` on, `workingMusic` off, `backgroundAlert` off, `flashTaskbar` on, `outputSpeech`
   `none`, `announceQuestions` on, `markerTimeStamps` off, `showMarkers` on, `joinWrappedLines` on, `maxTranscriptLines` 20000, and the
   window base's font, update check and window fields. Unknown or out-of-range values fall back to the defaults.

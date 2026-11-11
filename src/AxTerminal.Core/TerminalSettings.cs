@@ -9,7 +9,7 @@ public enum OutputSpeechMode
     All,
 }
 
-/// <summary>A shell of the user's own (SPEC.md AT-1.8): the name the menus show and the command line that starts it, as typed at a prompt; it starts as the custom shell does.</summary>
+/// <summary>A shell of the user's own (SPEC.md AT-1.6a): the name the menus show and the command line that starts it, as typed at a prompt; it starts as the custom shell does.</summary>
 public sealed record UserShell(string Name, string CommandLine);
 
 /// <summary>
@@ -27,7 +27,7 @@ public sealed class TerminalSettings : ConsoleSettings
     /// <summary>The command line of the custom shell, kept for the New session notice.</summary>
     public string? CustomShell { get; set; }
 
-    /// <summary>The user's own shells (AT-1.8), in the order added: a name and the command line that starts each, the shape of axFile's own programs (AF-4.11).</summary>
+    /// <summary>The user's own shells (AT-1.6a), in the order added: a name and the command line that starts each, the shape of axFile's own programs (AF-4.11).</summary>
     public List<UserShell> UserShells { get; set; } = [];
 
     /// <summary>The name of the user's shell in use, when the shell is one of <see cref="UserShells"/>; null otherwise.</summary>
@@ -66,7 +66,7 @@ public sealed class TerminalSettings : ConsoleSettings
     public UserShell? FindUserShell(string? name) =>
         name is null ? null : UserShells.FirstOrDefault(shell => string.Equals(shell.Name, name, StringComparison.OrdinalIgnoreCase));
 
-    /// <summary>Why a typed name cannot be a new shell's (AT-1.8): blank, or a name a built-in shell or one of the user's already has; null when it can.</summary>
+    /// <summary>Why a typed name cannot be a new shell's (AT-1.6a): blank, or a name a built-in shell or one of the user's already has; null when it can.</summary>
     public string? RefusedShellName(string typed)
     {
         var name = typed.Trim();

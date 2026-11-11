@@ -1,0 +1,69 @@
+# axTerminal: the user's own shells (AT-1.6a), section 3 of docs/axTerminal/nvda-test-plan.md, the steps on Add a
+# shell. Switch shell needs menu mode, which only the foreground window enters: "menu" runs the same items. Remove a
+# shell's items read as Switch shell's ("1. name"), so "menu" cannot tell them apart: removing stays a step by hand.
+mkdir work\myproject
+file home\AxKit\axTerminal.json {"checkForUpdates": false, "shell": "powershell"}
+# The reminders agreed to already (AX-11.5): a user's shell starts as the custom shell does, under its consent.
+file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Custom shell","version":"0","when":"2026-10-31T00:00:00"}]}
+start terminal {temp}\work\myproject
+expect said Ready
+
+# Add a shell: the name first, refused when blank or taken, then the command line.
+expect commands No shells of your own yet, Session, Switch shell, Remove a shell
+menu Add a shell
+expect state "notice":"Add a shell"
+expect focus Type the shell
+keys enter
+expect said Type a name
+expect state "notice":"Add a shell"
+type Command Prompt
+keys enter
+expect said A shell named Command Prompt is already there
+keys ctrl+a
+type Test cmd
+keys enter
+expect state The command line that starts Test cmd
+expect focus Type the command line that starts it
+keys enter
+expect said Type the command line
+type cmd.exe /k
+keys enter
+expect said Added Test cmd
+expect state "notice":null
+refuse said New session
+
+# Listed in Switch shell after the built-in shells, and in Remove a shell.
+expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell
+expect commands 1. Test cmd, Session, Switch shell, Remove a shell
+
+# Started from Switch shell: the title and the system line name it; cmd's own output in the terminal.
+menu 1. Test cmd
+expect said Test cmd
+expect state "myproject - Test cmd - axTerminal, access layer for your shell"
+expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell, checked
+keys ctrl+2
+expect text "System: Switched to Test cmd in
+keys ctrl+1
+type echo hello-user-shell
+keys enter
+keys ctrl+2
+expect text hello-user-shell
+keys ctrl+1
+
+# The New session notice lists it after the built-in shells, selected while it is the shell in use.
+keys ctrl+n
+expect state "notice":"New session"
+keys tab
+expect focus folder..."}
+keys tab
+expect focus "role":"RadioButton"
+expect focus "value":"Test cmd"}
+keys escape
+expect state "notice":null
+close
+
+# Remembered for the next window: the same shell starts again.
+start terminal {temp}\work\myproject
+expect state "myproject - Test cmd - axTerminal, access layer for your shell"
+keys ctrl+2
+expect text "System: Shell started: Test cmd in
