@@ -44,7 +44,7 @@ public sealed partial class TaskForm
         }
 
         var now = !TaskRules.IsDone(item.Document);
-        var leaves = now && (_smart is not null || _settings.HideDone);
+        var leaves = now && (_smart is not null || (_settings.HideDone && _search is null));
         var select = leaves ? NeighbourKey() : item.Path;
         if (CheckFresh(item.Path, item.Text))
         {
@@ -58,6 +58,13 @@ public sealed partial class TaskForm
         if (_smart is not null)
         {
             Announce("A smart list gathers items from the lists: open a list to add one", true);
+            return;
+        }
+
+        if (Gathered)
+        {
+            // TK-7b.3, TK-7b.4: items are made in a list where it lives.
+            Announce(_atProjects ? "A project's items are made in its lists: Right on a project, then on a list" : "Items are made in a list: open the item where it lives first, Enter", true);
             return;
         }
 

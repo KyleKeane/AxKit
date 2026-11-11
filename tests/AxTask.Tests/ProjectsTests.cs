@@ -88,6 +88,36 @@ public sealed class ProjectsTests : IDisposable
         Assert.Equal([Root], TaskSettings.Load(path, out _).ProjectFolders);
     }
 
+    [Fact]
+    public void The_top_folder_and_a_folder_inside_it_are_refused_as_project_folders()
+    {
+        var settings = TaskSettings.Load(Path.Combine(_temp.Path, "axTask.json"), out _);
+        settings.Folder = Top;
+        Assert.Equal("That is your own top folder: its lists show at the top already", settings.RefusedProjectFolder(Top + "\\"));
+        Assert.Equal("That is inside your own top folder: its lists show at the top already", settings.RefusedProjectFolder(Path.Combine(Top, "Home")));
+        Assert.Null(settings.RefusedProjectFolder(_temp.Path));
+    }
+
+    [Fact]
+    public void A_folder_whose_lists_were_all_archived_is_the_project_and_never_its_Archive()
+    {
+        List(Path.Combine(Root, "delta", "tasks", "Archive", "Old"));
+        var found = Projects.Find([Path.Combine(Root, "delta")], Top);
+        Assert.Equal([Path.Combine(Root, "delta", "tasks")], found.Select(project => project.Path));
+        Assert.Equal(0, found[0].Lists);
+    }
+
+    [Fact]
+    public void Names_still_shared_after_the_folder_above_are_told_apart_by_its_path()
+    {
+        var other = Path.Combine(_temp.Path, "work");
+        List(Path.Combine(other, "alpha", "tasks", "Jobs"));
+        var found = Projects.Find([Root, other], Top);
+        Assert.Contains(found, project => project.Name == $"tasks in alpha ({Path.Combine(Root, "alpha")})");
+        Assert.Contains(found, project => project.Name == $"tasks in alpha ({Path.Combine(other, "alpha")})");
+        Assert.Contains(found, project => project.Name == "tasks in beta");
+    }
+
     private static void List(string folder)
     {
         Directory.CreateDirectory(folder);

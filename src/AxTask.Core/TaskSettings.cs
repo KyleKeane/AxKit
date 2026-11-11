@@ -24,7 +24,7 @@ public sealed class TaskSettings : WindowSettings
     /// </summary>
     public List<string> ProjectFolders { get; set; } = [];
 
-    /// <summary>Why a typed path cannot be a new project folder (TK-7b.1): blank, not a full path, not there, or there already; null when it can.</summary>
+    /// <summary>Why a typed path cannot be a new project folder (TK-7b.1): blank, not a full path, not there, the top folder or inside it, or there already; null when it can.</summary>
     public string? RefusedProjectFolder(string typed)
     {
         var path = typed.Trim().Trim('"');
@@ -44,6 +44,14 @@ public sealed class TaskSettings : WindowSettings
         }
 
         var full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
+        // TK-7b.5: the top folder is never a project, so a project folder in it would find nothing.
+        if (Projects.Inside(full, TopFolder))
+        {
+            return full.Equals(Path.TrimEndingDirectorySeparator(Path.GetFullPath(TopFolder)), StringComparison.OrdinalIgnoreCase)
+                ? "That is your own top folder: its lists show at the top already"
+                : "That is inside your own top folder: its lists show at the top already";
+        }
+
         return ProjectFolders.FirstOrDefault(folder => folder.Equals(full, StringComparison.OrdinalIgnoreCase)) is { } there ? PathName.Of(there) + " is a project folder already" : null;
     }
 

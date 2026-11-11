@@ -44,6 +44,12 @@ public sealed partial class TaskForm
     /// <summary>The number of the latest look for projects; an older one's result is dropped.</summary>
     private int _findRun;
 
+    /// <summary>The number of the latest search; an older one's result is dropped.</summary>
+    private int _searchRun;
+
+    /// <summary>Whether the projects found changed while a notice was open, so that the level is read again as it closes.</summary>
+    private bool _refillHeld;
+
     private string _lastWords = string.Empty;
 
     private readonly List<ToolStripItem> _projectFolderItems = [];
@@ -143,12 +149,29 @@ public sealed partial class TaskForm
         Announce("Removed " + PathName.Of(folder), true);
     }
 
-    /// <summary>The level filled again when it shows the Projects row or level; nothing said.</summary>
+    /// <summary>
+    /// The level read again when it shows the Projects row or level, the selection kept and a changed row rewritten in
+    /// place (<see cref="ItemForm.Refill"/>); nothing said.
+    /// </summary>
     private void RefillGathered()
     {
         if (_search is null && _project is null && (AtTop || _atProjects))
         {
-            Fill(SelectedKey());
+            Refill();
+        }
+    }
+
+    /// <summary>Whether a look or a search that ends now must leave the panes alone: a notice is open, or a rename in place.</summary>
+    private bool Busy => NoticeOpen || Navigator.Renaming || DetailPane.Renaming;
+
+    /// <summary>A refill held back while a notice was open (TK-7b.2), done as the last notice closes.</summary>
+    protected override void OnNoticeClosed()
+    {
+        base.OnNoticeClosed();
+        if (_refillHeld && !Navigator.Renaming && !DetailPane.Renaming)
+        {
+            _refillHeld = false;
+            RefillGathered();
         }
     }
 
@@ -172,10 +195,23 @@ public sealed partial class TaskForm
                 return;
             }
 
+            // TK-7b.2: the panes change only when what was found did, and never under a notice or a rename in place.
             var waiting = _projects is null && _atProjects;
+            var changed = _projects is null || !_projects.SequenceEqual(found);
             _projects = found;
+            if (!changed)
+            {
+                return;
+            }
+
+            if (Busy)
+            {
+                _refillHeld = true;
+                return;
+            }
+
             RefillGathered();
-            if (waiting && !NoticeOpen)
+            if (waiting)
             {
                 AnnounceLevel();
             }
@@ -224,11 +260,18 @@ public sealed partial class TaskForm
             typed => Projects.Words(typed).Count == 0 ? "Type a word to find" : null, emptyMessage: "Type a word to find");
     }
 
+    /// <summary>
+    /// The search run off the UI thread, "Searching every list" said at once; what it finds is dropped when another
+    /// search was started meanwhile, or when a notice or a rename in place is open as it ends, so that the focus stays
+    /// where the user took it (TK-7b.4).
+    /// </summary>
     private void RunSearch(string words)
     {
         _lastWords = words;
+        var run = ++_searchRun;
         var roots = _settings.ProjectFolders.ToList();
         var home = _settings.TopFolder;
+        Announce("Searching every list", true);
         Do(async () =>
         {
             var (found, hits) = await Task.Run(() =>
@@ -236,12 +279,18 @@ public sealed partial class TaskForm
                 var projects = Projects.Find(roots, home);
                 return (projects, Projects.Search([(home, PathName.Of(home)), .. projects.Select(project => (project.Path, project.Name))], words));
             });
-            if (IsDisposed)
+            if (run != _searchRun || IsDisposed || Busy)
             {
                 return;
             }
 
-            _projects = found;
+            if (_projects is null || !_projects.SequenceEqual(found))
+            {
+                _projects = found;
+                _refillHeld = false;
+                RefillGathered();
+            }
+
             if (hits.Count == 0)
             {
                 Sounds.Edge();

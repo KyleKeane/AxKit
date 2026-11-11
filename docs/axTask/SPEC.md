@@ -175,36 +175,48 @@ parts are built here: the folders of lists found, one place to reach them, and t
 and the AI tools over them are later (the priorities item of the request).
 
 - **TK-7b.1 Project folders.** Options → Project folders → Add a project folder… asks "Type the folder's path, or
-  leave it empty for the folder picker": a typed path must be a whole path to a folder that is there and not one
-  already ("No folder is there: …", "Projects is a project folder already", the notice kept); an empty field opens the
+  leave it empty for the folder picker": a typed path must be a whole path to a folder that is there, not one already
+  and not the top folder or inside it ("No folder is there: …", "Projects is a project folder already", "That is your
+  own top folder: its lists show at the top already", "That is inside your own top folder: …", the notice kept; the
+  folder picker's choice is refused the same way, said); an empty field opens the
   Windows folder picker. "Added Projects, looking for lists". Remove a project folder ▸ lists them as "1. Projects
   (C:\…)", or one item "No project folders yet"; a choice says "Removed Projects". They are kept in axTask's settings
   as `projectFolders`, full paths; none by default (TK-D6).
 - **TK-7b.2 What is found.** A folder of lists, a folder holding at least one list (a folder with `list.json` at its
-  top), under a project folder, the project folder itself included, to four folders down; hidden folders, `.git`,
+  top, or whose Archive holds one when every list was archived, so that an Archive is never a project of its own),
+  under a project folder, the project folder itself included, to four folders down; hidden folders, `.git`,
   `node_modules`, `bin` and `obj` are never looked into, nor a folder of lists already found, nor the top folder or
   anything in it (TK-D7). The look runs off the UI thread at the start, on the way into Projects, on F5 at the top or
-  in Projects, and after a project folder is added or removed.
+  in Projects, and after a project folder is added or removed. When it ends, the Projects row or level is read again
+  only if what was found changed, nothing said: the selection stays, and a row whose words changed is rewritten in
+  place ("Projects, looking for lists" becomes "Projects, 5 lists"); a level with other rows is filled again on the
+  row selected. While a notice or a rename in place is open, the level is read again when the last notice closes.
 - **TK-7b.3 Projects.** While project folders are set, the top level's first row, before the sections, is "Projects, 5
   lists" (the lists of every project; "Projects, looking for lists" until the first look ends). Right or Enter:
   "Projects, 3 projects, tasks in alpha, 2 lists": each project by its folder's name, with the folder above it when
-  two share a name ("tasks in alpha"), and its count of lists; "Projects, none found: Options, Project folders" when
+  two share a name ("tasks in alpha"), and that folder's path when two still share it ("tasks in alpha
+  (D:\Work\alpha)"), and its count of lists; "Projects, none found: Options, Project folders" when
   there are none. Right or Enter on a project opens it as a top folder of its own, "tasks in alpha, 2 lists, Smart
   lists, section, 1 smart list": its sections, All tasks and smart lists, its Archive, every change and Ctrl+Z exactly
   as in the user's own folder (TK-D8). Left from a project's top goes back to Projects on it, and Left from Projects
   to the top level on the Projects row. In the Projects level Ctrl+N, Ctrl+Shift+N, F2 and Delete make, rename and
-  move nothing and say why; Ctrl+E shows a project's folder in axFile. A project is never remembered as the list open
+  move nothing and say why (Ctrl+N: "A project's items are made in its lists: Right on a project, then on a
+  list"); Ctrl+E shows a project's folder in axFile. A project is never remembered as the list open
   last.
 - **TK-7b.4 The search across every list.** Ctrl+Shift+F, anywhere in the window, asks "Type the words to find in
   every list" (the last words typed, again). Every list of the user's own top folder and of every project is read off
   the UI thread, the Archive left out as All tasks leaves it, and an item holding every word in its Title or a text
-  field (text and long text), case not minded, is found. Nothing found: the edge earcon and "Nothing found for zebra",
+  field (text and long text), case not minded, is found. "Searching every list" is said as the notice closes. What a
+  search finds is dropped, nothing said, when another search was started meanwhile or when a notice or a rename in
+  place is open as it ends, so that the focus stays where the user took it; Ctrl+Shift+F asks again with the words
+  kept. Nothing found: the edge earcon and "Nothing found for zebra",
   the level unchanged. Otherwise the level "Found tap, 3 items", one row per item, "Fix the tap, in tasks in alpha /
   Home", the user's own lists first, named by the top folder's name. Right or Enter opens the item's list where it
   lives (in its project, when it is in one) with the item selected: "Home, 1 item, Fix the tap"; Left, Backspace or
   Escape goes back where the search was started, the row selected then selected again. In the found level Tab shows
-  the item's fields, which change as anywhere, and Space marks a task done in its own file; F2, Delete and a link's
-  change say "Open it where it lives first", the action keys "Action keys act in a list: open one first" (TK-D9).
+  the item's fields, which change as anywhere, and Space marks a task done in its own file, the selection staying on
+  it (done tasks stay in the found level, Hide done or not); F2, Delete and a link's change say "Open it where it lives
+  first", Ctrl+N "Items are made in a list: open the item where it lives first, Enter", the action keys "Action keys act in a list: open one first" (TK-D9).
 - **TK-7b.5 The top folder** is never moved or changed by any of this: a project is shown, entered and changed where
   it is, and the user's top folder stays the one in the settings.
 

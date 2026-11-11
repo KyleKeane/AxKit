@@ -19,18 +19,19 @@ public sealed record SearchHit(string Path, string Top, string Place, string Lis
 /// </summary>
 public static class Projects
 {
-    /// <summary>How deep under a project folder a folder of lists is looked for (TK-D6): the project folder itself is depth 0.</summary>
+    /// <summary>How deep under a project folder a folder of lists is looked for (TK-7b.2, TK-D7): the project folder itself is depth 0.</summary>
     public const int Depth = 4;
 
-    /// <summary>Folders never looked into (TK-D6): build output and package folders hold no lists and many files.</summary>
+    /// <summary>Folders never looked into (TK-7b.2, TK-D7): build output and package folders hold no lists and many files.</summary>
     private static readonly string[] Skipped = [".git", "node_modules", "bin", "obj"];
 
     /// <summary>
-    /// Every folder of lists under the project folders (TK-7b.2, TK-D6): a folder that holds a list, a folder with a
-    /// <c>list.json</c> at its top; looked for to <see cref="Depth"/> folders down, hidden folders and
-    /// <see cref="Skipped"/> left out, never inside a folder of lists already found; the top folder
-    /// <paramref name="top"/> and anything inside it left out, since it is shown as the top (TK-7b.5). By name, a name two
-    /// share told apart by the folder above ("tasks in alpha").
+    /// Every folder of lists under the project folders (TK-7b.2, TK-D7): a folder that holds a list, a folder with a
+    /// <c>list.json</c> at its top, or an Archive that holds one when every list was archived; looked for to
+    /// <see cref="Depth"/> folders down, hidden folders and <see cref="Skipped"/> left out, never inside a folder of lists
+    /// already found; the top folder <paramref name="top"/> and anything inside it left out, since it is shown as the top
+    /// (TK-7b.5). By name, a name two share told apart by the folder above ("tasks in alpha"), and by that folder's path
+    /// when two still share it ("tasks in alpha (D:\Work\alpha)").
     /// </summary>
     public static IReadOnlyList<TaskProject> Find(IEnumerable<string> projectFolders, string top)
     {
@@ -41,11 +42,15 @@ public static class Projects
         }
 
         var distinct = found.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-        var names = distinct.GroupBy(PathName.Of, StringComparer.OrdinalIgnoreCase).ToDictionary(group => group.Key, group => group.Count(), StringComparer.OrdinalIgnoreCase);
-        var projects = distinct.Select(path => new TaskProject(path, NameOf(path, names[PathName.Of(path)] > 1), ItemFolder.ReadTop(path).Lists.Count)).ToList();
+        var first = distinct.ToDictionary(path => path, path => NameOf(path, Shared(distinct, PathName.Of, path)), StringComparer.OrdinalIgnoreCase);
+        var projects = distinct.Select(path => new TaskProject(path, Shared(distinct, other => first[other], path) && Path.GetDirectoryName(path) is { } parent ? $"{first[path]} ({parent})" : first[path], ItemFolder.ReadTop(path).Lists.Count)).ToList();
         projects.Sort((a, b) => NaturalOrder.Instance.Compare(a.Name, b.Name));
         return projects;
     }
+
+    /// <summary>Whether another path of <paramref name="paths"/> has the same name as <paramref name="path"/>.</summary>
+    private static bool Shared(List<string> paths, Func<string, string> name, string path) =>
+        paths.Count(other => name(other).Equals(name(path), StringComparison.OrdinalIgnoreCase)) > 1;
 
     private static string NameOf(string path, bool shared) =>
         shared && Path.GetDirectoryName(path) is { } parent ? $"{PathName.Of(path)} in {PathName.Of(parent)}" : PathName.Of(path);
@@ -67,7 +72,9 @@ public static class Projects
             return;
         }
 
-        if (children.Any(child => File.Exists(Path.Combine(child.FullName, ItemDocument.ListFile))))
+        // A folder whose lists were all archived holds lists in its Archive alone: it is the folder of lists, never the Archive.
+        if (children.Any(child => HoldsList(child.FullName))
+            || children.Any(child => child.Name.Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase) && HoldsAList(child)))
         {
             found.Add(Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder)));
             return;
@@ -81,6 +88,20 @@ public static class Projects
         foreach (var child in children)
         {
             Look(child.FullName, depth + 1, top, found);
+        }
+    }
+
+    private static bool HoldsList(string folder) => File.Exists(Path.Combine(folder, ItemDocument.ListFile));
+
+    private static bool HoldsAList(DirectoryInfo archive)
+    {
+        try
+        {
+            return archive.EnumerateDirectories().Any(child => !Passed(child) && HoldsList(child.FullName));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        {
+            return false;
         }
     }
 

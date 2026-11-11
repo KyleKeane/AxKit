@@ -28,6 +28,8 @@ keys ctrl+shift+n
 expect said ! A project's lists are made inside it: Right on a project first
 keys delete
 expect said ! A project stays: Options, Project folders removes the folder it was found in
+keys ctrl+n
+expect said ! A project's items are made in its lists: Right on a project, then on a list
 
 # 6.5 A project is a top folder of its own: its sections, its All tasks, a task marked done in place and undone.
 keys right
@@ -60,6 +62,10 @@ type {temp}\nowhere
 keys enter
 expect said ! No folder is there
 keys ctrl+a
+type {temp}\tasks
+keys enter
+expect said ! That is your own top folder: its lists show at the top already
+keys ctrl+a
 type {temp}\more
 keys enter
 expect said ! Added more, looking for lists
@@ -76,6 +82,7 @@ keys ctrl+shift+f
 expect state "notice":"Find in every list"
 type zebra
 keys enter
+expect said ! Searching every list
 expect said ! Nothing found for zebra
 keys ctrl+shift+f
 keys ctrl+a
@@ -94,6 +101,8 @@ keys ctrl+a
 type washer 15
 keys enter
 expect said ! Found washer 15, 1 item, Fix the tap, in tasks in alpha / Home
+keys ctrl+n
+expect said ! Items are made in a list: open the item where it lives first, Enter
 keys enter
 expect said ! Home, 1 item, Fix the tap
 keys left
