@@ -6,6 +6,20 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-11, the day's third push: every app, by the assistant through nvda-pass.ps1 (`main` 5f734ba)
+
+Run by the assistant with NVDA 2025.3.3 listening, the user still away, Windows 11 Pro 10.0.26200, a development build
+of `main` after the merges of `push3/cleanup` (axTask's project folder leftovers, TK-D10; axAutomate's "Running" after
+the commands notice; the AI tools' selection check by identity) and `push3/mcp-items` (axTask's AI tools
+`axkit_task_lists`, `axkit_task_items`, `axkit_task_add`, MC-8, TK-8; axTask opened by the tools only on the user's own
+top folder). `nvda-pass.ps1`, every app: 90 scripts, 89 passed whole, every announcement also spoken by NVDA,
+`mcp/04-task-items` among them. axFile `03-operations` missed the Find field at line 382 once (Ctrl+F right after an
+undo, the focus still on the list); `nvda-pass.ps1 -NoBuild axFile` then passed all 7 scripts whole, so a timing miss,
+not a fault, and nothing of this push touches axFile's Find.
+
+Not heard by this pass, the user's by ear: a real Claude Code session adding an item (axTask plan section 7), the
+project folder steps 6.4, 6.9 and 6.10 with a folder picker, axAutomate plan 5.5 and 5.6.
+
 ## 2026-11-11, the day's second push: every app, by the assistant through nvda-pass.ps1 (`main` 7b6e8f4 and the script fixes after it)
 
 Run by the assistant with NVDA 2025.3.3 listening while the user was away for the day (the user's word: "i will be
