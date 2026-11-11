@@ -84,6 +84,8 @@ public sealed partial class TaskForm : ItemForm
         AddKey(new Command("Next heading level 2", AxTaskKeys.NextHeading2, () => JumpHeading(2, 1)) { When = AtHeadings, Mark = CommandMark.Read });
         AddKey(new Command("Previous heading level 1", AxTaskKeys.PreviousHeading1, () => JumpHeading(1, -1)) { When = AtHeadings, Mark = CommandMark.Read });
         AddKey(new Command("Previous heading level 2", AxTaskKeys.PreviousHeading2, () => JumpHeading(2, -1)) { When = AtHeadings, Mark = CommandMark.Read });
+        AddKey(new Command("Next heading level 3", AxTaskKeys.NextHeading3, () => JumpHeading(3, 1)) { When = AtHeadings, Mark = CommandMark.Read });
+        AddKey(new Command("Previous heading level 3", AxTaskKeys.PreviousHeading3, () => JumpHeading(3, -1)) { When = AtHeadings, Mark = CommandMark.Read });
         // Ctrl+1 to Ctrl+9, the list's own actions, and the GitHub actions of a GitHub list (RP-7.2, RP-8; TaskForm.GitHub.cs).
         PlaceGitHubMenus();
         _itemMenu.DropDownItems.Add(_actionKeysMenu);
@@ -376,10 +378,12 @@ public sealed partial class TaskForm : ItemForm
     private const string ArchivedItemsName = "Archived items";
 
     /// <summary>
-    /// A heading row of the top level (TK-3a.1): its name, whether it is a section of the user's own, and its level, 1
-    /// or 2 (TK-D13).
+    /// A heading row of the top level (TK-3a.1): its name, whether it is a section of the user's own, its level, 1 to 3
+    /// (TK-D13, TK-D20), and what its detail pane says when that is not the name's own line.
     /// </summary>
-    private sealed record SectionTag(string Name, bool Custom, int Level);
+    private sealed record SectionTag(string Name, bool Custom, int Level, string? About = null);
+
+    private const string SmartTags = "Smart tags";
 
     /// <summary>The Tag of the "Archived items" row, which opens the Archive's own items.</summary>
     private static readonly object ArchivedItemsTag = new();
@@ -414,19 +418,34 @@ public sealed partial class TaskForm : ItemForm
             AddProjectSections(rows);
         }
 
-        List<SmartList> smart = [SmartList.AllTasks, .. SmartList.InFolder(TopFolder)];
-        AddHeading(rows, "Smart lists", 1, Count(smart.Count, "smart list"));
-        rows.AddRange(smart.Select(list => SmartRow(list, all, today)));
-
-        // TK-5.5: a smart list for each mention and each hashtag in the tasks not done; no heading when there are none.
-        var tasks = all.Select(gathered => gathered.Item).ToList();
-        foreach (var (heading, mark) in new[] { ("Mentions", Tags.Mention), ("Hashtags", Tags.Hashtag) })
+        // TK-5.2a, TK-D17: All tasks, the user's smart lists whose first word no other shares, then a heading of level 2
+        // for each first word two or more share ("App"), its lists under it by their full names.
+        var filters = SmartList.InFolder(TopFolder);
+        var (loose, groups) = SmartList.Grouped(filters);
+        AddHeading(rows, "Smart lists", 1, Count(1 + filters.Count, "smart list"));
+        rows.Add(SmartRow(SmartList.AllTasks, all, today));
+        rows.AddRange(loose.Select(list => SmartRow(list, all, today)));
+        foreach (var (word, lists) in groups)
         {
-            var tokens = Tags.InTasks(tasks, mark);
-            if (tokens.Count > 0)
+            rows.Add(Heading("filters:" + word, word, 2, Count(lists.Count, "smart list"),
+                new SectionTag(word, false, 2, $"Your smart lists whose names start with {word}; each is a file of its own, Ctrl+J changes it in axJSON")));
+            rows.AddRange(lists.Select(list => SmartRow(list, all, today)));
+        }
+
+        // TK-5.5, TK-D18: Smart tags, a heading of level 3 for each symbol found in the tasks not done, everywhere
+        // gathered (TK-5.6), with a smart list for each tag; no heading when there are none.
+        var bySymbol = Tags.InTasks(all.Select(gathered => gathered.Item));
+        if (bySymbol.Count > 0)
+        {
+            AddHeading(rows, SmartTags, 2, Count(bySymbol.Count, "symbol"));
+            foreach (var (symbol, tags) in bySymbol)
             {
-                AddHeading(rows, heading, 2, Count(tokens.Count, "smart list"));
-                rows.AddRange(tokens.Select(token => SmartRow(SmartList.Tagged(token), all, today)));
+                var spoken = Tags.Spoken(symbol);
+                rows.Add(Heading("symbol:" + symbol, spoken, 3, Count(tags.Count, "smart list"),
+                    new SectionTag(spoken, false, 3, symbol == Tags.Assignee
+                        ? "A smart list for each person a task is assigned to, written @ and the name in its title or a text field"
+                        : $"A smart list for each tag written {symbol} and a word in the title or a text field of a task not done")));
+                rows.AddRange(tags.Select(tag => SmartRow(SmartList.Tagged(tag), all, today)));
             }
         }
 
@@ -471,7 +490,7 @@ public sealed partial class TaskForm : ItemForm
     private static ItemRow Heading(string key, string name, int level, string state, object tag) =>
         new(false, key, name, $"{name}, heading level {level}, {state}", tag, IsSection: true);
 
-    /// <summary>A heading row's level, 1 or 2; 0 for a row that is no heading.</summary>
+    /// <summary>A heading row's level, 1 to 3; 0 for a row that is no heading.</summary>
     private static int LevelOf(ItemRow row) => row.Tag switch
     {
         SectionTag heading => heading.Level,
@@ -497,7 +516,7 @@ public sealed partial class TaskForm : ItemForm
     }
 
     /// <summary>
-    /// Ctrl+1 and Ctrl+2 at the top level (TK-3a.2, TK-D14): the next heading of that level, with Shift the one before;
+    /// Ctrl+1 to Ctrl+3 at the top level (TK-3a.2, TK-D14, TK-D20): the next heading of that level, with Shift the one before;
     /// the edge sound when there is none. The selection's move is read as Ctrl+Down's is.
     /// </summary>
     private void JumpHeading(int level, int direction)
@@ -538,11 +557,10 @@ public sealed partial class TaskForm : ItemForm
                 return new ItemDetail("Details of " + section.Name, row.Key, null,
                 [
                     new ItemDetailLine(row.Label),
-                    new ItemDetailLine((section.Custom ? string.Empty : section.Name) switch
+                    new ItemDetailLine(section.About ?? (section.Custom ? string.Empty : section.Name) switch
                     {
-                        "Smart lists" => "All tasks and your saved filters, over your lists and every project's; List, New smart list makes one",
-                        "Mentions" => "A smart list for each @name in the tasks not done, in their titles and text fields, in your lists and every project's",
-                        "Hashtags" => "A smart list for each #tag in the tasks not done, in their titles and text fields, in your lists and every project's",
+                        "Smart lists" => "All tasks and your saved filters, those that share a first word under a heading of it, over your lists and every project's; List, New smart list makes one",
+                        SmartTags => "A heading for each symbol that starts a word in your tasks not done, @ for the people they are assigned to, # and the rest for tags, with a smart list for each, over your lists and every project's",
                         "Date lists" => "The tasks not done by their Due date, in your lists and every project's",
                         "Projects" => "A heading for each project folder, with the folders of lists found under it; Options, Project folders adds and removes them",
                         "Archived lists" => "What Delete moved away; Ctrl+Z brings back the last, axFile deletes for good",

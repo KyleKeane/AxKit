@@ -39,6 +39,11 @@ public static class AxTaskKeys
 
     public const Keys PreviousHeading2 = Keys.Control | Keys.Shift | Keys.D2;
 
+    /// <summary>At a top level, the next and previous heading of level 3, the symbols under Smart tags (TK-D20); in a list Ctrl+3 is action key 3.</summary>
+    public const Keys NextHeading3 = Keys.Control | Keys.D3;
+
+    public const Keys PreviousHeading3 = Keys.Control | Keys.Shift | Keys.D3;
+
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
@@ -49,11 +54,13 @@ public static class AxTaskKeys
         ("All tasks", AllTasks),
         ("Move the list to a section", MoveToSection),
         ("Find in every list", FindEverywhere),
-        // Ctrl+1 and Ctrl+2 are one entry each: the next heading at a top level, the action key in a list (TK-D14).
+        // Ctrl+1 to Ctrl+3 are one entry each: the next heading at a top level, the action key in a list (TK-D14, TK-D20).
         ("Action key 1 in a list, the next heading of level 1 at a top level", NextHeading1),
         ("Action key 2 in a list, the next heading of level 2 at a top level", NextHeading2),
-        .. Enumerable.Range(3, 7).Select(digit => ($"Action key {digit}", ActionKey(digit))),
+        ("Action key 3 in a list, the next heading of level 3 at a top level", NextHeading3),
+        .. Enumerable.Range(4, 6).Select(digit => ($"Action key {digit}", ActionKey(digit))),
         ("Previous heading level 1", PreviousHeading1),
         ("Previous heading level 2", PreviousHeading2),
+        ("Previous heading level 3", PreviousHeading3),
     ];
 }
