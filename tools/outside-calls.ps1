@@ -93,7 +93,7 @@ $targets = @(
         @('Documentation', 'docs/axFile/SPEC.md (Open with); docs/axStart/SPEC.md.'),
         @('Apps', 'axFile; axStart.')) }
     @{ Key = 'axKit'; Kind = 'program'; Lines = @(
-        @('What', 'axKit itself, this very program file: a new window of an app, the restart under its own name when started through an Open with hard link, the restart after an update, a window the AI tool asked for.'),
+        @('What', 'axKit itself, this very program file: a new window of an app, the restart under its own name when started through an Open with hard link, the restart after an update, a window the AI tool asked for, the windows and the AI tools'' server of a workflow''s run (axAutomate, on the run''s own desktop).'),
         @('How', 'a new process of this program file (or the installed `AxKit.exe` after an update) with the app''s verb and path; a test run''s variables go only to a window of the run (S-11).'),
         @('What it reaches', 'nothing new: the same program.'),
         @('Documentation', 'docs/axKit/SPEC.md AX-1, AX-2.3, AX-3, AX-9.'),
@@ -104,9 +104,15 @@ $targets = @(
         @('What it reaches', 'nothing on the network: pipes on this computer. What the AI tool does with what it read is under its own terms. axPass and axClip are never read; axClaude and axTerminal are never opened.'),
         @('Documentation', 'https://modelcontextprotocol.io/specification; docs/axKit/mcp.md.'),
         @('Apps', 'every window.')) }
+    @{ Key = 'Workflow commands'; Kind = 'program'; Lines = @(
+        @('What', 'the command line of a workflow''s `run` step (a test''s `git init`, `findstr`, `copy`), through Windows'' own `cmd.exe`, when a workflow runs: in axAutomate''s window (F5) or with tools/AxAutomate.'),
+        @('How', '`cmd.exe /d /s /c "<command line>"` without a window, in the run''s own folder, both outputs read, waited for up to 60 seconds and ended with its process tree after that.'),
+        @('What it reaches', 'whatever the command reaches, with the user''s rights; the workflows of `tests/scripts` make and read files in the run''s folder.'),
+        @('Documentation', 'docs/axAutomate/SPEC.md AU-3.3, AU-4.4; docs/axKit/automation.md.'),
+        @('Apps', 'axAutomate; tools/AxAutomate.')) }
     @{ Key = 'Test automation'; Kind = 'pipe'; Lines = @(
-        @('What', 'tools/AxAutomate, the bundle''s own test driver, in an automated run only: a window started with the run''s secret (`AXKIT_AUTOMATION`) opens the pipe `axkit-auto-<process id>` for it. Never in normal use.'),
-        @('How', 'a named pipe this Windows account alone may open; the run''s secret and folder go from the environment to the window''s memory at its start (S-11).'),
+        @('What', 'the automation channel of a window of a workflow''s run, in a run only: axAutomate''s window (F5) or tools/AxAutomate, the bundle''s own test driver, starts the run''s windows on a desktop of the run''s own with the run''s secret (`AXKIT_AUTOMATION`), and each opens the pipe `axkit-auto-<process id>` for it. Never in normal use; the user''s own windows never open it.'),
+        @('How', 'a named pipe this Windows account alone may open; the run''s secret and folder are handed to the run''s windows alone in their own environment, and go from it to the window''s memory at its start (S-11).'),
         @('What it reaches', 'nothing on the network.'),
         @('Documentation', 'docs/axKit/automation.md.'),
         @('Apps', 'every window, in a test run.')) }
@@ -155,7 +161,7 @@ $kindNames = [ordered]@{ network = 'Network'; program = 'Programs'; pipe = 'Pipe
 $apps = @{
     AxClaude = 'axClaude'; AxDown = 'axDown'; AxJSON = 'axJSON'; AxGit = 'axGIT'; AxTerminal = 'axTerminal'; AxFile = 'axFile'
     AxMedia = 'axMedia'; AxPreview = 'axPreview'; AxStart = 'axStart'; AxProcess = 'axProcess'; AxTask = 'axTask'
-    AxPass = 'axPass'; AxCalc = 'axCalc'; AxClip = 'axClip'; AxKit = 'shared by every app'
+    AxPass = 'axPass'; AxCalc = 'axCalc'; AxClip = 'axClip'; AxAutomate = 'axAutomate'; AxKit = 'shared by every app'
 }
 
 $marker = [regex]'//\s*Outside call, (\w+), ([^:]+):\s*(.*)$'

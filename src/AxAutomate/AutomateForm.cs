@@ -8,12 +8,12 @@ namespace AxAutomate;
 /// axAutomate's window (SPEC.md AU-4), on the item apps' shared window <see cref="ItemForm"/>, which holds the panes,
 /// the moves between levels and the shared keys. This class holds what is axAutomate's: a folder of workflows as the
 /// levels (its folders, then its workflows), a workflow's steps as rows in the order they run with the steps of a
-/// block right after their step (AU-D5), and a step's parts as the detail pane's lines. The first version only views
-/// (AU-6): every change is refused with one sentence, and nothing runs.
+/// block right after their step (AU-D5), and a step's parts as the detail pane's lines. This version views and runs
+/// (AU-6a, the runs in <c>AutomateForm.Run.cs</c>): every change is refused with one sentence.
 /// </summary>
-public sealed class AutomateForm : ItemForm
+public sealed partial class AutomateForm : ItemForm
 {
-    private const string ViewOnly = "This version only views the workflows; changing them comes later";
+    private const string ViewOnly = "This version views and runs the workflows; changing them comes later";
 
     private readonly AutomateSettings _settings;
     private readonly MenuStrip _menu = new();
@@ -28,6 +28,14 @@ public sealed class AutomateForm : ItemForm
 
     private IReadOnlyList<StepRow> _steps = [];
 
+    /// <summary>How many workflows the folder level shown holds, counted as its rows were filled, so that F5 and the menu need no second read.</summary>
+    private int _levelWorkflows;
+
+    /// <summary>Run and Stop the run in the Operations menu, made available as the menu opens (<see cref="UpdateRunItems"/>).</summary>
+    private readonly ToolStripMenuItem _runItem;
+
+    private readonly ToolStripMenuItem _stopItem;
+
     public AutomateForm(string? path, AutomateSettings settings, string? settingsError)
         : base(AxAutomateApp.Name, settings, AutomateSettings.DefaultPath, settingsError)
     {
@@ -39,13 +47,21 @@ public sealed class AutomateForm : ItemForm
 
         // ---- menus and keys: one command list (docs/axKit/app-kit.md AK-2), each key from the tables (AU-4.4) ----
         Add(_sessionMenu, new Command("&Open a folder of workflows...", AxAutomateKeys.OpenFolder, OpenFolder) { When = NotRenaming, Mark = CommandMark.Open });
-        _sessionMenu.DropDownItems.Add(Item("Re&fresh", () => Refresh(announce: true), ItemKeys.Refresh));
+        // F5 runs here (AU-D8): Refresh is the menu's alone, and a run reads its file again first.
+        _sessionMenu.DropDownItems.Add(Item("Re&fresh", () => Refresh(announce: true), Keys.None));
         _sessionMenu.DropDownItems.Add(new ToolStripSeparator());
         _sessionMenu.DropDownItems.Add(CreateExitItem());
 
         _stepMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
         _stepMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
         Add(_stepMenu, new Command("The workflow's file as &text", AxAutomateKeys.OpenFile, OpenFile) { When = NotRenaming, Mark = CommandMark.Open });
+        _stepMenu.DropDownItems.Add(new ToolStripSeparator());
+        _runItem = Add(_stepMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
+        _stopItem = Add(_stepMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });
+        // Running keys only on what can run (AU-3.3.2): the items say so as the menu opens, and the command palette
+        // reads them after the same refresh.
+        CommandPalette.RefreshedOnOpening(_stepMenu, UpdateRunItems);
+        FormClosed += (_, _) => AbandonOnClose();
 
         var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(CreateTextMenu());
@@ -89,7 +105,7 @@ public sealed class AutomateForm : ItemForm
         var folder = _folders[^1];
         if (_workflow is { } workflow)
         {
-            var rows = _steps.Select((row, i) => new ItemRow(false, "step:" + i, row.Label, row.Label, row)).ToList();
+            var rows = _steps.Select((row, i) => new ItemRow(false, "step:" + i, row.Label, row.Label + StepMark(row), row)).ToList();
             if (rows.Count == 0)
             {
                 rows.Add(new ItemRow(false, "empty", "No steps", "No steps"));
@@ -100,6 +116,7 @@ public sealed class AutomateForm : ItemForm
         }
 
         var entries = WorkflowFolder.Read(folder);
+        _levelWorkflows = entries.Count(entry => !entry.IsFolder);
         var items = entries.Select(entry => entry.IsFolder
             ? new ItemRow(true, entry.Path, entry.Name, $"{entry.Name}, folder, {StepText.Count(WorkflowFolder.CountWorkflows(entry.Path), "workflow")}", entry)
             : WorkflowRow(entry)).ToList();
@@ -112,12 +129,12 @@ public sealed class AutomateForm : ItemForm
         return (items, $"{name}, {StepText.Count(entries.Count(entry => !entry.IsFolder), "workflow")}, {StepText.Count(entries.Count(entry => entry.IsFolder), "folder")}", name, folder);
     }
 
-    /// <summary>A workflow's row by its title (AU-4.2): a script's is its file's name, a workflow file's its own.</summary>
-    private static ItemRow WorkflowRow(FolderEntry entry)
+    /// <summary>A workflow's row by its title (AU-4.2): a script's is its file's name, a workflow file's its own; after a run, its outcome.</summary>
+    private ItemRow WorkflowRow(FolderEntry entry)
     {
         var workflow = WorkflowFolder.ReadWorkflow(entry.Path);
         var problem = workflow.Problem is null ? string.Empty : ", not all understood";
-        return new ItemRow(true, entry.Path, workflow.Title, $"{workflow.Title}, workflow, {StepText.Count(workflow.StepCount, "step")}{problem}", entry);
+        return new ItemRow(true, entry.Path, workflow.Title, $"{workflow.Title}, workflow, {StepText.Count(workflow.StepCount, "step")}{problem}{OutcomeMark(workflow.Path)}", entry);
     }
 
     protected override void EnterList(ItemRow row)
@@ -156,7 +173,7 @@ public sealed class AutomateForm : ItemForm
         return null;
     }
 
-    /// <summary>F5: a workflow open is read again from its file.</summary>
+    /// <summary>Session, Refresh: a workflow open is read again from its file.</summary>
     protected override void BeforeRefresh()
     {
         if (_workflow is { } workflow)
@@ -171,7 +188,13 @@ public sealed class AutomateForm : ItemForm
         switch (row?.Tag)
         {
             case StepRow step when _workflow is { } open:
-                return new ItemDetail(step.Step.IsNote ? "A note" : "Step " + step.Number, row.Key, null, StepText.Details(step, open).Select(line => new ItemDetailLine(line)).ToList());
+                var stepLines = StepText.Details(step, open).Select(line => new ItemDetailLine(line)).ToList();
+                if (OutcomeLine(open.Path, step) is { } failedLine)
+                {
+                    stepLines.Insert(1, failedLine);
+                }
+
+                return new ItemDetail(step.Step.IsNote ? "A note" : "Step " + step.Number, row.Key, null, stepLines);
             case FolderEntry { IsFolder: true } folder:
                 return new ItemDetail("Details of " + folder.Name, row.Key, null,
                 [
@@ -194,6 +217,9 @@ public sealed class AutomateForm : ItemForm
                     lines.Add(new ItemDetailLine("Not understood: " + problem));
                 }
 
+                lines.Add(ScriptLines.CannotRun(workflow, nvda: false, confined: true) is { } refusal
+                    ? new ItemDetailLine("Cannot run: " + refusal)
+                    : OutcomeLine(workflow.Path, null) ?? new ItemDetailLine("Not run yet"));
                 lines.Add(new ItemDetailLine("Right or Enter goes into its steps"));
                 return new ItemDetail("Details of " + workflow.Title, row.Key, null, lines);
             default:

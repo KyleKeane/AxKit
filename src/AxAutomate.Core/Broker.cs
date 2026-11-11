@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace AxAutomate;
+namespace AxAutomate.Core;
 
 /// <summary>
 /// The runner as an MCP client (docs/axKit/mcp.md MC-6): <c>AxKit.exe mcp</c> started as its child, as an AI client
@@ -36,7 +36,7 @@ internal sealed partial class Broker : IDisposable
         reader.Start();
     }
 
-    public static Broker Start(string exe)
+    public static Broker Start(string exe, string secret, string home)
     {
         var start = new ProcessStartInfo(exe)
         {
@@ -49,14 +49,11 @@ internal sealed partial class Broker : IDisposable
         };
         start.ArgumentList.Add("mcp");
         // The run's secret and folder, which the windows were started with: the broker reads the run's mcp.json and key.
-        foreach (var name in new[] { "AXKIT_AUTOMATION", "AXKIT_HOME" })
-        {
-            if (Environment.GetEnvironmentVariable(name) is { } value)
-            {
-                start.Environment[name] = value;
-            }
-        }
+        start.Environment[AxKit.Core.AutomationEnvironment.SecretVariable] = secret;
+        start.Environment[AxKit.Core.AutomationEnvironment.HomeVariable] = home;
 
+        // Outside call, program, axKit: AxKit.exe mcp, the AI tools' server, as the run's MCP client starts it, with the
+        // run's secret and folder.
         var broker = new Broker(Process.Start(start)!);
         broker.Send("""{"jsonrpc":"2.0","id":0,"method":"initialize","params":{"protocolVersion":"2025-06-18","clientInfo":{"name":"axAutomate"}}}""");
         return broker;

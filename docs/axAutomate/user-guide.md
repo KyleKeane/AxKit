@@ -3,7 +3,7 @@
 axAutomate shows workflows: lists of steps that drive axKit's windows, such as "press Ctrl+Shift+P, then expect
 Command palette to be said". Its first workflows are the automated checks of every axKit app, so that you can read
 what each check does, step by step. It is part of axKit, a bundle of apps for people who use a screen reader; it was
-built for and with NVDA. This first version views the workflows: running and changing them come later.
+built for and with NVDA. This version views the workflows and runs them; changing them comes later.
 
 ## Install
 
@@ -46,13 +46,46 @@ Tab or Enter on a step goes to its details: its number, what it does, each of it
 happens when it fails, what it reports, its blocks, its note, and the line of the file it comes from. Escape or Tab
 goes back. Ctrl+Q reads every line at once.
 
+## Running workflows
+
+F5 inside a workflow runs it; F5 in a folder runs every workflow of that folder, one after another (not the folders
+inside it). The axKit windows of a run open on a desktop of their own: they never come to the front, never take your
+keyboard and play no sound, so you can go on working, in axAutomate or anywhere else. Each workflow gets fresh
+windows with settings of their own, never yours, and its steps that make files and folders make them in a folder of
+the run's own: a workflow with such a step that writes anywhere else cannot run from the window.
+
+A workflow's `run` steps are different: their command lines run through Windows' command prompt on your own
+computer, with your files, as if you typed them. So before a run with one, a notice names them: "This workflow runs
+commands on your computer: git init. Run it?". Cancel is the default, so Enter and Escape both decline and you hear
+"Not run"; Alt+R, or Tab to Run and Enter, runs it.
+
+These two guards catch slips; they do not make a workflow safe. A workflow drives axKit's windows, and those
+reach what you can: it can open one of your files in axDown and save it changed, use axFile's operations, or type a
+command into axTerminal, without a question. A workflow is a program: run only workflows you wrote or trust.
+
+While steps pass, nothing is said. A step that fails is said as it ends, with what was expected and what the run saw:
+"Step 2 failed: Expect the focus: Nothing like this. Not within 10 s; seen: ...". When a workflow ends you hear one
+line, "01-passes passed, 4 steps" or "02-fails failed at step 2", and after a folder's run, "Run finished: 3 of 5
+workflows passed, 1 failed, 1 could not run". A folder's run you stop says where it stopped and how many it did not
+reach: "Run stopped at 03-waits: 1 passed, 1 failed, 3 not run".
+
+Afterwards the rows say how the last run went: "02-fails, workflow, 3 steps, failed at step 2", and inside it the step
+that failed ends with "failed". Tab on either gives "Last run:" with what the run saw. Escape during a run stops it
+after the step going on ("03-waits stopped"), from either pane; closing the window stops it the same way, and its run's
+windows are gone within half a minute.
+
+A workflow this version cannot run says why when you press F5, for example one with "otherwise" steps; its details
+say "Cannot run". So does one with a step whose number is not one, such as "wait 2s". The checks that need NVDA listening run only in the NVDA pass, not from the window.
+
 ## Keys
 
 - Ctrl+O: open a folder of workflows.
 - Ctrl+J: the workflow's file as text, a script in axDown, a workflow file in axJSON.
-- F5: read the folder or the workflow again, after the file changed.
+- F5: run the workflow, or every workflow of the folder. Escape during a run: stop it.
+- Session, Refresh: read the folder or the workflow again, after the file changed.
 - F1: every key of the window.
-- Ctrl+N, F2, Delete and the other keys that change items in axTask say "This version only views the workflows".
+- Ctrl+N, F2, Delete and the other keys that change items in axTask say "This version views and runs the workflows;
+  changing them comes later".
 
 ## The files
 
