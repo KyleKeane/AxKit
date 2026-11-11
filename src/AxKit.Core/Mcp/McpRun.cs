@@ -4,6 +4,19 @@ namespace AxKit.Core.Mcp;
 public sealed record McpCommandName(string Label, string Menu);
 
 /// <summary>
+/// What an act command would act on (docs/axKit/mcp.md MC-7.3): <paramref name="Shown"/>, the few words the question
+/// names it by ("report.pdf in files"), and <paramref name="Identity"/>, what the user's Run compares (axFile's full
+/// paths, the item apps' list and item file), so that two selections with the same short words are never taken for
+/// one. <see cref="Of"/> for a target whose words say it whole.
+/// </summary>
+public sealed record RunTarget(string Shown, string Identity)
+{
+    public static readonly RunTarget None = new(string.Empty, string.Empty);
+
+    public static RunTarget Of(string shown) => new(shown, shown);
+}
+
+/// <summary>
 /// The pure rules of <c>axkit_window_run</c> (docs/axKit/mcp.md MC-7): which windows never run a command for an AI tool,
 /// the words of a refusal, how a command's name is matched, and what the window says when a command ran. The window
 /// does the running (<c>AxKit.Forms/AxKitForm.Mcp.cs</c>); the switch is <see cref="McpSettings.RunCommands"/>. Tested
@@ -137,9 +150,12 @@ public static class McpRun
             + "Run runs it once, now, and not at all if what is selected has changed meanwhile. Deny, the default, does not.";
     }
 
-    /// <summary>Why the user's Run does not run (MC-7.3): <see cref="SelectionChanged"/> when the target now differs from the one asked about, null when it is the same.</summary>
-    public static string? TargetRefusal(string asked, string now) =>
-        string.Equals(asked, now, StringComparison.Ordinal) ? null : SelectionChanged;
+    /// <summary>
+    /// Why the user's Run does not run (MC-7.3): <see cref="SelectionChanged"/> when the target's identity now differs
+    /// from the one asked about, null when it is the same; the shown words are never compared.
+    /// </summary>
+    public static string? TargetRefusal(RunTarget asked, RunTarget now) =>
+        string.Equals(asked.Identity, now.Identity, StringComparison.Ordinal) ? null : SelectionChanged;
 
     /// <summary>How long after a chime for a run in a window behind the same window plays none for the next (MC-7.5): one chime for a burst of runs.</summary>
     public const int ChimeQuietMs = 5000;

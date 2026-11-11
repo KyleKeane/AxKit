@@ -357,10 +357,28 @@ public sealed class McpTests
     [Fact]
     public void A_run_is_refused_when_the_selection_changed_since_the_question()
     {
-        Assert.Null(McpRun.TargetRefusal("report.pdf in files", "report.pdf in files"));
-        Assert.Equal("the selection changed", McpRun.TargetRefusal("report.pdf in files", "notes.md in files"));
-        Assert.Equal("the selection changed", McpRun.TargetRefusal("Report.pdf", "report.pdf"));
-        Assert.Null(McpRun.TargetRefusal(string.Empty, string.Empty));
+        Assert.Null(McpRun.TargetRefusal(RunTarget.Of("report.pdf in files"), RunTarget.Of("report.pdf in files")));
+        Assert.Equal("the selection changed", McpRun.TargetRefusal(RunTarget.Of("report.pdf in files"), RunTarget.Of("notes.md in files")));
+        Assert.Equal("the selection changed", McpRun.TargetRefusal(RunTarget.Of("Report.pdf"), RunTarget.Of("report.pdf")));
+        Assert.Null(McpRun.TargetRefusal(RunTarget.None, RunTarget.None));
+
+        // The identity is compared, never the short words: two folders named files, each with its report.pdf.
+        var asked = new RunTarget("report.pdf in files", @"D:\a\files\report.pdf");
+        Assert.Equal("the selection changed", McpRun.TargetRefusal(asked, new RunTarget("report.pdf in files", @"D:\b\files\report.pdf")));
+        Assert.Null(McpRun.TargetRefusal(asked, asked with { Shown = "report.pdf in files, 2 items" }));
+    }
+
+    [Fact]
+    public void The_run_compares_the_selection_after_the_question_gave_the_focus_back()
+    {
+        // MC-7.3: the window's default target reads the focused control, so the Run must close the question first (which
+        // selects the control focused before it) and only then read the target again; the other order compares the
+        // question's own button.
+        var text = File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Mcp.cs"));
+        var ask = text.IndexOf("private void AskToRunMcp(", StringComparison.Ordinal);
+        var close = text.IndexOf("CloseNotice(null);", ask, StringComparison.Ordinal);
+        var compare = text.IndexOf("McpRun.TargetRefusal(target, McpTarget())", ask, StringComparison.Ordinal);
+        Assert.True(ask > 0 && close > ask && compare > close, "AskToRunMcp's Run must call CloseNotice before it compares the target");
     }
 
     [Theory]

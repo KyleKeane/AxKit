@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: an AI tool's command that you allow with Run is refused when the selection changed, now told by what is really selected rather than by its short name: in axFile the entries' full paths, so that report.pdf in another folder also named files no longer counts as the same, and in axTask and the other item apps the list and the item's file. In axGIT, with no file, commit or branch in hand (an empty list, or the details text focused), the question names what has the focus instead of nothing.
+
 - axAutomate: "Running ...; Escape stops it" is said once the run starts, after you answer the commands notice with Run; Cancel says only "Not run". The notice names the command lines as they will run, with a typed escape filled in and the run's own folder called "the run's folder".
 
 - axTask: the leftovers of the project folders. New GitHub list says why in the Projects level and the search's, as New list does; Use these fields for new items on a found item says "Open it where it lives first: Enter"; removing the last project folder while you are in a project takes you back to your own lists; opening a list in a project no longer becomes the list axTask starts in next time, which could open your own list of the same name instead; and a project's level read again as its lists are found leaves the selected row's fields alone. A list is found in a project by its `list.json` alone, now said in the guide.

@@ -178,19 +178,20 @@ public abstract partial class AxKitForm
     /// user's Run: the window's selection in a few words ("report.pdf in files"), empty when there is none. By default
     /// the focused control's name and, for a list, its selected item as NVDA reads it; the windows whose commands act on
     /// a selection say it themselves (axFile's selected entries, axStart's program, axProcess's process or service,
-    /// axGIT's file, the item apps' row).
+    /// axGIT's file, the item apps' row), with an identity of their own where the few words could name two things
+    /// (axFile's full paths, the item apps' list and item file), which is what the user's Run compares.
     /// </summary>
-    protected virtual string McpTarget()
+    protected virtual RunTarget McpTarget()
     {
         if (FocusedControl() is not { } control)
         {
-            return string.Empty;
+            return RunTarget.None;
         }
 
         var name = control.AccessibleName ?? string.Empty;
-        return control is ListBox && WindowReading.ValueOf(control) is { Length: > 0 } selected
+        return RunTarget.Of(control is ListBox && WindowReading.ValueOf(control) is { Length: > 0 } selected
             ? name.Length > 0 ? $"{selected}, in {name}" : selected
-            : name;
+            : name);
     }
 
     /// <summary>Milliseconds since the user's last key or mouse move in this session (<c>GetLastInputInfo</c>), -1 when Windows cannot tell.</summary>
@@ -216,15 +217,18 @@ public abstract partial class AxKitForm
     /// switch is still on (read again off the window's thread), the item still available and the window's selection still
     /// the one the question named (<paramref name="target"/>, <see cref="McpTarget"/>).
     /// </summary>
-    private void AskToRunMcp(string client, string label, string menu, ToolStripMenuItem item, string target)
+    private void AskToRunMcp(string client, string label, string menu, ToolStripMenuItem item, RunTarget target)
     {
-        var text = McpRun.AskText(client, label, menu, target);
+        var text = McpRun.AskText(client, label, menu, target.Shown);
         ShowNotice(new Notice(McpRun.AskTitle(client, label), text,
         [
             new OverlayChoice("&Run", () =>
             {
+                // The order matters: CloseNotice gives the focus back to the control that had it before the question
+                // (the notice rule, AxKitForm.Notices.cs: _focusBeforeNotice selected before CloseNotice returns, the
+                // Run being StaysOpen and outside any chain), so that McpTarget reads the same pane as when it was asked;
+                // read with the notice still open, the focus would be on this button and the default target would differ.
                 CloseNotice(null);
-                // Read with the focus back where it was before the question, as when it was asked.
                 if (McpRun.TargetRefusal(target, McpTarget()) is { } changed)
                 {
                     Announce($"{label} not run: {changed}", true);

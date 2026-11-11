@@ -304,12 +304,17 @@ public sealed partial class FileForm : AxKitForm
     /// <summary>The folder shown, for Recently closed (AX-9.4); nothing at This PC.</summary>
     protected override string? PathInHand => RealFolder;
 
-    /// <summary>What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the selected entries, or the current one, in the folder shown; the Actions list's line when it has the focus.</summary>
-    protected override string McpTarget()
+    /// <summary>
+    /// What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the selected entries, or the current one,
+    /// in the folder shown, by their names ("report.pdf in files") and, for the Run's comparison, by their full paths, so
+    /// that the same names in another folder of the same name are another target; the Actions list's line when it has
+    /// the focus.
+    /// </summary>
+    protected override AxKit.Core.Mcp.RunTarget McpTarget()
     {
         if (_pane.Focused)
         {
-            return _pane.SelectedItem?.ToString() is { Length: > 0 } action ? $"{action}, in the Actions list" : "the Actions list";
+            return AxKit.Core.Mcp.RunTarget.Of(_pane.SelectedItem?.ToString() is { Length: > 0 } action ? $"{action}, in the Actions list" : "the Actions list");
         }
 
         var entries = SelectedEntries();
@@ -320,7 +325,8 @@ public sealed partial class FileForm : AxKitForm
 
         var folder = RealFolder is { } real ? PathName.Of(real) : "This PC";
         var names = AxKit.Core.Mcp.McpRun.Names([.. entries.Select(entry => entry.Name)]);
-        return names.Length > 0 ? $"{names} in {folder}" : $"the folder {folder}";
+        var identity = string.Join("\n", [RealFolder ?? "This PC", .. entries.Select(entry => entry.Path)]);
+        return new AxKit.Core.Mcp.RunTarget(names.Length > 0 ? $"{names} in {folder}" : $"the folder {folder}", identity);
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)

@@ -146,11 +146,11 @@ public sealed class ProcessForm : AxKitForm
     protected override Control FocusTarget => _list;
 
     /// <summary>What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the selected process with its ID, service or startup entry.</summary>
-    protected override string McpTarget() =>
+    protected override AxKit.Core.Mcp.RunTarget McpTarget() => AxKit.Core.Mcp.RunTarget.Of(
         CurrentProcess() is { } process ? $"the process {process.Name}, ID {process.Id}"
         : CurrentService() is { } service ? $"the service {service.DisplayName}"
         : CurrentStartup() is { } startup ? $"the startup program {startup.Name}"
-        : string.Empty;
+        : string.Empty);
 
     protected override void ApplyFont(Font font) => _list.Font = font;
 

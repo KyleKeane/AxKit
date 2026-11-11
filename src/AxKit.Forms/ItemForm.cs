@@ -178,8 +178,13 @@ public abstract partial class ItemForm : AxKitForm
 
     protected override Control FocusTarget => DetailPane.Focused ? DetailPane : Navigator;
 
-    /// <summary>What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the navigator's selected row.</summary>
-    protected override string McpTarget() => SelectedRow()?.Name ?? string.Empty;
+    /// <summary>
+    /// What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the navigator's selected row by its name,
+    /// told apart by the level it is in (the status bar's place, the list's folder) and its key (an item's file), so
+    /// that two items of one title in two lists are never one target.
+    /// </summary>
+    protected override AxKit.Core.Mcp.RunTarget McpTarget() =>
+        SelectedRow() is { } row ? new AxKit.Core.Mcp.RunTarget(row.Name, $"{_placeLabel.Text}\n{row.Key}") : AxKit.Core.Mcp.RunTarget.None;
 
     protected override void ApplyFont(Font font)
     {
