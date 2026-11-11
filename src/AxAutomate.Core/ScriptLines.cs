@@ -136,10 +136,7 @@ public static class ScriptLines
     /// <summary>Whether a step's path stays in the run's folder, as <c>Run.Step</c> resolves it against that folder.</summary>
     public static bool InsideRunFolder(string path)
     {
-        var filled = System.Text.RegularExpressions.Regex.Replace(
-            path.Replace("{temp}", StandIn),
-            @"\\u([0-9A-Fa-f]{4})",
-            match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString());
+        var filled = Filled(path, StandIn);
         // The engine fills the escapes into the whole line before it splits a quoted path, so a quote that appears
         // only now (") would make it split another path than the one checked here: refused.
         if (filled.Contains('"'))
@@ -159,13 +156,29 @@ public static class ScriptLines
         }
     }
 
-    /// <summary>The command lines of the lines' <c>run</c> steps, in order, each once: what a run from the window names before it starts (AU-D11).</summary>
+    /// <summary>
+    /// A line as the engine plays it: <c>{temp}</c> replaced by <paramref name="temp"/>, then each <c>\uXXXX</c> escape
+    /// by its character, which a script may use for a character it cannot type (· + > ").
+    /// </summary>
+    public static string Filled(string text, string temp) =>
+        System.Text.RegularExpressions.Regex.Replace(
+            text.Replace("{temp}", temp),
+            @"\\u([0-9A-Fa-f]{4})",
+            match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString());
+
+    /// <summary>How <see cref="Commands"/> names the run's own folder, which only the run knows.</summary>
+    public const string RunFolderWords = "the run's folder";
+
+    /// <summary>
+    /// The command lines of the lines' <c>run</c> steps, in order, each once, as they will run: the escapes filled in
+    /// and <c>{temp}</c> named as "the run's folder"; what a run from the window names before it starts (AU-D11).
+    /// </summary>
     public static IReadOnlyList<string> Commands(IEnumerable<ScriptLine> lines)
     {
         var commands = new List<string>();
         foreach (var line in lines)
         {
-            var text = line.Text;
+            var text = Filled(line.Text, RunFolderWords);
             while (text.StartsWith("iffound ", StringComparison.Ordinal))
             {
                 text = text[8..];

@@ -139,9 +139,18 @@ public sealed partial class TaskForm
     {
         _settings.ProjectFolders.RemoveAll(path => path.Equals(folder, StringComparison.OrdinalIgnoreCase));
         SaveSettings();
-        if (_settings.ProjectFolders.Count == 0 && _atProjects)
+        if (_settings.ProjectFolders.Count == 0 && _search is null && (_atProjects || _project is not null))
         {
+            // TK-7b.1: with no project folder left, the Projects level or a project shown gives way to the user's own top level.
             _atProjects = false;
+            _project = null;
+            _projectName = null;
+            _smart = null;
+            _folder = TopFolder;
+            FindProjects();
+            Fill(select: null);
+            Announce("Removed " + PathName.Of(folder) + ". " + Navigator.AccessibleName, true);
+            return;
         }
 
         FindProjects();
@@ -160,6 +169,13 @@ public sealed partial class TaskForm
             Refill();
         }
     }
+
+    /// <summary>
+    /// The level by its state, not by the status bar's place, which a look ending during an AI tool's question can
+    /// rewrite (MC-7.3): the project, the folder, the smart list, the Projects level and the search's words.
+    /// </summary>
+    protected override string LevelIdentity() =>
+        $"{_project}\n{_folder}\n{(_smart is null ? "" : _smart.Path ?? SmartList.AllTasksName)}\n{_atProjects}\n{_search?.Words}";
 
     /// <summary>Whether a look or a search that ends now must leave the panes alone: a notice is open, or a rename in place.</summary>
     private bool Busy => NoticeOpen || Navigator.Renaming || DetailPane.Renaming;
@@ -328,7 +344,7 @@ public sealed partial class TaskForm
         _project = inHome ? null : found.Hit.Top;
         _projectName = inHome ? null : found.Hit.Place;
         _folder = Path.GetDirectoryName(found.Item.Path)!;
-        RememberLevel();
+        // TK-7b.3: a found item opened is never remembered as the list open last; the user's own place is kept.
         Fill(found.Item.Path);
         AnnounceLevel();
     }

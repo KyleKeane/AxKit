@@ -304,6 +304,12 @@ public sealed partial class TaskForm
     /// <summary>List, New GitHub list (RP-7.1): a list in the top folder named after the repository, filled when it opens.</summary>
     private void NewGitHubList()
     {
+        if (RefusedNewList() is { } why)
+        {
+            Announce(why, true);
+            return;
+        }
+
         var folder = TopFolder;
         AskText("New GitHub list", "The repository, as owner/name, for example KyleKeane/AxKit-reports. Its open issues become the list's items; your Notes on each stay yours.",
             "Repository:", "Repository", string.Empty, "&Make", typed =>

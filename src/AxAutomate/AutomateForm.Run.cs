@@ -84,9 +84,10 @@ public sealed partial class AutomateForm
         var exe = Environment.ProcessPath ?? throw new InvalidOperationException("The program's own path is unknown.");
         // A background thread: a window closed during a run waits for it on a thread of its own (AbandonOnClose), and
         // never longer than that wait.
-        _run = new Thread(() => RunJobs(workflowPath, folder, exe)) { IsBackground = true, Name = "axAutomate run" };
+        // "Running ..." is said by the run's thread once the run starts: after the commands notice is answered with Run
+        // (AU-D11), never before it, so that a Cancel says only "Not run".
+        _run = new Thread(() => RunJobs(workflowPath, folder, exe, said)) { IsBackground = true, Name = "axAutomate run" };
         _run.Start();
-        Announce(said, true);
     }
 
     /// <summary>A workflow's job, on the run's thread: its lines (a script's file read here) or why it cannot run.</summary>
@@ -158,7 +159,7 @@ public sealed partial class AutomateForm
     /// on its own desktop with its own folder, the outcomes posted to the window as each ends. Any exception ends the
     /// workflow it came from as failed and never the process (the user's window).
     /// </summary>
-    private void RunJobs(string? workflowPath, string? folder, string exe)
+    private void RunJobs(string? workflowPath, string? folder, string exe, string starting)
     {
         var (passed, failed, cannotRun) = (0, 0, 0);
         var count = 0;
@@ -202,6 +203,11 @@ public sealed partial class AutomateForm
             {
                 cancelled = true;
                 return;
+            }
+
+            if (count > 0 && !_stopAsked)
+            {
+                Post(() => Announce(starting, true));
             }
 
             for (var i = 0; i < jobs.Count && !_stopAsked; i++)

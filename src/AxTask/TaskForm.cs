@@ -286,8 +286,17 @@ public sealed partial class TaskForm : ItemForm
         AnnounceLevel();
     }
 
+    /// <summary>
+    /// The list open last, kept for the next start: a project's level is never remembered, and while a project is
+    /// shown the user's own place stays as it was (TK-7b.3).
+    /// </summary>
     private void RememberLevel()
     {
+        if (_project is not null)
+        {
+            return;
+        }
+
         _settings.LastList = _project is null && _smart is null && !AtTop && _folder.StartsWith(TopFolder + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
             ? Path.GetRelativePath(TopFolder, _folder)
             : null;

@@ -90,7 +90,8 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
 4. Right on Projects: "Projects, 2 projects, tasks in alpha, 1 list". Down: "tasks in beta, 1 list". Ctrl+Shift+N:
    "A project's lists are made inside it: Right on a project first". Delete: "A project stays: Options, Project
    folders removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E". Ctrl+N: "A
-   project's items are made in its lists: Right on a project, then on a list". F5: "Refreshed: Projects, 2 projects", and the Projects level
+   project's items are made in its lists: Right on a project, then on a list". List, New GitHub list: "A project's
+   lists are made inside it: Right on a project first", no notice. F5: "Refreshed: Projects, 2 projects", and the Projects level
    is not read a second time.
 5. Up, Right on tasks in alpha: "tasks in alpha, 1 list, Smart lists, section, 1 smart list". Down: "All tasks, 1 not
    done". Down twice, Right: "Home, 1 item, Fix the leak". Space: "Done: Fix the leak"; Ctrl+Z: "Undone: Done: Fix the
@@ -102,9 +103,10 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
 8. Ctrl+Shift+F, type `tap`, Enter: "Found tap, 2 items, Fix the tap, in tasks / Home" (your own lists first). Down:
    "Tap drips, in tasks in beta / Bugs". Tab: "Fields of Tap drips" and its Title. Shift+Tab, Escape: "Lists, 3 lists,
    Projects, 2 lists", where the search was started.
-9. Ctrl+Shift+F, type `washer 15`, Enter: "Found washer 15, 1 item, Fix the leak, in tasks in alpha / Home". F2: "Open
+9. Right on one of your own lists, so that it is the list open last. Ctrl+Shift+F, type `washer 15`, Enter: "Found washer 15, 1 item, Fix the leak, in tasks in alpha / Home". F2: "Open
    it where it lives first: Enter". Ctrl+N: "Items are made in a list: open the item where it lives first, Enter".
-   Enter: "Home, 1 item, Fix the leak". Left: "tasks in alpha, 1 list, Home, list, 1
-   item".
-10. Options, Project folders, Remove a project folder: "1. projects (...)"; Enter: "Removed projects", and the Projects
-    line is gone from the top level.
+   Item, Use these fields for new items: "Open it where it lives first: Enter". Enter: "Home, 1 item, Fix the leak".
+   Left: "tasks in alpha, 1 list, Home, list, 1 item".
+10. Right on Home again. Options, Project folders, Remove a project folder: "1. projects (...)"; Enter: "Removed
+    projects. Lists, 3 lists": with no project folder left, the window is back in your own lists and the Projects line
+    is gone. Close axTask and start it again on the folder: it opens in that list of your own, the one open before the search, not in a project's Home.
