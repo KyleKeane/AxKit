@@ -81,10 +81,25 @@ public sealed class SmartList
     /// <summary>Every list built in with a name of its own: All tasks and the lists by due date (TK-5.1, TK-5.4).</summary>
     public static IReadOnlyList<SmartList> BuiltIns { get; } = [AllTasks, .. DateLists];
 
-    /// <summary>TK-5.5: the tasks not done whose words hold a mention or a hashtag, "@Sam" or "#store".</summary>
+    /// <summary>TK-5.5: the tasks not done whose words hold a smart tag, "@Sam", "#store" or "$budget".</summary>
     public static SmartList Tagged(string token) => new(token, null, NotDone(), any: false, SoonestFirst, null,
         (item, _) => Tags.Has(Tags.TextOf(item), token),
         $"Every task not done whose title or text holds {token}, the soonest due first");
+
+    /// <summary>
+    /// The user's smart lists grouped by the first word of their names (TK-5.2a, TK-D17): every first word two or more
+    /// share is a group, by word in natural order, its lists in theirs; the rest stay loose, in the order given. Case
+    /// is not minded; a group is named as its first list writes the word.
+    /// </summary>
+    public static (IReadOnlyList<SmartList> Loose, IReadOnlyList<(string Word, IReadOnlyList<SmartList> Lists)> Groups) Grouped(IReadOnlyList<SmartList> filters)
+    {
+        static string FirstWord(SmartList list) => list.Name.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries) is [var first, ..] ? first : list.Name;
+        var shared = filters.GroupBy(FirstWord, StringComparer.OrdinalIgnoreCase).Where(group => group.Count() > 1)
+            .Select(group => (Word: FirstWord(group.First()), Lists: (IReadOnlyList<SmartList>)group.OrderBy(list => list.Name, AxKit.Core.NaturalOrder.Instance).ToList()))
+            .OrderBy(group => group.Word, AxKit.Core.NaturalOrder.Instance).ToList();
+        var grouped = shared.SelectMany(group => group.Lists).ToHashSet();
+        return (filters.Where(list => !grouped.Contains(list)).ToList(), shared);
+    }
 
     /// <summary>The text a new smart list starts from (TK-5.3): All tasks' conditions in a file of its own.</summary>
     public static string NewFileText() =>

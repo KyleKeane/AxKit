@@ -3,40 +3,46 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>
-/// The mentions and hashtags in the tasks' words (SPEC.md TK-5.5, asked 2026-11-11): "@name" and "#tag" in an item's
-/// Title or a text field, each a smart list of its own under Mentions or Hashtags on the top level. A mark starts a
-/// token only where no letter or digit stands before it, so that an e-mail address is no mention; the token is the
-/// letters, digits, "_" and "-" after it. Told apart without case, shown as first seen.
+/// The smart tags in the tasks' words (SPEC.md TK-5.5, asked 2026-11-11, generalized the same day): "@kyle", "#ui",
+/// "$budget", any symbol at the start of a word followed by a letter, each tag a smart list of its own under Smart tags,
+/// one heading per symbol. A tag starts at the start of the text or after white space; its symbol is any character that
+/// is not a letter, a digit or white space, except those that start ordinary prose or Markdown (<see cref="Excluded"/>);
+/// a letter must follow the symbol, then letters, digits, "_" and "-". So an e-mail address, "(note", "-item" and "$5"
+/// are none (TK-D18). Told apart without case, shown as first seen.
 /// </summary>
 public static class Tags
 {
-    public const char Mention = '@';
-    public const char Hashtag = '#';
+    /// <summary>The symbols that never start a tag: they start prose, quotes, lists and Markdown.</summary>
+    public const string Excluded = "([{<\"'`*_~-/\\.,;:!?=+|";
 
-    /// <summary>The tokens with this mark in a text, "@Sam", in order, each once (case not minded).</summary>
-    public static IReadOnlyList<string> In(string text, char mark)
+    /// <summary>The symbol of a person the item is assigned to (TK-D19).</summary>
+    public const char Assignee = '@';
+
+    /// <summary>Whether a character can be a tag's symbol.</summary>
+    public static bool IsSymbol(char c) =>
+        !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c) && !char.IsSurrogate(c) && !char.IsControl(c) && !Excluded.Contains(c);
+
+    /// <summary>The tags of a text, "@Sam", in order, each once (case not minded).</summary>
+    public static IReadOnlyList<string> In(string text)
     {
         var found = new List<string>();
         for (var i = 0; i < text.Length; i++)
         {
-            if (text[i] != mark || (i > 0 && char.IsLetterOrDigit(text[i - 1])))
+            if (!IsSymbol(text[i]) || (i > 0 && !char.IsWhiteSpace(text[i - 1])) || i + 1 >= text.Length || !char.IsLetter(text[i + 1]))
             {
                 continue;
             }
 
-            var end = i + 1;
-            while (end < text.Length && IsTokenChar(text[end]))
+            var end = i + 2;
+            while (end < text.Length && (char.IsLetterOrDigit(text[end]) || text[end] is '_' or '-'))
             {
                 end++;
             }
 
-            if (end > i + 1)
+            var token = text[i..end];
+            if (!found.Contains(token, StringComparer.OrdinalIgnoreCase))
             {
-                var token = text[i..end];
-                if (!found.Contains(token, StringComparer.OrdinalIgnoreCase))
-                {
-                    found.Add(token);
-                }
+                found.Add(token);
             }
 
             i = end - 1;
@@ -45,9 +51,8 @@ public static class Tags
         return found;
     }
 
-    /// <summary>Whether the text holds this token ("@Sam"), case not minded, as a whole token.</summary>
-    public static bool Has(string text, string token) =>
-        token.Length > 1 && In(text, token[0]).Contains(token, StringComparer.OrdinalIgnoreCase);
+    /// <summary>Whether the text holds this tag ("@Sam"), case not minded, as a whole tag.</summary>
+    public static bool Has(string text, string token) => In(text).Contains(token, StringComparer.OrdinalIgnoreCase);
 
     /// <summary>An item's words a tag is looked for in: its Title and its text fields (TK-5.5), as the search reads them.</summary>
     public static string TextOf(ItemDocument item) =>
@@ -55,10 +60,10 @@ public static class Tags
             .Select(field => FieldTypes.TextOf(field.Value)).Prepend(item.Title));
 
     /// <summary>
-    /// The tokens with this mark in the tasks not done (TK-5.5), each once as first seen, in natural order; the items
-    /// are those All tasks reads.
+    /// The tags of the tasks not done, by symbol (TK-5.5): "@" then "#" when there are any, then the other symbols in the
+    /// order they first appear; each symbol's tags once, as first seen, in natural order.
     /// </summary>
-    public static IReadOnlyList<string> InTasks(IEnumerable<ItemFile> items, char mark)
+    public static IReadOnlyList<(char Symbol, IReadOnlyList<string> Tags)> InTasks(IEnumerable<ItemFile> items)
     {
         var found = new List<string>();
         foreach (var item in items)
@@ -68,7 +73,7 @@ public static class Tags
                 continue;
             }
 
-            foreach (var token in In(TextOf(item.Document), mark))
+            foreach (var token in In(TextOf(item.Document)))
             {
                 if (!found.Contains(token, StringComparer.OrdinalIgnoreCase))
                 {
@@ -77,9 +82,54 @@ public static class Tags
             }
         }
 
-        found.Sort(NaturalOrder.Instance);
-        return found;
+        var symbols = found.Select(token => token[0]).Distinct().ToList();
+        var order = new[] { '@', '#' }.Where(symbols.Contains).Concat(symbols.Where(symbol => symbol is not ('@' or '#'))).ToList();
+        return order.Select(symbol => (symbol, (IReadOnlyList<string>)found.Where(token => token[0] == symbol).OrderBy(token => token, NaturalOrder.Instance).ToList())).ToList();
     }
 
-    private static bool IsTokenChar(char c) => char.IsLetterOrDigit(c) || c is '_' or '-';
+    /// <summary>
+    /// A symbol as NVDA should hear it (TK-5.5), since a bare symbol may not be spoken: "@ at sign", "§ section sign";
+    /// one not in the table by its code point, "※ U+203B".
+    /// </summary>
+    public static string Spoken(char symbol) => $"{symbol} {(Names.TryGetValue(symbol, out var name) ? name : $"U+{(int)symbol:X4}")}";
+
+    private static readonly Dictionary<char, string> Names = new()
+    {
+        ['@'] = "at sign",
+        ['#'] = "number sign",
+        ['$'] = "dollar sign",
+        ['%'] = "percent sign",
+        ['&'] = "ampersand",
+        ['^'] = "caret",
+        ['§'] = "section sign",
+        ['>'] = "greater-than sign",
+        [']'] = "right square bracket",
+        [')'] = "right parenthesis",
+        ['}'] = "right curly bracket",
+        ['¶'] = "pilcrow sign",
+        ['€'] = "euro sign",
+        ['£'] = "pound sign",
+        ['¥'] = "yen sign",
+        ['¢'] = "cent sign",
+        ['©'] = "copyright sign",
+        ['®'] = "registered sign",
+        ['°'] = "degree sign",
+        ['±'] = "plus-minus sign",
+        ['×'] = "multiplication sign",
+        ['÷'] = "division sign",
+        ['•'] = "bullet",
+        ['†'] = "dagger",
+        ['‡'] = "double dagger",
+        ['→'] = "rightwards arrow",
+        ['←'] = "leftwards arrow",
+        ['★'] = "black star",
+        ['☆'] = "white star",
+        ['✓'] = "check mark",
+        ['¤'] = "currency sign",
+        ['µ'] = "micro sign",
+        ['¬'] = "not sign",
+        ['¦'] = "broken bar",
+        ['¿'] = "inverted question mark",
+        ['¡'] = "inverted exclamation mark",
+    };
 }

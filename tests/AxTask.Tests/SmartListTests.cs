@@ -48,24 +48,56 @@ public sealed class SmartListTests : IDisposable
     }
 
     [Fact]
-    public void Tokens_start_after_no_letter_or_digit()
+    public void A_tag_is_a_symbol_after_white_space_and_before_a_letter()
     {
-        Assert.Equal(["@Sam", "@team-2"], Tags.In("Ask @Sam, then @team-2 and sam@example.org; @ alone", Tags.Mention));
-        Assert.Equal(["#garden"], Tags.In("#garden and #Garden and x#no", Tags.Hashtag));
+        Assert.Equal(["@Sam", "@team-2", "#ui", "$budget", "%done", "&team", "^up", "§law"],
+            Tags.In("Ask @Sam, then @team-2 and #ui with $budget %done &team ^up §law"));
+        // Case not minded, the first kept.
+        Assert.Equal(["#garden"], Tags.In("#garden and #Garden"));
+        // Not after a letter or a digit, not before a digit or a space, never an excluded symbol.
+        Assert.Empty(Tags.In("sam@example.org x#no $5 @ alone #1 (note [link] {x} <tag> \"quote 'single `code *bold _it ~del -item /path \\win .dot ,c ;s :c !b ?q =e +p |pipe"));
         Assert.True(Tags.Has("Call @sam today", "@Sam"));
         Assert.False(Tags.Has("Call @samuel today", "@Sam"));
     }
 
     [Fact]
-    public void Mentions_and_hashtags_come_from_the_tasks_not_done()
+    public void A_symbol_is_spoken_by_its_name()
     {
+        Assert.Equal("@ at sign", Tags.Spoken('@'));
+        Assert.Equal("# number sign", Tags.Spoken('#'));
+        Assert.Equal("§ section sign", Tags.Spoken('§'));
+        Assert.Equal("※ U+203B", Tags.Spoken('※'));
+        Assert.All(Tags.Excluded, symbol => Assert.False(Tags.IsSymbol(symbol)));
+    }
+
+    [Fact]
+    public void Smart_tags_come_from_the_tasks_not_done_at_then_number_sign_first()
+    {
+        Item("Home", "Plan $budget with @Lee", done: false, due: "2026-11-30");
         var all = ItemFolder.AllItems(_top.Path);
-        // Case not minded, shown as first seen; the done, the plain and the Archive left out.
-        Assert.Single(Tags.InTasks(all, Tags.Mention));
-        Assert.Single(Tags.InTasks(all, Tags.Hashtag));
+        // The done, the plain and the Archive left out; @ and # first, then by first appearance; each symbol's tags in natural order.
+        var bySymbol = Tags.InTasks(all);
+        Assert.Equal(['@', '#', '$'], bySymbol.Select(group => group.Symbol));
+        Assert.Equal(["@Lee", "@Sam"], bySymbol[0].Tags);
+        Assert.Equal(["#garden"], bySymbol[1].Tags);
         Assert.Equal(2, SmartList.Tagged("@sam").Items(_top.Path, Today).Count);
         Assert.Equal(2, SmartList.Tagged("#GARDEN").Items(_top.Path, Today).Count);
         Assert.Empty(SmartList.Tagged("#done-tag").Items(_top.Path, Today));
+    }
+
+    [Fact]
+    public void Smart_lists_are_grouped_by_a_shared_first_word()
+    {
+        foreach (var name in new[] { "App axDown", "App axClaude", "Tag ai", "tag bug", "Soon", "Appendix" })
+        {
+            File.WriteAllText(Path.Combine(_top.Path, name + ItemFolder.FilterExtension), SmartList.NewFileText());
+        }
+
+        var (loose, groups) = SmartList.Grouped(SmartList.InFolder(_top.Path));
+        Assert.Equal(["Appendix", "Soon"], loose.Select(list => list.Name));
+        Assert.Equal(["App", "Tag"], groups.Select(group => group.Word));
+        Assert.Equal(["App axClaude", "App axDown"], groups[0].Lists.Select(list => list.Name));
+        Assert.Equal(["Tag ai", "tag bug"], groups[1].Lists.Select(list => list.Name));
     }
 
     private void Item(string list, string title, bool done, string? due)
