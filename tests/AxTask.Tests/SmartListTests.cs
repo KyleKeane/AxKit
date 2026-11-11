@@ -65,6 +65,8 @@ public sealed class SmartListTests : IDisposable
     {
         // "!urgent" and "?maybe" are tags; the marks that end a word or a sentence never start one.
         Assert.Equal(["!urgent", "?maybe"], Tags.In("Do it now! !urgent, or later? ?maybe !! ?? !5"));
+        // A word that ends in its own symbol is a placeholder, never a tag.
+        Assert.Equal(["%done", "$budget"], Tags.In(@"%USERPROFILE%\Documents $VAR$ %done $budget"));
         Assert.Equal("! exclamation mark", Tags.Spoken('!'));
         Assert.Equal("? question mark", Tags.Spoken('?'));
     }

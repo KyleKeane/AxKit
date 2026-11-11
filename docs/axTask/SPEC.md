@@ -401,8 +401,9 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
   prose or Markdown ("(note", "-item", "*bold*", a quote); "!" and "?" are allowed, since after a word they never start
   one, and "!urgent" is a tag. A letter must follow the symbol, so "$5" and "#1" are none. Since NVDA may not read a
   bare symbol, a level-3 heading names it from a small table of names written in axTask (no lookup in the system's
-  character data), falling back to the code point. Seen on the user's own lists: "%USERPROFILE" from a path written
-  as "%USERPROFILE%" is read as a tag; a later rule may leave out a word that ends in its own symbol.
+  character data), falling back to the code point. A word that ends in its own symbol is a placeholder, not a tag:
+  "%USERPROFILE%" and "$VAR$" are none (seen on the user's own lists, 2026-11-11, where a path made "%USERPROFILE" a
+  tag).
 - **TK-D19 "@" means a person the item is assigned to** (the user, 2026-11-11): "@kyle" in a task assigns it; the
   "@ at sign" heading lists the people with their tasks. Notifications per person, and anything else an assignee
   does, are later work (the priorities item "axTask assignees from @ with notifications per person"). The direction

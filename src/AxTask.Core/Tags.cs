@@ -40,6 +40,13 @@ public static class Tags
             }
 
             var token = text[i..end];
+            // A word that ends in its own symbol is a placeholder, not a tag: %USERPROFILE%, $VAR$ (TK-D18).
+            if (end < text.Length && text[end] == text[i])
+            {
+                i = end;
+                continue;
+            }
+
             if (!found.Contains(token, StringComparer.OrdinalIgnoreCase))
             {
                 found.Add(token);
