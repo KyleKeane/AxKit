@@ -1,0 +1,58 @@
+# axAutomate: running workflows from the window, a folder's and one, a failing step said, the rows after the run, and
+# Escape stopping a run (docs/axAutomate/nvda-test-plan.md section 5; SPEC.md AU-4.4, AU-4.5), run by tools/AxAutomate
+# on a desktop of its own; the window's runs start their windows on a further desktop of their own. In the workflows'
+# lines {temp} is the inner run's {temp} (this runner fills in its own first), and a file name never starts with n
+# after a backslash, which a file step reads as a new line.
+file home\AxKit\axAutomate.json {"checkForUpdates": false}
+mkdir flows
+file flows\01-passes.txt # A workflow that passes.\n\nfile a.md Some text\nstart down {temp}\a.md\nexpect focus a.md\nclose
+file flows\02-fails.txt # A workflow that fails at its second step.\n\nstart down\nexpect focus Nothing like this\nclose
+file flows\03-waits.txt # A workflow that takes its time.\n\nstart down\nwait 3000\nwait 3000\nclose
+file flows\04-file.workflow.json {"format": "axkit-workflow 1", "title": "A workflow file", "steps": [{"do": "start", "arguments": "down"}, {"do": "close"}]}
+file flows\05-later.workflow.json {"format": "axkit-workflow 1", "title": "Later", "steps": [{"do": "start", "arguments": "down"}, {"do": "expect said", "text": "x", "otherwise": [{"do": "close"}]}]}
+
+# 5.1 F5 at the folder's level runs every workflow of the folder, one after another; nothing is said for a step that
+# passes, a failing step is said as it ends, one line at each workflow's end and one at the run's.
+start automate {temp}\flows
+check commands
+expect focus 01-passes, workflow, 4 steps
+keys f5
+expect said Running 5 workflows
+expect said 01-passes passed, 4 steps
+expect said Step 2 failed: Expect the focus: Nothing like this. Not within 10 s
+expect said 02-fails failed at step 2
+expect said 03-waits passed, 4 steps
+expect said A workflow file passed, 2 steps
+expect said Later cannot run: step 2 has otherwise steps
+expect said Run finished: 3 of 5 workflows passed, 1 failed, 1 could not run
+
+# 5.2 The rows carry the outcome, and the details what the runner saw.
+expect focus 01-passes, workflow, 4 steps, passed
+keys down
+expect focus 02-fails, workflow, 3 steps, failed at step 2
+keys tab
+expect list Last run: failed at step 2. Not within 10 s
+keys escape right
+expect said 02-fails, 3 steps, 1. Start down
+keys down
+expect focus 2. Expect the focus: Nothing like this, failed
+keys tab down
+expect focus Last run: failed. Not within 10 s
+keys escape
+
+# 5.3 F5 inside a workflow runs it alone; Escape stops a run after the step going on.
+keys left down
+expect focus 03-waits, workflow, 4 steps, passed
+keys right f5
+expect said Running 03-waits
+wait 1000
+keys escape
+expect said Stopping after the current step
+expect said 03-waits stopped
+keys left
+expect focus 03-waits, workflow, 4 steps, stopped
+
+# 5.4 A workflow this version cannot run says why.
+keys end right f5
+expect said This workflow cannot run: step 2 has otherwise steps
+close
