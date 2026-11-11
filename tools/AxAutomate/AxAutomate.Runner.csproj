@@ -9,4 +9,9 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- The engine (docs/axAutomate/SPEC.md AU-5.1): this program is the command line over it. -->
+    <ProjectReference Include="..\..\src\AxAutomate.Core\AxAutomate.Core.csproj" />
+  </ItemGroup>
+
 </Project>

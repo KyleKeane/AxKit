@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 11 network requests, 28 program starts and 4 pipes, in 28 files, under the 11 headings below.
+Today: 11 network requests, 31 program starts and 5 pipes, in 31 files, under the 12 headings below.
 
 ## What axKit reaches
 
@@ -179,22 +179,39 @@ Calls (2):
 
 #### axKit
 
-- **What**: axKit itself, this very program file: a new window of an app, the restart under its own name when started through an Open with hard link, the restart after an update, a window the AI tool asked for.
+- **What**: axKit itself, this very program file: a new window of an app, the restart under its own name when started through an Open with hard link, the restart after an update, a window the AI tool asked for, the windows and the AI tools' server of a workflow's run (axAutomate, on the run's own desktop).
 - **How**: a new process of this program file (or the installed `AxKit.exe` after an update) with the app's verb and path; a test run's variables go only to a window of the run (S-11).
 - **What it reaches**: nothing new: the same program.
 - **Documentation**: docs/axKit/SPEC.md AX-1, AX-2.3, AX-3, AX-9.
 - **Apps**: every window.
 
-Calls (4):
+Calls (6):
 
+- **axAutomate**, `src/AxAutomate.Core/Broker.cs:57`, in `Broker.Start`, by `Process.Start`: AxKit.exe mcp, the AI tools' server, as the run's MCP client starts it, with the run's secret and folder.
+  Code: `var broker = new Broker(Process.Start(start)!);`
+- **axAutomate**, `src/AxAutomate.Core/Window.cs:172`, in `Window.Create`, by `CreateProcess (Windows)`: a window of a workflow's run (axAutomate's window or tools/AxAutomate), on the run's own desktop with the run's secret and folder, so that it never takes the user's keyboard or settings. 0x400 is CREATE_UNICODE_ENVIRONMENT.
+  Code: `if (!Native.CreateProcessW(null, commandLine, 0, 0, false, 0x400, environment, null, ref startup, out var info))`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
   Code: `Process.Start(start)?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
   Code: `using var process = Process.Start(start);`
 - **shared by every app**, `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
   Code: `Process.Start(info)?.Dispose();`
-- **shared by every app**, `src/AxKit/Program.cs:143`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
+- **shared by every app**, `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
+
+#### Workflow commands
+
+- **What**: the command line of a workflow's `run` step (a test's `git init`, `findstr`, `copy`), through Windows' own `cmd.exe`, when a workflow runs: in axAutomate's window (F5) or with tools/AxAutomate.
+- **How**: `cmd.exe /d /s /c "<command line>"` without a window, in the run's own folder, both outputs read, waited for up to 60 seconds and ended with its process tree after that.
+- **What it reaches**: whatever the command reaches, with the user's rights; the workflows of `tests/scripts` make and read files in the run's folder.
+- **Documentation**: docs/axAutomate/SPEC.md AU-3.3, AU-4.4; docs/axKit/automation.md.
+- **Apps**: axAutomate; tools/AxAutomate.
+
+Calls (1):
+
+- **axAutomate**, `src/AxAutomate.Core/Run.cs:198`, in `Run.RunCommand`, by `Process.Start`: a workflow's run step, the command line it holds, through cmd.exe in the run's own folder, waited for up to 60 s.
+  Code: `using var process = Process.Start(start)!;`
 
 ### Pipes
 
@@ -217,14 +234,16 @@ Calls (3):
 
 #### Test automation
 
-- **What**: tools/AxAutomate, the bundle's own test driver, in an automated run only: a window started with the run's secret (`AXKIT_AUTOMATION`) opens the pipe `axkit-auto-<process id>` for it. Never in normal use.
-- **How**: a named pipe this Windows account alone may open; the run's secret and folder go from the environment to the window's memory at its start (S-11).
+- **What**: the automation channel of a window of a workflow's run, in a run only: axAutomate's window (F5) or tools/AxAutomate, the bundle's own test driver, starts the run's windows on a desktop of the run's own with the run's secret (`AXKIT_AUTOMATION`), and each opens the pipe `axkit-auto-<process id>` for it. Never in normal use; the user's own windows never open it.
+- **How**: a named pipe this Windows account alone may open; the run's secret and folder are handed to the run's windows alone in their own environment, and go from it to the window's memory at its start (S-11).
 - **What it reaches**: nothing on the network.
 - **Documentation**: docs/axKit/automation.md.
 - **Apps**: every window, in a test run.
 
-Calls (1):
+Calls (2):
 
+- **axAutomate**, `src/AxAutomate.Core/Window.cs:50`, in `Window.Window`, by `new NamedPipeClientStream`: the automation channel of a window of the run, opened with the run's secret.
+  Code: `_pipe = new NamedPipeClientStream(".", $"axkit-auto-{process.Id}", PipeDirection.InOut, PipeOptions.CurrentUserOnly);`
 - **shared by every app**, `src/AxKit.Forms/AutomationChannel.cs:123`, in `AutomationChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's pipe of an automated test run only (AXKIT_AUTOMATION, set by tools/AxAutomate), which only this account may open, so that the test tool can drive the window; never opened in normal use (docs/axKit/automation.md).
   Code: `using var pipe = NamedPipeServerStreamAcl.Create($"axkit-auto-{Environment.ProcessId}", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());`
 
@@ -275,8 +294,10 @@ Used in 1 place:
 
 Defined in .NET, System.Diagnostics: starts a program, through the Windows shell when UseShellExecute is set.
 
-Used in 16 places:
+Used in 18 places:
 
+- `src/AxAutomate.Core/Broker.cs:57`, in `Broker.Start`, for axKit.
+- `src/AxAutomate.Core/Run.cs:198`, in `Run.RunCommand`, for Workflow commands.
 - `src/AxFile/FileForm.Operations.cs:698`, in `FileForm.ShowFolderInExplorer`, for Windows.
 - `src/AxFile/FileForm.Operations.cs:782`, in `FileForm.OpenWithWindows`, for Windows.
 - `src/AxFile/FileForm.Programs.cs:74`, in `FileForm.RunProgram`, for User programs.
@@ -291,7 +312,7 @@ Used in 16 places:
 - `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
 - `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, for axKit.
-- `src/AxKit/Program.cs:143`, in `Program.StartedAsOpenWithLink`, for axKit.
+- `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, for axKit.
 - `src/AxStart/AppsFolder.cs:116`, in `AppsFolder.Start`, for User programs.
 
 ### ProcessRun.Run, program
@@ -323,10 +344,11 @@ Used in 1 place:
 
 ### CreateProcess (Windows), program
 
-Defined in Windows' `kernel32.dll`, declared for axKit in `src/AxKit.Core/Pty/PtyHost.cs:345` (`public static extern bool CreateProcess(string? lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes,`).
+Defined in Windows' `kernel32.dll`, declared for axKit in `src/AxAutomate.Core/Native.cs:143` (`public static extern bool CreateProcessW(string? application, StringBuilder commandLine, nint processAttributes, nint threadAttributes,`).
 
-Used in 1 place:
+Used in 2 places:
 
+- `src/AxAutomate.Core/Window.cs:172`, in `Window.Create`, for axKit.
 - `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, for Claude Code and Shells.
 
 ### ShellExecuteEx (Windows), program
@@ -366,8 +388,9 @@ Used in 1 place:
 
 Defined in .NET, System.IO.Pipes: connects to a named pipe on this computer.
 
-Used in 1 place:
+Used in 2 places:
 
+- `src/AxAutomate.Core/Window.cs:50`, in `Window.Window`, for Test automation.
 - `src/AxKit.Forms/McpBroker.cs:234`, in `McpBroker.Exchange`, for AI tools.
 
 ### NamedPipeServerStreamAcl.Create, pipe

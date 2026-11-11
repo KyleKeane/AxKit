@@ -138,7 +138,15 @@ keys in place of its words on a line:
 
 - AU-5.1 The runner's code moves from `tools/AxAutomate` into `src/AxAutomate.Core` (the steps, the reading of a
   workflow, the run on the test desktop, the report) and `src/AxAutomate` (the window). `tools/AxAutomate` stays as
-  the command line over the same core, for `nvda-pass.ps1`, the release checks and the assistant.
+  the command line over the same core, for `nvda-pass.ps1`, the release checks and the assistant. Done 2026-11-11:
+  `Run` (the steps), `Window` (a window of the run and its timeline), `Speech` (NVDA's capture), `Broker` (the run as
+  an MCP client) and `ScriptRunner` (one workflow played to its end, the lines of the report) are in the core, moved
+  unchanged but for three things a run inside a window needs: the run's secret and folder go to its windows in their
+  own environment and are never set on the process that runs it (S-11: the window's own Ctrl+J must not hand them to
+  the user's axDown); the secret is the run's, not the process's; and a run inside the window ends at its end only the
+  processes it started and their descendants, never the window's other children. The command line keeps its
+  arguments, its output and its report; it runs a `.workflow.json` file too (AU-5.2). Windows' voice for the NVDA
+  tier stays in the command line, which alone has that tier.
 - AU-5.2 Both formats are read while the tests move: a `.txt` script and a `.workflow.json` workflow run through the
   same steps. A converter writes each script as a workflow, its `#` lines as notes; a test run of the converted
   workflows must pass exactly as the scripts did, script by script, before the scripts are deleted.
@@ -177,6 +185,15 @@ keys in place of its words on a line:
   to manage").
 - AU-D6 The converted workflows will live in `tests/workflows/<app>`, beside `tests/scripts` while the runner reads
   both, then in the scripts' place (AU-5.2); until the runner reads JSON the viewer reads the scripts themselves.
+- AU-D7 The script interpreter is the engine (taken by the assistant on 2026-11-11, the user away, at the word "use
+  your best judgement"): a `.txt` script plays its own lines exactly as the runner always read them, each tied to the
+  step the reader made of it, and a `.workflow.json` file is written as the same lines (`ScriptLines`): an `expect
+  said` that goes on when it fails is `try said`, its `then` steps `iffound` lines; a stopping step's `then` steps
+  follow it. Playing the parsed steps directly would have needed a second interpreter of the scripts' quoting and
+  escapes, which every check of the bundle depends on. What the lines cannot say yet (an `otherwise` block, any other
+  step that goes on when it fails, a block in a block) makes a workflow file unrunnable with the step said, as an
+  unknown operation does (AU-3.3.2); the NVDA tier's steps (`expect spoken`, `refuse spoken`, `spoken`) run only from
+  the command line's `--nvda`. To reverse: a walker over `Workflow.Steps` that calls `Run.Step` per step.
 
 ## 7. Later
 

@@ -28,6 +28,11 @@ dotnet build src\AxKit\AxKit.csproj -c Release
 dotnet run --project tools\AxAutomate -c Release -- tests\scripts --build --report report.md
 ```
 
+The steps, the run on its own desktop and the report are the engine in `src/AxAutomate.Core` (`ScriptRunner`, `Run`,
+`Window`; moved there on 2026-11-11, docs/axAutomate/SPEC.md AU-5.1), which axAutomate's window plays workflows
+through as well; `tools/AxAutomate` is the command line over it, with the same arguments and output. It runs a
+`.workflow.json` file as well as a `.txt` script.
+
 For the windows' own behaviour: keys, focus, announcements, notices, menus, the control area. Runs any time,
 including while the user works, because nothing takes the foreground.
 
