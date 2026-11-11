@@ -4,6 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>$(AxKitDotNet)</TargetFramework>
     <RootNamespace>AxAutomate</RootNamespace>
+    <!-- The project is AxAutomate.Runner beside the app axAutomate's src\AxAutomate; the program keeps its name. -->
+    <AssemblyName>AxAutomate</AssemblyName>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 

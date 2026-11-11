@@ -54,7 +54,7 @@ if (-not $NoBuild) {
     Write-Host 'Building axKit and the runner into the scratch folder...'
     dotnet build (Join-Path $root 'src\AxKit\AxKit.csproj') -c Release -o (Join-Path $work 'axkit') --nologo -v q | Out-Null
     if ($LASTEXITCODE -ne 0) { Write-Host 'axKit did not build.'; exit $LASTEXITCODE }
-    dotnet build (Join-Path $root 'tools\AxAutomate\AxAutomate.csproj') -c Release -o (Join-Path $work 'runner') --nologo -v q | Out-Null
+    dotnet build (Join-Path $root 'tools\AxAutomate\AxAutomate.Runner.csproj') -c Release -o (Join-Path $work 'runner') --nologo -v q | Out-Null
     if ($LASTEXITCODE -ne 0) { Write-Host 'The runner did not build.'; exit $LASTEXITCODE }
 }
 
