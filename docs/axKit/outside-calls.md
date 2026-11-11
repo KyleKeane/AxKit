@@ -189,7 +189,7 @@ Calls (6):
 
 - **axAutomate**, `src/AxAutomate.Core/Broker.cs:57`, in `Broker.Start`, by `Process.Start`: AxKit.exe mcp, the AI tools' server, as the run's MCP client starts it, with the run's secret and folder.
   Code: `var broker = new Broker(Process.Start(start)!);`
-- **axAutomate**, `src/AxAutomate.Core/Window.cs:172`, in `Window.Create`, by `CreateProcess (Windows)`: a window of a workflow's run (axAutomate's window or tools/AxAutomate), on the run's own desktop with the run's secret and folder, so that it never takes the user's keyboard or settings. 0x400 is CREATE_UNICODE_ENVIRONMENT.
+- **axAutomate**, `src/AxAutomate.Core/Window.cs:187`, in `Window.Create`, by `CreateProcess (Windows)`: a window of a workflow's run (axAutomate's window or tools/AxAutomate), on the run's own desktop with the run's secret and folder, so that it never takes the user's keyboard or settings. 0x400 is CREATE_UNICODE_ENVIRONMENT.
   Code: `if (!Native.CreateProcessW(null, commandLine, 0, 0, false, 0x400, environment, null, ref startup, out var info))`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
   Code: `Process.Start(start)?.Dispose();`
@@ -210,7 +210,7 @@ Calls (6):
 
 Calls (1):
 
-- **axAutomate**, `src/AxAutomate.Core/Run.cs:198`, in `Run.RunCommand`, by `Process.Start`: a workflow's run step, the command line it holds, through cmd.exe in the run's own folder, waited for up to 60 s.
+- **axAutomate**, `src/AxAutomate.Core/Run.cs:208`, in `Run.RunCommand`, by `Process.Start`: a workflow's run step, the command line it holds, through cmd.exe in the run's own folder, waited for up to 60 s.
   Code: `using var process = Process.Start(start)!;`
 
 ### Pipes
@@ -297,7 +297,7 @@ Defined in .NET, System.Diagnostics: starts a program, through the Windows shell
 Used in 18 places:
 
 - `src/AxAutomate.Core/Broker.cs:57`, in `Broker.Start`, for axKit.
-- `src/AxAutomate.Core/Run.cs:198`, in `Run.RunCommand`, for Workflow commands.
+- `src/AxAutomate.Core/Run.cs:208`, in `Run.RunCommand`, for Workflow commands.
 - `src/AxFile/FileForm.Operations.cs:698`, in `FileForm.ShowFolderInExplorer`, for Windows.
 - `src/AxFile/FileForm.Operations.cs:782`, in `FileForm.OpenWithWindows`, for Windows.
 - `src/AxFile/FileForm.Programs.cs:74`, in `FileForm.RunProgram`, for User programs.
@@ -344,11 +344,11 @@ Used in 1 place:
 
 ### CreateProcess (Windows), program
 
-Defined in Windows' `kernel32.dll`, declared for axKit in `src/AxAutomate.Core/Native.cs:143` (`public static extern bool CreateProcessW(string? application, StringBuilder commandLine, nint processAttributes, nint threadAttributes,`).
+Defined in Windows' `kernel32.dll`, declared for axKit in `src/AxAutomate.Core/Native.cs:150` (`public static extern bool CreateProcessW(string? application, StringBuilder commandLine, nint processAttributes, nint threadAttributes,`).
 
 Used in 2 places:
 
-- `src/AxAutomate.Core/Window.cs:172`, in `Window.Create`, for axKit.
+- `src/AxAutomate.Core/Window.cs:187`, in `Window.Create`, for axKit.
 - `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, for Claude Code and Shells.
 
 ### ShellExecuteEx (Windows), program

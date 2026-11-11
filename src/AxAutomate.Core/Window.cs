@@ -144,10 +144,25 @@ public sealed class Window : IDisposable
     /// </summary>
     public static int Create(string exe, string arguments, string? desktop, string home, string secret)
     {
+        // This process's own block as Windows keeps it, so that the hidden per-drive folders (=C:=C:\...) reach the
+        // child as an inherited block would carry them; Environment.GetEnvironmentVariables leaves them out.
         var variables = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        foreach (System.Collections.DictionaryEntry entry in Environment.GetEnvironmentVariables())
+        var own = Native.GetEnvironmentStringsW();
+        try
         {
-            variables[(string)entry.Key] = (string?)entry.Value ?? string.Empty;
+            for (var at = own; Marshal.PtrToStringUni(at) is { Length: > 0 } entry; at += (entry.Length + 1) * sizeof(char))
+            {
+                // A name may start with '=' (the per-drive folders): the separator is the first '=' after the first character.
+                var equals = entry.IndexOf('=', 1);
+                if (equals > 0)
+                {
+                    variables[entry[..equals]] = entry[(equals + 1)..];
+                }
+            }
+        }
+        finally
+        {
+            Native.FreeEnvironmentStringsW(own);
         }
 
         // The run's secret (security audit S-11): the windows open their channel to a client that sends it first.

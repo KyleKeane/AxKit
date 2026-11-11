@@ -30,6 +30,13 @@ internal static class Native
         public int dwProcessId, dwThreadId;
     }
 
+    /// <summary>This process's environment block as Windows keeps it, the hidden per-drive folders (=C:) included.</summary>
+    [DllImport("kernel32.dll")]
+    public static extern nint GetEnvironmentStringsW();
+
+    [DllImport("kernel32.dll")]
+    public static extern bool FreeEnvironmentStringsW(nint block);
+
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern nint CreateDesktopW(string name, nint device, nint devmode, int flags, uint access, nint attributes);
 
