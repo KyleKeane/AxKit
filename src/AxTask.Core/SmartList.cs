@@ -75,8 +75,11 @@ public sealed class SmartList
     public static SmartList NoDueDate { get; } = new("No due date", null, NotDone(), any: false, [new(ItemDocument.TitleField)], null,
         (item, _) => TaskRules.Due(item) is null, "Every task not done that has no Due date, by title");
 
-    /// <summary>The built-in lists of the Smart lists section, in order (TK-5.1, TK-5.4).</summary>
-    public static IReadOnlyList<SmartList> BuiltIns { get; } = [AllTasks, Overdue, DueToday, DueInSevenDays, NoDueDate];
+    /// <summary>The lists by due date, the Date lists heading's, in order (TK-5.4).</summary>
+    public static IReadOnlyList<SmartList> DateLists { get; } = [Overdue, DueToday, DueInSevenDays, NoDueDate];
+
+    /// <summary>Every list built in with a name of its own: All tasks and the lists by due date (TK-5.1, TK-5.4).</summary>
+    public static IReadOnlyList<SmartList> BuiltIns { get; } = [AllTasks, .. DateLists];
 
     /// <summary>TK-5.5: the tasks not done whose words hold a mention or a hashtag, "@Sam" or "#store".</summary>
     public static SmartList Tagged(string token) => new(token, null, NotDone(), any: false, SoonestFirst, null,
@@ -164,8 +167,19 @@ public sealed class SmartList
         }
 
         var items = ItemFolder.AllItems(top).Where(item => Matches(item, top, today));
-        return Order(items);
+        return Order(items, item => item);
     }
+
+    /// <summary>
+    /// The items read from several folders of lists the conditions hold for, together in the list's order (TK-5.6): a
+    /// "list" condition is asked of each item against its own folder of lists.
+    /// </summary>
+    public IReadOnlyList<GatheredItem> Items(IEnumerable<GatheredItem> items, DateOnly today) =>
+        NotUnderstood is not null ? [] : Order(items.Where(gathered => Matches(gathered.Item, gathered.Top, today)), gathered => gathered.Item);
+
+    /// <summary>How many of the items read the conditions hold for (TK-5.6), for the list's row.</summary>
+    public int Count(IEnumerable<GatheredItem> items, DateOnly today) =>
+        NotUnderstood is not null ? 0 : items.Count(gathered => Matches(gathered.Item, gathered.Top, today));
 
     public bool Matches(ItemFile item, string top, DateOnly today)
     {
@@ -183,22 +197,22 @@ public sealed class SmartList
         return _any ? results.Any(held => held) : results.All(held => held);
     }
 
-    private IReadOnlyList<ItemFile> Order(IEnumerable<ItemFile> items)
+    private IReadOnlyList<T> Order<T>(IEnumerable<T> items, Func<T, ItemFile> fileOf)
     {
-        IOrderedEnumerable<ItemFile>? ordered = null;
+        IOrderedEnumerable<T>? ordered = null;
         foreach (var key in _order)
         {
             // An item without the field, or with it empty, goes after the rest in either direction. A date sorts by
             // the day; a choice by its options' order unless the key says by text; anything else by its text, as spoken.
-            Func<ItemFile, int> missing = item => item.Document.IndexOf(key.Field) is var i && i >= 0 && Sortable(item.Document.Fields[i], textOnly: true) is { Length: > 0 } ? 0 : 1;
-            Func<ItemFile, string> value = item => item.Document.IndexOf(key.Field) is var i && i >= 0 ? Sortable(item.Document.Fields[i], key.ByText) : string.Empty;
+            Func<T, int> missing = entry => fileOf(entry).Document is var document && document.IndexOf(key.Field) is var i && i >= 0 && Sortable(document.Fields[i], textOnly: true) is { Length: > 0 } ? 0 : 1;
+            Func<T, string> value = entry => fileOf(entry).Document is var document && document.IndexOf(key.Field) is var i && i >= 0 ? Sortable(document.Fields[i], key.ByText) : string.Empty;
             ordered = ordered is null ? items.OrderBy(missing) : ordered.ThenBy(missing);
             ordered = key.Descending
                 ? ordered.ThenByDescending(value, AxKit.Core.NaturalOrder.Instance)
                 : ordered.ThenBy(value, AxKit.Core.NaturalOrder.Instance);
         }
 
-        return (ordered ?? items.OrderBy(ItemFolder.NameOf, AxKit.Core.NaturalOrder.Instance)).ToList();
+        return (ordered ?? items.OrderBy(entry => ItemFolder.NameOf(fileOf(entry)), AxKit.Core.NaturalOrder.Instance)).ToList();
     }
 
     private static string Sortable(ItemField field, bool textOnly) => field.Type switch

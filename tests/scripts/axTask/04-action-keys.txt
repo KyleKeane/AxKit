@@ -7,10 +7,13 @@ file tasks\Later\list.json {"format": "axkit-list 1", "fields": [{"title": "Note
 start task {temp}\tasks
 check commands
 expect state Lists - axTask
-# Step 1: the digits act in a list only; Ctrl+0 is All tasks (TK-7a.1, RP-8.4).
-keys ctrl+1
+# Step 1: the digits act in a list only; at the top Ctrl+1 and Ctrl+2 go by heading (TK-D14); Ctrl+0 is All tasks
+# (TK-7a.1, RP-8.4).
+keys ctrl+3
 expect said ♪ Edge
 expect said Action keys act in a list: open one first
+keys ctrl+1
+expect focus Smart lists, heading level 1
 keys ctrl+0
 expect said All tasks
 # Into Home: Ctrl+3 has no action; Ctrl+1 sets Done as one step, which Ctrl+Z takes back.

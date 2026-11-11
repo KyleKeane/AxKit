@@ -29,8 +29,9 @@ marks a task done.
 
 ## 3. Scenarios
 
-1. Start axTask on the folder: "Lists - axTask window", then "Lists, 4 lists list, Smart lists, section, 1 of 7".
-   Down: "All tasks, 5 not done". Ctrl+Down: "User lists, section, 2 lists"; Down: "Home, list, 2 items".
+1. Start axTask on the folder: "Lists - axTask window", then "Lists, 4 lists list, Your lists, heading level 1, 2
+   lists". Down: "Home, list, 2 items". Ctrl+1: "Smart lists, heading level 1, 1 smart list"; Down: "All tasks, 5 not
+   done".
 2. Right: "Home, 2 items, Fix the tap, due 30 October". Tab: "Fields of Fix the tap, Title, text, Fix the tap". Down:
    "Done, check, not done", then "Due, date, 30 October 2026, Friday".
 3. Enter on Due, type `+3`, Enter: "Due: 2 November 2026, Monday". Shift+Tab: "Fix the tap, due 2 November".
@@ -39,21 +40,31 @@ marks a task done.
 6. Left: "Lists, Home". Up: "All tasks, 5 not done". Right: the tasks of every list, the soonest due first, each read
    "Call the plumber, in Home".
 
-## 3a. The top level in sections (asked 2026-10-24)
+## 3a. The top level under headings (asked 2026-10-24; two levels since 2026-11-11)
 
-- **TK-3a.1 The sections**, in this order, each under a header row "Smart lists, section, 3": **Smart lists** (All
-  tasks, then the smart lists, TK-5); **User lists**, the lists in no section of the user's own, by name; the user's
-  own sections, by name, each with its lists; **Archived lists**, the lists in the Archive (IA-D4), then one row
-  "Archived items, 4" when the Archive holds items of its own, which opens like a list. An empty section of the user's
-  does not exist; User lists shows "User lists, section, none: Ctrl+Shift+N makes one" when there are none.
-- **TK-3a.2 Ctrl+Up and Ctrl+Down** in the navigator go to the header of the section before or after the one the
-  selection is in; past the first or the last, the edge sound. On a header, Right and Enter play the edge sound and
-  say "A section: Down goes into it"; Down goes on to its first list. In the detail pane of a header: the number of
-  its lists and how a list joins it. (In an edit control the same keys move by paragraph, AX-8.2; the navigator is a
-  list, so they move by section there, the same idea.)
+- **TK-3a.1 The headings**, in this order, each a row of one shape, "Smart lists, heading level 1, 3 smart lists"
+  (TK-D13):
+  - **Your lists**, level 1: the lists in no section of the user's own, by name; then a heading of **level 2 for each
+    section of the user's own**, by name, each with its lists ("Jobs, heading level 2, 2 lists"). With no list at all:
+    "Your lists, heading level 1, none: Ctrl+Shift+N makes one". An empty section of the user's does not exist.
+  - **Projects**, level 1, while project folders are set and the user's own folder is shown ("Projects, heading level
+    1, 2 project folders"): a heading of level 2 for each project folder, with the projects found under it (TK-7b.3).
+  - **Smart lists**, level 1: All tasks, then the user's smart lists (TK-5); then **Mentions** and **Hashtags**, level
+    2, each only when the tasks hold any (TK-5.5).
+  - **Date lists**, level 1: Overdue, Due today, Due in the next 7 days, No due date (TK-5.4).
+  - **Archived lists**, level 1, only when the Archive holds any: the lists in the Archive (IA-D4), then one row
+    "Archived items, 4" when the Archive holds items of its own, which opens like a list.
+- **TK-3a.2 Moving by heading** in the navigator: Ctrl+Up and Ctrl+Down go to the heading of either level before or
+  after the selection; Ctrl+1 and Ctrl+2 to the next heading of level 1 or 2, Ctrl+Shift+1 and Ctrl+Shift+2 to the one
+  before, at a top level only (in a list, Ctrl+1 and Ctrl+2 are the list's action keys, TK-7a.1; TK-D14). NVDA reads
+  the heading's row as the selection moves; with no heading further, the edge sound. A typed letter finds a row by its
+  name as in every list. On a heading, Right and Enter play the edge sound and say "A section: Down goes into it";
+  Down goes on to its first row. In the detail pane of a heading: its row and what it holds. (In an edit control
+  Ctrl+Up and Ctrl+Down move by paragraph, AX-8.2; the navigator is a list, so they move by heading there, the same
+  idea.)
 - **TK-3a.3 A list's section** is the field Section (`text`) of its details (`list.json`), always shown first in the
-  detail pane of a list, empty for User lists. Enter on it changes it as any field; **List, Move to section**
-  (Ctrl+M) chooses from a list of the sections there are, User lists, and "A new section", which asks its name. A new
+  detail pane of a list, empty for Your lists. Enter on it changes it as any field; **List, Move to section**
+  (Ctrl+M) chooses from a list of the sections there are, Your lists, and "A new section", which asks its name. A new
   list (Ctrl+Shift+N) joins the section of the row selected. A section is renamed by moving its lists.
 
 ## 4. axTask's part of the shared shape
@@ -70,11 +81,11 @@ marks a task done.
 
 ## 5. All tasks and the smart lists
 
-- **TK-5.1 All tasks** is the first entry of the top level, always there and never a folder: every task in a list
+- **TK-5.1 All tasks** is the first entry under Smart lists, always there and never a folder: every task in a list
   (the Archive left out) whose Done is false, the soonest Due first, tasks without a due date after them in title order. A row adds
-  "in Home". Enter or Tab opens the task's fields as anywhere else; a change is written to the task's own file.
-- **TK-5.2 A smart list** is a file `<name>.filter.json` in the top folder, shown after All tasks in the Smart lists
-  section as "Due this week, smart list, 3". Its content is the conditions every shown item meets:
+  "in Home" (TK-5.6). Enter or Tab opens the task's fields as anywhere else; a change is written to the task's own file.
+- **TK-5.2 A smart list** is a file `<name>.filter.json` in the top folder, shown after All tasks under Smart lists
+  as "Due this week, smart list, 3". Its content is the conditions every shown item meets:
 
 ```json
 {
@@ -101,6 +112,24 @@ marks a task done.
   conditions and opens it in axJSON to change them; Ctrl+J on a smart list opens it again. The detail pane of a smart
   list says what it shows, how many, and its file; the conditions are written in axJSON, not field by field, until
   the need is heard (a filter is written once and read many times).
+- **TK-5.4 The date lists** (asked 2026-11-11), built in like All tasks and never files, under the heading Date lists:
+  **Overdue** (a Due before today), **Due today**, **Due in the next 7 days** (today to seven days on, both included)
+  and **No due date**, each over the tasks not done, read "Overdue, 2". Their order is All tasks' (No due date by
+  title). F2, Delete and Ctrl+J on one say it is built in.
+- **TK-5.5 Mentions and hashtags** (asked 2026-11-11): a smart list for each "@name" and each "#tag" in the Title or
+  a text field (text, long text) of a task not done, under the headings Mentions and Hashtags, read "@Sam, 3"; each
+  heading is left out while it would be empty. A mark starts one only where no letter or digit stands before it, so
+  that an e-mail address is no mention; the name is the letters, digits, "_" and "-" after it. Two told apart only
+  by case are one, shown as first seen; the lists are in natural order (TK-D16).
+- **TK-5.6 Gathered from everywhere** (asked 2026-11-11): at the user's own top level, All tasks, the smart lists,
+  Mentions, Hashtags and the date lists take the items of the user's own lists and of every project found (TK-7b.2)
+  together, so that "#ui" in two projects is one list. Each item's row says where it lives: "Fix the tap, in Home" for
+  the user's own, "Fix the tap, in alpha / Home" for a project's, as the search says it. A smart list's `list`
+  condition names a list of the item's own folder of lists. The item's fields, Done, F2, Delete and its links change
+  its own file, in its own folder of lists (a project's item goes to that project's Archive), through the one change
+  and its undo. The projects' items are read by the look for projects, off the UI thread (TK-7b.2), and kept; a file
+  the window changes itself is read again at once, so that a task marked done leaves Overdue as the key is pressed.
+  In a project shown as the top, they gather that project alone (TK-D15).
 
 ## 6. Later: rules (automation)
 
@@ -122,7 +151,9 @@ On top of IA-3:
 | Ctrl+Shift+D | navigator | hide or show done tasks in this list |
 | Ctrl+0 | anywhere | to All tasks (Ctrl+1 until 2026-11-07, when the digits became the action keys, TK-7a.1) |
 | Ctrl+1 to Ctrl+9 | anywhere, in a list | the list's action key on the item selected (TK-7a.1) |
-| Ctrl+Up, Ctrl+Down | navigator | the section before or after (TK-3a.2) |
+| Ctrl+1, Ctrl+2 | navigator, at a top level | the next heading of level 1 or 2 (TK-3a.2, TK-D14) |
+| Ctrl+Shift+1, Ctrl+Shift+2 | navigator, at a top level | the heading of level 1 or 2 before (TK-3a.2) |
+| Ctrl+Up, Ctrl+Down | navigator | the heading before or after, of either level (TK-3a.2) |
 | Ctrl+M | navigator, on a list | move the list to a section (TK-3a.3) |
 | Ctrl+Shift+F | anywhere | find words in every list, the user's own and every project's (TK-7b.4) |
 | Right, Enter, Escape | navigator, in the found level | open the item where it lives; back where the search started (TK-7b.4) |
@@ -179,36 +210,42 @@ are later (the priorities item of the request); the AI tools over the lists are 
   and not the top folder or inside it ("No folder is there: …", "Projects is a project folder already", "That is your
   own top folder: its lists show at the top already", "That is inside your own top folder: …", the notice kept; the
   folder picker's choice is refused the same way, said); an empty field opens the
-  Windows folder picker. "Added Projects, looking for lists". Remove a project folder ▸ lists them as "1. Projects
-  (C:\…)", or one item "No project folders yet"; a choice says "Removed Projects". When it removes the last one while
-  the Projects level or a project is shown, the window goes to the user's own top level and says so, "Removed
+  Windows folder picker once the notice has closed (the notice says that in the picker Enter opens a folder and the
+  Select Folder button chooses the one it is in). Either way the window goes to the user's own top level, the new
+  folder's heading selected and the focus in the navigator, and says "Added Projects in Work, looking for lists",
+  after the picker half a second later, once the window is in front again (TK-D12). Remove a project folder ▸ lists
+  them as "1. Projects (C:\…)", or one item "No project folders yet"; a choice says "Removed Projects". When it removes
+  the folder a project shown was found under, the window goes to the user's own top level and says so, "Removed
   Projects. Lists, 3 lists" (TK-D10). They are kept in axTask's settings as `projectFolders`, full paths; none by
   default (TK-D6).
 - **TK-7b.2 What is found.** A folder of lists, a folder holding at least one list (a folder with `list.json` at its
   top, or whose Archive holds one when every list was archived, so that an Archive is never a project of its own),
   under a project folder, the project folder itself included, to four folders down; hidden folders, `.git`,
   `node_modules`, `bin` and `obj` are never looked into, nor a folder of lists already found, nor the top folder or
-  anything in it (TK-D7). The look runs off the UI thread at the start, on the way into Projects, on F5 at the top or
-  in Projects, and after a project folder is added or removed. A list is recognised by its `list.json` alone: a
+  anything in it (TK-D7). The look reads every item of every project found too (TK-5.6), in the same walk. It runs off
+  the UI thread at the start, on F5 at the top, when Left leaves a project for the user's own top, and after a project
+  folder is added or removed; a search does it again and keeps what it read. A list is recognised by its `list.json` alone: a
   folder of lists whose lists were all made by hand without one (axTask itself always writes it) is never found, and
   so cannot be reached in axTask to change a list's details; it needs a `list.json` in one of its lists, made by
-  making one list in it with axTask (Session, Top folder on it, then Ctrl+Shift+N) or by adding the file. When it ends, the Projects row or level is read again
-  only if what was found changed, nothing said: the selection stays, and a row whose words changed is rewritten in
-  place ("Projects, looking for lists" becomes "Projects, 5 lists"); a level with other rows is filled again on the
-  row selected. While a notice or a rename in place is open, the level is read again when the last notice closes.
-- **TK-7b.3 Projects.** While project folders are set, the top level's first row, before the sections, is "Projects, 5
-  lists" (the lists of every project; "Projects, looking for lists" until the first look ends). Right or Enter:
-  "Projects, 3 projects, tasks in alpha, 2 lists": each project by its folder's name, with the folder above it when
-  two share a name ("tasks in alpha"), and that folder's path when two still share it ("tasks in alpha
-  (D:\Work\alpha)"), and its count of lists; "Projects, none found: Options, Project folders" when
-  there are none. Right or Enter on a project opens it as a top folder of its own, "tasks in alpha, 2 lists, Smart
-  lists, section, 1 smart list": its sections, All tasks and smart lists, its Archive, every change and Ctrl+Z exactly
-  as in the user's own folder (TK-D8). Left from a project's top goes back to Projects on it, and Left from Projects
-  to the top level on the Projects row. In the Projects level Ctrl+N, Ctrl+Shift+N, List → New GitHub list, F2 and
-  Delete make, rename and move nothing and say why (Ctrl+N: "A project's items are made in its lists: Right on a
-  project, then on a list"; Ctrl+Shift+N and New GitHub list: "A project's lists are made inside it: Right on a
-  project first", and in the found level "Lists are made among the sections: Left first"); Ctrl+E shows a project's
-  folder in axFile. A project is never remembered as the list open last, nor a found item opened (TK-7b.4): the list
+  making one list in it with axTask (Session, Top folder on it, then Ctrl+Shift+N) or by adding the file. When it
+  ends, the top level is read again only if what was found or any project's item changed, nothing said: the selection
+  stays, and a row whose words changed is rewritten in place ("Projects in Work, heading level 2, looking for lists"
+  becomes "…, 2 projects"); a level with other rows is filled again on the row selected. While a notice or a rename in
+  place is open, the level is read again when the last notice closes.
+- **TK-7b.3 Projects.** While project folders are set, the user's own top level has the heading **Projects** after
+  Your lists, "Projects, heading level 1, 2 project folders", and under it a heading of level 2 for each project
+  folder in the order they were added, "Projects in Work, heading level 2, 3 projects" ("looking for lists" until the
+  first look ends, "none found" when it found nothing), each followed by the projects found under it: "tasks in alpha,
+  project, 2 lists", by its folder's name, with the folder above it when two share a name ("tasks in alpha"), and
+  that folder's path when two still share it ("tasks in alpha (D:\Work\alpha)"). A project under two project folders
+  shows under the first. Right or Enter on a project opens it as a top folder of its own, "tasks in alpha, 2 lists,
+  Your lists, heading level 1, 1 list": its headings, All tasks and smart lists, its Archive, every change and Ctrl+Z
+  exactly as in the user's own folder (TK-D8). Left from a project's top goes back to the user's own top level on the
+  project's row. On a project or a project folder's heading Ctrl+Shift+N, List → New GitHub list, F2 and Delete make,
+  rename and move nothing and say why (Ctrl+Shift+N and New GitHub list: "A project's lists are made inside it: Right
+  on a project first"; Delete: "A project stays: Options, Project folders removes the folder it was found in"), and in
+  the found level "Lists are made among the sections: Left first"; Ctrl+E shows a project's folder, or the project
+  folder of its heading, in axFile. A project is never remembered as the list open last, nor a found item opened (TK-7b.4): the list
   open last of the user's own top folder stays as it was, so that the next start opens it, where before a project's
   list opened from the search cleared it and the next start opened at the top (TK-D10).
 - **TK-7b.4 The search across every list.** Ctrl+Shift+F, anywhere in the window, asks "Type the words to find in
@@ -288,7 +325,8 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
   list, and a list alone is not a folder axTask opens as a top; its parent is. So what is found is the folder above a
   `list.json` folder, which is what a top folder is, and it opens with everything a top folder has. Four folders down
   covers `Projects\client\repo\tasks`; the folders skipped are the ones that hold thousands of files and no lists.
-- **TK-D8 One row, then the projects as top folders** (2026-11-11): the top level gains one row, not a section, so the
+- **TK-D8 One row, then the projects as top folders** (2026-11-11; the one row became the Projects heading, TK-D13, and
+  the gathered All tasks was asked for the same day, TK-D15): the top level gains one row, not a section, so the
   sections stay as they were and a user without project folders sees no change. A project entered replaces the top
   folder for as long as it is shown, so the smart lists, the Archive, the links and the undo all work there unchanged;
   the window holds one folder of lists at a time. A gathered All tasks across every project waits until it is asked
@@ -310,6 +348,33 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
   2026-11-11, to confirm; `docs/axKit/mcp.md` MC-D10 to MC-D16): the window already knows the folders, the template,
   the undo and the refresh, and shared code never references an app. Reading is free once paired; adding needs Let AI
   tools run commands and is said; changing and deleting wait for a later version with the question of MC-7.3.
+- **TK-D12 The folder picker opens after the notice closes** (2026-11-11, from the user's pass by ear: the folder was
+  added, but "Added" was never heard, the empty field was read again and the folder was nowhere to be found). The
+  picker gives the focus back to the control it took it from, which was the notice's field while the notice was still
+  closing; it now opens from the navigator, and the window goes to the folder's new heading. An announcement made as a
+  Windows dialog closes is lost under NVDA's reading of the window coming back, so it is said half a second later.
+- **TK-D13 Two levels of headings, one shape** (the user, 2026-11-11: "make this all a bit more efficient and
+  consistent for the user"; supersedes the single Projects row and level of TK-D8): every heading row reads "name,
+  heading level N, what it holds", the word NVDA uses for a document's headings, so that a level is heard the same way
+  in axTask as on a page. Five headings of level 1, those of level 2 under them; a heading that would hold nothing is
+  left out (Projects without project folders, Mentions and Hashtags without any, Archived lists with an empty
+  Archive) except Your lists, which says how to make one. User lists is now Your lists. A project shown as the top
+  has no Projects heading: projects are reached from the user's own top.
+- **TK-D14 Ctrl+1 and Ctrl+2 go by heading at a top level** (2026-11-11): the level keys of a browse mode, on the
+  digits; there the list's action keys never act (they need a list), so each place gives the keys one meaning, as
+  Ctrl+Up does in a list and in a field. Ctrl+Shift+1 and Ctrl+Shift+2 go back, as Shift goes back with NVDA's
+  letters. Ctrl+0 stays All tasks; Ctrl+3 to Ctrl+9 at the top still say "Action keys act in a list".
+- **TK-D15 The smart lists gather every project** (the user, 2026-11-11; what TK-D8 left for later): one place for
+  "#ui" across projects. The user's own items are read on each fill, as before; the projects' are read off the UI
+  thread by the look for projects, the same walk the search makes, and kept until the next look, so TK-D3's "no cache"
+  now holds for the folder shown and not for the projects (a file the window changes itself is read again at once; a
+  change made outside axTask shows after F5). A gathered item changes in its own folder of lists, rename, Archive and
+  links included, where the found level still says "Open it where it lives first" (TK-D9): a smart list's rows are
+  the user's working view, the search's a jump. The user's own items are read "in Home", without the top folder's
+  name, a project's "in alpha / Home".
+- **TK-D16 A mention or a hashtag is a word after its mark** (taken by the assistant, 2026-11-11): the common reading
+  of "@" and "#" in notes; never after a letter or a digit, so that an address and "C#" are none; the tasks not done
+  only, as All tasks, so that a finished project's tags fall away by themselves.
 
 ## 9. Open questions
 

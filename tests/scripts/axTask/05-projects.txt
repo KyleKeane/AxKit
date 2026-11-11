@@ -12,29 +12,50 @@ file home\AxKit\axTask.json {"checkForUpdates": false}
 # The settings file names the first project folder by its full path, which only the run knows.
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('home\AxKit\axTask.json', (ConvertTo-Json -InputObject @{checkForUpdates=$false; projectFolders=@((Resolve-Path 'projects').Path)}))"
 
-# 6.1 Each project folder is a section after the user's own lists, its projects under it once they are found.
+# 6.1 Projects is a heading of level 1 after the user's own lists, with a heading of level 2 for each project folder and
+# its projects under it once they are found (TK-7b.3, TK-D13); Ctrl+1 and Ctrl+2 go by level (TK-D14).
 start task {temp}\tasks
-expect focus User lists, section, 1 list
+expect focus Your lists, heading level 1, 1 list
 check commands
-keys ctrl+down
-expect focus Projects in projects, section, 2 projects
+keys ctrl+1
+expect focus Projects, heading level 1, 1 project folder
+keys ctrl+2
+expect focus Projects in projects, heading level 2, 2 projects
 keys down
 expect focus tasks in alpha, project, 1 list
 keys down
 expect focus tasks in beta, project, 1 list
-keys ctrl+down
-expect focus Smart lists, section, 5 smart lists
+keys ctrl+2
+expect said ♪ Edge
+keys ctrl+1
+expect focus Smart lists, heading level 1, 1 smart list
+
+# 6.11 The smart lists gather the user's own lists and every project's, each item saying where it lives; a project's
+# item marked done there is written to its own file, and Ctrl+Z takes it back (TK-5.6).
 keys down
-expect focus All tasks, 1 not done
+expect focus All tasks, 2 not done
+keys right
+expect said ! All tasks, 2 items, Buy a tap, in Home
 keys down
-expect focus Overdue, 0
-keys down
-keys down
-keys down
-expect focus No due date, 1
-keys ctrl+up
-keys ctrl+up
-expect focus Projects in projects, section, 2 projects
+expect focus Fix the tap, in tasks in alpha / Home
+keys space
+expect said ! Done: Fix the tap
+run findstr /l /c:"true" "projects\alpha\tasks\Home\Fix the tap.json"
+expect focus Buy a tap, in Home
+keys ctrl+z
+expect said ! Undone: Done: Fix the tap
+run findstr /l /c:"false" "projects\alpha\tasks\Home\Fix the tap.json"
+keys left
+expect said ! Lists, 1 list, All tasks, 2 not done
+keys ctrl+1
+expect focus Date lists, heading level 1, 4 date lists
+keys end
+expect focus No due date, 2
+keys ctrl+shift+1
+keys ctrl+shift+1
+keys ctrl+shift+1
+expect focus Projects, heading level 1
+keys ctrl+2
 keys down
 expect focus tasks in alpha, project, 1 list
 keys ctrl+shift+n
@@ -44,11 +65,11 @@ expect said ! A project stays: Options, Project folders removes the folder it wa
 menu New GitHub list
 expect said ! A project's lists are made inside it: Right on a project first
 
-# 6.5 A project is a top folder of its own: its sections, its All tasks, a task marked done in place and undone.
+# 6.5 A project is a top folder of its own: its headings, its All tasks, a task marked done in place and undone.
 keys right
-expect said ! tasks in alpha, 1 list, User lists, section, 1 list
+expect said ! tasks in alpha, 1 list, Your lists, heading level 1, 1 list
 keys ctrl+down
-expect focus Smart lists, section, 5 smart lists
+expect focus Smart lists, heading level 1, 1 smart list
 keys down
 expect focus All tasks, 1 not done
 keys home
@@ -82,9 +103,9 @@ keys ctrl+a
 type {temp}\more
 keys enter
 expect said ! Added Projects in more, looking for lists
-expect focus Projects in more, section, 1 project
+expect focus Projects in more, heading level 2, 1 project
 keys f5
-expect focus Projects in more, section, 1 project
+expect focus Projects in more, heading level 2, 1 project
 keys down
 expect focus gamma, project, 1 list
 

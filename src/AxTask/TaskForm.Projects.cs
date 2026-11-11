@@ -37,6 +37,12 @@ public sealed partial class TaskForm
     /// <summary>The projects found; null until the first look has ended.</summary>
     private IReadOnlyList<TaskProject>? _projects;
 
+    /// <summary>
+    /// Every item of every project found, read by the same look off the UI thread (TK-5.6), for the smart lists and the
+    /// date lists; kept up to date for a file the window changes itself (<see cref="PatchProjectItems"/>).
+    /// </summary>
+    private IReadOnlyList<GatheredItem>? _projectItems;
+
     /// <summary>The number of the latest look for projects; an older one's result is dropped.</summary>
     private int _findRun;
 
@@ -244,7 +250,14 @@ public sealed partial class TaskForm
         var run = ++_findRun;
         if (_settings.ProjectFolders.Count == 0)
         {
+            var had = _projectItems is { Count: > 0 };
             _projects = [];
+            _projectItems = [];
+            if (had)
+            {
+                RefillGathered();
+            }
+
             return;
         }
 
@@ -252,15 +265,19 @@ public sealed partial class TaskForm
         var home = _settings.TopFolder;
         Do(async () =>
         {
-            var found = await Task.Run(() => Projects.Find(roots, home));
+            // One walk for the projects and their items (TK-5.6), off the UI thread.
+            var (found, items) = await Task.Run(() =>
+            {
+                var projects = Projects.Find(roots, home);
+                return (projects, Projects.Gather(projects));
+            });
             if (run != _findRun || IsDisposed)
             {
                 return;
             }
 
             // TK-7b.2: the panes change only when what was found did, and never under a notice or a rename in place.
-            var changed = _projects is null || !_projects.SequenceEqual(found);
-            _projects = found;
+            var changed = TakeLook(found, items);
             if (!changed)
             {
                 return;
@@ -276,15 +293,47 @@ public sealed partial class TaskForm
         });
     }
 
+    /// <summary>What a look found kept; true when the projects or any of their items changed since the last.</summary>
+    private bool TakeLook(IReadOnlyList<TaskProject> found, IReadOnlyList<GatheredItem> items)
+    {
+        var changed = _projects is null || !_projects.SequenceEqual(found) || _projectItems is null
+            || !_projectItems.Select(gathered => (gathered.Item.Path, gathered.Item.Text)).SequenceEqual(items.Select(gathered => (gathered.Item.Path, gathered.Item.Text)));
+        _projects = found;
+        _projectItems = items;
+        return changed;
+    }
+
+    /// <summary>
+    /// The projects' items the window's own change touched, read again on the UI thread, one file each (TK-5.6): an item
+    /// marked done from a smart list leaves it at once, before the next look.
+    /// </summary>
+    private void PatchProjectItems(IEnumerable<FileChange> parts)
+    {
+        if (_projects is not { Count: > 0 } projects || _projectItems is null)
+        {
+            return;
+        }
+
+        var paths = parts.SelectMany(part => part.To is { } to ? new[] { part.Path, to } : [part.Path]).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        if (!paths.Any(path => projects.Any(project => Projects.Inside(path, project.Path))))
+        {
+            return;
+        }
+
+        var kept = _projectItems.Where(gathered => !paths.Contains(gathered.Item.Path, StringComparer.OrdinalIgnoreCase)).ToList();
+        kept.AddRange(paths.Select(path => Projects.GatherOne(path, projects)).OfType<GatheredItem>());
+        _projectItems = kept;
+    }
+
     /// <summary>"Projects in Work": a project folder's section, named after the folder (TK-7b.3).</summary>
     private static string ProjectSectionName(string root) => "Projects in " + PathName.Of(root);
 
     private static string ProjectSectionKey(string root) => "projects:" + root;
 
     /// <summary>
-    /// A section for each project folder, in the order they were added (TK-7b.3): "Projects in Work, section, 2
-    /// projects", "looking for lists" until the first look ends, "none found" when it found nothing; under it each
-    /// project found there, "alpha, project, 3 lists".
+    /// A heading of level 2 for each project folder, in the order they were added (TK-7b.3): "Projects in Work, heading
+    /// level 2, 2 projects", "looking for lists" until the first look ends, "none found" when it found nothing; under it
+    /// each project found there, "alpha, project, 3 lists".
     /// </summary>
     private void AddProjectSections(List<ItemRow> rows)
     {
@@ -293,7 +342,7 @@ public sealed partial class TaskForm
             var name = ProjectSectionName(root);
             var found = (_projects ?? []).Where(project => project.Root.Equals(root, StringComparison.OrdinalIgnoreCase)).ToList();
             var state = _projects is null ? "looking for lists" : found.Count == 0 ? "none found" : Count(found.Count, "project");
-            rows.Add(new ItemRow(false, ProjectSectionKey(root), name, $"{name}, section, {state}", new ProjectSectionTag(root), IsSection: true));
+            rows.Add(Heading(ProjectSectionKey(root), name, 2, state, new ProjectSectionTag(root)));
             foreach (var project in found)
             {
                 rows.Add(new ItemRow(true, project.Path, project.Name, $"{project.Name}, project, {Count(project.Lists, "list")}", new ProjectTag(project)));
@@ -340,19 +389,20 @@ public sealed partial class TaskForm
         Announce("Searching every list", true);
         Do(async () =>
         {
-            var (found, hits) = await Task.Run(() =>
+            // The look for projects and their items done once, and the search run over what it read (TK-5.6).
+            var (found, items, hits) = await Task.Run(() =>
             {
                 var projects = Projects.Find(roots, home);
-                return (projects, Projects.Search([(home, PathName.Of(home)), .. projects.Select(project => (project.Path, project.Name))], words));
+                var projectItems = Projects.Gather(projects);
+                return (projects, projectItems, Projects.Search([.. Projects.Gather([(home, PathName.Of(home))]), .. projectItems], words));
             });
             if (run != _searchRun || IsDisposed || Busy)
             {
                 return;
             }
 
-            if (_projects is null || !_projects.SequenceEqual(found))
+            if (TakeLook(found, items))
             {
-                _projects = found;
                 _refillHeld = false;
                 RefillGathered();
             }

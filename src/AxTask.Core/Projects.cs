@@ -9,6 +9,16 @@ public sealed record TaskProject(string Path, string Name, int Lists)
     public string Root { get; init; } = string.Empty;
 }
 
+/// <summary>
+/// An item read from a folder of lists (TK-5.6): the item, the folder of lists it lives in (the top folder or a
+/// project's), and that place's name for its row, empty for the folder shown as the top.
+/// </summary>
+public sealed record GatheredItem(ItemFile Item, string Top, string Place)
+{
+    /// <summary>"Home" for the folder shown as the top, "alpha / Home" for a project's (TK-5.6), as the search says it.</summary>
+    public string Where => Place.Length == 0 ? ItemFolder.ListName(Top, System.IO.Path.GetDirectoryName(Item.Path)!) : $"{Place} / {ItemFolder.ListName(Top, System.IO.Path.GetDirectoryName(Item.Path)!)}";
+}
+
 /// <summary>An item a search found (TK-7b.4): its file, the folder of lists it is in (the top folder or a project), and the words of its row.</summary>
 public sealed record SearchHit(string Path, string Top, string Place, string List, string Title)
 {
@@ -150,21 +160,45 @@ public static class Projects
     /// The items of every list of each folder of lists (the Archive left out, as All tasks leaves it, TK-5.1) that hold
     /// the words, each with its place's name and its list's (TK-7b.4); by place in the order given, then by list and title.
     /// </summary>
-    public static IReadOnlyList<SearchHit> Search(IEnumerable<(string Top, string Name)> places, string typed)
+    public static IReadOnlyList<SearchHit> Search(IEnumerable<(string Top, string Name)> places, string typed) =>
+        Search(Gather(places), typed);
+
+    /// <summary>The same search over items already read (TK-7b.4, TK-5.6), each place named by its <see cref="GatheredItem.Place"/>.</summary>
+    public static IReadOnlyList<SearchHit> Search(IEnumerable<GatheredItem> items, string typed)
     {
         var words = Words(typed);
-        var hits = new List<SearchHit>();
-        foreach (var (top, name) in places)
+        return items.Where(gathered => Matches(gathered.Item.Document, words))
+            .Select(gathered => new SearchHit(gathered.Item.Path, gathered.Top, gathered.Place, ItemFolder.ListName(gathered.Top, Path.GetDirectoryName(gathered.Item.Path)!), ItemFolder.NameOf(gathered.Item)))
+            .ToList();
+    }
+
+    /// <summary>
+    /// Every item of every list of each folder of lists, the Archive left out (TK-5.6, TK-7b.4), with its place's name;
+    /// by place in the order given. A plain read of the disk, called off the UI thread for the projects.
+    /// </summary>
+    public static IReadOnlyList<GatheredItem> Gather(IEnumerable<(string Top, string Name)> places) =>
+        places.SelectMany(place => ItemFolder.AllItems(place.Top).Select(item => new GatheredItem(item, place.Top, place.Name))).ToList();
+
+    /// <summary>The items of every project found (TK-5.6), each named by its project.</summary>
+    public static IReadOnlyList<GatheredItem> Gather(IEnumerable<TaskProject> projects) =>
+        Gather(projects.Select(project => (project.Path, project.Name)));
+
+    /// <summary>
+    /// The item at <paramref name="path"/> as one of a project's (TK-5.6): read again when it is an item of a list of one
+    /// of the projects, the Archive left out; null otherwise or when it is gone.
+    /// </summary>
+    public static GatheredItem? GatherOne(string path, IEnumerable<TaskProject> projects)
+    {
+        var list = Path.GetDirectoryName(path);
+        var top = list is null ? null : Path.GetDirectoryName(list);
+        if (list is null || top is null || !path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+            || Path.GetFileName(path).Equals(ItemDocument.ListFile, StringComparison.OrdinalIgnoreCase)
+            || Path.GetFileName(list).Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase))
         {
-            foreach (var item in ItemFolder.AllItems(top))
-            {
-                if (Matches(item.Document, words))
-                {
-                    hits.Add(new SearchHit(item.Path, top, name, ItemFolder.ListName(top, Path.GetDirectoryName(item.Path)!), ItemFolder.NameOf(item)));
-                }
-            }
+            return null;
         }
 
-        return hits;
+        var project = projects.FirstOrDefault(project => Path.TrimEndingDirectorySeparator(project.Path).Equals(Path.TrimEndingDirectorySeparator(top), StringComparison.OrdinalIgnoreCase));
+        return project is not null && ItemFolder.ReadItem(path) is { } item ? new GatheredItem(item, project.Path, project.Name) : null;
     }
 }

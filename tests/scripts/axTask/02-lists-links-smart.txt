@@ -7,7 +7,7 @@ file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "T
 file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
 
 start task {temp}\tasks
-expect focus User lists, section, 2 lists
+expect focus Your lists, heading level 1, 2 lists
 
 # 1.8 A list's details: its fields, then the fields its new items get.
 keys down

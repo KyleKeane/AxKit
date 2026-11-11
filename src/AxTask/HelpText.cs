@@ -14,8 +14,10 @@ public static class HelpText
         ]) + """
         ## The navigator, on the left
           Up, Down, Home, End: move; the edge sound at an end. Type the start of a name to jump to it, Shift with a letter backwards
-          The top level is in sections, each under a header line: User lists, your own sections, one for each project folder, Smart lists (All tasks, Overdue, Due today, Due in the next 7 days, No due date, then your own), Mentions and Hashtags when your tasks hold any, Archived lists
-          Ctrl+Up, Ctrl+Down: the section before or after; the edge sound past the first or the last
+          The top level is under headings of two levels. Level 1: Your lists, Projects, Smart lists, Date lists, Archived lists. Level 2: your own sections under Your lists, a project folder's projects under Projects, Mentions and Hashtags under Smart lists
+          Smart lists, Mentions, Hashtags and Date lists gather your lists and every project's; each item says where it lives, and a change is made to its own file
+          Ctrl+Up, Ctrl+Down: the heading before or after, of either level; the edge sound past the first or the last
+          Ctrl+1, Ctrl+2: the next heading of level 1 or 2, at a top level. Ctrl+Shift+1, Ctrl+Shift+2: the one before. In a list these are action keys
           Right: into a list or a smart list. On an item or a section's header, nothing: the edge sound
           Left or Backspace: back to the sections
           Enter: open: a list shows its items, an item moves to its fields
@@ -27,6 +29,7 @@ public static class HelpText
           Ctrl+Q: read every field of the item
           Ctrl+0: All tasks, every task not done
           Mentions and Hashtags: a smart list for each @name and each #tag in the titles and text fields of your tasks not done
+          Date lists: Overdue, Due today, Due in the next 7 days, No due date
           Ctrl+Shift+F: find words in every list, your own and every project's. "Searching every list" is said, then what was found; another notice opened meanwhile drops the result. In what was found, Right or Enter opens the item where it lives, Left or Escape goes back
           Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9: the list's own action keys on the item selected, set in List, Action keys: fields set, the item moved to a list, or something opened; the Item menu's Action keys submenu names them
           Ctrl+Shift+D: hide or show the done tasks of a list
@@ -42,7 +45,7 @@ public static class HelpText
 
         ## Projects
           Options, Project folders, Add a project folder: a folder axTask looks in, four folders down, for your other folders of lists, never your own top folder or one inside it; Remove a project folder takes one off
-          Each project folder is a section of the top level after your own lists, "Projects in" and the folder's name, with each folder of lists found under it and its count of lists
+          Under the Projects heading, a heading of level 2 for each project folder, "Projects in" and the folder's name, with each folder of lists found under it and its count of lists
           Right on a project: its lists, smart lists and Archive, changed in place as your own. Left from its top goes back to your lists, on the project
 
         ## GitHub lists

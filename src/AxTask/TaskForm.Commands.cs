@@ -104,7 +104,7 @@ public sealed partial class TaskForm
             _ => AtTop || _smart is not null || IsArchiveFolder(_folder) ? string.Empty : ItemFolder.SectionOf(_folder),
         };
         var templateFrom = SelectedRow() is { IsList: true, Tag: null } selected ? selected.Key : AtTop || _smart is not null ? null : _folder;
-        AskText("New list", section.Length == 0 ? "In User lists." : $"In the section {section}.", "Name:", "Name", string.Empty, "&Make", name =>
+        AskText("New list", section.Length == 0 ? "In Your lists." : $"In the section {section}.", "Name:", "Name", string.Empty, "&Make", name =>
         {
             var trimmed = name.Trim();
             var listFile = Path.Combine(folder, trimmed, ItemDocument.ListFile);
@@ -137,9 +137,9 @@ public sealed partial class TaskForm
         var current = ItemFolder.SectionOf(row.Key);
         var sections = ItemFolder.ReadTop(TopFolder).Lists.Select(ItemFolder.SectionOf).Where(name => name.Length > 0)
             .Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(name => name, NaturalOrder.Instance).ToList();
-        List<string> choices = ["User lists", .. sections, "A new section"];
+        List<string> choices = [YourLists, .. sections, "A new section"];
         var start = current.Length == 0 ? 0 : Math.Max(0, choices.FindIndex(choice => choice.Equals(current, StringComparison.OrdinalIgnoreCase)));
-        ChooseFromList("Move " + row.Name, $"Now in {(current.Length == 0 ? "User lists" : current)}.", "Section", choices, start, chosen =>
+        ChooseFromList("Move " + row.Name, $"Now in {(current.Length == 0 ? YourLists : current)}.", "Section", choices, start, chosen =>
         {
             if (chosen == choices.Count - 1)
             {
@@ -161,7 +161,7 @@ public sealed partial class TaskForm
         details = details.WithValue(details.IndexOf(ItemFolder.SectionField), JsonValue.Create(section));
         if (CheckFresh(listFile, read?.Text))
         {
-            Commit(new Step([FileChange.Write(listFile, read?.Text, details.ToText())], $"Moved {row.Name} to {(section.Length == 0 ? "User lists" : section)}"), row.Key);
+            Commit(new Step([FileChange.Write(listFile, read?.Text, details.ToText())], $"Moved {row.Name} to {(section.Length == 0 ? YourLists : section)}"), row.Key);
         }
     }
 
@@ -261,7 +261,7 @@ public sealed partial class TaskForm
         if (!to.Equals(item.Path, StringComparison.Ordinal))
         {
             parts.Add(FileChange.Move(item.Path, to));
-            parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopFolder), item.Path, to, skip: item.Path));
+            parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopOf(item.Path)), item.Path, to, skip: item.Path));
         }
 
         if (CheckFresh(item.Path, item.Text))
@@ -297,18 +297,20 @@ public sealed partial class TaskForm
             return;
         }
 
-        if (IsArchiveFolder(row.Key) || ItemFolder.IsArchive(TopFolder, Path.GetDirectoryName(row.Key)!))
+        // A project's item in a smart list goes to its own folder of lists' Archive (TK-5.6).
+        var top = TopOf(row.Key);
+        if (IsArchiveFolder(row.Key) || ItemFolder.IsArchive(top, Path.GetDirectoryName(row.Key)!))
         {
             Announce(IsArchiveFolder(row.Key) ? "The Archive stays" : "Already in the Archive: Ctrl+E shows it in axFile, which deletes it for good", true);
             return;
         }
 
-        var archive = ItemFolder.ArchiveFolder(TopFolder);
+        var archive = ItemFolder.ArchiveFolder(top);
         var to = row.IsList
             ? ItemFiles.FreePath(archive, Path.GetFileName(row.Key), string.Empty)
             : ItemFiles.FreePath(archive, Path.GetFileNameWithoutExtension(row.Key), ".json");
         var parts = new List<FileChange> { FileChange.Move(row.Key, to) };
-        parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopFolder), row.Key, to));
+        parts.AddRange(Links.AfterMove(ItemFolder.AllItems(top), row.Key, to));
         if (row.Tag is not ItemFile item || CheckFresh(item.Path, item.Text))
         {
             Commit(new Step(parts, $"Archived {row.Name}"), NeighbourKey());
@@ -450,6 +452,7 @@ public sealed partial class TaskForm
         }
 
         Log.Info("Undone a step");
+        PatchProjectItems(step.Parts);
         // The selection on what the step touched first, where it is again.
         var first = step.Parts[0];
         Fill(first.IsMove ? first.Path : SelectedKey() ?? first.Path);
@@ -574,6 +577,8 @@ public sealed partial class TaskForm
             return true;
         }
 
+        // A project's item shown in a smart list is read again too, not only the look's copy (TK-5.6).
+        PatchProjectItems([FileChange.Write(path, shownText, now ?? string.Empty)]);
         Fill(SelectedKey());
         Announce("The item changed on disk; it has been read again", true);
         return false;
@@ -594,6 +599,7 @@ public sealed partial class TaskForm
         }
 
         Log.Info("A change written");
+        PatchProjectItems(step.Parts);
         _undo.Add(step);
         if (_undo.Count > MaxUndo)
         {
@@ -606,4 +612,11 @@ public sealed partial class TaskForm
     }
 
     private bool IsArchiveFolder(string path) => path.Equals(ItemFolder.ArchiveFolder(TopFolder), StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The folder of lists a file lives in: a project's, for one of its items gathered into the user's smart lists
+    /// (TK-5.6), so that its links and its Archive are its own; the folder shown as the top otherwise.
+    /// </summary>
+    private string TopOf(string path) =>
+        _project is null && _projects?.FirstOrDefault(project => Projects.Inside(path, project.Path)) is { } owner ? owner.Path : TopFolder;
 }
