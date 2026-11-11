@@ -18,7 +18,7 @@ dotnet test tests/AxTerminal.Tests/AxTerminal.Tests.csproj
   - `TerminalForm.Input.cs` (the field's keys, sending with PowerShell's extra Enter through the base's queue, interrupt and Escape, Enter on a line, the recent commands in the control area);
   - `TerminalForm.Process.cs` (starting, stopping and restarting the shell around the base's `StartProcess` and `StopProcess`, the exit);
   - `TerminalForm.Model.cs` (what the model reports: the tick and the speech, Ready, Done or Failed with the base's signals, the "a program asks" heuristic, Ctrl+Q, Clear);
-  - `TerminalForm.NewShell.cs` (the New session notice with the shared `SessionControls`, Switch shell, the folder picker, the recent folders' action, Show in).
+  - `TerminalForm.NewShell.cs` (the New session notice with the shared `SessionControls`, Switch shell, the user's own shells (AT-1.6a: `FillUserShells` makes their items in Switch shell and Remove a shell again as the submenu opens, through its `RefreshedOnOpening`, so that the palette lists them; `AddUserShell` is two `AskText` notices, the name then the command line; `RemoveUserShell` switches to the default shell when the one removed is in use; a user's shell is `_shell` Custom with `_userShell` set, `ShellName` and `CustomLine` read it), the folder picker, the recent folders' action, Show in).
   - A change goes in the file of its section; what both console windows need goes to `ConsoleForm`.
 - `AxTerminalKeys`: the window's keys (SPEC.md AT-6.2; bundle AX-8), the one place a key is changed, with `Transcript` (the view's keys as data); a notice's heading letters are the bundle's (`TextJump.HeadingLetters`). `HelpText`: the F1 text and the embedded guide. `AxTerminalApp`: the entry point through `AxKit.Forms/AppHost`.
 

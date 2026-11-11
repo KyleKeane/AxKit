@@ -358,8 +358,9 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   (`ShellExecute` with the arguments, so a batch file and a script whose type has a program registered run too);
   "Started <name>", or "Failed: <reason>" when it cannot start (the file gone, no program for the type). The list is
   refilled each time the submenu opens, so two windows see each other's additions after a restart only (the settings
-  are the window's, AF-8.1). It is the shape the user-defined shells of axTerminal are to take (docs/axKit/plan.md):
-  a list in the app's settings, added through the file picker and a notice for the name, removed from a submenu.
+  are the window's, AF-8.1). It is the shape the user-defined shells of axTerminal took (docs/axTerminal/SPEC.md
+  AT-1.6a, 2026-11-11): a list in the app's settings, added through a notice for the name (here after the file
+  picker; there followed by a notice for the command line), removed from a submenu.
   `UserPrograms` in `AxFile.Core` is tested; the menu and the start are the window's.
 - AF-4.12 **Compress to zip, Extract here** (the Operations menu; asked 2026-10-21), through .NET's own `ZipFile`, no
   package (`Archives` in `AxFile.Core`, tested). **Compress to zip** puts the selected entries, or the current one

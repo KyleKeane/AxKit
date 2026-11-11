@@ -111,8 +111,9 @@ the restart by the app itself (2.3.0).
 - **User-defined shells and programs, one shape** (2026-10-21). axFile's Open with a custom program ▸ (axFile
   AF-4.11) is the user's own list of programs and scripts: a list in the app's settings with a name and a path each,
   Add through the Windows file picker and a notice for the name, Remove from a submenu, the entries handed to the
-  program as its arguments. axTerminal's user-defined shells, still to come, take the same shape in its own settings:
-  a name and a command line each, next to the one custom command line it has now.
+  program as its arguments. axTerminal's user-defined shells take the same shape in its own settings: a
+  name and a command line each, next to the one custom command line it had already (built 2026-11-11, axTerminal
+  AT-1.6a: Session, Switch shell, Add a shell and Remove a shell, listed in Switch shell and the New session notice).
 - **Custom keys to scripts** (the user's thought, 2026-10-21, kept for later rather than built): a key the user binds
   to one of their own programs or scripts, so that one shortcut runs it on the entry or the folder in hand, with the
   key table and the collision test knowing the binding. The custom programs list above is what such keys would point

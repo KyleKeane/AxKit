@@ -27,20 +27,28 @@ internal sealed partial class TerminalForm
             switchShell.DropDownItems.Add(item);
         }
 
+        // AT-1.6a: the user's own shells come here, after the built-in ones, made again as the menu opens (FillUserShells).
+        var userShellsAt = switchShell.DropDownItems.Count;
         switchShell.DropDownItems.Add(new ToolStripMenuItem("C&ustom...", null, (_, _) => NewSession()));
+        switchShell.DropDownItems.Add(new ToolStripMenuItem("&Add a shell...", null, (_, _) => AddUserShell()));
+        var removeShell = new ToolStripMenuItem("&Remove a shell");
+        switchShell.DropDownItems.Add(removeShell);
         // AT-1.2a: a shell Windows does not have is not offered; its installer is, from its maker, through winget.
         var installPwsh = new ToolStripMenuItem("Install &PowerShell 7...", null, (_, _) => InstallShell(ProgramInstall.PowerShell7, ShellKind.PowerShell7));
         var installBash = new ToolStripMenuItem("Install Git, for Git &Bash...", null, (_, _) => InstallShell(ProgramInstall.Git, ShellKind.GitBash));
         switchShell.DropDownItems.Add(installPwsh);
         switchShell.DropDownItems.Add(installBash);
-        // The shell in use checked and the shells there (looked up once, ShellThere) shown as the menu opens; the palette refreshes it the same way (AX-10.2).
+        // The shell in use checked, the shells there (looked up once, ShellThere) shown and the user's shells made again
+        // as the menu opens; the palette refreshes it the same way (AX-10.2), so it lists the user's shells too.
         CommandPalette.RefreshedOnOpening(switchShell, () =>
         {
             foreach (var (kind, item) in _shellItems)
             {
-                item.Checked = kind == _shell;
+                item.Checked = kind == _shell && _userShell is null;
                 item.Visible = ShellThere(kind);
             }
+
+            FillUserShells(switchShell, userShellsAt, removeShell);
 
             installPwsh.Visible = !ShellThere(ShellKind.PowerShell7);
             installBash.Visible = !ShellThere(ShellKind.GitBash);
@@ -132,7 +140,7 @@ internal sealed partial class TerminalForm
     /// <summary>The title is the current directory's name (AT-2.3), which the Window menu lists the window by.</summary>
     private void UpdateTitle()
     {
-        var text = $"{PathName.Of(CurrentDirectory)} - {ShellLauncher.Describe(_shell)} - {AppTitle}";
+        var text = $"{PathName.Of(CurrentDirectory)} - {ShellName} - {AppTitle}";
         if (Text != text)
         {
             Text = text;

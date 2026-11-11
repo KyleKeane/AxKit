@@ -6,6 +6,18 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-11: axTerminal's shells of your own, by the assistant through nvda-pass.ps1 (branch `push/terminal-shells`, bec967e)
+
+Run by the assistant with NVDA 2025.3.3 listening after the user stepped away at the user's word, Windows 11 Pro
+10.0.26200, a development build of the branch `push/terminal-shells`: shells of the user's own in Switch shell and New
+session (`docs/axTerminal/SPEC.md` AT-1.6a), Add a shell as two notices, Remove a shell with the shell in use falling
+back to the default shell. `nvda-pass.ps1 axTerminal`, 8 scripts, all passed whole in 136 s, every announcement also
+spoken by NVDA, `08-user-shells` among them (add, list, start, remove). A first run failed at one step of that script
+for a title check the orchestrator had written wrong (a closing quote the title never has); fixed in the script, not
+the app, then the whole run passed.
+
+Not heard by this pass: the menus opened with Alt and the arrows (menu mode needs the foreground), the user's by ear.
+
 ## 2026-11-11: axAutomate's first version, by the assistant through nvda-pass.ps1 (branch `automate`, c2986c6)
 
 Run by the assistant with NVDA 2025.3.3 listening after the user stepped away at the user's word, Windows 11 Pro
