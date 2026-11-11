@@ -59,6 +59,13 @@ including while the user works, because nothing takes the foreground.
   wait for any of it.
 - **The run's own checks**: after the last step a run fails when a window's process ended by itself or a log of the
   run holds an ERROR line, so a crash or a logged exception never passes unseen.
+- **Nothing of the run left running** (2026-11-11): after its windows close, the runner ends every other process of
+  the run's own `AxKit.exe` that it made, a window a window of the run started and the script never adopted (or whose
+  adopt failed), with its process tree, and says so in the report ("after the steps: ended process ..."), without
+  failing the script. A process is the run's only when its program file is the run's exe by its full path and it
+  descends from the runner (read before the windows close and again after) or has a window on the run's own desktop;
+  never by its name alone, so the user's own axKit is never touched. A window left behind once stayed in front in the
+  NVDA tier and the four scripts after it failed at their first key (2026-11-09).
 - **Commands**:
   - `keys <keys>`: key presses as a user makes them, `ctrl+shift+p`, `escape`, `down`, posted to the focused
     control through the window's own message queue with the modifiers set for the window's thread, so that

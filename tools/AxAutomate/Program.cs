@@ -59,7 +59,8 @@
 //   wait <ms>                 waits
 //   close                     closes the current window as Alt+F4 does
 // After the last step every window is closed, and the run fails when a window's process ended on its own or a log of
-// the run holds an ERROR line.
+// the run holds an ERROR line. Any other process of the run's AxKit.exe (by its full path) that descends from the
+// runner or has a window on the run's desktop, a window never adopted, is then ended with its tree, a line in the report.
 
 using System.Diagnostics;
 using System.IO.Pipes;
@@ -255,6 +256,13 @@ internal static class Program
             {
                 ok = false;
                 var text = "FAIL after the steps: " + problem;
+                Console.WriteLine(text);
+                log.AppendLine(text);
+            }
+
+            foreach (var swept in run.Swept)
+            {
+                var text = "after the steps: " + swept;
                 Console.WriteLine(text);
                 log.AppendLine(text);
             }
@@ -866,10 +874,17 @@ internal sealed class Run(string exe, string temp)
         return text.ToString();
     }
 
+    /// <summary>What the end of the run ended besides its own windows (<see cref="Sweep"/>), one line each for the report; no failure.</summary>
+    public List<string> Swept { get; } = [];
+
     /// <summary>Closes every window and says what went wrong outside the steps: a process that ended by itself, an ERROR in a log.</summary>
     public List<string> Finish()
     {
         var problems = new List<string>();
+        var known = _windows.Select(window => window.ProcessId).ToHashSet();
+        // The runner's descendants are read before its windows close: a window started by a window of the run is found
+        // through its parent only while that parent lives.
+        var family = Native.Descendants(Environment.ProcessId);
         _broker?.Dispose();
         _broker = null;
         foreach (var window in _windows)
@@ -883,6 +898,7 @@ internal sealed class Run(string exe, string temp)
         }
 
         _windows.Clear();
+        Sweep(known, family);
         if (_desktop != 0)
         {
             Native.CloseDesktop(_desktop);
@@ -916,6 +932,56 @@ internal sealed class Run(string exe, string temp)
         }
 
         return problems;
+    }
+
+    /// <summary>
+    /// Ends every process of the run's program file that the run made and does not know as a window: a window a window
+    /// of the run started that the script never adopted, or one whose adopt failed (it stayed in front after the night
+    /// run of 2026-11-09 and the four scripts after it could not bring theirs up). A process counts as the run's only
+    /// when its program file is the run's exe, by its full path, and it is a descendant of the runner (read before the
+    /// windows closed and again now) or has a window on the run's own desktop: never by the name alone, so the user's
+    /// own axKit, whatever its path, is never touched. Each is ended with its process tree, one line in the report.
+    /// </summary>
+    private void Sweep(HashSet<int> known, HashSet<int> family)
+    {
+        var ours = new HashSet<int>(family);
+        ours.UnionWith(Native.Descendants(Environment.ProcessId));
+        if (_desktop != 0)
+        {
+            ours.UnionWith(Native.DesktopProcesses(_desktop));
+        }
+
+        ours.Remove(Environment.ProcessId);
+        foreach (var id in ours.Where(id => !known.Contains(id)).Order())
+        {
+            Process process;
+            try
+            {
+                process = Process.GetProcessById(id);
+            }
+            catch (ArgumentException)
+            {
+                continue;
+            }
+
+            using (process)
+            {
+                try
+                {
+                    if (process.HasExited || !string.Equals(process.MainModule?.FileName, exe, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    process.Kill(entireProcessTree: true);
+                    Swept.Add($"ended process {id}, a window of the run's program the script never started or adopted, with its process tree");
+                }
+                catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
+                {
+                    // Ended meanwhile, or not the user's to read: not the run's.
+                }
+            }
+        }
     }
 }
 
@@ -1474,6 +1540,108 @@ internal static class Native
 
     [DllImport("user32.dll")]
     public static extern bool CloseDesktop(nint desktop);
+
+    private delegate bool EnumWindowsProc(nint window, nint parameter);
+
+    [DllImport("user32.dll")]
+    private static extern bool EnumDesktopWindows(nint desktop, EnumWindowsProc callback, nint parameter);
+
+    /// <summary>The processes with a top-level window on the desktop.</summary>
+    public static HashSet<int> DesktopProcesses(nint desktop)
+    {
+        var ids = new HashSet<int>();
+        EnumDesktopWindows(desktop, (window, _) =>
+        {
+            GetWindowThreadProcessId(window, out var id);
+            ids.Add(id);
+            return true;
+        }, 0);
+        return ids;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private struct PROCESSENTRY32W
+    {
+        public int dwSize;
+        public int cntUsage;
+        public int th32ProcessID;
+        public nint th32DefaultHeapID;
+        public int th32ModuleID;
+        public int cntThreads;
+        public int th32ParentProcessID;
+        public int pcPriClassBase;
+        public int dwFlags;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+        public string szExeFile;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern nint CreateToolhelp32Snapshot(uint flags, int processId);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    private static extern bool Process32FirstW(nint snapshot, ref PROCESSENTRY32W entry);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    private static extern bool Process32NextW(nint snapshot, ref PROCESSENTRY32W entry);
+
+    /// <summary>
+    /// Every living descendant of the process, from one snapshot of the processes and their parents. A child must have
+    /// started after its parent, so that a parent's number reused by a newer process never adopts an older one.
+    /// </summary>
+    public static HashSet<int> Descendants(int root)
+    {
+        var parents = new Dictionary<int, int>();
+        var snapshot = CreateToolhelp32Snapshot(0x2, 0);
+        if (snapshot == -1)
+        {
+            return [];
+        }
+
+        try
+        {
+            var entry = new PROCESSENTRY32W { dwSize = Marshal.SizeOf<PROCESSENTRY32W>() };
+            for (var more = Process32FirstW(snapshot, ref entry); more; more = Process32NextW(snapshot, ref entry))
+            {
+                parents[entry.th32ProcessID] = entry.th32ParentProcessID;
+            }
+        }
+        finally
+        {
+            CloseHandle(snapshot);
+        }
+
+        var family = new HashSet<int> { root };
+        for (var grew = true; grew;)
+        {
+            grew = false;
+            foreach (var (child, parent) in parents)
+            {
+                if (!family.Contains(child) && family.Contains(parent) && StartedAfter(child, parent))
+                {
+                    family.Add(child);
+                    grew = true;
+                }
+            }
+        }
+
+        family.Remove(root);
+        return family;
+    }
+
+    private static bool StartedAfter(int child, int parent)
+    {
+        try
+        {
+            using var first = Process.GetProcessById(parent);
+            using var second = Process.GetProcessById(child);
+            return second.StartTime >= first.StartTime;
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception)
+        {
+            return false;
+        }
+    }
 
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
