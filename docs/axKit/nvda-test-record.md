@@ -6,6 +6,25 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-10: every app for 5.7.0, by the assistant through nvda-pass.ps1 (branch `conversation`, e917645)
+
+Run by the assistant with NVDA 2025.3.3 listening after the user stepped away at his word, Claude Code 2.1.322 and
+`--model haiku`, Windows 11 Pro 10.0.26200, a development build of the branch `conversation` at e917645, the state
+released as 5.7.0: the bundle's menus at the end of every bar, Window, Options, axKit (Claude, AI tools, Theme) and
+Help with the command palette first (AX-9.1); every first menu Session and every second Operations; axHelp rebuilt as
+two hotkeys into one conversation in axClaude, with axDescribe merged in (`docs/axHelp/SPEC.md`); axClaude's `--title`,
+`--model` and "message" hand-over. `nvda-pass.ps1` over every app, 82 scripts (axDescribe's two gone, axHelp's rewritten):
+all 82 passed whole in the one run, 2246 s, every announcement also spoken by NVDA, which covers: the F1 line of the
+bundle's menus in every window (`check commands`, `KeyTests`), the palette's paths under Session and Operations
+(`axDown/06`, `axFile/05`, `axGIT/02`, the editors), the axKit menu's Claude switch and folders (`axDown/11`), and
+axHelp's window, the conversation brought up from it on Haiku, titled axHelp, with its working folder's CLAUDE.md and
+agent written, and a picture start handed into the conversation's message field (`axHelp/01`). The user's own axHelp,
+axStart and axClip kept running from their older build throughout.
+
+Not heard by this pass and the user's by ear: the menus with Alt and the arrows (menu mode needs the foreground the
+runner does not take), the hotkeys Windows+Alt+H and Windows+Alt+S from another program, a real screenshot described,
+a real conversation with its agent at work, and Options, Conversation model across a restart.
+
 ## 2026-11-09, late evening: every app for 5.6.0, by the assistant through nvda-pass.ps1 (`main` a9de848)
 
 Run by the assistant with NVDA 2025.3.3 listening after the user stepped away at his word, Claude Code 2.1.322 and
