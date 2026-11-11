@@ -27,6 +27,8 @@ expect said axAutomate may read axKit
 expect mcp "app": "axDown"
 
 # MC-7.2: off by default; the refusal says how the user allows it, and the window says nothing.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
 expect mcp error: The user has not allowed AI tools to run commands in axKit. The user allows it in any axKit window: axKit menu, AI tools, Let AI tools run commands.
 refuse said ran Word wrap
@@ -37,27 +39,41 @@ expect said AI tools may run commands: each is said as it runs
 
 # MC-7.1, MC-7.5: run as the menu item would; the window says who ran it with the command's own words, and the
 # answer gives them back.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
 expect mcp axAutomate ran Word wrap. Word wrap
 expect said axAutomate ran Word wrap. Word wrap
 # Back as it was, the label as the palette and axkit_window_commands both give it, without care for case.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"word WRAP"}
 expect mcp "ran": "Word wrap"
 expect said axAutomate ran Word wrap
 
 # MC-7.1: two commands of one name (Heading under Next and under Previous) need the menu.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Heading"}
 expect mcp error: The window has several commands named Heading: give the menu too, one of: Navigate, Next; Navigate, Previous.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Heading","menu":"Navigate, Next"}
 expect mcp "ran": "Heading"
 expect said axAutomate ran Heading
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"No such command"}
 expect mcp error: The window has no command No such command
 
 # MC-7.3: a command that opens a notice gives the notice back; while it shows, nothing more runs, and the user answers it.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Find..."}
 expect mcp "notice": "Find
 expect focus Text to find
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
 expect mcp error: The window shows the user a notice
 keys escape
@@ -66,6 +82,8 @@ expect focus notes.md
 # MC-7.2: off again from the menu; the next run is refused at once.
 menu Let AI tools run commands
 expect said AI tools may no longer run commands
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
 expect mcp error: The user has not allowed AI tools to run commands
 refuse said ran Word wrap

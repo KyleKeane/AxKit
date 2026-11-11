@@ -29,6 +29,8 @@ expect mcp "app": "axFile"
 
 # The question in the window, the answer to the client that the user is asked; Run runs it as from its menu item (its
 # own notice for the folder's name follows, which the user answers).
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"New folder..."}
 expect mcp The window asks the user whether to run New folder
 expect state "notice":"axAutomate asks to run New folder"
@@ -43,6 +45,8 @@ keys escape
 
 # MC-D7: Open starts the file's program (a script or a program among them), so it is act and asked first too. Escape
 # is Deny, the default; nothing opens.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Open"}
 expect mcp The window asks the user whether to run Open
 expect state "notice":"axAutomate asks to run Open"
@@ -52,6 +56,8 @@ expect said Open not run
 refuse said axAutomate ran Open
 
 # After a Deny the window asks no more for a minute, whatever the command.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"New folder"}
 expect mcp error: The user denied running a command a moment ago
 refuse state asks to run

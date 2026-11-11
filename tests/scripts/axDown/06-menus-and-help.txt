@@ -131,7 +131,7 @@ keys enter
 expect said Word wrap off
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 \u00B7
-expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW","Font
+expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW","Say new line, Options, Text
 # Back on: the setting is the run's theme file, which the scripts after this one share (docs/axKit/theme.md TH-6).
 keys ctrl+shift+w
 expect said ! Word wrap on
