@@ -98,6 +98,8 @@ keys ctrl+1
 # Step 4: a command of several lines with Shift+Enter; no continuation rows in the output.
 type if ($true) {
 keys shift+enter
+# AX-7.8: the line break typed into the field is said; Enter, which sends, is not one.
+expect said new line
 type "yes"
 keys shift+enter
 type }
