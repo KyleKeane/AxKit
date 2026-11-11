@@ -137,6 +137,27 @@ GitHub list comes with action keys: Ctrl+1 to Ctrl+3 the kinds, Ctrl+4 Close, Ct
 axClaude. axKit's own reports arrive in the maintainer's reports repository this way; `docs/axKit/reports.md` tells
 the whole story.
 
+## Lists in other projects
+
+Your other folders of lists, such as a `tasks` folder in each code project, can be reached from this window without
+moving them.
+
+- Options, Project folders, Add a project folder: type the path of a folder that holds your projects, such as
+  `C:\Users\you\Projects`, and press Enter; or leave the field empty and press Enter to choose it with the Windows
+  folder picker. axTask looks four folders down in it for every folder that holds a list. Remove a project folder
+  takes one off. There are none until you add one.
+- While project folders are set, the top level starts with the line **Projects**, saying how many lists were found.
+  Right shows the projects, each by its folder's name and its number of lists ("tasks in alpha" when two folders
+  share a name).
+- Right on a project opens it the way your own folder is shown: its sections, All tasks, smart lists and Archive.
+  Everything you change there is changed in that project's files, and Ctrl+Z works as usual. Left from its sections
+  goes back to Projects, and Left again to your own lists.
+- Ctrl+Shift+F finds words in every list, your own and every project's: type the words and press Enter. An item is
+  found when its title or a text field holds every word, in capitals or not. Each line says where the item lives:
+  "Fix the tap, in tasks in alpha / Home". Right or Enter opens the item in its own list; Left or Escape goes back to
+  where you searched from. Tab shows the found item's fields, and Space marks a task done, there and then; to rename,
+  archive or link it, open it where it lives first.
+
 ## Keys
 
 F1 lists every key. Shift+F10 or the Applications key opens the menu of the selection.

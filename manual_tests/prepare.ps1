@@ -412,6 +412,14 @@ function Build-AxTask([string]$d) {
     Write-Item (Join-Path $shop 'Washer.json') 'Washer' 'false' ''
     Write-Item (Join-Path $plan 'Week one.json') 'Week one' 'false' '' '    { "title": "Notes", "type": "longtext", "value": "Read chapter one.\nWrite the summary." }'
     Write-Text (Join-Path $house 'notes.txt') 'Not an item: the list counts it as a file not shown.'
+    # The project folder of docs/axTask/nvda-test-plan.md section 6 (TK-7b): two code projects, each with a tasks folder.
+    $list = "{`r`n  ""format"": ""axkit-list 1"",`r`n  ""fields"": [`r`n    { ""title"": ""Notes"", ""type"": ""longtext"", ""value"": """" }`r`n  ]`r`n}`r`n"
+    $alpha = New-Folder (Join-Path $d 'projects\alpha\tasks\Home')
+    Write-Text (Join-Path $alpha 'list.json') $list
+    Write-Item (Join-Path $alpha 'Fix the leak.json') 'Fix the leak' 'false' '' '    { "title": "Notes", "type": "longtext", "value": "A washer of 15 mm" }'
+    $beta = New-Folder (Join-Path $d 'projects\beta\tasks\Bugs')
+    Write-Text (Join-Path $beta 'list.json') $list
+    Write-Item (Join-Path $beta 'Tap drips.json') 'Tap drips' 'false' ''
 }
 
 function Build-AxPass([string]$d) {

@@ -26,6 +26,7 @@ public static class HelpText
           F2: rename in place: a box over the line, Enter keeps the new name, Escape the old. Delete: move to the Archive; Ctrl+Z brings it back
           Ctrl+Q: read every field of the item
           Ctrl+0: All tasks, every task not done
+          Ctrl+Shift+F: find words in every list, your own and every project's. In what was found, Right or Enter opens the item where it lives, Left or Escape goes back
           Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9: the list's own action keys on the item selected, set in List, Action keys: fields set, the item moved to a list, or something opened; the Item menu's Action keys submenu names them
           Ctrl+Shift+D: hide or show the done tasks of a list
           Shift+F10 or the Applications key: the menu of the selection
@@ -37,6 +38,11 @@ public static class HelpText
           Ctrl+N: a new field. F2: rename the field in place. Delete: remove it. Alt+Up, Alt+Down: move it
           Ctrl+Q: read the field's whole value
           Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
+
+        ## Projects
+          Options, Project folders, Add a project folder: a folder axTask looks in, four folders down, for your other folders of lists; Remove a project folder takes one off
+          While project folders are set, the top level starts with Projects, the number of lists found. Right shows the projects, each with its count of lists
+          Right on a project: its lists, smart lists and Archive, changed in place as your own. Left from its top goes back to Projects, and Left again to your lists
 
         ## GitHub lists
           List, New GitHub list makes a list of a repository's open issues, read from GitHub when it opens and on F5; your Notes on each issue stay
