@@ -64,7 +64,7 @@ public sealed partial class TaskForm
         return menu;
     }
 
-    /// <summary>"1. Projects (C:\Users\you\Projects)" for each folder, or one item that says there are none (AX-9.5).</summary>
+    /// <summary>"1. Projects (D:\Projects)" for each folder, or one item that says there are none (AX-9.5).</summary>
     private void FillProjectFolderItems(ToolStripMenuItem remove)
     {
         foreach (var old in _projectFolderItems)

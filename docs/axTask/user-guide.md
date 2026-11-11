@@ -143,7 +143,7 @@ Your other folders of lists, such as a `tasks` folder in each code project, can 
 moving them.
 
 - Options, Project folders, Add a project folder: type the path of a folder that holds your projects, such as
-  `C:\Users\you\Projects`, and press Enter; or leave the field empty and press Enter to choose it with the Windows
+  `D:\Projects`, and press Enter; or leave the field empty and press Enter to choose it with the Windows
   folder picker. axTask looks four folders down in it for every folder that holds a list. Remove a project folder
   takes one off. There are none until you add one.
 - While project folders are set, the top level starts with the line **Projects**, saying how many lists were found.

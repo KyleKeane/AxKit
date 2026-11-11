@@ -35,7 +35,7 @@ public sealed class TaskSettings : WindowSettings
 
         if (!Path.IsPathFullyQualified(path))
         {
-            return "Type the whole path, from the drive: C:\\Users\\you\\Projects";
+            return "Type the whole path, from the drive, such as D:\\Projects";
         }
 
         if (!Directory.Exists(path))
