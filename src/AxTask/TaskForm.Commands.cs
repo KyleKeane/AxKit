@@ -22,7 +22,14 @@ public sealed partial class TaskForm
     /// <summary>Space in the navigator (TK-4.4): a task done or not done; the edge sound on a list or a plain item.</summary>
     protected override void CheckInNavigator(ItemRow? row)
     {
-        if (row is not { Tag: ItemFile item })
+        // A task the search found is marked where it lives, its file written (TK-7b.4).
+        var item = row switch
+        {
+            { Tag: ItemFile file } => file,
+            { Tag: FoundItem found } => found.Item,
+            _ => null,
+        };
+        if (item is null)
         {
             Sounds.Edge();
             return;
@@ -37,11 +44,11 @@ public sealed partial class TaskForm
         }
 
         var now = !TaskRules.IsDone(item.Document);
-        var leaves = now && (_smart is not null || _settings.HideDone);
-        var select = leaves ? NeighbourKey() : row.Key;
+        var leaves = now && (_smart is not null || (_settings.HideDone && _search is null));
+        var select = leaves ? NeighbourKey() : item.Path;
         if (CheckFresh(item.Path, item.Text))
         {
-            Commit(new Step([FileChange.Write(item.Path, item.Text, item.Document.WithValue(done, JsonValue.Create(now)).ToText())], (now ? "Done: " : "Not done: ") + row.Name), select);
+            Commit(new Step([FileChange.Write(item.Path, item.Text, item.Document.WithValue(done, JsonValue.Create(now)).ToText())], (now ? "Done: " : "Not done: ") + ItemFolder.NameOf(item)), select);
         }
     }
 
@@ -51,6 +58,13 @@ public sealed partial class TaskForm
         if (_smart is not null)
         {
             Announce("A smart list gathers items from the lists: open a list to add one", true);
+            return;
+        }
+
+        if (Gathered)
+        {
+            // TK-7b.3, TK-7b.4: items are made in a list where it lives.
+            Announce(_atProjects ? "A project's items are made in its lists: Right on a project, then on a list" : "Items are made in a list: open the item where it lives first, Enter", true);
             return;
         }
 
@@ -76,6 +90,12 @@ public sealed partial class TaskForm
     /// </summary>
     protected override void NewList()
     {
+        if (Gathered)
+        {
+            Announce(_atProjects ? "A project's lists are made inside it: Right on a project first" : "Lists are made among the sections: Left first", true);
+            return;
+        }
+
         var folder = TopFolder;
         var section = SelectedRow() switch
         {
@@ -143,6 +163,12 @@ public sealed partial class TaskForm
     /// <summary>List, New smart list (TK-5.3): a filter file with All tasks' conditions, opened in axJSON.</summary>
     private void NewSmartList()
     {
+        if (Gathered)
+        {
+            Announce("Smart lists are made among the sections: Left first", true);
+            return;
+        }
+
         AskText("New smart list", "Its conditions start as All tasks', and open in axJSON to change.", "Name:", "Name", string.Empty, "&Make", name =>
         {
             var path = Path.Combine(TopFolder, name.Trim() + ItemFolder.FilterExtension);
@@ -172,6 +198,9 @@ public sealed partial class TaskForm
         { Tag: SmartList { Path: null } } => "All tasks is built in and keeps its name",
         { Tag: SmartList } => "Rename a smart list's file in axFile: Ctrl+E",
         { Tag: ItemFile } => null,
+        { Tag: FoundItem } => "Open it where it lives first: Enter",
+        { Tag: ProjectTag } => "A project's folder is renamed in axFile: Ctrl+E",
+        _ when ReferenceEquals(row.Tag, ProjectsTag) => "Projects keeps its name",
         _ when ReferenceEquals(row.Tag, ArchivedItemsTag) || IsArchiveFolder(row.Key) => "The Archive keeps its name",
         _ => null,
     };
@@ -208,6 +237,13 @@ public sealed partial class TaskForm
     }
     protected override void RenameItem(ItemRow row, string title)
     {
+        if (row.Tag is FoundItem)
+        {
+            // The links to it are kept within its own folder of lists, which the search's level is not (TK-7b.4).
+            Announce("Open it where it lives first: Enter in the navigator", true);
+            return;
+        }
+
         if (row.Tag is not ItemFile item)
         {
             return;
@@ -241,6 +277,18 @@ public sealed partial class TaskForm
         if (row.Tag is SectionTag)
         {
             Announce("A section goes when its lists leave it: Ctrl+M on each", true);
+            return;
+        }
+
+        if (row.Tag is FoundItem)
+        {
+            Announce("Open it where it lives first: Enter", true);
+            return;
+        }
+
+        if (row.Tag is ProjectTag || ReferenceEquals(row.Tag, ProjectsTag))
+        {
+            Announce("A project stays: Options, Project folders removes the folder it was found in", true);
             return;
         }
 
@@ -325,6 +373,13 @@ public sealed partial class TaskForm
             return false;
         }
 
+        if (row.Tag is FoundItem)
+        {
+            // A link is looked for among the items of its own folder of lists (TK-7b.4).
+            Announce("Open it where it lives first: Shift+Tab, then Enter", true);
+            return true;
+        }
+
         var from = source.Path;
         var current = FieldTypes.TextOf(field.Value) is { Length: > 0 } link && ItemFolder.Resolve(from, link) is { } linkedPath && ItemFolder.ReadItem(linkedPath) is { } linked ? ItemFolder.NameOf(linked) : string.Empty;
         ItemFile? target = null;
@@ -406,6 +461,15 @@ public sealed partial class TaskForm
             case { Tag: ItemFile item }:
                 WindowMenu.Start(Dispatch.AxJSON, item.Path);
                 return;
+            case { Tag: FoundItem found }:
+                WindowMenu.Start(Dispatch.AxJSON, found.Item.Path);
+                return;
+            case { Tag: ProjectTag }:
+                Announce("A project is a folder: Ctrl+E shows it in axFile", true);
+                return;
+            case { Tag: var projects } when ReferenceEquals(projects, ProjectsTag):
+                Announce("Projects gathers folders: Options, Project folders lists them", true);
+                return;
             case { Tag: SmartList { Path: { } filter } }:
                 WindowMenu.Start(Dispatch.AxJSON, filter);
                 return;
@@ -432,7 +496,7 @@ public sealed partial class TaskForm
 
     /// <summary>Ctrl+E: the selection's file or folder in axFile; the folder shown when nothing is selected.</summary>
     private void ShowInAxFile() =>
-        WindowMenu.Start(Dispatch.AxFile, SelectedRow() is { } row && row.Tag is not SmartList { Path: null } ? row.Key : _smart is null ? _folder : TopFolder);
+        WindowMenu.Start(Dispatch.AxFile, SelectedRow() is { } row && row.Tag is not SmartList { Path: null } && !ReferenceEquals(row.Tag, ProjectsTag) ? row.Key : _smart is null ? _folder : TopFolder);
 
     private void ChooseTopFolder()
     {
@@ -446,6 +510,10 @@ public sealed partial class TaskForm
         SaveSettings();
         _undo.Clear();
         _smart = null;
+        _search = null;
+        _atProjects = false;
+        _project = null;
+        _projectName = null;
         _folder = TopFolder;
         Fill(select: null);
         Announce("Folder " + PathName.Of(folder) + ". " + Navigator.AccessibleName, true);

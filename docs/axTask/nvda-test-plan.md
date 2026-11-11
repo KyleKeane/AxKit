@@ -71,3 +71,40 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
 5. List menu, New GitHub list: "Repository:"; type "KyleKeane" and Enter: "Type the repository as owner/name"; type "KyleKeane/AxKit-reports", Enter: "Made AxKit-reports issues", the list selected. Right: the list opens, "AxKit-reports issues, empty: Ctrl+N adds an item" at once, then, when GitHub has answered, "AxKit-reports issues, N items, N new" and the items by "<title>"; with the network off instead: "GitHub not read: no network; the list shows what was read last".
 6. In the GitHub list, Tab: the fields Number, Kind, State, Opened, Reporter, Version, Updated, Issue, Body, Notes. Item menu, GitHub, Make it a bug without a token: "Set your GitHub token in the List menu first: GitHub account". List menu, GitHub account: the notice with a protected field "Paste your GitHub token"; Escape. Ctrl+5 (Open on GitHub, a default key of the list): the issue opens in the browser.
 7. Item menu, GitHub, Open in axClaude without a folder in list.json: "Set the code repository's folder first". With `"folder"` set in list.json (Ctrl+J, axJSON): a new axClaude window on that folder, its message field holding "Issue N: <title>" and the body, not sent.
+
+## 6. Project folders and the search across every list (TK-7b)
+
+The project folder is `manual_tests\axTask\projects`, with `alpha\tasks\Home` (`Fix the leak`, Notes "A washer of 15
+mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/axTask/05-projects.txt`.
+
+1. Without project folders, the top level starts at "Smart lists, section, 1 smart list", as before. Options, Project
+   folders, Remove a project folder: one item, "No project folders yet".
+2. Options, Project folders, Add a project folder: the notice "Add a project folder", the field "Type the folder's
+   path, or leave it empty for the folder picker". Type a path that is not there, Enter: "No folder is there: ...", the
+   notice stays. Type the path of `manual_tests\axTask\projects`, Enter: "Added projects, looking for lists"; the first
+   line of the top level reads "Projects, 2 lists", and NVDA does not read that line again as the look ends. Add it
+   again: "projects is a project folder already". Type the path of `manual_tests\axTask\tasks`, the top folder:
+   "That is your own top folder: its lists show at the top already", the notice stays.
+3. Add a project folder again with the field empty, Enter: the Windows folder picker opens; Cancel: back in the window,
+   nothing added.
+4. Right on Projects: "Projects, 2 projects, tasks in alpha, 1 list". Down: "tasks in beta, 1 list". Ctrl+Shift+N:
+   "A project's lists are made inside it: Right on a project first". Delete: "A project stays: Options, Project
+   folders removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E". Ctrl+N: "A
+   project's items are made in its lists: Right on a project, then on a list". F5: "Refreshed: Projects, 2 projects", and the Projects level
+   is not read a second time.
+5. Up, Right on tasks in alpha: "tasks in alpha, 1 list, Smart lists, section, 1 smart list". Down: "All tasks, 1 not
+   done". Down twice, Right: "Home, 1 item, Fix the leak". Space: "Done: Fix the leak"; Ctrl+Z: "Undone: Done: Fix the
+   leak".
+6. Left: "tasks in alpha, 1 list, Home, list, 1 item". Left: "Projects, 2 projects, tasks in alpha, 1 list". Left:
+   "Lists, 3 lists, Projects, 2 lists". Left: the edge sound.
+7. Ctrl+Shift+F: the notice "Find in every list", the field "Type the words to find in every list". Type `zebra`,
+   Enter: "Searching every list", then the edge sound and "Nothing found for zebra".
+8. Ctrl+Shift+F, type `tap`, Enter: "Found tap, 2 items, Fix the tap, in tasks / Home" (your own lists first). Down:
+   "Tap drips, in tasks in beta / Bugs". Tab: "Fields of Tap drips" and its Title. Shift+Tab, Escape: "Lists, 3 lists,
+   Projects, 2 lists", where the search was started.
+9. Ctrl+Shift+F, type `washer 15`, Enter: "Found washer 15, 1 item, Fix the leak, in tasks in alpha / Home". F2: "Open
+   it where it lives first: Enter". Ctrl+N: "Items are made in a list: open the item where it lives first, Enter".
+   Enter: "Home, 1 item, Fix the leak". Left: "tasks in alpha, 1 list, Home, list, 1
+   item".
+10. Options, Project folders, Remove a project folder: "1. projects (...)"; Enter: "Removed projects", and the Projects
+    line is gone from the top level.

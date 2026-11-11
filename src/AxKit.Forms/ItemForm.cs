@@ -451,6 +451,39 @@ public abstract partial class ItemForm : AxKitForm
         FillDetail();
     }
 
+    /// <summary>
+    /// The level read again for something that changed off the user's command (axTask's projects found, TK-7b.2): when
+    /// the same rows are there by key, only the words of the rows that changed are rewritten in place and the selection
+    /// stays, so that NVDA has nothing to read again; otherwise filled again on the row selected. Nothing said.
+    /// </summary>
+    protected void Refill()
+    {
+        var (rows, name, title, place) = ReadLevel();
+        if (!rows.Select(row => row.Key).SequenceEqual(_rows.Select(row => row.Key), StringComparer.OrdinalIgnoreCase))
+        {
+            Fill(SelectedKey());
+            return;
+        }
+
+        if (rows.SequenceEqual(_rows) && name == Navigator.AccessibleName)
+        {
+            return;
+        }
+
+        _rows = [.. rows];
+        Navigator.SetLines(_rows.Select(row => DisplayText.Visible(row.Label)).ToList());
+        if (Navigator.AccessibleName != name)
+        {
+            Navigator.AccessibleName = name;
+        }
+
+        SetTitle(title);
+        _nameLabel.Text = name;
+        _placeLabel.Text = place;
+        StatusLayout.Fit(_status, _nameLabel, _placeLabel);
+        FillDetail();
+    }
+
     /// <summary>The selected row's key, for <see cref="Fill"/>.</summary>
     protected string? SelectedKey() => SelectedRow()?.Key;
 

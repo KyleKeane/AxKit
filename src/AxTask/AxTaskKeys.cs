@@ -17,6 +17,9 @@ public static class AxTaskKeys
     /// <summary>All tasks; Ctrl+0 since the digits 1 to 9 became the list's action keys (docs/axKit/reports.md RP-8.4, 2026-11-07).</summary>
     public const Keys AllTasks = Keys.Control | Keys.D0;
 
+    /// <summary>Words found in every list, the user's own and every project's (TK-7b.4).</summary>
+    public const Keys FindEverywhere = Keys.Control | Keys.Shift | Keys.F;
+
     /// <summary>On a list among the sections: its section chosen (TK-3a.3).</summary>
     public const Keys MoveToSection = Keys.Control | Keys.M;
 
@@ -32,6 +35,7 @@ public static class AxTaskKeys
         ("Hide or show done tasks", HideDone),
         ("All tasks", AllTasks),
         ("Move the list to a section", MoveToSection),
+        ("Find in every list", FindEverywhere),
         .. Enumerable.Range(1, 9).Select(digit => ($"Action key {digit}", ActionKey(digit))),
     ];
 }

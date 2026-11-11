@@ -29,7 +29,8 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   `WithDone`, `WithoutDone`, `TemplateWithDone`, `DoneIndex`.
 - `SmartList` (TK-5): All tasks and the `.filter.json` files: `InFolder`, `Read` (a file not understood is a smart
   list that shows nothing, with `NotUnderstood`), `Items`, `Matches`, `NewFileText`; its `order` keys are `OrderKey` (a name, or `field` with `by` options or text and `descending`; a choice by its options' order).
-- `TaskSettings`: the top folder, the list open last, whether done tasks are hidden.
+- `TaskSettings`: the top folder, the list open last, whether done tasks are hidden, the project folders (`ProjectFolders`, `RefusedProjectFolder`, `AddProjectFolder`; full paths once, TK-7b.1).
+- `Projects` with `TaskProject` and `SearchHit` (TK-7b, 2026-11-11): `Find` (the folders of lists under the project folders, four folders down, hidden folders and `.git`, `node_modules`, `bin`, `obj` skipped, the top folder left out, names told apart by the folder above), `Inside`, `Words`, `Matches` (every word in the Title or a text field, case not minded) and `Search`. Read-only; the window calls them off the UI thread. Tested in `ProjectsTests`.
 - `ActionKeys` and `ListAction` (docs/axKit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
   `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Make it a bug"), `ApplySet`
   (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines); an

@@ -41,6 +41,8 @@ public sealed partial class TaskForm : ItemForm
         var file = new ToolStripMenuItem("&Session");
         file.DropDownItems.Add(new ToolStripMenuItem("Top &folder...", null, (_, _) => ChooseTopFolder()));
         Add(file, new Command("&All tasks", AxTaskKeys.AllTasks, ShowAllTasks) { When = NotRenaming, Mark = CommandMark.Open });
+        // TK-7b.4: the search across every list, the user's own and every project's.
+        Add(file, new Command("Find in &every list...", AxTaskKeys.FindEverywhere, FindEverywhere) { When = NotRenaming, Mark = CommandMark.Read });
         file.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh));
         file.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
         file.DropDownItems.Add(new ToolStripSeparator());
@@ -98,6 +100,7 @@ public sealed partial class TaskForm : ItemForm
         _hideDoneItem.Checked = settings.HideDone;
 
         var options = new ToolStripMenuItem("&Options");
+        options.DropDownItems.Add(CreateProjectFoldersMenu());
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());
@@ -106,6 +109,11 @@ public sealed partial class TaskForm : ItemForm
 
         _menu.Items.AddRange([file, _listMenu, _itemMenu, _fieldMenu, view, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
         SelectionMenus(_listMenu, _itemMenu, _fieldMenu);
+        // TK-7b.4: in the search's level, Right and Enter open what was found where it lives, Escape goes back; before
+        // the shared keys, which PlaceControls registers after these.
+        AddKey(new Command("Open it where it lives", ItemKeys.Into, OpenFound) { When = InSearch, Mark = CommandMark.Open });
+        AddKey(new Command("Open it where it lives", ItemKeys.Open, OpenFound) { When = InSearch, Mark = CommandMark.Open });
+        AddKey(new Command("Back from the search", ItemKeys.Back, UpLevel) { When = InSearch, Mark = CommandMark.Open });
         PlaceControls(_menu);
         Start(path);
     }
@@ -115,10 +123,11 @@ public sealed partial class TaskForm : ItemForm
     protected override string Shortcuts => HelpText.Shortcuts;
 
 
-    protected override IEnumerable<string> DiagnosticsLines => [$"Level: {(_smart is not null ? "smart list" : AtTop ? "top" : "list")}, {Rows.Count} rows"];
+    protected override IEnumerable<string> DiagnosticsLines =>
+        [$"Level: {(_search is not null ? "search" : _atProjects ? "projects" : _smart is not null ? "smart list" : AtTop ? "top" : "list")}{(_project is null ? string.Empty : ", in a project")}, {Rows.Count} rows, {_settings.ProjectFolders.Count} project folders"];
 
-    /// <summary>The folder of lists, for Recently closed (AX-9.4).</summary>
-    protected override string? PathInHand => TopFolder;
+    /// <summary>The folder of lists, for Recently closed (AX-9.4): the user's own, never a project's.</summary>
+    protected override string? PathInHand => _settings.TopFolder;
 
 
     /// <summary>A link reads the item it points to, or "missing: name" (IA-D3).</summary>
@@ -134,11 +143,18 @@ public sealed partial class TaskForm : ItemForm
 
         // F5 in a GitHub list reads GitHub again (TK-7a.2); the panes fill from the files meanwhile.
         RefreshGitHubAgain();
+
+        // F5 on the top level or the Projects level looks for the projects again (TK-7b.2).
+        if (_search is null && _project is null && (AtTop || _atProjects))
+        {
+            FindProjects();
+        }
     }
 
     // ---- the levels (IA-2.2) ----
 
-    private string TopFolder => _settings.TopFolder;
+    /// <summary>The folder of lists shown: the user's own, or the project entered (TK-7b.3), which is a top folder as the user's is.</summary>
+    private string TopFolder => _project ?? _settings.TopFolder;
 
     private bool AtTop => _smart is null && _folder.Equals(TopFolder, StringComparison.OrdinalIgnoreCase);
 
@@ -172,10 +188,30 @@ public sealed partial class TaskForm : ItemForm
 
         SaveSettings();
         Fill(select);
+        FindProjects();
     }
 
     protected override void EnterList(ItemRow row)
     {
+        if (ReferenceEquals(row.Tag, ProjectsTag))
+        {
+            // TK-7b.3: the projects found; looked for again on the way in.
+            _atProjects = true;
+            FindProjects();
+            return;
+        }
+
+        if (row.Tag is ProjectTag { Project: var project })
+        {
+            // TK-7b.3: a project is a top folder of its own while it is shown.
+            _atProjects = false;
+            _project = project.Path;
+            _projectName = project.Name;
+            _smart = null;
+            _folder = project.Path;
+            return;
+        }
+
         if (row.Tag is SmartList smart)
         {
             _smart = smart;
@@ -193,9 +229,30 @@ public sealed partial class TaskForm : ItemForm
 
     protected override string? LeaveList()
     {
+        if (_search is { } search)
+        {
+            return LeaveSearch(search);
+        }
+
+        if (_atProjects)
+        {
+            _atProjects = false;
+            return ProjectsKey;
+        }
+
         if (AtTop)
         {
-            return null;
+            if (_project is not { } project)
+            {
+                return null;
+            }
+
+            // TK-7b.3: out of a project's top, back to the Projects level on it.
+            _project = null;
+            _projectName = null;
+            _folder = TopFolder;
+            _atProjects = true;
+            return project;
         }
 
         string select;
@@ -219,6 +276,9 @@ public sealed partial class TaskForm : ItemForm
     /// <summary>Ctrl+1: All tasks from anywhere.</summary>
     private void ShowAllTasks()
     {
+        // In a project, its own All tasks (TK-7b.3); from the Projects level or the search, the user's own.
+        _search = null;
+        _atProjects = false;
         _smart = SmartList.AllTasks;
         _folder = TopFolder;
         Fill(select: null);
@@ -228,7 +288,7 @@ public sealed partial class TaskForm : ItemForm
 
     private void RememberLevel()
     {
-        _settings.LastList = _smart is null && !AtTop && _folder.StartsWith(TopFolder + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+        _settings.LastList = _project is null && _smart is null && !AtTop && _folder.StartsWith(TopFolder + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
             ? Path.GetRelativePath(TopFolder, _folder)
             : null;
         SaveSettings();
@@ -239,6 +299,16 @@ public sealed partial class TaskForm : ItemForm
         var today = Today;
         var rows = new List<ItemRow>();
         string name;
+        if (_project is not null && !Directory.Exists(_project))
+        {
+            // A project gone from disk: back to the Projects level.
+            _project = null;
+            _projectName = null;
+            _folder = TopFolder;
+            _smart = null;
+            _atProjects = true;
+        }
+
         if (!Directory.Exists(_folder) && !_folder.Equals(TopFolder, StringComparison.OrdinalIgnoreCase))
         {
             // A list gone from disk: back to the top.
@@ -246,7 +316,15 @@ public sealed partial class TaskForm : ItemForm
             _smart = null;
         }
 
-        if (_smart is { } smart)
+        if (_search is { } search)
+        {
+            name = ReadSearch(search, rows);
+        }
+        else if (_atProjects)
+        {
+            name = ReadProjects(rows);
+        }
+        else if (_smart is { } smart)
         {
             var items = smart.Items(TopFolder, today);
             foreach (var item in items)
@@ -290,7 +368,7 @@ public sealed partial class TaskForm : ItemForm
             }
         }
 
-        var title = _smart?.Name ?? (AtTop ? "Lists" : ListTitle());
+        var title = _search is not null ? "Found" : _atProjects ? "Projects" : _smart?.Name ?? (AtTop ? _projectName ?? "Lists" : ListTitle());
         return (rows, name, title, TopFolder);
     }
 
@@ -313,6 +391,12 @@ public sealed partial class TaskForm : ItemForm
     {
         var top = ItemFolder.ReadTop(TopFolder);
         var all = top.Lists.SelectMany(list => ItemFolder.Read(list).Items).ToList();
+        if (_project is null && _settings.ProjectFolders.Count > 0)
+        {
+            // TK-7b.3: the projects gathered, the first row, before the sections.
+            rows.Add(ProjectsRow());
+        }
+
         var smart = new List<ItemRow> { SmartRow(SmartList.AllTasks, all, today) };
         smart.AddRange(SmartList.InFolder(TopFolder).Select(filter => SmartRow(filter, all, today)));
         AddSection(rows, "Smart lists", custom: false, smart, "smart list");
@@ -344,7 +428,7 @@ public sealed partial class TaskForm : ItemForm
             AddSection(rows, "Archived lists", custom: false, archived, "list");
         }
 
-        var name = $"Lists, {Count(top.Lists.Count, "list")}";
+        var name = $"{_projectName ?? "Lists"}, {Count(top.Lists.Count, "list")}";
         return top.NotShown > 0 ? name + $", {Count(top.NotShown, "file")} not shown" : name;
     }
 
@@ -382,6 +466,13 @@ public sealed partial class TaskForm : ItemForm
                     [new ItemDetailLine(Rows.Count == 0 ? "Nothing in this list: Ctrl+N in the navigator adds an item" : "Nothing selected")]);
             case { Tag: ItemFile item }:
                 return new ItemDetail("Fields of " + row.Name, item.Path, item.Document, [], new FileSource(item.Path, item.Text));
+            case { Tag: FoundItem found }:
+                return new ItemDetail("Fields of " + row.Name, found.Item.Path, found.Item.Document,
+                    [new ItemDetailLine($"In {found.Hit.Place} / {found.Hit.List}; Enter in the navigator opens it there")], new FileSource(found.Item.Path, found.Item.Text));
+            case { Tag: ProjectTag }:
+                return ProjectDetail(row);
+            case { Tag: var projects } when ReferenceEquals(projects, ProjectsTag):
+                return ProjectDetail(row);
             case { Tag: SectionTag section }:
                 return new ItemDetail("Details of " + section.Name, row.Key, null,
                 [

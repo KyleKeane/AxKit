@@ -124,6 +124,8 @@ On top of IA-3:
 | Ctrl+1 to Ctrl+9 | anywhere, in a list | the list's action key on the item selected (TK-7a.1) |
 | Ctrl+Up, Ctrl+Down | navigator | the section before or after (TK-3a.2) |
 | Ctrl+M | navigator, on a list | move the list to a section (TK-3a.3) |
+| Ctrl+Shift+F | anywhere | find words in every list, the user's own and every project's (TK-7b.4) |
+| Right, Enter, Escape | navigator, in the found level | open the item where it lives; back where the search started (TK-7b.4) |
 
 ## 7a. Action keys and GitHub lists (2026-11-07)
 
@@ -165,6 +167,59 @@ The design is `docs/axKit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules a
   GitHub account removes it. Reading a public repository's issues needs none; every action does, and says "Set your
   GitHub token in the List menu first" without one.
 
+## 7b. Project folders and the search across every list (2026-11-11)
+
+The user, 2026-11-10: "run a script to find axtask databases and bring them into some aggregated list ... offer the
+ability to check for items that are across many lists ... keep track of many lists across projects". Its first three
+parts are built here: the folders of lists found, one place to reach them, and the search. Notifications of items due
+and the AI tools over them are later (the priorities item of the request).
+
+- **TK-7b.1 Project folders.** Options → Project folders → Add a project folder… asks "Type the folder's path, or
+  leave it empty for the folder picker": a typed path must be a whole path to a folder that is there, not one already
+  and not the top folder or inside it ("No folder is there: …", "Projects is a project folder already", "That is your
+  own top folder: its lists show at the top already", "That is inside your own top folder: …", the notice kept; the
+  folder picker's choice is refused the same way, said); an empty field opens the
+  Windows folder picker. "Added Projects, looking for lists". Remove a project folder ▸ lists them as "1. Projects
+  (C:\…)", or one item "No project folders yet"; a choice says "Removed Projects". They are kept in axTask's settings
+  as `projectFolders`, full paths; none by default (TK-D6).
+- **TK-7b.2 What is found.** A folder of lists, a folder holding at least one list (a folder with `list.json` at its
+  top, or whose Archive holds one when every list was archived, so that an Archive is never a project of its own),
+  under a project folder, the project folder itself included, to four folders down; hidden folders, `.git`,
+  `node_modules`, `bin` and `obj` are never looked into, nor a folder of lists already found, nor the top folder or
+  anything in it (TK-D7). The look runs off the UI thread at the start, on the way into Projects, on F5 at the top or
+  in Projects, and after a project folder is added or removed. When it ends, the Projects row or level is read again
+  only if what was found changed, nothing said: the selection stays, and a row whose words changed is rewritten in
+  place ("Projects, looking for lists" becomes "Projects, 5 lists"); a level with other rows is filled again on the
+  row selected. While a notice or a rename in place is open, the level is read again when the last notice closes.
+- **TK-7b.3 Projects.** While project folders are set, the top level's first row, before the sections, is "Projects, 5
+  lists" (the lists of every project; "Projects, looking for lists" until the first look ends). Right or Enter:
+  "Projects, 3 projects, tasks in alpha, 2 lists": each project by its folder's name, with the folder above it when
+  two share a name ("tasks in alpha"), and that folder's path when two still share it ("tasks in alpha
+  (D:\Work\alpha)"), and its count of lists; "Projects, none found: Options, Project folders" when
+  there are none. Right or Enter on a project opens it as a top folder of its own, "tasks in alpha, 2 lists, Smart
+  lists, section, 1 smart list": its sections, All tasks and smart lists, its Archive, every change and Ctrl+Z exactly
+  as in the user's own folder (TK-D8). Left from a project's top goes back to Projects on it, and Left from Projects
+  to the top level on the Projects row. In the Projects level Ctrl+N, Ctrl+Shift+N, F2 and Delete make, rename and
+  move nothing and say why (Ctrl+N: "A project's items are made in its lists: Right on a project, then on a
+  list"); Ctrl+E shows a project's folder in axFile. A project is never remembered as the list open
+  last.
+- **TK-7b.4 The search across every list.** Ctrl+Shift+F, anywhere in the window, asks "Type the words to find in
+  every list" (the last words typed, again). Every list of the user's own top folder and of every project is read off
+  the UI thread, the Archive left out as All tasks leaves it, and an item holding every word in its Title or a text
+  field (text and long text), case not minded, is found. "Searching every list" is said as the notice closes. What a
+  search finds is dropped, nothing said, when another search was started meanwhile or when a notice or a rename in
+  place is open as it ends, so that the focus stays where the user took it; Ctrl+Shift+F asks again with the words
+  kept. Nothing found: the edge earcon and "Nothing found for zebra",
+  the level unchanged. Otherwise the level "Found tap, 3 items", one row per item, "Fix the tap, in tasks in alpha /
+  Home", the user's own lists first, named by the top folder's name. Right or Enter opens the item's list where it
+  lives (in its project, when it is in one) with the item selected: "Home, 1 item, Fix the tap"; Left, Backspace or
+  Escape goes back where the search was started, the row selected then selected again. In the found level Tab shows
+  the item's fields, which change as anywhere, and Space marks a task done in its own file, the selection staying on
+  it (done tasks stay in the found level, Hide done or not); F2, Delete and a link's change say "Open it where it lives
+  first", Ctrl+N "Items are made in a list: open the item where it lives first, Enter", the action keys "Action keys act in a list: open one first" (TK-D9).
+- **TK-7b.5 The top folder** is never moved or changed by any of this: a project is shown, entered and changed where
+  it is, and the user's top folder stays the one in the settings.
+
 ## 8. Decisions
 
 - **TK-D1 The All tasks entry is not a file.** It is the one smart list nobody can delete or break; every other one is
@@ -181,6 +236,24 @@ The design is `docs/axKit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules a
   in the top folder itself.
 - **TK-D5 A list's section is in its own details** (the user's choice of both ways in, 2026-10-24): no file of
   sections to keep in step; a list moved, synced or archived keeps its section; a script sets it as any field.
+- **TK-D6 Project folders are named, never the whole disk** (taken for the user, who was away, 2026-11-11): the
+  request said "not the whole disk", and a search of every drive would be slow and find folders the user never meant.
+  One notice adds a folder, by a typed path or, with the field empty, by the Windows folder picker (the shape of
+  axTerminal's Add a shell, AT-1.6a), so that one menu item serves both ways in.
+- **TK-D7 A project is a folder holding lists** (2026-11-11): the request's "a folder with list.json at its top" is a
+  list, and a list alone is not a folder axTask opens as a top; its parent is. So what is found is the folder above a
+  `list.json` folder, which is what a top folder is, and it opens with everything a top folder has. Four folders down
+  covers `Projects\client\repo\tasks`; the folders skipped are the ones that hold thousands of files and no lists.
+- **TK-D8 One row, then the projects as top folders** (2026-11-11): the top level gains one row, not a section, so the
+  sections stay as they were and a user without project folders sees no change. A project entered replaces the top
+  folder for as long as it is shown, so the smart lists, the Archive, the links and the undo all work there unchanged;
+  the window holds one folder of lists at a time. A gathered All tasks across every project waits until it is asked
+  for (TK-D3's no index or cache stands; the search reads every project once per search).
+- **TK-D9 The search is a level of its own, read-only for what moves** (2026-11-11): Ctrl+Shift+F is free in axTask
+  and is axFile's filter key, the nearest meaning; Ctrl+F stays the bundle's find in the navigator. A found item's
+  file is changed in place for its fields and Done, but a rename, an archive, a link and an action key need the
+  item's own folder of lists (its Archive, the links to it), so they say to open it where it lives first. All the
+  words must be in the item, as a search box usually means.
 
 ## 9. Open questions
 
