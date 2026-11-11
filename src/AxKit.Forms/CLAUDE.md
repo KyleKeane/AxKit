@@ -190,7 +190,7 @@ WinForms code every app of the bundle uses (`docs/axKit/SPEC.md` AX-6.2, AX-6.4)
     - Since 2026-10-24 the read-only mode also takes `EditorApp.Render` (a `ViewerPage`: the document, the renderer's name for the status bar, the Contents lines and the `ViewerWayOut`) and `EditorApp.Details` (the lines of a Details list, `AxKitList`, docked under the text, read on a task, the same file's lines kept until the new ones come);
     - `SwitchPane` takes Ctrl+Tab, Ctrl+Shift+Tab and F6 between the text and the list;
     - Ctrl+E goes by the page;
-    - File → Open with is filled from `Dispatch.Apps` as it opens (docs/axPreview/SPEC.md AP-6, AP-7).
+    - Session → Open with is filled from `Dispatch.Apps` as it opens (docs/axPreview/SPEC.md AP-6, AP-7).
 - `AppHost` (AX-1.7): every app's entry point: `Run(name, logName, usage, args, window)` sets up the log and the crash handling (the report as a notice in the open `AxKitForm`, or a message box without one), logs the start and the exit, answers `--help` and `--version`, and runs the window the function makes from the remaining arguments; `OnePath` reads an app's one file or folder and reports anything else; `BadCommandLine` logs and shows a message box, the only kind the bundle allows, since no window exists yet. Gotchas of the window live in the axDown notes and in the window's comments (the Ctrl+H/I/J/M guard, the word wrap handle recreation, the notice state flag).
 
 Gotchas that live here are axClaude's and are kept in `src/AxClaude/CLAUDE.md` (the EDIT control, NVDA's reading after a key press, the notice state as a flag in the form, `AcceptButton` for Enter, Alt and F10 as `SC_KEYMENU`).

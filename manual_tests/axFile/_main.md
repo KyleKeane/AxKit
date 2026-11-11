@@ -79,7 +79,7 @@ Section 1, steps 9 and 12.
 
 Section 4, and axMedia's and axPreview's hand-over sections.
 
-- `README.md`, `plain.txt`, `app.log`: Shift+Enter shows each in one axPreview window. `binary-not-text.bin`: "Not a text file".
+- `README.md`, `plain.txt`, `app.log`: Shift+Enter shows each in one axPreview window. `binary-not-text.bin`: axPreview shows it too, "No readable text was found in binary-not-text.bin.", with the Details list under it ("Not a text file" until 2026-10-24).
 - `chapters-ctrl-enter-plays-me`: enter it, Ctrl+Enter plays its four chapters. Each says "Play folder chapter, track n of 4".
 - `queue-folder-a-add-with-ctrl-shift-q` and `queue-folder-b-add-with-ctrl-shift-q`: select both from this folder, Ctrl+Shift+Q: "Added 6 to axMedia's queue". In axMedia you hear "Queue folder A" and then "Queue folder B" after the chapters.
 - `no-media-here`: Ctrl+Enter inside it says "No sound or video files here".

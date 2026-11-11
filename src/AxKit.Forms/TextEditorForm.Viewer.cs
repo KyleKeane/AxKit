@@ -16,7 +16,7 @@ public sealed partial class TextEditorForm
     /// <summary>File → Edit in axDown or axJSON, Play in axMedia, or Open in Windows' program, named after the file's page; null in an editor.</summary>
     private ToolStripMenuItem? _editItem;
 
-    /// <summary>File → Open with ▸, filled as it opens (AP-7.3); null in an editor.</summary>
+    /// <summary>Session → Open with ▸, filled as it opens (AP-7.3); null in an editor.</summary>
     private ToolStripMenuItem? _openWithItem;
 
     /// <summary>What the renderer made of the file shown (AP-7); null for Untitled, or in an editor.</summary>
@@ -294,7 +294,7 @@ public sealed partial class TextEditorForm
     }
 
     /// <summary>
-    /// File → Open with ▸ (AP-7.3): the axKit apps that are programs for the file's type, axDown for any text, then
+    /// Session → Open with ▸ (AP-7.3): the axKit apps that are programs for the file's type, axDown for any text, then
     /// Windows' program for it and Windows' own dialog, whose Always is where a default is set; a choice opens the
     /// file once. Filled as the menu opens, from the file shown.
     /// </summary>

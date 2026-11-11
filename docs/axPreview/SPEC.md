@@ -40,8 +40,9 @@ it, so that every file shows something and the details say what it is.
   renderer into the same read-only text (AP-D6), with the details pane beside it in the reading order (AP-6).
 - **G5 Nothing spoken unprompted** (AX-7.3).
 - **Non-goals.** Editing of any kind (Ctrl+E is the way out); pictures, sound or video shown or played (the details
-  say what they are; axMedia plays, axOCR is planned for the text in a picture); a rendering of Markdown (the text is
-  the text; the navigation keys are the structure); syntax colouring; tabs or a list of open files.
+  say what they are; axMedia plays; a picture's text is read by Windows' own reader, AP-7.2 item 4, AP-D11); a
+  rendering of Markdown (the text is the text; the navigation keys are the structure); syntax colouring; tabs or a list
+  of open files.
 
 ## 3. Scenarios
 
@@ -53,7 +54,8 @@ it, so that every file shows something and the details say what it is.
 2. Shift+Enter on `notes.txt` in axFile while axPreview is open on `README.md`: the same window shows `notes.txt`;
    "Open recent" lists both.
 3. Shift+Enter on `report.log` in axFile, a file no editor takes: axPreview shows it, since its first bytes read as
-   text. Shift+Enter on `tool.exe`: axPreview says "Not a text file" in a notice and keeps what it had.
+   text. Shift+Enter on `tool.exe`: axPreview shows the readable text inside it, the Details list saying what it is
+   (AP-7; "Not a text file" in a notice until 2026-10-24).
 4. In File Explorer, right-click `CHANGELOG.md`, Open with axKit, axPreview: the window opens on it. The user makes
    axPreview the default program for `.log` files in Windows' settings (the guide says how); from then on Enter on
    a `.log` in axFile, and a double click in File Explorer, open axPreview.
@@ -67,8 +69,8 @@ it, so that every file shows something and the details say what it is.
 - AP-1.1 `AxKit.exe preview [<file>] [--new]`: the file shown; no path opens the window empty, named "Untitled" (Ctrl+O
   then); a path that does not exist is the notice "File not found" naming it, the window empty or keeping what it
   showed (decided 2026-10-23; it opened an empty window under the missing name, and Edit in axDown created the file). Start menu entry `axKit axPreview`, console command `axPreview`, File Explorer's Open with axKit ▸ axPreview on
-  every file, axPreview under Windows' own Open with for every file type (since 3.7.2, the general viewer to come,
-  `docs/axKit/plan.md`; the text kinds `.txt`, `.md`, `.markdown`, `.log`, `.json` until then; type name
+  every file, axPreview under Windows' own Open with for every file type (since 3.7.2, the general viewer, AP-6 and
+  AP-7; the text kinds `.txt`, `.md`, `.markdown`, `.log`, `.json` before it; type name
   "File (axPreview)"), so that the user can make it the default program for a kind in Windows'
   settings (AP-D2), the Window menu's New window (AX-9). A file alone on the command line keeps going to its editor
   (AX-1.2); the viewer is chosen by name or by Windows' association.
@@ -97,8 +99,8 @@ it, so that every file shows something and the details say what it is.
 - AP-2.2 **What opens:** a file whose first bytes read as text (the editors' kinds by extension, an empty file, a
   UTF-16 mark, or no zero byte and few control characters in the first eight kilobytes; the rule of axFile's
   `Preview.IsText`, moved) up to 32 MB (axDown AD-3.1's limit), decoded as the editors decode (`TextDocument`: the
-  mark, the code page, the line endings). Anything else: the notice "Not a text file" ("tool.exe is not a text file.
-  axFile's Enter opens it in the program Windows has for it."), the window keeping what it had; a file over the limit:
+  mark, the code page, the line endings). Anything else goes to the next renderer of AP-7 (since 2026-10-24; until
+  then the notice "Not a text file", the window keeping what it had); a text file over the limit:
   the notice "Too large", "<name> is 33,554,433 bytes, over the 32 MB a window can open." (the editors' wording, AD-3.7; until 2026-10-23 "is n MB", which said 32 MB for a file just over); a reload of a file that cannot be read
   (held by another program): the error notice, the text kept (axDown AD-3.6); a file whose first eight kilobytes pass
   and which the reader refuses (a NUL further in): the error notice, the text kept as well (2026-10-23; the window
@@ -224,7 +226,7 @@ and an error naming a file that could not be opened.
      "No text was found in <name>." for a picture without text; a reader that fails says why ("The text of <name> could
      not be read: <why>"), a Windows without a recognition language where to add one. A picture larger than the reader
      takes (2,600 pixels a side) is scaled down for it. The Contents group holds "Text lines: N". Nothing leaves the
-     computer. **File → Read the clipboard's picture (Ctrl+Shift+V)**: the picture on the clipboard, which Windows'
+     computer. **Session → Read the clipboard's picture (Ctrl+Shift+V)**: the picture on the clipboard, which Windows'
      Alt+PrintScreen puts there from the window in front and PrintScreen from the whole screen, is saved as a PNG
      beside axPreview's logs (`%LOCALAPPDATA%\AxKit\axpreview\clipboard-<date>-<time>.png`, kept) and opened here, so
      that a dialog or a window that reads badly is read as text; "No picture on the clipboard" with those two keys
@@ -242,7 +244,7 @@ and an error naming a file that could not be opened.
   `AssocIsDangerous`, through `AxKit.Core/DangerousFiles`) is never handed to Windows to open, by Ctrl+E or by Open with's
   Windows' program: the notice "Not run from axPreview" says so and where to run it if trusted (security review S-46,
   2026-10-25); Choose another program stays, the user picking the program.
-  **File → Open with ▸** (the user's choice of 2026-10-24, over a list of defaults of axKit's own): the axKit apps that
+  **Session → Open with ▸** (the user's choice of 2026-10-24, over a list of defaults of axKit's own): the axKit apps that
   are programs for the file's type (their Open with types of `Dispatch.Apps`) and axDown for any text, numbered
   ("&1. axDown"), then Windows' program for it and Choose another program… (Windows' own dialog,
   `AxKit.Forms/WindowsOpenWith`). A choice opens the file once; a default is set where Windows keeps them, with that

@@ -418,7 +418,9 @@ and the started process finds its open window and hands the paths over with the 
   task, the hidden ones as the settings say); "No sound or video files to add" when the count is none. With no axMedia
   window open, one opens behind this window, without taking the focus (AM-D3), holding the queue for later.
 - AF-5.3 **Preview** (Shift+Enter in the list; the Operations menu): the file read in axPreview, the window in front; a
-  folder in a new axFile window (AF-3.2). axPreview says "Not a text file" itself for a file that is none.
+  folder in a new axFile window (AF-3.2). axPreview shows every file through its renderer (axPreview AP-7): a file
+  that is no text as the readable text inside it, with the Details list under it (AP-7.2, AP-7.5); it said "Not a
+  text file" until 2026-10-24.
 - AF-5.4 **Enter** on a sound or video file is Windows' default program (AF-3.2): axMedia when the user has made it
   so, which plays the file with its folder's other media files after it (AM-D2).
 
