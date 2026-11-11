@@ -14,7 +14,7 @@ namespace AxKit.Forms;
 /// one request: the window checks that the client runs this very program file (the broker) and that the bundle's
 /// setting is on, sends a fresh challenge, takes the HMAC answer under the key, then reads one line and answers it on
 /// its own thread: <c>hello</c> (the app and the title), <c>state</c>, <c>list</c>, <c>text</c>, <c>commands</c>,
-/// <c>said</c>, or <c>pair</c>, which asks the user. Reading only: nothing here runs a command or types a key. The
+/// <c>said</c>, <c>pair</c>, which asks the user, or <c>run</c>, a command of the window's list run as its menu item would while the user allows it (MC-7); nothing here types a key or answers a notice. The
 /// window of an app that is never read (axPass, axClip, <see cref="McpTools.NeverRead"/>) serves no pipe.
 /// </summary>
 internal sealed class McpChannel
@@ -38,6 +38,10 @@ internal sealed class McpChannel
     private readonly object _gate = new();
     private volatile bool _recording;
 
+    /// <summary>What the window says while a run's answer waits for it (MC-7.1), null between runs; and when it last said something.</summary>
+    private List<string>? _heard;
+    private long _lastHeardTick;
+
     /// <summary>How long a request may wait for the window's thread before the call is refused: a busy or hung window never holds the pipe for good.</summary>
     private static readonly TimeSpan WindowWait = TimeSpan.FromSeconds(10);
 
@@ -53,6 +57,12 @@ internal sealed class McpChannel
 
             lock (_gate)
             {
+                if (_heard is { } heard)
+                {
+                    heard.Add(text);
+                    _lastHeardTick = Environment.TickCount64;
+                }
+
                 _said.Enqueue((DateTime.UtcNow, text));
                 while (_said.Count > 50)
                 {
@@ -175,7 +185,12 @@ internal sealed class McpChannel
         string answer;
         try
         {
-            answer = verb == "pair" ? Pair(argument) : OnWindow(() => Execute(verb));
+            answer = verb switch
+            {
+                "pair" => Pair(argument),
+                "run" => Run(argument),
+                _ => OnWindow(() => Execute(verb)),
+            };
         }
         catch (Exception ex)
         {
@@ -211,6 +226,7 @@ internal sealed class McpChannel
             "commands" => _form.CommandList.Select(command => new
             {
                 label = command.Label.Replace("&", string.Empty, StringComparison.Ordinal),
+                menu = _form.MenuOf(command),
                 key = command.Key == Keys.None ? null : BundleKeys.Text(command.Key).TrimEnd('.'),
                 mark = command.Mark.ToString().ToLowerInvariant(),
             }).ToArray(),
@@ -265,6 +281,85 @@ internal sealed class McpChannel
             var said = _said.Where(entry => entry.At > since).Select(entry => entry.Text).ToArray();
             _said.Clear();
             return said;
+        }
+    }
+
+    /// <summary>How long a run's answer waits for what the window says (MC-7.1), and the quiet after the last words that ends the wait sooner.</summary>
+    private const int RunListenMs = 2500;
+
+    private const int RunQuietMs = 700;
+
+    /// <summary>
+    /// MC-7.1: <c>axkit_window_run</c>. The window checks and posts the command on its thread (<see cref="AxKitForm.McpRunCommand"/>);
+    /// this thread then listens to what the window says until it has been quiet for a moment, at most
+    /// <see cref="RunListenMs"/>, and reads whether a notice or a Windows dialog now waits for the user. The answer
+    /// names what ran, or that the user is asked (an act, MC-7.3), what was said, and the question the window asks.
+    /// </summary>
+    private string Run(string argument)
+    {
+        var request = System.Text.Json.Nodes.JsonNode.Parse(argument);
+        var name = McpProtocol.Text(request?["command"]);
+        var menu = McpProtocol.Text(request?["menu"]);
+        var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
+        lock (_gate)
+        {
+            _heard = [];
+            _lastHeardTick = Environment.TickCount64;
+        }
+
+        try
+        {
+            var (error, label, asked) = OnWindow(() => _form.McpRunCommand(name, menu, client));
+            if (error is not null)
+            {
+                return JsonSerializer.Serialize(new { error }, Plain);
+            }
+
+            var start = Environment.TickCount64;
+            while (Environment.TickCount64 - start < RunListenMs && !_form.IsDisposed)
+            {
+                Thread.Sleep(100);
+                lock (_gate)
+                {
+                    if (_heard!.Count > 0 && Environment.TickCount64 - _lastHeardTick >= RunQuietMs)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            string[] said;
+            lock (_gate)
+            {
+                said = [.. _heard!];
+            }
+
+            if (_form.IsDisposed)
+            {
+                return JsonSerializer.Serialize(new { ran = asked ? null : label, said, closed = true }, Plain);
+            }
+
+            var (notice, noticeText, dialog) = OnWindow(_form.McpAfterRun);
+            return JsonSerializer.Serialize(new
+            {
+                ran = asked ? null : label,
+                asked = asked ? $"The window asks the user whether to run {label}; the user answers there, and axkit_window_said tells what came of it." : null,
+                said,
+                notice,
+                noticeText,
+                dialog = dialog ? "The window shows the user a Windows dialog." : null,
+            }, Plain);
+        }
+        catch (InvalidOperationException) when (_form.IsDisposed)
+        {
+            return JsonSerializer.Serialize(new { ran = name, closed = true }, Plain);
+        }
+        finally
+        {
+            lock (_gate)
+            {
+                _heard = null;
+            }
         }
     }
 

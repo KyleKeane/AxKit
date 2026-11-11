@@ -2,7 +2,7 @@
 
 Asked by the user on 2026-10-24: "programmatic access to all the features with very well defined MCP APIs but with
 absolute protection". Specification first (the user's order: spec, infrastructure, build); the first stage, read and
-open, is built (section 7, 2026-10-24); change and act tools are not.
+open, is built (section 7, 2026-10-24), and since 2026-11-11 one tool runs a window's command (section 8); typed data tools are not.
 It depends on two things before it: the security fixes of `security-audit-2026-10-24.md` (S-11 to S-13 above all),
 and the command lists of `app-kit.md`, which are what the tools are made from. Requirements are numbered MC-n.m.
 
@@ -139,7 +139,7 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   status bar, the notice shown and its text, the focused control and its value, a secret field as "protected"),
   `axkit_window_list` (the focused list's items, or the window's first list), `axkit_window_text` (the focused text's
   lines, or the window's main text, at most 1 MB), `axkit_window_commands` (the window's command list: label, key,
-  mark; running one is the next stage) and `axkit_window_said` (what the window announced since the last call, the
+  mark, and since 2026-11-11 the menus that hold it; MC-7 runs one) and `axkit_window_said` (what the window announced since the last call, the
   last 50). `axkit_open` (`open`): an app by its verb, on a path or none, but axClaude and axTerminal, which start a program as they open (an act, MC-3.1); the path fully qualified, on this computer
   (`LocalPaths`), through no link (a junction or a symbolic link, which may lead to a share; asked part by part
   before anything follows it), existing, and of a kind the app opens (`Dispatch.PathFor`); started as
@@ -156,13 +156,82 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   build, gone; its failure when there is none is ignored), then `claude mcp add --scope user axkit -- <AxKit.exe> mcp`.
   The result is said: "axKit is added to Claude Code: a new Claude session can use it", or Claude Code's own error
   line. Never in a test run, which must not touch the user's Claude Code settings.
-- MC-6.7 **Not in this stage**: change and act tools and their confirmation (MC-3.3), the "MCP clients…" list with
+- MC-6.7 **Not in this stage**: change and act tools and their confirmation (MC-3.3; since 2026-11-11 section 8), the "MCP clients…" list with
   scopes per app and folders (MC-2.3, MC-3.4), the reads counted in the status bar (MC-5.1), axPass's titles (MC-4.1).
 
-## 8. Built in this order
+## 8. Running a window's command (2026-11-11, the branch `push2/mcp-run`)
+
+The first part of the user's request of 2026-11-10, "everything in axkit should be very clearly operational via mcp
+servers so that you can perform any and all operations yourself directly": one tool that runs a named command of a
+window, so that every menu command of every app is reachable at once. Typed tools for data without a window (an
+axTask item made in a folder) are the next part.
+
+- MC-7.1 **The tool** `axkit_window_run`: a window's id from `axkit_windows`, a command's label as
+  `axkit_window_commands` lists it (and the palette shows it; the letter's marker, the trailing dots and case do not
+  matter), and, where two commands share a label (Heading under Next and under Previous), `menu`, the menus that hold
+  it as `axkit_window_commands` now lists them ("Navigate, Next"). Only the window's own command list (app-kit AK-2)
+  is searched, and only a command with a menu item the palette would offer now (its menus refreshed as on opening,
+  the item and every menu over it available and enabled): a key with no item, or an item disabled at the moment, is
+  refused with its reason. It runs on the window's thread as its menu item would (`PerformClick`), posted so that the
+  answer never waits on a command that shows a Windows dialog; the answer, after the window has been quiet for 0.7 s
+  or at most 2.5 s, gives what ran, what the window said meanwhile (as `axkit_window_said` reads it), the notice it
+  now shows the user with its text, or that a Windows dialog waits for the user. The window's pipe answers it as
+  every request (MC-6.3); the broker waits up to 25 s for it.
+- MC-7.2 **The switch**: axKit menu, AI tools, **Let AI tools run commands** (U), off by default, checked while on, one
+  for the bundle, kept in the AI tools' sealed setting (`mcp.json`, `runCommands`, part of the seal: a file turned on
+  by hand or by an AI tool's own file writing reads as off, MC-6.1). Turning it on or off is said at once ("AI tools
+  may run commands: each is said as it runs, and one that acts outside its window asks you first"; "AI tools may no
+  longer run commands"); it counts only while the access itself is on. Off, the tool answers "The user has not allowed
+  AI tools to run commands in axKit. The user allows it in any axKit window: axKit menu, AI tools, Let AI tools run
+  commands." The pairing (MC-6.4) applies first, as for every tool. The switch is an item of the bundle's menu, never
+  a command of a window's list, so that no AI tool can run it, nor Let AI tools read and open axKit, nor Forget.
+- MC-7.3 **What it never does**: it never answers a question for the user. While the window shows a notice (a
+  question, an error, the palette, a pairing) or a Windows dialog, every run is refused ("The window shows the user a
+  notice, <title>: commands run once the user has answered it, and AI tools never answer it"); a command that asks
+  (delete, discard, close with changes, New folder's name) shows its question as for the user and the answer says the
+  window asks it. A command marked **act** (app-kit's mark, MC-3.1: it deletes, moves, sends, starts or ends
+  something outside the window) is asked of the user first, in the window: the notice "Claude asks to run Delete",
+  its text naming the command's menus and what an act may do, unprompted with its chime, the window flashing on the
+  taskbar when it is not in front, **Deny** the default and Escape, **Run** running it once (and only while the switch is still on); after a Deny the window refuses an act's run without asking for a minute, as the pairing does; the tool's answer says
+  "The window asks the user whether to run Delete". No key tool exists, so only the user's own key answers.
+- MC-7.4 **Never in axPass** (and axClip): their windows serve no pipe (MC-6.2), so they are not reachable at all;
+  should one ever be, the window refuses with its reason ("axPass's commands are never run by AI tools: its windows
+  hold passwords"), `McpRun.NeverRun`.
+- MC-7.5 **Heard**: as the command runs, the window says who ran it, "Claude ran Word wrap" ("Claude" for Claude Code
+  under any spelling of its client name, otherwise the name the pairing recorded, its hidden characters made visible,
+  at most 40 characters), joined to the command's own words in one notification ("Claude ran Word wrap. Word wrap
+  off", AX-7.3), so that the command's interrupting announcement never cuts it off; alone when the command says
+  nothing. The run is in the window's recent actions as a command is (reports RP-4.1), and every call is a line of
+  the audit log (MC-6.6).
+- MC-7.6 **What a client can reach**: nothing it could not already read. The tool goes through the same pipe, the same
+  proof of the key both ways and the same pairing as the reads; a window id is a pipe's random part; a window of
+  another build or another user is never asked (MC-6.3). The broker checks the switch for its answer's words, and
+  the window checks it again from the sealed file at every run, which is the check that counts.
+- MC-7.7 **Not in this part**: arguments for a command (a path, a name, a text: a command that needs one asks the
+  user in its own notice), typed data tools without a window, the scopes per client and app of MC-3.1, "Allow for this
+  session" (MC-3.3).
+
+Decisions taken for the user while away (2026-11-11), each one line to reverse:
+
+- MC-D1 One tool, `axkit_window_run`, by the command's label (and its menus where two share one), rather than one
+  tool per command (MC-3.2): the commands differ by window and change with the app, and one tool keeps `tools/list`
+  short; MC-3.2 stays the later shape if clients need typed arguments.
+- MC-D2 Off by default behind its own switch in the axKit menu's AI tools, sealed with the access setting; the pairing
+  applies on top. Turning it on asks nothing more than the menu item, since it is the user's own key and is said.
+- MC-D3 Never while a notice or a Windows dialog shows; an act command asks the user first with Deny the default
+  (MC-3.3 as specified); everything else runs on the client's word and is heard.
+- MC-D4 The window says "Claude ran <command>" (or the paired client's name) joined to the command's own words.
+- MC-D5 Only commands with a menu item the palette would offer now; keys without an item (Tab between panes) are not
+  run, since their meaning depends on the focus, which the client does not hold.
+- MC-D6 No new network contact and no new program start: the run is a command of the window, which may itself reach
+  what the user's own command would (git's Push, Claude Code's restart), and an act command asks first.
+
+## 9. Built in this order
 
 1. The security fixes S-11 to S-13 (the channel's secret, `IsSecret`, the hand-over pipe).
 2. The command lists of `app-kit.md` in the first apps, with their scope marks.
 3. The windows' pipe and the broker with read and open tools only; pairing; the audit log.
-4. Change tools, then act tools with their confirmation notice.
+4. Change tools, then act tools with their confirmation notice:
+   `axkit_window_run` (section 8, 2026-11-11) runs every menu command, an act one after the user's Run; typed data
+   tools next.
 5. An NVDA pass of pairing, confirmation and the announcements; then on by the user's choice.

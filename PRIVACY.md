@@ -109,7 +109,10 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
 axKit menu, AI tools, Let AI tools read and open axKit. When it is on, an AI tool on your computer that you pair, such as
 Claude Code, can read what axKit's windows show and open apps (`docs/axKit/mcp.md`). This happens through named pipes
 for your Windows account alone, never over the network; what the tool then does with what it read is under its own
-terms (Claude Code: Anthropic's). axPass and axClip are never read. Every call is written to `mcp-audit.log` on your
+terms (Claude Code: Anthropic's). axPass and axClip are never read. A second switch, AI tools, Let AI tools run
+commands, off unless you turn it on, lets a paired tool run a window's menu commands by name through the same pipes;
+each is said in the window as it runs, one that acts outside the window asks you first, and none answers a question the
+window asks you. It adds no network contact and no program of its own: a command does what it does when you run it. Every call is written to `mcp-audit.log` on your
 computer, with its arguments hashed. Forget AI tools removes every pairing; turning it off ends access at the next
 call.
 

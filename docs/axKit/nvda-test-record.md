@@ -315,6 +315,25 @@ Space in the box said nothing.
 | Space: "checked", once | Passed |
 | Space again: "not checked", once | Passed |
 
+## Owed: the AI tools run a window's command (the branch `push2/mcp-run`, 2026-11-11, `docs/axKit/mcp.md` MC-7)
+
+New steps, none heard yet; `tests/scripts/mcp/02-run-commands.txt` and `03-run-asks-first.txt` drive them on the
+runner's desktop and pass. With NVDA, in axDown and axFile:
+
+1. axKit menu (Alt+A), AI tools (I): "Let AI tools run commands" (U) read with its checked state; Enter on it says "AI
+   tools may run commands: each is said as it runs, and one that acts outside its window asks you first", and again
+   "AI tools may no longer run commands".
+2. With it off, a run is refused and the window says nothing.
+3. A run of Word wrap in axDown: "axAutomate ran Word wrap. Word wrap off" as one announcement, nothing cut off; a run
+   of Heading in Navigate, Next: "axAutomate ran Heading. Second heading, heading level 2".
+4. A run of Find...: the Find notice opens with the focus in "Text to find", then "axAutomate ran Find"; a run while it
+   shows is refused, and the window says nothing more.
+5. In axFile, a run of New folder (marked act): the notice "axAutomate asks to run New folder" with its chime, the text
+   read, Enter at once does nothing for a moment; Tab to Run, Enter: "axAutomate ran New folder" with the folder's
+   name field focused; asked again, Escape says "New folder not run", and a third run within the minute asks nothing.
+6. A real Claude Code session, paired, asked to run a command of an axDown window: "Claude ran ..." heard (the user's,
+   by ear: the runner cannot be Claude Code).
+
 ## Owed: the twelve decided changes (the branch `improvements`, 2026-11-09, `docs/axKit/inventory-2026-11-09.md` section 11)
 
 The branch's twelve commits each change something heard, and none has been heard yet. Once, with NVDA: axFile's New

@@ -24,6 +24,9 @@ public static class McpBroker
     /// <summary>How long a window may take to answer one request; a pairing waits for the user (<see cref="McpChannel.PairingWait"/>).</summary>
     private const int AnswerMs = 10_000;
 
+    /// <summary>How long a run may take to answer (MC-7.1): the window's thread, then what it says, then its state.</summary>
+    private const int RunAnswerMs = 25_000;
+
     /// <summary>Runs until the client closes standard input.</summary>
     public static void Run()
     {
@@ -102,6 +105,26 @@ public static class McpBroker
             return new McpResult(refusal, true);
         }
 
+        if (tool == McpTools.Run)
+        {
+            // MC-7: the switch asked here for the answer's words and again by the window, whose answer is the one that
+            // counts; the client named as the pairing knows it, not as this session's initialize says.
+            var current = McpAccess.Load();
+            if (!current.RunCommands)
+            {
+                return new McpResult(McpRun.SwitchOff, true);
+            }
+
+            if (McpProtocol.Text(arguments["window"]) is not { } window || PipeOf(window) is not { } target)
+            {
+                return new McpResult("No such window: axkit_windows lists the ids.", true);
+            }
+
+            var paired = McpAccess.Find(current, program)?.Name ?? client;
+            var run = "run " + JsonSerializer.Serialize(new { command = McpProtocol.Text(arguments["command"]), menu = McpProtocol.Text(arguments["menu"]), client = paired });
+            return Ask(key, target, run, RunAnswerMs);
+        }
+
         if (McpTools.WindowRequests.TryGetValue(tool, out var request))
         {
             return McpProtocol.Text(arguments["window"]) is { } id && PipeOf(id) is { } pipe
@@ -144,9 +167,9 @@ public static class McpBroker
     }
 
     /// <summary>A window's answer to one request, as the tool's text.</summary>
-    private static McpResult Ask(byte[] key, string pipe, string request)
+    private static McpResult Ask(byte[] key, string pipe, string request, int timeoutMs = AnswerMs)
     {
-        var answer = Exchange(key, pipe, request, AnswerMs);
+        var answer = Exchange(key, pipe, request, timeoutMs);
         if (answer is null)
         {
             return new McpResult("The window did not answer.", true);
