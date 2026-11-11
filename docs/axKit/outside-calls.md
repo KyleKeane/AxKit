@@ -193,7 +193,7 @@ Calls (4):
   Code: `using var process = Process.Start(start);`
 - **shared by every app**, `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
   Code: `Process.Start(info)?.Dispose();`
-- **shared by every app**, `src/AxKit/Program.cs:143`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
+- **shared by every app**, `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
 
 ### Pipes
@@ -291,7 +291,7 @@ Used in 16 places:
 - `src/AxKit.Forms/McpBroker.cs:300`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
 - `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, for axKit.
-- `src/AxKit/Program.cs:143`, in `Program.StartedAsOpenWithLink`, for axKit.
+- `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, for axKit.
 - `src/AxStart/AppsFolder.cs:116`, in `AppsFolder.Start`, for User programs.
 
 ### ProcessRun.Run, program
