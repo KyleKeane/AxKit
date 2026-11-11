@@ -72,7 +72,7 @@ keys ctrl+1
 # Removed while in use: off both lists, the machine's default shell started in its place in the same folder.
 menu 1. Remove Test cmd
 expect said Removed Test cmd
-expect state "myproject - "
+expect state "title":"myproject - 
 refuse state - Test cmd - axTerminal
 expect commands No shells of your own yet, Session, Switch shell, Remove a shell
 refuse commands Test cmd
