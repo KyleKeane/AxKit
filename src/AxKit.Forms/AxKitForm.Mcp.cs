@@ -45,20 +45,9 @@ public abstract partial class AxKitForm
             return (McpRun.SwitchOff, string.Empty, false, 0);
         }
 
-        if (NoticeOpen)
+        if (McpChangeRefusal() is { } busy)
         {
-            return ($"The window shows the user a notice, {Overlay.Shown?.Title}: commands run once the user has answered it, and AI tools never answer it.", string.Empty, false, 0);
-        }
-
-        if (DialogShowing)
-        {
-            return ("The window shows the user a Windows dialog: commands run once the user has closed it.", string.Empty, false, 0);
-        }
-
-        // MC-7.8: never under the user's hands; a command may move the caret or the focus as its key would.
-        if (McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()))
-        {
-            return (McpRun.UserBusy, string.Empty, false, 0);
+            return (busy, string.Empty, false, 0);
         }
 
         var (index, refusal) = McpRun.Find([.. _commands.Select(command => new McpCommandName(command.Label, MenuOf(command)))], name, menu);
@@ -108,6 +97,79 @@ public abstract partial class AxKitForm
             }
         });
         return (null, label, false, ticket);
+    }
+
+    /// <summary>
+    /// Why an AI tool may not change anything in this window now, or null: a notice or a Windows dialog the user has in
+    /// hand (MC-7.3), or the user working in the window in front (MC-7.8), since a change may move the caret, the focus
+    /// or the selection as the user's own key would. A run and a typed data tool that changes (MC-8.3) both ask it.
+    /// </summary>
+    protected string? McpChangeRefusal()
+    {
+        if (NoticeOpen)
+        {
+            return $"The window shows the user a notice, {Overlay.Shown?.Title}: commands run once the user has answered it, and AI tools never answer it.";
+        }
+
+        if (DialogShowing)
+        {
+            return "The window shows the user a Windows dialog: commands run once the user has closed it.";
+        }
+
+        return McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()) ? McpRun.UserBusy : null;
+    }
+
+    /// <summary>
+    /// MC-8: a typed data tool of this window's app (<see cref="McpTools.AppTools"/>), on the window's thread: the
+    /// refusals every app shares first (axPass and axClip; a tool of another app; for a change, the switch off as
+    /// <paramref name="allowed"/> was read off this thread, then <see cref="McpChangeRefusal"/>), then the app's own
+    /// <see cref="McpAppRequest"/>. The answer is an object the pipe writes as JSON, <c>error</c> for a refusal.
+    /// </summary>
+    internal object McpApp(string tool, System.Text.Json.Nodes.JsonObject arguments, string client, bool allowed)
+    {
+        if (McpRun.AppRefusal(AppVerb) is { } refused)
+        {
+            return new { error = refused };
+        }
+
+        if (!McpTools.AppTools.TryGetValue(tool, out var appTool) || appTool.App != AppVerb)
+        {
+            return new { error = $"{AppName}'s window answers no tool {tool}." };
+        }
+
+        if (appTool.Changes)
+        {
+            if (!allowed)
+            {
+                return new { error = McpRun.SwitchOff };
+            }
+
+            if (McpChangeRefusal() is { } busy)
+            {
+                return new { error = busy };
+            }
+        }
+
+        return McpAppRequest(tool, arguments, client) ?? new { error = $"{AppName}'s window answers no tool {tool}." };
+    }
+
+    /// <summary>
+    /// MC-8: what a window answers to a typed data tool of its app, on the window's thread, after the shared refusals of
+    /// <see cref="McpApp"/>; null for a tool it does not answer. <paramref name="client"/> is the name the pairing
+    /// recorded, for the words that say who changed something (<see cref="McpRun.Speaker"/>); a window that changes
+    /// something calls <see cref="ChimeForMcp"/> after its own announcement.
+    /// </summary>
+    protected virtual object? McpAppRequest(string tool, System.Text.Json.Nodes.JsonObject arguments, string client) => null;
+
+    /// <summary>MC-7.5: a change by an AI tool in a window that is not in front chimes and flashes it on the taskbar, since NVDA does not speak a window behind; once for a burst.</summary>
+    protected void ChimeForMcp()
+    {
+        if (GetForegroundWindow() != Handle && McpRun.Chimes(_mcpLastChime, Environment.TickCount64))
+        {
+            _mcpLastChime = Environment.TickCount64;
+            Sounds.Notice();
+            FlashIfBehind();
+        }
     }
 
     /// <summary>Until when an act's run is refused without asking, after the user's Deny (milliseconds of <see cref="Environment.TickCount64"/>).</summary>
@@ -160,13 +222,7 @@ public abstract partial class AxKitForm
     {
         AnnounceBefore(McpRun.Said(client, label));
         // One chime and flash for a burst of runs, not one per run.
-        if (GetForegroundWindow() != Handle && McpRun.Chimes(_mcpLastChime, Environment.TickCount64))
-        {
-            _mcpLastChime = Environment.TickCount64;
-            Sounds.Notice();
-            FlashIfBehind();
-        }
-
+        ChimeForMcp();
         item.PerformClick();
     }
 
@@ -557,7 +613,7 @@ public abstract partial class AxKitForm
 
         var target = ConsentTarget.AiTool(name);
         var text = $"{name} asks to use axKit. It runs as {program}.\n\n"
-            + "It can read what the axKit windows show (their text, lists and status) and open apps. It runs a window's commands only while AI tools, Let AI tools run commands is on, each said as it runs, and it never reads axPass or axClip.\n\n"
+            + "It can read what the axKit windows show (their text, lists and status) and open apps. It runs a window's commands and adds items to your axTask lists only while AI tools, Let AI tools run commands is on, each said as it happens, and it never reads axPass or axClip.\n\n"
             + $"A reminder: axKit is only an access layer here. {target.Work}\n\n"
             + "To allow it, check the box, then Allow. The axKit menu's AI tools, Forget AI tools, takes this back, and turns Let AI tools run commands off.";
         ShowNotice(new Notice($"{name} asks to use axKit", text,

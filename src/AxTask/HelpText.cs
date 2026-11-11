@@ -48,6 +48,9 @@ public static class HelpText
           List, New GitHub list makes a list of a repository's open issues, read from GitHub when it opens and on F5; your Notes on each issue stay
           Item, GitHub: make it a bug, a feature request or feedback, close, reopen, comment, block the reporter or the version, open on GitHub, open in axClaude, as your own GitHub account (List, GitHub account, a token pasted once)
 
+        ## AI tools
+          While this window is open, an AI tool you allowed reads your lists, and adds an item while axKit menu, AI tools, Let AI tools run commands is on: "Claude added Call the dentist to Personal". Ctrl+Z takes it back
+
         ## Everywhere in axTask
           Ctrl+Z: undo the last change
           F5: read the folder again, and a GitHub list from GitHub

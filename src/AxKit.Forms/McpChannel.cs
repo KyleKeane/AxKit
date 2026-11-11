@@ -14,7 +14,7 @@ namespace AxKit.Forms;
 /// one request: the window checks that the client runs this very program file (the broker) and that the bundle's
 /// setting is on, sends a fresh challenge, takes the HMAC answer under the key, then reads one line and answers it on
 /// its own thread: <c>hello</c> (the app and the title), <c>state</c>, <c>list</c>, <c>text</c>, <c>commands</c>,
-/// <c>said</c>, <c>pair</c>, which asks the user, or <c>run</c>, a command of the window's list run as its menu item would while the user allows it (MC-7); nothing here types a key or answers a notice. The
+/// <c>said</c>, <c>pair</c>, which asks the user, or <c>run</c>, a command of the window's list run as its menu item would while the user allows it (MC-7), or <c>app</c>, a typed data tool of the window's app answered by its own code (MC-8); nothing here types a key or answers a notice. The
 /// window of an app that is never read (axPass, axClip, <see cref="McpTools.NeverRead"/>) serves no pipe.
 /// </summary>
 internal sealed class McpChannel
@@ -192,6 +192,7 @@ internal sealed class McpChannel
             {
                 "pair" => Pair(argument),
                 "run" => Run(argument),
+                "app" => App(argument),
                 _ => OnWindow(() => Execute(verb)),
             };
         }
@@ -370,6 +371,22 @@ internal sealed class McpChannel
                 _heard = null;
             }
         }
+    }
+
+    /// <summary>
+    /// MC-8: a typed data tool of the window's app, answered by the window's own code on its thread
+    /// (<see cref="AxKitForm.McpApp"/>). The switch is read here, off the window's thread, as for a run (MC-7.6); the
+    /// window refuses a change while it is off.
+    /// </summary>
+    private string App(string argument)
+    {
+        var request = System.Text.Json.Nodes.JsonNode.Parse(argument);
+        var tool = McpProtocol.Text(request?["tool"]) ?? string.Empty;
+        var arguments = request?["arguments"] as System.Text.Json.Nodes.JsonObject ?? [];
+        var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
+        var allowed = McpAccess.RunsCommands;
+        var answer = OnWindow(() => _form.McpApp(tool, arguments, client, allowed));
+        return JsonSerializer.Serialize(answer, RunAnswer);
     }
 
     /// <summary>

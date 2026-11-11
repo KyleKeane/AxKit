@@ -1,0 +1,94 @@
+# axTask's typed data tools (docs/axKit/mcp.md MC-8, docs/axTask/SPEC.md TK-8): the lists and the items read through
+# the open axTask window, an item added there by words with a Due date, said in the window and seen in its list, taken
+# back with Ctrl+Z; a list elsewhere refused; the add refused while Let AI tools run commands is off. The runner is the
+# MCP client.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Personal\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "new item": [{"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": ""}, {"title": "Priority", "type": "choice", "value": "Normal", "options": ["High", "Normal", "Low"]}]}
+file "tasks\Personal\Buy milk.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Buy milk"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": ""}]}
+file "tasks\Personal\Old chore.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Old chore"}, {"title": "Done", "type": "check", "value": true}]}
+start task {temp}\tasks
+expect state Lists - axTask
+keys end
+expect focus Personal, list, 2 items
+keys right
+expect focus Buy milk
+
+# The access on and the runner paired, as in 01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_task_lists
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+
+# TK-8.1: the lists with their counts, read without a key.
+expect mcp "notDone": 1
+
+# TK-8.1: one list's items with their fields; the done ones only when asked for.
+mcp call axkit_task_items {"list":"personal"}
+expect mcp "doneLeftOut": 1
+mcp call axkit_task_items {"list":"Personal","done":true}
+expect mcp "title": "Old chore"
+
+# MC-D12: a list named by a path outside the window's folders is refused.
+mcp call axkit_task_items {"list":"D:\\Elsewhere\\Personal"}
+expect mcp is not one of the axTask window's lists
+
+# MC-8.3: adding is a change, refused while Let AI tools run commands is off, and the window says nothing.
+# Under NVDA the keys are real input: the window in front changes only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_task_add {"list":"Personal","title":"Call the dentist","fields":{"Due":"2026-11-18"}}
+expect mcp error: The user has not allowed AI tools to run commands in axKit
+refuse said added Call the dentist
+
+menu Let AI tools run commands
+expect said AI tools may run commands: each is said as it runs
+
+# TK-8.3: a value the field does not take is refused with its reason, and nothing is written.
+# Under NVDA the keys are real input: the window in front changes only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_task_add {"list":"Personal","title":"Call the dentist","fields":{"Priority":"Urgent"}}
+expect mcp error: Priority: Not one of the options: High, Normal, Low
+
+# TK-8.3, MC-8.4: added from the list's template with the Due given, said in the window, selected in the list shown.
+# Under NVDA the keys are real input: the window in front changes only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_task_add {"list":"Personal","title":"Call the dentist","fields":{"Due":"2026-11-18","Priority":"High"}}
+expect mcp "added": "Call the dentist"
+expect said axAutomate added Call the dentist to Personal
+expect focus Call the dentist
+run findstr /c:"2026-11-18" "tasks\Personal\Call the dentist.json"
+run findstr /c:"High" "tasks\Personal\Call the dentist.json"
+
+# One step of the window's undo: Ctrl+Z takes it back.
+keys ctrl+z
+expect said Undone: axAutomate added Call the dentist to Personal
+refuse focus Call the dentist
+
+# Off again from the menu: the next add is refused at once.
+menu Let AI tools run commands
+expect said AI tools may no longer run commands
+# Under NVDA the keys are real input: the window in front changes only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_task_add {"list":"Personal","title":"Call the dentist"}
+expect mcp error: The user has not allowed AI tools to run commands
+
+# MC-6.6: the calls are in the log by their tool.
+run findstr /c:"axkit_task_add" home\AxKit\mcp-audit.log
+
+# MC-D10: the tools work through an open axTask window; with none open, nothing happens and the answer says how to open one.
+keys alt+f4
+expect closed
+mcp call axkit_task_lists
+expect mcp error: No axTask window is open

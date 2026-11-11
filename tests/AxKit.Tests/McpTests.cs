@@ -194,6 +194,23 @@ public sealed class McpTests
     }
 
     [Fact]
+    public void The_typed_data_tools_are_listed_and_never_of_an_app_that_is_never_read()
+    {
+        // MC-8.1, MC-4.5: each app tool is a tool of the list, of an app of Dispatch.Apps, and never axPass's or axClip's.
+        foreach (var (tool, (app, _)) in McpTools.AppTools)
+        {
+            Assert.Contains(tool, McpTools.All.Select(listed => listed.Name));
+            Assert.Contains(app, Dispatch.Apps.Select(known => known.Verb));
+            Assert.DoesNotContain(app, McpTools.NeverRead);
+        }
+
+        // MC-8.3: only the add changes anything; reading never needs the run switch.
+        Assert.Equal([McpTools.TaskAdd], McpTools.AppTools.Where(pair => pair.Value.Changes).Select(pair => pair.Key));
+        var add = McpTools.All.Single(listed => listed.Name == McpTools.TaskAdd).InputSchema;
+        Assert.Equal(["list", "title"], add["required"]!.AsArray().Select(name => name!.GetValue<string>()));
+    }
+
+    [Fact]
     public void Run_is_never_for_the_password_database_or_the_clipboard()
     {
         Assert.Contains("passwords", McpRun.AppRefusal(Dispatch.AxPass), StringComparison.Ordinal);
