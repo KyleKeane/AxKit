@@ -79,7 +79,7 @@ public sealed class McpTests
         Assert.Equal(["file", folder], Arguments("FILE", folder));
         Assert.Equal(["calc"], Arguments("calc", null));
         // A file given to an app that opens folders only: its folder (Dispatch.PathFor).
-        Assert.Equal(["file", Path.GetDirectoryName(file)!], Arguments("file", file));
+        Assert.Equal(["mcpclient", Path.GetDirectoryName(file)!], Arguments("mcpclient", file));
         // axTask only on the user's own top folder (MC-D12).
         Assert.Equal(["task"], Arguments("task", null));
     }
