@@ -39,7 +39,7 @@ public static class AxTaskKeys
 
     public const Keys PreviousHeading2 = Keys.Control | Keys.Shift | Keys.D2;
 
-    /// <summary>At a top level, the next and previous heading of level 3, the symbols under Smart tags (TK-D20); in a list Ctrl+3 is action key 3.</summary>
+    /// <summary>At a top level, the next and previous heading of level 3, the symbols under Tags (TK-D20); in a list Ctrl+3 is action key 3.</summary>
     public const Keys NextHeading3 = Keys.Control | Keys.D3;
 
     public const Keys PreviousHeading3 = Keys.Control | Keys.Shift | Keys.D3;

@@ -14,8 +14,8 @@ public static class HelpText
         ]) + """
         ## The navigator, on the left
           Up, Down, Home, End: move; the edge sound at an end. Type the start of a name to jump to it, Shift with a letter backwards
-          The top level is under headings of three levels. Level 1: Your lists, Projects, Smart lists, Date lists, Archived lists. Level 2: your own sections under Your lists, a project folder's projects under Projects, under Smart lists the first word your smart lists share (App for App axDown and App axClaude) and Smart tags. Level 3: under Smart tags, one heading per symbol, such as @ at sign
-          Smart lists, Smart tags and Date lists gather your lists and every project's; each item says where it lives, and a change is made to its own file
+          The top level is under headings of three levels. Level 1: Your lists, Projects, Smart lists, Date lists, Archived lists. Level 2: your own sections under Your lists, a project folder's projects under Projects, under Smart lists the first word your smart lists share (App for App axDown and App axClaude) and Tags. Level 3: under Tags, one heading per symbol, such as @ at sign
+          Smart lists, Tags and Date lists gather your lists and every project's; each item says where it lives, and a change is made to its own file
           Ctrl+Up, Ctrl+Down: the heading before or after, of either level; the edge sound past the first or the last
           Ctrl+1, Ctrl+2, Ctrl+3: the next heading of level 1, 2 or 3, at a top level. Ctrl+Shift+1, Ctrl+Shift+2, Ctrl+Shift+3: the one before. In a list these are action keys
           Right: into a list or a smart list. On an item or a section's header, nothing: the edge sound
@@ -28,7 +28,7 @@ public static class HelpText
           F2: rename in place: a box over the line, Enter keeps the new name, Escape the old. Delete: move to the Archive; Ctrl+Z brings it back
           Ctrl+Q: read every field of the item
           Ctrl+0: All tasks, every task not done
-          Smart tags: a smart list for each word your tasks not done start with a symbol, @kyle for the person a task is assigned to, #ui, $budget or %done, in their titles and text fields
+          Tags: a smart list for each word your tasks not done start with a symbol, @kyle for the person a task is assigned to, #ui, !urgent, $budget or %done, in their titles and text fields
           Date lists: Overdue, Due today, Due in the next 7 days, No due date
           Ctrl+Shift+F: find words in every list, your own and every project's. "Searching every list" is said, then what was found; another notice opened meanwhile drops the result. In what was found, Right or Enter opens the item where it lives, Left or Escape goes back
           Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9: the list's own action keys on the item selected, set in List, Action keys: fields set, the item moved to a list, or something opened; the Item menu's Action keys submenu names them

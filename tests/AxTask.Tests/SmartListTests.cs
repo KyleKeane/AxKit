@@ -55,9 +55,18 @@ public sealed class SmartListTests : IDisposable
         // Case not minded, the first kept.
         Assert.Equal(["#garden"], Tags.In("#garden and #Garden"));
         // Not after a letter or a digit, not before a digit or a space, never an excluded symbol.
-        Assert.Empty(Tags.In("sam@example.org x#no $5 @ alone #1 (note [link] {x} <tag> \"quote 'single `code *bold _it ~del -item /path \\win .dot ,c ;s :c !b ?q =e +p |pipe"));
+        Assert.Empty(Tags.In("sam@example.org x#no $5 @ alone #1 (note [link] {x} <tag> \"quote 'single `code *bold _it ~del -item /path \\win .dot ,c ;s :c =e +p |pipe"));
         Assert.True(Tags.Has("Call @sam today", "@Sam"));
         Assert.False(Tags.Has("Call @samuel today", "@Sam"));
+    }
+
+    [Fact]
+    public void Exclamation_and_question_marks_are_symbols_before_a_word_only()
+    {
+        // "!urgent" and "?maybe" are tags; the marks that end a word or a sentence never start one.
+        Assert.Equal(["!urgent", "?maybe"], Tags.In("Do it now! !urgent, or later? ?maybe !! ?? !5"));
+        Assert.Equal("! exclamation mark", Tags.Spoken('!'));
+        Assert.Equal("? question mark", Tags.Spoken('?'));
     }
 
     [Fact]

@@ -4,7 +4,7 @@ namespace AxTask.Core;
 
 /// <summary>
 /// The smart tags in the tasks' words (SPEC.md TK-5.5, asked 2026-11-11, generalized the same day): "@kyle", "#ui",
-/// "$budget", any symbol at the start of a word followed by a letter, each tag a smart list of its own under Smart tags,
+/// "$budget", any symbol at the start of a word followed by a letter, each tag a smart list of its own under Tags,
 /// one heading per symbol. A tag starts at the start of the text or after white space; its symbol is any character that
 /// is not a letter, a digit or white space, except those that start ordinary prose or Markdown (<see cref="Excluded"/>);
 /// a letter must follow the symbol, then letters, digits, "_" and "-". So an e-mail address, "(note", "-item" and "$5"
@@ -12,8 +12,8 @@ namespace AxTask.Core;
 /// </summary>
 public static class Tags
 {
-    /// <summary>The symbols that never start a tag: they start prose, quotes, lists and Markdown.</summary>
-    public const string Excluded = "([{<\"'`*_~-/\\.,;:!?=+|";
+    /// <summary>The symbols that never start a tag: they start prose, quotes, lists and Markdown. "!" and "?" are tags' symbols ("!urgent"): after a word they never start one.</summary>
+    public const string Excluded = "([{<\"'`*_~-/\\.,;:=+|";
 
     /// <summary>The symbol of a person the item is assigned to (TK-D19).</summary>
     public const char Assignee = '@';
@@ -96,6 +96,8 @@ public static class Tags
     private static readonly Dictionary<char, string> Names = new()
     {
         ['@'] = "at sign",
+        ['!'] = "exclamation mark",
+        ['?'] = "question mark",
         ['#'] = "number sign",
         ['$'] = "dollar sign",
         ['%'] = "percent sign",

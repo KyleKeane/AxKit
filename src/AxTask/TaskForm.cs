@@ -383,7 +383,7 @@ public sealed partial class TaskForm : ItemForm
     /// </summary>
     private sealed record SectionTag(string Name, bool Custom, int Level, string? About = null);
 
-    private const string SmartTags = "Smart tags";
+    private const string SmartTags = "Tags";
 
     /// <summary>The Tag of the "Archived items" row, which opens the Archive's own items.</summary>
     private static readonly object ArchivedItemsTag = new();
@@ -432,7 +432,7 @@ public sealed partial class TaskForm : ItemForm
             rows.AddRange(lists.Select(list => SmartRow(list, all, today)));
         }
 
-        // TK-5.5, TK-D18: Smart tags, a heading of level 3 for each symbol found in the tasks not done, everywhere
+        // TK-5.5, TK-D18: Tags, a heading of level 3 for each symbol found in the tasks not done, everywhere
         // gathered (TK-5.6), with a smart list for each tag; no heading when there are none.
         var bySymbol = Tags.InTasks(all.Select(gathered => gathered.Item));
         if (bySymbol.Count > 0)

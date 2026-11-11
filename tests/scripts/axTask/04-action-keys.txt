@@ -23,7 +23,7 @@ keys down
 expect focus Home, list, 1 item
 keys right
 expect focus Fix the tap
-keys ctrl+4
+keys ctrl+3
 expect said ♪ Edge
 expect said No action on Ctrl+3 in this list; List menu, Action keys sets one
 keys ctrl+1
