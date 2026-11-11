@@ -71,7 +71,7 @@ public sealed class HelpForm : HotkeyForm
             [("&Claude Code", "https://code.claude.com/docs/en/overview")]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([first, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
+        _menu.Items.AddRange([first, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         (_stateLabel, _) = StatusLayout.Pair(_status);

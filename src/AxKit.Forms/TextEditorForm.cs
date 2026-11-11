@@ -155,7 +155,7 @@ public sealed partial class TextEditorForm : AxKitForm
         var help = CreateHelpMenu(_app.UserGuide, _app.ResourcesLabel, _app.Resources);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange(edit is null ? [file, navigate, CreateWindowMenu(), options, CreateAxKitMenu(), help] : [file, edit, navigate, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
+        _menu.Items.AddRange(edit is null ? [file, navigate, options, CreateWindowMenu(), CreateAxKitMenu(), help] : [file, edit, navigate, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
 
         // The keys without a menu item: one main control, the editor, or the Go to line field while it shows; in the
         // viewer with its Details list, the text and the list in turn (AP-6.1); the viewer's line number. The keys the

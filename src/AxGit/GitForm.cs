@@ -115,7 +115,7 @@ public sealed partial class GitForm : AxKitForm
             [("&git-scm.com", "https://git-scm.com"), ("&Pro Git, the book", "https://git-scm.com/book/en/v2")]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([repository, changes, branches, view, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
+        _menu.Items.AddRange([repository, changes, branches, view, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
 
         // The keys without a menu item: between the list and the details, find in the details, Enter on a commit.
         foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- axKit: Options comes before Window at the end of every menu bar: the app's own menus, Options, Window, axKit, Help. Options is the app's own; Window starts the bundle's part.
+
 ## 5.7.0
 
 - axKit: every window's first menu is now called Session (Alt+S) and its second Operations (Alt+P), the same words in every app: Session is what the window holds and how it ends (axFile's Folder, axGIT's Repository, the editors' File, axMedia's Queue, axPass's File, axTask's Folder, axProcess's Computer, the one menu of axCalc, axStart, axClip and axHelp), Operations what the app does to it (axClaude's Claude Code, axTerminal's Shell, axFile's Item, axGIT's Changes, the editors' Edit, axMedia's Play). axTask, axPass, axMCP and axProcess keep their menus that change with the focus or the view (List, Item, Field; Process, Service, Startup). Letters that moved: axFile's Selection is now Alt+L, axProcess's Service Alt+E.

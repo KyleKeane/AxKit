@@ -70,7 +70,7 @@ public sealed class ClipForm : HotkeyForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Windows &resources",
             [("&Clipboard in Windows", "https://support.microsoft.com/windows/clipboard-in-windows-c436501e-985d-1c8d-97ea-fe46ddf338c6")]);
 
-        _menu.Items.AddRange([clip, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
+        _menu.Items.AddRange([clip, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
         MainMenuStrip = _menu;
 
         // ---- the field and the items (CP-2.1, AS-D2): HotkeyForm's, named here ----

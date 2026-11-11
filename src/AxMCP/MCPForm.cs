@@ -109,7 +109,7 @@ public sealed class MCPForm : ItemForm
             ("MCP servers in &Claude Code", "https://code.claude.com/docs/en/mcp"),
         ]);
 
-        _menu.Items.AddRange([_serverMenu, _itemMenu, _fieldMenu, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
+        _menu.Items.AddRange([_serverMenu, _itemMenu, _fieldMenu, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
         SelectionMenus(_serverMenu, _itemMenu, _fieldMenu);
         PlaceControls(_menu);
         _servers = ReadServers();

@@ -107,7 +107,7 @@ public sealed partial class MediaForm : AxKitForm
         ]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([queue, play, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
+        _menu.Items.AddRange([queue, play, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
 
         // ---- the list (AM-2.1): the one control; its own keys stay native ----
         _list.IntegralHeight = false;

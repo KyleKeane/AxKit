@@ -152,11 +152,11 @@ public abstract partial class AxKitForm : Form
 
     // ---- the menus every window has (AX-6.5, AX-9) ----
 
-    /// <summary>The Window menu (AX-9.1): New window, Open windows, Recently closed, Close all windows; the window puts it after its own menus (Navigate last of them), before Options.</summary>
+    /// <summary>The Window menu (AX-9.1): New window, Open windows, Recently closed, Close all windows; the window puts it after Options, which follows its own menus (Navigate last of them).</summary>
     protected WindowMenu CreateWindowMenu() => new(this);
 
     /// <summary>
-    /// The axKit menu (AX-9.1; the user's order of 2026-11-10: Navigate, Window, Options, axKit, Help): what is the
+    /// The axKit menu (AX-9.1; the user's order of 2026-11-10: Navigate, Options, Window, axKit, Help): what is the
     /// bundle's rather than the app's, each a submenu: Claude (AI help, <c>AxKitForm.Ai.cs</c>), AI tools (MC-6.1,
     /// <c>AxKitForm.Mcp.cs</c>) and Theme (the theme file, TH-4, <c>AxKitForm.Theme.cs</c>). A new bundle-wide setting or
     /// action joins here, never an app's Options.

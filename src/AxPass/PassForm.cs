@@ -110,7 +110,7 @@ public sealed partial class PassForm : ItemForm
         var help = CreateHelpMenu(HelpText.UserGuide, "KeePass &resources",
             [("KeePass&XC", "https://keepassxc.org/"), ("The KDBX &format", "https://keepass.info/help/kb/kdbx.html")]);
 
-        _menu.Items.AddRange([file, _groupMenu, _entryMenu, _fieldMenu, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
+        _menu.Items.AddRange([file, _groupMenu, _entryMenu, _fieldMenu, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
         SelectionMenus(_groupMenu, _entryMenu, _fieldMenu);
         PlaceControls(_menu);
 

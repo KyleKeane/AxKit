@@ -289,7 +289,7 @@ Gate: the loose package starts every app from the Start menu, and section 7 has 
 `docs/axKit/store-listing.md` with every text of 3.6; the screenshots and the store logo into `publish\store\`
 (ignored by git except the page).
 
-### Phase 6: The first submission (step 1 done 2026-11-08, by tools/EdgeDrive; steps 2 and 3 open)
+### Phase 6: The first submission (step 1 done 2026-11-08, by tools/EdgeDrive; step 2 done by 2026-11-10; step 3 open)
 
 1. Done: Submission 1 holds `AxKit-5.2.1.msix` (the 5.2.1 release's package from GitHub), the texts of
    `store-listing.md`, the six screenshots with captions and the 300 pixel logo, the properties and declarations
@@ -297,7 +297,7 @@ Gate: the loose package starts every app from the Start menu, and section 7 has 
    certification), the age ratings (3+), and was submitted for certification on 2026-11-08 (`store-setup.md`
    sections 3 and 8). The maintainer signed in; the rest was driven through `tools/EdgeDrive` (store-setup.md
    section 6), since the account has no API route (section 2 there).
-2. Certification usually takes hours, up to three business days (the overview page says so); a rejection comes with
+2. Done: certified and published by 2026-11-10 (`winget show --id 9PK01L2K5000 -s msstore` finds the listing). Certification usually takes hours, up to three business days (the overview page says so); a rejection comes with
    the policy number, I fix the text or the package and the resubmission goes the same way.
 3. Live: on this computer, `winget install <Store ID> -s msstore` next to the development copy; the NVDA pass of
    every app's plan on the Store copy, plus the Store items (Start menu entries, Windows search, the alias, the

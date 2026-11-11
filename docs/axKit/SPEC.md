@@ -494,15 +494,16 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (`docs/axKit/theme.md` TH-6). `TextBoxTests` fails on a plain `TextBox` and on a second subscription of the keys,
   which would move the caret twice.
 
-### AX-9 The bundle's menus: Window, Options, axKit, Help
+### AX-9 The bundle's menus: Options, Window, axKit, Help
 
 - AX-9.1 Every window's menu bar is the app's own menus first, then four of the bundle's, in this order, the same in
   every window and each built once in the window base, so that no app has a copy (5.7.0, 2026-11-10, the user:
   "organize things ... into clear categories of user intent", "make sure these menus are inherited by all axKit
-  apps", then "navigate then windows then options then axkit then help"):
-  - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after the app's own menus (Navigate the last of them
-    where the app has one): New window ▸ (N), Open windows ▸ (O), Recently closed ▸ (R) and Close all windows (C).
-  - **Options** (O), the app's own settings (AX-6.4): its own submenus, then Text, General and Developer.
+  apps", then "navigate then windows then options then axkit then help", and the same evening Options before Window: "the options are more about the app itself and the window starts to bridge into the axkit stuff"):
+  - **Options** (O), the app's own settings (AX-6.4), right after the app's own menus (Navigate the last of them where
+    the app has one): its own submenus, then Text, General and Developer.
+  - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after Options: New window ▸ (N), Open windows ▸ (O),
+    Recently closed ▸ (R) and Close all windows (C).
   - **axKit** (A; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Claude ▸ (C;
     `CreateClaudeMenu`, `ai-help.md` AH-1.1: Use Claude in axKit, the switch; Ask about this window…, Shift+F1; Folders
     Claude may read… and Claude's working folder), AI tools ▸ (I; `mcp.md` MC-6.1) and Theme ▸ (T; `theme.md` TH-4,

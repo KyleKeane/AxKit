@@ -128,7 +128,7 @@ internal sealed partial class MainForm
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window; Help ends with the update
         // items and About (AX-3.1, FR-1.10): Check for updates names the version in use and asks GitHub every time; Update
         // to axKit n stands below it while a newer release is known; About is the bundle's sections, as this window's notices.
-        MenuBar.Items.AddRange([session, claude, navigate, CreateWindowMenu(), options, CreateAxKitMenu(), help]);
+        MenuBar.Items.AddRange([session, claude, navigate, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
     }
 
     /// <summary>Options → Speech → Speak replies: a mode (FR-7.4): speech starts with what arrives next.</summary>
