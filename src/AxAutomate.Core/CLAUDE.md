@@ -22,6 +22,7 @@ dotnet build tools\AxAutomate\AxAutomate.Runner.csproj -c Release -o <scratch>  
   - `ScriptRunner.Play`: one workflow's lines played until one fails, every window closed, the report's log; a callback per line, and a stop asked between lines (Escape in the window).
   - `Run`: one step (`Step`), the expectations, the end (`Finish`) and what it ends (`Sweep`); `hosted` for a run inside axAutomate's window.
   - `Window`: one AxKit.exe of the run on its desktop (`Create`, with the run's variables in its own environment), its pipe and its timeline; `Event` and `Taken` in `RunEvent.cs`.
+  - `RunSentences` (AU-6b): what the window says of a run: a failing step, a workflow's end, a folder's end, and the outcome its rows carry.
   - `Speech`: NVDA's capture log (the NVDA tier); `Broker`: the run as an MCP client; `Native`: the P/Invoke the engine needs.
 
 ## Gotchas

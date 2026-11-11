@@ -8,7 +8,8 @@ automated checks of every app, the scripts of `tests/scripts` that the runner `t
 that i could open and review those workflows and potentially even tweak them"; then "each step has a main operation
 and some branching and reporting outputs"); this document was written the same day, before any code, for the user to
 read. Built from 2026-11-11 in steps, at the user's word ("the first goal on this is that i can view the existing
-workflows and navigate them"): the first version is a viewer (section 6a); running and changing come after it. Requirements are numbered AU-n.m and decisions AU-Dn. In axAutomate's code and
+workflows and navigate them"): the first version is a viewer (section 6a); running from the window followed the same day (section 6b), and
+changing comes after it. Requirements are numbered AU-n.m and decisions AU-Dn. In axAutomate's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -152,15 +153,42 @@ keys in place of its words on a line:
   workflows must pass exactly as the scripts did, script by script, before the scripts are deleted.
 - AU-5.3 The automation channel stays as the security audit left it (S-11): on only in a run, only for the runner's
   own windows, with the run's secret. The window starts the runs; it never opens the channel of the user's own
-  windows.
+  windows. As built (2026-11-11): the run's windows are this very program file (`Environment.ProcessPath`), started
+  on a desktop of the run's own with the run's secret and folder in their own environment block, never set on the
+  window's process, so that the window's other children (Ctrl+J's axDown, Window, New window) never get them; the
+  run's end ends only the processes the run started and their descendants (`Run`, `hosted`).
+
+## 6b. Running from the window (2026-11-11)
+
+- AU-6b.1 F5 runs the workflow in hand, read again from its file first; at a folder's level, every workflow of that
+  folder, one after another, each with fresh windows and a fresh `{temp}` under `%TEMP%\axkit-automate`. The folders
+  inside it are not run (AU-D9). Session, Refresh keeps its menu item, without a key (AU-D8).
+- AU-6b.2 The run is on a thread of its own: the window stays usable, the arrows move and nothing is said while
+  steps pass. A failing step is said as it ends, "Step 2 failed: Expect the focus: Nothing like this. Not within
+  10 s; seen: ...", its own `report` in place of its sentence when it has one, what the runner saw cut at 240
+  characters; each workflow's end is one line, "01-passes passed, 4 steps", "02-fails failed at step 2", "... failed
+  after its steps: ..." (a window that ended by itself, an ERROR in a run's log), "... stopped", "... cannot run:
+  ..."; a folder's run ends with "Run finished: 3 of 5 workflows passed, 1 failed, 1 could not run". None of them
+  interrupts.
+- AU-6b.3 After a run the workflow's row ends with "passed", "failed at step N", "stopped" or "cannot run", and the
+  failed step's row with "failed"; the detail pane gives "Last run: ..." with what the runner saw, on the workflow
+  and on the failed step. The outcomes are the window's, kept until it closes.
+- AU-6b.4 Escape during a run stops it after the step going on ("Stopping after the current step"); outside a run,
+  Escape keeps its item-app meaning. Closing the window during a run stops it the same way: the run's thread keeps
+  the process until its windows are closed.
+- AU-6b.5 A workflow that cannot run (AU-3.3.2, AU-D7) says why on F5, "This workflow cannot run: ...", and its
+  details say "Cannot run: ..."; Operations, Run is unavailable on it, and Stop the run when nothing runs.
+- AU-6b.6 The report of AU-4.5 (Ctrl+R, every step with what was said and focused) is not built: the detail pane's
+  "Last run" line holds what the runner saw at the failure.
 
 ## 6a. The first version: a viewer (2026-11-11)
 
 - AU-6a.1 `AxKit.exe automate [<folder>]` opens a folder of workflows; Ctrl+O opens another with Windows' folder
   picker, and the folder is opened again at the next start. The repository's `tests\scripts` is the folder of the
   existing checks: its scripts are read as workflows as they are (AU-5.2), with no second copy to drift from them.
-- AU-6a.2 Every change is refused with one sentence, "This version only views the workflows; changing them comes
-  later"; nothing runs. Ctrl+J opens the file as text: a script in axDown, a workflow file in axJSON.
+- AU-6a.2 Every change is refused with one sentence, "This version views and runs the workflows; changing them comes
+  later" (until the runs of section 6b, "only views", and nothing ran). Ctrl+J opens the file as text: a script in
+  axDown, a workflow file in axJSON.
 - AU-6a.3 A file not understood still shows what was read, with "not all understood" in its row and what in the
   detail pane.
 
@@ -194,8 +222,19 @@ keys in place of its words on a line:
   step that goes on when it fails, a block in a block) makes a workflow file unrunnable with the step said, as an
   unknown operation does (AU-3.3.2); the NVDA tier's steps (`expect spoken`, `refuse spoken`, `spoken`) run only from
   the command line's `--nvda`. To reverse: a walker over `Workflow.Steps` that calls `Run.Step` per step.
+- AU-D8 F5 runs (AU-4.4), so it is not the item apps' Refresh here: Refresh stays in the Session menu without a key,
+  and a run reads its workflow's file again by itself (the assistant, 2026-11-11). Escape also stops a run, before its
+  detail pane meaning, only while one goes on. To reverse: a key of its own for Refresh in `AxAutomateKeys`.
+- AU-D9 F5 at a folder's level runs that folder's own workflows, not those of the folders inside it (the assistant,
+  2026-11-11): at `tests\scripts`, whose workflows are all in folders, a stray F5 would otherwise start an hour of
+  checks. The command line keeps running a folder whole. To reverse: `WorkflowFolder` read recursively in
+  `RunCommand`.
+- AU-D10 The outcome of a run lives in the window until it closes, not in a file: the files are the user's workflows,
+  and a run's record beside them would be a second thing to keep (the assistant, 2026-11-11).
 
 ## 7. Later
 
 - The user's own workflows beyond the tests, and what they may drive (AU-D4), are for later (the user, 2026-11-11).
-- Running from the window (AU-4.4, AU-4.5) and changing steps (AU-4.3), with the blocks' editing (AU-D5).
+- Changing steps (AU-4.3), with the blocks' editing (AU-D5).
+- The run's report as a notice text, Ctrl+R (AU-4.5, AU-6b.6).
+- Playing `otherwise` blocks and steps other than `expect said` that go on when they fail (AU-D7).

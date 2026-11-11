@@ -92,6 +92,39 @@ public sealed class EngineTests
     }
 
     [Fact]
+    public void A_run_is_said_as_a_failing_step_and_one_line_at_its_end()
+    {
+        var workflow = ScriptReader.Parse(Script, "02-palette", @"C:\scripts\02-palette.txt");
+        var rows = StepText.Rows(workflow);
+        var lines = ScriptLines.FromScript(Script, workflow);
+
+        var enter = new LineResult(lines[3], false, "not within 10 s; seen: nothing");
+        var row = RunSentences.RowOf(rows, enter.Line.Step);
+        Assert.Equal("3.1", row!.Number);
+        Assert.Equal("Step 3.1 failed: Press Enter. Not within 10 s; seen: nothing.", RunSentences.StepFailed(row, enter));
+
+        var (said, outcome) = RunSentences.Ended(workflow, new ScriptResult(false, string.Empty, enter, [], false), row);
+        Assert.Equal("02-palette failed at step 3.1", said);
+        Assert.Equal(new RunOutcome("failed at step 3.1", "3.1", "Not within 10 s; seen: nothing."), outcome);
+
+        Assert.Equal("02-palette passed, 5 steps", RunSentences.Ended(workflow, new ScriptResult(true, string.Empty, null, [], false), null).Said);
+        Assert.Equal("02-palette stopped", RunSentences.Ended(workflow, new ScriptResult(true, string.Empty, null, [], true), null).Said);
+        Assert.Equal("02-palette failed after its steps: AxDown.log: ERROR x.", RunSentences.Ended(workflow, new ScriptResult(false, string.Empty, null, ["AxDown.log: ERROR x"], false), null).Said);
+        Assert.Equal("Run finished: 3 of 5 workflows passed, 1 failed, 1 could not run", RunSentences.FolderEnded(3, 1, 1, stopped: false));
+        Assert.Equal("Run stopped: 1 of 1 workflow passed", RunSentences.FolderEnded(1, 0, 0, stopped: true));
+    }
+
+    [Fact]
+    public void A_step_with_its_own_report_says_it_and_a_long_detail_is_cut()
+    {
+        var step = new WorkflowStep("menu", [new StepValue("name", "Close all windows")], WorkflowStep.Stop, "The palette did not close the windows", string.Empty, [], [], 0);
+        var line = new ScriptLine(4, "menu Close all windows", step);
+        var said = RunSentences.StepFailed(null, new LineResult(line, false, new string('x', 400)));
+        Assert.StartsWith("Line 4 failed: The palette did not close the windows. Xxx", said);
+        Assert.EndsWith("...", said);
+    }
+
+    [Fact]
     public void An_expectations_mark_names_the_kind_of_event_it_takes()
     {
         var sound = new Event(0, "sound", "Edge", false);

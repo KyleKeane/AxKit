@@ -13,7 +13,8 @@ The WinForms side of axAutomate: the item apps' window (`AxKit.Forms/ItemForm`) 
 
 - `AxAutomateApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run`.
 - `AutomateForm`: the window on `ItemForm`: the levels (a stack of folders, then one workflow), the rows from `StepText.Rows`, the details from `StepText.Details`; every change refused with `ViewOnly`; Ctrl+O and Ctrl+J its own.
-- `AxAutomateKeys`: the window's keys (bundle AX-8), `ItemKeys.All` and its two; `All` feeds the collision test and the F1 text names the same keys.
+- `AutomateForm.Run.cs` (SPEC.md AU-6b): F5 and Escape; the run on a foreground thread of its own through `ScriptRunner.Play(..., hosted: true)` with this program file as the run's exe; failing steps and each end posted to the window (`Post`) and said without interrupting (`RunSentences`); the outcomes by path, which the rows and the details read.
+- `AxAutomateKeys`: the window's keys (bundle AX-8), `ItemKeys.All` without F5 and Escape, which are Run and Stop the run here, and its own; `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules
@@ -25,3 +26,5 @@ The WinForms side of axAutomate: the item apps' window (`AxKit.Forms/ItemForm`) 
 ## Gotchas
 
 - `check commands` in the automation fails on a shared item key the F1 text does not name, even one this version only refuses: the refused keys have their line in the F1 text.
+- A run inside the runner's own hidden desktop starts its windows on a further desktop of its own; that works (`tests/scripts/axAutomate/02-run.txt`). In a script's `file` step, write `{temp}` for the inner run's `{temp}` and never a file name starting with n after a backslash (`\n` is a new line there).
+- The run's thread is a foreground thread on purpose: a window closed during a run leaves the process alive until the run has closed its windows.

@@ -3,7 +3,7 @@
 axAutomate shows workflows: lists of steps that drive axKit's windows, such as "press Ctrl+Shift+P, then expect
 Command palette to be said". Its first workflows are the automated checks of every axKit app, so that you can read
 what each check does, step by step. It is part of axKit, a bundle of apps for people who use a screen reader; it was
-built for and with NVDA. This first version views the workflows: running and changing them come later.
+built for and with NVDA. This version views the workflows and runs them; changing them comes later.
 
 ## Install
 
@@ -46,13 +46,34 @@ Tab or Enter on a step goes to its details: its number, what it does, each of it
 happens when it fails, what it reports, its blocks, its note, and the line of the file it comes from. Escape or Tab
 goes back. Ctrl+Q reads every line at once.
 
+## Running workflows
+
+F5 inside a workflow runs it; F5 in a folder runs every workflow of that folder, one after another (not the folders
+inside it). A run happens out of sight, on a desktop of its own: its windows never come to the front, never take your
+keyboard and play no sound, so you can go on working, in axAutomate or anywhere else. Each workflow gets fresh
+windows with settings of their own, never yours.
+
+While steps pass, nothing is said. A step that fails is said as it ends, with what was expected and what the run saw:
+"Step 2 failed: Expect the focus: Nothing like this. Not within 10 s; seen: ...". When a workflow ends you hear one
+line, "01-passes passed, 4 steps" or "02-fails failed at step 2", and after a folder's run, "Run finished: 3 of 5
+workflows passed, 1 failed, 1 could not run".
+
+Afterwards the rows say how the last run went: "02-fails, workflow, 3 steps, failed at step 2", and inside it the step
+that failed ends with "failed". Tab on either gives "Last run:" with what the run saw. Escape during a run stops it
+after the step going on ("03-waits stopped"); closing the window stops it the same way.
+
+A workflow this version cannot run says why when you press F5, for example one with "otherwise" steps; its details
+say "Cannot run". The checks that need NVDA listening run only in the NVDA pass, not from the window.
+
 ## Keys
 
 - Ctrl+O: open a folder of workflows.
 - Ctrl+J: the workflow's file as text, a script in axDown, a workflow file in axJSON.
-- F5: read the folder or the workflow again, after the file changed.
+- F5: run the workflow, or every workflow of the folder. Escape during a run: stop it.
+- Session, Refresh: read the folder or the workflow again, after the file changed.
 - F1: every key of the window.
-- Ctrl+N, F2, Delete and the other keys that change items in axTask say "This version only views the workflows".
+- Ctrl+N, F2, Delete and the other keys that change items in axTask say "This version views and runs the workflows;
+  changing them comes later".
 
 ## The files
 
