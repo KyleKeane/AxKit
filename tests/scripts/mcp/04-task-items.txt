@@ -1,8 +1,13 @@
 # axTask's typed data tools (docs/axKit/mcp.md MC-8, docs/axTask/SPEC.md TK-8): the lists and the items read through
 # the open axTask window, an item added there by words with a Due date, said in the window and seen in its list, taken
-# back with Ctrl+Z; a list elsewhere refused; the add refused while Let AI tools run commands is off. The runner is the
-# MCP client.
+# back with Ctrl+Z; an add into another list and into a project's list, the selection left where it was; a list
+# elsewhere refused; the add refused while Let AI tools run commands is off. The runner is the MCP client.
+file tasks\Errands\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
+file projects\alpha\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
+file "projects\alpha\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
 file home\AxKit\axTask.json {"checkForUpdates": false}
+# The settings file names the project folder by its full path, which only the run knows.
+run powershell -NoProfile -Command "[IO.File]::WriteAllText('home\AxKit\axTask.json', (ConvertTo-Json -InputObject @{checkForUpdates=$false; projectFolders=@((Resolve-Path 'projects').Path)}))"
 file tasks\Personal\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "new item": [{"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": ""}, {"title": "Priority", "type": "choice", "value": "Normal", "options": ["High", "Normal", "Low"]}]}
 file "tasks\Personal\Buy milk.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Buy milk"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": ""}]}
 file "tasks\Personal\Old chore.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Old chore"}, {"title": "Done", "type": "check", "value": true}]}
@@ -34,6 +39,13 @@ expect said axAutomate may read axKit
 
 # TK-8.1: the lists with their counts, read without a key.
 expect mcp "notDone": 1
+
+# TK-8.1, MC-D14: a project's list as "project / list", with the project as its place, once the projects are found.
+wait 1000
+mcp call axkit_task_lists
+expect mcp "name": "alpha / Home"
+mcp call axkit_task_lists
+expect mcp "place": "alpha"
 
 # TK-8.1: one list's items with their fields; the done ones only when asked for.
 mcp call axkit_task_items {"list":"personal"}
@@ -75,6 +87,25 @@ run findstr /c:"High" "tasks\Personal\Call the dentist.json"
 keys ctrl+z
 expect said Undone: axAutomate added Call the dentist to Personal
 refuse focus Call the dentist
+
+# TK-8.4, MC-D15: an add into a list not shown is said, and the selection stays where the user left it.
+keys home
+expect focus Buy milk
+# Under NVDA the keys are real input: the window in front changes only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_task_add {"list":"Errands","title":"Post the parcel"}
+expect mcp "added": "Post the parcel"
+expect said axAutomate added Post the parcel to Errands
+expect focus Buy milk
+run findstr /c:"Post the parcel" "tasks\Errands\Post the parcel.json"
+
+# TK-8.2: a project's list by its own name alone, since only one list has it.
+# Under NVDA the keys are real input: the window in front changes only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_task_add {"list":"home","title":"Buy a washer"}
+expect said axAutomate added Buy a washer to alpha / Home
+expect focus Buy milk
+run findstr /c:"Buy a washer" "projects\alpha\Home\Buy a washer.json"
 
 # Off again from the menu: the next add is refused at once.
 menu Let AI tools run commands

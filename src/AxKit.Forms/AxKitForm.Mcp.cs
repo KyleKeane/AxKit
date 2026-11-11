@@ -157,7 +157,9 @@ public abstract partial class AxKitForm
     /// MC-8: what a window answers to a typed data tool of its app, on the window's thread, after the shared refusals of
     /// <see cref="McpApp"/>; null for a tool it does not answer. <paramref name="client"/> is the name the pairing
     /// recorded, for the words that say who changed something (<see cref="McpRun.Speaker"/>); a window that changes
-    /// something calls <see cref="ChimeForMcp"/> after its own announcement.
+    /// something calls <see cref="ChimeForMcp"/> after its own announcement. An answer that takes a long read (many
+    /// folders) is a <see cref="Task{Object}"/> started with what it needs taken on this thread; the pipe's thread
+    /// waits for it (bundle rule 3).
     /// </summary>
     protected virtual object? McpAppRequest(string tool, System.Text.Json.Nodes.JsonObject arguments, string client) => null;
 
@@ -391,8 +393,8 @@ public abstract partial class AxKitForm
         var claude = ClaudeCodeProgram.Find(null);
         // The run switch as it really is: it can be turned on while the access is off, and then counts from Turn on.
         var runs = McpAccess.Load().RunCommands
-            ? "Let AI tools run commands is on, so they may also run a window's commands, each said as it runs, one that acts outside its window asked of you first"
-            : "They run a window's commands only after you also turn on Let AI tools run commands, which is off";
+            ? "Let AI tools run commands is on, so they may also run a window's commands and add items to your axTask lists, each said as it happens, a command that acts outside its window asked of you first"
+            : "They run a window's commands and add items to your axTask lists only after you also turn on Let AI tools run commands, which is off";
         var text = "AI tools such as Claude Code may then ask to read what the axKit windows show (their text, lists and status) "
             + $"and to open apps. {runs}; and they never read axPass or axClip. Each tool asks you "
             + "once, in an axKit window, before it reads anything, and every call is written in the log (AI tools, Read the log).\n\n"
@@ -426,7 +428,7 @@ public abstract partial class AxKitForm
         Announce(!on
             ? "AI tools may no longer run commands"
             : McpAccess.Enabled
-                ? "AI tools may run commands: each is said as it runs, and one that acts outside its window asks you first"
+                ? "AI tools may run commands: each is said as it runs, and one that acts outside its window asks you first. They may also add items to your axTask lists, each said as it is added"
                 : "AI tools may run commands once AI tools are on: Let AI tools read and open axKit", true);
     }
 

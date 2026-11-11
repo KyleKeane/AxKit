@@ -230,7 +230,8 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
 
 - **TK-8.1 What is read.** `axkit_task_lists` gives the lists the window reaches: its own top folder's (the one in
   axTask's settings, even while a project is shown as the top), by their own name ("Personal"), then the lists of each
-  project found under the project folders (TK-7b.2) as "project / list" ("tasks in alpha / Home"), each with its
+  project found under the project folders (TK-7b.2) as "project / list" ("alpha / Home"; "tasks in alpha / Home" when two projects' folders are both named tasks and
+  the project is told apart by the folder above, TK-7b), each with its
   place, its number of items and of tasks not done; the Archive and the smart lists never. While the first look for
   projects has not ended, the answer says so and gives the top folder's lists. `axkit_task_items` gives one list's
   items, each with its title, whether it is done (a task only) and its fields as title, type and value (a choice with
@@ -240,7 +241,8 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
   else is refused: "… is not one of the axTask window's lists: AI tools reach only the lists of its top folder and of
   its project folders" (MC-D12). A name that names none or several says so with the names to choose from.
 - **TK-8.3 An item added.** `axkit_task_add` makes the item as Ctrl+N does: the list's template (TK-4.1, the default
-  Done, Start and Due without one), the Title given, at a free file name (`ItemFiles.FreePath`, so nothing is ever
+  Done, Start and Due without one), the Title given (one line of at most 200 characters, since the window says it
+  whole: "A title is at most 200 characters: put the rest in Notes."), at a free file name (`ItemFiles.FreePath`, so nothing is ever
   overwritten), then each value given typed into its field as the field's own change takes it: a date as 2026-11-18,
   today, tomorrow, +7 or a weekday; a choice as one of its options; a check as true or false. A field the template
   lacks is added after the others, long text for Notes or a value of several lines, text otherwise (MC-D13). A link,

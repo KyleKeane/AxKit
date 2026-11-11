@@ -192,8 +192,11 @@ axTask item made in a folder) are the next part.
 - MC-7.2 **The switch**: axKit menu, AI tools, **Let AI tools run commands** (U), off by default, checked while on, one
   for the bundle, kept in the AI tools' sealed setting (`mcp.json`, `runCommands`, part of the seal: a file turned on
   by hand or by an AI tool's own file writing reads as off, MC-6.1). Turning it on or off is said at once ("AI tools
-  may run commands: each is said as it runs, and one that acts outside its window asks you first"; "AI tools may no
-  longer run commands"); it counts only while the access itself is on. Off, the tool answers "The user has not allowed
+  may run commands: each is said as it runs, and one that acts outside its window asks you first. They may also add
+  items to your axTask lists, each said as it is added", the second sentence since 2026-11-11, MC-8; "AI tools may no
+  longer run commands"); the "Turn on AI tools?" notice says the same of it ("They run a window's commands and add
+  items to your axTask lists only after you also turn on Let AI tools run commands, which is off", or that it is on and
+  what it lets them do); it counts only while the access itself is on. Off, the tool answers "The user has not allowed
   AI tools to run commands in axKit. The user allows it in any axKit window: axKit menu, AI tools, Let AI tools run
   commands." The pairing (MC-6.4) applies first, as for every tool. The switch is an item of the bundle's menu, never
   a command of a window's list, so that no AI tool can run it, nor Let AI tools read and open axKit, nor Forget.
@@ -275,7 +278,8 @@ After the review of 2026-11-11:
   axCalc's Copy answer, axFile's Copy path and axProcess's Copy line are pinned.
 - MC-D8 **An exception to AX-7.1's "the caret moves only on the user's own command"**: a run moves the caret or the
   focus as the command's key would, since the user allowed it with the switch and hears who ran it; MC-7.8 keeps it
-  from happening under the user's hands. Said in the guide.
+  from happening under the user's hands. Said in the guide. An item an AI tool adds to the axTask list shown is
+  selected under the same exception and guard (MC-D15, 2026-11-11).
 - MC-D9 **Off and Forget take the switch with them**: turning the access off and Forget AI tools both turn Let AI
   tools run commands off and say so; turning the access on again leaves it off.
 
@@ -309,7 +313,14 @@ lists without driving the window. axTask's own side is `docs/axTask/SPEC.md` sec
   client), the item is one step of the window's undo (Ctrl+Z: "Undone: Claude added ..."), a window behind chimes and
   flashes on the taskbar (`AxKitForm.ChimeForMcp`, shared with the runs), and the call is a line of the audit log. The
   answer gives the item as `axkit_task_items` would, with the words said.
-- MC-8.5 **Not in this version**: changing or deleting an item (later, with the question of MC-7.3), axTask's smart
+- MC-8.5 **Never twice, never under the window's thread.** The window's pipe waits up to 10 s for its thread to take a
+  request up; one not taken up by then is given up and never carried out later, and the answer says nothing was done
+  ("The window did not answer in time, and nothing was done: ask again in a moment"), so that a client that asks
+  again never makes a second item. One taken up is waited for up to 20 s in all (under the broker's 25 s); past that
+  the answer says its outcome is not known. `axkit_task_lists` reads every item of every list reached, so the window
+  takes its folders on its thread and reads them off it, as its search does (bundle rule 3); the pipe waits for the
+  read.
+- MC-8.6 **Not in this version**: changing or deleting an item (later, with the question of MC-7.3), axTask's smart
   lists and the Archive, items of other apps, a window chosen by its id when two axTask windows are open (the newest
   answers).
 
@@ -331,7 +342,10 @@ to reverse:
 - MC-D14 **List names**: a top folder's list by its own name, a project's as "project / list", the list's own name
   alone when only one list has it; the item's file name from its Title as New item gives it.
 - MC-D15 **The selection moves only within the list shown**: the new item is selected when its list is the one the
-  window shows; otherwise the panes are filled again and the selection stays where the user left it.
+  window shows; otherwise the panes are filled again and the selection stays where the user left it. Selecting the new
+  item is the second exception to AX-7.1's caret rule, the same as MC-D8's for a run and held by the same guard
+  (MC-7.8: never in the window in front within 3 s of the user's input), and said ("Claude added ... to ...") as the
+  selection moves.
 - MC-D16 **The newest axTask window answers**, as the pairing asks the newest window; no window id argument in this
   version, since every axTask window reaches the same lists unless their settings differ.
 

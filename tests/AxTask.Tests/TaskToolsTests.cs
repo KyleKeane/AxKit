@@ -97,6 +97,15 @@ public sealed class TaskToolsTests : IDisposable
         Assert.Equal(ItemDocument.NewItem("Milk", TaskRules.DefaultTemplate).ToText(), item!.ToText());
     }
 
+    [Fact]
+    public void A_title_longer_than_the_limit_is_refused_and_one_at_the_limit_taken()
+    {
+        var (longer, refused) = TaskTools.NewItem(new string('a', TaskTools.MaxTitle + 1), TaskRules.DefaultTemplate, [], Today);
+        Assert.Null(longer);
+        Assert.Equal("A title is at most 200 characters: put the rest in Notes.", refused);
+        Assert.NotNull(TaskTools.NewItem(new string('a', TaskTools.MaxTitle), TaskRules.DefaultTemplate, [], Today).Item);
+    }
+
     [Theory]
     [InlineData("", "Due", "+1", "Give the item's title.")]
     [InlineData("Two\nlines", "Due", "+1", "A title is one line.")]

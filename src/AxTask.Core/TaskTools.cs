@@ -115,6 +115,11 @@ public static class TaskTools
             return (null, "A title is one line.");
         }
 
+        if (trimmed.Length > MaxTitle)
+        {
+            return (null, $"A title is at most {MaxTitle} characters: put the rest in Notes.");
+        }
+
         var item = ItemDocument.NewItem(trimmed, template);
         foreach (var (name, text) in values)
         {
@@ -149,6 +154,9 @@ public static class TaskTools
 
         return (item, null);
     }
+
+    /// <summary>The longest title a tool may give (TK-8.3): the window says it whole, in "Claude added ..." and in the undo.</summary>
+    public const int MaxTitle = 200;
 
     /// <summary>The field a new item's notes go in when its list's template has none.</summary>
     public const string NotesField = "Notes";

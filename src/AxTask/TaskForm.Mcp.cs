@@ -24,25 +24,35 @@ public sealed partial class TaskForm
     /// <summary>The lists the tools reach: the user's own top folder, never a project shown as the top, and the projects found so far.</summary>
     private IReadOnlyList<ReachableList> McpReachable() => TaskTools.Lists(_settings.TopFolder, _projects ?? []);
 
-    /// <summary>TK-8.1: every list with its counts; a note while the projects are still being looked for.</summary>
-    private object McpLists()
+    /// <summary>
+    /// TK-8.1: every list with its counts; a note while the projects are still being looked for. Every item of every
+    /// list is read, which across the projects can be many files, so the read runs off the window's thread with the
+    /// folders taken here, as the search does (bundle rule 3); the pipe's thread waits for it.
+    /// </summary>
+    private Task<object> McpLists()
     {
-        var lists = McpReachable().Select(list =>
+        var top = _settings.TopFolder;
+        var projects = _projects ?? [];
+        var stillLooking = _projects is null && _settings.ProjectFolders.Count > 0;
+        return Task.Run(object () =>
         {
-            var items = ItemFolder.Read(list.Folder).Items;
+            var lists = TaskTools.Lists(top, projects).Select(list =>
+            {
+                var items = ItemFolder.Read(list.Folder).Items;
+                return new
+                {
+                    name = list.Name,
+                    place = list.Place,
+                    items = items.Count,
+                    notDone = items.Count(item => TaskRules.IsTask(item.Document) && !TaskRules.IsDone(item.Document)),
+                };
+            }).ToArray();
             return new
             {
-                name = list.Name,
-                place = list.Place,
-                items = items.Count,
-                notDone = items.Count(item => TaskRules.IsTask(item.Document) && !TaskRules.IsDone(item.Document)),
+                lists,
+                projects = stillLooking ? "The window is still looking for the lists of its project folders: ask again in a moment for theirs." : null,
             };
-        }).ToArray();
-        return new
-        {
-            lists,
-            projects = _projects is null && _settings.ProjectFolders.Count > 0 ? "The window is still looking for the lists of its project folders: ask again in a moment for theirs." : null,
-        };
+        });
     }
 
     /// <summary>TK-8.1: one list's items with their fields; done ones only when asked for.</summary>
