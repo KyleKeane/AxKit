@@ -49,14 +49,16 @@ marks a task done.
     "Your lists, heading level 1, none: Ctrl+Shift+N makes one". An empty section of the user's does not exist.
   - **Projects**, level 1, while project folders are set and the user's own folder is shown ("Projects, heading level
     1, 2 project folders"): a heading of level 2 for each project folder, with the projects found under it (TK-7b.3).
-  - **Smart lists**, level 1: All tasks, then the user's smart lists (TK-5); then **Mentions** and **Hashtags**, level
-    2, each only when the tasks hold any (TK-5.5).
+  - **Smart lists**, level 1: All tasks, then the user's smart lists whose first word no other shares (TK-5); then a
+    heading of level 2 for each first word two or more share, holding them (TK-5.2a); then **Tags**, level 2, only
+    when the tasks hold any, with a heading of **level 3 for each symbol** (TK-5.5).
   - **Date lists**, level 1: Overdue, Due today, Due in the next 7 days, No due date (TK-5.4).
   - **Archived lists**, level 1, only when the Archive holds any: the lists in the Archive (IA-D4), then one row
     "Archived items, 4" when the Archive holds items of its own, which opens like a list.
-- **TK-3a.2 Moving by heading** in the navigator: Ctrl+Up and Ctrl+Down go to the heading of either level before or
-  after the selection; Ctrl+1 and Ctrl+2 to the next heading of level 1 or 2, Ctrl+Shift+1 and Ctrl+Shift+2 to the one
-  before, at a top level only (in a list, Ctrl+1 and Ctrl+2 are the list's action keys, TK-7a.1; TK-D14). NVDA reads
+- **TK-3a.2 Moving by heading** in the navigator: Ctrl+Up and Ctrl+Down go to the heading of any level before or
+  after the selection; Ctrl+1, Ctrl+2 and Ctrl+3 to the next heading of level 1, 2 or 3, Ctrl+Shift+1, Ctrl+Shift+2
+  and Ctrl+Shift+3 to the one before, at a top level only (in a list, Ctrl+1 to Ctrl+3 are the list's action keys,
+  TK-7a.1; TK-D14, TK-D20). Ctrl+0 is All tasks (TK-D21). NVDA reads
   the heading's row as the selection moves; with no heading further, the edge sound. A typed letter finds a row by its
   name as in every list. On a heading, Right and Enter play the edge sound and say "A section: Down goes into it";
   Down goes on to its first row. In the detail pane of a heading: its row and what it holds. (In an edit control
@@ -108,6 +110,11 @@ marks a task done.
   `{ "field": "Priority", "by": "options", "descending": true }`. A choice sorts in its options' order by default
   (High, Normal, Low; change the order by changing the options), or alphabetically with `"by": "text"`;
   `descending` turns the order round (2026-11-10, the user: "fix the sort type on a field so that that is adjustable").
+- **TK-5.2a Smart lists grouped** (asked 2026-11-11): the user's smart lists are grouped by the first word of their
+  names. Every first word two or more share, case not minded, is a heading of level 2 under Smart lists, named as the
+  first of them writes it ("App, heading level 2, 5 smart lists"), holding them by their full names ("App axDown,
+  smart list, 3") in natural order; the groups in natural order after the lists whose first word no other shares.
+  Nothing is renamed (TK-D17).
 - **TK-5.3 A new smart list** (List, New smart list) asks its name, writes `<name>.filter.json` with All tasks'
   conditions and opens it in axJSON to change them; Ctrl+J on a smart list opens it again. The detail pane of a smart
   list says what it shows, how many, and its file; the conditions are written in axJSON, not field by field, until
@@ -116,13 +123,19 @@ marks a task done.
   **Overdue** (a Due before today), **Due today**, **Due in the next 7 days** (today to seven days on, both included)
   and **No due date**, each over the tasks not done, read "Overdue, 2". Their order is All tasks' (No due date by
   title). F2, Delete and Ctrl+J on one say it is built in.
-- **TK-5.5 Mentions and hashtags** (asked 2026-11-11): a smart list for each "@name" and each "#tag" in the Title or
-  a text field (text, long text) of a task not done, under the headings Mentions and Hashtags, read "@Sam, 3"; each
-  heading is left out while it would be empty. A mark starts one only where no letter or digit stands before it, so
-  that an e-mail address is no mention; the name is the letters, digits, "_" and "-" after it. Two told apart only
-  by case are one, shown as first seen; the lists are in natural order (TK-D16).
+- **TK-5.5 Tags** (asked 2026-11-11): a smart list for each tag in the Title or a text field (text, long text) of a
+  task not done, read "#ui, 3", under the heading **Tags** (level 2, "Tags, heading level 2, 3 symbols"), left out
+  while it would be empty. A tag is a symbol at the start of the text or after white space, then a letter, then
+  letters, digits, "_" and "-": "@kyle", "#ui", "!urgent", "$budget", "%done", "&team". A symbol is any character that
+  is not a letter, a digit or white space, except those that start ordinary prose or Markdown: ( [ { < " ' ` * _ ~ -
+  / \ . , ; : = + | (TK-D18). So "(note", "-item", "$5" and an e-mail address are none, and "!" or "?" after a word
+  never starts one. Under Tags, a heading of level 3 for each symbol, named so that NVDA says it: "@ at sign, heading
+  level 3, 2 smart lists", "# number sign", "! exclamation mark", "? question mark", "$ dollar sign", "% percent
+  sign", "& ampersand", "^ caret", "§ section sign", a symbol of no name in axTask's table by its code point ("※
+  U+203B"); "@" then "#" first, the others in the order they first appear. Under each, its tags in natural order. Two
+  tags told apart only by case are one, shown as first seen. "@" names the person a task is assigned to (TK-D19).
 - **TK-5.6 Gathered from everywhere** (asked 2026-11-11): at the user's own top level, All tasks, the smart lists,
-  Mentions, Hashtags and the date lists take the items of the user's own lists and of every project found (TK-7b.2)
+  the tags and the date lists take the items of the user's own lists and of every project found (TK-7b.2)
   together, so that "#ui" in two projects is one list. Each item's row says where it lives: "Fix the tap, in Home" for
   the user's own, "Fix the tap, in alpha / Home" for a project's, as the search says it. A smart list's `list`
   condition names a list of the item's own folder of lists. The item's fields, Done, F2, Delete and its links change
@@ -151,8 +164,8 @@ On top of IA-3:
 | Ctrl+Shift+D | navigator | hide or show done tasks in this list |
 | Ctrl+0 | anywhere | to All tasks (Ctrl+1 until 2026-11-07, when the digits became the action keys, TK-7a.1) |
 | Ctrl+1 to Ctrl+9 | anywhere, in a list | the list's action key on the item selected (TK-7a.1) |
-| Ctrl+1, Ctrl+2 | navigator, at a top level | the next heading of level 1 or 2 (TK-3a.2, TK-D14) |
-| Ctrl+Shift+1, Ctrl+Shift+2 | navigator, at a top level | the heading of level 1 or 2 before (TK-3a.2) |
+| Ctrl+1, Ctrl+2, Ctrl+3 | navigator, at a top level | the next heading of level 1, 2 or 3 (TK-3a.2, TK-D14, TK-D20) |
+| Ctrl+Shift+1, Ctrl+Shift+2, Ctrl+Shift+3 | navigator, at a top level | the heading of level 1, 2 or 3 before (TK-3a.2) |
 | Ctrl+Up, Ctrl+Down | navigator | the heading before or after, of either level (TK-3a.2) |
 | Ctrl+M | navigator, on a list | move the list to a section (TK-3a.3) |
 | Ctrl+Shift+F | anywhere | find words in every list, the user's own and every project's (TK-7b.4) |
@@ -356,8 +369,8 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
 - **TK-D13 Two levels of headings, one shape** (the user, 2026-11-11: "make this all a bit more efficient and
   consistent for the user"; supersedes the single Projects row and level of TK-D8): every heading row reads "name,
   heading level N, what it holds", the word NVDA uses for a document's headings, so that a level is heard the same way
-  in axTask as on a page. Five headings of level 1, those of level 2 under them; a heading that would hold nothing is
-  left out (Projects without project folders, Mentions and Hashtags without any, Archived lists with an empty
+  in axTask as on a page. Five headings of level 1, those of level 2 and 3 under them (TK-D20); a heading that would hold nothing is
+  left out (Projects without project folders, Tags without any, Archived lists with an empty
   Archive) except Your lists, which says how to make one. User lists is now Your lists. A project shown as the top
   has no Projects heading: projects are reached from the user's own top.
 - **TK-D14 Ctrl+1 and Ctrl+2 go by heading at a top level** (2026-11-11): the level keys of a browse mode, on the
@@ -372,9 +385,36 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
   links included, where the found level still says "Open it where it lives first" (TK-D9): a smart list's rows are
   the user's working view, the search's a jump. The user's own items are read "in Home", without the top folder's
   name, a project's "in alpha / Home".
-- **TK-D16 A mention or a hashtag is a word after its mark** (taken by the assistant, 2026-11-11): the common reading
-  of "@" and "#" in notes; never after a letter or a digit, so that an address and "C#" are none; the tasks not done
-  only, as All tasks, so that a finished project's tags fall away by themselves.
+- **TK-D16 A mention or a hashtag is a word after its mark** (taken by the assistant, 2026-11-11; widened to any
+  symbol the same day, TK-D18): the common reading of "@" and "#" in notes; never after a letter or a digit, so that
+  an address and "C#" are none; the tasks not done only, as All tasks, so that a finished project's tags fall away by
+  themselves.
+- **TK-D17 Smart lists grouped by their first word** (the user, 2026-11-11): the user names filters "App axClaude",
+  "App axDown", "Tag ai", "Tag bug", so the first word is already a group; a heading per shared word makes forty
+  filters a handful of headings, Ctrl+2 between them, with no setting and no file renamed. A first word only one
+  filter has is no group, since a heading of one would add a row and say nothing. On the user's own lists the group
+  "Tag" falls just before Tags, by natural order: the neighbourhood the user wished for came by itself, and nothing
+  places it there.
+- **TK-D18 A tag is any symbol before a word** (the user, 2026-11-11, generalizing Mentions and Hashtags into one Tags
+  heading): "@", "#", "!", "$", "%", "&" and any symbol the user picks start a tag, each symbol a heading of level 3,
+  so one rule covers them all and a new symbol needs no change in axTask. The excluded symbols are those that open
+  prose or Markdown ("(note", "-item", "*bold*", a quote); "!" and "?" are allowed, since after a word they never start
+  one, and "!urgent" is a tag. A letter must follow the symbol, so "$5" and "#1" are none. Since NVDA may not read a
+  bare symbol, a level-3 heading names it from a small table of names written in axTask (no lookup in the system's
+  character data), falling back to the code point. Seen on the user's own lists: "%USERPROFILE" from a path written
+  as "%USERPROFILE%" is read as a tag; a later rule may leave out a word that ends in its own symbol.
+- **TK-D19 "@" means a person the item is assigned to** (the user, 2026-11-11): "@kyle" in a task assigns it; the
+  "@ at sign" heading lists the people with their tasks. Notifications per person, and anything else an assignee
+  does, are later work (the priorities item "axTask assignees from @ with notifications per person"). The direction
+  beyond it, also the user's: any symbol may later be tied to any kind of thing (a person, a place, a budget) and to
+  handlers that act on its tags; nothing of that is built, and the rule of TK-D18 is the ground it stands on.
+- **TK-D20 Three heading levels; Ctrl+3 by the third** (the user, 2026-11-11): the symbols under Tags are level 3,
+  reached by Ctrl+3 and Ctrl+Shift+3 at a top level as Ctrl+1 and Ctrl+2 reach theirs (TK-D14), Ctrl+3 staying
+  action key 3 in a list. Ctrl+Up and Ctrl+Down still go to the heading before or after, of any level. The names of
+  the keys are axDown's ("Previous heading level 3"), so that the same key is the same thing in both windows.
+- **TK-D21 Ctrl+0 for a level above 1, if one ever comes** (the user, 2026-11-11): no heading above level 1 exists,
+  so Ctrl+0 stays All tasks. If a level above Your lists, Smart lists and the rest is ever added, Ctrl+0 at a top
+  level goes between those headings, as Ctrl+1 does between its own, and All tasks keeps its menu item.
 
 ## 9. Open questions
 

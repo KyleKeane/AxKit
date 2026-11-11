@@ -29,10 +29,15 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
 9. On Shopping, Ctrl+M: the list "Section" on Your lists; End, "A new section", Enter, type `Errands`, Enter: "Moved
    Shopping to Errands"; it is under the heading "Errands, heading level 2, 1 list". Ctrl+Shift+N there, type `Garden`: "Made
    Garden", in Errands too. Tab on Garden, Enter on Section, delete the text, Enter: back in Your lists.
-10. Make a task in Home titled `Call @Sam about #garden`, Left: under Smart lists, "Mentions, heading level 2, 1 smart
-   list" and "@Sam, 1"; "Hashtags, heading level 2, 1 smart list" and "#garden, 1" (TK-5.5). Right on @Sam: "@Sam, 1
-   item, Call @Sam about #garden, in Home". Space: "Done: …", and the row leaves the list. Ctrl+Z; then archive the
-   task with Delete: Left, the headings Mentions and Hashtags are gone.
+10. Make a task in Home titled `Call @Sam about #garden !urgent`, Left: under Smart lists, "Tags, heading level 2, 3
+   symbols"; Ctrl+3: "@ at sign, heading level 3, 1 smart list", Down: "@Sam, 1"; Ctrl+3: "# number sign, heading
+   level 3, 1 smart list"; Ctrl+3: "! exclamation mark, heading level 3, 1 smart list"; Ctrl+3: the edge sound;
+   Ctrl+Shift+3: back on "! exclamation mark" (TK-5.5, TK-D20). Listen that each symbol's name is said in full. Right
+   on @Sam: "@Sam, 1 item, Call @Sam about #garden !urgent, in Home". Space: "Done: …", and the row leaves the list.
+   Ctrl+Z; then archive the task with Delete: Left, the heading Tags is gone.
+11. Make two smart lists, List, New smart list, `App one` and `App two` (close axJSON each time), and a third, `Soon`:
+   under Smart lists, after All tasks, "Soon, smart list, …", then "App, heading level 2, 2 smart lists" holding "App
+   one" and "App two" by their full names (TK-5.2a). Ctrl+2 from Smart lists lands on App.
 
 ## 2. Changing (IA-5, TK-4)
 

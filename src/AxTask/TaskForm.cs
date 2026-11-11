@@ -403,7 +403,7 @@ public sealed partial class TaskForm : ItemForm
     /// <summary>
     /// The top level under two levels of headings (TK-3a.1, asked 2026-11-11; TK-D13): Your lists, with a heading of
     /// level 2 for each section of the user's own; Projects, with one for each project folder (TK-7b.3); Smart lists,
-    /// All tasks and the user's filters, with Mentions and Hashtags (TK-5.5); Date lists (TK-5.4); Archived lists. The
+    /// All tasks and the user's filters, those sharing a first word under a heading of level 2 of it (TK-5.2a), with Tags and a heading of level 3 per symbol (TK-5.5); Date lists (TK-5.4); Archived lists. The
     /// navigator's name is returned.
     /// </summary>
     private string ReadSections(List<ItemRow> rows, DateOnly today)

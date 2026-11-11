@@ -13,16 +13,18 @@ folder. It is part of axKit, a bundle of apps for people who use a screen reader
 
 Two panes side by side, and a status bar.
 
-- **The navigator**, on the left, where the focus starts. Its top level is under headings of two levels, each a
+- **The navigator**, on the left, where the focus starts. Its top level is under headings of three levels, each a
   line such as "Smart lists, heading level 1, 3 smart lists":
   - **Your lists**, with a heading of level 2 for each of your own sections;
   - **Projects**, when you have project folders, with a heading of level 2 for each project folder;
-  - **Smart lists**: All tasks and your saved filters, then **Mentions** and **Hashtags** when your tasks hold any;
+  - **Smart lists**: All tasks and your saved filters, those that share a first word under a heading of level 2 of
+    it (App for App axDown and App axClaude), then **Tags** when your tasks hold any, with a heading of level 3 for
+    each symbol;
   - **Date lists**: Overdue, Due today, Due in the next 7 days and No due date;
   - **Archived lists**, when you have archived anything.
 
-  Ctrl+Up and Ctrl+Down go to the heading before or after. Ctrl+1 and Ctrl+2 go to the next heading of level 1 or
-  2, and with Shift to the one before; in a list these keys are its action keys instead. Up and Down move; type the
+  Ctrl+Up and Ctrl+Down go to the heading before or after. Ctrl+1, Ctrl+2 and Ctrl+3 go to the next heading of
+  level 1, 2 or 3, and with Shift to the one before; in a list these keys are its action keys instead. Up and Down move; type the
   start of a name to jump to it.
 - **The detail pane**, on the right. It shows what the navigator's selection holds, without saying anything until
   you go there with Tab:
@@ -106,9 +108,17 @@ A condition is one of: a field `is` a value; a date field `before` or `after` a 
 (the day itself included); a field `empty` or not; the item in a `list` or the lists inside it; a text field `has` a
 word. `match` is `all` or `any`.
 
-Under the heading Smart lists, Mentions and Hashtags hold a list for each "@name" and each "#tag" written in the title
-or a text field of a task not done: write "Call @Sam about #garden" and both appear. Under Date lists, Overdue, Due
-today, Due in the next 7 days and No due date sort the tasks not done by their Due date.
+Smart lists whose names start with the same word, such as "App axDown" and "App axClaude", are grouped under a
+heading of that word, "App"; the file names stay as they are.
+
+Under Smart lists, the heading **Tags** holds a list for each tag written in the title or a text field of a task not
+done: a symbol at the start of a word, then the word, such as "@Sam", "#garden", "!urgent", "$budget" or "%done".
+Each symbol has a heading of level 3 of its own, read by name, "@ at sign" or "# number sign". "@" stands for the
+person a task is assigned to. Symbols that start ordinary writing never make a tag: brackets, quotes, the Markdown
+marks, "-", "/", ".", ",", ";", ":", "=", "+" and "|"; a symbol before a digit ("$5") or after a letter (an e-mail
+address) makes none either. Write "Call @Sam about #garden" and both appear.
+
+Under Date lists, Overdue, Due today, Due in the next 7 days and No due date sort the tasks not done by their Due date.
 
 When you have project folders, every one of these lists takes the tasks of your own lists and of every project
 together: "#ui" in two projects is one list. Each line says where the item lives, "Fix the tap, in Home" for yours,

@@ -6,7 +6,7 @@ namespace AxTask.Core;
 
 /// <summary>
 /// A smart list (docs/axTask/SPEC.md TK-5.2): a saved filter, a <c>.filter.json</c> file in the top folder, or one
-/// built in: All tasks (TK-D1), the four by date (TK-5.4) and a mention or hashtag (TK-5.5). Its conditions are read
+/// built in: All tasks (TK-D1), the four by date (TK-5.4) and a tag (TK-5.5). Its conditions are read
 /// once; <see cref="Matches"/> asks them of one item and <see cref="Items"/> of every item under the folder, the
 /// Archive left out.
 /// </summary>
@@ -36,7 +36,7 @@ public sealed class SmartList
 
     public string Name { get; }
 
-    /// <summary>The filter's file; null for a built-in list (All tasks, the four by date, a mention or a hashtag).</summary>
+    /// <summary>The filter's file; null for a built-in list (All tasks, the four by date, a tag).</summary>
     public string? Path { get; }
 
     /// <summary>Whether the list is built in rather than a filter file of the user's.</summary>
