@@ -63,7 +63,7 @@ expect focus a.md
 # axKit, About, Version names the version of axKit, the apps in their two kinds and the folders.
 menu Version
 expect state "notice":"axKit
-expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess.
+expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess, axAutomate.
 expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axMCP for MCP servers, axHelp for Claude Code.
 expect state Settings: 
 expect state Logs: 

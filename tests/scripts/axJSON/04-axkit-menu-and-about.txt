@@ -21,7 +21,7 @@ expect commands "axStart, Window, New window"
 # 4.2: axKit, About, Version names the apps in their two kinds.
 menu Version
 expect state "notice":"axKit
-expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess.
+expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess, axAutomate.
 expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axMCP for MCP servers, axHelp for Claude Code.
 keys escape
 expect state "notice":null
