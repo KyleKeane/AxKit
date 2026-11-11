@@ -86,6 +86,9 @@ public sealed class StartForm : HotkeyForm
 
     protected override Control FocusTarget => SearchField;
 
+    /// <summary>What an AI tool's Start would start (docs/axKit/mcp.md MC-7.3): the selected program's name.</summary>
+    protected override string McpTarget() => Selected?.Name ?? string.Empty;
+
     protected override void ApplyFont(Font font)
     {
         SearchField.Font = font;

@@ -29,6 +29,9 @@ public sealed class CommandMarkTests
         (Path.Combine("src", "AxTerminal", "TerminalForm.Ui.cs"), "&New session...", "starts a shell"),
         (Path.Combine("src", "AxTerminal", "TerminalForm.Ui.cs"), "Res&tart shell", "starts a shell"),
         (Path.Combine("src", "AxMCP", "MCPForm.cs"), "&Call, or fetch the prompt", "runs a server's tool"),
+        (Path.Combine("src", "AxCalc", "CalcForm.cs"), "&Copy answer", "writes the user's clipboard"),
+        (Path.Combine("src", "AxFile", "FileForm.cs"), "Copy pat&h", "writes the user's clipboard"),
+        (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "&Copy line", "writes the user's clipboard"),
     ];
 
     [Fact]

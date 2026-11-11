@@ -331,6 +331,49 @@ public sealed class McpTests
     }
 
     [Fact]
+    public void The_question_names_what_the_command_would_act_on()
+    {
+        var text = McpRun.AskText("claude-code", "Open", "File", "report.pdf");
+        Assert.StartsWith("Claude asks to run Open (File) on report.pdf in this window.", text, StringComparison.Ordinal);
+        Assert.Contains("not at all if what is selected has changed", text, StringComparison.Ordinal);
+        Assert.StartsWith("Claude asks to run Open in this window.", McpRun.AskText("claude-code", "&Open", string.Empty, "  "), StringComparison.Ordinal);
+
+        var shown = McpRun.ShownTarget(new string('a', 500));
+        Assert.Equal(McpRun.TargetShownLength + 3, shown.Length);
+        Assert.EndsWith("...", shown, StringComparison.Ordinal);
+        Assert.Equal("a b", McpRun.ShownTarget("a\r\nb"));
+        Assert.Contains("U+202E", McpRun.ShownTarget("a‮b"), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Several_names_are_one_target()
+    {
+        Assert.Equal(string.Empty, McpRun.Names([]));
+        Assert.Equal("report.pdf", McpRun.Names(["report.pdf"]));
+        Assert.Equal("a.txt and b.txt", McpRun.Names(["a.txt", "b.txt"]));
+        Assert.Equal("a.txt, b.txt and c.txt", McpRun.Names(["a.txt", "b.txt", "c.txt"]));
+    }
+
+    [Fact]
+    public void A_run_is_refused_when_the_selection_changed_since_the_question()
+    {
+        Assert.Null(McpRun.TargetRefusal("report.pdf in files", "report.pdf in files"));
+        Assert.Equal("the selection changed", McpRun.TargetRefusal("report.pdf in files", "notes.md in files"));
+        Assert.Equal("the selection changed", McpRun.TargetRefusal("Report.pdf", "report.pdf"));
+        Assert.Null(McpRun.TargetRefusal(string.Empty, string.Empty));
+    }
+
+    [Theory]
+    [InlineData(-1, 0, true)]
+    [InlineData(1000, 1000, false)]
+    [InlineData(1000, 5999, false)]
+    [InlineData(1000, 6000, true)]
+    public void A_burst_of_runs_in_a_window_behind_chimes_once(long last, long now, bool chimes)
+    {
+        Assert.Equal(chimes, McpRun.Chimes(last, now));
+    }
+
+    [Fact]
     public void The_run_tool_takes_a_window_and_a_command_and_says_it_needs_the_users_word()
     {
         var run = Assert.Single(McpTools.All, tool => tool.Name == McpTools.Run);

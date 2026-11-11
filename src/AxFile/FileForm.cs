@@ -304,6 +304,25 @@ public sealed partial class FileForm : AxKitForm
     /// <summary>The folder shown, for Recently closed (AX-9.4); nothing at This PC.</summary>
     protected override string? PathInHand => RealFolder;
 
+    /// <summary>What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the selected entries, or the current one, in the folder shown; the Actions list's line when it has the focus.</summary>
+    protected override string McpTarget()
+    {
+        if (_pane.Focused)
+        {
+            return _pane.SelectedItem?.ToString() is { Length: > 0 } action ? $"{action}, in the Actions list" : "the Actions list";
+        }
+
+        var entries = SelectedEntries();
+        if (entries.Count == 0 && CurrentEntry() is { } entry)
+        {
+            entries.Add(entry);
+        }
+
+        var folder = RealFolder is { } real ? PathName.Of(real) : "This PC";
+        var names = AxKit.Core.Mcp.McpRun.Names([.. entries.Select(entry => entry.Name)]);
+        return names.Length > 0 ? $"{names} in {folder}" : $"the folder {folder}";
+    }
+
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         if (RealFolder is { } closing)

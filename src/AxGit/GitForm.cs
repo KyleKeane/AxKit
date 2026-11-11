@@ -180,6 +180,13 @@ public sealed partial class GitForm : AxKitForm
 
     protected override Control FocusTarget => _list;
 
+    /// <summary>What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the selected file, commit or branch.</summary>
+    protected override string McpTarget() =>
+        CurrentFile() is { } file ? file.Path
+        : CurrentCommit() is { } commit ? $"the commit {commit.Subject}, {commit.Hash}"
+        : CurrentBranch() is { } branch ? $"the branch {branch.Name}"
+        : string.Empty;
+
     /// <summary>Ctrl+S, the bundle's save key: nothing to save in a git window, and the keys that do something said (AG-6.2).</summary>
     protected override void SaveCommand() => Announce("Nothing to save here. Space stages, Ctrl+Enter commits", true);
 

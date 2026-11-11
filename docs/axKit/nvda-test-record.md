@@ -338,6 +338,11 @@ runner's desktop and pass. With NVDA, in axDown and axFile:
    seconds: refused, nothing moves. A run in an axDown window behind another: the notice chime and the taskbar flash,
    no speech. Turning AI tools off says "... and Let AI tools run commands is off too", and on again the switch reads
    not checked; Forget AI tools says the switch is off.
+8. (After the second review of 2026-11-11.) In axFile on notes.md, a run of Open: the question's text reads "axAutomate
+   asks to run Open (Operations) on notes.md in files in this window"; with two files selected it names both. In axProcess,
+   a run of Copy line asks first. Turning AI tools on with Let AI tools run commands already on: the notice says it is
+   on; with it off, that it is off. Three runs within 5 seconds in an axDown window behind another: one chime and
+   one flash, not three.
 
 ## Owed: the twelve decided changes (the branch `improvements`, 2026-11-09, `docs/axKit/inventory-2026-11-09.md` section 11)
 

@@ -178,6 +178,9 @@ public abstract partial class ItemForm : AxKitForm
 
     protected override Control FocusTarget => DetailPane.Focused ? DetailPane : Navigator;
 
+    /// <summary>What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the navigator's selected row.</summary>
+    protected override string McpTarget() => SelectedRow()?.Name ?? string.Empty;
+
     protected override void ApplyFont(Font font)
     {
         Navigator.Font = font;

@@ -70,5 +70,14 @@ mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
 expect mcp error: The user has not allowed AI tools to run commands
 refuse said ran Word wrap
 
+# MC-6.1: the access off, the switch turned on meanwhile; turning the access on names the switch as it is.
+menu Let AI tools read and open axKit
+expect said AI tools off
+menu Let AI tools run commands
+expect said once AI tools are on
+menu Let AI tools read and open axKit
+expect state Let AI tools run commands is on, so they may also run
+keys escape
+
 # MC-6.6: the runs are in the log by their tool.
 run findstr /c:"axkit_window_run" home\AxKit\mcp-audit.log

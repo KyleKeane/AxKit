@@ -62,7 +62,7 @@ public sealed class ProcessForm : AxKitForm
         var computer = new ToolStripMenuItem("&Session");
         Add(computer, new Command("&Refresh", AxProcessKeys.Refresh, () => Do(() => RefreshAsync(announce: true))) { Mark = CommandMark.Read });
         Add(computer, new Command("&Summary", AxProcessKeys.Summary, SaySummary) { Mark = CommandMark.Read });
-        Add(computer, new Command("&Copy line", AxProcessKeys.CopyLine, CopyLine) { Mark = CommandMark.Read });
+        Add(computer, new Command("&Copy line", AxProcessKeys.CopyLine, CopyLine) { Mark = CommandMark.Act });
         computer.DropDownItems.Add(new ToolStripSeparator());
         computer.DropDownItems.Add(CreateExitItem());
 
@@ -144,6 +144,13 @@ public sealed class ProcessForm : AxKitForm
     protected override void ShowAfterNotice() => _list.Visible = true;
 
     protected override Control FocusTarget => _list;
+
+    /// <summary>What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the selected process with its ID, service or startup entry.</summary>
+    protected override string McpTarget() =>
+        CurrentProcess() is { } process ? $"the process {process.Name}, ID {process.Id}"
+        : CurrentService() is { } service ? $"the service {service.DisplayName}"
+        : CurrentStartup() is { } startup ? $"the startup program {startup.Name}"
+        : string.Empty;
 
     protected override void ApplyFont(Font font) => _list.Font = font;
 

@@ -102,4 +102,48 @@ public static class McpRun
 
     /// <summary>The title of the question an act command asks first (MC-7.3): "Claude asks to run Delete".</summary>
     public static string AskTitle(string client, string label) => $"{Speaker(client)} asks to run {Plain(label)}";
+
+    /// <summary>The longest target the question shows (MC-7.3); the rest is cut with three dots, and the whole is still what is compared.</summary>
+    public const int TargetShownLength = 200;
+
+    /// <summary>The reason a Run is refused when the window's selection is no longer the one the question named (MC-7.3).</summary>
+    public const string SelectionChanged = "the selection changed";
+
+    /// <summary>Names as one target (MC-7.3): "report.pdf", "a.txt and b.txt", "a.txt, b.txt and c.txt"; empty for none.</summary>
+    public static string Names(IReadOnlyList<string> names) => names.Count switch
+    {
+        0 => string.Empty,
+        1 => names[0],
+        _ => string.Join(", ", names.Take(names.Count - 1)) + " and " + names[^1],
+    };
+
+    /// <summary>A target as the question shows it: on one line, its hidden characters made visible, at most <see cref="TargetShownLength"/> characters.</summary>
+    public static string ShownTarget(string target)
+    {
+        var line = DisplayText.Visible(target.ReplaceLineEndings(" ").Trim());
+        return line.Length > TargetShownLength ? line[..TargetShownLength].TrimEnd() + "..." : line;
+    }
+
+    /// <summary>
+    /// The text of the question an act command asks first (MC-7.3): who asks, the command with its menus, what it would act
+    /// on (<paramref name="target"/>, the window's selection as <c>McpTarget</c> describes it; left out when empty), what
+    /// an act may do, and that a changed selection stops it.
+    /// </summary>
+    public static string AskText(string client, string label, string menu, string target)
+    {
+        var place = menu.Length > 0 ? $" ({menu})" : string.Empty;
+        var on = target.Trim().Length > 0 ? $" on {ShownTarget(target)}" : string.Empty;
+        return $"{Speaker(client)} asks to run {Plain(label)}{place}{on} in this window. It acts outside the window: it may delete, move, send, open or start a program, or end something, as when you run it yourself.\n\n"
+            + "Run runs it once, now, and not at all if what is selected has changed meanwhile. Deny, the default, does not.";
+    }
+
+    /// <summary>Why the user's Run does not run (MC-7.3): <see cref="SelectionChanged"/> when the target now differs from the one asked about, null when it is the same.</summary>
+    public static string? TargetRefusal(string asked, string now) =>
+        string.Equals(asked, now, StringComparison.Ordinal) ? null : SelectionChanged;
+
+    /// <summary>How long after a chime for a run in a window behind the same window plays none for the next (MC-7.5): one chime for a burst of runs.</summary>
+    public const int ChimeQuietMs = 5000;
+
+    /// <summary>MC-7.5: whether a run in a window behind chimes and flashes: the first run, or one at least <see cref="ChimeQuietMs"/> after the last chime (-1 for none yet).</summary>
+    public static bool Chimes(long lastChimeTick, long now) => lastChimeTick < 0 || now - lastChimeTick >= ChimeQuietMs;
 }
