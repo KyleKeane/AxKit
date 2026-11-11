@@ -51,4 +51,38 @@ public sealed class TerminalSettingsTests
         Assert.Equal(["C:\\src", "C:\\work"], again.RecentFolders);
         Assert.Equal("C:\\src", again.LastFolder);
     }
+
+    [Fact]
+    public void User_shells_round_trip_and_blank_ones_are_dropped()
+    {
+        using var temp = new TempFolder("axterminal-tests");
+        var path = Path.Combine(temp.Path, "axTerminal.json");
+        File.WriteAllText(path, """{"userShells":[{"name":"Dev cmd","commandLine":"cmd.exe /k"},{"name":"","commandLine":"x"},{"name":"No line","commandLine":" "},null],"userShellName":"Gone"}""");
+        var settings = TerminalSettings.Load(path, out var error);
+        Assert.Null(error);
+        Assert.Equal([new UserShell("Dev cmd", "cmd.exe /k")], settings.UserShells);
+        Assert.Null(settings.UserShellName);
+
+        settings.UserShells.Add(new UserShell("Plain PowerShell", "powershell -NoProfile"));
+        settings.UserShellName = "plain powershell";
+        settings.Save(path);
+        Assert.Contains("\"commandLine\": \"powershell -NoProfile\"", File.ReadAllText(path));
+        var again = TerminalSettings.Load(path, out error);
+        Assert.Null(error);
+        Assert.Equal(2, again.UserShells.Count);
+        Assert.Equal("plain powershell", again.UserShellName);
+        Assert.Equal(new UserShell("Plain PowerShell", "powershell -NoProfile"), again.FindUserShell(again.UserShellName));
+    }
+
+    [Fact]
+    public void A_new_shell_name_must_be_new_and_not_blank()
+    {
+        var settings = new TerminalSettings { UserShells = [new UserShell("Dev cmd", "cmd.exe /k")] };
+        Assert.Equal("Type a name", settings.RefusedShellName("  "));
+        Assert.Equal("A shell named dev CMD is already there", settings.RefusedShellName(" dev CMD "));
+        Assert.Equal("A shell named command prompt is already there", settings.RefusedShellName("command prompt"));
+        Assert.Null(settings.RefusedShellName("Node"));
+        Assert.Null(settings.FindUserShell(null));
+        Assert.Null(settings.FindUserShell("Node"));
+    }
 }
