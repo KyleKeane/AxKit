@@ -217,7 +217,7 @@ public sealed partial class AutomateForm : ItemForm
                     lines.Add(new ItemDetailLine("Not understood: " + problem));
                 }
 
-                lines.Add(ScriptLines.CannotRun(workflow, nvda: false) is { } refusal
+                lines.Add(ScriptLines.CannotRun(workflow, nvda: false, confined: true) is { } refusal
                     ? new ItemDetailLine("Cannot run: " + refusal)
                     : OutcomeLine(workflow.Path, null) ?? new ItemDetailLine("Not run yet"));
                 lines.Add(new ItemDetailLine("Right or Enter goes into its steps"));

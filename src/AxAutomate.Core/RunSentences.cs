@@ -62,11 +62,15 @@ public static class RunSentences
     public static (string Said, RunOutcome Outcome) CannotRun(Workflow workflow, string refusal) =>
         ($"{workflow.Title} cannot run: {refusal}", new RunOutcome("cannot run", string.Empty, refusal));
 
-    /// <summary>The line after a folder's run: how many passed of how many, and the rest by kind.</summary>
-    public static string FolderEnded(int passed, int failed, int cannotRun, bool stopped)
+    /// <summary>
+    /// The line after a folder's run: how many passed of how many, and the rest by kind, "Run finished: 3 of 5
+    /// workflows passed, 1 failed, 1 could not run". A stopped run names the workflow it stopped in, when one was
+    /// going on, and counts the workflows it never reached: "Run stopped at 02-x: 1 passed, 3 not run".
+    /// </summary>
+    public static string FolderEnded(int passed, int failed, int cannotRun, bool stopped, string? stoppedAt = null, int notRun = 0)
     {
         var total = passed + failed + cannotRun;
-        var parts = new List<string> { $"{passed} of {StepText.Count(total, "workflow")} passed" };
+        var parts = new List<string> { stopped ? $"{passed} passed" : $"{passed} of {StepText.Count(total, "workflow")} passed" };
         if (failed > 0)
         {
             parts.Add($"{failed} failed");
@@ -77,7 +81,13 @@ public static class RunSentences
             parts.Add($"{cannotRun} could not run");
         }
 
-        return (stopped ? "Run stopped: " : "Run finished: ") + string.Join(", ", parts);
+        if (stopped && notRun > 0)
+        {
+            parts.Add($"{notRun} not run");
+        }
+
+        var head = !stopped ? "Run finished" : stoppedAt is null ? "Run stopped" : "Run stopped at " + stoppedAt;
+        return head + ": " + string.Join(", ", parts);
     }
 
     /// <summary>Text cut to <see cref="DetailLength"/>, with "..." where it was cut.</summary>

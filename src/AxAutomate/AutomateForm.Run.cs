@@ -9,7 +9,8 @@ namespace AxAutomate;
 /// level every workflow of that folder one after another, through the engine of <c>AxAutomate.Core</c>
 /// (<see cref="ScriptRunner"/>), on a thread of its own and on a desktop of the run's own, so that the run never takes
 /// the user's keyboard; the run's windows are this very program file, started with the run's secret and folder alone
-/// (S-11). Escape stops the run after its current step. Nothing is said for a step that passes; a failing step is said
+/// (S-11). A file step must stay in the run's folder (AU-6b.8), and a workflow with a run step plays only after a
+/// notice has named its command lines and the user chose Run (AU-D11). Escape stops the run after its current step. Nothing is said for a step that passes; a failing step is said
 /// as it ends, and one line at each workflow's end; the rows then carry the outcome. Every file the run reads (the
 /// folder, the workflows, a script's lines) is read on the run's thread, never on the window's (bundle rule 3).
 /// </summary>
@@ -58,7 +59,7 @@ public sealed partial class AutomateForm
         string said;
         if (_workflow is { } open)
         {
-            if (ScriptLines.CannotRun(open, nvda: false) is { } refusal)
+            if (ScriptLines.CannotRun(open, nvda: false, confined: true) is { } refusal)
             {
                 Announce("This workflow cannot run: " + refusal, true);
                 return;
@@ -91,12 +92,12 @@ public sealed partial class AutomateForm
     /// <summary>A workflow's job, on the run's thread: its lines (a script's file read here) or why it cannot run.</summary>
     private static RunJob Job(Workflow workflow)
     {
-        var (lines, refusal) = ScriptLines.Prepare(workflow, nvda: false);
+        var (lines, refusal) = ScriptLines.Prepare(workflow, nvda: false, confined: true);
         return new RunJob(workflow, StepText.Rows(workflow), lines, refusal);
     }
 
     /// <summary>Whether F5 has something to run here, from what the window holds (no file read): the workflow in hand can run, or the level has a workflow.</summary>
-    private bool CanRun() => _workflow is { } open ? ScriptLines.CannotRun(open, nvda: false) is null : _folders.Count > 0 && _levelWorkflows > 0;
+    private bool CanRun() => _workflow is { } open ? ScriptLines.CannotRun(open, nvda: false, confined: true) is null : _folders.Count > 0 && _levelWorkflows > 0;
 
     /// <summary>
     /// The Operations menu as it opens, and the command palette as it reads it: Run only on what can run (AU-3.3.2),
@@ -161,6 +162,9 @@ public sealed partial class AutomateForm
     {
         var (passed, failed, cannotRun) = (0, 0, 0);
         var count = 0;
+        var done = 0;
+        string? stoppedAt = null;
+        var cancelled = false;
         var root = Path.Combine(Path.GetTempPath(), "axkit-automate", $"{Environment.ProcessId}-{DateTime.Now:HHmmss}");
         try
         {
@@ -192,9 +196,18 @@ public sealed partial class AutomateForm
                 Post(() => Announce("No workflows in this folder to run", false));
             }
 
+            // AU-D11: the commands of the run steps act on the user's own desktop and files, so they are named first.
+            var commands = jobs.Where(job => job.Refusal is null).SelectMany(job => ScriptLines.Commands(job.Lines)).Distinct().ToList();
+            if (commands.Count > 0 && !CommandsAllowed(commands, workflowPath is not null))
+            {
+                cancelled = true;
+                return;
+            }
+
             for (var i = 0; i < jobs.Count && !_stopAsked; i++)
             {
                 var job = jobs[i];
+                done++;
                 if (job.Refusal is { } refusal)
                 {
                     cannotRun++;
@@ -246,6 +259,10 @@ public sealed partial class AutomateForm
                 {
                     failed++;
                 }
+                else
+                {
+                    stoppedAt = job.Workflow.Title;
+                }
 
                 Post(() => WorkflowEnded(job.Workflow, end, kept));
             }
@@ -267,9 +284,30 @@ public sealed partial class AutomateForm
             }
 
             var stopped = _stopAsked;
-            var summary = count > 1 ? RunSentences.FolderEnded(passed, failed, cannotRun, stopped) : null;
+            var summary = cancelled ? "Not run" : count > 1 ? RunSentences.FolderEnded(passed, failed, cannotRun, stopped, stoppedAt, count - done) : null;
             Post(() => RunEnded(summary));
         }
+    }
+
+    /// <summary>
+    /// AU-D11, on the run's thread: the notice that names the run steps' command lines, "This workflow runs commands on
+    /// your computer: git init. Run it?", with Run and Cancel, Cancel the default (Enter and Escape both decline);
+    /// true when the user chose Run. A window closed, or Escape's stop asked, while it waits is a Cancel.
+    /// </summary>
+    private bool CommandsAllowed(IReadOnlyList<string> commands, bool one)
+    {
+        var answer = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var text = $"{(one ? "This workflow runs" : "These workflows run")} commands on your computer: {string.Join("; ", commands)}. Run {(one ? "it" : "them")}?";
+        Post(() => ShowNotice(Notice.Ask("Run commands", text, "&Run", () => answer.TrySetResult(true), cancelled: () => answer.TrySetResult(false), cancelIsDefault: true)));
+        while (!answer.Task.Wait(250))
+        {
+            if (_stopAsked || IsDisposed)
+            {
+                return false;
+            }
+        }
+
+        return answer.Task.Result;
     }
 
     /// <summary>The workflow in hand as the run read it again, on the window's thread: its rows shown, if it is still the one in hand.</summary>

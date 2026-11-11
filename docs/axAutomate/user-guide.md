@@ -49,14 +49,21 @@ goes back. Ctrl+Q reads every line at once.
 ## Running workflows
 
 F5 inside a workflow runs it; F5 in a folder runs every workflow of that folder, one after another (not the folders
-inside it). A run happens out of sight, on a desktop of its own: its windows never come to the front, never take your
+inside it). The axKit windows of a run open on a desktop of their own: they never come to the front, never take your
 keyboard and play no sound, so you can go on working, in axAutomate or anywhere else. Each workflow gets fresh
-windows with settings of their own, never yours.
+windows with settings of their own, never yours, and its steps that make files and folders make them in a folder of
+the run's own: a workflow with such a step that writes anywhere else cannot run from the window.
+
+A workflow's `run` steps are different: their command lines run through Windows' command prompt on your own
+computer, with your files, as if you typed them. So before a run with one, a notice names them: "This workflow runs
+commands on your computer: git init. Run it?". Cancel is the default, so Enter and Escape both decline and you hear
+"Not run"; Alt+R, or Tab to Run and Enter, runs it.
 
 While steps pass, nothing is said. A step that fails is said as it ends, with what was expected and what the run saw:
 "Step 2 failed: Expect the focus: Nothing like this. Not within 10 s; seen: ...". When a workflow ends you hear one
 line, "01-passes passed, 4 steps" or "02-fails failed at step 2", and after a folder's run, "Run finished: 3 of 5
-workflows passed, 1 failed, 1 could not run".
+workflows passed, 1 failed, 1 could not run". A folder's run you stop says where it stopped and how many it did not
+reach: "Run stopped at 03-waits: 1 passed, 1 failed, 3 not run".
 
 Afterwards the rows say how the last run went: "02-fails, workflow, 3 steps, failed at step 2", and inside it the step
 that failed ends with "failed". Tab on either gives "Last run:" with what the run saw. Escape during a run stops it

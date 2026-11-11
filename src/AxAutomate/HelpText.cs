@@ -36,6 +36,8 @@ public static class HelpText
         ## Everywhere in axAutomate
           Ctrl+O: open a folder of workflows; axAutomate opens it again at the next start
           F5: run the workflow you are in, on a desktop of its own, never with your keyboard; in a folder, every workflow of that folder, one after another. A failing step is said as it ends ("Step 3 failed: ..."), and one line when each workflow ends ("02-palette passed, 6 steps" or "02-palette failed at step 3"); the rows then carry the outcome, and the details what the runner saw
+          A workflow with a run step asks first, naming its command lines: they run on your own desktop and files. Cancel is the default; Alt+R runs it
+          A step that makes a file or a folder outside the run's own folder cannot run from here
           Escape during a run: stop it after the step going on
           Session, Refresh: read the folder or the workflow again; a run reads its file again by itself
           This version views and runs the workflows: changing them comes later. Ctrl+N, Ctrl+Shift+N, F2, Delete, Alt+Up, Alt+Down and Ctrl+Z say so

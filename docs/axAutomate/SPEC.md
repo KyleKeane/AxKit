@@ -168,8 +168,9 @@ keys in place of its words on a line:
   10 s; seen: ...", its own `report` in place of its sentence when it has one, what the runner saw cut at 240
   characters; each workflow's end is one line, "01-passes passed, 4 steps", "02-fails failed at step 2", "... failed
   after its steps: ..." (a window that ended by itself, an ERROR in a run's log), "... stopped", "... cannot run:
-  ..."; a folder's run ends with "Run finished: 3 of 5 workflows passed, 1 failed, 1 could not run". None of them
-  interrupts.
+  ..."; a folder's run ends with "Run finished: 3 of 5 workflows passed, 1 failed, 1 could not run", or, stopped,
+  with the workflow it stopped in and the count it never reached, "Run stopped at 02-x: 1 passed, 3 not run". None of
+  them interrupts.
 - AU-6b.3 After a run the workflow's row ends with "passed", "failed at step N", "stopped" or "cannot run", and the
   failed step's row with "failed"; the detail pane gives "Last run: ..." with what the runner saw, on the workflow
   and on the failed step. The outcomes are the window's, kept until it closes.
@@ -189,6 +190,14 @@ keys in place of its words on a line:
   desktop. The command line's NVDA tier, on the user's desktop, keeps giving it.
 - AU-6b.6 The report of AU-4.5 (Ctrl+R, every step with what was said and focused) is not built: the detail pane's
   "Last run" line holds what the runner saw at the failure.
+- AU-6b.8 What a run from the window reaches (2026-11-11, at review): its axKit windows are on the run's own desktop
+  with settings of their own, and its `file`, `mkdir` and `silence` steps write in the run's `{temp}` folder alone: a
+  path that resolves outside it (a full path elsewhere, one from the drive's root, `..` out of it, after `{temp}` and
+  `\uXXXX` are filled in) makes the workflow unrunnable before anything runs, "step 3 writes outside the run's folder:
+  ..\x.md" (`ScriptLines.CannotRun` with `confined`). A `run` step's command line is not confined: it runs through
+  Windows' `cmd.exe` by its full path (S-1), in the run's folder but on the user's own desktop, with the user's files
+  and rights, so it is asked for first (AU-D11). The command line (`tools/AxAutomate`) is unchanged: it runs its
+  scripts as they are, without the confinement and without the question.
 
 ## 6a. The first version: a viewer (2026-11-11)
 
@@ -244,6 +253,13 @@ keys in place of its words on a line:
   `RunCommand`.
 - AU-D10 The outcome of a run lives in the window until it closes, not in a file: the files are the user's workflows,
   and a run's record beside them would be a second thing to keep (the assistant, 2026-11-11).
+- AU-D11 From the window, a workflow with a `run` step plays only after a notice has named its command lines: "This
+  workflow runs commands on your computer: git init. Run it?" (for a folder, "These workflows run ... Run them?"),
+  with Run and Cancel, Cancel the default, so that Enter and Escape both decline; Cancel says "Not run" and nothing of
+  the run starts (taken by the assistant at review, 2026-11-11, for the user to confirm). The commands act on the
+  user's own desktop and files, which the run's own desktop does not cover, and a workflow file may come from anyone;
+  the question is asked once per F5, on the run's thread after the files are read, so it names what will really run.
+  To reverse: drop `CommandsAllowed` in `AutomateForm.Run.cs`.
 
 ## 7. Later
 

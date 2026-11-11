@@ -140,7 +140,9 @@ leaves it.
 
 When you run a workflow in axAutomate (F5), axKit starts its own windows for the run on a desktop of the run's own,
 with settings and logs in a folder of the run's under your temporary folder, and runs the command lines of the
-workflow's `run` steps through cmd; nothing of the run reaches the network unless such a command does.
+workflow's `run` steps through Windows' cmd, by its full path, in that folder. Those commands act on your own desktop
+and files as any command you type would, so before a run with one, axAutomate names them and runs them only if you
+choose Run. Nothing of the run reaches the network unless such a command does.
 
 ## Children, changes, contact
 

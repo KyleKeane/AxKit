@@ -94,25 +94,41 @@ public sealed class EngineTests
     }
 
     [Fact]
-    public void A_bad_number_in_a_played_line_fails_the_step_and_never_throws()
+    public void A_bad_number_in_a_played_line_is_an_error_with_the_line_said()
     {
-        // The engine's own check, for a line no reader checked (the command line plays a script's lines as they are).
-        var lines = new[] { new ScriptLine(1, "wait 2s", null), new ScriptLine(2, "wait 1", null) };
-        var temp = Path.Combine(Path.GetTempPath(), "axkit-engine-test-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(temp);
-        try
-        {
-            var result = ScriptRunner.Play(lines, Path.Combine(temp, "NoSuch.exe"), temp, output: _ => { }, hosted: true);
-            Assert.False(result.Ok);
-            Assert.Equal(1, result.Failed!.Line.Number);
-            Assert.Contains("needs a whole number", result.Failed.Detail);
-        }
-        finally
-        {
-            Directory.Delete(temp, recursive: true);
-        }
+        // The engine's own check, for a line no reader checked (the command line plays a script's lines as they are):
+        // Run.Step fails the step on it, through ScriptRunner's catch, and never plays it.
+        Assert.Equal(1500, Run.Number("1500", "wait 1500"));
+        var error = Assert.Throws<ArgumentException>(() => Run.Number("2s", "wait 2s"));
+        Assert.Contains("\"wait 2s\" needs a whole number", error.Message);
+        Assert.Throws<ArgumentException>(() => Run.Number("-5", "wait -5"));
     }
 
+    [Fact]
+    public void From_the_window_a_file_step_must_stay_in_the_runs_folder()
+    {
+        static string? Script(params string[] lines) => ScriptLines.CannotRun(ScriptReader.Parse(lines, "w", @"C:\w.txt"), nvda: false, confined: true);
+
+        Assert.Null(Script("mkdir flows", "file flows\\a.md text", "file {temp}\\b.md text", "silence s.wav 500", "file \"my notes.md\" x", "file a\\..\\b.md x"));
+        Assert.Equal("step 2 writes outside the run's folder: C:\\Users\\x.md", Script("start down", "file C:\\Users\\x.md text"));
+        Assert.Contains("step 1 writes outside", Script("file ..\\x.md text"));
+        Assert.Contains("step 1 writes outside", Script("mkdir {temp}\\..\\elsewhere"));
+        Assert.Contains("step 1 writes outside", Script("silence \\x.wav 500"));
+        Assert.Contains("step 1 writes outside", Script("file \\u002e\\u002e\\x.md text"));
+        Assert.Contains("step 1.1 writes outside", Script("try said x", "iffound file ..\\x.md y"));
+        Assert.Contains("step 1 writes outside", ScriptLines.Prepare(WorkflowFile.Parse("""{"format": "axkit-workflow 1", "steps": [{"do": "mkdir", "path": "D:\\x"}]}""", "w", @"C:\w.workflow.json"), nvda: false, confined: true).Refusal);
+
+        // The command line runs its scripts as they are.
+        Assert.Null(ScriptLines.CannotRun(ScriptReader.Parse(["file C:\\x.md y"], "w", @"C:\w.txt"), nvda: false));
+    }
+
+    [Fact]
+    public void The_run_steps_command_lines_are_named_each_once()
+    {
+        var lines = ScriptLines.FromScript(["run git init", "keys f5", "try said x", "iffound run git add .", "run git init"], null);
+        Assert.Equal(["git init", "git add ."], ScriptLines.Commands(lines));
+        Assert.Empty(ScriptLines.Commands(ScriptLines.FromScript(["start down", "close"], null)));
+    }
     [Fact]
     public void Every_script_of_the_repository_can_run_from_the_window()
     {
@@ -125,7 +141,7 @@ public sealed class EngineTests
         var scripts = Directory.GetFiles(Path.Combine(root, "tests", "scripts"), "*.txt", SearchOption.AllDirectories);
         Assert.NotEmpty(scripts);
         var refused = scripts.Select(ScriptReader.Read)
-            .Select(workflow => (workflow.Path, ScriptLines.Prepare(workflow, nvda: false).Refusal))
+            .Select(workflow => (workflow.Path, ScriptLines.Prepare(workflow, nvda: false, confined: true).Refusal))
             .Where(pair => pair.Refusal is not null)
             .Select(pair => $"{pair.Path}: {pair.Refusal}");
         Assert.Empty(refused);
@@ -151,7 +167,9 @@ public sealed class EngineTests
         Assert.Equal("02-palette stopped", RunSentences.Ended(workflow, new ScriptResult(true, string.Empty, null, [], true), null).Said);
         Assert.Equal("02-palette failed after its steps: AxDown.log: ERROR x.", RunSentences.Ended(workflow, new ScriptResult(false, string.Empty, null, ["AxDown.log: ERROR x"], false), null).Said);
         Assert.Equal("Run finished: 3 of 5 workflows passed, 1 failed, 1 could not run", RunSentences.FolderEnded(3, 1, 1, stopped: false));
-        Assert.Equal("Run stopped: 1 of 1 workflow passed", RunSentences.FolderEnded(1, 0, 0, stopped: true));
+        Assert.Equal("Run stopped at 02-x: 1 passed, 3 not run", RunSentences.FolderEnded(1, 0, 0, stopped: true, stoppedAt: "02-x", notRun: 3));
+        Assert.Equal("Run stopped: 2 passed, 1 failed, 2 not run", RunSentences.FolderEnded(2, 1, 0, stopped: true, stoppedAt: null, notRun: 2));
+        Assert.Equal("Run stopped at 05-x: 4 passed", RunSentences.FolderEnded(4, 0, 0, stopped: true, stoppedAt: "05-x", notRun: 0));
     }
 
     [Fact]

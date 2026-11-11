@@ -27,11 +27,12 @@ public static class ScriptLines
     /// <summary>
     /// The lines of the workflow, or why it cannot run (the lines then empty). <paramref name="nvda"/>: the NVDA
     /// tier's steps may run (the command line's <c>--nvda</c>). A script's steps are matched by their line, so the
-    /// steps of the lines are the very records of <paramref name="workflow"/>.
+    /// steps of the lines are the very records of <paramref name="workflow"/>. <paramref name="confined"/>: a run from
+    /// axAutomate's window, whose file steps must stay in the run's folder (<see cref="CannotRun"/>).
     /// </summary>
-    public static (IReadOnlyList<ScriptLine> Lines, string? Refusal) Prepare(Workflow workflow, bool nvda)
+    public static (IReadOnlyList<ScriptLine> Lines, string? Refusal) Prepare(Workflow workflow, bool nvda, bool confined = false)
     {
-        if (CannotRun(workflow, nvda) is { } refusal)
+        if (CannotRun(workflow, nvda, confined) is { } refusal)
         {
             return ([], refusal);
         }
@@ -54,9 +55,11 @@ public static class ScriptLines
     /// <summary>
     /// Why the workflow cannot run, from what was read alone (no file is read, so the window may ask it on its own
     /// thread for every row): not all understood, an operation the engine does not know, a number that is not one, a
-    /// block the lines cannot say; null when it can run.
+    /// block the lines cannot say; null when it can run. <paramref name="confined"/> (a run from axAutomate's window,
+    /// SPEC.md AU-6b.8): a <c>file</c>, <c>mkdir</c> or <c>silence</c> step whose path leaves the run's folder is
+    /// refused too (<see cref="Outside"/>); the command line runs its scripts as they are.
     /// </summary>
-    public static string? CannotRun(Workflow workflow, bool nvda)
+    public static string? CannotRun(Workflow workflow, bool nvda, bool confined = false)
     {
         if (workflow.Problem is { } problem)
         {
@@ -71,6 +74,11 @@ public static class ScriptLines
         if (Flattened(workflow.Steps).Select(step => BadNumber(Line(step))).FirstOrDefault(bad => bad is not null) is { } bad)
         {
             return bad;
+        }
+
+        if (confined && Outside(workflow) is { } outside)
+        {
+            return outside;
         }
 
         return workflow.Path.EndsWith(ScriptReader.Extension, StringComparison.OrdinalIgnoreCase) ? null : FromWorkflow(workflow).Refusal;
@@ -100,6 +108,69 @@ public static class ScriptLines
         };
 
         static bool Whole(string text) => int.TryParse(text, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out _);
+    }
+
+    /// <summary>The folder a path is checked against in <see cref="Outside"/>: a stand-in for the run's own <c>{temp}</c>.</summary>
+    private static readonly string StandIn = Path.Combine(Path.GetTempPath(), "axkit-automate-confined");
+
+    /// <summary>
+    /// The first <c>file</c>, <c>mkdir</c> or <c>silence</c> step whose path, <c>{temp}</c> and <c>\uXXXX</c> filled
+    /// in as the engine fills them, resolves outside the run's folder (a full path elsewhere, a path from the drive's
+    /// root, <c>..</c> out of it), said with its row's number; null when every one stays inside.
+    /// </summary>
+    public static string? Outside(Workflow workflow)
+    {
+        var rows = StepText.Rows(workflow);
+        foreach (var step in Flattened(workflow.Steps).Where(step => step.Do is "file" or "mkdir" or "silence"))
+        {
+            if (!InsideRunFolder(step.Value("path")))
+            {
+                var number = rows.FirstOrDefault(row => ReferenceEquals(row.Step, step))?.Number ?? step.Line.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                return $"step {number} writes outside the run's folder: {step.Value("path")}";
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>Whether a step's path stays in the run's folder, as <c>Run.Step</c> resolves it against that folder.</summary>
+    public static bool InsideRunFolder(string path)
+    {
+        var filled = System.Text.RegularExpressions.Regex.Replace(
+            path.Replace("{temp}", StandIn),
+            @"\\u([0-9A-Fa-f]{4})",
+            match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString());
+        try
+        {
+            var full = Path.GetFullPath(Path.Combine(StandIn, filled));
+            return full.StartsWith(StandIn + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(full, StandIn, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>The command lines of the lines' <c>run</c> steps, in order, each once: what a run from the window names before it starts (AU-D11).</summary>
+    public static IReadOnlyList<string> Commands(IEnumerable<ScriptLine> lines)
+    {
+        var commands = new List<string>();
+        foreach (var line in lines)
+        {
+            var text = line.Text;
+            while (text.StartsWith("iffound ", StringComparison.Ordinal))
+            {
+                text = text[8..];
+            }
+
+            if (text.StartsWith("run ", StringComparison.Ordinal) && !commands.Contains(text[4..].Trim()))
+            {
+                commands.Add(text[4..].Trim());
+            }
+        }
+
+        return commands;
     }
 
     /// <summary>A script's lines as the runner reads them: every line but the blank ones and the comments, trimmed, numbered by its line.</summary>
