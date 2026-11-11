@@ -37,12 +37,13 @@ public sealed class Theme
 
     private readonly Dictionary<string, ThemeColor> _colors;
 
-    private Theme(bool enabled, string name, bool wordWrap, bool sayNewLine, Dictionary<string, ThemeColor> colors, IReadOnlyList<string> notUnderstood)
+    private Theme(bool enabled, string name, bool wordWrap, bool sayNewLine, bool headingSound, Dictionary<string, ThemeColor> colors, IReadOnlyList<string> notUnderstood)
     {
         Enabled = enabled;
         Name = name;
         WordWrap = wordWrap;
         SayNewLine = sayNewLine;
+        HeadingSound = headingSound;
         _colors = colors;
         NotUnderstood = notUnderstood;
     }
@@ -55,6 +56,9 @@ public sealed class Theme
 
     /// <summary>TH-6.5 (2026-11-11): whether a line break typed into a field is said, "new line" (AX-7.8), <c>display.sayNewLine</c>; on when the file or the key is missing.</summary>
     public bool SayNewLine { get; }
+
+    /// <summary>TH-6.6 (2026-11-11): whether a move onto a heading plays the heading sound first (AX-7.9), <c>display.headingSound</c>; on when the file or the key is missing.</summary>
+    public bool HeadingSound { get; }
 
     public string Name { get; }
 
@@ -144,7 +148,8 @@ public sealed class Theme
         var display = root["display"] as JsonObject;
         var wordWrap = DisplayFlag(display, "wordWrap", notUnderstood);
         var sayNewLine = DisplayFlag(display, "sayNewLine", notUnderstood);
-        return new Theme(enabled, TextOf(root["name"]) ?? string.Empty, wordWrap, sayNewLine, colors, notUnderstood);
+        var headingSound = DisplayFlag(display, "headingSound", notUnderstood);
+        return new Theme(enabled, TextOf(root["name"]) ?? string.Empty, wordWrap, sayNewLine, headingSound, colors, notUnderstood);
     }
 
     /// <summary>One switch of the display settings: on when the object or the key is missing; on and counted when the value is not true or false.</summary>
@@ -179,7 +184,7 @@ public sealed class Theme
             ["enabled"] = true,
             ["name"] = "My theme",
             ["colors"] = colors,
-            ["display"] = new JsonObject { ["wordWrap"] = true, ["sayNewLine"] = true },
+            ["display"] = new JsonObject { ["wordWrap"] = true, ["sayNewLine"] = true, ["headingSound"] = true },
         };
         return ToText(root);
     }
@@ -195,6 +200,9 @@ public sealed class Theme
 
     /// <summary>Writes <c>display.sayNewLine</c> (TH-6.5) the same way.</summary>
     public static string? SetSayNewLine(string path, bool sayNewLine) => SetDisplay(path, "sayNewLine", sayNewLine);
+
+    /// <summary>Writes <c>display.headingSound</c> (TH-6.6) the same way.</summary>
+    public static string? SetHeadingSound(string path, bool headingSound) => SetDisplay(path, "headingSound", headingSound);
 
     private static string? SetDisplay(string path, string key, bool on) => Write(path, root =>
     {

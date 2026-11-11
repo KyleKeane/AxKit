@@ -32,6 +32,22 @@ public sealed class MarkdownOutlineTests
         ], headings.Select(h => (h.Start, h.Level, h.Text, h.Line)).ToList());
     }
 
+    /// <summary>AX-7.9 (2026-11-11): the heading sound asks whether the caret's line is a heading, anywhere on the line.</summary>
+    [Fact]
+    public void The_carets_line_is_a_heading_or_not()
+    {
+        Assert.Equal(0, MarkdownOutline.HeadingLineAt(Text, 0));
+        Assert.Equal(0, MarkdownOutline.HeadingLineAt(Text, 5));
+        Assert.Equal(27, MarkdownOutline.HeadingLineAt(Text, 30));
+        Assert.Equal(42, MarkdownOutline.HeadingLineAt(Text, 42));
+        Assert.Equal(-1, MarkdownOutline.HeadingLineAt(Text, 9));     // blank
+        Assert.Equal(-1, MarkdownOutline.HeadingLineAt(Text, 11));    // #tag inside a line
+        Assert.Equal(-1, MarkdownOutline.HeadingLineAt(Text, 60));    // in a fence
+        Assert.Equal(-1, MarkdownOutline.HeadingLineAt(Text, 97));    // #nospace
+        Assert.Equal(-1, MarkdownOutline.HeadingLineAt(Text, 120));   // four spaces
+        Assert.Equal(-1, MarkdownOutline.HeadingLineAt(string.Empty, 0));
+    }
+
     [Fact]
     public void Next_heading_is_after_the_carets_line_and_previous_before_it()
     {

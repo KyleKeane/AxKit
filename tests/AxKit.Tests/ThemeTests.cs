@@ -75,6 +75,27 @@ public sealed class ThemeTests
         Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
     }
 
+    /// <summary>TH-6.6, AX-7.9 (2026-11-11): Sound on headings, on without a file or a key, written beside the other display settings.</summary>
+    [Fact]
+    public void Sound_on_headings_is_on_by_default_and_written_beside_what_is_there()
+    {
+        Assert.True(Theme.Read("""{ "format": "axkit-theme 1" }""", out _)!.HeadingSound);
+        Assert.Contains("\"headingSound\": true", Theme.Template());
+        var odd = Theme.Read("""{ "format": "axkit-theme 1", "display": { "headingSound": "yes" } }""", out _);
+        Assert.True(odd!.HeadingSound);
+        Assert.Equal(["display.headingSound"], odd.NotUnderstood);
+
+        var path = Path.Combine(Path.GetTempPath(), "axkit-tests", Guid.NewGuid().ToString("N"), "theme.json");
+        Assert.Null(Theme.SetSayNewLine(path, false));
+        Assert.Null(Theme.SetHeadingSound(path, false));
+        var both = Theme.Load(path, out _)!;
+        Assert.False(both.HeadingSound);
+        Assert.False(both.SayNewLine);
+        Assert.Null(Theme.SetHeadingSound(path, true));
+        Assert.True(Theme.Load(path, out _)!.HeadingSound);
+        Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
+    }
+
     [Fact]
     public void A_hex_colour_is_read_system_in_any_case_and_a_bad_value_is_system_and_counted()
     {

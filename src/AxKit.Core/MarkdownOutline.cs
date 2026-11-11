@@ -101,6 +101,25 @@ public static class MarkdownOutline
     public static Element? PreviousHeading(string text, int caret, int level = 0) =>
         Before(Headings(text).Where(h => level == 0 || h.Level == level), LineStart(text, caret));
 
+    /// <summary>
+    /// The start of the caret's line when that line is a heading, outside a fenced code block; -1 otherwise (AX-7.9,
+    /// the heading sound). The line itself is looked at first, so that a line that cannot be one costs no read of the
+    /// whole text.
+    /// </summary>
+    public static int HeadingLineAt(string text, int caret)
+    {
+        var start = LineStart(text, caret);
+        var end = text.IndexOf('\n', start);
+        var line = text.AsSpan(start, (end < 0 ? text.Length : end) - start).TrimEnd('\r');
+        var trimmed = line.TrimStart(' ');
+        if (line.Length - trimmed.Length > 3 || HeadingLevel(trimmed) == 0)
+        {
+            return -1;
+        }
+
+        return Headings(text).Any(heading => heading.Start == start) ? start : -1;
+    }
+
     /// <summary>1 to 6 for <c># </c> to <c>###### </c> (or hashes alone); 0 for anything else, including <c>#tag</c>.</summary>
     private static int HeadingLevel(ReadOnlySpan<char> line)
     {

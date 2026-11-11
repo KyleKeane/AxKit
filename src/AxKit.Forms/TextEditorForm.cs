@@ -204,6 +204,12 @@ public sealed partial class TextEditorForm : AxKitForm
         };
         _editor.MouseUp += (_, _) => ScheduleStatus();
         _editor.TextChanged += OnTextChanged;
+        // AX-7.9: an editor whose outline has Markdown headings (axDown, axPreview; not axJSON) sounds them as the caret
+        // reaches one on the user's key.
+        if (_app.Jumps.Any(jump => jump.Name == MarkdownOutline.Name(ElementKind.Heading)))
+        {
+            FollowHeadings(_editor);
+        }
         _statusTimer.Tick += (_, _) =>
         {
             _statusTimer.Stop();

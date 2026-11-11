@@ -1,0 +1,21 @@
+# The item apps' heading sound (docs/axKit/SPEC.md AX-7.9; asked 2026-11-11), heard in axTask: the user's key that
+# takes the navigator's selection onto a heading row plays it before NVDA reads the row; a fill never does.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
+
+start task {temp}\tasks
+# The level filled on its first row, a heading: no sound for the window's own fill.
+expect focus Smart lists, section
+refuse said ♪ Heading
+# Down to a row that is no heading, then to the next heading.
+keys down
+refuse said ♪ Heading
+keys down
+expect said ♪ Heading
+# The section jumps (Ctrl+Up, Ctrl+Down) land on headings too.
+keys ctrl+up
+expect said ♪ Heading
+keys end
+refuse said ♪ Heading
+keys home
+expect said ♪ Heading

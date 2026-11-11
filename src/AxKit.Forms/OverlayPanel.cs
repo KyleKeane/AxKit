@@ -240,6 +240,9 @@ public sealed class OverlayPanel : Panel
     /// <summary>The notice's read-only text, for the window's find in it (AX-7.2): the caret kept and the match selected there.</summary>
     public TextBox Body => _text;
 
+    /// <summary>The text as the bundle's edit control, for the heading sound the window follows it with (AX-7.9).</summary>
+    internal AxKitTextBox BodyText => _text;
+
     /// <summary>Whether the text can be searched: a notice with text and neither a field nor a control of the window's own, since the text holds the focus then.</summary>
     public bool HasSearchableText => _text.Visible && _inputSpec is null && _custom is null;
 

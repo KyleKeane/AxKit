@@ -44,9 +44,79 @@ public class AxKitTextBox : TextBox
         }
     }
 
-    /// <summary>AX-7.8 (2026-11-11): Enter's character, or Ctrl+Enter's, handled by the control; then "new line" when it put a line break in.</summary>
+    // ---- a move to another line by the user's own key (AX-7.9, 2026-11-11) ----
+
+    private const int WM_KEYDOWN = 0x0100;
+    private const int WM_SYSKEYDOWN = 0x0104;
+
+    /// <summary>
+    /// The caret went to another line on the user's key, the text unchanged and nothing selected: an arrow, a page
+    /// key, Ctrl+Home or Ctrl+End, a paragraph key, or a window's command on the key (a heading jump). Never a move the
+    /// window makes off a key (AX-7). The editors play the heading sound from it when the line is a heading (AX-7.9).
+    /// </summary>
+    public event EventHandler? UserMovedLine;
+
+    /// <summary>Set while a key is being handled here, so that the window's commands (PreProcessMessage) and the control's own move (WndProc) are measured once each.</summary>
+    private bool _measuring;
+
+    private (int Line, int Length) Place() => (GetLineFromCharIndex(SelectionStart), TextLength);
+
+    private bool Measures(int msg) => msg is WM_KEYDOWN or WM_SYSKEYDOWN && UserMovedLine is not null && !_measuring && IsHandleCreated;
+
+    private void RaiseIfMoved((int Line, int Length) before)
+    {
+        if (IsDisposed || SelectionLength != 0)
+        {
+            return;
+        }
+
+        var after = Place();
+        if (after.Line != before.Line && after.Length == before.Length)
+        {
+            UserMovedLine?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public override bool PreProcessMessage(ref Message msg)
+    {
+        if (!Measures(msg.Msg))
+        {
+            return base.PreProcessMessage(ref msg);
+        }
+
+        var before = Place();
+        _measuring = true;
+        try
+        {
+            return base.PreProcessMessage(ref msg);
+        }
+        finally
+        {
+            _measuring = false;
+            RaiseIfMoved(before);
+        }
+    }
+
+    /// <summary>AX-7.8 (2026-11-11): Enter's character, or Ctrl+Enter's, handled by the control; then "new line" when it put a line break in. AX-7.9: a key's own move to another line measured.</summary>
     protected override void WndProc(ref Message m)
     {
+        if (Measures(m.Msg))
+        {
+            var before = Place();
+            _measuring = true;
+            try
+            {
+                base.WndProc(ref m);
+            }
+            finally
+            {
+                _measuring = false;
+            }
+
+            RaiseIfMoved(before);
+            return;
+        }
+
         base.WndProc(ref m);
         if (m.Msg == WM_CHAR && (int)m.WParam is 13 or 10 && _beforeEnter is not null)
         {

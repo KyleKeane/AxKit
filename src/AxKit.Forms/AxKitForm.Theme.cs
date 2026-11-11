@@ -64,6 +64,63 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
+    /// Options, Text, Sound on headings (AX-7.9, TH-6.6, 2026-11-11): the same kind of item as Say new line, the
+    /// theme file's <c>display.headingSound</c>.
+    /// </summary>
+    private ToolStripMenuItem CreateHeadingSoundItem(ToolStripMenuItem textMenu)
+    {
+        var item = new ToolStripMenuItem("Sound on &headings", null, (_, _) => ToggleHeadingSound()) { Checked = _theme?.HeadingSound ?? true };
+        CommandPalette.RefreshedOnOpening(textMenu, () => item.Checked = _theme?.HeadingSound ?? true);
+        return item;
+    }
+
+    private void ToggleHeadingSound()
+    {
+        var on = !(_theme?.HeadingSound ?? true);
+        if (Theme.SetHeadingSound(AppPaths.ThemeFile, on) is { } problem)
+        {
+            Failed("Theme file", "The theme file could not be changed: " + problem);
+            return;
+        }
+
+        LoadTheme();
+        Announce(on ? "Sound on headings on" : "Sound on headings off", true);
+    }
+
+    /// <summary>
+    /// The user's own key moved onto a heading (AX-7.9): the heading sound, unless Sound on headings is off. Called
+    /// on the key, before the control's own move, so that the sound starts before NVDA reads the heading. As the file
+    /// was read at the window's last activation, like Say new line.
+    /// </summary>
+    protected internal void SoundOnHeading()
+    {
+        if (_theme?.HeadingSound ?? true)
+        {
+            Sounds.Heading();
+        }
+    }
+
+    /// <summary>
+    /// The heading sound in a text (AX-7.9): when the user's key takes the caret onto a Markdown heading's line, once
+    /// per heading, so that a heading wrapped over two rows sounds as the caret reaches it and not again on its second
+    /// row. The editors with Markdown headings and every notice's text call it once for their control.
+    /// </summary>
+    protected internal void FollowHeadings(AxKitTextBox text)
+    {
+        var last = -1;
+        text.UserMovedLine += (_, _) =>
+        {
+            var here = MarkdownOutline.HeadingLineAt(text.Text, text.SelectionStart);
+            if (here >= 0 && here != last)
+            {
+                SoundOnHeading();
+            }
+
+            last = here;
+        };
+    }
+
+    /// <summary>
     /// A field of this window took a line break from a key (<see cref="AxKitTextBox"/>, AX-7.8): "new line" through
     /// the window's one announcement, unless Say new line is off. It does not interrupt, so that NVDA's own echo of
     /// the word just typed is still heard first.

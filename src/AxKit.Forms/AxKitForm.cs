@@ -46,6 +46,8 @@ public abstract partial class AxKitForm : Form
         Size = new Size(900, 600);
         StartPosition = FormStartPosition.WindowsDefaultLocation;
         Overlay.Chosen += OnNoticeChoice;
+        // AX-7.9: every notice's text moves by headings (h, 1 to 6), so a key onto one plays the heading sound.
+        FollowHeadings(Overlay.BodyText);
         WireAnnouncing();
         // The theme file now, before the window's own constructor, which may take a display setting from it (TH-6);
         // painted in OnLoad once the controls exist. A Windows app theme change repaints every class from the theme's
@@ -242,7 +244,7 @@ public abstract partial class AxKitForm : Form
     /// <summary>The last item of every first menu (AX-6): Exit, closing the window as Alt+F4 does, which is Windows' own key.</summary>
     protected ToolStripMenuItem CreateExitItem() => new("E&xit", null, (_, _) => Close()) { ShortcutKeyDisplayString = "Alt+F4" };
 
-    /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Say new line (AX-7.8), Font…, Larger text, Smaller text, Windows text size.</summary>
+    /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Say new line (AX-7.8), Sound on headings (AX-7.9), Font…, Larger text, Smaller text, Windows text size.</summary>
     protected ToolStripMenuItem CreateTextMenu(params ToolStripItem[] own)
     {
         var menu = new ToolStripMenuItem("&Text");
@@ -253,6 +255,7 @@ public abstract partial class AxKitForm : Form
         }
 
         menu.DropDownItems.Add(CreateSayNewLineItem(menu));
+        menu.DropDownItems.Add(CreateHeadingSoundItem(menu));
         menu.DropDownItems.Add(new ToolStripMenuItem("&Font...", null, (_, _) => ChooseFont()));
         menu.DropDownItems.Add(Item("&Larger text", () => ChangeTextSize(1), BundleKeys.LargerText));
         menu.DropDownItems.Add(Item("S&maller text", () => ChangeTextSize(-1), BundleKeys.SmallerText));
