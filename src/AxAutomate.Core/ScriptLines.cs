@@ -140,6 +140,13 @@ public static class ScriptLines
             path.Replace("{temp}", StandIn),
             @"\\u([0-9A-Fa-f]{4})",
             match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString());
+        // The engine fills the escapes into the whole line before it splits a quoted path, so a quote that appears
+        // only now (") would make it split another path than the one checked here: refused.
+        if (filled.Contains('"'))
+        {
+            return false;
+        }
+
         try
         {
             var full = Path.GetFullPath(Path.Combine(StandIn, filled));

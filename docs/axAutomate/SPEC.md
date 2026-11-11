@@ -196,7 +196,11 @@ keys in place of its words on a line:
   `\uXXXX` are filled in) makes the workflow unrunnable before anything runs, "step 3 writes outside the run's folder:
   ..\x.md" (`ScriptLines.CannotRun` with `confined`). A `run` step's command line is not confined: it runs through
   Windows' `cmd.exe` by its full path (S-1), in the run's folder but on the user's own desktop, with the user's files
-  and rights, so it is asked for first (AU-D11). The command line (`tools/AxAutomate`) is unchanged: it runs its
+  and rights, so it is asked for first (AU-D11). These two are guards against slips, not a sandbox: a workflow
+  still drives axKit's own windows, and those windows reach what the user can (`start down` on one of the user's
+  files followed by keys that change and save it, axFile's operations, a command typed into axTerminal's field), none
+  of which is confined or asked about. A workflow is a program: run only workflows you wrote or trust, as the guide
+  and the F1 text say. The command line (`tools/AxAutomate`) is unchanged: it runs its
   scripts as they are, without the confinement and without the question.
 
 ## 6a. The first version: a viewer (2026-11-11)
@@ -257,7 +261,8 @@ keys in place of its words on a line:
   workflow runs commands on your computer: git init. Run it?" (for a folder, "These workflows run ... Run them?"),
   with Run and Cancel, Cancel the default, so that Enter and Escape both decline; Cancel says "Not run" and nothing of
   the run starts (taken by the assistant at review, 2026-11-11, for the user to confirm). The commands act on the
-  user's own desktop and files, which the run's own desktop does not cover, and a workflow file may come from anyone;
+  user's own desktop and files, which the run's own desktop does not cover; the notice is a guard against a slip,
+  not a check of a workflow from someone else, which can still act through axKit's windows (AU-6b.8);
   the question is asked once per F5, on the run's thread after the files are read, so it names what will really run.
   To reverse: drop `CommandsAllowed` in `AutomateForm.Run.cs`.
 

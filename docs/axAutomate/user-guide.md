@@ -59,6 +59,10 @@ computer, with your files, as if you typed them. So before a run with one, a not
 commands on your computer: git init. Run it?". Cancel is the default, so Enter and Escape both decline and you hear
 "Not run"; Alt+R, or Tab to Run and Enter, runs it.
 
+These two guards catch slips; they do not make a workflow safe. A workflow drives axKit's windows, and those
+reach what you can: it can open one of your files in axDown and save it changed, use axFile's operations, or type a
+command into axTerminal, without a question. A workflow is a program: run only workflows you wrote or trust.
+
 While steps pass, nothing is said. A step that fails is said as it ends, with what was expected and what the run saw:
 "Step 2 failed: Expect the focus: Nothing like this. Not within 10 s; seen: ...". When a workflow ends you hear one
 line, "01-passes passed, 4 steps" or "02-fails failed at step 2", and after a folder's run, "Run finished: 3 of 5

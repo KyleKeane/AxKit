@@ -116,6 +116,8 @@ public sealed class EngineTests
         Assert.Contains("step 1 writes outside", Script("silence \\x.wav 500"));
         Assert.Contains("step 1 writes outside", Script("file \\u002e\\u002e\\x.md text"));
         Assert.Contains("step 1.1 writes outside", Script("try said x", "iffound file ..\\x.md y"));
+        // A quote made by an escape would let the engine split another path than the one checked.
+        Assert.Contains("step 1 writes outside", Script("file \\u0022..\\x.md\\u0022 text"));
         Assert.Contains("step 1 writes outside", ScriptLines.Prepare(WorkflowFile.Parse("""{"format": "axkit-workflow 1", "steps": [{"do": "mkdir", "path": "D:\\x"}]}""", "w", @"C:\w.workflow.json"), nvda: false, confined: true).Refusal);
 
         // The command line runs its scripts as they are.
