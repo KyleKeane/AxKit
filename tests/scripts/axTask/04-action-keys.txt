@@ -15,7 +15,7 @@ keys ctrl+0
 expect said All tasks
 # Into Home: Ctrl+3 has no action; Ctrl+1 sets Done as one step, which Ctrl+Z takes back.
 keys left
-keys ctrl+down
+keys home
 keys down
 expect focus Home, list, 1 item
 keys right

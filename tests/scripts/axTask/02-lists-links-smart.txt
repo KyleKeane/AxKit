@@ -7,12 +7,9 @@ file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "T
 file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
 
 start task {temp}\tasks
-expect focus Smart lists, section, 1 smart list
-keys down
-expect focus All tasks, 2 not done
+expect focus User lists, section, 2 lists
 
 # 1.8 A list's details: its fields, then the fields its new items get.
-keys down
 keys down
 expect focus Home, list, 2 items
 keys tab
@@ -113,9 +110,7 @@ file tasks\Odd.filter.json {"conditions": [{"field": "Due", "soon": true}]}
 file tasks\Soon.filter.json {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}, {"field": "Due", "before": "2099-11-30"}]}
 keys left
 keys f5
-keys home
-keys down
-keys down
+type od
 expect focus Odd, smart list, a condition not understood
 keys down
 expect focus Soon, smart list, 1

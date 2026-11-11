@@ -5,25 +5,24 @@ using AxTask.Core;
 namespace AxTask;
 
 /// <summary>
-/// The user's other folders of lists, gathered (SPEC.md TK-7b, 2026-11-11): the project folders in Options, the Projects
-/// row of the top level and its level, a project entered as a top folder of its own, and the search across every
-/// list (Ctrl+Shift+F). Finding the projects and searching read the disk off the UI thread (<see cref="Projects"/>).
+/// The user's other folders of lists, gathered (SPEC.md TK-7b, 2026-11-11): the project folders in Options, a section
+/// of the top level for each with the folders of lists found under it, a project entered as a top folder of its own,
+/// and the search across every list (Ctrl+Shift+F). Finding the projects and searching read the disk off the UI thread
+/// (<see cref="Projects"/>).
 /// </summary>
 public sealed partial class TaskForm
 {
-    /// <summary>The Projects row's key and its Tag.</summary>
-    private const string ProjectsKey = "projects:";
-
-    private static readonly object ProjectsTag = new();
-
-    /// <summary>A project's row in the Projects level.</summary>
+    /// <summary>A project's row, in the section of the project folder it was found under.</summary>
     private sealed record ProjectTag(TaskProject Project);
+
+    /// <summary>The header row of a project folder's section (TK-7b.3): the folder as the settings hold it.</summary>
+    private sealed record ProjectSectionTag(string Root);
 
     /// <summary>A row of the search's level: what was found, and the item as read for this fill.</summary>
     private sealed record FoundItem(SearchHit Hit, ItemFile Item);
 
     /// <summary>Where a search was started from, to go back to with Left or Escape.</summary>
-    private sealed record SearchReturn(string? Project, string? ProjectName, string Folder, SmartList? Smart, bool AtProjects, string? Select);
+    private sealed record SearchReturn(string? Project, string? ProjectName, string Folder, SmartList? Smart, string? Select);
 
     /// <summary>The search's level: the words, what they found, and where it was started from.</summary>
     private sealed record SearchLevel(string Words, IReadOnlyList<SearchHit> Hits, SearchReturn Back);
@@ -32,9 +31,6 @@ public sealed partial class TaskForm
     private string? _project;
 
     private string? _projectName;
-
-    /// <summary>Whether the level is the Projects level (TK-7b.3).</summary>
-    private bool _atProjects;
 
     private SearchLevel? _search;
 
@@ -54,8 +50,8 @@ public sealed partial class TaskForm
 
     private readonly List<ToolStripItem> _projectFolderItems = [];
 
-    /// <summary>Whether the level is the search's or the Projects level, where nothing is made or moved.</summary>
-    private bool Gathered => _search is not null || _atProjects;
+    /// <summary>Whether the level is the search's, where nothing is made or moved.</summary>
+    private bool Gathered => _search is not null;
 
     private bool InSearch() => _search is not null && InNavigator();
 
@@ -98,18 +94,32 @@ public sealed partial class TaskForm
 
     /// <summary>
     /// Options → Project folders → Add a project folder… (TK-7b.1): a typed path, or, with the field left empty, the
-    /// Windows folder picker; "Added Projects, looking for lists".
+    /// Windows folder picker; then the user's own top level on the folder's new section, "Added Projects in Work,
+    /// looking for lists".
     /// </summary>
     private void AddProjectFolder()
     {
         AskText("Add a project folder",
-            "A folder axTask looks in for your other folders of lists, four folders down. They show under Projects, the first line of the top level. Leave the field empty and press Enter to choose the folder with the Windows folder picker.",
+            "A folder axTask looks in for your other folders of lists, four folders down. Each project folder is a section of the top level, after your own lists, named Projects in and the folder's name. Leave the field empty and press Enter to choose the folder with the Windows folder picker: there, Enter opens a folder, and the Select Folder button chooses the one you are in.",
             "Type the folder's path, or leave it empty for the folder picker:", "Type the folder's path, or leave it empty for the folder picker", string.Empty, "&Add",
             typed =>
             {
+                // Once the notice has closed: the picker remembers the control in focus to give it back, which must be
+                // the navigator, never the notice's field (heard 2026-11-11: the empty field read again after the picker).
                 var path = typed.Trim();
-                if (path.Length == 0)
+                BeginInvoke(() =>
                 {
+                    if (IsDisposed)
+                    {
+                        return;
+                    }
+
+                    if (path.Length > 0)
+                    {
+                        AddChosenProjectFolder(path, afterDialog: false);
+                        return;
+                    }
+
                     if (ChooseFolder("Choose a folder with your projects") is not { } chosen)
                     {
                         return;
@@ -117,32 +127,69 @@ public sealed partial class TaskForm
 
                     if (_settings.RefusedProjectFolder(chosen) is { } why)
                     {
-                        Announce(why, true);
+                        SayAfterDialog(why);
                         return;
                     }
 
-                    path = chosen;
-                }
-
-                var added = _settings.AddProjectFolder(path);
-                SaveSettings();
-                _projects = null;
-                FindProjects();
-                RefillGathered();
-                Announce($"Added {PathName.Of(added)}, looking for lists", true);
+                    AddChosenProjectFolder(chosen, afterDialog: true);
+                });
             },
             typed => typed.Trim().Length == 0 ? null : _settings.RefusedProjectFolder(typed), required: false);
     }
 
-    /// <summary>Options → Project folders → Remove a project folder ▸ one folder (TK-7b.1): "Removed Projects"; its projects go from the Projects level.</summary>
+    /// <summary>The folder kept, looked in, and its section selected on the user's own top level (TK-7b.1).</summary>
+    private void AddChosenProjectFolder(string path, bool afterDialog)
+    {
+        var added = _settings.AddProjectFolder(path);
+        SaveSettings();
+        _projects = null;
+        _search = null;
+        _project = null;
+        _projectName = null;
+        _smart = null;
+        _folder = TopFolder;
+        RememberLevel();
+        Fill(ProjectSectionKey(added));
+        Navigator.Select();
+        FindProjects();
+        var said = $"Added {ProjectSectionName(added)}, looking for lists";
+        if (afterDialog)
+        {
+            SayAfterDialog(said);
+        }
+        else
+        {
+            Announce(said, true);
+        }
+    }
+
+    /// <summary>
+    /// Said once the window is in front again after a Windows dialog: an announcement raised as the dialog closes is lost
+    /// under NVDA's reading of the window coming back (heard 2026-11-11).
+    /// </summary>
+    private void SayAfterDialog(string text)
+    {
+        var timer = new System.Windows.Forms.Timer { Interval = 500 };
+        timer.Tick += (_, _) =>
+        {
+            timer.Stop();
+            timer.Dispose();
+            if (!IsDisposed)
+            {
+                Announce(text, true);
+            }
+        };
+        timer.Start();
+    }
+
+    /// <summary>Options → Project folders → Remove a project folder ▸ one folder (TK-7b.1): "Removed Projects"; its section goes from the top level.</summary>
     private void RemoveProjectFolder(string folder)
     {
         _settings.ProjectFolders.RemoveAll(path => path.Equals(folder, StringComparison.OrdinalIgnoreCase));
         SaveSettings();
-        if (_settings.ProjectFolders.Count == 0 && _search is null && (_atProjects || _project is not null))
+        if (_project is not null && _search is null && (_projects ?? []).Any(project => project.Path.Equals(_project, StringComparison.OrdinalIgnoreCase) && project.Root.Equals(folder, StringComparison.OrdinalIgnoreCase)))
         {
-            // TK-7b.1: with no project folder left, the Projects level or a project shown gives way to the user's own top level.
-            _atProjects = false;
+            // TK-7b.1: a project shown from the folder removed gives way to the user's own top level.
             _project = null;
             _projectName = null;
             _smart = null;
@@ -159,12 +206,12 @@ public sealed partial class TaskForm
     }
 
     /// <summary>
-    /// The level read again when it shows the Projects row or level, the selection kept and a changed row rewritten in
-    /// place (<see cref="ItemForm.Refill"/>); nothing said.
+    /// The user's own top level read again, which holds the projects' sections, the selection kept and a changed row
+    /// rewritten in place (<see cref="ItemForm.Refill"/>); nothing said.
     /// </summary>
     private void RefillGathered()
     {
-        if (_search is null && _project is null && (AtTop || _atProjects))
+        if (_search is null && _project is null && AtTop)
         {
             Refill();
         }
@@ -172,10 +219,10 @@ public sealed partial class TaskForm
 
     /// <summary>
     /// The level by its state, not by the status bar's place, which a look ending during an AI tool's question can
-    /// rewrite (MC-7.3): the project, the folder, the smart list, the Projects level and the search's words.
+    /// rewrite (MC-7.3): the project, the folder, the smart list and the search's words.
     /// </summary>
     protected override string LevelIdentity() =>
-        $"{_project}\n{_folder}\n{(_smart is null ? "" : _smart.Path ?? SmartList.AllTasksName)}\n{_atProjects}\n{_search?.Words}";
+        $"{_project}\n{_folder}\n{_smart?.Key}\n{_search?.Words}";
 
     /// <summary>Whether a look or a search that ends now must leave the panes alone: a notice is open, or a rename in place.</summary>
     private bool Busy => NoticeOpen || Navigator.Renaming || DetailPane.Renaming;
@@ -191,7 +238,7 @@ public sealed partial class TaskForm
         }
     }
 
-    /// <summary>The projects looked for again, off the UI thread (TK-7b.2); the Projects row and level filled when they come.</summary>
+    /// <summary>The projects looked for again, off the UI thread (TK-7b.2); the projects' sections filled when they come.</summary>
     private void FindProjects()
     {
         var run = ++_findRun;
@@ -212,7 +259,6 @@ public sealed partial class TaskForm
             }
 
             // TK-7b.2: the panes change only when what was found did, and never under a notice or a rename in place.
-            var waiting = _projects is null && _atProjects;
             var changed = _projects is null || !_projects.SequenceEqual(found);
             _projects = found;
             if (!changed)
@@ -227,28 +273,32 @@ public sealed partial class TaskForm
             }
 
             RefillGathered();
-            if (waiting)
-            {
-                AnnounceLevel();
-            }
         });
     }
 
-    /// <summary>"Projects, 5 lists": the first row of the top level while project folders are set (TK-7b.3).</summary>
-    private ItemRow ProjectsRow() =>
-        new(true, ProjectsKey, "Projects", _projects is null ? "Projects, looking for lists" : $"Projects, {Count(_projects.Sum(project => project.Lists), "list")}", ProjectsTag);
+    /// <summary>"Projects in Work": a project folder's section, named after the folder (TK-7b.3).</summary>
+    private static string ProjectSectionName(string root) => "Projects in " + PathName.Of(root);
 
-    /// <summary>The Projects level: each project by name with its count of lists.</summary>
-    private string ReadProjects(List<ItemRow> rows)
+    private static string ProjectSectionKey(string root) => "projects:" + root;
+
+    /// <summary>
+    /// A section for each project folder, in the order they were added (TK-7b.3): "Projects in Work, section, 2
+    /// projects", "looking for lists" until the first look ends, "none found" when it found nothing; under it each
+    /// project found there, "alpha, project, 3 lists".
+    /// </summary>
+    private void AddProjectSections(List<ItemRow> rows)
     {
-        foreach (var project in _projects ?? [])
+        foreach (var root in _settings.ProjectFolders)
         {
-            rows.Add(new ItemRow(true, project.Path, project.Name, $"{project.Name}, {Count(project.Lists, "list")}", new ProjectTag(project)));
+            var name = ProjectSectionName(root);
+            var found = (_projects ?? []).Where(project => project.Root.Equals(root, StringComparison.OrdinalIgnoreCase)).ToList();
+            var state = _projects is null ? "looking for lists" : found.Count == 0 ? "none found" : Count(found.Count, "project");
+            rows.Add(new ItemRow(false, ProjectSectionKey(root), name, $"{name}, section, {state}", new ProjectSectionTag(root), IsSection: true));
+            foreach (var project in found)
+            {
+                rows.Add(new ItemRow(true, project.Path, project.Name, $"{project.Name}, project, {Count(project.Lists, "list")}", new ProjectTag(project)));
+            }
         }
-
-        return _projects is null ? "Projects, looking for lists"
-            : _projects.Count == 0 ? "Projects, none found: Options, Project folders"
-            : $"Projects, {Count(_projects.Count, "project")}";
     }
 
     /// <summary>The search's level (TK-7b.4): each item found, read again, "Fix the tap, in alpha / Home".</summary>
@@ -314,12 +364,11 @@ public sealed partial class TaskForm
                 return;
             }
 
-            var back = _search?.Back ?? new SearchReturn(_project, _projectName, _folder, _smart, _atProjects, SelectedKey());
+            var back = _search?.Back ?? new SearchReturn(_project, _projectName, _folder, _smart, SelectedKey());
             _search = new SearchLevel(words, hits, back);
             _project = null;
             _projectName = null;
             _smart = null;
-            _atProjects = false;
             _folder = TopFolder;
             Fill(select: null);
             Navigator.Select();
@@ -337,7 +386,6 @@ public sealed partial class TaskForm
         }
 
         _search = null;
-        _atProjects = false;
         _smart = null;
         var home = _settings.TopFolder;
         var inHome = found.Hit.Top.Equals(home, StringComparison.OrdinalIgnoreCase);
@@ -358,11 +406,10 @@ public sealed partial class TaskForm
         _projectName = back.ProjectName;
         _folder = back.Folder;
         _smart = back.Smart;
-        _atProjects = back.AtProjects;
         return back.Select ?? string.Empty;
     }
 
-    /// <summary>The detail pane of the Projects row and of a project.</summary>
+    /// <summary>The detail pane of a project folder's section and of a project.</summary>
     private ItemDetail ProjectDetail(ItemRow row) => row.Tag is ProjectTag { Project: var project }
         ? new ItemDetail("Details of " + project.Name, null, null,
         [
@@ -370,10 +417,10 @@ public sealed partial class TaskForm
             new ItemDetailLine("Its folder: " + project.Path),
             new ItemDetailLine("Right opens it as a top folder of its own: its lists, smart lists and Archive, changed in place"),
         ])
-        : new ItemDetail("Details of Projects", null, null,
+        : new ItemDetail("Details of " + row.Name, null, null,
         [
             new ItemDetailLine(row.Label),
-            new ItemDetailLine(_settings.ProjectFolders.Count == 1 ? "Found under 1 project folder: " + _settings.ProjectFolders[0] : $"Found under {_settings.ProjectFolders.Count} project folders: {string.Join(", ", _settings.ProjectFolders)}"),
-            new ItemDetailLine("Every folder holding a list, four folders down; Options, Project folders adds and removes them. Ctrl+Shift+F finds words in every list"),
+            new ItemDetailLine("The project folder: " + ((ProjectSectionTag)row.Tag!).Root),
+            new ItemDetailLine("Every folder holding a list, four folders down; Options, Project folders adds and removes project folders. Ctrl+Shift+F finds words in every list"),
         ]);
 }

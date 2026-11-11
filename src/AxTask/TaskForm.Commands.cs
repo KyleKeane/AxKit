@@ -63,8 +63,8 @@ public sealed partial class TaskForm
 
         if (Gathered)
         {
-            // TK-7b.3, TK-7b.4: items are made in a list where it lives.
-            Announce(_atProjects ? "A project's items are made in its lists: Right on a project, then on a list" : "Items are made in a list: open the item where it lives first, Enter", true);
+            // TK-7b.4: items are made in a list where it lives.
+            Announce("Items are made in a list: open the item where it lives first, Enter", true);
             return;
         }
 
@@ -117,10 +117,10 @@ public sealed partial class TaskForm
         }, typed => ItemFolder.RefusedListName(folder, typed) ?? (typed.Trim().Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase) ? "Archive is the archive's own name" : null));
     }
 
-    /// <summary>Why no list is made in the Projects level or the search's (TK-7b.3, TK-7b.4); null where lists are made.</summary>
-    private string? RefusedNewList() => !Gathered ? null
-        : _atProjects ? "A project's lists are made inside it: Right on a project first"
-        : "Lists are made among the sections: Left first";
+    /// <summary>Why no list is made here: in the search's level (TK-7b.4), or on a project's row or section (TK-7b.3); null where lists are made.</summary>
+    private string? RefusedNewList() => Gathered ? "Lists are made among the sections: Left first"
+        : SelectedRow() is { Tag: ProjectTag or ProjectSectionTag } ? "A project's lists are made inside it: Right on a project first"
+        : null;
 
     /// <summary>
     /// List, Move to section (Ctrl+M, TK-3a.3): the list's Section field set from a list of the sections there are,
@@ -200,12 +200,12 @@ public sealed partial class TaskForm
     {
         { Tag: SectionTag { Custom: true } } => "A section is renamed by moving its lists: Ctrl+M on each",
         { Tag: SectionTag } => "This section keeps its name",
-        { Tag: SmartList { Path: null } } => "All tasks is built in and keeps its name",
+        { Tag: SmartList { BuiltIn: true } smart } => smart.Name + " is built in and keeps its name",
         { Tag: SmartList } => "Rename a smart list's file in axFile: Ctrl+E",
         { Tag: ItemFile } => null,
         { Tag: FoundItem } => "Open it where it lives first: Enter",
         { Tag: ProjectTag } => "A project's folder is renamed in axFile: Ctrl+E",
-        _ when ReferenceEquals(row.Tag, ProjectsTag) => "Projects keeps its name",
+        { Tag: ProjectSectionTag } => "A project folder's section keeps its folder's name",
         _ when ReferenceEquals(row.Tag, ArchivedItemsTag) || IsArchiveFolder(row.Key) => "The Archive keeps its name",
         _ => null,
     };
@@ -291,7 +291,7 @@ public sealed partial class TaskForm
             return;
         }
 
-        if (row.Tag is ProjectTag || ReferenceEquals(row.Tag, ProjectsTag))
+        if (row.Tag is ProjectTag or ProjectSectionTag)
         {
             Announce("A project stays: Options, Project folders removes the folder it was found in", true);
             return;
@@ -479,14 +479,17 @@ public sealed partial class TaskForm
             case { Tag: ProjectTag }:
                 Announce("A project is a folder: Ctrl+E shows it in axFile", true);
                 return;
-            case { Tag: var projects } when ReferenceEquals(projects, ProjectsTag):
-                Announce("Projects gathers folders: Options, Project folders lists them", true);
+            case { Tag: ProjectSectionTag }:
+                Announce("A project folder gathers folders: Options, Project folders lists them", true);
+                return;
+            case { Tag: SectionTag }:
+                Announce("A section is its lists' Section field: Ctrl+J on a list", true);
                 return;
             case { Tag: SmartList { Path: { } filter } }:
                 WindowMenu.Start(Dispatch.AxJSON, filter);
                 return;
-            case { Tag: SmartList }:
-                Announce("All tasks is built in: List, New smart list makes one to change", true);
+            case { Tag: SmartList smart }:
+                Announce(smart.Name + " is built in: List, New smart list makes one to change", true);
                 return;
             case { } row:
                 var listFile = Path.Combine(row.Key, ItemDocument.ListFile);
@@ -508,7 +511,13 @@ public sealed partial class TaskForm
 
     /// <summary>Ctrl+E: the selection's file or folder in axFile; the folder shown when nothing is selected.</summary>
     private void ShowInAxFile() =>
-        WindowMenu.Start(Dispatch.AxFile, SelectedRow() is { } row && row.Tag is not SmartList { Path: null } && !ReferenceEquals(row.Tag, ProjectsTag) ? row.Key : _smart is null ? _folder : TopFolder);
+        WindowMenu.Start(Dispatch.AxFile, SelectedRow() switch
+        {
+            { Tag: ProjectSectionTag header } => header.Root,
+            { Tag: SmartList { BuiltIn: true } or SectionTag } => TopFolder,
+            { } row => row.Key,
+            null => _smart is null ? _folder : TopFolder,
+        });
 
     private void ChooseTopFolder()
     {
@@ -523,7 +532,6 @@ public sealed partial class TaskForm
         _undo.Clear();
         _smart = null;
         _search = null;
-        _atProjects = false;
         _project = null;
         _projectName = null;
         _folder = TopFolder;

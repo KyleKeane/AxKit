@@ -1,6 +1,6 @@
 # axTask: the project folders (docs/axTask/SPEC.md TK-7b, TK-D6 to TK-D9; docs/axTask/nvda-test-plan.md section 6): the
-# folders of lists found under them as Projects, a project entered and changed in place, a project folder added by its
-# typed path, and the search across every list.
+# folders of lists found under them in a section for each project folder, a project entered and changed in place, a
+# project folder added by its typed path, and the search across every list.
 file "tasks\Home\Buy a tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Buy a tap"}, {"title": "Done", "type": "check", "value": false}]}
 file projects\alpha\tasks\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
 file "projects\alpha\tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Notes", "type": "longtext", "value": "A washer of 15 mm"}]}
@@ -12,33 +12,46 @@ file home\AxKit\axTask.json {"checkForUpdates": false}
 # The settings file names the first project folder by its full path, which only the run knows.
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('home\AxKit\axTask.json', (ConvertTo-Json -InputObject @{checkForUpdates=$false; projectFolders=@((Resolve-Path 'projects').Path)}))"
 
-# 6.1 Projects is the first row while project folders are set; the lists are counted once they are found.
+# 6.1 Each project folder is a section after the user's own lists, its projects under it once they are found.
 start task {temp}\tasks
-expect focus Projects, 2 lists
+expect focus User lists, section, 1 list
 check commands
+keys ctrl+down
+expect focus Projects in projects, section, 2 projects
 keys down
-expect focus Smart lists, section, 1 smart list
-keys up
-keys right
-expect said ! Projects, 2 projects, tasks in alpha, 1 list
+expect focus tasks in alpha, project, 1 list
 keys down
-expect focus tasks in beta, 1 list
-keys up
+expect focus tasks in beta, project, 1 list
+keys ctrl+down
+expect focus Smart lists, section, 5 smart lists
+keys down
+expect focus All tasks, 1 not done
+keys down
+expect focus Overdue, 0
+keys down
+keys down
+keys down
+expect focus No due date, 1
+keys ctrl+up
+keys ctrl+up
+expect focus Projects in projects, section, 2 projects
+keys down
+expect focus tasks in alpha, project, 1 list
 keys ctrl+shift+n
 expect said ! A project's lists are made inside it: Right on a project first
 keys delete
 expect said ! A project stays: Options, Project folders removes the folder it was found in
-keys ctrl+n
-expect said ! A project's items are made in its lists: Right on a project, then on a list
 menu New GitHub list
 expect said ! A project's lists are made inside it: Right on a project first
 
 # 6.5 A project is a top folder of its own: its sections, its All tasks, a task marked done in place and undone.
 keys right
-expect said ! tasks in alpha, 1 list, Smart lists, section, 1 smart list
+expect said ! tasks in alpha, 1 list, User lists, section, 1 list
+keys ctrl+down
+expect focus Smart lists, section, 5 smart lists
 keys down
 expect focus All tasks, 1 not done
-keys down
+keys home
 keys down
 expect focus Home, list, 1 item
 keys right
@@ -51,9 +64,7 @@ expect said ! Undone: Done: Fix the tap
 keys left
 expect said ! tasks in alpha, 1 list, Home, list, 1 item
 keys left
-expect said ! Projects, 2 projects, tasks in alpha, 1 list
-keys left
-expect said ! Lists, 1 list, Projects, 2 lists
+expect said ! Lists, 1 list, tasks in alpha, project, 1 list
 keys left
 expect said ♪ Edge
 
@@ -70,14 +81,12 @@ expect said ! That is your own top folder: its lists show at the top already
 keys ctrl+a
 type {temp}\more
 keys enter
-expect said ! Added more, looking for lists
-expect focus Projects, 3 lists
+expect said ! Added Projects in more, looking for lists
+expect focus Projects in more, section, 1 project
 keys f5
-expect focus Projects, 3 lists
-keys right
-expect said ! Projects, 3 projects, gamma, 1 list
-keys left
-expect focus Projects
+expect focus Projects in more, section, 1 project
+keys down
+expect focus gamma, project, 1 list
 
 # 6.7 to 6.9 The search across every list: nothing found, then three items, one opened where it lives, then back.
 keys ctrl+shift+f
@@ -97,9 +106,10 @@ keys tab
 expect focus Title, text, Fix the tap
 keys shift+tab
 keys escape
-expect said ! Lists, 1 list, Projects
+expect said ! Lists, 1 list, gamma, project, 1 list
 # The user's own list open, so that it is the list open last (TK-7b.3).
-keys end
+keys home
+keys down
 expect focus Home, list, 1 item
 keys right
 expect said ! Home, 1 item, Buy a tap
@@ -120,12 +130,12 @@ run powershell -NoProfile -Command "if (-not ((Get-Content 'home\AxKit\axTask.js
 keys left
 expect said ! tasks in alpha, 1 list, Home, list, 1 item
 
-# 6.10 A project's list is never the list open last (TK-7b.3); the last project folder removed while a project is shown
-# goes back to the user's own lists (TK-7b.1).
+# 6.10 A project's list is never the list open last (TK-7b.3); the project folder a shown project was found under,
+# removed, goes back to the user's own lists (TK-7b.1).
 keys right
 expect said ! Home, 1 item, Fix the tap
 run powershell -NoProfile -Command "if (-not ((Get-Content 'home\AxKit\axTask.json' -Raw -ErrorAction Stop) -match 'lastList.:\s*.Home')) { exit 1 }"
 menu 1. projects
-expect said ! Removed projects
+expect said ! Removed projects. Lists, 1 list
 menu 1. more
-expect said ! Removed more. Lists, 1 list
+expect said ! Removed more
