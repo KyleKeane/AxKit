@@ -1,14 +1,14 @@
 # Makes the files for the manual NVDA tests, and puts them back as they were after a test changed them.
 # Every app folder is emptied except its _main.md, then filled again. Git ignores everything made here.
 # Usage: .\manual_tests\prepare.ps1            (all apps)
-#        .\manual_tests\prepare.ps1 axfile     (one app: axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axtask, axpass)
+#        .\manual_tests\prepare.ps1 axfile     (one app: axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axtask, axpass, axautomate)
 # Close the axKit windows that have these files open first: a file in use cannot be replaced.
 
 param([string]$App = '')
 
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
-$apps = @('axclaude', 'axdown', 'axjson', 'axgit', 'axterminal', 'axfile', 'axmedia', 'axpreview', 'axtask', 'axpass')
+$apps = @('axclaude', 'axdown', 'axjson', 'axgit', 'axterminal', 'axfile', 'axmedia', 'axpreview', 'axtask', 'axpass', 'axautomate')
 if ($App -ne '') {
     if ($apps -notcontains $App) { throw "Unknown app '$App'. One of: $($apps -join ', ')" }
     $apps = @($App)
@@ -529,6 +529,35 @@ function Build-AxClaude([string]$d) {
     Write-Text (Join-Path $proj 'plain.txt') $plain
 }
 
+function Build-AxAutomate([string]$d) {
+    # A slow workflow for plan 5.5 and 5.6: F5 on it, then work in another window while it types.
+    $lines = @(
+        '# A slow run for the by-ear check: axDown on a scratch file, typed into a sentence at a time, about half a minute.',
+        'file home\AxKit\axDown.json {"checkForUpdates": false}',
+        'file slow.md Typed by axAutomate.',
+        '',
+        'start down {temp}\slow.md',
+        'expect focus Typed by axAutomate.',
+        'keys ctrl+end enter',
+        'wait 3000',
+        'type The first sentence, typed while you work.',
+        'wait 5000',
+        'keys enter',
+        'type The second sentence, five seconds later.',
+        'wait 5000',
+        'keys enter',
+        'type The third sentence.',
+        'wait 5000',
+        'keys enter',
+        'type The fourth sentence.',
+        'wait 5000',
+        'keys enter',
+        'type The last sentence.',
+        'expect state Line 6',
+        'wait 3000')
+    Write-Text (Join-Path $d 'slow-typing.txt') (($lines -join "`r`n") + "`r`n")
+}
+
 # ---- empty each app folder but its _main.md, then fill it ----
 
 foreach ($name in $apps) {
@@ -546,6 +575,7 @@ foreach ($name in $apps) {
         'axpreview' { Build-AxPreview $folder }
         'axtask' { Build-AxTask $folder }
         'axpass' { Build-AxPass $folder }
+        'axautomate' { Build-AxAutomate $folder }
     }
 }
 

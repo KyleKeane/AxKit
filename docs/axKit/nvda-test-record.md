@@ -6,6 +6,18 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-11, afternoon: the push's by-ear steps, by the user (`main` c992849)
+
+By the user with NVDA, answers given one step at a time through the assistant's questions, Windows 11 Pro 10.0.26200,
+a development build of `main` c992849.
+
+| Plan | Steps | Result |
+| --- | --- | --- |
+| axDown | 2.5a, "new line" after NVDA's echo of a typed word, and on an empty line | Passed: "sounds right" |
+| axTask | 7, a real Claude Code session adding an item (`axkit_task_add`), "Claude added X to tools", Ctrl+Z twice | Passed, once the user was in axTask (the first add came while the user was in axClaude; a second add made too early was refused by the user-busy guard, MC-7.8, as it should) |
+| axTask | 6.3, 6.4, Options, Project folders, Add a project folder with the folder picker | Failed: after choosing the folder in the picker the user was back in an empty field, never heard "Added", and found no Projects row; the folder was saved to the settings. Fix and the user's new top level (asked in the same answer) on branch `axtask-top` |
+| axAutomate | 5.5, 5.6, F5 on a slow workflow (`manual_tests/axAutomate/slow-typing.txt`) while working in another window | Passed: "keys stayed mine" |
+
 ## 2026-11-11, the day's third push: every app, by the assistant through nvda-pass.ps1 (`main` 5f734ba)
 
 Run by the assistant with NVDA 2025.3.3 listening, the user still away, Windows 11 Pro 10.0.26200, a development build
