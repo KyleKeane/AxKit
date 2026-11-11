@@ -170,6 +170,13 @@ public sealed partial class TaskForm
         }
     }
 
+    /// <summary>
+    /// The level by its state, not by the status bar's place, which a look ending during an AI tool's question can
+    /// rewrite (MC-7.3): the project, the folder, the smart list, the Projects level and the search's words.
+    /// </summary>
+    protected override string LevelIdentity() =>
+        $"{_project}\n{_folder}\n{(_smart is null ? "" : _smart.Path ?? SmartList.AllTasksName)}\n{_atProjects}\n{_search?.Words}";
+
     /// <summary>Whether a look or a search that ends now must leave the panes alone: a notice is open, or a rename in place.</summary>
     private bool Busy => NoticeOpen || Navigator.Renaming || DetailPane.Renaming;
 

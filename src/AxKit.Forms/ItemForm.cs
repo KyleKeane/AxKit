@@ -41,6 +41,9 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The detail pane's content now; its document is what the field commands change.</summary>
     private ItemDetail _shown = new("Details", null, null, []);
 
+    /// <summary>A refill changed the selected row while the detail pane had the focus: the pane is made again when the focus reaches the navigator.</summary>
+    private bool _detailStale;
+
     protected ItemForm(string appName, WindowSettings settings, string settingsPath, string? settingsError)
         : base(appName, settings, settingsPath, settingsError)
     {
@@ -48,6 +51,13 @@ public abstract partial class ItemForm : AxKitForm
         Navigator.TabIndex = 0;
         Navigator.Names = () => _rows.Select(row => row.Name).ToList();
         Navigator.SelectedIndexChanged += (_, _) => FillDetail();
+        Navigator.Enter += (_, _) =>
+        {
+            if (_detailStale)
+            {
+                FillDetail();
+            }
+        };
         DetailPane.Dock = DockStyle.Fill;
         DetailPane.TabIndex = 1;
         DetailPane.Names = () => _lines.Select(line => line.Field >= 0 && _shown.Document is { } document && line.Field < document.Fields.Count ? document.Fields[line.Field].Title : line.Line.Label).ToList();
@@ -180,11 +190,18 @@ public abstract partial class ItemForm : AxKitForm
 
     /// <summary>
     /// What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the navigator's selected row by its name,
-    /// told apart by the level it is in (the status bar's place, the list's folder) and its key (an item's file), so
-    /// that two items of one title in two lists are never one target.
+    /// told apart by the level it is in (<see cref="LevelIdentity"/>) and its key (an item's file), so that two items of
+    /// one title in two lists are never one target.
     /// </summary>
     protected override AxKit.Core.Mcp.RunTarget McpTarget() =>
-        SelectedRow() is { } row ? new AxKit.Core.Mcp.RunTarget(row.Name, $"{_placeLabel.Text}\n{row.Key}") : AxKit.Core.Mcp.RunTarget.None;
+        SelectedRow() is { } row ? new AxKit.Core.Mcp.RunTarget(row.Name, $"{LevelIdentity()}\n{row.Key}") : AxKit.Core.Mcp.RunTarget.None;
+
+    /// <summary>
+    /// The level shown, for <see cref="McpTarget"/>: the status bar's place by default; an app whose place can change
+    /// under a refill off the user's command (axTask's counts of found lists) names the level by its state instead, so
+    /// that a Run is never refused for a selection that did not change.
+    /// </summary>
+    protected virtual string LevelIdentity() => _placeLabel.Text ?? "";
 
     protected override void ApplyFont(Font font)
     {
@@ -492,9 +509,17 @@ public abstract partial class ItemForm : AxKitForm
         StatusLayout.Fit(_status, _nameLabel, _placeLabel);
         // The detail pane is made again only for a selected row whose words changed, and never under the user's focus
         // in it: a refill of other rows leaves the field the user is on alone.
-        if (!DetailPane.Focused && SelectedRow() != selectedBefore)
+        if (SelectedRow() != selectedBefore)
         {
-            FillDetail();
+            if (DetailPane.Focused)
+            {
+                // Made again, silently, once the user is back in the navigator.
+                _detailStale = true;
+            }
+            else
+            {
+                FillDetail();
+            }
         }
     }
 
@@ -520,6 +545,7 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The detail pane filled for the navigator's selection, silently; the field selected before kept when the same thing shows.</summary>
     protected void FillDetail()
     {
+        _detailStale = false;
         var keep = DetailPane.SelectedIndex;
         var detail = DetailOf(SelectedRow());
         var same = detail.Key is not null && string.Equals(detail.Key, _shown.Key, StringComparison.OrdinalIgnoreCase);
