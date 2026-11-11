@@ -56,6 +56,7 @@ public static class BundleHelp
         text.Append("  Ctrl+Plus, Ctrl+Minus: bigger or smaller text\r\n");
         // AX-7.8 (2026-11-11): NVDA says nothing for Enter, so every field that takes a line break says it.
         text.Append("  A line break typed into a field of several lines is said, new line; Options, Text, Say new line turns that off for every window\r\n");
+        text.Append("  A key that lands on a heading, in a list or a text, plays a short rising sound before it is read; Options, Text, Sound on headings turns that off for every window\r\n");
         text.Append("  Alt: the menu. Alt+F4: ").Append(altF4 ?? "close " + app).Append("\r\n");
         text.Append("  ").Append(BundleMenusLine).Append("\r\n");
         text.Append("\r\n");

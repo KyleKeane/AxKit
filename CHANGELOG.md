@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: a short rising sound plays when a key lands on a heading, before NVDA reads it: a section row in axTask, axPass, axMCP and axAutomate, and a Markdown heading in axDown, axPreview and every notice's text, by the arrows, the page keys, Home and End, typing a name or a heading jump. Only your own keys play it, never a list filled or a change the window makes. Options, Text, Sound on headings in any window turns it off for every window; it is on by default and kept in the theme file as `display.headingSound`.
+
 - axKit: an AI tool's command that you allow with Run is refused when the selection changed, now told by what is really selected rather than by its short name: in axFile the entries' full paths, so that report.pdf in another folder also named files no longer counts as the same, and in axTask and the other item apps the list and the item's file. In axGIT, with no file, commit or branch in hand (an empty list, or the details text focused), the question names what has the focus instead of nothing.
 
 - axAutomate: "Running ...; Escape stops it" is said once the run starts, after you answer the commands notice with Run; Cancel says only "Not run". The notice names the command lines as they will run, with a typed escape filled in and the run's own folder called "the run's folder".

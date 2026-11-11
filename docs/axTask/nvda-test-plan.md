@@ -13,6 +13,11 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
    list". Down: "All tasks, 3 not done". Ctrl+Down: "User lists, section, 2 lists"; Ctrl+Down: "Work, section, 1
    list"; Ctrl+Down: the edge sound; Ctrl+Up twice: back on User lists. Right on a header: the edge sound and "A
    section: Down goes into it". Down: "Home, list, 2 items".
+1a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/06-heading-sound.txt`). Down from All tasks onto "User lists,
+   section": a short rising sound before NVDA reads it; Down onto a list: none. Ctrl+Up and Ctrl+Down, Home and
+   type-to-find onto a header: the sound each time. Starting axTask, going into a list and back: no sound for the
+   window's own fill. With Options, Text, Sound on headings off: none. The same in axPass, axMCP and axAutomate on a
+   section header.
 2. Right: "Home, 2 items, Fix the tap, due 30 October". Down: "Water plants, done".
 3. Right on an item: the edge sound, nothing else. Left: "Lists, 3 lists, Home, list, 2 items". Left again: the edge
    sound.

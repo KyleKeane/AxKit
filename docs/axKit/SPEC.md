@@ -955,6 +955,20 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   and F1 text (`BundleHelp.Section`), kept in the theme file's display settings as `display.sayNewLine`
   (`docs/axKit/theme.md` TH-6.5), so that a change in one window holds in all; it says "Say new line on" or "Say new
   line off".
+- AX-7.9 A heading reached is heard before it is read (2026-11-11, the user: "an earcon as an option for each
+  navigation event that moves into a heading across all apps so that down arrow gives a sound before speaking a heading
+  title"). When the user's own key takes the selection onto a heading row of a list (a section of the item apps'
+  navigator, `ItemRow.IsSection`: axTask, axPass, axMCP, axAutomate) or the caret onto a Markdown heading's line in a
+  text (axDown's and axPreview's text, every notice's text), the window plays the heading sound (`Sounds.Heading`, a
+  low note leaping an octave, 85 ms, over before NVDA starts reading) as the key is handled, so that NVDA's reading
+  follows it: the arrows, the page keys, Home and End, type-to-find, the section and heading jumps alike. Only the
+  user's key counts (`AxKitList.UserMovedSelection`, `AxKitTextBox.UserMovedLine`, each measured around the key's own
+  handling): a fill, a refill or a move the window makes never sounds (AX-7.3), nor a key that changes the text or
+  selects; a heading wrapped over two rows sounds once. axJSON's text has no headings; the consoles' transcripts are
+  left out (their headings are line kinds the text does not mark unless Markers in the text is on). One setting for
+  every window, on by default: Options, Text, Sound on headings, in every window's menu, palette and F1 text, kept in
+  the theme file's display settings as `display.headingSound` (`docs/axKit/theme.md` TH-6.6); it says "Sound on
+  headings on" or "Sound on headings off".
 
 ## 5. Architecture
 
