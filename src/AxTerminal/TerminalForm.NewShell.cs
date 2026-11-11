@@ -40,9 +40,10 @@ internal sealed partial class TerminalForm
     /// </summary>
     private void NewSession()
     {
-        // AT-1.2a: only the shells this computer has; then the user's own, whatever they start.
+        // AT-1.2a: only the shells this computer has; then the user's own, whatever they start, an ampersand in a name
+        // doubled so that the radio button shows it rather than taking it for a mnemonic.
         var presets = ShellPresets.Where(preset => ShellThere(ShellLauncher.Parse(preset.Arguments[0])))
-            .Concat(_settings.UserShells.Select(shell => new SessionPreset(shell.Name, [UserShellPreset, shell.Name])))
+            .Concat(_settings.UserShells.Select(shell => new SessionPreset(shell.Name.Replace("&", "&&"), [UserShellPreset, shell.Name])))
             .ToArray();
         var selected = _userShell is { } user ? Array.FindIndex(presets, p => p.Arguments.Count > 1 && p.Arguments[1] == user.Name)
             : _shell == ShellKind.Custom ? presets.Length
@@ -146,11 +147,13 @@ internal sealed partial class TerminalForm
         }
 
         _userShellItems.Clear();
+        // AX-6: the numbers are mnemonics only where no fixed item of the submenu has the digit (PowerShell &7).
+        var taken = switchShell.DropDownItems.Cast<ToolStripItem>().Select(fixedItem => ShellMenuLabels.Mnemonic(fixedItem.Text ?? string.Empty)).OfType<char>().ToHashSet();
         var shells = _settings.UserShells;
         for (var i = 0; i < shells.Count; i++)
         {
             var shell = shells[i];
-            var item = new ToolStripMenuItem(AxKitWindows.Label(i, $"{shell.Name} ({shell.CommandLine})"), null, (_, _) => SwitchShell(shell))
+            var item = new ToolStripMenuItem(ShellMenuLabels.Switch(i, shell, taken), null, (_, _) => SwitchShell(shell))
             {
                 Checked = _userShell is { } user && string.Equals(user.Name, shell.Name, StringComparison.OrdinalIgnoreCase),
             };
@@ -168,7 +171,7 @@ internal sealed partial class TerminalForm
         for (var i = 0; i < shells.Count; i++)
         {
             var shell = shells[i];
-            var item = new ToolStripMenuItem(AxKitWindows.Label(i, shell.Name), null, (_, _) => RemoveUserShell(shell));
+            var item = new ToolStripMenuItem(ShellMenuLabels.Remove(i, shell), null, (_, _) => RemoveUserShell(shell));
             remove.DropDownItems.Add(item);
             _userShellItems.Add(item);
         }
@@ -199,21 +202,40 @@ internal sealed partial class TerminalForm
     }
 
     /// <summary>
-    /// Switch shell → Remove a shell ▸ one shell (AT-1.6a): taken off the list; "Removed <name>". The shell in use, when
-    /// it is the one removed, goes on running and is the custom shell from then on, with the same command line.
+    /// Switch shell → Remove a shell ▸ one shell (AT-1.6a): taken off the list (<see cref="TerminalSettings.RemoveUserShell"/>);
+    /// "Removed <name>". When it is the shell in use, the machine's default built-in shell starts in its place in the
+    /// same folder, the transcript kept, after the notice "Remove the shell?" while a command runs (Keep it keeps the
+    /// shell and the list as they were); the custom command line is left alone.
     /// </summary>
     private void RemoveUserShell(UserShell shell)
     {
-        _settings.UserShells.Remove(shell);
-        if (_userShell == shell)
+        if (_userShell is not { } inUse || !string.Equals(inUse.Name, shell.Name, StringComparison.OrdinalIgnoreCase))
         {
-            _customShell = shell.CommandLine;
-            _userShell = null;
-            _settings.CustomShell = _customShell;
-            _settings.UserShellName = null;
-            UpdateTitle();
+            ForgetUserShell(shell);
+            return;
         }
 
+        var fallback = ShellLauncher.DefaultKind();
+        if (ProcessRunning && _model.Running)
+        {
+            ShowNotice(Notice.Ask("Remove the shell?",
+                $"{_model.RunningCommand} is still running in {shell.Name}. Removing the shell ends it and starts {ShellLauncher.Describe(fallback)} in the same folder. The transcript stays in the window.",
+                "&Remove now", () => RemoveShellInUse(shell, fallback), "&Keep it"));
+            return;
+        }
+
+        RemoveShellInUse(shell, fallback);
+    }
+
+    private void RemoveShellInUse(UserShell shell, ShellKind fallback)
+    {
+        ForgetUserShell(shell);
+        ForceSwitch(fallback, null);
+    }
+
+    private void ForgetUserShell(UserShell shell)
+    {
+        _settings.RemoveUserShell(shell.Name);
         SaveSettings();
         Announce($"Removed {shell.Name}", true);
     }

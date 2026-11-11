@@ -81,8 +81,69 @@ public sealed class TerminalSettingsTests
         Assert.Equal("Type a name", settings.RefusedShellName("  "));
         Assert.Equal("A shell named dev CMD is already there", settings.RefusedShellName(" dev CMD "));
         Assert.Equal("A shell named command prompt is already there", settings.RefusedShellName("command prompt"));
+        Assert.Equal("A shell named custom is already there", settings.RefusedShellName("custom"));
+        Assert.Equal("A shell named Custom shell is already there", settings.RefusedShellName("Custom shell"));
         Assert.Null(settings.RefusedShellName("Node"));
         Assert.Null(settings.FindUserShell(null));
         Assert.Null(settings.FindUserShell("Node"));
+    }
+
+    [Fact]
+    public void Names_are_trimmed_and_a_name_taken_twice_is_kept_the_first_time()
+    {
+        using var temp = new TempFolder("axterminal-tests");
+        var path = Path.Combine(temp.Path, "axTerminal.json");
+        File.WriteAllText(path, """{"userShells":[{"name":"  Dev cmd ","commandLine":" cmd.exe /k "},{"name":"dev CMD","commandLine":"pwsh"},{"name":"Node","commandLine":"node"}]}""");
+        var settings = TerminalSettings.Load(path, out var error);
+        Assert.Null(error);
+        Assert.Equal([new UserShell("Dev cmd", "cmd.exe /k"), new UserShell("Node", "node")], settings.UserShells);
+    }
+
+    [Fact]
+    public void Removing_the_shell_in_use_falls_back_to_the_default_and_keeps_the_custom_line()
+    {
+        var settings = new TerminalSettings
+        {
+            Shell = "custom",
+            CustomShell = "cmd.exe /q",
+            UserShells = [new UserShell("Dev cmd", "cmd.exe /k"), new UserShell("Node", "node")],
+            UserShellName = "Dev cmd",
+        };
+
+        Assert.Null(settings.RemoveUserShell("Gone"));
+        Assert.Equal(2, settings.UserShells.Count);
+
+        // Another shell than the one in use: the shell stays.
+        Assert.Equal(new UserShell("Node", "node"), settings.RemoveUserShell("node"));
+        Assert.Equal("custom", settings.Shell);
+        Assert.Equal("Dev cmd", settings.UserShellName);
+
+        // The one in use: the machine's default, the custom line untouched.
+        Assert.Equal(new UserShell("Dev cmd", "cmd.exe /k"), settings.RemoveUserShell("DEV cmd"));
+        Assert.Empty(settings.UserShells);
+        Assert.Null(settings.UserShellName);
+        Assert.Null(settings.Shell);
+        Assert.Equal(ShellLauncher.DefaultKind(), settings.ShellKind);
+        Assert.Equal("cmd.exe /q", settings.CustomShell);
+    }
+
+    [Fact]
+    public void Switch_shell_labels_never_take_a_fixed_item_s_mnemonic()
+    {
+        // The fixed items of Switch shell (TerminalForm.ShellChoices and BuildMenus).
+        string[] fixedItems = ["PowerShell &7", "&Windows PowerShell", "&Command Prompt", "&Git Bash", "C&ustom...", "&Add a shell...", "&Remove a shell", "Install &PowerShell 7...", "Install Git, for Git &Bash..."];
+        var taken = fixedItems.Select(ShellMenuLabels.Mnemonic).OfType<char>().ToHashSet();
+        Assert.Equal(9, taken.Count);
+        var labels = Enumerable.Range(0, 40).Select(i => ShellMenuLabels.Switch(i, new UserShell("S" + i, "x"), taken)).ToList();
+        var mnemonics = labels.Select(ShellMenuLabels.Mnemonic).OfType<char>().ToList();
+        Assert.Empty(mnemonics.Intersect(taken));
+        Assert.Equal(mnemonics.Count, mnemonics.Distinct().Count());
+        Assert.Equal("&1. S0 (x)", labels[0]);
+        Assert.Equal("7. S6 (x)", labels[6]);
+        Assert.Equal("&9. S8 (x)", labels[8]);
+        Assert.Equal("10. S9 (x)", labels[9]);
+        Assert.Equal("&2. R&&D (a && b)", ShellMenuLabels.Switch(1, new UserShell("R&D", "a & b"), taken));
+        Assert.Equal("&1. Remove R&&D", ShellMenuLabels.Remove(0, new UserShell("R&D", "x")));
+        Assert.Null(ShellMenuLabels.Mnemonic("R&&D"));
     }
 }

@@ -66,7 +66,10 @@ public sealed class TerminalSettings : ConsoleSettings
     public UserShell? FindUserShell(string? name) =>
         name is null ? null : UserShells.FirstOrDefault(shell => string.Equals(shell.Name, name, StringComparison.OrdinalIgnoreCase));
 
-    /// <summary>Why a typed name cannot be a new shell's (AT-1.6a): blank, or a name a built-in shell or one of the user's already has; null when it can.</summary>
+    /// <summary>
+    /// Why a typed name cannot be a new shell's (AT-1.6a): blank, or a name a built-in shell, Custom ("Custom" and
+    /// "Custom shell") or one of the user's already has; null when it can.
+    /// </summary>
     public string? RefusedShellName(string typed)
     {
         var name = typed.Trim();
@@ -75,17 +78,55 @@ public sealed class TerminalSettings : ConsoleSettings
             return "Type a name";
         }
 
-        var builtIn = Enum.GetValues<ShellKind>().Where(kind => kind != ShellKind.Custom).Select(ShellLauncher.Describe);
-        return builtIn.Contains(name, StringComparer.OrdinalIgnoreCase) || FindUserShell(name) is not null
+        var taken = Enum.GetValues<ShellKind>().Select(ShellLauncher.Describe).Append("Custom");
+        return taken.Contains(name, StringComparer.OrdinalIgnoreCase) || FindUserShell(name) is not null
             ? $"A shell named {name} is already there"
             : null;
+    }
+
+    /// <summary>
+    /// Switch shell → Remove a shell (AT-1.6a): the user's shell with this name taken off the list. When it is the
+    /// shell in use, the settings fall back to the machine's default built-in shell (<see cref="Shell"/> null); the
+    /// custom command line is left as it is. The shell removed, or null when there is none of that name.
+    /// </summary>
+    public UserShell? RemoveUserShell(string name)
+    {
+        var shell = FindUserShell(name);
+        if (shell is null)
+        {
+            return null;
+        }
+
+        UserShells.Remove(shell);
+        if (string.Equals(UserShellName, shell.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            UserShellName = null;
+            Shell = null;
+        }
+
+        return shell;
     }
 
     private void Sanitize()
     {
         SanitizeConsole();
-        UserShells ??= [];
-        UserShells.RemoveAll(shell => string.IsNullOrWhiteSpace(shell?.Name) || string.IsNullOrWhiteSpace(shell?.CommandLine));
+        // AT-1.6a: names and lines trimmed, a shell without either dropped, and a name taken twice kept the first time.
+        var shells = new List<UserShell>();
+        foreach (var shell in UserShells ?? [])
+        {
+            if (shell is null || string.IsNullOrWhiteSpace(shell.Name) || string.IsNullOrWhiteSpace(shell.CommandLine))
+            {
+                continue;
+            }
+
+            var name = shell.Name.Trim();
+            if (!shells.Any(kept => string.Equals(kept.Name, name, StringComparison.OrdinalIgnoreCase)))
+            {
+                shells.Add(new UserShell(name, shell.CommandLine.Trim()));
+            }
+        }
+
+        UserShells = shells;
         if (FindUserShell(UserShellName) is null)
         {
             UserShellName = null;

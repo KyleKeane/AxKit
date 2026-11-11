@@ -1,10 +1,10 @@
 # axTerminal: the user's own shells (AT-1.6a), section 3 of docs/axTerminal/nvda-test-plan.md, the steps on Add a
-# shell. Switch shell needs menu mode, which only the foreground window enters: "menu" runs the same items. Remove a
-# shell's items read as Switch shell's ("1. name"), so "menu" cannot tell them apart: removing stays a step by hand.
+# shell and Remove a shell. Switch shell needs menu mode, which only the foreground window enters: "menu" runs the
+# same items by their palette names ("1. Test cmd (cmd.exe /k)" to switch, "1. Remove Test cmd" to remove).
 mkdir work\myproject
 file home\AxKit\axTerminal.json {"checkForUpdates": false, "shell": "powershell"}
 # The reminders agreed to already (AX-11.5): a user's shell starts as the custom shell does, under its consent.
-file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Custom shell","version":"0","when":"2026-10-31T00:00:00"}]}
+file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Custom shell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"}]}
 start terminal {temp}\work\myproject
 expect said Ready
 
@@ -34,7 +34,7 @@ refuse said New session
 
 # Listed in Switch shell after the built-in shells, and in Remove a shell.
 expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell
-expect commands 1. Test cmd, Session, Switch shell, Remove a shell
+expect commands 1. Remove Test cmd, Session, Switch shell, Remove a shell
 
 # Started from Switch shell: the title and the system line name it; cmd's own output in the terminal.
 menu 1. Test cmd
@@ -67,3 +67,12 @@ start terminal {temp}\work\myproject
 expect state "myproject - Test cmd - axTerminal, access layer for your shell"
 keys ctrl+2
 expect text "System: Shell started: Test cmd in
+keys ctrl+1
+
+# Removed while in use: off both lists, the machine's default shell started in its place in the same folder.
+menu 1. Remove Test cmd
+expect said Removed Test cmd
+expect state PowerShell - axTerminal
+refuse state - Test cmd - axTerminal
+expect commands No shells of your own yet, Session, Switch shell, Remove a shell
+refuse commands Test cmd

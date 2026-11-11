@@ -135,19 +135,29 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   with its shell, since the notice said so; an idle shell gets the two seconds of its console closing (axClaude
   FR-1.7; 2026-10-23).
 - AT-1.6a **The user's own shells** (2026-11-11; the shape of axFile's own programs, AF-4.11, docs/axKit/plan.md): a
-  list in the settings (`userShells`, each `{"name", "commandLine"}`, in the order added; one without a name or a
-  command line is dropped as the file is read), beside the one custom command line. Session → Switch shell ▸ lists
-  them after the built-in shells as "1. name (command line)" (AX-8.5), the one in use checked, and holds **Add a
-  shell…** and **Remove a shell ▸** after Custom…; the New session notice lists them as radio buttons after the
+  list in the settings (`userShells`, each `{"name", "commandLine"}`, in the order added; as the file is read the name
+  and the line are trimmed, one without either is dropped, and a name taken twice, case ignored, is kept the first
+  time), beside the one custom command line. Session → Switch shell ▸ lists them after the built-in shells as "1. name
+  (command line)" (AX-8.5), the one in use checked, and holds **Add a shell…** and **Remove a shell ▸** after Custom…;
+  the number is the item's mnemonic only while it is one digit no fixed item of the submenu has (PowerShell &7 keeps
+  7), and from the tenth on there is none, so that no two items share one (AX-6; `ShellMenuLabels`, tested); an
+  ampersand in a name is shown as one. The New session notice lists them as radio buttons after the
   built-in shells and before Custom, the one in use selected. **Add a shell…** opens the notice "Add a shell" with the
   field "Type the shell's name" and the buttons **Next** (Enter) and **Cancel** (Escape): a blank name says "Type a
-  name", a name a built-in shell or one of the user's already has (case ignored) says "A shell named <name> is already
-  there", and the notice stays; Next opens the notice "Add a shell" with the field "Type the command line that starts
+  name", a name a built-in shell, Custom ("Custom" or "Custom shell") or one of the user's already has (case ignored)
+  says "A shell named <name> is already there", and the notice stays; Next opens the notice "Add a shell" with the
+  field "Type the command line that starts
   it" ("The command line that starts <name>, as typed at a prompt, for example cmd.exe /k or pwsh -NoProfile…") and
   **Add** (Enter): a blank line says "Type the command line" and the notice stays; Add keeps the shell and says "Added
-  <name>"; nothing is started. **Remove a shell ▸** lists them as "1. name" ("No shells of your own yet" when there are
-  none); one chosen is taken off the list and "Removed <name>" said; when it is the shell in use, that shell goes on
-  running and is the custom shell from then on, with the same command line. A user's shell starts as the custom shell
+  <name>"; nothing is started. **Remove a shell ▸** lists them as "1. Remove name" ("No shells of your own yet" when
+  there are none; the word Remove keeps their names in the command palette apart from Switch shell's); one chosen is
+  taken off the list and "Removed <name>" said. When it is the shell in use, the machine's default built-in shell
+  (AT-1.2: PowerShell 7 when installed, otherwise Windows PowerShell) starts in its place in the same folder, the
+  transcript kept, as Switch shell does, after the notice "Remove the shell?" (**Remove now**, **Keep it**, which keeps
+  the shell and the list) while a command runs; the settings' `shell` falls back to the default. The custom command
+  line (`customShell`) is never changed by a removal (2026-11-11, the review: the first draft made the removed shell
+  the custom shell, overwriting the line the user had typed under Custom; `TerminalSettings.RemoveUserShell`, tested).
+  A user's shell starts as the custom shell
   does (no snippet, no marks unless its prompt prints them, the reminder of the custom shell, AX-11.5), under its own
   name in the title, the system lines (`Switched to <name> in …`, `Shell started: <name> in …`), Ctrl+Q and the
   announcement of Switch shell; the name in use is remembered (`userShellName`) for the next window.
@@ -345,7 +355,8 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
 - AT-8.1 `%APPDATA%\AxKit\axTerminal.json` (AX-5.3; `TerminalSettings` on the bundle's `ConsoleSettings`, the console
   fields shared with axClaude under the same names, on `WindowSettings`): `shell` (`pwsh`,
   `powershell`, `cmd`, `bash`, `custom`), `customShell`, `userShells` (the user's own shells, `name` and
-  `commandLine` each, AT-1.6a), `userShellName` (the one in use, with `shell` `custom`), `lastFolder`, `recentFolders` (ten), `ptyColumns` 240, `ptyRows` 50,
+  `commandLine` each, trimmed, a blank one dropped and a repeated name kept once, AT-1.6a), `userShellName` (the one
+  in use, with `shell` `custom`; dropped when no shell of that name is listed), `lastFolder`, `recentFolders` (ten), `ptyColumns` 240, `ptyRows` 50,
   `soundOnBell` on, `clickOnNewLine` on, `workingMusic` off, `backgroundAlert` off, `flashTaskbar` on, `outputSpeech`
   `none`, `announceQuestions` on, `markerTimeStamps` off, `showMarkers` on, `joinWrappedLines` on, `maxTranscriptLines` 20000, and the
   window base's font, update check and window fields. Unknown or out-of-range values fall back to the defaults.
