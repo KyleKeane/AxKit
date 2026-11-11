@@ -96,7 +96,8 @@ is written by a script from `apps.json`, the list of apps `publish.ps1` already 
 The first design gave every app its own `<Application>` and three hidden ones; the Store's package validation refused
 it: at most eight entries per package, and a hidden entry (`AppListEntry="none"`) is a "headless app" that needs a
 waiver. So the package has eight entries, the apps marked `StoreEntry` in `Dispatch.Apps` (axClaude, axDown, axFile,
-axTerminal, axGIT, axTask, axStart, axClip), each running `AxKit.exe`, named as today's Start menu entries (AX-2.2),
+axTerminal, axGIT, axTask, axStart, axClip in 5.2.1; axHelp in axGIT's place from the next package, the user's choice
+of 2026-11-11, AX-13.2), each running `AxKit.exe`, named as today's Start menu entries (AX-2.2),
 with its own icon as PNG assets (44 and 150, and the 50 by 50 store logo) made by `tools/make-icon.ps1`. The axClaude
 entry is first, with the id `AxKit` and no parameters: it starts axClaude as a bare `AxKit.exe` does, and it carries
 every app's console command and the file types of the six apps without an entry; the other seven carry their verb as

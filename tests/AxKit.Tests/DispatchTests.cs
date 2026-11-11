@@ -61,10 +61,11 @@ public sealed class DispatchTests
         var entries = Dispatch.Apps.Where(app => app.StoreEntry).ToList();
         Assert.InRange(entries.Count, 1, 8);
         Assert.Contains(entries, app => app.Verb == Dispatch.AxClaude);
-        // A startup task hangs on an entry (AX-13.2): the apps that start at sign-in without one, the eight being taken,
-        // have no sign-in start in the Store's copy and are started from another window there (AX-13.4; axHelp,
-        // 2026-11-09); a new such app is added here on purpose.
-        Assert.Equal(["axHelp"], Dispatch.Apps.Where(app => app.AtSignIn && !app.StoreEntry).Select(app => app.Name));
+        // A startup task hangs on an entry (AX-13.2): an app that starts at sign-in without one has no sign-in start in
+        // the Store's copy and is started from another window there (AX-13.4). Since 2026-11-11 axHelp has axGIT's
+        // entry (the user's choice) and every such app has one; a new app without one is added here on purpose.
+        Assert.Empty(Dispatch.Apps.Where(app => app.AtSignIn && !app.StoreEntry).Select(app => app.Name));
+        Assert.Contains(entries, app => app.Verb == Dispatch.AxHelp);
     }
 
     [Fact]

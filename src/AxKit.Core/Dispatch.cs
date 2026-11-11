@@ -204,7 +204,7 @@ public static class Dispatch
         },
         new("axGIT", AxGit, "AxGit", AppGroup.AccessLayers, Opens.FilesAndFolders, ShowIn: true)
         {
-            AccessLayerFor = "Git", Description = "axGIT, access layer for Git: one repository's changes, log and branches", Icon = new("Ag", 110, 40, 40), Explorer = Opens.Folders, StoreEntry = true,
+            AccessLayerFor = "Git", Description = "axGIT, access layer for Git: one repository's changes, log and branches", Icon = new("Ag", 110, 40, 40), Explorer = Opens.Folders,
         },
         new("axPass", AxPass, "AxPass", AppGroup.AccessLayers, Opens.Files)
         {
@@ -221,7 +221,7 @@ public static class Dispatch
         },
         new("axHelp", AxHelp, "AxHelp", AppGroup.Claude, Opens.Nothing)
         {
-            Description = "axHelp, access layer for Claude Code: your conversation with Claude and a screenshot into it, from anywhere, behind two hotkeys", AccessLayerFor = "Claude Code", Icon = new("Ah", 60, 90, 150), AtSignIn = true,
+            Description = "axHelp, access layer for Claude Code: your conversation with Claude and a screenshot into it, from anywhere, behind two hotkeys", AccessLayerFor = "Claude Code", Icon = new("Ah", 60, 90, 150), AtSignIn = true, StoreEntry = true,
         },
     ];
 
