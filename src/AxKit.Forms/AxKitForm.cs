@@ -242,7 +242,7 @@ public abstract partial class AxKitForm : Form
     /// <summary>The last item of every first menu (AX-6): Exit, closing the window as Alt+F4 does, which is Windows' own key.</summary>
     protected ToolStripMenuItem CreateExitItem() => new("E&xit", null, (_, _) => Close()) { ShortcutKeyDisplayString = "Alt+F4" };
 
-    /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Font…, Larger text, Smaller text, Windows text size, and the Theme submenu (docs/axKit/theme.md TH-4).</summary>
+    /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Say new line (AX-7.8), Font…, Larger text, Smaller text, Windows text size.</summary>
     protected ToolStripMenuItem CreateTextMenu(params ToolStripItem[] own)
     {
         var menu = new ToolStripMenuItem("&Text");
@@ -252,6 +252,7 @@ public abstract partial class AxKitForm : Form
             menu.DropDownItems.Add(new ToolStripSeparator());
         }
 
+        menu.DropDownItems.Add(CreateSayNewLineItem(menu));
         menu.DropDownItems.Add(new ToolStripMenuItem("&Font...", null, (_, _) => ChooseFont()));
         menu.DropDownItems.Add(Item("&Larger text", () => ChangeTextSize(1), BundleKeys.LargerText));
         menu.DropDownItems.Add(Item("S&maller text", () => ChangeTextSize(-1), BundleKeys.SmallerText));

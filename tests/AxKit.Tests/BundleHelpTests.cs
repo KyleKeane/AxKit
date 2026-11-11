@@ -23,6 +23,7 @@ public sealed class BundleHelpTests
                 "  Tab: between the list and the field",
                 "  Ctrl+S: save the thing",
                 "  Ctrl+Plus, Ctrl+Minus: bigger or smaller text",
+                "  A line break typed into a field of several lines is said, new line; Options, Text, Say new line turns that off for every window",
                 "  Alt: the menu. Alt+F4: close axThing",
                 "  " + BundleHelp.BundleMenusLine,
                 "",

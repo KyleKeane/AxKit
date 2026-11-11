@@ -37,11 +37,12 @@ public sealed class Theme
 
     private readonly Dictionary<string, ThemeColor> _colors;
 
-    private Theme(bool enabled, string name, bool wordWrap, Dictionary<string, ThemeColor> colors, IReadOnlyList<string> notUnderstood)
+    private Theme(bool enabled, string name, bool wordWrap, bool sayNewLine, Dictionary<string, ThemeColor> colors, IReadOnlyList<string> notUnderstood)
     {
         Enabled = enabled;
         Name = name;
         WordWrap = wordWrap;
+        SayNewLine = sayNewLine;
         _colors = colors;
         NotUnderstood = notUnderstood;
     }
@@ -51,6 +52,9 @@ public sealed class Theme
 
     /// <summary>TH-6.1: whether the editors wrap long lines, <c>display.wordWrap</c>; on when the file or the key is missing.</summary>
     public bool WordWrap { get; }
+
+    /// <summary>TH-6.5 (2026-11-11): whether a line break typed into a field is said, "new line" (AX-7.8), <c>display.sayNewLine</c>; on when the file or the key is missing.</summary>
+    public bool SayNewLine { get; }
 
     public string Name { get; }
 
@@ -137,20 +141,27 @@ public sealed class Theme
         }
 
         // The display settings (TH-6), after the colours as the template has them; a value that is not true or false is on and counted.
-        var wordWrap = true;
-        if (root["display"] is JsonObject display && display["wordWrap"] is { } wrapNode)
+        var display = root["display"] as JsonObject;
+        var wordWrap = DisplayFlag(display, "wordWrap", notUnderstood);
+        var sayNewLine = DisplayFlag(display, "sayNewLine", notUnderstood);
+        return new Theme(enabled, TextOf(root["name"]) ?? string.Empty, wordWrap, sayNewLine, colors, notUnderstood);
+    }
+
+    /// <summary>One switch of the display settings: on when the object or the key is missing; on and counted when the value is not true or false.</summary>
+    private static bool DisplayFlag(JsonObject? display, string key, List<string> notUnderstood)
+    {
+        if (display?[key] is not { } node)
         {
-            if (wrapNode is JsonValue wrap && wrap.TryGetValue<bool>(out var wraps))
-            {
-                wordWrap = wraps;
-            }
-            else
-            {
-                notUnderstood.Add("display.wordWrap");
-            }
+            return true;
         }
 
-        return new Theme(enabled, TextOf(root["name"]) ?? string.Empty, wordWrap, colors, notUnderstood);
+        if (node is JsonValue value && value.TryGetValue<bool>(out var on))
+        {
+            return on;
+        }
+
+        notUnderstood.Add("display." + key);
+        return true;
     }
 
     /// <summary>A whole file with every class at <c>system</c> (TH-1.2), for Edit theme file when there is none.</summary>
@@ -168,7 +179,7 @@ public sealed class Theme
             ["enabled"] = true,
             ["name"] = "My theme",
             ["colors"] = colors,
-            ["display"] = new JsonObject { ["wordWrap"] = true },
+            ["display"] = new JsonObject { ["wordWrap"] = true, ["sayNewLine"] = true },
         };
         return ToText(root);
     }
@@ -180,7 +191,12 @@ public sealed class Theme
     public static string? SetEnabled(string path, bool enabled) => Write(path, root => root["enabled"] = enabled);
 
     /// <summary>Writes <c>display.wordWrap</c> (TH-6.1) the same way, the display object made when the file has none.</summary>
-    public static string? SetWordWrap(string path, bool wordWrap) => Write(path, root =>
+    public static string? SetWordWrap(string path, bool wordWrap) => SetDisplay(path, "wordWrap", wordWrap);
+
+    /// <summary>Writes <c>display.sayNewLine</c> (TH-6.5) the same way.</summary>
+    public static string? SetSayNewLine(string path, bool sayNewLine) => SetDisplay(path, "sayNewLine", sayNewLine);
+
+    private static string? SetDisplay(string path, string key, bool on) => Write(path, root =>
     {
         if (root["display"] is not JsonObject display)
         {
@@ -188,7 +204,7 @@ public sealed class Theme
             root["display"] = display;
         }
 
-        display["wordWrap"] = wordWrap;
+        display[key] = on;
     });
 
     private static string? Write(string path, Action<JsonObject> change)

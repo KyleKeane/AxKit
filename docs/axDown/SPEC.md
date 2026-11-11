@@ -104,6 +104,12 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 - AD-2.7 The font is the setting's (family, size, bold), the Windows system font when none is set; Ctrl+Plus and
   Ctrl+Minus change the size in steps and remember it (AX-8.2); Options, Font opens the Windows font picker (the only
   separate windows are the Windows pickers, AX-7.2).
+- AD-2.8 A line break typed is said, "new line" (2026-11-11, the reports repository's issue 1, asked for axDown and
+  decided for every field, bundle AX-7.8 and B-18): Enter in the text, at the end of a line or in its middle, says
+  "new line" through the window's one announcement, after NVDA's own echo of the word typed; the editor itself does
+  nothing for it, since the bundle's edit control (`AxKitTextBox`, AD-2.1) says it in every window. Options, Text, Say
+  new line turns it off and on for every window of axKit ("Say new line off", "Say new line on"), kept in the theme
+  file beside word wrap (theme.md TH-6.5). axPreview's read-only text says nothing on Enter.
 
 ### AD-3 Files
 
