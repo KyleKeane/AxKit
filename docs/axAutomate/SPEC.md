@@ -162,7 +162,11 @@ keys in place of its words on a line:
 
 - AU-6b.1 F5 runs the workflow in hand, read again from its file first; at a folder's level, every workflow of that
   folder, one after another, each with fresh windows and a fresh `{temp}` under `%TEMP%\axkit-automate`. The folders
-  inside it are not run (AU-D9). Session, Refresh keeps its menu item, without a key (AU-D8).
+  inside it are not run (AU-D9). Session, Refresh keeps its menu item, without a key (AU-D8). "Running 03-waits;
+  Escape stops it" (a folder: "Running 6 workflows; Escape stops the run") is said once the run starts: after the
+  files are read, and, for a workflow with a `run` step, after the notice of AU-D11 is answered with Run; a Cancel
+  says "Not run" alone (taken by the assistant on 2026-11-11, for the user to confirm: the line said before the
+  notice told of a run that might never start).
 - AU-6b.2 The run is on a thread of its own: the window stays usable, the arrows move and nothing is said while
   steps pass. A failing step is said as it ends, "Step 2 failed: Expect the focus: Nothing like this. Not within
   10 s; seen: ...", its own `report` in place of its sentence when it has one, what the runner saw cut at 240
@@ -263,7 +267,9 @@ keys in place of its words on a line:
   the run starts (taken by the assistant at review, 2026-11-11, for the user to confirm). The commands act on the
   user's own desktop and files, which the run's own desktop does not cover; the notice is a guard against a slip,
   not a check of a workflow from someone else, which can still act through axKit's windows (AU-6b.8);
-  the question is asked once per F5, on the run's thread after the files are read, so it names what will really run.
+  the question is asked once per F5, on the run's thread after the files are read, so it names what will really run:
+  each command line once, its `\uXXXX` escapes filled in as the engine fills them ("echo one > out.txt") and `{temp}`
+  named as "the run's folder", which only the run knows (the assistant, 2026-11-11, for the user to confirm).
   To reverse: drop `CommandsAllowed` in `AutomateForm.Run.cs`.
 
 ## 7. Later

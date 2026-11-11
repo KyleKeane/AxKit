@@ -57,7 +57,8 @@ the run's own: a workflow with such a step that writes anywhere else cannot run 
 A workflow's `run` steps are different: their command lines run through Windows' command prompt on your own
 computer, with your files, as if you typed them. So before a run with one, a notice names them: "This workflow runs
 commands on your computer: git init. Run it?". Cancel is the default, so Enter and Escape both decline and you hear
-"Not run"; Alt+R, or Tab to Run and Enter, runs it.
+"Not run"; Alt+R, or Tab to Run and Enter, runs it, and only then is "Running ..." said. The command lines are named
+as they will run, with the run's own folder called "the run's folder".
 
 These two guards catch slips; they do not make a workflow safe. A workflow drives axKit's windows, and those
 reach what you can: it can open one of your files in axDown and save it changed, use axFile's operations, or type a

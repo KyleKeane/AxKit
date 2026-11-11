@@ -131,6 +131,15 @@ public sealed class EngineTests
         Assert.Equal(["git init", "git add ."], ScriptLines.Commands(lines));
         Assert.Empty(ScriptLines.Commands(ScriptLines.FromScript(["start down", "close"], null)));
     }
+
+    [Fact]
+    public void The_command_lines_are_named_as_they_will_run()
+    {
+        // The escapes filled in as the engine fills them, and the run's own folder named, which only the run knows.
+        var lines = ScriptLines.FromScript(["run echo one \\u003e {temp}\\out.txt", "run echo \\u0022two\\u0022"], null);
+        Assert.Equal(["echo one > the run's folder\\out.txt", "echo \"two\""], ScriptLines.Commands(lines));
+        Assert.Equal("type D:\\run\\a.txt \u00b7", ScriptLines.Filled("type {temp}\\a.txt \\u00b7", "D:\\run"));
+    }
     [Fact]
     public void Every_script_of_the_repository_can_run_from_the_window()
     {

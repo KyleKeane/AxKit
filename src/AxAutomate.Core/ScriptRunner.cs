@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace AxAutomate.Core;
 
@@ -59,7 +58,7 @@ public static class ScriptRunner
                 }
 
                 // {temp}, and \uXXXX escapes, which a script may use for a character it cannot type (· + > ").
-                var line = Regex.Replace(script.Text.Replace("{temp}", temp), @"\\u([0-9A-Fa-f]{4})", match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString());
+                var line = ScriptLines.Filled(script.Text, temp);
                 (bool Ok, string? Detail) result;
                 try
                 {

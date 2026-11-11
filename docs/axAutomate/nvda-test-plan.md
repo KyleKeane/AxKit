@@ -55,7 +55,8 @@ desktop; the window's run starts a further desktop of its own there, which works
    Manager shows the run's AxKit.exe processes gone within half a minute (checked by a scratch script 2026-11-11); no
    window of a run takes the focus from you, even one that opens a page or Explorer (none is handed the foreground).
 6. In a folder whose workflow has a `run` step (`run echo one`), go into it, F5: the notice "This workflow runs
-   commands on your computer: echo one. Run it?", Cancel the default: Enter says "Not run" and the row has no outcome.
-   F5 again, Alt+R: the run goes on and ends "... passed".
+   commands on your computer: echo one. Run it?", and nothing about running before it; Cancel the default: Enter says
+   "Not run" alone and the row has no outcome. F5 again, Alt+R: "Running 07-commands; Escape stops it", and the run
+   ends "... passed". A step `run echo a \u003e {temp}\b.txt` is named "echo a > the run's folder\b.txt".
 7. A workflow whose `file` step names `..\x.md` or a full path: its details say "Cannot run: step N writes outside the
    run's folder: ..."; F5 says "This workflow cannot run: ..." and nothing is written.
