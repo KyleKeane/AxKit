@@ -53,7 +53,7 @@ public static class AxTaskKeys
         ("Action key 1 in a list, the next heading of level 1 at a top level", NextHeading1),
         ("Action key 2 in a list, the next heading of level 2 at a top level", NextHeading2),
         .. Enumerable.Range(3, 7).Select(digit => ($"Action key {digit}", ActionKey(digit))),
-        ("Previous heading of level 1", PreviousHeading1),
-        ("Previous heading of level 2", PreviousHeading2),
+        ("Previous heading level 1", PreviousHeading1),
+        ("Previous heading level 2", PreviousHeading2),
     ];
 }

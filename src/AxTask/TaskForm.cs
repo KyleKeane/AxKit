@@ -80,10 +80,10 @@ public sealed partial class TaskForm : ItemForm
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         // TK-3a.2, TK-D14: Ctrl+1 and Ctrl+2 go by heading at a top level, where no list's action keys act; registered
         // before the action keys, so that the first command whose key and place match runs.
-        AddKey(new Command("Next heading of level 1", AxTaskKeys.NextHeading1, () => JumpHeading(1, 1)) { When = AtHeadings, Mark = CommandMark.Read });
-        AddKey(new Command("Next heading of level 2", AxTaskKeys.NextHeading2, () => JumpHeading(2, 1)) { When = AtHeadings, Mark = CommandMark.Read });
-        AddKey(new Command("Previous heading of level 1", AxTaskKeys.PreviousHeading1, () => JumpHeading(1, -1)) { When = AtHeadings, Mark = CommandMark.Read });
-        AddKey(new Command("Previous heading of level 2", AxTaskKeys.PreviousHeading2, () => JumpHeading(2, -1)) { When = AtHeadings, Mark = CommandMark.Read });
+        AddKey(new Command("Next heading level 1", AxTaskKeys.NextHeading1, () => JumpHeading(1, 1)) { When = AtHeadings, Mark = CommandMark.Read });
+        AddKey(new Command("Next heading level 2", AxTaskKeys.NextHeading2, () => JumpHeading(2, 1)) { When = AtHeadings, Mark = CommandMark.Read });
+        AddKey(new Command("Previous heading level 1", AxTaskKeys.PreviousHeading1, () => JumpHeading(1, -1)) { When = AtHeadings, Mark = CommandMark.Read });
+        AddKey(new Command("Previous heading level 2", AxTaskKeys.PreviousHeading2, () => JumpHeading(2, -1)) { When = AtHeadings, Mark = CommandMark.Read });
         // Ctrl+1 to Ctrl+9, the list's own actions, and the GitHub actions of a GitHub list (RP-7.2, RP-8; TaskForm.GitHub.cs).
         PlaceGitHubMenus();
         _itemMenu.DropDownItems.Add(_actionKeysMenu);
