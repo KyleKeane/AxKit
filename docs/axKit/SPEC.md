@@ -108,11 +108,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - **axMCP** (asked and built 2026-11-09; an access layer, AX-11, for MCP servers): `AxKit.exe mcpclient [<folder>]`, Start entry `axKit axMCP`, command `axMCP`: the MCP servers Claude Code knows on this computer and the user's own, in the item apps' window (`item-apps.md`); a server started by hand as a child process on its standard input and output shows its tools, resources and prompts, a tool's arguments are the detail pane's fields, Ctrl+Enter calls it and the result is a notice text; remote servers are listed and not started (its MP-D2). Specification `docs/axMCP/SPEC.md`, guide `docs/axMCP/user-guide.md`, test plan `docs/axMCP/nvda-test-plan.md`.
 - **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Windows+Alt+H, brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Windows+Alt+S, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
 
+- **axAutomate** (asked 2026-11-10, built 2026-11-11 as a viewer first): `AxKit.exe automate [<folder>]`, Start entry `axKit axAutomate`, command `axAutomate`: the workflows that drive axKit's windows, the automated checks of every app first, read step by step in the item apps' window (`docs/axAutomate/SPEC.md`).
 ## 4. Functional requirements
 
 ### AX-1 Launch and dispatch
 
-- AX-1.1 The first argument may be a verb naming an app: `claude`, `down`, `json`, `git`, `terminal`, `file`, `media`, `preview`, `start`, `process`, `task`, `pass`, `calc`, `clip`, `mcpclient`, `help`, `describe` (the one list is `Dispatch.Apps`). The rest of the arguments go to that app
+- AX-1.1 The first argument may be a verb naming an app: `claude`, `down`, `json`, `git`, `terminal`, `file`, `media`, `preview`, `start`, `process`, `task`, `pass`, `calc`, `clip`, `mcpclient`, `help`, `automate` (`describe` starts axHelp since 5.7.0; the one list is `Dispatch.Apps`). The rest of the arguments go to that app
   unchanged, so `AxKit.exe claude C:\src --record x.vt` is what `AxClaude.exe C:\src --record x.vt` was.
 - AX-1.2 Without a verb, a first argument that is an existing folder goes to axClaude and an existing file to axDown,
   or to axJSON when its extension is `.json`, to axPass when it is `.kdbx`, or to axMedia when it is a sound or video
@@ -129,7 +130,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   installation keeps that listing as `apps.json`, which an uninstall reads when the program cannot be run.
 - AX-1.5 The dispatch is pure code in `AxKit.Core` (`Dispatch`): arguments in, app name and arguments out. It is unit
   tested and has no knowledge of the apps beyond their names.
-- AX-1.6 Each process sets a Windows application id before its window opens (`AxKit.AxClaude`, `AxKit.AxDown`, `AxKit.AxJSON`, `AxKit.AxGit`, `AxKit.AxTerminal`, `AxKit.AxFile`, `AxKit.AxMedia`, `AxKit.AxPreview`, `AxKit.AxStart`, `AxKit.AxProcess`, `AxKit.AxTask`, `AxKit.AxPass`, `AxKit.AxCalc`, `AxKit.AxClip`, `AxKit.AxMCP`, `AxKit.AxHelp`, `AxKit.AxDescribe`), so the
+- AX-1.6 Each process sets a Windows application id before its window opens (`AxKit.AxClaude`, `AxKit.AxDown`, `AxKit.AxJSON`, `AxKit.AxGit`, `AxKit.AxTerminal`, `AxKit.AxFile`, `AxKit.AxMedia`, `AxKit.AxPreview`, `AxKit.AxStart`, `AxKit.AxProcess`, `AxKit.AxTask`, `AxKit.AxPass`, `AxKit.AxCalc`, `AxKit.AxClip`, `AxKit.AxMCP`, `AxKit.AxHelp`, `AxKit.AxAutomate`), so the
   taskbar shows the apps apart and Win+number keys reach the right one.
 - AX-1.7 An app is a class library with one entry point, `static void Run(string[] args)` on a class named
   `<App>App`, plus a `Usage` text. `AxKit`'s `Program` only dispatches; the entry point is one call into

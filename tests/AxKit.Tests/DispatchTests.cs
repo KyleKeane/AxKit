@@ -257,7 +257,7 @@ public sealed class DispatchTests
         Assert.Equal(Dispatch.AxJSON, Dispatch.Decide(["json", "x.json"]).App);
         Assert.Equal(["x.json"], Dispatch.Decide(["JSON", "x.json"]).Arguments);
         Assert.Contains("AxKit json", Dispatch.Usage);
-        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp"], Dispatch.Apps.Select(a => a.Name));
+        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axAutomate", "axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp"], Dispatch.Apps.Select(a => a.Name));
     }
 
     [Fact]

@@ -7,7 +7,8 @@ automated checks of every app, the scripts of `tests/scripts` that the runner `t
 2026-11-10 ("i would like axautomate workflows to be the framework that you are using for the automated testing so
 that i could open and review those workflows and potentially even tweak them"; then "each step has a main operation
 and some branching and reporting outputs"); this document was written the same day, before any code, for the user to
-read. **Nothing of it is built.** Requirements are numbered AU-n.m and decisions AU-Dn. In axAutomate's code and
+read. Built from 2026-11-11 in steps, at the user's word ("the first goal on this is that i can view the existing
+workflows and navigate them"): the first version is a viewer (section 6a); running and changing come after it. Requirements are numbered AU-n.m and decisions AU-Dn. In axAutomate's code and
 documents, "SPEC.md" means this file.
 
 ## 1. Summary
@@ -17,7 +18,7 @@ A workflow is one JSON file, `<name>.workflow.json`, in a folder of workflows; t
 the navigator lists the folder's workflows, Right goes into one, and its steps are rows read as a sentence: "3. Press
 Ctrl+Shift+P", "4. Expect said: Command palette", "5. Choose the menu item Close all windows". Tab goes to the detail
 pane, where a step's parts are fields: what it does, its text, what happens when it fails, the message it reports.
-F5 runs the workflow on a desktop of its own, so the run never takes the user's keyboard; each row then ends with
+Later, F5 runs the workflow on a desktop of its own, so the run never takes the user's keyboard; each row then ends with
 "passed", "failed: <what happened>" or "skipped", and the report opens as a notice text. Ctrl+J opens the file in
 axJSON, as in axTask.
 
@@ -114,9 +115,13 @@ keys in place of its words on a line:
 
 - AU-4.1 `AxKit.exe automate [<folder or workflow>]`, Start entry `axKit axAutomate`, command `axAutomate`. Without a
   path, the folder used last, or `tests\workflows` of the repository the user names once in Options.
-- AU-4.2 The item apps' window (`AxKit.Forms/ItemForm`): the navigator lists the folder's workflows by title, with
-  "N steps" and, after a run, "passed" or "failed at step 7"; Right or Enter goes into a workflow; its rows are the
-  steps of AU-3.3, numbered, with a step's `note` after its sentence; Tab or Enter on a step goes to its fields.
+- AU-4.2 The item apps' window (`AxKit.Forms/ItemForm`; the user's choice of 2026-11-11, "full window with all the
+  features since the list name will give a simple overview"): the navigator lists the folder's folders, then its
+  workflows by title, with "N steps" and, after a run, "passed" or "failed at step 7"; Right or Enter goes into a
+  folder or a workflow; a workflow's rows are its steps in the order they run, each a sentence (AU-3.3) with its
+  marks after it ("may not come" or "goes on if it fails", "reports", "then 2 steps", "otherwise 1 step"), a note a
+  row of its own, "Note: ..."; the steps of a block follow their step, numbered under it and named by their block,
+  "5.1 then: Wait 1.5 seconds" (AU-D5); Tab or Enter on a step goes to its details.
 - AU-4.3 A step's fields: Do (a choice of the operations), one field per key of the operation (text, a number for
   `ms`, a long text for `text`), On failure (a choice: stop, continue), Report (text), Note (long text). Changing Do
   keeps the keys the new operation shares and drops the others, with Ctrl+Z to bring them back (IA-5.4).
@@ -141,6 +146,16 @@ keys in place of its words on a line:
   own windows, with the run's secret. The window starts the runs; it never opens the channel of the user's own
   windows.
 
+## 6a. The first version: a viewer (2026-11-11)
+
+- AU-6a.1 `AxKit.exe automate [<folder>]` opens a folder of workflows; Ctrl+O opens another with Windows' folder
+  picker, and the folder is opened again at the next start. The repository's `tests\scripts` is the folder of the
+  existing checks: its scripts are read as workflows as they are (AU-5.2), with no second copy to drift from them.
+- AU-6a.2 Every change is refused with one sentence, "This version only views the workflows; changing them comes
+  later"; nothing runs. Ctrl+J opens the file as text: a script in axDown, a workflow file in axJSON.
+- AU-6a.3 A file not understood still shows what was read, with "not all understood" in its row and what in the
+  detail pane.
+
 ## 6. Decisions
 
 - AU-D1 JSON, one file per workflow (the user's decision of 2026-11-10: JSON for anything structured that may need
@@ -155,12 +170,15 @@ keys in place of its words on a line:
   safe and leaves the user's keyboard alone. Driving other programs, or the user's own windows, is a new kind of
   access, to be specified with its own safeguards if it is asked for.
 
-## 7. Open questions for the user
+- AU-D5 A block's steps are rows right after the step that holds them, numbered under it (5.1, 5.2) and named by
+  their block, not a level to go into: the arrows go through a workflow in the order it can run, and the marks on
+  the holding step say what follows. Managing blocks when steps can be changed (adding a step into a block, moving one
+  out) is to be specified with the editing (the user, 2026-11-11: "needs some thought about how to make that simple
+  to manage").
+- AU-D6 The converted workflows will live in `tests/workflows/<app>`, beside `tests/scripts` while the runner reads
+  both, then in the scripts' place (AU-5.2); until the runner reads JSON the viewer reads the scripts themselves.
 
-- AU-Q1 The window as an item app (AU-4.2) or a simpler one: one list of steps with the step's fields below it,
-  without the navigator's levels. The item app gives nesting and the fields for nothing; the simpler one is quicker to
-  move through.
-- AU-Q2 Where the workflows of the tests live: `tests/workflows/<app>` beside the scripts during the move, then in
-  their place.
-- AU-Q3 Whether the user's own workflows, beyond the tests, come in the first version (what they would drive is
-  AU-D4's question).
+## 7. Later
+
+- The user's own workflows beyond the tests, and what they may drive (AU-D4), are for later (the user, 2026-11-11).
+- Running from the window (AU-4.4, AU-4.5) and changing steps (AU-4.3), with the blocks' editing (AU-D5).

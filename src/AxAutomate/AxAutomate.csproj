@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- axAutomate's window side, as a class library inside AxKit.exe (docs/axKit/SPEC.md AX-1.7): the window, its key table
+       and its texts; the pure code is AxAutomate.Core. -->
+  <PropertyGroup>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>AxAutomate</RootNamespace>
+    <AssemblyName>axAutomate</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AxAutomate.Core\AxAutomate.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Forms\AxKit.Forms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Help, User guide shows this file. -->
+    <EmbeddedResource Include="..\..\docs\axAutomate\user-guide.md" LogicalName="UserGuide.md" />
+  </ItemGroup>
+
+</Project>

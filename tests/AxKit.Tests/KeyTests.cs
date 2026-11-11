@@ -28,6 +28,7 @@ public sealed class KeyTests
             ["axClip"] = AxClip.AxClipKeys.All,
             ["axMCP"] = AxMCP.AxMCPKeys.All,
             ["axHelp"] = AxHelp.AxHelpKeys.All,
+            ["axAutomate"] = AxAutomate.AxAutomateKeys.All,
         };
 
     /// <summary>
@@ -46,6 +47,8 @@ public sealed class KeyTests
         ("axPass", Keys.Control | Keys.Down),
         ("axMCP", Keys.Control | Keys.Up),
         ("axMCP", Keys.Control | Keys.Down),
+        ("axAutomate", Keys.Control | Keys.Up),
+        ("axAutomate", Keys.Control | Keys.Down),
     ];
 
     [Fact]
@@ -101,6 +104,7 @@ public sealed class KeyTests
         ["axClip"] = AxClip.HelpText.Shortcuts,
         ["axMCP"] = AxMCP.HelpText.Shortcuts,
         ["axHelp"] = AxHelp.HelpText.Shortcuts,
+        ["axAutomate"] = AxAutomate.HelpText.Shortcuts,
     };
 
     /// <summary>

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axAutomate: a new app, the workflows that drive axKit's windows. This first version opens the automated checks of every app and reads each one step by step, with its conditions and what it reports; running and changing them come later.
 - axKit: Options comes before Window at the end of every menu bar: the app's own menus, Options, Window, axKit, Help. Options is the app's own; Window starts the bundle's part.
 - axTask: a smart list sorts a choice field such as Priority in its options' order (High, Normal, Low), not alphabetically; an order key can say `"by": "text"` for the alphabet and `"descending": true` to turn it round.
 

@@ -706,7 +706,7 @@ Edit-TextFile 'tests\AxKit.Tests\DispatchTests.cs' {
 
 Edit-TextFile 'src\AxKit\AxKit.csproj' {
     param($text, $nl)
-    return [regex]::Replace($text, ', and ([^<]*)</Description>', ", `$1, and $Description</Description>")
+    return [regex]::Replace($text, '([^<]*)</Description>', "`$1, $Description</Description>")
 }
 
 foreach ($form in '.github\ISSUE_TEMPLATE\bug.yml', '.github\ISSUE_TEMPLATE\idea.yml') {

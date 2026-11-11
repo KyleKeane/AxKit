@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- axAutomate's pure code (docs/axAutomate/SPEC.md section 5): no window. -->
+  <PropertyGroup>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
+    <RootNamespace>AxAutomate.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+  </ItemGroup>
+
+</Project>
