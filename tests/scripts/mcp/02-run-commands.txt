@@ -1,0 +1,83 @@
+# axkit_window_run (docs/axKit/mcp.md MC-7): a window's command run by its name for a paired client, only while the
+# user allows it (axKit menu, AI tools, Let AI tools run commands), said in the window as it runs; a name that names
+# two commands, a notice the user has in hand, and the switch off are refused. The runner is the MCP client.
+file home\AxKit\axDown.json {"checkForUpdates": false}
+file notes.md # Notes\nFirst line of the notes.\n\n## Second heading\nMore.
+start down {temp}\notes.md
+expect focus notes.md
+
+# The access on and the runner paired, as in 01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axDown"
+
+# MC-7.2: off by default; the refusal says how the user allows it, and the window says nothing.
+mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
+expect mcp error: The user has not allowed AI tools to run commands in axKit. The user allows it in any axKit window: axKit menu, AI tools, Let AI tools run commands.
+refuse said ran Word wrap
+
+# On from the axKit menu, said.
+menu Let AI tools run commands
+expect said AI tools may run commands: each is said as it runs
+
+# MC-7.1, MC-7.5: run as the menu item would; the window says who ran it with the command's own words, and the
+# answer gives them back.
+mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
+expect mcp axAutomate ran Word wrap. Word wrap
+expect said axAutomate ran Word wrap. Word wrap
+# Back as it was, the label as the palette and axkit_window_commands both give it, without care for case.
+mcp call axkit_window_run {"window":"{window}","command":"word WRAP"}
+expect mcp "ran": "Word wrap"
+expect said axAutomate ran Word wrap
+
+# MC-7.1: two commands of one name (Heading under Next and under Previous) need the menu.
+mcp call axkit_window_run {"window":"{window}","command":"Heading"}
+expect mcp error: The window has several commands named Heading: give the menu too, one of: Navigate, Next; Navigate, Previous.
+mcp call axkit_window_run {"window":"{window}","command":"Heading","menu":"Navigate, Next"}
+expect mcp "ran": "Heading"
+expect said axAutomate ran Heading
+mcp call axkit_window_run {"window":"{window}","command":"No such command"}
+expect mcp error: The window has no command No such command
+
+# MC-7.3: a command that opens a notice gives the notice back; while it shows, nothing more runs, and the user answers it.
+mcp call axkit_window_run {"window":"{window}","command":"Find..."}
+expect mcp "notice": "Find
+expect focus Text to find
+mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
+expect mcp error: The window shows the user a notice
+keys escape
+expect focus notes.md
+
+# MC-7.2: off again from the menu; the next run is refused at once.
+menu Let AI tools run commands
+expect said AI tools may no longer run commands
+mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
+expect mcp error: The user has not allowed AI tools to run commands
+refuse said ran Word wrap
+
+# MC-6.1: the access off, the switch turned on meanwhile; turning the access on names the switch as it is.
+menu Let AI tools read and open axKit
+expect said AI tools off
+menu Let AI tools run commands
+expect said once AI tools are on
+menu Let AI tools read and open axKit
+expect state Let AI tools run commands is on, so they may also run
+keys escape
+
+# MC-6.6: the runs are in the log by their tool.
+run findstr /c:"axkit_window_run" home\AxKit\mcp-audit.log

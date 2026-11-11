@@ -1,0 +1,57 @@
+# axkit_window_run (docs/axKit/mcp.md MC-7.3): a command that acts outside its window (axFile's New folder, marked act)
+# is asked of the user in the window first; Deny, the default, refuses it, Run runs it once, said with who asked.
+file home\AxKit\axFile.json {"checkForUpdates": false}
+file files\notes.md Some notes.
+start file {temp}\files
+expect focus notes.md
+
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+expect state Let AI tools run commands, which is off
+keys enter
+expect said AI tools on
+try said Not in a test run
+menu Let AI tools run commands
+expect said AI tools may run commands
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axFile"
+
+# The question in the window, the answer to the client that the user is asked; Run runs it as from its menu item (its
+# own notice for the folder's name follows, which the user answers).
+mcp call axkit_window_run {"window":"{window}","command":"New folder..."}
+expect mcp The window asks the user whether to run New folder
+expect state "notice":"axAutomate asks to run New folder"
+expect state on notes.md in files in this window
+wait 1500
+keys tab
+expect focus &Run
+keys enter
+expect said axAutomate ran New folder
+expect focus Name
+keys escape
+
+# MC-D7: Open starts the file's program (a script or a program among them), so it is act and asked first too. Escape
+# is Deny, the default; nothing opens.
+mcp call axkit_window_run {"window":"{window}","command":"Open"}
+expect mcp The window asks the user whether to run Open
+expect state "notice":"axAutomate asks to run Open"
+wait 1500
+keys escape
+expect said Open not run
+refuse said axAutomate ran Open
+
+# After a Deny the window asks no more for a minute, whatever the command.
+mcp call axkit_window_run {"window":"{window}","command":"New folder"}
+expect mcp error: The user denied running a command a moment ago
+refuse state asks to run

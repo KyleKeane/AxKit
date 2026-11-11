@@ -140,6 +140,14 @@ $1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, it
 - `Mcp/McpTools`: the first stage's tools, `NeverRead` (axPass, axClip) and `NeverOpened` (axClaude, axTerminal),
   and `OpenArguments`, the check of `axkit_open`'s app and path. `Mcp/McpAudit` (one line a call, the arguments
   hashed) and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).
+- `Mcp/McpRun` with `McpCommandName` (MC-7, 2026-11-11): the pure rules of `axkit_window_run`, `NeverRun` (axPass,
+  axClip) with `AppRefusal`, `SwitchOff`, `Find` (a command by its label and, where two share one, its menus),
+  `Speaker` (Claude Code's own names matched whole, `ClaudeCodeNames`), `Said` ("Claude ran Word wrap"), `AskTitle`, `AskText` with `Names`, `ShownTarget` and `TargetRefusal` (MC-7.3: the question names what the command would act on, and a Run after the selection changed is refused), `Chimes` (MC-7.5: one chime for a burst),
+  and `IsUserBusy` with `UserBusy` (MC-7.8: no run in a window in front within 3 s of the user's last input); the
+  switch itself is `McpSettings.RunCommands`, sealed (its " run" in the seal only while on, so older files still
+  check), `McpAccess.RunsCommands` over the pure `RunsCommandsIn`, and `SetRunCommands`; `Switched` (the access off
+  takes the switch with it) and `Forgotten` (Forget: the clients and the switch) are the pure halves of `SetEnabled`
+  and `ForgetAll` (MC-D9).
 
 ## Background apps
 
@@ -234,7 +242,7 @@ Every piece is tested in `tests/AxKit.Tests`, one `<Piece>Tests.cs` file per pie
 `VtScreenOperationTests` and `ScreenMarkTests` for the screen); the transcript pieces are tested further in
 `tests/AxClaude.Tests`, where the recorded fixtures drive them. The same project holds the bundle's own checks of the
 sources: `LayoutTests` (the project references point one way, M2), `InventoryTests` (every app in every place it must
-be), `KeyTests` (no window key equals a bundle key, AX-8.4), `ListTests`, `MenuTests`, `CheckBoxTests` and `ReleaseWorkflowTests` (the workflows' shape).
+be), `KeyTests` (no window key equals a bundle key, AX-8.4), `ListTests`, `MenuTests`, `CheckBoxTests`, `CommandMarkTests` (every `new Command` states its `Mark`, and the act commands that start a program or reach past the window stay act, docs/axKit/mcp.md MC-D7) and `ReleaseWorkflowTests` (the workflows' shape).
 
 ## Gotchas
 

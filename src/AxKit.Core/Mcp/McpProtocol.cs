@@ -84,7 +84,7 @@ public sealed class McpProtocol(Func<IReadOnlyList<McpTool>> tools, Func<string,
             ["protocolVersion"] = asked is not null && Versions.Contains(asked) ? asked : Versions[0],
             ["capabilities"] = new JsonObject { ["tools"] = new JsonObject { ["listChanged"] = false } },
             ["serverInfo"] = new JsonObject { ["name"] = "axkit", ["version"] = BundleInfo.Version },
-            ["instructions"] = "axKit's windows for a blind user of NVDA: read what they show and open apps. Every call is in the user's log; nothing here changes or deletes anything.",
+            ["instructions"] = "axKit's windows for a blind user of NVDA: read what they show, open apps, and, while the user allows it, run a window's commands by name (axkit_window_run), each heard by the user as it runs; a command that acts outside the window asks the user first. Every call is in the user's log; nothing here answers a question the window asks the user.",
         };
     }
 

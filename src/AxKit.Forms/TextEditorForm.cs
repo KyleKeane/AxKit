@@ -60,8 +60,8 @@ public sealed partial class TextEditorForm : AxKitForm
     {
         _app = app;
         _settings = settings;
-        _undo = new Command("&Undo", EditorKeys.Undo, Undo);
-        _redo = new Command("&Redo", EditorKeys.Redo, Redo);
+        _undo = new Command("&Undo", EditorKeys.Undo, Undo) { Mark = CommandMark.Change };
+        _redo = new Command("&Redo", EditorKeys.Redo, Redo) { Mark = CommandMark.Change };
 
         // ---- menus and keys (AD-4, AD-5): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // File is the thing worked on, in the standard order of a File menu (AD-4.1, bundle AX-6): New, Open and the
@@ -75,7 +75,7 @@ public sealed partial class TextEditorForm : AxKitForm
         }
         else
         {
-            Add(file, new Command("&New", EditorKeys.NewDocument, NewDocument));
+            Add(file, new Command("&New", EditorKeys.NewDocument, NewDocument) { Mark = CommandMark.Change });
             Add(file, new Command("New &window", EditorKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
         }
 
@@ -92,7 +92,7 @@ public sealed partial class TextEditorForm : AxKitForm
         {
             // Ctrl+S is the base's key (SaveCommand), so Save stays an item that shows it.
             file.DropDownItems.Add(Item("&Save", () => Save(), BundleKeys.Save));
-            Add(file, new Command("Save &as...", EditorKeys.SaveAs, () => SaveAs()));
+            Add(file, new Command("Save &as...", EditorKeys.SaveAs, () => SaveAs()) { Mark = CommandMark.Change });
             file.DropDownItems.Add(new ToolStripSeparator());
         }
 
@@ -118,7 +118,7 @@ public sealed partial class TextEditorForm : AxKitForm
                 edit.DropDownItems.Add(new ToolStripSeparator());
                 foreach (var command in _app.Commands)
                 {
-                    Add(edit, new Command(command.Label, command.Key, () => RunCommand(command)));
+                    Add(edit, new Command(command.Label, command.Key, () => RunCommand(command)) { Mark = CommandMark.Change });
                 }
             }
         }
@@ -144,7 +144,7 @@ public sealed partial class TextEditorForm : AxKitForm
         // Options, as axClaude's (AD-4.3): every setting in the submenu for what it is about, none outside one.
         // The item goes into the Text submenu the base makes, so it is made from the command here and its key added.
         var options = new ToolStripMenuItem("&Options");
-        var wordWrap = new Command("&Word wrap", EditorKeys.WordWrap, ToggleWordWrap);
+        var wordWrap = new Command("&Word wrap", EditorKeys.WordWrap, ToggleWordWrap) { Mark = CommandMark.Change };
         _wordWrapItem = Add(wordWrap);
         _wordWrapItem.Checked = WordWrapPreference;
         options.DropDownItems.Add(CreateTextMenu(_wordWrapItem));

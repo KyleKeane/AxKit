@@ -46,8 +46,8 @@ public sealed class HelpForm : HotkeyForm
 
         // ---- menus and keys (HE-6): one command list (docs/axKit/app-kit.md AK-2) ----
         var first = new ToolStripMenuItem("&Session");
-        Add(first, new Command("&Open the conversation", AxHelpKeys.OpenConversation, () => OpenConversation(null)) { Mark = CommandMark.Open });
-        Add(first, new Command("Put a picture &file into the conversation...", AxHelpKeys.PictureFile, ChoosePicture) { Mark = CommandMark.Open });
+        Add(first, new Command("&Open the conversation", AxHelpKeys.OpenConversation, () => OpenConversation(null)) { Mark = CommandMark.Act });
+        Add(first, new Command("Put a picture &file into the conversation...", AxHelpKeys.PictureFile, ChoosePicture) { Mark = CommandMark.Act });
         Add(first, new Command("Open the last &screenshot in axPreview", AxHelpKeys.OpenScreenshot, OpenLastScreenshot) { Mark = CommandMark.Open });
         first.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
         AddHideAndQuit(first, AxHelpKeys.Hide);

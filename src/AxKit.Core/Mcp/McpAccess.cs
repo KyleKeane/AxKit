@@ -13,6 +13,9 @@ public sealed class McpSettings
 
     public List<McpClient> Clients { get; set; } = [];
 
+    /// <summary>Whether AI tools may run a window's commands (docs/axKit/mcp.md MC-7.2): off until the user turns it on in the axKit menu, AI tools, Let AI tools run commands; sealed with the rest.</summary>
+    public bool RunCommands { get; set; }
+
     /// <summary>HMAC-SHA256 of <see cref="Enabled"/> and the clients under the key (<see cref="McpAccess.SealOf"/>), so that a hand-written file counts for nothing.</summary>
     public string Seal { get; set; } = string.Empty;
 }
@@ -57,6 +60,45 @@ public static class McpAccess
 
     public static bool Enabled => Load().Enabled;
 
+    /// <summary>MC-7.2: whether AI tools may run commands, read from the sealed file; false whenever the access itself is off.</summary>
+    public static bool RunsCommands => RunsCommandsIn(Load());
+
+    /// <summary>MC-7.2: whether these settings let AI tools run commands: the switch on and the access itself on.</summary>
+    public static bool RunsCommandsIn(McpSettings settings) => settings is { Enabled: true, RunCommands: true };
+
+    /// <summary>MC-6.1, MC-7.2: the access turned on or off; off turns the run switch off too, so that turning the access on again never brings back running commands unsaid.</summary>
+    public static McpSettings Switched(McpSettings settings, bool enabled)
+    {
+        settings.Enabled = enabled;
+        if (!enabled)
+        {
+            settings.RunCommands = false;
+        }
+
+        return settings;
+    }
+
+    /// <summary>MC-6.1, MC-7.2: Forget AI tools takes every permission back: every client forgotten and the run switch off.</summary>
+    public static McpSettings Forgotten(McpSettings settings)
+    {
+        settings.Clients = [];
+        settings.RunCommands = false;
+        return settings;
+    }
+
+    /// <summary>MC-7.2: the switch Let AI tools run commands, written sealed; on makes the key first, as turning the access on does.</summary>
+    public static void SetRunCommands(bool on)
+    {
+        if (on)
+        {
+            MakeKey();
+        }
+
+        var settings = Load();
+        settings.RunCommands = on;
+        Save(settings);
+    }
+
     /// <summary>On or off; on makes the key first, so that the file can be sealed and a broker started next finds it.</summary>
     public static void SetEnabled(bool enabled)
     {
@@ -65,9 +107,7 @@ public static class McpAccess
             MakeKey();
         }
 
-        var settings = Load();
-        settings.Enabled = enabled;
-        Save(settings);
+        Save(Switched(Load(), enabled));
     }
 
     /// <summary>The client paired for this program file, or null.</summary>
@@ -82,12 +122,10 @@ public static class McpAccess
         Save(settings);
     }
 
-    /// <summary>axKit → AI tools → Forget AI tools: every client forgotten, so that each must be allowed again.</summary>
+    /// <summary>axKit → AI tools → Forget AI tools: every client forgotten, so that each must be allowed again, and the run switch off (<see cref="Forgotten"/>).</summary>
     public static void ForgetAll()
     {
-        var settings = Load();
-        settings.Clients = [];
-        Save(settings);
+        Save(Forgotten(Load()));
     }
 
     /// <summary>The file written with its seal; without a key (the access never turned on) it is written off and empty.</summary>
@@ -104,10 +142,18 @@ public static class McpAccess
         SettingsFile.Save(AppPaths.McpFile, settings);
     }
 
-    /// <summary>The seal of the setting and the clients: one line each, in order, under HMAC-SHA256.</summary>
+    /// <summary>
+    /// The seal of the setting and the clients: one line each, in order, under HMAC-SHA256. The switch of MC-7.2 adds
+    /// " run" to the first line only while it is on, so that a file written before it existed still checks.
+    /// </summary>
     public static string SealOf(byte[] key, McpSettings settings)
     {
         var text = new StringBuilder(settings.Enabled ? "on" : "off");
+        if (settings.RunCommands)
+        {
+            text.Append(" run");
+        }
+
         foreach (var client in settings.Clients)
         {
             text.Append('\n').Append(client.Program).Append('\t').Append(client.Name).Append('\t').Append(client.Paired);

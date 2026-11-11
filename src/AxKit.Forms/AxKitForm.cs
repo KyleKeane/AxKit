@@ -587,8 +587,19 @@ public abstract partial class AxKitForm : Form
             _commands.Add(command);
         }
 
-        return Item(command.Label, () => Run(command), command.Key);
+        var item = Item(command.Label, () => Run(command), command.Key);
+        // The items of a command, for axkit_window_run (docs/axKit/mcp.md MC-7.1): it runs as one of them would.
+        if (!_commandItems.TryGetValue(command, out var items))
+        {
+            _commandItems[command] = items = [];
+        }
+
+        items.Add(item);
+        return item;
     }
+
+    /// <summary>The menu items made for each command, by the record itself (two commands may be equal as records).</summary>
+    private readonly Dictionary<Command, List<ToolStripMenuItem>> _commandItems = new(ReferenceEqualityComparer.Instance);
 
     /// <summary>
     /// The window's last actions for a report (docs/axKit/reports.md RP-4.1): every command run by key, menu or palette,

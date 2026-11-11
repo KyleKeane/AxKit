@@ -424,7 +424,7 @@ public abstract partial class ConsoleForm : AxKitForm
     protected void AddBookmarkItems(ToolStripMenuItem menu)
     {
         var view = _transcriptName.ToLowerInvariant();
-        var bookmark = Add(menu, new Command("&Bookmark this line", _keys.BookmarkLine, Transcript.ToggleBookmark));
+        var bookmark = Add(menu, new Command("&Bookmark this line", _keys.BookmarkLine, Transcript.ToggleBookmark) { Mark = CommandMark.Change });
         bookmark.ShortcutKeyDisplayString = $"{BundleKeys.Text(_keys.BookmarkLine)}, or {BundleKeys.Text(_keys.BookmarkToggle)} in the {view}";
         menu.DropDownItems.Add(new ToolStripMenuItem("Next bookmar&k", null, (_, _) => Transcript.JumpToBookmark(backward: false)) { ShortcutKeyDisplayString = $"{BundleKeys.Text(_keys.Bookmark.Key)} in the {view}" });
         menu.DropDownItems.Add(new ToolStripMenuItem("Pre&vious bookmark", null, (_, _) => Transcript.JumpToBookmark(backward: true)) { ShortcutKeyDisplayString = $"Shift+{BundleKeys.Text(_keys.Bookmark.Key)} in the {view}" });
@@ -449,7 +449,7 @@ public abstract partial class ConsoleForm : AxKitForm
     /// <summary>Options → Sounds → Background music …, made with the window's words and key, the key a command that flips it from anywhere (<see cref="ToggleMusic"/>).</summary>
     protected ToolStripMenuItem CreateMusicItem(string text, Keys key)
     {
-        AddKey(new Command("Background music on or off", key, ToggleMusic));
+        AddKey(new Command("Background music on or off", key, ToggleMusic) { Mark = CommandMark.Change });
         _musicItem = Toggle(text, ConsoleSettings.WorkingMusic, v =>
         {
             ConsoleSettings.WorkingMusic = v;

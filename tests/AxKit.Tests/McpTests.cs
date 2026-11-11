@@ -194,6 +194,196 @@ public sealed class McpTests
     }
 
     [Fact]
+    public void Run_is_never_for_the_password_database_or_the_clipboard()
+    {
+        Assert.Contains("passwords", McpRun.AppRefusal(Dispatch.AxPass), StringComparison.Ordinal);
+        Assert.Contains("clipboard", McpRun.AppRefusal(Dispatch.AxClip), StringComparison.Ordinal);
+        Assert.NotNull(McpRun.AppRefusal("PASS"));
+        Assert.Null(McpRun.AppRefusal(Dispatch.AxDown));
+        // Every app run refuses is one that serves no pipe as well: nothing is reachable to run in the first place.
+        Assert.All(McpRun.NeverRun, verb => Assert.Contains(verb, McpTools.NeverRead));
+    }
+
+    [Fact]
+    public void The_run_switch_is_sealed_and_a_file_of_before_still_checks()
+    {
+        var key = new byte[32];
+        key[3] = 7;
+
+        // A file written before the switch existed: its seal was made of "on" and the clients alone.
+        var before = new McpSettings { Enabled = true };
+        var oldSeal = Convert.ToBase64String(System.Security.Cryptography.HMACSHA256.HashData(key, System.Text.Encoding.UTF8.GetBytes("on")));
+        before.Seal = oldSeal;
+        Assert.True(McpAccess.Checks(key, before));
+        Assert.False(before.RunCommands);
+
+        // The switch turned on by hand breaks the seal: only axKit's own menu item turns it on.
+        before.RunCommands = true;
+        Assert.False(McpAccess.Checks(key, before));
+        before.Seal = McpAccess.SealOf(key, before);
+        Assert.True(McpAccess.Checks(key, before));
+        Assert.NotEqual(oldSeal, before.Seal);
+    }
+
+    [Fact]
+    public void Commands_run_only_while_the_access_and_the_switch_are_both_on()
+    {
+        Assert.False(McpAccess.RunsCommandsIn(new McpSettings()));
+        Assert.False(McpAccess.RunsCommandsIn(new McpSettings { Enabled = true }));
+        // The switch left on while the access is off counts for nothing.
+        Assert.False(McpAccess.RunsCommandsIn(new McpSettings { Enabled = false, RunCommands = true }));
+        Assert.True(McpAccess.RunsCommandsIn(new McpSettings { Enabled = true, RunCommands = true }));
+    }
+
+    [Fact]
+    public void Turning_the_access_off_turns_the_switch_off_and_on_again_leaves_it_off()
+    {
+        var settings = new McpSettings { Enabled = true, RunCommands = true };
+        McpAccess.Switched(settings, enabled: false);
+        Assert.False(settings.Enabled);
+        Assert.False(settings.RunCommands);
+        McpAccess.Switched(settings, enabled: true);
+        Assert.True(settings.Enabled);
+        Assert.False(McpAccess.RunsCommandsIn(settings));
+    }
+
+    [Fact]
+    public void Forget_takes_every_permission_back_the_switch_included()
+    {
+        var settings = new McpSettings { Enabled = true, RunCommands = true, Clients = [new McpClient(@"C:\Tools\claude.exe", "Claude Code", "2026-11-11 09:00")] };
+        McpAccess.Forgotten(settings);
+        Assert.Empty(settings.Clients);
+        Assert.False(settings.RunCommands);
+        // The access itself stays as the user set it: Forget is about the clients and what they were allowed.
+        Assert.True(settings.Enabled);
+    }
+
+    [Theory]
+    [InlineData(true, 0, true)]
+    [InlineData(true, 2999, true)]
+    [InlineData(true, 3000, false)]
+    [InlineData(false, 0, false)]
+    [InlineData(true, -1, false)]
+    public void A_run_waits_while_the_user_works_in_the_window_in_front(bool inFront, long idleMs, bool busy)
+    {
+        Assert.Equal(busy, McpRun.IsUserBusy(inFront, idleMs));
+    }
+
+    private static readonly McpCommandName[] EditorCommands =
+    [
+        new("&Word wrap", "Options, Text"),
+        new("Save &as...", "File"),
+        new("&Heading", "Navigate, Next"),
+        new("&Heading", "Navigate, Previous"),
+        new("Between the text and the details", string.Empty),
+    ];
+
+    [Theory]
+    [InlineData("Word wrap", null, 0)]
+    [InlineData("word WRAP", null, 0)]
+    [InlineData("&Word wrap", null, 0)]
+    [InlineData("Save as...", null, 1)]
+    [InlineData("Save as", null, 1)]
+    [InlineData("Heading", "Navigate, Next", 2)]
+    [InlineData("heading", "navigate, previous", 3)]
+    [InlineData("Between the text and the details", null, 4)]
+    public void A_command_is_found_by_its_label_and_where_needed_its_menu(string name, string? menu, int index)
+    {
+        var (found, refusal) = McpRun.Find(EditorCommands, name, menu);
+        Assert.Null(refusal);
+        Assert.Equal(index, found);
+    }
+
+    [Theory]
+    [InlineData("Heading", null, "several commands named Heading: give the menu too, one of: Navigate, Next; Navigate, Previous.")]
+    [InlineData("Heading", "File", "no command Heading in the menu File")]
+    [InlineData("Delete", null, "no command Delete: axkit_window_commands lists them.")]
+    [InlineData("  ", null, "Name the command")]
+    [InlineData(null, null, "Name the command")]
+    [InlineData("Word", null, "no command Word")]
+    public void A_name_that_names_no_command_or_two_is_refused(string? name, string? menu, string reason)
+    {
+        var (found, refusal) = McpRun.Find(EditorCommands, name, menu);
+        Assert.Equal(-1, found);
+        Assert.Contains(reason, refusal, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("claude-code", "Claude")]
+    [InlineData("Claude Code", "Claude")]
+    [InlineData("CLAUDE", "Claude")]
+    [InlineData("axAutomate", "axAutomate")]
+    [InlineData("Claudette", "Claudette")]
+    [InlineData("claude-whatever", "claude-whatever")]
+    [InlineData("", "An AI tool")]
+    public void The_window_names_who_ran_a_command(string client, string speaker)
+    {
+        Assert.Equal(speaker, McpRun.Speaker(client));
+    }
+
+    [Fact]
+    public void What_the_window_says_and_asks_names_the_client_and_the_command()
+    {
+        Assert.Equal("Claude ran Word wrap", McpRun.Said("claude-code", "&Word wrap"));
+        Assert.Equal("Claude asks to run New folder", McpRun.AskTitle("Claude Code", "&New folder..."));
+        Assert.Equal(40, McpRun.Speaker(new string('x', 80)).Length);
+        Assert.Contains("U+202E", McpRun.Speaker("a‮b"), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_question_names_what_the_command_would_act_on()
+    {
+        var text = McpRun.AskText("claude-code", "Open", "File", "report.pdf");
+        Assert.StartsWith("Claude asks to run Open (File) on report.pdf in this window.", text, StringComparison.Ordinal);
+        Assert.Contains("not at all if what is selected has changed", text, StringComparison.Ordinal);
+        Assert.StartsWith("Claude asks to run Open in this window.", McpRun.AskText("claude-code", "&Open", string.Empty, "  "), StringComparison.Ordinal);
+
+        var shown = McpRun.ShownTarget(new string('a', 500));
+        Assert.Equal(McpRun.TargetShownLength + 3, shown.Length);
+        Assert.EndsWith("...", shown, StringComparison.Ordinal);
+        Assert.Equal("a b", McpRun.ShownTarget("a\r\nb"));
+        Assert.Contains("U+202E", McpRun.ShownTarget("a‮b"), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Several_names_are_one_target()
+    {
+        Assert.Equal(string.Empty, McpRun.Names([]));
+        Assert.Equal("report.pdf", McpRun.Names(["report.pdf"]));
+        Assert.Equal("a.txt and b.txt", McpRun.Names(["a.txt", "b.txt"]));
+        Assert.Equal("a.txt, b.txt and c.txt", McpRun.Names(["a.txt", "b.txt", "c.txt"]));
+    }
+
+    [Fact]
+    public void A_run_is_refused_when_the_selection_changed_since_the_question()
+    {
+        Assert.Null(McpRun.TargetRefusal("report.pdf in files", "report.pdf in files"));
+        Assert.Equal("the selection changed", McpRun.TargetRefusal("report.pdf in files", "notes.md in files"));
+        Assert.Equal("the selection changed", McpRun.TargetRefusal("Report.pdf", "report.pdf"));
+        Assert.Null(McpRun.TargetRefusal(string.Empty, string.Empty));
+    }
+
+    [Theory]
+    [InlineData(-1, 0, true)]
+    [InlineData(1000, 1000, false)]
+    [InlineData(1000, 5999, false)]
+    [InlineData(1000, 6000, true)]
+    public void A_burst_of_runs_in_a_window_behind_chimes_once(long last, long now, bool chimes)
+    {
+        Assert.Equal(chimes, McpRun.Chimes(last, now));
+    }
+
+    [Fact]
+    public void The_run_tool_takes_a_window_and_a_command_and_says_it_needs_the_users_word()
+    {
+        var run = Assert.Single(McpTools.All, tool => tool.Name == McpTools.Run);
+        Assert.Equal(["window", "command"], run.InputSchema["required"]!.AsArray().Select(name => name!.GetValue<string>()));
+        Assert.NotNull(run.InputSchema["properties"]!["menu"]);
+        Assert.Contains("Let AI tools run commands", McpRun.SwitchOff, StringComparison.Ordinal);
+        Assert.Contains("axKit menu, AI tools", McpRun.SwitchOff, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Mcp_is_the_brokers_verb_not_an_app()
     {
         var launch = Dispatch.Decide(["mcp"]);

@@ -58,6 +58,40 @@ public static class CommandPalette
         return entries;
     }
 
+    /// <summary>
+    /// The menus that hold an item, from the bar down, as the palette names them: "Navigate, Next"; empty for an item
+    /// of no menu bar's (a context menu's). For <c>axkit_window_commands</c> and <c>axkit_window_run</c> (docs/axKit/mcp.md MC-7.1).
+    /// </summary>
+    public static string MenuPath(ToolStripMenuItem item) =>
+        string.Join(", ", Owners(item).Select(owner => MenuText.Plain(owner.Text ?? string.Empty)));
+
+    /// <summary>
+    /// Whether the palette would offer the item now (AX-10.2, MC-7.1): its menus refreshed as on opening, top down, then
+    /// the item and every menu over it available and enabled, none of them filled on opening.
+    /// </summary>
+    public static bool Offered(ToolStripMenuItem item)
+    {
+        var owners = Owners(item);
+        foreach (var owner in owners)
+        {
+            (owner.Tag as Mark)?.Refresh?.Invoke();
+        }
+
+        return owners.Append(item).All(menu => menu.Available && menu.Enabled && menu.Tag is not Mark { LeftOut: true });
+    }
+
+    /// <summary>The menu items over an item, the bar's first.</summary>
+    private static List<ToolStripMenuItem> Owners(ToolStripMenuItem item)
+    {
+        var owners = new List<ToolStripMenuItem>();
+        for (var owner = item.OwnerItem as ToolStripMenuItem; owner is not null; owner = owner.OwnerItem as ToolStripMenuItem)
+        {
+            owners.Insert(0, owner);
+        }
+
+        return owners;
+    }
+
     private static void Collect(ToolStripItemCollection items, List<string> path, List<PaletteEntry> entries, Action<string> say)
     {
         foreach (ToolStripItem item in items)

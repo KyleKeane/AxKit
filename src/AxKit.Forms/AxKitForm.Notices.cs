@@ -289,6 +289,36 @@ public abstract partial class AxKitForm
         return Raise(text, false);
     }
 
+    /// <summary>
+    /// Words said ahead of what comes next (docs/axKit/mcp.md MC-7.5, "Claude ran Word wrap"): held to be joined to the
+    /// next announcement within <see cref="JoinMs"/>, an interrupting one included, so that the command's own words never
+    /// cut them off; said alone when nothing follows.
+    /// </summary>
+    protected void AnnounceBefore(string text)
+    {
+        if (RecordsAnnouncements)
+        {
+            Recent.Add(RecentActionKind.Said, text, DateTime.UtcNow);
+        }
+
+        if (_beforeActivation is { } held)
+        {
+            held.Add((text, false));
+            if (held.Count > 4)
+            {
+                held.RemoveAt(0);
+            }
+
+            return;
+        }
+
+        _joining.Add(text);
+        if (!_joinSay.Enabled)
+        {
+            _joinSay.Start();
+        }
+    }
+
     /// <summary>Wires the two timers; called once from the constructor.</summary>
     private void WireAnnouncing()
     {

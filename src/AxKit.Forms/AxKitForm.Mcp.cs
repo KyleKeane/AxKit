@@ -18,6 +18,258 @@ public abstract partial class AxKitForm
     /// <summary>The window's commands for <c>axkit_window_commands</c>.</summary>
     internal IReadOnlyList<Command> CommandList => _commands;
 
+    /// <summary>The menus that hold a command's first item ("Navigate, Next"), empty for a key with no item: for <c>axkit_window_commands</c> and <c>axkit_window_run</c> (MC-7.1).</summary>
+    internal string MenuOf(Command command) =>
+        _commandItems.TryGetValue(command, out var items) ? CommandPalette.MenuPath(items[0]) : string.Empty;
+
+    /// <summary>
+    /// <c>axkit_window_run</c>, on the window's thread (docs/axKit/mcp.md MC-7): the refusals first (axPass and axClip,
+    /// the switch off, a notice or a Windows dialog the user has in hand, the user working in the window in front, a name
+    /// that names no command or two, a key with no menu item, an item the menus do not offer now); then a command marked
+    /// act asks the user (MC-7.3), and any other is posted to run as its menu item would, after the words that say who
+    /// ran it (MC-7.5). Posted, so that the pipe's answer never waits on a command that shows a Windows dialog; the
+    /// ticket finds what came of it (<see cref="McpAfterRun"/>). <paramref name="allowed"/> is the switch as the pipe's
+    /// thread read it from the sealed file just before (MC-7.6), so that the window's thread never waits on the file.
+    /// Only the window's own command list is searched: the bundle's menus (the AI tools' switches among them) are not
+    /// commands of it and never run for a client.
+    /// </summary>
+    internal (string? Error, string Label, bool Asked, int Ticket) McpRunCommand(string? name, string? menu, string client, bool allowed)
+    {
+        if (McpRun.AppRefusal(AppVerb) is { } refused)
+        {
+            return (refused, string.Empty, false, 0);
+        }
+
+        if (!allowed)
+        {
+            return (McpRun.SwitchOff, string.Empty, false, 0);
+        }
+
+        if (NoticeOpen)
+        {
+            return ($"The window shows the user a notice, {Overlay.Shown?.Title}: commands run once the user has answered it, and AI tools never answer it.", string.Empty, false, 0);
+        }
+
+        if (DialogShowing)
+        {
+            return ("The window shows the user a Windows dialog: commands run once the user has closed it.", string.Empty, false, 0);
+        }
+
+        // MC-7.8: never under the user's hands; a command may move the caret or the focus as its key would.
+        if (McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()))
+        {
+            return (McpRun.UserBusy, string.Empty, false, 0);
+        }
+
+        var (index, refusal) = McpRun.Find([.. _commands.Select(command => new McpCommandName(command.Label, MenuOf(command)))], name, menu);
+        if (refusal is not null)
+        {
+            return (refusal, string.Empty, false, 0);
+        }
+
+        var found = _commands[index];
+        var label = McpRun.Plain(found.Label);
+        if (!_commandItems.TryGetValue(found, out var items))
+        {
+            return ($"{label} is a key of the window with no menu item: AI tools run what the menus offer.", label, false, 0);
+        }
+
+        if (items.FirstOrDefault(CommandPalette.Offered) is not { } item)
+        {
+            return ($"{label} is not available now: its menu item is disabled.", label, false, 0);
+        }
+
+        if (found.Mark == CommandMark.Act)
+        {
+            // After the user's Deny, the same window asks no more for a minute: a client that asks again at once does not
+            // wear the user down (as the pairing's Deny, MC-6.4).
+            // Per window, whichever client asks: the broker does not learn of the user's Deny (MC-7.3).
+            if (Environment.TickCount64 < _mcpRunDeniedUntil)
+            {
+                return ("The user denied running a command a moment ago; this window asks no more within a minute.", label, false, 0);
+            }
+
+            AskToRunMcp(client, label, MenuOf(found), item, McpTarget());
+            return (null, label, true, 0);
+        }
+
+        var ticket = ++_mcpRunTickets;
+        _mcpRun = (ticket, false, null);
+        BeginInvoke(() =>
+        {
+            // The outcome is kept before the click, which may hold this thread in a Windows dialog. The user may have
+            // started typing in the window between the check and now (MC-7.8).
+            var notRun = WhyNotRunForMcp(item, allowed: true)
+                ?? (McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()) ? "the user was working in the window" : null);
+            _mcpRun = (ticket, true, notRun);
+            if (notRun is null)
+            {
+                RunForMcp(client, label, item);
+            }
+        });
+        return (null, label, false, ticket);
+    }
+
+    /// <summary>Until when an act's run is refused without asking, after the user's Deny (milliseconds of <see cref="Environment.TickCount64"/>).</summary>
+    private long _mcpRunDeniedUntil;
+
+    /// <summary>The last posted run (MC-7.1): its ticket, whether it was taken up, and why it did not run, null when it ran.</summary>
+    private (int Ticket, bool Done, string? NotRun) _mcpRun;
+
+    private int _mcpRunTickets;
+
+    /// <summary>
+    /// What a command left the window doing, for the run's answer: the notice it shows the user, or a Windows dialog; and
+    /// for the run of <paramref name="ticket"/>, whether it ran (null while not known: not taken up yet, or another run
+    /// came after it) and why not.
+    /// </summary>
+    internal (string? Notice, string? NoticeText, bool Dialog, bool? Ran, string? NotRun) McpAfterRun(int ticket)
+    {
+        var (current, done, notRun) = _mcpRun;
+        bool? ran = current == ticket && done ? notRun is null : null;
+        return (NoticeOpen ? Overlay.Shown?.Title : null, NoticeOpen ? Overlay.Shown?.Text : null, DialogShowing, ran, ran == false ? notRun : null);
+    }
+
+    /// <summary>Why a run that waited (posted, or asked of the user) does not run now, or null when it runs: checked again at the moment it would run.</summary>
+    private string? WhyNotRunForMcp(ToolStripMenuItem item, bool allowed)
+    {
+        if (IsDisposed)
+        {
+            return "the window closed";
+        }
+
+        if (!allowed)
+        {
+            return "Let AI tools run commands is off";
+        }
+
+        if (NoticeOpen || DialogShowing)
+        {
+            return "the window showed the user a question first";
+        }
+
+        return CommandPalette.Offered(item) ? null : "its menu item is not available now";
+    }
+
+    /// <summary>
+    /// MC-7.5: the words that say who ran it, joined to what the command says next, then the item clicked as the menu
+    /// would. A window that is not in front chimes and flashes on the taskbar as well, since NVDA does not speak the
+    /// notifications of a window behind (<see cref="Raise"/>).
+    /// </summary>
+    private void RunForMcp(string client, string label, ToolStripMenuItem item)
+    {
+        AnnounceBefore(McpRun.Said(client, label));
+        // One chime and flash for a burst of runs, not one per run.
+        if (GetForegroundWindow() != Handle && McpRun.Chimes(_mcpLastChime, Environment.TickCount64))
+        {
+            _mcpLastChime = Environment.TickCount64;
+            Sounds.Notice();
+            FlashIfBehind();
+        }
+
+        item.PerformClick();
+    }
+
+    /// <summary>When a run in this window behind last chimed (<see cref="Environment.TickCount64"/>), -1 for never.</summary>
+    private long _mcpLastChime = -1;
+
+    /// <summary>
+    /// MC-7.3: what a command of this window would act on now, for the question an act command asks and the check at the
+    /// user's Run: the window's selection in a few words ("report.pdf in files"), empty when there is none. By default
+    /// the focused control's name and, for a list, its selected item as NVDA reads it; the windows whose commands act on
+    /// a selection say it themselves (axFile's selected entries, axStart's program, axProcess's process or service,
+    /// axGIT's file, the item apps' row).
+    /// </summary>
+    protected virtual string McpTarget()
+    {
+        if (FocusedControl() is not { } control)
+        {
+            return string.Empty;
+        }
+
+        var name = control.AccessibleName ?? string.Empty;
+        return control is ListBox && WindowReading.ValueOf(control) is { Length: > 0 } selected
+            ? name.Length > 0 ? $"{selected}, in {name}" : selected
+            : name;
+    }
+
+    /// <summary>Milliseconds since the user's last key or mouse move in this session (<c>GetLastInputInfo</c>), -1 when Windows cannot tell.</summary>
+    private static long UserIdleMs()
+    {
+        var info = new LastInputInfo { Size = (uint)Marshal.SizeOf<LastInputInfo>() };
+        return GetLastInputInfo(ref info) ? unchecked((uint)Environment.TickCount - info.Time) : -1;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct LastInputInfo
+    {
+        public uint Size;
+        public uint Time;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool GetLastInputInfo(ref LastInputInfo info);
+
+    /// <summary>
+    /// MC-7.3: a command that acts outside the window (a delete, a push, a program started) is asked of the user first,
+    /// in the window, unprompted, with Deny the default and Escape; only the user's Run runs it, once, and only while the
+    /// switch is still on (read again off the window's thread), the item still available and the window's selection still
+    /// the one the question named (<paramref name="target"/>, <see cref="McpTarget"/>).
+    /// </summary>
+    private void AskToRunMcp(string client, string label, string menu, ToolStripMenuItem item, string target)
+    {
+        var text = McpRun.AskText(client, label, menu, target);
+        ShowNotice(new Notice(McpRun.AskTitle(client, label), text,
+        [
+            new OverlayChoice("&Run", () =>
+            {
+                CloseNotice(null);
+                // Read with the focus back where it was before the question, as when it was asked.
+                if (McpRun.TargetRefusal(target, McpTarget()) is { } changed)
+                {
+                    Announce($"{label} not run: {changed}", true);
+                    return;
+                }
+
+                Do(async () =>
+                {
+                    // The user may have turned the switch off while the question waited.
+                    var allowed = await Task.Run(() => McpAccess.RunsCommands);
+                    if (WhyNotRunForMcp(item, allowed) is { } reason)
+                    {
+                        if (!IsDisposed)
+                        {
+                            Announce($"{label} not run: {reason}", true);
+                        }
+
+                        return;
+                    }
+
+                    RunForMcp(client, label, item);
+                });
+            }, StaysOpen: true),
+            new OverlayChoice("&Deny", () =>
+            {
+                _mcpRunDeniedUntil = Environment.TickCount64 + 60_000;
+                Announce($"{label} not run", true);
+            }, IsDefault: true, IsCancel: true),
+        ])
+        {
+            Unprompted = true,
+        });
+        FlashIfBehind();
+    }
+
+    /// <summary>The window flashed on the taskbar until it comes to the front, when it is not in front: a notice an AI tool caused waits for the user there.</summary>
+    private void FlashIfBehind()
+    {
+        if (GetForegroundWindow() != Handle)
+        {
+            var info = new FlashInfo { Size = (uint)Marshal.SizeOf<FlashInfo>(), Window = Handle, Flags = FlashAll | FlashUntilForeground };
+            FlashWindowEx(ref info);
+        }
+    }
+
     /// <summary>For the pipe's <c>hello</c>: the app's name.</summary>
     internal string AppNameForTools => AppName;
 
@@ -52,10 +304,18 @@ public abstract partial class AxKitForm
         var menu = new ToolStripMenuItem("A&I tools");
         var access = new ToolStripMenuItem("&Let AI tools read and open axKit", null, (_, _) => ToggleMcp());
         menu.DropDownItems.Add(access);
+        // MC-7.2: the second switch, a menu item of the bundle's and never a command of the window's list, so that no AI tool can run it.
+        var run = new ToolStripMenuItem("Let AI tools r&un commands", null, (_, _) => ToggleRunCommands());
+        menu.DropDownItems.Add(run);
         menu.DropDownItems.Add(new ToolStripMenuItem("&Add axKit to Claude Code", null, (_, _) => AddToClaudeCode()));
         menu.DropDownItems.Add(new ToolStripMenuItem("&Forget AI tools", null, (_, _) => ForgetMcpClients()));
         menu.DropDownItems.Add(new ToolStripMenuItem("&Read the log", null, (_, _) => ReadMcpLog()));
-        CommandPalette.RefreshedOnOpening(menu, () => access.Checked = McpAccess.Enabled);
+        CommandPalette.RefreshedOnOpening(menu, () =>
+        {
+            var settings = McpAccess.Load();
+            access.Checked = settings.Enabled;
+            run.Checked = settings.RunCommands;
+        });
         return menu;
     }
 
@@ -66,15 +326,19 @@ public abstract partial class AxKitForm
         {
             if (SetMcp(false))
             {
-                Announce("AI tools off: no AI tool can read or open axKit", true);
+                Announce("AI tools off: no AI tool can read, open or run anything in axKit, and Let AI tools run commands is off too", true);
             }
 
             return;
         }
 
         var claude = ClaudeCodeProgram.Find(null);
+        // The run switch as it really is: it can be turned on while the access is off, and then counts from Turn on.
+        var runs = McpAccess.Load().RunCommands
+            ? "Let AI tools run commands is on, so they may also run a window's commands, each said as it runs, one that acts outside its window asked of you first"
+            : "They run a window's commands only after you also turn on Let AI tools run commands, which is off";
         var text = "AI tools such as Claude Code may then ask to read what the axKit windows show (their text, lists and status) "
-            + "and to open apps. They cannot change or delete anything, and they never read axPass or axClip. Each tool asks you "
+            + $"and to open apps. {runs}; and they never read axPass or axClip. Each tool asks you "
             + "once, in an axKit window, before it reads anything, and every call is written in the log (AI tools, Read the log).\n\n"
             + (claude is null
                 ? "Claude Code was not found here, so Turn on only; then add axKit to your AI tool with this command line:\n\n" + McpClaudeCode.AddCommandLine(PackageIdentity.ProgramPath!)
@@ -84,6 +348,30 @@ public abstract partial class AxKitForm
             : [new OverlayChoice("&Turn on and add to Claude Code", () => TurnMcpOn(addToClaude: true), IsDefault: true), new OverlayChoice("Turn on &only", () => TurnMcpOn(addToClaude: false))];
         choices.Add(new OverlayChoice("&Cancel", IsCancel: true));
         ShowNotice(new Notice("Turn on AI tools?", text, choices));
+    }
+
+    /// <summary>
+    /// MC-7.2: Let AI tools run commands, on or off at once and said; sealed in the AI tools' setting with the rest, so
+    /// that no file written by hand or by an AI tool turns it on. Said with what it needs while the access itself is off.
+    /// </summary>
+    private void ToggleRunCommands()
+    {
+        var on = !McpAccess.Load().RunCommands;
+        try
+        {
+            McpAccess.SetRunCommands(on);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            Fail("The AI tools' setting was not changed: " + ex.Message);
+            return;
+        }
+
+        Announce(!on
+            ? "AI tools may no longer run commands"
+            : McpAccess.Enabled
+                ? "AI tools may run commands: each is said as it runs, and one that acts outside its window asks you first"
+                : "AI tools may run commands once AI tools are on: Let AI tools read and open axKit", true);
     }
 
     private void TurnMcpOn(bool addToClaude)
@@ -234,7 +522,7 @@ public abstract partial class AxKitForm
             McpAccess.ForgetAll();
             Consent.WithdrawAll(AppPaths.ConsentFile, McpConsentApp);
 
-            Announce("AI tools forgotten: each asks again before it reads anything", true);
+            Announce("AI tools forgotten: each asks again before it reads anything, and Let AI tools run commands is off", true);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -269,9 +557,9 @@ public abstract partial class AxKitForm
 
         var target = ConsentTarget.AiTool(name);
         var text = $"{name} asks to use axKit. It runs as {program}.\n\n"
-            + "It can read what the axKit windows show (their text, lists and status) and open apps. It cannot change or delete anything, and it never reads axPass or axClip.\n\n"
+            + "It can read what the axKit windows show (their text, lists and status) and open apps. It runs a window's commands only while AI tools, Let AI tools run commands is on, each said as it runs, and it never reads axPass or axClip.\n\n"
             + $"A reminder: axKit is only an access layer here. {target.Work}\n\n"
-            + "To allow it, check the box, then Allow. Options, General, Forget AI tools takes this back.";
+            + "To allow it, check the box, then Allow. The axKit menu's AI tools, Forget AI tools, takes this back, and turns Let AI tools run commands off.";
         ShowNotice(new Notice($"{name} asks to use axKit", text,
         [
             new OverlayChoice("&Allow", () =>
@@ -317,12 +605,7 @@ public abstract partial class AxKitForm
             }
         }, TaskScheduler.Default);
 
-        if (GetForegroundWindow() != Handle)
-        {
-            var info = new FlashInfo { Size = (uint)Marshal.SizeOf<FlashInfo>(), Window = Handle, Flags = FlashAll | FlashUntilForeground };
-            FlashWindowEx(ref info);
-        }
-
+        FlashIfBehind();
         return true;
     }
 

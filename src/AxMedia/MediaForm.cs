@@ -58,7 +58,7 @@ public sealed partial class MediaForm : AxKitForm
         queue.DropDownItems.Add(_recentItem);
         queue.DropDownItems.Add(new ToolStripSeparator());
         Add(queue, new Command("&Play", AxMediaKeys.Play, PlaySelected) { When = () => _list.Focused, Mark = CommandMark.Open });
-        Add(queue, new Command("R&emove", AxMediaKeys.Remove, RemoveSelected) { When = () => _list.Focused });
+        Add(queue, new Command("R&emove", AxMediaKeys.Remove, RemoveSelected) { When = () => _list.Focused, Mark = CommandMark.Change });
         queue.DropDownItems.Add(new ToolStripMenuItem("&Clear queue", null, (_, _) => ClearQueue()));
         queue.DropDownItems.Add(new ToolStripSeparator());
         Add(queue, new Command("&Information", AxMediaKeys.Information, SayInformation) { Mark = CommandMark.Read });
@@ -79,8 +79,8 @@ public sealed partial class MediaForm : AxKitForm
         Add(play, new Command($"&Back {_settings.SeekSeconds} seconds", AxMediaKeys.Back, () => Seek(-_settings.SeekSeconds)) { Mark = CommandMark.Open });
         Add(play, new Command("&Go to time...", AxMediaKeys.GoToTime, GoToTime) { Mark = CommandMark.Open });
         play.DropDownItems.Add(new ToolStripSeparator());
-        Add(play, new Command("Fa&ster", AxMediaKeys.Faster, () => ChangeSpeed(MediaFiles.Faster(_settings.Speed))));
-        Add(play, new Command("S&lower", AxMediaKeys.Slower, () => ChangeSpeed(MediaFiles.Slower(_settings.Speed))));
+        Add(play, new Command("Fa&ster", AxMediaKeys.Faster, () => ChangeSpeed(MediaFiles.Faster(_settings.Speed))) { Mark = CommandMark.Change });
+        Add(play, new Command("S&lower", AxMediaKeys.Slower, () => ChangeSpeed(MediaFiles.Slower(_settings.Speed))) { Mark = CommandMark.Change });
         play.DropDownItems.Add(new ToolStripMenuItem("N&ormal speed", null, (_, _) => ChangeSpeed(1)));
         play.DropDownItems.Add(new ToolStripSeparator());
         play.DropDownItems.Add(Toggle("Say &each file as it starts", _settings.SayEachFile, v => _settings.SayEachFile = v));

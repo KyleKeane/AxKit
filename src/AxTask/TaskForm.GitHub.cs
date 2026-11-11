@@ -36,7 +36,7 @@ public sealed partial class TaskForm
             var item = new ToolStripMenuItem("Not set", null, (_, _) => RunActionKey(d)) { ShortcutKeyDisplayString = BundleKeys.Text(AxTaskKeys.ActionKey(d)) };
             _actionKeyItems[d] = item;
             _actionKeysMenu.DropDownItems.Add(item);
-            AddKey(new Command($"Action key {d}", AxTaskKeys.ActionKey(d), () => RunActionKey(d)) { When = NotRenaming });
+            AddKey(new Command($"Action key {d}", AxTaskKeys.ActionKey(d), () => RunActionKey(d)) { When = NotRenaming, Mark = CommandMark.Act });
         }
 
         CommandPalette.RefreshedOnOpening(_actionKeysMenu, RefreshActionKeyItems);
