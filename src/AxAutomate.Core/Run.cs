@@ -187,15 +187,15 @@ public sealed class Run(string exe, string temp, bool hosted = false)
     }
 
     /// <summary>A step's number (milliseconds, a window's number); a step that holds none fails with its line said, as <see cref="ScriptLines.BadNumber"/> refuses it before a run.</summary>
-    private static int Number(string text, string line) =>
+    public static int Number(string text, string line) =>
         int.TryParse(text, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var number)
             ? number
             : throw new ArgumentException($"\"{line}\" needs a whole number, not \"{text}\"");
 
-    /// <summary>A command through cmd.exe in the run's folder; its output is the step's detail.</summary>
+    /// <summary>A command through Windows' cmd.exe, by its full path (S-1), in the run's folder; its output is the step's detail.</summary>
     private (bool, string?) RunCommand(string commandLine)
     {
-        var start = new ProcessStartInfo("cmd.exe", "/d /s /c \"" + commandLine + "\"")
+        var start = new ProcessStartInfo(AxKit.Core.SystemPrograms.Cmd, "/d /s /c \"" + commandLine + "\"")
         {
             WorkingDirectory = temp,
             UseShellExecute = false,
