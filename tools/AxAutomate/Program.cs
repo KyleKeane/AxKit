@@ -60,7 +60,8 @@
 //   close                     closes the current window as Alt+F4 does
 // After the last step every window is closed, and the run fails when a window's process ended on its own or a log of
 // the run holds an ERROR line. Any other process of the run's AxKit.exe (by its full path) that descends from the
-// runner or has a window on the run's desktop, a window never adopted, is then ended with its tree, a line in the report.
+// runner or has a window on the run's desktop, and started after the runner, is then ended with its tree, a line in the
+// report.
 
 using System.Diagnostics;
 using System.IO.Pipes;
@@ -883,8 +884,9 @@ internal sealed class Run(string exe, string temp)
         var problems = new List<string>();
         var known = _windows.Select(window => window.ProcessId).ToHashSet();
         // The runner's descendants are read before its windows close: a window started by a window of the run is found
-        // through its parent only while that parent lives.
-        var family = Native.Descendants(Environment.ProcessId);
+        // through its parent only while that parent lives. Each is kept with its start time, so that a number reused by
+        // another process before the sweep is never taken for it.
+        var family = StartTimes(Native.Descendants(Environment.ProcessId));
         _broker?.Dispose();
         _broker = null;
         foreach (var window in _windows)
@@ -940,19 +942,34 @@ internal sealed class Run(string exe, string temp)
     /// run of 2026-11-09 and the four scripts after it could not bring theirs up). A process counts as the run's only
     /// when its program file is the run's exe, by its full path, and it is a descendant of the runner (read before the
     /// windows closed and again now) or has a window on the run's own desktop: never by the name alone, so the user's
-    /// own axKit, whatever its path, is never touched. Each is ended with its process tree, one line in the report.
+    /// own axKit, whatever its path, is never touched. Every number is checked against the start time read when it was
+    /// found, and the process must have started at or after the runner itself, so a number reused meanwhile by another
+    /// process is never ended. Each is ended with its process tree, one line in the report.
     /// </summary>
-    private void Sweep(HashSet<int> known, HashSet<int> family)
+    private void Sweep(HashSet<int> known, Dictionary<int, DateTime> family)
     {
-        var ours = new HashSet<int>(family);
-        ours.UnionWith(Native.Descendants(Environment.ProcessId));
+        var ours = new Dictionary<int, DateTime>(family);
+        foreach (var (id, started) in StartTimes(Native.Descendants(Environment.ProcessId)))
+        {
+            ours.TryAdd(id, started);
+        }
+
         if (_desktop != 0)
         {
-            ours.UnionWith(Native.DesktopProcesses(_desktop));
+            foreach (var (id, started) in StartTimes(Native.DesktopProcesses(_desktop)))
+            {
+                ours.TryAdd(id, started);
+            }
         }
 
         ours.Remove(Environment.ProcessId);
-        foreach (var id in ours.Where(id => !known.Contains(id)).Order())
+        DateTime runnerStarted;
+        using (var runner = Process.GetCurrentProcess())
+        {
+            runnerStarted = runner.StartTime;
+        }
+
+        foreach (var id in ours.Keys.Where(id => !known.Contains(id)).Order())
         {
             Process process;
             try
@@ -968,13 +985,16 @@ internal sealed class Run(string exe, string temp)
             {
                 try
                 {
-                    if (process.HasExited || !string.Equals(process.MainModule?.FileName, exe, StringComparison.OrdinalIgnoreCase))
+                    if (process.HasExited
+                        || process.StartTime != ours[id]
+                        || process.StartTime < runnerStarted
+                        || !string.Equals(process.MainModule?.FileName, exe, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
 
                     process.Kill(entireProcessTree: true);
-                    Swept.Add($"ended process {id}, a window of the run's program the script never started or adopted, with its process tree");
+                    Swept.Add($"ended process {id}, a process of the run's program not among its windows, with its process tree");
                 }
                 catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
                 {
@@ -982,6 +1002,29 @@ internal sealed class Run(string exe, string temp)
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// The start time of each process that is still running, read now; a process that has ended or cannot be read is
+    /// left out, and so is never ended.
+    /// </summary>
+    private static Dictionary<int, DateTime> StartTimes(IEnumerable<int> ids)
+    {
+        var times = new Dictionary<int, DateTime>();
+        foreach (var id in ids)
+        {
+            try
+            {
+                using var process = Process.GetProcessById(id);
+                times[id] = process.StartTime;
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception)
+            {
+                // Ended meanwhile, or not the user's to read.
+            }
+        }
+
+        return times;
     }
 }
 
