@@ -110,7 +110,7 @@ public sealed class EngineTests
         static string? Script(params string[] lines) => ScriptLines.CannotRun(ScriptReader.Parse(lines, "w", @"C:\w.txt"), nvda: false, confined: true);
 
         Assert.Null(Script("mkdir flows", "file flows\\a.md text", "file {temp}\\b.md text", "silence s.wav 500", "file \"my notes.md\" x", "file a\\..\\b.md x"));
-        Assert.Equal("step 2 writes outside the run's folder: C:\\Users\\x.md", Script("start down", "file C:\\Users\\x.md text"));
+        Assert.Equal("step 2 writes outside the run's folder: D:\\docs\\x.md", Script("start down", "file D:\\docs\\x.md text"));
         Assert.Contains("step 1 writes outside", Script("file ..\\x.md text"));
         Assert.Contains("step 1 writes outside", Script("mkdir {temp}\\..\\elsewhere"));
         Assert.Contains("step 1 writes outside", Script("silence \\x.wav 500"));
