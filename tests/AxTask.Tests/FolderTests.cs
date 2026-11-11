@@ -180,6 +180,35 @@ public sealed class FolderTests : IDisposable
         Assert.Equal("Work, Course plan", ItemFolder.ListName(_top.Path, Path.Combine(_top.Path, "Work", "Course plan")));
     }
 
+    [Fact]
+    public void AChoiceSortsByItsOptionsUnlessTheOrderSaysByText()
+    {
+        Directory.CreateDirectory(Path.Combine(_top.Path, "Ranked"));
+        foreach (var (title, priority) in new[] { ("A", "Low"), ("B", "High"), ("C", ""), ("D", "Normal") })
+        {
+            File.WriteAllText(Path.Combine(_top.Path, "Ranked", title + ".json"), $$"""
+                { "format": "axkit-item 1", "fields": [
+                  { "title": "Title", "type": "text", "value": "{{title}}" },
+                  { "title": "Priority", "type": "choice", "value": "{{priority}}", "options": [ "High", "Normal", "Low" ] } ] }
+                """);
+        }
+
+        string[] Sorted(string order)
+        {
+            var path = Path.Combine(_top.Path, "Ranked.filter.json");
+            File.WriteAllText(path, $$"""{ "conditions": [ { "list": "Ranked" } ], "order": [ {{order}} ] }""");
+            return SmartList.Read(path).Items(_top.Path, Today).Select(ItemFolder.NameOf).ToArray();
+        }
+
+        Assert.Equal(["B", "D", "A", "C"], Sorted("\"Priority\""));
+        Assert.Equal(["B", "D", "A", "C"], Sorted("""{ "field": "Priority", "by": "options" }"""));
+        Assert.Equal(["B", "A", "D", "C"], Sorted("""{ "field": "Priority", "by": "text" }"""));
+        Assert.Equal(["A", "D", "B", "C"], Sorted("""{ "field": "Priority", "descending": true }"""));
+        Assert.Null(SmartList.Read(Path.Combine(_top.Path, "Ranked.filter.json")).NotUnderstood);
+        File.WriteAllText(Path.Combine(_top.Path, "Odd.filter.json"), """{ "conditions": [], "order": [ { "field": "Priority", "by": "colour" } ] }""");
+        Assert.NotNull(SmartList.Read(Path.Combine(_top.Path, "Odd.filter.json")).NotUnderstood);
+    }
+
     private void Item(string list, string title, bool done, string? due)
     {
         var item = ItemDocument.NewItem(title, TaskRules.DefaultTemplate);

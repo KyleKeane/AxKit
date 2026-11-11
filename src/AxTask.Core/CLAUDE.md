@@ -28,7 +28,7 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `TaskRules` (TK-4): Done, Start and Due, `DefaultTemplate`, `TemplateOf`, `IsTask`, `IsDone`, `Due`, `Summary`,
   `WithDone`, `WithoutDone`, `TemplateWithDone`, `DoneIndex`.
 - `SmartList` (TK-5): All tasks and the `.filter.json` files: `InFolder`, `Read` (a file not understood is a smart
-  list that shows nothing, with `NotUnderstood`), `Items`, `Matches`, `NewFileText`.
+  list that shows nothing, with `NotUnderstood`), `Items`, `Matches`, `NewFileText`; its `order` keys are `OrderKey` (a name, or `field` with `by` options or text and `descending`; a choice by its options' order).
 - `TaskSettings`: the top folder, the list open last, whether done tasks are hidden.
 - `ActionKeys` and `ListAction` (docs/axKit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
   `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Make it a bug"), `ApplySet`

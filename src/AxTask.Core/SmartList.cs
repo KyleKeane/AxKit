@@ -16,9 +16,9 @@ public sealed class SmartList
 
     private readonly JsonArray _conditions;
     private readonly bool _any;
-    private readonly IReadOnlyList<string> _order;
+    private readonly IReadOnlyList<OrderKey> _order;
 
-    private SmartList(string name, string? path, JsonArray conditions, bool any, IReadOnlyList<string> order, string? notUnderstood)
+    private SmartList(string name, string? path, JsonArray conditions, bool any, IReadOnlyList<OrderKey> order, string? notUnderstood)
     {
         Name = name;
         Path = path;
@@ -37,7 +37,7 @@ public sealed class SmartList
     public string? NotUnderstood { get; }
 
     /// <summary>TK-5.1: every task not done.</summary>
-    public static SmartList AllTasks { get; } = new(AllTasksName, null, [new JsonObject { ["field"] = TaskRules.DoneField, ["is"] = false }], any: false, [TaskRules.DueField, ItemDocument.TitleField], null);
+    public static SmartList AllTasks { get; } = new(AllTasksName, null, [new JsonObject { ["field"] = TaskRules.DoneField, ["is"] = false }], any: false, [new(TaskRules.DueField), new(ItemDocument.TitleField)], null);
 
     /// <summary>The text a new smart list starts from (TK-5.3): All tasks' conditions in a file of its own.</summary>
     public static string NewFileText() =>
@@ -81,9 +81,20 @@ public sealed class SmartList
                 return Broken(name, path, $"match is {match}, not all or any");
             }
 
-            var order = root["order"] is JsonArray keys
-                ? keys.Select(key => key is JsonValue v && v.TryGetValue<string>(out var s) ? s : null).OfType<string>().ToList()
-                : [TaskRules.DueField, ItemDocument.TitleField];
+            List<OrderKey> order = [new(TaskRules.DueField), new(ItemDocument.TitleField)];
+            if (root["order"] is JsonArray keys)
+            {
+                order = [];
+                foreach (var key in keys)
+                {
+                    if (OrderKey.Read(key) is not { } read)
+                    {
+                        return Broken(name, path, "an order that is not a field name, or a field with by options or by text");
+                    }
+
+                    order.Add(read);
+                }
+            }
             foreach (var condition in conditions)
             {
                 if (Check(condition) is { } problem)
@@ -128,22 +139,32 @@ public sealed class SmartList
         IOrderedEnumerable<ItemFile>? ordered = null;
         foreach (var key in _order)
         {
-            // A date sorts by the day, the ones without one after; anything else by its text, as spoken.
-            Func<ItemFile, int> missing = item => item.Document.IndexOf(key) is var i && i >= 0 && Sortable(item.Document.Fields[i]) is { Length: > 0 } ? 0 : 1;
-            Func<ItemFile, string> value = item => item.Document.IndexOf(key) is var i && i >= 0 ? Sortable(item.Document.Fields[i]) : string.Empty;
-            ordered = ordered is null
-                ? items.OrderBy(missing).ThenBy(value, AxKit.Core.NaturalOrder.Instance)
-                : ordered.ThenBy(missing).ThenBy(value, AxKit.Core.NaturalOrder.Instance);
+            // An item without the field, or with it empty, goes after the rest in either direction. A date sorts by
+            // the day; a choice by its options' order unless the key says by text; anything else by its text, as spoken.
+            Func<ItemFile, int> missing = item => item.Document.IndexOf(key.Field) is var i && i >= 0 && Sortable(item.Document.Fields[i], textOnly: true) is { Length: > 0 } ? 0 : 1;
+            Func<ItemFile, string> value = item => item.Document.IndexOf(key.Field) is var i && i >= 0 ? Sortable(item.Document.Fields[i], key.ByText) : string.Empty;
+            ordered = ordered is null ? items.OrderBy(missing) : ordered.ThenBy(missing);
+            ordered = key.Descending
+                ? ordered.ThenByDescending(value, AxKit.Core.NaturalOrder.Instance)
+                : ordered.ThenBy(value, AxKit.Core.NaturalOrder.Instance);
         }
 
         return (ordered ?? items.OrderBy(ItemFolder.NameOf, AxKit.Core.NaturalOrder.Instance)).ToList();
     }
 
-    private static string Sortable(ItemField field) => field.Type switch
+    private static string Sortable(ItemField field, bool textOnly) => field.Type switch
     {
         FieldTypes.Check => FieldTypes.IsTrue(field.Value) ? "1" : "0",
+        // A choice's place among its options, as a number; a value not among them after the rest.
+        FieldTypes.Choice when !textOnly && FieldTypes.TextOf(field.Value) is { Length: > 0 } chosen => OptionPlace(field, chosen),
         _ => field.Value is JsonValue value && value.GetValueKind() == JsonValueKind.Number ? value.GetValue<double>().ToString("000000000000000.######", System.Globalization.CultureInfo.InvariantCulture) : FieldTypes.TextOf(field.Value),
     };
+
+    private static string OptionPlace(ItemField field, string chosen)
+    {
+        var place = field.Options.ToList().FindIndex(option => string.Equals(option, chosen, StringComparison.OrdinalIgnoreCase));
+        return (place < 0 ? field.Options.Count : place).ToString("000000", System.Globalization.CultureInfo.InvariantCulture);
+    }
 
     private static bool Holds(JsonObject condition, ItemFile item, string top, DateOnly today)
     {
@@ -160,7 +181,7 @@ public sealed class SmartList
         if (condition.ContainsKey("empty"))
         {
             var empty = field is null
-                || (field.Type == FieldTypes.Check ? !FieldTypes.IsTrue(field.Value) : Sortable(field).Length == 0);
+                || (field.Type == FieldTypes.Check ? !FieldTypes.IsTrue(field.Value) : Sortable(field, textOnly: true).Length == 0);
             return empty == FieldTypes.IsTrue(condition["empty"]);
         }
 
@@ -173,7 +194,7 @@ public sealed class SmartList
         {
             return field.Type == FieldTypes.Check
                 ? FieldTypes.IsTrue(field.Value) == FieldTypes.IsTrue(wantedValue)
-                : string.Equals(Sortable(field), wantedValue is JsonValue w && w.TryGetValue<string>(out var s) ? s : wantedValue.ToJsonString(), StringComparison.OrdinalIgnoreCase);
+                : string.Equals(Sortable(field, textOnly: true), wantedValue is JsonValue w && w.TryGetValue<string>(out var s) ? s : wantedValue.ToJsonString(), StringComparison.OrdinalIgnoreCase);
         }
 
         if (condition["has"] is JsonValue hasValue && hasValue.TryGetValue<string>(out var word))

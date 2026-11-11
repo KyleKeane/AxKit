@@ -92,7 +92,11 @@ marks a task done.
   The conditions in the first version: a field equals a value (`is`), a date before or after a date or a day count
   from today, the day itself included (`before`, `after`), a field is empty or not (`empty`), the item is in a list (`list`), a
   text field holds a word (`has`). `match` is `all` or `any`. A condition the app does not know shows the smart list
-  as "Due this week, smart list, a condition not understood" and nothing in it.
+  as "Due this week, smart list, a condition not understood" and nothing in it. `order` is the fields to sort by, in turn (Due, then Title when it is left out); the items
+  without a field, or with it empty, come after the rest. A key is a field's name, or an object that says how:
+  `{ "field": "Priority", "by": "options", "descending": true }`. A choice sorts in its options' order by default
+  (High, Normal, Low; change the order by changing the options), or alphabetically with `"by": "text"`;
+  `descending` turns the order round (2026-11-10, the user: "fix the sort type on a field so that that is adjustable").
 - **TK-5.3 A new smart list** (List, New smart list) asks its name, writes `<name>.filter.json` with All tasks'
   conditions and opens it in axJSON to change them; Ctrl+J on a smart list opens it again. The detail pane of a smart
   list says what it shows, how many, and its file; the conditions are written in axJSON, not field by field, until
