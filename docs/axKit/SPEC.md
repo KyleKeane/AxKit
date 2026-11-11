@@ -808,7 +808,8 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
 - AX-13.2 **The entries.** The Store allows eight `<Application>` entries per package and no hidden one (its package
   validation of 2026-11-09: "declares 17 apps, which is more than the limit of 8", and `AppListEntry="none"` needs a
   waiver the account has not), so the package has eight entries, the apps marked `StoreEntry` in `Dispatch.Apps`
-  (axClaude, axDown, axFile, axTerminal, axGIT, axTask, axStart, axClip; the maintainer's choice, changed there and
+  (axClaude, axDown, axFile, axTerminal, axTask, axStart, axClip, axHelp; axHelp in axGIT's place since 2026-11-11,
+  the package of 5.2.1 still carrying axGIT; the maintainer's choice, changed there and
   nowhere else; `DispatchTests` keeps the count), all running `AxKit.exe`, named as AX-2.2's Start menu entries
   (`axKit axClaude, access layer for Claude Code`), each with its own images, so that Windows search finds them as
   before. The axClaude entry comes first, has the id `AxKit` and no parameters, so that it starts axClaude as
@@ -823,12 +824,13 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   is declared once per package, by the first app of the list that has it, and axPreview, whose Open with says every
   file, declares none: a package cannot claim every file, and AX-2.3's submenu (the apps on folders, axDown and
   axPreview on any file) has no form in a package without a COM server, which this copy does not have. Each app with
-  `AtSignIn` and an entry (axStart, axClip) carries a startup task on its entry with `<verb> --hidden` as the task's own
-  parameters, which Windows lists under Settings, Apps, Startup; an app with `AtSignIn` and no entry (axHelp,
-  2026-11-09, the eight being taken; axDescribe too until 5.7.0) has no startup task in the package: the Store's copy starts it from
-  another window (its Start with Windows item says so, `HotkeyForm`), the GitHub install from the Run key as before,
-  and `DispatchTests` names it so that a second is added on purpose. The apps without an entry (axJSON, axMedia,
-  axPreview, axProcess, axPass, axCalc, axMCP, axHelp) are reached by their command, by a file of their
+  `AtSignIn` and an entry (axStart, axClip, axHelp) carries a startup task on its entry with `<verb> --hidden` as the
+  task's own parameters, which Windows lists under Settings, Apps, Startup; an app with `AtSignIn` and no entry (axHelp
+  from 2026-11-09 until it took axGIT's entry on 2026-11-11, the user's choice; axDescribe until 5.7.0) has no startup
+  task in the package: the Store's copy starts it from another window (its Start with Windows item says so,
+  `HotkeyForm`), the GitHub install from the Run key as before, and `DispatchTests` fails on one, so that such an app
+  is added on purpose. The apps without an entry (axJSON, axGIT, axMedia, axPreview, axProcess, axPass, axCalc, axMCP,
+  axAutomate) are reached by their command, by a file of their
   kind, by the Window menu's New window in any window and from axFile; axStart lists the Start menu's programs and so
   knows the eight.
   `AxKit.Core/PackageIdentity` tells whether the process runs from the package (`GetCurrentPackageFullName`) and which

@@ -243,7 +243,8 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   eight are taken (axClaude, axDown, axFile, axTerminal, axGIT, axTask, axStart, axClip). axHelp and axDescribe start
   at sign-in in the GitHub install (the Run key, as axStart) and have no sign-in start in the Store's copy, where they
   are started from any window's New window and then keep running; which eight the Store shows is the user's to change
-  in `Dispatch.Apps` (a priorities item holds the question).
+  in `Dispatch.Apps`. The user answered on 2026-11-11: axHelp gets an entry, in axGIT's place, so from the next Store
+  package it has its startup task there too (axDescribe merged into it in 5.7.0).
 
 Later the same evening, after the first use (5.6.0):
 
