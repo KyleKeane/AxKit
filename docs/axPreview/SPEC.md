@@ -53,7 +53,8 @@ it, so that every file shows something and the details say what it is.
 2. Shift+Enter on `notes.txt` in axFile while axPreview is open on `README.md`: the same window shows `notes.txt`;
    "Open recent" lists both.
 3. Shift+Enter on `report.log` in axFile, a file no editor takes: axPreview shows it, since its first bytes read as
-   text. Shift+Enter on `tool.exe`: axPreview says "Not a text file" in a notice and keeps what it had.
+   text. Shift+Enter on `tool.exe`: axPreview shows the readable text inside it, the Details list saying what it is
+   (AP-7; "Not a text file" in a notice until 2026-10-24).
 4. In File Explorer, right-click `CHANGELOG.md`, Open with axKit, axPreview: the window opens on it. The user makes
    axPreview the default program for `.log` files in Windows' settings (the guide says how); from then on Enter on
    a `.log` in axFile, and a double click in File Explorer, open axPreview.
@@ -67,8 +68,8 @@ it, so that every file shows something and the details say what it is.
 - AP-1.1 `AxKit.exe preview [<file>] [--new]`: the file shown; no path opens the window empty, named "Untitled" (Ctrl+O
   then); a path that does not exist is the notice "File not found" naming it, the window empty or keeping what it
   showed (decided 2026-10-23; it opened an empty window under the missing name, and Edit in axDown created the file). Start menu entry `axKit axPreview`, console command `axPreview`, File Explorer's Open with axKit ▸ axPreview on
-  every file, axPreview under Windows' own Open with for every file type (since 3.7.2, the general viewer to come,
-  `docs/axKit/plan.md`; the text kinds `.txt`, `.md`, `.markdown`, `.log`, `.json` until then; type name
+  every file, axPreview under Windows' own Open with for every file type (since 3.7.2, the general viewer, AP-6 and
+  AP-7; the text kinds `.txt`, `.md`, `.markdown`, `.log`, `.json` before it; type name
   "File (axPreview)"), so that the user can make it the default program for a kind in Windows'
   settings (AP-D2), the Window menu's New window (AX-9). A file alone on the command line keeps going to its editor
   (AX-1.2); the viewer is chosen by name or by Windows' association.
@@ -97,8 +98,8 @@ it, so that every file shows something and the details say what it is.
 - AP-2.2 **What opens:** a file whose first bytes read as text (the editors' kinds by extension, an empty file, a
   UTF-16 mark, or no zero byte and few control characters in the first eight kilobytes; the rule of axFile's
   `Preview.IsText`, moved) up to 32 MB (axDown AD-3.1's limit), decoded as the editors decode (`TextDocument`: the
-  mark, the code page, the line endings). Anything else: the notice "Not a text file" ("tool.exe is not a text file.
-  axFile's Enter opens it in the program Windows has for it."), the window keeping what it had; a file over the limit:
+  mark, the code page, the line endings). Anything else goes to the next renderer of AP-7 (since 2026-10-24; until
+  then the notice "Not a text file", the window keeping what it had); a text file over the limit:
   the notice "Too large", "<name> is 33,554,433 bytes, over the 32 MB a window can open." (the editors' wording, AD-3.7; until 2026-10-23 "is n MB", which said 32 MB for a file just over); a reload of a file that cannot be read
   (held by another program): the error notice, the text kept (axDown AD-3.6); a file whose first eight kilobytes pass
   and which the reader refuses (a NUL further in): the error notice, the text kept as well (2026-10-23; the window
