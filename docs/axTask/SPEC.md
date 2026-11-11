@@ -172,7 +172,7 @@ The design is `docs/axKit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules a
 The user, 2026-11-10: "run a script to find axtask databases and bring them into some aggregated list ... offer the
 ability to check for items that are across many lists ... keep track of many lists across projects". Its first three
 parts are built here: the folders of lists found, one place to reach them, and the search. Notifications of items due
-and the AI tools over them are later (the priorities item of the request).
+are later (the priorities item of the request); the AI tools over the lists are section 7c.
 
 - **TK-7b.1 Project folders.** Options → Project folders → Add a project folder… asks "Type the folder's path, or
   leave it empty for the folder picker": a typed path must be a whole path to a folder that is there, not one already
@@ -228,6 +228,42 @@ and the AI tools over them are later (the priorities item of the request).
 - **TK-7b.5 The top folder** is never moved or changed by any of this: a project is shown, entered and changed where
   it is, and the user's top folder stays the one in the settings.
 
+## 7c. AI tools over the lists (2026-11-11)
+
+The second part of the user's request of 2026-11-10, "everything in axkit should be very clearly operational via mcp
+servers": an AI client (axHelp's conversation, Claude Code) reads the lists and adds an item by words ("remind me
+next week to call the dentist") without driving keys. The tools are the bundle's (`docs/axKit/mcp.md` section 9,
+MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mcp.cs`, the pure half
+`AxTask.Core/TaskTools`.
+
+- **TK-8.1 What is read.** `axkit_task_lists` gives the lists the window reaches: its own top folder's (the one in
+  axTask's settings, even while a project is shown as the top), by their own name ("Personal"), then the lists of each
+  project found under the project folders (TK-7b.2) as "project / list" ("alpha / Home"; "tasks in alpha / Home" when two projects' folders are both named tasks and
+  the project is told apart by the folder above, TK-7b), each with its
+  place, its number of items and of tasks not done; the Archive and the smart lists never. While the first look for
+  projects has not ended, the answer says so and gives the top folder's lists. `axkit_task_items` gives one list's
+  items, each with its title, whether it is done (a task only) and its fields as title, type and value (a choice with
+  its options); done items are left out and counted unless `done` is true. Reading changes nothing and says nothing.
+- **TK-8.2 A list by its name.** The name as `axkit_task_lists` gives it, case not minded; a list's own name alone when
+  exactly one list reached has it ("Home"); or its full path when that is one of the lists reached. A path anywhere
+  else is refused: "… is not one of the axTask window's lists: AI tools reach only the lists of its top folder and of
+  its project folders" (MC-D12). A name that names none or several says so with the names to choose from.
+- **TK-8.3 An item added.** `axkit_task_add` makes the item as Ctrl+N does: the list's template (TK-4.1, the default
+  Done, Start and Due without one), the Title given (one line of at most 200 characters, since the window says it
+  whole: "A title is at most 200 characters: put the rest in Notes."), at a free file name (`ItemFiles.FreePath`, so nothing is ever
+  overwritten), then each value given typed into its field as the field's own change takes it: a date as 2026-11-18,
+  today, tomorrow, +7 or a weekday; a choice as one of its options; a check as true or false. A field the template
+  lacks is added after the others, long text for Notes or a value of several lines, text otherwise (MC-D13). A link,
+  a password or a user name, the Title among the fields and a value a field does not take are refused with the
+  field's own reason ("Priority: Not one of the options: High, Normal, Low"), and nothing is written. It is one step of
+  the window's undo, so Ctrl+Z takes it back ("Undone: Claude added Call the dentist to Personal").
+- **TK-8.4 Heard.** The window says "Claude added Call the dentist to Personal" (the client's name as MC-7.5 gives it),
+  and the panes are filled again: the new item is selected when its list is the one shown, otherwise the selection
+  stays where the user left it (MC-D15). In a window behind, the chime and the taskbar flash of MC-7.5 instead.
+- **TK-8.5 When it is refused.** An add needs Let AI tools run commands on (MC-7.2), and is refused while the window
+  shows a notice or a Windows dialog, while a rename is open in it, and in the window in front within 3 s of the
+  user's key (MC-7.8), each with its reason. It never changes or deletes an item (MC-D11).
+
 ## 8. Decisions
 
 - **TK-D1 The All tasks entry is not a file.** It is the one smart list nobody can delete or break; every other one is
@@ -270,6 +306,10 @@ and the AI tools over them are later (the priorities item of the request).
   asked, a found item in the user's own folder included (the user's own place is the list open before the search);
   and a list without `list.json` is not looked for (TK-7b.2), since a
   folder of plain folders is not told from any other folder of folders without it.
+- **TK-D11 The AI tools act through the open window** (taken by the assistant for the user, who was away,
+  2026-11-11, to confirm; `docs/axKit/mcp.md` MC-D10 to MC-D16): the window already knows the folders, the template,
+  the undo and the refresh, and shared code never references an app. Reading is free once paired; adding needs Let AI
+  tools run commands and is said; changing and deleting wait for a later version with the question of MC-7.3.
 
 ## 9. Open questions
 

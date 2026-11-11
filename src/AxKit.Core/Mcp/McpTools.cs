@@ -18,6 +18,9 @@ public static class McpTools
     public const string Said = "axkit_window_said";
     public const string Open = "axkit_open";
     public const string Run = "axkit_window_run";
+    public const string TaskLists = "axkit_task_lists";
+    public const string TaskItems = "axkit_task_items";
+    public const string TaskAdd = "axkit_task_add";
 
     /// <summary>The apps that serve no pipe and so cannot be read (MC-4.1, MC-4.2): the password database and the clipboard history.</summary>
     public static readonly IReadOnlyList<string> NeverRead = [Dispatch.AxPass, Dispatch.AxClip];
@@ -35,6 +38,18 @@ public static class McpTools
         [Said] = "said",
     };
 
+    /// <summary>
+    /// The typed data tools of one app (MC-8.1): each answered by an open window of that app (its verb here), never by the
+    /// broker itself, and whether it changes something, which needs Let AI tools run commands as a run does (MC-8.3).
+    /// The window's own code answers them (<c>AxKitForm.McpAppRequest</c>); the shared code holds no app's rules.
+    /// </summary>
+    public static readonly IReadOnlyDictionary<string, (string App, bool Changes)> AppTools = new Dictionary<string, (string App, bool Changes)>
+    {
+        [TaskLists] = (Dispatch.AxTask, false),
+        [TaskItems] = (Dispatch.AxTask, false),
+        [TaskAdd] = (Dispatch.AxTask, true),
+    };
+
     public static IReadOnlyList<McpTool> All { get; } =
     [
         new(Apps, "The axKit apps: each one's verb for axkit_open, its name, and whether it opens files, folders or nothing.", Schema()),
@@ -45,6 +60,9 @@ public static class McpTools
         new(Commands, "The window's commands as its menus and keys have them: the label, the menus that hold it, the key, and the mark (read, open, change, act). axkit_window_run runs one by its label.", Schema(("window", "The window's id from axkit_windows."))),
         new(Said, "What the window announced to the user since the last call, the last 50 announcements.", Schema(("window", "The window's id from axkit_windows."))),
         new(Run, "Runs one command of a window, as its menu item would, by its label from axkit_window_commands, and gives what the window then said, or the question it now asks the user. Only while the user allows AI tools to run commands; never in axPass; never an answer to the window's question, which the user gives; a command that acts outside the window (marked act) asks the user first. The window says who ran it.", Require(Schema(("window", "The window's id from axkit_windows."), ("command", "The command's label as axkit_window_commands lists it, such as Word wrap."), ("menu", "Optional: the menus that hold it as axkit_window_commands lists them, such as Navigate, Next, when two commands share a label.")), "window", "command")),
+        new(TaskLists, "The user's axTask lists as the open axTask window reaches them: the lists of its top folder and of the project folders it found, each with its name for axkit_task_items and axkit_task_add, its place, its number of items and of tasks not done. Needs an open axTask window: axkit_open with the app task opens one.", Schema()),
+        new(TaskItems, "The items of one axTask list, each with its fields (title, type, value). Done items are left out unless done is true.", TaskItemsSchema()),
+        new(TaskAdd, "Adds an item to one axTask list, made from the list's template as the window's New item makes it: a Title and optional field values, a date as 2026-11-18, today, tomorrow, +7 or a weekday such as Monday, a choice as one of its options (Priority: High), anything else as text (Notes). Only while the user allows AI tools to run commands; the window says who added it, and Ctrl+Z there takes it back. It never changes or deletes an item.", TaskAddSchema()),
         new(Open, "Opens an axKit app in a new window, on a file or folder of this computer or on nothing. The user sees and hears it open.", Schema(("app", "The app's verb from axkit_apps: down, file, git ..."), ("path", "Optional: the full path of a file or folder on this computer."))),
     ];
 
@@ -93,6 +111,27 @@ public static class McpTools
         return schema;
     }
 
+    private static JsonObject TaskItemsSchema()
+    {
+        var schema = Schema(("list", "The list's name as axkit_task_lists gives it, such as Personal, or a project's list such as Work / Tasks."));
+        schema["properties"]!["done"] = new JsonObject { ["type"] = "boolean", ["description"] = "Optional: true to include the items already done." };
+        return schema;
+    }
+
+    private static JsonObject TaskAddSchema()
+    {
+        var schema = Require(Schema(
+            ("list", "The list's name as axkit_task_lists gives it, such as Personal."),
+            ("title", "The new item's Title, one line, such as Call the dentist.")), "list", "title");
+        schema["properties"]!["fields"] = new JsonObject
+        {
+            ["type"] = "object",
+            ["description"] = "Optional: other fields by their title, each a text as the user would type it, such as {\"Due\": \"2026-11-18\", \"Priority\": \"High\", \"Notes\": \"Ask about Tuesday\"}.",
+            ["additionalProperties"] = new JsonObject { ["type"] = "string" },
+        };
+        return schema;
+    }
+
     /// <summary>The schema with these arguments required, where more than the first is.</summary>
     private static JsonObject Require(JsonObject schema, params string[] names)
     {
@@ -123,6 +162,14 @@ public static class McpTools
         if (string.IsNullOrWhiteSpace(path))
         {
             return ([app.Verb], null);
+        }
+
+        // MC-D12 (2026-11-11): axTask started on a folder makes that folder its top folder and saves it, and the
+        // typed tools reach the top folder's lists: a client choosing it could read and write item files anywhere.
+        // So the tools open axTask only on the user's own top folder.
+        if (app.Verb == Dispatch.AxTask)
+        {
+            return (null, "axTask opens through the AI tools only on your own lists: call axkit_open with app task and no path; the user chooses its folder.");
         }
 
         if (!Path.IsPathFullyQualified(path) || path.StartsWith(@"\\", StringComparison.Ordinal))

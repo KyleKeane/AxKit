@@ -110,3 +110,23 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
 10. Right on Home again. Options, Project folders, Remove a project folder: "1. projects (...)"; Enter: "Removed
     projects. Lists, 3 lists": with no project folder left, the window is back in your own lists and the Projects line
     is gone. Close axTask and start it again on the folder: it opens in that list of your own, the one open before the search, not in a project's Home.
+
+## 7. AI tools over the lists (TK-8, docs/axKit/mcp.md MC-8)
+
+With Claude Code installed, axKit menu, AI tools, Let AI tools read and open axKit on and Claude Code added (the
+axKit guide), in a Claude session started in any folder. The runner's script `tests/scripts/mcp/04-task-items.txt`
+checks the same steps with the runner as the client.
+
+1. Ask Claude "which axTask lists do I have?": the pairing notice if Claude is not paired yet (Allow after the box);
+   then Claude names Home, Shopping and Course plan with their counts, and axTask says nothing.
+2. Let AI tools run commands off. Ask Claude "add Call the dentist to Home, due next Monday": Claude says it is not
+   allowed, and axTask says nothing.
+3. axKit menu, AI tools, Let AI tools run commands: "AI tools may run commands: ...". With Home shown and your hands
+   off the keys, ask the same: "Claude added Call the dentist to Home"; the navigator's selection is on "Call the
+   dentist, due ..." and Tab reads its fields, Due the coming Monday. Ctrl+Z: "Undone: Claude added Call the dentist
+   to Home".
+4. Shopping shown, ask Claude to add "Buy soap" to Home: "Claude added Buy soap to Home", and the selection stays in
+   Shopping where it was. Right into Home shows Buy soap. Ctrl+Z takes it back.
+5. Switch to another program and ask again: a chime and axTask flashing on the taskbar, no words; back in axTask, the
+   item is there.
+6. Close axTask and ask Claude to list the lists: Claude says no axTask window is open and offers to open one.

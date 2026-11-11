@@ -2,7 +2,8 @@
 
 Asked by the user on 2026-10-24: "programmatic access to all the features with very well defined MCP APIs but with
 absolute protection". Specification first (the user's order: spec, infrastructure, build); the first stage, read and
-open, is built (section 7, 2026-10-24), and since 2026-11-11 one tool runs a window's command (section 8); typed data tools are not.
+open, is built (section 7, 2026-10-24), and since 2026-11-11 one tool runs a window's command (section 8) and the
+first typed data tools read and add to axTask's lists (section 9).
 It depends on two things before it: the security fixes of `security-audit-2026-10-24.md` (S-11 to S-13 above all),
 and the command lists of `app-kit.md`, which are what the tools are made from. Requirements are numbered MC-n.m.
 
@@ -121,8 +122,9 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
 - MC-6.4 **Pairing**: a client is known by the program file of the broker's parent process (the client that started
   it), with the name it gives in `initialize` for display only. The first tool call of a client not paired asks the
   newest axKit window: a notice "<name> asks to use axKit", its text "<name> asks to use axKit. It runs as <program>.
-  It can read what the axKit windows show (their text, lists and status) and open apps. It runs a window's commands only
-  while AI tools, Let AI tools run commands is on, each said as it runs, and it never reads axPass or axClip." (until
+  It can read what the axKit windows show (their text, lists and status) and open apps. It runs a window's commands and
+  adds items to your axTask lists only while AI tools, Let AI tools run commands is on, each said as it happens, and it
+  never reads axPass or axClip." (the axTask items since 2026-11-11, MC-8; until
   2026-11-11 the text said "it cannot change or delete anything"; a client paired under those words keeps its pairing,
   since running commands needs the second switch, off by default, which the user turns on with its own announcement,
   MC-7.2), with Allow and Deny, and since 2026-10-29 (bundle AX-11.5) the
@@ -148,7 +150,7 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   `axkit_window_list` (the focused list's items, or the window's first list), `axkit_window_text` (the focused text's
   lines, or the window's main text, at most 1 MB), `axkit_window_commands` (the window's command list: label, key,
   mark, and since 2026-11-11 the menus that hold it; MC-7 runs one) and `axkit_window_said` (what the window announced since the last call, the
-  last 50). `axkit_open` (`open`): an app by its verb, on a path or none, but axClaude and axTerminal, which start a program as they open (an act, MC-3.1); the path fully qualified, on this computer
+  last 50). `axkit_open` (`open`): an app by its verb, on a path or none, but axClaude and axTerminal, which start a program as they open (an act, MC-3.1), and axTask on a path (MC-D12: it would make the path its top folder); the path fully qualified, on this computer
   (`LocalPaths`), through no link (a junction or a symbolic link, which may lead to a share; asked part by part
   before anything follows it), existing, and of a kind the app opens (`Dispatch.PathFor`); started as
   `AxKit.exe <verb> <path>` with the arguments as a list, through ShellExecute on the program file itself, never through
@@ -190,8 +192,11 @@ axTask item made in a folder) are the next part.
 - MC-7.2 **The switch**: axKit menu, AI tools, **Let AI tools run commands** (U), off by default, checked while on, one
   for the bundle, kept in the AI tools' sealed setting (`mcp.json`, `runCommands`, part of the seal: a file turned on
   by hand or by an AI tool's own file writing reads as off, MC-6.1). Turning it on or off is said at once ("AI tools
-  may run commands: each is said as it runs, and one that acts outside its window asks you first"; "AI tools may no
-  longer run commands"); it counts only while the access itself is on. Off, the tool answers "The user has not allowed
+  may run commands: each is said as it runs, and one that acts outside its window asks you first. They may also add
+  items to your axTask lists, each said as it is added", the second sentence since 2026-11-11, MC-8; "AI tools may no
+  longer run commands"); the "Turn on AI tools?" notice says the same of it ("They run a window's commands and add
+  items to your axTask lists only after you also turn on Let AI tools run commands, which is off", or that it is on and
+  what it lets them do); it counts only while the access itself is on. Off, the tool answers "The user has not allowed
   AI tools to run commands in axKit. The user allows it in any axKit window: axKit menu, AI tools, Let AI tools run
   commands." The pairing (MC-6.4) applies first, as for every tool. The switch is an item of the bundle's menu, never
   a command of a window's list, so that no AI tool can run it, nor Let AI tools read and open axKit, nor Forget.
@@ -246,8 +251,8 @@ axTask item made in a folder) are the next part.
   ends in `notRun` "the user was working in the window". A window behind is never typed in, so it runs there, heard as
   MC-7.5 says. The user's own Run of an act command is not held to it, since that Run is the key just pressed.
 - MC-7.7 **Not in this part**: arguments for a command (a path, a name, a text: a command that needs one asks the
-  user in its own notice), typed data tools without a window, the scopes per client and app of MC-3.1, "Allow for this
-  session" (MC-3.3).
+  user in its own notice), typed data tools (section 9, through a window rather than without one, MC-D10), the scopes
+  per client and app of MC-3.1, "Allow for this session" (MC-3.3).
 
 Decisions taken for the user while away (2026-11-11), each one line to reverse:
 
@@ -277,16 +282,87 @@ After the review of 2026-11-11:
   axCalc's Copy answer, axFile's Copy path and axProcess's Copy line are pinned.
 - MC-D8 **An exception to AX-7.1's "the caret moves only on the user's own command"**: a run moves the caret or the
   focus as the command's key would, since the user allowed it with the switch and hears who ran it; MC-7.8 keeps it
-  from happening under the user's hands. Said in the guide.
+  from happening under the user's hands. Said in the guide. An item an AI tool adds to the axTask list shown is
+  selected under the same exception and guard (MC-D15, 2026-11-11).
 - MC-D9 **Off and Forget take the switch with them**: turning the access off and Forget AI tools both turn Let AI
   tools run commands off and say so; turning the access on again leaves it off.
 
-## 9. Built in this order
+## 9. Typed data tools: axTask's lists (2026-11-11, the branch `push3/mcp-items`)
+
+The second part of the request of 2026-11-10: data, not keys. An AI client (axHelp's conversation, Claude Code) adds a
+reminder or a task to the user's axTask lists by words ("remind me next week to call the dentist") and reads the
+lists without driving the window. axTask's own side is `docs/axTask/SPEC.md` section 7c (TK-8).
+
+- MC-8.1 **The shape.** A typed data tool belongs to one app (`McpTools.AppTools`: the tool, the app's verb, whether
+  it changes something). The broker sends it to the newest open window of that app as the pipe's `app` request (the
+  tool, its arguments, the client's paired name); the window base refuses what every app refuses
+  (`AxKitForm.McpApp`: axPass and axClip, a tool of another app, and for a change the switch off and
+  `McpChangeRefusal`) and hands the rest to the app's own `McpAppRequest`, an override in the app's window, so that
+  the shared code names no app's types (M2). With no window of the app open, nothing happens: "No axTask window is
+  open, and the tool works through one: axkit_open with the app task opens it on the user's own lists; then call
+  axkit_task_lists again." The same pipe, the same proof of the key both ways, the same pairing and the same log as
+  every tool (MC-6.3, MC-6.4, MC-6.6).
+- MC-8.2 **The tools.** `axkit_task_lists` (read): the lists the axTask window reaches, its top folder's and its
+  projects', each with its name, place, items and tasks not done (TK-8.1). `axkit_task_items` (read): one list's
+  items by the list's name, each with its title, whether it is done and its fields (title, type, value); done items
+  only with `done` true. `axkit_task_add` (change): a new item in a named list, with `title` and an optional `fields`
+  object of field titles and typed texts (`{"Due": "2026-11-18", "Priority": "High", "Notes": "..."}`), made from the
+  list's template as New item makes it (TK-8.3).
+- MC-8.3 **Allowed.** The reads need only the access and the pairing. An add needs Let AI tools run commands as well
+  (MC-7.2, the same switch: it is a change), read again by the window from the sealed file off its thread (MC-7.6); off,
+  it answers as `axkit_window_run` does. It is refused while the window shows a notice or a Windows dialog, in the
+  window in front within 3 s of the user's input (MC-7.8, since filling the list may move the selection), and while a
+  rename is open in the axTask window. An add never asks first (MC-D11).
+- MC-8.4 **Heard and recorded.** The window says "Claude added Call the dentist to Personal" (MC-7.5's name for the
+  client), the item is one step of the window's undo (Ctrl+Z: "Undone: Claude added ..."), a window behind chimes and
+  flashes on the taskbar (`AxKitForm.ChimeForMcp`, shared with the runs), and the call is a line of the audit log. The
+  answer gives the item as `axkit_task_items` would, with the words said.
+- MC-8.5 **Never twice, never under the window's thread.** The window's pipe waits up to 10 s for its thread to take a
+  request up; one not taken up by then is given up and never carried out later, and the answer says nothing was done
+  ("The window did not answer in time, and nothing was done: ask again in a moment"), so that a client that asks
+  again never makes a second item. One taken up is waited for up to 20 s in all (under the broker's 25 s); past that
+  the answer says its outcome is not known. `axkit_task_lists` reads every item of every list reached, so the window
+  takes its folders on its thread and reads them off it, as its search does (bundle rule 3); the pipe waits for the
+  read.
+- MC-8.6 **Not in this version**: changing or deleting an item (later, with the question of MC-7.3), axTask's smart
+  lists and the Archive, items of other apps, a window chosen by its id when two axTask windows are open (the newest
+  answers).
+
+Decisions taken by the assistant for the user, who was away (2026-11-11), each for the user to confirm and one line
+to reverse:
+
+- MC-D10 **Through an open window, never the broker writing files.** Shared code never references an app (M2,
+  `LayoutTests`), and the axTask window already knows its folders, the template, the undo and the refresh; with no
+  axTask window open the tool says to open one (`axkit_open` can) and nothing happens.
+- MC-D11 **Reads free once paired; an add behind Let AI tools run commands, said, logged, never asked.** An add makes
+  something and never deletes or overwrites (`ItemFiles.FreePath` keeps names unique, and Ctrl+Z takes it back), so
+  the act question of MC-7.3 is not asked; changing and deleting an item are not built.
+- MC-D12 **Only the window's own lists.** The lists of its top folder (the user's, from axTask's settings, even while
+  a project is shown as the top) and of the projects it found under its project folders; a list named by a path
+  elsewhere is refused. axPass is never reachable (its windows serve no pipe, MC-6.2). So that a client never chooses
+  the top folder itself, `axkit_open` starts axTask only with no path, on the user's own top folder (a start on a
+  folder makes it the top and saves it): "axTask opens through the AI tools only on your own lists" (found at review,
+  2026-11-11).
+- MC-D13 **A field the template lacks is added**, after the others: long text for Notes or a value of several lines,
+  text otherwise, so that "Notes" works in a list whose template has none (the default template has Done, Start and
+  Due). A link, a password and a user name are never written by a tool.
+- MC-D14 **List names**: a top folder's list by its own name, a project's as "project / list", the list's own name
+  alone when only one list has it; the item's file name from its Title as New item gives it.
+- MC-D15 **The selection moves only within the list shown**: the new item is selected when its list is the one the
+  window shows; otherwise the panes are filled again and the selection stays where the user left it. Selecting the new
+  item is the second exception to AX-7.1's caret rule, the same as MC-D8's for a run and held by the same guard
+  (MC-7.8: never in the window in front within 3 s of the user's input), and said ("Claude added ... to ...") as the
+  selection moves.
+- MC-D16 **The newest axTask window answers**, as the pairing asks the newest window; no window id argument in this
+  version, since every axTask window reaches the same lists unless their settings differ.
+
+## 10. Built in this order
 
 1. The security fixes S-11 to S-13 (the channel's secret, `IsSecret`, the hand-over pipe).
 2. The command lists of `app-kit.md` in the first apps, with their scope marks.
 3. The windows' pipe and the broker with read and open tools only; pairing; the audit log.
 4. Change tools, then act tools with their confirmation notice:
    `axkit_window_run` (section 8, 2026-11-11) runs every menu command, an act one after the user's Run; typed data
-   tools next.
+   tools for axTask's lists (section 9, 2026-11-11) read them and add an item; changing an item, and other apps' data,
+   next.
 5. An NVDA pass of pairing, confirmation and the announcements; then on by the user's choice.

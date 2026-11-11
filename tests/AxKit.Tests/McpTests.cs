@@ -79,7 +79,9 @@ public sealed class McpTests
         Assert.Equal(["file", folder], Arguments("FILE", folder));
         Assert.Equal(["calc"], Arguments("calc", null));
         // A file given to an app that opens folders only: its folder (Dispatch.PathFor).
-        Assert.Equal(["task", Path.GetDirectoryName(file)!], Arguments("task", file));
+        Assert.Equal(["mcpclient", Path.GetDirectoryName(file)!], Arguments("mcpclient", file));
+        // axTask only on the user's own top folder (MC-D12).
+        Assert.Equal(["task"], Arguments("task", null));
     }
 
     [Theory]
@@ -92,6 +94,7 @@ public sealed class McpTests
     [InlineData("down", "FOLDER", "does not open a folder")]
     [InlineData("calc", "FOLDER", "does not open a folder")]
     [InlineData("down", @"C:\linked", "through a link")]
+    [InlineData("task", "FOLDER", "only on your own lists")]
     public void Open_refuses_with_a_reason(string verb, string? path, string reason)
     {
         var folder = Path.GetTempPath();
@@ -191,6 +194,23 @@ public sealed class McpTests
     {
         Assert.Contains(Dispatch.AxPass, McpTools.NeverRead);
         Assert.Contains(Dispatch.AxClip, McpTools.NeverRead);
+    }
+
+    [Fact]
+    public void The_typed_data_tools_are_listed_and_never_of_an_app_that_is_never_read()
+    {
+        // MC-8.1, MC-4.5: each app tool is a tool of the list, of an app of Dispatch.Apps, and never axPass's or axClip's.
+        foreach (var (tool, (app, _)) in McpTools.AppTools)
+        {
+            Assert.Contains(tool, McpTools.All.Select(listed => listed.Name));
+            Assert.Contains(app, Dispatch.Apps.Select(known => known.Verb));
+            Assert.DoesNotContain(app, McpTools.NeverRead);
+        }
+
+        // MC-8.3: only the add changes anything; reading never needs the run switch.
+        Assert.Equal([McpTools.TaskAdd], McpTools.AppTools.Where(pair => pair.Value.Changes).Select(pair => pair.Key));
+        var add = McpTools.All.Single(listed => listed.Name == McpTools.TaskAdd).InputSchema;
+        Assert.Equal(["list", "title"], add["required"]!.AsArray().Select(name => name!.GetValue<string>()));
     }
 
     [Fact]

@@ -125,6 +125,11 @@ public static class McpBroker
             return Ask(key, target, run, RunAnswerMs);
         }
 
+        if (McpTools.AppTools.TryGetValue(tool, out var appTool))
+        {
+            return AppTool(key, tool, appTool.App, appTool.Changes, arguments, McpAccess.Find(McpAccess.Load(), program)?.Name ?? client);
+        }
+
         if (McpTools.WindowRequests.TryGetValue(tool, out var request))
         {
             return McpProtocol.Text(arguments["window"]) is { } id && PipeOf(id) is { } pipe
@@ -139,6 +144,28 @@ public static class McpBroker
             McpTools.Open => Open(McpProtocol.Text(arguments["app"]), McpProtocol.Text(arguments["path"])),
             _ => new McpResult($"No tool {tool}.", true),
         };
+    }
+
+    /// <summary>
+    /// MC-8: a typed data tool, answered by the newest open window of its app (MC-D10), never by the broker itself; a tool
+    /// that changes something needs Let AI tools run commands, asked here for the answer's words and again by the window,
+    /// whose check counts. With no window of the app open nothing happens, and the answer says how to open one.
+    /// </summary>
+    private static McpResult AppTool(byte[] key, string tool, string verb, bool changes, JsonObject arguments, string client)
+    {
+        if (changes && !McpAccess.RunsCommandsIn(McpAccess.Load()))
+        {
+            return new McpResult(McpRun.SwitchOff, true);
+        }
+
+        var app = Dispatch.Of(verb);
+        if (Windows(key).FirstOrDefault(window => string.Equals(window.App, app.Name, StringComparison.OrdinalIgnoreCase)) is not { } target)
+        {
+            return new McpResult($"No {app.Name} window is open, and the tool works through one: axkit_open with the app {app.Verb} opens it on the user's own lists; then call {tool} again.", true);
+        }
+
+        var request = "app " + JsonSerializer.Serialize(new { tool, arguments, client });
+        return Ask(key, target.Pipe, request, RunAnswerMs);
     }
 
     /// <summary>MC-6.4: the user asked in the newest axKit window; null when allowed, else what to tell the client.</summary>

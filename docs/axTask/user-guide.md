@@ -167,6 +167,21 @@ moving them.
   where you searched from. Tab shows the found item's fields, and Space marks a task done, there and then; to rename,
   archive or link it, or to use its fields for new items, open it where it lives first.
 
+## AI tools and your lists
+
+An AI tool such as Claude Code, or your conversation in axHelp, can read your lists and add to them while an axTask
+window is open, once you have turned the AI tools on and allowed it (axKit menu, AI tools; the axKit guide says how).
+
+- Reading: it can list your lists, your own top folder's and your projects', with how many items each has, and read
+  one list's items with their fields. Nothing is said while it reads.
+- Adding: only while axKit menu, AI tools, Let AI tools run commands is on. Ask it, for instance, "remind me next week
+  to call the dentist": it adds the item to the list it names, made from that list's fields as Ctrl+N makes one, with
+  a Due date, a Priority from the list's choices or Notes if it gives them. The window says "Claude added Call the
+  dentist to Personal"; if that list is the one shown, the new item is selected, otherwise you stay where you are.
+  Ctrl+Z takes it back as any change. In a window behind you hear a chime and the window flashes on the taskbar.
+- It never changes or deletes an item, never reaches a folder of lists that is not your top folder or one of your
+  projects, and never adds while a notice or a rename is open, or while you are typing in the window.
+
 ## Keys
 
 F1 lists every key. Shift+F10 or the Applications key opens the menu of the selection.

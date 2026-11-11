@@ -64,7 +64,7 @@ Calls (5):
   Code: `var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
   Code: `created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Mcp.cs:498`, in `AxKitForm.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.Mcp.cs:556`, in `AxKitForm.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
   Code: `using var process = System.Diagnostics.Process.Start(start);`
 - **shared by every app**, `src/AxKit.Forms/ConsoleForm.Process.cs:51`, in `ConsoleForm.StartProcess`, by `PtyHost.Start`: starts the window's program in a pseudo console: "claude --ax-screen-reader" for axClaude, the chosen shell for axTerminal.
   Code: `host = PtyHost.Start(options, OnData, OnExited);`
@@ -193,7 +193,7 @@ Calls (6):
   Code: `if (!Native.CreateProcessW(null, commandLine, 0, 0, false, 0x400, environment, null, ref startup, out var info))`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
   Code: `Process.Start(start)?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:323`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
+- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:350`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
   Code: `using var process = Process.Start(start);`
 - **shared by every app**, `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
   Code: `Process.Start(info)?.Dispose();`
@@ -227,7 +227,7 @@ Calls (3):
 
 - **shared by every app**, `src/AxKit.Forms/McpBroker.cs:59`, in `McpBroker.Run`, by `Console.OpenStandardInput`: the standard input of the MCP server process ("AxKit.exe mcp"), on which the paired AI tool, Claude Code, sends its requests; the answers go back on standard output; on this computer, never over the network.
   Code: `using var input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(false));`
-- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:257`, in `McpBroker.Exchange`, by `new NamedPipeClientStream`: connects to one axKit window's pipe to ask it what it shows, for the AI tool's request; the broker first checks that the pipe's server is this very program file (docs/axKit/mcp.md MC-6.3).
+- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:284`, in `McpBroker.Exchange`, by `new NamedPipeClientStream`: connects to one axKit window's pipe to ask it what it shows, for the AI tool's request; the broker first checks that the pipe's server is this very program file (docs/axKit/mcp.md MC-6.3).
   Code: `using var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification);`
 - **shared by every app**, `src/AxKit.Forms/McpChannel.cs:101`, in `McpChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where the MCP server asks the window what it shows while the AI tools are on; each connection must answer the challenge with the paired key.
   Code: `using var pipe = NamedPipeServerStreamAcl.Create(_name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());`
@@ -307,9 +307,9 @@ Used in 18 places:
 - `src/AxKit.Forms/AxKitForm.cs:827`, in `AxKitForm.OpenUrl`, for Windows.
 - `src/AxKit.Forms/AxKitForm.cs:852`, in `AxKitForm.OpenInExplorer`, for Windows.
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
-- `src/AxKit.Forms/AxKitForm.Mcp.cs:498`, in `AxKitForm.RunClaude`, for Claude Code.
+- `src/AxKit.Forms/AxKitForm.Mcp.cs:556`, in `AxKitForm.RunClaude`, for Claude Code.
 - `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, for Windows.
-- `src/AxKit.Forms/McpBroker.cs:323`, in `McpBroker.Open`, for axKit.
+- `src/AxKit.Forms/McpBroker.cs:350`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
 - `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, for axKit.
 - `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, for axKit.
@@ -391,7 +391,7 @@ Defined in .NET, System.IO.Pipes: connects to a named pipe on this computer.
 Used in 2 places:
 
 - `src/AxAutomate.Core/Window.cs:50`, in `Window.Window`, for Test automation.
-- `src/AxKit.Forms/McpBroker.cs:257`, in `McpBroker.Exchange`, for AI tools.
+- `src/AxKit.Forms/McpBroker.cs:284`, in `McpBroker.Exchange`, for AI tools.
 
 ### NamedPipeServerStreamAcl.Create, pipe
 

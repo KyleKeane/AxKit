@@ -14,7 +14,7 @@ namespace AxKit.Forms;
 /// one request: the window checks that the client runs this very program file (the broker) and that the bundle's
 /// setting is on, sends a fresh challenge, takes the HMAC answer under the key, then reads one line and answers it on
 /// its own thread: <c>hello</c> (the app and the title), <c>state</c>, <c>list</c>, <c>text</c>, <c>commands</c>,
-/// <c>said</c>, <c>pair</c>, which asks the user, or <c>run</c>, a command of the window's list run as its menu item would while the user allows it (MC-7); nothing here types a key or answers a notice. The
+/// <c>said</c>, <c>pair</c>, which asks the user, or <c>run</c>, a command of the window's list run as its menu item would while the user allows it (MC-7), or <c>app</c>, a typed data tool of the window's app answered by its own code (MC-8); nothing here types a key or answers a notice. The
 /// window of an app that is never read (axPass, axClip, <see cref="McpTools.NeverRead"/>) serves no pipe.
 /// </summary>
 internal sealed class McpChannel
@@ -192,6 +192,7 @@ internal sealed class McpChannel
             {
                 "pair" => Pair(argument),
                 "run" => Run(argument),
+                "app" => App(argument),
                 _ => OnWindow(() => Execute(verb)),
             };
         }
@@ -371,6 +372,59 @@ internal sealed class McpChannel
             }
         }
     }
+
+    /// <summary>How long an app request may take in all: under the broker's 25 s wait, so that the client hears this answer.</summary>
+    private static readonly TimeSpan AppWait = TimeSpan.FromSeconds(20);
+
+    /// <summary>
+    /// MC-8: a typed data tool of the window's app, answered by the window's own code on its thread
+    /// (<see cref="AxKitForm.McpApp"/>). The switch is read here, off the window's thread, as for a run (MC-7.6); the
+    /// window refuses a change while it is off. MC-8.5: a request the window's thread has not taken up within
+    /// <see cref="WindowWait"/> is given up and never carried out later, so that a client told it failed may ask again
+    /// without a second item; one taken up is waited for to <see cref="AppWait"/>, and past that the answer says its
+    /// outcome is not known. An answer the window computes off its thread (a <see cref="Task{Object}"/>, such as a read
+    /// of many folders, bundle rule 3) is awaited here, on the pipe's thread.
+    /// </summary>
+    private string App(string argument)
+    {
+        var request = System.Text.Json.Nodes.JsonNode.Parse(argument);
+        var tool = McpProtocol.Text(request?["tool"]) ?? string.Empty;
+        var arguments = request?["arguments"] as System.Text.Json.Nodes.JsonObject ?? [];
+        var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
+        var allowed = McpAccess.RunsCommands;
+        var start = Environment.TickCount64;
+
+        // 0: waiting for the window's thread; 1: taken up there; 2: given up here, never to be carried out.
+        var state = 0;
+        var call = _form.BeginInvoke(new Func<object?>(() => Interlocked.CompareExchange(ref state, 1, 0) == 0 ? _form.McpApp(tool, arguments, client, allowed) : null));
+        if (!call.AsyncWaitHandle.WaitOne(WindowWait))
+        {
+            if (Interlocked.CompareExchange(ref state, 2, 0) == 0)
+            {
+                return JsonSerializer.Serialize(new { error = "The window did not answer in time, and nothing was done: ask again in a moment." }, RunAnswer);
+            }
+
+            if (!call.AsyncWaitHandle.WaitOne(Remaining(start)))
+            {
+                return JsonSerializer.Serialize(new { error = "The window is still working on the request, and whether it was done is not known: read the app's data again before asking again." }, RunAnswer);
+            }
+        }
+
+        var answer = _form.EndInvoke(call);
+        if (answer is Task<object> later)
+        {
+            if (!later.Wait(Remaining(start)))
+            {
+                return JsonSerializer.Serialize(new { error = "The window did not finish reading in time: ask again in a moment." }, RunAnswer);
+            }
+
+            answer = later.Result;
+        }
+
+        return JsonSerializer.Serialize(answer, RunAnswer);
+    }
+
+    private static TimeSpan Remaining(long start) => TimeSpan.FromMilliseconds(Math.Max(0, AppWait.TotalMilliseconds - (Environment.TickCount64 - start)));
 
     /// <summary>
     /// MC-6.4: the pairing notice, shown on the window's thread; this pipe thread waits up to two minutes for Allow or

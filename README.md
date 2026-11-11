@@ -59,7 +59,7 @@ The access layers meet the network only through the program each runs, as a chil
 - **axGIT, access layer for Git** runs your git; fetch, pull and push reach your repository's remotes, after your consent for that server; every other command works on disk.
 - **axTerminal, access layer for your shell** runs PowerShell, Command Prompt, Git Bash or PowerShell 7; your commands reach whatever they reach.
 - **axPass, access layer for KeePassXC** runs `keepassxc-cli.exe` on your database file; the tool has no network feature.
-- **Install it now** runs Windows' winget from its own source, or Anthropic's installer script for Claude Code, only when you choose; **the AI tools** (off unless you turn them on) read axKit's windows through named pipes on your computer, and run their menu commands only behind a second switch of their own; Help menus and links open in your browser.
+- **Install it now** runs Windows' winget from its own source, or Anthropic's installer script for Claude Code, only when you choose; **the AI tools** (off unless you turn them on) read axKit's windows through named pipes on your computer, and run their menu commands and add items to your axTask lists only behind a second switch of their own; Help menus and links open in your browser.
 
 [PRIVACY.md](PRIVACY.md) says all of it in full, with what stays on your computer; it is also in the zip and in every window: Help, About, Privacy. [docs/axKit/outside-calls.md](docs/axKit/outside-calls.md) is the exhaustive list behind both, written from the sources: everything axKit reaches outside its own process, with every call's file, line and purpose.
 
