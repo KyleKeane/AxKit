@@ -9,13 +9,11 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
 
 ## 1. Start and moving (IA-2, IA-3)
 
-1. Start axTask on the folder: "Lists - axTask window", then "Lists, 3 lists", then "Your lists, heading level 1, 2
-   lists" (TK-3a.1). Ctrl+Down: "Work, heading level 2, 1 list"; Ctrl+Down: "Smart lists, heading level 1, 1 smart
-   list"; Down: "All tasks, 3 not done". Ctrl+1: "Date lists, heading level 1, 4 date lists"; Down: "Overdue, 1",
-   then "Due today, 0", "Due in the next 7 days, 0", "No due date, 2". Ctrl+1: the edge sound. Ctrl+Shift+2: "Work,
-   heading level 2". Ctrl+2: the edge sound. Ctrl+Shift+1: "Your lists, heading level 1". Right on a heading: the
-   edge sound and "A section: Down goes into it". Down: "Home, list, 2 items". Listen that NVDA reads each heading
-   once, its level in the words, and that "heading level" is clear and not too long (TK-D13).
+$11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`). Down from a list onto a heading such
+   as "Smart lists, heading level 1": a short rising sound before NVDA reads it; Down onto a list: none. Ctrl+Up,
+   Ctrl+Down, Ctrl+1 to Ctrl+3, Home and type-to-find onto a heading: the sound each time. Starting axTask, going into a
+   list and back: no sound for the window's own fill. With Options, Text, Sound on headings off: none. The same in
+   axPass, axMCP and axAutomate on a section header.
 2. Right: "Home, 2 items, Fix the tap, due 30 October". Down: "Water plants, done".
 3. Right on an item: the edge sound, nothing else. Left: "Lists, 3 lists, Home, list, 2 items". Left again: the edge
    sound.

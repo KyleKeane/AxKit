@@ -185,6 +185,11 @@ whatever `enabled` says and under high contrast too, since none of it is a colou
   wrap (`Theme.SetSayNewLine`), says "Say new line on" or "Say new line off", and every other window takes it when next
   activated (TH-3.2), its Text menu checked as it opens.
   The template carries it beside `wordWrap`; a value that is not `true` or `false` is on and counted (TH-6.3).
+- TH-6.6 `display.headingSound` (true by default; 2026-11-11, bundle AX-7.9): whether a key that lands on a heading,
+  a heading row of a list or a Markdown heading in a text, plays the heading sound before it is read, in every window.
+  Options, Text, Sound on headings in any window writes it as TH-6.5 does (`Theme.SetHeadingSound`), says "Sound on
+  headings on" or "Sound on headings off", and every other window takes it when next activated (TH-3.2). The template
+  carries it beside `sayNewLine`; a value that is not `true` or `false` is on and counted (TH-6.3).
 
 ## 5. Architecture
 

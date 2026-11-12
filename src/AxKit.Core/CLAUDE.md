@@ -163,7 +163,7 @@ $1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, it
 - `TypedLineBreak` (AX-7.8, 2026-11-11): whether a key put a line break into a field, from the text and selection as
   the key went down and the text and caret after it (the selection replaced by a line break, an indent after it
   allowed, the caret after that), and `Said`, "new line"; `AxKit.Forms/AxKitTextBox` asks it. The setting is the theme
-  file's `display.sayNewLine` (`Theme.SayNewLine`, `SetSayNewLine`, TH-6.5). Tested in `TypedLineBreakTests`.
+  file's `display.sayNewLine` (`Theme.SayNewLine`, `SetSayNewLine`, TH-6.5); the heading sound's switch beside it is `display.headingSound` (`Theme.HeadingSound`, `SetHeadingSound`, TH-6.6). Tested in `TypedLineBreakTests`.
 - `Paragraphs`: where Ctrl+Up and Ctrl+Down go in a text with `\r\n` line ends: the starts of its paragraphs, the
   first line or a line with text after a blank line, for `AxKit.Forms.EditKeys.Paragraph`.
 - `TextLines` (docs/axDown/SPEC.md AD-6.4, AD-3.6; 2026-10-23): the caret's line and column in an edit control's text,
@@ -171,7 +171,7 @@ $1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, it
 - `MarkdownOutline` (docs/axDown/SPEC.md §9; from AxDown.Core): the elements of a Markdown text for navigation keys,
   outside fenced code blocks: headings with a level filter, links, list items and lists, block quotes and tables,
   each with `Next…` and `Previous…` from a caret position returning an `Element` with `Start` and `Spoken`; block
-  kinds by line, links by position.
+  kinds by line, links by position; `HeadingLineAt`, the caret's line when it is a heading, for the heading sound (AX-7.9).
 - `TextDocument` (docs/axDown/SPEC.md AD-3; from AxDown.Core, axJSON): a text file as an editor window holds it, with
   the encoding, the byte order mark and the line ending it came with, so that `ToBytes` writes it back as it was,
   every line ending of the text the file's (a lone LF pasted from a Unix clipboard included); `FromBytes` and
