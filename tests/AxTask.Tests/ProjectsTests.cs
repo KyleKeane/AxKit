@@ -61,6 +61,36 @@ public sealed class ProjectsTests : IDisposable
     }
 
     [Fact]
+    public void Smart_lists_gather_the_top_folder_and_every_project_together()
+    {
+        var projects = Projects.Find([Root], Top);
+        var items = Projects.Gather([(Top, string.Empty)]).Concat(Projects.Gather(projects)).ToList();
+        // TK-5.6: one smart list over every place, each item saying where it lives; the Archive left out.
+        var every = Path.Combine(_temp.Path, "Every.filter.json");
+        File.WriteAllText(every, """{ "conditions": [], "order": ["Title"] }""");
+        var list = SmartList.Read(every);
+        var today = new DateOnly(2026, 11, 11);
+        Assert.Equal(["Buy a tap, Home", "Fix the tap, tasks in alpha / Home", "Tap drips, tasks in beta / Bugs", "Water plants, tasks in alpha / Home"],
+            list.Items(items, today).Select(gathered => $"{ItemFolder.NameOf(gathered.Item)}, {gathered.Where}"));
+        Assert.Equal(4, list.Count(items, today));
+        // An item changed in a project is read again on its own; one outside every project's lists is not one.
+        var fix = Path.Combine(Root, "alpha", "tasks", "Home", "Fix the tap.json");
+        Assert.Equal("tasks in alpha", Projects.GatherOne(fix, projects)?.Place);
+        Assert.Null(Projects.GatherOne(Path.Combine(Root, "alpha", "tasks", "Archive", "Archived tap.json"), projects));
+        Assert.Null(Projects.GatherOne(Path.Combine(Top, "Home", "Buy a tap.json"), projects));
+    }
+
+    [Fact]
+    public void Each_project_knows_the_project_folder_it_was_found_under()
+    {
+        var beta = Path.Combine(Root, "beta");
+        var found = Projects.Find([beta, Root], Top);
+        // TK-7b.3: a folder under two project folders shows under the first; the rest under the folder that found them.
+        Assert.Equal(beta, found.Single(project => project.Name == "tasks in beta").Root);
+        Assert.Equal(Root, found.Single(project => project.Name == "gamma").Root);
+    }
+
+    [Fact]
     public void A_search_finds_every_word_in_the_title_or_a_text_field_without_minding_case()
     {
         var places = new[] { (Top, "Tasks"), (Path.Combine(Root, "alpha", "tasks"), "tasks in alpha"), (Path.Combine(Root, "beta", "tasks"), "tasks in beta") };

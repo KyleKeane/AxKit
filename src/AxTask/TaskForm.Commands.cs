@@ -63,8 +63,8 @@ public sealed partial class TaskForm
 
         if (Gathered)
         {
-            // TK-7b.3, TK-7b.4: items are made in a list where it lives.
-            Announce(_atProjects ? "A project's items are made in its lists: Right on a project, then on a list" : "Items are made in a list: open the item where it lives first, Enter", true);
+            // TK-7b.4: items are made in a list where it lives.
+            Announce("Items are made in a list: open the item where it lives first, Enter", true);
             return;
         }
 
@@ -104,7 +104,7 @@ public sealed partial class TaskForm
             _ => AtTop || _smart is not null || IsArchiveFolder(_folder) ? string.Empty : ItemFolder.SectionOf(_folder),
         };
         var templateFrom = SelectedRow() is { IsList: true, Tag: null } selected ? selected.Key : AtTop || _smart is not null ? null : _folder;
-        AskText("New list", section.Length == 0 ? "In User lists." : $"In the section {section}.", "Name:", "Name", string.Empty, "&Make", name =>
+        AskText("New list", section.Length == 0 ? "In Your lists." : $"In the section {section}.", "Name:", "Name", string.Empty, "&Make", name =>
         {
             var trimmed = name.Trim();
             var listFile = Path.Combine(folder, trimmed, ItemDocument.ListFile);
@@ -117,10 +117,10 @@ public sealed partial class TaskForm
         }, typed => ItemFolder.RefusedListName(folder, typed) ?? (typed.Trim().Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase) ? "Archive is the archive's own name" : null));
     }
 
-    /// <summary>Why no list is made in the Projects level or the search's (TK-7b.3, TK-7b.4); null where lists are made.</summary>
-    private string? RefusedNewList() => !Gathered ? null
-        : _atProjects ? "A project's lists are made inside it: Right on a project first"
-        : "Lists are made among the sections: Left first";
+    /// <summary>Why no list is made here: in the search's level (TK-7b.4), or on a project's row or section (TK-7b.3); null where lists are made.</summary>
+    private string? RefusedNewList() => Gathered ? "Lists are made among the sections: Left first"
+        : SelectedRow() is { Tag: ProjectTag or ProjectSectionTag } ? "A project's lists are made inside it: Right on a project first"
+        : null;
 
     /// <summary>
     /// List, Move to section (Ctrl+M, TK-3a.3): the list's Section field set from a list of the sections there are,
@@ -137,9 +137,9 @@ public sealed partial class TaskForm
         var current = ItemFolder.SectionOf(row.Key);
         var sections = ItemFolder.ReadTop(TopFolder).Lists.Select(ItemFolder.SectionOf).Where(name => name.Length > 0)
             .Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(name => name, NaturalOrder.Instance).ToList();
-        List<string> choices = ["User lists", .. sections, "A new section"];
+        List<string> choices = [YourLists, .. sections, "A new section"];
         var start = current.Length == 0 ? 0 : Math.Max(0, choices.FindIndex(choice => choice.Equals(current, StringComparison.OrdinalIgnoreCase)));
-        ChooseFromList("Move " + row.Name, $"Now in {(current.Length == 0 ? "User lists" : current)}.", "Section", choices, start, chosen =>
+        ChooseFromList("Move " + row.Name, $"Now in {(current.Length == 0 ? YourLists : current)}.", "Section", choices, start, chosen =>
         {
             if (chosen == choices.Count - 1)
             {
@@ -161,7 +161,7 @@ public sealed partial class TaskForm
         details = details.WithValue(details.IndexOf(ItemFolder.SectionField), JsonValue.Create(section));
         if (CheckFresh(listFile, read?.Text))
         {
-            Commit(new Step([FileChange.Write(listFile, read?.Text, details.ToText())], $"Moved {row.Name} to {(section.Length == 0 ? "User lists" : section)}"), row.Key);
+            Commit(new Step([FileChange.Write(listFile, read?.Text, details.ToText())], $"Moved {row.Name} to {(section.Length == 0 ? YourLists : section)}"), row.Key);
         }
     }
 
@@ -200,12 +200,12 @@ public sealed partial class TaskForm
     {
         { Tag: SectionTag { Custom: true } } => "A section is renamed by moving its lists: Ctrl+M on each",
         { Tag: SectionTag } => "This section keeps its name",
-        { Tag: SmartList { Path: null } } => "All tasks is built in and keeps its name",
+        { Tag: SmartList { BuiltIn: true } smart } => smart.Name + " is built in and keeps its name",
         { Tag: SmartList } => "Rename a smart list's file in axFile: Ctrl+E",
         { Tag: ItemFile } => null,
         { Tag: FoundItem } => "Open it where it lives first: Enter",
         { Tag: ProjectTag } => "A project's folder is renamed in axFile: Ctrl+E",
-        _ when ReferenceEquals(row.Tag, ProjectsTag) => "Projects keeps its name",
+        { Tag: ProjectSectionTag } => "A project folder's section keeps its folder's name",
         _ when ReferenceEquals(row.Tag, ArchivedItemsTag) || IsArchiveFolder(row.Key) => "The Archive keeps its name",
         _ => null,
     };
@@ -261,7 +261,7 @@ public sealed partial class TaskForm
         if (!to.Equals(item.Path, StringComparison.Ordinal))
         {
             parts.Add(FileChange.Move(item.Path, to));
-            parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopFolder), item.Path, to, skip: item.Path));
+            parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopOf(item.Path)), item.Path, to, skip: item.Path));
         }
 
         if (CheckFresh(item.Path, item.Text))
@@ -291,24 +291,26 @@ public sealed partial class TaskForm
             return;
         }
 
-        if (row.Tag is ProjectTag || ReferenceEquals(row.Tag, ProjectsTag))
+        if (row.Tag is ProjectTag or ProjectSectionTag)
         {
             Announce("A project stays: Options, Project folders removes the folder it was found in", true);
             return;
         }
 
-        if (IsArchiveFolder(row.Key) || ItemFolder.IsArchive(TopFolder, Path.GetDirectoryName(row.Key)!))
+        // A project's item in a smart list goes to its own folder of lists' Archive (TK-5.6).
+        var top = TopOf(row.Key);
+        if (IsArchiveFolder(row.Key) || ItemFolder.IsArchive(top, Path.GetDirectoryName(row.Key)!))
         {
             Announce(IsArchiveFolder(row.Key) ? "The Archive stays" : "Already in the Archive: Ctrl+E shows it in axFile, which deletes it for good", true);
             return;
         }
 
-        var archive = ItemFolder.ArchiveFolder(TopFolder);
+        var archive = ItemFolder.ArchiveFolder(top);
         var to = row.IsList
             ? ItemFiles.FreePath(archive, Path.GetFileName(row.Key), string.Empty)
             : ItemFiles.FreePath(archive, Path.GetFileNameWithoutExtension(row.Key), ".json");
         var parts = new List<FileChange> { FileChange.Move(row.Key, to) };
-        parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopFolder), row.Key, to));
+        parts.AddRange(Links.AfterMove(ItemFolder.AllItems(top), row.Key, to));
         if (row.Tag is not ItemFile item || CheckFresh(item.Path, item.Text))
         {
             Commit(new Step(parts, $"Archived {row.Name}"), NeighbourKey());
@@ -450,6 +452,7 @@ public sealed partial class TaskForm
         }
 
         Log.Info("Undone a step");
+        PatchProjectItems(step.Parts);
         // The selection on what the step touched first, where it is again.
         var first = step.Parts[0];
         Fill(first.IsMove ? first.Path : SelectedKey() ?? first.Path);
@@ -479,14 +482,17 @@ public sealed partial class TaskForm
             case { Tag: ProjectTag }:
                 Announce("A project is a folder: Ctrl+E shows it in axFile", true);
                 return;
-            case { Tag: var projects } when ReferenceEquals(projects, ProjectsTag):
-                Announce("Projects gathers folders: Options, Project folders lists them", true);
+            case { Tag: ProjectSectionTag }:
+                Announce("A project folder gathers folders: Options, Project folders lists them", true);
+                return;
+            case { Tag: SectionTag }:
+                Announce("A section is its lists' Section field: Ctrl+J on a list", true);
                 return;
             case { Tag: SmartList { Path: { } filter } }:
                 WindowMenu.Start(Dispatch.AxJSON, filter);
                 return;
-            case { Tag: SmartList }:
-                Announce("All tasks is built in: List, New smart list makes one to change", true);
+            case { Tag: SmartList smart }:
+                Announce(smart.Name + " is built in: List, New smart list makes one to change", true);
                 return;
             case { } row:
                 var listFile = Path.Combine(row.Key, ItemDocument.ListFile);
@@ -508,7 +514,13 @@ public sealed partial class TaskForm
 
     /// <summary>Ctrl+E: the selection's file or folder in axFile; the folder shown when nothing is selected.</summary>
     private void ShowInAxFile() =>
-        WindowMenu.Start(Dispatch.AxFile, SelectedRow() is { } row && row.Tag is not SmartList { Path: null } && !ReferenceEquals(row.Tag, ProjectsTag) ? row.Key : _smart is null ? _folder : TopFolder);
+        WindowMenu.Start(Dispatch.AxFile, SelectedRow() switch
+        {
+            { Tag: ProjectSectionTag header } => header.Root,
+            { Tag: SmartList { BuiltIn: true } or SectionTag } => TopFolder,
+            { } row => row.Key,
+            null => _smart is null ? _folder : TopFolder,
+        });
 
     private void ChooseTopFolder()
     {
@@ -523,7 +535,6 @@ public sealed partial class TaskForm
         _undo.Clear();
         _smart = null;
         _search = null;
-        _atProjects = false;
         _project = null;
         _projectName = null;
         _folder = TopFolder;
@@ -566,6 +577,8 @@ public sealed partial class TaskForm
             return true;
         }
 
+        // A project's item shown in a smart list is read again too, not only the look's copy (TK-5.6).
+        PatchProjectItems([FileChange.Write(path, shownText, now ?? string.Empty)]);
         Fill(SelectedKey());
         Announce("The item changed on disk; it has been read again", true);
         return false;
@@ -586,6 +599,7 @@ public sealed partial class TaskForm
         }
 
         Log.Info("A change written");
+        PatchProjectItems(step.Parts);
         _undo.Add(step);
         if (_undo.Count > MaxUndo)
         {
@@ -598,4 +612,11 @@ public sealed partial class TaskForm
     }
 
     private bool IsArchiveFolder(string path) => path.Equals(ItemFolder.ArchiveFolder(TopFolder), StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The folder of lists a file lives in: a project's, for one of its items gathered into the user's smart lists
+    /// (TK-5.6), so that its links and its Archive are its own; the folder shown as the top otherwise.
+    /// </summary>
+    private string TopOf(string path) =>
+        _project is null && _projects?.FirstOrDefault(project => Projects.Inside(path, project.Path)) is { } owner ? owner.Path : TopFolder;
 }
