@@ -24,6 +24,7 @@ dotnet test tests/AxGit.Tests/AxGit.Tests.csproj
     - each menu item and its key one `Add(menu, new Command(...))` (wrapped in `Git` when it runs git);
     - the keys with no item (Tab between the list and the details, find, Enter on a commit, and File Explorer, whose item the base's Show in submenu is made around) `AddKey`;
     - no `ProcessWindowKey` of its own.
+    - the bar is the bundle's eight (`PlaceMenuBar`, AX-9.1, 2026-11-11): Actions with the staging, Commit, New branch, Fetch, Pull and Push; Navigation with the three views; Context (`_context`, a `ContextBarMenu`, AX-9.11) over three menus off the bar, the Changes view's line, the Log's commit and the Branches view's branch, opened by Shift+F10, the Applications key and a right click in the list (`OpenContext`).
   - The views, one `AxKit.Forms/ListViewState` each (the list's name, the items, their keys, whether read since last made stale, the selected key):
     - `LoadAsync` reads one from git, `ShowViewAsync` and `FillList` show it;
     - `RememberSelection` keeps the key before the list changes, `Stale` marks views to read again;

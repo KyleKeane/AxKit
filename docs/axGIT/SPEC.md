@@ -100,7 +100,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   "Branches, 2"); the details text under it, read-only, named "Details" and, after a diff, "Diff of <file>"; the
   status bar. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move between the list and the details (AX-8.2); a
   notice takes the place of both while it shows (AX-6.4).
-- AG-2.2 Views: Ctrl+1 Changes, Ctrl+2 Log, Ctrl+3 Branches (View menu). The key says the list's name and the item
+- AG-2.2 Views: Ctrl+1 Changes, Ctrl+2 Log, Ctrl+3 Branches (Navigation). The key says the list's name and the item
   the selection is on, also when the list already shows the view (axClaude D26); while a command runs it says
   "Working…" and the view stays (2026-10-23: the switch went through with an empty list under the new name). Each
   view keeps its selection while the window is open, by the item's key (the file's path, the commit's hash, the
@@ -170,18 +170,21 @@ opens in the editor for its type (AG-1.4, AG-D1).
 
 ### AG-6 Menus, keys, texts
 
-- AG-6.1 Menus, in the standard order of a first menu (bundle AX-6): **Session (S):** Open repository… Ctrl+O |
-  Open recent repository ▸ (ten, "1. name (path)", AX-9.5; "No recent repositories" when none) | ─ | Refresh F5 | ─ |
-  Show current repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Operations (P):** Stage or unstage
-  Space | Stage all Ctrl+Shift+A | Unstage all Ctrl+Shift+U | ─ | Show diff Enter | Open file in editor Ctrl+E |
-  Discard changes… Delete | ─ | Commit… Ctrl+Enter. **Branches (B):** Switch to branch Enter | New branch… Ctrl+N |
-  ─ | Fetch Ctrl+Shift+F | Pull Ctrl+Shift+L | Push Ctrl+Shift+H. **View (V):** Changes Ctrl+1 | Log Ctrl+2 |
-  Branches Ctrl+3. **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text
-  size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Git resources ▸ (git-scm.com | Pro Git book).
-  Every item has a mnemonic (AX-7.4).
+- AG-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Open repository… Ctrl+O | Open recent
+  repository ▸ (ten, "1. name (path)", AX-9.5; "No recent repositories" when none) | ─ | Refresh F5 | ─ | Show current
+  repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Actions (A):** Stage all
+  Ctrl+Shift+A | Unstage all Ctrl+Shift+U | Commit… Ctrl+Enter | ─ | New branch… Ctrl+N | Fetch Ctrl+Shift+F | Pull
+  Ctrl+Shift+L | Push Ctrl+Shift+H. **Navigation (N):** Changes Ctrl+1 | Log Ctrl+2 | Branches Ctrl+3 (the View menu's
+  until 2026-11-11). **Context (C)**, what acts on the line selected by the view shown (AX-9.11; Shift+F10, the
+  Applications key and a right click in the list): in Changes, Stage or unstage Space | Show diff Enter | Open file in
+  editor Ctrl+E | Discard changes… Delete; in Log, Show the commit Enter; in Branches, Switch to branch Enter; "Nothing
+  selected" on an empty list. **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus |
+  Windows text size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics).
+  **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User
+  guide | ─ | Git resources ▸ (git-scm.com | Pro Git book). Every item has a mnemonic (AX-7.4).
 - AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
   "Nothing to save here. Space stages, Ctrl+Enter commits"), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
-  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Ctrl+1, Ctrl+2, Ctrl+3, Space and Enter and Delete in the
+  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Ctrl+1, Ctrl+2, Ctrl+3, Shift+F10 and the Applications key, Space and Enter and Delete in the
   list, Ctrl+Shift+A, Ctrl+Shift+U, Ctrl+E, Ctrl+Enter, Ctrl+N, Ctrl+Shift+F, Ctrl+Shift+L, Ctrl+Shift+H. Space,
   Enter and Delete act only while the list has the focus; in the details they are the control's own. The collision
   test covers the table. A command of one view asked for in another says which view first: "Changes view first:

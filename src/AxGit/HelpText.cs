@@ -11,6 +11,7 @@ public static class HelpText
         "axGIT",
         [
             "Tab, Shift+Tab, Ctrl+Tab or F6: switch between the list and the details",
+            "Shift+F10 or the Applications key: the Context menu, what acts on the line selected in the view shown",
             "Ctrl+F: find in the list while the list has the focus, in the details otherwise. F3 and Shift+F3: next or previous match",
         ]) + """
         ## axGIT

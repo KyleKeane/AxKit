@@ -33,6 +33,10 @@ public static class AxGitKeys
     public const Keys Pull = Keys.Control | Keys.Shift | Keys.L;
     public const Keys Push = Keys.Control | Keys.Shift | Keys.H;
 
+    /// <summary>In the list: the bar's Context menu on the line, as Alt and C open it (bundle AX-9.11, 2026-11-11).</summary>
+    public const Keys ContextMenu = Keys.Shift | Keys.F10;
+    public const Keys ContextMenuAlso = Keys.Apps;
+
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
@@ -53,5 +57,7 @@ public static class AxGitKeys
         ("Fetch", Fetch),
         ("Pull", Pull),
         ("Push", Push),
+        ("Context menu (in the list)", ContextMenu),
+        ("Context menu (in the list, the Applications key)", ContextMenuAlso),
     ];
 }

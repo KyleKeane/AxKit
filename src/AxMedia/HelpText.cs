@@ -27,9 +27,10 @@ public static class HelpText
           Space, or Ctrl+P from anywhere in the window: pause, or resume
           Ctrl+Right, Ctrl+Left: 15 seconds forward or back. Ctrl+T: go to a time, 12:40 or 1:02:10 or seconds
           Ctrl+Shift+Right, Ctrl+Shift+Left: the next or the previous file of the queue
-          Ctrl+Shift+Period, Ctrl+Shift+Comma: faster or slower by a quarter, the voice's pitch kept; Operations, Normal speed goes back to 1
+          Ctrl+Shift+Period, Ctrl+Shift+Comma: faster or slower by a quarter, the voice's pitch kept; Actions, Normal speed goes back to 1
           Ctrl+Q: what is playing, where it is, and the speed
-          Operations, Say each file as it starts: the next file's name said when the queue moves on, the one thing axMedia says on its own
+          Shift+F10 or the Applications key: the Context menu, what acts on the file selected in the queue
+          Options, Say each file as it starts: the next file's name said when the queue moves on, the one thing axMedia says on its own
           The volume is Windows' own: your keyboard's volume keys
         """ + BundleHelp.NoticesSection("axMedia", "the list");
 

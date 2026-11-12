@@ -28,6 +28,12 @@ public sealed partial class FileForm : AxKitForm
     private readonly ToolStripStatusLabel _pathLabel;
     private readonly ToolStripMenuItem _undoItem;
 
+    /// <summary>The bar's Context menu (AX-9.11): the entry's commands, or the Actions list's line's.</summary>
+    private readonly ContextBarMenu _context;
+
+    /// <summary>Whether the Actions list was the last of the two lists to have the focus, which Context follows.</summary>
+    private bool _paneLast;
+
     /// <param name="settingsPath">Where the settings are saved; the app's own file unless a probe says otherwise, so that a probe never writes the user's.</param>
     public FileForm(string? path, FileSettings settings, string? settingsError, string? settingsPath = null)
         : base(AxFileApp.Name, settings, settingsPath ?? FileSettings.DefaultPath, settingsError)
@@ -46,36 +52,41 @@ public sealed partial class FileForm : AxKitForm
         CommandPalette.FilledOnOpening(_recentItem).DropDownOpening += (_, _) => FillRecent();
         FillRecent();
         folder.DropDownItems.Add(_recentItem);
+        folder.DropDownItems.Add(new ToolStripSeparator());
+        Add(folder, new Command("Re&fresh", AxFileKeys.Refresh, () => Do(() => RefreshAsync(announce: true))) { Mark = CommandMark.Read });
+        folder.DropDownItems.Add(new ToolStripSeparator());
+
+        // Navigation (AX-9.1): the ways around, and the Actions list.
+        var navigation = new ToolStripMenuItem();
         // AF-3.9: the pinned folders, refilled when the submenu opens, with the key's item under them.
         CommandPalette.FilledOnOpening(_favoritesItem).DropDownOpening += (_, _) => FillFavorites();
         FillFavorites();
-        folder.DropDownItems.Add(_favoritesItem);
+        navigation.DropDownItems.Add(_favoritesItem);
         // Drives (AF-3.11): the drives to go to, This PC, and the drive's own Eject and Properties; refilled when it
         // opens, since a stick may have come or gone. A submenu here since 2026-10-22, freeing Alt+D for Go to folder.
         CommandPalette.FilledOnOpening(_drivesMenu).DropDownOpening += (_, _) => FillDrives();
         FillDrives();
-        folder.DropDownItems.Add(_drivesMenu);
-        Add(folder, new Command("&Go to folder...", AxFileKeys.GoToFolder, GoToFolder) { Mark = CommandMark.Open });
+        navigation.DropDownItems.Add(_drivesMenu);
+        Add(navigation, new Command("&Go to folder...", AxFileKeys.GoToFolder, GoToFolder) { Mark = CommandMark.Open });
         AddKey(new Command("Go to folder", AxFileKeys.GoToFolderAlso, GoToFolder) { Mark = CommandMark.Open });
-        folder.DropDownItems.Add(new ToolStripSeparator());
-        Add(folder, new Command("&Up one level", AxFileKeys.Up, GoUp) { When = InList, Mark = CommandMark.Open });
+        Add(navigation, new Command("&Up one level", AxFileKeys.Up, GoUp) { When = InList, Mark = CommandMark.Open });
         AddKey(new Command("Up one level", AxFileKeys.UpAlso, GoUp) { Mark = CommandMark.Open });
-        Add(folder, new Command("Re&fresh", AxFileKeys.Refresh, () => Do(() => RefreshAsync(announce: true))) { Mark = CommandMark.Read });
+        navigation.DropDownItems.Add(new ToolStripSeparator());
+        Add(navigation, new Command("The &Actions list", Keys.None, ShowActions) { Mark = CommandMark.Open });
+        AddKey(new Command("Add to or remove from Favorites", AxFileKeys.Favorite, ToggleFavorite) { Mark = CommandMark.Change });
+
+        // Actions (AX-9.1): what axFile does in the folder shown, the same wherever the focus is.
+        var actions = new ToolStripMenuItem();
         // AF-4.14: named after what it would undo each time the menu opens, "Undo rename"; the palette refreshes it the same way (AX-10.2).
         // Ctrl+Z in the rename box is the box's own undo of the typing (AF-6.2); in the Actions list, the line under
         // the selection (AF-9.3), whatever its place.
-        _undoItem = Add(folder, new Command(_actions.MenuText, AxFileKeys.Undo, Undo) { When = () => !_list.Renaming && !_pane.Focused, Mark = CommandMark.Act });
+        _undoItem = Add(actions, new Command(_actions.MenuText, AxFileKeys.Undo, Undo) { When = () => !_list.Renaming && !_pane.Focused, Mark = CommandMark.Act });
         AddKey(new Command("Undo the action", AxFileKeys.Undo, UndoSelectedAction) { When = () => !_list.Renaming && _pane.Focused, Mark = CommandMark.Act });
-        CommandPalette.RefreshedOnOpening(folder, () => _undoItem.Text = _actions.MenuText);
-        Add(folder, new Command("&Actions", Keys.None, ShowActions) { Mark = CommandMark.Open });
-        folder.DropDownItems.Add(new ToolStripSeparator());
-        // AF-3.8: the order, one checked item, and the filter.
-        var sort = new ToolStripMenuItem("&Sort by");
-        _sortItems = new ChoiceItems<SortBy>(sort, Enum.GetValues<SortBy>().Select(by => (by, "&" + char.ToUpperInvariant(by.ToString()[0]) + by.ToString()[1..])), _settings.SortBy, SetSort);
-        folder.DropDownItems.Add(sort);
-        Add(folder, new Command("Fil&ter...", AxFileKeys.Filter, ShowFilterNotice) { Mark = CommandMark.Change });
-        AddKey(new Command("Add to or remove from Favorites", AxFileKeys.Favorite, ToggleFavorite) { Mark = CommandMark.Change });
-        folder.DropDownItems.Add(new ToolStripSeparator());
+        CommandPalette.RefreshedOnOpening(actions, () => _undoItem.Text = _actions.MenuText);
+        Add(actions, new Command("&New folder...", AxFileKeys.NewFolder, NewFolder) { Mark = CommandMark.Act });
+        Add(actions, new Command("New text &file", AxFileKeys.NewFile, NewFile) { Mark = CommandMark.Act });
+        Add(actions, new Command("&Paste", AxFileKeys.Paste, Paste) { When = InList, Mark = CommandMark.Act });
+        actions.DropDownItems.Add(new ToolStripSeparator());
         // AF-1.3: the way to the other windows, on the folder shown. The base makes the submenu around its File
         // Explorer item, so the item only shows the key and the key is a command of its own.
         folder.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Item("File &Explorer", ShowFolderInExplorer, AxFileKeys.ShowInExplorer), () => TryFolder(out var shown) ? shown : null, FolderMissing));
@@ -83,19 +94,21 @@ public sealed partial class FileForm : AxKitForm
         folder.DropDownItems.Add(new ToolStripSeparator());
         folder.DropDownItems.Add(CreateExitItem());
 
-        // Item is the entry's menu (AF-4.6): the bar's drop-down and the list's context menu, filled the same way, so
-        // that the two are one menu. The bar's drop-down is the one WinForms makes (AX-6.6): a hand-made one loses
-        // its owner item when it closes, and the bar then opens its neighbours' menus on Left and Right.
-        var item = new ToolStripMenuItem("O&perations");
+        // Context (AX-9.11, AF-4.6): the entry's commands, the folder list's, or the Actions list's line's, by the list
+        // that last had the focus; held in two menus off the bar. The bar's drop-down is the one WinForms makes
+        // (AX-6.6): a hand-made one loses its owner item when it closes, and the bar then opens its neighbours' menus
+        // on Left and Right.
+        var item = new ToolStripMenuItem("&Entry");
         FillItemMenu(item);
 
-        // Selection (AF-3.7): the marks on the list's entries, which the operations act on; the menu of the whole list
-        // rather than of one entry, so it sits beside Item (asked 2026-10-21).
-        // Selection (AF-3.7, AF-D10, 2026-10-22): the marks from anywhere, then the operations on them alone, which say
-        // "None selected" rather than fall back to the current entry; Item is the entry, Folder the folder.
-        var select = new ToolStripMenuItem("Se&lection");
-        Add(select, new Command("Select &all", AxFileKeys.SelectAll, SelectAll) { When = InList, Mark = CommandMark.Change });
-        Add(select, new Command("&Deselect all", AxFileKeys.SelectNone, SelectNone) { When = InList, Mark = CommandMark.Change });
+        // Selection (AF-3.7, AF-D10, 2026-10-22): the marks, Select all and Deselect all in Actions, the rest a submenu
+        // of the entry's Context: this entry's mark, then the operations on the marks alone, which say "None selected"
+        // rather than fall back to the current entry.
+        Add(actions, new Command("Select &all", AxFileKeys.SelectAll, SelectAll) { When = InList, Mark = CommandMark.Change });
+        Add(actions, new Command("D&eselect all", AxFileKeys.SelectNone, SelectNone) { When = InList, Mark = CommandMark.Change });
+        var select = new ToolStripMenuItem("Selectio&n");
+        item.DropDownItems.Add(new ToolStripSeparator());
+        item.DropDownItems.Add(select);
         Add(select, new Command("Select or deselect this &entry", AxFileKeys.Select, ToggleSelection) { When = InList, Mark = CommandMark.Change });
         Add(select, new Command("Select to &here", AxFileKeys.SelectTo, SelectToHere) { When = InList, Mark = CommandMark.Change });
         // The Shift ranges (AF-3.7), keys of the list with no menu item.
@@ -106,7 +119,7 @@ public sealed partial class FileForm : AxKitForm
         // Escape: the marks cleared, else the filter (AF-3.7, AF-3.8); with neither, the key is left alone.
         AddKey(new Command("Clear the selection or the filter", AxFileKeys.Clear, () => ClearSelectionOrFilter()) { When = () => InList() && (_marks.Count > 0 || _filter.Length > 0), Mark = CommandMark.Change });
         select.DropDownItems.Add(new ToolStripSeparator());
-        // The operations on the marks alone (AF-D10): their keys are the Item menu's commands, on the targets, which
+        // The operations on the marks alone (AF-D10): their keys are the entry's commands, on the targets, which
         // are the marks while there are any; these items only show them.
         select.DropDownItems.Add(Item("Cu&t", () => OnMarks(() => CopyOrCut(cut: true)), AxFileKeys.Cut));
         select.DropDownItems.Add(Item("&Copy", () => OnMarks(() => CopyOrCut(cut: false)), AxFileKeys.Copy));
@@ -127,17 +140,31 @@ public sealed partial class FileForm : AxKitForm
         AddKey(new Command("Find", BundleKeys.Find, ShowFindNotice) { Mark = CommandMark.Read });
         AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(1)) { Mark = CommandMark.Read });
         AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(-1)) { Mark = CommandMark.Read });
-        // In the folder list: Right and Left (AF-D12), and the Item menu from the keyboard (AF-4.6, AF-D13).
+        // In the folder list: Right and Left (AF-D12), and Context from the keyboard (AF-4.6, AF-D13, AX-9.11).
         AddKey(new Command("Into the folder", AxFileKeys.IntoFolder, IntoFolder) { When = InList, Mark = CommandMark.Open });
         AddKey(new Command("Up one level", AxFileKeys.OutOfFolder, OutOfFolder) { When = InList, Mark = CommandMark.Open });
-        AddKey(new Command("Item menu", AxFileKeys.ContextMenu, ShowItemMenu) { When = InList, Mark = CommandMark.Open });
-        AddKey(new Command("Item menu", AxFileKeys.ContextMenuAlso, ShowItemMenu) { When = InList, Mark = CommandMark.Open });
+        AddKey(new Command("Context menu", AxFileKeys.ContextMenu, ShowItemMenu) { When = InList, Mark = CommandMark.Open });
+        AddKey(new Command("Context menu", AxFileKeys.ContextMenuAlso, ShowItemMenu) { When = InList, Mark = CommandMark.Open });
         // In the Actions list (AF-9.3): Enter goes where the action left things, Escape goes back to the folder list.
         AddKey(new Command("Go to the action's place", AxFileKeys.Open, GoToAction) { When = InPane, Mark = CommandMark.Open });
         AddKey(new Command("Back to the folder list", AxFileKeys.Clear, () => _list.Focus()) { When = InPane, Mark = CommandMark.Open });
 
-        // Options, as the other windows' (AX-6): every setting in the submenu for what it is about.
-        var options = new ToolStripMenuItem("&Options");
+        // The Actions list's line (AF-9.3): its keys, shown in Context while the Actions list has the focus.
+        var line = new ToolStripMenuItem("&Line");
+        line.DropDownItems.Add(Item("&Go to where it happened", GoToAction, AxFileKeys.Open));
+        line.DropDownItems.Add(Item("&Undo this action", UndoSelectedAction, AxFileKeys.Undo));
+        line.DropDownItems.Add(Item("Its number and &time", SayActionInformation, AxFileKeys.Information));
+        _list.Enter += (_, _) => _paneLast = false;
+        _pane.Enter += (_, _) => _paneLast = true;
+        _context = new ContextBarMenu(() => _paneLast ? line : item, () => "Nothing selected", said => Announce(said, true), item, line);
+
+        // Options, as the other windows' (AX-6): the order and the filter (AF-3.8) first, then every setting in the
+        // submenu for what it is about.
+        var options = new ToolStripMenuItem();
+        var sort = new ToolStripMenuItem("&Sort by");
+        _sortItems = new ChoiceItems<SortBy>(sort, Enum.GetValues<SortBy>().Select(by => (by, "&" + char.ToUpperInvariant(by.ToString()[0]) + by.ToString()[1..])), _settings.SortBy, SetSort);
+        options.DropDownItems.Add(sort);
+        Add(options, new Command("Fil&ter...", AxFileKeys.Filter, ShowFilterNotice) { Mark = CommandMark.Change });
         options.DropDownItems.Add(CreateTextMenu());
         // AF-2.2: what the list leaves out, two switches; the folder is read again on a flip.
         options.DropDownItems.Add(CreateGeneralMenu(
@@ -157,7 +184,8 @@ public sealed partial class FileForm : AxKitForm
             [("&Keyboard shortcuts in Windows", "https://support.microsoft.com/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec")]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([folder, item, select, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        PlaceMenuBar(_menu, folder, actions, navigation, _context.Menu, options, help);
+        _menu.MenuActivate += (_, _) => _context.Fill();
 
         // ---- the list (AF-2.1, AF-2.2): the main control; its own keys stay native (AF-3.6) ----
         _list.IntegralHeight = false;
@@ -168,7 +196,7 @@ public sealed partial class FileForm : AxKitForm
         // AF-3.6: File Explorer's type-ahead, several letters into one prefix, in place of the list's one-letter jump.
         // The bundle's list (AX-8.6) types over the shown entries' names, not the empty folder's or the Not shown line.
         _list.Names = () => _shown.Select(entry => entry.Name).ToList();
-        // AF-4.6, AF-D13: a right click opens the menu bar's Item menu on the entry under it, selected first as File
+        // AF-4.6, AF-D13: a right click opens the bar's Context menu on the entry under it, selected first as File
         // Explorer does; Shift+F10 and the Applications key open the same menu from their commands.
         _list.OpenMenuOnRightClick(ShowItemMenu);
 
@@ -222,14 +250,11 @@ public sealed partial class FileForm : AxKitForm
         menu.DropDownItems.Add(new ToolStripSeparator());
         Add(menu, new Command("Cu&t", AxFileKeys.Cut, () => CopyOrCut(cut: true)) { When = InList, Mark = CommandMark.Act });
         Add(menu, new Command("&Copy", AxFileKeys.Copy, () => CopyOrCut(cut: false)) { When = InList, Mark = CommandMark.Act });
-        Add(menu, new Command("&Paste", AxFileKeys.Paste, Paste) { When = InList, Mark = CommandMark.Act });
         menu.DropDownItems.Add(new ToolStripSeparator());
         // Posted, so that a menu has closed and the list has the focus back before the box takes it; F2 is posted the same way.
         Add(menu, new Command("Rena&me", AxFileKeys.Rename, () => BeginInvoke(() => Rename())) { When = InList, Mark = CommandMark.Act });
         Add(menu, new Command("&Delete", AxFileKeys.Delete, Delete) { When = InList, Mark = CommandMark.Act });
         menu.DropDownItems.Add(new ToolStripSeparator());
-        Add(menu, new Command("&New folder...", AxFileKeys.NewFolder, NewFolder) { Mark = CommandMark.Act });
-        Add(menu, new Command("New text &file", AxFileKeys.NewFile, NewFile) { Mark = CommandMark.Act });
         Add(menu, new Command("Mo&ve to folder...", Keys.None, MoveIntoNewFolder) { Mark = CommandMark.Act });
         Add(menu, new Command("Compress to &zip", Keys.None, Compress) { Mark = CommandMark.Act });
         Add(menu, new Command("E&xtract here", Keys.None, Extract) { Mark = CommandMark.Act });

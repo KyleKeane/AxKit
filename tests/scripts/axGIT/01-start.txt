@@ -66,13 +66,12 @@ keys space
 expect said ! Changes view first: Ctrl+1
 keys delete
 expect said ! Changes view first: Ctrl+1
-menu Show diff
-expect said ! Changes view first: Ctrl+1
+# Context holds the view's own commands only (bundle AX-9.11), so Show diff is not offered in the Log.
+expect commands Show the commit, Context
 expect focus Log, 2 commits
 keys ctrl+1
 expect said ! Changes, 2 files.
-menu Switch to branch
-expect said ! Branches view first: Ctrl+3
+expect commands Stage or unstage, Context
 expect focus Changes, 2 files
 
 # 1.6 Alt+F4 closes the window without a question (the runner's close is Alt+F4's path; that no question came is

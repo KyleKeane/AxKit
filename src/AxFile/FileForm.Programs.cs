@@ -154,10 +154,14 @@ public sealed partial class FileForm
         }
     }
 
-    /// <summary>Shift+F10, the Applications key and a right click in the folder list (AF-4.6, AF-D13): the menu bar's Item menu, opened as Alt and I open it (the window base's <c>OpenBarMenu</c>).</summary>
-    private void ShowItemMenu() => OpenBarMenu('P');
+    /// <summary>Shift+F10, the Applications key and a right click in the folder list (AF-4.6, AF-D13): the bar's Context menu with the entry's commands, opened as Alt and C open it (AX-9.11; the window base's <c>OpenBarMenu</c>).</summary>
+    private void ShowItemMenu()
+    {
+        _context.Fill();
+        OpenBarMenu(ContextBarMenu.Letter);
+    }
 
-    /// <summary>Item → Windows menu…: the shell's own menu for the entry, under it in the list, once the Item menu has closed.</summary>
+    /// <summary>Context → Windows menu…: the shell's own menu for the entry, under it in the list, once Context has closed.</summary>
     private void ShowWindowsMenu()
     {
         if (!TryEntry(out var entry))
@@ -167,7 +171,7 @@ public sealed partial class FileForm
 
         var bounds = _list.GetItemRectangle(_list.SelectedIndex);
         var at = _list.PointToScreen(new Point(bounds.Left, bounds.Bottom));
-        // Posted, so that the Item menu has closed and the list has the focus back before the shell's menu takes over.
+        // Posted, so that Context has closed and the list has the focus back before the shell's menu takes over.
         BeginInvoke(() =>
         {
             if (IsDisposed)

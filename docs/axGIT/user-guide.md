@@ -45,16 +45,18 @@ Enter on a commit shows its message and the list of files it changed, in the det
 
 ## Branches
 
-Enter on a branch switches to it. Branches, New branch (Ctrl+N) asks for a name and switches to the new branch. Fetch (Ctrl+Shift+F), Pull (Ctrl+Shift+L) and Push (Ctrl+Shift+H) talk to the remote; axGIT says "Fetched", "Pulled" or "Pushed", and when git refuses, its whole answer comes as a notice you can read. The status bar says "Working" while one of them runs; the window stays usable.
+Enter on a branch switches to it. Actions, New branch (Ctrl+N) asks for a name and switches to the new branch. Fetch (Ctrl+Shift+F), Pull (Ctrl+Shift+L) and Push (Ctrl+Shift+H) talk to the remote; axGIT says "Fetched", "Pulled" or "Pushed", and when git refuses, its whole answer comes as a notice you can read. The status bar says "Working" while one of them runs; the window stays usable.
 
 axGIT does not merge, rebase or resolve conflicts. For those, use the terminal or ask Claude in axClaude; axGIT shows you the result.
 
 ## Menus
 
+The menu bar is the same eight menus in every axKit window.
+
 - **Session**: Open repository (Ctrl+O), Open recent repository, Refresh (F5), Show current repository in (File Explorer Ctrl+W, axClaude, axTerminal, axFile), Exit.
-- **Operations**: Stage or unstage (Space), Stage all, Unstage all, Show diff (Enter), Open file in editor (Ctrl+E), Discard changes (Delete), Commit (Ctrl+Enter).
-- **Branches**: Switch to branch (Enter), New branch (Ctrl+N), Fetch, Pull, Push.
-- **View**: Changes, Log, Branches.
+- **Actions**: Stage all, Unstage all, Commit (Ctrl+Enter), New branch (Ctrl+N), Fetch, Pull, Push.
+- **Navigation**: Changes (Ctrl+1), Log (Ctrl+2), Branches (Ctrl+3).
+- **Context**: what acts on the line you are on, by the view: in Changes, Stage or unstage (Space), Show diff (Enter), Open file in editor (Ctrl+E), Discard changes (Delete); in Log, Show the commit (Enter); in Branches, Switch to branch (Enter). Shift+F10 opens it.
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 

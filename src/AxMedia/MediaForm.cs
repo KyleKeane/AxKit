@@ -18,6 +18,9 @@ public sealed partial class MediaForm : AxKitForm
     private readonly MediaSettings _settings;
     private readonly HandOver? _start;
     private readonly MenuStrip _menu = new();
+
+    /// <summary>The bar's Context menu (AX-9.11): the selected file's commands.</summary>
+    private readonly ContextBarMenu _context;
     private readonly ToolStripMenuItem _recentItem = new("Open &recent");
     private readonly AxKitList _list = new();
     private readonly Panel _video = new();
@@ -57,11 +60,8 @@ public sealed partial class MediaForm : AxKitForm
         FillRecent();
         queue.DropDownItems.Add(_recentItem);
         queue.DropDownItems.Add(new ToolStripSeparator());
-        Add(queue, new Command("&Play", AxMediaKeys.Play, PlaySelected) { When = () => _list.Focused, Mark = CommandMark.Open });
-        Add(queue, new Command("R&emove", AxMediaKeys.Remove, RemoveSelected) { When = () => _list.Focused, Mark = CommandMark.Change });
         queue.DropDownItems.Add(new ToolStripMenuItem("&Clear queue", null, (_, _) => ClearQueue()));
         queue.DropDownItems.Add(new ToolStripSeparator());
-        Add(queue, new Command("&Information", AxMediaKeys.Information, SayInformation) { Mark = CommandMark.Read });
         // AM-1.4: the ways out, on the file playing or the one under the selection; the File Explorer item is the
         // first of the submenu the base makes, so its command is made here and its key added to the list.
         var explorer = new Command("File &Explorer", AxMediaKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
@@ -69,23 +69,35 @@ public sealed partial class MediaForm : AxKitForm
         queue.DropDownItems.Add(new ToolStripSeparator());
         queue.DropDownItems.Add(CreateExitItem());
 
-        // The menu item shows Space, the list's key; Ctrl+P pauses and resumes from anywhere in the window.
-        var play = new ToolStripMenuItem("O&perations");
+        // Actions (AX-9.1): the player, the same wherever the focus is. The menu item shows Space, the list's key;
+        // Ctrl+P pauses and resumes from anywhere in the window.
+        var play = new ToolStripMenuItem();
         Add(play, new Command("P&ause or resume", AxMediaKeys.PauseResume, PauseResume) { When = () => _list.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Pause or resume", AxMediaKeys.PauseResumeAlso, PauseResume) { Mark = CommandMark.Open });
-        Add(play, new Command("&Next file", AxMediaKeys.NextFile, () => MoveInQueue(1)) { Mark = CommandMark.Open });
-        Add(play, new Command("Pre&vious file", AxMediaKeys.PreviousFile, () => MoveInQueue(-1)) { Mark = CommandMark.Open });
         Add(play, new Command($"&Forward {_settings.SeekSeconds} seconds", AxMediaKeys.Forward, () => Seek(_settings.SeekSeconds)) { Mark = CommandMark.Open });
         Add(play, new Command($"&Back {_settings.SeekSeconds} seconds", AxMediaKeys.Back, () => Seek(-_settings.SeekSeconds)) { Mark = CommandMark.Open });
-        Add(play, new Command("&Go to time...", AxMediaKeys.GoToTime, GoToTime) { Mark = CommandMark.Open });
         play.DropDownItems.Add(new ToolStripSeparator());
         Add(play, new Command("Fa&ster", AxMediaKeys.Faster, () => ChangeSpeed(MediaFiles.Faster(_settings.Speed))) { Mark = CommandMark.Change });
         Add(play, new Command("S&lower", AxMediaKeys.Slower, () => ChangeSpeed(MediaFiles.Slower(_settings.Speed))) { Mark = CommandMark.Change });
         play.DropDownItems.Add(new ToolStripMenuItem("N&ormal speed", null, (_, _) => ChangeSpeed(1)));
         play.DropDownItems.Add(new ToolStripSeparator());
-        play.DropDownItems.Add(Toggle("Say &each file as it starts", _settings.SayEachFile, v => _settings.SayEachFile = v));
         Add(play, new Command("&What is playing", AxMediaKeys.WhatIsPlaying, SayWhatIsPlaying) { Mark = CommandMark.Read });
 
+        // Navigation (AX-9.1): along the queue and in the file.
+        var navigation = new ToolStripMenuItem();
+        Add(navigation, new Command("&Next file", AxMediaKeys.NextFile, () => MoveInQueue(1)) { Mark = CommandMark.Open });
+        Add(navigation, new Command("Pre&vious file", AxMediaKeys.PreviousFile, () => MoveInQueue(-1)) { Mark = CommandMark.Open });
+        Add(navigation, new Command("&Go to time...", AxMediaKeys.GoToTime, GoToTime) { Mark = CommandMark.Open });
+
+        // Context (AX-9.11): what acts on the file selected in the queue; Enter, Delete and Space act in the list only
+        // (AM-5.2): in a notice's field they are the field's own, and in the list returning true keeps it from dinging.
+        var file = new ToolStripMenuItem("&File");
+        Add(file, new Command("&Play", AxMediaKeys.Play, PlaySelected) { When = () => _list.Focused, Mark = CommandMark.Open });
+        Add(file, new Command("R&emove", AxMediaKeys.Remove, RemoveSelected) { When = () => _list.Focused, Mark = CommandMark.Change });
+        Add(file, new Command("&Information", AxMediaKeys.Information, SayInformation) { Mark = CommandMark.Read });
+        _context = new ContextBarMenu(() => _queue.Count == 0 ? null : file, () => "Nothing in the queue", said => Announce(said, true), file);
+        AddKey(new Command("Context menu", AxMediaKeys.ContextMenu, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
+        AddKey(new Command("Context menu", AxMediaKeys.ContextMenuAlso, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
         // The keys without a menu item: Tab and its kin back to the list (the one control), and find in the queue.
         foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
         {
@@ -94,8 +106,9 @@ public sealed partial class MediaForm : AxKitForm
 
         AddFindInListKeys("queue", _list, Names);
 
-        // Options, as the other windows' (AX-6).
-        var options = new ToolStripMenuItem("&Options");
+        // Options, the app's own first (AX-9.1): Say each file as it starts, the play menu's until 2026-11-11.
+        var options = new ToolStripMenuItem();
+        options.DropDownItems.Add(Toggle("Say &each file as it starts", _settings.SayEachFile, v => _settings.SayEachFile = v));
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());
@@ -107,7 +120,8 @@ public sealed partial class MediaForm : AxKitForm
         ]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([queue, play, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        PlaceMenuBar(_menu, queue, play, navigation, _context.Menu, options, help);
+        _menu.MenuActivate += (_, _) => _context.Fill();
 
         // ---- the list (AM-2.1): the one control; its own keys stay native ----
         _list.IntegralHeight = false;
@@ -117,6 +131,7 @@ public sealed partial class MediaForm : AxKitForm
         _list.Items.Add(PlayQueue.EmptyText);
         _list.SelectedIndex = 0;
         _list.DoubleClick += (_, _) => PlaySelected();
+        _list.OpenMenuOnRightClick(OpenContext);
         // The bundle's list (AX-8.6): the empty queue's one line is no item to type to.
         _list.Names = () => _queue.Count == 0 ? [] : _list.Items.Cast<object>().Take(_queue.Count).Select(item => item.ToString() ?? string.Empty).ToList();
 
@@ -466,5 +481,12 @@ public sealed partial class MediaForm : AxKitForm
         }
 
         Announce(text, true);
+    }
+
+    /// <summary>Shift+F10, the Applications key and a right click in the queue (AX-9.11): the bar's Context menu.</summary>
+    private void OpenContext()
+    {
+        _context.Fill();
+        OpenBarMenu(ContextBarMenu.Letter);
     }
 }

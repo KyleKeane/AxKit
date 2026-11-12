@@ -27,7 +27,7 @@ public static class HelpText
           Shift+Enter: read the file in axPreview; a folder opens in a new axFile window
           Ctrl+E: edit the file in axDown, or axJSON for a .json file
           Ctrl+Enter: play the folder's sound and video files in axMedia. Ctrl+Shift+Q: add the entry, or the selected entries, to axMedia's queue, staying here
-          Alt+I, Shift+F10 or the Applications key: the entry's menu, one list in File Explorer's order, with Open with (Windows default, Choose a program, your own programs), Open in axKit (every app) and Windows menu, the full Windows menu for the entry.
+          Alt+C, Shift+F10 or the Applications key: the Context menu, the entry's, one list in File Explorer's order, with Open with (Windows default, Choose a program, your own programs), Open in axKit (every app) and Windows menu, the full Windows menu for the entry.
           Alt+Enter: the entry's Properties, the Windows sheet
 
         ## Selecting
@@ -36,7 +36,7 @@ public static class HelpText
           Shift+Space: select from the nearest selected entry to the one you are on, above or below; with no other selected, as Space
           Ctrl+A: select all. Ctrl+Shift+A, or Escape: deselect all. Ctrl+I says how many are selected
           Cut, Copy, Delete, Copy path, Move to folder, Compress to zip and Add to axMedia's queue act on the selected entries, or on the entry you are on when none is selected
-          Alt+S: the Selection menu, the selected entries from anywhere: select all, deselect all, select to here, then Cut, Copy, Delete, Move to folder, Compress to zip, Add to axMedia's queue and Copy paths on them alone; "None selected" when there are none
+          Context, Selection: the selected entries from anywhere: select this entry, select to here, then Cut, Copy, Delete, Move to folder, Compress to zip, Add to axMedia's queue and Copy paths on them alone; "None selected" when there are none. Select all and Deselect all are in Actions
           Every change of the selection is a line in the Actions list's Selection section; Ctrl+Z on that line puts the selection back as it was
 
         ## File operations

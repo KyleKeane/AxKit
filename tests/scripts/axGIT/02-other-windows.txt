@@ -29,7 +29,7 @@ expect commands "axFile, Session, Show current repository in"
 # 2.5 Ctrl+E with no file in the list says so and starts nothing.
 keys ctrl+e
 expect said ! No file selected
-expect commands "Open file in editor, Operations, Ctrl
+expect commands "Open file in editor, Context, Ctrl
 
 # 2.3 axDown on a file of the repository: File, Show current file in, axGIT.
 start down {temp}\repo\notes.md

@@ -43,6 +43,10 @@ public static class AxMediaKeys
     public const Keys Slower = Keys.Control | Keys.Shift | Keys.Oemcomma;
     public const Keys WhatIsPlaying = Keys.Control | Keys.Q;
 
+    /// <summary>In the queue: the bar's Context menu on the file, as Alt and C open it (bundle AX-9.11, 2026-11-11).</summary>
+    public const Keys ContextMenu = Keys.Shift | Keys.F10;
+    public const Keys ContextMenuAlso = Keys.Apps;
+
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
@@ -63,5 +67,7 @@ public static class AxMediaKeys
         ("Faster", Faster),
         ("Slower", Slower),
         ("What is playing", WhatIsPlaying),
+        ("Context menu (in the queue)", ContextMenu),
+        ("Context menu (in the queue, the Applications key)", ContextMenuAlso),
     ];
 }
