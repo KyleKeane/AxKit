@@ -6,6 +6,23 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-11, evening: axTask's headings and tags, the heading sound; by the user by ear, then nvda-pass.ps1 (`push4`, merged as c7eb2e2)
+
+By the user with NVDA, one step at a time through the assistant's questions, on a development build of the branches
+`axtask-top` and `heading-earcon` (merged as `push4`), Windows 11 Pro 10.0.26200, NVDA 2025.3.3.
+
+| Plan | Steps | Result |
+| --- | --- | --- |
+| axTask | 1.1, 1.10, 1.11: the top level under headings, Ctrl+Down, Ctrl+Up, Ctrl+1 to Ctrl+3, the App and Tag groups, Tags with a heading per symbol (`!thing`, `$thing` in the user's own lists) | Passed: "reads well" (a first "moved one row" was adjacent headings; Home then Ctrl+1 three times read Projects, Smart lists, Date lists) |
+| axTask | 6.3, the folder picker: Add a project folder, Select Folder | Passed: landed on "Projects in axkit-development" and heard "Added ..." (the fix of the afternoon's failure) |
+| axTask | 1a, the heading sound | Passed: "sounds right" |
+
+Then `nvda-pass.ps1` with the user away: 93 scripts, 90 passed whole. axFile `03-operations` missed the Find field at
+line 382 again (the timing miss of the third push) and passed whole on `-NoBuild axFile`. axClaude `07-folder` failed
+once on Claude's answer (it ran a tool for "echo one") and passed on the rerun. axClaude `04-headings` failed twice at
+line 347, "Line 7 copied" heard for "Line 6 copied": Claude Code 2.1.322 shows one more line before "# Input 1", and
+`main`'s own build failed the same way, so the script took the new number and passed on the runner.
+
 ## 2026-11-11, afternoon: the push's by-ear steps, by the user (`main` c992849)
 
 By the user with NVDA, answers given one step at a time through the assistant's questions, Windows 11 Pro 10.0.26200,
