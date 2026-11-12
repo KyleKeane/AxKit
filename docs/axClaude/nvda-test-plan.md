@@ -177,3 +177,7 @@ the app follows its spec, the plan's step reads as below.
 4. Minimize the axDown window (Windows+Down Arrow), then from here Alt+W, O, 1: it is restored and has the focus. With no other axKit window open, Open windows holds one item, "No other open windows", which NVDA reads and which does nothing on Enter; Session, Open recent folder on a fresh install reads "No recent folders".
 5. Close the axDown window that has `notes.md` open, then here Alt+W, R: "1. notes.md (<path>) - axDown, 1 of 1"; Enter: a new axDown opens on that file. Session, Open folder, another folder: the folder you left is now "1. <folder> (<path>) - axClaude" at the top of Recently closed, and closing axClaude puts the current one there; a file closed twice is listed once, at most ten items.
 6. With an axDown window holding unsaved changes and Claude working here, Alt+W, C (Close all windows): the axDown window asks "Save changes?" and stays until answered; this window asks "Close axClaude?" (section 8); answer both and every axKit window is gone. With nothing to ask, Close all windows closes every window at once.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. In the conversation on a line, Shift+F10: Context opens on "Quote this line in the message" and NVDA reads it, not the edit control's own menu; Escape: back on the line. In the message field, the same. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help.

@@ -179,3 +179,7 @@ Claude Code installed and logged in, and are the user's by ear.
    folder, Enter: the folder picker; Escape it: the notice comes back; Escape closes it. Alt+A, C, W: axFile opens on
    `Documents\axKit Claude`; Alt+F4.
 7. Alt+A, C, U: "Claude off"; Alt+A, C, U: "Claude on" (the agreement is remembered); Alt+A, C, U: "Claude off".
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. In the text with a word selected, Shift+F10: Context opens on "Cut Ctrl+X" and NVDA reads it, not the edit control's own menu; the Applications key and a right click the same; Escape: back in the text, the caret and the selection where they were. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help.

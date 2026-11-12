@@ -43,3 +43,7 @@ need a real reply and a real screen and are the user's by ear.
 
 1. Session, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`); the conversation window stays open, an
    axClaude window of its own.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help; Alt, A: Open the conversation first.

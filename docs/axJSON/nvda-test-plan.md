@@ -59,3 +59,7 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
 
 1. Alt+W, N: New window lists every app of the bundle; Alt+W, N, J starts a new axJSON window.
 2. Alt+W, O: Open windows lists the other axKit windows, most recent first. Alt+H, About, Version names every app.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. In the text, Shift+F10: Context opens on "Cut Ctrl+X"; Alt, A: Actions with Undo, Redo and Format; Alt, N: Navigation with the finds, Go to line and the jumps.

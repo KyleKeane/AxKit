@@ -48,3 +48,7 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 - Alt+F4 while `Start-Sleep 30` runs: the notice "A command is still running"; Escape keeps it; Alt+F4, Enter: closes.
 - After I accept all terms, install and restart (Help, Check for updates) while a command runs: the notice says the updated axTerminal starts again; Escape (Keep running): "Update installed. It starts with the next axTerminal", the command keeps running; the window closed later does not restart by itself.
 - Alt+W: the Window menu as in every window; New window lists axTerminal among the access layers; Open windows lists the other axKit windows.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. In the terminal on a line, Shift+F10: Context opens on "Copy this line into the command field" and NVDA reads it; Escape: back on the line. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help.
