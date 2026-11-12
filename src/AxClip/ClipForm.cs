@@ -46,15 +46,19 @@ public sealed class ClipForm : HotkeyForm
         // ---- menus and keys (CP-2.4, CP-5.1, CP-5.2): one command list (docs/axKit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----
         AddMatchKeys(AxClipKeys.NextMatch, AxClipKeys.PreviousMatch, AxClipKeys.FirstMatch, AxClipKeys.LastMatch);
-        var clip = new ToolStripMenuItem("&Session");
-        Add(clip, new Command("&Paste", AxClipKeys.Paste, Paste) { Mark = CommandMark.Act });
-        Add(clip, new Command("&Copy without pasting", AxClipKeys.CopyOnly, CopyOnly) { Mark = CommandMark.Act });
-        Add(clip, new Command("&Read in full", AxClipKeys.ReadInFull, ReadInFull) { Mark = CommandMark.Read });
-        Add(clip, new Command("Re&move", AxClipKeys.Remove, RemoveSelected) { Mark = CommandMark.Change });
-        Add(clip, new Command("C&lear history...", AxClipKeys.ClearHistory, ClearHistory) { Mark = CommandMark.Act });
+        // The bundle's eight (AX-9.1): Session holds Hide and Quit; Actions the history as a whole; Context what acts on
+        // the clip the first match or the selection is on (AX-9.11).
+        var clip = new ToolStripMenuItem();
         AddHideAndQuit(clip, AxClipKeys.Hide);
+        var actions = new ToolStripMenuItem();
+        Add(actions, new Command("C&lear history...", AxClipKeys.ClearHistory, ClearHistory) { Mark = CommandMark.Act });
+        var context = new ToolStripMenuItem();
+        Add(context, new Command("&Paste", AxClipKeys.Paste, Paste) { Mark = CommandMark.Act });
+        Add(context, new Command("&Copy without pasting", AxClipKeys.CopyOnly, CopyOnly) { Mark = CommandMark.Act });
+        Add(context, new Command("&Read in full", AxClipKeys.ReadInFull, ReadInFull) { Mark = CommandMark.Read });
+        Add(context, new Command("Re&move", AxClipKeys.Remove, RemoveSelected) { Mark = CommandMark.Change });
 
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         options.DropDownItems.Add(HotkeyItem());
         _pauseItem = Add(options, new Command("&Pause recording", AxClipKeys.PauseRecording, TogglePause) { Mark = CommandMark.Change });
         options.DropDownItems.Add(Toggle("&Keep history between runs", settings.KeepHistory, v =>
@@ -70,7 +74,7 @@ public sealed class ClipForm : HotkeyForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Windows &resources",
             [("&Clipboard in Windows", "https://support.microsoft.com/windows/clipboard-in-windows-c436501e-985d-1c8d-97ea-fe46ddf338c6")]);
 
-        _menu.Items.AddRange([clip, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        PlaceMenuBar(_menu, clip, actions, new ToolStripMenuItem(), context, options, help);
         MainMenuStrip = _menu;
 
         // ---- the field and the items (CP-2.1, AS-D2): HotkeyForm's, named here ----

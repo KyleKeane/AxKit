@@ -115,9 +115,10 @@ agreement (AX-11.4) asked the first time.
 
 ### HE-6 Menus and keys
 
-Session (S): Open the conversation (Enter), Put a picture file into the conversation… (Ctrl+D), Open
-the last screenshot in axPreview (Ctrl+O), Claude's working folder, Hide (Escape), Quit axHelp. Options: Hotkey…,
-Conversation model ▸, Text ▸, General ▸ (Start with Windows), Developer ▸. Then the bundle's Window, axKit and Help
+The bundle's eight menus (AX-9.1, 2026-11-11): Session (S): Hide (Escape), Quit axHelp. Actions (A): Open the
+conversation (Enter), Put a picture file into the conversation… (Ctrl+D), Open the last screenshot in axPreview
+(Ctrl+O), Claude's working folder. Navigation and Context hold one item each that says they have nothing yet. Options:
+Hotkey…, Conversation model ▸, Text ▸, General ▸ (Start with Windows), Developer ▸. Then the bundle's Window, axKit and Help
 (AX-9.1). Bundle-wide keys (AX-8.2): F1, Ctrl+Shift+P, F4, Shift+F1, the text size keys, Alt and Alt+F4. The F1 text
 names them all (`HelpText.Shortcuts`).
 

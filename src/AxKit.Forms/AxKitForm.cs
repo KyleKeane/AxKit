@@ -186,6 +186,25 @@ public abstract partial class AxKitForm : Form
         bar.Items.AddRange([.. own, window, CreateAxKitMenu(), help]);
     }
 
+    /// <summary>
+    /// Shift+F10, the Applications key and a right click on a control whose own context menu Windows would show (an
+    /// edit control's: Undo through its own buffer, AD-D1) open the bar's Context menu instead (AX-9.11, 2026-11-11: one
+    /// behaviour everywhere). The control gets a context menu that never shows: its opening is cancelled and Context
+    /// opened as Alt and C open it, once the keys that asked are up.
+    /// </summary>
+    protected void ContextFromControl(Control control)
+    {
+        var stand = new ContextMenuStrip();
+        // An empty strip never raises Opening; the item is never seen.
+        stand.Items.Add(new ToolStripMenuItem(BarMenus[3]));
+        stand.Opening += (_, e) =>
+        {
+            e.Cancel = true;
+            BeginInvoke(() => OpenBarMenu(ContextBarMenu.Letter));
+        };
+        control.ContextMenuStrip = stand;
+    }
+
     /// <summary>A bar menu with no items gets one enabled item that says <paramref name="said"/> when chosen (AX-9.1: a menu is never empty, WinForms skipping a disabled item).</summary>
     private void SayWhenEmpty(ToolStripMenuItem menu, string said)
     {
@@ -196,7 +215,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>The Window menu (AX-9.1): New window, Open windows, Recently closed, Close all windows; the window puts it after Options, which follows its own menus (Navigate last of them).</summary>
-    protected WindowMenu CreateWindowMenu() => new(this);
+    private WindowMenu CreateWindowMenu() => new(this);
 
     /// <summary>
     /// The axKit menu (AX-9.1; the user's order of 2026-11-10: Navigate, Options, Window, axKit, Help): what is the
@@ -204,7 +223,7 @@ public abstract partial class AxKitForm : Form
     /// <c>AxKitForm.Mcp.cs</c>) and Theme (the theme file, TH-4, <c>AxKitForm.Theme.cs</c>). A new bundle-wide setting or
     /// action joins here, never an app's Options.
     /// </summary>
-    protected ToolStripMenuItem CreateAxKitMenu()
+    private ToolStripMenuItem CreateAxKitMenu()
     {
         var menu = new ToolStripMenuItem(BarMenus[6]);
         menu.DropDownItems.Add(CreateClaudeMenu());

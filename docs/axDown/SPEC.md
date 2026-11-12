@@ -311,7 +311,8 @@ are read and written on the UI thread (a 32 MB file is the ceiling, AD-3.7).
   differently, wraps differently and would invite formatting. The known costs (re-wrap near the top of a large text,
   one-level undo) are accepted for a document editor; the undo has been the window's own history since AD-2.5 (2026-10-21), and the control's own undo is out of
   reach since 2026-10-23: its buffer is emptied after each change, Alt+Backspace is the window's Undo, and the text's
-  context menu is the window's own (Undo, Redo, Cut, Copy, Paste, Select all; the control's menu undid through its
+  context menu is the window's own: the bar's Context menu since 2026-11-11 (Cut, Copy, Paste, Select all; AX-9.11),
+  opened by Shift+F10, the Applications key and a right click in the text; the control's menu undid through its
   buffer, which the history then recorded as another step).
 - **AD-D2 Barebones first.** Version one has what section 4 lists and nothing more, so that the window is simple
   to learn and the code simple to change (AX B-10); the navigation keys come second (section 9); collaborative and

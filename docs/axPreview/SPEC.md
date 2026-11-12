@@ -124,13 +124,15 @@ it, so that every file shows something and the details say what it is.
 
 ### AP-3 Menus, keys, texts
 
-- AP-3.1 Menus (AX-6): **Session (S):** New window Ctrl+N | Open… Ctrl+O | Open recent ▸ | ─ | Reload F5 | Read the
-  clipboard's picture Ctrl+Shift+V (AP-7.2 item 4) | ─ | Edit in
-  axDown Ctrl+E (or Edit in axJSON, by the file) | Show current file in ▸ (File Explorer Ctrl+W | axClaude | axTerminal |
-  axGIT | axFile, bundle AX-9.10) | ─ | Exit Alt+F4. No Edit menu: the control's own Ctrl+A and Ctrl+C work as they do. **Navigate (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… Ctrl+G | ─ |
+- AP-3.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open… Ctrl+O | Open
+  recent ▸ | ─ | Reload F5 | Read the clipboard's picture Ctrl+Shift+V (AP-7.2 item 4) | ─ | Edit in axDown Ctrl+E (or
+  Edit in axJSON, by the file) | Show current file in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axGIT | axFile,
+  bundle AX-9.10) | ─ | Exit Alt+F4. **Actions (A):** "No actions here yet", the viewer changing nothing. **Context (C)**,
+  the selection (AX-9.11; Shift+F10, the Applications key and a right click in the text): Copy | Select all.
+  **Navigation (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… Ctrl+G | ─ |
   Next ▸ | Previous ▸ (Heading, Heading level 1 to 6, Link, List, List item, Block quote, Table). **Options (O):**
   Text ▸ (Word wrap Ctrl+Shift+W | ─ | Font… | Larger text | Smaller text | Windows text size) | General ▸ (Check for
-  updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):**
+  updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Markdown resources ▸ (axDown's pages). Every item has a mnemonic (AX-7.4).
 - AP-3.2 Keys (AX-8). Bundle-wide: F1, the control keys (the text, or the Go to line field while it shows), Ctrl+F,
   F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up, Ctrl+Down with
@@ -275,7 +277,7 @@ docs/axPreview/      this spec, user-guide.md (embedded), nvda-test-plan.md
 ```
 
 The window is `AxKit.Forms/TextEditorForm`, the text editor shell, in its read-only mode (AP-D4, decided at the build):
-`EditorApp.ReadOnly` turns the editor control read-only, drops the Operations menu, Save and the history, and adds the
+`EditorApp.ReadOnly` turns the editor control read-only, drops Undo, Redo, Cut, Paste, Save and the history, and adds the
 viewer's commands (Reload, Edit in the editor, `l` for the line, the hand-over received through `AppMessage`); the
 settings are the editors' `EditorSettings` in `axPreview.json`. Nothing of the shell is copied; axDown and axJSON are
 unchanged. What the viewer adds to the shell is marked with the flag in the shell's code, the one place a change to

@@ -151,10 +151,12 @@ taskbar. It works entirely offline (bundle G6).
   (on), `sayFirstMatch` (on), `starts` (each program's display name and how often axStart started it, for the order),
   and the window base's font, update check and window fields (the place is saved as every window's and never
   restored: the window is centred each time it shows).
-- AS-5.2 Menus (AX-6): **Session (S):** Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
-  Ctrl+O | Information Ctrl+I | ─ | Refresh programs F5 | ─ | Hide Escape | Quit axStart. **Options (O):** Hotkey… | Text ▸ (Font… |
+- AS-5.2 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Refresh programs F5 | ─ | Hide Escape |
+  Quit axStart. **Actions (A)** and **Navigation (N):** one item each saying there is nothing yet. **Context (C)**, the
+  program the selection is on (AX-9.11): Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
+  Ctrl+O | Information Ctrl+I. **Options (O):** Hotkey… | Text ▸ (Font… |
   Larger text | Smaller text | Windows text size) | General ▸ (Start with Windows ✓ | Say the first match while typing
-  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (A)** (AX-9.1).
+  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)**, **axKit (K)** (AX-9.1).
   **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
   item has a mnemonic (AX-7.4).
 - AS-5.3 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+Plus, Ctrl+Minus, Ctrl+S ("Nothing to save here", the

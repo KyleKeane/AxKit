@@ -80,7 +80,12 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>The end of the app's own menu: a separator, Hide with the app's key (AS-3.4: hidden at once, whatever the field holds; the next showing starts empty), and Quit, the one close that ends the process (AS-1.4).</summary>
     protected void AddHideAndQuit(ToolStripMenuItem menu, Keys hideKey)
     {
-        menu.DropDownItems.Add(new ToolStripSeparator());
+        // A separator only after the menu's own items: since 2026-11-11 (AX-9.1) a Session may hold nothing else.
+        if (menu.DropDownItems.Count > 0)
+        {
+            menu.DropDownItems.Add(new ToolStripSeparator());
+        }
+
         Add(menu, new Command("&Hide", hideKey, () =>
         {
             Log.Info("Hidden: Hide");

@@ -276,7 +276,7 @@ keys ctrl+shift+k
 expect said ! Bookmark 3 added
 wait 400
 expect focus Conversation
-# The Navigate menu's items do the same as m, k and Shift+K.
+# The Navigation menu's items do the same as m, k and Shift+K.
 keys down
 menu Bookmark this line
 expect said ! Bookmark 4 added

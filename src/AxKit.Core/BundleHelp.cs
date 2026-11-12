@@ -25,14 +25,14 @@ public static class BundleHelp
     /// <param name="lines">The app's lines of the section, without their indent.</param>
     /// <param name="altF4">What Alt+F4 does, when it is more than "close" and the app's name.</param>
     /// <param name="heading">The section's heading: axClaude and axTerminal call theirs "Anywhere".</param>
-    /// <param name="navigateMenu">Whether the first line says that the Navigate menu's Next and Previous keys work in the text too (the editors with that menu).</param>
+    /// <param name="navigateMenu">Whether the first line says that the Navigation menu's Next and Previous keys work in the text too (the editors with that menu).</param>
     public static string Section(string app, string[] lines, string? altF4 = null, string heading = InEveryWindow, bool navigateMenu = false)
     {
         var text = new StringBuilder();
         text.Append("In this text: h and Shift+H move by heading, 1 to 6 by level");
         if (navigateMenu)
         {
-            text.Append("; the Next and Previous keys of the Navigate menu work here too");
+            text.Append("; the Next and Previous keys of the Navigation menu work here too");
         }
 
         text.Append(". Ctrl+F finds, F3 and Shift+F3 the next and the previous match\r\n");
@@ -57,6 +57,8 @@ public static class BundleHelp
         // AX-7.8 (2026-11-11): NVDA says nothing for Enter, so every field that takes a line break says it.
         text.Append("  A line break typed into a field of several lines is said, new line; Options, Text, Say new line turns that off for every window\r\n");
         text.Append("  A key that lands on a heading, in a list or a text, plays a short rising sound before it is read; Options, Text, Sound on headings turns that off for every window\r\n");
+// AX-9.11 (2026-11-11): one Context menu in every window, opened the same way everywhere.
+        text.Append("  Shift+F10 or the Applications key: the Context menu, what acts on what you are on\r\n");
         text.Append("  Alt: the menu. Alt+F4: ").Append(altF4 ?? "close " + app).Append("\r\n");
         text.Append("  ").Append(BundleMenusLine).Append("\r\n");
         text.Append("\r\n");
@@ -70,9 +72,9 @@ public static class BundleHelp
     /// </summary>
     /// <param name="app">The app's name.</param>
     /// <param name="inPlaceOf">What a notice covers: "the conversation", "the text", "the lists".</param>
-    /// <param name="navigateMenu">Whether the Navigate menu's keys work in a notice's text too (the editors with that menu).</param>
+    /// <param name="navigateMenu">Whether the Navigation menu's keys work in a notice's text too (the editors with that menu).</param>
     public static string NoticesSection(string app, string inPlaceOf, bool navigateMenu = false) =>
         "\r\n\r\n## Notices\r\n"
         + $"  {app}'s questions, errors and help texts appear inside the window, in place of {inPlaceOf}.\r\n"
-        + $"  Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6{(navigateMenu ? ", the Navigate keys" : string.Empty)} and Ctrl+F work as in this one";
+        + $"  Tab moves between the text, a field and the buttons. Enter chooses the main button. Escape closes the notice. In a notice's text, h, 1 to 6{(navigateMenu ? ", the Navigation keys" : string.Empty)} and Ctrl+F work as in this one";
 }

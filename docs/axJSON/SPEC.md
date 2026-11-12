@@ -71,7 +71,7 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
   - an item of an array, at its first character: "Item 2 of 2, Read";
   - the error, at the place the document stops being JSON: "Error, line 3: expected a comma or a closing brace after
     model, found a string"; "No next error" when the document is JSON, which is the quickest check of a file.
-  Past the last element "No next key" and the like, the caret staying. The Navigate menu's Next and Previous submenus
+  Past the last element "No next key" and the like, the caret staying. The Navigation menu's Next and Previous submenus
   list Key, Object, Array, Item and Error with their keys, made from the pairs (AD-4.2). The same pairs work in every
   notice text (AX-7.2). The outline is forgiving (AJ-D6): comments, single-quoted strings, unquoted keys, a trailing
   comma and a missing comma between members or items read as JSON (they are the formatter's repairs); the first other
@@ -148,7 +148,7 @@ edit control holds it, every input is accepted without an exception, and the rep
   AX-6.2, AX-6.3), and each file type is one app over it as a record (`EditorApp`): axDown is the shell plus Markdown,
   axJSON the shell plus JSON plus Format, so that one app's folders hold everything about its file type. What differs
   per type is small and is the seam that existed already: the outline that finds the elements, the key pairs
-  (`TextJump`), the Navigate menu made from them, and the type's own commands. Tabs for several files in one window
+  (`TextJump`), the Navigation menu made from them, and the type's own commands. Tabs for several files in one window
   were considered and dropped (B-14): one file per window, and the axKit menu (AX-9) lists the open windows.
 - **AJ-D5 The letters.** A letter keeps its meaning where the concept exists in both editors: L is a list in axDown and
   an array here, I an item in both. A letter with no counterpart is the type's own: K is a key here (a link in axDown,

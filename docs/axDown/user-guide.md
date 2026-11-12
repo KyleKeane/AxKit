@@ -38,7 +38,7 @@ Ctrl+G asks for a line number; the field is named with where you are, for exampl
 
 ## Move by structure
 
-In a Markdown file, the keys NVDA uses on a web page work with Ctrl: Ctrl+H moves to the next heading (a line that starts with one or more `#`) and Ctrl+Shift+H to the previous one; Ctrl+1 to Ctrl+6 to the next heading of that level only; Ctrl+K to the next link, Ctrl+L to the next list, Ctrl+I to the next list item, Ctrl+Q to the next block quote and Ctrl+T to the next table, each with Shift added for the previous one. The caret lands at the start of what was found and axDown says what it is, as NVDA would: "Install, heading level 2", "GitHub, link", "List with 3 items, one", "Block quote, …", "Table with 3 rows and 2 columns". When there is none, axDown says so ("No next link") and the caret stays. Lines inside fenced code blocks are skipped. The Navigate menu lists all of them under Next and Previous. They work in the user guide and the other help texts too.
+In a Markdown file, the keys NVDA uses on a web page work with Ctrl: Ctrl+H moves to the next heading (a line that starts with one or more `#`) and Ctrl+Shift+H to the previous one; Ctrl+1 to Ctrl+6 to the next heading of that level only; Ctrl+K to the next link, Ctrl+L to the next list, Ctrl+I to the next list item, Ctrl+Q to the next block quote and Ctrl+T to the next table, each with Shift added for the previous one. The caret lands at the start of what was found and axDown says what it is, as NVDA would: "Install, heading level 2", "GitHub, link", "List with 3 items, one", "Block quote, …", "Table with 3 rows and 2 columns". When there is none, axDown says so ("No next link") and the caret stays. Lines inside fenced code blocks are skipped. The Navigation menu lists all of them under Next and Previous. They work in the user guide and the other help texts too.
 
 ## Text size and fonts
 
@@ -47,10 +47,11 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the n
 ## Menus
 
 - **Session**: New, Open, Open recent file (each as a number, the file's name and its full path), Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Operations**: Undo, Redo, Cut, Copy, Paste, Select all.
-- **Navigate**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Heading, Heading level 1 to 6, Link, List, List item, Block quote and Table.
+- **Actions**: Undo, Redo.
+- **Context**: Cut, Copy, Paste, Select all, on the selection. Shift+F10, the Applications key or a right click in the text opens it.
+- **Navigation**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Heading, Heading level 1 to 6, Link, List, List item, Block quote and Table.
 - **Options**: Text (Word wrap, Say new line, Sound on headings, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axDown.json in a new axJSON window, and Copy diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## Settings
 

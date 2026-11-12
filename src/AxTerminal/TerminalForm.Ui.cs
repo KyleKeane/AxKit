@@ -68,7 +68,7 @@ internal sealed partial class TerminalForm
         session.DropDownItems.Add(CreateExitItem());
 
         // What goes to the shell itself (AT-3.5), and the field's extras.
-        var shell = new ToolStripMenuItem("O&perations");
+        var shell = new ToolStripMenuItem();
         Add(shell, new Command("&Interrupt", AxTerminalKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
         Add(shell, new Command("Send &Escape", AxTerminalKeys.SendEscape, SendEscape) { Mark = CommandMark.Act });
         var sendKey = new ToolStripMenuItem("Send &key");
@@ -82,7 +82,7 @@ internal sealed partial class TerminalForm
         shell.DropDownItems.Add(new ToolStripSeparator());
         Add(shell, new Command("What is r&unning", AxTerminalKeys.WhatIsRunning, SayWhatIsRunning) { Mark = CommandMark.Read });
 
-        var navigate = new ToolStripMenuItem("&Navigate");
+        var navigate = new ToolStripMenuItem();
         Add(navigate, new Command("&Command field", AxTerminalKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open });
         Add(navigate, new Command("&Terminal", AxTerminalKeys.GoToTerminal, () => GoTo(Transcript)) { Mark = CommandMark.Open });
         Add(navigate, new Command("&Latest output", AxTerminalKeys.LatestOutput, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open });
@@ -92,7 +92,7 @@ internal sealed partial class TerminalForm
         AddBookmarkItems(navigate);
 
         // The settings: a submenu for each kind, nothing outside one. Each check item is saved as it is toggled.
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         var sounds = new ToolStripMenuItem("&Sounds");
         sounds.DropDownItems.Add(Toggle("&Chimes: ready, sent, done, question", _settings.SoundOnBell, v => _settings.SoundOnBell = v));
         sounds.DropDownItems.Add(Toggle("&Ticks for new lines", _settings.ClickOnNewLine, v => _settings.ClickOnNewLine = v));
@@ -123,7 +123,8 @@ internal sealed partial class TerminalForm
             ("&Bash manual", "https://www.gnu.org/software/bash/manual/"),
         ]);
 
-        MenuBar.Items.AddRange([session, shell, navigate, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        // The bundle's eight (AX-9.1): Context is the line of the terminal and the selection (AX-9.11).
+        PlaceMenuBar(MenuBar, session, shell, navigate, CreateTranscriptContext("Copy this line into the command &field"), options, help);
     }
 
     /// <summary>Options → Speech → Speak output: a mode (AT-5.3): speech starts with what arrives next.</summary>

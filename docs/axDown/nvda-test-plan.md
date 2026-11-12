@@ -46,7 +46,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    again the first, a third Ctrl+Z says "Nothing to undo"; Ctrl+Y twice puts both back, a third says "Nothing to
    redo". Paste a line (Ctrl+V) and type after it: Ctrl+Z takes the typed text, then the pasted line. Hold Backspace
    over a few words: one Ctrl+Z restores them all, the caret after them. Type, Ctrl+S ("Saved"), Ctrl+Z: the typing
-   is undone past the save and the title has its star again. Operations, Undo and Operations, Redo do the same as the keys. Alt+Backspace: "Undone" as Ctrl+Z (the undo of the window, not of the control); Shift+F10 in the text: the menu reads Undo, Redo, Cut, Copy, Paste, Select all.
+   is undone past the save and the title has its star again. Actions, Undo and Actions, Redo do the same as the keys. Alt+Backspace: "Undone" as Ctrl+Z (the undo of the window, not of the control); Shift+F10 in the text: the menu reads Undo, Redo, Cut, Copy, Paste, Select all.
    Open another file: Ctrl+Z says "Nothing to undo". Nothing but the announcement is spoken on any of these, and
    NVDA's arrow keys read the text as restored.
 
@@ -114,7 +114,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    window on `axDown.json`. Help, Markdown resources, Markdown basics: the browser opens commonmark.org; GitHub
    Flavored Markdown opens its page.
 6. The command palette (bundle AX-10), with the caret in the middle of a line. Ctrl+Shift+P: "Command palette",
-   the field "Search commands"; Down: "Undo, Operations, Ctrl+Z, 2 of …" or the like, each Down the next command with its
+   the field "Search commands"; Down: "Undo, Actions, Ctrl+Z, 2 of …" or the like, each Down the next command with its
    menu and key, Up back; Ctrl+Home at the first match plays the low note and says the first match again. Type `wrap`: after a
    moment "Word wrap, …, 1 of 1"; Down: the low note, then "Word wrap, …, 1 of 1" again; Enter: the palette closes, NVDA is back in the editor at the same place, and
    "Word wrap, checked" (or "not checked") is said; Options shows the item changed. Ctrl+Shift+P, type `xyz`:

@@ -80,4 +80,36 @@ public sealed class MenuTests
         Assert.Equal(letters.Count, letters.Distinct().Count());
         Assert.Equal('C', AxKit.Forms.ContextBarMenu.Letter);
     }
+
+    /// <summary>
+    /// Every window puts its bar together through the window base (AX-9.1, B-19): a project whose windows make a Help
+    /// menu calls <c>PlaceMenuBar</c>, and no source adds menus to a bar of its own, so that no bar drifts from the eight.
+    /// </summary>
+    [Fact]
+    public void Every_window_places_its_bar_through_the_base()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var offenders = new List<string>();
+        foreach (var project in Directory.GetDirectories(Path.Combine(root, "src")))
+        {
+            var files = Directory.GetFiles(project, "*.cs", SearchOption.AllDirectories)
+                .Where(file => !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")).ToList();
+            var texts = files.Select(File.ReadAllText).ToList();
+            var makesHelp = texts.Any(text => text.Contains("CreateHelpMenu(", StringComparison.Ordinal) && !text.Contains("protected ToolStripMenuItem CreateHelpMenu(", StringComparison.Ordinal));
+            if (makesHelp && !texts.Any(text => text.Contains("PlaceMenuBar(", StringComparison.Ordinal)))
+            {
+                offenders.Add(Path.GetFileName(project) + ": a Help menu but no PlaceMenuBar");
+            }
+
+            for (var i = 0; i < files.Count; i++)
+            {
+                if (Regex.IsMatch(texts[i], @"\b(_menu|MenuBar|menu)\.Items\.(Add|AddRange)\(") && !files[i].EndsWith("AxKitForm.cs", StringComparison.Ordinal))
+                {
+                    offenders.Add(Path.GetRelativePath(root, files[i]) + ": adds to a menu bar itself");
+                }
+            }
+        }
+
+        Assert.True(offenders.Count == 0, "A bar not placed through AxKitForm.PlaceMenuBar: " + string.Join("; ", offenders));
+    }
 }

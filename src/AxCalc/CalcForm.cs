@@ -38,27 +38,28 @@ public sealed class CalcForm : AxKitForm
         _calculator.Answer = _entries.Count > 0 ? _entries[^1].Value : null;
 
         // ---- menus and keys (AC-7.1, AC-7.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
-        var calculator = new ToolStripMenuItem("&Session");
-        Add(calculator, new Command("&Answer", AxCalcKeys.Act, Evaluate) { When = () => _field.Focused, Mark = CommandMark.Read });
-        Add(calculator, new Command("&Copy answer", AxCalcKeys.CopyAnswer, CopyAnswer) { Mark = CommandMark.Act });
+        // The bundle's eight (AX-9.1): Session the history's file and Exit; Actions the calculator's commands.
+        var calculator = new ToolStripMenuItem();
+        calculator.DropDownItems.Add(Item("&Save history...", SaveHistory, BundleKeys.Save));
+        calculator.DropDownItems.Add(new ToolStripSeparator());
+        calculator.DropDownItems.Add(CreateExitItem());
+        var actions = new ToolStripMenuItem();
+        Add(actions, new Command("&Answer", AxCalcKeys.Act, Evaluate) { When = () => _field.Focused, Mark = CommandMark.Read });
+        Add(actions, new Command("&Copy answer", AxCalcKeys.CopyAnswer, CopyAnswer) { Mark = CommandMark.Act });
         var copyIn = new ToolStripMenuItem("Copy answer &in");
         copyIn.DropDownItems.Add(new ToolStripMenuItem("&Hexadecimal", null, (_, _) => CopyCode(16)));
         copyIn.DropDownItems.Add(new ToolStripMenuItem("&Binary", null, (_, _) => CopyCode(2)));
         copyIn.DropDownItems.Add(new ToolStripMenuItem("&Octal", null, (_, _) => CopyCode(8)));
-        calculator.DropDownItems.Add(copyIn);
-        Add(calculator, new Command("Answer in other &bases", AxCalcKeys.OtherBases, SayBases) { Mark = CommandMark.Read });
-        Add(calculator, new Command("Say the &last answer", AxCalcKeys.LastAnswer, SayLastAnswer) { Mark = CommandMark.Read });
-        calculator.DropDownItems.Add(new ToolStripSeparator());
-        calculator.DropDownItems.Add(new ToolStripMenuItem("&Variables", null, (_, _) => ShowVariables()));
-        calculator.DropDownItems.Add(new ToolStripMenuItem("Clear va&riables...", null, (_, _) => ClearVariables()));
-        calculator.DropDownItems.Add(new ToolStripSeparator());
-        calculator.DropDownItems.Add(Item("&Save history...", SaveHistory, BundleKeys.Save));
-        Add(calculator, new Command("Clear &history...", AxCalcKeys.ClearHistory, ClearHistory) { Mark = CommandMark.Act });
-        calculator.DropDownItems.Add(new ToolStripSeparator());
-        calculator.DropDownItems.Add(CreateExitItem());
+        actions.DropDownItems.Add(copyIn);
+        Add(actions, new Command("Answer in other &bases", AxCalcKeys.OtherBases, SayBases) { Mark = CommandMark.Read });
+        Add(actions, new Command("Say the &last answer", AxCalcKeys.LastAnswer, SayLastAnswer) { Mark = CommandMark.Read });
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        actions.DropDownItems.Add(new ToolStripMenuItem("&Variables", null, (_, _) => ShowVariables()));
+        actions.DropDownItems.Add(new ToolStripMenuItem("Clear va&riables...", null, (_, _) => ClearVariables()));
+        Add(actions, new Command("Clear &history...", AxCalcKeys.ClearHistory, ClearHistory) { Mark = CommandMark.Act });
 
         // Options, as the other windows' (AX-6): the window's own submenus and items first, then Text, General, Developer.
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         var angles = new ToolStripMenuItem("&Angles");
         _angles = new ChoiceItems<bool>(angles, [(true, "&Degrees"), (false, "&Radians")], _calculator.Degrees, SetDegrees);
         options.DropDownItems.Add(angles);
@@ -76,7 +77,7 @@ public sealed class CalcForm : AxKitForm
             [("&Floating point explained", "https://floating-point-gui.de")]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([calculator, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        PlaceMenuBar(_menu, calculator, actions, new ToolStripMenuItem(), new ToolStripMenuItem(), options, help);
 
         // The keys without a menu item: between the history and the field, find in the history, and the keys that
         // act on what has the focus (AC-5.2; in the list they also keep it from dinging).

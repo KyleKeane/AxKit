@@ -90,7 +90,7 @@ keys shift+escape
 expect state Claude: ready
 keys ctrl+2 ctrl+end
 expect text Interrupted
-# Step 6: Operations, Send key, Ctrl+C from the menu, and Ctrl+Shift+C from the field: the same as Shift+Escape. Each
+# Step 6: Actions, Send key, Ctrl+C from the menu, and Ctrl+Shift+C from the field: the same as Shift+Escape. Each
 # interrupts Claude while it writes a long story (after the interruptions above, Claude did not always call a tool
 # again; a reply is printed in its final frame, so the story is interrupted while the status says working).
 keys ctrl+1
