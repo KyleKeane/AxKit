@@ -49,7 +49,7 @@ public static class AxProcessKeys
         ("Show the program in axFile", ShowProgram),
         ("Copy the line", CopyLine),
         ("Summary", Summary),
-        ("Item menu (in the list)", ItemMenu),
-        ("Item menu (in the list, the Applications key)", ItemMenuAlso),
+        ("Context menu (in the list)", ItemMenu),
+        ("Context menu (in the list, the Applications key)", ItemMenuAlso),
     ];
 }

@@ -31,9 +31,9 @@ public static class HelpText
           Tags: a smart list for each word your tasks not done start with a symbol, @kyle for the person a task is assigned to, #ui, !urgent, $budget or %done, in their titles and text fields
           Date lists: Overdue, Due today, Due in the next 7 days, No due date
           Ctrl+Shift+F: find words in every list, your own and every project's. "Searching every list" is said, then what was found; another notice opened meanwhile drops the result. In what was found, Right or Enter opens the item where it lives, Left or Escape goes back
-          Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9: the list's own action keys on the item selected, set in List, Action keys: fields set, the item moved to a list, or something opened; the Item menu's Action keys submenu names them
+          Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9: the list's own action keys on the item selected, set in Actions, Action keys: fields set, the item moved to a list, or something opened; Context's Action keys submenu on an item names them
           Ctrl+Shift+D: hide or show the done tasks of a list
-          Shift+F10 or the Applications key: the menu of the selection
+          Shift+F10 or the Applications key: the Context menu, what acts on the selection
 
         ## The detail pane, on the right
           It shows the fields of the item selected in the navigator, or the details of the list
@@ -49,8 +49,8 @@ public static class HelpText
           Right on a project: its lists, smart lists and Archive, changed in place as your own. Left from its top goes back to your lists, on the project
 
         ## GitHub lists
-          List, New GitHub list makes a list of a repository's open issues, read from GitHub when it opens and on F5; your Notes on each issue stay
-          Item, GitHub: make it a bug, a feature request or feedback, close, reopen, comment, block the reporter or the version, open on GitHub, open in axClaude, as your own GitHub account (List, GitHub account, a token pasted once)
+          Actions, New GitHub list makes a list of a repository's open issues, read from GitHub when it opens and on F5; your Notes on each issue stay
+          Context, GitHub on an item: make it a bug, a feature request or feedback, close, reopen, comment, block the reporter or the version, open on GitHub, open in axClaude, as your own GitHub account (Actions, GitHub account, a token pasted once)
 
         ## AI tools
           While this window is open, an AI tool you allowed reads your lists, and adds an item while axKit menu, AI tools, Let AI tools run commands is on: "Claude added Call the dentist to Personal". Ctrl+Z takes it back

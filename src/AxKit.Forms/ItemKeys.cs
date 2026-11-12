@@ -50,7 +50,7 @@ public static class ItemKeys
 
     public const Keys Refresh = Keys.F5;
 
-    /// <summary>The pane's menu from the bar, as Alt and its letter open it (the window base's OpenBarMenu).</summary>
+    /// <summary>The bar's Context menu, what acts on the selection or the field (AX-9.11), as Alt and C open it (the window base's OpenBarMenu).</summary>
     public const Keys ItemMenu = Keys.Shift | Keys.F10;
 
     public const Keys ItemMenuAlso = Keys.Apps;
@@ -77,7 +77,7 @@ public static class ItemKeys
         ("Undo", Undo),
         ("Read in full", ReadAll),
         ("Refresh", Refresh),
-        ("Menu of the pane", ItemMenu),
-        ("Menu of the pane (the Applications key)", ItemMenuAlso),
+        ("Context menu", ItemMenu),
+        ("Context menu (the Applications key)", ItemMenuAlso),
     ];
 }

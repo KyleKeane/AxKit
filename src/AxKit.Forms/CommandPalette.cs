@@ -71,13 +71,16 @@ public static class CommandPalette
     /// </summary>
     public static bool Offered(ToolStripMenuItem item)
     {
-        var owners = Owners(item);
-        foreach (var owner in owners)
+        foreach (var owner in Owners(item))
         {
             (owner.Tag as Mark)?.Refresh?.Invoke();
         }
 
-        return owners.Append(item).All(menu => menu.Available && menu.Enabled && menu.Tag is not Mark { LeftOut: true });
+        // A refresh may have moved the item (the bar's Context menu, ContextBarMenu): its menus are read again after it,
+        // and an item held in a menu off the bar (one Context is not showing now) is not offered.
+        var owners = Owners(item);
+        return (owners.Count == 0 || owners[0].Owner is MenuStrip)
+            && owners.Append(item).All(menu => menu.Available && menu.Enabled && menu.Tag is not Mark { LeftOut: true });
     }
 
     /// <summary>The menu items over an item, the bar's first.</summary>

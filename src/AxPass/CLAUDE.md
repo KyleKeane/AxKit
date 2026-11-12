@@ -18,8 +18,7 @@ guide `docs/axPass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
 ## Where things are
 
 - `AxPassApp`: the entry point `Run`, one call into `AxKit.Forms/AppHost.Run` with the one database of the command line.
-- `PassForm.cs`: the window on `ItemForm`: the menus (File; Group, Entry and Field, only the one for the selection
-  enabled by `ItemForm` from `SelectionMenus` and `SelectionMenusAvailable` (unlocked); Options with Lock after and the tool's place; axKit; Help), axPass's own keys
+- `PassForm.cs`: the window on `ItemForm`: the menus (the bundle's eight through `PlaceMenuBar`, AX-9.1: Session; Actions with New entry, New group, Lock and Undo; Context over the Group, Entry and Field menus, never on the bar, from `ItemForm.CreateContextMenu`, "Locked: Enter unlocks the database" while `SelectionMenusAvailable` is false; Options with Lock after and the tool's place), axPass's own keys
   as commands of the window's one command list (`Add`, `AddKey`; docs/axKit/app-kit.md AK-2; each before
   `ItemForm`'s shared keys, so that Enter unlocks a locked window before it opens; a command that acts anywhere has
   `When = NotRenaming`, so that the rename box keeps its keys), the levels from the `PassTree` (`ReadLevel`, `EnterList`,
@@ -28,7 +27,7 @@ guide `docs/axPass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
   unlocking and locking (`ShowUnlock`, `UnlockAsync`, `Lock`, `LockWhenIdle` from `GetLastInputInfo`), `ReloadAsync`,
   and `Cli`, the one way a command of the tool runs: off the UI thread, the master password first on its input, one
   at a time (`_busy`), its failure said, and before the first change after unlocking a backup (`_backedUp`,
-  `Backups.Make`; no change without it); `BackUpNowAsync` and `ShowBackups` for the File menu.
+  `Backups.Make`; no change without it); `BackUpNowAsync` and `ShowBackups` for the Session menu.
 - `PassForm.Commands.cs`: `SaveFields` (`edit` with `EntryFields.EditOptions`), `RenameItem`, `RenameTo`, `DeleteRow`
   (`rm` with its `mv` back; a group or the Recycle Bin's entries after a question), `NewItem`, `NewList`, `Undo` (the
   runs a `Step` keeps), the password's notices (`ChangeSpecial`, Generate, typed twice, `edit -p`), the copies (the

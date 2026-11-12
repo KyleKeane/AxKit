@@ -24,7 +24,7 @@ public static class HelpText
           F2: rename the entry in place: a box over the line, Enter keeps the new title, Escape the old. Delete: move it to the Recycle Bin; Ctrl+Z brings it back
           Ctrl+M: move the entry to another group, chosen from a list
           Ctrl+Q: read every field of the entry; the password is never read
-          Shift+F10 or the Applications key: the menu of the selection
+          Shift+F10 or the Applications key: the Context menu, what acts on the selection
 
         ## The detail pane, on the right
           It shows the fields of the entry selected in the navigator: Title, UserName, Password (read as hidden), URL, Notes

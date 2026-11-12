@@ -185,15 +185,15 @@ levers are built now.
   issue filed in the browser), Version (from the same line), Updated, Issue (link), Body (text) and Notes (text,
   local, never sent, kept across refreshes by Number). Items whose issue GitHub no longer returns move to the list's
   archive (IA-D4). The refresh says "Issues, 14 items, 2 new". A second list with `"state": "closed"` shows the rest.
-- **RP-7.2 Actions on an item** (the Item menu, and the action keys of section 8): Make it a bug, Make it a feature
+- **RP-7.2 Actions on an item** (Context on an item, and the action keys of section 8): Make it a bug, Make it a feature
   request, Make it feedback (`PATCH` the labels), Close, Reopen (`PATCH` the state), Comment… (a notice with a field,
   `POST` a comment), Block this reporter and Block this version (a line added to `blocklist.json` through the contents
   API, RP-6.4), Open on GitHub (the browser), Open in axClaude (axClaude on the code repository's folder with the issue
   as the message field's text, "Issue 12: <title>" and the body, not sent, for the user to read and send: the issues
-  made actionable). The actions use the **user's own token**, never the reporter's: List menu → "GitHub account…" takes
+  made actionable). The actions use the **user's own token**, never the reporter's: Actions → "GitHub account…" takes
   a fine-grained token of the user's once (Issues and Contents on the reports repository), kept protected as
-  `mcp.key` is (`UserSecret`), forgotten from the same menu; without one the actions say "Set your GitHub token in the
-  List menu first". A change refused by GitHub (403) is said and nothing changes locally.
+  `mcp.key` is (`UserSecret`), forgotten from the same menu; without one the actions say "Set your GitHub token in
+  Actions first: GitHub account". A change refused by GitHub (403) is said and nothing changes locally.
 - **RP-7.3 The maintainer's folder.** `docs/feature_requests` (the lists Features and Bugs) becomes GitHub issues: the
   assistant creates one issue per item, labelled by its list, through `gh` once, and the folder goes, its README
   replaced by one line pointing to the issues and to this page. GitHub's issues are the tracker from then on, for the
@@ -220,15 +220,15 @@ levers are built now.
   One kind of action per key: `set` (fields to values, one undo step, IA-5.4), `move` (to a list by a path relative to
   this one, IA-D3), `open` (a field's link, or an app's verb on the item's file; in a GitHub list `axClaude` means
   RP-7.2's Open in axClaude). In a GitHub list a `set` of Kind or State is also sent to GitHub (RP-7.2). A key without
-  an entry: the edge earcon and "No action on Ctrl+3 in this list; List menu, Action keys sets one". An `open` of
+  an entry: the edge earcon and "No action on Ctrl+3 in this list; Actions, Action keys sets one". An `open` of
   `claude` or `terminal`, and Open in axClaude, start their program only in a folder on a drive of this computer: on
   a share or a mapped drive the key says "Not started: axTerminal would run in a folder that is not on a drive of this
   computer" and starts nothing, since a `list.json` may come from a list the user did not write (security audit S-5's
   rule; the AI tools' `axkit_open` never starts the two at all, mcp.md; 2026-11-09).
-- **RP-8.2 Assigning them.** List menu → "Action keys…": a notice listing the nine keys with their names ("Ctrl+1.
+- **RP-8.2 Assigning them.** Actions → "Action keys…": a notice listing the nine keys with their names ("Ctrl+1.
   Make it a bug", the full stop as AX-8.5's pause); Enter on one opens its form: Name; What (Set fields, Move to a list,
   Open); the value; Delete clears it. Written into `list.json`, so axJSON (Ctrl+J) edits them too.
-- **RP-8.3 Shown everywhere a command is.** The Item menu lists the assigned actions with their keys, so the palette and
+- **RP-8.3 Shown everywhere a command is.** Context on an item lists the assigned actions with their keys, so the palette and
   F1 list them (AX-10.2); the names are the user's.
 - **RP-8.4 All tasks moves to Ctrl+0** (TK-7), so the nine digits are free for actions in every list (RP-D7).
 - **RP-8.5 Defaults.** A GitHub list's `list.json` comes with the keys above (1 to 3 the kinds, 4 Close, 5 Open on

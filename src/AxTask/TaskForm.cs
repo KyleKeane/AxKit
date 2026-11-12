@@ -37,35 +37,41 @@ public sealed partial class TaskForm : ItemForm
         // The shared keys (ItemKeys) are ItemForm's commands, registered after these by PlaceControls; the items here
         // for them only show them. A key in a second menu is an item showing it too: its command is the first menu's.
         // The first menu holds what every pane has; List and Item act on the navigator's selection, Field on the
-        // detail pane's, and only the menu of where the focus is and what is selected is enabled (UpdateRowMenus).
+        // detail pane's: Context holds the one for where the focus is and what is selected (AX-9.11, B-19).
         var file = new ToolStripMenuItem("&Session");
         file.DropDownItems.Add(new ToolStripMenuItem("Top &folder...", null, (_, _) => ChooseTopFolder()));
-        Add(file, new Command("&All tasks", AxTaskKeys.AllTasks, ShowAllTasks) { When = NotRenaming, Mark = CommandMark.Open });
-        // TK-7b.4: the search across every list, the user's own and every project's.
-        Add(file, new Command("Find in &every list...", AxTaskKeys.FindEverywhere, FindEverywhere) { When = NotRenaming, Mark = CommandMark.Read });
         file.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh));
-        file.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
         file.DropDownItems.Add(new ToolStripSeparator());
         file.DropDownItems.Add(CreateExitItem());
 
+        // Navigation: the moves and the finds (AX-9.1).
+        var navigation = new ToolStripMenuItem();
+        Add(navigation, new Command("&All tasks", AxTaskKeys.AllTasks, ShowAllTasks) { When = NotRenaming, Mark = CommandMark.Open });
+        // TK-7b.4: the search across every list, the user's own and every project's.
+        Add(navigation, new Command("Find in &every list...", AxTaskKeys.FindEverywhere, FindEverywhere) { When = NotRenaming, Mark = CommandMark.Read });
+        navigation.DropDownItems.Add(Item("Pre&vious section", () => JumpSection(-1), ItemKeys.PreviousSection));
+        navigation.DropDownItems.Add(Item("Ne&xt section", () => JumpSection(1), ItemKeys.NextSection));
+
+        // Actions: what acts on the lists as a whole, the same wherever the focus is (AX-9.1).
+        var actions = new ToolStripMenuItem();
+        actions.DropDownItems.Add(Item("New &item...", NewItem, ItemKeys.New));
+        actions.DropDownItems.Add(Item("New &list...", NewList, ItemKeys.NewList));
+        actions.DropDownItems.Add(new ToolStripMenuItem("New &smart list...", null, (_, _) => NewSmartList()));
+        actions.DropDownItems.Add(new ToolStripMenuItem("New Git&Hub list...", null, (_, _) => NewGitHubList()));
+        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        actions.DropDownItems.Add(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)));
+        actions.DropDownItems.Add(new ToolStripMenuItem("Remove Do&ne from every item", null, (_, _) => SwitchList(done: false)));
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        // The action keys and the GitHub account (docs/axKit/reports.md RP-7.2, RP-8.2; TaskForm.GitHub.cs).
+        actions.DropDownItems.Add(new ToolStripMenuItem("Action &keys...", null, (_, _) => EditActionKeys()));
+        actions.DropDownItems.Add(new ToolStripMenuItem("GitHub acc&ount...", null, (_, _) => SetGitHubAccount()));
+        actions.DropDownItems.Add(new ToolStripMenuItem("&Forget GitHub account", null, (_, _) => ForgetGitHubAccount()));
+
         _listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
-        _listMenu.DropDownItems.Add(Item("New &item...", NewItem, ItemKeys.New));
-        _listMenu.DropDownItems.Add(Item("New &list...", NewList, ItemKeys.NewList));
-        _listMenu.DropDownItems.Add(new ToolStripMenuItem("New &smart list...", null, (_, _) => NewSmartList()));
-        _listMenu.DropDownItems.Add(new ToolStripMenuItem("New Git&Hub list...", null, (_, _) => NewGitHubList()));
         _listMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename));
         _listMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete));
         Add(_listMenu, new Command("Move to s&ection...", AxTaskKeys.MoveToSection, MoveToSection) { When = InNavigator, Mark = CommandMark.Change });
-        _listMenu.DropDownItems.Add(Item("Pre&vious section", () => JumpSection(-1), ItemKeys.PreviousSection));
-        _listMenu.DropDownItems.Add(Item("Ne&xt section", () => JumpSection(1), ItemKeys.NextSection));
-        _listMenu.DropDownItems.Add(new ToolStripSeparator());
-        _listMenu.DropDownItems.Add(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)));
-        _listMenu.DropDownItems.Add(new ToolStripMenuItem("Remove Do&ne from every item", null, (_, _) => SwitchList(done: false)));
-        _listMenu.DropDownItems.Add(new ToolStripSeparator());
-        // The action keys and the GitHub account (docs/axKit/reports.md RP-7.2, RP-8.2; TaskForm.GitHub.cs).
-        _listMenu.DropDownItems.Add(new ToolStripMenuItem("Action &keys...", null, (_, _) => EditActionKeys()));
-        _listMenu.DropDownItems.Add(new ToolStripMenuItem("GitHub &account...", null, (_, _) => SetGitHubAccount()));
-        _listMenu.DropDownItems.Add(new ToolStripMenuItem("Forget GitHub acco&unt", null, (_, _) => ForgetGitHubAccount()));
         _listMenu.DropDownItems.Add(new ToolStripSeparator());
         Add(_listMenu, new Command("Open in ax&JSON", AxTaskKeys.OpenInAxJson, OpenInAxJson) { When = NotRenaming, Mark = CommandMark.Open });
         Add(_listMenu, new Command("Show in ax&File", AxTaskKeys.ShowInAxFile, ShowInAxFile) { When = NotRenaming, Mark = CommandMark.Open });
@@ -73,7 +79,6 @@ public sealed partial class TaskForm : ItemForm
         _itemMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open));
         _itemMenu.DropDownItems.Add(Item("&Done or not done", () => CheckInNavigator(SelectedRow()), ItemKeys.Check));
         _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
-        _itemMenu.DropDownItems.Add(Item("New &item...", NewItem, ItemKeys.New));
         _itemMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename));
         _itemMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete));
         _itemMenu.DropDownItems.Add(new ToolStripMenuItem("Use these fields for &new items", null, (_, _) => UseAsTemplate()));
@@ -103,11 +108,10 @@ public sealed partial class TaskForm : ItemForm
         _fieldMenu.DropDownItems.Add(Item("Move &up", () => MoveField(-1), ItemKeys.MoveFieldUp));
         _fieldMenu.DropDownItems.Add(Item("Move do&wn", () => MoveField(1), ItemKeys.MoveFieldDown));
 
-        var view = new ToolStripMenuItem("&View");
-        _hideDoneItem = Add(view, new Command("&Hide done tasks", AxTaskKeys.HideDone, ToggleHideDone) { When = NotRenaming, Mark = CommandMark.Change });
+        // Options: the app's own settings first (AX-9.1; Hide done tasks was the View menu's until 2026-11-11).
+        var options = new ToolStripMenuItem();
+        _hideDoneItem = Add(options, new Command("&Hide done tasks", AxTaskKeys.HideDone, ToggleHideDone) { When = NotRenaming, Mark = CommandMark.Change });
         _hideDoneItem.Checked = settings.HideDone;
-
-        var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(CreateProjectFoldersMenu());
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());
@@ -115,8 +119,7 @@ public sealed partial class TaskForm : ItemForm
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Item &resources", [("&JSON", "https://www.json.org/json-en.html")]);
 
-        _menu.Items.AddRange([file, _listMenu, _itemMenu, _fieldMenu, view, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
-        SelectionMenus(_listMenu, _itemMenu, _fieldMenu);
+        PlaceMenuBar(_menu, file, actions, navigation, CreateContextMenu(_listMenu, _itemMenu, _fieldMenu), options, help);
         // TK-7b.4: in the search's level, Right and Enter open what was found where it lives, Escape goes back; before
         // the shared keys, which PlaceControls registers after these.
         AddKey(new Command("Open it where it lives", ItemKeys.Into, OpenFound) { When = InSearch, Mark = CommandMark.Open });

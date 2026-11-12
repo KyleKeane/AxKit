@@ -59,8 +59,11 @@ public abstract partial class ItemForm : AxKitForm
                 SoundOnHeading();
             }
         };
+        // AX-9.11: Context follows the pane that last had the focus.
+        DetailPane.Enter += (_, _) => _detailLast = true;
         Navigator.Enter += (_, _) =>
         {
+            _detailLast = false;
             if (_detailStale)
             {
                 FillDetail();
@@ -132,38 +135,66 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>Ctrl+Z (IA-5.4).</summary>
     protected abstract void Undo();
 
-    // ---- the menus that act on the selection (inventory item 4, 2026-10-25: both apps wrote the same rule) ----
+    // ---- the bar's Context menu (AX-9.11, B-19, 2026-11-11; the three menus that acted on the selection until then) ----
 
     private ToolStripMenuItem? _listMenu;
     private ToolStripMenuItem? _rowMenu;
     private ToolStripMenuItem? _fieldMenu;
+    private ContextBarMenu? _context;
 
-    /// <summary>The app's three menus that act on the selection: a list's (axTask's List, axPass's Group), an item's (Item, Entry) and a field's; set once, with the menu bar.</summary>
-    protected void SelectionMenus(ToolStripMenuItem list, ToolStripMenuItem item, ToolStripMenuItem field) =>
+    /// <summary>
+    /// Whether the detail pane was the last of the two panes to have the focus: Context follows it while a notice, the
+    /// palette or the menu bar has the focus, and while the window is behind another (an AI tool's run).
+    /// </summary>
+    private bool _detailLast;
+
+    /// <summary>
+    /// The bar's Context menu (AX-9.11) over the app's three menus of what acts on the selection, which are never placed
+    /// on the bar: a list's (axTask's List, axPass's Group, axMCP's Server), an item's (Item, Entry) and a field's.
+    /// Context holds the field's in the detail pane, the item's or the list's in the navigator; made once, with the bar.
+    /// </summary>
+    protected ToolStripMenuItem CreateContextMenu(ToolStripMenuItem list, ToolStripMenuItem item, ToolStripMenuItem field)
+    {
         (_listMenu, _rowMenu, _fieldMenu) = (list, item, field);
+        _context = new ContextBarMenu(ContextNow, NothingToActOn, said => Announce(said, true), list, item, field);
+        return _context.Menu;
+    }
 
-    /// <summary>Whether the selection's menus act at all: axPass's only while the database is unlocked.</summary>
+    /// <summary>Whether the selection's commands act at all: axPass's only while the database is unlocked.</summary>
     protected virtual bool SelectionMenusAvailable => true;
 
-    /// <summary>The menu for where the focus is and what is selected enabled, the other two not: the field menu in the detail pane, the item's or the list's in the navigator.</summary>
-    private void UpdateMenus()
+    /// <summary>What Context says while <see cref="SelectionMenusAvailable"/> is false (axPass: locked).</summary>
+    protected virtual string NothingWhileUnavailable => "Nothing to act on";
+
+    /// <summary>The menu for where the focus is and what is selected: the field's in the detail pane, the item's or the list's in the navigator; null on a heading or with nothing selected.</summary>
+    private ToolStripMenuItem? ContextNow()
     {
-        var inDetail = DetailPane.Focused && _shown.Document is not null;
-        var onItem = SelectedRow() is { IsList: false };
-        var on = SelectionMenusAvailable;
-        _fieldMenu?.Enabled = on && inDetail;
-        _rowMenu?.Enabled = on && !inDetail && onItem;
-        _listMenu?.Enabled = on && !inDetail && !onItem;
+        if (!SelectionMenusAvailable)
+        {
+            return null;
+        }
+
+        if (_detailLast && _shown.Document is not null)
+        {
+            return _fieldMenu;
+        }
+
+        return SelectedRow() switch
+        {
+            null or { IsSection: true } => null,
+            { IsList: true } => _listMenu,
+            _ => _rowMenu,
+        };
     }
 
-    /// <summary>The letter of the bar's menu Shift+F10 opens, the mnemonic of that menu's own name: the field menu in the detail pane, the item's or the list's in the navigator.</summary>
-    private char MenuLetter()
-    {
-        var menu = DetailPane.Focused ? _fieldMenu : SelectedRow() is { IsList: false } ? _rowMenu : _listMenu;
-        var text = menu?.Text ?? string.Empty;
-        var at = text.IndexOf('&');
-        return at >= 0 && at + 1 < text.Length ? char.ToUpperInvariant(text[at + 1]) : 'F';
-    }
+    /// <summary>Context's one item when it has nothing else: why.</summary>
+    private string NothingToActOn() =>
+        !SelectionMenusAvailable ? NothingWhileUnavailable
+        : SelectedRow() is { IsSection: true } ? "A heading: nothing to act on"
+        : "Nothing selected";
+
+    /// <summary>Context filled for where the focus is and what is selected now.</summary>
+    private void UpdateMenus() => _context?.Fill();
 
     /// <summary>A field's value read out; the app's own types (a link, a password) here.</summary>
     protected virtual string SpokenValue(ItemRow? row, ItemField field) => FieldTypes.Spoken(field);
@@ -289,8 +320,8 @@ public abstract partial class ItemForm : AxKitForm
         AddKey(new Command("New item", ItemKeys.New, NewItem) { When = InNavigator, Mark = CommandMark.Change });
         AddKey(new Command("Rename", ItemKeys.Rename, RenameSelected) { When = InNavigator, Mark = CommandMark.Change });
         AddKey(new Command("Delete", ItemKeys.Delete, () => WithRow(DeleteRow)) { When = InNavigator, Mark = CommandMark.Act });
-        AddKey(new Command("The selection's menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("The selection's menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
+        AddKey(new Command("The Context menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
+        AddKey(new Command("The Context menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
 
         // The detail pane's keys.
         AddKey(new Command("Change the field", ItemKeys.Open, ChangeField) { When = InDetail, Mark = CommandMark.Change });
@@ -360,7 +391,7 @@ public abstract partial class ItemForm : AxKitForm
     protected void OpenPaneMenu()
     {
         UpdateMenus();
-        OpenBarMenu(MenuLetter());
+        OpenBarMenu(ContextBarMenu.Letter);
     }
 
 

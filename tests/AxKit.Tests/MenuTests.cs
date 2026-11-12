@@ -65,4 +65,19 @@ public sealed class MenuTests
 
         Assert.True(offenders.Count == 0, "An app named the old way in a menu: " + string.Join("; ", offenders));
     }
+
+    /// <summary>
+    /// Every window's bar is the same eight menus in one order, each with its own letter (docs/axKit/SPEC.md AX-9.1,
+    /// B-19, the user's word of 2026-11-11): the names the window base gives them.
+    /// </summary>
+    [Fact]
+    public void The_bar_is_eight_menus_in_one_order_with_letters_of_their_own()
+    {
+        Assert.Equal(
+            ["&Session", "&Actions", "&Navigation", "&Context", "&Options", "&Window", "ax&Kit", "&Help"],
+            AxKit.Forms.AxKitForm.BarMenus);
+        var letters = AxKit.Forms.AxKitForm.BarMenus.Select(name => char.ToUpperInvariant(name[name.IndexOf('&') + 1])).ToList();
+        Assert.Equal(letters.Count, letters.Distinct().Count());
+        Assert.Equal('C', AxKit.Forms.ContextBarMenu.Letter);
+    }
 }

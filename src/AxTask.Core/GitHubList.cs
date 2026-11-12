@@ -84,7 +84,7 @@ public static partial class GitHubList
         var list = ItemDocument.NewList(Template);
         list = list.WithValue(list.IndexOf(NotesField), JsonValue.Create(
             $"The {state} issues of {repository} on GitHub, read again when the list opens and on F5; Notes is yours and stays. "
-            + "The Item menu's GitHub actions and the Ctrl+number keys change an issue as your GitHub account (List menu, GitHub account). docs/axKit/reports.md RP-7."));
+            + "The GitHub actions of Context on an item and the Ctrl+number keys change an issue as your GitHub account (Actions, GitHub account). docs/axKit/reports.md RP-7."));
         var github = new JsonObject { ["repository"] = repository, ["state"] = state };
         if (folder is not null)
         {

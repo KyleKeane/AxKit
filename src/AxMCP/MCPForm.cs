@@ -80,15 +80,21 @@ public sealed class MCPForm : ItemForm
         // The shared keys (ItemKeys) are ItemForm's commands, registered after these by PlaceControls; the items here
         // for them only show them. Enter on a resource reads it, before Enter opens (ItemForm's, later on the list).
         AddKey(new Command("Read the resource", ItemKeys.Open, ReadSelectedResource) { When = () => InNavigator() && SelectedRow()?.Tag is ServerResource, Mark = CommandMark.Open });
+        // Session, Actions and Context (AX-9.1, AX-9.11, B-19): the servers read again and Exit; what acts on Your
+        // servers as a whole; what acts on the server, the item or the field the focus is on.
+        var session = new ToolStripMenuItem("&Session");
+        session.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh));
+        session.DropDownItems.Add(new ToolStripSeparator());
+        session.DropDownItems.Add(CreateExitItem());
+
+        var actions = new ToolStripMenuItem("");
+        actions.DropDownItems.Add(Item("&Add server...", NewItem, ItemKeys.New));
+        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
+
         _serverMenu.DropDownItems.Add(Item("&Start, or open", OpenSelected, ItemKeys.Open));
         Add(_serverMenu, new Command("S&top", AxMCPKeys.StopServer, StopSelected) { When = NotRenaming, Mark = CommandMark.Act });
-        _serverMenu.DropDownItems.Add(Item("&Add server...", NewItem, ItemKeys.New));
         _serverMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename));
         _serverMenu.DropDownItems.Add(Item("Re&move", () => WithRow(DeleteRow), ItemKeys.Delete));
-        _serverMenu.DropDownItems.Add(Item("Re&fresh", () => Refresh(announce: true), ItemKeys.Refresh));
-        _serverMenu.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
-        _serverMenu.DropDownItems.Add(new ToolStripSeparator());
-        _serverMenu.DropDownItems.Add(CreateExitItem());
 
         Add(_itemMenu, new Command("&Call, or fetch the prompt", AxMCPKeys.Call, CallSelected) { When = NotRenaming, Mark = CommandMark.Act });
         _itemMenu.DropDownItems.Add(Item("&Open its arguments", OpenSelected, ItemKeys.Open));
@@ -109,8 +115,7 @@ public sealed class MCPForm : ItemForm
             ("MCP servers in &Claude Code", "https://code.claude.com/docs/en/mcp"),
         ]);
 
-        _menu.Items.AddRange([_serverMenu, _itemMenu, _fieldMenu, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
-        SelectionMenus(_serverMenu, _itemMenu, _fieldMenu);
+        PlaceMenuBar(_menu, session, actions, new ToolStripMenuItem(), CreateContextMenu(_serverMenu, _itemMenu, _fieldMenu), options, help);
         PlaceControls(_menu);
         _servers = ReadServers();
         Fill(select: null);

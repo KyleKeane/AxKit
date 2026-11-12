@@ -154,6 +154,47 @@ public abstract partial class AxKitForm : Form
 
     // ---- the menus every window has (AX-6.5, AX-9) ----
 
+    /// <summary>
+    /// The eight menus of every window's bar, in their order, each with its letter (AX-9.1, B-19; the user's word of
+    /// 2026-11-11): Session, Actions, Navigation, Context, Options, Window, axKit, Help. <see cref="PlaceMenuBar"/>
+    /// names them; a test fails on a bar placed another way.
+    /// </summary>
+    public static readonly IReadOnlyList<string> BarMenus = ["&Session", "&Actions", "&Navigation", "&Context", "&Options", "&Window", "ax&Kit", "&Help"];
+
+    /// <summary>
+    /// Puts the window's bar together, the one way every window does (AX-9.1, B-19): its Session, Actions, Navigation,
+    /// Context and Options menus, named here whatever the window called them, then Window, axKit and the window's Help
+    /// (<see cref="CreateHelpMenu"/>). Actions, Navigation and Context are never empty: one with nothing yet holds one
+    /// enabled item that says so. Context is the window's <see cref="ContextBarMenu"/> where it has one, which Shift+F10,
+    /// the Applications key and a right click open (<see cref="OpenBarMenu"/> with <see cref="ContextBarMenu.Letter"/>).
+    /// </summary>
+    protected void PlaceMenuBar(MenuStrip bar, ToolStripMenuItem session, ToolStripMenuItem actions, ToolStripMenuItem navigation, ToolStripMenuItem context, ToolStripMenuItem options, ToolStripMenuItem help)
+    {
+        ToolStripMenuItem[] own = [session, actions, navigation, context, options];
+        for (var i = 0; i < own.Length; i++)
+        {
+            own[i].Text = BarMenus[i];
+        }
+
+        SayWhenEmpty(actions, "No actions here yet");
+        SayWhenEmpty(navigation, "Nothing to move to here yet");
+        SayWhenEmpty(context, "Nothing for the focus here yet");
+        var window = CreateWindowMenu();
+        window.Text = BarMenus[5];
+        help.Text = BarMenus[7];
+        bar.Items.Clear();
+        bar.Items.AddRange([.. own, window, CreateAxKitMenu(), help]);
+    }
+
+    /// <summary>A bar menu with no items gets one enabled item that says <paramref name="said"/> when chosen (AX-9.1: a menu is never empty, WinForms skipping a disabled item).</summary>
+    private void SayWhenEmpty(ToolStripMenuItem menu, string said)
+    {
+        if (menu.DropDownItems.Count == 0)
+        {
+            menu.DropDownItems.Add(new ToolStripMenuItem("&" + said, null, (_, _) => Announce(said, true)));
+        }
+    }
+
     /// <summary>The Window menu (AX-9.1): New window, Open windows, Recently closed, Close all windows; the window puts it after Options, which follows its own menus (Navigate last of them).</summary>
     protected WindowMenu CreateWindowMenu() => new(this);
 
@@ -165,7 +206,7 @@ public abstract partial class AxKitForm : Form
     /// </summary>
     protected ToolStripMenuItem CreateAxKitMenu()
     {
-        var menu = new ToolStripMenuItem("&axKit");
+        var menu = new ToolStripMenuItem(BarMenus[6]);
         menu.DropDownItems.Add(CreateClaudeMenu());
         menu.DropDownItems.Add(CreateMcpMenu());
         menu.DropDownItems.Add(CreateThemeMenu());

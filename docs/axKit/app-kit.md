@@ -28,8 +28,12 @@ After the kit:
   field, the details), what runs, when it is enabled, the F1 line, and its mark for MCP (read, open, change, act;
   `mcp.md` MC-3.1) and whether it is secret.
 - AK-2.2 `MenuSpec(Label, Items)`: a menu of commands, separators and submenus. A window describes its menus as specs.
-- AK-2.3 **The window base builds from them**: the menu bar with the bundle's frame (the first menu's standard shape
-  ending in Exit, Options with Text, General and Developer, the Window, axKit and Help menus); the key handling (`RunCommand`, one
+- AK-2.3 **The window base builds from them**: the menu bar with the bundle's frame, the same eight menus in every
+  window (SPEC AX-9.1, B-19, since 2026-11-11 put together by `AxKitForm.PlaceMenuBar`): Session (S, what the window
+  holds, ending in Exit), Actions (A, what the app does, the same wherever the focus is), Navigation (N, the moves and
+  the finds), Context (C, what acts on the focus, `ContextBarMenu`, opened by Shift+F10, AX-9.11), Options (O, the
+  app's own settings, then Text, General and Developer), Window (W), axKit (K) and Help (H); an item goes in one of
+  them by what it does, and an empty one of Actions, Navigation and Context holds one item that says so; the key handling (`RunCommand`, one
   loop over the commands in scope order, the window's own keys first, then the focused control's); the F1 text (the
   bundle's section, the app's commands from their help, a short hand-written paragraph for the controls' own keys);
   the command palette (it already reads the menus). Menu, key, F1, palette and MCP cannot disagree, since there is one
