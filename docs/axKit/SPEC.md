@@ -535,6 +535,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     (AX-9.11).
   - **Options**: what changes how things are shown or behave, a setting: the app's own items or submenus first, then
     Text, General and Developer (what View menus held until 2026-11-11 came here or to Navigation).
+  Within a menu, items stand in groups parted by separators. No item is deeper than the bar's menu, a submenu and
+  an item (Window, New window, axClaude is the deepest; `AxKit.Forms/MenuShape`, a deeper one logged as an error as
+  the bar is placed, `MenuTests`; 2026-11-11, when axTask's Remove a project folder, axFile's Remove a program and
+  axTerminal's Remove a shell came up a level). A submenu holds one kind where it can, commands or check items
+  (toggles and choices); the mixes kept are Options' Text (the app's display toggles beside the text size), axKit's
+  Claude, AI tools and Theme (a switch with its commands), each one subject.
   Actions, Navigation and Context are never empty: one with nothing yet holds one enabled item that says so ("No
   actions here yet", "Nothing to move to here yet", "Nothing for the focus here yet"), since WinForms skips a disabled
   item and NVDA reads nothing. The keys are the same as before; only where an item stands changed.

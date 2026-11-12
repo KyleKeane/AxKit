@@ -184,6 +184,11 @@ public abstract partial class AxKitForm : Form
         help.Text = BarMenus[7];
         bar.Items.Clear();
         bar.Items.AddRange([.. own, window, CreateAxKitMenu(), help]);
+        // AX-9.1: never deeper than the bar's menu, a submenu and an item; a deeper one is a defect, logged where it was made.
+        foreach (var path in MenuShape.TooDeep(bar.Items))
+        {
+            Log.Error($"A menu item deeper than {MenuShape.MaxDepth}: {path}");
+        }
     }
 
     /// <summary>

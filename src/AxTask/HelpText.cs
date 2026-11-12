@@ -44,7 +44,7 @@ public static class HelpText
           Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
 
         ## Projects
-          Options, Project folders, Add a project folder: a folder axTask looks in, four folders down, for your other folders of lists, never your own top folder or one inside it; Remove a project folder takes one off
+          Options, Add a project folder: a folder axTask looks in, four folders down, for your other folders of lists, never your own top folder or one inside it; Remove a project folder takes one off
           Under the Projects heading, a heading of level 2 for each project folder, "Projects in" and the folder's name, with each folder of lists found under it and its count of lists
           Right on a project: its lists, smart lists and Archive, changed in place as your own. Left from its top goes back to your lists, on the project
 

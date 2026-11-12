@@ -61,7 +61,7 @@ expect focus tasks in alpha, project, 1 list
 keys ctrl+shift+n
 expect said ! A project's lists are made inside it: Right on a project first
 keys delete
-expect said ! A project stays: Options, Project folders removes the folder it was found in
+expect said ! A project stays: Options, Remove a project folder removes the folder it was found in
 menu New GitHub list
 expect said ! A project's lists are made inside it: Right on a project first
 

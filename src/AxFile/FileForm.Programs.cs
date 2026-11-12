@@ -34,8 +34,25 @@ public sealed partial class FileForm
             menu.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, $"{program.Name} ({program.Path})"), null, (_, _) => RunProgram(program)));
         }
 
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Add a program...", null, (_, _) => AddProgram()));
-        var remove = new ToolStripMenuItem("&Remove a program");
+    }
+
+    /// <summary>
+    /// Options' items for the user's own programs (AF-4.11): Add a program to Open with…, and Remove a program from
+    /// Open with ▸ refilled as it opens; under Open with ▸ until 2026-11-11, a menu three deep (AX-9.1 depth rule).
+    /// </summary>
+    private ToolStripItem[] CreateProgramItems()
+    {
+        var remove = new ToolStripMenuItem("&Remove a program from Open with");
+        CommandPalette.FilledOnOpening(remove).DropDownOpening += (_, _) => FillRemovePrograms(remove);
+        FillRemovePrograms(remove);
+        return [new ToolStripMenuItem("&Add a program to Open with...", null, (_, _) => AddProgram()), remove];
+    }
+
+    /// <summary>One item per program of the user's, or one that says there are none (AX-9.5).</summary>
+    private void FillRemovePrograms(ToolStripMenuItem remove)
+    {
+        remove.DropDownItems.Clear();
+        var programs = _settings.Programs;
         if (programs.Count == 0)
         {
             remove.DropDownItems.Add(new ToolStripMenuItem("&No programs of your own yet"));
@@ -46,8 +63,6 @@ public sealed partial class FileForm
             var program = programs[i];
             remove.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, program.Name), null, (_, _) => RemoveProgram(program)));
         }
-
-        menu.DropDownItems.Add(remove);
     }
 
     /// <summary>Open with a custom program ▸ one program: run on the selected entries, or the current one, as its arguments; "Started <name>".</summary>

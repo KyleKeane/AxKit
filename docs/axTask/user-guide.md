@@ -169,7 +169,7 @@ the whole story.
 Your other folders of lists, such as a `tasks` folder in each code project, can be reached from this window without
 moving them.
 
-- Options, Project folders, Add a project folder: type the path of a folder that holds your projects, such as
+- Options, Add a project folder: type the path of a folder that holds your projects, such as
   `D:\Projects`, and press Enter; or leave the field empty and press Enter to choose it with the Windows
   folder picker: there, Enter opens a folder and the Select Folder button chooses the one you are in. axTask then
   shows your own lists with the new folder's heading selected, "Added Projects in Projects, looking for lists".

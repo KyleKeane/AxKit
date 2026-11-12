@@ -88,15 +88,15 @@ The project folder is `manual_tests\axTask\projects`, with `alpha\tasks\Home` (`
 mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/axTask/05-projects.txt`.
 
 1. Without project folders, the top level has no Projects heading: Ctrl+1 from Your lists goes to Smart lists.
-   Options, Project folders, Remove a project folder: one item, "No project folders yet".
-2. Options, Project folders, Add a project folder: the notice "Add a project folder", the field "Type the folder's
+   Options, Remove a project folder: one item, "No project folders yet".
+2. Options, Add a project folder: the notice "Add a project folder", the field "Type the folder's
    path, or leave it empty for the folder picker"; the notice's text says that in the picker Enter opens a folder and
    Select Folder chooses it. Type a path that is not there, Enter: "No folder is there: ...", the notice stays. Type
    the path of `manual_tests\axTask\tasks`, the top folder: "That is your own top folder: its lists show at the top
    already", the notice stays. Type the path of `manual_tests\axTask\projects`, Enter: "Added Projects in projects,
    looking for lists", the focus in the navigator on "Projects in projects, heading level 2, …", which becomes "2
    projects" quietly as the look ends. Add it again: "projects is a project folder already".
-3. Remove it (Options, Project folders, Remove a project folder, "1. projects"), then Add a project folder with the
+3. Remove it (Options, Remove a project folder, "1. projects"), then Add a project folder with the
    field empty, Enter: the Windows folder picker opens. Cancel: back in the navigator, nothing added. Again, choose
    `manual_tests\axTask\projects` with Select Folder: back in the navigator on its heading, and, half a second later,
    "Added Projects in projects, looking for lists" heard in full; never the empty field of the notice (TK-D12; the
@@ -123,7 +123,7 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
    it where it lives first: Enter". Ctrl+N: "Items are made in a list: open the item where it lives first, Enter".
    Context, Use these fields for new items: "Open it where it lives first: Enter". Enter: "Home, 1 item, Fix the leak".
    Left: "tasks in alpha, 1 list, Home, list, 1 item".
-10. Right on Home again. Options, Project folders, Remove a project folder: "1. projects (...)"; Enter: "Removed
+10. Right on Home again. Options, Remove a project folder: "1. projects (...)"; Enter: "Removed
     projects. Lists, 3 lists": with the project's folder removed, the window is back in your own lists and the Projects
     heading is gone. Close axTask and start it again on the folder: it opens in that list of your own, the one open before the search, not in a project's Home.
 

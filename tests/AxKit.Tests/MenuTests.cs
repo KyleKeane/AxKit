@@ -112,4 +112,30 @@ public sealed class MenuTests
 
         Assert.True(offenders.Count == 0, "A bar not placed through AxKitForm.PlaceMenuBar: " + string.Join("; ", offenders));
     }
+
+    /// <summary>
+    /// A bar is never deeper than its menu, a submenu and an item (AX-9.1, 2026-11-11, the user's rule: Window, New
+    /// window, axClaude is the deepest). <c>MenuShape.TooDeep</c> names every item past that, and the window base logs
+    /// them as it places a bar; here the rule itself, on a bar of each shape.
+    /// </summary>
+    [Fact]
+    public void A_bar_is_never_deeper_than_a_menu_a_submenu_and_an_item()
+    {
+        var bar = new MenuStrip();
+        var window = new ToolStripMenuItem("&Window");
+        var newWindow = new ToolStripMenuItem("&New window");
+        newWindow.DropDownItems.Add(new ToolStripMenuItem("ax&Claude"));
+        window.DropDownItems.Add(newWindow);
+        bar.Items.Add(window);
+        Assert.Empty(AxKit.Forms.MenuShape.TooDeep(bar.Items));
+
+        var options = new ToolStripMenuItem("&Options");
+        var folders = new ToolStripMenuItem("&Project folders");
+        var remove = new ToolStripMenuItem("&Remove a project folder");
+        remove.DropDownItems.Add(new ToolStripMenuItem("&1. Work"));
+        folders.DropDownItems.Add(remove);
+        options.DropDownItems.Add(folders);
+        bar.Items.Add(options);
+        Assert.Equal(["Options, Project folders, Remove a project folder, 1. Work"], AxKit.Forms.MenuShape.TooDeep(bar.Items));
+    }
 }

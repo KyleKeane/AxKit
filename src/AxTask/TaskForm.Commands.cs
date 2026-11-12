@@ -293,7 +293,7 @@ public sealed partial class TaskForm
 
         if (row.Tag is ProjectTag or ProjectSectionTag)
         {
-            Announce("A project stays: Options, Project folders removes the folder it was found in", true);
+            Announce("A project stays: Options, Remove a project folder removes the folder it was found in", true);
             return;
         }
 
@@ -483,7 +483,7 @@ public sealed partial class TaskForm
                 Announce("A project is a folder: Ctrl+E shows it in axFile", true);
                 return;
             case { Tag: ProjectSectionTag }:
-                Announce("A project folder gathers folders: Options, Project folders lists them", true);
+                Announce("A project folder gathers folders: Options, Add a project folder adds one", true);
                 return;
             case { Tag: SectionTag }:
                 Announce("A section is its lists' Section field: Ctrl+J on a list", true);

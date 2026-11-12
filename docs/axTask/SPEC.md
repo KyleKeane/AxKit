@@ -256,7 +256,7 @@ are later (the priorities item of the request); the AI tools over the lists are 
   exactly as in the user's own folder (TK-D8). Left from a project's top goes back to the user's own top level on the
   project's row. On a project or a project folder's heading Ctrl+Shift+N, Actions → New GitHub list, F2 and Delete make,
   rename and move nothing and say why (Ctrl+Shift+N and New GitHub list: "A project's lists are made inside it: Right
-  on a project first"; Delete: "A project stays: Options, Project folders removes the folder it was found in"), and in
+  on a project first"; Delete: "A project stays: Options, Remove a project folder removes the folder it was found in"), and in
   the found level "Lists are made among the sections: Left first"; Ctrl+E shows a project's folder, or the project
   folder of its heading, in axFile. A project is never remembered as the list open last, nor a found item opened (TK-7b.4): the list
   open last of the user's own top folder stays as it was, so that the next start opens it, where before a project's

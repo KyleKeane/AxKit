@@ -73,8 +73,10 @@ public sealed partial class PassForm : ItemForm
         var actions = new ToolStripMenuItem("");
         actions.DropDownItems.Add(Item("New &entry...", NewItem, ItemKeys.New));
         actions.DropDownItems.Add(Item("New &group...", NewList, ItemKeys.NewList));
-        Add(actions, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming, Mark = CommandMark.Change });
+        actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        Add(actions, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming, Mark = CommandMark.Change });
 
         _groupMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
         _groupMenu.DropDownItems.Add(Item("To the &Recycle Bin", () => WithRow(DeleteRow), ItemKeys.Delete));

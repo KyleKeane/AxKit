@@ -9,7 +9,7 @@ start terminal {temp}\work\myproject
 expect said Ready
 
 # Add a shell: the name first, refused when blank or taken, then the command line.
-expect commands No shells of your own yet, Session, Switch shell, Remove a shell
+expect commands No shells of your own yet, Session, Remove a shell
 menu Add a shell
 expect state "notice":"Add a shell"
 expect focus Type the shell
@@ -34,7 +34,7 @@ refuse said New session
 
 # Listed in Switch shell after the built-in shells, and in Remove a shell.
 expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell
-expect commands 1. Remove Test cmd, Session, Switch shell, Remove a shell
+expect commands 1. Remove Test cmd, Session, Remove a shell
 
 # Started from Switch shell: the title and the system line name it; cmd's own output in the terminal.
 menu 1. Test cmd
@@ -74,5 +74,5 @@ menu 1. Remove Test cmd
 expect said Removed Test cmd
 expect state "title":"myproject - 
 refuse state - Test cmd - axTerminal
-expect commands No shells of your own yet, Session, Switch shell, Remove a shell
+expect commands No shells of your own yet, Session, Remove a shell
 refuse commands Test cmd

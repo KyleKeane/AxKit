@@ -83,6 +83,7 @@ public sealed partial class FileForm : AxKitForm
         _undoItem = Add(actions, new Command(_actions.MenuText, AxFileKeys.Undo, Undo) { When = () => !_list.Renaming && !_pane.Focused, Mark = CommandMark.Act });
         AddKey(new Command("Undo the action", AxFileKeys.Undo, UndoSelectedAction) { When = () => !_list.Renaming && _pane.Focused, Mark = CommandMark.Act });
         CommandPalette.RefreshedOnOpening(actions, () => _undoItem.Text = _actions.MenuText);
+        actions.DropDownItems.Add(new ToolStripSeparator());
         Add(actions, new Command("&New folder...", AxFileKeys.NewFolder, NewFolder) { Mark = CommandMark.Act });
         Add(actions, new Command("New text &file", AxFileKeys.NewFile, NewFile) { Mark = CommandMark.Act });
         Add(actions, new Command("&Paste", AxFileKeys.Paste, Paste) { When = InList, Mark = CommandMark.Act });
@@ -164,7 +165,10 @@ public sealed partial class FileForm : AxKitForm
         var sort = new ToolStripMenuItem("&Sort by");
         _sortItems = new ChoiceItems<SortBy>(sort, Enum.GetValues<SortBy>().Select(by => (by, "&" + char.ToUpperInvariant(by.ToString()[0]) + by.ToString()[1..])), _settings.SortBy, SetSort);
         options.DropDownItems.Add(sort);
-        Add(options, new Command("Fil&ter...", AxFileKeys.Filter, ShowFilterNotice) { Mark = CommandMark.Change });
+        Add(options, new Command("&Filter...", AxFileKeys.Filter, ShowFilterNotice) { Mark = CommandMark.Change });
+        options.DropDownItems.Add(new ToolStripSeparator());
+        options.DropDownItems.AddRange(CreateProgramItems());
+        options.DropDownItems.Add(new ToolStripSeparator());
         options.DropDownItems.Add(CreateTextMenu());
         // AF-2.2: what the list leaves out, two switches; the folder is read again on a flip.
         options.DropDownItems.Add(CreateGeneralMenu(

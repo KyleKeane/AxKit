@@ -58,6 +58,7 @@ public sealed partial class TaskForm : ItemForm
         actions.DropDownItems.Add(Item("New &list...", NewList, ItemKeys.NewList));
         actions.DropDownItems.Add(new ToolStripMenuItem("New &smart list...", null, (_, _) => NewSmartList()));
         actions.DropDownItems.Add(new ToolStripMenuItem("New Git&Hub list...", null, (_, _) => NewGitHubList()));
+        actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
         actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)));
@@ -112,7 +113,9 @@ public sealed partial class TaskForm : ItemForm
         var options = new ToolStripMenuItem();
         _hideDoneItem = Add(options, new Command("&Hide done tasks", AxTaskKeys.HideDone, ToggleHideDone) { When = NotRenaming, Mark = CommandMark.Change });
         _hideDoneItem.Checked = settings.HideDone;
-        options.DropDownItems.Add(CreateProjectFoldersMenu());
+        options.DropDownItems.Add(new ToolStripSeparator());
+        options.DropDownItems.AddRange(CreateProjectFolderItems());
+        options.DropDownItems.Add(new ToolStripSeparator());
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());
@@ -565,7 +568,7 @@ public sealed partial class TaskForm : ItemForm
                         "Smart lists" => "All tasks and your saved filters, those that share a first word under a heading of it, over your lists and every project's; List, New smart list makes one",
                         SmartTags => "A heading for each symbol that starts a word in your tasks not done, @ for the people they are assigned to, # and the rest for tags, with a smart list for each, over your lists and every project's",
                         "Date lists" => "The tasks not done by their Due date, in your lists and every project's",
-                        "Projects" => "A heading for each project folder, with the folders of lists found under it; Options, Project folders adds and removes them",
+                        "Projects" => "A heading for each project folder, with the folders of lists found under it; Options, Add a project folder adds and removes them",
                         "Archived lists" => "What Delete moved away; Ctrl+Z brings back the last, axFile deletes for good",
                         YourLists => "Lists in no section of your own, then your sections; Ctrl+M on a list moves it to a section",
                         _ => "A section of your own: a list joins it by its Section field, or Ctrl+M",

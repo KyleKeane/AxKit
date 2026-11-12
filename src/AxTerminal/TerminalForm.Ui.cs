@@ -28,19 +28,16 @@ internal sealed partial class TerminalForm
         }
 
         // AT-1.6a: the user's own shells come here, after the built-in ones, made again as the menu opens (FillUserShells).
+        // Switch shell holds the shells alone, one checked; Custom, Add a shell, Remove a shell and the installers are
+        // Session's own items after it, so that no menu is three deep (AX-9.1 depth rule, 2026-11-11).
         var userShellsAt = switchShell.DropDownItems.Count;
-        switchShell.DropDownItems.Add(new ToolStripMenuItem("C&ustom...", null, (_, _) => NewSession()));
-        switchShell.DropDownItems.Add(new ToolStripMenuItem("&Add a shell...", null, (_, _) => AddUserShell()));
-        var removeShell = new ToolStripMenuItem("&Remove a shell");
-        switchShell.DropDownItems.Add(removeShell);
+        var removeShell = new ToolStripMenuItem("Remo&ve a shell");
         // AT-1.2a: a shell Windows does not have is not offered; its installer is, from its maker, through winget.
         var installPwsh = new ToolStripMenuItem("Install &PowerShell 7...", null, (_, _) => InstallShell(ProgramInstall.PowerShell7, ShellKind.PowerShell7));
         var installBash = new ToolStripMenuItem("Install Git, for Git &Bash...", null, (_, _) => InstallShell(ProgramInstall.Git, ShellKind.GitBash));
-        switchShell.DropDownItems.Add(installPwsh);
-        switchShell.DropDownItems.Add(installBash);
         // The shell in use checked, the shells there (looked up once, ShellThere) shown and the user's shells made again
-        // as the menu opens; the palette refreshes it the same way (AX-10.2), so it lists the user's shells too.
-        CommandPalette.RefreshedOnOpening(switchShell, () =>
+        // as Session or Switch shell opens; the palette refreshes them the same way (AX-10.2), so it lists the user's shells too.
+        void RefreshShells()
         {
             foreach (var (kind, item) in _shellItems)
             {
@@ -52,8 +49,17 @@ internal sealed partial class TerminalForm
 
             installPwsh.Visible = !ShellThere(ShellKind.PowerShell7);
             installBash.Visible = !ShellThere(ShellKind.GitBash);
-        });
+        }
+
+        CommandPalette.RefreshedOnOpening(switchShell, RefreshShells);
+        CommandPalette.RefreshedOnOpening(session, RefreshShells);
+        session.DropDownItems.Add(new ToolStripSeparator());
         session.DropDownItems.Add(switchShell);
+        session.DropDownItems.Add(new ToolStripMenuItem("C&ustom shell...", null, (_, _) => NewSession()));
+        session.DropDownItems.Add(new ToolStripMenuItem("&Add a shell...", null, (_, _) => AddUserShell()));
+        session.DropDownItems.Add(removeShell);
+        session.DropDownItems.Add(installPwsh);
+        session.DropDownItems.Add(installBash);
         session.DropDownItems.Add(new ToolStripSeparator());
         Add(session, new Command("Res&tart shell", AxTerminalKeys.RestartShell, RestartShell) { Mark = CommandMark.Act });
         Add(session, new Command("&Clear transcript", AxTerminalKeys.ClearTranscript, ClearTranscript) { Mark = CommandMark.Change });

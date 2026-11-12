@@ -344,8 +344,8 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   menu is a standard drop-down and does not take it; Ctrl+I in the list says the entry.
 - AF-4.11 **The user's own programs in Open with ▸** (asked 2026-10-21): a list of programs and scripts, kept in the
   settings (`programs`, a name and a path each, AF-8.1), shown under Windows default and Choose a program… (AF-4.7)
-  as "1. name (path)" (AX-9.5), or "No programs of your own yet" while the list is empty, then **Add a program…**
-  and **Remove a program ▸**. Add a program… opens the
+  as "1. name (path)" (AX-9.5), or "No programs of your own yet" while the list is empty. Options holds **Add a program to Open with…**
+  and **Remove a program from Open with ▸** (under Open with until 2026-11-11, a menu three deep, AX-9.1). Add a program… opens the
   Windows file picker on programs and scripts (`.exe`, `.cmd`, `.bat`, `.ps1`, `.py`; every file behind the second
   filter), then the notice "Add a program" with the field "Name" holding the file's name without its extension and
   the buttons Add and Cancel; "Added <name>"; a blank name says "Type a name" and the notice stays (`AskText`,
@@ -435,7 +435,7 @@ and the started process finds its open window and hands the paths over with the 
   (C:) … | ─ | This PC | ─ | Eject this drive | Drive properties; AF-3.11) | Go to folder… Ctrl+G | Up one level
   Backspace | ─ | The Actions list (AF-9.1). **Context (C)**, by the list that last had the focus (AX-9.11): in the
   folder list, the entry's menu (AF-4.6): Open Enter | Open with ▸ (Windows default | Choose a program… | ─ | 1. name
-  (path) … or No programs of your own yet | Add a program… | Remove a program ▸) | Open in axKit ▸ (Editor Ctrl+E | ─ |
+  (path) … or No programs of your own yet) | Open in axKit ▸ (Editor Ctrl+E | ─ |
   axClaude | axTerminal | axGIT | ─ | axFile | axDown | axJSON | axPreview | axMedia | ─ | axTask | axPass) | Preview
   Shift+Enter | Play folder in axMedia Ctrl+Enter | Add to axMedia's queue Ctrl+Shift+Q | ─ | Cut Ctrl+X | Copy Ctrl+C |
   ─ | Rename F2 | Delete Delete | ─ | Move to folder… | Compress to zip | Extract here | ─ | Copy path Ctrl+Shift+C |
@@ -443,7 +443,7 @@ and the started process finds its open window and hands the paths over with the 
   (Select or deselect this entry Space | Select to here Shift+Space | ─ | Cut Ctrl+X | Copy Ctrl+C | Delete Delete | ─ |
   Move to folder… | Compress to zip | Add to axMedia's queue Ctrl+Shift+Q | Copy paths Ctrl+Shift+C; AF-3.7, the
   operations on the marks alone); in the Actions list, its line (AF-9.3): Go to where it happened Enter | Undo this
-  action Ctrl+Z | Its number and time Ctrl+I. **Options (O):** Sort by ▸ (Name ✓ | Date | Size) | Filter… Ctrl+Shift+F
+  action Ctrl+Z | Its number and time Ctrl+I. **Options (O):** Sort by ▸ (Name ✓ | Date | Size) | Filter… Ctrl+Shift+F | ─ | Add a program to Open with… | Remove a program from Open with ▸ | ─
   | Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) | General ▸ (Check for updates
   at start ✓ | Show hidden files and folders | Show files and folders starting with a period) | Developer ▸ (Open
   settings file | Copy diagnostics). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User

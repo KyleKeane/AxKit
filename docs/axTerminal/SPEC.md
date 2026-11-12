@@ -67,7 +67,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   (the Start menu entry starts it in the user's profile folder, as the shells do).
 - AT-1.2a **Only the shells there are** (the user's ask, 2026-10-24): the New session notice and Switch shell list the
   shells this computer has; Windows always has Windows PowerShell and Command Prompt. PowerShell 7 and Git Bash, when
-  missing, are not listed; Switch shell offers "Install PowerShell 7…" and "Install Git, for Git Bash…" instead
+  missing, are not listed; Session offers "Install PowerShell 7…" and "Install Git, for Git Bash…" after Switch shell instead
   (bundle AX-2.9), and switches to the shell once it is installed.
 - AT-1.2 **The shell.** One of PowerShell 7 (`pwsh.exe`, found on the PATH or under `%ProgramFiles%\PowerShell\7`),
   Windows PowerShell (`powershell.exe`), Command Prompt (`cmd.exe` from System32 by its full path, never the `ComSpec`
@@ -310,7 +310,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 
 - AT-6.1 Menus, in the standard order of a first menu (AX-6): **Session (S):** New session… Ctrl+N | Open recent
   folder ▸ (ten, "1. name (path)", AX-9.5) | Open recent folder in new window ▸ (the same list, a new axTerminal window on the one chosen, this one left as it is) | Switch shell ▸ (PowerShell 7 | Windows PowerShell | Command Prompt |
-  Git Bash | the user's shells, "1. name (command line)" | Custom… | Add a shell… | Remove a shell ▸, AT-1.6a) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder Ctrl+P |
+  Git Bash | the user's shells, "1. name (command line)", the shells alone, AT-1.6a) | Custom shell… | Add a shell… | Remove a shell ▸ | Install PowerShell 7… | Install Git, for Git Bash… (the installers when the shell is missing; under Switch shell until 2026-11-11, a menu three deep, AX-9.1) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder Ctrl+P |
   Show current folder in ▸ (File Explorer Ctrl+W | axClaude | axGIT | axFile), on the shell's current directory | ─ |
   Export transcript… Ctrl+S | Exit Alt+F4. **Actions (A)** ("Operations" in 5.7.0; the bundle's eight since 2026-11-11, AX-9.1):
   Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent

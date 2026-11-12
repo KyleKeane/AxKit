@@ -61,15 +61,17 @@ public sealed partial class TaskForm
 
     private bool InSearch() => _search is not null && InNavigator();
 
-    /// <summary>Options → Project folders (TK-7b.1): Add a project folder…, and Remove a project folder ▸ made again as it opens.</summary>
-    private ToolStripMenuItem CreateProjectFoldersMenu()
+    /// <summary>
+    /// Options' project folder items (TK-7b.1): Add a project folder…, and Remove a project folder ▸ made again as it
+    /// opens; Options' own items since 2026-11-11, a Project folders submenu before, so that no menu is three deep (AX-9.1).
+    /// </summary>
+    private ToolStripItem[] CreateProjectFolderItems()
     {
-        var menu = new ToolStripMenuItem("&Project folders");
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Add a project folder...", null, (_, _) => AddProjectFolder()));
         var remove = new ToolStripMenuItem("&Remove a project folder");
-        menu.DropDownItems.Add(remove);
-        CommandPalette.RefreshedOnOpening(menu, () => FillProjectFolderItems(remove));
-        return menu;
+        CommandPalette.RefreshedOnOpening(remove, () => FillProjectFolderItems(remove));
+        // Filled once now too, so that the palette, which reads a menu with items, finds it a menu (AX-10.2).
+        FillProjectFolderItems(remove);
+        return [new ToolStripMenuItem("&Add a project folder...", null, (_, _) => AddProjectFolder()), remove];
     }
 
     /// <summary>"1. Projects (D:\Projects)" for each folder, or one item that says there are none (AX-9.5).</summary>
@@ -471,6 +473,6 @@ public sealed partial class TaskForm
         [
             new ItemDetailLine(row.Label),
             new ItemDetailLine("The project folder: " + ((ProjectSectionTag)row.Tag!).Root),
-            new ItemDetailLine("Every folder holding a list, four folders down; Options, Project folders adds and removes project folders. Ctrl+Shift+F finds words in every list"),
+            new ItemDetailLine("Every folder holding a list, four folders down; Options, Add a project folder adds and removes project folders. Ctrl+Shift+F finds words in every list"),
         ]);
 }
