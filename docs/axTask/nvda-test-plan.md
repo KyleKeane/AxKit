@@ -9,10 +9,11 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
 
 ## 1. Start and moving (IA-2, IA-3)
 
-1. Start axTask on the folder: "Lists - axTask window", then "Lists, 3 lists", then "Smart lists, section, 1 smart
-   list". Down: "All tasks, 3 not done". Ctrl+Down: "User lists, section, 2 lists"; Ctrl+Down: "Work, section, 1
-   list"; Ctrl+Down: the edge sound; Ctrl+Up twice: back on User lists. Right on a header: the edge sound and "A
-   section: Down goes into it". Down: "Home, list, 2 items".
+$11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`). Down from a list onto a heading such
+   as "Smart lists, heading level 1": a short rising sound before NVDA reads it; Down onto a list: none. Ctrl+Up,
+   Ctrl+Down, Ctrl+1 to Ctrl+3, Home and type-to-find onto a heading: the sound each time. Starting axTask, going into a
+   list and back: no sound for the window's own fill. With Options, Text, Sound on headings off: none. The same in
+   axPass, axMCP and axAutomate on a section header.
 2. Right: "Home, 2 items, Fix the tap, due 30 October". Down: "Water plants, done".
 3. Right on an item: the edge sound, nothing else. Left: "Lists, 3 lists, Home, list, 2 items". Left again: the edge
    sound.
@@ -23,9 +24,18 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
 7. Ctrl+0 from anywhere: "All tasks, 3 items, …", the soonest due first, each "…, in Home".
 8. Tab on a list: "Details of Home", "Section, text, empty", "Notes, long text, empty", then "Fields of a new item:
    Done, Start, Due".
-9. On Shopping, Ctrl+M: the list "Section" on User lists; End, "A new section", Enter, type `Errands`, Enter: "Moved
-   Shopping to Errands"; it is under the header "Errands, section, 1 list". Ctrl+Shift+N there, type `Garden`: "Made
-   Garden", in Errands too. Tab on Garden, Enter on Section, delete the text, Enter: back in User lists.
+9. On Shopping, Ctrl+M: the list "Section" on Your lists; End, "A new section", Enter, type `Errands`, Enter: "Moved
+   Shopping to Errands"; it is under the heading "Errands, heading level 2, 1 list". Ctrl+Shift+N there, type `Garden`: "Made
+   Garden", in Errands too. Tab on Garden, Enter on Section, delete the text, Enter: back in Your lists.
+10. Make a task in Home titled `Call @Sam about #garden !urgent`, Left: under Smart lists, "Tags, heading level 2, 3
+   symbols"; Ctrl+3: "@ at sign, heading level 3, 1 smart list", Down: "@Sam, 1"; Ctrl+3: "# number sign, heading
+   level 3, 1 smart list"; Ctrl+3: "! exclamation mark, heading level 3, 1 smart list"; Ctrl+3: the edge sound;
+   Ctrl+Shift+3: back on "! exclamation mark" (TK-5.5, TK-D20). Listen that each symbol's name is said in full. Right
+   on @Sam: "@Sam, 1 item, Call @Sam about #garden !urgent, in Home". Space: "Done: …", and the row leaves the list.
+   Ctrl+Z; then archive the task with Delete: Left, the heading Tags is gone.
+11. Make two smart lists, List, New smart list, `App one` and `App two` (close axJSON each time), and a third, `Soon`:
+   under Smart lists, after All tasks, "Soon, smart list, …", then "App, heading level 2, 2 smart lists" holding "App
+   one" and "App two" by their full names (TK-5.2a). Ctrl+2 from Smart lists lands on App.
 
 ## 2. Changing (IA-5, TK-4)
 
@@ -77,39 +87,45 @@ that reads differently is a defect. The specifications are `docs/axKit/item-apps
 The project folder is `manual_tests\axTask\projects`, with `alpha\tasks\Home` (`Fix the leak`, Notes "A washer of 15
 mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/axTask/05-projects.txt`.
 
-1. Without project folders, the top level starts at "Smart lists, section, 1 smart list", as before. Options, Project
-   folders, Remove a project folder: one item, "No project folders yet".
+1. Without project folders, the top level has no Projects heading: Ctrl+1 from Your lists goes to Smart lists.
+   Options, Project folders, Remove a project folder: one item, "No project folders yet".
 2. Options, Project folders, Add a project folder: the notice "Add a project folder", the field "Type the folder's
-   path, or leave it empty for the folder picker". Type a path that is not there, Enter: "No folder is there: ...", the
-   notice stays. Type the path of `manual_tests\axTask\projects`, Enter: "Added projects, looking for lists"; the first
-   line of the top level reads "Projects, 2 lists", and NVDA does not read that line again as the look ends. Add it
-   again: "projects is a project folder already". Type the path of `manual_tests\axTask\tasks`, the top folder:
-   "That is your own top folder: its lists show at the top already", the notice stays.
-3. Add a project folder again with the field empty, Enter: the Windows folder picker opens; Cancel: back in the window,
-   nothing added.
-4. Right on Projects: "Projects, 2 projects, tasks in alpha, 1 list". Down: "tasks in beta, 1 list". Ctrl+Shift+N:
+   path, or leave it empty for the folder picker"; the notice's text says that in the picker Enter opens a folder and
+   Select Folder chooses it. Type a path that is not there, Enter: "No folder is there: ...", the notice stays. Type
+   the path of `manual_tests\axTask\tasks`, the top folder: "That is your own top folder: its lists show at the top
+   already", the notice stays. Type the path of `manual_tests\axTask\projects`, Enter: "Added Projects in projects,
+   looking for lists", the focus in the navigator on "Projects in projects, heading level 2, …", which becomes "2
+   projects" quietly as the look ends. Add it again: "projects is a project folder already".
+3. Remove it (Options, Project folders, Remove a project folder, "1. projects"), then Add a project folder with the
+   field empty, Enter: the Windows folder picker opens. Cancel: back in the navigator, nothing added. Again, choose
+   `manual_tests\axTask\projects` with Select Folder: back in the navigator on its heading, and, half a second later,
+   "Added Projects in projects, looking for lists" heard in full; never the empty field of the notice (TK-D12; the
+   user's report of 2026-11-11).
+4. Ctrl+Shift+1 to "Projects, heading level 1, 1 project folder"; Ctrl+2: "Projects in projects, heading level 2, 2
+   projects". Down: "tasks in alpha, project, 1 list"; Down: "tasks in beta, project, 1 list". Ctrl+Shift+N:
    "A project's lists are made inside it: Right on a project first". Delete: "A project stays: Options, Project
-   folders removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E". Ctrl+N: "A
-   project's items are made in its lists: Right on a project, then on a list". List, New GitHub list: "A project's
-   lists are made inside it: Right on a project first", no notice. F5: "Refreshed: Projects, 2 projects", and the Projects level
-   is not read a second time.
-5. Up, Right on tasks in alpha: "tasks in alpha, 1 list, Smart lists, section, 1 smart list". Down: "All tasks, 1 not
-   done". Down twice, Right: "Home, 1 item, Fix the leak". Space: "Done: Fix the leak"; Ctrl+Z: "Undone: Done: Fix the
-   leak".
-6. Left: "tasks in alpha, 1 list, Home, list, 1 item". Left: "Projects, 2 projects, tasks in alpha, 1 list". Left:
-   "Lists, 3 lists, Projects, 2 lists". Left: the edge sound.
+   folders removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E". List, New
+   GitHub list: "A project's lists are made inside it: Right on a project first", no notice.
+5. Up, Right on tasks in alpha: "tasks in alpha, 1 list, Your lists, heading level 1, 1 list". Down: "Home, list, 1
+   item". Right: "Home, 1 item, Fix the leak". Space: "Done: Fix the leak"; Ctrl+Z: "Undone: Done: Fix the leak".
+6. Left: "tasks in alpha, 1 list, Home, list, 1 item". Left: "Lists, 3 lists, tasks in alpha, project, 1 list". Left:
+   the edge sound.
+6a. Ctrl+1 to Smart lists, Down: "All tasks, 4 not done", your own tasks and the projects' together (TK-5.6). Right:
+   each row ends with where it lives; "Fix the leak, in tasks in alpha / Home". Space on it: "Done: Fix the leak",
+   and it leaves All tasks at once; the file in `projects\alpha\tasks\Home` holds the change. Ctrl+Z: back. Left,
+   Ctrl+1 to Date lists: No due date counts the project's tasks too.
 7. Ctrl+Shift+F: the notice "Find in every list", the field "Type the words to find in every list". Type `zebra`,
    Enter: "Searching every list", then the edge sound and "Nothing found for zebra".
 8. Ctrl+Shift+F, type `tap`, Enter: "Found tap, 2 items, Fix the tap, in tasks / Home" (your own lists first). Down:
-   "Tap drips, in tasks in beta / Bugs". Tab: "Fields of Tap drips" and its Title. Shift+Tab, Escape: "Lists, 3 lists,
-   Projects, 2 lists", where the search was started.
+   "Tap drips, in tasks in beta / Bugs". Tab: "Fields of Tap drips" and its Title. Shift+Tab, Escape: "Lists, 3 lists",
+   then the row the search was started on.
 9. Right on one of your own lists, so that it is the list open last. Ctrl+Shift+F, type `washer 15`, Enter: "Found washer 15, 1 item, Fix the leak, in tasks in alpha / Home". F2: "Open
    it where it lives first: Enter". Ctrl+N: "Items are made in a list: open the item where it lives first, Enter".
    Item, Use these fields for new items: "Open it where it lives first: Enter". Enter: "Home, 1 item, Fix the leak".
    Left: "tasks in alpha, 1 list, Home, list, 1 item".
 10. Right on Home again. Options, Project folders, Remove a project folder: "1. projects (...)"; Enter: "Removed
-    projects. Lists, 3 lists": with no project folder left, the window is back in your own lists and the Projects line
-    is gone. Close axTask and start it again on the folder: it opens in that list of your own, the one open before the search, not in a project's Home.
+    projects. Lists, 3 lists": with the project's folder removed, the window is back in your own lists and the Projects
+    heading is gone. Close axTask and start it again on the folder: it opens in that list of your own, the one open before the search, not in a project's Home.
 
 ## 7. AI tools over the lists (TK-8, docs/axKit/mcp.md MC-8)
 

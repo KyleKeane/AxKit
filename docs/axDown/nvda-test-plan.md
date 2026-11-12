@@ -35,6 +35,13 @@ letter), and a `long.md` with headings and lines longer than the window.
    Enter says "new line" again. Arrow keys say nothing of it. In an item app's long text field (axTask, a list's
    Notes), Enter says "new line"; Tab, then Enter on Save keeps the text and says no "new line". In axTerminal,
    Shift+Enter in the command field says "new line" and Enter, which runs the command, does not.
+5b. Heading sound (bundle AX-7.9; `tests/scripts/axDown/13-heading-sound.txt`). In a Markdown file, Down onto a
+   heading's line: a short rising sound, then NVDA reads the heading; Down off it, and onto a plain line: no sound.
+   Ctrl+Home onto a first-line heading and the heading jumps (Navigate, Next, Heading): the sound first. A `#` line in a
+   fenced code block: no sound. A long heading wrapped over two rows sounds once. Options, Text, Sound on headings:
+   "Sound on headings off", and Down onto a heading is silent; again: "Sound on headings on". In axPreview the same on
+   a Markdown file, and in any notice's text (F1) h and Down onto a heading line. By ear: is the sound over before NVDA
+   starts, and does it carry over speech at your rate?
 6. Undo and redo (AD-2.5). Type a word, wait two seconds, type another: Ctrl+Z removes the second word only, Ctrl+Z
    again the first, a third Ctrl+Z says "Nothing to undo"; Ctrl+Y twice puts both back, a third says "Nothing to
    redo". Paste a line (Ctrl+V) and type after it: Ctrl+Z takes the typed text, then the pasted line. Hold Backspace

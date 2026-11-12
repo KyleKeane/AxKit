@@ -1,0 +1,58 @@
+# axTask: the smart lists grouped by a shared first word and the smart tags by symbol (docs/axTask/SPEC.md TK-5.2a,
+# TK-5.5, TK-D17 to TK-D20; docs/axTask/nvda-test-plan.md 3.3 and 3.4): three heading levels, Ctrl+3 and Ctrl+Shift+3,
+# a tag gathered from the user's own lists and a project's together.
+file "tasks\Home\Call @Sam about #garden.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Call @Sam about #garden"}, {"title": "Done", "type": "check", "value": false}]}
+file "tasks\Home\Plan the budget.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Plan the budget"}, {"title": "Done", "type": "check", "value": false}, {"title": "Notes", "type": "longtext", "value": "Ask about $budget, not $5, or sam@example (note -item"}]}
+file "tasks\App one.filter.json" {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}]}
+file "tasks\App two.filter.json" {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}]}
+file "tasks\Soon.filter.json" {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}]}
+file projects\alpha\tasks\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
+file "projects\alpha\tasks\Home\Fix #garden.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix #garden"}, {"title": "Done", "type": "check", "value": false}]}
+file home\AxKit\axTask.json {"checkForUpdates": false}
+# The settings file names the project folder by its full path, which only the run knows.
+run powershell -NoProfile -Command "[IO.File]::WriteAllText('home\AxKit\axTask.json', (ConvertTo-Json -InputObject @{checkForUpdates=$false; projectFolders=@((Resolve-Path 'projects').Path)}))"
+
+# 3.4 The symbols as headings of level 3, each named; Ctrl+3 and Ctrl+Shift+3 between them.
+start task {temp}\tasks
+expect focus Your lists, heading level 1, 1 list
+check commands
+keys ctrl+3
+expect focus @ at sign, heading level 3, 1 smart list
+keys down
+expect focus @Sam, 1
+keys ctrl+3
+expect focus # number sign, heading level 3, 1 smart list
+keys down
+expect focus #garden, 2
+
+# TK-5.6: one #garden list over the user's own lists and the project's.
+keys right
+expect said ! #garden, 2 items, Call @Sam about #garden, in Home
+keys down
+expect focus Fix #garden, in tasks / Home
+keys left
+expect said ! Lists, 1 list, #garden, 2
+keys ctrl+3
+expect focus $ dollar sign, heading level 3, 1 smart list
+keys down
+expect focus $budget, 1
+keys ctrl+3
+expect said ♪ Edge
+
+# 3.3 Ctrl+Shift+2 back to Tags, then to App, the first word two smart lists share; its lists by their full names.
+keys ctrl+shift+2
+expect focus Tags, heading level 2, 3 symbols
+keys ctrl+shift+2
+expect focus App, heading level 2, 2 smart lists
+keys down
+expect focus App one, smart list, 3
+keys down
+expect focus App two, smart list, 3
+keys ctrl+shift+1
+expect focus Smart lists, heading level 1, 4 smart lists
+keys down
+expect focus All tasks, 3 not done
+keys down
+expect focus Soon, smart list, 3
+keys ctrl+shift+3
+expect said ♪ Edge

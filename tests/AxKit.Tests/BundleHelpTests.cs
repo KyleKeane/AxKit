@@ -24,6 +24,7 @@ public sealed class BundleHelpTests
                 "  Ctrl+S: save the thing",
                 "  Ctrl+Plus, Ctrl+Minus: bigger or smaller text",
                 "  A line break typed into a field of several lines is said, new line; Options, Text, Say new line turns that off for every window",
+                "  A key that lands on a heading, in a list or a text, plays a short rising sound before it is read; Options, Text, Sound on headings turns that off for every window",
                 "  Alt: the menu. Alt+F4: close axThing",
                 "  " + BundleHelp.BundleMenusLine,
                 "",

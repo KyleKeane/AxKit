@@ -49,6 +49,19 @@ public class AxKitList : ListBox
     /// </summary>
     public bool SetLines(IReadOnlyList<string> lines, Func<int, bool>? leave = null)
     {
+        _filling = true;
+        try
+        {
+            return SetLinesNow(lines, leave);
+        }
+        finally
+        {
+            _filling = false;
+        }
+    }
+
+    private bool SetLinesNow(IReadOnlyList<string> lines, Func<int, bool>? leave)
+    {
         if (lines.Count == Items.Count)
         {
             for (var i = 0; i < lines.Count; i++)
@@ -77,6 +90,19 @@ public class AxKitList : ListBox
     /// matches and the views of axGIT and axProcess, 2026-11-09); SetLines rewrites one in place.
     /// </summary>
     public void Fill(IEnumerable<string> labels, string? name, int select)
+    {
+        _filling = true;
+        try
+        {
+            FillNow(labels, name, select);
+        }
+        finally
+        {
+            _filling = false;
+        }
+    }
+
+    private void FillNow(IEnumerable<string> labels, string? name, int select)
     {
         BeginUpdate();
         Items.Clear();
@@ -129,6 +155,68 @@ public class AxKitList : ListBox
         }
 
         base.OnSelectedIndexChanged(e);
+        if (_userKey > 0 && !_filling)
+        {
+            UserMovedSelection?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    // ---- a move by the user's own key (AX-7.9, 2026-11-11) ----
+
+    /// <summary>How deep this list is in handling a key: the window's commands (through <see cref="PreProcessMessage"/>, where the form's ProcessCmdKey runs) and the list box's own move (<see cref="WndProc"/>).</summary>
+    private int _userKey;
+
+    /// <summary>Set while <see cref="Fill"/> or <see cref="SetLines"/> fills the list, whose own selection is never the user's move.</summary>
+    private bool _filling;
+
+    /// <summary>
+    /// The selection moved on the user's key in this list: an arrow, a page key, Home or End, type-to-find, or a
+    /// window's command that selected another row (a section jump); never a fill, a refill or a move the window makes
+    /// off a key (AX-7: the window moves nothing on its own). The item apps play the heading sound from it (AX-7.9).
+    /// </summary>
+    public event EventHandler? UserMovedSelection;
+
+    private const int WM_KEYDOWN = 0x0100;
+    private const int WM_CHAR = 0x0102;
+    private const int WM_SYSKEYDOWN = 0x0104;
+
+    private static bool IsKey(int msg) => msg is WM_KEYDOWN or WM_CHAR or WM_SYSKEYDOWN;
+
+    public override bool PreProcessMessage(ref Message msg)
+    {
+        if (!IsKey(msg.Msg))
+        {
+            return base.PreProcessMessage(ref msg);
+        }
+
+        _userKey++;
+        try
+        {
+            return base.PreProcessMessage(ref msg);
+        }
+        finally
+        {
+            _userKey--;
+        }
+    }
+
+    protected override void WndProc(ref Message m)
+    {
+        if (!IsKey(m.Msg))
+        {
+            base.WndProc(ref m);
+            return;
+        }
+
+        _userKey++;
+        try
+        {
+            base.WndProc(ref m);
+        }
+        finally
+        {
+            _userKey--;
+        }
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

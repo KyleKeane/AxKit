@@ -5,9 +5,10 @@ using AxKit.Core;
 namespace AxTask.Core;
 
 /// <summary>
-/// A smart list (docs/axTask/SPEC.md TK-5.2): a saved filter, a <c>.filter.json</c> file in the top folder, or All
-/// tasks, the one built in (TK-D1). Its conditions are read once; <see cref="Matches"/> asks them of one item and
-/// <see cref="Items"/> of every item under the folder, the Archive left out.
+/// A smart list (docs/axTask/SPEC.md TK-5.2): a saved filter, a <c>.filter.json</c> file in the top folder, or one
+/// built in: All tasks (TK-D1), the four by date (TK-5.4) and a tag (TK-5.5). Its conditions are read
+/// once; <see cref="Matches"/> asks them of one item and <see cref="Items"/> of every item under the folder, the
+/// Archive left out.
 /// </summary>
 public sealed class SmartList
 {
@@ -18,7 +19,10 @@ public sealed class SmartList
     private readonly bool _any;
     private readonly IReadOnlyList<OrderKey> _order;
 
-    private SmartList(string name, string? path, JsonArray conditions, bool any, IReadOnlyList<OrderKey> order, string? notUnderstood)
+    /// <summary>A built-in list's own rule, asked after the conditions (TK-5.4, TK-5.5); null for a filter file and All tasks.</summary>
+    private readonly Func<ItemDocument, DateOnly, bool>? _rule;
+
+    private SmartList(string name, string? path, JsonArray conditions, bool any, IReadOnlyList<OrderKey> order, string? notUnderstood, Func<ItemDocument, DateOnly, bool>? rule = null, string? described = null)
     {
         Name = name;
         Path = path;
@@ -26,18 +30,76 @@ public sealed class SmartList
         _any = any;
         _order = order;
         NotUnderstood = notUnderstood;
+        _rule = rule;
+        Described = described;
     }
 
     public string Name { get; }
 
-    /// <summary>The filter's file; null for All tasks.</summary>
+    /// <summary>The filter's file; null for a built-in list (All tasks, the four by date, a tag).</summary>
     public string? Path { get; }
+
+    /// <summary>Whether the list is built in rather than a filter file of the user's.</summary>
+    public bool BuiltIn => Path is null;
+
+    /// <summary>What sets the list apart in the window: the filter's path, or "smart:" and a built-in list's name.</summary>
+    public string Key => Path ?? "smart:" + Name;
+
+    /// <summary>What a built-in list holds, one line for its details; null for a filter file.</summary>
+    public string? Described { get; }
 
     /// <summary>What in the file was not understood (TK-5.2); null when every condition is known. Such a list shows nothing.</summary>
     public string? NotUnderstood { get; }
 
+    private static JsonArray NotDone() => [new JsonObject { ["field"] = TaskRules.DoneField, ["is"] = false }];
+
+    private static readonly IReadOnlyList<OrderKey> SoonestFirst = [new(TaskRules.DueField), new(ItemDocument.TitleField)];
+
     /// <summary>TK-5.1: every task not done.</summary>
-    public static SmartList AllTasks { get; } = new(AllTasksName, null, [new JsonObject { ["field"] = TaskRules.DoneField, ["is"] = false }], any: false, [new(TaskRules.DueField), new(ItemDocument.TitleField)], null);
+    public static SmartList AllTasks { get; } = new(AllTasksName, null, NotDone(), any: false, SoonestFirst, null,
+        described: "Every task not done, in every list but the Archive, the soonest due first");
+
+    /// <summary>TK-5.4: the tasks not done whose Due date has passed.</summary>
+    public static SmartList Overdue { get; } = new("Overdue", null, NotDone(), any: false, SoonestFirst, null,
+        (item, today) => TaskRules.Due(item) is { } due && due < today, "Every task not done whose Due date has passed, the oldest first");
+
+    /// <summary>TK-5.4: the tasks not done due today.</summary>
+    public static SmartList DueToday { get; } = new("Due today", null, NotDone(), any: false, SoonestFirst, null,
+        (item, today) => TaskRules.Due(item) == today, "Every task not done that is due today");
+
+    /// <summary>TK-5.4: the tasks not done due from today to seven days on.</summary>
+    public static SmartList DueInSevenDays { get; } = new("Due in the next 7 days", null, NotDone(), any: false, SoonestFirst, null,
+        (item, today) => TaskRules.Due(item) is { } due && due >= today && due <= today.AddDays(7), "Every task not done due from today to seven days on, the soonest first");
+
+    /// <summary>TK-5.4: the tasks not done without a Due date.</summary>
+    public static SmartList NoDueDate { get; } = new("No due date", null, NotDone(), any: false, [new(ItemDocument.TitleField)], null,
+        (item, _) => TaskRules.Due(item) is null, "Every task not done that has no Due date, by title");
+
+    /// <summary>The lists by due date, the Date lists heading's, in order (TK-5.4).</summary>
+    public static IReadOnlyList<SmartList> DateLists { get; } = [Overdue, DueToday, DueInSevenDays, NoDueDate];
+
+    /// <summary>Every list built in with a name of its own: All tasks and the lists by due date (TK-5.1, TK-5.4).</summary>
+    public static IReadOnlyList<SmartList> BuiltIns { get; } = [AllTasks, .. DateLists];
+
+    /// <summary>TK-5.5: the tasks not done whose words hold a smart tag, "@Sam", "#store" or "$budget".</summary>
+    public static SmartList Tagged(string token) => new(token, null, NotDone(), any: false, SoonestFirst, null,
+        (item, _) => Tags.Has(Tags.TextOf(item), token),
+        $"Every task not done whose title or text holds {token}, the soonest due first");
+
+    /// <summary>
+    /// The user's smart lists grouped by the first word of their names (TK-5.2a, TK-D17): every first word two or more
+    /// share is a group, by word in natural order, its lists in theirs; the rest stay loose, in the order given. Case
+    /// is not minded; a group is named as its first list writes the word.
+    /// </summary>
+    public static (IReadOnlyList<SmartList> Loose, IReadOnlyList<(string Word, IReadOnlyList<SmartList> Lists)> Groups) Grouped(IReadOnlyList<SmartList> filters)
+    {
+        static string FirstWord(SmartList list) => list.Name.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries) is [var first, ..] ? first : list.Name;
+        var shared = filters.GroupBy(FirstWord, StringComparer.OrdinalIgnoreCase).Where(group => group.Count() > 1)
+            .Select(group => (Word: FirstWord(group.First()), Lists: (IReadOnlyList<SmartList>)group.OrderBy(list => list.Name, AxKit.Core.NaturalOrder.Instance).ToList()))
+            .OrderBy(group => group.Word, AxKit.Core.NaturalOrder.Instance).ToList();
+        var grouped = shared.SelectMany(group => group.Lists).ToHashSet();
+        return (filters.Where(list => !grouped.Contains(list)).ToList(), shared);
+    }
 
     /// <summary>The text a new smart list starts from (TK-5.3): All tasks' conditions in a file of its own.</summary>
     public static string NewFileText() =>
@@ -120,11 +182,27 @@ public sealed class SmartList
         }
 
         var items = ItemFolder.AllItems(top).Where(item => Matches(item, top, today));
-        return Order(items);
+        return Order(items, item => item);
     }
+
+    /// <summary>
+    /// The items read from several folders of lists the conditions hold for, together in the list's order (TK-5.6): a
+    /// "list" condition is asked of each item against its own folder of lists.
+    /// </summary>
+    public IReadOnlyList<GatheredItem> Items(IEnumerable<GatheredItem> items, DateOnly today) =>
+        NotUnderstood is not null ? [] : Order(items.Where(gathered => Matches(gathered.Item, gathered.Top, today)), gathered => gathered.Item);
+
+    /// <summary>How many of the items read the conditions hold for (TK-5.6), for the list's row.</summary>
+    public int Count(IEnumerable<GatheredItem> items, DateOnly today) =>
+        NotUnderstood is not null ? 0 : items.Count(gathered => Matches(gathered.Item, gathered.Top, today));
 
     public bool Matches(ItemFile item, string top, DateOnly today)
     {
+        if (_rule is not null && !_rule(item.Document, today))
+        {
+            return false;
+        }
+
         if (_conditions.Count == 0)
         {
             return true;
@@ -134,22 +212,22 @@ public sealed class SmartList
         return _any ? results.Any(held => held) : results.All(held => held);
     }
 
-    private IReadOnlyList<ItemFile> Order(IEnumerable<ItemFile> items)
+    private IReadOnlyList<T> Order<T>(IEnumerable<T> items, Func<T, ItemFile> fileOf)
     {
-        IOrderedEnumerable<ItemFile>? ordered = null;
+        IOrderedEnumerable<T>? ordered = null;
         foreach (var key in _order)
         {
             // An item without the field, or with it empty, goes after the rest in either direction. A date sorts by
             // the day; a choice by its options' order unless the key says by text; anything else by its text, as spoken.
-            Func<ItemFile, int> missing = item => item.Document.IndexOf(key.Field) is var i && i >= 0 && Sortable(item.Document.Fields[i], textOnly: true) is { Length: > 0 } ? 0 : 1;
-            Func<ItemFile, string> value = item => item.Document.IndexOf(key.Field) is var i && i >= 0 ? Sortable(item.Document.Fields[i], key.ByText) : string.Empty;
+            Func<T, int> missing = entry => fileOf(entry).Document is var document && document.IndexOf(key.Field) is var i && i >= 0 && Sortable(document.Fields[i], textOnly: true) is { Length: > 0 } ? 0 : 1;
+            Func<T, string> value = entry => fileOf(entry).Document is var document && document.IndexOf(key.Field) is var i && i >= 0 ? Sortable(document.Fields[i], key.ByText) : string.Empty;
             ordered = ordered is null ? items.OrderBy(missing) : ordered.ThenBy(missing);
             ordered = key.Descending
                 ? ordered.ThenByDescending(value, AxKit.Core.NaturalOrder.Instance)
                 : ordered.ThenBy(value, AxKit.Core.NaturalOrder.Instance);
         }
 
-        return (ordered ?? items.OrderBy(ItemFolder.NameOf, AxKit.Core.NaturalOrder.Instance)).ToList();
+        return (ordered ?? items.OrderBy(entry => ItemFolder.NameOf(fileOf(entry)), AxKit.Core.NaturalOrder.Instance)).ToList();
     }
 
     private static string Sortable(ItemField field, bool textOnly) => field.Type switch

@@ -51,6 +51,14 @@ public abstract partial class ItemForm : AxKitForm
         Navigator.TabIndex = 0;
         Navigator.Names = () => _rows.Select(row => row.Name).ToList();
         Navigator.SelectedIndexChanged += (_, _) => FillDetail();
+        // AX-7.9: the user's key landed on a heading row (a section): the heading sound before NVDA reads it.
+        Navigator.UserMovedSelection += (_, _) =>
+        {
+            if (SelectedRow() is { IsSection: true })
+            {
+                SoundOnHeading();
+            }
+        };
         Navigator.Enter += (_, _) =>
         {
             if (_detailStale)

@@ -13,9 +13,19 @@ folder. It is part of axKit, a bundle of apps for people who use a screen reader
 
 Two panes side by side, and a status bar.
 
-- **The navigator**, on the left, where the focus starts. Its top level is in sections, each under a header line:
-  **Smart lists** (All tasks and your saved filters), **User lists**, your own sections, and **Archived lists**.
-  Ctrl+Up and Ctrl+Down go to the section before or after. Up and Down move; type the start of a name to jump to it.
+- **The navigator**, on the left, where the focus starts. Its top level is under headings of three levels, each a
+  line such as "Smart lists, heading level 1, 3 smart lists":
+  - **Your lists**, with a heading of level 2 for each of your own sections;
+  - **Projects**, when you have project folders, with a heading of level 2 for each project folder;
+  - **Smart lists**: All tasks and your saved filters, those that share a first word under a heading of level 2 of
+    it (App for App axDown and App axClaude), then **Tags** when your tasks hold any, with a heading of level 3 for
+    each symbol;
+  - **Date lists**: Overdue, Due today, Due in the next 7 days and No due date;
+  - **Archived lists**, when you have archived anything.
+
+  Ctrl+Up and Ctrl+Down go to the heading before or after. Ctrl+1, Ctrl+2 and Ctrl+3 go to the next heading of
+  level 1, 2 or 3, and with Shift to the one before; in a list these keys are its action keys instead. Up and Down move; type the
+  start of a name to jump to it.
 - **The detail pane**, on the right. It shows what the navigator's selection holds, without saying anything until
   you go there with Tab:
   - on an item, its fields: "Due, date, 30 October 2026, Friday";
@@ -34,7 +44,7 @@ Two panes side by side, and a status bar.
 
 ## Sections of your own
 
-- On a list, Ctrl+M (List, Move to section) chooses its section: User lists, one of your sections, or a new one.
+- On a list, Ctrl+M (List, Move to section) chooses its section: Your lists, one of your sections, or a new one.
 - The same is the Section field, first in a list's details: Tab on the list, Enter on Section, type the name.
 - A new list (Ctrl+Shift+N) joins the section of the line selected.
 - A section exists while a list is in it; to rename one, move its lists.
@@ -98,6 +108,23 @@ A condition is one of: a field `is` a value; a date field `before` or `after` a 
 (the day itself included); a field `empty` or not; the item in a `list` or the lists inside it; a text field `has` a
 word. `match` is `all` or `any`.
 
+Smart lists whose names start with the same word, such as "App axDown" and "App axClaude", are grouped under a
+heading of that word, "App"; the file names stay as they are.
+
+Under Smart lists, the heading **Tags** holds a list for each tag written in the title or a text field of a task not
+done: a symbol at the start of a word, then the word, such as "@Sam", "#garden", "!urgent", "$budget" or "%done".
+Each symbol has a heading of level 3 of its own, read by name, "@ at sign" or "# number sign". "@" stands for the
+person a task is assigned to. Symbols that start ordinary writing never make a tag: brackets, quotes, the Markdown
+marks, "-", "/", ".", ",", ";", ":", "=", "+" and "|"; a symbol before a digit ("$5") or after a letter (an e-mail
+address) makes none either. Write "Call @Sam about #garden" and both appear.
+
+Under Date lists, Overdue, Due today, Due in the next 7 days and No due date sort the tasks not done by their Due date.
+
+When you have project folders, every one of these lists takes the tasks of your own lists and of every project
+together: "#ui" in two projects is one list. Each line says where the item lives, "Fix the tap, in Home" for yours,
+"Fix the tap, in alpha / Home" for a project's, and whatever you do to it there is done in its own file and its own
+folder of lists. A change made outside axTask to a project's file shows after F5.
+
 ## The files
 
 Each item is a JSON file named after its title, a list of fields each with a title, a type and a value:
@@ -144,21 +171,23 @@ moving them.
 
 - Options, Project folders, Add a project folder: type the path of a folder that holds your projects, such as
   `D:\Projects`, and press Enter; or leave the field empty and press Enter to choose it with the Windows
-  folder picker. axTask looks four folders down in it for every folder that holds a list. A list is known by its
+  folder picker: there, Enter opens a folder and the Select Folder button chooses the one you are in. axTask then
+  shows your own lists with the new folder's heading selected, "Added Projects in Projects, looking for lists".
+  axTask looks four folders down in it for every folder that holds a list. A list is known by its
   details file, `list.json`, which axTask writes for every list it makes; a project whose
   lists were all made by hand without one is not found: make one list in it with axTask (Session, Top folder on its folder of lists, then
   Ctrl+Shift+N), or add a `list.json` to one of
-  its lists. Remove a project folder takes one off; when you remove the last one
-  while you are in a project, you are taken back to your own lists. There are none until you add one. Your own top folder, or a folder inside it, is refused: its lists
+  its lists. Remove a project folder takes one off; when you remove the one a project you are in was found under,
+  you are taken back to your own lists. There are none until you add one. Your own top folder, or a folder inside it, is refused: its lists
   show at the top already.
-- While project folders are set, the top level starts with the line **Projects**, saying how many lists were found.
-  The line starts as "Projects, looking for lists" and changes quietly when the look ends. Right shows the projects,
-  each by its folder's name and its number of lists ("tasks in alpha" when two folders share a name, with that
-  folder's path when that is shared too). A folder whose lists were all archived is shown as a project with 0 lists.
-- Right on a project opens it the way your own folder is shown: its sections, All tasks, smart lists and Archive.
-  Everything you change there is changed in that project's files, and Ctrl+Z works as usual. Left from its sections
-  goes back to Projects, and Left again to your own lists. Lists are made inside a project, not in the Projects
-  level. axTask starts again in the list of your own you had open last, never in a project's, even after you open an item the search found.
+- While project folders are set, your top level has the heading **Projects** after Your lists, and under it a heading
+  of level 2 for each project folder, "Projects in Work". It says "looking for lists" at first and changes quietly
+  when the look ends; under it are the projects found, each by its folder's name and its number of lists ("tasks in
+  alpha" when two folders share a name, with that folder's path when that is shared too). A folder whose lists were
+  all archived is shown as a project with 0 lists.
+- Right on a project opens it the way your own folder is shown: its headings, All tasks, smart lists and Archive.
+  Everything you change there is changed in that project's files, and Ctrl+Z works as usual. Left from its top
+  goes back to your own lists, on the project. Lists are made inside a project, not on its line. axTask starts again in the list of your own you had open last, never in a project's, even after you open an item the search found.
 - Ctrl+Shift+F finds words in every list, your own and every project's: type the words and press Enter. An item is
   found when its title or a text field holds every word, in capitals or not. axTask says "Searching every list" and
   then what it found; if you open another notice before the search ends, its result is dropped and the focus stays

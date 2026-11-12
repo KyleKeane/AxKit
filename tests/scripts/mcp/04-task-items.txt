@@ -13,7 +13,7 @@ file "tasks\Personal\Buy milk.json" {"format": "axkit-item 1", "fields": [{"titl
 file "tasks\Personal\Old chore.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Old chore"}, {"title": "Done", "type": "check", "value": true}]}
 start task {temp}\tasks
 expect state Lists - axTask
-keys end
+type pe
 expect focus Personal, list, 2 items
 keys right
 expect focus Buy milk
