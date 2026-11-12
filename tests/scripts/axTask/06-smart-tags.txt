@@ -2,7 +2,7 @@
 # TK-5.5, TK-D17 to TK-D20; docs/axTask/nvda-test-plan.md 3.3 and 3.4): three heading levels, Ctrl+3 and Ctrl+Shift+3,
 # a tag gathered from the user's own lists and a project's together.
 file "tasks\Home\Call @Sam about #garden.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Call @Sam about #garden"}, {"title": "Done", "type": "check", "value": false}]}
-file "tasks\Home\Plan the budget.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Plan the budget"}, {"title": "Done", "type": "check", "value": false}, {"title": "Notes", "type": "longtext", "value": "Ask about $budget, not $5, or sam@example.org (note -item"}]}
+file "tasks\Home\Plan the budget.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Plan the budget"}, {"title": "Done", "type": "check", "value": false}, {"title": "Notes", "type": "longtext", "value": "Ask about $budget, not $5, or sam@example (note -item"}]}
 file "tasks\App one.filter.json" {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}]}
 file "tasks\App two.filter.json" {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}]}
 file "tasks\Soon.filter.json" {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}]}
