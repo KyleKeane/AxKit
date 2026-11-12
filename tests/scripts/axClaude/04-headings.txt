@@ -344,7 +344,8 @@ type Reply with the single word ok.
 keys ctrl+2 ctrl+home
 keys i
 keys enter
-expect said ! Line 6 copied
+# Line 7 since Claude Code 2.1.322 shows one more line before Input 1 (2026-11-11); line 6 before.
+expect said ! Line 7 copied
 keys ctrl+2 ctrl+home
 keys c
 keys enter
@@ -370,7 +371,7 @@ expect focus "value":""
 keys down
 expect focus "value":"_ start of copied line from conversation history _"
 keys down
-expect focus "value":"Line 6 of
+expect focus "value":"Line 7 of
 keys down
 expect focus "value":"# Input 1"
 keys down
