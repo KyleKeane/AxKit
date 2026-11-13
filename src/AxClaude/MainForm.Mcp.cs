@@ -66,7 +66,7 @@ internal sealed partial class MainForm
         }
 
         var settle = ++_offerSettle;
-        Later(OfferSettleMs, () =>
+        After(OfferSettleMs, () =>
         {
             if (settle == _offerSettle && !IsDisposed && _offers.Count > 0 && OfferMayShow)
             {

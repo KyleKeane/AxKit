@@ -26,6 +26,8 @@ public sealed partial class NotesTests
         "Runner",
         // The Window menu's class until 5.7.0, named as its former name.
         "AxKitMenu",
+        // This test, whose own file is not among the sources read (its list of names would vouch for every one).
+        "NotesTests",
     };
 
     [Fact]
@@ -52,7 +54,10 @@ public sealed partial class NotesTests
         }
 
         var gone = new List<string>();
-        foreach (var notes in Directory.GetFiles(Path.Combine(root, "src"), "CLAUDE.md", SearchOption.AllDirectories))
+        // The notes are each folder's CLAUDE.md and, where one was split by kind of window, the files of its notes folder.
+        var files = Directory.GetFiles(Path.Combine(root, "src"), "CLAUDE.md", SearchOption.AllDirectories)
+            .Concat(Directory.GetDirectories(Path.Combine(root, "src"), "notes", SearchOption.AllDirectories).SelectMany(folder => Directory.GetFiles(folder, "*.md")));
+        foreach (var notes in files)
         {
             var relative = Path.GetRelativePath(root, notes);
             foreach (Match named in NamedInBackticks().Matches(File.ReadAllText(notes)))

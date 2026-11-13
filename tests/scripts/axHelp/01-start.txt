@@ -41,6 +41,11 @@ iffound keys enter
 expect said Ready
 expect focus "name":"Message to Claude"
 expect focus Picture blocks.png:
+# A second picture while the conversation is open goes into its message field, and the window says so, since the
+# text arrived from outside it (docs/axKit/repairs.json R-07).
+said
+launch help {temp}\blocks.png
+expect said Text added to your message from another window, not sent
 close
 
 # Quit axHelp, the one close that ends its process.

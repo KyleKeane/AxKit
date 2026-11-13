@@ -8,7 +8,7 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - The root `CLAUDE.md`: the rules of the bundle, the constraints and the environment's gotchas.
 - `apps.md` (generated): the apps, each with its command, its code, its tests, its documents and its checks.
 - `commands.md`: every command and script.
-- An app's own `docs/<app>/SPEC.md`, `user-guide.md` and `nvda-test-plan.md`, and the `CLAUDE.md` notes beside its code.
+- An app's own `docs/<app>/SPEC.md`, `user-guide.md` and `nvda-test-plan.md`, and the `CLAUDE.md` notes beside its code. The shared window code's notes are an index, `src/AxKit.Forms/CLAUDE.md`, over one file per kind of window in `src/AxKit.Forms/notes` (the window base, the controls, the console window, the editor shell, the item window, the hotkey window, AI and automation): read the file of the kind you change.
 
 ## Specifications
 

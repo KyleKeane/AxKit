@@ -399,6 +399,26 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
+    /// The one one-shot timer of every window (docs/axKit/repairs.json R-17): <paramref name="action"/> runs on the
+    /// window's thread after <paramref name="milliseconds"/>, once, and never in a window that has closed meanwhile;
+    /// the timer is disposed either way.
+    /// </summary>
+    protected void After(int milliseconds, Action action)
+    {
+        var timer = new System.Windows.Forms.Timer { Interval = Math.Max(1, milliseconds) };
+        timer.Tick += (_, _) =>
+        {
+            timer.Stop();
+            timer.Dispose();
+            if (!IsDisposed)
+            {
+                action();
+            }
+        };
+        timer.Start();
+    }
+
+    /// <summary>
     /// Shift+F10, the Applications key and a right click (docs/axFile/SPEC.md AF-D13; from axFile on its second use,
     /// axProcess, 2026-10-24): the menu bar's menu with the mnemonic <paramref name="letter"/>, opened as Alt and the
     /// letter open it, so that NVDA reads its first item; a context menu of its own never read its first item the first

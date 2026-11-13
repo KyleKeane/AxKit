@@ -115,7 +115,7 @@ internal sealed partial class MainForm
         {
             // After NVDA has taken the focus change, so that the question comes last: raised at once, it was cut off.
             var question = (Area.CurrentItem.Length == 0 ? name : name + Stop(name) + Area.CurrentItem).TrimEnd(' ', '.');
-            Later(FocusSettleMs, () =>
+            After(FocusSettleMs, () =>
             {
                 if (AreaShows(signature) && _userActedAt == actedBefore)
                 {
@@ -129,7 +129,7 @@ internal sealed partial class MainForm
             // three seconds of the user's own answer: the focus goes to the question after a moment, so that it is
             // not found by Tab, and NVDA reads it there after what it is reading (asked 2026-10-21; the three-second
             // case was found by the off-screen replay). Not from an open menu, which the move would close (2026-10-23).
-            Later(QuestionFocusMs, () =>
+            After(QuestionFocusMs, () =>
             {
                 if (AreaShows(signature) && _userActedAt == actedBefore && !NoticeOpen && Area.Current is { } current && !current.ContainsFocus)
                 {
@@ -555,14 +555,14 @@ internal sealed partial class MainForm
 
             if (NoticeOpen || !(Transcript.ContainsFocus || Input.ContainsFocus || Area.ContainsFocus || !ContainsFocus))
             {
-                Later(QuestionFocusMs, TryOpen);
+                After(QuestionFocusMs, TryOpen);
                 return;
             }
 
             OpenScreenNotice(now, summary, interrupt: false, unprompted);
         }
 
-        Later(QuestionFocusMs, TryOpen);
+        After(QuestionFocusMs, TryOpen);
     }
 
     /// <summary>Opens the information screen's notice: Close, a button per other key, the scroll buttons when the screen may hold more than the console shows.</summary>
@@ -631,7 +631,7 @@ internal sealed partial class MainForm
             var spoken = (screen.Lines.Count == 0 ? screen.Title : screen.Title + Stop(screen.Title) + screen.Lines[0]).TrimEnd(' ', '.');
             var shown = _screenNotice;
             var actedBefore = _userActedAt;
-            Later(FocusSettleMs, () =>
+            After(FocusSettleMs, () =>
             {
                 if (ScreenNoticeOpen && ReferenceEquals(_screenNotice, shown) && _userActedAt == actedBefore)
                 {
@@ -767,7 +767,7 @@ internal sealed partial class MainForm
         else if (_draft is null)
         {
             _draft = new Draft(DraftStep.Opening, null, Environment.TickCount64);
-            Later(DraftSettleMs, OpenFeedbackDrafts);
+            After(DraftSettleMs, OpenFeedbackDrafts);
         }
     }
 

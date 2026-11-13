@@ -178,6 +178,9 @@ internal sealed partial class MainForm : ConsoleForm
             Input.SelectionStart = Input.Text.Length;
             WindowMenu.Activate(Handle);
             Input.Focus();
+            // Said, since any program of the user's can send it (docs/axKit/repairs.json R-07): text that appears in
+            // the field without a word could be sent with the next Enter unread.
+            Announce("Text added to your message from another window, not sent", true);
         } : null;
 
     protected override bool AskBeforeClosing()

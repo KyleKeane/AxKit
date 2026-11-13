@@ -177,17 +177,7 @@ public sealed partial class TaskForm
     /// </summary>
     private void SayAfterDialog(string text)
     {
-        var timer = new System.Windows.Forms.Timer { Interval = 500 };
-        timer.Tick += (_, _) =>
-        {
-            timer.Stop();
-            timer.Dispose();
-            if (!IsDisposed)
-            {
-                Announce(text, true);
-            }
-        };
-        timer.Start();
+        After(500, () => Announce(text, true));
     }
 
     /// <summary>Options → Project folders → Remove a project folder ▸ one folder (TK-7b.1): "Removed Projects"; its section goes from the top level.</summary>

@@ -170,8 +170,19 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
         Write-Host "No build of main's $sha appeared on GitHub within two minutes. The tag was not pushed; once the build has passed: git push origin $tag"
         exit 1
     }
-    gh run watch $run --exit-status
-    if ($LASTEXITCODE -ne 0) {
+    # Asked every 20 seconds, 40 minutes at most (docs/axKit/repairs.json R-38): gh run watch has no limit of its own,
+    # and a build that hangs on GitHub would hold the release for ever.
+    $conclusion = $null
+    for ($try = 0; -not $conclusion -and $try -lt 120; $try++) {
+        Start-Sleep -Seconds 20
+        $state = gh run view $run --json status,conclusion --jq '.status + " " + .conclusion'
+        if ($state -and $state.StartsWith('completed')) { $conclusion = $state.Substring('completed'.Length).Trim() }
+    }
+    if (-not $conclusion) {
+        Write-Host "The build of main (run $run) had not ended after 40 minutes. The tag $tag was not pushed; look at it with: gh run view $run. Once it has passed: git push origin $tag"
+        exit 1
+    }
+    if ($conclusion -ne 'success') {
         Write-Host "The build of main failed; the tag $tag was not pushed. Fix main, delete the tag here (git tag -d $tag) and release the next patch version."
         exit 1
     }

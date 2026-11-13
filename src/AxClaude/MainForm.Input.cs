@@ -179,7 +179,7 @@ internal sealed partial class MainForm
     /// </summary>
     private void ResendEnterWhileHeld(string text, int attempt)
     {
-        Later(EnterCheckMs, () =>
+        After(EnterCheckMs, () =>
         {
             if (!ProcessRunning || _model.Working || _model.PromptPending || !_model.PromptHolds(text))
             {
@@ -215,18 +215,6 @@ internal sealed partial class MainForm
         Announce("Sending now", false);
     }
 
-    /// <summary>A one-shot timer for the question flow's settles (D33); the write queue has its own pump in the console window.</summary>
-    private static void Later(int milliseconds, Action action)
-    {
-        var timer = new System.Windows.Forms.Timer { Interval = milliseconds };
-        timer.Tick += (_, _) =>
-        {
-            timer.Stop();
-            timer.Dispose();
-            action();
-        };
-        timer.Start();
-    }
 
     /// <summary>Escape to Claude (FR-2.3), and what is still queued to type goes: an answer typed out a key at a time must not land after it.</summary>
     private void Interrupt()
