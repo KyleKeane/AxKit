@@ -108,7 +108,15 @@ In a repository the branch row `  ● main` can sit between the mode line and th
 
 - `/login`, `/keybindings`, `/desktop`, `/insights`, `/install-github-app`, `/install-slack-app` (docs only).
 
+## Seen with 2.1.323 (2026-11-12, not kept as fixtures)
+
+Opened bare with `--model haiku` in `C:\Temp\axclaude-fixture` and closed with Escape. The recording was not kept: `/passes` shows the account's own referral link.
+
+- `/powerup`: "Power-ups  0/10 unlocked  0%", a line on what they are, ten numbered lessons ("1. ◯ Talk to your codebase — @ files, line refs"), the prompt row "Select with numbers [1-10]. Then Enter to submit or Escape to cancel:" and the hint `↑/↓ to select · Enter to open · Esc to close` under it: a list of answers. Escape prints "Power-ups closed". A lesson's own screen was not opened.
+- `/passes`: "Loading guest pass information…" over `Esc to cancel` for a moment, then "Guest passes · 3 left", three ticket drawings in box characters, the referral link, a sentence on what a pass gives, and `Enter to copy link · Esc to cancel`: a screen. Escape prints "Guest passes dialog dismissed".
+- `/rename` bare in a new conversation: "Could not generate a name: no conversation context yet. Usage: /rename <name>", text in the conversation.
+
 ## Not known yet
 
-- `/init`, `/fast`, `/voice`, `/upgrade`, `/passes`, `/remote-control` (also `/rc`), `/autofix-pr` (docs only; the docs do not say what the bare command shows).
-- `/rename`, `/claim-credit`, `/usage-credits`, `/powerup`: named in hints on recorded screens, not in the docs' list.
+- `/init`, `/fast`, `/voice`, `/upgrade`, `/remote-control` (also `/rc`), `/autofix-pr` (docs only; the docs do not say what the bare command shows).
+- `/claim-credit`, `/usage-credits`: named in hints on recorded screens, not in the docs' list.

@@ -99,6 +99,9 @@ keys shift+enter
 type l4
 keys shift+enter
 type l5
+# Each line break typed is said, "new line" (AX-7.8), the last ones joined into one announcement that lands a moment
+# later: waited for here, so that the quiet check of the page keys below hears nothing of it.
+wait 1500
 said
 keys ctrl+home
 expect focus "value":"l1"
