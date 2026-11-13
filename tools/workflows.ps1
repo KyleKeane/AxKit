@@ -43,10 +43,13 @@ $lines.Add('Every workflow below is played by the automated checks (`docs/axKit/
 $lines.Add('`nvda-pass.ps1`, so each is kept working from release to release. The label is the task in the words a user asks')
 $lines.Add('for help with, and the script is its steps; together they are the start of a tutorial for it.')
 
-$groups = Get-ChildItem (Join-Path $root 'tests\scripts'), (Join-Path $root 'tests\nvda-scripts') -Recurse -File -Filter *.txt |
-    Sort-Object FullName |
+# Ordinal order: Windows PowerShell and PowerShell 7 (CI) sort a hyphen differently by culture.
+$files = [System.Collections.Generic.List[System.IO.FileInfo]]::new()
+Get-ChildItem (Join-Path $root 'tests\scripts'), (Join-Path $root 'tests\nvda-scripts') -Recurse -File -Filter *.txt | ForEach-Object { $files.Add($_) }
+$files.Sort([Comparison[System.IO.FileInfo]] { param($a, $b) [string]::CompareOrdinal($a.FullName.ToLowerInvariant(), $b.FullName.ToLowerInvariant()) })
+$groups = $files |
     Group-Object { if ($_.Directory.Name -eq 'nvda-scripts') { 'NVDA only' } elseif ($_.Directory.Name -eq 'mcp') { 'AI tools' } else { $_.Directory.Name } } |
-    Sort-Object { if ($_.Name -eq 'NVDA only') { 2 } elseif ($_.Name -eq 'AI tools') { 1 } else { 0 } }, Name
+    Sort-Object { if ($_.Name -eq 'NVDA only') { 2 } elseif ($_.Name -eq 'AI tools') { 1 } else { 0 } }, { $_.Name.ToLowerInvariant() }
 $missing = @()
 foreach ($group in $groups) {
     $lines.Add('')
@@ -70,7 +73,8 @@ if ($missing.Count -gt 0) {
 $text = ($lines -join "`r`n") + "`r`n"
 if ($Check) {
     $current = if (Test-Path $documentPath) { [IO.File]::ReadAllText($documentPath) } else { '' }
-    if ($current -ne $text) {
+    # Line endings aside: the checkout's are native, LF on CI.
+    if (($current -replace "`r`n", "`n") -cne ($text -replace "`r`n", "`n")) {
         Write-Host 'docs/axKit/workflows.md is not current: run tools\workflows.ps1 and commit the page.'
         exit 1
     }
