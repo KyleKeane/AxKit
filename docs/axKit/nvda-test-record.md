@@ -6,6 +6,17 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-13: the night's four branches merged; by the assistant through nvda-pass.ps1 (`main` 877a1c5)
+
+`nvda-pass.ps1` with the user away, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 93 scripts, all passed whole in
+2516 s, every announcement also spoken by NVDA. On `main` with survey-question, reading-place, automate-report
+(axAutomate's Ctrl+R in `02-run` step 5.2a) and announcement-filters merged; the announcement switches are all on by
+default, so the existing scripts heard every word as before.
+
+Not heard yet, by ear or by script: Claude's feedback survey in the control area (axClaude plan section 12, step 16a,
+needs a survey in ordinary use), the announcement switches turned off, the silent words and the survey dismissed
+unheard (section 9, step 2a), and the reading place kept while a long reply streams (section 3).
+
 ## 2026-11-12, after midnight: one bar of eight menus, Context in every window; by the user by ear, then nvda-pass.ps1 (`menu-operations`, merged as 723df6d)
 
 By the user with NVDA on a development build of `menu-operations`: axTask's bar read Session, Actions, Navigation,
