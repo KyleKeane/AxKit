@@ -656,8 +656,10 @@ public sealed class MirrorUpdate
     /// <summary>
     /// Where a caret that sat at a position in the old text belongs in the new text: the same column of the same
     /// transcript line when that line is still shown (clamped to the line's new length), otherwise the start of the
-    /// nearest later line that is still shown, or of the lines that took its place. The caret therefore stays with
-    /// the content it was on while lines above it change and while the line it is on is rewritten.
+    /// nearest later line that is still shown, or else right after the nearest earlier one that is (the start of the
+    /// lines that took its place, or the end of the text). The caret therefore stays with the content it was on
+    /// while lines above it change and while the line it is on is rewritten, and never goes to the top because the
+    /// top changed too.
     /// </summary>
     public int MapPosition(int position)
     {
@@ -680,6 +682,18 @@ public sealed class MirrorUpdate
             if (target >= 0)
             {
                 return _starts[target];
+            }
+        }
+
+        // No later line is still shown: the place right after the nearest earlier line that is, which is the start of
+        // what took the caret's line's place, or the end of the text. Not the first changed line: in a long session
+        // the transcript cap trims the top at every update, so that was the top of the conversation (2026-11-12).
+        for (var i = index - 1; i >= 0; i--)
+        {
+            target = NewIndexOf(i);
+            if (target >= 0)
+            {
+                return target + 1 < _next.Count ? _starts[target + 1] : _starts[target] + _text[target].Length + _extra[target];
             }
         }
 
