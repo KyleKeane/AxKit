@@ -6,10 +6,10 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 11 (1 high, 3 medium, 7 low)
-- **done**: 31 (6 high, 16 medium, 9 low)
+- **open**: 5 (1 high, 2 medium, 2 low)
+- **done**: 36 (6 high, 17 medium, 13 low)
 - **deferred**: 3 (1 high, 2 medium)
-- **declined**: 4 (4 medium)
+- **declined**: 5 (4 medium, 1 low)
 
 ## The principles
 
@@ -32,14 +32,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxKit.Tests/CommandMarkTests' count falls with each step; every tests/scripts folder of the app passes
 - Note: About 131 items in the apps and 28 in the base state no mark (they ask before an AI tool runs them; safe, but a question more than needed, and their menu path is not in the report's recent actions). docs/axKit/app-kit.md AK-2 describes MenuSpec, Scope and Help, which do not exist: the document follows the code in the same steps.
 
-### R-23, medium, core: The update signature covers the zip alone, not its version: an older signed release could be offered as a newer one
-
-- Where: src/AxKit.Core/Updates/ReleaseSigning.cs; src/AxKit.Core/Updates/Updater.cs; tools/sign-release.ps1; install.ps1
-- Principle: P1
-- Fix: The updater refuses a zip whose own version (read from the AxKit.exe inside it, after the signature holds) is not the version the release names and not newer than the one running.
-- Checked by: tests/AxKit.Tests/UpdaterTests with a zip of an older version
-- Note: Needs no change to the signature format, so earlier releases still verify. Threat: the GitHub account taken over; the signing key stays offline.
-
 ### R-37, medium, tooling: Tests that read source text can be passed by ordinary code they do not see
 
 - Where: tests/AxKit.Tests/CommandMarkTests.cs; tests/AxKit.Tests/ListTests.cs
@@ -53,29 +45,8 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P8
 - Fix: Root CLAUDE.md is the rules, the gotchas and pointers, 8 KB at most, the commands on a page of their own; the AxKit.Forms notes split by kind of window; reference text loses its dates and until-clauses.
 - Checked by: a size check in tools/docs-check.ps1
-- Note: The root file is loaded into every session: it is rewritten in one commit of its own and read by the maintainer. Done 2026-11-13: the root CLAUDE.md from 32 KB to 14 KB, its long paragraphs moved whole into docs/axKit/commands.md, documents.md and the generated apps.md; the rules, the gotchas and the manual verification unchanged. Open: src/AxKit.Forms/CLAUDE.md (53 KB) split by kind of window, and the dates and until-clauses out of the reference text of the specs.
-
-### R-03, low, security: The pairing Deny cool-down and the rate limit live in the broker, which a client can start again
-
-- Where: src/AxKit.Forms/McpBroker.cs; src/AxKit.Forms/AxKitForm.Mcp.cs
-- Principle: P4
-- Fix: The window keeps the denied-until time by client program, as it does for a denied run.
-- Checked by: tests/scripts/mcp/01-read-and-pair.txt, a second broker after Deny
-
-### R-07, low, security: A hand-over's text reaches a window from any program of the user without a word
-
-- Where: src/AxKit.Forms/AppMessage.cs; src/AxClaude/MainForm.cs
-- Principle: P3
-- Fix: The window says what arrived (Text added to the message, from another window).
-- Checked by: tests/scripts/axHelp/01-start.txt hears it
-
-### R-17, low, framework: Timers are never disposed and one touches the handle without a disposed check
-
-- Where: src/AxKit.Forms/AxKitForm.cs; src/AxClaude/MainForm.Input.cs; src/AxTask/TaskForm.Projects.cs
-- Principle: P4
-- Fix: One After(ms, action) in the base with the disposed check, used by the three one-shot timers.
-- Checked by: the Release build; tests/scripts of axClaude and axTask
-- Note: Harmless today: one window per process.
+- Commit: ddd8dcb
+- Note: The root file is loaded into every session: it is rewritten in one commit of its own and read by the maintainer. Done 2026-11-13: the root CLAUDE.md from 32 KB to 14 KB, its long paragraphs moved whole into docs/axKit/commands.md, documents.md and the generated apps.md; the rules, the gotchas and the manual verification unchanged. Open: src/AxKit.Forms/CLAUDE.md (53 KB) split by kind of window, and the dates and until-clauses out of the reference text of the specs. 2026-11-13: src/AxKit.Forms/CLAUDE.md from 54 KB to a 3 KB index over src/AxKit.Forms/notes, one file per kind of window (NotesTests reads them). Open: the dates and until-clauses out of the reference text of the specs; the size check.
 
 ### R-29, low, core: Smaller core items: PtyHost.Kill after Dispose, JsonDocument not disposed, a report posted before it is marked sent, the seal's unescaped separators, AppPaths' uneven test-run home
 
@@ -84,14 +55,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: Each fixed where it stands.
 - Checked by: the unit tests of each piece
 
-### R-38, low, tooling: Hygiene: release.ps1 can wait on CI forever; empty AxList folders; merged branches; two forgotten worktrees; tools/EdgeDrive in no solution
-
-- Where: release.ps1; src/AxList; tools/EdgeDrive
-- Principle: P4
-- Fix: A time limit on the wait; the empty folders removed; the branches and worktrees listed for the maintainer, who deletes branches himself.
-- Checked by: reading
-- Note: Done: the empty AxList folders and two stale worktrees removed (both clean or holding only a generated page). The seventeen merged branches deleted by the maintainer on 2026-11-13, here and on GitHub. Open: the time limit on release.ps1's wait; the two unmerged branches cleanup and night-check, to be read and merged or dropped; tools/EdgeDrive is in no solution.
-
 ### R-42, low, apps: The same small piece written two or three times: one instance of a hotkey app, the busy guard and its words, the item apps' undo stack
 
 - Where: src/AxStart; src/AxClip; src/AxHelp; src/AxGit/GitForm.Run.cs; src/AxProcess/ProcessForm.cs; src/AxTask; src/AxPass; src/AxMCP
@@ -99,13 +62,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: AppHost.OneInstance; one Busy helper in the base with one wording; the undo stack in ItemForm.
 - Checked by: the apps' scripts
 - Note: With R-11, app by app.
-
-### R-48, low, docs: The Unreleased changelog is 17 KB with entries that later ones replaced and with internals
-
-- Where: CHANGELOG.md
-- Principle: P8
-- Fix: Replaced entries merged, each entry a user's sentence or two; internals under For developers.
-- Checked by: reading
 
 ## Done
 
@@ -242,6 +198,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Commit: af0fac3
 - Note: Where the swap is refused (another program holds the file open for writing but not for replacing) the file is written in place as before: never stricter than it was. axClaude's git exclude file and axTask's GitHub token too.
 
+### R-23, medium, core: The update signature covers the zip alone, not its version: an older signed release could be offered as a newer one
+
+- Where: src/AxKit.Core/Updates/ReleaseSigning.cs; src/AxKit.Core/Updates/Updater.cs; tools/sign-release.ps1; install.ps1
+- Principle: P1
+- Fix: The updater refuses a zip whose own version (read from the AxKit.exe inside it, after the signature holds) is not the version the release names and not newer than the one running.
+- Checked by: tests/AxKit.Tests/UpdaterTests with a zip of an older version
+- Commit: 36c603c
+- Note: Needs no change to the signature format, so earlier releases still verify. Threat: the GitHub account taken over; the signing key stays offline. Updater.VersionRefusal, asked after the signature holds and the zip is extracted; UpdaterTests.
+
 ### R-25, medium, core: axMCP starts a server by its configured command name without resolving it
 
 - Where: src/AxMCP.Core/StdioServer.cs
@@ -328,6 +293,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Commit: af0fac3
 - Note: A run's line names the command, without the path a recent file's entry carries; a refusal's first line goes through Redaction.
 
+### R-07, low, security: A hand-over's text reaches a window from any program of the user without a word
+
+- Where: src/AxKit.Forms/AppMessage.cs; src/AxClaude/MainForm.cs
+- Principle: P3
+- Fix: The window says what arrived (Text added to the message, from another window).
+- Checked by: tests/scripts/axHelp/01-start.txt hears it
+- Commit: ddd8dcb
+- Note: Said: Text added to your message from another window, not sent. tests/scripts/axHelp/01-start.txt hears it.
+
 ### R-10, low, framework: Reading the entries rebuilt a menu the user had open, and listed placeholders that do nothing
 
 - Where: src/AxKit.Forms/CommandPalette.cs; src/AxKit.Forms/RecentMenu.cs
@@ -343,6 +317,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: Commands, the command-to-items table and MenuPath removed with R-08; the comments corrected.
 - Checked by: the Release build (warnings are errors)
 - Commit: af0fac3
+
+### R-17, low, framework: Timers are never disposed and one touches the handle without a disposed check
+
+- Where: src/AxKit.Forms/AxKitForm.cs; src/AxClaude/MainForm.Input.cs; src/AxTask/TaskForm.Projects.cs
+- Principle: P4
+- Fix: One After(ms, action) in the base with the disposed check, used by the three one-shot timers.
+- Checked by: the Release build; tests/scripts of axClaude and axTask
+- Commit: ddd8dcb
+- Note: Harmless today: one window per process. AxKitForm.After; the menu timer of OpenBarMenu keeps its own, since it repeats.
 
 ### R-20, low, changes: The silent words tested each screen row alone, so a wrapped line was half spoken
 
@@ -367,6 +350,24 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: A cell takes at most eight combining characters.
 - Checked by: tests/AxKit.Tests/VtScreenTests
 - Commit: af0fac3
+
+### R-38, low, tooling: Hygiene: release.ps1 can wait on CI forever; empty AxList folders; merged branches; two forgotten worktrees; tools/EdgeDrive in no solution
+
+- Where: release.ps1; src/AxList; tools/EdgeDrive
+- Principle: P4
+- Fix: A time limit on the wait; the empty folders removed; the branches and worktrees listed for the maintainer, who deletes branches himself.
+- Checked by: reading
+- Commit: ddd8dcb
+- Note: Done: the empty AxList folders and two stale worktrees removed (both clean or holding only a generated page). The seventeen merged branches deleted by the maintainer on 2026-11-13, here and on GitHub. Open: the time limit on release.ps1's wait; the two unmerged branches cleanup and night-check, to be read and merged or dropped; tools/EdgeDrive is in no solution. 2026-11-13: release.ps1 asks for the build every 20 s, 40 minutes at most. The branches cleanup and night-check hold nothing main lacks (four commits already in main by content, one accidental commit of the lists hook, one merge of two merged branches): the maintainer deletes them with git branch -D. tools/EdgeDrive stays outside the solution by choice: a maintainer tool for Partner Center, built on its own.
+
+### R-48, low, docs: The Unreleased changelog is 17 KB with entries that later ones replaced and with internals
+
+- Where: CHANGELOG.md
+- Principle: P8
+- Fix: Replaced entries merged, each entry a user's sentence or two; internals under For developers.
+- Checked by: reading
+- Commit: ddd8dcb
+- Note: 19 KB to 12 KB: replaced entries merged, the AI tools together, internals in one For developers entry.
 
 ### R-49, low, docs: Stale names in the notes and a broken bullet in AxKit.Core's
 
@@ -436,3 +437,11 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: plan.md keeps the unbuilt apps only; the dated documents move to docs/axKit/archive once their open lines are in the priorities list.
 - Checked by: reading
 - Note: plan.md now marks what was built (R-43). The dated documents stay where they are: code comments, specs and the priorities list point at their paths in dozens of places, and moving them would break more than it tidies. docs/axKit/documents.md lists them apart as dated records.
+
+### R-03, low, security: The pairing Deny cool-down and the rate limit live in the broker, which a client can start again
+
+- Where: src/AxKit.Forms/McpBroker.cs; src/AxKit.Forms/AxKitForm.Mcp.cs
+- Principle: P4
+- Fix: The window keeps the denied-until time by client program, as it does for a denied run.
+- Checked by: tests/scripts/mcp/01-read-and-pair.txt, a second broker after Deny
+- Note: Declined 2026-11-13: that a new session of a client is asked again is the design (MC-6.4, held by tests/scripts/mcp/01-read-and-pair.txt): a user who denied by mistake restarts the client to be asked. The question is unprompted with Deny as default and a moment in which keys do nothing, so a client that restarts its broker gains a repeated question, never an answer.
