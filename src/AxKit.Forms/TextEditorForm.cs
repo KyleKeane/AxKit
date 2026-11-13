@@ -289,6 +289,9 @@ public sealed partial class TextEditorForm : AxKitForm
         }
     }
 
+    /// <summary>An AI's request is a list under the editor, where Go to line shows its field (MC-7.3); the editor has the focus again when it is answered.</summary>
+    protected override bool ShowOfferedRequest(OfferedRequest request) => ShowOfferedRequestIn(_area, request, () => { }, () => _editor.Select());
+
     /// <summary>The editor, or the Go to line field while it shows.</summary>
     protected override Control FocusTarget => _area.Current ?? _editor;
 

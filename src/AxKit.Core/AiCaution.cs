@@ -24,6 +24,9 @@ public static class AiCaution
         + "Read all the details here, and the conversation that led to it, before you run anything. If you do not understand what it does, do not run it. "
         + "Running it is your own act, as if you had typed it: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
 
+    /// <summary>In the name of the question an AI tool's run of a window command asks, heard every time the question is read.</summary>
+    public static string Asked(string who) => $"Asked by {who}, an AI: read the explanation before you allow it";
+
     /// <summary>In the question an AI tool's run of a window command asks.</summary>
     public const string Request = "The request comes from an AI tool, which can be wrong: allow it only if you know what the command will do here.";
 }

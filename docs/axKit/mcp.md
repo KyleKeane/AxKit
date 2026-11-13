@@ -213,16 +213,29 @@ axTask item made in a folder) are the next part.
   notice, <title>: commands run once the user has answered it, and AI tools never answer it"); a command that asks
   (delete, discard, close with changes, New folder's name) shows its question as for the user and the answer says the
   window asks it. A command marked **act** (app-kit's mark, MC-3.1: it deletes, moves, sends, starts or ends
-  something outside the window) is asked of the user first, in the window: the notice "Claude asks to run Delete",
-  its text naming the command's menus, what it would act on and what an act may do ("Claude asks to run Open
-  (Operations) on report.pdf in files in this window. It acts outside the window: ..."), unprompted with its chime, the window
-  flashing on the taskbar when it is not in front, **Deny** the default and Escape, **Run** running it once (and only
+  something outside the window) is asked of the user first, in the window, **through the interface of an offered
+  command** (MC-9.4; the user's decision of 2026-11-13, after answering two such questions as notices: the two kinds of
+  request are alike and are answered alike). It is a list answered with the arrows, so that Tab keeps its one meaning,
+  the move between a window's sections: the offer's chime (`Sounds.Offer`), a name that starts with "Command offer"
+  and names who asks, the command with its menus, what it would act on and that an AI asks ("Command offer. Claude
+  asks to run this window's command Open (Operations) on report.pdf in files. Asked by Claude, an AI: read the
+  explanation before you allow it"), and three answers: **Explain this command**, where the list starts, which opens
+  a text with one button ("Command offer: about this window command": the caution first, the command, what it would
+  act on, what an act may do, what the answers do) and comes back to the list; **Yes, run it**; **No, do not run
+  it**, which is Escape too. Where the list shows: a window with a section worth keeping in view shows it at the
+  bottom, the section still there to read (axClaude and axTerminal in the message field's place, with the
+  conversation above; the editors under the text; in axClaude it joins the offered commands' line, MC-9.4, without
+  waiting for Claude's turn to end, since nothing is sent to Claude Code); every other window shows the same list over
+  the whole window, its sections hidden as for a notice (`AxKitForm.ShowOfferedRequest`). Only when that place is
+  taken (a Go to line field, a list of the window's own, three offers waiting) is it a notice, "Command offer: Claude
+  asks to run Open", with the same chime and the buttons **Yes, run it** and **No, do not run it**, the default. The
+  window flashes on the taskbar when it is not in front. **Yes, run it** runs it once (and only
   while the switch, read again off the window's thread, is still on, the item still available and the window's
   selection still the one the question named; otherwise "<command> not run: <reason>" is said, "Open not run: the
   selection changed" for the last; what is compared is the selection's identity, never the few words the question
   shows: axFile's folder and the entries' full paths, the item apps' level (the status bar's place; axTask's by its state, which a look ending during the question never changes) and the row's key (an item's file),
-  axGIT's file, commit or branch and, with none in hand, the focused control as every other window's; the Run
-  compares after the question has given the focus back, so that the same control is read; taken by the assistant on
+  axGIT's file, commit or branch and, with none in hand, the focused control as every other window's; the Yes
+  compares after the question has given the focus back to the control it was asked from, so that the same control is read; taken by the assistant on
   2026-11-11, for the user to confirm, since two folders named alike made two selections one); after a Deny the window refuses an act's run without asking for a minute, as the
   pairing does, but per window and whichever client asks (the broker never learns of the user's Deny, since its
   answer is that the user is asked); the tool's answer says "The window asks the user whether to run Delete". No key

@@ -816,8 +816,8 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   care, to read every detail first and not to run what is not understood; running is never the answer a list starts
   on or a notice's default; and the AI's own words about its command are labelled as the AI's. Where it stands today:
   a command Claude offers (`docs/axKit/mcp.md` MC-9: the question's name and "Read this first" in the explanation);
-  an AI tool's run of a window's command (MC-7.3: the question says the request comes from an AI tool, which can be
-  wrong); AI help's answers ("Claude says" ends with who wrote it and that it can be wrong; `docs/axKit/ai-help.md`
+  an AI tool's run of a window's command (MC-7.3: asked through the same list as an offered command, named "Asked by
+  Claude, an AI: read the explanation before you allow it", its explanation starting with "Read this first"); AI help's answers ("Claude says" ends with who wrote it and that it can be wrong; `docs/axKit/ai-help.md`
   AH-3.1); the pairing of an AI tool (AX-11.4's reminder and check box). axClaude's conversation itself is Claude
   Code's own output, shown as it comes, under the access layer's consent (AX-11.4). These are reminders in plain
   words, as the consent notices are (AX-11.10), not legal advice. A new feature of this kind brings its caution in

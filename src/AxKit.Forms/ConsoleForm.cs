@@ -220,6 +220,14 @@ public abstract partial class ConsoleForm : AxKitForm
         Area.Visible = Area.Current is not null;
     }
 
+    /// <summary>An AI's request is a list in the control area, in the field's place (MC-7.3); the field comes back with the focus when it is answered.</summary>
+    protected override bool ShowOfferedRequest(OfferedRequest request) =>
+        ShowOfferedRequestIn(Area, request, () => Input.Visible = false, () =>
+        {
+            Input.Visible = !NoticeOpen;
+            Input.Focus();
+        });
+
     /// <summary>The bottom of the window, whichever control is there when the notice closes and the one that had the focus is gone (an answered question's list).</summary>
     protected override Control FocusTarget => BottomControl;
 

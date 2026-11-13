@@ -1,6 +1,8 @@
 # Workflow: Approve or deny an AI tool before it acts
 # axkit_window_run (docs/axKit/mcp.md MC-7.3): a command that acts outside its window (axFile's New folder, marked act)
-# is asked of the user in the window first; Deny, the default, refuses it, Run runs it once, said with who asked.
+# is asked of the user in the window first, as the list an offered command's question is: the offer's sound, a name that
+# starts with Command offer, the first answer only explains, Yes, run it runs it once, said with who asked, Escape is
+# No. axFile has no section to leave in view, so the list covers the whole window and the arrows answer it.
 file home\AxKit\axFile.json {"checkForUpdates": false}
 file files\notes.md Some notes.
 start file {temp}\files
@@ -28,37 +30,54 @@ keys enter
 expect said axAutomate may read axKit
 expect mcp "app": "axFile"
 
-# The question in the window, the answer to the client that the user is asked; Run runs it as from its menu item (its
-# own notice for the folder's name follows, which the user answers).
+# The question in the window, the answer to the client that the user is asked. The list names the command and what it
+# would act on, and starts on the answer that only explains; no notice shows.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
 wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"New folder..."}
 expect mcp The window asks the user whether to run New folder
-expect state "notice":"axAutomate asks to run New folder"
-expect state on notes.md in files in this window
+expect said ♪ Offer
+expect focus Command offer. axAutomate asks to run this window's command New folder
+expect focus on notes.md in files
+expect focus Asked by axAutomate, an AI: read the explanation before you allow it
+expect focus 1. Explain this command
+expect state "notice":null
+
+# Enter on Explain opens a text with one button, the caution first; closing it comes back to the list.
 wait 1500
-keys tab
-expect focus &Run
+keys enter
+expect state "notice":"Command offer: about this window command"
+expect state "noticeText":"# Read this first\n\naxAutomate, an AI model, asks to run a command of this window
+expect state # What it would act on\n\nnotes.md in files
+keys enter
+expect focus 1. Explain this command
+
+# Yes, run it is the second answer: it runs the command as from its menu item (its own notice for the folder's name
+# follows, which the user answers).
+keys down
+expect focus 2. Yes, run it
 keys enter
 expect said axAutomate ran New folder
 expect focus Name
 keys escape
+expect focus notes.md
 
 # MC-D7: Open starts the file's program (a script or a program among them), so it is act and asked first too. Escape
-# is Deny, the default; nothing opens.
+# is No; nothing opens, and the files have the focus again.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
 wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Open"}
 expect mcp The window asks the user whether to run Open
-expect state "notice":"axAutomate asks to run Open"
+expect focus Command offer. axAutomate asks to run this window's command Open
 wait 1500
 keys escape
 expect said Open not run
 refuse said axAutomate ran Open
+expect focus notes.md
 
-# After a Deny the window asks no more for a minute, whatever the command.
+# After a No the window asks no more for a minute, whatever the command.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
 wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"New folder"}
 expect mcp error: The user denied running a command a moment ago
-refuse state asks to run
+refuse focus asks to run

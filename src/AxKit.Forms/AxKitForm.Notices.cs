@@ -81,6 +81,12 @@ public abstract partial class AxKitForm
         _paletteSpeak.Stop();
         NoticeOpen = false;
         ShowAfterNotice();
+        if (RequestOverWindow)
+        {
+            // An AI's request still covers the window (its explanation just closed): the sections stay hidden under it.
+            HideForNotice();
+        }
+
         if (MainMenuStrip is { } menu)
         {
             menu.Enabled = true;

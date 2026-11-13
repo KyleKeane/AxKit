@@ -106,3 +106,23 @@ expect text offered-42
 refuse text offered-first
 # MC-6.6: the calls are in the log by their tool.
 run findstr /c:"axkit_offer_command" home\AxKit\mcp-audit.log
+
+# MC-7.3: an AI tool's request to run a command of this window is asked in the same list, with the same sound and
+# the same first words; Yes, run it is the second answer and runs it, said with who asked.
+menu Let AI tools run commands
+expect said AI tools may run commands
+said
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Check for updates at start"}
+expect mcp The window asks the user whether to run Check for updates at start
+expect said ♪ Offer
+expect focus Command offer. axAutomate asks to run this window's command Check for updates at start (Options, General)
+expect focus 1. Explain this command
+expect state "notice":null
+wait 1500
+keys down
+expect focus 2. Yes, run it
+keys enter
+expect said axAutomate ran Check for updates at start
+# The focus is back where the request found it, which is what the question named as its target.
+expect focus Conversation

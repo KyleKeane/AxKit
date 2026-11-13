@@ -17,7 +17,25 @@ namespace AxClaude;
 /// </summary>
 internal sealed partial class MainForm
 {
-    private sealed record Offer(string Client, string Command, string? Reason, string? Details);
+    /// <summary>A shell command offered, or, with <paramref name="Request"/>, an AI tool's request to run a command of this window (MC-7.3), which waits in the same line and is asked in the same list.</summary>
+    private sealed record Offer(string Client, string Command, string? Reason, string? Details, OfferedRequest? Request = null);
+
+    /// <summary>
+    /// An AI tool's request to run a command of this window joins the offers (MC-7.3): asked in the control area as they
+    /// are, one after another, and never over a question of Claude's. It does not wait for Claude's turn to end, since
+    /// nothing is sent to Claude Code. False, and a notice asks instead, when three already wait.
+    /// </summary>
+    protected override bool ShowOfferedRequest(OfferedRequest request)
+    {
+        if (_offers.Count + (_offerShown is null ? 0 : 1) >= McpOffer.MaxWaiting)
+        {
+            return false;
+        }
+
+        _offers.Add(new Offer(string.Empty, string.Empty, null, null, request));
+        ShowOfferWhenIdle();
+        return true;
+    }
 
     /// <summary>The offers that wait for the user, the oldest first; <see cref="McpOffer.MaxWaiting"/> at most.</summary>
     private readonly List<Offer> _offers = [];
@@ -69,7 +87,7 @@ internal sealed partial class MainForm
     /// </summary>
     private void ShowOfferWhenIdle()
     {
-        if (_offers.Count == 0 || !OfferMayShow)
+        if (_offers.Count == 0 || !OfferMayShow(_offers[0]))
         {
             return;
         }
@@ -77,7 +95,7 @@ internal sealed partial class MainForm
         var settle = ++_offerSettle;
         After(OfferSettleMs, () =>
         {
-            if (settle == _offerSettle && _offers.Count > 0 && OfferMayShow)
+            if (settle == _offerSettle && _offers.Count > 0 && OfferMayShow(_offers[0]))
             {
                 var offer = _offers[0];
                 _offers.RemoveAt(0);
@@ -93,8 +111,9 @@ internal sealed partial class MainForm
         ShowOfferWhenIdle();
     }
 
-    /// <summary>Claude's turn has ended, it asks nothing, no notice shows and nothing is in the control area.</summary>
-    private bool OfferMayShow => _readyAnnounced && ClaudeIdle && !NoticeOpen && Area.Current is null && _offerShown is null;
+    /// <summary>Claude's turn has ended (a shell command is sent to its prompt; a window command's request does not wait for that), it asks nothing, no notice shows and nothing is in the control area.</summary>
+    private bool OfferMayShow(Offer offer) =>
+        _readyAnnounced && (offer.Request is not null ? WaitSignature is null : ClaudeIdle) && !NoticeOpen && Area.Current is null && _offerShown is null;
 
     /// <summary>
     /// The question in the control area (MC-9.4): the list named with the command, starting on
@@ -103,13 +122,30 @@ internal sealed partial class MainForm
     private void AskOffer(Offer offer, int start, bool unprompted)
     {
         _offerShown = offer;
-        var name = McpOffer.AskName(offer.Client, offer.Command);
-        ShowInArea(OfferSignature, name, McpOffer.AskText(offer.Client, offer.Command, offer.Reason), unprompted, (focus, hold) =>
-            Area.ShowList(name, McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen), () => AnswerOffer(offer, McpOffer.No)), Sounds.Offer);
+        var name = offer.Request?.Name ?? McpOffer.AskName(offer.Client, offer.Command);
+        var text = offer.Request?.Text ?? McpOffer.AskText(offer.Client, offer.Command, offer.Reason);
+        ShowInArea(OfferSignature, name, text, unprompted, (focus, hold) =>
+            Area.ShowList(name, offer.Request?.Answers ?? McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen),
+                () => AnswerOffer(offer, offer.Request?.No ?? McpOffer.No)), Sounds.Offer);
     }
 
     private void AnswerOffer(Offer offer, int answer)
     {
+        if (offer.Request is { } request)
+        {
+            if (answer == request.Explain)
+            {
+                ShowNotice(Notice.Plain(request.ExplainTitle, request.ExplainText));
+                return;
+            }
+
+            // The base runs it or says why not; the list has gone and the message field is back first.
+            CloseOffer();
+            request.Answer(answer);
+            ShowOfferWhenIdle();
+            return;
+        }
+
         if (answer == McpOffer.Explain)
         {
             // A text with one button; the list is still there under it, and the focus comes back to it (the notice rule).

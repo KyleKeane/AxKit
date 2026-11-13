@@ -1,0 +1,62 @@
+# Workflow: Answer an AI tool's request in a list, with the text still there
+# axkit_window_run (docs/axKit/mcp.md MC-7.3): where a window has a place for it (the editors, the console windows), a
+# command that acts outside the window is asked as the list an offered command's question is: the offer's sound, a name
+# that starts with Command offer, the first answer only explains, Yes, run it runs it once, Escape is No. The text
+# stays there to read while the question waits.
+file home\AxKit\axDown.json {"checkForUpdates": false}
+file notes.md # Notes\nFirst line of the notes.
+start down {temp}\notes.md
+expect focus notes.md
+
+# The access and the run switch on, the runner paired, as in 03-run-asks-first.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+menu Let AI tools run commands
+expect said AI tools may run commands
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axDown"
+
+# The question is a list under the text, not a notice over it; it starts on the answer that only explains.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Check for updates at start"}
+expect mcp The window asks the user whether to run Check for updates at start
+expect said ♪ Offer
+expect focus Command offer. axAutomate asks to run this window's command Check for updates at start (Options, General)
+expect focus Asked by axAutomate, an AI: read the explanation before you allow it
+expect focus 1. Explain this command
+expect state "notice":null
+
+# Enter on Explain opens a text with one button, the caution first; closing it comes back to the list.
+wait 1500
+keys enter
+expect state "notice":"Command offer: about this window command"
+expect state "noticeText":"# Read this first\n\naxAutomate, an AI model, asks to run a command of this window
+expect state The request comes from an AI tool, which can be wrong
+keys enter
+expect focus 1. Explain this command
+
+# Escape is No: nothing runs, the text has the focus again.
+keys escape
+expect said Check for updates at start not run
+refuse said axAutomate ran Check for updates at start
+expect focus notes.md
+
+# After a No the window asks no more for a minute.
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Check for updates at start"}
+expect mcp error: The user denied running a command a moment ago

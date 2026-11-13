@@ -114,7 +114,51 @@ public static class McpRun
     public static string Said(string client, string label) => $"{Speaker(client)} ran {Plain(label)}";
 
     /// <summary>The title of the question an act command asks first (MC-7.3): "Claude asks to run Delete".</summary>
-    public static string AskTitle(string client, string label) => $"{Speaker(client)} asks to run {Plain(label)}";
+    public static string AskTitle(string client, string label) => $"{McpOffer.Label}: {Speaker(client)} asks to run {Plain(label)}";
+
+    /// <summary>
+    /// The answers of the question as a list (MC-7.3), in the order of an offered command's (<see cref="McpOffer.Answers"/>):
+    /// the first only explains, so that an Enter pressed by accident runs nothing; running is never where the list starts.
+    /// </summary>
+    public static readonly IReadOnlyList<string> Answers =
+    [
+        "1. Explain this command",
+        "2. Yes, run it",
+        "3. No, do not run it",
+    ];
+
+    public const int Explain = 0;
+    public const int Yes = 1;
+    public const int No = 2;
+
+    /// <summary>The two buttons of the question where a window has no place for the list and asks in a notice: the same words, the same order.</summary>
+    public const string YesButton = "&Yes, run it";
+    public const string NoButton = "&No, do not run it";
+
+    /// <summary>The list's name, read each time the focus comes to it: the label every offer starts with, who asks, the command with its menus and what it would act on, and that an AI asks (<see cref="AiCaution"/>).</summary>
+    public static string AskName(string client, string label, string menu, string target)
+    {
+        var place = menu.Length > 0 ? $" ({menu})" : string.Empty;
+        var on = target.Trim().Length > 0 ? $" on {ShownTarget(target)}" : string.Empty;
+        return $"{McpOffer.Label}. {Speaker(client)} asks to run this window's command {Plain(label)}{place}{on}. {AiCaution.Asked(Speaker(client))}";
+    }
+
+    public const string ExplainTitle = "Command offer: about this window command";
+
+    /// <summary>The explanation the list's first answer opens, a text to read by line and by heading: the caution first (bundle AX-11.12), the command, what it would act on, what an act may do, and what each answer does.</summary>
+    public static string ExplainText(string client, string label, string menu, string target)
+    {
+        var who = Speaker(client);
+        var shown = ShownTarget(target);
+        return $"# Read this first\n\n{who}, an AI model, asks to run a command of this window, as if you had chosen it from the menu. {AiCaution.Request} "
+            + $"axKit does not know why {who} asks: the conversation with it may say. If you do not know what the command will do here, do not allow it. Allowing it is your own act.\n\n"
+            + $"# The command\n\n{Plain(label)}{(menu.Length > 0 ? $", in the menu {menu}" : string.Empty)}.\n\n"
+            + $"# What it would act on\n\n{(shown.Length > 0 ? shown : "Nothing in particular: the window names no selection.")}\n\n"
+            + "# What it may do\n\nIt acts outside the window: it may delete, move, send, open or start a program, or end something, exactly as when you run it yourself.\n\n"
+            + "# What your answers do\n\n"
+            + "Yes, run it runs the command once, now, and not at all if what is selected has changed meanwhile.\n\n"
+            + "No, do not run it, which is Escape too, runs nothing. This window then asks no more for a minute.";
+    }
 
     /// <summary>The longest target the question shows (MC-7.3); the rest is cut with three dots, and the whole is still what is compared.</summary>
     public const int TargetShownLength = 200;
@@ -147,7 +191,7 @@ public static class McpRun
         var place = menu.Length > 0 ? $" ({menu})" : string.Empty;
         var on = target.Trim().Length > 0 ? $" on {ShownTarget(target)}" : string.Empty;
         return $"{Speaker(client)} asks to run {Plain(label)}{place}{on} in this window. It acts outside the window: it may delete, move, send, open or start a program, or end something, as when you run it yourself. {AiCaution.Request}\n\n"
-            + "Run runs it once, now, and not at all if what is selected has changed meanwhile. Deny, the default, does not.";
+            + "Yes, run it runs it once, now, and not at all if what is selected has changed meanwhile. No, do not run it, does not.";
     }
 
     /// <summary>

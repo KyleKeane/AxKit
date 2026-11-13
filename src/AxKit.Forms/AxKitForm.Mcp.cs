@@ -285,51 +285,175 @@ public abstract partial class AxKitForm
     /// </summary>
     private void AskToRunMcp(string client, string label, string menu, RunTarget target)
     {
-        var text = McpRun.AskText(client, label, menu, target.Shown);
-        ShowNotice(new Notice(McpRun.AskTitle(client, label), text,
-        [
-            new OverlayChoice("&Run", () =>
+        // The control that has the focus now is the one the target was read from, and the one a Yes reads it from again.
+        var asked = FocusedControl();
+
+        void Yes()
+        {
+            if (McpRun.TargetRefusal(target, McpTarget()) is { } changed)
             {
-                // The order matters: CloseNotice gives the focus back to the control that had it before the question
-                // (the notice rule, AxKitForm.Notices.cs: _focusBeforeNotice selected before CloseNotice returns, the
-                // Run being StaysOpen and outside any chain), so that McpTarget reads the same pane as when it was asked;
-                // read with the notice still open, the focus would be on this button and the default target would differ.
-                CloseNotice(null);
-                if (McpRun.TargetRefusal(target, McpTarget()) is { } changed)
+                Announce($"{label} not run: {changed}", true);
+                return;
+            }
+
+            Do(async () =>
+            {
+                // The user may have turned the switch off while the question waited.
+                var allowed = await Task.Run(() => McpAccess.RunsCommands);
+                var reason = WhyNotRunForMcp(allowed);
+                var item = reason is null ? ToolItem(label, menu) : null;
+                if (item is null)
                 {
-                    Announce($"{label} not run: {changed}", true);
+                    if (!IsDisposed)
+                    {
+                        Announce($"{label} not run: {reason ?? NotAvailableNow}", true);
+                    }
+
                     return;
                 }
 
-                Do(async () =>
-                {
-                    // The user may have turned the switch off while the question waited.
-                    var allowed = await Task.Run(() => McpAccess.RunsCommands);
-                    var reason = WhyNotRunForMcp(allowed);
-                    var item = reason is null ? ToolItem(label, menu) : null;
-                    if (item is null)
-                    {
-                        if (!IsDisposed)
-                        {
-                            Announce($"{label} not run: {reason ?? NotAvailableNow}", true);
-                        }
+                RunForMcp(client, label, item);
+            });
+        }
 
-                        return;
-                    }
+        void No()
+        {
+            _mcpRunDeniedUntil = Environment.TickCount64 + 60_000;
+            Announce($"{label} not run", true);
+        }
 
-                    RunForMcp(client, label, item);
-                });
-            }, StaysOpen: true),
-            new OverlayChoice("&Deny", () =>
+        // Where the window has a place for it, the question is the list an offered command's is (MC-7.3, MC-9.4): the
+        // window's content stays there to read, and the list starts on the answer that only explains.
+        var request = new OfferedRequest(McpRun.AskName(client, label, menu, target.Shown), McpRun.AskText(client, label, menu, target.Shown),
+            McpRun.ExplainTitle, McpRun.ExplainText(client, label, menu, target.Shown), McpRun.Answers, McpRun.Explain, McpRun.No, answer =>
             {
-                _mcpRunDeniedUntil = Environment.TickCount64 + 60_000;
-                Announce($"{label} not run", true);
-            }, IsDefault: true, IsCancel: true),
+                if (answer != McpRun.Yes)
+                {
+                    No();
+                    return;
+                }
+
+                // The list is gone and the bottom of the window has the focus: the control the question was asked from
+                // gets it back first, so that McpTarget reads the same pane as when it was asked.
+                if (asked is { IsDisposed: false, Visible: true, Enabled: true })
+                {
+                    asked.Select();
+                }
+
+                Yes();
+            });
+        if (ShowOfferedRequest(request))
+        {
+            FlashIfBehind();
+            return;
+        }
+
+        // Elsewhere a notice, with the offer's chime, name and order of answers; its text is the explanation.
+        if (NoticeChime)
+        {
+            Sounds.Offer();
+        }
+
+        ShowNotice(new Notice(McpRun.AskTitle(client, label), request.Text,
+        [
+            new OverlayChoice(McpRun.YesButton, () =>
+            {
+                // The order matters: CloseNotice gives the focus back to the control that had it before the question
+                // (the notice rule, AxKitForm.Notices.cs: _focusBeforeNotice selected before CloseNotice returns, the
+                // Yes being StaysOpen and outside any chain), so that McpTarget reads the same pane as when it was asked;
+                // read with the notice still open, the focus would be on this button and the default target would differ.
+                CloseNotice(null);
+                Yes();
+            }, StaysOpen: true),
+            new OverlayChoice(McpRun.NoButton, No, IsDefault: true, IsCancel: true),
         ])
         {
             Unprompted = true,
+            Silent = true,
         });
         FlashIfBehind();
+    }
+
+    /// <summary>
+    /// What an AI asks the user to let happen, as a window shows it (MC-7.3, MC-9.4): the list's name, read with every
+    /// arrival; the text Ctrl+Q reads where a window has that key; the explanation the first answer opens; the answers,
+    /// with which one explains and which one is No (Escape); and what a chosen answer other than Explain does, called
+    /// once, after the list has gone.
+    /// </summary>
+    protected sealed record OfferedRequest(string Name, string Text, string ExplainTitle, string ExplainText, IReadOnlyList<string> Answers, int Explain, int No, Action<int> Answer);
+
+    /// <summary>
+    /// Shows an AI's request as a list answered with the arrows. The console windows and the text editors show it at
+    /// the bottom, with the conversation or the text above it still there to read; every other window, here, shows it
+    /// over the whole window. False when the place is taken, and the request is asked in a notice instead.
+    /// </summary>
+    protected virtual bool ShowOfferedRequest(OfferedRequest request)
+    {
+        // A window with no section to leave in view (the user's decision of 2026-11-13): the same list over the whole
+        // window, its sections hidden as for a notice, so that the arrows answer and Tab has nowhere else to go.
+        if (_overWindow is null)
+        {
+            _overWindow = new ControlArea { Dock = DockStyle.Fill };
+            Controls.Add(_overWindow);
+        }
+
+        var area = _overWindow;
+        var before = FocusedControl();
+        return ShowOfferedRequestIn(area, request, () =>
+        {
+            HideForNotice();
+            area.BringToFront();
+            PaintTheme(area);
+            PerformLayout();
+        }, () =>
+        {
+            ShowAfterNotice();
+            PerformLayout();
+            (before is { IsDisposed: false, Enabled: true } ? before : FocusTarget).Select();
+        });
+    }
+
+    /// <summary>The list of an AI's request over the whole window, made at the first request; null in a window that never had one, and in the windows that show the list at the bottom.</summary>
+    private ControlArea? _overWindow;
+
+    /// <summary>Whether an AI's request covers the window now: its sections stay hidden when a notice over it closes (the explanation).</summary>
+    private bool RequestOverWindow => _overWindow is { Current: not null };
+
+    /// <summary>
+    /// The request as a list in <paramref name="area"/>, starting on Explain, with the offer's chime and a moment in
+    /// which the answering keys do nothing. Explain opens the text as a notice with one button and comes back to the
+    /// list (the notice rule); any other answer, or Escape for No, empties the area, calls <paramref name="closed"/>
+    /// for the window to put its own control back, then the request's answer. False when the area or a notice is in use.
+    /// </summary>
+    protected bool ShowOfferedRequestIn(ControlArea area, OfferedRequest request, Action shown, Action closed)
+    {
+        if (area.Current is not null || NoticeOpen || DialogShowing)
+        {
+            return false;
+        }
+
+        if (NoticeChime)
+        {
+            Sounds.Offer();
+        }
+
+        void Answer(int answer)
+        {
+            if (answer == request.Explain)
+            {
+                ShowNotice(Notice.Plain(request.ExplainTitle, request.ExplainText));
+                return;
+            }
+
+            area.Clear();
+            closed();
+            request.Answer(answer);
+        }
+
+        Recent.Add(RecentActionKind.Notice, request.Name, DateTime.UtcNow);
+        area.ShowList(request.Name, request.Answers, request.Explain, null, focus: true, hold: true, (chosen, _) => Answer(chosen), () => Answer(request.No));
+        shown();
+        return true;
     }
 
     /// <summary>The window flashed on the taskbar until it comes to the front, when it is not in front: a notice an AI tool caused waits for the user there.</summary>

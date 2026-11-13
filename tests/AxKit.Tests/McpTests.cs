@@ -372,9 +372,38 @@ public sealed class McpTests
     public void What_the_window_says_and_asks_names_the_client_and_the_command()
     {
         Assert.Equal("Claude ran Word wrap", McpRun.Said("claude-code", "&Word wrap"));
-        Assert.Equal("Claude asks to run New folder", McpRun.AskTitle("Claude Code", "&New folder..."));
+        Assert.Equal("Command offer: Claude asks to run New folder", McpRun.AskTitle("Claude Code", "&New folder..."));
         Assert.Equal(40, McpRun.Speaker(new string('x', 80)).Length);
         Assert.Contains("U+202E", McpRun.Speaker("a‮b"), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_question_as_a_list_is_an_offer_that_starts_on_the_explanation()
+    {
+        // The label every offer starts with, who asks, the command with its menus and target, and that an AI asks.
+        Assert.Equal("Command offer. Claude asks to run this window's command Open (File) on report.pdf. Asked by Claude, an AI: read the explanation before you allow it",
+            McpRun.AskName("claude-code", "&Open", "File", "report.pdf"));
+        Assert.Equal("Command offer. Claude asks to run this window's command Open. Asked by Claude, an AI: read the explanation before you allow it",
+            McpRun.AskName("claude-code", "Open", string.Empty, " "));
+
+        // Running is never where the list starts (bundle AX-11.12), and the order is an offered command's.
+        Assert.Equal("1. Explain this command", McpRun.Answers[McpRun.Explain]);
+        Assert.Equal("2. Yes, run it", McpRun.Answers[McpRun.Yes]);
+        Assert.Equal("3. No, do not run it", McpRun.Answers[McpRun.No]);
+        Assert.Equal(0, McpRun.Explain);
+        Assert.Equal(McpOffer.Answers[McpOffer.Explain], McpRun.Answers[McpRun.Explain]);
+        Assert.Equal(McpOffer.Answers[McpOffer.Run], McpRun.Answers[McpRun.Yes]);
+        Assert.Equal(McpOffer.Answers[McpOffer.No], McpRun.Answers[McpRun.No]);
+        Assert.StartsWith(McpOffer.Label, McpRun.ExplainTitle, StringComparison.Ordinal);
+
+        // The explanation: the caution first, then the command, the target, what an act may do and the answers.
+        var text = McpRun.ExplainText("claude-code", "&Open", "File", "report.pdf");
+        Assert.StartsWith("# Read this first\n\nClaude, an AI model, asks to run a command of this window", text, StringComparison.Ordinal);
+        Assert.Contains(AiCaution.Request, text, StringComparison.Ordinal);
+        Assert.Contains("# The command\n\nOpen, in the menu File.", text, StringComparison.Ordinal);
+        Assert.Contains("# What it would act on\n\nreport.pdf", text, StringComparison.Ordinal);
+        Assert.Contains("asks no more for a minute", text, StringComparison.Ordinal);
+        Assert.Contains("Nothing in particular", McpRun.ExplainText("claude-code", "Open", string.Empty, string.Empty), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -418,14 +447,23 @@ public sealed class McpTests
     [Fact]
     public void The_run_compares_the_selection_after_the_question_gave_the_focus_back()
     {
-        // MC-7.3: the window's default target reads the focused control, so the Run must close the question first (which
-        // selects the control focused before it) and only then read the target again; the other order compares the
-        // question's own button.
+        // MC-7.3: the window's default target reads the focused control, so a Yes must give the focus back to the control
+        // the question was asked from and only then read the target again; the other order compares the question's own
+        // list or button. The comparison is in one place, Yes(); the list's answer selects the control before it calls
+        // Yes(), and the notice's button closes the notice (which selects it) before it does.
         var text = File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Mcp.cs"));
         var ask = text.IndexOf("private void AskToRunMcp(", StringComparison.Ordinal);
-        var close = text.IndexOf("CloseNotice(null);", ask, StringComparison.Ordinal);
-        var compare = text.IndexOf("McpRun.TargetRefusal(target, McpTarget())", ask, StringComparison.Ordinal);
-        Assert.True(ask > 0 && close > ask && compare > close, "AskToRunMcp's Run must call CloseNotice before it compares the target");
+        var end = text.IndexOf("protected sealed record OfferedRequest(", ask, StringComparison.Ordinal);
+        Assert.True(ask > 0 && end > ask);
+        var body = text[ask..end];
+        const string Compare = "McpRun.TargetRefusal(target, McpTarget())";
+        Assert.Equal(body.IndexOf(Compare, StringComparison.Ordinal), body.LastIndexOf(Compare, StringComparison.Ordinal));
+        Assert.True(body.IndexOf("void Yes()", StringComparison.Ordinal) < body.IndexOf(Compare, StringComparison.Ordinal));
+
+        var select = body.IndexOf("asked.Select();", StringComparison.Ordinal);
+        Assert.True(select > 0 && body.IndexOf("Yes();", select, StringComparison.Ordinal) > select, "the list's Yes must select the control the question was asked from before it compares the target");
+        var close = body.IndexOf("CloseNotice(null);", StringComparison.Ordinal);
+        Assert.True(close > select && body.IndexOf("Yes();", close, StringComparison.Ordinal) > close, "the notice's Yes must call CloseNotice before it compares the target");
     }
 
     [Theory]
