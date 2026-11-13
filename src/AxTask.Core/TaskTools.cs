@@ -120,6 +120,13 @@ public static class TaskTools
             return (null, $"A title is at most {MaxTitle} characters: put the rest in Notes.");
         }
 
+        // A tab, a bell, an escape: never typed into a title by hand, said oddly or not at all, and the title is the
+        // file's name too (2026-11-12, left open by the review of MC-8).
+        if (trimmed.Any(char.IsControl))
+        {
+            return (null, "A title holds no control characters.");
+        }
+
         var item = ItemDocument.NewItem(trimmed, template);
         foreach (var (name, text) in values)
         {
@@ -127,6 +134,11 @@ public static class TaskTools
             if (field.Length == 0)
             {
                 return (null, "A field needs its title.");
+            }
+
+            if (field.Any(char.IsControl))
+            {
+                return (null, "A field's title holds no control characters.");
             }
 
             if (field.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
