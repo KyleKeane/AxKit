@@ -50,7 +50,7 @@ mcp call axkit_offer_command {"window":"{window}","command":"echo offered-first"
 expect mcp "offered": true
 # It is told from a question of Claude's by its own chime and by the words its name starts with.
 expect said ♪ Offer
-expect focus Command offer. axAutomate offers a command for you to run: echo offered-first
+expect focus Command offer: it runs on your computer, outside axKit. axAutomate offers a command for you to run: echo offered-first
 expect focus 1. Explain this command
 expect state "notice":null
 keys ctrl+2
@@ -116,7 +116,7 @@ wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Check for updates at start"}
 expect mcp The window asks the user whether to run Check for updates at start
 expect said ♪ Offer
-expect focus Command offer. axAutomate asks to run this window's command Check for updates at start (Options, General)
+expect focus Command offer: it acts outside this window. axAutomate asks to run this window's command Check for updates at start (Options, General)
 expect focus 1. Explain this command
 expect state "notice":null
 wait 1500

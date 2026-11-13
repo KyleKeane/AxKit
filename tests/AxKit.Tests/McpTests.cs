@@ -381,9 +381,9 @@ public sealed class McpTests
     public void The_question_as_a_list_is_an_offer_that_starts_on_the_explanation()
     {
         // The label every offer starts with, who asks, the command with its menus and target, and that an AI asks.
-        Assert.Equal("Command offer. Claude asks to run this window's command Open (File) on report.pdf. Asked by Claude, an AI: read the explanation before you allow it",
+        Assert.Equal("Command offer: it acts outside this window. Claude asks to run this window's command Open (File) on report.pdf. Asked by Claude, an AI: read the explanation before you allow it",
             McpRun.AskName("claude-code", "&Open", "File", "report.pdf"));
-        Assert.Equal("Command offer. Claude asks to run this window's command Open. Asked by Claude, an AI: read the explanation before you allow it",
+        Assert.Equal("Command offer: it acts outside this window. Claude asks to run this window's command Open. Asked by Claude, an AI: read the explanation before you allow it",
             McpRun.AskName("claude-code", "Open", string.Empty, " "));
 
         // Running is never where the list starts (bundle AX-11.12), and the order is an offered command's.

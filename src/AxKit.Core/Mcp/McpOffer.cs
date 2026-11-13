@@ -78,9 +78,21 @@ public static class McpOffer
     /// <summary>What every offer's name starts with, and no question of Claude's: with the chime of its own, what tells the two apart though they are answered alike.</summary>
     public const string Label = "Command offer";
 
-    /// <summary>The list's name, read each time the focus comes to it: the label, who offers, the command whole, and that an AI wrote it (<see cref="AiCaution"/>).</summary>
+    /// <summary>
+    /// How far a request reaches, said right after the label in every question's name and under "How far it reaches"
+    /// in its explanation (the user's decision of 2026-11-13: one place that tells when something breaks out of a
+    /// window). Two reaches ask: a window's own command that acts outside its window, and a shell command, which runs
+    /// on the computer outside axKit. A command that stays in its window asks nothing and is only said as it runs.
+    /// </summary>
+    public const string ReachWindow = "it acts outside this window";
+    public const string ReachComputer = "it runs on your computer, outside axKit";
+
+    /// <summary>What every question's name starts with: the label and the reach, "Command offer: it acts outside this window".</summary>
+    public static string Start(string reach) => $"{Label}: {reach}";
+
+    /// <summary>The list's name, read each time the focus comes to it: the label and the reach, who offers, the command whole, and that an AI wrote it (<see cref="AiCaution"/>).</summary>
     public static string AskName(string client, string command) =>
-        $"{Label}. {McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}. {AiCaution.Short(McpRun.Speaker(client))}";
+        $"{Start(ReachComputer)}. {McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}. {AiCaution.Short(McpRun.Speaker(client))}";
 
     /// <summary>What Ctrl+Q reads: the name and the reason.</summary>
     public static string AskText(string client, string command, string? reason)
@@ -108,6 +120,7 @@ public static class McpOffer
         var why = Reason(reason);
         var parts = Details(details);
         return $"# Read this first\n\n{AiCaution.Command(who)}\n\n"
+            + "# How far it reaches\n\nIt runs on your computer, outside axKit and outside any window. It is a shell command: it can read, change and delete what your account can, start programs and use the network. axKit sets no limit on it.\n\n"
             + $"# The command\n\n{command.Trim()}\n\n"
             + $"# Why {who} offers it\n\n{(why.Length > 0 ? why : "No reason was given.")}\n\n"
             + (parts.Length > 0 ? $"# What each part does, in {who}'s words\n\n{parts}\n\n" : string.Empty)

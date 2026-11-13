@@ -406,7 +406,7 @@ which overwrote what the user had there. Now it offers the command through a too
   never be taken for one (the user's decision of 2026-11-13), so two things tell it apart before the command is heard:
   the chime (`Sounds.Offer`, an alarm of five short high falling swoops, which the user chose by ear, where a question has the quick high trill), and
   the words every name of an offer starts with, "Command offer" (`McpOffer.Label`): the list, the explanation's title
-  and the concern's field. The list is named "Command offer. Claude offers a command for you to run: " and the
+  and the concern's field. The list is named "Command offer: it runs on your computer, outside axKit. Claude offers a command for you to run: " and the
   command, read each time the focus comes to it; Ctrl+Q reads it again with the reason. Its answers, in this order:
   1. **Explain this command**, where the list starts, so that an Enter pressed by accident runs nothing: a notice,
      "Command offer: about this command", a text read by line and by heading with one button: the command, why Claude offers it,
@@ -458,6 +458,18 @@ Decisions:
   shell, the session's folder, the output in the conversation. axKit starts no shell for it.
 - MC-D20 **The first answer explains.** Whatever the list starts on is what an Enter meant for something else takes;
   it must run nothing and lose nothing, so it is the answer that only opens a text.
+- MC-D22 **One point of control, and the reach said first** (the user's decision of 2026-11-13: "a single point of
+  control", to "help the user know when something will break out of the sandbox of a window"). What an AI tool can
+  cause in axKit has three reaches, and each has one treatment. **Inside the window** (a command marked read, open or
+  change, `axkit_window_run`): it runs without a question and the window says it, "Claude ran Word wrap". **Outside
+  the window** (a command marked act, `axkit_window_run`): asked first. **On the computer, outside axKit** (a shell
+  command, `axkit_offer_command`): asked first, every time, whatever the run switch says; axKit never runs it, the
+  user's Yes sends it to Claude Code. The two that ask use one interface (MC-7.3, MC-9.4) and their names start with
+  the label and the reach, from one place in the code (`McpOffer.Start`, `ReachWindow`, `ReachComputer`): "Command
+  offer: it acts outside this window" and "Command offer: it runs on your computer, outside axKit". The explanation
+  of each has a section "How far it reaches" right after "Read this first". There is no other way for an AI tool to
+  make something happen: the tools that only read never ask, and the typed data tools (MC-8) change one list's item
+  inside its window and say so. A new tool that acts states its reach here and uses the same interface.
 - MC-D21 **A concern goes through Claude Code's own feedback**, with its consent screen, not through a sender of
   axKit's: the report is about Claude's behaviour, and Anthropic's own channel carries the session's context.
 Code: `AxKit.Core/Mcp/McpOffer` (the rules and the words, `McpOfferTests`), `McpBroker.Offer` (the window),

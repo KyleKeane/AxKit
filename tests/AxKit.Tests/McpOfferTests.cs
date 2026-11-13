@@ -39,7 +39,7 @@ public sealed class McpOfferTests
     public void The_question_is_named_with_the_command_and_read_again_with_the_reason_on_one_line()
     {
         // The command first, then that an AI wrote it, every time the question is read (AX-11.12).
-        Assert.Equal("Command offer. Claude offers a command for you to run: gcloud auth login. Written by Claude, an AI: read the explanation before you run it", McpOffer.AskName("claude-code", " gcloud auth login "));
+        Assert.Equal("Command offer: it runs on your computer, outside axKit. Claude offers a command for you to run: gcloud auth login. Written by Claude, an AI: read the explanation before you run it", McpOffer.AskName("claude-code", " gcloud auth login "));
         Assert.EndsWith("before you run it. Its reason: It asks questions in a browser.",
             McpOffer.AskText("claude-code", "gcloud auth login", "It asks\nquestions in a browser."));
         Assert.DoesNotContain("Its reason", McpOffer.AskText("claude-code", "x", null));

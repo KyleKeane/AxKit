@@ -140,7 +140,7 @@ public static class McpRun
     {
         var place = menu.Length > 0 ? $" ({menu})" : string.Empty;
         var on = target.Trim().Length > 0 ? $" on {ShownTarget(target)}" : string.Empty;
-        return $"{McpOffer.Label}. {Speaker(client)} asks to run this window's command {Plain(label)}{place}{on}. {AiCaution.Asked(Speaker(client))}";
+        return $"{McpOffer.Start(McpOffer.ReachWindow)}. {Speaker(client)} asks to run this window's command {Plain(label)}{place}{on}. {AiCaution.Asked(Speaker(client))}";
     }
 
     public const string ExplainTitle = "Command offer: about this window command";
@@ -152,9 +152,9 @@ public static class McpRun
         var shown = ShownTarget(target);
         return $"# Read this first\n\n{who}, an AI model, asks to run a command of this window, as if you had chosen it from the menu. {AiCaution.Request} "
             + $"axKit does not know why {who} asks: the conversation with it may say. If you do not know what the command will do here, do not allow it. Allowing it is your own act.\n\n"
+            + "# How far it reaches\n\nIt acts outside this window: it may delete, move, send, open or start a program, or end something, exactly as when you run it yourself. It is this window's own menu command and does only what that menu item does; it is not a shell command.\n\n"
             + $"# The command\n\n{Plain(label)}{(menu.Length > 0 ? $", in the menu {menu}" : string.Empty)}.\n\n"
             + $"# What it would act on\n\n{(shown.Length > 0 ? shown : "Nothing in particular: the window names no selection.")}\n\n"
-            + "# What it may do\n\nIt acts outside the window: it may delete, move, send, open or start a program, or end something, exactly as when you run it yourself.\n\n"
             + "# What your answers do\n\n"
             + "Yes, run it runs the command once, now, and not at all if what is selected has changed meanwhile.\n\n"
             + "No, do not run it, which is Escape too, runs nothing. This window then asks no more for a minute.";
