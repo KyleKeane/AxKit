@@ -58,7 +58,7 @@ expect said ! Message to Claude
 keys ctrl+3
 expect said No response yet
 expect focus Conversation
-# Step 4a, the Navigate menu's Conversation item from the conversation: NVDA reading the control again after the menu
+# Step 4a, the Navigation menu's Conversation item from the conversation: NVDA reading the control again after the menu
 # closes needs a real menu opened with Alt, which needs the foreground (left manual). The command itself:
 menu Conversation
 expect said ! Conversation
@@ -75,11 +75,11 @@ keys shift+tab
 expect focus Message to Claude
 # Step 6, the menu bar opened with Alt, its mnemonics and the spoken shortcuts: a real menu needs the foreground
 # (left manual). What the menus hold is checked through the command list instead: the Options items stand in their
-# submenus, and Navigate's items carry the full stop after the number that makes NVDA pause before "1 of 9"
+# submenus, and Navigation's items carry the full stop after the number that makes NVDA pause before "1 of 9"
 # (the command list comes back as JSON with + escaped as \u002B, so the script spells it that way).
-expect commands Message field, Navigate, Ctrl\u002B1.
-expect commands Conversation, Navigate, Ctrl\u002B2.
-expect commands Latest response, Navigate, Ctrl\u002B3.
+expect commands Message field, Navigation, Ctrl\u002B1.
+expect commands Conversation, Navigation, Ctrl\u002B2.
+expect commands Latest response, Navigation, Ctrl\u002B3.
 expect commands Options, Sounds,
 expect commands Options, Speech,
 expect commands Options, When Claude is done,

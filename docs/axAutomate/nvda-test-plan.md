@@ -47,7 +47,7 @@ desktop; the window's run starts a further desktop of its own there, which works
 3. Right into the failed workflow: its step reads "2. Expect the focus: ..., failed"; Tab, Down: "Last run: failed.
    ...".
 4. Inside a workflow, F5: "Running 03-waits; Escape stops it"; Escape at once: "Stopping after the current step",
-   then "03-waits stopped". On a workflow that cannot run, F5: "This workflow cannot run: ...". The Operations menu:
+   then "03-waits stopped". On a workflow that cannot run, F5: "This workflow cannot run: ...". The Actions menu:
    Run unavailable on it; Stop the run unavailable when nothing runs.
 5. By ear (the script cannot): during a folder run of `tests\scripts\axDown`, work in another program: no axKit
    window of the run appears, takes the focus or plays a sound (a workflow's `run` step is a command on your own

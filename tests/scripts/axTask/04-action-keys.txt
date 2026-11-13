@@ -25,16 +25,16 @@ keys right
 expect focus Fix the tap
 keys ctrl+3
 expect said ♪ Edge
-expect said No action on Ctrl+3 in this list; List menu, Action keys sets one
+expect said No action on Ctrl+3 in this list; Actions, Action keys sets one
 keys ctrl+1
 expect said Done: Done: done
 expect focus Fix the tap, done
 keys ctrl+z
 expect said Undone: Done: Done: done
 expect focus Fix the tap
-# The Item menu's Action keys submenu names the list's actions (RP-8.3).
-expect commands Done, Item, Action keys
-expect commands Later, Item, Action keys
+# Context's Action keys submenu on an item names the list's actions (RP-8.3).
+expect commands Done, Context, Action keys
+expect commands Later, Context, Action keys
 # Step 4: Ctrl+2 moves the item to Later, the links following; Ctrl+Z brings it back.
 keys ctrl+2
 expect said Later: Fix the tap moved to Later

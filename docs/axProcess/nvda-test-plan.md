@@ -12,15 +12,15 @@ Run with NVDA before a release, after `run-axProcess.ps1` (or `.\run.ps1 -App pr
 6. F5: "Refreshed: Processes, N"; the selection is on the same process.
 7. Home, then Up: the low edge sound, nothing spoken. End, then Down: the same.
 8. Tab: "Services, N. <service>"; Tab: "Startup, N. <entry>"; Tab: "Processes, N. <process>". Shift+Tab: "Startup, …".
-9. On a process, Shift+F10: the Process menu opens and NVDA reads "Details Enter". Escape. Ctrl+2, Shift+F10: the Service menu; Ctrl+3, Shift+F10: the Startup menu. The Applications key does the same.
-9a. In the Processes view, Alt, then Right along the bar: Session, Process, View, Options, axKit, Help; Service and Startup are passed over. Ctrl+2, Alt, Right: Session, Service, View…
+9. On a process, Shift+F10: Context opens with the process commands and NVDA reads "Details Enter". Escape. Ctrl+2, Shift+F10: Context with the service commands; Ctrl+3, Shift+F10: the startup commands. The Applications key does the same.
+9a. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help, the same in every view; Context holds the view's commands.
 9b. Type `svc`: the first process starting with svc; `s` again after a pause: the next name starting with s; Shift+S: back to the one before.
 10. Close axProcess, then in another axKit window Alt+W, R: "1. axProcess" is in Recently closed; Enter starts it.
 7. Alt+F4 closes the window without a question.
 
 ## 2. Processes (PR-3)
 
-1. View, Sort processes by, Name: "Sorted by name"; the list is in the alphabet's order on the item it had. Sort by Processor: "Sorted by processor". Back to Memory.
+1. Options, Sort processes by, Name: "Sorted by name"; the list is in the alphabet's order on the item it had. Sort by Processor: "Sorted by processor". Back to Memory.
 2. Ctrl+F, type `notepad`, Enter: the Notepad item selected and read.
 3. Enter: a notice titled "Notepad" with "Process ID …", "Memory …", "Program C:\Windows\…\notepad.exe", "Started …", "Threads …"; the buttons End process, Show program in axFile, Close; Escape closes it.
 4. Ctrl+E on Notepad: axFile opens on its folder with notepad.exe selected.

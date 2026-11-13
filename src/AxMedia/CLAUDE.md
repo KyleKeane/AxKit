@@ -16,7 +16,7 @@ dotnet test tests/AxMedia.Tests/AxMedia.Tests.csproj
 
 - `AxMediaApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7): the paths, `--add` and `--new` read off the command line, then, with paths and an open axMedia window, one `AppMessage.Send` and no window of this process (SPEC.md AM-1.2); otherwise one call into `AxKit.Forms/AppHost.Run` with the settings and the window on a `HandOver`; the log (`axMedia.log`), the crash handling, `--help` and `--version` are the host's.
 - `MediaForm`, in two partial files since 2026-10-24 (`MediaForm.Player.cs` is playing, AM-4: the engine, the transport, the position, the engine's events):
-  - the controls (the list, the video area, the status bar), the menus (AM-5.1);
+  - the controls (the list, the video area, the status bar), the menus (AM-5.1; the bundle's eight through `PlaceMenuBar`, AX-9.1, 2026-11-11: Actions the player, Navigation the queue's moves and Go to time, Context (`_context`, a `ContextBarMenu`, AX-9.11) the selected file's Play, Remove and Information, opened by Shift+F10, the Applications key and a right click, `OpenContext`; Options with Say each file as it starts first);
   - the hooks the window base asks for (`TakeHandOver`: a hand-over message, answered by the base and queued through `Apply`, the queue drained in order by `DrainAsync`);
   - the menus and the keys as one command list (`Add` and `AddKey` of the window base, docs/axKit/app-kit.md AK-2; each key from `BundleKeys` and `AxMediaKeys`; Enter, Delete and Space with `When = _list.Focused`; no `ProcessWindowKey` of its own);
   - the base's `Do` runs every task (an escaped exception becomes a notice);

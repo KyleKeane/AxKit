@@ -35,7 +35,7 @@ internal sealed partial class MainForm
 
         // What goes to Claude itself (FR-11); the raw sequences are fixed here and listed in Appendix B.
         // "Claude Code" since 5.7.0: the bundle's axKit menu holds a Claude submenu (AI help, AX-9.1); this menu is the program.
-        var claude = new ToolStripMenuItem("O&perations");
+        var claude = new ToolStripMenuItem();
         // The process first (FR-1.8), then the turn.
         Add(claude, new Command("Force Claude to res&tart", AxClaudeKeys.RestartClaude, RestartClaude) { Mark = CommandMark.Act });
         claude.DropDownItems.Add(new ToolStripSeparator());
@@ -55,7 +55,7 @@ internal sealed partial class MainForm
         sendKey.DropDownItems.Add(new ToolStripMenuItem("Do&wn", null, (_, _) => Write("\x1b[B")));
         claude.DropDownItems.Add(sendKey);
 
-        var navigate = new ToolStripMenuItem("&Navigate");
+        var navigate = new ToolStripMenuItem();
         Add(navigate, new Command("&Message field", AxClaudeKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open });
         Add(navigate, new Command("&Conversation", AxClaudeKeys.GoToConversation, () => GoTo(Transcript)) { Mark = CommandMark.Open });
         Add(navigate, new Command("&Latest response", AxClaudeKeys.LatestResponse, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open });
@@ -66,7 +66,7 @@ internal sealed partial class MainForm
         AddBookmarkItems(navigate);
 
         // The settings: a submenu for each kind, nothing outside one. Each check item is saved as it is toggled.
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         var sounds = new ToolStripMenuItem("&Sounds");
         sounds.DropDownItems.Add(Toggle("&Chimes: ready, sent, replying, done, question", _settings.SoundOnBell, v => _settings.SoundOnBell = v));
         sounds.DropDownItems.Add(Toggle("&Ticks for new lines and tool calls", _settings.ClickOnNewLine, v => _settings.ClickOnNewLine = v));
@@ -128,7 +128,8 @@ internal sealed partial class MainForm
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window; Help ends with the update
         // items and About (AX-3.1, FR-1.10): Check for updates names the version in use and asks GitHub every time; Update
         // to axKit n stands below it while a newer release is known; About is the bundle's sections, as this window's notices.
-        MenuBar.Items.AddRange([session, claude, navigate, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        // The bundle's eight (AX-9.1): Context is the line of the conversation and the selection (AX-9.11).
+        PlaceMenuBar(MenuBar, session, claude, navigate, CreateTranscriptContext("&Quote this line in the message"), options, help);
     }
 
     /// <summary>Options → Speech → Speak replies: a mode (FR-7.4): speech starts with what arrives next.</summary>

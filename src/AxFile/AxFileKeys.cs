@@ -86,7 +86,7 @@ public static class AxFileKeys
     public const Keys SelectToStart = Keys.Shift | Keys.Home;
     public const Keys SelectToEnd = Keys.Shift | Keys.End;
 
-    /// <summary>In the list: the menu bar's Item menu on the entry, opened as Alt and I open it (AF-4.6, AF-D13).</summary>
+    /// <summary>In the list: the bar's Context menu on the entry, opened as Alt and C open it (AF-4.6, AF-D13, AX-9.11).</summary>
     public const Keys ContextMenu = Keys.Shift | Keys.F10;
 
     /// <summary>In the list: the same, from the Applications key.</summary>
@@ -161,8 +161,8 @@ public static class AxFileKeys
         ("Select to the previous entry (in the folder list)", SelectUp),
         ("Select to the first entry (in the folder list)", SelectToStart),
         ("Select to the last entry (in the folder list)", SelectToEnd),
-        ("Item menu (in the folder list)", ContextMenu),
-        ("Item menu (in the folder list)", ContextMenuAlso),
+        ("Context menu (in the folder list)", ContextMenu),
+        ("Context menu (in the folder list)", ContextMenuAlso),
         ("Properties", Properties),
         ("Undo the newest operation, or the action under the selection (in the Actions list)", Undo),
         ("The edge earcon at the first entry (in a list); the previous completion (in the Go to folder field)", FirstItem),

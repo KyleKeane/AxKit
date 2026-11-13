@@ -103,15 +103,21 @@ public sealed partial class TextEditorForm : AxKitForm
         file.DropDownItems.Add(new ToolStripSeparator());
         file.DropDownItems.Add(CreateExitItem());
 
-        // No Edit menu in the viewer (AP-3.1): the control's own Ctrl+A and Ctrl+C still work there.
-        ToolStripMenuItem? edit = null;
+        // Actions (AX-9.1): Undo, Redo and the app's own commands on the whole text; none in the viewer (AP-3.1), whose
+        // Actions says so. Context: the clipboard on the selection, the control's own Ctrl+A and Ctrl+C in the viewer.
+        var edit = new ToolStripMenuItem();
+        var context = new ToolStripMenuItem();
+        AddClipboardItems(context.DropDownItems);
+        if (context.DropDownItems.Count > 0 && context.DropDownItems[0] is ToolStripSeparator)
+        {
+            context.DropDownItems.RemoveAt(0);
+        }
+
         if (!_app.ReadOnly)
         {
-            edit = new ToolStripMenuItem("O&perations");
             Add(edit, _undo);
             Add(edit, _redo);
             AddKey(_redo with { Key = EditorKeys.RedoAlso });
-            AddClipboardItems(edit.DropDownItems);
             if (_app.Commands.Count > 0)
             {
                 // The app's own commands on the whole text (AJ-2.3), after the control's own.
@@ -123,7 +129,7 @@ public sealed partial class TextEditorForm : AxKitForm
             }
         }
 
-        var navigate = new ToolStripMenuItem("&Navigate");
+        var navigate = new ToolStripMenuItem();
         Add(navigate, new Command("&Find...", BundleKeys.Find, () => ShowFind(_editor)) { Mark = CommandMark.Read });
         Add(navigate, new Command("Find &next", BundleKeys.FindNext, () => FindInEditor(1)) { Mark = CommandMark.Read });
         Add(navigate, new Command("Find pre&vious", BundleKeys.FindPrevious, () => FindInEditor(-1)) { Mark = CommandMark.Read });
@@ -143,7 +149,7 @@ public sealed partial class TextEditorForm : AxKitForm
 
         // Options, as axClaude's (AD-4.3): every setting in the submenu for what it is about, none outside one.
         // The item goes into the Text submenu the base makes, so it is made from the command here and its key added.
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         var wordWrap = new Command("&Word wrap", EditorKeys.WordWrap, ToggleWordWrap) { Mark = CommandMark.Change };
         _wordWrapItem = Add(wordWrap);
         _wordWrapItem.Checked = WordWrapPreference;
@@ -155,7 +161,7 @@ public sealed partial class TextEditorForm : AxKitForm
         var help = CreateHelpMenu(_app.UserGuide, _app.ResourcesLabel, _app.Resources);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange(edit is null ? [file, navigate, options, CreateWindowMenu(), CreateAxKitMenu(), help] : [file, edit, navigate, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        PlaceMenuBar(_menu, file, edit, navigate, context, options, help);
 
         // The keys without a menu item: one main control, the editor, or the Go to line field while it shows; in the
         // viewer with its Details list, the text and the list in turn (AP-6.1); the viewer's line number. The keys the
@@ -185,16 +191,9 @@ public sealed partial class TextEditorForm : AxKitForm
         _editor.HideSelection = false;
         _editor.Dock = DockStyle.Fill;
         _editor.TabIndex = 0;
-        // The window's own context menu in place of the EDIT control's, whose Undo reaches the control's buffer (AD-D1).
-        var context = new ContextMenuStrip();
-        if (!_app.ReadOnly)
-        {
-            context.Items.Add(Item(_undo.Label, _undo.Run, _undo.Key));
-            context.Items.Add(Item(_redo.Label, _redo.Run, _redo.Key));
-        }
-
-        AddClipboardItems(context.Items);
-        _editor.ContextMenuStrip = context;
+        // Shift+F10, the Applications key and a right click open the bar's Context menu in place of the EDIT control's,
+        // whose Undo reaches the control's buffer (AD-D1; the window's own context menu until 2026-11-11, AX-9.11).
+        ContextFromControl(_editor);
         _editor.KeyDown += OnEditorKeyDown;
         _editor.KeyPress += OnEditorKeyPress;
         _editor.KeyUp += (_, _) =>

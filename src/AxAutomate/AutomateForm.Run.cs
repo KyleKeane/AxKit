@@ -101,7 +101,7 @@ public sealed partial class AutomateForm
     private bool CanRun() => _workflow is { } open ? ScriptLines.CannotRun(open, nvda: false, confined: true) is null : _folders.Count > 0 && _levelWorkflows > 0;
 
     /// <summary>
-    /// The Operations menu as it opens, and the command palette as it reads it: Run only on what can run (AU-3.3.2),
+    /// The Actions menu as it opens, and the command palette as it reads it: Run only on what can run (AU-3.3.2),
     /// a workflow that can or a folder with a workflow, and never during a run; Stop the run only during one.
     /// </summary>
     private void UpdateRunItems()

@@ -14,6 +14,7 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 6. Ctrl+I on the playing file: "<name>, 2 of 15, playing, 0:12 of 45:30"; on another: "<name>, 3 of 15".
 7. Delete on another file: "Removed <name>", the list one shorter, the mark still on the playing file. Delete on the playing file: "Removed <name>" and the next plays ("Playing <next>" is heard only when Say each file is on). Session, Clear queue: "Queue cleared", the sound stops, the list reads "Queue is empty"; NVDA+T: "axMedia".
 8. Ctrl+N: a second axMedia window, empty; Alt+W, O, 1 goes back; Alt+F4 closes the second.
+9. The menus (bundle AX-9.1, AX-9.11): Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help. On a file of the queue, Shift+F10: Context opens on "Play Enter" and NVDA reads it; Escape. With the queue empty, Alt+C: one item, "Nothing in the queue".
 
 ## 2. The hand-over (AM-1.2, AM-1.3)
 
@@ -30,9 +31,9 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 1. Enter on the first chapter: "Playing <name>". Space: "Paused at 0:05", the sound stops. Space: "Playing". Ctrl+P: "Paused at …"; Ctrl+P: "Playing". Ctrl+T, then Ctrl+P in the notice's field: nothing happens (the notice holds the keys); Escape.
 2a. Ctrl+Right again and again until the file is nearly over, then once more: the time said is the file's length, not a time past it; Go to time with a time past the end: the same.
 2. Ctrl+Right: "0:20" and the sound jumps. Ctrl+Left: "0:05". Ctrl+T, type `1:00`, Enter: "1:00". Ctrl+T, type `abc`, Enter: "Not a time", the notice stays; Escape.
-3. Ctrl+Shift+Period: "Speed 1.25"; the voice is faster at the same pitch. Twice more: "Speed 1.75". Ctrl+Shift+Comma: "Speed 1.5". Operations, Normal speed: "Speed 1". Set 1.5, Alt+F4, start again and play: Ctrl+Q ends in "speed 1.5".
+3. Ctrl+Shift+Period: "Speed 1.25"; the voice is faster at the same pitch. Twice more: "Speed 1.75". Ctrl+Shift+Comma: "Speed 1.5". Actions, Normal speed: "Speed 1". Set 1.5, Alt+F4, start again and play: Ctrl+Q ends in "speed 1.5".
 4. Ctrl+Q: "Playing <name>, 1:12 of 45:30, speed 1.5". Ctrl+Shift+Right: "Playing <next>". Ctrl+Shift+Left: "Playing <first>". Again: "First file".
-5. Ctrl+T near the end, Enter; wait: "Playing <next>" spoken on its own, the next file plays, the selection stays where it was and the mark moves. Operations, Say each file as it starts, off; the same again: nothing is spoken.
+5. Ctrl+T near the end, Enter; wait: "Playing <next>" spoken on its own, the next file plays, the selection stays where it was and the mark moves. Options, Say each file as it starts, off; the same again: nothing is spoken.
 6. On the last file, Ctrl+T near its end; wait: "End of queue" with the done chime; NVDA+End: both labels empty; NVDA+T: "axMedia". Ctrl+Q: "Nothing playing".
 7. Enter on the video: "Playing <name>", the picture appears at the top of the window, the focus stays in the list; Space pauses; Ctrl+Shift+Right or the end hides the picture.
 8. Enter on a file Windows cannot decode (an `.opus` without the Store codec): "Cannot play <name>: …" and the next plays. Ctrl+O and pick the `.txt` (All files): "Added 1"; Enter on it: "Cannot play <name>: …", the next plays.

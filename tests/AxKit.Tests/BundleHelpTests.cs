@@ -25,7 +25,8 @@ public sealed class BundleHelpTests
                 "  Ctrl+Plus, Ctrl+Minus: bigger or smaller text",
                 "  A line break typed into a field of several lines is said, new line; Options, Text, Say new line turns that off for every window",
                 "  A key that lands on a heading, in a list or a text, plays a short rising sound before it is read; Options, Text, Sound on headings turns that off for every window",
-                "  Alt: the menu. Alt+F4: close axThing",
+                "  Shift+F10 or the Applications key: the Context menu, what acts on what you are on",
+            "  Alt: the menu. Alt+F4: close axThing",
                 "  " + BundleHelp.BundleMenusLine,
                 "",
                 "",
@@ -42,10 +43,10 @@ public sealed class BundleHelpTests
     }
 
     [Fact]
-    public void The_app_names_what_Alt_F4_does_the_heading_and_the_Navigate_menu()
+    public void The_app_names_what_Alt_F4_does_the_heading_and_the_Navigation_menu()
     {
         var lines = Lines(BundleHelp.Section("axThing", [], altF4: "hide axThing", heading: "Anywhere", navigateMenu: true));
-        Assert.Equal("In this text: h and Shift+H move by heading, 1 to 6 by level; the Next and Previous keys of the Navigate menu work here too. Ctrl+F finds, F3 and Shift+F3 the next and the previous match", lines[0]);
+        Assert.Equal("In this text: h and Shift+H move by heading, 1 to 6 by level; the Next and Previous keys of the Navigation menu work here too. Ctrl+F finds, F3 and Shift+F3 the next and the previous match", lines[0]);
         Assert.Equal("## Anywhere", lines[2]);
         Assert.Contains("  Alt: the menu. Alt+F4: hide axThing", lines);
         Assert.DoesNotContain(lines, line => line.Contains("close axThing", StringComparison.Ordinal));

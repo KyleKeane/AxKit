@@ -44,7 +44,7 @@ Two panes side by side, and a status bar.
 
 ## Sections of your own
 
-- On a list, Ctrl+M (List, Move to section) chooses its section: Your lists, one of your sections, or a new one.
+- On a list, Ctrl+M (Context, Move to section) chooses its section: Your lists, one of your sections, or a new one.
 - The same is the Section field, first in a list's details: Tab on the list, Enter on Section, type the name.
 - A new list (Ctrl+Shift+N) joins the section of the line selected.
 - A section exists while a list is in it; to rename one, move its lists.
@@ -52,8 +52,8 @@ Two panes side by side, and a status bar.
 ## Tasks and plain lists
 
 - A task is an item with a **Done** check. Space marks it done or not done, in the navigator or on the Done field.
-- A list without Done is a plain list, for things that are not tasks. List, Add Done to every item makes a plain list
-  a checklist; List, Remove Done from every item makes it plain again.
+- A list without Done is a plain list, for things that are not tasks. Actions, Add Done to every item makes a plain list
+  a checklist; Actions, Remove Done from every item makes it plain again.
 - A row reads its title and, for a task, "done", "due 30 October" or "overdue since 22 October".
 - Ctrl+Shift+D hides the done tasks of a list, and shows them again.
 
@@ -80,14 +80,14 @@ In the detail pane:
   - a link takes the title of the item it points to, in any list.
 - Ctrl+N adds a field after the selected one: its title, then its type from a list; a choice then asks its options.
 - F2 renames the field in place, Delete removes it, Alt+Up and Alt+Down move it. The Title field stays.
-- Item, Use these fields for new items gives the list's new items the fields of the item selected, emptied.
+- Context, Use these fields for new items gives the list's new items the fields of the item selected, emptied.
 
 Every change is written to the file at once, and Ctrl+Z takes back the last ones, one at a time. If another program
 changed the file since axTask showed it, axTask reads it again and says so instead of writing over it.
 
 ## Smart lists
 
-All tasks is every task not done, in every list but the Archive, the soonest due first. List, New smart list makes
+All tasks is every task not done, in every list but the Archive, the soonest due first. Actions, New smart list makes
 one of your own: a small file whose conditions start as All tasks' and open in axJSON to change. For example, the
 tasks of the Work list due within a week:
 
@@ -145,20 +145,20 @@ axJSON; Ctrl+E shows it in axFile. Anything axTask does not know in a file is ke
 
 ## Action keys: Ctrl+1 to Ctrl+9
 
-Every list can give the number keys actions of its own. List, Action keys lists the nine keys; Enter on one asks a
+Every list can give the number keys actions of its own. Actions, Action keys lists the nine keys; Enter on one asks a
 name, what the key does and its value: set fields to values ("Kind: Bug", "Done: done"), move the item to another
 list, or open something (a field holding a web address, or an app such as axJSON for the item's file). From then on
-Ctrl+1 to Ctrl+9 do that to the item selected, and the Item menu's Action keys submenu names them. Ctrl+Z takes a set
+Ctrl+1 to Ctrl+9 do that to the item selected, and Context's Action keys submenu on an item names them. Ctrl+Z takes a set
 or a move back. All tasks is Ctrl+0.
 
 ## GitHub lists
 
-List, New GitHub list asks for a repository as owner/name and makes a list of its open issues, read from GitHub when
+Actions, New GitHub list asks for a repository as owner/name and makes a list of its open issues, read from GitHub when
 the list opens and on F5, with no account needed. Each issue is an item: its number, kind, state, who reported it, the
-axKit version when it came from axKit, the address, the body, and Notes, which are yours and stay. The Item menu's
+axKit version when it came from axKit, the address, the body, and Notes, which are yours and stay. Context's
 GitHub submenu changes an issue as your own GitHub account: make it a bug, a feature request or feedback, close or
 reopen it, comment, block a reporter or a version of axKit that sends nonsense, open it on GitHub, or open it in
-axClaude with the issue in the message field. For that, List, GitHub account takes a token of your GitHub account
+axClaude with the issue in the message field. For that, Actions, GitHub account takes a token of your GitHub account
 once (a fine-grained token with Issues and Contents on the reports repository), kept protected on this computer. A new
 GitHub list comes with action keys: Ctrl+1 to Ctrl+3 the kinds, Ctrl+4 Close, Ctrl+5 Open on GitHub, Ctrl+6 Open in
 axClaude. axKit's own reports arrive in the maintainer's reports repository this way; `docs/axKit/reports.md` tells
@@ -169,7 +169,7 @@ the whole story.
 Your other folders of lists, such as a `tasks` folder in each code project, can be reached from this window without
 moving them.
 
-- Options, Project folders, Add a project folder: type the path of a folder that holds your projects, such as
+- Options, Add a project folder: type the path of a folder that holds your projects, such as
   `D:\Projects`, and press Enter; or leave the field empty and press Enter to choose it with the Windows
   folder picker: there, Enter opens a folder and the Select Folder button chooses the one you are in. axTask then
   shows your own lists with the new folder's heading selected, "Added Projects in Projects, looking for lists".
@@ -213,7 +213,7 @@ window is open, once you have turned the AI tools on and allowed it (axKit menu,
 
 ## Keys
 
-F1 lists every key. Shift+F10 or the Applications key opens the menu of the selection.
+F1 lists every key. Shift+F10 or the Applications key opens Context, what acts on the selection.
 
 ## If something goes wrong
 

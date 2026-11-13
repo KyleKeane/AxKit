@@ -52,10 +52,14 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
 2. In `broken.json`, Ctrl+Shift+F: "Formatted, repaired: 1 trailing comma, 1 missing comma"; Ctrl+E then says "No next
    error". Type `'x'` as a value somewhere and Ctrl+Shift+F: "Formatted, repaired: 1 single-quoted string".
 3. Delete a value, leaving `"count": ,`, then Ctrl+Shift+F: "Not valid JSON: line 4, expected a value, found ','"; the
-   text is unchanged. Operations, Format does the same as the key.
+   text is unchanged. Actions, Format does the same as the key.
 4. Ctrl+Shift+F on an already formatted file: "Already formatted", nothing changes, and the title shows no star.
 
 ## 4. The Window menu and About
 
 1. Alt+W, N: New window lists every app of the bundle; Alt+W, N, J starts a new axJSON window.
 2. Alt+W, O: Open windows lists the other axKit windows, most recent first. Alt+H, About, Version names every app.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. In the text, Shift+F10: Context opens on "Cut Ctrl+X"; Alt, A: Actions with Undo, Redo and Format; Alt, N: Navigation with the finds, Go to line and the jumps.

@@ -132,10 +132,11 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 
 ### AC-7 Menus, keys, texts
 
-- AC-7.1 Menus (AX-6): **Session (S):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal |
-  Binary | Octal) | Answer in other bases Ctrl+I | Say the last answer Ctrl+Q | ─ | Variables | Clear variables… | ─ |
-  Save history… Ctrl+S | Clear history… Ctrl+Shift+Delete | ─ | Exit Alt+F4. **Options (O):** Angles ▸ (Degrees ✓ |
-  Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):**
+- AC-7.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Save history… Ctrl+S | ─ | Exit Alt+F4.
+  **Actions (A):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal | Binary | Octal) | Answer in
+  other bases Ctrl+I | Say the last answer Ctrl+Q | ─ | Variables | Clear variables… | Clear history… Ctrl+Shift+Delete.
+  **Navigation (N)** and **Context (C)**: one item each saying there is nothing yet. **Options (O):** Angles ▸ (Degrees ✓ |
+  Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Calculator resources ▸ (Floating point explained). Every item has a
   mnemonic (AX-7.4).
 - AC-7.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (the history as a

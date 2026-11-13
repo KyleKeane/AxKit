@@ -133,7 +133,7 @@ keys in place of its words on a line:
 - AU-4.5 During a run, each step's row is said as it ends only when it fails ("Step 7 failed: expected said Command
   palette"), and once at the end: "axDown: the command palette passed, 42 steps" or "failed at step 7". The report,
   every step with what was said and focused, opens with Ctrl+R as a notice text with the bundle's reading keys.
-- AU-4.6 The window's menus follow AX-9 (Session, Operations, Options, Window, axKit, Help).
+- AU-4.6 The window's menus follow AX-9.1 (Session, Actions, Navigation, Context, Options, Window, axKit, Help; 2026-11-11): Actions holds Run and Stop the run, Context Open, Read in full and the workflow's file as text for what the focus is on.
 
 ## 5. The engine and the move of the tests
 
@@ -184,7 +184,7 @@ keys in place of its words on a line:
   window that hangs), and ends; it never stays on without a window (checked 2026-11-11: gone within 35 s of closing
   during a 40 s wait). The run's thread never ends the process: anything a step throws fails that workflow.
 - AU-6b.5 A workflow that cannot run (AU-3.3.2, AU-D7) says why on F5, "This workflow cannot run: ...", and its
-  details say "Cannot run: ..."; Operations, Run is unavailable on it (in the command palette too), and Stop the run
+  details say "Cannot run: ..."; Actions, Run is unavailable on it (in the command palette too), and Stop the run
   when nothing runs. A step whose number is not one (`wait 2s`, `use first`, a `silence` without its length, a
   `wait` of a workflow file without its milliseconds) makes the workflow unrunnable with the step said, as an unknown
   operation does; whether a workflow can run is read from what the window holds, and every file a run reads is read

@@ -55,21 +55,21 @@ keys ctrl+4
 expect said ! Fourth level heading, heading level 4
 keys ctrl+shift+4
 expect said ! No previous heading level 4
-# Navigate, Next and Previous list Heading and Heading level 1 to 6 with their keys; the items do what the keys do.
-expect commands "Heading, Navigate, Next, Ctrl\u002BH"
-expect commands "Heading level 1, Navigate, Next, Ctrl\u002B1."
-expect commands "Heading level 6, Navigate, Next, Ctrl\u002B6."
-expect commands "Heading, Navigate, Previous, Ctrl\u002BShift\u002BH"
-expect commands "Heading level 1, Navigate, Previous, Ctrl\u002BShift\u002B1."
-expect commands "Heading level 6, Navigate, Previous, Ctrl\u002BShift\u002B6."
+# Navigation, Next and Previous list Heading and Heading level 1 to 6 with their keys; the items do what the keys do.
+expect commands "Heading, Navigation, Next, Ctrl\u002BH"
+expect commands "Heading level 1, Navigation, Next, Ctrl\u002B1."
+expect commands "Heading level 6, Navigation, Next, Ctrl\u002B6."
+expect commands "Heading, Navigation, Previous, Ctrl\u002BShift\u002BH"
+expect commands "Heading level 1, Navigation, Previous, Ctrl\u002BShift\u002B1."
+expect commands "Heading level 6, Navigation, Previous, Ctrl\u002BShift\u002B6."
 keys ctrl+home
-menu Heading level 3, Navigate, Next
+menu Heading level 3, Navigation, Next
 expect said ! Third heading, level 3, heading level 3
-menu Heading level 1, Navigate, Previous
+menu Heading level 1, Navigation, Previous
 expect said ! Long Markdown file for navigation, heading level 1
-menu Heading, Navigate, Next
+menu Heading, Navigation, Next
 expect said ! Second heading, level 2, heading level 2
-menu Heading, Navigate, Previous
+menu Heading, Navigation, Previous
 expect said ! Long Markdown file for navigation, heading level 1
 
 # 8.5: Ctrl+K, the caret on the link's first character; a bare and an angle address count, an image does not, nor
@@ -124,14 +124,14 @@ keys ctrl+shift+t
 expect said ! No previous table
 keys ctrl+end ctrl+shift+t
 expect said ! Table with 3 rows and 2 columns
-# Navigate, Next and Previous list Link, List, List item, Block quote and Table with their keys.
-expect commands "Link, Navigate, Next, Ctrl\u002BK"
-expect commands "List, Navigate, Next, Ctrl\u002BL"
-expect commands "List item, Navigate, Next, Ctrl\u002BI"
-expect commands "Block quote, Navigate, Next, Ctrl\u002BQ"
-expect commands "Table, Navigate, Next, Ctrl\u002BT"
-expect commands "Link, Navigate, Previous, Ctrl\u002BShift\u002BK"
-expect commands "List, Navigate, Previous, Ctrl\u002BShift\u002BL"
-expect commands "List item, Navigate, Previous, Ctrl\u002BShift\u002BI"
-expect commands "Block quote, Navigate, Previous, Ctrl\u002BShift\u002BQ"
-expect commands "Table, Navigate, Previous, Ctrl\u002BShift\u002BT"
+# Navigation, Next and Previous list Link, List, List item, Block quote and Table with their keys.
+expect commands "Link, Navigation, Next, Ctrl\u002BK"
+expect commands "List, Navigation, Next, Ctrl\u002BL"
+expect commands "List item, Navigation, Next, Ctrl\u002BI"
+expect commands "Block quote, Navigation, Next, Ctrl\u002BQ"
+expect commands "Table, Navigation, Next, Ctrl\u002BT"
+expect commands "Link, Navigation, Previous, Ctrl\u002BShift\u002BK"
+expect commands "List, Navigation, Previous, Ctrl\u002BShift\u002BL"
+expect commands "List item, Navigation, Previous, Ctrl\u002BShift\u002BI"
+expect commands "Block quote, Navigation, Previous, Ctrl\u002BShift\u002BQ"
+expect commands "Table, Navigation, Previous, Ctrl\u002BShift\u002BT"

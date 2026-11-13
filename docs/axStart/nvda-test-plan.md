@@ -56,3 +56,7 @@ Before starting: install the build (`publish.ps1`), or quit any running axStart 
 3. Options, General, Say the first match while typing off: typing says nothing; Ctrl+I says the match. On again.
 4. An update in place from another axKit window: afterwards Ctrl+Shift+Space still works (axStart was stopped and started again hidden).
 5. Session, Quit axStart: the hotkey does nothing until axStart is started again.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. With a match selected, Alt, C: Context opens on "Start Enter"; Alt, A: one item, "No actions here yet".

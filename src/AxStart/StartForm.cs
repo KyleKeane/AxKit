@@ -31,16 +31,18 @@ public sealed class StartForm : HotkeyForm
         // ---- menus and keys (AS-3.3, AS-5.2, AS-5.3): one command list (docs/axKit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----
         AddMatchKeys(AxStartKeys.NextMatch, AxStartKeys.PreviousMatch, AxStartKeys.FirstMatch, AxStartKeys.LastMatch);
-        var start = new ToolStripMenuItem("&Session");
-        Add(start, new Command("&Start", AxStartKeys.Start, () => StartSelected(administrator: false)) { Mark = CommandMark.Act });
-        Add(start, new Command("Start as &administrator", AxStartKeys.StartAsAdministrator, () => StartSelected(administrator: true)) { Mark = CommandMark.Act });
-        Add(start, new Command("Open file &location", AxStartKeys.OpenFileLocation, OpenFileLocation) { Mark = CommandMark.Open });
-        Add(start, new Command("&Information", AxStartKeys.Information, SayInformation) { Mark = CommandMark.Read });
-        start.DropDownItems.Add(new ToolStripSeparator());
+        // The bundle's eight (AX-9.1): Session holds the programs read again, Hide and Quit; Context what acts on the
+        // program the first match or the selection is on (AX-9.11).
+        var start = new ToolStripMenuItem();
         Add(start, new Command("&Refresh programs", AxStartKeys.Refresh, () => Do(() => RefreshAsync(announce: true))) { Mark = CommandMark.Read });
         AddHideAndQuit(start, AxStartKeys.Hide);
+        var context = new ToolStripMenuItem();
+        Add(context, new Command("&Start", AxStartKeys.Start, () => StartSelected(administrator: false)) { Mark = CommandMark.Act });
+        Add(context, new Command("Start as &administrator", AxStartKeys.StartAsAdministrator, () => StartSelected(administrator: true)) { Mark = CommandMark.Act });
+        Add(context, new Command("Open file &location", AxStartKeys.OpenFileLocation, OpenFileLocation) { Mark = CommandMark.Open });
+        Add(context, new Command("&Information", AxStartKeys.Information, SayInformation) { Mark = CommandMark.Read });
 
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         options.DropDownItems.Add(HotkeyItem());
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem()));
@@ -50,7 +52,7 @@ public sealed class StartForm : HotkeyForm
             [("&Keyboard shortcuts in Windows", "https://support.microsoft.com/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec")]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([start, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        PlaceMenuBar(_menu, start, new ToolStripMenuItem(), new ToolStripMenuItem(), context, options, help);
         MainMenuStrip = _menu;
 
         // ---- the field and the matches (AS-3.1, AS-D2): HotkeyForm's, named here ----

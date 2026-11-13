@@ -70,39 +70,39 @@ expect said ! No next error
 keys down down right right left up end home
 expect quiet 1000
 
-# 2.5: Navigate, Next and Previous list Key, Object, Array, Item and Error with their keys; each item does what its key does.
-expect commands "Key, Navigate, Next, Ctrl\u002BK"
-expect commands "Object, Navigate, Next, Ctrl\u002BJ"
-expect commands "Array, Navigate, Next, Ctrl\u002BL"
-expect commands "Item, Navigate, Next, Ctrl\u002BI"
-expect commands "Error, Navigate, Next, Ctrl\u002BE"
-expect commands "Key, Navigate, Previous, Ctrl\u002BShift\u002BK"
-expect commands "Object, Navigate, Previous, Ctrl\u002BShift\u002BJ"
-expect commands "Array, Navigate, Previous, Ctrl\u002BShift\u002BL"
-expect commands "Item, Navigate, Previous, Ctrl\u002BShift\u002BI"
-expect commands "Error, Navigate, Previous, Ctrl\u002BShift\u002BE"
+# 2.5: Navigation, Next and Previous list Key, Object, Array, Item and Error with their keys; each item does what its key does.
+expect commands "Key, Navigation, Next, Ctrl\u002BK"
+expect commands "Object, Navigation, Next, Ctrl\u002BJ"
+expect commands "Array, Navigation, Next, Ctrl\u002BL"
+expect commands "Item, Navigation, Next, Ctrl\u002BI"
+expect commands "Error, Navigation, Next, Ctrl\u002BE"
+expect commands "Key, Navigation, Previous, Ctrl\u002BShift\u002BK"
+expect commands "Object, Navigation, Previous, Ctrl\u002BShift\u002BJ"
+expect commands "Array, Navigation, Previous, Ctrl\u002BShift\u002BL"
+expect commands "Item, Navigation, Previous, Ctrl\u002BShift\u002BI"
+expect commands "Error, Navigation, Previous, Ctrl\u002BShift\u002BE"
 keys ctrl+home
-menu Key, Navigate, Next
+menu Key, Navigation, Next
 expect said ! model: opus
-menu Object, Navigate, Next
+menu Object, Navigation, Next
 expect said ! permissions, object with 2 keys
-menu Array, Navigate, Next
+menu Array, Navigation, Next
 expect said ! allow, array with 2 items
-menu Item, Navigate, Next
+menu Item, Navigation, Next
 expect said ! Item 1 of 2, Bash
-menu Item, Navigate, Previous
+menu Item, Navigation, Previous
 expect said ! No previous item
-menu Array, Navigate, Previous
+menu Array, Navigation, Previous
 expect said ! allow, array with 2 items
-menu Object, Navigate, Previous
+menu Object, Navigation, Previous
 expect said ! permissions, object with 2 keys
-menu Object, Navigate, Previous
+menu Object, Navigation, Previous
 expect said ! object with 4 keys
-menu Key, Navigate, Previous
+menu Key, Navigation, Previous
 expect said ! No previous key
-menu Error, Navigate, Next
+menu Error, Navigation, Next
 expect said ! No next error
-menu Error, Navigate, Previous
+menu Error, Navigation, Previous
 expect said ! No previous error
 # Help, User guide: Ctrl+K and the other keys move through the guide's text too, "No next key" when there is none.
 menu User guide

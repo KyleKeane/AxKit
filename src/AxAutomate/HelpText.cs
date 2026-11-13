@@ -24,7 +24,7 @@ public static class HelpText
           Enter, Tab, Ctrl+Tab or F6: to the step's details
           Ctrl+J: the workflow's file as text, a script in axDown, a workflow file in axJSON
           Ctrl+Q: read every line of the selection's details
-          Shift+F10 or the Applications key: the menu of the selection
+          Shift+F10 or the Applications key: the Context menu, what acts on the selection
 
         ## The detail pane, on the right
           On a step: its number, what it does, each of its values, what happens when it fails, what it reports, its blocks, its note, and the line of the file it comes from

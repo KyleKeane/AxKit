@@ -10,7 +10,7 @@ namespace AxTask;
 /// The GitHub lists and the action keys (docs/axKit/reports.md RP-7, RP-8): a list whose <c>list.json</c> names a
 /// repository fills itself from the repository's issues when it opens and on F5; Ctrl+1 to Ctrl+9 run the actions a
 /// list's <c>list.json</c> assigns (set fields, move, open), and in a GitHub list a Kind or State set goes to GitHub as
-/// the user's own account first; the Item menu's GitHub submenu has the actions by name; the user's token is kept
+/// the user's own account first; Context's GitHub submenu on an item has the actions by name; the user's token is kept
 /// protected on this computer.
 /// </summary>
 public sealed partial class TaskForm
@@ -27,7 +27,7 @@ public sealed partial class TaskForm
 
     private GitHubListSettings? CurrentGitHub => GitHubList.Of(CurrentListDetails);
 
-    /// <summary>The menus of this file, placed by the constructor: the action keys in the Item menu, the GitHub actions, the List menu's items.</summary>
+    /// <summary>The menus of this file, placed by the constructor: the action keys and the GitHub actions in Context on an item, the account in Actions.</summary>
     private void PlaceGitHubMenus()
     {
         for (var digit = ActionKeys.First; digit <= ActionKeys.Last; digit++)
@@ -79,7 +79,7 @@ public sealed partial class TaskForm
         if (!ActionKeys.Read(CurrentListDetails).TryGetValue(digit, out var action))
         {
             Sounds.Edge();
-            Announce($"No action on Ctrl+{digit} in this list; List menu, Action keys sets one", true);
+            Announce($"No action on Ctrl+{digit} in this list; Actions, Action keys sets one", true);
             return;
         }
 
@@ -325,7 +325,7 @@ public sealed partial class TaskForm
             typed => !GitHubList.IsRepository(typed) ? "Type the repository as owner/name" : ItemFolder.RefusedListName(folder, typed.Trim()[(typed.Trim().IndexOf('/') + 1)..] + " issues"));
     }
 
-    // ---- the GitHub actions of the Item menu (RP-7.2) ----
+    // ---- the GitHub actions, Context on an item (RP-7.2) ----
 
     private void SetKind(ReportKind kind) =>
         WithGitHubItem((_, item) => SetFields(item, new Dictionary<string, JsonNode?> { [GitHubList.KindField] = JsonValue.Create(ReportKinds.Name(kind)) }, "Make it " + (kind == ReportKind.Feedback ? "feedback" : "a " + ReportKinds.Name(kind).ToLowerInvariant())));
@@ -377,7 +377,7 @@ public sealed partial class TaskForm
     {
         if (CurrentGitHub is not { } github)
         {
-            Announce("Not a GitHub list: List menu, New GitHub list makes one", true);
+            Announce("Not a GitHub list: Actions, New GitHub list makes one", true);
             return;
         }
 
@@ -416,7 +416,7 @@ public sealed partial class TaskForm
         }
         else
         {
-            Announce("Set your GitHub token in the List menu first: GitHub account", true);
+            Announce("Set your GitHub token in Actions first: GitHub account", true);
         }
     }
 
@@ -493,7 +493,7 @@ public sealed partial class TaskForm
     private void EditActionKey(string folder, int digit)
     {
         var current = ActionKeys.Read(ItemFolder.ReadList(folder)).GetValueOrDefault(digit);
-        AskText($"Ctrl+{digit}", "The action's name, as the Item menu will show it. Empty removes the key.", "Name:", "Name", current?.Name ?? string.Empty, "&Next", typed =>
+        AskText($"Ctrl+{digit}", "The action's name, as Context will show it on an item. Empty removes the key.", "Name:", "Name", current?.Name ?? string.Empty, "&Next", typed =>
         {
             var name = typed.Trim();
             if (name.Length == 0)

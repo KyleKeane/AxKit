@@ -48,3 +48,7 @@ Run with NVDA before a release, after `run-axCalc.ps1` (or `.\run.ps1 -App calc`
 2. F1: the Keyboard shortcuts notice; h moves by heading; Escape closes it. Help, User guide: this guide; Escape.
 3. Alt+W: the Window menu; New window lists axCalc. Alt+H, About, Version names axCalc among the apps.
 4. Ctrl+Shift+P, type `bases`, Enter: the bases of the last answer are said.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help; Alt, C: one item, "Nothing for the focus here yet".

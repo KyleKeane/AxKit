@@ -56,7 +56,7 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
 
 - PR-2.1 From the top: the menu bar; the list, named with its view and count ("Processes, 214", "Services, 280",
   "Startup, 9"); the status bar. A notice takes the list's place while it shows (AX-6.4). The focus starts in the list.
-- PR-2.2 Views: Ctrl+1 Processes, Ctrl+2 Services, Ctrl+3 Startup (View menu), and Tab and Shift+Tab to the next and the
+- PR-2.2 Views: Ctrl+1 Processes, Ctrl+2 Services, Ctrl+3 Startup (Navigation), and Tab and Shift+Tab to the next and the
   previous view, round from Startup to Processes (the window has one control; the user's ask, 2026-10-24). The key says the list's name and the
   item the selection is on, also when the list already shows the view (axClaude D26). A view is read the first time it
   shows and on F5; each keeps its selection by the item's key (the process ID, the service's name, the startup entry's
@@ -76,25 +76,25 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
 - PR-3.1 Each process is "<name>, <memory>, <n>% CPU, process <id>": the name without `.exe`, the working set
   ("350 MB", "350.4 MB", "1.2 GB", "900 KB": the bundle's `AxKit.Core/FileSize`, one decimal from megabytes up, since 2026-10-25, the format every app says sizes in; whole megabytes before), the processor use over one second, rounded to a whole percent of the whole computer
   ("0% CPU" for an idle one; left out for a process Windows does not let the user measure), and the process ID.
-- PR-3.2 Sort by ▸ Memory (the default), Processor, Name (View menu; the choice is kept, PR-7.1). Memory and processor
+- PR-3.2 Sort by ▸ Memory (the default), Processor, Name (Options; the choice is kept, PR-7.1). Memory and processor
   sort the largest first; ties go by name.
-- PR-3.3 Delete, or Process → End process, asks "End <name> (process <id>)? Anything unsaved in it is lost." with End
+- PR-3.3 Delete, or Context → End process, asks "End <name> (process <id>)? Anything unsaved in it is lost." with End
   process and Cancel; End runs `Process.Kill` on a background task, says "Ended <name>" and reads the list again. End
-  process tree (Process → End process tree) ends its child processes too, with the question "End <name> and the
+  process tree (Context → End process tree) ends its child processes too, with the question "End <name> and the
   processes it started?". A process that is already gone says "<name> has already ended"; one Windows refuses says
   "Could not end <name>: access is denied. It may need administrator rights". axProcess's own process is refused:
   "That is this window: close it with Alt+F4".
-- PR-3.4 Enter, or Process → Details, shows a notice titled with the process's name: the process ID, the memory, the
+- PR-3.4 Enter, or Context → Details, shows a notice titled with the process's name: the process ID, the memory, the
   processor use, the program file, the start time and the number of threads, each on its own line, those Windows lets
   the user read; with the buttons End process, Show program in axFile and Close (the default and the cancel button).
-- PR-3.5 Ctrl+E, or Process → Show program in axFile, opens axFile on the program file's folder with the file selected
+- PR-3.5 Ctrl+E, or Context → Show program in axFile, opens axFile on the program file's folder with the file selected
   (`WindowMenu.Start`); "Windows does not say where <name>'s program is" when it cannot be read.
 
 ### PR-4 Services
 
 - PR-4.1 Each service is "<display name> (<name>), <state>, <start type>", the name once when the display name holds it already ("ActiveX Installer (AxInstSV)") or is it: the states running, stopped, starting,
   stopping, paused; the start types automatic, automatic (delayed), manual, disabled. Sorted by display name.
-- PR-4.2 Enter, or Service → Details, shows a notice titled with the display name: the name, the state, the start
+- PR-4.2 Enter, or Context → Details, shows a notice titled with the display name: the name, the state, the start
   type, the process ID while it runs, with the buttons Start (while stopped), Stop (while running and it accepts a stop),
   Restart (while running), Close.
 - PR-4.3 Start, Stop and Restart go to the Service Control Manager on a background task and wait up to 30 seconds for
@@ -110,22 +110,24 @@ process after a question. Nothing refreshes by itself: F5 reads the computer aga
   Run key (32-bit)", "your Startup folder", "all users' Startup folder". Sorted by name.
 - PR-5.2 Disabled is what Task Manager's Startup tab set: the entry's value under the matching `StartupApproved` key
   has an odd first byte. Without such a value the entry is enabled.
-- PR-5.3 Enter, or Startup → Details, shows a notice titled with the name: the command, the place, enabled or
+- PR-5.3 Enter, or Context → Details, shows a notice titled with the name: the command, the place, enabled or
   disabled, and the program file read from the command (the quoted path, or the text up to `.exe`); Show program in
   axFile (also Ctrl+E) opens it. The list is read-only (PR-D4).
 
 ### PR-6 Menus, keys, texts
 
-- PR-6.1 Menus (AX-6): **Session (S):** Refresh F5 | Summary Ctrl+Q | Copy line Ctrl+C | ─ | Exit Alt+F4. **Process
-  (P):** Details Enter | End process… Delete | End process tree… | Show program in axFile Ctrl+E. **Service (E):**
-  Details Enter | Start | Stop | Restart. **Startup (T):** Details Enter | Show program in axFile Ctrl+E. Only the menu
-  of the view shown is enabled, the other two not, so that a process command is never at hand among the services and
-  the reverse (the user's ask, 2026-10-24): the bar's arrows pass over a disabled menu and the command palette leaves
-  its items out. **View (V):** Processes Ctrl+1 | Services Ctrl+2 | Startup Ctrl+3 | ─ | Sort processes by ▸
-  (Memory ✓ | Processor | Name). **Options (O):** Text ▸ | General ▸ | Developer ▸. **Window (W)** (before Options), **axKit (A)** (AX-9.1). **Help (H):**
-  Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Task Manager | Services). Every item has a mnemonic
-  (AX-7.4). Shift+F10, the Applications key and a right click in the list open the view's menu from the bar, as Alt and its letter open it, so that NVDA reads its first item (the window base's `OpenBarMenu`,
-  axFile's AF-D13; 2026-10-24).
+- PR-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Refresh F5 | ─ | Exit Alt+F4.
+  **Actions (A):** Summary Ctrl+Q. **Navigation (N):** Processes Ctrl+1 | Services Ctrl+2 | Startup Ctrl+3.
+  **Context (C)**, what acts on the line selected, by the view shown (AX-9.11): in Processes, Details Enter | End
+  process… Delete | End process tree… | Show program in axFile Ctrl+E | Copy line Ctrl+C; in Services, Details Enter |
+  Start | Stop | Restart | Copy line Ctrl+C; in Startup, Details Enter | Show program in axFile Ctrl+E | Copy line
+  Ctrl+C; "Nothing selected" on an empty list. So a process command is never at hand among the services and the
+  reverse (the user's ask, 2026-10-24; until 2026-11-11 three menus of which only the view's was enabled).
+  **Options (O):** Sort processes by ▸ (Memory ✓ | Processor | Name) | Text ▸ | General ▸ | Developer ▸. **Window (W)**,
+  **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Task Manager |
+  Services). Every item has a mnemonic (AX-7.4). Shift+F10, the Applications key and a right click in the list open
+  Context, as Alt and C open it, so that NVDA reads its first item (the window base's `OpenBarMenu`, axFile's AF-D13;
+  2026-10-24).
 - PR-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here. F5
   refreshes, Delete ends a process"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxProcessKeys`): Ctrl+1,
   Ctrl+2, Ctrl+3, Tab, Shift+Tab, F5, Enter, Delete, Ctrl+E, Ctrl+C, Ctrl+Q, Shift+F10 and the Applications key, and Up,

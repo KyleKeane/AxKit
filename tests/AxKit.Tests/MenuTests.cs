@@ -65,4 +65,77 @@ public sealed class MenuTests
 
         Assert.True(offenders.Count == 0, "An app named the old way in a menu: " + string.Join("; ", offenders));
     }
+
+    /// <summary>
+    /// Every window's bar is the same eight menus in one order, each with its own letter (docs/axKit/SPEC.md AX-9.1,
+    /// B-19, the user's word of 2026-11-11): the names the window base gives them.
+    /// </summary>
+    [Fact]
+    public void The_bar_is_eight_menus_in_one_order_with_letters_of_their_own()
+    {
+        Assert.Equal(
+            ["&Session", "&Actions", "&Navigation", "&Context", "&Options", "&Window", "ax&Kit", "&Help"],
+            AxKit.Forms.AxKitForm.BarMenus);
+        var letters = AxKit.Forms.AxKitForm.BarMenus.Select(name => char.ToUpperInvariant(name[name.IndexOf('&') + 1])).ToList();
+        Assert.Equal(letters.Count, letters.Distinct().Count());
+        Assert.Equal('C', AxKit.Forms.ContextBarMenu.Letter);
+    }
+
+    /// <summary>
+    /// Every window puts its bar together through the window base (AX-9.1, B-19): a project whose windows make a Help
+    /// menu calls <c>PlaceMenuBar</c>, and no source adds menus to a bar of its own, so that no bar drifts from the eight.
+    /// </summary>
+    [Fact]
+    public void Every_window_places_its_bar_through_the_base()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var offenders = new List<string>();
+        foreach (var project in Directory.GetDirectories(Path.Combine(root, "src")))
+        {
+            var files = Directory.GetFiles(project, "*.cs", SearchOption.AllDirectories)
+                .Where(file => !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")).ToList();
+            var texts = files.Select(File.ReadAllText).ToList();
+            var makesHelp = texts.Any(text => text.Contains("CreateHelpMenu(", StringComparison.Ordinal) && !text.Contains("protected ToolStripMenuItem CreateHelpMenu(", StringComparison.Ordinal));
+            if (makesHelp && !texts.Any(text => text.Contains("PlaceMenuBar(", StringComparison.Ordinal)))
+            {
+                offenders.Add(Path.GetFileName(project) + ": a Help menu but no PlaceMenuBar");
+            }
+
+            for (var i = 0; i < files.Count; i++)
+            {
+                if (Regex.IsMatch(texts[i], @"\b(_menu|MenuBar|menu)\.Items\.(Add|AddRange)\(") && !files[i].EndsWith("AxKitForm.cs", StringComparison.Ordinal))
+                {
+                    offenders.Add(Path.GetRelativePath(root, files[i]) + ": adds to a menu bar itself");
+                }
+            }
+        }
+
+        Assert.True(offenders.Count == 0, "A bar not placed through AxKitForm.PlaceMenuBar: " + string.Join("; ", offenders));
+    }
+
+    /// <summary>
+    /// A bar is never deeper than its menu, a submenu and an item (AX-9.1, 2026-11-11, the user's rule: Window, New
+    /// window, axClaude is the deepest). <c>MenuShape.TooDeep</c> names every item past that, and the window base logs
+    /// them as it places a bar; here the rule itself, on a bar of each shape.
+    /// </summary>
+    [Fact]
+    public void A_bar_is_never_deeper_than_a_menu_a_submenu_and_an_item()
+    {
+        var bar = new MenuStrip();
+        var window = new ToolStripMenuItem("&Window");
+        var newWindow = new ToolStripMenuItem("&New window");
+        newWindow.DropDownItems.Add(new ToolStripMenuItem("ax&Claude"));
+        window.DropDownItems.Add(newWindow);
+        bar.Items.Add(window);
+        Assert.Empty(AxKit.Forms.MenuShape.TooDeep(bar.Items));
+
+        var options = new ToolStripMenuItem("&Options");
+        var folders = new ToolStripMenuItem("&Project folders");
+        var remove = new ToolStripMenuItem("&Remove a project folder");
+        remove.DropDownItems.Add(new ToolStripMenuItem("&1. Work"));
+        folders.DropDownItems.Add(remove);
+        options.DropDownItems.Add(folders);
+        bar.Items.Add(options);
+        Assert.Equal(["Options, Project folders, Remove a project folder, 1. Work"], AxKit.Forms.MenuShape.TooDeep(bar.Items));
+    }
 }

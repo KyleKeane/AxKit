@@ -9,9 +9,9 @@ expect focus a.md
 # 6.1 manual: Alt opens the menu bar, whose menu mode needs the foreground. Every item with its shortcut, as the
 # palette reads them from the menus:
 expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW, checked"
-expect commands "Go to line, Navigate, Ctrl\u002BG"
-expect commands "Heading level 2, Navigate, Next, Ctrl\u002B2."
-expect commands "Undo, Operations, Ctrl\u002BZ"
+expect commands "Go to line, Navigation, Ctrl\u002BG"
+expect commands "Heading level 2, Navigation, Next, Ctrl\u002B2."
+expect commands "Undo, Actions, Ctrl\u002BZ"
 expect commands "Keyboard shortcuts, Help, F1"
 
 # 6.2: F1, the shortcuts notice, its first line naming the text's own keys.

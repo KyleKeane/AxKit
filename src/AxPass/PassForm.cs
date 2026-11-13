@@ -60,19 +60,25 @@ public sealed partial class PassForm : ItemForm
         var file = new ToolStripMenuItem("&Session");
         Add(file, new Command("&Open database...", AxPassKeys.OpenDatabase, ChooseDatabase) { When = NotRenaming, Mark = CommandMark.Open });
         file.DropDownItems.Add(new ToolStripMenuItem("&New database...", null, (_, _) => NewDatabase()));
-        Add(file, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming, Mark = CommandMark.Change });
         file.DropDownItems.Add(new ToolStripMenuItem("&Back up now", null, (_, _) => Do(BackUpNowAsync)));
         file.DropDownItems.Add(new ToolStripMenuItem("Show backups in ax&File", null, (_, _) => ShowBackups()));
         // F5 and the item read the database again (item-apps.md: "read the folder again"); until 2026-10-24 the key
         // was ItemForm's and only filled the navigator again from the tree already read.
         Add(file, new Command("&Refresh", ItemKeys.Refresh, () => Do(RefreshDatabaseAsync)) { When = NotRenaming, Mark = CommandMark.Read });
-        file.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
         file.DropDownItems.Add(new ToolStripSeparator());
         file.DropDownItems.Add(CreateExitItem());
 
+        // Actions: what acts on the database as a whole, the same wherever the focus is (AX-9.1); Context holds what
+        // acts on the group, the entry or the field the focus is on (AX-9.11, B-19).
+        var actions = new ToolStripMenuItem("");
+        actions.DropDownItems.Add(Item("New &entry...", NewItem, ItemKeys.New));
+        actions.DropDownItems.Add(Item("New &group...", NewList, ItemKeys.NewList));
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        Add(actions, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming, Mark = CommandMark.Change });
+
         _groupMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
-        _groupMenu.DropDownItems.Add(Item("New &entry...", NewItem, ItemKeys.New));
-        _groupMenu.DropDownItems.Add(Item("New &group...", NewList, ItemKeys.NewList));
         _groupMenu.DropDownItems.Add(Item("To the &Recycle Bin", () => WithRow(DeleteRow), ItemKeys.Delete));
 
         _entryMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open));
@@ -80,7 +86,6 @@ public sealed partial class PassForm : ItemForm
         Add(_entryMenu, new Command("Copy &password", AxPassKeys.CopyPassword, CopyPassword) { When = NotRenaming, Mark = CommandMark.Act });
         Add(_entryMenu, new Command("Open U&RL", AxPassKeys.OpenUrl, OpenEntryUrl) { When = NotRenaming, Mark = CommandMark.Act });
         _entryMenu.DropDownItems.Add(Item("Read in &full", ReadAll, ItemKeys.ReadAll));
-        _entryMenu.DropDownItems.Add(Item("New &entry...", NewItem, ItemKeys.New));
         _entryMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename));
         Add(_entryMenu, new Command("Move to a gr&oup...", AxPassKeys.MoveEntry, MoveEntry) { When = InNavigator, Mark = CommandMark.Change });
         _entryMenu.DropDownItems.Add(Item("To the Recycle &Bin", () => WithRow(DeleteRow), ItemKeys.Delete));
@@ -110,8 +115,7 @@ public sealed partial class PassForm : ItemForm
         var help = CreateHelpMenu(HelpText.UserGuide, "KeePass &resources",
             [("KeePass&XC", "https://keepassxc.org/"), ("The KDBX &format", "https://keepass.info/help/kb/kdbx.html")]);
 
-        _menu.Items.AddRange([file, _groupMenu, _entryMenu, _fieldMenu, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
-        SelectionMenus(_groupMenu, _entryMenu, _fieldMenu);
+        PlaceMenuBar(_menu, file, actions, new ToolStripMenuItem(), CreateContextMenu(_groupMenu, _entryMenu, _fieldMenu), options, help);
         PlaceControls(_menu);
 
         _lockTimer.Tick += (_, _) => LockWhenIdle();
@@ -223,6 +227,8 @@ public sealed partial class PassForm : ItemForm
 
     /// <summary>The selection's menus act only while the database is unlocked.</summary>
     protected override bool SelectionMenusAvailable => _password is not null;
+
+    protected override string NothingWhileUnavailable => "Locked: Enter unlocks the database";
 
     /// <summary>PW-6.1: KeePass's own fields only.</summary>
     protected override string? FieldsFixed => "An entry has KeePass's own fields here; other fields are added in KeePassXC's own window";

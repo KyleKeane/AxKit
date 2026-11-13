@@ -65,7 +65,7 @@ marks a task done.
   Ctrl+Up and Ctrl+Down move by paragraph, AX-8.2; the navigator is a list, so they move by heading there, the same
   idea.)
 - **TK-3a.3 A list's section** is the field Section (`text`) of its details (`list.json`), always shown first in the
-  detail pane of a list, empty for Your lists. Enter on it changes it as any field; **List, Move to section**
+  detail pane of a list, empty for Your lists. Enter on it changes it as any field; **Context, Move to section**
   (Ctrl+M) chooses from a list of the sections there are, Your lists, and "A new section", which asks its name. A new
   list (Ctrl+Shift+N) joins the section of the row selected. A section is renamed by moving its lists.
 
@@ -76,7 +76,7 @@ marks a task done.
 - **TK-4.2 A task** is an item with a `check` field titled Done. An item without one is a plain item: a list of
   things that are not tasks is a list whose template has no Done (the user's ask: plain lists and checklists, and an
   easy way between them). Changing a list's template does not change its items; "Add Done to every item" and "Remove
-  Done from every item" in the List menu switch a whole list between the two.
+  Done from every item" in Actions switch a whole list between the two.
 - **TK-4.3 The row summary** (IA-6): the Title, then "done" when Done is true, then "due" and the Due date when there is
   one: "Fix the tap, done, due 30 October". Overdue reads "overdue since 30 October".
 - **TK-4.4 Space in the navigator** toggles Done on a task; on a plain item, the edge earcon and "Not a task".
@@ -115,7 +115,7 @@ marks a task done.
   first of them writes it ("App, heading level 2, 5 smart lists"), holding them by their full names ("App axDown,
   smart list, 3") in natural order; the groups in natural order after the lists whose first word no other shares.
   Nothing is renamed (TK-D17).
-- **TK-5.3 A new smart list** (List, New smart list) asks its name, writes `<name>.filter.json` with All tasks'
+- **TK-5.3 A new smart list** (Actions, New smart list) asks its name, writes `<name>.filter.json` with All tasks'
   conditions and opens it in axJSON to change them; Ctrl+J on a smart list opens it again. The detail pane of a smart
   list says what it shows, how many, and its file; the conditions are written in axJSON, not field by field, until
   the need is heard (a filter is written once and read many times).
@@ -181,13 +181,13 @@ The design is `docs/axKit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules a
   following (IA-D3), `open` opens a field's web address in the browser, an app by its verb on the item's file
   (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1), or `axClaude` on an
   issue (TK-7a.3). A digit without an action: the edge earcon and "No action
-  on Ctrl+3 in this list; List menu, Action keys sets one"; outside a list, "Action keys act in a list: open one
-  first". List → Action keys… lists the nine keys ("Ctrl+1. Make it a bug", "Ctrl+3. not set"); Enter on one asks the
+  on Ctrl+3 in this list; Actions, Action keys sets one"; outside a list, "Action keys act in a list: open one
+  first". Actions → Action keys… lists the nine keys ("Ctrl+1. Make it a bug", "Ctrl+3. not set"); Enter on one asks the
   name (empty removes the key), what it does (set, move, open) and the value, and writes `list.json` as one undo step
-  (RP-8.2). The Item menu's Action keys submenu shows the nine with the names the list gives them, so the palette and
+  (RP-8.2). Context's Action keys submenu on an item shows the nine with the names the list gives them, so the palette and
   F1 list them (RP-8.3). All tasks moved to Ctrl+0 for them (RP-8.4).
 - **TK-7a.2 A GitHub list** is a list whose `list.json` has `"github": {"repository": "owner/name", "state": "open"}`
-  (`GitHubList.Of`), made by List → New GitHub list… in the top folder as "<name> issues" (RP-7.1). When it opens,
+  (`GitHubList.Of`), made by Actions → New GitHub list… in the top folder as "<name> issues" (RP-7.1). When it opens,
   once per visit, and on F5, the repository's issues in that state are read from GitHub without an account
   (`GitHubIssues.ListAsync`, off the UI thread), and the folder is brought up to them (`GitHubList.Refresh`): one
   item per issue, named "<number> <title>.json", with Number, Kind (the label among feedback, bug and feature, else
@@ -209,7 +209,7 @@ The design is `docs/axKit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules a
 - **TK-7a.4 The user's token.** List → GitHub account… takes a fine-grained token of the user's own GitHub account in
   a hidden field, kept protected for the Windows account in `%LOCALAPPDATA%\AxKit\github.token` (`UserSecret`); Forget
   GitHub account removes it. Reading a public repository's issues needs none; every action does, and says "Set your
-  GitHub token in the List menu first" without one.
+  GitHub token in Actions first" without one.
 
 ## 7b. Project folders and the search across every list (2026-11-11)
 
@@ -254,9 +254,9 @@ are later (the priorities item of the request); the AI tools over the lists are 
   shows under the first. Right or Enter on a project opens it as a top folder of its own, "tasks in alpha, 2 lists,
   Your lists, heading level 1, 1 list": its headings, All tasks and smart lists, its Archive, every change and Ctrl+Z
   exactly as in the user's own folder (TK-D8). Left from a project's top goes back to the user's own top level on the
-  project's row. On a project or a project folder's heading Ctrl+Shift+N, List → New GitHub list, F2 and Delete make,
+  project's row. On a project or a project folder's heading Ctrl+Shift+N, Actions → New GitHub list, F2 and Delete make,
   rename and move nothing and say why (Ctrl+Shift+N and New GitHub list: "A project's lists are made inside it: Right
-  on a project first"; Delete: "A project stays: Options, Project folders removes the folder it was found in"), and in
+  on a project first"; Delete: "A project stays: Options, Remove a project folder removes the folder it was found in"), and in
   the found level "Lists are made among the sections: Left first"; Ctrl+E shows a project's folder, or the project
   folder of its heading, in axFile. A project is never remembered as the list open last, nor a found item opened (TK-7b.4): the list
   open last of the user's own top folder stays as it was, so that the next start opens it, where before a project's

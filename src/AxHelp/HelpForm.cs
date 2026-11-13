@@ -45,14 +45,16 @@ public sealed class HelpForm : HotkeyForm
         Text = AxHelpApp.WindowTitle;
 
         // ---- menus and keys (HE-6): one command list (docs/axKit/app-kit.md AK-2) ----
-        var first = new ToolStripMenuItem("&Session");
-        Add(first, new Command("&Open the conversation", AxHelpKeys.OpenConversation, () => OpenConversation(null)) { Mark = CommandMark.Act });
-        Add(first, new Command("Put a picture &file into the conversation...", AxHelpKeys.PictureFile, ChoosePicture) { Mark = CommandMark.Act });
-        Add(first, new Command("Open the last &screenshot in axPreview", AxHelpKeys.OpenScreenshot, OpenLastScreenshot) { Mark = CommandMark.Open });
-        first.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
+        // The bundle's eight (AX-9.1): Session holds Hide and Quit; Actions what axHelp does.
+        var first = new ToolStripMenuItem();
         AddHideAndQuit(first, AxHelpKeys.Hide);
+        var actions = new ToolStripMenuItem();
+        Add(actions, new Command("&Open the conversation", AxHelpKeys.OpenConversation, () => OpenConversation(null)) { Mark = CommandMark.Act });
+        Add(actions, new Command("Put a picture &file into the conversation...", AxHelpKeys.PictureFile, ChoosePicture) { Mark = CommandMark.Act });
+        Add(actions, new Command("Open the last &screenshot in axPreview", AxHelpKeys.OpenScreenshot, OpenLastScreenshot) { Mark = CommandMark.Open });
+        actions.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
 
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         options.DropDownItems.Add(HotkeyItem());
         // HE-2.3: the conversation's own model, given at its start, so that Claude Code's saved default never changes it.
         var model = new ToolStripMenuItem("Conversation &model");
@@ -71,7 +73,7 @@ public sealed class HelpForm : HotkeyForm
             [("&Claude Code", "https://code.claude.com/docs/en/overview")]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([first, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        PlaceMenuBar(_menu, first, actions, new ToolStripMenuItem(), new ToolStripMenuItem(), options, help);
         MainMenuStrip = _menu;
 
         (_stateLabel, _) = StatusLayout.Pair(_status);

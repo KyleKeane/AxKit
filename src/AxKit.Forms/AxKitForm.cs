@@ -154,8 +154,73 @@ public abstract partial class AxKitForm : Form
 
     // ---- the menus every window has (AX-6.5, AX-9) ----
 
+    /// <summary>
+    /// The eight menus of every window's bar, in their order, each with its letter (AX-9.1, B-19; the user's word of
+    /// 2026-11-11): Session, Actions, Navigation, Context, Options, Window, axKit, Help. <see cref="PlaceMenuBar"/>
+    /// names them; a test fails on a bar placed another way.
+    /// </summary>
+    public static readonly IReadOnlyList<string> BarMenus = ["&Session", "&Actions", "&Navigation", "&Context", "&Options", "&Window", "ax&Kit", "&Help"];
+
+    /// <summary>
+    /// Puts the window's bar together, the one way every window does (AX-9.1, B-19): its Session, Actions, Navigation,
+    /// Context and Options menus, named here whatever the window called them, then Window, axKit and the window's Help
+    /// (<see cref="CreateHelpMenu"/>). Actions, Navigation and Context are never empty: one with nothing yet holds one
+    /// enabled item that says so. Context is the window's <see cref="ContextBarMenu"/> where it has one, which Shift+F10,
+    /// the Applications key and a right click open (<see cref="OpenBarMenu"/> with <see cref="ContextBarMenu.Letter"/>).
+    /// </summary>
+    protected void PlaceMenuBar(MenuStrip bar, ToolStripMenuItem session, ToolStripMenuItem actions, ToolStripMenuItem navigation, ToolStripMenuItem context, ToolStripMenuItem options, ToolStripMenuItem help)
+    {
+        ToolStripMenuItem[] own = [session, actions, navigation, context, options];
+        for (var i = 0; i < own.Length; i++)
+        {
+            own[i].Text = BarMenus[i];
+        }
+
+        SayWhenEmpty(actions, "No actions here yet");
+        SayWhenEmpty(navigation, "Nothing to move to here yet");
+        SayWhenEmpty(context, "Nothing for the focus here yet");
+        var window = CreateWindowMenu();
+        window.Text = BarMenus[5];
+        help.Text = BarMenus[7];
+        bar.Items.Clear();
+        bar.Items.AddRange([.. own, window, CreateAxKitMenu(), help]);
+        // AX-9.1: never deeper than the bar's menu, a submenu and an item; a deeper one is a defect, logged where it was made.
+        foreach (var path in MenuShape.TooDeep(bar.Items))
+        {
+            Log.Error($"A menu item deeper than {MenuShape.MaxDepth}: {path}");
+        }
+    }
+
+    /// <summary>
+    /// Shift+F10, the Applications key and a right click on a control whose own context menu Windows would show (an
+    /// edit control's: Undo through its own buffer, AD-D1) open the bar's Context menu instead (AX-9.11, 2026-11-11: one
+    /// behaviour everywhere). The control gets a context menu that never shows: its opening is cancelled and Context
+    /// opened as Alt and C open it, once the keys that asked are up.
+    /// </summary>
+    protected void ContextFromControl(Control control)
+    {
+        var stand = new ContextMenuStrip();
+        // An empty strip never raises Opening; the item is never seen.
+        stand.Items.Add(new ToolStripMenuItem(BarMenus[3]));
+        stand.Opening += (_, e) =>
+        {
+            e.Cancel = true;
+            BeginInvoke(() => OpenBarMenu(ContextBarMenu.Letter));
+        };
+        control.ContextMenuStrip = stand;
+    }
+
+    /// <summary>A bar menu with no items gets one enabled item that says <paramref name="said"/> when chosen (AX-9.1: a menu is never empty, WinForms skipping a disabled item).</summary>
+    private void SayWhenEmpty(ToolStripMenuItem menu, string said)
+    {
+        if (menu.DropDownItems.Count == 0)
+        {
+            menu.DropDownItems.Add(new ToolStripMenuItem("&" + said, null, (_, _) => Announce(said, true)));
+        }
+    }
+
     /// <summary>The Window menu (AX-9.1): New window, Open windows, Recently closed, Close all windows; the window puts it after Options, which follows its own menus (Navigate last of them).</summary>
-    protected WindowMenu CreateWindowMenu() => new(this);
+    private WindowMenu CreateWindowMenu() => new(this);
 
     /// <summary>
     /// The axKit menu (AX-9.1; the user's order of 2026-11-10: Navigate, Options, Window, axKit, Help): what is the
@@ -163,9 +228,9 @@ public abstract partial class AxKitForm : Form
     /// <c>AxKitForm.Mcp.cs</c>) and Theme (the theme file, TH-4, <c>AxKitForm.Theme.cs</c>). A new bundle-wide setting or
     /// action joins here, never an app's Options.
     /// </summary>
-    protected ToolStripMenuItem CreateAxKitMenu()
+    private ToolStripMenuItem CreateAxKitMenu()
     {
-        var menu = new ToolStripMenuItem("&axKit");
+        var menu = new ToolStripMenuItem(BarMenus[6]);
         menu.DropDownItems.Add(CreateClaudeMenu());
         menu.DropDownItems.Add(CreateMcpMenu());
         menu.DropDownItems.Add(CreateThemeMenu());

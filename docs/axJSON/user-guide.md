@@ -42,11 +42,11 @@ The keys follow axDown's: Ctrl and a letter go to the next thing of that kind, C
 - Ctrl+I: the next item of an array, "Item 2 of 2, Read".
 - Ctrl+E: the place where the file stops being JSON, "Error, line 12: expected a comma or a closing brace after model, found a string". When the file is valid you hear "No next error", which is the quickest way to check a file.
 
-Past the last one of a kind you hear "No next key" and the caret stays. The same keys work in the user guide and the other notices. The Navigate menu lists all of them under Next and Previous.
+Past the last one of a kind you hear "No next key" and the caret stays. The same keys work in the user guide and the other notices. The Navigation menu lists all of them under Next and Previous.
 
 ## Format
 
-Operations, Format (Ctrl+Shift+F) writes the file out again with two spaces per level and one key or item per line, keeping the order of the keys and the file's line endings, and says "Formatted". Small mistakes are repaired on the way and named: a comma after the last item, a missing comma between two items, single quotes, a key without quotes, and comments, so "Formatted, repaired: 1 trailing comma, 1 unquoted key". Anything else leaves the file as it is and names the line: "Not valid JSON: line 12, expected a value, found '}'". Format is one step for Undo (Ctrl+Z), and Redo (Ctrl+Y) formats again. The history reaches back to when the file was opened in this window, a run of typing being one step: "Undone", "Redone", "Nothing to undo", "Nothing to redo".
+Actions, Format (Ctrl+Shift+F) writes the file out again with two spaces per level and one key or item per line, keeping the order of the keys and the file's line endings, and says "Formatted". Small mistakes are repaired on the way and named: a comma after the last item, a missing comma between two items, single quotes, a key without quotes, and comments, so "Formatted, repaired: 1 trailing comma, 1 unquoted key". Anything else leaves the file as it is and names the line: "Not valid JSON: line 12, expected a value, found '}'". Format is one step for Undo (Ctrl+Z), and Redo (Ctrl+Y) formats again. The history reaches back to when the file was opened in this window, a run of typing being one step: "Undone", "Redone", "Nothing to undo", "Nothing to redo".
 
 ## Text size and fonts
 
@@ -55,10 +55,11 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 ## Menus
 
 - **Session**: New, Open, Open recent file, Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Operations**: Undo, Redo, Cut, Copy, Paste, Select all, Format (Ctrl+Shift+F).
-- **Navigate**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Key, Object, Array, Item and Error.
+- **Actions**: Undo, Redo, Format (Ctrl+Shift+F).
+- **Context**: Cut, Copy, Paste, Select all, on the selection; Shift+F10 opens it.
+- **Navigation**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Key, Object, Array, Item and Error.
 - **Options**: Text (Word wrap, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axJSON.json in a new axJSON window, and Copy diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## Settings
 

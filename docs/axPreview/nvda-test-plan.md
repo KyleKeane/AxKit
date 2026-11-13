@@ -49,3 +49,7 @@ Files: `README.md`, and a Word document, a zip, an MP3 and a picture of your own
 7. Open the MP3: "<name> is a sound file (MP3). …"; the Windows group gives its length, bit rate, artist; Ctrl+E plays it in axMedia. Open a picture with words in it (a screenshot): "<name> is a picture (PNG). Reading its text…", then within a second or two "Text read: N lines" and the text in the window, one line per line, under a first line naming the picture; the Contents group has "Text lines: N"; the Windows group gives its dimensions; Ctrl+E opens it in Windows' program. A picture without words: "No text found in the picture".
 7a. Alt+PrintScreen on any window, then in axPreview Ctrl+Shift+V: "Text read: N lines" and that window's text; the title names a file clipboard-<date>-<time>.png. With nothing but text on the clipboard: "No picture on the clipboard. Alt+PrintScreen copies the window in front; PrintScreen the whole screen".
 8. Session, Open with on the README: "1. axDown", then Windows' program for it and Choose another program…; Enter on axDown opens it there once. Choose another program…: Windows' own dialog; Escape closes it, nothing changed.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. In the text, Shift+F10: Context opens on "Copy Ctrl+C"; Alt, A: one item, "No actions here yet".

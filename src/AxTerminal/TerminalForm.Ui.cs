@@ -28,19 +28,16 @@ internal sealed partial class TerminalForm
         }
 
         // AT-1.6a: the user's own shells come here, after the built-in ones, made again as the menu opens (FillUserShells).
+        // Switch shell holds the shells alone, one checked; Custom, Add a shell, Remove a shell and the installers are
+        // Session's own items after it, so that no menu is three deep (AX-9.1 depth rule, 2026-11-11).
         var userShellsAt = switchShell.DropDownItems.Count;
-        switchShell.DropDownItems.Add(new ToolStripMenuItem("C&ustom...", null, (_, _) => NewSession()));
-        switchShell.DropDownItems.Add(new ToolStripMenuItem("&Add a shell...", null, (_, _) => AddUserShell()));
-        var removeShell = new ToolStripMenuItem("&Remove a shell");
-        switchShell.DropDownItems.Add(removeShell);
+        var removeShell = new ToolStripMenuItem("Remo&ve a shell");
         // AT-1.2a: a shell Windows does not have is not offered; its installer is, from its maker, through winget.
         var installPwsh = new ToolStripMenuItem("Install &PowerShell 7...", null, (_, _) => InstallShell(ProgramInstall.PowerShell7, ShellKind.PowerShell7));
         var installBash = new ToolStripMenuItem("Install Git, for Git &Bash...", null, (_, _) => InstallShell(ProgramInstall.Git, ShellKind.GitBash));
-        switchShell.DropDownItems.Add(installPwsh);
-        switchShell.DropDownItems.Add(installBash);
         // The shell in use checked, the shells there (looked up once, ShellThere) shown and the user's shells made again
-        // as the menu opens; the palette refreshes it the same way (AX-10.2), so it lists the user's shells too.
-        CommandPalette.RefreshedOnOpening(switchShell, () =>
+        // as Session or Switch shell opens; the palette refreshes them the same way (AX-10.2), so it lists the user's shells too.
+        void RefreshShells()
         {
             foreach (var (kind, item) in _shellItems)
             {
@@ -52,8 +49,17 @@ internal sealed partial class TerminalForm
 
             installPwsh.Visible = !ShellThere(ShellKind.PowerShell7);
             installBash.Visible = !ShellThere(ShellKind.GitBash);
-        });
+        }
+
+        CommandPalette.RefreshedOnOpening(switchShell, RefreshShells);
+        CommandPalette.RefreshedOnOpening(session, RefreshShells);
+        session.DropDownItems.Add(new ToolStripSeparator());
         session.DropDownItems.Add(switchShell);
+        session.DropDownItems.Add(new ToolStripMenuItem("C&ustom shell...", null, (_, _) => NewSession()));
+        session.DropDownItems.Add(new ToolStripMenuItem("&Add a shell...", null, (_, _) => AddUserShell()));
+        session.DropDownItems.Add(removeShell);
+        session.DropDownItems.Add(installPwsh);
+        session.DropDownItems.Add(installBash);
         session.DropDownItems.Add(new ToolStripSeparator());
         Add(session, new Command("Res&tart shell", AxTerminalKeys.RestartShell, RestartShell) { Mark = CommandMark.Act });
         Add(session, new Command("&Clear transcript", AxTerminalKeys.ClearTranscript, ClearTranscript) { Mark = CommandMark.Change });
@@ -68,7 +74,7 @@ internal sealed partial class TerminalForm
         session.DropDownItems.Add(CreateExitItem());
 
         // What goes to the shell itself (AT-3.5), and the field's extras.
-        var shell = new ToolStripMenuItem("O&perations");
+        var shell = new ToolStripMenuItem();
         Add(shell, new Command("&Interrupt", AxTerminalKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
         Add(shell, new Command("Send &Escape", AxTerminalKeys.SendEscape, SendEscape) { Mark = CommandMark.Act });
         var sendKey = new ToolStripMenuItem("Send &key");
@@ -82,7 +88,7 @@ internal sealed partial class TerminalForm
         shell.DropDownItems.Add(new ToolStripSeparator());
         Add(shell, new Command("What is r&unning", AxTerminalKeys.WhatIsRunning, SayWhatIsRunning) { Mark = CommandMark.Read });
 
-        var navigate = new ToolStripMenuItem("&Navigate");
+        var navigate = new ToolStripMenuItem();
         Add(navigate, new Command("&Command field", AxTerminalKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open });
         Add(navigate, new Command("&Terminal", AxTerminalKeys.GoToTerminal, () => GoTo(Transcript)) { Mark = CommandMark.Open });
         Add(navigate, new Command("&Latest output", AxTerminalKeys.LatestOutput, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open });
@@ -92,7 +98,7 @@ internal sealed partial class TerminalForm
         AddBookmarkItems(navigate);
 
         // The settings: a submenu for each kind, nothing outside one. Each check item is saved as it is toggled.
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         var sounds = new ToolStripMenuItem("&Sounds");
         sounds.DropDownItems.Add(Toggle("&Chimes: ready, sent, done, question", _settings.SoundOnBell, v => _settings.SoundOnBell = v));
         sounds.DropDownItems.Add(Toggle("&Ticks for new lines", _settings.ClickOnNewLine, v => _settings.ClickOnNewLine = v));
@@ -123,7 +129,8 @@ internal sealed partial class TerminalForm
             ("&Bash manual", "https://www.gnu.org/software/bash/manual/"),
         ]);
 
-        MenuBar.Items.AddRange([session, shell, navigate, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        // The bundle's eight (AX-9.1): Context is the line of the terminal and the selection (AX-9.11).
+        PlaceMenuBar(MenuBar, session, shell, navigate, CreateTranscriptContext("Copy this line into the command &field"), options, help);
     }
 
     /// <summary>Options → Speech → Speak output: a mode (AT-5.3): speech starts with what arrives next.</summary>

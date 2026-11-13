@@ -505,7 +505,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     the app has one): its own submenus, then Text, General and Developer.
   - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after Options: New window ▸ (N), Open windows ▸ (O),
     Recently closed ▸ (R) and Close all windows (C).
-  - **axKit** (A; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Claude ▸ (C;
+  - **axKit** (K since 2026-11-11, A before; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Claude ▸ (C;
     `CreateClaudeMenu`, `ai-help.md` AH-1.1: Use Claude in axKit, the switch; Ask about this window…, Shift+F1; Folders
     Claude may read… and Claude's working folder), AI tools ▸ (I; `mcp.md` MC-6.1: Let AI tools read and open axKit, Let AI tools run commands (MC-7.2,
     2026-11-11, `axkit_window_run`, a window's command run by its name, said in the window, an act one asked first,
@@ -520,18 +520,34 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 
   The lists are filled each time the menu opens, so that they show the windows and the files of that moment.
 
-  The app's own menus begin the same way in every window (5.7.0, the user: "rename the first menu in all axkit windows
-  to be session and every second menu to be operations ... consistent across all apps"): the first is **Session**
-  (S), what the window holds and how it ends (open, save, recent, show in, exit; axClaude's and axTerminal's session,
-  axFile's folder, axGIT's repository, the editors' file, axMedia's queue, axPass's and axTask's database or folder,
-  axProcess's computer, axCalc's, axStart's, axClip's and axHelp's one menu), and the second, where there is one, is
-  **Operations** (P, since Options has O), what the app does to it (axClaude's Claude Code, axTerminal's shell,
-  axFile's item, axGIT's changes, the editors' edit, axMedia's play). The item apps (axTask, axPass, axMCP) and
-  axProcess keep their second menus named for what they act on, since those menus change with the focus or the view
-  (List, Item, Field; Process, Service, Startup) and are opened by their letters (Shift+F10); axMCP has no Session
-  menu, its first being one of those. Letters moved with the names: axFile's Selection is L, axProcess's Service E.
-  History: 5.6.0 had one axKit menu (A) holding the window lists, a Claude submenu, the palette, the reports, the
-  updates and About; until 5.6.0 Open windows by type ▸ (one submenu per app) stood after Open windows.
+  **Every bar is the same eight menus, in this order, each with its letter** (2026-11-11, the user's word, B-19):
+  **Session** (S), **Actions** (A), **Navigation** (N), **Context** (C), **Options** (O), **Window** (W), **axKit**
+  (K) and **Help** (H). The window base puts the bar together (`AxKitForm.PlaceMenuBar`, `BarMenus`), naming the
+  window's five menus itself, so that no window spells one differently; `MenuTests` fails on another order or a letter
+  used twice. Every item of an app goes in one of them by one rule:
+  - **Session**: what concerns the window's file, folder, database, session or connection as a whole: new, open,
+    recent, save, show in, refresh, close, Exit last.
+  - **Actions**: everything else the app does, the same wherever the focus is: new item, new list, undo, lock, run,
+    the app's own commands on the whole thing ("Operations" in 5.7.0).
+  - **Navigation**: what moves the focus or the selection, or finds: go to, find, next and previous heading or
+    section, bookmarks, levels, the views, the panes ("Navigate" until 2026-11-11).
+  - **Context**: what acts on the thing the focus is on, the selection or the caret, and changes with the focus
+    (AX-9.11).
+  - **Options**: what changes how things are shown or behave, a setting: the app's own items or submenus first, then
+    Text, General and Developer (what View menus held until 2026-11-11 came here or to Navigation).
+  Within a menu, items stand in groups parted by separators. No item is deeper than the bar's menu, a submenu and
+  an item (Window, New window, axClaude is the deepest; `AxKit.Forms/MenuShape`, a deeper one logged as an error as
+  the bar is placed, `MenuTests`; 2026-11-11, when axTask's Remove a project folder, axFile's Remove a program and
+  axTerminal's Remove a shell came up a level). A submenu holds one kind where it can, commands or check items
+  (toggles and choices); the mixes kept are Options' Text (the app's display toggles beside the text size), axKit's
+  Claude, AI tools and Theme (a switch with its commands), each one subject.
+  Actions, Navigation and Context are never empty: one with nothing yet holds one enabled item that says so ("No
+  actions here yet", "Nothing to move to here yet", "Nothing for the focus here yet"), since WinForms skips a disabled
+  item and NVDA reads nothing. The keys are the same as before; only where an item stands changed.
+  History: 5.7.0 named the first menu Session and the second Operations (P), the item apps and axProcess keeping menus
+  named for what they act on (List, Item, Field; Process, Service, Startup), only the one of the focus enabled; 5.6.0
+  had one axKit menu (A) holding the window lists, a Claude submenu, the palette, the reports, the updates and About;
+  until 5.6.0 Open windows by type ▸ (one submenu per app) stood after Open windows.
 - AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
   after ax as the mnemonic. It starts `AxKit.exe <verb>` with no arguments: a new process and a new window (B-2), the
   app starting as it does from its Start menu entry. The apps stand in five groups, a separator between them
@@ -605,6 +621,16 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   missing", by what the window holds, and starts nothing, File Explorer included (`SaidMissing`, `OpenInExplorer`;
   one wording in every window since 2026-11-09, axClaude's and axTerminal's before, while the others started the app
   on the gone path or File Explorer on its parent).
+- AX-9.11 **Context follows the focus** (2026-11-11, B-19; `AxKit.Forms/ContextBarMenu`): the bar's Context menu holds
+  what acts on the thing the focus is on, and only that: in the item apps the list's, the item's or the field's
+  commands by where the focus is and what is selected (`ItemForm.CreateContextMenu`); in axProcess the view's process,
+  service or startup commands. The window keeps one menu of items for each kind of thing, never on the bar, and
+  Context takes the items of the one for now each time it opens, as the palette reads it and as an AI tool asks
+  (`CommandPalette.Offered` reads the menus again after the refresh, and an item held off the bar is not offered), so
+  that the palette and `axkit_window_commands` offer the commands of the focus and no other. With nothing to act on
+  it holds one enabled item that says why ("Nothing selected", "A heading: nothing to act on", axPass's "Locked: Enter
+  unlocks the database"). **Shift+F10, the Applications key and a right click open Context** in every window
+  (`OpenBarMenu` with C).
 
 - AX-6.6 **Menus are the standard ones.** A menu bar item's drop-down is the one WinForms makes for it; no window
   assigns a drop-down of its own (a `ContextMenuStrip` or any `ToolStripDropDown` set as `DropDown`). A hand-made
@@ -1220,6 +1246,17 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   wants the same in every window is a key there, never a setting per app), with its item in every window's Options,
   Text, since it is about the text. Pasted text with line breaks is said by the paste's own sentence ("Pasted, 3
   lines", AX-7.3), not as new lines.
+- **B-19 One bar of eight menus in every window, and Context follows the focus (2026-11-11).** The reminder of
+  2026-11-10 asked whether the apps whose menus followed the focus (axTask's List, Item and Field; axPass's, axMCP's;
+  axProcess's views) should take the names the other apps took in 5.7.0. The user chose, in three steps the same
+  evening: one menu whose items follow the focus; then that menu beside an Actions menu whose items never change
+  ("Operations" until then) in every app with a selection, "it will be needed eventually" in the editors and the
+  consoles too; then the whole bar fixed, "Session, Actions, Navigation, Context, Options, Window, axKit, Help", each
+  with its letter, every other menu folded into these by what its items do (AX-9.1). Why: the same menu in the same
+  place with the same letter in every window is what a screen reader user learns once; a menu that is greyed out is
+  skipped by the keys and read as nothing, while Context with one item saying why tells the user where they are; and
+  the commands of the focus in one menu let Shift+F10 mean the same thing everywhere. The window base builds the bar
+  so that no window can drift from it; the keys did not move.
 
 ## 7. Status
 

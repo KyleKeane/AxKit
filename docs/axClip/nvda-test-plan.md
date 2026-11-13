@@ -31,3 +31,7 @@ Run with NVDA before a release, after `run-axClip.ps1` (or `.\run.ps1 -App clip`
 2. Options, Keep history between runs (checked), copy two lines, Session, Quit axClip, start it again: the two lines are there. Turn the option off, quit, start again: the history is empty.
 3. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide.
 4. Alt+H, About, Version names axClip among the apps.
+
+## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
+
+1. With a clip selected, Alt, C: Context opens on "Paste Enter"; Alt, A: "Clear history".

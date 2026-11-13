@@ -52,6 +52,13 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | Ctrl+Z | undo the last change | the same |
 | Ctrl+Q | read the selection in full: every field, one after another | read the field in full |
 | F5 | read the folder again | — |
+| Shift+F10, the Applications key | the bar's Context menu: the list's or the item's commands (bundle AX-9.11) | Context: the field's commands |
+
+- **IA-3.0 The menus** (bundle AX-9.1, B-19, 2026-11-11): every item app's bar is Session, Actions, Navigation,
+  Context, Options, Window, axKit, Help. What acts on the whole (a new item, a new list, Undo, Lock) is in Actions; the
+  moves (sections, All tasks, the search) in Navigation; and what acts on the row or field the focus is on in Context,
+  which `ItemForm.CreateContextMenu` fills from the app's three menus of a list, an item and a field (none of them on
+  the bar), saying "Nothing selected" or "A heading: nothing to act on" when there is nothing.
 
 - **IA-3.1** Entering the detail pane reads its name and the field: "Fields of Fix the tap, Due, date, 30 October
   2026". Leaving it says the navigator's selection.

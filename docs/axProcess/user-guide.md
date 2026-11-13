@@ -21,9 +21,9 @@ Type the start of a name to jump to it, as in File Explorer: letters typed withi
 ## Acting on an item
 
 - **Enter** shows the item's details in a notice, with buttons for what can be done to it. Escape closes it.
-- **Delete** on a process ends it, after a question: "End notepad (process 4410)? Anything unsaved in it is lost." Process, End process tree ends it with the programs it started.
+- **Delete** on a process ends it, after a question: "End notepad (process 4410)? Anything unsaved in it is lost." Context, End process tree ends it with the programs it started.
 - **Ctrl+E** opens axFile on the program's file, selected in its folder.
-- **Shift+F10**, or the Applications key, opens the menu of the view you are in: Process, Service or Startup.
+- **Shift+F10**, or the Applications key, opens Context: what acts on the line selected in the view you are in.
 - **Ctrl+C** copies the line. **Ctrl+F** finds an item by its text; F3 finds the next.
 - A service's details offer **Start**, **Stop** and **Restart**. Windows lets only an administrator start and stop most services, and axProcess runs as you, so expect "access is denied" for those; axProcess says so plainly.
 
@@ -31,15 +31,14 @@ The Startup view is for reading: axProcess does not turn startup programs on or 
 
 ## Menus
 
-- **Session**: Refresh (F5), Summary (Ctrl+Q), Copy line (Ctrl+C), Exit.
-- **Process**: Details (Enter), End process (Delete), End process tree, Show program in axFile (Ctrl+E).
-- **Service**: Details (Enter), Start, Stop, Restart.
-- **Startup**: Details (Enter), Show program in axFile (Ctrl+E).
+The menu bar is the same eight menus in every axKit window.
 
-Only the menu of the view you are in can be opened; the other two are unavailable, so that you never end a process from the services or the reverse.
-- **View**: Processes (Ctrl+1), Services (Ctrl+2), Startup (Ctrl+3), Sort processes by.
-- **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Session**: Refresh (F5), Exit.
+- **Actions**: Summary (Ctrl+Q).
+- **Navigation**: Processes (Ctrl+1), Services (Ctrl+2), Startup (Ctrl+3).
+- **Context**: what acts on the line selected, for the view you are in. Processes: Details (Enter), End process (Delete), End process tree, Show program in axFile (Ctrl+E), Copy line (Ctrl+C). Services: Details, Start, Stop, Restart, Copy line. Startup: Details, Show program in axFile, Copy line. So you never end a process from the services or the reverse. Shift+F10 opens it.
+- **Options**: Sort processes by, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## Settings
 

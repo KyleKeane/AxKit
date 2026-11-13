@@ -21,12 +21,12 @@ public static class HelpText
           In the list
             Enter: the item's details, with what can be done to it: end a process, start or stop a service
             Delete: end the process, after a question
-            Shift+F10 or the Applications key: the menu of the view, Process, Service or Startup
+            Shift+F10 or the Applications key: the Context menu, what acts on the line selected in the view shown
             Up or Home on the first item, Down or End on the last: the edge sound, since nothing moves
           Ctrl+E: show the program file in axFile
           Ctrl+C: copy the line
           Ctrl+S: nothing to save here; axProcess says so
-          View, Sort processes by: memory, processor or name
+          Options, Sort processes by: memory, processor or name
         """ + BundleHelp.NoticesSection("axProcess", "the list");
 
     /// <summary>docs/axProcess/user-guide.md, embedded by AxProcess.csproj.</summary>

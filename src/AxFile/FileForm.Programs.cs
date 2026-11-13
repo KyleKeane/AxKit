@@ -34,8 +34,25 @@ public sealed partial class FileForm
             menu.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, $"{program.Name} ({program.Path})"), null, (_, _) => RunProgram(program)));
         }
 
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Add a program...", null, (_, _) => AddProgram()));
-        var remove = new ToolStripMenuItem("&Remove a program");
+    }
+
+    /// <summary>
+    /// Options' items for the user's own programs (AF-4.11): Add a program to Open with…, and Remove a program from
+    /// Open with ▸ refilled as it opens; under Open with ▸ until 2026-11-11, a menu three deep (AX-9.1 depth rule).
+    /// </summary>
+    private ToolStripItem[] CreateProgramItems()
+    {
+        var remove = new ToolStripMenuItem("&Remove a program from Open with");
+        CommandPalette.FilledOnOpening(remove).DropDownOpening += (_, _) => FillRemovePrograms(remove);
+        FillRemovePrograms(remove);
+        return [new ToolStripMenuItem("&Add a program to Open with...", null, (_, _) => AddProgram()), remove];
+    }
+
+    /// <summary>One item per program of the user's, or one that says there are none (AX-9.5).</summary>
+    private void FillRemovePrograms(ToolStripMenuItem remove)
+    {
+        remove.DropDownItems.Clear();
+        var programs = _settings.Programs;
         if (programs.Count == 0)
         {
             remove.DropDownItems.Add(new ToolStripMenuItem("&No programs of your own yet"));
@@ -46,8 +63,6 @@ public sealed partial class FileForm
             var program = programs[i];
             remove.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, program.Name), null, (_, _) => RemoveProgram(program)));
         }
-
-        menu.DropDownItems.Add(remove);
     }
 
     /// <summary>Open with a custom program ▸ one program: run on the selected entries, or the current one, as its arguments; "Started <name>".</summary>
@@ -154,10 +169,14 @@ public sealed partial class FileForm
         }
     }
 
-    /// <summary>Shift+F10, the Applications key and a right click in the folder list (AF-4.6, AF-D13): the menu bar's Item menu, opened as Alt and I open it (the window base's <c>OpenBarMenu</c>).</summary>
-    private void ShowItemMenu() => OpenBarMenu('P');
+    /// <summary>Shift+F10, the Applications key and a right click in the folder list (AF-4.6, AF-D13): the bar's Context menu with the entry's commands, opened as Alt and C open it (AX-9.11; the window base's <c>OpenBarMenu</c>).</summary>
+    private void ShowItemMenu()
+    {
+        _context.Fill();
+        OpenBarMenu(ContextBarMenu.Letter);
+    }
 
-    /// <summary>Item → Windows menu…: the shell's own menu for the entry, under it in the list, once the Item menu has closed.</summary>
+    /// <summary>Context → Windows menu…: the shell's own menu for the entry, under it in the list, once Context has closed.</summary>
     private void ShowWindowsMenu()
     {
         if (!TryEntry(out var entry))
@@ -167,7 +186,7 @@ public sealed partial class FileForm
 
         var bounds = _list.GetItemRectangle(_list.SelectedIndex);
         var at = _list.PointToScreen(new Point(bounds.Left, bounds.Bottom));
-        // Posted, so that the Item menu has closed and the list has the focus back before the shell's menu takes over.
+        // Posted, so that Context has closed and the list has the focus back before the shell's menu takes over.
         BeginInvoke(() =>
         {
             if (IsDisposed)

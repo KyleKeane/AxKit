@@ -18,7 +18,7 @@ public sealed partial class AutomateForm : ItemForm
     private readonly AutomateSettings _settings;
     private readonly MenuStrip _menu = new();
     private readonly ToolStripMenuItem _sessionMenu = new("&Session");
-    private readonly ToolStripMenuItem _stepMenu = new("O&perations");
+    private readonly ToolStripMenuItem _actionsMenu = new();
 
     /// <summary>The folder open, and the folders gone into from it; empty when none is open.</summary>
     private readonly List<string> _folders = [];
@@ -31,7 +31,7 @@ public sealed partial class AutomateForm : ItemForm
     /// <summary>How many workflows the folder level shown holds, counted as its rows were filled, so that F5 and the menu need no second read.</summary>
     private int _levelWorkflows;
 
-    /// <summary>Run and Stop the run in the Operations menu, made available as the menu opens (<see cref="UpdateRunItems"/>).</summary>
+    /// <summary>Run and Stop the run in the Actions menu, made available as the menu opens (<see cref="UpdateRunItems"/>).</summary>
     private readonly ToolStripMenuItem _runItem;
 
     private readonly ToolStripMenuItem _stopItem;
@@ -52,15 +52,23 @@ public sealed partial class AutomateForm : ItemForm
         _sessionMenu.DropDownItems.Add(new ToolStripSeparator());
         _sessionMenu.DropDownItems.Add(CreateExitItem());
 
-        _stepMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
-        _stepMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
-        Add(_stepMenu, new Command("The workflow's file as &text", AxAutomateKeys.OpenFile, OpenFile) { When = NotRenaming, Mark = CommandMark.Open });
-        _stepMenu.DropDownItems.Add(new ToolStripSeparator());
-        _runItem = Add(_stepMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
-        _stopItem = Add(_stepMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });
+        // Context (AX-9.11, B-19): what acts on the folder, workflow, step or part the focus is on; Actions the runs.
+        var listMenu = new ToolStripMenuItem("&Workflow");
+        listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
+        listMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
+        Add(listMenu, new Command("The workflow's file as &text", AxAutomateKeys.OpenFile, OpenFile) { When = NotRenaming, Mark = CommandMark.Open });
+        var stepMenu = new ToolStripMenuItem("S&tep");
+        stepMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
+        stepMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
+        stepMenu.DropDownItems.Add(Item("The workflow's file as &text", OpenFile, AxAutomateKeys.OpenFile));
+        var partMenu = new ToolStripMenuItem("&Part");
+        partMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
+
+        _runItem = Add(_actionsMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
+        _stopItem = Add(_actionsMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });
         // Running keys only on what can run (AU-3.3.2): the items say so as the menu opens, and the command palette
         // reads them after the same refresh.
-        CommandPalette.RefreshedOnOpening(_stepMenu, UpdateRunItems);
+        CommandPalette.RefreshedOnOpening(_actionsMenu, UpdateRunItems);
         FormClosed += (_, _) => AbandonOnClose();
 
         var options = new ToolStripMenuItem("&Options");
@@ -74,7 +82,7 @@ public sealed partial class AutomateForm : ItemForm
         ]);
 
         // The bundle's menus (AX-9.1), Options, Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([_sessionMenu, _stepMenu, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
+        PlaceMenuBar(_menu, _sessionMenu, _actionsMenu, new ToolStripMenuItem(), CreateContextMenu(listMenu, stepMenu, partMenu), options, help);
         PlaceControls(_menu);
         Fill(select: null);
     }

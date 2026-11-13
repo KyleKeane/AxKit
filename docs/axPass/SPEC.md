@@ -91,7 +91,7 @@ forgets the master password and shows only the notice that asks for it.
   Delete on a group asks first and says that KeePassXC's own window brings it back. In the Recycle Bin, Delete removes
   for good after a question, since the tool asks none. A title cannot hold a slash (the tool's paths have no escape).
 
-- **PW-6.5 Moving an entry** (Ctrl+M, Entry, Move to a group; asked 2026-10-24): a list of the groups, the top of
+- **PW-6.5 Moving an entry** (Ctrl+M, Context, Move to a group; asked 2026-10-24): a list of the groups, the top of
   the database first and the Recycle Bin left out; `mv` to it (`/` for the top), and Ctrl+Z moves it back.
 - **PW-6.6 Every change is saved at once.** axPass holds no copy of the database: each change is one run of the tool,
   which writes the `.kdbx` file before axPass says the change, so there is nothing to save and nothing lost when the

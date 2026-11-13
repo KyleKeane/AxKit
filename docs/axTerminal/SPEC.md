@@ -67,7 +67,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   (the Start menu entry starts it in the user's profile folder, as the shells do).
 - AT-1.2a **Only the shells there are** (the user's ask, 2026-10-24): the New session notice and Switch shell list the
   shells this computer has; Windows always has Windows PowerShell and Command Prompt. PowerShell 7 and Git Bash, when
-  missing, are not listed; Switch shell offers "Install PowerShell 7…" and "Install Git, for Git Bash…" instead
+  missing, are not listed; Session offers "Install PowerShell 7…" and "Install Git, for Git Bash…" after Switch shell instead
   (bundle AX-2.9), and switches to the shell once it is installed.
 - AT-1.2 **The shell.** One of PowerShell 7 (`pwsh.exe`, found on the PATH or under `%ProgramFiles%\PowerShell\7`),
   Windows PowerShell (`powershell.exe`), Command Prompt (`cmd.exe` from System32 by its full path, never the `ComSpec`
@@ -310,18 +310,20 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 
 - AT-6.1 Menus, in the standard order of a first menu (AX-6): **Session (S):** New session… Ctrl+N | Open recent
   folder ▸ (ten, "1. name (path)", AX-9.5) | Open recent folder in new window ▸ (the same list, a new axTerminal window on the one chosen, this one left as it is) | Switch shell ▸ (PowerShell 7 | Windows PowerShell | Command Prompt |
-  Git Bash | the user's shells, "1. name (command line)" | Custom… | Add a shell… | Remove a shell ▸, AT-1.6a) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder Ctrl+P |
+  Git Bash | the user's shells, "1. name (command line)", the shells alone, AT-1.6a) | Custom shell… | Add a shell… | Remove a shell ▸ | Install PowerShell 7… | Install Git, for Git Bash… (the installers when the shell is missing; under Switch shell until 2026-11-11, a menu three deep, AX-9.1) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder Ctrl+P |
   Show current folder in ▸ (File Explorer Ctrl+W | axClaude | axGIT | axFile), on the shell's current directory | ─ |
-  Export transcript… Ctrl+S | Exit Alt+F4. **Operations (P):** Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send
-  key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent commands… Ctrl+R | Send without recording (Ctrl+Enter in the
-  command field) | ─ | What is running Ctrl+Q. **Navigate (N):** axClaude's Navigate menu with the kinds the terminal
-  has: Command field Ctrl+1 | Terminal Ctrl+2 | Latest output Ctrl+3 | ─ | Find… Ctrl+F | Find next F3 | Find
-  previous Shift+F3 | ─ | Bookmark this line Ctrl+Shift+K | Next bookmark | Previous bookmark (the other quick keys
-  are the terminal's letters, named in the F1 text). **Options (O):** Sounds ▸ (Chimes ✓ | Ticks for new lines ✓ |
+  Export transcript… Ctrl+S | Exit Alt+F4. **Actions (A)** ("Operations" in 5.7.0; the bundle's eight since 2026-11-11, AX-9.1):
+  Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent
+  commands… Ctrl+R | Send without recording (Ctrl+Enter in the command field) | ─ | What is running Ctrl+Q.
+  **Navigation (N):** axClaude's Navigation menu with the kinds the terminal has: Command field Ctrl+1 | Terminal
+  Ctrl+2 | Latest output Ctrl+3 | ─ | Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | ─ | Next bookmark |
+  Previous bookmark (the other quick keys are the terminal's letters, named in the F1 text). **Context (C)** (AX-9.11): Copy
+  this line into the command field (Enter in the terminal) | Bookmark this line Ctrl+Shift+K | Copy the selection; Shift+F10,
+  the Applications key and a right click in the terminal or the field open it. **Options (O):** Sounds ▸ (Chimes ✓ | Ticks for new lines ✓ |
   Background music while a command runs Ctrl+Space) | Speech ▸ (Speak output: none ○ | Speak output: all lines ○ |
   ─ | Say when a program asks ✓) | When a command is done ▸ (Flash the taskbar button ✓ | Louder alert when the window
   is in the background) | Text ▸ (Time stamps | Markers in the text ✓ | ─ | Font… | Larger text | Smaller text | Windows text size) | General
-  ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream | Copy diagnostics). **Window (W)** (before Options), **axKit (A)**
+  ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream | Copy diagnostics). **Window (W)** (before Options), **axKit (K)**
   (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Shell resources ▸ (PowerShell documentation |
   Windows Terminal shell integration | Bash manual). Every item has a mnemonic (AX-7.4).
   The first menu is Session, as in axClaude, since what it holds is the shell in its folder, the thing the window

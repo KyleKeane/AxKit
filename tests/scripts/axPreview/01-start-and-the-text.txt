@@ -17,11 +17,11 @@ check commands
 expect state "title":"README.md - axPreview"
 expect focus {"name":"README.md","role":"Text","value":"# Readme for the preview tests"}
 expect quiet 1000
-# 1.1 manual: the menu bar (Alt) needs the foreground; its menus as the palette reads them: File, Navigate, Options,
+# 1.1 manual: the menu bar (Alt) needs the foreground; its menus as the palette reads them: File, Navigation, Options,
 # axKit, Help, and no Edit menu (the runner has no refuse for the commands, so the absence is not checked).
 expect commands "New window, Session, Ctrl\u002BN"
 expect commands "Reload, Session, F5"
-expect commands "Find, Navigate, Ctrl\u002BF"
+expect commands "Find, Navigation, Ctrl\u002BF"
 expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW, checked"
 expect commands "Keyboard shortcuts, Help, F1"
 
@@ -87,9 +87,9 @@ expect said ! Table with 3 rows and 2 columns
 keys ctrl+t
 expect said ! No next table
 # 1.4 manual: Alt+N, X opens the Next submenu, a real menu; the palette lists its items with their keys.
-expect commands "Heading, Navigate, Next, Ctrl\u002BH"
-expect commands "Link, Navigate, Next, Ctrl\u002BK"
-expect commands "Table, Navigate, Previous, Ctrl\u002BShift\u002BT"
+expect commands "Heading, Navigation, Next, Ctrl\u002BH"
+expect commands "Link, Navigation, Next, Ctrl\u002BK"
+expect commands "Table, Navigation, Previous, Ctrl\u002BShift\u002BT"
 
 # 1.5: Ctrl+F, update, Enter: the match selected; F3 the next; Shift+F3 back.
 keys ctrl+home ctrl+f

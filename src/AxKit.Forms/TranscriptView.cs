@@ -523,8 +523,8 @@ public sealed class TranscriptView : AxKitTextBox
         Announce($"Line {_mirror.DisplayLineOf(index) + 1} of {_mirror.DisplayLineCount}", true);
     }
 
-    /// <summary>Enter: hands the caret's line, as the reader sees it (joined rows as one), to the window to quote in the message.</summary>
-    private void ChooseLine()
+    /// <summary>Enter, and the bar's Context item for it: hands the caret's line, as the reader sees it (joined rows as one), to the window to quote in the message.</summary>
+    public void ChooseLine()
     {
         if (_mirror.LineCount == 0)
         {

@@ -39,7 +39,7 @@ axPreview, which reads the text in it without Claude.
 
 ## axHelp's folder and model
 
-Claude works in its own folder, Documents, axKit Claude (Session, Claude's working folder opens it in axFile). Its
+Claude works in its own folder, Documents, axKit Claude (Actions, Claude's working folder opens it in axFile). Its
 conversations, the permissions you give with "always" and its instructions stay there, apart from your projects. The
 file CLAUDE.md there holds Claude's standing instructions for axHelp, short spoken replies among them; change it as you
 like. The folder `.claude\agents` holds the agent.
@@ -57,7 +57,7 @@ hotkeys do. Enter opens the conversation; Escape hides the window. Session, Quit
 Options, Hotkey changes Windows+Alt+H. The screenshot's key is `screenshotHotkey` in the settings file
 (`%APPDATA%\AxKit\axHelp.json`, Options, Developer, Open settings file); start axHelp again after changing it.
 
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+A) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 
 ## If something goes wrong
 

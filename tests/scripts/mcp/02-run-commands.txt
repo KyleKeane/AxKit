@@ -55,10 +55,10 @@ expect said axAutomate ran Word wrap
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
 wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Heading"}
-expect mcp error: The window has several commands named Heading: give the menu too, one of: Navigate, Next; Navigate, Previous.
+expect mcp error: The window has several commands named Heading: give the menu too, one of: Navigation, Next; Navigation, Previous.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
 wait 3500
-mcp call axkit_window_run {"window":"{window}","command":"Heading","menu":"Navigate, Next"}
+mcp call axkit_window_run {"window":"{window}","command":"Heading","menu":"Navigation, Next"}
 expect mcp "ran": "Heading"
 expect said axAutomate ran Heading
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).

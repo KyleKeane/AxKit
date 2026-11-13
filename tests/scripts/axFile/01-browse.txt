@@ -404,20 +404,20 @@ expect said ! No names contain zzz
 keys escape
 expect said ! Filter cleared
 # Sort by: Name checked; Date: newest first after the folders; Size: largest first; Name again.
-expect commands "Name, Session, Sort by, checked"
-menu Date, Session, Sort by
+expect commands "Name, Options, Sort by, checked"
+menu Date, Options, Sort by
 expect said ! Sorted by date
 keys home
 expect focus sort-newest-and-largest.bin
 keys down
 expect focus sort-middle-age-and-size.bin
-menu Size, Session, Sort by
+menu Size, Options, Sort by
 expect said ! Sorted by size
 keys home
 expect focus sort-newest-and-largest.bin
 keys down
 expect focus sort-middle-age-and-size.bin
-menu Name, Session, Sort by
+menu Name, Options, Sort by
 expect said ! Sorted by name
 keys home
 expect focus chapter-01-notes.txt

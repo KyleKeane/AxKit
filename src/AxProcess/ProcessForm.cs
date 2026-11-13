@@ -36,6 +36,7 @@ public sealed class ProcessForm : AxKitForm
     private readonly ToolStripMenuItem _processMenu = new("&Process");
     private readonly ToolStripMenuItem _serviceMenu = new("S&ervice");
     private readonly ToolStripMenuItem _startupMenu = new("S&tartup");
+    private readonly ContextBarMenu _context;
 
     private View _view = View.Processes;
     private IReadOnlyList<ProcessRow> _processes = [];
@@ -56,43 +57,50 @@ public sealed class ProcessForm : AxKitForm
 
         // ---- menus and keys (PR-6.1, PR-6.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // The first menu holds what every view has (AX-6: the thing worked on, then Exit); each view has a menu of its
-        // own, and only the menu of the view shown is enabled, so that a process command is never at hand among the
-        // services (the user's ask, 2026-10-24; UpdateViewMenus). The keys act whichever menu is enabled, as before:
+        // own, off the bar, and Context holds the one of the view shown, so that a process command is never at hand
+        // among the services (the user's ask, 2026-10-24; AX-9.11, 2026-11-11). The keys act in every view, as before:
         // Enter and Ctrl+E are the first menu's command with the key, and each command finds the view shown.
         var computer = new ToolStripMenuItem("&Session");
         Add(computer, new Command("&Refresh", AxProcessKeys.Refresh, () => Do(() => RefreshAsync(announce: true))) { Mark = CommandMark.Read });
-        Add(computer, new Command("&Summary", AxProcessKeys.Summary, SaySummary) { Mark = CommandMark.Read });
-        Add(computer, new Command("&Copy line", AxProcessKeys.CopyLine, CopyLine) { Mark = CommandMark.Act });
         computer.DropDownItems.Add(new ToolStripSeparator());
         computer.DropDownItems.Add(CreateExitItem());
 
-        // Details and Show program are in more than one view's menu: one command each, placed in every menu that has it.
+        // Actions: what is about the computer as a whole (AX-9.1); Context: what acts on the line the list is on, from
+        // the menu of the view shown (AX-9.11, B-19).
+        var actions = new ToolStripMenuItem();
+        Add(actions, new Command("&Summary", AxProcessKeys.Summary, SaySummary) { Mark = CommandMark.Read });
+
+        // Details, Copy line and Show program are in more than one view's menu: one command each, placed in every menu that has it.
         var details = new Command("&Details", AxProcessKeys.Act, () => Do(ActAsync)) { When = () => _list.Focused, Mark = CommandMark.Read };
+        var copyLine = new Command("&Copy line", AxProcessKeys.CopyLine, CopyLine) { Mark = CommandMark.Act };
         var showProgram = new Command("Show program in ax&File", AxProcessKeys.ShowProgram, ShowProgram) { Mark = CommandMark.Open };
         Add(_processMenu, details);
         Add(_processMenu, new Command("&End process...", AxProcessKeys.End, () => EndProcess(tree: false)) { When = () => _list.Focused, Mark = CommandMark.Act });
         Add(_processMenu, new Command("End process &tree...", Keys.None, () => EndProcess(tree: true)) { Mark = CommandMark.Act });
         Add(_processMenu, showProgram);
+        Add(_processMenu, copyLine);
 
         Add(_serviceMenu, details);
         Add(_serviceMenu, new Command("&Start", Keys.None, () => ControlSelectedService(ServiceAction.Start)) { Mark = CommandMark.Act });
         Add(_serviceMenu, new Command("S&top", Keys.None, () => ControlSelectedService(ServiceAction.Stop)) { Mark = CommandMark.Act });
         Add(_serviceMenu, new Command("&Restart", Keys.None, () => ControlSelectedService(ServiceAction.Restart)) { Mark = CommandMark.Act });
+        Add(_serviceMenu, copyLine);
 
         Add(_startupMenu, details);
         Add(_startupMenu, showProgram);
+        Add(_startupMenu, copyLine);
 
-        var view = new ToolStripMenuItem("&View");
+        // Navigation: the three views (the View menu's until 2026-11-11, AX-9.1).
+        var view = new ToolStripMenuItem();
         Add(view, new Command("&Processes", AxProcessKeys.ViewProcesses, () => Do(() => ShowViewAsync(View.Processes))) { Mark = CommandMark.Open });
         Add(view, new Command("&Services", AxProcessKeys.ViewServices, () => Do(() => ShowViewAsync(View.Services))) { Mark = CommandMark.Open });
         Add(view, new Command("Start&up", AxProcessKeys.ViewStartup, () => Do(() => ShowViewAsync(View.Startup))) { Mark = CommandMark.Open });
-        view.DropDownItems.Add(new ToolStripSeparator());
         var sort = new ToolStripMenuItem("Sort processes &by");
         _sortItems = new ChoiceItems<ProcessSort>(sort, [(ProcessSort.Memory, "&Memory"), (ProcessSort.Processor, "&Processor"), (ProcessSort.Name, "&Name")], settings.SortBy, SetSort);
-        view.DropDownItems.Add(sort);
 
-        // Options, as the other windows' (AX-6).
-        var options = new ToolStripMenuItem("&Options");
+        // Options, the app's own first (AX-9.1): Sort processes by, the View menu's until 2026-11-11.
+        var options = new ToolStripMenuItem();
+        options.DropDownItems.Add(sort);
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());
@@ -104,16 +112,17 @@ public sealed class ProcessForm : AxKitForm
         ]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([computer, _processMenu, _serviceMenu, _startupMenu, view, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
-        UpdateViewMenus();
+        _context = new ContextBarMenu(ContextNow, () => "Nothing selected", said => Announce(said, true), _processMenu, _serviceMenu, _startupMenu);
+        PlaceMenuBar(_menu, computer, actions, view, _context.Menu, options, help);
+        _menu.MenuActivate += (_, _) => _context.Fill();
 
         // The keys without a menu item: find in the list, and Tab, Shift+Tab and the menu keys in the list (returning
         // true there keeps it from dinging).
         AddFindInListKeys("list", _list, () => Current.Labels);
         AddKey(new Command("Next view", AxProcessKeys.NextView, () => Do(() => ShowViewAsync(Cycled(1)))) { When = () => _list.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Previous view", AxProcessKeys.PreviousView, () => Do(() => ShowViewAsync(Cycled(-1)))) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Item menu", AxProcessKeys.ItemMenu, OpenViewMenu) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Item menu", AxProcessKeys.ItemMenuAlso, OpenViewMenu) { When = () => _list.Focused, Mark = CommandMark.Open });
+        AddKey(new Command("Context menu", AxProcessKeys.ItemMenu, OpenViewMenu) { When = () => _list.Focused, Mark = CommandMark.Open });
+        AddKey(new Command("Context menu", AxProcessKeys.ItemMenuAlso, OpenViewMenu) { When = () => _list.Focused, Mark = CommandMark.Open });
 
         // ---- the list (PR-2.1) ----
         _list.IntegralHeight = false;
@@ -178,16 +187,19 @@ public sealed class ProcessForm : AxKitForm
     /// <summary>The view after or before the one shown, round from Startup to Processes (Tab, Shift+Tab; PR-2.2).</summary>
     private View Cycled(int step) => (View)(((int)_view + step + 3) % 3);
 
-    /// <summary>Shift+F10, the Applications key, a right click (PR-6.1): the view's menu from the bar, Process, Service or Startup.</summary>
-    private void OpenViewMenu() => OpenBarMenu(_view switch { View.Services => 'E', View.Startup => 'T', _ => 'P' });
-
-    /// <summary>The menu of the view shown enabled, the other two not (PR-6.1): WinForms skips a disabled menu on the bar's arrows and the palette leaves its items out.</summary>
-    private void UpdateViewMenus()
+    /// <summary>Shift+F10, the Applications key, a right click (PR-6.1): the bar's Context menu, holding the view's items.</summary>
+    private void OpenViewMenu()
     {
-        _processMenu.Enabled = _view == View.Processes;
-        _serviceMenu.Enabled = _view == View.Services;
-        _startupMenu.Enabled = _view == View.Startup;
+        _context.Fill();
+        OpenBarMenu(ContextBarMenu.Letter);
     }
+
+    /// <summary>The menu of the view shown, whose items Context holds (PR-6.1, AX-9.11); null with nothing selected.</summary>
+    private ToolStripMenuItem? ContextNow() =>
+        _list.SelectedIndex < 0 ? null : _view switch { View.Services => _serviceMenu, View.Startup => _startupMenu, _ => _processMenu };
+
+    /// <summary>Context made again for the view shown.</summary>
+    private void UpdateViewMenus() => _context.Fill();
 
     // ---- the views (PR-2.2, PR-2.3) ----
 

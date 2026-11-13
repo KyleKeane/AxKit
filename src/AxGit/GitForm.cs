@@ -28,6 +28,9 @@ public sealed partial class GitForm : AxKitForm
     private readonly GitSettings _settings;
     private readonly string? _startPath;
     private readonly MenuStrip _menu = new();
+
+    /// <summary>The bar's Context menu (AX-9.11): the line's commands by the view shown.</summary>
+    private readonly ContextBarMenu _context;
     private readonly ToolStripMenuItem _recentItem = new("Open &recent repository");
     private readonly AxKitList _list = new();
     private readonly AxKitTextBox _details = new();
@@ -79,34 +82,39 @@ public sealed partial class GitForm : AxKitForm
         repository.DropDownItems.Add(new ToolStripSeparator());
         repository.DropDownItems.Add(CreateExitItem());
 
-        // Space, Enter and Delete act in the list only; in the details they are the control's own (AG-6.2). Enter acts
-        // on the item of the view shown: Show diff, the commit (a key without an item), Switch to branch.
-        var changes = new ToolStripMenuItem("O&perations");
+        // Actions (AX-9.1): what axGIT does to the repository, the same wherever the focus is.
+        var actions = new ToolStripMenuItem();
+        Git(Add(actions, new Command("Stage &all", AxGitKeys.StageAll, () => Do(() => StageAllAsync(stage: true))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("&Unstage all", AxGitKeys.UnstageAll, () => Do(() => StageAllAsync(stage: false))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("&Commit...", AxGitKeys.Commit, Commit) { Mark = CommandMark.Act }));
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        Git(Add(actions, new Command("&New branch...", AxGitKeys.NewBranch, NewBranch) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("&Fetch", AxGitKeys.Fetch, () => Do(() => ToServerAsync(FetchAsync))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("&Pull", AxGitKeys.Pull, () => Do(() => ToServerAsync(PullAsync))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("Pu&sh", AxGitKeys.Push, () => Do(() => ToServerAsync(PushAsync))) { Mark = CommandMark.Act }));
+
+        // Navigation (AX-9.1): the three views (the View menu's until 2026-11-11).
+        var navigation = new ToolStripMenuItem();
+        Add(navigation, new Command("&Changes", AxGitKeys.ViewChanges, () => Do(() => ShowViewAsync(View.Changes))) { Mark = CommandMark.Open });
+        Add(navigation, new Command("&Log", AxGitKeys.ViewLog, () => Do(() => ShowViewAsync(View.Log))) { Mark = CommandMark.Open });
+        Add(navigation, new Command("&Branches", AxGitKeys.ViewBranches, () => Do(() => ShowViewAsync(View.Branches))) { Mark = CommandMark.Open });
+
+        // Context (AX-9.11): what acts on the line selected, by the view shown. Space, Enter and Delete act in the list
+        // only; in the details they are the control's own (AG-6.2). Enter acts on the item of the view shown: Show
+        // diff, the commit, Switch to branch.
+        var changes = new ToolStripMenuItem("&Change");
         Git(Add(changes, new Command("&Stage or unstage", AxGitKeys.StageToggle, () => Do(StageToggleAsync)) { When = () => _list.Focused, Mark = CommandMark.Act }));
-        Git(Add(changes, new Command("Stage &all", AxGitKeys.StageAll, () => Do(() => StageAllAsync(stage: true))) { Mark = CommandMark.Act }));
-        Git(Add(changes, new Command("&Unstage all", AxGitKeys.UnstageAll, () => Do(() => StageAllAsync(stage: false))) { Mark = CommandMark.Act }));
-        changes.DropDownItems.Add(new ToolStripSeparator());
         Git(Add(changes, new Command("Show &diff", AxGitKeys.Act, () => Do(ShowDiffAsync)) { When = () => _list.Focused && _view == View.Changes, Mark = CommandMark.Read }));
         Add(changes, new Command("&Open file in editor", AxGitKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
         Git(Add(changes, new Command("Disca&rd changes...", AxGitKeys.Discard, Discard) { When = () => _list.Focused, Mark = CommandMark.Act }));
-        changes.DropDownItems.Add(new ToolStripSeparator());
-        Git(Add(changes, new Command("&Commit...", AxGitKeys.Commit, Commit) { Mark = CommandMark.Act }));
-
-        var branches = new ToolStripMenuItem("&Branches");
-        Git(Add(branches, new Command("&Switch to branch", AxGitKeys.Act, () => Do(SwitchBranchAsync)) { When = () => _list.Focused && _view == View.Branches, Mark = CommandMark.Act }));
-        Git(Add(branches, new Command("&New branch...", AxGitKeys.NewBranch, NewBranch) { Mark = CommandMark.Act }));
-        branches.DropDownItems.Add(new ToolStripSeparator());
-        Git(Add(branches, new Command("&Fetch", AxGitKeys.Fetch, () => Do(() => ToServerAsync(FetchAsync))) { Mark = CommandMark.Act }));
-        Git(Add(branches, new Command("&Pull", AxGitKeys.Pull, () => Do(() => ToServerAsync(PullAsync))) { Mark = CommandMark.Act }));
-        Git(Add(branches, new Command("P&ush", AxGitKeys.Push, () => Do(() => ToServerAsync(PushAsync))) { Mark = CommandMark.Act }));
-
-        var view = new ToolStripMenuItem("&View");
-        Add(view, new Command("&Changes", AxGitKeys.ViewChanges, () => Do(() => ShowViewAsync(View.Changes))) { Mark = CommandMark.Open });
-        Add(view, new Command("&Log", AxGitKeys.ViewLog, () => Do(() => ShowViewAsync(View.Log))) { Mark = CommandMark.Open });
-        Add(view, new Command("&Branches", AxGitKeys.ViewBranches, () => Do(() => ShowViewAsync(View.Branches))) { Mark = CommandMark.Open });
+        var commit = new ToolStripMenuItem("C&ommit");
+        commit.DropDownItems.Add(Item("&Show the commit", () => Do(ShowCommitAsync), AxGitKeys.Act));
+        var branch = new ToolStripMenuItem("&Branch");
+        Git(Add(branch, new Command("&Switch to branch", AxGitKeys.Act, () => Do(SwitchBranchAsync)) { When = () => _list.Focused && _view == View.Branches, Mark = CommandMark.Act }));
+        _context = new ContextBarMenu(() => _view switch { View.Log => commit, View.Branches => branch, _ => changes }, () => "Nothing selected", said => Announce(said, true), changes, commit, branch);
 
         // Options, as the other windows' (AX-6): every setting in the submenu for what it is about.
-        var options = new ToolStripMenuItem("&Options");
+        var options = new ToolStripMenuItem();
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());
@@ -114,9 +122,8 @@ public sealed partial class GitForm : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Git &resources",
             [("&git-scm.com", "https://git-scm.com"), ("&Pro Git, the book", "https://git-scm.com/book/en/v2")]);
 
-        // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([repository, changes, branches, view, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
-
+        PlaceMenuBar(_menu, repository, actions, navigation, _context.Menu, options, help);
+        _menu.MenuActivate += (_, _) => _context.Fill();
         // The keys without a menu item: between the list and the details, find in the details, Enter on a commit.
         foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
         {
@@ -132,6 +139,8 @@ public sealed partial class GitForm : AxKitForm
         AddKey(new Command("Find in the details", BundleKeys.Find, () => ShowFind(_details)) { Mark = CommandMark.Read });
         AddKey(new Command("Find next", BundleKeys.FindNext, () => FindNext(_details, 1)) { Mark = CommandMark.Read });
         AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindNext(_details, -1)) { Mark = CommandMark.Read });
+        AddKey(new Command("Context menu", AxGitKeys.ContextMenu, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
+        AddKey(new Command("Context menu", AxGitKeys.ContextMenuAlso, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Show the commit", AxGitKeys.Act, () => Do(ShowCommitAsync)) { When = () => _list.Focused && _view == View.Log, Mark = CommandMark.Read });
 
         // ---- the list and the details (AG-2.1) ----
@@ -140,6 +149,7 @@ public sealed partial class GitForm : AxKitForm
         _list.Height = 200;
         _list.TabIndex = 0;
         _list.AccessibleName = "No repository";
+        _list.OpenMenuOnRightClick(OpenContext);
 
         _details.Multiline = true;
         _details.ReadOnly = true;
@@ -349,6 +359,7 @@ public sealed partial class GitForm : AxKitForm
         SetTitle("No repository");
         _list.Items.Clear();
         _list.AccessibleName = "No repository";
+        _list.OpenMenuOnRightClick(OpenContext);
         UpdateStatusBar();
     }
 
@@ -406,5 +417,12 @@ public sealed partial class GitForm : AxKitForm
 
         var path = Path.Combine(_root, file.Path.Replace('/', Path.DirectorySeparatorChar));
         WindowMenu.Start(Dispatch.EditorOf(path), path);
+    }
+
+    /// <summary>Shift+F10, the Applications key and a right click in the list (AX-9.11): the bar's Context menu with the line's commands.</summary>
+    private void OpenContext()
+    {
+        _context.Fill();
+        OpenBarMenu(ContextBarMenu.Letter);
     }
 }

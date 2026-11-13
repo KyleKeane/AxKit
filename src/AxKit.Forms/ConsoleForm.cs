@@ -420,16 +420,32 @@ public abstract partial class ConsoleForm : AxKitForm
         Add(menu, new Command("Find &previous", BundleKeys.FindPrevious, () => FindNext(backward: true)) { Mark = CommandMark.Read });
     }
 
-    /// <summary>Bookmark this line (a command with its key), Next bookmark and Previous bookmark for the Navigate menu (axClaude FR-3.9), with the view's letters named.</summary>
+    /// <summary>Next bookmark and Previous bookmark for the Navigation menu (axClaude FR-3.9), with the view's letters named; Bookmark this line is Context's (<see cref="CreateTranscriptContext"/>).</summary>
     protected void AddBookmarkItems(ToolStripMenuItem menu)
     {
         var view = _transcriptName.ToLowerInvariant();
-        var bookmark = Add(menu, new Command("&Bookmark this line", _keys.BookmarkLine, Transcript.ToggleBookmark) { Mark = CommandMark.Change });
-        bookmark.ShortcutKeyDisplayString = $"{BundleKeys.Text(_keys.BookmarkLine)}, or {BundleKeys.Text(_keys.BookmarkToggle)} in the {view}";
         menu.DropDownItems.Add(new ToolStripMenuItem("Next bookmar&k", null, (_, _) => Transcript.JumpToBookmark(backward: false)) { ShortcutKeyDisplayString = $"{BundleKeys.Text(_keys.Bookmark.Key)} in the {view}" });
         menu.DropDownItems.Add(new ToolStripMenuItem("Pre&vious bookmark", null, (_, _) => Transcript.JumpToBookmark(backward: true)) { ShortcutKeyDisplayString = $"Shift+{BundleKeys.Text(_keys.Bookmark.Key)} in the {view}" });
     }
 
+    /// <summary>
+    /// The bar's Context menu of a console window (AX-9.11, 2026-11-11): what acts on the line the transcript's caret
+    /// is on and the selection: the line handed to the window (<paramref name="chooseText"/>: axClaude's quote into the
+    /// message, axTerminal's copy into the field), Bookmark this line (a command with its key), Copy the selection.
+    /// Shift+F10, the Applications key and a right click in the transcript and the field open it (<see cref="AxKitForm.ContextFromControl"/>).
+    /// </summary>
+    protected ToolStripMenuItem CreateTranscriptContext(string chooseText)
+    {
+        var view = _transcriptName.ToLowerInvariant();
+        var menu = new ToolStripMenuItem();
+        menu.DropDownItems.Add(new ToolStripMenuItem(chooseText, null, (_, _) => Transcript.ChooseLine()) { ShortcutKeyDisplayString = $"Enter in the {view}" });
+        var bookmark = Add(menu, new Command("&Bookmark this line", _keys.BookmarkLine, Transcript.ToggleBookmark) { Mark = CommandMark.Change });
+        bookmark.ShortcutKeyDisplayString = $"{BundleKeys.Text(_keys.BookmarkLine)}, or {BundleKeys.Text(_keys.BookmarkToggle)} in the {view}";
+        menu.DropDownItems.Add(new ToolStripMenuItem("&Copy the selection", null, (_, _) => Transcript.Copy()) { ShortcutKeyDisplayString = $"Ctrl+C in the {view}" });
+        ContextFromControl(Transcript);
+        ContextFromControl(Input);
+        return menu;
+    }
     /// <summary>The transcript's two switches for Options → Text: the time stamps on the markers and the # markers in the text (axClaude FR-4.6, FR-4.6a).</summary>
     protected ToolStripItem[] TranscriptTextItems() =>
     [
