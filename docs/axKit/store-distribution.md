@@ -6,6 +6,13 @@ the maintainer's; section 7 lists what the documentation did not say and the fir
 work follows the bundle's order: specification first, then infrastructure, then code, then the NVDA pass, then the
 release. The code runs on a branch, `store`, and merges when the Store copy has passed its NVDA checks.
 
+State on 2026-11-13: the package, the listing and the first publication are done, and every release's package is
+uploaded in Partner Center's website by hand or through `tools/EdgeDrive` (`store-setup.md` sections 5 and 6). The
+command-line route this plan describes (the tenant, the Microsoft Entra application, the Store Developer CLI, the
+submission API; section 2, phase 1 steps 2 and 3, phase 7) does not exist: the account is an Individual account, to
+which Partner Center opens none of it, and what was built for it was removed on 2026-11-13 at the maintainer's
+decision. Those passages stay as the plan's record.
+
 ## 0. The short version (chosen 2026-11-08)
 
 The maintainer found the full plan too much to take in at once and asked for the simplest way. It is this, and the
@@ -15,9 +22,10 @@ Then I build the package, the listing texts and the screenshots and check them w
 needed from him). Then one submission by hand in the browser, step by step with me (phase 6, about an hour): upload
 the file, paste the texts, answer the age questionnaire, submit. Then Microsoft certifies (days) and `winget install`
 works. The tenant, the Entra application and its key (section 2 steps 1 to 3) were first deferred; on 2026-11-09 the
-maintainer asked for the automated publishing as soon as possible, so they are part one of his steps
-(`store-setup.md` section 2), the workflow `store.yml` and `tools/store-submit.ps1` are built, and the switch
-`STORE_SUBMIT` is turned on once the first publication is live.
+maintainer asked for the automated publishing as soon as possible, and a workflow and a script for the submission API
+were built that day. His account, an Individual account, turned out to have no tenant and no Entra application to
+offer (`store-setup.md` section 2), so the route was never switched on, and it was removed on 2026-11-13 at his
+decision. Every release's package is uploaded in Partner Center's website (`store-setup.md` sections 5 and 6).
 
 ## 1. Why, in one paragraph
 
@@ -32,6 +40,9 @@ and what it may write where (section 3), and the first publication goes through 
 (section 2).
 
 ## 2. What runs from the command line and what does not
+
+As planned on 2026-11-08. The command-line side below was closed to the account and removed on 2026-11-13; what
+holds is `store-setup.md` section 2, and every submission goes through the website (section 5 there).
 
 Partner Center's programmatic side, the Microsoft Store submission API and the Microsoft Store Developer CLI
 (`msstore`) built on it, authenticates only as a Microsoft Entra application: a tenant ID, a client ID and a key, with
@@ -184,7 +195,7 @@ desktop (a screenshot step to add), captions under 200 characters. Store logo 30
 mandatory, another strongly recommended: provided). Age ratings: the IARC questionnaire answered truthfully; axTerminal
 and axClaude reach the internet without a filter, so a rating above 3+ is likely and does not matter for a developer
 tool. Additional licence terms: AGPL-3.0-only with its link. The texts live in `docs/axKit/store-listing.md`, the
-source of truth the listing is pasted from and, later, pushed from by the CLI.
+source of truth the listing is pasted from.
 
 ### 3.7 winget
 
@@ -230,10 +241,9 @@ the Store copy's Check for updates, About and Start with Windows; `build.yml` bu
 `publish\msix\StoreLogo-300.png` and six screenshots in `publish\store` (`tools/store-screenshots.ps1`, retaken from a
 demo folder under the Public profile after the first set showed the maintainer's folder path; axTerminal's and
 axGIT's come with `-WithAccessLayers` once he has connected them here, axClaude's by hand); phase 6
-waits for the maintainer (his steps are `store-setup.md` section 3); phase 7 is built (`store.yml` on a published
-release behind the variable `STORE_SUBMIT`, `tools/store-submit.ps1` against the submission API,
-`tools/store-credentials.ps1` for the maintainer's copy of the credentials; the Partner Center application is his
-steps in `store-setup.md` section 2, and the first real run is the release after the first publication). The
+waits for the maintainer (his steps are `store-setup.md` section 3); phase 7 was built on 2026-11-09 (a workflow on
+a published release behind a repository variable, a script against the submission API and a script for the
+maintainer's copy of the credentials), never switched on, and removed on 2026-11-13 (phase 7 below). The
 registration and probe tests of section 7 passed; the NVDA pass of the Store copy comes with phase 6.
 
 ### Phase 1: Partner Center (the maintainer, in the browser, about an hour; can start now)
@@ -305,30 +315,25 @@ Gate: the loose package starts every app from the Start menu, and section 7 has 
    startup tasks after a sign-in, the file verbs, Check for updates, where the settings landed), recorded in
    `docs/axKit/nvda-test-record.md`. Then `store` merges to `main`.
 
-### Phase 7: The release process (built 2026-11-09)
+### Phase 7: The release process (built 2026-11-09; the API route removed 2026-11-13)
 
-Decided for the plain script over the Store Developer CLI: the CLI needs a .NET 9 runtime of its own, its documentation
-leaves open whether it takes a package built outside its project types, and the submission API it wraps has been
-Microsoft's documented interface since 2017. So: `release.yml` builds the package beside the zip and attaches it to
-the draft; `release.ps1` publishes as before; and the new workflow `store.yml`, on a published release and only while
-the repository variable `STORE_SUBMIT` is `on`, downloads the release's attested `AxKit-<version>.msix` and runs
-`tools/store-submit.ps1` in the `release` environment with the secrets `PARTNER_CENTER_TENANT_ID`,
-`PARTNER_CENTER_CLIENT_ID` and `PARTNER_CENTER_CLIENT_SECRET` (no Seller ID: the API does not use one). The script
-takes a token from `login.microsoftonline.com/<tenant>/oauth2/token` for the resource
-`https://manage.devcenter.microsoft.com`, reads the application, refuses to run over a pending submission unless told
-to replace it, creates the submission (a copy of the last published one), marks the old package for deletion and adds
-the new, sets What's new from the release notes (1500 characters at most), uploads the zip to the submission's upload
-address, commits, and polls the status until the Store has taken it in or refused it. `-Status` reads the state;
-`-DryRun` shapes a submission without the network, which is how it was checked before any credentials existed.
-`docs/axKit/store-setup.md` records the account, the application, the secrets and the runbook as `reports-setup.md`
-does for the reports; this page keeps the plan and its decisions. The first real run: the first release after the
-first publication is live, watched by hand (`gh run watch`, then `-Status`).
+`release.yml` builds the package beside the zip and attaches it to the draft; `release.ps1` publishes as before; the
+release's attested `AxKit-<version>.msix` is then uploaded in Partner Center's website as a new submission, by hand
+or through `tools/EdgeDrive` (`store-setup.md` sections 5 and 6). `docs/axKit/store-setup.md` records the account
+and the runbook as `reports-setup.md` does for the reports; this page keeps the plan and its decisions.
+
+The decision of 2026-11-09 was a plain script against the submission API over the Store Developer CLI (the CLI needs
+a .NET 9 runtime of its own, and its documentation leaves open whether it takes a package built outside its project
+types), run by a workflow on a published release behind a repository variable, with a Microsoft Entra application's
+three values as secrets of the `release` environment. It was checked without the network only and never switched
+on, since Partner Center offers an Individual account neither the tenant nor the application
+(`store-setup.md` section 2). On 2026-11-13 the maintainer decided to give the route up for good, and the workflow
+and its two scripts were removed.
 
 ### Phase 8: Later
 
 arm64 in a bundle with x64; the community winget manifest; the folder context menu's COM server; retiring
-`install.ps1` once the Store path has carried a few releases; listing changes pushed by `msstore submission
-updateMetadata`.
+`install.ps1` once the Store path has carried a few releases.
 
 ## 6. Risks and what is done about them
 
@@ -345,7 +350,7 @@ updateMetadata`.
   hand-over. Acceptable on that computer only; the plans test one copy at a time.
 - The Store copy needs Windows 10 version 2004; the zip keeps 1809. Stated in the listing and in SPEC 5.4.
 - The CLI needs a .NET 9 runtime on the development computer, outside the bundle's zero-dependency rule, which is
-  about axKit's own code; recorded as a development tool.
+  about axKit's own code. Settled: the CLI is not used (phase 7).
 
 ## 7. To verify (the documentation does not say)
 

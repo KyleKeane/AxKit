@@ -924,16 +924,14 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   policy 10.2.4), discloses that axClaude shows the output of a live generative AI (11.16; the F4 report is the means
   to report content, AX-12) and links `PRIVACY.md` (10.5.1). The release workflow builds the package beside the zip and
   attaches it to the draft release (`ReleaseWorkflowTests` keeps it). The first publication goes through Partner
-  Center's website by hand, as Microsoft requires (`docs/axKit/store-setup.md` section 3); every later one goes by
-  itself: when a GitHub release is published and the repository variable `STORE_SUBMIT` is `on`, the workflow
-  `store.yml` downloads that release's attested `AxKit-<version>.msix`, never a rebuild, and `tools/store-submit.ps1`
-  posts it to Partner Center through Microsoft's submission API over HTTPS with the Partner Center application's
-  three secrets of the `release` environment (a new submission as a copy of the last published one, the old package
-  marked for deletion and the new one added, What's new from the release notes, the zip uploaded to the address the
-  API gives, the commit, then the wait until the Store has taken it in or refused it, the result in the run's
-  summary); the same script reads the state (`-Status`) and runs by hand with the credentials
-  `tools/store-credentials.ps1` keeps encrypted for the maintainer's account (`store-setup.md` sections 4 to 6;
-  `ReleaseWorkflowTests` keeps the switch, the environment and the secrets' names). Certification runs at Microsoft's
+  Center's website by hand, as Microsoft requires (`docs/axKit/store-setup.md` section 3), and so does every later
+  one: once a GitHub release is published, that release's attested `AxKit-<version>.msix`, never a rebuild, is
+  uploaded in Partner Center as a new submission (a copy of the last published one, the old package removed and the
+  new one added, What's new from the release notes), by the maintainer or through `tools/EdgeDrive`, which drives his
+  signed-in browser on the development computer and holds no credential (`store-setup.md` sections 5 and 6). No
+  workflow and no script of the repository submits to the Store: a route through Microsoft's submission API was
+  built on 2026-11-09, never switched on, and removed on 2026-11-13 at the maintainer's decision, since Partner
+  Center opens that API to no Individual account (`store-setup.md` section 2). Certification runs at Microsoft's
   afterwards and the Store updates every installed copy by itself. `winget install 9PK01L2K5000 -s msstore`
   (`StoreListing.WingetCommand`) installs the Store's copy. The zip of AX-2 and AX-3 stays, for developers and for a
   computer without the Store.

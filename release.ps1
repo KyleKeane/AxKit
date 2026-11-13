@@ -193,8 +193,8 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
 git -C $root push -q origin $tag
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host "Pushed the tag. GitHub Actions is building the draft release: https://github.com/KyleKeane/AxKit/actions"
-# AX-13.6: once the release is published, store.yml posts its package to the Microsoft Store while STORE_SUBMIT is on.
-Write-Host "Once published, the Store workflow posts this release to Partner Center when the repository variable STORE_SUBMIT is on (docs/axKit/store-setup.md section 4): gh run watch, then .\tools\store-submit.ps1 -Status"
+# AX-13.6: the release's package reaches the Microsoft Store by an upload in Partner Center, by hand.
+Write-Host "Once published, the release's AxKit-<version>.msix is uploaded to the Microsoft Store in Partner Center by hand (docs/axKit/store-setup.md section 5)."
 
 # AX-3.4 (security audit S-27): the draft is signed here, with the key that never leaves this machine, and only then
 # published; the apps install nothing unsigned.
