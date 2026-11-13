@@ -6,8 +6,7 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 5 (1 high, 2 medium, 2 low)
-- **done**: 36 (6 high, 17 medium, 13 low)
+- **done**: 41 (7 high, 19 medium, 15 low)
 - **deferred**: 3 (1 high, 2 medium)
 - **declined**: 5 (4 medium, 1 low)
 
@@ -22,47 +21,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - **P7. Tests check the built thing.** What matters is checked on the running window or the built data; a test that reads source text is lint, a help and never the proof. (1 finding)
 - **P8. Documents describe the present.** Reference text says what is true now, in small files a reader with little context can hold; history lives in the changelog and git; open work lives in the priorities list. (9 findings)
 
-## Open
-
-### R-11, high, framework: The one command list is not one: items are made by Add(Command), by Item() and by bare ToolStripMenuItem
-
-- Where: src/AxKit.Forms/AxKitForm.cs; src/AxKit.Forms/ItemForm.cs; src/AxTask/TaskForm.cs; src/AxPass; src/AxMCP; src/AxAutomate; src/AxClaude/MainForm.Ui.cs; src/AxTerminal/TerminalForm.Ui.cs; src/AxFile
-- Principle: P2
-- Fix: In steps, one app per commit: (1) ItemForm's shared actions become Command records the apps place with Add; (2) Item() becomes private to the base; (3) each app's static raw items become commands, its filled lists state a mark; (4) the test counts every item made without a mark and its limit falls to zero.
-- Checked by: tests/AxKit.Tests/CommandMarkTests' count falls with each step; every tests/scripts folder of the app passes
-- Note: About 131 items in the apps and 28 in the base state no mark (they ask before an AI tool runs them; safe, but a question more than needed, and their menu path is not in the report's recent actions). docs/axKit/app-kit.md AK-2 describes MenuSpec, Scope and Help, which do not exist: the document follows the code in the same steps.
-
-### R-37, medium, tooling: Tests that read source text can be passed by ordinary code they do not see
-
-- Where: tests/AxKit.Tests/CommandMarkTests.cs; tests/AxKit.Tests/ListTests.cs
-- Principle: P7
-- Fix: The runner's check commands step, which every app's first script runs on the built window, also fails on a menu entry with no stated mark once R-11 is done; the text tests stay as lint and say so.
-- Checked by: check commands in each app's script
-
-### R-45, medium, docs: What a reader must hold to change one app is about 90,000 tokens; the root instructions alone are 31 KB of three paragraphs
-
-- Where: CLAUDE.md; src/AxKit.Forms/CLAUDE.md; src/AxKit.Core/CLAUDE.md; docs/axKit/SPEC.md
-- Principle: P8
-- Fix: Root CLAUDE.md is the rules, the gotchas and pointers, 8 KB at most, the commands on a page of their own; the AxKit.Forms notes split by kind of window; reference text loses its dates and until-clauses.
-- Checked by: a size check in tools/docs-check.ps1
-- Commit: ddd8dcb
-- Note: The root file is loaded into every session: it is rewritten in one commit of its own and read by the maintainer. Done 2026-11-13: the root CLAUDE.md from 32 KB to 14 KB, its long paragraphs moved whole into docs/axKit/commands.md, documents.md and the generated apps.md; the rules, the gotchas and the manual verification unchanged. Open: src/AxKit.Forms/CLAUDE.md (53 KB) split by kind of window, and the dates and until-clauses out of the reference text of the specs. 2026-11-13: src/AxKit.Forms/CLAUDE.md from 54 KB to a 3 KB index over src/AxKit.Forms/notes, one file per kind of window (NotesTests reads them). Open: the dates and until-clauses out of the reference text of the specs; the size check.
-
-### R-29, low, core: Smaller core items: PtyHost.Kill after Dispose, JsonDocument not disposed, a report posted before it is marked sent, the seal's unescaped separators, AppPaths' uneven test-run home
-
-- Where: src/AxKit.Core/Pty/PtyHost.cs; src/AxKit.Core/Reports/GitHubIssues.cs; src/AxKit.Core/Reports/ReportSender.cs; src/AxKit.Core/Mcp/McpAccess.cs; src/AxKit.Core/AppPaths.cs
-- Principle: P4
-- Fix: Each fixed where it stands.
-- Checked by: the unit tests of each piece
-
-### R-42, low, apps: The same small piece written two or three times: one instance of a hotkey app, the busy guard and its words, the item apps' undo stack
-
-- Where: src/AxStart; src/AxClip; src/AxHelp; src/AxGit/GitForm.Run.cs; src/AxProcess/ProcessForm.cs; src/AxTask; src/AxPass; src/AxMCP
-- Principle: P2
-- Fix: AppHost.OneInstance; one Busy helper in the base with one wording; the undo stack in ItemForm.
-- Checked by: the apps' scripts
-- Note: With R-11, app by app.
-
 ## Done
 
 ### R-09, high, framework: Palette marks lived in ToolStripItem.Tag, one slot: a second refresh on a menu replaced the first
@@ -73,6 +31,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxKit.Tests/CommandPaletteTests (two refreshes both run; marks; withheld through owners)
 - Commit: af0fac3
 - Note: Shown bug: the palette listed Say new line's old check after Sound on headings registered its refresh on the same Text menu.
+
+### R-11, high, framework: The one command list is not one: items are made by Add(Command), by Item() and by bare ToolStripMenuItem
+
+- Where: src/AxKit.Forms/AxKitForm.cs; src/AxKit.Forms/ItemForm.cs; src/AxTask/TaskForm.cs; src/AxPass; src/AxMCP; src/AxAutomate; src/AxClaude/MainForm.Ui.cs; src/AxTerminal/TerminalForm.Ui.cs; src/AxFile
+- Principle: P2
+- Fix: In steps, one app per commit: (1) ItemForm's shared actions become Command records the apps place with Add; (2) Item() becomes private to the base; (3) each app's static raw items become commands, its filled lists state a mark; (4) the test counts every item made without a mark and its limit falls to zero.
+- Checked by: tests/AxKit.Tests/CommandMarkTests' count falls with each step; every tests/scripts folder of the app passes
+- Commit: 5e56218
+- Note: About 131 items in the apps and 28 in the base state no mark (they ask before an AI tool runs them; safe, but a question more than needed, and their menu path is not in the report's recent actions). docs/axKit/app-kit.md AK-2 describes MenuSpec, Scope and Help, which do not exist: the document follows the code in the same steps. Settled 2026-11-13: all 160 judged and marked; Item(text, action, key, mark) with the mark required; items filled as a menu opens wrapped in CommandPalette.Marked; the empty-list lines NoEntry. Not done, by choice: ItemForm's shared actions stay AddKey commands with the apps' Context items beside them (the items now carry the same marks), since moving them would change every item app's menus for no gain a user or an AI tool would meet. docs/axKit/app-kit.md AK-2 says what is built.
 
 ### R-30, high, tooling: The local gate did not run the page checks that failed CI six times in three days
 
@@ -251,6 +218,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Commit: af0fac3
 - Note: KeePassXC's place is stated as the scripts' need; the two scripts that write the clipboard on purpose are named in automation.md.
 
+### R-37, medium, tooling: Tests that read source text can be passed by ordinary code they do not see
+
+- Where: tests/AxKit.Tests/CommandMarkTests.cs; tests/AxKit.Tests/ListTests.cs
+- Principle: P7
+- Fix: The runner's check commands step, which every app's first script runs on the built window, also fails on a menu entry with no stated mark once R-11 is done; the text tests stay as lint and say so.
+- Checked by: check commands in each app's script
+- Commit: 5e56218
+- Note: AxKitForm.CommandProblems fails on any entry of the built window that states no mark and is not withheld; the first full run found six items the source test could not see (Exit, Check for updates, Update to, Record raw stream, Hotkey, two empty-list lines). The source tests say they are lint.
+
 ### R-39, medium, apps: axPass and axTask dropped an undo step before applying it: a failed undo lost it
 
 - Where: src/AxPass/PassForm.Commands.cs; src/AxTask/TaskForm.Commands.cs
@@ -259,6 +235,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxTask.Tests; reading for axPass
 - Commit: af0fac3
 - Note: axPass fixed. axTask left as it is, on purpose: a step that can no longer be undone (its files changed since) is dropped so that the steps before it can still be reached, and says why.
+
+### R-45, medium, docs: What a reader must hold to change one app is about 90,000 tokens; the root instructions alone are 31 KB of three paragraphs
+
+- Where: CLAUDE.md; src/AxKit.Forms/CLAUDE.md; src/AxKit.Core/CLAUDE.md; docs/axKit/SPEC.md
+- Principle: P8
+- Fix: Root CLAUDE.md is the rules, the gotchas and pointers, 8 KB at most, the commands on a page of their own; the AxKit.Forms notes split by kind of window; reference text loses its dates and until-clauses.
+- Checked by: a size check in tools/docs-check.ps1
+- Commit: 5e56218
+- Note: The root file is loaded into every session: it is rewritten in one commit of its own and read by the maintainer. Done 2026-11-13: the root CLAUDE.md from 32 KB to 14 KB, its long paragraphs moved whole into docs/axKit/commands.md, documents.md and the generated apps.md; the rules, the gotchas and the manual verification unchanged. Open: src/AxKit.Forms/CLAUDE.md (53 KB) split by kind of window, and the dates and until-clauses out of the reference text of the specs. 2026-11-13: src/AxKit.Forms/CLAUDE.md from 54 KB to a 3 KB index over src/AxKit.Forms/notes, one file per kind of window (NotesTests reads them). Open: the dates and until-clauses out of the reference text of the specs; the size check. NotesTests holds the sizes (the root at most 20 KB, any notes file 32 KB). Declined: taking the dates and until-clauses out of the specifications. They record when a decision was made and by whom, which is what a reader needs when a rule is questioned; the load problem this finding named is met by the root file's 15 KB and the split notes.
 
 ### R-47, medium, docs: PRIVACY.md and rule 8 name two places where axKit's own code reaches the network; axTask's GitHub lists are a third
 
@@ -351,6 +336,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxKit.Tests/VtScreenTests
 - Commit: af0fac3
 
+### R-29, low, core: Smaller core items: PtyHost.Kill after Dispose, JsonDocument not disposed, a report posted before it is marked sent, the seal's unescaped separators, AppPaths' uneven test-run home
+
+- Where: src/AxKit.Core/Pty/PtyHost.cs; src/AxKit.Core/Reports/GitHubIssues.cs; src/AxKit.Core/Reports/ReportSender.cs; src/AxKit.Core/Mcp/McpAccess.cs; src/AxKit.Core/AppPaths.cs
+- Principle: P4
+- Fix: Each fixed where it stands.
+- Checked by: the unit tests of each piece
+- Commit: 5e56218
+- Note: PtyHost.Kill ends the process under the lock Dispose takes; GitHubIssues disposes its JsonDocument; ReportSender never marks a posted report as not sent when its item cannot be written (it stops and says so); McpAccess.SealOf reads each field with control characters replaced, and Pair cleans the name (McpTests); AppPaths.UpdatesFolder is under a test run's own folder.
+
 ### R-38, low, tooling: Hygiene: release.ps1 can wait on CI forever; empty AxList folders; merged branches; two forgotten worktrees; tools/EdgeDrive in no solution
 
 - Where: release.ps1; src/AxList; tools/EdgeDrive
@@ -359,6 +353,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: reading
 - Commit: ddd8dcb
 - Note: Done: the empty AxList folders and two stale worktrees removed (both clean or holding only a generated page). The seventeen merged branches deleted by the maintainer on 2026-11-13, here and on GitHub. Open: the time limit on release.ps1's wait; the two unmerged branches cleanup and night-check, to be read and merged or dropped; tools/EdgeDrive is in no solution. 2026-11-13: release.ps1 asks for the build every 20 s, 40 minutes at most. The branches cleanup and night-check hold nothing main lacks (four commits already in main by content, one accidental commit of the lists hook, one merge of two merged branches): the maintainer deletes them with git branch -D. tools/EdgeDrive stays outside the solution by choice: a maintainer tool for Partner Center, built on its own.
+
+### R-42, low, apps: The same small piece written two or three times: one instance of a hotkey app, the busy guard and its words, the item apps' undo stack
+
+- Where: src/AxStart; src/AxClip; src/AxHelp; src/AxGit/GitForm.Run.cs; src/AxProcess/ProcessForm.cs; src/AxTask; src/AxPass; src/AxMCP
+- Principle: P2
+- Fix: AppHost.OneInstance; one Busy helper in the base with one wording; the undo stack in ItemForm.
+- Checked by: the apps' scripts
+- Commit: 5e56218
+- Note: With R-11, app by app. AppHost.FirstInstance replaces the three copies of the one-instance mutex. Left as they are, by choice: the busy guards of axGIT, axProcess and axPass hold different things (a verb for the status bar, a phrase in the list's name, a flag) in about ten lines each, and the item apps' undo stacks hold each app's own kind of step; one shared piece would need the generics rule B-10 rules out.
 
 ### R-48, low, docs: The Unreleased changelog is 17 KB with entries that later ones replaced and with internals
 
