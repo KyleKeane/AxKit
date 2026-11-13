@@ -6,6 +6,16 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-13: axClaude, a command Claude offers; by the user by ear (`main` 21c3107)
+
+The user, in his own axClaude with NVDA, on a command offered from the running session (axClaude plan section 12a):
+the question in the control area and "Yes, run it" (step 6) heard and used, the output in the conversation; his word:
+"that is much better. lock it in", after the first version, a notice over the whole window (229d98c), which he asked
+to be changed. Steps 1 to 4 and 6 also pass in `tests/scripts/axClaude/18-offered-command.txt` without NVDA listening.
+
+Owed: the script with NVDA listening (`nvda-pass.ps1 axClaude`); by ear, step 3's breakdown section (it needs a
+session started after the build), step 5 (the clipboard) and step 7 (the concern through to Claude Code's feedback
+dialog, where what becomes of the typed words is not documented).
 ## 2026-11-13: the night's four branches merged; by the assistant through nvda-pass.ps1 (`main` 877a1c5)
 
 `nvda-pass.ps1` with the user away, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 93 scripts, all passed whole in
