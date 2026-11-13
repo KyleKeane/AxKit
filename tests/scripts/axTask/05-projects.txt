@@ -63,6 +63,8 @@ keys ctrl+shift+n
 expect said ! A project's lists are made inside it: Right on a project first
 keys delete
 expect said ! A project stays: Options, Remove a project folder removes the folder it was found in
+keys f2
+expect said ! A project's folder is renamed in axFile: Ctrl+E
 menu New GitHub list
 expect said ! A project's lists are made inside it: Right on a project first
 
@@ -141,6 +143,8 @@ keys ctrl+a
 type washer 15
 keys enter
 expect said ! Found washer 15, 1 item, Fix the tap, in tasks in alpha / Home
+keys f2
+expect said ! Open it where it lives first: Enter
 keys ctrl+n
 expect said ! Items are made in a list: open the item where it lives first, Enter
 menu Use these fields for new items
@@ -161,3 +165,10 @@ menu 1. projects
 expect said ! Removed projects. Lists, 1 list
 menu 1. more
 expect said ! Removed more
+
+# 6.10 Closed and started again, without a folder so that the last run's place opens (a folder named opens at its
+# top): the user's own list that was open before the search, never the project's Home shown last.
+close
+start task
+expect state Home - axTask
+expect focus "name":"Home, 1 item","role":"List","value":"Buy a tap"

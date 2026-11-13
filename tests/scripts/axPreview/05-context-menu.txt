@@ -1,0 +1,36 @@
+# Workflow: Use axPreview's Context menu
+# axPreview, the bar's Context menu (docs/axKit/SPEC.md AX-9.1, AX-9.11; the text editor shell's, in the viewer Copy
+# and Select all alone, AP-3.1), run by name through the command list and found in the command palette, since
+# Shift+F10 and Alt+C open the menu in menu mode, which only the foreground window enters.
+# Copy is only checked to be listed: the test desktop shares the clipboard with the user's session.
+# The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
+file home\AxKit\axPreview.json {"checkForUpdates": false}
+file README.md # Readme\n\n## Install\n\nRun the installer.
+
+start preview {temp}\README.md
+expect focus README.md
+expect state Line 1, Column 1 ·
+
+# Context as the palette reads it: Copy and Select all; the viewer changes nothing, so no Cut and no Paste.
+expect commands "Copy, Context, Ctrl+C"
+expect commands "Select all, Context, Ctrl+A"
+refuse commands "Cut, Context
+refuse commands "Paste, Context
+
+# Select all: the whole text is selected, so Right lets go of the selection at its end, the last line's.
+menu Select all, Context
+keys right
+expect state Line 5, Column 19 ·
+expect focus {"name":"README.md","role":"Text","value":"Run the installer."}
+
+# The same command from the palette: its name, its menu and its key are said; Enter runs it and the focus is back in
+# the text. Left lets go of the selection at its start.
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type select all, context
+expect said Select all, Context, Ctrl+A
+keys enter
+expect state "notice":null
+expect focus README.md
+keys left
+expect state Line 1, Column 1 ·

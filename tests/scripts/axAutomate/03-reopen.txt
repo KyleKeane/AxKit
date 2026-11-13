@@ -1,0 +1,22 @@
+# Workflow: Close axAutomate and come back to the folder you had
+# axAutomate: started with no folder, the folder chosen last opens (docs/axAutomate/nvda-test-plan.md 4.2; SPEC.md
+# AU-6a.1). The choosing itself, step 4.1, is Ctrl+O with Windows' folder picker, which the channel cannot drive, and
+# only the picker's choice is remembered (a folder named on the command line is not): so the settings file holds the
+# folder as Ctrl+O writes it, and the script checks that a start without a folder opens it, twice.
+mkdir flows
+file flows\02-two.txt # A workflow.\n\nstart down\nwait 100\nclose
+file home\AxKit\axAutomate.json {"checkForUpdates": false}
+# The settings file names the folder by its full path, which only the run knows.
+run powershell -NoProfile -Command "[IO.File]::WriteAllText('home\AxKit\axAutomate.json', (ConvertTo-Json -InputObject @{checkForUpdates=$false; folder=(Resolve-Path 'flows').Path}))"
+
+# 4.2 Started with no folder: the folder chosen last, at its first row.
+start automate
+expect state "title":"flows - axAutomate"
+expect focus 02-two, workflow, 3 steps
+# Inside the workflow when the window closes (Alt+F4): the next start is at the folder again, not in the workflow.
+keys right
+expect said 02-two, 3 steps, 1. Start down
+close
+start automate
+expect state "title":"flows - axAutomate"
+expect focus 02-two, workflow, 3 steps

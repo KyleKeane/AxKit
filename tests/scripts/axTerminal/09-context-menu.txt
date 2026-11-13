@@ -1,0 +1,75 @@
+# Workflow: Use axTerminal's Context menu
+# axTerminal, "The menu bar and Context" of docs/axTerminal/nvda-test-plan.md (bundle AX-9.1, AX-9.11): Context holds
+# what acts on the terminal's line and the selection: Copy this line into the command field (it writes the field,
+# "Line copied", never the clipboard), Bookmark this line and Copy the selection. They are run by name through the
+# command list and found in the command palette, since Shift+F10 opens the menu in menu mode, which only the
+# foreground window enters. Copy the selection is only checked to be listed: the test desktop shares the clipboard
+# with the user's session.
+mkdir myproject
+# The run's own settings: no update check (network, and an ERROR in the log when it fails); a small font in a
+# maximized window, so that no line wraps in the view, since the channel reads the caret's line by its visual row.
+file home\AxKit\axTerminal.json {"checkForUpdates": false, "fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+start terminal {temp}\myproject
+expect said ♪ Ready
+# Clear the transcript first, so that the command's block is the window's first lines.
+keys ctrl+l
+expect said Cleared
+
+# Context as the palette reads it: the three commands, each with the key that does the same in the terminal.
+expect commands "Copy this line into the command field, Context, Enter in the terminal"
+expect commands "Bookmark this line, Context, Ctrl+Shift+K, or M in the terminal"
+expect commands "Copy the selection, Context, Ctrl+C in the terminal"
+
+# A line to act on: the output of a command.
+type Write-Output hello
+keys enter
+expect said Done
+expect said ♪ Done
+keys ctrl+3
+expect said Output 1 heading level 1
+expect focus "name":"Terminal"
+keys down
+keys down
+expect focus "value":"hello"}
+
+# Bookmark this line: the bookmark is added, and taken away by the same command on the same line.
+menu Bookmark this line, Context
+expect said ! Bookmark 1 added
+# The bookmark reaches the view after the 250 ms the view holds new lines back after a key press.
+wait 400
+menu Bookmark this line, Context
+expect said ! Bookmark 1 removed
+wait 400
+expect focus "value":"hello"}
+
+# Copy this line into the command field: "Line copied", the focus in the field with the line.
+menu Copy this line into the command field, Context
+expect said ! Line copied
+expect focus "name":"Command"
+expect focus "value":"hello"}
+keys ctrl+a
+keys delete
+
+# From the palette, opened in the command field: the commands act on the line the terminal's caret is on. Bookmark
+# this line is said with its menu and keys; Enter bookmarks the line and the focus is in the terminal, on it.
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type bookmark this
+expect said Bookmark this line, Context, Ctrl+Shift+K, or M in the terminal
+keys enter
+expect said ! Bookmark 2 added
+expect state "notice":null
+expect focus "name":"Terminal"
+expect focus "value":"hello"}
+wait 400
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type copy this line
+expect said Copy this line into the command field, Context, Enter in the terminal
+keys enter
+expect said ! Line copied
+expect state "notice":null
+expect focus "name":"Command"
+expect focus "value":"hello"}

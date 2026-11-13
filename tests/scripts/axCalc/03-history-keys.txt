@@ -1,0 +1,109 @@
+# Workflow: Move through axCalc's history, find in it and remove an entry
+# axCalc, docs/axCalc/nvda-test-plan.md, what 01-basics and 02-answers-variables-history leave of sections 3, 4 and 6:
+# 3.1 and 4.2 (the bases of the last answer and of the selected entry), 4.1 (Up and Down read one entry, the edge at
+# an end), 4.4 (Delete selects the next entry), 4.5 (F3 and Shift+F3 the next and the one before, "Not found"), 4.7
+# (the question's text with the number of entries), AC-5.7 (a letter typed in the history finds an entry), 6.1 (the
+# text size) and 6.4 (the palette). SPEC AC-4.1, AC-5. Not run: 3.3 and 4.2's Ctrl+Shift+C (the user's clipboard),
+# 4.6 (the Windows save dialog).
+file home\AxKit\axCalc.json {"checkForUpdates": false, "keepHistory": false}
+
+start calc
+expect focus Expression
+type 255
+keys enter
+expect said ! 255
+# 3.1 Ctrl+I in the field: the last answer in other bases.
+keys ctrl+i
+expect said ! 255, hex FF, binary 1111 1111, octal 377
+type 10+1
+keys enter
+expect said ! 11
+type 2.5*2
+keys enter
+expect said ! 5
+type 10*3
+keys enter
+expect said ! 30
+
+# 4.1 The history: the newest entry first; Up reads one entry at a time, nothing announced; the edge at the first.
+keys shift+tab
+expect focus "name":"History, 4 entries","role":"List","value":"10*3 = 30"
+keys up
+expect focus "value":"2.5*2 = 5"
+keys up
+expect focus "value":"10+1 = 11"
+keys up
+expect focus "value":"255 = 255"
+expect quiet 1500
+keys up
+expect said ♪ Edge
+expect focus "value":"255 = 255"
+
+# 4.2 Ctrl+I in the history: the selected entry's answer, not the last one (AC-4.1).
+keys ctrl+i
+expect said ! 255, hex FF, binary 1111 1111, octal 377
+keys down
+keys ctrl+i
+expect said ! 11, hex B, binary 1011, octal 13
+
+# 4.5 Find from the selected entry on: the next match, F3 the one after it round the end, Shift+F3 back.
+keys ctrl+f
+expect state "notice":"Find"
+type 10
+keys enter
+expect state "notice":null
+expect focus "value":"10*3 = 30"
+keys f3
+expect focus "value":"10+1 = 11"
+keys f3
+expect focus "value":"10*3 = 30"
+keys shift+f3
+expect focus "value":"10+1 = 11"
+# A text no entry holds: "Not found", the selection kept.
+keys ctrl+f
+expect state "notice":"Find"
+type zebra
+keys enter
+expect said ! Not found
+expect focus "value":"10+1 = 11"
+
+# 4.4 Delete: the entry is gone and the next one is selected; on the last entry the one before it.
+keys delete
+expect said ! Removed
+expect focus "name":"History, 3 entries","role":"List","value":"2.5*2 = 5"
+refuse list 10+1 = 11
+keys end
+expect focus "value":"10*3 = 30"
+keys delete
+expect said ! Removed
+expect focus "name":"History, 2 entries","role":"List","value":"2.5*2 = 5"
+
+# AC-5.7 A character typed in the history finds the entry starting with it, round the end.
+type 255
+expect focus "value":"255 = 255"
+
+# 4.7 The question says how many entries go; Escape keeps them and gives the history back.
+keys ctrl+shift+delete
+expect state "notice":"Clear the history?","noticeText":"The 2 entries cannot be brought back."
+keys escape
+expect state "notice":null
+expect focus "name":"History, 2 entries","role":"List","value":"255 = 255"
+
+# 4.4 Escape: back to the field.
+keys escape
+expect focus "name":"Expression","role":"Text","value":""
+
+# 6.1 The text size, up and back.
+keys ctrl+plus
+expect said ! Text size
+keys ctrl+minus
+expect said ! Text size
+
+# 6.4 The palette: "bases" says the bases of the last answer.
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type bases
+keys enter
+expect said ! 30, hex 1E, binary 1 1110, octal 36
+expect state "notice":null
+expect focus "name":"Expression"

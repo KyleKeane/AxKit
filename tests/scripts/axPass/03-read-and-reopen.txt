@@ -1,0 +1,55 @@
+# Workflow: Read an entry in full and come back to the same database
+# Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
+# axPass: Ctrl+Q on a field and on an entry, the password never read (docs/axPass/nvda-test-plan.md 2.3; SPEC PW-6),
+# the Lock after setting said (5.3, the words only: the lock itself waits minutes on the real keyboard's idle time,
+# which a run cannot make), and a start without a file asking for the database it had last (5.4; PW-4.1).
+# The idle lock off at first, as in 01; it is chosen only while the database is locked, where it has nothing to lock.
+file home\AxKit\axPass.json {"checkForUpdates": false, "lockMinutes": 0}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file twice.txt test-master-1\ntest-master-1\n
+file once.txt test-master-1\n
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" db-create -q -p test.kdbx < twice.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" mkdir -q test.kdbx Email < once.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u sam --url https://mail.example.com test.kdbx Email/Gmail < once.txt
+
+start pass {temp}\test.kdbx
+expect state Unlock test
+type test-master-1
+keys enter
+expect said ! test, 1 item, Email, group, 1 item
+keys right
+expect said ! Email, 1 item, Gmail
+
+# 2.3 Ctrl+Q on the Password field: its line, the password hidden.
+keys enter
+expect focus Title, text, Gmail
+keys down down
+expect focus Password, password, hidden
+keys ctrl+q
+expect said ! Password, password, hidden
+
+# 2.3 Escape; Ctrl+Q in the navigator: every field, the password "hidden".
+keys escape
+expect focus Gmail, sam
+keys ctrl+q
+expect said ! Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes:
+
+# 1.3, 5.3 Locked, the Lock after setting says what it does.
+keys ctrl+l
+expect said ! Locked
+keys escape
+expect focus test, locked: Enter unlocks
+menu 5 minutes
+expect said ! axPass locks after 5 minutes without a key
+menu Never
+expect said ! axPass locks only on Ctrl+L
+close
+
+# 5.4 Started again without a file: the unlock notice for the same database, which the password opens.
+start pass
+expect state Unlock test
+expect focus Type the master password to unlock test
+type test-master-1
+keys enter
+expect said ! test, 1 item, Email, group, 1 item

@@ -1,0 +1,80 @@
+# Workflow: Copy again, read a long copy and keep the history between runs
+# axClip: a text copied again moves to the top and stays one item (docs/axClip/nvda-test-plan.md 2.3; SPEC CP-3.2), a
+# copy of three lines says its count and reads in full (2.4; CP-2.5, CP-4.3), Alt+F4 hides and a second start shows the
+# running window with its items (1.4, 1.5; CP-1.1, CP-1.4), and the history is kept between runs only while the option
+# is on (4.2; CP-3.4). The hotkey is one nobody uses, as in 01-basics.
+#
+# The test desktop shares the clipboard with the user's session: as 01-basics does, the script copies texts of its own
+# through clip, which stay on the clipboard after the run, and every step filters on them, so that nothing the user
+# copies is ever said here.
+file home\AxKit\axClip.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
+
+start clip
+expect focus Search the clipboard
+
+run <nul set /p =axkitkeep one| clip
+wait 500
+run <nul set /p =axkitkeep two| clip
+wait 500
+type axkitkeep
+keys down
+expect said axkitkeep one, 2 of 2
+
+# 2.3 The first text copied again: it is the newest, and in the list once.
+run <nul set /p =axkitkeep one| clip
+wait 500
+keys ctrl+home
+expect said axkitkeep one, 1 of 2
+keys down
+expect said axkitkeep two, 2 of 2
+keys down
+expect said ♪ Edge
+
+# 2.4 A text of three lines: its first line and the count; Ctrl+Q the whole text in a notice; Escape closes it.
+run (echo axkitkeep first&echo second&echo third)| clip
+wait 500
+keys ctrl+home
+expect said axkitkeep first, 3 lines, 1 of 3
+keys ctrl+q
+expect state "notice":"Clipboard text, 3 lines"
+expect text second
+expect text third
+keys escape
+expect state "notice":null
+expect focus Search the clipboard
+
+# 1.5 Alt+F4 hides the window and does not end axClip; 1.4 a second start ends by itself and shows the running window,
+# the field empty and the items still there.
+keys alt+f4
+launch clip
+expect focus "name":"Search the clipboard","role":"Text","value":""
+type axkitkeep
+keys down
+expect said axkitkeep one, 2 of 3
+
+# 4.2 Keep history between runs on, Quit, a new start: the items are there.
+menu Keep history between runs
+menu Quit axClip
+expect closed
+start clip
+expect focus Search the clipboard
+type axkitkeep
+keys down
+expect said axkitkeep one, 2 of 3
+keys ctrl+end
+expect said axkitkeep two, 3 of 3
+
+# 4.2 The option off, Quit, a new start: nothing of the history is left.
+menu Keep history between runs
+menu Quit axClip
+expect closed
+start clip
+expect focus Search the clipboard
+type axkitkeep
+# Down with no item: the edge sound, and the list holds none of the texts. (The words after it are "The clipboard
+# history is empty", or the no-match line when the user copied something meanwhile, so they are not expected.)
+keys down
+expect said ♪ Edge
+refuse list axkitkeep
+menu Quit axClip
+expect closed

@@ -1,0 +1,41 @@
+# Workflow: Open a recent folder in axFile from the command palette
+# axFile, plan step 1.8 (docs/axFile/nvda-test-plan.md; SPEC.md AF-3.3, Session, Open recent folder): the folders
+# opened by command, "1. name (path)", the newest first; choosing one shows it. The submenu needs menu mode, which
+# only the foreground window enters; since 2026-11-13 the command palette reads every Open recent list
+# (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter.
+mkdir orchard\inner
+file orchard\apple.txt The apple file.
+file cellar\barrel.txt The barrel file.
+
+# The run's own settings: no update check at the start, which is a network call (bundle G6).
+file home\AxKit\axFile.json {"checkForUpdates": false}
+
+# The start and Go to folder each make a recent entry, the newest first.
+start file {temp}\orchard
+expect focus "name":"2 items"
+# A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
+wait 500
+keys ctrl+g
+expect state "notice":"Go to folder"
+expect focus "name":"Path"
+type {temp}\cellar
+keys enter
+expect said ! cellar, 1 item, barrel.txt
+expect state "title":"cellar - axFile"
+expect commands "1. cellar (
+expect commands "2. orchard (
+
+# The palette: part of the folder's name, the entry said with its menu; Enter shows the folder, said as every change
+# of folder is, and it is the newest of the recent folders now.
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type orch
+expect said 2. orchard (
+expect said Session, Open recent folder
+keys enter
+expect said ! orchard, 2 items, inner, folder
+expect state "notice":null
+expect state "title":"orchard - axFile"
+expect focus inner, folder
+expect commands "1. orchard (
+expect commands "2. cellar (

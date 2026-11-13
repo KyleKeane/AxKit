@@ -1,0 +1,47 @@
+# Workflow: Close axTask and come back to the list you had
+# axTask: the list open when the window closed opens at the next start without a folder (docs/axTask/nvda-test-plan.md
+# 4.4); a smart list or the top level open at the close leaves the next start at the top; a start that names the
+# folder opens its top level whatever was open last.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
+file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
+
+# The first start names the folder, which becomes the top folder of the next starts; Shopping opened, Washer selected.
+start task {temp}\tasks
+expect state Lists - axTask
+type s
+expect focus Shopping, list, 2 items
+keys right
+expect said ! Shopping, 2 items, Milk
+keys down
+expect focus Washer
+close
+
+# 4.4 Started again without a folder: Shopping, the list open at the close, on its first row.
+start task
+expect state Shopping - axTask
+expect focus "name":"Shopping, 2 items","role":"List","value":"Milk"
+keys left
+expect said ! Lists, 2 lists, Shopping, list, 2 items
+close
+
+# Closed at the top level: the next start is at the top level.
+start task
+expect state Lists - axTask
+expect focus Your lists, heading level 1, 2 lists
+# A smart list open at the close is not a list of the folder: the next start is at the top level too.
+keys ctrl+0
+expect said ! All tasks, 2 items
+close
+start task
+expect state Lists - axTask
+type h
+keys right
+expect said ! Home, 1 item, Fix the tap
+close
+
+# Started on the folder by name: its top level, whatever was open last.
+start task {temp}\tasks
+expect state Lists - axTask
+expect focus Your lists, heading level 1, 2 lists

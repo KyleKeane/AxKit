@@ -1,0 +1,214 @@
+# Workflow: Add, rename and remove a server of your own in axMCP
+# axMCP, docs/axMCP/nvda-test-plan.md beyond 01-start: section 5 (Your servers: Ctrl+N, F2, Delete, Ctrl+Z, and the
+# sentences for a server of Claude Code's), 3.4 (a check), 3.6 (Ctrl+J before any call), 3.7 (a tool that reports an
+# error, a server error), 4.1 (a resource template) and 4.2 (a prompt filled and fetched); SPEC MP-1.3, MP-3.5, MP-4.2,
+# MP-5. The fake server is 01-start's with two more tools, a template and a prompt. The server of Claude Code's is the
+# one of the run folder's own .mcp.json (the project scope), so the run neither needs nor changes Claude Code's files;
+# the server added here has a command line that is never started. Rows are found by name, since this computer may have
+# servers of its own.
+# Not run: 1.4 (Right on an http server): the plan says the level does not change, the window shows a level of the
+# server's with one row; left for a decision.
+file home\AxKit\axMCP.json {"checkForUpdates": false, "servers": [{"name": "fake", "commandLine": "powershell -NoProfile -ExecutionPolicy Bypass -File fake.ps1"}]}
+file home\AxKit\consent.json {"items":[{"app":"axMCP","target":"fake (powershell)","version":"0","when":"2026-11-09T00:00:00"}]}
+file .mcp.json {"mcpServers":{"zzproj":{"command":"cmd","args":["/c","echo"]}}}
+file fake.ps1 $in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  $e = 'Method not found'\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}},{"name":"fail","description":"Reports an error.","inputSchema":{"type":"object","properties":{}}},{"name":"boom","description":"Breaks the server.","inputSchema":{"type":"object","properties":{}}}]}' }\n    'tools/call' {\n      if ($m.params.name -eq 'echo') { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n      if ($m.params.name -eq 'fail') { $r = '{"content":[{"type":"text","text":"It went wrong."}],"isError":true}' }\n      if ($m.params.name -eq 'boom') { $e = 'The server broke.' + [char]92 + 'nIt says so on two lines.' }\n    }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[{"name":"page","uriTemplate":"fake://page/1","description":"A page by its number."}]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"' + $m.params.uri + '","mimeType":"text/plain","text":"Text of ' + $m.params.uri + '"}]}' }\n    'prompts/list' { $r = '{"prompts":[{"name":"greet","description":"Greets someone. Politely.","arguments":[{"name":"who","description":"Who to greet","required":true}]}]}' }\n    'prompts/get' { $r = '{"description":"A greeting.","messages":[{"role":"user","content":{"type":"text","text":"Say hello to ' + $m.params.arguments.who + '"}}]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"' + $e + '"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
+
+start mcpclient {temp}
+expect state Servers - axMCP, access layer for MCP servers
+expect focus Servers
+
+# 5.4 F2 and Delete on a server of Claude Code's: read only here, the sentence names claude mcp (MP-1.2).
+type zzproj
+expect focus zzproj, stdio, stopped
+keys tab
+expect focus Source: Claude Code, project scope
+keys escape
+expect focus zzproj, stdio, stopped
+keys f2
+expect said ! A server of Claude Code's is renamed with claude mcp remove and claude mcp add
+keys delete
+expect said Only Your servers are removed here; a server of Claude Code's goes with claude mcp remove
+expect state "notice":null
+
+# 5.1 Ctrl+N at the top: the name, the command line, the folder prefilled with the folder in hand; the row selected
+# under Your servers, its details the command line typed.
+keys ctrl+n
+expect state "notice":"Add server","noticeText":"A name for the list."
+expect focus "name":"Name","role":"Text","value":""
+type probe
+keys enter
+expect state The command line that starts probe, as a terminal would run it.
+expect focus "name":"Command line","role":"Text","value":""
+type cmd /c echo
+keys enter
+expect state The folder to start it in; empty for the folder axMCP was started on, or your profile folder.
+expect focus "name":"Folder","role":"Text"
+keys enter
+expect said ! Added probe
+expect focus probe, stdio, stopped
+expect state "notice":null
+keys tab
+expect focus Source: Your servers
+keys down
+expect focus Command: cmd /c echo
+keys escape
+expect focus probe, stdio, stopped
+
+# MP-1.3 A name already in the list is refused with the notice kept open.
+keys ctrl+n
+expect focus "name":"Name"
+type fake
+keys enter
+expect said ! There is a server named fake already
+expect state "notice":"Add server","noticeText":"A name for the list."
+keys escape
+expect state "notice":null
+expect focus probe, stdio, stopped
+
+# 5.2 F2: the rename box with the name; a new name, Enter; Ctrl+Z takes it back.
+keys f2
+expect focus "name":"New name","role":"Text","value":"probe"
+keys ctrl+a
+type probe two
+keys enter
+expect said ! Renamed to probe two
+expect focus probe two, stdio, stopped
+keys ctrl+z
+expect said ! Undone: renamed probe to probe two
+expect focus probe, stdio, stopped
+
+# 5.3 Delete asks; Escape keeps the server; Delete and Enter remove it; Ctrl+Z brings the row back, and a second
+# Ctrl+Z has nothing to undo (one step, MP-1.3).
+keys delete
+expect state "notice":"Remove probe?","noticeText":"The server leaves axMCP's list; nothing is uninstalled."
+# A notice holds its answering keys for a moment after it appears (KeyHold).
+wait 1200
+keys escape
+expect state "notice":null
+expect focus probe, stdio, stopped
+keys delete
+expect state "notice":"Remove probe?"
+wait 1200
+keys enter
+expect said ! Removed probe
+refuse list probe, stdio
+keys ctrl+z
+expect said ! Undone: removed probe
+expect focus probe, stdio, stopped
+keys ctrl+z
+expect said ! Nothing to undo
+
+# The fake started (01-start, 2.2), with its three tools, the resource and its template, and the prompt.
+wait 1100
+type fake
+expect focus fake, stdio, stopped
+keys right
+expect said ! fake, running, Tools 3, Resources 2, Prompts 1
+expect focus Tools, 3
+# MP-1.3 Ctrl+N below the top level says where servers are added.
+keys ctrl+n
+expect said ! Servers are added at the top level
+expect state "notice":null
+# 3.6 Ctrl+J before any call.
+keys ctrl+j
+expect said ! No result yet
+
+# 3.4 A check: Space changes it (the item apps' words, "done"), and the call sends it: the fake answers in capitals.
+keys right
+expect said ! Tools, 3 tools, echo, tool, Says the text back.
+keys tab
+expect focus Description, long text
+keys down
+keys down
+expect focus loud, check, not done
+keys space
+expect said ! loud: done
+expect focus loud, check, done
+keys up
+expect focus text (required), text
+keys enter
+expect state "notice":"Change text (required)"
+type hello
+keys enter
+expect said ! text (required): hello
+keys ctrl+enter
+expect said ! Calling echo
+expect state "notice":"Result of echo","noticeText":"HELLO"
+keys escape
+expect state "notice":null
+keys escape
+expect focus echo, tool
+
+# 3.7 A tool that reports an error: the result's first line says so, the tool's own text after it (MP-3.5).
+keys down
+expect focus fail, tool, Reports an error.
+keys ctrl+enter
+expect said ! Calling fail
+expect state "notice":"Result of fail"
+expect focus "name":"Result of fail","role":"Text","value":"The tool reported an error"
+expect text It went wrong.
+keys escape
+expect state "notice":null
+expect focus fail, tool
+
+# 3.7 A server error: the notice "boom failed" with the server's message. The message here has two lines; one of a
+# single line is said as "Failed: ..." without a notice (the base's rule, AxKitForm.Failed), which the plan and
+# MP-3.5 do not say: left for a decision, not run.
+keys down
+expect focus boom, tool, Breaks the server.
+keys ctrl+enter
+expect said ! Calling boom
+expect state "notice":"boom failed"
+expect text The server broke.
+expect text It says so on two lines.
+keys escape
+expect state "notice":null
+expect focus boom, tool
+
+# 4.1 A resource template: Enter asks the address, prefilled with the template; Enter reads it; Escape back on the row.
+keys left
+expect focus Tools, 3
+keys down
+expect focus Resources, 2
+keys right
+expect said ! Resources, 2 resources, readme, resource, fake://readme
+keys down
+expect focus page, resource template, fake://page/1
+keys enter
+expect state "notice":"Read a resource","noticeText":"The address, with the template's variables filled in."
+expect focus "name":"Address","role":"Text","value":"fake://page/1"
+keys enter
+expect said ! Reading page
+expect state "notice":"page","noticeText":"Text of fake://page/1"
+keys escape
+expect state "notice":null
+expect focus page, resource template
+
+# 4.2 A prompt: its row, its arguments, the required one refused while empty, filled, fetched: the notice with the
+# description and the message under its role.
+keys left
+expect focus Resources, 2
+keys down
+expect focus Prompts, 1
+keys right
+expect said ! Prompts, 1 prompt, greet, prompt, Greets someone.
+keys tab
+expect focus "name":"Arguments of greet","role":"List","value":"Description, long text, Greets someone. Politely."
+keys down
+expect focus who (required), text
+keys ctrl+enter
+expect said ! who is required
+expect state "notice":null
+keys enter
+expect state "notice":"Change who (required)"
+type Ada
+keys enter
+expect said ! who (required): Ada
+keys ctrl+enter
+expect said ! Fetching greet
+expect state "notice":"greet"
+expect text A greeting.
+expect text user: Say hello to Ada
+keys escape
+expect state "notice":null
+expect focus who (required), text, Ada

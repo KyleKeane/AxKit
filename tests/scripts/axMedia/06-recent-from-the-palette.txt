@@ -1,0 +1,33 @@
+# Workflow: Add a recent folder to the queue from the command palette
+# axMedia, plan step 1.3 (docs/axMedia/nvda-test-plan.md; SPEC.md AM-3, Session, Open recent): the folders and files
+# added by command, "1. name (path)"; choosing a folder adds its files, "Added n". Alt+S, R is menu mode, which only
+# the foreground window enters; since 2026-11-13 the command palette reads every Open recent list (docs/axKit/SPEC.md
+# AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter.
+# Every sound is the runner's silence; nothing reaches the speakers.
+
+# The run's own settings (AXKIT_HOME): no update check at start, which goes to the network.
+file home\AxKit\axMedia.json {"checkForUpdates":false}
+mkdir chapters
+silence chapters\alpha.wav 30000
+silence chapters\beta.wav 30000
+
+# The start on the folder makes the recent entry; the queue is emptied, so that what the entry adds is seen.
+start media {temp}\chapters
+expect said ! Playing alpha.wav
+expect commands "1. chapters (
+menu Clear queue
+expect said ! Queue cleared
+expect list ["Queue is empty"]
+
+# The palette: part of the folder's name, the entry said with its menu; Enter adds the folder's files, nothing plays.
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type chapt
+expect said 1. chapters (
+expect said Session, Open recent
+keys enter
+expect said ! Added 2
+expect state "notice":null
+expect focus Queue, 2 items
+expect list "items":["alpha.wav","beta.wav"]
+expect state "title":"axMedia"

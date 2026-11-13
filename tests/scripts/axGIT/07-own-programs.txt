@@ -1,0 +1,49 @@
+# Workflow: Open a repository that runs programs of its own
+# Needs: Git installed.
+# axGIT: a repository with a hook of its own (docs/axGIT/nvda-test-plan.md 1.7; SPEC AG-6): the notice names the hook,
+# Enter keeps the programs off and the Changes list comes; opened again, Trust this repository says "Trusted", and the
+# opening after that shows no notice.
+file home\AxKit\axGIT.json {"checkForUpdates": false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+run git init -q -b main repo
+file repo\a.txt hello
+run git -C repo add .
+run git -C repo -c user.name=Test -c user.email=none commit -q -m first
+file repo\a.txt hello\nchanged
+file repo\.git\hooks\post-checkout #!/bin/sh\nexit 0
+
+# 1.7 The notice names the hook; Enter keeps the programs off, and the Changes list comes.
+start git {temp}\repo
+expect state "notice":"This repository runs programs of its own"
+expect state Its settings or hooks name programs git would run: hook post-checkout. axGIT runs git without them.
+expect focus "name":"This repository runs programs of its own"
+expect text Enter or Escape: Keep them off.
+# The notice holds the answering keys for a second after it appears (KeyHold).
+wait 1200
+keys enter
+expect state "notice":null
+expect focus Changes, 1 file
+expect focus Modified a.txt, unstaged
+refuse said Trusted
+close
+
+# Opened again: the notice again, since nothing was trusted; Trust this repository.
+start git {temp}\repo
+expect state "notice":"This repository runs programs of its own"
+wait 1200
+keys tab
+expect focus Keep them &off
+keys tab
+expect focus &Trust this repository
+keys space
+expect said Trusted
+expect state "notice":null
+expect focus Changes, 1 file
+close
+
+# The next opening shows no notice: the Changes list at once.
+start git {temp}\repo
+expect focus Changes, 1 file
+expect state "notice":null
+refuse said This repository runs programs of its own

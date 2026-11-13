@@ -1,0 +1,39 @@
+# Workflow: Use axJSON's Context menu
+# axJSON, the bar's Context menu (docs/axKit/SPEC.md AX-9.1, AX-9.11; docs/axDown/SPEC.md AD-4.2, the text editor
+# shell's): Cut, Copy, Paste and Select all on the text, run by name through the command list and found in the command
+# palette, since Shift+F10 and Alt+C open the menu in menu mode, which only the foreground window enters.
+# Cut, Copy and Paste are only checked to be listed: the test desktop shares the clipboard with the user's session.
+# The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
+file home\AxKit\axJSON.json {"checkForUpdates": false}
+file settings.json {\n  "model": "opus"\n}
+
+start json {temp}\settings.json
+expect focus settings.json
+expect state Line 1, Column 1 ·
+
+# Context as the palette reads it: the four commands with the control's own keys.
+expect commands "Cut, Context, Ctrl+X"
+expect commands "Copy, Context, Ctrl+C"
+expect commands "Paste, Context, Ctrl+V"
+expect commands "Select all, Context, Ctrl+A"
+
+# Select all: the whole text is selected, so Right lets go of the selection at its end, the last line's.
+menu Select all, Context
+keys right
+expect state Line 3, Column 2 ·
+expect focus {"name":"settings.json","role":"Text","value":"}"}
+
+# The same command from the palette: its name, its menu and its key are said; Enter runs it and the focus is back in
+# the text. Left lets go of the selection at its start.
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type select all, context
+expect said Select all, Context, Ctrl+A
+keys enter
+expect state "notice":null
+expect focus settings.json
+keys left
+expect state Line 1, Column 1 ·
+# Nothing changed in the text.
+expect text "lines":["{","  \"model\": \"opus\"","}"]
+expect state "title":"settings.json - axJSON"

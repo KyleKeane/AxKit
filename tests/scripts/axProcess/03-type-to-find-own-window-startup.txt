@@ -1,0 +1,41 @@
+# Workflow: Jump to a process by typing its name and read a startup program's details
+# axProcess, docs/axProcess/nvda-test-plan.md, what 01-start and 02-services-startup leave: 1.9b (letters typed in the
+# processes) and 4.2 (a startup program's details); SPEC PR-3, PR-5.3, AX-8.6. The lists are this computer's, so the
+# steps match the fixed words. Nothing is ended here, and Delete is never pressed.
+# Not run: 2.6 (Delete and Enter on a system process): it would really ask Windows to end a process the script did not
+# start. 2.7 (Delete on this window's own process is refused): the window's own row cannot be told from the user's
+# other axKit windows by its name, and a check must never press Delete on the user's own windows, even to cancel the
+# question; it stays a step of the manual plan. 1.9b's Shift with a letter: the channel's type has no Shift
+# (02-services-startup says the same). 4.2's Show program in axFile and 4.3 (an entry turned off in Task Manager).
+file home\AxKit\axProcess.json {"checkForUpdates": false}
+start process
+# The first read done: the status bar says "Reading..." until then.
+expect state "status":["Processes,
+expect said Processes,
+
+# 1.9b Letters typed in the list: the first process whose name starts with them (every Windows runs svchost, many of
+# them); a letter after a pause: the next name starting with it. By name, so that the next one is a svchost too.
+menu Name
+expect said ! Sorted by name
+keys home
+type svc
+expect focus "value":"svchost,
+wait 1100
+type s
+expect focus "value":"svchost,
+# Nothing is announced by the letters: the list's own selection is what NVDA reads.
+expect quiet 1500
+
+# 4.2 Ctrl+3, Enter on the first startup program: its details, the command, where it is set and whether it is
+# enabled; Escape closes them. A computer may start nothing: then the steps are not run.
+keys ctrl+3
+expect said ! Startup,
+expect focus Startup,
+keys enter
+try said (Text): Command
+iffound expect state "noticeText":"Command
+iffound expect state Set in
+iffound expect state abled
+iffound keys escape
+expect state "notice":null
+expect focus Startup,

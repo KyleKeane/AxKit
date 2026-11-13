@@ -1,0 +1,44 @@
+# Workflow: Start a shell in a recent folder from the command palette
+# axTerminal, section 3 of docs/axTerminal/nvda-test-plan.md, "Session, Open recent folder: the folders as
+# 1. name (path); Enter on one: a new session there" (SPEC.md AT-6, "Folder <name>"). The submenu needs menu mode,
+# which only the foreground window enters; since 2026-11-13 the command palette reads every Open recent list
+# (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter.
+mkdir work\orchard
+mkdir work\cellar
+# The run's own settings: no update check, which would go to the network and log an ERROR when it fails.
+file home\AxKit\axTerminal.json {"checkForUpdates": false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+
+# Two recent folders: a window on the first, closed (the close waited for, so that its settings are written), then a
+# window on the second, which lists both, the newest first.
+start terminal {temp}\work\orchard
+expect said ♪ Ready
+close
+expect closed
+start terminal {temp}\work\cellar
+expect said ♪ Ready
+expect state "title":"cellar -
+expect commands "1. cellar (
+expect commands "2. orchard (
+expect commands Session, Open recent folder in new window
+
+# The palette: part of the folder's name, the entry of Open recent folder said first; Enter starts a new session
+# there: "Folder orchard", then "Ready"; the title and the status bar's prompt name the folder, and it is the newest
+# of the recent folders now.
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type orch
+expect said 2. orchard (
+expect said Session, Open recent folder
+keys enter
+expect said Folder orchard
+expect said ♪ Ready
+expect state "notice":null
+expect state "title":"orchard -
+expect state \\work\\orchard>"]
+expect focus "name":"Command"
+expect commands "1. orchard (
+expect commands "2. cellar (
+keys ctrl+p
+expect said {temp}\work\orchard
