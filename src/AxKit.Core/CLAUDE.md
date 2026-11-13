@@ -129,6 +129,9 @@ $1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, it
 - `Mcp/McpAccess` with `McpSettings` and `McpClient`: the bundle's one setting in `%APPDATA%\AxKit\mcp.json` (off
   until the user turns it on, the paired clients by their program file), read again at every connection; the key in
   `%LOCALAPPDATA%\AxKit\mcp.key` through `UserSecret`, `NewChallenge`, `Proof` and `Proves` (HMAC-SHA256).
+- `Mcp/McpPipeName` (MC-6.2, 2026-11-12): a window's pipe name after the user's prefix, the random digits, after
+  "run", the run's mark and a dash in a test run (`AppPaths.RunMark`, which `OneAtATime` uses too); `SameKind`, the
+  broker's filter, so that a run's broker never knocks on the user's windows. Tested in `McpPipeNameTests`.
 - `Mcp/McpProtocol`: MCP's JSON-RPC as the broker speaks it, one line in, one line out, the tools from two functions;
   `Text` reads a string a client sent without trusting its type. `McpTool` and `McpResult`.
 - `ClaudeCodeProgram` (axClaude FR-1.2, MC-6.8; from `AxClaude.Core/ClaudeLauncher` on its second use, 2026-11-09):
