@@ -42,6 +42,28 @@ After the kit:
   bundle key; every act command is marked (since 2026-11-11 every command states its mark, and the act commands that
   start a program or reach past the window are pinned, `tests/AxKit.Tests/CommandMarkTests`, `mcp.md` MC-D7).
 
+- AK-2.5 **One source, every reader the same** (the user's rule of 2026-11-13: parity between the menus, the settings,
+  the command palette and the AI tools, with as few exceptions as possible, each one deliberate and for security).
+  The menu bar is the one source of what a window can do: every command, every setting (a check item or a choice),
+  and every list a menu fills as it opens (Open recent, Open windows, Recently closed). The palette, the AI tools'
+  `axkit_window_commands` and `axkit_window_run`, the F1 text and the tests all read it through one function, the
+  entries `CommandPalette.Commands` makes, each with its name, its menu path, its key, its checked state and its mark.
+  A command of the list keeps its own mark (AK-2.1); an item that is not one takes its kind's: a setting is change, a
+  recent file or window is open, Recently closed is open. Nothing is added to one reader alone: a new action is a menu
+  item, and it is in all of them at once.
+- AK-2.6 **The exceptions**, all here and nowhere else, each for security:
+  1. axPass and axClip answer no AI tool (MC-4.3): secrets and the clipboard.
+  2. An act entry asks the user before an AI tool runs it, naming its target (MC-7.3).
+  3. The AI tools' own switches (Let AI tools read and open axKit, Let AI tools run commands, Forget) are never
+     offered to an AI tool: a client never widens its own access.
+  4. A setting that an AI tool changes is said in the window like any command it runs (MC-5.1); the consent and
+     access settings of AX-11 are under exception 3.
+  Not security, and kept as few as possible: axFile's Drives and the Open with submenus are filled only when opened,
+  since reading them can stall on a network drive or the shell's handlers; the menus themselves and their keys work.
+  Built so far (2026-11-13): the palette reads every menu, the recent lists included. Owed: the AI tools reading the
+  same entries in place of the command list alone, with exception 3 as a mark the base sets, and a test that every
+  reader's list is the palette's.
+
 ## 3. Archetypes
 
 - AK-3.1 The windows keep their archetype bases and gain one: **`ListWindow`** (shapes of axGIT, axProcess, axMedia,

@@ -56,7 +56,7 @@ public sealed partial class MediaForm : AxKitForm
         Add(queue, new Command("&New window", AxMediaKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
         Add(queue, new Command("&Open files...", AxMediaKeys.OpenFiles, OpenFiles) { Mark = CommandMark.Open });
         Add(queue, new Command("Open &folder...", AxMediaKeys.OpenFolder, OpenFolder) { Mark = CommandMark.Open });
-        CommandPalette.FilledOnOpening(_recentItem).DropDownOpening += (_, _) => FillRecent();
+        CommandPalette.RefreshedOnOpening(_recentItem, FillRecent);
         FillRecent();
         queue.DropDownItems.Add(_recentItem);
         queue.DropDownItems.Add(new ToolStripSeparator());

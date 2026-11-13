@@ -80,7 +80,7 @@ public sealed partial class TextEditorForm : AxKitForm
         }
 
         Add(file, new Command("&Open...", EditorKeys.Open, OpenFile) { Mark = CommandMark.Open });
-        CommandPalette.FilledOnOpening(_recentFilesItem).DropDownOpening += (_, _) => FillRecentFiles();
+        CommandPalette.RefreshedOnOpening(_recentFilesItem, FillRecentFiles);
         FillRecentFiles();
         file.DropDownItems.Add(_recentFilesItem);
         file.DropDownItems.Add(new ToolStripSeparator());

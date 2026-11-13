@@ -20,8 +20,9 @@ public static class CommandPalette
     private sealed record Mark(bool LeftOut, Action? Refresh);
 
     /// <summary>
-    /// Marks a submenu whose items are made each time it opens (Open recent, Open windows, the drives): the palette
-    /// leaves it out, since what it holds is known only once it opens (AX-10.2). Returns the item.
+    /// Marks a submenu whose items are made each time it opens and are slow to make (the drives, Open with): the palette
+    /// leaves it out (AX-10.2). A quick list, Open recent and the Window menu's, is <see cref="RefreshedOnOpening"/> with
+    /// its filling instead, so that the palette fills it before reading (2026-11-13). Returns the item.
     /// </summary>
     public static ToolStripMenuItem FilledOnOpening(ToolStripMenuItem item)
     {

@@ -95,9 +95,9 @@ public abstract partial class ConsoleForm : AxKitForm
 
         RecordItem = new ToolStripMenuItem(RecordItemText);
         RecordItem.Click += (_, _) => ToggleRecording();
-        CommandPalette.FilledOnOpening(RecentFoldersItem).DropDownOpening += (_, _) => FillRecentFolders();
+        CommandPalette.RefreshedOnOpening(RecentFoldersItem, FillRecentFolders);
         FillRecentFolders();
-        CommandPalette.FilledOnOpening(RecentFoldersInNewWindowItem).DropDownOpening += (_, _) => FillRecentFoldersInNewWindow();
+        CommandPalette.RefreshedOnOpening(RecentFoldersInNewWindowItem, FillRecentFoldersInNewWindow);
         FillRecentFoldersInNewWindow();
 
         _quiet.Tick += (_, _) =>

@@ -119,7 +119,7 @@ keys ctrl+s
 expect said ! Saved
 run findstr /c:"Created by Ctrl+S." created.md
 
-# 3.10 manual: File, Open recent file is a submenu filled as it opens, which the palette leaves out, and a real menu needs the foreground.
+# 3.10: Open recent file from the palette is played in 14-recent-from-the-palette; the real menu needs the foreground (manual).
 
 # 3.11: Show current file in, File Explorer (Ctrl+W) on Untitled: "No file yet".
 # 3.11 manual: with a file, Ctrl+W opens a File Explorer window, which would open on the user's desktop.

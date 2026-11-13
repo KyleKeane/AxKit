@@ -1,0 +1,45 @@
+# Workflow: Open a recent file or window from the command palette
+# The recent lists in the command palette (docs/axKit/SPEC.md AX-10.2, the user's ask of 2026-11-13): Session, Open
+# recent file, and the Window menu's Open windows and Recently closed are filled before the palette reads them, so
+# that each entry is one search away, Ctrl+Shift+P, a few letters, Enter. Shown in axDown; every app's Open recent and
+# every Window menu are the same pieces.
+file home\AxKit\axDown.json {"checkForUpdates": false}
+file one.md # One\n\nThe first file.
+file two.md # Two\n\nThe second file.
+
+start down {temp}\one.md
+expect state "title":"one.md - axDown"
+start down {temp}\two.md
+expect state "title":"two.md - axDown"
+wait 500
+
+# Open recent file from the palette: a few letters of the file's name, the first match said, Enter opens it here.
+keys ctrl+shift+p
+expect state "notice":"Command palette"
+type one.md
+expect said one.md
+expect said Open recent file
+keys enter
+expect state "notice":null
+expect state "title":"one.md - axDown"
+
+# The Window menu's lists are there too: the other window by its title, and nothing recently closed yet.
+keys ctrl+shift+p
+type open windows
+expect said one.md - axDown, Window, Open windows
+keys escape
+expect state "notice":null
+
+# Recently closed: two.md, the file this window showed before it opened one.md (one.md itself is open here, so it is
+# not among the closed); its entry is one search away and opens it in a new window.
+use 1
+close
+use 2
+keys ctrl+shift+p
+type recently closed
+expect said two.md
+expect said Window, Recently closed
+keys enter
+adopt
+expect state "title":"two.md - axDown"
+expect focus "value":"# Two

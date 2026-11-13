@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: the command palette (Ctrl+Shift+P) finds your recent files and windows: every Open recent list, axFile's Favorites, and the Window menu's Open windows and Recently closed. Type a few letters of a file's name and press Enter. Before, the palette left these lists out.
 - axKit: Find in a list (Ctrl+F in axCalc's history, axFile, axMedia's queue and the other list windows) moves the focus to the match, so NVDA reads it. Before, a Find started from another control, such as axCalc's expression field, selected the match without a word.
 - axAutomate: every workflow of the automated checks has a label in your words, such as "Answer Claude's questions and screens", and the window lists the workflows by it. docs/axKit/workflows.md lists all of them by app, the workflows kept working from release to release, and the start of a tutorial for each.
 - axClaude: you choose what is spoken. Options, Announcements has a switch for each word axClaude says by itself ("Ready", "Sent" and "Queued", "Responding", "Question closed", Claude's own notices such as "accept edits on"); Options, Speech, "Words that keep a reply line silent" takes words between semicolons, and a reply line holding one is shown and not spoken; Options, Questions, "Dismiss Claude's feedback surveys unheard" answers Claude's surveys with Dismiss for you, and "Open Claude's feedback drafts by themselves" can be turned off. Everything is on, and the surveys asked, as before until you change it.

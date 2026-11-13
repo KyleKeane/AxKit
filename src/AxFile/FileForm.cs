@@ -49,7 +49,7 @@ public sealed partial class FileForm : AxKitForm
         var folder = new ToolStripMenuItem("&Session");
         Add(folder, new Command("&New window", AxFileKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
         Add(folder, new Command("&Open folder...", AxFileKeys.OpenFolder, OpenFolderDialog) { Mark = CommandMark.Open });
-        CommandPalette.FilledOnOpening(_recentItem).DropDownOpening += (_, _) => FillRecent();
+        CommandPalette.RefreshedOnOpening(_recentItem, FillRecent);
         FillRecent();
         folder.DropDownItems.Add(_recentItem);
         folder.DropDownItems.Add(new ToolStripSeparator());
@@ -59,7 +59,7 @@ public sealed partial class FileForm : AxKitForm
         // Navigation (AX-9.1): the ways around, and the Actions list.
         var navigation = new ToolStripMenuItem();
         // AF-3.9: the pinned folders, refilled when the submenu opens, with the key's item under them.
-        CommandPalette.FilledOnOpening(_favoritesItem).DropDownOpening += (_, _) => FillFavorites();
+        CommandPalette.RefreshedOnOpening(_favoritesItem, FillFavorites);
         FillFavorites();
         navigation.DropDownItems.Add(_favoritesItem);
         // Drives (AF-3.11): the drives to go to, This PC, and the drive's own Eject and Properties; refilled when it

@@ -31,11 +31,12 @@ public sealed class WindowMenu : ToolStripMenuItem
         var newWindow = new ToolStripMenuItem("&New window");
         AddApps(newWindow.DropDownItems, Dispatch.Apps, app => new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => Start(app.Verb, null)));
         DropDownItems.Add(newWindow);
-        // The lists made as the menu opens; the command palette leaves them out (AX-10.2).
-        DropDownItems.Add(CommandPalette.FilledOnOpening(_openWindows));
-        DropDownItems.Add(CommandPalette.FilledOnOpening(_recentlyClosed));
+        // The lists made as the menu opens, and again before the command palette reads it, so that an open window or a
+        // recently closed file is one search away (AX-10.2, 2026-11-13; the palette left them out before).
+        DropDownItems.Add(_openWindows);
+        DropDownItems.Add(_recentlyClosed);
         DropDownItems.Add(new ToolStripMenuItem("&Close all windows", null, (_, _) => CloseAll()));
-        DropDownOpening += (_, _) => Fill();
+        CommandPalette.RefreshedOnOpening(this, Fill);
         Fill();
     }
 

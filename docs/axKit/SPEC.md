@@ -657,11 +657,13 @@ name, so that a command is reached without knowing its menu or its key, and its 
   included: every enabled item that does something when chosen, in menu order. An entry reads its name, then its menu
   path, then its key when it has one, then "checked" for a checked item: "Save as, File, Ctrl+Shift+S", "Larger text,
   Options, Text, Ctrl+Plus", "Word wrap, Edit, Ctrl+Shift+W, checked". The name is the item's text without its
-  mnemonic ampersand and its trailing dots. Left out: separators, items that only open a submenu, disabled items, and
-  the lists a menu fills only as it opens (Open recent, Open windows, Recently closed), whose state the palette would
-  have to guess; a window marks such a submenu where it attaches its filling (`CommandPalette.FilledOnOpening`), and
-  the fixed items such a submenu also holds (axFile's Add or remove this folder under Favorites, This PC and Eject
-  under Drives) are left out with it, their keys still working. A menu whose items change their text or check mark as
+  mnemonic ampersand and its trailing dots. Left out: separators, items that only open a submenu and disabled items.
+  The recent lists are filled before the palette reads them, as on opening, so that each is one search away (the
+  user's ask of 2026-11-13; left out before): every Open recent submenu, axFile's Favorites, and the Window menu's
+  Open windows and Recently closed, an entry reading "1. notes.md (C:\...), Open recent file, Session". The lists that
+  are slow to fill are still left out, their keys working: axFile's Drives, the Open with submenus and axFile's
+  Remove a program; a window marks such a submenu where it attaches its filling (`CommandPalette.FilledOnOpening`). A
+  menu whose items change their text or check mark as
   it opens (axFile's Undo named after what it would undo, axTerminal's Switch shell with the shell in use checked)
   is marked where its refreshing is attached (`CommandPalette.RefreshedOnOpening`), and the palette runs the
   refresh before reading (until 2026-10-23 such an item read as it last stood). The palette reads

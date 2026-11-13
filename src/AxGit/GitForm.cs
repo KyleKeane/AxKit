@@ -69,7 +69,7 @@ public sealed partial class GitForm : AxKitForm
         // while a menu item is disabled, as before: the command says what stops it.
         var repository = new ToolStripMenuItem("&Session");
         Add(repository, new Command("&Open repository...", AxGitKeys.OpenRepository, OpenRepositoryDialog) { Mark = CommandMark.Open });
-        CommandPalette.FilledOnOpening(_recentItem).DropDownOpening += (_, _) => FillRecent();
+        CommandPalette.RefreshedOnOpening(_recentItem, FillRecent);
         FillRecent();
         repository.DropDownItems.Add(_recentItem);
         repository.DropDownItems.Add(new ToolStripSeparator());
