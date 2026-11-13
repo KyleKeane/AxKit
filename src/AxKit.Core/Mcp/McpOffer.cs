@@ -60,7 +60,7 @@ public static class McpOffer
     public const int Concern = 4;
 
     /// <summary>The name of the field that follows Report a concern: an instruction, with what Enter and Escape do.</summary>
-    public const string ConcernName = "Type what concerns you about this command, or leave it empty. Enter opens Claude Code's feedback with it, for you to review before it is sent. Escape goes back";
+    public const string ConcernName = "Command offer. Type what concerns you about this command, or leave it empty. Enter opens Claude Code's feedback with it, for you to review before it is sent. Escape goes back";
 
     /// <summary>
     /// The line that opens Claude Code's own feedback with the concern (MC-9.8): the command, the reason given and the
@@ -75,9 +75,12 @@ public static class McpOffer
         return "/feedback " + (text.Length > 1500 ? text[..1500] : text);
     }
 
-    /// <summary>The list's name, read each time the focus comes to it: who offers, the command whole, and that an AI wrote it (<see cref="AiCaution"/>).</summary>
+    /// <summary>What every offer's name starts with, and no question of Claude's: with the chime of its own, what tells the two apart though they are answered alike.</summary>
+    public const string Label = "Command offer";
+
+    /// <summary>The list's name, read each time the focus comes to it: the label, who offers, the command whole, and that an AI wrote it (<see cref="AiCaution"/>).</summary>
     public static string AskName(string client, string command) =>
-        $"{McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}. {AiCaution.Short(McpRun.Speaker(client))}";
+        $"{Label}. {McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}. {AiCaution.Short(McpRun.Speaker(client))}";
 
     /// <summary>What Ctrl+Q reads: the name and the reason.</summary>
     public static string AskText(string client, string command, string? reason)
@@ -93,7 +96,7 @@ public static class McpOffer
         return text.Length > 4000 ? text[..4000] : text;
     }
 
-    public const string ExplainTitle = "About this command";
+    public const string ExplainTitle = "Command offer: about this command";
 
     /// <summary>
     /// The explanation, a text to read by line and by heading: the command, the reason, the breakdown the AI tool

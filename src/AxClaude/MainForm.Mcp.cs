@@ -105,7 +105,7 @@ internal sealed partial class MainForm
         _offerShown = offer;
         var name = McpOffer.AskName(offer.Client, offer.Command);
         ShowInArea(OfferSignature, name, McpOffer.AskText(offer.Client, offer.Command, offer.Reason), unprompted, (focus, hold) =>
-            Area.ShowList(name, McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen), () => AnswerOffer(offer, McpOffer.No)));
+            Area.ShowList(name, McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen), () => AnswerOffer(offer, McpOffer.No)), Sounds.Offer);
     }
 
     private void AnswerOffer(Offer offer, int answer)

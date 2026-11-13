@@ -40,7 +40,9 @@ spoken
 # The question as it arrives: who offers, the command whole, then the answer the list starts on.
 mcp call axkit_offer_command {"window":"{window}","command":"echo heard-by-ear","reason":"A check by ear.","details":"echo: prints its words"}
 expect mcp "offered": true
+expect said ♪ Offer
 expect focus 1. Explain this command
+expect spoken Command offer
 expect spoken offers a command for you to run: echo heard-by-ear
 expect spoken Explain this command
 wait 2500
@@ -74,8 +76,9 @@ spoken
 keys home
 expect spoken Explain this command
 keys enter
-expect state "notice":"About this command"
-expect spoken About this command
+expect state "notice":"Command offer: about this command"
+expect spoken Command offer
+expect spoken about this command
 wait 3000
 spoken
 keys escape

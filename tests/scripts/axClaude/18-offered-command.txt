@@ -48,7 +48,9 @@ expect mcp error: The command must be one line
 # comes back to the same list.
 mcp call axkit_offer_command {"window":"{window}","command":"echo offered-first","reason":"A check of the question.","details":"echo: prints its words\noffered-first: the words"}
 expect mcp "offered": true
-expect focus axAutomate offers a command for you to run: echo offered-first
+# It is told from a question of Claude's by its own chime and by the words its name starts with.
+expect said ♪ Offer
+expect focus Command offer. axAutomate offers a command for you to run: echo offered-first
 expect focus 1. Explain this command
 expect state "notice":null
 keys ctrl+2
@@ -57,7 +59,7 @@ keys ctrl+1
 expect focus 1. Explain this command
 wait 1500
 keys enter
-expect state "notice":"About this command"
+expect state "notice":"Command offer: about this command"
 # The caution is the first thing in the text (bundle AX-11.12).
 expect state "noticeText":"# Read this first\n\naxAutomate, an AI model, wrote this command
 expect state safety checks refused it, so run it with care
@@ -76,7 +78,7 @@ expect said offers a command for you to run: echo offered-first. Written by axAu
 keys end
 expect focus 5. No, and report a concern about it
 keys enter
-expect focus Type what concerns you about this command
+expect focus Command offer. Type what concerns you about this command
 keys escape
 expect focus 5. No, and report a concern about it
 

@@ -186,6 +186,11 @@ public static class Sounds
     private static readonly Sound QuestionChime = new(WaveTone.Notes(0.35, (659.25, 70), (0, 40), (659.25, 110)));
     private static readonly Sound NoticeChime = new(WaveTone.Notes(0.35, (1046.5, 45), (1318.5, 45), (1046.5, 45), (1318.5, 110)));
 
+    // A4 twice, then A5 held: two low knocks and a note an octave up, a command offered for the user to run themselves
+    // (axClaude FR-2.12, asked 2026-11-13). Lower and slower than the trill of a question, and three sounds where the
+    // question chime has two, so that an offer is told from a question of Claude's before a word is spoken.
+    private static readonly Sound OfferChime = new(WaveTone.Notes(0.35, (440, 60), (0, 50), (440, 60), (0, 50), (880, 180)));
+
     // A3 alone, short and low: the edge, nothing there (a list's first or last entry under Up or Down, a typed name no
     // entry starts with; axFile AF-3.6). An earcon where a sentence would be noise, asked 2026-10-22. A4 falling to
     // A3, louder than the chimes: A3 alone at 0.35 was lost under the speech that follows it (2026-10-23), and A4
@@ -212,7 +217,7 @@ public static class Sounds
         174.61, 220.00, 261.63, 349.23,
         196.00, 246.94, 293.66, 392.00), loops: true);
 
-    private static readonly Device Chimes = new("sounds", LineTick, ToolTick, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, EdgeTick, RecallTick, HeadingTick, AlertChime);
+    private static readonly Device Chimes = new("sounds", LineTick, ToolTick, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime);
     private static readonly Device Music = new("working music", WorkingMusic);
 
     /// <summary>A tiny typewriter-like tick: a line from Claude arrived.</summary>
@@ -256,6 +261,9 @@ public static class Sounds
 
     /// <summary>A quick high trill: the answer notice opened and waits for an answer.</summary>
     public static void Notice() => Play("Notice", () => Chimes.Play(NoticeChime, replace: true));
+
+    /// <summary>Two low knocks and a note an octave up: a command is offered for the user to run themselves, not a question of Claude's.</summary>
+    public static void Offer() => Play("Offer", () => Chimes.Play(OfferChime, replace: true));
 
     /// <summary>One short low note: the edge, nothing there (a key that moves nothing, a typed name no entry starts with).</summary>
     public static void Edge() => Play("Edge", () => Chimes.Play(EdgeTick, replace: true));

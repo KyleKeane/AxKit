@@ -72,7 +72,7 @@ Keys that go straight to Claude Code:
 
 ### When Claude asks you to run a command yourself
 
-Some commands Claude cannot or should not run: a sign-in that asks questions, or something its permissions refuse. Claude can then offer you the command. When its turn has ended, axClaude chimes and a list takes the message field's place, just as for one of Claude's questions. The list is called "Claude offers a command for you to run" followed by the command itself, and Ctrl+Q reads that again with Claude's reason. The conversation is still there: Tab or Ctrl+2 goes to it, so you can read what led to the command, and Tab or Ctrl+1 comes back to the list.
+Some commands Claude cannot or should not run: a sign-in that asks questions, or something its permissions refuse. Claude can then offer you the command. When its turn has ended, a list takes the message field's place. You answer it as you answer one of Claude's questions, and you can always tell it from one: it has a sound of its own, two low knocks and then a higher note, where a question has the quick high trill, and everything about it starts with the words "Command offer". The list is called "Command offer. Claude offers a command for you to run" followed by the command itself, and Ctrl+Q reads that again with Claude's reason. The conversation is still there: Tab or Ctrl+2 goes to it, so you can read what led to the command, and Tab or Ctrl+1 comes back to the list.
 
 The list starts on its first answer, which runs nothing, so an Enter pressed by accident is harmless:
 

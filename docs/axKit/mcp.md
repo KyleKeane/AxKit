@@ -388,11 +388,15 @@ which overwrote what the user had there. Now it offers the command through a too
   (the user's decision of 2026-11-13, after hearing the first version, a notice that covered the window): the
   conversation stays there to read for context (Tab, Ctrl+2), and the question is told from a notice by where it is.
   It shows only once Claude has been idle for a second and a half, asks nothing and no notice or question shows; an
-  offer made during a turn waits for the turn's end, and several are asked one after another. It comes with the
-  chime and a moment in which keys do nothing. The list is named "Claude offers a command for you to run: " and the
+  offer made during a turn waits for the turn's end, and several are asked one after another. It comes with a
+  chime of its own and a moment in which keys do nothing. It is answered as a question of Claude's is and must still
+  never be taken for one (the user's decision of 2026-11-13), so two things tell it apart before the command is heard:
+  the chime (`Sounds.Offer`, two low knocks and a note an octave up, where a question has the quick high trill), and
+  the words every name of an offer starts with, "Command offer" (`McpOffer.Label`): the list, the explanation's title
+  and the concern's field. The list is named "Command offer. Claude offers a command for you to run: " and the
   command, read each time the focus comes to it; Ctrl+Q reads it again with the reason. Its answers, in this order:
   1. **Explain this command**, where the list starts, so that an Enter pressed by accident runs nothing: a notice,
-     "About this command", a text read by line and by heading with one button: the command, why Claude offers it,
+     "Command offer: about this command", a text read by line and by heading with one button: the command, why Claude offers it,
      what each part does in Claude's words when the tool gave `details`, and what each answer does. Closing it comes
      back to the list.
   2. **Yes, run it** (MC-9.5).

@@ -82,7 +82,7 @@ internal sealed partial class MainForm
     /// <summary>
     /// Shows what Claude waits on in the control area, in place of the message field (D33). <paramref name="show"/>
     /// puts the control there, given whether it takes the focus and whether it holds its answering keys for a moment
-    /// (when the user did not cause it, since they may be typing). Such a control also plays the notice chime, unless
+    /// (when the user did not cause it, since they may be typing). Such a control also plays the notice chime, or <paramref name="chime"/> in its place, unless
     /// the window is in the background with the louder alert on, which the signal then plays in its place (FR-7.3).
     /// With Go to them at once, interrupting speech (the default) it takes the focus wherever it was, and the question
     /// with the answer the focus is on is spoken as an interrupting notification 300 ms after the focus moved: it cuts
@@ -92,7 +92,7 @@ internal sealed partial class MainForm
     /// reads the question when the focus reaches it, after what it was reading (a focus change alone does not cut
     /// NVDA off).
     /// </summary>
-    private void ShowInArea(string signature, string name, string text, bool unprompted, Action<bool, bool> show)
+    private void ShowInArea(string signature, string name, string text, bool unprompted, Action<bool, bool> show, Action? chime = null)
     {
         // The next question of a set, after the user's answer, interrupts too: the focus is in the area, or in the
         // message field when the area closed between two questions, and what NVDA was still reading (the answer just
@@ -103,7 +103,8 @@ internal sealed partial class MainForm
         var focus = !NoticeOpen && (interrupt || Input.ContainsFocus || Area.ContainsFocus);
         if (unprompted && _settings.SoundOnBell && !(_settings.BackgroundAlert && !ContainsFocus))
         {
-            Sounds.Notice();
+            // An offered command has a chime of its own (FR-2.12), so that it is told from a question of Claude's.
+            (chime ?? Sounds.Notice)();
         }
 
         show(focus, unprompted);
