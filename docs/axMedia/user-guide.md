@@ -4,7 +4,7 @@ axMedia is a player for sound and video files, made for screen reader users. One
 
 ## Install
 
-axMedia is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axMedia`, a console command `axMedia`, axMedia in the `Open with axKit` submenu when you right-click a sound or video file in File Explorer, and axMedia under Windows' own `Open with` for those files, so that you can make it the program that opens them when you press Enter on one: Settings, Apps, Default apps, axMedia, or right-click a file, Open with, Choose another app, axMedia, Always. Windows lets only you set that, never a program.
+axMedia is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry `axKit axMedia`, a console command `axMedia`, axMedia in the `Open with axKit` submenu when you right-click a sound or video file in File Explorer, and axMedia under Windows' own `Open with` for those files, so that you can make it the program that opens them when you press Enter on one: Settings, Apps, Default apps, axMedia, or right-click a file, Open with, Choose another app, axMedia, Always. Windows lets only you set that, never a program.
 
 ## Start
 

@@ -159,7 +159,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 ### AD-4 Commands and menus
 
 - AD-4.1 File, shaped as axClaude's Session menu: New (Ctrl+N), New window (Ctrl+Shift+N: an empty document in a new
-  window of the app, this window left as it is, the viewer's File menu's shape, AP-3.2; asked 2026-11-05 as the reports
+  window of the app, this window left as it is, the viewer's Session menu's shape, AP-3.2; asked 2026-11-05 as the reports
   repository's issue 2, built 2026-11-09), Open… (Ctrl+O), Open recent file ▸ (the last ten
   files opened or saved under a name, newest first, those that still exist, kept in the settings, each as its number, a
   full stop, the file's name and its full path, "1. notes.md (C:\notes\notes.md)", the Window menu's shape, AX-9.5; choosing one opens it

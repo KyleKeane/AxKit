@@ -4,14 +4,14 @@ axFile is a file manager for one folder, made for screen reader users. One windo
 
 ## Install
 
-axFile is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axFile`, a console command `axFile`, and axFile in the `Open with axKit` submenu when you right-click a folder or a file in File Explorer. The same install registers axDown, axJSON, axMedia and axPreview as programs for their kinds of file, so that you can make any of them the program Enter uses: Settings, Apps, Default apps, the app, or right-click a file, Open with, Choose another app, the app, Always. Windows lets only you set that; no program can.
+axFile is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry `axKit axFile`, a console command `axFile`, and axFile in the `Open with axKit` submenu when you right-click a folder or a file in File Explorer. The same install registers axDown, axJSON, axMedia and axPreview as programs for their kinds of file, so that you can make any of them the program Enter uses: Settings, Apps, Default apps, the app, or right-click a file, Open with, Choose another app, the app, Always. Windows lets only you set that; no program can.
 
 ## Start
 
 - Start menu: `axKit axFile`. Press the Windows key and type `axf`. axFile opens the folder you had last, or your profile folder the first time.
 - Console: `axfile C:\Music\Dune`, or `axfile C:\Music\Dune\03.mp3` to open the folder with that file selected.
 - File Explorer: right-click a folder or a file, open `Open with axKit` and choose axFile.
-- From axClaude: Session, Show current folder in, axFile (Alt+S, I, F). From axDown, axJSON or axPreview: File, Show current file in, axFile (the file's folder, the file selected). From axGIT: Session, Show current repository in, axFile. From axTerminal: Session, Show current folder in, axFile. From axMedia: Queue, Show current file in, axFile. Each opens a new axFile window.
+- From axClaude: Session, Show current folder in, axFile (Alt+S, I, F). From axDown, axJSON or axPreview: Session, Show current file in, axFile (the file's folder, the file selected). From axGIT: Session, Show current repository in, axFile. From axTerminal: Session, Show current folder in, axFile. From axMedia: Session, Show current file in, axFile. Each opens a new axFile window.
 - To go back: Alt+W, O lists the open axKit windows, most recent first, so Alt+W, O, 1 is the window you came from. From axFile, Session, Show current folder in offers File Explorer (Ctrl+W), axClaude, axTerminal and axGIT on the folder you are in.
 
 The window is named after the folder: "Dune - axFile". The list is named with its count, "24 items", so that the folder is not read twice, and NVDA reads the entry you are on. The status bar (NVDA+End) has the newest line of the Actions list on the left, "Copied 3 items", and the folder's full path on the right.

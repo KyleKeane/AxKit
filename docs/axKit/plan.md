@@ -41,8 +41,8 @@ the restart by the app itself (2.3.0).
 
 ## Still to come
 
-- **The Microsoft Store, MSIX and winget** (asked 2026-11-08, the day the Partner Center account was opened; planned in `store-distribution.md`; built on branch `store` the same day, SPEC AX-13, the first submission pending): axKit as one MSIX package the Store signs, installs and updates, one Application per app, the Store page in place of the updater in that copy, `winget install` from the Store source as the command-line path, the zip kept for developers; the account work by hand in Partner Center once, every release from the command line through the Store Developer CLI; the decisions still open are its section 4.
-- Reports (asked 2026-11-07, specified in `docs/axKit/reports.md`, not built): F4 in every window opens a report with
+- **The Microsoft Store, MSIX and winget** (asked 2026-11-08, the day the Partner Center account was opened; planned in `store-distribution.md`; built on branch `store` the same day, SPEC AX-13; built, and live in the Store since 2026-11-10 as the 5.2.1 package, Store ID 9PK01L2K5000): axKit as one MSIX package the Store signs, installs and updates, one Application per app, the Store page in place of the updater in that copy, `winget install` from the Store source as the command-line path, the zip kept for developers; the account work by hand in Partner Center once, every release from the command line through the Store Developer CLI; the decisions still open are its section 4.
+- Reports (asked 2026-11-07, specified in `docs/axKit/reports.md`; built, released in 5.1.0): F4 in every window opens a report with
   the last actions and the focus filled in, three kinds (feedback, bug, feature request), saved as an axTask item
   first and sent to GitHub as an issue of a reports repository over its REST API through axKit's own reporter account,
   nothing to sign in to, a reporter id per install and a blocklist against abuse, unsent ones going with the next;
@@ -90,12 +90,12 @@ the restart by the app itself (2.3.0).
   Left for later (its section 8): axDown's and axJSON's AI items with Offer a change (AH-3.2), a path in an answer
   opened with Enter (AH-3.3).
 - **A command palette in every window** (the user's ask, 2026-10-21; specified 2026-10-22 as bundle SPEC AX-10,
-  Ctrl+Shift+P at the user's choice, built on the branch `palette`): one key opens a field with a list under it;
+  Ctrl+Shift+P at the user's choice, built on the branch `palette`; built and released, in every window): one key opens a field with a list under it;
   typing narrows the list to the window's menu commands by name, each with its key named as a reminder, and in axFile
   to the folder's entries as well; Enter runs the command or opens the entry. It is the window base's, fed by each
   window's menus, with axStart's matching shared; next to the AI service above, the second thing every app gets for
   free.
-- **Themes** (asked 2026-11-09, specified the same night in `theme.md`, to be built): one JSON file,
+- **Themes** (asked 2026-11-09, specified the same night in `theme.md`; built, `AxKit.Forms/AxKitForm.Theme.cs`, the axKit menu's Theme): one JSON file,
   `%APPDATA%\AxKit\theme.json`, with a colour or `system` for every class of object the windows draw (the window,
   the texts, the transcripts, the lists, the console field and its band, the notices, the status bar, the menus, the
   buttons, the title bar), edited in axJSON from Options, Theme in every window, applied by the window base and read
@@ -230,7 +230,7 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
 - **Automated quality checks** (asked 2026-10-23): runs that drive the apps the way a user does and check the
   result, so that a robustness question (several axClaude sessions at once, a model change, a message each) is a
   command rather than a manual pass. The first is `tools/QaRun`, which runs Claude sessions through the app's own
-  console pieces without windows; driving real windows waits for a way that never takes the foreground.
+  console pieces without windows; driving real windows waited for a way that never takes the foreground, which `tools/AxAutomate` is since 2026-10-23 (windows on a desktop of their own, `automation.md`).
 - **Other everyday utilities, on record only** (2026-10-23): **AxWeb**, a simple browser for reading the web as a
   transcript of headings, links and text (the hard part is the engine: WebView2 is a web view, which B-10 rules out,
   so a reader over fetched HTML is the likely shape); **AxMail**, a mail reader and writer over IMAP and SMTP;

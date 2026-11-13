@@ -95,7 +95,7 @@ axJSON.
 
 ## About
 
-axList is part of axKit by Dr. Kyle Keane, www.kylekeane.com. axKit, About has the licence and the version.
+axList is part of axKit by Dr. Kyle Keane, www.kylekeane.com. Help, About has the licence and the version.
 
 ## Disclaimer
 

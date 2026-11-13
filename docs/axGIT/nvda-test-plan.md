@@ -20,7 +20,7 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 
 1. In axClaude on the repository, Alt+S, I: "Show current folder in submenu", Down: "File Explorer Ctrl+W", Down: "axTerminal", Down: "axGIT"; Enter: a new axGIT window on the repository, focused.
 2. Alt+W, O: the open windows, the axClaude window first; Enter goes back to it. Alt+W, O again, the axGIT window first now.
-3. In axDown on a file of the repository, Alt+F, I, G: axGIT on the repository that holds the file.
+3. In axDown on a file of the repository, Alt+S, I, G: axGIT on the repository that holds the file.
 4. In axGIT, Alt+S, I: "File Explorer Ctrl+W" and "axClaude"; Enter on axClaude: a new axClaude on the repository.
 5. In the Changes list on a `.md` file, Ctrl+E: axDown opens it; on a `.json` file, axJSON.
 

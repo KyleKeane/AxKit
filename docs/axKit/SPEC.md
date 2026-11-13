@@ -30,9 +30,10 @@ manager: `docs/axKit/plan.md`) and follow the same pattern without changes to th
 - **G6 Local first.** Every standalone app has its full utility with the network off. An access layer has the utility
   of its program: axGIT's and axPass's work on the disk, axTerminal's is the commands typed, and axClaude's needs
   Claude Code's service, so axClaude is the one app that needs the network. axKit's own code makes network requests in
-  two places, both over HTTPS to GitHub: the updater (AX-3), the update check, a setting that can be off, and the
-  download the user chooses; and the report sender (AX-12, docs/axKit/reports.md), only when the user sends a report
-  (F4), the report saved on the computer first. A network failure is never more than a missing update or a report that
+  three places, all over HTTPS to GitHub: the updater (AX-3), the update check, a setting that can be off, and the
+  download the user chooses; the report sender (AX-12, docs/axKit/reports.md), only when the user sends a report
+  (F4), the report saved on the computer first; and axTask's GitHub lists (docs/axKit/reports.md RP-7), only when the
+  user opens, refreshes or acts on such a list, the actions with the user's own token. A network failure is never more than a missing update or a report that
   waits for the next. An access layer reaches the network only
   through the program it runs (AX-11.11). Any AI help in the other apps is one shared, optional service (B-15), never
   a dependency of a feature that works without it.
@@ -387,8 +388,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   line, the status bar, the notices, the fonts, the update flow; axDown's `EditorForm` until axJSON, the second
   editor), `EditorApp` (what differs between the editor apps, as data: name, verb, settings file, file types, F1 text,
   guide, the `TextJump` pairs of its outline, its resources pages and its commands on the text; `ReadOnly` and
-  `Refuse` make the shell a viewer, axPreview, docs/axPreview/SPEC.md AP-D4, 2026-10-22: no Edit menu, no Save and
-  no history, Reload and Edit in the editor in the File menu, `l` for the line, the hand-over of a file received),
+  `Refuse` make the shell a viewer, axPreview, docs/axPreview/SPEC.md AP-D4, 2026-10-22: no commands in Actions, no Save and
+  no history, Reload and Edit in the editor in the Session menu, `l` for the line, the hand-over of a file received),
   `EditorKeys` (the shell's keys, the same in every editor window, and `Viewer`, the read-only set) and `EditorHost`
   (the entry point every editor app's `Run` is one call into); `AppHost` (every app's entry point, AX-1.7); `AxKitForm`, the window base (AX-6.5); and `ConsoleForm` (2026-10-23), the window of a console app on it, which axClaude's and axTerminal's windows derive from: the transcript view, the field, the control area, the status bar pair, the pty bridge, the paced writes with one pump, the recording, the export, find, the signals and the music, with the hooks for what is the program's (docs/axTerminal/SPEC.md AT-2).
 - AX-6.3 A piece moves into a shared project only when a second app needs it, in a commit of its own, with the
@@ -626,7 +627,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   commands by where the focus is and what is selected (`ItemForm.CreateContextMenu`); in axProcess the view's process,
   service or startup commands. The window keeps one menu of items for each kind of thing, never on the bar, and
   Context takes the items of the one for now each time it opens, as the palette reads it and as an AI tool asks
-  (`CommandPalette.Offered` reads the menus again after the refresh, and an item held off the bar is not offered), so
+  (every reader reads the bar alone, `CommandPalette.Entries`, which refreshes Context first; an item held off the bar is not among the entries), so
   that the palette and `axkit_window_commands` offer the commands of the focus and no other. With nothing to act on
   it holds one enabled item that says why ("Nothing selected", "A heading: nothing to act on", axPass's "Locked: Enter
   unlocks the database"). **Shift+F10, the Applications key and a right click open Context** in every window
@@ -662,7 +663,7 @@ name, so that a command is reached without knowing its menu or its key, and its 
   user's ask of 2026-11-13; left out before): every Open recent submenu, axFile's Favorites, and the Window menu's
   Open windows and Recently closed, an entry reading "1. notes.md (C:\...), Open recent file, Session". The lists that
   are slow to fill are still left out, their keys working: axFile's Drives, the Open with submenus and axFile's
-  Remove a program; a window marks such a submenu where it attaches its filling (`CommandPalette.FilledOnOpening`). A
+  Remove a program; a window marks such a submenu where it attaches its filling (`CommandPalette.NoEntry`). A
   menu whose items change their text or check mark as
   it opens (axFile's Undo named after what it would undo, axTerminal's Switch shell with the shell in use checked)
   is marked where its refreshing is attached (`CommandPalette.RefreshedOnOpening`), and the palette runs the
@@ -791,10 +792,12 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   the server's consent first; its credential helper may ask for a sign-in in its own window, AX-11.6); a shell's
   commands reach what they reach; KeePassXC's tool has no network feature. axKit does not see, record or change that
   traffic; it reads what the program prints and passes on what the user types. axKit's own code makes network requests
-  in two places (AX-12, 2026-11-07), over HTTPS to GitHub: the updater (AX-3), the update check and the download the
-  user chooses, which the updater takes only from this repository's release address; and the report sender
+  in three places (AX-12, 2026-11-07), over HTTPS to GitHub: the updater (AX-3), the update check and the download the
+  user chooses, which the updater takes only from this repository's release address; the report sender
   (docs/axKit/reports.md RP-6), which posts a report the user sends as an issue of the reports repository and reads
-  that repository's blocklist first, only on the user's Enter; nothing else in the code makes a network request or
+  that repository's blocklist first, only on the user's Enter; and axTask's GitHub lists (docs/axKit/reports.md RP-7),
+  which read a repository's issues when the user opens or refreshes such a list and send the user's actions on its
+  items with the user's own token; nothing else in the code makes a network request or
   listens for one, and the remaining addresses in the code are the Help menus' links, opened in the browser, and the
   installers' (AX-2.9: winget from its own source, Anthropic's installer script). `PRIVACY.md`, `README.md`,
   `docs/axKit/README.md` and `SECURITY.md` say this in these terms, and a change here changes them in the same commit;
@@ -846,7 +849,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   (`axKit axClaude, access layer for Claude Code`), each with its own images, so that Windows search finds them as
   before. The axClaude entry comes first, has the id `AxKit` and no parameters, so that it starts axClaude as
   `AxKit.exe` does with nothing (AX-1.3), and carries what the whole bundle needs: every app's console command,
-  `axKit.exe` and `<name>.exe` for all fourteen (`axDown.exe`, `axCalc.exe`), on the PATH through the user's
+  `axKit.exe` and `<name>.exe` for every app (`axDown.exe`, `axCalc.exe`), on the PATH through the user's
   WindowsApps folder in place of AX-2.4's `.cmd` shims, and the file types of the apps without an entry. Windows gives
   a process started through a command the command's own path as the first word of its command line (measured
   2026-11-09: `"…\WindowsApps\axDown.exe"`), so `Dispatch.VerbOfProgramName` reads the app off it, and a file opened
@@ -1038,7 +1041,7 @@ src/AxCalc/          class library (net10.0-windows): AxCalcApp, CalcForm, AxCal
 src/AxCalc.Core/     class library (net10.0): Calculator, NumberText, CalcEntry, CalcSettings (axCalc's pure code)
 src/AxClip/          class library (net10.0-windows): AxClipApp, ClipForm, AxClipKeys, HelpText (axClip's window, on HotkeyForm)
 src/AxClip.Core/     class library (net10.0): ClipHistory, ClipEntry, ClipPolicy, ClipSettings (axClip's pure code)
-tests/AxKit.Tests, tests/AxClaude.Tests, tests/AxJSON.Tests, tests/AxGit.Tests, tests/AxTerminal.Tests, tests/AxFile.Tests, tests/AxMedia.Tests, tests/AxPreview.Tests, tests/AxStart.Tests, tests/AxProcess.Tests, tests/AxTask.Tests, tests/AxPass.Tests, tests/AxCalc.Tests, tests/AxClip.Tests
+tests/AxKit.Tests, tests/AxClaude.Tests, tests/AxJSON.Tests, tests/AxGit.Tests, tests/AxTerminal.Tests, tests/AxFile.Tests, tests/AxMedia.Tests, tests/AxPreview.Tests, tests/AxStart.Tests, tests/AxProcess.Tests, tests/AxTask.Tests, tests/AxPass.Tests, tests/AxCalc.Tests, tests/AxClip.Tests, tests/AxMCP.Tests, tests/AxHelp.Tests, tests/AxAutomate.Tests
 ```
 
 References point one way: `AxKit` references every app; an app's window project references its own `.Core`,

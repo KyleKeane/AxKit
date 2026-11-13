@@ -57,7 +57,7 @@ Its own code is the outline and the commands (pure, in its Core, tested), its ke
 `EditorKeys.All` plus its letters) and its texts. An app around a program in a pseudo console derives its window from
 `AxKit.Forms/ConsoleForm`, as axClaude and axTerminal do: its settings class from `AxKit.Core/ConsoleSettings`, its model
 from `AxKit.Core/Transcript/LineStore`, and the window fills in the console hooks (`Working`, `OnTranscriptChanged`,
-`UpdateStatus`, `OnProcessExited`, `AskBeforeClosing`, `FolderInHand`, `SwitchFolder`, `ProcessConsoleKey`) besides
+`UpdateStatus`, `OnProcessExited`, `AskBeforeClosing`, `SwitchFolder`, `ProcessConsoleKey`) besides
 the base's. The rest of this section is for a window of a new kind.
 
 - `AxThing.csproj` (net10.0-windows, WinForms), referencing `AxThing.Core`, `AxKit.Core` and `AxKit.Forms`, embedding
@@ -138,10 +138,11 @@ the base's. The rest of this section is for a window of a new kind.
 - `.github/ISSUE_TEMPLATE/bug.yml` and `idea.yml`: the app among the choices; `src/AxKit/AxKit.csproj`: the
   `<Description>`; `docs/axKit/SPEC.md`: the verb in AX-1.1 and the taskbar id in AX-1.6 **(script)**.
 - The text places **(script, as drafts to rewrite in real words)**: `README.md` (the repository's page) and
-  `docs/axKit/README.md` (the zip's guide), the app in the list; `docs/axKit/SPEC.md` section 3, the app's entry; the
-  root `CLAUDE.md`, the map line; `CHANGELOG.md`, a bullet with the app's name in front under Unreleased. By hand:
-  the app in the root `CLAUDE.md`'s opening paragraph and Commands paragraph, `docs/axKit/SPEC.md`'s summary, the
-  zip guide's Start entries and commands, and its removal from `docs/axKit/plan.md`'s Still to come.
+  `docs/axKit/README.md` (the zip's guide), the app in the list; `docs/axKit/SPEC.md` section 3, the app's entry;
+  `docs/axKit/apps.md`, written again from `Dispatch.Apps` by `tools/apps-page.ps1` (the root `CLAUDE.md` names no app:
+  it points to that page); `CHANGELOG.md`, a bullet with the app's name in front under Unreleased. By hand:
+  `docs/axKit/SPEC.md`'s summary, the zip guide's Start entries and commands, and its removal from
+  `docs/axKit/plan.md`'s Still to come.
 - The documents and the code the script wrote are a first draft: the spec, the guide and the test plan are stubs,
   and the window is one list. The first build writes the new test project's `packages.lock.json` and changes
   `tests/AxKit.Tests/packages.lock.json`; commit both.

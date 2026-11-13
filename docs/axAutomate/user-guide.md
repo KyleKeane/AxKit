@@ -7,7 +7,7 @@ built for and with NVDA. This version views the workflows and runs them; changin
 
 ## Install
 
-axAutomate is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry
+axAutomate is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry
 `axKit axAutomate` and a console command `axAutomate`. Any axKit window starts one too: Alt+W, New window,
 axAutomate.
 
@@ -105,7 +105,7 @@ Options, Text sets the font and its size; Options, General the update check.
 
 ## Updates
 
-The Help, Check for updates.
+Help, Check for updates says whether a newer axKit exists.
 
 ## If something goes wrong
 
@@ -113,8 +113,8 @@ Options, Developer, Copy diagnostics copies what helps a bug report; F4 sends a 
 
 ## About
 
-The Help, About.
+axAutomate is part of axKit by Dr. Kyle Keane, www.kylekeane.com. Help, About has the licence and the version.
 
 ## Disclaimer
 
-axAutomate comes with no warranty; see the licence in the Help, About.
+axAutomate comes with no warranty; see the licence (Help, About, Licence).

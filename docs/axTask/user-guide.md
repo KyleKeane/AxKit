@@ -224,7 +224,7 @@ F1 lists every key. Shift+F10 or the Applications key opens Context, what acts o
 
 ## About
 
-axTask is part of axKit by Dr. Kyle Keane, www.kylekeane.com. axKit, About has the licence and the version.
+axTask is part of axKit by Dr. Kyle Keane, www.kylekeane.com. Help, About has the licence and the version.
 
 ## Disclaimer
 

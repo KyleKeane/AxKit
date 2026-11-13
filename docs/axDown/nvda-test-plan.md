@@ -37,7 +37,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    Shift+Enter in the command field says "new line" and Enter, which runs the command, does not.
 5b. Heading sound (bundle AX-7.9; `tests/scripts/axDown/13-heading-sound.txt`). In a Markdown file, Down onto a
    heading's line: a short rising sound, then NVDA reads the heading; Down off it, and onto a plain line: no sound.
-   Ctrl+Home onto a first-line heading and the heading jumps (Navigate, Next, Heading): the sound first. A `#` line in a
+   Ctrl+Home onto a first-line heading and the heading jumps (Navigation, Next, Heading): the sound first. A `#` line in a
    fenced code block: no sound. A long heading wrapped over two rows sounds once. Options, Text, Sound on headings:
    "Sound on headings off", and Down onto a heading is silent; again: "Sound on headings on". In axPreview the same on
    a Markdown file, and in any notice's text (F1) h and Down onto a heading line. By ear: is the sound over before NVDA
@@ -101,9 +101,9 @@ letter), and a `long.md` with headings and lines longer than the window.
    line, F3: the next line with it, Ctrl+F then Escape: the text is back where it was; Escape closes the notice and
    the focus is back in the editor at the same place.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
-   as in the editor, "No next table" when there is none; axKit, About, Version names the version of axKit, the nine apps
+   as in the editor, "No next table" when there is none; Help, About, Version names the version of axKit, the apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
-4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows; Alt+A: the axKit menu with Claude, AI tools and Theme;
+4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows; Alt+K: the axKit menu with Claude, AI tools and Theme;
    Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds
@@ -124,14 +124,14 @@ letter), and a `long.md` with headings and lines longer than the window.
 
 ## 7. Updates and uninstall
 
-1. axKit, "Check for updates (axKit <version>)..." names the version you have and reports in a notice either way; axKit, About, Version names it too
+1. Help, "Check for updates (axKit <version>)..." names the version you have and reports in a notice either way; Help, About, Version names it too
    and "Latest release on GitHub: axKit <version>" with the releases page.
 2. With an older build installed (set `<Version>` in `src/AxKit/AxKit.csproj` below the latest release, `.\publish.ps1`,
    set it back), open a file: the notice "Update to axKit <newest>" opens by itself with four buttons. Escape (Later):
    the Help menu has "Update to axKit <newest>..." below Check for updates, and Check for updates asks GitHub again and opens
    the notice once more. Enter (I accept all terms, install and restart): the notice "Updating to axKit <newest>" with a progress bar that
    NVDA reports by its progress bar settings; "Downloaded. Installing" at about 80 percent, then "Installed.
-   Restarting"; axDown closes and comes back on the same file (or empty, as it was), axKit, About, Version naming the newest
+   Restarting"; axDown closes and comes back on the same file (or empty, as it was), Help, About, Version naming the newest
    version. Again with the older build: Escape during the download says "Update cancelled" and keeps the version;
    I accept all terms, install and close says "Installed. Closing" and axDown does not come back; the Start menu entry is the newest
    version. With unsaved changes, I accept all terms, install and restart: the "Save changes?" question; Escape (Cancel): "Update
@@ -147,14 +147,14 @@ letter), and a `long.md` with headings and lines longer than the window.
 2. A heading-looking line inside a fenced code block is skipped.
 3. Plain arrow keys still speak nothing of axDown's own.
 4. Ctrl+2: the next level-2 heading, other levels skipped, spoken "…, heading level 2"; Ctrl+Shift+2 back; past the
-   last one: "No next heading level 2". Navigate, Next and Navigate, Previous each list Heading and Heading level 1 to
+   last one: "No next heading level 2". Navigation, Next and Navigation, Previous each list Heading and Heading level 1 to
    6 with their keys, and the items do the same as the keys.
 5. Ctrl+K: the caret on the next link's first character, "GitHub, link"; Ctrl+Shift+K from inside a link: the link
    before it; a bare https address and an `<https://…>` address count, an image does not.
 6. Ctrl+L: "List with 3 items, one" at the first item; Ctrl+I: the next item's text, nested items included; a numbered
    list after a bulleted one is a second list.
 7. Ctrl+Q: "Block quote, " and the first line; Ctrl+T: "Table with 3 rows and 2 columns" at the header line; nothing
-   inside a fenced code block counts. Navigate, Next and Navigate, Previous list Link, List, List item, Block quote
+   inside a fenced code block counts. Navigation, Next and Navigation, Previous list Link, List, List item, Block quote
    and Table with their keys.
 
 ## 9. AI help: a question about this window (docs/axKit/ai-help.md AH-1, AH-6; 2026-11-09)

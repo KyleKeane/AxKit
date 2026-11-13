@@ -9,10 +9,11 @@ purpose.
 
 ## What axKit sends over the network on its own
 
-axKit's own code makes network requests in two places, the updater (`src/AxKit.Core/Updates`) and the report sender
-(`src/AxKit.Core/Reports`), over HTTPS, to GitHub only. No other code in axKit makes a network request or listens for
-one; the other addresses in the code are the Help menus' links and the installers' addresses below. The updater's two
-requests, the first a setting; the report sender's only when you send a report:
+axKit's own code makes network requests in three places, the updater (`src/AxKit.Core/Updates`), the report sender
+(`src/AxKit.Core/Reports`) and axTask's GitHub lists (`src/AxTask/TaskForm.GitHub.cs`), over HTTPS, to GitHub only. No
+other code in axKit makes a network request or listens for one; the other addresses in the code are the Help menus'
+links and the installers' addresses below. The updater's two requests, the first a setting; the report sender's only
+when you send a report; the GitHub lists' only when you open, refresh or act on such a list:
 
 - **The update check.** When an axKit window starts, it asks GitHub for the latest release of this repository: one GET
   of `https://api.github.com/repos/KyleKeane/AxKit/releases/latest` with the headers `User-Agent: AxKit/<version>` and
@@ -45,6 +46,14 @@ requests, the first a setting; the report sender's only when you send a report:
   build without the sending token) stays in Your reports as "Not sent yet" with the reason, and goes with the next
   one; the notice then also offers to copy the report or to open GitHub's own form in your browser. GitHub's privacy
   statement applies to what is posted: <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>.
+- **A GitHub list in axTask** (`docs/axKit/reports.md` RP-7). A list you made of a GitHub repository's issues is
+  filled, when you open it and when you press F5 in it, from `GET https://api.github.com/repos/<repository>/issues`,
+  page by page, with your token when you gave one and without one otherwise. An action you choose on one of its items
+  (make it a bug, a feature request or feedback, close, reopen, comment, block this reporter or this version, which
+  reads and writes that repository's `blocklist.json`) is one or two requests to the same service with a token of
+  your own GitHub account, which you paste once under Actions, GitHub account; it is kept protected for your Windows
+  account on your computer, sent nowhere but to GitHub, and forgotten from the same menu. Without such a list axTask
+  makes no network request. GitHub's privacy statement applies, as above.
 
 ## What axKit does on the network only when you ask
 

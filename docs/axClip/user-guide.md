@@ -4,7 +4,7 @@ axClip keeps a history of the text you copy, made for screen reader users. It ru
 
 ## Install
 
-axClip is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axClip` and a console command `axClip`, and starts axClip in the background; it then starts with Windows, unless you turn that off in its Options, General.
+axClip is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry `axKit axClip` and a console command `axClip`, and starts axClip in the background; it then starts with Windows, unless you turn that off in its Options, General.
 
 ## Using it
 

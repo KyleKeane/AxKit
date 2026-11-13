@@ -4,7 +4,7 @@ axStart is a program launcher, made for screen reader users: one key from anywhe
 
 ## Install and start
 
-axStart is part of axKit. Installing axKit (see the axKit guide in the Help, About) starts axStart in the background and makes it start again each time you sign in to Windows. It has no window and no taskbar button until you press its hotkey, **Ctrl+Shift+Space**.
+axStart is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) starts axStart in the background and makes it start again each time you sign in to Windows. It has no window and no taskbar button until you press its hotkey, **Ctrl+Shift+Space**.
 
 You can also start it from the Start menu, `axKit axStart`, or the console, `axStart`: the search field comes up, and axStart keeps running afterwards. Starting it again while it runs just brings up the field.
 

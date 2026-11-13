@@ -24,6 +24,7 @@ axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commerc
 - **axTask**: tasks and lists as a folder of small files, moved through as axFile moves through folders. Each item's fields (a due date, done, notes, links to other items) are in a pane beside the list; All tasks gathers every task not done.
 - **axCalc**: a calculator as one field and a history: type an expression, Enter says the answer, and every answer stays as a line to read back, copy and recall; hexadecimal, binary and octal for development.
 - **axClip**: a clipboard history. It keeps the text of every copy while it runs, in memory unless you ask; Windows+Alt+V from anywhere brings up a search field over it, Down and Up move through it with the caret kept in the field, and Enter pastes into the program you were in.
+- **axAutomate**: the workflows that drive axKit's windows, starting with the automated checks of every app, read step by step; this version views the workflows and runs them, and changing them comes later.
 
 ### Access layers: through a program or service you install, which does the work under its maker's terms (`NOTICE.md` says who is responsible for what)
 
@@ -33,7 +34,6 @@ axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commerc
 - **axPass, access layer for KeePassXC**: a KeePass password database, read and changed by ear: groups and entries in the same two panes, the password never spoken, copied with Ctrl+C and cleared from the clipboard after 30 seconds. It runs KeePassXC's own command-line tool, so KeePassXC must be installed.
 - **axMCP, access layer for MCP servers**: the MCP servers Claude Code knows on this computer, and your own, in one list; a server started by hand shows its tools, resources and prompts, a tool's arguments are fields you fill by ear, and the result reads as text. For trying a server before giving it to Claude Code, or running a tool without a turn of Claude's.
 - **axHelp, access layer for Claude Code**: your conversation with Claude from anywhere: Windows+Alt+H brings up an axClaude window titled axHelp, one conversation that goes on until you clear it, on a fast model of its own, where Claude Code can also do work on your computer, asking first; Windows+Alt+S puts a picture of the window in front into it, for a question about the screen. axDescribe, which described the screen, is part of axHelp since 5.7.0.
-- **axAutomate**: the workflows that drive axKit's windows, starting with the automated checks of every app, read step by step; in this first version you view and move through them.
 
 The apps reach each other: axFile hands a file to axMedia or axPreview, every window can show its folder in the others, and the Window menu in every window lists the open windows and starts any app.
 
@@ -49,13 +49,13 @@ Needs Windows 10 1809 or later. axClaude also needs [Claude Code](https://code.c
 
 ### Or from the Microsoft Store
 
-The Store's copy is behind the releases: the 5.2.1 package is the one submitted so far. Install it with `winget install 9PK01L2K5000 -s msstore` in any terminal, or from [the Store's page](https://apps.microsoft.com/detail/9PK01L2K5000). The Store signs the package with Microsoft's certificate, which Smart App Control accepts, installs it for your account, and keeps it current by itself; Check for updates in any window says where your copy stands. The Store's copy has eight Start menu entries, the Store's limit ("axKit axClaude", axDown, axFile, axTerminal, axGIT, axTask, axStart and axClip; from the next Store package axHelp takes axGIT's place, so that it starts at sign-in there too), the commands for every app (`axkit`, `axDown`, `axCalc` and the rest) and Windows' Open with for the apps' file types; the other six apps open from their command, from a file of their kind, from the Window menu's New window in any window and from axFile. File Explorer's "Open with axKit" submenu is the zip's alone ([docs/axKit/SPEC.md](docs/axKit/SPEC.md) AX-13).
+The Store's copy is behind the releases: the 5.2.1 package is the one submitted so far. Install it with `winget install 9PK01L2K5000 -s msstore` in any terminal, or from [the Store's page](https://apps.microsoft.com/detail/9PK01L2K5000). The Store signs the package with Microsoft's certificate, which Smart App Control accepts, installs it for your account, and keeps it current by itself; Check for updates in any window says where your copy stands. The Store's copy has eight Start menu entries, the Store's limit ("axKit axClaude", axDown, axFile, axTerminal, axGIT, axTask, axStart and axClip; from the next Store package axHelp takes axGIT's place, so that it starts at sign-in there too), the commands for every app (`axkit`, `axDown`, `axCalc` and the rest) and Windows' Open with for the apps' file types; the other apps open from their command, from a file of their kind, from the Window menu's New window in any window and from axFile. File Explorer's "Open with axKit" submenu is the zip's alone ([docs/axKit/SPEC.md](docs/axKit/SPEC.md) AX-13).
 
 Pick one of the two. A Store copy and a zip copy on the same computer are two installs with separate settings, and each updates from its own source: the Store copy from the Store, the zip copy from this repository's releases; neither knows about the other.
 
 ## Privacy, and what axKit works with
 
-axKit collects nothing: no telemetry, no analytics, no crash reports, no accounts. Its own code makes network requests in two places, the updater and the report sender, over HTTPS to GitHub only. The updater: the update check when a window starts (one request for the latest release, with the version in the User-Agent header and nothing else about you; Options, General, Check for updates at start turns it off) and, when you choose Update, the release's zip and signature, accepted from this repository's release address only and checked before they are installed. The report sender: only when you press Enter on a report (F4 in any window), it posts what the report notice showed you as a public issue of the reports repository, [AxKit-reports](https://github.com/KyleKeane/AxKit-reports), with the maintainer's reporter token, never with an account of yours, carrying a random id of your install and nothing that names you, after reading that repository's blocklist (`docs/axKit/reports.md`). No other code in axKit makes a network request or listens for one.
+axKit collects nothing: no telemetry, no analytics, no crash reports, no accounts. Its own code makes network requests in three places, the updater, the report sender and axTask's GitHub lists, over HTTPS to GitHub only. The updater: the update check when a window starts (one request for the latest release, with the version in the User-Agent header and nothing else about you; Options, General, Check for updates at start turns it off) and, when you choose Update, the release's zip and signature, accepted from this repository's release address only and checked before they are installed. The report sender: only when you press Enter on a report (F4 in any window), it posts what the report notice showed you as a public issue of the reports repository, [AxKit-reports](https://github.com/KyleKeane/AxKit-reports), with the maintainer's reporter token, never with an account of yours, carrying a random id of your install and nothing that names you, after reading that repository's blocklist (`docs/axKit/reports.md`). axTask's GitHub lists: only when you open or refresh a list you made of a GitHub repository's issues, axTask reads those issues, and an action you choose on one of its items (a label, close or reopen, a comment, a line of the reports repository's blocklist) is sent with a token of your own GitHub account, which you gave axTask for it (`docs/axKit/reports.md` RP-7). No other code in axKit makes a network request or listens for one.
 
 The access layers meet the network only through the program each runs, as a child process on your computer, through a pseudo console or pipes, never over the network; that program uses the network as it would without axKit, under its maker's terms, on your command:
 
@@ -75,7 +75,7 @@ Every release is built by GitHub Actions from this repository's source, with Git
 
 Team and roles ([GOVERNANCE.md](GOVERNANCE.md)): Dr. Kyle Keane (www.kylekeane.com), author, reviewer and approver.
 
-Privacy: axKit transfers no information to other networked systems unless the user asks it to, except the update check above, which the user can turn off. Its own code makes HTTPS requests to GitHub alone, for that check and the update the user chooses; its access layers start Claude Code, git, the user's shell and KeePassXC's tool as child processes on the computer, which use the network as they would without axKit, under their makers' terms, on the user's command and after the user's consent ([PRIVACY.md](PRIVACY.md)).
+Privacy: axKit transfers no information to other networked systems unless the user asks it to, except the update check above, which the user can turn off. Its own code makes HTTPS requests to GitHub alone, in three places: the updater (that check and the update the user chooses), the report sender (a report the user sends) and axTask's GitHub lists (a list the user opens or refreshes, and the user's actions on its items with the user's own token); its access layers start Claude Code, git, the user's shell and KeePassXC's tool as child processes on the computer, which use the network as they would without axKit, under their makers' terms, on the user's command and after the user's consent ([PRIVACY.md](PRIVACY.md)).
 
 Transparency and self-audit: [PRIVACY.md](PRIVACY.md) says what axKit sends and runs, for the user; [SECURITY.md](SECURITY.md) what matters for security and how to report; [GOVERNANCE.md](GOVERNANCE.md) who decides; and [docs/axKit/outside-calls.md](docs/axKit/outside-calls.md) is the exhaustive list of everything axKit reaches outside its own process, every network request, program start and pipe in the code, by what it reaches (GitHub, Claude Code, Git, the shells, KeePassXC, the installers, Windows, the programs you choose, axKit itself, the AI tools' pipes), with what each is, how axKit reaches it and its documentation, and each call's file, line, function and purpose. `tools/outside-calls.ps1` writes that page from the sources, checks it on every push and writes it again at every release; a call without its explanation fails the build.
 
@@ -86,7 +86,7 @@ Needs the .NET 10 SDK, and NVDA for the manual checks. Every tool of the develop
 ```
 .\run-axFile.ps1 C:\path\to\folder       # build, then start axFile on that folder
 .\run-axClaude.ps1 C:\path\to\project    # axClaude on a project folder
-.\run.ps1 -App down C:\notes\todo.md     # any app: claude, down, json, git, terminal, file, media, preview, start, process, task, pass, calc, clip
+.\run.ps1 -App down C:\notes\todo.md     # any app: claude, down, json, git, terminal, file, media, preview, start, process, task, pass, calc, clip, mcpclient, help, automate
 .\run.ps1 -NoBuild                       # start without building
 ```
 
@@ -95,7 +95,7 @@ There is a `run-ax<app>.ps1` for each app. Close a running axKit before building
 ## Test
 
 ```
-.\test.ps1                 # every test project, in Release, the way GitHub Actions runs them
+.\test.ps1                 # every test project, in Release, one by one (GitHub Actions runs the solution in Release)
 .\test.ps1 axFile          # one project
 .\manual_tests\prepare.ps1 # the files of the NVDA test passes, made new
 ```

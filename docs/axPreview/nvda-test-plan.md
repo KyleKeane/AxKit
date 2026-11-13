@@ -6,7 +6,7 @@ Run with NVDA before a release, on a folder with `README.md` (headings, links, a
 
 ## 1. Start and the text (AP-1, AP-2)
 
-1. Start axPreview on `README.md`: NVDA reads "README.md - axPreview window", then "README.md, read only, edit, multi line" and the first line. Nothing else is spoken. The menu bar (Alt): Session, Navigate, Options, axKit, Help; no Edit menu.
+1. Start axPreview on `README.md`: NVDA reads "README.md - axPreview window", then "README.md, read only, edit, multi line" and the first line. Nothing else is spoken. The menu bar (Alt): Session, Actions, Navigation, Context, Options, Window, axKit, Help; Actions holds one item, "No actions here yet".
 2. Down Arrow reads the next line; Ctrl+Right reads words; typing a letter changes nothing and says nothing; Ctrl+V does nothing. Shift+Down selects a line; Ctrl+A, Ctrl+C: the text on the clipboard.
 3. `l`: "Line 2 of 40" (your numbers). Ctrl+G: the field "Go to line (now line 2, column 1)" under the text; type `5`, Enter: "Line 5 of 40", the caret there; Ctrl+G, type `x`, Enter: "Not a line number". Typing `l` into the Go to line field puts an l in the field.
 4. Ctrl+H: "Install, heading level 2" (the next heading); Ctrl+Shift+H back; Ctrl+2: the next level 2 heading; Ctrl+K: the next link; Ctrl+L: the next list; Ctrl+I: the next list item; Ctrl+Q: "No next block quote" when there is none; Ctrl+T: a table or "No next table". Alt+N, X: the Next submenu lists them with their keys.
@@ -33,7 +33,7 @@ Run with NVDA before a release, on a folder with `README.md` (headings, links, a
 
 1. Ctrl+Plus: "Text size 13" (or the next size), the caret where it was; Ctrl+Minus back. Options, Text, Font: the font picker; Escape.
 2. Help, User guide: this guide; Ctrl+H moves through its headings; Escape.
-3. Alt+W: the Window menu with New window (axPreview among the apps), Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows; Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
+3. Alt+W: the Window menu with New window (axPreview among the apps), Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows; Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+K: the axKit menu with Claude, AI tools and Theme.
 4. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the file with its encoding and the log's end. Alt+F4 closes without a question.
 
 ## 5. The Details list and the kinds of file (AP-6, AP-7)
@@ -44,7 +44,7 @@ Files: `README.md`, and a Word document, a zip, an MP3 and a picture of your own
 2. Type `wor`: the Words line. Ctrl+C: "Copied"; paste into another program: the number alone. Enter: "Enter opens the Folder line in axFile". Up to the Folder line, Enter: axFile opens on the folder, README.md selected.
 3. F6: back in the text, the caret where it was; F6 again: the list, on the same line. Shift+Tab from the list: the text. With Go to line open (Ctrl+G), Tab goes text, field, list.
 4. F5 while in the list: "Reloaded"; the list stays on its line. Listen for whether NVDA reads the line again, and note it.
-5. Open the Word document: its text, headings starting with #; Ctrl+H moves by them; the status bar says "Word document"; the Details list's Contents group gives the paragraphs, headings and tables, and the Windows group its author or pages when Windows knows them. File menu: "Open in Windows' program" (Ctrl+E) opens Word or the program Windows has.
+5. Open the Word document: its text, headings starting with #; Ctrl+H moves by them; the status bar says "Word document"; the Details list's Contents group gives the paragraphs, headings and tables, and the Windows group its author or pages when Windows knows them. Session menu: "Open in Windows' program" (Ctrl+E) opens Word or the program Windows has.
 6. Open the zip: one line per file with its size and date; the Details list counts files and folders and the packed and unpacked sizes.
 7. Open the MP3: "<name> is a sound file (MP3). …"; the Windows group gives its length, bit rate, artist; Ctrl+E plays it in axMedia. Open a picture with words in it (a screenshot): "<name> is a picture (PNG). Reading its text…", then within a second or two "Text read: N lines" and the text in the window, one line per line, under a first line naming the picture; the Contents group has "Text lines: N"; the Windows group gives its dimensions; Ctrl+E opens it in Windows' program. A picture without words: "No text found in the picture".
 7a. Alt+PrintScreen on any window, then in axPreview Ctrl+Shift+V: "Text read: N lines" and that window's text; the title names a file clipboard-<date>-<time>.png. With nothing but text on the clipboard: "No picture on the clipboard. Alt+PrintScreen copies the window in front; PrintScreen the whole screen".

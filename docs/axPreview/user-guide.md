@@ -4,7 +4,7 @@ axPreview is a viewer for one text file, made for screen reader users: the file'
 
 ## Install
 
-axPreview is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axPreview`, a console command `axPreview`, axPreview in the `Open with axKit` submenu when you right-click any file in File Explorer, and axPreview under Windows' own `Open with` for every kind of file, so that you can make it the program that opens a kind when you press Enter on one: Settings, Apps, Default apps, axPreview, or right-click a file, Open with, Choose another app, axPreview, Always. Windows lets only you set that, never a program.
+axPreview is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry `axKit axPreview`, a console command `axPreview`, axPreview in the `Open with axKit` submenu when you right-click any file in File Explorer, and axPreview under Windows' own `Open with` for every kind of file, so that you can make it the program that opens a kind when you press Enter on one: Settings, Apps, Default apps, axPreview, or right-click a file, Open with, Choose another app, axPreview, Always. Windows lets only you set that, never a program.
 
 ## Start
 
@@ -24,7 +24,7 @@ The text is the one control. Arrow keys, Home, End, Ctrl+Home, Ctrl+End, Ctrl+Le
 - **Page Up** and **Page Down** move one screen, or to the first or last line. **Ctrl+Up** and **Ctrl+Down** go to the previous or next paragraph.
 - **l** says where you are, "Line 12 of 40". **Ctrl+G** goes to a line: the field under the text says where you are now, type the number, Enter.
 - **Ctrl+F** finds text; F3 and Shift+F3 the next and the previous match, the match selected and read.
-- **Ctrl+H** and **Ctrl+Shift+H** go to the next and the previous Markdown heading, spoken as "Install, heading level 2"; **Ctrl+1** to **Ctrl+6** to the next heading of that level only, Ctrl+Shift with the number back. **Ctrl+K** links, **Ctrl+L** lists, **Ctrl+I** list items, **Ctrl+Q** block quotes, **Ctrl+T** tables, each with Shift for the previous one; "No next heading" when there is none. They work in a plain text file too, where there are none, and in every notice text. Navigate, Next and Previous list them.
+- **Ctrl+H** and **Ctrl+Shift+H** go to the next and the previous Markdown heading, spoken as "Install, heading level 2"; **Ctrl+1** to **Ctrl+6** to the next heading of that level only, Ctrl+Shift with the number back. **Ctrl+K** links, **Ctrl+L** lists, **Ctrl+I** list items, **Ctrl+Q** block quotes, **Ctrl+T** tables, each with Shift for the previous one; "No next heading" when there is none. They work in a plain text file too, where there are none, and in every notice text. Navigation, Next and Previous list them.
 - **F5** reads the file again, the caret kept on its line, "Reloaded". Coming back to the window after another program changed the file does the same by itself: "Reloaded, README.md changed on disk".
 - **Ctrl+E** opens the file in axDown, or in axJSON for a `.json` file, a new editor window; Session, Edit in axDown is the same item, named after the file's kind.
 - **Ctrl+W** shows the file in File Explorer; Session, Show current file in also offers axClaude and axTerminal (in its folder), axGIT (the repository that holds it) and axFile (the file selected in its folder).

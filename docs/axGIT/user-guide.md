@@ -6,12 +6,12 @@ axGIT is a git manager for one repository, made for screen reader users. One win
 
 ## Install
 
-axGIT is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axGIT`, a console command `axGIT`, and axGIT in the `Open with axKit` submenu when you right-click a folder in File Explorer. You also need git itself, from https://git-scm.com; if it is missing, axGIT says so when it starts.
+axGIT is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry `axKit axGIT`, a console command `axGIT`, and axGIT in the `Open with axKit` submenu when you right-click a folder in File Explorer. You also need git itself, from https://git-scm.com; if it is missing, axGIT says so when it starts.
 
 ## Start
 
 - From axClaude: Session, Show current folder in, axGIT (Alt+S, I, G). axGIT opens on the repository that holds the project folder.
-- From axDown or axJSON: File, Show current file in, axGIT (Alt+F, I, G). axGIT opens on the repository that holds the file.
+- From axDown or axJSON: Session, Show current file in, axGIT (Alt+S, I, G). axGIT opens on the repository that holds the file.
 - From the Start menu, `axKit axGIT`, or the console: `axgit C:\my\project`. Without a folder, axGIT opens the last repository you had, or asks for one with Session, Open repository (Ctrl+O).
 - To go back: Alt+W, O lists the open axKit windows, most recent first, so Alt+W, O, 1 is the window you came from. From axGIT, Session, Show current repository in, axClaude opens a new axClaude on the repository, axTerminal a shell there, axFile the folder's files, and File Explorer (Ctrl+W) shows the folder.
 

@@ -4,7 +4,7 @@ axCalc is a calculator made for screen reader users: one field to type an expres
 
 ## Install
 
-axCalc is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axCalc` and a console command `axCalc`. Any axKit window starts one too: Alt+W, New window, axCalc.
+axCalc is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry `axKit axCalc` and a console command `axCalc`. Any axKit window starts one too: Alt+W, New window, axCalc.
 
 ## Start
 

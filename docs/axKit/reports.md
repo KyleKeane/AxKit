@@ -169,8 +169,9 @@ levers are built now.
   a window's start: a standalone app stays off the network until the user acts, the update check being the bundle's
   one automatic request (G6, AX-3). Each send has a ten-second limit; its reason, in a few words, goes into Status.
 - **RP-6.8 The rule changes, in one commit with the code** (bundle rule 8, B-15, G6, AX-11.11, `PRIVACY.md`,
-  `README.md`, `docs/axKit/README.md`, `SECURITY.md`): axKit's own code makes network requests in two places, the
-  updater and the report sender, both over HTTPS to GitHub, the report sender only when the user acts (RP-D2). The
+  `README.md`, `docs/axKit/README.md`, `SECURITY.md`): axKit's own code makes network requests in three places, the
+  updater, the report sender and axTask's GitHub lists (section 7), all over HTTPS to GitHub, the report sender and the
+  GitHub lists only when the user acts (RP-D2). The
   two endpoints (the issue, the blocklist) carry `Outside call, network, GitHub:` comments and appear on
   `docs/axKit/outside-calls.md` (B-17). The security audit gets entries for the token in the build, the reporter id
   and the redaction of what is sent.

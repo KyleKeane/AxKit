@@ -67,7 +67,7 @@ axJSON remembers the font, the text size, the recent files and the window's plac
 
 ## Updates
 
-New versions of axKit are published on GitHub, and every app of axKit updates together. When axJSON starts, it asks GitHub once whether there is a newer one; if there is, a notice opens with four buttons. I accept all terms, install and restart downloads and installs the new version, then closes axJSON (asking first about unsaved changes) and starts the new version on the same file; I accept all terms, install and close installs it and closes without starting it again. Later keeps the version you have, and axKit, Update to axKit n offers it until you take it. axKit, Check for updates asks at any time. axKit, About, Version names the version you have and the latest release on GitHub.
+New versions of axKit are published on GitHub, and every app of axKit updates together. When axJSON starts, it asks GitHub once whether there is a newer one; if there is, a notice opens with four buttons. I accept all terms, install and restart downloads and installs the new version, then closes axJSON (asking first about unsaved changes) and starts the new version on the same file; I accept all terms, install and close installs it and closes without starting it again. Later keeps the version you have, and Help, Update to axKit n offers it until you take it. Help, Check for updates asks at any time. Help, About, Version names the version you have and the latest release on GitHub.
 
 ## If something goes wrong
 

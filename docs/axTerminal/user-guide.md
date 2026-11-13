@@ -19,7 +19,7 @@ axKit's installer installs axTerminal with the other apps: see the axKit guide (
 - Start menu: `axKit axTerminal`. Press the Windows key and type `axt`.
 - Console: `axTerminal`, or `axterminal C:\src\myproject` to start the shell in that folder.
 - File Explorer: right-click a folder, open `Open with axKit` and choose axTerminal.
-- From axClaude: Session, Show current folder in, axTerminal. From axDown or axJSON: File, Show current file in, axTerminal (the file's folder). From axGIT: Repository, Show current repository in, axTerminal. From axFile: Folder, Show current folder in, axTerminal. Each opens a new axTerminal window.
+- From axClaude: Session, Show current folder in, axTerminal. From axDown or axJSON: Session, Show current file in, axTerminal (the file's folder). From axGIT: Session, Show current repository in, axTerminal. From axFile: Session, Show current folder in, axTerminal. Each opens a new axTerminal window.
 
 The window opens with the command field focused. When the shell's first prompt appears you hear "Ready" with a short ping. The status bar shows the state on the left (Idle, or Running with the command) and the shell's prompt on the right, which is where you are. The title is the name of the current folder and the shell. Ctrl+P says the current folder, the full path.
 

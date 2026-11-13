@@ -79,7 +79,7 @@ in a password field rather than in the notes.
 ## About
 
 axPass is part of axKit by Dr. Kyle Keane, www.kylekeane.com. KeePassXC is a separate project; axPass only runs its
-command-line tool. axKit, About has the licence and the version.
+command-line tool. Help, About has the licence and the version.
 
 ## Disclaimer
 
