@@ -212,6 +212,14 @@ pages that said "from the first release whose notes say so" (`README.md`, `SECUR
 `docs/axKit/README.md`, SPEC AX-3.4) rewritten to say that the Store's copy is the signed one. No release was ever
 signed this way, so no user has a signed `AxKit.exe` to lose.
 
+Done on 2026-11-13, at the maintainer's word, with the Azure CLI signed in by him: the signing account
+`axkit-code-signing` deleted, then the application registration "axKit release signing" and the user "axKit signer",
+then the resource group (it was the sign-up's own, `azure-signup-rg`, holding the signing account and the free
+services entry, and a subscription cannot be cancelled while a resource is left), then the subscription cancelled (its
+state read back as Warned, which is Azure's word for cancelled; Azure deletes it for good after its own waiting
+time, and the Microsoft account itself stays). Nothing of the signing set-up is left in Azure. The list as it stood
+until then:
+
 Left to the maintainer, in the Azure portal, when convenient (nothing of it costs anything while it idles except the
 signing account's Basic tier, about ten dollars a month, which is the reason to do it soon):
 
