@@ -3,7 +3,8 @@
 # Every step of this section starts another window (axClaude, axDown, axJSON, axPreview, axGIT, axTerminal, axMedia,
 # axFile itself) or File Explorer, which the runner cannot reach or close:
 # Manual (2.1): axClaude's Session, Show current folder in, axFile starts a new axFile window.
-# Manual (2.2): Show current file in, axFile from axDown, axJSON and axPreview starts axFile with the file selected.
+# 2.2 from axDown is driven at the end (the runner takes over the axFile window axDown starts); from axJSON and
+# axPreview it is the same shared item of the editor shell.
 # Manual (2.3): the same from axGIT, axTerminal and axMedia.
 # Manual (2.4): Enter on axTerminal starts a shell; Ctrl+W and Ctrl+Shift+W start File Explorer.
 # What can be checked from inside: the Folder menu's Show current folder in submenu holds its four items (2.4).
@@ -15,3 +16,13 @@ expect focus "value":"a.txt"
 wait 500
 expect commands "File Explorer, Session, Show current folder in, Ctrl\u002BW","axTerminal, access layer for your shell, Session, Show current folder in","axGIT, access layer for Git, Session, Show current folder in","axClaude, access layer for Claude Code, Session, Show current folder in"
 expect commands "Show in File Explorer, Context, Ctrl\u002BShift\u002BW"
+
+# 2.2 axDown on b.txt: Session, Show current file in, axFile: a new axFile window on the folder, b.txt selected (not
+# the first entry, so that the selection is seen to follow the file).
+file here\b.txt A second file.
+start down {temp}\here\b.txt
+expect state "title":"b.txt - axDown"
+menu axFile, Session, Show current file in
+adopt
+expect state axFile
+expect focus "value":"b.txt"

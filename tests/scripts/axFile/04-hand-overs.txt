@@ -1,8 +1,7 @@
 # Workflow: Play or read a file from axFile
 # axFile, test plan section 4: sound, video and reading, the hand-overs (docs/axFile/nvda-test-plan.md 4.1 to 4.5; AF-5).
-# Every hand-over starts axPreview or axMedia, windows the runner cannot reach or close; only the answers axFile gives
-# itself without starting anything are checked here.
-# Manual (4.1): Shift+Enter on README.md and plain.txt, Shift+F10, E, and Shift+Enter on a folder or an .exe start axPreview or a new axFile window.
+# 4.1 is driven at the end: the window axFile starts is taken over by the runner (adopt), and a second Shift+Enter is
+# handed to the axPreview window already open (AP-1.2).
 # Manual (4.2): Ctrl+Enter in a folder of chapters starts axMedia.
 # Manual (4.3): Ctrl+Shift+Q on two folders with media and Shift+F10, Q on a chapter start axMedia (behind this window).
 # Manual (4.4): Shift+F10, A, M on a chapter or a folder and A, P on README.md start axMedia or axPreview.
@@ -41,3 +40,29 @@ keys home
 expect focus "value":"a-folder-for-not-a-file, folder"
 menu axPreview, Context, Open in axKit
 expect said ! Not a file
+
+# 4.1 Shift+Enter on README.md: an axPreview window on it, in front.
+keys end
+expect focus "value":"README.md"
+keys shift+enter
+adopt
+expect state "title":"README.md - axPreview"
+expect focus README.md
+# Shift+Enter on plain.txt in axFile: the open axPreview window takes it; no second axPreview.
+use 1
+keys up
+expect focus "value":"plain.txt"
+wait 500
+keys shift+enter
+use 2
+expect state "title":"plain.txt - axPreview"
+expect focus plain.txt
+# Shift+Enter on a folder: a new axFile window on that folder, not axPreview.
+use 1
+keys home
+expect focus "value":"a-folder-for-not-a-file, folder"
+wait 500
+keys shift+enter
+adopt
+expect state a-folder-for-not-a-file
+expect state axFile
