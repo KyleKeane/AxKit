@@ -193,7 +193,7 @@ Calls (6):
   Code: `if (!Native.CreateProcessW(null, commandLine, 0, 0, false, 0x400, environment, null, ref startup, out var info))`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
   Code: `Process.Start(start)?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:350`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
+- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:353`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
   Code: `using var process = Process.Start(start);`
 - **shared by every app**, `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
   Code: `Process.Start(info)?.Dispose();`
@@ -227,9 +227,9 @@ Calls (3):
 
 - **shared by every app**, `src/AxKit.Forms/McpBroker.cs:59`, in `McpBroker.Run`, by `Console.OpenStandardInput`: the standard input of the MCP server process ("AxKit.exe mcp"), on which the paired AI tool, Claude Code, sends its requests; the answers go back on standard output; on this computer, never over the network.
   Code: `using var input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(false));`
-- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:284`, in `McpBroker.Exchange`, by `new NamedPipeClientStream`: connects to one axKit window's pipe to ask it what it shows, for the AI tool's request; the broker first checks that the pipe's server is this very program file (docs/axKit/mcp.md MC-6.3).
+- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:287`, in `McpBroker.Exchange`, by `new NamedPipeClientStream`: connects to one axKit window's pipe to ask it what it shows, for the AI tool's request; the broker first checks that the pipe's server is this very program file (docs/axKit/mcp.md MC-6.3).
   Code: `using var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification);`
-- **shared by every app**, `src/AxKit.Forms/McpChannel.cs:101`, in `McpChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where the MCP server asks the window what it shows while the AI tools are on; each connection must answer the challenge with the paired key.
+- **shared by every app**, `src/AxKit.Forms/McpChannel.cs:102`, in `McpChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where the MCP server asks the window what it shows while the AI tools are on; each connection must answer the challenge with the paired key.
   Code: `using var pipe = NamedPipeServerStreamAcl.Create(_name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());`
 
 #### Test automation
@@ -309,7 +309,7 @@ Used in 18 places:
 - `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/AxKitForm.Mcp.cs:556`, in `AxKitForm.RunClaude`, for Claude Code.
 - `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, for Windows.
-- `src/AxKit.Forms/McpBroker.cs:350`, in `McpBroker.Open`, for axKit.
+- `src/AxKit.Forms/McpBroker.cs:353`, in `McpBroker.Open`, for axKit.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
 - `src/AxKit.Forms/WindowMenu.cs:183`, in `WindowMenu.StartWith`, for axKit.
 - `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, for axKit.
@@ -391,7 +391,7 @@ Defined in .NET, System.IO.Pipes: connects to a named pipe on this computer.
 Used in 2 places:
 
 - `src/AxAutomate.Core/Window.cs:50`, in `Window.Window`, for Test automation.
-- `src/AxKit.Forms/McpBroker.cs:284`, in `McpBroker.Exchange`, for AI tools.
+- `src/AxKit.Forms/McpBroker.cs:287`, in `McpBroker.Exchange`, for AI tools.
 
 ### NamedPipeServerStreamAcl.Create, pipe
 
@@ -400,7 +400,7 @@ Defined in .NET, System.IO.Pipes: opens a named pipe on this computer with an ac
 Used in 2 places:
 
 - `src/AxKit.Forms/AutomationChannel.cs:123`, in `AutomationChannel.Serve`, for Test automation.
-- `src/AxKit.Forms/McpChannel.cs:101`, in `McpChannel.Serve`, for AI tools.
+- `src/AxKit.Forms/McpChannel.cs:102`, in `McpChannel.Serve`, for AI tools.
 
 ### Console.OpenStandardInput, pipe
 
