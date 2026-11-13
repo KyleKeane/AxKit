@@ -1,0 +1,112 @@
+# Workflow: Hear an offered command as NVDA reads it
+# Needs: Claude Code signed in and the network; run only with --nvda, the user away.
+# NVDA tier (docs/axKit/automation.md, tier 3): what only NVDA can show of a command an AI tool offers
+# (docs/axKit/mcp.md MC-9.4, docs/axClaude/nvda-test-plan.md section 12a): the question is spoken whole with its first
+# answer as it arrives; each answer is read as the arrows reach it; the explanation is read as a notice and the list
+# is read again, by its name with the command, when the focus comes back from it and from the conversation; the
+# concern's field is read by its instruction.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir heard
+start claude {temp}\heard -- --model haiku
+expect said trust
+wait 1500
+keys enter
+expect said Ready
+wait 2000
+
+# The access on and the runner paired, as in tests\scripts\mcp\01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axClaude"
+wait 2000
+spoken
+
+# The question as it arrives: who offers, the command whole, then the answer the list starts on.
+mcp call axkit_offer_command {"window":"{window}","command":"echo heard-by-ear","reason":"A check by ear.","details":"echo: prints its words"}
+expect mcp "offered": true
+expect focus 1. Explain this command
+expect spoken offers a command for you to run: echo heard-by-ear
+expect spoken Explain this command
+wait 2500
+spoken
+
+# Each answer is read as the arrows reach it.
+keys down
+expect spoken Yes, run it
+keys down
+expect spoken No, do not run it
+keys down
+expect spoken No, copy it to the clipboard instead
+keys down
+expect spoken No, and report a concern about it
+wait 1000
+spoken
+
+# The concern's field is read by its instruction; Escape comes back to the list, which is read again by its name.
+keys enter
+expect focus Type what concerns you about this command
+expect spoken Type what concerns you about this command
+wait 2500
+spoken
+keys escape
+expect focus 5. No, and report a concern about it
+expect spoken offers a command for you to run: echo heard-by-ear
+wait 2500
+spoken
+
+# The explanation: a notice read by its title; closed, the list is read again.
+keys home
+expect spoken Explain this command
+keys enter
+expect state "notice":"About this command"
+expect spoken About this command
+wait 3000
+spoken
+keys escape
+expect focus 1. Explain this command
+expect spoken offers a command for you to run: echo heard-by-ear
+wait 2500
+spoken
+
+# To the conversation and back: the conversation reads as usual, and the list by its name again.
+keys ctrl+2
+expect focus Conversation
+expect spoken Conversation
+wait 1500
+spoken
+keys ctrl+1
+expect focus 1. Explain this command
+expect spoken offers a command for you to run: echo heard-by-ear
+wait 2500
+spoken
+
+# Ctrl+Q reads the question again with the reason.
+keys ctrl+q
+expect spoken Its reason: A check by ear.
+wait 2500
+spoken
+
+# Yes, run it: "Sent" is spoken, and the output is in the conversation.
+keys down
+expect spoken Yes, run it
+keys enter
+expect said Sent
+keys ctrl+2
+expect focus Conversation
+expect text heard-by-ear

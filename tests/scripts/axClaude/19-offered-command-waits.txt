@@ -1,0 +1,91 @@
+# Workflow: See an offered command wait its turn
+# Needs: Claude Code signed in, the network and a live model (Haiku): the step that offers a command while Claude works needs a reply that takes a few seconds.
+# axkit_offer_command (docs/axKit/mcp.md MC-9.3, MC-9.4): an offer never interrupts. It waits behind a notice the
+# user reads and behind Claude's turn; three wait at most; they are asked one after another; Escape is No.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir waits
+start claude {temp}\waits -- --model haiku
+try said trust
+iffound wait 1500
+iffound keys enter
+expect said Ready
+expect focus "name":"Message to Claude"
+
+# The access on and the runner paired, as in mcp\01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axClaude"
+
+# MC-9.4: behind a notice the user reads (the F1 text), an offer waits; the notice stays as it was.
+keys f1
+refuse state "notice":null
+mcp call axkit_offer_command {"window":"{window}","command":"echo first"}
+expect mcp "offered": true
+mcp call axkit_offer_command {"window":"{window}","command":"echo second"}
+expect mcp "offered": true
+mcp call axkit_offer_command {"window":"{window}","command":"echo third"}
+expect mcp "offered": true
+
+# MC-9.3: three wait at most; a fourth is refused, and says to end the turn.
+mcp call axkit_offer_command {"window":"{window}","command":"echo fourth"}
+expect mcp error: 3 offered commands already wait for the user
+wait 2500
+refuse state "notice":null
+refuse focus Explain this command
+
+# The notice closed: the first offer is asked, then the others one after another, each after the answer before.
+keys escape
+expect focus axAutomate offers a command for you to run: echo first
+wait 1500
+# Escape is No.
+keys escape
+expect said Not run
+expect focus axAutomate offers a command for you to run: echo second
+wait 1500
+keys escape
+expect said Not run
+expect focus axAutomate offers a command for you to run: echo third
+wait 1500
+keys escape
+expect said Not run
+expect focus "name":"Message to Claude"
+# Nothing was sent: no line of the conversation holds a command.
+keys ctrl+2
+expect focus Conversation
+refuse text echo first
+refuse text echo third
+keys ctrl+1
+expect focus "name":"Message to Claude"
+
+# MC-9.4: an offer made while Claude works waits for the end of the turn.
+said
+# A reply long enough to still be on its way when the offer arrives (a short one ended within half a second).
+type Write 400 words about rivers, in plain paragraphs.
+keys enter
+mcp call axkit_offer_command {"window":"{window}","command":"echo after-the-turn"}
+expect mcp "offered": true
+refuse focus Explain this command
+expect said Done
+expect focus axAutomate offers a command for you to run: echo after-the-turn
+expect focus 1. Explain this command
+wait 1500
+keys escape
+expect said Not run
+expect focus "name":"Message to Claude"
