@@ -364,7 +364,56 @@ to reverse:
 - MC-D16 **The newest axTask window answers**, as the pairing asks the newest window; no window id argument in this
   version, since every axTask window reaches the same lists unless their settings differ.
 
-## 10. Built in this order
+## 10. A command offered to the user (2026-11-13)
+
+Asked by the user on 2026-11-13, after three commands pasted by hand in one session: when Claude cannot or should not
+run a command itself (a sign-in that asks questions, a command its own permissions refuse, a deletion the user keeps
+for themselves), it used to print the command and ask the user to type it after a `!`, or put it on the clipboard,
+which overwrote what the user had there. Now it offers the command through a tool, and axClaude asks.
+
+- MC-9.1 **The tool** `axkit_offer_command`: `command` (one line), `reason` (optional, one sentence the user hears),
+  `window` (optional). It runs nothing. It hands the command to an axClaude window, which asks the user; the answer to
+  the client says only that the user will be asked, and to end its turn.
+- MC-9.2 **Which window**: the axClaude window this session runs in, found by the processes: the window started Claude
+  Code, which started the broker, so the window's process is an ancestor of the broker's (eight levels at most; each
+  window's `hello` carries its process id). A client outside axClaude names an axClaude window by its id or is told
+  that this works only inside axClaude. Never the newest window by default: the line runs in that window's session
+  and folder.
+- MC-9.3 **What is refused** (`McpOffer.Refusal`, by the broker and again by the window): no command; a line break or
+  any control character, which could hide part of the command from the listener or press a key in Claude Code; more
+  than 1000 characters; Claude Code not running in the window; three offers already waiting in that window.
+- MC-9.4 **The question** is a notice of the window (AX-7.2), unprompted (its chime, and a moment in which keys do
+  nothing), shown only once Claude has been idle for a second and a half, asks nothing and no other notice or
+  question shows; an offer made during a turn waits for the turn's end, and several are asked one after another. The
+  title: "Claude offers a command for you to run". The text starts with the command on a line of its own, then the
+  reason, then what Run it does. The focus starts in the text, so the command is read first. **Do not run** is the
+  default and Escape; **Run it** is reached with Tab or Alt+R.
+- MC-9.5 **Run it** sends `! ` and the command to Claude Code as a message of the user's own goes (its block in the
+  conversation, the text and Enter as separate writes), says "Sent", and what the command prints joins the
+  conversation, where Claude reads it. If Claude has started on something else meanwhile, nothing is sent and the
+  window says so. Do not run says "Not run" and sends nothing; the client is not told, and reads the outcome from the
+  conversation.
+- MC-9.6 **Asked every time.** There is no "always allow", and the switch Let AI tools run commands plays no part: it
+  is about a window's own commands, and here the user gives the word each time. The access itself (Let AI tools read
+  and open axKit) and the pairing are needed as for every tool. The audit log holds the call by its tool; the command
+  is in the conversation.
+- MC-9.7 **What this is in security terms.** It is the one path from an AI tool to a shell command, and it is the
+  user's own keystroke by another route: a `!` line runs without Claude Code's permission check, which is why the
+  question says so and why nothing shortens it. A command read out of text Claude merely quotes (a file, a web page)
+  cannot trigger it: only a tool call does, and the question names who asked.
+
+Decisions:
+
+- MC-D17 **A tool call, never a marker in Claude's text.** A marker would be forged by any file Claude prints.
+- MC-D18 **A notice, not the control area.** The control area is for what Claude Code itself waits on, and its state
+  is read from Claude's screen; this question is axKit's own, with a long text to read by line.
+- MC-D19 **The `!` line, not a process of axKit's.** The command runs where the user's own would: Claude Code's
+  shell, the session's folder, the output in the conversation. axKit starts no shell for it.
+
+Code: `AxKit.Core/Mcp/McpOffer` (the rules and the words, `McpOfferTests`), `McpBroker.Offer` (the window),
+`AxClaude/MainForm.Mcp.cs` (the wait, the notice, the send). Checked by `tests/scripts/axClaude/18-offered-command.txt`.
+
+## 11. Built in this order
 
 1. The security fixes S-11 to S-13 (the channel's secret, `IsSecret`, the hand-over pipe).
 2. The command lists of `app-kit.md` in the first apps, with their scope marks.

@@ -84,7 +84,7 @@ public sealed class McpProtocol(Func<IReadOnlyList<McpTool>> tools, Func<string,
             ["protocolVersion"] = asked is not null && Versions.Contains(asked) ? asked : Versions[0],
             ["capabilities"] = new JsonObject { ["tools"] = new JsonObject { ["listChanged"] = false } },
             ["serverInfo"] = new JsonObject { ["name"] = "axkit", ["version"] = BundleInfo.Version },
-            ["instructions"] = "axKit's windows for a blind user of NVDA: read what they show, open apps, and, while the user allows it, run a window's commands by name (axkit_window_run), each heard by the user as it runs; a command that acts outside the window asks the user first. axTask's lists are read and added to through an open axTask window (axkit_task_lists, axkit_task_items, axkit_task_add), an add only while the user allows commands to run. Every call is in the user's log; nothing here answers a question the window asks the user.",
+            ["instructions"] = "axKit's windows for a blind user of NVDA: read what they show, open apps, and, while the user allows it, run a window's commands by name (axkit_window_run), each heard by the user as it runs; a command that acts outside the window asks the user first. axTask's lists are read and added to through an open axTask window (axkit_task_lists, axkit_task_items, axkit_task_add), an add only while the user allows commands to run. Inside an axClaude window, a command the user must run themselves is offered with axkit_offer_command: the user hears it and decides, and it is sent as a ! line. Every call is in the user's log; nothing here answers a question the window asks the user.",
         };
     }
 

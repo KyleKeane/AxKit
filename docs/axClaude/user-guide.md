@@ -70,6 +70,15 @@ Keys that go straight to Claude Code:
 - Actions, Send key, Up and Down send Up and Down to Claude, for its own menus. They have no key: Ctrl+Up and Ctrl+Down move by paragraph, as everywhere in axKit.
 - Ctrl+Shift+C sends Ctrl+C from anywhere in the window. Ctrl+O, Claude's detailed view, is switched off in axClaude: in screen reader mode it redraws the whole conversation, which doubled it and spoke old replies again. Pressing it says so. To see what the tools print, start the session with the `--verbose` argument (Ctrl+N, Custom, for example `--continue --verbose`): every tool's output then appears in full under its "tool:" line. Claude, Send key has Ctrl+D and Tab too.
 
+### When Claude asks you to run a command yourself
+
+Some commands Claude cannot or should not run: a sign-in that asks questions, or something its permissions refuse. Claude can then offer you the command. When its turn has ended, axClaude chimes and shows a notice called "Claude offers a command for you to run". The focus is in the text: the command is read first, then Claude's reason, then what running it means. Read it with the arrow keys as often as you like.
+
+- Enter or Escape is Do not run. Nothing is sent, and axClaude says "Not run".
+- Tab to Run it and press Enter, or press Alt+R. axClaude sends the command to Claude Code as a line that starts with an exclamation mark, exactly as if you had typed it, and says "Sent". What the command prints appears in the conversation, and Claude can read it.
+
+A command run this way skips Claude Code's own permission check, because it is your command, so axClaude asks every time and there is no "always allow". Nothing is put on your clipboard. For this to work, the AI tools must be on and axKit added to Claude Code: axKit menu, Claude, AI tools, Let AI tools read and open axKit. You can always type such a line yourself too: an exclamation mark, a space and the command.
+
 ## Slash commands
 
 Anything that starts with a slash is a Claude Code command. Type `/help` and press Enter for the list. Some useful ones:

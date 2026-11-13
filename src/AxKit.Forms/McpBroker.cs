@@ -125,6 +125,11 @@ public static class McpBroker
             return Ask(key, target, run, RunAnswerMs);
         }
 
+        if (tool == McpTools.Offer)
+        {
+            return Offer(key, arguments, McpAccess.Find(McpAccess.Load(), program)?.Name ?? client);
+        }
+
         if (McpTools.AppTools.TryGetValue(tool, out var appTool))
         {
             return AppTool(key, tool, appTool.App, appTool.Changes, arguments, McpAccess.Find(McpAccess.Load(), program)?.Name ?? client);
@@ -166,6 +171,58 @@ public static class McpBroker
 
         var request = "app " + JsonSerializer.Serialize(new { tool, arguments, client });
         return Ask(key, target.Pipe, request, RunAnswerMs);
+    }
+
+    /// <summary>
+    /// MC-9: a command offered to the user, in the axClaude window this session runs in: the window whose process is
+    /// an ancestor of this broker (the window started Claude Code, which started the broker), or the axClaude window
+    /// the client names. Never the newest one by default: the ! line runs in that window's session and folder. The
+    /// window's own code checks the command and asks the user (<c>AxClaude.MainForm.McpAppRequest</c>).
+    /// </summary>
+    private static McpResult Offer(byte[] key, JsonObject arguments, string client)
+    {
+        if (McpOffer.Refusal(McpProtocol.Text(arguments["command"])) is { } refusal)
+        {
+            return new McpResult(refusal, true);
+        }
+
+        var claude = Dispatch.Of(Dispatch.AxClaude).Name;
+        var windows = Windows(key).Where(window => string.Equals(window.App, claude, StringComparison.OrdinalIgnoreCase)).ToList();
+        OpenWindow? target;
+        if (McpProtocol.Text(arguments["window"]) is { } id)
+        {
+            target = windows.FirstOrDefault(window => window.Id == id);
+            if (target is null)
+            {
+                return new McpResult("No axClaude window has that id: axkit_windows lists the ids.", true);
+            }
+        }
+        else
+        {
+            var ancestors = Ancestors();
+            target = windows.FirstOrDefault(window => ancestors.Contains(window.ProcessId));
+            if (target is null)
+            {
+                return new McpResult(McpOffer.NoWindow, true);
+            }
+        }
+
+        var request = "app " + JsonSerializer.Serialize(new { tool = McpTools.Offer, arguments, client });
+        return Ask(key, target.Pipe, request, RunAnswerMs);
+    }
+
+    /// <summary>The processes above this one, nearest first, eight at most: Claude Code, perhaps a shell or node between, then the window that started it.</summary>
+    private static List<uint> Ancestors()
+    {
+        var ancestors = new List<uint>();
+        var current = ThisProgram.ParentId();
+        while (current is { } id && id != 0 && ancestors.Count < 8 && !ancestors.Contains(id))
+        {
+            ancestors.Add(id);
+            current = ThisProgram.ParentOf(id);
+        }
+
+        return ancestors;
     }
 
     /// <summary>MC-6.4: the user asked in the newest axKit window; null when allowed, else what to tell the client.</summary>
@@ -221,7 +278,7 @@ public static class McpBroker
     /// <summary>Until when a client the user just denied is refused without asking (milliseconds of <see cref="Environment.TickCount64"/>).</summary>
     private static long _deniedUntil;
 
-    private sealed record OpenWindow(string Id, string Pipe, string App, string Title, long Handle);
+    private sealed record OpenWindow(string Id, string Pipe, string App, string Title, long Handle, uint ProcessId);
 
     /// <summary>The windows that serve a pipe, the most recently used first (the Window menu's order).</summary>
     private static List<OpenWindow> Windows(byte[] key)
@@ -240,7 +297,7 @@ public static class McpBroker
                 if (hello is not null && McpProtocol.Text(hello["app"]) is { } app)
                 {
                     // The id is the pipe's sixteen random digits, after a run's mark when there is one (McpPipeName).
-                    windows.Add(new OpenWindow(pipe[^16..], pipe, app, McpProtocol.Text(hello["title"]) ?? string.Empty, hello["handle"]?.GetValue<long>() ?? 0));
+                    windows.Add(new OpenWindow(pipe[^16..], pipe, app, McpProtocol.Text(hello["title"]) ?? string.Empty, hello["handle"]?.GetValue<long>() ?? 0, (uint)(hello["process"]?.GetValue<long>() ?? 0)));
                 }
             }
             catch (Exception ex) when (ex is JsonException or InvalidOperationException or FormatException)

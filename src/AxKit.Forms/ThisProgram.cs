@@ -44,6 +44,28 @@ public static class ThisProgram
             : null;
     }
 
+    /// <summary>The process that started another one, as <see cref="ParentId"/>; null when it is gone or may not be asked.</summary>
+    public static uint? ParentOf(uint processId)
+    {
+        var process = OpenProcess(ProcessQueryLimitedInformation, false, processId);
+        if (process == 0)
+        {
+            return null;
+        }
+
+        try
+        {
+            var info = new ProcessBasicInformation();
+            return NtQueryInformationProcess(process, 0, ref info, Marshal.SizeOf<ProcessBasicInformation>(), out _) == 0
+                ? (uint)info.InheritedFromUniqueProcessId
+                : null;
+        }
+        finally
+        {
+            CloseHandle(process);
+        }
+    }
+
     private const uint ProcessQueryLimitedInformation = 0x1000;
 
     [StructLayout(LayoutKind.Sequential)]

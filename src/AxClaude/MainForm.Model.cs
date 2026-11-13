@@ -106,6 +106,7 @@ internal sealed partial class MainForm
         }
 
         OpenDraftsWhenIdle();
+        ShowOfferWhenIdle();
     }
 
     /// <summary>The held reply lines go out as one notification (D32), and the hold ends.</summary>

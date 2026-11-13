@@ -21,6 +21,7 @@ public static class McpTools
     public const string TaskLists = "axkit_task_lists";
     public const string TaskItems = "axkit_task_items";
     public const string TaskAdd = "axkit_task_add";
+    public const string Offer = "axkit_offer_command";
 
     /// <summary>The apps that serve no pipe and so cannot be read (MC-4.1, MC-4.2): the password database and the clipboard history.</summary>
     public static readonly IReadOnlyList<string> NeverRead = [Dispatch.AxPass, Dispatch.AxClip];
@@ -48,6 +49,8 @@ public static class McpTools
         [TaskLists] = (Dispatch.AxTask, false),
         [TaskItems] = (Dispatch.AxTask, false),
         [TaskAdd] = (Dispatch.AxTask, true),
+        // MC-9: not a change of the window's: the user is asked every time, whatever the switch, and alone runs it.
+        [Offer] = (Dispatch.AxClaude, false),
     };
 
     public static IReadOnlyList<McpTool> All { get; } =
@@ -63,6 +66,7 @@ public static class McpTools
         new(TaskLists, "The user's axTask lists as the open axTask window reaches them: the lists of its top folder and of the project folders it found, each with its name for axkit_task_items and axkit_task_add, its place, its number of items and of tasks not done. Needs an open axTask window: axkit_open with the app task opens one.", Schema()),
         new(TaskItems, "The items of one axTask list, each with its fields (title, type, value). Done items are left out unless done is true.", TaskItemsSchema()),
         new(TaskAdd, "Adds an item to one axTask list, made from the list's template as the window's New item makes it: a Title and optional field values, a date as 2026-11-18, today, tomorrow, +7 or a weekday such as Monday, a choice as one of its options (Priority: High), anything else as text (Notes). Only while the user allows AI tools to run commands; the window says who added it, and Ctrl+Z there takes it back. It never changes or deletes an item.", TaskAddSchema()),
+        new(Offer, "Offers the user one shell command to run themselves, for when you cannot or should not run it: a sign-in that asks questions, a command your permissions refuse, something the user asked to run by hand. Only when you run inside an axClaude window. The user hears the command whole there after your turn ends and decides; on Run it is sent as a ! line and what it prints joins the conversation. Call it, say what the command is for, and end your turn. Never for a command you may run yourself.", OfferSchema()),
         new(Open, "Opens an axKit app in a new window, on a file or folder of this computer or on nothing. The user sees and hears it open.", Schema(("app", "The app's verb from axkit_apps: down, file, git ..."), ("path", "Optional: the full path of a file or folder on this computer."))),
     ];
 
@@ -131,6 +135,11 @@ public static class McpTools
         };
         return schema;
     }
+
+    private static JsonObject OfferSchema() => Schema(
+        ("command", "The command, one line, as the user would type it after the ! mark; it runs in Claude Code's shell, which is Bash on Windows too unless the user set another."),
+        ("reason", "Optional: one sentence the user hears, why they should run it themselves."),
+        ("window", "Optional: an axClaude window's id from axkit_windows; left out, the window this session runs in."));
 
     /// <summary>The schema with these arguments required, where more than the first is.</summary>
     private static JsonObject Require(JsonObject schema, params string[] names)

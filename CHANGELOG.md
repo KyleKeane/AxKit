@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: when Claude needs you to run a command yourself (a sign-in that asks questions, or one its permissions refuse), it can now offer it instead of asking you to type or paste it. After its turn ends, a notice reads the command, Claude's reason and what running it means; Enter or Escape is Do not run, and Run it (Tab, or Alt+R) sends it as a ! line, as if you had typed it, with its output in the conversation. Nothing touches your clipboard, and it asks every time. It needs the AI tools on and axKit added to Claude Code (axKit menu, Claude, AI tools). For AI tools: axkit_offer_command (docs/axKit/mcp.md section 10).
 - axKit: a file you save is written whole or not at all: the new text goes to a temporary file that then takes the old one's place, so a crash or a full disk in the middle of a save leaves the file as it was. This covers the editors' documents, axTask's items, the settings and the theme.
 - axMCP: a server whose command is a bare name such as `npx` or `node` is found in the folders of your PATH, with `.exe`, `.cmd` or `.bat` when the name has none; before, `npx` did not start. A name that is nowhere says so and how to fix it.
 - axPass: an undo that the tool refuses at once ("Still working on the last command") keeps its step, so Ctrl+Z works when you press it again; before, the step was lost.

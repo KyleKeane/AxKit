@@ -243,7 +243,7 @@ internal sealed class McpChannel
     {
         object result = verb switch
         {
-            "hello" => new { app = _form.AppNameForTools, title = _form.Text, handle = (long)_form.Handle },
+            "hello" => new { app = _form.AppNameForTools, title = _form.Text, handle = (long)_form.Handle, process = Environment.ProcessId },
             "state" => _form.McpState(),
             "list" => List(),
             "text" => Text(),

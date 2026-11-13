@@ -1,0 +1,72 @@
+# Workflow: Run a command Claude offers you
+# Needs: Claude Code signed in and the network; Claude Code's shell for a ! line is Bash (the arithmetic in the last command is Bash's).
+# axkit_offer_command (docs/axKit/mcp.md MC-9, docs/axClaude/SPEC.md FR-2.12): a command an AI tool offers is read to
+# the user in a notice once Claude is idle, Do not run its default; only Run it sends it, as a ! line, and what it
+# prints joins the conversation. The runner is the MCP client, so it names the window; Claude Code itself is found by
+# the window it runs in.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir offer
+start claude {temp}\offer -- --model haiku
+try said trust
+iffound wait 1500
+iffound keys enter
+expect said Ready
+expect focus "name":"Message to Claude"
+
+# The access on and the runner paired, as in mcp\01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axClaude"
+
+# MC-9.2: a client that runs in no axClaude window and names none is told so; nothing is asked.
+mcp call axkit_offer_command {"command":"echo nowhere"}
+expect mcp error: This works only for a Claude Code that runs inside an axClaude window
+
+# MC-9.3: more than one line is refused, since the user hears one line.
+mcp call axkit_offer_command {"window":"{window}","command":"echo a\necho b"}
+expect mcp error: The command must be one line
+
+# MC-9.4: the question reads the command and the reason; Enter is Do not run, and nothing is sent.
+mcp call axkit_offer_command {"window":"{window}","command":"echo offered-first","reason":"A check of the question."}
+expect mcp "offered": true
+expect state "notice":"axAutomate offers a command for you to run"
+expect state echo offered-first
+expect state Its reason: A check of the question.
+wait 1500
+keys enter
+expect said Not run
+expect focus "name":"Message to Claude"
+refuse text offered-first
+
+# MC-9.5: Run it sends the command as a ! line; what it prints is in the conversation.
+mcp call axkit_offer_command {"window":"{window}","command":"echo offered-$((40+2))"}
+expect mcp "offered": true
+expect state "notice":"axAutomate offers a command for you to run"
+wait 1500
+keys tab
+expect focus &Run it
+keys enter
+expect said Sent
+keys ctrl+2
+expect focus Conversation
+expect text offered-42
+
+# MC-6.6: the calls are in the log by their tool.
+run findstr /c:"axkit_offer_command" home\AxKit\mcp-audit.log
