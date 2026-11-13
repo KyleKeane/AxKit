@@ -75,6 +75,11 @@ that failed ends with "failed". Tab on either gives "Last run:" with what the ru
 after the step going on ("03-waits stopped"), from either pane; closing the window stops it the same way, and its run's
 windows are gone within half a minute.
 
+Ctrl+R on a workflow, or inside one, shows the report of its last run: how it ended, then every step played with what
+the runner saw ("ok  3: ..." or "FAIL 4: ...  -> ...", numbered by the line of the script's file, not by step), and the timeline of what the run's windows said and where the
+focus went. It is a text: the arrows read it, Ctrl+F finds in it and Escape closes it. The reports are kept until the
+window closes.
+
 A workflow this version cannot run says why when you press F5, for example one with "otherwise" steps; its details
 say "Cannot run". So does one with a step whose number is not one, such as "wait 2s". The checks that need NVDA listening run only in the NVDA pass, not from the window.
 
@@ -83,6 +88,7 @@ say "Cannot run". So does one with a step whose number is not one, such as "wait
 - Ctrl+O: open a folder of workflows.
 - Ctrl+J: the workflow's file as text, a script in axDown, a workflow file in axJSON.
 - F5: run the workflow, or every workflow of the folder. Escape during a run: stop it.
+- Ctrl+R: the report of the last run.
 - Session, Refresh: read the folder or the workflow again, after the file changed.
 - F1: every key of the window.
 - Ctrl+N, F2, Delete and the other keys that change items in axTask say "This version views and runs the workflows;

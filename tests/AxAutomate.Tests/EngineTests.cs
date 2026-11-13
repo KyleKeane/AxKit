@@ -181,6 +181,10 @@ public sealed class EngineTests
         Assert.Equal("Run stopped at 02-x: 1 passed, 3 not run", RunSentences.FolderEnded(1, 0, 0, stopped: true, stoppedAt: "02-x", notRun: 3));
         Assert.Equal("Run stopped: 2 passed, 1 failed, 2 not run", RunSentences.FolderEnded(2, 1, 0, stopped: true, stoppedAt: null, notRun: 2));
         Assert.Equal("Run stopped at 05-x: 4 passed", RunSentences.FolderEnded(4, 0, 0, stopped: true, stoppedAt: "05-x", notRun: 0));
+
+        // The report of Ctrl+R (AU-4.5): the end as said, a blank line, the log with Windows' line ends.
+        Assert.Equal("02-palette failed at step 3.\r\n\r\nok  1: start down\r\nFAIL 3: expect said x  -> seen: y\r\nThe timeline so far:\r\n0.1 s said: Ready",
+            RunSentences.Report("02-palette failed at step 3", "ok  1: start down\nFAIL 3: expect said x  -> seen: y\r\nThe timeline so far:\n0.1 s said: Ready\r\n"));
     }
 
     [Fact]

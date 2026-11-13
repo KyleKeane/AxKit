@@ -47,6 +47,15 @@ keys tab down
 expect focus Last run: failed. Not within 10 s
 keys escape
 
+# 5.2a Ctrl+R: the report of the workflow's last run, its end then the lines played, as a notice (AU-4.5, AU-6b.6).
+keys ctrl+r
+expect state "notice":"Report of 02-fails"
+expect state 02-fails failed at step 2.
+expect state FAIL 4: expect focus Nothing like this
+keys escape
+expect state "notice":null
+expect focus 2. Expect the focus: Nothing like this, failed
+
 # 5.3 F5 inside a workflow runs it alone; Escape stops a run after the step going on.
 keys left down
 expect focus 03-waits, workflow, 4 steps, passed
