@@ -346,8 +346,9 @@ type Reply with the single word ok.
 keys ctrl+2 ctrl+home
 keys i
 keys enter
-# Line 7 since Claude Code 2.1.322 shows one more line before Input 1 (2026-11-11); line 6 before.
-expect said ! Line 7 copied
+# The line's number is not checked: Claude Code prints more or fewer lines before Input 1 from one day to the next
+# (a warning that the login expires soon was one of them: line 7 with it, line 6 without, 2026-11-13).
+expect said copied
 keys ctrl+2 ctrl+home
 keys c
 keys enter
@@ -373,7 +374,7 @@ expect focus "value":""
 keys down
 expect focus "value":"_ start of copied line from conversation history _"
 keys down
-expect focus "value":"Line 7 of
+expect focus "value":"Line 
 keys down
 expect focus "value":"# Input 1"
 keys down

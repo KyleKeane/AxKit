@@ -6,6 +6,37 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-13, afternoon: every app; by the assistant with NVDA listening (`main` ed7033e, axKit 5.7.0 with what is unreleased)
+
+`.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: every script of
+`tests/scripts` (97, all seventeen apps and the AI tools) and the four of `tests/nvda-scripts`, 101 in all, every
+expected announcement and focus move also spoken by NVDA. 98 passed in the run; the three that failed did so on the
+script's own fault, were corrected and passed when run again under NVDA the same hour, so every script has passed on
+this commit.
+
+What this pass heard for the first time: the command offer's alarm and its first words with the reach ("Command
+offer: it runs on your computer, outside axKit", then the answer the list starts on); an AI tool's request to run a
+window command as the same list, over the whole window in axFile (`mcp/03`), under the text in axDown (`mcp/05`) and
+in the control area in axClaude (`axClaude/18`); the explanation's notice by its title, "Command offer: about this
+command"; the AI tools after the palette parity (`mcp/01` to `04`); the reading sections of axClaude and axTerminal
+after the reading-place fix of 2026-11-12 (`axClaude/03`, `04`, the Say all script, `axTerminal/02`).
+
+The three corrected scripts:
+
+- `axClaude/04-headings.txt` step 350 expected "Line 7 copied" and heard "Line 6 copied": Claude Code printed one line
+  fewer before Input 1, since the warning that the login expires soon was gone after the login was renewed that day.
+  The line's number is no longer checked.
+- `axClaude/17-what-is-spoken.txt` step 72, `refuse said feathers`: under NVDA the typed message is itself among what
+  was said, and it holds the word. What was said is now put aside before the reply is listened to.
+- `nvda-scripts/axClaude-offered-command.txt` step 47: NVDA says the question twice as it arrives (the focus, then
+  the window's own announcement) and the script had three expectations for the two; it has two now.
+
+Not heard by a script, and still the user's ear: a long streaming reply under NVDA+A; the feedback survey when Claude
+Code next shows one (step 16a); in an offered command, the clipboard answer, the concern through to Claude Code's
+feedback screen and the breakdown section from a real session; a real `/login` to its last screen; the cautions under
+an answer of AI help from a live answer (the scripts check the text, `axDown/11`); the Store copy (not installed on
+this computer).
+
 ## 2026-11-13: axClaude, a command Claude offers; by the assistant with NVDA listening (`main` 935398e and the scripts' fix after it)
 
 The runner with `--nvda`, the user away, Windows 11 Pro 10.0.26200, NVDA 2025.3.3, on the three scripts of the offered

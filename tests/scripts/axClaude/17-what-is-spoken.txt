@@ -67,6 +67,9 @@ expect said 2 words keep a line silent
 expect focus Message to Claude
 # A reply of two lines: the one holding a silent word is shown, not spoken; the other is spoken.
 type Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.
+# Under NVDA the typed message is itself among what was said: put aside before the reply is listened to.
+expect focus second line the words green apples
+said
 keys enter
 expect said green apples
 refuse said feathers

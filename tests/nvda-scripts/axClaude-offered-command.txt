@@ -42,8 +42,8 @@ mcp call axkit_offer_command {"window":"{window}","command":"echo heard-by-ear",
 expect mcp "offered": true
 expect said ♪ Offer
 expect focus 1. Explain this command
-expect spoken Command offer
-expect spoken offers a command for you to run: echo heard-by-ear
+# NVDA says it twice, as the focus arrives and as the window's own announcement: one expectation for each.
+expect spoken Command offer: it runs on your computer, outside axKit
 expect spoken Explain this command
 wait 2500
 spoken
@@ -77,8 +77,7 @@ keys home
 expect spoken Explain this command
 keys enter
 expect state "notice":"Command offer: about this command"
-expect spoken Command offer
-expect spoken about this command
+expect spoken Command offer: about this command
 wait 3000
 spoken
 keys escape
