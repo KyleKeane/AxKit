@@ -6,6 +6,22 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-13: axClaude, a command Claude offers; by the assistant with NVDA listening (`main` 935398e and the scripts' fix after it)
+
+The runner with `--nvda`, the user away, Windows 11 Pro 10.0.26200, NVDA 2025.3.3, on the three scripts of the offered
+command (axClaude plan section 12a): `tests/scripts/axClaude/18-offered-command.txt` (steps 1 to 4, 6 and 7 as far as
+the field), `19-offered-command-waits.txt` (an offer waits behind a notice and behind Claude's turn, three at most,
+one after another, Escape is No) and `tests/nvda-scripts/axClaude-offered-command.txt`. All passed, every expected
+announcement also spoken by NVDA. NVDA says the question whole with its first answer as it arrives ("... offers a
+command for you to run: echo heard-by-ear", "Explain this command"); each answer as the arrows reach it; the concern
+field by its instruction; "About this command" for the explanation; and the list by its name with the command again
+on the way back from the field, from the explanation and from the conversation; Ctrl+Q with the reason; "Sent".
+
+The first run failed the NVDA script's last step on the script's own fault: `expect said Sent` matched the trust
+answer's earlier line "Sent: y, Yes, I trust this folder"; both scripts now put earlier announcements aside first.
+
+Owed by ear: the breakdown section of the explanation from a real Claude session, step 5 (the clipboard, which no
+script writes) and step 7 through to Claude Code's feedback dialog.
 ## 2026-11-13: axClaude, a command Claude offers; by the user by ear (`main` 21c3107)
 
 The user, in his own axClaude with NVDA, on a command offered from the running session (axClaude plan section 12a):
@@ -13,7 +29,7 @@ the question in the control area and "Yes, run it" (step 6) heard and used, the 
 "that is much better. lock it in", after the first version, a notice over the whole window (229d98c), which he asked
 to be changed. Steps 1 to 4 and 6 also pass in `tests/scripts/axClaude/18-offered-command.txt` without NVDA listening.
 
-Owed: the script with NVDA listening (`nvda-pass.ps1 axClaude`); by ear, step 3's breakdown section (it needs a
+Owed (the script with NVDA listening was run the same day, above): by ear, step 3's breakdown section (it needs a
 session started after the build), step 5 (the clipboard) and step 7 (the concern through to Claude Code's feedback
 dialog, where what becomes of the typed words is not documented).
 ## 2026-11-13: the night's four branches merged; by the assistant through nvda-pass.ps1 (`main` 877a1c5)

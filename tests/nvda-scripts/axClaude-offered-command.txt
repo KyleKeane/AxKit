@@ -105,6 +105,8 @@ spoken
 # Yes, run it: "Sent" is spoken, and the output is in the conversation.
 keys down
 expect spoken Yes, run it
+# What was said before is put aside: the trust answer's line also starts with Sent.
+said
 keys enter
 expect said Sent
 keys ctrl+2

@@ -91,6 +91,8 @@ expect focus 1. Explain this command
 wait 1500
 keys down
 expect focus 2. Yes, run it
+# What was said before is put aside: the trust answer's line also starts with Sent.
+said
 keys enter
 expect said Sent
 keys ctrl+2
