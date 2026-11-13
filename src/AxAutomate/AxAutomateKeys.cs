@@ -23,6 +23,9 @@ public static class AxAutomateKeys
     /// <summary>During a run: stop it after the step going on (AU-4.4); otherwise, in the detail pane, back to the navigator.</summary>
     public const Keys StopRun = Keys.Escape;
 
+    /// <summary>The report of the workflow's last run in this window, every step with what was said and focused (AU-4.5).</summary>
+    public const Keys Report = Keys.Control | Keys.R;
+
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
@@ -31,5 +34,6 @@ public static class AxAutomateKeys
         ("The workflow's file as text", OpenFile),
         ("Run the workflow, or every workflow of the folder", Run),
         ("Stop the run; in the detail pane, back to the navigator", StopRun),
+        ("The report of the workflow's last run", Report),
     ];
 }

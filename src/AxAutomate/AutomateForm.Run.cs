@@ -22,6 +22,9 @@ public sealed partial class AutomateForm
     /// <summary>The outcome of each workflow's last run in this window, by its file's full path.</summary>
     private readonly Dictionary<string, RunOutcome> _outcomes = new(StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>The report of each workflow's last run in this window (AU-4.5): its end, then every line played and the timeline, by its file's full path.</summary>
+    private readonly Dictionary<string, string> _reports = new(StringComparer.OrdinalIgnoreCase);
+
     /// <summary>The run going on, or null.</summary>
     private Thread? _run;
 
@@ -218,7 +221,7 @@ public sealed partial class AutomateForm
                 {
                     cannotRun++;
                     var (said, outcome) = RunSentences.CannotRun(job.Workflow, refusal);
-                    Post(() => WorkflowEnded(job.Workflow, said, outcome));
+                    Post(() => WorkflowEnded(job.Workflow, said, outcome, said));
                     continue;
                 }
 
@@ -270,7 +273,8 @@ public sealed partial class AutomateForm
                     stoppedAt = job.Workflow.Title;
                 }
 
-                Post(() => WorkflowEnded(job.Workflow, end, kept));
+                var report = RunSentences.Report(end, result.Log);
+                Post(() => WorkflowEnded(job.Workflow, end, kept, report));
             }
         }
         catch (Exception ex)
@@ -327,11 +331,36 @@ public sealed partial class AutomateForm
         }
     }
 
-    /// <summary>One workflow's end, on the window's thread: its outcome kept and its line said; the rows wait for the run's end.</summary>
-    private void WorkflowEnded(Workflow workflow, string said, RunOutcome outcome)
+    /// <summary>One workflow's end, on the window's thread: its outcome and report kept and its line said; the rows wait for the run's end.</summary>
+    private void WorkflowEnded(Workflow workflow, string said, RunOutcome outcome, string report)
     {
         _outcomes[workflow.Path] = outcome;
+        _reports[workflow.Path] = report;
         Announce(said, false);
+    }
+
+    /// <summary>
+    /// Ctrl+R (AU-4.5): the report of the last run of the workflow in hand, or of the one selected, as a notice text
+    /// with the bundle's reading keys and find: its end, then every line played with what the runner saw, and the
+    /// timeline of what was said and focused.
+    /// </summary>
+    private void ShowRunReport()
+    {
+        var path = _workflow?.Path ?? (SelectedRow()?.Tag is FolderEntry { IsFolder: false } entry ? entry.Path : null);
+        if (path is null)
+        {
+            Announce("No workflow selected", true);
+            return;
+        }
+
+        if (!_reports.TryGetValue(path, out var report))
+        {
+            Announce(Running ? "No report yet: the run is going on" : "No report yet: F5 runs the workflow", true);
+            return;
+        }
+
+        var title = _workflow?.Title ?? WorkflowFolder.ReadWorkflow(path).Title;
+        ShowNotice(Notice.Plain("Report of " + title, report));
     }
 
     /// <summary>

@@ -192,8 +192,12 @@ keys in place of its words on a line:
 - AU-6b.7 The run's windows never get the right to take the foreground: the window that runs is the user's
   foreground app, and what a run's window hands to the shell (Explorer, a browser, Open with) lands on the user's own
   desktop. The command line's NVDA tier, on the user's desktop, keeps giving it.
-- AU-6b.6 The report of AU-4.5 (Ctrl+R, every step with what was said and focused) is not built: the detail pane's
-  "Last run" line holds what the runner saw at the failure.
+- AU-6b.6 The report of AU-4.5 (built 2026-11-12): Ctrl+R, or Actions, The last run's report, on a workflow or
+  inside one, shows its last run in this window as a notice titled "Report of 03-waits": how it ended, as said, then
+  the runner's log as the command line writes it (each line played, numbered by its line in a script's file and in
+  run order for a workflow file, "ok  3: ..." or "FAIL 4: ...  -> what the runner saw", what failed after the steps) and the timeline of what was said and focused, with the bundle's reading keys and
+  Ctrl+F (`RunSentences.Report`). A workflow that could not run reports why. Without a run: "No report yet: F5 runs
+  the workflow" ("... the run is going on" during one). Kept with the outcomes until the window closes (AU-D10).
 - AU-6b.8 What a run from the window reaches (2026-11-11, at review): its axKit windows are on the run's own desktop
   with settings of their own, and its `file`, `mkdir` and `silence` steps write in the run's `{temp}` folder alone: a
   path that resolves outside it (a full path elsewhere, one from the drive's root, `..` out of it, after `{temp}` and
@@ -276,5 +280,4 @@ keys in place of its words on a line:
 
 - The user's own workflows beyond the tests, and what they may drive (AU-D4), are for later (the user, 2026-11-11).
 - Changing steps (AU-4.3), with the blocks' editing (AU-D5).
-- The run's report as a notice text, Ctrl+R (AU-4.5, AU-6b.6).
 - Playing `otherwise` blocks and steps other than `expect said` that go on when they fail (AU-D7).

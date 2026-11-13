@@ -39,6 +39,7 @@ public static class HelpText
           A workflow with a run step asks first, naming its command lines: they run on your own desktop and files. Cancel is the default; Alt+R runs it
           A step that makes a file or a folder outside the run's own folder cannot run from here. These guard against slips only: a workflow drives axKit's windows, which reach your files, so run only workflows you wrote or trust
           Escape during a run: stop it after the step going on
+          Ctrl+R: the report of the last run of the workflow you are in or on: how it ended, every step played with what the runner saw, and the timeline of what was said and focused, as a text with the reading keys and Ctrl+F. Kept until the window closes
           Session, Refresh: read the folder or the workflow again; a run reads its file again by itself
           This version views and runs the workflows: changing them comes later. Ctrl+N, Ctrl+Shift+N, F2, Delete, Alt+Up, Alt+Down and Ctrl+Z say so
         """ + BundleHelp.NoticesSection("axAutomate", "the panes");

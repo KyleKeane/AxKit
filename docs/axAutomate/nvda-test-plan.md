@@ -60,3 +60,4 @@ desktop; the window's run starts a further desktop of its own there, which works
    ends "... passed". A step `run echo a \u003e {temp}\b.txt` is named "echo a > the run's folder\b.txt".
 7. A workflow whose `file` step names `..\x.md` or a full path: its details say "Cannot run: step N writes outside the
    run's folder: ..."; F5 says "This workflow cannot run: ..." and nothing is written.
+8. After a run, on the failed workflow's row, Ctrl+R: the notice "Report of 02-fails", its text first "02-fails failed at step 2.", then the lines played ("ok  1: ...", "FAIL 2: ...  -> ...") and the timeline; Down reads line by line, Ctrl+F finds a word in it, Escape closes it and the focus is back on the row. Inside a passed workflow, Ctrl+R: its report, ending with the timeline. On a workflow not run yet: "No report yet: F5 runs the workflow". The Actions menu holds "The last run's report" with Ctrl+R.

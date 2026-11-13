@@ -66,6 +66,7 @@ public sealed partial class AutomateForm : ItemForm
 
         _runItem = Add(_actionsMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
         _stopItem = Add(_actionsMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });
+        Add(_actionsMenu, new Command("The last run's &report", AxAutomateKeys.Report, ShowRunReport) { When = NotRenaming, Mark = CommandMark.Read });
         // Running keys only on what can run (AU-3.3.2): the items say so as the menu opens, and the command palette
         // reads them after the same refresh.
         CommandPalette.RefreshedOnOpening(_actionsMenu, UpdateRunItems);

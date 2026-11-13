@@ -90,6 +90,14 @@ public static class RunSentences
         return head + ": " + string.Join(", ", parts);
     }
 
+    /// <summary>
+    /// The report of one workflow's run (AU-4.5), the text Ctrl+R shows: its end as said, a blank line, then the
+    /// runner's log as it is, every line played ("ok  3: keys ctrl+f", "FAIL 7: expect said ...  -> ...") and the
+    /// timeline of what was said and focused, with Windows' line ends so that the notice's text shows one per line.
+    /// </summary>
+    public static string Report(string ended, string log) =>
+        (Sentence(ended) + "\n\n" + log.TrimEnd()).Replace("\r\n", "\n").Replace("\n", "\r\n");
+
     /// <summary>Text cut to <see cref="DetailLength"/>, with "..." where it was cut.</summary>
     public static string Cut(string text)
     {
