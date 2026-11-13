@@ -1,0 +1,10 @@
+#!/bin/sh
+# Every commit names its item of the priorities list (CLAUDE.md rule 9) on a line "Item: <title words>", "Item done:
+# <title words>" or "Item: none, <reason>", and tools/item-of-commit.ps1 marks the item started or done in the
+# maintainer's lists, so that the bookkeeping is done by the commit and not from memory. A message that names no item
+# is refused. Where the lists are not beside the repository (another clone, the build service) every commit passes.
+# Installed with the other hook: git config core.hooksPath tools/hooks. Kept with LF line endings (.gitattributes).
+root=$(git rev-parse --show-toplevel)
+# The script reads and writes files only; git's variables are dropped all the same, as in pre-push.
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_PREFIX
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/item-of-commit.ps1" "$1" </dev/null

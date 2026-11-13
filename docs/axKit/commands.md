@@ -65,16 +65,15 @@ page by hand; run its script and commit the page.
   commit, the tag, the push. GitHub Actions publishes the release the apps update from. Only at the maintainer's
   word. `gh run watch` follows the workflow.
 - `.github/workflows`: `build.yml` tests every push to every branch and every pull request; `release.yml` builds a
-  `v*` tag into a GitHub release; `store.yml` posts a published release to the Store while the variable
-  `STORE_SUBMIT` is on; `dependabot.yml` keeps the actions and the test packages current.
+  `v*` tag into a GitHub release; `dependabot.yml` keeps the actions and the test packages current.
 
 ## The Store
 
 - `tools/store-screenshots.ps1` takes the listing's screenshots, with the user away.
-- `tools/store-submit.ps1` posts a release's package to Partner Center through the submission API, or reads the
-  Store's state with `-Status`, with the credentials `tools/store-credentials.ps1` keeps encrypted.
 - `tools/EdgeDrive` drives a Microsoft Edge window over the DevTools protocol, one command per run, for Partner
-  Center's website while the account has no API route (`store-setup.md` section 6).
+  Center's website, where every release's package is uploaded by hand (`store-setup.md` sections 5 and 6).
+- No command submits to the Store: the route through Microsoft's API was built, never switched on, and removed on
+  2026-11-13, since the account is an Individual account (`store-setup.md` section 2).
 
 ## Other tools
 
@@ -86,5 +85,11 @@ page by hand; run its script and commit the page.
   as one dated commit, pulled fast-forward, pushed, one line each, nothing forced. `-Status` only says where they
   stand. Git runs it on every push of this repository through the pre-push hook `tools/hooks/pre-push`, installed once
   per clone with `git config core.hooksPath tools/hooks`, which `release.ps1` checks.
+- `tools/item-of-commit.ps1 <message file>`: the priorities list's bookkeeping from a commit message (the root
+  `CLAUDE.md`, rule 9). The message names its item on a line of its own: `Item: <words of the title>` (the item's
+  Started field gets today's date), `Item done: <words>` (its Done is checked too) or `Item: none, <the reason>`. A
+  message without such a line, or with words that name no item or several, is refused. Git runs it for every commit
+  through the hook `tools/hooks/commit-msg`; where the lists are not beside the repository, every commit passes.
+  `-Check` says what it would mark and writes nothing; `-Lists <folder>` names another list.
 - `tools/PtyCapture`: records Claude Code's screen stream for a fixture (`--dump` reads a recording with personal data
   replaced; never `--raw`). The `record-fixture` skill has the steps.

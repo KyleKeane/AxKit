@@ -34,18 +34,15 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 - **GitHub**: `gh auth login` (HTTPS, through the browser) as the repository's owner; `gh` keeps its token in Windows'
   credential store, and git pushes through Git Credential Manager with the same account. The repository
   `KyleKeane/AxKit` has the environment `release`, which only the branch `main` and tags `v*` may use, with the
-  secret `AXKIT_REPORTER_TOKEN` (`docs/axKit/reports-setup.md`) and, for the Store, the secrets
-  `PARTNER_CENTER_TENANT_ID`, `PARTNER_CENTER_CLIENT_ID` and `PARTNER_CENTER_CLIENT_SECRET` and, once the first
-  publication is live, the repository variable `STORE_SUBMIT` (`docs/axKit/store-setup.md`). `gh secret list --env
-  release` and `gh variable list` show the names. (The three `AZURE_*` secrets of the retired signing were deleted on
-  2026-11-09, `docs/axKit/code-signing.md` section 7.)
-- **Partner Center**: the maintainer's personal Microsoft account, in a browser only (the name reservation, the first
-  submission, anything the API cannot do; `docs/axKit/store-setup.md` sections 2 and 3). The automation speaks as the
-  Microsoft Entra application `axKit release`, which holds the Manager role on the Partner Center account and nothing
-  in Azure: its tenant id, client id and key are the `release` environment's secrets above and, for a run by hand,
-  `%LOCALAPPDATA%\AxKit-release\store-credentials.xml`, written by `tools/store-credentials.ps1` with the key
-  encrypted for the Windows account; `tools/store-submit.ps1 -Status` proves them. A new key is made in Partner
-  Center (the application's page, Add new key) and put in both places; the old one is removed there.
+  secret `AXKIT_REPORTER_TOKEN` (`docs/axKit/reports-setup.md`). `gh secret list --env release` shows the names.
+  (The three `AZURE_*` secrets of the retired signing were deleted on 2026-11-09, `docs/axKit/code-signing.md`
+  section 7.)
+- **Partner Center**: the maintainer's personal Microsoft account, in a browser only (the name reservation and every
+  submission; `docs/axKit/store-setup.md` sections 3 and 5). `tools/EdgeDrive` drives that signed-in browser, an Edge
+  window on a profile of its own, `%LOCALAPPDATA%\AxKit-release\edge-profile`, and holds no credential (section 6
+  there). No program of the repository signs in to Partner Center: the route through Microsoft's submission API,
+  with a Microsoft Entra application's three values as secrets, was built, never switched on, and removed on
+  2026-11-13, since the account is an Individual account (section 2 there).
 - **The release key**: `%LOCALAPPDATA%\AxKit-release\release-key.bin`, an ECDSA P-256 key encrypted for the Windows
   account that made it (`tools/release-key.ps1`; SPEC AX-3.4). `release.ps1` signs every release's zip with it; the
   public half is built into `AxKit.Core/Updates/ReleaseSigning` and `install.cmd`. A new computer gets it only by the
@@ -67,7 +64,7 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 | Automated checks and Claude sessions | `tools/AxAutomate <script>`, `tools/QaRun` | .NET SDK, Claude Code with `--model haiku` |
 | Publish and install locally | `publish.ps1 [-NoInstall]`, `install.ps1 [-Uninstall]` | .NET SDK; not on the development computer, which keeps no installed copy |
 | The MSIX package for the Store | `publish.ps1 -Msix` | .NET SDK, `tools/make-manifest.ps1`, `tools/make-icon.ps1 -Png`, makeappx (Windows Kits, or `tools/sdk` through `tools/get-sdk-tools.ps1`). A local test registers the published folder as the package, `Add-AppxPackage -Register publishmsixpackageAppxManifest.xml`, which needs Developer Mode (Settings, System, For developers); `Remove-AppxPackage` removes it |
-| The Store submission | By itself: `store.yml` when a release is published and `STORE_SUBMIT` is on. By hand: `tools/store-submit.ps1 -Package <msix> -Notes <file>`; `-Status` reads the state; `-DryRun` sends nothing | PowerShell, HTTPS to Partner Center's submission API with the credentials of section 2 (`docs/axKit/store-setup.md` sections 4 and 5) |
+| The Store submission | No command: after `release.ps1`, the release's `AxKit-<version>.msix` is uploaded in Partner Center's website by hand, or with `tools/EdgeDrive` driving the maintainer's signed-in Edge window | A browser, `tools/EdgeDrive` (`docs/axKit/store-setup.md` sections 5 and 6) |
 | Release | `release.ps1 <version>` after a `## <version>` section in `CHANGELOG.md` | git, gh, `test.ps1`, `tools/outside-calls.ps1`, the .NET SDK; then GitHub Actions (`release.yml`: build, package, draft) and `tools/sign-release.ps1` with gh and the release key |
 | The Windows signature | None on the GitHub release's `AxKit.exe`; the Store signs its package after certification (`docs/axKit/store-distribution.md`). The Azure signing was retired on 2026-11-09 (`docs/axKit/code-signing.md` section 7) | Partner Center |
 
@@ -81,10 +78,12 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
    `git clone https://github.com/KyleKeane/axkit-management` (private; the maintainer's account): the three folders of
    axKit's development, which `tools/sync-repos.ps1` finds by name. In the code's clone, `git config user.name` and
    `git config user.email` with GitHub's no-reply address, and `git config core.hooksPath tools/hooks`, so that every
-   push also syncs the two beside it (`release.ps1` refuses to run until it is set).
+   push also syncs the two beside it (`release.ps1` refuses to run until it is set) and every commit names its item
+   of the priorities list and marks it started or done there (`tools/hooks/commit-msg`, `tools/item-of-commit.ps1`;
+   the root `CLAUDE.md`, rule 9).
 4. `gh auth login` as the owner. `gh auth status` says so.
-5. `az extension add --name artifact-signing`; `az login --use-device-code` as `axkit-signer`. `az account show` names
-   that user.
+5. (Nothing since 2026-11-13: this step set up the Azure CLI for code signing, which was retired on 2026-11-09 and
+   whose Azure resources are deleted, `code-signing.md` section 7. The Azure CLI is not needed.)
 6. Copy `tools/nvda-capture` to `%APPDATA%\nvda\addons\axkitCapture`, restart NVDA.
 7. `dotnet build AxKit.sln`, then `.\test.ps1`: every project green. `.\manual_tests\prepare.ps1` makes the files of
    the NVDA passes.
