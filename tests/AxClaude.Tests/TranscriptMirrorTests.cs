@@ -149,6 +149,47 @@ public class TranscriptMirrorTests
     }
 
     [Fact]
+    public void A_caret_on_the_last_line_stays_at_the_end_when_the_cap_trims_the_top_in_the_same_update()
+    {
+        // A long session at the transcript cap loses its first lines at every update, so the first changed line is
+        // the top. When the line the caret was on went in the same update with no shown line after it (hidden, or
+        // replaced), the caret went to the start of that first change: the top of the conversation, heard by the
+        // user on 2026-11-12 as being bumped toward the top. It goes to the place the line held instead.
+        var mirror = new TranscriptMirror();
+        var lines = new[] { L("one"), L("two"), L("three"), L("four"), L("last") };
+        var text = Apply(new StringBuilder(), mirror.Update(lines));
+        var caret = mirror.StartAt(4) + 2;
+
+        lines[4].EchoHidden = true;
+        var hidden = mirror.Update(lines[1..]);
+        Apply(text, hidden);
+        Assert.Equal("two\r\nthree\r\nfour", text.ToString());
+        Assert.Equal(text.Length, hidden.MapPosition(caret));
+
+        var replacement = L("new last");
+        var before = mirror.StartAt(2) + 1;
+        var replaced = mirror.Update([lines[2], lines[3], replacement]);
+        Apply(text, replaced);
+        Assert.Equal("three\r\nfour\r\nnew last", text.ToString());
+        // On "four" the caret was on a kept line: it stays with it.
+        Assert.Equal(mirror.StartAt(1) + 1, replaced.MapPosition(before));
+    }
+
+    [Fact]
+    public void A_caret_on_a_replaced_last_line_goes_to_its_replacement_when_the_top_is_trimmed_too()
+    {
+        var mirror = new TranscriptMirror();
+        var lines = new[] { L("one"), L("two"), L("three"), L("old last") };
+        var text = Apply(new StringBuilder(), mirror.Update(lines));
+        var caret = mirror.StartAt(3) + 4;
+
+        var update = mirror.Update([lines[1], lines[2], L("new last")]);
+        Apply(text, update);
+        Assert.Equal("two\r\nthree\r\nnew last", text.ToString());
+        Assert.Equal(mirror.StartAt(2), update.MapPosition(caret));
+    }
+
+    [Fact]
     public void A_caret_on_replaced_lines_goes_to_the_start_of_their_replacement()
     {
         var mirror = new TranscriptMirror();
