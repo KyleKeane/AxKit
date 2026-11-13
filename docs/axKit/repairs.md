@@ -90,7 +90,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P4
 - Fix: A time limit on the wait; the empty folders removed; the branches and worktrees listed for the maintainer, who deletes branches himself.
 - Checked by: reading
-- Note: Done: the empty AxList folders and two stale worktrees removed (both clean or holding only a generated page). Open: the time limit on release.ps1's wait; the merged branches, which the maintainer deletes himself (local: ai-help, announcement-filters, automate, automate-report, axmcp, consolidation, conversation, improvements, menu-operations, ocr, reading-place, reports, run-pipes, say-all, store, survey-question, text-box; unmerged: cleanup, night-check); tools/EdgeDrive is in no solution.
+- Note: Done: the empty AxList folders and two stale worktrees removed (both clean or holding only a generated page). The seventeen merged branches deleted by the maintainer on 2026-11-13, here and on GitHub. Open: the time limit on release.ps1's wait; the two unmerged branches cleanup and night-check, to be read and merged or dropped; tools/EdgeDrive is in no solution.
 
 ### R-42, low, apps: The same small piece written two or three times: one instance of a hotkey app, the busy guard and its words, the item apps' undo stack
 
