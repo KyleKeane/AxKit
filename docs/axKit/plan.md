@@ -136,6 +136,50 @@ the restart by the app itself (2.3.0).
 
 - **axKit's own folder and file picker** (asked 2026-10-23; kept for later with the later apps, its priority to be chosen; spec first): in place of the Windows Open, Save as and folder pickers, an owned modal window in front of the window it serves (as the Windows picker stays), with a menu bar for the extras (favourites, sort, hidden files, "Use the Windows picker instead"). The view is axFile's folder list with its keys (arrows, Enter, Backspace, Left and Right, type-ahead; Home and End stay the first and last entry); Ctrl+Left goes to This PC, in axFile too; Ctrl+G opens the Go to field with the path completion, which also completes favourites and the known folders by name (places by name without crowding the list). The Save version adds a name field; every version has buttons for its action and Cancel. It takes axFile's list, `FolderListing` and the path completion into the shared pieces. The user weighed the Windows dialogs' familiarity against axKit's consistency; the choice was axKit's own picker with a way back to Windows'.
 
+## Parked on 2026-11-13: asked for, not built
+
+Before the work on a second agent window (GitHub Copilot's CLI beside Claude Code) the priorities list was cleared of
+everything that is an idea and not work in hand, at the user's word. Each idea is kept here in a line, with the day it
+was asked; its full notes (the scope, the open questions, the proposal made) stay in its closed item of the
+priorities list, found there by its title. An idea comes back by a new item that points here. None of these is
+started, and each needs its spec first.
+
+Features of the apps that exist:
+
+- **axAutomate: workflows as JSON** (asked 2026-11-10): one file per workflow, each step a small fixed record with its
+  operation, what to do when it fails and the message to report. **Values from the system in a workflow**, such as
+  the clipboard's contents (asked the same day), waits on that format.
+- **One shared shape for axList, axTask and axAutomate's workflows** (asked 2026-11-10): templates with actions,
+  conditions and links, separate windows over as much shared code as possible; the automated tests as workflows the
+  user can open and change.
+- **axKit's lists: a filter field, symbol jumps and nesting** (asked 2026-11-12): any list filtered by typed text or a
+  pattern, "filtered" said before the list's name, a symbol jumping to the next item that holds it, nested lists.
+- **axTask: @ as assignment to people** (asked 2026-11-11), with notification of their items and a sort by assignee;
+  the smart tags already gather one list per @name.
+- **axTask: lists across projects gathered, notified and searched** (asked 2026-11-10): the axTask folders found under
+  folders the user names, one gathered view, notifications.
+- **Every operation of axKit through its AI tools** (asked 2026-11-10). Much of it exists since: the tools run a
+  window's commands by name and add an axTask item (`mcp.md` MC-7, MC-8); what is left is the typed data tools of the
+  other apps.
+- **A remind-me skill** (asked 2026-11-10, not to build yet): "remind me next week ..." in a conversation makes an
+  axTask item with its Due date, through the AI tools.
+- **axClaude: a backlog of questions** (asked 2026-11-12) that Claude keeps and asks when the time is right, proposed
+  as an axTask list Claude adds to instead of asking at once.
+- **axClaude: say when text was not spoken** before a question took the focus (asked 2026-11-12); knowing what NVDA
+  spoke needs an add-on installed for the user.
+- **axClaude: the lines of a tab screen in the conversation**, and the newer screens of Claude Code (from its SPEC,
+  section 12, which keeps axClaude's own open items).
+- **axJSON: structured mode and the caret path**, after the item apps' field editing (the user's direction,
+  2026-10-24).
+- **axKit's own folder and file picker** (asked 2026-10-23), in place of the Windows pickers, with axFile's list and
+  keys.
+- **A gutter for the transcript views** and **custom keys to scripts**: described above in this section.
+
+New apps: **axList** (lists to remember as Markdown files; a draft is on the tag `archive/axlist-draft`), **axSQL** (a
+SQLite browser), **axHTTP** (a REST client), **axMail** (mail over IMAP and SMTP, the largest build), **AxVault**
+(Cryptomator vaults; AxCryptomator below), and, on record only, **AxWeb**, **AxCalendar** and **AxSettings**. Each is
+described under "Later apps".
+
 ## Later apps (recorded 2026-10-18)
 
 Each would be one more app of the bundle, a window per thing worked on, added the way `adding-an-app.md` says, with no
