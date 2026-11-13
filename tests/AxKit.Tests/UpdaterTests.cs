@@ -20,4 +20,26 @@ public class UpdaterTests
         Assert.Contains("<email>", details);
         Assert.DoesNotContain("someone", details);
     }
+
+    /// <summary>docs/axKit/repairs.json R-23: the signature covers the zip, so the program inside says which version it is.</summary>
+    [Theory]
+    [InlineData("5.8.0.0", "5.8.0", "5.7.0", null)]
+    [InlineData("5.8.0", "5.8.0", "5.7.3", null)]
+    [InlineData("5.1.0.0", "5.8.0", "5.7.0", "The release is named 5.8.0, but the program in it is version 5.1.0.")]
+    [InlineData("5.7.0.0", "5.7.0", "5.7.0", "is not newer than the 5.7.0 that is running")]
+    [InlineData("5.6.0.0", "5.6.0", "5.7.0", "is not newer than the 5.7.0 that is running")]
+    [InlineData("", "5.8.0", "5.7.0", "does not say which version it is")]
+    public void A_downloaded_program_is_installed_only_when_it_is_the_version_named_and_newer_than_the_one_running(string inZip, string named, string running, string? refusal)
+    {
+        var said = Updater.VersionRefusal(UpdateCheck.ParseVersion(inZip), UpdateCheck.ParseVersion(named)!, running);
+        if (refusal is null)
+        {
+            Assert.Null(said);
+        }
+        else
+        {
+            Assert.Contains(refusal, said);
+            Assert.Contains("Nothing was installed", said);
+        }
+    }
 }

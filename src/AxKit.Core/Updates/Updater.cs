@@ -148,7 +148,40 @@ public static class Updater
             throw new InvalidOperationException("The downloaded zip does not contain a program file and install.ps1.");
         }
 
+        // The signature covers the zip, not the number its release carries (docs/axKit/repairs.json R-23): an older
+        // signed zip attached to a release named as newer would pass it, so the program inside says its own version.
+        var program = Directory.GetFiles(folder, "*.exe").OrderBy(file => Path.GetFileName(file).Equals("AxKit.exe", StringComparison.OrdinalIgnoreCase) ? 0 : 1).First();
+        if (VersionRefusal(UpdateCheck.ParseVersion(FileVersionInfo.GetVersionInfo(program).FileVersion ?? string.Empty), release.Version, BundleInfo.Version) is { } refusal)
+        {
+            Directory.Delete(folder, recursive: true);
+            throw new InvalidOperationException(refusal);
+        }
+
         return folder;
+    }
+
+    /// <summary>
+    /// Why a downloaded program is not installed, or null (R-23): its own version, read from the file after the
+    /// signature held, must be the one its release names and newer than the one running. Otherwise a signed zip of an
+    /// earlier release, offered under a newer number, would take the user back to a version with known faults.
+    /// </summary>
+    public static string? VersionRefusal(Version? inZip, Version named, string running)
+    {
+        const string end = " Nothing was installed. Try again later; if it happens again, report it on GitHub (docs/axKit/SPEC.md AX-3.4).";
+        if (inZip is null)
+        {
+            return "The downloaded program does not say which version it is." + end;
+        }
+
+        var three = new Version(inZip.Major, inZip.Minor, Math.Max(0, inZip.Build));
+        if (three != new Version(named.Major, named.Minor, Math.Max(0, named.Build)))
+        {
+            return $"The release is named {named.ToString(3)}, but the program in it is version {three.ToString(3)}." + end;
+        }
+
+        return UpdateCheck.ParseVersion(running) is { } now && three <= new Version(now.Major, now.Minor, Math.Max(0, now.Build))
+            ? $"The downloaded program is version {three.ToString(3)}, which is not newer than the {running} that is running." + end
+            : null;
     }
 
     /// <summary>

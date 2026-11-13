@@ -282,7 +282,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - AX-3.3 The 1.7.0 bridge (B-6): axClaude 1.7.0 accepts a download whose program file is not `AxClaude.exe`, so an
   installed axClaude updates into axKit through Help, Update now. The first axKit release is 2.0.0.
 - AX-3.4 The update check and the version comparison are pure code in `AxKit.Core/Updates/UpdateCheck`, unit tested;
-  the download and the hand-over are `AxKit.Core/Updates/Updater`. **Signed releases** (2026-10-24, the user's
+  the download and the hand-over are `AxKit.Core/Updates/Updater`. **No way back** (`Updater.VersionRefusal`,
+  `docs/axKit/repairs.json` R-23): the signature covers the zip and not the number its release carries, so once the
+  signature holds and the zip is extracted, the program inside is asked its own version, which must be the one the
+  release names and newer than the one running; otherwise the download is deleted and the notice says which of the
+  two failed. An older signed zip offered under a newer number is thus never installed. **Signed releases** (2026-10-24, the user's
   decision; security audit S-27 to S-31): every release's zip is signed with the release key, an ECDSA P-256 key that
   lives only on the maintainer's machine, encrypted for its Windows account (`tools/release-key.ps1`), never on
   GitHub. The release workflow leaves a draft (a build job that can only read, then a job that uploads and attests
