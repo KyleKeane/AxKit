@@ -641,11 +641,18 @@ public sealed class Screen
             {
                 if (_top == 0)
                 {
-                    // The row may have been written and scrolled away inside one frame.
+                    // The row may have been written and scrolled away inside one frame: its text goes to the line through
+                    // the store, as at a frame's end (PullRowText), so that the model learns of a rewritten row here
+                    // too. Set directly until 2026-11-13, a line rewritten and scrolled in one frame kept the hidden
+                    // flags and the kind of its old text (docs/axKit/repairs.json R-21).
                     if (top.Dirty)
                     {
-                        line.Text = top.Text();
                         top.Dirty = false;
+                        var text = top.Text();
+                        if (text != line.Text)
+                        {
+                            _store.TextChanged(line, text);
+                        }
                     }
 
                     _store.Commit(line);
@@ -738,9 +745,20 @@ public sealed class Screen
             x--;
         }
 
-        row.Cells[x] = (row.Cells[x] ?? " ") + s;
+        // A cell takes a few combining characters and no more: a run of them without end grew one cell with every
+        // character, a quadratic cost a hostile file could stall the window with (docs/axKit/repairs.json R-27).
+        var cell = row.Cells[x] ?? " ";
+        if (cell.Length >= MaxCellLength)
+        {
+            return;
+        }
+
+        row.Cells[x] = cell + s;
         row.Dirty = true;
     }
+
+    /// <summary>The most characters one cell holds: its base character and the combining ones on it.</summary>
+    private const int MaxCellLength = 16;
 
     private void ClearCell(Row row, int x)
     {

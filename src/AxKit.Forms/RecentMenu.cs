@@ -12,24 +12,25 @@ public static class RecentMenu
     /// <param name="paths">Newest first; those on a local drive that do not exist any more are left out (a path on a share is listed without the check, which could wait for the network, <see cref="LocalPaths"/>).</param>
     /// <param name="exists">Whether a path is still there: <see cref="File.Exists"/> for files, <see cref="Directory.Exists"/> for folders.</param>
     /// <param name="name">The short name shown before the path.</param>
+    /// <param name="mark">What choosing an item does, for the AI tools: open for a file or folder shown; act where it starts a program (a console's folder, which starts Claude Code or a shell again, MC-3.1).</param>
     /// <param name="noneLabel">The one item when nothing is left, with its mnemonic ("&amp;No recent files").</param>
-    public static void Fill(ToolStripMenuItem menu, IEnumerable<string> paths, Func<string, bool> exists, Func<string, string> name, string noneLabel, Action<string> open)
+    public static void Fill(ToolStripMenuItem menu, IEnumerable<string> paths, Func<string, bool> exists, Func<string, string> name, string noneLabel, CommandMark mark, Action<string> open)
     {
         menu.DropDownItems.Clear();
         var targets = paths.Where(path => LocalPaths.ExistsQuickly(path, exists)).ToList();
         for (var i = 0; i < targets.Count; i++)
         {
             var target = targets[i];
-            // A recent file or folder opens it (docs/axKit/app-kit.md AK-2.5).
-            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, $"{name(target)} ({target})"), null, (_, _) => open(target)), CommandMark.Open));
+            // What choosing one does is the caller's to say (docs/axKit/app-kit.md AK-2.5): open for a file or folder shown,
+            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, $"{name(target)} ({target})"), null, (_, _) => open(target)), mark));
         }
 
         NoneWhenEmpty(menu, noneLabel);
     }
 
     /// <summary><see cref="Fill"/> for the folders of a recent list: Directory.Exists and the folder's name (<see cref="PathName.Of"/>).</summary>
-    public static void FillFolders(ToolStripMenuItem menu, IEnumerable<string> folders, string noneLabel, Action<string> open) =>
-        Fill(menu, folders, Directory.Exists, PathName.Of, noneLabel, open);
+    public static void FillFolders(ToolStripMenuItem menu, IEnumerable<string> folders, string noneLabel, CommandMark mark, Action<string> open) =>
+        Fill(menu, folders, Directory.Exists, PathName.Of, noneLabel, mark, open);
 
     /// <summary>
     /// An empty submenu gets one item that says so and does nothing, enabled (AX-9.5): WinForms skips disabled items
@@ -40,8 +41,8 @@ public static class RecentMenu
     {
         if (menu.DropDownItems.Count == 0)
         {
-            // Says only that the list is empty.
-            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(text), CommandMark.Read));
+            // Says only that the list is empty: no entry for the palette or the AI tools, which would run nothing.
+            menu.DropDownItems.Add(CommandPalette.NoEntry(new ToolStripMenuItem(text)));
         }
     }
 }

@@ -58,15 +58,12 @@ public abstract partial class AxKitForm
             return (refusal, string.Empty, false, 0);
         }
 
+        // The entry is kept by its name and menus, never by its item (docs/axKit/repairs.json R-08): a recent or window
+        // list makes its items again at every reading, and what runs later is found again then (ToolItem).
         var found = entries[index];
         var label = found.Name;
-        var item = found.Item;
-        if (!CommandPalette.Offered(item))
-        {
-            return ($"{label} is not available now: its menu item is disabled.", label, false, 0);
-        }
-
-        if (CommandPalette.MarkOf(item) == CommandMark.Act)
+        var menus = found.Menu;
+        if (CommandPalette.MarkOf(found.Item) == CommandMark.Act)
         {
             // After the user's Deny, the same window asks no more for a minute: a client that asks again at once does not
             // wear the user down (as the pairing's Deny, MC-6.4).
@@ -76,7 +73,7 @@ public abstract partial class AxKitForm
                 return ("The user denied running a command a moment ago; this window asks no more within a minute.", label, false, 0);
             }
 
-            AskToRunMcp(client, label, found.Menu, item, McpTarget());
+            AskToRunMcp(client, label, menus, McpTarget());
             return (null, label, true, 0);
         }
 
@@ -86,16 +83,28 @@ public abstract partial class AxKitForm
         {
             // The outcome is kept before the click, which may hold this thread in a Windows dialog. The user may have
             // started typing in the window between the check and now (MC-7.8).
-            var notRun = WhyNotRunForMcp(item, allowed: true)
+            var notRun = WhyNotRunForMcp(allowed: true)
                 ?? (McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()) ? "the user was working in the window" : null);
+            var item = notRun is null ? ToolItem(label, menus) : null;
+            notRun ??= item is null ? NotAvailableNow : null;
             _mcpRun = (ticket, true, notRun);
-            if (notRun is null)
+            if (item is not null)
             {
                 RunForMcp(client, label, item);
             }
         });
         return (null, label, false, ticket);
     }
+
+    /// <summary>Why a run does not happen when its entry is no longer among the window's entries: disabled, renamed, or its list made anew without it.</summary>
+    private const string NotAvailableNow = "its menu item is not available now";
+
+    /// <summary>
+    /// The item of the entry of that name and menus as the menus stand now, or null (R-08): found again at the moment a
+    /// run happens, posted or after the user's Run, so that what is clicked is live, enabled and still what was named.
+    /// </summary>
+    private ToolStripMenuItem? ToolItem(string label, string menus) =>
+        CommandPalette.Find(MainMenuStrip, label, menus) is { } entry && CommandPalette.ForAiTools(entry.Item) ? entry.Item : null;
 
     /// <summary>
     /// Why an AI tool may not change anything in this window now, or null: a notice or a Windows dialog the user has in
@@ -193,7 +202,7 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>Why a run that waited (posted, or asked of the user) does not run now, or null when it runs: checked again at the moment it would run.</summary>
-    private string? WhyNotRunForMcp(ToolStripMenuItem item, bool allowed)
+    private string? WhyNotRunForMcp(bool allowed)
     {
         if (IsDisposed)
         {
@@ -210,7 +219,7 @@ public abstract partial class AxKitForm
             return "the window showed the user a question first";
         }
 
-        return CommandPalette.Offered(item) ? null : "its menu item is not available now";
+        return null;
     }
 
     /// <summary>
@@ -270,10 +279,11 @@ public abstract partial class AxKitForm
     /// <summary>
     /// MC-7.3: a command that acts outside the window (a delete, a push, a program started) is asked of the user first,
     /// in the window, unprompted, with Deny the default and Escape; only the user's Run runs it, once, and only while the
-    /// switch is still on (read again off the window's thread), the item still available and the window's selection still
-    /// the one the question named (<paramref name="target"/>, <see cref="McpTarget"/>).
+    /// switch is still on (read again off the window's thread), the entry of that name still among the window's entries
+    /// (found again then, <see cref="ToolItem"/>) and the window's selection still the one the question named
+    /// (<paramref name="target"/>, <see cref="McpTarget"/>).
     /// </summary>
-    private void AskToRunMcp(string client, string label, string menu, ToolStripMenuItem item, RunTarget target)
+    private void AskToRunMcp(string client, string label, string menu, RunTarget target)
     {
         var text = McpRun.AskText(client, label, menu, target.Shown);
         ShowNotice(new Notice(McpRun.AskTitle(client, label), text,
@@ -295,11 +305,13 @@ public abstract partial class AxKitForm
                 {
                     // The user may have turned the switch off while the question waited.
                     var allowed = await Task.Run(() => McpAccess.RunsCommands);
-                    if (WhyNotRunForMcp(item, allowed) is { } reason)
+                    var reason = WhyNotRunForMcp(allowed);
+                    var item = reason is null ? ToolItem(label, menu) : null;
+                    if (item is null)
                     {
                         if (!IsDisposed)
                         {
-                            Announce($"{label} not run: {reason}", true);
+                            Announce($"{label} not run: {reason ?? NotAvailableNow}", true);
                         }
 
                         return;

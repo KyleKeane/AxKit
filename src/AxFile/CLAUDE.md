@@ -69,7 +69,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
     - the rename in place (the box is the bundle's, `AxKitList.BeginRename`, AX-8.7, since 2026-10-24) (`Rename`, `CommitRename`; the box, its keys and `EndRename` are `AxKitList`'s);
     - delete (on the marked entries in one shell operation, `NameAfter` choosing what to select next);
     - copy path, cut, copy and paste through the clipboard (`CopyOrCut`, `Paste`, AF-4.8);
-    - the File Explorer and the other apps' windows (`NewWindow`, `OpenIn` on the folder, `OpenInAxKit` on the entry, AF-4.9);
+    - the File Explorer and the other apps' windows (`NewWindow`, `ShowFolderInExplorer` and the base's `CreateShowInMenu` on the folder, `OpenInAxKit` on the entry, AF-4.9);
     - open in editor (`AxKit.Core/Dispatch.EditorOf`);
     - open with Windows (the Open with dialog when Windows has no program);
     - zip files (AF-4.12: `Compress` and `Extract` through `RunArchiveWork`);

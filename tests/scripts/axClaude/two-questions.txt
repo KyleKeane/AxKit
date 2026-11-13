@@ -1,4 +1,5 @@
 # Workflow: Answer a set of two questions from Claude
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axClaude: a set of two questions (docs/axClaude/nvda-test-plan.md section 12 step 19). The first question reads
 # itself; after its answer the second cuts in and reads itself, with nothing of the first read again.
 mkdir q

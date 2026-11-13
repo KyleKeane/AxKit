@@ -32,16 +32,16 @@ another project on its second use, the bullet says so.
   input), `AiAnswer` (the JSON result read), `AiPrompts` with `WindowContext` (the prompts: about this window, from
   anywhere, a screen's picture, a picture file, a follow-up); tested in `AiTests`.
 - `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
+  for the bundle, `%APPDATA%\AxKit\consent.json`: `Given`, `Record` (a file that cannot be written is logged and the
+  window keeps the agreement for its session), `Withdraw`, `WithdrawAll` (Forget AI tools), `Line` for About, Licence;
+  the targets' words and addresses (`ClaudeCode`, `Git`, `KeePassXC`, `Shell` per shell, `Server` per host, `AiTool`,
+  `For` from an installed program's name, which throws for a name it does not know). Tested in `ConsentTests`.
 - `Theme` with `ThemeColor` (docs/axKit/theme.md, 2026-11-09): the theme file `%APPDATA%\AxKit\theme.json`, one for the
   bundle, a colour (`#RRGGBB`) or `system` for every class of object the windows draw (`Classes`, `Keys`); `Load` and
   `Read` give the theme or null with the reason, `Template` the whole file with `system` everywhere, `SetEnabled` writes
   the switch and keeps every other key; values not understood are `system` and listed. Colours are integers here, so
   the project stays off the desktop assemblies. Tested in `ThemeTests`, which also fails on a colour named outside
   `AxKit.Forms/ThemePainter.cs` and axMedia's video surface (TH-5.2).
-  for the bundle, `%APPDATA%\AxKit\consent.json`: `Given`, `Record` (a file that cannot be written is logged and the
-  window keeps the agreement for its session), `Withdraw`, `WithdrawAll` (Forget AI tools), `Line` for About, Licence;
-  the targets' words and addresses (`ClaudeCode`, `Git`, `KeePassXC`, `Shell` per shell, `Server` per host, `AiTool`,
-  `For` from an installed program's name, which throws for a name it does not know). Tested in `ConsentTests`.
 - `SettingsFile` (AX-5.2, AX-5.3): how every app's settings file is read and written, an unreadable one copied to
   `.bad` once, and the take-over of an old file.
 - `FileCase` (AX-5.1, 2026-11-10): `Match(path)` renames a file that exists under another case to the path's own
@@ -118,7 +118,7 @@ another project on its second use, the bullet says so.
 - `ProgramInstall` (AX-2.9, 2026-10-24): the programs an app needs and Windows lacks (Git, KeePassXC, Claude Code, PowerShell 7), each with its winget id or its maker's own installer and its download page; `StartInfo` (the install without a window, every question answered; Windows PowerShell by its full path), `Winget` (only Windows' own, never one on the PATH, S-10) with `WingetArguments` (`--source winget`), `RefreshPath` (the PATH read again from Windows after an install); the PATH is searched through `SystemPrograms.OnPath`. Tested in `ProgramInstallTests`.
 - `AutomationEnvironment` (S-11): a test run's secret and folder, read once in `Main` and taken out of the environment; only a new axKit window of the run gets them (`PassTo`).
 - `ProcessRun` and `ProcessResult` (2026-10-25; from axGIT's `GitRunner`, Claude Code's version check and axPass's `KeePassCli` on their third use, inventory item 3): a program run without a window to its end under a time limit, input lines then closed, both outputs read under the limit, the whole tree ended on a timeout, `Finished` telling whether the program itself had ended (git's case of a child holding the pipes). Tested in `ProcessRunTests`; the callers' own tests cover their cases.
-$1- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, its bidi and zero-width characters made
+- `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, its bidi and zero-width characters made
   visible; `AxKit.Forms/AxKitList.Fill` applies it to every list it fills.
 - `Signatures` (S-19): whether a program file carries a valid Authenticode signature (`WinVerifyTrust`, the file alone,
   no network), asked before a secret is handed to a program found outside an administrator's folders; axPass's tool.

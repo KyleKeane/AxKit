@@ -1,4 +1,5 @@
 # Workflow: Choose which words axClaude says by itself
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axClaude, docs/axClaude/nvda-test-plan.md section 9 step 2a (SPEC.md FR-7.3a, FR-7.4a, D33; 2026-11-12): the
 # announcement switches, the words that keep a reply line silent, and the two feedback items under Questions. A switch
 # silences the word only: the chime stays. The survey itself cannot be forced in a run (the launcher strips Claude's

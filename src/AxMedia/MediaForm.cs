@@ -383,7 +383,7 @@ public sealed partial class MediaForm : AxKitForm
 
     /// <summary>Queue → Open recent (AM-3.2): the last ten files and folders added or handed over, those that still exist, "1. name (path)" (AX-9.5); one chosen is appended again.</summary>
     private void FillRecent() =>
-        RecentMenu.Fill(_recentItem, _settings.Recent, path => File.Exists(path) || Directory.Exists(path), PathName.Of, "&No recent files or folders",
+        RecentMenu.Fill(_recentItem, _settings.Recent, path => File.Exists(path) || Directory.Exists(path), PathName.Of, "&No recent files or folders", CommandMark.Open,
             target => AddPaths([target], Directory.Exists(target) ? $"No sound or video files in {PathName.Of(target)}" : null));
 
     /// <summary>Queue → New window (Ctrl+N): another axMedia window, empty; the Window menu's New window does the same (AX-9).</summary>

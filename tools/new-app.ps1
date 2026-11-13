@@ -16,7 +16,7 @@
       the icon (tools\make-icon.ps1), AxKit.csproj's description, the issue forms' choices, the verb and the taskbar
       id in docs\axKit\SPEC.md AX-1.1 and AX-1.6;
     - drafts, to be rewritten in real words, of the app's line in README.md, docs\axKit\README.md, docs\axKit\SPEC.md
-      section 3, the root CLAUDE.md map and CHANGELOG.md.
+      section 3, docs\axKit\apps.md (written again by tools\apps-page.ps1) and CHANGELOG.md.
   What reads Dispatch.Apps needs nothing: the installer (AxKit.exe apps), run.ps1, make-icon.ps1, the project
   references (a glob), the Window menu and the other lists of the windows.
 
@@ -725,13 +725,10 @@ Edit-TextFile 'docs\axKit\SPEC.md' {
 
 Edit-TextFile 'README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+[^*]*\*\*: .*' "- **$title**: $what." }
 Edit-TextFile 'docs\axKit\README.md' { param($text, $nl) Add-AfterLast $text $nl '^- \*\*ax\w+[^*]*\*\* is .*' "- **$title** is $what." }
-Edit-TextFile 'CLAUDE.md' {
-    param($text, $nl)
-    $map = "- **$Name**: window code in ``src/$Project`` (notes: ``src/$Project/CLAUDE.md``), pure code in ``src/$Project.Core`` (notes: ``src/$Project.Core/CLAUDE.md``), tests in ``tests/$Project.Tests``, documents in ``docs/$Name/`` (``SPEC.md``, ``user-guide.md``, ``nvda-test-plan.md``). In $Name's code and documents, `"SPEC.md`" means ``docs/$Name/SPEC.md``."
-    $bundle = $text.IndexOf("$nl- **Bundle**:")
-    if ($bundle -lt 0) { return $text }
-    return $text.Insert($bundle, "$nl$map")
-}
+# The list of the apps with their folders is docs\axKit\apps.md, written from Dispatch.Apps (tools\apps-page.ps1): the
+# root CLAUDE.md points there and names no app (2026-11-13, docs/axKit/repairs.json R-44).
+& (Join-Path $root 'tools\apps-page.ps1') | Out-Null
+$written.Add('docs\axKit\apps.md')
 Edit-TextFile 'CHANGELOG.md' {
     param($text, $nl)
     $bullet = "- ${Name}: a new app, $what."
@@ -758,15 +755,14 @@ $written | Sort-Object -Unique | ForEach-Object { Write-Host "  $_" }
 Write-Host @"
 
 Drafts to rewrite in real words: the lines of $Name in README.md, docs\axKit\README.md, docs\axKit\SPEC.md section 3,
-the root CLAUDE.md map and CHANGELOG.md; Description in its Dispatch.Apps entry; the documents in docs\$Name;
+and CHANGELOG.md; Description in its Dispatch.Apps entry (then tools\apps-page.ps1 again); the documents in docs\$Name;
 for an access layer, the list of them in tests\AxKit.Tests\DispatchTests.cs and its line in PRIVACY.md.
 
 Still by hand:
   - Dispatch.Apps: ShowIn: true for an app that works in a folder (then DispatchTests' Show in list), Explorer,
     Types, OpenWith and TypeName for File Explorer and Open with, and a rule in Dispatch.Decide if a path alone
     should open $Name (AX-1.2).
-  - The root CLAUDE.md: $Name in the opening paragraph and in the Commands paragraph (run.ps1's -App values, the
-    run-*.ps1 list); docs\axKit\SPEC.md's summary sentence; docs\axKit\README.md's Start entries and commands; run.ps1's
+  - docs\axKit\SPEC.md's summary sentence; docs\axKit\README.md's Start entries and commands; run.ps1's
     examples; install.ps1's header comment; docs\axKit\plan.md's Still to come, if $Name was there.
   - A background app (a hotkey, as axStart and axClip): install.ps1's `$background table and run.ps1's restart.
   - KeyTests: the known keys and the overrides, when the window's keys meet another window's.

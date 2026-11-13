@@ -1,4 +1,5 @@
 # Workflow: Read the history and switch branches
+# Needs: Git installed.
 # axGIT: log and branches (docs/axGIT/nvda-test-plan.md section 4; SPEC AG-4, AG-5, AG-7).
 # A scratch repository with a bare repository in {temp} as its remote (never a network remote), a second branch, and
 # a clone that pushes a commit the scratch repository has not fetched yet.

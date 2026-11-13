@@ -206,9 +206,32 @@ public sealed class Window : IDisposable
             _closing = true;
         }
 
+        if (_hung)
+        {
+            return HungAnswer;
+        }
+
         _writer.WriteLine(command);
-        return _reader.ReadLine() ?? "{\"error\":\"the window closed\"}";
+        // A limit on the answer (docs/axKit/repairs.json R-34): a window whose thread hangs with its process alive never
+        // answers, and the run waited for ever, in the NVDA tier with the keyboard taken. The read that timed out still
+        // holds the pipe, so the window answers nothing more in this run.
+        var answer = _reader.ReadLineAsync();
+        if (!answer.Wait(AnswerLimitMs))
+        {
+            _hung = true;
+            return HungAnswer;
+        }
+
+        return answer.Result ?? "{\"error\":\"the window closed\"}";
     }
+
+    /// <summary>How long a window may take to answer one request of the run.</summary>
+    private const int AnswerLimitMs = 30_000;
+
+    /// <summary>What a window that did not answer in time answers from then on: the step fails with it, and so does every later step on the window.</summary>
+    private string HungAnswer => $"{{\"error\":\"the window (process {ProcessId}) did not answer within {AnswerLimitMs / 1000} seconds: its thread is busy or hung; see the window's log in the run's home folder (--keep keeps it)\"}}";
+
+    private bool _hung;
 
     /// <summary>The events not yet taken by an expectation, after fetching what the window has recorded since the last look.</summary>
     public List<Event> Pending()

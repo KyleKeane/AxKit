@@ -1,4 +1,5 @@
 # Workflow: Read a side answer and other information screens
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axClaude, docs/axClaude/nvda-test-plan.md section 12, step 22: a side answer (/btw) and /goal, information screens
 # shown as read-only text in a notice (SPEC.md FR-2.11), never as a list in the control area.
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).

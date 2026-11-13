@@ -37,13 +37,22 @@ public static class ProcessRun
         var error = process.StandardError.ReadToEndAsync(limit.Token);
         try
         {
-            foreach (var line in input)
+            try
             {
-                await process.StandardInput.WriteAsync(line.AsMemory(), limit.Token).ConfigureAwait(false);
-                await process.StandardInput.WriteAsync("\n".AsMemory(), limit.Token).ConfigureAwait(false);
+                foreach (var line in input)
+                {
+                    await process.StandardInput.WriteAsync(line.AsMemory(), limit.Token).ConfigureAwait(false);
+                    await process.StandardInput.WriteAsync("\n".AsMemory(), limit.Token).ConfigureAwait(false);
+                }
+
+                process.StandardInput.Close();
+            }
+            catch (IOException)
+            {
+                // The program ended, or closed its input, before it read all of it: not an error of the run. What it
+                // wrote and its exit code say why, and the caller gets them (docs/axKit/repairs.json R-26).
             }
 
-            process.StandardInput.Close();
             await process.WaitForExitAsync(limit.Token).ConfigureAwait(false);
             return new ProcessResult(process.ExitCode, await output.ConfigureAwait(false), await error.ConfigureAwait(false), TimedOut: false, Finished: true);
         }

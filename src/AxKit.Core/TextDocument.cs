@@ -53,7 +53,7 @@ public sealed record TextDocument(string Text, Encoding Encoding, bool ByteOrder
     }
 
     /// <summary>Writes <paramref name="text"/> (with <c>\r\n</c> line endings, as the edit control gives it) back in this document's encoding and line ending.</summary>
-    public void Write(string path, string text) => File.WriteAllBytes(path, ToBytes(text));
+    public void Write(string path, string text) => SafeFile.WriteAllBytes(path, ToBytes(text));
 
     /// <summary>
     /// AD-3.1: a byte order mark decides UTF-8, UTF-16 little or big endian; without one, valid UTF-8 is UTF-8 and

@@ -66,8 +66,12 @@ internal sealed partial class MainForm
 
     private void UserActedNow() => _userActedAt = Environment.TickCount64;
 
-    /// <summary>Claude waits on something the control area reads, so its rows are not read as reply lines too.</summary>
-    private bool QuestionShown => _settings.QuestionNotices && _model.PromptPending;
+    /// <summary>
+    /// Claude waits on something the control area reads, so its rows are not read as reply lines too. Not a feedback
+    /// survey: it comes after a turn, and the end of the reply still held when it arrives is spoken, where a question
+    /// of Claude's drops it (docs/axKit/repairs.json R-19).
+    /// </summary>
+    private bool QuestionShown => _settings.QuestionNotices && _model.PromptPending && _model.PendingQuestion is not { KeyOnly: true };
 
     /// <summary>What Claude waits on now, as a signature: the question, the screen, or the row for the user's own words; null when it waits on nothing.</summary>
     private string? WaitSignature => _model.PendingQuestion?.Signature ?? _model.PendingScreen?.Signature ?? _model.TextPrompt;
@@ -237,10 +241,12 @@ internal sealed partial class MainForm
             return false;
         }
 
-        if (question.KeyOnly && _settings.DismissSurveys && question.EscapeKey is { } dismiss)
+        if (question.KeyOnly && _settings.DismissSurveys && question.EscapeKey is { } dismiss && !WritesPending)
         {
             // Options, Questions, Dismiss feedback surveys (2026-11-12): the app gives the survey's Dismiss, or No to
-            // the transcript question after it, as the user's Escape would, and nothing is heard.
+            // the transcript question after it, as the user's Escape would, and nothing is heard. Not while a write of
+            // the user's is on its way to Claude: the key would land in the middle of the message (R-18); the survey is
+            // then shown like any question.
             TypeAnswer(dismiss, enter: false);
             return false;
         }

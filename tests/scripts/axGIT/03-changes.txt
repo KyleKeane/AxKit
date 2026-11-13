@@ -1,4 +1,5 @@
 # Workflow: Review and commit changes
+# Needs: Git installed.
 # axGIT: changes (docs/axGIT/nvda-test-plan.md section 3; SPEC AG-3, AG-7).
 # A scratch repository with one commit, then a modified tracked file and an untracked one.
 # The update check off in the run's own settings (AXKIT_HOME): a network call, and its failure is a logged ERROR.

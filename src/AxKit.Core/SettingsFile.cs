@@ -82,7 +82,7 @@ public static class SettingsFile
         }
     }
 
-    /// <summary>Writes the file atomically: a temporary file next to it is moved into place.</summary>
+    /// <summary>Writes the file whole or not at all (<see cref="SafeFile"/>): a temporary file of its own name next to it is put in its place.</summary>
     public static void Save<T>(string path, T settings) where T : class
     {
         var directory = Path.GetDirectoryName(path);
@@ -91,9 +91,7 @@ public static class SettingsFile
             Directory.CreateDirectory(directory);
         }
 
-        var temporary = path + ".tmp";
-        File.WriteAllText(temporary, JsonSerializer.Serialize(settings, JsonOptions));
-        File.Move(temporary, path, overwrite: true);
+        SafeFile.WriteAllText(path, JsonSerializer.Serialize(settings, JsonOptions));
     }
 
     /// <summary>

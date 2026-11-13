@@ -1,4 +1,5 @@
 # Workflow: Choose axClaude's speech, sounds and text
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axClaude, docs/axClaude/nvda-test-plan.md section 9: options and diagnostics; with it the sounds of section 8
 # steps 6 to 8, by name on the timeline (the run records sounds and plays none: how they sound is for the ear).
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).

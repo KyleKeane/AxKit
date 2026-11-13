@@ -43,7 +43,7 @@ public sealed partial class FileForm
     private ToolStripItem[] CreateProgramItems()
     {
         var remove = new ToolStripMenuItem("&Remove a program from Open with");
-        CommandPalette.FilledOnOpening(remove).DropDownOpening += (_, _) => FillRemovePrograms(remove);
+        CommandPalette.NoEntry(remove).DropDownOpening += (_, _) => FillRemovePrograms(remove);
         FillRemovePrograms(remove);
         return [new ToolStripMenuItem("&Add a program to Open with...", null, (_, _) => AddProgram()), remove];
     }

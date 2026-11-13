@@ -252,10 +252,13 @@ public sealed partial class PassForm
             return;
         }
 
+        // The step stays until its first run has succeeded (docs/axKit/repairs.json R-39): taken off first, a run the
+        // tool refused at once ("Still working on the last command") lost the step, and the change could no longer be
+        // undone. Once a run has gone through, the step is used up, whatever the later runs do.
         var step = _undo[^1];
-        _undo.RemoveAt(_undo.Count - 1);
         Do(async () =>
         {
+            var begun = false;
             foreach (var call in step.Undo)
             {
                 if (await Cli(call.Command, call.Options, call.Rest) is null)
@@ -263,7 +266,15 @@ public sealed partial class PassForm
                     await ReloadAsync(SelectedKey());
                     return;
                 }
+
+                if (!begun)
+                {
+                    begun = true;
+                    _undo.Remove(step);
+                }
             }
+
+            _undo.Remove(step);
 
             _entries.Clear();
             if (step.Select is { } path && !path.EndsWith('/') && await Cli("show", null, [path]) is { } shown)

@@ -1,4 +1,5 @@
 # Workflow: Unlock a password database and change an entry
+# Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
 # axPass: unlocking, the levels, an entry's fields, a change and its undo, an entry added and archived, a group's
 # question, locking (docs/axPass/nvda-test-plan.md sections 1, 2, 4 and 5; SPEC PW-4, PW-6). Needs KeePassXC installed:
 # the database is made by its own tool, the master password a test value. The copies (Ctrl+B, Ctrl+C) are left to the

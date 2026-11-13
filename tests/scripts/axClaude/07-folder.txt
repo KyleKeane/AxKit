@@ -1,4 +1,5 @@
 # Workflow: Change Claude's project folder
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axClaude, docs/axClaude/nvda-test-plan.md section 7: project folder.
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
 file home\AxKit\axClaude.json {"checkForUpdates":false}

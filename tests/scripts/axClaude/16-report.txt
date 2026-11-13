@@ -1,4 +1,5 @@
 # Workflow: Report a bug or an idea from a conversation
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axClaude, docs/axClaude/nvda-test-plan.md section 13 step 0: a report from the window (docs/axKit/reports.md RP-2, RP-3,
 # RP-6.6, RP-D6). The run's own home has no agreement to the reports yet, so Enter asks it, and Not now leaves the
 # report saved and unsent: nothing reaches GitHub from a test run.

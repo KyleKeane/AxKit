@@ -1,4 +1,5 @@
 # Workflow: Send messages while Claude is still working
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axClaude, docs/axClaude/nvda-test-plan.md section 6: sending while Claude works.
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Claude starts in
 # its manual permission mode, so that the slow command asks first. Claude Code 2.1.309 blocks "sleep 20" (it asks for

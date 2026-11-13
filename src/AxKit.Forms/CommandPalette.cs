@@ -1,11 +1,18 @@
+using System.Runtime.CompilerServices;
 using AxKit.Core;
 
 namespace AxKit.Forms;
 
 /// <summary>
-/// The command palette's window side (docs/axKit/SPEC.md AX-10): the window's menu bar read into entries, and the
-/// marks on the submenus it leaves out or refreshes first. The notice and its keys are the window base's
-/// (<see cref="AxKitForm"/>); the lines and the search are <see cref="Palette"/>, tested.
+/// The window's menu bar as every reader takes it (docs/axKit/app-kit.md AK-2.5, docs/axKit/SPEC.md AX-10): the entries
+/// the command palette, the AI tools and the automated checks all read, and what each menu item says of itself for
+/// them. The notice and its keys are the window base's (<see cref="AxKitForm"/>); the lines and the search are
+/// <see cref="Palette"/>, tested.
+///
+/// What an item says of itself is one record per item (<see cref="ItemInfo"/>), kept beside the item and never in its
+/// Tag: its mark, whether it is withheld from the AI tools, whether it is no entry at all, and what refreshes it before
+/// it is read. Until 2026-11-13 these were three stores, and the Tag held one refresh, which a second one replaced
+/// (docs/axKit/repairs.json R-09).
 /// </summary>
 public static class CommandPalette
 {
@@ -16,13 +23,10 @@ public static class CommandPalette
     public const Keys FirstMatch = Keys.Control | Keys.Home;
     public const Keys LastMatch = Keys.Control | Keys.End;
 
-    /// <summary>A menu's mark for the palette, kept in the item's Tag: left out, since its items are made as it opens; or refreshed before it is read, since its items change as it opens.</summary>
-    private sealed record Mark(bool LeftOut, Action? Refresh);
-
     /// <summary>
-    /// One item of the menu bar as every reader takes it (docs/axKit/app-kit.md AK-2.5): the palette, the AI tools'
-    /// <c>axkit_window_commands</c> and <c>axkit_window_run</c>, and the tests. <paramref name="Path"/> is the menus from
-    /// the bar down ("Session", "Open recent file").
+    /// One item of the menu bar as every reader takes it (AK-2.5). <paramref name="Path"/> is the menus from the bar
+    /// down ("Session", "Open recent file"). An entry is known by its name and its menus: the item itself may be made
+    /// again whenever its menu is refreshed, so a reader that acts later finds the entry again (<see cref="Find"/>).
     /// </summary>
     public sealed record MenuEntry(ToolStripMenuItem Item, string Name, IReadOnlyList<string> Path, string? Key, bool Checked)
     {
@@ -30,19 +34,34 @@ public static class CommandPalette
         public string Menu => string.Join(", ", Path);
     }
 
-    /// <summary>What each item does beyond reading, for the AI tools (AK-2.5): set where the item is made.</summary>
-    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ToolStripItem, object> Marks = new();
+    /// <summary>What one menu item says of itself for the readers.</summary>
+    private sealed class ItemInfo
+    {
+        /// <summary>What choosing it does beyond reading; null when nobody said, which the AI tools take as act.</summary>
+        public CommandMark? Mark { get; set; }
 
-    /// <summary>The menus and items never offered to an AI tool (AK-2.6, exception 3), with everything under them.</summary>
-    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ToolStripItem, object> Withheld = new();
+        /// <summary>Never offered to an AI tool, nor anything under it (AK-2.6, exception 3).</summary>
+        public bool Withheld { get; set; }
+
+        /// <summary>No entry, nor anything under it: a list slow to fill, or the line that says a list is empty.</summary>
+        public bool NoEntry { get; set; }
+
+        /// <summary>What makes the menu's items current, run before it is read, in the order they were attached.</summary>
+        public List<Action> Refreshes { get; } = [];
+    }
+
+    private static readonly ConditionalWeakTable<ToolStripItem, ItemInfo> Infos = [];
+
+    private static ItemInfo? InfoOf(ToolStripItem item) => Infos.TryGetValue(item, out var info) ? info : null;
 
     /// <summary>
     /// Gives an item its mark (AK-2.5): a command's own (<see cref="AxKitForm"/>'s Add), change for a setting, open for a
-    /// recent file or window, read for an item that only says something. Returns the item.
+    /// recent file or window, read for an item that only says something, act for what starts a program or reaches past
+    /// the window. Returns the item.
     /// </summary>
     public static ToolStripMenuItem Marked(ToolStripMenuItem item, CommandMark mark)
     {
-        Marks.AddOrUpdate(item, mark);
+        Infos.GetOrCreateValue(item).Mark = mark;
         return item;
     }
 
@@ -50,22 +69,50 @@ public static class CommandPalette
     /// An item's mark; act for one that was never given one, so that an AI tool asks the user before it runs anything
     /// whose effect no one stated (AK-2.6, exception 2).
     /// </summary>
-    public static CommandMark MarkOf(ToolStripItem item) => Marks.TryGetValue(item, out var mark) ? (CommandMark)mark : CommandMark.Act;
+    public static CommandMark MarkOf(ToolStripItem item) => InfoOf(item)?.Mark ?? CommandMark.Act;
+
+    /// <summary>Whether the item states its mark: for the check that every entry of a built window does.</summary>
+    public static bool StatesMark(ToolStripItem item) => InfoOf(item)?.Mark is not null;
 
     /// <summary>Withholds a menu or an item from the AI tools, with everything under it (AK-2.6, exception 3: the AI tools' own switches). Returns the item.</summary>
     public static ToolStripMenuItem NeverForAiTools(ToolStripMenuItem item)
     {
-        Withheld.AddOrUpdate(item, true);
+        Infos.GetOrCreateValue(item).Withheld = true;
         return item;
     }
 
     /// <summary>Whether an AI tool may see and run the item: neither it nor a menu over it is withheld.</summary>
     public static bool ForAiTools(ToolStripMenuItem item) =>
-        !Withheld.TryGetValue(item, out _) && !Owners(item).Any(owner => Withheld.TryGetValue(owner, out _));
+        InfoOf(item)?.Withheld != true && !Owners(item).Any(owner => InfoOf(owner)?.Withheld == true);
 
     /// <summary>
-    /// Every enabled item of the menu bar that does something, in menu order, the lists a menu fills as it opens filled
-    /// first (AX-10.2): the one list the palette and the AI tools read (AK-2.5).
+    /// Keeps an item, and everything under it, out of the entries (AX-10.2): a submenu whose items are made as it opens
+    /// and are slow to make (the drives, Open with), or the one line that says a list is empty, which does nothing.
+    /// The menu itself and its keys work as ever. Returns the item.
+    /// </summary>
+    public static ToolStripMenuItem NoEntry(ToolStripMenuItem item)
+    {
+        Infos.GetOrCreateValue(item).NoEntry = true;
+        return item;
+    }
+
+    /// <summary>
+    /// Attaches <paramref name="refresh"/> to a menu whose items are made or change as it opens (Open recent, the Window
+    /// menu's lists, axFile's Undo named after what it would undo, a check read from a file), so that it runs as the
+    /// menu opens and before any reader reads the menu (AX-10.2). A menu may have several, each attached where its
+    /// items are made; all run, in order. Returns the item.
+    /// </summary>
+    public static ToolStripMenuItem RefreshedOnOpening(ToolStripMenuItem item, Action refresh)
+    {
+        item.DropDownOpening += (_, _) => refresh();
+        Infos.GetOrCreateValue(item).Refreshes.Add(refresh);
+        return item;
+    }
+
+    /// <summary>
+    /// Every enabled item of the menu bar that does something, in menu order, each menu refreshed first as on opening
+    /// (AX-10.2): the one list the palette and the AI tools read (AK-2.5). Read while the menu bar is enabled: an item
+    /// of a disabled bar counts as disabled, so a window showing a notice has no entries.
     /// </summary>
     public static List<MenuEntry> Entries(MenuStrip? menu)
     {
@@ -79,68 +126,35 @@ public static class CommandPalette
     }
 
     /// <summary>
-    /// Marks a submenu whose items are made each time it opens and are slow to make (the drives, Open with): the palette
-    /// leaves it out (AX-10.2). A quick list, Open recent and the Window menu's, is <see cref="RefreshedOnOpening"/> with
-    /// its filling instead, so that the palette fills it before reading (2026-11-13). Returns the item.
+    /// The entry of that name under those menus as the bar stands now, or null: how a reader that found an entry in one
+    /// moment acts on it in another (docs/axKit/repairs.json R-08). The item found before may have been made again by
+    /// a refresh, renamed (axFile's Undo) or disabled since.
     /// </summary>
-    public static ToolStripMenuItem FilledOnOpening(ToolStripMenuItem item)
-    {
-        item.Tag = new Mark(true, null);
-        return item;
-    }
+    public static MenuEntry? Find(MenuStrip? menu, string name, string menus) =>
+        Entries(menu).FirstOrDefault(entry => entry.Name == name && entry.Menu == menus);
 
     /// <summary>
-    /// Attaches <paramref name="refresh"/> to a menu whose items change their text or check mark as it opens (axFile's
-    /// Undo named after what it would undo, axTerminal's Switch shell with the shell in use checked), and marks the
-    /// menu so that the palette runs it before reading (AX-10.2; until 2026-10-23 the palette read such an item as it
-    /// last stood). Returns the item.
-    /// </summary>
-    public static ToolStripMenuItem RefreshedOnOpening(ToolStripMenuItem item, Action refresh)
-    {
-        item.DropDownOpening += (_, _) => refresh();
-        item.Tag = new Mark(false, refresh);
-        return item;
-    }
-
-    /// <summary>
-    /// Every enabled item of the menu bar that does something, in menu order, as an entry that clicks it (AX-10.2).
-    /// A checked setting says its new state after the click through <paramref name="say"/>, "Word wrap, checked".
-    /// Read while the menu bar is enabled: an item of a disabled bar counts as disabled.
+    /// The entries as the palette's lines, each clicking its item (AX-10.2). A checked setting says its new state after
+    /// the click through <paramref name="say"/>, "Word wrap, checked". An entry whose item was made again since the
+    /// palette read it is found again by its name; one that is gone says so.
     /// </summary>
     public static List<PaletteEntry> Commands(MenuStrip? menu, Action<string> say) =>
         Entries(menu).Select(entry => new PaletteEntry(Palette.Text(entry.Name, [.. entry.Path], entry.Key, entry.Checked), () =>
         {
-            entry.Item.PerformClick();
-            if (entry.Item.CheckOnClick)
+            // An item no longer in a menu was replaced when its list was filled again.
+            var item = entry.Item.Owner is not null ? entry.Item : Find(menu, entry.Name, entry.Menu)?.Item;
+            if (item is null)
             {
-                say($"{entry.Name}, {(entry.Item.Checked ? "checked" : "not checked")}");
+                say($"{entry.Name} is not available now");
+                return;
+            }
+
+            item.PerformClick();
+            if (item.CheckOnClick)
+            {
+                say($"{entry.Name}, {(item.Checked ? "checked" : "not checked")}");
             }
         })).ToList();
-
-    /// <summary>
-    /// The menus that hold an item, from the bar down, as the palette names them: "Navigate, Next"; empty for an item
-    /// of no menu bar's (a context menu's). For <c>axkit_window_commands</c> and <c>axkit_window_run</c> (docs/axKit/mcp.md MC-7.1).
-    /// </summary>
-    public static string MenuPath(ToolStripMenuItem item) =>
-        string.Join(", ", Owners(item).Select(owner => MenuText.Plain(owner.Text ?? string.Empty)));
-
-    /// <summary>
-    /// Whether the palette would offer the item now (AX-10.2, MC-7.1): its menus refreshed as on opening, top down, then
-    /// the item and every menu over it available and enabled, none of them filled on opening.
-    /// </summary>
-    public static bool Offered(ToolStripMenuItem item)
-    {
-        foreach (var owner in Owners(item))
-        {
-            (owner.Tag as Mark)?.Refresh?.Invoke();
-        }
-
-        // A refresh may have moved the item (the bar's Context menu, ContextBarMenu): its menus are read again after it,
-        // and an item held in a menu off the bar (one Context is not showing now) is not offered.
-        var owners = Owners(item);
-        return (owners.Count == 0 || owners[0].Owner is MenuStrip)
-            && owners.Append(item).All(menu => menu.Available && menu.Enabled && menu.Tag is not Mark { LeftOut: true });
-    }
 
     /// <summary>The menu items over an item, the bar's first.</summary>
     private static List<ToolStripMenuItem> Owners(ToolStripMenuItem item)
@@ -156,25 +170,40 @@ public static class CommandPalette
 
     private static void Collect(ToolStripItemCollection items, List<string> path, List<MenuEntry> entries)
     {
-        foreach (ToolStripItem item in items)
+        // A copy: a refresh below may make a menu's items again while they are walked.
+        foreach (var item in items.Cast<ToolStripItem>().ToList())
         {
-            if (item is not ToolStripMenuItem menuItem || !menuItem.Available || !menuItem.Enabled || menuItem.Tag is Mark { LeftOut: true })
+            if (item is not ToolStripMenuItem menuItem || !menuItem.Available || !menuItem.Enabled)
             {
                 continue;
+            }
+
+            var info = InfoOf(menuItem);
+            if (info?.NoEntry == true)
+            {
+                continue;
+            }
+
+            // What the menu would show on opening, before its items are read; a menu the user has open is read as it
+            // stands, since making its items again would take the one the user is on (R-10).
+            if (info is not null && !menuItem.DropDown.Visible)
+            {
+                foreach (var refresh in info.Refreshes)
+                {
+                    refresh();
+                }
             }
 
             var name = MenuText.Plain(menuItem.Text ?? string.Empty);
             if (menuItem.HasDropDownItems)
             {
-                // What the menu would show on opening, before its items are read.
-                (menuItem.Tag as Mark)?.Refresh?.Invoke();
                 path.Add(name);
                 Collect(menuItem.DropDownItems, path, entries);
                 path.RemoveAt(path.Count - 1);
                 continue;
             }
 
-            // The bar's own items (File, Edit) only open their menus.
+            // The bar's own items (Session, Actions) only open their menus.
             if (path.Count == 0)
             {
                 continue;

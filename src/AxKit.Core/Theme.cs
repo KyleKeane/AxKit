@@ -236,7 +236,7 @@ public sealed class Theme
 
             change(root);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            File.WriteAllText(path, ToText(root));
+            SafeFile.WriteAllText(path, ToText(root));
             return null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)

@@ -28,6 +28,12 @@ jobs:
       - name: Workflows are listed
         # Every automated script has its workflow label, and docs/axKit/workflows.md is what the scripts give (AU-5.2a).
         run: ./tools/workflows.ps1 -Check
+      - name: Repairs are listed
+        # The repair list's fields hold, and docs/axKit/repairs.md is what docs/axKit/repairs.json gives.
+        run: ./tools/repairs.ps1 -Check
+      - name: Apps are listed
+        # docs/axKit/apps.md is what Dispatch.Apps and the folders give: the one list of the apps (repairs R-44).
+        run: ./tools/apps-page.ps1 -Check
       - name: Build and test
         # ContinuousIntegrationBuild: deterministic paths; the test packages restore exactly as their lock files say (S-34).
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true

@@ -1,4 +1,5 @@
 # Workflow: Agree to the reminder before the first unlock
+# Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
 # axPass: the reminder before the first master password goes to KeePassXC's tool (docs/axKit/SPEC.md AX-11.4, AX-11.5;
 # the Owed list of docs/axKit/nvda-test-record.md). Needs KeePassXC installed, as 01 does. A fresh run's home has no
 # consent, so the reminder comes before the unlock notice. With --nvda (nvda-pass.ps1) every expected line must be

@@ -138,6 +138,20 @@ public sealed class McpTests
     }
 
     [Fact]
+    public void The_log_names_a_command_that_ran_without_a_recent_file_s_path_and_keeps_an_account_path_out_of_a_refusal()
+    {
+        // docs/axKit/repairs.json R-06.
+        Assert.Equal("done: ran Word wrap", McpAudit.Result(McpTools.Run, "Word wrap", failed: false, "ran"));
+        Assert.Equal("done: ran 1. notes.md", McpAudit.Result(McpTools.Run, @"1. notes.md (C:\Work\notes.md)", failed: false, "ran"));
+        Assert.Equal("done", McpAudit.Result(McpTools.Open, null, failed: false, "opened"));
+        var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var refused = McpAudit.Result(McpTools.Open, null, failed: true, $"There is no file or folder at {profile}\\secret plans.md\nsecond line");
+        Assert.StartsWith("refused or failed: There is no file or folder at ", refused, StringComparison.Ordinal);
+        Assert.DoesNotContain(profile, refused, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("second line", refused, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void A_file_counts_only_with_its_seal()
     {
         var key = new byte[32];

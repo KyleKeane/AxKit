@@ -24,9 +24,22 @@ palette, axClaude's message and its set of two questions), all passing.
 Run one:
 
 ```
-dotnet build src\AxKit\AxKit.csproj -c Release
 dotnet run --project tools\AxAutomate -c Release -- tests\scripts --build --report report.md
 ```
+
+The run names the program it drives: `--build` builds the sources as they are into the run's own folder, `--exe
+<AxKit.exe>` names a built one (to run several folders against one build, build once with `dotnet build
+src\AxKit\AxKit.csproj -c Release -o <folder>` and give `--exe <folder>\AxKit.exe`). There is no default: until
+2026-11-13 a run with neither drove whatever lay in `src\AxKit\bin\Release`, and a pass or a failure against a stale
+build read like a real one. The console and the report's first lines say the program's version and when it was
+built. Exit code 0 when every script passed, 1 when one failed, 2 when the run could not start. A window that does
+not answer a step within 30 seconds fails the step, and the run goes on to its end.
+
+**Where these checks run.** On the developer's computer, by hand or by the assistant: `tools/AxAutomate` for one
+script or folder, `nvda-pass.ps1` for all of them with NVDA listening. Never in CI: `build.yml` builds the solution,
+runs the unit tests and checks the generated pages, and that is all it proves. A workflow of
+`docs/axKit/workflows.md` is kept working by the runs recorded in `docs/axKit/nvda-test-record.md`, so a change to a
+window is followed by its scripts before it is pushed, and a release by a full pass.
 
 The steps, the run on its own desktop and the report are the engine in `src/AxAutomate.Core` (`ScriptRunner`, `Run`,
 `Window`; moved there on 2026-11-11, docs/axAutomate/SPEC.md AU-5.1), which axAutomate's window plays workflows
@@ -109,7 +122,9 @@ on Haiku. Every step a script cannot drive is a `#` line naming the plan step an
   the palette's list either.
 - The Windows pickers (Open, Save as, Font, the folder picker) and the shell's own windows (Open with, Properties,
   File Explorer, a default program).
-- The clipboard: the test desktop shares it with the user's session, so copy and paste steps are not run.
+- The clipboard: the test desktop shares it with the user's session, so copy and paste steps are not run. Two scripts
+  write it on purpose, since the clipboard is what they check, and what the user had on it is replaced: axClip's
+  `01-basics` (three test texts) and axPreview's `04-details-and-kinds` (one test picture, for Ctrl+Shift+V).
 - Coming back to a window with Alt+Tab (the files changed on disk); F5 is used instead where the app has it.
 - What only NVDA shows, and sound and video quality: tier 3 and the user's ear.
 

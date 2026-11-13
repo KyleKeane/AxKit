@@ -125,12 +125,12 @@ public static class ReportFiles
     {
         EnsureList(folder);
         var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(report.Title), ".json");
-        File.WriteAllText(path, ToItem(report, status).ToText(), Utf8);
+        SafeFile.WriteAllText(path, ToItem(report, status).ToText(), Utf8);
         return path;
     }
 
     /// <summary>Writes an item back to its file (the status changed, the issue known).</summary>
-    public static void Write(string path, ItemDocument item) => File.WriteAllText(path, item.ToText(), Utf8);
+    public static void Write(string path, ItemDocument item) => SafeFile.WriteAllText(path, item.ToText(), Utf8);
 
     /// <summary>The items of the folder that wait to be sent (RP-6.7), oldest first by their Created field, each with its path; none when the folder is missing.</summary>
     public static IReadOnlyList<(string Path, ItemDocument Item)> Unsent(string folder)

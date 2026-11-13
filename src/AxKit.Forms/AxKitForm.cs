@@ -294,10 +294,11 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>A checked menu item for a setting: flipping it applies the value and saves the settings.</summary>
-    protected ToolStripMenuItem Toggle(string text, bool initial, Action<bool> apply)
+    protected ToolStripMenuItem Toggle(string text, bool initial, Action<bool> apply, CommandMark mark = CommandMark.Change)
     {
-        // A setting is a change (docs/axKit/app-kit.md AK-2.5).
-        var item = CommandPalette.Marked(new ToolStripMenuItem(text) { CheckOnClick = true, Checked = initial }, CommandMark.Change);
+        // A setting is a change (docs/axKit/app-kit.md AK-2.5); one whose effect reaches past the app's own settings (the
+        // Run key, a network contact, a file in the user's repository, a check the user relies on) says act.
+        var item = CommandPalette.Marked(new ToolStripMenuItem(text) { CheckOnClick = true, Checked = initial }, mark);
         item.CheckedChanged += (_, _) =>
         {
             apply(item.Checked);
@@ -336,7 +337,8 @@ public abstract partial class AxKitForm : Form
         if (!PackageIdentity.IsPackaged)
         {
             // The Store's copy makes no check at start (AX-13.3), so it has no setting for one.
-            menu.DropDownItems.Add(Toggle("Check for &updates at start", Settings.CheckForUpdates, v => Settings.CheckForUpdates = v));
+            // Act for the AI tools: on, it is a network contact at every start (docs/axKit/repairs.json R-04).
+            menu.DropDownItems.Add(Toggle("Check for &updates at start", Settings.CheckForUpdates, v => Settings.CheckForUpdates = v, CommandMark.Act));
         }
 
         menu.DropDownItems.AddRange(own);
@@ -380,7 +382,7 @@ public abstract partial class AxKitForm : Form
         {
             ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
         });
-        help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Your reports", null, (_, _) => OpenReports()), CommandMark.Open));
+        help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Your reports", null, (_, _) => OpenReports()), CommandMark.Act));
         help.DropDownItems.Add(new ToolStripSeparator());
         help.DropDownItems.Add(_checkItem);
         help.DropDownItems.Add(_updateItem);
@@ -633,9 +635,6 @@ public abstract partial class AxKitForm : Form
 
     private readonly List<Command> _commands = [];
 
-    /// <summary>The window's commands, as its menus and keys were made from them: for the command palette's checks and MCP.</summary>
-    protected IReadOnlyList<Command> Commands => _commands;
-
     /// <summary>A command as an item of <paramref name="menu"/> showing its key, and its key handled with it (AK-2.3); the item, for a window that keeps it.</summary>
     protected ToolStripMenuItem Add(ToolStripMenuItem menu, Command command)
     {
@@ -656,19 +655,9 @@ public abstract partial class AxKitForm : Form
             _commands.Add(command);
         }
 
-        var item = CommandPalette.Marked(Item(command.Label, () => Run(command), command.Key), command.Mark);
-        // The items of a command, for axkit_window_run (docs/axKit/mcp.md MC-7.1): it runs as one of them would.
-        if (!_commandItems.TryGetValue(command, out var items))
-        {
-            _commandItems[command] = items = [];
-        }
-
-        items.Add(item);
-        return item;
+        // The item carries the command's mark, for the AI tools, which read the menus (docs/axKit/app-kit.md AK-2.5).
+        return CommandPalette.Marked(Item(command.Label, () => Run(command), command.Key), command.Mark);
     }
-
-    /// <summary>The menu items made for each command, by the record itself (two commands may be equal as records).</summary>
-    private readonly Dictionary<Command, List<ToolStripMenuItem>> _commandItems = new(ReferenceEqualityComparer.Instance);
 
     /// <summary>
     /// The window's last actions for a report (docs/axKit/reports.md RP-4.1): every command run by key, menu or palette,

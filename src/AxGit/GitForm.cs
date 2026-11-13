@@ -375,7 +375,7 @@ public sealed partial class GitForm : AxKitForm
 
     /// <summary>Repository → Open recent repository (AG-6.1): the last ten, those that still exist, "1. name (path)" (AX-9.5).</summary>
     private void FillRecent() =>
-        RecentMenu.FillFolders(_recentItem, _settings.RecentRepositories, "&No recent repositories", target => Do(() => StartAsync(target)));
+        RecentMenu.FillFolders(_recentItem, _settings.RecentRepositories, "&No recent repositories", CommandMark.Open, target => Do(() => StartAsync(target)));
 
     /// <summary>Repository → Show current repository in → File Explorer (Ctrl+W): the folder opened in File Explorer, one of the system's own windows.</summary>
     private void ShowInExplorer()

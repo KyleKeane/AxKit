@@ -475,9 +475,9 @@ public abstract partial class ConsoleForm : AxKitForm
         return _musicItem;
     }
 
-    private void FillRecentFolders() => RecentMenu.FillFolders(RecentFoldersItem, ConsoleSettings.RecentFolders, "&No recent folders", SwitchFolder);
+    private void FillRecentFolders() => RecentMenu.FillFolders(RecentFoldersItem, ConsoleSettings.RecentFolders, "&No recent folders", CommandMark.Act, SwitchFolder);
 
-    private void FillRecentFoldersInNewWindow() => RecentMenu.FillFolders(RecentFoldersInNewWindowItem, ConsoleSettings.RecentFolders, "&No recent folders", OpenInNewWindow);
+    private void FillRecentFoldersInNewWindow() => RecentMenu.FillFolders(RecentFoldersInNewWindowItem, ConsoleSettings.RecentFolders, "&No recent folders", CommandMark.Act, OpenInNewWindow);
 
     /// <summary>The program in <paramref name="folder"/> in a window of its own, this one left as it is (axClaude FR-8.5, axTerminal AT-1.5).</summary>
     protected void OpenInNewWindow(string folder)

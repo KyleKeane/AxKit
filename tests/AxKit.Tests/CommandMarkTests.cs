@@ -7,7 +7,7 @@ namespace AxKit.Tests;
 /// change what lies outside the window or bring in what the AI tools could not read are pinned as act. Read off the
 /// sources, as <see cref="ListTests"/> does.
 /// </summary>
-public sealed class CommandMarkTests
+public sealed partial class CommandMarkTests
 {
     /// <summary>Commands that must stay act, by file and label as written, each with why (the review of 2026-11-11).</summary>
     private static readonly (string File, string Label, string Why)[] PinnedAct =
@@ -74,14 +74,43 @@ public sealed class CommandMarkTests
     }
 
     /// <summary>
-    /// The menu items made outside the command list that do something on a click and state no mark
-    /// (<c>CommandPalette.Marked</c>), counted on 2026-11-13 (docs/axKit/app-kit.md AK-2.5). Such an item is act for the
-    /// AI tools, which ask the user before running it: safe, but a question more than needed. The number may only go
-    /// down: a new item is a command or states its mark, and an item converted lowers it here.
+    /// Menu items outside the command list whose effect reaches past the window, by file and the text that makes them
+    /// act (docs/axKit/repairs.json R-01, R-04, R-05; the review of 2026-11-13): each must keep stating act, so that an
+    /// AI tool asks the user before it runs one.
     /// </summary>
-    private const int UnmarkedItemsAtMost = UnmarkedItemsCounted;
+    private static readonly (string File, string Text, string Why)[] PinnedActItems =
+    [
+        (Path.Combine("src", "AxKit.Forms", "ConsoleForm.cs"), "CommandMark.Act, SwitchFolder", "a console's recent folder starts Claude Code or a shell again"),
+        (Path.Combine("src", "AxKit.Forms", "ConsoleForm.cs"), "CommandMark.Act, OpenInNewWindow", "starts Claude Code or a shell in a new window"),
+        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "v => Settings.CheckForUpdates = v, CommandMark.Act", "turns a network contact on"),
+        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "OpenReports()), CommandMark.Act", "sends the unsent reports to GitHub"),
+        (Path.Combine("src", "AxKit.Forms", "HotkeyForm.cs"), "}, CommandMark.Act); // Writes the user's Run key", "writes the user's Run key"),
+        (Path.Combine("src", "AxKit.Forms", "WindowMenu.cs"), "McpTools.NeverOpened.Contains(verb) ? CommandMark.Act", "a new axClaude or axTerminal window starts a program"),
+        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "v => _settings.ReviewAnswers = v, CommandMark.Act", "the review is the user's own check of what goes to Claude"),
+        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "}, CommandMark.Act))); // Writes into the project repository", "writes into the user's repository"),
+    ];
 
-    private const int UnmarkedItemsCounted = 93;
+    [Fact]
+    public void Menu_items_that_act_outside_their_window_stay_marked_act()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        foreach (var (file, text, why) in PinnedActItems)
+        {
+            Assert.True(File.ReadAllText(Path.Combine(root, file)).Contains(text, StringComparison.Ordinal), $"{file}: must still state act ({why}); looked for: {text}. See docs/axKit/app-kit.md AK-2.5.");
+        }
+    }
+
+    /// <summary>
+    /// The menu items made outside the command list that do something on a click and state no mark
+    /// (<c>CommandPalette.Marked</c>), counted on 2026-11-13 (docs/axKit/app-kit.md AK-2.5; docs/axKit/repairs.json
+    /// R-11): 92 made as a bare <c>new ToolStripMenuItem</c> with a click, and 68 made through the base's
+    /// <c>Item(...)</c>, which the first count of that day did not see. Such an item is act for the AI tools, which ask
+    /// the user before running it: safe, but a question more than needed, and its action is often stated a second time
+    /// in a key's command. The number may only go down: a new item is a command (<c>Add</c>) or states its mark, and an
+    /// item converted lowers the number here. This test reads the source's lines and is lint, not proof: an item made
+    /// another way is not seen (R-37).
+    /// </summary>
+    private const int UnmarkedItemsAtMost = 160;
 
     [Fact]
     public void Menu_items_without_a_mark_never_grow_in_number()
@@ -100,8 +129,10 @@ public sealed class CommandMarkTests
             for (var i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                if (line.Contains("new ToolStripMenuItem(", StringComparison.Ordinal) && line.Contains("(_, _) =>", StringComparison.Ordinal)
-                    && !line.Contains("CommandPalette.Marked(", StringComparison.Ordinal) && !line.Contains("NeverForAiTools(", StringComparison.Ordinal))
+                var marked = line.Contains("CommandPalette.Marked(", StringComparison.Ordinal) || line.Contains("NeverForAiTools(", StringComparison.Ordinal);
+                var bare = line.Contains("new ToolStripMenuItem(", StringComparison.Ordinal) && line.Contains("(_, _) =>", StringComparison.Ordinal);
+                var throughItem = ItemCall().IsMatch(line) && !line.Contains("protected static", StringComparison.Ordinal);
+                if ((bare || throughItem) && !marked)
                 {
                     unmarked.Add($"{relative}:{i + 1}");
                 }
@@ -110,6 +141,10 @@ public sealed class CommandMarkTests
 
         Assert.True(unmarked.Count <= UnmarkedItemsAtMost, $"{unmarked.Count} menu items without a mark, at most {UnmarkedItemsAtMost} allowed (AK-2.5): make the new one a command or give it CommandPalette.Marked. " + string.Join("; ", unmarked));
     }
+
+    /// <summary>A call of the base's <c>Item("label", action, key)</c>: the name alone, not the end of another name or a member of something.</summary>
+    [System.Text.RegularExpressions.GeneratedRegex(@"(?<![\w.])Item\(""")]
+    private static partial System.Text.RegularExpressions.Regex ItemCall();
 
     /// <summary>Every <c>new Command(…)</c> of a source with its object initializer, if it has one, and where it starts.</summary>
     private static IEnumerable<(int At, string Span)> Commands(string text)

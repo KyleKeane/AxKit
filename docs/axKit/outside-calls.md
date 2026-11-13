@@ -1,6 +1,6 @@
 # Outside calls
 
-Everything axKit reaches outside its own process: the network requests its own code makes, the programs it starts and the pipes it opens, by what is reached. For each, what it is, where it is (the program file or the endpoint), how axKit reaches it, what it may reach in turn, its documentation, and every call under it with its app, file and line, the function it stands in, the function it calls and what the call does for the user. The second section is the functions themselves, where each is defined and where it is used, and what is watched for.
+Everything axKit reaches outside its own process: the network requests its own code makes, the programs it starts and the pipes it opens, by what is reached. For each, what it is, where it is (the program file or the endpoint), how axKit reaches it, what it may reach in turn, its documentation, and every call under it with its app and file, the function it stands in (no line number since 2026-11-13: an edit above a call made the page stale, which failed CI four times in three days, docs/axKit/repairs.json R-30), the function it calls and what the call does for the user. The second section is the functions themselves, where each is defined and where it is used, and what is watched for.
 
 `tools/outside-calls.ps1` writes this page from the sources, so it is a list, not a promise: each call in the code carries a comment that starts `Outside call, <kind>, <what is reached>:` on the line above it or at its end, and this page is their list, found by the functions of the second section. A call without that comment fails the script, which `build.yml` runs on every push (with the check that this page is current) and `release.ps1` before every release; `release.ps1` writes the page again and commits it with the release, so it is exact at every tag (bundle SPEC B-17). Do not edit this page by hand: change the comment in the code, or the tables in the script, and run it.
 
@@ -23,27 +23,27 @@ Today: 11 network requests, 31 program starts and 5 pipes, in 31 files, under th
 
 Calls (11):
 
-- **shared by every app**, `src/AxKit.Core/AxKitHttp.cs:19`, in `AxKitHttp.Create`, by `new HttpClient`: the one HTTP client of axKit, for the update check, the two downloads and the reports; no other code makes a network request (AX-11.11).
+- **shared by every app**, `src/AxKit.Core/AxKitHttp.cs`, in `AxKitHttp.Create`, by `new HttpClient`: the one HTTP client of axKit, for the update check, the two downloads and the reports; no other code makes a network request (AX-11.11).
   Code: `var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:81`, in `GitHubIssues.CreateAsync`, by `HttpClient.SendAsync`: posts a report as an issue of the reports repository, as axKit's own reporter account, with what the user read and edited in the report notice and the install's random reporter id; only when the user sends a report (docs/axKit/reports.md RP-6.1, PRIVACY.md).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.CreateAsync`, by `HttpClient.SendAsync`: posts a report as an issue of the reports repository, as axKit's own reporter account, with what the user read and edited in the report notice and the install's random reporter id; only when the user sends a report (docs/axKit/reports.md RP-6.1, PRIVACY.md).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:93`, in `GitHubIssues.ReadBlocklistAsync`, by `HttpClient.SendAsync`: reads the reports repository's blocklist before a report is sent, so that a blocked install or version sends nothing; one GET with the version in the User-Agent and nothing else about the user (docs/axKit/reports.md RP-6.4).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.ReadBlocklistAsync`, by `HttpClient.SendAsync`: reads the reports repository's blocklist before a report is sent, so that a blocked install or version sends nothing; one GET with the version in the User-Agent and nothing else about the user (docs/axKit/reports.md RP-6.4).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:112`, in `GitHubIssues.ListAsync`, by `HttpClient.SendAsync`: lists the issues of a repository for a GitHub list of axTask, page by page, when the user opens or refreshes the list (docs/axKit/reports.md RP-7.1).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.ListAsync`, by `HttpClient.SendAsync`: lists the issues of a repository for a GitHub list of axTask, page by page, when the user opens or refreshes the list (docs/axKit/reports.md RP-7.1).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:152`, in `GitHubIssues.PatchAsync`, by `HttpClient.SendAsync`: changes an issue's labels or state as the user's own account, from an action on an item of a GitHub list in axTask (docs/axKit/reports.md RP-7.2).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.PatchAsync`, by `HttpClient.SendAsync`: changes an issue's labels or state as the user's own account, from an action on an item of a GitHub list in axTask (docs/axKit/reports.md RP-7.2).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:162`, in `GitHubIssues.CommentAsync`, by `HttpClient.SendAsync`: adds the user's comment to an issue as the user's own account, from an action on an item of a GitHub list in axTask (docs/axKit/reports.md RP-7.2).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.CommentAsync`, by `HttpClient.SendAsync`: adds the user's comment to an issue as the user's own account, from an action on an item of a GitHub list in axTask (docs/axKit/reports.md RP-7.2).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:174`, in `GitHubIssues.WriteBlocklistAsync`, by `HttpClient.SendAsync`: reads the blocklist file's version before writing it, as the user's own account, from Block this reporter or Block this version in axTask (docs/axKit/reports.md RP-7.2).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.WriteBlocklistAsync`, by `HttpClient.SendAsync`: reads the blocklist file's version before writing it, as the user's own account, from Block this reporter or Block this version in axTask (docs/axKit/reports.md RP-7.2).
   Code: `using var found = await http.SendAsync(read, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs:195`, in `GitHubIssues.WriteBlocklistAsync`, by `HttpClient.SendAsync`: writes the reports repository's blocklist as the user's own account, from Block this reporter or Block this version in axTask (docs/axKit/reports.md RP-6.4, RP-7.2).
+- **shared by every app**, `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.WriteBlocklistAsync`, by `HttpClient.SendAsync`: writes the reports repository's blocklist as the user's own account, from Block this reporter or Block this version in axTask (docs/axKit/reports.md RP-6.4, RP-7.2).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Updates/UpdateCheck.cs:130`, in `UpdateCheck.FetchLatestAsync`, by `HttpClient.SendAsync`: asks GitHub for the latest release of this repository, so that the window can say when a newer axKit exists; one GET with the version in the User-Agent header and nothing else about the user; off when the user turns the update check off, run by hand from Check for updates (AX-3, PRIVACY.md).
+- **shared by every app**, `src/AxKit.Core/Updates/UpdateCheck.cs`, in `UpdateCheck.FetchLatestAsync`, by `HttpClient.SendAsync`: asks GitHub for the latest release of this repository, so that the window can say when a newer axKit exists; one GET with the version in the User-Agent header and nothing else about the user; off when the user turns the update check off, run by hand from Check for updates (AX-3, PRIVACY.md).
   Code: `using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:65`, in `Updater.DownloadAsync`, by `HttpClient.GetStringAsync`: downloads the release's signature file from this repository's release page, the only address the updater accepts; it is checked against the zip before anything is installed (AX-3.4).
+- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs`, in `Updater.DownloadAsync`, by `HttpClient.GetStringAsync`: downloads the release's signature file from this repository's release page, the only address the updater accepts; it is checked against the zip before anything is installed (AX-3.4).
   Code: `var signature = await Http.GetStringAsync(release.SignatureUrl, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:89`, in `Updater.DownloadAsync`, by `HttpClient.GetAsync`: downloads the release's zip from this repository's release page, hashed as it arrives; it is installed only if the hash matches GitHub's digest of the file and the release key's signature (AX-3.4).
+- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs`, in `Updater.DownloadAsync`, by `HttpClient.GetAsync`: downloads the release's zip from this repository's release page, hashed as it arrives; it is installed only if the hash matches GitHub's digest of the file and the release key's signature (AX-3.4).
   Code: `using (var response = await Http.GetAsync(release.ZipUrl, HttpCompletionOption.ResponseHeadersRead, cancellation).ConfigureAwait(false))`
 
 ### Programs
@@ -58,15 +58,15 @@ Calls (11):
 
 Calls (5):
 
-- **axClaude**, `src/AxClaude.Core/Pty/ClaudeLauncher.cs:46`, in `ClaudeLauncher.VersionAsync`, by `ProcessRun.RunAsync`: runs the user's Claude Code once with --version, without a window, so that axClaude knows which Claude Code it found and that it runs.
+- **axClaude**, `src/AxClaude.Core/Pty/ClaudeLauncher.cs`, in `ClaudeLauncher.VersionAsync`, by `ProcessRun.RunAsync`: runs the user's Claude Code once with --version, without a window, so that axClaude knows which Claude Code it found and that it runs.
   Code: `var result = await ProcessRun.RunAsync(start, [], timeout).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Ai/AiRequest.cs:74`, in `AiRequest.AskAsync`, by `ProcessRun.RunAsync`: claude -p in its working folder with the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
+- **shared by every app**, `src/AxKit.Core/Ai/AiRequest.cs`, in `AiRequest.AskAsync`, by `ProcessRun.RunAsync`: claude -p in its working folder with the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
   Code: `var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);`
-- **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
+- **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
   Code: `created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Mcp.cs:555`, in `AxKitForm.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.Mcp.cs`, in `AxKitForm.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
   Code: `using var process = System.Diagnostics.Process.Start(start);`
-- **shared by every app**, `src/AxKit.Forms/ConsoleForm.Process.cs:51`, in `ConsoleForm.StartProcess`, by `PtyHost.Start`: starts the window's program in a pseudo console: "claude --ax-screen-reader" for axClaude, the chosen shell for axTerminal.
+- **shared by every app**, `src/AxKit.Forms/ConsoleForm.Process.cs`, in `ConsoleForm.StartProcess`, by `PtyHost.Start`: starts the window's program in a pseudo console: "claude --ax-screen-reader" for axClaude, the chosen shell for axTerminal.
   Code: `host = PtyHost.Start(options, OnData, OnExited);`
 
 #### Git
@@ -79,7 +79,7 @@ Calls (5):
 
 Calls (1):
 
-- **axGIT**, `src/AxGit.Core/GitRunner.cs:111`, in `GitRunner.RunAsync`, by `ProcessRun.RunAsync`: runs the user's installed git on the repository for one command and reads what it prints, one process per command, its terminal prompts off; fetch, pull and push reach the repository's remotes, every other command works on disk (AX-11.11).
+- **axGIT**, `src/AxGit.Core/GitRunner.cs`, in `GitRunner.RunAsync`, by `ProcessRun.RunAsync`: runs the user's installed git on the repository for one command and reads what it prints, one process per command, its terminal prompts off; fetch, pull and push reach the repository's remotes, every other command works on disk (AX-11.11).
   Code: `result = await ProcessRun.RunAsync(info, [], timeout, cancellation);`
 
 #### Shells
@@ -92,9 +92,9 @@ Calls (1):
 
 Calls (2):
 
-- **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
+- **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
   Code: `created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,`
-- **shared by every app**, `src/AxKit.Forms/ConsoleForm.Process.cs:51`, in `ConsoleForm.StartProcess`, by `PtyHost.Start`: starts the window's program in a pseudo console: "claude --ax-screen-reader" for axClaude, the chosen shell for axTerminal.
+- **shared by every app**, `src/AxKit.Forms/ConsoleForm.Process.cs`, in `ConsoleForm.StartProcess`, by `PtyHost.Start`: starts the window's program in a pseudo console: "claude --ax-screen-reader" for axClaude, the chosen shell for axTerminal.
   Code: `host = PtyHost.Start(options, OnData, OnExited);`
 
 #### KeePassXC
@@ -107,7 +107,7 @@ Calls (2):
 
 Calls (1):
 
-- **axPass**, `src/AxPass.Core/KeePassCli.cs:79`, in `KeePassCli.Run`, by `ProcessRun.Run`: runs the user's installed keepassxc-cli.exe for one command on the database, the master password on its standard input, and reads what it prints; the tool has no network feature.
+- **axPass**, `src/AxPass.Core/KeePassCli.cs`, in `KeePassCli.Run`, by `ProcessRun.Run`: runs the user's installed keepassxc-cli.exe for one command on the database, the master password on its standard input, and reads what it prints; the tool has no network feature.
   Code: `var result = ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs));`
 
 #### Installers
@@ -120,7 +120,7 @@ Calls (1):
 
 Calls (1):
 
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, by `Process.Start`: runs the installer of a missing program the user chose in Install it now (AX-2.9): Windows' own winget from its own source for Git, KeePassXC and PowerShell 7, or Anthropic's installer script for Claude Code in Windows PowerShell; each downloads the maker's installer.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.Install.cs`, in `AxKitForm.RunInstallerAsync`, by `Process.Start`: runs the installer of a missing program the user chose in Install it now (AX-2.9): Windows' own winget from its own source for Git, KeePassXC and PowerShell 7, or Anthropic's installer script for Claude Code in Windows PowerShell; each downloads the maker's installer.
   Code: `process = Process.Start(info);`
 
 #### Windows
@@ -133,33 +133,33 @@ Calls (1):
 
 Calls (14):
 
-- **axFile**, `src/AxFile/FileForm.Operations.cs:698`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
+- **axFile**, `src/AxFile/FileForm.Operations.cs`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, "shell:MyComputerFolder") { UseShellExecute = false })?.Dispose();`
-- **axFile**, `src/AxFile/FileForm.Operations.cs:782`, in `FileForm.OpenWithWindows`, by `Process.Start`: opens the selected file or folder with the program Windows has for it, as Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with dialog follows.
+- **axFile**, `src/AxFile/FileForm.Operations.cs`, in `FileForm.OpenWithWindows`, by `Process.Start`: opens the selected file or folder with the program Windows has for it, as Enter in File Explorer does (AF-3.2), through the Windows shell; when Windows has none, its Open with dialog follows.
   Code: `Process.Start(new ProcessStartInfo(entry.Path) { UseShellExecute = true })?.Dispose();`
-- **axFile**, `src/AxFile/Shell.cs:68`, in `Shell.Properties`, by `ShellExecuteEx (Windows)`: shows Windows' Properties sheet for the entry (Alt+Enter), the shell's own window, through the shell's verb "properties".
+- **axFile**, `src/AxFile/Shell.cs`, in `Shell.Properties`, by `ShellExecuteEx (Windows)`: shows Windows' Properties sheet for the entry (Alt+Enter), the shell's own window, through the shell's verb "properties".
   Code: `if (ShellExecuteExW(ref info))`
-- **axFile**, `src/AxFile/Shell.cs:116`, in `Shell.ShowMenu`, by `IContextMenu.InvokeCommand (Windows)`: runs the item the user picked in the Windows menu, the shell's own context menu for the entry (More from Windows); what it does is the shell's or an installed shell extension's.
+- **axFile**, `src/AxFile/Shell.cs`, in `Shell.ShowMenu`, by `IContextMenu.InvokeCommand (Windows)`: runs the item the user picked in the Windows menu, the shell's own context menu for the entry (More from Windows); what it does is the shell's or an installed shell extension's.
   Code: `var hr = ((IContextMenu)parts.Handler).InvokeCommand(ref info);`
-- **axFile**, `src/AxFile/Shell.cs:326`, in `Shell.Invoke`, by `IContextMenu.InvokeCommand (Windows)`: runs one command of the shell's own menu for an entry or a drive without showing the menu: the Windows operations axFile's items stand for (the shell's cut, copy and paste; Eject for a drive).
+- **axFile**, `src/AxFile/Shell.cs`, in `Shell.Invoke`, by `IContextMenu.InvokeCommand (Windows)`: runs one command of the shell's own menu for an entry or a drive without showing the menu: the Windows operations axFile's items stand for (the shell's cut, copy and paste; Eject for a drive).
   Code: `var hr = contextMenu.InvokeCommand(ref info);`
-- **shared by every app**, `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, by `Process.Start`: opens Windows' Startup apps page in the Settings app through the Windows shell (the ms-settings: address), from the Store's copy's Start with Windows item (AX-13.4).
+- **shared by every app**, `src/AxKit.Core/SignInStart.cs`, in `SignInStart.OpenWindowsStartupSettings`, by `Process.Start`: opens Windows' Startup apps page in the Settings app through the Windows shell (the ms-settings: address), from the Store's copy's Start with Windows item (AX-13.4).
   Code: `Process.Start(new ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true })?.Dispose();`
-- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
+- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
   Code: `using var process = Process.Start(start) ?? throw new InvalidOperationException("PowerShell could not be started.");`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:896`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs`, in `AxKitForm.OpenUrl`, by `Process.Start`: opens a web page in the user's default browser through the Windows shell, for the Help menu's links, the release page and links the user presses Enter on; axKit itself fetches nothing.
   Code: `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs:921`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.cs`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, arguments) { UseShellExecute = false })?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
+- **shared by every app**, `src/AxKit.Forms/AxKitForm.Updates.cs`, in `AxKitForm.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
   Code: `System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(StoreListing.PageUri) { UseShellExecute = true });`
-- **shared by every app**, `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, by `Process.Start`: opens the viewed file with the program Windows has for it (axPreview's Open with Windows default, AP-7.3), through the Windows shell; never a file that would run (S-46).
+- **shared by every app**, `src/AxKit.Forms/TextEditorForm.Viewer.cs`, in `TextEditorForm.OpenInWindowsProgram`, by `Process.Start`: opens the viewed file with the program Windows has for it (axPreview's Open with Windows default, AP-7.3), through the Windows shell; never a file that would run (S-46).
   Code: `Process.Start(new ProcessStartInfo(path) { UseShellExecute = true })?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/WindowsOpenWith.cs:23`, in `WindowsOpenWith.Show`, by `SHOpenWithDialog (Windows)`: shows Windows' own Open with dialog for a file, and Windows runs the program the user picks in it (axFile's and axPreview's Open with, Choose another program).
+- **shared by every app**, `src/AxKit.Forms/WindowsOpenWith.cs`, in `WindowsOpenWith.Show`, by `SHOpenWithDialog (Windows)`: shows Windows' own Open with dialog for a file, and Windows runs the program the user picks in it (axFile's and axPreview's Open with, Choose another program).
   Code: `var hr = SHOpenWithDialog(owner, in info);`
-- **axPreview**, `src/AxPreview.Core/PictureText.cs:112`, in `PictureText.RecognizeAsync`, by `ProcessRun.RunAsync`: Windows PowerShell by its full path, running axPreview's own script beside its logs, which asks Windows' text reader (Windows.Media.Ocr) for the text in one picture; on this computer, no network.
+- **axPreview**, `src/AxPreview.Core/PictureText.cs`, in `PictureText.RecognizeAsync`, by `ProcessRun.RunAsync`: Windows PowerShell by its full path, running axPreview's own script beside its logs, which asks Windows' text reader (Windows.Media.Ocr) for the text in one picture; on this computer, no network.
   Code: `return Read(await ProcessRun.RunAsync(Start(script, picturePath), [], Timeout, cancellation).ConfigureAwait(false));`
-- **axProcess**, `src/AxProcess.Core/ServiceManager.cs:171`, in `ServiceManager.Start`, by `StartService (Windows)`: starts a Windows service the user chose in axProcess (Services view, Start), through the Service Control Manager; Windows runs the service's own program.
+- **axProcess**, `src/AxProcess.Core/ServiceManager.cs`, in `ServiceManager.Start`, by `StartService (Windows)`: starts a Windows service the user chose in axProcess (Services view, Start), through the Service Control Manager; Windows runs the service's own program.
   Code: `StartService(service, 0, null) ? 0 : Marshal.GetLastWin32Error(), ErrorAlreadyRunning);`
 
 #### User programs
@@ -172,9 +172,9 @@ Calls (14):
 
 Calls (2):
 
-- **axFile**, `src/AxFile/FileForm.Programs.cs:89`, in `FileForm.RunProgram`, by `Process.Start`: starts a program the user added to Open with on the selected entries; the user's own program, by the path they gave, a script through Windows PowerShell.
+- **axFile**, `src/AxFile/FileForm.Programs.cs`, in `FileForm.RunProgram`, by `Process.Start`: starts a program the user added to Open with on the selected entries; the user's own program, by the path they gave, a script through Windows PowerShell.
   Code: `Process.Start(UserPrograms.StartInfo(program, paths))?.Dispose();`
-- **axStart**, `src/AxStart/AppsFolder.cs:116`, in `AppsFolder.Start`, by `Process.Start`: starts the program the user picked in axStart, by its name in the shell's Applications folder as the Start menu does, or its target file as administrator when asked.
+- **axStart**, `src/AxStart/AppsFolder.cs`, in `AppsFolder.Start`, by `Process.Start`: starts the program the user picked in axStart, by its name in the shell's Applications folder as the Start menu does, or its target file as administrator when asked.
   Code: `Process.Start(info)?.Dispose();`
 
 #### axKit
@@ -187,17 +187,17 @@ Calls (2):
 
 Calls (6):
 
-- **axAutomate**, `src/AxAutomate.Core/Broker.cs:57`, in `Broker.Start`, by `Process.Start`: AxKit.exe mcp, the AI tools' server, as the run's MCP client starts it, with the run's secret and folder.
+- **axAutomate**, `src/AxAutomate.Core/Broker.cs`, in `Broker.Start`, by `Process.Start`: AxKit.exe mcp, the AI tools' server, as the run's MCP client starts it, with the run's secret and folder.
   Code: `var broker = new Broker(Process.Start(start)!);`
-- **axAutomate**, `src/AxAutomate.Core/Window.cs:187`, in `Window.Create`, by `CreateProcess (Windows)`: a window of a workflow's run (axAutomate's window or tools/AxAutomate), on the run's own desktop with the run's secret and folder, so that it never takes the user's keyboard or settings. 0x400 is CREATE_UNICODE_ENVIRONMENT.
+- **axAutomate**, `src/AxAutomate.Core/Window.cs`, in `Window.Create`, by `CreateProcess (Windows)`: a window of a workflow's run (axAutomate's window or tools/AxAutomate), on the run's own desktop with the run's secret and folder, so that it never takes the user's keyboard or settings. 0x400 is CREATE_UNICODE_ENVIRONMENT.
   Code: `if (!Native.CreateProcessW(null, commandLine, 0, 0, false, 0x400, environment, null, ref startup, out var info))`
-- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
+- **shared by every app**, `src/AxKit.Core/Updates/Updater.cs`, in `Updater.StartInstalled`, by `Process.Start`: starts the installed AxKit.exe again after an update, with the window's own arguments, so that the user comes back to the same app (Update and restart).
   Code: `Process.Start(start)?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:353`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
+- **shared by every app**, `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
   Code: `using var process = Process.Start(start);`
-- **shared by every app**, `src/AxKit.Forms/WindowMenu.cs:187`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
+- **shared by every app**, `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
   Code: `Process.Start(info)?.Dispose();`
-- **shared by every app**, `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
+- **shared by every app**, `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
 
 #### Workflow commands
@@ -210,7 +210,7 @@ Calls (6):
 
 Calls (1):
 
-- **axAutomate**, `src/AxAutomate.Core/Run.cs:208`, in `Run.RunCommand`, by `Process.Start`: a workflow's run step, the command line it holds, through cmd.exe in the run's own folder, waited for up to 60 s.
+- **axAutomate**, `src/AxAutomate.Core/Run.cs`, in `Run.RunCommand`, by `Process.Start`: a workflow's run step, the command line it holds, through cmd.exe in the run's own folder, waited for up to 60 s.
   Code: `using var process = Process.Start(start)!;`
 
 ### Pipes
@@ -225,11 +225,11 @@ Calls (1):
 
 Calls (3):
 
-- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:59`, in `McpBroker.Run`, by `Console.OpenStandardInput`: the standard input of the MCP server process ("AxKit.exe mcp"), on which the paired AI tool, Claude Code, sends its requests; the answers go back on standard output; on this computer, never over the network.
+- **shared by every app**, `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Run`, by `Console.OpenStandardInput`: the standard input of the MCP server process ("AxKit.exe mcp"), on which the paired AI tool, Claude Code, sends its requests; the answers go back on standard output; on this computer, never over the network.
   Code: `using var input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(false));`
-- **shared by every app**, `src/AxKit.Forms/McpBroker.cs:287`, in `McpBroker.Exchange`, by `new NamedPipeClientStream`: connects to one axKit window's pipe to ask it what it shows, for the AI tool's request; the broker first checks that the pipe's server is this very program file (docs/axKit/mcp.md MC-6.3).
+- **shared by every app**, `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Exchange`, by `new NamedPipeClientStream`: connects to one axKit window's pipe to ask it what it shows, for the AI tool's request; the broker first checks that the pipe's server is this very program file (docs/axKit/mcp.md MC-6.3).
   Code: `using var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification);`
-- **shared by every app**, `src/AxKit.Forms/McpChannel.cs:102`, in `McpChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where the MCP server asks the window what it shows while the AI tools are on; each connection must answer the challenge with the paired key.
+- **shared by every app**, `src/AxKit.Forms/McpChannel.cs`, in `McpChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where the MCP server asks the window what it shows while the AI tools are on; each connection must answer the challenge with the paired key.
   Code: `using var pipe = NamedPipeServerStreamAcl.Create(_name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());`
 
 #### Test automation
@@ -242,9 +242,9 @@ Calls (3):
 
 Calls (2):
 
-- **axAutomate**, `src/AxAutomate.Core/Window.cs:50`, in `Window.Window`, by `new NamedPipeClientStream`: the automation channel of a window of the run, opened with the run's secret.
+- **axAutomate**, `src/AxAutomate.Core/Window.cs`, in `Window.Window`, by `new NamedPipeClientStream`: the automation channel of a window of the run, opened with the run's secret.
   Code: `_pipe = new NamedPipeClientStream(".", $"axkit-auto-{process.Id}", PipeDirection.InOut, PipeOptions.CurrentUserOnly);`
-- **shared by every app**, `src/AxKit.Forms/AutomationChannel.cs:123`, in `AutomationChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's pipe of an automated test run only (AXKIT_AUTOMATION, set by tools/AxAutomate), which only this account may open, so that the test tool can drive the window; never opened in normal use (docs/axKit/automation.md).
+- **shared by every app**, `src/AxKit.Forms/AutomationChannel.cs`, in `AutomationChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's pipe of an automated test run only (AXKIT_AUTOMATION, set by tools/AxAutomate), which only this account may open, so that the test tool can drive the window; never opened in normal use (docs/axKit/automation.md).
   Code: `using var pipe = NamedPipeServerStreamAcl.Create($"axkit-auto-{Environment.ProcessId}", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());`
 
 ## The functions that make these calls
@@ -257,14 +257,14 @@ Defined in .NET, System.Net.Http: the framework's HTTP client.
 
 Used in 8 places:
 
-- `src/AxKit.Core/Reports/GitHubIssues.cs:81`, in `GitHubIssues.CreateAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:93`, in `GitHubIssues.ReadBlocklistAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:112`, in `GitHubIssues.ListAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:152`, in `GitHubIssues.PatchAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:162`, in `GitHubIssues.CommentAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:174`, in `GitHubIssues.WriteBlocklistAsync`, for GitHub.
-- `src/AxKit.Core/Reports/GitHubIssues.cs:195`, in `GitHubIssues.WriteBlocklistAsync`, for GitHub.
-- `src/AxKit.Core/Updates/UpdateCheck.cs:130`, in `UpdateCheck.FetchLatestAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.CreateAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.ReadBlocklistAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.ListAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.PatchAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.CommentAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.WriteBlocklistAsync`, for GitHub.
+- `src/AxKit.Core/Reports/GitHubIssues.cs`, in `GitHubIssues.WriteBlocklistAsync`, for GitHub.
+- `src/AxKit.Core/Updates/UpdateCheck.cs`, in `UpdateCheck.FetchLatestAsync`, for GitHub.
 
 ### HttpClient.GetAsync, network
 
@@ -272,7 +272,7 @@ Defined in .NET, System.Net.Http: the framework's HTTP client.
 
 Used in 1 place:
 
-- `src/AxKit.Core/Updates/Updater.cs:89`, in `Updater.DownloadAsync`, for GitHub.
+- `src/AxKit.Core/Updates/Updater.cs`, in `Updater.DownloadAsync`, for GitHub.
 
 ### HttpClient.GetStringAsync, network
 
@@ -280,7 +280,7 @@ Defined in .NET, System.Net.Http: the framework's HTTP client.
 
 Used in 1 place:
 
-- `src/AxKit.Core/Updates/Updater.cs:65`, in `Updater.DownloadAsync`, for GitHub.
+- `src/AxKit.Core/Updates/Updater.cs`, in `Updater.DownloadAsync`, for GitHub.
 
 ### new HttpClient, network
 
@@ -288,7 +288,7 @@ Defined in .NET, System.Net.Http: the framework's HTTP client.
 
 Used in 1 place:
 
-- `src/AxKit.Core/AxKitHttp.cs:19`, in `AxKitHttp.Create`, for GitHub.
+- `src/AxKit.Core/AxKitHttp.cs`, in `AxKitHttp.Create`, for GitHub.
 
 ### Process.Start, program
 
@@ -296,93 +296,93 @@ Defined in .NET, System.Diagnostics: starts a program, through the Windows shell
 
 Used in 18 places:
 
-- `src/AxAutomate.Core/Broker.cs:57`, in `Broker.Start`, for axKit.
-- `src/AxAutomate.Core/Run.cs:208`, in `Run.RunCommand`, for Workflow commands.
-- `src/AxFile/FileForm.Operations.cs:698`, in `FileForm.ShowFolderInExplorer`, for Windows.
-- `src/AxFile/FileForm.Operations.cs:782`, in `FileForm.OpenWithWindows`, for Windows.
-- `src/AxFile/FileForm.Programs.cs:89`, in `FileForm.RunProgram`, for User programs.
-- `src/AxKit.Core/SignInStart.cs:57`, in `SignInStart.OpenWindowsStartupSettings`, for Windows.
-- `src/AxKit.Core/Updates/Updater.cs:183`, in `Updater.InstallInPlaceAsync`, for Windows.
-- `src/AxKit.Core/Updates/Updater.cs:236`, in `Updater.StartInstalled`, for axKit.
-- `src/AxKit.Forms/AxKitForm.cs:896`, in `AxKitForm.OpenUrl`, for Windows.
-- `src/AxKit.Forms/AxKitForm.cs:921`, in `AxKitForm.OpenInExplorer`, for Windows.
-- `src/AxKit.Forms/AxKitForm.Install.cs:122`, in `AxKitForm.RunInstallerAsync`, for Installers.
-- `src/AxKit.Forms/AxKitForm.Mcp.cs:555`, in `AxKitForm.RunClaude`, for Claude Code.
-- `src/AxKit.Forms/AxKitForm.Updates.cs:156`, in `AxKitForm.OpenStorePage`, for Windows.
-- `src/AxKit.Forms/McpBroker.cs:353`, in `McpBroker.Open`, for axKit.
-- `src/AxKit.Forms/TextEditorForm.Viewer.cs:274`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
-- `src/AxKit.Forms/WindowMenu.cs:187`, in `WindowMenu.StartWith`, for axKit.
-- `src/AxKit/Program.cs:145`, in `Program.StartedAsOpenWithLink`, for axKit.
-- `src/AxStart/AppsFolder.cs:116`, in `AppsFolder.Start`, for User programs.
+- `src/AxAutomate.Core/Broker.cs`, in `Broker.Start`, for axKit.
+- `src/AxAutomate.Core/Run.cs`, in `Run.RunCommand`, for Workflow commands.
+- `src/AxFile/FileForm.Operations.cs`, in `FileForm.ShowFolderInExplorer`, for Windows.
+- `src/AxFile/FileForm.Operations.cs`, in `FileForm.OpenWithWindows`, for Windows.
+- `src/AxFile/FileForm.Programs.cs`, in `FileForm.RunProgram`, for User programs.
+- `src/AxKit.Core/SignInStart.cs`, in `SignInStart.OpenWindowsStartupSettings`, for Windows.
+- `src/AxKit.Core/Updates/Updater.cs`, in `Updater.InstallInPlaceAsync`, for Windows.
+- `src/AxKit.Core/Updates/Updater.cs`, in `Updater.StartInstalled`, for axKit.
+- `src/AxKit.Forms/AxKitForm.cs`, in `AxKitForm.OpenUrl`, for Windows.
+- `src/AxKit.Forms/AxKitForm.cs`, in `AxKitForm.OpenInExplorer`, for Windows.
+- `src/AxKit.Forms/AxKitForm.Install.cs`, in `AxKitForm.RunInstallerAsync`, for Installers.
+- `src/AxKit.Forms/AxKitForm.Mcp.cs`, in `AxKitForm.RunClaude`, for Claude Code.
+- `src/AxKit.Forms/AxKitForm.Updates.cs`, in `AxKitForm.OpenStorePage`, for Windows.
+- `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Open`, for axKit.
+- `src/AxKit.Forms/TextEditorForm.Viewer.cs`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
+- `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartWith`, for axKit.
+- `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, for axKit.
+- `src/AxStart/AppsFolder.cs`, in `AppsFolder.Start`, for User programs.
 
 ### ProcessRun.Run, program
 
-Defined in this repository, `src/AxKit.Core/ProcessRun.cs:69` (`public static ProcessResult Run(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout) =>`).
+Defined in this repository, `src/AxKit.Core/ProcessRun.cs` (`public static ProcessResult Run(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout) =>`).
 
 Used in 1 place:
 
-- `src/AxPass.Core/KeePassCli.cs:79`, in `KeePassCli.Run`, for KeePassXC.
+- `src/AxPass.Core/KeePassCli.cs`, in `KeePassCli.Run`, for KeePassXC.
 
 ### ProcessRun.RunAsync, program
 
-Defined in this repository, `src/AxKit.Core/ProcessRun.cs:23` (`public static async Task<ProcessResult> RunAsync(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout, CancellationToken cancellation = default)`).
+Defined in this repository, `src/AxKit.Core/ProcessRun.cs` (`public static async Task<ProcessResult> RunAsync(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout, CancellationToken cancellation = default)`).
 
 Used in 4 places:
 
-- `src/AxClaude.Core/Pty/ClaudeLauncher.cs:46`, in `ClaudeLauncher.VersionAsync`, for Claude Code.
-- `src/AxGit.Core/GitRunner.cs:111`, in `GitRunner.RunAsync`, for Git.
-- `src/AxKit.Core/Ai/AiRequest.cs:74`, in `AiRequest.AskAsync`, for Claude Code.
-- `src/AxPreview.Core/PictureText.cs:112`, in `PictureText.RecognizeAsync`, for Windows.
+- `src/AxClaude.Core/Pty/ClaudeLauncher.cs`, in `ClaudeLauncher.VersionAsync`, for Claude Code.
+- `src/AxGit.Core/GitRunner.cs`, in `GitRunner.RunAsync`, for Git.
+- `src/AxKit.Core/Ai/AiRequest.cs`, in `AiRequest.AskAsync`, for Claude Code.
+- `src/AxPreview.Core/PictureText.cs`, in `PictureText.RecognizeAsync`, for Windows.
 
 ### PtyHost.Start, program
 
-Defined in this repository, `src/AxKit.Core/Pty/PtyHost.cs:46` (`public static PtyHost Start(PtyOptions options, Action<byte[]> dataReceived, Action<int> exited)`).
+Defined in this repository, `src/AxKit.Core/Pty/PtyHost.cs` (`public static PtyHost Start(PtyOptions options, Action<byte[]> dataReceived, Action<int> exited)`).
 
 Used in 1 place:
 
-- `src/AxKit.Forms/ConsoleForm.Process.cs:51`, in `ConsoleForm.StartProcess`, for Claude Code and Shells.
+- `src/AxKit.Forms/ConsoleForm.Process.cs`, in `ConsoleForm.StartProcess`, for Claude Code and Shells.
 
 ### CreateProcess (Windows), program
 
-Defined in Windows' `kernel32.dll`, declared for axKit in `src/AxAutomate.Core/Native.cs:150` (`public static extern bool CreateProcessW(string? application, StringBuilder commandLine, nint processAttributes, nint threadAttributes,`).
+Defined in Windows' `kernel32.dll`, declared for axKit in `src/AxAutomate.Core/Native.cs` (`public static extern bool CreateProcessW(string? application, StringBuilder commandLine, nint processAttributes, nint threadAttributes,`).
 
 Used in 2 places:
 
-- `src/AxAutomate.Core/Window.cs:187`, in `Window.Create`, for axKit.
-- `src/AxKit.Core/Pty/PtyHost.cs:107`, in `PtyHost.Start`, for Claude Code and Shells.
+- `src/AxAutomate.Core/Window.cs`, in `Window.Create`, for axKit.
+- `src/AxKit.Core/Pty/PtyHost.cs`, in `PtyHost.Start`, for Claude Code and Shells.
 
 ### ShellExecuteEx (Windows), program
 
-Defined in Windows' `shell32.dll`, declared for axKit in `src/AxFile/Shell.cs:455` (`private static extern bool ShellExecuteExW(ref ShellExecuteInfo info);`).
+Defined in Windows' `shell32.dll`, declared for axKit in `src/AxFile/Shell.cs` (`private static extern bool ShellExecuteExW(ref ShellExecuteInfo info);`).
 
 Used in 1 place:
 
-- `src/AxFile/Shell.cs:68`, in `Shell.Properties`, for Windows.
+- `src/AxFile/Shell.cs`, in `Shell.Properties`, for Windows.
 
 ### IContextMenu.InvokeCommand (Windows), program
 
-Defined in the Windows shell's COM interface IContextMenu, as a method of it, declared for axKit in `src/AxFile/Shell.cs:593` (`int InvokeCommand(ref InvokeInfo info);`).
+Defined in the Windows shell's COM interface IContextMenu, as a method of it, declared for axKit in `src/AxFile/Shell.cs` (`int InvokeCommand(ref InvokeInfo info);`).
 
 Used in 2 places:
 
-- `src/AxFile/Shell.cs:116`, in `Shell.ShowMenu`, for Windows.
-- `src/AxFile/Shell.cs:326`, in `Shell.Invoke`, for Windows.
+- `src/AxFile/Shell.cs`, in `Shell.ShowMenu`, for Windows.
+- `src/AxFile/Shell.cs`, in `Shell.Invoke`, for Windows.
 
 ### SHOpenWithDialog (Windows), program
 
-Defined in Windows' `shell32.dll`, declared for axKit in `src/AxKit.Forms/WindowsOpenWith.cs:28` (`private static extern int SHOpenWithDialog(nint owner, in OpenAsInfo info);`).
+Defined in Windows' `shell32.dll`, declared for axKit in `src/AxKit.Forms/WindowsOpenWith.cs` (`private static extern int SHOpenWithDialog(nint owner, in OpenAsInfo info);`).
 
 Used in 1 place:
 
-- `src/AxKit.Forms/WindowsOpenWith.cs:23`, in `WindowsOpenWith.Show`, for Windows.
+- `src/AxKit.Forms/WindowsOpenWith.cs`, in `WindowsOpenWith.Show`, for Windows.
 
 ### StartService (Windows), program
 
-Defined in Windows' `advapi32.dll`, declared for axKit in `src/AxProcess.Core/ServiceManager.cs:335` (`private static extern bool StartService(IntPtr service, uint arguments, string[]? vectors);`).
+Defined in Windows' `advapi32.dll`, declared for axKit in `src/AxProcess.Core/ServiceManager.cs` (`private static extern bool StartService(IntPtr service, uint arguments, string[]? vectors);`).
 
 Used in 1 place:
 
-- `src/AxProcess.Core/ServiceManager.cs:171`, in `ServiceManager.Start`, for Windows.
+- `src/AxProcess.Core/ServiceManager.cs`, in `ServiceManager.Start`, for Windows.
 
 ### new NamedPipeClientStream, pipe
 
@@ -390,8 +390,8 @@ Defined in .NET, System.IO.Pipes: connects to a named pipe on this computer.
 
 Used in 2 places:
 
-- `src/AxAutomate.Core/Window.cs:50`, in `Window.Window`, for Test automation.
-- `src/AxKit.Forms/McpBroker.cs:287`, in `McpBroker.Exchange`, for AI tools.
+- `src/AxAutomate.Core/Window.cs`, in `Window.Window`, for Test automation.
+- `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Exchange`, for AI tools.
 
 ### NamedPipeServerStreamAcl.Create, pipe
 
@@ -399,8 +399,8 @@ Defined in .NET, System.IO.Pipes: opens a named pipe on this computer with an ac
 
 Used in 2 places:
 
-- `src/AxKit.Forms/AutomationChannel.cs:123`, in `AutomationChannel.Serve`, for Test automation.
-- `src/AxKit.Forms/McpChannel.cs:102`, in `McpChannel.Serve`, for AI tools.
+- `src/AxKit.Forms/AutomationChannel.cs`, in `AutomationChannel.Serve`, for Test automation.
+- `src/AxKit.Forms/McpChannel.cs`, in `McpChannel.Serve`, for AI tools.
 
 ### Console.OpenStandardInput, pipe
 
@@ -408,6 +408,6 @@ Defined in .NET, System: the standard input, which the process that started this
 
 Used in 1 place:
 
-- `src/AxKit.Forms/McpBroker.cs:59`, in `McpBroker.Run`, for AI tools.
+- `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Run`, for AI tools.
 
 Watched for and not used today: HttpClient.GetStreamAsync (network); HttpClient.GetByteArrayAsync (network); HttpClient.PostAsync (network); WebRequest.Create (network); new WebClient (network); new Socket (network); new TcpClient (network); new TcpListener (network); new UdpClient (network); new HttpListener (network); Dns.GetHostEntry, Dns.GetHostAddresses (network).

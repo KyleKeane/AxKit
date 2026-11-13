@@ -1,4 +1,5 @@
 # Workflow: Check for an update from a conversation
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently; GitHub for the update check.
 # axClaude, docs/axClaude/nvda-test-plan.md section 11: updates. This script asks GitHub (the update check at start is
 # on, as it is by default); GitHub's limit for unsigned requests, sixty an hour, can make the check fail, and the
 # window then logs an ERROR, which fails the run after its steps.

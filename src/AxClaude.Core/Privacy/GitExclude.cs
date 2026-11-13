@@ -79,7 +79,7 @@ public static class GitExclude
         }
 
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        File.WriteAllText(path, updated);
+        SafeFile.WriteAllText(path, updated);
         return path;
     }
 

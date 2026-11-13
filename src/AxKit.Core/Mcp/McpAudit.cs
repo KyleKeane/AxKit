@@ -27,6 +27,29 @@ public static class McpAudit
         }
     }
 
+    /// <summary>
+    /// The result as the line holds it (docs/axKit/repairs.json R-06). A command run is named, so that the user can
+    /// read what an AI tool ran: "done: ran Word wrap", the name cut before a recent file's path ("1. notes.md"). A
+    /// refusal's first line goes through <see cref="Redaction"/>, since it may quote a path the client gave.
+    /// </summary>
+    public static string Result(string tool, string? command, bool failed, string text)
+    {
+        var first = text.Split('\n')[0].Trim();
+        if (failed)
+        {
+            return "refused or failed: " + Redaction.Redact(first);
+        }
+
+        return tool == McpTools.Run && !string.IsNullOrWhiteSpace(command) ? "done: ran " + NameOnly(command) : "done";
+    }
+
+    /// <summary>A command's name without the path a recent file's entry carries in brackets: "1. notes.md (C:\…\notes.md)" is "1. notes.md".</summary>
+    private static string NameOnly(string command)
+    {
+        var bracket = command.IndexOf(" (", StringComparison.Ordinal);
+        return (bracket > 0 ? command[..bracket] : command).Trim();
+    }
+
     /// <summary>The first 16 hex digits of the arguments' SHA-256: the same arguments give the same digits, and nothing of them can be read back.</summary>
     public static string Hash(string arguments) =>
         Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(arguments)))[..16];

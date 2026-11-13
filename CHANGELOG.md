@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- axKit: a file you save is written whole or not at all: the new text goes to a temporary file that then takes the old one's place, so a crash or a full disk in the middle of a save leaves the file as it was. This covers the editors' documents, axTask's items, the settings and the theme.
+- axMCP: a server whose command is a bare name such as `npx` or `node` is found in the folders of your PATH, with `.exe`, `.cmd` or `.bat` when the name has none; before, `npx` did not start. A name that is nowhere says so and how to fix it.
+- axPass: an undo that the tool refuses at once ("Still working on the last command") keeps its step, so Ctrl+Z works when you press it again; before, the step was lost.
+- axClaude: when a turn ends in one of Claude's feedback surveys you still hear "Done" and the end of the reply; and the words that keep a reply line silent now test a long line whole, not row by row.
+- For developers: the audit of 2026-11-13 and its repairs are in docs/axKit/repairs.md, written from docs/axKit/repairs.json by tools/repairs.ps1. test.ps1 now ends with the checks of the generated pages, as CI does; tools/AxAutomate needs --build or --exe (no default program) and says which build it drove; a window that hangs fails its step after 30 seconds.
 - axKit: the AI tools see a window as the command palette does: every menu item, the settings with whether each is on, and the recent files and windows; a setting an AI tool changes is said in the window like any command it runs. The AI tools' own switches, and AI help's switch and folders, are never offered to them. One list now feeds the menus, the palette and the AI tools, so they cannot drift apart. A menu item whose effect has not been stated yet asks you before an AI tool runs it.
 - axKit: the command palette (Ctrl+Shift+P) finds your recent files and windows: every Open recent list, axFile's Favorites, and the Window menu's Open windows and Recently closed. Type a few letters of a file's name and press Enter. Before, the palette left these lists out.
 - axKit: Find in a list (Ctrl+F in axCalc's history, axFile, axMedia's queue and the other list windows) moves the focus to the match, so NVDA reads it. Before, a Find started from another control, such as axCalc's expression field, selected the match without a word.

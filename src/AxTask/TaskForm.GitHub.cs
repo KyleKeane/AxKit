@@ -444,7 +444,7 @@ public sealed partial class TaskForm
                 try
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(AppPaths.GitHubTokenFile)!);
-                    File.WriteAllText(AppPaths.GitHubTokenFile, UserSecret.Protect(token));
+                    SafeFile.WriteAllText(AppPaths.GitHubTokenFile, UserSecret.Protect(token));
                     Announce("GitHub token kept", false);
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.Cryptography.CryptographicException)

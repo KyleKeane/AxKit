@@ -13,8 +13,20 @@ FLAG = os.path.join(os.environ.get("TEMP", "."), "axkit-nvda-capture.on")
 LOG = os.path.join(os.environ.get("TEMP", "."), "axkit-nvda-speech.log")
 
 
+# A run of every script takes under an hour. A flag older than this was left by a run that ended without its end (the
+# runner killed): it is not obeyed, so that nothing of daily use is ever recorded (docs/axKit/repairs.json R-33).
+FLAG_MAX_AGE_SECONDS = 2 * 60 * 60
+
+
+def _capturing():
+	try:
+		return time.time() - os.path.getmtime(FLAG) < FLAG_MAX_AGE_SECONDS
+	except OSError:
+		return False
+
+
 def _write(kind, text):
-	if not os.path.exists(FLAG):
+	if not _capturing():
 		return
 	try:
 		with open(LOG, "a", encoding="utf-8") as log:

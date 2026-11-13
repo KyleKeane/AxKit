@@ -22,6 +22,21 @@ public class ProcessRunTests
     }
 
     [Fact]
+    public async Task A_program_that_ends_without_reading_its_input_gives_its_words_and_exit_code()
+    {
+        // docs/axKit/repairs.json R-26: more input than a pipe holds, to a program that reads none of it and ends.
+        var start = new ProcessStartInfo(SystemPrograms.Cmd);
+        start.ArgumentList.Add("/d");
+        start.ArgumentList.Add("/c");
+        start.ArgumentList.Add("echo refused& exit 5");
+        var line = new string('x', 4096);
+        var result = await ProcessRun.RunAsync(start, [.. Enumerable.Repeat(line, 200)], TimeSpan.FromSeconds(20));
+        Assert.False(result.TimedOut);
+        Assert.Equal(5, result.ExitCode);
+        Assert.Equal("refused", result.Output.Trim());
+    }
+
+    [Fact]
     public async Task The_input_lines_reach_the_program()
     {
         // findstr prints the lines of its input that hold the text.

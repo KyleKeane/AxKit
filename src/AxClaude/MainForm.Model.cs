@@ -115,13 +115,11 @@ internal sealed partial class MainForm
         if (_heldLines.Count > 0)
         {
             var text = new StringBuilder();
-            foreach (var line in _heldLines)
+            // FR-7.4a: a line holding one of the user's silent words stays in the conversation, unspoken, whole: its
+            // row and the rows its wrapping joined to it.
+            foreach (var line in SpeechFilter.Spoken(_heldLines, _settings.SilentWords))
             {
-                // FR-7.4a: a line holding one of the user's silent words stays in the conversation, unspoken.
-                if (!SpeechFilter.Silences(line.Text, _settings.SilentWords))
-                {
-                    Utterance.Append(text, Arrivals.SpokenText(line), line.JoinedToPrevious);
-                }
+                Utterance.Append(text, Arrivals.SpokenText(line), line.JoinedToPrevious);
             }
 
             if (text.Length > 0)
@@ -147,6 +145,20 @@ internal sealed partial class MainForm
         {
             if (_wait is null || _wait.Stale || _wait.Signature != waiting || ScreenNoticeOutdated)
             {
+                // A feedback survey comes after the turn, not in its place: the turn's end is said first, as without
+                // the survey (docs/axKit/repairs.json R-18; a question of Claude's about its work replaces "Done", a
+                // survey about Claude does not). Whether the survey is then shown or dismissed unheard is the user's setting.
+                if (_bellPending && _model.PendingQuestion is { KeyOnly: true })
+                {
+                    if (_settings.AnnounceBell)
+                    {
+                        Announce("Done", false);
+                    }
+
+                    Signal(question: false);
+                    _bellPending = false;
+                }
+
                 if (_wait?.Signature != waiting && !ScreenNoticeShows(_model.PendingScreen))
                 {
                     // Something else waits now: an information screen's notice (FR-2.11) gives way to it.

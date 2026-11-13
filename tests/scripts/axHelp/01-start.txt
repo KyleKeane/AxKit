@@ -1,4 +1,5 @@
 # Workflow: Ask Claude for help from anywhere, with a picture of the screen
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axHelp: its window, the conversation brought up from it, and a picture handed into the conversation's message field
 # (docs/axHelp/nvda-test-plan.md sections 1 to 3; SPEC.md HE-1 to HE-3). The conversation is a real axClaude window on
 # the run's own working folder (AI help's, under the run's home), titled axHelp, with Claude Code on Haiku, axHelp's

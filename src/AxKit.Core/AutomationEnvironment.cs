@@ -8,7 +8,8 @@ namespace AxKit.Core;
 /// <c>AXKIT_HOME</c>, the run's folder for the settings and logs. They are read once, as the process starts, and taken
 /// out of its environment at once, so that no program the window starts inherits them (a shell, Claude, git, the user's
 /// own programs): only a new axKit window of the same run gets them, from <see cref="PassTo"/>. A secret shorter than 32
-/// characters opens nothing, and the folder counts only with a secret.
+/// characters opens nothing; the secret and the folder count only together, and never from the lasting environment
+/// (<see cref="Accepted"/>).
 /// </summary>
 public static class AutomationEnvironment
 {
@@ -58,9 +59,24 @@ public static class AutomationEnvironment
         var home = Environment.GetEnvironmentVariable(HomeVariable);
         Environment.SetEnvironmentVariable(SecretVariable, null);
         Environment.SetEnvironmentVariable(HomeVariable, null);
-        _secret = secret is { Length: >= MinimumSecretLength } ? secret : null;
-        _home = _secret is not null && home is { Length: > 0 } ? home : null;
+        // The registry is asked only when a secret is there at all: never in a start of the user's own.
+        (_secret, _home) = Accepted(secret, home, secret is not null && (Persisted(SecretVariable) || Persisted(HomeVariable)));
     }
+
+    /// <summary>
+    /// What a start takes of the two variables (docs/axKit/repairs.json R-02): the secret and the folder together, or
+    /// neither. A run's windows get both, in their own environment block, from the runner that starts them. A secret
+    /// without a folder would open the channel on the user's real settings and files, and one set in the user's or
+    /// the computer's lasting environment (<paramref name="persisted"/>) was put there by something other than a
+    /// run, to reach every window started later: neither opens anything.
+    /// </summary>
+    public static (string? Secret, string? Home) Accepted(string? secret, string? home, bool persisted) =>
+        !persisted && secret is { Length: >= MinimumSecretLength } && home is { Length: > 0 } ? (secret, home) : (null, null);
+
+    /// <summary>Whether a variable is set in the user's or the computer's environment as Windows keeps it, beyond this process.</summary>
+    private static bool Persisted(string variable) =>
+        Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.User) is not null
+        || Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.Machine) is not null;
 
     /// <summary>A new axKit window of the same run gets the run's variables; outside a run, nothing.</summary>
     public static void PassTo(ProcessStartInfo info)

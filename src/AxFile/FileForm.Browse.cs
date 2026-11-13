@@ -584,7 +584,7 @@ public sealed partial class FileForm
     /// <summary>Folder → Favorites ▸: the pinned folders that still exist as "1. name (path)", or "No favorites yet", then the key's item.</summary>
     private void FillFavorites()
     {
-        RecentMenu.FillFolders(_favoritesItem, _settings.Favorites, "&No favorites yet", target => Do(() => ShowFolderAsync(target, null, remember: true)));
+        RecentMenu.FillFolders(_favoritesItem, _settings.Favorites, "&No favorites yet", CommandMark.Open, target => Do(() => ShowFolderAsync(target, null, remember: true)));
         _favoritesItem.DropDownItems.Add(new ToolStripSeparator());
         _favoritesItem.DropDownItems.Add(Item("&Add or remove this folder", ToggleFavorite, AxFileKeys.Favorite));
     }
@@ -744,7 +744,7 @@ public sealed partial class FileForm
 
     /// <summary>Folder → Open recent folder (AF-3.3): the last ten opened by command, those that still exist, "1. name (path)" (AX-9.5).</summary>
     private void FillRecent() =>
-        RecentMenu.FillFolders(_recentItem, _settings.RecentFolders, "&No recent folders", target => Do(() => ShowFolderAsync(target, null, remember: true)));
+        RecentMenu.FillFolders(_recentItem, _settings.RecentFolders, "&No recent folders", CommandMark.Open, target => Do(() => ShowFolderAsync(target, null, remember: true)));
 
     // ---- find (AF-3.6) and information (AF-2.4) ----
 

@@ -49,7 +49,7 @@ public static class McpBroker
                 result = new McpResult("axKit could not do it: " + ex.Message, true);
             }
 
-            McpAudit.Write(name, program ?? "unknown program", tool, arguments.ToJsonString(), result.IsError ? "refused or failed: " + FirstLine(result.Text) : "done");
+            McpAudit.Write(name, program ?? "unknown program", tool, arguments.ToJsonString(), McpAudit.Result(tool, McpProtocol.Text(arguments["command"]), result.IsError, result.Text));
             return result;
         });
 
@@ -353,6 +353,4 @@ public static class McpBroker
         using var process = Process.Start(start);
         return new McpResult(process is null ? "The app did not start." : $"Opened {string.Join(" ", arguments)}.", process is null);
     }
-
-    private static string FirstLine(string text) => text.Split('\n')[0];
 }

@@ -1,5 +1,6 @@
 using AxClaude.Core;
 using AxClaude.Core.Transcript;
+using AxKit.Core.Transcript;
 using AxKit.TestShared;
 
 namespace AxClaude.Tests;
@@ -24,6 +25,25 @@ public class SpeechFilterTests
         Assert.True(SpeechFilter.Silences("tip: use /compact", words));
         Assert.False(SpeechFilter.Silences("The tests pass.", words));
         Assert.False(SpeechFilter.Silences("Anything at all", []));
+    }
+
+    [Fact]
+    public void A_wrapped_line_is_silenced_or_spoken_whole_with_the_rows_joined_to_it()
+    {
+        // docs/axKit/repairs.json R-20: one line over three rows, the word in the second; then a line of its own.
+        var first = new Line(1, LineKind.ClaudeReply, "claude: The total");
+        var second = new Line(2, LineKind.Plain, "cost: twelve cents for") { JoinedToPrevious = true };
+        var third = new Line(3, LineKind.Plain, "this turn.") { JoinedToPrevious = true };
+        var own = new Line(4, LineKind.Plain, "The tests pass.");
+        Assert.Equal([own], SpeechFilter.Spoken([first, second, third, own], ["cost:"]));
+        // No word: every row, in order.
+        Assert.Equal([first, second, third, own], SpeechFilter.Spoken([first, second, third, own], []));
+        // A word the wrap split over two rows still silences the line, with or without a space at the wrap.
+        var head = new Line(5, LineKind.ClaudeReply, "claude: see the pel");
+        var tail = new Line(6, LineKind.Plain, "ican there") { JoinedToPrevious = true };
+        Assert.Empty(SpeechFilter.Spoken([head, tail], ["pelican"]));
+        var spaced = new Line(7, LineKind.Plain, "feathers") { JoinedToPrevious = true };
+        Assert.Empty(SpeechFilter.Spoken([new Line(8, LineKind.ClaudeReply, "claude: pelican"), spaced], ["pelican feathers"]));
     }
 
     [Fact]

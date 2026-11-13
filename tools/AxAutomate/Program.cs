@@ -80,8 +80,8 @@ internal static class Program
     {
         if (args.Length == 0)
         {
-            Console.Error.WriteLine("Usage: AxAutomate <script or folder> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep]");
-            return 2;
+            Console.Error.WriteLine(Usage);
+            return CannotStart;
         }
 
         Console.OutputEncoding = Encoding.UTF8;
@@ -94,14 +94,17 @@ internal static class Program
         {
             switch (args[i])
             {
+                case "--exe" or "--report" when i + 1 >= args.Length:
+                    Console.Error.WriteLine($"{args[i]} needs a value. {Usage}");
+                    return CannotStart;
                 case "--exe": exe = args[++i]; break;
                 case "--build": build = true; break;
                 case "--report": reportPath = args[++i]; break;
                 case "--keep": keep = true; break;
                 case "--nvda": Run.Nvda = true; break;
                 default:
-                    Console.Error.WriteLine($"Unknown option: {args[i]}");
-                    return 2;
+                    Console.Error.WriteLine($"Unknown option: {args[i]}. {Usage}");
+                    return CannotStart;
             }
         }
 
@@ -115,16 +118,24 @@ internal static class Program
             exe = Build(repository, Path.Combine(root, "build"));
             if (exe is null)
             {
-                return 2;
+                return CannotStart;
             }
         }
 
-        exe ??= Path.Combine(repository, "src", "AxKit", "bin", "Release", "net10.0-windows", "AxKit.exe");
+        // No default program (docs/axKit/repairs.json R-32, 2026-11-13): the old default, src\AxKit\bin\Release, was
+        // whatever build happened to lie there, and a run against a stale one read exactly like a real one, twice in
+        // one week. The run names the program it drives, or builds it.
+        if (exe is null)
+        {
+            Console.Error.WriteLine($"Say which AxKit.exe to drive: --build builds the sources as they are now, --exe names a built one. {Usage}");
+            return CannotStart;
+        }
+
         exe = Path.GetFullPath(exe);
         if (!File.Exists(exe))
         {
-            Console.Error.WriteLine($"AxKit.exe not found: {exe}. Use --build, or --exe with a built AxKit.exe.");
-            return 2;
+            Console.Error.WriteLine($"AxKit.exe not found: {exe}. Use --build, or --exe with a built AxKit.exe. {Usage}");
+            return CannotStart;
         }
 
         var scripts = Directory.Exists(target)
@@ -132,53 +143,72 @@ internal static class Program
                 .Concat(Directory.GetFiles(target, "*" + WorkflowFile.Extension, SearchOption.AllDirectories))
                 .OrderBy(path => path, StringComparer.OrdinalIgnoreCase).ToList()
             : [target];
-        if (Run.Nvda)
-        {
-            // NVDA records only while this file exists (tools/nvda-capture); the log starts empty for the run.
-            File.Delete(Speech.LogPath);
-            File.WriteAllText(Speech.FlagPath, string.Empty);
 
-            // The user has stepped away at the assistant's question (automation.md, tier 3): Windows' own voice says the
-            // run takes the keyboard now, before the first key, and says when it is over. Not NVDA, so the capture holds
-            // only what the windows made NVDA say, and no window takes the focus.
-            Console.WriteLine("NVDA tier: hands off the keyboard and mouse until it says the tests are finished.");
-            Speech.WaitForQuiet(3000);
-            HandsOff.StartLoop("Running NVDA tests. Please do not touch the keyboard or mouse.");
-            Thread.Sleep(5000);
-            File.Delete(Speech.LogPath);
-        }
+        // A run that ended without its end (the runner killed, its console closed) left NVDA's capture on, and the add-on
+        // then wrote everything NVDA spoke into a file (R-33): an earlier run's flag goes first, in every run.
+        File.Delete(Speech.FlagPath);
 
-        var report = new StringBuilder($"# AxAutomate report\n\n{DateTime.Now:yyyy-MM-dd HH:mm}, {exe}\n\n");
+        // Which build this run drives, in the console and in the report's first lines (R-32).
+        var built = $"AxKit.exe {FileVersionInfo.GetVersionInfo(exe).ProductVersion ?? "of unknown version"}, built {File.GetLastWriteTime(exe):yyyy-MM-dd HH:mm}";
+        Console.WriteLine(built);
+        var report = new StringBuilder($"# AxAutomate report\n\n{DateTime.Now:yyyy-MM-dd HH:mm}, {exe}\n{built}\n\n");
         var failed = new List<string>();
         var notHeard = new List<string>();
         var clock = Stopwatch.StartNew();
-        foreach (var script in scripts)
+        try
         {
-            var name = Path.GetRelativePath(Directory.Exists(target) ? target : Path.GetDirectoryName(Path.GetFullPath(target))!, script);
-            Console.WriteLine($"== {name}");
-            var temp = Path.Combine(root, Path.GetFileNameWithoutExtension(script) + "-" + scripts.IndexOf(script));
-            Directory.CreateDirectory(temp);
-            var (ok, log) = RunScript(script, exe, temp);
-            report.Append($"## {name}: {(ok ? "PASS" : "FAIL")}\n\n```\n{log}```\n\n");
-            if (!ok)
+            if (Run.Nvda)
             {
-                failed.Add(name);
-                if (log.Contains("|| NVDA did not speak", StringComparison.Ordinal) || log.Contains("|| NVDA spoke it only after", StringComparison.Ordinal))
+                // NVDA records only while this file exists (tools/nvda-capture); the log starts empty for the run.
+                File.Delete(Speech.LogPath);
+                File.WriteAllText(Speech.FlagPath, string.Empty);
+
+                // The user has stepped away at the assistant's question (automation.md, tier 3): Windows' own voice says
+                // the run takes the keyboard now, before the first key, and says when it is over. Not NVDA, so the
+                // capture holds only what the windows made NVDA say, and no window takes the focus.
+                Console.WriteLine("NVDA tier: hands off the keyboard and mouse until it says the tests are finished.");
+                Speech.WaitForQuiet(3000);
+                HandsOff.StartLoop("Running NVDA tests. Please do not touch the keyboard or mouse.");
+                Thread.Sleep(5000);
+                File.Delete(Speech.LogPath);
+            }
+
+            foreach (var script in scripts)
+            {
+                var name = Path.GetRelativePath(Directory.Exists(target) ? target : Path.GetDirectoryName(Path.GetFullPath(target))!, script);
+                Console.WriteLine($"== {name}");
+                var temp = Path.Combine(root, Path.GetFileNameWithoutExtension(script) + "-" + scripts.IndexOf(script));
+                Directory.CreateDirectory(temp);
+                var (ok, log) = RunScript(script, exe, temp);
+                report.Append($"## {name}: {(ok ? "PASS" : "FAIL")}\n\n```\n{log}```\n\n");
+                if (!ok)
                 {
-                    notHeard.Add(name);
+                    failed.Add(name);
+                    if (log.Contains("|| NVDA did not speak", StringComparison.Ordinal) || log.Contains("|| NVDA spoke it only after", StringComparison.Ordinal))
+                    {
+                        notHeard.Add(name);
+                    }
                 }
             }
-        }
 
-        if (Run.Nvda)
+            if (Run.Nvda)
+            {
+                // The last windows have closed and NVDA reads what comes to the front: the end waits for it.
+                Speech.WaitForQuiet(4000);
+            }
+        }
+        finally
         {
-            // The last windows have closed and NVDA reads what comes to the front: the end waits for it.
-            Speech.WaitForQuiet(4000);
-            HandsOff.StopLoop();
-            Thread.Sleep(500);
-            File.Delete(Speech.FlagPath);
-            File.Delete(Speech.LogPath);
-            HandsOff.Say("NVDA tests finished. The keyboard is yours.");
+            if (Run.Nvda)
+            {
+                // Whatever ended the run, an exception included: the warning stops, the capture ends and its log goes,
+                // and the user hears that the keyboard is theirs again (R-33).
+                HandsOff.StopLoop();
+                Thread.Sleep(500);
+                File.Delete(Speech.FlagPath);
+                File.Delete(Speech.LogPath);
+                HandsOff.Say("NVDA tests finished. The keyboard is yours.");
+            }
         }
 
         var summary = failed.Count == 0
@@ -210,8 +240,15 @@ internal static class Program
 
         Console.WriteLine();
         Console.WriteLine(summary);
-        return failed.Count;
+        return failed.Count == 0 ? 0 : ScriptsFailed;
     }
+
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda]. See docs/axKit/automation.md.";
+
+    /// <summary>The exit codes: 0 every script passed, 1 a script failed, 2 the run could not start (the command line, the build, the program). Until 2026-11-13 the number of failed scripts, which two failures shared with a usage error.</summary>
+    private const int ScriptsFailed = 1;
+
+    private const int CannotStart = 2;
 
     /// <summary>One script or workflow with its own windows and folder, played by the engine (ScriptRunner); the console gets each step, the report the steps and the timeline.</summary>
     private static (bool Ok, string Log) RunScript(string script, string exe, string temp)

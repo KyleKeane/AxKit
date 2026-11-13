@@ -28,10 +28,48 @@ public sealed class StdioServer : IDisposable
 
     public bool HasExited => _process.HasExited;
 
-    /// <summary>Starts the server's program; throws as <see cref="Process.Start()"/> does when it cannot (MP-10).</summary>
+    /// <summary>The extensions tried for a command written without one, in Windows' order for programs.</summary>
+    private static readonly string[] Extensions = [".exe", ".cmd", ".bat"];
+
+    /// <summary>
+    /// The program a server's command names (docs/axKit/repairs.json R-25, security audit S-1): a path as it is; a bare
+    /// name found in the PATH's full folders only, with .exe, .cmd or .bat when it has no extension (npx is npx.cmd).
+    /// Handed to Windows as it was until 2026-11-13, a bare name was looked for in the current folder first, and a
+    /// name without .exe that is a batch file did not start at all. Throws, naming the command, when nothing is found.
+    /// </summary>
+    public static string Resolve(string command, string? path)
+    {
+        if (command.Contains(Path.DirectorySeparatorChar) || command.Contains(Path.AltDirectorySeparatorChar) || command.Contains(':'))
+        {
+            return command;
+        }
+
+        var names = Path.HasExtension(command) ? [command] : Extensions.Select(extension => command + extension);
+        foreach (var name in names)
+        {
+            if (AxKit.Core.SystemPrograms.OnPath(name, path) is { } found)
+            {
+                return found;
+            }
+        }
+
+        throw new FileNotFoundException($"The program {command} is not in any folder of the PATH: give its full path in the server's command line (docs/axMCP/user-guide.md, Your servers).");
+    }
+
+    private static bool IsBatch(string program) =>
+        program.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase) || program.EndsWith(".bat", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Starts the server's program; throws as <see cref="Process.Start()"/> does when it cannot (MP-10), or with the reason when its command names no program or cannot be started safely.</summary>
     public static StdioServer Start(McpServer server, string? folder, Action<string> log)
     {
-        var start = new ProcessStartInfo(server.Command)
+        var program = Resolve(server.Command, Environment.GetEnvironmentVariable("PATH"));
+        if (IsBatch(program) && server.Args.FirstOrDefault(AxKit.Core.SystemPrograms.HasCmdSpecials) is { } unsafeArgument)
+        {
+            // A .cmd or .bat runs through cmd.exe, which acts on these characters even inside quotes (S-3).
+            throw new InvalidOperationException($"{Path.GetFileName(program)} is a batch program, and the argument {unsafeArgument} holds a character cmd.exe acts on (one of & | < > ^ % ! ( ) , ; = \"): it is not started. Name the program the batch file runs (node.exe, python.exe) with its script instead; docs/axMCP/user-guide.md, Your servers.");
+        }
+
+        var start = new ProcessStartInfo(program)
         {
             UseShellExecute = false,
             CreateNoWindow = true,

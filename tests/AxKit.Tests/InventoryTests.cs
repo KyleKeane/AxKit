@@ -57,7 +57,7 @@ public sealed class InventoryTests
             Expect(name, File.Exists(Path.Combine(root, $"run-{shown}.ps1")), $"run-{shown}.ps1");
             Expect(name, Text("src/AxKit/Program.cs").Contains($"{name}App.Run", StringComparison.Ordinal), "Program.cs's call");
             Expect(name, Text("src/AxKit/AxKit.csproj").Contains(shown, StringComparison.Ordinal), "AxKit.csproj's description");
-            Expect(name, Text("CLAUDE.md").Contains($"**{shown}**", StringComparison.Ordinal), "the root CLAUDE.md map");
+            Expect(name, Text("docs/axKit/apps.md").Contains($"### {shown}", StringComparison.Ordinal), "docs/axKit/apps.md, the generated list of the apps (run tools/apps-page.ps1)");
             Expect(name, Text("README.md").Contains($"**{app.Title}**", StringComparison.Ordinal), "README.md, by its title (AX-11.2)");
             Expect(name, Text("docs/axKit/README.md").Contains($"**{app.Title}**", StringComparison.Ordinal), "docs/axKit/README.md, by its title (AX-11.2)");
             Expect(name, Text("docs/axKit/SPEC.md").Contains($"**{shown}**", StringComparison.Ordinal), "docs/axKit/SPEC.md section 3");

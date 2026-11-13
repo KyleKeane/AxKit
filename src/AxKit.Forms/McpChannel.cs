@@ -197,24 +197,43 @@ internal sealed class McpChannel
                 _ => OnWindow(() => Execute(verb)),
             };
         }
+        catch (TimeoutException)
+        {
+            // The window's thread was busy (a long read, a Windows dialog): nothing was done (OnWindow), and the client
+            // is told so in words it can act on.
+            Log.Info("The AI tools' request " + verb + " was given up: the window did not answer in time");
+            answer = JsonSerializer.Serialize(new { error = "The window is busy and did not answer in time; nothing was done. Ask again in a moment." }, Plain);
+        }
         catch (Exception ex)
         {
-            // Whatever went wrong is the client's answer, never the end of the window's process.
+            // Whatever went wrong is the client's answer, never the end of the window's process. The log has the cause.
             Log.Error("The AI tools' request " + verb + " failed", ex);
-            answer = JsonSerializer.Serialize(new { error = "The window could not answer." }, Plain);
+            answer = JsonSerializer.Serialize(new { error = $"The window could not answer {verb}: {ex.GetType().Name}. The cause is in the app's log under %LOCALAPPDATA%\\AxKit\\logs." }, Plain);
         }
 
         writer.WriteLine(answer);
     }
 
 
-    /// <summary>Runs on the window's thread and waits at most <see cref="WindowWait"/>; a window that does not answer in time refuses the call.</summary>
+    /// <summary>
+    /// Runs on the window's thread and waits at most <see cref="WindowWait"/>; a window that does not answer in time
+    /// refuses the call, and a call the window's thread had not taken up by then is given up for good: it never runs
+    /// later (docs/axKit/repairs.json R-12; until 2026-11-13 a run posted to a busy window still ran once the window was
+    /// free, after its client had been told it failed, and a client that asked again ran the command twice). The same
+    /// flag as <see cref="App"/>'s, which both threads swap.
+    /// </summary>
     private T OnWindow<T>(Func<T> read)
     {
-        var call = _form.BeginInvoke(read);
+        // 0: waiting for the window's thread; 1: taken up there; 2: given up here, never to be carried out.
+        var state = 0;
+        var call = _form.BeginInvoke(new Func<object?>(() => Interlocked.CompareExchange(ref state, 1, 0) == 0 ? read() : null));
         if (!call.AsyncWaitHandle.WaitOne(WindowWait))
         {
-            throw new TimeoutException("The window did not answer in time");
+            // Given up before the window took it; or taken up and still at work, which gets as long again.
+            if (Interlocked.CompareExchange(ref state, 2, 0) == 0 || !call.AsyncWaitHandle.WaitOne(WindowWait))
+            {
+                throw new TimeoutException("The window did not answer in time");
+            }
         }
 
         return (T)_form.EndInvoke(call)!;

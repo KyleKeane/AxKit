@@ -176,7 +176,7 @@ public static class McpAccess
         }
 
         Directory.CreateDirectory(Path.GetDirectoryName(AppPaths.McpKeyFile)!);
-        File.WriteAllText(AppPaths.McpKeyFile, UserSecret.Protect(Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))));
+        SafeFile.WriteAllText(AppPaths.McpKeyFile, UserSecret.Protect(Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))));
     }
 
     /// <summary>The key, or null when there is none or it was made for another user.</summary>

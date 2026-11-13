@@ -64,7 +64,7 @@ public sealed partial class FileForm : AxKitForm
         navigation.DropDownItems.Add(_favoritesItem);
         // Drives (AF-3.11): the drives to go to, This PC, and the drive's own Eject and Properties; refilled when it
         // opens, since a stick may have come or gone. A submenu here since 2026-10-22, freeing Alt+D for Go to folder.
-        CommandPalette.FilledOnOpening(_drivesMenu).DropDownOpening += (_, _) => FillDrives();
+        CommandPalette.NoEntry(_drivesMenu).DropDownOpening += (_, _) => FillDrives();
         FillDrives();
         navigation.DropDownItems.Add(_drivesMenu);
         Add(navigation, new Command("&Go to folder...", AxFileKeys.GoToFolder, GoToFolder) { Mark = CommandMark.Open });
@@ -238,7 +238,7 @@ public sealed partial class FileForm : AxKitForm
     {
         Add(menu, new Command("&Open", AxFileKeys.Open, OpenSelected) { When = InList, Mark = CommandMark.Act });
         var openWith = new ToolStripMenuItem("Open &with");
-        CommandPalette.FilledOnOpening(openWith).DropDownOpening += (_, _) => FillOpenWith(openWith);
+        CommandPalette.NoEntry(openWith).DropDownOpening += (_, _) => FillOpenWith(openWith);
         FillOpenWith(openWith);
         menu.DropDownItems.Add(openWith);
         var axkit = new ToolStripMenuItem("Open in &axKit");

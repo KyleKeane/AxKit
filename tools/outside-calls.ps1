@@ -15,7 +15,7 @@ with <kind> one of network, program or pipe, and <what is reached> one or more k
 (several separated by ", ": a shared piece that starts Claude Code and the shells names both); more comment lines
 directly under it continue the text. The page lists, for each target, what it is, where it is (the program file or
 the endpoint), how axKit reaches it, what it may reach in turn, and its documentation, then every call under it with
-its app, file and line, the function it stands in, the function it calls and its purpose. A second section gives the
+its app and file, the function it stands in (no line number since 2026-11-13: an edit above a call made the page stale, which failed CI four times in three days, docs/axKit/repairs.json R-30), the function it calls and its purpose. A second section gives the
 functions themselves: where each is defined (.NET, Windows and its P/Invoke declaration, or the file and line in this
 repository) and every place it is used, and what is watched for and not used.
 
@@ -244,7 +244,8 @@ function Declaration([hashtable]$defined) {
         $lines = $sources[$file.FullName]
         for ($i = 0; $i -lt $lines.Count; $i++) {
             if (-not $find.IsMatch($lines[$i])) { continue }
-            $place = "``$(Relative $file.FullName):$($i + 1)``"
+            # The file alone, as for the calls: a line number went stale with every edit above it.
+            $place = "``$(Relative $file.FullName)``"
             $text = $lines[$i].Trim()
             if ($defined.ContainsKey('Note')) {
                 return "$($defined.Note) $place (``$text``)."
@@ -314,7 +315,7 @@ if ($errors.Count -gt 0) {
 $out = New-Object System.Collections.Generic.List[string]
 $out.Add('# Outside calls')
 $out.Add('')
-$out.Add('Everything axKit reaches outside its own process: the network requests its own code makes, the programs it starts and the pipes it opens, by what is reached. For each, what it is, where it is (the program file or the endpoint), how axKit reaches it, what it may reach in turn, its documentation, and every call under it with its app, file and line, the function it stands in, the function it calls and what the call does for the user. The second section is the functions themselves, where each is defined and where it is used, and what is watched for.')
+$out.Add('Everything axKit reaches outside its own process: the network requests its own code makes, the programs it starts and the pipes it opens, by what is reached. For each, what it is, where it is (the program file or the endpoint), how axKit reaches it, what it may reach in turn, its documentation, and every call under it with its app and file, the function it stands in (no line number since 2026-11-13: an edit above a call made the page stale, which failed CI four times in three days, docs/axKit/repairs.json R-30), the function it calls and what the call does for the user. The second section is the functions themselves, where each is defined and where it is used, and what is watched for.')
 $out.Add('')
 $out.Add('`tools/outside-calls.ps1` writes this page from the sources, so it is a list, not a promise: each call in the code carries a comment that starts `Outside call, <kind>, <what is reached>:` on the line above it or at its end, and this page is their list, found by the functions of the second section. A call without that comment fails the script, which `build.yml` runs on every push (with the check that this page is current) and `release.ps1` before every release; `release.ps1` writes the page again and commits it with the release, so it is exact at every tag (bundle SPEC B-17). Do not edit this page by hand: change the comment in the code, or the tables in the script, and run it.')
 $out.Add('')
@@ -344,7 +345,7 @@ foreach ($kind in $kindNames.Keys) {
         $out.Add("Calls ($($calls.Count)):")
         $out.Add('')
         foreach ($call in $calls) {
-            $out.Add("- **$($call.App)**, ``$($call.File):$($call.Line)``, in ``$($call.Member)``, by ``$($call.Function.Name)``: $($call.Text)")
+            $out.Add("- **$($call.App)**, ``$($call.File)``, in ``$($call.Member)``, by ``$($call.Function.Name)``: $($call.Text)")
             $out.Add("  Code: ``$($call.Code)``")
         }
         $out.Add('')
@@ -366,7 +367,7 @@ foreach ($function in $functions) {
     $out.Add("Used in $($uses.Count) place$(if ($uses.Count -ne 1) { 's' }):")
     $out.Add('')
     foreach ($use in $uses) {
-        $out.Add("- ``$($use.File):$($use.Line)``, in ``$($use.Member)``, for $($use.Targets -join ' and ').")
+        $out.Add("- ``$($use.File)``, in ``$($use.Member)``, for $($use.Targets -join ' and ').")
     }
     $out.Add('')
 }

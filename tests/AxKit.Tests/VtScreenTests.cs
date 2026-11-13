@@ -12,6 +12,9 @@ public sealed class VtScreenTests
 {
     private sealed class Store : LineStore
     {
+        /// <summary>The texts the screen handed over as changed, in order.</summary>
+        public List<string> Rewritten { get; } = [];
+
         public override void AddSystemLine(string text)
         {
         }
@@ -19,6 +22,46 @@ public sealed class VtScreenTests
         protected override void CompleteFrame()
         {
         }
+
+        protected override void TextChanged(Line line, string text)
+        {
+            Rewritten.Add(text);
+            base.TextChanged(line, text);
+        }
+    }
+
+    [Fact]
+    public void A_row_rewritten_and_scrolled_away_within_one_frame_reaches_the_store_as_a_changed_text()
+    {
+        // docs/axKit/repairs.json R-21: the model learns of a rewritten row through TextChanged, also when the row
+        // leaves the screen before the frame's end.
+        var store = new Store();
+        var screen = new Screen(20, 2, store);
+        var parser = new VtParser(screen);
+        parser.Feed("old");
+        screen.PullRowText();
+        store.Rewritten.Clear();
+
+        // The first row rewritten, then two line feeds that scroll it away, with no frame end in between.
+        parser.Feed("\rnew text\r\n\r\nz");
+        Assert.Contains("new text", store.Rewritten);
+        Assert.Equal("new text", store.Lines[0].Text);
+        Assert.True(store.Lines[0].Committed);
+    }
+
+    [Fact]
+    public void A_cell_takes_a_few_combining_characters_and_no_more()
+    {
+        // R-27: a run of combining characters without end must not grow one cell with each of them.
+        var store = new Store();
+        var screen = new Screen(20, 2, store);
+        var parser = new VtParser(screen);
+        parser.Feed("a" + new string('́', 500) + "b");
+        screen.PullRowText();
+        var text = store.Lines[0].Text;
+        Assert.StartsWith("á", text);
+        Assert.EndsWith("b", text);
+        Assert.True(text.Length <= 20, $"The row's text is {text.Length} characters long.");
     }
 
     [Fact]

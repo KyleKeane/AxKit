@@ -115,7 +115,8 @@ internal sealed partial class MainForm
             }
         }));
         questions.DropDownItems.Add(Toggle("&Go to them at once, interrupting speech", _settings.InterruptForQuestions, v => _settings.InterruptForQuestions = v));
-        questions.DropDownItems.Add(Toggle("&Review answers before they go to Claude", _settings.ReviewAnswers, v => _settings.ReviewAnswers = v));
+        // Act for the AI tools: the review is the user's own check of what goes to Claude (docs/axKit/repairs.json R-04).
+        questions.DropDownItems.Add(Toggle("&Review answers before they go to Claude", _settings.ReviewAnswers, v => _settings.ReviewAnswers = v, CommandMark.Act));
         // D33, 2026-11-12: what Claude asks for itself, about itself, can be left unheard.
         questions.DropDownItems.Add(Toggle("&Dismiss Claude's feedback surveys unheard", _settings.DismissSurveys, v => _settings.DismissSurveys = v));
         questions.DropDownItems.Add(Toggle("&Open Claude's feedback drafts by themselves", _settings.OpenFeedbackDrafts, v => _settings.OpenFeedbackDrafts = v));
@@ -126,7 +127,7 @@ internal sealed partial class MainForm
         {
             _settings.KeepFilesOutOfGit = v;
             KeepFilesOutOfGit();
-        })));
+        }, CommandMark.Act))); // Writes into the project repository's exclude file: act for the AI tools (R-04).
         // What only a developer or a bug report needs (FR-12.3, FR-13.3, FR-9.2), in one place.
         options.DropDownItems.Add(CreateDeveloperMenu(RecordItem));
 

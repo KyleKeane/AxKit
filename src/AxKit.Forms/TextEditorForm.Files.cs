@@ -167,7 +167,7 @@ public sealed partial class TextEditorForm
 
     /// <summary>File → Open recent file (AD-4.1): the last ten files opened or saved under a name, from the settings; one that no longer exists is left out, or, on a share listed without the check (AX-9.5), said when chosen rather than opened as a new file.</summary>
     private void FillRecentFiles() =>
-        RecentMenu.Fill(_recentFilesItem, _settings.RecentFiles, File.Exists, Path.GetFileName, "&No recent files", target => AskToSave(() =>
+        RecentMenu.Fill(_recentFilesItem, _settings.RecentFiles, File.Exists, Path.GetFileName, "&No recent files", CommandMark.Open, target => AskToSave(() =>
         {
             if (File.Exists(target))
             {

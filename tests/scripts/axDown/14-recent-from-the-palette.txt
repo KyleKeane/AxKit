@@ -30,16 +30,18 @@ expect said one.md - axDown, Window, Open windows
 keys escape
 expect state "notice":null
 
-# Recently closed: two.md, the file this window showed before it opened one.md (one.md itself is open here, so it is
-# not among the closed); its entry is one search away and opens it in a new window.
+# Recently closed: the first window closes, and its file is the newest of the closed (before it two.md, which this
+# window showed before it opened one.md). The close is waited for, so that the list holds it: read too early, the
+# list was one entry short on some runs (2026-11-13). The entry is one search away and opens in a new window.
 use 1
 close
+expect closed
 use 2
 keys ctrl+shift+p
 type recently closed
-expect said two.md
+expect said 1. one.md
 expect said Window, Recently closed
 keys enter
 adopt
-expect state "title":"two.md - axDown"
-expect focus "value":"# Two
+expect state "title":"one.md - axDown"
+expect focus "value":"# One

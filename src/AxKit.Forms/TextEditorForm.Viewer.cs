@@ -69,7 +69,7 @@ public sealed partial class TextEditorForm
         // The item's label follows the file's page (UpdateEditItem); the command's is the key table's, true for any.
         _editItem = Add(file, new Command("&Edit in the editor", EditorKeys.Edit, OpenInEditor) { Mark = CommandMark.Open });
         _openWithItem = new ToolStripMenuItem("Open wit&h");
-        CommandPalette.FilledOnOpening(_openWithItem).DropDownOpening += (_, _) => FillOpenWith();
+        CommandPalette.NoEntry(_openWithItem).DropDownOpening += (_, _) => FillOpenWith();
         FillOpenWith();
         file.DropDownItems.Add(_openWithItem);
         UpdateEditItem();

@@ -1,6 +1,6 @@
 # axAutomate, the window
 
-The WinForms side of axAutomate: the item apps' window (`AxKit.Forms/ItemForm`) over a folder of workflows, a viewer in its first version (SPEC.md AU-6a). The pure code is `src/AxAutomate.Core`, with its own `CLAUDE.md`. The spec is `docs/axAutomate/SPEC.md` ("SPEC.md" below); the guide `docs/axAutomate/user-guide.md` is embedded by `AxAutomate.csproj` for Help, User guide; the manual test plan is `docs/axAutomate/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
+The WinForms side of axAutomate: the item apps' window (`AxKit.Forms/ItemForm`) over a folder of workflows, which views them (SPEC.md AU-6a) and runs them, F5 (AU-6b); changing them comes later. The pure code is `src/AxAutomate.Core`, with its own `CLAUDE.md`. The spec is `docs/axAutomate/SPEC.md` ("SPEC.md" below); the guide `docs/axAutomate/user-guide.md` is embedded by `AxAutomate.csproj` for Help, User guide; the manual test plan is `docs/axAutomate/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 

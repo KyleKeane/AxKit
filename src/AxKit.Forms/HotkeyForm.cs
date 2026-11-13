@@ -37,6 +37,15 @@ public abstract class HotkeyForm : AxKitForm
 
     private Hotkey? _captured;
     private bool _capturing;
+
+    private const string HotkeyNoticeTitle = "Hotkey";
+
+    /// <summary>
+    /// The Hotkey notice takes the next key: only while that notice is the one showing. A notice shown over it (an
+    /// error) replaces it without its Cancel, and the flag alone then kept the hotkey from hiding the window until the
+    /// next hide (docs/axKit/repairs.json R-14): what is asked is the notice on view, never a flag that may be stale.
+    /// </summary>
+    private bool Capturing => _capturing && NoticeOpen && Overlay.Shown is { Title: HotkeyNoticeTitle };
     private bool _quitting;
 
     /// <summary>
@@ -54,7 +63,7 @@ public abstract class HotkeyForm : AxKitForm
             {
                 _settings.StartWithWindows = v;
                 SignInStart.Apply(AppName, AppVerb, v);
-            });
+            }, CommandMark.Act); // Writes the user's Run key: act for the AI tools (R-04).
         }
 
         if (Dispatch.ByName(AppName) is { StoreEntry: false })
@@ -393,7 +402,7 @@ public abstract class HotkeyForm : AxKitForm
 
         if (m.Msg == WM_HOTKEY && m.WParam == HotkeyId)
         {
-            if (_capturing)
+            if (Capturing)
             {
                 // The hotkey pressed in Hotkey…: the key in use chosen again.
                 CaptureKey(CurrentHotkey);
@@ -576,7 +585,7 @@ public abstract class HotkeyForm : AxKitForm
     {
         _captured = null;
         _capturing = true;
-        ShowNotice(new Notice("Hotkey",
+        ShowNotice(new Notice(HotkeyNoticeTitle,
             $"Press the key that brings {AppName} up, with Ctrl, Alt or the Windows key, then Enter. Now: {CurrentHotkey}.",
             [
                 new OverlayChoice("&Save", () => ApplyHotkey(_captured), IsDefault: true),

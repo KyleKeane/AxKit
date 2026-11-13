@@ -5,8 +5,9 @@
 
 .DESCRIPTION
   Dot-source it, then call Get-AxKitApps with the repository's root. Each app is an object with Name (as shown,
-  "axGIT"), Verb ("git"), Project ("AxGit"), Group, Opens (Nothing, Folders, Files, FilesAndFolders) and Icon
-  (Letters, Rgb), in the order of Dispatch.Apps. It reads the lines as Dispatch.cs writes them: each entry starts
+  "axGIT"), Verb ("git"), Project ("AxGit"), Group, Opens (Nothing, Folders, Files, FilesAndFolders), Description,
+  AccessLayerFor (the program an access layer works through, empty for a standalone app), AtSignIn, StoreEntry and
+  Icon (Letters, Rgb), in the order of Dispatch.Apps. tools\apps-page.ps1 writes docs\axKit\apps.md from it. It reads the lines as Dispatch.cs writes them: each entry starts
   with new("name", Constant, "Project", AppGroup.X, Opens.Y on a line of its own, and its Icon = new("Ab", r, g, b)
   follows before the next entry. The installer runs without the source and reads the same list from the program,
   AxKit.exe apps.
@@ -37,6 +38,8 @@ function Get-AxKitApps([string]$Root) {
         $next = if ($i + 1 -lt $entries.Count) { $entries[$i + 1].Index } else { $block.Length }
         $body = $block.Substring($entry.Index, $next - $entry.Index)
         $icon = [regex]::Match($body, 'Icon = new\("(?<letters>[^"]+)", (?<r>\d+), (?<g>\d+), (?<b>\d+)\)')
+        $description = [regex]::Match($body, 'Description = "(?<text>[^"]*)"')
+        $layer = [regex]::Match($body, 'AccessLayerFor = "(?<text>[^"]*)"')
         $constant = $entry.Groups['verb'].Value
         if (-not $verbs.ContainsKey($constant)) { throw "The verb constant $constant of $($entry.Groups['name'].Value) was not found in $file." }
         [pscustomobject]@{
@@ -46,6 +49,10 @@ function Get-AxKitApps([string]$Root) {
             Project = $entry.Groups['project'].Value
             Group = $entry.Groups['group'].Value
             Opens = $entry.Groups['opens'].Value
+            Description = if ($description.Success) { $description.Groups['text'].Value } else { '' }
+            AccessLayerFor = if ($layer.Success) { $layer.Groups['text'].Value } else { '' }
+            AtSignIn = $body -match 'AtSignIn = true'
+            StoreEntry = $body -match 'StoreEntry = true'
             Icon = if ($icon.Success) {
                 [pscustomobject]@{ Letters = $icon.Groups['letters'].Value; Rgb = @([int]$icon.Groups['r'].Value, [int]$icon.Groups['g'].Value, [int]$icon.Groups['b'].Value) }
             } else { $null }

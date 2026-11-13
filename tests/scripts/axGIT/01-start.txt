@@ -1,4 +1,5 @@
 # Workflow: Open a repository in axGIT
+# Needs: Git installed.
 # axGIT: start (docs/axGIT/nvda-test-plan.md section 1; SPEC AG-1, AG-2, AG-6.2).
 # A scratch repository with two commits, a second branch and two changes: a modified tracked file and an untracked one.
 # The update check off in the run's own settings (AXKIT_HOME): a network call, and its failure is a logged ERROR.
