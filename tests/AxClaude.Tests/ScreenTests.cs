@@ -85,4 +85,39 @@ public class ScreenTests
         Assert.Equal(["Escape"], screen.Keys.Select(k => k.Name));
         Assert.Equal(1, screen.FirstRow);
     }
+
+    [Fact]
+    public void Login_ends_on_a_screen_that_waits_on_enter()
+    {
+        // Recorded with Claude Code 2.1.323 (2026-11-13), the address as the redacting dump shows it. Unseen, this screen took the Enter of
+        // the user's next message, which never reached Claude.
+        string[] rows =
+        [
+            "you: /login",
+            "Logged in as <email>",
+            "Login successful. Press Enter to continue…",
+            "",
+        ];
+        var screen = ScreenReader.Read(rows, 2)!;
+        Assert.Equal("Login successful", screen.Title);
+        Assert.Equal(["Logged in as <email>"], screen.Lines);
+        Assert.Equal([("Enter", "continue", "\r")], screen.Keys.Select(k => (k.Name, k.Action, k.Send)));
+        Assert.Equal(1, screen.FirstRow);
+        // A list, not a notice: Enter is its key, and Enter on any line continues.
+        Assert.False(ScreenActions.IsInformation(screen));
+        Assert.Equal("\r", ScreenActions.EnterOnLine(screen)!.Send);
+
+        // The same frame through the model: the screen waits, so the message field gives way to it.
+        const string Esc = "\x1b";
+        var model = new SessionModel(240, 50);
+        TestHelpers.Feed(model, $"{Esc}[?25l{Esc}[2J{Esc}[Hyou: /login\r\nLogged in as <email>\r\nLogin successful. Press Enter to continue…{Esc}[?25h");
+        model.EndFrame();
+        Assert.True(model.PromptPending);
+        Assert.Equal("Login successful", model.PendingScreen!.Title);
+
+        // The words alone, three full stops for the ellipsis, are a screen too; Claude quoting them in a reply is not.
+        Assert.Equal("Press Enter to continue", ScreenReader.Read(["you: /x", "Press Enter to continue..."], 1)!.Title);
+        Assert.Null(ScreenReader.Read(["you: hi", "claude: It says Press Enter to continue…"], 1));
+        Assert.Null(ScreenReader.Read(["you: hi", "Then run /rc to continue this session from your phone"], 1));
+    }
 }

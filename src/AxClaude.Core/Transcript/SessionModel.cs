@@ -1210,6 +1210,7 @@ public sealed partial class SessionModel : LineStore
         var text = _screen.LineAt(cy)?.Text;
         if (text is null || !(text.Contains("Esc", StringComparison.Ordinal) || text.Contains("   ", StringComparison.Ordinal)
             || text == "Any key to continue"
+            || ScreenReader.EndsWithPressEnter(text)
             || (cy > 0 && _screen.LineAt(cy - 1)?.Text.Contains("Esc", StringComparison.Ordinal) == true)
             || EditHintUnder(cy)))
         {

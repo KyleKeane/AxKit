@@ -65,6 +65,17 @@ public static partial class ScreenReader
         }
 
         var cursorText = rows[cursorRow].Trim();
+
+        // The last screen of /login (recorded with 2.1.323, 2026-11-13): "Logged in as …" over "Login successful.
+        // Press Enter to continue…", the cursor at that row's end. Unseen, it left the message field in place, and
+        // the Enter of the user's next message closed it: the message never reached Claude. The row's own words are
+        // the title, the rows above it the lines, Enter the one key.
+        if (PressEnterTitle(cursorText) is { } title)
+        {
+            var (lines, first) = LinesAbove(rows, cursorRow);
+            return new ClaudeScreen(title, lines, [new ScreenKey("\r", "Enter", "continue")]) { FirstRow = lines.Count > 0 ? first : cursorRow };
+        }
+
         if (Keys(cursorText) is { } keys)
         {
             var (lines, first) = LinesAbove(rows, cursorRow);
@@ -123,6 +134,32 @@ public static partial class ScreenReader
         }
 
         return null;
+    }
+
+    /// <summary>What a row that waits on Enter ends with ("Login successful. Press Enter to continue…"), with the ellipsis as one character or three full stops.</summary>
+    public const string PressEnter = "Press Enter to continue";
+
+    /// <summary>Whether a row can be one that waits on Enter: the cheap test for every frame's end, without allocating.</summary>
+    public static bool EndsWithPressEnter(string text)
+    {
+        var end = text.AsSpan().TrimEnd().TrimEnd('…').TrimEnd('.');
+        return end.EndsWith(PressEnter, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// The title of a screen whose cursor row waits on Enter: the row's words before "Press Enter to continue"
+    /// ("Login successful"), or those words themselves when the row holds nothing else; null for any other row, and
+    /// for a labelled row (<c>claude:</c>, <c>tool:</c>), which is Claude quoting the words, not waiting on them.
+    /// </summary>
+    public static string? PressEnterTitle(string text)
+    {
+        if (!EndsWithPressEnter(text) || LineClassifier.Classify(text, inPromptBlock: false) is not (LineKind.Plain or LineKind.Prompt))
+        {
+            return null;
+        }
+
+        var before = text[..text.LastIndexOf(PressEnter, StringComparison.Ordinal)].Trim().TrimEnd('.').Trim();
+        return before.Length > 0 ? before : PressEnter;
     }
 
     /// <summary>A row of tab names: three or more, two spaces or more apart.</summary>
