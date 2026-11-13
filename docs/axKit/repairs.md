@@ -115,6 +115,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P2
 - Fix: One record per item in one table (MenuItemInfo: its mark, withheld, left out, its refreshes as a list); Tag is no longer used for menus.
 - Checked by: tests/AxKit.Tests/CommandPaletteTests (two refreshes both run; marks; withheld through owners)
+- Commit: af0fac3
 - Note: Shown bug: the palette listed Say new line's old check after Sound on headings registered its refresh on the same Text menu.
 
 ### R-30, high, tooling: The local gate did not run the page checks that failed CI six times in three days
@@ -123,6 +124,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P2
 - Fix: test.ps1 ends with the three page checks (outside calls, workflows, repairs); release.ps1 writes all three pages before its commit; the outside-calls page names the file and function of a call, no line number, so an edit above a call no longer makes it stale.
 - Checked by: test.ps1 fails on a stale page; gh run list shows no page failure after it
+- Commit: af0fac3
 
 ### R-32, high, tooling: The runner drove whatever build lay in src\AxKit\bin\Release when none was named
 
@@ -130,6 +132,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P1
 - Fix: No default: --build or --exe is required; the console and the report's first lines give the program's version and when it was built; the exit codes are 0, 1 (a script failed), 2 (could not start).
 - Checked by: a run without either option ends with the message; the report's header
+- Commit: af0fac3
 - Note: Cost two wrong diagnoses on 2026-11-13.
 
 ### R-33, high, tooling: An NVDA run that ended abnormally left NVDA's speech capture on
@@ -138,6 +141,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P4
 - Fix: The run's end is a finally; every run deletes an earlier run's flag first; the add-on ignores a flag older than two hours.
 - Checked by: reading; nvda-pass.ps1 once
+- Commit: af0fac3
 - Note: Privacy: the capture writes what NVDA speaks into a file. The add-on installed in NVDA is a copy: tools/nvda-capture is copied to %APPDATA%\nvda\addons\axkitCapture and NVDA restarted for the two-hour rule to hold there.
 
 ### R-43, high, docs: Twenty-nine statements in the overview and user documents are false today
@@ -146,6 +150,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P8
 - Fix: Each corrected: axAutomate runs workflows; seventeen apps; the menus by their names since 2026-11-11; About and Check for updates in Help; what plan.md calls unbuilt and is built; the broken sentence in ten user guides.
 - Checked by: the list of the audit, each line read again
+- Commit: af0fac3
 - Note: All 25 groups of the audit's list corrected and read again; six further false statements seen on the way are in R-45 and R-46.
 
 ### R-44, high, docs: The list of apps is written by hand in at least eight places
@@ -154,6 +159,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P2
 - Fix: tools/apps.ps1 writes docs/axKit/apps.md from Dispatch.Apps (name, verb, group, what it opens, its folders and documents); the hand-written lists point to it or are checked against it; a test fails on an app count written as a word.
 - Checked by: tools/apps.ps1 -Check in test.ps1 and build.yml
+- Commit: af0fac3
 - Note: tools/apps-page.ps1 writes docs/axKit/apps.md; the root CLAUDE.md, tools/new-app.ps1 and InventoryTests use it. Still by hand, and checked by InventoryTests for every app: the user-facing lists of README.md and docs/axKit/README.md, which are prose for readers.
 
 ### R-01, medium, security: Recent folders of axClaude and axTerminal started Claude Code or a shell for an AI tool without asking
@@ -162,6 +168,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P1
 - Fix: RecentMenu.Fill and FillFolders take the mark from the caller, with no default; the two console lists pass act, the others open.
 - Checked by: tests/AxKit.Tests/CommandMarkTests (the console lists pinned act); tests/scripts/mcp
+- Commit: af0fac3
 - Note: Introduced 2026-11-13 by the palette parity (070a005), found the same day.
 
 ### R-02, medium, security: The test automation channel is gated by an environment variable alone
@@ -170,6 +177,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P1
 - Fix: The secret counts only together with the run's home folder, and never when either variable is set in the user's or the computer's persisted environment; a window serving the channel says Test run at its first activation.
 - Checked by: tests/AxKit.Tests/AutomationEnvironmentTests; every tests/scripts run still starts
+- Commit: af0fac3
 - Note: Not done: the words Test run at a window's first activation, which every script's timeline would then hold; the two conditions close the hole without them.
 
 ### R-08, medium, framework: A menu item found for an AI tool was held and clicked later, passing its availability check by accident
@@ -178,6 +186,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P5
 - Fix: A run keeps the entry's name and menus and finds it again among the entries at the moment it runs, posted or after the user's Run; Offered, MenuPath and the command-to-items table go.
 - Checked by: tests/scripts/mcp (02 runs, 03 asks first); tests/scripts/axDown/14-recent-from-the-palette.txt
+- Commit: af0fac3
 
 ### R-12, medium, framework: A run for an AI tool could still execute after the client was told it timed out
 
@@ -185,6 +194,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P4
 - Fix: Run gives up as App does: a flag both threads swap, so a request not taken up in time never runs.
 - Checked by: reading against App(); tests/scripts/mcp
+- Commit: af0fac3
 - Note: In OnWindow itself, so every request of the pipe has it; a timeout now answers in words the client can act on.
 
 ### R-14, medium, framework: A notice shown over another replaces it and the replaced notice's cancel never runs
@@ -193,6 +203,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P4
 - Fix: ShowNotice runs the cancel of the notice it replaces, unless it is chained from that notice's own button.
 - Checked by: a script: the Hotkey notice replaced by an error, the hotkey then hides the window
+- Commit: af0fac3
 - Note: Fixed where it bit, not in ShowNotice: running a replaced notice's cancel in general would break the notices that are replaced on purpose and come back (Find inside a notice). The hotkey capture now asks which notice is on view instead of trusting a flag. The rule for new code: state that outlives a notice is read from the notice showing, never from a flag its buttons clear.
 
 ### R-18, medium, changes: With Dismiss surveys on, a turn that ended in a survey lost its Done, its chime and its flash
@@ -201,6 +212,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P3
 - Fix: A survey the app dismisses leaves the bell pending, so Done is said once the survey has gone; the key is sent only while no write of the user's is on its way.
 - Checked by: tests/AxClaude.Tests (the survey fixture through the window's rule) and reading; by ear when a survey comes
+- Commit: af0fac3
 - Note: From e71f67d (2026-11-12). Done is said as the survey arrives, shown or dismissed.
 
 ### R-19, medium, changes: A survey arriving within the speech hold dropped the end of the reply unspoken
@@ -209,6 +221,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P3
 - Fix: A survey is not Claude's question about the turn: reply lines held when it arrives are spoken.
 - Checked by: reading; by ear when a survey comes
+- Commit: af0fac3
 - Note: Suspected from the timing; the fix is safe either way.
 
 ### R-21, medium, core: A row rewritten and scrolled away within one frame kept its hidden flags and kind
@@ -217,6 +230,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P5
 - Fix: The screen hands the new text to the store's TextChanged before it commits the line, as it does for a row that stays.
 - Checked by: tests/AxClaude.Tests fixtures unchanged, and a new test of a row rewritten and scrolled in one frame
+- Commit: af0fac3
 - Note: The mechanism is verified; whether Claude Code produces that frame is not. Every fixture's expected transcript is unchanged by it.
 
 ### R-22, medium, core: Only the settings were written through a temporary file; documents, items, the theme and the key were written in place
@@ -225,6 +239,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P6
 - Fix: One SafeFile.Write (a temporary file of its own name beside the target, then replaced in one step, the target's attributes kept) used by all five; the settings' fixed .tmp name, which two windows shared, goes.
 - Checked by: tests/AxKit.Tests/SafeFileTests; the editors' and axTask's scripts
+- Commit: af0fac3
 - Note: Where the swap is refused (another program holds the file open for writing but not for replacing) the file is written in place as before: never stricter than it was. axClaude's git exclude file and axTask's GitHub token too.
 
 ### R-25, medium, core: axMCP starts a server by its configured command name without resolving it
@@ -233,6 +248,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P1
 - Fix: A bare name is found through SystemPrograms.OnPath (full PATH folders only, .exe and .cmd); not found is said with the name.
 - Checked by: tests/AxMCP.Tests
+- Commit: af0fac3
 - Note: A batch program with an argument cmd.exe would act on is refused with the reason.
 
 ### R-31, medium, tooling: CI runs no window script, and no document said so
@@ -241,6 +257,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P8
 - Fix: automation.md and the workflows page say that the window scripts run on the developer's computer (nvda-pass.ps1 and tools/AxAutomate), never in CI, and what CI does prove.
 - Checked by: reading
+- Commit: af0fac3
 - Note: Running the model-free scripts in CI is a later question: whether the runner's own desktop works on a hosted Windows runner is not known.
 
 ### R-34, medium, tooling: A window whose thread hung blocked a run forever, in the NVDA tier with the keyboard taken
@@ -249,6 +266,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P4
 - Fix: A read of the window's pipe waits 30 seconds at most and then fails the step, naming the window.
 - Checked by: tests/AxAutomate.Tests
+- Commit: af0fac3
 
 ### R-35, medium, tooling: Scripts that depend on a live model or the network read like any other when they fail
 
@@ -256,6 +274,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P3
 - Fix: A script says what it needs in its header (# Needs: Claude Code, the network, KeePassXC); the runner's summary and the workflows page give those apart, so a model's change of wording is not taken for a regression.
 - Checked by: tests/AxAutomate.Tests; the summary of a run
+- Commit: af0fac3
 - Note: 257 fixed waits in 56 scripts stand in for conditions; each is replaced by an expectation when its script is next touched. Done: the # Needs: line on 29 scripts and on the workflows page. Open as part of R-37: the runner's summary giving such scripts apart, and the fixed waits.
 
 ### R-36, medium, tooling: Two scripts name KeePassXC by one computer's path, and one overwrites the user's clipboard
@@ -264,6 +283,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P1
 - Fix: The path comes from where the tool is found; the clipboard step saves and puts back what was there, or goes.
 - Checked by: the scripts pass
+- Commit: af0fac3
 - Note: KeePassXC's place is stated as the scripts' need; the two scripts that write the clipboard on purpose are named in automation.md.
 
 ### R-39, medium, apps: axPass and axTask dropped an undo step before applying it: a failed undo lost it
@@ -272,6 +292,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P6
 - Fix: The step is looked at, applied, and removed only when the undo succeeded.
 - Checked by: tests/AxTask.Tests; reading for axPass
+- Commit: af0fac3
 - Note: axPass fixed. axTask left as it is, on purpose: a step that can no longer be undone (its files changed since) is dropped so that the steps before it can still be reached, and says why.
 
 ### R-47, medium, docs: PRIVACY.md and rule 8 name two places where axKit's own code reaches the network; axTask's GitHub lists are a third
@@ -280,6 +301,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P8
 - Fix: The three places stated in the same terms everywhere: the updater, the report sender, and axTask's GitHub lists with the user's own token.
 - Checked by: reading against docs/axKit/outside-calls.md
+- Commit: af0fac3
 
 ### R-04, low, security: Settings whose effect is more than a setting were marked change
 
@@ -287,6 +309,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P1
 - Fix: Toggle takes a mark; Start with Windows, Check for updates at start, Review answers before they go to Claude and Keep recordings out of git are act.
 - Checked by: tests/AxKit.Tests/CommandMarkTests pins them
+- Commit: af0fac3
 
 ### R-05, low, security: Your reports was marked open but sends unsent reports to GitHub first
 
@@ -294,6 +317,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P1
 - Fix: Marked act.
 - Checked by: tests/AxKit.Tests/CommandMarkTests pins it
+- Commit: af0fac3
 
 ### R-06, low, security: The AI tools' log holds refused paths and no name of what was run
 
@@ -301,6 +325,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P3
 - Fix: A refusal is logged by its class, not its text; a run logs the label it matched.
 - Checked by: tests/AxKit.Tests McpAudit tests; tests/scripts/mcp reads the log
+- Commit: af0fac3
 - Note: A run's line names the command, without the path a recent file's entry carries; a refusal's first line goes through Redaction.
 
 ### R-10, low, framework: Reading the entries rebuilt a menu the user had open, and listed placeholders that do nothing
@@ -309,6 +334,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P5
 - Fix: A menu whose list is showing is read as it stands; the placeholder of an empty list is left out of the entries.
 - Checked by: tests/AxKit.Tests/CommandPaletteTests
+- Commit: af0fac3
 
 ### R-16, low, framework: Dead code and stale notes in the command layer
 
@@ -316,6 +342,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P8
 - Fix: Commands, the command-to-items table and MenuPath removed with R-08; the comments corrected.
 - Checked by: the Release build (warnings are errors)
+- Commit: af0fac3
 
 ### R-20, low, changes: The silent words tested each screen row alone, so a wrapped line was half spoken
 
@@ -323,6 +350,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P5
 - Fix: The filter works on whole lines: a row and the rows joined to it are tested and silenced together (SpeechFilter.Spoken).
 - Checked by: tests/AxClaude.Tests/SpeechFilterTests
+- Commit: af0fac3
 
 ### R-26, low, core: A program that exits before reading its input made the run throw instead of giving its error text
 
@@ -330,6 +358,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P3
 - Fix: A broken pipe while writing the input is not an error of the run: the outputs and the exit code are returned.
 - Checked by: tests/AxKit.Tests/ProcessRunTests
+- Commit: af0fac3
 
 ### R-27, low, core: A run of combining characters grew one screen cell without limit
 
@@ -337,6 +366,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P4
 - Fix: A cell takes at most eight combining characters.
 - Checked by: tests/AxKit.Tests/VtScreenTests
+- Commit: af0fac3
 
 ### R-49, low, docs: Stale names in the notes and a broken bullet in AxKit.Core's
 
@@ -344,6 +374,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P8
 - Fix: Corrected; a test pins every backticked identifier of the notes against the sources.
 - Checked by: tests/AxKit.Tests/NotesTests
+- Commit: af0fac3
 - Note: Done: the names and the broken bullet corrected (R-43). Open: the test that pins the notes' identifiers against the sources. tests/AxKit.Tests/NotesTests pins every name the notes give in backticks against the sources, with a short list of names that are Windows' or .NET's.
 
 ## Deferred
