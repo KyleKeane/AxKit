@@ -301,7 +301,8 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
 - **TK-8.3 An item added.** `axkit_task_add` makes the item as Ctrl+N does: the list's template (TK-4.1, the default
   Done, Start and Due without one), the Title given (one line of at most 200 characters, since the window says it
   whole: "A title is at most 200 characters: put the rest in Notes."; no control character, a tab or an escape, in the
-  title or a field's name, since 2026-11-12: "A title holds no control characters."), at a free file name (`ItemFiles.FreePath`, so nothing is ever
+  title or a field's name, since 2026-11-12: "A title holds no control characters."), into a list of the computer's own (a GitHub list, TK-7a.2, is refused
+  since 2026-11-12, the user's choice: an item made there never reaches GitHub, and the next refresh would archive it), at a free file name (`ItemFiles.FreePath`, so nothing is ever
   overwritten), then each value given typed into its field as the field's own change takes it: a date as 2026-11-18,
   today, tomorrow, +7 or a weekday; a choice as one of its options; a check as true or false. A field the template
   lacks is added after the others, long text for Notes or a value of several lines, text otherwise (MC-D13). A link,

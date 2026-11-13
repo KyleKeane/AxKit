@@ -132,6 +132,16 @@ public sealed class TaskToolsTests : IDisposable
     }
 
     [Fact]
+    public void An_add_into_a_GitHub_list_is_refused_and_one_into_an_ordinary_list_taken()
+    {
+        var list = new ReachableList("Issues", TaskTools.TopPlace, @"D:\Tasks\Issues");
+        var github = GitHubList.NewList("owner/repo", GitHubList.OpenState, null);
+        Assert.Equal("Issues is a list of the GitHub issues of owner/repo, which AI tools do not add to: add the item to one of the computer's own lists.", TaskTools.AddRefused(list, github));
+        Assert.Null(TaskTools.AddRefused(list, ItemDocument.NewList([])));
+        Assert.Null(TaskTools.AddRefused(list, null));
+    }
+
+    [Fact]
     public void An_item_is_given_with_its_title_whether_it_is_done_and_its_fields_a_password_never()
     {
         var document = ItemDocument.NewItem("Fix the tap", TaskRules.DefaultTemplate).WithField(-1, "Secret", FieldTypes.Password, []).WithValue(4, JsonValue.Create("hunter2"));

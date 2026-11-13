@@ -167,6 +167,15 @@ public static class TaskTools
         return (item, null);
     }
 
+    /// <summary>
+    /// TK-8.3: a list an AI tool does not add to, with the reason; null when it takes the add. A GitHub list (RP-7.1) is
+    /// GitHub's issues: an item made here was never sent there, so its next refresh would archive it (2026-11-12).
+    /// </summary>
+    public static string? AddRefused(ReachableList list, ItemDocument? details) =>
+        GitHubList.Of(details) is { } github
+            ? $"{list.Name} is a list of the GitHub issues of {github.Repository}, which AI tools do not add to: add the item to one of the computer's own lists."
+            : null;
+
     /// <summary>The longest title a tool may give (TK-8.3): the window says it whole, in "Claude added ..." and in the undo.</summary>
     public const int MaxTitle = 200;
 
