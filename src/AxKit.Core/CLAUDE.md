@@ -61,7 +61,7 @@ another project on its second use, the bullet says so.
 - `Updates/UpdateCheck` (the latest GitHub release: JSON parsing, version comparison; the repository name lives here)
   and `Updates/Updater` (the download and the hand-over to `install.ps1`, AX-3); `Updates/ReleaseSigning`, the release
   key's public half and the check of a zip's signature before anything is installed (AX-3.4, S-27).
-- `Audio/WaveTone`: the chimes, the ticks and the working music as WAV bytes, generated in code; no media files ship.
+- `Audio/WaveTone`: the chimes, the ticks, the command offer's swoops and the working music as WAV bytes, generated in code; no media files ship.
 - `BundleAbout` (AX-9.9): the About sections of the bundle, each a notice's title and text: Version (with the window's
   latest-release state), Licence, Attribution, and the axKit guide, `docs/axKit/README.md` embedded by
   `AxKit.Core.csproj` as `AxKitGuide.md`, read through `EmbeddedText`, which every app's `HelpText.UserGuide` uses for

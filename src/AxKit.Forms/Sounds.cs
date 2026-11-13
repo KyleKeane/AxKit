@@ -186,10 +186,11 @@ public static class Sounds
     private static readonly Sound QuestionChime = new(WaveTone.Notes(0.35, (659.25, 70), (0, 40), (659.25, 110)));
     private static readonly Sound NoticeChime = new(WaveTone.Notes(0.35, (1046.5, 45), (1318.5, 45), (1046.5, 45), (1318.5, 110)));
 
-    // A4 twice, then A5 held: two low knocks and a note an octave up, a command offered for the user to run themselves
-    // (axClaude FR-2.12, asked 2026-11-13). Lower and slower than the trill of a question, and three sounds where the
-    // question chime has two, so that an offer is told from a question of Claude's before a word is spoken.
-    private static readonly Sound OfferChime = new(WaveTone.Notes(0.35, (440, 60), (0, 50), (440, 60), (0, 50), (880, 180)));
+    // Five short swoops falling from 2400 to 900 Hz, 80 ms each, 400 ms in all: a command offered for the user to run
+    // themselves (axClaude FR-2.12, asked 2026-11-13). An alarm, not a chime, louder than the chimes. Chosen by the
+    // user by ear the same day, played to him one by one: two low knocks and a note an octave up were too mild; seven
+    // fast struck taps, rising swoops, slower falling swoops and three of these were heard and passed over.
+    private static readonly Sound OfferChime = new(WaveTone.Swoops(0.5, 2400, 900, 80, 5));
 
     // A3 alone, short and low: the edge, nothing there (a list's first or last entry under Up or Down, a typed name no
     // entry starts with; axFile AF-3.6). An earcon where a sentence would be noise, asked 2026-10-22. A4 falling to
@@ -262,7 +263,7 @@ public static class Sounds
     /// <summary>A quick high trill: the answer notice opened and waits for an answer.</summary>
     public static void Notice() => Play("Notice", () => Chimes.Play(NoticeChime, replace: true));
 
-    /// <summary>Two low knocks and a note an octave up: a command is offered for the user to run themselves, not a question of Claude's.</summary>
+    /// <summary>Five short high falling swoops, an alarm: a command is offered for the user to run themselves, not a question of Claude's.</summary>
     public static void Offer() => Play("Offer", () => Chimes.Play(OfferChime, replace: true));
 
     /// <summary>One short low note: the edge, nothing there (a key that moves nothing, a typed name no entry starts with).</summary>

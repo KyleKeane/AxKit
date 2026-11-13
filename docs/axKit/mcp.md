@@ -391,7 +391,7 @@ which overwrote what the user had there. Now it offers the command through a too
   offer made during a turn waits for the turn's end, and several are asked one after another. It comes with a
   chime of its own and a moment in which keys do nothing. It is answered as a question of Claude's is and must still
   never be taken for one (the user's decision of 2026-11-13), so two things tell it apart before the command is heard:
-  the chime (`Sounds.Offer`, two low knocks and a note an octave up, where a question has the quick high trill), and
+  the chime (`Sounds.Offer`, an alarm of five short high falling swoops, which the user chose by ear, where a question has the quick high trill), and
   the words every name of an offer starts with, "Command offer" (`McpOffer.Label`): the list, the explanation's title
   and the concern's field. The list is named "Command offer. Claude offers a command for you to run: " and the
   command, read each time the focus comes to it; Ctrl+Q reads it again with the reason. Its answers, in this order:

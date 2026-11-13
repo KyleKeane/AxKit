@@ -79,6 +79,48 @@ public class WaveToneTests
     }
 
     [Fact]
+    public void Swoops_glide_from_one_pitch_to_the_other_and_start_afresh()
+    {
+        var wav = WaveTone.Swoops(0.5, 2400, 900, 80, 3);
+        var each = 80 * WaveTone.SampleRate / 1000;
+        Assert.Equal(3 * each, (wav.Length - WaveTone.HeaderLength) / 2);
+
+        int At(int i) => BitConverter.ToInt16(wav, WaveTone.HeaderLength + i * 2);
+
+        // The pitch by the zero crossings: many in a swoop's first quarter, far fewer in its last, and again in the next swoop.
+        int Crossings(int from, int to)
+        {
+            var count = 0;
+            for (var i = from + 1; i < to; i++)
+            {
+                if ((At(i - 1) < 0) != (At(i) < 0))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        for (var n = 0; n < 3; n++)
+        {
+            var start = n * each;
+            Assert.True(Crossings(start, start + each / 4) > Crossings(start + each * 3 / 4, start + each) * 3 / 2, $"swoop {n} should fall in pitch");
+            // Each swoop starts and ends in silence, so that the jump back up does not click.
+            Assert.True(Math.Abs(At(start)) < 0.05 * short.MaxValue, $"swoop {n} should start quietly");
+            Assert.True(Math.Abs(At(start + each - 1)) < 0.05 * short.MaxValue, $"swoop {n} should end quietly");
+        }
+
+        var peak = 0;
+        for (var i = 0; i < 3 * each; i++)
+        {
+            peak = Math.Max(peak, Math.Abs(At(i)));
+        }
+
+        Assert.InRange(peak, 0.4 * short.MaxValue, 0.5 * short.MaxValue + 1);
+    }
+
+    [Fact]
     public void Plucks_ring_into_the_next_note_and_loop_without_a_seam()
     {
         var wav = WaveTone.Plucks(0.2, 100, 440, 330, 220);

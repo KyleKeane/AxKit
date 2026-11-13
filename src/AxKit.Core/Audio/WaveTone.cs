@@ -52,6 +52,31 @@ public static class WaveTone
     }
 
     /// <summary>
+    /// Swoops, like a small siren: each glides from one pitch to the other in a straight line over
+    /// <paramref name="millisecondsEach"/>, faded in and out over three milliseconds, the next following at once.
+    /// Falling swoops sound like an alarm (the command offer's sound, axClaude FR-2.12). The phase is summed sample by
+    /// sample, so that the glide has no step in it.
+    /// </summary>
+    public static byte[] Swoops(double amplitude, double fromHertz, double toHertz, int millisecondsEach, int count)
+    {
+        var each = Samples(millisecondsEach);
+        var fade = Math.Max(1, Math.Min(each / 2, Samples(3)));
+        var samples = new short[each * count];
+        for (var n = 0; n < count; n++)
+        {
+            var phase = 0.0;
+            for (var i = 0; i < each; i++)
+            {
+                phase += 2 * Math.PI * (fromHertz + (toHertz - fromHertz) * i / each) / SampleRate;
+                var envelope = Math.Min(1.0, Math.Min(i, each - 1 - i) / (double)fade);
+                samples[n * each + i] = (short)(Math.Sin(phase) * envelope * amplitude * short.MaxValue);
+            }
+        }
+
+        return Wav(samples);
+    }
+
+    /// <summary>
     /// Strikes, like a typewriter key or a tiny hammer: each is a burst of noise over a short tone that dies away at
     /// once, the noise gone within a couple of milliseconds and the tone within <paramref name="millisecondsEach"/>,
     /// the next strike following as soon as the last has faded. One strike is heard as a single tick; two or three in

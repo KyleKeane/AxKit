@@ -173,7 +173,7 @@ the app follows its spec, the plan's step reads as below.
 
 Needs the AI tools on and axKit added to Claude Code, in a session started after that. Ask Claude: "Offer me the command echo hello with axkit_offer_command, with details." Steps 1 to 4 and 6 are also `tests/scripts/axClaude/18-offered-command.txt`.
 
-1. After Claude's turn ends: the offer's own chime (two low knocks and a higher note, not the trill of a question), then the focus on a list in the message field's place, read as "Command offer. Claude offers a command for you to run: echo hello", then "1. Explain this command". No notice covers the window.
+1. After Claude's turn ends: the offer's own chime (an alarm of five short falling swoops, not the trill of a question), then the focus on a list in the message field's place, read as "Command offer. Claude offers a command for you to run: echo hello", then "1. Explain this command". No notice covers the window.
 2. Ctrl+2 goes to the conversation, which reads as usual; Ctrl+1 comes back to the list on the same answer. Ctrl+Q reads the question again with Claude's reason.
 3. Enter on Explain this command: a notice, "Command offer: about this command", the focus in its text; `h` moves by heading: The command, Why Claude offers it, What each part does in Claude's words (when Claude gave details), What your answers do. Enter or Escape closes it and the focus is back on the list.
 4. Down to "3. No, do not run it", Enter: "Not run"; the message field is back and nothing was sent. Escape on the list does the same.
