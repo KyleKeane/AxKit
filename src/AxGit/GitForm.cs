@@ -108,7 +108,7 @@ public sealed partial class GitForm : AxKitForm
         Add(changes, new Command("&Open file in editor", AxGitKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
         Git(Add(changes, new Command("Disca&rd changes...", AxGitKeys.Discard, Discard) { When = () => _list.Focused, Mark = CommandMark.Act }));
         var commit = new ToolStripMenuItem("C&ommit");
-        commit.DropDownItems.Add(Item("&Show the commit", () => Do(ShowCommitAsync), AxGitKeys.Act));
+        commit.DropDownItems.Add(Item("&Show the commit", () => Do(ShowCommitAsync), AxGitKeys.Act, CommandMark.Open));
         var branch = new ToolStripMenuItem("&Branch");
         Git(Add(branch, new Command("&Switch to branch", AxGitKeys.Act, () => Do(SwitchBranchAsync)) { When = () => _list.Focused && _view == View.Branches, Mark = CommandMark.Act }));
         _context = new ContextBarMenu(() => _view switch { View.Log => commit, View.Branches => branch, _ => changes }, () => "Nothing selected", said => Announce(said, true), changes, commit, branch);

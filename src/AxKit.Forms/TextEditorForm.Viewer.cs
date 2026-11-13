@@ -320,7 +320,7 @@ public sealed partial class TextEditorForm
         var number = 0;
         foreach (var app in apps)
         {
-            _openWithItem.DropDownItems.Add(new ToolStripMenuItem($"&{++number}. {app.Title}", null, (_, _) => WindowMenu.Start(app.Verb, path)));
+            _openWithItem.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem($"&{++number}. {app.Title}", null, (_, _) => WindowMenu.Start(app.Verb, path)), CommandMark.Open));
         }
 
         if (_openWithItem.DropDownItems.Count > 0)
@@ -328,8 +328,8 @@ public sealed partial class TextEditorForm
             _openWithItem.DropDownItems.Add(new ToolStripSeparator());
         }
 
-        _openWithItem.DropDownItems.Add(new ToolStripMenuItem("&Windows' program for it", null, (_, _) => OpenInWindowsProgram(path)));
-        _openWithItem.DropDownItems.Add(new ToolStripMenuItem("&Choose another program...", null, (_, _) => ChooseProgram(path)));
+        _openWithItem.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Windows' program for it", null, (_, _) => OpenInWindowsProgram(path)), CommandMark.Act));
+        _openWithItem.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Choose another program...", null, (_, _) => ChooseProgram(path)), CommandMark.Act));
     }
 
     /// <summary>The viewer's way on, named after the file's page (AP-1.4, AP-7.3); nothing in an editor.</summary>

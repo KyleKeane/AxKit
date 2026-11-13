@@ -91,7 +91,7 @@ public sealed partial class TextEditorForm : AxKitForm
         else
         {
             // Ctrl+S is the base's key (SaveCommand), so Save stays an item that shows it.
-            file.DropDownItems.Add(Item("&Save", () => Save(), BundleKeys.Save));
+            file.DropDownItems.Add(Item("&Save", () => Save(), BundleKeys.Save, CommandMark.Change));
             Add(file, new Command("Save &as...", EditorKeys.SaveAs, () => SaveAs()) { Mark = CommandMark.Change });
             file.DropDownItems.Add(new ToolStripSeparator());
         }
@@ -249,20 +249,20 @@ public sealed partial class TextEditorForm : AxKitForm
         if (!_app.ReadOnly)
         {
             items.Add(new ToolStripSeparator());
-            items.Add(new ToolStripMenuItem("Cu&t", null, (_, _) => _editor.Cut()) { ShortcutKeyDisplayString = "Ctrl+X" });
+            items.Add(CommandPalette.Marked(new ToolStripMenuItem("Cu&t", null, (_, _) => _editor.Cut()) { ShortcutKeyDisplayString = "Ctrl+X" }, CommandMark.Act));
         }
 
-        items.Add(new ToolStripMenuItem("&Copy", null, (_, _) => _editor.Copy()) { ShortcutKeyDisplayString = "Ctrl+C" });
+        items.Add(CommandPalette.Marked(new ToolStripMenuItem("&Copy", null, (_, _) => _editor.Copy()) { ShortcutKeyDisplayString = "Ctrl+C" }, CommandMark.Act));
         if (!_app.ReadOnly)
         {
-            items.Add(new ToolStripMenuItem("&Paste", null, (_, _) =>
+            items.Add(CommandPalette.Marked(new ToolStripMenuItem("&Paste", null, (_, _) =>
             {
                 _editor.Paste();
                 SayPasteAfter(_editor);
-            }) { ShortcutKeyDisplayString = "Ctrl+V" });
+            }) { ShortcutKeyDisplayString = "Ctrl+V" }, CommandMark.Act));
         }
 
-        items.Add(new ToolStripMenuItem("Select &all", null, (_, _) => _editor.SelectAll()) { ShortcutKeyDisplayString = "Ctrl+A" });
+        items.Add(CommandPalette.Marked(new ToolStripMenuItem("Select &all", null, (_, _) => _editor.SelectAll()) { ShortcutKeyDisplayString = "Ctrl+A" }, CommandMark.Open));
     }
 
     // ---- what the window base asks for ----

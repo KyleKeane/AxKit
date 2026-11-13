@@ -38,8 +38,9 @@ public sealed class McpOfferTests
     [Fact]
     public void The_question_is_named_with_the_command_and_read_again_with_the_reason_on_one_line()
     {
-        Assert.Equal("Claude offers a command for you to run: gcloud auth login", McpOffer.AskName("claude-code", " gcloud auth login "));
-        Assert.Equal("Claude offers a command for you to run: gcloud auth login. Its reason: It asks questions in a browser.",
+        // The command first, then that an AI wrote it, every time the question is read (AX-11.12).
+        Assert.Equal("Claude offers a command for you to run: gcloud auth login. Written by Claude, an AI: read the explanation before you run it", McpOffer.AskName("claude-code", " gcloud auth login "));
+        Assert.EndsWith("before you run it. Its reason: It asks questions in a browser.",
             McpOffer.AskText("claude-code", "gcloud auth login", "It asks\nquestions in a browser."));
         Assert.DoesNotContain("Its reason", McpOffer.AskText("claude-code", "x", null));
     }
@@ -69,6 +70,11 @@ public sealed class McpOfferTests
     public void The_explanation_has_the_command_the_reason_the_tool_s_breakdown_by_line_and_what_the_answers_do()
     {
         var text = McpOffer.ExplainText("claude-code", "git branch -D cleanup", "Deleting is yours.", "git branch: works on branches\r\n-D: deletes even when not merged\u001b[2J\nhttps://git-scm.com/docs/git-branch");
+        // The caution comes first: who wrote it, that a refused command may be why it is offered, to read all of it, whose act running is.
+        Assert.StartsWith("# Read this first\n\nClaude, an AI model, wrote this command and everything said about it below.", text);
+        Assert.Contains("permission or safety checks refused it, so run it with care", text);
+        Assert.Contains("Read all the details here", text);
+        Assert.Contains("Running it is your own act", text);
         Assert.Contains("# The command\n\ngit branch -D cleanup\n\n", text);
         Assert.Contains("# Why Claude offers it\n\nDeleting is yours.\n\n", text);
         Assert.Contains("# What each part does, in Claude's words\n\ngit branch: works on branches\n-D: deletes even when not merged [2J\nhttps://git-scm.com/docs/git-branch\n\n", text);

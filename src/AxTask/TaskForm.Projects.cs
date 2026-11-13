@@ -71,7 +71,7 @@ public sealed partial class TaskForm
         CommandPalette.RefreshedOnOpening(remove, () => FillProjectFolderItems(remove));
         // Filled once now too, so that the palette, which reads a menu with items, finds it a menu (AX-10.2).
         FillProjectFolderItems(remove);
-        return [new ToolStripMenuItem("&Add a project folder...", null, (_, _) => AddProjectFolder()), remove];
+        return [CommandPalette.Marked(new ToolStripMenuItem("&Add a project folder...", null, (_, _) => AddProjectFolder()), CommandMark.Change), remove];
     }
 
     /// <summary>"1. Projects (D:\Projects)" for each folder, or one item that says there are none (AX-9.5).</summary>
@@ -87,14 +87,14 @@ public sealed partial class TaskForm
         var folders = _settings.ProjectFolders;
         if (folders.Count == 0)
         {
-            _projectFolderItems.Add(new ToolStripMenuItem("&No project folders yet"));
+            _projectFolderItems.Add(CommandPalette.NoEntry(new ToolStripMenuItem("&No project folders yet")));
         }
 
         for (var i = 0; i < folders.Count; i++)
         {
             var folder = folders[i];
             var label = (i < 9 ? $"&{i + 1}. " : $"{i + 1}. ") + $"{PathName.Of(folder)} ({folder})".Replace("&", "&&", StringComparison.Ordinal);
-            _projectFolderItems.Add(new ToolStripMenuItem(label, null, (_, _) => RemoveProjectFolder(folder)));
+            _projectFolderItems.Add(CommandPalette.Marked(new ToolStripMenuItem(label, null, (_, _) => RemoveProjectFolder(folder)), CommandMark.Change));
         }
 
         remove.DropDownItems.AddRange([.. _projectFolderItems]);

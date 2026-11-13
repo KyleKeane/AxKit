@@ -104,7 +104,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 
 ### AH-3 What a window may do with an answer
 
-- AH-3.1 **Ask**: the answer is a notice, "Claude says": the text first, read with the bundle's keys (the heading
+- AH-3.1 **Ask**: the answer is a notice, "Claude says" (its text ends with one line, "Written by Claude, an AI model. It can be wrong: check what matters before you rely on it.", bundle AX-11.12; Copy takes the answer alone): the text first, read with the bundle's keys (the heading
   letters, Ctrl+F), then a field "Ask more about this answer" (AH-6.3), then the buttons Ask more (Enter), Copy
   (the whole answer to the clipboard, the notice kept) and Close (Escape). An error is "Claude could not answer"
   with Claude Code's own words. Every use starts here; this is all axHelp and axDescribe do.

@@ -68,20 +68,20 @@ public abstract class HotkeyForm : AxKitForm
 
         if (Dispatch.ByName(AppName) is { StoreEntry: false })
         {
-            return new ToolStripMenuItem("&Start with Windows (not in the Store's copy)", null, (_, _) =>
-                Announce($"The Store's copy has no sign-in start for {AppName}: the Store allows eight apps with startup tasks, and they are taken. Start {AppName} from any axKit window, Window menu, New window; it then keeps running until Quit", true));
+            return CommandPalette.Marked(new ToolStripMenuItem("&Start with Windows (not in the Store's copy)", null, (_, _) =>
+                Announce($"The Store's copy has no sign-in start for {AppName}: the Store allows eight apps with startup tasks, and they are taken. Start {AppName} from any axKit window, Window menu, New window; it then keeps running until Quit", true)), CommandMark.Read);
         }
 
-        return new ToolStripMenuItem("&Start with Windows (Windows Settings)...", null, (_, _) =>
+        return CommandPalette.Marked(new ToolStripMenuItem("&Start with Windows (Windows Settings)...", null, (_, _) =>
         {
             Announce(SignInStart.OpenWindowsStartupSettings()
                 ? $"Windows Settings, Startup apps, is open: turn axKit {AppName} on or off there"
                 : "Windows Settings could not be opened. Settings, Apps, Startup is where axKit " + AppName + " is turned on or off", true);
-        });
+        }), CommandMark.Act);
     }
 
     /// <summary>Options, Hotkey... (AS-4.2): the notice that takes the next key.</summary>
-    protected ToolStripMenuItem HotkeyItem() => new("&Hotkey...", null, (_, _) => ShowHotkeyNotice());
+    protected ToolStripMenuItem HotkeyItem() => CommandPalette.Marked(new ToolStripMenuItem("&Hotkey...", null, (_, _) => ShowHotkeyNotice()), CommandMark.Open);
 
     /// <summary>Options, General's Say the first match while typing (AS-3.2, CP-2.3).</summary>
     protected ToolStripMenuItem SayFirstMatchItem() => Toggle("Say the first &match while typing", _settings.SayFirstMatch, v => _settings.SayFirstMatch = v);
@@ -100,7 +100,7 @@ public abstract class HotkeyForm : AxKitForm
             Log.Info("Hidden: Hide");
             HideWindow();
         }) { Mark = CommandMark.Change });
-        menu.DropDownItems.Add(new ToolStripMenuItem($"&Quit {AppName}", null, (_, _) => Quit()));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem($"&Quit {AppName}", null, (_, _) => Quit()), CommandMark.Act));
     }
 
     /// <param name="hidden">Started with --hidden, as at sign-in: the window stays hidden until the hotkey.</param>

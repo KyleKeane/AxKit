@@ -58,6 +58,9 @@ expect focus 1. Explain this command
 wait 1500
 keys enter
 expect state "notice":"About this command"
+# The caution is the first thing in the text (bundle AX-11.12).
+expect state "noticeText":"# Read this first\n\naxAutomate, an AI model, wrote this command
+expect state safety checks refused it, so run it with care
 expect state Why axAutomate offers it
 expect state A check of the question.
 expect state echo: prints its words
@@ -66,7 +69,7 @@ expect focus 1. Explain this command
 
 # Ctrl+Q reads the question again with the reason.
 keys ctrl+q
-expect said offers a command for you to run: echo offered-first. Its reason: A check of the question.
+expect said offers a command for you to run: echo offered-first. Written by axAutomate, an AI: read the explanation before you run it. Its reason: A check of the question.
 
 # MC-9.8: No, and report a concern asks for the user's words in a field; Escape comes back to the list on that answer.
 # (Enter would open Claude Code's own feedback, which a check must not send: left to the manual plan.)

@@ -146,7 +146,7 @@ public static class McpRun
     {
         var place = menu.Length > 0 ? $" ({menu})" : string.Empty;
         var on = target.Trim().Length > 0 ? $" on {ShownTarget(target)}" : string.Empty;
-        return $"{Speaker(client)} asks to run {Plain(label)}{place}{on} in this window. It acts outside the window: it may delete, move, send, open or start a program, or end something, as when you run it yourself.\n\n"
+        return $"{Speaker(client)} asks to run {Plain(label)}{place}{on} in this window. It acts outside the window: it may delete, move, send, open or start a program, or end something, as when you run it yourself. {AiCaution.Request}\n\n"
             + "Run runs it once, now, and not at all if what is selected has changed meanwhile. Deny, the default, does not.";
     }
 

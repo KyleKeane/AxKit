@@ -75,8 +75,9 @@ public static class McpOffer
         return "/feedback " + (text.Length > 1500 ? text[..1500] : text);
     }
 
-    /// <summary>The list's name, read each time the focus comes to it: who offers, and the command whole.</summary>
-    public static string AskName(string client, string command) => $"{McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}";
+    /// <summary>The list's name, read each time the focus comes to it: who offers, the command whole, and that an AI wrote it (<see cref="AiCaution"/>).</summary>
+    public static string AskName(string client, string command) =>
+        $"{McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}. {AiCaution.Short(McpRun.Speaker(client))}";
 
     /// <summary>What Ctrl+Q reads: the name and the reason.</summary>
     public static string AskText(string client, string command, string? reason)
@@ -103,7 +104,8 @@ public static class McpOffer
         var who = McpRun.Speaker(client);
         var why = Reason(reason);
         var parts = Details(details);
-        return $"# The command\n\n{command.Trim()}\n\n"
+        return $"# Read this first\n\n{AiCaution.Command(who)}\n\n"
+            + $"# The command\n\n{command.Trim()}\n\n"
             + $"# Why {who} offers it\n\n{(why.Length > 0 ? why : "No reason was given.")}\n\n"
             + (parts.Length > 0 ? $"# What each part does, in {who}'s words\n\n{parts}\n\n" : string.Empty)
             + "# What your answers do\n\n"

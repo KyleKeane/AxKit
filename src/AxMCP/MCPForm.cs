@@ -83,26 +83,26 @@ public sealed class MCPForm : ItemForm
         // Session, Actions and Context (AX-9.1, AX-9.11, B-19): the servers read again and Exit; what acts on Your
         // servers as a whole; what acts on the server, the item or the field the focus is on.
         var session = new ToolStripMenuItem("&Session");
-        session.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh));
+        session.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh, CommandMark.Read));
         session.DropDownItems.Add(new ToolStripSeparator());
         session.DropDownItems.Add(CreateExitItem());
 
         var actions = new ToolStripMenuItem("");
-        actions.DropDownItems.Add(Item("&Add server...", NewItem, ItemKeys.New));
-        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
+        actions.DropDownItems.Add(Item("&Add server...", NewItem, ItemKeys.New, CommandMark.Change));
+        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo, CommandMark.Change));
 
-        _serverMenu.DropDownItems.Add(Item("&Start, or open", OpenSelected, ItemKeys.Open));
+        _serverMenu.DropDownItems.Add(Item("&Start, or open", OpenSelected, ItemKeys.Open, CommandMark.Act));
         Add(_serverMenu, new Command("S&top", AxMCPKeys.StopServer, StopSelected) { When = NotRenaming, Mark = CommandMark.Act });
-        _serverMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename));
-        _serverMenu.DropDownItems.Add(Item("Re&move", () => WithRow(DeleteRow), ItemKeys.Delete));
+        _serverMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename, CommandMark.Change));
+        _serverMenu.DropDownItems.Add(Item("Re&move", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
 
         Add(_itemMenu, new Command("&Call, or fetch the prompt", AxMCPKeys.Call, CallSelected) { When = NotRenaming, Mark = CommandMark.Act });
-        _itemMenu.DropDownItems.Add(Item("&Open its arguments", OpenSelected, ItemKeys.Open));
-        _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
+        _itemMenu.DropDownItems.Add(Item("&Open its arguments", OpenSelected, ItemKeys.Open, CommandMark.Open));
+        _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         Add(_itemMenu, new Command("The last result as &JSON", AxMCPKeys.LastResult, OpenLastResult) { When = NotRenaming, Mark = CommandMark.Open });
 
-        _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open));
-        _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
+        _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open, CommandMark.Change));
+        _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
 
         var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(CreateTextMenu());

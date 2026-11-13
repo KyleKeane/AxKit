@@ -23,9 +23,6 @@ public static class AxStartApp
           --help, --version this text, or the version
         """;
 
-    /// <summary>Held for the life of the process, so that a second start finds the first (AS-1.2).</summary>
-    private static Mutex? _one;
-
     public static void Run(string[] args) =>
         AppHost.Run(Name, "axStart", Usage, args, arguments =>
         {
@@ -43,12 +40,9 @@ public static class AxStartApp
                 }
             }
 
-            _one = new Mutex(initiallyOwned: true, AppPaths.OneAtATime("AxStart"), out var first);
-            if (!first)
+            if (!AppHost.FirstInstance("AxStart"))
             {
                 // AS-1.2: one axStart; the running one shows its field, unless this start only wanted it running.
-                _one.Dispose();
-                _one = null;
                 if (!hidden && HotkeyForm.FindRunning(Name) is var running and not 0)
                 {
                     AppMessage.SendTo(running, Name, AppMessage.Show, []);

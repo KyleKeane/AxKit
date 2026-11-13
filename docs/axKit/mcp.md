@@ -424,6 +424,13 @@ which overwrote what the user had there. Now it offers the command through a too
   Claude is idle. A frame that changes nothing Claude waits on never closes the offer's question, as it would close
   a question Claude took back.
 
+- MC-9.10 **The caution** (bundle AX-11.12, the user's decision of 2026-11-13): the question's name ends "Written by
+  Claude, an AI: read the explanation before you run it", so it is heard each time the question is read, after the
+  command. The explanation starts with "Read this first": Claude, an AI model, wrote the command and everything said
+  about it; it can be wrong and axKit has checked none of it; a command is offered when Claude could not or should
+  not run it itself, which can be because Claude Code's own permission or safety checks refused it, so run it with
+  care; read all the details and the conversation first, and do not run what you do not understand; running it is
+  your own act, and what it does is yours to answer for (`AiCaution.Command`).
 Decisions:
 
 - MC-D17 **A tool call, never a marker in Claude's text.** A marker would be forged by any file Claude prints.

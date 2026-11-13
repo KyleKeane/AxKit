@@ -82,6 +82,7 @@ The list starts on its first answer, which runs nothing, so an Enter pressed by 
 - No, copy it to the clipboard instead puts the command on your clipboard and sends nothing. It is the only answer that touches your clipboard.
 - No, and report a concern about it asks for your words in a field (they are optional), then opens Claude Code's own feedback with the command, Claude's reason and your words. Claude Code shows you the report and asks before anything goes to Anthropic. Escape in the field goes back to the list.
 
+Claude writes the command and its explanation, and Claude can be wrong; axKit checks neither. A command may be offered precisely because Claude Code's own permission or safety checks refused to run it, so treat it with care: read the explanation and the conversation before you say yes, and do not run a command you do not understand. The question says so each time it is read ("Written by Claude, an AI: read the explanation before you run it"), and the explanation starts with a section called "Read this first". Running it is your own act, as if you had typed it.
 A command run this way skips Claude Code's own permission check, because it is your command, so axClaude asks every time and there is no "always allow". For this to work, the AI tools must be on and axKit added to Claude Code: axKit menu, Claude, AI tools, Let AI tools read and open axKit. You can always type such a line yourself too: an exclamation mark, a space and the command.
 ## Slash commands
 

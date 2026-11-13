@@ -48,21 +48,21 @@ public sealed partial class AutomateForm : ItemForm
         // ---- menus and keys: one command list (docs/axKit/app-kit.md AK-2), each key from the tables (AU-4.4) ----
         Add(_sessionMenu, new Command("&Open a folder of workflows...", AxAutomateKeys.OpenFolder, OpenFolder) { When = NotRenaming, Mark = CommandMark.Open });
         // F5 runs here (AU-D8): Refresh is the menu's alone, and a run reads its file again first.
-        _sessionMenu.DropDownItems.Add(Item("Re&fresh", () => Refresh(announce: true), Keys.None));
+        _sessionMenu.DropDownItems.Add(Item("Re&fresh", () => Refresh(announce: true), Keys.None, CommandMark.Read));
         _sessionMenu.DropDownItems.Add(new ToolStripSeparator());
         _sessionMenu.DropDownItems.Add(CreateExitItem());
 
         // Context (AX-9.11, B-19): what acts on the folder, workflow, step or part the focus is on; Actions the runs.
         var listMenu = new ToolStripMenuItem("&Workflow");
-        listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
-        listMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
+        listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
+        listMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         Add(listMenu, new Command("The workflow's file as &text", AxAutomateKeys.OpenFile, OpenFile) { When = NotRenaming, Mark = CommandMark.Open });
         var stepMenu = new ToolStripMenuItem("S&tep");
-        stepMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
-        stepMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
-        stepMenu.DropDownItems.Add(Item("The workflow's file as &text", OpenFile, AxAutomateKeys.OpenFile));
+        stepMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
+        stepMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
+        stepMenu.DropDownItems.Add(Item("The workflow's file as &text", OpenFile, AxAutomateKeys.OpenFile, CommandMark.Open));
         var partMenu = new ToolStripMenuItem("&Part");
-        partMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
+        partMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
 
         _runItem = Add(_actionsMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
         _stopItem = Add(_actionsMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });

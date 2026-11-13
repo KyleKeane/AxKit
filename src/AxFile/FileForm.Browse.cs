@@ -515,14 +515,14 @@ public sealed partial class FileForm
         for (var i = 0; i < drives.Count; i++)
         {
             var drive = drives[i];
-            items.Add(new ToolStripMenuItem(AxKitWindows.Label(i, drive.Name), null, (_, _) => Do(() => ShowFolderAsync(drive.Path, null, remember: true))));
+            items.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, drive.Name), null, (_, _) => Do(() => ShowFolderAsync(drive.Path, null, remember: true))), CommandMark.Open));
         }
 
         items.Add(new ToolStripSeparator());
-        items.Add(new ToolStripMenuItem("This &PC", null, (_, _) => Do(() => ShowFolderAsync(FolderListing.ThisPC, CurrentDrive()?.Path, remember: false))));
+        items.Add(CommandPalette.Marked(new ToolStripMenuItem("This &PC", null, (_, _) => Do(() => ShowFolderAsync(FolderListing.ThisPC, CurrentDrive()?.Path, remember: false))), CommandMark.Open));
         items.Add(new ToolStripSeparator());
-        items.Add(new ToolStripMenuItem("&Eject this drive", null, (_, _) => EjectDrive()));
-        items.Add(new ToolStripMenuItem("Drive p&roperties", null, (_, _) => ShowDriveProperties()));
+        items.Add(CommandPalette.Marked(new ToolStripMenuItem("&Eject this drive", null, (_, _) => EjectDrive()), CommandMark.Act));
+        items.Add(CommandPalette.Marked(new ToolStripMenuItem("Drive p&roperties", null, (_, _) => ShowDriveProperties()), CommandMark.Act));
     }
 
     /// <summary>The drive in hand: the entry at This PC, the folder's own drive otherwise; null without a folder.</summary>
@@ -586,7 +586,7 @@ public sealed partial class FileForm
     {
         RecentMenu.FillFolders(_favoritesItem, _settings.Favorites, "&No favorites yet", CommandMark.Open, target => Do(() => ShowFolderAsync(target, null, remember: true)));
         _favoritesItem.DropDownItems.Add(new ToolStripSeparator());
-        _favoritesItem.DropDownItems.Add(Item("&Add or remove this folder", ToggleFavorite, AxFileKeys.Favorite));
+        _favoritesItem.DropDownItems.Add(Item("&Add or remove this folder", ToggleFavorite, AxFileKeys.Favorite, CommandMark.Change));
     }
 
     /// <summary>Ctrl+D: the folder shown pinned, "Added to Favorites", or unpinned again, "Removed from Favorites".</summary>

@@ -39,8 +39,8 @@ public sealed partial class TaskForm : ItemForm
         // The first menu holds what every pane has; List and Item act on the navigator's selection, Field on the
         // detail pane's: Context holds the one for where the focus is and what is selected (AX-9.11, B-19).
         var file = new ToolStripMenuItem("&Session");
-        file.DropDownItems.Add(new ToolStripMenuItem("Top &folder...", null, (_, _) => ChooseTopFolder()));
-        file.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh));
+        file.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Top &folder...", null, (_, _) => ChooseTopFolder()), CommandMark.Act));
+        file.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh, CommandMark.Read));
         file.DropDownItems.Add(new ToolStripSeparator());
         file.DropDownItems.Add(CreateExitItem());
 
@@ -49,40 +49,40 @@ public sealed partial class TaskForm : ItemForm
         Add(navigation, new Command("&All tasks", AxTaskKeys.AllTasks, ShowAllTasks) { When = NotRenaming, Mark = CommandMark.Open });
         // TK-7b.4: the search across every list, the user's own and every project's.
         Add(navigation, new Command("Find in &every list...", AxTaskKeys.FindEverywhere, FindEverywhere) { When = NotRenaming, Mark = CommandMark.Read });
-        navigation.DropDownItems.Add(Item("Pre&vious section", () => JumpSection(-1), ItemKeys.PreviousSection));
-        navigation.DropDownItems.Add(Item("Ne&xt section", () => JumpSection(1), ItemKeys.NextSection));
+        navigation.DropDownItems.Add(Item("Pre&vious section", () => JumpSection(-1), ItemKeys.PreviousSection, CommandMark.Open));
+        navigation.DropDownItems.Add(Item("Ne&xt section", () => JumpSection(1), ItemKeys.NextSection, CommandMark.Open));
 
         // Actions: what acts on the lists as a whole, the same wherever the focus is (AX-9.1).
         var actions = new ToolStripMenuItem();
-        actions.DropDownItems.Add(Item("New &item...", NewItem, ItemKeys.New));
-        actions.DropDownItems.Add(Item("New &list...", NewList, ItemKeys.NewList));
-        actions.DropDownItems.Add(new ToolStripMenuItem("New &smart list...", null, (_, _) => NewSmartList()));
-        actions.DropDownItems.Add(new ToolStripMenuItem("New Git&Hub list...", null, (_, _) => NewGitHubList()));
+        actions.DropDownItems.Add(Item("New &item...", NewItem, ItemKeys.New, CommandMark.Change));
+        actions.DropDownItems.Add(Item("New &list...", NewList, ItemKeys.NewList, CommandMark.Change));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("New &smart list...", null, (_, _) => NewSmartList()), CommandMark.Change));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("New Git&Hub list...", null, (_, _) => NewGitHubList()), CommandMark.Act));
         actions.DropDownItems.Add(new ToolStripSeparator());
-        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
+        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo, CommandMark.Change));
         actions.DropDownItems.Add(new ToolStripSeparator());
-        actions.DropDownItems.Add(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)));
-        actions.DropDownItems.Add(new ToolStripMenuItem("Remove Do&ne from every item", null, (_, _) => SwitchList(done: false)));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)), CommandMark.Act));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Remove Do&ne from every item", null, (_, _) => SwitchList(done: false)), CommandMark.Act));
         actions.DropDownItems.Add(new ToolStripSeparator());
         // The action keys and the GitHub account (docs/axKit/reports.md RP-7.2, RP-8.2; TaskForm.GitHub.cs).
-        actions.DropDownItems.Add(new ToolStripMenuItem("Action &keys...", null, (_, _) => EditActionKeys()));
-        actions.DropDownItems.Add(new ToolStripMenuItem("GitHub acc&ount...", null, (_, _) => SetGitHubAccount()));
-        actions.DropDownItems.Add(new ToolStripMenuItem("&Forget GitHub account", null, (_, _) => ForgetGitHubAccount()));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Action &keys...", null, (_, _) => EditActionKeys()), CommandMark.Act));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("GitHub acc&ount...", null, (_, _) => SetGitHubAccount()), CommandMark.Act));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Forget GitHub account", null, (_, _) => ForgetGitHubAccount()), CommandMark.Act));
 
-        _listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
-        _listMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename));
-        _listMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete));
+        _listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
+        _listMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename, CommandMark.Change));
+        _listMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
         Add(_listMenu, new Command("Move to s&ection...", AxTaskKeys.MoveToSection, MoveToSection) { When = InNavigator, Mark = CommandMark.Change });
         _listMenu.DropDownItems.Add(new ToolStripSeparator());
         Add(_listMenu, new Command("Open in ax&JSON", AxTaskKeys.OpenInAxJson, OpenInAxJson) { When = NotRenaming, Mark = CommandMark.Open });
         Add(_listMenu, new Command("Show in ax&File", AxTaskKeys.ShowInAxFile, ShowInAxFile) { When = NotRenaming, Mark = CommandMark.Open });
 
-        _itemMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open));
-        _itemMenu.DropDownItems.Add(Item("&Done or not done", () => CheckInNavigator(SelectedRow()), ItemKeys.Check));
-        _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
-        _itemMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename));
-        _itemMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete));
-        _itemMenu.DropDownItems.Add(new ToolStripMenuItem("Use these fields for &new items", null, (_, _) => UseAsTemplate()));
+        _itemMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open, CommandMark.Open));
+        _itemMenu.DropDownItems.Add(Item("&Done or not done", () => CheckInNavigator(SelectedRow()), ItemKeys.Check, CommandMark.Change));
+        _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
+        _itemMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename, CommandMark.Change));
+        _itemMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
+        _itemMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Use these fields for &new items", null, (_, _) => UseAsTemplate()), CommandMark.Change));
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         // TK-3a.2, TK-D14: Ctrl+1 and Ctrl+2 go by heading at a top level, where no list's action keys act; registered
         // before the action keys, so that the first command whose key and place match runs.
@@ -97,17 +97,17 @@ public sealed partial class TaskForm : ItemForm
         _itemMenu.DropDownItems.Add(_actionKeysMenu);
         _itemMenu.DropDownItems.Add(_gitHubMenu);
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
-        _itemMenu.DropDownItems.Add(Item("Open in ax&JSON", OpenInAxJson, AxTaskKeys.OpenInAxJson));
-        _itemMenu.DropDownItems.Add(Item("Show in ax&File", ShowInAxFile, AxTaskKeys.ShowInAxFile));
+        _itemMenu.DropDownItems.Add(Item("Open in ax&JSON", OpenInAxJson, AxTaskKeys.OpenInAxJson, CommandMark.Open));
+        _itemMenu.DropDownItems.Add(Item("Show in ax&File", ShowInAxFile, AxTaskKeys.ShowInAxFile, CommandMark.Open));
 
-        _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open));
-        _fieldMenu.DropDownItems.Add(Item("&Done or not done", CheckField, ItemKeys.Check));
-        _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
-        _fieldMenu.DropDownItems.Add(Item("&New field...", NewField, ItemKeys.New));
-        _fieldMenu.DropDownItems.Add(Item("Ren&ame field", RenameField, ItemKeys.Rename));
-        _fieldMenu.DropDownItems.Add(Item("Re&move field", RemoveField, ItemKeys.Delete));
-        _fieldMenu.DropDownItems.Add(Item("Move &up", () => MoveField(-1), ItemKeys.MoveFieldUp));
-        _fieldMenu.DropDownItems.Add(Item("Move do&wn", () => MoveField(1), ItemKeys.MoveFieldDown));
+        _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open, CommandMark.Change));
+        _fieldMenu.DropDownItems.Add(Item("&Done or not done", CheckField, ItemKeys.Check, CommandMark.Change));
+        _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
+        _fieldMenu.DropDownItems.Add(Item("&New field...", NewField, ItemKeys.New, CommandMark.Change));
+        _fieldMenu.DropDownItems.Add(Item("Ren&ame field", RenameField, ItemKeys.Rename, CommandMark.Change));
+        _fieldMenu.DropDownItems.Add(Item("Re&move field", RemoveField, ItemKeys.Delete, CommandMark.Change));
+        _fieldMenu.DropDownItems.Add(Item("Move &up", () => MoveField(-1), ItemKeys.MoveFieldUp, CommandMark.Change));
+        _fieldMenu.DropDownItems.Add(Item("Move do&wn", () => MoveField(1), ItemKeys.MoveFieldDown, CommandMark.Change));
 
         // Options: the app's own settings first (AX-9.1; Hide done tasks was the View menu's until 2026-11-11).
         var options = new ToolStripMenuItem();

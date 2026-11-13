@@ -807,6 +807,21 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   `docs/axKit/README.md` and `SECURITY.md` say this in these terms, and a change here changes them in the same commit;
   `docs/axKit/outside-calls.md` lists every such call in the code, written from the sources (B-17).
 
+- AX-11.12 **What an AI wrote or asks for says so (2026-11-13, the user's decision).** Wherever a window shows text an
+  AI wrote for the user to act on, or lets something an AI asked for happen, it says in plain words who wrote it, that
+  it can be wrong, that axKit checked nothing of it, and that acting on it is the user's own choice. The words are one
+  class, `AxKit.Core/AiCaution`, so that every window uses the same ones. Code and commands get the most care: the
+  caution is the first thing in their explanation and part of the question's name, heard every time it is read; it
+  says that a command may be offered because the AI's own permission or safety checks refused it, to run it with
+  care, to read every detail first and not to run what is not understood; running is never the answer a list starts
+  on or a notice's default; and the AI's own words about its command are labelled as the AI's. Where it stands today:
+  a command Claude offers (`docs/axKit/mcp.md` MC-9: the question's name and "Read this first" in the explanation);
+  an AI tool's run of a window's command (MC-7.3: the question says the request comes from an AI tool, which can be
+  wrong); AI help's answers ("Claude says" ends with who wrote it and that it can be wrong; `docs/axKit/ai-help.md`
+  AH-3.1); the pairing of an AI tool (AX-11.4's reminder and check box). axClaude's conversation itself is Claude
+  Code's own output, shown as it comes, under the access layer's consent (AX-11.4). These are reminders in plain
+  words, as the consent notices are (AX-11.10), not legal advice. A new feature of this kind brings its caution in
+  the same commit, in these terms, and a line here.
 ### AX-12 Reports from every window
 
 The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes what the bundle promises.

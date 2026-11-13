@@ -183,15 +183,17 @@ public sealed class PtyHost : IDisposable
     /// </summary>
     public void Kill()
     {
+        // Under the lock Dispose takes before it closes the handle (docs/axKit/repairs.json R-29): a Kill that had
+        // checked and then lost the processor could otherwise end whatever process the closed handle's number names next.
         lock (_writeLock)
         {
             if (_disposed || HasExited)
             {
                 return;
             }
-        }
 
-        Native.TerminateProcess(_process.hProcess, 1);
+            Native.TerminateProcess(_process.hProcess, 1);
+        }
     }
 
     /// <summary>Closes the console, which ends the client, and terminates it if it lingers.</summary>

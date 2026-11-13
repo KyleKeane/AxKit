@@ -54,7 +54,7 @@ public static class AppPaths
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "github.token");
 
     public static string UpdatesFolder { get; } =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AxKit", "updates");
+        Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "updates");
 
     /// <summary>Where install.ps1 puts the bundle (AX-2.1), and the program file there, which an update starts again.</summary>
     public static string InstallFolder { get; } =

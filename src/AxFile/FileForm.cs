@@ -90,7 +90,7 @@ public sealed partial class FileForm : AxKitForm
         actions.DropDownItems.Add(new ToolStripSeparator());
         // AF-1.3: the way to the other windows, on the folder shown. The base makes the submenu around its File
         // Explorer item, so the item only shows the key and the key is a command of its own.
-        folder.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Item("File &Explorer", ShowFolderInExplorer, AxFileKeys.ShowInExplorer), () => TryFolder(out var shown) ? shown : null, FolderMissing));
+        folder.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Item("File &Explorer", ShowFolderInExplorer, AxFileKeys.ShowInExplorer, CommandMark.Act), () => TryFolder(out var shown) ? shown : null, FolderMissing));
         AddKey(new Command("Show the folder in File Explorer", AxFileKeys.ShowInExplorer, ShowFolderInExplorer) { Mark = CommandMark.Open });
         folder.DropDownItems.Add(new ToolStripSeparator());
         folder.DropDownItems.Add(CreateExitItem());
@@ -122,14 +122,14 @@ public sealed partial class FileForm : AxKitForm
         select.DropDownItems.Add(new ToolStripSeparator());
         // The operations on the marks alone (AF-D10): their keys are the entry's commands, on the targets, which
         // are the marks while there are any; these items only show them.
-        select.DropDownItems.Add(Item("Cu&t", () => OnMarks(() => CopyOrCut(cut: true)), AxFileKeys.Cut));
-        select.DropDownItems.Add(Item("&Copy", () => OnMarks(() => CopyOrCut(cut: false)), AxFileKeys.Copy));
-        select.DropDownItems.Add(Item("De&lete", () => OnMarks(Delete), AxFileKeys.Delete));
+        select.DropDownItems.Add(Item("Cu&t", () => OnMarks(() => CopyOrCut(cut: true)), AxFileKeys.Cut, CommandMark.Act));
+        select.DropDownItems.Add(Item("&Copy", () => OnMarks(() => CopyOrCut(cut: false)), AxFileKeys.Copy, CommandMark.Act));
+        select.DropDownItems.Add(Item("De&lete", () => OnMarks(Delete), AxFileKeys.Delete, CommandMark.Act));
         select.DropDownItems.Add(new ToolStripSeparator());
         Add(select, new Command("Mo&ve to folder...", Keys.None, () => OnMarks(MoveIntoNewFolder)) { Mark = CommandMark.Act });
         Add(select, new Command("Compress to &zip", Keys.None, () => OnMarks(Compress)) { Mark = CommandMark.Act });
-        select.DropDownItems.Add(Item("Add to axMedia's &queue", () => OnMarks(AddToQueue), AxFileKeys.AddToQueue));
-        select.DropDownItems.Add(Item("Copy &paths", () => OnMarks(CopyPath), AxFileKeys.CopyPath));
+        select.DropDownItems.Add(Item("Add to axMedia's &queue", () => OnMarks(AddToQueue), AxFileKeys.AddToQueue, CommandMark.Act));
+        select.DropDownItems.Add(Item("Copy &paths", () => OnMarks(CopyPath), AxFileKeys.CopyPath, CommandMark.Act));
 
         // The keys without a menu item. Two places at most, the folder list and the Actions list (AF-9.1): every one
         // of the control keys moves between them.
@@ -152,9 +152,9 @@ public sealed partial class FileForm : AxKitForm
 
         // The Actions list's line (AF-9.3): its keys, shown in Context while the Actions list has the focus.
         var line = new ToolStripMenuItem("&Line");
-        line.DropDownItems.Add(Item("&Go to where it happened", GoToAction, AxFileKeys.Open));
-        line.DropDownItems.Add(Item("&Undo this action", UndoSelectedAction, AxFileKeys.Undo));
-        line.DropDownItems.Add(Item("Its number and &time", SayActionInformation, AxFileKeys.Information));
+        line.DropDownItems.Add(Item("&Go to where it happened", GoToAction, AxFileKeys.Open, CommandMark.Open));
+        line.DropDownItems.Add(Item("&Undo this action", UndoSelectedAction, AxFileKeys.Undo, CommandMark.Act));
+        line.DropDownItems.Add(Item("Its number and &time", SayActionInformation, AxFileKeys.Information, CommandMark.Read));
         _list.Enter += (_, _) => _paneLast = false;
         _pane.Enter += (_, _) => _paneLast = true;
         _context = new ContextBarMenu(() => _paneLast ? line : item, () => "Nothing selected", said => Announce(said, true), item, line);
@@ -245,7 +245,7 @@ public sealed partial class FileForm : AxKitForm
         Add(axkit, new Command("&Editor", AxFileKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
         axkit.DropDownItems.Add(new ToolStripSeparator());
         // Every app that opens a path (AF-4.9), by group as in the Window menu.
-        WindowMenu.AddApps(axkit.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing), app => new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => OpenInAxKit(app)));
+        WindowMenu.AddApps(axkit.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing), app => CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => OpenInAxKit(app)), WindowMenu.OpenMark(app.Verb)));
 
         menu.DropDownItems.Add(axkit);
         Add(menu, new Command("Pr&eview", AxFileKeys.Preview, OpenInPreview) { When = InList, Mark = CommandMark.Open });

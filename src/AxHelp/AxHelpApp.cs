@@ -31,9 +31,6 @@ public static class AxHelpApp
           --help, --version this text, or the version
         """;
 
-    /// <summary>Held for the life of the process, so that a second start finds the first (HE-1.2).</summary>
-    private static Mutex? _one;
-
     public static void Run(string[] args) =>
         AppHost.Run(Name, "axHelp", Usage, args, arguments =>
         {
@@ -68,11 +65,8 @@ public static class AxHelpApp
                 return null;
             }
 
-            _one = new Mutex(initiallyOwned: true, AppPaths.OneAtATime("AxHelp"), out var first);
-            if (!first)
+            if (!AppHost.FirstInstance("AxHelp"))
             {
-                _one.Dispose();
-                _one = null;
                 if (HotkeyForm.FindRunning(WindowTitle) is var running and not 0)
                 {
                     if (picture is not null)

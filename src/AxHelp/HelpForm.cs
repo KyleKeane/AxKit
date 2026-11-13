@@ -52,7 +52,7 @@ public sealed class HelpForm : HotkeyForm
         Add(actions, new Command("&Open the conversation", AxHelpKeys.OpenConversation, () => OpenConversation(null)) { Mark = CommandMark.Act });
         Add(actions, new Command("Put a picture &file into the conversation...", AxHelpKeys.PictureFile, ChoosePicture) { Mark = CommandMark.Act });
         Add(actions, new Command("Open the last &screenshot in axPreview", AxHelpKeys.OpenScreenshot, OpenLastScreenshot) { Mark = CommandMark.Open });
-        actions.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()), CommandMark.Open));
 
         var options = new ToolStripMenuItem();
         options.DropDownItems.Add(HotkeyItem());

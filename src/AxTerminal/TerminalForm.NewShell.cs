@@ -153,17 +153,17 @@ internal sealed partial class TerminalForm
         for (var i = 0; i < shells.Count; i++)
         {
             var shell = shells[i];
-            var item = new ToolStripMenuItem(ShellMenuLabels.Switch(i, shell, taken), null, (_, _) => SwitchShell(shell))
+            var item = CommandPalette.Marked(new ToolStripMenuItem(ShellMenuLabels.Switch(i, shell, taken), null, (_, _) => SwitchShell(shell))
             {
                 Checked = _userShell is { } user && string.Equals(user.Name, shell.Name, StringComparison.OrdinalIgnoreCase),
-            };
+            }, CommandMark.Act);
             switchShell.DropDownItems.Insert(at + i, item);
             _userShellItems.Add(item);
         }
 
         if (shells.Count == 0)
         {
-            var none = new ToolStripMenuItem("&No shells of your own yet");
+            var none = CommandPalette.NoEntry(new ToolStripMenuItem("&No shells of your own yet"));
             remove.DropDownItems.Add(none);
             _userShellItems.Add(none);
         }
@@ -171,7 +171,7 @@ internal sealed partial class TerminalForm
         for (var i = 0; i < shells.Count; i++)
         {
             var shell = shells[i];
-            var item = new ToolStripMenuItem(ShellMenuLabels.Remove(i, shell), null, (_, _) => RemoveUserShell(shell));
+            var item = CommandPalette.Marked(new ToolStripMenuItem(ShellMenuLabels.Remove(i, shell), null, (_, _) => RemoveUserShell(shell)), CommandMark.Change);
             remove.DropDownItems.Add(item);
             _userShellItems.Add(item);
         }

@@ -79,7 +79,7 @@ public static class GitHubIssues
         // account, with what the user read and edited in the report notice and the install's random reporter id; only
         // when the user sends a report (docs/axKit/reports.md RP-6.1, PRIVACY.md).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
-        var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
+        using var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
         return new IssueCreated(Number(json.RootElement), JsonElements.GetString(json.RootElement, "html_url") ?? string.Empty);
     }
 
@@ -110,7 +110,7 @@ public static class GitHubIssues
             // Outside call, network, GitHub: lists the issues of a repository for a GitHub list of axTask, page by page,
             // when the user opens or refreshes the list (docs/axKit/reports.md RP-7.1).
             using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
-            var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
+            using var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
             var count = 0;
             foreach (var element in json.RootElement.EnumerateArray())
             {

@@ -35,7 +35,7 @@ public sealed class WindowMenu : ToolStripMenuItem
         // recently closed file is one search away (AX-10.2, 2026-11-13; the palette left them out before).
         DropDownItems.Add(_openWindows);
         DropDownItems.Add(_recentlyClosed);
-        DropDownItems.Add(new ToolStripMenuItem("&Close all windows", null, (_, _) => CloseAll()));
+        DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Close all windows", null, (_, _) => CloseAll()), CommandMark.Act));
         CommandPalette.RefreshedOnOpening(this, Fill);
         Fill();
     }
@@ -61,7 +61,7 @@ public sealed class WindowMenu : ToolStripMenuItem
     }
 
     /// <summary>Starting an app is open, but axClaude and axTerminal start Claude Code or a shell as they open: act (docs/axKit/mcp.md MC-3.1, app-kit.md AK-2.5).</summary>
-    private static CommandMark OpenMark(string verb) => AxKit.Core.Mcp.McpTools.NeverOpened.Contains(verb) ? CommandMark.Act : CommandMark.Open;
+    public static CommandMark OpenMark(string verb) => AxKit.Core.Mcp.McpTools.NeverOpened.Contains(verb) ? CommandMark.Act : CommandMark.Open;
 
     private nint Current() => _owner.IsHandleCreated ? _owner.Handle : 0;
 

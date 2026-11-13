@@ -19,8 +19,8 @@ public sealed partial class FileForm
     private void FillOpenWith(ToolStripMenuItem menu)
     {
         menu.DropDownItems.Clear();
-        menu.DropDownItems.Add(new ToolStripMenuItem("Windows &default", null, (_, _) => OpenSelectedWithWindows()));
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Choose a program...", null, (_, _) => OpenWith()));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Windows &default", null, (_, _) => OpenSelectedWithWindows()), CommandMark.Act));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Choose a program...", null, (_, _) => OpenWith()), CommandMark.Act));
         menu.DropDownItems.Add(new ToolStripSeparator());
         var programs = _settings.Programs;
         if (programs.Count == 0)
@@ -31,7 +31,7 @@ public sealed partial class FileForm
         for (var i = 0; i < programs.Count; i++)
         {
             var program = programs[i];
-            menu.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, $"{program.Name} ({program.Path})"), null, (_, _) => RunProgram(program)));
+            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, $"{program.Name} ({program.Path})"), null, (_, _) => RunProgram(program)), CommandMark.Act));
         }
 
     }
@@ -45,7 +45,7 @@ public sealed partial class FileForm
         var remove = new ToolStripMenuItem("&Remove a program from Open with");
         CommandPalette.NoEntry(remove).DropDownOpening += (_, _) => FillRemovePrograms(remove);
         FillRemovePrograms(remove);
-        return [new ToolStripMenuItem("&Add a program to Open with...", null, (_, _) => AddProgram()), remove];
+        return [CommandPalette.Marked(new ToolStripMenuItem("&Add a program to Open with...", null, (_, _) => AddProgram()), CommandMark.Change), remove];
     }
 
     /// <summary>One item per program of the user's, or one that says there are none (AX-9.5).</summary>
@@ -61,7 +61,7 @@ public sealed partial class FileForm
         for (var i = 0; i < programs.Count; i++)
         {
             var program = programs[i];
-            remove.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, program.Name), null, (_, _) => RemoveProgram(program)));
+            remove.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, program.Name), null, (_, _) => RemoveProgram(program)), CommandMark.Change));
         }
     }
 

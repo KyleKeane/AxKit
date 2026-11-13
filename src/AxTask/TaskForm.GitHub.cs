@@ -33,7 +33,7 @@ public sealed partial class TaskForm
         for (var digit = ActionKeys.First; digit <= ActionKeys.Last; digit++)
         {
             var d = digit;
-            var item = new ToolStripMenuItem("Not set", null, (_, _) => RunActionKey(d)) { ShortcutKeyDisplayString = BundleKeys.Text(AxTaskKeys.ActionKey(d)) };
+            var item = CommandPalette.Marked(new ToolStripMenuItem("Not set", null, (_, _) => RunActionKey(d)) { ShortcutKeyDisplayString = BundleKeys.Text(AxTaskKeys.ActionKey(d)) }, CommandMark.Act);
             _actionKeyItems[d] = item;
             _actionKeysMenu.DropDownItems.Add(item);
             AddKey(new Command($"Action key {d}", AxTaskKeys.ActionKey(d), () => RunActionKey(d)) { When = NotRenaming, Mark = CommandMark.Act });
@@ -41,18 +41,18 @@ public sealed partial class TaskForm
 
         CommandPalette.RefreshedOnOpening(_actionKeysMenu, RefreshActionKeyItems);
 
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Make it a &bug", null, (_, _) => SetKind(ReportKind.Bug)));
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Make it a &feature request", null, (_, _) => SetKind(ReportKind.Feature)));
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Make it feedbac&k", null, (_, _) => SetKind(ReportKind.Feedback)));
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("&Close", null, (_, _) => SetState(GitHubList.ClosedState)));
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Reo&pen", null, (_, _) => SetState(GitHubList.OpenState)));
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Co&mment...", null, (_, _) => CommentOnIssue()));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Make it a &bug", null, (_, _) => SetKind(ReportKind.Bug)), CommandMark.Act));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Make it a &feature request", null, (_, _) => SetKind(ReportKind.Feature)), CommandMark.Act));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Make it feedbac&k", null, (_, _) => SetKind(ReportKind.Feedback)), CommandMark.Act));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Close", null, (_, _) => SetState(GitHubList.ClosedState)), CommandMark.Act));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Reo&pen", null, (_, _) => SetState(GitHubList.OpenState)), CommandMark.Act));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Co&mment...", null, (_, _) => CommentOnIssue()), CommandMark.Act));
         _gitHubMenu.DropDownItems.Add(new ToolStripSeparator());
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Block this &reporter", null, (_, _) => Block(reporter: true)));
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Block this &version", null, (_, _) => Block(reporter: false)));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Block this &reporter", null, (_, _) => Block(reporter: true)), CommandMark.Act));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Block this &version", null, (_, _) => Block(reporter: false)), CommandMark.Act));
         _gitHubMenu.DropDownItems.Add(new ToolStripSeparator());
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Open on &GitHub", null, (_, _) => WithGitHubItem((_, item) => OpenTarget(item, GitHubList.IssueField))));
-        _gitHubMenu.DropDownItems.Add(new ToolStripMenuItem("Open in ax&Claude", null, (_, _) => WithGitHubItem((_, item) => OpenInAxClaude(item))));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open on &GitHub", null, (_, _) => WithGitHubItem((_, item) => OpenTarget(item, GitHubList.IssueField))), CommandMark.Act));
+        _gitHubMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open in ax&Claude", null, (_, _) => WithGitHubItem((_, item) => OpenInAxClaude(item))), CommandMark.Act));
     }
 
     /// <summary>The nine items say the list's actions as the menu opens (RP-8.3), so that the palette and F1 list the user's names.</summary>

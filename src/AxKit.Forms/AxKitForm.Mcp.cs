@@ -375,14 +375,14 @@ public abstract partial class AxKitForm
     {
         // Never offered to an AI tool, nor anything in it (docs/axKit/app-kit.md AK-2.6, exception 3).
         var menu = CommandPalette.NeverForAiTools(new ToolStripMenuItem("A&I tools"));
-        var access = new ToolStripMenuItem("&Let AI tools read and open axKit", null, (_, _) => ToggleMcp());
+        var access = CommandPalette.Marked(new ToolStripMenuItem("&Let AI tools read and open axKit", null, (_, _) => ToggleMcp()), CommandMark.Act);
         menu.DropDownItems.Add(access);
         // MC-7.2: the second switch, a menu item of the bundle's and never a command of the window's list, so that no AI tool can run it.
-        var run = new ToolStripMenuItem("Let AI tools r&un commands", null, (_, _) => ToggleRunCommands());
+        var run = CommandPalette.Marked(new ToolStripMenuItem("Let AI tools r&un commands", null, (_, _) => ToggleRunCommands()), CommandMark.Act);
         menu.DropDownItems.Add(run);
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Add axKit to Claude Code", null, (_, _) => AddToClaudeCode()));
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Forget AI tools", null, (_, _) => ForgetMcpClients()));
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Read the log", null, (_, _) => ReadMcpLog()));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Add axKit to Claude Code", null, (_, _) => AddToClaudeCode()), CommandMark.Act));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Forget AI tools", null, (_, _) => ForgetMcpClients()), CommandMark.Act));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Read the log", null, (_, _) => ReadMcpLog()), CommandMark.Act));
         CommandPalette.RefreshedOnOpening(menu, () =>
         {
             var settings = McpAccess.Load();

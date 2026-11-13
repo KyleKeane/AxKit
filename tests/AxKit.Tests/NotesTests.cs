@@ -75,6 +75,42 @@ public sealed partial class NotesTests
         Assert.True(gone.Count == 0, "The notes name what the sources no longer have (correct the note, or add a name that is not axKit's to NotesTests.NotOurs): " + string.Join("; ", gone.Distinct()));
     }
 
+    /// <summary>The most a file of notes may hold, in bytes: what is loaded with every file of its folder stays readable in one go.</summary>
+    private const int NotesAtMost = 32 * 1024;
+
+    /// <summary>The most the root instructions may hold: they are loaded into every session.</summary>
+    private const int RootAtMost = 20 * 1024;
+
+    /// <summary>
+    /// The notes stay small enough to hold (docs/axKit/repairs.json R-45): the root instructions, loaded into every
+    /// session, and each folder's notes, loaded with every file read there. One that outgrows its limit is split by
+    /// kind into a notes folder under an index, as <c>src/AxKit.Forms</c> is, or loses what a document already says.
+    /// </summary>
+    [Fact]
+    public void The_notes_stay_small_enough_to_hold()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var large = new List<string>();
+        var rootNotes = new FileInfo(Path.Combine(root, "CLAUDE.md"));
+        if (rootNotes.Length > RootAtMost)
+        {
+            large.Add($"CLAUDE.md is {rootNotes.Length} bytes, at most {RootAtMost}: move what is not a rule or a gotcha to docs/axKit (commands.md, documents.md)");
+        }
+
+        var files = Directory.GetFiles(Path.Combine(root, "src"), "CLAUDE.md", SearchOption.AllDirectories)
+            .Concat(Directory.GetDirectories(Path.Combine(root, "src"), "notes", SearchOption.AllDirectories).SelectMany(folder => Directory.GetFiles(folder, "*.md")));
+        foreach (var file in files)
+        {
+            var length = new FileInfo(file).Length;
+            if (length > NotesAtMost)
+            {
+                large.Add($"{Path.GetRelativePath(root, file)} is {length} bytes, at most {NotesAtMost}: split it by kind into a notes folder under a short index, as src/AxKit.Forms is");
+            }
+        }
+
+        Assert.True(large.Count == 0, string.Join("; ", large));
+    }
+
     [GeneratedRegex(@"[A-Za-z_][A-Za-z0-9_]*")]
     private static partial Regex Identifier();
 

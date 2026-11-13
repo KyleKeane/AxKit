@@ -16,9 +16,9 @@ internal sealed partial class MainForm
         // Session is the thing worked on, as axDown's File is: the session, where Claude runs, what the window holds.
         var session = new ToolStripMenuItem("&Session");
         Add(session, new Command("&New session...", AxClaudeKeys.NewSession, NewSession) { Mark = CommandMark.Act });
-        session.DropDownItems.Add(new ToolStripMenuItem("&Open folder...", null, (_, _) => OpenFolder()));
+        session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Open folder...", null, (_, _) => OpenFolder()), CommandMark.Act));
         // FR-8.3, FR-8.5: Open replaces this window's session; in new window leaves it running.
-        session.DropDownItems.Add(new ToolStripMenuItem("Open folder in new &window...", null, (_, _) => OpenFolderInNewWindow()));
+        session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open folder in new &window...", null, (_, _) => OpenFolderInNewWindow()), CommandMark.Act));
         session.DropDownItems.Add(RecentFoldersItem);
         session.DropDownItems.Add(RecentFoldersInNewWindowItem);
         // The standard order of a File menu (bundle AX-6): the editors have Save and Save as here; axClaude has none.
@@ -29,7 +29,7 @@ internal sealed partial class MainForm
         session.DropDownItems.Add(new ToolStripSeparator());
         // Not a save: the conversation is Claude's own record, and this writes a text copy of it. At the bottom, where
         // the editors have Save and Save as, so that the first menu of every window keeps the same order (bundle AX-6).
-        session.DropDownItems.Add(new ToolStripMenuItem("&Export conversation...", null, (_, _) => ExportConversation()) { ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Save) });
+        session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Export conversation...", null, (_, _) => ExportConversation()) { ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Save) }, CommandMark.Change));
         session.DropDownItems.Add(new ToolStripSeparator());
         session.DropDownItems.Add(CreateExitItem());
 
@@ -39,7 +39,7 @@ internal sealed partial class MainForm
         // The process first (FR-1.8), then the turn.
         Add(claude, new Command("Force Claude to res&tart", AxClaudeKeys.RestartClaude, RestartClaude) { Mark = CommandMark.Act });
         claude.DropDownItems.Add(new ToolStripSeparator());
-        claude.DropDownItems.Add(new ToolStripMenuItem("Send &message", null, (_, _) => SendInput()) { ShortcutKeyDisplayString = "Enter in the message field" });
+        claude.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Send &message", null, (_, _) => SendInput()) { ShortcutKeyDisplayString = "Enter in the message field" }, CommandMark.Act));
         Add(claude, new Command("Send &queued messages now", AxClaudeKeys.SendNow, SendNow) { Mark = CommandMark.Act });
         // The interrupt key (FR-2.3). Ctrl+Escape opens the Start menu and never reaches the app.
         Add(claude, new Command("&Interrupt", AxClaudeKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
@@ -49,10 +49,10 @@ internal sealed partial class MainForm
         // paragraph in every edit control of the bundle.
         var sendKey = new ToolStripMenuItem("Send &key");
         Add(sendKey, new Command("Ctrl+&C", AxClaudeKeys.SendCtrlC, () => Write("\x03")) { Mark = CommandMark.Act });
-        sendKey.DropDownItems.Add(new ToolStripMenuItem("Ctrl+&D", null, (_, _) => Write("\x04")));
-        sendKey.DropDownItems.Add(new ToolStripMenuItem("&Tab", null, (_, _) => Write("\t")));
-        sendKey.DropDownItems.Add(new ToolStripMenuItem("&Up", null, (_, _) => Write("\x1b[A")));
-        sendKey.DropDownItems.Add(new ToolStripMenuItem("Do&wn", null, (_, _) => Write("\x1b[B")));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Ctrl+&D", null, (_, _) => Write("\x04")), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Tab", null, (_, _) => Write("\t")), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Up", null, (_, _) => Write("\x1b[A")), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Do&wn", null, (_, _) => Write("\x1b[B")), CommandMark.Act));
         claude.DropDownItems.Add(sendKey);
 
         var navigate = new ToolStripMenuItem();
@@ -85,7 +85,7 @@ internal sealed partial class MainForm
             _arrivals.Skip(_model.Lines);
         }));
         // FR-7.4a: the user's words that keep a reply line silent, one field, semicolons between them.
-        speech.DropDownItems.Add(new ToolStripMenuItem("Words that keep a reply line &silent...", null, (_, _) => EditSilentWords()));
+        speech.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Words that keep a reply line &silent...", null, (_, _) => EditSilentWords()), CommandMark.Change));
         options.DropDownItems.Add(speech);
 
         // FR-7.3a: each of the window's own status words, and Claude's bracketed notices, on or off.

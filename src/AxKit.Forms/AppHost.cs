@@ -47,6 +47,27 @@ public static class AppHost
         Log.Info($"{name} exiting");
     }
 
+    /// <summary>The mutex of a background app, held for the life of the process, so that a second start finds the first.</summary>
+    private static Mutex? _one;
+
+    /// <summary>
+    /// Whether this process is the one process of a background app (axStart, axClip, axHelp; from their three copies,
+    /// docs/axKit/repairs.json R-42): the app's mutex (<see cref="AppPaths.OneAtATime"/>, a test run's apart from the
+    /// user's) taken and kept when free. False when another process holds it: the caller hands over to that one's
+    /// window and ends.
+    /// </summary>
+    public static bool FirstInstance(string app)
+    {
+        _one = new Mutex(initiallyOwned: true, AppPaths.OneAtATime(app), out var first);
+        if (!first)
+        {
+            _one.Dispose();
+            _one = null;
+        }
+
+        return first;
+    }
+
     /// <summary>
     /// The one path an app takes on its command line (a file, a folder): the full path, or null for none. False,
     /// with the command line reported, when there is more than one argument or an option the app does not know.

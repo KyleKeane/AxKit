@@ -10,7 +10,9 @@ start terminal {temp}\work\myproject
 expect said Ready
 
 # Add a shell: the name first, refused when blank or taken, then the command line.
-expect commands No shells of your own yet, Session, Remove a shell
+# With none yet, Remove a shell holds one line that says so; it does nothing, so it is no command of the list
+# (docs/axKit/app-kit.md AK-2.5: the line that says a list is empty is never an entry).
+refuse commands No shells of your own yet
 menu Add a shell
 expect state "notice":"Add a shell"
 expect focus Type the shell
@@ -75,5 +77,7 @@ menu 1. Remove Test cmd
 expect said Removed Test cmd
 expect state "title":"myproject - 
 refuse state - Test cmd - axTerminal
-expect commands No shells of your own yet, Session, Remove a shell
+# With none yet, Remove a shell holds one line that says so; it does nothing, so it is no command of the list
+# (docs/axKit/app-kit.md AK-2.5: the line that says a list is empty is never an entry).
+refuse commands No shells of your own yet
 refuse commands Test cmd

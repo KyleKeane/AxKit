@@ -55,8 +55,9 @@ public abstract partial class AxKitForm : Form
         LoadTheme();
         SystemColorsChanged += (_, _) => PaintTheme(this);
         _paletteSpeak.Tick += (_, _) => SayFirstPaletteMatch();
-        _checkItem.Click += (_, _) => CheckForUpdates(manual: true);
-        _updateItem.Click += (_, _) => OfferKnownUpdate();
+        // Both reach GitHub: act for the AI tools (docs/axKit/app-kit.md AK-2.5).
+        CommandPalette.Marked(_checkItem, CommandMark.Act).Click += (_, _) => CheckForUpdates(manual: true);
+        CommandPalette.Marked(_updateItem, CommandMark.Act).Click += (_, _) => OfferKnownUpdate();
     }
 
     /// <summary>The app's name, which ends the title of its windows and names them in the Window menu.</summary>
@@ -251,13 +252,13 @@ public abstract partial class AxKitForm : Form
         menu.DropDownItems.Add(explorer);
         foreach (var app in Dispatch.Apps.Where(app => app.ShowIn && !string.Equals(app.Name, AppName, StringComparison.OrdinalIgnoreCase)))
         {
-            menu.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) =>
+            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) =>
             {
                 if (place() is { } path && !SaidMissing(path, missing) && Dispatch.PathFor(app, path, Directory.Exists(path)) is { } target)
                 {
                     WindowMenu.Start(app.Verb, target);
                 }
-            }));
+            }), WindowMenu.OpenMark(app.Verb)));
         }
 
         return menu;
@@ -282,9 +283,9 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>A menu item whose key the window handles itself: the item only shows the key (AX-8).</summary>
-    protected static ToolStripMenuItem Item(string text, Action action, Keys key)
+    protected static ToolStripMenuItem Item(string text, Action action, Keys key, CommandMark mark)
     {
-        var item = new ToolStripMenuItem(text, null, (_, _) => action());
+        var item = CommandPalette.Marked(new ToolStripMenuItem(text, null, (_, _) => action()), mark);
         if (key != Keys.None)
         {
             item.ShortcutKeyDisplayString = BundleKeys.Text(key);
@@ -309,7 +310,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>The last item of every first menu (AX-6): Exit, closing the window as Alt+F4 does, which is Windows' own key.</summary>
-    protected ToolStripMenuItem CreateExitItem() => new("E&xit", null, (_, _) => Close()) { ShortcutKeyDisplayString = "Alt+F4" };
+    protected ToolStripMenuItem CreateExitItem() => CommandPalette.Marked(new ToolStripMenuItem("E&xit", null, (_, _) => Close()) { ShortcutKeyDisplayString = "Alt+F4" }, CommandMark.Act); // Ends the window, and with it what the window runs (Claude Code, a shell, a player).
 
     /// <summary>Options → Text (AX-6.5): the window's own items first, then what every window has: Say new line (AX-7.8), Sound on headings (AX-7.9), Font…, Larger text, Smaller text, Windows text size.</summary>
     protected ToolStripMenuItem CreateTextMenu(params ToolStripItem[] own)
@@ -324,8 +325,8 @@ public abstract partial class AxKitForm : Form
         menu.DropDownItems.Add(CreateSayNewLineItem(menu));
         menu.DropDownItems.Add(CreateHeadingSoundItem(menu));
         menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Font...", null, (_, _) => ChooseFont()), CommandMark.Change));
-        menu.DropDownItems.Add(CommandPalette.Marked(Item("&Larger text", () => ChangeTextSize(1), BundleKeys.LargerText), CommandMark.Change));
-        menu.DropDownItems.Add(CommandPalette.Marked(Item("S&maller text", () => ChangeTextSize(-1), BundleKeys.SmallerText), CommandMark.Change));
+        menu.DropDownItems.Add(Item("&Larger text", () => ChangeTextSize(1), BundleKeys.LargerText, CommandMark.Change));
+        menu.DropDownItems.Add(Item("S&maller text", () => ChangeTextSize(-1), BundleKeys.SmallerText, CommandMark.Change));
         menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Windows &text size", null, (_, _) => UseSystemFont()), CommandMark.Change));
         return menu;
     }
@@ -351,7 +352,7 @@ public abstract partial class AxKitForm : Form
         var menu = new ToolStripMenuItem("De&veloper");
         menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open settings &file", null, (_, _) => OpenSettingsFile()), CommandMark.Open));
         menu.DropDownItems.AddRange(own);
-        menu.DropDownItems.Add(new ToolStripMenuItem("Copy diag&nostics", null, (_, _) => CopyDiagnostics()));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Copy diag&nostics", null, (_, _) => CopyDiagnostics()), CommandMark.Act));
         return menu;
     }
 
@@ -366,22 +367,22 @@ public abstract partial class AxKitForm : Form
         // Kept for a question about this window (docs/axKit/ai-help.md AH-6.2), which gives Claude the guide to answer from.
         _userGuide = userGuide;
         var help = new ToolStripMenuItem("&Help");
-        help.DropDownItems.Add(CommandPalette.Marked(Item("Command &palette...", ShowCommandPalette, BundleKeys.CommandPalette), CommandMark.Read));
-        help.DropDownItems.Add(CommandPalette.Marked(Item("&Keyboard shortcuts", () => ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts)), BundleKeys.Shortcuts), CommandMark.Read));
+        help.DropDownItems.Add(Item("Command &palette...", ShowCommandPalette, BundleKeys.CommandPalette, CommandMark.Read));
+        help.DropDownItems.Add(Item("&Keyboard shortcuts", () => ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts)), BundleKeys.Shortcuts, CommandMark.Read));
         help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("User &guide", null, (_, _) => ShowNotice(Notice.Plain("User guide", userGuide()))), CommandMark.Read));
         var resources = new ToolStripMenuItem(resourcesLabel);
         foreach (var (label, url) in pages)
         {
-            resources.DropDownItems.Add(new ToolStripMenuItem(label, null, (_, _) => OpenUrl(url)));
+            resources.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(label, null, (_, _) => OpenUrl(url)), CommandMark.Act));
         }
 
         help.DropDownItems.Add(resources);
         help.DropDownItems.Add(new ToolStripSeparator());
         // Reports (RP-2.2): the report itself, with its bundle key shown, and the list of them in axTask.
-        help.DropDownItems.Add(new ToolStripMenuItem("&Send a report...", null, (_, _) => ShowReport())
+        help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Send a report...", null, (_, _) => ShowReport())
         {
             ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
-        });
+        }, CommandMark.Open));
         help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Your reports", null, (_, _) => OpenReports()), CommandMark.Act));
         help.DropDownItems.Add(new ToolStripSeparator());
         help.DropDownItems.Add(_checkItem);
@@ -393,7 +394,7 @@ public abstract partial class AxKitForm : Form
         about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Privacy", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.PrivacyTitle, BundleAbout.Privacy()))), CommandMark.Read));
         about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Third-party &notices", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.NoticesTitle, BundleAbout.Notices()))), CommandMark.Read));
         about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("axKit &guide", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.GuideTitle, BundleAbout.Guide()))), CommandMark.Read));
-        about.DropDownItems.Add(new ToolStripMenuItem("axKit on Git&Hub", null, (_, _) => OpenUrl(UpdateCheck.RepositoryPage)));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("axKit on Git&Hub", null, (_, _) => OpenUrl(UpdateCheck.RepositoryPage)), CommandMark.Act));
         help.DropDownItems.Add(about);
         return help;
     }
@@ -676,7 +677,7 @@ public abstract partial class AxKitForm : Form
         }
 
         // The item carries the command's mark, for the AI tools, which read the menus (docs/axKit/app-kit.md AK-2.5).
-        return CommandPalette.Marked(Item(command.Label, () => Run(command), command.Key), command.Mark);
+        return Item(command.Label, () => Run(command), command.Key, command.Mark);
     }
 
     /// <summary>
@@ -738,6 +739,18 @@ public abstract partial class AxKitForm : Form
             if (_commands.Take(i).FirstOrDefault(earlier => earlier.Key == key && earlier.When is null) is { } shadow)
             {
                 problems.Add($"{Plain(command.Label)} ({text}) never runs: {Plain(shadow.Label)} takes the key everywhere");
+            }
+        }
+
+        // Every entry of the built window states its mark (docs/axKit/repairs.json R-11, R-37): asked of the menus as
+        // they stand, the lists that fill themselves included, so an item made in a way the source tests do not see
+        // is found here.
+        if (MainMenuStrip is { } bar)
+        {
+            // An item withheld from the AI tools (NeverForAiTools) has said what it is to them: never theirs.
+            foreach (var entry in CommandPalette.Entries(bar).Where(entry => CommandPalette.ForAiTools(entry.Item) && !CommandPalette.StatesMark(entry.Item)))
+            {
+                problems.Add($"{entry.Name} ({entry.Menu}) states no mark: give it one where it is made, as a Command or with CommandPalette.Marked (docs/axKit/app-kit.md AK-2.5)");
             }
         }
 

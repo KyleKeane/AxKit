@@ -23,9 +23,6 @@ public static class AxClipApp
           --help, --version this text, or the version
         """;
 
-    /// <summary>Held for the life of the process, so that a second start finds the first (CP-1.1).</summary>
-    private static Mutex? _one;
-
     public static void Run(string[] args) =>
         AppHost.Run(Name, "axClip", Usage, args, arguments =>
         {
@@ -43,11 +40,8 @@ public static class AxClipApp
                 }
             }
 
-            _one = new Mutex(initiallyOwned: true, AppPaths.OneAtATime("AxClip"), out var first);
-            if (!first)
+            if (!AppHost.FirstInstance("AxClip"))
             {
-                _one.Dispose();
-                _one = null;
                 if (!hidden && HotkeyForm.FindRunning(Name) is var running and not 0)
                 {
                     AppMessage.SendTo(running, Name, AppMessage.Show, []);

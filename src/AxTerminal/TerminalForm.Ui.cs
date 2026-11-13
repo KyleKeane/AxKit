@@ -22,7 +22,7 @@ internal sealed partial class TerminalForm
         var switchShell = new ToolStripMenuItem("S&witch shell");
         foreach (var (kind, text) in ShellChoices)
         {
-            var item = new ToolStripMenuItem(text, null, (_, _) => SwitchShell(kind));
+            var item = CommandPalette.Marked(new ToolStripMenuItem(text, null, (_, _) => SwitchShell(kind)), CommandMark.Act);
             _shellItems.Add((kind, item));
             switchShell.DropDownItems.Add(item);
         }
@@ -33,8 +33,8 @@ internal sealed partial class TerminalForm
         var userShellsAt = switchShell.DropDownItems.Count;
         var removeShell = new ToolStripMenuItem("Remo&ve a shell");
         // AT-1.2a: a shell Windows does not have is not offered; its installer is, from its maker, through winget.
-        var installPwsh = new ToolStripMenuItem("Install &PowerShell 7...", null, (_, _) => InstallShell(ProgramInstall.PowerShell7, ShellKind.PowerShell7));
-        var installBash = new ToolStripMenuItem("Install Git, for Git &Bash...", null, (_, _) => InstallShell(ProgramInstall.Git, ShellKind.GitBash));
+        var installPwsh = CommandPalette.Marked(new ToolStripMenuItem("Install &PowerShell 7...", null, (_, _) => InstallShell(ProgramInstall.PowerShell7, ShellKind.PowerShell7)), CommandMark.Act);
+        var installBash = CommandPalette.Marked(new ToolStripMenuItem("Install Git, for Git &Bash...", null, (_, _) => InstallShell(ProgramInstall.Git, ShellKind.GitBash)), CommandMark.Act);
         // The shell in use checked, the shells there (looked up once, ShellThere) shown and the user's shells made again
         // as Session or Switch shell opens; the palette refreshes them the same way (AX-10.2), so it lists the user's shells too.
         void RefreshShells()
@@ -55,8 +55,8 @@ internal sealed partial class TerminalForm
         CommandPalette.RefreshedOnOpening(session, RefreshShells);
         session.DropDownItems.Add(new ToolStripSeparator());
         session.DropDownItems.Add(switchShell);
-        session.DropDownItems.Add(new ToolStripMenuItem("C&ustom shell...", null, (_, _) => NewSession()));
-        session.DropDownItems.Add(new ToolStripMenuItem("&Add a shell...", null, (_, _) => AddUserShell()));
+        session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("C&ustom shell...", null, (_, _) => NewSession()), CommandMark.Act));
+        session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Add a shell...", null, (_, _) => AddUserShell()), CommandMark.Act));
         session.DropDownItems.Add(removeShell);
         session.DropDownItems.Add(installPwsh);
         session.DropDownItems.Add(installBash);
@@ -69,7 +69,7 @@ internal sealed partial class TerminalForm
         var explorer = new Command("File &Explorer", AxTerminalKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
         session.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Add(explorer), () => CurrentDirectory, FolderMissing));
         session.DropDownItems.Add(new ToolStripSeparator());
-        session.DropDownItems.Add(new ToolStripMenuItem("&Export transcript...", null, (_, _) => ExportTranscript()) { ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Save) });
+        session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Export transcript...", null, (_, _) => ExportTranscript()) { ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Save) }, CommandMark.Change));
         session.DropDownItems.Add(new ToolStripSeparator());
         session.DropDownItems.Add(CreateExitItem());
 
@@ -78,13 +78,13 @@ internal sealed partial class TerminalForm
         Add(shell, new Command("&Interrupt", AxTerminalKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
         Add(shell, new Command("Send &Escape", AxTerminalKeys.SendEscape, SendEscape) { Mark = CommandMark.Act });
         var sendKey = new ToolStripMenuItem("Send &key");
-        sendKey.DropDownItems.Add(new ToolStripMenuItem("&Up", null, (_, _) => SendKey("\x1b[A", "Up sent")));
-        sendKey.DropDownItems.Add(new ToolStripMenuItem("&Down", null, (_, _) => SendKey("\x1b[B", "Down sent")));
-        sendKey.DropDownItems.Add(new ToolStripMenuItem("Ctrl+D (&end of input)", null, (_, _) => SendKey("\x04", "Ctrl+D sent")));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Up", null, (_, _) => SendKey("\x1b[A", "Up sent")), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Down", null, (_, _) => SendKey("\x1b[B", "Down sent")), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Ctrl+D (&end of input)", null, (_, _) => SendKey("\x04", "Ctrl+D sent")), CommandMark.Act));
         shell.DropDownItems.Add(sendKey);
         shell.DropDownItems.Add(new ToolStripSeparator());
         Add(shell, new Command("&Recent commands...", AxTerminalKeys.RecentCommands, ShowRecentCommands) { Mark = CommandMark.Open });
-        shell.DropDownItems.Add(new ToolStripMenuItem("Send &without recording", null, (_, _) => SendInput(record: false)) { ShortcutKeyDisplayString = "Ctrl+Enter in the command field" });
+        shell.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Send &without recording", null, (_, _) => SendInput(record: false)) { ShortcutKeyDisplayString = "Ctrl+Enter in the command field" }, CommandMark.Act));
         shell.DropDownItems.Add(new ToolStripSeparator());
         Add(shell, new Command("What is r&unning", AxTerminalKeys.WhatIsRunning, SayWhatIsRunning) { Mark = CommandMark.Read });
 

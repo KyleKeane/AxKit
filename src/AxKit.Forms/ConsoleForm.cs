@@ -93,7 +93,7 @@ public abstract partial class ConsoleForm : AxKitForm
         // The bundle's status bar pair (no AccessibleName, no Spring; StatusLayout keeps both inside the strip).
         (StateLabel, PlaceLabel) = StatusLayout.Pair(StatusBar);
 
-        RecordItem = new ToolStripMenuItem(RecordItemText);
+        RecordItem = CommandPalette.Marked(new ToolStripMenuItem(RecordItemText), CommandMark.Act); // Writes the raw stream, everything typed and shown, to a file.
         RecordItem.Click += (_, _) => ToggleRecording();
         CommandPalette.RefreshedOnOpening(RecentFoldersItem, FillRecentFolders);
         FillRecentFolders();
@@ -424,8 +424,8 @@ public abstract partial class ConsoleForm : AxKitForm
     protected void AddBookmarkItems(ToolStripMenuItem menu)
     {
         var view = _transcriptName.ToLowerInvariant();
-        menu.DropDownItems.Add(new ToolStripMenuItem("Next bookmar&k", null, (_, _) => Transcript.JumpToBookmark(backward: false)) { ShortcutKeyDisplayString = $"{BundleKeys.Text(_keys.Bookmark.Key)} in the {view}" });
-        menu.DropDownItems.Add(new ToolStripMenuItem("Pre&vious bookmark", null, (_, _) => Transcript.JumpToBookmark(backward: true)) { ShortcutKeyDisplayString = $"Shift+{BundleKeys.Text(_keys.Bookmark.Key)} in the {view}" });
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Next bookmar&k", null, (_, _) => Transcript.JumpToBookmark(backward: false)) { ShortcutKeyDisplayString = $"{BundleKeys.Text(_keys.Bookmark.Key)} in the {view}" }, CommandMark.Open));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Pre&vious bookmark", null, (_, _) => Transcript.JumpToBookmark(backward: true)) { ShortcutKeyDisplayString = $"Shift+{BundleKeys.Text(_keys.Bookmark.Key)} in the {view}" }, CommandMark.Open));
     }
 
     /// <summary>
@@ -438,10 +438,10 @@ public abstract partial class ConsoleForm : AxKitForm
     {
         var view = _transcriptName.ToLowerInvariant();
         var menu = new ToolStripMenuItem();
-        menu.DropDownItems.Add(new ToolStripMenuItem(chooseText, null, (_, _) => Transcript.ChooseLine()) { ShortcutKeyDisplayString = $"Enter in the {view}" });
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(chooseText, null, (_, _) => Transcript.ChooseLine()) { ShortcutKeyDisplayString = $"Enter in the {view}" }, CommandMark.Change));
         var bookmark = Add(menu, new Command("&Bookmark this line", _keys.BookmarkLine, Transcript.ToggleBookmark) { Mark = CommandMark.Change });
         bookmark.ShortcutKeyDisplayString = $"{BundleKeys.Text(_keys.BookmarkLine)}, or {BundleKeys.Text(_keys.BookmarkToggle)} in the {view}";
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Copy the selection", null, (_, _) => Transcript.Copy()) { ShortcutKeyDisplayString = $"Ctrl+C in the {view}" });
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Copy the selection", null, (_, _) => Transcript.Copy()) { ShortcutKeyDisplayString = $"Ctrl+C in the {view}" }, CommandMark.Act));
         ContextFromControl(Transcript);
         ContextFromControl(Input);
         return menu;

@@ -123,7 +123,6 @@ public static class ReportSender
                 using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
                 limit.CancelAfter(RequestLimit);
                 last = await GitHubIssues.CreateAsync(http, Repository, token, report.Title, body, ReportKinds.Label(report.Kind), limit.Token).ConfigureAwait(false);
-                ReportFiles.Write(path, ReportFiles.WithSent(item, last.Number, last.Url));
                 settings.LastSentUtc = clock?.Invoke() ?? DateTime.UtcNow;
                 sent++;
             }
@@ -131,6 +130,19 @@ public static class ReportSender
             {
                 stopped = GitHubIssues.ReasonOf(ex);
                 ReportFiles.Write(path, ReportFiles.WithStatus(item, ReportStatus.NotSent(stopped)));
+                break;
+            }
+
+            // The issue exists from here on: a failure to write that down must never mark the item as not sent, or
+            // the next run posts it a second time (docs/axKit/repairs.json R-29). The run stops, and says why.
+            try
+            {
+                ReportFiles.Write(path, ReportFiles.WithSent(item, last.Number, last.Url));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Log.Error($"A report was sent as issue {last.Number}, but its item could not be marked Sent", ex);
+                stopped = $"sent as issue {last.Number}, but its item could not be marked Sent ({ex.Message}); mark it by hand before sending again";
                 break;
             }
         }

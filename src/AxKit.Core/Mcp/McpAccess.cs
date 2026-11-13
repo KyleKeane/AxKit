@@ -118,7 +118,7 @@ public static class McpAccess
     public static void Pair(string program, string name)
     {
         var settings = Load();
-        settings.Clients = [.. settings.Clients.Where(client => !string.Equals(client.Program, program, StringComparison.OrdinalIgnoreCase)), new McpClient(program, name, DateTime.Now.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture))];
+        settings.Clients = [.. settings.Clients.Where(client => !string.Equals(client.Program, program, StringComparison.OrdinalIgnoreCase)), new McpClient(program, new string(name.Select(c => char.IsControl(c) ? ' ' : c).ToArray()).Trim(), DateTime.Now.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture))];
         Save(settings);
     }
 
@@ -156,11 +156,19 @@ public static class McpAccess
 
         foreach (var client in settings.Clients)
         {
-            text.Append('\n').Append(client.Program).Append('\t').Append(client.Name).Append('\t').Append(client.Paired);
+            text.Append('\n').Append(OneField(client.Program)).Append('\t').Append(OneField(client.Name)).Append('\t').Append(OneField(client.Paired));
         }
 
         return Convert.ToBase64String(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(text.ToString())));
     }
+
+    /// <summary>
+    /// A field as the seal reads it: every control character is one replacement character (docs/axKit/repairs.json
+    /// R-29). The seal's lines are fields between tabs, and a client chooses its own name: a name that held a tab or a
+    /// line break could have been sealed as one client and read back as two, the second a program the user never
+    /// allowed. A file with no such character, every file axKit wrote so far, seals as before.
+    /// </summary>
+    private static string OneField(string field) => new(field.Select(c => char.IsControl(c) ? '\uFFFD' : c).ToArray());
 
     /// <summary>Whether the file's seal is the one its content has under the key, compared in constant time.</summary>
     public static bool Checks(byte[] key, McpSettings settings) =>

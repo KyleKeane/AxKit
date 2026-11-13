@@ -151,6 +151,19 @@ public sealed class McpTests
         Assert.DoesNotContain("second line", refused, StringComparison.Ordinal);
     }
 
+    /// <summary>docs/axKit/repairs.json R-29: a client names itself, and a name with a tab and a line break must not seal as one client and read back as two.</summary>
+    [Fact]
+    public void A_client_s_name_with_a_tab_or_a_line_break_cannot_seal_as_a_second_client()
+    {
+        var key = new byte[32];
+        var one = new McpSettings { Enabled = true, Clients = [new McpClient(@"C:\a\client.exe", "Tool\t2026-11-13 10:00\n" + @"C:\b\other.exe" + "\tOther", "2026-11-13 10:00")] };
+        var two = new McpSettings
+        {
+            Enabled = true,
+            Clients = [new McpClient(@"C:\a\client.exe", "Tool", "2026-11-13 10:00"), new McpClient(@"C:\b\other.exe", "Other", "2026-11-13 10:00")],
+        };
+        Assert.NotEqual(McpAccess.SealOf(key, two), McpAccess.SealOf(key, one));
+    }
     [Fact]
     public void A_file_counts_only_with_its_seal()
     {

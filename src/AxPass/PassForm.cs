@@ -59,9 +59,9 @@ public sealed partial class PassForm : ItemForm
         AddKey(new Command("Unlock", ItemKeys.Open, UnlockOrOpen) { When = () => _password is null && InNavigator(), Mark = CommandMark.Open });
         var file = new ToolStripMenuItem("&Session");
         Add(file, new Command("&Open database...", AxPassKeys.OpenDatabase, ChooseDatabase) { When = NotRenaming, Mark = CommandMark.Open });
-        file.DropDownItems.Add(new ToolStripMenuItem("&New database...", null, (_, _) => NewDatabase()));
-        file.DropDownItems.Add(new ToolStripMenuItem("&Back up now", null, (_, _) => Do(BackUpNowAsync)));
-        file.DropDownItems.Add(new ToolStripMenuItem("Show backups in ax&File", null, (_, _) => ShowBackups()));
+        file.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&New database...", null, (_, _) => NewDatabase()), CommandMark.Act));
+        file.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Back up now", null, (_, _) => Do(BackUpNowAsync)), CommandMark.Act));
+        file.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Show backups in ax&File", null, (_, _) => ShowBackups()), CommandMark.Open));
         // F5 and the item read the database again (item-apps.md: "read the folder again"); until 2026-10-24 the key
         // was ItemForm's and only filled the navigator again from the tree already read.
         Add(file, new Command("&Refresh", ItemKeys.Refresh, () => Do(RefreshDatabaseAsync)) { When = NotRenaming, Mark = CommandMark.Read });
@@ -71,29 +71,29 @@ public sealed partial class PassForm : ItemForm
         // Actions: what acts on the database as a whole, the same wherever the focus is (AX-9.1); Context holds what
         // acts on the group, the entry or the field the focus is on (AX-9.11, B-19).
         var actions = new ToolStripMenuItem("");
-        actions.DropDownItems.Add(Item("New &entry...", NewItem, ItemKeys.New));
-        actions.DropDownItems.Add(Item("New &group...", NewList, ItemKeys.NewList));
+        actions.DropDownItems.Add(Item("New &entry...", NewItem, ItemKeys.New, CommandMark.Change));
+        actions.DropDownItems.Add(Item("New &group...", NewList, ItemKeys.NewList, CommandMark.Change));
         actions.DropDownItems.Add(new ToolStripSeparator());
-        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo));
+        actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo, CommandMark.Change));
         actions.DropDownItems.Add(new ToolStripSeparator());
         Add(actions, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming, Mark = CommandMark.Change });
 
-        _groupMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open));
-        _groupMenu.DropDownItems.Add(Item("To the &Recycle Bin", () => WithRow(DeleteRow), ItemKeys.Delete));
+        _groupMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
+        _groupMenu.DropDownItems.Add(Item("To the &Recycle Bin", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
 
-        _entryMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open));
+        _entryMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open, CommandMark.Open));
         Add(_entryMenu, new Command("Copy &user name", AxPassKeys.CopyUserName, CopyUserName) { When = NotRenaming, Mark = CommandMark.Act });
         Add(_entryMenu, new Command("Copy &password", AxPassKeys.CopyPassword, CopyPassword) { When = NotRenaming, Mark = CommandMark.Act });
         Add(_entryMenu, new Command("Open U&RL", AxPassKeys.OpenUrl, OpenEntryUrl) { When = NotRenaming, Mark = CommandMark.Act });
-        _entryMenu.DropDownItems.Add(Item("Read in &full", ReadAll, ItemKeys.ReadAll));
-        _entryMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename));
+        _entryMenu.DropDownItems.Add(Item("Read in &full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
+        _entryMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename, CommandMark.Change));
         Add(_entryMenu, new Command("Move to a gr&oup...", AxPassKeys.MoveEntry, MoveEntry) { When = InNavigator, Mark = CommandMark.Change });
-        _entryMenu.DropDownItems.Add(Item("To the Recycle &Bin", () => WithRow(DeleteRow), ItemKeys.Delete));
+        _entryMenu.DropDownItems.Add(Item("To the Recycle &Bin", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
 
-        _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open));
-        _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll));
-        _fieldMenu.DropDownItems.Add(Item("Copy &user name", CopyUserName, AxPassKeys.CopyUserName));
-        _fieldMenu.DropDownItems.Add(Item("Copy &password", CopyPassword, AxPassKeys.CopyPassword));
+        _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open, CommandMark.Change));
+        _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
+        _fieldMenu.DropDownItems.Add(Item("Copy &user name", CopyUserName, AxPassKeys.CopyUserName, CommandMark.Act));
+        _fieldMenu.DropDownItems.Add(Item("Copy &password", CopyPassword, AxPassKeys.CopyPassword, CommandMark.Act));
 
         var lockAfter = new ToolStripMenuItem("&Lock after");
         ChoiceItems<int> lockChoices = null!;
@@ -107,7 +107,7 @@ public sealed partial class PassForm : ItemForm
 
         var options = new ToolStripMenuItem("&Options");
         options.DropDownItems.Add(lockAfter);
-        options.DropDownItems.Add(new ToolStripMenuItem("&KeePassXC's tool...", null, (_, _) => ChooseCli()));
+        options.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&KeePassXC's tool...", null, (_, _) => ChooseCli()), CommandMark.Act));
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());

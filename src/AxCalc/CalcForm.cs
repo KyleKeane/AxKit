@@ -40,22 +40,22 @@ public sealed class CalcForm : AxKitForm
         // ---- menus and keys (AC-7.1, AC-7.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // The bundle's eight (AX-9.1): Session the history's file and Exit; Actions the calculator's commands.
         var calculator = new ToolStripMenuItem();
-        calculator.DropDownItems.Add(Item("&Save history...", SaveHistory, BundleKeys.Save));
+        calculator.DropDownItems.Add(Item("&Save history...", SaveHistory, BundleKeys.Save, CommandMark.Change));
         calculator.DropDownItems.Add(new ToolStripSeparator());
         calculator.DropDownItems.Add(CreateExitItem());
         var actions = new ToolStripMenuItem();
         Add(actions, new Command("&Answer", AxCalcKeys.Act, Evaluate) { When = () => _field.Focused, Mark = CommandMark.Read });
         Add(actions, new Command("&Copy answer", AxCalcKeys.CopyAnswer, CopyAnswer) { Mark = CommandMark.Act });
         var copyIn = new ToolStripMenuItem("Copy answer &in");
-        copyIn.DropDownItems.Add(new ToolStripMenuItem("&Hexadecimal", null, (_, _) => CopyCode(16)));
-        copyIn.DropDownItems.Add(new ToolStripMenuItem("&Binary", null, (_, _) => CopyCode(2)));
-        copyIn.DropDownItems.Add(new ToolStripMenuItem("&Octal", null, (_, _) => CopyCode(8)));
+        copyIn.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Hexadecimal", null, (_, _) => CopyCode(16)), CommandMark.Act));
+        copyIn.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Binary", null, (_, _) => CopyCode(2)), CommandMark.Act));
+        copyIn.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Octal", null, (_, _) => CopyCode(8)), CommandMark.Act));
         actions.DropDownItems.Add(copyIn);
         Add(actions, new Command("Answer in other &bases", AxCalcKeys.OtherBases, SayBases) { Mark = CommandMark.Read });
         Add(actions, new Command("Say the &last answer", AxCalcKeys.LastAnswer, SayLastAnswer) { Mark = CommandMark.Read });
         actions.DropDownItems.Add(new ToolStripSeparator());
-        actions.DropDownItems.Add(new ToolStripMenuItem("&Variables", null, (_, _) => ShowVariables()));
-        actions.DropDownItems.Add(new ToolStripMenuItem("Clear va&riables...", null, (_, _) => ClearVariables()));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Variables", null, (_, _) => ShowVariables()), CommandMark.Open));
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Clear va&riables...", null, (_, _) => ClearVariables()), CommandMark.Change));
         Add(actions, new Command("Clear &history...", AxCalcKeys.ClearHistory, ClearHistory) { Mark = CommandMark.Act });
 
         // Options, as the other windows' (AX-6): the window's own submenus and items first, then Text, General, Developer.

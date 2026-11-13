@@ -88,6 +88,20 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxKit.Forms", "WindowMenu.cs"), "McpTools.NeverOpened.Contains(verb) ? CommandMark.Act", "a new axClaude or axTerminal window starts a program"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "v => _settings.ReviewAnswers = v, CommandMark.Act", "the review is the user's own check of what goes to Claude"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "}, CommandMark.Act))); // Writes into the project repository", "writes into the user's repository"),
+        // The items given their marks on 2026-11-13 (R-11) whose act must never be lost.
+        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => SendInput()) { ShortcutKeyDisplayString = \"Enter in the message field\" }, CommandMark.Act)", "sends the message field to Claude Code"),
+        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => Write(\"\\x04\")), CommandMark.Act)", "types a key into Claude Code"),
+        (Path.Combine("src", "AxTerminal", "TerminalForm.Ui.cs"), "(_, _) => SendKey(\"\\x04\", \"Ctrl+D sent\")), CommandMark.Act)", "types a key into the shell"),
+        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => CopyDiagnostics()), CommandMark.Act)", "writes the user's clipboard"),
+        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => OpenUrl(url)), CommandMark.Act)", "opens the browser"),
+        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => Close()) { ShortcutKeyDisplayString = \"Alt+F4\" }, CommandMark.Act)", "ends the window and what it runs"),
+        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "CommandPalette.Marked(_checkItem, CommandMark.Act)", "reaches GitHub"),
+        (Path.Combine("src", "AxKit.Forms", "TextEditorForm.cs"), "(_, _) => _editor.Copy()) { ShortcutKeyDisplayString = \"Ctrl+C\" }, CommandMark.Act)", "writes the user's clipboard"),
+        (Path.Combine("src", "AxTask", "TaskForm.GitHub.cs"), "(_, _) => SetState(GitHubList.ClosedState)), CommandMark.Act)", "changes an issue on GitHub"),
+        (Path.Combine("src", "AxTask", "TaskForm.GitHub.cs"), "(_, _) => WithGitHubItem((_, item) => OpenInAxClaude(item))), CommandMark.Act)", "starts Claude Code"),
+        (Path.Combine("src", "AxFile", "FileForm.cs"), "Item(\"De&lete\", () => OnMarks(Delete), AxFileKeys.Delete, CommandMark.Act)", "deletes the marked entries"),
+        (Path.Combine("src", "AxFile", "FileForm.Programs.cs"), "(_, _) => RunProgram(program)), CommandMark.Act)", "starts a program"),
+        (Path.Combine("src", "AxMCP", "MCPForm.cs"), "Item(\"&Start, or open\", OpenSelected, ItemKeys.Open, CommandMark.Act)", "starts a server's program"),
     ];
 
     [Fact]
@@ -101,19 +115,15 @@ public sealed partial class CommandMarkTests
     }
 
     /// <summary>
-    /// The menu items made outside the command list that do something on a click and state no mark
-    /// (<c>CommandPalette.Marked</c>), counted on 2026-11-13 (docs/axKit/app-kit.md AK-2.5; docs/axKit/repairs.json
-    /// R-11): 92 made as a bare <c>new ToolStripMenuItem</c> with a click, and 68 made through the base's
-    /// <c>Item(...)</c>, which the first count of that day did not see. Such an item is act for the AI tools, which ask
-    /// the user before running it: safe, but a question more than needed, and its action is often stated a second time
-    /// in a key's command. The number may only go down: a new item is a command (<c>Add</c>) or states its mark, and an
-    /// item converted lowers the number here. This test reads the source's lines and is lint, not proof: an item made
-    /// another way is not seen (R-37).
+    /// No menu item that does something on a click is made without its mark (docs/axKit/app-kit.md AK-2.5;
+    /// docs/axKit/repairs.json R-11, settled 2026-11-13, when the last 160 were given theirs): a bare
+    /// <c>new ToolStripMenuItem</c> with a click is wrapped in <c>CommandPalette.Marked</c> on its own line. The base's
+    /// <c>Item(...)</c> takes the mark as a required argument, which the compiler holds. This test reads the source's
+    /// lines and is lint: an item made another way (a click attached later) is found by the built window's own
+    /// check, <c>AxKitForm.CommandProblems</c>, which every app's first script asks with <c>check commands</c> (R-37).
     /// </summary>
-    private const int UnmarkedItemsAtMost = 160;
-
     [Fact]
-    public void Menu_items_without_a_mark_never_grow_in_number()
+    public void Every_menu_item_made_with_a_click_states_its_mark()
     {
         var root = LayoutTests.RepositoryRoot();
         var unmarked = new List<string>();
@@ -130,22 +140,16 @@ public sealed partial class CommandMarkTests
             {
                 var line = lines[i];
                 var marked = line.Contains("CommandPalette.Marked(", StringComparison.Ordinal) || line.Contains("NeverForAiTools(", StringComparison.Ordinal);
-                var bare = line.Contains("new ToolStripMenuItem(", StringComparison.Ordinal) && line.Contains("(_, _) =>", StringComparison.Ordinal);
-                var throughItem = ItemCall().IsMatch(line) && !line.Contains("protected static", StringComparison.Ordinal);
-                if ((bare || throughItem) && !marked)
+                var made = line.Contains("new ToolStripMenuItem(", StringComparison.Ordinal) || line.Contains("ToolStripMenuItem", StringComparison.Ordinal) && line.Contains("=> new(", StringComparison.Ordinal);
+                if (made && line.Contains("(_, _) =>", StringComparison.Ordinal) && !marked)
                 {
                     unmarked.Add($"{relative}:{i + 1}");
                 }
             }
         }
 
-        Assert.True(unmarked.Count <= UnmarkedItemsAtMost, $"{unmarked.Count} menu items without a mark, at most {UnmarkedItemsAtMost} allowed (AK-2.5): make the new one a command or give it CommandPalette.Marked. " + string.Join("; ", unmarked));
+        Assert.True(unmarked.Count == 0, "A menu item without a mark (AK-2.5): make it a command (Add) or wrap it in CommandPalette.Marked with what it does: read, open, change, or act when it reaches outside the window. " + string.Join("; ", unmarked));
     }
-
-    /// <summary>A call of the base's <c>Item("label", action, key)</c>: the name alone, not the end of another name or a member of something.</summary>
-    [System.Text.RegularExpressions.GeneratedRegex(@"(?<![\w.])Item\(""")]
-    private static partial System.Text.RegularExpressions.Regex ItemCall();
-
     /// <summary>Every <c>new Command(…)</c> of a source with its object initializer, if it has one, and where it starts.</summary>
     private static IEnumerable<(int At, string Span)> Commands(string text)
     {

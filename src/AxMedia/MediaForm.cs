@@ -60,7 +60,7 @@ public sealed partial class MediaForm : AxKitForm
         FillRecent();
         queue.DropDownItems.Add(_recentItem);
         queue.DropDownItems.Add(new ToolStripSeparator());
-        queue.DropDownItems.Add(new ToolStripMenuItem("&Clear queue", null, (_, _) => ClearQueue()));
+        queue.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Clear queue", null, (_, _) => ClearQueue()), CommandMark.Change));
         queue.DropDownItems.Add(new ToolStripSeparator());
         // AM-1.4: the ways out, on the file playing or the one under the selection; the File Explorer item is the
         // first of the submenu the base makes, so its command is made here and its key added to the list.
@@ -79,7 +79,7 @@ public sealed partial class MediaForm : AxKitForm
         play.DropDownItems.Add(new ToolStripSeparator());
         Add(play, new Command("Fa&ster", AxMediaKeys.Faster, () => ChangeSpeed(MediaFiles.Faster(_settings.Speed))) { Mark = CommandMark.Change });
         Add(play, new Command("S&lower", AxMediaKeys.Slower, () => ChangeSpeed(MediaFiles.Slower(_settings.Speed))) { Mark = CommandMark.Change });
-        play.DropDownItems.Add(new ToolStripMenuItem("N&ormal speed", null, (_, _) => ChangeSpeed(1)));
+        play.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("N&ormal speed", null, (_, _) => ChangeSpeed(1)), CommandMark.Change));
         play.DropDownItems.Add(new ToolStripSeparator());
         Add(play, new Command("&What is playing", AxMediaKeys.WhatIsPlaying, SayWhatIsPlaying) { Mark = CommandMark.Read });
 

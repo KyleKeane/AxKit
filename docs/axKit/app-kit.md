@@ -23,12 +23,17 @@ After the kit:
 
 ## 2. Commands: one list per window
 
-- AK-2.1 `Command(Label, Key, Scope, Run, Enabled?, Help?, Mark)`: the menu's label with its letter, the key (from the
-  window's key table, so that the collision test keeps static data), where the key acts (the window, the list, the
-  field, the details), what runs, when it is enabled, the F1 line, and its mark for MCP (read, open, change, act;
-  `mcp.md` MC-3.1) and whether it is secret.
-- AK-2.2 `MenuSpec(Label, Items)`: a menu of commands, separators and submenus. A window describes its menus as specs.
-- AK-2.3 **The window base builds from them**: the menu bar with the bundle's frame, the same eight menus in every
+- AK-2.1 `Command(Label, Key, Run)` with `When` and `Mark` (`AxKit.Forms/Command.cs`): the menu's label with its
+  letter, the key (from the window's key table, so that the collision test keeps static data), what runs, where the
+  key acts (`When`: the list has the focus, the field has it; null for anywhere; the menu item always runs), and its
+  mark for the AI tools (read, open, change, act; `mcp.md` MC-3.1).
+- AK-2.2 **Three ways an item is made, each with its mark** (as built; the menu specifications first planned here,
+  `MenuSpec` and a scope per command, were never needed and are not built): `Add(menu, command)` for a command, which
+  makes the item, handles the key and gives the item the command's mark; `Item(text, action, key, mark)` for an item
+  whose key another command of the list handles (the item apps' Context menus, whose keys are `ItemForm`'s shared
+  commands), the mark a required argument; and `CommandPalette.Marked(new ToolStripMenuItem(...), mark)` for an item
+  made where the menu is filled (a list of drives, programs, shells, apps). `Toggle` and `ChoiceItems` mark a setting
+  change unless told otherwise. A submenu that only holds items needs no mark.- AK-2.3 **The window base builds from them**: the menu bar with the bundle's frame, the same eight menus in every
   window (SPEC AX-9.1, B-19, since 2026-11-11 put together by `AxKitForm.PlaceMenuBar`): Session (S, what the window
   holds, ending in Exit), Actions (A, what the app does, the same wherever the focus is), Navigation (N, the moves and
   the finds), Context (C, what acts on the focus, `ContextBarMenu`, opened by Shift+F10, AX-9.11), Options (O, the
@@ -38,10 +43,12 @@ After the kit:
   bundle's section, the app's commands from their help, a short hand-written paragraph for the controls' own keys);
   the command palette (it already reads the menus). Menu, key, F1, palette and MCP cannot disagree, since there is one
   list.
-- AK-2.4 Tests from the data: every command's key is in the F1 text; letters are unique within a menu; no key equals a
-  bundle key; every act command is marked (since 2026-11-11 every command states its mark, and the act commands that
-  start a program or reach past the window are pinned, `tests/AxKit.Tests/CommandMarkTests`, `mcp.md` MC-D7).
-
+- AK-2.4 Tests from the data: every command's key is in the F1 text; no key equals a bundle key; every command states
+  its mark, and the act commands and items that start a program or reach past the window are pinned
+  (`tests/AxKit.Tests/CommandMarkTests`, `mcp.md` MC-D7); no menu item with a click is made without a mark (the same
+  tests, read off the sources, and the compiler for `Item`). And from the built window: `check commands`, which every
+  app's first script asks (`AxKitForm.CommandProblems`), fails on a key the F1 text does not name, on a command that
+  never runs, and on any entry of the menus as they stand that states no mark, however it was made.
 - AK-2.5 **One source, every reader the same** (the user's rule of 2026-11-13: parity between the menus, the settings,
   the command palette and the AI tools, with as few exceptions as possible, each one deliberate and for security).
   The menu bar is the one source of what a window can do: every command, every setting (a check item or a choice),
@@ -63,10 +70,11 @@ After the kit:
   Built 2026-11-13: the palette reads every menu, the recent lists included; `axkit_window_commands` and
   `axkit_window_run` read the same entries (`AxKitForm.ToolEntries`); exception 3 is `CommandPalette.NeverForAiTools`
   on the menus it covers; marks are given where items are made (`CommandPalette.Marked`: a command's through `Add`,
-  `Toggle` and `ChoiceItems` change, the recent lists and the Window menu open, axClaude and axTerminal act). Owed:
-  93 menu items of the apps state no mark yet and so ask before an AI tool runs them; `CommandMarkTests` keeps the
-  number from growing, and each converted item lowers it.
-
+  `Toggle` and `ChoiceItems` change, the recent lists and the Window menu open, axClaude and axTerminal act). Since
+  2026-11-13 every menu item states its mark (`docs/axKit/repairs.json` R-11, R-37): the last 160 were judged one by
+  one, act wherever an item reaches outside its window (a file deleted or written elsewhere, a program started, the
+  clipboard, the network, keys sent to Claude Code or a shell, another account's settings) and wherever there was
+  doubt; an item with no mark is now a failure of the tests and of `check commands`, not a silent default.
 ## 3. Archetypes
 
 - AK-3.1 The windows keep their archetype bases and gain one: **`ListWindow`** (shapes of axGIT, axProcess, axMedia,

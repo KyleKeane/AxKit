@@ -33,10 +33,10 @@ public abstract partial class AxKitForm
         var on = CommandPalette.NeverForAiTools(new ToolStripMenuItem("&Use Claude in axKit", null, (_, _) => ToggleAiHelp()));
         menu.DropDownItems.Add(on);
         menu.DropDownItems.Add(new ToolStripSeparator());
-        menu.DropDownItems.Add(Item("&Ask about this window...", AskAboutThisWindow, BundleKeys.AskClaude));
+        menu.DropDownItems.Add(Item("&Ask about this window...", AskAboutThisWindow, BundleKeys.AskClaude, CommandMark.Act));
         menu.DropDownItems.Add(new ToolStripSeparator());
         menu.DropDownItems.Add(CommandPalette.NeverForAiTools(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders())));
-        menu.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()), CommandMark.Open));
         CommandPalette.RefreshedOnOpening(menu, () => on.Checked = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled);
         return menu;
     }
@@ -246,7 +246,8 @@ public abstract partial class AxKitForm
             return;
         }
 
-        ShowNotice(new Notice("Claude says", answer.Text,
+        // Under every answer, who wrote it and that it can be wrong (AX-11.12); Copy takes the answer alone.
+        ShowNotice(new Notice("Claude says", answer.Text.TrimEnd() + "\n\n" + AiCaution.Written,
         [
             new OverlayChoice("Ask &more", () => AskClaude(AiPrompts.FollowUp(Overlay.InputText), extraFolders, answer.SessionId, more => ShowAnswer(more, extraFolders, closed)), IsDefault: true),
             new OverlayChoice("Cop&y", () => CopyText(answer.Text, "Copied"), StaysOpen: true),
