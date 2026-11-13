@@ -76,6 +76,22 @@ $
 
 In a repository the branch row `  ● main` can sit between the mode line and the prompt. The card's keys cannot be pressed from the app: a digit typed in the message field goes to Claude as text with Enter (a 2 went as a message), and at Claude's own prompt a digit lands in the prompt as text too, a 0 also asking `Turn off Claude-drafted feedback? 0 to turn off · Esc to keep` under it. Claude draws the card again after every turn while the draft waits, and `/exit` asks "You have 1 unsent feedback draft" with `Enter to review & send · Esc to discard and exit`, a screen. The way that works is `/feedback`, the list above, and the app goes through it itself for a draft made in a turn of this session: when the mode line's count is higher after a turn than before it and Claude is idle, the app sends `/feedback`, answers the list with the draft the card named (`SessionModel.DraftTitle`) and shows the review as a screen, like a question; the list that comes back after Send, Discard or Later is closed for the user (SPEC.md D33). Drafts already counted when Claude is ready, and a draft put off with Later, wait for `/feedback` typed by hand, which shows the list. The card's rows stay out of the conversation, and the count is not background work. With Options → Questions → Answer from a list off, nothing opens and the card stays in the conversation as printed, less its hint row.
 
+## The feedback surveys
+
+Now and then Claude Code asks how the session is going, above its prompt, with the cursor on the bare `$` row (recorded with 2.1.323 in the `survey` fixture, forced with the environment variable `CLAUDE_FORCE_DISPLAY_SURVEY=1`):
+
+```
+● How is Claude doing this session? (optional)
+1: Bad 2: Fine 3: Good 0: Dismiss
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$
+```
+
+A key alone answers it, without Enter, and only into an empty prompt and after a pause: a key with more typing after it within a moment is the start of a message, lands in the prompt as text, and the survey closes (a message typed over it closes it too). Read from Claude Code's source, not recorded: after an answer it may ask "Can Anthropic look at your session transcript to help us improve Claude Code?" over a link row and `y: Yes n: No d: Don't ask again`, or a short follow-up in a field of its own; "How was Claude's recollection?" after a recalled memory adds `4: Unsure`; with text in the prompt the survey dims and wants Ctrl+X before the key.
+
+The app reads each of these as a question (`SurveyReader`, SPEC.md D33): the title without the bullet, the answers as a list in the control area, the answer sent as its key alone, and Escape sent as Dismiss (`0`) or No (`n`), since an Escape at Claude's prompt answers nothing and a second one opens Rewind. A message from the message field meets the guard of any question (FR-2.10); sent anyway, it closes the survey. With Options → Questions → Answer from a list off, the rows stay in the conversation and nothing is offered.
+
 ## Panels
 
 - `/permissions`: tabs Permissions, Recently denied, Allow, Ask, Deny, Auto mode, Workspace; a search row; a numbered list starting with "Add a new rule…". Hint: `←/→ to switch · ↓ to select · Esc to cancel`. Cursor on the tab row.

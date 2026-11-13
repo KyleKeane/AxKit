@@ -84,7 +84,18 @@ internal sealed partial class MainForm
             _settings.SpeakToolCalls = v;
             _arrivals.Skip(_model.Lines);
         }));
+        // FR-7.4a: the user's words that keep a reply line silent, one field, semicolons between them.
+        speech.DropDownItems.Add(new ToolStripMenuItem("Words that keep a reply line &silent...", null, (_, _) => EditSilentWords()));
         options.DropDownItems.Add(speech);
+
+        // FR-7.3a: each of the window's own status words, and Claude's bracketed notices, on or off.
+        var announcements = new ToolStripMenuItem("&Announcements");
+        announcements.DropDownItems.Add(Toggle("\"&Ready\" when Claude starts", _settings.AnnounceReady, v => _settings.AnnounceReady = v));
+        announcements.DropDownItems.Add(Toggle("\"&Sent\" and \"Queued\" after a message", _settings.AnnounceSent, v => _settings.AnnounceSent = v));
+        announcements.DropDownItems.Add(Toggle("\"Res&ponding\" when a reply starts", _settings.AnnounceResponding, v => _settings.AnnounceResponding = v));
+        announcements.DropDownItems.Add(Toggle("\"Question &closed\" when Claude closes one", _settings.AnnounceQuestionClosed, v => _settings.AnnounceQuestionClosed = v));
+        announcements.DropDownItems.Add(Toggle("Claude's own &notices, such as \"accept edits on\"", _settings.AnnounceClaudeNotices, v => _settings.AnnounceClaudeNotices = v));
+        options.DropDownItems.Add(announcements);
 
         var done = new ToolStripMenuItem("When Claude is &done");
         done.DropDownItems.Add(Toggle("&Announce \"Done\"", _settings.AnnounceBell, v => _settings.AnnounceBell = v));
@@ -105,6 +116,9 @@ internal sealed partial class MainForm
         }));
         questions.DropDownItems.Add(Toggle("&Go to them at once, interrupting speech", _settings.InterruptForQuestions, v => _settings.InterruptForQuestions = v));
         questions.DropDownItems.Add(Toggle("&Review answers before they go to Claude", _settings.ReviewAnswers, v => _settings.ReviewAnswers = v));
+        // D33, 2026-11-12: what Claude asks for itself, about itself, can be left unheard.
+        questions.DropDownItems.Add(Toggle("&Dismiss Claude's feedback surveys unheard", _settings.DismissSurveys, v => _settings.DismissSurveys = v));
+        questions.DropDownItems.Add(Toggle("&Open Claude's feedback drafts by themselves", _settings.OpenFeedbackDrafts, v => _settings.OpenFeedbackDrafts = v));
         options.DropDownItems.Add(questions);
 
         options.DropDownItems.Add(CreateTextMenu(TranscriptTextItems()));
@@ -131,6 +145,22 @@ internal sealed partial class MainForm
         // The bundle's eight (AX-9.1): Context is the line of the conversation and the selection (AX-9.11).
         PlaceMenuBar(MenuBar, session, claude, navigate, CreateTranscriptContext("&Quote this line in the message"), options, help);
     }
+
+    /// <summary>Options → Speech → Words that keep a reply line silent (FR-7.4a): one field, the words between semicolons; empty speaks every line again.</summary>
+    private void EditSilentWords() =>
+        AskText("Words that keep a reply line silent",
+            "A reply line holding one of these words is shown in the conversation and not spoken. Case does not matter. Put a semicolon between them; leave the field empty to speak every line.",
+            "&Words, separated by semicolons", "Words that keep a reply line silent", SpeechFilter.Text(_settings.SilentWords), "&Save", text =>
+            {
+                _settings.SilentWords = SpeechFilter.Words(text);
+                SaveSettings();
+                Announce(_settings.SilentWords.Count switch
+                {
+                    0 => "Every reply line is spoken",
+                    1 => "1 word keeps a line silent",
+                    var count => $"{count} words keep a line silent",
+                }, false);
+            }, required: false);
 
     /// <summary>Options → Speech → Speak replies: a mode (FR-7.4): speech starts with what arrives next.</summary>
     private void SetReplySpeech(ReplySpeechMode mode)

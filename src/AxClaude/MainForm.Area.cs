@@ -237,9 +237,24 @@ internal sealed partial class MainForm
             return false;
         }
 
+        if (question.KeyOnly && _settings.DismissSurveys && question.EscapeKey is { } dismiss)
+        {
+            // Options, Questions, Dismiss feedback surveys (2026-11-12): the app gives the survey's Dismiss, or No to
+            // the transcript question after it, as the user's Escape would, and nothing is heard.
+            TypeAnswer(dismiss, enter: false);
+            return false;
+        }
+
         _askedQuestion = question;
         ShowQuestionList(question.Signature, QuestionName(question), QuestionName(question, int.MaxValue), question, null, !UserActed(), AnswerQuestion, () =>
         {
+            // A survey's Escape is its Dismiss: an Escape at Claude's prompt is no answer, and a second one rewinds.
+            if (question.EscapeKey is { } key && question.OptionFor(key) is { } leave)
+            {
+                AnswerQuestion([leave]);
+                return;
+            }
+
             SendEscape();
             Announce("Cancelled", false);
         });
@@ -666,8 +681,10 @@ internal sealed partial class MainForm
     }
 
     /// <summary>
-    /// An answer through the send queue: each character as a keystroke of its own, then Enter. The control area holds
-    /// its keys meanwhile, so that a second Enter does not send it again.
+    /// An answer through the send queue: each character as a keystroke of its own, then Enter, except for a question
+    /// answered by its key alone (a feedback survey, <see cref="Question.KeyOnly"/>), where Claude takes the key after
+    /// a pause and an Enter would go to its prompt. The control area holds its keys meanwhile, so that a second Enter
+    /// does not send it again.
     /// </summary>
     private void SendAnswer(string key)
     {
@@ -676,7 +693,7 @@ internal sealed partial class MainForm
             return;
         }
 
-        TypeAnswer(key);
+        TypeAnswer(key, enter: _model.PendingQuestion is not { KeyOnly: true });
         UserActedNow();
         Area.Hold(UserActionMs);
         if (_settings.SoundOnBell)
@@ -691,7 +708,7 @@ internal sealed partial class MainForm
     /// for several answers). Then Enter. Without the sound and the hold of <see cref="SendAnswer"/>: an answer the app
     /// gives on the user's behalf, which what follows announces as new.
     /// </summary>
-    private void TypeAnswer(string key)
+    private void TypeAnswer(string key, bool enter = true)
     {
         var keys = key.EnumerateRunes().Select(rune => rune.ToString()).ToList();
         for (var i = 0; i < keys.Count; i++)
@@ -699,7 +716,11 @@ internal sealed partial class MainForm
             Enqueue(keys[i], i == keys.Count - 1 ? 100 : 60);
         }
 
-        Enqueue("\r", 50);
+        if (enter)
+        {
+            Enqueue("\r", 50);
+        }
+
         StartWrites();
     }
 
@@ -733,7 +754,7 @@ internal sealed partial class MainForm
             return;
         }
 
-        if (!_settings.QuestionNotices)
+        if (!_settings.QuestionNotices || !_settings.OpenFeedbackDrafts)
         {
             _drafts.Opened(_model.FeedbackDrafts);
         }

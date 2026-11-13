@@ -1,0 +1,9 @@
+mark
+wait 20000 How is Claude doing
+sleep 3000
+send 0
+sleep 4000
+send /exit
+sleep 300
+send \r
+exit 15000

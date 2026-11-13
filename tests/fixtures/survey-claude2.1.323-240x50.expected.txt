@@ -1,0 +1,6 @@
+[Screen Reader Mode: on via flag]
+Claude Code v2.1.323
+Haiku 5.5 · Claude Ultra
+C:\Temp\axclaude-fixture
+warning: Your login expires in 2 days · run /login to renew
+you: /exit

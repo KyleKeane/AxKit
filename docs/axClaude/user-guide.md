@@ -37,6 +37,8 @@ Screens that Claude shows until you press a key, such as `/status`, `/tasks` and
 
 Claude Code sometimes drafts feedback for Anthropic by itself, about a bug or an idea it noticed, and prints a card at the end of the turn: "Product feedback drafted", a preview of the draft, and keys to review, send or dismiss it that cannot be pressed from the message field. axClaude brings the draft up like a question instead, as soon as Claude is done: the trill, then the draft's review as a screen with the draft's text, "Send (Enter)", "Discard (d)" and "Later (Escape)". Enter anywhere in the review sends it and d anywhere discards it, as in the terminal, where only Claude's highlight counts; the items at the end of the list name the keys. The receipt follows with "Continue (Enter)". After any of the three the message field comes back. "Move (Up)" moves Claude's highlight to the transcript switch and then to the draft's fields: a switch is changed with "Change (Left)" or "Change (Right)", while a text row such as Details gives you a field named with the row: what you type is added to the end of the row's text when you press Enter, which also moves on to the next row, and Escape cancels the edit. Ctrl+Q reads the review with the row's text as it stands. Nothing can be deleted this way: to reword a draft, discard it and ask Claude to draft it again with your changes. Later keeps the draft: `/feedback` lists the drafts waiting on this machine, this session's first, and Enter on one gives the same review. Drafts already waiting when axClaude starts are left for `/feedback` too; nothing opens by itself at startup. The card itself is not in the conversation. `/config` has a setting that turns Claude's drafting off.
 
+Now and then Claude Code also asks "How is Claude doing this session? (optional)". axClaude shows it like any question: the list Bad, Fine, Good and Dismiss, where Enter answers and Escape dismisses it. Claude takes the answer as a single key with no Enter after it, and axClaude sends it that way. A question whether Anthropic may look at the session's transcript can follow, with Yes, No and Don't ask again, where Escape says No.
+
 Anything Claude asks that axClaude cannot list stays with the message field and is announced with "Claude asks". Then Enter only sends an answer: a message you typed stays in the field, and axClaude says so; press Enter again to send it all the same. Options, Questions, "Answer from a list", turns the lists and this protection off: questions are then only announced, and you answer them in the message field.
 
 ## The window
@@ -116,6 +118,13 @@ The heading keys, h, Shift+H and 1 to 6, also work in the user guide and the oth
 Ctrl+Plus and Ctrl+Minus make the text bigger or smaller and say the new size. Options, Text, Font opens the Windows font dialog. Options, Text, "Windows text size" goes back to the Windows setting (Settings, Accessibility, Text size). Colours follow Windows, light or dark, and high contrast themes work.
 
 ## Settings
+
+### Choosing what you hear
+
+- Options, Announcements: a switch for each word axClaude says by itself: "Ready", "Sent" and "Queued", "Responding", "Question closed", and Claude's own notices such as "accept edits on". All are on at first. "Done" has its switch under Options, When Claude is done. A switch silences the word only; the chimes stay, under Options, Sounds.
+- Options, Speech, "Words that keep a reply line silent": type words with a semicolon between them, such as `Tip; Cost:`. A reply line that holds one of them, in any case, stays in the conversation and is not spoken. Leave the field empty to hear every line again.
+- Options, Questions, "Dismiss Claude's feedback surveys unheard": Claude's "How is Claude doing this session?" is dismissed for you, with nothing said; the survey's lines stay in the conversation. Off at first.
+- Options, Questions, "Open Claude's feedback drafts by themselves": on at first; off, a feedback draft Claude made waits until you type /feedback.
 
 Everything you change is saved in `%APPDATA%\AxKit\axClaude.json` (the first start of axKit copies your settings from axClaude 1.x there). Options, Developer, "Open settings file" opens it in axJSON. Some settings have no menu item: `claudePath` names the Claude Code program when it is not on PATH, `joinWrappedLines` set to false keeps long paragraphs on separate lines, `ptyColumns` and `ptyRows` size the hidden console Claude writes to (240 by 50), and `maxTranscriptLines` caps the conversation (20000 lines).
 

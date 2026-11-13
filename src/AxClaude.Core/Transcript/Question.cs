@@ -49,6 +49,15 @@ public sealed record Question(string Title, IReadOnlyList<string> Text, IReadOnl
     /// </summary>
     public (int Number, int Count)? Step { get; init; }
 
+    /// <summary>
+    /// Answered by its key alone, with no Enter after it: Claude's feedback surveys at its own prompt
+    /// (<see cref="SurveyReader"/>), where Enter would go to the prompt instead.
+    /// </summary>
+    public bool KeyOnly { get; init; }
+
+    /// <summary>The key Escape stands for, an answer of its own (Dismiss on a survey); null when Escape is sent as Escape.</summary>
+    public string? EscapeKey { get; init; }
+
     /// <summary>/config's list of settings, waiting on "Enter a number to change [1-44], or Escape to save and close:".</summary>
     public bool IsSettings => Title.StartsWith("Enter a number to change", StringComparison.Ordinal);
 

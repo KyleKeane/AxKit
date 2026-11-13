@@ -101,7 +101,11 @@ internal sealed partial class MainForm
             // Typed like the control area's answers, one keystroke each ("1,3" for several answers, the words of an
             // answer of the user's own on one line).
             SendAnswer(text.Replace('\n', ' '));
-            Announce("Sent", false);
+            if (_settings.AnnounceSent)
+            {
+                Announce("Sent", false);
+            }
+
             return;
         }
 
@@ -129,7 +133,12 @@ internal sealed partial class MainForm
             _model.AddSystemLine(signIn);
         }
 
-        Announce((queued && !answer ? "Queued" : "Sent") + (signIn is null ? string.Empty : ". " + signIn), false);
+        // FR-7.3a: "Sent" and "Queued" can be switched off; the sign-in reminder is said whatever the switch.
+        var sent = _settings.AnnounceSent ? (queued && !answer ? "Queued" : "Sent") : null;
+        if (string.Join(". ", new[] { sent, signIn }.OfType<string>()) is { Length: > 0 } said)
+        {
+            Announce(said, false);
+        }
         if (_settings.SoundOnBell)
         {
             Sounds.Sent();

@@ -258,6 +258,13 @@ public sealed partial class SessionModel : LineStore
         PromptPending = promptRow >= 0;
         PendingQuestion = PromptPending ? QuestionReader.Read(ScreenRows(), promptRow) : null;
         TextPrompt = PromptPending && _screen.LineAt(promptRow) is { } prompt && LineClassifier.IsTextPrompt(prompt.Text) ? prompt.Text : null;
+        if (!PromptPending && DetectScreens && !working && SurveyAboveCursor())
+        {
+            // A feedback survey above Claude's own prompt waits as a question too, answered by its key alone.
+            PendingQuestion = SurveyReader.Read(ScreenRows(), _screen.CursorRow);
+            PromptPending = PendingQuestion is not null;
+        }
+
         // A screen of Claude's that waits on its hint row waits for the user just as a question does (D33).
         PendingScreen = PromptPending || !DetectScreens ? null : ReadPendingScreen();
         PromptPending |= PendingScreen is not null;
@@ -1210,6 +1217,31 @@ public sealed partial class SessionModel : LineStore
         }
 
         return ScreenReader.Read(ScreenRows(), _screen.CursorRow);
+    }
+
+    /// <summary>
+    /// The cheap test before <see cref="SurveyReader.Read"/>, run at every idle frame end without allocating: the cursor
+    /// on a bare prompt row and a survey's answers row a few rows above it.
+    /// </summary>
+    private bool SurveyAboveCursor()
+    {
+        var cy = _screen.CursorRow;
+        if (_screen.LineAt(cy) is not { } prompt || !LineClassifier.IsBarePrompt(prompt.Text))
+        {
+            return false;
+        }
+
+        for (var r = cy - 1; r >= 1 && cy - r <= 6; r--)
+        {
+            // Not trimmed: that allocated for the branch row ("  ● main") at every idle frame (D24); the answers row
+            // starts at the first column.
+            if (_screen.LineAt(r) is { } line && SurveyReader.IsAnswersRow(line.Text))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>The hint row of a field being edited ("… · Esc to cancel edit") within a few rows under <paramref name="row"/>.</summary>

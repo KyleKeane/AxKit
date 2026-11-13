@@ -94,7 +94,11 @@ internal sealed partial class MainForm
             // Speech starts here: the replayed conversation gets its markers and is not read out.
             _arrivals.Skip(_model.Lines);
             _model.MarkReplayedExchanges();
-            Announce("Ready", false);
+            if (_settings.AnnounceReady)
+            {
+                Announce("Ready", false);
+            }
+
             if (_settings.SoundOnBell)
             {
                 Sounds.Ready();
@@ -113,10 +117,17 @@ internal sealed partial class MainForm
             var text = new StringBuilder();
             foreach (var line in _heldLines)
             {
-                Utterance.Append(text, Arrivals.SpokenText(line), line.JoinedToPrevious);
+                // FR-7.4a: a line holding one of the user's silent words stays in the conversation, unspoken.
+                if (!SpeechFilter.Silences(line.Text, _settings.SilentWords))
+                {
+                    Utterance.Append(text, Arrivals.SpokenText(line), line.JoinedToPrevious);
+                }
             }
 
-            Announce(text.ToString(), false);
+            if (text.Length > 0)
+            {
+                Announce(text.ToString(), false);
+            }
         }
 
         _heldLines.Clear();
@@ -164,7 +175,7 @@ internal sealed partial class MainForm
                 // right after the user's answer or key.
                 var byUser = UserActed();
                 CloseArea();
-                if (!byUser)
+                if (!byUser && _settings.AnnounceQuestionClosed)
                 {
                     Announce("Question closed", false);
                 }
