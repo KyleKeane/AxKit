@@ -1,0 +1,91 @@
+# Workflow: Choose which words axClaude says by itself
+# axClaude, docs/axClaude/nvda-test-plan.md section 9 step 2a (SPEC.md FR-7.3a, FR-7.4a, D33; 2026-11-12): the
+# announcement switches, the words that keep a reply line silent, and the two feedback items under Questions. A switch
+# silences the word only: the chime stays. The survey itself cannot be forced in a run (the launcher strips Claude's
+# variables), so its dismissal is a unit of the window left to ordinary use; its switch is checked here.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"announceReady":false,"announceSent":false,"announceResponding":false,"announceClaudeNotices":false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir spoken
+start claude {temp}\spoken -- --model haiku --permission-mode default
+try said trust
+iffound wait 1500
+iffound keys enter
+# "Ready" off: the chime alone, the status bar says it.
+expect said ♪ Ready
+expect state Claude: ready
+refuse said Ready
+expect focus "name":"Message to Claude"
+# The trust question's answer is said ("Sent: y, Yes, I trust this folder"): an answer to a question is the user's own
+# key, never silenced. Taken here, before the message. Claude takes keys a moment after it is ready (05-modes).
+said
+wait 3000
+
+# Claude's own notices off: the mode changes and the status bar shows it, nothing is said. Before the first message, as
+# in 05-modes: after a turn the same key was not taken in the runs of 2026-11-13.
+keys ctrl+shift+m
+expect state | accept edits on
+refuse said accept edits on
+menu Claude's own notices, such as "accept edits on"
+keys ctrl+shift+m
+expect said plan mode on
+expect state | plan mode on
+keys ctrl+shift+m
+keys ctrl+shift+m
+expect state | manual mode on
+said
+
+# "Sent" and "Responding" off: their chimes, no words; "Done" keeps its own switch and is said.
+type Reply with the single word one.
+keys enter
+expect said ♪ Done
+refuse said Sent
+refuse said Responding
+expect said Done
+
+# The switches back on from Options, Announcements: the words come again.
+menu "Sent" and "Queued" after a message
+menu "Responding" when a reply starts
+said
+type Reply with the single word two.
+keys enter
+expect said Sent
+expect said Responding
+expect said Done
+said
+
+# Words that keep a reply line silent: every line spoken, then two words typed into the notice's field.
+menu Speak replies: all lines
+expect said Speak replies: all lines
+menu Words that keep a reply line silent
+expect state "notice":"Words that keep a reply line silent"
+expect focus Words that keep a reply line silent
+type pelican; walrus
+keys enter
+expect said 2 words keep a line silent
+expect focus Message to Claude
+# A reply of two lines: the one holding a silent word is shown, not spoken; the other is spoken.
+type Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.
+keys enter
+expect said green apples
+refuse said feathers
+expect said Done
+keys ctrl+2 ctrl+end
+expect text pelican feathers
+# The field emptied: every line spoken again.
+menu Words that keep a reply line silent
+expect focus Words that keep a reply line silent
+keys ctrl+a delete enter
+expect said Every reply line is spoken
+# The notice gives the focus back to the conversation, where it was; Ctrl+1 to the message field.
+keys ctrl+1
+type Reply with exactly one line: the words pelican again.
+keys enter
+expect said pelican again
+expect said Done
+
+# The two feedback items under Options, Questions are switches like the others, saved as they are toggled.
+menu Dismiss Claude's feedback surveys unheard
+menu Open Claude's feedback drafts by themselves
+menu Dismiss Claude's feedback surveys unheard
+menu Open Claude's feedback drafts by themselves
