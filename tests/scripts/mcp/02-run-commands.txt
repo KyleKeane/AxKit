@@ -66,6 +66,15 @@ expect said axAutomate ran Heading
 wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"No such command"}
 expect mcp error: The window has no command No such command
+# docs/axKit/app-kit.md AK-2.5: a setting runs as a command does, said in the window (out of the AI tools' reach until
+# 2026-11-13, when they began to read the palette's entries); twice, so that the run's shared theme file is as it was.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Say new line"}
+expect said axAutomate ran Say new line. Say new line off
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Say new line"}
+expect said axAutomate ran Say new line. Say new line on
 
 # MC-7.3: a command that opens a notice gives the notice back; while it shows, nothing more runs, and the user answers it.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).

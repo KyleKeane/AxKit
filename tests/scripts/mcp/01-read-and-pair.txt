@@ -53,7 +53,16 @@ expect mcp First line of the notes.
 mcp call axkit_window_state {"window":"{window}"}
 expect mcp notes.md
 mcp call axkit_window_commands {"window":"{window}"}
-expect mcp "label": "Save as..."
+# docs/axKit/app-kit.md AK-2.5: the AI tools read the command palette's entries, named as the palette names them
+# ("Save as", no dots), the settings and the recent lists among them, each with its mark; the AI tools' own switches
+# are never among them (AK-2.6, exception 3).
+expect mcp "label": "Save as"
+mcp call axkit_window_commands {"window":"{window}"}
+expect mcp "menu": "Session, Open recent file"
+mcp call axkit_window_commands {"window":"{window}"}
+expect mcp "label": "Word wrap"
+mcp call axkit_window_commands {"window":"{window}"}
+refuse mcp Let AI tools
 mcp call axkit_apps
 expect mcp "verb": "pass"
 mcp call axkit_window_said {"window":"{window}"}

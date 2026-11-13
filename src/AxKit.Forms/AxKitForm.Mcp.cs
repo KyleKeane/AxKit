@@ -15,12 +15,13 @@ public abstract partial class AxKitForm
     /// <summary>The app's verb (<see cref="Dispatch.Apps"/>): the command line's word for this window, and what decides whether the window is read at all (<see cref="McpTools.NeverRead"/>). Every window's app is listed there (InventoryTests).</summary>
     protected string AppVerb => Dispatch.ByName(AppName)?.Verb ?? throw new InvalidOperationException($"{AppName} is not an app of Dispatch.Apps");
 
-    /// <summary>The window's commands for <c>axkit_window_commands</c>.</summary>
-    internal IReadOnlyList<Command> CommandList => _commands;
-
-    /// <summary>The menus that hold a command's first item ("Navigate, Next"), empty for a key with no item: for <c>axkit_window_commands</c> and <c>axkit_window_run</c> (MC-7.1).</summary>
-    internal string MenuOf(Command command) =>
-        _commandItems.TryGetValue(command, out var items) ? CommandPalette.MenuPath(items[0]) : string.Empty;
+    /// <summary>
+    /// What an AI tool sees and runs in this window (docs/axKit/app-kit.md AK-2.5): the command palette's entries, the
+    /// settings and the recent lists among them, but those withheld from the AI tools (AK-2.6, exception 3). One list
+    /// for <c>axkit_window_commands</c> and <c>axkit_window_run</c>, so that the two and the palette never disagree.
+    /// </summary>
+    internal List<CommandPalette.MenuEntry> ToolEntries() =>
+        CommandPalette.Entries(MainMenuStrip).Where(entry => CommandPalette.ForAiTools(entry.Item)).ToList();
 
     /// <summary>
     /// <c>axkit_window_run</c>, on the window's thread (docs/axKit/mcp.md MC-7): the refusals first (axPass and axClip,
@@ -30,8 +31,8 @@ public abstract partial class AxKitForm
     /// ran it (MC-7.5). Posted, so that the pipe's answer never waits on a command that shows a Windows dialog; the
     /// ticket finds what came of it (<see cref="McpAfterRun"/>). <paramref name="allowed"/> is the switch as the pipe's
     /// thread read it from the sealed file just before (MC-7.6), so that the window's thread never waits on the file.
-    /// Only the window's own command list is searched: the bundle's menus (the AI tools' switches among them) are not
-    /// commands of it and never run for a client.
+    /// The palette's entries are searched (<see cref="ToolEntries"/>, AK-2.5): every menu item, a setting or a recent
+    /// file among them, with its mark (an item with none is act, and asks); the AI tools' own switches are not there.
     /// </summary>
     internal (string? Error, string Label, bool Asked, int Ticket) McpRunCommand(string? name, string? menu, string client, bool allowed)
     {
@@ -50,25 +51,22 @@ public abstract partial class AxKitForm
             return (busy, string.Empty, false, 0);
         }
 
-        var (index, refusal) = McpRun.Find([.. _commands.Select(command => new McpCommandName(command.Label, MenuOf(command)))], name, menu);
+        var entries = ToolEntries();
+        var (index, refusal) = McpRun.Find([.. entries.Select(entry => new McpCommandName(entry.Name, entry.Menu))], name, menu);
         if (refusal is not null)
         {
             return (refusal, string.Empty, false, 0);
         }
 
-        var found = _commands[index];
-        var label = McpRun.Plain(found.Label);
-        if (!_commandItems.TryGetValue(found, out var items))
-        {
-            return ($"{label} is a key of the window with no menu item: AI tools run what the menus offer.", label, false, 0);
-        }
-
-        if (items.FirstOrDefault(CommandPalette.Offered) is not { } item)
+        var found = entries[index];
+        var label = found.Name;
+        var item = found.Item;
+        if (!CommandPalette.Offered(item))
         {
             return ($"{label} is not available now: its menu item is disabled.", label, false, 0);
         }
 
-        if (found.Mark == CommandMark.Act)
+        if (CommandPalette.MarkOf(item) == CommandMark.Act)
         {
             // After the user's Deny, the same window asks no more for a minute: a client that asks again at once does not
             // wear the user down (as the pairing's Deny, MC-6.4).
@@ -78,7 +76,7 @@ public abstract partial class AxKitForm
                 return ("The user denied running a command a moment ago; this window asks no more within a minute.", label, false, 0);
             }
 
-            AskToRunMcp(client, label, MenuOf(found), item, McpTarget());
+            AskToRunMcp(client, label, found.Menu, item, McpTarget());
             return (null, label, true, 0);
         }
 
@@ -363,7 +361,8 @@ public abstract partial class AxKitForm
     /// </summary>
     internal ToolStripMenuItem CreateMcpMenu()
     {
-        var menu = new ToolStripMenuItem("A&I tools");
+        // Never offered to an AI tool, nor anything in it (docs/axKit/app-kit.md AK-2.6, exception 3).
+        var menu = CommandPalette.NeverForAiTools(new ToolStripMenuItem("A&I tools"));
         var access = new ToolStripMenuItem("&Let AI tools read and open axKit", null, (_, _) => ToggleMcp());
         menu.DropDownItems.Add(access);
         // MC-7.2: the second switch, a menu item of the bundle's and never a command of the window's list, so that no AI tool can run it.

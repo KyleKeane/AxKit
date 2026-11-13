@@ -73,6 +73,44 @@ public sealed class CommandMarkTests
         }
     }
 
+    /// <summary>
+    /// The menu items made outside the command list that do something on a click and state no mark
+    /// (<c>CommandPalette.Marked</c>), counted on 2026-11-13 (docs/axKit/app-kit.md AK-2.5). Such an item is act for the
+    /// AI tools, which ask the user before running it: safe, but a question more than needed. The number may only go
+    /// down: a new item is a command or states its mark, and an item converted lowers it here.
+    /// </summary>
+    private const int UnmarkedItemsAtMost = UnmarkedItemsCounted;
+
+    private const int UnmarkedItemsCounted = 93;
+
+    [Fact]
+    public void Menu_items_without_a_mark_never_grow_in_number()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var unmarked = new List<string>();
+        foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
+        {
+            var relative = Path.GetRelativePath(root, file);
+            if (relative.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"))
+            {
+                continue;
+            }
+
+            var lines = File.ReadAllLines(file);
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                if (line.Contains("new ToolStripMenuItem(", StringComparison.Ordinal) && line.Contains("(_, _) =>", StringComparison.Ordinal)
+                    && !line.Contains("CommandPalette.Marked(", StringComparison.Ordinal) && !line.Contains("NeverForAiTools(", StringComparison.Ordinal))
+                {
+                    unmarked.Add($"{relative}:{i + 1}");
+                }
+            }
+        }
+
+        Assert.True(unmarked.Count <= UnmarkedItemsAtMost, $"{unmarked.Count} menu items without a mark, at most {UnmarkedItemsAtMost} allowed (AK-2.5): make the new one a command or give it CommandPalette.Marked. " + string.Join("; ", unmarked));
+    }
+
     /// <summary>Every <c>new Command(…)</c> of a source with its object initializer, if it has one, and where it starts.</summary>
     private static IEnumerable<(int At, string Span)> Commands(string text)
     {

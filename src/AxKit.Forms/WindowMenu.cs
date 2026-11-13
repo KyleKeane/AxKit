@@ -29,7 +29,7 @@ public sealed class WindowMenu : ToolStripMenuItem
     {
         _owner = owner;
         var newWindow = new ToolStripMenuItem("&New window");
-        AddApps(newWindow.DropDownItems, Dispatch.Apps, app => new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => Start(app.Verb, null)));
+        AddApps(newWindow.DropDownItems, Dispatch.Apps, app => CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => Start(app.Verb, null)), OpenMark(app.Verb)));
         DropDownItems.Add(newWindow);
         // The lists made as the menu opens, and again before the command palette reads it, so that an open window or a
         // recently closed file is one search away (AX-10.2, 2026-11-13; the palette left them out before).
@@ -49,7 +49,7 @@ public sealed class WindowMenu : ToolStripMenuItem
             var item = closed[i];
             if (Dispatch.ByName(item.App) is { } app)
             {
-                _recentlyClosed.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, RecentlyClosed.Title(item)), null, (_, _) => Start(app.Verb, item.Path.Length == 0 ? null : item.Path)));
+                _recentlyClosed.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, RecentlyClosed.Title(item)), null, (_, _) => Start(app.Verb, item.Path.Length == 0 ? null : item.Path)), OpenMark(app.Verb)));
             }
         }
 
@@ -60,6 +60,9 @@ public sealed class WindowMenu : ToolStripMenuItem
         FillWindows(_openWindows, AxKitWindows.Others(windows, current), current, "&No other open windows");
     }
 
+    /// <summary>Starting an app is open, but axClaude and axTerminal start Claude Code or a shell as they open: act (docs/axKit/mcp.md MC-3.1, app-kit.md AK-2.5).</summary>
+    private static CommandMark OpenMark(string verb) => AxKit.Core.Mcp.McpTools.NeverOpened.Contains(verb) ? CommandMark.Act : CommandMark.Open;
+
     private nint Current() => _owner.IsHandleCreated ? _owner.Handle : 0;
 
     private static void FillWindows(ToolStripMenuItem list, IReadOnlyList<AxKitWindow> windows, nint current, string none)
@@ -68,10 +71,10 @@ public sealed class WindowMenu : ToolStripMenuItem
         for (var i = 0; i < windows.Count; i++)
         {
             var window = windows[i];
-            list.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, window.Title), null, (_, _) => Activate(window.Handle))
+            list.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, window.Title), null, (_, _) => Activate(window.Handle))
             {
                 Checked = window.Handle == current,
-            });
+            }, CommandMark.Open));
         }
 
         RecentMenu.NoneWhenEmpty(list, none);

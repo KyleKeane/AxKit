@@ -215,7 +215,7 @@ public abstract partial class AxKitForm : Form
     {
         if (menu.DropDownItems.Count == 0)
         {
-            menu.DropDownItems.Add(new ToolStripMenuItem("&" + said, null, (_, _) => Announce(said, true)));
+            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&" + said, null, (_, _) => Announce(said, true)), CommandMark.Read));
         }
     }
 
@@ -296,7 +296,8 @@ public abstract partial class AxKitForm : Form
     /// <summary>A checked menu item for a setting: flipping it applies the value and saves the settings.</summary>
     protected ToolStripMenuItem Toggle(string text, bool initial, Action<bool> apply)
     {
-        var item = new ToolStripMenuItem(text) { CheckOnClick = true, Checked = initial };
+        // A setting is a change (docs/axKit/app-kit.md AK-2.5).
+        var item = CommandPalette.Marked(new ToolStripMenuItem(text) { CheckOnClick = true, Checked = initial }, CommandMark.Change);
         item.CheckedChanged += (_, _) =>
         {
             apply(item.Checked);
@@ -321,10 +322,10 @@ public abstract partial class AxKitForm : Form
 
         menu.DropDownItems.Add(CreateSayNewLineItem(menu));
         menu.DropDownItems.Add(CreateHeadingSoundItem(menu));
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Font...", null, (_, _) => ChooseFont()));
-        menu.DropDownItems.Add(Item("&Larger text", () => ChangeTextSize(1), BundleKeys.LargerText));
-        menu.DropDownItems.Add(Item("S&maller text", () => ChangeTextSize(-1), BundleKeys.SmallerText));
-        menu.DropDownItems.Add(new ToolStripMenuItem("Windows &text size", null, (_, _) => UseSystemFont()));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Font...", null, (_, _) => ChooseFont()), CommandMark.Change));
+        menu.DropDownItems.Add(CommandPalette.Marked(Item("&Larger text", () => ChangeTextSize(1), BundleKeys.LargerText), CommandMark.Change));
+        menu.DropDownItems.Add(CommandPalette.Marked(Item("S&maller text", () => ChangeTextSize(-1), BundleKeys.SmallerText), CommandMark.Change));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Windows &text size", null, (_, _) => UseSystemFont()), CommandMark.Change));
         return menu;
     }
 
@@ -346,7 +347,7 @@ public abstract partial class AxKitForm : Form
     protected ToolStripMenuItem CreateDeveloperMenu(params ToolStripItem[] own)
     {
         var menu = new ToolStripMenuItem("De&veloper");
-        menu.DropDownItems.Add(new ToolStripMenuItem("Open settings &file", null, (_, _) => OpenSettingsFile()));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open settings &file", null, (_, _) => OpenSettingsFile()), CommandMark.Open));
         menu.DropDownItems.AddRange(own);
         menu.DropDownItems.Add(new ToolStripMenuItem("Copy diag&nostics", null, (_, _) => CopyDiagnostics()));
         return menu;
@@ -363,9 +364,9 @@ public abstract partial class AxKitForm : Form
         // Kept for a question about this window (docs/axKit/ai-help.md AH-6.2), which gives Claude the guide to answer from.
         _userGuide = userGuide;
         var help = new ToolStripMenuItem("&Help");
-        help.DropDownItems.Add(Item("Command &palette...", ShowCommandPalette, BundleKeys.CommandPalette));
-        help.DropDownItems.Add(Item("&Keyboard shortcuts", () => ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts)), BundleKeys.Shortcuts));
-        help.DropDownItems.Add(new ToolStripMenuItem("User &guide", null, (_, _) => ShowNotice(Notice.Plain("User guide", userGuide()))));
+        help.DropDownItems.Add(CommandPalette.Marked(Item("Command &palette...", ShowCommandPalette, BundleKeys.CommandPalette), CommandMark.Read));
+        help.DropDownItems.Add(CommandPalette.Marked(Item("&Keyboard shortcuts", () => ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts)), BundleKeys.Shortcuts), CommandMark.Read));
+        help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("User &guide", null, (_, _) => ShowNotice(Notice.Plain("User guide", userGuide()))), CommandMark.Read));
         var resources = new ToolStripMenuItem(resourcesLabel);
         foreach (var (label, url) in pages)
         {
@@ -379,17 +380,17 @@ public abstract partial class AxKitForm : Form
         {
             ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
         });
-        help.DropDownItems.Add(new ToolStripMenuItem("&Your reports", null, (_, _) => OpenReports()));
+        help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Your reports", null, (_, _) => OpenReports()), CommandMark.Open));
         help.DropDownItems.Add(new ToolStripSeparator());
         help.DropDownItems.Add(_checkItem);
         help.DropDownItems.Add(_updateItem);
         var about = new ToolStripMenuItem("&About");
-        about.DropDownItems.Add(new ToolStripMenuItem("&Version", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.VersionTitle, BundleAbout.Version(LatestReleaseState)))));
-        about.DropDownItems.Add(new ToolStripMenuItem("&Licence", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.LicenceTitle, BundleAbout.LicenceWithAgreements(Consent.Read(AppPaths.ConsentFile))))));
-        about.DropDownItems.Add(new ToolStripMenuItem("&Attribution", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.AttributionTitle, BundleAbout.Attribution))));
-        about.DropDownItems.Add(new ToolStripMenuItem("&Privacy", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.PrivacyTitle, BundleAbout.Privacy()))));
-        about.DropDownItems.Add(new ToolStripMenuItem("Third-party &notices", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.NoticesTitle, BundleAbout.Notices()))));
-        about.DropDownItems.Add(new ToolStripMenuItem("axKit &guide", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.GuideTitle, BundleAbout.Guide()))));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Version", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.VersionTitle, BundleAbout.Version(LatestReleaseState)))), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Licence", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.LicenceTitle, BundleAbout.LicenceWithAgreements(Consent.Read(AppPaths.ConsentFile))))), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Attribution", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.AttributionTitle, BundleAbout.Attribution))), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Privacy", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.PrivacyTitle, BundleAbout.Privacy()))), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Third-party &notices", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.NoticesTitle, BundleAbout.Notices()))), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("axKit &guide", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.GuideTitle, BundleAbout.Guide()))), CommandMark.Read));
         about.DropDownItems.Add(new ToolStripMenuItem("axKit on Git&Hub", null, (_, _) => OpenUrl(UpdateCheck.RepositoryPage)));
         help.DropDownItems.Add(about);
         return help;
@@ -655,7 +656,7 @@ public abstract partial class AxKitForm : Form
             _commands.Add(command);
         }
 
-        var item = Item(command.Label, () => Run(command), command.Key);
+        var item = CommandPalette.Marked(Item(command.Label, () => Run(command), command.Key), command.Mark);
         // The items of a command, for axkit_window_run (docs/axKit/mcp.md MC-7.1): it runs as one of them would.
         if (!_commandItems.TryGetValue(command, out var items))
         {

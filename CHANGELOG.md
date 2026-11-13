@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: the AI tools see a window as the command palette does: every menu item, the settings with whether each is on, and the recent files and windows; a setting an AI tool changes is said in the window like any command it runs. The AI tools' own switches, and AI help's switch and folders, are never offered to them. One list now feeds the menus, the palette and the AI tools, so they cannot drift apart. A menu item whose effect has not been stated yet asks you before an AI tool runs it.
 - axKit: the command palette (Ctrl+Shift+P) finds your recent files and windows: every Open recent list, axFile's Favorites, and the Window menu's Open windows and Recently closed. Type a few letters of a file's name and press Enter. Before, the palette left these lists out.
 - axKit: Find in a list (Ctrl+F in axCalc's history, axFile, axMedia's queue and the other list windows) moves the focus to the match, so NVDA reads it. Before, a Find started from another control, such as axCalc's expression field, selected the match without a word.
 - axAutomate: every workflow of the automated checks has a label in your words, such as "Answer Claude's questions and screens", and the window lists the workflows by it. docs/axKit/workflows.md lists all of them by app, the workflows kept working from release to release, and the start of a tutorial for each.

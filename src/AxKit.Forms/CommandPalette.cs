@@ -20,6 +20,65 @@ public static class CommandPalette
     private sealed record Mark(bool LeftOut, Action? Refresh);
 
     /// <summary>
+    /// One item of the menu bar as every reader takes it (docs/axKit/app-kit.md AK-2.5): the palette, the AI tools'
+    /// <c>axkit_window_commands</c> and <c>axkit_window_run</c>, and the tests. <paramref name="Path"/> is the menus from
+    /// the bar down ("Session", "Open recent file").
+    /// </summary>
+    public sealed record MenuEntry(ToolStripMenuItem Item, string Name, IReadOnlyList<string> Path, string? Key, bool Checked)
+    {
+        /// <summary>The menus as one text, "Session, Open recent file", as the palette and the AI tools name them.</summary>
+        public string Menu => string.Join(", ", Path);
+    }
+
+    /// <summary>What each item does beyond reading, for the AI tools (AK-2.5): set where the item is made.</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ToolStripItem, object> Marks = new();
+
+    /// <summary>The menus and items never offered to an AI tool (AK-2.6, exception 3), with everything under them.</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ToolStripItem, object> Withheld = new();
+
+    /// <summary>
+    /// Gives an item its mark (AK-2.5): a command's own (<see cref="AxKitForm"/>'s Add), change for a setting, open for a
+    /// recent file or window, read for an item that only says something. Returns the item.
+    /// </summary>
+    public static ToolStripMenuItem Marked(ToolStripMenuItem item, CommandMark mark)
+    {
+        Marks.AddOrUpdate(item, mark);
+        return item;
+    }
+
+    /// <summary>
+    /// An item's mark; act for one that was never given one, so that an AI tool asks the user before it runs anything
+    /// whose effect no one stated (AK-2.6, exception 2).
+    /// </summary>
+    public static CommandMark MarkOf(ToolStripItem item) => Marks.TryGetValue(item, out var mark) ? (CommandMark)mark : CommandMark.Act;
+
+    /// <summary>Withholds a menu or an item from the AI tools, with everything under it (AK-2.6, exception 3: the AI tools' own switches). Returns the item.</summary>
+    public static ToolStripMenuItem NeverForAiTools(ToolStripMenuItem item)
+    {
+        Withheld.AddOrUpdate(item, true);
+        return item;
+    }
+
+    /// <summary>Whether an AI tool may see and run the item: neither it nor a menu over it is withheld.</summary>
+    public static bool ForAiTools(ToolStripMenuItem item) =>
+        !Withheld.TryGetValue(item, out _) && !Owners(item).Any(owner => Withheld.TryGetValue(owner, out _));
+
+    /// <summary>
+    /// Every enabled item of the menu bar that does something, in menu order, the lists a menu fills as it opens filled
+    /// first (AX-10.2): the one list the palette and the AI tools read (AK-2.5).
+    /// </summary>
+    public static List<MenuEntry> Entries(MenuStrip? menu)
+    {
+        var entries = new List<MenuEntry>();
+        if (menu is not null)
+        {
+            Collect(menu.Items, [], entries);
+        }
+
+        return entries;
+    }
+
+    /// <summary>
     /// Marks a submenu whose items are made each time it opens and are slow to make (the drives, Open with): the palette
     /// leaves it out (AX-10.2). A quick list, Open recent and the Window menu's, is <see cref="RefreshedOnOpening"/> with
     /// its filling instead, so that the palette fills it before reading (2026-11-13). Returns the item.
@@ -48,16 +107,15 @@ public static class CommandPalette
     /// A checked setting says its new state after the click through <paramref name="say"/>, "Word wrap, checked".
     /// Read while the menu bar is enabled: an item of a disabled bar counts as disabled.
     /// </summary>
-    public static List<PaletteEntry> Commands(MenuStrip? menu, Action<string> say)
-    {
-        var entries = new List<PaletteEntry>();
-        if (menu is not null)
+    public static List<PaletteEntry> Commands(MenuStrip? menu, Action<string> say) =>
+        Entries(menu).Select(entry => new PaletteEntry(Palette.Text(entry.Name, [.. entry.Path], entry.Key, entry.Checked), () =>
         {
-            Collect(menu.Items, [], entries, say);
-        }
-
-        return entries;
-    }
+            entry.Item.PerformClick();
+            if (entry.Item.CheckOnClick)
+            {
+                say($"{entry.Name}, {(entry.Item.Checked ? "checked" : "not checked")}");
+            }
+        })).ToList();
 
     /// <summary>
     /// The menus that hold an item, from the bar down, as the palette names them: "Navigate, Next"; empty for an item
@@ -96,7 +154,7 @@ public static class CommandPalette
         return owners;
     }
 
-    private static void Collect(ToolStripItemCollection items, List<string> path, List<PaletteEntry> entries, Action<string> say)
+    private static void Collect(ToolStripItemCollection items, List<string> path, List<MenuEntry> entries)
     {
         foreach (ToolStripItem item in items)
         {
@@ -111,7 +169,7 @@ public static class CommandPalette
                 // What the menu would show on opening, before its items are read.
                 (menuItem.Tag as Mark)?.Refresh?.Invoke();
                 path.Add(name);
-                Collect(menuItem.DropDownItems, path, entries, say);
+                Collect(menuItem.DropDownItems, path, entries);
                 path.RemoveAt(path.Count - 1);
                 continue;
             }
@@ -123,15 +181,7 @@ public static class CommandPalette
             }
 
             var key = menuItem.ShortcutKeyDisplayString ?? (menuItem.ShortcutKeys != Keys.None ? BundleKeys.Text(menuItem.ShortcutKeys) : null);
-            var text = Palette.Text(name, path, key, menuItem.Checked);
-            entries.Add(new PaletteEntry(text, () =>
-            {
-                menuItem.PerformClick();
-                if (menuItem.CheckOnClick)
-                {
-                    say($"{name}, {(menuItem.Checked ? "checked" : "not checked")}");
-                }
-            }));
+            entries.Add(new MenuEntry(menuItem, name, [.. path], key, menuItem.Checked));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace AxKit.Forms;
 /// </summary>
 public abstract partial class AxKitForm
 {
-    private readonly ToolStripMenuItem _themeOnItem = new("Theme &on");
+    private readonly ToolStripMenuItem _themeOnItem = CommandPalette.Marked(new("Theme &on"), CommandMark.Change);
     private Theme? _theme;
     private DateTime _themeStamp;
     private bool _themeProblemLogged;
@@ -45,7 +45,7 @@ public abstract partial class AxKitForm
     /// </summary>
     private ToolStripMenuItem CreateSayNewLineItem(ToolStripMenuItem textMenu)
     {
-        var item = new ToolStripMenuItem("Say &new line", null, (_, _) => ToggleSayNewLine()) { Checked = _theme?.SayNewLine ?? true };
+        var item = CommandPalette.Marked(new ToolStripMenuItem("Say &new line", null, (_, _) => ToggleSayNewLine()) { Checked = _theme?.SayNewLine ?? true }, CommandMark.Change);
         CommandPalette.RefreshedOnOpening(textMenu, () => item.Checked = _theme?.SayNewLine ?? true);
         return item;
     }
@@ -69,7 +69,7 @@ public abstract partial class AxKitForm
     /// </summary>
     private ToolStripMenuItem CreateHeadingSoundItem(ToolStripMenuItem textMenu)
     {
-        var item = new ToolStripMenuItem("Sound on &headings", null, (_, _) => ToggleHeadingSound()) { Checked = _theme?.HeadingSound ?? true };
+        var item = CommandPalette.Marked(new ToolStripMenuItem("Sound on &headings", null, (_, _) => ToggleHeadingSound()) { Checked = _theme?.HeadingSound ?? true }, CommandMark.Change);
         CommandPalette.RefreshedOnOpening(textMenu, () => item.Checked = _theme?.HeadingSound ?? true);
         return item;
     }
@@ -147,8 +147,8 @@ public abstract partial class AxKitForm
     private ToolStripMenuItem CreateThemeMenu()
     {
         var menu = new ToolStripMenuItem("&Theme");
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Edit theme file...", null, (_, _) => EditThemeFile()));
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Reload theme", null, (_, _) => ReloadTheme()));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Edit theme file...", null, (_, _) => EditThemeFile()), CommandMark.Open));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Reload theme", null, (_, _) => ReloadTheme()), CommandMark.Change));
         _themeOnItem.Click += (_, _) => ToggleTheme();
         menu.DropDownItems.Add(_themeOnItem);
         return menu;

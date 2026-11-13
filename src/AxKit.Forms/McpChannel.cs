@@ -228,12 +228,15 @@ internal sealed class McpChannel
             "state" => _form.McpState(),
             "list" => List(),
             "text" => Text(),
-            "commands" => _form.CommandList.Select(command => new
+            // The palette's entries (docs/axKit/app-kit.md AK-2.5): what the user finds with Ctrl+Shift+P, settings and
+            // recent files included, each with its mark; the AI tools' own switches left out (AK-2.6).
+            "commands" => _form.ToolEntries().Select(entry => new
             {
-                label = command.Label.Replace("&", string.Empty, StringComparison.Ordinal),
-                menu = _form.MenuOf(command),
-                key = command.Key == Keys.None ? null : BundleKeys.Text(command.Key).TrimEnd('.'),
-                mark = command.Mark.ToString().ToLowerInvariant(),
+                label = entry.Name,
+                menu = entry.Menu,
+                key = entry.Key,
+                mark = CommandPalette.MarkOf(entry.Item).ToString().ToLowerInvariant(),
+                @checked = entry.Item.CheckOnClick || entry.Checked ? entry.Checked : (bool?)null,
             }).ToArray(),
             "said" => Said(),
             _ => new { error = $"unknown request {verb}" },

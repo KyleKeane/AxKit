@@ -183,10 +183,14 @@ axTask item made in a folder) are the next part.
 - MC-7.1 **The tool** `axkit_window_run`: a window's id from `axkit_windows`, a command's label as
   `axkit_window_commands` lists it (and the palette shows it; the letter's marker, the trailing dots and case do not
   matter), and, where two commands share a label (Heading under Next and under Previous), `menu`, the menus that hold
-  it as `axkit_window_commands` now lists them ("Navigate, Next"). Only the window's own command list (app-kit AK-2)
-  is searched, and only a command with a menu item the palette would offer now (its menus refreshed as on opening,
-  the item and every menu over it available and enabled): a key with no item, or an item disabled at the moment, is
-  refused with its reason. It runs on the window's thread as its menu item would (`PerformClick`), posted so that the
+  it as `axkit_window_commands` now lists them ("Navigate, Next"). Since 2026-11-13 (app-kit AK-2.5, the user's rule
+  of one source) both tools read the command palette's entries, every menu item the palette would offer now (its
+  menus refreshed and its recent lists filled as on opening, the item and every menu over it available and enabled):
+  the commands, the settings with their checked state, the recent files and windows; an item's mark is its command's,
+  change for a setting, open for a recent file or window, read for an item that only says something, and act for an
+  item that states none, which asks the user (MC-7.3). The AI tools' own switches and AI help's switch and folders
+  are never listed (AK-2.6, exception 3). Until then only the window's command list was searched, and a key with no
+  menu item was listed and refused; such a key is no longer listed. It runs on the window's thread as its menu item would (`PerformClick`), posted so that the
   answer never waits on a command that shows a Windows dialog; the answer, after the window has been quiet for 0.7 s
   or at most 2.5 s, gives what ran (`ran`, only for a command the window took up and ran; `notRun` with the reason when
   a notice, a dialog, the switch or a disabled item stopped it in between; `unknown` when the window had not taken it up

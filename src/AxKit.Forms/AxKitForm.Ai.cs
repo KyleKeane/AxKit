@@ -29,12 +29,13 @@ public abstract partial class AxKitForm
     internal ToolStripMenuItem CreateClaudeMenu()
     {
         var menu = new ToolStripMenuItem("&Claude");
-        var on = new ToolStripMenuItem("&Use Claude in axKit", null, (_, _) => ToggleAiHelp());
+        // The switch and the folders Claude reads are never offered to an AI tool (docs/axKit/app-kit.md AK-2.6, exception 3).
+        var on = CommandPalette.NeverForAiTools(new ToolStripMenuItem("&Use Claude in axKit", null, (_, _) => ToggleAiHelp()));
         menu.DropDownItems.Add(on);
         menu.DropDownItems.Add(new ToolStripSeparator());
         menu.DropDownItems.Add(Item("&Ask about this window...", AskAboutThisWindow, BundleKeys.AskClaude));
         menu.DropDownItems.Add(new ToolStripSeparator());
-        menu.DropDownItems.Add(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders()));
+        menu.DropDownItems.Add(CommandPalette.NeverForAiTools(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders())));
         menu.DropDownItems.Add(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()));
         CommandPalette.RefreshedOnOpening(menu, () => on.Checked = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled);
         return menu;

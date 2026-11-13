@@ -20,7 +20,8 @@ public static class RecentMenu
         for (var i = 0; i < targets.Count; i++)
         {
             var target = targets[i];
-            menu.DropDownItems.Add(new ToolStripMenuItem(AxKitWindows.Label(i, $"{name(target)} ({target})"), null, (_, _) => open(target)));
+            // A recent file or folder opens it (docs/axKit/app-kit.md AK-2.5).
+            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, $"{name(target)} ({target})"), null, (_, _) => open(target)), CommandMark.Open));
         }
 
         NoneWhenEmpty(menu, noneLabel);
@@ -39,7 +40,8 @@ public static class RecentMenu
     {
         if (menu.DropDownItems.Count == 0)
         {
-            menu.DropDownItems.Add(new ToolStripMenuItem(text));
+            // Says only that the list is empty.
+            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(text), CommandMark.Read));
         }
     }
 }

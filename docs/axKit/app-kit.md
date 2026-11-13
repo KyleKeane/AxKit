@@ -60,9 +60,12 @@ After the kit:
      access settings of AX-11 are under exception 3.
   Not security, and kept as few as possible: axFile's Drives and the Open with submenus are filled only when opened,
   since reading them can stall on a network drive or the shell's handlers; the menus themselves and their keys work.
-  Built so far (2026-11-13): the palette reads every menu, the recent lists included. Owed: the AI tools reading the
-  same entries in place of the command list alone, with exception 3 as a mark the base sets, and a test that every
-  reader's list is the palette's.
+  Built 2026-11-13: the palette reads every menu, the recent lists included; `axkit_window_commands` and
+  `axkit_window_run` read the same entries (`AxKitForm.ToolEntries`); exception 3 is `CommandPalette.NeverForAiTools`
+  on the menus it covers; marks are given where items are made (`CommandPalette.Marked`: a command's through `Add`,
+  `Toggle` and `ChoiceItems` change, the recent lists and the Window menu open, axClaude and axTerminal act). Owed:
+  93 menu items of the apps state no mark yet and so ask before an AI tool runs them; `CommandMarkTests` keeps the
+  number from growing, and each converted item lowers it.
 
 ## 3. Archetypes
 

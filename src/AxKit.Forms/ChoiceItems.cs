@@ -16,7 +16,8 @@ public sealed class ChoiceItems<T>
     {
         foreach (var (value, text) in choices)
         {
-            var item = new ToolStripMenuItem(text, null, (_, _) => chosen(value)) { Checked = EqualityComparer<T>.Default.Equals(value, current) };
+            // A setting's choice is a change (docs/axKit/app-kit.md AK-2.5).
+            var item = CommandPalette.Marked(new ToolStripMenuItem(text, null, (_, _) => chosen(value)) { Checked = EqualityComparer<T>.Default.Equals(value, current) }, CommandMark.Change);
             _items.Add((value, item));
             menu.DropDownItems.Add(item);
         }
