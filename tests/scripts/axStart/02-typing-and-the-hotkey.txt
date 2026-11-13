@@ -1,0 +1,71 @@
+# Workflow: Search programs as you type and change axStart's hotkey
+# axStart, docs/axStart/nvda-test-plan.md sections 2 to 4 beyond 01-basics, with the first match said as the user has it
+# by default (AS-3.2, plan 5.3): the first match after a pause, Backspace narrowing again, several words, Tab and the
+# notices keeping the field's text, the refusals for a Store app, and the Hotkey notice. Starting a program, File
+# Explorer and the Start menu are outside the window (manual). The hotkey is one nobody uses, unlike 01-basics', so
+# that the two never meet.
+file home\AxKit\axStart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F10", "sayFirstMatch": true}
+
+start start
+expect focus Search programs
+# The programs are read once at the start.
+wait 5000
+
+# 2.1 The first match said after a pause, its place among the matches with it.
+type windows
+expect said , 1 of
+# 2.4 Down, then Backspace: the text loses a letter and the first match of the new text is said.
+keys down
+expect said , 2 of
+keys backspace
+expect focus "value":"window"
+expect said , 1 of
+
+# 2.6 Several words: each found in the name, in any order.
+keys ctrl+a
+type win power
+expect said PowerShell
+
+# 2.8 Tab: the focus stays in the field.
+keys tab
+expect focus "name":"Search programs","role":"Text","value":"win power"
+# 2.9 Ctrl+S: nothing to save; F1: the shortcuts, and Escape gives the field back with its text.
+keys ctrl+s
+expect said Nothing to save here
+keys f1
+expect state "notice":"Keyboard shortcuts"
+keys escape
+expect state "notice":null
+expect focus "name":"Search programs","role":"Text","value":"win power"
+
+# 3.5 and 3.7 A Store app has no administrator start and no file location.
+keys ctrl+a
+type calculator
+expect said Calculator, 1 of
+keys ctrl+shift+enter
+expect said Cannot start as administrator
+keys ctrl+o
+expect said No file location for Calculator
+
+# 4.1 to 4.3 The Hotkey notice: the key in use, a key without Ctrl, Alt or Windows refused, a new one taken.
+menu Hotkey
+expect state "notice":"Hotkey"
+expect focus Ctrl+Alt+Shift+F10
+keys a
+expect said Use Ctrl, Alt or the Windows key with it
+keys ctrl+alt+shift+f9
+expect focus Ctrl+Alt+Shift+F9
+keys enter
+expect said Hotkey Ctrl+Alt+Shift+F9
+# 4.6 Escape keeps the key in use.
+menu Hotkey
+expect focus Ctrl+Alt+Shift+F9
+keys escape
+expect state "notice":null
+menu Hotkey
+expect focus Ctrl+Alt+Shift+F9
+keys escape
+
+# Quit axStart, so that its hotkey goes with it.
+menu Quit axStart
+expect closed

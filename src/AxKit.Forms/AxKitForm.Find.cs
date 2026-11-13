@@ -93,7 +93,7 @@ public abstract partial class AxKitForm
         return true;
     }
 
-    /// <summary>F3 and Shift+F3 on a list: the next (or previous) item whose name contains the text, wrapping once, selected; "Not found" otherwise; the Find notice when nothing was searched for yet. The selection is NVDA's own reading.</summary>
+    /// <summary>F3 and Shift+F3 on a list: the next (or previous) item whose name contains the text, wrapping once, selected and given the focus; "Not found" otherwise; the Find notice when nothing was searched for yet. The selection is NVDA's own reading.</summary>
     protected void FindInList(ListBox list, Func<IReadOnlyList<string>> names, int direction)
     {
         if (_findText.Length == 0)
@@ -111,6 +111,9 @@ public abstract partial class AxKitForm
             if (items[i].Contains(_findText, StringComparison.OrdinalIgnoreCase))
             {
                 list.SelectedIndex = i;
+                // The list takes the focus, as a text box does for its match: from another control (axCalc's field)
+                // the match was selected unheard (found by the workflow script of 2026-11-13).
+                list.Focus();
                 return;
             }
         }

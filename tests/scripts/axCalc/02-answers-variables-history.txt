@@ -1,0 +1,150 @@
+# Workflow: Use variables, earlier answers and the history in axCalc
+# axCalc, docs/axCalc/nvda-test-plan.md sections 2 to 5 beyond 01-basics: ans, variables, errors that keep the
+# expression, Up and Down left to the field, angles, bases of a fraction, editing a history entry, Find landing on a
+# match, clearing the history and the variables, and the history kept between runs. Ctrl+S and the copy to the
+# clipboard (4.6, 3.3) are the Windows save dialog and the user's clipboard (manual).
+file home\AxKit\axCalc.json {"checkForUpdates": false}
+
+start calc
+expect focus Expression
+# 1.2 The history's name when it is empty.
+keys shift+tab
+expect focus History, empty
+keys tab
+expect focus Expression
+
+# 2.2 ans and an answer continued.
+type 1920*1080*4
+keys enter
+expect said ! 8294400
+type *2
+keys enter
+expect said ! 16588800
+type -3
+keys enter
+expect said ! -3
+type ans*2
+keys enter
+expect said ! -6
+
+# 2.3 A variable: set, said, used; the status bar counts it.
+type rate = 1.25
+keys enter
+expect said ! rate = 1.25
+type 400 * rate
+keys enter
+expect said ! 500
+expect state 1 variable
+
+# 2.4 An error is said and the expression stays in the field to be fixed.
+type sqrt(-1)
+keys enter
+expect said ! Error: not a real number
+expect focus "value":"sqrt(-1)"
+keys escape
+expect said ! Cleared
+type (2+3
+keys enter
+expect said ! Error: missing closing parenthesis
+keys escape
+type foo
+keys enter
+expect said ! Error: unknown name foo
+keys escape
+expect said ! Cleared
+# 2.5 Enter on the empty field.
+keys enter
+expect said ! Type an expression
+
+# 2.7 Up and Down are the field's own: its text is not replaced by a history line.
+type 7+
+keys up
+keys down
+expect focus "value":"7+"
+keys escape
+
+# 2.8 Degrees by default, radians from Options, Angles.
+type sin(30)
+keys enter
+expect said ! 0.5
+menu Radians
+expect said Radians
+type sin(pi/2)
+keys enter
+expect said ! 1
+menu Degrees
+expect said Degrees
+
+# 3.2 The bases of a fraction.
+type 2.5
+keys enter
+expect said ! 2.5
+keys ctrl+i
+expect said 2.5 is not a whole number
+
+# 4.3 A history entry back in the field with Enter, changed and answered again.
+keys shift+tab
+expect focus History
+keys up
+expect focus sin(pi/2)
+keys enter
+expect focus "value":"sin(pi/2)"
+# Back in degrees: the angle changed to 30.
+keys backspace backspace backspace backspace backspace
+type 30)
+keys enter
+expect said ! 0.5
+
+# 4.5 Find lands on a match in the history.
+keys ctrl+f
+expect state "notice":"Find"
+type rate
+keys enter
+expect state "notice":null
+expect focus rate = 1.25
+
+# 4.8 The variables notice, then Clear variables.
+menu Variables
+expect state "notice":"Variables"
+expect state rate = 1.25
+keys escape
+menu Clear variables
+keys enter
+expect said Variables cleared
+
+# 5.1 Two answers kept between runs: the history and the last answer come back.
+keys f6
+type 6*7
+keys enter
+expect said ! 42
+close
+wait 1500
+start calc
+keys ctrl+q
+expect said 42
+keys shift+tab
+expect focus 6*7 = 42
+
+# 4.7 Clear the history: Escape keeps it, Enter clears it.
+keys ctrl+shift+delete
+expect state "notice":"Clear the history?"
+keys escape
+expect state "notice":null
+keys ctrl+shift+delete
+expect state "notice":"Clear the history?"
+keys enter
+expect said History cleared
+# The focus is still in the history, now empty.
+expect focus History, empty
+
+# 5.2 Keep history between runs off: the next start has none.
+keys tab
+type 1+1
+keys enter
+expect said ! 2
+menu Keep history between runs
+close
+wait 1500
+start calc
+keys shift+tab
+expect focus History, empty

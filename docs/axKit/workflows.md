@@ -13,6 +13,7 @@ for help with, and the script is its steps; together they are the start of a tut
 ## axCalc
 
 1. **Calculate and reuse earlier answers** (`tests/scripts/axCalc/01-basics.txt`): axCalc: the field, the answer, the history and its keys (docs/axCalc/nvda-test-plan.md; SPEC AC-3 to AC-6). Every key here is a command of the window's one list (docs/axKit/app-kit.md AK-2), so this script is also the check that the list does what the key switch did before it.
+2. **Use variables, earlier answers and the history in axCalc** (`tests/scripts/axCalc/02-answers-variables-history.txt`): axCalc, docs/axCalc/nvda-test-plan.md sections 2 to 5 beyond 01-basics: ans, variables, errors that keep the expression, Up and Down left to the field, angles, bases of a fraction, editing a history entry, Find landing on a match, clearing the history and the variables, and the history kept between runs. Ctrl+S and the copy to the clipboard (4.6, 3.3) are the Windows save dialog and the user's clipboard (manual).
 
 ## axClaude
 
@@ -121,6 +122,7 @@ for help with, and the script is its steps; together they are the start of a tut
 ## axStart
 
 1. **Find and start a program** (`tests/scripts/axStart/01-basics.txt`): axStart: the search field, the match keys and the commands that stay inside the window (docs/axStart/nvda-test-plan.md; SPEC AS-3, AS-5.3). Every key here is a command of the window's one list (docs/axKit/app-kit.md AK-2), the match keys HotkeyForm's, so this script is also the check that the list does what the key switch did before it. The hotkey is one nobody uses, so that the run never takes the user's; Start with Windows stays on, which a development build never writes (SignInStart), since off would remove the user's own sign-in value.
+2. **Search programs as you type and change axStart's hotkey** (`tests/scripts/axStart/02-typing-and-the-hotkey.txt`): axStart, docs/axStart/nvda-test-plan.md sections 2 to 4 beyond 01-basics, with the first match said as the user has it by default (AS-3.2, plan 5.3): the first match after a pause, Backspace narrowing again, several words, Tab and the notices keeping the field's text, the refusals for a Store app, and the Hotkey notice. Starting a program, File Explorer and the Start menu are outside the window (manual). The hotkey is one nobody uses, unlike 01-basics', so that the two never meet.
 
 ## axTask
 
