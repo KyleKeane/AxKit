@@ -34,7 +34,8 @@ internal sealed class McpChannel
     private static readonly JsonSerializerOptions RunAnswer = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull };
 
     private readonly AxKitForm _form;
-    private readonly string _name = Prefix + Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(8));
+    // A test run's windows carry the run's mark, so that only the run's broker finds them (McpPipeName).
+    private readonly string _name = Prefix + McpPipeName.Suffix(AppPaths.RunMark, Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(8)));
 
     /// <summary>What the window announced lately, the last 50, taken by <c>said</c>; recorded only from the first call a client proved the key for, so that nothing said before any access is handed over.</summary>
     private readonly Queue<(DateTime At, string Text)> _said = new();

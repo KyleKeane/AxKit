@@ -109,6 +109,9 @@ public sealed class TaskToolsTests : IDisposable
     [Theory]
     [InlineData("", "Due", "+1", "Give the item's title.")]
     [InlineData("Two\nlines", "Due", "+1", "A title is one line.")]
+    [InlineData("Tab\there", "Due", "+1", "A title holds no control characters.")]
+    [InlineData("Bell\u0007", "Due", "+1", "A title holds no control characters.")]
+    [InlineData("Milk", "Due\u001b", "+1", "A field's title holds no control characters.")]
     [InlineData("Milk", "Due", "next week", "Due: Not a date: next week.")]
     [InlineData("Milk", "Priority", "Urgent", "Priority: Not one of the options: High, Normal, Low")]
     [InlineData("Milk", "Done", "maybe", "Done: a check is true or false")]
@@ -126,6 +129,16 @@ public sealed class TaskToolsTests : IDisposable
         var (item, refused) = TaskTools.NewItem(title, template, [new(field, value)], Today);
         Assert.Null(item);
         Assert.StartsWith(reason, refused);
+    }
+
+    [Fact]
+    public void An_add_into_a_GitHub_list_is_refused_and_one_into_an_ordinary_list_taken()
+    {
+        var list = new ReachableList("Issues", TaskTools.TopPlace, @"D:\Tasks\Issues");
+        var github = GitHubList.NewList("owner/repo", GitHubList.OpenState, null);
+        Assert.Equal("Issues is a list of the GitHub issues of owner/repo, which AI tools do not add to: add the item to one of the computer's own lists.", TaskTools.AddRefused(list, github));
+        Assert.Null(TaskTools.AddRefused(list, ItemDocument.NewList([])));
+        Assert.Null(TaskTools.AddRefused(list, null));
     }
 
     [Fact]

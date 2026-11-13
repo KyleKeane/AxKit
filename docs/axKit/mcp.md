@@ -108,7 +108,11 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
 - MC-6.2 **The windows' pipes**: every window serves its own pipe, `\\.\pipe\AxKit-mcp-<user SID>-<random>`, for the
   current user alone and refused over the network (the access list of S-11). The broker finds them by listing the
   pipes with that prefix, so no file names them. A window of axPass or axClip serves none (MC-4.1, MC-4.2): those apps
-  are not reachable at all in this stage. The test channel stays apart (MC-1.3).
+  are not reachable at all in this stage. The test channel stays apart (MC-1.3). A test run's windows name their pipe
+  `...-run<mark>-<random>`, the mark twelve hex digits of the run's folder (`AppPaths.RunMark`, the same as its
+  mutexes'), and a broker lists only the pipes of its own kind (`McpPipeName.SameKind`): the user's broker the user's
+  windows, a run's broker that run's (2026-11-12: a run's broker had knocked on the user's own windows, which refused
+  it by MC-6.3 and logged every knock). A window's id is the pipe's random part either way.
 - MC-6.3 **Both ends prove who they are**: the window answers only a client whose process runs this very program file
   (`GetNamedPipeClientProcessId`, its image path, as the hand-over checks, S-13), and the broker talks only to a pipe
   whose server process runs it (`GetNamedPipeServerProcessId`): a broker reads only the windows of its own

@@ -69,17 +69,18 @@ public static class AppPaths
     /// sign-in, never take each other for a second start (2026-11-09: the user's axDescribe, now axHelp, made every test start end
     /// at once).
     /// </summary>
-    public static string OneAtATime(string app)
-    {
-        var name = @"Local\AxKit." + app;
-        if (AutomationEnvironment.Home is { } home)
-        {
-            var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(home.ToUpperInvariant()));
-            name += "." + Convert.ToHexString(hash, 0, 6);
-        }
+    public static string OneAtATime(string app) => RunMark is { } mark ? @"Local\AxKit." + app + "." + mark : @"Local\AxKit." + app;
 
-        return name;
-    }
+    /// <summary>
+    /// A mark of the test run this process belongs to, twelve hex digits from its folder
+    /// (<see cref="AutomationEnvironment.Home"/>); null for the user's own processes. It keeps a run's mutexes and AI
+    /// tools' pipes apart from the user's (<see cref="OneAtATime"/>, <see cref="Mcp.McpPipeName"/>).
+    /// </summary>
+    public static string? RunMark => AutomationEnvironment.Home is { } home ? MarkOf(home) : null;
+
+    /// <summary>The mark of a run's folder, the case not minded.</summary>
+    public static string MarkOf(string home) =>
+        Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(home.ToUpperInvariant())), 0, 6);
 
     /// <summary>
     /// The first start after the rename (docs/axKit/SPEC.md AX-5.4, B-16): what Axit, the bundle's name up to 4.0.0,

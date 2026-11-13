@@ -120,6 +120,13 @@ public static class TaskTools
             return (null, $"A title is at most {MaxTitle} characters: put the rest in Notes.");
         }
 
+        // A tab, a bell, an escape: never typed into a title by hand, said oddly or not at all, and the title is the
+        // file's name too (2026-11-12, left open by the review of MC-8).
+        if (trimmed.Any(char.IsControl))
+        {
+            return (null, "A title holds no control characters.");
+        }
+
         var item = ItemDocument.NewItem(trimmed, template);
         foreach (var (name, text) in values)
         {
@@ -127,6 +134,11 @@ public static class TaskTools
             if (field.Length == 0)
             {
                 return (null, "A field needs its title.");
+            }
+
+            if (field.Any(char.IsControl))
+            {
+                return (null, "A field's title holds no control characters.");
             }
 
             if (field.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
@@ -154,6 +166,15 @@ public static class TaskTools
 
         return (item, null);
     }
+
+    /// <summary>
+    /// TK-8.3: a list an AI tool does not add to, with the reason; null when it takes the add. A GitHub list (RP-7.1) is
+    /// GitHub's issues: an item made here was never sent there, so its next refresh would archive it (2026-11-12).
+    /// </summary>
+    public static string? AddRefused(ReachableList list, ItemDocument? details) =>
+        GitHubList.Of(details) is { } github
+            ? $"{list.Name} is a list of the GitHub issues of {github.Repository}, which AI tools do not add to: add the item to one of the computer's own lists."
+            : null;
 
     /// <summary>The longest title a tool may give (TK-8.3): the window says it whole, in "Claude added ..." and in the undo.</summary>
     public const int MaxTitle = 200;

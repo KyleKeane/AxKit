@@ -239,7 +239,8 @@ public static class McpBroker
                 var hello = JsonNode.Parse(answer) as JsonObject;
                 if (hello is not null && McpProtocol.Text(hello["app"]) is { } app)
                 {
-                    windows.Add(new OpenWindow(pipe[McpChannel.Prefix.Length..], pipe, app, McpProtocol.Text(hello["title"]) ?? string.Empty, hello["handle"]?.GetValue<long>() ?? 0));
+                    // The id is the pipe's sixteen random digits, after a run's mark when there is one (McpPipeName).
+                    windows.Add(new OpenWindow(pipe[^16..], pipe, app, McpProtocol.Text(hello["title"]) ?? string.Empty, hello["handle"]?.GetValue<long>() ?? 0));
                 }
             }
             catch (Exception ex) when (ex is JsonException or InvalidOperationException or FormatException)
@@ -251,13 +252,15 @@ public static class McpBroker
         return [.. windows.OrderBy(window => order.IndexOf(window.Handle) is var i and >= 0 ? i : int.MaxValue)];
     }
 
-    /// <summary>The names of this user's axKit windows' pipes.</summary>
+    /// <summary>The names of this user's axKit windows' pipes, of this broker's kind: the user's own, or its test run's (<see cref="McpPipeName"/>).</summary>
     private static IEnumerable<string> Pipes()
     {
         var prefix = McpChannel.Prefix;
+        var mark = AppPaths.RunMark;
         try
         {
-            return Directory.GetFiles(@"\\.\pipe\").Select(Path.GetFileName).OfType<string>().Where(name => name.StartsWith(prefix, StringComparison.Ordinal)).ToList();
+            return Directory.GetFiles(@"\\.\pipe\").Select(Path.GetFileName).OfType<string>()
+                .Where(name => name.StartsWith(prefix, StringComparison.Ordinal) && McpPipeName.SameKind(name[prefix.Length..], mark)).ToList();
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
