@@ -139,6 +139,7 @@ public static class McpTools
     private static JsonObject OfferSchema() => Schema(
         ("command", "The command, one line, as the user would type it after the ! mark; it runs in Claude Code's shell, which is Bash on Windows too unless the user set another."),
         ("reason", "Optional: one sentence the user hears, why they should run it themselves."),
+        ("details", "Optional, and wanted for anything but the plainest command: what the user reads on Explain. What each part of the command does, one part a line, what it changes and whether that can be undone, and the addresses of the official documentation pages for the program."),
         ("window", "Optional: an axClaude window's id from axkit_windows; left out, the window this session runs in."));
 
     /// <summary>The schema with these arguments required, where more than the first is.</summary>

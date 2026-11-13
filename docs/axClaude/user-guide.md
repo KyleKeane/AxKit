@@ -72,13 +72,17 @@ Keys that go straight to Claude Code:
 
 ### When Claude asks you to run a command yourself
 
-Some commands Claude cannot or should not run: a sign-in that asks questions, or something its permissions refuse. Claude can then offer you the command. When its turn has ended, axClaude chimes and shows a notice called "Claude offers a command for you to run". The focus is in the text: the command is read first, then Claude's reason, then what running it means. Read it with the arrow keys as often as you like.
+Some commands Claude cannot or should not run: a sign-in that asks questions, or something its permissions refuse. Claude can then offer you the command. When its turn has ended, axClaude chimes and a list takes the message field's place, just as for one of Claude's questions. The list is called "Claude offers a command for you to run" followed by the command itself, and Ctrl+Q reads that again with Claude's reason. The conversation is still there: Tab or Ctrl+2 goes to it, so you can read what led to the command, and Tab or Ctrl+1 comes back to the list.
 
-- Enter or Escape is Do not run. Nothing is sent, and axClaude says "Not run".
-- Tab to Run it and press Enter, or press Alt+R. axClaude sends the command to Claude Code as a line that starts with an exclamation mark, exactly as if you had typed it, and says "Sent". What the command prints appears in the conversation, and Claude can read it.
+The list starts on its first answer, which runs nothing, so an Enter pressed by accident is harmless:
 
-A command run this way skips Claude Code's own permission check, because it is your command, so axClaude asks every time and there is no "always allow". Nothing is put on your clipboard. For this to work, the AI tools must be on and axKit added to Claude Code: axKit menu, Claude, AI tools, Let AI tools read and open axKit. You can always type such a line yourself too: an exclamation mark, a space and the command.
+- Explain this command opens a text: the command, why Claude offers it, what each part does in Claude's words when it said so, and what each answer does. Read it with the arrows; `h` jumps by heading. Enter or Escape closes it and you are back on the list.
+- Yes, run it sends the command to Claude Code as a line that starts with an exclamation mark, exactly as if you had typed it, and says "Sent". What the command prints appears in the conversation, and Claude can read it.
+- No, do not run it sends nothing and says "Not run". Escape does the same.
+- No, copy it to the clipboard instead puts the command on your clipboard and sends nothing. It is the only answer that touches your clipboard.
+- No, and report a concern about it asks for your words in a field (they are optional), then opens Claude Code's own feedback with the command, Claude's reason and your words. Claude Code shows you the report and asks before anything goes to Anthropic. Escape in the field goes back to the list.
 
+A command run this way skips Claude Code's own permission check, because it is your command, so axClaude asks every time and there is no "always allow". For this to work, the AI tools must be on and axKit added to Claude Code: axKit menu, Claude, AI tools, Let AI tools read and open axKit. You can always type such a line yourself too: an exclamation mark, a space and the command.
 ## Slash commands
 
 Anything that starts with a slash is a Claude Code command. Type `/help` and press Enter for the list. Some useful ones:

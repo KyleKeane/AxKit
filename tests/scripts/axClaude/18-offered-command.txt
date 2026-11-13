@@ -1,7 +1,7 @@
 # Workflow: Run a command Claude offers you
 # Needs: Claude Code signed in and the network; Claude Code's shell for a ! line is Bash (the arithmetic in the last command is Bash's).
-# axkit_offer_command (docs/axKit/mcp.md MC-9, docs/axClaude/SPEC.md FR-2.12): a command an AI tool offers is read to
-# the user in a notice once Claude is idle, Do not run its default; only Run it sends it, as a ! line, and what it
+# axkit_offer_command (docs/axKit/mcp.md MC-9, docs/axClaude/SPEC.md FR-2.12): a command an AI tool offers is a question
+# in the control area once Claude is idle, starting on Explain; only Yes, run it sends it, as a ! line, and what it
 # prints joins the conversation. The runner is the MCP client, so it names the window; Claude Code itself is found by
 # the window it runs in.
 file home\AxKit\axClaude.json {"checkForUpdates":false}
@@ -43,30 +43,59 @@ expect mcp error: This works only for a Claude Code that runs inside an axClaude
 mcp call axkit_offer_command {"window":"{window}","command":"echo a\necho b"}
 expect mcp error: The command must be one line
 
-# MC-9.4: the question reads the command and the reason; Enter is Do not run, and nothing is sent.
-mcp call axkit_offer_command {"window":"{window}","command":"echo offered-first","reason":"A check of the question."}
+# MC-9.4: the question is a list in the control area, named with the command, starting on the answer that only
+# explains; the conversation stays there to read. Enter opens the explanation, a text with one button, and closing it
+# comes back to the same list.
+mcp call axkit_offer_command {"window":"{window}","command":"echo offered-first","reason":"A check of the question.","details":"echo: prints its words\noffered-first: the words"}
 expect mcp "offered": true
-expect state "notice":"axAutomate offers a command for you to run"
-expect state echo offered-first
-expect state Its reason: A check of the question.
+expect focus axAutomate offers a command for you to run: echo offered-first
+expect focus 1. Explain this command
+expect state "notice":null
+keys ctrl+2
+expect focus Conversation
+keys ctrl+1
+expect focus 1. Explain this command
 wait 1500
+keys enter
+expect state "notice":"About this command"
+expect state Why axAutomate offers it
+expect state A check of the question.
+expect state echo: prints its words
+keys enter
+expect focus 1. Explain this command
+
+# Ctrl+Q reads the question again with the reason.
+keys ctrl+q
+expect said offers a command for you to run: echo offered-first. Its reason: A check of the question.
+
+# MC-9.8: No, and report a concern asks for the user's words in a field; Escape comes back to the list on that answer.
+# (Enter would open Claude Code's own feedback, which a check must not send: left to the manual plan.)
+keys end
+expect focus 5. No, and report a concern about it
+keys enter
+expect focus Type what concerns you about this command
+keys escape
+expect focus 5. No, and report a concern about it
+
+# No, do not run it sends nothing.
+keys up up
+expect focus 3. No, do not run it
 keys enter
 expect said Not run
 expect focus "name":"Message to Claude"
-refuse text offered-first
 
-# MC-9.5: Run it sends the command as a ! line; what it prints is in the conversation.
+# MC-9.5: Yes, run it is the second answer; it sends the command as a ! line, and what it prints is in the conversation.
 mcp call axkit_offer_command {"window":"{window}","command":"echo offered-$((40+2))"}
 expect mcp "offered": true
-expect state "notice":"axAutomate offers a command for you to run"
+expect focus 1. Explain this command
 wait 1500
-keys tab
-expect focus &Run it
+keys down
+expect focus 2. Yes, run it
 keys enter
 expect said Sent
 keys ctrl+2
 expect focus Conversation
 expect text offered-42
-
+refuse text offered-first
 # MC-6.6: the calls are in the log by their tool.
 run findstr /c:"axkit_offer_command" home\AxKit\mcp-audit.log

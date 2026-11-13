@@ -40,23 +40,83 @@ public static class McpOffer
         return line.Length > 300 ? line[..300] : line;
     }
 
-    public static string AskTitle(string client) => $"{McpRun.Speaker(client)} offers a command for you to run";
+    /// <summary>
+    /// The answers of the question, in the control area's list (MC-9.4). The first is the one an Enter pressed by
+    /// accident takes, and it only explains; running is the second, and never where the list starts.
+    /// </summary>
+    public static readonly IReadOnlyList<string> Answers =
+    [
+        "1. Explain this command",
+        "2. Yes, run it",
+        "3. No, do not run it",
+        "4. No, copy it to the clipboard instead",
+        "5. No, and report a concern about it",
+    ];
 
-    /// <summary>The question: the command on a line of its own, first, so that it is what is heard; then why, then what Run does.</summary>
+    public const int Explain = 0;
+    public const int Run = 1;
+    public const int No = 2;
+    public const int Copy = 3;
+    public const int Concern = 4;
+
+    /// <summary>The name of the field that follows Report a concern: an instruction, with what Enter and Escape do.</summary>
+    public const string ConcernName = "Type what concerns you about this command, or leave it empty. Enter opens Claude Code's feedback with it, for you to review before it is sent. Escape goes back";
+
+    /// <summary>
+    /// The line that opens Claude Code's own feedback with the concern (MC-9.8): the command, the reason given and the
+    /// user's words on one line, 1500 characters at most. Claude Code shows it for review; nothing here sends it.
+    /// </summary>
+    public static string ConcernLine(string client, string command, string? reason, string? concern)
+    {
+        var why = Reason(reason);
+        var words = Reason(concern);
+        var text = $"Concern about a command {McpRun.Speaker(client)} offered me to run myself (axKit, axkit_offer_command). The command: {command.Trim()} "
+            + $"The reason given: {(why.Length > 0 ? why : "none")} My concern: {(words.Length > 0 ? words : "not stated")}";
+        return "/feedback " + (text.Length > 1500 ? text[..1500] : text);
+    }
+
+    /// <summary>The list's name, read each time the focus comes to it: who offers, and the command whole.</summary>
+    public static string AskName(string client, string command) => $"{McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}";
+
+    /// <summary>What Ctrl+Q reads: the name and the reason.</summary>
     public static string AskText(string client, string command, string? reason)
     {
         var why = Reason(reason);
-        return $"{McpRun.Speaker(client)} asks you to run this command yourself:\n\n{command.Trim()}\n\n"
-            + (why.Length > 0 ? $"Its reason: {why}\n\n" : string.Empty)
-            + "Run it sends the command to Claude Code as a ! line, as if you had typed it: it runs in Claude Code's own shell, in this session's folder, "
-            + "without Claude Code's permission check, and what it prints joins the conversation. Do not run sends nothing.";
+        return AskName(client, command) + (why.Length > 0 ? $". Its reason: {why}" : string.Empty);
+    }
+
+    /// <summary>The breakdown as the explanation shows it: its lines kept, every other control character a space, at most 4000 characters.</summary>
+    public static string Details(string? details)
+    {
+        var text = new string((details ?? string.Empty).Replace("\r\n", "\n").Select(c => c != '\n' && char.IsControl(c) ? ' ' : c).ToArray()).Trim();
+        return text.Length > 4000 ? text[..4000] : text;
+    }
+
+    public const string ExplainTitle = "About this command";
+
+    /// <summary>
+    /// The explanation, a text to read by line and by heading: the command, the reason, the breakdown the AI tool
+    /// gave of each part with the pages it names (its own words, shown as such), and what running means.
+    /// </summary>
+    public static string ExplainText(string client, string command, string? reason, string? details)
+    {
+        var who = McpRun.Speaker(client);
+        var why = Reason(reason);
+        var parts = Details(details);
+        return $"# The command\n\n{command.Trim()}\n\n"
+            + $"# Why {who} offers it\n\n{(why.Length > 0 ? why : "No reason was given.")}\n\n"
+            + (parts.Length > 0 ? $"# What each part does, in {who}'s words\n\n{parts}\n\n" : string.Empty)
+            + "# What your answers do\n\n"
+            + "Yes, run it sends the command to Claude Code as a line that starts with an exclamation mark, as if you had typed it. It runs in Claude Code's own shell, in this session's folder, without Claude Code's permission check, and what it prints joins the conversation.\n\n"
+            + "No, do not run it sends nothing. No, copy it to the clipboard instead puts the command on your clipboard, in place of what was there, and sends nothing. No, and report a concern about it asks for your words, then opens Claude Code's own feedback with the command and your concern, where you review the report before anything goes to Anthropic.\n\n"
+            + "While the question shows you can read the conversation: Tab or Ctrl+2 goes there, and Tab or Ctrl+1 comes back.";
     }
 
     /// <summary>The line sent to Claude Code: its shell mode's mark, a space, the command.</summary>
     public static string Line(string command) => "! " + command.Trim();
 
     /// <summary>What the AI tool is told once the offer waits for the user: to end its turn, since the question shows only then.</summary>
-    public const string Waiting = "The user will be asked in axClaude's window once your turn has ended, and hears the command whole. Say in a few words what the command is for, then end your turn: on Run it is sent as a ! line and what it prints joins the conversation; on Do not run nothing is sent.";
+    public const string Waiting = "The user will be asked in axClaude's window once your turn has ended, and hears the command whole, with your reason and details on request. Say in a few words what the command is for, then end your turn: on Yes it is sent as a ! line and what it prints joins the conversation; on No nothing is sent.";
 
     /// <summary>What the AI tool is told when it runs outside axClaude: there is no window to ask in.</summary>
     public const string NoWindow = "This works only for a Claude Code that runs inside an axClaude window, and no axClaude window holds this session: ask the user to type the command themselves as a ! line.";

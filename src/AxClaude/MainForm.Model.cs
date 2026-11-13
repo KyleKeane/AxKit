@@ -146,6 +146,8 @@ internal sealed partial class MainForm
         {
             if (_wait is null || _wait.Stale || _wait.Signature != waiting || ScreenNoticeOutdated)
             {
+                // A command an AI tool offered (MainForm.Mcp.cs) waits again while Claude's own question is answered.
+                OfferGivesWay();
                 // A feedback survey comes after the turn, not in its place: the turn's end is said first, as without
                 // the survey (docs/axKit/repairs.json R-18; a question of Claude's about its work replaces "Done", a
                 // survey about Claude does not). Whether the survey is then shown or dismissed unheard is the user's setting.
@@ -182,7 +184,7 @@ internal sealed partial class MainForm
         }
         else
         {
-            if (_wait is { Shown: true })
+            if (_wait is { Shown: true } && _offerShown is null)
             {
                 // Nothing waits any more: the message field comes back. Said only when Claude closed it by itself, not
                 // right after the user's answer or key.
@@ -194,8 +196,12 @@ internal sealed partial class MainForm
                 }
             }
 
-            // The question is over: the same one asked again later is new.
-            _wait = null;
+            // The question is over: the same one asked again later is new. An offered command's question is the
+            // window's own and stays until the user answers it (MainForm.Mcp.cs).
+            if (_offerShown is null)
+            {
+                _wait = null;
+            }
             if (_bellPending)
             {
                 if (_settings.AnnounceBell)
