@@ -6,6 +6,19 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-12, after midnight: one bar of eight menus, Context in every window; by the user by ear, then nvda-pass.ps1 (`menu-operations`, merged as 723df6d)
+
+By the user with NVDA on a development build of `menu-operations`: axTask's bar read Session, Actions, Navigation,
+Context, Options, Window, axKit, Help; Shift+F10 on an item opened Context with the item's commands, on a heading the
+one item saying nothing acts on it: "feels right". Then `nvda-pass.ps1` with the user away, Windows 11 Pro
+10.0.26200, NVDA 2025.3.3: 93 scripts, all passed whole, every announcement also spoken by NVDA. axClaude
+`02-conversation`, which failed at step 125 in the branch's runs without NVDA (three "new line" heard late during a
+quiet check, on `main`'s build too), passed whole with NVDA listening: a quirk of the runs without NVDA, where the
+window is never in front and its announcements wait for its first activation (AX-7.1), not something heard.
+
+Not heard yet, by ear: Context opened by Shift+F10 in an edit control (axDown, axClaude's field) and whether the text
+box's own menu ever flashes; the menus of the other apps.
+
 ## 2026-11-11, evening: axTask's headings and tags, the heading sound; by the user by ear, then nvda-pass.ps1 (`push4`, merged as c7eb2e2)
 
 By the user with NVDA, one step at a time through the assistant's questions, on a development build of the branches
