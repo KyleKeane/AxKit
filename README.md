@@ -41,13 +41,17 @@ The set grows as I find another thing worth doing by ear. `docs/axKit/plan.md` (
 
 ## Install
 
-From the Microsoft Store, where axKit is listed (the 5.2.1 package, the one submitted so far): `winget install 9PK01L2K5000 -s msstore` in any terminal, or the Store's page, https://apps.microsoft.com/detail/9PK01L2K5000. The Store signs the package with Microsoft's certificate, which Smart App Control accepts, installs it for your account, and keeps it current by itself; Check for updates in any window says where your copy stands. The Store's copy has eight Start menu entries, the Store's limit ("axKit axClaude", axDown, axFile, axTerminal, axGIT, axTask, axStart and axClip, with axHelp in axGIT's place from the next Store package; from the next Store package axHelp takes axGIT's place, so that it starts at sign-in there too), the commands for every app (`axkit`, `axDown`, `axCalc` and the rest) and Windows' Open with for the apps' file types; the other six apps open from their command, from a file of their kind, from the Window menu's New window in any window and from axFile. File Explorer's "Open with axKit" submenu is the zip's alone ([docs/axKit/SPEC.md](docs/axKit/SPEC.md) AX-13).
+Download [install.cmd](https://github.com/KyleKeane/AxKit/releases/latest/download/install.cmd) and run it. The link always fetches the newest release's installer; no administrator rights are needed. It adds the Start menu entries, the commands for every app (`axkit`, `axDown`, `axCalc` and the rest) and an "Open with axKit" submenu in File Explorer. Installed copies offer each new release themselves: Help, Check for updates.
 
-Without the Store: download `install.cmd`, or the zip, from the [latest release](https://github.com/KyleKeane/AxKit/releases/latest) and run it; no administrator rights are needed. It adds the same Start menu entries and commands, and an "Open with axKit" submenu in File Explorer. Installed copies offer each new release themselves: Help, Check for updates. `docs/axKit/README.md` is the README inside the zip, with the rest.
-
-Pick one of the two. A Store copy and a zip copy on the same computer are two installs with separate settings, and each updates from its own source: the Store copy from the Store, the zip copy from this repository's releases; neither knows about the other.
+The [latest release's page](https://github.com/KyleKeane/AxKit/releases/latest) has the same `install.cmd`, the zip and its notes; every earlier version is on the [releases page](https://github.com/KyleKeane/AxKit/releases). `docs/axKit/README.md` is the README inside the zip, with the rest.
 
 Needs Windows 10 1809 or later. axClaude also needs [Claude Code](https://code.claude.com/docs/en/setup). The standalone apps work with the network off; an access layer reaches it only through the program it runs, as the next section says.
+
+### Or from the Microsoft Store
+
+The Store's copy is behind the releases: the 5.2.1 package is the one submitted so far. Install it with `winget install 9PK01L2K5000 -s msstore` in any terminal, or from [the Store's page](https://apps.microsoft.com/detail/9PK01L2K5000). The Store signs the package with Microsoft's certificate, which Smart App Control accepts, installs it for your account, and keeps it current by itself; Check for updates in any window says where your copy stands. The Store's copy has eight Start menu entries, the Store's limit ("axKit axClaude", axDown, axFile, axTerminal, axGIT, axTask, axStart and axClip; from the next Store package axHelp takes axGIT's place, so that it starts at sign-in there too), the commands for every app (`axkit`, `axDown`, `axCalc` and the rest) and Windows' Open with for the apps' file types; the other six apps open from their command, from a file of their kind, from the Window menu's New window in any window and from axFile. File Explorer's "Open with axKit" submenu is the zip's alone ([docs/axKit/SPEC.md](docs/axKit/SPEC.md) AX-13).
+
+Pick one of the two. A Store copy and a zip copy on the same computer are two installs with separate settings, and each updates from its own source: the Store copy from the Store, the zip copy from this repository's releases; neither knows about the other.
 
 ## Privacy, and what axKit works with
 
