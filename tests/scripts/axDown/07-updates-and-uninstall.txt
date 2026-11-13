@@ -1,3 +1,4 @@
+# Workflow: Check for updates and remove axKit
 # axDown, test plan section 7 (Updates and uninstall), the part a window shows (docs/axDown/nvda-test-plan.md).
 # 7.2 manual: an older build installed with publish.ps1, the update notice, the download and the restart replace the
 # installed program, which a test run must not touch.

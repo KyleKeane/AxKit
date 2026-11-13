@@ -1,3 +1,4 @@
+# Workflow: Have a short exchange with Claude
 # axClaude: a fresh session with Haiku, a message, its reply and Done (docs/axClaude/nvda-test-plan.md sections 1 and 2).
 mkdir a
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.

@@ -1,3 +1,4 @@
+# Workflow: Answer a notice and use the command palette
 # The notice focus rule and the palette in axDown, driven from inside (docs/axKit/automation.md).
 start down {temp}\notes.md
 expect focus Text

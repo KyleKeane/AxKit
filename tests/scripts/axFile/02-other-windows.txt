@@ -1,3 +1,4 @@
+# Workflow: Open a folder in axFile from another app
 # axFile, test plan section 2: from and to the other windows (docs/axFile/nvda-test-plan.md 2.1 to 2.4; AF-1.3).
 # Every step of this section starts another window (axClaude, axDown, axJSON, axPreview, axGIT, axTerminal, axMedia,
 # axFile itself) or File Explorer, which the runner cannot reach or close:

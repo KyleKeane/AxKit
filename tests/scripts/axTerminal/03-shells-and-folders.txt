@@ -1,3 +1,4 @@
+# Workflow: Switch shells and folders
 # axTerminal, section 3 of docs/axTerminal/nvda-test-plan.md: shells and folders (AT-1.2, AT-1.6, AT-1.7). Alt+S, W
 # (the Switch shell submenu) needs menu mode, which only the foreground window enters: "menu" runs the same items.
 mkdir work\myproject

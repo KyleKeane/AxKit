@@ -1,3 +1,4 @@
+# Workflow: Undo a file operation from the Actions list
 # axFile, test plan section 6: the Actions list (docs/axFile/nvda-test-plan.md 6.1 to 6.9; AF-9).
 # The files are those of manual_tests/prepare.ps1 axfile (actions-list, selection), made in {temp}.
 file home\AxKit\axFile.json {"checkForUpdates": false}

@@ -1,3 +1,4 @@
+# Workflow: Use axMedia's text, notices and axKit menu
 # axMedia: text, notices, the axKit menu (docs/axMedia/nvda-test-plan.md section 4; SPEC.md AM-5, AM-6).
 
 file home\AxKit\axMedia.json {"checkForUpdates":false}

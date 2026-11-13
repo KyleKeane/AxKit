@@ -1,3 +1,4 @@
+# Workflow: Format a JSON file
 # axJSON, test plan section 3 (Format, AJ-2.3), driven from inside the window (docs/axJSON/nvda-test-plan.md).
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
 file home\AxKit\axJSON.json {"checkForUpdates": false}

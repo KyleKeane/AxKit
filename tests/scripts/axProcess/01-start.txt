@@ -1,3 +1,4 @@
+# Workflow: Find and end a process
 # axProcess: start, the Processes view, ending a process (docs/axProcess/nvda-test-plan.md sections 1 and 2; SPEC PR-2, PR-3).
 # The lists are this computer's, so the steps match the fixed words, never a count. Something safe to end: a hidden
 # ping that runs for two minutes with its window hidden, started apart from the runner's command (run's own children

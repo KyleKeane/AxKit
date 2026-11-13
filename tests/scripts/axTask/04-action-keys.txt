@@ -1,3 +1,4 @@
+# Workflow: Act on items with action keys and a GitHub list
 # axTask: the action keys and a GitHub list (docs/axTask/nvda-test-plan.md section 5; docs/axTask/SPEC.md TK-7a;
 # docs/axKit/reports.md RP-7, RP-8). A scratch folder with two lists; Home's list.json assigns Ctrl+1 and Ctrl+2.
 file home\AxKit\axTask.json {"checkForUpdates": false}

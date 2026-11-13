@@ -153,6 +153,33 @@ public sealed class AutomateTests : IDisposable
     }
 
     [Fact]
+    public void Every_script_of_the_repository_has_a_workflow_label_of_its_own()
+    {
+        var root = AppContext.BaseDirectory;
+        while (!File.Exists(Path.Combine(root, "AxKit.sln")))
+        {
+            root = Path.GetDirectoryName(root) ?? throw new InvalidOperationException("No repository above the tests.");
+        }
+
+        var scripts = Directory.GetFiles(Path.Combine(root, "tests", "scripts"), "*.txt", SearchOption.AllDirectories)
+            .Concat(Directory.GetFiles(Path.Combine(root, "tests", "nvda-scripts"), "*.txt", SearchOption.AllDirectories)).ToList();
+        var unlabelled = scripts.Where(path => ScriptReader.Read(path).Title == Path.GetFileNameWithoutExtension(path));
+        Assert.Empty(unlabelled);
+        var repeated = scripts.Select(path => ScriptReader.Read(path).Title).GroupBy(title => title, StringComparer.OrdinalIgnoreCase).Where(group => group.Count() > 1).Select(group => group.Key);
+        Assert.Empty(repeated);
+    }
+
+    [Fact]
+    public void A_header_line_starting_Workflow_names_the_workflow_and_is_not_among_what_it_covers()
+    {
+        var workflow = ScriptReader.Parse(["# Workflow: Answer one of Claude's questions", "# axClaude: the control area.", "start claude"], "12-questions", @"C:\12-questions.txt");
+        Assert.Equal("Answer one of Claude's questions", workflow.Title);
+        Assert.Equal("axClaude: the control area.", workflow.Covers);
+        Assert.Null(ScriptReader.LabelOf("Workflow:"));
+        Assert.Equal("x", ScriptReader.LabelOf("workflow: x"));
+    }
+
+    [Fact]
     public void Seconds_and_keys_are_said_as_words()
     {
         Assert.Equal("1 second", StepText.Seconds("1000"));

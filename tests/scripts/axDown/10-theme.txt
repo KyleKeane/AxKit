@@ -1,3 +1,4 @@
+# Workflow: Change the colours with the theme file
 # axDown: the theme items every window has (docs/axKit/theme.md TH-4, TH-5.3). The theme file lives in the run's own
 # home, so nothing of the user's is touched: Reload with no file says what makes one; Edit theme file writes the
 # template and opens it in axJSON; Reload then says so; Theme on toggles the file's switch and says which.

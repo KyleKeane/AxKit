@@ -1,3 +1,4 @@
+# Workflow: Preview a text file
 # axPreview, test plan section 1 (Start and the text), driven from inside the window (docs/axPreview/nvda-test-plan.md).
 # A second axPreview start hands its file to the open window and ends (AP-1.2), so every window after the first is
 # started with --new.

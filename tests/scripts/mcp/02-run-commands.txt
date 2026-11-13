@@ -1,3 +1,4 @@
+# Workflow: Let an AI tool run a window's commands
 # axkit_window_run (docs/axKit/mcp.md MC-7): a window's command run by its name for a paired client, only while the
 # user allows it (axKit menu, AI tools, Let AI tools run commands), said in the window as it runs; a name that names
 # two commands, a notice the user has in hand, and the switch off are refused. The runner is the MCP client.

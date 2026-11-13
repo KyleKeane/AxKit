@@ -1,3 +1,4 @@
+# Workflow: Read a file's details
 # axPreview, test plan section 5 (the Details list and the kinds of file, docs/axPreview/SPEC.md AP-6, AP-7), driven
 # from inside the window. Every window after the first is started with --new, since a start otherwise hands its file
 # to the open window (AP-1.2).

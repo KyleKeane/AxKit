@@ -1,3 +1,4 @@
+# Workflow: Read the conversation while Claude is writing
 # axClaude, docs/axClaude/nvda-test-plan.md section 3: reading while output arrives.
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
 file home\AxKit\axClaude.json {"checkForUpdates":false}

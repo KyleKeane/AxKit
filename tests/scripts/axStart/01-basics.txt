@@ -1,3 +1,4 @@
+# Workflow: Find and start a program
 # axStart: the search field, the match keys and the commands that stay inside the window (docs/axStart/nvda-test-plan.md;
 # SPEC AS-3, AS-5.3). Every key here is a command of the window's one list (docs/axKit/app-kit.md AK-2), the match keys
 # HotkeyForm's, so this script is also the check that the list does what the key switch did before it. The hotkey is

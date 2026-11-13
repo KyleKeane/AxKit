@@ -1,3 +1,4 @@
+# Workflow: Repeat an earlier command
 # axTerminal, Ctrl+Up and Ctrl+Down in the command field (AT-3.9, 2026-10-23): the recent list with the draft as its last item.
 file home\AxKit\axTerminal.json {"checkForUpdates": false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.

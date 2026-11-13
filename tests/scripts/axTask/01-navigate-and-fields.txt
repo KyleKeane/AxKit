@@ -1,3 +1,4 @@
+# Workflow: Move through tasks and change an item's fields
 # axTask: the navigator, the detail pane and every change to a field (docs/axTask/nvda-test-plan.md sections 1 and 2;
 # docs/axKit/item-apps.md IA-2, IA-3, IA-5). A scratch folder of lists; findstr checks what reached the file.
 file home\AxKit\axTask.json {"checkForUpdates": false}

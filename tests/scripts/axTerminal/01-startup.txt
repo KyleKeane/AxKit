@@ -1,3 +1,4 @@
+# Workflow: Start a terminal
 # axTerminal, section 1 of docs/axTerminal/nvda-test-plan.md: start (AT-1, AT-2). The shell is the default one of a
 # fresh settings file: PowerShell 7 when installed, otherwise Windows PowerShell; the texts below name neither.
 # Plan step 1 by the Start menu entry stays manual: the Start menu is the system's, outside the window.

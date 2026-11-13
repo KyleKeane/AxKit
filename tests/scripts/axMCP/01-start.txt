@@ -1,3 +1,4 @@
+# Workflow: Start an MCP server and use its tools
 # axMCP: the servers, a server started, its tool called, its resource read, stopped (docs/axMCP/nvda-test-plan.md
 # sections 1 to 4 and 6), run by tools/AxAutomate on a desktop of its own (docs/axKit/automation.md). The server is a
 # fake in Windows PowerShell, written here: it answers the handshake, one tool (echo) and one resource. The agreement

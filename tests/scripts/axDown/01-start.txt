@@ -1,3 +1,4 @@
+# Workflow: Open a text file in axDown
 # axDown, test plan section 1 (Install and start), driven from inside the window (docs/axDown/nvda-test-plan.md).
 # 1.1 manual: the Start menu entry and the installer need publish.ps1 and the real Start menu.
 # 1.2 manual: File Explorer's Open with axKit submenu is the shell's menu, outside the window.

@@ -1,3 +1,4 @@
+# Workflow: Read and write text in axDown
 # axDown, test plan section 2 (Reading and writing), driven from inside the window (docs/axDown/nvda-test-plan.md).
 # What NVDA reads by itself (say-all, words) is tier 3; here the caret's line is checked and axDown's silence.
 file long.md # Long Markdown file for navigation\n\nThe first paragraph, one line.\n\nThis line is longer than the window, so word wrap shows it on several rows and the caret test can tell. This line is longer than the window, so word wrap shows it on several rows and the caret test can tell. This line is longer than the window, so word wrap shows it on several rows and the caret test can tell. This line is longer than the window, so word wrap shows it on several rows and the caret test can tell.\n\n## Second heading, level 2\n\nA paragraph of two lines,\nthe second line of it.\n\n### Third heading, level 3\n\nThe last paragraph of the file.

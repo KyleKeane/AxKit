@@ -1,3 +1,4 @@
+# Workflow: Use axJSON's axKit menu and About
 # axJSON, test plan section 4 (The axKit menu and About), driven from inside the window (docs/axJSON/nvda-test-plan.md).
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
 file home\AxKit\axJSON.json {"checkForUpdates": false}

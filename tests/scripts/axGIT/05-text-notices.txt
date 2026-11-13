@@ -1,3 +1,4 @@
+# Workflow: Use axGIT's text, notices and axKit menu
 # axGIT: text, notices, the axKit menu (docs/axGIT/nvda-test-plan.md section 5; SPEC AG-2.4, AG-6, AG-7).
 # The update check off in the run's own settings (AXKIT_HOME): a network call, and its failure is a logged ERROR.
 file home\AxKit\axGIT.json {"checkForUpdates": false}

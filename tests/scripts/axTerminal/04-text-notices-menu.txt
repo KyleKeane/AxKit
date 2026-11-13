@@ -1,3 +1,4 @@
+# Workflow: Use axTerminal's text, notices and axKit menu
 # axTerminal, section 4 of docs/axTerminal/nvda-test-plan.md: text, notices, the axKit menu (AT-4, AT-6).
 mkdir myproject
 # The run's own settings: no update check (network, and an ERROR in the log when it fails); a small font in a

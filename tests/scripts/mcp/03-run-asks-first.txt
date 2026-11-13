@@ -1,3 +1,4 @@
+# Workflow: Approve or deny an AI tool before it acts
 # axkit_window_run (docs/axKit/mcp.md MC-7.3): a command that acts outside its window (axFile's New folder, marked act)
 # is asked of the user in the window first; Deny, the default, refuses it, Run runs it once, said with who asked.
 file home\AxKit\axFile.json {"checkForUpdates": false}

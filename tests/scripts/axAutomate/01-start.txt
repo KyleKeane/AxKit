@@ -1,3 +1,4 @@
+# Workflow: Browse a folder of workflows and read their steps
 # axAutomate: a folder of workflows, a workflow's steps with a then block, a step's details and what this version
 # refuses (docs/axAutomate/nvda-test-plan.md sections 1 to 3; SPEC.md AU-4), run by tools/AxAutomate on a desktop of
 # its own (docs/axKit/automation.md).

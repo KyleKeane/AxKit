@@ -1,3 +1,4 @@
+# Workflow: Hear the heading sound in the item apps
 # The item apps' heading sound (docs/axKit/SPEC.md AX-7.9; asked 2026-11-11), heard in axTask: the user's key that
 # takes the navigator's selection onto a heading row plays it before NVDA reads the row; a fill never does.
 file home\AxKit\axTask.json {"checkForUpdates": false}

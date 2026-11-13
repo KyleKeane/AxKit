@@ -1,3 +1,4 @@
+# Workflow: Change the permission mode and interrupt Claude
 # axClaude, docs/axClaude/nvda-test-plan.md section 5: permission mode, prompts and interruption.
 # Options, Questions, "Answer from a list" off for steps 2, 3 and 7, set in the run's own settings file; the update
 # check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Claude starts in its manual

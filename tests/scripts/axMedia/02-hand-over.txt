@@ -1,3 +1,4 @@
+# Workflow: Add files to the queue from another app
 # axMedia: the hand-over (docs/axMedia/nvda-test-plan.md section 2; SPEC.md AM-1.1, AM-1.2, AM-1.3).
 # What the channel can drive: the starts that open a window of their own (a play on a file, an add with no window
 # open, --new beside an open window). A start that hands its paths to an open window ends at once without a window

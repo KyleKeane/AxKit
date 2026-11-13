@@ -1,3 +1,4 @@
+# Workflow: Play, pause and seek
 # axMedia: playing (docs/axMedia/nvda-test-plan.md section 3; SPEC.md AM-4, AM-3.3, AM-6).
 # Every sound is the runner's silence. Whether the sound starts, stops, jumps or keeps its pitch is for the ear and
 # stays with the NVDA pass; here the announcements, the list, the title and the status bar are checked.

@@ -1,3 +1,4 @@
+# Workflow: Install Claude Code when it is missing
 # axClaude, docs/axClaude/nvda-test-plan.md section 10: Claude Code missing, and the installer.
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
 allow error Claude Code was not found

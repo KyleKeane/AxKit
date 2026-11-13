@@ -1,3 +1,4 @@
+# Workflow: Add project folders and search every list
 # axTask: the project folders (docs/axTask/SPEC.md TK-7b, TK-D6 to TK-D9; docs/axTask/nvda-test-plan.md section 6): the
 # folders of lists found under them in a section for each project folder, a project entered and changed in place, a
 # project folder added by its typed path, and the search across every list.

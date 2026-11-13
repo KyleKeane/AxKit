@@ -1,3 +1,4 @@
+# Workflow: Show the current file in another app
 # axDown: Show current file in on a file that is gone says "File missing" and starts nothing (bundle AX-9.10; one wording in
 # every window since 2026-11-09, where axDown started File Explorer on the folder before).
 file home\AxKit\axDown.json {"checkForUpdates": false}

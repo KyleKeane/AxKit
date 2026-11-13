@@ -1,3 +1,4 @@
+# Workflow: Make lists, link items and use smart lists
 # axTask: a list's details, plain lists and checklists, links, smart lists, a change on disk (docs/axTask/nvda-test-plan.md
 # sections 1.8, 2.4, 2.8 to 2.10, 3 and 4; docs/axKit/item-apps.md IA-4.3, IA-5.5, IA-D3; SPEC TK-4, TK-5).
 file home\AxKit\axTask.json {"checkForUpdates": false}

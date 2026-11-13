@@ -25,6 +25,9 @@ jobs:
         # Every network request, program start and pipe in src carries its explanation, and docs/axKit/outside-calls.md
         # is what the sources give (docs/axKit/SPEC.md B-17).
         run: ./tools/outside-calls.ps1 -Check
+      - name: Workflows are listed
+        # Every automated script has its workflow label, and docs/axKit/workflows.md is what the scripts give (AU-5.2a).
+        run: ./tools/workflows.ps1 -Check
       - name: Build and test
         # ContinuousIntegrationBuild: deterministic paths; the test packages restore exactly as their lock files say (S-34).
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true

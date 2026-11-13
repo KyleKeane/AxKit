@@ -1,3 +1,4 @@
+# Workflow: Preview a file that is almost text
 # axPreview, test plan section 1 step 9a, the second half: a file whose first eight kilobytes are text with a NUL
 # further in: the error notice, and what the window showed is kept. Apart from 01-start-and-the-text.txt: the window
 # logs the refused read as an ERROR, and the runner fails a run with an ERROR in its logs (see the report), so this

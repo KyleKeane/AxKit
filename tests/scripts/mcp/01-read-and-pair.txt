@@ -1,3 +1,4 @@
+# Workflow: Let an AI tool read axKit, once you allow it
 # The AI tools' first stage (docs/axKit/mcp.md MC-6): off by default, turned on from the menu, a client paired in the
 # window, the reads, the refusals, off again. The runner is the MCP client (mcp start, mcp call, expect mcp); it never
 # calls axkit_open on an app it may open, which would start a window on the user's own desktop.

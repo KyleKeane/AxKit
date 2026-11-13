@@ -1,3 +1,4 @@
+# Workflow: Let an AI tool read and add tasks
 # axTask's typed data tools (docs/axKit/mcp.md MC-8, docs/axTask/SPEC.md TK-8): the lists and the items read through
 # the open axTask window, an item added there by words with a Due date, said in the window and seen in its list, taken
 # back with Ctrl+Z; an add into another list and into a project's list, the selection left where it was; a list

@@ -151,6 +151,13 @@ keys in place of its words on a line:
 - AU-5.2 Both formats are read while the tests move: a `.txt` script and a `.workflow.json` workflow run through the
   same steps. A converter writes each script as a workflow, its `#` lines as notes; a test run of the converted
   workflows must pass exactly as the scripts did, script by script, before the scripts are deleted.
+- AU-5.2a Every workflow has a label, a task in the user's own words (2026-11-13, the user's ask: the workflows to
+  stabilize, each with a high-level label that can become a tutorial for a user who asks for help). A script gives it
+  as its first line, `# Workflow: Answer Claude's questions and screens`; the window lists the workflow by it in place
+  of the file's name, and it is not among what the workflow covers. A test fails on a script without one or on two
+  with the same label. `tools/workflows.ps1` writes `docs/axKit/workflows.md`, every workflow by app with its label,
+  what it covers and its script; `build.yml` checks the page is current. A new workflow worth keeping working is a new
+  script with its label.
 - AU-5.3 The automation channel stays as the security audit left it (S-11): on only in a run, only for the runner's
   own windows, with the run's secret. The window starts the runs; it never opens the channel of the user's own
   windows. As built (2026-11-11): the run's windows are this very program file (`Environment.ProcessPath`), started

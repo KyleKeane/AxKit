@@ -1,3 +1,4 @@
+# Workflow: Restart, stop and close a conversation
 # axClaude, docs/axClaude/nvda-test-plan.md section 8: lifecycle.
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Claude starts in
 # its manual permission mode, so that the slow command asks first; Claude Code 2.1.309 blocks "sleep 20" and asks for

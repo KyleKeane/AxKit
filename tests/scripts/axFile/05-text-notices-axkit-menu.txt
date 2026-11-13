@@ -1,3 +1,4 @@
+# Workflow: Use axFile's text, notices and axKit menu
 # axFile, test plan section 5: text, notices, the axKit menu, the command palette (docs/axFile/nvda-test-plan.md 5.1 to 5.6; AF-6).
 file home\AxKit\axFile.json {"checkForUpdates": false}
 file pal\plan.md # Plan

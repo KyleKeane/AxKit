@@ -1,3 +1,4 @@
+# Workflow: Browse folders and files
 # axFile, test plan section 1: start, the list, browsing (docs/axFile/nvda-test-plan.md 1.1 to 1.12b; AF-1, AF-2, AF-3).
 # The folders are those of manual_tests/prepare.ps1 axfile, made in {temp}.
 mkdir nav

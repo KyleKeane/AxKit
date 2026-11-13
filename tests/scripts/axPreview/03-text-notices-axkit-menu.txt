@@ -1,3 +1,4 @@
+# Workflow: Use axPreview's text, notices and axKit menu
 # axPreview, test plan section 3 (Text, notices, the axKit menu, AP-3), driven from inside the window
 # (docs/axPreview/nvda-test-plan.md).
 # The runner's keys have no plus or minus key, so Ctrl+Plus and Ctrl+Minus run as their menu items, Options, Text,

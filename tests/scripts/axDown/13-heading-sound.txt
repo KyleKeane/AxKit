@@ -1,3 +1,4 @@
+# Workflow: Hear the heading sound as you move
 # axDown: the heading sound (docs/axKit/SPEC.md AX-7.9, theme.md TH-6.6; asked 2026-11-11). A key that takes the caret
 # onto a Markdown heading's line plays it before NVDA reads the line, unless Options, Text, Sound on headings is off,
 # which is written into the theme file of the run's own home, so nothing of the user's is touched.

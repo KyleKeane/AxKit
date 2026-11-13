@@ -1,3 +1,4 @@
+# Workflow: Copy, move, rename and delete files
 # axFile, test plan section 3: file operations and the entry's menu (docs/axFile/nvda-test-plan.md 3.1 to 3.14; AF-4).
 # The files are those of manual_tests/prepare.ps1 axfile (file-operations, undo-ctrl-z), made in {temp}.
 # Not here: every step that puts something on the clipboard (Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+Shift+C, the Selection

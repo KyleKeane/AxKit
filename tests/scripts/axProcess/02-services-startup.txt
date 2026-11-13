@@ -1,3 +1,4 @@
+# Workflow: Manage services and startup programs
 # axProcess: the Services and Startup views (docs/axProcess/nvda-test-plan.md sections 3 and 4; SPEC PR-4, PR-5).
 # Read only: no service is started or stopped here, since a run with administrator rights would do it for real.
 file home\AxKit\axProcess.json {"checkForUpdates": false}

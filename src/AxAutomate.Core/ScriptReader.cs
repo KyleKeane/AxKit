@@ -58,7 +58,12 @@ public static class ScriptReader
             if (line.StartsWith('#'))
             {
                 var text = line.TrimStart('#').Trim();
-                if (inHeader)
+                if (inHeader && LabelOf(text) is { } label)
+                {
+                    // AU-5.2a: the workflow's label, a task in the user's words, in place of the file's name.
+                    title = label;
+                }
+                else if (inHeader)
                 {
                     covers.Add(text);
                 }
@@ -101,6 +106,13 @@ public static class ScriptReader
         EndNote();
         return new Workflow(title, string.Join(" ", covers), steps, path, problem);
     }
+
+    /// <summary>The start of the header line that names the workflow (AU-5.2a): <c># Workflow: Answer one of Claude's questions</c>.</summary>
+    public const string LabelPrefix = "Workflow:";
+
+    /// <summary>The label of a header comment's text, or null when the line is no label.</summary>
+    public static string? LabelOf(string comment) =>
+        comment.StartsWith(LabelPrefix, StringComparison.OrdinalIgnoreCase) && comment[LabelPrefix.Length..].Trim() is { Length: > 0 } label ? label : null;
 
     /// <summary>One line as a step: the operation's words, then its values by the operation's keys (AU-3.3).</summary>
     public static WorkflowStep Step(string line, int number)

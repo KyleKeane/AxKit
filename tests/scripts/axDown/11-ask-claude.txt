@@ -1,3 +1,4 @@
+# Workflow: Ask Claude about the window you are in
 # axDown: AI help in a window (docs/axKit/ai-help.md AH-1, AH-6): off, the first ask opens the reminder at once (AH-1.3,
 # 5.6.0) and Turn on records the agreement, turns Claude on and asks; the switch in the axKit menu, Claude;
 # Shift+F1 asks Claude about this window and the answer is a notice with a field for more; the folders notice; off

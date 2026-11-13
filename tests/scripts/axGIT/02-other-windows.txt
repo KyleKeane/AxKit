@@ -1,3 +1,4 @@
+# Workflow: Open axGIT from another app
 # axGIT: from and to the other windows (docs/axGIT/nvda-test-plan.md section 2; SPEC AG-1.4).
 # What the runner can check is that each way in and out is in its menu. Running one starts a new axKit process that
 # the runner did not start and so can neither drive nor close (it would stay behind on the test desktop), so these

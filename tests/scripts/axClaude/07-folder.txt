@@ -1,3 +1,4 @@
+# Workflow: Change Claude's project folder
 # axClaude, docs/axClaude/nvda-test-plan.md section 7: project folder.
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
 file home\AxKit\axClaude.json {"checkForUpdates":false}

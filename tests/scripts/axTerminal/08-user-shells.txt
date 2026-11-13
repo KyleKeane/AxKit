@@ -1,3 +1,4 @@
+# Workflow: Add a shell of your own
 # axTerminal: the user's own shells (AT-1.6a), section 3 of docs/axTerminal/nvda-test-plan.md, the steps on Add a
 # shell and Remove a shell. Switch shell needs menu mode, which only the foreground window enters: "menu" runs the
 # same items by their palette names ("1. Test cmd (cmd.exe /k)" to switch, "1. Remove Test cmd" to remove).

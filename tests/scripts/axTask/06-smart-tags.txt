@@ -1,3 +1,4 @@
+# Workflow: Group smart lists and find items by tag
 # axTask: the smart lists grouped by a shared first word and the smart tags by symbol (docs/axTask/SPEC.md TK-5.2a,
 # TK-5.5, TK-D17 to TK-D20; docs/axTask/nvda-test-plan.md 3.3 and 3.4): three heading levels, Ctrl+3 and Ctrl+Shift+3,
 # a tag gathered from the user's own lists and a project's together.

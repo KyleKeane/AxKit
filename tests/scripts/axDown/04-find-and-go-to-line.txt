@@ -1,3 +1,4 @@
+# Workflow: Find text and go to a line
 # axDown, test plan section 4 (Find and go to line), driven from inside the window (docs/axDown/nvda-test-plan.md).
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
 file home\AxKit\axDown.json {"checkForUpdates": false}

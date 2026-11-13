@@ -1,3 +1,4 @@
+# Workflow: Send Claude a message and hear the reply
 # axClaude, docs/axClaude/nvda-test-plan.md section 2: dialogs and plain conversation.
 # Options, Questions, "Answer from a list" off for steps 1 and 2, set in the run's own settings file before the start;
 # the update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).

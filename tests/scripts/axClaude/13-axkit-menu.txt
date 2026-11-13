@@ -1,3 +1,4 @@
+# Workflow: Use the axKit menu from a conversation
 # axClaude, docs/axClaude/nvda-test-plan.md section 13: the axKit menu (bundle AX-9).
 # The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
 file home\AxKit\axClaude.json {"checkForUpdates":false}

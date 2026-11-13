@@ -12,7 +12,7 @@ dotnet build tools\AxAutomate\AxAutomate.Runner.csproj -c Release -o <scratch>  
 ## Where things are
 
 - `Workflow`, `WorkflowStep`, `StepValue` (AU-3): a workflow and its steps as records; a note alone is a step with an empty `Do`.
-- `ScriptReader` (AU-5.2): a runner's `.txt` script read as a workflow: the header comments are `Covers`, later comment runs are notes, `try said` is `expect said` with `on failure` continue, the `iffound` lines its `Then`. A test reads every script of `tests/scripts` without a problem.
+- `ScriptReader` (AU-5.2): a runner's `.txt` script read as a workflow: a header line `# Workflow: <label>` is its title (AU-5.2a; `LabelOf`, every script has one, `tools/workflows.ps1` lists them in `docs/axKit/workflows.md`), the other header comments are `Covers`, later comment runs are notes, `try said` is `expect said` with `on failure` continue, the `iffound` lines its `Then`. A test reads every script of `tests/scripts` without a problem.
 - `WorkflowFile` (AU-3.1): a `.workflow.json` file; every key of a step other than do, on failure, report, note, then and otherwise is a value.
 - `StepText` (AU-4.2, AU-D5): a step's sentence, its marks, the rows in run order with a block's steps after their step ("5.1 then: ..."), a step's detail lines.
 - `WorkflowFolder` (AU-4.1): a folder's folders then its workflows, natural order, hidden and dot entries left out.

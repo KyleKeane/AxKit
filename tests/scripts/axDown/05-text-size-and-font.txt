@@ -1,3 +1,4 @@
+# Workflow: Change the text size and the font
 # axDown, test plan section 5 (Text size and font), driven from inside the window (docs/axDown/nvda-test-plan.md).
 # The runner's keys have no plus or minus key, so Ctrl+Plus and Ctrl+Minus run as their menu items, Options, Text,
 # Larger text and Smaller text, which the keys stand for.

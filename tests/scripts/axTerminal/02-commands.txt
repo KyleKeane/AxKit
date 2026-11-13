@@ -1,3 +1,4 @@
+# Workflow: Run commands and read their output
 # axTerminal, section 2 of docs/axTerminal/nvda-test-plan.md: commands (AT-3, AT-5), in Windows PowerShell or
 # PowerShell 7, the default shell of a fresh settings file.
 mkdir myproject
