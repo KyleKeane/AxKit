@@ -119,6 +119,13 @@ Ctrl+Plus and Ctrl+Minus make the text bigger or smaller and say the new size. O
 
 ## Settings
 
+### Choosing what you hear
+
+- Options, Announcements: a switch for each word axClaude says by itself: "Ready", "Sent" and "Queued", "Responding", "Question closed", and Claude's own notices such as "accept edits on". All are on at first. "Done" has its switch under Options, When Claude is done. A switch silences the word only; the chimes stay, under Options, Sounds.
+- Options, Speech, "Words that keep a reply line silent": type words with a semicolon between them, such as `Tip; Cost:`. A reply line that holds one of them, in any case, stays in the conversation and is not spoken. Leave the field empty to hear every line again.
+- Options, Questions, "Dismiss Claude's feedback surveys unheard": Claude's "How is Claude doing this session?" is dismissed for you, with nothing said; the survey's lines stay in the conversation. Off at first.
+- Options, Questions, "Open Claude's feedback drafts by themselves": on at first; off, a feedback draft Claude made waits until you type /feedback.
+
 Everything you change is saved in `%APPDATA%\AxKit\axClaude.json` (the first start of axKit copies your settings from axClaude 1.x there). Options, Developer, "Open settings file" opens it in axJSON. Some settings have no menu item: `claudePath` names the Claude Code program when it is not on PATH, `joinWrappedLines` set to false keeps long paragraphs on separate lines, `ptyColumns` and `ptyRows` size the hidden console Claude writes to (240 by 50), and `maxTranscriptLines` caps the conversation (20000 lines).
 
 ## Updates

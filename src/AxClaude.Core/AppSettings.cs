@@ -29,6 +29,30 @@ public sealed class AppSettings : ConsoleSettings
     /// <summary>Speak the <c>tool:</c> row of each tool call as it arrives, whatever <see cref="ReplySpeech"/> says (FR-7.4).</summary>
     public bool SpeakToolCalls { get; set; }
 
+    /// <summary>The words that keep a reply line silent (FR-7.4a): a line holding one is shown and not spoken.</summary>
+    public List<string> SilentWords { get; set; } = [];
+
+    /// <summary>Say "Ready" when Claude is ready after a start (FR-7.3a; the chime is the sounds' switch).</summary>
+    public bool AnnounceReady { get; set; } = true;
+
+    /// <summary>Say "Sent" or "Queued" after a message goes (FR-7.3a).</summary>
+    public bool AnnounceSent { get; set; } = true;
+
+    /// <summary>Say "Responding" when Claude's reply starts (FR-7.3a).</summary>
+    public bool AnnounceResponding { get; set; } = true;
+
+    /// <summary>Say "Question closed" when Claude closes what it asked by itself (FR-7.3a).</summary>
+    public bool AnnounceQuestionClosed { get; set; } = true;
+
+    /// <summary>Speak Claude's own notices, the bracketed rows such as "[accept edits on]", and "Conversation cleared" (FR-7.3a).</summary>
+    public bool AnnounceClaudeNotices { get; set; } = true;
+
+    /// <summary>Claude's feedback surveys are dismissed by the app, unheard (D33, 2026-11-12): its Dismiss, or No to the transcript question.</summary>
+    public bool DismissSurveys { get; set; }
+
+    /// <summary>A feedback draft Claude queued opens its review by itself once Claude is idle (D33). Off: it waits for /feedback.</summary>
+    public bool OpenFeedbackDrafts { get; set; } = true;
+
     /// <summary>
     /// Recognise what Claude waits on and show it in the control area in the message field's place, and keep
     /// messages out of a waiting question (D33, FR-2.10). Off: questions are only announced, as before 1.4.0.
@@ -89,5 +113,6 @@ public sealed class AppSettings : ConsoleSettings
         }
 
         SpeakReplies = false;
+        SilentWords = SpeechFilter.Words(SpeechFilter.Text(SilentWords ?? []));
     }
 }

@@ -237,6 +237,14 @@ internal sealed partial class MainForm
             return false;
         }
 
+        if (question.KeyOnly && _settings.DismissSurveys && question.EscapeKey is { } dismiss)
+        {
+            // Options, Questions, Dismiss feedback surveys (2026-11-12): the app gives the survey's Dismiss, or No to
+            // the transcript question after it, as the user's Escape would, and nothing is heard.
+            TypeAnswer(dismiss, enter: false);
+            return false;
+        }
+
         _askedQuestion = question;
         ShowQuestionList(question.Signature, QuestionName(question), QuestionName(question, int.MaxValue), question, null, !UserActed(), AnswerQuestion, () =>
         {
@@ -746,7 +754,7 @@ internal sealed partial class MainForm
             return;
         }
 
-        if (!_settings.QuestionNotices)
+        if (!_settings.QuestionNotices || !_settings.OpenFeedbackDrafts)
         {
             _drafts.Opened(_model.FeedbackDrafts);
         }

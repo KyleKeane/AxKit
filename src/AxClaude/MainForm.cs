@@ -94,13 +94,24 @@ internal sealed partial class MainForm : ConsoleForm
         _folder = options.Folder ?? (settings.LastProjectFolder is { } last && Directory.Exists(last) && !StartupOptions.IsNeverAProject(last) ? last : null);
         _model.ResponseStarted += () =>
         {
-            Announce("Responding", false);
+            // FR-7.3a: each of the window's own status words can be switched off in Options, Announcements.
+            if (_settings.AnnounceResponding)
+            {
+                Announce("Responding", false);
+            }
+
             if (_settings.SoundOnBell)
             {
                 Sounds.Responding();
             }
         };
-        _model.Announcement += text => Announce(text, false);
+        _model.Announcement += text =>
+        {
+            if (_settings.AnnounceClaudeNotices)
+            {
+                Announce(text, false);
+            }
+        };
         _model.Bell += () =>
         {
             _bellPending = true;
