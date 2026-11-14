@@ -6,13 +6,13 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **done**: 43 (8 high, 20 medium, 15 low)
+- **done**: 44 (8 high, 20 medium, 16 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 5 (4 medium, 1 low)
 
 ## The principles
 
-- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (9 findings)
+- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (10 findings)
 - **P2. One source, generated views.** A fact lives in one place (the menu bar, Dispatch.Apps, a JSON list); every page or list that repeats it is written by a script and checked by the same gate on the developer's computer and in CI. (6 findings)
 - **P3. A failure says what, why and where to read.** Every refusal, error and failed check names the thing, the reason and the document or command that helps; nothing fails silently and nothing passes silently against the wrong thing. (7 findings)
 - **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (11 findings)
@@ -396,6 +396,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxKit.Tests/NotesTests
 - Commit: af0fac3
 - Note: Done: the names and the broken bullet corrected (R-43). Open: the test that pins the notes' identifiers against the sources. tests/AxKit.Tests/NotesTests pins every name the notes give in backticks against the sources, with a short list of names that are Windows' or .NET's.
+
+### R-50, low, forms: The Store's copy shows an empty General submenu under Options in the windows with no General item of their own
+
+- Where: src/AxKit.Forms/AxKitForm.cs
+- Principle: P1
+- Fix: CreateGeneralMenu makes a General without items not Available, so the menu bar and the command list pass over it.
+- Checked by: the apps' scripts on the Store copy: check commands
+- Note: Found on 2026-11-14 by the NVDA pass of the Store copy of 5.8.0: Check for updates at start is left out of a packaged copy (AX-13.3), which left General empty in thirteen windows, and check commands named it in eighteen scripts as an entry without a mark. Fixed after 5.8.0; the Store has the fix with the next release's package.
 
 ## Deferred
 

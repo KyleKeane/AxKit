@@ -6,6 +6,28 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-14: the Store copy of 5.8.0; by the assistant with NVDA listening (the package `axKit.axKit` 5.8.0.0 from the Microsoft Store)
+
+The first pass of a copy installed from the Store (`store-distribution.md` phase 6, step 3). Submission 2 was live
+that morning; `winget install 9PK01L2K5000 -s msstore` on the development computer, at the user's word, the runner
+of `main` started on the package's alias (`%LOCALAPPDATA%\Microsoft\WindowsApps\axKit.exe`) with `--nvda`, on the
+scripts of the tag `v5.8.0` (114 of `tests/scripts`, four of `tests/nvda-scripts`), then `winget uninstall`: the
+package, its private folder and its aliases were gone afterwards. Windows 11 Pro 10.0.26200, NVDA 2025.3.3.
+
+96 of 118 scripts passed, every announcement also spoken by NVDA. The 22 that did not:
+
+| What | Scripts | Result |
+|---|---|---|
+| `check commands`: "General (Options) states no mark" | 18: the first script of axAutomate (two), axCalc, axDown, axGIT, axJSON, axMCP, axMedia, axPreview (two), axProcess, axTask (four), axTerminal | Failed, a fault of the Store copy: General is empty there, since Check for updates at start is left out of a packaged copy. Fixed after 5.8.0 (`repairs.json` R-50); every later step of these scripts was not run |
+| Steps that use Check for updates at start | `axClaude/11`, `axClaude/18`, `axDown/06`, `axMedia/04`, `mcp/05` | Not a fault: the Store copy has no such command by design (AX-13.3). The scripts are written for the unpackaged copy |
+| `axTerminal/02-commands.txt` step 140 | 1 | Failed once: after Escape in Recent commands the notice "Unexpected error" stood where the Command field should have the focus. The script passed when run again on the Store copy; the first run's log was not kept. An open item of the priorities list |
+
+The Store items that need no keyboard, read from the installed package: eight Start menu entries (axClaude, axClip,
+axDown, axFile, axHelp, axStart, axTask, axTerminal), an alias for each of the seventeen apps and `axKit.exe`, three
+start-up tasks (axStart, axClip, axHelp), the file types of the manifest, the one capability `runFullTrust`, version
+5.8.0.0. Not run: the Start menu and Windows search by ear, the start-up tasks after a sign-in, the file verbs from
+Explorer, the Store's own update; these are the user's on his other computer.
+
 ## 2026-11-14, morning: every app; by the assistant with NVDA listening (`main` bae7e48, axKit 5.8.0 with what is unreleased)
 
 `.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 115 scripts of

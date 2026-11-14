@@ -353,6 +353,9 @@ public abstract partial class AxKitForm : Form
         }
 
         menu.DropDownItems.AddRange(own);
+        // In the Store's copy a window with no item of its own would show an empty General: the menus and the
+        // command list pass over an item that is not Available (found by the Store copy's NVDA pass, 2026-11-14).
+        menu.Available = menu.DropDownItems.Count > 0;
         return menu;
     }
 
