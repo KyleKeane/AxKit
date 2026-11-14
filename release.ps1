@@ -68,8 +68,14 @@ if (-not $NoPush) {
     # Every push of this repository also syncs the repositories beside it, the reports clone and the management lists
     # (tools/sync-repos.ps1), through the pre-push hook, so that a release never leaves them behind. The hook is a
     # setting of the clone, made once (docs/axKit/development-environment.md section 4).
-    $hooks = (git -C $root config --get core.hooksPath)
-    if ($hooks -ne 'tools/hooks') {
+    # The setting may hold the folder as written there, tools/hooks, or its full path: both name the same folder.
+    $hooks = "$(git -C $root config --get core.hooksPath)".Trim()
+    $hooksFolder = ''
+    if ($hooks) {
+        $hooksFolder = if ([IO.Path]::IsPathRooted($hooks)) { $hooks } else { Join-Path $root $hooks }
+        $hooksFolder = [IO.Path]::GetFullPath($hooksFolder).TrimEnd('\')
+    }
+    if ($hooksFolder -ine [IO.Path]::GetFullPath((Join-Path $root 'tools\hooks')).TrimEnd('\')) {
         Write-Host "The pre-push hook is not installed in this clone. Run once: git config core.hooksPath tools/hooks (docs/axKit/development-environment.md section 4), then run this again."
         exit 1
     }
