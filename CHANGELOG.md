@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- axPass: Install KeePassXC now no longer leaves KeePassXC starting with Windows. KeePassXC's installer sets that by default, and its window then opened at every sign-in; axPass now tells the installer not to, and not to open KeePassXC when it ends. If an installer sets it all the same, the notice "KeePassXC is installed" says so and where to turn it off. An entry an earlier install left is not touched: turn it off in KeePassXC, Tools, Settings, General, Automatically launch KeePassXC at system startup.
+
 ## 5.8.0
 
 - axDown, axJSON: a letter typed over selected text is one step to undo. Before, the first Ctrl+Z took only the letter back and left the text empty, and a second brought the selected text back.

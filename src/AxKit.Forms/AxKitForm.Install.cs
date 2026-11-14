@@ -65,6 +65,9 @@ public abstract partial class AxKitForm
             };
             ShowNotice(progress);
             Log.Info("Installing " + program.Name);
+            // The user's sign-in entries before and after (AX-2.9): an installer that set its program to start with
+            // Windows is said, never undone. Windows' own setting of this user, read, not written.
+            var signInBefore = program.ProgramFile is null ? null : ProgramInstall.SignInEntries();
             var (exitCode, lastLine) = await RunInstallerAsync(info, exited => _installing = (program.Name, exited));
             ProgramInstall.RefreshPath();
             if (IsDisposed)
@@ -72,23 +75,47 @@ public abstract partial class AxKitForm
                 return;
             }
 
+            var signIn = signInBefore is not null && ProgramInstall.AddedSignInEntry(signInBefore, ProgramInstall.SignInEntries(), program.ProgramFile!) is not null
+                ? program.SignInNotice(AppName)
+                : null;
+            if (signIn is not null)
+            {
+                Log.Info($"{program.Name}'s installer added a sign-in entry");
+            }
+
             var ownShowing = NoticeOpen && ReferenceEquals(Overlay.Shown, progress);
             if (installed())
             {
                 Log.Info(program.Name + " installed");
-                if (ownShowing)
+                if (signIn is null)
                 {
-                    CloseNotice(null);
+                    if (ownShowing)
+                    {
+                        CloseNotice(null);
+                    }
+
+                    Announce(program.Name + " is installed", true);
+                    then();
+                    return;
                 }
 
-                Announce(program.Name + " is installed", true);
-                then();
+                if (NoticeOpen && !ownShowing)
+                {
+                    // The user is in another notice: said, not shown over it.
+                    Announce($"{program.Name} is installed. {signIn}", true);
+                    then();
+                    return;
+                }
+
+                // A notice, since where to turn it off is too much to hear once; the app goes on when it closes.
+                ShowNotice(new Notice(program.Name + " is installed", signIn, [new OverlayChoice("&Close", then, IsDefault: true, IsCancel: true)]));
                 return;
             }
 
             Log.Info($"{program.Name} not installed: exit {exitCode}");
             var why = (exitCode is null ? "The installer took over a quarter of an hour, and the window stopped waiting for it." : $"The installer ended with code {exitCode}{(lastLine.Length > 0 ? ": " + lastLine : string.Empty)}.")
-                + (program.AsksForAdministrator ? " If Windows asked whether to allow it and the answer was No, try again." : string.Empty);
+                + (program.AsksForAdministrator ? " If Windows asked whether to allow it and the answer was No, try again." : string.Empty)
+                + (signIn is null ? string.Empty : " " + signIn);
             if (NoticeOpen && !ownShowing)
             {
                 // The user is in another notice: said, not shown over it.

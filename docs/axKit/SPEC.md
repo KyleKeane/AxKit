@@ -237,6 +237,19 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   default button: Enter is Close, as the key line says (the first default of a notice is its Enter, OverlayPanel).
   The end closes only its own progress notice; a failure while the user is in another notice is announced, not shown
   over it. The installer's output is read under the same deadline, so a helper left running cannot hold it.
+  **An install adds no start at sign-in and opens no window of the program** (2026-11-14, after KeePassXC, installed
+  this way, started its window at every sign-in of the maintainer's computer and blocked the screen reader there):
+  KeePassXC's installer writes a value `KeePassXC` under the user's Run key and offers to start KeePassXC when it ends
+  unless told otherwise (its user guide, "Installer Options": `AUTOSTARTPROGRAM` and `LAUNCHAPPONEXIT`, both on by
+  default), so winget passes it `AUTOSTARTPROGRAM=0 LAUNCHAPPONEXIT=0` beside its own silent options (`--custom`,
+  `ProgramInstall.InstallerArguments`; the other programs have none). And whatever an installer's options are named:
+  for a program with a window of its own (`ProgramInstall.ProgramFile`, KeePassXC's) the window reads the user's Run
+  key before and after the install (`SignInEntries`, read only), and when a value that was not there now names the
+  program's file (`AddedSignInEntry`), the end of the install is a notice, "KeePassXC is installed", that says so and
+  where to turn it off: "KeePassXC's installer set it to start with Windows. axPass does not need that. To turn it
+  off: KeePassXC, Tools, Settings, General, Automatically launch KeePassXC at system startup." The app goes on when
+  the notice closes; while another notice shows, and after an install that failed, the same words are said or added
+  to the notice. axKit never removes the value: the setting is the user's and the program's.
 - AX-2.10 The Microsoft Store's copy installs nothing of the above itself: its package declares the Start menu entries,
   the console aliases, the file types and the startup tasks, and the Store installs, updates and removes it (AX-13).
 

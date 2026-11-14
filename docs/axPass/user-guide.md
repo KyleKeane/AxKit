@@ -9,7 +9,8 @@ installed; axPass never decrypts the file itself.
 
 ## Before you start
 
-- Install KeePassXC from https://keepassxc.org/, or in a console: `winget install KeePassXCTeam.KeePassXC`.
+- Install KeePassXC: when it is missing, axPass's first notice offers Install KeePassXC now, which installs it without setting it to start with Windows. Or install it by hand from https://keepassxc.org/, or in a console: `winget install KeePassXCTeam.KeePassXC --custom "AUTOSTARTPROGRAM=0 LAUNCHAPPONEXIT=0"`.
+- KeePassXC's own installer, run by hand or without those options, sets KeePassXC to start with Windows, and its window then opens at every sign-in. axPass does not need that. To turn it off: KeePassXC, Tools, Settings, General, Automatically launch KeePassXC at system startup. If an install from axPass ever sets it, the notice "KeePassXC is installed" says so.
 - A database made by KeePass, KeePassXC or KeePassium opens in axPass, and the other way round.
 - Start menu: `axKit axPass`. Console: `axPass`, or `axpass C:\Vault\mine.kdbx`. In File Explorer, a `.kdbx` file's
   Open with axKit submenu has axPass.

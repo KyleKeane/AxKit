@@ -11,6 +11,45 @@ public class ProgramInstallTests
             ProgramInstall.WingetArguments("Git.Git"));
 
     [Fact]
+    public void KeePassXCIsInstalledWithoutItsSignInStartAndWithoutItsWindow()
+    {
+        Assert.Equal(["install", "--id", "KeePassXCTeam.KeePassXC", "--exact", "--source", "winget", "--silent", "--accept-package-agreements", "--accept-source-agreements", "--disable-interactivity",
+                "--custom", "AUTOSTARTPROGRAM=0 LAUNCHAPPONEXIT=0"],
+            ProgramInstall.WingetArguments(ProgramInstall.KeePassXC.WingetId!, ProgramInstall.KeePassXC.InstallerArguments));
+        Assert.Null(ProgramInstall.Git.InstallerArguments);
+        Assert.Null(ProgramInstall.PowerShell7.InstallerArguments);
+        Assert.Null(ProgramInstall.ClaudeCode.InstallerArguments);
+    }
+
+    [Fact]
+    public void ASignInEntryTheInstallAddedIsFoundByTheProgramsFile()
+    {
+        var before = new Dictionary<string, string> { ["OneDrive"] = @"""C:\Programs\OneDrive.exe"" /background" };
+        var after = new Dictionary<string, string>(before) { ["KeePassXC"] = @"""C:\Program Files\KeePassXC\keepassxc.exe""" };
+        Assert.Equal("KeePassXC", ProgramInstall.AddedSignInEntry(before, after, "KeePassXC.exe"));
+    }
+
+    [Fact]
+    public void AnEntryThatWasThereBeforeOrIsAnotherProgramsIsNotReported()
+    {
+        var own = new Dictionary<string, string> { ["KeePassXC"] = @"""C:\Program Files\KeePassXC\KeePassXC.exe""" };
+        Assert.Null(ProgramInstall.AddedSignInEntry(own, own, "KeePassXC.exe"));
+        Assert.Null(ProgramInstall.AddedSignInEntry(own, new Dictionary<string, string> { ["keepassxc"] = own["KeePassXC"] }, "KeePassXC.exe"));
+        var other = new Dictionary<string, string>(own) { ["Updater"] = @"C:\Programs\updater.exe" };
+        Assert.Null(ProgramInstall.AddedSignInEntry(own, other, "KeePassXC.exe"));
+        Assert.Null(ProgramInstall.AddedSignInEntry(own, new Dictionary<string, string>(), "KeePassXC.exe"));
+    }
+
+    [Fact]
+    public void TheSignInNoticeSaysWhatHappenedAndWhereItIsTurnedOff()
+    {
+        Assert.Equal("KeePassXC's installer set it to start with Windows. axPass does not need that. To turn it off: KeePassXC, Tools, Settings, General, Automatically launch KeePassXC at system startup.",
+            ProgramInstall.KeePassXC.SignInNotice("axPass"));
+        Assert.Equal("KeePassXC.exe", ProgramInstall.KeePassXC.ProgramFile);
+        Assert.Null(ProgramInstall.Git.ProgramFile);
+    }
+
+    [Fact]
     public void EachProgramComesFromItsMaker()
     {
         Assert.Equal("Git.Git", ProgramInstall.Git.WingetId);
