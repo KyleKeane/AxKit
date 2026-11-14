@@ -32,7 +32,7 @@ manager: `docs/axKit/plan.md`) and follow the same pattern without changes to th
   Claude Code's service, so axClaude is the one app that needs the network. axKit's own code makes network requests in
   two places, both over HTTPS to GitHub: the updater (AX-3), the update check, a setting that can be off, and the
   download the user chooses; and the report sender (AX-12, docs/axKit/reports.md), only when the user sends a report
-  (F4), the report saved on the computer first (axTask's GitHub lists, a third place from 2026-11-07, were removed
+  (F4), the report saved on the computer first and encrypted there for the maintainer's key before it goes (AX-12.3a) (axTask's GitHub lists, a third place from 2026-11-07, were removed
   on 2026-11-14: axTask is local only, docs/axKit/reports.md RP-7). A network failure is never more than a missing update or a report that
   waits for the next. An access layer reaches the network only
   through the program it runs (AX-11.11). Any AI help in the other apps is one shared, optional service (B-15), never
@@ -816,8 +816,11 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   in two places (AX-12; three from 2026-11-07 to 2026-11-14, while axTask had GitHub lists, docs/axKit/reports.md
   RP-7), over HTTPS to GitHub: the updater (AX-3), the update check and the download the
   user chooses, which the updater takes only from this repository's release address; and the report sender
-  (docs/axKit/reports.md RP-6), which posts a report the user sends as an issue of the reports repository and reads
-  that repository's blocklist first, only on the user's Enter; nothing else in the code makes a network request or
+  (docs/axKit/reports.md RP-6), which posts a report the user sends, encrypted on the user's computer for the
+  maintainer's key (AX-12.3a), as an issue of the private reports repository, only on the user's Enter, and so
+  contacts two addresses of GitHub: first the block list's file in the public repository `KyleKeane/AxKit-blocklist`
+  (`raw.githubusercontent.com`; a read without a token that sends nothing of the user's but the request, at most
+  once a day), then the API that takes the sealed report (`api.github.com`); nothing else in the code makes a network request or
   listens for one, and the remaining addresses in the code are the Help menus' links, opened in the browser, and the
   installers' (AX-2.9: winget from its own source, Anthropic's installer script). `PRIVACY.md`, `README.md`,
   `docs/axKit/README.md` and `SECURITY.md` say this in these terms, and a change here changes them in the same commit;
@@ -856,13 +859,30 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   over GitHub's REST API (RP-6). Nothing is sent at a window's start; the unsent go with the next report and when Your
   reports opens (RP-6.7). Escape with words typed keeps a draft.
 - AX-12.3 **axKit's own reporter account.** The issue is posted by a machine account of the maintainer's whose token
-  the release build carries and which can reach that repository's issues alone (RP-6.2); every report ends with the
-  install's random reporter id and the version (RP-6.3). A blocklist in that repository, read before a send, the
-  repository's own workflow, and the token's revocation at a release are the levers against abuse (RP-6.4); a report
-  that cannot go stays saved, and the notice offers it for copying and GitHub's own form (RP-6.5).
-- AX-12.4 **Consent once** (AX-11.4's shape): before the first report goes, a notice says that it becomes a public
-  issue under axKit's account with nothing that names the user, with the check box; recorded in `consent.json` under
-  the app name "axKit" and listed in About, Licence (RP-6.6). The report sender is the second place axKit's own code
+  the release build carries and which can reach that repository's issues alone (RP-6.2); every report carries the
+  install's random reporter id and the version (RP-6.3). A block list, read before a send from a public repository
+  of its own that holds only random install ids and versions (`KyleKeane/AxKit-blocklist`, 2026-11-14), the reports
+  repository's own workflow, and the token's revocation at a release are the levers against abuse (RP-6.4). A
+  blocked install or version posts nothing and is told so in a notice: an install with its install id, Copy install
+  id and Open the block list page, where to ask if it is a mistake; a version to update axKit. A report
+  that cannot go stays saved, and the notice offers it for copying (RP-6.5).
+- AX-12.3a **Sealed on the user's computer, a private repository (2026-11-14, the user's decision).** The reporter
+  token is in every copy and can read the repository's issues, so nothing of a report leaves the computer in the
+  clear: the sender encrypts the report with the maintainer's public key, a constant in the code (`ReportSeal`: a
+  fresh AES-256-GCM key per report, wrapped with RSA 3072 OAEP-SHA256), before any request, and a report that cannot
+  be encrypted is not sent. The issue's title is the kind and the version; its body is one JSON object, the envelope
+  (RP-6.1a): in the clear the format, the reporter id, the version, the kind, a fingerprint of the key and the
+  method; sealed, the report. Only the private key, on the maintainer's computer alone (`tools/ReportKey`,
+  `reports-setup.md` section 5), opens it. The report saved in Your reports stays as the user wrote it.
+- AX-12.4 **Consent once** (AX-11.4's shape): before the first report goes, a notice says that the report is
+  encrypted on the user's computer, stored as an issue in a private repository on GitHub that only the maintainer
+  can open and only the maintainer's key can read, that GitHub stores the encrypted text and sees when and from
+  which network address it came, under GitHub's terms, that nothing in it names the user unless they write it or
+  check the detail box, and that the maintainer may quote or summarise a report in the public repository without
+  anything that identifies the user; with the check box; recorded in `consent.json` under
+  the app name "axKit" and the target "GitHub, encrypted reports", and listed in About, Licence (RP-6.6). An
+  agreement given to the words of 5.1.0 to 5.8.0, which said "public issue" (target "GitHub"), does not count: the
+  user is asked again. The report sender is the second place axKit's own code
   meets the network, beside the updater (G6, AX-11.11, `PRIVACY.md`).
 
 ### AX-13 The Microsoft Store copy

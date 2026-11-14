@@ -31,11 +31,26 @@ when you send a report:
   digest matches GitHub's digest of the file and the signature made with axKit's release key (ECDSA P-256), and only for
   your Windows account, without administrator rights.
 - **A report you send** (F4 in any window, or Help, Send a report; `docs/axKit/reports.md`). Your report is
-  saved on your computer first, as an item of the axTask list under Help, Your reports. Then it is posted as a
-  public issue of the reports repository, `https://github.com/KyleKeane/AxKit-reports`, with one `POST` to
-  `https://api.github.com/repos/KyleKeane/AxKit-reports/issues`, after one `GET` of that repository's
-  `blocklist.json` from `raw.githubusercontent.com`, which says whether reports from this install or version are
-  blocked. The issue holds exactly what the report notice showed you and let you edit: your words, the kind, the
+  saved on your computer first, as you wrote it, as an item of the axTask list under Help, Your reports. Then it is
+  encrypted on your computer, with the public half of a key whose private half only axKit's maintainer has, on his
+  own computer (a fresh AES-256-GCM key for each report, wrapped with RSA 3072 OAEP-SHA256), and the encrypted text
+  is posted as an issue of the reports repository `KyleKeane/AxKit-reports`, which is private: only the maintainer
+  can open it, and only his key can read a report. The report sender contacts two addresses of GitHub. First the
+  block list: one `GET` of `https://raw.githubusercontent.com/KyleKeane/AxKit-blocklist/main/blocklist.json`, a file
+  of a public repository that holds nothing but the list of random install ids and axKit versions whose reports are
+  not accepted; a read without a token that sends nothing of yours but the request itself (the version you have in
+  the User-Agent header and, as every web request does, your network address), made at most once a day. If the
+  list names your install or your version, nothing is posted, and a notice says so, with your install id and, for a
+  blocked install, the page where to ask if it is a mistake, `https://github.com/KyleKeane/AxKit-blocklist/issues`,
+  which opens in your browser only if you choose it. Then the report: one `POST` to
+  `https://api.github.com/repos/KyleKeane/AxKit-reports/issues`. GitHub, a Microsoft company, stores the encrypted
+  text and sees when and from which network address it was sent. In the clear, beside the encrypted text, the issue holds
+  only: a random id of this install, axKit's version, the report's kind, a short fingerprint of the maintainer's
+  public key and the name of the encryption method; its title is the kind and the version, never your words. The
+  maintainer may quote or summarise a report in axKit's public repository when fixing what it reports, without
+  anything that identifies you. Copies of axKit up to 5.8.0 send their reports unencrypted into the same repository,
+  which was public until 2026-11-14, and their own texts still say "public"; they ask for the block list at its old
+  address in that repository, which now answers that nothing is there, so their own check finds an empty list. The encrypted report holds exactly what the report notice showed you and let you edit: your words, the kind, the
   app and version with Windows' build and NVDA's version, the commands you last ran in the window, the kind of control the focus was in and its
   place (never its name, an item's name or its text), the log's errors of the last day with every path and every quoted text masked, and a title.
   Nothing of this names your files, folders, lists or items. Only if you check the box "Add detail that may name your files" does the report also
@@ -46,8 +61,8 @@ when you send a report:
   the install and nothing else; it carries no name, e-mail address or account of yours unless you write one into the
   report. The first report asks your agreement once. A report that cannot be sent (no network, a blocked install, a
   build without the sending token) stays in Your reports as "Not sent yet" with the reason, and goes with the next
-  one; the notice then also offers to copy the report or to open GitHub's own form in your browser. GitHub's privacy
-  statement applies to what is posted: <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>.
+  one; where this copy cannot send at all, the notice offers to copy the report, not encrypted, to your own
+  clipboard. GitHub's privacy statement applies to what is posted: <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>.
 
 axTask is local only and makes no network request. Versions 5.1.0 to 5.8.0 had GitHub lists in axTask, which read a
 repository's issues and could change one with a token of your own GitHub account; they were removed

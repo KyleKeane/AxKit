@@ -65,7 +65,7 @@ keys tab
 expect focus Cancel
 # Back in the words field, Enter saves the report. A build made with the sending token asks the agreement first
 # (RP-6.6) and Escape says "Saved; not sent yet"; a development build made without the token, which this pass's build
-# is, says "This build cannot send reports" (RP-6.5) and offers Copy report and GitHub's form. Either notice: Escape
+# is, says "This build cannot send reports" (RP-6.5) and offers Copy report. Either notice: Escape
 # leaves the report saved and unsent in Your reports, the focus back in the message field.
 keys shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab
 expect focus Type your report

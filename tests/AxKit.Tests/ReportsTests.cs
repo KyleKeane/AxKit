@@ -3,7 +3,7 @@ using AxKit.Core.Reports;
 
 namespace AxKit.Tests;
 
-/// <summary>A report as the form holds it, as an item of the Reports list and as an issue's body (docs/axKit/reports.md RP-3, RP-5, RP-6.1).</summary>
+/// <summary>A report as the form holds it, as an item of the Reports list, as plain text and as an issue's sealed body (docs/axKit/reports.md RP-3, RP-5, RP-6.1).</summary>
 public sealed class ReportsTests
 {
     private static readonly DateTime Created = new(2026, 11, 7, 14, 30, 0, DateTimeKind.Utc);
@@ -133,7 +133,7 @@ public sealed class ReportsTests
     }
 
     [Fact]
-    public void The_body_puts_the_words_first_and_the_reporter_line_last()
+    public void The_plain_report_puts_the_words_first_and_the_reporter_line_last()
     {
         var body = ReportBody.Markdown(Sample(), "5.1.0", Reporter);
         Assert.StartsWith("The list loses my place.\nAfter Ctrl+F the focus lands on the first item.\n\n### Context\n", body);
@@ -143,6 +143,127 @@ public sealed class ReportsTests
         Assert.Contains("<details>\n<summary>Log lines</summary>\n\n```text\n14:29:58 Find: 3 matches for notes\n```\n\n</details>\n", body);
         Assert.EndsWith("\nSent from axKit 5.1.0 with F4; reporter 6f1c2d3e-4a5b-4c6d-8e7f-901234567890\n", body);
         Assert.Equal(("5.1.0", Reporter), ReportBody.ParseReporterLine(body));
+    }
+
+    [Theory]
+    [InlineData(ReportKind.Bug, "Bug report, axKit 5.9.0")]
+    [InlineData(ReportKind.Feature, "Feature request, axKit 5.9.0")]
+    [InlineData(ReportKind.Feedback, "Feedback, axKit 5.9.0")]
+    public void The_issue_title_is_the_kind_and_the_version_and_never_the_users_words(ReportKind kind, string expected)
+    {
+        Assert.Equal(expected, ReportBody.IssueTitle(kind, " 5.9.0 "));
+    }
+
+    [Fact]
+    public void The_issue_body_is_the_envelope_alone_and_holds_nothing_of_the_report_in_the_clear()
+    {
+        var report = Sample();
+        var body = ReportBody.Sealed(report, "5.9.0", Reporter, ReportSealTests.Keys.Public);
+
+        // One JSON object between the two lines of a code fence, and nothing else.
+        Assert.StartsWith("```json\n{\n", body);
+        Assert.EndsWith("\n}\n```\n", body);
+        using var json = System.Text.Json.JsonDocument.Parse(body["```json\n".Length..^"```\n".Length]);
+        Assert.Equal(11, json.RootElement.EnumerateObject().Count());
+
+        // What is read without a key: who sent it (a random id), with which version, of which kind.
+        var envelope = ReportSeal.Read(body);
+        Assert.NotNull(envelope);
+        Assert.Equal(Reporter, envelope.Reporter);
+        Assert.Equal("5.9.0", envelope.Version);
+        Assert.Equal("bug", envelope.Kind);
+
+        // Nothing the user wrote and nothing the window added: no title, no words, no context line, no action, no log line.
+        var title = ReportBody.IssueTitle(report.Kind, "5.9.0");
+        foreach (var text in new[] { title, body })
+        {
+            Assert.DoesNotContain("loses", text);
+            Assert.DoesNotContain("my place", text);
+            Assert.DoesNotContain("focus lands", text);
+            Assert.DoesNotContain("axFile", text);
+            Assert.DoesNotContain("Windows 11", text);
+            Assert.DoesNotContain("NVDA 2025.3", text);
+            Assert.DoesNotContain("item 7 of 40", text);
+            Assert.DoesNotContain("Ctrl+F", text);
+            Assert.DoesNotContain("3 matches", text);
+            Assert.DoesNotContain("14:29:58", text);
+            Assert.DoesNotContain("Context", text);
+            Assert.DoesNotContain("Sent from axKit", text);
+        }
+
+        // The maintainer's key gives the whole report back: its title and kind, then the plain report as before.
+        var plain = ReportSeal.Open(body, ReportSealTests.Keys.Private);
+        Assert.Equal(ReportBody.Plain(report, "5.9.0", Reporter), plain);
+        Assert.StartsWith("Title: The list loses my place\nKind: Bug\n\nThe list loses my place.\nAfter Ctrl+F", plain);
+        Assert.EndsWith(ReportBody.Markdown(report, "5.9.0", Reporter), plain);
+        Assert.Equal(("5.9.0", Reporter), ReportBody.ParseReporterLine(plain));
+    }
+
+    [Fact]
+    public void An_agreement_to_the_public_issues_of_earlier_versions_does_not_count_for_the_sealed_reports()
+    {
+        var file = Path.Combine(Path.GetTempPath(), "axkit-tests", "consent-" + Guid.NewGuid().ToString("N") + ".json");
+        Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+        try
+        {
+            // What 5.1.0 to 5.8.0 recorded: the app "axKit", the target "GitHub".
+            Consent.Record(file, "axKit", ConsentTarget.GitHubReportsBefore, "5.8.0", new DateTime(2026, 11, 8));
+            Assert.False(Consent.Given(file, "axKit", ConsentTarget.GitHubReports.Program));
+
+            // Agreeing to the new words takes the old record out and counts from then on.
+            Consent.Withdraw(file, "axKit", ConsentTarget.GitHubReportsBefore);
+            Consent.Record(file, "axKit", ConsentTarget.GitHubReports.Program, "5.9.0", new DateTime(2026, 11, 14));
+            Assert.True(Consent.Given(file, "axKit", ConsentTarget.GitHubReports.Program));
+            Assert.Equal("axKit, GitHub, encrypted reports, 14 November 2026, axKit 5.9.0", Consent.Line(Assert.Single(Consent.Read(file))));
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+
+        // The words the user agrees to: encrypted here, a private repository, the maintainer alone; never "public issue".
+        var work = ConsentTarget.GitHubReports.Work;
+        Assert.Contains("encrypted on your computer before it is sent", work);
+        Assert.Contains("private repository on GitHub that only axKit's maintainer can open", work);
+        Assert.Contains("only the maintainer's key can read it", work);
+        Assert.Contains("sees when and from which network address", work);
+        Assert.Contains("may quote or summarise", work);
+        Assert.DoesNotContain("public issue", work);
+    }
+
+    [Fact]
+    public void A_list_made_when_reports_were_public_gets_the_new_notes_and_keeps_what_the_user_set()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "axkit-tests", "reports-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            ReportFiles.EnsureList(folder);
+            var file = Path.Combine(folder, ItemDocument.ListFile);
+            var made = File.ReadAllText(file);
+            Assert.Contains("sent encrypted to a private repository", made);
+            Assert.DoesNotContain("public", made);
+            Assert.DoesNotContain("Open on GitHub", made);
+
+            // An earlier version's list: its own Notes, and a key the user added.
+            var list = ItemDocument.Parse(made);
+            var old = list.WithValue(list.IndexOf("Notes"), System.Text.Json.Nodes.JsonValue.Create(ReportFiles.ListNotesBefore))
+                .WithExtra("keys", new System.Text.Json.Nodes.JsonObject { ["7"] = new System.Text.Json.Nodes.JsonObject { ["name"] = "Mine", ["open"] = "Issue" } });
+            File.WriteAllText(file, old.ToText());
+            ReportFiles.EnsureList(folder);
+            var after = File.ReadAllText(file);
+            Assert.DoesNotContain("public issue", after);
+            Assert.Contains("\"Mine\"", after);
+            Assert.Equal(ReportFiles.ListNotes, FieldTypes.TextOf(ItemDocument.Parse(after).Fields[list.IndexOf("Notes")].Value));
+
+            // Notes the user wrote themselves stay.
+            File.WriteAllText(file, list.WithValue(list.IndexOf("Notes"), System.Text.Json.Nodes.JsonValue.Create("My own words")).ToText());
+            ReportFiles.EnsureList(folder);
+            Assert.Contains("My own words", File.ReadAllText(file));
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
     }
 
     [Fact]

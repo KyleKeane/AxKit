@@ -43,12 +43,23 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
         "KeePassXC's licence",
         "https://keepassxc.org/");
 
-    /// <summary>The reports (docs/axKit/reports.md RP-6.6): GitHub, where a report becomes a public issue; recorded under the app name "axKit", since every window sends the same way.</summary>
+    /// <summary>
+    /// The reports (docs/axKit/reports.md RP-6.6): GitHub, where a report is stored encrypted in a private repository;
+    /// recorded under the app name "axKit", since every window sends the same way. The target's name changed on
+    /// 2026-11-14 with the terms (until then "GitHub", <see cref="GitHubReportsBefore"/>, for a public issue), so that
+    /// a user who agreed to the old words is asked again with the new ones.
+    /// </summary>
     public static readonly ConsentTarget GitHubReports = new(
-        "GitHub",
-        "A report goes to GitHub as a public issue of axKit's reports repository, posted with the maintainer's reporter token, never with an account of yours, and carrying a random id of this install and nothing that names you; what you write in it is public.",
+        "GitHub, encrypted reports",
+        "Your report is encrypted on your computer before it is sent. It is stored as an issue in a private repository on GitHub that only axKit's maintainer can open, and only the maintainer's key can read it. "
+        + "GitHub, a Microsoft company, stores the encrypted text and sees when and from which network address it was sent. "
+        + "It is posted with axKit's reporter token, never with an account of yours, and carries a random id of this install. Nothing in it names you or your files unless you write it or check the box for more detail. "
+        + "The maintainer may quote or summarise a report in axKit's public repository when fixing it, without anything that identifies you.",
         "GitHub's terms and privacy statement",
         "https://docs.github.com/site-policy");
+
+    /// <summary>The reports' target of 5.1.0 to 5.8.0, whose words said "public issue": an agreement to it does not count for <see cref="GitHubReports"/> and is taken out when the new one is recorded.</summary>
+    public const string GitHubReportsBefore = "GitHub";
 
     /// <summary>
     /// The target of a program Install it now installs (<see cref="ProgramInstall"/>'s name), so that agreeing there

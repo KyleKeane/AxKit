@@ -15,13 +15,15 @@ internal sealed class ReportFlow
     private const string ReportTitle = "Report to axKit";
 
     private const string ReportText =
-        "A report goes to axKit's maintainer as a public issue on GitHub, posted by axKit itself with nothing that names you. "
+        "A report goes to axKit's maintainer. It is encrypted on your computer and stored in a private repository on GitHub; only the maintainer can read it. Nothing in it names you unless you write it. "
         + "Type your words and press Enter. Tab reviews the kind and what the window adds: the app, the last actions, where the focus was, the log lines, the title.";
 
     /// <summary>The agreement to the reports is recorded under this name, not the app's: every window sends the same way (RP-6.6).</summary>
     private const string ReportsConsentApp = "axKit";
 
-    private const string ReportsConsentBox = "I understand that my report becomes a public issue on GitHub and that GitHub's terms apply to what I write";
+    private const string ReportsConsentBox = "I understand that my report is sent encrypted to a private repository on GitHub, that only axKit's maintainer can read it, and that GitHub's terms apply to what GitHub stores";
+
+    private const string CopyInstead = "Copy report puts the report on your clipboard, not encrypted, to send another way.";
 
     private readonly AxKitForm _form;
 
@@ -156,18 +158,21 @@ internal sealed class ReportFlow
     {
         if (ReporterToken.Token is null)
         {
-            ShowCannotSend("This build cannot send reports", "This build of axKit was made without the sending token, so your report stays in Your reports. Copy it to send it another way, or open GitHub's own form, which needs a GitHub account of yours.", saved);
+            ShowCannotSend("This build cannot send reports", "This build of axKit was made without the sending token, so your report stays in Your reports. " + CopyInstead, saved);
             return;
         }
 
         if (!ReportsAgreed())
         {
             _form.ShowNotice(new Notice("Before the first report goes", ConsentTarget.GitHubReports.Work + "\n"
-                + $"GitHub's terms and privacy statement apply to it, between you and GitHub: {ConsentTarget.GitHubReports.TermsUrl}\n"
+                + $"GitHub's terms and privacy statement apply to what GitHub stores, between you and GitHub: {ConsentTarget.GitHubReports.TermsUrl}\n"
                 + "Your report is saved in Your reports whatever you choose here; Not now leaves it there, unsent, and asks again with the next one.",
             [
                 new OverlayChoice("&Send", () =>
                 {
+                    // The agreement of 5.1.0 to 5.8.0 was to a public issue: it never counts here, and it goes from
+                    // the file with the new one's record, so that About lists what was agreed to last.
+                    Consent.Withdraw(AppPaths.ConsentFile, ReportsConsentApp, ConsentTarget.GitHubReportsBefore);
                     Consent.Record(AppPaths.ConsentFile, ReportsConsentApp, ConsentTarget.GitHubReports.Program, BundleInfo.Version, DateTime.Now);
                     SendSaved(saved);
                 }, IsDefault: true),
@@ -189,20 +194,27 @@ internal sealed class ReportFlow
         var outcome = await SendUnsentAsync();
         if (outcome.Sent > 0 && outcome.Last is { } last)
         {
-            _form.Announce(outcome.Sent == 1 ? $"Sent as issue {last.Number}" : $"Sent as issue {last.Number}, with {outcome.Sent - 1} earlier", false);
+            // The number is the report's in the maintainer's private list: said so that it can be quoted to him, and
+            // never as an issue, which would be a place the user could open.
+            _form.Announce(outcome.Sent == 1 ? $"Sent, report {last.Number}" : $"Sent, report {last.Number}, with {outcome.Sent - 1} earlier", false);
             return;
         }
 
         switch (outcome.Reason)
         {
             case ReportSender.NoTokenReason:
-                ShowCannotSend("This build cannot send reports", "This build of axKit was made without the sending token, so your report stays in Your reports. Copy it to send it another way, or open GitHub's own form, which needs a GitHub account of yours.", saved);
+                ShowCannotSend("This build cannot send reports", "This build of axKit was made without the sending token, so your report stays in Your reports. " + CopyInstead, saved);
                 break;
-            case ReportSender.BlockedReason:
-                _form.ShowNotice(Notice.Plain("Report not sent", "Reports from this install or this version of axKit are blocked; the reports repository on GitHub says why. The report stays in Your reports."));
+            case ReportSender.BlockedInstallReason:
+                ShowBlockedInstall();
+                break;
+            case ReportSender.BlockedVersionReason:
+                _form.ShowNotice(Notice.Plain("Report not sent",
+                    "Reports from this version of axKit are not being accepted. Nothing was sent. Your report stays saved in Your reports on this computer.\n"
+                    + "Update axKit from the Help menu, or from the Microsoft Store if you installed it there. After the update, open Your reports from the Help menu, and the report is sent."));
                 break;
             case { } reason when reason.StartsWith("this version can no longer", StringComparison.Ordinal):
-                ShowCannotSend("This version can no longer send reports", "GitHub no longer takes reports from this version of axKit. Update axKit from the Help menu and send it again from Your reports, or copy the report, or open GitHub's own form, which needs a GitHub account of yours.", saved);
+                ShowCannotSend("This version can no longer send reports", "GitHub no longer takes reports from this version of axKit. Update axKit from the Help menu and send it again from Your reports. " + CopyInstead, saved);
                 break;
             case null:
                 _form.Announce("Saved", false);
@@ -214,16 +226,38 @@ internal sealed class ReportFlow
     });
 
     private static Task<SendOutcome> SendUnsentAsync() =>
-        ReportSender.SendUnsentAsync(AppPaths.ReportsFolder, AppPaths.ReportsFile, BundleInfo.Version, ReporterToken.Token, AxKitHttp.Client, null, CancellationToken.None);
+        ReportSender.SendUnsentAsync(AppPaths.ReportsFolder, AppPaths.ReportsFile, BundleInfo.Version, ReporterToken.Token, ReportSeal.PublicKey, AxKitHttp.Client, null, CancellationToken.None);
 
-    /// <summary>The notice of RP-6.5: why the report cannot go, with Copy report and Open GitHub's form; the report stays saved.</summary>
+    /// <summary>
+    /// The notice of RP-6.5: why the report cannot go, with Copy report, the plain report to the user's own clipboard;
+    /// the report stays saved. GitHub's own form, offered until 2026-11-14, would post into a repository that is
+    /// private now, which no user can reach.
+    /// </summary>
     private void ShowCannotSend(string title, string text, Report report)
     {
         var body = ReportBody.Markdown(report, BundleInfo.Version, ReportSender.ReporterId(AppPaths.ReportsFile));
         _form.ShowNotice(new Notice(title, text,
         [
             new OverlayChoice("&Copy report", () => _form.CopyText(body.Replace("\n", "\r\n"), "Copied"), StaysOpen: true),
-            new OverlayChoice("Open GitHub's &form", () => _form.OpenUrl(GitHubIssues.NewIssueFormUrl(ReportSender.Repository, report.Title, body, ReportKinds.Label(report.Kind)))),
+            OverlayChoice.Close,
+        ]));
+    }
+
+    /// <summary>
+    /// The notice for an install the block list names (RP-6.4, RP-D12): said plainly, with the install id, a random
+    /// id that names nobody, and the one place to ask when it is a mistake, the block list's own page, never the
+    /// reports repository, which no user can open. Close is Enter's and Escape's choice.
+    /// </summary>
+    private void ShowBlockedInstall()
+    {
+        var id = ReportSender.ReporterId(AppPaths.ReportsFile).ToString("D");
+        _form.ShowNotice(new Notice("Report not sent",
+            "Reports from this install of axKit are not being accepted. Nothing was sent. Your report stays saved in Your reports on this computer.\n"
+            + "If this is a mistake, ask on the block list's page: open an issue there and give your install id. The id is random and names nobody.\n"
+            + $"Your install id: {id}",
+        [
+            new OverlayChoice("Copy &install id", () => _form.CopyText(id, "Copied"), StaysOpen: true),
+            new OverlayChoice("&Open the block list page", () => _form.OpenUrl(ReportSender.BlocklistIssuesUrl)),
             OverlayChoice.Close,
         ]));
     }

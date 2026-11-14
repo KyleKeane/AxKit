@@ -1,9 +1,11 @@
 # The reports repository's workflow (docs/axKit/reports.md RP-6.4; this file is copied to AxKit-reports as
-# .github/workflows/close-blocked.yml, docs/axKit/reports-setup.md). Every new issue's last line is read: a report from
-# axKit ends "Sent from axKit <version> with F4; reporter <id>". When the id or the version stands in blocklist.json,
-# the issue is closed and locked with one comment, so that a blocked install or version is stopped even by a sender that
-# skipped the blocklist. Issues filed by people in the browser have no such line and are left alone. The repository's
-# own token, issues: write, no secret.
+# .github/workflows/close-blocked.yml, docs/axKit/reports-setup.md). Every new issue's reporter id and version are
+# read: from the JSON envelope a report of axKit holds since 2026-11-14 (its members "reporter" and "version", in the
+# clear; RP-6.1a), or, for a report of 5.8.0 or earlier, from its last line, "Sent from axKit <version> with F4;
+# reporter <id>". When the id or the version stands in the block list, blocklist.json of the public repository
+# KyleKeane/AxKit-blocklist, the issue is closed and locked with one comment, so that a blocked install or version is
+# stopped whatever the sender did. Issues without either are left alone. The repository's own token, issues: write,
+# no secret; the list is public and read without one.
 name: Close blocked reports
 
 on:
@@ -12,37 +14,52 @@ on:
 
 permissions:
   issues: write
-  contents: read
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Compare the report's last line with blocklist.json
+      - name: Compare the report's reporter id and version with the block list
         env:
           # The body through the environment, never pasted into the script.
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          BLOCKLIST_URL: https://raw.githubusercontent.com/KyleKeane/AxKit-blocklist/main/blocklist.json
         run: |
           set -eu
-          last=$(printf '%s\n' "$ISSUE_BODY" | sed '/^[[:space:]]*$/d' | tail -n 1 | tr -d '\r')
-          if ! printf '%s' "$last" | grep -Eq '^Sent from axKit [^ ]+ with F4; reporter [0-9a-fA-F-]{36}$'; then
+          body=$(printf '%s\n' "$ISSUE_BODY" | tr -d '\r')
+          version=""
+          reporter=""
+          # The envelope: the body without the two lines of its code fence is one JSON object whose format starts
+          # with "axkit-report ". Read with jq alone; nothing of the body is ever run.
+          envelope=$(printf '%s\n' "$body" | sed '/^[[:space:]]*```/d')
+          if printf '%s' "$envelope" | jq -e 'type == "object" and ((.format // "") | tostring | startswith("axkit-report "))' >/dev/null 2>&1; then
+            version=$(printf '%s' "$envelope" | jq -r '(.version // "") | tostring')
+            reporter=$(printf '%s' "$envelope" | jq -r '(.reporter // "") | tostring | ascii_downcase')
+          else
+            # A report of 5.8.0 or earlier: the last line with text.
+            last=$(printf '%s\n' "$body" | sed '/^[[:space:]]*$/d' | tail -n 1)
+            if printf '%s' "$last" | grep -Eq '^Sent from axKit [^ ]+ with F4; reporter [0-9a-fA-F-]{36}$'; then
+              version=$(printf '%s' "$last" | sed -E 's/^Sent from axKit ([^ ]+) with F4; reporter .*$/\1/')
+              reporter=$(printf '%s' "$last" | sed -E 's/^.*; reporter ([0-9a-fA-F-]{36})$/\1/' | tr 'A-F' 'a-f')
+            fi
+          fi
+          # What an issue says of itself is anyone's text: only the characters an id and a version have are kept.
+          version=$(printf '%s' "$version" | tr -cd 'A-Za-z0-9._+-')
+          reporter=$(printf '%s' "$reporter" | tr -cd 'a-f0-9-')
+          if [ -z "$version" ] && [ -z "$reporter" ]; then
             echo "Not a report from axKit: left alone."
             exit 0
           fi
-          version=$(printf '%s' "$last" | sed -E 's/^Sent from axKit ([^ ]+) with F4; reporter .*$/\1/')
-          reporter=$(printf '%s' "$last" | sed -E 's/^.*; reporter ([0-9a-fA-F-]{36})$/\1/' | tr 'A-F' 'a-f')
-          blocked_reporter=$(jq -r --arg id "$reporter" '[.reporters[]? | ascii_downcase] | index($id) != null' blocklist.json)
-          blocked_version=$(jq -r --arg v "$version" '[.versions[]?] | index($v) != null' blocklist.json)
+          # A list that cannot be read stops nothing: the step fails, and the issue stays open for the maintainer.
+          curl --fail --silent --show-error --location --max-time 30 "$BLOCKLIST_URL" -o blocklist.json
+          blocked_reporter=$(jq -r --arg id "$reporter" '[.reporters[]? | tostring | ascii_downcase] | index($id) != null' blocklist.json)
+          blocked_version=$(jq -r --arg v "$version" '[.versions[]? | tostring] | index($v) != null' blocklist.json)
           if [ "$blocked_reporter" = "true" ] || [ "$blocked_version" = "true" ]; then
             echo "Blocked: reporter $reporter, version $version."
-            gh issue comment "$ISSUE_NUMBER" --body "Reports from this install or this version of axKit are blocked (blocklist.json of this repository, https://github.com/KyleKeane/AxKit/blob/main/docs/axKit/reports.md RP-6.4). This issue is closed."
+            gh issue comment "$ISSUE_NUMBER" --body "Reports from this install or this version of axKit are blocked (blocklist.json of https://github.com/KyleKeane/AxKit-blocklist; https://github.com/KyleKeane/AxKit/blob/main/docs/axKit/reports.md RP-6.4). This issue is closed."
             gh issue close "$ISSUE_NUMBER" --reason "not planned"
             gh issue lock "$ISSUE_NUMBER" --reason spam
           else

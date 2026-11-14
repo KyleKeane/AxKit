@@ -6,7 +6,8 @@ namespace AxKit.Core.Reports;
 /// <summary>
 /// What a report carries of the window when the user only types and presses Enter (docs/axKit/reports.md RP-4.2a;
 /// the user's question of 2026-11-14, after his own first reports from a second computer showed a file's name and a
-/// folder's in a public issue). A report is public, so its plain form holds nothing that can name the user's files,
+/// folder's in a public issue). A report was public then, and since the same day it is sealed for the maintainer
+/// alone (<see cref="ReportSeal"/>), who still has no need of such names; so its plain form holds nothing that can name the user's files,
 /// folders, lists or items: the app and the versions without the window's title, the kind of control in focus and its
 /// place without its name or the item's, the commands run without what the window said or which notices it showed,
 /// and of the log only today's errors, with every path and every quoted text masked. The fuller form, with the title,

@@ -24,8 +24,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `access-layers.md`: the programs under the access layers (Claude Code, Git, KeePassXC's tool, the shells, MCP
   servers), where each one's texts, options and protocol are written, what is read from it and how, what guards it,
   and what is still outside that one place (root `CLAUDE.md`, rule 12).
-- `reports.md` (RP-n): the reports from every window (F4), sent to GitHub as issues of the reports repository;
-  axTask's action keys, and why its GitHub lists were removed.
+- `reports.md` (RP-n): the reports from every window (F4), encrypted on the user's computer and sent to GitHub as
+  issues of the private reports repository; the envelope; axTask's action keys, and why its GitHub lists were
+  removed.
 - `theme.md` (TH-n): the theme file, every colour from one JSON file, and the display settings.
 - `adding-an-app.md`: how a new app is made and every place it is registered.
 
@@ -49,7 +50,8 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   their state.
 - `store-listing.md`: the Store listing's texts.
 - `store-setup.md`: the Store account's runbook.
-- `reports-setup.md`: the reports repository, the reporter account, its token and the release secret.
+- `reports-setup.md`: the reports repository, the reporter account, its token and the release secret; the
+  maintainer's key for the sealed reports, its backup, and how reports are read (`tools/ReportKey`).
 - `development-environment.md`: every tool of the development computer and how to set a new one up.
 
 ## Plans and history

@@ -18,71 +18,47 @@ public sealed class GitHubException(string reason, HttpStatusCode? status, strin
 }
 
 /// <summary>
-/// GitHub's REST API as the report sender uses it (RP-6): an issue created as the reporter account and the blocklist
-/// read, nothing else (axTask's GitHub lists, which listed and changed issues here, were removed 2026-11-14, RP-7). Pure:
-/// the client is given, so that the tests hand in canned answers. Every call is to GitHub over HTTPS (AX-11.11).
+/// GitHub as the report sender uses it (RP-6): an issue created as the reporter account over the REST API, and the
+/// blocklist read from its public repository, nothing else (axTask's GitHub lists, which listed and changed issues here, were removed 2026-11-14, RP-7; the
+/// browser's form went the same day, when the reports repository became private, RP-D11). Pure: the client is given,
+/// so that the tests hand in canned answers. Every call is to GitHub over HTTPS (AX-11.11).
 /// </summary>
 public static class GitHubIssues
 {
     public const string ApiVersion = "2022-11-28";
 
     /// <summary>
-    /// The whole address of the browser's form may be this long at most: the Windows shell hands a longer one to the
-    /// browser cut off (the user's browser opened a page that did not load, 2026-11-07), so the body is cut to fit, the
-    /// user's words first; the issue the sender posts is never cut.
+    /// The blocklist's address (RP-6.4), read without a sign-in: the one place that names it. The list is the file
+    /// <c>blocklist.json</c> of a public repository of its own, <see cref="ReportSender.BlocklistRepository"/>, since
+    /// 2026-11-14, when the reports repository became private (RP-D12); until then it was a file of the reports
+    /// repository, whose address now answers 404, an empty list, to the copies up to 5.8.0 that still ask there.
     /// </summary>
-    public const int FormUrlLength = 2000;
+    public const string BlocklistUrl = "https://raw.githubusercontent.com/" + ReportSender.BlocklistRepository + "/main/blocklist.json";
 
     private static string IssuesApi(string repository) => $"https://api.github.com/repos/{repository}/issues";
 
-    private static string BlocklistUrl(string repository) => $"https://raw.githubusercontent.com/{repository}/main/blocklist.json";
-
-    /// <summary>
-    /// The browser's new-issue form of the repository, prefilled (RP-6.5), for a user with a GitHub account of their own:
-    /// the title, the label and as much of the body as keeps the address within <see cref="FormUrlLength"/>, the
-    /// user's words coming first in it; a cut body ends by saying where the rest is.
-    /// </summary>
-    public static string NewIssueFormUrl(string repository, string title, string body, string label)
-    {
-        var head = $"https://github.com/{repository}/issues/new?title={Uri.EscapeDataString(title)}&labels={Uri.EscapeDataString(label)}&body=";
-        const string note = "\n\n(cut: the rest is in the report saved on your computer, Help, Your reports)";
-        var text = body.Trim();
-        var encoded = Uri.EscapeDataString(text);
-        if (head.Length + encoded.Length <= FormUrlLength)
-        {
-            return head + encoded;
-        }
-
-        var room = Math.Max(0, FormUrlLength - head.Length - Uri.EscapeDataString(note).Length);
-        var cut = text;
-        while (cut.Length > 0 && Uri.EscapeDataString(cut).Length > room)
-        {
-            cut = cut[..Math.Max(0, cut.Length - Math.Max(1, cut.Length / 10))].TrimEnd();
-        }
-
-        return head + Uri.EscapeDataString(cut + note);
-    }
-
-    /// <summary>Creates an issue as the token's account (RP-6.1): the title, the Markdown body and one label.</summary>
+    /// <summary>Creates an issue as the token's account (RP-6.1): the title, the body and one label.</summary>
     public static async Task<IssueCreated> CreateAsync(HttpClient http, string repository, string token, string title, string body, string label, CancellationToken cancellation)
     {
         var payload = new JsonObject { ["title"] = title, ["body"] = body, ["labels"] = new JsonArray(JsonValue.Create(label)) };
         using var request = Request(HttpMethod.Post, IssuesApi(repository), token, payload);
-        // Outside call, network, GitHub: posts a report as an issue of the reports repository, as axKit's own reporter
-        // account, with what the user read and edited in the report notice and the install's random reporter id; only
-        // when the user sends a report (docs/axKit/reports.md RP-6.1, PRIVACY.md).
+        // Outside call, network, GitHub: posts a report as an issue of the private reports repository, as axKit's own
+        // reporter account: the report encrypted on this computer for the maintainer's key, its kind, axKit's version
+        // and the install's random reporter id; only when the user sends a report (docs/axKit/reports.md RP-6.1,
+        // PRIVACY.md).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         using var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
         return new IssueCreated(Number(json.RootElement), JsonElements.GetString(json.RootElement, "html_url") ?? string.Empty);
     }
 
-    /// <summary>The blocklist of the reports repository (RP-6.4); empty when there is none yet (404).</summary>
-    public static async Task<Blocklist> ReadBlocklistAsync(HttpClient http, string repository, CancellationToken cancellation)
+    /// <summary>The blocklist at <see cref="BlocklistUrl"/> (RP-6.4); empty when there is none there (404).</summary>
+    public static async Task<Blocklist> ReadBlocklistAsync(HttpClient http, CancellationToken cancellation)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, BlocklistUrl(repository));
-        // Outside call, network, GitHub: reads the reports repository's blocklist before a report is sent, so that a
-        // blocked install or version sends nothing; one GET with the version in the User-Agent and nothing else about
-        // the user (docs/axKit/reports.md RP-6.4).
+        using var request = new HttpRequestMessage(HttpMethod.Get, BlocklistUrl);
+        // Outside call, network, GitHub: reads the reports' blocklist, a file of the public repository
+        // KyleKeane/AxKit-blocklist, before a report is sent, so that a blocked install or version sends nothing; one
+        // GET without a token, with the version in the User-Agent and nothing else about the user, at most once a
+        // day (docs/axKit/reports.md RP-6.4).
         using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.NotFound)
         {
@@ -166,7 +142,7 @@ public static class GitHubIssues
 }
 
 /// <summary>
-/// The reports repository's <c>blocklist.json</c> (RP-6.4): the reporter ids and the axKit versions whose reports are
+/// The block list, <c>blocklist.json</c> of the public repository KyleKeane/AxKit-blocklist (RP-6.4): the reporter ids and the axKit versions whose reports are
 /// not sent. <c>{"reporters": ["6f1c…"], "versions": ["5.1.0"]}</c>; a file that is not that shape blocks nothing.
 /// The maintainer changes the file on GitHub itself; axKit only reads it, and <see cref="ToJson"/> is the copy the
 /// report sender keeps for a day.
@@ -175,8 +151,14 @@ public sealed record Blocklist(IReadOnlyList<Guid> Reporters, IReadOnlyList<stri
 {
     public static readonly Blocklist Empty = new([], []);
 
-    public bool Blocks(Guid reporter, string version) =>
-        Reporters.Contains(reporter) || Versions.Any(blocked => string.Equals(blocked.Trim(), version.Trim(), StringComparison.OrdinalIgnoreCase));
+    public bool Blocks(Guid reporter, string version) => BlocksReporter(reporter) || BlocksVersion(version);
+
+    /// <summary>Whether the list names this install: then the user is told the install id and where to ask.</summary>
+    public bool BlocksReporter(Guid reporter) => Reporters.Contains(reporter);
+
+    /// <summary>Whether the list names this version of axKit: then the user is told to update.</summary>
+    public bool BlocksVersion(string version) =>
+        Versions.Any(blocked => string.Equals(blocked.Trim(), version.Trim(), StringComparison.OrdinalIgnoreCase));
 
     public static Blocklist Parse(string json)
     {

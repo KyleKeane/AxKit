@@ -115,5 +115,16 @@ page by hand; run its script and commit the page.
   with an item not done); or one line saying they agree. It changes nothing. Exit code 0 when they agree, 1 when
   something is named, 2 when GitHub or the lists could not be read. `tools/sync-repos.ps1` runs it with every push,
   without minding its exit code; run it at the start of a session. `-Lists` and `-IssuesFile` name other sources.
+  It reads numbers, states and titles alone and needs no key; a report's text is read with `tools/ReportKey`.
+- `tools/ReportKey` (`dotnet run --project tools\ReportKey -c Release -- <command>`): the maintainer's key for the
+  sealed reports, one command per run (`reports-setup.md` section 5, `reports.md` RP-6.1a). `issues` prints every
+  open report of `KyleKeane/AxKit-reports`, asked of `gh`, opened with the key: number, labels, state, title, the
+  envelope's members in the clear, the plain report ("not sealed" for an issue of 5.8.0 or earlier). `open <file>`
+  does so for one issue body or envelope, from a file or standard input. `public` prints the key's public half and
+  fingerprint and says whether this build seals for it; `seal <file>` seals a text as a copy of axKit does, for
+  trying `open`. `new` made the key once (it refuses while one exists); `export <file>` writes a backup of the
+  private half under a passphrase, and `import <file>` reads one back. The private half is in
+  `%LOCALAPPDATA%\AxKit-release\reports-key.bin` on the maintainer's computer alone and is never printed; without
+  it, or its backup, no sealed report can be read.
 - `tools/PtyCapture`: records Claude Code's screen stream for a fixture (`--dump` reads a recording with personal data
   replaced; never `--raw`). The `record-fixture` skill has the steps.

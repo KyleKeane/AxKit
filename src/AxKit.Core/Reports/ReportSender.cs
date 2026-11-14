@@ -23,18 +23,31 @@ public sealed record SendOutcome(int Sent, int Left, string? Reason, IssueCreate
 
 /// <summary>
 /// Sends the reports that wait in the Reports list (RP-6): the reporter id made once and kept, the blocklist read
-/// before a send and kept a day, each unsent item posted as an issue of the reports repository as the reporter
-/// account, oldest first, and marked Sent with its issue, or marked with the reason it could not go. Pure apart from
-/// the files it is given: the client and the clock are handed in.
+/// before a send and kept a day, each unsent item sealed for the maintainer's key (<see cref="ReportSeal"/>) and
+/// posted as an issue of the reports repository as the reporter account, oldest first, and marked Sent with its
+/// issue, or marked with the reason it could not go. Pure apart from the files it is given: the client, the key and
+/// the clock are handed in.
 /// </summary>
 public static class ReportSender
 {
     public const string Repository = "KyleKeane/AxKit-reports";
 
+    /// <summary>
+    /// The block list's repository (RP-6.4, RP-D12): public, of its own, holding nothing but the list of blocked
+    /// install ids and versions, so that the sender reads it without a sign-in while the reports repository is
+    /// private. <see cref="GitHubIssues.BlocklistUrl"/> is the list's address in it.
+    /// </summary>
+    public const string BlocklistRepository = "KyleKeane/AxKit-blocklist";
+
+    /// <summary>Where a blocked install asks, with its install id, when the block is a mistake: that repository's issues, in the browser.</summary>
+    public const string BlocklistIssuesUrl = "https://github.com/" + BlocklistRepository + "/issues";
+
     /// <summary>The reasons the sender itself gives (the others come from GitHub, <see cref="GitHubIssues.ReasonOf"/>).</summary>
     public const string NoTokenReason = "this build cannot send reports";
-    public const string BlockedReason = "reports from this install or version are blocked";
+    public const string BlockedInstallReason = "reports from this install are not being accepted";
+    public const string BlockedVersionReason = "reports from this version of axKit are not being accepted, update axKit";
     public const string GapReason = "wait half a minute between reports";
+    public const string SealReason = "the report could not be encrypted";
 
     public static readonly TimeSpan BlocklistAge = TimeSpan.FromDays(1);
     public static readonly TimeSpan RequestLimit = TimeSpan.FromSeconds(10);
@@ -55,11 +68,14 @@ public static class ReportSender
     }
 
     /// <summary>
-    /// Sends every unsent report of the folder (RP-6.7). Without a token nothing goes and every item says so; a blocked
-    /// install or version sends nothing; a send within half a minute of the last waits; the first failure stops the
-    /// run, its reason written into that item, the rest left as they were for the next run.
+    /// Sends every unsent report of the folder (RP-6.7), each sealed for <paramref name="publicKey"/> before the
+    /// request is made, so that nothing of the user's leaves the computer in the clear. Without a token nothing goes
+    /// and every item says so; a blocked install or version sends nothing; a send within half a minute of the last
+    /// waits; the first failure stops the run, its
+    /// reason written into that item, the rest left as they were for the next run. A report that cannot be sealed is
+    /// never sent plain: the run stops with <see cref="SealReason"/>.
     /// </summary>
-    public static async Task<SendOutcome> SendUnsentAsync(string folder, string settingsFile, string version, string? token, HttpClient http, Func<DateTime>? clock, CancellationToken cancellation)
+    public static async Task<SendOutcome> SendUnsentAsync(string folder, string settingsFile, string version, string? token, string publicKey, HttpClient http, Func<DateTime>? clock, CancellationToken cancellation)
     {
         var unsent = ReportFiles.Unsent(folder);
         if (unsent.Count == 0)
@@ -100,11 +116,14 @@ public static class ReportSender
             return new SendOutcome(0, unsent.Count, reason, null);
         }
 
+        // A blocked install or version posts nothing, of this report or of an older unsent one; the list is asked
+        // again when its copy is a day old, so an install taken off the list sends again by itself.
         if (blocklist.Blocks(reporter, version))
         {
-            Mark(unsent, BlockedReason);
+            var blocked = blocklist.BlocksReporter(reporter) ? BlockedInstallReason : BlockedVersionReason;
+            Mark(unsent, blocked);
             SettingsFile.Save(settingsFile, settings);
-            return new SendOutcome(0, unsent.Count, BlockedReason, null);
+            return new SendOutcome(0, unsent.Count, blocked, null);
         }
 
         var sent = 0;
@@ -117,12 +136,26 @@ public static class ReportSender
                 continue;
             }
 
-            var body = ReportBody.Markdown(report, version, reporter);
+            // Sealed here, on the user's computer, before any request: the issue holds nothing of the user's in the
+            // clear, its title the kind and the version alone (RP-6.1).
+            string body;
+            try
+            {
+                body = ReportBody.Sealed(report, version, reporter, publicKey);
+            }
+            catch (ReportSealException ex)
+            {
+                Log.Error("A report could not be encrypted, so it was not sent", ex);
+                stopped = SealReason;
+                ReportFiles.Write(path, ReportFiles.WithStatus(item, ReportStatus.NotSent(stopped)));
+                break;
+            }
+
             try
             {
                 using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
                 limit.CancelAfter(RequestLimit);
-                last = await GitHubIssues.CreateAsync(http, Repository, token, report.Title, body, ReportKinds.Label(report.Kind), limit.Token).ConfigureAwait(false);
+                last = await GitHubIssues.CreateAsync(http, Repository, token, ReportBody.IssueTitle(report.Kind, version), body, ReportKinds.Label(report.Kind), limit.Token).ConfigureAwait(false);
                 settings.LastSentUtc = clock?.Invoke() ?? DateTime.UtcNow;
                 sent++;
             }
@@ -142,7 +175,7 @@ public static class ReportSender
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
                 Log.Error($"A report was sent as issue {last.Number}, but its item could not be marked Sent", ex);
-                stopped = $"sent as issue {last.Number}, but its item could not be marked Sent ({ex.Message}); mark it by hand before sending again";
+                stopped = $"sent as report {last.Number}, but its item could not be marked Sent ({ex.Message}); mark it by hand before sending again";
                 break;
             }
         }
@@ -151,7 +184,7 @@ public static class ReportSender
         return new SendOutcome(sent, unsent.Count - sent, stopped, last);
     }
 
-    /// <summary>The blocklist kept a day in the settings, read again from GitHub when older (RP-6.4).</summary>
+    /// <summary>The blocklist kept a day in the settings, read again from its public repository when older (RP-6.4).</summary>
     private static async Task<Blocklist> BlocklistAsync(HttpClient http, ReportSettings settings, DateTime now, CancellationToken cancellation)
     {
         if (settings.Blocklist is { } cached && settings.BlocklistReadUtc is { } read && now - read < BlocklistAge && now >= read)
@@ -161,7 +194,7 @@ public static class ReportSender
 
         using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
         limit.CancelAfter(RequestLimit);
-        var blocklist = await GitHubIssues.ReadBlocklistAsync(http, Repository, limit.Token).ConfigureAwait(false);
+        var blocklist = await GitHubIssues.ReadBlocklistAsync(http, limit.Token).ConfigureAwait(false);
         settings.Blocklist = blocklist.ToJson();
         settings.BlocklistReadUtc = now;
         return blocklist;

@@ -4,7 +4,7 @@ using AxKit.Core.Reports;
 namespace AxKit.Tests;
 
 /// <summary>
-/// What a report's plain form carries (docs/axKit/reports.md RP-4.2a): a report is public, so nothing in it may name
+/// What a report's plain form carries (docs/axKit/reports.md RP-4.2a): a report goes to someone else, sealed for the maintainer since 2026-11-14 and public before, so nothing in it may name
 /// the user's files, folders, lists or items unless the user chose the fuller form.
 /// </summary>
 public class ReportPrivacyTests

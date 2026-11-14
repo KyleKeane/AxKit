@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The maintainer's key for the sealed reports (docs/axKit/reports-setup.md section 5): makes it, prints its public
+       half, opens reports with it. A development tool, never part of axKit. No package: ReportSeal and UserSecret are
+       AxKit.Core's, the rest is the framework's. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
+    <RootNamespace>ReportKey</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AxKit.Core\AxKit.Core.csproj" />
+  </ItemGroup>
+
+</Project>

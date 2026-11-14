@@ -46,7 +46,7 @@ public static class BundleHelp
         text.Append("## ").Append(heading).Append("\r\n");
         text.Append("  F1: this list\r\n");
         text.Append("  Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it\r\n");
-        text.Append("  F4: report a bug, an idea or feedback to axKit's maintainer: type your words and press Enter; Tab reviews the kind and what the window adds before you send\r\n");
+        text.Append("  F4: report a bug, an idea or feedback to axKit's maintainer: type your words and press Enter; Tab reviews the kind and what the window adds before you send. The report is encrypted on your computer, and only the maintainer can read it\r\n");
         text.Append("  Shift+F1: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more\r\n");
         foreach (var line in lines)
         {

@@ -72,21 +72,22 @@ public sealed class GitHubIssuesTests
     }
 
     [Fact]
-    public async Task The_blocklist_is_read_without_a_token_and_a_missing_one_blocks_nothing()
+    public async Task The_blocklist_is_read_without_a_token_from_its_one_address_and_a_missing_one_blocks_nothing()
     {
         var fake = new Fake()
             .Answer(HttpStatusCode.OK, "{\"reporters\": [\"6f1c2d3e-4a5b-4c6d-8e7f-901234567890\", \"not a guid\"], \"versions\": [\"5.1.0\", \"\"]}")
             .Answer(HttpStatusCode.NotFound, "404: Not Found");
-        var list = await GitHubIssues.ReadBlocklistAsync(Client(fake), Repository, CancellationToken.None);
+        var list = await GitHubIssues.ReadBlocklistAsync(Client(fake), CancellationToken.None);
         Assert.Equal([Reporter], list.Reporters);
         Assert.Equal(["5.1.0"], list.Versions);
         Assert.True(list.Blocks(Reporter, "5.2.0"));
         Assert.True(list.Blocks(Guid.NewGuid(), "5.1.0"));
         Assert.False(list.Blocks(Guid.NewGuid(), "5.2.0"));
-        Assert.Equal("https://raw.githubusercontent.com/KyleKeane/AxKit-reports/main/blocklist.json", fake.Requests[0].Url);
+        Assert.Equal("https://raw.githubusercontent.com/KyleKeane/AxKit-blocklist/main/blocklist.json", GitHubIssues.BlocklistUrl);
+        Assert.Equal(GitHubIssues.BlocklistUrl, fake.Requests[0].Url);
         Assert.Null(fake.Requests[0].Authorization);
 
-        var none = await GitHubIssues.ReadBlocklistAsync(Client(fake), Repository, CancellationToken.None);
+        var none = await GitHubIssues.ReadBlocklistAsync(Client(fake), CancellationToken.None);
         Assert.Empty(none.Reporters);
         Assert.False(none.Blocks(Reporter, "5.1.0"));
     }
@@ -102,16 +103,23 @@ public sealed class GitHubIssuesTests
         Assert.Empty(Blocklist.Parse("[1, 2]").Reporters);
     }
 
+    /// <summary>
+    /// The blocklist's address is written in one place, and the browser's form, which would post into a repository
+    /// that is private since 2026-11-14, is gone (docs/axKit/reports.md RP-6.5).
+    /// </summary>
     [Fact]
-    public void The_browser_form_is_prefilled_and_a_long_body_is_cut()
+    public void The_reports_code_names_the_blocklist_once_and_no_browser_form()
     {
-        var url = GitHubIssues.NewIssueFormUrl(Repository, "A title", "Line one\nLine two", "feedback");
-        Assert.StartsWith("https://github.com/KyleKeane/AxKit-reports/issues/new?title=A%20title&labels=feedback&body=Line%20one%0ALine%20two", url);
-        // A long body is cut so that the whole address stays within what the Windows shell hands a browser whole.
-        var words = string.Join(' ', Enumerable.Repeat("my words", 600));
-        var longUrl = GitHubIssues.NewIssueFormUrl(Repository, "t", words + "\n\n### Context\n\n- App: axFile", "bug");
-        Assert.True(longUrl.Length <= GitHubIssues.FormUrlLength, longUrl.Length.ToString());
-        Assert.StartsWith("https://github.com/KyleKeane/AxKit-reports/issues/new?title=t&labels=bug&body=my%20words", longUrl);
-        Assert.EndsWith(Uri.EscapeDataString("(cut: the rest is in the report saved on your computer, Help, Your reports)"), longUrl);
+        var root = AppContext.BaseDirectory;
+        while (!File.Exists(Path.Combine(root, "AxKit.sln")))
+        {
+            root = Path.GetDirectoryName(root) ?? throw new InvalidOperationException("The repository's root was not found.");
+        }
+
+        var sources = string.Concat(Directory.EnumerateFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
+            .Where(path => !path.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar) && !path.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar))
+            .Select(File.ReadAllText));
+        Assert.Single(System.Text.RegularExpressions.Regex.Matches(sources, "raw\\.githubusercontent"));
+        Assert.DoesNotContain("issues/new", sources);
     }
 }

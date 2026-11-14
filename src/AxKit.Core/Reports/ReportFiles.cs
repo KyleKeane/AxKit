@@ -38,22 +38,29 @@ public static class ReportFiles
         new(NumberField, FieldTypes.Number, JsonValue.Create(string.Empty), []),
     ];
 
+    /// <summary>What the list says of itself, its Notes (RP-5.1).</summary>
+    public const string ListNotes =
+        "Your reports to axKit's maintainer, from F4 in any window: each one is saved here first, as you wrote it, then sent encrypted to a private repository on GitHub that only the maintainer can read; Status says whether it went, and Number is the report's number there, to quote to the maintainer. Delete removes a report from this list only.";
+
+    /// <summary>The Notes of a list made by 5.1.0 to 5.8.0, when a report was a public issue; <see cref="EnsureList"/> replaces exactly these words.</summary>
+    public const string ListNotesBefore =
+        "Your reports to axKit's maintainer, from F4 in any window: each one is saved here first, then sent to GitHub as a public issue; Status says whether it went, and Issue is its address once it has. Delete removes a report from this list only.";
+
     /// <summary>
     /// The list's <c>list.json</c> (RP-5.1, RP-8.5): what the list is, the template with its values (Feedback, Draft),
-    /// and the action keys for the kinds and the issue; a list as <see cref="ItemDocument.NewList"/> writes one (until
-    /// 2026-11-09 written by hand here, because the written template emptied its values).
+    /// and the action keys for the kinds; a list as <see cref="ItemDocument.NewList"/> writes one (until 2026-11-09
+    /// written by hand here, because the written template emptied its values). Until 2026-11-14 a fourth key opened
+    /// the report's issue on GitHub, which is in a private repository now and opens for the maintainer alone.
     /// </summary>
     public static string ListText()
     {
         var list = ItemDocument.NewList(Template);
-        list = list.WithValue(list.IndexOf("Notes"), JsonValue.Create(
-            "Your reports to axKit's maintainer, from F4 in any window: each one is saved here first, then sent to GitHub as a public issue; Status says whether it went, and Issue is its address once it has. Delete removes a report from this list only."));
+        list = list.WithValue(list.IndexOf("Notes"), JsonValue.Create(ListNotes));
         return list.WithExtra("keys", new JsonObject
         {
             ["1"] = Key("Make it a bug", KindField, ReportKinds.Name(ReportKind.Bug)),
             ["2"] = Key("Make it a feature request", KindField, ReportKinds.Name(ReportKind.Feature)),
             ["3"] = Key("Make it feedback", KindField, ReportKinds.Name(ReportKind.Feedback)),
-            ["4"] = new JsonObject { ["name"] = "Open on GitHub", ["open"] = IssueField },
         }).ToText();
 
         static JsonObject Key(string name, string field, string value) =>
@@ -106,7 +113,11 @@ public static class ReportFiles
         return Set(item, NumberField, number.ToString(System.Globalization.CultureInfo.InvariantCulture));
     }
 
-    /// <summary>The folder and its <c>list.json</c>, made when missing (RP-5.1): before a report is written, and before axTask opens the list.</summary>
+    /// <summary>
+    /// The folder and its <c>list.json</c>, made when missing (RP-5.1): before a report is written, and before axTask
+    /// opens the list. A list an earlier version made keeps everything the user set in it; only its Notes, when they
+    /// are still that version's own words, which said "public issue", become <see cref="ListNotes"/>.
+    /// </summary>
     public static void EnsureList(string folder)
     {
         Directory.CreateDirectory(folder);
@@ -114,6 +125,21 @@ public static class ReportFiles
         if (!File.Exists(list))
         {
             File.WriteAllText(list, ListText(), Utf8);
+            return;
+        }
+
+        try
+        {
+            var document = ItemDocument.Parse(File.ReadAllText(list));
+            var notes = document.IndexOf("Notes");
+            if (notes >= 0 && FieldTypes.TextOf(document.Fields[notes].Value) == ListNotesBefore)
+            {
+                SafeFile.WriteAllText(list, document.WithValue(notes, JsonValue.Create(ListNotes)).ToText(), Utf8);
+            }
+        }
+        catch (InvalidDataException)
+        {
+            // A list.json the user changed into something else is theirs: left as it is.
         }
     }
 

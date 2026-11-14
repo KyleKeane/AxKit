@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   Syncs the two repositories that sit beside this one on the maintainer's computer: axkit-reports, the clone of the
-  public reports repository (the issue forms, the workflow, the blocklist), and axkit-management, the private axTask
+  reports repository (private; the issue forms, the workflow, the blocklist), and axkit-management, the private axTask
   lists (the issues read from GitHub and the maintainer's priorities). Each is fetched, pulled fast-forward and
   pushed; the management lists are committed first, as one dated commit, since axTask writes them. git runs this on
   every push of the code repository through the pre-push hook (tools/hooks/pre-push, installed once per clone with

@@ -207,20 +207,37 @@ another project on its second use, the bullet says so.
 - `Reports/` (docs/axKit/reports.md, 2026-11-07): `Report` with `ReportKind`, `ReportKinds` (the names, the GitHub
   labels, `Parse`) and `ReportStatus` (Draft, Not sent yet with its reason, Sent, `AwaitsSending`); `ReportFiles`, the
   Reports list as an axTask folder (the template, `ListText` with the action keys, `ToItem`, `FromItem`, `Save`,
-  `Write`, `WithStatus`, `WithSent`, `Unsent`); `ReportBody`, the issue's Markdown with the reporter line last and
-  `ParseReporterLine`. Tested in `ReportsTests`. `ReportPrivacy` with `ReportContext` (RP-4.2a, 2026-11-14): what a
+  `Write`, `WithStatus`, `WithSent`, `Unsent`; `EnsureList` also replaces the Notes of a list made when reports
+  were public, `ListNotesBefore`, by `ListNotes`); `ReportBody`: `Markdown`, the plain report with the reporter line
+  last, and `ParseReporterLine`; `Plain` (the title and the kind, then `Markdown`), which is what is sealed;
+  `IssueTitle` (the kind and the version, never the user's words) and `Sealed`, the issue's body, the envelope alone
+  in a `json` code fence. Tested in `ReportsTests`. `ReportSeal` with `ReportEnvelope` and `ReportSealException`
+  (RP-6.1a, 2026-11-14): a report encrypted on the user's computer for the maintainer's key, since the reporter token
+  in every copy can read the reports repository: `Seal` (a fresh AES-256-GCM key and nonce, the key wrapped with
+  RSA-OAEP-SHA256) gives the JSON envelope, in the clear `format`, `note`, `reporter`, `version`, `kind`, `key` (the
+  `Fingerprint` of the public key, sixteen hexadecimal characters) and `method`, sealed `wrappedKey`, `nonce`, `tag`
+  and `body`; `Read` gives the envelope of a text without any key, null where there is none; `Open` refuses an
+  unknown format or method and another key's fingerprint before it decrypts, and a changed member after;
+  `PublicKey` is the maintainer's public half, whose private half is on his computer alone (`tools/ReportKey`,
+  docs/axKit/reports-setup.md section 5). Tested in `ReportSealTests` with pairs made in memory. `ReportPrivacy` with `ReportContext` (RP-4.2a, 2026-11-14): what a
   report carries by itself, nothing that can name the user's files: `AppLine` without the window's title, `Commands`
   (the commands alone of `RecentActions.Entries`), `Errors` (the log's errors of the last day, masked) and `Mask`
   (every path and quoted text, on top of `Redaction`); the fuller form is the user's check box, `DetailBox`. Tested
   in `ReportPrivacyTests`. `GitHubIssues` (RP-6), GitHub's REST API as the report sender uses
-  it, the client handed in: `CreateAsync` (an issue as the reporter account), `ReadBlocklistAsync` (404 is an empty
-  list; the listing of issues and every write but the report went on 2026-11-14 with axTask's GitHub lists, RP-7), `NewIssueFormUrl` (the browser's form,
-  prefilled), `ReasonOf` (an exception as a few words for the Status field); `GitHubException` with its `Reason`;
-  `Blocklist` (`Parse`, `Blocks`, `ToJson`, the copy the sender keeps a day); `IssueCreated`. Tested in
+  it, the client handed in: `CreateAsync` (an issue as the reporter account), `ReadBlocklistAsync` (the list at
+  `BlocklistUrl`, the one place that names its address: `blocklist.json` of the public repository
+  `ReportSender.BlocklistRepository`, KyleKeane/AxKit-blocklist, which holds only the list, since 2026-11-14, RP-D12;
+  read without a token, 404 is an empty list; the listing of issues and every write
+  but the report went on 2026-11-14 with axTask's GitHub lists, RP-7, and the browser's form the same day, RP-6.5),
+  `ReasonOf` (an exception as a few words for the Status field); `GitHubException` with its `Reason`;
+  `Blocklist` (`Parse`, `Blocks`, `BlocksReporter`, `BlocksVersion`, `ToJson`, the copy the sender keeps a day); `IssueCreated`. Tested in
   `GitHubIssuesTests` against canned answers. `ReportSender` (RP-6.3 to RP-6.7): `ReporterId` (made once, kept in
   `AppPaths.ReportsFile` as `ReportSettings`), `SendUnsentAsync` (no token: every item says so; the blocklist read
-  before a send and kept a day; the half-minute gap; each item posted and marked Sent with its issue, or marked with
-  the reason; the first failure stops the run), `SendOutcome`; `ReporterToken` (RP-6.2): the token the release build
+  before a send and kept a day, a listed install or version posting nothing, `BlockedInstallReason` or
+  `BlockedVersionReason`, and asked again after the day; `BlocklistIssuesUrl`, where a blocked install asks; the
+  half-minute gap; each item sealed for the public key handed in, then posted
+  under `ReportBody.IssueTitle` and marked Sent with its issue, or marked with the reason, `SealReason` for one that
+  could not be sealed, which is never sent plain; the first failure stops the run), `SendOutcome`; `ReporterToken` (RP-6.2): the token the release build
   embeds from `Reports/reporter.token`, `Encode` and `Decode` (the mixing `tools/reporter-token.ps1` repeats), null in
   a build without it. Tested in `ReportSenderTests`.
 - `AxKitHttp` (AX-11.11, 2026-11-07): the one HTTP client of axKit's own code, the updater's and the report sender's,

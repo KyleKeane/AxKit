@@ -45,7 +45,8 @@ the restart by the app itself (2.3.0).
 - Reports (asked 2026-11-07, specified in `docs/axKit/reports.md`; built, released in 5.1.0): F4 in every window opens a report with
   the last actions and the focus filled in, three kinds (feedback, bug, feature request), saved as an axTask item
   first and sent to GitHub as an issue of a reports repository over its REST API through axKit's own reporter account,
-  nothing to sign in to, a reporter id per install and a blocklist against abuse, unsent ones going with the next;
+  nothing to sign in to, a reporter id per install and a blocklist against abuse, unsent ones going with the next
+  (since 2026-11-14 the repository is private and each report is encrypted on the user's computer for the maintainer's key);
   "Your reports" in the axKit menu; in axTask, GitHub lists of the repository's issues (removed 2026-11-14, when axTask became local only) and Ctrl+1 to Ctrl+9 as the
   user's own actions on a list's items (set fields, move, open), All tasks moving to Ctrl+0. Built the same day on the
   branch `reports` (CHANGELOG 5.1.0); the reports repository `KyleKeane/AxKit-reports` exists with the maintainer's
