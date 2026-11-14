@@ -46,4 +46,28 @@ public sealed class HookTests
         // The rule that the hook enforces is written where every session reads it.
         Assert.Contains("item-of-commit", File.ReadAllText(Path.Combine(root, "CLAUDE.md")), StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Every_push_says_where_the_reports_and_the_list_disagree()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var check = File.ReadAllText(Path.Combine(root, "tools", "reports-check.ps1"));
+        // The three disagreements, and the words that tie an item to its reports.
+        Assert.Contains("Reports: new:", check, StringComparison.Ordinal);
+        Assert.Contains("Reports: close it:", check, StringComparison.Ordinal);
+        Assert.Contains("Reports: item open:", check, StringComparison.Ordinal);
+        Assert.Contains("AxKit-reports issues? ", check, StringComparison.Ordinal);
+        // It reads and says; it never closes a report or writes an item.
+        Assert.DoesNotContain("issue close", check, StringComparison.Ordinal);
+        Assert.DoesNotContain("WriteAllText", check, StringComparison.Ordinal);
+        Assert.DoesNotContain(check, c => c > 127);
+
+        // The push runs it after the two repositories, and its exit code is not the push's.
+        var sync = File.ReadAllText(Path.Combine(root, "tools", "sync-repos.ps1"));
+        var at = sync.IndexOf("reports-check.ps1'", StringComparison.Ordinal);
+        Assert.True(at > 0, "tools/sync-repos.ps1 does not run tools/reports-check.ps1");
+        Assert.Contains("if ($script:failed) { exit 1 }", sync[at..], StringComparison.Ordinal);
+
+        Assert.Contains("reports-check", File.ReadAllText(Path.Combine(root, "CLAUDE.md")), StringComparison.Ordinal);
+    }
 }

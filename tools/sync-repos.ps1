@@ -154,5 +154,12 @@ function Sync-Sibling {
 Sync-Sibling -Name 'axkit-management' -CommitLists $true
 Sync-Sibling -Name 'axkit-reports' -CommitLists $false
 
+# The reports on GitHub against the items of the priorities list (tools/reports-check.ps1): said with every push, so
+# that a new report, a report to close or an item left open is never a matter of memory. It informs only: its exit
+# code is not this script's.
+if (-not $Status) {
+    & (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) 'reports-check.ps1')
+}
+
 if ($script:failed) { exit 1 }
 exit 0

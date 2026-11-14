@@ -108,5 +108,12 @@ page by hand; run its script and commit the page.
   message without such a line, or with words that name no item or several, is refused. Git runs it for every commit
   through the hook `tools/hooks/commit-msg`; where the lists are not beside the repository, every commit passes.
   `-Check` says what it would mark and writes nothing; `-Lists <folder>` names another list.
+- `tools/reports-check.ps1`: the reports on GitHub (the issues of `KyleKeane/AxKit-reports`) against the items of the
+  priorities list (the root `CLAUDE.md`, rule 9). An item points at its reports in Where it is written with
+  `KyleKeane/AxKit-reports issue 8` or `issues 8 and 9`, up to the next semicolon. One line per disagreement: "new" (an
+  open report no item points at), "close it" (an open report whose items are all done), "item open" (a closed report
+  with an item not done); or one line saying they agree. It changes nothing. Exit code 0 when they agree, 1 when
+  something is named, 2 when GitHub or the lists could not be read. `tools/sync-repos.ps1` runs it with every push,
+  without minding its exit code; run it at the start of a session. `-Lists` and `-IssuesFile` name other sources.
 - `tools/PtyCapture`: records Claude Code's screen stream for a fixture (`--dump` reads a recording with personal data
   replaced; never `--raw`). The `record-fixture` skill has the steps.
