@@ -36,9 +36,11 @@ when you send a report:
   `https://api.github.com/repos/KyleKeane/AxKit-reports/issues`, after one `GET` of that repository's
   `blocklist.json` from `raw.githubusercontent.com`, which says whether reports from this install or version are
   blocked. The issue holds exactly what the report notice showed you and let you edit: your words, the kind, the
-  app and version with Windows' build and NVDA's version, the window's title, the window's last twenty actions (its commands, the notices it showed and,
-  in the apps whose announcements never carry your content, what it announced; axClaude, axTerminal, axPass and axClip
-  record no announcements), where the focus was (a control's name and place, never its text), the log's last lines, and a title;
+  app and version with Windows' build and NVDA's version, the commands you last ran in the window, the kind of control the focus was in and its
+  place (never its name, an item's name or its text), the log's errors of the last day with every path and every quoted text masked, and a title.
+  Nothing of this names your files, folders, lists or items. Only if you check the box "Add detail that may name your files" does the report also
+  carry the window's title, the focused control's and item's names, what the window announced and the notices it showed (never in axClaude,
+  axTerminal, axPass and axClip, which record no announcements), and the log's last lines as they are;
   paths of your account read `<user>` before you see them. It is posted with the maintainer's reporter token, never with an account of yours, and
   carries a random id of this install (`%APPDATA%\AxKit\reports.json`; delete the file for a new one), which names
   the install and nothing else; it carries no name, e-mail address or account of yours unless you write one into the

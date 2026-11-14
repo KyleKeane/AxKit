@@ -42,12 +42,25 @@ internal sealed class ReportFlow
             return;
         }
 
+        // RP-4.2a: the plain form holds nothing that can name the user's files (no title, no names, no spoken lines,
+        // of the log only today's errors, masked); the fuller form is the user's choice in the form's check box.
         var now = DateTime.UtcNow;
-        var controls = new ReportControls(
-            Redact(AppLine()),
+        var build = Environment.OSVersion.Version.Build;
+        var windows = $"{(build >= 22000 ? "Windows 11" : "Windows 10")} build {build}";
+        var nvda = NvdaVersion();
+        var plain = new ReportContext(
+            ReportPrivacy.AppLine(_form.AppName, BundleInfo.Version, windows, nvda),
+            _form.FocusDescription(named: false),
+            ReportPrivacy.Commands(_form.Recent.Entries(), now),
+            ReportPrivacy.Errors(LogTail(ReportPrivacy.LogRead), DateTime.Now));
+        var full = new ReportContext(
+            Redact(ReportPrivacy.AppLine(_form.AppName, BundleInfo.Version, windows, nvda, _form.Text)),
             Redact(_form.FocusDescription()),
             _form.Recent.Lines(now).Select(Redact).ToList(),
-            LogTail().Select(Redact).ToList(),
+            LogTail(ReportPrivacy.LogLines).Select(Redact).ToList());
+        var controls = new ReportControls(
+            plain,
+            full,
             said => _form.Announce(said, true),
             _form.Overlay.PressDefault);
         _form.ShowNotice(new Notice(ReportTitle, ReportText,
@@ -215,19 +228,11 @@ internal sealed class ReportFlow
         ]));
     }
 
-    /// <summary>"axFile 5.1.0, Windows 11 build 26200, NVDA 2025.3; window: notes - axFile" (RP-3 item 3).</summary>
-    private string AppLine()
-    {
-        var build = Environment.OSVersion.Version.Build;
-        var windows = build >= 22000 ? "Windows 11" : "Windows 10";
-        return $"{_form.AppName} {BundleInfo.Version}, {windows} build {build}, {NvdaVersion()}; window: {_form.Text}";
-    }
-
-    private static IReadOnlyList<string> LogTail()
+    private static IReadOnlyList<string> LogTail(int lines)
     {
         try
         {
-            return Log.Tail(20).ReplaceLineEndings("\n").Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            return Log.Tail(lines).ReplaceLineEndings("\n").Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

@@ -23,13 +23,30 @@ public abstract partial class AxKitForm
     /// </summary>
     protected internal void OpenReports() => _reports.OpenReports();
 
-    /// <summary>The focused control's name and place, never its text (RP-3 item 5, RP-4.2); a report and a question to Claude about this window both carry it.</summary>
-    internal string FocusDescription()
+    /// <summary>
+    /// The focused control's name and place, never an edit field's text (RP-3 item 5, RP-4.2); a question to Claude
+    /// about this window carries it, and a report's fuller form. <paramref name="named"/> false is a report's plain
+    /// form (RP-4.2a): the kind of control and the place alone, since a control's name can hold a list's or a folder's
+    /// ("Details of Home") and a list's item is a file's or a task's.
+    /// </summary>
+    internal string FocusDescription(bool named = true)
     {
         var control = FocusedControl();
         if (control is null)
         {
             return "the window itself";
+        }
+
+        if (!named)
+        {
+            return control switch
+            {
+                TextBoxBase box => $"a text field, line {WindowReading.LogicalLine(box) + 1} of {Math.Max(1, box.Lines.Length)}",
+                ListBox { Items.Count: 0 } => "a list, empty",
+                ListBox list => $"a list, item {list.SelectedIndex + 1} of {list.Items.Count}",
+                ButtonBase => "a button",
+                _ => "a control",
+            };
         }
 
         var name = control.AccessibleName is { Length: > 0 } accessible ? accessible : control.Name is { Length: > 0 } own ? own : control.GetType().Name;

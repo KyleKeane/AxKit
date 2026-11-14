@@ -57,6 +57,15 @@ public sealed class RecentActions
         }
     }
 
+    /// <summary>The entries themselves, oldest first, for a report that takes only some kinds (<c>Reports.ReportPrivacy.Commands</c>).</summary>
+    public IReadOnlyList<(DateTime At, RecentActionKind Kind, string Text)> Entries()
+    {
+        lock (_gate)
+        {
+            return _entries.ToList();
+        }
+    }
+
     public static string Line(DateTime at, RecentActionKind kind, string text, DateTime now)
     {
         var age = Age(now - at);

@@ -844,10 +844,12 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
 
 - AX-12.1 **F4 in every window** (`BundleKeys.Report`, AX-8.2) and the Help menu's Send a report… open the notice
   "Report to axKit" with the window's own fields (`ReportControls`): the user's words first and focused, Enter sends,
-  Shift+Enter breaks a line; then the kind (Feedback, Bug, Feature request), the app and version, the window's last
-  twenty actions (`RecentActions`: its commands and notices, and its announcements in the apps whose announcements
-  never carry the user's content, so not in axClaude, axTerminal, axPass and axClip), where the focus was by name and place and never by text, the
-  log's last lines and a title, every prefilled field redacted (`Redaction`) and editable. Your reports opens the
+  Shift+Enter breaks a line; then the kind (Feedback, Bug, Feature request), a check box for more detail, the app and version, the commands last
+  run, the kind of control in focus and its place, the log's errors of the last day masked, and a title: by itself
+  the window adds nothing that can name the user's files, folders, lists or items (`ReportPrivacy`, reports.md
+  RP-4.2a); the check box, not checked, adds the window's title, the names, what the window said (`RecentActions`;
+  never in axClaude, axTerminal, axPass and axClip) and the log's last lines, redacted (`Redaction`). Every field is
+  editable. Your reports opens the
   Reports list in axTask.
 - AX-12.2 **Saved first, sent second.** Enter writes the report as an item of the axTask list `%APPDATA%\AxKit\reports`
   (RP-5), then sends it and every unsent one, oldest first, as an issue of the reports repository `KyleKeane/AxKit-reports`

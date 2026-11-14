@@ -54,14 +54,20 @@ one announcement per move:
    the edge earcon and "Type a few words first".
 2. **"Kind"**: a list of three, Feedback (selected), Bug, Feature request; type-to-find reaches them (AX-8.6). NVDA
    reads the selected kind as the list moves, and the app adds nothing (AX-7).
+2a. **"Add detail that may name your files: the window's title, the focused item, what the window said, the log as it
+   is"**: a check box, not checked. The four fields after it hold the plain form (RP-4.2a) while it is not checked and
+   the fuller form once it is; checking or unchecking it fills them afresh.
 3. **"App and version"**: read-only text, "axClaude 5.0.1, Windows 11 build 26200, NVDA 2025.3" (NVDA's version from
-   its running process, "NVDA not running" otherwise; the window's title after it, redacted).
-4. **"What you were doing: the last actions"**: a multi-line field, editable, filled with the window's last twenty
-   actions (section 4), oldest first, one per line: "12 s ago: Find, Ctrl+F" and "12 s ago, said: 3 matches".
-5. **"Where the focus was"**: a one-line field, editable: the focused control's name and place, never its text:
-   "Conversation, line 54 of 120", "Message to Claude, 2 lines typed (not included)", "Files, item 7 of 40, notes.md".
-6. **"Log lines, the last twenty"**: a multi-line field, editable, the app's log tail, redacted; the user deletes what
-   they do not want sent.
+   its running process, "NVDA not running" otherwise). The fuller form adds the window's title, redacted.
+4. **"What you were doing: the last actions"**: a multi-line field, editable, oldest first, one per line: the commands
+   run, "12 s ago: Find, Ctrl+F". The fuller form adds what the window said and the notices it showed, "12 s ago,
+   said: 3 matches" (section 4).
+5. **"Where the focus was"**: a one-line field, editable: the kind of control and the place, "a list, item 7 of 40",
+   "a text field, line 1 of 1". The fuller form names the control and a list's item: "Files, item 7 of 40: notes.md",
+   "Message to Claude, line 1 of 1 (the text is not included)"; never an edit field's text.
+6. **"Log lines"**: a multi-line field, editable: the errors of the last day, at most twenty lines, every path and
+   every quoted text masked. The fuller form holds the log's last twenty lines as they are, redacted; the user deletes
+   what they do not want sent.
 7. **"Title"**: a one-line field, filled from the first line of the report (eighty characters at most) when the user
    Tabs past the first field or presses Enter there; editable.
 8. **Send** (Enter anywhere but a multi-line field, the notice's default button) and **Cancel** (Escape).
@@ -85,6 +91,19 @@ one announcement per move:
   docs/axKit/mcp.md section 5) and the console windows, axClaude and axTerminal, whose spoken replies and output are
   the user's conversation (the first real report, 2026-11-08, carried a spoken reply of Claude's), put only their
   commands and notices in the ring, not their announcements (`AxKitForm.RecordsAnnouncements`).
+- **RP-4.2a The plain form names nothing of the user's** (the user, 2026-11-14, after his own first two reports from
+  a second computer showed a file's name and a folder's in public issues; both were deleted from GitHub). A report is
+  public, and most are sent by typing and Enter, without a look at the other fields. So what the window adds by
+  itself holds nothing that can name the user's files, folders, lists or items (`AxKit.Core/Reports/ReportPrivacy`):
+  the app and the versions without the window's title; the kind of control in focus and its place without its name
+  or the item's (`AxKitForm.FocusDescription(named: false)`); the commands alone, never what the window said nor a
+  notice's title; of the log, only the errors of the last day with the lines of their stack, every path as `<path>`
+  and every quoted text as `<text>` (`ReportPrivacy.Mask`, on top of `Redaction`), so no line of a start, which names
+  the folder or file an app was started on, and nothing older. The fuller form (the title, the names, the spoken
+  lines, the log's last lines as they are, each through `Redaction` as before) is the user's own choice, the check
+  box of RP-3 item 2a, whose name says that it may name their files. What cannot be ruled out in the plain form: an
+  error's message that names something without quotes and without a path; the fields stay readable and editable.
+  Copies released before this (5.8.0 and earlier) send the fuller form.
 - **RP-4.3 Redaction.** Every prefilled field goes through `Redaction` (AxKit.Core, S-20) before it is shown: the
   account's paths read `<user>`, an e-mail address `<email>`. The user reads what will be sent.
 - **RP-4.4 Public.** An issue is public on GitHub, posted by axKit's reporter account with the install's reporter id

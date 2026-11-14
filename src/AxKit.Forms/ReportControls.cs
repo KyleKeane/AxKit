@@ -17,19 +17,25 @@ public sealed class ReportControls : FlowLayoutPanel
     private readonly AxKitTextBox _where = new();
     private readonly AxKitTextBox _log = new();
     private readonly AxKitTextBox _title = new();
+    private readonly AxKitCheckBox _detail = new();
     private readonly List<Control> _rows = [];
     private readonly Action<string> _say;
     private bool _titleTyped;
 
-    /// <param name="app">The app and version line (RP-3 item 3), read-only.</param>
-    /// <param name="where">Where the focus was (item 5), redacted.</param>
-    /// <param name="actions">The last actions (item 4), redacted.</param>
-    /// <param name="log">The log's last lines (item 6), redacted.</param>
+    /// <param name="plain">What the window adds unless the user asks for more (RP-4.2a): nothing that can name their files.</param>
+    /// <param name="full">The fuller form, redacted, shown when the user checks the detail box.</param>
     /// <param name="say">The window's announcer, interrupting.</param>
     /// <param name="accept">Presses the notice's default button (Enter in the words field).</param>
-    public ReportControls(string app, string where, IReadOnlyList<string> actions, IReadOnlyList<string> log, Action<string> say, Action accept)
+    public ReportControls(ReportContext plain, ReportContext full, Action<string> say, Action accept)
     {
         _say = say;
+        _detail.Text = ReportPrivacy.DetailBox;
+        _detail.AccessibleName = ReportPrivacy.DetailBox;
+        _detail.AutoSize = true;
+        _detail.Margin = new Padding(0, 8, 0, 0);
+        // The four fields are the window's own words in one form or the other; a change of the box fills them afresh.
+        _detail.CheckedChanged += (_, _) => Fill(_detail.Checked ? full : plain);
+        var (app, where, actions, log) = (plain.App, plain.Where, plain.Actions, plain.Log);
         Dock = DockStyle.Fill;
         FlowDirection = FlowDirection.TopDown;
         WrapContents = false;
@@ -74,19 +80,28 @@ public sealed class ReportControls : FlowLayoutPanel
         MultiLine(_actions, "What you were doing: the last actions", rows: 5, acceptsReturn: true);
         _actions.Text = string.Join("\r\n", actions);
         OneLine(_where, "Where the focus was", where);
-        MultiLine(_log, "Log lines, the last twenty", rows: 4, acceptsReturn: true);
+        MultiLine(_log, "Log lines", rows: 4, acceptsReturn: true);
         _log.Text = string.Join("\r\n", log);
         OneLine(_title, "Title", string.Empty);
         _title.TextChanged += (_, _) => _titleTyped = _title.Focused;
 
         Add(_words, "Your report");
         Add(_kind, "Kind");
+        Controls.Add(_detail);
         Add(_app, "App and version");
         Add(_actions, "What you were doing: the last actions");
         Add(_where, "Where the focus was");
-        Add(_log, "Log lines, the last twenty");
+        Add(_log, "Log lines");
         Add(_title, "Title");
         LayoutRows();
+    }
+
+    private void Fill(ReportContext context)
+    {
+        _app.Text = context.App;
+        _actions.Text = string.Join("\r\n", context.Actions);
+        _where.Text = context.Where;
+        _log.Text = string.Join("\r\n", context.Log);
     }
 
     public string Words => _words.Text;

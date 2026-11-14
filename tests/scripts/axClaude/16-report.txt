@@ -27,17 +27,36 @@ type The list loses my place
 keys tab
 expect focus Kind
 expect focus Feedback
+# The check box for more detail, not checked (RP-3 item 2a): the four fields after it hold the plain form, which
+# names nothing of the user's (RP-4.2a): no window title, the kind of control and not its name.
+keys tab
+expect focus Add detail that may name your files
 keys tab
 expect focus App and version
 expect focus axClaude
+refuse focus window:
 keys tab
 expect focus What you were doing: the last actions
 keys tab
 expect focus Where the focus was
-expect focus Message to Claude
+expect focus a text field, line 1 of 1
 keys tab
-expect focus Log lines, the last twenty
+expect focus Log lines
+# Checked, the fields hold the fuller form: the title and the control's name; unchecked, the plain form again.
+keys shift+tab shift+tab shift+tab shift+tab
+expect focus Add detail that may name your files
+keys space
+expect said checked
 keys tab
+expect focus window: report
+keys tab tab
+expect focus Message to Claude, line 1 of 1
+keys shift+tab shift+tab shift+tab
+keys space
+expect said not checked
+keys tab tab tab
+expect focus a text field, line 1 of 1
+keys tab tab
 expect focus Title
 expect focus The list loses my place
 keys tab
@@ -48,7 +67,7 @@ expect focus Cancel
 # (RP-6.6) and Escape says "Saved; not sent yet"; a development build made without the token, which this pass's build
 # is, says "This build cannot send reports" (RP-6.5) and offers Copy report and GitHub's form. Either notice: Escape
 # leaves the report saved and unsent in Your reports, the focus back in the message field.
-keys shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab
+keys shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab
 expect focus Type your report
 keys enter
 expect state "notice":"

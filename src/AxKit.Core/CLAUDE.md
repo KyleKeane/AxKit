@@ -208,7 +208,11 @@ another project on its second use, the bullet says so.
   labels, `Parse`) and `ReportStatus` (Draft, Not sent yet with its reason, Sent, `AwaitsSending`); `ReportFiles`, the
   Reports list as an axTask folder (the template, `ListText` with the action keys, `ToItem`, `FromItem`, `Save`,
   `Write`, `WithStatus`, `WithSent`, `Unsent`); `ReportBody`, the issue's Markdown with the reporter line last and
-  `ParseReporterLine`. Tested in `ReportsTests`. `GitHubIssues` (RP-6), GitHub's REST API as the report sender uses
+  `ParseReporterLine`. Tested in `ReportsTests`. `ReportPrivacy` with `ReportContext` (RP-4.2a, 2026-11-14): what a
+  report carries by itself, nothing that can name the user's files: `AppLine` without the window's title, `Commands`
+  (the commands alone of `RecentActions.Entries`), `Errors` (the log's errors of the last day, masked) and `Mask`
+  (every path and quoted text, on top of `Redaction`); the fuller form is the user's check box, `DetailBox`. Tested
+  in `ReportPrivacyTests`. `GitHubIssues` (RP-6), GitHub's REST API as the report sender uses
   it, the client handed in: `CreateAsync` (an issue as the reporter account), `ReadBlocklistAsync` (404 is an empty
   list; the listing of issues and every write but the report went on 2026-11-14 with axTask's GitHub lists, RP-7), `NewIssueFormUrl` (the browser's form,
   prefilled), `ReasonOf` (an exception as a few words for the Status field); `GitHubException` with its `Reason`;
