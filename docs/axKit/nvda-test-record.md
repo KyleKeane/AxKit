@@ -6,6 +6,28 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-14, morning: every app; by the assistant with NVDA listening (`main` bae7e48, axKit 5.8.0 with what is unreleased)
+
+`.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 115 scripts of
+`tests/scripts` and the four of `tests/nvda-scripts`, 119 in all. All 119 passed in one run (3068 s), with no script
+corrected.
+
+What this pass is the first to hear, all of it since 5.8.0: the window base with five services moved out of it
+(`UpdateFlow`, `ProgramInstaller`, `ReportFlow`, `AiHelpFlow`, `AiToolsSetup`; R-15), axProcess's Turn off, Turn on
+and Remove for a start-up program (`axProcess/02` to `04`), Claude Code's texts read from `ClaudeCodeTexts` and the
+other access layers' from their one place each, and the arguments of `claude.cmd` in quotes.
+
+A first run of the same commit an hour earlier is not a result: NVDA itself froze during `axAutomate/02-run.txt`
+(its log: "Core frozen in stack", the main thread in `UIAHandler._isUIAWindowHelper` under
+`processForegroundWinEvent`, from 07:05 until NVDA was restarted at 07:54), so 108 scripts failed with NVDA saying
+nothing while every window said what it should. After `nvda.exe -r` the run above passed without a freeze. The cause
+is not found; it is an open item of the priorities list ("NVDA freezes in a foreground window check").
+
+Still the user's ear, as before: a long streaming reply under NVDA+A, the feedback survey, the concern report and the
+breakdown section of an offered command, a real `/login`, a live answer of AI help, the Store copy; and not scripted
+at all: a real install by `ProgramInstaller` and a real update download by `UpdateFlow`, which were only compiled
+after their move.
+
 ## 2026-11-14: every app; by the assistant with NVDA listening (`main` 20d990f, axKit 5.7.0 with what is unreleased)
 
 `.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 114 scripts of
