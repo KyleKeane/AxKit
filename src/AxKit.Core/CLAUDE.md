@@ -17,6 +17,10 @@ another project on its second use, the bullet says so.
   `GetCurrentPackageFullName` and `GetCurrentApplicationUserModelId`; null and false outside a package, as in the
   tests and the zip's copy; `AliasPath` and `ProgramPath`, the path recorded for later use (the package's `axKit.exe`
   alias in the Store's copy, the process path otherwise), since the package folder changes with every update.
+- `StoreFirstStart` (AX-13.4a, 2026-11-14): the Store's copy right after its install: `Due` (packaged, no test run,
+  no marker), `Verbs` (the apps that run from sign-in but the one starting), `MarkerFile` and `Mark`; `Program.Main`
+  starts those apps hidden once per install, since Windows runs their startup tasks only from the next sign-in.
+  Tested in `StoreFirstStartTests`.
 - `StoreListing` (AX-13, 2026-11-08): the Store ID and the addresses made from it (the Store page `ms-windows-store:`,
   the web page, the `winget install` line).
 - `BundleInfo`: the version, read from the executable.

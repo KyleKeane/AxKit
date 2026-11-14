@@ -921,6 +921,13 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   value written by a packaged process goes to the package's private registry and would never run), and the Options,
   General item of axStart and axClip opens Settings, Apps, Startup (`ms-settings:startupapps`,
   `SignInStart.OpenWindowsStartupSettings`, `HotkeyForm.StartWithWindowsItem`) and says to turn the app on or off there.
+- AX-13.4a **The background apps right after the install** (the user's report of 2026-11-14 from a second computer:
+  axStart's hotkey did nothing until Windows was restarted). Windows runs a package's startup tasks at a sign-in, and
+  only after an app of the package was started once. So the first start of any app of the Store's copy starts axStart,
+  axClip and axHelp itself, hidden, once per install (`StoreFirstStart`, `Program.StartBackgroundAppsOnce`): a marker
+  file in the package's private folder says it was done and goes with an uninstall. Afterwards Windows' Startup apps
+  page alone decides, so an app turned off there is never started by axKit. Never in a test run. Nothing is said:
+  the apps wait behind their hotkeys as they do after a sign-in.
 - AX-13.5 **AppData and the programs axKit starts.** A packaged desktop app's new files under AppData Local and Roaming
   land in the package's private folder (`%LOCALAPPDATA%\Packages\axKit.axKit_<hash>\LocalCache`), its writes under HKCU
   in a private hive, and its package folder is read-only (measured 2026-11-08). So axKit's own files of AX-5 go with the

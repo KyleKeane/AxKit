@@ -64,6 +64,7 @@ internal static class Program
 
         if (Runs.TryGetValue(launch.App, out var run))
         {
+            StartBackgroundAppsOnce(launch.App);
             // AX-1.6: the taskbar's id is the app's project name, AxKit.AxClaude and so on.
             SetAppId("AxKit." + Dispatch.Of(launch.App).Project);
             run(launch.Arguments);
@@ -155,6 +156,38 @@ internal static class Program
 
     [DllImport("user32.dll")]
     private static extern bool AllowSetForegroundWindow(int processId);
+
+    /// <summary>
+    /// AX-13.4a: the first start of any app of the Store's copy starts the background apps (axStart, axClip, axHelp),
+    /// hidden, once per install, since Windows runs their startup tasks only from the next sign-in
+    /// (<see cref="StoreFirstStart"/>). A start that fails is left to that sign-in.
+    /// </summary>
+    private static void StartBackgroundAppsOnce(string startedApp)
+    {
+        if (!StoreFirstStart.Due(PackageIdentity.IsPackaged, AutomationEnvironment.Requested, File.Exists(StoreFirstStart.MarkerFile))
+            || Environment.ProcessPath is not { } path
+            || !StoreFirstStart.Mark())
+        {
+            return;
+        }
+
+        foreach (var verb in StoreFirstStart.Verbs(startedApp))
+        {
+            try
+            {
+                var start = new System.Diagnostics.ProcessStartInfo(path) { UseShellExecute = false };
+                start.ArgumentList.Add(verb);
+                start.ArgumentList.Add("--hidden");
+                // Outside call, program, axKit: starts AxKit.exe itself as a background app (axStart, axClip, axHelp),
+                // hidden, at the first start of the Store's copy after its install (AX-13.4a).
+                using var started = System.Diagnostics.Process.Start(start);
+            }
+            catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
+            {
+                // Windows starts it at the next sign-in.
+            }
+        }
+    }
 
     /// <summary>
     /// AX-2.8: an update installed in place renames the program file that was running to AxKit.old.exe, since a

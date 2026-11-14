@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 11 network requests, 31 program starts and 5 pipes, in 31 files, under the 12 headings below.
+Today: 11 network requests, 32 program starts and 5 pipes, in 31 files, under the 12 headings below.
 
 ## What axKit reaches
 
@@ -185,7 +185,7 @@ Calls (2):
 - **Documentation**: docs/axKit/SPEC.md AX-1, AX-2.3, AX-3, AX-9.
 - **Apps**: every window.
 
-Calls (6):
+Calls (7):
 
 - **axAutomate**, `src/AxAutomate.Core/Broker.cs`, in `Broker.Start`, by `Process.Start`: AxKit.exe mcp, the AI tools' server, as the run's MCP client starts it, with the run's secret and folder.
   Code: `var broker = new Broker(Process.Start(start)!);`
@@ -198,6 +198,8 @@ Calls (6):
 - **shared by every app**, `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
   Code: `Process.Start(info)?.Dispose();`
 - **shared by every app**, `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
+  Code: `using var started = System.Diagnostics.Process.Start(start);`
+- **shared by every app**, `src/AxKit/Program.cs`, in `Program.StartBackgroundAppsOnce`, by `Process.Start`: starts AxKit.exe itself as a background app (axStart, axClip, axHelp), hidden, at the first start of the Store's copy after its install (AX-13.4a).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
 
 #### Workflow commands
@@ -294,7 +296,7 @@ Used in 1 place:
 
 Defined in .NET, System.Diagnostics: starts a program, through the Windows shell when UseShellExecute is set.
 
-Used in 18 places:
+Used in 19 places:
 
 - `src/AxAutomate.Core/Broker.cs`, in `Broker.Start`, for axKit.
 - `src/AxAutomate.Core/Run.cs`, in `Run.RunCommand`, for Workflow commands.
@@ -313,6 +315,7 @@ Used in 18 places:
 - `src/AxKit.Forms/UpdateFlow.cs`, in `UpdateFlow.OpenStorePage`, for Windows.
 - `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartWith`, for axKit.
 - `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, for axKit.
+- `src/AxKit/Program.cs`, in `Program.StartBackgroundAppsOnce`, for axKit.
 - `src/AxStart/AppsFolder.cs`, in `AppsFolder.Start`, for User programs.
 
 ### ProcessRun.Run, program
