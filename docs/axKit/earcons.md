@@ -162,6 +162,80 @@ Pattern: soft plucked notes in a slow loop while Claude works. Not an earcon: a 
 | 9. Call | rising three, twice, long | go to that window |
 | 10. Working | soft looping plucks | wait |
 
+## The sound of each app, and the start (asked 2026-11-14, proposed)
+
+The user's second ask the same day: a start sequence when the program loads; each app with a sound quality of its
+own, so that a window that opens plays a priming sound and brings the ear into that app; and the sounds adjustable in
+bundle-wide settings, perhaps per app and per effect.
+
+This adds a third thing a sound can say. The pattern names the class, the pitch or direction names the variant, and
+**the sound quality names the app**: the same question knock is heard as a pure tone in one app and as a plucked
+string in another, and is still the same knock.
+
+### Sound qualities
+
+A quality is how a note is made, not which note: pure (a sine, as every chime is today), plucked (as the working
+music), bell (a struck tone with a long ring), hollow (a reed, like a clarinet), struck wood. The ear tells five or
+six apart with ease and seventeen not at all, so a quality belongs to a family of apps, and the single app is told by
+its own short motif.
+
+| Family | Apps | Quality, proposed |
+|---|---|---|
+| Conversations | axClaude, axHelp | pure, as today, so that nothing learned changes |
+| Shells and programs | axTerminal, axGIT, axProcess, axMCP, axAutomate | struck wood |
+| Texts | axDown, axJSON, axPreview | hollow |
+| Things in lists | axFile, axTask, axPass, axCalc | plucked |
+| Reached by a hotkey | axStart, axClip | bell, short |
+| Sound and video | axMedia | none: it must never play over the user's own media |
+
+The classes that guard or interrupt keep one quality in every app, because they must be known at once anywhere: code
+(class 5), the edge (class 2) and the call from another window (class 9).
+
+### The priming sound: a window opened
+
+Pattern: two or three notes of the app's own, in its family's quality, under a third of a second, before NVDA reads
+the title. Each app's motif is a different interval or shape (a rise of a third, a fall of a fifth, three notes up
+and back), so that inside a family the apps are told apart. It plays when a window opens or comes back from hiding,
+never when focus only returns to it.
+
+The hotkey windows open many times a day: theirs is one short note, or nothing, by default.
+
+### The start sequence
+
+Pattern: a longer phrase of about one second, the bundle's signature, the same every time. axKit is not one program
+that stays open; each app is a process of its own. So "the program loads" means: an axKit window opens while no other
+axKit window is open. The signature plays then, and the app's priming sound follows it. A window opened beside others
+plays its priming sound alone. The background apps starting hidden at sign-in play nothing.
+
+### Settings
+
+One file for the bundle, as the theme has, in the same shape as every setting of axKit: JSON, flat, a switch and a
+volume at each level, and "as above" where nothing is set.
+
+- **Everything**: on or off, and one volume.
+- **Each class** (ticks, moves, turns, questions, code, one field, forms, notices, the call, working music, priming,
+  the start): on or off, and a volume. This is "per effect".
+- **Each app**: on or off, a volume, and its sound quality, which the user may change or set to plain. This is "per
+  app".
+- **An app's class**: only where a user wants it, for example axTerminal's ticks off and everything else on. Written
+  in the file by hand or through the Options menu of that app; the menus show the common switches and the file holds
+  them all.
+
+What is fixed and has no switch: the words. Every earcon is followed by speech that says the same thing, so a user
+with every sound off loses nothing but the early cue. The code class's words are said with or without its sound.
+
+The settings that exist today (Options, Sounds in axClaude and axTerminal: chimes, ticks, working music, the sound on
+headings) become entries of this one file, read by every app, and keep their menu items.
+
+### Cautions
+
+- A sound at every window open can become noise. The priming sound must be short, quiet, and easy to switch off for
+  one app or for all.
+- NVDA starts reading a new window at once: a priming sound longer than a third of a second talks over it.
+- Qualities must be tested on small laptop speakers and through headphones; a low bell is lost on the first, a high
+  struck sound is harsh in the second.
+- axMedia never plays a sound of axKit's while media plays.
+
 ## What building this would change
 
 - New sounds to choose by ear: axKit's own question (4), the AI tool variant (5), the two of one field (6), the lower
@@ -179,3 +253,7 @@ Pattern: soft plucked notes in a slow loop while Claude works. Not an earcon: a 
 1. Whether a plain notice needs a sound at all, or silence and its words are enough.
 2. Whether the AI tool variant of class 5 should differ by direction, by pitch, or both.
 3. Whether one field and a form are far enough apart by ear; to be settled by listening, not on paper.
+4. Whether the sound quality should go with the family of apps, as proposed, or each app should have a quality of its
+   own although seventeen cannot be told apart.
+5. Whether the hotkey windows play a priming sound at all.
+6. Whether the start sequence plays at the first window after sign-in only, or whenever no other axKit window is open.
