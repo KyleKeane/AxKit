@@ -126,6 +126,20 @@ needs every section Complete; it takes the submission to "In certification" at o
 dismissed by its Cancel. A release's upload is section 5's five steps done with these commands; a script for them
 follows once a second submission has shown that the pages hold still.
 
+What the second submission taught (5.8.0, 2026-11-14, about a quarter of an hour by an agent with this section in
+hand): the overview's button is "Start update" now, and it makes "Product update: In draft (Submission 2)". On the
+Packages page the old package is not removed by hand: once the new one has validated, the page marks the older one
+itself ("This package will be removed after you save this page because you have a higher-versioned package that
+supports the same customers") and Save drops it. The display's scale matters for `dropxy` and `clickxy`: at 150 per
+cent a place read off a screenshot is 1.5 times the tool's coordinates, and a drop that misses the drag area makes
+Edge download the file into the Downloads folder instead (delete that copy). The English listing of an update is
+reached through the overview's "Languages supported in packages", at `.../submissions/<id>/listings?languageid=4`;
+"What's new in this version" takes 1500 characters. An update's sections read Unchanged or Updated, not Complete, and
+Submit is enabled all the same. The warning under the package, "The following restricted capabilities require
+approval before you can use them in your app: runFullTrust", is the same as at the first submission and is answered
+by the reason given in the submission options. Before any of it: Microsoft's sign-in may stop on an offer to set up
+a passkey, which only the maintainer answers, in that Edge window.
+
 ## 7. The support request for the API route (dropped on 2026-11-13)
 
 This section held the words of a request to Partner Center's support to open the submission API to the account. The
@@ -141,6 +155,9 @@ route was removed on 2026-11-13 (section 2), so the request is no longer needed.
   Pre-processing, Certification, Publishing; certification usually takes hours, up to three business days. When it
   is live: `winget install 9PK01L2K5000 -s msstore` on this computer beside the development copy, then the NVDA pass
   of the Store copy (`store-distribution.md`, phase 6, step 3).
+- Submission 2 (`AxKit-5.8.0.msix`, the listing's What's new rewritten for 5.8.0, everything else unchanged) was
+  submitted for certification on 2026-11-14; the overview showed "Product update: In certification (Submission 2)",
+  at Pre-processing, to publish as soon as it passes. Until it is live the Store holds 5.2.1.
 - The last published and the pending submission, with the status and the Store's error and warning codes, are in
   Partner Center under the product's overview.
 - A failed certification names the policy; the fix goes into the next release (or, for a listing text, into
