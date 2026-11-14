@@ -20,8 +20,8 @@
 
   A commit without such a line, a line that names no item or more than one, and "none" without a reason are refused,
   with what to write. Where the lists are not beside the repository (another person's clone, the build service), the
-  script says nothing and allows every commit: the lists are the maintainer's own. Merge commits and the commits git
-  writes itself (a revert, a fixup) are allowed as they are.
+  script says nothing and allows every commit: the lists are the maintainer's own. Merge commits, the commits git
+  writes itself (a revert, a fixup) and the release script's own commit ("Release 1.2.3") are allowed as they are.
 
 .EXAMPLE
   .\tools\item-of-commit.ps1 .git\COMMIT_EDITMSG
@@ -52,8 +52,9 @@ if (-not $subject) {
     exit 0
 }
 
-# What git writes itself is allowed as it is.
-if ($subject -match '^(Merge |Revert "|fixup! |squash! |amend! )') {
+# What git writes itself is allowed as it is, and the release script's own commit, "Release 1.2.3", which is the
+# whole bundle's and no one item's.
+if ($subject -match '^(Merge |Revert "|fixup! |squash! |amend! )' -or $subject -match '^Release \d+\.\d+\.\d+$') {
     exit 0
 }
 
