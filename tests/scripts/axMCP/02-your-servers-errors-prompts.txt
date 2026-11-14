@@ -2,16 +2,16 @@
 # axMCP, docs/axMCP/nvda-test-plan.md beyond 01-start: section 5 (Your servers: Ctrl+N, F2, Delete, Ctrl+Z, and the
 # sentences for a server of Claude Code's), 3.4 (a check), 3.6 (Ctrl+J before any call), 3.7 (a tool that reports an
 # error, a server error), 4.1 (a resource template) and 4.2 (a prompt filled and fetched); SPEC MP-1.3, MP-3.5, MP-4.2,
-# MP-5. The fake server is 01-start's with two more tools, a template and a prompt. The server of Claude Code's is the
+# MP-5. The fake server is 01-start's with three more tools, a template and a prompt. The server of Claude Code's is the
 # one of the run folder's own .mcp.json (the project scope), so the run neither needs nor changes Claude Code's files;
 # the server added here has a command line that is never started. Rows are found by name, since this computer may have
 # servers of its own.
-# Not run: 1.4 (Right on an http server): the plan says the level does not change, the window shows a level of the
-# server's with one row; left for a decision.
+# Also 1.4 (Right and Enter on an http server say why and the level stays, MP-1.4; a level of the server's opened
+# until 2026-11-14), with a second, remote server in the same .mcp.json, which is never reached.
 file home\AxKit\axMCP.json {"checkForUpdates": false, "servers": [{"name": "fake", "commandLine": "powershell -NoProfile -ExecutionPolicy Bypass -File fake.ps1"}]}
 file home\AxKit\consent.json {"items":[{"app":"axMCP","target":"fake (powershell)","version":"0","when":"2026-11-09T00:00:00"}]}
-file .mcp.json {"mcpServers":{"zzproj":{"command":"cmd","args":["/c","echo"]}}}
-file fake.ps1 $in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  $e = 'Method not found'\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}},{"name":"fail","description":"Reports an error.","inputSchema":{"type":"object","properties":{}}},{"name":"boom","description":"Breaks the server.","inputSchema":{"type":"object","properties":{}}}]}' }\n    'tools/call' {\n      if ($m.params.name -eq 'echo') { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n      if ($m.params.name -eq 'fail') { $r = '{"content":[{"type":"text","text":"It went wrong."}],"isError":true}' }\n      if ($m.params.name -eq 'boom') { $e = 'The server broke.' + [char]92 + 'nIt says so on two lines.' }\n    }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[{"name":"page","uriTemplate":"fake://page/1","description":"A page by its number."}]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"' + $m.params.uri + '","mimeType":"text/plain","text":"Text of ' + $m.params.uri + '"}]}' }\n    'prompts/list' { $r = '{"prompts":[{"name":"greet","description":"Greets someone. Politely.","arguments":[{"name":"who","description":"Who to greet","required":true}]}]}' }\n    'prompts/get' { $r = '{"description":"A greeting.","messages":[{"role":"user","content":{"type":"text","text":"Say hello to ' + $m.params.arguments.who + '"}}]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"' + $e + '"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
+file .mcp.json {"mcpServers":{"zzproj":{"command":"cmd","args":["/c","echo"]},"zzremote":{"type":"http","url":"https://example.invalid/mcp"}}}
+file fake.ps1 $in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  $e = 'Method not found'\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}},{"name":"fail","description":"Reports an error.","inputSchema":{"type":"object","properties":{}}},{"name":"boom","description":"Breaks the server.","inputSchema":{"type":"object","properties":{}}},{"name":"snap","description":"Breaks in one line.","inputSchema":{"type":"object","properties":{}}}]}' }\n    'tools/call' {\n      if ($m.params.name -eq 'echo') { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n      if ($m.params.name -eq 'fail') { $r = '{"content":[{"type":"text","text":"It went wrong."}],"isError":true}' }\n      if ($m.params.name -eq 'boom') { $e = 'The server broke.' + [char]92 + 'nIt says so on two lines.' }\n    }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[{"name":"page","uriTemplate":"fake://page/1","description":"A page by its number."}]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"' + $m.params.uri + '","mimeType":"text/plain","text":"Text of ' + $m.params.uri + '"}]}' }\n    'prompts/list' { $r = '{"prompts":[{"name":"greet","description":"Greets someone. Politely.","arguments":[{"name":"who","description":"Who to greet","required":true}]}]}' }\n    'prompts/get' { $r = '{"description":"A greeting.","messages":[{"role":"user","content":{"type":"text","text":"Say hello to ' + $m.params.arguments.who + '"}}]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"' + $e + '"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
 
 start mcpclient {temp}
 expect state Servers - axMCP, access layer for MCP servers
@@ -29,6 +29,18 @@ expect said ! A server of Claude Code's is renamed with claude mcp remove and cl
 keys delete
 expect said Only Your servers are removed here; a server of Claude Code's goes with claude mcp remove
 expect state "notice":null
+
+# 1.4 A remote server is listed and never started (MP-1.4): Right and Enter say why, and the level is still Servers.
+wait 1200
+type zzremote
+expect focus zzremote, http, not started by this version
+keys right
+expect said ! http servers need a network connection of axKit's own, which this version does not make
+expect state "title":"Servers - axMCP
+expect focus zzremote, http, not started by this version
+keys enter
+expect said ! http servers need a network connection of axKit's own, which this version does not make
+expect focus zzremote, http, not started by this version
 
 # 5.1 Ctrl+N at the top: the name, the command line, the folder prefilled with the folder in hand; the row selected
 # under Your servers, its details the command line typed.
@@ -98,13 +110,13 @@ expect focus probe, stdio, stopped
 keys ctrl+z
 expect said ! Nothing to undo
 
-# The fake started (01-start, 2.2), with its three tools, the resource and its template, and the prompt.
+# The fake started (01-start, 2.2), with its four tools, the resource and its template, and the prompt.
 wait 1100
 type fake
 expect focus fake, stdio, stopped
 keys right
-expect said ! fake, running, Tools 3, Resources 2, Prompts 1
-expect focus Tools, 3
+expect said ! fake, running, Tools 4, Resources 2, Prompts 1
+expect focus Tools, 4
 # MP-1.3 Ctrl+N below the top level says where servers are added.
 keys ctrl+n
 expect said ! Servers are added at the top level
@@ -115,7 +127,7 @@ expect said ! No result yet
 
 # 3.4 A check: Space changes it (the item apps' words, "done"), and the call sends it: the fake answers in capitals.
 keys right
-expect said ! Tools, 3 tools, echo, tool, Says the text back.
+expect said ! Tools, 4 tools, echo, tool, Says the text back.
 keys tab
 expect focus Description, long text
 keys down
@@ -151,9 +163,8 @@ keys escape
 expect state "notice":null
 expect focus fail, tool
 
-# 3.7 A server error: the notice "boom failed" with the server's message. The message here has two lines; one of a
-# single line is said as "Failed: ..." without a notice (the base's rule, AxKitForm.Failed), which the plan and
-# MP-3.5 do not say: left for a decision, not run.
+# 3.7 A server error: the notice "boom failed" with the server's message, here of two lines; then one of a single
+# line, "snap failed", a notice as well (MP-3.5; said as "Failed: ..." with no notice and no name until 2026-11-14).
 keys down
 expect focus boom, tool, Breaks the server.
 keys ctrl+enter
@@ -164,10 +175,19 @@ expect text It says so on two lines.
 keys escape
 expect state "notice":null
 expect focus boom, tool
+keys down
+expect focus snap, tool, Breaks in one line.
+keys ctrl+enter
+expect said ! Calling snap
+expect state "notice":"snap failed"
+expect text Method not found
+keys escape
+expect state "notice":null
+expect focus snap, tool
 
 # 4.1 A resource template: Enter asks the address, prefilled with the template; Enter reads it; Escape back on the row.
 keys left
-expect focus Tools, 3
+expect focus Tools, 4
 keys down
 expect focus Resources, 2
 keys right

@@ -43,6 +43,9 @@ public sealed partial class AutomateForm : ItemForm
         if ((path ?? settings.Folder) is { } folder && Directory.Exists(folder))
         {
             _folders.Add(Path.GetFullPath(folder));
+            // AU-4.1: the folder used last is the one a start named as well as Ctrl+O's (as axTask keeps the folder
+            // it was started on); written with the settings as the window closes. Until 2026-11-14 Ctrl+O's alone.
+            _settings.Folder = _folders[0];
         }
 
         // ---- menus and keys: one command list (docs/axKit/app-kit.md AK-2), each key from the tables (AU-4.4) ----

@@ -103,8 +103,8 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
    user's report of 2026-11-11).
 4. Ctrl+Shift+1 to "Projects, heading level 1, 1 project folder"; Ctrl+2: "Projects in projects, heading level 2, 2
    projects". Down: "tasks in alpha, project, 1 list"; Down: "tasks in beta, project, 1 list". Ctrl+Shift+N:
-   "A project's lists are made inside it: Right on a project first". Delete: "A project stays: Options, Project
-   folders removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E". Actions, New
+   "A project's lists are made inside it: Right on a project first". Delete: "A project stays: Options, Remove
+   a project folder removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E". Actions, New
    GitHub list: "A project's lists are made inside it: Right on a project first", no notice.
 5. Up, Right on tasks in alpha: "tasks in alpha, 1 list, Your lists, heading level 1, 1 list". Down: "Home, list, 1
    item". Right: "Home, 1 item, Fix the leak". Space: "Done: Fix the leak"; Ctrl+Z: "Undone: Done: Fix the leak".
@@ -125,7 +125,7 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
    Left: "tasks in alpha, 1 list, Home, list, 1 item".
 10. Right on Home again. Options, Remove a project folder: "1. projects (...)"; Enter: "Removed
     projects. Lists, 3 lists": with the project's folder removed, the window is back in your own lists and the Projects
-    heading is gone. Close axTask and start it again on the folder: it opens in that list of your own, the one open before the search, not in a project's Home.
+    heading is gone. Close axTask and start it again without naming a folder (a start that names the folder opens its top level): it opens in that list of your own, the one open before the search, not in a project's Home.
 
 ## 7. AI tools over the lists (TK-8, docs/axKit/mcp.md MC-8)
 

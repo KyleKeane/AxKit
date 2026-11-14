@@ -12,7 +12,7 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
   - `EditorKeys` are the shell's keys, included in every editor app's table.
   - `EditorHost.Run` is the editors' entry point, one call into `AppHost.Run` with the one file of the command line, the settings and the window.
   - The undo history (docs/axDown/SPEC.md AD-2.5, 2026-10-21):
-    - every `TextChanged` outside a load or a replay records the text before and after it into `AxKit.Core.EditHistory` with where the key was typed (`KeyPress` for characters, Backspace, Enter and Tab, `KeyDown` for Delete; -1 for a paste, a cut, a command), so that runs merge;
+    - every `TextChanged` outside a load or a replay records the text before and after it into `AxKit.Core.EditHistory` with where the key was typed (`KeyPress` for characters, Backspace, Enter and Tab, `KeyDown` for Delete; -1 for a paste, a cut, a command), so that runs merge; a character typed over a selection comes as two changes (the selection out, the character in), and the second keeps the key's place (`_typedOverSelection`), so that both are one step;
     - a one-second timer breaks the run;
     - Undo and Redo (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z, `EditorKeys`) apply the step through `Select` and `SelectedText` with the `_replaying` flag set and put the caret after the text put back;
     - a reload is recorded as a step, Open and New clear the history.

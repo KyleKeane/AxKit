@@ -15,7 +15,7 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
     - every field command (`CheckField`, `ChangeField` by type, with the app's `ChangeSpecial` for its own types and the Title's change through `RenameItem`; `NewField`, `RenameField`, `RemoveField`, `MoveField`, refused with the app's `FieldsFixed`; `ReadAll`), each a new `ItemDocument` handed to the app's `SaveFields`;
     - and `ChooseFromList`, the list notice both apps use (`AskText`, the one-field notice, is the base's since 2026-11-09, `AxKitForm.Notices.cs`).
   - The app fills in:
-    - the levels (`ReadLevel`, `EnterList`, `LeaveList`);
+    - the levels (`ReadLevel`, `EnterList`, `LeaveList`; `EntryRefused` for a list Right and Enter do not go into, its reason said, axMCP's remote server);
     - the detail (`DetailOf`, `SpokenValue`);
     - the saving;
     - the navigator's commands (`NewItem`, `NewList`, `RenameItem`, `RenameTo` (an item's rename by default), `RenameRefused`, `DeleteRow`, `Undo`, `CheckInNavigator`);

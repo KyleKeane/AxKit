@@ -207,7 +207,10 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   trailing prompt row at the moment of sending; the `##` lines are level 2 headings, so `h` and `2` find them, and
   a jump speaks a heading without its marker, "Input 1 heading level 1" (axClaude §6.4); *n* counts since the window started or the transcript was cleared; both markers are level 1 headings;
   Options → Text → Time stamps adds the time to both (axClaude FR-4.6), and Options → Text → Markers in the text (axClaude FR-4.6a) shows or hides the `#` markers of every heading line in the view, the lines, the keys and the export unchanged. The shell's echo of the command, the prompt
-  row holding the command after its prompt, stays hidden: the block stands for it (axClaude D22), and so do the
+  row holding the command after its prompt, stays hidden: the block stands for it (axClaude D22), and so do the rows
+  a command longer than the console is wide wraps onto (the rows directly under the prompt row that hold the
+  command's own text at that place; they were spoken after "Sent" and stood in the Output block until 2026-11-14;
+  a wrapped continuation row of a multi-line command is not covered), and the
   continuation rows of a multi-line command, the shell's continuation prompt (PowerShell's `>> `, bash's `> `, cmd's
   `More? `; a custom shell has none known, and its rows all stay) followed by one of the command's lines, or by
   nothing (the host's empty continuation after the last line), directly under the prompt rows while the command runs;

@@ -59,6 +59,21 @@ public class EditHistoryTests
     }
 
     [Fact]
+    public void A_letter_typed_over_a_selection_is_one_step()
+    {
+        // The edit control makes two changes of the one key, both typed where the selection began: the selection
+        // out, then the letter in (the window keeps the key's place for the second).
+        var history = new EditHistory();
+        history.Record("one two three", "one  three", 4, typedAt: 4);
+        history.Record("one  three", "one x three", 5, typedAt: 4);
+        // More typing goes on in the same run.
+        history.Record("one x three", "one xy three", 6, typedAt: 5);
+
+        Assert.Equal(new EditStep(4, "two", "xy"), history.Undo());
+        Assert.Null(history.Undo());
+    }
+
+    [Fact]
     public void Typing_elsewhere_and_a_change_not_typed_are_steps_of_their_own()
     {
         var history = new EditHistory();

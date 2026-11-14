@@ -24,6 +24,7 @@ dotnet build tools\AxAutomate\AxAutomate.Runner.csproj -c Release -o <scratch>  
   - `ScriptLines.CannotRun` reads no file (the window asks it per row); `BadNumber` refuses a step whose number is not one before a run, and `Run.Step` fails such a line (never throws) when the command line plays it unchecked. With `confined` (the window, AU-6b.8) it also refuses a `file`, `mkdir` or `silence` path outside the run's `{temp}` (`Outside`); `Commands` lists the `run` steps' command lines the window names before a run (AU-D11), filled by `Filled` (the engine's one filling of `{temp}` and the escapes) with `{temp}` as "the run's folder". The command line passes neither.
   - `Window`: one AxKit.exe of the run on its desktop (`Create`, with the run's variables in its own environment), its pipe and its timeline; `Event` and `Taken` in `RunEvent.cs`.
   - `RunSentences` (AU-6b): what the window says of a run: a failing step, a workflow's end, a folder's end, and the outcome its rows carry.
+  - `ClipboardText`: the clipboard's text read and put back around a run of the command line (automation.md, "The user's clipboard kept").
   - `Speech`: NVDA's capture log (the NVDA tier); `Broker`: the run as an MCP client; `Native`: the P/Invoke the engine needs.
 
 ## Gotchas

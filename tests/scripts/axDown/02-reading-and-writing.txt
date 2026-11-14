@@ -143,6 +143,14 @@ expect said ! Undone
 keys alt+backspace
 expect said ! Undone
 expect focus {"name":"empty.md","role":"Text","value":"alpha"}
+# AD-2.5: a letter typed over a selection is one step, though the control makes two changes of it (the selection out,
+# the letter in): one Ctrl+Z brings the selected text back (two until 2026-11-14).
+menu Select all
+type x
+expect focus {"name":"empty.md","role":"Text","value":"x"}
+keys ctrl+z
+expect said ! Undone
+expect focus {"name":"empty.md","role":"Text","value":"alpha"}
 # 2.6 manual: Shift+F10 opens the text's context menu, a real menu, which needs the foreground.
 # 2.6: after another document (New, which ends the history as Open does) Ctrl+Z has nothing to undo.
 keys ctrl+n

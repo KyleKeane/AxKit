@@ -36,7 +36,7 @@ script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a f
    each argument "name (required), text, " or its type and default.
 3. Ctrl+Enter with a required argument empty: "<argument> is required"; nothing is called.
 4. Enter on a text argument: the notice "Change <argument>", the field; type a value, Enter: "<argument>: value", the
-   pane on the field. A check: Space, "on"; a choice: Enter, the list of options, Enter.
+   pane on the field. A check: Space, "<argument>: done", and Space again, "<argument>: not done" (the item apps' words, `item-apps.md`); a choice: Enter, the list of options, Enter.
 5. Ctrl+Enter: "Calling name", then the notice "Result of name" with its text focused; the arrows read it, h moves by
    heading where the text has them, Ctrl+F finds; Escape: the pane is back on the same field.
 6. Ctrl+J: axJSON opens on `last-result.json` with the whole answer; close it. Ctrl+J before any call: "No result yet".

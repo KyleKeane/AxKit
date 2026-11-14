@@ -221,7 +221,8 @@ keys in place of its words on a line:
 ## 6a. The first version: a viewer (2026-11-11)
 
 - AU-6a.1 `AxKit.exe automate [<folder>]` opens a folder of workflows; Ctrl+O opens another with Windows' folder
-  picker, and the folder is opened again at the next start. The repository's `tests\scripts` is the folder of the
+  picker, and the folder used last, named at a start or chosen with Ctrl+O, is opened again at the next start
+  without one (AU-4.1; Ctrl+O's choice alone until 2026-11-14). The repository's `tests\scripts` is the folder of the
   existing checks: its scripts are read as workflows as they are (AU-5.2), with no second copy to drift from them.
 - AU-6a.2 Every change is refused with one sentence, "This version views and runs the workflows; changing them comes
   later" (until the runs of section 6b, "only views", and nothing ran). Ctrl+J opens the file as text: a script in

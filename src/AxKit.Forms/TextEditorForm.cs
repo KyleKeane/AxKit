@@ -43,6 +43,9 @@ public sealed partial class TextEditorForm : AxKitForm
 
     /// <summary>Where the caret was when a character, Backspace or Delete was typed, until the change it makes is recorded; -1 otherwise.</summary>
     private int _typedAt = -1;
+
+    /// <summary>A character, Enter or Tab was typed with text selected: the control first takes the selection out, then puts the character in, and both changes are that key's (AD-2.5).</summary>
+    private bool _typedOverSelection;
     private bool _replaying;
 
     private TextDocument _document = TextDocument.Empty();
@@ -199,6 +202,7 @@ public sealed partial class TextEditorForm : AxKitForm
         _editor.KeyUp += (_, _) =>
         {
             _typedAt = -1;
+            _typedOverSelection = false;
             ScheduleStatus();
         };
         _editor.MouseUp += (_, _) => ScheduleStatus();
@@ -407,6 +411,7 @@ public sealed partial class TextEditorForm : AxKitForm
         if (e.KeyChar >= ' ' || e.KeyChar is '\b' or '\r' or '\t')
         {
             _typedAt = _editor.SelectionStart;
+            _typedOverSelection = e.KeyChar != '\b' && _editor.SelectionLength > 0;
         }
     }
 

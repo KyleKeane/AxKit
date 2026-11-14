@@ -58,6 +58,8 @@
 //   iffound <step>            the step, only when the last try found its text (a trust prompt that may not come)
 //   wait <ms>                 waits
 //   close                     closes the current window as Alt+F4 does
+// The clipboard's text is read before the first script and put back after the last (ClipboardText): the run's desktop
+// shares the clipboard with the user's. A clipboard without text is left as the run left it.
 // After the last step every window is closed, and the run fails when a window's process ended on its own or a log of
 // the run holds an ERROR line. Any other process of the run's AxKit.exe (by its full path) that descends from the
 // runner or has a window on the run's desktop, and started after the runner, is then ended with its tree, a line in the
@@ -155,6 +157,11 @@ internal static class Program
         var failed = new List<string>();
         var notHeard = new List<string>();
         var clock = Stopwatch.StartNew();
+
+        // The run's desktop shares the clipboard with the user's, and some scripts write it (axClip's): its text is
+        // read before the first script and put back after the last, whatever ends the run. No text there (empty, a
+        // picture, files): nothing is put back.
+        var clipboardBefore = ClipboardText.Read();
         try
         {
             if (Run.Nvda)
@@ -199,6 +206,7 @@ internal static class Program
         }
         finally
         {
+            Console.WriteLine(ClipboardText.PutBack(clipboardBefore));
             if (Run.Nvda)
             {
                 // Whatever ended the run, an exception included: the warning stops, the capture ends and its log goes,

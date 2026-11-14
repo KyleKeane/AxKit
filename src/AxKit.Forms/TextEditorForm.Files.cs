@@ -146,8 +146,16 @@ public sealed partial class TextEditorForm
             // AD-2.5: every change the user makes, as the text before and after it; a typed key says where it was typed.
             var after = _editor.Text;
             _history.Record(_text, after, _editor.SelectionStart, _typedAt);
+            // A character typed over a selection reaches the EDIT control as two changes, the selection gone and then
+            // the character: the second is the same key's, typed at the same place, so that both are one step.
+            var selectionGone = _typedOverSelection && after.Length < _text.Length;
+            _typedOverSelection = false;
             _text = after;
-            _typedAt = -1;
+            if (!selectionGone)
+            {
+                _typedAt = -1;
+            }
+
             _runTimer.Stop();
             _runTimer.Start();
             // The EDIT control's own undo buffer stays empty (AD-D1): the history is the one undo.

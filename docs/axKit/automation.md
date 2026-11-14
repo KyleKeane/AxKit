@@ -87,6 +87,15 @@ including while the user works, because nothing takes the foreground.
   is never touched. Under `--nvda` there is no desktop of the run's own and only the descent counts: a stray started
   through the shell, whose parent can be another process than its starter, is not found there. A window left behind once
   stayed in front in the NVDA tier and the four scripts after it failed at their first key (2026-11-09).
+- **The user's clipboard kept** (2026-11-14): the run's desktop shares the clipboard with the user's session, and a
+  few scripts write it. The command line (`tools/AxAutomate`, with `ClipboardText` of `src/AxAutomate.Core`) reads the
+  clipboard's text before its first script and puts it back after its last, also when a script fails or the run stops
+  on an error. A clipboard that held no text before the run has a script's text taken off it again, so that a test text is
+  not what the user pastes next; a picture or files it held before cannot be kept, since a script's text replaced
+  them. Not covered: a runner that is killed, what the user copies during the run (the text of
+  before the run replaces it), Windows' own clipboard history and the user's running axClip, which both record the
+  test texts as they pass, and a workflow played in axAutomate's window, which goes through the engine and not this
+  command line.
 - **Commands**:
   - `keys <keys>`: key presses as a user makes them, `ctrl+shift+p`, `escape`, `down`, posted to the focused
     control through the window's own message queue with the modifiers set for the window's thread, so that
@@ -123,8 +132,9 @@ on Haiku. Every step a script cannot drive is a `#` line naming the plan step an
 - The Windows pickers (Open, Save as, Font, the folder picker) and the shell's own windows (Open with, Properties,
   File Explorer, a default program).
 - The clipboard: the test desktop shares it with the user's session, so copy and paste steps are not run. Two scripts
-  write it on purpose, since the clipboard is what they check, and what the user had on it is replaced: axClip's
-  `01-basics` (three test texts) and axPreview's `04-details-and-kinds` (one test picture, for Ctrl+Shift+V).
+  write it on purpose, since the clipboard is what they check: axClip's `01-basics` (three test texts) and axPreview's
+  `04-details-and-kinds` (one test picture, for Ctrl+Shift+V). The runner puts the user's text back after its last
+  script ("The user's clipboard kept" above); a picture or files the user had there are not kept and stay replaced.
 - Coming back to a window with Alt+Tab (the files changed on disk); F5 is used instead where the app has it.
 - What only NVDA shows, and sound and video quality: tier 3 and the user's ear.
 
@@ -229,7 +239,7 @@ neighbours may come in either order, on the window's side (a Fetch and a Pull pr
 focus back; NVDA says the focus first), since what the last expectation took is looked at again.
 
 Side effects of the tier on the user's own session: axClip's script puts three test texts on the real clipboard (the
-last stays there), and axPass's leaves the copies to the pass by ear for the same reason; the windows of the run come
+runner puts the user's text back after the last script), and axPass's leaves the copies to the pass by ear for the same reason; the windows of the run come
 to the front of the user's desktop and go again.
 
 When to run it: after a change to focus, keys, announcements or an edit control (the app's alone), and the whole pass

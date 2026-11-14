@@ -324,7 +324,8 @@ public abstract partial class ItemForm
         {
             case { IsList: false } row when _shown.Document is { } document:
                 Announce(row.Name + ". " + string.Join(". ", document.Fields.Where(field => !field.Title.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
-                    .Select(field => $"{field.Title}: {(field.Type == FieldTypes.LongText ? FieldTypes.TextOf(field.Value).ReplaceLineEndings(". ") : SpokenValue(row, field))}")), true);
+                    // A long text is read whole here; an empty one reads "empty" as every other empty field does ("Notes: " and nothing until 2026-11-14).
+                    .Select(field => $"{field.Title}: {(field.Type == FieldTypes.LongText && FieldTypes.TextOf(field.Value) is { Length: > 0 } text ? text.ReplaceLineEndings(". ") : SpokenValue(row, field))}")), true);
                 return;
             case { } other:
                 Announce(other.Label, true);

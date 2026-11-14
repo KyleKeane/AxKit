@@ -34,6 +34,9 @@ public sealed class TerminalModel : LineStore
     /// <summary>The line of the row the A mark landed on, until the B mark closes the prompt; null between prompts.</summary>
     private Line? _promptStart;
 
+    /// <summary>The line of the row the B mark landed on, where the echo of the next command starts; the rows a long command wraps onto are found under it (<see cref="HideWrappedEcho"/>).</summary>
+    private Line? _promptEnd;
+
     /// <summary>The lines of the last command as sent (trimmed), which the continuation rows under the prompt echo (AT-3.2); kept until the next prompt's B mark, emptied then.</summary>
     private readonly List<string> _sentLines = [];
 
@@ -218,6 +221,7 @@ public sealed class TerminalModel : LineStore
         AttachScreen();
         _promptLines.Clear();
         _promptStart = null;
+        _promptEnd = null;
         _sentLines.Clear();
         _lastCode = null;
         State = ShellState.NoMarks;
@@ -350,6 +354,7 @@ public sealed class TerminalModel : LineStore
                 }
 
                 _promptStart = null;
+                _promptEnd = _promptLines.Count > 0 ? _promptLines[^1] : null;
                 Prompt = string.Join(" ", texts);
                 break;
         }
@@ -395,7 +400,13 @@ public sealed class TerminalModel : LineStore
     /// </summary>
     private void HideContinuationRows()
     {
-        if (_promptLines.Count == 0 || ContinuationPrompt is null || _sentLines.Count == 0)
+        if (_promptLines.Count == 0 || _sentLines.Count == 0)
+        {
+            return;
+        }
+
+        HideWrappedEcho();
+        if (ContinuationPrompt is null)
         {
             return;
         }
@@ -419,6 +430,59 @@ public sealed class TerminalModel : LineStore
             {
                 line.ChromeHidden = true;
                 _promptLines.Add(line);
+            }
+        }
+    }
+
+    /// <summary>
+    /// A command longer than the console is wide is echoed over several rows (AT-3.2): the prompt row is filled to its
+    /// last column with the command's start, and the rows directly under it hold the rest, a console's width each.
+    /// Those rows are the echo's as the prompt row is, and are hidden with it; without this they were spoken after
+    /// "Sent" and stood in the Output block (2026-11-14). A row counts only when its text is what the command has at
+    /// that place (the whole piece, or its start while the echo is still arriving), so output is never taken.
+    /// </summary>
+    private void HideWrappedEcho()
+    {
+        var sent = _sentLines[0];
+        var row = _promptEnd is null ? -1 : _screen.RowOf(_promptEnd);
+        if (row < 0 || sent.Length == 0)
+        {
+            return;
+        }
+
+        // How much of the command the prompt row holds: its text, filled to the last column, ends with that much of
+        // the command's start (the row's own text has lost a space at its end).
+        var head = _promptEnd!.Text.PadRight(Columns);
+        var held = Math.Min(sent.Length - 1, head.Length);
+        while (held > 0 && !head.EndsWith(sent[..held], StringComparison.Ordinal))
+        {
+            held--;
+        }
+
+        if (held == 0)
+        {
+            return;
+        }
+
+        for (var r = row + 1; r < Rows && held < sent.Length; r++, held += Columns)
+        {
+            var line = _screen.LineAt(r);
+            var piece = sent.Substring(held, Math.Min(Columns, sent.Length - held)).TrimEnd();
+            if (line is null || line.Text.Length == 0 || !piece.StartsWith(line.Text.TrimEnd(), StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            if (!line.ChromeHidden)
+            {
+                line.ChromeHidden = true;
+                _promptLines.Add(line);
+            }
+
+            if (line.Text.TrimEnd().Length < piece.Length)
+            {
+                // The echo has come this far only; the next frame looks again.
+                return;
             }
         }
     }

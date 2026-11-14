@@ -194,6 +194,40 @@ public sealed class TerminalModelTests
         Assert.Equal(["# Input 1", "## Folder", "C:\\src", "## Command", "if ($true) {", "\"yes\"", "}", "", "# Output 1", "", "yes"], model.Lines.Where(l => !l.Hidden).Select(l => l.Text));
     }
 
+    /// <summary>A command longer than the console is wide (AT-3.2): the rows its echo wraps onto are the echo's, hidden with the prompt row, whether the echo comes in one frame or in pieces; output that repeats the command's text stays (the rows stood in the Output block until 2026-11-14).</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void The_rows_a_long_command_wraps_onto_are_hidden(bool inPieces)
+    {
+        // "PS C:\src> " is 11 columns of 20: the prompt row takes "echo 0123", the next rows the rest.
+        const string command = "echo 0123456789abcdefghijKLMNOPQRSTUVWXYZ-tail";
+        var model = new TerminalModel(20, 10);
+        Feed(model, Prompt(null));
+        model.EndFrame();
+        model.Send(command);
+        if (inPieces)
+        {
+            Feed(model, command[..14]);
+            model.EndFrame();
+            Feed(model, command[14..33]);
+            model.EndFrame();
+            Assert.DoesNotContain(model.Lines, l => !l.Hidden && l.Text.StartsWith("456789", StringComparison.Ordinal));
+            Feed(model, command[33..]);
+        }
+        else
+        {
+            Feed(model, command);
+        }
+
+        Feed(model, $"\r\n456789abcdefghijKLMN\r\nOPQRSTUVWXYZ-tail\r\n{Prompt("0")}");
+        model.EndFrame();
+
+        Assert.Equal(
+            ["# Input 1", "## Folder", "C:\\src", "## Command", command, "", "# Output 1", "", "456789abcdefghijKLMN", "OPQRSTUVWXYZ-tail"],
+            model.Lines.Where(l => !l.Hidden).Select(l => l.Text));
+    }
+
     /// <summary>The prompt rows are found by their lines (AT-4.2): a prompt of two rows printed from the bottom row scrolls its first row up before the B mark, and both are hidden all the same.</summary>
     [Fact]
     public void A_two_row_prompt_at_the_bottom_row_is_hidden_whole()

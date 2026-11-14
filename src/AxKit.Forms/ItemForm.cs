@@ -102,6 +102,9 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The app's state set to the list's level, for Right and Enter on a list.</summary>
     protected abstract void EnterList(ItemRow row);
 
+    /// <summary>Why Right and Enter do not go into this list, said in place of the move; null (every list of most apps) when they do.</summary>
+    protected virtual string? EntryRefused(ItemRow row) => null;
+
     /// <summary>The app's state set to the level above, and the key of the row to select there; null at the top, where nothing changes.</summary>
     protected abstract string? LeaveList();
 
@@ -462,6 +465,13 @@ public abstract partial class ItemForm : AxKitForm
 
     private void OpenList(ItemRow row)
     {
+        if (EntryRefused(row) is { } why)
+        {
+            // A list that cannot be gone into (axMCP's remote server, MP-1.4): the reason said, the level as it was.
+            Announce(why, true);
+            return;
+        }
+
         EnterList(row);
         Fill(select: null);
         AnnounceLevel();

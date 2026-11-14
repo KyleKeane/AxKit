@@ -209,3 +209,16 @@ expect said Done
 expect said ♪ Done
 keys ctrl+space
 expect said Background music off
+
+# AT-3.2: a command longer than the console is wide. The rows its echo wraps onto are hidden with the prompt row:
+# after "Sent" only the output is said, and the command's text is not in the Output block (it was, until 2026-11-14).
+keys ctrl+l
+expect said Cleared
+type $n = 'abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij tailmark'; Write-Output finished
+keys enter
+expect said Sent
+refuse said tailmark
+expect said finished
+expect said Done
+keys ctrl+3
+expect text "# Output 1","","finished"

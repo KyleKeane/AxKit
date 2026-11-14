@@ -243,6 +243,11 @@ public sealed class MCPForm : ItemForm
         return (rows, $"Servers, {Count(_servers.Count, "server")}", "Servers", _folder ?? string.Empty);
     }
 
+    /// <summary>MP-1.4: a server that is not stdio is never started, and Right or Enter on it says why and stays on the servers.</summary>
+    protected override string? EntryRefused(ItemRow row) => row.Tag is McpServer { Kind: not ServerKind.Stdio } server ? NotStarted(server) : null;
+
+    private static string NotStarted(McpServer server) => $"{server.KindText} servers need a network connection of axKit's own, which this version does not make";
+
     protected override void EnterList(ItemRow row)
     {
         switch (row.Tag)
@@ -475,7 +480,7 @@ public sealed class MCPForm : ItemForm
 
         if (server.Kind != ServerKind.Stdio)
         {
-            Announce($"{server.KindText} servers need a network connection of axKit's own, which this version does not make", true);
+            Announce(NotStarted(server), true);
             return;
         }
 
@@ -501,7 +506,7 @@ public sealed class MCPForm : ItemForm
         }
         catch (Exception ex) when (ex is Win32Exception or InvalidOperationException or IOException or UnauthorizedAccessException)
         {
-            Failed($"Could not start {server.Name}", ex.Message);
+            ShowError($"Could not start {server.Name}", ex.Message);
             return;
         }
 
@@ -541,7 +546,7 @@ public sealed class MCPForm : ItemForm
             running.ExitCode ??= -1;
             running.Starting = false;
             FillLevel();
-            Failed($"Could not start {server.Name}", ex is OperationCanceledException ? $"No answer from {server.Name} in 60 s" : ex.Message);
+            ShowError($"Could not start {server.Name}", ex is OperationCanceledException ? $"No answer from {server.Name} in 60 s" : ex.Message);
             return;
         }
 
@@ -729,7 +734,7 @@ public sealed class MCPForm : ItemForm
             }
             catch (McpError ex)
             {
-                Failed($"{what} failed", ex.Message);
+                ShowError($"{what} failed", ex.Message);
             }
             catch (OperationCanceledException)
             {

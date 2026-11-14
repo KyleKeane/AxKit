@@ -5,7 +5,7 @@ file home\AxKit\axTask.json {"checkForUpdates": false}
 file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Start", "type": "date", "value": ""}, {"title": "Due", "type": "date", "value": "2099-10-30"}]}
 file "tasks\Home\Water plants.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Water plants"}, {"title": "Done", "type": "check", "value": true}]}
 file tasks\Home\notes.txt not an item
-file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
+file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}, {"title": "Notes", "type": "longtext", "value": ""}]}
 file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
 file "tasks\Course plan\Week one.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Week one"}, {"title": "Done", "type": "check", "value": false}]}
 
@@ -173,6 +173,10 @@ type m
 expect focus Milk
 keys space
 expect said ! Not a task
+# IA-3 Ctrl+Q reads every field of the selection; an empty long text reads "empty" as every empty field does ("Notes: "
+# and nothing after it until 2026-11-14).
+keys ctrl+q
+expect said ! Milk. Notes: empty
 
 # 1.7 Ctrl+0: All tasks (Ctrl+1 until 2026-11-07, TK-7a.1), the soonest due first, each with its list.
 keys ctrl+0
