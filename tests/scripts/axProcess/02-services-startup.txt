@@ -2,6 +2,9 @@
 # axProcess: the Services and Startup views (docs/axProcess/nvda-test-plan.md sections 3 and 4; SPEC PR-4, PR-5).
 # Read only: no service is started or stopped here, since a run with administrator rights would do it for real.
 file home\AxKit\axProcess.json {"checkForUpdates": false}
+# In a test run the Startup view reads a stand-in of the run's own, never this computer's start-up places (PR-5.8):
+# one file in the run's stand-in for your Startup folder, so that the view has an entry.
+file home\AxKit\startup\yours\Morning.lnk a stand-in for a shortcut
 start process
 # The first read done: the status bar says "Reading…" until then, and a view key meanwhile says "Working…" (PR-2.3).
 expect state "status":["Processes,
@@ -36,10 +39,11 @@ expect said ! Services,
 keys ctrl+1
 expect said ! Processes,
 
-# 4.1 Ctrl+3: the startup programs, whatever this computer starts (it may be none).
+# 4.1 Ctrl+3: the startup programs: the run's stand-in, with its one entry (until 2026-11-14 this computer's own, whatever
+# it starts).
 keys ctrl+3
-expect said ! Startup,
-expect focus Startup,
+expect said ! Startup, 1. Morning, enabled, your Startup folder
+expect focus Startup, 1
 
 # 5.3 F1: the shortcuts; Escape.
 keys f1
@@ -64,6 +68,7 @@ expect said ! Startup,
 # among the services (the palette's list is the menus' enabled items).
 refuse commands Restart
 refuse commands End process tree
+expect commands Turn off
 keys ctrl+2
 expect said ! Services,
 expect commands Restart

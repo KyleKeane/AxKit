@@ -42,6 +42,15 @@ Run with NVDA before a release, after `run-axProcess.ps1` (or `.\run.ps1 -App pr
 2. Enter: the details, "Command …", "Set in …", "Enabled", "Program …"; Show program in axFile opens axFile on it.
 3. An entry turned off in Task Manager's Startup apps reads "disabled".
 
+Steps 4 to 9 change what starts with Windows. By ear, run them on an entry of your own that you can lose: make one first, for example a shortcut to Notepad in your Startup folder (Windows+R, `shell:startup`), which reads "<name>, enabled, your Startup folder". The automated check (`tests/scripts/axProcess/04-startup-turn-off-remove.txt`) runs the same steps on a stand-in of its own and never on this computer's start-up places (SPEC PR-5.8).
+
+4. On your entry, Shift+F10: Context reads "Details Enter", then Turn off, Turn on, Remove... Delete, Show program in axFile, Copy line. Turn off: "<name> turned off: it no longer starts with Windows", once; the selection is on the same entry, which now reads "<name>, disabled, your Startup folder". Task Manager's Startup apps tab shows it Disabled. Turn off again: "<name> is already turned off".
+5. Context, Turn on: "<name> turned on: it starts with Windows again"; the line reads "enabled"; Task Manager shows it Enabled. Turn on again: "<name> is already turned on".
+6. Delete: a notice, "Remove <name> from the programs that start with Windows?", with "Command ...", "Set in your Startup folder", "The file in the Startup folder is deleted for good, not sent to the Recycle Bin. The program itself stays on the computer." and "Turn off is the gentler way: it keeps the entry, and Turn on brings it back."; the buttons Remove and Cancel, Cancel the default. Enter: the notice closes, nothing is said about a removal, the entry is still there. Delete, Escape: the same.
+7. Delete, Alt+R: "<name> removed from the programs that start with Windows", once; the list has one entry fewer and the selection is on the entry that followed it (the one before it when it was the last); the shortcut is gone from the Startup folder.
+8. On an entry that reads "computer's Run key" or "all users' Startup folder" (if the computer has one), Context, Turn off: "<name> is set for every user of this computer: turning it off needs administrator rights. Use Task Manager's Startup apps tab, or Settings, Apps, Startup"; no Windows prompt appears and the line still reads as before. Delete: "<name> is set for every user of this computer: removing it needs administrator rights. Task Manager's Startup apps tab, or Settings, Apps, Startup, turns it off", with no question.
+9. Enter on an enabled entry: the details' buttons are Turn off, Remove, Show program in axFile, Close; on a disabled one the first is Turn on. Delete in the Services view still says "Processes view first: Ctrl+1"; Delete on a process still asks to end it.
+
 ## 5. Text, notices, the Window, axKit and Help menus (PR-6)
 
 1. Ctrl+S: "Nothing to save here. F5 refreshes, Delete ends a process".

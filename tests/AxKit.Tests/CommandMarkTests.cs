@@ -32,6 +32,9 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxCalc", "CalcForm.cs"), "&Copy answer", "writes the user's clipboard"),
         (Path.Combine("src", "AxFile", "FileForm.cs"), "Copy pat&h", "writes the user's clipboard"),
         (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "&Copy line", "writes the user's clipboard"),
+        (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Turn &off", "changes what starts with Windows"),
+        (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Turn o&n", "changes what starts with Windows"),
+        (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "&Remove...", "deletes an entry of what starts with Windows"),
     ];
 
     [Fact]

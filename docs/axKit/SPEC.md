@@ -85,7 +85,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   guide `docs/axStart/user-guide.md`, test plan `docs/axStart/nvda-test-plan.md`.
 - **axProcess** (2026-10-23, branch `axProcess`): `AxKit.exe process`, Start entry `axKit axProcess`, command `axProcess`,
   no File Explorer entry. What runs on the computer as one list with three views (processes, services, startup
-  programs), read on F5 and never on a timer; a process ended after a question, a service started or stopped.
+  programs), read on F5 and never on a timer; a process ended after a question, a service started or stopped, a
+  startup program of the user's own turned off, on again or removed after a question (2026-11-14).
   Specification `docs/axProcess/SPEC.md`, guide `docs/axProcess/user-guide.md`, test plan
   `docs/axProcess/nvda-test-plan.md`.
 - **axTask** (2026-10-24, branch `axTask`): `AxKit.exe task [<folder>]`, Start entry `axKit axTask`, command `axTask`,

@@ -63,6 +63,12 @@ including while the user works, because nothing takes the foreground.
   that folder (`AppPaths.OneAtATime`), so that a run's axStart, axClip or axHelp never takes the user's
   own, running from sign-in, for a second start and ends at once (which every axDescribe script did on 2026-11-09
   while the user's axDescribe ran; axDescribe is part of axHelp since 5.7.0).
+- **Its own start-up places** (2026-11-14, docs/axProcess/SPEC.md PR-5.8). axProcess's Startup view turns entries off
+  and removes them, so in a test run it reads and changes a stand-in and never what starts with Windows on the
+  computer: the registry key `HKEY_CURRENT_USER\Software\AxKit\Runs\<the run's mark>\Startup` (`AppPaths.RunMark`) and
+  the folders `AxKit\startup\yours` and `everyone` under the run's folder (`AxProcess.Core/StartupPlaces`). A script
+  seeds it (a `file` step for a folder entry, a PowerShell `run` step for the registry) and deletes the key at its
+  end. A view of a run therefore lists the stand-in's entries and no other.
 - **One named pipe per window**, `\\.\pipe\axkit-auto-<process id>`, for the current user alone and refused to
   clients over the network (its access list); the runner connects with `CurrentUserOnly`, so a pipe another program
   made under the name is refused. A pipe already taken ends the channel, never the window. One command per line, one

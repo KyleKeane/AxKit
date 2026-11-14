@@ -19,8 +19,9 @@ public static class HelpText
           Ctrl+Q: the summary: the processes, the memory in use, the processor
           Type the start of an item to jump to it, the same letter again to the next; Shift with a letter backwards
           In the list
-            Enter: the item's details, with what can be done to it: end a process, start or stop a service
-            Delete: end the process, after a question
+            Enter: the item's details, with what can be done to it: end a process, start or stop a service, turn a startup program off or on, remove it
+            Delete: end the process, after a question; in the Startup view, remove the startup program, after a question whose default is Cancel
+            Context, Turn off and Turn on, in the Startup view: the startup program no longer starts with Windows, or starts again; nothing is deleted
             Shift+F10 or the Applications key: the Context menu, what acts on the line selected in the view shown
             Up or Home on the first item, Down or End on the last: the edge sound, since nothing moves
           Ctrl+E: show the program file in axFile

@@ -109,7 +109,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxProcess` (the window), `src/AxProcess.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxProcess.Tests`.
 - Documents: `docs/axProcess/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axProcess/`, 3 scripts (their workflows are in `docs/axKit/workflows.md`).
+- Automated checks: `tests/scripts/axProcess/`, 4 scripts (their workflows are in `docs/axKit/workflows.md`).
 - Run from the sources: `run-axProcess.ps1`, or `run.ps1 -App process`.
 
 ### axAutomate

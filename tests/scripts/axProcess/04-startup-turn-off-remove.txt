@@ -1,0 +1,126 @@
+# Workflow: Turn a startup program off, on again, or remove it
+# axProcess: Turn off, Turn on and Remove in the Startup view (docs/axProcess/nvda-test-plan.md section 4; SPEC PR-5.4
+# to PR-5.8). SAFETY: nothing here reads or changes what starts with Windows on this computer. In a test run the
+# Startup view's five places are a stand-in of the run's own (PR-5.8): the registry key
+# HKEY_CURRENT_USER\Software\AxKit\Runs\<the run's mark>\Startup, where the Run keys and the StartupApproved keys lie
+# under User and Computer, and the folders home\AxKit\startup\yours and \everyone of the run's folder. The stand-in is
+# seeded, looked at and deleted by stand-in.ps1, written here: it finds the key from the run's folder as AppPaths.MarkOf
+# does (the first six bytes of the SHA-256 of the folder's path in capitals) and touches nothing outside it.
+file home\AxKit\axProcess.json {"checkForUpdates": false}
+file stand-in.ps1 param([string]$runHome, [string]$mode)\n$bytes = [Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($runHome.ToUpperInvariant()))\n$mark = -join ($bytes[0..5] | ForEach-Object { $_.ToString('X2') })\n$root = 'HKCU:\Software\AxKit\Runs\' + $mark\n$user = $root + '\Startup\User\Software\Microsoft\Windows\CurrentVersion'\n$computer = $root + '\Startup\Computer\Software\Microsoft\Windows\CurrentVersion'\nfunction Switch-Byte($name) { $v = (Get-ItemProperty -Path ($user + '\Explorer\StartupApproved\Run') -ErrorAction SilentlyContinue).$name; if ($null -eq $v) { -1 } else { [int]$v[0] } }\nfunction Has($name) { $null -ne (Get-ItemProperty -Path ($user + '\Run') -ErrorAction SilentlyContinue).$name }\n$ok = $true\nif ($mode -eq 'seed') { New-Item -Path ($user + '\Run') -Force | Out-Null; New-Item -Path ($computer + '\Run') -Force | Out-Null; Set-ItemProperty -Path ($user + '\Run') -Name 'Check Alpha' -Value 'C:\Checks\alpha.exe --quiet'; Set-ItemProperty -Path ($user + '\Run') -Name 'Check Beta' -Value 'C:\Checks\beta.exe'; Set-ItemProperty -Path ($computer + '\Run') -Name 'Check Everyone' -Value 'C:\Checks\everyone.exe' }\nif ($mode -eq 'off') { $ok = (Has 'Check Alpha') -and ((Switch-Byte 'Check Alpha') -eq 3) }\nif ($mode -eq 'on') { $ok = (Has 'Check Alpha') -and ((Switch-Byte 'Check Alpha') -eq 2) }\nif ($mode -eq 'removed') { $ok = (-not (Has 'Check Alpha')) -and (Has 'Check Beta') -and ((Switch-Byte 'Check Alpha') -eq -1) }\nif ($mode -eq 'computer') { $ok = ($null -ne (Get-ItemProperty -Path ($computer + '\Run')).'Check Everyone') -and -not (Test-Path ($computer + '\Explorer')) }\nif ($mode -eq 'clean') { Remove-Item -Path $root -Recurse -Force -ErrorAction SilentlyContinue; $runs = 'HKCU:\Software\AxKit\Runs'; foreach ($up in @($runs, (Split-Path $runs))) { $key = Get-Item $up -ErrorAction SilentlyContinue; if ($key -and $key.SubKeyCount -eq 0 -and $key.ValueCount -eq 0) { Remove-Item $up -ErrorAction SilentlyContinue } }; $ok = -not (Test-Path $root) }\nif (-not $ok) { exit 1 }
+# Four entries: two of the user's Run key, one of the computer's Run key, one file in the user's Startup folder.
+run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" seed
+file "home\AxKit\startup\yours\Check Morning.lnk" a stand-in for a shortcut
+
+start process
+check commands
+expect state "status":["Processes,
+
+# 4.1 Ctrl+3: the stand-in's four entries and no other, so nothing of this computer's own is listed.
+keys ctrl+3
+expect said ! Startup, 4. Check Alpha, enabled, current user's Run key
+expect list Check Beta, enabled, current user's Run key
+expect list Check Everyone, enabled, computer's Run key
+expect list Check Morning, enabled, your Startup folder
+# The view's commands, and none of the other views'.
+expect commands Turn off
+expect commands Turn on
+expect commands Remove
+refuse commands End process
+
+# 4.4 Turn off: one sentence, the line reads disabled, the selection stays; the switch is Task Manager's byte 03.
+menu Turn off
+expect said ! Check Alpha turned off: it no longer starts with Windows
+expect focus Check Alpha, disabled, current user's Run key
+expect focus Startup, 4
+run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" off
+# Turned off already: said, nothing done.
+menu Turn off
+expect said ! Check Alpha is already turned off
+
+# 4.5 Turn on: the entry starts again; the switch is byte 02, and nothing was deleted.
+menu Turn on
+expect said ! Check Alpha turned on: it starts with Windows again
+expect focus Check Alpha, enabled, current user's Run key
+run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" on
+menu Turn on
+expect said ! Check Alpha is already turned on
+
+# 4.6 Delete asks first, naming the entry, its command and its place, and that Turn off is the gentler way; Enter is
+# Cancel, and the entry stays.
+keys delete
+expect state "notice":"Remove Check Alpha from the programs that start with Windows?"
+expect state alpha.exe --quiet
+expect state Set in current user's Run key
+expect state The entry is deleted from the Run key for good.
+expect state Turn off is the gentler way: it keeps the entry, and Turn on brings it back.
+# A notice holds its answering keys for a moment after it appears (KeyHold).
+wait 1200
+keys enter
+expect state "notice":null
+expect focus Check Alpha, enabled, current user's Run key
+run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" on
+# Escape is Cancel too.
+keys delete
+expect state "notice":"Remove Check Alpha
+wait 1200
+keys escape
+expect state "notice":null
+expect focus Startup, 4
+
+# 4.7 Delete, then Remove (Alt+R): one sentence, the entry gone with its switch, the selection on the entry after it.
+keys delete
+expect state "notice":"Remove Check Alpha
+wait 1200
+keys alt+r
+expect said ! Check Alpha removed from the programs that start with Windows
+expect focus Startup, 3
+expect focus Check Beta, enabled, current user's Run key
+refuse list Check Alpha
+run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" removed
+
+# 4.8 An entry set for every user of the computer: each command says so and names Windows' own place; no question is
+# asked, nothing is tried, and the entry is as it was.
+keys down
+expect focus Check Everyone, enabled, computer's Run key
+menu Turn off
+expect said ! Check Everyone is set for every user of this computer: turning it off needs administrator rights. Use Task Manager's Startup apps tab, or Settings, Apps, Startup
+keys delete
+expect said ! Check Everyone is set for every user of this computer: removing it needs administrator rights. Task Manager's Startup apps tab, or Settings, Apps, Startup, turns it off
+expect state "notice":null
+expect focus Check Everyone, enabled, computer's Run key
+run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" computer
+
+# 4.9 A file of the Startup folder: turned off, its details say Disabled and offer Turn on; removed, the file is
+# deleted, and the selection goes to the entry before it, since it was the last.
+keys down
+expect focus Check Morning, enabled, your Startup folder
+menu Turn off
+expect said ! Check Morning turned off: it no longer starts with Windows
+expect focus Check Morning, disabled, your Startup folder
+keys enter
+expect state "notice":"Check Morning"
+expect state Set in your Startup folder
+expect state Disabled
+keys alt+n
+expect said ! Check Morning turned on: it starts with Windows again
+expect state "notice":null
+expect focus Check Morning, enabled, your Startup folder
+keys delete
+expect state "notice":"Remove Check Morning from the programs that start with Windows?"
+expect state The file in the Startup folder is deleted for good, not sent to the Recycle Bin.
+wait 1200
+keys alt+r
+expect said ! Check Morning removed from the programs that start with Windows
+expect focus Startup, 2
+expect focus Check Everyone, enabled, computer's Run key
+run if exist "home\AxKit\startup\yours\Check Morning.lnk" (exit 1) else (exit 0)
+
+# PR-6.2 Delete in the Services view is still the Processes view's command, and says which view first.
+keys ctrl+2
+expect said ! Services,
+keys delete
+expect said ! Processes view first: Ctrl+1
+
+# The stand-in's key deleted: nothing of the run is left in the registry.
+run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" clean

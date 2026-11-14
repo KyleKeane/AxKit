@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axProcess: the Startup view (Ctrl+3) can now stop a program from starting with Windows. Context (Shift+F10), Turn off sets the same switch as Task Manager's Startup apps tab and deletes nothing ("KeePassXC turned off: it no longer starts with Windows"); Turn on brings it back. Delete removes the entry for good after a question whose default is Cancel. The details notice (Enter) has the same buttons. An entry set for every user of the computer needs administrator rights: axProcess says so, changes nothing and names Windows' own places for it.
 - axPass: Install KeePassXC now no longer leaves KeePassXC starting with Windows. KeePassXC's installer sets that by default, and its window then opened at every sign-in; axPass now tells the installer not to, and not to open KeePassXC when it ends. If an installer sets it all the same, the notice "KeePassXC is installed" says so and where to turn it off. An entry an earlier install left is not touched: turn it off in KeePassXC, Tools, Settings, General, Automatically launch KeePassXC at system startup.
 
 ## 5.8.0

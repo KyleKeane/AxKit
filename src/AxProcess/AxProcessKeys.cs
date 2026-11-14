@@ -23,7 +23,7 @@ public static class AxProcessKeys
     /// <summary>In the list: the item's details with what can be done to it.</summary>
     public const Keys Act = Keys.Return;
 
-    /// <summary>In the list: end the process, after a question (PR-3.3).</summary>
+    /// <summary>In the list, by the view shown: end the process (PR-3.3), or in the Startup view remove the startup program (PR-5.6), each after a question.</summary>
     public const Keys End = Keys.Delete;
 
     public const Keys ShowProgram = Keys.Control | Keys.E;
@@ -45,7 +45,7 @@ public static class AxProcessKeys
         ("Previous view", PreviousView),
         ("Refresh", Refresh),
         ("Details (in the list)", Act),
-        ("End the process (in the list)", End),
+        ("End the process, or in the Startup view remove the startup program (in the list)", End),
         ("Show the program in axFile", ShowProgram),
         ("Copy the line", CopyLine),
         ("Summary", Summary),

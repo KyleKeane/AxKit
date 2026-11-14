@@ -75,7 +75,8 @@ public sealed class ProcessForm : AxKitForm
         var copyLine = new Command("&Copy line", AxProcessKeys.CopyLine, CopyLine) { Mark = CommandMark.Act };
         var showProgram = new Command("Show program in ax&File", AxProcessKeys.ShowProgram, ShowProgram) { Mark = CommandMark.Open };
         Add(_processMenu, details);
-        Add(_processMenu, new Command("&End process...", AxProcessKeys.End, () => EndProcess(tree: false)) { When = () => _list.Focused, Mark = CommandMark.Act });
+        // Delete is two commands, by the view shown (PR-6.2): Remove in Startup, End process in the other two.
+        Add(_processMenu, new Command("&End process...", AxProcessKeys.End, () => EndProcess(tree: false)) { When = () => _list.Focused && _view != View.Startup, Mark = CommandMark.Act });
         Add(_processMenu, new Command("End process &tree...", Keys.None, () => EndProcess(tree: true)) { Mark = CommandMark.Act });
         Add(_processMenu, showProgram);
         Add(_processMenu, copyLine);
@@ -86,7 +87,11 @@ public sealed class ProcessForm : AxKitForm
         Add(_serviceMenu, new Command("&Restart", Keys.None, () => ControlSelectedService(ServiceAction.Restart)) { Mark = CommandMark.Act });
         Add(_serviceMenu, copyLine);
 
+        // Turn off, Turn on and Remove change what starts with Windows (PR-5.4 to PR-5.6): act, so an AI tool asks first.
         Add(_startupMenu, details);
+        Add(_startupMenu, new Command("Turn &off", Keys.None, () => ChangeSelectedStartup(StartupAction.TurnOff)) { Mark = CommandMark.Act });
+        Add(_startupMenu, new Command("Turn o&n", Keys.None, () => ChangeSelectedStartup(StartupAction.TurnOn)) { Mark = CommandMark.Act });
+        Add(_startupMenu, new Command("&Remove...", AxProcessKeys.End, () => ChangeSelectedStartup(StartupAction.Remove)) { When = () => _list.Focused && _view == View.Startup, Mark = CommandMark.Act });
         Add(_startupMenu, showProgram);
         Add(_startupMenu, copyLine);
 
@@ -339,7 +344,7 @@ public sealed class ProcessForm : AxKitForm
             return true;
         }
 
-        Announce(view == View.Processes ? "Processes view first: Ctrl+1" : "Services view first: Ctrl+2", true);
+        Announce(view switch { View.Processes => "Processes view first: Ctrl+1", View.Services => "Services view first: Ctrl+2", _ => "Startup view first: Ctrl+3" }, true);
         return false;
     }
 
@@ -401,6 +406,10 @@ public sealed class ProcessForm : AxKitForm
 
                 ShowNotice(new Notice(entry.Name, string.Join("\n", entry.Details),
                 [
+                    entry.Enabled
+                        ? new OverlayChoice("Turn &off", () => ChangeStartup(entry, StartupAction.TurnOff))
+                        : new OverlayChoice("Turn o&n", () => ChangeStartup(entry, StartupAction.TurnOn)),
+                    new OverlayChoice("&Remove...", () => ChangeStartup(entry, StartupAction.Remove)),
                     new OverlayChoice("Show program in ax&File", ShowProgram),
                     new OverlayChoice("&Close", IsDefault: true, IsCancel: true),
                 ]));
@@ -609,6 +618,97 @@ public sealed class ProcessForm : AxKitForm
         var stop = ServiceManager.Stop(name);
         return stop.Done ? ServiceManager.Start(name) : stop;
     }
+
+    // ---- startup (PR-5.4 to PR-5.7) ----
+
+    private void ChangeSelectedStartup(StartupAction action)
+    {
+        if (!InView(View.Startup))
+        {
+            return;
+        }
+
+        if (CurrentStartup() is not { } entry)
+        {
+            Announce("Nothing selected", true);
+            return;
+        }
+
+        ChangeStartup(entry, action);
+    }
+
+    /// <summary>
+    /// Turn off, Turn on, Remove: what is refused is said before anything else (an entry of the whole computer, one
+    /// already off or on); a removal asks first, Cancel the default (PR-5.6); the others act at once.
+    /// </summary>
+    private void ChangeStartup(StartupEntry entry, StartupAction action)
+    {
+        if (StartupChange.Refusal(action, entry, StartupPlaces.Current.Administrator) is { } refused)
+        {
+            Announce(StartupChange.Said(action, entry, new StartupResult(refused)), true);
+            return;
+        }
+
+        if (action != StartupAction.Remove)
+        {
+            ApplyStartup(entry, action);
+            return;
+        }
+
+        ShowNotice(Notice.Ask(StartupChange.RemoveQuestion(entry), StartupChange.RemoveText(entry), "&Remove", () => ApplyStartup(entry, action), cancelIsDefault: true));
+    }
+
+    /// <summary>
+    /// The change on a background task, its one sentence, then the list read again on the same entry, or after a
+    /// removal on the one that followed it (PR-5.7). In a test run the places are the run's own (PR-5.8).
+    /// </summary>
+    private void ApplyStartup(StartupEntry entry, StartupAction action) => Do(async () =>
+    {
+        if (_busy is not null)
+        {
+            Announce("Working…", true);
+            return;
+        }
+
+        var at = _startup.ToList().IndexOf(entry);
+        var neighbour = at < 0 ? null : at + 1 < _startup.Count ? _startup[at + 1].Key : at > 0 ? _startup[at - 1].Key : null;
+        _busy = (action switch { StartupAction.TurnOff => "Turning off ", StartupAction.TurnOn => "Turning on ", _ => "Removing " }) + entry.Name + "…";
+        UpdateStatusBar();
+        StartupResult result;
+        try
+        {
+            result = await Task.Run(() => StartupList.Apply(StartupPlaces.Current, entry, action));
+        }
+        finally
+        {
+            _busy = null;
+            UpdateStatusBar();
+        }
+
+        Log.Info($"Startup entry {entry.Name} ({StartupEntry.PlaceText(entry.Place)}) {action}: {result.Outcome}{(result.Error is { } error ? ", " + error : string.Empty)}");
+        Announce(StartupChange.Said(action, entry, result), true);
+        if (result.Outcome is not (StartupOutcome.Done or StartupOutcome.Gone))
+        {
+            return;
+        }
+
+        // The list read again, in place: the selection stays on the entry, or goes to its neighbour when it is gone.
+        var startup = _views[(int)View.Startup];
+        if (_view == View.Startup)
+        {
+            RememberSelection();
+        }
+
+        if (startup.SelectedKey == entry.Key && (action == StartupAction.Remove || result.Outcome == StartupOutcome.Gone))
+        {
+            startup.SelectedKey = neighbour;
+        }
+
+        if (await LoadAsync(View.Startup) && _view == View.Startup)
+        {
+            FillList();
+        }
+    });
 
     // ---- the status bar (PR-2.4) ----
 
