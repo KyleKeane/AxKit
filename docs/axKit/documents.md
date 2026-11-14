@@ -25,7 +25,7 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   servers), where each one's texts, options and protocol are written, what is read from it and how, what guards it,
   and what is still outside that one place (root `CLAUDE.md`, rule 12).
 - `reports.md` (RP-n): the reports from every window (F4), sent to GitHub as issues of the reports repository;
-  axTask's GitHub lists and action keys.
+  axTask's action keys, and why its GitHub lists were removed.
 - `theme.md` (TH-n): the theme file, every colour from one JSON file, and the display settings.
 - `adding-an-app.md`: how a new app is made and every place it is registered.
 

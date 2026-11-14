@@ -10,7 +10,12 @@ records them and the steps to make them again, as `code-signing.md` does for the
 | The reports repository `AxKit-reports` | https://github.com/KyleKeane/AxKit-reports, public, made 2026-11-07 | Issues are the reports; `blocklist.json` at its root is the blocklist (RP-6.4); `.github/workflows/close-blocked.yml` closes and locks a blocked report; the labels `feedback`, `bug` and `feature`; two issue forms for people with a GitHub account of their own; issues on, wiki, projects and discussions off |
 | The reporter token | A fine-grained personal access token of the maintainer's own GitHub account: repository access `AxKit-reports` only, permission Issues: read and write, nothing else, expiry one year | Creates, edits, labels and closes issues of the reports repository, nothing else (RP-6.2). Issues it posts show the maintainer's name as the author; the reporter line in the body tells which install sent them |
 | The secret `AXKIT_REPORTER_TOKEN` | A secret of the GitHub environment `release` of this repository (the one the Store's credentials are in) | Read by the package job of `release.yml` alone; `publish.ps1` writes it into the build through `tools/reporter-token.ps1` |
-| The maintainer's token for axTask's GitHub actions (RP-7.2) | A second fine-grained token of the maintainer's account: `AxKit-reports`, permissions Issues: read and write and Contents: read and write (the blocklist) | Pasted once into axTask (List menu, GitHub account…), kept on the maintainer's computer protected as the MCP key is; never in the repository or on GitHub. Optional until the maintainer wants to relabel, close, comment or block from axTask |
+
+axTask's GitHub lists were removed on 2026-11-14 (RP-7, RP-D10): axTask is local only, and the maintainer reads,
+relabels, closes, answers and blocks on GitHub itself, in the browser or with `gh`. A second token of the maintainer's, made
+for axTask's GitHub actions before that day (Issues and Contents on `AxKit-reports`), is no longer used by anything:
+delete it on GitHub (Settings → Developer settings → Fine-grained tokens), and its protected copy on the computer,
+`%LOCALAPPDATA%\AxKit\github.token`.
 
 Why one account: GitHub lets a fine-grained token reach only repositories its own account owns (or an organization the
 account belongs to), so a separate reporter account could hold no fine-grained token for `KyleKeane/AxKit-reports`; it
@@ -40,13 +45,12 @@ this (RP-D2). A reporter account can come later, with an organization, without a
    repository. `tools\reporter-token.ps1 -Remove` and deleting the file afterwards leave nothing behind.
 6. **A release.** `release.ps1 <version>` as always; the sign job writes the token into the build. The notes do not
    mention the token. Check with a fresh install the same way as step 5.
-7. **The maintainer's second token** for axTask (section 1, last row), made the same way with Issues and Contents, and
-   pasted into axTask once, when the GitHub actions are wanted.
 
 ## 3. When something goes wrong
 
-- **Nonsense from one install or one version** (RP-6.4): add the reporter id or the version to `blocklist.json`, from
-  axTask (Block this reporter, Block this version) or by hand on GitHub; the workflow closes what still arrives, and
+- **Nonsense from one install or one version** (RP-6.4): add the reporter id or the version to `blocklist.json` on
+  GitHub itself (the file's edit page in the browser, or a commit pushed with git; the id and the version are in the
+  last line of the issue's body, "Sent from axKit <version> with F4; reporter <id>"); the workflow closes what still arrives, and
   the senders stop within a day, when they read the list again.
 - **The token leaked or abused.** Delete it on GitHub (Settings → Developer settings → Fine-grained tokens → the token);
   make a new one; replace the environment secret; release a new version. Every earlier version then gets GitHub's 401

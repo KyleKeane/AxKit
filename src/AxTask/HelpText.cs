@@ -48,16 +48,12 @@ public static class HelpText
           Under the Projects heading, a heading of level 2 for each project folder, "Projects in" and the folder's name, with each folder of lists found under it and its count of lists
           Right on a project: its lists, smart lists and Archive, changed in place as your own. Left from its top goes back to your lists, on the project
 
-        ## GitHub lists
-          Actions, New GitHub list makes a list of a repository's open issues, read from GitHub when it opens and on F5; your Notes on each issue stay
-          Context, GitHub on an item: make it a bug, a feature request or feedback, close, reopen, comment, block the reporter or the version, open on GitHub, open in axClaude, as your own GitHub account (Actions, GitHub account, a token pasted once)
-
         ## AI tools
           While this window is open, an AI tool you allowed reads your lists, and adds an item while axKit menu, AI tools, Let AI tools run commands is on: "Claude added Call the dentist to Personal". Ctrl+Z takes it back
 
         ## Everywhere in axTask
           Ctrl+Z: undo the last change
-          F5: read the folder again, and a GitHub list from GitHub
+          F5: read the folder again
           Ctrl+J: open the item, the list's details or the smart list in axJSON
           Ctrl+E: show it in axFile
           Ctrl+S: nothing to save here; every change is written at once

@@ -27,9 +27,9 @@ TK and IA material and moves into those specs when built.
   token's revocation and rotation at a release let the maintainer stop nonsense from one install or one version
   (RP-6.4). A version whose token was revoked says so and offers the report for copying and GitHub's own form.
 - **axTask shows it all.** The Reports list is an ordinary axTask list with a template, so the user reads, edits and
-  deletes reports as items. The maintainer's lists of the repository's issues are axTask lists too (GitHub lists,
-  section 7), and Ctrl+1 to Ctrl+9 run the actions the user assigned to that list (section 8): make it a bug, close it,
-  open it in axClaude.
+  deletes reports as items, and Ctrl+1 to Ctrl+9 run the actions the user assigned to a list (section 8): set a
+  field, move the item, open the report's issue in the browser. axTask itself is local only: its GitHub lists of
+  the repository's issues, built with the reports, were removed on 2026-11-14 (section 7, RP-D10).
 
 ## 2. The key and the menu
 
@@ -145,7 +145,9 @@ levers are built now.
 - **RP-6.4 Abuse: the levers.** Three, cheapest first. The **blocklist**, `blocklist.json` in the reports repository
   (`https://raw.githubusercontent.com/KyleKeane/AxKit-reports/main/blocklist.json`, a list of reporter ids and of
   axKit versions), fetched by the sender before a send and kept a day: a listed install or version does not send and
-  says "Reports from this install are blocked; see the reports repository". The **workflow** in the reports repository
+  says "Reports from this install are blocked; see the reports repository". The maintainer changes the file on GitHub
+  itself, in the browser or with `gh`: axKit only reads it, and nothing in axTask writes it (RP-D10; Block this
+  reporter and Block this version were removed 2026-11-14). The **workflow** in the reports repository
   (`issues: opened`) reads the last line of every new issue and closes and locks one from a blocked id or version at
   once, so the lever holds even against a sender that skips the blocklist. The **token**: revoked on GitHub and
   replaced, the secret updated, a release made; every earlier version gets GitHub's 401 and says "This version can no
@@ -169,36 +171,35 @@ levers are built now.
   a window's start: a standalone app stays off the network until the user acts, the update check being the bundle's
   one automatic request (G6, AX-3). Each send has a ten-second limit; its reason, in a few words, goes into Status.
 - **RP-6.8 The rule changes, in one commit with the code** (bundle rule 8, B-15, G6, AX-11.11, `PRIVACY.md`,
-  `README.md`, `docs/axKit/README.md`, `SECURITY.md`): axKit's own code makes network requests in three places, the
-  updater, the report sender and axTask's GitHub lists (section 7), all over HTTPS to GitHub, the report sender and the
-  GitHub lists only when the user acts (RP-D2). The
+  `README.md`, `docs/axKit/README.md`, `SECURITY.md`): axKit's own code makes network requests in two places, the
+  updater and the report sender, both over HTTPS to GitHub, the report sender only when the user acts (RP-D2). From
+  2026-11-07 to 2026-11-14 axTask's GitHub lists were a third place (section 7, RP-D10). The
   two endpoints (the issue, the blocklist) carry `Outside call, network, GitHub:` comments and appear on
   `docs/axKit/outside-calls.md` (B-17). The security audit gets entries for the token in the build, the reporter id
   and the redaction of what is sent.
 
-## 7. The maintainer's side: GitHub lists in axTask
+## 7. The maintainer's side: the GitHub lists of axTask, removed
 
-- **RP-7.1 A GitHub list** is an axTask list whose `list.json` has `"github": {"repository": "KyleKeane/AxKit-reports",
-  "state": "open"}`. Opening it, and F5, fill it from `GET /repos/{repository}/issues?state=open&per_page=100` (paged,
-  pull requests left out), with no token: a public repository's issues are read without one, sixty requests an hour,
-  enough for a list. One item per issue with Title, Number, Kind (the label among feedback, bug and feature, else
-  "unlabelled"), State, Opened (date), Reporter (the reporter id from the body's last line, or the GitHub login of an
-  issue filed in the browser), Version (from the same line), Updated, Issue (link), Body (text) and Notes (text,
-  local, never sent, kept across refreshes by Number). Items whose issue GitHub no longer returns move to the list's
-  archive (IA-D4). The refresh says "Issues, 14 items, 2 new". A second list with `"state": "closed"` shows the rest.
-- **RP-7.2 Actions on an item** (Context on an item, and the action keys of section 8): Make it a bug, Make it a feature
-  request, Make it feedback (`PATCH` the labels), Close, Reopen (`PATCH` the state), Comment… (a notice with a field,
-  `POST` a comment), Block this reporter and Block this version (a line added to `blocklist.json` through the contents
-  API, RP-6.4), Open on GitHub (the browser), Open in axClaude (axClaude on the code repository's folder with the issue
-  as the message field's text, "Issue 12: <title>" and the body, not sent, for the user to read and send: the issues
-  made actionable). The actions use the **user's own token**, never the reporter's: Actions → "GitHub account…" takes
-  a fine-grained token of the user's once (Issues and Contents on the reports repository), kept protected as
-  `mcp.key` is (`UserSecret`), forgotten from the same menu; without one the actions say "Set your GitHub token in
-  Actions first: GitHub account". A change refused by GitHub (403) is said and nothing changes locally.
-- **RP-7.3 The maintainer's folder.** `docs/feature_requests` (the lists Features and Bugs) becomes GitHub issues: the
-  assistant creates one issue per item, labelled by its list, through `gh` once, and the folder goes, its README
-  replaced by one line pointing to the issues and to this page. GitHub's issues are the tracker from then on, for the
-  maintainer as for everyone (RP-D1).
+- **RP-7.1 What they were.** From 2026-11-07 to 2026-11-14 (5.1.0 to 5.8.0) axTask had GitHub lists: a list whose
+  `list.json` had `"github": {"repository": "owner/name", "state": "open"}` filled itself from that repository's
+  issues when it opened and on F5, one item per issue with the user's Notes kept, and Context → GitHub on an item
+  changed the issue with a token of the user's own (the kinds, Close, Reopen, Comment…, Block this reporter, Block
+  this version), opened it on GitHub or opened it in axClaude.
+- **RP-7.2 Why they went** (the user's decisions of 2026-11-14, RP-D10). First the actions and the token: they were
+  placeholders for operating GitHub from a task list, never used in earnest. Then the reading too: "axTask is local
+  only". A task list that also speaks to a service is two things, and a complex interaction such as GitHub belongs in
+  an app of its own, where the program that signs in and writes is one place (rule 12). So nothing in axTask
+  contacts GitHub or any other host, and axTask keeps no token; `GitHubIssues` lost its listing, patch, comment and
+  blocklist-writing calls and keeps what the report sender uses. A list made as a GitHub list stays as an ordinary
+  local list with its items, its `"github"` member kept and meaning nothing (docs/axTask/SPEC.md TK-7a.2). A token
+  an earlier version kept stays in `%LOCALAPPDATA%\AxKit\github.token`, unused, for the user to delete.
+- **RP-7.3 How the reports are read now.** The reports are the issues of `KyleKeane/AxKit-reports`. The maintainer
+  reads them on GitHub, and the assistant with `gh`; `tools/reports-check.ps1`, run with every push, names each open
+  report that no item of the priorities list points at, each open report whose items are done, and each closed
+  report with an item that is not (root `CLAUDE.md` rule 9). An issue is relabelled, closed, answered or blocked on
+  GitHub itself (RP-6.4). The folder `docs/feature_requests` went to issues on 2026-11-07; its README points here.
+- **RP-7.4 The later plan.** axGitHub: an access layer over the `gh` CLI for issues, on the shared item window, which
+  may reuse what the GitHub lists had (`docs/axKit/plan.md`, Still to come; asked 2026-11-14, not built).
 
 ## 8. Ctrl+number: the user's own actions on items (axTask, every list)
 
@@ -208,33 +209,30 @@ levers are built now.
 
   ```json
   "keys": {
-    "1": { "name": "Make it a bug", "set": { "Kind": "Bug" } },
-    "2": { "name": "Make it a feature request", "set": { "Kind": "Feature request" } },
-    "3": { "name": "Make it feedback", "set": { "Kind": "Feedback" } },
-    "4": { "name": "Close", "set": { "State": "closed" } },
-    "5": { "name": "Open on GitHub", "open": "Issue" },
-    "6": { "name": "Open in axClaude", "open": "axClaude" },
-    "7": { "name": "Move to Later", "move": "../Later" }
+    "1": { "name": "Done", "set": { "Done": true } },
+    "2": { "name": "Make it a bug", "set": { "Kind": "Bug" } },
+    "3": { "name": "Move to Later", "move": "../Later" },
+    "4": { "name": "Open on GitHub", "open": "Issue" }
   }
   ```
 
   One kind of action per key: `set` (fields to values, one undo step, IA-5.4), `move` (to a list by a path relative to
-  this one, IA-D3), `open` (a field's link, or an app's verb on the item's file; in a GitHub list `axClaude` means
-  RP-7.2's Open in axClaude). In a GitHub list a `set` of Kind or State is also sent to GitHub (RP-7.2). A key without
+  this one, IA-D3), `open` (a field's web address, handed to the browser, or an app's verb on the item's file). Every action works on
+  the files of the computer: axTask sends nothing anywhere (RP-7.2). A key without
   an entry: the edge earcon and "No action on Ctrl+3 in this list; Actions, Action keys sets one". An `open` of
-  `claude` or `terminal`, and Open in axClaude, start their program only in a folder on a drive of this computer: on
+  `claude` or `terminal` starts its program only in a folder on a drive of this computer: on
   a share or a mapped drive the key says "Not started: axTerminal would run in a folder that is not on a drive of this
   computer" and starts nothing, since a `list.json` may come from a list the user did not write (security audit S-5's
   rule; the AI tools' `axkit_open` never starts the two at all, mcp.md; 2026-11-09).
 - **RP-8.2 Assigning them.** Actions → "Action keys…": a notice listing the nine keys with their names ("Ctrl+1.
-  Make it a bug", the full stop as AX-8.5's pause); Enter on one opens its form: Name; What (Set fields, Move to a list,
+  Done", the full stop as AX-8.5's pause); Enter on one opens its form: Name; What (Set fields, Move to a list,
   Open); the value; Delete clears it. Written into `list.json`, so axJSON (Ctrl+J) edits them too.
 - **RP-8.3 Shown everywhere a command is.** Context on an item lists the assigned actions with their keys, so the palette and
   F1 list them (AX-10.2); the names are the user's.
 - **RP-8.4 All tasks moves to Ctrl+0** (TK-7), so the nine digits are free for actions in every list (RP-D7).
-- **RP-8.5 Defaults.** A GitHub list's `list.json` comes with the keys above (1 to 3 the kinds, 4 Close, 5 Open on
-  GitHub, 6 Open in axClaude); the Reports list's (RP-5.1) with 1 to 3 the kinds and 4 Open on GitHub, since its items
-  are the user's own reports; an ordinary list has none until the user sets them.
+- **RP-8.5 Defaults.** The Reports list's `list.json` (RP-5.1) comes with 1 to 3 the kinds and 4 Open on GitHub, since
+  its items are the user's own reports; an ordinary list has none until the user sets them. A list made as a GitHub
+  list keeps the keys it was given, which act on its files alone (RP-7.2).
 
 ## 9. Privacy and safety
 
@@ -242,8 +240,8 @@ levers are built now.
   text of an edit field or a conversation (RP-4.2). Nothing names the user: the reporter account is axKit's, the
   reporter id is a random id of the install (RP-6.3). An issue is public (RP-4.4), said at consent and in the form's
   title. The sender touches the network only on the user's action (RP-6.7). The reporter token can reach one
-  repository's issues and nothing else, and is revoked and replaced at will (RP-6.2, RP-6.4); the maintainer's own
-  token stays on the maintainer's computer (RP-7.2). `PrivacyTests` keeps the repository free of what a report may
+  repository's issues and nothing else, and is revoked and replaced at will (RP-6.2, RP-6.4); axTask
+  holds no token and asks the network nothing (RP-7.2). `PrivacyTests` keeps the repository free of what a report may
   contain, since nothing of a report is committed, and the token never enters the source (RP-6.2).
 
 ## 10. Decisions
@@ -269,6 +267,13 @@ levers are built now.
 - **RP-D5 One key, one kind of action, as data in `list.json`**: set, move or open, no scripting (B-10).
 - **RP-D6 Escape keeps a draft** when words were typed: a blind user's Escape by habit must not lose a paragraph.
 - **RP-D7 All tasks to Ctrl+0**, the digits to the list's actions.
+- **RP-D10 axTask is local only; the GitHub lists are removed** (the user, 2026-11-14, in two steps the same day).
+  First: the GitHub lists only read; the actions on an issue (the kinds, Close, Reopen, Comment, Block this reporter,
+  Block this version) and the user's token were removed, not hidden. Then: "axTask is local only", so the reading
+  went too, with New GitHub list, the GitHub submenu and Open in axClaude; nothing in axTask contacts GitHub. axKit's
+  own code makes network requests in two places from then on, the updater and the report sender. A complex
+  interaction such as GitHub gets an app of its own later, axGitHub, an access layer over the `gh` CLI on the shared
+  item window (rule 12), which may reuse components (RP-7.4).
 
 ## 11. Open questions, for the user when reading this
 
@@ -296,6 +301,8 @@ levers are built now.
 6. The sender with its retry, the reporter id, the consent target, the fallback buttons, the rule changes and the
    pages (RP-6.3, RP-6.5 to RP-6.8).
 7. axTask: GitHub lists, the action keys and their notice, the user's token, Ctrl+0 (RP-7, RP-8); TK-7 and IA-3 updated.
+   (Steps 4 and 7 as built on 2026-11-07; the GitHub lists, with the listing, the patch, the comment, the blocklist's
+   writing and the user's token, were removed on 2026-11-14, RP-D10; the action keys and Ctrl+0 stay.)
 8. The labels, the issue forms (a bug form and an idea form in the reports repository too), the maintainer's folder
    to issues (RP-6.1, RP-7.3).
 9. Released as 5.1.0, after the NVDA passes.

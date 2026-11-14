@@ -30,10 +30,10 @@ manager: `docs/axKit/plan.md`) and follow the same pattern without changes to th
 - **G6 Local first.** Every standalone app has its full utility with the network off. An access layer has the utility
   of its program: axGIT's and axPass's work on the disk, axTerminal's is the commands typed, and axClaude's needs
   Claude Code's service, so axClaude is the one app that needs the network. axKit's own code makes network requests in
-  three places, all over HTTPS to GitHub: the updater (AX-3), the update check, a setting that can be off, and the
-  download the user chooses; the report sender (AX-12, docs/axKit/reports.md), only when the user sends a report
-  (F4), the report saved on the computer first; and axTask's GitHub lists (docs/axKit/reports.md RP-7), only when the
-  user opens, refreshes or acts on such a list, the actions with the user's own token. A network failure is never more than a missing update or a report that
+  two places, both over HTTPS to GitHub: the updater (AX-3), the update check, a setting that can be off, and the
+  download the user chooses; and the report sender (AX-12, docs/axKit/reports.md), only when the user sends a report
+  (F4), the report saved on the computer first (axTask's GitHub lists, a third place from 2026-11-07, were removed
+  on 2026-11-14: axTask is local only, docs/axKit/reports.md RP-7). A network failure is never more than a missing update or a report that
   waits for the next. An access layer reaches the network only
   through the program it runs (AX-11.11). Any AI help in the other apps is one shared, optional service (B-15), never
   a dependency of a feature that works without it.
@@ -813,12 +813,11 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   the server's consent first; its credential helper may ask for a sign-in in its own window, AX-11.6); a shell's
   commands reach what they reach; KeePassXC's tool has no network feature. axKit does not see, record or change that
   traffic; it reads what the program prints and passes on what the user types. axKit's own code makes network requests
-  in three places (AX-12, 2026-11-07), over HTTPS to GitHub: the updater (AX-3), the update check and the download the
-  user chooses, which the updater takes only from this repository's release address; the report sender
+  in two places (AX-12; three from 2026-11-07 to 2026-11-14, while axTask had GitHub lists, docs/axKit/reports.md
+  RP-7), over HTTPS to GitHub: the updater (AX-3), the update check and the download the
+  user chooses, which the updater takes only from this repository's release address; and the report sender
   (docs/axKit/reports.md RP-6), which posts a report the user sends as an issue of the reports repository and reads
-  that repository's blocklist first, only on the user's Enter; and axTask's GitHub lists (docs/axKit/reports.md RP-7),
-  which read a repository's issues when the user opens or refreshes such a list and send the user's actions on its
-  items with the user's own token; nothing else in the code makes a network request or
+  that repository's blocklist first, only on the user's Enter; nothing else in the code makes a network request or
   listens for one, and the remaining addresses in the code are the Help menus' links, opened in the browser, and the
   installers' (AX-2.9: winget from its own source, Anthropic's installer script). `PRIVACY.md`, `README.md`,
   `docs/axKit/README.md` and `SECURITY.md` say this in these terms, and a change here changes them in the same commit;

@@ -54,6 +54,30 @@ public sealed class ActionKeysTests
         Assert.Single(list.Fields);
     }
 
+    /// <summary>
+    /// A list made as a GitHub list before 2026-11-14 (TK-7a.2): its <c>github</c> member means nothing now and is kept
+    /// as any member axTask does not know; its keys are read and its template is the list's, as in every list.
+    /// </summary>
+    [Fact]
+    public void A_list_that_was_a_GitHub_list_is_an_ordinary_list_and_keeps_its_member()
+    {
+        const string text = """
+            {
+              "format": "axkit-list 1",
+              "fields": [ { "title": "Notes", "type": "longtext", "value": "" } ],
+              "new item": [ { "title": "Kind", "type": "choice", "value": "unlabelled", "options": ["Bug", "unlabelled"] } ],
+              "github": { "repository": "owner/repo", "state": "open" },
+              "keys": { "1": { "name": "Make it a bug", "set": { "Kind": "Bug" } }, "5": { "name": "Open on GitHub", "open": "Issue" } }
+            }
+            """;
+        var list = ItemDocument.Parse(text);
+        Assert.Equal([1, 5], ActionKeys.Read(list).Keys.Order());
+        Assert.Equal("Kind", Assert.Single(TaskRules.TemplateOf(list)).Title);
+        var changed = ActionKeys.With(list, 5, null);
+        Assert.Contains("\"github\"", changed.ToText());
+        Assert.Contains("owner/repo", changed.ToText());
+    }
+
     [Fact]
     public void Applying_a_set_changes_the_fields_and_adds_a_missing_one()
     {

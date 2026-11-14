@@ -171,45 +171,35 @@ On top of IA-3:
 | Ctrl+Shift+F | anywhere | find words in every list, the user's own and every project's (TK-7b.4) |
 | Right, Enter, Escape | navigator, in the found level | open the item where it lives; back where the search started (TK-7b.4) |
 
-## 7a. Action keys and GitHub lists (2026-11-07)
+## 7a. Action keys (2026-11-07; the GitHub lists removed 2026-11-14)
 
-The design is `docs/axKit/reports.md` sections 7 and 8 (RP-7, RP-8); the rules axTask keeps:
+The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
 
 - **TK-7a.1 Action keys.** Ctrl+1 to Ctrl+9 run the action the list's `list.json` assigns to the digit under `"keys"`
   (RP-8.1), on the item selected in the navigator: `set` writes fields to values as one undo step (a field the item
   lacks is added, with the value's type), `move` moves the item to a list by a path relative to this one, the links
-  following (IA-D3), `open` opens a field's web address in the browser, an app by its verb on the item's file
-  (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1), or `axClaude` on an
-  issue (TK-7a.3). A digit without an action: the edge earcon and "No action
+  following (IA-D3), `open` opens a field's web address in the browser (the user's own act; axTask itself asks the network nothing) or
+  an app by its verb on the item's file
+  (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1). A digit without an action: the edge earcon and "No action
   on Ctrl+3 in this list; Actions, Action keys sets one"; outside a list, "Action keys act in a list: open one
-  first". Actions → Action keys… lists the nine keys ("Ctrl+1. Make it a bug", "Ctrl+3. not set"); Enter on one asks the
+  first". Actions → Action keys… lists the nine keys ("Ctrl+1. Done", "Ctrl+3. not set"); Enter on one asks the
   name (empty removes the key), what it does (set, move, open) and the value, and writes `list.json` as one undo step
   (RP-8.2). Context's Action keys submenu on an item shows the nine with the names the list gives them, so the palette and
   F1 list them (RP-8.3). All tasks moved to Ctrl+0 for them (RP-8.4).
-- **TK-7a.2 A GitHub list** is a list whose `list.json` has `"github": {"repository": "owner/name", "state": "open"}`
-  (`GitHubList.Of`), made by Actions → New GitHub list… in the top folder as "<name> issues" (RP-7.1). When it opens,
-  once per visit, and on F5, the repository's issues in that state are read from GitHub without an account
-  (`GitHubIssues.ListAsync`, off the UI thread), and the folder is brought up to them (`GitHubList.Refresh`): one
-  item per issue, named "<number> <title>.json", with Number, Kind (the label among feedback, bug and feature, else
-  "unlabelled"), State, Opened, Reporter (the reporter id of a report sent from axKit, or the GitHub login), Version,
-  Updated, Issue (the web address), Body and Notes, which is the user's and stays across refreshes; an item whose
-  issue GitHub no longer returns goes to the Archive. The refresh is a mirror, not a step: nothing to undo. It says
-  "Issues, 14 items, 2 new"; a failure says "GitHub not read: no network; the list shows what was read last". An item
-  made by Ctrl+N in the list starts as "unlabelled" and "open", the template's values (IA-4.3; a list made before
-  2026-11-09 carries empty values in its `list.json`, which Ctrl+J puts right).
-- **TK-7a.3 The GitHub actions** (Item → GitHub, and the action keys a new GitHub list comes with: Ctrl+1 to Ctrl+3
-  the kinds, Ctrl+4 Close, Ctrl+5 Open on GitHub, Ctrl+6 Open in axClaude): Make it a bug, a feature request or
-  feedback (the issue's labels), Close and Reopen (its state), Comment… (a notice with a field), Block this reporter
-  and Block this version (the reports repository's `blocklist.json`, RP-6.4), Open on GitHub (the browser), Open in
-  axClaude (axClaude started on the folder `"folder"` under `"github"` names, with `--message` putting "Issue 12:
-  <title>" and the body into its message field, unsent; without the folder, it says to set it; a folder off this
-  computer, a share or a mapped drive, is refused before it is touched, RP-8.1). A set of Kind or
-  State in a GitHub list goes to GitHub first, as the user's own account, and the file changes only when GitHub took
-  it; a refusal is said ("Not changed: GitHub refused (403)…") and nothing changes locally (RP-7.2).
-- **TK-7a.4 The user's token.** List → GitHub account… takes a fine-grained token of the user's own GitHub account in
-  a hidden field, kept protected for the Windows account in `%LOCALAPPDATA%\AxKit\github.token` (`UserSecret`); Forget
-  GitHub account removes it. Reading a public repository's issues needs none; every action does, and says "Set your
-  GitHub token in Actions first" without one.
+- **TK-7a.2 axTask is local only; the GitHub lists are gone** (the user's decision, 2026-11-14; RP-7, RP-D10).
+  axTask makes no network request and keeps no token. From 2026-11-07 to 2026-11-14 a list whose `list.json` had
+  `"github": {"repository": "owner/name"}` filled itself from that repository's issues, and its items could change an
+  issue with the user's token; all of it was removed: Actions → New GitHub list…, the reading when a list opens and on
+  F5, Context → GitHub with its actions, Open on GitHub and Open in axClaude, Actions → GitHub account… and Forget
+  GitHub account, and the `axClaude` target of an `open` key, which read the `"folder"` of that member. A list made
+  as a GitHub list stays, as an ordinary local list: its items are files like any other, its `"github"` member is
+  kept in `list.json` untouched and means nothing (as everything axTask does not know, IA-4), nothing is read,
+  refused or reported, and its action keys work as in every list: a key that sets Kind or State writes the field in
+  the file, a key that opens the Issue field opens the browser, and a key whose `open` is `axClaude` says "No field
+  called axClaude, and no app called that". A token an earlier version kept stays in
+  `%LOCALAPPDATA%\AxKit\github.token`, unused; no code reads or deletes it. A complex interaction such as GitHub gets
+  an app of its own, an access layer over the `gh` CLI on the shared item window (`docs/axKit/plan.md`, Still to
+  come: axGitHub).
 
 ## 7b. Project folders and the search across every list (2026-11-11)
 
@@ -254,8 +244,8 @@ are later (the priorities item of the request); the AI tools over the lists are 
   shows under the first. Right or Enter on a project opens it as a top folder of its own, "tasks in alpha, 2 lists,
   Your lists, heading level 1, 1 list": its headings, All tasks and smart lists, its Archive, every change and Ctrl+Z
   exactly as in the user's own folder (TK-D8). Left from a project's top goes back to the user's own top level on the
-  project's row. On a project or a project folder's heading Ctrl+Shift+N, Actions → New GitHub list, F2 and Delete make,
-  rename and move nothing and say why (Ctrl+Shift+N and New GitHub list: "A project's lists are made inside it: Right
+  project's row. On a project or a project folder's heading Ctrl+Shift+N, F2 and Delete make,
+  rename and move nothing and say why (Ctrl+Shift+N: "A project's lists are made inside it: Right
   on a project first"; Delete: "A project stays: Options, Remove a project folder removes the folder it was found in"), and in
   the found level "Lists are made among the sections: Left first"; Ctrl+E shows a project's folder, or the project
   folder of its heading, in axFile. A project is never remembered as the list open last, nor a found item opened (TK-7b.4): the list
@@ -301,8 +291,7 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
 - **TK-8.3 An item added.** `axkit_task_add` makes the item as Ctrl+N does: the list's template (TK-4.1, the default
   Done, Start and Due without one), the Title given (one line of at most 200 characters, since the window says it
   whole: "A title is at most 200 characters: put the rest in Notes."; no control character, a tab or an escape, in the
-  title or a field's name, since 2026-11-12: "A title holds no control characters."), into a list of the computer's own (a GitHub list, TK-7a.2, is refused
-  since 2026-11-12, the user's choice: an item made there never reaches GitHub, and the next refresh would archive it), at a free file name (`ItemFiles.FreePath`, so nothing is ever
+  title or a field's name, since 2026-11-12: "A title holds no control characters."), into the list named (from 2026-11-12 to 2026-11-14 a GitHub list was refused; there is none now, TK-7a.2), at a free file name (`ItemFiles.FreePath`, so nothing is ever
   overwritten), then each value given typed into its field as the field's own change takes it: a date as 2026-11-18,
   today, tomorrow, +7 or a weekday; a choice as one of its options; a check as true or false. A field the template
   lacks is added after the others, long text for Notes or a value of several lines, text otherwise (MC-D13). A link,

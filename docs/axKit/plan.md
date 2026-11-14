@@ -46,7 +46,7 @@ the restart by the app itself (2.3.0).
   the last actions and the focus filled in, three kinds (feedback, bug, feature request), saved as an axTask item
   first and sent to GitHub as an issue of a reports repository over its REST API through axKit's own reporter account,
   nothing to sign in to, a reporter id per install and a blocklist against abuse, unsent ones going with the next;
-  "Your reports" in the axKit menu; in axTask, GitHub lists of the repository's issues and Ctrl+1 to Ctrl+9 as the
+  "Your reports" in the axKit menu; in axTask, GitHub lists of the repository's issues (removed 2026-11-14, when axTask became local only) and Ctrl+1 to Ctrl+9 as the
   user's own actions on a list's items (set fields, move, open), All tasks moving to Ctrl+0. Built the same day on the
   branch `reports` (CHANGELOG 5.1.0); the reports repository `KyleKeane/AxKit-reports` exists with the maintainer's
   former `docs/feature_requests` items as its first issues; the reporter account, its token and the release secret
@@ -154,6 +154,10 @@ Features of the apps that exist:
   user can open and change.
 - **axKit's lists: a filter field, symbol jumps and nesting** (asked 2026-11-12): any list filtered by typed text or a
   pattern, "filtered" said before the list's name, a symbol jumping to the next item that holds it, nested lists.
+- **axGitHub: an access layer over the `gh` CLI for issues** (asked 2026-11-14, not built), on the shared item window:
+  a repository's issues as items, read and changed through `gh`, which signs in and reaches GitHub in its one place
+  (rule 12). It takes the place of axTask's GitHub lists, removed the same day when axTask became local only
+  (`docs/axKit/reports.md` RP-7), and may reuse their components; spec first.
 - **axTask: @ as assignment to people** (asked 2026-11-11), with notification of their items and a sort by assignee;
   the smart tags already gather one list per @name.
 - **axTask: lists across projects gathered, notified and searched** (asked 2026-11-10): the axTask folders found under

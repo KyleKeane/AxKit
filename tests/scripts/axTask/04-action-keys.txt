@@ -1,6 +1,9 @@
-# Workflow: Act on items with action keys and a GitHub list
-# axTask: the action keys and a GitHub list (docs/axTask/nvda-test-plan.md section 5; docs/axTask/SPEC.md TK-7a;
-# docs/axKit/reports.md RP-7, RP-8). A scratch folder with two lists; Home's list.json assigns Ctrl+1 and Ctrl+2.
+# Workflow: Act on items with action keys
+# axTask: the action keys (docs/axTask/nvda-test-plan.md section 5; docs/axTask/SPEC.md TK-7a;
+# docs/axKit/reports.md RP-8). A scratch folder with three lists; Home's list.json assigns Ctrl+1 and Ctrl+2; Issues
+# was made as a GitHub list, with the "github" member and the keys such a list had, and is an ordinary list now.
+file tasks\Issues\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "new item": [{"title": "Kind", "type": "choice", "value": "unlabelled", "options": ["Feedback", "Bug", "Feature request", "unlabelled"]}], "github": {"repository": "owner/repo", "state": "open"}, "keys": {"1": {"name": "Make it a bug", "set": {"Kind": "Bug"}}, "5": {"name": "Open on GitHub", "open": "Issue"}, "6": {"name": "Open in axClaude", "open": "axClaude"}}}
+file "tasks\Issues\12 The list loses my place.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "The list loses my place"}, {"title": "Number", "type": "number", "value": 12}, {"title": "Kind", "type": "choice", "value": "unlabelled", "options": ["Feedback", "Bug", "Feature request", "unlabelled"]}, {"title": "Issue", "type": "link", "value": ""}, {"title": "Notes", "type": "longtext", "value": ""}]}
 file home\AxKit\axTask.json {"checkForUpdates": false}
 file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
 file tasks\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "new item": [{"title": "Done", "type": "check", "value": false}], "keys": {"1": {"name": "Done", "set": {"Done": true}}, "2": {"name": "Later", "move": "../Later"}}}
@@ -65,42 +68,36 @@ expect said Finish: Done: done
 expect focus Fix the tap, done
 keys ctrl+z
 expect said Undone: Finish: Done: done
-# Step 6: the token notice's field is protected (RP-7.2); nothing is kept here.
-menu GitHub account
-expect state "notice":"GitHub account"
-expect focus Paste your GitHub token
-keys escape
-# Step 5: New GitHub list refuses a bare name; owner/name makes "AxKit-reports issues"; opening it asks GitHub, whose
-# answer, or the lack of a network, is reported and never fails the run.
-menu New GitHub list
-expect state "notice":"New GitHub list"
-type KyleKeane
-keys enter
-expect said Type the repository as owner/name
-keys ctrl+a
-type KyleKeane/AxKit-reports
-keys enter
-expect said Made AxKit-reports issues
-expect focus AxKit-reports issues, list
+# Step 6: axTask is local only (TK-7a.2, 2026-11-14): no command of the GitHub lists is left.
+refuse commands New GitHub list
+refuse commands GitHub account
+refuse commands Open on GitHub
+refuse commands Open in axClaude
+refuse commands Make it a bug
+# A list made as a GitHub list is an ordinary list: it opens and refreshes with nothing read and nothing said of GitHub.
+keys left
+expect focus Home, list, 1 item
+keys down
+expect focus Issues, list, 1 item
 keys right
-expect focus AxKit-reports issues
-try said AxKit-reports issues,
-try said GitHub not read
-# Ctrl+N in a GitHub list: the new item starts with the template's values, unlabelled and open (IA-4.3, 2026-11-09).
-keys ctrl+n
-expect state "notice":"New item"
-type Test issue
-keys enter
-expect said Added Test issue
+expect said ! Issues, 1 item, The list loses my place
+keys f5
+expect said Refreshed: Issues, 1 item
+wait 1500
+refuse said GitHub
+# Its keys work as in every list: one that sets Kind writes the field, as one step that Ctrl+Z takes back.
+keys ctrl+1
+expect said Make it a bug: Kind: Bug
 keys tab
-keys down
-expect focus Number, number
-keys down
-expect focus Kind, choice, unlabelled
-keys down
-expect focus State, text, open
+keys home
+keys down down
+expect focus Kind, choice, Bug
 keys escape
-# Step 7: Open in axClaude needs the folder in list.json; without an issue selected it asks for one first.
-menu Open in axClaude
-try said Set the code repository's folder first
-try said Select an issue first
+keys ctrl+z
+expect said Undone: Make it a bug: Kind: Bug
+# Step 5: a key that opens a field opens its web address in the browser; this Issue field is empty. The axClaude
+# target went with the GitHub lists.
+keys ctrl+5
+expect said Issue is empty
+keys ctrl+6
+expect said No field called axClaude, and no app called that

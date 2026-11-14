@@ -4,7 +4,7 @@ using AxKit.Core.Reports;
 
 namespace AxKit.Tests;
 
-/// <summary>GitHub's REST API as the reports use it (docs/axKit/reports.md RP-6, RP-7), against canned answers.</summary>
+/// <summary>GitHub's REST API as the report sender uses it (docs/axKit/reports.md RP-6), against canned answers.</summary>
 public sealed class GitHubIssuesTests
 {
     private const string Repository = "KyleKeane/AxKit-reports";
@@ -94,77 +94,12 @@ public sealed class GitHubIssuesTests
     [Fact]
     public void A_blocklist_round_trips_and_a_broken_one_blocks_nothing()
     {
-        var list = Blocklist.Empty.WithReporter(Reporter).WithVersion("5.1.0").WithVersion("5.1.0");
+        var list = new Blocklist([Reporter], ["5.1.0"]);
         var back = Blocklist.Parse(list.ToJson());
         Assert.Equal(list.Reporters, back.Reporters);
         Assert.Equal(["5.1.0"], back.Versions);
         Assert.Equal(Blocklist.Empty, Blocklist.Parse("not json") with { Reporters = [], Versions = [] });
         Assert.Empty(Blocklist.Parse("[1, 2]").Reporters);
-    }
-
-    [Fact]
-    public async Task Listing_pages_through_the_issues_and_leaves_pull_requests_out()
-    {
-        var page = new StringBuilder("[");
-        for (var i = 1; i <= GitHubIssues.PageSize; i++)
-        {
-            page.Append(i > 1 ? "," : string.Empty).Append($"{{\"number\": {i}, \"title\": \"Issue {i}\", \"body\": \"b\", \"state\": \"open\", \"labels\": [{{\"name\": \"bug\"}}], \"user\": {{\"login\": \"axkit-reporter\"}}, \"created_at\": \"2026-11-07T10:00:00Z\", \"updated_at\": \"2026-11-07T11:00:00Z\", \"html_url\": \"https://github.com/KyleKeane/AxKit-reports/issues/{i}\"}}");
-        }
-
-        page.Append(']');
-        var fake = new Fake()
-            .Answer(HttpStatusCode.OK, page.ToString())
-            .Answer(HttpStatusCode.OK, "[{\"number\": 101, \"title\": \"A pull request\", \"pull_request\": {}, \"state\": \"open\"}, {\"number\": 102, \"title\": \"Last\", \"state\": \"open\", \"labels\": []}]");
-        var issues = await GitHubIssues.ListAsync(Client(fake), Repository, "open", null, CancellationToken.None);
-        Assert.Equal(GitHubIssues.PageSize + 1, issues.Count);
-        Assert.Equal(2, fake.Requests.Count);
-        Assert.Contains("state=open&per_page=100&page=1", fake.Requests[0].Url);
-        Assert.Contains("page=2", fake.Requests[1].Url);
-        Assert.Null(fake.Requests[0].Authorization);
-
-        var first = issues[0];
-        Assert.Equal(1, first.Number);
-        Assert.Equal(["bug"], first.Labels);
-        Assert.Equal("axkit-reporter", first.User);
-        Assert.Equal(new DateTime(2026, 11, 7, 10, 0, 0, DateTimeKind.Utc), first.CreatedAt);
-        Assert.Equal(102, issues[^1].Number);
-        Assert.Empty(issues[^1].Labels);
-    }
-
-    [Fact]
-    public async Task Patch_and_comment_go_as_the_user_with_their_token()
-    {
-        var fake = new Fake().Answer(HttpStatusCode.OK, "{}").Answer(HttpStatusCode.Created, "{}");
-        await GitHubIssues.PatchAsync(Client(fake), Repository, "mine", 12, ["feature"], "closed", CancellationToken.None);
-        await GitHubIssues.CommentAsync(Client(fake), Repository, "mine", 12, "Fixed in 5.1.1", CancellationToken.None);
-        Assert.Equal(HttpMethod.Patch, fake.Requests[0].Method);
-        Assert.Equal("https://api.github.com/repos/KyleKeane/AxKit-reports/issues/12", fake.Requests[0].Url);
-        Assert.Equal("{\"labels\":[\"feature\"],\"state\":\"closed\"}", fake.Requests[0].Body);
-        Assert.Equal("Bearer mine", fake.Requests[0].Authorization);
-        Assert.Equal("https://api.github.com/repos/KyleKeane/AxKit-reports/issues/12/comments", fake.Requests[1].Url);
-        Assert.Equal("{\"body\":\"Fixed in 5.1.1\"}", fake.Requests[1].Body);
-    }
-
-    [Fact]
-    public async Task Writing_the_blocklist_reads_its_version_first_and_puts_the_whole_file()
-    {
-        var fake = new Fake()
-            .Answer(HttpStatusCode.OK, "{\"sha\": \"abc123\", \"content\": \"\"}")
-            .Answer(HttpStatusCode.OK, "{}");
-        var list = Blocklist.Empty.WithVersion("5.1.0");
-        await GitHubIssues.WriteBlocklistAsync(Client(fake), Repository, "mine", list, "Block 5.1.0", CancellationToken.None);
-        Assert.Equal(HttpMethod.Get, fake.Requests[0].Method);
-        Assert.Equal(HttpMethod.Put, fake.Requests[1].Method);
-        Assert.Equal("https://api.github.com/repos/KyleKeane/AxKit-reports/contents/blocklist.json", fake.Requests[1].Url);
-        Assert.Contains("\"sha\":\"abc123\"", fake.Requests[1].Body);
-        Assert.Contains("\"message\":\"Block 5.1.0\"", fake.Requests[1].Body);
-        var content = System.Text.Json.JsonDocument.Parse(fake.Requests[1].Body!).RootElement.GetProperty("content").GetString();
-        Assert.Equal(list.ToJson(), Encoding.UTF8.GetString(Convert.FromBase64String(content!)));
-
-        // No file yet: no sha in the put.
-        var fresh = new Fake().Answer(HttpStatusCode.NotFound, "{\"message\":\"Not Found\"}").Answer(HttpStatusCode.Created, "{}");
-        await GitHubIssues.WriteBlocklistAsync(Client(fresh), Repository, "mine", list, "Start the blocklist", CancellationToken.None);
-        Assert.DoesNotContain("\"sha\"", fresh.Requests[1].Body);
     }
 
     [Fact]

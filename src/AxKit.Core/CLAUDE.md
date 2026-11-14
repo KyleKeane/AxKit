@@ -208,12 +208,11 @@ another project on its second use, the bullet says so.
   labels, `Parse`) and `ReportStatus` (Draft, Not sent yet with its reason, Sent, `AwaitsSending`); `ReportFiles`, the
   Reports list as an axTask folder (the template, `ListText` with the action keys, `ToItem`, `FromItem`, `Save`,
   `Write`, `WithStatus`, `WithSent`, `Unsent`); `ReportBody`, the issue's Markdown with the reporter line last and
-  `ParseReporterLine`. Tested in `ReportsTests`. `GitHubIssues` (RP-6, RP-7), GitHub's REST API as the reports use
+  `ParseReporterLine`. Tested in `ReportsTests`. `GitHubIssues` (RP-6), GitHub's REST API as the report sender uses
   it, the client handed in: `CreateAsync` (an issue as the reporter account), `ReadBlocklistAsync` (404 is an empty
-  list), `ListAsync` (paged, pull requests left out, a token optional), `PatchAsync`, `CommentAsync`,
-  `WriteBlocklistAsync` (the contents API, the file's sha read first), `NewIssueFormUrl` (the browser's form,
+  list; the listing of issues and every write but the report went on 2026-11-14 with axTask's GitHub lists, RP-7), `NewIssueFormUrl` (the browser's form,
   prefilled), `ReasonOf` (an exception as a few words for the Status field); `GitHubException` with its `Reason`;
-  `Blocklist` (`Parse`, `Blocks`, `ToJson`, `WithReporter`, `WithVersion`); `IssueCreated`, `IssueInfo`. Tested in
+  `Blocklist` (`Parse`, `Blocks`, `ToJson`, the copy the sender keeps a day); `IssueCreated`. Tested in
   `GitHubIssuesTests` against canned answers. `ReportSender` (RP-6.3 to RP-6.7): `ReporterId` (made once, kept in
   `AppPaths.ReportsFile` as `ReportSettings`), `SendUnsentAsync` (no token: every item says so; the blocklist read
   before a send and kept a day; the half-minute gap; each item posted and marked Sent with its issue, or marked with

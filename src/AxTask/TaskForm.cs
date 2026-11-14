@@ -57,17 +57,14 @@ public sealed partial class TaskForm : ItemForm
         actions.DropDownItems.Add(Item("New &item...", NewItem, ItemKeys.New, CommandMark.Change));
         actions.DropDownItems.Add(Item("New &list...", NewList, ItemKeys.NewList, CommandMark.Change));
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("New &smart list...", null, (_, _) => NewSmartList()), CommandMark.Change));
-        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("New Git&Hub list...", null, (_, _) => NewGitHubList()), CommandMark.Act));
         actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo, CommandMark.Change));
         actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)), CommandMark.Act));
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Remove Do&ne from every item", null, (_, _) => SwitchList(done: false)), CommandMark.Act));
         actions.DropDownItems.Add(new ToolStripSeparator());
-        // The action keys and the GitHub account (docs/axKit/reports.md RP-7.2, RP-8.2; TaskForm.GitHub.cs).
+        // The action keys (docs/axKit/reports.md RP-8.2; TaskForm.ActionKeys.cs).
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Action &keys...", null, (_, _) => EditActionKeys()), CommandMark.Act));
-        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("GitHub acc&ount...", null, (_, _) => SetGitHubAccount()), CommandMark.Act));
-        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Forget GitHub account", null, (_, _) => ForgetGitHubAccount()), CommandMark.Act));
 
         _listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
         _listMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename, CommandMark.Change));
@@ -92,10 +89,9 @@ public sealed partial class TaskForm : ItemForm
         AddKey(new Command("Previous heading level 2", AxTaskKeys.PreviousHeading2, () => JumpHeading(2, -1)) { When = AtHeadings, Mark = CommandMark.Read });
         AddKey(new Command("Next heading level 3", AxTaskKeys.NextHeading3, () => JumpHeading(3, 1)) { When = AtHeadings, Mark = CommandMark.Read });
         AddKey(new Command("Previous heading level 3", AxTaskKeys.PreviousHeading3, () => JumpHeading(3, -1)) { When = AtHeadings, Mark = CommandMark.Read });
-        // Ctrl+1 to Ctrl+9, the list's own actions, and the GitHub actions of a GitHub list (RP-7.2, RP-8; TaskForm.GitHub.cs).
-        PlaceGitHubMenus();
+        // Ctrl+1 to Ctrl+9, the list's own actions (RP-8; TaskForm.ActionKeys.cs).
+        PlaceActionKeyMenu();
         _itemMenu.DropDownItems.Add(_actionKeysMenu);
-        _itemMenu.DropDownItems.Add(_gitHubMenu);
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         _itemMenu.DropDownItems.Add(Item("Open in ax&JSON", OpenInAxJson, AxTaskKeys.OpenInAxJson, CommandMark.Open));
         _itemMenu.DropDownItems.Add(Item("Show in ax&File", ShowInAxFile, AxTaskKeys.ShowInAxFile, CommandMark.Open));
@@ -154,9 +150,6 @@ public sealed partial class TaskForm : ItemForm
         {
             _smart = SmartList.Read(filter);
         }
-
-        // F5 in a GitHub list reads GitHub again (TK-7a.2); the panes fill from the files meanwhile.
-        RefreshGitHubAgain();
 
         // F5 on the top level looks for the projects again (TK-7b.2).
         if (_search is null && _project is null && AtTop)
@@ -228,8 +221,6 @@ public sealed partial class TaskForm : ItemForm
         }
 
         RememberLevel();
-        // A GitHub list is read from GitHub as it opens (TK-7a.2); its files show at once, the issues follow.
-        RefreshGitHubOnEnter();
     }
 
     protected override string? LeaveList()

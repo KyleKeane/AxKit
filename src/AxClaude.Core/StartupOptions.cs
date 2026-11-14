@@ -27,7 +27,7 @@ public sealed record StartupOptions(
           --claude <path>     claude.exe or claude.cmd to run (default: found on PATH or in the usual install folders)
           --cols N, --rows N  size of the hidden console Claude writes to (default 240 by 50)
           --record <file.vt>  record the raw console stream for a bug report
-          --message <text>    put the text into the message field, not sent (axTask's Open in axClaude on an issue, axHelp's screenshot)
+          --message <text>    put the text into the message field, not sent (axHelp's screenshot)
           --title <text>      the window's title in place of the folder's (axHelp's conversation, titled axHelp)
           --model <name>      Claude Code's model on every start of Claude in this window (axHelp's own model)
           --no-ax             start Claude without --ax-screen-reader (testing only)

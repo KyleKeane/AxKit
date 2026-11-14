@@ -114,11 +114,6 @@ public sealed partial class TaskForm
         }
 
         var details = ItemFolder.ReadList(list.Folder);
-        if (TaskTools.AddRefused(list, details) is { } notHere)
-        {
-            return new { error = notHere };
-        }
-
         var template = TaskRules.TemplateOf(details);
         var (item, wrong) = TaskTools.NewItem(McpProtocol.Text(arguments["title"]), template, values, DateOnly.FromDateTime(DateTime.Now));
         if (item is null)

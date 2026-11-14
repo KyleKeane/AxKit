@@ -41,15 +41,12 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `Projects` with `TaskProject` (its `Root`, the project folder it was found under, TK-7b.3), `GatheredItem` (an item with its top and its place's name; `Where`, "Home" or "alpha / Home", TK-5.6) and `SearchHit` (TK-7b, 2026-11-11): `Find` (the folders of lists under the project folders, four folders down, hidden folders and `.git`, `node_modules`, `bin`, `obj` skipped, the top folder left out, names told apart by the folder above), `Gather` (every item of each place, the Archive left out), `GatherOne` (one file read again as a project's item, or null), `Inside`, `Words`, `Matches` (every word in the Title or a text field, case not minded) and `Search` (over places, or over items already gathered). Read-only; the window calls them off the UI thread. Tested in `ProjectsTests`.
 - `TaskTools` with `ReachableList` (TK-8, docs/axKit/mcp.md MC-8, 2026-11-11): the AI tools' pure half: `Lists` (the top folder's lists by name, then each project's as "project / list"), `Find` (a list by its name, its own name when unique, or its full path when reached; a path elsewhere refused), `ItemOf` (an item as JSON, a password or user name field "protected"), `NewItem` (`ItemDocument.NewItem` with the template, then each typed value through `FieldTypes.Parse`; a missing field added, Notes as long text; link, password, user name refused). Tested in `TaskToolsTests`.
 - `ActionKeys` and `ListAction` (docs/axKit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
-  `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Make it a bug"), `ApplySet`
+  `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Done"), `ApplySet`
   (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines); an
-  action is `set`, `move` or `open`, with `Described`; `OpenRefusal` keeps an `open` of axClaude or axTerminal, and Open
-  in axClaude, off a folder that is not on a drive of this computer (S-5's rule, 2026-11-09). Tested in `ActionKeysTests`.
-- `GitHubList` and `GitHubListSettings` (RP-7.1, TK-7a.2): a list whose `list.json` has `"github"`: `Of`, `IsRepository`,
-  `NewList` (the template, the settings, the default action keys), `Template`, `ToItem` (an issue as an item, the
-  reporter id and the version from the body's last line), `NumberOf`, `FileStem` ("12 title"), `Refresh` (the
-  `FileChange`s that bring the folder up to the issues, Notes kept, the gone archived), `KindName`, `LabelOf`,
-  `SpokenRefresh`. The issues come from `AxKit.Core.Reports.GitHubIssues`. Tested in `GitHubListTests`.
+  action is `set`, `move` or `open`, with `Described`; `OpenRefusal` keeps an `open` of axClaude or axTerminal off a
+  folder that is not on a drive of this computer (S-5's rule, 2026-11-09). Tested in `ActionKeysTests`. The GitHub
+  lists that came with them (RP-7) were removed on 2026-11-14, when axTask became local only: a `"github"` member in a
+  `list.json` is kept as any member axTask does not know and means nothing (TK-7a.2).
 
 ## Gotchas
 

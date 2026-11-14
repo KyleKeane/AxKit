@@ -86,7 +86,7 @@ The `CHANGELOG.md` section of the version, as the release notes carry it.
 - axPreview: a read-only viewer for one text file, with the same navigation keys as the editors.
 - axStart: a program launcher behind a global hotkey, with the first match spoken as you type.
 - axProcess: the processes, services and startup programs as one list with three views.
-- axTask: tasks and lists as a folder of small files, with typed fields and GitHub lists.
+- axTask: tasks and lists as a folder of small files, with typed fields and smart lists.
 - axPass: a KeePass password database read and changed by ear, through KeePassXC's own tool.
 - axCalc: a calculator as one expression field and a history list.
 - axClip: a clipboard history behind a hotkey, pasted into the window you came from.

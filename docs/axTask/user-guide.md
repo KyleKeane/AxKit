@@ -151,18 +151,15 @@ list, or open something (a field holding a web address, or an app such as axJSON
 Ctrl+1 to Ctrl+9 do that to the item selected, and Context's Action keys submenu on an item names them. Ctrl+Z takes a set
 or a move back. All tasks is Ctrl+0.
 
-## GitHub lists
+## Local only
 
-Actions, New GitHub list asks for a repository as owner/name and makes a list of its open issues, read from GitHub when
-the list opens and on F5, with no account needed. Each issue is an item: its number, kind, state, who reported it, the
-axKit version when it came from axKit, the address, the body, and Notes, which are yours and stay. Context's
-GitHub submenu changes an issue as your own GitHub account: make it a bug, a feature request or feedback, close or
-reopen it, comment, block a reporter or a version of axKit that sends nonsense, open it on GitHub, or open it in
-axClaude with the issue in the message field. For that, Actions, GitHub account takes a token of your GitHub account
-once (a fine-grained token with Issues and Contents on the reports repository), kept protected on this computer. A new
-GitHub list comes with action keys: Ctrl+1 to Ctrl+3 the kinds, Ctrl+4 Close, Ctrl+5 Open on GitHub, Ctrl+6 Open in
-axClaude. axKit's own reports arrive in the maintainer's reports repository this way; `docs/axKit/reports.md` tells
-the whole story.
+axTask works on the files of your computer and asks the network nothing. An action key that opens a field's web
+address hands the address to your browser, which is your own step.
+
+Until version 5.8.0 axTask had GitHub lists, which read a repository's issues. They were removed: a complex thing
+such as GitHub will get an app of its own. A list you made as a GitHub list stays, as an ordinary list with its
+items; it is no longer refreshed, and its action keys work as in every list. A GitHub token an earlier version kept
+is no longer used; its file is `%LOCALAPPDATA%\AxKit\github.token`, yours to delete.
 
 ## Lists in other projects
 

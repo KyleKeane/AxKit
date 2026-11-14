@@ -65,8 +65,6 @@ keys delete
 expect said ! A project stays: Options, Remove a project folder removes the folder it was found in
 keys f2
 expect said ! A project's folder is renamed in axFile: Ctrl+E
-menu New GitHub list
-expect said ! A project's lists are made inside it: Right on a project first
 
 # 6.5 A project is a top folder of its own: its headings, its All tasks, a task marked done in place and undone.
 keys right

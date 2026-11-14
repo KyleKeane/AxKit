@@ -9,9 +9,6 @@ namespace AxKit.Core.Reports;
 /// <summary>An issue just created (docs/axKit/reports.md RP-6.1): its number and web address.</summary>
 public sealed record IssueCreated(int Number, string Url);
 
-/// <summary>An issue as the maintainer's lists read it (RP-7.1).</summary>
-public sealed record IssueInfo(int Number, string Title, string Body, string State, IReadOnlyList<string> Labels, string User, DateTime CreatedAt, DateTime UpdatedAt, string Url);
-
 /// <summary>GitHub answered with an error, or could not be reached: <see cref="Reason"/> says so in a few words for the Status field.</summary>
 public sealed class GitHubException(string reason, HttpStatusCode? status, string? detail) : Exception(detail is null ? reason : $"{reason} ({detail})")
 {
@@ -21,15 +18,13 @@ public sealed class GitHubException(string reason, HttpStatusCode? status, strin
 }
 
 /// <summary>
-/// GitHub's REST API as the reports use it (RP-6, RP-7): an issue created as the reporter account, the blocklist
-/// read, the issues of a repository listed, one changed or commented on as the user, and the blocklist written. Pure:
+/// GitHub's REST API as the report sender uses it (RP-6): an issue created as the reporter account and the blocklist
+/// read, nothing else (axTask's GitHub lists, which listed and changed issues here, were removed 2026-11-14, RP-7). Pure:
 /// the client is given, so that the tests hand in canned answers. Every call is to GitHub over HTTPS (AX-11.11).
 /// </summary>
 public static class GitHubIssues
 {
     public const string ApiVersion = "2022-11-28";
-    public const int PageSize = 100;
-    public const int MaxPages = 10;
 
     /// <summary>
     /// The whole address of the browser's form may be this long at most: the Windows shell hands a longer one to the
@@ -41,8 +36,6 @@ public static class GitHubIssues
     private static string IssuesApi(string repository) => $"https://api.github.com/repos/{repository}/issues";
 
     private static string BlocklistUrl(string repository) => $"https://raw.githubusercontent.com/{repository}/main/blocklist.json";
-
-    private static string BlocklistApi(string repository) => $"https://api.github.com/repos/{repository}/contents/blocklist.json";
 
     /// <summary>
     /// The browser's new-issue form of the repository, prefilled (RP-6.5), for a user with a GitHub account of their own:
@@ -100,102 +93,6 @@ public static class GitHubIssues
         return Blocklist.Parse(await response.Content.ReadAsStringAsync(cancellation).ConfigureAwait(false));
     }
 
-    /// <summary>The issues of the repository in one state, pull requests left out, up to ten pages of a hundred (RP-7.1); a token when the user has one, none for a public repository.</summary>
-    public static async Task<IReadOnlyList<IssueInfo>> ListAsync(HttpClient http, string repository, string state, string? token, CancellationToken cancellation)
-    {
-        var issues = new List<IssueInfo>();
-        for (var page = 1; page <= MaxPages; page++)
-        {
-            using var request = Request(HttpMethod.Get, $"{IssuesApi(repository)}?state={Uri.EscapeDataString(state)}&per_page={PageSize}&page={page}", token, null);
-            // Outside call, network, GitHub: lists the issues of a repository for a GitHub list of axTask, page by page,
-            // when the user opens or refreshes the list (docs/axKit/reports.md RP-7.1).
-            using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
-            using var json = await ReadAsync(response, cancellation).ConfigureAwait(false);
-            var count = 0;
-            foreach (var element in json.RootElement.EnumerateArray())
-            {
-                count++;
-                if (element.TryGetProperty("pull_request", out _))
-                {
-                    continue;
-                }
-
-                issues.Add(Issue(element));
-            }
-
-            if (count < PageSize)
-            {
-                break;
-            }
-        }
-
-        return issues;
-    }
-
-    /// <summary>Changes an issue as the user (RP-7.2): its labels when given, its state ("open" or "closed") when given.</summary>
-    public static async Task PatchAsync(HttpClient http, string repository, string token, int number, IReadOnlyList<string>? labels, string? state, CancellationToken cancellation)
-    {
-        var payload = new JsonObject();
-        if (labels is not null)
-        {
-            payload["labels"] = new JsonArray(labels.Select(label => (JsonNode)JsonValue.Create(label)).ToArray());
-        }
-
-        if (state is not null)
-        {
-            payload["state"] = state;
-        }
-
-        using var request = Request(HttpMethod.Patch, $"{IssuesApi(repository)}/{number}", token, payload);
-        // Outside call, network, GitHub: changes an issue's labels or state as the user's own account, from an action on
-        // an item of a GitHub list in axTask (docs/axKit/reports.md RP-7.2).
-        using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
-        await ThrowOnErrorAsync(response, cancellation).ConfigureAwait(false);
-    }
-
-    /// <summary>Adds a comment to an issue as the user (RP-7.2).</summary>
-    public static async Task CommentAsync(HttpClient http, string repository, string token, int number, string body, CancellationToken cancellation)
-    {
-        using var request = Request(HttpMethod.Post, $"{IssuesApi(repository)}/{number}/comments", token, new JsonObject { ["body"] = body });
-        // Outside call, network, GitHub: adds the user's comment to an issue as the user's own account, from an action on
-        // an item of a GitHub list in axTask (docs/axKit/reports.md RP-7.2).
-        using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
-        await ThrowOnErrorAsync(response, cancellation).ConfigureAwait(false);
-    }
-
-    /// <summary>Writes the blocklist file of the reports repository as the user (RP-6.4, RP-7.2): read for its version first, then put whole.</summary>
-    public static async Task WriteBlocklistAsync(HttpClient http, string repository, string token, Blocklist blocklist, string message, CancellationToken cancellation)
-    {
-        string? sha = null;
-        using (var read = Request(HttpMethod.Get, BlocklistApi(repository), token, null))
-        {
-            // Outside call, network, GitHub: reads the blocklist file's version before writing it, as the user's own
-            // account, from Block this reporter or Block this version in axTask (docs/axKit/reports.md RP-7.2).
-            using var found = await http.SendAsync(read, cancellation).ConfigureAwait(false);
-            if (found.StatusCode != HttpStatusCode.NotFound)
-            {
-                var json = await ReadAsync(found, cancellation).ConfigureAwait(false);
-                sha = JsonElements.GetString(json.RootElement, "sha");
-            }
-        }
-
-        var payload = new JsonObject
-        {
-            ["message"] = message,
-            ["content"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(blocklist.ToJson())),
-        };
-        if (sha is not null)
-        {
-            payload["sha"] = sha;
-        }
-
-        using var request = Request(HttpMethod.Put, BlocklistApi(repository), token, payload);
-        // Outside call, network, GitHub: writes the reports repository's blocklist as the user's own account, from Block
-        // this reporter or Block this version in axTask (docs/axKit/reports.md RP-6.4, RP-7.2).
-        using var response = await http.SendAsync(request, cancellation).ConfigureAwait(false);
-        await ThrowOnErrorAsync(response, cancellation).ConfigureAwait(false);
-    }
-
     /// <summary>What went wrong, in a few words for the Status field and the announcement (RP-6.4, RP-6.7).</summary>
     public static string ReasonOf(Exception exception) => exception switch
     {
@@ -205,7 +102,7 @@ public static class GitHubIssues
         _ => exception.Message,
     };
 
-    private static HttpRequestMessage Request(HttpMethod method, string url, string? token, JsonObject? payload)
+    private static HttpRequestMessage Request(HttpMethod method, string url, string token, JsonObject payload)
     {
         var request = new HttpRequestMessage(method, url);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
@@ -215,11 +112,7 @@ public static class GitHubIssues
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        if (payload is not null)
-        {
-            request.Content = new StringContent(payload.ToJsonString(), Encoding.UTF8, "application/json");
-        }
-
+        request.Content = new StringContent(payload.ToJsonString(), Encoding.UTF8, "application/json");
         return request;
     }
 
@@ -268,43 +161,15 @@ public static class GitHubIssues
         throw new GitHubException(reason, status, detail);
     }
 
-    private static IssueInfo Issue(JsonElement element)
-    {
-        var labels = new List<string>();
-        if (element.TryGetProperty("labels", out var labelArray) && labelArray.ValueKind == JsonValueKind.Array)
-        {
-            foreach (var label in labelArray.EnumerateArray())
-            {
-                if (JsonElements.GetString(label, "name") is { } name)
-                {
-                    labels.Add(name);
-                }
-            }
-        }
-
-        var user = element.TryGetProperty("user", out var userElement) && userElement.ValueKind == JsonValueKind.Object ? JsonElements.GetString(userElement, "login") ?? string.Empty : string.Empty;
-        return new IssueInfo(
-            Number(element),
-            JsonElements.GetString(element, "title") ?? string.Empty,
-            JsonElements.GetString(element, "body") ?? string.Empty,
-            JsonElements.GetString(element, "state") ?? "open",
-            labels,
-            user,
-            Date(element, "created_at"),
-            Date(element, "updated_at"),
-            JsonElements.GetString(element, "html_url") ?? string.Empty);
-    }
-
     private static int Number(JsonElement element) =>
         element.TryGetProperty("number", out var number) && number.ValueKind == JsonValueKind.Number ? number.GetInt32() : 0;
-
-    private static DateTime Date(JsonElement element, string name) =>
-        DateTime.TryParse(JsonElements.GetString(element, name), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var date) ? date : DateTime.MinValue;
 }
 
 /// <summary>
 /// The reports repository's <c>blocklist.json</c> (RP-6.4): the reporter ids and the axKit versions whose reports are
 /// not sent. <c>{"reporters": ["6f1c…"], "versions": ["5.1.0"]}</c>; a file that is not that shape blocks nothing.
+/// The maintainer changes the file on GitHub itself; axKit only reads it, and <see cref="ToJson"/> is the copy the
+/// report sender keeps for a day.
 /// </summary>
 public sealed record Blocklist(IReadOnlyList<Guid> Reporters, IReadOnlyList<string> Versions)
 {
@@ -312,10 +177,6 @@ public sealed record Blocklist(IReadOnlyList<Guid> Reporters, IReadOnlyList<stri
 
     public bool Blocks(Guid reporter, string version) =>
         Reporters.Contains(reporter) || Versions.Any(blocked => string.Equals(blocked.Trim(), version.Trim(), StringComparison.OrdinalIgnoreCase));
-
-    public Blocklist WithReporter(Guid reporter) => Reporters.Contains(reporter) ? this : this with { Reporters = [.. Reporters, reporter] };
-
-    public Blocklist WithVersion(string version) => Versions.Contains(version) ? this : this with { Versions = [.. Versions, version] };
 
     public static Blocklist Parse(string json)
     {

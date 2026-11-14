@@ -72,15 +72,14 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 3. F1: the keys; Help, User guide: this guide. Alt+H, About, Version names axTask.
 4. Close and start again without a folder: the list you had.
 
-## 5. Action keys and GitHub lists (TK-7a, docs/axKit/reports.md RP-7, RP-8)
+## 5. Action keys (TK-7a, docs/axKit/reports.md RP-8)
 
 1. In a list, Ctrl+3: the edge sound and "No action on Ctrl+3 in this list; Actions, Action keys sets one". At the top level, Ctrl+1: the edge sound and "Action keys act in a list: open one first". Ctrl+0: "All tasks" (Ctrl+1 until 5.1.0).
 2. Actions, Action keys: the list "Keys" with nine lines, "Ctrl+1. not set" to "Ctrl+9. not set", the full stop a pause after the digit. Enter on the first: "Ctrl+1" and a Name field; type "Done", Enter; the list "What" with "Set fields to values" first; Enter; the Fields field; type "Done: done", Enter: "Ctrl+1: Done, sets Done: done". Ctrl+Z: "Undone: Ctrl+1: Done, sets Done: done".
 3. Set Ctrl+1 again as in step 2, then on a task not done, Ctrl+1: "Done: Done: done" and the row reads done. Ctrl+Z takes it back. Context, Action keys: the first item reads "Done Ctrl+1." and the others "Not set Ctrl+2." to "Not set Ctrl+9.".
 4. Actions, Action keys, Enter on Ctrl+2, name "Later", "Move the item to a list", the list's name of another list: Ctrl+2 on an item: "Later: <item> moved to <list>", the item gone from this list and in the other; Ctrl+Z brings it back.
-5. Actions, New GitHub list: "Repository:"; type "KyleKeane" and Enter: "Type the repository as owner/name"; type "KyleKeane/AxKit-reports", Enter: "Made AxKit-reports issues", the list selected. Right: the list opens, "AxKit-reports issues, empty: Ctrl+N adds an item" at once, then, when GitHub has answered, "AxKit-reports issues, N items, N new" and the items by "<title>"; with the network off instead: "GitHub not read: no network; the list shows what was read last".
-6. In the GitHub list, Tab: the fields Number, Kind, State, Opened, Reporter, Version, Updated, Issue, Body, Notes. Context, GitHub, Make it a bug without a token: "Set your GitHub token in Actions first: GitHub account". Actions, GitHub account: the notice with a protected field "Paste your GitHub token"; Escape. Ctrl+5 (Open on GitHub, a default key of the list): the issue opens in the browser.
-7. Context, GitHub, Open in axClaude without a folder in list.json: "Set the code repository's folder first". With `"folder"` set in list.json (Ctrl+J, axJSON): a new axClaude window on that folder, its message field holding "Issue N: <title>" and the body, not sent.
+5. Actions, Action keys, Enter on Ctrl+5, name "Web", "Open a field's web address, or an app", the value "Notes": "Ctrl+5: Web, opens Notes". Ctrl+5 on an item with empty Notes: "Notes is empty"; with a web address in its Notes: the address opens in the browser.
+6. axTask is local only (TK-7a.2): Actions has no New GitHub list and no GitHub account, and Context on an item has no GitHub submenu. A list whose list.json has a "github" member (a list made as a GitHub list, up to 5.8.0; `tasks\Issues` in the runner's script) opens as any list, "Issues, 1 item" and the item, with nothing said about GitHub; F5: "Refreshed: Issues, 1 item", nothing read from the network. Its key that sets Kind (Ctrl+1 there): "Make it a bug: Kind: Bug", and Ctrl+Z takes it back.
 
 ## 6. Project folders and the search across every list (TK-7b)
 
@@ -104,8 +103,7 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
 4. Ctrl+Shift+1 to "Projects, heading level 1, 1 project folder"; Ctrl+2: "Projects in projects, heading level 2, 2
    projects". Down: "tasks in alpha, project, 1 list"; Down: "tasks in beta, project, 1 list". Ctrl+Shift+N:
    "A project's lists are made inside it: Right on a project first". Delete: "A project stays: Options, Remove
-   a project folder removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E". Actions, New
-   GitHub list: "A project's lists are made inside it: Right on a project first", no notice.
+   a project folder removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E".
 5. Up, Right on tasks in alpha: "tasks in alpha, 1 list, Your lists, heading level 1, 1 list". Down: "Home, list, 1
    item". Right: "Home, 1 item, Fix the leak". Space: "Done: Fix the leak"; Ctrl+Z: "Undone: Done: Fix the leak".
 6. Left: "tasks in alpha, 1 list, Home, list, 1 item". Left: "Lists, 3 lists, tasks in alpha, project, 1 list". Left:

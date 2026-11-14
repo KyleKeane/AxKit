@@ -142,7 +142,7 @@ internal sealed partial class MainForm : ConsoleForm
             StartRecording(record);
         }
 
-        // --message (FR-9.2): the text in the message field, for the user to read and send; axTask's Open in axClaude on an issue.
+        // --message (FR-9.2): the text in the message field, for the user to read and send; axHelp's screenshot (axTask's Open in axClaude on an issue until 2026-11-14).
         if (_options.Message is { Length: > 0 } message)
         {
             Input.Text = message.ReplaceLineEndings("\r\n");
