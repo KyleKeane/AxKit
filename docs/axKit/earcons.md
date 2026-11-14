@@ -66,17 +66,37 @@ when there are three. Rising opens, falling closes.
 | A reply begins | C5, E5, up to a held G5 | exists (`Sounds.Responding`) |
 | The turn is done | G5, E5, down to a held C5 | exists (`Sounds.Done`) |
 
-### 4. Questions: a list of answers, pick one
+### 4. Asks: the knock scale
 
-What the user does: Up and Down through the answers, Enter on one. Nothing is typed.
+Everything that asks something of the user is one family, and **the number of knocks says how much is asked** (the
+user's idea, 2026-11-14: the length of the sound signals the size of what is wanted; a form is sonified by its
+number of elements). One thing to learn, not four.
 
-Pattern: the same note twice with a short gap, a knock at the door.
+Pattern: the same note struck again and again at an even pace, a knock at the door, about seventy milliseconds a
+knock with a short gap. Only the count changes.
+
+| Knocks | What is asked | What you do |
+|---|---|---|
+| One | Nothing: something to read (information, help, an error) | Read; Enter or Escape closes |
+| Two | One choice from a list of answers | Up and Down, Enter on one |
+| Three | One thing to type (a name, a folder, a search, a password) | Type; Enter answers; Escape cancels |
+| Four | A form with two fields | Up and Down through the fields, Enter edits one, Send or Ctrl+Enter sends |
+| Five | A form with three fields | the same |
+| A roll, knocks too fast to count | A form with four fields or more | the same; the words say how many fields |
+
+The ear counts four or five knocks with ease and no more, so the scale stops counting there and a longer form is a
+roll. The words that follow always give the exact number ("Report to axKit, 7 fields").
+
+The variant is the pitch, and it says who asks:
 
 | Variant | Sound | State |
 |---|---|---|
-| Claude asks | E5, E5 | exists (`Sounds.Question`) |
-| axKit asks (a notice with choices of its own: save changes, delete, agree) | proposed: the same knock lower, C5, C5 | proposed |
+| Claude asks | the knocks on E5; two of them is the question sound of today | two knocks exist (`Sounds.Question`); the other counts are proposed |
+| axKit asks (its own notices, questions and forms) | proposed: the same knocks lower, on C5 | proposed |
+| An error among the one-knock notices | proposed: one knock lower still and louder, on A3 | proposed; today an error has no sound of its own |
 
+What this replaces: the quick trill that plays today when a notice opens by itself (`Sounds.Notice`) is retired, its
+work done by the count.
 ### 5. Code: something asks to run or to act beyond the window
 
 What the user does: decides, with care. Running is never the first answer.
@@ -93,44 +113,7 @@ only class that glides, so nothing else can be taken for it.
 Why falling for the first and rising for the second: falling and high is the more alarming, and it marks the wider
 reach, your whole computer; rising and lower marks the narrower reach, one window of axKit.
 
-### 6. One field: type, and Enter answers
-
-What the user does: types one thing; Enter does it at once; Escape cancels.
-
-Pattern, proposed: a short note and then a long held one on the same pitch, "da-daaa": a prompt that waits. No
-existing sound has this shape.
-
-| Variant | Sound | State |
-|---|---|---|
-| A text asked for (a name, a folder, a search) | proposed: C5 short, C5 held | proposed |
-| A secret asked for (a password; nothing typed is spoken) | proposed: the same lower, G4 short, G4 held | proposed |
-
-### 7. Forms: several fields, and a Send at the end
-
-What the user does: Up and Down through the fields, Enter edits the one in focus, Send or Ctrl+Enter sends; Enter in
-a text box never sends.
-
-Pattern: a quick trill, two notes alternating four times. The existing notice trill has exactly this shape and
-becomes this class.
-
-| Variant | Sound | State |
-|---|---|---|
-| A form that sends something out of the computer (a report) | proposed: the trill C6, E6, C6, E6 as today | the sound exists (`Sounds.Notice`); the meaning is proposed |
-| A form that changes something here (an item's fields, settings) | proposed: the same trill a fifth lower, F5, A5, F5, A5 | proposed |
-
-### 8. Notices: something to read, nothing to choose
-
-What the user does: reads; Enter or Escape closes.
-
-Pattern, proposed: one soft low note with a long fade, a single bell. Today a notice that opens by itself plays the
-trill of class 7; with this scheme the trill means a form and a plain notice gets its own.
-
-| Variant | Sound | State |
-|---|---|---|
-| Information or help | proposed: one bell, E4 | proposed |
-| An error, something failed | proposed: one bell lower and louder, A3 | proposed; today an error has no sound of its own, and a refused key plays the edge |
-
-### 9. The call from another window
+### 6. The call from another window
 
 Pattern: three rising notes to a held one, twice, long and loud: Claude is done or asks while its window is in the
 background. The only earcon longer than half a second.
@@ -139,7 +122,7 @@ background. The only earcon longer than half a second.
 |---|---|---|
 | Done, or a question, in the background | G5, C6, held E6, and again | exists (`Sounds.Alert`) |
 
-### 10. Working
+### 7. Working
 
 Pattern: soft plucked notes in a slow loop while Claude works. Not an earcon: a state that lasts.
 
@@ -154,14 +137,10 @@ Pattern: soft plucked notes in a slow loop while Claude works. Not an earcon: a 
 | 1. Tick | struck noise, one or two | nothing |
 | 2. Move | two notes run together, very short | carry on |
 | 3. Turn | one to three even notes, last one held | wait, or type |
-| 4. Question | the same note twice | pick an answer from a list |
+| 4. Ask | knocks on one note; the count is how much is asked | one: read; two: pick; three: type; more: a form |
 | 5. Code | five gliding swoops | decide with care |
-| 6. One field | short note, then held note | type, Enter answers |
-| 7. Form | a trill of two notes | fill fields, then Send |
-| 8. Notice | one bell | read, then close |
-| 9. Call | rising three, twice, long | go to that window |
-| 10. Working | soft looping plucks | wait |
-
+| 6. Call | rising three, twice, long | go to that window |
+| 7. Working | soft looping plucks | wait |
 ## The sound of each app, and the start (asked 2026-11-14, proposed)
 
 The user's second ask the same day: a start sequence when the program loads; each app with a sound quality of its
@@ -189,7 +168,7 @@ its own short motif.
 | Sound and video | axMedia | none: it must never play over the user's own media |
 
 The classes that guard or interrupt keep one quality in every app, because they must be known at once anywhere: code
-(class 5), the edge (class 2) and the call from another window (class 9).
+(class 5), the edge (class 2) and the call from another window (class 6).
 
 ### The priming sound: a window opened
 
@@ -213,8 +192,7 @@ One file for the bundle, as the theme has, in the same shape as every setting of
 volume at each level, and "as above" where nothing is set.
 
 - **Everything**: on or off, and one volume.
-- **Each class** (ticks, moves, turns, questions, code, one field, forms, notices, the call, working music, priming,
-  the start): on or off, and a volume. This is "per effect".
+- **Each class** (ticks, moves, turns, asks, code, the call, working music, priming, the start): on or off, and a volume. This is "per effect".
 - **Each app**: on or off, a volume, and its sound quality, which the user may change or set to plain. This is "per
   app".
 - **An app's class**: only where a user wants it, for example axTerminal's ticks off and everything else on. Written
@@ -238,11 +216,11 @@ headings) become entries of this one file, read by every app, and keep their men
 
 ## What building this would change
 
-- New sounds to choose by ear: axKit's own question (4), the AI tool variant (5), the two of one field (6), the lower
-  form trill (7), the two bells (8), the value steps (2).
-- `Sounds.Notice` is renamed for what it will mean, a form, and the plain notices move to the bell.
-- `OverlayPanel` and `ControlArea` play the class of what they show (a list of choices, one field, a form, a text to
-  read) instead of one sound for every notice; the kind is known where the notice is made.
+- New sounds to choose by ear: the knock itself and its pace, the roll, the lower pitch for axKit and the error's
+  (4), the AI tool variant (5), the value steps (2).
+- `Sounds.Notice`, the trill, is retired; `Sounds.Question` becomes two knocks of the scale.
+- `OverlayPanel` and `ControlArea` play the count of what they show (a text to read, a list of choices, one field, a
+  form of so many fields) instead of one sound for every notice; the count is known where the notice is made.
 - The specifications that name sounds change with it: `docs/axKit/SPEC.md` AX-7 and AX-11.12, `docs/axClaude/SPEC.md`
   FR-7.3 and FR-2.12, `docs/axKit/mcp.md` MC-7.3 and MC-9, and every user guide's list of sounds.
 - An NVDA pass cannot hear sound; the automated scripts check that the right sound was asked for by its name, and the
@@ -250,9 +228,10 @@ headings) become entries of this one file, read by every app, and keep their men
 
 ## Open questions for the user
 
-1. Whether a plain notice needs a sound at all, or silence and its words are enough.
+1. Whether a plain notice needs its one knock at all, or silence and its words are enough.
 2. Whether the AI tool variant of class 5 should differ by direction, by pitch, or both.
-3. Whether one field and a form are far enough apart by ear; to be settled by listening, not on paper.
+3. Whether three, four and five knocks are told apart at speed, and where the roll should begin; to be settled by
+   listening, not on paper.
 4. Whether the sound quality should go with the family of apps, as proposed, or each app should have a quality of its
    own although seventeen cannot be told apart.
 5. Whether the hotkey windows play a priming sound at all.

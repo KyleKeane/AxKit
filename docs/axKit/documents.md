@@ -29,7 +29,7 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   removed.
 - `theme.md` (TH-n): the theme file, every colour from one JSON file, and the display settings.
 - `earcons.md`: the classes of sound, a proposal of 2026-11-14 not built: each class of interaction (a tick, a move,
-  a turn, a question, code that asks to run, one field, a form, a notice) with the pattern that names it and the
+  a turn, an ask whose number of knocks says how much is asked, code that asks to run) with the pattern that names it and the
   variants inside it, the sounds that exist and the ones proposed.
 - `adding-an-app.md`: how a new app is made and every place it is registered.
 
