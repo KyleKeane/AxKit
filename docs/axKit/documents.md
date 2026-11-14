@@ -28,6 +28,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   issues of the private reports repository; the envelope; axTask's action keys, and why its GitHub lists were
   removed.
 - `theme.md` (TH-n): the theme file, every colour from one JSON file, and the display settings.
+- `earcons.md`: the classes of sound, a proposal of 2026-11-14 not built: each class of interaction (a tick, a move,
+  a turn, a question, code that asks to run, one field, a form, a notice) with the pattern that names it and the
+  variants inside it, the sounds that exist and the ones proposed.
 - `adding-an-app.md`: how a new app is made and every place it is registered.
 
 ## Checks and quality
