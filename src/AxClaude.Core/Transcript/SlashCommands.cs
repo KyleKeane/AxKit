@@ -144,7 +144,7 @@ public static class SlashCommands
     public static SlashCommand? Find(string sent)
     {
         var text = sent.TrimStart();
-        if (text.Length < 2 || text[0] != '/')
+        if (text.Length < 2 || text[0] != ClaudeCodeTexts.CommandStart)
         {
             return null;
         }

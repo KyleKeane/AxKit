@@ -64,7 +64,7 @@ internal sealed partial class MainForm
         || _model.PendingScreen is null
         && (_model.PendingQuestion is { } question
             ? question.Accepts(text)
-            : text is "y" or "n" or "Y" or "N" || text.All(char.IsAsciiDigit));
+            : text is ClaudeCodeTexts.Yes or ClaudeCodeTexts.No or ClaudeCodeTexts.YesCapital or ClaudeCodeTexts.NoCapital || text.All(char.IsAsciiDigit));
 
     private void SendInput()
     {
@@ -127,7 +127,7 @@ internal sealed partial class MainForm
         }
 
         // Bundle AX-11.6: signing in goes to Anthropic through Claude Code, said once in the window's own words.
-        var signIn = !answer && _lastCommand?.Name == "login" ? SignInReminder : null;
+        var signIn = !answer && _lastCommand?.Name == ClaudeCodeTexts.LoginCommandName ? SignInReminder : null;
         if (signIn is not null)
         {
             _model.AddSystemLine(signIn);

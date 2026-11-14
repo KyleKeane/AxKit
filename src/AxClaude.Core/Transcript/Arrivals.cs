@@ -40,7 +40,7 @@ public readonly record struct Arrival(bool NewLine, bool ToolCall, string? Speec
 public sealed class Arrivals
 {
     /// <summary>The hint Claude appends to a collapsed tool row (<c>tool: Reading 1 file… (ctrl+o to expand)</c>); shown, not spoken.</summary>
-    private const string ExpandHint = "(ctrl+o to expand)";
+    private const string ExpandHint = ClaudeCodeTexts.ExpandHint;
 
     private readonly Dictionary<int, string> _spoken = [];
     private readonly Dictionary<int, string> _toolRows = [];
@@ -61,7 +61,7 @@ public sealed class Arrivals
     private int _exchangeMarker = -1;
 
     /// <summary>The row that names a tool call, <c>tool: Read (a.txt)</c>; the rows of its output are Tool lines too and are never spoken.</summary>
-    public static bool IsToolCall(Line line) => line.Kind == LineKind.Tool && line.Text.StartsWith("tool:", StringComparison.Ordinal);
+    public static bool IsToolCall(Line line) => line.Kind == LineKind.Tool && line.Text.StartsWith(ClaudeCodeTexts.ToolLabel, StringComparison.Ordinal);
 
     /// <summary>Looks at the transcript after a frame: whether a line from Claude arrived, and what to speak: the reply in <paramref name="mode"/>, and each tool call when <paramref name="toolCalls"/> is set.</summary>
     public Arrival Update(IReadOnlyList<Line> lines, bool working, ReplySpeechMode mode, bool toolCalls)

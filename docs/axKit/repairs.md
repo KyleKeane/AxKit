@@ -6,8 +6,8 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **done**: 41 (7 high, 19 medium, 15 low)
-- **deferred**: 3 (1 high, 2 medium)
+- **done**: 42 (8 high, 19 medium, 15 low)
+- **deferred**: 2 (2 medium)
 - **declined**: 5 (4 medium, 1 low)
 
 ## The principles
@@ -40,6 +40,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxKit.Tests/CommandMarkTests' count falls with each step; every tests/scripts folder of the app passes
 - Commit: 5e56218
 - Note: About 131 items in the apps and 28 in the base state no mark (they ask before an AI tool runs them; safe, but a question more than needed, and their menu path is not in the report's recent actions). docs/axKit/app-kit.md AK-2 describes MenuSpec, Scope and Help, which do not exist: the document follows the code in the same steps. Settled 2026-11-13: all 160 judged and marked; Item(text, action, key, mark) with the mark required; items filled as a menu opens wrapped in CommandPalette.Marked; the empty-list lines NoEntry. Not done, by choice: ItemForm's shared actions stay AddKey commands with the apps' Context items beside them (the items now carry the same marks), since moving them would change every item app's menus for no gain a user or an AI tool would meet. docs/axKit/app-kit.md AK-2 says what is built.
+
+### R-28, high, core: What axClaude knows of Claude Code's screen is English text spread over seven files
+
+- Where: src/AxClaude.Core/Transcript/LineClassifier.cs; src/AxClaude.Core/Transcript/SessionModel.cs; src/AxClaude.Core/Transcript/QuestionReader.cs; src/AxClaude.Core/Transcript/SurveyReader.cs; src/AxClaude.Core/Transcript/ScreenReader.cs
+- Principle: P2
+- Fix: Every text and pattern of Claude Code's moves into one table (ClaudeText), each with the Claude Code version it was last seen in and the fixture that shows it; a test fails on such a literal elsewhere in the project; tools/claude-text.ps1 writes the page that is compared when a new Claude Code version comes.
+- Checked by: the fixtures and their golden files unchanged; tests/AxClaude.Tests/ClaudeCodeTextsTests
+- Note: Done 2026-11-14 as the table ClaudeCodeTexts (src/AxClaude.Core/Transcript/ClaudeCodeTexts.cs), which the readers and the window read with no behaviour changed; not built: the page of tools/claude-text.ps1, and the key sequences and command line options axClaude sends stay where they were (root CLAUDE.md rule 12 names the launcher as their place).
 
 ### R-30, high, tooling: The local gate did not run the page checks that failed CI six times in three days
 
@@ -382,14 +390,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Note: Done: the names and the broken bullet corrected (R-43). Open: the test that pins the notes' identifiers against the sources. tests/AxKit.Tests/NotesTests pins every name the notes give in backticks against the sources, with a short list of names that are Windows' or .NET's.
 
 ## Deferred
-
-### R-28, high, core: What axClaude knows of Claude Code's screen is English text spread over seven files
-
-- Where: src/AxClaude.Core/Transcript/LineClassifier.cs; src/AxClaude.Core/Transcript/SessionModel.cs; src/AxClaude.Core/Transcript/QuestionReader.cs; src/AxClaude.Core/Transcript/SurveyReader.cs; src/AxClaude.Core/Transcript/ScreenReader.cs
-- Principle: P2
-- Fix: Every text and pattern of Claude Code's moves into one table (ClaudeText), each with the Claude Code version it was last seen in and the fixture that shows it; a test fails on such a literal elsewhere in the project; tools/claude-text.ps1 writes the page that is compared when a new Claude Code version comes.
-- Checked by: the fixtures unchanged; the new test
-- Note: The largest risk to axClaude over years, since every Claude Code release can change a text. A session of its own, with the full axClaude scripts before and after.
 
 ### R-15, medium, framework: AxKitForm is one class of about 3,400 lines in twelve files that every app inherits whole
 

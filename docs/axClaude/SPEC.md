@@ -409,7 +409,8 @@ While a notice shows: Tab / Shift+Tab between text, field and buttons; Enter the
 ```
 src/AxClaude.Core/        class library (net10.0), no WinForms
   Pty/        ClaudeLauncher (command line, environment, claude --version; claude is found by AxKit.Core/ClaudeCodeProgram)
-  Transcript/ SessionModel (on the bundle's LineStore), LineClassifier, Arrivals (the tick and the spoken replies),
+  Transcript/ ClaudeCodeTexts (the one table of Claude Code's own texts and patterns, which the classes here and the window read),
+              SessionModel (on the bundle's LineStore), LineClassifier, Arrivals (the tick and the spoken replies),
               Question (the Question and QuestionOption records), QuestionReader, ScreenReader (ClaudeScreen, ScreenKey),
               QuestionRouter, SlashCommands (what Claude waits on, D33), ScreenActions (what a screen's keys do in the area), FeedbackDraftWatch
   Privacy/    GitExclude (D34; `Redaction` is the bundle's, `AxKit.Core/Redaction.cs`, since 2026-10-24)

@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace AxClaude.Core.Transcript;
 
 /// <summary>
@@ -16,27 +14,21 @@ namespace AxClaude.Core.Transcript;
 /// typing is the start of a message, and the survey closes. So it is a question answered by its key alone
 /// (<see cref="Question.KeyOnly"/>), with Dismiss for Escape. The same shape asks "How was Claude's recollection?"
 /// (with 4: Unsure) and "Can Anthropic look at your session transcript …?" (y: Yes n: No d: Don't ask again, under
-/// a link row); those two are read from Claude Code's source, not recorded.
+/// a link row); those two are read from Claude Code's source, not recorded. The texts and patterns are
+/// <see cref="ClaudeCodeTexts"/>'s.
 /// </summary>
-public static partial class SurveyReader
+public static class SurveyReader
 {
     /// <summary>How far above the cursor the answers row may be: the mode line, the effort row, the branch row and a blank row lie between.</summary>
     private const int MaxRowsAbove = 6;
-
-    // "1: Bad 2: Fine 3: Good 0: Dismiss", "y: Yes n: No d: Don't ask again": a key, a colon, a label, two answers at least.
-    [GeneratedRegex(@"^(?:[0-9a-z]: \S[^:]*?)(?: [0-9a-z]: \S[^:]*?)+$")]
-    private static partial Regex AnswersRowRegex();
-
-    [GeneratedRegex(@"(?:^| )(?<key>[0-9a-z]): ")]
-    private static partial Regex KeyRegex();
 
     /// <summary>
     /// Whether a row can be a survey's answers row, a cheap test for every frame: its last answer is Dismiss or
     /// Don't ask again, the ways out of every survey Claude draws.
     /// </summary>
     public static bool IsAnswersRow(string text) =>
-        (text.EndsWith(" 0: Dismiss", StringComparison.Ordinal) || text.EndsWith(" d: Don't ask again", StringComparison.Ordinal))
-        && AnswersRowRegex().IsMatch(text);
+        (text.EndsWith(ClaudeCodeTexts.SurveyDismissEnd, StringComparison.Ordinal) || text.EndsWith(ClaudeCodeTexts.SurveyDontAskEnd, StringComparison.Ordinal))
+        && ClaudeCodeTexts.SurveyAnswersRow().IsMatch(text);
 
     /// <summary>
     /// The survey waiting above the cursor, or null. The cursor sits on Claude's bare prompt row (<c>$</c>, nothing
@@ -72,21 +64,21 @@ public static partial class SurveyReader
         // The title directly above, or above a link row ("https://code.claude.com/docs/en/data-usage#…").
         var titleRow = answersRow - 1;
         var lines = new List<string>();
-        if (titleRow > 0 && rows[titleRow].Trim().StartsWith("https://", StringComparison.Ordinal))
+        if (titleRow > 0 && rows[titleRow].Trim().StartsWith(ClaudeCodeTexts.LinkStart, StringComparison.Ordinal))
         {
             lines.Add(rows[titleRow].Trim());
             titleRow--;
         }
 
         var title = rows[titleRow].Trim();
-        if (!title.StartsWith("● ", StringComparison.Ordinal))
+        if (!title.StartsWith(ClaudeCodeTexts.SurveyBullet, StringComparison.Ordinal))
         {
             return null;
         }
 
         var options = Options(answers);
-        var leave = options.FirstOrDefault(option => option.Key == "0") ?? options.FirstOrDefault(option => option.Key == "n");
-        return new Question(title[2..].Trim(), lines, options)
+        var leave = options.FirstOrDefault(option => option.Key == ClaudeCodeTexts.SurveyDismissKey) ?? options.FirstOrDefault(option => option.Key == ClaudeCodeTexts.No);
+        return new Question(title[ClaudeCodeTexts.SurveyBullet.Length..].Trim(), lines, options)
         {
             FirstRow = titleRow,
             KeyOnly = true,
@@ -97,7 +89,7 @@ public static partial class SurveyReader
     /// <summary>The answers of a row, "1: Bad 2: Fine": each key with the text up to the next key.</summary>
     public static IReadOnlyList<QuestionOption> Options(string answers)
     {
-        var matches = KeyRegex().Matches(answers);
+        var matches = ClaudeCodeTexts.SurveyKey().Matches(answers);
         var options = new List<QuestionOption>();
         for (var i = 0; i < matches.Count; i++)
         {

@@ -9,7 +9,7 @@ namespace AxClaude.Core.Transcript;
 public sealed class FeedbackDraftWatch
 {
     /// <summary>The title of Claude's list of drafts, which the app answers itself and closes again (D33).</summary>
-    public const string ListTitle = "Feedback drafts";
+    public const string ListTitle = ClaudeCodeTexts.FeedbackDraftsTitle;
 
     private int _before;
     private bool _worked;
@@ -58,6 +58,6 @@ public sealed class FeedbackDraftWatch
     /// </summary>
     public static QuestionOption? Find(Question question, string title) =>
         question.Title == ListTitle
-            ? question.Options.FirstOrDefault(option => option.Text.StartsWith(title + ",", StringComparison.Ordinal))
+            ? question.Options.FirstOrDefault(option => option.Text.StartsWith(title + ClaudeCodeTexts.DraftTitleEnd, StringComparison.Ordinal))
             : null;
 }

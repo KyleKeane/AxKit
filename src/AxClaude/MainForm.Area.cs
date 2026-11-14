@@ -217,7 +217,7 @@ internal sealed partial class MainForm
     }
 
     /// <summary>A line without the quote marker Claude Code draws in front of a question's text ("> Which colour …"), which NVDA read as "greater" (found by the speech capture, 2026-10-23).</summary>
-    private static string Unquoted(string line) => line.StartsWith("> ", StringComparison.Ordinal) ? line[2..] : line;
+    private static string Unquoted(string line) => line.StartsWith(ClaudeCodeTexts.QuoteMark, StringComparison.Ordinal) ? line[ClaudeCodeTexts.QuoteMark.Length..] : line;
 
     /// <summary>What goes between two sentences: a space after a text that ends in its own punctuation, else a full stop and a space; nothing after an empty text.</summary>
     private static string Stop(string before) => before.Length == 0 ? string.Empty : before[^1] is '.' or '?' or '!' or ':' ? " " : ". ";
@@ -238,7 +238,7 @@ internal sealed partial class MainForm
         if (SubmitsReview(question))
         {
             // The last answer's "Sent" said nothing about a review; y goes as the user's own answer would.
-            SendAnswer("y");
+            SendAnswer(ClaudeCodeTexts.Yes);
             return false;
         }
 
@@ -320,9 +320,9 @@ internal sealed partial class MainForm
         // Each answer's name without Claude's explanation after the dash.
         Announce("Sent: " + string.Join(", ", chosen.Select(option =>
         {
-            var dash = option.Text.IndexOf(" — ", StringComparison.Ordinal);
+            var dash = option.Text.IndexOf(ClaudeCodeTexts.AnswerDash, StringComparison.Ordinal);
             return $"{option.Key}, {(dash > 0 ? option.Text[..dash] : option.Text)}";
-        })) + (chosen.Any(option => option.Text.Equals("Other", StringComparison.OrdinalIgnoreCase))
+        })) + (chosen.Any(option => option.Text.Equals(ClaudeCodeTexts.OtherAnswer, StringComparison.OrdinalIgnoreCase))
             // Claude asks for the words of Other next (ShowOwnAnswer).
             ? ". Your words next"
             : NextStep()), false);
@@ -340,9 +340,9 @@ internal sealed partial class MainForm
     /// </summary>
     private bool SubmitsReview(Question question) =>
         !_settings.ReviewAnswers
-        && question.Title == "Review your answers"
-        && question.OptionFor("y") is not null
-        && !question.Text.Any(line => line.StartsWith("warning:", StringComparison.Ordinal))
+        && question.Title == ClaudeCodeTexts.ReviewTitle
+        && question.OptionFor(ClaudeCodeTexts.Yes) is not null
+        && !question.Text.Any(line => line.StartsWith(ClaudeCodeTexts.WarningLabel, StringComparison.Ordinal))
         && _askedQuestion?.Step is (int number, int count) && number == count
         && UserActed();
 
@@ -461,7 +461,7 @@ internal sealed partial class MainForm
     /// </summary>
     private void ShowEditedRow(ClaudeScreen screen, string text)
     {
-        var row = screen.Highlighted?.TrimEnd(':') ?? "Text";
+        var row = screen.Highlighted?.TrimEnd(ClaudeCodeTexts.FieldNameEnd) ?? "Text";
         var name = $"{screen.Title}. {row}, add at the end";
         ShowInArea(screen.Signature, name, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
         {
@@ -786,8 +786,8 @@ internal sealed partial class MainForm
 
         _drafts.Opened(_model.FeedbackDrafts);
         _draft = new Draft(DraftStep.Listing, _model.DraftTitle, Environment.TickCount64);
-        _lastCommand = SlashCommands.Find("/feedback");
-        QueueWrites("/feedback");
+        _lastCommand = SlashCommands.Find(ClaudeCodeTexts.FeedbackCommand);
+        QueueWrites(ClaudeCodeTexts.FeedbackCommand);
     }
 
     /// <summary>

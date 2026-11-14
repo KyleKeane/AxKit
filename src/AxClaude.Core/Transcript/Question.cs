@@ -11,7 +11,7 @@ public sealed record QuestionOption(string Key, string Text, bool Current = fals
     /// or null when the text has no <c>: </c>.
     /// </summary>
     public (string Name, string Value)? Setting =>
-        Text.IndexOf(": ", StringComparison.Ordinal) is var colon and > 0 ? (Text[..colon], Text[(colon + 2)..]) : null;
+        Text.IndexOf(ClaudeCodeTexts.SettingSeparator, StringComparison.Ordinal) is var colon and > 0 ? (Text[..colon], Text[(colon + ClaudeCodeTexts.SettingSeparator.Length)..]) : null;
 
     /// <summary>
     /// The value of a /config switch, a setting that is true or false, which Claude flips when its number is sent; null
@@ -19,10 +19,10 @@ public sealed record QuestionOption(string Key, string Text, bool Current = fals
     /// </summary>
     public bool? Switch => Setting?.Value switch
     {
-        "true" => true,
-        "false" => false,
-        { } value when value.StartsWith("true ", StringComparison.Ordinal) => true,
-        { } value when value.StartsWith("false ", StringComparison.Ordinal) => false,
+        ClaudeCodeTexts.SettingTrue => true,
+        ClaudeCodeTexts.SettingFalse => false,
+        { } value when value.StartsWith(ClaudeCodeTexts.SettingTrueThen, StringComparison.Ordinal) => true,
+        { } value when value.StartsWith(ClaudeCodeTexts.SettingFalseThen, StringComparison.Ordinal) => false,
         _ => null,
     };
 }
@@ -59,7 +59,7 @@ public sealed record Question(string Title, IReadOnlyList<string> Text, IReadOnl
     public string? EscapeKey { get; init; }
 
     /// <summary>/config's list of settings, waiting on "Enter a number to change [1-44], or Escape to save and close:".</summary>
-    public bool IsSettings => Title.StartsWith("Enter a number to change", StringComparison.Ordinal);
+    public bool IsSettings => Title.StartsWith(ClaudeCodeTexts.EnterNumberToChange, StringComparison.Ordinal);
 
     /// <summary>What tells one question from the next: the title and the answers. The same question redrawn keeps it.</summary>
     public string Signature => Title + "\n" + string.Join("\n", Options.Select(option => option.Key + ". " + option.Text));

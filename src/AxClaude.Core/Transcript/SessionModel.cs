@@ -185,7 +185,7 @@ public sealed partial class SessionModel : LineStore
 
         for (var r = 0; r < Rows; r++)
         {
-            if (_screen.LineAt(r) is not { ChromeHidden: true } prompt || !prompt.Text.StartsWith('$') || prompt.Text.Length < 2)
+            if (_screen.LineAt(r) is not { ChromeHidden: true } prompt || !prompt.Text.StartsWith(ClaudeCodeTexts.PromptDollar) || prompt.Text.Length < 2)
             {
                 continue;
             }
@@ -286,7 +286,7 @@ public sealed partial class SessionModel : LineStore
     public bool Send(string text, bool evenWhilePrompting = false)
     {
         var trimmed = text.Trim();
-        if (trimmed.Length == 0 || trimmed.StartsWith('/') || (PromptPending && !evenWhilePrompting))
+        if (trimmed.Length == 0 || trimmed.StartsWith(ClaudeCodeTexts.CommandStart) || (PromptPending && !evenWhilePrompting))
         {
             return false;
         }
@@ -332,7 +332,7 @@ public sealed partial class SessionModel : LineStore
 
         for (var row = _screen.CursorRow; row >= 0 && row >= _screen.CursorRow - 4; row--)
         {
-            if (_screen.LineAt(row) is { } line && line.Text.StartsWith('$'))
+            if (_screen.LineAt(row) is { } line && line.Text.StartsWith(ClaudeCodeTexts.PromptDollar))
             {
                 return line.Text.Contains(first[..Math.Min(first.Length, 40)], StringComparison.Ordinal);
             }
@@ -364,7 +364,7 @@ public sealed partial class SessionModel : LineStore
         }
 
         // Without the quote marker Claude draws in front of a set's question ("> What is your favourite colour?").
-        var text = "Question: " + (title.StartsWith("> ", StringComparison.Ordinal) ? title[2..] : title);
+        var text = "Question: " + (title.StartsWith(ClaudeCodeTexts.QuoteMark, StringComparison.Ordinal) ? title[ClaudeCodeTexts.QuoteMark.Length..] : title);
         var first = _screen.LineAt(row);
         var index = first is null ? -1 : _lines.LastIndexOf(first);
         index = index >= 0 ? index : AnchorIndex();
@@ -444,8 +444,8 @@ public sealed partial class SessionModel : LineStore
             return false;
         }
 
-        var rest = line.Text.AsSpan("you:".Length).TrimStart();
-        return rest.Length > 0 && rest[0] != '/';
+        var rest = line.Text.AsSpan(ClaudeCodeTexts.YouLabel.Length).TrimStart();
+        return rest.Length > 0 && rest[0] != ClaudeCodeTexts.CommandStart;
     }
 
     /// <summary>The first reply row (claude:, thinking:, tool:) at or after <paramref name="from"/>, or -1 when another message comes first.</summary>
@@ -495,7 +495,7 @@ public sealed partial class SessionModel : LineStore
     {
         for (var i = _lines.Count - 1; i >= 0 && i >= _lines.Count - 20; i--)
         {
-            if (_lines[i].Text.StartsWith("No conversation found to continue", StringComparison.Ordinal))
+            if (_lines[i].Text.StartsWith(ClaudeCodeTexts.NoConversationToContinue, StringComparison.Ordinal))
             {
                 return true;
             }
@@ -737,7 +737,7 @@ public sealed partial class SessionModel : LineStore
                 // A message sent while Claude was busy is drawn inside the block until Claude takes it up;
                 // its rows move as the block changes, so they are not the echo the markers wait for.
                 chrome = true;
-                inQueued = !line.Text.StartsWith("you:", StringComparison.Ordinal);
+                inQueued = !line.Text.StartsWith(ClaudeCodeTexts.YouLabel, StringComparison.Ordinal);
             }
             else if (inCard)
             {
@@ -790,7 +790,7 @@ public sealed partial class SessionModel : LineStore
                         mode = m;
                         background = LineClassifier.BackgroundText(line.Text);
                         drafts = LineClassifier.FeedbackDrafts(line.Text);
-                        working |= line.Text.Contains("esc to interrupt", StringComparison.Ordinal);
+                        working |= line.Text.Contains(ClaudeCodeTexts.InterruptHint, StringComparison.Ordinal);
                     }
                 }
                 else
@@ -1099,7 +1099,7 @@ public sealed partial class SessionModel : LineStore
         // The echo of /clear, the first row above the live block, where Claude prints the command it takes up (a
         // you: /clear quoted in a tool result or replayed at startup stands elsewhere): Claude has emptied its
         // conversation, so the window empties its own (FR-8.8; recorded with 2.1.319, the clear fixture).
-        if (line.Text == "you: /clear" && _lines.LastIndexOf(line) == AnchorIndex() - 1)
+        if (line.Text == ClaudeCodeTexts.ClearEcho && _lines.LastIndexOf(line) == AnchorIndex() - 1)
         {
             ClearConversation();
             return _lines.Count;
@@ -1118,7 +1118,7 @@ public sealed partial class SessionModel : LineStore
     {
         var target = Squeeze(sentText);
         var block = new List<Line> { _lines[start] };
-        var text = Squeeze(_lines[start].Text["you:".Length..]);
+        var text = Squeeze(_lines[start].Text[ClaudeCodeTexts.YouLabel.Length..]);
         if (!target.StartsWith(text, StringComparison.Ordinal))
         {
             return null;
@@ -1208,10 +1208,10 @@ public sealed partial class SessionModel : LineStore
         // field of a draft being edited has its hint row a few rows under the cursor (D33).
         var cy = _screen.CursorRow;
         var text = _screen.LineAt(cy)?.Text;
-        if (text is null || !(text.Contains("Esc", StringComparison.Ordinal) || text.Contains("   ", StringComparison.Ordinal)
-            || text == "Any key to continue"
+        if (text is null || !(text.Contains(ClaudeCodeTexts.KeyEsc, StringComparison.Ordinal) || text.Contains(ClaudeCodeTexts.WideGap, StringComparison.Ordinal)
+            || text == ClaudeCodeTexts.AnyKeyToContinue
             || ScreenReader.EndsWithPressEnter(text)
-            || (cy > 0 && _screen.LineAt(cy - 1)?.Text.Contains("Esc", StringComparison.Ordinal) == true)
+            || (cy > 0 && _screen.LineAt(cy - 1)?.Text.Contains(ClaudeCodeTexts.KeyEsc, StringComparison.Ordinal) == true)
             || EditHintUnder(cy)))
         {
             return null;
@@ -1250,7 +1250,7 @@ public sealed partial class SessionModel : LineStore
     {
         for (var r = row + 1; r < Rows && r - row <= ScreenReader.EditRows; r++)
         {
-            if (_screen.LineAt(r)?.Text.Contains("to cancel edit", StringComparison.Ordinal) == true)
+            if (_screen.LineAt(r)?.Text.Contains(ClaudeCodeTexts.CancelEditHint, StringComparison.Ordinal) == true)
             {
                 return true;
             }
@@ -1294,13 +1294,13 @@ public sealed partial class SessionModel : LineStore
 
         // Session names arrive as "<state glyph> <name>"; other titles (the executable name at startup,
         // "Claude Code" before a name exists) are not names.
-        if (!"◐◑◒◓✳✶✻✽✢·".Contains(text[0]))
+        if (!ClaudeCodeTexts.TitleGlyphs.Contains(text[0]))
         {
             return;
         }
 
         text = text[1..].Trim();
-        if (text.Length > 0 && text != "Claude Code")
+        if (text.Length > 0 && text != ClaudeCodeTexts.TitleWithoutName)
         {
             SessionName = text;
         }

@@ -212,7 +212,7 @@ internal sealed partial class MainForm
                 }
 
                 var line = McpOffer.ConcernLine(offer.Client, offer.Command, offer.Reason, typed);
-                _lastCommand = SlashCommands.Find("/feedback");
+                _lastCommand = SlashCommands.Find(ClaudeCodeTexts.FeedbackCommand);
                 _model.Send(line, evenWhilePrompting: true);
                 _messageSent = true;
                 QueueWrites(line);

@@ -18,10 +18,10 @@ public static class ScreenActions
     public static ScreenKey LeaveKey(ClaudeScreen screen) => screen.Keys.FirstOrDefault(key => key.Send == "\x1b") ?? screen.Keys[0];
 
     /// <summary>Whether the leaving key closes the screen, which "Closed" then says: close, dismiss, cancel or exit.</summary>
-    public static bool Closes(ScreenKey leave) => leave.Action.ToLowerInvariant() is "close" or "dismiss" or "cancel" or "exit";
+    public static bool Closes(ScreenKey leave) => leave.Action.ToLowerInvariant() is ClaudeCodeTexts.ActionClose or ClaudeCodeTexts.ActionDismiss or ClaudeCodeTexts.ActionCancel or ClaudeCodeTexts.ActionExit;
 
     /// <summary>Whether the leaving key puts the screen off: a close, or Continue.</summary>
-    public static bool Leaves(ScreenKey leave) => Closes(leave) || leave.Action == "continue";
+    public static bool Leaves(ScreenKey leave) => Closes(leave) || leave.Action == ClaudeCodeTexts.ActionContinue;
 
     /// <summary>
     /// What Enter on one of the screen's lines sends: the key the hint row names for Enter (send on a review, next on
@@ -138,5 +138,5 @@ public static class ScreenActions
 
     /// <summary>What the status bar says the screen is after "Claude: showing": "a side answer" for /btw, else its title.</summary>
     public static string StatusName(ClaudeScreen screen) =>
-        screen.Title.StartsWith("/btw", StringComparison.Ordinal) ? "a side answer" : screen.Title;
+        screen.Title.StartsWith(ClaudeCodeTexts.SideAnswerTitle, StringComparison.Ordinal) ? "a side answer" : screen.Title;
 }

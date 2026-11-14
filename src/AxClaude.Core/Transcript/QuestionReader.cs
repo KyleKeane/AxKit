@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using AxKit.Core.Transcript;
 
 namespace AxClaude.Core.Transcript;
@@ -8,38 +7,22 @@ namespace AxClaude.Core.Transcript;
 /// the same way (SPEC.md D33): a title row, text rows, the answers (<c>1. …</c>, or <c>y. …</c> and <c>n. …</c>,
 /// with <c>(selected)</c> before the current one), the row the cursor sits on (<c>Enter y/n:</c>,
 /// <c>Select with numbers [1-5]. …</c>), and key hints under it. The block ends upwards at two blank rows, a
-/// labelled row (<c>you:</c>, <c>claude:</c>, <c>tool:</c> …) or a chrome row.
+/// labelled row (<c>you:</c>, <c>claude:</c>, <c>tool:</c> …) or a chrome row. The texts and patterns are
+/// <see cref="ClaudeCodeTexts"/>'s.
 /// </summary>
-public static partial class QuestionReader
+public static class QuestionReader
 {
     /// <summary>More rows than any question has (/config lists 44 settings); a runaway block is cut here.</summary>
     private const int MaxRows = 60;
 
-    [GeneratedRegex(@"^(\d+|[yn])\. (?:(\(selected\)) )?(.*)$")]
-    private static partial Regex OptionRegex();
-
-    // AskUserQuestion draws its header as " ☐ Colour" (☒ once answered); only the recorded marks, since a plan's own
-    // rows can start with other ticks.
-    [GeneratedRegex(@"^\s*[☐☒✔]\s*")]
-    private static partial Regex CheckBoxRegex();
-
-    // With several questions in one call, a tab row above each: "←   ☐ Colour   ☐ Fruit   ✔ Submit   →".
-    [GeneratedRegex(@"^←.*→$")]
-    private static partial Regex QuestionTabsRegex();
-
-    // Since Claude Code 2.1.316 a header row instead: "Questions: Colour (answered), Fruit", and each question's own
-    // row starts with "> " (the several-questions-claude2.1.316 fixture).
-    [GeneratedRegex(@"^Questions: (.+)$")]
-    private static partial Regex QuestionsHeaderRegex();
-
-    // One question alone has "Question: Colour" over its row since 2.1.319 (the one-question-claude2.1.319 fixture):
-    // the same header with nothing to count. Unknown until 2026-11-07, the reader read on past it into the reply's rows
-    // above, and the reply's last line named the question.
-    [GeneratedRegex(@"^Question: .+$")]
-    private static partial Regex QuestionHeaderRegex();
-
-    /// <summary>The row over the questions of one call, any shape: it ends the question upwards and numbers it.</summary>
-    private static bool IsQuestionsRow(string line) => QuestionTabsRegex().IsMatch(line) || QuestionsHeaderRegex().IsMatch(line) || QuestionHeaderRegex().IsMatch(line);
+    /// <summary>
+    /// The row over the questions of one call, any shape: it ends the question upwards and numbers it. The tab row
+    /// ("←   ☐ Colour   ☐ Fruit   ✔ Submit   →"), since 2.1.316 the header row ("Questions: Colour (answered), Fruit"),
+    /// and since 2.1.319 "Question: Colour" over one question alone: unknown until 2026-11-07, the reader read on past
+    /// it into the reply's rows above, and the reply's last line named the question.
+    /// </summary>
+    private static bool IsQuestionsRow(string line) =>
+        ClaudeCodeTexts.QuestionTabs().IsMatch(line) || ClaudeCodeTexts.QuestionsHeader().IsMatch(line) || ClaudeCodeTexts.QuestionHeader().IsMatch(line);
 
     /// <summary>
     /// The question whose prompt row (the row the cursor sits on) is <paramref name="promptRow"/>, or null when
@@ -64,7 +47,7 @@ public static partial class QuestionReader
         for (var row = promptRow - 1; row >= 0 && promptRow - row <= MaxRows; row--)
         {
             var line = rows[row].Trim();
-            var match = OptionRegex().Match(line);
+            var match = ClaudeCodeTexts.AnswerRow().Match(line);
             if (!match.Success)
             {
                 if (line.Length == 0)
@@ -125,7 +108,7 @@ public static partial class QuestionReader
             }
 
             // A tip Claude puts inside a permission question ("Tip: auto mode handles these prompts for you") is skipped.
-            if (line.StartsWith("Tip: ", StringComparison.Ordinal))
+            if (line.StartsWith(ClaudeCodeTexts.TipStart, StringComparison.Ordinal))
             {
                 continue;
             }
@@ -138,9 +121,9 @@ public static partial class QuestionReader
 
             blanks = 0;
             // The "> " that marks a question's row since 2.1.316 (its own, and each one the review lists) is not read.
-            text.Add(line.StartsWith("> ", StringComparison.Ordinal) ? line[2..] : line);
+            text.Add(line.StartsWith(ClaudeCodeTexts.QuoteMark, StringComparison.Ordinal) ? line[ClaudeCodeTexts.QuoteMark.Length..] : line);
             first = row;
-            if (CheckBoxRegex().IsMatch(rows[row]) || line.StartsWith("Permission Required:", StringComparison.Ordinal))
+            if (ClaudeCodeTexts.CheckBox().IsMatch(rows[row]) || line.StartsWith(ClaudeCodeTexts.PermissionRequired, StringComparison.Ordinal))
             {
                 // A question's own header (" ☐ Colour", "Permission Required: Bash command") is its first row: what
                 // is above it is the tool call or the message before, or a row left over from it ("/plan to preview").
@@ -158,19 +141,16 @@ public static partial class QuestionReader
             text.RemoveAt(0);
         }
 
-        title = CheckBoxRegex().Replace(title, string.Empty).TrimEnd(':', ' ');
+        title = ClaudeCodeTexts.CheckBox().Replace(title, string.Empty).TrimEnd(':', ' ');
         // "Select with numbers [1-4] (comma- or space-separated for several)": more than one answer may be given.
-        var several = rows[promptRow].Contains("for several", StringComparison.Ordinal);
+        var several = rows[promptRow].Contains(ClaudeCodeTexts.ForSeveral, StringComparison.Ordinal);
         return new Question(title, text, options) { AllowsSeveral = several, FirstRow = first, Step = step };
     }
 
     /// <summary>The highest answer a prompt row names ("5" in "Select with numbers [1-5]", "n" in "Enter y/n:"), or null.</summary>
     private static string? LastKey(string promptRow) =>
-        LastKeyRegex().Match(promptRow) is { Success: true } m ? m.Groups[1].Value
-        : promptRow.TrimStart().StartsWith("Enter y/n", StringComparison.Ordinal) ? "n" : null;
-
-    [GeneratedRegex(@"\[1-(\d+)\]")]
-    private static partial Regex LastKeyRegex();
+        ClaudeCodeTexts.LastAnswer().Match(promptRow) is { Success: true } m ? m.Groups[1].Value
+        : promptRow.TrimStart().StartsWith(ClaudeCodeTexts.EnterYesNo, StringComparison.Ordinal) ? ClaudeCodeTexts.No : null;
 
     /// <summary>
     /// True when answer <paramref name="key"/> comes just before <paramref name="below"/>: 2 before 3, y before n. Never
@@ -178,7 +158,7 @@ public static partial class QuestionReader
     /// program or a page put on the screen, which would otherwise become an answer of the question (security audit S-44).
     /// </summary>
     private static bool Follows(string key, string below) =>
-        (key, below) is ("y", "n") || (int.TryParse(key, out var a) && a >= 1 && int.TryParse(below, out var b) && a + 1 == b);
+        (key, below) is (ClaudeCodeTexts.Yes, ClaudeCodeTexts.No) || (int.TryParse(key, out var a) && a >= 1 && int.TryParse(below, out var b) && a + 1 == b);
 
     /// <summary>
     /// The number and count of the question under the questions row. The tab row ("←   ☒ Colour   ☐ Fruit   ✔ Submit   →")
@@ -188,18 +168,18 @@ public static partial class QuestionReader
     /// </summary>
     private static (int, int)? Step(string questionsRow)
     {
-        if (QuestionsHeaderRegex().Match(questionsRow) is { Success: true } header)
+        if (ClaudeCodeTexts.QuestionsHeader().Match(questionsRow) is { Success: true } header)
         {
             // Counted by the "(answered)" marks, not by the commas, since a header may hold one ("Size, colour"): the
             // names after the last mark are still to answer, the first of them current; none left is the review.
-            var parts = header.Groups[1].Value.Split(" (answered)");
+            var parts = header.Groups[1].Value.Split(ClaudeCodeTexts.AnsweredMark);
             var answered = parts.Length - 1;
             var rest = parts[^1].TrimStart(',', ' ');
-            return rest.Length == 0 ? null : (answered + 1, answered + rest.Split(", ").Length);
+            return rest.Length == 0 ? null : (answered + 1, answered + rest.Split(ClaudeCodeTexts.HeaderSeparator).Length);
         }
 
-        var tabs = questionsRow.Where(c => c is '☐' or '☒').ToList();
-        var number = tabs.IndexOf('☐') + 1;
+        var tabs = questionsRow.Where(c => c is ClaudeCodeTexts.Unanswered or ClaudeCodeTexts.Answered).ToList();
+        var number = tabs.IndexOf(ClaudeCodeTexts.Unanswered) + 1;
         return number > 0 ? (number, tabs.Count) : null;
     }
 

@@ -2,6 +2,8 @@
 
 What each slash command of Claude Code shows in screen reader mode, and where the app lets you answer it (SPEC.md D33). The code form of this list is `SlashCommands.All` in `src/AxClaude.Core/Transcript/SlashCommands.cs`; keep the two in step.
 
+The texts themselves (the line labels, the prompt rows, the hint rows and their key names, the mode line, the survey rows, every pattern) are in one table, `ClaudeCodeTexts` in `src/AxClaude.Core/Transcript/ClaudeCodeTexts.cs`, each with a comment saying what it is and, where known, the Claude Code version and the fixture that show it. When Claude Code changes a word, that table is adjusted and this page with it; the classes that read the screen and the window take the texts from there, and `ClaudeCodeTextsTests` fails when one of the most characteristic ones is written in another file. A second agent program would get a table of its own of the same shape.
+
 Recorded: 33 commands were opened bare with Claude Code 2.1.281 in `C:\Temp\axclaude-fixture`, each in its own Claude process, and cancelled with Escape (2026-09-24). The others come from https://code.claude.com/docs/en/commands only and were not opened, mostly because typing them alone already acts (`/clear`, `/logout`, `/compact`, `/init`) or opens another program. Skills and plugins also appear as slash commands; they are not listed here.
 
 ## Where each one is answered

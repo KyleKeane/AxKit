@@ -27,10 +27,10 @@ public sealed record ClaudeScreen(string Title, IReadOnlyList<string> Lines, IRe
     public string Signature => Title + "\n" + string.Join(" ", Keys.Select(key => key.Send));
 
     /// <summary>The line Claude highlights with ❯, without the mark ("Send feedback", "Details:"); null when none is marked.</summary>
-    public string? Highlighted => Lines.FirstOrDefault(line => line.StartsWith('❯'))?[1..].Trim();
+    public string? Highlighted => Lines.FirstOrDefault(line => line.StartsWith(ClaudeCodeTexts.HighlightMark))?[1..].Trim();
 
     /// <summary>A text row of /feedback's review that Claude has opened for editing (D33): the hint row names "cancel edit", and typed keys go to the end of the row's text.</summary>
-    public bool Editing => Keys.Any(key => key.Action == "cancel edit");
+    public bool Editing => Keys.Any(key => key.Action == ClaudeCodeTexts.ActionCancelEdit);
 }
 
 /// <summary>
@@ -38,23 +38,14 @@ public sealed record ClaudeScreen(string Title, IReadOnlyList<string> Lines, IRe
 /// (<c>↑/↓ to select · Enter to view · Esc to close</c>, <c>Esc to dismiss</c>), with the screen's lines above it up to
 /// a labelled row or two blank rows; or it sits on a tab row (<c>Settings  Status   Config   Usage   Stats</c>) with the
 /// screen's lines below it down to such a hint row. At Claude's own prompt the cursor is on the <c>$</c> row, so
-/// ordinary work never looks like a screen.
+/// ordinary work never looks like a screen. The texts and patterns are <see cref="ClaudeCodeTexts"/>'s.
 /// </summary>
-public static partial class ScreenReader
+public static class ScreenReader
 {
     private const int MaxRows = 60;
 
-    // "Esc to close", "Esc/Enter/Space to close", "↑/↓ to select", "x to stop", "ctrl+j to new line": a key, or keys
-    // joined by "/", then "to". "⇧←/→ to browse" (a second /btw, 2.1.310) is Shift with both arrows.
-    [GeneratedRegex(@"^(?<keys>(?:Esc|Enter|Space|Tab|ctrl\+[a-z]|⇧?[←→↑↓]|[a-z])(?:/(?:Esc|Enter|Space|Tab|ctrl\+[a-z]|⇧?[←→↑↓]|[a-z]))*) to (?<action>.+)$")]
-    private static partial Regex HintRegex();
-
     /// <summary>How far under the cursor the hint row of a field being edited is looked for.</summary>
     public const int EditRows = 8;
-
-    // Tab names separated by two spaces or more: three of them at least.
-    [GeneratedRegex(@"^\S+(?: \S+)?(?:\s{2,}\S+(?: \S+)?){2,}$")]
-    private static partial Regex TabRowRegex();
 
     /// <summary>The screen waiting around the cursor row, or null when the cursor is not on a hint or tab row.</summary>
     public static ClaudeScreen? Read(IReadOnlyList<string> rows, int cursorRow)
@@ -73,7 +64,7 @@ public static partial class ScreenReader
         if (PressEnterTitle(cursorText) is { } title)
         {
             var (lines, first) = LinesAbove(rows, cursorRow);
-            return new ClaudeScreen(title, lines, [new ScreenKey("\r", "Enter", "continue")]) { FirstRow = lines.Count > 0 ? first : cursorRow };
+            return new ClaudeScreen(title, lines, [new ScreenKey("\r", ClaudeCodeTexts.KeyEnter, ClaudeCodeTexts.ActionContinue)]) { FirstRow = lines.Count > 0 ? first : cursorRow };
         }
 
         if (Keys(cursorText) is { } keys)
@@ -105,7 +96,7 @@ public static partial class ScreenReader
                     continue;
                 }
 
-                if (!editKeys.Any(key => key.Action == "cancel edit"))
+                if (!editKeys.Any(key => key.Action == ClaudeCodeTexts.ActionCancelEdit))
                 {
                     break;
                 }
@@ -115,7 +106,7 @@ public static partial class ScreenReader
             }
         }
 
-        if (TabRowRegex().IsMatch(cursorText))
+        if (ClaudeCodeTexts.TabRow().IsMatch(cursorText))
         {
             var lines = new List<string>();
             for (var r = cursorRow + 1; r < rows.Count && r - cursorRow <= MaxRows; r++)
@@ -136,14 +127,11 @@ public static partial class ScreenReader
         return null;
     }
 
-    /// <summary>What a row that waits on Enter ends with ("Login successful. Press Enter to continue…"), with the ellipsis as one character or three full stops.</summary>
-    public const string PressEnter = "Press Enter to continue";
-
     /// <summary>Whether a row can be one that waits on Enter: the cheap test for every frame's end, without allocating.</summary>
     public static bool EndsWithPressEnter(string text)
     {
-        var end = text.AsSpan().TrimEnd().TrimEnd('…').TrimEnd('.');
-        return end.EndsWith(PressEnter, StringComparison.Ordinal);
+        var end = text.AsSpan().TrimEnd().TrimEnd(ClaudeCodeTexts.EllipsisCharacter).TrimEnd('.');
+        return end.EndsWith(ClaudeCodeTexts.PressEnterToContinue, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -158,39 +146,41 @@ public static partial class ScreenReader
             return null;
         }
 
-        var before = text[..text.LastIndexOf(PressEnter, StringComparison.Ordinal)].Trim().TrimEnd('.').Trim();
-        return before.Length > 0 ? before : PressEnter;
+        var before = text[..text.LastIndexOf(ClaudeCodeTexts.PressEnterToContinue, StringComparison.Ordinal)].Trim().TrimEnd('.').Trim();
+        return before.Length > 0 ? before : ClaudeCodeTexts.PressEnterToContinue;
     }
 
     /// <summary>A row of tab names: three or more, two spaces or more apart.</summary>
-    public static bool IsTabRow(string text) => TabRowRegex().IsMatch(text);
+    public static bool IsTabRow(string text) => ClaudeCodeTexts.TabRow().IsMatch(text);
 
     /// <summary>The keys of a hint row that names Escape, or null when the row is no such hint row.</summary>
     public static IReadOnlyList<ScreenKey>? Keys(string text)
     {
         // After a feedback report is sent from /feedback: "done: Feedback sent (receipt …). Thanks!" over this row
         // (D33, recorded with 2.1.302). Enter stands for the key.
-        if (text == "Any key to continue")
+        if (text == ClaudeCodeTexts.AnyKeyToContinue)
         {
-            return [new ScreenKey("\r", "Enter", "continue")];
+            return [new ScreenKey("\r", ClaudeCodeTexts.KeyEnter, ClaudeCodeTexts.ActionContinue)];
         }
 
         var keys = new List<ScreenKey>();
-        foreach (var part in text.Split('·', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+        foreach (var part in text.Split(ClaudeCodeTexts.PartSeparator, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
         {
-            var match = HintRegex().Match(part);
+            var match = ClaudeCodeTexts.Hint().Match(part);
             if (!match.Success)
             {
                 return null;
             }
 
             var action = match.Groups["action"].Value;
-            var names = match.Groups["keys"].Value.Split('/');
+            var names = match.Groups["keys"].Value.Split(ClaudeCodeTexts.KeyJoin);
             // "⇧←/→": the Shift of the first arrow holds for the arrows after it.
-            var shift = names[0].StartsWith('⇧');
+            var shift = names[0].StartsWith(ClaudeCodeTexts.KeyShift);
             foreach (var name in names)
             {
-                var key = shift && name is "←" or "→" or "↑" or "↓" ? "⇧" + name : name;
+                var key = shift && name is ClaudeCodeTexts.KeyLeft or ClaudeCodeTexts.KeyRight or ClaudeCodeTexts.KeyUp or ClaudeCodeTexts.KeyDown
+                    ? ClaudeCodeTexts.KeyShift + name
+                    : name;
                 keys.Add(new ScreenKey(Send(key), Name(key), action));
             }
         }
@@ -232,36 +222,38 @@ public static partial class ScreenReader
     }
 
     private static IEnumerable<string> Tabs(string row) =>
-        Regex.Split(row, @"\s{2,}").Select(tab => tab.Trim()).Where(tab => tab.Length > 0);
+        Regex.Split(row, ClaudeCodeTexts.TabGapPattern).Select(tab => tab.Trim()).Where(tab => tab.Length > 0);
 
+    /// <summary>What goes to Claude for a key its hint row names.</summary>
     private static string Send(string key) => key switch
     {
-        "Esc" => "\x1b",
-        "Enter" => "\r",
-        "Space" => " ",
-        "Tab" => "\t",
-        "←" => "\x1b[D",
-        "→" => "\x1b[C",
-        "↑" => "\x1b[A",
-        "↓" => "\x1b[B",
-        "⇧←" => "\x1b[1;2D",
-        "⇧→" => "\x1b[1;2C",
-        "⇧↑" => "\x1b[1;2A",
-        "⇧↓" => "\x1b[1;2B",
+        ClaudeCodeTexts.KeyEsc => "\x1b",
+        ClaudeCodeTexts.KeyEnter => "\r",
+        ClaudeCodeTexts.KeySpace => " ",
+        ClaudeCodeTexts.KeyTab => "\t",
+        ClaudeCodeTexts.KeyLeft => "\x1b[D",
+        ClaudeCodeTexts.KeyRight => "\x1b[C",
+        ClaudeCodeTexts.KeyUp => "\x1b[A",
+        ClaudeCodeTexts.KeyDown => "\x1b[B",
+        ClaudeCodeTexts.KeyShiftLeft => "\x1b[1;2D",
+        ClaudeCodeTexts.KeyShiftRight => "\x1b[1;2C",
+        ClaudeCodeTexts.KeyShiftUp => "\x1b[1;2A",
+        ClaudeCodeTexts.KeyShiftDown => "\x1b[1;2B",
         // "ctrl+j": the control character of the letter.
-        { Length: 6 } when key.StartsWith("ctrl+", StringComparison.Ordinal) => ((char)(key[5] - 'a' + 1)).ToString(),
+        { Length: 6 } when key.StartsWith(ClaudeCodeTexts.KeyCtrl, StringComparison.Ordinal) => ((char)(key[5] - 'a' + 1)).ToString(),
         _ => key,
     };
 
+    /// <summary>The name the user hears for a key its hint row names.</summary>
     private static string Name(string key) => key switch
     {
-        "Esc" => "Escape",
-        "←" => "Left",
-        "→" => "Right",
-        "↑" => "Up",
-        "↓" => "Down",
-        ['⇧', var arrow] => "Shift+" + Name(arrow.ToString()),
-        { Length: 6 } when key.StartsWith("ctrl+", StringComparison.Ordinal) => "Ctrl+" + char.ToUpperInvariant(key[5]),
+        ClaudeCodeTexts.KeyEsc => "Escape",
+        ClaudeCodeTexts.KeyLeft => "Left",
+        ClaudeCodeTexts.KeyRight => "Right",
+        ClaudeCodeTexts.KeyUp => "Up",
+        ClaudeCodeTexts.KeyDown => "Down",
+        [ClaudeCodeTexts.KeyShift, var arrow] => "Shift+" + Name(arrow.ToString()),
+        { Length: 6 } when key.StartsWith(ClaudeCodeTexts.KeyCtrl, StringComparison.Ordinal) => "Ctrl+" + char.ToUpperInvariant(key[5]),
         _ => key,
     };
 }
