@@ -181,8 +181,10 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
     $conclusion = $null
     for ($try = 0; -not $conclusion -and $try -lt 120; $try++) {
         Start-Sleep -Seconds 20
-        $state = gh run view $run --json status,conclusion --jq '.status + " " + .conclusion'
-        if ($state -and $state.StartsWith('completed')) { $conclusion = $state.Substring('completed'.Length).Trim() }
+        # Two plain questions: a filter with a quoted space in it reaches gh as two arguments from Windows PowerShell 5.1,
+        # and gh refused it at every try of the 5.8.0 release, which waited without end (2026-11-14).
+        $status = "$(gh run view $run --json status --jq .status)".Trim()
+        if ($status -eq 'completed') { $conclusion = "$(gh run view $run --json conclusion --jq .conclusion)".Trim() }
     }
     if (-not $conclusion) {
         Write-Host "The build of main (run $run) had not ended after 40 minutes. The tag $tag was not pushed; look at it with: gh run view $run. Once it has passed: git push origin $tag"
