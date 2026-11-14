@@ -96,6 +96,14 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   as `--add-dir`. A window's own file or folder is
   added for that call alone when the user asked about it (axDown's document, AxSee's screenshot file), so that the
   answer can read what the user pointed at without the folder being allowed for good.
+- AH-2.1a When Claude Code is npm's `claude.cmd`, a batch file Windows runs through cmd.exe, the command line is
+  axClaude FR-1.2's (`ClaudeCodeProgram.LineFor`, `repairs.json` R-24): every argument in quotes, so that an allowed
+  folder named `R&D` arrives whole; an allowed folder or a model holding a percent sign, an exclamation mark or a
+  double quote, which cmd.exe acts on inside quotes too, is refused before anything runs, as the notice "Claude could
+  not answer": "Claude Code was not run. claude.cmd is a batch program, which Windows runs through cmd.exe, and
+  "<the folder>" holds a percent sign (%), which cmd.exe would act on even inside quotes: it is not started with it.
+  Rename the folder or change the argument, or install Claude Code with its own installer… The folders Claude may
+  read are in AI help's settings." `claude.exe` takes every character.
 - AH-2.4 The answer is the JSON's `result` text; its `is_error` makes a notice "Claude could not answer" with the
   text; a process that does not end in 120 s is ended and said ("No answer in two minutes"); Escape in the waiting
   notice ends it at once.

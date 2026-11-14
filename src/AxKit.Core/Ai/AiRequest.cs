@@ -44,32 +44,40 @@ public static class AiRequest
         return arguments;
     }
 
-    /// <summary>The process: Claude Code started in <paramref name="workingFolder"/> (AH-2.1, <see cref="AiSettings.EnsureWorkingFolder"/>), the allowed folders added.</summary>
-    public static ProcessStartInfo StartInfo(string claude, string workingFolder, IReadOnlyList<string> folders, string? model, string? resume)
-    {
-        var start = new ProcessStartInfo(claude)
+    /// <summary>
+    /// How Claude Code is started for a question (AH-2.1): <see cref="Arguments"/> on the bundle's one command line
+    /// for Claude Code (<see cref="ClaudeCodeProgram.LineFor"/>), which runs npm's <c>claude.cmd</c> through cmd.exe
+    /// with every argument quoted, or refuses a folder or a model cmd.exe would act on (a percent sign, an
+    /// exclamation mark, a double quote), with the reason.
+    /// </summary>
+    public static ProgramLine Line(string claude, string workingFolder, IReadOnlyList<string> folders, string? model, string? resume) =>
+        ClaudeCodeProgram.LineFor(claude, Arguments(folders, workingFolder, model, resume));
+
+    /// <summary>The process of a <see cref="Line"/> that was not refused, started in <paramref name="workingFolder"/> (AH-2.1, <see cref="AiSettings.EnsureWorkingFolder"/>).</summary>
+    public static ProcessStartInfo StartInfo(ProgramLine line, string workingFolder) =>
+        new(line.FileName, line.Arguments)
         {
             WorkingDirectory = workingFolder,
             StandardInputEncoding = new UTF8Encoding(false),
             StandardOutputEncoding = Encoding.UTF8,
             StandardErrorEncoding = Encoding.UTF8,
         };
-        foreach (var argument in Arguments(folders, workingFolder, model, resume))
-        {
-            start.ArgumentList.Add(argument);
-        }
-
-        return start;
-    }
 
     /// <summary>
     /// Claude Code run to its end with the prompt on its standard input; the answer, or an error answer after the time
-    /// limit. Throws as <see cref="Process.Start()"/> does when the program cannot be started; a cancelled wait ends
-    /// the process and throws <see cref="OperationCanceledException"/>.
+    /// limit, or, without a run, when the command line was refused (<see cref="Line"/>). Throws as
+    /// <see cref="Process.Start()"/> does when the program cannot be started; a cancelled wait ends the process and
+    /// throws <see cref="OperationCanceledException"/>.
     /// </summary>
     public static async Task<AiAnswer> AskAsync(string claude, string prompt, string workingFolder, IReadOnlyList<string> folders, string? model, string? resume, CancellationToken cancellation)
     {
-        var start = StartInfo(claude, workingFolder, folders, model, resume);
+        var line = Line(claude, workingFolder, folders, model, resume);
+        if (line.Refusal is { } refusal)
+        {
+            return new AiAnswer("Claude Code was not run. " + refusal + " The folders Claude may read are in AI help's settings.", true, null);
+        }
+
+        var start = StartInfo(line, workingFolder);
         // Outside call, program, Claude Code: claude -p in its working folder with the folders the user allowed, with read-only tools, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
         var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);
         return result.TimedOut

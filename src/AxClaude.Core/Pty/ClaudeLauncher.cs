@@ -14,29 +14,33 @@ public static class ClaudeLauncher
 
     public static string InstallUrl => ProgramInstall.ClaudeCode.Page;
 
-    public static string BuildCommandLine(string claudePath, IEnumerable<string> arguments)
-    {
-        var args = string.Join(' ', arguments.Select(Quote));
-        return claudePath.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase)
-            ? $"\"{SystemPrograms.Cmd}\" /d /s /c \"\"{claudePath}\" {args}\""
-            : $"\"{claudePath}\" {args}";
-    }
+    /// <summary>
+    /// How Claude Code is started with these arguments (FR-1.2): <c>claude.exe</c> as it is; npm's <c>claude.cmd</c>
+    /// through cmd.exe, every argument quoted, or, when its path or an argument holds a character cmd.exe acts on
+    /// inside quotes too, the refusal with <see cref="ClaudeCodeProgram.BatchAdvice"/> after it and nothing to run.
+    /// The rule is the bundle's, <c>ClaudeCodeProgram.LineFor</c> over <c>SystemPrograms.LineFor</c>
+    /// (docs/axKit/repairs.json R-24).
+    /// </summary>
+    public static ProgramLine BuildCommandLine(string claudePath, IEnumerable<string> arguments) =>
+        ClaudeCodeProgram.LineFor(claudePath, arguments);
 
     /// <summary>
     /// What <c>claude --version</c> prints, its first line (<c>2.0.30 (Claude Code)</c>), or null when Claude cannot
     /// be started or has not answered within <paramref name="timeout"/>, in which case it is ended with whatever it
     /// started. Asked once per run of the app, logged and named by Copy diagnostics (FR-13.2, FR-13.3), so that a
     /// transcript bug can be matched to the Claude Code that drew the screens (docs/axKit/longevity.md 3.10). A
-    /// <c>.cmd</c> runs through cmd.exe, as the session does (<see cref="BuildCommandLine"/>).
+    /// <c>.cmd</c> runs through cmd.exe, as the session does (<see cref="BuildCommandLine"/>), and one whose path
+    /// cmd.exe would act on is not run and gives null.
     /// </summary>
     public static async Task<string?> VersionAsync(string claudePath, TimeSpan timeout)
     {
-        var script = claudePath.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase);
-        var start = new ProcessStartInfo
+        var line = BuildCommandLine(claudePath, ["--version"]);
+        if (line.Refusal is not null)
         {
-            FileName = script ? SystemPrograms.Cmd : claudePath,
-            Arguments = script ? $"/d /s /c \"\"{claudePath}\" --version\"" : "--version",
-        };
+            return null;
+        }
+
+        var start = new ProcessStartInfo { FileName = line.FileName, Arguments = line.Arguments };
         try
         {
             // The bundle's run (AxKit.Core/ProcessRun, 2026-10-25): both pipes read to their end, so that a full one
@@ -159,35 +163,5 @@ public static class ClaudeLauncher
     }
 
     /// <summary>The arguments as one line, quoted where needed, so that <see cref="SplitArguments"/> and Windows give them back.</summary>
-    public static string JoinArguments(IEnumerable<string> arguments) => string.Join(' ', arguments.Select(Quote));
-
-    /// <summary>
-    /// The argument as the child's CommandLineToArgvW reads it back: quoted when it has a space, a tab or a quote;
-    /// inside, backslashes are literal except in front of a quote, the closing one included, where the run is
-    /// doubled, and a quote gets one more backslash. An argument ending in a backslash used to swallow the closing
-    /// quote and every argument after it.
-    /// </summary>
-    private static string Quote(string argument)
-    {
-        if (argument.Length > 0 && argument.IndexOfAny([' ', '\t', '"']) < 0)
-        {
-            return argument;
-        }
-
-        var quoted = new StringBuilder("\"");
-        var backslashes = 0;
-        foreach (var c in argument)
-        {
-            if (c == '\\')
-            {
-                backslashes++;
-                continue;
-            }
-
-            quoted.Append('\\', c == '"' ? backslashes * 2 + 1 : backslashes).Append(c);
-            backslashes = 0;
-        }
-
-        return quoted.Append('\\', backslashes * 2).Append('"').ToString();
-    }
+    public static string JoinArguments(IEnumerable<string> arguments) => string.Join(' ', arguments.Select(SystemPrograms.QuoteArgument));
 }

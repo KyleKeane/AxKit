@@ -29,7 +29,7 @@ dotnet test tests/AxGit.Tests/AxGit.Tests.csproj
     - `LoadAsync` reads one from git, `ShowViewAsync` and `FillList` show it;
     - `RememberSelection` keeps the key before the list changes, `Stale` marks views to read again;
     - `InView` says "Changes view first: Ctrl+1" for a command of another view.
-  - The commands, each one `RunGitAsync` call with the argument list the Core's records give (`StageToggleAsync`, `ShowDiffAsync`, `Discard`, `Commit`, `ShowCommitAsync`, `SwitchBranchAsync`, `NewBranch`, `FetchAsync`, `PullAsync`, `PushAsync`); `ShowDetails`.
+  - The commands, each one `RunGitAsync` call with the argument list the Core's records or `GitTexts` give, and git's output read by the Core alone (root `CLAUDE.md` rule 12: no option and no text of git's is written in the window, `GitTextsTests` fails on one) (`StageToggleAsync`, `ShowDiffAsync`, `Discard`, `Commit`, `ShowCommitAsync`, `SwitchBranchAsync`, `NewBranch`, `FetchAsync`, `PullAsync`, `PushAsync`); `ShowDetails`.
   - The notice flow, the fonts, the window placement, find and the update flow are the window base's (`AxKit.Forms/AxKitForm`, bundle AX-6.5), which `GitForm` fills in with its hooks:
     - the list and the details hidden for a notice;
     - the list as the focus target (the details keep the focus across a notice by the base's rule);

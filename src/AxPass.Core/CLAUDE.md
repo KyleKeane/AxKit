@@ -13,9 +13,17 @@ section 8. The window is `src/AxPass`, with its own `CLAUDE.md`. The item format
 
 ## Where things are
 
+- `KeePassCliTexts` (root `CLAUDE.md` rule 12, 2026-11-14; `docs/axKit/access-layers.md`): the one table of the tool's
+  words, as constants: the commands (`List`, `Show`, `Edit`, `Add`, `Remove`, `RemoveGroup`, `MakeGroup`, `Move`,
+  `Generate`, `CreateDatabase`), the options (`Quiet`, `ListOptions`, `TitleOption` and the other `edit` options,
+  `PasswordPromptOption`, `ShowValueOptions`, `GenerateArguments`), the marks of its paths (`PathSeparator`, `Root`,
+  `EmptyMark`, `RecycleBin`) and the names `show` prints. Every class here and the window name a command or an option
+  by its constant; `KeePassCliTextsTests` fails when one is written as a string anywhere else, or when something
+  searches the tool's error text. No prompt and no error text of the tool is matched anywhere.
 - `KeePassCli` and `CliResult` (PW-5): `Find` (the path set, KeePassXC's install folder, the PATH), `Run` (one command,
   the arguments in `ArgumentList`, the input lines on standard input, a timeout; through `AxKit.Core/ProcessRun`),
-  `On` (the command, `-q`, the options, the database, the paths).
+  `On` (the command, `-q`, the options, the database, the paths); `CliResult.Why` (the tool's own words for a
+  failure) and `SaidNothing` (a failure without words, which with `-q` is a wrong master password).
 - `PassTree` and `PassNode`: `ls -R -f` read into groups and entries (`Parse`), a group's `Level` (groups first, the
   Recycle Bin last at the top), `CountIn`, `HasGroup`, `HasEntry`, `InRecycleBin`, `Join`, `RefusedName` (a slash),
   `DatabaseName`.

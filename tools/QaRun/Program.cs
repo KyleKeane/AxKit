@@ -125,7 +125,8 @@ internal sealed class Session(int number, string folder, string claude, string m
             }
 
             Directory.CreateDirectory(folder);
-            var commandLine = ClaudeLauncher.BuildCommandLine(claude, ["--ax-screen-reader", "--model", model]);
+            var line = ClaudeLauncher.BuildCommandLine(claude, ["--ax-screen-reader", "--model", model]);
+            var commandLine = line.Refusal is null ? line.CommandLine : throw new InvalidOperationException(line.Refusal);
             _host = PtyHost.Start(new PtyOptions(commandLine, folder, 240, 50, ClaudeLauncher.BuildEnvironment()), OnData, code =>
             {
                 lock (_gate)

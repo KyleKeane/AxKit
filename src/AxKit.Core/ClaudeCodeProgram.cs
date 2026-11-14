@@ -37,6 +37,22 @@ public static class ClaudeCodeProgram
         return candidates;
     }
 
+    /// <summary>What a refusal to start npm's <c>claude.cmd</c> ends with: what the user can do about it.</summary>
+    public const string BatchAdvice = "Rename the folder or change the argument, or install Claude Code with its own installer: its claude.exe is no batch program and takes any character.";
+
+    /// <summary>
+    /// How Claude Code is started with these arguments, for every caller (axClaude's session and version, AI help,
+    /// the AI tools' registration; docs/axKit/repairs.json R-24): <see cref="SystemPrograms.LineFor"/>, so
+    /// <c>claude.exe</c> as it is and npm's <c>claude.cmd</c> through cmd.exe with every argument quoted, or, when
+    /// its path or an argument holds a character cmd.exe acts on inside quotes too, the refusal with
+    /// <see cref="BatchAdvice"/> after it and nothing to run.
+    /// </summary>
+    public static ProgramLine LineFor(string claude, IEnumerable<string> arguments)
+    {
+        var line = SystemPrograms.LineFor(claude, arguments);
+        return line.Refusal is null ? line : line with { Refusal = line.Refusal + " " + BatchAdvice };
+    }
+
     /// <summary>The first of <see cref="Candidates"/> that exists; null when Claude Code is not installed.</summary>
     public static string? Find(string? explicitPath, string? pathVariable = null)
     {

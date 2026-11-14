@@ -53,5 +53,5 @@ public static class Backups
     }
 
     /// <summary>Whether a command of the tool changes the database, so that a backup comes first.</summary>
-    public static bool Changes(string command) => command is "add" or "edit" or "rm" or "rmdir" or "mkdir" or "mv";
+    public static bool Changes(string command) => command is KeePassCliTexts.Add or KeePassCliTexts.Edit or KeePassCliTexts.Remove or KeePassCliTexts.RemoveGroup or KeePassCliTexts.MakeGroup or KeePassCliTexts.Move;
 }

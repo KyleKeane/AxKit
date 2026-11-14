@@ -234,7 +234,12 @@ path, parser, pipe and log line again and closed these, each on the branch `cons
 | S-57 | low | S-42's rule, text from outside shown with its hidden characters made visible, reached three lists; `AxKitList.Fill` fills every list of that kind now, so the viewer's details follow it too |
 
 Left for the user (the inventory's section 11, decided on 2026-11-09): S-53's refusal in axClaude's own `claude.cmd`
-command lines. Done since that day: S-1's `NoDefaultCurrentDirectoryInExePath` (the table's row), the cap on a zip's
+command lines; settled on 2026-11-14 (`repairs.json` R-24): every start of Claude Code, the session, `--version`, AI
+help and the AI tools' registration, takes its command line from `SystemPrograms.LineFor`, which runs a batch file
+through cmd.exe with every argument in quotes (where `& | < > ^ ( ) , ; =` are text) and refuses `%`, `!`, a double
+quote and a line break, which cmd.exe acts on inside quotes too, and a batch file whose own path holds any of these or
+an operator; proved against cmd.exe itself by tests that run a real batch file. axFile's own programs and axMCP's
+servers, batch files whose inside nobody knows, keep the strict list (`CmdSpecials`). Done since that day: S-1's `NoDefaultCurrentDirectoryInExePath` (the table's row), the cap on a zip's
 entries in axPreview (the first 1,000, then "and N more", AP-7.2), and a `list.json` `open` action's shell or Claude
 Code kept off a folder that is not on a drive of this computer (S-5's row; the user presses the key, so on this
 computer the two start, where the MCP tool never starts them).

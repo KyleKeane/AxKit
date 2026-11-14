@@ -73,7 +73,7 @@ internal sealed partial class TerminalForm
         // The end of a command is reported while its output is still being read, before the frame that makes its last
         // line final: the word waits for that frame's speech (OnTranscriptChanged), so that Speak output: all lines
         // says the last line before "Done", not after it (found by tools/AxAutomate, 2026-10-23).
-        _finished = code is null or 0 ? "Done" : code == -1 ? "Failed" : $"Failed, exit code {code}";
+        _finished = code is null or 0 ? "Done" : code == ShellTexts.ErrorWithoutCode ? "Failed" : $"Failed, exit code {code}";
         StartFinishedLate();
     }
 
@@ -102,7 +102,7 @@ internal sealed partial class TerminalForm
         }
 
         var row = _model.CursorRowText?.TrimEnd();
-        if (row is null || row == _askedRow || row.Length == 0 || row[^1] is not (':' or '?' or ']' or ')'))
+        if (row is null || row == _askedRow || !ShellTexts.EndsLikeQuestion(row))
         {
             return;
         }

@@ -8,8 +8,8 @@
   running axKit holds open. Release is what the workflows build, and only Release treats warnings as errors
   (Directory.Build.props), so a test that passes in Debug can still stop a release; 3.3.0 was lost that way.
   release.ps1 and run.ps1 -Test call this script. Exit code 0 when every project passed, otherwise the first failure's.
-  A run of every project ends with the checks of the generated pages (outside calls, workflows, repairs, apps), as
-  CI's does.
+  A run of every project ends with the checks of the generated pages (outside calls, workflows, repairs, apps) and of
+  the outside programs' record (tools\upstream.ps1 -Check), as CI's does.
 
 .EXAMPLE
   .\test.ps1                 # every test project
@@ -67,6 +67,15 @@ if ($Only -eq '') {
             Write-Host "The page check tools\$page.ps1 -Check failed: run tools\$page.ps1 (without -Check) and commit the page it writes."
             exit $LASTEXITCODE
         }
+    }
+
+    # The record of the outside programs' verified versions (docs/axKit/automation.md, When an outside program
+    # changes): only that it is well formed. The installed versions are compared by tools\upstream.ps1 alone, never
+    # here, since CI's computer has other versions.
+    & (Join-Path $root 'tools\upstream.ps1') -Check
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host 'The check tools\upstream.ps1 -Check failed: correct docs\axKit\upstream.json as its lines say.'
+        exit $LASTEXITCODE
     }
 }
 

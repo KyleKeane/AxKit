@@ -28,6 +28,7 @@ The ones used every day; all of them, with their options, are in `docs/axKit/com
 - `dotnet run --project tools\AxAutomate -c Release -- tests\scripts\<app> --build`: the app's automated window checks, on a desktop of their own (`docs/axKit/automation.md`). They never run in CI: run them after a change to a window.
 - `.\nvda-pass.ps1 [<app>]`: the same checks with NVDA listening. It takes the keyboard: only after the user has stepped away.
 - The generated pages (`outside-calls.md`, `workflows.md`, `repairs.md`, `apps.md` in `docs/axKit`) are each written by a script in `tools` and never by hand; `test.ps1` says which script to run when one is stale.
+- `.\tools\upstream.ps1` at the start of a session: when it says an outside program changed, run it with `-Verify` before other work and fix what fails in that program's one place (rule 12).
 - After a bare `dotnet build` or `dotnet test`, run `dotnet build-server shutdown`: the development computer has 7 GB.
 - `.\release.ps1 <version>` only at the maintainer's word.
 

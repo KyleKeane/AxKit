@@ -110,9 +110,17 @@ internal sealed partial class MainForm
         // The name Claude draws above its prompt (--name or -n), so that the model knows that row for chrome.
         var nameAt = ClaudeArgs.ToList().FindIndex(argument => argument is "--name" or "-n");
         _model.StartName = nameAt >= 0 && nameAt + 1 < ClaudeArgs.Count ? ClaudeArgs[nameAt + 1] : null;
+        // FR-1.2: npm's claude.cmd runs through cmd.exe, and an argument cmd.exe would act on is refused, said as any failed start.
+        var line = ClaudeLauncher.BuildCommandLine(claude, arguments);
+        if (line.Refusal is { } refusal)
+        {
+            Fail("Claude Code was not started. " + refusal);
+            return;
+        }
+
         _launchedFolder = _folder;
         KeepFilesOutOfGit();
-        var options = new PtyOptions(ClaudeLauncher.BuildCommandLine(claude, arguments), _folder!, _model.Columns, _model.Rows, ClaudeLauncher.BuildEnvironment());
+        var options = new PtyOptions(line.CommandLine, _folder!, _model.Columns, _model.Rows, ClaudeLauncher.BuildEnvironment());
         if (!StartProcess(options, "Claude"))
         {
             return;

@@ -38,13 +38,13 @@ public sealed partial class PassForm
 
         Do(async () =>
         {
-            if (await Cli("edit", options, [path]) is null)
+            if (await Cli(KeePassCliTexts.Edit, options, [path]) is null)
             {
                 return;
             }
 
             _entries[path] = changed;
-            Remember(new Step(said, [new Call("edit", [.. EntryFields.EditOptions(changed, before)], [path])], path));
+            Remember(new Step(said, [new Call(KeePassCliTexts.Edit, [.. EntryFields.EditOptions(changed, before)], [path])], path));
             Fill(path);
             SelectField(selectField);
             Announce(said, true);
@@ -68,7 +68,7 @@ public sealed partial class PassForm
         var to = PassTree.Join(entry.Group, title);
         Do(async () =>
         {
-            if (await Cli("edit", ["-t", title], [entry.Path]) is null)
+            if (await Cli(KeePassCliTexts.Edit, [KeePassCliTexts.TitleOption, title], [entry.Path]) is null)
             {
                 return;
             }
@@ -78,7 +78,7 @@ public sealed partial class PassForm
                 _entries[to] = fields.WithTitle(title);
             }
 
-            Remember(new Step("Renamed " + title, [new Call("edit", ["-t", entry.Name], [to])], entry.Path));
+            Remember(new Step("Renamed " + title, [new Call(KeePassCliTexts.Edit, [KeePassCliTexts.TitleOption, entry.Name], [to])], entry.Path));
             await ReloadAsync(to);
             Announce("Renamed " + title, true);
         });
@@ -108,7 +108,7 @@ public sealed partial class PassForm
             return;
         }
 
-        var command = node.IsGroup ? "rmdir" : "rm";
+        var command = node.IsGroup ? KeePassCliTexts.RemoveGroup : KeePassCliTexts.Remove;
         if (!node.IsGroup && !forGood)
         {
             Do(async () =>
@@ -120,7 +120,7 @@ public sealed partial class PassForm
                 }
 
                 _entries.Remove(node.Path);
-                Remember(new Step($"Moved {node.Name} to the Recycle Bin", [new Call("mv", [], [PassTree.Join(PassTree.RecycleBin, node.Name), node.Group.Length == 0 ? "/" : node.Group])], node.Path));
+                Remember(new Step($"Moved {node.Name} to the Recycle Bin", [new Call(KeePassCliTexts.Move, [], [PassTree.Join(PassTree.RecycleBin, node.Name), node.Group.Length == 0 ? KeePassCliTexts.Root : node.Group])], node.Path));
                 await ReloadAsync(select);
                 Announce($"Moved {node.Name} to the Recycle Bin; Ctrl+Z brings it back", true);
             });
@@ -176,7 +176,7 @@ public sealed partial class PassForm
             Do(async () =>
             {
                 var select = NeighbourKey();
-                if (await Cli("mv", null, [entry.Path, group.Length == 0 ? "/" : group]) is null)
+                if (await Cli(KeePassCliTexts.Move, null, [entry.Path, group.Length == 0 ? KeePassCliTexts.Root : group]) is null)
                 {
                     return;
                 }
@@ -188,7 +188,7 @@ public sealed partial class PassForm
                 }
 
                 var where = group.Length == 0 ? "the top of the database" : group.Replace("/", ", ");
-                Remember(new Step($"Moved {entry.Name} to {where}", [new Call("mv", [], [moved, entry.Group.Length == 0 ? "/" : entry.Group])], entry.Path));
+                Remember(new Step($"Moved {entry.Name} to {where}", [new Call(KeePassCliTexts.Move, [], [moved, entry.Group.Length == 0 ? KeePassCliTexts.Root : entry.Group])], entry.Path));
                 await ReloadAsync(select);
                 Announce($"Moved {entry.Name} to {where}", true);
             });
@@ -208,12 +208,12 @@ public sealed partial class PassForm
         AskText("New entry", group.Length == 0 ? "At the top of the database." : $"In {group}.", "Title:", "Title", string.Empty, "&Add", title => Do(async () =>
         {
             var path = PassTree.Join(group, title.Trim());
-            if (await Cli("add", [], [path]) is null)
+            if (await Cli(KeePassCliTexts.Add, [], [path]) is null)
             {
                 return;
             }
 
-            Remember(new Step("Added " + title.Trim(), [new Call("rm", [], [path]), new Call("rm", [], [PassTree.Join(PassTree.RecycleBin, title.Trim())])], null));
+            Remember(new Step("Added " + title.Trim(), [new Call(KeePassCliTexts.Remove, [], [path]), new Call(KeePassCliTexts.Remove, [], [PassTree.Join(PassTree.RecycleBin, title.Trim())])], null));
             await ReloadAsync(path);
             Announce($"Added {title.Trim()}; Tab, then Enter on Password sets its password", true);
         }), typed => PassTree.RefusedName(typed) ?? (_tree?.HasEntry(PassTree.Join(group, typed.Trim())) == true ? $"There is an entry called {typed.Trim()} here already" : null));
@@ -232,12 +232,12 @@ public sealed partial class PassForm
         AskText("New group", group.Length == 0 ? "At the top of the database." : $"In {group}.", "Name:", "Name", string.Empty, "&Make", name => Do(async () =>
         {
             var path = PassTree.Join(group, name.Trim());
-            if (await Cli("mkdir", [], [path]) is null)
+            if (await Cli(KeePassCliTexts.MakeGroup, [], [path]) is null)
             {
                 return;
             }
 
-            Remember(new Step("Made " + name.Trim(), [new Call("rmdir", [], [path]), new Call("rmdir", [], [PassTree.Join(PassTree.RecycleBin, name.Trim())])], null));
+            Remember(new Step("Made " + name.Trim(), [new Call(KeePassCliTexts.RemoveGroup, [], [path]), new Call(KeePassCliTexts.RemoveGroup, [], [PassTree.Join(PassTree.RecycleBin, name.Trim())])], null));
             await ReloadAsync(GroupKey(path));
             Announce("Made " + name.Trim(), true);
         }), typed => PassTree.RefusedName(typed) ?? (_tree?.HasGroup(PassTree.Join(group, typed.Trim())) == true ? $"There is a group called {typed.Trim()} here already" : null));
@@ -277,7 +277,7 @@ public sealed partial class PassForm
             _undo.Remove(step);
 
             _entries.Clear();
-            if (step.Select is { } path && !path.EndsWith('/') && await Cli("show", null, [path]) is { } shown)
+            if (step.Select is { } path && !path.EndsWith(KeePassCliTexts.PathSeparator) && await Cli(KeePassCliTexts.Show, null, [path]) is { } shown)
             {
                 // The entry read again before the words, so that its fields are there for the next key.
                 _entries[path] = EntryFields.Parse(shown.Output);
@@ -359,7 +359,7 @@ public sealed partial class PassForm
                     return;
                 }
 
-                var result = await Task.Run(() => KeePassCli.Run(cli, ["generate", "-L", "20", "-l", "-U", "-n", "-s"], []));
+                var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCliTexts.GenerateArguments, []));
                 if (result.Succeeded)
                 {
                     Overlay.SetInputText(result.Output.Trim());
@@ -381,7 +381,7 @@ public sealed partial class PassForm
 
     private void SetPassword(PassNode entry, string password) => Do(async () =>
     {
-        if (await Cli("edit", ["-p"], [entry.Path], [password, password]) is not null)
+        if (await Cli(KeePassCliTexts.Edit, [KeePassCliTexts.PasswordPromptOption], [entry.Path], [password, password]) is not null)
         {
             Announce("Password set for " + entry.Name, true);
         }
@@ -440,7 +440,7 @@ public sealed partial class PassForm
 
         Do(async () =>
         {
-            if (await Cli("show", ["-s", "-a", EntryFields.Password], [entry.Path]) is not { } result)
+            if (await Cli(KeePassCliTexts.Show, KeePassCliTexts.ShowValueOptions(EntryFields.Password), [entry.Path]) is not { } result)
             {
                 return;
             }
@@ -603,7 +603,7 @@ public sealed partial class PassForm
                                 File.Delete(path);
                             }
 
-                            var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On("db-create", path, ["-p"]), [first, first]));
+                            var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.CreateDatabase, path, [KeePassCliTexts.PasswordPromptOption]), [first, first]));
                             if (!result.Succeeded)
                             {
                                 Fail(PassTree.DatabaseName(path) + " could not be made: " + result.Why);

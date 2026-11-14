@@ -18,6 +18,13 @@ public static partial class GitTrust
     public static readonly IReadOnlyList<string> HooksArguments = ["rev-parse", "--git-path", "hooks"];
 
     /// <summary>
+    /// The hooks folder as a full path, from git's answer to <see cref="HooksArguments"/>: one line, a path that is
+    /// relative to the repository's root unless the configuration names another; null when git printed nothing.
+    /// </summary>
+    public static string? HooksFolder(string output, string root) =>
+        output.Trim() is { Length: > 0 } folder ? Path.GetFullPath(folder, root) : null;
+
+    /// <summary>
     /// A hooks folder that holds nothing: git looks for <c>NUL\pre-commit</c> and finds no file, on every Windows
     /// (a folder of axKit's own could be filled by another program).
     /// </summary>

@@ -76,7 +76,7 @@ internal sealed partial class TerminalForm
         Input.Clear();
         if (text.Trim().Length == 0)
         {
-            Write("\r");
+            Write(ShellTexts.Enter);
             return;
         }
 
@@ -106,12 +106,12 @@ internal sealed partial class TerminalForm
         foreach (var line in lines)
         {
             Enqueue(line, 60);
-            Enqueue("\r", 120);
+            Enqueue(ShellTexts.Enter, 120);
         }
 
-        if (lines.Length > 1 && _shell is ShellKind.PowerShell7 or ShellKind.WindowsPowerShell)
+        if (lines.Length > 1 && ShellTexts.EndsBlockOnEmptyLine(_shell))
         {
-            Enqueue("\r", 120);
+            Enqueue(ShellTexts.Enter, 120);
         }
 
         StartWrites();
@@ -127,12 +127,12 @@ internal sealed partial class TerminalForm
         }
 
         ClearWrites();
-        Write("\x03");
+        Write(ShellTexts.Interrupt);
         Announce("Interrupt sent", true);
     }
 
     /// <summary>Shift+Escape (AT-3.5): Escape to the shell.</summary>
-    private void SendEscape() => SendKey("\x1b", "Escape sent");
+    private void SendEscape() => SendKey(ShellTexts.Escape, "Escape sent");
 
     /// <summary>Shell → Send key: a key the field cannot type, for a program that wants it.</summary>
     private void SendKey(string sequence, string said)

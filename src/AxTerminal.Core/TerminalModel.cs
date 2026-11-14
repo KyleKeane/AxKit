@@ -285,8 +285,8 @@ public sealed class TerminalModel : LineStore
         string? code;
         if (MarkNonce is { } nonce)
         {
-            var suffix = "axkit=" + nonce;
-            if (rest is null || !(rest == suffix || rest.EndsWith(";" + suffix, StringComparison.Ordinal)))
+            var suffix = ShellTexts.NonceField + nonce;
+            if (rest is null || !(rest == suffix || rest.EndsWith(ShellTexts.MarkFieldSeparator + suffix, StringComparison.Ordinal)))
             {
                 _directoryExpected = false;
                 return;
@@ -299,13 +299,13 @@ public sealed class TerminalModel : LineStore
             code = rest;
         }
 
-        _directoryExpected = letter == 'A';
+        _directoryExpected = letter == ShellTexts.PromptStartMark;
         switch (letter)
         {
-            case 'D':
+            case ShellTexts.CommandDoneMark:
                 _lastCode = code;
                 break;
-            case 'A':
+            case ShellTexts.PromptStartMark:
                 _promptStart = _screen.EnsureLine(_screen.CursorRow);
                 if (State == ShellState.Running)
                 {
@@ -323,7 +323,7 @@ public sealed class TerminalModel : LineStore
 
                 _lastCode = null;
                 break;
-            case 'B':
+            case ShellTexts.PromptEndMark:
                 if (_promptStart is null)
                 {
                     // A B without an A since the last prompt (a program inside the shell that marks its own input,

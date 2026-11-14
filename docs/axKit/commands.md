@@ -24,6 +24,13 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   always with `--model haiku`.
 - `nvda-pass.ps1 [<app>]` runs the same scripts with NVDA listening, plus `tests/nvda-scripts`: the NVDA test plans as
   the assistant runs them. It takes the keyboard, so only after the user has stepped away.
+- `tools/upstream.ps1` is the upstream watch (`automation.md`, "When an outside program changes"): for each outside
+  program (Claude Code, Git, KeePassXC's tool, the shells) the installed version beside the one the checks last passed
+  with, from `upstream.json`, and "changed" where they differ; exit code 1 when one did. Quick, no build: run it at
+  the start of a session. `-Verify [<program>]` runs the checks of every changed program (or the one named) and
+  writes the new version and the date into `upstream.json` where they pass; exit code 1 when a check failed, 2 when
+  the checks could not run (not installed, Claude Code signed out, no network, no build). `-Check` only checks the
+  file's shape, for `test.ps1` and `build.yml`. `-File <path>` reads and writes another file.
 - `manual_tests/prepare.ps1 [<app>]` makes and resets the files of the NVDA test passes in `manual_tests/<app>`, spoken
   WAV files and a scratch git repository among them. Git ignores all but the script and the `_main.md` files, so a
   file a test pass needs is added to the script, never committed.
@@ -64,6 +71,16 @@ page by hand; run its script and commit the page.
 - `release.ps1 <version>`, after a `## <version>` section in `CHANGELOG.md`: the pages, the tests, the version, the
   commit, the tag, the push. GitHub Actions publishes the release the apps update from. Only at the maintainer's
   word. `gh run watch` follows the workflow.
+- `release.ps1 -Rehearse [<version>] [-WithTests]`, before a release: the rehearsal. It makes the real run's checks
+  (the branch, behind origin, the hooks setting, uncommitted files, the changelog section and the version; of the
+  given version, or of the newest released section) and asks GitHub every question the real run and
+  `tools/sign-release.ps1` ask, through the same functions and so with the same command lines, about what is already
+  there: the build of main's newest commit and the newest published release. It commits, tags, pushes, signs and
+  publishes nothing (it only fetches origin), takes a few seconds, and runs `test.ps1` only with `-WithTests`. Exit
+  code 0 when every check passed and every question was answered sensibly; uncommitted files are named as what the
+  real run would refuse and do not change the exit code; a failing question is shown with its command and output.
+  The parts of the script that talk to git and GitHub otherwise run only in a real release (two faults met 5.8.0
+  there); `ReleaseScriptTests` reads both scripts for the shape that keeps the rehearsal harmless.
 - `.github/workflows`: `build.yml` tests every push to every branch and every pull request; `release.yml` builds a
   `v*` tag into a GitHub release; `dependabot.yml` keeps the actions and the test packages current.
 

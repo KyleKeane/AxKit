@@ -253,6 +253,39 @@ before a merge or a release, in place of asking the user for a pass by ear. A pa
 `docs/axKit/nvda-test-record.md` as "run by the assistant through nvda-pass.ps1" with the commit. What stays the
 user's: sound and video quality, the Start menu and Explorer (outside the windows), and how a change feels to use.
 
+## 4. When an outside program changes: `tools/upstream.ps1` (2026-11-14)
+
+The programs under the access layers update themselves, Claude Code sometimes daily. When one changes what it prints,
+the place of axKit that reads it can break (the root `CLAUDE.md`, rule 12), and the user would be the first to notice,
+in daily work. The upstream watch lets the assistant notice first. It has no side the user sees.
+
+- **The record**, `upstream.json`: one entry per program (Claude Code, Git, KeePassXC's tool, Windows PowerShell,
+  PowerShell 7, Command Prompt, Git Bash) with `places` (where it is looked for, in the app's own order; a bare file
+  name is searched in the PATH's full folders), `arguments` (its version question), `verified` and `date` (the version
+  the checks last passed with, and when; "not installed" for a program this computer lacks), `tests` (test projects)
+  and `scripts` (folders or scripts of `tests/scripts`). Claude Code's entry also has `needs`, `signedIn` (the
+  arguments that end with 0 when it is signed in) and `host`. A new access layer's program gets its entry;
+  `UpstreamTests` fails while Claude Code, Git, KeePassXC's tool or a shell is missing.
+- **At the start of every session**: `.\tools\upstream.ps1`. One line per program, the installed version and the
+  verified one, "changed" where they differ; no build, a few seconds. Exit code 0 when none changed, 1 when one did.
+- **When one changed**: `.\tools\upstream.ps1 -Verify` before other work (or `-Verify <id>` for one program, changed
+  or not). Each check of the changed programs runs once: the test projects through `test.ps1 <App>`, the scripts
+  through `tools\AxAutomate ... --build` on the desktop of their own. Where all pass, the new version and the date are
+  written into the record: commit it. Where one fails, the record keeps the program as it was, the last lines name the
+  script and the failing step, and the exit code is 1: fix it in that program's one place (its launcher, its parser,
+  its table of texts), with a new recording where the parser reads one (the `record-fixture` skill for Claude Code),
+  and verify again. What the user hears and presses stays as it was.
+- **When the checks cannot run** (the program is not installed, Claude Code is signed out, its host does not answer,
+  the build failed), the output says so, nothing is written, and the exit code is 2. That is not a failure of a
+  parser. Claude Code's scripts need the network, a signed-in Claude Code and a live model, and take about a quarter
+  of an hour; a step that waits for the model's words can fail on the wording, so a failure there is read at its step
+  before the parser is blamed.
+- **`-Check`**, in `test.ps1` and `build.yml`: only that the record is well formed (every field, every named check
+  exists). It never asks an installed version: CI's computer has other versions.
+
+Windows' own programs change with Windows' monthly updates, so Command Prompt and Windows PowerShell are "changed"
+about once a month; their check is axTerminal's, run once for all the shells.
+
 ## Rules
 
 - Claude sessions in tests use Haiku through `--model haiku` and leave the user's settings alone.

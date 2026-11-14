@@ -327,7 +327,7 @@ public sealed partial class PassForm : ItemForm
 
         try
         {
-            var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On("show", database, null, path), [password]));
+            var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.Show, database, null, path), [password]));
             if (_password is null || _database != database)
             {
                 return;
@@ -405,10 +405,10 @@ public sealed partial class PassForm : ItemForm
         }
 
         Announce("Unlocking " + PassTree.DatabaseName(database), true);
-        var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On("ls", database, ["-R", "-f"]), [password]));
+        var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.List, database, KeePassCliTexts.ListOptions), [password]));
         if (!result.Succeeded)
         {
-            ShowUnlock(result.Error.Trim().Length == 0 ? $"The password does not open {PassTree.DatabaseName(database)}." : result.Why);
+            ShowUnlock(result.SaidNothing ? $"The password does not open {PassTree.DatabaseName(database)}." : result.Why);
             return;
         }
 
@@ -480,7 +480,7 @@ public sealed partial class PassForm : ItemForm
 
     private async Task ReloadAsync(string? select)
     {
-        if (await Cli("ls", ["-R", "-f"]) is { } result)
+        if (await Cli(KeePassCliTexts.List, KeePassCliTexts.ListOptions) is { } result)
         {
             _tree = PassTree.Parse(result.Output);
             Fill(select);

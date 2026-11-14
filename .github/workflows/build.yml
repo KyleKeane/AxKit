@@ -34,6 +34,10 @@ jobs:
       - name: Apps are listed
         # docs/axKit/apps.md is what Dispatch.Apps and the folders give: the one list of the apps (repairs R-44).
         run: ./tools/apps-page.ps1 -Check
+      - name: The outside programs' record is well formed
+        # docs/axKit/upstream.json has its fields and names checks that exist; the installed versions are never
+        # compared here, this computer has its own (docs/axKit/automation.md, When an outside program changes).
+        run: ./tools/upstream.ps1 -Check
       - name: Build and test
         # ContinuousIntegrationBuild: deterministic paths; the test packages restore exactly as their lock files say (S-34).
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true

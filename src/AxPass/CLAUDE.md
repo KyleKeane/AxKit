@@ -27,7 +27,8 @@ guide `docs/axPass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
   unlocking and locking (`ShowUnlock`, `UnlockAsync`, `Lock`, `LockWhenIdle` from `GetLastInputInfo`), `ReloadAsync`,
   and `Cli`, the one way a command of the tool runs: off the UI thread, the master password first on its input, one
   at a time (`_busy`), its failure said, and before the first change after unlocking a backup (`_backedUp`,
-  `Backups.Make`; no change without it); `BackUpNowAsync` and `ShowBackups` for the Session menu.
+  `Backups.Make`; no change without it; a command and an option are named by `KeePassCliTexts`' constants, never
+  written as a string here, root `CLAUDE.md` rule 12, and `KeePassCliTextsTests` fails on one); `BackUpNowAsync` and `ShowBackups` for the Session menu.
 - `PassForm.Commands.cs`: `SaveFields` (`edit` with `EntryFields.EditOptions`), `RenameItem`, `RenameTo`, `DeleteRow`
   (`rm` with its `mv` back; a group or the Recycle Bin's entries after a question), `NewItem`, `NewList`, `Undo` (the
   runs a `Step` keeps), the password's notices (`ChangeSpecial`, Generate, typed twice, `edit -p`), the copies (the

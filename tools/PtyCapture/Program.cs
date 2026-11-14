@@ -98,7 +98,14 @@ internal static class Program
         }
         else
         {
-            commandLine = ClaudeLauncher.BuildCommandLine(command[0], command.Skip(1));
+            var line = ClaudeLauncher.BuildCommandLine(command[0], command.Skip(1));
+            if (line.Refusal is not null)
+            {
+                Console.Error.WriteLine(line.Refusal);
+                return 2;
+            }
+
+            commandLine = line.CommandLine;
             environment = ClaudeLauncher.BuildEnvironment();
         }
 

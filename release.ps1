@@ -21,54 +21,66 @@
        signed zip, so a release is never published without this step.
   When it is done, the release is at https://github.com/KyleKeane/AxKit/releases and the apps offer it as an update.
 
+  -Rehearse releases nothing. It makes the checks of steps 1 and 2 and asks git and GitHub every question the real
+  run asks, through the same functions and so with the same command lines, about things that are already there: the
+  build of main's newest commit, and the newest published release (tools/sign-release.ps1 -Rehearse). The parts that
+  talk to git and GitHub otherwise run only during a real release, and 5.8.0 met two faults in them (2026-11-14).
+  The rehearsal ends before the first statement that changes anything, in a few seconds; -WithTests adds test.ps1.
+  Without a version, the changelog and version checks are made for the newest released section. It only fetches
+  origin, as every session does. Exit code 0: every check passed and every question was answered sensibly. Files not
+  yet committed are named as what the real run would refuse, and do not change the exit code: a rehearsal is run
+  while the work is still open. Anything else the real run would refuse, and any question that fails, gives 1.
+
 .EXAMPLE
+  .\release.ps1 -Rehearse         # before a release: the checks and the questions to git and GitHub, nothing changed
+  .\release.ps1 -Rehearse 1.0.1   # the same, with the changelog section and the tag of 1.0.1 checked
   .\release.ps1 1.0.1
   .\release.ps1 1.0.1 -NoPush     # commit and tag only; push later with: git push origin main; git push origin v1.0.1
 #>
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true, Position = 0)]
+    [Parameter(Position = 0)]
     [string]$Version,
 
-    [switch]$NoPush
+    [switch]$NoPush,
+
+    [switch]$Rehearse,
+
+    [switch]$WithTests
 )
 
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
 $project = Join-Path $root 'src\AxKit\AxKit.csproj'
 $changelog = Join-Path $root 'CHANGELOG.md'
-$tag = "v$Version"
 
-if ($Version -notmatch '^\d+\.\d+\.\d+$') {
-    Write-Host "The version must be three numbers, like 1.0.1 (got '$Version')."
-    exit 1
+# ---- The checks and the questions, each one a function that the release and the rehearsal both call. A check
+# ---- returns what is wrong, or nothing. None of them changes anything but origin's refs (the fetch).
+
+function Get-VersionProblem([string]$ofVersion) {
+    if ($ofVersion -notmatch '^\d+\.\d+\.\d+$') { return "The version must be three numbers, like 1.0.1 (got '$ofVersion')." }
 }
 
-$branch = (git -C $root rev-parse --abbrev-ref HEAD).Trim()
-if ($branch -ne 'main') {
-    Write-Host "Release from main (you are on '$branch')."
-    exit 1
+function Get-BranchProblem {
+    $branch = "$(git -C $root rev-parse --abbrev-ref HEAD)".Trim()
+    if ($branch -ne 'main') { return "Release from main (you are on '$branch')." }
 }
 
-# Nothing is released over work someone else has pushed: main here must contain everything origin/main has. The
-# check belongs to the push, so -NoPush (commit and tag offline, push later) does not need origin to be reachable.
-if (-not $NoPush) {
+# Nothing is released over work someone else has pushed: main here must contain everything origin/main has.
+function Get-BehindProblem {
     git -C $root fetch -q origin
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Could not fetch origin. Nothing was changed."
-        exit $LASTEXITCODE
-    }
-
+    if ($LASTEXITCODE -ne 0) { return "Could not fetch origin. Nothing was changed." }
     git -C $root merge-base --is-ancestor origin/main main
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "origin/main has commits that main here does not. Bring them in first (git pull --ff-only, or a merge), then run this again."
-        exit 1
+        return "origin/main has commits that main here does not. Bring them in first (git pull --ff-only, or a merge), then run this again."
     }
+}
 
-    # Every push of this repository also syncs the repositories beside it, the reports clone and the management lists
-    # (tools/sync-repos.ps1), through the pre-push hook, so that a release never leaves them behind. The hook is a
-    # setting of the clone, made once (docs/axKit/development-environment.md section 4).
-    # The setting may hold the folder as written there, tools/hooks, or its full path: both name the same folder.
+# Every push of this repository also syncs the repositories beside it, the reports clone and the management lists
+# (tools/sync-repos.ps1), through the pre-push hook, so that a release never leaves them behind. The hook is a
+# setting of the clone, made once (docs/axKit/development-environment.md section 4).
+# The setting may hold the folder as written there, tools/hooks, or its full path: both name the same folder.
+function Get-HooksProblem {
     $hooks = "$(git -C $root config --get core.hooksPath)".Trim()
     $hooksFolder = ''
     if ($hooks) {
@@ -76,27 +88,18 @@ if (-not $NoPush) {
         $hooksFolder = [IO.Path]::GetFullPath($hooksFolder).TrimEnd('\')
     }
     if ($hooksFolder -ine [IO.Path]::GetFullPath((Join-Path $root 'tools\hooks')).TrimEnd('\')) {
-        Write-Host "The pre-push hook is not installed in this clone. Run once: git config core.hooksPath tools/hooks (docs/axKit/development-environment.md section 4), then run this again."
-        exit 1
+        return "The pre-push hook is not installed in this clone. Run once: git config core.hooksPath tools/hooks (docs/axKit/development-environment.md section 4), then run this again."
     }
 }
 
-$generated = @('CHANGELOG.md', 'docs/axKit/outside-calls.md')
-$dirty = @(git -C $root status --porcelain) | Where-Object { $_ -and ($generated -notcontains $_.Substring(3)) }
-if ($dirty.Count -gt 0) {
-    Write-Host "Commit or stash these first; only CHANGELOG.md and docs/axKit/outside-calls.md may be uncommitted:"
-    $dirty | ForEach-Object { Write-Host "  $_" }
-    exit 1
+# The files the real run refuses to release over: everything uncommitted but the two it commits itself.
+function Get-UncommittedFiles {
+    $generated = @('CHANGELOG.md', 'docs/axKit/outside-calls.md')
+    return @(git -C $root status --porcelain) | Where-Object { $_ -and ($generated -notcontains $_.Substring(3)) }
 }
 
-if (git -C $root tag --list $tag) {
-    Write-Host "The tag $tag already exists. Pick the next version."
-    exit 1
-}
-
-if (-not (Select-String -Path $changelog -Pattern ('^## ' + [regex]::Escape($Version) + '(\s|$)') -Quiet)) {
-    Write-Host "CHANGELOG.md has no '## $Version' section. Add one (its text becomes the release notes), then run this again."
-    exit 1
+function Get-TagProblem([string]$ofTag) {
+    if (git -C $root tag --list $ofTag) { return "The tag $ofTag already exists. Pick the next version." }
 }
 
 # The section is the release notes and the update notice: it says something, and every bullet names its app or apps,
@@ -104,20 +107,205 @@ if (-not (Select-String -Path $changelog -Pattern ('^## ' + [regex]::Escape($Ver
 # apps are the folders of docs/ that hold a SPEC.md (axkit among them, for the bundle; never a private or planning
 # folder), matched without regard to case; the notes come from tools/release-notes.ps1, the script the release
 # workflow runs, which fails on an empty section.
-try {
-    $notes = & (Join-Path $root 'tools\release-notes.ps1') -Version $Version -Path $changelog
-} catch {
-    Write-Host $_.Exception.Message
+function Get-ChangelogProblem([string]$ofVersion) {
+    if (-not (Select-String -Path $changelog -Pattern ('^## ' + [regex]::Escape($ofVersion) + '(\s|$)') -Quiet)) {
+        return "CHANGELOG.md has no '## $ofVersion' section. Add one (its text becomes the release notes), then run this again."
+    }
+    try {
+        $notes = & (Join-Path $root 'tools\release-notes.ps1') -Version $ofVersion -Path $changelog
+    } catch {
+        return $_.Exception.Message
+    }
+    $appNames = @(Get-ChildItem (Join-Path $root 'docs') -Directory | Where-Object { Test-Path (Join-Path $_.FullName 'SPEC.md') } | ForEach-Object { $_.Name }) -join '|'
+    $prefix = "^- (($appNames)(, ($appNames))*|For developers): "
+    $unnamed = @($notes -split "`n" | Where-Object { $_ -match '^- ' -and $_ -notmatch $prefix })
+    if ($unnamed.Count -gt 0) {
+        return (@("Every bullet of the '## $ofVersion' section starts with its app or apps ('- axFile: ', '- axDown, axJSON: ') or with '- For developers: '. These do not:") + ($unnamed | ForEach-Object { "  $_" })) -join "`n"
+    }
+}
+
+# The project file's text with the version set, or nothing when the file has no <Version> element.
+function Get-ProjectWithVersion([string]$ofVersion) {
+    $xml = Get-Content $project -Raw
+    $updated = $xml -replace '<Version>[^<]*</Version>', "<Version>$ofVersion</Version>"
+    if ($updated -eq $xml -and $xml -notmatch "<Version>$([regex]::Escape($ofVersion))</Version>") { return $null }
+    return $updated
+}
+
+# One question to GitHub: gh with these words, each word one argument. The answer is what gh wrote, trimmed; the
+# command as text and gh's exit code stay in $script:asked and $script:askedExit, for the rehearsal's report. What gh
+# writes as an error goes to the console as it comes.
+# Every --jq filter is one plain word, with no space and no double quote in it: a filter with a quoted space reaches
+# gh as two arguments from Windows PowerShell 5.1, and gh refused it at every try of the 5.8.0 release, which waited
+# without end (2026-11-14). ReleaseScriptTests holds the scripts to it.
+function Get-GitHubAnswer([string[]]$words) {
+    $script:asked = 'gh ' + ($words -join ' ')
+    $lines = @(gh @words)
+    $script:askedExit = $LASTEXITCODE
+    return ($lines -join "`n").Trim()
+}
+
+# The run of build.yml for a commit: its number, or nothing (or 'null') while GitHub has none yet.
+function Find-BuildRun([string]$ofCommit) {
+    return Get-GitHubAnswer @('run', 'list', '--workflow', 'build.yml', '--commit', $ofCommit, '--limit', '1', '--json', 'databaseId', '--jq', '.[0].databaseId')
+}
+
+# Two plain questions, the status and then the conclusion, where one filter joining them was the fault of 5.8.0.
+function Get-RunStatus([string]$ofRun) {
+    return Get-GitHubAnswer @('run', 'view', $ofRun, '--json', 'status', '--jq', '.status')
+}
+
+function Get-RunConclusion([string]$ofRun) {
+    return Get-GitHubAnswer @('run', 'view', $ofRun, '--json', 'conclusion', '--jq', '.conclusion')
+}
+
+# ---- The rehearsal: the checks and the questions above, and nothing else. It always ends in an exit, above the
+# ---- first statement of this script that changes anything; ReleaseScriptTests reads the script for that.
+if ($Rehearse) {
+    $failed = 0        # what gives exit code 1: a refusal other than uncommitted files, or a question that failed
+    $checked = 0
+    function Write-Check([string]$what, $problem) {
+        $script:checked++
+        if ($problem) {
+            $script:failed++
+            Write-Host "The real run would stop here: ${what}:"
+            Write-Host "  $problem"
+        } else {
+            Write-Host "Passed: $what."
+        }
+    }
+    function Write-Answer([string]$what, [string]$answer, [bool]$sensible) {
+        $script:checked++
+        if ($script:askedExit -eq 0 -and $sensible) {
+            Write-Host "Answered: ${what}: $answer"
+            Write-Host "  $script:asked"
+        } else {
+            $script:failed++
+            Write-Host "FAILED: ${what}."
+            Write-Host "  Command: $script:asked"
+            Write-Host "  Exit code: $script:askedExit"
+            Write-Host "  Output: '$answer'"
+        }
+    }
+
+    try {
+        Write-Host "Rehearsal of a release: checks and questions only."
+        $rehearsed = $Version
+        if (-not $rehearsed) {
+            $heading = Select-String -Path $changelog -Pattern '^## (\d+\.\d+\.\d+)(\s|$)' | Select-Object -First 1
+            if ($heading) { $rehearsed = $heading.Matches[0].Groups[1].Value }
+            Write-Host "No version given: the changelog and version checks are made for the newest released section, $rehearsed."
+        }
+        Write-Check "the version's format ($rehearsed)" (Get-VersionProblem $rehearsed)
+        Write-Check 'the branch is main' (Get-BranchProblem)
+        Write-Check 'main has everything origin/main has (origin fetched)' (Get-BehindProblem)
+        Write-Check 'the hooks setting of the clone' (Get-HooksProblem)
+
+        $uncommitted = @(Get-UncommittedFiles)
+        $checked++
+        if ($uncommitted.Count -gt 0) {
+            Write-Host "The real run would stop here: $($uncommitted.Count) uncommitted file(s). Commit or stash them before the release; the rehearsal goes on:"
+            $uncommitted | ForEach-Object { Write-Host "  $_" }
+        } else {
+            Write-Host 'Passed: nothing uncommitted but what the release commits.'
+        }
+
+        if ($Version) {
+            Write-Check "the tag v$rehearsed is free" (Get-TagProblem "v$rehearsed")
+        } else {
+            Write-Host "Not checked: that the tag is free (v$rehearsed is released; give the next version to check its tag)."
+        }
+        Write-Check "the changelog section of $rehearsed" (Get-ChangelogProblem $rehearsed)
+        $withVersion = Get-ProjectWithVersion $rehearsed
+        Write-Check 'the project file has its <Version> element' $(if (-not $withVersion) { "No <Version> element was found in $project." })
+
+        if ($WithTests) {
+            Write-Host 'Running the tests...'
+            & (Join-Path $root 'test.ps1')
+            Write-Check 'the tests and the generated pages (test.ps1)' $(if ($LASTEXITCODE -ne 0) { "test.ps1 ended with exit code $LASTEXITCODE." })
+        } else {
+            Write-Host 'Not run: the tests and the generated pages (add -WithTests).'
+        }
+
+        if (Get-Command gh -ErrorAction SilentlyContinue) {
+            # The build of main's newest commit; of origin/main's when the newest one here has not been pushed.
+            $sha = "$(git -C $root rev-parse HEAD)".Trim()
+            $id = Find-BuildRun $sha
+            if ($script:askedExit -eq 0 -and (-not $id -or $id -eq 'null')) {
+                $pushed = "$(git -C $root rev-parse origin/main)".Trim()
+                if ($pushed -ne $sha) {
+                    Write-Host "GitHub has no build of $sha (not pushed yet): asking about origin/main's commit."
+                    $sha = $pushed
+                    $id = Find-BuildRun $sha
+                }
+            }
+            Write-Answer "the build run of main's commit $sha" $id ($id -match '^\d+$')
+            if ($id -match '^\d+$') {
+                $status = Get-RunStatus $id
+                Write-Answer "the status of run $id" $status ($status -match '^[a-z_]+$')
+                if ($status -eq 'completed') {
+                    $conclusion = Get-RunConclusion $id
+                    Write-Answer "the conclusion of run $id" $conclusion ($conclusion -match '^[a-z_]+$')
+                    if ($conclusion -match '^[a-z_]+$' -and $conclusion -ne 'success') {
+                        Write-Host "  Note: with this conclusion on the release's commit, the real run would not push the tag."
+                    }
+                } else {
+                    Write-Host "  The run has not ended, so the conclusion was not asked, as in the real run's wait."
+                }
+            }
+
+            # What tools/sign-release.ps1 asks, about the newest published release.
+            & (Join-Path $root 'tools\sign-release.ps1') -Rehearse
+            Write-Check 'the questions of tools/sign-release.ps1' $(if ($LASTEXITCODE -ne 0) { "sign-release.ps1 -Rehearse ended with exit code $LASTEXITCODE; its lines are above." })
+        } else {
+            $failed++
+            Write-Host 'FAILED: gh is not installed, so no question to GitHub could be asked (the real run would push the tag without waiting for the build, and sign nothing).'
+        }
+    } catch {
+        $failed++
+        Write-Host "FAILED: the rehearsal itself stopped: $($_.Exception.Message)"
+        Write-Host "  $($_.InvocationInfo.PositionMessage)"
+    }
+
+    Write-Host "Checked: $checked checks and questions, $failed of them failed."
+    Write-Host 'Not rehearsed: the commit, the tag, the pushes, the download and the signing of the zip, the upload, the publishing.'
+    Write-Host 'Nothing was changed: no commit, no tag, no push, nothing signed, uploaded or published.'
+    if ($failed -gt 0) { exit 1 }
+    exit 0
+}
+# ---- End of the rehearsal. Everything below is the release.
+
+function Stop-OnProblem($problem) {
+    if ($problem) {
+        Write-Host $problem
+        exit 1
+    }
+}
+
+if (-not $Version) {
+    Write-Host "Give the version, like .\release.ps1 1.0.1 (or -Rehearse to rehearse a release without making one)."
     exit 1
 }
-$apps = @(Get-ChildItem (Join-Path $root 'docs') -Directory | Where-Object { Test-Path (Join-Path $_.FullName 'SPEC.md') } | ForEach-Object { $_.Name }) -join '|'
-$prefix = "^- (($apps)(, ($apps))*|For developers): "
-$unnamed = @($notes -split "`n" | Where-Object { $_ -match '^- ' -and $_ -notmatch $prefix })
-if ($unnamed.Count -gt 0) {
-    Write-Host "Every bullet of the '## $Version' section starts with its app or apps ('- axFile: ', '- axDown, axJSON: ') or with '- For developers: '. These do not:"
-    $unnamed | ForEach-Object { Write-Host "  $_" }
+$tag = "v$Version"
+
+Stop-OnProblem (Get-VersionProblem $Version)
+Stop-OnProblem (Get-BranchProblem)
+
+# The check belongs to the push, so -NoPush (commit and tag offline, push later) does not need origin to be reachable.
+if (-not $NoPush) {
+    Stop-OnProblem (Get-BehindProblem)
+    Stop-OnProblem (Get-HooksProblem)
+}
+
+$dirty = @(Get-UncommittedFiles)
+if ($dirty.Count -gt 0) {
+    Write-Host "Commit or stash these first; only CHANGELOG.md and docs/axKit/outside-calls.md may be uncommitted:"
+    $dirty | ForEach-Object { Write-Host "  $_" }
     exit 1
 }
+
+Stop-OnProblem (Get-TagProblem $tag)
+Stop-OnProblem (Get-ChangelogProblem $Version)
 
 # The page of everything axKit reaches outside its process, written from the sources and committed with the release
 # (docs/axKit/SPEC.md B-17): a call without its explanation stops the release here.
@@ -135,9 +323,8 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-$xml = Get-Content $project -Raw
-$updated = $xml -replace '<Version>[^<]*</Version>', "<Version>$Version</Version>"
-if ($updated -eq $xml -and $xml -notmatch "<Version>$([regex]::Escape($Version))</Version>") {
+$updated = Get-ProjectWithVersion $Version
+if (-not $updated) {
     Write-Host "No <Version> element was found in $project."
     exit 1
 }
@@ -169,7 +356,7 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
     $run = $null
     for ($try = 0; -not $run -and $try -lt 24; $try++) {
         Start-Sleep -Seconds 5
-        $id = gh run list --workflow build.yml --commit $sha --limit 1 --json databaseId --jq '.[0].databaseId'
+        $id = Find-BuildRun $sha
         if ($id -and $id -ne 'null') { $run = $id }
     }
     if (-not $run) {
@@ -181,10 +368,8 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
     $conclusion = $null
     for ($try = 0; -not $conclusion -and $try -lt 120; $try++) {
         Start-Sleep -Seconds 20
-        # Two plain questions: a filter with a quoted space in it reaches gh as two arguments from Windows PowerShell 5.1,
-        # and gh refused it at every try of the 5.8.0 release, which waited without end (2026-11-14).
-        $status = "$(gh run view $run --json status --jq .status)".Trim()
-        if ($status -eq 'completed') { $conclusion = "$(gh run view $run --json conclusion --jq .conclusion)".Trim() }
+        $status = Get-RunStatus $run
+        if ($status -eq 'completed') { $conclusion = Get-RunConclusion $run }
     }
     if (-not $conclusion) {
         Write-Host "The build of main (run $run) had not ended after 40 minutes. The tag $tag was not pushed; look at it with: gh run view $run. Once it has passed: git push origin $tag"

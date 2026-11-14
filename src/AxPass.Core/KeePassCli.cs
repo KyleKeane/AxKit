@@ -9,6 +9,12 @@ public sealed record CliResult(int ExitCode, string Output, string Error)
 {
     public bool Succeeded => ExitCode == 0;
 
+    /// <summary>
+    /// The tool complained in no words. With <c>-q</c> a wrong master password ends it so, which is how the window
+    /// tells a password that does not open the database from a failure the tool explains: no text of the tool's is matched.
+    /// </summary>
+    public bool SaidNothing => Error.Trim().Length == 0;
+
     /// <summary>The tool's own words for a failure ("Could not find entry with path …"), or a plain line when it said nothing (a wrong password, with -q).</summary>
     public string Why => Error.Trim() is { Length: > 0 } error ? error.ReplaceLineEndings(" ") : $"KeePassXC's tool ended with code {ExitCode}";
 }
@@ -17,7 +23,8 @@ public sealed record CliResult(int ExitCode, string Output, string Error)
 /// KeePassXC's command-line tool (docs/axPass/SPEC.md PW-5, PW-D1; what it does was tried and is in
 /// docs/axPass/kdbx-notes.md section 8): one process per command, no window, the database's and the entry's paths as
 /// arguments, the master password (and a new entry password, twice) as lines of standard input, never on the command
-/// line, in a file or in the environment. Blocking: the window runs it off the UI thread.
+/// line, in a file or in the environment. Blocking: the window runs it off the UI thread. The tool's commands and
+/// options are written in <see cref="KeePassCliTexts"/> and nowhere else (root CLAUDE.md rule 12).
 /// </summary>
 public static class KeePassCli
 {
@@ -84,12 +91,12 @@ public static class KeePassCli
 
     /// <summary>The arguments of a command on a database: the command, -q (so that the password prompt goes nowhere), the options, the database, the rest.</summary>
     public static IReadOnlyList<string> On(string command, string database, IEnumerable<string>? options = null, params string[] rest) =>
-        [command, "-q", .. options ?? [], database, .. rest.Select(AsPath)];
+        [command, KeePassCliTexts.Quiet, .. options ?? [], database, .. rest.Select(AsPath)];
 
     /// <summary>
     /// An entry's or a group's path as the tool reads it: one that starts with "-" (a name in a shared database such
     /// as <c>--key-file=\\server\k</c>) gets the root's "/" in front, so that the tool never reads it as an option
     /// (security audit S-6).
     /// </summary>
-    public static string AsPath(string path) => path.StartsWith('-') ? "/" + path : path;
+    public static string AsPath(string path) => path.StartsWith('-') ? KeePassCliTexts.Root + path : path;
 }

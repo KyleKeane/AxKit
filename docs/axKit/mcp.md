@@ -165,7 +165,8 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
 - MC-6.8 **Added to Claude Code**: Claude Code found where axClaude finds it (`AxKit.Core/ClaudeCodeProgram`, one
   search for both since 2026-11-09, axClaude FR-1.2: `claude.exe` or `claude.cmd` in every PATH folder, then its
   installer's `%USERPROFILE%\.local\bin\claude.exe`, then npm's `%APPDATA%\npm\claude.cmd`; a `.cmd` runs through
-  cmd); run without a window, off the window's
+  cmd.exe by FR-1.2's rule, every argument quoted, and a path holding a percent sign, an exclamation mark or a double
+  quote is refused with the sentence that names it, shown as Claude Code's error line is); run without a window, off the window's
   thread, with the arguments as a list: `claude mcp remove --scope user axkit` (an earlier entry, perhaps of another
   build, gone; its failure when there is none is ignored), then `claude mcp add --scope user axkit -- <AxKit.exe> mcp`.
   The result is said: "axKit is added to Claude Code: a new Claude session can use it", or Claude Code's own error

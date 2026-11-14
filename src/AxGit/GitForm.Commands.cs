@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using AxGit.Core;
 using AxKit.Forms;
 
@@ -46,7 +45,7 @@ public sealed partial class GitForm
 
     private async Task StageAllAsync(bool stage)
     {
-        var result = await RunGitAsync(stage ? ["add", "-A"] : ["restore", "--staged", "."], GitRunner.Short, stage ? "stage all" : "unstage all");
+        var result = await RunGitAsync(stage ? GitTexts.StageAllArguments : GitTexts.UnstageAllArguments, GitRunner.Short, stage ? "stage all" : "unstage all");
         if (result is null)
         {
             return;
@@ -189,7 +188,7 @@ public sealed partial class GitForm
             var message = typed.Trim();
             Do(async () =>
             {
-                var result = await RunGitAsync(["commit", "-m", message], GitRunner.Short, "commit");
+                var result = await RunGitAsync(GitTexts.CommitArguments(message), GitRunner.Short, "commit");
                 if (result is null)
                 {
                     return;
@@ -201,17 +200,12 @@ public sealed partial class GitForm
                     return;
                 }
 
-                var hash = CommitHashRegex().Match(result.Output);
-                Announce(hash.Success ? $"Committed {hash.Groups[1].Value}" : "Committed", true);
+                Announce(GitTexts.CommittedHash(result.Output) is { } hash ? $"Committed {hash}" : "Committed", true);
                 Stale(View.Log, View.Branches);
                 await RefreshAsync(announce: false);
             });
         }, emptyMessage: "Type the commit message", cancel: "C&ancel");
     }
-
-    // "[main 3a1f2c0] Subject" on the first line of git commit's output.
-    [GeneratedRegex(@"^\[[^\]]+ ([0-9a-f]{7,})\]", RegexOptions.Multiline)]
-    private static partial Regex CommitHashRegex();
 
     // ---- history (AG-4) ----
 
@@ -311,7 +305,7 @@ public sealed partial class GitForm
 
     private async Task FetchAsync()
     {
-        var result = await RunGitAsync(["fetch", "--prune"], GitRunner.Long, "fetch");
+        var result = await RunGitAsync(GitTexts.FetchArguments, GitRunner.Long, "fetch");
         if (result is null)
         {
             return;
@@ -330,7 +324,7 @@ public sealed partial class GitForm
 
     private async Task PullAsync()
     {
-        var result = await RunGitAsync(["pull", "--ff-only"], GitRunner.Long, "pull");
+        var result = await RunGitAsync(GitTexts.PullArguments, GitRunner.Long, "pull");
         if (result is null)
         {
             return;
@@ -342,17 +336,14 @@ public sealed partial class GitForm
             return;
         }
 
-        Announce(result.Output.Contains("Already up to date", StringComparison.OrdinalIgnoreCase) ? "Already up to date" : "Pulled", true);
+        Announce(GitTexts.SaysUpToDate(result.Output) ? "Already up to date" : "Pulled", true);
         Stale(View.Log, View.Branches);
         await RefreshAsync(announce: false);
     }
 
     private async Task PushAsync()
     {
-        IReadOnlyList<string> arguments = _repo.Upstream is null && _repo.Branch is { } branch
-            ? ["push", "--set-upstream", "origin", branch]
-            : ["push"];
-        var result = await RunGitAsync(arguments, GitRunner.Long, "push");
+        var result = await RunGitAsync(GitTexts.PushArguments(_repo.Upstream, _repo.Branch), GitRunner.Long, "push");
         if (result is null)
         {
             return;

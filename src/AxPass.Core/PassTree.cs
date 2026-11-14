@@ -10,9 +10,9 @@ public sealed record PassNode(string Path, string Group, string Name, bool IsGro
 /// </summary>
 public sealed class PassTree
 {
-    public const string RecycleBin = "Recycle Bin";
+    public const string RecycleBin = KeePassCliTexts.RecycleBin;
 
-    private const string EmptyMark = "[empty]";
+    private const string EmptyMark = KeePassCliTexts.EmptyMark;
 
     private readonly List<PassNode> _nodes;
 

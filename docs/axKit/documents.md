@@ -21,6 +21,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `mcp.md` (MC-n): the AI tools, what an AI client may read and run in axKit's windows and how the user stays in
   control.
 - `ai-help.md` (AH-n): AI help, Claude Code in print mode with read-only tools, Shift+F1 in every window, and axHelp.
+- `access-layers.md`: the programs under the access layers (Claude Code, Git, KeePassXC's tool, the shells, MCP
+  servers), where each one's texts, options and protocol are written, what is read from it and how, what guards it,
+  and what is still outside that one place (root `CLAUDE.md`, rule 12).
 - `reports.md` (RP-n): the reports from every window (F4), sent to GitHub as issues of the reports repository;
   axTask's GitHub lists and action keys.
 - `theme.md` (TH-n): the theme file, every colour from one JSON file, and the display settings.
@@ -30,6 +33,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 
 - `automation.md`: the automated checks of the windows, the runner, and the NVDA pass.
 - `workflows.md` (generated): every workflow the automated checks keep working, by app.
+- `upstream.json`: the outside programs (Claude Code, Git, KeePassXC's tool, the shells), each with the version the
+  checks last passed with; read and written by `tools/upstream.ps1` (`automation.md`, "When an outside program
+  changes").
 - `nvda-test-record.md`: every NVDA pass, by step, newest first.
 - `repairs.md` (generated from `repairs.json`): what the audits found and what became of each finding.
 - `security-audit-2026-10-24.md` (S-n): the security audit and its fixes.

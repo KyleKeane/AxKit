@@ -235,7 +235,7 @@ deliberate `UseShellExecute`; five with a string argument, four justified. New, 
 - **S-56** `AutomationChannel` reads the first line without a length cap before the secret check, where `McpChannel`
   caps at 64 KB: the same cap (test runs only).
 - **S-57** `ClaudeLauncher`'s two `cmd /c` lines lack the `HasCmdSpecials` refusal that the MCP registration applies to
-  the same path: the same refusal.
+  the same path: the same refusal. Settled on 2026-11-14 (`repairs.json` R-24): one rule, `SystemPrograms.LineFor`.
 - The audit's text says both "receivers refuse network paths" and "the receiver's side accepted" of the `WM_COPYDATA`
   hand-over; the code accepts any signed path: the document says one thing.
 

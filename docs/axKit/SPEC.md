@@ -331,6 +331,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   `AxKit-<version>-win-x64.zip` and `install.cmd` attached and the CHANGELOG section as notes, as a draft that is
   published once the files are up (since 2026-10-21: the update check reads the latest published release, and one
   made while the zip was still uploading had a window download a half-written zip, "The installer failed").
+  `release.ps1 -Rehearse` is run before a release: it makes the checks and asks git and GitHub the real run's
+  questions, through the same functions, about the build of main's newest commit and the newest published release,
+  and changes nothing (`docs/axKit/commands.md`; since 2026-11-14, when 5.8.0 met two faults in those parts).
 - AX-4.2 `publish.ps1` publishes `src/AxKit` self-contained, single file, into `publish\win-x64` with `install.cmd`,
   `install.ps1`, `LICENSE`, `NOTICE.md`, `PRIVACY.md`, `THIRD-PARTY-NOTICES.md` and `docs/axKit/README.md` as `README.md`,
   and zips it.

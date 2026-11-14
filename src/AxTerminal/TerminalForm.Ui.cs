@@ -78,9 +78,9 @@ internal sealed partial class TerminalForm
         Add(shell, new Command("&Interrupt", AxTerminalKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
         Add(shell, new Command("Send &Escape", AxTerminalKeys.SendEscape, SendEscape) { Mark = CommandMark.Act });
         var sendKey = new ToolStripMenuItem("Send &key");
-        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Up", null, (_, _) => SendKey("\x1b[A", "Up sent")), CommandMark.Act));
-        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Down", null, (_, _) => SendKey("\x1b[B", "Down sent")), CommandMark.Act));
-        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Ctrl+D (&end of input)", null, (_, _) => SendKey("\x04", "Ctrl+D sent")), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Up", null, (_, _) => SendKey(ShellTexts.Up, "Up sent")), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Down", null, (_, _) => SendKey(ShellTexts.Down, "Down sent")), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Ctrl+D (&end of input)", null, (_, _) => SendKey(ShellTexts.EndOfInput, "Ctrl+D sent")), CommandMark.Act));
         shell.DropDownItems.Add(sendKey);
         shell.DropDownItems.Add(new ToolStripSeparator());
         Add(shell, new Command("&Recent commands...", AxTerminalKeys.RecentCommands, ShowRecentCommands) { Mark = CommandMark.Open });

@@ -4,6 +4,10 @@
 
 - axProcess: the Startup view (Ctrl+3) can now stop a program from starting with Windows. Context (Shift+F10), Turn off sets the same switch as Task Manager's Startup apps tab and deletes nothing ("KeePassXC turned off: it no longer starts with Windows"); Turn on brings it back. Delete removes the entry for good after a question whose default is Cancel. The details notice (Enter) has the same buttons. An entry set for every user of the computer needs administrator rights: axProcess says so, changes nothing and names Windows' own places for it.
 - axPass: Install KeePassXC now no longer leaves KeePassXC starting with Windows. KeePassXC's installer sets that by default, and its window then opened at every sign-in; axPass now tells the installer not to, and not to open KeePassXC when it ends. If an installer sets it all the same, the notice "KeePassXC is installed" says so and where to turn it off. An entry an earlier install left is not touched: turn it off in KeePassXC, Tools, Settings, General, Automatically launch KeePassXC at system startup.
+- axKit: Claude Code installed through npm (claude.cmd) gets every argument in quotes, so a folder named R&D arrives whole in axClaude and AI help; a folder or argument with a percent sign, an exclamation mark or a double quote is refused with a sentence that names it.
+- For developers: the upstream watch, tools\upstream.ps1 with docs\axKit\upstream.json, says at the start of a session which outside program (Claude Code, Git, KeePassXC's tool, a shell) changed its version since the checks last passed, and -Verify runs that program's checks again.
+- For developers: every access layer's program words in one place (ClaudeCodeTexts, GitTexts, KeePassCliTexts, ShellTexts), tests that keep them there, and docs/axKit/access-layers.md saying where each layer stands (rule 12).
+- For developers: release.ps1 -Rehearse makes a release's checks and asks git and GitHub the real run's questions through the same functions, without committing, tagging, pushing, signing or publishing.
 
 ## 5.8.0
 

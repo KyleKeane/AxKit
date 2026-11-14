@@ -6,8 +6,8 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **done**: 42 (8 high, 19 medium, 15 low)
-- **deferred**: 2 (2 medium)
+- **done**: 43 (8 high, 20 medium, 15 low)
+- **deferred**: 1 (1 medium)
 - **declined**: 5 (4 medium, 1 low)
 
 ## The principles
@@ -181,6 +181,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxKit.Tests/UpdaterTests with a zip of an older version
 - Commit: 36c603c
 - Note: Needs no change to the signature format, so earlier releases still verify. Threat: the GitHub account taken over; the signing key stays offline. Updater.VersionRefusal, asked after the signature holds and the zip is extracted; UpdaterTests.
+
+### R-24, medium, core: cmd.exe's special characters are checked in two callers that start a .cmd and missed in two
+
+- Where: src/AxKit.Core/Ai/AiRequest.cs; src/AxClaude.Core/Pty/ClaudeLauncher.cs
+- Principle: P1
+- Fix: One check in the one place that builds a command line for claude.cmd; a folder or argument with such a character is refused with the reason.
+- Checked by: tests/AxKit.Tests/SystemProgramsTests and AiTests, tests/AxClaude.Tests/ClaudeLauncherTests: both callers with a folder named R&D, and a real batch file run by cmd.exe
+- Note: Done 2026-11-14: SystemPrograms.LineFor is the one command line for a program that may be a batch file, used by every start of Claude Code (session, version, AI help, the AI tools registration) through ClaudeCodeProgram.LineFor; a batch file gets every argument quoted and is refused a percent sign, an exclamation mark, a double quote or a line break with a sentence naming the character and the argument. Only the npm install (claude.cmd) was affected.
 
 ### R-25, medium, core: axMCP starts a server by its configured command name without resolving it
 
@@ -398,14 +406,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: The services with their own state move out into plain classes the base holds (the updater flow, the installer, the report sender, AI help, the AI tools' window side), one per commit, the base keeping the hooks; no behaviour changes.
 - Checked by: every tests/scripts folder after each move
 - Note: After R-11: moving code while the command layer changes would double the risk. Not a defect, a cost of every later change.
-
-### R-24, medium, core: cmd.exe's special characters are checked in two callers that start a .cmd and missed in two
-
-- Where: src/AxKit.Core/Ai/AiRequest.cs; src/AxClaude.Core/Pty/ClaudeLauncher.cs
-- Principle: P1
-- Fix: One check in the one place that builds a command line for claude.cmd; a folder or argument with such a character is refused with the reason.
-- Checked by: tests for both callers with a folder named R&D
-- Note: Only when Claude Code is the npm install (claude.cmd); the native claude.exe is not affected. Deferred: the launch paths throw nothing today, and their callers must be read before a refusal is added. Plan: SystemPrograms gets the operators that matter in a quoted argument (% and ! alone) and in an unquoted one (& | < > ^); ClaudeLauncher quotes an argument holding the second set when the program is a .cmd and refuses the first; AiRequest the same for its folders.
 
 ## Declined
 

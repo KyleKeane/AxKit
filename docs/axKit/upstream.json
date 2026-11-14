@@ -1,0 +1,78 @@
+{
+  "about": "The outside programs under axKit's access layers, each with the version axKit's checks last passed with. Read and written by tools/upstream.ps1 (docs/axKit/automation.md, When an outside program changes): -Verify writes verified and date, the rest is edited by hand. places: where the program is looked for, in order, as the app looks; a bare file name is searched in the PATH's full folders. tests: test projects (tests/<name>.Tests). scripts: folders or scripts of tests/scripts.",
+  "programs": [
+    {
+      "id": "claude",
+      "name": "Claude Code",
+      "places": ["claude.exe", "claude.cmd", "%USERPROFILE%\\.local\\bin\\claude.exe", "%APPDATA%\\npm\\claude.cmd"],
+      "arguments": ["--version"],
+      "verified": "2.1.325 (Claude Code)",
+      "date": "2026-11-14",
+      "tests": ["AxClaude", "AxHelp"],
+      "scripts": ["axClaude", "axHelp", "axDown/11-ask-claude.txt"],
+      "needs": "Claude Code signed in, the network and a live model",
+      "signedIn": ["auth", "status"],
+      "host": "api.anthropic.com"
+    },
+    {
+      "id": "git",
+      "name": "Git",
+      "places": ["git.exe", "%ProgramFiles%\\Git\\cmd\\git.exe"],
+      "arguments": ["--version"],
+      "verified": "git version 2.53.0.windows.2",
+      "date": "2026-11-14",
+      "tests": ["AxGit"],
+      "scripts": ["axGIT"]
+    },
+    {
+      "id": "keepassxc",
+      "name": "KeePassXC's tool",
+      "places": ["%ProgramFiles%\\KeePassXC\\keepassxc-cli.exe", "%ProgramFiles(x86)%\\KeePassXC\\keepassxc-cli.exe", "keepassxc-cli.exe"],
+      "arguments": ["--version"],
+      "verified": "keepassxc-cli 2.8.0",
+      "date": "2026-11-14",
+      "tests": ["AxPass"],
+      "scripts": ["axPass"]
+    },
+    {
+      "id": "powershell",
+      "name": "Windows PowerShell",
+      "places": ["%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"],
+      "arguments": ["-NoLogo", "-NoProfile", "-Command", "$PSVersionTable.PSVersion.ToString()"],
+      "verified": "5.1.26100.9818",
+      "date": "2026-11-14",
+      "tests": ["AxTerminal"],
+      "scripts": ["axTerminal"]
+    },
+    {
+      "id": "pwsh",
+      "name": "PowerShell 7",
+      "places": ["pwsh.exe", "%ProgramFiles%\\PowerShell\\7\\pwsh.exe"],
+      "arguments": ["-NoLogo", "-NoProfile", "-Command", "$PSVersionTable.PSVersion.ToString()"],
+      "verified": "not installed",
+      "date": "2026-11-14",
+      "tests": ["AxTerminal"],
+      "scripts": ["axTerminal"]
+    },
+    {
+      "id": "cmd",
+      "name": "Command Prompt",
+      "places": ["%SystemRoot%\\System32\\cmd.exe"],
+      "arguments": ["/d", "/c", "ver"],
+      "verified": "Microsoft Windows [Version 10.0.26200.9974]",
+      "date": "2026-11-14",
+      "tests": ["AxTerminal"],
+      "scripts": ["axTerminal"]
+    },
+    {
+      "id": "bash",
+      "name": "Git Bash",
+      "places": ["%ProgramFiles%\\Git\\bin\\bash.exe", "%ProgramFiles(x86)%\\Git\\bin\\bash.exe", "%LOCALAPPDATA%\\Programs\\Git\\bin\\bash.exe"],
+      "arguments": ["--version"],
+      "verified": "GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)",
+      "date": "2026-11-14",
+      "tests": ["AxTerminal"],
+      "scripts": ["axTerminal"]
+    }
+  ]
+}

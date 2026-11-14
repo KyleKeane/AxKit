@@ -11,11 +11,11 @@ namespace AxPass.Core;
 /// </summary>
 public static class EntryFields
 {
-    public const string Title = "Title";
-    public const string UserName = "UserName";
-    public const string Password = "Password";
-    public const string Url = "URL";
-    public const string Notes = "Notes";
+    public const string Title = KeePassCliTexts.TitleField;
+    public const string UserName = KeePassCliTexts.UserNameField;
+    public const string Password = KeePassCliTexts.PasswordField;
+    public const string Url = KeePassCliTexts.UrlField;
+    public const string Notes = KeePassCliTexts.NotesField;
 
     /// <summary>
     /// The web address Ctrl+U opens for an entry's URL (security audit S-4): an http or https address as it is, a bare
@@ -37,7 +37,7 @@ public static class EntryFields
     }
 
     /// <summary>The attributes <c>show</c> prints that are not fields of the entry.</summary>
-    private static readonly string[] Bookkeeping = ["Uuid", "Tags"];
+    private static readonly string[] Bookkeeping = [KeePassCliTexts.UuidField, KeePassCliTexts.TagsField];
 
     private static readonly (string Title, string Type)[] Standard =
     [
@@ -63,7 +63,7 @@ public static class EntryFields
         {
             var colon = line.IndexOf(": ", StringComparison.Ordinal);
             var name = colon > 0 ? line[..colon] : line.EndsWith(':') ? line[..^1] : null;
-            if (name is not null && (known.Contains(name) || current is null || current == "Tags"))
+            if (name is not null && (known.Contains(name) || current is null || current == KeePassCliTexts.TagsField))
             {
                 current = name;
                 order.Add(name);
@@ -101,7 +101,7 @@ public static class EntryFields
     public static IReadOnlyList<string> EditOptions(ItemDocument before, ItemDocument after)
     {
         var options = new List<string>();
-        foreach (var (title, option) in new[] { (Title, "-t"), (UserName, "-u"), (Url, "--url"), (Notes, "--notes") })
+        foreach (var (title, option) in new[] { (Title, KeePassCliTexts.TitleOption), (UserName, KeePassCliTexts.UserNameOption), (Url, KeePassCliTexts.UrlOption), (Notes, KeePassCliTexts.NotesOption) })
         {
             var was = ValueOf(before, title);
             var now = ValueOf(after, title);

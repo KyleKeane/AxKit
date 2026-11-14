@@ -50,11 +50,49 @@ public sealed class AiTests
         Assert.Equal(["-p", "--output-format", "json", "--allowedTools", "Read,Glob,Grep", "--model", "haiku", "--resume", "s1"], full);
 
         // Claude Code starts in its working folder (AH-2.1), which is never an --add-dir of its own.
-        var start = AiRequest.StartInfo(@"C:\bin\claude.exe", @"C:\work\claude", [@"C:\work\claude", @"C:\notes"], null, null);
+        var line = AiRequest.Line(@"C:\bin\claude.exe", @"C:\work\claude", [@"C:\work\claude", @"C:\my notes"], null, null);
+        Assert.Null(line.Refusal);
+        var start = AiRequest.StartInfo(line, @"C:\work\claude");
         Assert.Equal(@"C:\bin\claude.exe", start.FileName);
         Assert.Equal(@"C:\work\claude", start.WorkingDirectory);
-        Assert.Equal("-p", start.ArgumentList[0]);
-        Assert.Equal(["--add-dir", @"C:\notes"], start.ArgumentList.Skip(5));
+        Assert.Equal(@"-p --output-format json --allowedTools Read,Glob,Grep --add-dir ""C:\my notes""", start.Arguments);
+    }
+
+    [Fact]
+    public void Npms_claude_cmd_gets_a_folder_named_R_and_D_in_quotes_and_is_refused_one_with_a_percent_sign()
+    {
+        // docs/axKit/repairs.json R-24: claude.cmd runs through cmd.exe, which reads & as text only inside quotes
+        // and % as a variable everywhere.
+        var line = AiRequest.Line(@"C:\npm\claude.cmd", @"C:\work\claude", [@"C:\work\R&D"], null, null);
+        Assert.Null(line.Refusal);
+        Assert.Equal(AxKit.Core.SystemPrograms.Cmd, line.FileName);
+        Assert.Equal(@"/d /s /c """"C:\npm\claude.cmd"" ""-p"" ""--output-format"" ""json"" ""--allowedTools"" ""Read,Glob,Grep"" ""--add-dir"" ""C:\work\R&D""""", line.Arguments);
+
+        var refused = AiRequest.Line(@"C:\npm\claude.cmd", @"C:\work\claude", [@"C:\work\100%"], null, null);
+        Assert.Contains(@"""C:\work\100%"" holds a percent sign (%)", refused.Refusal, StringComparison.Ordinal);
+        Assert.EndsWith(AxKit.Core.ClaudeCodeProgram.BatchAdvice, refused.Refusal, StringComparison.Ordinal);
+        // The native program takes both.
+        Assert.Null(AiRequest.Line(@"C:\bin\claude.exe", @"C:\work\claude", [@"C:\work\R&D", @"C:\work\100%"], null, null).Refusal);
+    }
+
+    [Fact]
+    public async Task A_question_through_a_real_claude_cmd_hands_it_the_R_and_D_folder_whole_and_a_refused_folder_is_an_error_answer_without_a_run()
+    {
+        using var temp = new TempFolder("axkit-ai-batch");
+        var claude = temp.File("claude.cmd", "@echo off\r\n>\"%~dp0out.txt\" echo %*\r\necho {\"type\":\"result\",\"is_error\":false,\"result\":\"ok\",\"session_id\":\"s\"}\r\n");
+        var folder = Directory.CreateDirectory(Path.Combine(temp.Path, "R&D")).FullName;
+        var answer = await AiRequest.AskAsync(claude, "a question", temp.Path, [folder], null, null, CancellationToken.None);
+        Assert.False(answer.IsError, answer.Text);
+        Assert.Equal("ok", answer.Text);
+        var output = Path.Combine(temp.Path, "out.txt");
+        Assert.EndsWith($"\"--add-dir\" \"{folder}\"", File.ReadAllText(output).Trim(), StringComparison.Ordinal);
+
+        File.Delete(output);
+        var refused = await AiRequest.AskAsync(claude, "a question", temp.Path, [Path.Combine(temp.Path, "100%")], null, null, CancellationToken.None);
+        Assert.True(refused.IsError);
+        Assert.StartsWith("Claude Code was not run. claude.cmd is a batch program", refused.Text, StringComparison.Ordinal);
+        Assert.Contains("a percent sign (%)", refused.Text, StringComparison.Ordinal);
+        Assert.False(File.Exists(output));
     }
 
     [Fact]

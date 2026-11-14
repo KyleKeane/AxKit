@@ -656,32 +656,22 @@ public abstract partial class AxKitForm
     /// <summary>Claude Code run without a window, its arguments as a list (cmd for npm's claude.cmd), at most 30 seconds; its exit code and what it printed.</summary>
     private static (int Code, string Output) RunClaude(string claude, IReadOnlyList<string> arguments)
     {
-        var script = claude.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase);
-        var start = new System.Diagnostics.ProcessStartInfo(script ? SystemPrograms.Cmd : claude)
+        // S-53 (security review, 2026-10-25), on the bundle's one rule since R-24 (2026-11-14): claude.cmd runs through
+        // cmd.exe with every argument quoted; a path cmd would act on inside quotes too (an AxKit.exe under C:\100%)
+        // is refused rather than run, with the sentence that names the character.
+        var line = ClaudeCodeProgram.LineFor(claude, arguments);
+        if (line.Refusal is { } refusal)
+        {
+            return (-1, refusal + " Or add axKit by hand with the command line shown.");
+        }
+
+        var start = new System.Diagnostics.ProcessStartInfo(line.FileName, line.Arguments)
         {
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
         };
-        if (script)
-        {
-            // S-53 (security review, 2026-10-25): cmd reads its special characters even inside quotes, so a path or an
-            // argument holding one (an AxKit.exe under C:\R&D) is refused rather than run; every argument is quoted.
-            if (SystemPrograms.HasCmdSpecials(claude) || arguments.Any(SystemPrograms.HasCmdSpecials))
-            {
-                return (-1, "a path holds one of cmd's special characters (& | < > ^ % ! and the like), so claude.cmd is not run with it; add axKit by hand with the command line shown");
-            }
-
-            start.Arguments = "/d /s /c \"\"" + claude + "\" " + string.Join(' ', arguments.Select(a => $"\"{a}\"")) + "\"";
-        }
-        else
-        {
-            foreach (var argument in arguments)
-            {
-                start.ArgumentList.Add(argument);
-            }
-        }
 
         try
         {

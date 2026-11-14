@@ -105,6 +105,7 @@ The unit tests cover everything that needs no window. What a window does is chec
 ## Release
 
 ```
+.\release.ps1 -Rehearse    # before a release: the checks and the questions to git and GitHub, nothing released
 .\release.ps1 3.4.0        # checks the changelog section, tests, sets the version, commits, tags v3.4.0, pushes main and, once its build has passed, the tag
 gh run watch               # follows the workflow that builds and publishes the release
 ```

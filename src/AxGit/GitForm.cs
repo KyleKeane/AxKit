@@ -322,7 +322,7 @@ public sealed partial class GitForm : AxKitForm
         {
             var config = await GitRunner.RunAsync(root, GitTrust.ConfigArguments, GitRunner.Short);
             var hooks = await GitRunner.RunAsync(root, GitTrust.HooksArguments, GitRunner.Short);
-            var hooksFolder = hooks.Ok && hooks.Output.Trim() is { Length: > 0 } folder ? Path.GetFullPath(folder, root) : null;
+            var hooksFolder = hooks.Ok ? GitTrust.HooksFolder(hooks.Output, root) : null;
             var risks = GitTrust.Risks(config.Ok ? config.Output : string.Empty, hooksFolder);
             if (risks.Count == 0 || _settings.Trusts(root) || IsDisposed)
             {
