@@ -1,19 +1,16 @@
-# Workflow: Hear that nothing matches, turn the spoken match off and meet a hotkey that is taken
+# Workflow: Hear that nothing matches and turn the spoken match off
 # axStart, docs/axStart/nvda-test-plan.md, what 01-basics and 02-typing-and-the-hotkey leave: 2.5 (nothing matches,
 # said while typing, and again after Backspace), 3.6 (Ctrl+I on a Store app), 5.3 (Say the first match while typing
-# off: typing says nothing, Ctrl+I says the match; on again), 4.2 (Shift with a letter refused) and 4.5 (a key another
-# program holds: said, and the key in use kept). SPEC AS-3.2, AS-4. The key that is taken is one nobody uses, held for
-# half a minute by a hidden Windows PowerShell the script starts itself (hold.ps1), apart from the runner's command
-# (run's own children end with the command); the hotkey of the run is unlike the other two scripts'.
-# Not run: 2.6's name with an accent (it needs such a program in the user's Start menu), starting programs, File
+# off: typing says nothing, Ctrl+I says the match; on again) and 4.2 (Shift with a letter refused). SPEC AS-3.2, AS-4.
+# Not run: 4.5 (a key another program holds): it needs a program that really holds a system hotkey, and with NVDA
+# listening the keys are real, so the key goes to that program and never reaches the field; it stays a step of the
+# manual plan. 2.6's name with an accent (it needs such a program in the user's Start menu), starting programs, File
 # Explorer, the Start menu and signing in (outside the window).
 file home\AxKit\axStart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F8", "sayFirstMatch": true}
-file hold.ps1 Add-Type -Namespace N -Name H -MemberDefinition '[DllImport("user32.dll")] public static extern bool RegisterHotKey(System.IntPtr h, int id, uint m, uint k);'\n[N.H]::RegisterHotKey([IntPtr]::Zero, 1, 7, 0x76) | Out-File held.txt\nStart-Sleep -Seconds 30\n
-run powershell -NoProfile -Command "Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','hold.ps1' -WindowStyle Hidden"
 
 start start
 expect focus Search programs
-# The programs are read once at the start; the hidden PowerShell has its key by then.
+# The programs are read once at the start.
 wait 5000
 
 # 2.5 A text nothing matches is said after the pause, with the text; Backspace: the new text, said again.
@@ -53,16 +50,6 @@ keys shift+a
 expect said ! Use Ctrl, Alt or the Windows key with it
 expect focus "value":"Ctrl+Alt+Shift+F8"
 
-# 4.5 A key another program holds: said on Enter, the field back with its text, the key in use unchanged.
-keys ctrl+alt+shift+f7
-expect focus "value":"Ctrl+Alt+Shift+F7"
-keys enter
-expect said ! Ctrl+Alt+Shift+F7 is taken by another program
-expect state "notice":null
-expect focus "name":"Search programs","role":"Text","value":"calculat"
-menu Hotkey
-expect state Now: Ctrl+Alt+Shift+F8.
-expect focus "value":"Ctrl+Alt+Shift+F8"
 keys escape
 expect state "notice":null
 

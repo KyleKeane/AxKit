@@ -309,6 +309,9 @@ internal static class Native
             "end" => 0x23,
             "pageup" => 0x21,
             "pagedown" => 0x22,
+            // The text size keys, as the window's own channel names them (AutomationChannel): the main keyboard's plus and minus.
+            "plus" => 0xBB,
+            "minus" => 0xBD,
             _ when name.StartsWith('f') && int.TryParse(name[1..], out var f) && f is >= 1 and <= 12 => (ushort)(0x70 + f - 1),
             _ => throw new ArgumentException($"unknown key {name}"),
         };

@@ -6,6 +6,32 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-14: every app; by the assistant with NVDA listening (`main` 20d990f, axKit 5.7.0 with what is unreleased)
+
+`.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 114 scripts of
+`tests/scripts` and the four of `tests/nvda-scripts`, 118 in all. 116 passed in the run; the two that failed were
+scripts written the day before for the hidden desktop alone, were corrected and passed when run again under NVDA, so
+every script has passed on this commit with the two corrections.
+
+Heard for the first time, each by its script: the seventeen workflows scripted on 2026-11-13 (the histories of axCalc,
+reopening where one left off in axTask, axPass and axAutomate, the Context menus of axJSON, axPreview, axMedia and
+axTerminal, Open recent through the palette in axTerminal, axMedia and axFile, axTerminal's forged marks, axGIT's own
+programs, axMCP's own servers, axClip's history kept) and the six fixes of the same night: undo after typing over a
+selection as one step (`axDown/02`), a long command's wrapped echo kept out of axTerminal's Output (`axTerminal/02`),
+a one-line server error's notice and Right on an http server in axMCP (`axMCP/02`), axAutomate's folder remembered
+(`axAutomate/03`), an empty field read as empty (`axTask/01`).
+
+The two corrections:
+
+- `axCalc/03-history-keys.txt` step 97, `keys ctrl+plus`: the runner's table of real keys did not know plus and
+  minus, which the window's own channel does; they are in the table now (`AxAutomate.Core/Native`).
+- `axStart/03`, the step of a hotkey another program holds (plan 4.5): with real keys the key goes to the program
+  that holds it and never reaches the field. The step and the hidden helper that held the key are out of the script,
+  now `03-no-match-and-options.txt`; 4.5 stays a step of the manual plan.
+
+Still the user's ear, as before: a long streaming reply under NVDA+A, the feedback survey, the concern report and the
+breakdown section of an offered command, a real `/login`, a live answer of AI help, the Store copy.
+
 ## 2026-11-13, afternoon: every app; by the assistant with NVDA listening (`main` ed7033e, axKit 5.7.0 with what is unreleased)
 
 `.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: every script of
