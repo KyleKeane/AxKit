@@ -157,7 +157,10 @@ route was removed on 2026-11-13 (section 2), so the request is no longer needed.
   of the Store copy (`store-distribution.md`, phase 6, step 3).
 - Submission 2 (`AxKit-5.8.0.msix`, the listing's What's new rewritten for 5.8.0, everything else unchanged) was
   submitted for certification on 2026-11-14; the overview showed "Product update: In certification (Submission 2)",
-  at Pre-processing, to publish as soon as it passes. Until it is live the Store holds 5.2.1.
+  at Pre-processing, to publish as soon as it passes. It passed the same day: read on 2026-11-14, the overview said
+  "Congrats! Your product is now updated. Your latest product is now available on Microsoft Store" and "Store
+  presence (Submission 2: Last modified on 11/14/2026)", so the Store holds 5.8.0. `winget show` gives no version
+  for a Store product, so Partner Center's overview is where a submission's state is read.
 - The last published and the pending submission, with the status and the Store's error and warning codes, are in
   Partner Center under the product's overview.
 - A failed certification names the policy; the fix goes into the next release (or, for a listing text, into
