@@ -64,7 +64,7 @@ Calls (5):
   Code: `var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
   Code: `created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Mcp.cs`, in `AxKitForm.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
+- **shared by every app**, `src/AxKit.Forms/AiToolsSetup.cs`, in `AiToolsSetup.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
   Code: `using var process = System.Diagnostics.Process.Start(start);`
 - **shared by every app**, `src/AxKit.Forms/ConsoleForm.Process.cs`, in `ConsoleForm.StartProcess`, by `PtyHost.Start`: starts the window's program in a pseudo console: "claude --ax-screen-reader" for axClaude, the chosen shell for axTerminal.
   Code: `host = PtyHost.Start(options, OnData, OnExited);`
@@ -120,7 +120,7 @@ Calls (1):
 
 Calls (1):
 
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Install.cs`, in `AxKitForm.RunInstallerAsync`, by `Process.Start`: runs the installer of a missing program the user chose in Install it now (AX-2.9): Windows' own winget from its own source for Git, KeePassXC and PowerShell 7, or Anthropic's installer script for Claude Code in Windows PowerShell; each downloads the maker's installer.
+- **shared by every app**, `src/AxKit.Forms/ProgramInstaller.cs`, in `ProgramInstaller.RunInstallerAsync`, by `Process.Start`: runs the installer of a missing program the user chose in Install it now (AX-2.9): Windows' own winget from its own source for Git, KeePassXC and PowerShell 7, or Anthropic's installer script for Claude Code in Windows PowerShell; each downloads the maker's installer.
   Code: `process = Process.Start(info);`
 
 #### Windows
@@ -151,10 +151,10 @@ Calls (14):
   Code: `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });`
 - **shared by every app**, `src/AxKit.Forms/AxKitForm.cs`, in `AxKitForm.OpenInExplorer`, by `Process.Start`: opens File Explorer on a folder, or with a file selected, for Show in File Explorer; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, arguments) { UseShellExecute = false })?.Dispose();`
-- **shared by every app**, `src/AxKit.Forms/AxKitForm.Updates.cs`, in `AxKitForm.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
-  Code: `System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(StoreListing.PageUri) { UseShellExecute = true });`
 - **shared by every app**, `src/AxKit.Forms/TextEditorForm.Viewer.cs`, in `TextEditorForm.OpenInWindowsProgram`, by `Process.Start`: opens the viewed file with the program Windows has for it (axPreview's Open with Windows default, AP-7.3), through the Windows shell; never a file that would run (S-46).
   Code: `Process.Start(new ProcessStartInfo(path) { UseShellExecute = true })?.Dispose();`
+- **shared by every app**, `src/AxKit.Forms/UpdateFlow.cs`, in `UpdateFlow.OpenStorePage`, by `Process.Start`: opens axKit's page in the Microsoft Store app through the Windows shell (the ms-windows-store: address), from the Store's copy's Check for updates (AX-13.3); axKit downloads nothing.
+  Code: `System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(StoreListing.PageUri) { UseShellExecute = true });`
 - **shared by every app**, `src/AxKit.Forms/WindowsOpenWith.cs`, in `WindowsOpenWith.Show`, by `SHOpenWithDialog (Windows)`: shows Windows' own Open with dialog for a file, and Windows runs the program the user picks in it (axFile's and axPreview's Open with, Choose another program).
   Code: `var hr = SHOpenWithDialog(owner, in info);`
 - **axPreview**, `src/AxPreview.Core/PictureText.cs`, in `PictureText.RecognizeAsync`, by `ProcessRun.RunAsync`: Windows PowerShell by its full path, running axPreview's own script beside its logs, which asks Windows' text reader (Windows.Media.Ocr) for the text in one picture; on this computer, no network.
@@ -304,13 +304,13 @@ Used in 18 places:
 - `src/AxKit.Core/SignInStart.cs`, in `SignInStart.OpenWindowsStartupSettings`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs`, in `Updater.InstallInPlaceAsync`, for Windows.
 - `src/AxKit.Core/Updates/Updater.cs`, in `Updater.StartInstalled`, for axKit.
+- `src/AxKit.Forms/AiToolsSetup.cs`, in `AiToolsSetup.RunClaude`, for Claude Code.
 - `src/AxKit.Forms/AxKitForm.cs`, in `AxKitForm.OpenUrl`, for Windows.
 - `src/AxKit.Forms/AxKitForm.cs`, in `AxKitForm.OpenInExplorer`, for Windows.
-- `src/AxKit.Forms/AxKitForm.Install.cs`, in `AxKitForm.RunInstallerAsync`, for Installers.
-- `src/AxKit.Forms/AxKitForm.Mcp.cs`, in `AxKitForm.RunClaude`, for Claude Code.
-- `src/AxKit.Forms/AxKitForm.Updates.cs`, in `AxKitForm.OpenStorePage`, for Windows.
 - `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Open`, for axKit.
+- `src/AxKit.Forms/ProgramInstaller.cs`, in `ProgramInstaller.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
+- `src/AxKit.Forms/UpdateFlow.cs`, in `UpdateFlow.OpenStorePage`, for Windows.
 - `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartWith`, for axKit.
 - `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, for axKit.
 - `src/AxStart/AppsFolder.cs`, in `AppsFolder.Start`, for User programs.

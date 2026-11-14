@@ -6,13 +6,13 @@ WinForms code every app of the bundle uses (`docs/axKit/SPEC.md` AX-6.2, AX-6.4)
 
 The notes of each piece are in `src/AxKit.Forms/notes`, one file per kind of window, so that a change to one kind is made with that file alone in hand. Read the file of the piece you change before changing it, and keep its bullet current in the same commit (`NotesTests` fails on a name the sources no longer have).
 
-- `notes/window-base.md`, the window base, its notices, menus and palette: `AxKitForm` (its partial files, the command list, `After`, the menus every window has), `ReportControls`, `OverlayPanel` with `Notice`, `OverlayChoice` and `OverlayInput`, `CommandPalette`, `RecentMenu`, `ThemePainter` with `ThemeMark`, the lists of apps, `WindowMenu`, `AppMessage` with `HandOver`, `AppHost`.
+- `notes/window-base.md`, the window base, its notices, menus and palette: `AxKitForm` (its partial files, the command list, `After`, the menus every window has), the services it holds (`UpdateFlow`, `ProgramInstaller`, `ReportFlow`), `ReportControls`, `OverlayPanel` with `Notice`, `OverlayChoice` and `OverlayInput`, `CommandPalette`, `RecentMenu`, `ThemePainter` with `ThemeMark`, the lists of apps, `WindowMenu`, `AppMessage` with `HandOver`, `AppHost`.
 - `notes/controls.md`, the shared controls, keys and sounds: `Sounds`, `EditKeys.Page`, `EditKeys.Paragraph`, `EditKeys`, `AxKitTextBox`, `WindowsOpenWith`, `User32`, `Announcer`, `AxKitList`, `AxKitCheckBox`, `ChoiceItems<T>`, `PrivateClipboard`, `WindowAccessibleObject`, `StatusLayout`, `BundleKeys`.
 - `notes/console.md`, the console window (axClaude, axTerminal): `ConsoleForm`, `TranscriptView` with `TranscriptKeys` and `QuickKey`, `ControlArea` with `ListKeys`.
 - `notes/editor.md`, the text editor shell (axDown, axJSON, axPreview): `MarkdownKeys`, `TextJump`, `TextEditorForm`, `EditorApp`, `EditorKeys`, `EditorHost`.
 - `notes/item.md`, the item window (axTask, axPass, axMCP, axAutomate) and the list views: `ContextBarMenu`, `ListViewState`, `ItemForm`, `ItemKeys`, `ItemRow`, `ItemDetail`, `ItemDetailLine`.
 - `notes/hotkey.md`, the hotkey window (axStart, axClip, axHelp): `HotkeyForm`.
-- `notes/ai-and-automation.md`, AI help, the AI tools and the automation channel: `AutomationChannel`, AI help (`AxKitForm.Ai.cs`), the AI tools (`McpChannel`, `McpBroker`, `AxKitForm.Mcp.cs`), `ThisProgram`, `UserPipe`, `WindowReading`.
+- `notes/ai-and-automation.md`, AI help, the AI tools and the automation channel: `AutomationChannel`, AI help (`AxKitForm.Ai.cs`, `AiHelpFlow`), the AI tools (`McpChannel`, `McpBroker`, `AxKitForm.Mcp.cs`, `AiToolsSetup`), `ThisProgram`, `UserPipe`, `WindowReading`.
 
 ## Rules
 

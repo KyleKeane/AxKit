@@ -934,7 +934,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   they do without axKit. A child that runs a program file of the package keeps the identity (New window, the AI tools'
   window). `PackageIdentity.ProgramPath` is the path recorded for later use in the Store's copy, the alias
   `%LOCALAPPDATA%\Microsoft\WindowsApps\axKit.exe`, since the package folder changes with every update (the AI tools'
-  `claude mcp add` command line, AxKitForm.Mcp.cs). The capability that turns virtualization off,
+  `claude mcp add` command line, AiToolsSetup.cs). The capability that turns virtualization off,
   `unvirtualizedResources`, is restricted to games and not used.
 - AX-13.6 **The listing and the release.** The listing (name axKit, category Developer tools, free, every market,
   discoverable; its texts in `docs/axKit/store-listing.md`) begins with the programs the access layers need (Store

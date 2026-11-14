@@ -170,7 +170,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 
 - `AxKit.Core/Ai/AiSettings` (AH-1.1), `AiRequest` (the command line and the process, AH-2), `AiAnswer` (the JSON
   read, with the session), `AiPrompts` with `WindowContext` (AH-4, AH-6.2).
-- `AxKit.Forms/AxKitForm.Ai.cs`: `CreateClaudeMenu` (axKit, Claude, AX-9.1, beside the AI tools), `TurnOnAi` (AH-1.3), `AskAboutThisWindow` (Shift+F1,
+- `AxKit.Forms/AxKitForm.Ai.cs` (the menu and the members a window calls) and `AxKit.Forms/AiHelpFlow.cs` (the work, a plain class the window holds since 2026-11-14): `CreateClaudeMenu` (axKit, Claude, AX-9.1, beside the AI tools), `TurnOnAi` (AH-1.3), `AskAboutThisWindow` (Shift+F1,
   AH-6), `AskClaude(prompt, extraFolders, resume, then)` with the switch, the program and the consent checks and the
   waiting notice, `ShowAnswer(answer, extraFolders, closed)` with the follow-up field (AH-3.1, AH-6.3), the folders
   notice (AH-2.3); `ConsentTarget.AiHelp` and `HasConsent`'s app name for the one agreement (AH-1.2); `Notice.FocusText`

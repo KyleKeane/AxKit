@@ -7,6 +7,7 @@
 - axKit: Claude Code installed through npm (claude.cmd) gets every argument in quotes, so a folder named R&D arrives whole in axClaude and AI help; a folder or argument with a percent sign, an exclamation mark or a double quote is refused with a sentence that names it.
 - For developers: the upstream watch, tools\upstream.ps1 with docs\axKit\upstream.json, says at the start of a session which outside program (Claude Code, Git, KeePassXC's tool, a shell) changed its version since the checks last passed, and -Verify runs that program's checks again.
 - For developers: every access layer's program words in one place (ClaudeCodeTexts, GitTexts, KeePassCliTexts, ShellTexts), tests that keep them there, and docs/axKit/access-layers.md saying where each layer stands (rule 12).
+- For developers: five services moved out of the window base into plain classes the window holds, with no change to what a window does (R-15): UpdateFlow, ProgramInstaller, ReportFlow, AiHelpFlow and AiToolsSetup; the base keeps the members an app calls, the menu items and the hooks, and the run of a command for an AI tool with its request list stays in the base.
 - For developers: release.ps1 -Rehearse makes a release's checks and asks git and GitHub the real run's questions through the same functions, without committing, tagging, pushing, signing or publishing.
 
 ## 5.8.0

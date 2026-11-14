@@ -71,7 +71,7 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>Closes the notice, runs <paramref name="then"/>, and gives the focus back unless the action opened the next notice of the chain or closed the window.</summary>
-    protected void CloseNotice(Action? then)
+    protected internal void CloseNotice(Action? then)
     {
         if (!NoticeOpen)
         {
@@ -175,7 +175,7 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>A failed command's reason: one announcement, "Failed: ...", when it is one line; a notice with all of it when it is more (axGIT AG-7, axFile AF-4.5).</summary>
-    protected void Failed(string title, string text)
+    protected internal void Failed(string title, string text)
     {
         if (text.Contains('\n'))
         {
@@ -195,7 +195,7 @@ public abstract partial class AxKitForm
     /// required field says; <paramref name="hidden"/> makes a password field; <paramref name="cancel"/> is the cancel's
     /// label where &C is the button's.
     /// </summary>
-    protected void AskText(string title, string text, string label, string name, string initial, string button, Action<string> act, Func<string, string?>? refused = null, bool required = true, string emptyMessage = "Type something first", bool hidden = false, string cancel = "&Cancel")
+    protected internal void AskText(string title, string text, string label, string name, string initial, string button, Action<string> act, Func<string, string?>? refused = null, bool required = true, string emptyMessage = "Type something first", bool hidden = false, string cancel = "&Cancel")
     {
         ShowNotice(new Notice(title, text,
         [
@@ -250,7 +250,7 @@ public abstract partial class AxKitForm
     private long _lastRaiseTick = long.MinValue / 2;
 
     /// <summary>Speaks without moving the focus (AX-7.3): on the notice while one shows, since the window's controls are hidden then, and on <see cref="AnnounceSource"/> otherwise; before the first activation, kept for it; close on the heels of the one before, joined to it.</summary>
-    protected bool Announce(string text, bool interrupt)
+    protected internal bool Announce(string text, bool interrupt)
     {
         // For a report (docs/axKit/reports.md RP-4.2): a window whose announcements may carry the user's content records
         // its commands and notices alone (RecordsAnnouncements).

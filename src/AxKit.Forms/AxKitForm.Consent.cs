@@ -24,11 +24,11 @@ public abstract partial class AxKitForm
     /// now alike (the overload takes the title and the button); a caller that checked first as well had made this one
     /// dead (review, 2026-11-01).
     /// </summary>
-    protected bool HasConsent(ConsentTarget target, Action connect, Action notNow) =>
+    protected internal bool HasConsent(ConsentTarget target, Action connect, Action notNow) =>
         HasConsent(target, $"Before {AppName} connects to {target.Program}", "&Connect", connect, notNow);
 
     /// <param name="app">The app the agreement is recorded under: this window's unless the caller is a service every window shares (AI help, docs/axKit/ai-help.md AH-1.2).</param>
-    protected bool HasConsent(ConsentTarget target, string title, string button, Action connect, Action notNow, string? app = null)
+    protected internal bool HasConsent(ConsentTarget target, string title, string button, Action connect, Action notNow, string? app = null)
     {
         var who = app ?? AppName;
         if (_agreed.Contains(who + "/" + target.Program) || Consent.Given(AppPaths.ConsentFile, who, target.Program))

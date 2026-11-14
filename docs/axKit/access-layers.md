@@ -134,7 +134,7 @@ What every layer shares:
   and `session_id`. No error text is matched: when there is no readable object, what was printed on either stream is
   said as it is, or the exit code.
 - What guards it: `AiTests` in `tests/AxKit.Tests`, with answers as Claude Code printed them. The window code
-  (`src/AxKit.Forms/AxKitForm.Ai.cs`) calls `AiRequest.AskAsync` and reads the `AiAnswer` record only.
+  (`src/AxKit.Forms/AiHelpFlow.cs`) calls `AiRequest.AskAsync` and reads the `AiAnswer` record only.
 - Still outside: nothing was found in a window. There is no source-reading test for the three field names yet; they
   stand in one method, and the audit left the folder as it was because other work was changing it that day.
 

@@ -167,7 +167,7 @@ the package; its writes under HKCU are copied to a private hive; its package fol
 - `Environment.ProcessPath` lies under `C:\Program Files\WindowsApps\<package>\` and changes with every update, so
   whatever records the exe's path for later use records the alias `%LOCALAPPDATA%\Microsoft\WindowsApps\axKit.exe`
   in the Store build (`PackageIdentity.ProgramPath`): the MCP command line written into Claude Code's settings
-  (`AxKitForm.Mcp.cs`). `SignInStart` writes nothing in that copy (3.3).
+  (`AiToolsSetup.cs`). `SignInStart` writes nothing in that copy (3.3).
 
 ### 3.5 What the Store build turns off
 

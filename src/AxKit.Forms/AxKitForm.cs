@@ -12,8 +12,12 @@ namespace AxKit.Forms;
 /// window has, the keys, the window's place, the settings, the ways out to the system), <c>AxKitForm.Notices.cs</c>
 /// (the notice flow with its one focus rule, and <see cref="Announce"/>), <c>AxKitForm.Find.cs</c> (find in a text
 /// box, a list, a transcript and a notice's text), <c>AxKitForm.Fonts.cs</c> (the text font with its size keys and
-/// picker), <c>AxKitForm.Updates.cs</c> (the update check, the update notice and the install in place, AX-3) and
-/// <c>AxKitForm.Palette.cs</c> (the command palette, AX-10). A window derives from it, adds its controls (the
+/// picker) and <c>AxKitForm.Palette.cs</c> (the command palette, AX-10). The services with a flow of their own are
+/// plain classes the window holds, each made in the constructor with the window as its one collaborator
+/// (docs/axKit/repairs.json R-15, 2026-11-14): <see cref="UpdateFlow"/> (AX-3), <see cref="ProgramInstaller"/>
+/// (AX-2.9), <see cref="ReportFlow"/>, <see cref="AiHelpFlow"/> and <see cref="AiToolsSetup"/>; the partial file of
+/// each (<c>AxKitForm.Updates.cs</c>, <c>.Install.cs</c>, <c>.Report.cs</c>, <c>.Ai.cs</c>, <c>.Mcp.cs</c>) keeps the
+/// members a window calls, the menu items and the hooks. A window derives from it, adds its controls (the
 /// <see cref="Overlay"/> first, so that it docks over the rest), and fills in the hooks listed under "what the window
 /// fills in". It grew out of axDown's window (the editor shell) on the third copy, axGIT (2026-10-18); the notice and
 /// focus core was written again on 2026-10-23 (docs/axKit/review-2026-10-23.md, 5.3).
@@ -39,6 +43,12 @@ public abstract partial class AxKitForm : Form
         Settings = settings;
         SettingsPath = settingsPath;
         _settingsError = settingsError;
+        // The services the window holds, each a plain class with this window as its one collaborator (R-15).
+        _installer = new ProgramInstaller(this);
+        _updates = new UpdateFlow(this);
+        _reports = new ReportFlow(this);
+        _ai = new AiHelpFlow(this);
+        _aiTools = new AiToolsSetup(this);
         // With the role Window, NVDA speaks the window when it opens ("notes.md - axDown window") before the focused
         // control; without it the window is a nameless pane to NVDA and the app is never named (AX-7.1).
         AccessibleRole = AccessibleRole.Window;
@@ -61,7 +71,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>The app's name, which ends the title of its windows and names them in the Window menu.</summary>
-    protected string AppName { get; }
+    protected internal string AppName { get; }
 
     /// <summary>The app's name as the user meets it (AX-11.2): "axClaude, access layer for Claude Code" for an access layer, the name alone otherwise; window titles end with it.</summary>
     protected string AppTitle => Dispatch.ByName(AppName)?.Title ?? AppName;
@@ -75,10 +85,10 @@ public abstract partial class AxKitForm : Form
     protected string SettingsPath { get; }
 
     /// <summary>The notices panel (AX-7.2); the window adds it to its controls first, so that it docks over the rest.</summary>
-    protected OverlayPanel Overlay { get; } = new();
+    protected internal OverlayPanel Overlay { get; } = new();
 
     /// <summary>A notice holds the window: the main controls are hidden, the menu and the shortcuts wait.</summary>
-    protected bool NoticeOpen { get; private set; }
+    protected internal bool NoticeOpen { get; private set; }
 
     // ---- what the window fills in ----
 
@@ -780,7 +790,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>Runs a command's task from the UI thread and turns an escaped exception into a notice rather than a crash: an exception out of an awaited task would otherwise be unobserved.</summary>
-    protected async void Do(Func<Task> action)
+    protected internal async void Do(Func<Task> action)
     {
         try
         {
@@ -896,7 +906,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>The Windows folder picker, titled with <paramref name="description"/> and opened on <paramref name="start"/>: the folder chosen, or null.</summary>
-    protected string? ChooseFolder(string description, string? start = null)
+    protected internal string? ChooseFolder(string description, string? start = null)
     {
         using var dialog = new FolderBrowserDialog { Description = description, UseDescriptionForTitle = true, ShowNewFolderButton = true };
         if (start is not null)
@@ -976,7 +986,7 @@ public abstract partial class AxKitForm : Form
     /// nothing), and a clipboard another program holds for a moment reported through <see cref="Fail"/> rather than as a
     /// crash; false then.
     /// </summary>
-    protected bool CopyText(string text, string? said)
+    protected internal bool CopyText(string text, string? said)
     {
         try
         {
