@@ -76,7 +76,7 @@ public abstract partial class ConsoleForm
     }
 
     /// <summary>
-    /// Ctrl+Space anywhere in the window: the music option flips through its menu item (<see cref="CreateMusicItem"/>),
+    /// The window's music key (Ctrl+M in both tables) anywhere in the window: the music option flips through its menu item (<see cref="CreateMusicItem"/>),
     /// which applies and saves it, and the result is said; when nothing is running at that moment nothing is heard
     /// yet, which is said too.
     /// </summary>

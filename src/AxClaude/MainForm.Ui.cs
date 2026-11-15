@@ -86,7 +86,7 @@ internal sealed partial class MainForm
         var sounds = new ToolStripMenuItem("&Sounds");
         sounds.DropDownItems.Add(Toggle("&Chimes: ready, sent, replying, done, question", _settings.SoundOnBell, v => _settings.SoundOnBell = v));
         sounds.DropDownItems.Add(Toggle("&Ticks for new lines and tool calls", _settings.ClickOnNewLine, v => _settings.ClickOnNewLine = v));
-        // FR-7.9: starts or stops at once when toggled during a turn; Ctrl+Space anywhere flips the same item.
+        // FR-7.9: starts or stops at once when toggled during a turn; Ctrl+M anywhere flips the same item.
         sounds.DropDownItems.Add(CreateMusicItem("&Background music while Claude works", AxClaudeKeys.ToggleMusic));
         options.DropDownItems.Add(sounds);
         // FR-7.10: the sounds and the words of work in the background, and the pause between the recurring chords.

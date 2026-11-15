@@ -33,8 +33,12 @@ public static class AxTerminalKeys
     public const Keys WhatIsRunning = Keys.Control | Keys.Q;
     /// <summary>The current folder, the full path, on demand (AT-D9).</summary>
     public const Keys SayFolder = Keys.Control | Keys.P;
-    /// <summary>Background music on or off, said each time (AT-5.5).</summary>
-    public const Keys ToggleMusic = Keys.Control | Keys.Space;
+    /// <summary>
+    /// Background music on or off, said each time (AT-5.5); M for music. Ctrl+Space until 2026-11-15, when that became
+    /// the bundle's mode key (AX-8.13). A command of the window, so it is taken before the field, where Ctrl+M would be a
+    /// line break.
+    /// </summary>
+    public const Keys ToggleMusic = Keys.Control | Keys.M;
 
     // The command field, and the terminal: Enter sends a command in the field and copies the line in the terminal;
     // Escape is the guard in the field and clears the selection or returns to the field in the terminal.

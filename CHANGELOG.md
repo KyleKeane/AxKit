@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- axKit: Ctrl+Space, the mode key, in every text of several lines that you can type in: it switches between edit mode and navigation mode and says which. In navigation mode the letters move without typing, as in a conversation of axClaude or NVDA's browse mode: h and Shift+H by heading, 1 to 6 by level, k by link, l by list, i by list item, q by block quote, t by table. The arrows still move and select and Ctrl+C copies, but nothing changes the text: a key that would type or delete, Enter included, plays the low edge sound. Every window starts in edit mode. In a text you cannot type in, Ctrl+Space says "Read only: there is no edit mode here"; elsewhere it plays the edge sound. Help, Diagnostics, Test a key names it.
+- axDown: navigation mode (Ctrl+Space): the letters of the Ctrl jumps work alone, and the Ctrl jumps still work; the status bar shows "navigation mode" after the file's name; Undo, Cut and Paste from the menus say "Navigation mode: press Ctrl+Space to edit". axJSON has it too, with its own letters.
+- axClaude: Ctrl+Space in the message field is navigation mode, to read a long message back by its headings, links and lists before you send it; Enter does not send meanwhile, and the status bar says "field in navigation mode". The background music moved to Ctrl+M.
+- axTerminal: Ctrl+Space in the command field is navigation mode, as in axClaude; Ctrl+Up and Ctrl+Down go by paragraph there instead of through the history. The background music moved to Ctrl+M.
 - axHelp: when its conversation comes back with a message you typed and did not send, it says so with a short chime, "Unsent message in the field", after NVDA has read the field. The message stays, as before.
 - axKit: Escape now ends the key test at once (Help, Diagnostics, Test a key), with "Key test ended". It needed Escape twice before; Escape is no longer named by the test, and in axStart it ends the test without hiding the window.
 

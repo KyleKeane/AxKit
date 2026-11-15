@@ -27,8 +27,12 @@ public static class AxClaudeKeys
     public const Keys ShowInExplorer = Keys.Control | Keys.W;
     public const Keys NewSession = Keys.Control | Keys.N;
     public const Keys RestartClaude = Keys.Control | Keys.Shift | Keys.R;
-    /// <summary>Background music on or off, said each time (FR-7.9).</summary>
-    public const Keys ToggleMusic = Keys.Control | Keys.Space;
+    /// <summary>
+    /// Background music on or off, said each time (FR-7.9); M for music. Ctrl+Space until 2026-11-15, when that became
+    /// the bundle's mode key (AX-8.13). A command of the window, so it is taken before the field, where Ctrl+M would be a
+    /// line break.
+    /// </summary>
+    public const Keys ToggleMusic = Keys.Control | Keys.M;
 
     /// <summary>Read Claude's question or screen again while the control area shows it, from anywhere, the focus staying (D33); Q as the conversation's question key.</summary>
     public const Keys ReadQuestion = Keys.Control | Keys.Q;

@@ -21,6 +21,9 @@ public static class BundleHelp
     /// <summary>Ctrl+Enter's line, the same in every F1 text (AX-8.10 rule 3).</summary>
     public const string MainActionLine = "  Ctrl+Enter: the main action of where you are: it sends a form from any of its fields, keeps a long text from inside its box, presses a notice's main button, and does a window's main action where it has one; anywhere else, the edge sound and nothing more";
 
+    /// <summary>The mode key's line, the same in every F1 text (AX-8.13, 2026-11-15).</summary>
+    public const string ModeLine = "  Ctrl+Space in a text of several lines that you can type in: navigation mode or edit mode, said each time. In navigation mode the letters move without typing: h and Shift+H by heading, 1 to 6 by level, and the other letters of the window's Ctrl jumps without Ctrl (k a link, l a list, i a list item in Markdown); the arrows still move and select, Ctrl+C copies, and a key that would change the text plays the edge sound. In a text you cannot type in, Ctrl+Space says it is read only";
+
     /// <summary>The key test's line, the same in every F1 text (AX-8.12, 2026-11-15).</summary>
     public const string KeyTestLine = "  A key that seems to do nothing: Help, Diagnostics, Test a key says each key you press and what it does here, and carries none of them out; Escape ends it. A key that is not said never reached axKit";
 
@@ -60,6 +63,7 @@ public static class BundleHelp
         text.Append("  Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it\r\n");
         text.Append(ReportLine).Append("\r\n");
         text.Append(MainActionLine).Append("\r\n");
+        text.Append(ModeLine).Append("\r\n");
         text.Append("  Shift+F1: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more\r\n");
         text.Append(StatusLine).Append("\r\n");
         foreach (var line in lines)

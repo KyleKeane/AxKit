@@ -59,28 +59,28 @@ refuse said ♪ Sent
 refuse said ♪ Done
 menu Chimes
 said
-# Section 8 step 7: Ctrl+Space in the field with Claude idle: "Background music on, nothing is running"; a turn: the
-# music starts as the status turns to working and stops before the falling notes; Ctrl+Space: "Background music off".
-keys ctrl+space
+# Section 8 step 7: Ctrl+M (Ctrl+Space until 2026-11-15, now the mode key, AX-8.13) in the field with Claude idle: "Background music on, nothing is running"; a turn: the
+# music starts as the status turns to working and stops before the falling notes; Ctrl+M: "Background music off".
+keys ctrl+m
 expect said Background music on, nothing is running
 type Use the Bash tool to run: echo hi. Then reply with the single word music.
 keys enter
 expect said ♪ StartMusic
 expect said ♪ StopMusic
 expect said ♪ Done
-keys ctrl+space
+keys ctrl+m
 expect said Background music off
-# Ctrl+Space from the conversation during a turn: the music starts with "Background music on"; again: it stops.
+# Ctrl+M from the conversation during a turn: the music starts with "Background music on"; again: it stops.
 type Write a story of 1500 words about a lighthouse keeper.
 keys enter
 expect said Sent
 expect state Claude: working
 keys ctrl+2
-keys ctrl+space
+keys ctrl+m
 expect said ♪ StartMusic
 expect said ! Background music on
 refuse said nothing is running
-keys ctrl+space
+keys ctrl+m
 expect said ♪ StopMusic
 expect said Background music off
 expect said Done

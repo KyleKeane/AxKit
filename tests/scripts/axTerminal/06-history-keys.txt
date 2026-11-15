@@ -39,3 +39,34 @@ keys ctrl+up
 expect said ! echo one
 keys ctrl+down ctrl+down
 expect said ! echo two --x
+
+# The mode key in the field (docs/axKit/SPEC.md AX-8.13): navigation mode, said and in the status bar; Ctrl+Up and
+# Ctrl+Down go by paragraph there instead of through the history, Enter and typing play the edge sound and change nothing.
+keys ctrl+space
+expect said ! Navigation mode
+expect state field in navigation mode
+keys ctrl+up
+refuse said Recall
+keys enter
+expect said ♪ Edge
+type zz
+expect said ♪ Edge
+expect focus {"name":"Command","role":"Text","value":"echo two --x"}
+# The terminal cannot be edited: the key says so and changes nothing.
+keys ctrl+2
+keys ctrl+space
+expect said ! Read only: there is no edit mode here
+# Back in the field: edit mode again, and typing types.
+keys ctrl+1
+keys ctrl+space
+expect said ! Edit mode
+refuse state navigation mode
+keys end
+type !
+expect focus {"name":"Command","role":"Text","value":"echo two --x!"}
+# The music key moved to Ctrl+M on 2026-11-15, and it is taken before the field, where it would be a line break.
+keys ctrl+m
+expect said ! Background music on, nothing is running
+keys ctrl+m
+expect said ! Background music off
+expect focus {"name":"Command","role":"Text","value":"echo two --x!"}

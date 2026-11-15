@@ -204,7 +204,7 @@ expect said ♪ Done
 keys shift+escape
 expect said Escape sent
 
-# Step 10: the background music while a command runs, until "Done"; Ctrl+Space turns it off. The menu command
+# Step 10: the background music while a command runs, until "Done"; Ctrl+M turns it off (Ctrl+Space until 2026-11-15). The menu command
 # itself says nothing here: the palette's spoken new state is the palette notice's, which "menu" skips.
 # Step 9, Speak output, is in 02b-speak-output.txt, since it fails at present too.
 menu Background music while a command runs
@@ -215,7 +215,7 @@ expect said ♪ StartMusic
 expect said ♪ StopMusic
 expect said Done
 expect said ♪ Done
-keys ctrl+space
+keys ctrl+m
 expect said Background music off
 
 # AT-3.2: a command longer than the console is wide. The rows its echo wraps onto are hidden with the prompt row:

@@ -28,7 +28,7 @@ public static class HelpText
             "Ctrl+L: clear the transcript (the shell's own cls clears only its screen)",
             "Ctrl+Alt and a letter from the Terminal list below: read every line of that kind from the caret to the end of the terminal in one go, without moving; Ctrl+Alt+P reads the paragraphs whole. Control stops NVDA",
             "Ctrl+Shift+K: bookmark the terminal line the caret is on, or take the bookmark away",
-            "Ctrl+Space: background music while a command runs, on or off, and says which",
+            "Ctrl+M: background music while a command runs, on or off, and says which",
         ],
         altF4: "close axTerminal (asks first while a command runs)",
         heading: "Anywhere") + """
@@ -40,6 +40,7 @@ public static class HelpText
           Page Up, Page Down: one screen of the field up or down, or the first or last line
           Escape: does nothing; a reminder says that Shift+Escape sends Escape and Ctrl+Shift+C interrupts
           Ctrl+Up, Ctrl+Down: the previous or next paragraph of the text; with Shift, select to there
+          Ctrl+Space: navigation mode, to move through a long command by single letters without changing it; Enter and every key that would type play the edge sound, and Ctrl+Up and Ctrl+Down go by paragraph. Ctrl+Space again: edit mode
 
         ## Terminal
           Arrow keys, Home, End, Ctrl+Home, Ctrl+End: move as in any text

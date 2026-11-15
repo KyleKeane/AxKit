@@ -1,0 +1,89 @@
+# Workflow: Move through a file with single letters without changing it, then type again
+# axDown: Ctrl+Space, the mode key (docs/axKit/SPEC.md AX-8.13; docs/axDown/SPEC.md AD-5.3; docs/axDown/nvda-test-plan.md,
+# section 8). Navigation mode: the letters jump, a key that would type plays the edge sound and changes nothing; Ctrl+Space
+# again: edit mode, and typing types.
+file home\AxKit\axDown.json {"checkForUpdates": false}
+file modes.md # Modes\n\nThe first paragraph.\n\n## Links\n\nSee [GitHub](https://github.com) for more.\n\n## List\n\n- one\n- two\n\nThe end.
+
+start down {temp}\modes.md
+expect focus modes.md
+refuse state navigation mode
+
+# On: said, and the status bar shows it after the file's name.
+keys ctrl+space
+expect said ! Navigation mode
+expect state modes.md, navigation mode
+
+# h and Shift+H by heading, 2 by level, k by link, l by list, i by list item; the words are the editor's own jumps'.
+keys h
+expect said ! Links, heading level 2
+keys h
+expect said ! List, heading level 2
+keys h
+expect said ! No next heading
+keys shift+h
+expect said ! Links, heading level 2
+keys ctrl+home 2
+expect said ! Links, heading level 2
+keys k
+expect said ! GitHub, link
+keys l
+expect said ! List with 2 items, one
+keys i
+expect said ! two
+keys shift+i
+expect said ! one
+# The Ctrl jumps work as in edit mode.
+keys ctrl+shift+h
+expect said ! List, heading level 2
+
+# Keys that would type or delete: the edge sound, nothing changes, the title has no star.
+keys a
+expect said ♪ Edge
+keys space
+expect said ♪ Edge
+keys enter
+expect said ♪ Edge
+keys backspace
+expect said ♪ Edge
+keys delete
+expect said ♪ Edge
+keys ctrl+z
+expect said ♪ Edge
+# A character sent with no key of its own is stopped too.
+type xyz
+expect said ♪ Edge
+refuse state *modes.md
+refuse state unsaved changes
+expect focus {"name":"modes.md","role":"Text","value":"## List"}
+# The menus' Undo and Paste say why they did nothing.
+menu Undo
+expect said ! Navigation mode: press Ctrl+Space to edit
+# The arrows still move.
+keys down down
+expect focus {"name":"modes.md","role":"Text","value":"- one"}
+
+# The key test names the letters by what they do in this mode.
+menu Test a key
+expect said ! Key test.
+keys h
+expect said ! H: moves to the next heading
+keys shift+k
+expect said ! Shift+K: moves to the previous link
+keys a
+expect said ! A: changes nothing in navigation mode
+keys ctrl+space
+expect said ! Ctrl+Space: Edit mode or navigation mode: to edit mode
+keys escape
+expect said ! Key test ended
+
+# Off: said, the status bar without it, and typing types.
+keys ctrl+space
+expect said ! Edit mode
+refuse state navigation mode
+keys home
+type X
+expect focus {"name":"modes.md","role":"Text","value":"X- one"}
+expect state *modes.md
+keys ctrl+z
+expect said ! Undone

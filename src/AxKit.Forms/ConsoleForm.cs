@@ -67,6 +67,8 @@ public abstract partial class ConsoleForm : AxKitForm
         // A frame, a colour of its own and the name line over it, so that the active field is told from the read-only
         // view on screen (both are the white Window colour otherwise); none of this is anything to NVDA.
         Input.BorderStyle = BorderStyle.FixedSingle;
+        // AX-8.13: the field's mode is in the status bar, after the program's state.
+        Input.ModeChanged += (_, _) => UpdateStatus();
         _inputName.Text = inputName;
         _inputName.AutoEllipsis = true;
         _inputName.UseMnemonic = false;
@@ -459,6 +461,12 @@ public abstract partial class ConsoleForm : AxKitForm
     /// <summary>The two status labels, fitted into the strip when either changed (axClaude §6.2).</summary>
     protected void SetStatus(string state, string place)
     {
+        if (Input.NavigationMode)
+        {
+            // AX-8.13: the field in navigation mode, said with the state wherever the status is read (F8 too).
+            state += ", field in " + TextModes.StatusPart;
+        }
+
         if (StateLabel.Text == state && PlaceLabel.Text == place)
         {
             return;

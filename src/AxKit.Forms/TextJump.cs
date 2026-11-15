@@ -23,6 +23,14 @@ public sealed record TextJump(Keys Next, Keys Previous, string Name, Func<string
         .. Enumerable.Range(1, 6).Select(level => Markdown(Keys.D0 + level, Keys.Shift | (Keys.D0 + level), ElementKind.Heading, level)),
     ];
 
+    /// <summary>
+    /// The letters of a text's navigation mode (AX-8.13): the window's own Ctrl pairs without Ctrl, so that h is the
+    /// next heading where Ctrl+H is, Shift+H the previous one, k a link, l a list, i a list item (axJSON's k a key, j an
+    /// object). One table, the window's, for both modes; a change of a Ctrl key changes its letter.
+    /// </summary>
+    public static IReadOnlyList<TextJump> Letters(IReadOnlyList<TextJump> jumps) =>
+        [.. jumps.Select(jump => jump with { Next = jump.Next & ~Keys.Control, Previous = jump.Previous & ~Keys.Control })];
+
     /// <summary>The pair for a Markdown kind, with the level narrowing headings (0 for any).</summary>
     public static TextJump Markdown(Keys next, Keys previous, ElementKind kind, int level = 0) =>
         new(next, previous, MarkdownOutline.Name(kind, level),

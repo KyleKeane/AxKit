@@ -4,6 +4,7 @@
   the key went down and the text and caret after it (the selection replaced by a line break, an indent after it
   allowed, the caret after that), and `Said`, "new line"; `AxKit.Forms/AxKitTextBox` asks it. The setting is the theme
   file's `display.sayNewLine` (`Theme.SayNewLine`, `SetSayNewLine`, TH-6.5); the heading sound's switch beside it is `display.headingSound` (`Theme.HeadingSound`, `SetHeadingSound`, TH-6.6). Tested in `TypedLineBreakTests`.
+- `TextModes` (AX-8.13, 2026-11-15): the words of the mode key ("Edit mode", "Navigation mode", "Read only: there is no edit mode here", the menu refusal "Navigation mode: press Ctrl+Space to edit", the status part and the key test's words) and the rule of navigation mode by virtual key code and modifiers (`InNavigation`: `Refused` for what types or deletes, pastes, cuts, undoes or sends; `Passes` for moves, copy and every other command), with `CharacterAllowed` for the control's own guard. `AxKit.Forms/AxKitTextBox` and the window base apply it. Tested in `TextModesTests`.
 - `Paragraphs`: where Ctrl+Up and Ctrl+Down go in a text with `\r\n` line ends: the starts of its paragraphs, the
   first line or a line with text after a blank line, for `AxKit.Forms.EditKeys.Paragraph`.
 - `TextLines` (docs/axDown/SPEC.md AD-6.4, AD-3.6; 2026-10-23): the caret's line and column in an edit control's text,

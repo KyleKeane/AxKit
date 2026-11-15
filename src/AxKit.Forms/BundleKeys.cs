@@ -33,6 +33,13 @@ public static class BundleKeys
     /// </summary>
     public const Keys MainAction = Keys.Control | Keys.Return;
 
+    /// <summary>
+    /// The mode key, "the magic key" (AX-8.13, the user's decision of 2026-11-15): in an editable text of several lines,
+    /// edit mode or navigation mode, said each time; in a text that cannot be edited, one line that says so; elsewhere
+    /// the edge sound. The user may find it confusing in use: a change of key is this one line.
+    /// </summary>
+    public const Keys ToggleMode = Keys.Control | Keys.Space;
+
     public const Keys NextControl = Keys.Control | Keys.Tab;
     public const Keys PreviousControl = Keys.Control | Keys.Shift | Keys.Tab;
     public const Keys NextControlAlso = Keys.F6;
@@ -74,6 +81,7 @@ public static class BundleKeys
         ("Ask Claude about this window", AskClaude),
         ("Say the status", SayStatus),
         ("The main action", MainAction),
+        ("Edit mode or navigation mode", ToggleMode),
         ("Next control", NextControl),
         ("Previous control", PreviousControl),
         ("Next control (F6)", NextControlAlso),

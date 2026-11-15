@@ -207,6 +207,10 @@ public sealed partial class TextEditorForm : AxKitForm
         };
         _editor.MouseUp += (_, _) => ScheduleStatus();
         _editor.TextChanged += OnTextChanged;
+        // AX-8.13: navigation mode's letters are the app's own jump keys without Ctrl (h where Ctrl+H is), and the
+        // status bar names the mode.
+        _editor.NavigationJumps = TextJump.Letters(_app.Jumps);
+        _editor.ModeChanged += (_, _) => UpdateStatus();
         // AX-7.9: an editor whose outline has Markdown headings (axDown, axPreview; not axJSON) sounds them as the caret
         // reaches one on the user's key.
         if (_app.Jumps.Any(jump => jump.Name == MarkdownOutline.Name(ElementKind.Heading)))
@@ -253,7 +257,13 @@ public sealed partial class TextEditorForm : AxKitForm
         if (!_app.ReadOnly)
         {
             items.Add(new ToolStripSeparator());
-            items.Add(CommandPalette.Marked(new ToolStripMenuItem("Cu&t", null, (_, _) => _editor.Cut()) { ShortcutKeyDisplayString = "Ctrl+X" }, CommandMark.Act));
+            items.Add(CommandPalette.Marked(new ToolStripMenuItem("Cu&t", null, (_, _) =>
+            {
+                if (!RefusedInNavigation(_editor))
+                {
+                    _editor.Cut();
+                }
+            }) { ShortcutKeyDisplayString = "Ctrl+X" }, CommandMark.Act));
         }
 
         items.Add(CommandPalette.Marked(new ToolStripMenuItem("&Copy", null, (_, _) => _editor.Copy()) { ShortcutKeyDisplayString = "Ctrl+C" }, CommandMark.Act));
@@ -261,6 +271,11 @@ public sealed partial class TextEditorForm : AxKitForm
         {
             items.Add(CommandPalette.Marked(new ToolStripMenuItem("&Paste", null, (_, _) =>
             {
+                if (RefusedInNavigation(_editor))
+                {
+                    return;
+                }
+
                 _editor.Paste();
                 SayPasteAfter(_editor);
             }) { ShortcutKeyDisplayString = "Ctrl+V" }, CommandMark.Act));
@@ -419,6 +434,11 @@ public sealed partial class TextEditorForm : AxKitForm
 
     private void Undo()
     {
+        if (RefusedInNavigation(_editor))
+        {
+            return;
+        }
+
         if (_history.Undo() is not { } step)
         {
             Announce("Nothing to undo", true);
@@ -431,6 +451,11 @@ public sealed partial class TextEditorForm : AxKitForm
 
     private void Redo()
     {
+        if (RefusedInNavigation(_editor))
+        {
+            return;
+        }
+
         if (_history.Redo() is not { } step)
         {
             Announce("Nothing to redo", true);
@@ -458,6 +483,11 @@ public sealed partial class TextEditorForm : AxKitForm
     /// <summary>An app command on the whole text (AJ-2.3): the text replaced in one undo step, the caret kept at its offset, one announcement.</summary>
     private void RunCommand(EditorCommand command)
     {
+        if (RefusedInNavigation(_editor))
+        {
+            return;
+        }
+
         var result = command.Run(_editor.Text);
         if (result.Text != _editor.Text)
         {
@@ -558,7 +588,7 @@ public sealed partial class TextEditorForm : AxKitForm
     private void UpdateStatus()
     {
         var (line, column, _) = Position();
-        _fileLabel.Text = DocumentName + (_changed ? ", unsaved changes" : string.Empty);
+        _fileLabel.Text = DocumentName + (_changed ? ", unsaved changes" : string.Empty) + (_editor.NavigationMode ? ", " + TextModes.StatusPart : string.Empty);
         // AP-7.4: a text names its encoding and line ending; another kind's page its renderer's name.
         _positionLabel.Text = _page is { IsText: false } page
             ? $"Line {line}, Column {column} · {page.Kind}"

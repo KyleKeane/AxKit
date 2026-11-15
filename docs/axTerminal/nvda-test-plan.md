@@ -26,7 +26,8 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
   seconds.
 - `Start-Sleep 30`, Enter; NVDA+End: "Running: Start-Sleep 30"; Ctrl+Q: "Running: Start-Sleep 30, n seconds, …"; Ctrl+Shift+C: "Interrupt sent", then "Done" or "Failed". Shift+Escape: "Escape sent".
 - Options, Speech, Speak output: all lines; `Get-ChildItem`, Enter: the lines spoken as one utterance, then "Done". Back to none.
-- Options, Sounds, Background music while a command runs on; `Start-Sleep 5`: the music plays until "Done". Ctrl+Space: "Background music off".
+- Options, Sounds, Background music while a command runs on; `Start-Sleep 5`: the music plays until "Done". Ctrl+M: "Background music off" (Ctrl+Space until 2026-11-15).
+- The mode key (bundle AX-8.13): type `echo one`, then Ctrl+Space: "Navigation mode", and F8 ends in "field in navigation mode". A letter or Enter: the edge sound, nothing typed, nothing sent; Ctrl+Up: the caret to the start of the field, no command from the history. Ctrl+2, Ctrl+Space: "Read only: there is no edit mode here". Ctrl+1, Ctrl+Space: "Edit mode"; typing types again.
 
 ## 3. Shells and folders (AT-1.2, AT-1.6)
 

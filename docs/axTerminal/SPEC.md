@@ -307,7 +307,8 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   exists; off, the tick and the status are what tell.
 - AT-5.5 axClaude's attention options, unchanged in meaning: the taskbar flash when the window is not active
   (`flashTaskbar`), the louder background alert (`backgroundAlert`) and the working music while a command runs, with
-  Ctrl+Space (`workingMusic`, axClaude FR-7.9), all through the shared `Sounds`.
+  Ctrl+M (Ctrl+Space until 2026-11-15, now the bundle's mode key, AX-8.13; `workingMusic`, axClaude FR-7.9), all
+  through the shared `Sounds`.
 - AT-5.6 Nothing speaks on an arrow key; a jump announces its line; Ctrl+1 and Ctrl+2 name the control they land on
   (AX-7.3, axClaude D26).
 
@@ -325,7 +326,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   Previous bookmark (the other quick keys are the terminal's letters, named in the F1 text). **Context (C)** (AX-9.11): Copy
   this line into the command field (Enter in the terminal) | Bookmark this line Ctrl+Shift+K | Copy the selection; Shift+F10,
   the Applications key and a right click in the terminal or the field open it. **Options (O):** Sounds ▸ (Chimes ✓ | Ticks for new lines ✓ |
-  Background music while a command runs Ctrl+Space) | Speech ▸ (Speak output: none ○ | Speak output: all lines ○ |
+  Background music while a command runs Ctrl+M) | Speech ▸ (Speak output: none ○ | Speak output: all lines ○ |
   ─ | Say when a program asks ✓) | When a command is done ▸ (Flash the taskbar button ✓ | Louder alert when the window
   is in the background) | Text ▸ (Time stamps | Markers in the text ✓ | ─ | Font… | Larger text | Smaller text | Windows text size) | General
   ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream). **Window (W)** (before Options), **axKit (K)**
@@ -334,8 +335,8 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   The first menu is Session, as in axClaude, since what it holds is the shell in its folder, the thing the window
   is about; Shell takes E, S being Session's.
 - AT-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P (the command palette, AX-10), the control keys, Ctrl+F, F3,
-  Shift+F3, Ctrl+S, Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up and Ctrl+Down with Shift, Alt+F4. Window-specific (`AxTerminalKeys`): Ctrl+N, Ctrl+Shift+R,
-  Ctrl+L, Ctrl+W, Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+Shift+C, Shift+Escape, Ctrl+R, Ctrl+Q, Ctrl+P, Ctrl+Space, Ctrl+Shift+K; in
+  Shift+F3, Ctrl+S, Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up and Ctrl+Down with Shift, Ctrl+Space (edit mode or navigation mode in the command field, and in the terminal "Read only: there is no edit mode here", AX-8.13; in navigation mode Ctrl+Up and Ctrl+Down go by paragraph in the field, not through the history, and Enter sends nothing), Alt+F4. Window-specific (`AxTerminalKeys`): Ctrl+N, Ctrl+Shift+R,
+  Ctrl+L, Ctrl+W, Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+Shift+C, Shift+Escape, Ctrl+R, Ctrl+Q, Ctrl+P, Ctrl+M, Ctrl+Shift+K; in
   the field Enter, Shift+Enter, Escape (Ctrl+Enter there is the bundle's main action, AX-8.10: it sends as Enter does); in the view the quick keys `i`, `o`, `h`, `1` to `6`, `p`, `s`,
   `k` with Shift, `m`, `l`, Enter, Escape, Backspace, and Ctrl+Alt with `i`, `o`, `h`, `p`, `s`, `k`. axClaude's `c`,
   `t`, `d`, `e`, `q` and `r` have no kind here and do nothing. The collision test covers the table and lists the keys

@@ -654,6 +654,13 @@ public abstract partial class AxKitForm : Form
                 return true;
         }
 
+        // AX-8.13: the mode key, for the control the key is addressed to, in a notice too (a notice's field has the
+        // modes); navigation mode's own keys reach the text first (AxKitTextBox.ProcessCmdKey, TakeNavigationKey).
+        if (TextModeKey(FromHandle(msg.HWnd), keyData))
+        {
+            return true;
+        }
+
         // AX-7.3 (2026-10-25, the user's ask): a paste into an editable text is said, since the edit control's own
         // paste makes no sound and NVDA says nothing. The edit control's keys, not the bundle's: the paste is the
         // control's, and axFile's list keeps Ctrl+V for files.

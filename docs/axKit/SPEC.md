@@ -472,7 +472,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   starting at the first line or at a line with text directly after a blank line, and Ctrl+Shift+Up and
   Ctrl+Shift+Down the selection grown to there, as in Word (`EditKeys.Paragraph`; the EDIT control's own keys scroll a
   row and leave the caret where it is, as Notepad's do, which a screen reader, reading at the caret after the key,
-  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); F8 the status bar said by axKit itself, in a notice too (`BundleKeys.SayStatus`, AX-7.10, 2026-11-15); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
+  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); F8 the status bar said by axKit itself, in a notice too (`BundleKeys.SayStatus`, AX-7.10, 2026-11-15); Ctrl+Space edit mode or navigation mode in an editable text of several lines (`BundleKeys.ToggleMode`, AX-8.13, 2026-11-15); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
 - AX-8.3 Window-specific keys are defined once per window, in one table (`AxClaudeKeys`, `AxDownKeys`, `AxJSONKeys`, `AxGitKeys`, `AxTerminalKeys`, `AxFileKeys`, `AxMediaKeys`, `AxPreviewKeys`, `AxStartKeys`, `AxProcessKeys`, `AxTaskKeys`, `AxPassKeys`, `AxCalcKeys`, `AxClipKeys`), as constants
   with names that say what the key does. Changing a key is a change to that one line: the menu item and the key
   handler read the table, and the F1 text names the same keys and is changed with it. Single-letter quick keys
@@ -687,6 +687,66 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     (`KeyTest.AiToolsRefusal`). Test a key itself is marked act, so an AI tool that asks for it asks the user first:
     it takes the window's keys until the user ends it.
   - In every F1 text (`BundleHelp.KeyTestLine`) and in the bundle's guide ("If a key does nothing").
+- AX-8.13 **Edit mode and navigation mode: Ctrl+Space, the mode key** (the user's decision of 2026-11-15: "the magic
+  key"; he is not sure it is the right key and will take his own confusion in use as the sign to change it, so it is
+  one line, `BundleKeys.ToggleMode`). The words and the rule of the keys are `AxKit.Core/TextModes` (tested in
+  `TextModesTests`); the control is `AxKitTextBox` and the key is handled by the window base (`AxKitForm.Modes.cs`).
+  - **Which texts have the two modes: every editable text of several lines, that is every `AxKitTextBox` that is
+    multi-line and not read-only** (`AxKitTextBox.HasModes`), wherever it is, a notice included. That covers: the
+    editors' text (axDown, axJSON); axClaude's message field and axTerminal's command field ("in case the user is
+    constructing some long reply"); and the fields of several lines of a notice or a form (the report's words, F4;
+    a long text field of the item window, IA-4.2; axTask's Action keys value, TK-7a.1; the custom arguments of the
+    console windows' New session). A field of one line has no modes, nor does a text that cannot be edited; a new
+    field of several lines anywhere has them by being made.
+  - **The key, in an editable text of several lines**, toggles between **edit mode**, as every text has always been
+    (keys type; axDown's and axJSON's Ctrl+letter jumps move), and **navigation mode**, and says the new mode as one
+    interrupting announcement: "Navigation mode", "Edit mode". Where the window has a status bar it shows the mode:
+    the editors add ", navigation mode" to the file's part ("notes.md, unsaved changes, navigation mode"), the console
+    windows ", field in navigation mode" to the state, so that F8 says it too. **Every text starts in edit mode**, at
+    every start of a window and in every new notice; the mode is not remembered between runs (the plainest answer to
+    the question the item left open: nothing is lost by it, and the user never finds a window that will not type).
+    The mode belongs to the text: a field hidden by the control area or a notice keeps its mode until it is shown
+    again.
+  - **In a text that cannot be edited at all** (axClaude's conversation, axTerminal's terminal, axPreview's text,
+    axGIT's details, axHelp's text, a notice's text), the key changes nothing and says "Read only: there is no edit mode here".
+  - **Anywhere else** (a list, a button, a field of one line, a window whose focus is in no text) it plays the edge
+    sound and does nothing more. No window gives Ctrl+Space a meaning of its own: axClaude's and axTerminal's
+    background music, on Ctrl+Space until then, moved to Ctrl+M the same day (`AxClaudeKeys.ToggleMusic`,
+    `AxTerminalKeys.ToggleMusic`); a command of the window, so it is taken before the field, where Ctrl+M would be a
+    line break. In menu mode the key is the menu's.
+  - **In navigation mode**, every key down goes to the text before anything else (the text box's own shortcuts, a
+    notice's keys, the window's commands):
+    1. **The jump letters**: the window's own Ctrl jumps without Ctrl (`TextJump.Letters`), the next element and with
+       Shift the previous one, spoken as the Ctrl key's jump is ("Install, heading level 2", "No next link"). One
+       table serves both modes, so a Ctrl key changed changes its letter. In Markdown (axDown, and every other text
+       of the rule, whose letters are Markdown's): h heading, 1 to 6 a heading of that level, k link, l list, i list
+       item, q block quote, t table, as NVDA's browse mode and axDown's Ctrl keys (AD-D7). In axJSON: k key, j object,
+       l array, i item, e error. The conversation's quick key table was not taken: its kinds are the transcript's
+       lines (input, output, tool lines), which a text being written has not; the editors' jump pairs over
+       `MarkdownOutline` are the shared machinery for a text, and every notice's text already used their letters.
+    2. **The moves**: the arrows, Home, End, Page Up and Page Down, Ctrl with them, and the paragraph keys move, and
+       with Shift select, as in edit mode; Ctrl+Up and Ctrl+Down go by paragraph in every text, axTerminal's command
+       field included, whose history they are in edit mode (the history would replace the text).
+    3. **Copy and the commands**: Ctrl+C, Ctrl+Insert and Ctrl+A act as ever; every other key with Ctrl or Alt goes on
+       to the window and the menus (the Ctrl jumps, F1, F8, Ctrl+M, Ctrl+Alt with a letter in a console window), and
+       Escape, Tab and the function keys too.
+    4. **A key that would change the text is refused with the edge sound and changes nothing**: every key that types
+       a character (a letter that is no jump, a digit that is no jump, Space, a sign, the number pad), Enter (it never
+       sends a message or a command in navigation mode), Backspace, Delete, Ctrl+Backspace, Ctrl+Delete,
+       Alt+Backspace, Ctrl+V, Ctrl+X, Ctrl+Z, Ctrl+Y and Ctrl+Shift+Z, Shift+Insert, Shift+Delete, and Ctrl+Enter, the
+       main action, which would send what the field holds. A character that still reaches the control (Tab in an
+       editor, a character a program sends, one that Ctrl+Alt makes on some keyboards) and a paste, cut, clear or
+       undo message are stopped by the control itself, with the edge sound. The edge sound, not a sentence: it comes
+       on every stray key, where words would be noise (`Sounds.Edge`, AX-8.6).
+    5. **A menu command that would change the text** (the editors' Undo, Redo, Cut, Paste and axJSON's Format) does
+       nothing and says "Navigation mode: press Ctrl+Space to edit", since a command chosen from a menu needs its
+       reason.
+  - The key test (AX-8.12) says the mode key by what it does where the focus is ("Ctrl+Space: Edit mode or
+    navigation mode: to navigation mode", "...: says this text is read only", "...: there is no text with modes where
+    you are"), and in a text in navigation mode its letters and refused keys by what they do there ("H: moves to the
+    next heading", "A: changes nothing in navigation mode").
+  - In every F1 text (`BundleHelp.ModeLine`), the editors' own section, the console windows' field sections, and the
+    guides.
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 

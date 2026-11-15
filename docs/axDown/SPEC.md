@@ -206,7 +206,7 @@ Bundle-wide (AX-8.2): F1 shortcuts; Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and
 controls (in axDown there is one, so they stay in the editor; in a notice they move between its text, field and
 buttons); Ctrl+F find, F3 and Shift+F3 next and previous; Ctrl+S save; Ctrl+Plus and Ctrl+Minus text size; Enter
 and Escape on a notice; Page Up and Page Down one screen in an edit control; Ctrl+Up and Ctrl+Down the previous and
-next paragraph, with Shift selecting to there (AD-2.3); Alt+F4 exit; Alt and F10 the menu.
+next paragraph, with Shift selecting to there (AD-2.3); Ctrl+Space edit mode or navigation mode (AD-5.3); Alt+F4 exit; Alt and F10 the menu.
 
 Window-specific: Ctrl+N new document; Ctrl+O open; Ctrl+Shift+S save as; Ctrl+W show the file in File Explorer (axClaude's key for its folder); Ctrl+Z undo, Ctrl+Y or Ctrl+Shift+Z redo (AD-2.5); Ctrl+G go to line; Ctrl+Shift+W word wrap;
 Ctrl+H heading, Ctrl+1 to Ctrl+6 a heading of that level, Ctrl+K link, Ctrl+L list, Ctrl+I list item, Ctrl+Q block
@@ -219,6 +219,18 @@ Ctrl+Backspace, Tab (types a tab), Enter (a new line).
   and Enter. A handled key sets `SuppressKeyPress`; a key in that group that axDown does not handle is swallowed
   the same way, so that Ctrl+M never inserts a line.
 - AD-5.2 NVDA's own key combinations are never intercepted; no global hook (AX-7.4).
+- AD-5.3 **Ctrl+Space, edit mode and navigation mode** (bundle-wide, AX-8.13; the user's ask of 2026-11-15: "sometimes
+  I will want Ctrl+key to jump in edit mode and sometimes I will want to just navigate and select things"). The text
+  starts in edit mode, as above. Ctrl+Space says "Navigation mode": the letters of the Ctrl jumps of section 9 move
+  without Ctrl, h and Shift+H heading, 1 to 6 (Shift with them back) a heading of that level, k link, l list, i list
+  item, q block quote, t table, spoken as the Ctrl keys' jumps are; the Ctrl keys still work; the arrows, Home, End,
+  the page and paragraph keys move and with Shift select; Ctrl+C and Ctrl+A act; a key that would change the text (a
+  letter that is no jump, a digit, Space, Enter, Tab, Backspace, Delete, Ctrl+V, Ctrl+X, Ctrl+Z, Ctrl+Y) plays the
+  edge sound and the file stays unchanged (no star in the title); Undo, Redo, Cut, Paste and an app's command
+  (axJSON's Format) from the menus say "Navigation mode: press Ctrl+Space to edit". The status bar's left part ends in
+  ", navigation mode" (AD-9). Ctrl+Space again says "Edit mode". The mode is not remembered: every window starts in
+  edit mode, and New and Open keep the mode the window is in. axJSON is the same shell (its letters k, j, l, i, e);
+  axPreview's text is read only, and Ctrl+Space there says "Read only: there is no edit mode here".
 
 ### AD-6 Notices and questions
 
@@ -246,6 +258,7 @@ window has the accessible role Window, as axClaude's has, so that NVDA names it;
 then. Afterwards, spoken through one UI Automation notification on the editor (AX-7.3), and only these: "Saved" (after a save and
 after Save as); "Reloaded, <name> changed on disk" and "<name> changed on disk; Save will ask" on coming back to the window, "Reloaded" after Reload and lose mine (AD-3.6); "Not found" (find); "Line n of m" after Go to line, or "Not a line number"; "Word wrap on" / "Word wrap off"; "Undone", "Redone", "Nothing to undo", "Nothing to redo" (AD-2.5); "Text size n"; "No file yet" (Show current file in on Untitled);
 "Install, heading level 2" after a heading jump, "No next heading" / "No previous heading" when there is none;
+"Navigation mode" / "Edit mode" on Ctrl+Space, and "Navigation mode: press Ctrl+Space to edit" for a menu command that would change the text in navigation mode (AD-5.3);
 "Copied" is NVDA's own. Opening a file speaks nothing of its own: the focus arrives in the editor and NVDA reads
 its name (the file's) and the first line.
 
@@ -259,7 +272,7 @@ Word wrap is not here since 5.5.0: it is the bundle's, `display.wordWrap` in the
 ### AD-9 Status bar
 
 Two labels through the bundle's `StatusLayout` (no `Spring`, fixed widths when the texts do not fit, as axClaude's
-§6.2): the left one the document's state ("notes.md", "notes.md, unsaved changes"), the right one "Line 12,
+§6.2): the left one the document's state ("notes.md", "notes.md, unsaved changes", and ", navigation mode" at the end while the text is in navigation mode, AD-5.3), the right one "Line 12,
 Column 4 · UTF-8 · CRLF", updated on caret moves (the file's lines counted by scanning the text 300 ms after the last key, `Position`, since `EM_LINEFROMCHAR` counts wrapped rows while word wrap is on). NVDA
 reads it with NVDA+End; nothing is spoken automatically.
 

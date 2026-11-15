@@ -27,6 +27,55 @@ public class AxKitTextBox : TextBox
         MaxLength = 0;
     }
 
+    // ---- edit mode and navigation mode (AX-8.13, 2026-11-15) ----
+
+    /// <summary>
+    /// Whether the text is in navigation mode: the plain letters jump (<see cref="NavigationJumps"/>), and no key, no
+    /// character and no paste, cut or undo message changes the text. Off at every start: each text starts in edit mode.
+    /// </summary>
+    [System.ComponentModel.Browsable(false)]
+    [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+    public bool NavigationMode { get; private set; }
+
+    /// <summary>The rule of AX-8.13: an editable text of several lines has the two modes; a one-line field and a read-only text have none.</summary>
+    public bool HasModes => Multiline && !ReadOnly;
+
+    /// <summary>The letters of navigation mode: Markdown's (h, 1 to 6, k, l, i, q, t), unless the window gives its own (an editor its outline's, <see cref="TextJump.Letters"/>).</summary>
+    [System.ComponentModel.Browsable(false)]
+    [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+    public IReadOnlyList<TextJump> NavigationJumps { get; set; } = MarkdownLetters;
+
+    private static readonly IReadOnlyList<TextJump> MarkdownLetters = TextJump.Letters(MarkdownKeys.Jumps);
+
+    /// <summary>The mode changed: the window's status bar follows.</summary>
+    public event EventHandler? ModeChanged;
+
+    /// <summary>The mode key in this text (<see cref="BundleKeys.ToggleMode"/>): the other mode, and the words to say. Only where <see cref="HasModes"/>.</summary>
+    public string ToggleMode()
+    {
+        NavigationMode = !NavigationMode;
+        ModeChanged?.Invoke(this, EventArgs.Empty);
+        return TextModes.Toggled(NavigationMode);
+    }
+
+    /// <summary>
+    /// In navigation mode every key down goes first to the window base's <c>TakeNavigationKey</c> (AX-8.13): the jump
+    /// letters, the paragraph keys and the refusal of a key that would change the text, ahead of the text box's own
+    /// shortcuts and the window's commands.
+    /// </summary>
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (NavigationMode && FindForm() is AxKitForm window && window.TakeNavigationKey(this, keyData))
+        {
+            return true;
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
+    }
+
+    /// <summary>A message that would change the text in navigation mode: a character, or a paste, cut, clear or undo sent to the control (a menu's Paste included).</summary>
+    private const int WM_CUT = 0x0300, WM_PASTE = 0x0302, WM_CLEAR = 0x0303, WM_UNDO = 0x0304, EM_UNDO = 0x00C7;
+
     protected override void OnKeyDown(KeyEventArgs e)
     {
         _beforeEnter = e.KeyCode == Keys.Enter && Multiline && !ReadOnly ? (Text, SelectionStart, SelectionLength) : null;
@@ -100,6 +149,16 @@ public class AxKitTextBox : TextBox
     /// <summary>AX-7.8 (2026-11-11): Enter's character, or Ctrl+Enter's, handled by the control; then "new line" when it put a line break in. AX-7.9: a key's own move to another line measured.</summary>
     protected override void WndProc(ref Message m)
     {
+        if (NavigationMode && (m.Msg is WM_CUT or WM_PASTE or WM_CLEAR or WM_UNDO or EM_UNDO
+            || (m.Msg == WM_CHAR && !TextModes.CharacterAllowed((char)(m.WParam.ToInt64() & 0xFFFF)))))
+        {
+            // AX-8.13: nothing changes the text in navigation mode. The keys are refused before they get here (the window
+            // base's ProcessCmdKey); this stops what comes another way: Tab in an editor, a character a program sends,
+            // one that Ctrl+Alt makes on some keyboards, the menus' Cut and Paste.
+            Sounds.Edge();
+            return;
+        }
+
         if (Measures(m.Msg))
         {
             var before = Place();

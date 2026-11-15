@@ -105,7 +105,10 @@ public abstract partial class AxKitForm
         var modifiers = KeyTest.IsWindowsKey(code) ? "Windows" : BundleKeys.Text(key & Keys.Modifiers).TrimEnd('.');
         // "Ctrl+Shift+None": the modifiers alone, without the key code's name.
         modifiers = modifiers.EndsWith("+None", StringComparison.Ordinal) ? modifiers[..^5] : modifiers == "None" ? string.Empty : modifiers;
-        var (said, ends) = test.Down(press, modifiers, () => KeyTest.Describe(press, KeyTestCommands(), KeyTestBundle(), KeyTestFocusNow(), KeyTestOwn(key)));
+        // A text in navigation mode (AX-8.13) says what its keys do there first: a jump letter, a refused key.
+        var (said, ends) = test.Down(press, modifiers, () => KeyTestInMode(key) is { } inMode
+            ? $"{press.Text}: {inMode}"
+            : KeyTest.Describe(press, KeyTestCommands(), KeyTestBundle(), KeyTestFocusNow(), KeyTestOwn(key)));
         if (ends)
         {
             EndKeyTest();
@@ -215,6 +218,7 @@ public abstract partial class AxKitForm
     [
         BundleKeys.LargerText, BundleKeys.LargerTextNumpad, BundleKeys.SmallerText, BundleKeys.SmallerTextNumpad, BundleKeys.SayStatus,
         BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.Save,
+        BundleKeys.ToggleMode,
     ];
 
     /// <summary>The bundle's keys (<see cref="BundleKeys.All"/>): one the base handles applies everywhere, under its menu item's name where a menu shows it; the others mean something only through a window's command or the focused control.</summary>

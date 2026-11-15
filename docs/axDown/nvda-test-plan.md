@@ -166,6 +166,12 @@ letter), and a `long.md` with headings and lines longer than the window.
 7. Ctrl+Q: "Block quote, " and the first line; Ctrl+T: "Table with 3 rows and 2 columns" at the header line; nothing
    inside a fenced code block counts. Navigation, Next and Navigation, Previous list Link, List, List item, Block quote
    and Table with their keys.
+8. Navigation mode (bundle AX-8.13, AD-5.3): Ctrl+Space: "Navigation mode", and NVDA+End (or F8) reads ", navigation mode"
+   after the file's name. h, Shift+H, 2, k, l, i: the same jumps and words as Ctrl with the letter. A letter that is
+   no jump, Space, Enter, Backspace, Delete, Ctrl+V and Ctrl+Z: the edge sound, the text and the title unchanged.
+   Actions, Undo: "Navigation mode: press Ctrl+Space to edit". Arrows and Shift+arrows move and select as ever.
+   Ctrl+Space: "Edit mode"; a letter types. In Help, User guide (a read-only text), Ctrl+Space: "Read only: there is
+   no edit mode here".
 
 ## 9. AI help: a question about this window (docs/axKit/ai-help.md AH-1, AH-6; 2026-11-09)
 
