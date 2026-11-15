@@ -6,6 +6,25 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-15, evening: every app, after 5.9.1; by the assistant with NVDA listening (`main` 1db380e, then the fix of axClip's scripts)
+
+`.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3, Claude Code 2.1.325:
+129 scripts of `tests/scripts` and the four of `tests/nvda-scripts`, 133 in all. 131 passed in the full run, with
+every announcement also spoken by NVDA. The runner took the foreground itself, and the user's own axKit windows were
+left as they were.
+
+| What | Scripts | Result |
+|---|---|---|
+| Every script but two | 131 | Passed |
+| `axClip/01-basics.txt` step 28, `axClip/02-history-kept.txt` step 27 | 2 | Failed, as in the early morning: a copy made by the script was missing from the history. Run again, a different copy went missing each time, and reading the clipboard for longer in axClip (ten tries, not three) changed nothing, so it was undone. The cause is the script's copy: clip.exe gives up without a word when another program holds the clipboard open, and the user's own axClip and NVDA read it too. The scripts now copy through a small `copy.ps1` that reads the clipboard back and tries again; axClip's folder then passed three times running with NVDA |
+
+What this pass is the first to hear: Ctrl+Space between edit mode and navigation mode (`axDown/16`, `axClaude/25`),
+the music on Ctrl+M (`axClaude/09`), Options, Claude Code settings on a stand-in settings file (`axClaude/26`), the
+unsent message said when axHelp's conversation comes back (`axHelp/02`), and one Escape ending the key test.
+
+Owed to the user's ear: the modes in his own axDown and axClaude; a /btw answer in a real session; Claude Code's
+settings menu against his own settings, by his choice.
+
 ## 2026-11-15, afternoon: every app, before 5.9.0; by the assistant with NVDA listening (`main` 3b39748, then the fix of axDown/15)
 
 `.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3, Claude Code 2.1.325:

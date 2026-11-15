@@ -8,20 +8,23 @@
 # through clip, which stay on the clipboard after the run, and every step filters on them, so that nothing the user
 # copies is ever said here.
 file home\AxKit\axClip.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
+file copy.ps1 # Copies its arguments, one line each, and reads the clipboard back: clip.exe gives up silently when another program holds the clipboard open (the NVDA pass, 2026-11-15).\n$v = $args -join "`r`n"\nfor ($i = 0; $i -lt 20; $i++) { try { Set-Clipboard -Value $v; if ((Get-Clipboard -Raw) -eq $v) { exit 0 } } catch { }; Start-Sleep -Milliseconds 100 }\nexit 1
+# A copy goes through copy.ps1, which reads the clipboard back and tries again: clip.exe gave up without a word while
+# the user's own axClip and NVDA read the same clipboard, and a copy was missing from the history (2026-11-15).
 
 start clip
 expect focus Search the clipboard
 
-run <nul set /p =axkitkeep one| clip
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep one"
 wait 500
-run <nul set /p =axkitkeep two| clip
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep two"
 wait 500
 type axkitkeep
 keys down
 expect said axkitkeep one, 2 of 2
 
 # 2.3 The first text copied again: it is the newest, and in the list once.
-run <nul set /p =axkitkeep one| clip
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep one"
 wait 500
 keys ctrl+home
 expect said axkitkeep one, 1 of 2
@@ -31,7 +34,7 @@ keys down
 expect said ♪ Edge
 
 # 2.4 A text of three lines: its first line and the count; Ctrl+Q the whole text in a notice; Escape closes it.
-run (echo axkitkeep first&echo second&echo third)| clip
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep first" second third
 wait 500
 keys ctrl+home
 expect said axkitkeep first, 3 lines, 1 of 3

@@ -8,17 +8,20 @@
 # The test desktop shares the clipboard with the user's session: the script copies three texts of its own, which stay
 # on the clipboard after the run, and every step filters on them, so that nothing the user copies is ever said here.
 file home\AxKit\axClip.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F10", "sayFirstMatch": false}
+file copy.ps1 # Copies its arguments, one line each, and reads the clipboard back: clip.exe gives up silently when another program holds the clipboard open (the NVDA pass, 2026-11-15).\n$v = $args -join "`r`n"\nfor ($i = 0; $i -lt 20; $i++) { try { Set-Clipboard -Value $v; if ((Get-Clipboard -Raw) -eq $v) { exit 0 } } catch { }; Start-Sleep -Milliseconds 100 }\nexit 1
+# A copy goes through copy.ps1, which reads the clipboard back and tries again: clip.exe gave up without a word while
+# the user's own axClip and NVDA read the same clipboard, and a copy was missing from the history (2026-11-15).
 
 start clip
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
 expect focus Search the clipboard
 
-run <nul set /p =axkitclip alpha| clip
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitclip alpha"
 wait 500
-run <nul set /p =axkitclip beta| clip
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitclip beta"
 wait 500
-run <nul set /p =axkitclip gamma| clip
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitclip gamma"
 wait 500
 
 # CP-2.4: Down and Up move the selection, newest first, with the caret kept in the field; at an end the edge sound,
