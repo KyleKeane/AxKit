@@ -10,7 +10,7 @@ The bundle rules are in the root `CLAUDE.md`.
 ## Commands
 
 ```
-.\run-axTask.ps1 manual_tests\axTask\tasks   # build AxKit and start axTask on the test folder (run.ps1 -App task)
+.\run-individual-apps\run-axTask.ps1 manual_tests\axTask\tasks   # build AxKit and start axTask on the test folder (run.ps1 -App task)
 .\test.ps1 AxTask                            # the tests in Release, as CI runs them
 ```
 

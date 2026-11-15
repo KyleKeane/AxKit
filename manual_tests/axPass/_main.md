@@ -2,7 +2,7 @@
 
 The steps and every expected announcement are in `docs/axPass/nvda-test-plan.md`. KeePassXC must be installed. Run `.\manual_tests\prepare.ps1 axpass` first; it makes the database again with KeePassXC's own tool.
 
-Start with `.\run-axPass.ps1 manual_tests\axPass\test.kdbx`. The master password is `test-master-1`, a test value for this throwaway database only.
+Start with `.\run-individual-apps\run-axPass.ps1 manual_tests\axPass\test.kdbx`. The master password is `test-master-1`, a test value for this throwaway database only.
 
 ## The database
 

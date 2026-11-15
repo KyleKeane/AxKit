@@ -366,7 +366,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   **Every file and folder name that carries an app's name is written in the app's own case** (5.6.0, the user's ask
   of 2026-11-10: NVDA reads an all-lower-case `axdown` oddly): the settings and log files (`axDown.json`,
   `axDown.log`), the console commands and the package's aliases (`axDown.cmd`, `axDown.exe`), the documents' folders
-  (`docs/axDown`), the test folders and the run scripts (`run-axDown.ps1`). Windows finds a file typed in any case;
+  (`docs/axDown`), the test folders and the run scripts (`run-individual-apps\run-axDown.ps1`). Windows finds a file typed in any case;
   the spelling is what a screen reader says in a folder listing. A settings or log file an earlier version left in
   lower case is renamed to the app's case the first time it is read (`FileCase`). The bundle's own folders and the
   program file keep `AxKit`, the repository's spelling.

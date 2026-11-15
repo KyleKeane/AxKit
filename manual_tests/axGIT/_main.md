@@ -2,7 +2,7 @@
 
 The steps and every expected announcement are in `docs/axGIT/nvda-test-plan.md`. Run `.\manual_tests\prepare.ps1 axgit` first, and again after commits, switches or discards, to have the repository as new.
 
-Start with `.\run-axGIT.ps1 manual_tests\axGIT\scratch-repository-with-changes`.
+Start with `.\run-individual-apps\run-axGIT.ps1 manual_tests\axGIT\scratch-repository-with-changes`.
 
 ## scratch-repository-with-changes
 

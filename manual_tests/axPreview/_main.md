@@ -2,7 +2,7 @@
 
 The steps and every expected announcement are in `docs/axPreview/nvda-test-plan.md`. Every file of it is in this one folder. Run `.\manual_tests\prepare.ps1 axpreview` first.
 
-Start with `.\run-axPreview.ps1 manual_tests\axPreview\README.md`.
+Start with `.\run-individual-apps\run-axPreview.ps1 manual_tests\axPreview\README.md`.
 
 ## The files
 
@@ -16,7 +16,7 @@ Start with `.\run-axPreview.ps1 manual_tests\axPreview\README.md`.
 
 ## The hand-over
 
-Section 2: open axFile on this folder (`.\run-axFile.ps1 manual_tests\axPreview`), then Shift+Enter on each file in turn: one axPreview window takes each.
+Section 2: open axFile on this folder (`.\run-individual-apps\run-axFile.ps1 manual_tests\axPreview`), then Shift+Enter on each file in turn: one axPreview window takes each.
 
 ## The console
 

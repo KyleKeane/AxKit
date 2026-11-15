@@ -5,9 +5,9 @@ The WinForms side of axMedia: one list with the queue, a video area shown only w
 ## Commands
 
 ```
-.\run-axMedia.ps1 C:\Music\Dune           # build AxKit and start axMedia on the folder's media files (run.ps1 -App media)
-.\run-axMedia.ps1 C:\Music\Dune\03.mp3    # the file, with the folder's other media files after it
-.\run-axMedia.ps1                         # an empty queue
+.\run-individual-apps\run-axMedia.ps1 C:\Music\Dune           # build AxKit and start axMedia on the folder's media files (run.ps1 -App media)
+.\run-individual-apps\run-axMedia.ps1 C:\Music\Dune\03.mp3    # the file, with the folder's other media files after it
+.\run-individual-apps\run-axMedia.ps1                         # an empty queue
 dotnet build AxKit.sln
 dotnet test tests/AxMedia.Tests/AxMedia.Tests.csproj
 ```

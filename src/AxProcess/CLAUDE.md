@@ -5,7 +5,7 @@ The WinForms side of axProcess: one list with three views (Processes, Services, 
 ## Commands
 
 ```
-.\run-axProcess.ps1               # build AxKit and start axProcess (run.ps1 -App process)
+.\run-individual-apps\run-axProcess.ps1               # build AxKit and start axProcess (run.ps1 -App process)
 .\test.ps1 AxProcess              # the tests in Release, as CI runs them
 ```
 

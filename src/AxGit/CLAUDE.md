@@ -5,8 +5,8 @@ The WinForms side of axGIT: one list with three views, one read-only details tex
 ## Commands
 
 ```
-.\run-axGIT.ps1 C:\path\to\repo   # build AxKit and start axGIT on the repository that holds the path (run.ps1 -App git)
-.\run-axGIT.ps1                   # the last repository opened
+.\run-individual-apps\run-axGIT.ps1 C:\path\to\repo   # build AxKit and start axGIT on the repository that holds the path (run.ps1 -App git)
+.\run-individual-apps\run-axGIT.ps1                   # the last repository opened
 dotnet build AxKit.sln
 dotnet test tests/AxGit.Tests/AxGit.Tests.csproj
 ```

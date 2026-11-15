@@ -1,6 +1,6 @@
 # axClip NVDA test plan
 
-Run with NVDA before a release, after `run-axClip.ps1` (or `.\run.ps1 -App clip`), with axDown open on a scratch file. Quit an installed axClip first. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axClip/SPEC.md` (CP-n.m). axStart's plan (`docs/axStart/nvda-test-plan.md`) is run in the same pass while the two share `HotkeyForm`.
+Run with NVDA before a release, after `run-individual-apps\run-axClip.ps1` (or `.\run.ps1 -App clip`), with axDown open on a scratch file. Quit an installed axClip first. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axClip/SPEC.md` (CP-n.m). axStart's plan (`docs/axStart/nvda-test-plan.md`) is run in the same pass while the two share `HotkeyForm`.
 
 ## 1. Start and the hotkey (CP-1)
 

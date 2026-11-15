@@ -5,7 +5,7 @@ The WinForms side of axCalc: the history as a list, the expression field under i
 ## Commands
 
 ```
-.\run-axCalc.ps1                  # build AxKit and start axCalc (run.ps1 -App calc)
+.\run-individual-apps\run-axCalc.ps1                  # build AxKit and start axCalc (run.ps1 -App calc)
 .\test.ps1 AxCalc                 # the tests in Release, as CI runs them
 ```
 

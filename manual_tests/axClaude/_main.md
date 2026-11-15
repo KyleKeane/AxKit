@@ -4,7 +4,7 @@ The steps and every expected announcement are in `docs/axClaude/nvda-test-plan.m
 
 ## never-used-with-claude-<date and time>
 
-Claude Code remembers each folder it was trusted in, so this folder has a new name each time the script runs, and Claude asks its trust question again. Sections 1, 2 and 12, step 1: `.\run-axClaude.ps1 manual_tests\axClaude\never-used-with-claude-<the name>`. `hello.txt` is there for Claude to read.
+Claude Code remembers each folder it was trusted in, so this folder has a new name each time the script runs, and Claude asks its trust question again. Sections 1, 2 and 12, step 1: `.\run-individual-apps\run-axClaude.ps1 manual_tests\axClaude\never-used-with-claude-<the name>`. `hello.txt` is there for Claude to read.
 
 ## empty-folder-nothing-to-continue-<date and time>
 
@@ -16,5 +16,5 @@ The folder for the rest of the plan: `notes.md` to ask Claude to change ("add a 
 
 ## Not in a folder
 
-- Section 10, Claude Code missing: `.\run-axClaude.ps1 manual_tests\axClaude\project-for-conversations --claude C:\nowhere\claude.exe`.
+- Section 10, Claude Code missing: `.\run-individual-apps\run-axClaude.ps1 manual_tests\axClaude\project-for-conversations --claude C:\nowhere\claude.exe`.
 - Section 13, the axKit menu: open axDown on `manual_tests\axDown\notes.md` beside axClaude.

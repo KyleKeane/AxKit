@@ -1,7 +1,7 @@
 # axHelp NVDA test plan
 
 The manual checks of axHelp (`docs/axHelp/SPEC.md`, HE-n.m), run with NVDA before a release. Before starting: Claude
-Code installed and logged in, axClaude's agreement given, `run-axHelp.ps1` (or quit a running axHelp first, axHelp,
+Code installed and logged in, axClaude's agreement given, `run-individual-apps\run-axHelp.ps1` (or quit a running axHelp first, axHelp,
 Quit axHelp). The automated part is `tests/scripts/axHelp`, which `nvda-pass.ps1 axHelp` runs; the steps marked "(real)"
 need a real reply and a real screen and are the user's by ear.
 

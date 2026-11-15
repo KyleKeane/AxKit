@@ -1,6 +1,6 @@
 # axProcess NVDA test plan
 
-Run with NVDA before a release, after `run-axProcess.ps1` (or `.\run.ps1 -App process`). Start Notepad first, to have a process to end. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axProcess/SPEC.md` (PR-n.m).
+Run with NVDA before a release, after `run-individual-apps\run-axProcess.ps1` (or `.\run.ps1 -App process`). Start Notepad first, to have a process to end. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axProcess/SPEC.md` (PR-n.m).
 
 ## 1. Start (PR-1, PR-2)
 

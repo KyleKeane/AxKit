@@ -5,7 +5,7 @@ The WinForms side of axTerminal: axClaude's window around a shell, a transcript 
 ## Commands
 
 ```
-.\run-axTerminal.ps1 C:\src\myproject    # build AxKit and start axTerminal there (run.ps1 -App terminal; -NoBuild)
+.\run-individual-apps\run-axTerminal.ps1 C:\src\myproject    # build AxKit and start axTerminal there (run.ps1 -App terminal; -NoBuild)
 dotnet build src/AxTerminal/AxTerminal.csproj -o <scratch dir>   # while AxKit runs: never into src/AxKit/bin
 dotnet test tests/AxTerminal.Tests/AxTerminal.Tests.csproj
 ```

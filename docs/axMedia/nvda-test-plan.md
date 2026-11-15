@@ -2,7 +2,7 @@
 
 The files for this plan are in `manual_tests/axMedia`, made and reset by `.\manual_tests\prepare.ps1 axmedia`; its `_main.md` says which folder or file each section uses.
 
-Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video and a `.txt` in it, after `run-axMedia.ps1` (or `.\run.ps1 -App media`) and from axFile on the same folder. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axMedia/SPEC.md` (AM-n.m).
+Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video and a `.txt` in it, after `run-individual-apps\run-axMedia.ps1` (or `.\run.ps1 -App media`) and from axFile on the same folder. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axMedia/SPEC.md` (AM-n.m).
 
 ## 1. Start and the queue (AM-1, AM-2, AM-3)
 

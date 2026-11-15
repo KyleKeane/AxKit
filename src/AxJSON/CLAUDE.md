@@ -5,8 +5,8 @@ The window side of axJSON: an `EditorApp` record for the bundle's text editor sh
 ## Commands
 
 ```
-.\run-axJSON.ps1 C:\path\to\settings.json   # build AxKit and start axJSON on the file (run.ps1 -App json; close a running AxKit first)
-.\run-axJSON.ps1                            # axJSON with an empty document
+.\run-individual-apps\run-axJSON.ps1 C:\path\to\settings.json   # build AxKit and start axJSON on the file (run.ps1 -App json; close a running AxKit first)
+.\run-individual-apps\run-axJSON.ps1                            # axJSON with an empty document
 dotnet build AxKit.sln
 dotnet test tests/AxJSON.Tests/AxJSON.Tests.csproj
 ```

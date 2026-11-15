@@ -5,8 +5,8 @@ The WinForms side of axClaude: the window that hosts Claude Code's screen reader
 ## Commands
 
 ```
-.\run-axClaude.ps1 "C:\path\to\project"  # build AxKit and start axClaude there (run.ps1 -App claude, the default; -NoBuild, -Test, -- claude args)
-.\run-axClaude.ps1 "C:\path" -New        # a new conversation instead of the default --continue (PowerShell swallows a bare --)
+.\run-individual-apps\run-axClaude.ps1 "C:\path\to\project"  # build AxKit and start axClaude there (run.ps1 -App claude, the default; -NoBuild, -Test, -- claude args)
+.\run-individual-apps\run-axClaude.ps1 "C:\path" -New        # a new conversation instead of the default --continue (PowerShell swallows a bare --)
 dotnet build AxKit.sln
 .\test.ps1 axClaude                      # the tests in Release, as CI runs them (never dotnet test AxKit.sln while AxKit runs: it writes into the running program's bin\Debug)
 AXCLAUDE_UPDATE_EXPECTED=1 dotnet test tests/AxClaude.Tests/AxClaude.Tests.csproj   # regenerate tests/fixtures/*.expected.txt after a deliberate parser change; review the diff

@@ -5,8 +5,8 @@ The WinForms side of axFile: one list with a folder's entries, the Actions list 
 ## Commands
 
 ```
-.\run-axFile.ps1 C:\Music\Dune    # build AxKit and start axFile on the folder (run.ps1 -App file); a file selects itself in its folder
-.\run-axFile.ps1                  # the last folder opened
+.\run-individual-apps\run-axFile.ps1 C:\Music\Dune    # build AxKit and start axFile on the folder (run.ps1 -App file); a file selects itself in its folder
+.\run-individual-apps\run-axFile.ps1                  # the last folder opened
 dotnet build AxKit.sln
 dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
 ```

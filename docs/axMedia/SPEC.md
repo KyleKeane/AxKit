@@ -292,6 +292,6 @@ events are posted back to it (AX-7.5).
   `AppMessage` in `AxKit.Forms`, `AxMedia.Core` (the player and the queue from AxFile.Core, `MediaFolder`,
   `MediaSettings`, 13 tests), the window (`MediaForm`), the keys, the texts, the guide, the test plan and the
   wiring (the dispatcher with AX-1.2's media rule, the installer's block with the Open with registration, the
-  icon, `run-axMedia.ps1`). The window and the hand-over are not yet checked with NVDA or heard; axFile hands over
+  icon, `run-individual-apps\run-axMedia.ps1`). The window and the hand-over are not yet checked with NVDA or heard; axFile hands over
   in the next step of the inventory and keeps its own player until then.
 - 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axKit/nvda-test-record.md`.

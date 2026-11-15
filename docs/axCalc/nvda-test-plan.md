@@ -1,6 +1,6 @@
 # axCalc NVDA test plan
 
-Run with NVDA before a release, after `run-axCalc.ps1` (or `.\run.ps1 -App calc`). No files are needed. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axCalc/SPEC.md` (AC-n.m).
+Run with NVDA before a release, after `run-individual-apps\run-axCalc.ps1` (or `.\run.ps1 -App calc`). No files are needed. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axCalc/SPEC.md` (AC-n.m).
 
 ## 1. Start (AC-1, AC-2)
 

@@ -2,7 +2,7 @@
 
 Welcome. This file is both a guided tour of axDown and a practice ground: every kind of Markdown structure has a
 section of its own below, so each navigation key has somewhere to land, and the text explains what to try as you
-go. `run-axDown.ps1` opens this file when it is given no other; edit it as much as you like, the repository keeps
+go. `run-individual-apps\run-axDown.ps1` opens this file when it is given no other; edit it as much as you like, the repository keeps
 the original.
 
 Read it the way you read any text: Down Arrow for the next line, Ctrl+Down for the next paragraph in NVDA, NVDA's

@@ -56,7 +56,7 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 
 | Task | Command | Tools it uses |
 |---|---|---|
-| Build and start one app | `run.ps1 -App <app> [<path>]`, `run-ax<app>.ps1` | .NET SDK, PowerShell. A running app locks its `bin`: a change is checked from a build elsewhere (`dotnet build <project> -o <scratch dir>`), and the development axStart runs from `src\AxKit\bin\Debug` on this computer, where no axKit is installed |
+| Build and start one app | `run.ps1 -App <app> [<path>]`, `run-individual-apps\run-ax<app>.ps1` | .NET SDK, PowerShell. A running app locks its `bin`: a change is checked from a build elsewhere (`dotnet build <project> -o <scratch dir>`), and the development axStart runs from `src\AxKit\bin\Debug` on this computer, where no axKit is installed |
 | Tests | `test.ps1 [<App>]` | .NET SDK: every test project in Release, one by one, as the workflows do. Before every commit |
 | The outside-calls page | `tools/outside-calls.ps1` (`-Check`) | PowerShell; the sources' `Outside call` comments (SPEC B-17) |
 | The repositories beside this one | `tools/sync-repos.ps1` (`-Status`); git runs it on every push through `tools/hooks/pre-push` | git. `..\axkit-reports` (the clone of the reports repository, private since 2026-11-14: the issue forms, the workflow, the blocklist) and `..\axkit-management` (the private repository of axTask's lists: the issues read from GitHub and the maintainer's priorities, `CLAUDE.md` rule 9) are fetched, the lists committed as one dated commit, pulled fast-forward and pushed; one line each, nothing forced, a sibling's trouble never stops the push. A clone without the two folders beside it skips them |

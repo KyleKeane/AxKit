@@ -120,7 +120,7 @@ the base's. The rest of this section is for a window of a new kind.
 - `tests/AxKit.Tests/KeyTests` **(script)**: the window's table in `Windows` and its F1 text in `F1Texts`; by hand,
   the known keys and the overrides when the window's keys meet another window's.
 - `run.ps1` **(automatic)**: `-App` takes any verb of `Dispatch.Apps`, read off `Dispatch.cs` by `tools/apps.ps1`,
-  and leaves the path out for an app that opens nothing. `run-axThing.ps1` **(script)** calls `run.ps1 -App thing
+  and leaves the path out for an app that opens nothing. `run-individual-apps\run-axThing.ps1` **(script)** calls `run.ps1 -App thing
   @args`; `tests/scripts/axThing/01-start.txt` **(script)** is a first `tools/AxAutomate` script. By hand: the
   examples in `run.ps1`'s help, and its restart of a background app (`start|clip`).
 

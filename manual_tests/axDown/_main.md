@@ -2,7 +2,7 @@
 
 The steps and every expected announcement are in `docs/axDown/nvda-test-plan.md`. Every file of it is in this one folder. Run `.\manual_tests\prepare.ps1 axdown` first, and again after saves, to have the files as new.
 
-Start with `.\run-axDown.ps1 manual_tests\axDown\long.md`.
+Start with `.\run-individual-apps\run-axDown.ps1 manual_tests\axDown\long.md`.
 
 ## The files
 

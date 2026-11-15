@@ -38,8 +38,11 @@ points here. Each app's own commands are in its `CLAUDE.md`.
 ## Run
 
 - `run.ps1 [-App <verb>] [<path>]` builds `src/AxKit` and starts one app, axClaude on a folder by default (`-New`,
-  `-NoBuild`, `-Test`). The verbs are the apps' commands (`apps.md`).
-- `run-ax<Name>.ps1` is the same with `-App` filled in, one script per app.
+  `-NoBuild`, `-Test`). The verbs are the apps' commands (`apps.md`). It also keeps the three background apps
+  running from the same build: axStart, axClip and axHelp are ended before the build, since they hold its folder, and
+  each that is not running is started hidden afterwards, whether it ran before or not, so that the hotkeys work and
+  run the code just built.
+- `run-individual-apps\run-ax<Name>.ps1` is the same with `-App` filled in, one script per app.
 - `AxKit.exe <verb> ...`, or a folder or a file alone, picks the app.
 
 ## The generated pages

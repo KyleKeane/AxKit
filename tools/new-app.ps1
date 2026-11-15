@@ -371,7 +371,7 @@ The WinForms side of {{Name}}: one list and the bundle's notices, on the window 
 ## Commands
 
 ```
-.\run-{{Name}}.ps1                  # build axKit and start {{Name}} (run.ps1 -App {{Verb}})
+.\run-individual-apps\run-{{Name}}.ps1                  # build axKit and start {{Name}} (run.ps1 -App {{Verb}})
 .\test.ps1 {{Project}}                 # the tests in Release, as CI runs them
 ```
 
@@ -612,7 +612,7 @@ The Help, About.
 New-TextFile "docs\$Name\nvda-test-plan.md" @'
 # {{Name}} NVDA test plan
 
-Run with NVDA before a release, after `run-{{Name}}.ps1` (or `.\run.ps1 -App {{Verb}}`). Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/{{Name}}/SPEC.md` ({{P}}-n.m).
+Run with NVDA before a release, after `run-individual-apps\run-{{Name}}.ps1` (or `.\run.ps1 -App {{Verb}}`). Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/{{Name}}/SPEC.md` ({{P}}-n.m).
 
 ## 1. Start ({{P}}-1, {{P}}-2)
 
@@ -636,19 +636,19 @@ keys escape
 expect focus {{Short}}
 '@
 
-$runOpens = if ($opensWhat) { "  .\run-{{Name}}.ps1 C:\some\path            # build and start {{Name}} on a $opensWhat" } else { '' }
-New-TextFile "run-$Name.ps1" (@'
+$runOpens = if ($opensWhat) { "  .\run-individual-apps\run-{{Name}}.ps1 C:\some\path            # build and start {{Name}} on a $opensWhat" } else { '' }
+New-TextFile "run-individual-apps\run-$Name.ps1" (@'
 <#
 .SYNOPSIS
   Builds axKit and starts {{Name}}: run.ps1 with -App {{Verb}}. Every other argument goes through unchanged.
 
 .EXAMPLE
-  .\run-{{Name}}.ps1                          # build and start {{Name}}
+  .\run-individual-apps\run-{{Name}}.ps1                          # build and start {{Name}}
 '@ + $(if ($runOpens) { "`n" + $runOpens } else { '' }) + @'
 
-  .\run-{{Name}}.ps1 -NoBuild                 # without building
+  .\run-individual-apps\run-{{Name}}.ps1 -NoBuild                 # without building
 #>
-& "$PSScriptRoot\run.ps1" -App {{Verb}} @args
+& "$PSScriptRoot\..\run.ps1" -App {{Verb}} @args
 exit $LASTEXITCODE
 '@)
 

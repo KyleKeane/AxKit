@@ -1,6 +1,6 @@
 # axMCP NVDA test plan
 
-Run with NVDA before a release, after `run-axMCP.ps1` (or `.\run.ps1 -App mcpclient`). Every step says what NVDA should
+Run with NVDA before a release, after `run-individual-apps\run-axMCP.ps1` (or `.\run.ps1 -App mcpclient`). Every step says what NVDA should
 read; a step that reads differently is a defect. The specification is `docs/axMCP/SPEC.md` (MP-n.m). The automation's
 script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a fake server it writes itself;
 `nvda-pass.ps1 axMCP` runs it with NVDA listening. A server of Claude Code's own on this computer (axKit's broker,

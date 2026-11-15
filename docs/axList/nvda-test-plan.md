@@ -2,7 +2,7 @@
 
 axList is planned, not yet built (`docs/axList/SPEC.md`); this is the plan it is heard against when it is. Run with
 NVDA before a release, on the files of `manual_tests/axList` (made and reset by `.\manual_tests\prepare.ps1 axlist`),
-after `.\run-axList.ps1 manual_tests\axList\lists`, never on the folder of your real lists. The folder holds
+after `.\run-individual-apps\run-axList.ps1 manual_tests\axList\lists`, never on the folder of your real lists. The folder holds
 `Shopping.md` (`# Shopping`, `- [ ] Milk`, `- [x] Eggs`, `  - [ ] Free range`, `- Butter`, `1. One`, `2. Two`) and
 `Home.md` (`- [ ] Fix the tap`). Every step says what NVDA should read; a step that reads differently is a defect. The
 specification is `docs/axList/SPEC.md` (LI-n.m); the steps of section 3 that touch the Tasks view follow the answer to
