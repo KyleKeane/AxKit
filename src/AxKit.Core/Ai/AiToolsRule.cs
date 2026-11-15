@@ -116,6 +116,9 @@ public static class AiToolsRule
               do it, then say in one short sentence what came of it. No tables, no raw output.
             - Read before you act: {McpTools.Windows}, then the window's state, list or text, then a command.
             - A window's id comes from {McpTools.Windows}. Ask again when a window was opened or closed.
+            - A window listed with the app axClaude and the title axHelp is this very conversation: the user
+              is talking to you in it. Call it axHelp, never an axClaude window, and leave it out when the
+              user asks what else is open. Do not read it or run commands in it.
             - The user hears every command you run ("Claude ran Word wrap") and every item you add, as it happens.
             - Every call is written in the user's log (axKit menu, AI tools, Read the log).
             - The first call may make an axKit window ask the user whether Claude Code may use axKit.
