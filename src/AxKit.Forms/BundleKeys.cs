@@ -91,6 +91,7 @@ public static class BundleKeys
         ("axStart's search field", Keys.Control | Keys.Shift | Keys.Space),
         ("axHelp's conversation", Keys.Control | Keys.Shift | Keys.OemQuestion),
         ("axHelp's screenshot", Keys.Control | Keys.Shift | Keys.Oemcomma),
+        ("axClip's search field", Keys.Control | Keys.Shift | Keys.OemSemicolon),
         ("Kept for a later help launcher", Keys.Control | Keys.Shift | Keys.OemPeriod),
     ];
 
@@ -126,6 +127,7 @@ public static class BundleKeys
             Keys.OemPeriod => "Period",
             Keys.Oemcomma => "Comma",
             Keys.OemQuestion => "Slash",
+            Keys.OemSemicolon => "Semicolon",
             Keys.Back => "Backspace",
             >= Keys.D0 and <= Keys.D9 => ((char)('0' + (code - Keys.D0))).ToString(),
             _ => code.ToString(),

@@ -131,7 +131,7 @@ public sealed class KeyTests
     /// <summary>
     /// AX-8.11: the list the test above reads holds the hotkeys the background apps really start with (a default
     /// changed in its settings class must change here), Ctrl+Shift+Period, kept and registered by nothing, and no
-    /// Windows+Alt key of axHelp's, retired on 2026-11-14.
+    /// Windows+Alt key of axHelp's or axClip's, retired on 2026-11-14.
     /// </summary>
     [Fact]
     public void The_system_wide_keys_are_the_background_apps_defaults_and_the_reserved_one()
@@ -139,15 +139,17 @@ public sealed class KeyTests
         // New settings, as an app has them without a file.
         var start = new AxStart.Core.StartSettings().Key;
         var help = new AxHelp.Core.HelpSettings();
+        var clip = new AxClip.Core.ClipSettings().Key;
         Keys[] expected =
         [
             AsKeys(start),
             AsKeys(help.Key),
             AsKeys(help.ScreenshotKey),
+            AsKeys(clip),
             Keys.Control | Keys.Shift | Keys.OemPeriod,
         ];
         Assert.Equal(expected, BundleKeys.SystemWide.Select(k => k.Key));
-        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Comma"], new[] { start, help.Key, help.ScreenshotKey }.Select(key => key.ToString()));
+        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Comma", "Ctrl+Shift+Semicolon"], new[] { start, help.Key, help.ScreenshotKey, clip }.Select(key => key.ToString()));
 
         static Keys AsKeys(AxKit.Core.Hotkey hotkey) =>
             (Keys)hotkey.Key
@@ -274,6 +276,7 @@ public sealed class KeyTests
     [InlineData(Keys.Control | Keys.Shift | Keys.OemPeriod, "Ctrl+Shift+Period")]
     [InlineData(Keys.Control | Keys.Shift | Keys.Oemcomma, "Ctrl+Shift+Comma")]
     [InlineData(Keys.Control | Keys.Shift | Keys.OemQuestion, "Ctrl+Shift+Slash")]
+    [InlineData(Keys.Control | Keys.Shift | Keys.OemSemicolon, "Ctrl+Shift+Semicolon")]
     [InlineData(Keys.Control | Keys.Up, "Ctrl+Up")]
     [InlineData(Keys.Back, "Backspace")]
     [InlineData(Keys.Return, "Enter")]

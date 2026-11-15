@@ -23,7 +23,7 @@ axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commerc
 - **axProcess**: what runs on the computer, as one list with three views: the processes with their memory and processor use, the services, and the programs that start at sign-in. End a process after a question, start or stop a service, turn a startup program off or on or remove it; nothing refreshes by itself.
 - **axTask**: tasks and lists as a folder of small files, moved through as axFile moves through folders. Each item's fields (a due date, done, notes, links to other items) are in a pane beside the list; All tasks gathers every task not done.
 - **axCalc**: a calculator as one field and a history: type an expression, Enter says the answer, and every answer stays as a line to read back, copy and recall; hexadecimal, binary and octal for development.
-- **axClip**: a clipboard history. It keeps the text of every copy while it runs, in memory unless you ask; Windows+Alt+V from anywhere brings up a search field over it, Down and Up move through it with the caret kept in the field, and Enter pastes into the program you were in.
+- **axClip**: a clipboard history. It keeps the text of every copy while it runs, in memory unless you ask; Ctrl+Shift+Semicolon from anywhere brings up a search field over it, Down and Up move through it with the caret kept in the field, and Enter pastes into the program you were in.
 - **axAutomate**: the workflows that drive axKit's windows, starting with the automated checks of every app, read step by step; this version views the workflows and runs them, and changing them comes later.
 
 ### Access layers: through a program or service you install, which does the work under its maker's terms (`NOTICE.md` says who is responsible for what)

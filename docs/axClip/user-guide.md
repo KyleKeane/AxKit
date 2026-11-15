@@ -1,6 +1,6 @@
 # axClip user guide
 
-axClip keeps a history of the text you copy, made for screen reader users. It runs in the background; one key from anywhere, Windows+Alt+V unless you choose another, brings up a search field over everything you copied, the newest first. Enter pastes the item into the program you were in.
+axClip keeps a history of the text you copy, made for screen reader users. It runs in the background; one key from anywhere, Ctrl+Shift+Semicolon unless you choose another, brings up a search field over everything you copied, the newest first. Enter pastes the item into the program you were in.
 
 ## Install
 
@@ -9,7 +9,7 @@ axClip is part of axKit. Installing axKit (see the axKit guide: Help, About, axK
 ## Using it
 
 1. Copy text anywhere, as you always do (Ctrl+C). axClip keeps it quietly; nothing is said.
-2. Press Windows+Alt+V. axClip comes up with the caret in its search field and the newest item selected.
+2. Press Ctrl+Shift+Semicolon. axClip comes up with the caret in its search field and the newest item selected.
 3. Down and Up move through the items; each is read with its place, "git status, 2 of 12". Ctrl+Home and Ctrl+End go to the first and the last, Page Down and Page Up a screen at a time.
 4. Type part of what you want: only the items with every word you typed stay, and after a short pause the first is read.
 5. **Enter** pastes the item into the program you were in. axClip hides, that program comes back to the front, and the text is pasted.
@@ -39,6 +39,8 @@ The history is kept in memory only: it is gone when axClip ends, unless you turn
 ## The hotkey
 
 Options, Hotkey: press the new key with Ctrl, Alt or the Windows key, then Enter. When another program already holds the key, axClip says so and keeps the one before.
+
+Up to version 5.8.0 the key was Windows+Alt+V. If you never changed it, axClip moves you to Ctrl+Shift+Semicolon by itself; a key you chose stays yours.
 
 ## Settings
 

@@ -19,6 +19,7 @@ public sealed class HotkeyTests
     [InlineData("Alt+A")]
     [InlineData("Ctrl+Shift+Slash")]
     [InlineData("Ctrl+Shift+Comma")]
+    [InlineData("Ctrl+Shift+Semicolon")]
     public void The_text_comes_back_the_same(string text)
     {
         Assert.Equal(text, Hotkey.Parse(text)!.ToString());
@@ -58,12 +59,13 @@ public sealed class HotkeyTests
         Assert.Null(Hotkey.Parse(odd.ToString()));
     }
 
-    /// <summary>AX-8.11: the period's key is kept for a later help launcher, so it is no hotkey's key, while its two neighbours are.</summary>
+    /// <summary>AX-8.11: the period's key is kept for a later help launcher, so it is no hotkey's key, while Slash, Comma and Semicolon are.</summary>
     [Fact]
-    public void Slash_and_comma_are_hotkey_keys_and_period_is_not()
+    public void Slash_comma_and_semicolon_are_hotkey_keys_and_period_is_not()
     {
         Assert.Null(new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBF).Refusal());
         Assert.Null(new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBC).Refusal());
+        Assert.Null(new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBA).Refusal());
         Assert.Equal("That key cannot be a hotkey", new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBE).Refusal());
         Assert.Null(Hotkey.Parse("Ctrl+Shift+Period"));
     }

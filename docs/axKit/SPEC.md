@@ -103,7 +103,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   every answer to read back, copy and recall, and Ctrl+I says an answer in hexadecimal, binary and octal.
   Specification `docs/axCalc/SPEC.md`, guide `docs/axCalc/user-guide.md`, test plan `docs/axCalc/nvda-test-plan.md`.
 - **axClip** (2026-10-23, branch `axClip`): `AxKit.exe clip [--hidden]`, Start entry `axKit axClip`, command `axClip`, no File
-  Explorer entry. A clipboard history behind a hotkey (Windows+Alt+V unless the user chose another): a background
+  Explorer entry. A clipboard history behind a hotkey (Ctrl+Shift+Semicolon unless the user chose another): a background
   process from sign-in, as axStart, on the bundle's `HotkeyForm`, with one search field over the text of every copy;
   Enter pastes into the program that was in front. Specification `docs/axClip/SPEC.md`, guide
   `docs/axClip/user-guide.md`, test plan `docs/axClip/nvda-test-plan.md`.
@@ -600,18 +600,19 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | Ctrl+Shift+Space | axStart's search field (AS-4.1) | `AxKit.Core/Hotkey.Default`; Options, Hotkey in axStart |
   | Ctrl+Shift+Slash, the question mark's key | axHelp's conversation with Claude (HE-4.1) | `AxHelp.Core/HelpSettings.DefaultHotkey`; Options, Hotkey in axHelp |
   | Ctrl+Shift+Comma, the less-than sign's key | a screenshot of the window in front into axHelp's conversation (HE-4.1) | `HelpSettings.DefaultScreenshotHotkey`; `screenshotHotkey` in `axHelp.json` |
+  | Ctrl+Shift+Semicolon | axClip's search field over the clipboard history (CP-1.3) | `AxClip.Core/ClipSettings.DefaultHotkey`; Options, Hotkey in axClip |
   | Ctrl+Shift+Period, the greater-than sign's key | reserved for a later help launcher; nothing registers it | written here alone |
 
-  The Windows+Alt keys of axHelp, Windows+Alt+H and Windows+Alt+S, are retired: the user expected other programs to
-  take them or to act on them. A settings file that still holds one of them is taken over to the new key as it is
+  The Windows+Alt keys, axHelp's Windows+Alt+H and Windows+Alt+S and axClip's Windows+Alt+V, are retired: the user
+  expected other programs to take them or to act on them. A settings file that still holds one of them is taken over to the new key as it is
   read (`AxKit.Core/HotkeySettings.TakenOver`, tested; an app names its `RetiredDefault`), and a key the user chose
-  stays. No table, the bundle's or a window's, holds one of the four keys, the reserved one included: the key would
+  stays. No table, the bundle's or a window's, holds one of the five keys, the reserved one included: the key would
   never reach the window. `BundleKeys.SystemWide` lists them, and `KeyTests` fails on a table that holds one and on
   a default that left the list. axMedia's Faster and Slower, on Ctrl+Shift+Period and Ctrl+Shift+Comma until then,
   are Ctrl+Up and Ctrl+Down (AM-D8). Outside axKit, Word and Outlook lose their larger and smaller font on the comma
   and period keys while axHelp runs; the user was told. A hotkey's key is one of `Hotkey.Names`: a letter, a digit,
-  a function key, a navigation key, Slash or Comma, never Period. axClip's hotkey, Windows+Alt+V (CP-D1), was not
-  part of the decision and is as it was.
+  a function key, a navigation key, Slash, Comma or Semicolon, never Period. axClip's key joined the same day by a
+  second decision of the user's (CP-D1); no window used Ctrl+Shift+Semicolon.
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 
