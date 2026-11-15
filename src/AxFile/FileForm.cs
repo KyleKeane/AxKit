@@ -249,7 +249,7 @@ public sealed partial class FileForm : AxKitForm
 
         menu.DropDownItems.Add(axkit);
         Add(menu, new Command("Pr&eview", AxFileKeys.Preview, OpenInPreview) { When = InList, Mark = CommandMark.Open });
-        Add(menu, new Command("Play folder in AxMe&dia", AxFileKeys.PlayFolder, PlayFolder) { When = InList, Mark = CommandMark.Open });
+        Add(menu, new Command("Play folder in AxMe&dia", BundleKeys.MainAction, PlayFolder) { When = InList, Mark = CommandMark.Open });
         Add(menu, new Command("Add to axMedia's &queue", AxFileKeys.AddToQueue, AddToQueue) { When = InList, Mark = CommandMark.Open });
         menu.DropDownItems.Add(new ToolStripSeparator());
         Add(menu, new Command("Cu&t", AxFileKeys.Cut, () => CopyOrCut(cut: true)) { When = InList, Mark = CommandMark.Act });

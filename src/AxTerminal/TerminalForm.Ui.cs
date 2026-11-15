@@ -84,7 +84,10 @@ internal sealed partial class TerminalForm
         shell.DropDownItems.Add(sendKey);
         shell.DropDownItems.Add(new ToolStripSeparator());
         Add(shell, new Command("&Recent commands...", AxTerminalKeys.RecentCommands, ShowRecentCommands) { Mark = CommandMark.Open });
-        shell.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Send &without recording", null, (_, _) => SendInput(record: false)) { ShortcutKeyDisplayString = "Ctrl+Enter in the command field" }, CommandMark.Act));
+        // No key of its own since 2026-11-14 (AT-3.4, bundle AX-8.10 rule 3): the menu and the palette run it.
+        shell.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Send &without recording", null, (_, _) => SendInput(record: false)), CommandMark.Act));
+        // Ctrl+Enter, the bundle's main action (AX-8.10 rule 3): in the command field it sends the command, exactly as Enter does.
+        AddKey(new Command("Send the command", BundleKeys.MainAction, () => SendInput(record: true)) { When = () => Input.Focused, Mark = CommandMark.Act });
         shell.DropDownItems.Add(new ToolStripSeparator());
         Add(shell, new Command("What is r&unning", AxTerminalKeys.WhatIsRunning, SayWhatIsRunning) { Mark = CommandMark.Read });
 

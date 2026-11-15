@@ -217,6 +217,51 @@ public abstract partial class AxKitForm
         });
     }
 
+    /// <summary>
+    /// A form (AX-8.10): a notice whose text is the form's explanation, with the window's <paramref name="controls"/>
+    /// under it in Tab order, then <paramref name="button"/>, the default button, and Cancel. Whatever asks more than
+    /// one thing for one action is asked this way, once, never as one question after another. The focus starts in
+    /// the first control, ready to type, and the explanation is said once, after NVDA has read that control. Enter
+    /// presses the default button from a one-line box, a list or a check box, and makes a new line in a box of several
+    /// lines (the text then says the keys itself, and no line made from the buttons follows it); Ctrl+Enter presses
+    /// the default button from any control (<see cref="BundleKeys.MainAction"/>); Escape cancels and nothing is kept.
+    /// <paramref name="missing"/>, asked before the button acts, names the control that still needs something and
+    /// what to say: the focus goes there with the edge sound, and the form stays open.
+    /// </summary>
+    protected internal void ShowForm(string title, string text, FormControls controls, string button, Action act, Func<(Control Field, string Said)?>? missing = null, Action? cancelled = null)
+    {
+        ShowNotice(new Notice(title, text,
+        [
+            new OverlayChoice(button, act, IsDefault: true),
+            new OverlayChoice("&Cancel", cancelled, IsCancel: true),
+        ])
+        {
+            Custom = controls,
+            KeyLine = !controls.EnterMakesNewLine,
+            Accepts = missing is null ? null : () =>
+            {
+                if (missing() is not { } lacking)
+                {
+                    return true;
+                }
+
+                Sounds.Edge();
+                Announce(lacking.Said, true);
+                lacking.Field.Select();
+                return false;
+            },
+        });
+        // After the notice's own FocusStart, which lands on the notice's text, never on a control of the window's own.
+        BeginInvoke(() =>
+        {
+            if (NoticeOpen && ReferenceEquals(Overlay.Shown?.Custom, controls))
+            {
+                controls.FocusFirst();
+                Announce(text, false);
+            }
+        });
+    }
+
     /// <summary>An error the user must see: logged and shown as a notice; a console window adds a system line.</summary>
     protected virtual void Fail(string message)
     {

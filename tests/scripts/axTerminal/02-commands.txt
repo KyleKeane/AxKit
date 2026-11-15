@@ -118,14 +118,16 @@ expect focus "value":"yes"}
 expect text "# Output 6","","yes"
 keys ctrl+1
 
-# Step 5: Ctrl+Enter sends without a record: no block (the next block is number 7), no recent command.
+# Step 5: Actions, Send without recording (AT-3.4; no key since 2026-11-14, the menu and the palette run it) sends
+# without a record: no block (the next block is number 7), no recent command.
+expect commands Send without recording, Actions
 type echo secret
-keys ctrl+enter
+menu Send without recording
 expect said Sent, not recorded
 expect said Done
 expect said ♪ Done
 type Start-Sleep 5
-keys ctrl+enter
+menu Send without recording
 expect said Sent, not recorded
 expect state Running: a command sent without recording
 keys ctrl+q
@@ -138,13 +140,19 @@ expect focus "name":"Recent commands"
 expect list "items":["if ($true) {
 keys escape
 expect focus "name":"Command"
+# Ctrl+Enter in the command field sends the command exactly as Enter does (bundle AX-8.10 rule 3): recorded, block 7.
 type Write-Output seven
-keys enter
+keys ctrl+enter
+expect said Sent
+refuse said not recorded
 expect said Done
 expect said ♪ Done
 keys ctrl+3
 expect said Output 7 heading level 1
 expect focus "name":"Terminal"
+# In the terminal Ctrl+Enter has no main action: the edge sound, nothing sent.
+keys ctrl+enter
+expect said ♪ Edge
 keys ctrl+1
 
 # Step 6: Ctrl+R lists the recent commands, the newest first; Enter puts one in the field; Escape goes back.

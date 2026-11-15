@@ -39,6 +39,7 @@ public static class HelpText
           It shows the fields of the item selected in the navigator, or the details of the list
           Up, Down: move through the fields
           Enter: change the field. Space: done or not done, on a check
+          Right and Left: on a choice, the next and the previous value; on a check, Right checks and Left unchecks. Said once, one step for Ctrl+Z; the edge sound at an end and on any other field
           Ctrl+N: a new field. F2: rename the field in place. Delete: remove it. Alt+Up, Alt+Down: move it
           Ctrl+Q: read the field's whole value
           Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator

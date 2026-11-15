@@ -9,28 +9,40 @@ file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows Pow
 start terminal {temp}\work\myproject
 expect said Ready
 
-# Add a shell: the name first, refused when blank or taken, then the command line.
+# Add a shell: one form (bundle AX-8.10), the name then the command line, the focus in the name and the explanation
+# said once; a blank or taken name, or a blank command line, is said with the focus in that field, the form kept.
 # With none yet, Remove a shell holds one line that says so; it does nothing, so it is no command of the list
 # (docs/axKit/app-kit.md AK-2.5: the line that says a list is empty is never an entry).
 refuse commands No shells of your own yet
 menu Add a shell
 expect state "notice":"Add a shell"
-expect focus Type the shell
+expect focus "name":"Type the shell's name"
+expect said A shell of your own: the name Switch shell and the New session notice show for it
 keys enter
+expect said ♪ Edge
 expect said Type a name
 expect state "notice":"Add a shell"
+expect focus "name":"Type the shell's name"
 type Command Prompt
 keys enter
 expect said A shell named Command Prompt is already there
+expect focus "name":"Type the shell's name"
 keys ctrl+a
 type Test cmd
-keys enter
-expect state The command line that starts Test cmd
-expect focus Type the command line that starts it
+# Enter in a one-line field presses Add: the command line is still empty, so the focus goes there.
 keys enter
 expect said Type the command line
+expect state "notice":"Add a shell"
+expect focus "name":"Type the command line that starts it"
 type cmd.exe /k
-keys enter
+# Tab reaches the buttons after the two fields; Shift+Tab comes back; Ctrl+Enter adds from the field.
+keys tab
+expect focus Add
+keys tab
+expect focus Cancel
+keys shift+tab shift+tab
+expect focus "name":"Type the command line that starts it"
+keys ctrl+enter
 expect said Added Test cmd
 expect state "notice":null
 refuse said New session

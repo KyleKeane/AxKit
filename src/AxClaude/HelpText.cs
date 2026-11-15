@@ -32,7 +32,7 @@ public static class HelpText
         altF4: "close axClaude (asks first while Claude is working)",
         heading: "Anywhere") + """
         ## Message field
-          Enter: send (an empty field sends a plain Enter to Claude)
+          Enter: send (an empty field sends a plain Enter to Claude). Ctrl+Enter sends too
           Shift+Enter: new line
           Page Up, Page Down: one screen of the field up or down, or the first or last line of the message
           Escape: does nothing; a reminder says that Shift+Escape interrupts Claude

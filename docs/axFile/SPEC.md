@@ -454,13 +454,15 @@ and the started process finds its open window and hands the paths over with the 
   Ctrl+Minus, Page Up and Page Down (the list's own here), Alt+F4. Window-specific (`AxFileKeys`): Enter,
   Shift+Enter, Backspace, Alt+Up, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, Ctrl+G, Alt+D, Ctrl+D, Ctrl+W, Ctrl+Shift+W, Ctrl+E,
   Ctrl+I, Ctrl+Shift+N, Ctrl+Shift+T, Ctrl+Shift+C, Ctrl+Shift+F, Escape, Shift+Up, Shift+Down, Shift+Home,
-  Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Enter, Ctrl+Shift+Q (AF-5), Shift+F10, the Applications key,
+  Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Shift+Q (AF-5), Shift+F10, the Applications key,
   Alt+Enter, Ctrl+Z (AF-4.14), Ctrl+X, Ctrl+C, Ctrl+V. Enter, Shift+Enter, Backspace, Left, Right, Space, Escape, F2, Delete,
   Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+Space, Ctrl+Enter, Ctrl+Shift+Q, the Shift arrows, Shift+F10 and the
   Applications key act only while the folder list has the focus (in the Actions list, Enter, Escape, Ctrl+Z and Ctrl+I
   act on its line, AF-9.3; in a notice's field or the rename box they are the field's; the two menu keys open the
   bar's Context menu once they are up, AF-D13, AX-9.11). The collision test covers the table and lists the keys other windows use
-  otherwise (Ctrl+N, Ctrl+G, Ctrl+E, Ctrl+C, Ctrl+Shift+C, Ctrl+Shift+F, Ctrl+Enter).
+  otherwise (Ctrl+N, Ctrl+G, Ctrl+E, Ctrl+C, Ctrl+Shift+C, Ctrl+Shift+F). Ctrl+Enter is the bundle's main action
+  (AX-8.10, `BundleKeys.MainAction`), here Play folder in axMedia (AF-5.1) while the folder list has the focus, the edge
+  sound elsewhere.
 - AF-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axFile/user-guide.md` is embedded (Help → User
   guide); About is the bundle's (AX-9.9).
 

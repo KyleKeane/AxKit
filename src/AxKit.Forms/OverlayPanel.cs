@@ -45,6 +45,13 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// <summary>Asked before the default button acts, when given: false keeps the notice open, the window having said why (no folder chosen yet).</summary>
     public Func<bool>? Accepts { get; init; }
 
+    /// <summary>
+    /// False for a notice whose text names its keys itself, because Enter is not the default button in the control
+    /// that has the focus: a form whose first field takes several lines (the report, AX-8.10), a long text's box. The
+    /// line made from the buttons, "Enter: Send. Escape: Cancel.", would be untrue there. True, the default, adds it.
+    /// </summary>
+    public bool KeyLine { get; init; } = true;
+
     /// <summary>An unprompted notice that brings no chime of its own, because the window sounds its own rule for it (axClaude's information screens).</summary>
     public bool Silent { get; init; }
 
@@ -320,7 +327,7 @@ public sealed class OverlayPanel : Panel
         }
 
         Shown = shown with { Text = text };
-        _body = WithKeyLine(text, shown.Choices);
+        _body = shown.KeyLine ? WithKeyLine(text, shown.Choices) : text;
         var caret = _text.SelectionStart;
         SetText();
         _text.Select(Math.Min(caret, _text.TextLength), 0);
@@ -328,6 +335,29 @@ public sealed class OverlayPanel : Panel
 
     /// <summary>The default button pressed, as Enter presses it: a control of the window's own asks for it (Enter in the session controls' free field).</summary>
     public void PressDefault() => DefaultButton?.PerformClick();
+
+    /// <summary>
+    /// Ctrl+Enter while the notice shows (AX-8.10): the notice's default button, from whichever control has the
+    /// focus: a form's Send from any of its fields, a long text saved from inside its box, where plain Enter makes a
+    /// new line; the edge sound when the notice has no default button. Nothing while the answering keys of an
+    /// unprompted notice are held.
+    /// </summary>
+    public void PressMain()
+    {
+        if (_hold.Holding)
+        {
+            return;
+        }
+
+        if (DefaultButton is { } button)
+        {
+            button.PerformClick();
+        }
+        else
+        {
+            Sounds.Edge();
+        }
+    }
 
     /// <summary>The font of the text, kept in step with the conversation's by the window.</summary>
     public void SetTextFont(Font font)
@@ -361,7 +391,7 @@ public sealed class OverlayPanel : Panel
 
         _title.Text = title;
         _text.AccessibleName = title;
-        _body = WithKeyLine(text, choices);
+        _body = notice.KeyLine ? WithKeyLine(text, choices) : text;
         _headLine = notice.HeadLine;
         // The field's spec goes in after its text is set, so that Changed does not fire for the filling (the palette
         // filled its list twice), nor the previous notice's Changed for the new text.
@@ -567,7 +597,8 @@ public sealed class OverlayPanel : Panel
     }
 
     /// <summary>
-    /// The last line of every notice, made from its buttons so that no notice words its keys itself: "Enter: Close
+    /// The last line of every notice but the ones that say their keys themselves (<see cref="Notice.KeyLine"/> false:
+    /// Enter is a new line where their focus starts), made from its buttons so that no other notice words its keys: "Enter: Close
     /// anyway. Escape: Keep working.", or "Enter or Escape: Close." for a single button; the whole text of a notice
     /// with no words of its own (axDown's save question), so that there is always text to land on.
     /// </summary>

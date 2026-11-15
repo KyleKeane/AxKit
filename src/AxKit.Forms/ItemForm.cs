@@ -338,9 +338,10 @@ public abstract partial class ItemForm : AxKitForm
         AddKey(new Command("Move the field up", ItemKeys.MoveFieldUp, () => MoveField(-1)) { When = InDetail, Mark = CommandMark.Change });
         AddKey(new Command("Move the field down", ItemKeys.MoveFieldDown, () => MoveField(1)) { When = InDetail, Mark = CommandMark.Change });
 
-        // Nothing moves sideways in the field list: the edge sound, not the list box's own scroll.
-        AddKey(new Command("Nothing sideways", ItemKeys.Into, Sounds.Edge) { When = InDetail, Mark = CommandMark.Read });
-        AddKey(new Command("Nothing sideways", ItemKeys.Up, Sounds.Edge) { When = InDetail, Mark = CommandMark.Read });
+        // Right and Left change the field in focus (IA-5.6, AX-8.10 rule 4): a choice's next and previous value, a
+        // check checked and unchecked; the edge sound on every other field, never the list box's own move.
+        AddKey(new Command("The next value of the field", ItemKeys.Into, () => StepField(1)) { When = InDetail, Mark = CommandMark.Change });
+        AddKey(new Command("The previous value of the field", ItemKeys.Up, () => StepField(-1)) { When = InDetail, Mark = CommandMark.Change });
         AddKey(new Command("The field's menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InDetail, Mark = CommandMark.Open });
         AddKey(new Command("The field's menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InDetail, Mark = CommandMark.Open });
     }

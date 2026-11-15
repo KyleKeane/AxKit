@@ -14,7 +14,7 @@ dotnet run --project tools\AxAutomate -c Release -- tests\scripts\axMCP --build 
 
 - `AxMCPApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run` with the one optional folder.
 - `MCPForm : ItemForm`: the levels (`ReadLevel`: the top in two sections, a server's with Tools, Resources and Prompts or its start row, a section's items), `EnterList` starting a server (consent first, `HasConsent`), `DetailOf` (a server's lines, a tool's or a prompt's arguments as a document kept per server in `Running.Arguments`), `SaveFields` keeping a change, the calls (`CallSelected`, `Request`: one awaited request through the base's `Do`, 60 s), the result notices, Ctrl+J, Stop, and Your servers (Ctrl+N, F2, Delete, one-step Ctrl+Z). Its commands are `Add` and `AddKey` calls (docs/axKit/app-kit.md AK-2); "Read the resource" is registered before the shared keys so that Enter on a resource reads it.
-- `AxMCPKeys`: `ItemKeys.All` plus Ctrl+Enter, Ctrl+J and Ctrl+Shift+S (bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys.
+- `AxMCPKeys`: `ItemKeys.All` plus Ctrl+J and Ctrl+Shift+S (bundle AX-8; Ctrl+Enter, the call, is a command on the bundle's `BundleKeys.MainAction`, AX-8.10), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules

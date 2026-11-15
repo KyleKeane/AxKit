@@ -178,27 +178,30 @@ internal sealed partial class TerminalForm
     }
 
     /// <summary>
-    /// Switch shell → Add a shell… (AT-1.6a): the notice "Add a shell" with the field "Type the shell's name" (a blank
-    /// name or one a shell already has is said and the notice stays), then the notice with the field "Type the command
-    /// line that starts it"; "Added <name>". The shell is not started: Switch shell or New session starts it.
+    /// Switch shell → Add a shell… (AT-1.6a): one form (bundle AX-8.10), "Add a shell", with the fields "Type the
+    /// shell's name" and "Type the command line that starts it", then Add and Cancel. A blank name, one a shell
+    /// already has, or a blank command line is said with the focus in that field, and the form stays; "Added
+    /// <name>". The shell is not started: Switch shell or New session starts it. (Two notices, one after the other,
+    /// until 2026-11-14.)
     /// </summary>
     private void AddUserShell()
     {
-        AskText("Add a shell", "The name Switch shell and the New session notice show for the shell.", "Type the shell's name:", "Type the shell's name", string.Empty, "&Next",
-            typed =>
+        var form = new FormControls();
+        var name = form.AddText("Type the shell's name");
+        var line = form.AddText("Type the command line that starts it");
+        ShowForm("Add a shell",
+            "A shell of your own: the name Switch shell and the New session notice show for it, and the command line that starts it, as typed at a prompt, for example cmd.exe /k or pwsh -NoProfile. It starts as a custom shell does, without the integration marks unless its prompt prints them. Tab moves between the fields; Enter or Ctrl+Enter adds the shell.",
+            form, "&Add",
+            () =>
             {
-                var name = typed.Trim();
-                AskText("Add a shell", $"The command line that starts {name}, as typed at a prompt, for example cmd.exe /k or pwsh -NoProfile. It starts as a custom shell does, without the integration marks unless its prompt prints them.",
-                    "Type the command line that starts it:", "Type the command line that starts it", string.Empty, "&Add",
-                    line =>
-                    {
-                        _settings.UserShells.Add(new UserShell(name, line.Trim()));
-                        SaveSettings();
-                        Announce($"Added {name}", true);
-                    },
-                    line => line.Trim().Length == 0 ? "Type the command line" : null, emptyMessage: "Type the command line");
+                var shell = new UserShell(name.Text.Trim(), line.Text.Trim());
+                _settings.UserShells.Add(shell);
+                SaveSettings();
+                Announce($"Added {shell.Name}", true);
             },
-            _settings.RefusedShellName, emptyMessage: "Type a name");
+            () => _settings.RefusedShellName(name.Text) is { } refused ? (name, refused)
+                : line.Text.Trim().Length == 0 ? (line, "Type the command line")
+                : null);
     }
 
     /// <summary>

@@ -16,10 +16,6 @@ internal sealed partial class TerminalForm
                 e.Handled = e.SuppressKeyPress = true;
                 SendInput(record: true);
                 break;
-            case AxTerminalKeys.SendWithoutRecording:
-                e.Handled = e.SuppressKeyPress = true;
-                SendInput(record: false);
-                break;
             case AxTerminalKeys.Escape:
                 // The guard (AT-3.5): a reflex key, and the shell would take it as an edit of its line.
                 e.SuppressKeyPress = true;
@@ -60,7 +56,8 @@ internal sealed partial class TerminalForm
     }
 
     /// <summary>
-    /// Enter (and Ctrl+Enter without a record): the field's text goes to the shell line by line, each with its
+    /// Enter, and Ctrl+Enter as Enter (the bundle's main action, AX-8.10 rule 3); without a record from the Actions
+    /// menu's Send without recording (AT-3.4): the field's text goes to the shell line by line, each with its
     /// Enter (AT-3.1); the model prints the exchange block above the prompt row (AT-3.2) and the command joins the
     /// recent list; an empty field sends a bare Enter. Nothing is sent once the shell ended.
     /// </summary>

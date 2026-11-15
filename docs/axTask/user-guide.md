@@ -44,7 +44,7 @@ Two panes side by side, and a status bar.
 
 ## Sections of your own
 
-- On a list, Ctrl+M (Context, Move to section) chooses its section: Your lists, one of your sections, or a new one.
+- On a list, Ctrl+M (Context, Move to section) opens a small form: a list of the sections (Your lists, each of your sections, and A new section, the last) and, after it, a field for a new section's name. Up and Down choose, Enter moves the list there. For a new section, choose A new section, Tab, type its name, Enter.
 - The same is the Section field, first in a list's details: Tab on the list, Enter on Section, type the name.
 - A new list (Ctrl+Shift+N) joins the section of the line selected.
 - A section exists while a list is in it; to rename one, move its lists.
@@ -76,9 +76,10 @@ In the detail pane:
   - a date takes 2026-10-30, 30 October 2026, today, tomorrow, +3 for three days on, or a weekday such as friday;
   - a date and time takes a date, a space and a time: tomorrow 14:00;
   - a choice shows a list of its options; Up and Down move, Enter chooses;
-  - a long text is a field of several lines: Enter makes a new line, Tab and then Enter on Save keeps it;
+  - a long text is a field of several lines: Enter makes a new line, Ctrl+Enter keeps it, and so does Tab and then Enter on Save;
   - a link takes the title of the item it points to, in any list.
-- Ctrl+N adds a field after the selected one: its title, then its type from a list; a choice then asks its options.
+- Right and Left change the field you are on without opening anything. On a choice, Right is the next option and Left the previous; at the first and the last you hear the edge sound, and it never goes round. On a check, Right checks and Left unchecks; when it is so already, the edge sound. You hear the field and its new value once, "Priority: Low", and Ctrl+Z takes it back. On any other field the two keys do nothing but the edge sound. They never leave the detail pane: Escape or Shift+Tab goes back to the navigator.
+- Ctrl+N adds a field after the selected one, in one form: type its title, Tab to the list of types and choose one, and for a choice Tab once more and type its options with a comma between them; Enter or Ctrl+Enter adds the field. What is missing is said, with the focus in its field.
 - F2 renames the field in place, Delete removes it, Alt+Up and Alt+Down move it. The Title field stays.
 - Context, Use these fields for new items gives the list's new items the fields of the item selected, emptied.
 
@@ -145,8 +146,10 @@ axJSON; Ctrl+E shows it in axFile. Anything axTask does not know in a file is ke
 
 ## Action keys: Ctrl+1 to Ctrl+9
 
-Every list can give the number keys actions of its own. Actions, Action keys lists the nine keys; Enter on one asks a
-name, what the key does and its value: set fields to values ("Kind: Bug", "Done: done"), move the item to another
+Every list can give the number keys actions of its own. Actions, Action keys opens one form. It starts on the list of
+the nine keys; Up and Down choose one, and the fields after it show what that key does. Tab goes on to the action's
+name (empty removes the key), to a list of what the key does, and to a box for its value, where Enter makes a new
+line; Ctrl+Enter or the Keep button keeps it. The three things a key can do: set fields to values ("Kind: Bug", "Done: done"), move the item to another
 list, or open something (a field holding a web address, or an app such as axJSON for the item's file). From then on
 Ctrl+1 to Ctrl+9 do that to the item selected, and Context's Action keys submenu on an item names them. Ctrl+Z takes a set
 or a move back. All tasks is Ctrl+0.

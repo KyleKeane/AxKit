@@ -36,7 +36,7 @@ environment variables (never their values) and its state.
 
 A tool's row reads its name and the first sentence of what it does. Tab moves to its arguments: the description first
 (Enter reads it whole), then one field per argument with its type, "(required)" after the ones the tool needs. Enter
-changes a field, as in axTask: a text, a number, a date, a check with Space, a choice from a list, or a long text
+changes a field, as in axTask: a text, a number, a date, a check with Space, a choice from a list (Right and Left also step through a choice, and check or uncheck a check), or a long text
 holding JSON for anything structured. Ctrl+Enter calls the tool with what the fields hold: "Calling …", then the result
 opens as a text in the window's place, read with the arrows, h for the headings and Ctrl+F to find; Escape closes it
 and the focus is back where it was. Ctrl+J opens the whole answer as JSON in axJSON. The values you typed stay while
@@ -49,8 +49,9 @@ filled like a tool and fetched with Ctrl+Enter; its messages open as a text, eac
 
 ## Your own servers
 
-At the top level, Ctrl+N adds a server: a name, the command line that starts it as a terminal would, and a folder to
-start it in (empty for the folder axMCP was started on, or your profile folder). F2 renames one of yours, Delete removes
+At the top level, Ctrl+N adds a server in one form: type its name, Tab, type the command line that starts it as a
+terminal would, Tab, and a folder to start it in (empty for the folder axMCP was started on, or your profile folder);
+Enter or Ctrl+Enter adds it. What is missing is said, with the focus in its field. F2 renames one of yours, Delete removes
 one after a question, Ctrl+Z takes the last of these back. Claude Code's own servers are changed in Claude Code, with
 `claude mcp add` and `claude mcp remove`; axMCP only reads its files.
 

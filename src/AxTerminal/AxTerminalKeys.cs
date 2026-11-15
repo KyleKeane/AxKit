@@ -38,9 +38,9 @@ public static class AxTerminalKeys
 
     // The command field, and the terminal: Enter sends a command in the field and copies the line in the terminal;
     // Escape is the guard in the field and clears the selection or returns to the field in the terminal.
+    // Ctrl+Enter is the bundle's main action (BundleKeys.MainAction, AX-8.10): in the field it sends as Enter does.
+    // Send without recording (AT-3.4) has no key since 2026-11-14: the Actions menu and the palette run it.
     public const Keys Enter = Keys.Return;
-    /// <summary>In the command field: the text goes to the shell with no block, no history, no log (AT-3.4).</summary>
-    public const Keys SendWithoutRecording = Keys.Control | Keys.Return;
     public const Keys Escape = Keys.Escape;
     /// <summary>In the command field: the command before, from the recent list (AT-3.9), in place of the bundle's paragraph up.</summary>
     public const Keys OlderCommand = Keys.Control | Keys.Up;
@@ -86,7 +86,6 @@ public static class AxTerminalKeys
         ("Say current folder", SayFolder),
         ("Background music on or off", ToggleMusic),
         ("Enter: send, or copy the line", Enter),
-        ("Send without recording", SendWithoutRecording),
         ("Previous command (in the field)", OlderCommand),
         ("Next command, then what you typed (in the field)", NewerCommand),
         ("Escape: the guard, clear the selection or go to the field", Escape),

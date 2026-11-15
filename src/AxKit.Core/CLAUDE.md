@@ -74,7 +74,7 @@ another project on its second use, the bullet says so.
 - `BundleHelp` (docs/axKit/app-kit.md AK-2.3, AX-7.2; 2026-10-24): the start and the end of every F1 text, written once (`NoticesSection`, the Notices section every text ends with, the same words in every window since 2026-11-09, with the app's name and what its notices cover): `Section`
   takes the app's name and its own lines of the section (what Tab moves between, what Ctrl+F finds, what Ctrl+S does;
   all the window keys in axClaude and axTerminal, whose heading is "Anywhere") and returns the first line naming the
-  text's keys and the section with F1, the palette, the app's lines, the text size, the menu with Alt+F4 (`altF4` when
+  text's keys and the section with F1, the palette, `ReportLine`, `MainActionLine`, the app's lines, the text size, the menu with Alt+F4 (`altF4` when
   it does more than close the app) and `BundleMenusLine`; each `HelpText.Shortcuts` adds its own sections after it.
 - `RecentActions` with `RecentActionKind` (docs/axKit/reports.md RP-4.1, 2026-11-07): the last twenty actions of one
   window for a report, the commands run, what it said and the notices it showed, each with its time; `Lines(now)`
@@ -202,6 +202,8 @@ another project on its second use, the bullet says so.
   the types read out and typed (dates as tomorrow or +3); a list's template (`NewList`, `WithTemplate`) is written
   with its values, which a new item starts with (IA-4.3; emptied until 2026-11-09, so `ReportFiles.ListText` wrote
   its own and a GitHub list's new items had no kind or state).
+- `FieldStep` (AX-8.10 rule 4, IA-5.6): Right and Left on a field: a choice's next or previous value, a check
+  checked or unchecked, null (the edge sound) otherwise, never a `Protected` type.
 - `ItemFiles` (IA-4.5; from AxTask.Core's `ItemFolder` on its second use, the reports list, 2026-11-07): `FileStem`,
   the file name a Title gives, and `FreePath`, a free name beside the taken ones ("name - 2.json").
 - `Reports/` (docs/axKit/reports.md, 2026-11-07): `Report` with `ReportKind`, `ReportKinds` (the names, the GitHub
@@ -222,7 +224,7 @@ another project on its second use, the bullet says so.
   docs/axKit/reports-setup.md section 5). Tested in `ReportSealTests` with pairs made in memory. `ReportPrivacy` with `ReportContext` (RP-4.2a, 2026-11-14): what a
   report carries by itself, nothing that can name the user's files: `AppLine` without the window's title, `Commands`
   (the commands alone of `RecentActions.Entries`), `Errors` (the log's errors of the last day, masked) and `Mask`
-  (every path and quoted text, on top of `Redaction`); the fuller form is the user's check box, `DetailBox`. Tested
+  (every path and quoted text, on top of `Redaction`); the fuller form is the user's check box, `DetailBox`; `Shown`, either form as the lines the report form shows. Tested
   in `ReportPrivacyTests`. `GitHubIssues` (RP-6), GitHub's REST API as the report sender uses
   it, the client handed in: `CreateAsync` (an issue as the reporter account), `ReadBlocklistAsync` (the list at
   `BlocklistUrl`, the one place that names its address: `blocklist.json` of the public repository

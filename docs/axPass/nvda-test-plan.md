@@ -32,7 +32,7 @@ should read; a step that reads differently is a defect. The specifications are `
 
 ## 4. Changing (IA-5, PW-6)
 
-1. In the fields, Enter on UserName, type `sam2`, Enter: "UserName: sam2". Ctrl+Z: "Undone: UserName: sam2"; it reads
+1. In the fields, Right and Left on UserName, on Password and on Title: the edge sound, nothing said, nothing changed, the focus still in the pane (IA-5.6). Enter on UserName, type `sam2`, Enter: "UserName: sam2". Ctrl+Z: "Undone: UserName: sam2"; it reads
    sam again.
 2. Enter on Password: the notice "New password for Gmail", its field protected. Alt+G: "Generated a password of 20
    characters; Enter sets it"; Enter: "Password set for Gmail".

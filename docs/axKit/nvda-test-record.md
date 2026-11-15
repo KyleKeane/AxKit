@@ -6,6 +6,26 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-14, evening: every app; by the assistant with NVDA listening (`main` c3dde20 with the forms and the speech fix not yet committed, axKit 5.8.0 with what is unreleased)
+
+`.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 115 scripts of
+`tests/scripts` and the four of `tests/nvda-scripts`, 119 in all. All 119 passed in one run (3012 s), with no script
+corrected during the pass; the scripts of axTask, axMCP, axTerminal and axClaude had passed without NVDA just before.
+
+What this pass is the first to hear:
+
+- The forms of standard controls (bundle AX-8.10, `FormControls` and `ShowForm`): the report, F4 (`axClaude/16`);
+  axTerminal's Add a shell (`axTerminal/08`); axMCP's Add server (`axMCP/02`); the item window's New field
+  (`axTask/01`); axTask's Move to section (`axTask/03`) and Action keys (`axTask/04`).
+- Ctrl+Enter as the main action in every window, Right and Left on a choice or a check in the detail pane
+  (`axTask/01`), and axTerminal's Send without recording from the menu alone (`axTerminal/02`).
+- axClaude's record of an answered question, shown and never spoken, and a question cutting leftover reply speech
+  (FR-7.4b; `axClaude/12`).
+
+Owed to the user's ear, since a script cannot judge them: the order of speech as a form opens (the field, then the
+explanation), and whether the longer explanations (Action keys, Add a shell) are too much after the first time. The
+user had tried the report form himself earlier that day and accepted it.
+
 ## 2026-11-14: the Store copy of 5.8.0; by the assistant with NVDA listening (the package `axKit.axKit` 5.8.0.0 from the Microsoft Store)
 
 The first pass of a copy installed from the Store (`store-distribution.md` phase 6, step 3). Submission 2 was live

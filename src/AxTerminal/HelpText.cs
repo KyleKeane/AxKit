@@ -23,7 +23,7 @@ public static class HelpText
             "Ctrl+S: export the transcript as a Markdown file",
             "Ctrl+W: show the current folder in File Explorer",
             "Ctrl+N: new session: choose the folder and the shell (Windows PowerShell, Command Prompt, PowerShell 7 and Git Bash when they are installed, or a custom command line; Session offers to install the two that are not); Session, Switch shell changes the shell in the same folder and keeps the text",
-             "Session, Add a shell: a shell of your own, a name and the command line that starts it; listed in Switch shell and the New session notice, and taken off with Session, Remove a shell; removing the shell in use starts the default shell in its place",
+             "Session, Add a shell: a shell of your own, in one form: a name and the command line that starts it, Tab between them, Enter or Ctrl+Enter adds it; listed in Switch shell and the New session notice, and taken off with Session, Remove a shell; removing the shell in use starts the default shell in its place",
             "Ctrl+Shift+R: restart the shell in its current folder, after a confirmation while a command runs",
             "Ctrl+L: clear the transcript (the shell's own cls clears only its screen)",
             "Ctrl+Alt and a letter from the Terminal list below: read every line of that kind from the caret to the end of the terminal in one go, without moving; Ctrl+Alt+P reads the paragraphs whole. Control stops NVDA",
@@ -34,7 +34,8 @@ public static class HelpText
         heading: "Anywhere") + """
         ## Command field
           Enter: send the command (an empty field sends a plain Enter to the shell). A command of several lines goes line by line, with one more Enter at the end for PowerShell
-          Ctrl+Enter (Ctrl+Return): send the text without recording it: no Input and Output lines, not in the recent commands, not in the log. For passphrases and tokens a program asks for
+          Ctrl+Enter: send the command, as Enter does
+          Actions, Send without recording (no key; the command palette finds it): send the text with no Input and Output lines, not in the recent commands, not in the log. For passphrases and tokens a program asks for
           Shift+Enter: new line
           Page Up, Page Down: one screen of the field up or down, or the first or last line
           Escape: does nothing; a reminder says that Shift+Escape sends Escape and Ctrl+Shift+C interrupts

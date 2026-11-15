@@ -24,7 +24,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 7. Ctrl+0 from anywhere: "All tasks, 3 items, …", the soonest due first, each "…, in Home".
 8. Tab on a list: "Details of Home", "Section, text, empty", "Notes, long text, empty", then "Fields of a new item:
    Done, Start, Due".
-9. On Shopping, Ctrl+M: the list "Section" on Your lists; End, "A new section", Enter, type `Errands`, Enter: "Moved
+9. On Shopping, Ctrl+M: the form "Move Shopping", the focus in the list "Choose the section" on Your lists, then its explanation said once; End, "A new section", Enter: the edge sound, "Type the section's name", the focus in the field "Type the new section's name, when you chose A new section", the form still open; type `Errands`, Enter: "Moved
    Shopping to Errands"; it is under the heading "Errands, heading level 2, 1 list". Ctrl+Shift+N there, type `Garden`: "Made
    Garden", in Errands too. Tab on Garden, Enter on Section, delete the text, Enter: back in Your lists.
 10. Make a task in Home titled `Call @Sam about #garden !urgent`, Left: under Smart lists, "Tags, heading level 2, 3
@@ -42,10 +42,16 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 1. On Fix the tap, Space: "Done: Fix the tap"; Space: "Not done: Fix the tap". Ctrl+J: axJSON shows `"value": false`.
 2. In its fields, Enter on Due, type `+3`, Enter: "Due: …, " three days from today. Type `30 Febuary`: "Not a date: …"
    and the notice stays; Escape.
-3. Ctrl+N in the fields, type `Priority`, Enter: the list "Type", on "text"; type `c` twice to "choice", Enter, type
-   `High, Low`, Enter: "Added Priority, choice of 2". Enter on it: the list "Priority" on High; Down, Enter: "Priority:
-   Low".
-4. Enter on Notes (a list's details), type two lines, Tab, Enter on Save: "Notes: …"; Ctrl+Q reads both lines.
+3. Ctrl+N in the fields: the form "New field", the focus in "Type the field's title", then its explanation said once;
+   type `Priority`, Tab: the list "Choose what the field holds", on "text"; type `c` twice to "choice", Enter: the edge
+   sound, "Type at least one option", the focus in the options' field, the form still open; type `High, Low`, Enter:
+   "Added Priority, choice of 2". Ctrl+N again, Tab through: title, type, options, Add, Cancel; Escape: nothing added. Enter on it: the list "Priority" on High; Down, Enter: "Priority:
+   Low". Left on it: "Priority: High", once; Left again: the edge sound, nothing said; Right: "Priority: Low"; Right
+   again: the edge sound, it does not go round; Ctrl+Z: "Undone: Priority: Low", one step. On Done: Right: "Done:
+   done"; Right again: the edge sound; Left: "Done: not done"; Left again: the edge sound. On Title or Due: Right and
+   Left play the edge sound and change nothing; neither key leaves the pane (IA-5.6).
+4. Enter on Notes (a list's details), type two lines, Tab, Enter on Save: "Notes: …"; Ctrl+Q reads both lines. Enter on
+   Notes again, type a word, Ctrl+Enter: the text is kept as with Save (IA-5.7).
 5. Alt+Up on Priority: "Moved up: Priority"; at the top: the edge sound and "Top of the fields".
 6. F2 on Title: "The Title field keeps its name …". F2 in the navigator on Fix the tap, type `Fix the sink`: "Renamed
    Fix the sink"; Ctrl+E shows `Fix the sink.json` in axFile.
@@ -75,10 +81,10 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 ## 5. Action keys (TK-7a, docs/axKit/reports.md RP-8)
 
 1. In a list, Ctrl+3: the edge sound and "No action on Ctrl+3 in this list; Actions, Action keys sets one". At the top level, Ctrl+1: the edge sound and "Action keys act in a list: open one first". Ctrl+0: "All tasks" (Ctrl+1 until 5.1.0).
-2. Actions, Action keys: the list "Keys" with nine lines, "Ctrl+1. not set" to "Ctrl+9. not set", the full stop a pause after the digit. Enter on the first: "Ctrl+1" and a Name field; type "Done", Enter; the list "What" with "Set fields to values" first; Enter; the Fields field; type "Done: done", Enter: "Ctrl+1: Done, sets Done: done". Ctrl+Z: "Undone: Ctrl+1: Done, sets Done: done".
+2. Actions, Action keys: one form, the focus in the list "Choose the key" with nine lines, "Ctrl+1. not set" to "Ctrl+9. not set", the full stop a pause after the digit, then its explanation said once. Tab: "Type the action's name, or leave it empty to remove the key"; type "Done"; Tab: the list "Choose what the key does" with "Set fields to values" first; Ctrl+Enter now: the edge sound, "Type at least one line as Field: value", the focus in the last box; type "Done: done", Enter: "new line", nothing kept yet; Ctrl+Enter: "Ctrl+1: Done, sets Done: done". Open the form again: Down through the keys changes what the three fields after the list hold; Escape keeps nothing. Ctrl+Z: "Undone: Ctrl+1: Done, sets Done: done".
 3. Set Ctrl+1 again as in step 2, then on a task not done, Ctrl+1: "Done: Done: done" and the row reads done. Ctrl+Z takes it back. Context, Action keys: the first item reads "Done Ctrl+1." and the others "Not set Ctrl+2." to "Not set Ctrl+9.".
-4. Actions, Action keys, Enter on Ctrl+2, name "Later", "Move the item to a list", the list's name of another list: Ctrl+2 on an item: "Later: <item> moved to <list>", the item gone from this list and in the other; Ctrl+Z brings it back.
-5. Actions, Action keys, Enter on Ctrl+5, name "Web", "Open a field's web address, or an app", the value "Notes": "Ctrl+5: Web, opens Notes". Ctrl+5 on an item with empty Notes: "Notes is empty"; with a web address in its Notes: the address opens in the browser.
+4. Actions, Action keys, Down to Ctrl+2, Tab, name "Later", Tab, "Move the item to a list", Tab, the list's name of another list, Ctrl+Enter: Ctrl+2 on an item: "Later: <item> moved to <list>", the item gone from this list and in the other; Ctrl+Z brings it back.
+5. Actions, Action keys, Down to Ctrl+5, Tab, name "Web", Tab, "Open a field's web address, or an app", Tab, the value "Notes", Ctrl+Enter: "Ctrl+5: Web, opens Notes". Ctrl+5 on an item with empty Notes: "Notes is empty"; with a web address in its Notes: the address opens in the browser.
 6. axTask is local only (TK-7a.2): Actions has no New GitHub list and no GitHub account, and Context on an item has no GitHub submenu. A list whose list.json has a "github" member (a list made as a GitHub list, up to 5.8.0; `tasks\Issues` in the runner's script) opens as any list, "Issues, 1 item" and the item, with nothing said about GitHub; F5: "Refreshed: Issues, 1 item", nothing read from the network. Its key that sets Kind (Ctrl+1 there): "Make it a bug: Kind: Bug", and Ctrl+Z takes it back.
 
 ## 6. Project folders and the search across every list (TK-7b)

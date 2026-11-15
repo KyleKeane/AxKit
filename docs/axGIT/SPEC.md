@@ -183,9 +183,9 @@ opens in the editor for its type (AG-1.4, AG-D1).
   **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User
   guide | ─ | Git resources ▸ (git-scm.com | Pro Git book). Every item has a mnemonic (AX-7.4).
 - AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
-  "Nothing to save here. Space stages, Ctrl+Enter commits"), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
+  "Nothing to save here. Space stages, Ctrl+Enter commits"), Ctrl+Enter (the bundle's main action, AX-8.10: here Commit, AG-3.5, a command on `BundleKeys.MainAction`), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
   Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Ctrl+1, Ctrl+2, Ctrl+3, Shift+F10 and the Applications key, Space and Enter and Delete in the
-  list, Ctrl+Shift+A, Ctrl+Shift+U, Ctrl+E, Ctrl+Enter, Ctrl+N, Ctrl+Shift+F, Ctrl+Shift+L, Ctrl+Shift+H. Space,
+  list, Ctrl+Shift+A, Ctrl+Shift+U, Ctrl+E, Ctrl+N, Ctrl+Shift+F, Ctrl+Shift+L, Ctrl+Shift+H. Space,
   Enter and Delete act only while the list has the focus; in the details they are the control's own. The collision
   test covers the table. A command of one view asked for in another says which view first: "Changes view first:
   Ctrl+1" for Space, Delete, Stage or unstage, Show diff and Discard changes, "Branches view first: Ctrl+3" for

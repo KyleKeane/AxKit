@@ -139,17 +139,20 @@ public sealed partial class TaskForm
             .Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(name => name, NaturalOrder.Instance).ToList();
         List<string> choices = [YourLists, .. sections, "A new section"];
         var start = current.Length == 0 ? 0 : Math.Max(0, choices.FindIndex(choice => choice.Equals(current, StringComparison.OrdinalIgnoreCase)));
-        ChooseFromList("Move " + row.Name, $"Now in {(current.Length == 0 ? YourLists : current)}.", "Section", choices, start, chosen =>
-        {
-            if (chosen == choices.Count - 1)
-            {
-                AskText("New section", $"The section {row.Name} moves to.", "Name:", "Section name", string.Empty, "&Move", typed => SetSection(row, typed.Trim()),
-                    typed => typed.Trim().Length == 0 ? "Type the section's name" : choices.Contains(typed.Trim(), StringComparer.OrdinalIgnoreCase) ? $"There is a section called {typed.Trim()} already" : null);
-                return;
-            }
-
-            SetSection(row, chosen == 0 ? string.Empty : choices[chosen]);
-        });
+        // One form (bundle AX-8.10): the sections as a list and, for a new one, its name; a list and then a second
+        // notice for the name until 2026-11-14.
+        var form = new FormControls();
+        var section = form.AddList("Choose the section", choices, start);
+        var name = form.AddText("Type the new section's name, when you chose A new section");
+        bool IsNew() => section.SelectedIndex == choices.Count - 1;
+        ShowForm("Move " + row.Name,
+            $"Now in {(current.Length == 0 ? YourLists : current)}. Up and Down choose the section; Enter or Ctrl+Enter moves the list there. For a section that does not exist yet, choose A new section, the last one, then Tab and type its name.",
+            form, "&Move",
+            () => SetSection(row, IsNew() ? name.Text.Trim() : section.SelectedIndex <= 0 ? string.Empty : choices[section.SelectedIndex]),
+            () => !IsNew() ? null
+                : name.Text.Trim().Length == 0 ? (name, "Type the section's name")
+                : choices.Contains(name.Text.Trim(), StringComparer.OrdinalIgnoreCase) ? (name, $"There is a section called {name.Text.Trim()} already")
+                : null);
     }
 
     /// <summary>The list's Section field written (TK-3a.3).</summary>

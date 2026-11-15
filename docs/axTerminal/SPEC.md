@@ -49,7 +49,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
    chime and "Done". Ctrl+3 lands on `# Output 1`; Down reads the output line by line.
 2. A command fails: the chime and "Failed, exit code 1". Ctrl+3, then Ctrl+End and Up for the last lines.
 3. `git push` asks for a passphrase: after a moment of quiet, the question chime and "Asks: Enter passphrase for
-   key". Ctrl+Enter sends the field's text without recording it; "Sent, not recorded". The push goes on; "Done".
+   key". Actions, Send without recording sends the field's text without recording it; "Sent, not recorded". The push goes on; "Done".
 4. `npm start` runs on: lines arrive with their ticks; Ctrl+Shift+C: "Interrupt sent"; the prompt returns, "Done".
 5. Ctrl+R: the window's recent commands as a list, the newest first; Enter puts `dotnet test` back in the field, Enter
    again runs it. Or `i` in the view finds `# Input 1`, `2` twice finds `## Command`, Down, and Enter on the command line copies it into the field.
@@ -142,13 +142,13 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   the number is the item's mnemonic only while it is one digit no fixed item of the submenu has (PowerShell &7 keeps
   7), and from the tenth on there is none, so that no two items share one (AX-6; `ShellMenuLabels`, tested); an
   ampersand in a name is shown as one. The New session notice lists them as radio buttons after the
-  built-in shells and before Custom, the one in use selected. **Add a shell…** opens the notice "Add a shell" with the
-  field "Type the shell's name" and the buttons **Next** (Enter) and **Cancel** (Escape): a blank name says "Type a
-  name", a name a built-in shell, Custom ("Custom" or "Custom shell") or one of the user's already has (case ignored)
-  says "A shell named <name> is already there", and the notice stays; Next opens the notice "Add a shell" with the
-  field "Type the command line that starts
-  it" ("The command line that starts <name>, as typed at a prompt, for example cmd.exe /k or pwsh -NoProfile…") and
-  **Add** (Enter): a blank line says "Type the command line" and the notice stays; Add keeps the shell and says "Added
+  built-in shells and before Custom, the one in use selected. **Add a shell…** opens one form (bundle AX-8.10, since 2026-11-14; two notices, one
+  after the other, before), "Add a shell", with the fields "Type the shell's name" and "Type the command line that
+  starts it" (as typed at a prompt, for example cmd.exe /k or pwsh -NoProfile) and the buttons **Add** (Enter or
+  Ctrl+Enter) and **Cancel** (Escape); Tab moves between them. A blank name says "Type a name", a name a built-in
+  shell, Custom ("Custom" or "Custom shell") or one of the user's already has (case ignored) says "A shell named
+  <name> is already there", a blank command line says "Type the command line", each with the edge sound and the focus
+  in that field, and the form stays; Add keeps the shell and says "Added
   <name>"; nothing is started. **Remove a shell ▸** lists them as "1. Remove name" ("No shells of your own yet" when
   there are none; the word Remove keeps their names in the command palette apart from Switch shell's); one chosen is
   taken off the list and "Removed <name>" said. When it is the shell in use, the machine's default built-in shell
@@ -218,7 +218,9 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   stays (AT-4.2). Every Enter is an exchange, also one that answers a running program (AT-D3).
 - AT-3.3 **No send lock** (axClaude D12): while a command runs, the text goes at once as input to the running program
   (an answer, or what the shell reads next), with its block; the status keeps the running command's name.
-- AT-3.4 **Send without recording** (Ctrl+Enter in the field; Shell → Send without recording): the text goes as on
+- AT-3.4 **Send without recording** (Actions → Send without recording, and the command palette; no key since
+  2026-11-14, when Ctrl+Enter became the bundle's main action, AX-8.10 rule 3, and in the command field sends the
+  command exactly as Enter does): the text goes as on
   Enter, with no block, no entry in the recent commands and nothing in the log; "Sent, not recorded"; while it runs,
   the status bar and Ctrl+Q say "a command sent without recording" in the command's place (until 2026-10-23 the
   command itself stood there). For passphrases and tokens that a program asks for (AT-D3).
@@ -317,7 +319,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   Show current folder in ▸ (File Explorer Ctrl+W | axClaude | axGIT | axFile), on the shell's current directory | ─ |
   Export transcript… Ctrl+S | Exit Alt+F4. **Actions (A)** ("Operations" in 5.7.0; the bundle's eight since 2026-11-11, AX-9.1):
   Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent
-  commands… Ctrl+R | Send without recording (Ctrl+Enter in the command field) | ─ | What is running Ctrl+Q.
+  commands… Ctrl+R | Send without recording (no key) | ─ | What is running Ctrl+Q.
   **Navigation (N):** axClaude's Navigation menu with the kinds the terminal has: Command field Ctrl+1 | Terminal
   Ctrl+2 | Latest output Ctrl+3 | ─ | Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | ─ | Next bookmark |
   Previous bookmark (the other quick keys are the terminal's letters, named in the F1 text). **Context (C)** (AX-9.11): Copy
@@ -334,10 +336,10 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 - AT-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P (the command palette, AX-10), the control keys, Ctrl+F, F3,
   Shift+F3, Ctrl+S, Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up and Ctrl+Down with Shift, Alt+F4. Window-specific (`AxTerminalKeys`): Ctrl+N, Ctrl+Shift+R,
   Ctrl+L, Ctrl+W, Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+Shift+C, Shift+Escape, Ctrl+R, Ctrl+Q, Ctrl+P, Ctrl+Space, Ctrl+Shift+K; in
-  the field Enter, Shift+Enter, Ctrl+Enter, Escape; in the view the quick keys `i`, `o`, `h`, `1` to `6`, `p`, `s`,
+  the field Enter, Shift+Enter, Escape (Ctrl+Enter there is the bundle's main action, AX-8.10: it sends as Enter does); in the view the quick keys `i`, `o`, `h`, `1` to `6`, `p`, `s`,
   `k` with Shift, `m`, `l`, Enter, Escape, Backspace, and Ctrl+Alt with `i`, `o`, `h`, `p`, `s`, `k`. axClaude's `c`,
   `t`, `d`, `e`, `q` and `r` have no kind here and do nothing. The collision test covers the table and lists the keys
-  axClaude uses otherwise (Ctrl+N, Ctrl+R, Ctrl+L, Ctrl+Enter).
+  axClaude uses otherwise (Ctrl+N, Ctrl+R, Ctrl+L).
 - AT-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axTerminal/user-guide.md` is embedded (Help → User
   guide); About is the bundle's (AX-9.9).
 
@@ -426,9 +428,11 @@ its notes record what moved.
   already support through their prompt; the app injects its wrapper for the session without touching the user's
   profile; without marks the app degrades to a plain transcript rather than guessing. The `C` mark is not needed: the
   app sends the `\r` itself and knows when a command starts.
-- **AT-D3 Every Enter is an exchange; Ctrl+Enter is the one that leaves no trace.** One rule for the record (the
+- **AT-D3 Every Enter is an exchange; Send without recording is the one that leaves no trace.** One rule for the record (the
   transcript is the log of what was typed and what came back, a program's questions and their answers included) and
-  one key for the secrets. A separate "input to a running command" kind was considered and dropped: a second block
+  one command for the secrets. It was Ctrl+Enter until 2026-11-14; the user gave that key to the main action in
+  every window (bundle AX-8.10 rule 3), so the command is in the Actions menu and the palette with no key, and
+  Ctrl+Enter in the field sends as Enter does. A separate "input to a running command" kind was considered and dropped: a second block
   shape to learn for the rare case.
 - **AT-D4 Enter on a line copies the bare line.** axClaude's quote markers exist so that Claude can tell the quoted
   line from the comment; a shell wants the command itself, to run or edit it.

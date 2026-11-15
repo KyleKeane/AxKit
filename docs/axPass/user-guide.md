@@ -31,7 +31,9 @@ installed; axPass never decrypts the file itself.
   to its fields. Type the start of a name to jump to it.
 - **The detail pane**, on the right: the entry's fields, "Title, text, Gmail", "UserName, user name, sam",
   "Password, password, hidden", "URL, text, …", "Notes, long text, …". Tab, Ctrl+Tab or F6 go there; Escape, Tab,
-  Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 come back. A row reads its user name once the entry has been read.
+  Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 come back. A row reads its user name once the entry has been read. Right
+  and Left change nothing in this pane and play the edge sound: in the other item apps they step through a choice and
+  check or uncheck a check, and a user name or a password never changes on an arrow key.
 
 The password is never spoken, never shown and never written anywhere by axPass.
 

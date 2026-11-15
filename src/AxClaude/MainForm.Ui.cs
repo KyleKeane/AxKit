@@ -40,6 +40,8 @@ internal sealed partial class MainForm
         Add(claude, new Command("Force Claude to res&tart", AxClaudeKeys.RestartClaude, RestartClaude) { Mark = CommandMark.Act });
         claude.DropDownItems.Add(new ToolStripSeparator());
         claude.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Send &message", null, (_, _) => SendInput()) { ShortcutKeyDisplayString = "Enter in the message field" }, CommandMark.Act));
+        // Ctrl+Enter, the bundle's main action (AX-8.10 rule 3): in the message field it sends the message, as Enter does.
+        AddKey(new Command("Send the message", BundleKeys.MainAction, SendInput) { When = () => Input.Focused, Mark = CommandMark.Act });
         Add(claude, new Command("Send &queued messages now", AxClaudeKeys.SendNow, SendNow) { Mark = CommandMark.Act });
         // The interrupt key (FR-2.3). Ctrl+Escape opens the Start menu and never reaches the app.
         Add(claude, new Command("&Interrupt", AxClaudeKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });

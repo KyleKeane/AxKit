@@ -14,11 +14,13 @@ TK and IA material and moves into those specs when built.
 
 ## 1. Summary
 
-- **F4 in every window** (`BundleKeys.Report`, AX-8.2) opens the notice **Report to axKit** in the window, with the
-  field for the user's words focused. Enter sends; Tab reaches the kind, the context fields and the buttons. The axKit
+- **F4 in every window** (`BundleKeys.Report`, AX-8.2) opens the notice **Report to axKit** in the window, a form of
+  standard controls with the field for the user's words focused (section 3; bundle AX-8.10). Enter there makes a new
+  line; Tab reaches the kind, the box for more detail, what is sent with the report and the buttons; Ctrl+Enter or
+  the Send button sends; Escape cancels and keeps nothing. The axKit
   menu has it as "Report a bug or an idea…" and, beside it, "Your reports", which opens the list of reports in axTask;
   the command palette lists both (AX-10.2).
-- **Saved first, sent second.** Enter writes the report as an item of the axTask list `Reports` under the user's axKit
+- **Saved first, sent second.** Send writes the report as an item of the axTask list `Reports` under the user's axKit
   data folder, then sends it to GitHub as an issue of the reports repository over GitHub's REST API, through axKit's
   own reporter account, whose token ships inside the executable: nothing to sign in to (RP-D2). No network or a refusal
   leaves the item marked "Not sent yet", and it goes with the next report or when the list is opened (RP-D3).
@@ -52,39 +54,69 @@ TK and IA material and moves into those specs when built.
 
 ## 3. The form: the notice "Report to axKit"
 
-One notice (`OverlayPanel`, bundle rule 2), its controls in Tab order, each named as an instruction (the user's rule),
-one announcement per move:
+A form of standard controls, used the standard way (docs/axKit/SPEC.md AX-8.10; the user's decisions of 2026-11-14,
+RP-D14): one notice (`OverlayPanel`, bundle rule 2) with its text at the top, then real controls in Tab order, each
+read by NVDA itself, then the buttons. The focus starts in the first control, ready to type.
 
-1. **"Type your report; Enter sends it, Shift+Enter starts a new line"**: a multi-line field, focused when the notice
-   opens, empty. Enter sends (the message field's rule, axClaude D11); Shift+Enter a line break. Enter on an empty field:
-   the edge earcon and "Type a few words first".
-2. **"Kind"**: a list of three, Feedback (selected), Bug, Feature request; type-to-find reaches them (AX-8.6). NVDA
-   reads the selected kind as the list moves, and the app adds nothing (AX-7).
+The notice's text, the explanation and disclaimer, never shortened away and never a field of its own: "A report goes
+to axKit's maintainer. It is encrypted on your computer and stored in a private repository on GitHub; only the
+maintainer can read it. Nothing in it names you unless you write it. Type your words; Enter makes a new line. Tab goes
+on to the kind, the box for more detail and what is sent with your report. Ctrl+Enter or the Send button sends. Escape
+cancels." It says the form's keys itself; no line made from the buttons follows it.
+
+The controls, in Tab order: four stops, then the buttons. The numbers are the ones this document and the code cite
+(RP-3 item n), kept from the form of 2026-11-07:
+
+1. **"Your report"**: a text box of several lines, focused when the form opens, empty. Enter makes a new line, as in
+   every text box, and never sends; the window says "new line" (bundle AX-7.8).
+2. **"Kind"**: a list of three, Feedback (selected), Bug, Feature request; Up and Down move, type-to-find reaches
+   them (AX-8.6). NVDA reads the selected kind as the list moves, and the app adds nothing (AX-7).
 2a. **"Add detail that may name your files: the window's title, the focused item, what the window said, the log as it
-   is"**: a check box, not checked. The four fields after it hold the plain form (RP-4.2a) while it is not checked and
-   the fuller form once it is; checking or unchecking it fills them afresh.
-3. **"App and version"**: read-only text, "axClaude 5.0.1, Windows 11 build 26200, NVDA 2025.3" (NVDA's version from
-   its running process, "NVDA not running" otherwise). The fuller form adds the window's title, redacted.
-4. **"What you were doing: the last actions"**: a multi-line field, editable, oldest first, one per line: the commands
-   run, "12 s ago: Find, Ctrl+F". The fuller form adds what the window said and the notices it showed, "12 s ago,
-   said: 3 matches" (section 4).
-5. **"Where the focus was"**: a one-line field, editable: the kind of control and the place, "a list, item 7 of 40",
-   "a text field, line 1 of 1". The fuller form names the control and a list's item: "Files, item 7 of 40: notes.md",
-   "Message to Claude, line 1 of 1 (the text is not included)"; never an edit field's text.
-6. **"Log lines"**: a multi-line field, editable: the errors of the last day, at most twenty lines, every path and
-   every quoted text masked. The fuller form holds the log's last twenty lines as they are, redacted; the user deletes
-   what they do not want sent.
-7. **"Title"**: a one-line field, filled from the first line of the report (eighty characters at most) when the user
-   Tabs past the first field or presses Enter there; editable.
-8. **Send** (Enter anywhere but a multi-line field, the notice's default button) and **Cancel** (Escape).
+   is"**: a check box, not checked; Space toggles it and it says "checked" or "not checked" (AX-8.8). It decides
+   which form of the next control's content is shown and sent.
 
-- **RP-3.1 What is said.** Opening: "Report to axKit" and the first field's name, as every notice. Sending: "Sent, report
-  12" with the done chime (the number is the report's in the maintainer's list, to quote to him; "issue" is not said,
-  since it would name a place the user cannot open); or "Saved; not sent yet, no network. It goes with the next report"; or, when this
-  build or version cannot send (RP-6.4, RP-6.5), the notice that says why, with Copy report. Escape with words typed: "Kept as a draft in Your
-  reports" (RP-D6); with none: "Cancelled".
-- **RP-3.2 Nothing is lost.** The report is written to the Reports list before any network is touched, so a failed send
-  is a saved item with its reason in the Status field, and a crash mid-way leaves the file.
+Items 3 to 6 are one control, the fourth stop: **"What is sent with your report"**, a text box of several lines that
+is only read. Under four short labels, with a blank line between them and "none" for an empty part, it shows what the
+report carries of the window (`ReportPrivacy.Shown`):
+
+3. **"App and version:"** "axClaude 5.0.1, Windows 11 build 26200, NVDA 2025.3" (NVDA's version from its running
+   process, "NVDA not running" otherwise). The fuller form adds the window's title, redacted.
+4. **"Last actions:"** oldest first, one per line: the commands run, "12 s ago: Find, Ctrl+F". The fuller form adds
+   what the window said and the notices it showed, "12 s ago, said: 3 matches" (section 4).
+5. **"Where the focus was:"** the kind of control and the place, "a list, item 7 of 40", "a text field, line 1 of 1".
+   The fuller form names the control and a list's item: "Files, item 7 of 40: notes.md", "Message to Claude, line 1
+   of 1 (the text is not included)"; never an edit field's text.
+6. **"Log lines:"** the errors of the last day, at most twenty lines, every path and every quoted text masked. The
+   fuller form holds the log's last twenty lines as they are, redacted.
+
+While the check box is not checked the box holds the plain form (RP-4.2a); once it is checked, the fuller form;
+checking or unchecking fills it afresh. The report carries exactly the context the box shows: the four parts are not
+edited in the form (until 2026-11-14 each was a field of its own that could be changed). A user who does not want a
+part sent leaves the box unchecked, or cancels.
+
+7. **No title field** (there was one until 2026-11-14). The report's title is the first line of the user's words,
+   eighty characters at most (`Report.TitleFrom`). It is sealed inside the report, and the issue's own title never
+   used it (RP-6.1a).
+8. **Send**, the notice's default button, and **Cancel**.
+
+- **RP-3.1 What is said.** Opening: NVDA reads "Your report", the control the focus lands in; then the window says the
+  notice's text once, so that the disclaimer is heard without leaving the field. Sending: "Sent, report 12" with the
+  done chime (the number is the report's in the maintainer's list, to quote to him; "issue" is not said, since it
+  would name a place the user cannot open); or "Saved; not sent yet, no network. It goes with the next report"; or,
+  when this build or version cannot send (RP-6.4, RP-6.5), the notice that says why, with Copy report. Escape:
+  "Cancelled", whatever was typed; nothing is kept (RP-D13).
+- **RP-3.2 Nothing sent is lost.** The report is written to the Reports list before any network is touched, so a
+  failed send is a saved item with its reason in the Status field, and a crash mid-way leaves the file. A form the
+  user cancels is not a report and leaves nothing.
+- **RP-3.3 Drafts of before.** Until 2026-11-14 Escape with words typed saved the report with the status Draft
+  (RP-D6). Those items stay in Your reports with that status, to be read, changed or deleted there; no new draft is
+  made.
+- **RP-3.4 The keys.** Tab and Shift+Tab move through the controls and the buttons in the order above, and
+  Shift+Tab from the first control reaches the notice's text. Ctrl+Enter presses Send from any control (the bundle's
+  main action, AX-8.10). Enter makes a new line in "Your report"; in the kind's list, on the check box and in "What is
+  sent with your report" it presses Send, the default button, as Windows does in a dialog; on a button it presses that
+  button. The form has no one-line text box. Escape cancels the form from anywhere. Send with no words typed, however
+  it was pressed: the focus goes to "Your report" with the edge earcon and "Type a few words first"; nothing is sent.
 
 ## 4. What is gathered, and what never is
 
@@ -110,7 +142,7 @@ one announcement per move:
   the folder or file an app was started on, and nothing older. The fuller form (the title, the names, the spoken
   lines, the log's last lines as they are, each through `Redaction` as before) is the user's own choice, the check
   box of RP-3 item 2a, whose name says that it may name their files. What cannot be ruled out in the plain form: an
-  error's message that names something without quotes and without a path; the fields stay readable and editable.
+  error's message that names something without quotes and without a path; what is sent stays readable in the form before Send, in its one box (RP-3).
   Copies released before this (5.8.0 and earlier) send the fuller form.
 - **RP-4.3 Redaction.** Every prefilled field goes through `Redaction` (AxKit.Core, S-20) before it is shown: the
   account's paths read `<user>`, an e-mail address `<email>`. The user reads what will be sent.
@@ -346,9 +378,11 @@ levers are built now.
   a share or a mapped drive the key says "Not started: axTerminal would run in a folder that is not on a drive of this
   computer" and starts nothing, since a `list.json` may come from a list the user did not write (security audit S-5's
   rule; the AI tools' `axkit_open` never starts the two at all, mcp.md; 2026-11-09).
-- **RP-8.2 Assigning them.** Actions → "Action keys…": a notice listing the nine keys with their names ("Ctrl+1.
-  Done", the full stop as AX-8.5's pause); Enter on one opens its form: Name; What (Set fields, Move to a list,
-  Open); the value; Delete clears it. Written into `list.json`, so axJSON (Ctrl+J) edits them too.
+- **RP-8.2 Assigning them.** Actions → "Action keys…": one form of standard controls (bundle AX-8.10, since
+  2026-11-14; a list of the keys and then up to three notices before): the list of the nine keys with their names
+  ("Ctrl+1. Done", the full stop as AX-8.5's pause); the name, where an empty one removes the key; a list of what the
+  key does (Set fields, Move to a list, Open); and the value in a box of several lines. Moving through the keys fills
+  the other fields; Ctrl+Enter or Keep writes it. Written into `list.json`, so axJSON (Ctrl+J) edits them too.
 - **RP-8.3 Shown everywhere a command is.** Context on an item lists the assigned actions with their keys, so the palette and
   F1 list them (AX-10.2); the names are the user's.
 - **RP-8.4 All tasks moves to Ctrl+0** (TK-7), so the nine digits are free for actions in every list (RP-D7).
@@ -359,7 +393,7 @@ levers are built now.
 
 ## 9. Privacy and safety
 
-- Everything sent is in fields the user can read and change before Enter (RP-3), redacted first (RP-4.3), never the
+- Everything sent is shown in the form before Send, the user's words in a field they type and the rest in a box they can read (RP-3), redacted first (RP-4.3), never the
   text of an edit field or a conversation (RP-4.2). Nothing names the user: the reporter account is axKit's, the
   reporter id is a random id of the install (RP-6.3). A report is sealed on the user's computer for the maintainer's
   key and stored in a private repository (RP-4.4, RP-6.1a), said at consent and in the form's text. The sender touches the network only on the user's action (RP-6.7). The reporter token can reach one
@@ -389,6 +423,7 @@ levers are built now.
 - **RP-D4 F4, bundle-wide**; Ctrl+P is three windows' own (RP-2.1).
 - **RP-D5 One key, one kind of action, as data in `list.json`**: set, move or open, no scripting (B-10).
 - **RP-D6 Escape keeps a draft** when words were typed: a blind user's Escape by habit must not lose a paragraph.
+  **Reversed on 2026-11-14 by RP-D13**; kept here as the record of what the form did from 5.1.0 until then.
 - **RP-D7 All tasks to Ctrl+0**, the digits to the list's actions.
 - **RP-D10 axTask is local only; the GitHub lists are removed** (the user, 2026-11-14, in two steps the same day).
   First: the GitHub lists only read; the actions on an issue (the kinds, Close, Reopen, Comment, Block this reporter,
@@ -418,6 +453,19 @@ levers are built now.
   half-minute gap stays); for real abuse the lever is revoking the reporter token (RP-6.4). The report sender
   therefore contacts two addresses of GitHub: the list's raw file, a read without a token, and the API that takes
   the sealed report.
+- **RP-D13 2026-11-14: Escape cancels the report whole, and no draft is kept** (the user; bundle AX-8.10 rule 7).
+  Escape on a form cancels it all, as Windows does: this reverses RP-D6. Reports saved as drafts before stay in Your
+  reports with the status Draft (RP-3.3); Escape makes no new one, and the window says "Cancelled".
+- **RP-D14 2026-11-14, late afternoon: the report form is standard controls** (the user, after trying the form built
+  that morning as one list of fields with a Send row, which he withdrew: it did not open ready to type, sending took
+  too many steps, too much was read aloud, the disclaimer was buried, and it did not feel like a form; "we need to
+  just go with standard form controls so that user expectations are met and that we are teaching good habits"). So:
+  the form opens in the words, ready to type; Tab moves through real controls; plain Enter in the words is a new line
+  and never sends (a stray Enter had sent an unfinished report that morning, when Enter sent and Shift+Enter broke a
+  line); Ctrl+Enter or the Send button sends; the explanation and disclaimer are the notice's text, said as the form
+  opens; what the window adds is one box that is only read, four stops before the buttons where there were eight,
+  and the report carries that context as it is; the title field is gone, the title being the first line of the words.
+  The list form is not to be built again (bundle AX-8.10 rule 13).
 
 ## 11. Open questions, for the user when reading this
 

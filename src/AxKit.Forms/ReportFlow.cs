@@ -16,7 +16,7 @@ internal sealed class ReportFlow
 
     private const string ReportText =
         "A report goes to axKit's maintainer. It is encrypted on your computer and stored in a private repository on GitHub; only the maintainer can read it. Nothing in it names you unless you write it. "
-        + "Type your words and press Enter. Tab reviews the kind and what the window adds: the app, the last actions, where the focus was, the log lines, the title.";
+        + "Type your words; Enter makes a new line. Tab goes on to the kind, the box for more detail and what is sent with your report. Ctrl+Enter or the Send button sends. Escape cancels.";
 
     /// <summary>The agreement to the reports is recorded under this name, not the app's: every window sends the same way (RP-6.6).</summary>
     private const string ReportsConsentApp = "axKit";
@@ -34,8 +34,10 @@ internal sealed class ReportFlow
 
     /// <summary>
     /// F4 and axKit → Send a report… (RP-2, RP-3): the notice "Report to axKit" with the window's context filled in,
-    /// redacted, and the words field focused. Enter saves the report into the Reports list and sends it (RP-5, RP-6);
-    /// Escape keeps a draft when words were typed (RP-D6).
+    /// redacted, as standard form controls (bundle AX-8.10), the focus in the words, ready to type, and the notice's
+    /// text, the explanation and disclaimer, said once as it opens. Send, or Ctrl+Enter in any control, saves the
+    /// report into the Reports list and sends it (RP-5, RP-6); Enter in the words is a new line; Escape cancels the
+    /// form whole and keeps nothing (RP-D13, which reversed RP-D6 on 2026-11-14).
     /// </summary>
     public void ShowReport()
     {
@@ -60,22 +62,10 @@ internal sealed class ReportFlow
             Redact(_form.FocusDescription()),
             _form.Recent.Lines(now).Select(Redact).ToList(),
             LogTail(ReportPrivacy.LogLines).Select(Redact).ToList());
-        var controls = new ReportControls(
-            plain,
-            full,
-            said => _form.Announce(said, true),
-            _form.Overlay.PressDefault);
-        _form.ShowNotice(new Notice(ReportTitle, ReportText,
-        [
-            new OverlayChoice("&Send", () => SaveReport(controls), IsDefault: true),
-            new OverlayChoice("Cancel", () => KeepDraft(controls), IsCancel: true),
-        ])
-        {
-            Custom = controls,
-            Accepts = controls.Ready,
-        });
-        // After the notice's own FocusStart, which lands on the field or the text, never on a Custom control's first field.
-        _form.BeginInvoke(controls.FocusWords);
+        // The bundle's form (AX-8.10): the focus in the words, ready to type, the text, the explanation and
+        // disclaimer, said once as it opens (rule 10), Send the default button, Ctrl+Enter from any control.
+        var controls = new ReportControls(plain, full);
+        _form.ShowForm(ReportTitle, ReportText, controls.Panel, "&Send", () => SaveReport(controls), controls.Missing, Cancelled);
     }
 
     /// <summary>
@@ -113,7 +103,7 @@ internal sealed class ReportFlow
         WindowMenu.Start(Dispatch.AxTask, AppPaths.ReportsFolder);
     }
 
-    /// <summary>Enter or Send: the report written into the Reports list first (RP-3.2), then sent with every unsent one (RP-6).</summary>
+    /// <summary>Send: the report written into the Reports list first (RP-3.2), then sent with every unsent one (RP-6).</summary>
     private void SaveReport(ReportControls controls)
     {
         var report = controls.ToReport();
@@ -130,25 +120,11 @@ internal sealed class ReportFlow
         SendReports(report);
     }
 
-    /// <summary>Escape or Cancel: words typed are kept as a draft in the Reports list (RP-D6); none typed cancels.</summary>
-    private void KeepDraft(ReportControls controls)
-    {
-        if (controls.Words.Trim().Length == 0)
-        {
-            _form.Announce("Cancelled", false);
-            return;
-        }
-
-        try
-        {
-            ReportFiles.Save(controls.ToReport(), ReportStatus.Draft, AppPaths.ReportsFolder);
-            _form.Announce("Kept as a draft in Your reports", false);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            _form.ShowError("Draft not kept", "The draft could not be written: " + ex.Message);
-        }
-    }
+    /// <summary>
+    /// Escape or Cancel: the form is cancelled whole, as Windows cancels a dialog, and nothing is kept (bundle AX-8.10
+    /// rule 7; RP-D13). Until 2026-11-14 words typed were kept as a draft (RP-D6); drafts saved then stay in Your reports.
+    /// </summary>
+    private void Cancelled() => _form.Announce("Cancelled", false);
 
     /// <summary>
     /// The sending (RP-6): a build without the token says so and offers the report for copying (RP-6.5); the first time,

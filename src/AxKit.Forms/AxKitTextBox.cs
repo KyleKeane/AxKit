@@ -132,7 +132,7 @@ public class AxKitTextBox : TextBox
         }
 
         _beforeEnter = null;
-        // A handler's Enter may have closed the notice that held the field (the report's Enter sends it).
+        // A handler's Enter may have closed the notice that held the field (a one-field notice's Enter answers it).
         if (IsDisposed)
         {
             return;

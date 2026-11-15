@@ -86,7 +86,22 @@ public sealed class KeyTests
         Assert.Empty(repeats);
     }
 
-    private static readonly IReadOnlyDictionary<string, string> F1Texts = new Dictionary<string, string>
+    /// <summary>
+    /// AX-8.10 rule 3: Ctrl+Enter is the bundle's main action and no window's own key. A window gives it its main
+    /// action as a command on <see cref="BundleKeys.MainAction"/> (axGIT's commit, axMCP's call, axFile's play the
+    /// folder, the console windows' send); a table that names Ctrl+Enter for anything else fails the collision test
+    /// above, and this one says why in plain words. axTerminal's "send without recording" lost the key on 2026-11-14.
+    /// </summary>
+    [Fact]
+    public void Ctrl_Enter_is_the_bundles_main_action_and_in_no_windows_table()
+    {
+        Assert.Equal(Keys.Control | Keys.Return, BundleKeys.MainAction);
+        Assert.Contains(BundleKeys.All, key => key.Key == BundleKeys.MainAction);
+        var own = Windows.Where(window => window.Value.Any(key => key.Key == BundleKeys.MainAction)).Select(window => window.Key).ToList();
+        Assert.True(own.Count == 0, "Ctrl+Enter is the bundle's main action (AX-8.10), not a window's own key: " + string.Join(", ", own));
+    }
+
+    private static readonly IReadOnlyDictionary<string, string> F1Texts =new Dictionary<string, string>
     {
         ["axDown"] = AxDown.HelpText.Shortcuts,
         ["axJSON"] = AxJSON.HelpText.Shortcuts,
@@ -148,7 +163,7 @@ public sealed class KeyTests
     [Fact]
     public void Every_F1_text_names_the_keys_every_window_has()
     {
-        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
+        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.MainAction, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
         var missing = new List<string>();
         foreach (var (window, text) in F1Texts)
         {
@@ -176,7 +191,7 @@ public sealed class KeyTests
         string[] known =
         [
             "Alt+Up", "Ctrl+Down", "Ctrl+J", "Ctrl+M", "Ctrl+Shift+N", "Ctrl+Up", "F2", "Left", "Right", "Shift+Tab", "Tab",
-            "Apps", "Backspace", "Ctrl+1", "Ctrl+2", "Ctrl+3", "Ctrl+4", "Ctrl+5", "Ctrl+6", "Ctrl+C", "Ctrl+D", "Ctrl+E", "Ctrl+Enter", "Ctrl+G", "Ctrl+I", "Ctrl+K", "Ctrl+L",
+            "Apps", "Backspace", "Ctrl+1", "Ctrl+2", "Ctrl+3", "Ctrl+4", "Ctrl+5", "Ctrl+6", "Ctrl+C", "Ctrl+D", "Ctrl+E", "Ctrl+G", "Ctrl+I", "Ctrl+K", "Ctrl+L",
             "Ctrl+N", "Ctrl+O", "Ctrl+P", "Ctrl+Q", "Ctrl+R", "Ctrl+Shift+A", "Ctrl+Shift+C", "Ctrl+Shift+F", "Ctrl+Shift+H", "Ctrl+Shift+I",
             "Ctrl+Shift+K", "Ctrl+Shift+L", "Ctrl+Shift+Q", "Ctrl+Shift+R", "Ctrl+Shift+S", "Ctrl+Shift+T", "Ctrl+Shift+W", "Ctrl+T",
             "Ctrl+W", "Ctrl+Z", "Delete", "Down", "Enter", "Escape", "F5", "O", "Shift+Enter", "Shift+Escape", "Shift+F10", "Space", "Up",

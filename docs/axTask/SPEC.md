@@ -66,7 +66,10 @@ marks a task done.
   idea.)
 - **TK-3a.3 A list's section** is the field Section (`text`) of its details (`list.json`), always shown first in the
   detail pane of a list, empty for Your lists. Enter on it changes it as any field; **Context, Move to section**
-  (Ctrl+M) chooses from a list of the sections there are, Your lists, and "A new section", which asks its name. A new
+  (Ctrl+M) opens one form (bundle AX-8.10), "Move <list>": the list "Choose the section" with Your lists, the sections
+  there are and "A new section", then the field "Type the new section's name, when you chose A new section", then Move
+  and Cancel. Enter or Ctrl+Enter moves the list; a new section without a name, or with a name a section has, is said
+  with the focus in the name's field and the form stays (a list and then a second notice until 2026-11-14). A new
   list (Ctrl+Shift+N) joins the section of the row selected. A section is renamed by moving its lists.
 
 ## 4. axTask's part of the shared shape
@@ -182,8 +185,13 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   an app by its verb on the item's file
   (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1). A digit without an action: the edge earcon and "No action
   on Ctrl+3 in this list; Actions, Action keys sets one"; outside a list, "Action keys act in a list: open one
-  first". Actions → Action keys… lists the nine keys ("Ctrl+1. Done", "Ctrl+3. not set"); Enter on one asks the
-  name (empty removes the key), what it does (set, move, open) and the value, and writes `list.json` as one undo step
+  first". Actions → Action keys… opens one form (bundle AX-8.10) with four controls in Tab order: the list "Choose
+  the key" with the nine keys ("Ctrl+1. Done", "Ctrl+3. not set"); "Type the action's name, or leave it empty to remove
+  the key"; the list "Choose what the key does" (set, move, open); and a box of several lines for the value, its
+  fields as Field: value lines, the list it moves to, or the field or app it opens; then Keep and Cancel. Moving
+  through the keys fills the other three with that key's action. Ctrl+Enter or Keep writes `list.json` as one undo
+  step; a value the kind cannot take is said with the focus in the value's box and the form stays (`ActionKeys.FromForm`;
+  a list and up to three notices, one after the other, until 2026-11-14)
   (RP-8.2). Context's Action keys submenu on an item shows the nine with the names the list gives them, so the palette and
   F1 list them (RP-8.3). All tasks moved to Ctrl+0 for them (RP-8.4).
 - **TK-7a.2 axTask is local only; the GitHub lists are gone** (the user's decision, 2026-11-14; RP-7, RP-D10).

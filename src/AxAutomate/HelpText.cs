@@ -29,7 +29,7 @@ public static class HelpText
         ## The detail pane, on the right
           On a step: its number, what it does, each of its values, what happens when it fails, what it reports, its blocks, its note, and the line of the file it comes from
           On a workflow: its title, what it covers, how many steps, its file and its format
-          Up, Down: move through the lines. Ctrl+Q: read the line whole
+          Up, Down: move through the lines. Ctrl+Q: read the line whole. Right and Left change nothing in this version: the edge sound
           Escape, Tab, Shift+Tab, Ctrl+Tab or F6: back to the navigator; during a run Escape stops the run instead
           After a run: "Last run:" with the outcome and what the runner saw, on the workflow and on the step that failed
 

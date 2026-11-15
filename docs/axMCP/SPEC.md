@@ -66,8 +66,12 @@ with Enter; a prompt is filled and fetched like a tool.
   scope"), Command (the program and the arguments as one line, or Address for a remote one), Folder, Environment ("2
   variables" and their names, never their values, which may be secrets), State, and the server's own name and version
   once it runs. Claude Code's entries are read only in axMCP (MP-D3): F2 and Delete on one say to use `claude mcp`.
-- MP-1.3 **Your servers**: Ctrl+N at the top level asks the name, then the command line (split as Windows splits one,
-  `CommandLines`), then the folder (optional; the folder in hand otherwise, or the profile folder); Delete removes one
+- MP-1.3 **Your servers**: Ctrl+N at the top level opens one form (bundle AX-8.10, since 2026-11-14; three notices,
+  one after the other, before), "Add server", with three fields in Tab order: "Type the name of the server", "Type the
+  command line that starts it" (split as Windows splits one, `CommandLines`) and "Type the folder to start it in, or
+  leave it empty" (the folder in hand filled in; empty means that folder, or the profile folder), then Add and Cancel.
+  Enter or Ctrl+Enter adds it; a missing or taken name, a missing command line or a folder that does not exist is said
+  with the focus in its field, and the form stays; Delete removes one
   after the bundle's yes-or-cancel question; F2 renames; Ctrl+Z takes the last of these back. Kept in `axMCP.json`
   (MP-8). A name already in the list is refused with the notice kept open. On any other level Ctrl+N says "Servers
   are added at the top level"; Ctrl+Shift+N says that Ctrl+N adds one.
@@ -143,11 +147,13 @@ with Enter; a prompt is filled and fetched like a tool.
 ### MP-6 Keys
 
 Bundle-wide keys (AX-8) as in every window; the item apps' keys (item-apps section 3, `ItemKeys`) for the panes,
-Enter, Right, Left, Tab, F2, Delete, Ctrl+N, Ctrl+Shift+N, Ctrl+Z, Ctrl+Q and F5. Window-specific, in `AxMCPKeys`:
+Enter, Right, Left, Tab, F2, Delete, Ctrl+N, Ctrl+Shift+N, Ctrl+Z, Ctrl+Q and F5 (in the detail pane Right and Left
+step through a choice and check or uncheck a check, item-apps IA-5.6). Ctrl+Enter is the bundle's main action (AX-8.10,
+`BundleKeys.MainAction`): here it calls the tool or fetches the prompt selected (MP-3.4, MP-5.2). Window-specific, in
+`AxMCPKeys`:
 
 | Key | Does |
 | --- | --- |
-| Ctrl+Enter | Call the tool or fetch the prompt selected (MP-3.4, MP-5.2) |
 | Ctrl+J | Open the last result as JSON in axJSON (MP-3.6) |
 | Ctrl+Shift+S | Stop the server (MP-2.3) |
 
@@ -169,7 +175,7 @@ claude mcp add"; "Names here are the server's"; "Select a server first", "Select
 then into Tools", "Select a tool or a prompt first", "Select a resource first"; "No description" or the description
 whole (Enter on it); a field's change as the item apps say it ("path (required): C:\work"). Notices: the consent notice
 (AX-11.4); "Could not start <server>"; "Result of <tool>"; "<tool> failed"; a resource's text under its name; a prompt's
-messages under its title; "Remove <name>?" (yes or cancel); the three one-field notices of Add server and the one of a
+messages under its title; "Remove <name>?" (yes or cancel); the form Add server and the one-field notice of a
 resource template; "Last result" when the file cannot be written.
 
 ### MP-8 Settings

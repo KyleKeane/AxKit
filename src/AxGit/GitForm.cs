@@ -86,7 +86,7 @@ public sealed partial class GitForm : AxKitForm
         var actions = new ToolStripMenuItem();
         Git(Add(actions, new Command("Stage &all", AxGitKeys.StageAll, () => Do(() => StageAllAsync(stage: true))) { Mark = CommandMark.Act }));
         Git(Add(actions, new Command("&Unstage all", AxGitKeys.UnstageAll, () => Do(() => StageAllAsync(stage: false))) { Mark = CommandMark.Act }));
-        Git(Add(actions, new Command("&Commit...", AxGitKeys.Commit, Commit) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("&Commit...", BundleKeys.MainAction, Commit) { Mark = CommandMark.Act }));
         actions.DropDownItems.Add(new ToolStripSeparator());
         Git(Add(actions, new Command("&New branch...", AxGitKeys.NewBranch, NewBranch) { Mark = CommandMark.Act }));
         Git(Add(actions, new Command("&Fetch", AxGitKeys.Fetch, () => Do(() => ToServerAsync(FetchAsync))) { Mark = CommandMark.Act }));

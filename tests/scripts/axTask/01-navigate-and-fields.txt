@@ -116,14 +116,22 @@ keys escape
 expect focus Due, date, 
 expect focus , Friday
 
-# 2.3 A new field, a choice of two, chosen.
+# 2.3 A new field, a choice of two: one form (bundle AX-8.10), the title, the type as a list, the options. A choice
+# without options is refused with the focus in the options' field.
 keys ctrl+n
+expect state "notice":"New field"
+expect focus "name":"Type the field's title"
 type Priority
-keys enter
+keys tab
+expect focus "name":"Choose what the field holds"
 expect focus text
 type cc
 expect focus choice
 keys enter
+expect said ♪ Edge
+expect said ! Type at least one option
+expect state "notice":"New field"
+expect focus "name":"Type the options of a choice
 type High, Low
 keys enter
 expect said ! Added Priority, choice of 2
@@ -134,12 +142,47 @@ keys down
 keys enter
 expect said ! Priority: Low
 
+# 2.4 Right and Left change the field in focus (IA-5.6, bundle AX-8.10 rule 4). A choice: the previous and the next
+# value, said once, the edge sound at its ends, never round; each change one step for Ctrl+Z.
+keys left
+expect said ! Priority: High
+keys left
+expect said ♪ Edge
+keys right
+expect said ! Priority: Low
+keys right
+expect said ♪ Edge
+keys ctrl+z
+expect said ! Undone: Priority: Low
+expect focus Priority, choice, High
+keys right
+expect said ! Priority: Low
+
 # 2.5 Alt+Up moves the field; at the top of the fields, the edge sound.
 keys alt+up
 expect said ! Moved up: Priority
 keys home
 keys alt+up
 expect said ! Top of the fields
+
+# 2.4 again, a check and a text: Right checks and Left unchecks, a direction and not a toggle (the edge sound when it
+# is so already); on any other kind of field both keys play the edge sound and change nothing.
+keys right
+expect said ♪ Edge
+keys left
+expect said ♪ Edge
+expect focus Title, text, Fix the tap
+keys down
+expect focus Done, check, not done
+keys left
+expect said ♪ Edge
+keys right
+expect said ! Done: done
+keys right
+expect said ♪ Edge
+keys left
+expect said ! Done: not done
+keys home
 
 # 2.6 The Title keeps its name; F2 in the navigator renames the item and its file.
 keys f2

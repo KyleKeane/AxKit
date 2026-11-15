@@ -42,20 +42,26 @@ keys enter
 expect said ! http servers need a network connection of axKit's own, which this version does not make
 expect focus zzremote, http, not started by this version
 
-# 5.1 Ctrl+N at the top: the name, the command line, the folder prefilled with the folder in hand; the row selected
-# under Your servers, its details the command line typed.
+# 5.1 Ctrl+N at the top: one form (bundle AX-8.10), the name, the command line, the folder prefilled with the folder
+# in hand, Tab between them; the row selected under Your servers, its details the command line typed.
 keys ctrl+n
-expect state "notice":"Add server","noticeText":"A name for the list."
-expect focus "name":"Name","role":"Text","value":""
+expect state "notice":"Add server"
+expect focus "name":"Type the name of the server","role":"Text","value":""
+expect said A server of your own: a name for the list
 type probe
+# Enter in a one-line field presses Add: the command line is missing, so the focus goes there, the form kept.
 keys enter
-expect state The command line that starts probe, as a terminal would run it.
-expect focus "name":"Command line","role":"Text","value":""
+expect said ♪ Edge
+expect said ! Type the program and its arguments
+expect state "notice":"Add server"
+expect focus "name":"Type the command line that starts it","role":"Text","value":""
 type cmd /c echo
-keys enter
-expect state The folder to start it in; empty for the folder axMCP was started on, or your profile folder.
-expect focus "name":"Folder","role":"Text"
-keys enter
+keys tab
+expect focus "name":"Type the folder to start it in, or leave it empty","role":"Text"
+keys tab
+expect focus Add
+keys shift+tab
+keys ctrl+enter
 expect said ! Added probe
 expect focus probe, stdio, stopped
 expect state "notice":null
@@ -66,13 +72,14 @@ expect focus Command: cmd /c echo
 keys escape
 expect focus probe, stdio, stopped
 
-# MP-1.3 A name already in the list is refused with the notice kept open.
+# MP-1.3 A name already in the list is refused with the form kept open and the focus in the name.
 keys ctrl+n
-expect focus "name":"Name"
+expect focus "name":"Type the name of the server"
 type fake
 keys enter
 expect said ! There is a server named fake already
-expect state "notice":"Add server","noticeText":"A name for the list."
+expect state "notice":"Add server"
+expect focus "name":"Type the name of the server"
 keys escape
 expect state "notice":null
 expect focus probe, stdio, stopped

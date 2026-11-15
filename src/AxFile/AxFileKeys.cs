@@ -120,8 +120,8 @@ public static class AxFileKeys
 
     public const Keys LastItemAlso = Keys.End;
 
-    /// <summary>In the folder list: axMedia on the folder, its media files from the first (AF-5).</summary>
-    public const Keys PlayFolder = Keys.Control | Keys.Return;
+    // Ctrl+Enter is the bundle's main action (BundleKeys.MainAction, AX-8.10): in the folder list, axMedia on the
+    // folder, its media files from the first (AF-5).
 
     /// <summary>In the folder list: the entry, or the marked entries, to the end of axMedia's queue (AF-5).</summary>
     public const Keys AddToQueue = Keys.Control | Keys.Shift | Keys.Q;
@@ -171,7 +171,6 @@ public static class AxFileKeys
         ("Into the folder (in the folder list); into the completed folder (in the Go to folder field)", IntoFolder),
         ("Up one level (in the folder list)", OutOfFolder),
         ("The edge earcon at the last entry (in a list)", LastItemAlso),
-        ("Play the folder in axMedia (in the folder list)", PlayFolder),
         ("Add to axMedia's queue (in the folder list)", AddToQueue),
     ];
 }

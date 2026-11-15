@@ -12,8 +12,8 @@ public abstract partial class AxKitForm
 
     /// <summary>
     /// F4 and axKit → Send a report… (RP-2, RP-3): the notice "Report to axKit" with the window's context filled in,
-    /// redacted, and the words field focused. Enter saves the report into the Reports list and sends it (RP-5, RP-6);
-    /// Escape keeps a draft when words were typed (RP-D6).
+    /// redacted, as standard form controls with the words focused (bundle AX-8.10). Send, or Ctrl+Enter in any control,
+    /// saves the report into the Reports list and sends it (RP-5, RP-6); Escape cancels the form and keeps nothing (RP-D13).
     /// </summary>
     protected internal void ShowReport() => _reports.ShowReport();
 

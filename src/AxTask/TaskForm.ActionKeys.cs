@@ -146,6 +146,12 @@ public sealed partial class TaskForm
 
     // ---- Actions, Action keys (RP-8.2) ----
 
+    /// <summary>
+    /// Actions, Action keys (RP-8.2): one form (bundle AX-8.10): the nine keys as a list, then the name, what the key
+    /// does as a list of three, and what it sets, moves to or opens; Keep and Cancel. Moving through the keys fills the
+    /// other fields with that key's action. An empty name removes the key. (A list of the keys and then up to three
+    /// notices, one after the other, until 2026-11-14.) The rules are <see cref="ActionKeys.FromForm"/>, tested.
+    /// </summary>
     private void EditActionKeys()
     {
         if (_smart is not null || AtTop)
@@ -157,46 +163,32 @@ public sealed partial class TaskForm
         var folder = _folder;
         var keys = ActionKeys.Read(ItemFolder.ReadList(folder));
         var lines = Enumerable.Range(ActionKeys.First, ActionKeys.Last).Select(digit => ActionKeys.Spoken(digit, keys.GetValueOrDefault(digit))).ToList();
-        ChooseFromList("Action keys", $"The Ctrl+number keys of {ListTitle()}: Enter on one sets or changes it.", "Keys", lines, 0, chosen => EditActionKey(folder, chosen + ActionKeys.First));
-    }
+        var form = new FormControls();
+        var key = form.AddList("Choose the key", lines, 0);
+        var name = form.AddText("Type the action's name, or leave it empty to remove the key");
+        var kind = form.AddList("Choose what the key does", ActionKeys.KindNames, 0);
+        var value = form.AddLines("Type what it sets, one field per line as Field: value; or the list it moves to; or the field or app it opens", rows: 3);
+        int Digit() => Math.Max(0, key.SelectedIndex) + ActionKeys.First;
 
-    private void EditActionKey(string folder, int digit)
-    {
-        var current = ActionKeys.Read(ItemFolder.ReadList(folder)).GetValueOrDefault(digit);
-        AskText($"Ctrl+{digit}", "The action's name, as Context will show it on an item. Empty removes the key.", "Name:", "Name", current?.Name ?? string.Empty, "&Next", typed =>
+        // The fields hold the action of the key the list is on: filled at first and whenever the list moves.
+        void Fill()
         {
-            var name = typed.Trim();
-            if (name.Length == 0)
-            {
-                WriteActionKey(folder, digit, null);
-                return;
-            }
+            var current = keys.GetValueOrDefault(Digit());
+            name.Text = current?.Name ?? string.Empty;
+            kind.SelectedIndex = ActionKeys.KindIndex(current);
+            value.Text = ActionKeys.ValueText(current).ReplaceLineEndings("\r\n");
+        }
 
-            var kinds = new[] { "Set fields to values", "Move the item to a list", "Open a field's web address, or an app" };
-            var start = current?.Kind switch { ListAction.MoveKind => 1, ListAction.OpenKind => 2, _ => 0 };
-            ChooseFromList($"Ctrl+{digit}: {name}", "What the key does.", "What", kinds, start, kind =>
-            {
-                switch (kind)
-                {
-                    case 0:
-                        AskText($"Ctrl+{digit}: {name} sets", "One field per line, as Field: value. Done: done or not done for a check; Kind: Bug.", "Fields:", "Fields",
-                            current?.Set is { } set ? string.Join("\r\n", set.Select(pair => $"{pair.Key}: {FieldTypes.TextOf(pair.Value)}")) : string.Empty, "&Keep",
-                            text => WriteActionKey(folder, digit, new ListAction(name, Set: ActionKeys.ParseSetLines(text))),
-                            text => ActionKeys.ParseSetLines(text) is null ? "Type at least one line as Field: value" : null);
-                        break;
-                    case 1:
-                        AskText($"Ctrl+{digit}: {name} moves to", "The list's name, a list in the top folder.", "List:", "List", current?.Move?.Replace("../", string.Empty, StringComparison.Ordinal) ?? string.Empty, "&Keep",
-                            text => WriteActionKey(folder, digit, new ListAction(name, Move: "../" + text.Trim())),
-                            text => Directory.Exists(Path.Combine(TopFolder, text.Trim())) ? null : $"No list called {text.Trim()} in the top folder");
-                        break;
-                    default:
-                        AskText($"Ctrl+{digit}: {name} opens", "A field whose value is a web address, such as Issue, or an app for the item's file: json or file.", "Open:", "Open", current?.Open ?? string.Empty, "&Keep",
-                            text => WriteActionKey(folder, digit, new ListAction(name, Open: text.Trim())),
-                            text => text.Trim().Length == 0 ? "Type a field's title or an app" : null);
-                        break;
-                }
-            });
-        }, _ => null, required: false);
+        (ListAction? Action, string? Refused, bool InValue) Typed() =>
+            ActionKeys.FromForm(name.Text, kind.SelectedIndex, value.Text, list => Directory.Exists(Path.Combine(TopFolder, list)));
+
+        Fill();
+        key.SelectedIndexChanged += (_, _) => Fill();
+        ShowForm("Action keys",
+            $"The Ctrl+number keys of {ListTitle()}. Up and Down choose a key, and the fields after it show what it does. Tab goes on to the action's name, as Context will show it on an item, to what the key does, and to its fields as Field: value lines, the list it moves to, or the field or app it opens. In that last box Enter makes a new line. Ctrl+Enter or the Keep button keeps the key. An empty name removes it. Escape cancels.",
+            form, "&Keep",
+            () => WriteActionKey(folder, Digit(), Typed().Action),
+            () => Typed() is { Refused: { } refused } typed ? (typed.InValue ? value : name, refused) : null);
     }
 
     /// <summary>The list's details written with the key set or removed, one undo step.</summary>

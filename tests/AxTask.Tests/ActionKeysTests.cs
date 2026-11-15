@@ -103,4 +103,71 @@ public sealed class ActionKeysTests
         Assert.Null(ActionKeys.OpenRefusal(Dispatch.AxTerminal, Path.GetTempPath()));
         Assert.Null(ActionKeys.OpenRefusal(Dispatch.AxClaude, Path.Combine(Path.GetTempPath(), "code")));
     }
+
+    // ---- the form of one key (RP-8.2, bundle AX-8.10) ----
+
+    private static bool Later(string list) => list == "Later";
+
+    [Fact]
+    public void The_form_shows_a_keys_action_by_its_kind_and_its_value()
+    {
+        var keys = ActionKeys.Read(ItemDocument.Parse(ListText));
+        Assert.Equal(3, ActionKeys.KindNames.Count);
+        Assert.Equal((0, "Kind: Bug"), (ActionKeys.KindIndex(keys[1]), ActionKeys.ValueText(keys[1])));
+        // A check is written as it is typed, done or not done.
+        Assert.Equal((0, "Done: done"), (ActionKeys.KindIndex(keys[4]), ActionKeys.ValueText(keys[4])));
+        Assert.Equal((1, "Later"), (ActionKeys.KindIndex(keys[7]), ActionKeys.ValueText(keys[7])));
+        Assert.Equal((2, "Issue"), (ActionKeys.KindIndex(keys[8]), ActionKeys.ValueText(keys[8])));
+        // A key not set: the first kind, nothing typed.
+        Assert.Equal((0, string.Empty), (ActionKeys.KindIndex(null), ActionKeys.ValueText(null)));
+    }
+
+    [Fact]
+    public void The_forms_fields_make_the_action_of_the_kind_chosen()
+    {
+        var set = ActionKeys.FromForm(" Finish ", 0, "Done: done\r\nKind: Bug", Later);
+        Assert.Null(set.Refused);
+        Assert.Equal("Finish", set.Action!.Name);
+        Assert.Equal("sets Done: done, Kind: Bug", set.Action.Described);
+
+        var move = ActionKeys.FromForm("Park", 1, " Later ", Later);
+        Assert.Equal("../Later", move.Action!.Move);
+
+        var open = ActionKeys.FromForm("Web", 2, "Issue", Later);
+        Assert.Equal("Issue", open.Action!.Open);
+    }
+
+    [Fact]
+    public void What_a_key_shows_comes_back_as_the_same_action()
+    {
+        var keys = ActionKeys.Read(ItemDocument.Parse(ListText));
+        foreach (var action in keys.Values)
+        {
+            var again = ActionKeys.FromForm(action.Name, ActionKeys.KindIndex(action), ActionKeys.ValueText(action), Later);
+            Assert.Null(again.Refused);
+            Assert.Equal(action.ToJson().ToJsonString(), again.Action!.ToJson().ToJsonString());
+        }
+    }
+
+    [Fact]
+    public void An_empty_name_removes_the_key_whatever_else_is_typed()
+    {
+        Assert.Equal((null, null, false), ActionKeys.FromForm("  ", 1, "Nowhere", Later));
+    }
+
+    [Theory]
+    [InlineData(0, "no colon here", "Type at least one line as Field: value")]
+    [InlineData(0, "", "Type at least one line as Field: value")]
+    [InlineData(1, "", "Type the name of a list in the top folder")]
+    [InlineData(1, "Nowhere", "No list called Nowhere in the top folder")]
+    [InlineData(1, "Later\nSooner", "No list called Later Sooner in the top folder")]
+    [InlineData(2, " ", "Type one field's title or one app")]
+    [InlineData(2, "Issue\njson", "Type one field's title or one app")]
+    public void A_value_the_kind_cannot_take_is_refused_in_the_values_field(int kind, string value, string refused)
+    {
+        var typed = ActionKeys.FromForm("Name", kind, value, Later);
+        Assert.Null(typed.Action);
+        Assert.Equal(refused, typed.Refused);
+        Assert.True(typed.InValue);
+    }
 }

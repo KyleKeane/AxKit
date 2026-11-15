@@ -42,7 +42,7 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `TaskTools` with `ReachableList` (TK-8, docs/axKit/mcp.md MC-8, 2026-11-11): the AI tools' pure half: `Lists` (the top folder's lists by name, then each project's as "project / list"), `Find` (a list by its name, its own name when unique, or its full path when reached; a path elsewhere refused), `ItemOf` (an item as JSON, a password or user name field "protected"), `NewItem` (`ItemDocument.NewItem` with the template, then each typed value through `FieldTypes.Parse`; a missing field added, Notes as long text; link, password, user name refused). Tested in `TaskToolsTests`.
 - `ActionKeys` and `ListAction` (docs/axKit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
   `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Done"), `ApplySet`
-  (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines); an
+  (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines), and the form of one key, `KindNames`, `KindIndex`, `ValueText` and `FromForm` (what its fields make, or why they are refused); an
   action is `set`, `move` or `open`, with `Described`; `OpenRefusal` keeps an `open` of axClaude or axTerminal off a
   folder that is not on a drive of this computer (S-5's rule, 2026-11-09). Tested in `ActionKeysTests`. The GitHub
   lists that came with them (RP-7) were removed on 2026-11-14, when axTask became local only: a `"github"` member in a

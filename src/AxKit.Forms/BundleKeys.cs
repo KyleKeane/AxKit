@@ -19,6 +19,14 @@ public static class BundleKeys
     /// <summary>A question to Claude about this window, with what the window knows about itself (docs/axKit/ai-help.md AH-6); Windows' own key for help about the thing in front.</summary>
     public const Keys AskClaude = Keys.Shift | Keys.F1;
 
+    /// <summary>
+    /// The main action of where you are (AX-8.10 rule 3): a form sent from any of its fields, a long text kept from inside its box, a
+    /// notice's main button, and in a window its one main action (axGIT's commit, axMCP's call, axFile's play the
+    /// folder, a console window's send), which the window registers as a command on this key; the edge sound where
+    /// there is none.
+    /// </summary>
+    public const Keys MainAction = Keys.Control | Keys.Return;
+
     public const Keys NextControl = Keys.Control | Keys.Tab;
     public const Keys PreviousControl = Keys.Control | Keys.Shift | Keys.Tab;
     public const Keys NextControlAlso = Keys.F6;
@@ -58,6 +66,7 @@ public static class BundleKeys
         ("Command palette", CommandPalette),
         ("Report", Report),
         ("Ask Claude about this window", AskClaude),
+        ("The main action", MainAction),
         ("Next control", NextControl),
         ("Previous control", PreviousControl),
         ("Next control (F6)", NextControlAlso),

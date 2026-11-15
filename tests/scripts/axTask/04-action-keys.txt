@@ -46,23 +46,33 @@ expect focus Home, empty
 keys ctrl+z
 expect said Undone: Later: Fix the tap moved to Later
 expect focus Fix the tap
-# Step 2: List, Action keys: the nine keys read by digit; Ctrl+4 made "Finish", a set of Done: done, as one undo step.
+# Step 2: List, Action keys: one form (bundle AX-8.10): the nine keys read by digit, then the name, what the key
+# does and its value; moving through the keys fills the fields. Ctrl+4 made "Finish", a set of Done: done, as one
+# undo step; a name without a value is refused with the focus in the value's box.
 menu Action keys
 expect state "notice":"Action keys"
+expect focus "name":"Choose the key"
 expect focus Ctrl+1. Done
+keys tab
+expect focus "name":"Type the action's name, or leave it empty to remove the key","role":"Text","value":"Done"
+keys shift+tab
 keys down down down
 expect focus Ctrl+4. not set
-keys enter
-expect state "notice":"Ctrl+4"
+keys tab
+expect focus "name":"Type the action's name, or leave it empty to remove the key","role":"Text","value":""
 type Finish
-keys enter
-expect state "notice":"Ctrl+4: Finish"
+keys tab
+expect focus "name":"Choose what the key does"
 expect focus Set fields to values
-keys enter
-expect state "notice":"Ctrl+4: Finish sets"
+keys ctrl+enter
+expect said ♪ Edge
+expect said Type at least one line as Field: value
+expect state "notice":"Action keys"
+expect focus "name":"Type what it sets
 type Done: done
-keys enter
+keys ctrl+enter
 expect said Ctrl+4: Finish, sets Done: done
+expect state "notice":null
 keys ctrl+4
 expect said Finish: Done: done
 expect focus Fix the tap, done

@@ -117,10 +117,35 @@ public class ReportPrivacyTests
         Assert.Contains("_form.FocusDescription(named: false)", flow, StringComparison.Ordinal);
         Assert.Contains("ReportPrivacy.Commands(", flow, StringComparison.Ordinal);
         Assert.Contains("ReportPrivacy.Errors(", flow, StringComparison.Ordinal);
-        // The fields are filled from the plain form, and from the fuller one only by the box.
-        Assert.Contains("plain.App, plain.Where, plain.Actions, plain.Log", controls, StringComparison.Ordinal);
+        // What is sent starts as the plain form, shown and held, and becomes the fuller one only by the box.
+        Assert.Contains("_context = plain;", controls, StringComparison.Ordinal);
+        Assert.Contains("Fill(plain);", controls, StringComparison.Ordinal);
         Assert.Contains("Fill(_detail.Checked ? full : plain)", controls, StringComparison.Ordinal);
         Assert.DoesNotContain("_detail.Checked = true", controls, StringComparison.Ordinal);
         Assert.Contains("may name your files", ReportPrivacy.DetailBox, StringComparison.Ordinal);
+        // The box that shows it is only read, and the report is built from the context it shows, never from its text:
+        // nothing the form holds can differ from what the user was shown.
+        Assert.Contains("_sent.ReadOnly = true;", controls, StringComparison.Ordinal);
+        Assert.Contains("_sent.Text = string.Join(\"\\r\\n\", ReportPrivacy.Shown(context));", controls, StringComparison.Ordinal);
+        Assert.Contains("_context.App, _context.Where.Trim(), _context.Actions, _context.Log", controls, StringComparison.Ordinal);
+        Assert.DoesNotContain("_sent.Text.", controls, StringComparison.Ordinal);
+        // The context is set in two places alone: the start, and Fill.
+        Assert.Equal(2, System.Text.RegularExpressions.Regex.Matches(controls, @"_context = ").Count);
+    }
+
+    [Fact]
+    public void What_is_sent_is_shown_under_short_labels_with_none_for_an_empty_part()
+    {
+        var context = new ReportContext("axThing 1.0, Windows 11 build 26200, NVDA 2025.3", "a list, item 2 of 9", ["5 s ago: Find, Ctrl+F", "2 s ago: Refresh, F5"], []);
+
+        Assert.Equal(
+            [
+                "App and version:", "axThing 1.0, Windows 11 build 26200, NVDA 2025.3", "",
+                "Last actions:", "5 s ago: Find, Ctrl+F", "2 s ago: Refresh, F5", "",
+                "Where the focus was:", "a list, item 2 of 9", "",
+                "Log lines:", "none",
+            ],
+            ReportPrivacy.Shown(context));
+        Assert.Equal(["Last actions:", "none"], ReportPrivacy.Shown(context with { Actions = [] }).Skip(3).Take(2));
     }
 }

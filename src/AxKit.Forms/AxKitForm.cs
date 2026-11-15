@@ -630,6 +630,13 @@ public abstract partial class AxKitForm : Form
                 }
             }
 
+            if (keyData == BundleKeys.MainAction)
+            {
+                // AX-8.10 rule 3: the notice's main action, a form's Send or the main button, as Enter presses it.
+                Overlay.PressMain();
+                return true;
+            }
+
             return false;
         }
 
@@ -662,7 +669,20 @@ public abstract partial class AxKitForm : Form
         }
 
         // The window's own keys first (a rename box's, a state's), then the keys of its command list (app-kit AK-2.3).
-        return ProcessWindowKey(keyData) || RunCommandKey(keyData) || base.ProcessCmdKey(ref msg, keyData);
+        if (ProcessWindowKey(keyData) || RunCommandKey(keyData))
+        {
+            return true;
+        }
+
+        if (keyData == BundleKeys.MainAction)
+        {
+            // AX-8.10 rule 3: no main action where the focus is (no command of the window took the key): the edge
+            // sound and nothing else, never a line break in a text or a control's own meaning.
+            Sounds.Edge();
+            return true;
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
     }
 
     // ---- the window's commands (docs/axKit/app-kit.md AK-2) ----

@@ -60,6 +60,26 @@ public static partial class ReportPrivacy
     public static string AppLine(string app, string version, string windows, string nvda, string title) =>
         $"{AppLine(app, version, windows, nvda)}; window: {title}";
 
+    /// <summary>
+    /// What is sent with a report, as the form shows it in one text that is only read (RP-3): each part under a short
+    /// label, a blank line between the parts, "none" where a part is empty. The report itself carries the context,
+    /// never this text.
+    /// </summary>
+    public static IReadOnlyList<string> Shown(ReportContext context) =>
+    [
+        "App and version:",
+        context.App,
+        string.Empty,
+        "Last actions:",
+        .. context.Actions.Count == 0 ? ["none"] : context.Actions,
+        string.Empty,
+        "Where the focus was:",
+        context.Where,
+        string.Empty,
+        "Log lines:",
+        .. context.Log.Count == 0 ? ["none"] : context.Log,
+    ];
+
     /// <summary>The plain form's actions: the commands alone, never what the window said or the notices' titles, which can hold a name.</summary>
     public static IReadOnlyList<string> Commands(IEnumerable<(DateTime At, RecentActionKind Kind, string Text)> entries, DateTime now) =>
         entries.Where(entry => entry.Kind == RecentActionKind.Command)

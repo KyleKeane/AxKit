@@ -175,6 +175,52 @@ public static class ActionKeys
         return set.Count == 0 ? null : set;
     }
 
+    // ---- the form of one key (RP-8.2; one form since 2026-11-14, bundle AX-8.10) ----
+
+    /// <summary>What a key can do, as the form's list shows it, in the order of <see cref="KindIndex"/>.</summary>
+    public static readonly IReadOnlyList<string> KindNames = ["Set fields to values", "Move the item to a list", "Open a field's web address, or an app"];
+
+    /// <summary>The line of <see cref="KindNames"/> an action is; the first for a key not set.</summary>
+    public static int KindIndex(ListAction? action) => action?.Kind switch { ListAction.MoveKind => 1, ListAction.OpenKind => 2, _ => 0 };
+
+    /// <summary>What the form's last field holds for an action: its fields as "Field: value" lines, the list it moves to, or what it opens; empty for a key not set.</summary>
+    public static string ValueText(ListAction? action) =>
+        action?.Set is { } set ? string.Join("\n", set.Select(pair => pair.Key + ": " + (FieldTypes.TextOf(pair.Value) is { Length: > 0 } text ? text : SpokenValue(pair.Value))))
+        : action?.Move is { } move ? move.Replace("../", string.Empty, StringComparison.Ordinal)
+        : action?.Open ?? string.Empty;
+
+    /// <summary>
+    /// What the form's fields make: the action, or none for an empty name, which removes the key; or why they are
+    /// refused, and whether that is about the last field (the name's otherwise). <paramref name="listExists"/> says
+    /// whether the top folder holds a list of a name.
+    /// </summary>
+    public static (ListAction? Action, string? Refused, bool InValue) FromForm(string name, int kind, string value, Func<string, bool> listExists)
+    {
+        name = name.Trim();
+        if (name.Length == 0)
+        {
+            return (null, null, false);
+        }
+
+        switch (kind)
+        {
+            case 0:
+                return ParseSetLines(value) is { } set
+                    ? (new ListAction(name, Set: set), null, false)
+                    : (null, "Type at least one line as Field: value", true);
+            case 1:
+                var list = value.Trim();
+                return list.Length == 0 ? (null, "Type the name of a list in the top folder", true)
+                    : list.Contains('\n') || !listExists(list) ? (null, $"No list called {list.ReplaceLineEndings(" ")} in the top folder", true)
+                    : (new ListAction(name, Move: "../" + list), null, false);
+            default:
+                var open = value.Trim();
+                return open.Length == 0 || open.Contains('\n')
+                    ? (null, "Type one field's title or one app", true)
+                    : (new ListAction(name, Open: open), null, false);
+        }
+    }
+
     private static string TypeFor(JsonNode? value) => value switch
     {
         JsonValue v when v.TryGetValue<bool>(out _) => FieldTypes.Check,

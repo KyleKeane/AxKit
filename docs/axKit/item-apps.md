@@ -38,8 +38,9 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | --- | --- | --- |
 | Up, Down, Home, End | move; the edge earcon at an end | move through the fields |
 | Ctrl+Up, Ctrl+Down | the section before or after, on a level in sections (axTask's top level, TK-3a); the edge earcon past the ends | — |
-| Right | on a list: open it. On an item: nothing, the edge earcon (axFile's Right on a file) | nothing |
-| Left, Backspace | up a level | nothing |
+| Right | on a list: open it. On an item: nothing, the edge earcon (axFile's Right on a file) | on a choice the next value, on a check checked (IA-5.6); the edge earcon on any other field |
+| Left | up a level | on a choice the previous value, on a check unchecked (IA-5.6); the edge earcon on any other field |
+| Backspace | up a level | nothing |
 | Enter | open: a list opens its items; an item moves to its fields, as Tab (IA-D2) | change the field (section 5) |
 | Tab, Shift+Tab | to the detail pane | back to the navigator |
 | Ctrl+Tab, Ctrl+Shift+Tab, F6 | to the detail pane (the bundle's pane keys, AX-8.2, since 2026-11-09) | back to the navigator |
@@ -94,12 +95,12 @@ A JSON file holding a list of fields. The first field is the Title.
 | Type | Value in the file | Read as | Set by (section 5) |
 | --- | --- | --- | --- |
 | `text` | a string, one line | the text | a text field |
-| `longtext` | a string with line breaks | the first line and the count of the others, Ctrl+Q for all | a field of several lines: Enter makes a new line, Tab then Enter on Save keeps it |
+| `longtext` | a string with line breaks | the first line and the count of the others, Ctrl+Q for all | a field of several lines: Enter makes a new line, Ctrl+Enter keeps it, as Tab then Enter on Save does |
 | `number` | a JSON number | the number | a text field that takes only a number |
 | `date` | `"YYYY-MM-DD"` | "30 October 2026, Friday" | a text field: a date, `today`, `tomorrow`, `+3` (days) |
 | `datetime` | `"YYYY-MM-DDTHH:MM"` | "30 October 2026, 14:00" | the same, a time after the date |
-| `check` | `true` or `false` | "done" or "not done" | Space toggles it, no field |
-| `choice` | one of `options` | the option | a list of the options, the current one selected |
+| `check` | `true` or `false` | "done" or "not done" | Space or Enter toggles it, Right checks and Left unchecks; no field |
+| `choice` | one of `options` | the option | a list of the options, the current one selected; Right and Left step through them without the list |
 | `link` | a path to another item, relative to this file | the other item's title, or "missing: name" | the other item's title, typed |
 
 axPass adds `username` and `password` (section 6).
@@ -145,11 +146,24 @@ A folder. Its details are `list.json` in it, the same shape as an item, never sh
   field and selected (a date as 2026-10-30, a link as the other item's title). Enter keeps it, Escape leaves it as it
   was. A value the type refuses ("30 Febuary") says why and the notice stays.
 - **IA-5.2** A check changes with Space or Enter, at once: "Done: done".
-- **IA-5.3** New field (Ctrl+N in the pane): its title in a text field, then its type from a list of the types (a
-  choice then asks its options, with a comma between them), added after the selected field.
+- **IA-5.3** New field (Ctrl+N in the pane): one form (bundle AX-8.10, since 2026-11-14; up to three notices, one after
+  the other, before): "Type the field's title", the list "Choose what the field holds" with the types, and "Type the
+  options of a choice, with a comma between them; leave it empty for any other type", then Add and Cancel. The field
+  is added after the selected one. A missing or taken title, or a choice without options, is said with the focus in
+  its field, and the form stays.
 - **IA-5.4** Every change is one announcement ("Due: 30 October 2026, Friday") and one step for Ctrl+Z.
 - **IA-5.5** Before every write the file is read again; if it changed since it was shown (axJSON, a script, a sync),
   the change is refused with "The item changed on disk; it has been read again" (axList's LI-D5).
+- **IA-5.6** Right and Left change the field in focus (bundle AX-8.10 rule 4; the user's decision, 2026-11-14). On a
+  choice, Right is the next option and Left the previous, stopping at the first and the last with the edge earcon,
+  never wrapping; a choice that is empty takes the first option on Right. On a check, Right checks and Left unchecks;
+  already so, the edge earcon. The change is saved at once, said once ("Priority: Low", "Done: done") and is one step
+  for Ctrl+Z, as every change (IA-5.4). On any other field, and on a line that is no field, both keys play the edge
+  earcon and change nothing; never on axPass's user name and password. The rule is `AxKit.Core/FieldStep`. Until
+  2026-11-14 both keys played the edge earcon on every field: neither ever left the pane, and they still do not;
+  Escape, Shift+Tab and the pane keys go back to the navigator.
+- **IA-5.7** A long text's box: Enter makes a new line; Ctrl+Enter keeps the text (bundle AX-8.10 rule 9), as Tab,
+  then Enter on Save does; Escape leaves the text as it was.
 
 ## 6. What differs between the apps
 

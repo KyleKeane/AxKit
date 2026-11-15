@@ -120,6 +120,24 @@ public abstract partial class ItemForm
     }
 
     /// <summary>
+    /// Right and Left in the detail pane (IA-5.6, bundle AX-8.10 rule 4): on a choice the next or the previous value,
+    /// stopping at the ends; on a check Right checks and Left unchecks; saved, said once ("Priority: Low") and one step
+    /// for Ctrl+Z, as every change. The edge sound and nothing else on any other field or line, at a choice's end, on
+    /// a check already so, and always on a protected field (<see cref="FieldStep"/>).
+    /// </summary>
+    protected void StepField(int direction)
+    {
+        if (SelectedField() is { } index && _shown.Document!.Fields[index] is var field && FieldStep.Step(field, direction) is { } value)
+        {
+            SetValue(index, field, value);
+        }
+        else
+        {
+            Sounds.Edge();
+        }
+    }
+
+    /// <summary>
     /// A notice with a list to choose from (a choice's options, a new field's type): the bundle's list, type-to-find
     /// included, holds the focus; Enter chooses the selected line, Escape leaves it.
     /// </summary>
@@ -139,7 +157,10 @@ public abstract partial class ItemForm
         list.Select();
     }
 
-    /// <summary>A long text (IA-4.2): a field of several lines; Enter makes a new line, Tab then Enter on Save keeps it.</summary>
+    /// <summary>
+    /// A long text (IA-4.2, IA-5.7): a field of several lines; Enter makes a new line, as in every text box; Ctrl+Enter
+    /// keeps the text (the notice's main button, bundle AX-8.10), as Tab then Enter on Save does.
+    /// </summary>
     private void ChangeLongText(int index, ItemField field)
     {
         var box = new AxKitTextBox
@@ -153,19 +174,25 @@ public abstract partial class ItemForm
             Text = FieldTypes.TextOf(field.Value).ReplaceLineEndings("\r\n"),
             Font = Navigator.Font,
         };
-        ShowNotice(new Notice("Change " + field.Title, "Enter makes a new line. Tab, then Enter on Save keeps the text.",
+        ShowNotice(new Notice("Change " + field.Title, "Enter makes a new line. Ctrl+Enter keeps the text; so does Tab, then Enter on Save. Escape leaves it as it was.",
         [
             new OverlayChoice("&Save", () => SetValue(index, field, FieldTypes.Parse(FieldTypes.LongText, box.Text, [], DateOnly.FromDateTime(DateTime.Now)).Value), IsDefault: true),
             new OverlayChoice("&Cancel", IsCancel: true),
         ])
         {
             Custom = box,
+            // The text says the keys: "Enter: Save." would be untrue in the box.
+            KeyLine = false,
         });
         box.Select();
         box.Select(box.TextLength, 0);
     }
 
-    /// <summary>Ctrl+N in the detail pane (IA-5.3): the field's title, then its type, then a choice's options; after the selected field.</summary>
+    /// <summary>
+    /// Ctrl+N in the detail pane (IA-5.3): one form (bundle AX-8.10) with the field's title, its type as a list and a
+    /// choice's options, then Add and Cancel; the field goes after the selected one. (Up to three notices, one after
+    /// the other, until 2026-11-14.)
+    /// </summary>
     protected void NewField()
     {
         if (_shown.Document is not { } shown)
@@ -181,15 +208,22 @@ public abstract partial class ItemForm
         }
 
         var after = SelectedField() ?? shown.Fields.Count - 1;
-        AskText("New field", string.Empty, "Title:", "Field title", string.Empty, "&Next", title =>
-        {
-            var trimmed = title.Trim();
-            ChooseFromList("Type of " + trimmed, "What the field holds.", "Type", NewFieldTypes.Select(SpokenType).ToList(), 0,
-                chosen => AddField(after, trimmed, NewFieldTypes[chosen]));
-        }, typed => typed.Trim().Length == 0 ? "Type the field's title" : shown.IndexOf(typed.Trim()) >= 0 ? $"There is a field called {typed.Trim()} already" : null);
+        var form = new FormControls();
+        var title = form.AddText("Type the field's title");
+        var type = form.AddList("Choose what the field holds", NewFieldTypes.Select(SpokenType).ToList(), 0);
+        var options = form.AddText("Type the options of a choice, with a comma between them; leave it empty for any other type");
+        string Chosen() => NewFieldTypes[Math.Clamp(type.SelectedIndex, 0, NewFieldTypes.Count - 1)];
+        ShowForm("New field",
+            "A field has a title and a type. A choice also has options, with a comma between them: High, Normal, Low. Tab moves between the title, the type and the options; Enter or Ctrl+Enter adds the field.",
+            form, "&Add",
+            () => AddField(after, title.Text.Trim(), Chosen(), Options(options.Text)),
+            () => title.Text.Trim().Length == 0 ? (title, "Type the field's title")
+                : shown.IndexOf(title.Text.Trim()) >= 0 ? (title, $"There is a field called {title.Text.Trim()} already")
+                : Chosen() == FieldTypes.Choice && Options(options.Text).Count == 0 ? (options, "Type at least one option")
+                : null);
     }
 
-    private void AddField(int after, string title, string type)
+    private void AddField(int after, string title, string type, IReadOnlyList<string> options)
     {
         if (type != FieldTypes.Choice)
         {
@@ -197,9 +231,7 @@ public abstract partial class ItemForm
             return;
         }
 
-        AskText("Options of " + title, "The options, with a comma between them: High, Normal, Low.", "Options:", "Options", string.Empty, "&Add",
-            typed => ChangeShown(document => (document.WithField(after, title, type, Options(typed)), $"Added {title}, choice of {Options(typed).Count}"), after + 1),
-            typed => Options(typed).Count == 0 ? "Type at least one option" : null);
+        ChangeShown(document => (document.WithField(after, title, type, options), $"Added {title}, choice of {options.Count}"), after + 1);
     }
 
     private static IReadOnlyList<string> Options(string typed) =>

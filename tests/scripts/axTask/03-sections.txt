@@ -11,14 +11,21 @@ file tasks\Work\Nested\Hidden.json {"format": "axkit-item 1", "fields": [{"title
 start task {temp}\tasks
 expect focus Your lists, heading level 1, 3 lists
 
-# TK-3a.3 Ctrl+M on Work: a new section, Jobs.
+# TK-3a.3 Ctrl+M on Work: one form (bundle AX-8.10), the sections as a list, then the new section's name. A new
+# section without a name is refused with the focus in the name's field; then Jobs.
 type w
 expect focus Work, list, 1 item
 keys ctrl+m
+expect state "notice":"Move Work"
+expect focus "name":"Choose the section"
 expect focus Your lists
 keys end
 expect focus A new section
 keys enter
+expect said ♪ Edge
+expect said ! Type the section's name
+expect state "notice":"Move Work"
+expect focus "name":"Type the new section's name, when you chose A new section"
 type Jobs
 keys enter
 expect said ! Moved Work to Jobs

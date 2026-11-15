@@ -470,7 +470,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   starting at the first line or at a line with text directly after a blank line, and Ctrl+Shift+Up and
   Ctrl+Shift+Down the selection grown to there, as in Word (`EditKeys.Paragraph`; the EDIT control's own keys scroll a
   row and leave the caret where it is, as Notepad's do, which a screen reader, reading at the caret after the key,
-  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
+  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
 - AX-8.3 Window-specific keys are defined once per window, in one table (`AxClaudeKeys`, `AxDownKeys`, `AxJSONKeys`, `AxGitKeys`, `AxTerminalKeys`, `AxFileKeys`, `AxMediaKeys`, `AxPreviewKeys`, `AxStartKeys`, `AxProcessKeys`, `AxTaskKeys`, `AxPassKeys`, `AxCalcKeys`, `AxClipKeys`), as constants
   with names that say what the key does. Changing a key is a change to that one line: the menu item and the key
   handler read the table, and the F1 text names the same keys and is changed with it. Single-letter quick keys
@@ -516,6 +516,79 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   control's, on, everywhere but the editors, which take it from the theme file's display settings
   (`docs/axKit/theme.md` TH-6). `TextBoxTests` fails on a plain `TextBox` and on a second subscription of the keys,
   which would move the caret twice.
+- AX-8.10 **Fields and forms: standard controls, used the standard way** (the user's decisions of 2026-11-14). The
+  reason: a screen reader user in a field knows only that they are in a field. No visual clue tells what kind of
+  form it is, and an interface used rarely must not need a remembered name or a change of mode. So a form is made of
+  the controls every Windows user already knows, behaving as they do everywhere, so that what the user expects holds
+  and good habits are taught. The rules:
+  1. **A form opens with the focus in its first field, ready to type.**
+  2. **Tab and Shift+Tab move between the fields and the buttons, in order.** Each is a real control with its
+     `AccessibleName`, read by NVDA itself: a text box (`AxKitTextBox`), a list for a choice (`AxKitList`), a check
+     box that Space toggles (`AxKitCheckBox`), buttons. The window adds no speech of its own to a move.
+  3. **Ctrl+Enter does the main action, in every window and every form** (`BundleKeys.MainAction`, bundle-wide,
+     AX-8.2): it sends a form from any of its controls. The table below says what it is in each app.
+  4. **In the item window's fields pane, which is an item editor and not a form, Right and Left change the field in
+     focus** (docs/axKit/item-apps.md IA-5.6). On a choice, Right is the next value and Left the previous, stopping
+     at the ends with the edge sound, never wrapping; a choice whose value is none of its options takes the first
+     on Right. On a check, Right checks and Left unchecks, a direction and not a toggle; already in that state, the
+     edge sound. Every change is spoken once, as the field's name and its new value ("Priority: Low"), and is one
+     Ctrl+Z step where the window has undo. Space still toggles a check and Enter still opens a choice. On any
+     other kind of field Right and Left play the edge sound and change nothing. Never on axPass's protected fields,
+     the user name and the password (`AxKit.Core/FieldStep`, tested).
+  5. **Enter in a text box does what it does in every text box.** In a box of several lines it makes a new line and
+     never sends (chosen over "Enter sends, Shift+Enter breaks a line", by which a stray Enter sent an unfinished
+     report on the morning of 2026-11-14). In a one-line box of a form with several fields, and in a list, on a
+     check box or in a text that is only read, Enter presses the form's default button, as Windows does; on a
+     button it presses that button.
+  6. **A question with one text field keeps the short way**: Enter answers at once (`AxKitForm.AskText`).
+  7. **Escape cancels the form and keeps nothing**: no draft, and the window says "Cancelled". In a one-field
+     question Escape cancels that question.
+  8. **A plain list of answers stays where no form is needed**: the question interface (`ControlArea`'s list of
+     answers) is unchanged.
+  9. **Ctrl+Enter is the main action of where the focus is, and never two things in one press.** While a notice
+     shows it presses the notice's default button from whichever control has the focus (`OverlayPanel.PressMain`):
+     a form's Send, a long text's Save from inside its box, any other notice's main button, as Enter does there. In
+     a window it does the window's one main action where the focus is, when there is one. Where there is none it
+     does nothing and plays the edge sound; it never reaches the control, so it puts no line break into a text.
+  10. **A form's explanation and disclaimer are the notice's own text at the top**, never a row or a field of their
+     own and never shortened away. The text names the form's keys itself (`Notice.KeyLine` false: the line made
+     from the buttons, "Enter: Send", would be untrue where Enter is a new line). Since the focus starts in the
+     first field, the window says the text once as the form opens, after NVDA has read the field.
+  11. **A required field left empty**: Send and Ctrl+Enter move the focus to that field, play the edge sound and
+     say what is missing ("Type a few words first").
+  12. **The value steps of rule 4 have no sound of their own**: the edge sound at the ends, speech for the change.
+  13. **Built and withdrawn, 2026-11-14: a form as a list of fields.** The first answer of that day made a form one
+     list, a row per field read with its value ("Kind: Bug") and a Send row at the end, with Enter acting on the
+     row in focus and opening an edit box for a text. It was built for the report the same day; the user tried it
+     and withdrew it at once: it did not open ready to type, sending took too many steps, too much was read
+     aloud, the disclaimer was buried, and it did not feel like a form. Rules 1, 2, 5 and 10 are what he decided
+     in its place. Do not build it again; the first form is the report (docs/axKit/reports.md RP-3).
+  14. **Whatever asks more than one thing for one action is one form, never one question after another** (the
+     user, 2026-11-14: "implement this everywhere so we go back to standard interaction paradigms"). Every form is
+     made of one piece: `AxKit.Forms/FormControls`, the controls in Tab order (a text box of one line or of several,
+     a list for a choice of one, a check box; never radio buttons), each under its caption and named with an
+     instruction ("Type the name of the server"), shown by `AxKitForm.ShowForm` with the form's explanation, its
+     default button and Cancel. The window's check runs before the button acts: what is missing or refused is said
+     with the edge sound and the focus in that control, and the form stays open. The forms: the report (F4); axTerminal,
+     Add a shell (AT-1.6a); axMCP, Add server (MP-1.3); the item window, New field (item-apps IA-5.3); axTask, Action
+     keys (TK-7a.1) and Move to section (TK-3a.3). Left as they are: a question with one field (rule 6); a list to
+     choose one thing from, which is one question; and a password asked twice, axPass's master password for a new
+     database and an entry's new password, each in the notice's own hidden field, which is emptied as the notice
+     closes (S-17).
+
+  What Ctrl+Enter does, per app. A window gives the key its main action as a command on `BundleKeys.MainAction`;
+  no window's key table holds Ctrl+Enter, and `KeyTests` fails on one that does.
+
+  | App | Until 2026-11-14 | Now |
+  | --- | --- | --- |
+  | Every window, while a notice shows | nothing of axKit's; a line break in a notice's text box of several lines | the notice's default button from any of its controls: a form's Send, a long text's Save, a plain notice's Close, as Enter there |
+  | axClaude | in the message field, a line break (the edit control's own) | in the message field, sends the message, as Enter; elsewhere the edge sound |
+  | axTerminal | in the command field, send without recording (AT-3.4) | in the command field, sends the command, as Enter; elsewhere the edge sound. Send without recording has no key: Actions menu and the palette |
+  | axGIT | commit what is staged (AG-3.5) | the same |
+  | axMCP | call the tool or fetch the prompt selected (MP-3.4) | the same |
+  | axFile | in the folder list, play the folder in axMedia (AF-5.1) | the same; outside the folder list the edge sound |
+  | axDown, axJSON | a line break in the text (the edit control's own) | the edge sound; Enter makes the line break |
+  | axPreview, axMedia, axProcess, axCalc, axTask, axPass, axAutomate, axStart, axClip, axHelp | nothing of axKit's (the focused control's own, if any) | the edge sound |
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 
@@ -846,18 +919,20 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
 The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes what the bundle promises.
 
 - AX-12.1 **F4 in every window** (`BundleKeys.Report`, AX-8.2) and the Help menu's Send a report… open the notice
-  "Report to axKit" with the window's own fields (`ReportControls`): the user's words first and focused, Enter sends,
-  Shift+Enter breaks a line; then the kind (Feedback, Bug, Feature request), a check box for more detail, the app and version, the commands last
-  run, the kind of control in focus and its place, the log's errors of the last day masked, and a title: by itself
+  "Report to axKit", a form of standard controls (AX-8.10; `ReportControls`): the user's words first and focused,
+  where Enter makes a new line; then the kind (Feedback, Bug, Feature request), a check box for more detail, and one
+  text that is only read, what is sent with the report: the app and version, the commands last
+  run, the kind of control in focus and its place and the log's errors of the last day masked: by itself
   the window adds nothing that can name the user's files, folders, lists or items (`ReportPrivacy`, reports.md
   RP-4.2a); the check box, not checked, adds the window's title, the names, what the window said (`RecentActions`;
-  never in axClaude, axTerminal, axPass and axClip) and the log's last lines, redacted (`Redaction`). Every field is
-  editable. Your reports opens the
+  never in axClaude, axTerminal, axPass and axClip) and the log's last lines, redacted (`Redaction`). The report's
+  title is the first line of the words. Send, or Ctrl+Enter in any control, sends; Escape cancels the form and keeps
+  nothing (RP-D13). Your reports opens the
   Reports list in axTask.
-- AX-12.2 **Saved first, sent second.** Enter writes the report as an item of the axTask list `%APPDATA%\AxKit\reports`
+- AX-12.2 **Saved first, sent second.** Send writes the report as an item of the axTask list `%APPDATA%\AxKit\reports`
   (RP-5), then sends it and every unsent one, oldest first, as an issue of the reports repository `KyleKeane/AxKit-reports`
   over GitHub's REST API (RP-6). Nothing is sent at a window's start; the unsent go with the next report and when Your
-  reports opens (RP-6.7). Escape with words typed keeps a draft.
+  reports opens (RP-6.7). Escape cancels the form and keeps nothing (RP-D13; until 2026-11-14 words typed were kept as a draft, and those drafts stay in the list).
 - AX-12.3 **axKit's own reporter account.** The issue is posted by a machine account of the maintainer's whose token
   the release build carries and which can reach that repository's issues alone (RP-6.2); every report carries the
   install's random reporter id and the version (RP-6.3). A block list, read before a send from a public repository

@@ -27,7 +27,6 @@ public static class AxGitKeys
     public const Keys StageAll = Keys.Control | Keys.Shift | Keys.A;
     public const Keys UnstageAll = Keys.Control | Keys.Shift | Keys.U;
     public const Keys OpenInEditor = Keys.Control | Keys.E;
-    public const Keys Commit = Keys.Control | Keys.Return;
     public const Keys NewBranch = Keys.Control | Keys.N;
     public const Keys Fetch = Keys.Control | Keys.Shift | Keys.F;
     public const Keys Pull = Keys.Control | Keys.Shift | Keys.L;
@@ -52,7 +51,6 @@ public static class AxGitKeys
         ("Stage all", StageAll),
         ("Unstage all", UnstageAll),
         ("Open the file in its editor", OpenInEditor),
-        ("Commit", Commit),
         ("New branch", NewBranch),
         ("Fetch", Fetch),
         ("Pull", Pull),

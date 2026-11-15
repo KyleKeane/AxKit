@@ -1,8 +1,8 @@
 # Workflow: Report a bug or an idea from a conversation
 # Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
 # axClaude, docs/axClaude/nvda-test-plan.md section 13 step 0: a report from the window (docs/axKit/reports.md RP-2, RP-3,
-# RP-6.6, RP-D6). The run's own home has no agreement to the reports yet, so Enter asks it, and Not now leaves the
-# report saved and unsent: nothing reaches GitHub from a test run.
+# RP-6.6, RP-D13, RP-D14; a form of standard controls, docs/axKit/SPEC.md AX-8.10). The run's own home has no agreement
+# to the reports yet, so Send asks it, and Not now leaves the report saved and unsent: nothing reaches GitHub from a test run.
 file home\AxKit\axClaude.json {"checkForUpdates":false}
 # The access layer's reminder agreed to already (AX-11.5): this script is about the report.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
@@ -13,80 +13,95 @@ iffound wait 1500
 iffound keys enter
 expect said Ready
 expect focus Message to Claude
-# F4: the notice, the words field focused and named as an instruction; Enter with nothing typed is refused.
+# F4: the form opens with the focus in the words, ready to type, and its explanation and disclaimer, the notice's
+# text, are said once (AX-8.10 rules 1 and 10).
 keys f4
 expect state "notice":"Report to axKit"
-expect focus Type your report; Enter sends it, Shift+Enter starts a new line
-keys enter
+expect focus "name":"Your report"
+expect said A report goes to axKit's maintainer. It is encrypted on your computer
+# Ctrl+Enter, the main action, with nothing typed: refused with the edge sound and the words, the form still open.
+keys ctrl+enter
 expect said ♪ Edge
 expect said Type a few words first
-expect focus Type your report
+expect focus "name":"Your report"
+expect state "notice":"Report to axKit"
+# Enter in the words makes a new line, said, and never sends: the form is still open, the focus still in the words.
 type The list loses my place
-# Tab through the fields in their order (RP-3): the kind NVDA reads itself, the app line, the actions, the focus, the
-# log lines, the title filled from the first line typed, then the two buttons.
+keys enter
+expect said new line
+expect state "notice":"Report to axKit"
+expect focus "name":"Your report"
+type every time
+expect text "The list loses my place","every time"
+# Tab through the controls in their order (RP-3): four stops, then the two buttons. The kind NVDA reads itself.
 keys tab
-expect focus Kind
+expect focus "name":"Kind"
 expect focus Feedback
-# The check box for more detail, not checked (RP-3 item 2a): the four fields after it hold the plain form, which
-# names nothing of the user's (RP-4.2a): no window title, the kind of control and not its name.
+# The check box for more detail, not checked (RP-3 item 2a).
 keys tab
 expect focus Add detail that may name your files
+# What is sent with your report: one text that is only read, the plain form, which names nothing of the user's
+# (RP-4.2a): no window title, the kind of control and not its name.
 keys tab
-expect focus App and version
-expect focus axClaude
-refuse focus window:
-keys tab
-expect focus What you were doing: the last actions
-keys tab
-expect focus Where the focus was
-expect focus a text field, line 1 of 1
-keys tab
-expect focus Log lines
-# Checked, the fields hold the fuller form: the title and the control's name; unchecked, the plain form again.
-keys shift+tab shift+tab shift+tab shift+tab
+expect focus "name":"What is sent with your report"
+expect text App and version:
+expect text axClaude
+expect text Last actions:
+expect text Where the focus was:
+expect text a text field, line 1 of 1
+expect text Log lines:
+refuse text window:
+refuse text Message to Claude
+# Checked, the box holds the fuller form: the title and the control's name; unchecked, the plain form again.
+keys shift+tab
 expect focus Add detail that may name your files
 keys space
 expect said checked
 keys tab
-expect focus window: report
-keys tab tab
-expect focus Message to Claude, line 1 of 1
-keys shift+tab shift+tab shift+tab
+expect focus "name":"What is sent with your report"
+expect text window: report
+expect text Message to Claude, line 1 of 1
+keys shift+tab
 keys space
 expect said not checked
-keys tab tab tab
-expect focus a text field, line 1 of 1
-keys tab tab
-expect focus Title
-expect focus The list loses my place
+keys tab
+expect text a text field, line 1 of 1
+refuse text window:
+# Then the buttons; there is no title field.
 keys tab
 expect focus Send
 keys tab
 expect focus Cancel
-# Back in the words field, Enter saves the report. A build made with the sending token asks the agreement first
-# (RP-6.6) and Escape says "Saved; not sent yet"; a development build made without the token, which this pass's build
-# is, says "This build cannot send reports" (RP-6.5) and offers Copy report. Either notice: Escape
-# leaves the report saved and unsent in Your reports, the focus back in the message field.
-keys shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab shift+tab
-expect focus Type your report
-keys enter
+# Back in the words (Cancel, Send, the box, the check box, the kind, the words), Ctrl+Enter sends. A build made with
+# the sending token asks the agreement first (RP-6.6) and Escape says "Saved; not sent yet"; a development build made
+# without the token, which this pass's build is, says "This build cannot send reports" (RP-6.5) and offers Copy
+# report. Either notice: Escape leaves the report saved and unsent in Your reports, the focus back in the message field.
+keys shift+tab shift+tab shift+tab shift+tab shift+tab
+expect focus "name":"Your report"
+keys ctrl+enter
 expect state "notice":"
+refuse state "notice":"Report to axKit"
 try said ! Saved
 keys escape
 expect state "notice":null
 expect focus Message to Claude
-# Escape with nothing typed cancels; with words typed it keeps a draft (RP-D6).
+# The report saved is titled with the first line of the words (RP-3 item 7).
+run cmd /c if exist "home\AxKit\reports\The list loses my place.json" (exit 0) else (exit 1)
+# Escape cancels the form whole, words typed or not, and keeps no draft (AX-8.10 rule 7, RP-D13).
 keys f4
 expect state "notice":"Report to axKit"
 keys escape
 expect said Cancelled
+expect state "notice":null
 expect focus Message to Claude
 keys f4
-expect focus Type your report
+expect focus "name":"Your report"
 type Draft words
 keys escape
-expect said Kept as a draft in Your reports
+expect said Cancelled
+expect state "notice":null
 expect focus Message to Claude
+run cmd /c if exist "home\AxKit\reports\Draft words.json" (exit 1) else (exit 0)
 # The two items of the axKit menu, by their palette names (RP-2.2).
 expect commands Send a report, Help
 expect commands Your reports, Help

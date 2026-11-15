@@ -23,7 +23,7 @@ public static class HelpText
           Ctrl+Enter: call the tool, or fetch the prompt, with the arguments in the detail pane; the result opens as a notice text
           Ctrl+J: the last result, whole, as JSON in axJSON
           Ctrl+Shift+S: stop the server
-          Ctrl+N at the top level: add a server of your own: a name, its command line, a folder. F2: rename one of yours. Delete: remove one of yours, after a question
+          Ctrl+N at the top level: add a server of your own, in one form: a name, its command line, a folder, Tab between them, Enter or Ctrl+Enter adds it. F2: rename one of yours. Delete: remove one of yours, after a question
           Ctrl+Shift+N: nothing here; servers are added with Ctrl+N
           Ctrl+Q: read every field of the selection
           Shift+F10 or the Applications key: the menu of the selection
@@ -34,6 +34,7 @@ public static class HelpText
           On a resource: its name, address, type and description
           Up, Down: move through the fields
           Enter: change the field; on the description, read it whole. Space: a check on or off
+          Right and Left: on a choice, the next and the previous value; on a check, Right checks and Left unchecks; the edge sound at an end and on any other field
           Alt+Up, Alt+Down: nothing here; the arguments keep the server's order
           Ctrl+Q: read the field's whole value
           Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator

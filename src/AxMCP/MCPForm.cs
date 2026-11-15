@@ -96,7 +96,7 @@ public sealed class MCPForm : ItemForm
         _serverMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename, CommandMark.Change));
         _serverMenu.DropDownItems.Add(Item("Re&move", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
 
-        Add(_itemMenu, new Command("&Call, or fetch the prompt", AxMCPKeys.Call, CallSelected) { When = NotRenaming, Mark = CommandMark.Act });
+        Add(_itemMenu, new Command("&Call, or fetch the prompt", BundleKeys.MainAction, CallSelected) { When = NotRenaming, Mark = CommandMark.Act });
         _itemMenu.DropDownItems.Add(Item("&Open its arguments", OpenSelected, ItemKeys.Open, CommandMark.Open));
         _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         Add(_itemMenu, new Command("The last result as &JSON", AxMCPKeys.LastResult, OpenLastResult) { When = NotRenaming, Mark = CommandMark.Open });
@@ -415,7 +415,11 @@ public sealed class MCPForm : ItemForm
         }
     }
 
-    /// <summary>MP-1.3: a server of the user's own, asked in three notices: the name, the command line, the folder.</summary>
+    /// <summary>
+    /// MP-1.3: a server of the user's own, asked in one form (bundle AX-8.10): the name, the command line, the folder,
+    /// then Add and Cancel; what is missing or refused is said with the focus in its field. (Three notices, one after
+    /// the other, until 2026-11-14.)
+    /// </summary>
     protected override void NewItem()
     {
         if (_server is not null)
@@ -424,24 +428,31 @@ public sealed class MCPForm : ItemForm
             return;
         }
 
-        AskText("Add server", "A name for the list.", "Name:", "Name", string.Empty, "&Next", name =>
-            AskText("Add server", $"The command line that starts {name.Trim()}, as a terminal would run it.", "Command line:", "Command line", string.Empty, "&Next", command =>
-                AskText("Add server", "The folder to start it in; empty for the folder axMCP was started on, or your profile folder.", "Folder:", "Folder", _folder ?? string.Empty, "&Add", folder =>
+        var form = new FormControls();
+        var name = form.AddText("Type the name of the server");
+        var command = form.AddText("Type the command line that starts it");
+        var folder = form.AddText("Type the folder to start it in, or leave it empty", _folder ?? string.Empty);
+        ShowForm("Add server",
+            "A server of your own: a name for the list, the command line that starts it, as a terminal would run it, and the folder to start it in; an empty folder means the folder axMCP was started on, or your profile folder. Tab moves between the fields; Enter or Ctrl+Enter adds the server.",
+            form, "&Add",
+            () =>
+            {
+                var own = new OwnServer { Name = name.Text.Trim(), CommandLine = command.Text.Trim(), Folder = folder.Text.Trim().Length == 0 ? null : folder.Text.Trim() };
+                _settings.Servers.Add(own);
+                SaveSettings();
+                ReadAndFill(ServerSources.Own + ": " + own.Name);
+                Announce($"Added {own.Name}", true);
+                _undo = (() =>
                 {
-                    var own = new OwnServer { Name = name.Trim(), CommandLine = command.Trim(), Folder = folder.Trim().Length == 0 ? null : folder.Trim() };
-                    _settings.Servers.Add(own);
+                    _settings.Servers.Remove(own);
                     SaveSettings();
-                    ReadAndFill(ServerSources.Own + ": " + own.Name);
-                    Announce($"Added {own.Name}", true);
-                    _undo = (() =>
-                    {
-                        _settings.Servers.Remove(own);
-                        SaveSettings();
-                        ReadAndFill(null);
-                    }, $"added {own.Name}");
-                }, typed => typed.Trim().Length > 0 && !Directory.Exists(typed.Trim()) ? "There is no folder " + typed.Trim() : null, required: false),
-                typed => CommandLines.Split(typed).Count == 0 ? "Type the program and its arguments" : null),
-            RefusedOwnName);
+                    ReadAndFill(null);
+                }, $"added {own.Name}");
+            },
+            () => RefusedOwnName(name.Text) is { } refused ? (name, refused)
+                : CommandLines.Split(command.Text).Count == 0 ? (command, "Type the program and its arguments")
+                : folder.Text.Trim().Length > 0 && !Directory.Exists(folder.Text.Trim()) ? (folder, "There is no folder " + folder.Text.Trim())
+                : null);
     }
 
     protected override void NewList() => Announce("Servers are added with Ctrl+N at the top level", true);

@@ -7,9 +7,13 @@ namespace AxKit.Forms;
 /// </summary>
 public static class ItemKeys
 {
-    /// <summary>Into a list or a group (IA-3): Right only goes into them; on an item it plays the edge sound.</summary>
+    /// <summary>
+    /// Into a list or a group (IA-3): Right only goes into them; on an item it plays the edge sound. In the detail pane
+    /// (IA-5.6): the next value of a choice, a check checked; the edge sound on any other field.
+    /// </summary>
     public const Keys Into = Keys.Right;
 
+    /// <summary>Up a level (IA-3). In the detail pane (IA-5.6): the previous value of a choice, a check unchecked; the edge sound on any other field.</summary>
     public const Keys Up = Keys.Left;
     public const Keys UpAlso = Keys.Back;
 
@@ -58,8 +62,8 @@ public static class ItemKeys
     /// <summary>The shared keys with their names, which each app's table includes.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
-        ("Into a list", Into),
-        ("Up a level", Up),
+        ("Into a list; in the detail pane, the next value of a choice, or check", Into),
+        ("Up a level; in the detail pane, the previous value of a choice, or uncheck", Up),
         ("Up a level (Backspace)", UpAlso),
         ("Previous section", PreviousSection),
         ("Next section", NextSection),
