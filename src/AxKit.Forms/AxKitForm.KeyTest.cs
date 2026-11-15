@@ -271,6 +271,14 @@ public abstract partial class AxKitForm
 
             switch (m.Msg)
             {
+                case WM_KEYDOWN or WM_SYSKEYDOWN when (m.WParam.ToInt64() & 0xFFFF) == (long)Keys.Packet:
+                    // A character a program sent with no key of its own (SendInput's Unicode input, as the NVDA tier
+                    // types): its key-down is VK_PACKET, and the character itself comes only as the WM_CHAR that
+                    // TranslateMessage makes of it. Translated here, since the key-down is taken, so that the
+                    // character is said as one sent without a key press; the packet is never named as a key.
+                    var message = new MSG { hwnd = m.HWnd, message = (uint)m.Msg, wParam = m.WParam, lParam = m.LParam };
+                    TranslateMessage(ref message);
+                    break;
                 case WM_KEYDOWN or WM_SYSKEYDOWN:
                     // Bit 30: the key was down already, a repeat of a held key.
                     if ((m.LParam.ToInt64() & (1L << 30)) == 0)
@@ -279,6 +287,8 @@ public abstract partial class AxKitForm
                         form.KeyTestDown(code | Control.ModifierKeys);
                     }
 
+                    break;
+                case WM_KEYUP or WM_SYSKEYUP when (m.WParam.ToInt64() & 0xFFFF) == (long)Keys.Packet:
                     break;
                 case WM_KEYUP or WM_SYSKEYUP:
                     form.KeyTestUp((int)(m.WParam.ToInt64() & 0xFFFF));
@@ -294,5 +304,21 @@ public abstract partial class AxKitForm
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool IsChild(nint parent, nint window);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MSG
+        {
+            public nint hwnd;
+            public uint message;
+            public nint wParam;
+            public nint lParam;
+            public uint time;
+            public int ptX;
+            public int ptY;
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool TranslateMessage(ref MSG message);
     }
 }

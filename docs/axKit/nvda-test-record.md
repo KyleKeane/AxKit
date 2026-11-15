@@ -6,6 +6,29 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-15, afternoon: every app, before 5.9.0; by the assistant with NVDA listening (`main` 3b39748, then the fix of axDown/15)
+
+`.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3, Claude Code 2.1.325:
+126 scripts of `tests/scripts` and the four of `tests/nvda-scripts`, 130 in all. 129 passed in the full run, with
+every announcement also spoken by NVDA. The runner took the foreground itself and touched no window outside the run:
+the user's axClaude and axHelp windows were open throughout and were left as they were (axClaude/13's Close all
+windows reached only the run's own two windows).
+
+| What | Scripts | Result |
+|---|---|---|
+| Every script but one | 129 | Passed |
+| `axDown/15-key-test.txt` step 49, `type z` | 1 | Failed: under the NVDA tier a typed character arrives as SendInput's Unicode input, whose key-down is VK_PACKET; the key test took that key-down and named it ("Packet: no command of this window"), and no character followed. Fixed the same hour: the key test translates a VK_PACKET key-down into its character and says it as one sent without a key press. Then `axDown/15` passed on the hidden desktop and axDown's 19 scripts passed with NVDA |
+
+What this pass is the first to hear: the key test (Help, Diagnostics, Test a key) in axDown, axFile, axTask, axStart
+and axClaude; the soft chords and the tool pop (by their earcon names); the view's self-check in every axClaude
+script (an ERROR line fails a script, and none was written); Shift+Up and Shift+Down in Send key (`axClaude/05`); a
+single several-answer question's review submitted (`axClaude/12` step 8a); `axkit_window_text` giving a console's
+text (`mcp/06`).
+
+Owed to the user's ear: the chords and the pop in a real session; the key test with the real keyboard (modifiers
+alone, Alt+Tab ending it); F8 in a notice and in the hotkey windows; axHelp started hidden with "Keep the conversation
+ready" on; the new Ctrl+Shift hotkeys pressed from another program.
+
 ## 2026-11-15, early morning: every app; by the assistant with NVDA listening (`main` 84d3f86 with the F8 key and axClaude's background work not yet committed)
 
 `.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 119 scripts of
