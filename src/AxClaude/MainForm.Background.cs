@@ -129,9 +129,9 @@ internal sealed partial class MainForm
 
     /// <summary>
     /// A tick of the chords' timer: a chord when one is due (<see cref="BackgroundChords.Next"/>: the last one and its
-    /// pause over), with a tone for each thing running now. None starts while NVDA is counted as still reading a reply
-    /// this window spoke (<see cref="LeftoverSpeech"/>, the estimate FR-7.4b uses); it then starts as soon as that is
-    /// over. A window put away is silent through <see cref="Sounds.Muted"/>.
+    /// pause over), with a tone for each thing running now. Chords play under speech too: held back while a reply was
+    /// estimated to be read, they were never heard (the user, 2026-11-15), since Claude speaks most of the time work
+    /// runs. A window put away is silent through <see cref="Sounds.Muted"/>.
     /// </summary>
     private void PlayBackgroundChord()
     {
@@ -142,7 +142,7 @@ internal sealed partial class MainForm
         }
 
         var now = Environment.TickCount64;
-        if (_backgroundChords.Next(now, _backgroundHeard.Total, _settings.BackgroundChordPauseSeconds, LeftoverSpeech.Running(now, _replySpeechEnds)) is { } chord)
+        if (_backgroundChords.Next(now, _backgroundHeard.Total, _settings.BackgroundChordPauseSeconds, held: false) is { } chord)
         {
             Sounds.BackgroundChord(chord.Chord, chord.Things);
         }
