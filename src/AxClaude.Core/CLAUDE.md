@@ -27,7 +27,7 @@ New fixtures follow the `record-fixture` skill and are reviewed for personal dat
 ## Gotchas already learned (do not rediscover)
 
 - Clear this process's standard handles around `CreateProcess` when attaching a child to a pseudo console (see `PtyHost.Start`). Otherwise a child started from a process with redirected stdio inherits those pipes, sees no TTY, and Claude Code silently switches to non-interactive print mode.
-- Strip every `CLAUDE*` environment variable from the child's environment so a nested Claude Code session is not detected, and set `TERM=xterm-256color`.
+- Strip every `CLAUDE*` environment variable but `CLAUDE_CONFIG_DIR` (the user's own folder for Claude Code, kept since 2026-11-15) from the child's environment so a nested Claude Code session is not detected, and set `TERM=xterm-256color`.
 - Startup can show dialogs before the prompt (workspace trust, one-time onboarding questions). They are flat `y/n` or numbered prompts in screen reader mode; the app must simply show them and let the user answer.
 - Frames are bracketed by `ESC[?25l` and `ESC[?25h`. Chrome, finality and announcements are evaluated at frame end. Rows below the cursor row are chrome (autocomplete list, dialog hints). Only the cursor row may be treated as the `$` prompt; reply and tool rows can start with `$ ` too. On a full screen Claude can park the cursor on the mode line in the bottom row while it works; that row is chrome too, or the spinner and mode line above it are spoken with the reply (FR-3.5).
 - Screen reader mode emits no SGR styling. Markdown headings arrive as plain short rows, and the first block of a reply shares the `claude:` row. Heading detection is structural (SPEC.md §7.6).

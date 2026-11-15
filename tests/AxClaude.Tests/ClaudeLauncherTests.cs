@@ -21,6 +21,25 @@ public class ClaudeLauncherTests
     }
 
     [Fact]
+    public void The_child_environment_keeps_the_config_folder_and_drops_the_other_claude_variables()
+    {
+        var before = (Environment.GetEnvironmentVariable("CLAUDE_CONFIG_DIR"), Environment.GetEnvironmentVariable("CLAUDECODE"));
+        try
+        {
+            Environment.SetEnvironmentVariable("CLAUDE_CONFIG_DIR", @"D:\claude-config");
+            Environment.SetEnvironmentVariable("CLAUDECODE", "1");
+            var env = ClaudeLauncher.BuildEnvironment();
+            Assert.Equal(@"D:\claude-config", env["CLAUDE_CONFIG_DIR"]);
+            Assert.False(env.ContainsKey("CLAUDECODE"));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("CLAUDE_CONFIG_DIR", before.Item1);
+            Environment.SetEnvironmentVariable("CLAUDECODE", before.Item2);
+        }
+    }
+
+    [Fact]
     public async Task The_version_is_the_first_line_claude_prints_for_version()
     {
         // %~1: the argument without the quotes every argument of a batch program travels in.

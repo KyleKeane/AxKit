@@ -72,7 +72,7 @@ public static class ClaudeLauncher
         foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
         {
             var key = (string)entry.Key;
-            if (key.StartsWith("CLAUDE", StringComparison.OrdinalIgnoreCase))
+            if (key.StartsWith("CLAUDE", StringComparison.OrdinalIgnoreCase) && !key.Equals(ClaudeCodeSettings.ConfigDirVariable, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
