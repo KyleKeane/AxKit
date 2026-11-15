@@ -22,8 +22,11 @@ What this pass is the first to hear: Ctrl+Space between edit mode and navigation
 the music on Ctrl+M (`axClaude/09`), Options, Claude Code settings on a stand-in settings file (`axClaude/26`), the
 unsent message said when axHelp's conversation comes back (`axHelp/02`), and one Escape ending the key test.
 
-Owed to the user's ear: the modes in his own axDown and axClaude; a /btw answer in a real session; Claude Code's
-settings menu against his own settings, by his choice.
+Heard by the user the same evening, on his own build: the modes in axDown and axClaude, a /btw answer in a real
+session, Block Claude Code's feedback requests on his own settings, the unsent message in axHelp and one Escape
+ending the key test, all as written. His main axClaude window closed one second after he put axHelp's conversation
+away with Alt+F4: an ordinary close, no error in the log, most likely a second or repeated Alt+F4 that reached the
+window given the foreground back. Left as it is, at his word.
 
 ## 2026-11-15, afternoon: every app, before 5.9.0; by the assistant with NVDA listening (`main` 3b39748, then the fix of axDown/15)
 
