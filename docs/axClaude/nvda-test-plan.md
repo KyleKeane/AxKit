@@ -220,21 +220,21 @@ heard. The sounds are provisional; say which to change.
    started." After the reply: a short sweep gliding up, softer than the chimes; nothing is spoken about the
    shell. F8: "Claude: ready", then "1 shell in the background", the mode, the session name, then the folder.
    NVDA+End reads the same or says "blank" (the reason for F8).
-2. Wait: every 20 seconds one quiet breath of three seconds that swells and fades with no beginning to hear: it
-   sounds like something going on, not like a notification. It does not cut or delay a chime, a tick or NVDA's speech.
+2. Wait: every 10 seconds one low breath of five seconds that swells, stays and fades with no beginning to hear: it
+   sounds like something going on, not like a notification, and is heard without effort among the ticks and speech. It does not cut or delay a chime, a tick or NVDA's speech.
 3. Ctrl+B: "1 shell in the background". Alt, A: the Actions menu has What runs in the background, Ctrl+B.
 4. When the ping ends (a minute): the short sweep gliding down, told apart from the Done chime's three notes; the
    recurring sound does not come again. Ctrl+B: "Nothing runs in the background".
 5. Ask Claude: "Start two general-purpose agents in the background, each to wait 40 seconds with the Bash tool and
    report, and reply at once with the single word started." One rising sound for the two; the reply is spoken alone,
    no row of an agent with it. F8 says "2 agents in the background" (or "2 in the background" with their kinds).
-   Every 20 seconds the breath with two voices, fuller and no longer. Ctrl+B: the number, then each agent's type
+   Every 10 seconds the breath with two voices, fuller and no longer. Ctrl+B: the number, then each agent's type
    and description.
 6. As each agent ends: the falling sound, once each; after the first, the recurring sound has one voice.
 7. Options, Background work: Play a sound when background work starts and ends (checked), Play a sound while
    background work runs (checked), Say background work as it starts and ends (not checked), then four choices,
-   While it runs, a sound every 10, 20, 30 and 60 seconds, the one for 20 checked. Choose 10: "While it runs, a
-   sound every 10 seconds" is said. Check Say background work as it starts and ends and repeat step 1: after the
+   While it runs, a sound every 10, 20, 30 and 60 seconds, the one for 10 checked. Choose 20: "While it runs, a
+   sound every 20 seconds" is said. Check Say background work as it starts and ends and repeat step 1: after the
    reply has been read, "1 shell started"; at its end, "1 shell finished". Never in the middle of a reply.
 8. With background work running and Speak replies on all lines, send a message with a long reply: while the reply
    is read, the recurring sound stays away.
@@ -263,3 +263,20 @@ Script: `tests/scripts/axClaude/23-key-test.txt` (a stand-in for Claude Code, no
    Ctrl+Alt+H: "reads every heading from the caret's line to the end"; l: "L: says the line number"; the caret does
    not move. Alt+Tab away while the test runs: "Key test ended" is said as the window is left, and on coming back the
    keys act.
+
+## 24. Every line in its place (FR-3.3a, 2026-11-15)
+
+Script: `tests/scripts/axClaude/24-view-keeps-order.txt` (a stand-in for Claude Code, no network): a selection holds
+two frames back and both arrive in order; a message sent with the caret left at the top, and one sent from a quoted
+line, stand at the end. Every script of this folder also fails on the view's own ERROR line. By ear, in a long real
+conversation, since the fault of 2026-11-15 came after hours:
+
+1. While Claude writes a long reply, Ctrl+2, Ctrl+Home, then NVDA+Down (Say all) for half a minute, then Ctrl+End:
+   the last lines are the newest, in the order Claude wrote them, and nothing new stands further up (h and Shift+H
+   through the Input and Output headings: the numbers only rise).
+2. In the conversation, Shift+Down over a few lines while Claude writes, wait, Escape: "Selection cleared"; Ctrl+End:
+   as in step 1.
+3. With the caret left in the middle of the conversation, Ctrl+1, a message, Enter; Ctrl+2, Ctrl+End, Shift+H: the
+   newest Input heading is the message just sent, and the line the caret was left on has nothing new around it.
+4. After a long session, Help, Diagnostics, Copy diagnostics (or the log file `axClaude.log`): no line "the view's
+   text was not the transcript's". When there is one, send it with F4: it says which edit went wrong.

@@ -66,8 +66,12 @@ public class AmbientSoundsTests
     {
         var start = SamplesOf(AmbientSounds.BackgroundStart());
         var finish = SamplesOf(AmbientSounds.BackgroundFinish());
-        Assert.Equal(450 * Rate / 1000, start.Length);
+        Assert.Equal(AmbientSounds.SweepMilliseconds * Rate / 1000, start.Length);
         Assert.Equal(start.Length, finish.Length);
+
+        // An event, short, and heard: clearly louder than the first version (0.15) and under the chimes (0.35).
+        Assert.InRange(AmbientSounds.SweepMilliseconds, 500, 800);
+        Assert.InRange(Peak(start), 0.20 * short.MaxValue, 0.25 * short.MaxValue);
 
         var third = start.Length / 3;
         Assert.True(Crossings(start, 0, third) * 11 < Crossings(start, 2 * third, start.Length) * 10, "the start sound should rise in pitch");
@@ -105,8 +109,8 @@ public class AmbientSoundsTests
             Assert.True(Peak(samples, 0, samples.Length / 10) < peak / 3, "a sweep should swell slowly");
             Assert.True(Peak(samples, samples.Length - samples.Length / 10, samples.Length) < peak / 3, "a sweep should fade slowly");
 
-            // Gentle: nothing near clipping, and well under the chimes (0.35 of full scale).
-            Assert.InRange(peak, 0.04 * short.MaxValue, AmbientSounds.SweepLimit * short.MaxValue);
+            // Heard, and still gentle: nothing near clipping, and under the chimes (0.35 of full scale).
+            Assert.InRange(peak, 0.15 * short.MaxValue, AmbientSounds.SweepLimit * short.MaxValue);
         }
     }
 
@@ -115,22 +119,28 @@ public class AmbientSoundsTests
     {
         var one = SamplesOf(AmbientSounds.BackgroundPulse(1));
         Assert.Equal(AmbientSounds.PulseMilliseconds * Rate / 1000, one.Length);
-        Assert.InRange(AmbientSounds.PulseMilliseconds, 2500, 4000);
-        var apart = 150 * Rate / 1000;
+        Assert.InRange(AmbientSounds.PulseMilliseconds, 4500, 5000);
+
+        // Pronounced: one voice alone peaks near 0.17 of full scale (the version that went unheard: 0.05).
+        Assert.InRange(Peak(one), 0.15 * short.MaxValue, 0.19 * short.MaxValue);
+        var apart = 100 * Rate / 1000;
         var energy = Energy(one);
         for (var layers = 1; layers <= AmbientSounds.MostLayers; layers++)
         {
             var samples = SamplesOf(AmbientSounds.BackgroundPulse(layers));
 
-            // A process, not an event: the same length whatever runs, and a level that only rises to the middle
-            // and only sinks from it, tenth by tenth, with no onset anywhere.
+            // A process, not an event: the same length whatever runs; the level rises through the first three
+            // tenths with no onset, stays near its fullest through the middle four, and sinks through the last three.
             Assert.Equal(one.Length, samples.Length);
             var tenth = samples.Length / 10;
-            for (var n = 1; n < 10; n++)
+            var tenths = Enumerable.Range(0, 10).Select(n => Energy(samples[(n * tenth)..((n + 1) * tenth)])).ToArray();
+            var fullest = tenths.Max();
+            Assert.True(tenths[0] < tenths[1] && tenths[1] < tenths[2] && tenths[2] < tenths[3], $"{layers} layers: the breath should rise");
+            Assert.True(tenths[6] > tenths[7] && tenths[7] > tenths[8] && tenths[8] > tenths[9], $"{layers} layers: the breath should sink");
+            Assert.True(tenths[0] < fullest / 20 && tenths[9] < fullest / 20, $"{layers} layers: the ends should be all but silent");
+            for (var n = 3; n < 7; n++)
             {
-                var before = Energy(samples[((n - 1) * tenth)..(n * tenth)]);
-                var here = Energy(samples[(n * tenth)..((n + 1) * tenth)]);
-                Assert.True(n < 5 ? here > before : n == 5 || here < before, $"{layers} layers: tenth {n} should follow the breath");
+                Assert.True(tenths[n] > fullest * 0.7, $"{layers} layers: tenth {n} should be full");
             }
 
             if (layers == 1)
@@ -138,11 +148,12 @@ public class AmbientSoundsTests
                 continue;
             }
 
-            // Fuller with every layer, and far from the chimes' level at its loudest.
+            // Fuller with every layer, and under the chimes' level at its loudest.
             var more = Energy(samples);
-            Assert.True(more > energy * 1.03, $"{layers} layers should carry more than {layers - 1}");
+            Assert.True(more > energy * 1.005, $"{layers} layers should carry more than {layers - 1}");
             energy = more;
-            Assert.True(Peak(samples) > Peak(one), $"{layers} layers should be fuller at the middle than one");
+            Assert.True(Peak(samples) > Peak(one), $"{layers} layers should be fuller than one");
+            Assert.InRange(Peak(samples), 0, 0.31 * short.MaxValue);
 
             // The first layer of several is the one breath itself, only quieter: where it sounds alone, the same shape.
             var scale = (double)Peak(samples, 0, apart) / Peak(one, 0, apart);
@@ -157,12 +168,12 @@ public class AmbientSoundsTests
         Assert.Equal(AmbientSounds.BackgroundPulse(5), AmbientSounds.BackgroundPulse(9));
         Assert.Equal(AmbientSounds.BackgroundPulse(1), AmbientSounds.BackgroundPulse(0));
 
-        // A small drift up into the pitch while it rises, and the pitch held while it fades: C4, 262 Hz.
+        // A small drift up into the pitch while it rises, and the pitch held from then on: C3, 131 Hz, low.
         var fifth = one.Length / 5;
-        var rising = Crossings(one, fifth, 2 * fifth);
+        var rising = Crossings(one, 0, fifth);
         var held = Crossings(one, 3 * fifth, 4 * fifth);
-        Assert.InRange(held - rising, 1, held / 20);
-        Assert.InRange(held, 2 * 258 * fifth / Rate, 2 * 266 * fifth / Rate);
+        Assert.InRange(held - rising, 2, held / 10);
+        Assert.InRange(held, 2 * 129 * fifth / Rate, 2 * 133 * fifth / Rate);
 
         // The layers above are higher: five have more crossings at the middle than one.
         var five = SamplesOf(AmbientSounds.BackgroundPulse(5));
@@ -172,16 +183,32 @@ public class AmbientSoundsTests
     [Fact]
     public void A_swell_nests_its_layers_inside_the_first()
     {
-        var one = SamplesOf(WaveTone.Swell(0.2, 1000, 100, 1, 300));
-        var two = SamplesOf(WaveTone.Swell(0.2, 1000, 100, 1, 300, 450));
+        var one = SamplesOf(WaveTone.Swell(0.2, 1000, 100, 0.4, 1, (300.0, 0.0)));
+        var two = SamplesOf(WaveTone.Swell(0.2, 1000, 100, 0.4, 1, (300.0, 0.0), (450.0, 1.0)));
         Assert.Equal(Rate, one.Length);
         Assert.Equal(one.Length, two.Length);
         Assert.Equal(0, one[0]);
-        Assert.InRange(Peak(one), 0.15 * short.MaxValue, 0.22 * short.MaxValue);
+        Assert.InRange(Peak(one), 0.18 * short.MaxValue, 0.27 * short.MaxValue);
+
+        // Held at the full level for two fifths of the length: every 50 ms from 300 to 700 ms is as loud as the loudest.
+        for (var from = 300; from < 700; from += 50)
+        {
+            Assert.True(Peak(one, from * Rate / 1000, (from + 50) * Rate / 1000) > Peak(one) * 0.9, $"full at {from} ms");
+        }
+
+        // No hold at all is still a sound, and a whole hold does not divide by nothing.
+        Assert.Equal(one.Length, SamplesOf(WaveTone.Swell(0.2, 1000, 100, 0, 1, (300.0, 0.0))).Length);
+        Assert.InRange(Peak(SamplesOf(WaveTone.Swell(0.2, 1000, 100, 1, 1, (300.0, 0.0)))), 0.18 * short.MaxValue, 0.27 * short.MaxValue);
+
+        // A layer's phase is its tone's phase at the middle of the sound: at 0 the middle sample is all but silent,
+        // at a quarter turn it is the loudest.
+        Assert.InRange(Math.Abs((int)one[one.Length / 2]), 0, Peak(one) / 10);
+        var quarter = SamplesOf(WaveTone.Swell(0.2, 1000, 100, 0.4, 1, (300.0, Math.PI / 2)));
+        Assert.InRange(Math.Abs((int)quarter[quarter.Length / 2]), Peak(quarter) * 0.7, Peak(quarter));
 
         // The second layer enters 100 ms in and has left 100 ms before the end: outside that, two are one, only quieter.
         var apart = 100 * Rate / 1000;
-        var scale = Math.Pow(2, -0.15);
+        var scale = Math.Pow(2, -0.3);
         for (var i = 0; i < apart; i += 5)
         {
             Assert.Equal(one[i] * scale, two[i], 3.0);

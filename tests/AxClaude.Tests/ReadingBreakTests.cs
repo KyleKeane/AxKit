@@ -121,6 +121,35 @@ public class ReadingBreakTests
     }
 
     [Fact]
+    public void Two_marks_in_one_word_are_one_line_break_and_the_length_counts_it_once()
+    {
+        // A word that streams in three pieces with the reader on it: both marks move in front of the word. The length
+        // counted two line breaks where the text had one until 2026-11-15, and every later edit landed two characters off.
+        var mirror = new TranscriptMirror();
+        var reply = L("The qu");
+        List<Line> lines = [reply];
+        var text = Apply(new StringBuilder(), mirror.Update(lines));
+        mirror.BreakAtEnd(0);
+        reply.Text = "The quan";
+        Apply(text, mirror.Update(lines));
+        Assert.Equal("The \r\nquan", text.ToString());
+
+        mirror.BreakAtEnd(6);
+        reply.Text = "The quantum";
+        Apply(text, mirror.Update(lines));
+        Assert.Equal("The \r\nquantum", text.ToString());
+        Assert.Equal(text.Length, mirror.Length);
+        Assert.Equal(text.ToString(), mirror.Rendering());
+
+        lines.Add(L("next"));
+        Apply(text, mirror.Update(lines));
+        Assert.Equal("The \r\nquantum\r\nnext", text.ToString());
+        mirror.ClearBreaks();
+        Apply(text, mirror.Update(lines));
+        Assert.Equal("The quantum\r\nnext", text.ToString());
+    }
+
+    [Fact]
     public void A_line_that_shrinks_below_the_mark_loses_the_break()
     {
         var mirror = new TranscriptMirror();

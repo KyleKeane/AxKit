@@ -1,0 +1,55 @@
+# Workflow: Read back in the conversation while Claude writes on, and find every line in its place
+# axClaude, docs/axClaude/nvda-test-plan.md section 24 (SPEC.md FR-3.3, FR-3.3a, FR-3.11): the conversation view holds
+# its output back while text is selected in it, then takes everything that came meanwhile at once; a message sent
+# with the caret left far up in the conversation, and one sent from a quoted line, go to the end of the conversation,
+# never to the caret. The view checks its own text against the transcript's with every change and as it takes the
+# focus, and a difference is an ERROR line in the log, which fails this run. Needs no Claude Code, no network and no
+# model: a stand-in batch file draws one frame for each file the script makes in the project folder.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir order
+file claude.cmd @echo off\nif "%~1"=="--version" goto version\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait1\nif exist go1 goto frame1\nping -n 2 127.0.0.1 >nul\ngoto wait1\n:frame1\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho claude: one\necho claude: two\necho claude: three\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait2\nif exist go2 goto frame2\nping -n 2 127.0.0.1 >nul\ngoto wait2\n:frame2\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho claude: one\necho claude: two\necho claude: three\necho claude: four\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait3\nif exist go3 goto frame3\nping -n 2 127.0.0.1 >nul\ngoto wait3\n:frame3\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho claude: one\necho claude: two\necho claude: three\necho claude: four\necho claude: five\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait4\nif exist go4 goto frame4\nping -n 2 127.0.0.1 >nul\ngoto wait4\n:frame4\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho claude: one\necho claude: two\necho claude: three\necho claude: four\necho claude: five\necho you: hello there\necho claude: six\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait5\nif exist go5 goto frame5\nping -n 2 127.0.0.1 >nul\ngoto wait5\n:frame5\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho claude: one\necho claude: two\necho claude: three\necho claude: four\necho claude: five\necho you: hello there\necho claude: six\necho you: and again\necho claude: seven\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\necho 0.0.0 (stand-in)
+
+start claude {temp}\order --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+file order\go1 x
+keys ctrl+2
+expect text "claude: two","claude: three"
+
+# The caret at the top and a line selected: what Claude writes now waits (FR-3.11).
+keys ctrl+home
+keys shift+down
+file order\go2 x
+wait 2500
+file order\go3 x
+wait 2500
+refuse text claude: four
+# The selection cleared: both frames arrive at once, each line in its place, the caret still on the first line.
+keys escape
+expect said ! Selection cleared
+expect text "claude: three","claude: four","claude: five"
+expect text "caretLine":0
+
+# A message sent with the caret left at the top of the conversation: its block stands at the end, after the last
+# line, and the reply after it.
+keys ctrl+1
+type hello there
+keys enter
+expect said Sent
+file order\go4 x
+keys ctrl+2
+expect text "claude: five","# Input 1","hello there","","# Output 1 Reply from Claude","","claude: six"
+refuse text "hello there","","# Output 1 Reply from Claude","","claude: one
+
+# The same from a quoted line: Enter on the first line copies it into the message, and the message goes to the end.
+keys ctrl+home
+keys enter
+expect said ! Line 1 copied
+type and again
+keys enter
+expect said Sent
+file order\go5 x
+keys ctrl+2
+expect text "claude: six","# Input 2","_ start of copied line from conversation history _","Line 1 of 12:","claude: started","_ start of comment on the copied line _","and again","","# Output 2 Reply from Claude",""
+# The stand-in's own row for the message is no echo of the several lines sent, so it stays; the reply ends the text.
+expect text "# Output 2 Reply from Claude","","you: and again","claude: seven"]

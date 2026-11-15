@@ -366,4 +366,202 @@ public class TranscriptMirrorTests
         model.EndFrame();
         Assert.True(frames > 1, $"Only {frames} frames");
     }
+
+    // ---- several changes in one update: what a view that held its output back applies at once (FR-3.3a) ----
+    //
+    // While the reader's caret is in the conversation the view waits (a key's hold, the reader's, a selection), and
+    // the update that follows carries everything that happened meanwhile. Two of its edits can then start at the same
+    // place, an empty line that got its text and the lines added after it, and their order decides where the text
+    // lands (the fault of 2026-11-15: new text stood above older text).
+
+    [Fact]
+    public void An_empty_line_that_gets_its_text_keeps_the_lines_added_after_it_below_it()
+    {
+        var mirror = new TranscriptMirror();
+        var first = L("claude: Done.");
+        var blank = L("");
+        var text = Apply(new StringBuilder(), mirror.Update([first, blank]));
+
+        blank.Text = "# Input 2";
+        var update = mirror.Update([first, blank, L("you: next"), L("claude: Yes.")]);
+        Apply(text, update);
+
+        Assert.Equal("claude: Done.\r\n# Input 2\r\nyou: next\r\nclaude: Yes.", text.ToString());
+        Assert.Equal(mirror.Length, text.Length);
+    }
+
+    [Fact]
+    public void An_empty_line_that_gets_its_text_keeps_a_joined_line_that_changed_after_it()
+    {
+        var mirror = new TranscriptMirror();
+        var first = L("first");
+        var blank = L("");
+        var joined = Joined(" tail");
+        var last = L("last");
+        List<Line> lines = [first, blank, joined, last];
+        var text = Apply(new StringBuilder(), mirror.Update(lines));
+        Assert.Equal("first\r\n tail\r\nlast", text.ToString());
+
+        blank.Text = "head";
+        joined.Text = " longer tail";
+        Apply(text, mirror.Update(lines));
+        Assert.Equal("first\r\nhead longer tail\r\nlast", text.ToString());
+    }
+
+    [Fact]
+    public void The_check_of_the_view_names_the_first_place_where_its_text_is_not_the_mirrors()
+    {
+        var mirror = new TranscriptMirror();
+        var text = Apply(new StringBuilder(), mirror.Update([L("first"), L(""), L("second"), Joined("row")])).ToString();
+        Assert.Equal("first\r\n\r\nsecond row", text);
+        Assert.Equal(text, mirror.Rendering());
+        Assert.Equal(-1, mirror.FirstDifference(text));
+        // Text put in at a wrong place, the same length cut short, and more than there should be.
+        Assert.Equal(7, mirror.FirstDifference(text.Insert(7, "you: hi")));
+        Assert.Equal(text.Length - 3, mirror.FirstDifference(text[..^3]));
+        Assert.Equal(text.Length, mirror.FirstDifference(text + "x"));
+        Assert.Equal(0, new TranscriptMirror().FirstDifference("x"));
+        Assert.Equal(-1, new TranscriptMirror().FirstDifference(""));
+    }
+
+    [Theory]
+    [MemberData(nameof(FixtureTests.Fixtures), MemberType = typeof(FixtureTests))]
+    public void A_view_that_held_its_output_back_still_gets_the_visible_text(string name)
+    {
+        // The recording in chunks, the frame ended after some of them as the quiet timer cuts a redraw, and the view
+        // taking the lines only at every second, third, seventh or fortieth change, as one that held its output back.
+        var (columns, rows) = FixtureSize(name);
+        var bytes = Fixture(name);
+        foreach (var every in new[] { 1, 2, 3, 7, 40 })
+        {
+            var model = new SessionModel(columns, rows);
+            var mirror = new TranscriptMirror();
+            var text = new StringBuilder();
+            var frames = 0;
+            model.Changed += () =>
+            {
+                if (++frames % every != 0)
+                {
+                    return;
+                }
+
+                Apply(text, mirror.Update(model.Lines));
+                Assert.True(TranscriptMirror.Render(model.Lines) == text.ToString(), $"Every {every} frames, at frame {frames}: the text differs from the visible lines");
+            };
+
+            var random = new Random(name.Length + every);
+            var offset = 0;
+            while (offset < bytes.Length)
+            {
+                var length = Math.Min(random.Next(1, 300), bytes.Length - offset);
+                model.Feed(bytes.AsSpan(offset, length));
+                offset += length;
+                if (random.Next(4) == 0)
+                {
+                    model.EndFrame();
+                }
+            }
+
+            model.EndFrame();
+            Apply(text, mirror.Update(model.Lines));
+            Assert.Equal(TranscriptMirror.Render(model.Lines), text.ToString());
+        }
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    public void Any_mix_of_changes_between_two_updates_gives_the_visible_text_and_keeps_the_caret_on_its_line(int seed)
+    {
+        // Lines shown and hidden, emptied and filled, joined and unjoined, added anywhere, trimmed at the top, with
+        // reading breaks at the end now and then: whatever happened between two updates, the edits applied in their
+        // order give the visible lines, and a caret stays on its line while that line is shown.
+        var random = new Random(seed);
+        string[] words = ["", "", "", "a", "you: hi", " tail", "claude: The quick brown fox", " ", "# Input 3"];
+        var mirror = new TranscriptMirror();
+        var lines = new List<Line>();
+        var text = new StringBuilder();
+        for (var round = 0; round < 3000; round++)
+        {
+            var changes = random.Next(1, 8);
+            for (var c = 0; c < changes; c++)
+            {
+                var at = lines.Count == 0 ? 0 : random.Next(lines.Count);
+                switch (lines.Count == 0 ? 0 : random.Next(12))
+                {
+                    case 9:
+                    case 10:
+                        // The newest line grows, by a few letters or by a word, as a reply that streams.
+                        lines[^1].Text += random.Next(3) == 0 ? " and" : "x";
+                        break;
+                    case 11:
+                        // A line moves (the same line, another place).
+                        var moved = lines[at];
+                        lines.RemoveAt(at);
+                        lines.Insert(random.Next(lines.Count + 1), moved);
+                        break;
+                    case 0:
+                    case 1:
+                        lines.Add(new Line(0, LineKind.Plain, words[random.Next(words.Length)]) { JoinedToPrevious = random.Next(4) == 0 });
+                        break;
+                    case 2:
+                        lines.Insert(at, L(words[random.Next(words.Length)]));
+                        break;
+                    case 3:
+                    case 4:
+                        lines[at].Text = words[random.Next(words.Length)];
+                        break;
+                    case 5:
+                        lines[at].ChromeHidden = !lines[at].ChromeHidden;
+                        break;
+                    case 6:
+                        lines[at].JoinedToPrevious = !lines[at].JoinedToPrevious;
+                        break;
+                    case 7:
+                        lines.RemoveAt(at);
+                        break;
+                    default:
+                        if (lines.Count > 30)
+                        {
+                            lines.RemoveRange(0, random.Next(1, 10));
+                        }
+
+                        break;
+                }
+            }
+
+            if (random.Next(3) == 0 && mirror.LineCount > 0)
+            {
+                // The reader on the newest line, at any column of it: its end is marked as heard.
+                var last = mirror.LineCount - 1;
+                mirror.BreakAtEnd(random.Next(text.Length - mirror.StartAt(last) + 1));
+            }
+            else if (random.Next(6) == 0)
+            {
+                mirror.ClearBreaks();
+            }
+
+            var caret = text.Length == 0 ? 0 : random.Next(text.Length + 1);
+            Line? on = mirror.LineCount == 0 ? null : mirror.LineAt(mirror.LineIndexAt(caret));
+            var update = mirror.Update(lines);
+            Apply(text, update);
+            Assert.True(mirror.Length == text.Length, $"Seed {seed}, round {round}: the text is {text.Length} long, the mirror {mirror.Length}");
+            Assert.True(mirror.FirstDifference(text.ToString()) == -1, $"Seed {seed}, round {round}: the text differs from the mirror's at {mirror.FirstDifference(text.ToString())}");
+            Assert.Equal(mirror.Rendering(), text.ToString());
+            var mapped = update.MapPosition(caret);
+            Assert.InRange(mapped, 0, text.Length);
+            if (on is not null && !on.Hidden && lines.Contains(on))
+            {
+                Assert.True(ReferenceEquals(on, mirror.LineAt(mirror.LineIndexAt(mapped))) || mirror.TextAt(mirror.IndexOf(on)).Length == 0 || mapped == mirror.StartAt(mirror.IndexOf(on)) + mirror.TextAt(mirror.IndexOf(on)).Length, $"Seed {seed}, round {round}: the caret left its line");
+            }
+
+            if (!mirror.HasBreaks)
+            {
+                Assert.True(TranscriptMirror.Render(lines) == text.ToString(), $"Seed {seed}, round {round}: the text differs from the visible lines");
+            }
+        }
+    }
 }

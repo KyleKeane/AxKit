@@ -40,7 +40,8 @@ public static class BackgroundWork
     /// <summary>How often the recurring sound may play, in seconds: the choices of Options, Background work.</summary>
     public static readonly IReadOnlyList<int> PulseSeconds = [10, 20, 30, 60];
 
-    public const int DefaultPulseSeconds = 20;
+    /// <summary>Every 10 seconds at first (20 until 2026-11-15, when the user was not sure he heard the sound at all); a settings file that holds a value keeps it.</summary>
+    public const int DefaultPulseSeconds = 10;
 
     /// <summary>A number of seconds from a settings file: one of <see cref="PulseSeconds"/>, or the default.</summary>
     public static int SanitizePulseSeconds(int seconds) => PulseSeconds.Contains(seconds) ? seconds : DefaultPulseSeconds;

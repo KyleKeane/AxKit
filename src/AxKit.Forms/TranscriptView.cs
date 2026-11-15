@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Text;
+using AxKit.Core;
 using AxKit.Core.Transcript;
 using static AxKit.Forms.User32;
 
@@ -55,6 +56,9 @@ public sealed class TranscriptView : AxKitTextBox
 
     /// <summary>Set while the view moves the selection itself (<see cref="OwnSelect"/>), so that its own selection message is never taken for the reader's.</summary>
     private bool _applying;
+
+    /// <summary>How often the self-check found the control's text apart from the mirror's in this run (<see cref="PutWholeText"/>).</summary>
+    private int _faults;
 
     /// <param name="keys">The window's keys for the view, from its key table.</param>
     /// <param name="accessibleName">What NVDA calls the view: "Conversation" in axClaude, "Terminal" in axTerminal.</param>
@@ -202,6 +206,7 @@ public sealed class TranscriptView : AxKitTextBox
             _mirror.ClearBreaks();
         }
 
+        var length = _mirror.Length;
         var update = _mirror.Update(lines);
         if (!update.Changed)
         {
@@ -211,10 +216,30 @@ public sealed class TranscriptView : AxKitTextBox
         SendMessage(Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
         try
         {
-            foreach (var edit in update.Edits)
+            // The self-check (FR-3.3a): every edit is placed by an offset into the text the edits before it made, so
+            // one that lands elsewhere, or not whole, would put every later one in a wrong place for the rest of the
+            // session. The control's length is asked before the first edit and after each, and after each the caret,
+            // which the control leaves behind what it put in; all are single messages that copy nothing.
+            var actual = TextLength;
+            var fault = actual == length ? null : $"before the edits it was {actual} characters long, not {length}";
+            for (var i = 0; i < update.Edits.Count && fault is null; i++)
             {
+                var edit = update.Edits[i];
                 OwnSelect(edit.Start, edit.OldLength);
                 SelectedText = edit.Text;
+                length += edit.Text.Length - edit.OldLength;
+                var caret = SelectionStart;
+                actual = TextLength;
+                if (actual != length || caret != edit.Start + edit.Text.Length || SelectionLength != 0)
+                {
+                    fault = $"edit {i + 1} of {update.Edits.Count}, {edit.OldLength} characters at {edit.Start} to become {edit.Text.Length}, " +
+                        $"left it {actual} characters long, not {length}, with the caret at {caret}, not {edit.Start + edit.Text.Length}";
+                }
+            }
+
+            if (fault is not null)
+            {
+                PutWholeText(fault);
             }
 
             if (focused)
@@ -280,9 +305,47 @@ public sealed class TranscriptView : AxKitTextBox
         }
     }
 
+    /// <summary>
+    /// The way out when the control's text is not what the edits should have made of it (the self-check in
+    /// <see cref="Sync"/> and on taking the focus, FR-3.3a): one log line that says how it differed, numbers only and
+    /// never the conversation's words, and the whole mirrored text put in the control in one message, which depends
+    /// on no selection. The caller puts the caret back. Never the way a frame is shown: on a long conversation it
+    /// wraps every row again.
+    /// </summary>
+    private void PutWholeText(string fault)
+    {
+        // Twenty lines a run tell what there is to tell; a fault at every frame must not fill the log.
+        if (++_faults <= 20)
+        {
+            Log.Error($"{AccessibleName}: the view's text was not the transcript's: {fault}. The whole text was put in again");
+        }
+
+        _applying = true;
+        try
+        {
+            Text = _mirror.Rendering();
+        }
+        finally
+        {
+            _applying = false;
+        }
+    }
+
     protected override void OnGotFocus(EventArgs e)
     {
         base.OnGotFocus(e);
+        // The whole text checked against the mirror's as the reader comes to it (FR-3.3a): text that stands in a wrong
+        // place with the right length passes the lengths of the self-check in Sync. One copy of the text, about a
+        // millisecond at 20 000 lines, at a moment that is no frame; the caret stays at its position.
+        if (_mirror.FirstDifference(Text) is var at && at >= 0)
+        {
+            var start = SelectionStart;
+            var selected = SelectionLength;
+            var was = TextLength;
+            PutWholeText($"on taking the focus it differed from character {at} on, {was} characters long, not {_mirror.Length}");
+            OwnSelect(Math.Min(start, _mirror.Length), Math.Min(selected, _mirror.Length - Math.Min(start, _mirror.Length)));
+        }
+
         // Output that arrived while the view was unfocused moved the caret without the view following (Sync).
         ScrollCaretIntoView();
     }

@@ -103,17 +103,33 @@ public sealed class TranscriptMirror
             return column;
         }
 
-        var text = _text[index];
-        var rendered = column;
+        return column + 2 * BreaksUpTo(_shown[index], _text[index], column);
+    }
+
+    /// <summary>
+    /// How many reading breaks are rendered inside a row's text at or before a column: the one rule that the text
+    /// (<see cref="Rendered(Line, string)"/>), its length (<see cref="ExtraOf(Line)"/>) and the columns share. A
+    /// break counts only when it falls inside the text and after the break before it: two marks set in one word both
+    /// move in front of that word and are one line break, which the length counted as two until 2026-11-15, leaving
+    /// the mirrored text two characters longer than the view's.
+    /// </summary>
+    private int BreaksUpTo(Line row, string text, int column)
+    {
+        var count = 0;
+        var from = 0;
         foreach (var b in _breaks)
         {
-            if (ReferenceEquals(b.Row, _shown[index]) && ResolveColumn(b, text) is var c && c > 0 && c < text.Length && c <= column)
+            if (ReferenceEquals(b.Row, row) && ResolveColumn(b, text) is var c && c > from && c < text.Length)
             {
-                rendered += 2;
+                from = c;
+                if (c <= column)
+                {
+                    count++;
+                }
             }
         }
 
-        return rendered;
+        return count;
     }
 
     /// <summary>
@@ -216,6 +232,64 @@ public sealed class TranscriptMirror
     }
 
     /// <summary>
+    /// The whole mirrored text as the view must hold it now, reading breaks included: what the view puts in place of
+    /// its own text when it finds the two apart (<see cref="FirstDifference"/>). Built on demand, never per frame.
+    /// </summary>
+    public string Rendering()
+    {
+        var sb = new StringBuilder(Length);
+        for (var i = 0; i < _shown.Count; i++)
+        {
+            if (i > 0)
+            {
+                sb.Append(_separators[i]);
+            }
+
+            sb.Append(_extra[i] == 0 ? _text[i] : Rendered(_shown[i], _text[i]));
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Where a text first differs from the mirrored text, or -1 when the two are the same: the view's check of its
+    /// edit control against what the edits should have made of it. A text that is the mirrored text and more, or
+    /// less, differs at the shorter one's end. Nothing is allocated for lines without reading breaks.
+    /// </summary>
+    public int FirstDifference(string text)
+    {
+        var at = 0;
+        for (var i = 0; i < _shown.Count; i++)
+        {
+            if (i > 0 && Differs(text, ref at, _separators[i]))
+            {
+                return at;
+            }
+
+            if (Differs(text, ref at, _extra[i] == 0 ? _text[i] : Rendered(_shown[i], _text[i])))
+            {
+                return at;
+            }
+        }
+
+        return at == text.Length ? -1 : at;
+    }
+
+    /// <summary>Compares <paramref name="piece"/> with the text at <paramref name="at"/>: true with <paramref name="at"/> on the first character that differs, false with it moved past the piece.</summary>
+    private static bool Differs(string text, ref int at, string piece)
+    {
+        for (var k = 0; k < piece.Length; k++, at++)
+        {
+            if (at >= text.Length || text[at] != piece[k])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Finds the next (or previous) visible line whose text contains <paramref name="text"/>, ignoring case, starting
     /// after (before) <paramref name="from"/> and wrapping around to end with <paramref name="from"/> itself. Returns
     /// the line index or -1; <paramref name="column"/> is where the match starts within the line, and
@@ -260,7 +334,8 @@ public sealed class TranscriptMirror
 
     /// <summary>
     /// Takes the model's lines (hidden ones are skipped) and returns the edits that bring the mirrored text in line
-    /// with them, in descending start order so that applying them one after the other needs no offset bookkeeping.
+    /// with them, from the end of the text to its start so that applying them one after the other needs no offset
+    /// bookkeeping; of two edits with the same start, the one further on in the text comes first.
     /// The update is meant to be applied at once: its view of the previous state is reused by the next call.
     /// </summary>
     public MirrorUpdate Update(IReadOnlyList<Line> lines)
@@ -279,15 +354,7 @@ public sealed class TranscriptMirror
         }
 
         // The breaks all sit in one display line near the end: rows in front of it never consult them.
-        _breakStart = int.MaxValue;
-        if (_breaks.Count > 0)
-        {
-            PruneBreaks(next);
-            if (_breaks.Count > 0)
-            {
-                _breakStart = IndexOf(next, _breaks[0].Row);
-            }
-        }
+        _breakStart = _breaks.Count > 0 ? PruneBreaks(next) : int.MaxValue;
 
         var max = Math.Min(_shown.Count, next.Count);
         var prefix = 0;
@@ -318,16 +385,11 @@ public sealed class TranscriptMirror
             }
         }
 
-        for (var k = 1; k <= suffix; k++)
-        {
-            var shownIndex = _shown.Count - k;
-            var nextIndex = next.Count - k;
-            if (_text[shownIndex] != TextOf(next[nextIndex]) || _extra[shownIndex] != ExtraOf(nextIndex, next[nextIndex]))
-            {
-                edits.Add(new MirrorEdit(_starts[shownIndex], _text[shownIndex].Length + _extra[shownIndex], Rendered(next[nextIndex])));
-            }
-        }
-
+        // The edits are collected in the order of the text (the prefix's lines, the middle, the suffix's lines) and
+        // turned round at the end. A sort by start is not enough: an empty line that got its text and what follows it
+        // (the lines added after it, or a line joined to it without a space) are two edits with the same start, and
+        // the one further on in the text must be applied first, or the earlier line's text lands after it (the fault
+        // of 2026-11-15: a view that had held its output back showed new text above older text).
         var shownMiddleEnd = _shown.Count - suffix;
         var nextMiddleEnd = next.Count - suffix;
         if (shownMiddleEnd > prefix || nextMiddleEnd > prefix)
@@ -363,6 +425,16 @@ public sealed class TranscriptMirror
             edits.Add(new MirrorEdit(start, end - start, middle.ToString()));
         }
 
+        for (var k = suffix; k >= 1; k--)
+        {
+            var shownIndex = _shown.Count - k;
+            var nextIndex = next.Count - k;
+            if (_text[shownIndex] != TextOf(next[nextIndex]) || _extra[shownIndex] != ExtraOf(nextIndex, next[nextIndex]))
+            {
+                edits.Add(new MirrorEdit(_starts[shownIndex], _text[shownIndex].Length + _extra[shownIndex], Rendered(next[nextIndex])));
+            }
+        }
+
         if (edits.Count == 0)
         {
             // The same lines with the same texts and separators: nothing to recompute, and the same update as last
@@ -370,7 +442,7 @@ public sealed class TranscriptMirror
             return _unchanged ??= new MirrorUpdate(edits, _shown, _starts, _shown, _text, _extra, _starts, _shown.Count, 0);
         }
 
-        edits.Sort((a, b) => b.Start.CompareTo(a.Start));
+        edits.Reverse();
 
         // Everything up to the first prefix line whose text changed keeps its text, offset, separator and display
         // line; only the rest is recomputed. The old start offsets stay intact for the caret mapping.
@@ -463,51 +535,28 @@ public sealed class TranscriptMirror
     /// <summary>How many characters the reading breaks add to a line's text: two for each break inside it.</summary>
     private int ExtraOf(Line line)
     {
-        if (_breaks.Count == 0)
-        {
-            return 0;
-        }
-
-        var extra = 0;
-        foreach (var b in _breaks)
-        {
-            if (ReferenceEquals(b.Row, line) && ResolveColumn(b, TextOf(line)) is var c && c > 0 && c < TextOf(line).Length)
-            {
-                extra += 2;
-            }
-        }
-
-        return extra;
+        return _breaks.Count == 0 ? 0 : 2 * BreaksUpTo(line, TextOf(line), int.MaxValue);
     }
 
     /// <summary>The line's text as rendered, with a line break at each reading break inside it.</summary>
-    private string Rendered(Line line)
-    {
-        if (ExtraOf(line) == 0)
-        {
-            return TextOf(line);
-        }
+    private string Rendered(Line line) => Rendered(line, TextOf(line));
 
-        var text = TextOf(line);
-        var sb = new StringBuilder(text.Length + 2 * _breaks.Count);
+    /// <summary>A row's text as rendered: <paramref name="text"/> itself when no reading break falls inside it.</summary>
+    private string Rendered(Line row, string text)
+    {
+        StringBuilder? sb = null;
         var from = 0;
         foreach (var b in _breaks)
         {
-            if (!ReferenceEquals(b.Row, line))
+            if (ReferenceEquals(b.Row, row) && ResolveColumn(b, text) is var c && c > from && c < text.Length)
             {
-                continue;
-            }
-
-            var c = ResolveColumn(b, text);
-            if (c > from && c < text.Length)
-            {
+                sb ??= new StringBuilder(text.Length + 2 * _breaks.Count);
                 sb.Append(text, from, c - from).Append("\r\n");
                 from = c;
             }
         }
 
-        sb.Append(text, from, text.Length - from);
-        return sb.ToString();
+        return sb is null ? text : sb.Append(text, from, text.Length - from).ToString();
     }
 
     /// <summary>
@@ -547,9 +596,14 @@ public sealed class TranscriptMirror
         return space >= 0 && space + 1 >= b.Floor ? space + 1 : c;
     }
 
-    /// <summary>Forgets breaks whose line is gone or has shrunk below the mark; the breaks stay in text order.</summary>
-    private void PruneBreaks(List<Line> next)
+    /// <summary>
+    /// Forgets breaks whose line is gone or has shrunk below the mark; the breaks stay in text order. Returns the
+    /// index of the first row that still has one (no row when none is left): the smallest, not the first break's,
+    /// so that a row with a break is never taken for one without, wherever the rows went.
+    /// </summary>
+    private int PruneBreaks(List<Line> next)
     {
+        var first = int.MaxValue;
         for (var i = _breaks.Count - 1; i >= 0; i--)
         {
             var b = _breaks[i];
@@ -558,7 +612,13 @@ public sealed class TranscriptMirror
             {
                 _breaks.RemoveAt(i);
             }
+            else
+            {
+                first = Math.Min(first, index);
+            }
         }
+
+        return first;
     }
 
     /// <summary>The column of a character position within a line, without the line breaks that reading breaks added.</summary>
@@ -570,16 +630,22 @@ public sealed class TranscriptMirror
         }
 
         var text = _text[index];
-        var column = renderedColumn;
+        var count = 0;
+        var from = 0;
         foreach (var b in _breaks)
         {
-            if (ReferenceEquals(b.Row, _shown[index]) && ResolveColumn(b, text) is var c && c > 0 && c < text.Length && c + 2 <= renderedColumn)
+            if (ReferenceEquals(b.Row, _shown[index]) && ResolveColumn(b, text) is var c && c > from && c < text.Length)
             {
-                column -= 2;
+                from = c;
+                // The break at column c stands after the line breaks of the ones before it.
+                if (c + 2 * (count + 1) <= renderedColumn)
+                {
+                    count++;
+                }
             }
         }
 
-        return Math.Clamp(column, 0, text.Length);
+        return Math.Clamp(renderedColumn - 2 * count, 0, text.Length);
     }
 
     /// <summary>The visible index of a line, or -1 when it is not shown (any more).</summary>
@@ -648,7 +714,7 @@ public sealed class MirrorUpdate
         _suffix = suffix;
     }
 
-    /// <summary>Replacements in descending start order; empty when nothing changed.</summary>
+    /// <summary>Replacements from the end of the text to its start, to be applied in this order; empty when nothing changed.</summary>
     public IReadOnlyList<MirrorEdit> Edits { get; }
 
     public bool Changed => Edits.Count > 0;

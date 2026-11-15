@@ -130,17 +130,35 @@ public class BackgroundWorkTests
     }
 
     [Fact]
-    public void The_settings_start_with_both_sounds_on_the_words_off_and_twenty_seconds()
+    public void The_settings_start_with_both_sounds_on_the_words_off_and_ten_seconds()
     {
         var settings = new AppSettings();
         Assert.True(settings.SoundOnBackgroundWork);
         Assert.True(settings.BackgroundPulse);
         Assert.False(settings.SayBackgroundWork);
-        Assert.Equal(20, settings.BackgroundPulseSeconds);
+        Assert.Equal(10, settings.BackgroundPulseSeconds);
         Assert.Equal([10, 20, 30, 60], BackgroundWork.PulseSeconds);
         Assert.Equal(30, BackgroundWork.SanitizePulseSeconds(30));
-        Assert.Equal(20, BackgroundWork.SanitizePulseSeconds(0));
-        Assert.Equal(20, BackgroundWork.SanitizePulseSeconds(45));
+        Assert.Equal(20, BackgroundWork.SanitizePulseSeconds(20));
+        Assert.Equal(10, BackgroundWork.SanitizePulseSeconds(0));
+        Assert.Equal(10, BackgroundWork.SanitizePulseSeconds(45));
+    }
+
+    /// <summary>A settings file that already holds an interval keeps it when the default changes (20 was the default until 2026-11-15).</summary>
+    [Fact]
+    public void A_settings_file_that_holds_an_interval_keeps_it()
+    {
+        var path = Path.Combine(Path.GetTempPath(), "axclaude-tests", Guid.NewGuid().ToString("N"), "settings.json");
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.WriteAllText(path, "{ \"backgroundPulseSeconds\": 20 }");
+            Assert.Equal(20, AppSettings.Load(path, out _).BackgroundPulseSeconds);
+        }
+        finally
+        {
+            Directory.Delete(Path.GetDirectoryName(path)!, true);
+        }
     }
 
     /// <summary>A settings file written before these settings existed: both sounds are on, the words off.</summary>
@@ -158,7 +176,7 @@ public class BackgroundWorkTests
             Assert.True(settings.SoundOnBackgroundWork);
             Assert.True(settings.BackgroundPulse);
             Assert.False(settings.SayBackgroundWork);
-            Assert.Equal(20, settings.BackgroundPulseSeconds);
+            Assert.Equal(10, settings.BackgroundPulseSeconds);
         }
         finally
         {

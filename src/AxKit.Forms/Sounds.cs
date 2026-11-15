@@ -349,7 +349,7 @@ public static class Sounds
     public static void BackgroundFinish() => Play("BackgroundFinish", () => Chimes.Play(BackgroundFinishTone, replace: false));
 
     /// <summary>
-    /// The recurring sound while work runs in the background: one slow breath of about three seconds, a process and
+    /// The recurring sound while work runs in the background: one slow, low breath of about five seconds, a process and
     /// not an event, with <paramref name="notes"/> voices in it, one for each thing running, five at most; nothing
     /// for none. On its own device, so it sounds with the chimes, the ticks and the music and delays none of them;
     /// one that would start while the last still sounds is dropped. Recorded as "BackgroundPulse 2". Provisional.
