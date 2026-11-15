@@ -30,6 +30,12 @@ public abstract partial class AxKitForm
     protected internal void ShowNotice(Notice notice)
     {
         _paletteSpeak.Stop();
+        if (PutAway)
+        {
+            // Unheard and unseen now: shown again when the window is brought up (ShowNoticeRaisedWhilePutAway).
+            _noticeWhilePutAway = true;
+        }
+
         Recent.Add(RecentActionKind.Notice, notice.Title, DateTime.UtcNow);
         if (notice.Unprompted && !notice.Silent && NoticeChime)
         {
@@ -270,6 +276,50 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
+    /// The window is put away: hidden by its own close and running on, to be shown again as it was (axClaude's window
+    /// that hides on closing, docs/axClaude/SPEC.md FR-9.6, 2026-11-15; false for every other window, a hotkey window
+    /// included, which speaks while hidden: axHelp's "The screenshot could not be taken"). While it is, the window
+    /// announces nothing (<see cref="Announce"/>, <see cref="AnnounceBefore"/>: dropped, not kept for later) and the
+    /// AI tools do not see it (<see cref="McpChannel"/> answers that it is hidden, so <c>axkit_windows</c> leaves it out).
+    /// </summary>
+    protected internal virtual bool PutAway => false;
+
+    /// <summary>An announcement dropped because the window is put away: the window keeps what the user must still hear when it is brought up (axClaude: that Claude stopped); nothing by default.</summary>
+    protected virtual void SaidWhilePutAway(string text)
+    {
+    }
+
+    /// <summary>A notice was raised while the window was put away, unheard and unseen.</summary>
+    private bool _noticeWhilePutAway;
+
+    /// <summary>
+    /// For a window brought up again: a notice raised while it was put away, and still showing, is shown again as on
+    /// its arrival, with its chime and the focus where a notice puts it, so that NVDA reads it; true when there was one.
+    /// </summary>
+    protected bool ShowNoticeRaisedWhilePutAway()
+    {
+        var raised = _noticeWhilePutAway;
+        _noticeWhilePutAway = false;
+        if (!raised || !NoticeOpen || Overlay.Shown is not { } notice)
+        {
+            return false;
+        }
+
+        // Chained, so that the notice is not taken for one replacing itself (its cancel must not run, R-14).
+        _chaining = true;
+        try
+        {
+            ShowNotice(notice);
+        }
+        finally
+        {
+            _chaining = false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// What was announced before the window was first activated, said on the activation, in order (AX-7.1): NVDA
     /// ignores the announcements of a window that is not in front, and a window started by a program in the background
     /// (a hand-over, the test runner) comes up behind until it is activated; what it said as it opened was lost (heard
@@ -297,6 +347,13 @@ public abstract partial class AxKitForm
     /// <summary>Speaks without moving the focus (AX-7.3): on the notice while one shows, since the window's controls are hidden then, and on <see cref="AnnounceSource"/> otherwise; before the first activation, kept for it; close on the heels of the one before, joined to it.</summary>
     protected internal bool Announce(string text, bool interrupt)
     {
+        // A window put away says nothing; what it would have said goes to SaidWhilePutAway, which keeps what matters.
+        if (PutAway)
+        {
+            SaidWhilePutAway(text);
+            return false;
+        }
+
         // For a report (docs/axKit/reports.md RP-4.2): a window whose announcements may carry the user's content records
         // its commands and notices alone (RecordsAnnouncements).
         if (RecordsAnnouncements)
@@ -347,6 +404,11 @@ public abstract partial class AxKitForm
     /// </summary>
     protected void AnnounceBefore(string text)
     {
+        if (PutAway)
+        {
+            return;
+        }
+
         if (RecordsAnnouncements)
         {
             Recent.Add(RecentActionKind.Said, text, DateTime.UtcNow);

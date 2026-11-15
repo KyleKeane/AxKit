@@ -10,7 +10,7 @@ public static class HelpText
     public static string Window(string conversationKey, string screenshotKey, bool screenshotRegistered, string workingFolder) => $"""
         axHelp: your conversation with Claude, from any program.
 
-        {conversationKey}: the conversation, an axClaude window titled axHelp, the focus in its message field. It is one conversation that goes on until you clear it there with Session, New session, so that earlier answers stay readable with axClaude's keys. Claude Code works in its own folder, {workingFolder}, and asks before it changes anything on your computer.
+        {conversationKey}: the conversation, an axClaude window titled axHelp, the focus in its message field. It is one conversation that goes on until you clear it there with Session, New session, so that earlier answers stay readable with axClaude's keys. Alt+F4 there hides it, Claude Code running on, and {conversationKey} brings the same window back at once; Session, End Claude and close this window ends it. Claude Code works in its own folder, {workingFolder}, and asks before it changes anything on your computer. Ask it about axKit too: it answers from axKit's guides, kept in the documentation folder there.
 
         {screenshotKey}: a screenshot of the window in front, put into the conversation's message field with its path, which is on the clipboard too; type your question after it and press Enter.{(screenshotRegistered ? string.Empty : $" {screenshotKey} is taken by another program now: change screenshotHotkey in axHelp.json (Options, Developer, Open settings file) and start axHelp again.")}
 
@@ -27,6 +27,9 @@ public static class HelpText
         ## From any program
           The conversation's hotkey, Ctrl+Shift+Slash (the question mark's key) unless you chose another in Options, Hotkey: the conversation with Claude, an axClaude window titled axHelp, the focus in its message field
           The screenshot's hotkey, Ctrl+Shift+Comma (the less-than sign's key) unless axHelp.json names another: a picture of the window in front, its path put into the conversation's message field and on the clipboard; type your question after it and press Enter
+          Alt+F4 in the conversation hides it and Claude Code runs on; the hotkey brings the same window back with the caret in the message field. Its Session menu has End Claude and close this window; Quit axHelp ends it too, and it asks first when Claude is working or a message is typed and not sent
+          Options, Keep the conversation ready in the background, off at first: Claude Code starts at your first press. On, axHelp started at sign-in starts Claude Code hidden, so that the first press is quick too; Claude Code then runs from sign-in
+          A question about axKit or one of its apps is answered from axKit's guides, kept in the documentation folder of Claude's working folder
           The first time, axClaude's reminder of what goes to Anthropic, and Claude Code's question whether to trust its working folder
 
         ## In this window

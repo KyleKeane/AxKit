@@ -29,6 +29,27 @@ public class StartupOptionsTests
         Assert.Throws<ArgumentException>(() => StartupOptions.Parse([Folder, "--title"]));
     }
 
+    /// <summary>FR-9.6: a window that hides on closing, and its hidden start, which counts only with it and a folder.</summary>
+    [Fact]
+    public void Hide_on_close_and_a_hidden_start_are_taken_and_hidden_alone_starts_on_view()
+    {
+        var plain = StartupOptions.Parse([Folder]);
+        Assert.False(plain.HideOnClose);
+        Assert.False(plain.StartsHidden);
+
+        var hides = StartupOptions.Parse([Folder, "--title", "axHelp", "--hide-on-close"]);
+        Assert.True(hides.HideOnClose);
+        Assert.False(hides.StartsHidden);
+
+        var hidden = StartupOptions.Parse([Folder, "--hide-on-close", "--hidden"]);
+        Assert.True(hidden.StartsHidden);
+
+        // Hidden without hide on close would be a window nothing brings back: it starts on view.
+        Assert.False(StartupOptions.Parse([Folder, "--hidden"]).StartsHidden);
+        Assert.False((hidden with { Folder = null }).StartsHidden);
+        Assert.Contains("--hide-on-close", StartupOptions.Usage);
+    }
+
     [Fact]
     public void Windows_own_folders_and_the_apps_own_are_never_a_project()
     {

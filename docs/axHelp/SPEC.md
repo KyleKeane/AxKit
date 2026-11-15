@@ -49,18 +49,49 @@ agreement (AX-11.4) asked the first time.
 - HE-1.2 One axHelp at a time (a named mutex, `AppPaths.OneAtATime`): a second start hands "show", or "open" with its
   picture, to the running one's window (`AppMessage`), found by its title "axHelp hotkeys" (never "axHelp", which is the
   conversation's), and ends; with `--hidden` it just ends.
-- HE-1.3 Alt+F4 and Close all windows hide axHelp's window; Session, Quit axHelp ends the process. The conversation is an
-  axClaude window of its own and closes as any axClaude window.
+- HE-1.3 Alt+F4 and Close all windows hide axHelp's window; Session, Quit axHelp ends the process. **The conversation
+  hides too** (2026-11-15; the fault the user found: Alt+F4 on the conversation, then the hotkey, started a new
+  axClaude that loaded Claude Code and replayed the conversation). It is an axClaude window started with
+  `--hide-on-close` (axClaude FR-9.6): Alt+F4, its close command and Close all windows hide it, without a question,
+  Claude Code running on with everything as it was, and the hotkeys bring that same window back (HE-2.1). While
+  hidden it is in no Window menu, not in Alt+Tab and not counted by Close all windows; the AI tools do not list it;
+  it says nothing and plays nothing: a reply that arrives is read in the conversation when it is shown, and a
+  question of Claude's waits and is asked then. Its own Session menu ends it: End Claude and close this window, with
+  axClaude's question while Claude is in the middle of something (FR-1.7). **Quit axHelp asks the conversation to end
+  with it**, hidden or on view (the "end" hand-over), as does axHelp's close for an update: with axHelp gone nothing
+  would bring a hidden conversation back. It is a request, and nothing is lost without a word (axClaude FR-9.6): a
+  conversation with nothing to lose ends at once, unheard; one where Claude is at work or waits for an answer comes
+  to the front with axClaude's "Close axClaude?" (FR-1.7), and one with a message typed and not sent, or an offered
+  command not answered, with "Close this conversation?", whose Enter keeps it open. axHelp itself ends either way,
+  since its own process holds nothing; a conversation the user kept stays on view as a window of its own and from
+  then on closes on Alt+F4 as any axClaude window. A conversation axHelp started a moment ago whose window does not
+  exist yet has its process ended with axHelp (`Conversation.AtQuit`), so that none is left running unseen. Windows'
+  own end closes both. The cost, said in the guide:
+  Claude Code stays in memory while the conversation is hidden.
 - HE-1.4 `AxKit.exe describe`, axDescribe's verb until 5.7.0, starts axHelp with the same arguments (`Dispatch.
   FormerDescribe`), so that an older sign-in start or script still works; axHelp removes axDescribe's Run value at its
   start.
 
 ### HE-2 The conversation
 
-- HE-2.1 **The conversation's hotkey** (and Enter in axHelp's window) brings up the conversation: the open axKit window
-  titled "axHelp" to the front (`WindowMenu.Activate`), or, when none is open, a new axClaude window, `AxKit.exe claude
-  <working folder> --title axHelp -- --continue --model <model>` (`HelpSettings.ConversationArguments`), which continues
-  the folder's last conversation (axClaude FR-9.1). axHelp's own window hides first. Everything in the conversation is
+- HE-2.1 **The conversation's hotkey** (and Enter in axHelp's window) brings up the conversation. The window titled
+  "axHelp" of this program, on view or hidden (`HotkeyForm.FindRunning`, which finds hidden windows; the Window
+  menu's list does not), is handed "show" (`AppMessage`, which passes on the hotkey's right to the front) and brings
+  itself up: made visible when it was hidden, in front, **the focus in the message field, always**, whether it was
+  hidden, behind other windows or in front with the focus in the conversation (the user, 2026-11-15: "the global
+  hotkey always places the caret in the message field"). While Claude waits on an answer, the question's list stands
+  in the message field's place and takes the focus; a notice on view keeps it. Showing is the same window made
+  visible: nothing is started, rebuilt, replayed or read out again, and NVDA says only what it says for a window
+  coming to the front (the user: "as snappy and responsive as possible, the window loading with content filling
+  should not be involved"). Coming back to the window another way, Alt+Tab or the taskbar, changes nothing: the focus
+  and the caret are where they were ("alt+tab back to it holds his position"). When no such window exists, a new
+  axClaude window is started, `AxKit.exe claude <working folder> --title axHelp --model <model> --hide-on-close`
+  (`HelpSettings.ConversationArguments`), which continues the folder's last conversation (axClaude FR-9.1); axHelp
+  keeps the process it started, and a press while that process runs and its window is not there yet waits for the
+  window, however long the start takes, and never starts a second (`Conversation.Next`: hand over to the window,
+  wait for a started process, start only when there is neither; one conversation at a time in every order of start,
+  press and quit). axHelp's own window hides first.
+  Everything in the conversation is
   axClaude's: the message field, the transcript and its keys, the replies spoken by Options, Speech, Speak replies, the
   questions Claude asks, Session, New session to clear it, Claude Code's `/resume` for the folder's earlier
   conversations.
@@ -70,7 +101,8 @@ agreement (AX-11.4) asked the first time.
 - HE-2.3 **The model.** The conversation starts with axHelp's own model, `model` in `axHelp.json`, the fast one
   (`haiku`) by default; Options, Conversation model offers Fast (Haiku), Balanced (Sonnet), Strongest (Opus). Given as
   `--model` at the start, it wins over Claude Code's saved default, so a model chosen elsewhere never changes axHelp's;
-  a change counts from the conversation's next start. `/model` typed inside the conversation changes that session and
+  a change counts from the conversation's next start (its Session, End Claude and close this window, then the
+  hotkey: closing alone hides it, HE-1.3). `/model` typed inside the conversation changes that session and
   is saved by Claude Code as its default for new sessions everywhere, axClaude's included; the guide says to choose
   axHelp's model in its Options instead.
 - HE-2.4 **The working folder** is AI help's (`ai-help.md` AH-2.1, AH-D6): `Documents\axKit Claude` unless
@@ -79,10 +111,42 @@ agreement (AX-11.4) asked the first time.
   when missing (`WorkingFolderFiles`): `CLAUDE.md` (short spoken replies; a message starting "Screenshot of" or
   "Picture" names a picture file to read first; work of several steps on the computer goes to the subagent) and
   `.claude\agents\agent.md`, a Claude Code subagent named agent on the strongest model (`model: opus`). The user's own
-  changes to either stay.
+  changes to either stay. What axHelp itself puts into the folder has a place: the two files above, the folder
+  `screenshots` (HE-3.1) and axKit's `documentation` (HE-2.6) with its rule file under `.claude\rules`; nothing of
+  axHelp's lands loose at the top. (The conversation's Export, axClaude's, proposes the folder in the Windows save
+  dialog, as for any project; where the file goes is the user's choice there.)
 - HE-2.5 **Permissions.** The conversation is Claude Code in its interactive mode: it may read, write and run commands
   on the computer, and asks before each change unless the user allowed it (axClaude's questions, FR-2.x; the mode with
   Ctrl+Shift+M). This is the agent the user asked for on 2026-11-10; its power is Claude Code's, under the user's eye.
+- HE-2.6 **axKit's guides** (the user's ask of 2026-11-15: "a better developed RAG system by copying the relevant
+  documentation for axKit into the axHelp folder"; the whole of it is `ai-help.md` AH-7, since Shift+F1 uses the same
+  folder). The working folder holds `documentation`: `index.md`, `axKit.md` (the bundle's guide) and one guide per
+  app under its name (`axFile.md`), and `.claude\rules\axkit-documentation.md`, which Claude Code loads at every start
+  beside CLAUDE.md and which tells Claude: for a question about axKit or one of its apps, read the index and the
+  fitting guide first, answer from it, and say when the guides do not cover it. These files are axKit's, unlike the
+  two of HE-2.4: written where missing and written again by each new version of axKit (the marker
+  `documentation\axkit-version.txt`), at every use of the folder (the hotkeys, Enter, Claude's working folder); a
+  file of the user's own beside them is left alone, and the user's CLAUDE.md is never read or changed for it. A new
+  folder's CLAUDE.md names the guides too (`WorkingFolderFiles.Instructions`). Nothing is indexed and nothing leaves
+  the computer for it: Claude Code's own Read, Grep and Glob find the text, and a guide goes to Anthropic only as
+  any file Claude reads for an answer does. `AxKit.Core/Ai/AiDocumentation`; `AiHelpFlow.AiWorkingFolder` writes.
+- HE-2.7 **Ready before the first press, when the user turns it on** (2026-11-15). The setting Options, Keep the
+  conversation ready in the background (`keepConversationReady`) is **off at first** (HE-D9): Claude Code starts at
+  the first press of the hotkey and never before the user acts. There is no prompt, no first-run question and no
+  reminder about the setting: it is in Options and in the guide. With it on, when axHelp starts hidden (`--hidden`:
+  sign-in, `run.ps1`), it starts the conversation's window hidden as well (`--hide-on-close --hidden`, axClaude
+  FR-9.6), so that Claude Code is loaded when the hotkey is first pressed. Only when all of these hold
+  (`HelpSettings.StartsConversationHidden`): the setting is on; the user has already agreed to axClaude's reminder for Claude Code (read
+  from the bundle's consent file, nothing shown: Claude Code is never started before that agreement, and axClaude
+  checks it again itself); Claude Code is found where axKit looks; and no conversation window exists yet. Otherwise
+  nothing is started until the first press, which starts it on view as before, and closing still hides it. A hidden
+  start shows nothing, says nothing, plays nothing and never takes the focus or the foreground; Claude Code's trust
+  question for a new folder, or any other question at its start, waits unspoken, and is asked when the window is
+  first shown, as a question that has just arrived. **With the setting on, this is a moment at which Claude Code runs
+  without the user's key**: at sign-in, and Claude Code may contact Anthropic as it starts (its sign-in check, its
+  own update check; nothing of the user's is sent until a message is). It exists only when the user turned the
+  setting on; `PRIVACY.md`, the READMEs and the guide say so. The cost: Claude Code in memory from sign-in while the
+  setting is on.
 
 ### HE-3 Screenshots and pictures
 
@@ -118,23 +182,23 @@ agreement (AX-11.4) asked the first time.
 ### HE-5 Settings
 
 - HE-5.1 `%APPDATA%\AxKit\axHelp.json` (`HelpSettings` on `HotkeySettings`): `hotkey`, `screenshotHotkey`, `model`,
-  `startWithWindows`, the font and the update check. A file of 5.6.0 holds `exchanges`, no longer read.
+  `keepConversationReady` (HE-2.7), `startWithWindows`, the font and the update check. A file of 5.6.0 holds `exchanges`, no longer read.
 
 ### HE-6 Menus and keys
 
 The bundle's eight menus (AX-9.1, 2026-11-11): Session (S): Hide (Escape), Quit axHelp. Actions (A): Open the
 conversation (Enter), Put a picture file into the conversation… (Ctrl+D), Open the last screenshot in axPreview
 (Ctrl+O), Claude's working folder. Navigation and Context hold one item each that says they have nothing yet. Options:
-Hotkey…, Conversation model ▸, Text ▸, General ▸ (Start with Windows), Developer ▸. Then the bundle's Window, axKit and Help
+Hotkey…, Conversation model ▸, Keep the conversation ready in the background (HE-2.7), Text ▸, General ▸ (Start with Windows), Developer ▸. Then the bundle's Window, axKit and Help
 (AX-9.1). Bundle-wide keys (AX-8.2): F1, Ctrl+Shift+P, F4, Shift+F1, the text size keys, Alt and Alt+F4. The F1 text
 names them all (`HelpText.Shortcuts`).
 
 ## 5. Architecture
 
 `src/AxHelp`: `HelpForm` on `AxKit.Forms/HotkeyForm` (`OnHotkey` and the second hotkey, `OpenConversation`,
-`TakeScreenshot`, `PutPicture`), `ScreenPicture` (from axDescribe), `AxHelpApp`, `AxHelpKeys`, `HelpText`.
+`StartConversationHidden`, `TakeScreenshot`, `PutPicture`), `ScreenPicture` (from axDescribe), `AxHelpApp`, `AxHelpKeys`, `HelpText`.
 `src/AxHelp.Core`: `HelpSettings` (the two hotkeys, the model, `ConversationArguments`), `PictureFile`,
-`WorkingFolderFiles`; tested in `tests/AxHelp.Tests`. axClaude's part: `--title` and the "message" hand-over
+`WorkingFolderFiles`; tested in `tests/AxHelp.Tests`. The guides (HE-2.6) are the bundle's, `AxKit.Core/Ai/AiDocumentation`. axClaude's part: `--title` and the "message" hand-over
 (`MainForm.TakeHandOver`, FR-9.2). `HotkeyForm`'s part: `OnHotkey`, `SecondHotkey`, `OnSecondHotkey`.
 
 ## 6. Decisions
@@ -154,12 +218,35 @@ names them all (`HelpText.Shortcuts`).
   Ctrl+Shift+I, which are keys of axKit's editors and axGIT and of every browser; not Ctrl+Shift+Enter, Excel's and
   several chat programs'. axMedia gave up Ctrl+Shift+Comma and Period for it (its AM-D8). The cost outside axKit:
   Word and Outlook lose smaller and larger font on those keys while axHelp runs.
+- **HE-D6 The guides as files, told by a rule file** (2026-11-15; `ai-help.md` AH-D7): the retrieval is Claude
+  Code's own reading of a folder, and the instruction is a file of axKit's in `.claude\rules`, not a line in the
+  user's CLAUDE.md (which is theirs and written once) and not a system prompt option on the command line (which
+  Claude Code records with a conversation's first request, so it would not reach the conversation that goes on).
+- **HE-D7 The conversation hides; it does not close** (2026-11-15). A conversation the user returns to all day
+  should cost nothing to return to. Closing ended Claude Code, and the next press paid for its start and for the
+  replay of the conversation, with the reading that goes with it. Hiding keeps the window, the caret, the text typed
+  and Claude Code as they were; axClaude learns one option for it and knows nothing of axHelp. Ending is still one
+  command, in the conversation's own Session menu, and Quit axHelp ends everything of axHelp's.
+- **HE-D8 The hotkey means "let me type"** (2026-11-15): it always puts the focus in the message field, since that
+  is what the key is pressed for; every other way back to the window leaves the user where they were reading.
+- **HE-D9 Claude Code is started ahead only when the user turned that on; the setting is off at first** (the
+  user's decision, 2026-11-15). By default Claude Code never starts, and so never contacts Anthropic, before the user
+  acts: the first press of the hotkey. The instant return after that comes from hiding on close (HE-D7) and costs no
+  new contact. A user who wants the first press instant too turns the setting on, and the guide says what it costs:
+  memory, and Claude Code starting at sign-in. No prompt, no first-run question, no reminder: the setting is only in
+  Options and in the guide. The other conditions stay: axClaude's agreement for Claude Code given, Claude Code
+  installed.
 - Until 5.7.0 (`docs/axKit/ai-help.md` section 7): a field over a list of ten earlier questions, each answered by Claude
   Code's print mode as a notice; and axDescribe, a field over a list of ten descriptions.
 
 ## 7. Testing
 
 `tests/AxHelp.Tests` (the settings, the conversation's command line, the working folder's files, the picture files);
+`tests/AxKit.Tests/AiDocumentationTests` (the guides: every app's among them, written where missing, again by another
+version, a file of the user's kept);
 `tests/scripts/axHelp` (the window, the conversation brought up from it and from a picture start, against the real
-axClaude with Haiku); the NVDA test plan `docs/axHelp/nvda-test-plan.md`, whose real conversation and screenshots are
+axClaude with Haiku; `02-hide-and-show.txt`: closing hides, the same window comes back with the focus in the message
+field, coming back otherwise keeps the focus, Quit axHelp ends a hidden conversation); the hidden start itself is
+`tests/scripts/axClaude/20-hide-on-close.txt`, and its conditions `HelpTests`: no script starts axHelp hidden, since
+a hidden hotkey window has no automation channel; the NVDA test plan `docs/axHelp/nvda-test-plan.md`, whose real conversation and screenshots are
 the user's by ear, with the test pictures of `tests/fixtures/pictures`.

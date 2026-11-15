@@ -22,9 +22,16 @@ need a real reply and a real screen and are the user's by ear.
 3. Alt+Tab to Notepad, Ctrl+Shift+Slash: the same window, the reply still there; no second window starts (Window menu,
    Open windows lists one "axHelp").
 4. In the conversation, "/model": the model is Haiku (real). Options, Conversation model in axHelp's window, Balanced:
-   "sonnet, from the conversation's next start". Close the conversation (Alt+F4), Ctrl+Shift+Slash: the conversation
-   continues on Sonnet (real). Set Fast again.
+   "sonnet, from the conversation's next start ...". End the conversation (its Session, End Claude and close this
+   window), Ctrl+Shift+Slash: the conversation continues on Sonnet (real). Set Fast again.
 5. "Make a folder named Test on my desktop": Claude hands it to its agent or asks before creating it (real); answer.
+6. The guides (HE-2.6). Actions, Claude's working folder in axHelp's window: axFile on the folder, whose list holds
+   `documentation` and `screenshots` beside CLAUDE.md; Right into `documentation`: index.md, axKit.md and one file
+   per app (axFile.md, axGIT.md), and axkit-version.txt. In the conversation, "in axFile, how do I select several
+   files?": Claude reads the guide (a tool line names documentation and axFile.md) and answers Space (real). "what is
+   axKit's phone number?": Claude says the guides do not cover it (real). Add a file `mine.md` to `documentation`,
+   change a word in `axFile.md`, delete `axkit-version.txt`, press Ctrl+Shift+Slash: `axFile.md` is as axKit wrote
+   it, `mine.md` is still there.
 
 ## 3. Screenshots and pictures (HE-3)
 
@@ -41,8 +48,8 @@ need a real reply and a real screen and are the user's by ear.
 
 ## 4. Quit
 
-1. Session, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`); the conversation window stays open, an
-   axClaude window of its own.
+1. Session, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`), and the conversation ends with it,
+   on view or hidden (HE-1.3, section 6).
 
 ## 5. The keys taken over (HE-4.2, 2026-11-14)
 
@@ -53,6 +60,33 @@ need a real reply and a real screen and are the user's by ear.
    brings the conversation up, and Ctrl+Shift+Slash does not. Set it back: Options, Hotkey, Ctrl+Shift+Slash, Enter.
 3. In an axKit window (axDown, axMedia) with axHelp running, Ctrl+Shift+Period: nothing of axKit's happens.
 4. In Word with axHelp running: Ctrl+Shift+Comma takes the screenshot, not the smaller font (expected, HE-D5).
+
+## 6. The conversation hides and comes back (HE-1.3, HE-2.1, HE-2.7, 2026-11-15)
+
+The automated part is `tests/scripts/axHelp/02-hide-and-show.txt` and `tests/scripts/axClaude/20-hide-on-close.txt`;
+what the foreground and NVDA do on the real desktop is by ear.
+
+1. With the conversation open and a few words typed in its message field, Alt+F4: no question, nothing said, the
+   window gone and the program you were in before in front, its keys working. Alt+Tab does not list axHelp; Window,
+   Open windows in another axKit window does not either.
+2. Ctrl+Shift+Slash: NVDA says "axHelp" and "Message to Claude, edit" with your words, at once; nothing of the
+   conversation is read again, no "Ready", no chime.
+3. Ctrl+2 into the conversation, Up a few lines. Alt+Tab away and back: the caret is on the same line.
+   Ctrl+Shift+Slash from another program: the focus is in the message field.
+4. Send "count slowly to five", Alt+F4 at once: nothing is spoken, no tick or chime while it is hidden.
+   Ctrl+Shift+Slash a little later: "Done" is said once, the reply is in the conversation (h, Ctrl+3).
+5. With the conversation hidden, Ctrl+Shift+Comma in Notepad: the conversation comes up with the screenshot's line.
+6. In the conversation, Session, End Claude and close this window: the window closes (Task Manager: its `AxKit.exe
+   claude` and Claude Code are gone). Ctrl+Shift+Slash starts it afresh, the conversation continued.
+7. With the conversation hidden, axHelp's window, Session, Quit axHelp: both processes end.
+8. Ready before the first press (real, after `run.ps1` or a sign-in, axClaude's agreement given). As installed, the
+   setting is off: after a start in the background Task Manager shows no `AxKit.exe claude` until the hotkey is
+   pressed. Options, Keep the conversation ready in the background: checked, "On: from axHelp's next start in the
+   background ...". Quit axHelp and start it hidden again: without pressing anything, Task Manager shows `AxKit.exe
+   claude ... --hide-on-close --hidden`; nothing was said and the program in front kept the keyboard.
+   Ctrl+Shift+Slash: the conversation at once, "Ready" not said again. Turn the setting off again.
+9. With the setting on, in a folder Claude Code has not been trusted for (`workingFolder` in `ai-help.json` set to a
+   new folder), start axHelp hidden: nothing is said. Ctrl+Shift+Slash: the trust question is asked now, with its chime and its list.
 
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
 

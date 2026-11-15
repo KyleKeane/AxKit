@@ -1,0 +1,83 @@
+# Workflow: Close axHelp's conversation and bring the same one back
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+# axHelp, docs/axHelp/nvda-test-plan.md section 6 (SPEC.md HE-1.3, HE-2.1; axClaude FR-9.6): closing the conversation
+# hides it with Claude Code running on, and bringing it up shows the same window at once, nothing started or read
+# again, the focus in the message field wherever it was. The hotkeys are keys nobody uses: the command Open the conversation of axHelp's
+# window is the conversation's hotkey in everything it does, and a start with a picture is
+# the hand-over the screenshot's hotkey makes.
+file home\AxKit\axHelp.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
+file home\AxKit\axClaude.json {"checkForUpdates": false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+file blocks.b64 iVBORw0KGgoAAAANSUhEUgAAADAAAAAgCAYAAABU1PscAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADvSURBVFhH7Y8xCsRAEMP2/5++62WDESnCQgRqDBqY87ucw+E2vgfeJh4455kTBlaei6E0xgkDK8/FUBrjhIGV52IojXHCwMpzMZTGOGFg5bkYSmOcMLDyXAylMU4YWHkuhtIYJwysPBdDaYwTBlaei6E0xgkDK8/FUBrjhIGV52IojXHCwMpzMZTGOGFg5bkYSmOcMLDyXAylMU4YWHkuhtIYJwysPBdDaYwTBlaei6E0xgkDK8/FUBrjhIGV52IojXHCwMpzMZTGOGFg5bkYSmOcMLDyXAylMU4YWHkuhtIYJwysPMfhNr4H3ub6B/6n0O8Aed7pxwAAAABJRU5ErkJggg==
+run certutil -f -decode blocks.b64 blocks.png
+
+# The conversation, started on view from axHelp's window (started on view, axHelp starts nothing ahead, HE-2.7).
+start help
+keys enter
+adopt
+try said trust
+iffound wait 1500
+iffound keys enter
+expect said Ready
+expect state "visible":true
+expect focus "name":"Message to Claude"
+# Words left in the field, to know the window again by.
+type the same window
+
+# 6.1 Alt+F4 hides the conversation: no question, nothing said, its process and Claude Code running on.
+said
+close
+expect state "visible":false
+expect quiet 2000
+expect state Claude: ready
+
+# 6.2 The conversation's hotkey (axHelp's Open the conversation) shows the same window: the words still in the field, the
+# focus there, no start and no "Ready" again.
+use 1
+menu Open the conversation
+use 2
+expect state "visible":true
+expect focus "name":"Message to Claude","role":"Text","value":"the same window"
+refuse said Ready
+
+# 6.3 The focus in the conversation view (Ctrl+2); coming back to the window as Alt+Tab does leaves it there.
+keys ctrl+2
+expect focus "name":"Conversation"
+use 1
+use 2
+expect focus "name":"Conversation"
+# The hotkey, with the window on view and the focus in the conversation: the focus goes to the message field.
+use 1
+menu Open the conversation
+use 2
+expect focus "name":"Message to Claude","role":"Text","value":"the same window"
+
+# 6.4 Hidden again, then a picture (the screenshot's hand-over): the window shows with the picture's line added.
+keys ctrl+a delete
+close
+expect state "visible":false
+launch help {temp}\blocks.png
+expect state "visible":true
+expect said Text added to your message from another window, not sent
+expect focus Picture blocks.png:
+
+# 6.5 Hidden once more, the picture's line still typed and not sent. Quit axHelp asks the conversation to end, and
+# it does not go with words unsent: it comes up and asks, Keep it open the answer Enter gives. Kept, the words are
+# still there, and the window, its keeper gone, now closes on Alt+F4 as any axClaude window does.
+# (A hidden conversation with nothing to lose ends at once: tests\scripts\axClaude\20-hide-on-close.txt, 20.5.)
+close
+expect state "visible":false
+use 1
+menu Quit axHelp
+expect closed
+use 2
+expect state "visible":true
+expect state "notice":"Close this conversation?"
+expect state The message you typed is not sent and would be lost
+# A notice nobody asked for holds its keys for a moment (AX-7.2).
+wait 1500
+keys enter
+expect state "notice":null
+expect focus Picture blocks.png:
+close
+expect closed

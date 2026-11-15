@@ -187,6 +187,14 @@ internal sealed class McpChannel
         var verb = space < 0 ? line : line[..space];
         var argument = space < 0 ? string.Empty : line[(space + 1)..];
         string answer;
+        if (_form.PutAway)
+        {
+            // A window put away (hidden by its close, running on) is not an open window to the AI tools: the broker's
+            // hello gets this too, so axkit_windows leaves it out (docs/axKit/mcp.md MC-6.2).
+            writer.WriteLine(JsonSerializer.Serialize(new { error = "This window is hidden: its user put it away and brings it back. Nothing was read or done." }, Plain));
+            return;
+        }
+
         try
         {
             answer = verb switch

@@ -1,0 +1,162 @@
+using System.Text;
+
+namespace AxKit.Core.Ai;
+
+/// <summary>
+/// axKit's own guides in Claude's working folder (docs/axKit/ai-help.md AH-7; the user's ask of 2026-11-15: "a better
+/// developed RAG system by copying the relevant documentation for axKit into the axHelp folder"): the folder
+/// <c>documentation</c> with the bundle's guide, one guide per app under the app's name and an index, and the rule
+/// file <c>.claude\rules\axkit-documentation.md</c>, which Claude Code reads at every start beside the user's
+/// CLAUDE.md and which tells Claude to read the guides before it answers a question about axKit. Claude Code's own
+/// Read, Grep and Glob do the finding: no index service, no embeddings, no network (AH-7.5). The files are axKit's,
+/// not the user's: written where missing, and all written again when the version in the folder's marker is not this
+/// axKit's, so that they follow each release; a file of the user's own in the folder is never touched. The texts are
+/// embedded by AxKit.Core.csproj once more (an app's project keeps its own copy for Help, User guide; this project
+/// may not reference an app).
+/// </summary>
+public static class AiDocumentation
+{
+    /// <summary>The folder inside the working folder.</summary>
+    public const string FolderName = "documentation";
+
+    /// <summary>The list of the guides, one line each, which Claude reads first.</summary>
+    public const string IndexName = "index.md";
+
+    /// <summary>The bundle's guide, docs/axKit/README.md.</summary>
+    public const string BundleName = "axKit.md";
+
+    /// <summary>The marker: the version of the axKit that wrote the files, alone on one line.</summary>
+    public const string VersionName = "axkit-version.txt";
+
+    /// <summary>The rule file, from the working folder: Claude Code loads every .md file of .claude\rules at its start, as it loads CLAUDE.md.</summary>
+    public static readonly string RulePath = Path.Combine(".claude", "rules", "axkit-documentation.md");
+
+    /// <summary>What the rule file says (AH-7.3).</summary>
+    public const string Rule = """
+        # axKit's guides
+
+        This file is axKit's: axKit writes it again with each new version, so a change to it is lost. Your own
+        instructions for Claude belong in CLAUDE.md, in the folder above.
+
+        The folder documentation in this working folder holds axKit's own guides. index.md there lists them: axKit.md
+        is the guide of axKit as a whole, and each app has one file under its name (axFile.md, axClaude.md).
+
+        For a question about axKit or one of its apps (what an app does, a key, a menu, a setting, how to do
+        something in a window), read documentation/index.md and the guide that fits with your Read tool before you
+        answer, and answer from the guide. When you do not know which guide holds the answer, search the folder with
+        your Grep tool. When the guides do not cover the question, say so, and say what you answer from instead.
+        """;
+
+    /// <summary>The file of an app's guide in the folder: the app's name as shown, so that Claude finds it by the name the user says ("axFile.md").</summary>
+    public static string GuideName(App app) => app.Name + ".md";
+
+    /// <summary>An app's user guide as AxKit.Core.csproj embeds it (<c>Guide.axFile.md</c>); null for an app whose guide is not embedded, which <c>AiDocumentationTests</c> fails on.</summary>
+    public static string? Guide(App app) => Embedded("Guide." + app.Name + ".md");
+
+    /// <summary>
+    /// Every file axKit keeps in the working folder for the guides, each with its path from the working folder and
+    /// its text: the bundle's guide, a guide per app of <see cref="Dispatch.Apps"/>, the index, which names
+    /// <paramref name="version"/>, and the rule file.
+    /// </summary>
+    public static IReadOnlyList<(string Path, string Text)> Files(string version)
+    {
+        var files = new List<(string Path, string Text)>();
+        var index = new StringBuilder();
+        index.Append("# axKit's guides\n\n");
+        index.Append("axKit's own guides, written here by axKit ").Append(version).Append(" for Claude to read. axKit writes these files again with each new version, so a change to one of them is lost; a file of your own in this folder is left alone.\n\n");
+        if (Embedded("AxKitGuide.md") is { } bundle)
+        {
+            files.Add((Path.Combine(FolderName, BundleName), bundle));
+            index.Append("- ").Append(BundleName).Append(": axKit as a whole: what the apps are, installing and updating, the menus, keys and notices every window shares, the settings, AI help and the AI tools.\n");
+        }
+
+        foreach (var app in Dispatch.Apps)
+        {
+            if (Guide(app) is { } guide)
+            {
+                files.Add((Path.Combine(FolderName, GuideName(app)), guide));
+                index.Append("- ").Append(GuideName(app)).Append(": ").Append(app.Description).Append(".\n");
+            }
+        }
+
+        files.Insert(0, (Path.Combine(FolderName, IndexName), index.ToString()));
+        files.Add((RulePath, Rule));
+        return files;
+    }
+
+    /// <summary>
+    /// Whether the working folder has never had the guides: the index or the rule file is missing. Then they must be
+    /// there before Claude Code starts, which reads the rule at its start; otherwise a refresh can follow in the
+    /// background, the files of the version before serving until it is done.
+    /// </summary>
+    public static bool IsMissing(string workingFolder) =>
+        !File.Exists(Path.Combine(workingFolder, FolderName, IndexName)) || !File.Exists(Path.Combine(workingFolder, RulePath));
+
+    /// <summary>
+    /// The files written into <paramref name="workingFolder"/> (AH-7.1): those that are missing, and every one when
+    /// the folder's marker does not hold <paramref name="version"/> or <paramref name="rewrite"/> asks for it (a
+    /// development build, whose guides change without its version). The marker holds the version on its first line
+    /// and then the path of every file axKit wrote, one a line; it is written last, so that a write that failed half
+    /// way is done again. A file an earlier axKit wrote and this one no longer has (an app that left the bundle) is
+    /// deleted, by the marker's list alone: a file the marker does not name is the user's and is never read, changed
+    /// or deleted. Returns the paths written, from the working folder; empty when everything was current. Throws as
+    /// <see cref="File.WriteAllText(string, string)"/> does.
+    /// </summary>
+    public static IReadOnlyList<string> Write(string workingFolder, string version, bool rewrite = false)
+    {
+        var marker = Path.Combine(workingFolder, FolderName, VersionName);
+        var before = File.Exists(marker) ? File.ReadAllLines(marker) : [];
+        var current = !rewrite && before.Length > 0 && before[0].Trim() == version;
+        var files = Files(version);
+        var written = new List<string>();
+        foreach (var (name, text) in files)
+        {
+            var path = Path.Combine(workingFolder, name);
+            if (current && File.Exists(path))
+            {
+                continue;
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.WriteAllText(path, text.ReplaceLineEndings("\r\n").TrimEnd() + "\r\n");
+            written.Add(name);
+        }
+
+        if (!current)
+        {
+            var names = files.Select(file => file.Path).ToList();
+            foreach (var old in before.Skip(1).Select(line => line.Trim()).Where(line => IsOurs(line) && !names.Contains(line, StringComparer.OrdinalIgnoreCase)))
+            {
+                File.Delete(Path.Combine(workingFolder, old));
+            }
+
+            File.WriteAllLines(marker, [version, .. names]);
+        }
+
+        return written;
+    }
+
+    /// <summary>
+    /// Whether a path a marker names is one axKit could have written: a Markdown file directly in the documentation
+    /// folder, or the rule file. A marker is a file in the user's folder and could hold anything; nothing outside
+    /// these two places is ever deleted on its word.
+    /// </summary>
+    public static bool IsOurs(string path) =>
+        string.Equals(path, RulePath, StringComparison.OrdinalIgnoreCase)
+        || (string.Equals(Path.GetDirectoryName(path), FolderName, StringComparison.OrdinalIgnoreCase)
+            && Path.GetFileName(path) is { Length: > 3 } name
+            && name.EndsWith(".md", StringComparison.OrdinalIgnoreCase)
+            && name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0);
+
+    private static string? Embedded(string name)
+    {
+        using var stream = typeof(AiDocumentation).Assembly.GetManifestResourceStream(name);
+        if (stream is null)
+        {
+            return null;
+        }
+
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
+    }
+}

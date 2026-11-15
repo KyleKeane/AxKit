@@ -10,11 +10,12 @@ Everything of axHelp that needs no window: the settings, the conversation's comm
 
 ## Where things are
 
-- `HelpSettings` (SPEC.md HE-2.3, HE-4, HE-5): on the bundle's `HotkeySettings` (the conversation's hotkey, Ctrl+Shift+Slash by default, Start with Windows); `ScreenshotHotkeyText` with `ScreenshotKey` (Ctrl+Shift+Comma); the defaults until 2026-11-14, Windows+Alt+H (`RetiredDefault`) and Windows+Alt+S (`RetiredScreenshotHotkey`), taken over to the new ones in `Load` (HE-4.2), `Model` (`FastModel`, haiku, by default) with the choices `Models`, `ScreenshotsKept`; `ConversationArguments` (the axClaude command line: the folder, `--title axHelp`, `--message`, then `-- --continue --model`).
-- `WorkingFolderFiles` (SPEC.md HE-2.4): `CLAUDE.md` and `.claude\agents\agent.md` (a subagent on opus), written into the working folder only where missing.
+- `HelpSettings` (SPEC.md HE-2.3, HE-4, HE-5): on the bundle's `HotkeySettings` (the conversation's hotkey, Ctrl+Shift+Slash by default, Start with Windows); `ScreenshotHotkeyText` with `ScreenshotKey` (Ctrl+Shift+Comma); the defaults until 2026-11-14, Windows+Alt+H (`RetiredDefault`) and Windows+Alt+S (`RetiredScreenshotHotkey`), taken over to the new ones in `Load` (HE-4.2), `Model` (`FastModel`, haiku, by default) with the choices `Models`, `ScreenshotsKept`; `ConversationArguments` (the axClaude command line: the folder, `--title axHelp`, `--model`, `--hide-on-close`, `--hidden` for the start ahead, `--message`); `KeepConversationReady` (off at first, HE-D9: never change that default without the user's word) and `StartsConversationHidden`, the four conditions of the start ahead (SPEC.md HE-2.7).
+- `WorkingFolderFiles` (SPEC.md HE-2.4): `CLAUDE.md` and `.claude\agents\agent.md` (a subagent on opus), written into the working folder only where missing. They are the user's from then on. What axKit keeps current there, the guides in `documentation` and the rule file that tells Claude to read them (SPEC.md HE-2.6), is not here: `AxKit.Core/Ai/AiDocumentation`, since Shift+F1 uses the same folder.
 - `PictureFile` (SPEC.md HE-3.3; axDescribe's until 5.7.0): `Kinds`, `Filter` for the Windows file picker, `IsPicture`, `Refusal`.
 
 ## Gotchas
 
 - A settings file of 5.6.0 holds `exchanges`; System.Text.Json leaves an unknown property alone, so it still reads.
 
+- `Conversation` (SPEC.md HE-2.1, HE-1.3): the two pure decisions that keep one conversation at a time, `Next` (hand over to the window, wait for the process axHelp started, start only when there is neither) and `AtQuit` (ask the window to end, end a started process that has no window yet, nothing). The window keeps the started process; never go back to a wait by the clock.

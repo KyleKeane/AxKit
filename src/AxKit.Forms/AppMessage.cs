@@ -37,6 +37,9 @@ public static class AppMessage
     /// <summary>axClaude: the one line after the verb put into the message field, not sent, and the window in front (axHelp's conversation, docs/axHelp/SPEC.md HE-2).</summary>
     public const string Message = "message";
 
+    /// <summary>axClaude's window that hides on closing: closed for good, Claude ended, without a question (axHelp's Quit ends its conversation, docs/axHelp/SPEC.md HE-1.3); no paths, and the window does not come to the front.</summary>
+    public const string End = "end";
+
     private const int WM_COPYDATA = 0x004A;
     private const uint SMTO_NORMAL = 0x0000;
     private const uint SMTO_ABORTIFHUNG = 0x0002;
@@ -45,8 +48,21 @@ public static class AppMessage
     /// <summary>Marks a message as the bundle's, so that another program's WM_COPYDATA is left alone: the letters AXKIT.</summary>
     private static readonly nint Signature = unchecked((nint)0x41584B4954L);
 
-    /// <summary>Whether a verb brings the window to the front (the window does it itself, once the paths are applied): everything but an add, which leaves the user where they are (AM-D3).</summary>
+    /// <summary>Whether a verb brings the window to the front (the window does it itself, once the paths are applied): everything but an add, which leaves the user where they are (AM-D3). An end does: a window with something to lose comes up to ask before it closes (axClaude FR-9.6).</summary>
     public static bool TakesFocus(string verb) => !string.Equals(verb, Add, StringComparison.Ordinal);
+
+    /// <summary>
+    /// Why a hand-over is refused by the window it reached, null when it is taken (2026-11-15, the review of FR-9.6):
+    /// the sender names a window of its own in the message's wParam, and the receiving window takes the message only
+    /// when that window belongs to a process of this very program file, the comparison the sender makes of its target
+    /// (S-13). It stops a program that merely knows the message's shape; it is not proof, since a program of the
+    /// user's can name a window that is not its own, which is why a "message" is still said aloud (R-07) and an
+    /// "end" still asks before anything is lost.
+    /// </summary>
+    public static string? SenderRefusal(bool namesWindow, bool windowIsThisProgram) =>
+        !namesWindow ? "the hand-over names no sending window"
+        : !windowIsThisProgram ? "the hand-over's sending window is not this program's"
+        : null;
 
     /// <summary>The text of a message: the verb on the first line, then one path per line.</summary>
     public static string Format(string verb, IEnumerable<string> paths) => string.Join("\n", [verb, .. paths]);
@@ -109,11 +125,15 @@ public static class AppMessage
 
         var bytes = Encoding.Unicode.GetBytes(Format(verb, paths) + "\0");
         var buffer = Marshal.AllocHGlobal(bytes.Length);
+        // The sender's own window for the message's wParam, which the receiver checks (SenderRefusal): a window that
+        // takes no messages and shows nothing, made for this one send, since a starting process has no other.
+        var sender = new NativeWindow();
         try
         {
+            sender.CreateHandle(new CreateParams { Parent = MessageOnly });
             Marshal.Copy(bytes, 0, buffer, bytes.Length);
             var data = new CopyData { Signature = Signature, Length = (uint)bytes.Length, Data = buffer };
-            if (SendMessageTimeoutW(target, WM_COPYDATA, 0, ref data, SMTO_NORMAL | SMTO_ABORTIFHUNG, TimeoutMs, out var result) == 0 || result == 0)
+            if (SendMessageTimeoutW(target, WM_COPYDATA, sender.Handle, ref data, SMTO_NORMAL | SMTO_ABORTIFHUNG, TimeoutMs, out var result) == 0 || result == 0)
             {
                 Log.Error($"The open {appName} window did not take the {verb} message");
                 return false;
@@ -121,6 +141,7 @@ public static class AppMessage
         }
         finally
         {
+            sender.DestroyHandle();
             Marshal.FreeHGlobal(buffer);
         }
 
@@ -146,8 +167,18 @@ public static class AppMessage
             return null;
         }
 
+        // The receiving side's check of who sent it (SenderRefusal), for every verb: every sender is SendTo.
+        if (SenderRefusal(m.WParam != 0, m.WParam != 0 && IsThisProgram(m.WParam)) is { } refusal)
+        {
+            Log.Info("A hand-over was refused: " + refusal);
+            return null;
+        }
+
         return Parse(Marshal.PtrToStringUni(data.Data, (int)(data.Length / 2)) ?? string.Empty);
     }
+
+    /// <summary>HWND_MESSAGE: the parent of a window that only exists to be named.</summary>
+    private static readonly nint MessageOnly = -3;
 
     /// <summary>Whether the window belongs to a process of this program file (the same AxKit.exe), asked of Windows by the process's own image path.</summary>
     private static bool IsThisProgram(nint window)

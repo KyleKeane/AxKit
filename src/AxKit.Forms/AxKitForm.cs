@@ -495,6 +495,8 @@ public abstract partial class AxKitForm : Form
         notice = NoticeOpen ? Overlay.Shown?.Title : null,
         noticeText = NoticeOpen ? Overlay.Shown?.Text : null,
         process = Environment.ProcessId,
+        // Whether the window is on view: false for a window put away by its close (axClaude FR-9.6).
+        visible = Visible,
         status = Controls.OfType<StatusStrip>().SelectMany(strip => strip.Items.Cast<ToolStripItem>()).Select(item => item.Text).ToArray(),
     };
 
@@ -530,7 +532,11 @@ public abstract partial class AxKitForm : Form
                 RecentlyClosed.Remember(AppName, held);
             }
 
-            SaveWindow();
+            if (SavesWindowPlace)
+            {
+                SaveWindow();
+            }
+
             SaveSettings();
             StartInstalledVersion();
         }
@@ -867,6 +873,13 @@ public abstract partial class AxKitForm : Form
             WindowState = FormWindowState.Maximized;
         }
     }
+
+    /// <summary>
+    /// Whether the window's place and state are the user's to remember as it closes: true, but for a window whose
+    /// place the user never saw (axClaude's hidden start, shown at a size of its own until it is first brought up,
+    /// FR-9.6: saved, it wrote "not maximized" into the settings every axClaude window reads).
+    /// </summary>
+    protected virtual bool SavesWindowPlace => true;
 
     private void SaveWindow()
     {

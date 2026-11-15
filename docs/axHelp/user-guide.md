@@ -16,6 +16,25 @@ It is one conversation that goes on: press Ctrl+Shift+Slash tomorrow and it is t
 start afresh, Session, New session in that window. Claude Code's own `/resume` lists the earlier conversations of
 axHelp's folder.
 
+Alt+F4 in the conversation hides it; it does not end it. Claude Code keeps running, and Ctrl+Shift+Slash brings the
+same window back at once, as you left it: nothing is loaded or read again. Ctrl+Shift+Slash always puts the caret in
+the message field, ready to type, also when the window is already open and you were reading in the conversation.
+Coming back with Alt+Tab changes nothing: you are where you were. While it is hidden the conversation says nothing
+and plays no sound, and it is not in Alt+Tab or the Window menu; a reply that came meanwhile is in the conversation
+when you bring it up ("Done" is said then), and a question of Claude's waits and is asked then. To end it for real,
+in the conversation: Session, End Claude and close this window. Quit axHelp ends it too; if Claude is still working, or you typed a
+message you have not sent, the conversation comes up and asks first, and stays open if you keep it. The cost of all this: Claude
+Code stays in your computer's memory while the conversation is hidden.
+
+Claude Code starts at your first press of the key, never before you act; that first press takes a few seconds, and
+every press after it is at once. If you want the first press at once too, turn on Options, Keep the conversation
+ready in the background, in axHelp's window; it is off unless you turn it on. axHelp then starts the conversation
+hidden when axHelp itself starts in the background, as at sign-in, so that Claude Code is loaded before you press
+anything. It does so only after you have agreed to Claude Code in axClaude's reminder, and only when Claude Code is
+installed. What it costs: Claude Code starts at every sign-in and may contact Anthropic then, to check your sign-in
+and for its own updates (your words and files go only with a message you send), and it stays in memory from
+sign-in on.
+
 The first time, axClaude's reminder says what goes to Anthropic, and Claude Code asks whether to trust its folder:
 answer yes. Claude Code must be installed and logged in.
 
@@ -44,8 +63,15 @@ conversations, the permissions you give with "always" and its instructions stay 
 file CLAUDE.md there holds Claude's standing instructions for axHelp, short spoken replies among them; change it as you
 like. The folder `.claude\agents` holds the agent.
 
+You can ask about axKit itself: "how do I select several files in axFile?" The folder `documentation` there holds
+axKit's own guides, one file per app and an index, and Claude reads the fitting one before it answers, and says when
+the guides do not cover your question. axKit writes these guides again with each new version, so do not keep your own
+changes in them; a file of your own that you add beside them stays. Nothing is sent anywhere for this: Claude Code
+reads the files on your computer as it reads any file for an answer. The screenshots have their own folder there too,
+`screenshots`, so the top of the folder stays short: CLAUDE.md, `documentation` and `screenshots`.
+
 The conversation runs on the fast model by default. Options, Conversation model chooses Fast, Balanced or Strongest; it
-counts from the conversation's next start, so close the axHelp conversation window and press Ctrl+Shift+Slash. Choose the
+counts from the conversation's next start, so end the conversation (its Session, End Claude and close this window) and press Ctrl+Shift+Slash. Choose the
 model here rather than with `/model` in the conversation: Claude Code saves `/model` as its default for every new
 session, axClaude's too.
 

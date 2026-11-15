@@ -6,7 +6,9 @@ namespace AxHelp.Core;
 /// instructions for every message there (short spoken replies, how to read a screenshot, when to hand work on), and
 /// <c>.claude\agents\agent.md</c>, a Claude Code subagent on the strongest model, so that the fast conversation hands
 /// work of several steps to it and answers the rest itself (the user's ask of 2026-11-10: "a simple fast chat option
-/// that only spins up a better model if needed for agentic work").
+/// that only spins up a better model if needed for agentic work"). axKit's own files there, the guides in the folder
+/// <c>documentation</c> and the rule that tells Claude to read them, are the bundle's
+/// (<c>AxKit.Core.Ai.AiDocumentation</c>, HE-2.6): written again with each version, which these two never are.
 /// </summary>
 public static class WorkingFolderFiles
 {
@@ -22,6 +24,8 @@ public static class WorkingFolderFiles
 
         - Answer briefly, in plain prose: short paragraphs, no tables, no decoration, keys named as they are pressed
           (Ctrl+Shift+W). Say when you are not sure.
+        - For a question about axKit or one of its apps, read index.md in the folder documentation here and the guide
+          it names before you answer, and say when the guides do not cover it. axKit keeps those guides current.
         - A message that starts with "Screenshot of" or "Picture" names a picture file: read it with your Read tool
           first, then answer the user's question about it; with no question, say what the window or the picture is,
           what it shows and the controls a keyboard user can reach.

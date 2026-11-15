@@ -231,8 +231,49 @@ public static class Sounds
 
     private static readonly bool Silent = AutomationEnvironment.Requested;
 
+    private static bool _muted;
+    private static bool _musicWanted;
+
+    /// <summary>
+    /// No sound at all while set: the process's one window is put away, hidden and running on (axClaude's window that
+    /// hides on closing, docs/axClaude/SPEC.md FR-9.6), and a hidden window makes no sound. A sound asked for meanwhile
+    /// is neither played nor recorded; the working music stops, and starts again when the mute ends while it is
+    /// still wanted.
+    /// </summary>
+    public static bool Muted
+    {
+        get => _muted;
+        set
+        {
+            if (_muted == value)
+            {
+                return;
+            }
+
+            _muted = value;
+            if (Silent)
+            {
+                return;
+            }
+
+            if (value)
+            {
+                Music.Reset();
+            }
+            else if (_musicWanted)
+            {
+                Music.Play(WorkingMusic, replace: false);
+            }
+        }
+    }
+
     private static void Play(string name, Action play)
     {
+        if (_muted)
+        {
+            return;
+        }
+
         Played?.Invoke(name);
         if (!Silent)
         {
@@ -257,6 +298,16 @@ public static class Sounds
     /// <summary>Three falling notes ending on a long one: the turn is done.</summary>
     public static void Done() => Play("Done", () => Chimes.Play(DoneChime, replace: true));
 
+    /// <summary>The Done chime through the mute: for a window put away whose one switch says a turn's end is still heard (axClaude FR-9.6, <c>DoneChimeWhilePutAway</c>, off).</summary>
+    public static void DoneWhileMuted()
+    {
+        Played?.Invoke("Done");
+        if (!Silent)
+        {
+            Chimes.Play(DoneChime, replace: true);
+        }
+    }
+
     /// <summary>Two equal notes: Claude needs an answer.</summary>
     public static void Question() => Play("Question", () => Chimes.Play(QuestionChime, replace: true));
 
@@ -279,10 +330,18 @@ public static class Sounds
     public static void Alert() => Play("Alert", () => Chimes.Play(AlertChime, replace: true));
 
     /// <summary>Starts the soft music loop that plays while Claude works (axClaude FR-7.9); nothing while it plays already.</summary>
-    public static void StartMusic() => Play("StartMusic", () => Music.Play(WorkingMusic, replace: false));
+    public static void StartMusic()
+    {
+        _musicWanted = true;
+        Play("StartMusic", () => Music.Play(WorkingMusic, replace: false));
+    }
 
     /// <summary>Stops the music loop at once; nothing when it is not playing.</summary>
-    public static void StopMusic() => Play("StopMusic", () => Music.Reset());
+    public static void StopMusic()
+    {
+        _musicWanted = false;
+        Play("StopMusic", () => Music.Reset());
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct WAVEFORMATEX

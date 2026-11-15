@@ -111,9 +111,9 @@ internal sealed partial class MainForm
         ShowOfferWhenIdle();
     }
 
-    /// <summary>Claude's turn has ended (a shell command is sent to its prompt; a window command's request does not wait for that), it asks nothing, no notice shows and nothing is in the control area.</summary>
+    /// <summary>Claude's turn has ended (a shell command is sent to its prompt; a window command's request does not wait for that), it asks nothing, no notice shows and nothing is in the control area; and the window is on view: put away (FR-9.6), an offer waits as a question of Claude's does, and is asked, with its caution heard, when the window is brought up.</summary>
     private bool OfferMayShow(Offer offer) =>
-        _readyAnnounced && (offer.Request is not null ? WaitSignature is null : ClaudeIdle) && !NoticeOpen && Area.Current is null && _offerShown is null;
+        !_putAway && _readyAnnounced && (offer.Request is not null ? WaitSignature is null : ClaudeIdle) && !NoticeOpen && Area.Current is null && _offerShown is null;
 
     /// <summary>
     /// The question in the control area (MC-9.4): the list named with the command, starting on

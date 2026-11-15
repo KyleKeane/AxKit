@@ -164,11 +164,18 @@ public sealed class WindowMenu : ToolStripMenuItem
     public static void Start(string verb, string? path) => StartWith(verb, path is null ? [] : [path]);
 
     /// <summary>The app started with several arguments after its verb (axMedia's paths and --add, a viewer's --new); a new process, which may hand its paths to the app's open window and end (AppMessage).</summary>
-    public static void StartWith(string verb, IReadOnlyList<string> arguments)
+    public static void StartWith(string verb, IReadOnlyList<string> arguments) => StartKept(verb, arguments)?.Dispose();
+
+    /// <summary>
+    /// As <see cref="StartWith"/>, with the started process handed back for a caller that keeps one window of its own
+    /// and must know whether it still lives before its window exists (axHelp's conversation, docs/axHelp/SPEC.md
+    /// HE-2.1); null when it could not be started. The caller disposes it.
+    /// </summary>
+    public static Process? StartKept(string verb, IReadOnlyList<string> arguments)
     {
         if (Environment.ProcessPath is not { } exe)
         {
-            return;
+            return null;
         }
 
         var info = new ProcessStartInfo(exe) { UseShellExecute = false };
@@ -183,13 +190,14 @@ public sealed class WindowMenu : ToolStripMenuItem
         try
         {
             // Outside call, program, axKit: starts another window of axKit from the Window menu (New window, Show
-            // current folder in, Open in axKit): this very program file with the app's verb and path.
-            Process.Start(info)?.Dispose();
+            // current folder in, Open in axKit): this very program file with the app's verb and path; axHelp starts its conversation, an axClaude window, the same way, hidden as axHelp itself starts in the background only when the user turned on its setting Keep the conversation ready in the background, off at first (docs/axHelp/SPEC.md HE-2.7).
+            return Process.Start(info);
         }
         catch (System.ComponentModel.Win32Exception ex)
         {
             // The program file blocked (a policy, an antivirus): logged, since the menu has closed and the caller is any window.
             Log.Error($"axKit {verb} could not be started", ex);
+            return null;
         }
     }
 

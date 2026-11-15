@@ -1,0 +1,90 @@
+# Workflow: See what happened while a hidden conversation was away
+# Needs: Claude Code signed in, the network and a live model (Haiku): the step that hides the window while Claude works needs a reply that takes a few seconds.
+# axClaude, docs/axClaude/nvda-test-plan.md section 20 (SPEC.md FR-9.6): what happens while a window that hides on
+# closing is put away is neither heard nor lost. The AI tools do not see the hidden window; a command offered before
+# it was hidden is not asked while it is hidden; brought up, the window says "Done" for the turn that ended and then
+# asks the offer, with its chime and its caution; and a Claude that stopped while hidden is said on the bringing up.
+# axHelp's window, the second one here, is what brings the window titled axHelp up.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\axHelp.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir away
+start claude {temp}\away --title axHelp --hide-on-close -- --model haiku
+try said trust
+iffound wait 1500
+iffound keys enter
+expect said Ready
+expect focus "name":"Message to Claude"
+
+# The access on and the runner paired, as in mcp\01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axClaude"
+start help
+
+# 21.1 An offer made while Claude works waits for the turn's end; the window is hidden before that end.
+use 1
+said
+type Write 400 words about rivers, in plain paragraphs.
+keys enter
+mcp call axkit_offer_command {"window":"{window}","command":"echo while-away"}
+expect mcp "offered": true
+close
+expect state "visible":false
+# The turn ends while the window is hidden: nothing is said, no sound plays, and the offer is not asked.
+wait 25000
+expect state Claude: ready
+refuse said Done
+refuse said offers a command
+refuse focus Explain this command
+# The AI tools do not list the hidden window.
+mcp call axkit_windows
+refuse mcp "app": "axClaude"
+
+# 21.2 Brought up: "Done" for the turn that ended, then the offer, asked with its chime and its caution.
+use 2
+menu Open the conversation
+use 1
+expect state "visible":true
+expect said Done
+expect said ♪ Offer
+expect focus axAutomate offers a command for you to run: echo while-away
+wait 1500
+keys escape
+expect said Not run
+expect focus "name":"Message to Claude"
+
+# 21.3 Claude stops while the window is hidden (/exit, hidden at once): said when the window is brought up.
+said
+type /exit
+keys enter
+close
+expect state "visible":false
+wait 4000
+expect state Claude: stopped
+use 2
+menu Open the conversation
+use 1
+expect state "visible":true
+expect said Claude stopped. Ctrl+Shift+R starts it again
+
+menu End Claude and close this window
+expect closed
+use 2
+menu Quit axHelp
+expect closed

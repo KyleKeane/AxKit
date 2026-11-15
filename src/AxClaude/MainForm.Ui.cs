@@ -31,7 +31,16 @@ internal sealed partial class MainForm
         // the editors have Save and Save as, so that the first menu of every window keeps the same order (bundle AX-6).
         session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Export conversation...", null, (_, _) => ExportConversation()) { ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Save) }, CommandMark.Change));
         session.DropDownItems.Add(new ToolStripSeparator());
-        session.DropDownItems.Add(CreateExitItem());
+        if (_options.HideOnClose)
+        {
+            // FR-9.6: Alt+F4 puts this window away and Claude runs on; ending it is a command of its own.
+            session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Hide this window", null, (_, _) => Close()) { ShortcutKeyDisplayString = "Alt+F4" }, CommandMark.Change));
+            session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("En&d Claude and close this window", null, (_, _) => EndForGood()), CommandMark.Act));
+        }
+        else
+        {
+            session.DropDownItems.Add(CreateExitItem());
+        }
 
         // What goes to Claude itself (FR-11); the raw sequences are fixed here and listed in Appendix B.
         // "Claude Code" since 5.7.0: the bundle's axKit menu holds a Claude submenu (AI help, AX-9.1); this menu is the program.

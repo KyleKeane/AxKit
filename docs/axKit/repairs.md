@@ -301,7 +301,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: The window says what arrived (Text added to the message, from another window).
 - Checked by: tests/scripts/axHelp/01-start.txt hears it
 - Commit: ddd8dcb
-- Note: Said: Text added to your message from another window, not sent. tests/scripts/axHelp/01-start.txt hears it.
+- Note: Said: Text added to your message from another window, not sent. tests/scripts/axHelp/01-start.txt hears it. Since 2026-11-15 the receiving window also takes a hand-over only from a sender that names a window of this very program file (AppMessage.SenderRefusal, every verb): a program that only knows the message is refused, but a program running as the user can name a window not its own, so the words stay said.
 
 ### R-10, low, framework: Reading the entries rebuilt a menu the user had open, and listed placeholders that do nothing
 

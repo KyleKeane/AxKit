@@ -29,11 +29,11 @@ public abstract class HotkeyForm : AxKitForm
     private Hotkey? _registered;
 
     /// <summary>
-    /// The window the foreground goes back to whenever this process holds it while the window is hidden (AS-3.4): the
-    /// window of another program that was in front when this one last showed, or, before any showing, when the process
-    /// started. The one place the rule reads; <see cref="ShowWindowInFront"/> the one place that sets it.
+    /// The window the foreground goes back to whenever this process holds it while the window is hidden (AS-3.4), and
+    /// the rule itself (<see cref="ForegroundReturn"/>, shared with axClaude's window that hides on closing since
+    /// 2026-11-15); <see cref="ShowWindowInFront"/> is the one place that sets it.
     /// </summary>
-    private nint _giveBackTo = GetForegroundWindow();
+    private readonly ForegroundReturn _front = new();
 
     private Hotkey? _captured;
     private bool _capturing;
@@ -163,7 +163,7 @@ public abstract class HotkeyForm : AxKitForm
     protected bool HotkeyRegistered => _registered is not null;
 
     /// <summary>The window of the program that was in front when this one last showed: where a paste goes (axClip).</summary>
-    protected nint ForegroundBefore => _giveBackTo;
+    protected nint ForegroundBefore => _front.Window;
 
     /// <summary>How many matches the list shows now (none: the list holds one line that says so).</summary>
     protected abstract int MatchCount { get; }
@@ -444,13 +444,7 @@ public abstract class HotkeyForm : AxKitForm
 
         // AS-3.4: the window the foreground goes back to when this one hides, when it is another program's (this
         // process's own windows, after a start that failed or a hide Windows answered with one of them, are not it).
-        var before = GetForegroundWindow();
-        GetWindowThreadProcessId(before, out var owner);
-        if (owner != (uint)Environment.ProcessId)
-        {
-            _giveBackTo = before;
-        }
-
+        var before = _front.Remember();
         PrepareShowing(Screen.FromHandle(before).WorkingArea, keepText);
         Log.Info("Shown");
         Show();
@@ -483,23 +477,11 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>
     /// The one rule of the foreground (AS-3.4): while the window is hidden, this process never keeps it. Whenever the
     /// process holds it with the window hidden (Windows activates a hidden window of the process that hid one or that
-    /// started hidden; a start brought nothing up), the window of <see cref="_giveBackTo"/> gets it, allowed because
-    /// this process is in front at that moment. Called as the window hides, on an activation while hidden, and once
-    /// three seconds after a start; nothing happens when another program has the front.
+    /// started hidden; a start brought nothing up), the window in front before gets it, allowed because this process
+    /// is in front at that moment (<see cref="ForegroundReturn.GiveBack"/>). Called as the window hides, on an
+    /// activation while hidden, and once three seconds after a start; nothing happens when another program has the front.
     /// </summary>
-    protected void GiveForegroundBack()
-    {
-        if (IsWindowVisible(Handle))
-        {
-            return;
-        }
-
-        GetWindowThreadProcessId(GetForegroundWindow(), out var owner);
-        if (owner == (uint)Environment.ProcessId && _giveBackTo != 0 && IsWindow(_giveBackTo))
-        {
-            SetForegroundWindow(_giveBackTo);
-        }
-    }
+    protected void GiveForegroundBack() => _front.GiveBack(Handle);
 
     /// <summary>After a start (AS-3.4): a program without a window, or a declined administrator prompt, leaves the front to this hidden process; the rule gives it back.</summary>
     protected async Task GiveForegroundBackLaterAsync()
@@ -660,10 +642,6 @@ public abstract class HotkeyForm : AxKitForm
 
     [DllImport("user32.dll")]
     private static extern bool UnregisterHotKey(nint hWnd, int id);
-
-
-    [DllImport("user32.dll")]
-    private static extern bool IsWindow(nint hWnd);
 
 
     [DllImport("user32.dll")]

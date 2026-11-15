@@ -86,7 +86,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   `AiSettings.EnsureWorkingFolder`; axKit menu, Claude, Claude's working folder, and axHelp's first menu, open it in
   axFile; a CLAUDE.md the user writes there is Claude's standing instructions, and Claude Code's own memory, settings
   and sessions for the service live there; until 5.6.0 Claude Code started in the first allowed folder, or the user's
-  profile, so nothing of its own had a home), every allowed folder as `--add-dir`, its standard output read to the
+  profile, so nothing of its own had a home; since 2026-11-15 axKit's guides are there too, AH-7), every allowed folder as `--add-dir`, its standard output read to the
   end under a time limit (`ProcessRun`); the prompt goes on standard input, never on the command line (it may be long and may hold
   anything). `// Outside call, program, Claude Code` (B-17), the kind axClaude's calls already have.
 - AH-2.2 The tools allowed are the three that read (`Read`, `Glob`, `Grep`); print mode cannot ask for permissions, so
@@ -141,7 +141,8 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 
 - The pure parts in `AxKit.Core/Ai`: the settings file (the relative `claudePath`), the command line built from the
   folders, the model and the session, the JSON answer read (`result`, `is_error`, `session_id`, a broken answer, an
-  empty one), the prompts with the user's text last; `AiTests`.
+  empty one), the prompts with the user's text last; `AiTests`. The guides of AH-7 (every app's among the files,
+  written where missing, again by another version, the user's own files kept); `AiDocumentationTests`.
 - The window: the automation script of each use against a fake `claude` (a cmd script in the run's own settings
   folder, named by `claudePath`, that swallows the prompt and prints one canned JSON answer, as axMCP's fake server
   does), so that no run reaches Anthropic: `tests/scripts/axHelp/01-start.txt`, `tests/scripts/axDescribe/01-start.txt`,
@@ -166,7 +167,59 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   the window's own work goes on behind it (AH-3.4). The answer notice opens in its place with the focus on the text,
   so that NVDA reads it from the top; Tab reaches the field.
 
+### AH-7 axKit's guides in the working folder (2026-11-15)
+
+The user, 2026-11-15: "axHelp should have a better developed RAG system by copying the relevant documentation for
+axKit into the axHelp folder. Also screenshots should be placed into a folder so the top level axHelp folder stays
+simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) and axHelp's conversation
+(`docs/axHelp/SPEC.md` HE-2.6).
+
+- AH-7.1 **The folder.** `<working folder>\documentation` holds axKit's own guides as Markdown: `index.md` (one line
+  per file saying what it is, and the version of axKit that wrote it), `axKit.md` (the bundle's guide,
+  `docs/axKit/README.md`) and one file per app of `Dispatch.Apps` under the app's name as the user says it
+  (`axFile.md`, `axGIT.md`: its `docs/ax<Name>/user-guide.md`). These files are axKit's, not the user's: each is
+  written where it is missing, and all are written again when `documentation\axkit-version.txt`, the marker, does not
+  hold this axKit's version, so that they follow each release (a development build writes them once in each process,
+  since its guides change without its version). A changed copy is overwritten by the next version, which `index.md` and
+  the rule file say; a file of the user's own in the folder is never read, changed or deleted. The marker's
+  first line is the version; its other lines name every file axKit wrote. A file an earlier version wrote and this
+  one no longer has (an app that left the bundle) is deleted on the next version's write, by that list alone and only
+  when it names a Markdown file directly in `documentation` or the rule file (`AiDocumentation.IsOurs`): a marker is a
+  file in the user's folder and is not believed about any other place. The write is seen to when a window asks for
+  the working folder (`AiHelpFlow.AiWorkingFolder`: a question, the start of axHelp's conversation, a screenshot,
+  Claude's working folder in the menu), once per process and folder whatever comes of it, and off the window's
+  thread (bundle rule 3). One case waits for it: a folder that never had the guides (the index or the rule file is
+  missing, two checks for a file), since Claude Code reads the rule as it starts moments later; in every other case
+  the files of the version before serve until the refresh is done. A failure is logged and the ask goes on.
+- AH-7.2 **Where the texts come from.** `AxKit.Core.csproj` embeds every app's guide once more, one line per app
+  (`Guide.axFile.md`), beside the bundle's guide it embeds already. An app's own project keeps its copy for Help, User
+  guide; the shared code may not reference an app (bundle 5.3 M2), so it embeds the files, which is no reference.
+  `AiDocumentationTests` fails on an app of `Dispatch.Apps` whose guide is not among the files, or differs from the
+  repository's; `tools/new-app.ps1` writes a new app's line. The cost is the guides' size once more in the program,
+  about 180 KB before compression.
+- AH-7.3 **Claude is told by a rule file.** `<working folder>\.claude\rules\axkit-documentation.md`, written and
+  kept current with the guides, says: for a question about axKit or one of its apps, read `documentation/index.md`
+  and the fitting guide with the Read tool before answering, answer from the guide, search the folder with Grep when
+  the guide is not obvious, and say when the guides do not cover the question. Claude Code loads every Markdown file
+  of a folder's `.claude\rules` at its start, with CLAUDE.md, in print mode and in a conversation alike
+  (code.claude.com/docs/en/memory, "Organize rules with .claude/rules/"; read 2026-11-15). So the instruction also
+  reaches a user whose CLAUDE.md exists already: that file is theirs, written once, and is never read or changed for
+  this. A new folder's CLAUDE.md names the guides as well (`AxHelp.Core/WorkingFolderFiles.Instructions`).
+- AH-7.4 **Nothing else at the top of the folder.** What axKit puts into the working folder: `documentation`,
+  `screenshots` (axHelp, HE-3.1), `CLAUDE.md` and `.claude` (the agent, the rule; Claude Code's own settings). No
+  picture, log or export of axKit's lands loose there (checked 2026-11-15: the screenshots were in their folder
+  already; the conversation's Export proposes the folder in the save dialog and the user chooses).
+- AH-7.5 **Local first** (bundle G6, B-15; AH-D2 stands): no index, no embeddings, no service and no network request
+  of axKit's. The retrieval is Claude Code's own read-only tools (Read, Grep, Glob) over plain files. A guide's text
+  goes to Anthropic only as any file does that Claude reads for an answer; the guides are public text of axKit's
+  repository and hold nothing of the user's.
+- AH-7.6 The cautions are unchanged (bundle AX-11.12): an answer of Shift+F1 still ends with `AiCaution.Written`,
+  and the conversation is axClaude's with its own.
+
 ## 5. Architecture
+
+- `AxKit.Core/Ai/AiDocumentation` (AH-7): `Files(version)`, the guides, the index and the rule with their paths, and
+  `Write(workingFolder, version, rewrite)`; tested in `AiDocumentationTests`.
 
 - `AxKit.Core/Ai/AiSettings` (AH-1.1), `AiRequest` (the command line and the process, AH-2), `AiAnswer` (the JSON
   read, with the session), `AiPrompts` with `WindowContext` (AH-4, AH-6.2).
@@ -205,6 +258,18 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   in the first allowed folder, or the user's profile, scattered that; one folder, `Documents\axKit Claude`, made when
   first needed and opened from the menu, gathers it and gives the user one place to write Claude standing
   instructions. The allowed folders stay what they were, `--add-dir` each.
+- **AH-D7 The guides as files, the instruction as a rule file** (2026-11-15, AH-7). Three ways to tell Claude about
+  the guides were weighed. A line in the working folder's CLAUDE.md reaches only new folders: the file is the user's
+  and is written once. Claude Code's `--append-system-prompt` works in print mode and in a conversation, but Claude
+  Code records the system prompt with a conversation's first request and reuses it after `--continue` and `--resume`
+  until the conversation is compacted (code.claude.com/docs/en/cli-reference, "System prompt flags in resumed
+  conversations"), so it would not reach axHelp's conversation, which goes on; it would also put a long sentence on
+  the command line of npm's `claude.cmd`, where cmd.exe refuses several characters (AH-2.1a), and need a new option
+  of axClaude's. A file of axKit's own in `.claude\rules` is loaded at every start in both modes, needs no option and
+  no change to a launcher, is plain text the user can read, and is kept current by the same code that writes the
+  guides. That is the one mechanism. If Claude Code stops reading `.claude\rules`, this one file's place changes
+  (root rule 12). The retrieval stays Claude Code's own reading (AH-D2): the guides are small and few, and a search
+  by name and by Grep finds what a question needs.
 
 ## 7. The first two apps (built 2026-11-09; rebuilt as one in 5.7.0, section 10)
 
@@ -295,3 +360,8 @@ and on the model, "a very fast chat like experience ... that only spins up a bet
   Claude Code's saved default everywhere, which the guide says.
 - AiPrompts lost `Anywhere`, `Screen` and `Picture`, which only the two apps used; the working folder (AH-D6) is what
   axHelp still takes from here.
+- Since 2026-11-15 the conversation hides on closing and the hotkey brings the same window back, and, only when the user turned on
+  axHelp's setting Keep the conversation ready in the background (off at first), axHelp started in the background
+  starts it hidden, Claude Code loaded, once the user has agreed to Claude Code (`docs/axHelp/SPEC.md` HE-1.3,
+  HE-2.1, HE-2.7, HE-D9; axClaude FR-9.6). That start is the one moment Claude Code runs without the user's key, and
+  it exists only with that setting on; this service's own questions (AH-2) start Claude Code only when asked.

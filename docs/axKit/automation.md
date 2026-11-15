@@ -110,7 +110,8 @@ including while the user works, because nothing takes the foreground.
   - `focus`: the focused control's accessible name and role, its text or the selected item, the caret's line.
   - `said`: what the window announced since the last `said`, each notification with its kind (interrupting or not),
     in order; the announcements are recorded where they are raised (`AxKitForm.Announce`).
-  - `state`: the title, the status bar's texts, whether a notice shows and its title, the control area's name.
+  - `state`: the title, the status bar's texts, whether a notice shows and its title, the control area's name, and
+    `visible`, false for a window hidden by its own close (axClaude FR-9.6), which `activate` leaves hidden.
   - `menu <name>`: runs a menu command by the name the command palette knows it by.
   - `close`: closes the window as Alt+F4 does.
   - `problems`: what is wrong with the window's command list (app-kit AK-2.4): a key of its own the F1 text does not

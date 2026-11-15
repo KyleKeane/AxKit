@@ -29,7 +29,7 @@ public static class HelpText
             "Ctrl+Space: background music on or off, and says which",
             "Ctrl+Q: read Claude's question or screen again while it waits at the bottom, all its lines and the answer the focus is on, without moving",
         ],
-        altF4: "close axClaude (asks first while Claude is working)",
+        altF4: "close axClaude (asks first while Claude is working); in axHelp's conversation it hides the window and Claude runs on, and Session, End Claude and close this window ends it",
         heading: "Anywhere") + """
         ## Message field
           Enter: send (an empty field sends a plain Enter to Claude). Ctrl+Enter sends too

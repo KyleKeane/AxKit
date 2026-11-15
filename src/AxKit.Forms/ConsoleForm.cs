@@ -311,6 +311,9 @@ public abstract partial class ConsoleForm : AxKitForm
         base.OnFormClosing(e);
     }
 
+    /// <summary>Whether the closing question was answered with Close anyway: the close under way is that one (axClaude's window that hides on closing closes for real then, FR-9.6).</summary>
+    protected bool CloseWasConfirmed => _closeConfirmed;
+
     /// <summary>The Close anyway of the closing question: the window closes without asking again.</summary>
     protected void CloseConfirmed()
     {

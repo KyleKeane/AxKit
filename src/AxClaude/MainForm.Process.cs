@@ -231,8 +231,11 @@ internal sealed partial class MainForm
         }
 
         _model.AddSystemLine($"Claude stopped (exit code {code}). Press Ctrl+Shift+R to start it again.");
-        Announce("Claude stopped", false);
+        Announce(StoppedText, false);
     }
+
+    /// <summary>Said when Claude's process ended; a window put away keeps it for its bringing up (<see cref="SaidWhilePutAway"/>).</summary>
+    private const string StoppedText = "Claude stopped";
 
     /// <summary>The attention timer stops with Claude; the console window stops the process, the writes and the control area.</summary>
     protected override void StopProcess(bool terminateAtOnce = false)

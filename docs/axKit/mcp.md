@@ -112,7 +112,10 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   `...-run<mark>-<random>`, the mark twelve hex digits of the run's folder (`AppPaths.RunMark`, the same as its
   mutexes'), and a broker lists only the pipes of its own kind (`McpPipeName.SameKind`): the user's broker the user's
   windows, a run's broker that run's (2026-11-12: a run's broker had knocked on the user's own windows, which refused
-  it by MC-6.3 and logged every knock). A window's id is the pipe's random part either way.
+  it by MC-6.3 and logged every knock). A window's id is the pipe's random part either way. A window put away by
+  its own close and running on (axClaude's `--hide-on-close`, axHelp's conversation while hidden; `AxKitForm.PutAway`,
+  2026-11-15) answers every request, the broker's `hello` included, with "This window is hidden", so `axkit_windows`
+  leaves it out and nothing reads or runs anything in it until its user brings it back.
 - MC-6.3 **Both ends prove who they are**: the window answers only a client whose process runs this very program file
   (`GetNamedPipeClientProcessId`, its image path, as the hand-over checks, S-13), and the broker talks only to a pipe
   whose server process runs it (`GetNamedPipeServerProcessId`): a broker reads only the windows of its own

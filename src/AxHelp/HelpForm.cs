@@ -35,12 +35,58 @@ public sealed class HelpForm : HotkeyForm
 
     private readonly string? _picture;
 
+    /// <summary>axHelp started with --hidden, as at sign-in (HE-2.7): the one start that may start the conversation hidden too.</summary>
+    private readonly bool _startedHidden;
+
+    /// <summary>
+    /// The process axHelp last started for the conversation, kept so that a press while its window is still coming up
+    /// waits for that window, however long, and never starts a second one, and so that Quit can end a process whose
+    /// window never came (<see cref="Conversation"/>); null before any start and once it has ended.
+    /// </summary>
+    private System.Diagnostics.Process? _conversation;
+
+    /// <summary>Whether the process axHelp started for the conversation still runs.</summary>
+    private bool ConversationProcessRuns
+    {
+        get
+        {
+            if (_conversation is not { } process)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (!process.HasExited)
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception)
+            {
+                // Not ours to ask any more: as ended.
+            }
+
+            process.Dispose();
+            _conversation = null;
+            return false;
+        }
+    }
+
+    /// <summary>The conversation's window started, its process kept in place of the one before.</summary>
+    private void StartConversation(IReadOnlyList<string> arguments)
+    {
+        _conversation?.Dispose();
+        _conversation = WindowMenu.StartKept(Dispatch.AxClaude, arguments);
+    }
+
     /// <param name="picture">A picture file the start named (HE-3.3): put into the conversation once the window is made.</param>
     public HelpForm(bool hidden, HelpSettings settings, string? settingsError, string? picture)
         : base(AxHelpApp.Name, settings, HelpSettings.DefaultPath, settingsError, hidden || picture is not null)
     {
         _settings = settings;
         _picture = picture;
+        _startedHidden = hidden && picture is null;
         // The window's own title differs from the conversation's, so that a second start never takes one for the other (HE-1.2).
         Text = AxHelpApp.WindowTitle;
 
@@ -62,9 +108,18 @@ public sealed class HelpForm : HotkeyForm
         {
             _settings.Model = chosen;
             SaveSettings();
-            Announce(FindConversation() != 0 ? $"{chosen}, from the conversation's next start: close it and press the hotkey" : chosen, true);
+            Announce(FindConversation() != 0 ? $"{chosen}, from the conversation's next start: in its window, Session, End Claude and close this window, then the hotkey" : chosen, true);
         });
         options.DropDownItems.Add(model);
+        // HE-2.7, HE-D9: off at first. On, Claude Code is loaded from sign-in, for a first press as quick as the later
+        // ones; the item is all there is of it: no prompt, no reminder.
+        options.DropDownItems.Add(Toggle("&Keep the conversation ready in the background", _settings.KeepConversationReady, v =>
+        {
+            _settings.KeepConversationReady = v;
+            Announce(v
+                ? "On: from axHelp's next start in the background, as at sign-in, Claude Code is started with it, may contact Anthropic then, and stays in memory"
+                : "Off: Claude Code starts at the first press of the hotkey; closing the conversation still hides it", true);
+        }, CommandMark.Act));
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem()));
         options.DropDownItems.Add(CreateDeveloperMenu());
@@ -139,6 +194,77 @@ public sealed class HelpForm : HotkeyForm
         {
             BeginInvoke(() => PutPicture(_picture));
         }
+        else if (_startedHidden)
+        {
+            BeginInvoke(StartConversationHidden);
+        }
+    }
+
+    /// <summary>
+    /// axHelp ends (Quit axHelp, an update's close; never a hide): the conversation is asked to end with it, hidden
+    /// or on view (HE-1.3), since with axHelp gone nothing would bring a hidden one back and its Claude Code would run
+    /// on unseen. Asked, not made to: a conversation with something to lose (Claude at work, a message typed, a
+    /// question waiting) comes up and asks its own question (axClaude FR-9.6), and axHelp ends all the same, since
+    /// its own process holds nothing. A process started a moment ago whose window does not exist yet is ended itself.
+    /// Not at Windows' own end, which closes the conversation's window itself.
+    /// </summary>
+    protected override void OnFormClosing(FormClosingEventArgs e)
+    {
+        base.OnFormClosing(e);
+        if (e.Cancel || e.CloseReason == CloseReason.WindowsShutDown)
+        {
+            return;
+        }
+
+        var open = FindConversation();
+        switch (Conversation.AtQuit(open != 0, ConversationProcessRuns))
+        {
+            case ConversationEnd.AskToEnd:
+                Log.Info("The conversation asked to end with axHelp");
+                AppMessage.SendTo(open, ConversationTitle, AppMessage.End, []);
+                break;
+            case ConversationEnd.EndProcess:
+                Log.Info("The conversation's process, started and without a window yet, ended with axHelp");
+                try
+                {
+                    _conversation?.Kill(entireProcessTree: true);
+                }
+                catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception)
+                {
+                    Log.Error("The conversation's process could not be ended: " + ex.Message);
+                }
+
+                break;
+        }
+    }
+
+    /// <summary>
+    /// The conversation started hidden as axHelp starts hidden (HE-2.7), so that Claude Code is loaded at the first
+    /// press: only with the setting on, axClaude's agreement for Claude Code already given (read from the bundle's
+    /// consent file, nothing shown) and Claude Code installed; and never a second conversation.
+    /// </summary>
+    private void StartConversationHidden()
+    {
+        var agreed = Consent.Given(AppPaths.ConsentFile, Dispatch.Of(Dispatch.AxClaude).Name, ConsentTarget.ClaudeCode.Program);
+        var installed = ClaudeCodeProgram.Find(null) is not null;
+        if (!HelpSettings.StartsConversationHidden(_startedHidden, _settings.KeepConversationReady, agreed, installed)
+            || Conversation.Next(FindConversation() != 0, ConversationProcessRuns) != ConversationStep.Start)
+        {
+            Log.Info($"The conversation not started ahead: the setting {(_settings.KeepConversationReady ? "on" : "off")}, agreed {agreed}, Claude Code {(installed ? "found" : "not found")}");
+            return;
+        }
+
+        if (!AiWorkingFolder(out var folder))
+        {
+            return;
+        }
+
+        Log.Info("The conversation started hidden, to be ready for the hotkey");
+        PrepareWorkingFolder(folder);
+        // A moment at which Claude Code runs and may contact Anthropic without the user's key: axHelp's own start in
+        // the background (sign-in), only with the setting the user turned on (HE-2.7, HE-D9; PRIVACY.md names it).
+        // The start itself is WindowMenu.StartKept's outside call; Claude Code's is the console window's.
+        StartConversation(HelpSettings.ConversationArguments(folder, _settings.Model, null, hidden: true));
     }
 
     /// <summary>The conversation's hotkey (HE-2.1): the conversation, never this window.</summary>
@@ -163,12 +289,12 @@ public sealed class HelpForm : HotkeyForm
 
     // ---- the conversation (HE-2) ----
 
-    /// <summary>The open conversation window: an axKit window titled "axHelp" that is not this one; 0 when none.</summary>
-    private nint FindConversation()
-    {
-        var self = IsHandleCreated ? Handle : 0;
-        return WindowMenu.OpenWindows().FirstOrDefault(window => window.Handle != self && window.Title == ConversationTitle)?.Handle ?? 0;
-    }
+    /// <summary>
+    /// The conversation's window, on view or hidden by its close (HE-1.3): the window titled "axHelp" of another
+    /// process of this very program file, found where a second start finds a hidden hotkey window
+    /// (<see cref="HotkeyForm.FindRunning"/>; the Window menu's list holds visible windows only); 0 when none.
+    /// </summary>
+    private static nint FindConversation() => FindRunning(ConversationTitle);
 
     /// <summary>
     /// The conversation brought up (HE-2.1): the open one to the front, with <paramref name="message"/> put into its
@@ -178,20 +304,22 @@ public sealed class HelpForm : HotkeyForm
     /// </summary>
     private void OpenConversation(string? message)
     {
-        if (!AiWorkingFolder(out var folder))
-        {
-            return;
-        }
-
         if (Visible)
         {
             HideWindow(giveBack: false);
         }
 
-        if (FindConversation() is var open and not 0)
+        var open = FindConversation();
+        var step = Conversation.Next(open != 0, ConversationProcessRuns);
+        if (step == ConversationStep.HandOver)
         {
-            Log.Info("The conversation brought to the front");
-            if (message is null || !AppMessage.SendTo(open, ConversationTitle, AppMessage.Message, [message]))
+            // The window brings itself up, hidden or behind others, and puts the focus in its message field (axClaude
+            // FR-9.6): "show", or the "message" with its text. The hand-over passes on this process's right to the front.
+            Log.Info("The conversation brought up");
+            var handed = message is null
+                ? AppMessage.SendTo(open, ConversationTitle, AppMessage.Show, [])
+                : AppMessage.SendTo(open, ConversationTitle, AppMessage.Message, [message]);
+            if (!handed)
             {
                 WindowMenu.Activate(open);
             }
@@ -199,9 +327,22 @@ public sealed class HelpForm : HotkeyForm
             return;
         }
 
+        if (step == ConversationStep.Wait)
+        {
+            // Started (the start in the background, or a first press) and its window not made yet: wait for that one
+            // while its process lives, never a second conversation. Nothing is read or written while waiting.
+            After(300, () => OpenConversation(message));
+            return;
+        }
+
+        if (!AiWorkingFolder(out var folder))
+        {
+            return;
+        }
+
         Log.Info("The conversation started");
         PrepareWorkingFolder(folder);
-        WindowMenu.StartWith(Dispatch.AxClaude, HelpSettings.ConversationArguments(folder, _settings.Model, message));
+        StartConversation(HelpSettings.ConversationArguments(folder, _settings.Model, message));
         Do(GiveForegroundBackLaterAsync);
     }
 

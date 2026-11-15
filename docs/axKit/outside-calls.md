@@ -44,7 +44,7 @@ Calls (6):
 - **How**: for a session, `claude --ax-screen-reader` in a ConPTY pseudo console (PtyHost): what it prints is read from the console and the user's keys are written to it. For its version and for `claude mcp add` and `claude mcp remove`, a process without a window whose output is read. For AI help (`docs/axKit/ai-help.md`), `claude -p --output-format json --allowedTools Read,Glob,Grep` once per question, the prompt on its standard input, the folders the user allowed as `--add-dir`, a follow-up with `--resume`; read-only tools, so it changes no file and runs no command.
 - **What it reaches**: Anthropic's service with the user's account, and whatever else Claude Code does from a terminal, its own update check included, under Anthropic's terms; axKit neither sees nor changes that traffic.
 - **Documentation**: https://code.claude.com/docs/en/cli-reference and https://code.claude.com/docs/en/setup; Anthropic's privacy policy, https://www.anthropic.com/legal/privacy.
-- **Apps**: axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window; AI help in every window (Shift+F1, the axKit menu, Claude); axHelp, access layer for Claude Code, through axClaude.
+- **Apps**: axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window; AI help in every window (Shift+F1, the axKit menu, Claude); axHelp, access layer for Claude Code, through axClaude: at the user's key, and, only when the user turned on Keep the conversation ready in the background (off at first) and has agreed to Claude Code, hidden as axHelp starts in the background at sign-in (docs/axHelp/SPEC.md HE-2.7).
 
 Calls (5):
 
@@ -185,8 +185,8 @@ Calls (7):
   Code: `Process.Start(start)?.Dispose();`
 - **shared by every app**, `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Open`, by `Process.Start`: starts an axKit app for the AI tool axkit_open, this very program file with a checked verb and path, through the shell so that the new window inherits none of the broker's pipes (docs/axKit/mcp.md MC-6).
   Code: `using var process = Process.Start(start);`
-- **shared by every app**, `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartWith`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path.
-  Code: `Process.Start(info)?.Dispose();`
+- **shared by every app**, `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartKept`, by `Process.Start`: starts another window of axKit from the Window menu (New window, Show current folder in, Open in axKit): this very program file with the app's verb and path; axHelp starts its conversation, an axClaude window, the same way, hidden as axHelp itself starts in the background only when the user turned on its setting Keep the conversation ready in the background, off at first (docs/axHelp/SPEC.md HE-2.7).
+  Code: `return Process.Start(info);`
 - **shared by every app**, `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
 - **shared by every app**, `src/AxKit/Program.cs`, in `Program.StartBackgroundAppsOnce`, by `Process.Start`: starts AxKit.exe itself as a background app (axStart, axClip, axHelp), hidden, at the first start of the Store's copy after its install (AX-13.4a).
@@ -298,7 +298,7 @@ Used in 19 places:
 - `src/AxKit.Forms/ProgramInstaller.cs`, in `ProgramInstaller.RunInstallerAsync`, for Installers.
 - `src/AxKit.Forms/TextEditorForm.Viewer.cs`, in `TextEditorForm.OpenInWindowsProgram`, for Windows.
 - `src/AxKit.Forms/UpdateFlow.cs`, in `UpdateFlow.OpenStorePage`, for Windows.
-- `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartWith`, for axKit.
+- `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartKept`, for axKit.
 - `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, for axKit.
 - `src/AxKit/Program.cs`, in `Program.StartBackgroundAppsOnce`, for axKit.
 - `src/AxStart/AppsFolder.cs`, in `AppsFolder.Start`, for User programs.

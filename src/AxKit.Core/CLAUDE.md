@@ -35,7 +35,8 @@ another project on its second use, the bullet says so.
   process started in the working folder with every allowed folder as `--add-dir`, the run with the prompt on standard
   input; `Line` is `ClaudeCodeProgram.LineFor` over `Arguments`, and a refused line, a `claude.cmd` with a folder
   holding `%`, is an error answer without a run, AH-2.1a), `AiAnswer` (the JSON result read), `AiPrompts` with `WindowContext` (the prompts: about this window, from
-  anywhere, a screen's picture, a picture file, a follow-up); tested in `AiTests`.
+  anywhere, a screen's picture, a picture file, a follow-up); tested in `AiTests`. `AiDocumentation` (AH-7): axKit's guides in
+  the working folder; a new app needs its `Guide.<name>.md` line in the csproj.
 - `AiCaution` (AX-11.12, root rule 11, 2026-11-13): the words that go with anything an AI wrote or asks to do, one place for every window: `Written` (under an answer of AI help), `Short` (in the name of an offered command's question), `Command` (the first section of its explanation), `Asked` (in the name of the list an AI tool's run of a window command asks through) and `Request` (in that question's text and explanation). A new feature of the kind takes its words from here.
 - `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
   for the bundle, `%APPDATA%\AxKit\consent.json`: `Given`, `Record` (a file that cannot be written is logged and the

@@ -121,6 +121,13 @@ internal sealed partial class MainForm : ConsoleForm
         _attention.Tick += (_, _) =>
         {
             _attention.Stop();
+            if (_putAway)
+            {
+                // FR-9.6: a question that arrives while the window is put away waits, unspoken, until it is shown.
+                SettledWhilePutAway();
+                return;
+            }
+
             OnFrameSettled();
         };
         _speechHold.Tick += (_, _) => SpeakHeld();
@@ -131,10 +138,32 @@ internal sealed partial class MainForm : ConsoleForm
         UpdateFolderUi();
         ApplyTextFont();
         RestoreWindow();
+        if (_options.StartsHidden)
+        {
+            // FR-9.6: put away from the start, silent, and shown once without activation and without a pixel
+            // (ShowWithoutActivation; a maximized window would be activated as it shows, so it starts at its normal
+            // size and takes its own state when it is first brought up).
+            _putAway = true;
+            Sounds.Muted = true;
+            _stateWhenBroughtUp = WindowState;
+            WindowState = FormWindowState.Normal;
+            Opacity = 0;
+        }
     }
+
+    /// <summary>The saved window state of a hidden start, taken when the window is first brought up; null otherwise.</summary>
+    private FormWindowState? _stateWhenBroughtUp;
 
     protected override void OnShown(EventArgs e)
     {
+        if (_options.StartsHidden && _putAway)
+        {
+            // The hidden start (FR-9.6): hidden again before anything else, Claude started below as in any start.
+            Hide();
+            _front.GiveBack(Handle);
+            Log.Info("Started hidden; Claude is loaded for the first showing");
+        }
+
         // The base puts the focus in the field first: a notice shown by what follows (Claude not found) takes it from there and gives it back.
         base.OnShown(e);
         if (_options.RecordPath is { } record)
@@ -171,17 +200,31 @@ internal sealed partial class MainForm : ConsoleForm
     /// added to the message field on a line of its own, not sent, the caret at its end and the window in front, so
     /// that the user types the question after it and presses Enter.
     /// </summary>
-    protected override Action? TakeHandOver(HandOver message) =>
-        message.Verb == AppMessage.Message && message.Paths.Count == 1 ? () =>
+    /// <remarks>
+    /// "show" (FR-9.6) brings the window up as it is, the focus in the message field; "end" asks a window that hides
+    /// on closing to close, which it does at once only with nothing to lose (<see cref="EndRequested"/>): axHelp's
+    /// hotkey and axHelp's Quit. The window base has checked that the sender is this very program file.
+    /// </remarks>
+    protected override Action? TakeHandOver(HandOver message) => message.Verb switch
+    {
+        AppMessage.Message when message.Paths.Count == 1 => () =>
         {
+            _keeperLeft = false;
             Input.Text = Input.Text.Length == 0 ? message.Paths[0] : Input.Text.TrimEnd() + "\r\n" + message.Paths[0];
             Input.SelectionStart = Input.Text.Length;
-            WindowMenu.Activate(Handle);
-            Input.Focus();
+            BringUp();
             // Said, since any program of the user's can send it (docs/axKit/repairs.json R-07): text that appears in
             // the field without a word could be sent with the next Enter unread.
             Announce("Text added to your message from another window, not sent", true);
-        } : null;
+        },
+        AppMessage.Show => () =>
+        {
+            _keeperLeft = false;
+            BringUp();
+        },
+        AppMessage.End when _options.HideOnClose => EndRequested,
+        _ => null,
+    };
 
     protected override bool AskBeforeClosing()
     {
@@ -278,6 +321,24 @@ internal sealed partial class MainForm : ConsoleForm
         if (_folder is not null)
         {
             arguments.Add(_folder);
+            // A window another program keeps (axHelp's conversation, FR-9.2, FR-9.6) comes back as that window.
+            if (_options.Title is { Length: > 0 } title)
+            {
+                arguments.Add("--title");
+                arguments.Add(title);
+            }
+
+            if (_options.Model is { Length: > 0 } model)
+            {
+                arguments.Add("--model");
+                arguments.Add(model);
+            }
+
+            if (_options.HideOnClose)
+            {
+                arguments.Add("--hide-on-close");
+            }
+
             if (_messageSent)
             {
                 arguments.Add("--");

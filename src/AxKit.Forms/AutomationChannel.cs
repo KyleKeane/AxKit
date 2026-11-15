@@ -320,6 +320,12 @@ internal sealed class AutomationChannel : IMessageFilter
     /// <summary>The NVDA tier (docs/axKit/automation.md, tier 3): the window to the front, so that NVDA follows it and the keyboard reaches it; only on the user's desktop, at the user's word.</summary>
     private object Activate()
     {
+        // A window put away stays put away: only its own program's hand-over brings it up (axClaude FR-9.6).
+        if (_form.PutAway)
+        {
+            return new { ok = false };
+        }
+
         // The thread's own activation first: on the test desktop, where no foreground is to be had, it is what fires
         // OnActivated, so that the window says what it kept for its first activation (AX-7.3, 2026-11-01).
         SetActiveWindow(_form.Handle);

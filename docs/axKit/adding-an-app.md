@@ -113,6 +113,9 @@ the base's. The rest of this section is for a window of a new kind.
   its item under New window, its place in axFile's Open in axKit and the Show in
   submenus, and its line in About, Version (AX-9.2) **(automatic)**; `DispatchTests` and `BundleAboutTests` cover
   every entry by themselves, and the app order `DispatchTests` expects is rewritten by the script.
+- `src/AxKit.Core/AxKit.Core.csproj` **(script)**: the app's guide embedded once more, `Guide.axThing.md`, which
+  axKit writes into the documentation folder of Claude's working folder (`ai-help.md` AH-7.2);
+  `AiDocumentationTests` fails without the line.
 - `src/AxKit/Program.cs` **(script)**: the line `[Dispatch.AxThing] = AxThingApp.Run,` in `Runs`, and its `using`;
   the taskbar id `AxKit.AxThing` follows from the project name (AX-1.6).
 - The project references **(automatic)**: `src/AxKit/AxKit.csproj` and `tests/AxKit.Tests` reference every project of

@@ -16,4 +16,29 @@
     <EmbeddedResource Include="Reports/reporter.token" LogicalName="AxKit.Core.ReporterToken" Condition="Exists('Reports/reporter.token')" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Every app's user guide once more, for Claude's working folder (docs/axKit/ai-help.md AH-7.2,
+         Ai/AiDocumentation): the documentation folder there holds them as <name>.md. An app's own project embeds its
+         guide for Help, User guide; this project may not reference an app, so it embeds the files themselves. One
+         line per app of Dispatch.Apps, named Guide.<the app's name>.md; AiDocumentationTests fails on an app without
+         one, and tools/new-app.ps1 writes a new app's line. -->
+    <EmbeddedResource Include="../../docs/axFile/user-guide.md" LogicalName="Guide.axFile.md" />
+    <EmbeddedResource Include="../../docs/axDown/user-guide.md" LogicalName="Guide.axDown.md" />
+    <EmbeddedResource Include="../../docs/axJSON/user-guide.md" LogicalName="Guide.axJSON.md" />
+    <EmbeddedResource Include="../../docs/axPreview/user-guide.md" LogicalName="Guide.axPreview.md" />
+    <EmbeddedResource Include="../../docs/axMedia/user-guide.md" LogicalName="Guide.axMedia.md" />
+    <EmbeddedResource Include="../../docs/axTask/user-guide.md" LogicalName="Guide.axTask.md" />
+    <EmbeddedResource Include="../../docs/axStart/user-guide.md" LogicalName="Guide.axStart.md" />
+    <EmbeddedResource Include="../../docs/axClip/user-guide.md" LogicalName="Guide.axClip.md" />
+    <EmbeddedResource Include="../../docs/axCalc/user-guide.md" LogicalName="Guide.axCalc.md" />
+    <EmbeddedResource Include="../../docs/axProcess/user-guide.md" LogicalName="Guide.axProcess.md" />
+    <EmbeddedResource Include="../../docs/axAutomate/user-guide.md" LogicalName="Guide.axAutomate.md" />
+    <EmbeddedResource Include="../../docs/axTerminal/user-guide.md" LogicalName="Guide.axTerminal.md" />
+    <EmbeddedResource Include="../../docs/axGIT/user-guide.md" LogicalName="Guide.axGIT.md" />
+    <EmbeddedResource Include="../../docs/axPass/user-guide.md" LogicalName="Guide.axPass.md" />
+    <EmbeddedResource Include="../../docs/axClaude/user-guide.md" LogicalName="Guide.axClaude.md" />
+    <EmbeddedResource Include="../../docs/axMCP/user-guide.md" LogicalName="Guide.axMCP.md" />
+    <EmbeddedResource Include="../../docs/axHelp/user-guide.md" LogicalName="Guide.axHelp.md" />
+  </ItemGroup>
+
 </Project>

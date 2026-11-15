@@ -34,6 +34,21 @@ public sealed class AppMessageTests
         Assert.True(AppMessage.TakesFocus(AppMessage.Play));
         Assert.True(AppMessage.TakesFocus(AppMessage.Open));
         Assert.False(AppMessage.TakesFocus(AppMessage.Add));
+        // A window that hides on closing (axClaude FR-9.6): "show" brings it to the front, and so may "end", which asks before anything is lost.
+        Assert.True(AppMessage.TakesFocus(AppMessage.Show));
+        Assert.True(AppMessage.TakesFocus(AppMessage.End));
+        var show = AppMessage.Parse(AppMessage.Format(AppMessage.Show, []));
+        Assert.Equal("show", show?.Verb);
+        Assert.Empty(show!.Paths);
+    }
+
+    /// <summary>The receiving window's check of a hand-over's sender (the review of 2026-11-15): it must name a window, and that window must be this very program file's.</summary>
+    [Fact]
+    public void A_hand_over_is_taken_only_from_a_sender_that_names_a_window_of_this_program()
+    {
+        Assert.Null(AppMessage.SenderRefusal(namesWindow: true, windowIsThisProgram: true));
+        Assert.Equal("the hand-over names no sending window", AppMessage.SenderRefusal(namesWindow: false, windowIsThisProgram: false));
+        Assert.Equal("the hand-over's sending window is not this program's", AppMessage.SenderRefusal(namesWindow: true, windowIsThisProgram: false));
     }
 
     [Fact]

@@ -195,3 +195,16 @@ Needs the AI tools on and axKit added to Claude Code, in a session started after
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
 
 1. In the conversation on a line, Shift+F10: Context opens on "Quote this line in the message" and NVDA reads it, not the edit control's own menu; Escape: back on the line. In the message field, the same. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help.
+
+## 20. A window that hides on closing (FR-9.6, 2026-11-15)
+
+The automated part is `tests/scripts/axClaude/20-hide-on-close.txt`; axHelp's plan, section 6, has the steps by ear,
+since axHelp is what starts such a window and brings it up.
+
+1. `axClaude C:\some\folder --title Helper --hide-on-close`: the window as any axClaude window; Session ends with
+   Hide this window (Alt+F4) and End Claude and close this window, no Exit.
+2. Alt+F4 while Claude works: no "Close axClaude?" question; the window is gone, Claude Code still in Task Manager;
+   nothing is spoken and no sound plays while it is hidden. The program in front before has the keyboard.
+3. Session, End Claude and close this window while Claude works: "Close axClaude?"; Keep working keeps it, and the
+   next Alt+F4 hides again; Close anyway ends it.
+4. With such a window hidden, sign out of Windows: no question holds the sign-out up.

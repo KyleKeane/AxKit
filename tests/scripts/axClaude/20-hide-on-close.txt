@@ -1,0 +1,62 @@
+# Workflow: A conversation window that starts hidden and hides on closing
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+# axClaude, docs/axClaude/nvda-test-plan.md section 20 (SPEC.md FR-9.6): --hide-on-close with --hidden, as axHelp
+# starts its conversation ahead (docs/axHelp/SPEC.md HE-2.7). The window starts hidden with Claude loaded, says and
+# plays nothing while hidden, keeps Claude's first question unspoken until it is shown, then acts on it as on one that
+# has just arrived; Alt+F4 hides it again; its own command ends it. What brings it up is the "show" hand-over, which
+# axHelp's Open the conversation sends to the window titled axHelp: axHelp's window is the second one here.
+# The window place saved maximized, as a user's is: a hidden start must not lose it (20.5).
+file home\AxKit\axClaude.json {"checkForUpdates":false,"window":{"x":40,"y":40,"width":900,"height":600,"maximized":true}}
+file home\AxKit\axHelp.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+run mkdir "home\axKit Claude"
+
+# 20.1 The hidden start: no window on view, and Claude Code's question about the new folder waits unspoken: no
+# announcement, no sound, no move of the focus.
+start claude "{temp}\home\axKit Claude" --title axHelp --hide-on-close --hidden -- --model haiku
+expect state "visible":false
+wait 8000
+refuse said trust
+refuse said Ready
+expect state "visible":false
+
+# 20.2 Brought up: the window on view, and the question that waited is asked now.
+start help
+menu Open the conversation
+use 1
+expect state "visible":true
+try said trust
+iffound wait 1500
+iffound keys enter
+expect said Ready
+expect focus "name":"Message to Claude"
+
+# 20.3 Alt+F4 hides it, without a question and without a word; brought up again it is the same window, ready.
+said
+close
+expect state "visible":false
+expect quiet 2000
+use 2
+menu Open the conversation
+use 1
+expect state "visible":true
+expect state Claude: ready
+expect focus "name":"Message to Claude"
+refuse said Ready
+
+# 20.4 Session, End Claude and close this window ends it for good.
+menu End Claude and close this window
+expect closed
+
+# 20.5 A hidden start that is never brought up: axHelp's Quit asks it to end, and with nothing to lose it ends at
+# once, unseen. It was never where the user put a window, so the saved place stays as it was: still maximized.
+start claude "{temp}\home\axKit Claude" --title axHelp --hide-on-close --hidden -- --model haiku
+expect state "visible":false
+wait 6000
+expect state Claude: ready
+use 2
+menu Quit axHelp
+expect closed
+use 3
+expect closed
+run findstr /r "maximized.:.true" home\AxKit\axClaude.json

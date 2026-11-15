@@ -12,7 +12,7 @@
     - docs\<Name>\SPEC.md, user-guide.md and nvda-test-plan.md as stubs, run-<Name>.ps1, and
       tests\scripts\<Name>\01-start.txt for tools\AxAutomate;
     - the app's line in Dispatch.Apps with its verb constant and its usage line (src\AxKit.Core\Dispatch.cs), its line
-      in Program.cs's table, the KeyTests entries, the app order DispatchTests expects, the solution's three projects,
+      in Program.cs's table, its guide's line in AxKit.Core.csproj (ai-help.md AH-7.2), the KeyTests entries, the app order DispatchTests expects, the solution's three projects,
       the icon (tools\make-icon.ps1), AxKit.csproj's description, the issue forms' choices, the verb and the taskbar
       id in docs\axKit\SPEC.md AX-1.1 and AX-1.6;
     - drafts, to be rewritten in real words, of the app's line in README.md, docs\axKit\README.md, docs\axKit\SPEC.md
@@ -689,6 +689,12 @@ Edit-TextFile 'src\AxKit\Program.cs' {
     param($text, $nl)
     $text = Add-AfterLast $text $nl '^using Ax\w+;' "using $Project;"
     return Add-AfterLast $text $nl '^        \[Dispatch\.\w+\] = \w+App\.Run,' "        [Dispatch.$constant] = ${Project}App.Run,"
+}
+
+# The app's guide once more in AxKit.Core, for the documentation folder of Claude's working folder (ai-help.md AH-7.2).
+Edit-TextFile 'src\AxKit.Core\AxKit.Core.csproj' {
+    param($text, $nl)
+    return Add-AfterLast $text $nl '^    <EmbeddedResource Include="\.\./\.\./docs/ax\w+/user-guide\.md" LogicalName="Guide\.ax\w+\.md" />' "    <EmbeddedResource Include=`"../../docs/$Name/user-guide.md`" LogicalName=`"Guide.$Name.md`" />"
 }
 
 Edit-TextFile 'tests\AxKit.Tests\KeyTests.cs' {
