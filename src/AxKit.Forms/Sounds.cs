@@ -218,10 +218,10 @@ public static class Sounds
     private static readonly Sound WorkingMusic = new(AmbientSounds.WorkingMusic(), loops: true);
 
     // The sounds of work in the background (axClaude FR-7.10, asked 2026-11-15): a start and an end are events,
-    // gentle sweeps, smooth glides in pitch with no attack, at well under half the chimes' loudness; what arrives
-    // rises, what leaves falls (his rule). The recurring sound is a process: one slow breath of the music's pad,
-    // with one voice for each thing running, mixed into one buffer, five at most. PROVISIONAL, all three: the user
-    // chooses the final ones by ear; each is one method of AxKit.Core's AmbientSounds.
+    // punctuation, three quick bell notes with a sparkle; what arrives rises, what leaves falls (his rule). The
+    // recurring sound is a process: one slow breath with one voice for each thing running, mixed into one buffer,
+    // five at most. All three were chosen by the user by ear (2026-11-15) and are no longer provisional; each is
+    // one method of AxKit.Core's AmbientSounds, held to what he heard by its tests.
     private static readonly Sound BackgroundStartTone = new(AmbientSounds.BackgroundStart());
     private static readonly Sound BackgroundFinishTone = new(AmbientSounds.BackgroundFinish());
     private static readonly Sound[] BackgroundPulses = [.. Enumerable.Range(1, AmbientSounds.MostLayers).Select(layers => new Sound(AmbientSounds.BackgroundPulse(layers)))];
@@ -342,17 +342,17 @@ public static class Sounds
     /// <summary>A longer, louder call, three rising notes to a held one and again: Claude is done or asks while the window is in the background.</summary>
     public static void Alert() => Play("Alert", () => Chimes.Play(AlertChime, replace: true));
 
-    /// <summary>One gentle sweep rising: work started in the background (axClaude FR-7.10). Behind whatever plays, never cutting a chime. Provisional.</summary>
+    /// <summary>Three quick bell notes up, with a sparkle: work started in the background (axClaude FR-7.10). Behind whatever plays, never cutting a chime.</summary>
     public static void BackgroundStart() => Play("BackgroundStart", () => Chimes.Play(BackgroundStartTone, replace: false));
 
-    /// <summary>The same sweep falling: work in the background ended. Provisional.</summary>
+    /// <summary>The same three notes down: work in the background ended.</summary>
     public static void BackgroundFinish() => Play("BackgroundFinish", () => Chimes.Play(BackgroundFinishTone, replace: false));
 
     /// <summary>
-    /// The recurring sound while work runs in the background: one slow, low breath of about five seconds, a process and
+    /// The recurring sound while work runs in the background: one slow breath of about five seconds, a process and
     /// not an event, with <paramref name="notes"/> voices in it, one for each thing running, five at most; nothing
     /// for none. On its own device, so it sounds with the chimes, the ticks and the music and delays none of them;
-    /// one that would start while the last still sounds is dropped. Recorded as "BackgroundPulse 2". Provisional.
+    /// one that would start while the last still sounds is dropped. Recorded as "BackgroundPulse 2".
     /// </summary>
     public static void BackgroundPulse(int notes)
     {

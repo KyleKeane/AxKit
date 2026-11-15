@@ -27,7 +27,7 @@ public static class HelpText
             "Ctrl+Alt and a letter from the Conversation list below: read every line of that kind from the caret to the end of the conversation in one go, without moving; Ctrl+Alt+P reads the paragraphs whole. Control stops NVDA",
             "Ctrl+Shift+K: bookmark the conversation line the caret is on, or take the bookmark away",
             "Ctrl+Space: background music on or off, and says which",
-            "Ctrl+B: say what runs in the background: how many things, each agent's type and what it does, and the shells. The status bar (F8) says the number; a short rising sound says that background work started, a falling one that it ended, and while it runs a low sound like a slow breath comes back every 10 seconds, fuller with each thing running (Options, Background work)",
+            "Ctrl+B: say what runs in the background: how many things, each agent's type and what it does, and the shells. The status bar (F8) says the number; three quick notes going up say that background work started, the same three going down that it ended, and while it runs a soft sound like a slow breath comes back every 10 seconds, fuller with each thing running (Options, Background work)",
             "Ctrl+Q: read Claude's question or screen again while it waits at the bottom, all its lines and the answer the focus is on, without moving",
         ],
         altF4: "close axClaude (asks first while Claude is working); in axHelp's conversation it hides the window and Claude runs on, and Session, End Claude and close this window ends it",

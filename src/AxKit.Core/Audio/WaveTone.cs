@@ -155,9 +155,9 @@ public static class WaveTone
     }
 
     /// <summary>
-    /// How much of its second and third harmonics a sweep or a swell carries: body over the sine, nothing bright.
-    /// They carry a low note on small speakers, which give little under 200 Hz (the first versions, sines with a
-    /// trace of the second harmonic, were "too thin" to be heard among other sounds, 2026-11-15).
+    /// How much of its second and third harmonics a sweep or a swell carries: body over the sine, nothing bright
+    /// (the first versions, sines with a trace of the second harmonic, were "too thin" to be heard among other
+    /// sounds, 2026-11-15).
     /// </summary>
     private const double SecondHarmonic = 0.25;
     private const double ThirdHarmonic = 0.10;
@@ -207,67 +207,98 @@ public static class WaveTone
     }
 
     /// <summary>
-    /// How fast each layer of a swell gets quieter as layers are added: each of n plays at n to the power of minus
-    /// this. Under 0.5, so that the whole carries more with every layer, and high enough that five stay well
-    /// under the chimes at their loudest.
+    /// Pings, small bell notes that may overlap: each starts At seconds into the sound, rises in a straight line
+    /// over 4 ms and dies away at once (down to under a hundredth after its Ring, in seconds, where it is cut), a
+    /// sine with a fifth of its second harmonic, at its Level beside the others. A few in quick succession up or
+    /// down a chord are a flourish, punctuation; a soft high one is a sparkle. The whole lasts
+    /// <paramref name="seconds"/> and is scaled so that its loudest sample is <paramref name="peak"/>. Chosen by
+    /// the user by ear on 2026-11-15 from a script that played candidates, and built here to give the same samples
+    /// (the places are rounded to whole samples as the script rounded them). The start and finish sounds of
+    /// axClaude's background work (FR-7.10).
     /// </summary>
-    private const double SwellLayerFall = 0.3;
+    public static byte[] Pings(double peak, double seconds, params (double At, double Hertz, double Level, double Ring)[] pings)
+    {
+        var mix = new double[(int)Math.Round(SampleRate * seconds)];
+        foreach (var (at, hertz, level, ring) in pings)
+        {
+            var start = (int)Math.Round(SampleRate * at);
+            var length = (int)Math.Round(SampleRate * ring);
+            for (var i = 0; i < length && start + i < mix.Length; i++)
+            {
+                var t = i / (double)SampleRate;
+                var attack = Math.Min(1.0, t / 0.004);
+                mix[start + i] += level * attack * Math.Exp(-t / (ring / 5)) * (Math.Sin(2 * Math.PI * hertz * t) + 0.2 * Math.Sin(2 * Math.PI * 2 * hertz * t));
+            }
+        }
+
+        var loudest = 0.0;
+        foreach (var value in mix)
+        {
+            loudest = Math.Max(loudest, Math.Abs(value));
+        }
+
+        var scale = loudest > 0 ? peak / loudest : 0;
+        var samples = new short[mix.Length];
+        for (var i = 0; i < mix.Length; i++)
+        {
+            samples[i] = (short)Math.Round(mix[i] * scale * short.MaxValue);
+        }
+
+        return Wav(samples);
+    }
 
     /// <summary>
-    /// A swell, like a breath or a slow wave: something that goes on, not something that happened. Every layer is
-    /// a voice with body: two sines a fraction of a hertz apart, the second softer, which is a slow shimmer, and
-    /// some of the second and third harmonics. Its envelope has no onset to hear: a raised-cosine rise from
-    /// nothing, the full level held for <paramref name="hold"/> of the layer's length (0.4 is two fifths), and
-    /// the same fall. The first layer lasts the whole <paramref name="milliseconds"/>; each further one enters
-    /// <paramref name="millisecondsApart"/> later and leaves as much earlier, so the layers are nested and all are
-    /// full at the same time: more layers sound fuller and wider, never longer. A layer glides gently up into its
-    /// pitch from <paramref name="fromRatio"/> of it while it rises and holds it from then on. A layer's Phase is
-    /// the phase of its tone, in radians, at the middle of the sound: layers at whole-number ratios of one pitch
-    /// keep their places against one another while they are full, so the phases decide whether their peaks pile
-    /// up (all 0: five layers peak at 4.5 times one) or stay apart.
-    /// <paramref name="amplitude"/> is the level of one layer alone; each of several is quieter
-    /// (<see cref="SwellLayerFall"/>). The recurring sound of axClaude's background work (FR-7.10).
+    /// How the loudest sample of a swell grows with its layers: n layers peak at n to the power of this times one
+    /// layer's peak (two at 1.23 times, five at 1.62 times).
     /// </summary>
-    public static byte[] Swell(double amplitude, int milliseconds, int millisecondsApart, double hold, double fromRatio, params (double Hertz, double Phase)[] layers)
+    private const double SwellLayerRise = 0.3;
+
+    /// <summary>
+    /// A swell, like a breath or a slow wave: something that goes on, not something that happened. Chosen by the
+    /// user by ear on 2026-11-15 from a script that played candidates, and built here to give the same samples;
+    /// change nothing of it without his ear. Every layer is a voice with body: two sines
+    /// <paramref name="shimmerHertz"/> apart at half level each, which beat slowly, so the voice comes and goes
+    /// like breathing, and a quarter of the second harmonic and a tenth of the third, which stay. Its envelope has
+    /// no onset to hear: a raised-cosine rise from nothing, the full level held for <paramref name="hold"/> of the
+    /// layer's length (0.4 is two fifths), and the same fall. The first layer lasts the whole
+    /// <paramref name="milliseconds"/>; each further one enters <paramref name="millisecondsApart"/> later and
+    /// leaves as much earlier, so more layers sound fuller and wider, never longer. The whole is scaled so that
+    /// its loudest sample is <paramref name="peak"/> for one layer and grows with the layers
+    /// (<see cref="SwellLayerRise"/>), never over <paramref name="limit"/>. The recurring sound of axClaude's
+    /// background work (FR-7.10).
+    /// </summary>
+    public static byte[] Swell(double peak, double limit, int milliseconds, int millisecondsApart, double hold, double shimmerHertz, params double[] hertz)
     {
         var total = Samples(milliseconds);
         var apart = Samples(millisecondsApart);
         var mix = new double[total];
-        var level = amplitude * Math.Pow(Math.Max(1, layers.Length), -SwellLayerFall);
         var rise = Math.Max(0.001, (1 - hold) / 2);
-        for (var n = 0; n < layers.Length; n++)
+        for (var n = 0; n < hertz.Length; n++)
         {
             var length = total - 2 * n * apart;
-            var middle = total / 2 - n * apart;
-            var shimmer = 0.12 + 0.02 * n;
-
-            // What the tone's phase gains with each sample: less while the layer rises into its pitch.
-            double Step(int i) => 2 * Math.PI * layers[n].Hertz * Math.Pow(fromRatio, Math.Max(0, 1 - (double)i / length / rise)) / SampleRate;
-
-            // The phase to start from, so that the tone has the layer's Phase at the middle of the sound.
-            var phase = layers[n].Phase;
-            for (var i = 0; i < middle; i++)
-            {
-                phase -= Step(i);
-            }
-
             for (var i = 0; i < length; i++)
             {
                 var along = (double)i / length;
                 var edge = Math.Min(1.0, Math.Min(along, 1 - along) / rise);
                 var envelope = 0.5 - 0.5 * Math.Cos(Math.PI * edge);
-                // The two sines agree at the middle and drift a little apart towards the layer's ends.
-                var tone = 0.65 * Math.Sin(phase) + 0.35 * Math.Sin(phase + 2 * Math.PI * shimmer * (i - middle) / SampleRate)
-                    + SecondHarmonic * Math.Sin(2 * phase) + ThirdHarmonic * Math.Sin(3 * phase);
-                mix[n * apart + i] += tone * envelope * level;
-                phase += Step(i);
+                var turn = 2 * Math.PI * i / SampleRate;
+                var tone = 0.5 * (Math.Sin(turn * hertz[n]) + Math.Sin(turn * (hertz[n] + shimmerHertz)))
+                    + SecondHarmonic * Math.Sin(turn * 2 * hertz[n]) + ThirdHarmonic * Math.Sin(turn * 3 * hertz[n]);
+                mix[n * apart + i] += tone * envelope;
             }
         }
 
+        var loudest = 0.0;
+        foreach (var value in mix)
+        {
+            loudest = Math.Max(loudest, Math.Abs(value));
+        }
+
+        var scale = loudest > 0 ? Math.Min(limit, peak * Math.Pow(Math.Max(1, hertz.Length), SwellLayerRise)) / loudest : 0;
         var samples = new short[total];
         for (var i = 0; i < total; i++)
         {
-            samples[i] = (short)(Math.Clamp(mix[i], -1.0, 1.0) * short.MaxValue);
+            samples[i] = (short)Math.Round(mix[i] * scale * short.MaxValue);
         }
 
         return Wav(samples);

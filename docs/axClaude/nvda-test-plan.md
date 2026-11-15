@@ -213,17 +213,17 @@ since axHelp is what starts such a window and brings it up.
 
 The automated part is `tests/scripts/axClaude/22-background-work.txt`, with a stand-in for Claude Code that draws the
 rows: the number in the status bar, the sounds by name, Ctrl+B, F8 and the words. These steps need real background
-work and the ear: how the three sounds sound, whether they are told apart from the chimes, and whether the number is
-heard. The sounds are provisional; say which to change.
+work and the ear: how the three sounds sound in the app, whether they are told apart from the chimes, and whether the
+number is heard. The user chose all three by ear from scripts (2026-11-15); this is their first hearing in real use.
 
 1. Ask Claude: "Run `ping -n 60 127.0.0.1` with the Bash tool in the background, then reply with the single word
-   started." After the reply: a short sweep gliding up, softer than the chimes; nothing is spoken about the
+   started." After the reply: three quick bell notes going up with a sparkle, softer than the chimes; nothing is spoken about the
    shell. F8: "Claude: ready", then "1 shell in the background", the mode, the session name, then the folder.
    NVDA+End reads the same or says "blank" (the reason for F8).
-2. Wait: every 10 seconds one low breath of five seconds that swells, stays and fades with no beginning to hear: it
+2. Wait: every 10 seconds one soft breath of five seconds that swells, stays and fades with no beginning to hear: it
    sounds like something going on, not like a notification, and is heard without effort among the ticks and speech. It does not cut or delay a chime, a tick or NVDA's speech.
 3. Ctrl+B: "1 shell in the background". Alt, A: the Actions menu has What runs in the background, Ctrl+B.
-4. When the ping ends (a minute): the short sweep gliding down, told apart from the Done chime's three notes; the
+4. When the ping ends (a minute): the same three bell notes going down, quicker and softer than the Done chime's three notes and told apart from them; the
    recurring sound does not come again. Ctrl+B: "Nothing runs in the background".
 5. Ask Claude: "Start two general-purpose agents in the background, each to wait 40 seconds with the Bash tool and
    report, and reply at once with the single word started." One rising sound for the two; the reply is spoken alone,
