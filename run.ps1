@@ -7,23 +7,23 @@
   .\run.ps1 C:\src\myproject                 # axClaude on that folder
   .\run.ps1 C:\src\myproject -- --resume     # extra arguments go to claude (default: --continue)
   .\run.ps1 C:\src\myproject -New            # a new conversation (PowerShell swallows a bare --)
-  .\run.ps1 -App down C:\notes\todo.md       # axDown on that file (run-individual-apps\run-axDown.ps1 says the same)
-  .\run.ps1 -App down                        # axDown with an empty document (run-individual-apps\run-axDown.ps1 opens the tutorial file instead)
-  .\run.ps1 -App json C:\x\settings.json     # axJSON on that file (run-individual-apps\run-axJSON.ps1 says the same)
-  .\run.ps1 -App git C:\src\myproject        # axGIT on the repository that holds the folder (run-individual-apps\run-axGIT.ps1 says the same)
-  .\run.ps1 -App terminal C:\src\myproject   # axTerminal with a shell in that folder (run-individual-apps\run-axTerminal.ps1 says the same)
-  .\run.ps1 -App media C:\Music\Dune         # axMedia on the folder's sound and video files (run-individual-apps\run-axMedia.ps1 says the same)
-  .\run.ps1 -App preview C:\notes\README.md  # axPreview on the file, read-only (run-individual-apps\run-axPreview.ps1 says the same)
-  .\run.ps1 -App start                       # axStart, the launcher: its field shown; it keeps running (run-individual-apps\run-axStart.ps1 says the same)
-  .\run.ps1 -App process                     # axProcess (run-individual-apps\run-axProcess.ps1 says the same)
-  .\run.ps1 -App task C:\my\tasks            # axTask on a folder of lists (run-individual-apps\run-axTask.ps1 says the same)
-  .\run.ps1 -App pass C:\Vault\mine.kdbx     # axPass on a KeePass database (run-individual-apps\run-axPass.ps1 says the same)
-  .\run.ps1 -App calc                        # axCalc, the calculator (run-individual-apps\run-axCalc.ps1 says the same)
-  .\run.ps1 -App clip                        # axClip, the clipboard history (run-individual-apps\run-axClip.ps1 says the same)
+  .\run.ps1 -App down C:\notes\todo.md       # axDown on that file (scripts to run-individual-apps\run-axDown.ps1 says the same)
+  .\run.ps1 -App down                        # axDown with an empty document (scripts to run-individual-apps\run-axDown.ps1 opens the tutorial file instead)
+  .\run.ps1 -App json C:\x\settings.json     # axJSON on that file (scripts to run-individual-apps\run-axJSON.ps1 says the same)
+  .\run.ps1 -App git C:\src\myproject        # axGIT on the repository that holds the folder (scripts to run-individual-apps\run-axGIT.ps1 says the same)
+  .\run.ps1 -App terminal C:\src\myproject   # axTerminal with a shell in that folder (scripts to run-individual-apps\run-axTerminal.ps1 says the same)
+  .\run.ps1 -App media C:\Music\Dune         # axMedia on the folder's sound and video files (scripts to run-individual-apps\run-axMedia.ps1 says the same)
+  .\run.ps1 -App preview C:\notes\README.md  # axPreview on the file, read-only (scripts to run-individual-apps\run-axPreview.ps1 says the same)
+  .\run.ps1 -App start                       # axStart, the launcher: its field shown; it keeps running (scripts to run-individual-apps\run-axStart.ps1 says the same)
+  .\run.ps1 -App process                     # axProcess (scripts to run-individual-apps\run-axProcess.ps1 says the same)
+  .\run.ps1 -App task C:\my\tasks            # axTask on a folder of lists (scripts to run-individual-apps\run-axTask.ps1 says the same)
+  .\run.ps1 -App pass C:\Vault\mine.kdbx     # axPass on a KeePass database (scripts to run-individual-apps\run-axPass.ps1 says the same)
+  .\run.ps1 -App calc                        # axCalc, the calculator (scripts to run-individual-apps\run-axCalc.ps1 says the same)
+  .\run.ps1 -App clip                        # axClip, the clipboard history (scripts to run-individual-apps\run-axClip.ps1 says the same)
   .\run.ps1 -NoBuild                         # skip the build, just start
   .\run.ps1 -Test                            # run the unit tests instead (test.ps1: every test project, in Release)
 
-  The folder run-individual-apps holds one script per app (run-axClaude.ps1, run-axDown.ps1 and so on): each passes
+  The folder "scripts to run-individual-apps" holds one script per app (run-axClaude.ps1, run-axDown.ps1 and so on): each passes
   -App for you and takes the same other arguments.
   If PowerShell refuses to run scripts: powershell -ExecutionPolicy Bypass -File .\run.ps1
   Close a running axKit window first: the build writes into the folder it holds open. axStart and axClip, which run in
@@ -88,6 +88,48 @@ if (-not $NoBuild) {
         Write-Host "Ending axKit $($process.Verb) (process $($process.Id)), which holds the build folder; the background apps start again after the build."
         Stop-Process -Id $process.Id -Force
         Wait-Process -Id $process.Id -Timeout 10 -ErrorAction SilentlyContinue
+    }
+
+    # axHelp's conversation hides when it is closed and runs on (axClaude FR-9.6, 2026-11-15): an axClaude process no
+    # window shows, with Claude Code under it and, when the AI tools are on, their broker, another AxKit.exe of this
+    # folder. Ending axHelp by force above leaves it running, unseen, and the build then fails on files in use (the
+    # user had to restart the computer, 2026-11-15). So it is ended here with everything under it; Claude Code keeps
+    # the conversation itself, and axHelp starts a window on it again at the next press of its key.
+    $hidden = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe'" |
+        Where-Object { $_.ExecutablePath -eq $exe -and $_.CommandLine -match '\s--hide-on-close(\s|$)' })
+    foreach ($process in $hidden) {
+        Write-Host "Ending axHelp's conversation (process $($process.ProcessId)), which runs on hidden and holds the build folder."
+        & taskkill.exe /PID $process.ProcessId /T /F 2>&1 | Out-Null
+        Wait-Process -Id $process.ProcessId -Timeout 10 -ErrorAction SilentlyContinue
+    }
+
+    # A broker of the AI tools (AxKit.exe mcp) whose Claude Code has ended holds the folder for nobody: ended too.
+    $brokers = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe'" |
+        Where-Object { $_.ExecutablePath -eq $exe -and $_.CommandLine -match '\smcp(\s|$)' -and -not (Get-Process -Id $_.ParentProcessId -ErrorAction SilentlyContinue) })
+    foreach ($process in $brokers) {
+        Write-Host "Ending an AI tools broker left behind (process $($process.ProcessId))."
+        Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue
+        Wait-Process -Id $process.ProcessId -Timeout 10 -ErrorAction SilentlyContinue
+    }
+
+    # What still runs from this folder is a window the user has open, or a broker of a Claude Code that runs: the
+    # build cannot replace files they hold. Said in one plain line each, in place of the compiler's wall of errors.
+    $holding = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe'" | Where-Object { $_.ExecutablePath -eq $exe })
+    if ($holding.Count -gt 0) {
+        Write-Host "axKit still runs from the folder the build writes into. Close these, then run again:"
+        foreach ($process in $holding) {
+            $words = ($process.CommandLine -replace '^"?[^"]*AxKit\.exe"?\s*', '').Trim()
+            $what = if ($words -match '^mcp(\s|$)') { "the AI tools' broker of a Claude Code that is running (close that Claude Code)" }
+                elseif ($words) { "the window started as: axkit $words" }
+                else { 'an axKit window' }
+            Write-Host "  process $($process.ProcessId): $what"
+        }
+        Write-Host "Or start what is already built, without building: .\run.ps1 -NoBuild"
+        # The background apps ended above run again, from the build that is there: the hotkeys never stay dead.
+        foreach ($verb in @($background | ForEach-Object Verb | Where-Object { $_ -ne 'describe' } | Sort-Object -Unique)) {
+            Start-Process -FilePath $exe -ArgumentList $verb, '--hidden' -WindowStyle Hidden
+        }
+        exit 1
     }
 
     Write-Host "Building axKit..."

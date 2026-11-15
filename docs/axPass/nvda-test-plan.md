@@ -2,7 +2,7 @@
 
 Run with NVDA before a release, with KeePassXC installed, on the database of `manual_tests/axPass` (made and reset by
 `.\manual_tests\prepare.ps1 axpass`, whose master password is `test-master-1`), after
-`.\run-individual-apps\run-axPass.ps1 manual_tests\axPass\test.kdbx`, never on your own database. The database holds the groups `Email`
+`& '.\scripts to run-individual-apps\run-axPass.ps1' manual_tests\axPass\test.kdbx`, never on your own database. The database holds the groups `Email`
 (`Gmail`, user name `sam`, a URL and two lines of notes) and `Work`, and the entry `Top entry`. Every step says what NVDA
 should read; a step that reads differently is a defect. The specifications are `docs/axKit/item-apps.md` (IA-n.m) and
 `docs/axPass/SPEC.md` (PW-n.m).

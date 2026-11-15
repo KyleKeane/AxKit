@@ -5,7 +5,7 @@ The WinForms side of axClip, the clipboard history: a background process with on
 ## Commands
 
 ```
-.\run-individual-apps\run-axClip.ps1                  # build AxKit and start axClip with its field shown (run.ps1 -App clip); quit an installed axClip first
+& '.\scripts to run-individual-apps\run-axClip.ps1'                  # build AxKit and start axClip with its field shown (run.ps1 -App clip); quit an installed axClip first
 .\test.ps1 AxClip
 ```
 

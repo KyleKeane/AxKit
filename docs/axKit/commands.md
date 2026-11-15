@@ -41,8 +41,11 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   `-NoBuild`, `-Test`). The verbs are the apps' commands (`apps.md`). It also keeps the three background apps
   running from the same build: axStart, axClip and axHelp are ended before the build, since they hold its folder, and
   each that is not running is started hidden afterwards, whether it ran before or not, so that the hotkeys work and
-  run the code just built.
-- `run-individual-apps\run-ax<Name>.ps1` is the same with `-App` filled in, one script per app.
+  run the code just built. Before a build it also ends axHelp's conversation when that runs on hidden, with Claude
+  Code and the AI tools' broker under it, and a broker left behind by a Claude Code that has ended: each holds the
+  build folder unseen (2026-11-15). If a window of this folder's axKit is still open then, it names it in one line and
+  stops, in place of the compiler's errors about files in use.
+- `scripts to run-individual-apps\run-ax<Name>.ps1` is the same with `-App` filled in, one script per app.
 - `AxKit.exe <verb> ...`, or a folder or a file alone, picks the app.
 
 ## The generated pages

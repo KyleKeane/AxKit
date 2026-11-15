@@ -71,7 +71,7 @@ Shift+Enter in axFile as its own key (`docs/axPreview/SPEC.md` AP-D2, `docs/axFi
 | `docs/axPreview/` | `SPEC.md` (written), `user-guide.md`, `nvda-test-plan.md`. |
 | `src/AxFile.Core/ActionLog.cs`, `tests/AxFile.Tests/ActionLogTests.cs` | Section 6. |
 | `tools/make-icon.ps1` | Two lines, axMedia's and axPreview's icons; `publish.ps1` copies them. |
-| `run-individual-apps\run-axMedia.ps1`, `run-individual-apps\run-axPreview.ps1` | `run.ps1 -App media @args`, `-App preview @args`. |
+| `scripts to run-individual-apps\run-axMedia.ps1`, `scripts to run-individual-apps\run-axPreview.ps1` | `run.ps1 -App media @args`, `-App preview @args`. |
 
 ## 5. Stays in axFile and changes
 

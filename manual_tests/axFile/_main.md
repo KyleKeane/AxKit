@@ -2,7 +2,7 @@
 
 The steps and every expected announcement are in `docs/axFile/nvda-test-plan.md`. This file says which folder each section uses. Run `.\manual_tests\prepare.ps1 axfile` first, and again after any section that changed files.
 
-Start axFile on a folder with `.\run-individual-apps\run-axFile.ps1 manual_tests\axFile\<folder>`, or with Ctrl+G and the path once axFile runs.
+Start axFile on a folder with `& '.\scripts to run-individual-apps\run-axFile.ps1' manual_tests\axFile\<folder>`, or with Ctrl+G and the path once axFile runs.
 
 ## navigate-arrows-type-ahead-and-levels
 

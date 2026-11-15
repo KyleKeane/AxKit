@@ -363,7 +363,7 @@ details' lines, AP-6), and the shell's read-only mode adds the Details list unde
 - 2026-10-22: specified at the user's ask, with the inventory of the split in `docs/axKit/axfile-split.md`.
 - 2026-10-22, later the same day, on the branch `split`: built as the editor shell's read-only mode (AP-D4), with
   `TextSniff` in `AxPreview.Core` (tested), the keys, the texts, the guide, the test plan and the wiring (the
-  dispatcher, the installer's block with Open with for the text kinds, the icon, `run-individual-apps\run-axPreview.ps1`); a file alone
+  dispatcher, the installer's block with Open with for the text kinds, the icon, `scripts to run-individual-apps\run-axPreview.ps1`); a file alone
   on the command line still goes to its editor (AP-1.1). axFile handed over and lost its preview pane in the next
   step of the inventory, the same day.
 - 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axKit/nvda-test-record.md`.

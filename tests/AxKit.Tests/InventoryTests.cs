@@ -54,7 +54,7 @@ public sealed class InventoryTests
             }
 
             Expect(name, File.Exists(Path.Combine(root, "src", "AxKit", $"{name}.ico")), "icon in src/AxKit");
-            Expect(name, File.Exists(Path.Combine(root, "run-individual-apps", $"run-{shown}.ps1")), $"run-individual-apps/run-{shown}.ps1");
+            Expect(name, File.Exists(Path.Combine(root, "scripts to run-individual-apps", $"run-{shown}.ps1")), $"scripts to run-individual-apps/run-{shown}.ps1");
             Expect(name, Text("src/AxKit/Program.cs").Contains($"{name}App.Run", StringComparison.Ordinal), "Program.cs's call");
             Expect(name, Text("src/AxKit/AxKit.csproj").Contains(shown, StringComparison.Ordinal), "AxKit.csproj's description");
             Expect(name, Text("docs/axKit/apps.md").Contains($"### {shown}", StringComparison.Ordinal), "docs/axKit/apps.md, the generated list of the apps (run tools/apps-page.ps1)");

@@ -4,9 +4,9 @@
   it opens docs\axDown\tutorial.md, the guided tour of axDown with every Markdown structure to practise on.
 
 .EXAMPLE
-  .\run-individual-apps\run-axDown.ps1                    # the tutorial file
-  .\run-individual-apps\run-axDown.ps1 C:\notes\todo.md   # that file
-  .\run-individual-apps\run-axDown.ps1 -NoBuild           # the tutorial file, without building
+  & '.\scripts to run-individual-apps\run-axDown.ps1'                    # the tutorial file
+  & '.\scripts to run-individual-apps\run-axDown.ps1' C:\notes\todo.md   # that file
+  & '.\scripts to run-individual-apps\run-axDown.ps1' -NoBuild           # the tutorial file, without building
 #>
 $arguments = @($args)
 if (-not ($arguments | Where-Object { $_ -notlike '-*' })) {

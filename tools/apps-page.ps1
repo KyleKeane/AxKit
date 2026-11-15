@@ -72,7 +72,7 @@ foreach ($app in $apps) {
         $lines.Add("- Automated checks: ``tests/scripts/$($app.Name)/``, $count script$(if ($count -ne 1) { 's' }) (their workflows are in ``docs/axKit/workflows.md``).")
     }
 
-    $run = Existing "run-individual-apps\run-$($app.Name).ps1"
+    $run = Existing "scripts to run-individual-apps\run-$($app.Name).ps1"
     if ($run) { $lines.Add("- Run from the sources: $run, or ``run.ps1 -App $($app.Verb)``.") } else { $lines.Add("- Run from the sources: ``run.ps1 -App $($app.Verb)``.") }
 }
 

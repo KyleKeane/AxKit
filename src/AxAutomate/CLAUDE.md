@@ -5,7 +5,7 @@ The WinForms side of axAutomate: the item apps' window (`AxKit.Forms/ItemForm`) 
 ## Commands
 
 ```
-.\run-individual-apps\run-axAutomate.ps1                  # build axKit and start axAutomate (run.ps1 -App automate)
+& '.\scripts to run-individual-apps\run-axAutomate.ps1'                  # build axKit and start axAutomate (run.ps1 -App automate)
 .\test.ps1 AxAutomate                 # the tests in Release, as CI runs them
 ```
 

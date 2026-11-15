@@ -84,13 +84,13 @@ Transparency and self-audit: [PRIVACY.md](PRIVACY.md) says what axKit sends and 
 Needs the .NET 10 SDK, and NVDA for the manual checks. Every tool of the development computer, how it is installed, signed in and checked, and the order to set a new computer up in: [docs/axKit/development-environment.md](docs/axKit/development-environment.md).
 
 ```
-.\run-individual-apps\run-axFile.ps1 C:\path\to\folder       # build, then start axFile on that folder
-.\run-individual-apps\run-axClaude.ps1 C:\path\to\project    # axClaude on a project folder
+& '.\scripts to run-individual-apps\run-axFile.ps1' C:\path\to\folder       # build, then start axFile on that folder
+& '.\scripts to run-individual-apps\run-axClaude.ps1' C:\path\to\project    # axClaude on a project folder
 .\run.ps1 -App down C:\notes\todo.md     # any app: claude, down, json, git, terminal, file, media, preview, start, process, task, pass, calc, clip, mcpclient, help, automate
 .\run.ps1 -NoBuild                       # start without building
 ```
 
-There is a `run-individual-apps\run-ax<app>.ps1` for each app. Close a running axKit before building: the build writes into the folder it runs from. If PowerShell refuses to run scripts: `powershell -ExecutionPolicy Bypass -File .\run.ps1`.
+There is a `scripts to run-individual-apps\run-ax<app>.ps1` for each app. Close a running axKit before building: the build writes into the folder it runs from. If PowerShell refuses to run scripts: `powershell -ExecutionPolicy Bypass -File .\run.ps1`.
 
 ## Test
 

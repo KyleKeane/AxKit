@@ -160,7 +160,7 @@ the flags stay in `publish.ps1`, the one way to build a release).
 ## 6. What a stranger needs
 
 Windows 10 or 11, the .NET SDK that `global.json` names (any 10.0.3xx), Windows PowerShell 5.1 (a Windows component),
-git, and `gh` for a release. Then: clone, `dotnet build AxKit.sln`, `.\test.ps1`, `.\run-individual-apps\run-axDown.ps1` to see a window,
+git, and `gh` for a release. Then: clone, `dotnet build AxKit.sln`, `.\test.ps1`, `& '.\scripts to run-individual-apps\run-axDown.ps1'` to see a window,
 `publish.ps1 -NoInstall` for the zip, `release.ps1 <version>` for a release (or the manual path, 3.3). NVDA for any
 change to a window, following `docs/<app>/nvda-test-plan.md` on the files `manual_tests/prepare.ps1` makes. The
 rules are `CLAUDE.md` and `CONTRIBUTING.md`; the specs are the truth; the notes are the traps already found.

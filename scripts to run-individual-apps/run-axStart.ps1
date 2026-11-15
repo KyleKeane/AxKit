@@ -5,8 +5,8 @@
   axStart already running takes the start instead: quit it first to try a development build.
 
 .EXAMPLE
-  .\run-individual-apps\run-axStart.ps1               # build, then the search field
-  .\run-individual-apps\run-axStart.ps1 -NoBuild      # without building
+  & '.\scripts to run-individual-apps\run-axStart.ps1'               # build, then the search field
+  & '.\scripts to run-individual-apps\run-axStart.ps1' -NoBuild      # without building
 #>
 & "$PSScriptRoot\..\run.ps1" -App start @args
 exit $LASTEXITCODE

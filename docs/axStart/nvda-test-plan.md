@@ -4,7 +4,7 @@ The manual checks of axStart (`docs/axStart/SPEC.md`), run with NVDA before a re
 own: it reads the Start menu's programs. Write each pass into `docs/axKit/nvda-test-record.md`, by step.
 
 Before starting: install the build (`publish.ps1`), or quit any running axStart (Session, Quit axStart) and run
-`.\run-individual-apps\run-axStart.ps1`. Have Notepad and Calculator installed (they are, on Windows 11).
+`& '.\scripts to run-individual-apps\run-axStart.ps1'`. Have Notepad and Calculator installed (they are, on Windows 11).
 
 ## 1. Bringing it up and putting it away
 

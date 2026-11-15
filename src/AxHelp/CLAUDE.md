@@ -5,7 +5,7 @@ The WinForms side of axHelp: two hotkeys into one conversation with Claude, on t
 ## Commands
 
 ```
-.\run-individual-apps\run-axHelp.ps1                  # build axKit and start axHelp, its window in front (run.ps1 -App help)
+& '.\scripts to run-individual-apps\run-axHelp.ps1'                  # build axKit and start axHelp, its window in front (run.ps1 -App help)
 .\test.ps1 AxHelp                 # the tests in Release, as CI runs them
 .\nvda-pass.ps1 axHelp            # tests\scripts\axHelp with NVDA listening
 ```

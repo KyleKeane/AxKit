@@ -2,7 +2,7 @@
 
 The steps and every expected announcement are in `docs/axJSON/nvda-test-plan.md`. Every file of it is in this one folder. Run `.\manual_tests\prepare.ps1 axjson` first, and again after formatting, to have the files as new.
 
-Start with `.\run-individual-apps\run-axJSON.ps1 manual_tests\axJSON\settings.json`.
+Start with `& '.\scripts to run-individual-apps\run-axJSON.ps1' manual_tests\axJSON\settings.json`.
 
 ## The files
 

@@ -371,7 +371,7 @@ The WinForms side of {{Name}}: one list and the bundle's notices, on the window 
 ## Commands
 
 ```
-.\run-individual-apps\run-{{Name}}.ps1                  # build axKit and start {{Name}} (run.ps1 -App {{Verb}})
+& '.\scripts to run-individual-apps\run-{{Name}}.ps1'                  # build axKit and start {{Name}} (run.ps1 -App {{Verb}})
 .\test.ps1 {{Project}}                 # the tests in Release, as CI runs them
 ```
 
@@ -612,7 +612,7 @@ The Help, About.
 New-TextFile "docs\$Name\nvda-test-plan.md" @'
 # {{Name}} NVDA test plan
 
-Run with NVDA before a release, after `run-individual-apps\run-{{Name}}.ps1` (or `.\run.ps1 -App {{Verb}}`). Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/{{Name}}/SPEC.md` ({{P}}-n.m).
+Run with NVDA before a release, after `scripts to run-individual-apps\run-{{Name}}.ps1` (or `.\run.ps1 -App {{Verb}}`). Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/{{Name}}/SPEC.md` ({{P}}-n.m).
 
 ## 1. Start ({{P}}-1, {{P}}-2)
 
@@ -636,17 +636,17 @@ keys escape
 expect focus {{Short}}
 '@
 
-$runOpens = if ($opensWhat) { "  .\run-individual-apps\run-{{Name}}.ps1 C:\some\path            # build and start {{Name}} on a $opensWhat" } else { '' }
-New-TextFile "run-individual-apps\run-$Name.ps1" (@'
+$runOpens = if ($opensWhat) { "  & '.\scripts to run-individual-apps\run-{{Name}}.ps1' C:\some\path            # build and start {{Name}} on a $opensWhat" } else { '' }
+New-TextFile "scripts to run-individual-apps\run-$Name.ps1" (@'
 <#
 .SYNOPSIS
   Builds axKit and starts {{Name}}: run.ps1 with -App {{Verb}}. Every other argument goes through unchanged.
 
 .EXAMPLE
-  .\run-individual-apps\run-{{Name}}.ps1                          # build and start {{Name}}
+  & '.\scripts to run-individual-apps\run-{{Name}}.ps1'                          # build and start {{Name}}
 '@ + $(if ($runOpens) { "`n" + $runOpens } else { '' }) + @'
 
-  .\run-individual-apps\run-{{Name}}.ps1 -NoBuild                 # without building
+  & '.\scripts to run-individual-apps\run-{{Name}}.ps1' -NoBuild                 # without building
 #>
 & "$PSScriptRoot\..\run.ps1" -App {{Verb}} @args
 exit $LASTEXITCODE

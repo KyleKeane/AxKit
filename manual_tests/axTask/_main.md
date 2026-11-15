@@ -2,7 +2,7 @@
 
 The steps and every expected announcement are in `docs/axTask/nvda-test-plan.md`. Run `.\manual_tests\prepare.ps1 axtask` first; it puts the folder of lists back as it was.
 
-Start with `.\run-individual-apps\run-axTask.ps1 manual_tests\axTask\tasks`.
+Start with `& '.\scripts to run-individual-apps\run-axTask.ps1' manual_tests\axTask\tasks`.
 
 ## The files
 

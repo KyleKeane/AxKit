@@ -2,7 +2,7 @@
 
 The steps and every expected announcement are in `docs/axTerminal/nvda-test-plan.md`. Run `.\manual_tests\prepare.ps1 axterminal` first.
 
-Start with `.\run-individual-apps\run-axTerminal.ps1 manual_tests\axTerminal\start-here`.
+Start with `& '.\scripts to run-individual-apps\run-axTerminal.ps1' manual_tests\axTerminal\start-here`.
 
 ## start-here
 

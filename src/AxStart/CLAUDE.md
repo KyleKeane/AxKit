@@ -5,7 +5,7 @@ The WinForms side of axStart, the program launcher: a background process from si
 ## Commands
 
 ```
-.\run-individual-apps\run-axStart.ps1                 # build AxKit and start axStart with its field shown (run.ps1 -App start); quit an installed axStart first
+& '.\scripts to run-individual-apps\run-axStart.ps1'                 # build AxKit and start axStart with its field shown (run.ps1 -App start); quit an installed axStart first
 dotnet build AxKit.sln
 .\test.ps1 axStart
 ```

@@ -11,7 +11,7 @@ guide `docs/axPass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
 
 ```
 .\manual_tests\prepare.ps1 axpass                 # the test database, password test-master-1 (needs KeePassXC)
-.\run-individual-apps\run-axPass.ps1 manual_tests\axPass\test.kdbx    # build AxKit and start axPass on it (run.ps1 -App pass)
+& '.\scripts to run-individual-apps\run-axPass.ps1' manual_tests\axPass\test.kdbx    # build AxKit and start axPass on it (run.ps1 -App pass)
 .\test.ps1 AxPass                                 # the tests in Release, as CI runs them
 ```
 

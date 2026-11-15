@@ -24,7 +24,7 @@ Specifications are the source of truth: `docs/axKit/SPEC.md` for the bundle and 
 The ones used every day; all of them, with their options, are in `docs/axKit/commands.md`.
 
 - `.\test.ps1 [<App>]`: every test project (or one) in Release, one by one, then the checks of the generated pages. Run it before a commit. Never `dotnet test AxKit.sln` while axKit runs.
-- `.\run.ps1 [-App <verb>] [<path>]`, or `.\run-individual-apps\run-ax<Name>.ps1`: build and start one app.
+- `.\run.ps1 [-App <verb>] [<path>]`, or `& '.\scripts to run-individual-apps\run-ax<Name>.ps1'`: build and start one app.
 - `dotnet run --project tools\AxAutomate -c Release -- tests\scripts\<app> --build`: the app's automated window checks, on a desktop of their own (`docs/axKit/automation.md`). They never run in CI: run them after a change to a window.
 - `.\nvda-pass.ps1 [<app>]`: the same checks with NVDA listening. It takes the keyboard: only after the user has stepped away.
 - The generated pages (`outside-calls.md`, `workflows.md`, `repairs.md`, `apps.md` in `docs/axKit`) are each written by a script in `tools` and never by hand; `test.ps1` says which script to run when one is stale.

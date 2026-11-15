@@ -5,8 +5,8 @@ axPreview has no window of its own: it is the text editor shell (`src/AxKit.Form
 ## Commands
 
 ```
-.\run-individual-apps\run-axPreview.ps1 C:\path\to\README.md   # build AxKit and start axPreview on the file (run.ps1 -App preview)
-.\run-individual-apps\run-axPreview.ps1                        # an empty window
+& '.\scripts to run-individual-apps\run-axPreview.ps1' C:\path\to\README.md   # build AxKit and start axPreview on the file (run.ps1 -App preview)
+& '.\scripts to run-individual-apps\run-axPreview.ps1'                        # an empty window
 dotnet build AxKit.sln
 dotnet test tests/AxPreview.Tests/AxPreview.Tests.csproj
 ```

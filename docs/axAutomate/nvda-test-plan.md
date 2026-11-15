@@ -1,6 +1,6 @@
 # axAutomate NVDA test plan
 
-Run with NVDA before a release, after `run-individual-apps\run-axAutomate.ps1` (or `.\run.ps1 -App automate`), on the repository's
+Run with NVDA before a release, after `scripts to run-individual-apps\run-axAutomate.ps1` (or `.\run.ps1 -App automate`), on the repository's
 `tests\scripts` folder. Every step says what NVDA should read; a step that reads differently is a defect. The
 specification is `docs/axAutomate/SPEC.md` (AU-n.m). `tests/scripts/axAutomate/01-start.txt` runs sections 1 to 3 on
 a small folder of its own.

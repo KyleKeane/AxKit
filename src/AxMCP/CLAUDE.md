@@ -5,7 +5,7 @@ The WinForms side of axMCP: the item apps' window (`AxKit.Forms/ItemForm`, docs/
 ## Commands
 
 ```
-.\run-individual-apps\run-axMCP.ps1 [<folder>]       # build axKit and start axMCP (run.ps1 -App mcpclient)
+& '.\scripts to run-individual-apps\run-axMCP.ps1' [<folder>]       # build axKit and start axMCP (run.ps1 -App mcpclient)
 .\test.ps1 AxMCP                 # the tests in Release, as CI runs them
 dotnet run --project tools\AxAutomate -c Release -- tests\scripts\axMCP --build   # the window driven against the fake server
 ```

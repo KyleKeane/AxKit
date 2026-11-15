@@ -5,8 +5,8 @@ The WinForms side of axDown: one plain edit control named after the file, a menu
 ## Commands
 
 ```
-.\run-individual-apps\run-axDown.ps1 C:\path\to\notes.md     # build AxKit and start axDown on the file (run.ps1 -App down; close a running AxKit first)
-.\run-individual-apps\run-axDown.ps1                         # docs\axDown\tutorial.md, the guided tour with every Markdown structure to practise on
+& '.\scripts to run-individual-apps\run-axDown.ps1' C:\path\to\notes.md     # build AxKit and start axDown on the file (run.ps1 -App down; close a running AxKit first)
+& '.\scripts to run-individual-apps\run-axDown.ps1'                         # docs\axDown\tutorial.md, the guided tour with every Markdown structure to practise on
 dotnet build AxKit.sln
 dotnet test tests/AxKit.Tests/AxKit.Tests.csproj     # TextDocumentTests, EditorSettingsTests, MarkdownOutlineTests, TextJumpsTests
 ```
