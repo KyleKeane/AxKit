@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: a reply that ends while background agents are still running is spoken alone again. Claude Code's own rows under it ("Waiting for 2 background agents to finish", the mode line, the branch, and a row for each running agent) were read out joined onto the reply and showed in the conversation.
 - axHelp: the two keys that work from any program have moved onto Ctrl+Shift, beside axStart's Ctrl+Shift+Space. Ctrl+Shift+Slash, the key with the question mark, brings up your conversation with Claude; Ctrl+Shift+Comma, the key with the less-than sign, puts a picture of the window in front into it. Windows+Alt+H and Windows+Alt+S are retired. If you never changed them, axHelp moves you to the new keys by itself at its next start; a key you chose stays yours. Options, Hotkey can now take Slash or Comma as a key. While axHelp runs, these two keys are taken from every program: Word and Outlook use them for a smaller and a larger font.
 - axClip: the key that brings up the clipboard history from any program is now Ctrl+Shift+Semicolon, on Ctrl+Shift like axStart's and axHelp's. Windows+Alt+V is retired. If you never changed it, axClip moves you to the new key by itself at its next start; a key you chose stays yours. Options, Hotkey can now take Semicolon as a key.
 - axMedia: faster is now Ctrl+Up and slower Ctrl+Down, beside Ctrl+Left and Ctrl+Right, which jump 15 seconds as before. Ctrl+Shift+Period and Ctrl+Shift+Comma no longer change the speed.

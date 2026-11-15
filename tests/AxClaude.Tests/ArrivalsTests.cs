@@ -361,6 +361,56 @@ public class ArrivalsTests
         Assert.Equal(["claude: Two things. · input → output"], heard.Speech);
     }
 
+    [Fact]
+    public void A_reply_that_ends_while_background_agents_run_is_spoken_without_claude_codes_rows_under_it()
+    {
+        // Heard on 2026-11-15 over the current Claude Code (no recording yet): the turn ends while two background
+        // agents run, and under the reply stand a waiting row, the mode line, the branch and a row per agent that ends
+        // in "running" and names no time. That agent row was unknown and stood lowest, so it closed the chrome block
+        // and every row above it was spoken as the reply's.
+        var model = new SessionModel(120, 20);
+        var heard = Listen(model, ReplySpeechMode.All);
+        Feed(model, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        model.Send("go");
+        Feed(model, $"{Esc}[?25l{Esc}[1;1Hyou: go{Esc}[K\r\nThinking…{Esc}[K\r\nauto mode on (shift+tab to cycle)  ·  esc to interrupt{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hclaude: Both agents are started.{Esc}[K\r\nWaiting for 2 background agents to finish{Esc}[K\r\n"
+            + $"auto mode on (shift+tab to cycle)  ·  ↓ to manage{Esc}[K\r\n  ● main{Esc}[K\r\n"
+            + $"  ◯  general-purpose Flipping a default in a settings file running{Esc}[K\r\n"
+            + $"  ◯  general-purpose Inspect the transcript for garbling running{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        model.EndFrame();
+
+        Assert.Equal(["claude: Both agents are started."], heard.Speech);
+        Assert.False(model.Working);
+        Assert.Equal("auto mode on", model.Mode);
+        Assert.Equal("see /tasks", model.Background);
+        Assert.Equal("claude: Both agents are started.", model.Lines.Last(line => !line.Hidden && line.Text.Length > 0).Text);
+
+        // The footer redrawn with a count, the agents still under it: nothing more is spoken.
+        Feed(model, $"{Esc}[?25l{Esc}[3;1HWaiting for 1 background agent to finish{Esc}[K\r\nauto mode on  ·  1 shell  ·  ↓ to manage{Esc}[K\r\n  ● main{Esc}[K\r\n"
+            + $"  ◯  Explore Inspect the transcript for garbling running{Esc}[K\r\n${Esc}[K\r\n{Esc}[K{Esc}[7;2H{Esc}[?25h");
+        model.EndFrame();
+        Assert.Equal(["claude: Both agents are started."], heard.Speech);
+        Assert.Equal("1 shell", model.Background);
+    }
+
+    [Fact]
+    public void A_replys_own_sentence_about_waiting_for_agents_is_spoken()
+    {
+        var model = new SessionModel(120, 20);
+        var heard = Listen(model, ReplySpeechMode.All);
+        Feed(model, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        model.Send("go");
+        Feed(model, $"{Esc}[?25l{Esc}[1;1Hyou: go{Esc}[K\r\nThinking…{Esc}[K\r\nauto mode on (shift+tab to cycle)  ·  esc to interrupt{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hclaude: Status.{Esc}[K\r\n- Waiting for 2 background agents to finish{Esc}[K\r\n"
+            + $"I am waiting for 2 background agents to finish.{Esc}[K\r\n- ◯ the second agent is still running{Esc}[K\r\n"
+            + $"auto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        model.EndFrame();
+
+        Assert.Equal(
+            ["claude: Status. - Waiting for 2 background agents to finish. I am waiting for 2 background agents to finish. - ◯ the second agent is still running"],
+            heard.Speech);
+    }
+
     private sealed class Heard
     {
         public List<string> Speech { get; } = [];

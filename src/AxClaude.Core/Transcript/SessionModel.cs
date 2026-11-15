@@ -107,6 +107,26 @@ public sealed partial class SessionModel : LineStore
     /// </summary>
     public string? Background { get; private set; }
 
+    /// <summary>
+    /// The agents Claude Code's panel of running agents shows, top to bottom, read off its rows in either form
+    /// (<see cref="LineClassifier.AgentOf"/>); empty when the panel is gone. What the latest frame with a mode line
+    /// shows: kept while a screen of Claude's hides the mode line, like <see cref="Background"/>, so that /tasks
+    /// opened over the panel does not read as every agent finished. The same list object for as long as the rows
+    /// stay as they are, so a redraw costs nothing; <see cref="AgentPanel.Changes"/> says what changed between two.
+    /// </summary>
+    public IReadOnlyList<BackgroundAgent> BackgroundAgents { get; private set; } = [];
+
+    /// <summary>
+    /// The number in Claude Code's row "Waiting for 2 background agents to finish", shown when a turn has ended
+    /// and background agents still run; zero while the row is not shown. Kept like <see cref="BackgroundAgents"/>.
+    /// </summary>
+    public int BackgroundAgentsAwaited { get; private set; }
+
+    /// <summary>The agent rows of the frame being read, bottom to top, and those <see cref="BackgroundAgents"/> was made from.</summary>
+    private readonly List<string> _agentRows = [];
+    private readonly List<string> _agentRowsShown = [];
+    private int _agentsAwaited;
+
     public string? SessionName { get; private set; }
 
     /// <summary>
@@ -246,6 +266,8 @@ public sealed partial class SessionModel : LineStore
         {
             Background = background;
             FeedbackDrafts = drafts;
+            BackgroundAgentsAwaited = _agentsAwaited;
+            ReadAgents();
         }
 
         Mode = mode ?? Mode;
@@ -589,6 +611,9 @@ public sealed partial class SessionModel : LineStore
         TranscriptViewOpen = false;
         Mode = null;
         Background = null;
+        BackgroundAgents = [];
+        BackgroundAgentsAwaited = 0;
+        _agentRowsShown.Clear();
         SessionName = null;
         RaiseChanged();
     }
@@ -703,6 +728,8 @@ public sealed partial class SessionModel : LineStore
         var underAnnouncement = false;
         var transcriptView = false;
         List<string>? announcements = null;
+        _agentRows.Clear();
+        _agentsAwaited = 0;
         for (var r = Rows - 1; r >= 0; r--)
         {
             var line = _screen.LineAt(r);
@@ -804,6 +831,22 @@ public sealed partial class SessionModel : LineStore
                 line.StickyChromeText = line.Text;
             }
 
+            if (chrome && line.Text.Length > 0 && (r > cy || blockOpen))
+            {
+                // The panel of running agents, in the live block or under the cursor: its rows and the waiting row's count.
+                if (line.Text.Contains(ClaudeCodeTexts.AgentMark))
+                {
+                    if (ClaudeCodeTexts.IdleAgentRow().IsMatch(line.Text) || ClaudeCodeTexts.AgentRow().IsMatch(line.Text))
+                    {
+                        _agentRows.Add(line.Text);
+                    }
+                }
+                else if (_agentsAwaited == 0)
+                {
+                    _agentsAwaited = LineClassifier.BackgroundWaitCount(line.Text);
+                }
+            }
+
             line.ChromeHidden = chrome;
         }
 
@@ -830,6 +873,37 @@ public sealed partial class SessionModel : LineStore
         }
 
         return anchor;
+    }
+
+    /// <summary>
+    /// Makes <see cref="BackgroundAgents"/> from the agent rows <see cref="ApplyChrome"/> found, only when the rows
+    /// are not the ones it was made from: the panel is redrawn often, and a frame that changes nothing must not allocate.
+    /// </summary>
+    private void ReadAgents()
+    {
+        var same = _agentRows.Count == _agentRowsShown.Count;
+        for (var i = 0; same && i < _agentRows.Count; i++)
+        {
+            same = _agentRows[i] == _agentRowsShown[i];
+        }
+
+        if (same)
+        {
+            return;
+        }
+
+        _agentRowsShown.Clear();
+        _agentRowsShown.AddRange(_agentRows);
+        var agents = new List<BackgroundAgent>(_agentRows.Count);
+        for (var i = _agentRows.Count - 1; i >= 0; i--)
+        {
+            if (LineClassifier.AgentOf(_agentRows[i]) is { } agent)
+            {
+                agents.Add(agent);
+            }
+        }
+
+        BackgroundAgents = agents;
     }
 
     /// <summary>The slash-command completion list and the draft row, hidden wherever they stand above the cursor row (FR-3.5 d).</summary>

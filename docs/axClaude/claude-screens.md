@@ -80,6 +80,22 @@ $
 
 In a repository the branch row `  ● main` can sit between the mode line and the prompt. The card's keys cannot be pressed from the app: a digit typed in the message field goes to Claude as text with Enter (a 2 went as a message), and at Claude's own prompt a digit lands in the prompt as text too, a 0 also asking `Turn off Claude-drafted feedback? 0 to turn off · Esc to keep` under it. Claude draws the card again after every turn while the draft waits, and `/exit` asks "You have 1 unsent feedback draft" with `Enter to review & send · Esc to discard and exit`, a screen. The way that works is `/feedback`, the list above, and the app goes through it itself for a draft made in a turn of this session: when the mode line's count is higher after a turn than before it and Claude is idle, the app sends `/feedback`, answers the list with the draft the card named (`SessionModel.DraftTitle`) and shows the review as a screen, like a question; the list that comes back after Send, Discard or Later is closed for the user (SPEC.md D33). Drafts already counted when Claude is ready, and a draft put off with Later, wait for `/feedback` typed by hand, which shows the list. The card's rows stay out of the conversation, and the count is not background work. With Options → Questions → Answer from a list off, nothing opens and the card stays in the conversation as printed, less its hint row.
 
+## The rows under a reply while background agents run
+
+Heard live on 2026-11-15 over the Claude Code of that day, through axClaude's own speech; no recording yet, a fixture is owed (the `record-fixture` skill, a turn that starts a background agent and ends before it does). When a turn ends while background agents still run, the rows under the reply were:
+
+```
+Waiting for 2 background agents to finish
+auto mode on (shift+tab to cycle)  ·  ↓ to manage
+  ● main
+  ◯  general-purpose <the agent's description> running
+  ◯  general-purpose <the agent's description> running
+```
+
+The agent rows end in the word `running` and name no time and no token count, unlike the rows above the spinner while the Agent tool runs (`◯  general-purpose Checking callers 2m 15s · ↓ 1.2k tokens`, 2.1.300). All of them are interface rows, out of the conversation and never spoken: `ClaudeCodeTexts.BackgroundWait` (the whole row; the singular `1 background agent` is assumed), `ModeLine`, `BranchRow` and `IdleAgentRow`. Not seen, and to be read off the recording: where the prompt row stands among them (the tests put it under the agent rows, as in the 2.1.300 recording), the exact leading spaces, whether a finished or failed agent's row ends in another word (only `running` is matched), and whether the waiting row can carry anything after `finish`. With a background shell as well the mode line was `auto mode on  ·  1 shell  ·  ↓ to manage`.
+
+The panel is read as well as hidden, for a window that tells the user about it without speech (pure code only so far; nothing in the window uses it yet). Each agent row, in either form, gives the agent's type, its first word, and its description, the words after it without the mark, the word `running` or the time and the tokens (`LineClassifier.AgentOf`, from the named groups of `AgentRow` and `IdleAgentRow`); the waiting row gives its number (`LineClassifier.BackgroundWaitCount`). `SessionModel.BackgroundAgents` is the list the latest frame with a mode line shows, top to bottom, empty when the panel is gone, and `SessionModel.BackgroundAgentsAwaited` the waiting row's number, zero without the row; both are kept while a screen such as `/tasks` covers the mode line, as the background count is. `AgentPanel.Changes(before, after)` says which agents were newly shown and which are no longer shown, compared by type and description, so a redraw, another order or a new time is no change. Assumed until a recording says otherwise: a type is one word (a custom agent's name with a space would give its first word as the type and the rest in the description).
+
 ## The feedback surveys
 
 Now and then Claude Code asks how the session is going, above its prompt, with the cursor on the bare `$` row (recorded with 2.1.323 in the `survey` fixture, forced with the environment variable `CLAUDE_FORCE_DISPLAY_SURVEY=1`):

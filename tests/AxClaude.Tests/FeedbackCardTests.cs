@@ -120,6 +120,23 @@ public class FeedbackCardTests
         Assert.False(LineClassifier.IsChrome("● main and more"));
         Assert.True(LineClassifier.IsChrome("   ◯  general-purpose Checking callers 2m 15s · ↓ 1.2k tokens"));
 
+        // A turn that ended while background agents run (heard 2026-11-15, fixture owed): the agent rows end in
+        // "running" without a time, and a waiting row stands over the mode line.
+        Assert.True(LineClassifier.IsChrome("    ◯  general-purpose Inspect the transcript for garbling running"));
+        Assert.True(LineClassifier.IsChrome("◯  Explore Reading the spec running"));
+        Assert.False(LineClassifier.IsChrome("◯  general-purpose Inspect the transcript for garbling"));
+        Assert.False(LineClassifier.IsChrome("◯  general-purpose Inspect the transcript done"));
+        Assert.False(LineClassifier.IsChrome("- ◯ the second agent is still running"));
+        Assert.False(LineClassifier.IsChrome("The agent ◯ is running"));
+        Assert.False(LineClassifier.IsChrome("◯ running"));
+        Assert.True(LineClassifier.IsChrome("Waiting for 2 background agents to finish"));
+        Assert.True(LineClassifier.IsChrome("  Waiting for 1 background agent to finish"));
+        Assert.False(LineClassifier.IsChrome("Waiting for 2 background agents to finish."));
+        Assert.False(LineClassifier.IsChrome("- Waiting for 2 background agents to finish"));
+        Assert.False(LineClassifier.IsChrome("I am waiting for 2 background agents to finish"));
+        Assert.False(LineClassifier.IsChrome("Waiting for 2 background agents to finish their work"));
+        Assert.False(LineClassifier.IsChrome("Waiting for the background agents to finish"));
+
         // The running command's timer on a row of its own, redrawn every second (2026-10-22): interface, not conversation.
         Assert.True(LineClassifier.IsChrome("(4s · timeout 3m)"));
         Assert.True(LineClassifier.IsChrome("  (1m 12s · timeout 10m)"));

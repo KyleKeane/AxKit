@@ -18,7 +18,34 @@ public static partial class LineClassifier
         ClaudeCodeTexts.ModeLine().IsMatch(text) || ClaudeCodeTexts.Spinner().IsMatch(text) || ClaudeCodeTexts.Tip().IsMatch(text)
         || ClaudeCodeTexts.NotepadHint().IsMatch(text) || ClaudeCodeTexts.EffortHint().IsMatch(text) || ClaudeCodeTexts.BackgroundHint().IsMatch(text)
         || ClaudeCodeTexts.QueuedHint().IsMatch(text) || ClaudeCodeTexts.AnnouncementRow().IsMatch(text) || ClaudeCodeTexts.AgentRow().IsMatch(text)
-        || ClaudeCodeTexts.BranchRow().IsMatch(text) || ClaudeCodeTexts.FeedbackCardHint().IsMatch(text) || ClaudeCodeTexts.ToolTimer().IsMatch(text);
+        || ClaudeCodeTexts.BranchRow().IsMatch(text) || ClaudeCodeTexts.FeedbackCardHint().IsMatch(text) || ClaudeCodeTexts.ToolTimer().IsMatch(text)
+        || ClaudeCodeTexts.IdleAgentRow().IsMatch(text) || ClaudeCodeTexts.BackgroundWait().IsMatch(text);
+
+    /// <summary>
+    /// The agent a row of Claude Code's panel of running agents names, in either form ("◯  general-purpose Checking
+    /// callers 2m 15s · ↓ 1.2k tokens" while the Agent tool runs, "◯  general-purpose Checking callers running"
+    /// after the turn has ended): its type and its description; null for any other row.
+    /// </summary>
+    public static BackgroundAgent? AgentOf(string text)
+    {
+        // Runs for the chrome rows of every frame: no regex unless the row holds the mark.
+        if (!text.Contains(ClaudeCodeTexts.AgentMark))
+        {
+            return null;
+        }
+
+        var m = ClaudeCodeTexts.IdleAgentRow().Match(text);
+        if (!m.Success)
+        {
+            m = ClaudeCodeTexts.AgentRow().Match(text);
+        }
+
+        return m.Success ? new BackgroundAgent(m.Groups["type"].Value, m.Groups["description"].Value.Trim()) : null;
+    }
+
+    /// <summary>The number in "Waiting for 2 background agents to finish"; zero for any other row.</summary>
+    public static int BackgroundWaitCount(string text) =>
+        text.Length > 0 && ClaudeCodeTexts.BackgroundWait().Match(text) is { Success: true } m && int.TryParse(m.Groups["count"].ValueSpan, out var count) ? count : 0;
 
     /// <summary>The key-hint row of the feedback card, <c>1 to review · 2 to send · 0 to dismiss</c> (D33).</summary>
     public static bool IsFeedbackCardHint(string text) => ClaudeCodeTexts.FeedbackCardHint().IsMatch(text);

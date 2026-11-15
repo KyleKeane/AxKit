@@ -96,10 +96,35 @@ public static partial class ClaudeCodeTexts
 
     /// <summary>
     /// A running subagent, one row each above the spinner, redrawn every second with its time and token count
-    /// (§4.4 item 21): "◯  general-purpose Checking callers 2m 15s · ↓ 1.2k tokens".
+    /// (§4.4 item 21): "◯  general-purpose Checking callers 2m 15s · ↓ 1.2k tokens". The groups are named type (the
+    /// agent's type, the first word) and description (what follows, without the time and the tokens).
     /// </summary>
-    [GeneratedRegex(@"^\s*◯\s+.*\d+[hms](?: \d+[ms])?(?: · [↓↑] [\d.]+[kM]? tokens)?$")]
+    [GeneratedRegex(@"^\s*◯\s+(?<type>\S+)(?:\s+(?<description>.*?))?\s+\d+[hms](?: \d+[ms])?(?: · [↓↑] [\d.]+[kM]? tokens)?$")]
     public static partial Regex AgentRow();
+
+    /// <summary>
+    /// The same row after the main turn has ended with the agent still running in the background, under the mode
+    /// line and the branch row: "  ◯  general-purpose Inspect the transcript for garbling running", the agent's
+    /// type, its description and the word "running", no time (heard live on 2026-11-15, no recording yet). Only
+    /// "running" was seen; a row that ends in another state word is not matched until one is recorded. Unknown and
+    /// the lowest row above the prompt, it closed the chrome block, and the mode line, the branch row and
+    /// <see cref="BackgroundWait"/> above it were spoken with the reply. The groups are named type and description,
+    /// as in <see cref="AgentRow"/>.
+    /// </summary>
+    [GeneratedRegex(@"^\s*◯\s+(?<type>\S+)(?:\s+(?<description>.*\S))?\s+running$")]
+    public static partial Regex IdleAgentRow();
+
+    /// <summary>
+    /// The row Claude Code draws over its mode line when a turn has ended and background agents still run:
+    /// "Waiting for 2 background agents to finish", "Waiting for 1 background agent to finish" (heard live on
+    /// 2026-11-15, no recording yet; the singular is assumed). The whole row and nothing else, so that a reply's
+    /// sentence with a full stop, a list mark or other words stays the reply's. The group named count is the number.
+    /// </summary>
+    [GeneratedRegex(@"^\s*Waiting for (?<count>\d+) background agents? to finish$")]
+    public static partial Regex BackgroundWait();
+
+    /// <summary>The mark an agent's row starts with: the cheap test before <see cref="AgentRow"/> and <see cref="IdleAgentRow"/> are tried.</summary>
+    public const char AgentMark = '◯';
 
     /// <summary>
     /// The git branch Claude prints under its mode line in a repository, "  ● main" (2.1.300), rewritten with the
