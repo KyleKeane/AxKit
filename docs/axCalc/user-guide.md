@@ -49,7 +49,7 @@ The newest line is at the bottom, so Up from the end reads back from the latest.
 - **Session**: Save history (Ctrl+S), Exit.
 - **Actions**: Answer (Enter), Copy answer (Ctrl+Shift+C), Copy answer in, Answer in other bases (Ctrl+I), Say the last answer (Ctrl+Q), Variables, Clear variables, Clear history (Ctrl+Shift+Delete).
 - **Options**: Angles (Degrees, Radians), Keep history between runs, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 
 ## Settings
 
@@ -61,7 +61,7 @@ axCalc checks for a newer axKit when it starts and offers it in a notice; the He
 
 ## If something goes wrong
 
-axCalc's log is `%LOCALAPPDATA%\AxKit\logs\axCalc.log`; it never holds what you calculated. Options, Developer, Copy diagnostics copies its end with the versions, for a bug report.
+axCalc's log is `%LOCALAPPDATA%\AxKit\logs\axCalc.log`; it never holds what you calculated. Help, Diagnostics, Copy diagnostics copies its end with the versions, for a bug report.
 
 ## About axCalc
 

@@ -59,6 +59,17 @@ axKit was called Axit up to 4.0.0. If you have Axit installed, close its windows
 - In any notice's text (the keyboard shortcuts of F1, a user guide, this guide, About): h and Shift+H move by heading and 1 to 6 by level; Ctrl+F finds a text, F3 and Shift+F3 the next and the previous match.
 - Colours, for a sighted helper or low vision: in any window, axKit menu, Theme, Edit theme file opens `%APPDATA%\AxKit\theme.json` in axJSON, one line per class of object (the window, the texts, the transcripts, the lists, the console field and its band, the notices, the status bar, the menus, the buttons, the title bar), each `system` for Windows' own colour or a hex colour such as `#FFF4C2`. Save it and switch back: the window takes it, and every other window when it is next activated; Reload theme reads it at once, Theme on switches it off and on. Nothing changes for a screen reader. The same file holds `display.wordWrap`, the editors' word wrap, one value for axDown, axJSON and axPreview, which Ctrl+Shift+W in any of them writes.
 
+## If a key does nothing
+
+In any axKit window: Help, Diagnostics, Test a key (Alt+H, D, T), or Ctrl+Shift+P and `test a key`. It says "Key test. Press any key to hear its name and what it does here. Press Escape twice to end."
+
+- Now press the key. axKit says its name and what it does in this window, where you are: "F8: Say the status", "Ctrl+B: What runs in the background", "A: types the letter", "Down: moves in the list", or "F9: no command of this window". Nothing is carried out while the test runs: no command runs, nothing is typed, the menu does not open, and Alt+F4 does not close the window. A key such as Alt or Ctrl, pressed and released alone, is named too.
+- A key that is not said did not reach axKit. The keyboard changed it (a function key that needs or must not have the Fn key), or Windows, NVDA or another program took it first. NVDA's own input help, NVDA+1, says each key NVDA sees: a key that NVDA names and axKit does not was taken between the two; a key that NVDA does not name either never left the keyboard as that key. NVDA+1 again turns input help off.
+- A key that is said with a command you did not expect is the window's own answer: the same key can do something else in another place of the window, so test it where you would press it, the text field or the list.
+- Escape twice in a row ends the test, "Key test ended". It also ends when you go to another window. The keys act again, and nothing in the window has changed.
+
+Help, Diagnostics also holds Copy diagnostics, which puts the version, the paths and the last log lines on the clipboard for a bug report, with your account's name and paths replaced.
+
 ## Update
 
 A copy from the Microsoft Store is updated by the Store itself, usually within a day of a release, with nothing to press; Check for updates (Help menu) says where your copy stands against the latest release and opens axKit's Store page, where Update appears as soon as the Store has it. That copy makes no check at start and downloads nothing itself.

@@ -30,6 +30,8 @@ public abstract partial class AxKitForm
     protected internal void ShowNotice(Notice notice)
     {
         _paletteSpeak.Stop();
+        // AX-8.12: a notice that arrives while a key is tested ends the test, so that its keys answer the notice.
+        EndKeyTest();
         if (PutAway)
         {
             // Unheard and unseen now: shown again when the window is brought up (ShowNoticeRaisedWhilePutAway).

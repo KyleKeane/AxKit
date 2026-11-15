@@ -1,0 +1,90 @@
+# Workflow: Find out whether a key arrives and what it does
+# axDown: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axDown/nvda-test-plan.md, section 6). While the
+# test runs every key is said with what it does here and none is carried out; Escape twice ends it.
+file home\AxKit\axDown.json {"checkForUpdates": false}
+file a.md # A file for the key test\n\nSome text here.\nMore text.
+
+start down {temp}\a.md
+expect focus a.md
+# The command is in the menus and the palette, with Copy diagnostics, which came from Options, Developer.
+expect commands "Test a key, Help, Diagnostics"
+expect commands "Copy diagnostics, Help, Diagnostics"
+refuse commands Copy diagnostics, Options
+
+# The caret in the middle of a line, so that a move or a typed letter would show.
+keys down down right
+expect state Line 3, Column 2 ·
+menu Test a key
+expect said ! Key test. Press any key to hear its name and what it does here. Press Escape twice to end.
+
+# Bundle keys: said by their command's name, and not carried out (no status said, no notice opened).
+keys f8
+expect said ! F8: Say the status
+keys f4
+expect said ! F4: Send a report
+keys f1
+expect said ! F1: Keyboard shortcuts
+keys ctrl+shift+p
+expect said ! Ctrl+Shift+P: Command palette
+expect state "notice":null
+# Window keys, from the window's command list.
+keys ctrl+g
+expect said ! Ctrl+G: Go to line
+keys ctrl+h
+expect said ! Ctrl+H: Next, Heading
+expect state "notice":null
+# The text's own keys: a letter, an arrow, Enter, a paragraph key; a key nothing has.
+keys a
+expect said ! A: types the letter
+keys down
+expect said ! Down: moves in the text
+keys enter
+expect said ! Enter: makes a new line
+keys ctrl+down
+expect said ! Ctrl+Down: Paragraph down
+keys f9
+expect said ! F9: no command of this window
+# A character sent with no key press is said and not typed.
+type z
+expect said ! z: a character sent without a key press; it types the character
+# Windows' own keys for a window: said (Alt+F4 by the name of the menu item that shows it), and the window stays, its menu bar closed.
+keys alt+f4
+expect said ! Alt+F4: Exit
+keys f10
+expect said ! F10: opens the menu bar
+keys alt+h
+expect said ! Alt+H: opens the Help menu
+# Nothing was carried out: the text, the caret and the title are as they were.
+expect focus {"name":"a.md","role":"Text","value":"Some text here."}
+expect state Line 3, Column 2 ·
+refuse state a.md*
+
+# Escape once says how to end; another key in between and it is a first Escape again; twice in a row ends.
+keys escape
+expect said Press Escape again to end the key test
+keys a
+expect said ! A: types the letter
+keys escape
+expect said Press Escape again to end the key test
+keys escape
+expect said ! Key test ended
+expect focus {"name":"a.md","role":"Text","value":"Some text here."}
+
+# The same keys act again.
+keys f8
+expect said ! Line 3, Column 2
+keys a
+expect focus {"name":"a.md","role":"Text","value":"Saome text here."}
+keys ctrl+g
+expect focus Go to line (now line 3, column 3)
+keys escape
+expect focus a.md
+
+# A notice that arrives ends the test: F1's does not arrive (the key is only said), so through the menu.
+menu Test a key
+expect said ! Key test. Press any key
+menu Keyboard shortcuts
+expect said ! Key test ended
+expect state "notice":"Keyboard shortcuts"
+keys escape
+expect state "notice":null

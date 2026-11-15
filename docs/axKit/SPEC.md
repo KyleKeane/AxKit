@@ -613,6 +613,78 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   and period keys while axHelp runs; the user was told. A hotkey's key is one of `Hotkey.Names`: a letter, a digit,
   a function key, a navigation key, Slash, Comma or Semicolon, never Period. axClip's key joined the same day by a
   second decision of the user's (CP-D1); no window used Ctrl+Shift+Semicolon.
+- AX-8.12 **The key test: whether a key reaches the window, and what it does there** (2026-11-15, the user's
+  decision, after a function key that never reached axClaude: the keyboard had made it another key). Every window
+  has **Help, Diagnostics, Test a key**, in the menu and the command palette, with no key of its own; it is not
+  offered while a notice shows, as no menu command is. It is built once, in the window base
+  (`AxKitForm.KeyTest.cs`), and its words are pure code (`AxKit.Core/KeyTest`, `KeyTestSession`, tested in
+  `KeyTestTests`).
+  - **Starting** says, as one interrupting announcement of the window (AX-7.3): "Key test. Press any key to hear its
+    name and what it does here. Press Escape twice to end."
+  - **While it runs, every key press that reaches the window is said and not carried out**: no command runs, no
+    character is typed, no selection or caret moves, Alt and F10 open no menu, Alt+F4 closes nothing. Each press is
+    one interrupting announcement, once per press (a held key's repeats say nothing): the key as the bundle spells
+    it (`BundleKeys.Text` without the number row's full stop: "Ctrl+Shift+P", "F8", "Alt+Left"; "PageDown",
+    "CapsLock" and the bracket, quote and backslash keys by plain names), a colon, and what it does in this window
+    where the focus is, the first of these that applies:
+    1. a bundle key the window base handles itself in every window (F1, Ctrl+Shift+P, F4, Shift+F1, F8, Ctrl+S, the
+       text size keys): the name of the menu item that shows the key, "F8: Say the status", "F4: Send a report",
+       "Ctrl+Plus: Text, Larger text";
+    2. a command of the window's list (docs/axKit/app-kit.md AK-2) on that key whose `When` holds now, the first in
+       the list's order, by its menu item's name, with its submenu in front when it is in one: "Ctrl+B: What runs in
+       the background", "Ctrl+H: Next, Heading", "Ctrl+Up: Previous section" in an item window's navigator, where
+       the same key in a text is the bundle's "Ctrl+Up: Paragraph up" (the overrides of AX-8.4); then a key a menu
+       item shows that is no command of the list ("Alt+F4: Exit"), and "Alt+H: opens the Help menu" for each menu of
+       the bar by its letter;
+    3. Windows' own keys for a window: "Alt+F4: closes this window" (where no menu item shows the key), "F10: opens
+       the menu bar", "Shift+F10: opens the Context menu" (and the Applications key), "Alt+Space: opens the window's
+       own menu: restore, move, size, close", "Ctrl+Enter: the main action; there is none where you are";
+    4. what the window says of a key its focused control handles itself (`KeyTestOwn`; the console windows: "H:
+       moves to the next heading", "Shift+H: moves to the previous heading", "Ctrl+Alt+H: reads every heading from
+       the caret's line to the end", "L: says the line number", and in the field "Enter: sends what the field
+       holds");
+    5. what a control of the focused kind does with the key: in a text that can be typed in, "A: types the letter",
+       "Space: types a space", "5: types the character", "Enter: makes a new line" (a text of several lines),
+       "Backspace: deletes the character before the caret", "Delete: deletes the character after the caret",
+       "Ctrl+V: pastes", "Ctrl+X: cuts the selected text", "Ctrl+Z: undoes the last change of the text"; in any
+       text, "Down: moves in the text", "Shift+Right: selects text", "Ctrl+A: selects all the text", "Ctrl+C: copies
+       the selected text", and in a text of several lines the bundle's paragraph keys by their names; in a list,
+       "Down: moves in the list" and "A: finds the next item that starts with what you type" (AX-8.6); "Space:
+       checks or unchecks the box", "Enter: presses the button"; "Tab: moves to the next control", "Shift+Tab: moves
+       to the previous control"; where the kind of control is not known, "Down: moves in the list or the text";
+    6. otherwise "<key>: no command of this window". The line is kept honest rather than complete: a key a window
+       handles in a control's own handler and outside its command list is said this way unless rule 4 names it.
+  - **A modifier alone** is named once, when it is released with no other key pressed since it went down: "Alt
+    alone: opens the menu bar", "Ctrl alone: no command of this window", "Ctrl+Shift alone: no command of this
+    window", "Windows key alone: opens the Start menu, Windows' own key"; in a combination only the combination is
+    said. A character that arrives with no key press (a program that sends text) is said as "z: a character sent
+    without a key press; it types the character" and is not typed.
+  - **It ends** on Escape pressed twice in a row. The first Escape says its own line and how to end: "Escape: no
+    command of this window. Press Escape again to end the key test" ("Escape: Hide. Press …" in axStart); any other
+    key, or a modifier, in between makes the next Escape a first one again; Shift+Escape is a key of its own. It also
+    ends when the window is no longer in front or is hidden, since its keys go elsewhere then, when a notice arrives
+    (the notice's keys must answer it), and when the window closes. Every end says "Key test ended", at once, but
+    the closing window's. Nothing was changed meanwhile: the focus, the caret, the selection and the text are as
+    they were, and the same keys act again.
+  - **What it cannot catch is the point.** A key that is not said did not reach axKit: the keyboard itself (an Fn
+    layer), Windows (a system-wide hotkey, the Windows key's combinations, Alt+Tab, Ctrl+Alt+Delete, the Print
+    Screen key's snipping tool), NVDA (its own commands and the NVDA key) or another program took it. The guide
+    says so and names NVDA's input help, NVDA+1, which says whether NVDA saw the key. The background apps' own
+    system-wide keys (AX-8.11) are taken by Windows the same way and are not said. Two things Windows does with a
+    key before any window sees it happen all the same: Caps Lock, Num Lock and Scroll Lock switch their state (the
+    key is still said), and a key that takes the window out of the foreground (the Windows key) ends the test.
+  - **How the keys are caught**: a message filter on the window's thread while the test runs
+    (`Application.AddMessageFilter`, removed as it ends), ahead of `ProcessCmdKey`, the menus and every control: it
+    takes every keyboard message (key down and up, system key down and up, the character messages) addressed to the
+    window or a control in it. The automation channel's `keys` and `type` arrive the same way, so the window
+    scripts play it (`15-key-test` of axDown, `09-key-test` of axFile and axTask, `04-key-test` of axStart,
+    `23-key-test` of axClaude); a modifier alone needs the real keyboard and is in the unit tests and the NVDA plans.
+  - **The AI tools** (docs/axKit/mcp.md MC-7.3): a window in its key test is read as ever, and nothing is run in
+    it: `axkit_window_run` and a typed data tool that changes are refused with "The window is in its key test: the
+    user is trying keys, and nothing is carried out meanwhile. Commands run once the user has ended it."
+    (`KeyTest.AiToolsRefusal`). Test a key itself is marked act, so an AI tool that asks for it asks the user first:
+    it takes the window's keys until the user ends it.
+  - In every F1 text (`BundleHelp.KeyTestLine`) and in the bundle's guide ("If a key does nothing").
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 
@@ -634,8 +706,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     Add axKit to Claude Code, Forget AI tools, Read the log) and Theme ▸ (T; `theme.md` TH-4,
     Options, Text, Theme until 5.7.0). A new bundle-wide setting or action joins here, never an app's Options.
   - **Help** (H; `AxKitForm.CreateHelpMenu`, which the window calls with its guide and pages): Command palette… (P,
-    Ctrl+Shift+P, AX-10), Keyboard shortcuts (K, F1), User guide (G), the app's resources ▸; Send a report… (S, F4)
-    and Your reports (Y, docs/axKit/reports.md RP-2.2); Check for updates (U), Update to (T, while a newer release is
+    Ctrl+Shift+P, AX-10), Keyboard shortcuts (K, F1), User guide (G), the app's resources ▸; Send a report… (S, F4),
+    Your reports (Y, docs/axKit/reports.md RP-2.2) and Diagnostics ▸ (D; `CreateDiagnosticsMenu`, 2026-11-15, the
+    user's submenu: what finds out why something does not work, the same two items in every window: Test a key, T,
+    AX-8.12, and Copy diagnostics, C, which was Options, Developer, Copy diagnostics until then; Developer keeps Open
+    settings file and the window's own items, such as the consoles' Record raw stream, which are settings and files
+    of the app and not a diagnosis of the window); Check for updates (U), Update to (T, while a newer release is
     known) and About ▸ (A, AX-9.9).
 
   The lists are filled each time the menu opens, so that they show the windows and the files of that moment.

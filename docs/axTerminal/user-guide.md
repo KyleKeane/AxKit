@@ -91,7 +91,7 @@ Alt+H, Check for updates asks GitHub for a newer axKit; Update to installs it an
 - "PowerShell 7 was not found": Ctrl+N and choose Windows PowerShell or Command Prompt, or install PowerShell 7.
 - Nothing is spoken when a command ends: the shell gives no marks (a custom shell, or a shell started inside the shell). Ctrl+Q says what the window knows.
 - A program took the whole screen (an editor, a pager): press q and Enter, or Ctrl+Shift+C. axTerminal shows such programs row by row and is not meant for them.
-- Options, Developer, Record raw stream writes everything the shell prints to a file, for a bug report; Copy diagnostics copies the state and the last log lines. The log is `%LOCALAPPDATA%\AxKit\logs\axTerminal.log`; it never holds a command or a line of output.
+- Options, Developer, Record raw stream writes everything the shell prints to a file, for a bug report; Help, Diagnostics, Copy diagnostics copies the state and the last log lines. The log is `%LOCALAPPDATA%\AxKit\logs\axTerminal.log`; it never holds a command or a line of output.
 
 ## About axTerminal
 

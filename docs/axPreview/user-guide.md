@@ -43,7 +43,7 @@ Under the text is the Details list: Tab or F6 moves there and back. It has every
 - **Session**: New window (Ctrl+N), Open (Ctrl+O), Open recent, Reload (F5), the way on (Ctrl+E: Edit in axDown or axJSON for a text, Play in axMedia for a sound or video, Open in Windows' program for anything else), Open with (the axKit apps for the file, Windows' program, or Choose another program…, Windows' own list, whose Always makes one the default), Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
 - **Navigation**: Find (Ctrl+F), Find next (F3), Find previous (Shift+F3), Go to line (Ctrl+G), Next and Previous (heading, heading level 1 to 6, link, list, list item, block quote, table).
 - **Options**: Text (word wrap, font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 
 ## Settings
 
@@ -55,7 +55,7 @@ axPreview checks for a newer axKit when it starts and offers it in a notice; the
 
 ## If something goes wrong
 
-axPreview's log is `%LOCALAPPDATA%\AxKit\logs\axPreview.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. A file that could not be read is reported in a notice with Windows' message.
+axPreview's log is `%LOCALAPPDATA%\AxKit\logs\axPreview.log`; Help, Diagnostics, Copy diagnostics copies its end with the versions, for a bug report. A file that could not be read is reported in a notice with Windows' message.
 
 ## About axPreview
 

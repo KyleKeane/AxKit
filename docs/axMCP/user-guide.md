@@ -67,7 +67,7 @@ Help, Check for updates says whether a newer axKit exists.
 
 ## If something goes wrong
 
-A server that does not start says why in a notice; its standard error goes to axMCP's log, which Options, Developer,
+A server that does not start says why in a notice; its standard error goes to axMCP's log, which Help, Diagnostics,
 Copy diagnostics includes. A server that stops by itself is announced with its exit code; Enter on its level starts it
 again. A call that gets no answer in 60 seconds is given up and said.
 

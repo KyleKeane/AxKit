@@ -220,7 +220,7 @@ F1 lists every key. Shift+F10 or the Applications key opens Context, what acts o
 - "The item changed on disk; it has been read again": another program changed the file. Look at it again and repeat
   the change.
 - A file that is not an item is not shown; the list's name counts such files.
-- Options, Developer, Copy diagnostics puts what is needed for a bug report on the clipboard.
+- Help, Diagnostics, Copy diagnostics puts what is needed for a bug report on the clipboard.
 
 ## About
 

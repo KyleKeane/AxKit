@@ -339,6 +339,47 @@ public abstract partial class ConsoleForm : AxKitForm
         return ProcessConsoleKey(keyData);
     }
 
+    /// <summary>
+    /// The key test's words (AX-8.12) for the keys that are no command of the list: Ctrl+Alt with a quick key letter
+    /// from anywhere, and in the view its quick keys, the bookmark letter, the line number and the way back.
+    /// </summary>
+    protected override string? KeyTestOwn(Keys key)
+    {
+        var code = key & Keys.KeyCode;
+        var modifiers = key & Keys.Modifiers;
+        var quick = _keys.QuickKeys.FirstOrDefault(k => k.Key == code);
+        if (modifiers == _keys.ReadToEnd && quick is not null)
+        {
+            return $"reads every {quick.Name} from the caret's line to the end";
+        }
+
+        if (Input.Focused && key == Keys.Enter)
+        {
+            // The field's Enter is each console's own handler (a message to Claude, a command line to the shell).
+            return "sends what the field holds";
+        }
+
+        if (!Transcript.Focused || modifiers is not (Keys.None or Keys.Shift))
+        {
+            return null;
+        }
+
+        if (quick is not null)
+        {
+            return $"moves to the {(modifiers == Keys.Shift ? "previous" : "next")} {quick.Name}";
+        }
+
+        if (modifiers == Keys.Shift)
+        {
+            return null;
+        }
+
+        return code == _keys.BookmarkToggle ? "bookmarks this line, or takes its bookmark away"
+            : code == _keys.LineNumber ? "says the line number"
+            : code == _keys.JumpBack ? "goes back to the line before the jump"
+            : null;
+    }
+
     /// <summary>Tab, Shift+Tab and the bundle's focus keys: the view, or the control at the bottom when the view has the focus.</summary>
     private void SwitchPlace()
     {

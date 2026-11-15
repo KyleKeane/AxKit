@@ -96,6 +96,7 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => Write(\"\\x04\")), CommandMark.Act)", "types a key into Claude Code"),
         (Path.Combine("src", "AxTerminal", "TerminalForm.Ui.cs"), "(_, _) => SendKey(ShellTexts.EndOfInput, \"Ctrl+D sent\")), CommandMark.Act)", "types a key into the shell"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => CopyDiagnostics()), CommandMark.Act)", "writes the user's clipboard"),
+        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => StartKeyTest()), CommandMark.Act)", "takes the window's keys until the user ends the key test"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => OpenUrl(url)), CommandMark.Act)", "opens the browser"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => Close()) { ShortcutKeyDisplayString = \"Alt+F4\" }, CommandMark.Act)", "ends the window and what it runs"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "CommandPalette.Marked(_checkItem, CommandMark.Act)", "reaches GitHub"),

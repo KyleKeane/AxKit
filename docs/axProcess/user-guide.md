@@ -50,7 +50,7 @@ The menu bar is the same eight menus in every axKit window.
 - **Navigation**: Processes (Ctrl+1), Services (Ctrl+2), Startup (Ctrl+3).
 - **Context**: what acts on the line selected, for the view you are in. Processes: Details (Enter), End process (Delete), End process tree, Show program in axFile (Ctrl+E), Copy line (Ctrl+C). Services: Details, Start, Stop, Restart, Copy line. Startup: Details, Turn off, Turn on, Remove (Delete), Show program in axFile, Copy line. So you never end a process from the services or the reverse. Shift+F10 opens it.
 - **Options**: Sort processes by, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 
 ## Settings
 
@@ -62,7 +62,7 @@ axProcess checks for a newer axKit when it starts and offers it in a notice; the
 
 ## If something goes wrong
 
-axProcess's log is `%LOCALAPPDATA%\AxKit\logs\axProcess.log`; it names every process you ended, every service you started or stopped and every startup program you turned off, turned on or removed. Options, Developer, Copy diagnostics copies its end with the versions, for a bug report.
+axProcess's log is `%LOCALAPPDATA%\AxKit\logs\axProcess.log`; it names every process you ended, every service you started or stopped and every startup program you turned off, turned on or removed. Help, Diagnostics, Copy diagnostics copies its end with the versions, for a bug report.
 
 ## About axProcess
 

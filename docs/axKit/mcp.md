@@ -228,7 +228,7 @@ axTask item made in a folder) are the next part.
   a command of a window's list, so that no AI tool can run it, nor Let AI tools read and open axKit, nor Forget.
 - MC-7.3 **What it never does**: it never answers a question for the user. While the window shows a notice (a
   question, an error, the palette, a pairing) or a Windows dialog, every run is refused ("The window shows the user a
-  notice, <title>: commands run once the user has answered it, and AI tools never answer it"); a command that asks
+  notice, <title>: commands run once the user has answered it, and AI tools never answer it"), and while the window's key test runs (bundle AX-8.12, 2026-11-15: the user is trying keys and nothing is carried out, "The window is in its key test: ... Commands run once the user has ended it"; Test a key itself is act, so it is asked of the user); a command that asks
   (delete, discard, close with changes, New folder's name) shows its question as for the user and the answer says the
   window asks it. A command marked **act** (app-kit's mark, MC-3.1: it deletes, moves, sends, starts or ends
   something outside the window) is asked of the user first, in the window, **through the interface of an offered

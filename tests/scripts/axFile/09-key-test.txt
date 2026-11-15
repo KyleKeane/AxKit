@@ -1,0 +1,63 @@
+# Workflow: Find out whether a key arrives and what it does, in a list
+# axFile: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axFile/nvda-test-plan.md, section 5). Every key
+# is said with what it does where the focus is, the folder list here, and none is carried out; Escape twice ends it.
+mkdir orchard\inner
+file orchard\apple.txt The apple file.
+file orchard\berry.txt The berry file.
+file home\AxKit\axFile.json {"checkForUpdates": false}
+
+start file {temp}\orchard
+expect focus "name":"3 items"
+wait 500
+expect commands "Test a key, Help, Diagnostics"
+expect focus "value":"inner
+menu Test a key
+expect said ! Key test. Press any key to hear its name and what it does here. Press Escape twice to end.
+
+# Bundle keys.
+keys f8
+expect said ! F8: Say the status
+keys f4
+expect said ! F4: Send a report
+# Window keys of the command list, each as it acts in the folder list.
+keys f5
+expect said ! F5: Refresh
+keys ctrl+g
+expect said ! Ctrl+G: Go to folder
+keys delete
+expect said ! Delete: Delete
+keys enter
+expect said ! Enter: Open
+keys backspace
+expect said ! Backspace: Up one level
+keys ctrl+f
+expect said ! Ctrl+F: Find
+# The list's own keys, and a key nothing has.
+keys down
+expect said ! Down: moves in the list
+keys b
+expect said ! B: finds the next item that starts with what you type
+keys f9
+expect said ! F9: no command of this window
+keys alt+f4
+expect said ! Alt+F4: Exit
+# Nothing was carried out: the same folder, the same entry, no notice.
+expect state "notice":null
+expect state "title":"orchard - axFile"
+expect focus "value":"inner
+expect list "count":3
+
+keys escape
+expect said Press Escape again to end the key test
+keys escape
+expect said ! Key test ended
+
+# The same keys act again.
+keys down
+expect focus "value":"apple.txt
+keys b
+expect focus "value":"berry.txt
+keys ctrl+g
+expect state "notice":"Go to folder"
+keys escape
+expect state "notice":null

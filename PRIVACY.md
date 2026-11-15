@@ -162,7 +162,7 @@ turning the access off ends access at the next call and turns Let AI tools run c
 - **axPass** never stores your passwords: KeePassXC's own tool reads and writes your database, and the master password
   goes to it on a pipe. A copied password is marked private for Windows' clipboard history and cleared after 30
   seconds.
-- **Copy diagnostics** (Options, Developer) and **Copy details** (a failed update's notice) put text on your clipboard
+- **Copy diagnostics** (Help, Diagnostics) and **Copy details** (a failed update's notice) put text on your clipboard
   only when you choose them, with your account's name and folders, your computer's name and any e-mail address
   replaced, for you to read before you share it.
 

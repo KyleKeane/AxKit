@@ -132,7 +132,7 @@ it, so that every file shows something and the details say what it is.
   **Navigation (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… Ctrl+G | ─ |
   Next ▸ | Previous ▸ (Heading, Heading level 1 to 6, Link, List, List item, Block quote, Table). **Options (O):**
   Text ▸ (Word wrap Ctrl+Shift+W | ─ | Font… | Larger text | Smaller text | Windows text size) | General ▸ (Check for
-  updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics). **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):**
+  updates at start ✓) | Developer ▸ (Open settings file). **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Markdown resources ▸ (axDown's pages). Every item has a mnemonic (AX-7.4).
 - AP-3.2 Keys (AX-8). Bundle-wide: F1, the control keys (the text, or the Go to line field while it shows), Ctrl+F,
   F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up, Ctrl+Down with

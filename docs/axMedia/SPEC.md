@@ -162,7 +162,7 @@ top of the window. It works entirely offline (bundle G6).
   Go to time… Ctrl+T. **Context (C)**, the file selected (AX-9.11; Shift+F10, the Applications key and a right click in
   the queue): Play Enter | Remove Delete | Information Ctrl+I; "Nothing in the queue" while it is empty. **Options
   (O):** Say each file as it starts ✓ | Text ▸ | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings
-  file | Copy diagnostics). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
+  file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
   page on Media Foundation; Free codecs in the Microsoft Store, a Store search for media extensions; each in the
   browser). Every item has a mnemonic (AX-7.4).
 - AM-5.2 Keys (AX-8). Bundle-wide: F1, the control keys (one control, so they stay in the list), Ctrl+F, F3, Shift+F3,

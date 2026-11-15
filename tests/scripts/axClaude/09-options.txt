@@ -240,6 +240,8 @@ expect said Install, heading level 2
 keys h
 expect said Start
 keys h
+expect said If a key does nothing
+keys h
 expect said Update
 keys escape
 expect state "notice":null

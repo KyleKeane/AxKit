@@ -28,6 +28,7 @@ public sealed class BundleHelpTests
                 "  A line break typed into a field of several lines is said, new line; Options, Text, Say new line turns that off for every window",
                 "  A key that lands on a heading, in a list or a text, plays a short rising sound before it is read; Options, Text, Sound on headings turns that off for every window",
                 "  Shift+F10 or the Applications key: the Context menu, what acts on what you are on",
+                "  A key that seems to do nothing: Help, Diagnostics, Test a key says each key you press and what it does here, and carries none of them out; Escape twice ends it. A key that is not said never reached axKit",
             "  Alt: the menu. Alt+F4: close axThing",
                 "  " + BundleHelp.BundleMenusLine,
                 "",
@@ -40,7 +41,7 @@ public sealed class BundleHelpTests
     public void The_AxKit_menu_line_is_the_bundles_words()
     {
         Assert.Contains(
-            "  Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About\r\n",
+            "  Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check for updates, and About\r\n",
             BundleHelp.Section("axThing", []));
     }
 

@@ -115,6 +115,12 @@ public abstract partial class AxKitForm
     /// </summary>
     protected string? McpChangeRefusal()
     {
+        if (KeyTestRunning)
+        {
+            // AX-8.12: nothing is carried out while the user tries keys, an AI tool's command no more than a key's.
+            return KeyTest.AiToolsRefusal;
+        }
+
         if (NoticeOpen)
         {
             return $"The window shows the user a notice, {Overlay.Shown?.Title}: commands run once the user has answered it, and AI tools never answer it.";
@@ -221,7 +227,7 @@ public abstract partial class AxKitForm
             return "the window showed the user a question first";
         }
 
-        return null;
+        return KeyTestRunning ? "the user had started the window's key test" : null;
     }
 
     /// <summary>

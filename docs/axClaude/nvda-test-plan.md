@@ -118,7 +118,7 @@ the app follows its spec, the plan's step reads as below.
 2. Options, Speech: "Speak replies: none" (checked), "Speak replies: first lines", "Speak replies: all lines", then "Speak each tool call". Choose all lines: "Speak replies: all lines". Ask for the markdown answer of section 4 step 1: the whole answer is spoken in one piece, with a pause after each heading, without moving the caret, and the ticks still sound. Ask for something that needs a few tool calls: Claude's opening line is spoken, the tool rows only tick, and the closing message is spoken when it arrives. Choose first lines and ask again: only the first line of each of Claude's messages is spoken, the rest ticks. Ctrl+Shift+R: nothing of the replayed conversation is spoken, "Ready", and the next reply is spoken again. Press Control during a long spoken reply: NVDA stops, the ticks continue. An error from Claude is spoken in both modes: in PowerShell, `$env:ANTHROPIC_API_KEY = 'bad'; axclaude <folder>` (answer Yes if Claude asks whether to use the key), choose all lines and send a message: "Sent", "Responding", then "error: API Error: 401 Invalid API key · Please run /login" is spoken, then "Done"; the e key finds the row. Close that axClaude; one started the usual way is signed in as before. Choose none again: "Speak replies: none". Options, Speech, Speak each tool call (a check item), then ask for something that needs a few tool calls: each "tool:" line is spoken as soon as it appears, with Claude's opening line in the same breath when they arrive together, and tool output is not spoken; the same with all lines chosen. Uncheck it again.
 2a. Options, Announcements (FR-7.3a, 2026-11-12): five check items, all checked. Uncheck "Sent" and "Queued" and "Responding", send a message: the sent chime and the reply chime sound, no "Sent" and no "Responding"; check them again. Options, Speech, "Words that keep a reply line silent": the notice's field, type `tests; Done`, Enter: "2 words keep a line silent". With all lines spoken, ask "Say the words: the tests pass. Then on its own line: nothing else.": the line with "tests" is shown in the conversation and not spoken, the other line is. Open it again, empty the field, Enter: "Every reply line is spoken". Options, Questions, "Dismiss Claude's feedback surveys unheard" checked: when a survey next comes in ordinary use, nothing is heard and the message field keeps the focus; the survey's rows are in the conversation (step 16a of section 12 with it off).
 3. Options, Developer, Record raw stream for a bug report: choose a file; "Recording started" and a "System:" line with the path. Send a message, then Options, Developer, Stop recording: "Recording stopped" and a system line with the size. The `.vt` file and its `.chunks.txt` exist.
-4. Options, Developer, Copy diagnostics: "Copied"; paste into Notepad: version, paths and log lines.
+4. Help, Diagnostics, Copy diagnostics: "Copied"; paste into Notepad: version, paths and log lines.
 5. Help, Keyboard shortcuts (F1): the list takes the place of the conversation, in the same window. NVDA reads "Keyboard shortcuts read only edit multi line" and the first line, which names the text's own keys (h, 1 to 6, Ctrl+F); Down Arrow reads the list; h: "Anywhere, heading level 2", h again: "Message field, heading level 2", Shift+H back, 2: the next heading of level 2; Ctrl+F: the Find notice in its place; type `palette`, Enter: the shortcuts text is back with "palette" selected and NVDA reads the line; F3: the next line with "palette", Shift+F3 back; Ctrl+F, Escape: the shortcuts text is back where it was; Tab reaches the Close button and Tab again returns to the text; NVDA+End still reads the status bar. Escape (or Enter) closes it and the focus returns where it was. F1 from the conversation, then close: the focus is back in the conversation on the same line.
 6. Help, User guide: the same kind of notice, starting with "axClaude user guide"; Escape closes it. Help, About, Version: a notice "axKit <version>" with the version, the apps, the latest release and the folders; Escape closes it. About, Licence and About, Attribution: their notices, Escape closes each. About, axKit guide: the bundle's guide, starting "axKit", h moving by heading (Install, Start, Update, Remove, About); Escape closes it. In the User guide, h and Shift+H move by heading and 1 to 6 by level, each spoken as "…, heading level 2"; "No next heading" at the end, the caret staying.
 7. Help, Claude Code resources, Slash commands: the browser opens the commands page at code.claude.com. The other web items open their pages too.
@@ -239,3 +239,27 @@ heard. The sounds are provisional; say which to change.
 8. With background work running and Speak replies on all lines, send a message with a long reply: while the reply
    is read, the recurring sound stays away.
 9. Ctrl+Shift+R with background work running, Restart now: no falling sound, and no recurring sound afterwards.
+
+## 23. The key test (bundle AX-8.12, 2026-11-15)
+
+Script: `tests/scripts/axClaude/23-key-test.txt` (a stand-in for Claude Code, no network).
+
+1. In the message field, with a few words typed: Alt+H, D, T (Help, Diagnostics, Test a key). NVDA says "Key test.
+   Press any key to hear its name and what it does here. Press Escape twice to end." and nothing else changes.
+2. F8: "F8: Say the status", and the status is not said. F4: "F4: Send a report", and no form opens. Ctrl+B: "Ctrl+B:
+   What runs in the background". Shift+Escape: "Shift+Escape: Interrupt", and Claude is not interrupted. A letter:
+   "A: types the letter", and the field is unchanged. Enter: "Enter: sends what the field holds", and nothing is sent.
+   F9: "F9: no command of this window".
+3. Alt alone, pressed and released: "Alt alone: opens the menu bar", and the menu bar stays closed. Ctrl+B again: only
+   the combination is said, never "Ctrl alone". Alt+F4: "Alt+F4: Exit", and the window stays. Each line is heard whole
+   when the keys are pressed slowly, and a new key cuts the line before it.
+4. A key that Windows or another program takes (the user's case: a function key that was the snipping tool; the
+   Windows key with a letter) is not said: that is the answer the test gives. NVDA+1, NVDA's own input help, says
+   whether NVDA saw it.
+5. Escape: "Escape: no command of this window. Press Escape again to end the key test". Any other key, then Escape:
+   the same line again. Escape twice in a row: "Key test ended"; the field holds what it held, the caret where it was.
+   F8 says the status again.
+6. Ctrl+2, then the key test again from the menu: h: "H: moves to the next heading"; Shift+H: the previous;
+   Ctrl+Alt+H: "reads every heading from the caret's line to the end"; l: "L: says the line number"; the caret does
+   not move. Alt+Tab away while the test runs: "Key test ended" is said as the window is left, and on coming back the
+   keys act.

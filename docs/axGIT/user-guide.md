@@ -58,7 +58,7 @@ The menu bar is the same eight menus in every axKit window.
 - **Navigation**: Changes (Ctrl+1), Log (Ctrl+2), Branches (Ctrl+3).
 - **Context**: what acts on the line you are on, by the view: in Changes, Stage or unstage (Space), Show diff (Enter), Open file in editor (Ctrl+E), Discard changes (Delete); in Log, Show the commit (Enter); in Branches, Switch to branch (Enter). Shift+F10 opens it.
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 
 ## Settings
 
@@ -70,7 +70,7 @@ axGIT checks for a newer axKit when it starts and offers it in a notice; the Hel
 
 ## If something goes wrong
 
-axGIT's log is `%LOCALAPPDATA%\AxKit\logs\axGIT.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. "Git was not found" means git is not on your PATH: install it from https://git-scm.com and start axGIT again. "Not a git repository" means the folder you gave is not inside one; Open repository (Ctrl+O) takes another.
+axGIT's log is `%LOCALAPPDATA%\AxKit\logs\axGIT.log`; Help, Diagnostics, Copy diagnostics copies its end with the versions, for a bug report. "Git was not found" means git is not on your PATH: install it from https://git-scm.com and start axGIT again. "Not a git repository" means the folder you gave is not inside one; Open repository (Ctrl+O) takes another.
 
 ## About axGIT
 

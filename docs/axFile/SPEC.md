@@ -446,7 +446,7 @@ and the started process finds its open window and hands the paths over with the 
   action Ctrl+Z | Its number and time Ctrl+I. **Options (O):** Sort by ▸ (Name ✓ | Date | Size) | Filter… Ctrl+Shift+F | ─ | Add a program to Open with… | Remove a program from Open with ▸ | ─
   | Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) | General ▸ (Check for updates
   at start ✓ | Show hidden files and folders | Show files and folders starting with a period) | Developer ▸ (Open
-  settings file | Copy diagnostics). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User
+  settings file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User
   guide | ─ | File resources ▸ (Keyboard shortcuts in Windows, the Microsoft page, in the browser). Every item has a
   mnemonic (AX-7.4).
 - AF-6.2 Keys (AX-8). Bundle-wide: F1, the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between

@@ -104,13 +104,13 @@ letter), and a `long.md` with headings and lines longer than the window.
    as in the editor, "No next table" when there is none; Help, About, Version names the version of axKit, the apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
 4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows, Say the status (F8: the status bar is said); Alt+K: the axKit menu with Claude, AI tools and Theme;
-   Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check
+   Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds
    "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+W, R reads "1. plain.txt
    (<path>) - axDown" and Enter opens it in a new window; Session, Open on another file puts the one you left there too. Alt+W, C
    (Close all windows) with unsaved changes in one window: that window asks "Save changes?" and the others close.
-5. Options, General, Check for updates at start: read as checked; Enter unchecks it. Options, Developer, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
+5. Options, General, Check for updates at start: read as checked; Enter unchecks it. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
    window on `axDown.json`. Help, Markdown resources, Markdown basics: the browser opens commonmark.org; GitHub
    Flavored Markdown opens its page.
 6. The command palette (bundle AX-10), with the caret in the middle of a line. Ctrl+Shift+P: "Command palette",
@@ -121,6 +121,16 @@ letter), and a `long.md` with headings and lines longer than the window.
    "No commands match xyz"; Enter says it again and the palette stays; Escape: back in the editor, nothing run.
    Ctrl+Shift+P, `save as`, Enter: the Save as picker opens. Alt+H, P (Help, Command palette, the menu's first item) opens it too. Recent files and the
    Window menu's lists are not in it; Alt+W, New window, axDown is ("axDown, Window, New window").
+7. The key test (bundle AX-8.12; script `15-key-test`), with the caret in the middle of a line. Alt+H, D, T (Help,
+   Diagnostics, Test a key): "Key test. Press any key to hear its name and what it does here. Press Escape twice to
+   end." F8: "F8: Say the status" and no status; F4: "F4: Send a report" and no form; Ctrl+G: "Ctrl+G: Go to line";
+   Ctrl+H: "Ctrl+H: Next, Heading"; a letter: "A: types the letter" and the text unchanged; Down: "Down: moves in the
+   text" and the caret where it was; Enter: "Enter: makes a new line" and no line; F9: "F9: no command of this
+   window"; Alt alone: "Alt alone: opens the menu bar", the bar closed; Ctrl alone: "Ctrl alone: no command of this
+   window"; Alt+F4: "Alt+F4: Exit", the window still there. Escape: its line, then "Press Escape again to end the key
+   test"; Escape again: "Key test ended". The title has no star, the caret is where it was, and the same keys act
+   again. Started again and left with Alt+Tab: "Key test ended" as the window is left. A key that is never said did
+   not reach axKit: NVDA+1, NVDA's input help, says whether NVDA saw it.
 
 ## 7. Updates and uninstall
 

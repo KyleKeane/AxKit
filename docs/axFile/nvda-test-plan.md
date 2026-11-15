@@ -67,13 +67,18 @@ Run with NVDA before a release, on a folder with a few subfolders, text files an
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. Help, User guide: this guide; Escape.
-3. Alt+W: the Window menu with New window (axFile among the apps), Recently closed (the folder of a closed axFile window), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme. About, Version: "axKit <version>".
-4. Options, Developer, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the folder, the count of actions and the log's end.
+3. Alt+W: the Window menu with New window (axFile among the apps), Recently closed (the folder of a closed axFile window), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme. About, Version: "axKit <version>".
+4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the folder, the count of actions and the log's end.
 5. Close the window and start axFile without a folder: it opens on the same folder (the last one).
 6. The command palette (AF-3.12, bundle AX-10). Ctrl+Shift+P, type the start of a folder's name: after a moment "<name>,
    folder, 1 of …"; Enter: the palette closes and the folder opens, "<name>, n items, <entry>". Ctrl+Shift+P, a file's
    name, Enter: it opens in its program, as Enter in the list. Ctrl+Shift+P, `refresh`: "Refresh, Folder, F5, 1 of 1"
    before the entries; Enter refreshes. From the Actions list, Ctrl+Shift+P, Escape: back on the same Actions line.
+7. The key test (bundle AX-8.12; script `09-key-test`). In the folder list: Alt+H, D, T (Help, Diagnostics, Test a key):
+   "Key test. Press any key to hear its name and what it does here. Press Escape twice to end." F5: "F5: Refresh";
+   Delete: "Delete: Delete", and nothing is deleted; Enter: "Enter: Open", and nothing opens; Down: "Down: moves in
+   the list", and the selection stays; a letter: "B: finds the next item that starts with what you type"; Alt alone:
+   "Alt alone: opens the menu bar", the bar closed. Escape, Escape: "Key test ended"; Down moves again.
 
 ## 6. The Actions list (AF-9)
 

@@ -42,7 +42,7 @@ After the kit:
   loop over the commands in scope order, the window's own keys first, then the focused control's); the F1 text (the
   bundle's section, the app's commands from their help, a short hand-written paragraph for the controls' own keys);
   the command palette (it already reads the menus). Menu, key, F1, palette and MCP cannot disagree, since there is one
-  list.
+  list. The key test (bundle AX-8.12) reads the same list: each key press is said with the command the list would run for it where the focus is, and for a key a control handles itself the window may say what it does (`KeyTestOwn`).
 - AK-2.4 Tests from the data: every command's key is in the F1 text; no key equals a bundle key; every command states
   its mark, and the act commands and items that start a program or reach past the window are pinned
   (`tests/AxKit.Tests/CommandMarkTests`, `mcp.md` MC-D7); no menu item with a click is made without a mark (the same

@@ -1,0 +1,49 @@
+# Workflow: Find out whether a key arrives and what it does, in a hotkey window
+# axStart: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12). Every key is said with what it does in the
+# search field and none is carried out: no letter typed, no match moved to, the window not hidden; Escape twice ends
+# it, and only then does Escape hide the window again. The hotkey is one nobody uses, as in 01-basics.
+file home\AxKit\axStart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
+
+start start
+expect focus Search programs
+wait 5000
+expect commands "Test a key, Help, Diagnostics"
+type windows
+expect focus "name":"Search programs","role":"Text","value":"windows"
+menu Test a key
+expect said ! Key test. Press any key to hear its name and what it does here. Press Escape twice to end.
+
+keys f8
+expect said ! F8: Say the status
+keys f5
+expect said ! F5: Refresh programs
+keys ctrl+i
+expect said ! Ctrl+I: Information
+keys down
+expect said ! Down: Next match
+keys enter
+expect said ! Enter: Start
+keys a
+expect said ! A: types the letter
+keys f9
+expect said ! F9: no command of this window
+# Nothing was carried out: the field as it was, the window on view.
+expect focus "name":"Search programs","role":"Text","value":"windows"
+expect state "visible":true
+
+# Escape is the window's Hide: said, with how to end; the second Escape ends the test and hides nothing.
+keys escape
+expect said ! Escape: Hide. Press Escape again to end the key test
+expect state "visible":true
+keys escape
+expect said ! Key test ended
+expect state "visible":true
+expect focus "name":"Search programs","role":"Text","value":"windows"
+
+# The same keys act again: Down moves to a match, and Escape hides the window.
+keys down
+expect said , 2 of
+keys escape
+expect state "visible":false
+menu Quit axStart
+expect closed

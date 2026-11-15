@@ -109,7 +109,7 @@ Help, Check for updates says whether a newer axKit exists.
 
 ## If something goes wrong
 
-Options, Developer, Copy diagnostics copies what helps a bug report; F4 sends a report.
+Help, Diagnostics, Copy diagnostics copies what helps a bug report; F4 sends a report.
 
 ## About
 

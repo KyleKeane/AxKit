@@ -359,20 +359,33 @@ public abstract partial class AxKitForm : Form
         return menu;
     }
 
-    /// <summary>Options → Developer: Open settings file, the window's own items, Copy diagnostics.</summary>
+    /// <summary>Options → Developer: Open settings file, the window's own items. Copy diagnostics was here until 2026-11-15 and is Help, Diagnostics now.</summary>
     protected ToolStripMenuItem CreateDeveloperMenu(params ToolStripItem[] own)
     {
         var menu = new ToolStripMenuItem("De&veloper");
         menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open settings &file", null, (_, _) => OpenSettingsFile()), CommandMark.Open));
         menu.DropDownItems.AddRange(own);
-        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Copy diag&nostics", null, (_, _) => CopyDiagnostics()), CommandMark.Act));
+        return menu;
+    }
+
+    /// <summary>
+    /// Help → Diagnostics (AX-9.1, 2026-11-15, the user's submenu): what finds out why something does not work, the
+    /// same in every window: Test a key (AX-8.12, <c>AxKitForm.KeyTest.cs</c>) and Copy diagnostics (from Options,
+    /// Developer). Test a key is act for the AI tools: it takes the window's keys until the user ends it, so the user
+    /// is asked first.
+    /// </summary>
+    private ToolStripMenuItem CreateDiagnosticsMenu()
+    {
+        var menu = new ToolStripMenuItem("&Diagnostics");
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Test a key", null, (_, _) => StartKeyTest()), CommandMark.Act));
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Copy diagnostics", null, (_, _) => CopyDiagnostics()), CommandMark.Act));
         return menu;
     }
 
     /// <summary>
     /// Help (AX-9.1; 5.7.0, 2026-11-10: the user's help in one menu): Command palette… (Ctrl+Shift+P, AX-10),
-    /// Keyboard shortcuts (F1, the base's key), User guide, the app's pages in the browser; Send a report… (F4) and Your
-    /// reports (docs/axKit/reports.md RP-2.2); the window's Check for updates and Update to items (AX-3.1) and About,
+    /// Keyboard shortcuts (F1, the base's key), User guide, the app's pages in the browser; Send a report… (F4), Your
+    /// reports (docs/axKit/reports.md RP-2.2) and Diagnostics (<see cref="CreateDiagnosticsMenu"/>); the window's Check for updates and Update to items (AX-3.1) and About,
     /// the bundle's sections (AX-9.9, <see cref="BundleAbout"/>), each shown as a notice of this window.
     /// </summary>
     protected ToolStripMenuItem CreateHelpMenu(Func<string> userGuide, string resourcesLabel, IEnumerable<(string Label, string Url)> pages)
@@ -397,6 +410,7 @@ public abstract partial class AxKitForm : Form
             ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
         }, CommandMark.Open));
         help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Your reports", null, (_, _) => OpenReports()), CommandMark.Act));
+        help.DropDownItems.Add(CreateDiagnosticsMenu());
         help.DropDownItems.Add(new ToolStripSeparator());
         help.DropDownItems.Add(_checkItem);
         help.DropDownItems.Add(_updateItem);
@@ -1032,7 +1046,7 @@ public abstract partial class AxKitForm : Form
         WindowMenu.Start(Dispatch.AxJSON, SettingsPath);
     }
 
-    /// <summary>Options → Developer → Copy diagnostics: the versions, the window's own lines and the end of the log, to the clipboard.</summary>
+    /// <summary>Help → Diagnostics → Copy diagnostics: the versions, the window's own lines and the end of the log, to the clipboard.</summary>
     private void CopyDiagnostics()
     {
         var text = string.Join("\r\n",

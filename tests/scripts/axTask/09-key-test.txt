@@ -1,0 +1,49 @@
+# Workflow: Find out whether a key arrives and what it does, in an item window
+# axTask: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12). Every key is said with what it does where the
+# focus is, the navigator here, and none is carried out; Escape twice ends it. Ctrl+Up and Ctrl+Down are the item
+# windows' section keys in the navigator, in the bundle's paragraph keys' place (docs/axKit/item-apps.md IA-2.3a).
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
+file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
+
+start task {temp}\tasks
+expect state Lists - axTask
+type s
+expect focus Shopping, list, 2 items
+keys right
+expect said ! Shopping, 2 items, Milk
+expect commands "Test a key, Help, Diagnostics"
+menu Test a key
+expect said ! Key test. Press any key to hear its name and what it does here. Press Escape twice to end.
+
+keys f8
+expect said ! F8: Say the status
+keys f1
+expect said ! F1: Keyboard shortcuts
+keys ctrl+n
+expect said ! Ctrl+N: New item
+keys ctrl+up
+expect said ! Ctrl+Up: Previous section
+keys left
+expect said ! Left: Up a level
+keys down
+expect said ! Down: moves in the list
+keys w
+expect said ! W: finds the next item that starts with what you type
+keys f9
+expect said ! F9: no command of this window
+# Nothing was carried out: the same list, the same item, no notice.
+expect state "notice":null
+expect state Shopping - axTask
+expect focus "value":"Milk"
+
+keys escape
+expect said Press Escape again to end the key test
+keys escape
+expect said ! Key test ended
+
+# The same keys act again.
+keys w
+expect focus "value":"Washer"
+keys left
+expect said ! Lists

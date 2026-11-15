@@ -328,7 +328,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   Background music while a command runs Ctrl+Space) | Speech ▸ (Speak output: none ○ | Speak output: all lines ○ |
   ─ | Say when a program asks ✓) | When a command is done ▸ (Flash the taskbar button ✓ | Louder alert when the window
   is in the background) | Text ▸ (Time stamps | Markers in the text ✓ | ─ | Font… | Larger text | Smaller text | Windows text size) | General
-  ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream | Copy diagnostics). **Window (W)** (before Options), **axKit (K)**
+  ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Record raw stream). **Window (W)** (before Options), **axKit (K)**
   (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Shell resources ▸ (PowerShell documentation |
   Windows Terminal shell integration | Bash manual). Every item has a mnemonic (AX-7.4).
   The first menu is Session, as in axClaude, since what it holds is the shell in its folder, the thing the window

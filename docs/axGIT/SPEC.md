@@ -179,7 +179,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   Applications key and a right click in the list): in Changes, Stage or unstage Space | Show diff Enter | Open file in
   editor Ctrl+E | Discard changes… Delete; in Log, Show the commit Enter; in Branches, Switch to branch Enter; "Nothing
   selected" on an empty list. **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus |
-  Windows text size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file | Copy diagnostics).
+  Windows text size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file).
   **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User
   guide | ─ | Git resources ▸ (git-scm.com | Pro Git book). Every item has a mnemonic (AX-7.4).
 - AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:

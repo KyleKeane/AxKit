@@ -83,7 +83,7 @@ The menu bar is the same eight menus in every axKit window.
 - **Navigation**: Favorites (your pinned folders, Add or remove this folder Ctrl+D), Drives (your drives by number, This PC, Eject this drive, Drive properties), Go to folder (Ctrl+G or Alt+D), Up one level (Backspace), The Actions list.
 - **Context**, what acts on what you are on: in the folder list, the entry's menu: Open (Enter), Open with (Windows default, Choose a program, your own programs), Open in axKit (Editor Ctrl+E and every app), Preview (Shift+Enter), Play folder in axMedia (Ctrl+Enter), Add to axMedia's queue (Ctrl+Shift+Q), Cut Ctrl+X, Copy Ctrl+C, Rename F2, Delete, Move to folder, Compress to zip, Extract here, Copy path Ctrl+Shift+C, Show in File Explorer Ctrl+Shift+W, Information Ctrl+I, Properties Alt+Enter, Windows menu, and the Selection submenu (Select or deselect this entry Space, Select to here Shift+Space, then Cut, Copy, Delete, Move to folder, Compress to zip, Add to axMedia's queue and Copy paths on the selected entries alone); in the Actions list, the line's Go to where it happened (Enter), Undo this action (Ctrl+Z) and Its number and time (Ctrl+I). It opens on the entry with Shift+F10, the Applications key or a right click.
 - **Options**: Sort by (Name, Date, Size), Filter (Ctrl+Shift+F), Add a program to Open with, Remove a program from Open with, then Text (font and size), General (the update check, hidden files, files starting with a period) and Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude, the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
+- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude, the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 
 ## Settings
 
@@ -95,7 +95,7 @@ axFile checks for a newer axKit when it starts and offers it in a notice; the He
 
 ## If something goes wrong
 
-axFile's log is `%LOCALAPPDATA%\AxKit\logs\axFile.log`; Options, Developer, Copy diagnostics copies its end with the versions, for a bug report. "Folder not found" means the folder is gone or the drive unplugged; axFile shows the nearest folder above it that exists. "Failed: Access denied" means Windows does not let your account change that place.
+axFile's log is `%LOCALAPPDATA%\AxKit\logs\axFile.log`; Help, Diagnostics, Copy diagnostics copies its end with the versions, for a bug report. "Folder not found" means the folder is gone or the drive unplugged; axFile shows the nearest folder above it that exists. "Failed: Access denied" means Windows does not let your account change that place.
 
 ## About axFile
 
