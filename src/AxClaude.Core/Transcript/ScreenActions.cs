@@ -137,6 +137,24 @@ public static class ScreenActions
     }
 
     /// <summary>What the status bar says the screen is after "Claude: showing": "a side answer" for /btw, else its title.</summary>
-    public static string StatusName(ClaudeScreen screen) =>
-        screen.Title.StartsWith(ClaudeCodeTexts.SideAnswerTitle, StringComparison.Ordinal) ? "a side answer" : screen.Title;
+    public static string StatusName(ClaudeScreen screen) => IsSideAnswer(screen) ? "a side answer" : screen.Title;
+
+    /// <summary>/btw's side answer: its title is the first question asked with /btw in the session (claude-screens.md).</summary>
+    public static bool IsSideAnswer(ClaudeScreen screen) => screen.Title.StartsWith(ClaudeCodeTexts.SideAnswerTitle, StringComparison.Ordinal);
+
+    /// <summary>
+    /// The side question a /btw screen answers, without "/btw ", for its record in the conversation (FR-5, D33); null for
+    /// any other screen. A second /btw in the session keeps the first question as the title and draws the newest one as
+    /// the first of its lines (2.1.310, claude-screens.md), so a line that starts with /btw is the question when there is one.
+    /// </summary>
+    public static string? SideQuestion(ClaudeScreen screen)
+    {
+        if (!IsSideAnswer(screen))
+        {
+            return null;
+        }
+
+        var asked = screen.Lines.FirstOrDefault(l => l.StartsWith(ClaudeCodeTexts.SideAnswerTitle + " ", StringComparison.Ordinal)) ?? screen.Title;
+        return asked[ClaudeCodeTexts.SideAnswerTitle.Length..].Trim();
+    }
 }

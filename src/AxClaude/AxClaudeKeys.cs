@@ -65,6 +65,8 @@ public static class AxClaudeKeys
     public const Keys TurnSummary = Keys.D;
     public const Keys SystemLine = Keys.S;
     public const Keys Question = Keys.Q;
+    /// <summary>b and Shift+B: the records of the side questions asked with /btw, "btw: …" (FR-5; the user's ask of 2026-11-14).</summary>
+    public const Keys SideQuestion = Keys.B;
     public const Keys Bookmark = Keys.K;
     public const Keys BookmarkToggle = Keys.M;
     public const Keys LineNumber = Keys.L;
@@ -106,6 +108,7 @@ public static class AxClaudeKeys
         ("Turn summary", TurnSummary),
         ("System line", SystemLine),
         ("Question", Question),
+        ("btw", SideQuestion),
         ("Bookmark", Bookmark),
         ("Bookmark this line (m)", BookmarkToggle),
         ("Line number", LineNumber),
@@ -150,6 +153,8 @@ public static class AxClaudeKeys
             new(SystemLine, "system line", l => l.Kind == LineKind.System),
             // The app's record of each question Claude asked (D33): Claude redraws an answered question as its result.
             new(Question, "question", l => l.Kind == LineKind.Question),
+            // The app's record of each side question asked with /btw: a btw entry, not one of Claude's questions.
+            new(SideQuestion, "btw", l => l.Kind == LineKind.SideQuestion),
             BookmarkKey,
             new(HeadingLevel1, "heading level 1", l => l.HeadingLevel == 1),
             new(HeadingLevel2, "heading level 2", l => l.HeadingLevel == 2),

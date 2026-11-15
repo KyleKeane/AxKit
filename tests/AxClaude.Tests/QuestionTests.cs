@@ -1,4 +1,5 @@
 using AxClaude.Core.Transcript;
+using AxKit.Core.Transcript;
 using static AxClaude.Tests.TestHelpers;
 
 namespace AxClaude.Tests;
@@ -375,6 +376,34 @@ public class QuestionTests
         Feed(model, $"{Esc}[?25l{Esc}[2;1H●  User answered Claude's questions:{Esc}[K\r\n· Which colour? → Green{Esc}[K\r\n{Esc}[K\r\n{Esc}[K\r\n{Esc}[K\r\n${Esc}[K{Esc}[?25h");
         visible = Visible(model);
         Assert.Equal(visible.IndexOf("Question: Colour") + 1, visible.IndexOf("●  User answered Claude's questions:"));
+    }
+
+    [Fact]
+    public void A_side_question_is_recorded_as_btw_not_as_a_question()
+    {
+        // /btw's screen as Claude Code 2.1.310 drew it on 2026-10-24 (claude-screens.md; ScreenActionsTests).
+        var model = new SessionModel(80, 12);
+        Feed(model, $"{Esc}[?25lyou: /btw what is two plus two? answer in one word{Esc}[K\r\n{Esc}[K\r\n/btw what is two plus two? answer in one word{Esc}[K\r\nFour{Esc}[K\r\n↑/↓ to scroll · c to copy · f to fork · Esc to close{Esc}[K{Esc}[?25h");
+        Assert.NotNull(model.PendingScreen);
+        model.MarkQuestion();
+        model.MarkQuestion();
+        var visible = Visible(model);
+        Assert.Single(visible, t => t == "btw: what is two plus two? answer in one word");
+        Assert.DoesNotContain(visible, t => t.StartsWith("Question: ", StringComparison.Ordinal));
+        Assert.Equal(visible.IndexOf("btw: what is two plus two? answer in one word") + 1, visible.IndexOf("/btw what is two plus two? answer in one word"));
+        Assert.Single(model.Lines, l => l.Kind == LineKind.SideQuestion);
+        Assert.DoesNotContain(model.Lines, l => l.Kind == LineKind.Question);
+    }
+
+    [Fact]
+    public void A_second_side_question_is_named_by_its_newest_question()
+    {
+        // A second /btw keeps the first question as the title and draws the newest one first among its lines (2.1.310).
+        var keys = ScreenReader.Keys("⇧←/→ to browse · c to copy · f to fork · x to clear history · Esc to close")!;
+        var second = new ClaudeScreen("/btw what is two plus two? answer in one word", ["/btw what is three plus three? answer in one word", "Six"], keys);
+        Assert.Equal("what is three plus three? answer in one word", ScreenActions.SideQuestion(second));
+        Assert.Equal("what is two plus two? answer in one word", ScreenActions.SideQuestion(new ClaudeScreen("/btw what is two plus two? answer in one word", ["Four"], keys)));
+        Assert.Null(ScreenActions.SideQuestion(new ClaudeScreen("Goal", ["No goal set"], keys)));
     }
 
     [Fact]

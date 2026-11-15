@@ -79,3 +79,22 @@ keys enter
 expect said Closed
 expect focus Message to Claude
 expect state Claude: ready
+# The records in the conversation (SPEC.md FR-5, D33; 2026-11-14): each /btw is a "btw:" line with its question,
+# found with b in order, not with q; /goal stays a "Question:" line.
+keys ctrl+2 ctrl+home
+keys b
+expect said ! btw: what is two plus two? answer in one word
+keys b
+expect said ! btw: what is three plus three? answer in one word
+keys b
+expect said ! No next btw
+# The caret stayed on the second record: Shift+B goes back to the first. Browsing the history added no record.
+keys shift+b
+expect said ! btw: what is two plus two? answer in one word
+# Ctrl+End lands on the last line, the record of /goal; Shift+Q from there passes over both btw records to the trust
+# question at the start.
+keys ctrl+end
+expect said Question: Goal
+keys shift+q
+refuse said Question: /btw
+expect said ! Question: Permission Required

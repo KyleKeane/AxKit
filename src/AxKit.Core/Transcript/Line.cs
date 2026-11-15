@@ -30,6 +30,13 @@ public enum LineKind
     Question,
 
     /// <summary>
+    /// The app's record of a side question asked with Claude Code's <c>/btw</c>, <c>btw: what is two plus two?</c>, in
+    /// front of the side answer's first row and found again with b (axClaude FR-5, D33; the user's ask of 2026-11-14):
+    /// a btw entry of its own, not among Claude's questions.
+    /// </summary>
+    SideQuestion,
+
+    /// <summary>
     /// A row of the record Claude Code prints in an answered question's place (<c>●  User answered Claude's
     /// questions:</c>, then <c>· Which colour? → Green</c> for each question): Claude Code's words, not Claude's reply,
     /// so shown and never spoken as one (axClaude FR-7.4b). A row of the screen, classified by its text like any other.
@@ -93,7 +100,7 @@ public sealed class Line
     /// of a question), plus Claude's one <c>[Screen Reader Mode: …]</c> row, which is classified System as well: not
     /// classified again by text, no stop for the tick, no row to join.
     /// </summary>
-    public bool IsMarker => Kind is LineKind.InputMarker or LineKind.OutputMarker or LineKind.System or LineKind.UserMessage or LineKind.Bookmark or LineKind.Question;
+    public bool IsMarker => Kind is LineKind.InputMarker or LineKind.OutputMarker or LineKind.System or LineKind.UserMessage or LineKind.Bookmark or LineKind.Question or LineKind.SideQuestion;
 
     public bool ChromeHidden { get; set; }
     public string? StickyChromeText { get; set; }

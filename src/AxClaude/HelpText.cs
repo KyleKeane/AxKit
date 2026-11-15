@@ -57,6 +57,7 @@ public static class HelpText
           d and Shift+D: next and previous "done" line at the end of a reply
           s and Shift+S: next and previous system line
           q and Shift+Q: next and previous question Claude asked (its "Question:" line)
+          b and Shift+B: next and previous side question you asked with /btw (its "btw:" line)
           m: bookmark this line (a "Bookmark 1" line appears above it), or take the bookmark away again
           k and Shift+K: next and previous bookmark, read together with the line it marks
           Enter: copy the line into the message field under a marker line and go there, to comment on it

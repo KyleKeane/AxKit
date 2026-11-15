@@ -373,7 +373,10 @@ public sealed partial class SessionModel : LineStore
     /// <summary>
     /// Records the question or screen Claude waits on (D33): the line <c>Question: title</c> in front of its first row,
     /// found again with q. Claude redraws an answered question as a one-line result, so the record is what stays. The
-    /// same question shown again (the next key of a screen) is not recorded twice.
+    /// same question shown again (the next key of a screen) is not recorded twice. /btw's side answer is recorded as
+    /// <c>btw: question</c> instead (<see cref="LineKind.SideQuestion"/>, found with b, not q; the user's ask of
+    /// 2026-11-14), named by the newest question, which stays the first of the screen's lines while its history is
+    /// browsed (the 14-side-answer script), so a browse adds no second record.
     /// </summary>
     public void MarkQuestion()
     {
@@ -385,8 +388,11 @@ public sealed partial class SessionModel : LineStore
             return;
         }
 
+        var side = PendingQuestion is null && PendingScreen is { } shown ? ScreenActions.SideQuestion(shown) : null;
+        var kind = side is null ? LineKind.Question : LineKind.SideQuestion;
         // Without the quote marker Claude draws in front of a set's question ("> What is your favourite colour?").
-        var text = "Question: " + (title.StartsWith(ClaudeCodeTexts.QuoteMark, StringComparison.Ordinal) ? title[ClaudeCodeTexts.QuoteMark.Length..] : title);
+        var text = side is not null ? "btw: " + side
+            : "Question: " + (title.StartsWith(ClaudeCodeTexts.QuoteMark, StringComparison.Ordinal) ? title[ClaudeCodeTexts.QuoteMark.Length..] : title);
         var first = _screen.LineAt(row);
         var index = first is null ? -1 : _lines.LastIndexOf(first);
         index = index >= 0 ? index : AnchorIndex();
@@ -397,12 +403,12 @@ public sealed partial class SessionModel : LineStore
             previous--;
         }
 
-        if (previous >= 0 && _lines[previous] is { Kind: LineKind.Question } before && before.Text == text)
+        if (previous >= 0 && _lines[previous] is { } before && before.Kind == kind && before.Text == text)
         {
             return;
         }
 
-        _lines.Insert(index, NewLine(LineKind.Question, text));
+        _lines.Insert(index, NewLine(kind, text));
         RaiseChanged();
     }
 
