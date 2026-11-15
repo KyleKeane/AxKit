@@ -622,7 +622,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (`AxKitForm.KeyTest.cs`), and its words are pure code (`AxKit.Core/KeyTest`, `KeyTestSession`, tested in
   `KeyTestTests`).
   - **Starting** says, as one interrupting announcement of the window (AX-7.3): "Key test. Press any key to hear its
-    name and what it does here. Press Escape twice to end."
+    name and what it does here. Press Escape to end."
   - **While it runs, every key press that reaches the window is said and not carried out**: no command runs, no
     character is typed, no selection or caret moves, Alt and F10 open no menu, Alt+F4 closes nothing. Each press is
     one interrupting announcement, once per press (a held key's repeats say nothing): the key as the bundle spells
@@ -661,10 +661,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     window", "Windows key alone: opens the Start menu, Windows' own key"; in a combination only the combination is
     said. A character that arrives with no key press (a program that sends text) is said as "z: a character sent
     without a key press; it types the character" and is not typed.
-  - **It ends** on Escape pressed twice in a row. The first Escape says its own line and how to end: "Escape: no
-    command of this window. Press Escape again to end the key test" ("Escape: Hide. Press …" in axStart); any other
-    key, or a modifier, in between makes the next Escape a first one again; Shift+Escape is a key of its own. It also
-    ends when the window is no longer in front or is hidden, since its keys go elsewhere then, when a notice arrives
+  - **It ends** on Escape, at once, with nothing held (the user's decision of 2026-11-15, after trying it: "just
+    leave plain Escape as the close of the key test"). Escape itself is therefore never named by the test, nor carried
+    out: in axStart, where Escape is Hide, it ends the test and hides nothing. Shift+Escape, Ctrl+Escape and
+    Alt+Escape are keys of their own, said like any other. It also ends when the window is no longer in front or is hidden, since its keys go elsewhere then, when a notice arrives
     (the notice's keys must answer it), and when the window closes. Every end says "Key test ended", at once, but
     the closing window's. Nothing was changed meanwhile: the focus, the caret, the selection and the text are as
     they were, and the same keys act again.

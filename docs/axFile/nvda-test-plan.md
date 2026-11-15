@@ -75,10 +75,10 @@ Run with NVDA before a release, on a folder with a few subfolders, text files an
    name, Enter: it opens in its program, as Enter in the list. Ctrl+Shift+P, `refresh`: "Refresh, Folder, F5, 1 of 1"
    before the entries; Enter refreshes. From the Actions list, Ctrl+Shift+P, Escape: back on the same Actions line.
 7. The key test (bundle AX-8.12; script `09-key-test`). In the folder list: Alt+H, D, T (Help, Diagnostics, Test a key):
-   "Key test. Press any key to hear its name and what it does here. Press Escape twice to end." F5: "F5: Refresh";
+   "Key test. Press any key to hear its name and what it does here. Press Escape to end." F5: "F5: Refresh";
    Delete: "Delete: Delete", and nothing is deleted; Enter: "Enter: Open", and nothing opens; Down: "Down: moves in
    the list", and the selection stays; a letter: "B: finds the next item that starts with what you type"; Alt alone:
-   "Alt alone: opens the menu bar", the bar closed. Escape, Escape: "Key test ended"; Down moves again.
+   "Alt alone: opens the menu bar", the bar closed. Escape: "Key test ended" at once, Escape itself not named; Down moves again.
 
 ## 6. The Actions list (AF-9)
 

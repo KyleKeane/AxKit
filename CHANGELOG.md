@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- axKit: Escape now ends the key test at once (Help, Diagnostics, Test a key), with "Key test ended". It needed Escape twice before; Escape is no longer named by the test, and in axStart it ends the test without hiding the window.
+
 ## 5.9.1
 
 - axClaude: the soft chords while background work runs are now heard. In 5.9.0 they waited while a reply was being read, and Claude speaks most of the time work runs, so between the bells going up and down none played. They now play on their own schedule, softly under speech.

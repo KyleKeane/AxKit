@@ -122,13 +122,13 @@ letter), and a `long.md` with headings and lines longer than the window.
    Ctrl+Shift+P, `save as`, Enter: the Save as picker opens. Alt+H, P (Help, Command palette, the menu's first item) opens it too. Recent files and the
    Window menu's lists are not in it; Alt+W, New window, axDown is ("axDown, Window, New window").
 7. The key test (bundle AX-8.12; script `15-key-test`), with the caret in the middle of a line. Alt+H, D, T (Help,
-   Diagnostics, Test a key): "Key test. Press any key to hear its name and what it does here. Press Escape twice to
-   end." F8: "F8: Say the status" and no status; F4: "F4: Send a report" and no form; Ctrl+G: "Ctrl+G: Go to line";
+   Diagnostics, Test a key): "Key test. Press any key to hear its name and what it does here. Press Escape to end."
+   F8: "F8: Say the status" and no status; F4: "F4: Send a report" and no form; Ctrl+G: "Ctrl+G: Go to line";
    Ctrl+H: "Ctrl+H: Next, Heading"; a letter: "A: types the letter" and the text unchanged; Down: "Down: moves in the
    text" and the caret where it was; Enter: "Enter: makes a new line" and no line; F9: "F9: no command of this
    window"; Alt alone: "Alt alone: opens the menu bar", the bar closed; Ctrl alone: "Ctrl alone: no command of this
-   window"; Alt+F4: "Alt+F4: Exit", the window still there. Escape: its line, then "Press Escape again to end the key
-   test"; Escape again: "Key test ended". The title has no star, the caret is where it was, and the same keys act
+   window"; Alt+F4: "Alt+F4: Exit", the window still there. Escape: "Key test ended" at once, Escape itself not
+   named. The title has no star, the caret is where it was, and the same keys act
    again. Started again and left with Alt+Tab: "Key test ended" as the window is left. A key that is never said did
    not reach axKit: NVDA+1, NVDA's input help, says whether NVDA saw it.
 

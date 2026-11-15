@@ -61,12 +61,12 @@ axKit was called Axit up to 4.0.0. If you have Axit installed, close its windows
 
 ## If a key does nothing
 
-In any axKit window: Help, Diagnostics, Test a key (Alt+H, D, T), or Ctrl+Shift+P and `test a key`. It says "Key test. Press any key to hear its name and what it does here. Press Escape twice to end."
+In any axKit window: Help, Diagnostics, Test a key (Alt+H, D, T), or Ctrl+Shift+P and `test a key`. It says "Key test. Press any key to hear its name and what it does here. Press Escape to end."
 
 - Now press the key. axKit says its name and what it does in this window, where you are: "F8: Say the status", "Ctrl+B: What runs in the background", "A: types the letter", "Down: moves in the list", or "F9: no command of this window". Nothing is carried out while the test runs: no command runs, nothing is typed, the menu does not open, and Alt+F4 does not close the window. A key such as Alt or Ctrl, pressed and released alone, is named too.
 - A key that is not said did not reach axKit. The keyboard changed it (a function key that needs or must not have the Fn key), or Windows, NVDA or another program took it first. NVDA's own input help, NVDA+1, says each key NVDA sees: a key that NVDA names and axKit does not was taken between the two; a key that NVDA does not name either never left the keyboard as that key. NVDA+1 again turns input help off.
 - A key that is said with a command you did not expect is the window's own answer: the same key can do something else in another place of the window, so test it where you would press it, the text field or the list.
-- Escape twice in a row ends the test, "Key test ended". It also ends when you go to another window. The keys act again, and nothing in the window has changed.
+- Escape ends the test at once, "Key test ended"; Escape is the one key the test does not name. It also ends when you go to another window. The keys act again, and nothing in the window has changed.
 
 Help, Diagnostics also holds Copy diagnostics, which puts the version, the paths and the last log lines on the clipboard for a bug report, with your account's name and paths replaced.
 

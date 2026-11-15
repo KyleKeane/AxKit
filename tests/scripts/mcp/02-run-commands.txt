@@ -90,7 +90,7 @@ keys escape
 expect focus notes.md
 
 # Bundle AX-8.12: while the window's key test runs nothing is carried out, an AI tool's command no more than a key's;
-# the window is read as ever. After Escape twice the command runs again.
+# the window is read as ever. After Escape the command runs again.
 menu Test a key
 expect said ! Key test. Press any key
 wait 3500
@@ -99,7 +99,7 @@ expect mcp error: The window is in its key test
 refuse said ran Word wrap
 mcp call axkit_window_state {"window":"{window}"}
 expect mcp notes.md
-keys escape escape
+keys escape
 expect said ! Key test ended
 wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}

@@ -45,7 +45,7 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
-    /// Ends the test: Escape twice, the window no longer in front or hidden, a notice arriving, the window closing.
+    /// Ends the test: Escape, the window no longer in front or hidden, a notice arriving, the window closing.
     /// The keys are the window's again, and "Key test ended" is said at once unless the window is going.
     /// </summary>
     private void EndKeyTest(bool say = true)
@@ -92,7 +92,7 @@ public abstract partial class AxKitForm
         base.OnFormClosed(e);
     }
 
-    /// <summary>A key went down while the test runs, once per press: its line said, or the test ended on the second Escape.</summary>
+    /// <summary>A key went down while the test runs, once per press: its line said, or the test ended on Escape.</summary>
     private void KeyTestDown(Keys key)
     {
         if (_keyTest is not { } test)

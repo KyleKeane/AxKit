@@ -248,7 +248,7 @@ same day, after the breath was heard in the app and rejected; this is the chords
 Script: `tests/scripts/axClaude/23-key-test.txt` (a stand-in for Claude Code, no network).
 
 1. In the message field, with a few words typed: Alt+H, D, T (Help, Diagnostics, Test a key). NVDA says "Key test.
-   Press any key to hear its name and what it does here. Press Escape twice to end." and nothing else changes.
+   Press any key to hear its name and what it does here. Press Escape to end." and nothing else changes.
 2. F8: "F8: Say the status", and the status is not said. F4: "F4: Send a report", and no form opens. Ctrl+B: "Ctrl+B:
    What runs in the background". Shift+Escape: "Shift+Escape: Interrupt", and Claude is not interrupted. A letter:
    "A: types the letter", and the field is unchanged. Enter: "Enter: sends what the field holds", and nothing is sent.
@@ -259,8 +259,7 @@ Script: `tests/scripts/axClaude/23-key-test.txt` (a stand-in for Claude Code, no
 4. A key that Windows or another program takes (the user's case: a function key that was the snipping tool; the
    Windows key with a letter) is not said: that is the answer the test gives. NVDA+1, NVDA's own input help, says
    whether NVDA saw it.
-5. Escape: "Escape: no command of this window. Press Escape again to end the key test". Any other key, then Escape:
-   the same line again. Escape twice in a row: "Key test ended"; the field holds what it held, the caret where it was.
+5. Escape: "Key test ended" at once, Escape itself not named; the field holds what it held, the caret where it was.
    F8 says the status again.
 6. Ctrl+2, then the key test again from the menu: h: "H: moves to the next heading"; Shift+H: the previous;
    Ctrl+Alt+H: "reads every heading from the caret's line to the end"; l: "L: says the line number"; the caret does

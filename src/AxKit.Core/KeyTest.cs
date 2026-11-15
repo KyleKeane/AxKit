@@ -47,13 +47,10 @@ public sealed record KeyTestCommand(string Key, string Label, bool Applies = tru
 public static class KeyTest
 {
     /// <summary>Said as the test starts.</summary>
-    public const string Started = "Key test. Press any key to hear its name and what it does here. Press Escape twice to end.";
+    public const string Started = "Key test. Press any key to hear its name and what it does here. Press Escape to end.";
 
     /// <summary>Said as the test ends, however it ends.</summary>
     public const string Ended = "Key test ended";
-
-    /// <summary>Said after the first Escape's own line.</summary>
-    public const string EscapeAgain = "Press Escape again to end the key test";
 
     /// <summary>What a key does that neither a command nor the focused control is known to take.</summary>
     public const string NoCommand = "no command of this window";
@@ -207,41 +204,32 @@ public static class KeyTest
 
 /// <summary>
 /// One run of the key test (AX-8.12): what is said for each key that goes down or comes up, and when the test ends.
-/// It holds the two things a single press does not show: that the key before was Escape, and that a modifier went
-/// down with no other key since. The window hands it each press once, never a repeat of a held key.
+/// It holds the one thing a single press does not show: that a modifier went down with no other key since. The
+/// window hands it each press once, never a repeat of a held key.
 /// </summary>
 public sealed class KeyTestSession
 {
-    private bool _escapeBefore;
     private string? _modifiersAlone;
 
     /// <summary>
     /// A key went down. A modifier says nothing yet (<paramref name="modifiers"/> names the ones held now, "Ctrl+Shift");
-    /// any other key says its line, <paramref name="line"/>; Escape says its line and how to end, and a second Escape
-    /// right after it ends the test.
+    /// Escape with nothing held ends the test at once, so the test never names Escape itself (the user's decision,
+    /// 2026-11-15); any other key says its line, <paramref name="line"/>.
     /// </summary>
     public (string? Said, bool Ends) Down(KeyTestPress press, string modifiers, Func<string> line)
     {
         if (KeyTest.IsModifier(press.Code))
         {
             _modifiersAlone = modifiers;
-            _escapeBefore = false;
             return (null, false);
         }
 
         _modifiersAlone = null;
         if (KeyTest.IsEscape(press))
         {
-            if (_escapeBefore)
-            {
-                return (KeyTest.Ended, true);
-            }
-
-            _escapeBefore = true;
-            return ($"{line()}. {KeyTest.EscapeAgain}", false);
+            return (KeyTest.Ended, true);
         }
 
-        _escapeBefore = false;
         return (line(), false);
     }
 

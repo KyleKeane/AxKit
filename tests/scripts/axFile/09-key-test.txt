@@ -1,6 +1,6 @@
 # Workflow: Find out whether a key arrives and what it does, in a list
 # axFile: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axFile/nvda-test-plan.md, section 5). Every key
-# is said with what it does where the focus is, the folder list here, and none is carried out; Escape twice ends it.
+# is said with what it does where the focus is, the folder list here, and none is carried out; Escape ends it.
 mkdir orchard\inner
 file orchard\apple.txt The apple file.
 file orchard\berry.txt The berry file.
@@ -12,7 +12,7 @@ wait 500
 expect commands "Test a key, Help, Diagnostics"
 expect focus "value":"inner
 menu Test a key
-expect said ! Key test. Press any key to hear its name and what it does here. Press Escape twice to end.
+expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
 # Bundle keys.
 keys f8
@@ -47,10 +47,10 @@ expect state "title":"orchard - axFile"
 expect focus "value":"inner
 expect list "count":3
 
-keys escape
-expect said Press Escape again to end the key test
+# Escape ends the test at once.
 keys escape
 expect said ! Key test ended
+expect focus "value":"inner
 
 # The same keys act again.
 keys down

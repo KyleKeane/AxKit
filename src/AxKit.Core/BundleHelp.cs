@@ -22,7 +22,7 @@ public static class BundleHelp
     public const string MainActionLine = "  Ctrl+Enter: the main action of where you are: it sends a form from any of its fields, keeps a long text from inside its box, presses a notice's main button, and does a window's main action where it has one; anywhere else, the edge sound and nothing more";
 
     /// <summary>The key test's line, the same in every F1 text (AX-8.12, 2026-11-15).</summary>
-    public const string KeyTestLine = "  A key that seems to do nothing: Help, Diagnostics, Test a key says each key you press and what it does here, and carries none of them out; Escape twice ends it. A key that is not said never reached axKit";
+    public const string KeyTestLine = "  A key that seems to do nothing: Help, Diagnostics, Test a key says each key you press and what it does here, and carries none of them out; Escape ends it. A key that is not said never reached axKit";
 
     /// <summary>F8's line, the same in every F1 text (AX-7.10, 2026-11-15).</summary>
     public const string StatusLine = "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";

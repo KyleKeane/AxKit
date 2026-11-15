@@ -2,7 +2,7 @@
 # axClaude: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axClaude/nvda-test-plan.md section 23). The
 # user's own case of 2026-11-15: a function key that never reached the window. Every key is said with what it does
 # where the focus is, the message field and then the conversation, and none is carried out: nothing typed, nothing
-# sent to Claude, no notice; Escape twice ends it. Needs no Claude Code, no network and no model: a stand-in batch
+# sent to Claude, no notice; Escape ends it. Needs no Claude Code, no network and no model: a stand-in batch
 # file draws one screen and waits, as in 22-background-work.
 file home\AxKit\axClaude.json {"checkForUpdates":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
@@ -16,7 +16,7 @@ keys ctrl+1
 expect focus Message
 type hello
 menu Test a key
-expect said ! Key test. Press any key to hear its name and what it does here. Press Escape twice to end.
+expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
 # Bundle keys and window keys, by their commands' names.
 keys f8
@@ -39,8 +39,7 @@ expect said ! F9: no command of this window
 expect state "notice":null
 expect focus "value":"hello"
 
-keys escape
-expect said Press Escape again to end the key test
+# Escape ends the test at once, the field as it was.
 keys escape
 expect said ! Key test ended
 expect focus "value":"hello"
@@ -64,7 +63,7 @@ keys l
 expect said ! L: says the line number
 keys y
 expect said ! Y: no command of this window
-keys escape escape
+keys escape
 expect said ! Key test ended
 keys l
 expect said ! Line

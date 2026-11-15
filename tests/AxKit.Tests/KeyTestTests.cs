@@ -4,7 +4,7 @@ namespace AxKit.Tests;
 
 /// <summary>
 /// The key test's words (docs/axKit/SPEC.md AX-8.12): what one key does in a window, from the window's commands and
-/// the bundle's keys, and the run of a test: Escape twice, a modifier alone.
+/// the bundle's keys, and the run of a test: Escape ending it, a modifier alone.
 /// </summary>
 public sealed class KeyTestTests
 {
@@ -163,28 +163,26 @@ public sealed class KeyTestTests
     }
 
     [Fact]
-    public void Escape_once_says_how_to_end_and_Escape_twice_in_a_row_ends()
+    public void Escape_ends_at_once_and_is_never_named()
     {
-        var test = new KeyTestSession();
         var escape = Press("Escape", 0x1B);
-        Assert.Equal(("Escape: Cancel. Press Escape again to end the key test", false), test.Down(escape, string.Empty, () => "Escape: Cancel"));
-        // Another key in between: the next Escape is a first one again.
+        Assert.Equal((KeyTest.Ended, true), new KeyTestSession().Down(escape, string.Empty, () => "never"));
+
+        var test = new KeyTestSession();
         Assert.Equal(("A: types the letter", false), test.Down(Press("A", 'A'), string.Empty, () => "A: types the letter"));
-        Assert.Equal(("Escape: Cancel. Press Escape again to end the key test", false), test.Down(escape, string.Empty, () => "Escape: Cancel"));
-        // A modifier in between too.
+        // Shift+Escape, Ctrl+Escape and Alt+Escape are keys of their own, said and not ending the test.
+        Assert.Equal(("Shift+Escape: Interrupt", false), test.Down(Press("Shift+Escape", 0x1B, shift: true), "Shift", () => "Shift+Escape: Interrupt"));
+        Assert.Equal(("Ctrl+Escape: no command of this window", false), test.Down(Press("Ctrl+Escape", 0x1B, ctrl: true), "Ctrl", () => "Ctrl+Escape: no command of this window"));
+        // A modifier held before Escape and released: Escape alone still ends it.
         test.Down(Press("Shift", 0x10, shift: true), "Shift", () => "never");
         test.Up(0x10);
-        Assert.Equal(("Escape: Cancel. Press Escape again to end the key test", false), test.Down(escape, string.Empty, () => "Escape: Cancel"));
-        // Shift+Escape is a key of its own, not an Escape.
-        Assert.Equal(("Shift+Escape: Interrupt", false), test.Down(Press("Shift+Escape", 0x1B, shift: true), "Shift", () => "Shift+Escape: Interrupt"));
-        Assert.Equal(("Escape: Cancel. Press Escape again to end the key test", false), test.Down(escape, string.Empty, () => "Escape: Cancel"));
         Assert.Equal((KeyTest.Ended, true), test.Down(escape, string.Empty, () => "never"));
     }
 
     [Fact]
     public void The_texts_are_the_specifications()
     {
-        Assert.Equal("Key test. Press any key to hear its name and what it does here. Press Escape twice to end.", KeyTest.Started);
+        Assert.Equal("Key test. Press any key to hear its name and what it does here. Press Escape to end.", KeyTest.Started);
         Assert.Equal("Key test ended", KeyTest.Ended);
     }
 }

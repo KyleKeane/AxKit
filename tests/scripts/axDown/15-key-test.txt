@@ -1,6 +1,6 @@
 # Workflow: Find out whether a key arrives and what it does
 # axDown: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axDown/nvda-test-plan.md, section 6). While the
-# test runs every key is said with what it does here and none is carried out; Escape twice ends it.
+# test runs every key is said with what it does here and none is carried out; Escape ends it.
 file home\AxKit\axDown.json {"checkForUpdates": false}
 file a.md # A file for the key test\n\nSome text here.\nMore text.
 
@@ -15,7 +15,7 @@ refuse commands Copy diagnostics, Options
 keys down down right
 expect state Line 3, Column 2 ·
 menu Test a key
-expect said ! Key test. Press any key to hear its name and what it does here. Press Escape twice to end.
+expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
 # Bundle keys: said by their command's name, and not carried out (no status said, no notice opened).
 keys f8
@@ -59,15 +59,10 @@ expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 ·
 refuse state a.md*
 
-# Escape once says how to end; another key in between and it is a first Escape again; twice in a row ends.
-keys escape
-expect said Press Escape again to end the key test
-keys a
-expect said ! A: types the letter
-keys escape
-expect said Press Escape again to end the key test
+# Escape ends the test at once; Escape itself is never named by the test.
 keys escape
 expect said ! Key test ended
+refuse said Escape:
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 
 # The same keys act again.

@@ -1,6 +1,6 @@
 # Workflow: Find out whether a key arrives and what it does, in an item window
 # axTask: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12). Every key is said with what it does where the
-# focus is, the navigator here, and none is carried out; Escape twice ends it. Ctrl+Up and Ctrl+Down are the item
+# focus is, the navigator here, and none is carried out; Escape ends it. Ctrl+Up and Ctrl+Down are the item
 # windows' section keys in the navigator, in the bundle's paragraph keys' place (docs/axKit/item-apps.md IA-2.3a).
 file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
@@ -14,7 +14,7 @@ keys right
 expect said ! Shopping, 2 items, Milk
 expect commands "Test a key, Help, Diagnostics"
 menu Test a key
-expect said ! Key test. Press any key to hear its name and what it does here. Press Escape twice to end.
+expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
 keys f8
 expect said ! F8: Say the status
@@ -37,10 +37,10 @@ expect state "notice":null
 expect state Shopping - axTask
 expect focus "value":"Milk"
 
-keys escape
-expect said Press Escape again to end the key test
+# Escape ends the test at once, and leaves the list as it was.
 keys escape
 expect said ! Key test ended
+expect state Shopping - axTask
 
 # The same keys act again.
 keys w
