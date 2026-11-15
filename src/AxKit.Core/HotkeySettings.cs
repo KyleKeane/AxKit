@@ -30,13 +30,28 @@ public abstract class HotkeySettings : WindowSettings
     /// <summary>The app's own default hotkey, which <see cref="Key"/> falls back to.</summary>
     protected abstract Hotkey DefaultHotkey { get; }
 
+    /// <summary>
+    /// A default of an earlier version that no longer is one (axHelp's Windows+Alt+H, retired 2026-11-14, bundle
+    /// AX-8.11), null for none: a file that still holds it is taken over to <see cref="DefaultHotkey"/> on loading.
+    /// </summary>
+    protected virtual Hotkey? RetiredDefault => null;
+
+    /// <summary>
+    /// A hotkey's text taken over from a retired default (AX-8.11): the text of <paramref name="now"/> when
+    /// <paramref name="text"/> reads as <paramref name="retired"/>, in any order and case of its parts; any other
+    /// text, a key the user chose among them, comes back as it is.
+    /// </summary>
+    public static string? TakenOver(string? text, Hotkey? retired, Hotkey now) =>
+        retired is not null && Hotkey.Parse(text) == retired ? now.ToString() : text;
+
     /// <summary>The hotkey of the settings, or the default when the text is not a usable one.</summary>
     public Hotkey Key => Hotkey.Parse(HotkeyText) is { } key && key.Refusal() is null ? key : DefaultHotkey;
 
-    /// <summary>After loading: the window's settings sanitised, and the hotkey's text as the key it reads as.</summary>
+    /// <summary>After loading: the window's settings sanitised, a retired default taken over, and the hotkey's text as the key it reads as.</summary>
     protected void SanitizeHotkey()
     {
         SanitizeWindow();
+        HotkeyText = TakenOver(HotkeyText, RetiredDefault, DefaultHotkey) ?? string.Empty;
         HotkeyText = Key.ToString();
     }
 }

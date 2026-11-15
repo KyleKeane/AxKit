@@ -49,16 +49,21 @@ expect focus first.wav (playing)
 keys space
 expect said ! Playing
 
-# Step 3: the speed in steps of 0.25, Normal speed back to 1 (Ctrl+Shift+Period and Ctrl+Shift+Comma through the
-# menu commands, which run the same code, since the channel has no key name for the period and the comma). That
-# the voice is faster at the same pitch is for the ear.
-menu Faster
+# Step 3: the speed in steps of 0.25 with Ctrl+Up and Ctrl+Down (AM-D8, 2026-11-14; Ctrl+Shift+Period and
+# Ctrl+Shift+Comma until then), the selection left where it is, and once through the menu commands, which run the
+# same code; Normal speed back to 1. That the voice is faster at the same pitch is for the ear.
+keys ctrl+up
 expect said ! Speed 1.25
-menu Faster
+keys ctrl+up
 expect said ! Speed 1.5
 menu Faster
 expect said ! Speed 1.75
+keys ctrl+down
+expect said ! Speed 1.5
+expect focus first.wav (playing)
 menu Slower
+expect said ! Speed 1.25
+keys ctrl+up
 expect said ! Speed 1.5
 menu Normal speed
 expect said ! Speed 1

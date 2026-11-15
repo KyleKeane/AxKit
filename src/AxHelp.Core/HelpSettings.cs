@@ -16,11 +16,17 @@ public sealed class HelpSettings : HotkeySettings
     /// <summary>How many screenshots the working folder keeps (HE-3.2); the oldest beyond them is deleted as a new one is taken.</summary>
     public const int ScreenshotsKept = 20;
 
-    /// <summary>Windows+Alt+H (HE-4.1): the conversation.</summary>
-    protected override Hotkey DefaultHotkey => new(Hotkey.Windows | Hotkey.Alt, 'H');
+    /// <summary>Ctrl+Shift+Slash, the question mark's key (HE-4.1, bundle AX-8.11): the conversation.</summary>
+    protected override Hotkey DefaultHotkey => new(Hotkey.Control | Hotkey.Shift, 0xBF);
 
-    /// <summary>Windows+Alt+S (HE-4.1): the screenshot into the conversation (axDescribe's key until 5.7.0).</summary>
-    public static Hotkey DefaultScreenshotHotkey => new(Hotkey.Windows | Hotkey.Alt, 'S');
+    /// <summary>Windows+Alt+H, the conversation's default until 2026-11-14 (HE-D5): a file that holds it is taken over to the new one.</summary>
+    protected override Hotkey? RetiredDefault => new(Hotkey.Windows | Hotkey.Alt, 'H');
+
+    /// <summary>Ctrl+Shift+Comma, the less-than sign's key (HE-4.1, bundle AX-8.11): the screenshot into the conversation.</summary>
+    public static Hotkey DefaultScreenshotHotkey => new(Hotkey.Control | Hotkey.Shift, 0xBC);
+
+    /// <summary>Windows+Alt+S, the screenshot's default until 2026-11-14 (HE-D5), taken over as the conversation's is.</summary>
+    public static Hotkey RetiredScreenshotHotkey => new(Hotkey.Windows | Hotkey.Alt, 'S');
 
     /// <summary>The screenshot's hotkey as text, the file's <c>screenshotHotkey</c>; <see cref="ScreenshotKey"/> reads it.</summary>
     [JsonPropertyName("screenshotHotkey")]
@@ -53,6 +59,7 @@ public sealed class HelpSettings : HotkeySettings
     {
         var settings = SettingsFile.Load<HelpSettings>(path, out error);
         settings.SanitizeHotkey();
+        settings.ScreenshotHotkeyText = TakenOver(settings.ScreenshotHotkeyText, RetiredScreenshotHotkey, DefaultScreenshotHotkey) ?? string.Empty;
         settings.ScreenshotHotkeyText = settings.ScreenshotKey.ToString();
         settings.Model = string.IsNullOrWhiteSpace(settings.Model) ? FastModel : settings.Model.Trim();
         return settings;

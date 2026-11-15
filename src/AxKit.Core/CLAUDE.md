@@ -61,6 +61,7 @@ another project on its second use, the bullet says so.
 - `HotkeySettings` (2026-11-09): on `WindowSettings`, the base of axStart's and axClip's classes: the hotkey as text
   (`HotkeyText`, read as `Key`, the app's `DefaultHotkey` when the text is not a usable one), Start with Windows and
   Say the first match while typing, with `SanitizeHotkey`; the JSON names are the ones the two files had.
+  `RetiredDefault` with `TakenOver` (AX-8.11): a file's retired default becomes the new one on loading.
   `AxKit.Forms/HotkeyForm` reads it without knowing the app.
 - `Log`: one file per app; each app calls `Log.UseApp` first thing in its `Run`.
 - `Updates/UpdateCheck` (the latest GitHub release: JSON parsing, version comparison; the repository name lives here)
@@ -168,7 +169,7 @@ another project on its second use, the bullet says so.
   since axProcess has a `StartupEntry` of its own, an entry of the startup list.
 - `Hotkey` (docs/axStart/SPEC.md AS-4; from AxStart.Core, axClip, 2026-10-23): a system-wide key as `RegisterHotKey`
   takes it, its text both ways ("Ctrl+Shift+Space", any order and case on reading), `Refusal` (Ctrl, Alt or the
-  Windows key, and a key of `Names`), axStart's `Default`; each app names its own default.
+  Windows key, and a key of `Names`, Slash and Comma among them, never Period, AX-8.11), axStart's `Default`; each app names its own default.
 
 ## Text and the editors
 

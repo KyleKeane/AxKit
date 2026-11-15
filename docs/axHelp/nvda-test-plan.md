@@ -14,21 +14,21 @@ need a real reply and a real screen and are the user's by ear.
 
 ## 2. The conversation (HE-2.1, HE-2.3, HE-2.4)
 
-1. In Notepad, press Windows+Alt+H: "axHelp window", then "Message to Claude, edit". The first time, axClaude's reminder
+1. In Notepad, press Ctrl+Shift+Slash: "axHelp window", then "Message to Claude, edit". The first time, axClaude's reminder
    and Claude Code's trust question come first; answer them. `Documents\axKit Claude` now has CLAUDE.md and
    `.claude\agents\agent.md`.
 2. Type "what is the capital of France", Enter: the reply, spoken by axClaude's Speak replies setting (real). Ctrl+3:
    the reply. The status bar names the folder.
-3. Alt+Tab to Notepad, Windows+Alt+H: the same window, the reply still there; no second window starts (Window menu,
+3. Alt+Tab to Notepad, Ctrl+Shift+Slash: the same window, the reply still there; no second window starts (Window menu,
    Open windows lists one "axHelp").
 4. In the conversation, "/model": the model is Haiku (real). Options, Conversation model in axHelp's window, Balanced:
-   "sonnet, from the conversation's next start". Close the conversation (Alt+F4), Windows+Alt+H: the conversation
+   "sonnet, from the conversation's next start". Close the conversation (Alt+F4), Ctrl+Shift+Slash: the conversation
    continues on Sonnet (real). Set Fast again.
 5. "Make a folder named Test on my desktop": Claude hands it to its agent or asks before creating it (real); answer.
 
 ## 3. Screenshots and pictures (HE-3)
 
-1. In Notepad with a line typed, Windows+Alt+S: the conversation comes up, its field holding "Screenshot of "Untitled -
+1. In Notepad with a line typed, Ctrl+Shift+Comma: the conversation comes up, its field holding "Screenshot of "Untitled -
    Notepad": <path> " with the caret at the end; Ctrl+V in Notepad later pastes the same path.
 2. Type "what does it say?", Enter: the reply reads the line (real).
 3. In axHelp's window, Ctrl+D: the Windows file picker, "Choose a picture to put into the conversation"; type the path of
@@ -43,6 +43,16 @@ need a real reply and a real screen and are the user's by ear.
 
 1. Session, Quit axHelp: the process ends (Task Manager has no `AxKit.exe help`); the conversation window stays open, an
    axClaude window of its own.
+
+## 5. The keys taken over (HE-4.2, 2026-11-14)
+
+1. With axHelp ended, set `"hotkey": "Windows+Alt+H"` and `"screenshotHotkey": "Windows+Alt+S"` in
+   `%APPDATA%\AxKit\axHelp.json`, as 5.8.0 left them. Start axHelp: its text names Ctrl+Shift+Slash and
+   Ctrl+Shift+Comma; Windows+Alt+H does nothing; Ctrl+Shift+Slash, the question mark's key, brings the conversation up.
+2. Options, Hotkey, press Ctrl+Alt+J, Enter: "Hotkey Ctrl+Alt+J". Quit axHelp and start it again: Ctrl+Alt+J still
+   brings the conversation up, and Ctrl+Shift+Slash does not. Set it back: Options, Hotkey, Ctrl+Shift+Slash, Enter.
+3. In an axKit window (axDown, axMedia) with axHelp running, Ctrl+Shift+Period: nothing of axKit's happens.
+4. In Word with axHelp running: Ctrl+Shift+Comma takes the screenshot, not the smaller font (expected, HE-D5).
 
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
 

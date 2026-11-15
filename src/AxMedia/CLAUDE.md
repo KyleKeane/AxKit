@@ -31,7 +31,7 @@ dotnet test tests/AxMedia.Tests/AxMedia.Tests.csproj
     - the events (`OnStarted`, `OnEnded`, `OnFailed`, `MoveOn`, `StopPlayback`);
     - the transport keys, the speed, Go to time, Ctrl+Q, the clock;
     - `UpdateTitle`, `UpdateStatusBar`, `FitVideo`.
-- `AxMediaKeys`: the window's keys (SPEC.md AM-5.2; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys.
+- `AxMediaKeys`: the window's keys (SPEC.md AM-5.2; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys. Faster and Slower are Ctrl+Up and Ctrl+Down since 2026-11-14 (AM-D8), the bundle's paragraph keys taken on purpose (`KeyTests`' `Overrides`); Ctrl+Shift+Period and Ctrl+Shift+Comma are system-wide keys now (bundle AX-8.11) and no window's.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules

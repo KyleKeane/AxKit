@@ -49,6 +49,9 @@ public sealed class KeyTests
         ("axMCP", Keys.Control | Keys.Down),
         ("axAutomate", Keys.Control | Keys.Up),
         ("axAutomate", Keys.Control | Keys.Down),
+        // axMedia: faster and slower (docs/axMedia/SPEC.md AM-D8, the user's choice of 2026-11-14); a list, no text.
+        ("axMedia", Keys.Control | Keys.Up),
+        ("axMedia", Keys.Control | Keys.Down),
     ];
 
     [Fact]
@@ -99,6 +102,58 @@ public sealed class KeyTests
         Assert.Contains(BundleKeys.All, key => key.Key == BundleKeys.MainAction);
         var own = Windows.Where(window => window.Value.Any(key => key.Key == BundleKeys.MainAction)).Select(window => window.Key).ToList();
         Assert.True(own.Count == 0, "Ctrl+Enter is the bundle's main action (AX-8.10), not a window's own key: " + string.Join(", ", own));
+    }
+
+    /// <summary>
+    /// AX-8.11: a system-wide key, a background app's hotkey as it is at first or the one kept for a later help
+    /// launcher, is in no table: Windows takes it from every program, so a window's command on it would never run.
+    /// </summary>
+    [Fact]
+    public void No_table_holds_a_system_wide_key()
+    {
+        var tables = new Dictionary<string, IReadOnlyList<(string Name, Keys Key)>>(Windows) { ["Bundle"] = BundleKeys.All };
+        var taken = new List<string>();
+        foreach (var (table, keys) in tables)
+        {
+            foreach (var (name, key) in keys)
+            {
+                var systemWide = BundleKeys.SystemWide.FirstOrDefault(k => k.Key == key);
+                if (systemWide.Name is not null)
+                {
+                    taken.Add($"{table}: {name} is {BundleKeys.Text(key)}, system-wide: {systemWide.Name}.");
+                }
+            }
+        }
+
+        Assert.Empty(taken);
+    }
+
+    /// <summary>
+    /// AX-8.11: the list the test above reads holds the hotkeys the background apps really start with (a default
+    /// changed in its settings class must change here), Ctrl+Shift+Period, kept and registered by nothing, and no
+    /// Windows+Alt key of axHelp's, retired on 2026-11-14.
+    /// </summary>
+    [Fact]
+    public void The_system_wide_keys_are_the_background_apps_defaults_and_the_reserved_one()
+    {
+        // New settings, as an app has them without a file.
+        var start = new AxStart.Core.StartSettings().Key;
+        var help = new AxHelp.Core.HelpSettings();
+        Keys[] expected =
+        [
+            AsKeys(start),
+            AsKeys(help.Key),
+            AsKeys(help.ScreenshotKey),
+            Keys.Control | Keys.Shift | Keys.OemPeriod,
+        ];
+        Assert.Equal(expected, BundleKeys.SystemWide.Select(k => k.Key));
+        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Comma"], new[] { start, help.Key, help.ScreenshotKey }.Select(key => key.ToString()));
+
+        static Keys AsKeys(AxKit.Core.Hotkey hotkey) =>
+            (Keys)hotkey.Key
+            | ((hotkey.Modifiers & AxKit.Core.Hotkey.Control) != 0 ? Keys.Control : Keys.None)
+            | ((hotkey.Modifiers & AxKit.Core.Hotkey.Shift) != 0 ? Keys.Shift : Keys.None)
+            | ((hotkey.Modifiers & AxKit.Core.Hotkey.Alt) != 0 ? Keys.Alt : Keys.None);
     }
 
     private static readonly IReadOnlyDictionary<string, string> F1Texts =new Dictionary<string, string>
@@ -218,6 +273,8 @@ public sealed class KeyTests
     [InlineData(Keys.Control | Keys.Oemplus, "Ctrl+Plus")]
     [InlineData(Keys.Control | Keys.Shift | Keys.OemPeriod, "Ctrl+Shift+Period")]
     [InlineData(Keys.Control | Keys.Shift | Keys.Oemcomma, "Ctrl+Shift+Comma")]
+    [InlineData(Keys.Control | Keys.Shift | Keys.OemQuestion, "Ctrl+Shift+Slash")]
+    [InlineData(Keys.Control | Keys.Up, "Ctrl+Up")]
     [InlineData(Keys.Back, "Backspace")]
     [InlineData(Keys.Return, "Enter")]
     [InlineData(Keys.Alt | Keys.Return, "Alt+Enter")]

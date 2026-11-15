@@ -6,6 +6,16 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-14, night: axMedia and axHelp; by the assistant with NVDA listening (`main` 7dfe161 with the hotkey change not yet committed)
+
+`.\nvda-pass.ps1 axMedia` and `.\nvda-pass.ps1 axHelp`, the user away at his own word, Windows 11 Pro 10.0.26200,
+NVDA 2025.3.3: axMedia's seven scripts and axHelp's one passed. First heard: axMedia's speed on Ctrl+Up and Ctrl+Down
+(`axMedia/03`, AM-D8). The scripts of axStart and axClip passed without NVDA.
+
+Owed to the user: the system-wide keys themselves, pressed from another program (Ctrl+Shift+Slash for axHelp,
+Ctrl+Shift+Comma for the screenshot; bundle AX-8.11), and the take-over of a settings file that holds the retired
+Windows+Alt keys (axHelp's test plan, section 5). A script sets a hotkey of its own and cannot press the real ones.
+
 ## 2026-11-14, evening: every app; by the assistant with NVDA listening (`main` c3dde20 with the forms and the speech fix not yet committed, axKit 5.8.0 with what is unreleased)
 
 `.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 115 scripts of

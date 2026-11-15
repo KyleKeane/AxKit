@@ -8,10 +8,10 @@ code means this file.
 
 ## 1. Summary
 
-axHelp is a conversation with Claude from anywhere on the computer. One hotkey (Windows+Alt+H) brings it up: an
+axHelp is a conversation with Claude from anywhere on the computer. One hotkey (Ctrl+Shift+Slash, the question mark's key) brings it up: an
 axClaude window on Claude's own working folder, titled "axHelp", with the focus in its message field. It is one
 conversation that goes on until the user clears it, read with axClaude's keys, its replies spoken as axClaude speaks
-them, and Claude Code in it may do work on the computer, asking before each change. A second hotkey (Windows+Alt+S)
+them, and Claude Code in it may do work on the computer, asking before each change. A second hotkey (Ctrl+Shift+Comma)
 takes a picture of the window in front and drops its path into that conversation's message field, so that a question
 about the screen is one key and a sentence. `AxKit.exe help [--hidden | <picture>]`, Start entry `axKit axHelp`,
 command `axHelp`; a background process from sign-in, as axStart and axClip. It is an access layer (AX-11.1): Claude
@@ -29,10 +29,10 @@ agreement (AX-11.4) asked the first time.
 
 ## 3. Scenarios
 
-- In Word, Windows+Alt+H: "axHelp" and the message field. "how do I make a table of contents", Enter; the reply is
-  spoken as it comes. Later, Windows+Alt+H again: the same conversation, the earlier answer still there under h and the
+- In Word, Ctrl+Shift+Slash: "axHelp" and the message field. "how do I make a table of contents", Enter; the reply is
+  spoken as it comes. Later, Ctrl+Shift+Slash again: the same conversation, the earlier answer still there under h and the
   reply keys.
-- A dialog NVDA reads badly: Windows+Alt+S. The conversation comes up with "Screenshot of "Save changes?": C:\...\
+- A dialog NVDA reads badly: Ctrl+Shift+Comma. The conversation comes up with "Screenshot of "Save changes?": C:\...\
   2026-11-10 14.02.11.png " in its field; type "which button is the default?", Enter.
 - "Move every PDF in my Downloads folder into a folder named Papers": the conversation hands it to its agent, Claude
   Code asks before it moves anything, and says what it did.
@@ -103,10 +103,17 @@ agreement (AX-11.4) asked the first time.
 
 ### HE-4 The hotkeys
 
-- HE-4.1 Windows+Alt+H for the conversation (changed in Options, Hotkey, AS-4.2) and Windows+Alt+S for the screenshot
-  (axDescribe's until 5.7.0; `screenshotHotkey` in `axHelp.json`), each kept in the settings. The conversation's hotkey
+- HE-4.1 Ctrl+Shift+Slash, the question mark's key, for the conversation (changed in Options, Hotkey, AS-4.2) and
+  Ctrl+Shift+Comma, the less-than sign's key, for the screenshot (`screenshotHotkey` in `axHelp.json`), each kept in
+  the settings (HE-D5; the bundle's system-wide keys, AX-8.11). The conversation's hotkey
   while axHelp's own window is in front hides it. A taken conversation hotkey shows the window with the notice (AS-4.3);
   a taken screenshot hotkey is said in the window's text.
+- HE-4.2 The keys until 2026-11-14 were Windows+Alt+H and Windows+Alt+S. A settings file that still holds one of them
+  is taken over to the new key as it is read, each of the two on its own (`HelpSettings.Load` through
+  `HotkeySettings.TakenOver`), and written with the next save; a key the user chose is kept. A user who had chosen
+  Windows+Alt+H themselves cannot be told from one who never chose: they get the new key and choose again.
+- HE-4.3 Ctrl+Shift+Period, the greater-than sign's key, is kept for a later help launcher (AX-8.11): axHelp
+  registers nothing on it, and it cannot be chosen as a hotkey.
 
 ### HE-5 Settings
 
@@ -141,6 +148,12 @@ names them all (`HelpText.Shortcuts`).
   cannot override, so the fast chat stays fast; the subagent carries the strong model only where it is needed.
 - **HE-D4 Ongoing, cleared by the user** (the user, 2026-11-10: "leave it ongoing and then let the user clear it"), so
   that old answers stay reachable with the heading and reply keys.
+- **HE-D5 The hotkeys are on Ctrl+Shift** (the user's decision of 2026-11-14, with axStart's Ctrl+Shift+Space): the
+  question mark's key says "help", and the less-than sign's key beside it is the screenshot. Windows+Alt+H and
+  Windows+Alt+S are retired: the user expected other programs to take them or to act on them. Not Ctrl+Shift+H or
+  Ctrl+Shift+I, which are keys of axKit's editors and axGIT and of every browser; not Ctrl+Shift+Enter, Excel's and
+  several chat programs'. axMedia gave up Ctrl+Shift+Comma and Period for it (its AM-D8). The cost outside axKit:
+  Word and Outlook lose smaller and larger font on those keys while axHelp runs.
 - Until 5.7.0 (`docs/axKit/ai-help.md` section 7): a field over a list of ten earlier questions, each answered by Claude
   Code's print mode as a notice; and axDescribe, a field over a list of ten descriptions.
 

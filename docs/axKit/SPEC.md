@@ -108,7 +108,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   Enter pastes into the program that was in front. Specification `docs/axClip/SPEC.md`, guide
   `docs/axClip/user-guide.md`, test plan `docs/axClip/nvda-test-plan.md`.
 - **axMCP** (asked and built 2026-11-09; an access layer, AX-11, for MCP servers): `AxKit.exe mcpclient [<folder>]`, Start entry `axKit axMCP`, command `axMCP`: the MCP servers Claude Code knows on this computer and the user's own, in the item apps' window (`item-apps.md`); a server started by hand as a child process on its standard input and output shows its tools, resources and prompts, a tool's arguments are the detail pane's fields, Ctrl+Enter calls it and the result is a notice text; remote servers are listed and not started (its MP-D2). Specification `docs/axMCP/SPEC.md`, guide `docs/axMCP/user-guide.md`, test plan `docs/axMCP/nvda-test-plan.md`.
-- **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Windows+Alt+H, brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Windows+Alt+S, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
+- **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Ctrl+Shift+Slash (the question mark's key, AX-8.11), brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Ctrl+Shift+Comma, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
 
 - **axAutomate** (asked 2026-11-10, built 2026-11-11 as a viewer first): `AxKit.exe automate [<folder>]`, Start entry `axKit axAutomate`, command `axAutomate`: the workflows that drive axKit's windows, the automated checks of every app first, read step by step in the item apps' window (`docs/axAutomate/SPEC.md`).
 ## 4. Functional requirements
@@ -481,7 +481,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - AX-8.4 A unit test in `tests/AxKit.Tests` fails when a window-specific key equals a bundle-wide key, and lists the
   keys that two windows use for different actions, so that a collision between apps is seen before it is felt. A
   window key may take a bundle key's place in one control only by the user's decision, listed by name in the test's
-  `Overrides` with its spec line: axTerminal's command field, Ctrl+Up and Ctrl+Down for the history (AT-3.9, 2026-10-23).
+  `Overrides` with its spec line: axTerminal's command field, Ctrl+Up and Ctrl+Down for the history (AT-3.9, 2026-10-23);
+  the item apps' navigator, the same keys by section (item-apps IA-2.3a, 2026-10-24); axMedia, the same keys for
+  faster and slower (AM-D8, 2026-11-14), whose window has a list and no text outside a notice.
 - AX-8.5 A key is never handled anywhere but through its table, and no key is intercepted that NVDA uses (AX-7.4).
   The text a menu item shows for its key comes from the tables too (`BundleKeys.Text`: "Ctrl+Shift+S", "Shift+Escape"),
   so that a key changed in its table changes in the menus by itself; only Windows' own keys (Alt+F4, the edit
@@ -589,6 +591,27 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | axFile | in the folder list, play the folder in axMedia (AF-5.1) | the same; outside the folder list the edge sound |
   | axDown, axJSON | a line break in the text (the edit control's own) | the edge sound; Enter makes the line break |
   | axPreview, axMedia, axProcess, axCalc, axTask, axPass, axAutomate, axStart, axClip, axHelp | nothing of axKit's (the focused control's own, if any) | the edge sound |
+- AX-8.11 **The system-wide keys are on Ctrl+Shift** (the user's decision of 2026-11-14). A system-wide key is a
+  background app's hotkey: Windows takes the combination from every program while that app runs, axKit's own windows
+  among them. Each is a setting of its app, and these are what they are at first:
+
+  | Key | What it does | Where it is set |
+  | --- | --- | --- |
+  | Ctrl+Shift+Space | axStart's search field (AS-4.1) | `AxKit.Core/Hotkey.Default`; Options, Hotkey in axStart |
+  | Ctrl+Shift+Slash, the question mark's key | axHelp's conversation with Claude (HE-4.1) | `AxHelp.Core/HelpSettings.DefaultHotkey`; Options, Hotkey in axHelp |
+  | Ctrl+Shift+Comma, the less-than sign's key | a screenshot of the window in front into axHelp's conversation (HE-4.1) | `HelpSettings.DefaultScreenshotHotkey`; `screenshotHotkey` in `axHelp.json` |
+  | Ctrl+Shift+Period, the greater-than sign's key | reserved for a later help launcher; nothing registers it | written here alone |
+
+  The Windows+Alt keys of axHelp, Windows+Alt+H and Windows+Alt+S, are retired: the user expected other programs to
+  take them or to act on them. A settings file that still holds one of them is taken over to the new key as it is
+  read (`AxKit.Core/HotkeySettings.TakenOver`, tested; an app names its `RetiredDefault`), and a key the user chose
+  stays. No table, the bundle's or a window's, holds one of the four keys, the reserved one included: the key would
+  never reach the window. `BundleKeys.SystemWide` lists them, and `KeyTests` fails on a table that holds one and on
+  a default that left the list. axMedia's Faster and Slower, on Ctrl+Shift+Period and Ctrl+Shift+Comma until then,
+  are Ctrl+Up and Ctrl+Down (AM-D8). Outside axKit, Word and Outlook lose their larger and smaller font on the comma
+  and period keys while axHelp runs; the user was told. A hotkey's key is one of `Hotkey.Names`: a letter, a digit,
+  a function key, a navigation key, Slash or Comma, never Period. axClip's hotkey, Windows+Alt+V (CP-D1), was not
+  part of the decision and is as it was.
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 

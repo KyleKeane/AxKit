@@ -27,7 +27,7 @@ Section 3, steps 2 to 6. One file of 3 minutes that says the time every 5 second
 
 - Ctrl+Right, Ctrl+Left: the voice you hear names the time you landed on.
 - Ctrl+T, `1:00`, Enter: you hear "1 minute" within 5 seconds.
-- Ctrl+Shift+Period: faster, at the same pitch.
+- Ctrl+Up: faster, at the same pitch.
 - Ctrl+T, `2:55`, Enter, wait: "End of queue" when it is the only file.
 
 ## end-of-queue-two-short-files

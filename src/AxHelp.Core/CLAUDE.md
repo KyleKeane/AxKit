@@ -10,7 +10,7 @@ Everything of axHelp that needs no window: the settings, the conversation's comm
 
 ## Where things are
 
-- `HelpSettings` (SPEC.md HE-2.3, HE-4, HE-5): on the bundle's `HotkeySettings` (the conversation's hotkey, Windows+Alt+H by default, Start with Windows); `ScreenshotHotkeyText` with `ScreenshotKey` (Windows+Alt+S), `Model` (`FastModel`, haiku, by default) with the choices `Models`, `ScreenshotsKept`; `ConversationArguments` (the axClaude command line: the folder, `--title axHelp`, `--message`, then `-- --continue --model`).
+- `HelpSettings` (SPEC.md HE-2.3, HE-4, HE-5): on the bundle's `HotkeySettings` (the conversation's hotkey, Ctrl+Shift+Slash by default, Start with Windows); `ScreenshotHotkeyText` with `ScreenshotKey` (Ctrl+Shift+Comma); the defaults until 2026-11-14, Windows+Alt+H (`RetiredDefault`) and Windows+Alt+S (`RetiredScreenshotHotkey`), taken over to the new ones in `Load` (HE-4.2), `Model` (`FastModel`, haiku, by default) with the choices `Models`, `ScreenshotsKept`; `ConversationArguments` (the axClaude command line: the folder, `--title axHelp`, `--message`, then `-- --continue --model`).
 - `WorkingFolderFiles` (SPEC.md HE-2.4): `CLAUDE.md` and `.claude\agents\agent.md` (a subagent on opus), written into the working folder only where missing.
 - `PictureFile` (SPEC.md HE-3.3; axDescribe's until 5.7.0): `Kinds`, `Filter` for the Windows file picker, `IsPicture`, `Refusal`.
 

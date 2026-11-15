@@ -81,6 +81,20 @@ public static class BundleKeys
     ];
 
     /// <summary>
+    /// The system-wide keys (AX-8.11): the background apps' hotkeys as they are at first, which Windows takes from
+    /// every program while those apps run, axKit's windows among them, and the one kept for later. No table, the
+    /// bundle's or a window's, may hold one (<c>KeyTests</c>): the key would never reach the window. The hotkeys
+    /// themselves are settings (<c>AxKit.Core/HotkeySettings</c>); the test holds these against their defaults.
+    /// </summary>
+    public static readonly IReadOnlyList<(string Name, Keys Key)> SystemWide =
+    [
+        ("axStart's search field", Keys.Control | Keys.Shift | Keys.Space),
+        ("axHelp's conversation", Keys.Control | Keys.Shift | Keys.OemQuestion),
+        ("axHelp's screenshot", Keys.Control | Keys.Shift | Keys.Oemcomma),
+        ("Kept for a later help launcher", Keys.Control | Keys.Shift | Keys.OemPeriod),
+    ];
+
+    /// <summary>
     /// "Ctrl+Shift+S", "F3", "Ctrl+Plus", "Ctrl+Shift+Period", "Shift+Escape": a key as a menu shows it next to its item, from the tables.
     /// A key of the number row ends in a full stop ("Ctrl+1."): NVDA speaks the shortcut directly before the position
     /// of the item in the menu, and the synthesizer runs "Ctrl+1  1 of 9" together into "Ctrl+11 of 9" (AX-8.5); the
@@ -111,6 +125,7 @@ public static class BundleKeys
             Keys.OemMinus or Keys.Subtract => "Minus",
             Keys.OemPeriod => "Period",
             Keys.Oemcomma => "Comma",
+            Keys.OemQuestion => "Slash",
             Keys.Back => "Backspace",
             >= Keys.D0 and <= Keys.D9 => ((char)('0' + (code - Keys.D0))).ToString(),
             _ => code.ToString(),

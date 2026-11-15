@@ -284,8 +284,8 @@ with a single keypress"; then, asked whether axDescribe should stay an app of it
 and on the model, "a very fast chat like experience ... that only spins up a better model if needed for agentic work".
 
 - axHelp is now two hotkeys into one conversation, and the conversation is an axClaude window (`docs/axHelp/SPEC.md`
-  HE-D1): Windows+Alt+H brings it up on Claude's working folder (AH-2.1), titled "axHelp", ongoing until the user
-  clears it; Windows+Alt+S puts a picture of the window in front into its message field. axDescribe leaves the bundle;
+  HE-D1): Ctrl+Shift+Slash (Windows+Alt+H until 2026-11-14, bundle AX-8.11) brings it up on Claude's working folder (AH-2.1), titled "axHelp", ongoing until the user
+  clears it; Ctrl+Shift+Comma (Windows+Alt+S until then) puts a picture of the window in front into its message field. axDescribe leaves the bundle;
   its verb still starts axHelp.
 - So axHelp is no longer a use of this service's print mode: the conversation is Claude Code in its interactive mode,
   with axClaude's agreement and its permission questions, not read-only. Shift+F1 in every window (AH-6) stays this

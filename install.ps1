@@ -266,7 +266,7 @@ $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 $background = @(
     @{ Verb = 'start'; Name = 'axStart'; Settings = 'axStart.json'; What = 'the launcher'; Started = 'axStart, the launcher, runs in the background: Ctrl+Shift+Space, or the hotkey you chose, brings up its search field' },
     @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axClip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Windows+Alt+V, or the hotkey you chose, brings it up' },
-    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axHelp.json'; What = 'the conversation with Claude'; Started = 'axHelp runs in the background: Windows+Alt+H brings up your conversation with Claude, Windows+Alt+S puts a picture of the screen into it' },
+    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axHelp.json'; What = 'the conversation with Claude'; Started = 'axHelp runs in the background: Ctrl+Shift+Slash (the question mark key) brings up your conversation with Claude, Ctrl+Shift+Comma (the less-than key) puts a picture of the screen into it' },
     # axDescribe merged into axHelp in 5.7.0: an older one is stopped for the installation and not started again.
     @{ Verb = 'describe'; Name = 'axDescribe'; Settings = 'axDescribe.json'; What = 'the former screen description'; Started = ''; Former = $true }
 )

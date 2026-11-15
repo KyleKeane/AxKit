@@ -35,7 +35,7 @@ The list is the one control, named with its count, "Queue, 12 items". Arrow keys
 - **Space**, or **Ctrl+P** from anywhere in the window, pauses, "Paused at 12:40", and resumes, "Playing".
 - **Ctrl+Right** and **Ctrl+Left** move 15 seconds forward or back and say the new position, "12:25".
 - **Ctrl+Shift+Right** and **Ctrl+Shift+Left** play the next or the previous file of the queue; "First file" and "End of queue" at the ends.
-- **Ctrl+Shift+Period** and **Ctrl+Shift+Comma** make it faster or slower by a quarter, between a half and three times: "Speed 1.25". The voice keeps its pitch. Actions, Normal speed goes back to 1. The speed stays for the next file and the next window.
+- **Ctrl+Up** and **Ctrl+Down** make it faster or slower by a quarter, between a half and three times: "Speed 1.25". The voice keeps its pitch. Actions, Normal speed goes back to 1. The speed stays for the next file and the next window.
 - **Ctrl+T** goes to a time: `12:40`, `1:02:10`, or `750` for seconds.
 - **Ctrl+Q** says what is playing: "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25", or "Nothing playing".
 - Options, Say each file as it starts (on by default) is the one thing axMedia says on its own: the next file's name when the queue moves on. Turn it off to hear nothing between chapters.

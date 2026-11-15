@@ -31,7 +31,7 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 1. Enter on the first chapter: "Playing <name>". Space: "Paused at 0:05", the sound stops. Space: "Playing". Ctrl+P: "Paused at …"; Ctrl+P: "Playing". Ctrl+T, then Ctrl+P in the notice's field: nothing happens (the notice holds the keys); Escape.
 2a. Ctrl+Right again and again until the file is nearly over, then once more: the time said is the file's length, not a time past it; Go to time with a time past the end: the same.
 2. Ctrl+Right: "0:20" and the sound jumps. Ctrl+Left: "0:05". Ctrl+T, type `1:00`, Enter: "1:00". Ctrl+T, type `abc`, Enter: "Not a time", the notice stays; Escape.
-3. Ctrl+Shift+Period: "Speed 1.25"; the voice is faster at the same pitch. Twice more: "Speed 1.75". Ctrl+Shift+Comma: "Speed 1.5". Actions, Normal speed: "Speed 1". Set 1.5, Alt+F4, start again and play: Ctrl+Q ends in "speed 1.5".
+3. Ctrl+Up: "Speed 1.25"; the voice is faster at the same pitch. Twice more: "Speed 1.75". Ctrl+Down: "Speed 1.5". Actions, Normal speed: "Speed 1". Set 1.5, Alt+F4, start again and play: Ctrl+Q ends in "speed 1.5".
 4. Ctrl+Q: "Playing <name>, 1:12 of 45:30, speed 1.5". Ctrl+Shift+Right: "Playing <next>". Ctrl+Shift+Left: "Playing <first>". Again: "First file".
 5. Ctrl+T near the end, Enter; wait: "Playing <next>" spoken on its own, the next file plays, the selection stays where it was and the mark moves. Options, Say each file as it starts, off; the same again: nothing is spoken.
 6. On the last file, Ctrl+T near its end; wait: "End of queue" with the done chime; NVDA+End: both labels empty; NVDA+T: "axMedia". Ctrl+Q: "Nothing playing".

@@ -41,7 +41,7 @@ top of the window. It works entirely offline (bundle G6).
 1. In axFile on a folder of chapters, with axMedia the default program for `.mp3` in Windows' settings, Enter on
    `03 Chapter 3.mp3`: axMedia opens with the folder's media files as the queue, the third playing, the window in
    front: NVDA reads "03 Chapter 3.mp3 - axMedia window", then "Queue, 12 items, 03 Chapter 3.mp3 (playing), 3 of
-   12". Space: "Paused at 12:40". Space: "Playing". Ctrl+Left: "12:25". Ctrl+Shift+Period: "Speed 1.25". Ctrl+Q:
+   12". Space: "Paused at 12:40". Space: "Playing". Ctrl+Left: "12:25". Ctrl+Up: "Speed 1.25". Ctrl+Q:
    "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25". Without that default, Enter opens the file in whatever
    plays it on the machine, and Item → Open in axKit → axMedia does the same as above.
 2. The chapter ends: "Playing 04 Chapter 4.mp3" and the next plays; the window can be left in the background, Alt+Tab
@@ -142,7 +142,7 @@ top of the window. It works entirely offline (bundle G6).
   ("Paused at 12:40" / "Playing"); **Ctrl+Right** and **Ctrl+Left** move 15 seconds forward or back (`seekSeconds`),
   saying the position reached, "12:25", the file's end at most (until 2026-10-23 the position asked for, past the
   end included); **Ctrl+Shift+Right** and **Ctrl+Shift+Left** the next and the previous file ("Playing <name>"; "First
-  file" and "End of queue" at the ends); **Ctrl+Shift+Period** and **Ctrl+Shift+Comma** faster and slower by 0.25
+  file" and "End of queue" at the ends); **Ctrl+Up** and **Ctrl+Down** faster and slower by 0.25
   between 0.5 and 3 ("Speed 1.25"), Play → Normal speed back to 1, the speed kept in the settings for the next file
   and the next window; **Ctrl+T** Go to time…, the notice with the field "Time" (`12:40`, `1:02:10`, or `750` for
   seconds), the position reached, "12:40", when done; **Ctrl+Q** What is playing: "Playing <name>, 12:52 of 45:30, speed 1.25", "Paused …"
@@ -157,7 +157,7 @@ top of the window. It works entirely offline (bundle G6).
 - AM-5.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open files… Ctrl+O |
   Open folder… Ctrl+Shift+O | Open recent ▸ | ─ | Clear queue | ─ | Show current file in ▸ (File Explorer Ctrl+W |
   axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Actions (A):** Pause or resume Space | Forward 15
-  seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Ctrl+Shift+Period | Slower Ctrl+Shift+Comma | Normal
+  seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Ctrl+Up | Slower Ctrl+Down | Normal
   speed | ─ | What is playing Ctrl+Q. **Navigation (N):** Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
   Go to time… Ctrl+T. **Context (C)**, the file selected (AX-9.11; Shift+F10, the Applications key and a right click in
   the queue): Play Enter | Remove Delete | Information Ctrl+I; "Nothing in the queue" while it is empty. **Options
@@ -168,8 +168,9 @@ top of the window. It works entirely offline (bundle G6).
 - AM-5.2 Keys (AX-8). Bundle-wide: F1, the control keys (one control, so they stay in the list), Ctrl+F, F3, Shift+F3,
   Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxMediaKeys`): Enter, Delete and
   Space in the list; Ctrl+P, Ctrl+I, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9), Ctrl+W, Ctrl+Right, Ctrl+Left,
-  Ctrl+Shift+Right, Ctrl+Shift+Left, Ctrl+T, Ctrl+Shift+Period, Ctrl+Shift+Comma, Ctrl+Q from anywhere in the window
-  (in a notice's field they are the field's own, AX-7.2). The collision test covers the table.
+  Ctrl+Shift+Right, Ctrl+Shift+Left, Ctrl+T, Ctrl+Up, Ctrl+Down, Ctrl+Q from anywhere in the window
+  (in a notice's field they are the field's own, AX-7.2; Ctrl+Up and Ctrl+Down, faster and slower, are the bundle's
+  paragraph keys there, AM-D8). The collision test covers the table.
 - AM-5.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axMedia/user-guide.md` is embedded (Help → User
   guide); About is the bundle's (AX-9.9).
 
@@ -258,6 +259,12 @@ events are posted back to it (AX-7.5).
 - **AM-D7 Space pauses.** In axFile Space marks entries, so pause had moved to Ctrl+P; in axMedia the list is the
   queue and Space is what every player's pause is. Ctrl+P stays as the key from anywhere in the window; while a
   notice shows, the keys are the notice's, as in every window (AX-6.5).
+- **AM-D8 Ctrl+Up is faster, Ctrl+Down slower** (the user's choice of 2026-11-14). Until then the speed was on
+  Ctrl+Shift+Period and Ctrl+Shift+Comma; those became the bundle's system-wide keys, axHelp's screenshot and the
+  one kept for a later help launcher (bundle AX-8.11), which never reach a window. The four arrows with Ctrl are now
+  the player: Left and Right through the file, Up and Down the speed. Ctrl+Up and Ctrl+Down are the bundle's
+  paragraph keys in a text (AX-8.2); axMedia's window has a list and no text, and while a notice shows its text
+  keeps them, so the two never meet. `KeyTests` lists the two among its `Overrides` (AX-8.4).
 
 ## 8. Testing
 

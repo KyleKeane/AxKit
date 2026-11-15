@@ -8,11 +8,11 @@ answers and works under your own Anthropic account and Anthropic's terms, which 
 ## The conversation
 
 axHelp runs in the background from sign-in (Options, General, Start with Windows). From any program, press
-Windows+Alt+H: an axClaude window titled axHelp comes up with the focus in its message field. Type and press Enter;
+Ctrl+Shift+Slash, the key with the question mark: an axClaude window titled axHelp comes up with the focus in its message field. Type and press Enter;
 the reply comes as in axClaude, and every key of axClaude reads it: h for headings, the reply keys, Ctrl+Home. Whether
 replies are spoken as they arrive is axClaude's setting, Options, Speech, Speak replies.
 
-It is one conversation that goes on: press Windows+Alt+H tomorrow and it is there, the earlier answers with it. To
+It is one conversation that goes on: press Ctrl+Shift+Slash tomorrow and it is there, the earlier answers with it. To
 start afresh, Session, New session in that window. Claude Code's own `/resume` lists the earlier conversations of
 axHelp's folder.
 
@@ -27,7 +27,7 @@ stronger model, and tells you so.
 
 ## Pictures of the screen
 
-Press Windows+Alt+S in any program: axHelp takes a picture of the window in front, the conversation comes up with
+Press Ctrl+Shift+Comma, the key with the less-than sign, in any program: axHelp takes a picture of the window in front, the conversation comes up with
 "Screenshot of" and the picture's path in its message field, and the path is on the clipboard too. Type your question
 after it ("which button is the default?") and press Enter; with no question, Claude says what the window shows.
 
@@ -45,7 +45,7 @@ file CLAUDE.md there holds Claude's standing instructions for axHelp, short spok
 like. The folder `.claude\agents` holds the agent.
 
 The conversation runs on the fast model by default. Options, Conversation model chooses Fast, Balanced or Strongest; it
-counts from the conversation's next start, so close the axHelp conversation window and press Windows+Alt+H. Choose the
+counts from the conversation's next start, so close the axHelp conversation window and press Ctrl+Shift+Slash. Choose the
 model here rather than with `/model` in the conversation: Claude Code saves `/model` as its default for every new
 session, axClaude's too.
 
@@ -54,8 +54,12 @@ session, axClaude's too.
 Start menu, axKit axHelp, or the command `axHelp`, shows axHelp's own small window: one text that says what the two
 hotkeys do. Enter opens the conversation; Escape hides the window. Session, Quit axHelp ends axHelp.
 
-Options, Hotkey changes Windows+Alt+H. The screenshot's key is `screenshotHotkey` in the settings file
+Options, Hotkey changes Ctrl+Shift+Slash. The screenshot's key is `screenshotHotkey` in the settings file
 (`%APPDATA%\AxKit\axHelp.json`, Options, Developer, Open settings file); start axHelp again after changing it.
+
+Up to version 5.8.0 the two keys were Windows+Alt+H and Windows+Alt+S. If you never changed them, axHelp moves you to the new
+keys by itself; a key you chose stays yours. While axHelp runs, its two keys are taken from every program: Word and
+Outlook use them for a smaller and a larger font. Choose other keys if you need those.
 
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Check for updates and About.
 

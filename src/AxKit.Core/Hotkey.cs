@@ -109,6 +109,11 @@ public sealed record Hotkey(int Modifiers, int Key)
             [0x26] = "Up",
             [0x27] = "Right",
             [0x28] = "Down",
+            // The two punctuation keys of the bundle's own system-wide keys (docs/axKit/SPEC.md AX-8.11): axHelp's
+            // Ctrl+Shift+Slash, the question mark's key, and Ctrl+Shift+Comma, the less-than sign's. The period, the
+            // greater-than sign's key, is kept for a later help launcher and so is no hotkey's key.
+            [0xBF] = "Slash",
+            [0xBC] = "Comma",
         };
         for (var c = 'A'; c <= 'Z'; c++)
         {

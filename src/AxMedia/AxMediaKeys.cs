@@ -39,8 +39,15 @@ public static class AxMediaKeys
     public const Keys NextFile = Keys.Control | Keys.Shift | Keys.Right;
     public const Keys PreviousFile = Keys.Control | Keys.Shift | Keys.Left;
     public const Keys GoToTime = Keys.Control | Keys.T;
-    public const Keys Faster = Keys.Control | Keys.Shift | Keys.OemPeriod;
-    public const Keys Slower = Keys.Control | Keys.Shift | Keys.Oemcomma;
+
+    /// <summary>
+    /// The speed (SPEC.md AM-D8, the user's choice of 2026-11-14): Ctrl+Up faster, Ctrl+Down slower, beside Ctrl+Left
+    /// and Ctrl+Right. They take the place of the bundle's paragraph keys on purpose (bundle AX-8.4): the window's one
+    /// control is a list, and in a notice's text the keys are the text's own, since the window's keys wait there.
+    /// Ctrl+Shift+Period and Ctrl+Shift+Comma, the keys until then, are the bundle's system-wide ones (AX-8.11).
+    /// </summary>
+    public const Keys Faster = Keys.Control | Keys.Up;
+    public const Keys Slower = Keys.Control | Keys.Down;
     public const Keys WhatIsPlaying = Keys.Control | Keys.Q;
 
     /// <summary>In the queue: the bar's Context menu on the file, as Alt and C open it (bundle AX-9.11, 2026-11-11).</summary>
