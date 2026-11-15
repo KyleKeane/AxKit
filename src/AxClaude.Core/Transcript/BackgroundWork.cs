@@ -8,7 +8,7 @@ public sealed record BackgroundCount(int Shells, int Agents, int Other = 0, int 
 {
     public static readonly BackgroundCount None = new(0, 0);
 
-    /// <summary>The one number: what the status bar says, what the sounds follow, how many notes the recurring sound has.</summary>
+    /// <summary>The one number: what the status bar says, what the sounds follow, how many tones the recurring chords add.</summary>
     public int Total => Shells + Agents + Other + Uncounted;
 }
 
@@ -27,28 +27,14 @@ public enum BackgroundSound
 /// <summary>
 /// The rules of axClaude's signals for background work (SPEC.md FR-7.10, the user's decisions of 2026-11-15): the one
 /// number from what Claude Code shows in two places, the words of the status bar, which sound a change gets, the lines
-/// spoken when the user asks for them, and the answer to "What runs in the background". Pure: the window only wires
+/// spoken when the user asks for them, and the answer to "What runs in the background"; when the recurring chords
+/// play is <see cref="BackgroundChords"/>. Pure: the window only wires
 /// it to the model, the sounds and the settings. The texts read here are the model's own
 /// (<see cref="SessionModel.Background"/>, made by <see cref="LineClassifier.BackgroundText"/>), with Claude Code's
 /// two words for a kind from <see cref="ClaudeCodeTexts"/>.
 /// </summary>
 public static class BackgroundWork
 {
-    /// <summary>The recurring sound has one note for each thing running, and never more than this, so that it stays short.</summary>
-    public const int MostNotes = 5;
-
-    /// <summary>How often the recurring sound may play, in seconds: the choices of Options, Background work.</summary>
-    public static readonly IReadOnlyList<int> PulseSeconds = [10, 20, 30, 60];
-
-    /// <summary>Every 10 seconds at first (20 until 2026-11-15, when the user was not sure he heard the sound at all); a settings file that holds a value keeps it.</summary>
-    public const int DefaultPulseSeconds = 10;
-
-    /// <summary>A number of seconds from a settings file: one of <see cref="PulseSeconds"/>, or the default.</summary>
-    public static int SanitizePulseSeconds(int seconds) => PulseSeconds.Contains(seconds) ? seconds : DefaultPulseSeconds;
-
-    /// <summary>The notes of the recurring sound for <paramref name="total"/> things running: as many, up to <see cref="MostNotes"/>; none for none.</summary>
-    public static int Notes(int total) => Math.Clamp(total, 0, MostNotes);
-
     /// <summary>
     /// The one number, from the two places Claude Code shows background work in. The mode line counts shells
     /// ("1 shell") and may count agents and other kinds ("1 shell, 2 agents"); the panel shows one row per agent, and

@@ -121,37 +121,78 @@ public class WaveToneTests
     }
 
     [Fact]
-    public void Plucks_ring_into_the_next_note_and_loop_without_a_seam()
+    public void The_tool_pop_is_the_one_the_user_chose_by_ear()
     {
-        var wav = WaveTone.Plucks(0.2, 100, 440, 330, 220);
+        // The script that played it to him (2026-11-15, kind J): ToolSynth.Pop(700.0, 300.0, 0.006, 0.030) at a peak of 0.3.
+        var count = (int)(WaveTone.SampleRate * 0.030);
+        var mix = new double[count];
+        var phase = 0.0;
+        for (var i = 0; i < count; i++)
+        {
+            var t = i / (double)WaveTone.SampleRate;
+            var pitch = 300.0 + (700.0 - 300.0) * Math.Exp(-t / 0.006);
+            phase += 2 * Math.PI * pitch / WaveTone.SampleRate;
+            var attack = Math.Min(1.0, t / 0.0015);
+            var body = Math.Exp(-t / (0.030 / 4));
+            var release = Math.Min(1.0, (0.030 - t) / 0.004);
+            mix[i] = attack * body * release * (Math.Sin(phase) + 0.08 * Math.Sin(2 * phase));
+        }
+
+        var max = 1e-9;
+        foreach (var x in mix)
+        {
+            max = Math.Max(max, Math.Abs(x));
+        }
+
+        var scale = 0.3 / max;
+        var wav = WaveTone.Pop(0.3, 700, 300, 0.006, 0.030);
+        Assert.Equal(WaveTone.HeaderLength + 2 * count, wav.Length);
+        for (var i = 0; i < count; i++)
+        {
+            Assert.Equal((short)Math.Round(mix[i] * scale * 32767), BitConverter.ToInt16(wav, WaveTone.HeaderLength + i * 2));
+        }
+    }
+
+    [Fact]
+    public void A_pop_is_short_starts_and_ends_at_nothing_and_falls_in_pitch()
+    {
+        var wav = WaveTone.Pop(0.3, 700, 300, 0.006, 0.030);
         var samples = (wav.Length - WaveTone.HeaderLength) / 2;
-        var each = 100 * WaveTone.SampleRate / 1000;
-        Assert.Equal(3 * each, samples);
 
         int At(int i) => BitConverter.ToInt16(wav, WaveTone.HeaderLength + i * 2);
 
-        int Peak(int from, int to)
+        // Not elongated: 30 ms, 661 samples, no tail.
+        Assert.Equal(661, samples);
+
+        var peak = 0;
+        for (var i = 0; i < samples; i++)
         {
-            var peak = 0;
-            for (var i = from; i < to; i++)
+            peak = Math.Max(peak, Math.Abs(At(i)));
+        }
+
+        Assert.Equal(0.3 * short.MaxValue, peak, 1.5);
+
+        // No click: silence at the first sample, the last sample all but silent, the loudest within the first quarter.
+        Assert.Equal(0, At(0));
+        Assert.True(Math.Abs(At(samples - 1)) < peak / 50, "the pop should end at nothing");
+
+        // The pitch falls: the time between two rising zero crossings grows from the start to the end.
+        var rising = new List<int>();
+        for (var i = 1; i < samples; i++)
+        {
+            if (At(i - 1) < 0 && At(i) >= 0)
             {
-                peak = Math.Max(peak, Math.Abs(At(i)));
+                rising.Add(i);
             }
-
-            return peak;
         }
 
-        // The loop is scaled as a whole: its loudest sample is the amplitude.
-        var peak = Peak(0, samples);
-        Assert.InRange(peak, 0.2 * short.MaxValue - 2, 0.2 * short.MaxValue + 1);
+        Assert.True(rising.Count >= 6, "a pop should have several cycles");
+        var first = rising[1] - rising[0];
+        var last = rising[^1] - rising[^2];
+        Assert.True(last > first * 3 / 2, $"the pitch should fall: {first} samples a cycle at the start, {last} at the end");
 
-        // Each note starts well over the tail of the one before, which has died away under it.
-        for (var n = 1; n < 3; n++)
-        {
-            Assert.True(Peak(n * each, n * each + each / 4) > 2 * Peak(n * each - each / 4, n * each), $"note {n} should start over the last one's tail");
-        }
-
-        // The last note's tail wraps round to the start, so the first sample follows on from the last: no seam when it loops.
-        Assert.True(Math.Abs(At(0) - At(samples - 1)) < peak / 10, "the loop should join up");
+        // Near 700 Hz at the start (about 31 samples a cycle) and near 300 Hz at the end (about 73).
+        Assert.InRange(first, 25, 45);
+        Assert.InRange(last, 60, 80);
     }
 }

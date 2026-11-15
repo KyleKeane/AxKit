@@ -2,8 +2,8 @@ namespace AxKit.Core.Audio;
 
 /// <summary>
 /// The app's sounds as WAV data (16-bit mono PCM), generated in code so that no media file ships: the tick for a
-/// new line, the chimes for a sent message and for Claude replying, finishing and asking, the music loop that
-/// plays while Claude works and the sweeps of work in the background (axClaude FR-7.3, FR-7.8, FR-7.9, FR-7.10).
+/// new line, the pop for a tool call, the chimes for a sent message and for Claude replying, finishing and asking, the music loop that
+/// plays while Claude works and the bells and chords of work in the background (axClaude FR-7.3, FR-7.8, FR-7.9, FR-7.10).
 /// </summary>
 public static class WaveTone
 {
@@ -112,95 +112,37 @@ public static class WaveTone
     }
 
     /// <summary>
-    /// Soft plucked notes, one every <paramref name="millisecondsEach"/>: each is a tone with a little of its first
-    /// two overtones, which die faster than the fundamental as a struck string's do, swelling over 20 ms and ringing
-    /// into the next note's time, down to about two percent where the one after that starts. The tail of the last
-    /// note wraps round to the start, so the sequence is exactly periodic and loops without a seam, which is what a
-    /// sound that plays for as long as Claude works needs (axClaude FR-7.9). The whole is scaled so that its loudest
-    /// sample is <paramref name="amplitude"/>.
+    /// A tiny mouth pop: a round tone, a sine with 0.08 of its second harmonic, whose pitch drops fast from
+    /// <paramref name="fromHertz"/> towards <paramref name="toHertz"/> as to + (from - to) * exp(-t / drop), over in
+    /// <paramref name="seconds"/>: it rises in a straight line over 1.5 ms, dies away as exp(-t / (seconds / 4)) and
+    /// is brought to nothing in a straight line over its last 4 ms, so neither end clicks and nothing rings on. The
+    /// whole is scaled so that its loudest sample is <paramref name="peak"/>. The tool call's sound in axClaude
+    /// (FR-7.8), chosen by the user by ear on 2026-11-15 from a script that played candidates ("something more like a
+    /// tiny mouth pop so it is not elongated"; the first of three), and built here to give the same samples.
     /// </summary>
-    public static byte[] Plucks(double amplitude, int millisecondsEach, params double[] hertz)
+    public static byte[] Pop(double peak, double fromHertz, double toHertz, double drop, double seconds)
     {
-        var each = Samples(millisecondsEach);
-        var ring = 2 * each;
-        var attack = Math.Max(1, Samples(20));
-        var total = each * hertz.Length;
-        var mix = new double[total];
-        for (var n = 0; n < hertz.Length; n++)
+        var count = (int)(SampleRate * seconds);
+        var mix = new double[count];
+        var phase = 0.0;
+        var loudest = 1e-9;
+        for (var i = 0; i < count; i++)
         {
-            for (var i = 0; i < ring; i++)
-            {
-                var decay = Math.Exp(-4.0 * i / ring);
-                var envelope = i < attack ? decay * i / attack : decay;
-                var phase = 2 * Math.PI * hertz[n] * i / SampleRate;
-                var tone = Math.Sin(phase) + 0.3 * Math.Sin(2 * phase) * decay + 0.1 * Math.Sin(3 * phase) * decay * decay;
-                mix[(n * each + i) % total] += tone * envelope;
-            }
+            var t = i / (double)SampleRate;
+            var pitch = toHertz + (fromHertz - toHertz) * Math.Exp(-t / drop);
+            phase += 2 * Math.PI * pitch / SampleRate;
+            var attack = Math.Min(1.0, t / 0.0015);
+            var body = Math.Exp(-t / (seconds / 4));
+            var release = Math.Min(1.0, (seconds - t) / 0.004);
+            mix[i] = attack * body * release * (Math.Sin(phase) + 0.08 * Math.Sin(2 * phase));
+            loudest = Math.Max(loudest, Math.Abs(mix[i]));
         }
 
-        var peak = 0.0;
-        foreach (var value in mix)
+        var scale = peak / loudest;
+        var samples = new short[count];
+        for (var i = 0; i < count; i++)
         {
-            peak = Math.Max(peak, Math.Abs(value));
-        }
-
-        var scale = peak > 0 ? amplitude / peak : 0;
-        var samples = new short[total];
-        for (var i = 0; i < total; i++)
-        {
-            samples[i] = (short)(mix[i] * scale * short.MaxValue);
-        }
-
-        return Wav(samples);
-    }
-
-    /// <summary>
-    /// How much of its second and third harmonics a sweep or a swell carries: body over the sine, nothing bright
-    /// (the first versions, sines with a trace of the second harmonic, were "too thin" to be heard among other
-    /// sounds, 2026-11-15).
-    /// </summary>
-    private const double SecondHarmonic = 0.25;
-    private const double ThirdHarmonic = 0.10;
-
-    /// <summary>
-    /// How fast each layer of a sweep gets quieter as layers are added: each of n layers plays at n to the power of
-    /// minus this. Under 0.5, so that the whole carries more energy with every layer (fuller), and high enough that
-    /// five overlapping layers stay near one layer's peak.
-    /// </summary>
-    private const double SweepLayerFall = 0.35;
-
-    /// <summary>
-    /// Gentle sweeps, layered: each layer is one smooth glide in pitch from <paramref name="fromHertz"/> to
-    /// <paramref name="toHertz"/> (even in musical pitch, the phase summed sample by sample, so no step is heard),
-    /// a sine with some of its second and third harmonics, under a raised-cosine envelope that starts and ends at nothing:
-    /// no attack, no click. Each of <paramref name="layers"/> is a pitch ratio (1 the glide as given, 1.5 a fifth
-    /// above it, 2 an octave) and starts <paramref name="millisecondsApart"/> after the one before, so the layers
-    /// overlap and more of them sound fuller, not much longer. They are mixed into one buffer;
-    /// <paramref name="amplitude"/> is the level of one layer alone, and each of several is a little quieter
-    /// (<see cref="SweepLayerFall"/>). The sounds of axClaude's background work (FR-7.10).
-    /// </summary>
-    public static byte[] Sweeps(double amplitude, double fromHertz, double toHertz, int millisecondsEach, int millisecondsApart, params double[] layers)
-    {
-        var each = Samples(millisecondsEach);
-        var apart = Samples(millisecondsApart);
-        var mix = new double[each + apart * Math.Max(0, layers.Length - 1)];
-        var level = amplitude * Math.Pow(Math.Max(1, layers.Length), -SweepLayerFall);
-        for (var n = 0; n < layers.Length; n++)
-        {
-            var phase = 0.0;
-            for (var i = 0; i < each; i++)
-            {
-                var along = (double)i / each;
-                var envelope = 0.5 - 0.5 * Math.Cos(2 * Math.PI * along);
-                mix[n * apart + i] += (Math.Sin(phase) + SecondHarmonic * Math.Sin(2 * phase) + ThirdHarmonic * Math.Sin(3 * phase)) * envelope * level;
-                phase += 2 * Math.PI * layers[n] * fromHertz * Math.Pow(toHertz / fromHertz, along) / SampleRate;
-            }
-        }
-
-        var samples = new short[mix.Length];
-        for (var i = 0; i < mix.Length; i++)
-        {
-            samples[i] = (short)(Math.Clamp(mix[i], -1.0, 1.0) * short.MaxValue);
+            samples[i] = (short)Math.Round(mix[i] * scale * 32767);
         }
 
         return Wav(samples);
@@ -248,57 +190,98 @@ public static class WaveTone
     }
 
     /// <summary>
-    /// How the loudest sample of a swell grows with its layers: n layers peak at n to the power of this times one
-    /// layer's peak (two at 1.23 times, five at 1.62 times).
+    /// One soft synth chord with a long tail: the recurring sound of axClaude's background work (FR-7.10). Chosen
+    /// by the user by ear on 2026-11-15 from a script that played it, and built here to give the same samples;
+    /// change nothing of it without his ear. Each of <paramref name="tones"/> is a pad voice, two sines 0.3% apart
+    /// at half level each with a little of the second, third and fourth harmonics; a tone further up the list is
+    /// softer and enters 120 ms after the one before it; each rises as a raised cosine over 0.7 s, is full for
+    /// 1.5 s and dies away. <paramref name="ping"/>, when not 0, is the accent, as the working music has: one soft
+    /// bell note of that pitch 0.9 s in. A small reverb makes the tail: four damped comb filters side by side, then
+    /// two all-pass filters, mixed over the dry sound; the last 0.4 s fade to nothing in a straight line. The whole
+    /// lasts <paramref name="seconds"/> and is scaled so that its loudest sample is <paramref name="peak"/>.
     /// </summary>
-    private const double SwellLayerRise = 0.3;
-
-    /// <summary>
-    /// A swell, like a breath or a slow wave: something that goes on, not something that happened. Chosen by the
-    /// user by ear on 2026-11-15 from a script that played candidates, and built here to give the same samples;
-    /// change nothing of it without his ear. Every layer is a voice with body: two sines
-    /// <paramref name="shimmerHertz"/> apart at half level each, which beat slowly, so the voice comes and goes
-    /// like breathing, and a quarter of the second harmonic and a tenth of the third, which stay. Its envelope has
-    /// no onset to hear: a raised-cosine rise from nothing, the full level held for <paramref name="hold"/> of the
-    /// layer's length (0.4 is two fifths), and the same fall. The first layer lasts the whole
-    /// <paramref name="milliseconds"/>; each further one enters <paramref name="millisecondsApart"/> later and
-    /// leaves as much earlier, so more layers sound fuller and wider, never longer. The whole is scaled so that
-    /// its loudest sample is <paramref name="peak"/> for one layer and grows with the layers
-    /// (<see cref="SwellLayerRise"/>), never over <paramref name="limit"/>. The recurring sound of axClaude's
-    /// background work (FR-7.10).
-    /// </summary>
-    public static byte[] Swell(double peak, double limit, int milliseconds, int millisecondsApart, double hold, double shimmerHertz, params double[] hertz)
+    public static byte[] PadChord(double peak, double seconds, double ping, params double[] tones)
     {
-        var total = Samples(milliseconds);
-        var apart = Samples(millisecondsApart);
-        var mix = new double[total];
-        var rise = Math.Max(0.001, (1 - hold) / 2);
-        for (var n = 0; n < hertz.Length; n++)
+        var count = (int)(SampleRate * seconds);
+        var dry = new double[count];
+        if (ping > 0)
         {
-            var length = total - 2 * n * apart;
-            for (var i = 0; i < length; i++)
+            const double at = 0.9;
+            for (var i = (int)(at * SampleRate); i < count; i++)
             {
-                var along = (double)i / length;
-                var edge = Math.Min(1.0, Math.Min(along, 1 - along) / rise);
-                var envelope = 0.5 - 0.5 * Math.Cos(Math.PI * edge);
-                var turn = 2 * Math.PI * i / SampleRate;
-                var tone = 0.5 * (Math.Sin(turn * hertz[n]) + Math.Sin(turn * (hertz[n] + shimmerHertz)))
-                    + SecondHarmonic * Math.Sin(turn * 2 * hertz[n]) + ThirdHarmonic * Math.Sin(turn * 3 * hertz[n]);
-                mix[n * apart + i] += tone * envelope;
+                var t = i / (double)SampleRate - at;
+                var rise = Math.Min(1.0, t / 0.03);
+                dry[i] += 0.22 * rise * Math.Exp(-t / 0.7) * (Math.Sin(2 * Math.PI * ping * t) + 0.15 * Math.Sin(4 * Math.PI * ping * t));
             }
         }
 
-        var loudest = 0.0;
-        foreach (var value in mix)
+        const double attack = 0.7;
+        const double hold = 1.5;
+        const double release = 1.2 / 3.0; // 0.4 s, written as the script wrote it, for the same samples
+        for (var v = 0; v < tones.Length; v++)
         {
-            loudest = Math.Max(loudest, Math.Abs(value));
+            var f = tones[v];
+            var level = 1.0 / Math.Pow(v + 1, 0.35);
+            var start = 0.12 * v;
+            for (var i = (int)(start * SampleRate); i < count; i++)
+            {
+                var t = i / (double)SampleRate - start;
+                var envelope = t < attack ? 0.5 - 0.5 * Math.Cos(Math.PI * t / attack)
+                    : t < attack + hold ? 1.0
+                    : Math.Exp(-(t - attack - hold) / release);
+                var a = 2 * Math.PI * f * t;
+                var b = 2 * Math.PI * (f * 1.003) * t;
+                var tone = 0.5 * (Math.Sin(a) + Math.Sin(b)) + (0.22 * Math.Sin(2 * a) + 0.10 * Math.Sin(3 * b) + 0.04 * Math.Sin(4 * a));
+                dry[i] += level * envelope * tone;
+            }
         }
 
-        var scale = loudest > 0 ? Math.Min(limit, peak * Math.Pow(Math.Max(1, hertz.Length), SwellLayerRise)) / loudest : 0;
-        var samples = new short[total];
-        for (var i = 0; i < total; i++)
+        // The reverb: four comb filters side by side, each feeding its own output back through a one-pole damping.
+        var wet = new double[count];
+        foreach (var delay in (int[])[1103, 1277, 1409, 1559])
         {
-            samples[i] = (short)Math.Round(mix[i] * scale * short.MaxValue);
+            var line = new double[delay];
+            var at = 0;
+            var damped = 0.0;
+            for (var i = 0; i < count; i++)
+            {
+                var delayed = line[at];
+                damped = 0.7 * damped + 0.3 * delayed;
+                line[at] = dry[i] + 0.86 * damped;
+                at = (at + 1) % delay;
+                wet[i] += delayed * 0.25;
+            }
+        }
+
+        // Then two all-pass filters one after the other, which smear the combs' echoes into a tail.
+        foreach (var delay in (int[])[347, 113])
+        {
+            var line = new double[delay];
+            var at = 0;
+            for (var i = 0; i < count; i++)
+            {
+                var delayed = line[at];
+                var input = wet[i];
+                wet[i] = delayed - 0.5 * input;
+                line[at] = input + 0.5 * delayed;
+                at = (at + 1) % delay;
+            }
+        }
+
+        var fade = (int)(SampleRate * 0.4);
+        var loudest = 1e-9;
+        for (var i = 0; i < count; i++)
+        {
+            var tail = i > count - fade ? (count - i) / (double)fade : 1.0;
+            dry[i] = (0.6 * dry[i] + 0.8 * wet[i]) * tail;
+            loudest = Math.Max(loudest, Math.Abs(dry[i]));
+        }
+
+        var scale = peak / loudest;
+        var samples = new short[count];
+        for (var i = 0; i < count; i++)
+        {
+            samples[i] = (short)Math.Round(dry[i] * scale * 32767);
         }
 
         return Wav(samples);

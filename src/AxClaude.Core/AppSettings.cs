@@ -56,11 +56,19 @@ public sealed class AppSettings : ConsoleSettings
     /// <summary>A short sound when work in the background starts and when it ends (FR-7.10): rising for a start, falling for an end.</summary>
     public bool SoundOnBackgroundWork { get; set; } = true;
 
-    /// <summary>A soft sound every <see cref="BackgroundPulseSeconds"/> while work runs in the background, one note for each thing running (FR-7.10).</summary>
+    /// <summary>
+    /// The recurring sound while work runs in the background (FR-7.10): slow soft chords, a tone more for each thing
+    /// running, with a pause of <see cref="BackgroundChordPauseSeconds"/> between them. The name is from the first
+    /// recurring sound and stays, so that a file keeps the user's choice.
+    /// </summary>
     public bool BackgroundPulse { get; set; } = true;
 
-    /// <summary>How often the recurring sound plays: 10, 20, 30 or 60 seconds (<see cref="BackgroundWork.PulseSeconds"/>).</summary>
-    public int BackgroundPulseSeconds { get; set; } = BackgroundWork.DefaultPulseSeconds;
+    /// <summary>
+    /// The pause between two chords: 2, 5, 10 or 20 seconds (<see cref="BackgroundChords.PauseSeconds"/>). The
+    /// setting before it, <c>backgroundPulseSeconds</c> (how often the first recurring sound came), is read past
+    /// without error and not carried over: every file starts with 2.
+    /// </summary>
+    public int BackgroundChordPauseSeconds { get; set; } = BackgroundChords.DefaultPauseSeconds;
 
     /// <summary>Say background work as it starts and ends (FR-7.10): off, since the sounds say it.</summary>
     public bool SayBackgroundWork { get; set; }
@@ -125,7 +133,7 @@ public sealed class AppSettings : ConsoleSettings
         }
 
         SpeakReplies = false;
-        BackgroundPulseSeconds = BackgroundWork.SanitizePulseSeconds(BackgroundPulseSeconds);
+        BackgroundChordPauseSeconds = BackgroundChords.SanitizePauseSeconds(BackgroundChordPauseSeconds);
         SilentWords = SpeechFilter.Words(SpeechFilter.Text(SilentWords ?? []));
     }
 }

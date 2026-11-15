@@ -17,8 +17,14 @@ internal sealed partial class MainForm
 
     private readonly System.Windows.Forms.Timer _backgroundSettle = new() { Interval = BackgroundSettleMs };
 
-    /// <summary>The recurring sound while background work runs; its interval is the setting's.</summary>
-    private readonly System.Windows.Forms.Timer _backgroundPulse = new();
+    /// <summary>How often the recurring chords' timer asks whether a chord is due: fine enough that a pause of 2 s is 2 s, and that a chord held for a reply comes soon after it.</summary>
+    private const int BackgroundChordCheckMs = 250;
+
+    /// <summary>The recurring chords while background work runs: the timer asks <see cref="_backgroundChords"/> whether one is due.</summary>
+    private readonly System.Windows.Forms.Timer _backgroundChordTimer = new() { Interval = BackgroundChordCheckMs };
+
+    /// <summary>When the chords play and which (FR-7.10): Core's schedule, with the shared random numbers.</summary>
+    private readonly BackgroundChords _backgroundChords = new(AxKit.Core.Audio.AmbientSounds.ChordNames.Count, Random.Shared.Next);
 
     /// <summary>What the model showed at the last frame, by which a frame that changes nothing costs three comparisons.</summary>
     private string? _backgroundSeenText;
@@ -29,7 +35,7 @@ internal sealed partial class MainForm
     private BackgroundCount _backgroundHeard = BackgroundCount.None;
     private IReadOnlyList<BackgroundAgent> _backgroundAgentsHeard = [];
 
-    private ChoiceItems<int>? _pulseItems;
+    private ChoiceItems<int>? _pauseItems;
 
     /// <summary>Called once from the constructor.</summary>
     private void WireBackground()
@@ -39,7 +45,7 @@ internal sealed partial class MainForm
             _backgroundSettle.Stop();
             BackgroundSettled();
         };
-        _backgroundPulse.Tick += (_, _) => PlayBackgroundPulse();
+        _backgroundChordTimer.Tick += (_, _) => PlayBackgroundChord();
     }
 
     /// <summary>The number now (FR-7.10): the agents shown or awaited and what the mode line counts; nothing while Claude is stopped.</summary>
@@ -93,51 +99,52 @@ internal sealed partial class MainForm
             }
         }
 
-        FollowBackgroundPulse();
+        FollowBackgroundChords();
     }
 
     /// <summary>Claude stopped or starts again: nothing runs, and its going is no end to signal.</summary>
     private void ForgetBackground()
     {
         _backgroundSettle.Stop();
-        _backgroundPulse.Stop();
+        _backgroundChordTimer.Stop();
         _backgroundHeard = BackgroundCount.None;
         _backgroundAgentsHeard = [];
     }
 
-    /// <summary>The recurring sound's timer runs while something runs and the setting is on, at the setting's interval; it stops at once at zero.</summary>
-    private void FollowBackgroundPulse()
+    /// <summary>
+    /// The chords' timer runs while something runs and the setting is on; at zero it stops, so no new chord starts,
+    /// and a chord that sounds rings out. The first chord comes at the first tick.
+    /// </summary>
+    private void FollowBackgroundChords()
     {
-        var wanted = _settings.BackgroundPulse && _backgroundHeard.Total > 0;
-        var interval = _settings.BackgroundPulseSeconds * 1000;
-        if (!wanted)
+        if (_settings.BackgroundPulse && _backgroundHeard.Total > 0)
         {
-            _backgroundPulse.Stop();
+            _backgroundChordTimer.Start();
         }
-        else if (!_backgroundPulse.Enabled || _backgroundPulse.Interval != interval)
+        else
         {
-            _backgroundPulse.Stop();
-            _backgroundPulse.Interval = interval;
-            _backgroundPulse.Start();
+            _backgroundChordTimer.Stop();
         }
     }
 
     /// <summary>
-    /// One beat of the recurring sound: as many notes as things run. A beat is skipped while NVDA is counted as still
-    /// reading a reply this window spoke (<see cref="LeftoverSpeech"/>, the estimate FR-7.4b uses); a window put away
-    /// is silent through <see cref="Sounds.Muted"/>.
+    /// A tick of the chords' timer: a chord when one is due (<see cref="BackgroundChords.Next"/>: the last one and its
+    /// pause over), with a tone for each thing running now. None starts while NVDA is counted as still reading a reply
+    /// this window spoke (<see cref="LeftoverSpeech"/>, the estimate FR-7.4b uses); it then starts as soon as that is
+    /// over. A window put away is silent through <see cref="Sounds.Muted"/>.
     /// </summary>
-    private void PlayBackgroundPulse()
+    private void PlayBackgroundChord()
     {
         if (_backgroundHeard.Total == 0 || !ProcessRunning)
         {
-            _backgroundPulse.Stop();
+            _backgroundChordTimer.Stop();
             return;
         }
 
-        if (!LeftoverSpeech.Running(Environment.TickCount64, _replySpeechEnds))
+        var now = Environment.TickCount64;
+        if (_backgroundChords.Next(now, _backgroundHeard.Total, _settings.BackgroundChordPauseSeconds, LeftoverSpeech.Running(now, _replySpeechEnds)) is { } chord)
         {
-            Sounds.BackgroundPulse(BackgroundWork.Notes(_backgroundHeard.Total));
+            Sounds.BackgroundChord(chord.Chord, chord.Things);
         }
     }
 
@@ -145,7 +152,7 @@ internal sealed partial class MainForm
     private void SayBackgroundWork() =>
         Announce(BackgroundWork.Said(BackgroundNow, ProcessRunning ? _model.BackgroundAgents : []), true);
 
-    /// <summary>Options, Background work (FR-7.10): the two sounds, the words, and how often the recurring sound plays.</summary>
+    /// <summary>Options, Background work (FR-7.10): the two sounds, the words, and the pause between the recurring chords.</summary>
     private ToolStripMenuItem CreateBackgroundMenu()
     {
         var menu = new ToolStripMenuItem("&Background work");
@@ -153,24 +160,26 @@ internal sealed partial class MainForm
         menu.DropDownItems.Add(Toggle("Play a sound &while background work runs", _settings.BackgroundPulse, v =>
         {
             _settings.BackgroundPulse = v;
-            FollowBackgroundPulse();
+            FollowBackgroundChords();
         }));
         menu.DropDownItems.Add(Toggle("Sa&y background work as it starts and ends", _settings.SayBackgroundWork, v => _settings.SayBackgroundWork = v));
         menu.DropDownItems.Add(new ToolStripSeparator());
-        _pulseItems = new ChoiceItems<int>(menu, BackgroundWork.PulseSeconds.Select(seconds => (seconds, PulseChoice(seconds))), _settings.BackgroundPulseSeconds, SetPulseSeconds);
+        _pauseItems = new ChoiceItems<int>(menu, BackgroundChords.PauseSeconds.Select(seconds => (seconds, PauseChoice(seconds))), _settings.BackgroundChordPauseSeconds, SetPauseSeconds);
         return menu;
     }
 
-    /// <summary>"While it runs, a sound every &amp;20 seconds": the choice's text, its number the mnemonic.</summary>
-    private static string PulseChoice(int seconds) => $"While it runs, a sound every &{seconds} seconds";
+    /// <summary>"A pause of &amp;2 seconds between chords": the choice's text, its number the mnemonic (the first digit; for 20, whose 2 is taken by 2, its 0).</summary>
+    private static string PauseChoice(int seconds) =>
+        seconds >= 10 && BackgroundChords.PauseSeconds.Contains(seconds / 10)
+            ? $"A pause of {seconds / 10}&{seconds % 10} seconds between chords"
+            : $"A pause of &{seconds} seconds between chords";
 
-    private void SetPulseSeconds(int seconds)
+    private void SetPauseSeconds(int seconds)
     {
-        _settings.BackgroundPulseSeconds = seconds;
-        _pulseItems?.Check(seconds);
-        FollowBackgroundPulse();
+        _settings.BackgroundChordPauseSeconds = seconds;
+        _pauseItems?.Check(seconds);
         SaveSettings();
         // The menu closes on a choice, so the choice is said (AX-6.4).
-        Announce(AxKit.Core.MenuText.Plain(PulseChoice(seconds)), true);
+        Announce(AxKit.Core.MenuText.Plain(PauseChoice(seconds)), true);
     }
 }

@@ -108,7 +108,7 @@ the app follows its spec, the plan's step reads as below.
 3. Alt+F4 while the status says "ready": the app closes within two seconds; Task Manager shows no `claude.exe`.
 4. Start the app, ask Claude to run `sleep 20` with the Bash tool, and press Alt+F4 while the status says "working". The window stays. NVDA reads "Close axClaude? read only edit multi line" and the first line "Claude is still working. If you close now, Claude stops in the middle of its work." Down Arrow: the line about carrying on, then "Enter: Close anyway. Escape: Keep working." Tab: "Close anyway button", Tab: "Keep working button". Escape: the notice goes, the focus is back in the message field, NVDA+End still says "working". Send a second message, then Alt+F4 again: the first line now ends "and a message you sent is still waiting for it". Enter: the app closes within two seconds and no `claude.exe` is left. Start it again: the conversation is back.
 5. Start the app from a shortcut with no folder argument: it opens the last folder without asking, at the same window size.
-6. Sounds, with Options, Sounds, "Chimes: ready, sent, replying, done, question" checked: start the app; a single high ping with "Ready". Then send a message that needs a few tool calls; a short low note plays with "Sent", three rising notes with "Responding", soft single ticks follow while lines arrive, two lower knocks each time a tool starts, with no chime between the tool calls, and three falling notes come with "Done" once the turn has ended. Ask Claude to do something that needs permission: two equal notes with "Claude asks". Options, Sounds, "Ticks for new lines and tool calls" unchecked: no ticks and no tool tick during the next reply; checked again: ticks. The sound option unchecked: no chimes, ticks still there. Ask for a long answer in many short lines ("Write 80 numbered lines"): the ticks stay even and clean to the end, without stutter, and a tick that falls into a chime sounds right after it.
+6. Sounds, with Options, Sounds, "Chimes: ready, sent, replying, done, question" checked: start the app; a single high ping with "Ready". Then send a message that needs a few tool calls; a short low note plays with "Sent", three rising notes with "Responding", soft single ticks follow while lines arrive, a tiny soft pop each time a tool starts (short, no tail, nothing in the music or in NVDA's speech dips with it), with no chime between the tool calls, and three falling notes come with "Done" once the turn has ended. Ask Claude to do something that needs permission: two equal notes with "Claude asks". Options, Sounds, "Ticks for new lines and tool calls" unchecked: no ticks and no tool pop during the next reply; checked again: ticks. The sound option unchecked: no chimes, ticks still there. Ask for a long answer in many short lines ("Write 80 numbered lines"): the ticks stay even and clean to the end, without stutter, and a tick that falls into a chime sounds right after it.
 7. Options, Sounds, "Background music while Claude works" checked: send a message that needs a few tool calls; quiet, slow chords of soft sustained tones, with a faint high ping in each, start as the status turns to working and repeat every 14 seconds with no seam or click heard, well under NVDA's speech and under the ticks and the chimes, which sound as before; it stops as the turn ends, just before the three falling notes. Ask Claude for something that needs permission: the music stops as "Claude asks" comes and starts again once the answer has gone. Uncheck the option during a long turn: the music stops at once; check it again: it starts again. Ctrl+Shift+R during a turn, Enter: the music stops with "Restarting". NVDA's speech stays easy to follow over the music. Ctrl+Space in the message field while Claude is idle: "Background music on, nothing is running" and the Sounds item, which shows Ctrl+Space, is checked; Ctrl+Space: "Background music off", unchecked. Ctrl+Space from the conversation during a turn: the music starts with "Background music on"; again: it stops with "Background music off". Plain Space in the conversation does nothing.
 8. Options, When Claude is done, "Louder alert when the window is in the background" checked: send a message and switch to another window (Alt+Tab) before Claude is done; a longer, louder call (three rising notes to a held one, twice) comes in place of the three falling notes, and the taskbar button flashes; NVDA says nothing, since the window is not active. Ask for something that needs permission and switch away: the same call in place of the two equal notes or the trill. Stay in the window for the next turn: the three falling notes as before, no alert. Uncheck "Chimes", keep the alert checked, switch away: the alert still comes.
 
@@ -214,31 +214,34 @@ since axHelp is what starts such a window and brings it up.
 The automated part is `tests/scripts/axClaude/22-background-work.txt`, with a stand-in for Claude Code that draws the
 rows: the number in the status bar, the sounds by name, Ctrl+B, F8 and the words. These steps need real background
 work and the ear: how the three sounds sound in the app, whether they are told apart from the chimes, and whether the
-number is heard. The user chose all three by ear from scripts (2026-11-15); this is their first hearing in real use.
+number is heard. The user chose all three by ear from scripts (2026-11-15); the recurring chords replaced the breath the
+same day, after the breath was heard in the app and rejected; this is the chords' first hearing in real use.
 
 1. Ask Claude: "Run `ping -n 60 127.0.0.1` with the Bash tool in the background, then reply with the single word
    started." After the reply: three quick bell notes going up with a sparkle, softer than the chimes; nothing is spoken about the
    shell. F8: "Claude: ready", then "1 shell in the background", the mode, the session name, then the folder.
    NVDA+End reads the same or says "blank" (the reason for F8).
-2. Wait: every 10 seconds one soft breath of five seconds that swells, stays and fades with no beginning to hear: it
-   sounds like something going on, not like a notification, and is heard without effort among the ticks and speech. It does not cut or delay a chime, a tick or NVDA's speech.
+2. Wait: a slow soft chord that swells, rings with a long fading tail and a small bell note, about four and a half
+   seconds, then 2 seconds of silence, then another chord, never the same twice running: a quiet progression that
+   sounds like something going on, not like a notification, heard without effort among the ticks and speech and in
+   tune with the background music (Ctrl+Space) when both play. It does not cut or delay a chime, a tick or NVDA's speech.
 3. Ctrl+B: "1 shell in the background". Alt, A: the Actions menu has What runs in the background, Ctrl+B.
 4. When the ping ends (a minute): the same three bell notes going down, quicker and softer than the Done chime's three notes and told apart from them; the
-   recurring sound does not come again. Ctrl+B: "Nothing runs in the background".
+   chord sounding rings out and no new chord comes. Ctrl+B: "Nothing runs in the background".
 5. Ask Claude: "Start two general-purpose agents in the background, each to wait 40 seconds with the Bash tool and
    report, and reply at once with the single word started." One rising sound for the two; the reply is spoken alone,
    no row of an agent with it. F8 says "2 agents in the background" (or "2 in the background" with their kinds).
-   Every 10 seconds the breath with two voices, fuller and no longer. Ctrl+B: the number, then each agent's type
+   The chords now have a note more on top, fuller and no longer. Ctrl+B: the number, then each agent's type
    and description.
-6. As each agent ends: the falling sound, once each; after the first, the recurring sound has one voice.
+6. As each agent ends: the falling sound, once each; after the first, the next chord has a note fewer (one that sounds is not cut).
 7. Options, Background work: Play a sound when background work starts and ends (checked), Play a sound while
    background work runs (checked), Say background work as it starts and ends (not checked), then four choices,
-   While it runs, a sound every 10, 20, 30 and 60 seconds, the one for 10 checked. Choose 20: "While it runs, a
-   sound every 20 seconds" is said. Check Say background work as it starts and ends and repeat step 1: after the
+   A pause of 2, 5, 10 and 20 seconds between chords, the one for 2 checked. Choose 5: "A pause of 5 seconds
+   between chords" is said, and from the next chord on the pause is 5 seconds. Choose 2 again. Check Say background work as it starts and ends and repeat step 1: after the
    reply has been read, "1 shell started"; at its end, "1 shell finished". Never in the middle of a reply.
 8. With background work running and Speak replies on all lines, send a message with a long reply: while the reply
-   is read, the recurring sound stays away.
-9. Ctrl+Shift+R with background work running, Restart now: no falling sound, and no recurring sound afterwards.
+   is read, no new chord starts; the next comes soon after the reading ends.
+9. Ctrl+Shift+R with background work running, Restart now: no falling sound, and no new chord afterwards.
 
 ## 23. The key test (bundle AX-8.12, 2026-11-15)
 

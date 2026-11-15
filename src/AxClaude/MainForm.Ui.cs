@@ -86,7 +86,7 @@ internal sealed partial class MainForm
         // FR-7.9: starts or stops at once when toggled during a turn; Ctrl+Space anywhere flips the same item.
         sounds.DropDownItems.Add(CreateMusicItem("&Background music while Claude works", AxClaudeKeys.ToggleMusic));
         options.DropDownItems.Add(sounds);
-        // FR-7.10: the sounds and the words of work in the background, and how often the recurring sound plays.
+        // FR-7.10: the sounds and the words of work in the background, and the pause between the recurring chords.
         options.DropDownItems.Add(CreateBackgroundMenu());
 
         // FR-7.4: the reply choices are one of three, shown checked like a radio group; the choice is announced, since

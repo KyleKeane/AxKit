@@ -35,12 +35,12 @@ Notes are named as on a piano (C5 is the C above middle C); times are millisecon
 
 ### 1. Ticks: something arrived, nothing to do
 
-Pattern: struck noise, one or two strikes of about ten milliseconds, like a typewriter. Never a note.
+Pattern: something tiny and percussive, over within a few tens of milliseconds and with no tail: a typewriter strike of noise, or a mouth pop. Never a held note.
 
 | Variant | Sound | State |
 |---|---|---|
 | A line of output arrived | one strike, 1500 Hz under the noise | exists (`Sounds.Click`) |
-| A tool call arrived | two lower knocks, 650 then 850 Hz | exists (`Sounds.Tool`) |
+| A tool call arrived | a tiny mouth pop, 30 ms, a round tone falling from 700 towards 300 Hz, no noise (two lower knocks, 650 then 850 Hz, until 2026-11-15) | exists (`Sounds.Tool`), chosen by ear 2026-11-15 |
 
 ### 2. Moves: where your own key took you
 

@@ -1,12 +1,12 @@
 # Workflow: Hear and ask what Claude runs in the background
 # axClaude, docs/axClaude/nvda-test-plan.md section 22 (SPEC.md FR-7.10, FR-10.2; bundle AX-7.10): the number of things
-# running in the background in the status bar, the start and finish sounds, the recurring sound, the words when the
+# running in the background in the status bar, the start and finish sounds, the recurring chords and their pause, the words when the
 # user turns them on, Ctrl+B and F8. Needs no Claude Code, no network and no model: a stand-in batch file draws the
 # rows Claude Code draws (the mode line's count of shells, the panel's agent rows, the waiting row; heard live on
 # 2026-11-15, docs/axClaude/claude-screens.md), one frame for each file the script makes in the project folder. The
 # sounds are checked by name on the timeline; how they sound is for the ear (the plan's section 22).
-# The recurring sound every 10 seconds, so that the run hears it soon.
-file home\AxKit\axClaude.json {"checkForUpdates":false,"backgroundPulseSeconds":10}
+# The recurring chords with the first pause, 2 seconds, so that the run hears them soon.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir bg
 # The stand-in: the escape character from cmd's own prompt, then a frame, then it waits for the next file.
@@ -23,7 +23,12 @@ refuse said ♪ BackgroundStart
 expect commands What runs in the background, Actions, Ctrl\u002BB
 expect commands Play a sound when background work starts and ends, Options, Background work, checked
 expect commands Play a sound while background work runs, Options, Background work, checked
-expect commands While it runs, a sound every 10 seconds, Options, Background work, checked
+expect commands A pause of 2 seconds between chords, Options, Background work, checked
+expect commands A pause of 20 seconds between chords, Options, Background work
+menu A pause of 5 seconds between chords
+expect said ! A pause of 5 seconds between chords
+menu A pause of 2 seconds between chords
+expect said ! A pause of 2 seconds between chords
 
 # A shell and two agents start: one start sound, however many started; the status bar says the number and its kinds;
 # nothing is spoken (Say background work is off at first).
@@ -39,8 +44,8 @@ keys f8
 expect said ! Claude: ready | 3 in the background: 1 shell, 2 agents | auto mode on
 menu What runs in the background
 expect said ! 3 in the background: 1 shell, 2 agents. general-purpose: Checking callers. Explore: Reading the spec
-# While it runs: the recurring sound, three notes for three things.
-expect said ♪ BackgroundPulse 3
+# While it runs: the recurring chords, a tone more for each of the three things.
+expect said ♪ BackgroundChord 3
 
 # A redraw of the same panel is no change: no start sound and no finish sound.
 file bg\go2 x
@@ -54,9 +59,9 @@ file bg\go3 x
 expect said ♪ BackgroundFinish
 expect said Checking callers finished
 expect state Claude: ready | 2 in the background: 1 shell, 1 agent | auto mode on
-expect said ♪ BackgroundPulse 2
+expect said ♪ BackgroundChord 2
 
-# Everything ends: one finish sound, the words, no background part in the status bar, and the recurring sound stops.
+# Everything ends: one finish sound, the words, no background part in the status bar, and no new chord starts.
 file bg\go4 x
 expect said ♪ BackgroundFinish
 expect said Reading the spec finished. 1 shell finished
@@ -64,5 +69,5 @@ refuse state in the background
 keys ctrl+b
 expect said ! Nothing runs in the background
 said
-wait 11000
-refuse said ♪ BackgroundPulse
+wait 8000
+refuse said ♪ BackgroundChord

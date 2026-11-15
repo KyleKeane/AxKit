@@ -3,7 +3,7 @@ using AxKit.Core.Audio;
 namespace AxKit.Tests;
 
 /// <summary>
-/// The sweeps of background work and the working music (axClaude FR-7.10, FR-7.9): what can be said of a sound
+/// The sounds of background work and the working music (axClaude FR-7.10, FR-7.9): what can be said of a sound
 /// without hearing it. With AXKIT_RENDER_SOUNDS set to a folder, the last test also writes the sounds there as WAV
 /// files, for the ear; it plays nothing.
 /// </summary>
@@ -35,31 +35,6 @@ public class AmbientSoundsTests
 
     private static int Peak(short[] samples) => Peak(samples, 0, samples.Length);
 
-    private static double Energy(short[] samples)
-    {
-        var sum = 0.0;
-        foreach (var sample in samples)
-        {
-            sum += (double)sample * sample;
-        }
-
-        return sum;
-    }
-
-    /// <summary>The pitch by the zero crossings between two places.</summary>
-    private static int Crossings(short[] samples, int from, int to)
-    {
-        var count = 0;
-        for (var i = from + 1; i < to; i++)
-        {
-            if ((samples[i - 1] < 0) != (samples[i] < 0))
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
 
     /// <summary>How strongly a pitch sounds between two places: the samples against a sine and a cosine of it.</summary>
     private static double Strength(short[] samples, int from, int to, double hertz)
@@ -141,7 +116,7 @@ public class AmbientSoundsTests
 
         foreach (var samples in new[] { start, finish })
         {
-            // Under the chimes (0.35), over the breath's one voice (0.18): the loudest sample is 0.24 of full scale.
+            // Under the chimes (0.35), about the recurring chords' (0.22 to 0.30): the loudest sample is 0.24 of full scale.
             Assert.Equal(AmbientSounds.FlourishPeak * short.MaxValue, Peak(samples), 1.5);
 
             // No click at either end: it starts at nothing, a note is cut where it has died away to under a
@@ -153,25 +128,178 @@ public class AmbientSoundsTests
         }
     }
 
-    [Fact]
-    public void The_recurring_sound_starts_and_ends_at_nothing_and_swells_and_fades_slowly()
+    /// <summary>
+    /// The chord synthesis of the script that played the recurring sound to the user on 2026-11-15
+    /// (chords.ps1, its class ChordSynth, copied as it was), the independent reference the app's chords are held to.
+    /// </summary>
+    private static class ChordSynth
     {
-        foreach (var layers in Enumerable.Range(1, AmbientSounds.MostLayers))
+        public const int Rate = 22050;
+
+        public static double[] Render(double[] tones, double seconds, double bright, double ping)
         {
-            var samples = SamplesOf(AmbientSounds.BackgroundPulse(layers));
-            var peak = Peak(samples);
-            var edge = 5 * Rate / 1000;
+            int count = (int)(Rate * seconds);
+            double[] dry = new double[count];
+            if (ping > 0)
+            {
+                double at = 0.9;
+                for (int i = (int)(at * Rate); i < count; i++)
+                {
+                    double t = i / (double)Rate - at;
+                    double rise = Math.Min(1.0, t / 0.03);
+                    dry[i] += 0.22 * rise * Math.Exp(-t / 0.7) * (Math.Sin(2 * Math.PI * ping * t) + 0.15 * Math.Sin(4 * Math.PI * ping * t));
+                }
+            }
+            double attack = 0.7, hold = 1.5, release = 1.2;
+            for (int v = 0; v < tones.Length; v++)
+            {
+                double f = tones[v];
+                double level = 1.0 / Math.Pow(v + 1, 0.35);
+                double start = 0.12 * v;
+                for (int i = (int)(start * Rate); i < count; i++)
+                {
+                    double t = i / (double)Rate - start;
+                    double env = t < attack ? 0.5 - 0.5 * Math.Cos(Math.PI * t / attack)
+                        : t < attack + hold ? 1.0
+                        : Math.Exp(-(t - attack - hold) / (release / 3.0));
+                    double a = 2 * Math.PI * f * t, b = 2 * Math.PI * (f * 1.003) * t;
+                    double tone = 0.5 * (Math.Sin(a) + Math.Sin(b))
+                        + bright * (0.22 * Math.Sin(2 * a) + 0.10 * Math.Sin(3 * b) + 0.04 * Math.Sin(4 * a));
+                    dry[i] += level * env * tone;
+                }
+            }
 
-            // No click: silence at both ends, and the first and last 5 ms far below the loudest sample.
-            Assert.Equal(0, samples[0]);
-            Assert.InRange(Math.Abs((int)samples[^1]), 0, 2);
-            Assert.True(Peak(samples, 0, edge) < peak / 20, "the breath should start from nothing");
-            Assert.True(Peak(samples, samples.Length - edge, samples.Length) < peak / 20, "the breath should end in nothing");
-
-            // No attack: a tenth of the way in, the sound is still under a third of its loudest, and so again at the end.
-            Assert.True(Peak(samples, 0, samples.Length / 10) < peak / 3, "the breath should swell slowly");
-            Assert.True(Peak(samples, samples.Length - samples.Length / 10, samples.Length) < peak / 3, "the breath should fade slowly");
+            int[] combs = { 1103, 1277, 1409, 1559 };
+            double[] wet = new double[count];
+            foreach (int delay in combs)
+            {
+                double[] line = new double[delay];
+                int at = 0;
+                double damp = 0;
+                for (int i = 0; i < count; i++)
+                {
+                    double outSample = line[at];
+                    damp = 0.7 * damp + 0.3 * outSample;
+                    line[at] = dry[i] + 0.86 * damp;
+                    at = (at + 1) % delay;
+                    wet[i] += outSample * 0.25;
+                }
+            }
+            foreach (int delay in new[] { 347, 113 })
+            {
+                double[] line = new double[delay];
+                int at = 0;
+                for (int i = 0; i < count; i++)
+                {
+                    double buffered = line[at];
+                    double input = wet[i];
+                    wet[i] = buffered - 0.5 * input;
+                    line[at] = input + 0.5 * buffered;
+                    at = (at + 1) % delay;
+                }
+            }
+            double[] mix = new double[count];
+            int fade = (int)(Rate * 0.4);
+            for (int i = 0; i < count; i++)
+            {
+                double tail = i > count - fade ? (count - i) / (double)fade : 1.0;
+                mix[i] = (0.6 * dry[i] + 0.8 * wet[i]) * tail;
+            }
+            return mix;
         }
+
+        /// <summary>The script's Wav without its header: the samples scaled to the peak and rounded.</summary>
+        public static short[] Samples(double[] samples, double peak)
+        {
+            double max = 1e-9;
+            foreach (double s in samples)
+            {
+                max = Math.Max(max, Math.Abs(s));
+            }
+
+            double scale = peak / max;
+            return [.. samples.Select(s => (short)Math.Round(s * scale * 32767))];
+        }
+    }
+
+    // The script's $book and $accents, typed out again from it: each chord's tones from the bottom up, and its accent.
+    private static readonly Dictionary<string, (double[] Tones, double Accent)> Book = new()
+    {
+        ["C"] = ([261.63, 392.00, 329.63, 493.88, 587.33, 783.99], 783.99),
+        ["Am"] = ([220.00, 329.63, 261.63, 392.00, 493.88, 659.26], 1318.51),
+        ["F"] = ([349.23, 523.25, 440.00, 659.26, 783.99, 1046.50], 880.00),
+        ["G"] = ([392.00, 587.33, 493.88, 659.26, 880.00, 1174.66], 1174.66),
+    };
+
+    /// <summary>What the script played for a chord and a number of things, at the peak the user asked for after it ("yes, but softer": 0.22 where he heard 0.28).</summary>
+    private static short[] ChordAsChosen(string name, int things)
+    {
+        var (tones, accent) = Book[name];
+        return ChordSynth.Samples(ChordSynth.Render(tones[..(things + 1)], 4.6, 1.0, accent), 0.22 * Math.Pow(things, 0.2));
+    }
+
+    [Theory]
+    [InlineData("Am", 1)]
+    [InlineData("G", 1)]
+    [InlineData("F", 3)]
+    [InlineData("C", 3)]
+    [InlineData("G", 5)]
+    public void The_recurring_chords_are_the_ones_the_user_chose_by_ear(string name, int things)
+    {
+        var chord = AmbientSounds.ChordNames.ToList().IndexOf(name);
+        Assert.Equal(ChordAsChosen(name, things), SamplesOf(AmbientSounds.BackgroundChord(chord, things)));
+    }
+
+    [Fact]
+    public void A_chord_lasts_four_seconds_and_six_tenths_fades_to_nothing_and_is_fuller_with_more_things()
+    {
+        Assert.Equal(["C", "Am", "F", "G"], AmbientSounds.ChordNames);
+        Assert.Equal(4.6, AmbientSounds.ChordSeconds);
+        Assert.Equal(5, AmbientSounds.MostThings);
+        for (var chord = 0; chord < AmbientSounds.ChordNames.Count; chord++)
+        {
+            short[] before = [];
+            for (var things = 1; things <= AmbientSounds.MostThings; things++)
+            {
+                var samples = SamplesOf(AmbientSounds.BackgroundChord(chord, things));
+                Assert.Equal((int)(Rate * 4.6), samples.Length);
+
+                // The peak the user asked for: 0.22 for one thing, n to the power of 0.2 times it for n (0.30 for five).
+                Assert.Equal(0.22 * Math.Pow(things, 0.2) * short.MaxValue, Peak(samples), 1.5);
+
+                // No click: it starts at nothing, rises over a few tenths, and the last sample is nothing.
+                Assert.Equal(0, samples[0]);
+                Assert.True(Peak(samples, 0, Rate / 100) < Peak(samples) / 20, "a chord should rise slowly");
+                Assert.InRange(Math.Abs((int)samples[^1]), 0, 1);
+
+                // The tail fades: the last half second is far quieter than the first two seconds.
+                Assert.True(Peak(samples, samples.Length - Rate / 2, samples.Length) < Peak(samples, 0, 2 * Rate) / 4, "the tail should fade");
+
+                // Fuller: every further thing adds the chord's next tone on top. Heard by its upper sine, 0.3% above it,
+                // which no tone below has (the tone itself can be the second harmonic of one below: E5 over E4 in A minor).
+                if (things > 1)
+                {
+                    var added = 1.003 * Book[AmbientSounds.ChordNames[chord]].Tones[things];
+                    Assert.True(Strength(samples, Rate, 3 * Rate, added) > 3 * Strength(before, Rate, 3 * Rate, added), $"chord {chord}, {things} things: the tone {added} should be added");
+                }
+
+                before = samples;
+            }
+        }
+
+        // More than five things sound as five, and none is never asked for: the count is clamped.
+        Assert.Equal(AmbientSounds.BackgroundChord(2, 5), AmbientSounds.BackgroundChord(2, 9));
+        Assert.Equal(AmbientSounds.BackgroundChord(2, 1), AmbientSounds.BackgroundChord(2, 0));
+    }
+
+    /// <summary>The chords are made off the UI thread at their first use (rule 3): this measures how long one takes, for the notes; it fails only if one takes a whole second.</summary>
+    [Fact]
+    public void A_chord_is_made_in_well_under_a_second()
+    {
+        AmbientSounds.BackgroundChord(0, 1);
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        AmbientSounds.BackgroundChord(3, 5);
+        Assert.InRange(watch.ElapsedMilliseconds, 0, 1000);
     }
 
     [Fact]
@@ -190,161 +318,6 @@ public class AmbientSoundsTests
         // A ping that would run past the end is cut there, and no ping at all is silence.
         Assert.Equal(Rate / 10, SamplesOf(WaveTone.Pings(0.3, 0.1, (0.05, 500, 1.0, 0.2))).Length);
         Assert.Equal(0, Peak(SamplesOf(WaveTone.Pings(0.3, 0.1))));
-    }
-
-    /// <summary>
-    /// The breath as the user chose it by ear on 2026-11-15, written out a second time from the script that played
-    /// it to him: voices at 1, 1.5, 2, 2.5 and 3 times 392 Hz, each two sines 0.6 Hz apart at half level with a
-    /// quarter of the second harmonic and a tenth of the third, a raised-cosine rise over three tenths of the voice,
-    /// full for four, a fall over three, each further voice 100 ms later in and 100 ms earlier out, 4.8 s, the
-    /// loudest sample 0.18 times the voices to the power of 0.3 and never over 0.33.
-    /// </summary>
-    private static short[] BreathAsChosen(int voices)
-    {
-        double[] ratios = [1.0, 1.5, 2.0, 2.5, 3.0];
-        var count = (int)(Rate * 4.8);
-        var mix = new double[count];
-        for (var v = 0; v < voices; v++)
-        {
-            var f = 392 * ratios[v];
-            var lead = (int)(Rate * 0.1 * v);
-            var length = count - 2 * lead;
-            for (var i = 0; i < length; i++)
-            {
-                var x = i / (double)length;
-                var envelope = x < 0.3 ? 0.5 - 0.5 * Math.Cos(Math.PI * x / 0.3) : x > 0.7 ? 0.5 - 0.5 * Math.Cos(Math.PI * (1 - x) / 0.3) : 1.0;
-                var t = i / (double)Rate;
-                var tone = Math.Sin(2 * Math.PI * f * t) + Math.Sin(2 * Math.PI * (f + 0.6) * t);
-                tone = 0.5 * tone + 0.25 * Math.Sin(2 * Math.PI * 2 * f * t) + 0.10 * Math.Sin(2 * Math.PI * 3 * f * t);
-                mix[lead + i] += envelope * tone;
-            }
-        }
-
-        var max = mix.Max(Math.Abs);
-        var scale = 0.18 * Math.Pow(voices, 0.3) / max;
-        if (scale * max > 0.33)
-        {
-            scale = 0.33 / max;
-        }
-
-        return [.. mix.Select(sample => (short)Math.Round(sample * scale * 32767))];
-    }
-
-    [Fact]
-    public void The_recurring_sound_is_the_breath_the_user_chose_by_ear()
-    {
-        for (var voices = 1; voices <= AmbientSounds.MostLayers; voices++)
-        {
-            var chosen = BreathAsChosen(voices);
-            var built = SamplesOf(AmbientSounds.BackgroundPulse(voices));
-            Assert.Equal(chosen.Length, built.Length);
-            for (var i = 0; i < chosen.Length; i++)
-            {
-                // The same sample, to within one step: only the order of the multiplications differs.
-                Assert.InRange(built[i] - chosen[i], -1, 1);
-            }
-        }
-    }
-
-    [Fact]
-    public void The_recurring_sound_is_one_slow_breath_fuller_with_each_thing_and_never_longer()
-    {
-        var one = SamplesOf(AmbientSounds.BackgroundPulse(1));
-        Assert.Equal(AmbientSounds.PulseMilliseconds * Rate / 1000, one.Length);
-        Assert.Equal(4800, AmbientSounds.PulseMilliseconds);
-        var apart = 100 * Rate / 1000;
-        for (var layers = 1; layers <= AmbientSounds.MostLayers; layers++)
-        {
-            var samples = SamplesOf(AmbientSounds.BackgroundPulse(layers));
-
-            // A process, not an event: the same length whatever runs, and both ends all but silent beside the middle.
-            Assert.Equal(one.Length, samples.Length);
-            var tenth = samples.Length / 10;
-            var tenths = Enumerable.Range(0, 10).Select(n => Energy(samples[(n * tenth)..((n + 1) * tenth)])).ToArray();
-            var fullest = tenths.Max();
-            Assert.True(tenths[0] < fullest / 10 && tenths[9] < fullest / 10, $"{layers} layers: the ends should be all but silent");
-            Assert.True(Array.IndexOf(tenths, fullest) is >= 3 and <= 6, $"{layers} layers: the fullest tenth should be in the middle");
-
-            // Fuller with every voice by the rule he heard: the loudest sample is 0.18 times the voices to the
-            // power of 0.3 (0.18, 0.22, 0.25, 0.27, 0.29), under the chimes' 0.35.
-            Assert.Equal(AmbientSounds.PulsePeak * Math.Pow(layers, 0.3) * short.MaxValue, Peak(samples), 1.5);
-            Assert.InRange(Peak(samples), 0, AmbientSounds.PulseLimit * short.MaxValue);
-
-            // The first voice of several is the one breath itself at another level: where it sounds alone, the same shape.
-            var scale = (double)Peak(samples, 0, apart) / Peak(one, 0, apart);
-            Assert.InRange(scale, 0.2, 1.0);
-            for (var i = 0; i < apart; i += 7)
-            {
-                Assert.Equal(one[i] * scale, samples[i], 3.0);
-            }
-        }
-
-        // More than five things sound as five, and none is never asked for: the count is clamped.
-        Assert.Equal(AmbientSounds.BackgroundPulse(5), AmbientSounds.BackgroundPulse(9));
-        Assert.Equal(AmbientSounds.BackgroundPulse(1), AmbientSounds.BackgroundPulse(0));
-
-        // The pitch is held from end to end, no glide: G4, 392 Hz, the register he could hear on his laptop.
-        var fifth = one.Length / 5;
-        var held = Crossings(one, 3 * fifth, 4 * fifth);
-        Assert.InRange(held, 2 * 388 * fifth / Rate, 2 * 396 * fifth / Rate);
-
-        // The voices above are higher: five have more crossings there than one.
-        var five = SamplesOf(AmbientSounds.BackgroundPulse(5));
-        Assert.True(Crossings(five, 3 * fifth, 4 * fifth) > held);
-    }
-
-    [Fact]
-    public void A_swell_nests_its_layers_inside_the_first()
-    {
-        var one = SamplesOf(WaveTone.Swell(0.2, 0.9, 1000, 100, 0.4, 0, 300));
-        var two = SamplesOf(WaveTone.Swell(0.2, 0.9, 1000, 100, 0.4, 0, 300, 450));
-        Assert.Equal(Rate, one.Length);
-        Assert.Equal(one.Length, two.Length);
-        Assert.Equal(0, one[0]);
-
-        // Scaled as a whole: one layer peaks at the peak asked for, two at 2 to the power of 0.3 times it, and none over the limit.
-        Assert.Equal(0.2 * short.MaxValue, Peak(one), 1.5);
-        Assert.Equal(0.2 * Math.Pow(2, 0.3) * short.MaxValue, Peak(two), 1.5);
-        Assert.Equal(0.21 * short.MaxValue, Peak(SamplesOf(WaveTone.Swell(0.2, 0.21, 1000, 100, 0.4, 0, 300, 450))), 1.5);
-
-        // Held at the full level for two fifths of the length (no shimmer here): every 50 ms from 300 to 700 ms is as loud as the loudest.
-        for (var from = 300; from < 700; from += 50)
-        {
-            Assert.True(Peak(one, from * Rate / 1000, (from + 50) * Rate / 1000) > Peak(one) * 0.9, $"full at {from} ms");
-        }
-
-        // Two sines 2 Hz apart beat: silent a quarter of a second in, where one alone is full... and loud again at half a second.
-        var beating = SamplesOf(WaveTone.Swell(0.2, 0.9, 1000, 100, 1, 2, 300));
-        Assert.True(Peak(beating, 245 * Rate / 1000, 255 * Rate / 1000) < Peak(beating, 495 * Rate / 1000, 505 * Rate / 1000) / 2, "the two sines should beat");
-
-        // No hold at all is still a sound, and a whole hold does not divide by nothing.
-        Assert.Equal(one.Length, SamplesOf(WaveTone.Swell(0.2, 0.9, 1000, 100, 0, 0, 300)).Length);
-        Assert.Equal(0.2 * short.MaxValue, Peak(SamplesOf(WaveTone.Swell(0.2, 0.9, 1000, 100, 1, 0, 300))), 1.5);
-
-        // The second layer enters 100 ms in and has left 100 ms before the end: outside that, two are one at another level.
-        var apart = 100 * Rate / 1000;
-        var scale = (double)Peak(two, 0, apart) / Peak(one, 0, apart);
-        for (var i = 0; i < apart; i += 5)
-        {
-            Assert.Equal(one[i] * scale, two[i], 3.0);
-            Assert.Equal(one[^(i + 1)] * scale, two[^(i + 1)], 3.0);
-        }
-    }
-
-    [Fact]
-    public void Sweeps_mix_their_layers_into_one_buffer_without_clipping()
-    {
-        // Far louder than any sound of the app: six layers at once stay inside the range (clamped, never wrapped round).
-        var samples = SamplesOf(WaveTone.Sweeps(0.9, 300, 600, 300, 0, 1, 1, 1, 1, 1, 1));
-        Assert.Equal(300 * Rate / 1000, samples.Length);
-        Assert.InRange(Peak(samples), 0.9 * short.MaxValue, short.MaxValue);
-        for (var i = 1; i < samples.Length; i++)
-        {
-            // A sample that wrapped round would jump from one end of the range to the other.
-            Assert.True(Math.Abs(samples[i] - samples[i - 1]) < short.MaxValue, "no sample should wrap round");
-        }
-
-        Assert.Equal(WaveTone.HeaderLength, WaveTone.Sweeps(0.2, 300, 600, 0, 0, 1).Length);
     }
 
     [Fact]
@@ -408,10 +381,13 @@ public class AmbientSoundsTests
         Directory.CreateDirectory(folder);
         File.WriteAllBytes(Path.Combine(folder, "background-start.wav"), AmbientSounds.BackgroundStart());
         File.WriteAllBytes(Path.Combine(folder, "background-finish.wav"), AmbientSounds.BackgroundFinish());
-        foreach (var layers in new[] { 1, 2, 3, 5 })
+        foreach (var (name, things) in new[] { ("C", 1), ("Am", 1), ("F", 3), ("G", 5) })
         {
-            File.WriteAllBytes(Path.Combine(folder, $"background-pulse-{layers}.wav"), AmbientSounds.BackgroundPulse(layers));
+            var chord = AmbientSounds.ChordNames.ToList().IndexOf(name);
+            File.WriteAllBytes(Path.Combine(folder, $"background-chord-{name}-{things}.wav"), AmbientSounds.BackgroundChord(chord, things));
         }
+
+        File.WriteAllBytes(Path.Combine(folder, "tool-pop.wav"), WaveTone.Pop(0.3, 700, 300, 0.006, 0.030));
 
         File.WriteAllBytes(Path.Combine(folder, "background-music.wav"), Twice(AmbientSounds.WorkingMusic()));
         Assert.True(File.Exists(Path.Combine(folder, "background-music.wav")));

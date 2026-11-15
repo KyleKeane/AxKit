@@ -13,8 +13,8 @@ namespace AxKit.Forms;
 /// Until 1.2.1 the sounds went through <c>PlaySound</c>, which opens and closes the device for every call: ticks in
 /// quick succession stuttered and backed up. The working music is the one sound that loops: one buffer written once
 /// with the loop flags, on a second device of its own, where no chime's reset can cut it off and no tick waits
-/// behind it, and stopped with a reset of that device. The recurring sound of background work (FR-7.10), a breath
-/// of some seconds, has a third device for the same reasons. UI thread only.
+/// behind it, and stopped with a reset of that device. The recurring chords of background work (FR-7.10), 4.6 s
+/// each, have a third device for the same reasons; they are made off the UI thread at their first use. UI thread only.
 /// </summary>
 public static class Sounds
 {
@@ -58,14 +58,35 @@ public static class Sounds
     private sealed class Device
     {
         private readonly string _name;
-        private readonly Sound[] _sounds;
+        private readonly List<Sound> _sounds;
         private nint _handle;
         private bool _failed;
 
         public Device(string name, params Sound[] sounds)
         {
             _name = name;
-            _sounds = sounds;
+            _sounds = [.. sounds];
+        }
+
+        /// <summary>
+        /// One more sound for this device, made after the device (a chord of background work, made at its first use):
+        /// prepared at once when the device is open, with the others when it opens.
+        /// </summary>
+        public void Add(Sound sound)
+        {
+            _sounds.Add(sound);
+            if (_handle == 0 || _failed)
+            {
+                return;
+            }
+
+            var result = waveOutPrepareHeader(_handle, sound.Header, HeaderSize);
+            if (result != 0)
+            {
+                // As after a failed write: closed, and the next sound opens the device and prepares every sound again.
+                Log.Error($"waveOutPrepareHeader failed with {result}; the {_name} device is reopened at the next sound");
+                Close();
+            }
         }
 
         /// <summary>Queues the sound; with <paramref name="replace"/> it first stops and drops whatever is queued, otherwise it is skipped while it is queued itself.</summary>
@@ -172,10 +193,12 @@ public static class Sounds
     }
 
     // A typewriter-like strike, a burst of noise over a 1.5 kHz tone that dies away within 10 ms: a line from Claude
-    // arrived. Two lower knocks in a row, 12 ms each and rising: a tool call arrived. Softer versions were tried in
-    // 2.4.0 and went unheard under speech; these are the 1.3.0 sounds, which the user likes.
+    // arrived (the 1.3.0 sound, which the user likes; softer versions were tried in 2.4.0 and went unheard under
+    // speech). A tiny mouth pop, 30 ms, its pitch falling from 700 towards 300 Hz: a tool call arrived. Chosen by the
+    // user by ear on 2026-11-15, the first of three pops ("something more like a tiny mouth pop so it is not
+    // elongated"); until then two lower knocks of noise and tone, 650 and 850 Hz, at 0.5, which he heard as jarring.
     private static readonly Sound LineTick = new(WaveTone.Strikes(0.4, 10, 0.5, 1500));
-    private static readonly Sound ToolTick = new(WaveTone.Strikes(0.5, 12, 0.5, 650, 850));
+    private static readonly Sound ToolPop = new(WaveTone.Pop(0.3, 700, 300, 0.006, 0.030));
 
     // C6 alone, a high ping: Claude is ready. A4 alone, low: the message went out. C5, E5, G5 up to a long note:
     // Claude starts replying. The same notes down, G5, E5, C5: the turn is done. Two E5s: Claude needs an answer.
@@ -219,21 +242,24 @@ public static class Sounds
 
     // The sounds of work in the background (axClaude FR-7.10, asked 2026-11-15): a start and an end are events,
     // punctuation, three quick bell notes with a sparkle; what arrives rises, what leaves falls (his rule). The
-    // recurring sound is a process: one slow breath with one voice for each thing running, mixed into one buffer,
-    // five at most. All three were chosen by the user by ear (2026-11-15) and are no longer provisional; each is
-    // one method of AxKit.Core's AmbientSounds, held to what he heard by its tests.
+    // recurring sound is a slow soft chord with a long tail, one of the working music's four at random, with a tone
+    // more for each thing running. All were chosen by the user by ear (2026-11-15); each is one method of AxKit.Core's
+    // AmbientSounds, held to what he heard by its tests.
     private static readonly Sound BackgroundStartTone = new(AmbientSounds.BackgroundStart());
     private static readonly Sound BackgroundFinishTone = new(AmbientSounds.BackgroundFinish());
-    private static readonly Sound[] BackgroundPulses = [.. Enumerable.Range(1, AmbientSounds.MostLayers).Select(layers => new Sound(AmbientSounds.BackgroundPulse(layers)))];
 
-    private static readonly Device Chimes = new("sounds", [LineTick, ToolTick, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone]);
+    // The chords, by chord and number of things: made at their first use, off the UI thread (some tens of
+    // milliseconds each, rule 3), and kept for the life of the process like every other sound; 200 KB each.
+    private static readonly Sound?[,] BackgroundChords = new Sound?[AmbientSounds.ChordNames.Count, AmbientSounds.MostThings];
+    private static readonly bool[,] BackgroundChordsBeingMade = new bool[AmbientSounds.ChordNames.Count, AmbientSounds.MostThings];
+
+    private static readonly Device Chimes = new("sounds", [LineTick, ToolPop, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone]);
     private static readonly Device Music = new("working music", WorkingMusic);
 
-    // The recurring sound of background work is a breath of some seconds, on a third device of its own: on the
-    // chimes' device every tick would wait behind it until it ended, and a chime's reset would cut it off.
-    private static readonly Device Breath = new("background work sound", BackgroundPulses);
+    // The recurring chords of background work, 4.6 s each, on a third device of their own: on the chimes' device
+    // every tick would wait behind a chord until it ended, and a chime's reset would cut it off.
+    private static readonly Device ChordDevice = new("background work sound");
 
-    /// <summary>A tiny typewriter-like tick: a line from Claude arrived.</summary>
     /// <summary>
     /// Every sound asked for, by its name ("Notice", "Edge", "Ready"): the automation channel's record
     /// (docs/axKit/automation.md). In a test run the sounds are recorded and not played, so that a run on the test
@@ -271,7 +297,7 @@ public static class Sounds
             if (value)
             {
                 Music.Reset();
-                Breath.Reset();
+                ChordDevice.Reset();
             }
             else if (_musicWanted)
             {
@@ -294,10 +320,11 @@ public static class Sounds
         }
     }
 
+    /// <summary>A tiny typewriter-like tick: a line from Claude arrived.</summary>
     public static void Click() => Play("Click", () => Chimes.Play(LineTick, replace: false));
 
-    /// <summary>Two lower knocks: a tool call arrived.</summary>
-    public static void Tool() => Play("Tool", () => Chimes.Play(ToolTick, replace: false));
+    /// <summary>A tiny mouth pop: a tool call arrived.</summary>
+    public static void Tool() => Play("Tool", () => Chimes.Play(ToolPop, replace: false));
 
     /// <summary>A single high ping: Claude is ready.</summary>
     public static void Ready() => Play("Ready", () => Chimes.Play(ReadyChime, replace: true));
@@ -349,20 +376,70 @@ public static class Sounds
     public static void BackgroundFinish() => Play("BackgroundFinish", () => Chimes.Play(BackgroundFinishTone, replace: false));
 
     /// <summary>
-    /// The recurring sound while work runs in the background: one slow breath of about five seconds, a process and
-    /// not an event, with <paramref name="notes"/> voices in it, one for each thing running, five at most; nothing
-    /// for none. On its own device, so it sounds with the chimes, the ticks and the music and delays none of them;
-    /// one that would start while the last still sounds is dropped. Recorded as "BackgroundPulse 2".
+    /// One chord of the recurring sound while work runs in the background: <paramref name="chord"/> of
+    /// <see cref="AmbientSounds.ChordNames"/>, with a tone more for each of <paramref name="things"/> running, five at
+    /// most; nothing for none. On its own device, so it sounds with the chimes, the ticks and the music and delays
+    /// none of them; the caller (axClaude's <c>BackgroundChords</c>) starts one only after the last has ended. The
+    /// first time a chord is asked for, it is made off the UI thread and played as soon as it is ready, a few tens
+    /// of milliseconds later; from then on it is kept. Recorded as "BackgroundChord 2", by the number of things.
     /// </summary>
-    public static void BackgroundPulse(int notes)
+    public static void BackgroundChord(int chord, int things)
     {
-        if (notes < 1)
+        if (things < 1 || chord < 0 || chord >= AmbientSounds.ChordNames.Count)
         {
             return;
         }
 
-        var sound = BackgroundPulses[Math.Min(notes, BackgroundPulses.Length) - 1];
-        Play("BackgroundPulse " + Math.Min(notes, BackgroundPulses.Length), () => Breath.Play(sound, replace: false));
+        var count = Math.Min(things, AmbientSounds.MostThings);
+        Play("BackgroundChord " + count, () => PlayChord(chord, count));
+    }
+
+    /// <summary>Plays the chord when it is made; otherwise makes it on a pool thread and plays it back on this, the UI thread.</summary>
+    private static void PlayChord(int chord, int count)
+    {
+        if (BackgroundChords[chord, count - 1] is { } made)
+        {
+            ChordDevice.Play(made, replace: false);
+            return;
+        }
+
+        if (BackgroundChordsBeingMade[chord, count - 1])
+        {
+            return;
+        }
+
+        var ui = SynchronizationContext.Current;
+        if (ui is null)
+        {
+            // Not on a window's thread (no such caller today): made here, at the cost of the wait.
+            Keep(chord, count, AmbientSounds.BackgroundChord(chord, count));
+            return;
+        }
+
+        BackgroundChordsBeingMade[chord, count - 1] = true;
+        Task.Run(() => AmbientSounds.BackgroundChord(chord, count)).ContinueWith(task => ui.Post(_ =>
+        {
+            BackgroundChordsBeingMade[chord, count - 1] = false;
+            if (task.IsFaulted)
+            {
+                Log.Error("The background work sound could not be made", task.Exception);
+                return;
+            }
+
+            Keep(chord, count, task.Result);
+        }, null), TaskScheduler.Default);
+    }
+
+    /// <summary>A chord just made: kept, prepared for its device and played, unless the window was put away meanwhile.</summary>
+    private static void Keep(int chord, int count, byte[] wav)
+    {
+        var sound = new Sound(wav);
+        BackgroundChords[chord, count - 1] = sound;
+        ChordDevice.Add(sound);
+        if (!_muted)
+        {
+            ChordDevice.Play(sound, replace: false);
+        }
     }
 
     /// <summary>Starts the soft pad loop that plays while Claude works (axClaude FR-7.9); nothing while it plays already.</summary>

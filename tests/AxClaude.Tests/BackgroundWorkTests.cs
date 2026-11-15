@@ -118,42 +118,174 @@ public class BackgroundWorkTests
         Assert.Equal("Claude Code shows work in the background and does not count it. The command /tasks lists it", BackgroundWork.Said(new BackgroundCount(0, 0, 0, 1), []));
     }
 
+    /// <summary>Random numbers from a list, in turn, as the schedule asks for them; the bound each was asked under is kept.</summary>
+    private sealed class Dice(params int[] rolls)
+    {
+        private int _next;
+
+        public List<int> Bounds { get; } = [];
+
+        public int Roll(int bound)
+        {
+            Bounds.Add(bound);
+            return rolls[_next++ % rolls.Length];
+        }
+    }
+
+    [Fact]
+    public void A_chord_then_its_length_and_the_pause_then_the_next()
+    {
+        var chords = new BackgroundChords(4, new Dice(2, 0, 0).Roll);
+
+        // The first chord at once, for the things running then.
+        Assert.Equal(new BackgroundChord(2, 1), chords.Next(1000, 1, 2, false));
+
+        // Nothing while it sounds (4.6 s) and while the pause lasts (2 s).
+        Assert.Null(chords.Next(1001, 1, 2, false));
+        Assert.Null(chords.Next(1000 + 4600, 1, 2, false));
+        Assert.Null(chords.Next(1000 + 4600 + 1999, 1, 2, false));
+
+        // Then the next, another chord: 0 among the others than 2 is 3.
+        Assert.Equal(new BackgroundChord(3, 1), chords.Next(1000 + 4600 + 2000, 1, 2, false));
+
+        // With a pause of 20 s the third waits 20 s after the second's end; 0 among the others than 3 is 0.
+        Assert.Null(chords.Next(7600 + 4600 + 19_999, 1, 20, false));
+        Assert.Equal(new BackgroundChord(0, 1), chords.Next(7600 + 4600 + 20_000, 1, 20, false));
+        Assert.Equal(4600, BackgroundChords.ChordMilliseconds);
+        Assert.Equal(AxKit.Core.Audio.AmbientSounds.ChordSeconds * 1000, BackgroundChords.ChordMilliseconds);
+    }
+
+    [Fact]
+    public void The_same_chord_never_comes_twice_running_and_every_other_can_come()
+    {
+        var dice = new Dice(0, 0, 1, 2, 2, 1, 0, 2, 1, 0);
+        var chords = new BackgroundChords(4, dice.Roll);
+        var played = new List<int>();
+        for (var n = 0; n < 10; n++)
+        {
+            played.Add(chords.Next(n * 10_000L, 1, 2, false)!.Chord);
+        }
+
+        // The first is chosen among all four, each later one among the three others.
+        Assert.Equal(4, dice.Bounds[0]);
+        Assert.All(dice.Bounds.Skip(1), bound => Assert.Equal(3, bound));
+        for (var n = 1; n < played.Count; n++)
+        {
+            Assert.NotEqual(played[n - 1], played[n]);
+        }
+
+        Assert.Equal([0, 1, 3, 2, 1, 3, 0, 3, 1, 2], played);
+
+        // With the real random numbers, a long run never repeats a chord and plays all four.
+        var real = new BackgroundChords(4, new Random(7).Next);
+        var seen = new List<int>();
+        for (var n = 0; n < 400; n++)
+        {
+            seen.Add(real.Next(n * 10_000L, 1, 2, false)!.Chord);
+        }
+
+        Assert.All(seen.Zip(seen.Skip(1)), pair => Assert.NotEqual(pair.First, pair.Second));
+        Assert.Equal([0, 1, 2, 3], seen.Distinct().Order());
+    }
+
     [Theory]
-    [InlineData(0, 0)]
     [InlineData(1, 1)]
     [InlineData(3, 3)]
     [InlineData(5, 5)]
     [InlineData(9, 5)]
-    public void The_recurring_sound_has_one_note_for_each_thing_and_five_at_most(int total, int notes)
+    public void A_chord_has_a_tone_more_for_each_thing_running_five_at_most(int total, int things)
     {
-        Assert.Equal(notes, BackgroundWork.Notes(total));
+        Assert.Equal(things, BackgroundChords.Things(total));
+        Assert.Equal(things, new BackgroundChords(4, _ => 0).Next(0, total, 2, false)!.Things);
     }
 
     [Fact]
-    public void The_settings_start_with_both_sounds_on_the_words_off_and_ten_seconds()
+    public void A_thing_that_starts_during_a_chord_is_heard_in_the_next_and_none_starts_at_zero()
+    {
+        var chords = new BackgroundChords(4, _ => 0);
+        Assert.Equal(1, chords.Next(0, 1, 2, false)!.Things);
+
+        // Two more start while the chord sounds and in the pause: no chord is cut or added; the next has three.
+        Assert.Null(chords.Next(2000, 3, 2, false));
+        Assert.Null(chords.Next(5000, 3, 2, false));
+        Assert.Equal(3, chords.Next(6600, 3, 2, false)!.Things);
+
+        // Nothing runs any more: no chord starts, however long it is.
+        Assert.Null(chords.Next(60_000, 0, 2, false));
+        Assert.Null(chords.Next(600_000, 0, 2, false));
+
+        // Work starts again long after: a chord at once.
+        Assert.Equal(2, chords.Next(700_000, 2, 2, false)!.Things);
+    }
+
+    [Fact]
+    public void A_chord_waits_while_a_reply_is_read_and_comes_as_soon_as_it_is_not()
+    {
+        var chords = new BackgroundChords(4, _ => 1);
+        Assert.Null(chords.Next(0, 1, 2, true));
+        Assert.Null(chords.Next(3000, 1, 2, true));
+        Assert.Equal(new BackgroundChord(1, 1), chords.Next(3250, 1, 2, false));
+        Assert.Equal(1, chords.Last);
+    }
+
+    [Fact]
+    public void The_settings_start_with_both_sounds_on_the_words_off_and_a_pause_of_two_seconds()
     {
         var settings = new AppSettings();
         Assert.True(settings.SoundOnBackgroundWork);
         Assert.True(settings.BackgroundPulse);
         Assert.False(settings.SayBackgroundWork);
-        Assert.Equal(10, settings.BackgroundPulseSeconds);
-        Assert.Equal([10, 20, 30, 60], BackgroundWork.PulseSeconds);
-        Assert.Equal(30, BackgroundWork.SanitizePulseSeconds(30));
-        Assert.Equal(20, BackgroundWork.SanitizePulseSeconds(20));
-        Assert.Equal(10, BackgroundWork.SanitizePulseSeconds(0));
-        Assert.Equal(10, BackgroundWork.SanitizePulseSeconds(45));
+        Assert.Equal(2, settings.BackgroundChordPauseSeconds);
+        Assert.Equal([2, 5, 10, 20], BackgroundChords.PauseSeconds);
+        Assert.Equal(5, BackgroundChords.SanitizePauseSeconds(5));
+        Assert.Equal(20, BackgroundChords.SanitizePauseSeconds(20));
+        Assert.Equal(2, BackgroundChords.SanitizePauseSeconds(0));
+        Assert.Equal(2, BackgroundChords.SanitizePauseSeconds(30));
     }
 
-    /// <summary>A settings file that already holds an interval keeps it when the default changes (20 was the default until 2026-11-15).</summary>
-    [Fact]
-    public void A_settings_file_that_holds_an_interval_keeps_it()
+    /// <summary>A file that holds a pause keeps it; one with an invalid pause gets 2.</summary>
+    [Theory]
+    [InlineData("{ \"backgroundChordPauseSeconds\": 10 }", 10)]
+    [InlineData("{ \"backgroundChordPauseSeconds\": 7 }", 2)]
+    public void A_settings_file_that_holds_a_pause_keeps_a_valid_one(string json, int pause)
     {
         var path = Path.Combine(Path.GetTempPath(), "axclaude-tests", Guid.NewGuid().ToString("N"), "settings.json");
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            File.WriteAllText(path, "{ \"backgroundPulseSeconds\": 20 }");
-            Assert.Equal(20, AppSettings.Load(path, out _).BackgroundPulseSeconds);
+            File.WriteAllText(path, json);
+            var settings = AppSettings.Load(path, out var error);
+            Assert.Null(error);
+            Assert.Equal(pause, settings.BackgroundChordPauseSeconds);
+        }
+        finally
+        {
+            Directory.Delete(Path.GetDirectoryName(path)!, true);
+        }
+    }
+
+    /// <summary>
+    /// A file of the first recurring sound, the breath, holds how often it came (<c>backgroundPulseSeconds</c>): read
+    /// without an error, not carried over, so the pause is 2; the switch, <c>backgroundPulse</c>, keeps its name and its value.
+    /// </summary>
+    [Fact]
+    public void A_settings_file_of_the_breath_is_read_without_error_and_gets_a_pause_of_two_seconds()
+    {
+        var path = Path.Combine(Path.GetTempPath(), "axclaude-tests", Guid.NewGuid().ToString("N"), "settings.json");
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.WriteAllText(path, "{ \"backgroundPulse\": false, \"backgroundPulseSeconds\": 20 }");
+            var settings = AppSettings.Load(path, out var error);
+            Assert.Null(error);
+            Assert.False(settings.BackgroundPulse);
+            Assert.Equal(2, settings.BackgroundChordPauseSeconds);
+
+            // Saved again, the old key is gone and the new one is written.
+            settings.Save(path);
+            var text = File.ReadAllText(path);
+            Assert.DoesNotContain("backgroundPulseSeconds", text, StringComparison.Ordinal);
+            Assert.Contains("\"backgroundChordPauseSeconds\": 2", text, StringComparison.Ordinal);
         }
         finally
         {
@@ -176,18 +308,12 @@ public class BackgroundWorkTests
             Assert.True(settings.SoundOnBackgroundWork);
             Assert.True(settings.BackgroundPulse);
             Assert.False(settings.SayBackgroundWork);
-            Assert.Equal(10, settings.BackgroundPulseSeconds);
+            Assert.Equal(2, settings.BackgroundChordPauseSeconds);
         }
         finally
         {
             Directory.Delete(Path.GetDirectoryName(path)!, true);
         }
-    }
-
-    [Fact]
-    public void The_recurring_sound_has_a_layer_for_every_note_the_rules_ask_for()
-    {
-        Assert.Equal(BackgroundWork.MostNotes, AxKit.Core.Audio.AmbientSounds.MostLayers);
     }
 
     /// <summary>The model's own texts feed the count: the mode line as Claude Code draws it, with a shell and the panel's rows.</summary>
