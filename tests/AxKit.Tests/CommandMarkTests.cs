@@ -93,7 +93,9 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "}, CommandMark.Act))); // Writes into the project repository", "writes into the user's repository"),
         // The items given their marks on 2026-11-13 (R-11) whose act must never be lost.
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => SendInput()) { ShortcutKeyDisplayString = \"Enter in the message field\" }, CommandMark.Act)", "sends the message field to Claude Code"),
-        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => Write(\"\\x04\")), CommandMark.Act)", "types a key into Claude Code"),
+        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => Write(ClaudeCodeKeys.CtrlD)), CommandMark.Act)", "types a key into Claude Code"),
+        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => Write(ClaudeCodeKeys.ShiftUp)), CommandMark.Act)", "types a key into Claude Code"),
+        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => Write(ClaudeCodeKeys.ShiftDown)), CommandMark.Act)", "types a key into Claude Code"),
         (Path.Combine("src", "AxTerminal", "TerminalForm.Ui.cs"), "(_, _) => SendKey(ShellTexts.EndOfInput, \"Ctrl+D sent\")), CommandMark.Act)", "types a key into the shell"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => CopyDiagnostics()), CommandMark.Act)", "writes the user's clipboard"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "(_, _) => StartKeyTest()), CommandMark.Act)", "takes the window's keys until the user ends the key test"),

@@ -359,3 +359,23 @@ keys shift+q
 expect said ! Question: Review your answers
 keys shift+q
 expect said ! Question: Which fruits do you like?
+# Step 8a (2026-11-15, the item "a question with several answers to tick still asks to review and submit"): one
+# question alone that takes several answers. Claude Code follows it with "Review your answers" too, which the app
+# submits itself while Review answers is off: "Sent: 1, Apple, 3, Cherry", no review, Claude's reply names apple and
+# cherry, and the message field is back.
+keys ctrl+1
+expect focus Message to Claude
+wait 2000
+type Use the AskUserQuestion tool once with one question only, with multiSelect: which fruits I like (apple, banana, cherry).
+keys enter
+expect said ♪ Notice
+wait 1500
+keys home space down down space enter
+expect said Sent: 1, Apple, 3, Cherry
+refuse said Review
+expect said Done
+keys ctrl+2 ctrl+end
+expect text apple
+expect text cherry
+keys ctrl+1
+expect focus Message to Claude

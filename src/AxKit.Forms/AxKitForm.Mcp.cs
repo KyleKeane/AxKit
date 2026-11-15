@@ -178,6 +178,14 @@ public abstract partial class AxKitForm
     /// </summary>
     protected virtual object? McpAppRequest(string tool, System.Text.Json.Nodes.JsonObject arguments, string client) => null;
 
+    /// <summary>
+    /// MC-6.5: the text <c>axkit_window_text</c> reads, given the text field of this window that has the focus (null
+    /// when the focus is in none): by default that field, which in an editor is the file and in an item window the field
+    /// the user is in, else the window's first visible text of several lines. The console window's is its view, whatever
+    /// has the focus (<see cref="ConsoleForm"/>).
+    /// </summary>
+    internal virtual TextBoxBase? McpMainText(TextBoxBase? focused) => focused ?? WindowReading.FirstVisibleText(this);
+
     /// <summary>MC-7.5: a change by an AI tool in a window that is not in front chimes and flashes it on the taskbar, since NVDA does not speak a window behind; once for a burst.</summary>
     protected void ChimeForMcp()
     {

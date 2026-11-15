@@ -167,6 +167,10 @@ public class QuestionTests
         Assert.Equal((1, 2), colour.Step);
         Assert.Equal((2, 2), fruit.Step);
         Assert.Null(review.Step);
+
+        // The review follows the last question, which the app then submits itself when Review answers is off.
+        Assert.False(colour.ReviewFollows);
+        Assert.True(fruit.ReviewFollows);
     }
 
     [Fact]
@@ -200,6 +204,38 @@ public class QuestionTests
         Assert.Empty(question.Text);
         Assert.Null(question.Step);
         Assert.Equal(["1", "2", "3", "4", "5"], question.Options.Select(o => o.Key));
+        Assert.False(question.ReviewFollows);
+    }
+
+    [Fact]
+    public void A_question_alone_with_several_answers_is_followed_by_the_review()
+    {
+        // The item "a question with several answers to tick still asks to review and submit" (2026-11-14). The
+        // wrapped-answers recording (2.1.282) draws a Submit step over one question that takes several answers, the
+        // tab row "←   ☐ Next work   ✔ Submit   →": question 1 of 1, so its review follows it.
+        var (_, seen) = QuestionsIn("wrapped-answers-claude2.1.282-120x40.vt");
+        var question = Assert.Single(seen);
+        Assert.Equal((1, 1), question.Step);
+        Assert.True(question.ReviewFollows);
+
+        // Since 2.1.319 a question alone is drawn under "Question: …", which numbers nothing (the one-question
+        // recording). One that takes several answers is still followed by the review, which then reached the user
+        // although Review answers was off (the window script 12-questions, step 8a, saw the review follow on 2.1.325). Not
+        // recorded as a fixture in this shape yet: rows written after the two recordings.
+        string[] rows =
+        [
+            "Question: Next work",
+            "> Which open items should we work on?",
+            "1. Claude's screens",
+            "2. NVDA test run",
+            "3. Other",
+            "Select with numbers [1-3] (comma- or space-separated for several). Then Enter to Submit or Escape to cancel:",
+        ];
+        var alone = QuestionReader.Read(rows, 5)!;
+        Assert.Equal("Which open items should we work on?", alone.Title);
+        Assert.True(alone.AllowsSeveral);
+        Assert.Null(alone.Step);
+        Assert.True(alone.ReviewFollows);
     }
 
     [Fact]

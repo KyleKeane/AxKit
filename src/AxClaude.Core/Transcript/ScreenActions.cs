@@ -15,7 +15,7 @@ public static class ScreenActions
     public static string KeyItem(ScreenKey key) => $"{char.ToUpperInvariant(key.Action[0])}{key.Action[1..]} ({key.Name})";
 
     /// <summary>The key that leaves the screen: Escape, or the one key of "Any key to continue".</summary>
-    public static ScreenKey LeaveKey(ClaudeScreen screen) => screen.Keys.FirstOrDefault(key => key.Send == "\x1b") ?? screen.Keys[0];
+    public static ScreenKey LeaveKey(ClaudeScreen screen) => screen.Keys.FirstOrDefault(key => key.Send == ClaudeCodeKeys.Escape) ?? screen.Keys[0];
 
     /// <summary>Whether the leaving key closes the screen, which "Closed" then says: close, dismiss, cancel or exit.</summary>
     public static bool Closes(ScreenKey leave) => leave.Action.ToLowerInvariant() is ClaudeCodeTexts.ActionClose or ClaudeCodeTexts.ActionDismiss or ClaudeCodeTexts.ActionCancel or ClaudeCodeTexts.ActionExit;
@@ -33,7 +33,7 @@ public static class ScreenActions
     /// </summary>
     public static ScreenKey? EnterOnLine(ClaudeScreen screen)
     {
-        if (screen.Keys.FirstOrDefault(key => key.Send == "\r") is { } enter)
+        if (screen.Keys.FirstOrDefault(key => key.Send == ClaudeCodeKeys.Enter) is { } enter)
         {
             return enter;
         }
@@ -56,10 +56,10 @@ public static class ScreenActions
     /// tabs. The window shows it as a read-only notice rather than a list; a screen with Enter (/tasks with tasks,
     /// a review) or with tabs (/status) stays a list.
     /// </summary>
-    public static bool IsInformation(ClaudeScreen screen) => !screen.Tabbed && !screen.Keys.Any(key => key.Send == "\r");
+    public static bool IsInformation(ClaudeScreen screen) => !screen.Tabbed && !screen.Keys.Any(key => key.Send == ClaudeCodeKeys.Enter);
 
     /// <summary>Up or Down: the notice's own arrows move in its text, and the scroll buttons send them (<see cref="Scrolls"/>).</summary>
-    public static bool IsScrollKey(ScreenKey key) => key.Send is "\x1b[A" or "\x1b[B";
+    public static bool IsScrollKey(ScreenKey key) => key.Send is ClaudeCodeKeys.Up or ClaudeCodeKeys.Down;
 
     /// <summary>The keys that get a button of their own besides Close: every key of the hint row but Up, Down and the leaving key ("Copy (c)", "Fork (f)").</summary>
     public static IReadOnlyList<ScreenKey> NoticeKeys(ClaudeScreen screen)

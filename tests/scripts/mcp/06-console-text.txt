@@ -1,0 +1,46 @@
+# Workflow: Let an AI tool read a console window's conversation while you type
+# docs/axKit/mcp.md MC-6.5 (2026-11-15): in axClaude and axTerminal, axkit_window_text reads the view, the conversation
+# or the terminal, while the focus is in the field at the bottom, which is nearly always; the field is named beside
+# it, never read. Until then the tool read the empty field. axTerminal stands in for both: the same console window,
+# and no Claude Code or network needed.
+mkdir myproject
+file home\AxKit\axTerminal.json {"checkForUpdates": false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+start terminal {temp}\myproject
+expect said ♪ Ready
+type Write-Output marker-for-the-ai-tools
+keys enter
+expect said ♪ Done
+expect focus Command
+
+# On from the axKit menu, and the runner paired, as in 01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axTerminal"
+
+# The focus is back in the empty command field: the text is the terminal's, and the field is named beside it.
+expect focus Command
+mcp call axkit_window_text {"window":"{window}"}
+expect mcp marker-for-the-ai-tools
+mcp call axkit_window_text {"window":"{window}"}
+expect mcp "name": "Command"
+
+# Off again from the menu.
+menu Let AI tools read and open axKit
+expect said AI tools off

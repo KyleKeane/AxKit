@@ -154,8 +154,12 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
 - MC-6.5 **The tools** (all `read` but the last): `axkit_apps` (the apps and what each opens), `axkit_windows` (the
   open windows that serve a pipe: an id, the app, the title), and for one window by its id `axkit_window_state` (title,
   status bar, the notice shown and its text, the focused control and its value, a secret field as "protected"),
-  `axkit_window_list` (the focused list's items, or the window's first list), `axkit_window_text` (the focused text's
-  lines, or the window's main text, at most 1 MB), `axkit_window_commands` (the window's command list: label, key,
+  `axkit_window_list` (the focused list's items, or the window's first list), `axkit_window_text` (the window's
+  main text, at most 1 MB: the focused text, or the window's first visible text of several lines when the focus is in
+  none; in a console window, axClaude's and axTerminal's, its view, the conversation or the terminal, wherever the
+  focus is, with the text field the focus is in named beside it, its name and caret line and never its text; until
+  2026-11-15 the focused field came first there too, so the tool read the empty message field and never the
+  conversation; each kind of window says its main text, `AxKitForm.McpMainText`; a secret field "protected"), `axkit_window_commands` (the window's command list: label, key,
   mark, and since 2026-11-11 the menus that hold it; MC-7 runs one) and `axkit_window_said` (what the window announced since the last call, the
   last 50). `axkit_open` (`open`): an app by its verb, on a path or none, but axClaude and axTerminal, which start a program as they open (an act, MC-3.1), and axTask on a path (MC-D12: it would make the path its top folder); the path fully qualified, on this computer
   (`LocalPaths`), through no link (a junction or a symbolic link, which may lead to a share; asked part by part

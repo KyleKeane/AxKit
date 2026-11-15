@@ -64,7 +64,7 @@ public static class ScreenReader
         if (PressEnterTitle(cursorText) is { } title)
         {
             var (lines, first) = LinesAbove(rows, cursorRow);
-            return new ClaudeScreen(title, lines, [new ScreenKey("\r", ClaudeCodeTexts.KeyEnter, ClaudeCodeTexts.ActionContinue)]) { FirstRow = lines.Count > 0 ? first : cursorRow };
+            return new ClaudeScreen(title, lines, [new ScreenKey(ClaudeCodeKeys.Enter, ClaudeCodeTexts.KeyEnter, ClaudeCodeTexts.ActionContinue)]) { FirstRow = lines.Count > 0 ? first : cursorRow };
         }
 
         if (Keys(cursorText) is { } keys)
@@ -160,7 +160,7 @@ public static class ScreenReader
         // (D33, recorded with 2.1.302). Enter stands for the key.
         if (text == ClaudeCodeTexts.AnyKeyToContinue)
         {
-            return [new ScreenKey("\r", ClaudeCodeTexts.KeyEnter, ClaudeCodeTexts.ActionContinue)];
+            return [new ScreenKey(ClaudeCodeKeys.Enter, ClaudeCodeTexts.KeyEnter, ClaudeCodeTexts.ActionContinue)];
         }
 
         var keys = new List<ScreenKey>();
@@ -185,7 +185,7 @@ public static class ScreenReader
             }
         }
 
-        return keys.Any(key => key.Send == "\x1b") ? keys : null;
+        return keys.Any(key => key.Send == ClaudeCodeKeys.Escape) ? keys : null;
     }
 
     private static (List<string> Lines, int First) LinesAbove(IReadOnlyList<string> rows, int hintRow)
@@ -227,18 +227,18 @@ public static class ScreenReader
     /// <summary>What goes to Claude for a key its hint row names.</summary>
     private static string Send(string key) => key switch
     {
-        ClaudeCodeTexts.KeyEsc => "\x1b",
-        ClaudeCodeTexts.KeyEnter => "\r",
+        ClaudeCodeTexts.KeyEsc => ClaudeCodeKeys.Escape,
+        ClaudeCodeTexts.KeyEnter => ClaudeCodeKeys.Enter,
         ClaudeCodeTexts.KeySpace => " ",
-        ClaudeCodeTexts.KeyTab => "\t",
-        ClaudeCodeTexts.KeyLeft => "\x1b[D",
-        ClaudeCodeTexts.KeyRight => "\x1b[C",
-        ClaudeCodeTexts.KeyUp => "\x1b[A",
-        ClaudeCodeTexts.KeyDown => "\x1b[B",
-        ClaudeCodeTexts.KeyShiftLeft => "\x1b[1;2D",
-        ClaudeCodeTexts.KeyShiftRight => "\x1b[1;2C",
-        ClaudeCodeTexts.KeyShiftUp => "\x1b[1;2A",
-        ClaudeCodeTexts.KeyShiftDown => "\x1b[1;2B",
+        ClaudeCodeTexts.KeyTab => ClaudeCodeKeys.Tab,
+        ClaudeCodeTexts.KeyLeft => ClaudeCodeKeys.Left,
+        ClaudeCodeTexts.KeyRight => ClaudeCodeKeys.Right,
+        ClaudeCodeTexts.KeyUp => ClaudeCodeKeys.Up,
+        ClaudeCodeTexts.KeyDown => ClaudeCodeKeys.Down,
+        ClaudeCodeTexts.KeyShiftLeft => ClaudeCodeKeys.ShiftLeft,
+        ClaudeCodeTexts.KeyShiftRight => ClaudeCodeKeys.ShiftRight,
+        ClaudeCodeTexts.KeyShiftUp => ClaudeCodeKeys.ShiftUp,
+        ClaudeCodeTexts.KeyShiftDown => ClaudeCodeKeys.ShiftDown,
         // "ctrl+j": the control character of the letter.
         { Length: 6 } when key.StartsWith(ClaudeCodeTexts.KeyCtrl, StringComparison.Ordinal) => ((char)(key[5] - 'a' + 1)).ToString(),
         _ => key,

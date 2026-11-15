@@ -356,22 +356,26 @@ internal sealed partial class MainForm
             : NextStep()), false);
     }
 
-    /// <summary>After an answer to one of several questions, what comes next, so that the gap before it does not sound like the end.</summary>
-    private string NextStep() => _askedQuestion?.Step is (int number, int count)
-        ? number < count ? ". Next question" : _settings.ReviewAnswers ? ". Review next" : string.Empty
-        : string.Empty;
+    /// <summary>After an answer to one of several questions, or to a question whose review follows, what comes next, so that the gap before it does not sound like the end.</summary>
+    private string NextStep() => _askedQuestion switch
+    {
+        { Step: (int number, int count) } when number < count => ". Next question",
+        { ReviewFollows: true } when _settings.ReviewAnswers => ". Review next",
+        _ => string.Empty,
+    };
 
     /// <summary>
-    /// Claude's "Review your answers" right after the user answered the last of its questions, which the app answers y
-    /// itself unless Review answers is on (D33). Not when it warns that a question has no answer, and not a review the
-    /// user came back to by some other way.
+    /// Claude's "Review your answers" right after the user answered the question it follows (the last of several, or
+    /// one alone with several answers: <see cref="Question.ReviewFollows"/>), which the app answers y itself unless
+    /// Review answers is on (D33). Not when it warns that a question has no answer, and not a review the user came
+    /// back to by some other way.
     /// </summary>
     private bool SubmitsReview(Question question) =>
         !_settings.ReviewAnswers
         && question.Title == ClaudeCodeTexts.ReviewTitle
         && question.OptionFor(ClaudeCodeTexts.Yes) is not null
         && !question.Text.Any(line => line.StartsWith(ClaudeCodeTexts.WarningLabel, StringComparison.Ordinal))
-        && _askedQuestion?.Step is (int number, int count) && number == count
+        && _askedQuestion is { ReviewFollows: true }
         && UserActed();
 
     /// <summary>
@@ -495,7 +499,7 @@ internal sealed partial class MainForm
         {
             ScreenKeySent();
             TypeAnswer(typed);
-        }, () => SendScreenKey("\x1b")));
+        }, () => SendScreenKey(ClaudeCodeKeys.Escape)));
     }
 
     // ---- a screen that only informs, as read-only text in a notice (FR-2.11) ----
@@ -628,8 +632,8 @@ internal sealed partial class MainForm
         choices.AddRange(keys.Select(key => new OverlayChoice(ScreenActions.KeyItem(key), () => SendNoticeKey(key), StaysOpen: true)));
         if (ScreenActions.Scrolls(screen))
         {
-            choices.Add(new OverlayChoice("Scroll &down", () => SendScreenKey("\x1b[B"), StaysOpen: true));
-            choices.Add(new OverlayChoice("Scroll &up", () => SendScreenKey("\x1b[A"), StaysOpen: true));
+            choices.Add(new OverlayChoice("Scroll &down", () => SendScreenKey(ClaudeCodeKeys.Down), StaysOpen: true));
+            choices.Add(new OverlayChoice("Scroll &up", () => SendScreenKey(ClaudeCodeKeys.Up), StaysOpen: true));
         }
 
         _screenLines = screen.Lines;
@@ -712,7 +716,7 @@ internal sealed partial class MainForm
     {
         UserActedNow();
         Area.Hold(UserActionMs);
-        Write("\x1b");
+        Write(ClaudeCodeKeys.Escape);
     }
 
     /// <summary>
@@ -753,7 +757,7 @@ internal sealed partial class MainForm
 
         if (enter)
         {
-            Enqueue("\r", 50);
+            Enqueue(ClaudeCodeKeys.Enter, 50);
         }
 
         StartWrites();
@@ -836,7 +840,7 @@ internal sealed partial class MainForm
             _draft = null;
             Handled(question.Signature, mark: false);
             UserActedNow();
-            Write("\x1b");
+            Write(ClaudeCodeKeys.Escape);
             return true;
         }
 

@@ -231,6 +231,13 @@ public abstract partial class ConsoleForm : AxKitForm
     /// <summary>The bottom of the window, whichever control is there when the notice closes and the one that had the focus is gone (an answered question's list).</summary>
     protected override Control FocusTarget => BottomControl;
 
+    /// <summary>
+    /// MC-6.5: the view is the console window's main text, the conversation or the terminal, wherever the focus is: the
+    /// focus is nearly always in the field at the bottom, and until 2026-11-15 the AI tool read that field (an empty
+    /// message) and never the conversation. The field the focus is in is named beside it (<c>McpChannel</c>).
+    /// </summary>
+    internal override TextBoxBase? McpMainText(TextBoxBase? focused) => Transcript;
+
     /// <summary>Everything is announced on the view, the control NVDA reads the window by.</summary>
     protected override Control AnnounceSource => Transcript;
 

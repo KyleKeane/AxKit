@@ -295,7 +295,7 @@ internal sealed partial class MainForm : ConsoleForm
         // speaks old replies again. The key is sent only to close the view should it be open.
         if (_model.TranscriptViewOpen)
         {
-            Write("\x0f");
+            Write(ClaudeCodeKeys.CtrlO);
         }
         else
         {

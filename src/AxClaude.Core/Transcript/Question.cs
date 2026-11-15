@@ -50,6 +50,16 @@ public sealed record Question(string Title, IReadOnlyList<string> Text, IReadOnl
     public (int Number, int Count)? Step { get; init; }
 
     /// <summary>
+    /// Claude Code shows "Review your answers" once this question is answered: it is the last of several in one call,
+    /// or a question alone that takes several answers, which has a Submit step of its own (the wrapped-answers
+    /// fixture, 2.1.282: the tab row "←   ☐ Next work   ✔ Submit   →" over one question, Step 1 of 1). Since 2.1.319
+    /// a question alone is drawn under "Question: Next work", which numbers nothing (Step null), and the review after
+    /// such a question with several answers went to the user although Review answers was off (2026-11-14). A
+    /// question alone with one answer has no review (the one-question fixture).
+    /// </summary>
+    public bool ReviewFollows => Step is (int number, int count) ? number == count : AllowsSeveral;
+
+    /// <summary>
     /// Answered by its key alone, with no Enter after it: Claude's feedback surveys at its own prompt
     /// (<see cref="SurveyReader"/>), where Enter would go to the prompt instead.
     /// </summary>

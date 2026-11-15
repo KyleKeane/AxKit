@@ -91,7 +91,7 @@ internal sealed partial class MainForm
         Input.Clear();
         if (text.Length == 0)
         {
-            Write("\r");
+            Write(ClaudeCodeKeys.Enter);
             return;
         }
 
@@ -158,11 +158,11 @@ internal sealed partial class MainForm
             Enqueue(lines[i], i == lines.Length - 1 ? 100 : 30);
             if (i < lines.Length - 1)
             {
-                Enqueue("\n", 30);
+                Enqueue(ClaudeCodeKeys.NewLine, 30);
             }
         }
 
-        Enqueue("\r", 50);
+        Enqueue(ClaudeCodeKeys.Enter, 50);
         StartWrites();
     }
 
@@ -187,7 +187,7 @@ internal sealed partial class MainForm
             }
 
             Log.Info($"Enter sent again ({attempt}): the message was still on Claude's prompt row");
-            Enqueue("\r", 50);
+            Enqueue(ClaudeCodeKeys.Enter, 50);
             StartWrites();
             if (attempt < EnterAttempts)
             {
@@ -208,8 +208,8 @@ internal sealed partial class MainForm
             return;
         }
 
-        Enqueue("\x18", 30);
-        Enqueue("\x13", 30);
+        Enqueue(ClaudeCodeKeys.CtrlX, 30);
+        Enqueue(ClaudeCodeKeys.CtrlS, 30);
         StartWrites();
 
         Announce("Sending now", false);
@@ -220,6 +220,6 @@ internal sealed partial class MainForm
     private void Interrupt()
     {
         ClearWrites();
-        Write("\x1b");
+        Write(ClaudeCodeKeys.Escape);
     }
 }

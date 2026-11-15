@@ -70,7 +70,58 @@ public sealed class ClaudeCodeTextsTests
         Assert.True(offenders.Count == 0, "A text of Claude Code's outside ClaudeCodeTexts, where it belongs (rule 12): " + string.Join("; ", offenders));
     }
 
-    /// <summary>The list above is real: the table's file names every text watched, as a constant, inside a pattern or in an entry's comment.</summary>
+    /// <summary>The keys sent to Claude Code, the one table of them (rule 12).</summary>
+    private static readonly string KeysTable = Path.Combine("src", "AxClaude.Core", "Transcript", "ClaudeCodeKeys.cs");
+
+    /// <summary>
+    /// What axClaude sends to Claude Code for a key is written in <c>ClaudeCodeKeys</c> alone: an escape or another
+    /// control character written in a string of any other file of axClaude's two source folders fails here
+    /// (2026-11-15: Up and Down were literals in the window's menu, and the same sequences in ScreenReader).
+    /// </summary>
+    [Fact]
+    public void Claude_Codes_keys_are_written_in_their_table_alone()
+    {
+        var root = RepositoryRoot();
+        var control = new System.Text.RegularExpressions.Regex(@"\\x[01][0-9a-fA-F]|\\u00[01][0-9a-fA-F]|\\e");
+        var offenders = new List<string>();
+        foreach (var folder in new[] { Path.Combine(root, "src", "AxClaude.Core"), Path.Combine(root, "src", "AxClaude") })
+        {
+            foreach (var file in Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories))
+            {
+                var relative = Path.GetRelativePath(root, file);
+                if (relative.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
+                    || relative.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}")
+                    || relative.Equals(KeysTable, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var number = 0;
+                foreach (var line in File.ReadLines(file))
+                {
+                    number++;
+                    if (StringLiterals(line).Any(literal => control.IsMatch(literal)))
+                    {
+                        offenders.Add($"{relative}:{number}");
+                    }
+                }
+            }
+        }
+
+        Assert.True(offenders.Count == 0, "A key sequence outside ClaudeCodeKeys, where it belongs (rule 12): " + string.Join("; ", offenders));
+    }
+
+    [Fact]
+    public void The_shifted_arrows_are_xterms()
+    {
+        // FR-2.4: Claude, Send key, Shift+Up and Shift+Down; a hint row's ⇧↑ sends the same.
+        Assert.Equal("\x1b[1;2A", AxClaude.Core.Transcript.ClaudeCodeKeys.ShiftUp);
+        Assert.Equal("\x1b[1;2B", AxClaude.Core.Transcript.ClaudeCodeKeys.ShiftDown);
+        Assert.Equal("\x1b[A", AxClaude.Core.Transcript.ClaudeCodeKeys.Up);
+        Assert.Equal("\x1b[B", AxClaude.Core.Transcript.ClaudeCodeKeys.Down);
+    }
+
+    /// <summary>The list above is real:the table's file names every text watched, as a constant, inside a pattern or in an entry's comment.</summary>
     [Fact]
     public void Every_watched_text_is_in_the_table()
     {

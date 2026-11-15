@@ -54,18 +54,21 @@ internal sealed partial class MainForm
         Add(claude, new Command("Send &queued messages now", AxClaudeKeys.SendNow, SendNow) { Mark = CommandMark.Act });
         // The interrupt key (FR-2.3). Ctrl+Escape opens the Start menu and never reaches the app.
         Add(claude, new Command("&Interrupt", AxClaudeKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
-        Add(claude, new Command("Next &permission mode", AxClaudeKeys.NextPermissionMode, () => Write("\x1b[Z")) { Mark = CommandMark.Act });
+        Add(claude, new Command("Next &permission mode", AxClaudeKeys.NextPermissionMode, () => Write(ClaudeCodeKeys.ShiftTab)) { Mark = CommandMark.Act });
         // FR-7.10: on demand, the number of things running in the background and each agent by type and description.
         Add(claude, new Command("What runs in the &background", AxClaudeKeys.BackgroundWork, SayBackgroundWork) { Mark = CommandMark.Read });
         claude.DropDownItems.Add(new ToolStripSeparator());
-        // The keys Claude's own menus take. Up and Down are menu items only (FR-2.4): Ctrl+Up and Ctrl+Down move by
-        // paragraph in every edit control of the bundle.
+        // The keys Claude's own menus take. Up, Down, Shift+Up and Shift+Down are menu items only (FR-2.4): Ctrl+Up and
+        // Ctrl+Down move by paragraph in every edit control of the bundle, and Shift with an arrow selects text in the
+        // message field. The sequences are ClaudeCodeKeys' (rule 12).
         var sendKey = new ToolStripMenuItem("Send &key");
-        Add(sendKey, new Command("Ctrl+&C", AxClaudeKeys.SendCtrlC, () => Write("\x03")) { Mark = CommandMark.Act });
-        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Ctrl+&D", null, (_, _) => Write("\x04")), CommandMark.Act));
-        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Tab", null, (_, _) => Write("\t")), CommandMark.Act));
-        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Up", null, (_, _) => Write("\x1b[A")), CommandMark.Act));
-        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Do&wn", null, (_, _) => Write("\x1b[B")), CommandMark.Act));
+        Add(sendKey, new Command("Ctrl+&C", AxClaudeKeys.SendCtrlC, () => Write(ClaudeCodeKeys.CtrlC)) { Mark = CommandMark.Act });
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Ctrl+&D", null, (_, _) => Write(ClaudeCodeKeys.CtrlD)), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Tab", null, (_, _) => Write(ClaudeCodeKeys.Tab)), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Up", null, (_, _) => Write(ClaudeCodeKeys.Up)), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Do&wn", null, (_, _) => Write(ClaudeCodeKeys.Down)), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Shift+Up", null, (_, _) => Write(ClaudeCodeKeys.ShiftUp)), CommandMark.Act));
+        sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("S&hift+Down", null, (_, _) => Write(ClaudeCodeKeys.ShiftDown)), CommandMark.Act));
         claude.DropDownItems.Add(sendKey);
 
         var navigate = new ToolStripMenuItem();

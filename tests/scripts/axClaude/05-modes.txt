@@ -114,4 +114,15 @@ expect state Claude: working
 expect said Responding
 keys ctrl+shift+c
 expect state Claude: ready
+# Step 6a (FR-2.4, 2026-11-15): Actions, Send key, Shift+Up and Shift+Down go to Claude from the menu; the window stays
+# ready and the focus where it was. What Claude Code does with them at its prompt is its own (its documentation names
+# Shift+Up and Shift+Down only for extending a selection in fullscreen rendering).
+wait 4000
+menu Shift+Up
+wait 1500
+expect state Claude: ready
+menu Shift+Down
+wait 1500
+expect state Claude: ready
+expect focus Message to Claude
 # Step 7 sends /model, which this run never does (choosing a model there saves it as the user's default): left manual.

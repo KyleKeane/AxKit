@@ -282,18 +282,27 @@ internal sealed class McpChannel
         return new { name = list.AccessibleName, items = list.Items.Cast<object>().Take(5000).Select(item => item.ToString()).ToArray(), selected = list.SelectedIndex, count = list.Items.Count };
     }
 
+    /// <summary>
+    /// MC-6.5: the window's main text (<see cref="AxKitForm.McpMainText"/>: the focused text, or the console window's
+    /// view wherever the focus is), and, when the focus is in another text field, that field's name and caret line
+    /// beside it, never its text.
+    /// </summary>
     private object Text()
     {
-        var focused = Control.FromChildHandle(User32.GetFocus());
-        if ((focused is TextBoxBase own && own.FindForm() == _form ? own : WindowReading.FirstVisibleText(_form)) is not { } box)
+        var focused = Control.FromChildHandle(User32.GetFocus()) is TextBoxBase own && own.FindForm() == _form ? own : null;
+        if (_form.McpMainText(focused) is not { } box)
         {
             return new { error = "The window shows no text." };
         }
 
+        var field = focused is not null && !ReferenceEquals(focused, box)
+            ? new { name = focused.AccessibleName, caretLine = WindowReading.IsSecret(focused) ? 0 : WindowReading.LogicalLine(focused) }
+            : null;
+
         // MC-4.3: a hidden field never leaves the window.
         if (WindowReading.IsSecret(box))
         {
-            return new { name = box.AccessibleName, text = "protected", caretLine = 0 };
+            return new { name = box.AccessibleName, text = "protected", caretLine = 0, focused = field };
         }
 
         var text = box.Text;
@@ -303,6 +312,7 @@ internal sealed class McpChannel
             text = text.Length > MaxText ? text[..MaxText] : text,
             truncated = text.Length > MaxText,
             caretLine = WindowReading.LogicalLine(box),
+            focused = field,
         };
     }
 
