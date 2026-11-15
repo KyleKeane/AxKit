@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.9.1
+
+- axClaude: the soft chords while background work runs are now heard. In 5.9.0 they waited while a reply was being read, and Claude speaks most of the time work runs, so between the bells going up and down none played. They now play on their own schedule, softly under speech.
+
 ## 5.9.0
 
 - axClaude: Actions, Send key has Shift+Up and Shift+Down, after Up and Down, for a screen of Claude's that asks for them. Like Up and Down they have no key of their own (Shift with an arrow selects text in the message field) and are in the command palette. Claude Code's documentation names these keys only for extending a selection in its fullscreen view; to change Claude's effort level, type /effort.
