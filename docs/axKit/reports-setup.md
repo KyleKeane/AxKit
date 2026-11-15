@@ -10,7 +10,8 @@ records them and the steps to make them again, as `code-signing.md` does for the
 | The reports repository `AxKit-reports` | https://github.com/KyleKeane/AxKit-reports, made 2026-11-07, private since 2026-11-14 (RP-D11): only the maintainer opens it | Issues are the reports, each a JSON envelope with the report sealed for the maintainer's key (RP-6.1a; those of 5.8.0 and earlier are plain text); `.github/workflows/close-blocked.yml` closes and locks a blocked report; the labels `feedback`, `bug` and `feature`; issues on, wiki, projects and discussions off. Its two issue forms and its old `blocklist.json` serve nobody since it is private: the maintainer removes them |
 | The block list `AxKit-blocklist` | https://github.com/KyleKeane/AxKit-blocklist, public, made 2026-11-14 (RP-D12) | `blocklist.json` at its root, `{"reporters": [], "versions": []}`: random install ids and axKit versions whose reports are not accepted, nothing else. The sender and the workflow read it without a sign-in at `https://raw.githubusercontent.com/KyleKeane/AxKit-blocklist/main/blocklist.json`. Its issues are where a blocked install asks, with its install id, when the block is a mistake |
 | The reporter token | A fine-grained personal access token of the maintainer's own GitHub account: repository access `AxKit-reports` only, permission Issues: read and write, nothing else, expiry one year | Reads, creates, edits, labels and closes issues of the reports repository, nothing else (RP-6.2). Issues it posts show the maintainer's name as the author; the envelope's `reporter` tells which install sent them |
-| The reports key | The private half: `%LOCALAPPDATA%\AxKit-release\reports-key.bin` on the maintainer's computer, made 2026-11-14 with `tools/ReportKey new`, protected for his Windows account. The public half: the constant `ReportSeal.PublicKey` in `src/AxKit.Core/Reports/ReportSeal.cs` | Every copy of axKit seals its reports for the public half; only the private half opens them (section 5). Never on GitHub, never in the repository |
+| The reports key | The private half: `%LOCALAPPDATA%\AxKit-release\reports-key.bin` on the maintainer's computer, made 2026-11-14 with `tools/ReportKey new`, protected for his Windows account. The public half: the constant `ReportSeal.PublicKey` in `src/AxKit.Core/Reports/ReportSeal.cs` | Every copy of axKit seals its reports for the public half; only the private half opens them (section 5). Never in this repository; its passphrase-encrypted backup and the passphrase are in the private repository `KyleKeane/AxKit-keys` since 2026-11-15 (section 5) |
+| The keys repository `AxKit-keys` | https://github.com/KyleKeane/AxKit-keys, private, made 2026-11-15, cloned beside this repository as `..\axkit-keys` | The backups of the reports key and the release key, each beside its passphrase (section 5; `docs/axKit/development-environment.md` section 2). Only the maintainer opens it; the reporter token reaches `AxKit-reports` alone and cannot read it |
 | The secret `AXKIT_REPORTER_TOKEN` | A secret of the GitHub environment `release` of this repository (the one the Store's credentials are in) | Read by the package job of `release.yml` alone; `publish.ps1` writes it into the build through `tools/reporter-token.ps1` |
 
 axTask's GitHub lists were removed on 2026-11-14 (RP-7, RP-D10): axTask is local only, and the maintainer reads,
@@ -91,23 +92,32 @@ list, which every copy must read without a sign-in, has a public repository of i
 
 Every report is encrypted on the user's computer with the public half of one RSA key (3072 bits), a constant in the
 code, `ReportSeal.PublicKey` (RP-6.1a). The private half opens them. It was made on 2026-11-14 with
-`tools/ReportKey new` on the maintainer's computer and is kept there alone, as the release key is
-(`tools/release-key.ps1`):
+`tools/ReportKey new` on the maintainer's computer and is kept there, as the release key is
+(`tools/release-key.ps1`), with one backup in the private repository `KyleKeane/AxKit-keys` (below):
 
 - **Where.** `%LOCALAPPDATA%\AxKit-release\reports-key.bin`, protected for the Windows account that made it (DPAPI,
   through `AxKit.Core/UserSecret`): a copy of the file is useless on another computer or for another account. It is
-  never printed, never in the repository, never on GitHub, and no test reads it (the tests make their own pairs).
+  never printed, never in this repository, and no test reads it (the tests make their own pairs).
 - **Losing it means that every sealed report is unreadable, for good**: the ones already on GitHub and the ones
   every released copy goes on sending until a release carries a new public half. A new Windows account, a
-  reinstalled Windows or a new computer loses it unless there is a backup.
+  reinstalled Windows or a new computer loses it unless the backup is imported there (below).
 - **The backup.** `dotnet run --project tools\ReportKey -c Release -- export <file>` writes the private half
   encrypted with a passphrase (twelve characters at least, typed at the prompt without being shown, or read from
   standard input; PBKDF2-SHA256 with 600000 rounds, then AES-256-GCM; a text file of base64). It refuses to
-  overwrite a file. Keep the file and the passphrase in the password manager, and delete the file from the disk
-  once it is there. **Not yet made on 2026-11-14: it is the maintainer's to make, since the passphrase is his.**
-  `import <file>` brings the key back from such a file on a computer that has none, and prints the public half,
-  which must equal the constant in the code; `public` prints the public half and its fingerprint at any time and
-  says whether it is the one this build seals for.
+  overwrite a file. `import <file>` brings the key back from such a file on a computer that has none (it never
+  replaces an existing key file), and prints the public half, which must equal the constant in the code; `public`
+  prints the public half and its fingerprint at any time and says whether it is the one this build seals for.
+- **Where the backup is (the maintainer's decision, 2026-11-15).** In the private repository
+  `KyleKeane/AxKit-keys`, cloned beside this one as `..\axkit-keys`: `reports-key.backup` with its passphrase in
+  `reports-key.passphrase.txt`, and the release key's backup beside it (`release-key.backup`,
+  `release-key.passphrase.txt`; `docs/axKit/development-environment.md` section 2). The maintainer chose this
+  knowingly in place of a password manager: the files are protected by his GitHub sign-in alone, so a stolen
+  GitHub account could open the sealed reports (and sign an update with the release key). The reporter token that
+  ships in axKit reaches `AxKit-reports` alone, so no token shipped with axKit can read `AxKit-keys`. Restore on a
+  computer without the key, from this repository's folder:
+  `Get-Content ..\axkit-keys\reports-key.passphrase.txt | dotnet run --project tools\ReportKey -c Release -- import ..\axkit-keys\reports-key.backup`.
+  A new backup is the same with `export` and a new file name (export never overwrites), then committed and pushed
+  in `..\axkit-keys` by hand: no script syncs that repository.
 - **Reading the reports.** `dotnet run --project tools\ReportKey -c Release -- issues` asks `gh` for the open
   issues of the reports repository and prints each: its number, labels, state and title, the envelope's members in
   the clear (format, reporter, version, kind, key, method), then the plain report; an issue without an envelope, of

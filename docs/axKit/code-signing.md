@@ -61,7 +61,8 @@ does; the names above are resource names, not ids.
 ## 2. Setting it up (the user does the marked steps; Claude the rest)
 
 Nothing of this is needed on a second development computer: the signing happens in GitHub Actions, and a release from
-another computer needs only what AX-3.4 already needs there (the release key, `gh` signed in). The Azure CLI on a
+another computer needs only what AX-3.4 already needs there (the release key, imported from its backup in `..\axkit-keys` since 2026-11-15, and `gh` signed in;
+`docs/axKit/development-environment.md` section 6). The Azure CLI on a
 development computer is for reading the signing account, and for signing a file by hand if that is ever needed, as
 `axkit-signer` (`docs/axKit/development-environment.md`).
 

@@ -202,7 +202,8 @@ levers are built now.
   sender encrypts the report on the user's computer, before any request, with the maintainer's public key, a
   constant in the code (`ReportSeal.PublicKey`, RSA 3072 bits, SubjectPublicKeyInfo in base64, as
   `Updates/ReleaseSigning` holds the release key's public half). Only the private key opens it, and that key is on
-  the maintainer's computer alone (`reports-setup.md` section 5). A report that cannot be encrypted is not sent
+  the maintainer's computer, with a passphrase-encrypted backup beside its passphrase in the private repository
+  `KyleKeane/AxKit-keys` since 2026-11-15 (`reports-setup.md` section 5). A report that cannot be encrypted is not sent
   ("Not sent yet: the report could not be encrypted").
 
   The issue's body is one JSON object, indented, inside a `json` code fence so that GitHub shows it as it is (the

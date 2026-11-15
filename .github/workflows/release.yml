@@ -2,7 +2,7 @@
 # so it can be downloaded alone and install the latest release. Three jobs: build tests with a token that can only
 # read; package publishes the folder with the reporter token of the reports (docs/axKit/reports.md RP-6.2), makes the
 # zip and the Store package; draft uploads and attests. The release stays a draft: release.ps1, on the maintainer's
-# machine, signs the zip with the release key, which never reaches GitHub, uploads the signature and publishes the
+# machine, signs the zip with the release key, which the workflow never sees, uploads the signature and publishes the
 # release (docs/axKit/SPEC.md AX-3.4; docs/axKit/security-audit-2026-10-24.md S-27, S-30, S-31). The apps install only
 # a signed zip. AxKit.exe itself carries no Windows (Authenticode) signature: the signed copy of axKit is the Microsoft
 # Store's, which Microsoft signs after certification (AX-13; docs/axKit/store-distribution.md 4.4); the Azure Artifact

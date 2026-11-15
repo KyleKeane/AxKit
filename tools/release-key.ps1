@@ -4,11 +4,11 @@
   release's zip with it, and prints its public half.
 
 .DESCRIPTION
-  An ECDSA P-256 key that lives only on the maintainer's machine, never on GitHub: its private half is kept in
+  An ECDSA P-256 key kept on the maintainer's machine, never in this repository: its private half is kept in
   %LOCALAPPDATA%\AxKit-release\release-key.bin, encrypted for the Windows account that made it (DPAPI), so that a copy
   of the file is useless elsewhere. release.ps1 signs every release's zip with it before the release is published;
   the updater (AxKit.Core/Updates/ReleaseSigning) and install.cmd refuse a zip whose signature does not check against
-  the public half built into them. A stolen GitHub account cannot sign. Losing the key means one release installed
+  the public half built into them. Losing the key means one release installed
   by hand with a new key's public half in it.
 
   Windows PowerShell 5.1 and .NET Framework only: CngKey, ECDsaCng and ProtectedData, nothing to install.

@@ -45,9 +45,29 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
   2026-11-13, since the account is an Individual account (section 2 there).
 - **The release key**: `%LOCALAPPDATA%\AxKit-release\release-key.bin`, an ECDSA P-256 key encrypted for the Windows
   account that made it (`tools/release-key.ps1`; SPEC AX-3.4). `release.ps1` signs every release's zip with it; the
-  public half is built into `AxKit.Core/Updates/ReleaseSigning` and `install.cmd`. A new computer gets it only by the
-  maintainer's own copy; a copy of the file alone is useless under another account. Losing it means one release
-  installed by hand with a new key's public half in it.
+  public half is built into `AxKit.Core/Updates/ReleaseSigning` and `install.cmd`. A copy of the file alone is
+  useless under another account: a new computer gets the key by importing its backup (below). Losing the key and
+  its backup means one release installed by hand with a new key's public half in it.
+- **The reports key**: `%LOCALAPPDATA%\AxKit-release\reports-key.bin`, the private half of the key the reports are
+  sealed for, protected the same way (`tools/ReportKey`; `docs/axKit/reports-setup.md` section 5).
+- **The keys repository, `..\axkit-keys`** (the maintainer's decision, 2026-11-15): the private repository
+  `KyleKeane/AxKit-keys`, cloned beside the others, holds the backups of what no other copy holds:
+  `reports-key.backup` with `reports-key.passphrase.txt`, and `release-key.backup` with
+  `release-key.passphrase.txt`, each backup encrypted with its passphrase. The maintainer chose this knowingly: the
+  files are protected by his GitHub sign-in alone, so a stolen GitHub account could open the sealed reports and sign
+  an update (the security audit's S-27 had kept the release key off GitHub until then; its note of that day). The
+  reporter token shipped with axKit reaches `AxKit-reports` alone, so no token shipped with axKit can read
+  `AxKit-keys`. Restore, from the code's folder, on a computer without the keys (import never replaces an existing
+  key):
+  `Get-Content ..\axkit-keys\reports-key.passphrase.txt | dotnet run --project tools\ReportKey -c Release -- import ..\axkit-keys\reports-key.backup`
+  and
+  `Get-Content ..\axkit-keys\release-key.passphrase.txt | .\tools\release-key.ps1 import ..\axkit-keys\release-key.backup`.
+  Each prints the public half, which must equal the code's (`ReportSeal.PublicKey`; `ReleaseSigning` and
+  `install.cmd`). A new backup is the same with `export` and a new file name (export never overwrites a file); the
+  folder is then committed and pushed by hand. Neither `tools/sync-repos.ps1` nor the pre-push hook touches
+  `axkit-keys`: it changes only when a backup changes, and is never pushed by accident with the code.
+- **A fork, or this project used as a template**, makes its own keys (`tools/release-key.ps1 new`, `tools/ReportKey
+  new`, their public halves into the code) and its own private keys repository, and never reuses these.
 - **Claude Code**: its own sign-in, the maintainer's Anthropic account.
 - **Windows**: the development computer's account is the maintainer's; a second computer, with Smart App Control on,
   is where the Store's copy and its updates are checked for real (`docs/axKit/store-distribution.md`).
@@ -59,7 +79,7 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 | Build and start one app | `run.ps1 -App <app> [<path>]`, `scripts to run-individual-apps\run-ax<app>.ps1` | .NET SDK, PowerShell. A running app locks its `bin`: a change is checked from a build elsewhere (`dotnet build <project> -o <scratch dir>`), and the development axStart runs from `src\AxKit\bin\Debug` on this computer, where no axKit is installed |
 | Tests | `test.ps1 [<App>]` | .NET SDK: every test project in Release, one by one, as the workflows do. Before every commit |
 | The outside-calls page | `tools/outside-calls.ps1` (`-Check`) | PowerShell; the sources' `Outside call` comments (SPEC B-17) |
-| The repositories beside this one | `tools/sync-repos.ps1` (`-Status`); git runs it on every push through `tools/hooks/pre-push` | git. `..\axkit-reports` (the clone of the reports repository, private since 2026-11-14: the issue forms, the workflow, the blocklist) and `..\axkit-management` (the private repository of axTask's lists: the issues read from GitHub and the maintainer's priorities, `CLAUDE.md` rule 9) are fetched, the lists committed as one dated commit, pulled fast-forward and pushed; one line each, nothing forced, a sibling's trouble never stops the push. A clone without the two folders beside it skips them |
+| The repositories beside this one | `tools/sync-repos.ps1` (`-Status`); git runs it on every push through `tools/hooks/pre-push` | git. `..\axkit-reports` (the clone of the reports repository, private since 2026-11-14: the issue forms, the workflow, the blocklist) and `..\axkit-management` (the private repository of axTask's lists: the issues read from GitHub and the maintainer's priorities, `CLAUDE.md` rule 9) are fetched, the lists committed as one dated commit, pulled fast-forward and pushed; one line each, nothing forced, a sibling's trouble never stops the push. A clone without the two folders beside it skips them. `..\axkit-keys` is not among them: it is committed and pushed by hand when a backup changes (section 2) |
 | NVDA passes | `manual_tests/prepare.ps1 [<app>]`, then `nvda-pass.ps1 [<app>]` after the user has stepped away | NVDA with the add-on, `tools/AxAutomate`; takes the keyboard |
 | Automated checks and Claude sessions | `tools/AxAutomate <script>`, `tools/QaRun` | .NET SDK, Claude Code with `--model haiku` |
 | Publish and install locally | `publish.ps1 [-NoInstall]`, `install.ps1 [-Uninstall]` | .NET SDK; not on the development computer, which keeps no installed copy |
@@ -75,8 +95,10 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
    `KeePassXCTeam.KeePassXC`; Claude Code with Anthropic's installer. Open a new shell.
 3. `git clone https://github.com/KyleKeane/AxKit` into a folder of the maintainer's choosing, as `axkit`, and beside it
    `git clone https://github.com/KyleKeane/AxKit-reports axkit-reports` and
-   `git clone https://github.com/KyleKeane/axkit-management` (private; the maintainer's account): the three folders of
-   axKit's development, which `tools/sync-repos.ps1` finds by name. In the code's clone, `git config user.name` and
+   `git clone https://github.com/KyleKeane/axkit-management` (private; the maintainer's account), and
+   `git clone https://github.com/KyleKeane/AxKit-keys axkit-keys` (private; the key backups, section 2): the four
+   folders of axKit's development. `tools/sync-repos.ps1` finds the reports clone and the management lists by name;
+   the keys repository is only read from. In the code's clone, `git config user.name` and
    `git config user.email` with GitHub's no-reply address, and `git config core.hooksPath tools/hooks`, so that every
    push also syncs the two beside it (`release.ps1` refuses to run until it is set) and every commit names its item
    of the priorities list and marks it started or done there (`tools/hooks/commit-msg`, `tools/item-of-commit.ps1`;
@@ -87,9 +109,9 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 6. Copy `tools/nvda-capture` to `%APPDATA%\nvda\addons\axkitCapture`, restart NVDA.
 7. `dotnet build AxKit.sln`, then `.\test.ps1`: every project green. `.\manual_tests\prepare.ps1` makes the files of
    the NVDA passes.
-8. To release from this computer: the release key, brought over by the maintainer and protected again for this
-   account (`tools/release-key.ps1`), and `gh` signed in. `tools/release-key.ps1 public` prints the public half, which
-   must equal the one in `AxKit.Core/Updates/ReleaseSigning`.
+8. To release from this computer, or read the reports: the two keys imported from `..\axkit-keys` (section 2), and
+   `gh` signed in. `tools/release-key.ps1 public` prints the release key's public half, which must equal the one in
+   `AxKit.Core/Updates/ReleaseSigning`.
 9. Claude Code opened in the repository's folder reads `CLAUDE.md`; the AI tools of axKit are turned on from any
    window's axKit menu, AI tools, when wanted, which registers the `axkit` MCP server in Claude Code.
 
@@ -151,3 +173,41 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 - `winget upgrade` keeps the tools current; a new .NET SDK feature band is a change to `global.json` and the
   workflows, in a commit of its own (`docs/axKit/longevity.md`); the yearly check there covers the signing too
   (`docs/axKit/code-signing.md` section 5). A tool's version in this page is updated when it changes the band.
+
+## 6. A second development computer (2026-11-15)
+
+A checklist for working, and releasing, from a computer besides the first; section 4 has the steps in order.
+
+What it needs:
+
+- [ ] Windows PowerShell 5.1 (it comes with Windows; every script runs in it).
+- [ ] The .NET SDK of `global.json` (10.0.300, or a later feature band of 10: `rollForward: latestFeature`), which
+  builds the .NET version that `Directory.Build.props` names for every project.
+- [ ] Git and `gh`, signed in as the repository's owner (`gh auth status`); `release.ps1`, `tools/sign-release.ps1`,
+  `tools/ReportKey issues` and `tools/reports-check.ps1` ask GitHub through `gh`.
+- [ ] Claude Code, signed in with the maintainer's Anthropic account.
+- [ ] The four repositories side by side in one folder: `axkit`, `axkit-reports`, `axkit-management` and
+  `axkit-keys` (section 4, step 3).
+- [ ] In `axkit`: `git config core.hooksPath tools/hooks`. `release.ps1` refuses to run without it (it accepts the
+  folder written so or as its full path), and with it every push runs `tools/sync-repos.ps1` and every commit
+  `tools/hooks/commit-msg`.
+- [ ] The two keys imported from `..\axkit-keys` (section 2), each import's public half checked against the code's.
+  Import the release key before `release.ps1`: neither the release nor its rehearsal checks for the key beforehand,
+  and without it the run stops at the signing, after the tag is pushed, leaving the draft unpublished; import the
+  key then and run `.\tools\sign-release.ps1 <version>`, which signs and publishes that draft.
+- [ ] For `nvda-pass.ps1`: NVDA, with the add-on: `tools\nvda-capture` copied to
+  `%APPDATA%\nvda\addons\axkitCapture`, then NVDA restarted (`docs/axKit/automation.md` section 3); the script stops
+  when the add-on is missing and says when it differs from the repository's.
+
+What is made anew there, never copied:
+
+- [ ] The AI tools: turned on from any window's axKit menu, AI tools, which registers the `axkit` MCP server in this
+  computer's Claude Code; each client is paired again, with a new pairing key in `%LOCALAPPDATA%\AxKit\mcp.key`
+  (`docs/axKit/mcp.md` section 3).
+- [ ] Partner Center's browser profile, `%LOCALAPPDATA%\AxKit-release\edge-profile`, signed in again in the browser
+  (`docs/axKit/store-setup.md` section 6), if the Store's uploads are made from this computer.
+- [ ] The hotkey apps (axStart, axClip, axHelp), started and set up again on this computer.
+
+What is not shared between the computers: the settings under `%APPDATA%\AxKit` (each app's settings file, the
+theme, AI help's and the MCP clients' settings) and everything under `%LOCALAPPDATA%\AxKit` (the logs, the pairing
+key). Each computer keeps its own; only the four repositories and the keys' backups travel.

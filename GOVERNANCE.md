@@ -40,8 +40,9 @@ GitHub, and to the Partner Center account that publishes the Store's copy, with 
 
 Every release is built by GitHub Actions from a tag of this repository (`.github/workflows/release.yml`), with GitHub's
 attestation of where it was built, and approved by the maintainer before it is published: `release.ps1` runs the
-tests, waits for the build, checks the attestation, signs the zip with the release key that never leaves the
-maintainer's computer, and only then publishes it. The installed apps install a release only when that signature
+tests, waits for the build, checks the attestation, signs the zip with the release key, kept on the
+maintainer's computer with a passphrase-encrypted backup in his private GitHub repository `KyleKeane/AxKit-keys`
+(since 2026-11-15, `docs/axKit/security-audit-2026-10-24.md` S-27), and only then publishes it. The installed apps install a release only when that signature
 checks (`docs/axKit/SPEC.md` AX-3.4). Nothing in a release is built anywhere else.
 
 ## The maintainer's commitments

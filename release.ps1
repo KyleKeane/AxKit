@@ -92,6 +92,17 @@ function Get-HooksProblem {
     }
 }
 
+# The release key signs the zip after the tag is pushed (tools/sign-release.ps1); without it the draft would stay
+# unpublished. So it is checked before anything is tagged: on a second computer it is imported from ..\axkit-keys
+# first (docs/axKit/development-environment.md section 6). The file alone is checked; it opens for this Windows
+# account only, which sign-release.ps1 finds out.
+function Get-ReleaseKeyProblem {
+    $keyFile = Join-Path $env:LOCALAPPDATA 'AxKit-release\release-key.bin'
+    if (-not (Test-Path -LiteralPath $keyFile)) {
+        return "No release key on this computer ($keyFile). Import it first: Get-Content ..\axkit-keys\release-key.passphrase.txt | .\tools\release-key.ps1 import ..\axkit-keys\release-key.backup"
+    }
+}
+
 # The files the real run refuses to release over: everything uncommitted but the two it commits itself.
 function Get-UncommittedFiles {
     $generated = @('CHANGELOG.md', 'docs/axKit/outside-calls.md')
@@ -200,6 +211,7 @@ if ($Rehearse) {
         Write-Check 'the branch is main' (Get-BranchProblem)
         Write-Check 'main has everything origin/main has (origin fetched)' (Get-BehindProblem)
         Write-Check 'the hooks setting of the clone' (Get-HooksProblem)
+        Write-Check 'the release key is on this computer' (Get-ReleaseKeyProblem)
 
         $uncommitted = @(Get-UncommittedFiles)
         $checked++
@@ -290,6 +302,7 @@ $tag = "v$Version"
 
 Stop-OnProblem (Get-VersionProblem $Version)
 Stop-OnProblem (Get-BranchProblem)
+Stop-OnProblem (Get-ReleaseKeyProblem)
 
 # The check belongs to the push, so -NoPush (commit and tag offline, push later) does not need origin to be reachable.
 if (-not $NoPush) {
@@ -389,7 +402,7 @@ Write-Host "Pushed the tag. GitHub Actions is building the draft release: https:
 # AX-13.6: the release's package reaches the Microsoft Store by an upload in Partner Center, by hand.
 Write-Host "Once published, the release's AxKit-<version>.msix is uploaded to the Microsoft Store in Partner Center by hand (docs/axKit/store-setup.md section 5)."
 
-# AX-3.4 (security audit S-27): the draft is signed here, with the key that never leaves this machine, and only then
+# AX-3.4 (security audit S-27): the draft is signed here, with the key on this machine (imported from ..\axkit-keys on a second one), and only then
 # published; the apps install nothing unsigned.
 if (Get-Command gh -ErrorAction SilentlyContinue) {
     & (Join-Path $root 'tools\sign-release.ps1') $Version

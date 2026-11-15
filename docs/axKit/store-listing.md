@@ -19,7 +19,9 @@ policies (10.2.4 dependencies disclosed first, 10.5.1 a privacy policy, 11.16 li
 - Category: Developer tools.
 - Privacy policy URL: https://github.com/KyleKeane/AxKit/blob/main/PRIVACY.md
 - Website: https://www.kylekeane.com
-- Support contact: https://github.com/KyleKeane/AxKit-reports/issues
+- Support contact: https://github.com/KyleKeane/AxKit/issues (until 2026-11-15 the reports repository's issues, which
+  became private on 2026-11-14 and so Not Found for everyone; reports themselves go from inside axKit with F4). Partner
+  Center's field must be changed to match at the next submission (the maintainer's step).
 - Product declarations: this product has been tested to meet accessibility guidelines (yes: NVDA, every window, the
   test plans under `docs/<app>/nvda-test-plan.md`); it accesses the internet (the update check on Check for updates,
   a report the user sends; the access layers through the programs they run).

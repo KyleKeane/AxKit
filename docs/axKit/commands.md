@@ -87,6 +87,16 @@ page by hand; run its script and commit the page.
   real run would refuse and do not change the exit code; a failing question is shown with its command and output.
   The parts of the script that talk to git and GitHub otherwise run only in a real release (two faults met 5.8.0
   there); `ReleaseScriptTests` reads both scripts for the shape that keeps the rehearsal harmless.
+- `tools/sign-release.ps1 <version>`: signs a release's draft with the release key and publishes it; `release.ps1`
+  calls it last, and it is run alone when a release stopped there (`-Rehearse` asks its questions only).
+- `tools/release-key.ps1 <command>`: the release key (SPEC AX-3.4), kept in `%LOCALAPPDATA%\AxKit-release\release-key.bin`
+  for the Windows account. `public` prints its public half, which must equal `AxKit.Core/Updates/ReleaseSigning`'s;
+  `sign <zip>` and `verify <zip>` are `tools/sign-release.ps1`'s steps; `new` made the key once and refuses while one
+  exists. `export <file>` writes a backup under a passphrase read from standard input, refusing an existing file;
+  `import <file>` puts the key back from one on a computer that has none, never replacing a key. The backup lives in
+  the private repository `KyleKeane/AxKit-keys`, cloned as `..\axkit-keys` (`development-environment.md` section 2):
+  `Get-Content ..\axkit-keys\release-key.passphrase.txt | .\tools\release-key.ps1 import ..\axkit-keys\release-key.backup`,
+  and the same with `export` and a new file name for a new backup.
 - `.github/workflows`: `build.yml` tests every push to every branch and every pull request; `release.yml` builds a
   `v*` tag into a GitHub release; `dependabot.yml` keeps the actions and the test packages current.
 
@@ -107,7 +117,8 @@ page by hand; run its script and commit the page.
   clone of the reports repository) and `..\axkit-management` (the private axTask lists): fetched, the lists committed
   as one dated commit, pulled fast-forward, pushed, one line each, nothing forced. `-Status` only says where they
   stand. Git runs it on every push of this repository through the pre-push hook `tools/hooks/pre-push`, installed once
-  per clone with `git config core.hooksPath tools/hooks`, which `release.ps1` checks.
+  per clone with `git config core.hooksPath tools/hooks`, which `release.ps1` checks. The fourth folder,
+  `..\axkit-keys`, is not synced by it: it is committed and pushed by hand when a backup changes.
 - `tools/item-of-commit.ps1 <message file>`: the priorities list's bookkeeping from a commit message (the root
   `CLAUDE.md`, rule 9). The message names its item on a line of its own: `Item: <words of the title>` (the item's
   Started field gets today's date), `Item done: <words>` (its Done is checked too) or `Item: none, <the reason>`. A
@@ -129,8 +140,11 @@ page by hand; run its script and commit the page.
   does so for one issue body or envelope, from a file or standard input. `public` prints the key's public half and
   fingerprint and says whether this build seals for it; `seal <file>` seals a text as a copy of axKit does, for
   trying `open`. `new` made the key once (it refuses while one exists); `export <file>` writes a backup of the
-  private half under a passphrase, and `import <file>` reads one back. The private half is in
-  `%LOCALAPPDATA%\AxKit-release\reports-key.bin` on the maintainer's computer alone and is never printed; without
-  it, or its backup, no sealed report can be read.
+  private half under a passphrase (refusing an existing file), and `import <file>` reads one back (refusing while a
+  key exists); both read the passphrase from standard input. The private half is in
+  `%LOCALAPPDATA%\AxKit-release\reports-key.bin` on the maintainer's computer and is never printed; its backup is in
+  the private repository `KyleKeane/AxKit-keys`, cloned as `..\axkit-keys`:
+  `Get-Content ..\axkit-keys\reports-key.passphrase.txt | dotnet run --project tools\ReportKey -c Release -- import ..\axkit-keys\reports-key.backup`.
+  Without the key or its backup, no sealed report can be read.
 - `tools/PtyCapture`: records Claude Code's screen stream for a fixture (`--dump` reads a recording with personal data
   replaced; never `--raw`). The `record-fixture` skill has the steps.

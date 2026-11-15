@@ -34,6 +34,12 @@ Severity: **critical** (code run or a secret lost with no action by the user), *
   machine; `release.ps1` signs the zip's SHA-256 before the release is published; axKit's updater and `install.cmd`
   refuse a zip whose signature does not check against the public key built into axKit. A stolen GitHub account cannot
   sign. Losing the key means one manual install of a release signed with a new key.
+  **Changed by the maintainer on 2026-11-15** (appended; the text above is the audit's as written): the key, ECDSA
+  P-256 as built, now also has a backup, encrypted with a passphrase, in the private repository
+  `KyleKeane/AxKit-keys`, beside its passphrase (`tools/release-key.ps1` export and import), so that a second
+  development computer can release. He chose it knowingly: the backup is protected by his GitHub sign-in alone, so
+  a stolen GitHub account could now sign an update (and open the sealed reports, whose key's backup is there too).
+  The reporter token shipped in axKit reaches `AxKit-reports` alone and cannot read `AxKit-keys`. See S-27.
 - **axPass copies a password itself** (2026-10-24): at Ctrl+C the one password is read from KeePassXC's tool, put on
   the clipboard marked private (`ExcludeClipboardContentFromMonitorProcessing`, `CanIncludeInClipboardHistory` 0,
   `CanUploadToCloudClipboard` 0) and cleared after 30 seconds if it is still there. axPass PW-D1 changes: a password is
@@ -123,6 +129,14 @@ State is **open**, **fixed (commit)**, or **decided** with the reason. Grouped b
 - **S-27, high.** The update zip is never checked: no signature, no checksum, any download address the API returns.
   Decided (section 2): signed with the user's offline key; meanwhile the address must be the repository's releases and
   the zip must match the checksum GitHub records for the asset.
+  *Note of 2026-11-15:* the maintainer changed the decision on where the key lives. Until then it was kept on his
+  machine alone, never on GitHub. Since that day a passphrase-encrypted backup of it lies beside its passphrase in
+  the private repository `KyleKeane/AxKit-keys` (`tools/release-key.ps1` export and import), so that a second
+  development computer can import it and release. The reason: a key on one computer is lost with that computer, and
+  releasing only from it ties every release to it. The cost, accepted knowingly: the key is protected by the GitHub
+  sign-in alone, so a stolen GitHub account could sign an update, which the original decision ruled out. The
+  signature still guards against a changed download address or a tampered asset without the account.
+  (`docs/axKit/development-environment.md` section 2.)
 - **S-28, high.** `install.cmd` alone downloads and runs the latest release unchecked, from a fixed folder in `%TEMP%`.
   Fix: the same signature check, a fresh folder, TLS 1.2 at least.
 - **S-29, medium.** An update folder already in `%LOCALAPPDATA%\AxKit\updates` is reused without a check. Fix: always a
@@ -175,7 +189,7 @@ Fixed on the branch `security`, one commit per finding or close set, each with i
 | S-7, S-8 | 69e3052 | the mark of the web kept on extracted files; links left out of a compressed folder |
 | S-5 | 1bffbbe | axTask links rooted or off this computer never opened; on 2026-11-09 an action key's or Open in axClaude's shell or Claude Code never on a folder off this computer (`ActionKeys.OpenRefusal`) |
 | S-4, S-6, S-15, S-18, S-19 | 5e332b1 | axPass: private clipboard (the user's decision), lock with Windows, a signed tool only, web addresses only, option-like names as paths |
-| S-27 to S-34 | c9adcf0 | signed releases (the user's decision): the key on the maintainer's machine, the draft workflow, the updater's and `install.cmd`'s checks, read-only build tokens, locked restore |
+| S-27 to S-34 | c9adcf0 | signed releases (the user's decision): the key on the maintainer's machine, the draft workflow, the updater's and `install.cmd`'s checks, read-only build tokens, locked restore; since 2026-11-15 a backup of the key in the private `KyleKeane/AxKit-keys` (S-27's note) |
 | S-37, S-38 | 9dc315f | axTerminal's marks carry a per-session secret; the folder mark only after the prompt's own, on this computer |
 | S-39, S-40, S-41 | b4f0b1b | depth limits in axJSON and axCalc; caps in the terminal parser; clamped scrolls |
 | S-44 | 5e9d3cf | no "0." answer above the first |

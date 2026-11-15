@@ -302,8 +302,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   release names and newer than the one running; otherwise the download is deleted and the notice says which of the
   two failed. An older signed zip offered under a newer number is thus never installed. **Signed releases** (2026-10-24, the user's
   decision; security audit S-27 to S-31): every release's zip is signed with the release key, an ECDSA P-256 key that
-  lives only on the maintainer's machine, encrypted for its Windows account (`tools/release-key.ps1`), never on
-  GitHub. The release workflow leaves a draft (a build job that can only read, then a job that uploads and attests
+  lives on the maintainer's development computer, encrypted for its Windows account (`tools/release-key.ps1`).
+  Since 2026-11-15 (the maintainer's decision, S-27's note) a passphrase-encrypted backup of it lies beside its
+  passphrase in the private repository `KyleKeane/AxKit-keys`, from which a second development computer imports it:
+  the key is then protected by the maintainer's GitHub sign-in alone, which the original decision had avoided. The release workflow leaves a draft (a build job that can only read, then a job that uploads and attests
   the build's provenance); `release.ps1` then runs `tools/sign-release.ps1`, which checks the provenance, signs the
   zip's SHA-256, uploads `<zip>.sig` and publishes. The updater takes assets only from this repository's releases
   address, downloads afresh every time, and extracts nothing unless the zip matches GitHub's recorded checksum and its

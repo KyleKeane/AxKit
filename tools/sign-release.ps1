@@ -7,7 +7,7 @@
     1. waits for the tag's release workflow to finish (it leaves the release as a draft with the zip and install.cmd),
     2. downloads the draft's zip into a fresh folder and checks the build provenance GitHub attested for it (that this
        repository's release workflow built it),
-    3. signs the zip's SHA-256 with the release key (tools/release-key.ps1), which lives only on this machine,
+    3. signs the zip's SHA-256 with the release key (tools/release-key.ps1), which is on this machine,
        checks the signature against the public half the apps hold, and uploads "<zip>.sig" to the draft,
     4. publishes the release. Only then do the apps see it, and they install it only when the signature checks.
 

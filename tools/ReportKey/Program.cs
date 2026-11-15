@@ -1,11 +1,12 @@
 // ReportKey: the maintainer's key for the sealed reports (docs/axKit/reports.md RP-6.1a, docs/axKit/reports-setup.md
 // section 5). A report is encrypted on the user's computer with the key's public half, which is a constant in
 // AxKit.Core/Reports/ReportSeal; only the private half opens it. The private half lives on the maintainer's computer
-// alone, in %LOCALAPPDATA%\AxKit-release\reports-key.bin, protected for the Windows account that made it (DPAPI,
+// in %LOCALAPPDATA%\AxKit-release\reports-key.bin, protected for the Windows account that made it (DPAPI,
 // AxKit.Core's UserSecret), so that a copy of the file is useless elsewhere. This tool never prints it.
 //
 // A LOST KEY MEANS THAT EVERY SEALED REPORT IS UNREADABLE, for good: the ones already on GitHub and the ones every
-// released copy goes on sending. Keep a backup (export) in a password manager, and remember its passphrase.
+// released copy goes on sending. Its backup (export) lies beside its passphrase in the private repository
+// KyleKeane/AxKit-keys, cloned as ..\axkit-keys (reports-setup.md section 5).
 //
 // One command per run:
 //

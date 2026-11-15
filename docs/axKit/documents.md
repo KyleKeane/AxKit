@@ -54,8 +54,12 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `store-listing.md`: the Store listing's texts.
 - `store-setup.md`: the Store account's runbook.
 - `reports-setup.md`: the reports repository, the reporter account, its token and the release secret; the
-  maintainer's key for the sealed reports, its backup, and how reports are read (`tools/ReportKey`).
-- `development-environment.md`: every tool of the development computer and how to set a new one up.
+  maintainer's key for the sealed reports, its backup in the private `KyleKeane/AxKit-keys`, and how reports are read
+  (`tools/ReportKey`).
+- `development-environment.md`: every tool of the development computer and how to set a new one up; the four
+  folders side by side; where the keys and their backups are (section 2: the release key and the reports key, both
+  backed up in `..\axkit-keys`); the second development computer's checklist (section 6). The release key's commands:
+  `commands.md` and the header of `tools/release-key.ps1`.
 
 ## Plans and history
 
