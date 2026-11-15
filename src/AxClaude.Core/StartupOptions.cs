@@ -2,7 +2,7 @@ namespace AxClaude.Core;
 
 /// <summary>
 /// Command line: <c>axKit claude [&lt;folder&gt;] [--project &lt;folder&gt;] [--claude &lt;path&gt;] [--cols N] [--rows N] [--no-ax]
-/// [--record &lt;file.vt&gt;] [--message, --title, --model, --hide-on-close, --hidden] [-- claude arguments]</c> (the console command <c>axclaude</c> stands for <c>axKit claude</c>;
+/// [--record &lt;file.vt&gt;] [--message, --title, --model, --hide-on-close, --hidden, --ai-tools] [-- claude arguments]</c> (the console command <c>axclaude</c> stands for <c>axKit claude</c>;
 /// a folder alone also reaches here, docs/axKit/SPEC.md AX-1). Values not given fall back to the settings file.
 /// <see cref="ClaudeArgs"/> is null when no <c>--</c> was given (the window then uses <c>--continue</c>, FR-9.1) and
 /// empty after a bare <c>--</c>.
@@ -19,13 +19,14 @@ public sealed record StartupOptions(
     string? Title = null,
     string? Model = null,
     bool HideOnClose = false,
-    bool Hidden = false)
+    bool Hidden = false,
+    bool AiTools = false)
 {
     /// <summary>The window starts hidden (FR-9.6): only together with <see cref="HideOnClose"/> and a folder, since a hidden window that asks for a folder, or that nothing can bring back, serves nobody.</summary>
     public bool StartsHidden => Hidden && HideOnClose && Folder is not null;
 
     public const string Usage = """
-        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [--message <text>] [--title <text>] [--model <name>] [--hide-on-close [--hidden]] [-- claude arguments]
+        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [--message <text>] [--title <text>] [--model <name>] [--hide-on-close [--hidden]] [--ai-tools] [-- claude arguments]
                axclaude ...  the same, as the installed console command
 
           <folder>            the project folder (default: the current folder, or the last one used)
@@ -38,6 +39,8 @@ public sealed record StartupOptions(
           --hide-on-close     Alt+F4 hides the window and Claude runs on; a start that hands it "show" or a message
                               brings it back as it was; Session, End Claude and close this window ends it (axHelp's conversation)
           --hidden            with --hide-on-close and a folder: start hidden, Claude loaded, until it is brought up
+          --ai-tools          while the user has axKit's AI tools on, Claude in this window gets them by itself
+                              (axHelp's conversation; off, nothing is added)
           --no-ax             start Claude without --ax-screen-reader (testing only)
           -- ...              everything after -- goes to claude, for example -- --resume <id> or -- --permission-mode plan
                               (default: --continue, the last conversation in the folder; a bare -- starts a new one)
@@ -55,6 +58,7 @@ public sealed record StartupOptions(
         var noAx = false;
         var hideOnClose = false;
         var hidden = false;
+        var aiTools = false;
         int? columns = null;
         int? rows = null;
         List<string>? claudeArgs = null;
@@ -101,6 +105,9 @@ public sealed record StartupOptions(
                 case "--hidden":
                     hidden = true;
                     break;
+                case "--ai-tools":
+                    aiTools = true;
+                    break;
                 default:
                     if (arg.StartsWith("--", StringComparison.Ordinal))
                     {
@@ -137,7 +144,7 @@ public sealed record StartupOptions(
             }
         }
 
-        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message, title, model, hideOnClose, hidden);
+        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message, title, model, hideOnClose, hidden, aiTools);
     }
 
     private static string Next(string[] args, ref int i)

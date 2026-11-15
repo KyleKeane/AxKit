@@ -32,6 +32,17 @@ need a real reply and a real screen and are the user's by ear.
    axKit's phone number?": Claude says the guides do not cover it (real). Add a file `mine.md` to `documentation`,
    change a word in `axFile.md`, delete `axkit-version.txt`, press Ctrl+Shift+Slash: `axFile.md` is as axKit wrote
    it, `mine.md` is still there.
+7. The AI tools (HE-2.8). With the AI tools off (axKit menu, AI tools): in the conversation, "what is in my axDown
+   window?": Claude says axKit's AI tools are off and names the menu item (real); `/mcp` lists no axkit server
+   unless axKit was added to Claude Code earlier. Turn them on (Turn on only), open a file in axDown, end the
+   conversation (its Session, End Claude and close this window), Ctrl+Shift+Slash: no question at the start. "What
+   is in my axDown window?": Claude Code's permission question for the tool, read as a list in the message
+   field's place, and, when Claude Code was never paired, the notice "Claude Code asks to use axKit" in an axKit
+   window; after both, Claude says what the file holds in a sentence or two (real). "What did axDown just say?"
+   and "remind me tomorrow to water the plants" (with Let AI tools run commands on and axTask open: "Claude added
+   ..." is heard). `/mcp`: one server named axkit, also when axKit was added to Claude Code before (owed: Claude
+   Code's documentation does not say what it does with the same name twice). In axFile, the working folder's
+   `.claude\rules` holds `axkit-tools.md` beside `axkit-documentation.md`.
 
 ## 3. Screenshots and pictures (HE-3)
 

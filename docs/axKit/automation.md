@@ -63,6 +63,23 @@ including while the user works, because nothing takes the foreground.
   that folder (`AppPaths.OneAtATime`), so that a run's axStart, axClip or axHelp never takes the user's
   own, running from sign-in, for a second start and ends at once (which every axDescribe script did on 2026-11-09
   while the user's axDescribe ran; axDescribe is part of axHelp since 5.7.0).
+- **Only the run's own windows** (2026-11-15). A window of a run lists, messages and closes only windows of the same
+  run: the Window menu's Open windows, Close all windows, the hand-over to an app's open window (axMedia, axPreview)
+  or to a background app's hidden one (axStart, axClip, axHelp and its conversation), and the AI tools' order of
+  windows. Every process of a run holds a named mutex of Windows for as long as it lives,
+  `Local\AxKit.Run.<the run's mark>.<process id>` (`AxKit.Core/RunMembership`, taken in `Program.Main` before any
+  window exists), and the one place that finds other processes' windows (`AxKit.Forms/BundleWindows`) leaves out, in
+  a run, every process whose name it cannot open. A named object because it is the plainest mark that holds for
+  every window: no right beyond the user's own (reading another process's environment needs more), no file of
+  process ids to keep current, nothing for each window to set (a window property would miss hidden and message-only
+  windows), and Windows removes it when the process ends. It fails safe: in a run, a window without the mark is never
+  listed, messaged or closed, and a hand-over from a process without it is refused by the window it reaches. Outside a
+  run nothing is asked and nothing changes. On the run's own desktop the windows were the run's anyway; the rule is
+  for the NVDA tier, on the user's desktop, where `axClaude/13-axkit-menu`'s Close all windows posted the close
+  command to the user's own axClaude window (it only asked "Close axClaude?" because Claude was working; an idle
+  window would have closed). `WindowReachTests` fails when another file of `src` finds windows or processes by name
+  itself. Not covered, by choice: axProcess lists every process of the computer, as it is for (its scripts end only
+  what they started), and a window that hides gives the foreground back to the window that had it.
 - **Its own start-up places** (2026-11-14, docs/axProcess/SPEC.md PR-5.8). axProcess's Startup view turns entries off
   and removes them, so in a test run it reads and changes a stand-in and never what starts with Windows on the
   computer: the registry key `HKEY_CURRENT_USER\Software\AxKit\Runs\<the run's mark>\Startup` (`AppPaths.RunMark`) and
@@ -229,7 +246,7 @@ command's last line, its "Ready" after a shell's banner; the fix is one notifica
 before the window was activated, which NVDA ignores (axMedia's "No sound or video files" as it opened; since
 2026-11-01 `AxKitForm.Announce` keeps it for the activation); a window behind another program's (the script's second
 window, not `use`d). "NVDA spoke it only after N s" means NVDA was slow, not silent: the step fails, and the cause is
-worth a look at what NVDA was reading. A failure with the keys at fault reads "no window of the run is in front". A
+worth a look at what NVDA was reading. A failure with the keys at fault reads "no window of the run is in front" (another program came up and stayed, although the runner took the foreground twice). A
 key the window never answered, with NVDA naming it in its input help (`keys nvda+1` before and after it) and no command
 of its own, is taken by another program's hook or hotkey: Windows Magnifier keeps Ctrl+Alt+H, K, L and M while it
 runs (2026-11-01); `Get-Process Magnify` tells, and a `RegisterHotKey` probe tells for registered hotkeys. A failed
@@ -244,6 +261,34 @@ later in the announcement the last expectation matched counts ("Sent. hello. Don
 neighbours may come in either order, on the window's side (a Fetch and a Pull pressed at once say "Working…" and
 "Fetched" in the order the keys' pace decides) and on NVDA's (a notice closing says "Not found" and then gives the
 focus back; NVDA says the focus first), since what the last expectation took is looked at again.
+
+What the tier guarantees on the user's desktop (2026-11-15, after a full pass that failed 120 of 123 scripts and
+reached the user's own window):
+
+- **No window outside the run is listed, messaged or closed** by a window of the run ("Only the run's own windows" in
+  section 2), whatever a script asks: Close all windows closes the run's windows, a hand-over finds the run's window
+  or none.
+- **No key goes to a window outside the run**, with one exception. Before every key the runner looks at the
+  foreground (`Run.InFront`, the rules in `AxAutomate.Core/Front`): with a window of the run in front the key is
+  sent. Otherwise the current window is asked to activate itself, with the runner's leave, which is enough whenever
+  Windows grants the runner the foreground. It does not when the desktop is in front as the pass starts, or the
+  runner's terminal is behind another program: half a second later, and once more a second after that, the runner
+  takes the foreground itself (`Native.TakeForeground`): Alt goes down, the runner sets the run's window in front,
+  Alt goes up. That Alt going down is the one key that reaches a window outside the run (the desktop, or the user's
+  window that came up between scripts); a window that only sees Alt go down opens no menu and loses the foreground at
+  once. The Alt going up reaches the run's window, which saw none go down and so opens no menu; the runner asks it
+  all the same (the channel's `activate` answers `menu`), and where its menu bar is active presses Escape, only
+  while that window is in front, until it is not. After three seconds without a window of the run in front the step
+  fails with "no window of the run is in front; the key was not sent", as before.
+- **The run gives up at once when it cannot start.** When the first window of the whole run that shows cannot be
+  brought to the front, the run stops there: one line, "The NVDA tier could not bring its window to the front: ..."
+  with the program whose window stayed in front (never a title), then "STOPPED", no further script, exit code 2 (the
+  run could not start), and Windows' voice says the keyboard is free. A locked session is the likely cause. Once a
+  window of the run has been in front, a later failure of the kind is one step's and the pass goes on. A background
+  app started hidden shows no window and stops nothing.
+
+None of the foreground part can be run while the user is at the keyboard, so it is checked by its unit tests
+(`FrontTests`) and by reading; the first pass after 2026-11-15 confirms it by its first script.
 
 Side effects of the tier on the user's own session: axClip's script puts three test texts on the real clipboard (the
 runner puts the user's text back after the last script), and axPass's leaves the copies to the pass by ear for the same reason; the windows of the run come

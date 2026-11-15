@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
 using AxKit.Core;
 using static AxKit.Forms.User32;
 
@@ -88,7 +87,8 @@ public sealed class WindowMenu : ToolStripMenuItem
 
     /// <summary>
     /// AX-9.8: the close command Alt+F4 sends, posted to every other axKit window and then to this one; each window
-    /// closes as it does on Alt+F4 and asks there what it would ask then (unsaved changes, Claude working).
+    /// closes as it does on Alt+F4 and asks there what it would ask then (unsaved changes, Claude working). In a test
+    /// run the other windows are the run's own alone (<see cref="BundleWindows.Visible"/>): never the user's.
     /// </summary>
     private void CloseAll()
     {
@@ -104,36 +104,8 @@ public sealed class WindowMenu : ToolStripMenuItem
         }
     }
 
-    /// <summary>The visible, unowned, titled top-level windows of every process with this one's name, in Z order: the most recently used first.</summary>
-    public static IReadOnlyList<AxKitWindow> OpenWindows()
-    {
-        var processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
-        var ids = new HashSet<int>(processes.Select(p => p.Id));
-        foreach (var process in processes)
-        {
-            process.Dispose();
-        }
-
-        var windows = new List<AxKitWindow>();
-        EnumWindows((handle, _) =>
-        {
-            if (IsWindowVisible(handle) && GetWindow(handle, GW_OWNER) == 0)
-            {
-                GetWindowThreadProcessId(handle, out var id);
-                if (ids.Contains((int)id))
-                {
-                    var title = TitleOf(handle);
-                    if (title.Length > 0)
-                    {
-                        windows.Add(new AxKitWindow(handle, title));
-                    }
-                }
-            }
-
-            return true;
-        }, 0);
-        return windows;
-    }
+    /// <summary>The visible windows of the bundle's processes, most recently used first; in a test run only the run's own (<see cref="BundleWindows.Visible"/>, the one place that lists them).</summary>
+    public static IReadOnlyList<AxKitWindow> OpenWindows() => BundleWindows.Visible();
 
     /// <summary>Brings the window to the front, restored when it was minimized. Windows allows it because the user's own key in the foreground window asked.</summary>
     public static void Activate(nint handle)
@@ -207,36 +179,8 @@ public sealed class WindowMenu : ToolStripMenuItem
         }
     }
 
-    private static string TitleOf(nint handle)
-    {
-        var length = GetWindowTextLength(handle);
-        if (length == 0)
-        {
-            return string.Empty;
-        }
-
-        var buffer = new StringBuilder(length + 1);
-        GetWindowText(handle, buffer, buffer.Capacity);
-        return buffer.ToString();
-    }
-
-    private const uint GW_OWNER = 4;
     private const int SW_RESTORE = 9;
     private const nint SC_CLOSE = 0xF060;
-
-    private delegate bool EnumWindowsProc(nint hWnd, nint lParam);
-
-    [DllImport("user32.dll")]
-    private static extern bool EnumWindows(EnumWindowsProc callback, nint lParam);
-
-    [DllImport("user32.dll")]
-    private static extern nint GetWindow(nint hWnd, uint cmd);
-
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private static extern int GetWindowTextLength(nint hWnd);
-
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private static extern int GetWindowText(nint hWnd, StringBuilder text, int max);
 
     [DllImport("user32.dll")]
     private static extern bool IsIconic(nint hWnd);

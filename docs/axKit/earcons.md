@@ -124,11 +124,11 @@ background. The only earcon longer than half a second.
 
 ### 7. Working
 
-Pattern: soft plucked notes in a slow loop while Claude works. Not an earcon: a state that lasts.
+Pattern: soft sustained chords in a slow loop while Claude works (plucked notes until 2026-11-15). Not an earcon: a state that lasts.
 
 | Variant | Sound | State |
 |---|---|---|
-| Claude is working | sixteen plucked notes, eight seconds, looping | exists (`Sounds.StartMusic`) |
+| Claude is working | four soft chords with a faint ping in each, fourteen seconds, looping | exists (`Sounds.StartMusic`) |
 
 ## The classes side by side
 
@@ -140,7 +140,7 @@ Pattern: soft plucked notes in a slow loop while Claude works. Not an earcon: a 
 | 4. Ask | knocks on one note; the count is how much is asked | one: read; two: pick; three: type; more: a form |
 | 5. Code | five gliding swoops | decide with care |
 | 6. Call | rising three, twice, long | go to that window |
-| 7. Working | soft looping plucks | wait |
+| 7. Working | soft looping chords | wait |
 ## The sound of each app, and the start (asked 2026-11-14, proposed)
 
 The user's second ask the same day: a start sequence when the program loads; each app with a sound quality of its

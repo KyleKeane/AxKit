@@ -110,6 +110,8 @@ public sealed class HelpTests : IDisposable
         Assert.StartsWith("---\r\nname: agent\r\n", File.ReadAllText(Path.Combine(_folder, ".claude", "agents", "agent.md")));
         // HE-2.6: a new folder's instructions name axKit's guides too.
         Assert.Contains("read index.md in the folder documentation here", File.ReadAllText(Path.Combine(_folder, "CLAUDE.md")));
+        // HE-2.8: and axKit's rules, the AI tools' among them.
+        Assert.Contains(@"axKit's rules in the folder .claude\rules here", File.ReadAllText(Path.Combine(_folder, "CLAUDE.md")));
 
         File.WriteAllText(Path.Combine(_folder, "CLAUDE.md"), "my own");
         Assert.Empty(WorkingFolderFiles.WriteMissing(_folder));
@@ -119,10 +121,11 @@ public sealed class HelpTests : IDisposable
     [Fact]
     public void The_conversation_starts_on_the_working_folder_titled_axHelp_with_the_model()
     {
-        // HE-1.3: always a window that hides on closing; HE-2.7: hidden from the start when axHelp starts it ahead.
-        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null));
-        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "opus", "--hide-on-close", "--message", "Screenshot: a.png "], HelpSettings.ConversationArguments(@"C:\w", "opus", "Screenshot: a.png "));
-        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--hidden"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null, hidden: true));
+        // HE-1.3: always a window that hides on closing; HE-2.8: always --ai-tools, which axClaude acts on only while
+        // the user has the AI tools on; HE-2.7: hidden from the start when axHelp starts it ahead.
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null));
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "opus", "--hide-on-close", "--ai-tools", "--message", "Screenshot: a.png "], HelpSettings.ConversationArguments(@"C:\w", "opus", "Screenshot: a.png "));
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools", "--hidden"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null, hidden: true));
     }
 
     /// <summary>HE-2.7: the conversation is started ahead only when axHelp started hidden, the setting is on, the agreement is given and Claude Code is installed.</summary>

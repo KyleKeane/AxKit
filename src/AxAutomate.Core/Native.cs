@@ -199,6 +199,86 @@ internal static class Native
         return id;
     }
 
+    [DllImport("user32.dll")]
+    private static extern bool EnumWindows(EnumWindowsProc callback, nint parameter);
+
+    [DllImport("user32.dll")]
+    private static extern bool IsWindowVisible(nint window);
+
+    [DllImport("user32.dll")]
+    private static extern nint GetWindow(nint window, uint command);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(nint window);
+
+    /// <summary>
+    /// The NVDA tier: the window a process shows on this desktop, its first visible top-level window without an owner
+    /// in Z order; 0 when it shows none (a background app started hidden). Only ever asked of a process the run started.
+    /// </summary>
+    public static nint ShownWindow(int processId)
+    {
+        nint found = 0;
+        EnumWindows((window, _) =>
+        {
+            GetWindowThreadProcessId(window, out var id);
+            // 4 is GW_OWNER.
+            if (id == processId && IsWindowVisible(window) && GetWindow(window, 4) == 0)
+            {
+                found = window;
+                return false;
+            }
+
+            return true;
+        }, 0);
+        return found;
+    }
+
+    /// <summary>
+    /// The NVDA tier: the runner takes the foreground for a window of the run (2026-11-15). Windows lets a program
+    /// bring a window forward only when it has the right to the foreground, which a runner started from a terminal
+    /// behind the desktop has not; a key press of the program's own gives it. So: Alt down, the window set in front
+    /// (and its process given the right too, for its own activation right after), Alt up, whatever happens between.
+    /// The Alt going down reaches the window in front, the one key the runner ever sends to a window outside the run;
+    /// a window that only sees Alt go down opens no menu, and it loses the foreground at once. The Alt going up
+    /// reaches the run's window, which saw no Alt go down and so should open no menu either; the caller asks the
+    /// window all the same (<see cref="Front.LeavesMenu"/>).
+    /// </summary>
+    public static void TakeForeground(nint window, int processId)
+    {
+        const ushort alt = 0x12;
+        Send([Key(alt, up: false)]);
+        try
+        {
+            AllowSetForegroundWindow(processId);
+            SetForegroundWindow(window);
+            Thread.Sleep(50);
+        }
+        finally
+        {
+            Send([Key(alt, up: true)]);
+        }
+    }
+
+    /// <summary>The program whose window is in front, by its process name alone (never a title, which can hold a file's or a person's name); "no program" when no window is.</summary>
+    public static string ForegroundProgram()
+    {
+        var id = ForegroundProcess();
+        if (id == 0)
+        {
+            return "no program";
+        }
+
+        try
+        {
+            using var process = Process.GetProcessById(id);
+            return process.ProcessName;
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            return "a program that has ended";
+        }
+    }
+
     /// <summary>
     /// Key presses as the channel's keys step spells them, "ctrl+shift+p escape down", each one pressed and released with
     /// its modifiers. <paramref name="inFront"/> is asked before each press: a key goes only to a window of the run, never

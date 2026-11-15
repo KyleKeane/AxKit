@@ -207,6 +207,32 @@ public sealed class McpTests
         Assert.Equal("claude mcp add --scope user axkit -- \"D:\\AxKit\\AxKit.exe\" mcp", McpClaudeCode.AddCommandLine(@"D:\AxKit\AxKit.exe"));
     }
 
+    /// <summary>MC-6.9: the file of Claude Code's --mcp-config, for a conversation that loads the AI tools by itself.</summary>
+    [Fact]
+    public void A_conversation_gets_this_AxKit_through_a_config_file_only_when_asked_and_the_tools_are_on()
+    {
+        var json = System.Text.Json.Nodes.JsonNode.Parse(McpClaudeCode.ConfigText(@"D:\Ax Kit\AxKit.exe"))!;
+        var server = json["mcpServers"]![McpClaudeCode.ServerName]!;
+        Assert.Equal("stdio", (string?)server["type"]);
+        Assert.Equal(@"D:\Ax Kit\AxKit.exe", (string?)server["command"]);
+        Assert.Equal(["mcp"], server["args"]!.AsArray().Select(argument => (string?)argument));
+        // One server and nothing else: no environment, no second entry.
+        Assert.Single(json["mcpServers"]!.AsObject());
+
+        Assert.Equal(["--mcp-config", @"C:\x\claude-mcp.json"], McpClaudeCode.SessionArguments(asked: true, toolsOn: true, @"C:\x\claude-mcp.json"));
+        // Off, the consent's gate: nothing, whatever the window asked for; and never without the asking.
+        Assert.Empty(McpClaudeCode.SessionArguments(asked: true, toolsOn: false, @"C:\x\claude-mcp.json"));
+        Assert.Empty(McpClaudeCode.SessionArguments(asked: false, toolsOn: true, @"C:\x\claude-mcp.json"));
+
+        using var temp = new TempFolder("axkit-mcp-config");
+        var file = Path.Combine(temp.Path, "AxKit", "claude-mcp.json");
+        Assert.True(McpClaudeCode.WriteConfig(file, @"D:\AxKit\AxKit.exe"));
+        Assert.False(McpClaudeCode.WriteConfig(file, @"D:\AxKit\AxKit.exe"));
+        // Another program file (another build, a copy that moved): written again.
+        Assert.True(McpClaudeCode.WriteConfig(file, @"E:\dev\AxKit.exe"));
+        Assert.Contains(@"E:\\dev\\AxKit.exe", File.ReadAllText(file), StringComparison.Ordinal);
+    }
+
     [Fact]
     public void Ten_calls_a_second_and_no_more()
     {

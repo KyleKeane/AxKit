@@ -7,7 +7,8 @@ namespace AxKit.Core.Ai;
 /// developed RAG system by copying the relevant documentation for axKit into the axHelp folder"): the folder
 /// <c>documentation</c> with the bundle's guide, one guide per app under the app's name and an index, and the rule
 /// file <c>.claude\rules\axkit-documentation.md</c>, which Claude Code reads at every start beside the user's
-/// CLAUDE.md and which tells Claude to read the guides before it answers a question about axKit. Claude Code's own
+/// CLAUDE.md and which tells Claude to read the guides before it answers a question about axKit; and, since AH-8, the
+/// rule file of axKit's AI tools beside it (<see cref="AiToolsRule"/>), kept current the same way. Claude Code's own
 /// Read, Grep and Glob do the finding: no index service, no embeddings, no network (AH-7.5). The files are axKit's,
 /// not the user's: written where missing, and all written again when the version in the folder's marker is not this
 /// axKit's, so that they follow each release; a file of the user's own in the folder is never touched. The texts are
@@ -81,16 +82,21 @@ public static class AiDocumentation
 
         files.Insert(0, (Path.Combine(FolderName, IndexName), index.ToString()));
         files.Add((RulePath, Rule));
+        // AH-8: the second rule file, when to use which of axKit's AI tools; kept current as the guides are.
+        files.Add((AiToolsRule.RulePath, AiToolsRule.Text));
         return files;
     }
 
     /// <summary>
-    /// Whether the working folder has never had the guides: the index or the rule file is missing. Then they must be
-    /// there before Claude Code starts, which reads the rule at its start; otherwise a refresh can follow in the
-    /// background, the files of the version before serving until it is done.
+    /// Whether the working folder has never had the guides: the index or one of the two rule files is missing (the
+    /// tools' rule in a folder an axKit before it wrote). Then they must be there before Claude Code starts, which
+    /// reads the rules at its start; otherwise a refresh can follow in the background, the files of the version
+    /// before serving until it is done.
     /// </summary>
     public static bool IsMissing(string workingFolder) =>
-        !File.Exists(Path.Combine(workingFolder, FolderName, IndexName)) || !File.Exists(Path.Combine(workingFolder, RulePath));
+        !File.Exists(Path.Combine(workingFolder, FolderName, IndexName))
+        || !File.Exists(Path.Combine(workingFolder, RulePath))
+        || !File.Exists(Path.Combine(workingFolder, AiToolsRule.RulePath));
 
     /// <summary>
     /// The files written into <paramref name="workingFolder"/> (AH-7.1): those that are missing, and every one when
@@ -138,11 +144,12 @@ public static class AiDocumentation
 
     /// <summary>
     /// Whether a path a marker names is one axKit could have written: a Markdown file directly in the documentation
-    /// folder, or the rule file. A marker is a file in the user's folder and could hold anything; nothing outside
-    /// these two places is ever deleted on its word.
+    /// folder, or one of the two rule files. A marker is a file in the user's folder and could hold anything; nothing
+    /// outside these places is ever deleted on its word.
     /// </summary>
     public static bool IsOurs(string path) =>
         string.Equals(path, RulePath, StringComparison.OrdinalIgnoreCase)
+        || string.Equals(path, AiToolsRule.RulePath, StringComparison.OrdinalIgnoreCase)
         || (string.Equals(Path.GetDirectoryName(path), FolderName, StringComparison.OrdinalIgnoreCase)
             && Path.GetFileName(path) is { Length: > 3 } name
             && name.EndsWith(".md", StringComparison.OrdinalIgnoreCase)

@@ -30,6 +30,7 @@ public static class HelpText
           Alt+F4 in the conversation hides it and Claude Code runs on; the hotkey brings the same window back with the caret in the message field. Its Session menu has End Claude and close this window; Quit axHelp ends it too, and it asks first when Claude is working or a message is typed and not sent
           Options, Keep the conversation ready in the background, off at first: Claude Code starts at your first press. On, axHelp started at sign-in starts Claude Code hidden, so that the first press is quick too; Claude Code then runs from sign-in
           A question about axKit or one of its apps is answered from axKit's guides, kept in the documentation folder of Claude's working folder
+          While axKit's AI tools are on (axKit menu, AI tools, Let AI tools read and open axKit), Claude in the conversation can read your axKit windows, open apps and add tasks when you ask. While they are off it cannot, and says where to turn them on
           The first time, axClaude's reminder of what goes to Anthropic, and Claude Code's question whether to trust its working folder
 
         ## In this window

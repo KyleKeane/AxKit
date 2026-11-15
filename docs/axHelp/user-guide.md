@@ -70,6 +70,17 @@ changes in them; a file of your own that you add beside them stays. Nothing is s
 reads the files on your computer as it reads any file for an answer. The screenshots have their own folder there too,
 `screenshots`, so the top of the folder stays short: CLAUDE.md, `documentation` and `screenshots`.
 
+Claude can also work with your axKit windows, when you have turned axKit's AI tools on: axKit menu, AI tools, Let AI
+tools read and open axKit, in any window. The conversation then gets the tools by itself at its next start, and
+you can say "what is in my axDown window", "what did it just say", "open my Downloads folder in axFile" or "remind
+me on Friday to call the dentist". While the tools are off, nothing changes: Claude has none of them, and tells you
+where to turn them on if you ask for something that needs them. Running a window's commands and adding tasks need
+the second switch too, Let AI tools run commands. The first time Claude uses a tool, Claude Code asks whether it
+may, as it asks before any tool, and an axKit window may ask once whether Claude Code may use axKit. What Claude
+reads from a window becomes part of the conversation, as a file it reads does. axKit also keeps a file of
+instructions for Claude about these tools, `.claude\rules\axkit-tools.md` in the folder; it is axKit's, written
+again with each version, like the guides.
+
 The conversation runs on the fast model by default. Options, Conversation model chooses Fast, Balanced or Strongest; it
 counts from the conversation's next start, so end the conversation (its Session, End Claude and close this window) and press Ctrl+Shift+Slash. Choose the
 model here rather than with `/model` in the conversation: Claude Code saves `/model` as its default for every new

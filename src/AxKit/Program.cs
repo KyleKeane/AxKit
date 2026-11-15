@@ -38,6 +38,9 @@ internal static class Program
         // First of all: a test run's variables read and taken out of the environment, so that nothing this process
         // starts inherits them (security audit S-11).
         AutomationEnvironment.Capture();
+        // A process of a test run takes the run's mark before any window exists: the windows of a run list, message
+        // and close only each other, never the user's own (RunMembership). Nothing outside a run.
+        RunMembership.Join();
         // And the current folder kept out of every program search by bare name, in this process and in the shells and
         // programs it starts (S-1).
         SystemPrograms.KeepCurrentFolderOffSearches();

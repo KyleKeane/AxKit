@@ -11,6 +11,8 @@
 //   --nvda       the NVDA tier (tier 3): the windows open on the user's own desktop and come to the front, the keys go
 //                through SendInput as a keyboard's do, and NVDA's speech is read from its capture add-on
 //                (tools/nvda-capture). It takes over the machine: only at the user's word, with the user away.
+//                When no window of the run is in front the runner takes the foreground itself (one Alt key press);
+//                when the run's first window cannot come to the front at all, the run stops with one line, exit 2.
 //   --keep       keeps %TEMP%\axkit-automate\<process id>, the run's folder ({temp} in a script), with its logs
 //   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}; the exit code
 //   is the number of scripts that failed.
@@ -196,6 +198,13 @@ internal static class Program
                         notHeard.Add(name);
                     }
                 }
+
+                if (Run.Stopped is not null)
+                {
+                    // The NVDA tier could not bring the run's first window to the front (Front.StopsRun): every
+                    // script after it would fail at its first key the same way, an hour of them once. No more is run.
+                    break;
+                }
             }
 
             if (Run.Nvda)
@@ -228,6 +237,12 @@ internal static class Program
             summary += $"\nNVDA did not speak what the window said in {notHeard.Count} of them: {string.Join(", ", notHeard)}";
         }
 
+        if (Run.Stopped is { } stopped)
+        {
+            // One plain line, the whole result: the scripts did not fail, they were not run.
+            summary = $"{stopped}\nSTOPPED: {scripts.Count} script(s), none run to its end.";
+        }
+
         report.Append(summary).Append('\n');
         if (reportPath is not null)
         {
@@ -248,7 +263,7 @@ internal static class Program
 
         Console.WriteLine();
         Console.WriteLine(summary);
-        return failed.Count == 0 ? 0 : ScriptsFailed;
+        return Run.Stopped is not null ? CannotStart : failed.Count == 0 ? 0 : ScriptsFailed;
     }
 
     private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda]. See docs/axKit/automation.md.";

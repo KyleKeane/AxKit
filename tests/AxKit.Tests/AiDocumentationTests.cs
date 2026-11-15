@@ -26,8 +26,8 @@ public sealed class AiDocumentationTests
         }
 
         Assert.Equal(Normal(File.ReadAllText(Path.Combine(root, "docs", "axKit", "README.md"))), Normal(files[Path.Combine("documentation", "axKit.md")]));
-        // The index, the bundle's guide, one guide per app, the rule: nothing else.
-        Assert.Equal(Dispatch.Apps.Count + 3, files.Count);
+        // The index, the bundle's guide, one guide per app, the two rules: nothing else.
+        Assert.Equal(Dispatch.Apps.Count + 4, files.Count);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public sealed class AiDocumentationTests
         var rule = temp.File(Path.Combine(".claude", "rules", "mine.md"), "my rule");
 
         var written = AiDocumentation.Write(temp.Path, "1.3.0");
-        Assert.Equal(Dispatch.Apps.Count + 3, written.Count);
+        Assert.Equal(Dispatch.Apps.Count + 4, written.Count);
         Assert.StartsWith("# axFile", File.ReadAllText(Path.Combine(folder, "axFile.md")), StringComparison.Ordinal);
         Assert.Contains("axKit 1.3.0", File.ReadAllText(Path.Combine(folder, "index.md")), StringComparison.Ordinal);
         Assert.Equal("1.3.0", File.ReadLines(Path.Combine(folder, "axkit-version.txt")).First());
@@ -101,7 +101,7 @@ public sealed class AiDocumentationTests
 
         // A development build asks for every file again whatever the marker says: its guides change without its version.
         File.WriteAllText(Path.Combine(folder, "axFile.md"), "an old guide");
-        Assert.Equal(Dispatch.Apps.Count + 3, AiDocumentation.Write(temp.Path, "1.3.0", rewrite: true).Count);
+        Assert.Equal(Dispatch.Apps.Count + 4, AiDocumentation.Write(temp.Path, "1.3.0", rewrite: true).Count);
         Assert.StartsWith("# axFile", File.ReadAllText(Path.Combine(folder, "axFile.md")), StringComparison.Ordinal);
         Assert.Equal("my own", File.ReadAllText(own));
     }
@@ -138,6 +138,7 @@ public sealed class AiDocumentationTests
 
         Assert.True(AiDocumentation.IsOurs(Path.Combine("documentation", "axFile.md")));
         Assert.True(AiDocumentation.IsOurs(AiDocumentation.RulePath));
+        Assert.True(AiDocumentation.IsOurs(AiToolsRule.RulePath));
         Assert.False(AiDocumentation.IsOurs("CLAUDE.md"));
         Assert.False(AiDocumentation.IsOurs(Path.Combine("documentation", "..", "CLAUDE.md")));
         Assert.False(AiDocumentation.IsOurs(Path.Combine("documentation", "notes.txt")));

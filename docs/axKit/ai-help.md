@@ -206,7 +206,7 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   reaches a user whose CLAUDE.md exists already: that file is theirs, written once, and is never read or changed for
   this. A new folder's CLAUDE.md names the guides as well (`AxHelp.Core/WorkingFolderFiles.Instructions`).
 - AH-7.4 **Nothing else at the top of the folder.** What axKit puts into the working folder: `documentation`,
-  `screenshots` (axHelp, HE-3.1), `CLAUDE.md` and `.claude` (the agent, the rule; Claude Code's own settings). No
+  `screenshots` (axHelp, HE-3.1), `CLAUDE.md` and `.claude` (the agent, the two rules, AH-7.3 and AH-8; Claude Code's own settings). No
   picture, log or export of axKit's lands loose there (checked 2026-11-15: the screenshots were in their folder
   already; the conversation's Export proposes the folder in the save dialog and the user chooses).
 - AH-7.5 **Local first** (bundle G6, B-15; AH-D2 stands): no index, no embeddings, no service and no network request
@@ -216,10 +216,54 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
 - AH-7.6 The cautions are unchanged (bundle AX-11.12): an answer of Shift+F1 still ends with `AiCaution.Written`,
   and the conversation is axClaude's with its own.
 
+### AH-8 The rule file of axKit's AI tools (2026-11-15)
+
+The user, 2026-11-15: "make axhelp load the mcp automatically and provide lots of instructions along with some
+language rules to help it know when to use which tool". How the conversation gets the tools is axHelp's
+(`docs/axHelp/SPEC.md` HE-2.8) and the AI tools' (`mcp.md` MC-6.9); the instructions are here, since they are a
+file of the working folder.
+
+- AH-8.1 **The file.** `<working folder>\.claude\rules\axkit-tools.md`, a second rule file of axKit's own beside
+  AH-7.3's, loaded by Claude Code at every start as that one is. It is one of the files of AH-7.1
+  (`AiDocumentation.Files`): written where missing, written again by each new version of axKit, named in the marker,
+  deleted by the marker alone should axKit ever stop writing it; a file of the user's in `.claude\rules` is never
+  touched. A folder that has the guides and lacks this file (one an axKit before it wrote) counts as missing
+  (`AiDocumentation.IsMissing`), so the file is there before Claude Code starts. It is written whether the AI tools
+  are on or off: off, it is how Claude knows to say where the user turns them on.
+- AH-8.2 **What it says** (`AxKit.Core/Ai/AiToolsRule.Text`), plain Markdown for a model, about 150 lines:
+  1. what the tools are for; that the user is blind and hears every action, so one short sentence before an action
+     and one after; reading before acting; that every call is in the user's log; that the first call may make an
+     axKit window ask the user to allow Claude Code;
+  2. **the language rules**: what the user is likely to say and what answers it. "What is on my screen", "what is
+     open": `axkit_windows`, then `axkit_window_state`, then `axkit_window_text` or `axkit_window_list`. "What did
+     it just say": `axkit_window_said`. "Open ...": `axkit_apps`, `axkit_open`, never axClaude or axTerminal.
+     "Press, run, turn on, do X in that window": `axkit_window_commands` for the label, the command said first,
+     then `axkit_window_run`, only while the user allows commands to run. "Add a task", "remind me":
+     `axkit_task_lists`, `axkit_task_add`. "What are my tasks": `axkit_task_lists`, `axkit_task_items`. "How do
+     I ... in axFile": the guides of AH-7, not a tool. A command the user must run themselves:
+     `axkit_offer_command`. A screenshot's message: the picture read first;
+  3. **every tool** of `McpTools.All`, in its order, each with its own description as the tool gives it, then
+     three lines written by hand (`AiToolsRule.Tools`): when to use it, when not, what to say;
+  4. the caution of an offered command, quoted from `AiCaution.Short` and `AiCaution.Command` (bundle AX-11.12,
+     root rule 11: never written afresh), and that a No is the answer;
+  5. the limits: axPass and axClip never readable (`McpTools.NeverRead`), nothing answers a question a window asks
+     the user, a command that acts outside its window asks first, a refused call is not retried another way, no
+     keys and no typing;
+  6. when the tools are not there: say so, and where the user turns them on (axKit menu, AI tools, Let AI tools read
+     and open axKit; the run switch beside it, asked for only when the task needs it).
+- AH-8.3 **It cannot drift.** The tools' names and descriptions come from the one table (`McpTools.All`), and
+  `AiToolsRuleTests` fails when a tool has no guidance, when the file lacks a tool, or when the file names an
+  `axkit_` tool that does not exist.
+- AH-8.4 The file changes nothing about what Claude may do: every gate is the tools' own (`mcp.md`), and the file
+  says only how to use them well. Shift+F1's print mode reads the same folder and so loads the file, but has no
+  AI tools (AH-2.2: only `Read`, `Glob` and `Grep` are allowed there); the file's last section tells Claude what to
+  say then.
+
 ## 5. Architecture
 
 - `AxKit.Core/Ai/AiDocumentation` (AH-7): `Files(version)`, the guides, the index and the rule with their paths, and
-  `Write(workingFolder, version, rewrite)`; tested in `AiDocumentationTests`.
+  `Write(workingFolder, version, rewrite)`; tested in `AiDocumentationTests`. `AxKit.Core/Ai/AiToolsRule` (AH-8):
+  the AI tools' rule file, `Text` made from `McpTools.All` and the hand-written `Tools`; `AiToolsRuleTests`.
 
 - `AxKit.Core/Ai/AiSettings` (AH-1.1), `AiRequest` (the command line and the process, AH-2), `AiAnswer` (the JSON
   read, with the session), `AiPrompts` with `WindowContext` (AH-4, AH-6.2).

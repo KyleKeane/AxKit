@@ -85,8 +85,8 @@ agreement (AX-11.4) asked the first time.
   coming to the front (the user: "as snappy and responsive as possible, the window loading with content filling
   should not be involved"). Coming back to the window another way, Alt+Tab or the taskbar, changes nothing: the focus
   and the caret are where they were ("alt+tab back to it holds his position"). When no such window exists, a new
-  axClaude window is started, `AxKit.exe claude <working folder> --title axHelp --model <model> --hide-on-close`
-  (`HelpSettings.ConversationArguments`), which continues the folder's last conversation (axClaude FR-9.1); axHelp
+  axClaude window is started, `AxKit.exe claude <working folder> --title axHelp --model <model> --hide-on-close
+  --ai-tools` (`HelpSettings.ConversationArguments`; `--ai-tools` is HE-2.8), which continues the folder's last conversation (axClaude FR-9.1); axHelp
   keeps the process it started, and a press while that process runs and its window is not there yet waits for the
   window, however long the start takes, and never starts a second (`Conversation.Next`: hand over to the window,
   wait for a started process, start only when there is neither; one conversation at a time in every order of start,
@@ -112,7 +112,8 @@ agreement (AX-11.4) asked the first time.
   "Picture" names a picture file to read first; work of several steps on the computer goes to the subagent) and
   `.claude\agents\agent.md`, a Claude Code subagent named agent on the strongest model (`model: opus`). The user's own
   changes to either stay. What axHelp itself puts into the folder has a place: the two files above, the folder
-  `screenshots` (HE-3.1) and axKit's `documentation` (HE-2.6) with its rule file under `.claude\rules`; nothing of
+  `screenshots` (HE-3.1) and axKit's `documentation` (HE-2.6) with its two rule files under `.claude\rules`
+  (the guides', HE-2.6, and the AI tools', HE-2.8); nothing of
   axHelp's lands loose at the top. (The conversation's Export, axClaude's, proposes the folder in the Windows save
   dialog, as for any project; where the file goes is the user's choice there.)
 - HE-2.5 **Permissions.** The conversation is Claude Code in its interactive mode: it may read, write and run commands
@@ -147,6 +148,39 @@ agreement (AX-11.4) asked the first time.
   own update check; nothing of the user's is sent until a message is). It exists only when the user turned the
   setting on; `PRIVACY.md`, the READMEs and the guide say so. The cost: Claude Code in memory from sign-in while the
   setting is on.
+- HE-2.8 **axKit's AI tools, by themselves, with instructions** (the user's ask of 2026-11-15: "make axhelp load the
+  mcp automatically and provide lots of instructions along with some language rules to help it know when to use
+  which tool"). Two parts.
+  - **The tools.** The conversation is started with `--ai-tools` (`HelpSettings.ConversationArguments`), an option of
+    axClaude's (FR-9.7). At every start of Claude Code in that window, axClaude reads the AI tools' sealed setting
+    (`mcp.md` MC-6.1). **On**: it writes `%LOCALAPPDATA%\AxKit\claude-mcp.json`, which names this very program file
+    (`PackageIdentity.ProgramPath`: the Store copy's alias, the installed file, or a development build) as the server
+    `axkit` with the argument `mcp`, when the file is missing or names another program file, and adds
+    `--mcp-config <that file>` to Claude Code's command line (`mcp.md` MC-6.9). **Off: nothing is written, nothing is
+    added, nothing is asked**, and the conversation is as it was before this requirement; the guide and the rule
+    file say where the tools are turned on. The existing switch stays the one gate: axHelp turns nothing on, shows
+    no new question, and the pairing (MC-6.4), the run switch (MC-7.2) and every question of the tools are
+    unchanged. A change of the switch counts from Claude Code's next start in the window (Session, End Claude and
+    close this window, then the hotkey; or Force Claude to restart).
+  - **What the user meets the first time**, with the tools on: nothing at the start (a server given on the command
+    line has no approval question, unlike a `.mcp.json` in the folder). At Claude's first use of a tool, Claude Code's
+    own permission question for that tool (with its "don't ask again" answer, kept per folder by Claude Code), which
+    reaches the user through axClaude's question flow as every permission question does (FR-2.x; this one for an
+    MCP tool is not yet among the recorded fixtures, so its reading as a list is owed a pass); and, if Claude Code was never paired with axKit, the
+    pairing notice in an axKit window (MC-6.4), Deny its default. Neither is new, and neither is answered for the
+    user.
+  - **The instructions.** A second rule file of axKit's, `<working folder>\.claude\rules\axkit-tools.md`
+    (`ai-help.md` AH-8, `AxKit.Core/Ai/AiToolsRule`), written and kept current with the guides (HE-2.6: the same
+    marker, the same list of files, never a file of the user's). It says what the tools are for and that the user
+    hears every action; the language rules, what the user is likely to say and which tool or guide answers it; each
+    tool with its own description from `McpTools`, when to use it, when not, and what to say before and after; the
+    caution of an offered command in `AiCaution`'s words; the limits (axPass and axClip never readable, no answer to
+    a window's question, a refused call never retried another way); and what to say when the tools are not there.
+    It is written whether the tools are on or off, so that Claude can say where they are turned on. A new folder's
+    CLAUDE.md points at the rules (`WorkingFolderFiles.Instructions`); an existing one is never edited.
+  - **Shift+F1 stays without the tools.** Its print-mode questions allow `Read`, `Glob` and `Grep` alone
+    (`ai-help.md` AH-2.2), and a tool not allowed is refused in print mode; it gets the window's text from axKit
+    itself already (AH-6).
 
 ### HE-3 Screenshots and pictures
 
@@ -198,7 +232,9 @@ names them all (`HelpText.Shortcuts`).
 `src/AxHelp`: `HelpForm` on `AxKit.Forms/HotkeyForm` (`OnHotkey` and the second hotkey, `OpenConversation`,
 `StartConversationHidden`, `TakeScreenshot`, `PutPicture`), `ScreenPicture` (from axDescribe), `AxHelpApp`, `AxHelpKeys`, `HelpText`.
 `src/AxHelp.Core`: `HelpSettings` (the two hotkeys, the model, `ConversationArguments`), `PictureFile`,
-`WorkingFolderFiles`; tested in `tests/AxHelp.Tests`. The guides (HE-2.6) are the bundle's, `AxKit.Core/Ai/AiDocumentation`. axClaude's part: `--title` and the "message" hand-over
+`WorkingFolderFiles`; tested in `tests/AxHelp.Tests`. The guides (HE-2.6) are the bundle's, `AxKit.Core/Ai/AiDocumentation`, and so are the AI tools' rule file
+(`AxKit.Core/Ai/AiToolsRule`) and config file (`AxKit.Core/Mcp/McpClaudeCode`), HE-2.8. axClaude's part: `--ai-tools`
+(`MainForm.AiToolsArguments`, FR-9.7), `--title` and the "message" hand-over
 (`MainForm.TakeHandOver`, FR-9.2). `HotkeyForm`'s part: `OnHotkey`, `SecondHotkey`, `OnSecondHotkey`.
 
 ## 6. Decisions
@@ -236,6 +272,33 @@ names them all (`HelpText.Shortcuts`).
   memory, and Claude Code starting at sign-in. No prompt, no first-run question, no reminder: the setting is only in
   Options and in the guide. The other conditions stay: axClaude's agreement for Claude Code given, Claude Code
   installed.
+- **HE-D10 The tools on the conversation's own command line; the instructions as a rule file** (2026-11-15,
+  HE-2.8). Three ways to give the conversation the tools were weighed against Claude Code's documentation
+  (code.claude.com/docs/en/mcp and /cli-reference, read 2026-11-15).
+  (a) A `.mcp.json` in the working folder, project scope: "Claude Code prompts for approval in interactive sessions
+  before using project-scoped servers from `.mcp.json` files", a question at the start that is Claude Code's own
+  security prompt for a file anyone could have put there; the file would sit loose at the top of the user's folder
+  (HE-2.4), and a file in a folder cannot follow the consent, which lives in axKit's sealed setting.
+  (b) `--mcp-config`, "Load MCP servers from JSON files or strings", on the conversation's command line: no approval
+  question, decided anew at every start from the sealed setting, in the one place that builds Claude Code's command
+  line (root rule 12), and always this very program file. **Chosen.**
+  (c) Nothing new, relying on Add axKit to Claude Code (MC-6.8, `claude mcp add --scope user`), which does make the
+  tools available in every folder, the working folder included (checked 2026-11-15: a session in another folder had
+  them). It stays as it is for the user's other Claude Code sessions, but it is not enough for axHelp: a user who
+  chose Turn on only has no entry; the entry names the program file of the day it was made, and a broker reads only
+  the windows of its own program file (MC-6.3), so an entry of another copy (a development build beside the Store's)
+  sees no window and cannot offer a command (MC-9.2). The server on the command line has the same name, `axkit`, as
+  that entry, so that the tools' names are the same either way and Claude Code can hold one axKit server: its
+  documentation says of the scopes that "Claude Code matches duplicates ... by name" and "connects to it once"; it
+  does not say so of a server given on the command line beside a user-scope entry of the same name, which is owed a
+  check on a Claude Code that has both (the nvda test plan's step).
+  The file is a file, not the JSON on the command line, because npm's `claude.cmd` runs through cmd.exe, where an
+  argument holding a double quote is refused (axClaude FR-1.2). It is in axKit's own folder, not the working folder.
+  Claude Code's permission question for each tool is left as it is, not allowed ahead with `--allowedTools`: what a
+  tool reads goes into the conversation and so to Anthropic, and skipping a question about that is the user's to
+  choose ("don't ask again"), never axKit's default.
+  The instructions are a rule file for HE-D6's reasons, and generated from `McpTools`, so that they cannot name a
+  tool that is gone.
 - Until 5.7.0 (`docs/axKit/ai-help.md` section 7): a field over a list of ten earlier questions, each answered by Claude
   Code's print mode as a notice; and axDescribe, a field over a list of ten descriptions.
 
@@ -243,8 +306,10 @@ names them all (`HelpText.Shortcuts`).
 
 `tests/AxHelp.Tests` (the settings, the conversation's command line, the working folder's files, the picture files);
 `tests/AxKit.Tests/AiDocumentationTests` (the guides: every app's among them, written where missing, again by another
-version, a file of the user's kept);
-`tests/scripts/axHelp` (the window, the conversation brought up from it and from a picture start, against the real
+version, a file of the user's kept); `AiToolsRuleTests` (HE-2.8: every tool of `McpTools` in the rule file and no
+tool that does not exist, the caution's words, the length) and `McpTests` (the config file, and nothing while the
+tools are off);
+`tests/scripts/axHelp` (`01-start.txt` turns the AI tools on and checks the rule file and the config file; the window, the conversation brought up from it and from a picture start, against the real
 axClaude with Haiku; `02-hide-and-show.txt`: closing hides, the same window comes back with the focus in the message
 field, coming back otherwise keeps the focus, Quit axHelp ends a hidden conversation); the hidden start itself is
 `tests/scripts/axClaude/20-hide-on-close.txt`, and its conditions `HelpTests`: no script starts axHelp hidden, since

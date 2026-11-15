@@ -354,31 +354,59 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         window.Send("activate");
         if (Nvda)
         {
-            InFront();
+            var everBefore = _everInFront;
+            var inFront = InFront();
+            if (Front.StopsRun(inFront, everBefore, Native.ShownWindow(window.ProcessId) != 0))
+            {
+                // The first window of the whole run cannot come to the front: every script would fail the same way.
+                Stopped = Front.CannotTake(Native.ForegroundProgram());
+                throw new InvalidOperationException(Stopped);
+            }
+
             Speech.WaitForQuiet(1500);
         }
     }
 
+    /// <summary>The NVDA tier: whether a window of any script of this process's run has been in front yet (<see cref="Front.StopsRun"/>).</summary>
+    private static bool _everInFront;
+
+    /// <summary>
+    /// The NVDA tier: why the whole run stops, null while it goes on. Set when the first window of the run could not
+    /// be brought to the front (<see cref="Front.CannotTake"/>); the command line reads it after each script and runs
+    /// no further one.
+    /// </summary>
+    public static string? Stopped { get; private set; }
+
     /// <summary>
     /// The NVDA tier: whether a window of this run is in front, bringing the current one back (up to 3 s) when another
-    /// program's is, such as the user's own window after a test window closed.
+    /// program's is, such as the user's own window after a test window closed, or the desktop as a pass begins: the
+    /// window is asked first, and then the runner takes the foreground for it itself (<see cref="Front.At"/>).
     /// </summary>
     private bool InFront()
     {
-        for (var attempt = 0; attempt < 30; attempt++)
+        for (var look = 0; look < Front.Looks; look++)
         {
             var front = Native.ForegroundProcess();
             if (_windows.Any(window => window.ProcessId == front))
             {
+                _everInFront = true;
                 return true;
             }
 
-            if (_current is not null && attempt % 5 == 0)
+            if (_current is not null)
             {
                 try
                 {
-                    Native.AllowSetForegroundWindow(_current.ProcessId);
-                    _current.Send("activate");
+                    switch (Front.At(look))
+                    {
+                        case FrontMove.Ask:
+                            Native.AllowSetForegroundWindow(_current.ProcessId);
+                            _current.Send("activate");
+                            break;
+                        case FrontMove.Take:
+                            TakeFront(_current);
+                            break;
+                    }
                 }
                 catch (Exception error) when (error is IOException or InvalidOperationException or TimeoutException)
                 {
@@ -391,6 +419,29 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// The NVDA tier: the runner takes the foreground for the window (<c>Native.TakeForeground</c>, one Alt key
+    /// press), then the window activates itself as on any start, and says whether the Alt key's release left its menu
+    /// bar active; if so, Escape leaves the menu, pressed only while that very window is in front, and the window is
+    /// asked again (an open menu takes two). A window that shows nothing (hidden, put away) is left as it is.
+    /// </summary>
+    private static void TakeFront(Window window)
+    {
+        var handle = Native.ShownWindow(window.ProcessId);
+        if (handle == 0)
+        {
+            return;
+        }
+
+        Native.TakeForeground(handle, window.ProcessId);
+        var answer = window.Send("activate");
+        for (var press = 0; press < 2 && Front.LeavesMenu(Native.ForegroundProcess() == window.ProcessId, answer.Contains("\"menu\":true", StringComparison.Ordinal)); press++)
+        {
+            Native.Keys("escape", () => Native.ForegroundProcess() == window.ProcessId);
+            answer = window.Send("activate");
+        }
     }
 
     /// <summary>

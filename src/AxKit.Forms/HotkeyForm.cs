@@ -276,22 +276,10 @@ public abstract class HotkeyForm : AxKitForm
     /// For a starting process (AS-1.2): the hidden window of another process of this very program file
     /// (<see cref="ThisProgram.Runs"/>) with the title <paramref name="title"/>, which a second start hands "show" to;
     /// 0 when none. The program file, not the process name (2026-11-09): the user's own axHelp from one build and a
-    /// test run's from another are two programs, and the test's hand-over must never show the user's window.
+    /// test run's from another are two programs, and the test's hand-over must never show the user's window; in a
+    /// test run, only a window of the run's own (<see cref="BundleWindows.Titled"/>, where the search is made).
     /// </summary>
-    public static nint FindRunning(string title)
-    {
-        var process = (uint)Environment.ProcessId;
-        for (var window = FindWindowExW(0, 0, null, title); window != 0; window = FindWindowExW(0, window, null, title))
-        {
-            GetWindowThreadProcessId(window, out var owner);
-            if (owner != process && ThisProgram.Runs(owner))
-            {
-                return window;
-            }
-        }
-
-        return 0;
-    }
+    public static nint FindRunning(string title) => BundleWindows.Titled(title);
 
     /// <summary>
     /// The first showing, which Application.Run asks for before the handle exists (AS-1.1): the handle is made, so that
@@ -646,7 +634,4 @@ public abstract class HotkeyForm : AxKitForm
 
     [DllImport("user32.dll")]
     private static extern short GetKeyState(int key);
-
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private static extern nint FindWindowExW(nint parent, nint after, string? className, string title);
 }

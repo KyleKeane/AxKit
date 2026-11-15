@@ -331,7 +331,23 @@ internal sealed class AutomationChannel : IMessageFilter
         SetActiveWindow(_form.Handle);
         _form.Activate();
         SetForegroundWindow(_form.Handle);
-        return new { ok = GetForegroundWindow() == _form.Handle };
+        return new { ok = GetForegroundWindow() == _form.Handle, menu = MenuBarActive() };
+    }
+
+    /// <summary>
+    /// Whether the menu bar is in the keyboard's hands: one of its menus selected or open while the mouse is not over
+    /// the bar (a pointer resting there selects an item too, and is no menu mode). The NVDA tier's runner asks after
+    /// it took the foreground with an Alt key press, whose release reaches this window: a bar left active would take
+    /// the script's first keys, so the runner leaves it with Escape (docs/axKit/automation.md, section 3).
+    /// </summary>
+    private bool MenuBarActive()
+    {
+        if (_form.MainMenuStrip is not { } bar || bar.ClientRectangle.Contains(bar.PointToClient(Cursor.Position)))
+        {
+            return false;
+        }
+
+        return bar.Items.Cast<ToolStripItem>().Any(item => item.Selected || item.Pressed);
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]

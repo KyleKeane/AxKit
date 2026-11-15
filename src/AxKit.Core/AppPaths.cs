@@ -38,6 +38,13 @@ public static class AppPaths
     public static string McpAuditFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "mcp-audit.log");
 
+    /// <summary>
+    /// This AxKit.exe as an MCP server for Claude Code's <c>--mcp-config</c> (MC-6.9): written before a conversation
+    /// that loads the AI tools by itself starts (axHelp's); it names a program file of this computer, so it never roams.
+    /// </summary>
+    public static string McpClaudeConfigFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "claude-mcp.json");
+
     public static string LogsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "logs");
 

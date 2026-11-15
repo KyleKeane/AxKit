@@ -143,6 +143,35 @@ public class BackgroundWorkTests
         Assert.Equal(20, BackgroundWork.SanitizePulseSeconds(45));
     }
 
+    /// <summary>A settings file written before these settings existed: both sounds are on, the words off.</summary>
+    [Fact]
+    public void A_settings_file_from_before_the_background_sounds_has_both_on()
+    {
+        var path = Path.Combine(Path.GetTempPath(), "axclaude-tests", Guid.NewGuid().ToString("N"), "settings.json");
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.WriteAllText(path, "{ \"ptyColumns\": 200, \"soundOnBell\": false, \"workingMusic\": true }");
+            var settings = AppSettings.Load(path, out var error);
+            Assert.Null(error);
+            Assert.Equal(200, settings.PtyColumns);
+            Assert.True(settings.SoundOnBackgroundWork);
+            Assert.True(settings.BackgroundPulse);
+            Assert.False(settings.SayBackgroundWork);
+            Assert.Equal(20, settings.BackgroundPulseSeconds);
+        }
+        finally
+        {
+            Directory.Delete(Path.GetDirectoryName(path)!, true);
+        }
+    }
+
+    [Fact]
+    public void The_recurring_sound_has_a_layer_for_every_note_the_rules_ask_for()
+    {
+        Assert.Equal(BackgroundWork.MostNotes, AxKit.Core.Audio.AmbientSounds.MostLayers);
+    }
+
     /// <summary>The model's own texts feed the count: the mode line as Claude Code draws it, with a shell and the panel's rows.</summary>
     [Fact]
     public void A_frame_with_a_shell_on_the_mode_line_and_two_agents_in_the_panel_counts_three()

@@ -180,12 +180,12 @@ public static class AppMessage
     /// <summary>HWND_MESSAGE: the parent of a window that only exists to be named.</summary>
     private static readonly nint MessageOnly = -3;
 
-    /// <summary>Whether the window belongs to a process of this program file (the same AxKit.exe), asked of Windows by the process's own image path.</summary>
-    private static bool IsThisProgram(nint window)
-    {
-        GetWindowThreadProcessId(window, out var processId);
-        return ThisProgram.Runs(processId);
-    }
+    /// <summary>
+    /// Whether the window belongs to a process of this program file (the same AxKit.exe), asked of Windows by the
+    /// process's own image path, and, in a test run, to a process of the run (<see cref="BundleWindows.Reachable"/>):
+    /// a run's window neither hands anything to the user's own window nor takes anything from it.
+    /// </summary>
+    private static bool IsThisProgram(nint window) => BundleWindows.Reachable(window);
 
     /// <summary>COPYDATASTRUCT: a number of the sender's choosing, the byte count, and the bytes.</summary>
     [StructLayout(LayoutKind.Sequential)]

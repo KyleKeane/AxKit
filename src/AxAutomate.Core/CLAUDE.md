@@ -25,10 +25,12 @@ dotnet build tools\AxAutomate\AxAutomate.Runner.csproj -c Release -o <scratch>  
   - `Window`: one AxKit.exe of the run on its desktop (`Create`, with the run's variables in its own environment), its pipe and its timeline; `Event` and `Taken` in `RunEvent.cs`.
   - `RunSentences` (AU-6b): what the window says of a run: a failing step, a workflow's end, a folder's end, and the outcome its rows carry.
   - `ClipboardText`: the clipboard's text read and put back around a run of the command line (automation.md, "The user's clipboard kept").
+  - `Front` with `FrontMove` (the NVDA tier, 2026-11-15, automation.md section 3): the rules of the foreground, pure and tested in `FrontTests`: `At` (the window asked first, then the runner takes the foreground itself, twice at most a step), `StopsRun` with `CannotTake` (the run's first shown window cannot come to the front: `Run.Stopped` is set and the command line runs no further script, exit 2) and `LeavesMenu`. `Run.InFront` and `Run.TakeFront` follow them; `Native.TakeForeground` is the one Alt key press, `Native.ShownWindow` the window of a process the run started.
   - `Speech`: NVDA's capture log (the NVDA tier); `Broker`: the run as an MCP client; `Native`: the P/Invoke the engine needs.
 
 ## Gotchas
 
 - A new step word of the runner needs its value key in `ScriptReader.Values`, its sentence in `StepText.Sentence` and its name in `ScriptLines.Known`; without the last the window will not run a workflow that uses it.
 - The run's secret and folder are never set on this process's environment (`Window.Create` hands them in the child's own block): the window that runs a workflow also starts the user's own windows, which must never get them (S-11).
+- The NVDA tier sends a key only while a window of the run is in front (`Run.InFront` before every press), with one exception, the Alt key press of `Native.TakeForeground`. Nothing of it can be run while the user is at the keyboard: its rules are pure (`Front`) and the rest is checked by reading and by a pass.
 - Every process start and pipe here carries its `Outside call, ...` comment (`tools/outside-calls.ps1`).

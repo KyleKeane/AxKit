@@ -174,6 +174,20 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   build, gone; its failure when there is none is ignored), then `claude mcp add --scope user axkit -- <AxKit.exe> mcp`.
   The result is said: "axKit is added to Claude Code: a new Claude session can use it", or Claude Code's own error
   line. Never in a test run, which must not touch the user's Claude Code settings.
+- MC-6.9 **Given to one conversation by itself** (2026-11-15, for axHelp's conversation, `docs/axHelp/SPEC.md`
+  HE-2.8, HE-D10). An axClaude window started with `--ai-tools` (axClaude FR-9.7) gives its Claude Code this very
+  `AxKit.exe` as the server `axkit` at every start, **only while Let AI tools read and open axKit is on**: it writes
+  `%LOCALAPPDATA%\AxKit\claude-mcp.json` (`McpClaudeCode.ConfigText`: `{"mcpServers": {"axkit": {"type": "stdio",
+  "command": "<this AxKit.exe>", "args": ["mcp"]}}}`; written again when it names another program file) and adds
+  Claude Code's `--mcp-config <file>` to the command line (`McpClaudeCode.SessionArguments`). Off: no file, no
+  argument. The consent is unchanged and is the gate: nothing here turns the access on, pairs a client or allows
+  commands to run; the broker Claude Code then starts is the same `AxKit.exe mcp` as MC-1.1's, refused, paired,
+  limited and logged as every broker. No registration is written into Claude Code's settings for it, so MC-6.8
+  stays the one registration for every folder, and a test run, which never runs MC-6.8, can use this one: the file
+  is in the run's own folder. The same server name as MC-6.8's entry, so that there are never two axKit servers'
+  tools in one session. No new program start of axKit's and no network contact: Claude Code starts the broker, as
+  it does for a registered server. What Claude reads through the tools is part of its conversation and goes to
+  Anthropic as the rest of the conversation does, as before.
 - MC-6.7 **Not in this stage**: change and act tools and their confirmation (MC-3.3; since 2026-11-11 section 8), the "MCP clients…" list with
   scopes per app and folders (MC-2.3, MC-3.4), the reads counted in the status bar (MC-5.1), axPass's titles (MC-4.1).
 

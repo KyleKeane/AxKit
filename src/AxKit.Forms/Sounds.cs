@@ -13,7 +13,8 @@ namespace AxKit.Forms;
 /// Until 1.2.1 the sounds went through <c>PlaySound</c>, which opens and closes the device for every call: ticks in
 /// quick succession stuttered and backed up. The working music is the one sound that loops: one buffer written once
 /// with the loop flags, on a second device of its own, where no chime's reset can cut it off and no tick waits
-/// behind it, and stopped with a reset of that device. UI thread only.
+/// behind it, and stopped with a reset of that device. The recurring sound of background work (FR-7.10), a breath
+/// of some seconds, has a third device for the same reasons. UI thread only.
 /// </summary>
 public static class Sounds
 {
@@ -209,35 +210,28 @@ public static class Sounds
     // heard from another window, where the done chime was missed (axClaude FR-7.3).
     private static readonly Sound AlertChime = new(WaveTone.Notes(0.6, (783.99, 100), (1046.5, 100), (1318.5, 300), (0, 200), (783.99, 100), (1046.5, 100), (1318.5, 500)));
 
-    // Sixteen soft plucked notes, an arpeggio up C, A minor, F and G at 500 ms a note: 8 s that loop without a seam
-    // while Claude works (axClaude FR-7.9). Quiet, slow and dull next to the chimes, on a device of its own; the first
-    // version, at half the chimes' peak and 300 ms a note with a music-box ring, was too much over NVDA's speech.
-    private static readonly Sound WorkingMusic = new(WaveTone.Plucks(0.08, 500,
-        261.63, 329.63, 392.00, 523.25,
-        220.00, 261.63, 329.63, 440.00,
-        174.61, 220.00, 261.63, 349.23,
-        196.00, 246.94, 293.66, 392.00), loops: true);
+    // A pad of four slow chords with a soft high ping in each, 14 s that loop without a seam while Claude works
+    // (axClaude FR-7.9; AmbientSounds.WorkingMusic, the one place it is made; asked 2026-11-15: gentler, like the lift
+    // of a building of the future). On a device of its own. Before it: sixteen soft plucked notes, an arpeggio at
+    // 500 ms a note (WaveTone.Plucks), and before that a version at half the chimes' peak with a music-box ring,
+    // which was too much over NVDA's speech.
+    private static readonly Sound WorkingMusic = new(AmbientSounds.WorkingMusic(), loops: true);
 
-    // The sounds of work in the background (axClaude FR-7.10, asked 2026-11-15): one character, soft low sine notes
-    // at half the chimes' loudness, below the chimes' register. PROVISIONAL, all three: the user chooses the final
-    // ones by ear; each is this one line. What arrives rises, what leaves falls (his rule): E4 up a fifth to B4 for a
-    // start, the same two down for an end, shorter and lower than the Done chime's three notes.
-    private static readonly Sound BackgroundStartTone = new(WaveTone.Notes(0.2, (329.63, 60), (493.88, 90)));
-    private static readonly Sound BackgroundFinishTone = new(WaveTone.Notes(0.2, (493.88, 60), (329.63, 90)));
+    // The sounds of work in the background (axClaude FR-7.10, asked 2026-11-15): a start and an end are events,
+    // gentle sweeps, smooth glides in pitch with no attack, at well under half the chimes' loudness; what arrives
+    // rises, what leaves falls (his rule). The recurring sound is a process: one slow breath of the music's pad,
+    // with one voice for each thing running, mixed into one buffer, five at most. PROVISIONAL, all three: the user
+    // chooses the final ones by ear; each is one method of AxKit.Core's AmbientSounds.
+    private static readonly Sound BackgroundStartTone = new(AmbientSounds.BackgroundStart());
+    private static readonly Sound BackgroundFinishTone = new(AmbientSounds.BackgroundFinish());
+    private static readonly Sound[] BackgroundPulses = [.. Enumerable.Range(1, AmbientSounds.MostLayers).Select(layers => new Sound(AmbientSounds.BackgroundPulse(layers)))];
 
-    // The recurring sound while background work runs: the first notes of this row, one for each thing running, always
-    // rising and in the same timbre, so that with practice the number is heard (D4, F sharp, A, D5, F sharp: a chord
-    // climbing). Five at most (AxClaude.Core BackgroundWork.MostNotes).
-    private static readonly (double Hertz, int Milliseconds)[] BackgroundPulseNotes = [(293.66, 70), (369.99, 70), (440, 70), (587.33, 70), (739.99, 70)];
-    private const double BackgroundPulseLoudness = 0.16;
-    private static readonly Sound[] BackgroundPulses = [.. Enumerable.Range(1, BackgroundPulseNotes.Length).Select(count => new Sound(WaveTone.Notes(BackgroundPulseLoudness, PulseNotes(count))))];
-
-    /// <summary>The first <paramref name="count"/> notes of the recurring sound, a short gap after each so that they are counted apart.</summary>
-    private static (double Hertz, int Milliseconds)[] PulseNotes(int count) =>
-        [.. BackgroundPulseNotes.Take(count).SelectMany(note => new[] { note, (0.0, 35) })];
-
-    private static readonly Device Chimes = new("sounds", [LineTick, ToolTick, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone, .. BackgroundPulses]);
+    private static readonly Device Chimes = new("sounds", [LineTick, ToolTick, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone]);
     private static readonly Device Music = new("working music", WorkingMusic);
+
+    // The recurring sound of background work is a breath of some seconds, on a third device of its own: on the
+    // chimes' device every tick would wait behind it until it ended, and a chime's reset would cut it off.
+    private static readonly Device Breath = new("background work sound", BackgroundPulses);
 
     /// <summary>A tiny typewriter-like tick: a line from Claude arrived.</summary>
     /// <summary>
@@ -277,6 +271,7 @@ public static class Sounds
             if (value)
             {
                 Music.Reset();
+                Breath.Reset();
             }
             else if (_musicWanted)
             {
@@ -347,15 +342,17 @@ public static class Sounds
     /// <summary>A longer, louder call, three rising notes to a held one and again: Claude is done or asks while the window is in the background.</summary>
     public static void Alert() => Play("Alert", () => Chimes.Play(AlertChime, replace: true));
 
-    /// <summary>Two soft low notes rising: work started in the background (axClaude FR-7.10). Behind whatever plays, never cutting a chime. Provisional.</summary>
+    /// <summary>One gentle sweep rising: work started in the background (axClaude FR-7.10). Behind whatever plays, never cutting a chime. Provisional.</summary>
     public static void BackgroundStart() => Play("BackgroundStart", () => Chimes.Play(BackgroundStartTone, replace: false));
 
-    /// <summary>The same two notes falling: work in the background ended. Provisional.</summary>
+    /// <summary>The same sweep falling: work in the background ended. Provisional.</summary>
     public static void BackgroundFinish() => Play("BackgroundFinish", () => Chimes.Play(BackgroundFinishTone, replace: false));
 
     /// <summary>
-    /// The recurring sound while work runs in the background: <paramref name="notes"/> soft rising notes, one for each
-    /// thing running, five at most; nothing for none. Behind whatever plays. Recorded as "BackgroundPulse 2". Provisional.
+    /// The recurring sound while work runs in the background: one slow breath of about three seconds, a process and
+    /// not an event, with <paramref name="notes"/> voices in it, one for each thing running, five at most; nothing
+    /// for none. On its own device, so it sounds with the chimes, the ticks and the music and delays none of them;
+    /// one that would start while the last still sounds is dropped. Recorded as "BackgroundPulse 2". Provisional.
     /// </summary>
     public static void BackgroundPulse(int notes)
     {
@@ -365,10 +362,10 @@ public static class Sounds
         }
 
         var sound = BackgroundPulses[Math.Min(notes, BackgroundPulses.Length) - 1];
-        Play("BackgroundPulse " + Math.Min(notes, BackgroundPulses.Length), () => Chimes.Play(sound, replace: false));
+        Play("BackgroundPulse " + Math.Min(notes, BackgroundPulses.Length), () => Breath.Play(sound, replace: false));
     }
 
-    /// <summary>Starts the soft music loop that plays while Claude works (axClaude FR-7.9); nothing while it plays already.</summary>
+    /// <summary>Starts the soft pad loop that plays while Claude works (axClaude FR-7.9); nothing while it plays already.</summary>
     public static void StartMusic()
     {
         _musicWanted = true;

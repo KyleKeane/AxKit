@@ -85,12 +85,14 @@ public sealed class HelpSettings : HotkeySettings
     /// <summary>
     /// The arguments of <c>AxKit.exe claude</c> for the conversation (HE-2.1): the working folder, the title "axHelp",
     /// the model on every start of Claude Code, and the message for its field when there is one; Claude Code continues the folder's last conversation, or starts one, as axClaude does by default (FR-9.1).
-    /// Always with <c>--hide-on-close</c> (HE-1.3: closing the conversation hides it, axClaude FR-9.6);
+    /// Always with <c>--hide-on-close</c> (HE-1.3: closing the conversation hides it, axClaude FR-9.6) and
+    /// <c>--ai-tools</c> (HE-2.8: axClaude gives Claude Code axKit's AI tools at each of its starts while the user
+    /// has them on, and nothing while they are off; axHelp itself reads no setting for it);
     /// <paramref name="hidden"/> adds <c>--hidden</c>, the start in the background (HE-2.7).
     /// </summary>
     public static IReadOnlyList<string> ConversationArguments(string folder, string model, string? message, bool hidden = false)
     {
-        var arguments = new List<string> { folder, "--title", "axHelp", "--model", model, "--hide-on-close" };
+        var arguments = new List<string> { folder, "--title", "axHelp", "--model", model, "--hide-on-close", "--ai-tools" };
         if (hidden)
         {
             arguments.Add("--hidden");

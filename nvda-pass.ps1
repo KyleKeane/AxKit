@@ -83,7 +83,7 @@ $report = Join-Path $work 'report.md'
 # its first line into a terminating error and end this script before the summary (the root CLAUDE.md's 2>&1 gotcha).
 & $runner $scripts --exe $exe --nvda --report $report |
     ForEach-Object { "$_" } |
-    Where-Object { $_ -match '^(==|FAIL|PASS|FAILED|NVDA tier|NVDA did not)' -or $_ -match '^\s*(FAIL|failed)' } |
+    Where-Object { $_ -match '^(==|FAIL|PASS|FAILED|STOPPED|NVDA tier|The NVDA tier|NVDA did not)' -or $_ -match '^\s*(FAIL|failed)' } |
     ForEach-Object { $_ -replace '[A-Za-z]:(\\\\|\\)Users(\\\\|\\)[^\\"\s]+', '%USERPROFILE%' }
 $code = $LASTEXITCODE
 Write-Host 'Report: %TEMP%\axkit-nvda\report.md'

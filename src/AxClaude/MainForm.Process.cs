@@ -112,6 +112,22 @@ internal sealed partial class MainForm
         _model.StartName = nameAt >= 0 && nameAt + 1 < ClaudeArgs.Count ? ClaudeArgs[nameAt + 1] : null;
         // FR-1.2: npm's claude.cmd runs through cmd.exe, and an argument cmd.exe would act on is refused, said as any failed start.
         var line = ClaudeLauncher.BuildCommandLine(claude, arguments);
+        // --ai-tools (FR-9.7, docs/axKit/mcp.md MC-6.9): axKit's AI tools for this start of Claude, only while the user
+        // has them on. Last on the line, since --mcp-config takes every word up to the next option. A line cmd.exe
+        // would refuse because of the file's path starts without the tools rather than not at all.
+        if (AiToolsArguments() is { Count: > 0 } tools)
+        {
+            var withTools = ClaudeLauncher.BuildCommandLine(claude, [.. arguments, .. tools]);
+            if (withTools.Refusal is null)
+            {
+                line = withTools;
+            }
+            else
+            {
+                Log.Error("Claude Code started without axKit's AI tools: " + withTools.Refusal);
+            }
+        }
+
         if (line.Refusal is { } refusal)
         {
             Fail("Claude Code was not started. " + refusal);
@@ -139,6 +155,37 @@ internal sealed partial class MainForm
         _settings.RememberFolder(_folder!);
         SaveSettings();
         UpdateStatus();
+    }
+
+    /// <summary>
+    /// Claude Code's arguments for axKit's AI tools (FR-9.7, docs/axKit/mcp.md MC-6.9): only in a window started with
+    /// <c>--ai-tools</c> (axHelp's conversation) and only while the user has the AI tools on, read from the sealed
+    /// setting at this start; then the file that names this very program file is written when it is missing or names
+    /// another, and <c>--mcp-config</c> points Claude Code at it. Off, or the file not writable: nothing, and Claude
+    /// starts as it always did. Nothing is asked and nothing is turned on here.
+    /// </summary>
+    private IReadOnlyList<string> AiToolsArguments()
+    {
+        if (!_options.AiTools || PackageIdentity.ProgramPath is not { } program)
+        {
+            return [];
+        }
+
+        try
+        {
+            var arguments = AxKit.Core.Mcp.McpClaudeCode.SessionArguments(asked: true, AxKit.Core.Mcp.McpAccess.Enabled, AppPaths.McpClaudeConfigFile);
+            if (arguments.Count > 0 && AxKit.Core.Mcp.McpClaudeCode.WriteConfig(AppPaths.McpClaudeConfigFile, program))
+            {
+                Log.Info("Wrote the file that gives Claude Code axKit's AI tools for this conversation");
+            }
+
+            return arguments;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            Log.Error("axKit's AI tools were not given to Claude Code: " + ex.Message);
+            return [];
+        }
     }
 
     /// <summary>

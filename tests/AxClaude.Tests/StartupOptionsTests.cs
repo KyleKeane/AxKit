@@ -50,6 +50,16 @@ public class StartupOptionsTests
         Assert.Contains("--hide-on-close", StartupOptions.Usage);
     }
 
+    /// <summary>FR-9.7: axKit's AI tools for the window's Claude are asked for by an option, never by default.</summary>
+    [Fact]
+    public void The_ai_tools_are_asked_for_by_their_option_alone()
+    {
+        Assert.False(StartupOptions.Parse([Folder]).AiTools);
+        Assert.False(StartupOptions.Parse([Folder, "--title", "axHelp", "--hide-on-close"]).AiTools);
+        Assert.True(StartupOptions.Parse([Folder, "--title", "axHelp", "--ai-tools"]).AiTools);
+        Assert.Contains("--ai-tools", StartupOptions.Usage);
+    }
+
     [Fact]
     public void Windows_own_folders_and_the_apps_own_are_never_a_project()
     {

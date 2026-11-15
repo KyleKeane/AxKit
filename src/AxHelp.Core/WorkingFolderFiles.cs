@@ -26,6 +26,8 @@ public static class WorkingFolderFiles
           (Ctrl+Shift+W). Say when you are not sure.
         - For a question about axKit or one of its apps, read index.md in the folder documentation here and the guide
           it names before you answer, and say when the guides do not cover it. axKit keeps those guides current.
+        - axKit's rules in the folder .claude\rules here say when to read the guides and when to use which of
+          axKit's AI tools (reading a window, opening an app, running a command, adding a task). Follow them.
         - A message that starts with "Screenshot of" or "Picture" names a picture file: read it with your Read tool
           first, then answer the user's question about it; with no question, say what the window or the picture is,
           what it shows and the controls a keyboard user can reach.
