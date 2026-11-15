@@ -33,6 +33,9 @@ public static class AxClaudeKeys
     /// <summary>Read Claude's question or screen again while the control area shows it, from anywhere, the focus staying (D33); Q as the conversation's question key.</summary>
     public const Keys ReadQuestion = Keys.Control | Keys.Q;
 
+    /// <summary>What runs in the background, said on demand: the number, each agent's type and description (FR-7.10); B for background.</summary>
+    public const Keys BackgroundWork = Keys.Control | Keys.B;
+
     /// <summary>D14: never sent to Claude; the key only says why.</summary>
     public const Keys CtrlOGuard = Keys.Control | Keys.O;
 
@@ -104,6 +107,7 @@ public static class AxClaudeKeys
         ("Line number", LineNumber),
         ("Background music on or off", ToggleMusic),
         ("Read Claude's question or screen again", ReadQuestion),
+        ("What runs in the background", BackgroundWork),
         ("Back to the line before the jump", JumpBack),
         ("Heading level 1", HeadingLevel1),
         ("Heading level 2", HeadingLevel2),

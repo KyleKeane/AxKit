@@ -103,7 +103,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
    as in the editor, "No next table" when there is none; Help, About, Version names the version of axKit, the apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
-4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows; Alt+K: the axKit menu with Claude, AI tools and Theme;
+4. Alt+W: the Window menu with New window, Open windows, Recently closed, Close all windows, Say the status (F8: the status bar is said); Alt+K: the axKit menu with Claude, AI tools and Theme;
    Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Check
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds

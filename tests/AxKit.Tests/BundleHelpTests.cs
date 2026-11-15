@@ -21,6 +21,7 @@ public sealed class BundleHelpTests
                 "  F4: report a bug, an idea or feedback to axKit's maintainer: type your words, Enter makes a new line; Tab goes on to the kind, a box for more detail and what is sent with your report; Ctrl+Enter or the Send button sends; Escape cancels and keeps nothing. The report is encrypted on your computer, and only the maintainer can read it",
                 "  Ctrl+Enter: the main action of where you are: it sends a form from any of its fields, keeps a long text from inside its box, presses a notice's main button, and does a window's main action where it has one; anywhere else, the edge sound and nothing more",
                 "  Shift+F1: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more",
+                "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too",
                 "  Tab: between the list and the field",
                 "  Ctrl+S: save the thing",
                 "  Ctrl+Plus, Ctrl+Minus: bigger or smaller text",
@@ -39,7 +40,7 @@ public sealed class BundleHelpTests
     public void The_AxKit_menu_line_is_the_bundles_words()
     {
         Assert.Contains(
-            "  Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About\r\n",
+            "  Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About\r\n",
             BundleHelp.Section("axThing", []));
     }
 

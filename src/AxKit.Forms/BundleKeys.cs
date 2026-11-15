@@ -20,6 +20,12 @@ public static class BundleKeys
     public const Keys AskClaude = Keys.Shift | Keys.F1;
 
     /// <summary>
+    /// Say the status (AX-7.10, the user's key of 2026-11-15): the window's status bar as one announcement of axKit's
+    /// own, so that the status never depends on NVDA finding the status bar (NVDA+End said "blank" over a full bar).
+    /// </summary>
+    public const Keys SayStatus = Keys.F8;
+
+    /// <summary>
     /// The main action of where you are (AX-8.10 rule 3): a form sent from any of its fields, a long text kept from inside its box, a
     /// notice's main button, and in a window its one main action (axGIT's commit, axMCP's call, axFile's play the
     /// folder, a console window's send), which the window registers as a command on this key; the edge sound where
@@ -66,6 +72,7 @@ public static class BundleKeys
         ("Command palette", CommandPalette),
         ("Report", Report),
         ("Ask Claude about this window", AskClaude),
+        ("Say the status", SayStatus),
         ("The main action", MainAction),
         ("Next control", NextControl),
         ("Previous control", PreviousControl),

@@ -55,6 +55,8 @@ internal sealed partial class MainForm
         // The interrupt key (FR-2.3). Ctrl+Escape opens the Start menu and never reaches the app.
         Add(claude, new Command("&Interrupt", AxClaudeKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
         Add(claude, new Command("Next &permission mode", AxClaudeKeys.NextPermissionMode, () => Write("\x1b[Z")) { Mark = CommandMark.Act });
+        // FR-7.10: on demand, the number of things running in the background and each agent by type and description.
+        Add(claude, new Command("What runs in the &background", AxClaudeKeys.BackgroundWork, SayBackgroundWork) { Mark = CommandMark.Read });
         claude.DropDownItems.Add(new ToolStripSeparator());
         // The keys Claude's own menus take. Up and Down are menu items only (FR-2.4): Ctrl+Up and Ctrl+Down move by
         // paragraph in every edit control of the bundle.
@@ -84,6 +86,8 @@ internal sealed partial class MainForm
         // FR-7.9: starts or stops at once when toggled during a turn; Ctrl+Space anywhere flips the same item.
         sounds.DropDownItems.Add(CreateMusicItem("&Background music while Claude works", AxClaudeKeys.ToggleMusic));
         options.DropDownItems.Add(sounds);
+        // FR-7.10: the sounds and the words of work in the background, and how often the recurring sound plays.
+        options.DropDownItems.Add(CreateBackgroundMenu());
 
         // FR-7.4: the reply choices are one of three, shown checked like a radio group; the choice is announced, since
         // the menu closes on it. The tool: row of each call is spoken whatever the reply mode; it starts with what arrives next.

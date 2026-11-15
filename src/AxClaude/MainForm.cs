@@ -131,6 +131,7 @@ internal sealed partial class MainForm : ConsoleForm
             OnFrameSettled();
         };
         _speechHold.Tick += (_, _) => SpeakHeld();
+        WireBackground();
         Input.KeyDown += OnInputKeyDown;
         Transcript.LineChosen += QuoteLineInMessage;
         BuildMenus();

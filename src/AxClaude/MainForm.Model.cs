@@ -107,6 +107,8 @@ internal sealed partial class MainForm
 
         OpenDraftsWhenIdle();
         ShowOfferWhenIdle();
+        // FR-7.10: the work in the background, signalled once it has stood still (MainForm.Background.cs).
+        WatchBackground();
     }
 
     /// <summary>The held reply lines go out as one notification (D32), and the hold ends.</summary>
@@ -302,9 +304,10 @@ internal sealed partial class MainForm
             parts.Add(_model.QueuedMessages == 1 ? "1 message waiting" : $"{_model.QueuedMessages} messages waiting");
         }
 
-        if (ClaudeBackground is { } background)
+        // FR-7.10: the one number in plain words, "1 shell in the background", "3 in the background: 1 shell, 2 agents".
+        if (BackgroundWork.Status(BackgroundNow) is { } background)
         {
-            parts.Add(background + " in the background");
+            parts.Add(background);
         }
 
         if (_model.Mode is { } mode)

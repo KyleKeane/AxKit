@@ -55,6 +55,10 @@ expect focus Home, list, 2 items
 keys right
 expect said ! Home, 2 items, 1 file not shown, Fix the tap, due 30 October 2099
 expect state Home - axTask
+# F8, Say the status (bundle AX-7.10), from the navigator: the status bar said by axKit itself.
+keys f8
+expect said \tasks
+refuse said No status
 keys down
 expect focus Water plants, done
 

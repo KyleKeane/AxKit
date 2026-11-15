@@ -53,6 +53,18 @@ public sealed class AppSettings : ConsoleSettings
     /// <summary>A feedback draft Claude queued opens its review by itself once Claude is idle (D33). Off: it waits for /feedback.</summary>
     public bool OpenFeedbackDrafts { get; set; } = true;
 
+    /// <summary>A short sound when work in the background starts and when it ends (FR-7.10): rising for a start, falling for an end.</summary>
+    public bool SoundOnBackgroundWork { get; set; } = true;
+
+    /// <summary>A soft sound every <see cref="BackgroundPulseSeconds"/> while work runs in the background, one note for each thing running (FR-7.10).</summary>
+    public bool BackgroundPulse { get; set; } = true;
+
+    /// <summary>How often the recurring sound plays: 10, 20, 30 or 60 seconds (<see cref="BackgroundWork.PulseSeconds"/>).</summary>
+    public int BackgroundPulseSeconds { get; set; } = BackgroundWork.DefaultPulseSeconds;
+
+    /// <summary>Say background work as it starts and ends (FR-7.10): off, since the sounds say it.</summary>
+    public bool SayBackgroundWork { get; set; }
+
     /// <summary>
     /// Recognise what Claude waits on and show it in the control area in the message field's place, and keep
     /// messages out of a waiting question (D33, FR-2.10). Off: questions are only announced, as before 1.4.0.
@@ -113,6 +125,7 @@ public sealed class AppSettings : ConsoleSettings
         }
 
         SpeakReplies = false;
+        BackgroundPulseSeconds = BackgroundWork.SanitizePulseSeconds(BackgroundPulseSeconds);
         SilentWords = SpeechFilter.Words(SpeechFilter.Text(SilentWords ?? []));
     }
 }

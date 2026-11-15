@@ -6,6 +6,38 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-15, early morning: every app; by the assistant with NVDA listening (`main` 84d3f86 with the F8 key and axClaude's background work not yet committed)
+
+`.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3: 119 scripts of
+`tests/scripts` and the four of `tests/nvda-scripts`, 123 in all (3311 s).
+
+| What | Scripts | Result |
+|---|---|---|
+| Every script but three | 120 | Passed in the full run, every announcement also spoken by NVDA |
+| `axClip/01-basics.txt` step 28, `axClip/02-history-kept.txt` step 27 | 2 | Failed in the full run: of the copies made half a second apart one was not in the history. Passed when axClip's folder was run again at once. The same was seen once without NVDA the evening before; the user's own axClip was running beside the test's and reads the same clipboard. Not known to be a fault of axClip; watch it |
+| `axFile/03-operations.txt` step 385 | 1 | Failed once in the full run: after an undo the focus was still on the list when the script looked for "Name contains". Passed when axFile's folder was run again at once |
+
+A first attempt that night failed 120 of 123 from the first script on, "no window of the run is in front": the
+desktop was the foreground window when the pass started, and Windows let none of the run's windows come to the front.
+With the user's axClaude window brought to the front first, the pass ran. An item of the priorities list.
+
+Found by this pass, older than this work: `axClaude/13-axkit-menu.txt` runs Close all windows, which on the real
+desktop reaches the user's own axKit windows too. His axClaude window asked "Close axClaude?" and stayed open, since
+Claude had work running; an idle window would have closed. An item of the priorities list, High.
+
+What this pass is the first to hear:
+
+- axHelp's conversation that hides on closing and comes back (`axHelp/02`, `axClaude/20` and `21`; axClaude FR-9.6),
+  and axKit's guides in Claude's working folder (`axHelp/01`).
+- The hotkey windows after the foreground rule moved into `ForegroundReturn` (axStart, axClip, axHelp).
+- F8, Say the status, in axClaude, axFile, axDown and axTask (bundle AX-7.10).
+- axClaude's background work: the status, the start and finish sounds, the recurring sound, Ctrl+B, the spoken lines
+  as an option (`axClaude/22`, FR-7.10), and the panel's rows hidden from a reply (FR-7.4b's neighbour, 607e2fb).
+
+Owed to the user's ear: the three background sounds (provisional) and their interval; that the hotkey brings axHelp
+back at once with the caret in the message field, and that hiding gives the keyboard back to the program before; F8
+inside a notice and in the hotkey windows; axHelp started hidden with "Keep the conversation ready" on.
+
 ## 2026-11-14, night: axMedia and axHelp; by the assistant with NVDA listening (`main` 7dfe161 with the hotkey change not yet committed)
 
 `.\nvda-pass.ps1 axMedia` and `.\nvda-pass.ps1 axHelp`, the user away at his own word, Windows 11 Pro 10.0.26200,

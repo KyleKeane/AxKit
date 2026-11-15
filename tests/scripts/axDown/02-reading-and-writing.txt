@@ -29,6 +29,10 @@ keys ctrl+down
 expect state Line 7, Column 1 \u00B7
 keys ctrl+down
 expect state Line 9, Column 1 \u00B7
+# F8, Say the status (bundle AX-7.10), from the text: the status bar's two parts as one announcement, the caret unmoved.
+keys f8
+expect said Line 9, Column 1
+expect state Line 9, Column 1 \u00B7
 # From inside a paragraph Ctrl+Up goes to its start first, then to the one before.
 keys down
 expect state Line 10, Column 1 \u00B7

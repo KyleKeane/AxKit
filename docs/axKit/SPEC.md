@@ -470,7 +470,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   starting at the first line or at a line with text directly after a blank line, and Ctrl+Shift+Up and
   Ctrl+Shift+Down the selection grown to there, as in Word (`EditKeys.Paragraph`; the EDIT control's own keys scroll a
   row and leave the caret where it is, as Notepad's do, which a screen reader, reading at the caret after the key,
-  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
+  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); F8 the status bar said by axKit itself, in a notice too (`BundleKeys.SayStatus`, AX-7.10, 2026-11-15); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
 - AX-8.3 Window-specific keys are defined once per window, in one table (`AxClaudeKeys`, `AxDownKeys`, `AxJSONKeys`, `AxGitKeys`, `AxTerminalKeys`, `AxFileKeys`, `AxMediaKeys`, `AxPreviewKeys`, `AxStartKeys`, `AxProcessKeys`, `AxTaskKeys`, `AxPassKeys`, `AxCalcKeys`, `AxClipKeys`), as constants
   with names that say what the key does. Changing a key is a change to that one line: the menu item and the key
   handler read the table, and the F1 text names the same keys and is changed with it. Single-letter quick keys
@@ -623,7 +623,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - **Options** (O), the app's own settings (AX-6.4), right after the app's own menus (Navigate the last of them where
     the app has one): its own submenus, then Text, General and Developer.
   - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after Options: New window ▸ (N), Open windows ▸ (O),
-    Recently closed ▸ (R) and Close all windows (C).
+    Recently closed ▸ (R) and Close all windows (C); then, after a separator, Say the status (S, F8, AX-7.10), the
+    one item about this window alone.
   - **axKit** (K since 2026-11-11, A before; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Claude ▸ (C;
     `CreateClaudeMenu`, `ai-help.md` AH-1.1: Use Claude in axKit, the switch; Ask about this window…, Shift+F1; Folders
     Claude may read… and Claude's working folder), AI tools ▸ (I; `mcp.md` MC-6.1: Let AI tools read and open axKit, Let AI tools run commands (MC-7.2,
@@ -1161,6 +1162,23 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   every window, on by default: Options, Text, Sound on headings, in every window's menu, palette and F1 text, kept in
   the theme file's display settings as `display.headingSound` (`docs/axKit/theme.md` TH-6.6); it says "Sound on
   headings on" or "Sound on headings off".
+- AX-7.10 **Say the status: F8 in every window** (2026-11-15; the key is the user's choice). Every window's status
+  bar is two labels of a native status strip (`StatusLayout.Pair`), which NVDA reads with NVDA+End. NVDA finds a
+  status bar by a lookup on the screen, at the bottom-left of the foreground window (the reason for
+  `WindowAccessibleObject`), and that lookup can miss: the user heard "blank" in axClaude while the status bar held
+  its full text, exposed to UI Automation, at 150 percent scaling in a maximized window, and a restart of NVDA did not
+  help; the cause was not found. So the status has a command of axKit's own that does not depend on it: **F8**
+  (`BundleKeys.SayStatus`), and Window, Say the status, say the status bar's texts as one interrupting announcement
+  of the window (`AxKitForm.SayStatus`, AX-7.3): the labels' texts in order, an empty one left out, each without its
+  own final full stop and parted by one, so that they are heard as separate parts ("Claude: ready | 1 shell in the
+  background | auto mode on. C:\work"); **"No status"** for a window with no status bar or no text in it
+  (`AxKitForm.StatusWords`, tested). The texts are read in one place, `AxKitForm.StatusTexts`, off the window's
+  status strip, so no window does anything for it; the automation channel's and the AI tools' `state` read the same.
+  The caret and the focus stay. It works from a text field and from a list, and **while a notice shows** too, said
+  on the notice: the status is still true behind it, the command only informs, and so it stands with the text size
+  keys, the bundle keys that work in a notice, where F1, F4, the palette and Shift+F1, which each open a notice, wait
+  (AX-7.2). An open menu keeps the key. A window put away says nothing (axClaude FR-9.6). In every F1 text
+  (`BundleHelp.StatusLine`), the command palette and the menu, marked read for the AI tools.
 
 ## 5. Architecture
 

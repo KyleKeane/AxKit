@@ -127,6 +127,8 @@ internal sealed partial class MainForm
         }
 
         _readyAnnounced = false;
+        // The old Claude's background work is gone with it, unsignalled (FR-7.10).
+        ForgetBackground();
         // Nothing of the old Claude's is handled: its question, if any, is gone with it.
         _wait = null;
         // A question of the new Claude belongs to no slash command of the old one (QuestionRouter).
@@ -215,6 +217,8 @@ internal sealed partial class MainForm
     /// <summary>Claude's process ended, its last output in and the process stopped: the explanation shown, the default --continue retried as a new conversation (FR-9.1), or "Claude stopped".</summary>
     protected override void OnProcessExited(int code)
     {
+        // FR-7.10: what ran in the background went with Claude; its going is no end to signal.
+        ForgetBackground();
         if (_model.HideReplay)
         {
             // Claude ended before it was ready: whatever it printed is the explanation.

@@ -218,7 +218,25 @@ public static class Sounds
         174.61, 220.00, 261.63, 349.23,
         196.00, 246.94, 293.66, 392.00), loops: true);
 
-    private static readonly Device Chimes = new("sounds", LineTick, ToolTick, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime);
+    // The sounds of work in the background (axClaude FR-7.10, asked 2026-11-15): one character, soft low sine notes
+    // at half the chimes' loudness, below the chimes' register. PROVISIONAL, all three: the user chooses the final
+    // ones by ear; each is this one line. What arrives rises, what leaves falls (his rule): E4 up a fifth to B4 for a
+    // start, the same two down for an end, shorter and lower than the Done chime's three notes.
+    private static readonly Sound BackgroundStartTone = new(WaveTone.Notes(0.2, (329.63, 60), (493.88, 90)));
+    private static readonly Sound BackgroundFinishTone = new(WaveTone.Notes(0.2, (493.88, 60), (329.63, 90)));
+
+    // The recurring sound while background work runs: the first notes of this row, one for each thing running, always
+    // rising and in the same timbre, so that with practice the number is heard (D4, F sharp, A, D5, F sharp: a chord
+    // climbing). Five at most (AxClaude.Core BackgroundWork.MostNotes).
+    private static readonly (double Hertz, int Milliseconds)[] BackgroundPulseNotes = [(293.66, 70), (369.99, 70), (440, 70), (587.33, 70), (739.99, 70)];
+    private const double BackgroundPulseLoudness = 0.16;
+    private static readonly Sound[] BackgroundPulses = [.. Enumerable.Range(1, BackgroundPulseNotes.Length).Select(count => new Sound(WaveTone.Notes(BackgroundPulseLoudness, PulseNotes(count))))];
+
+    /// <summary>The first <paramref name="count"/> notes of the recurring sound, a short gap after each so that they are counted apart.</summary>
+    private static (double Hertz, int Milliseconds)[] PulseNotes(int count) =>
+        [.. BackgroundPulseNotes.Take(count).SelectMany(note => new[] { note, (0.0, 35) })];
+
+    private static readonly Device Chimes = new("sounds", [LineTick, ToolTick, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone, .. BackgroundPulses]);
     private static readonly Device Music = new("working music", WorkingMusic);
 
     /// <summary>A tiny typewriter-like tick: a line from Claude arrived.</summary>
@@ -328,6 +346,27 @@ public static class Sounds
 
     /// <summary>A longer, louder call, three rising notes to a held one and again: Claude is done or asks while the window is in the background.</summary>
     public static void Alert() => Play("Alert", () => Chimes.Play(AlertChime, replace: true));
+
+    /// <summary>Two soft low notes rising: work started in the background (axClaude FR-7.10). Behind whatever plays, never cutting a chime. Provisional.</summary>
+    public static void BackgroundStart() => Play("BackgroundStart", () => Chimes.Play(BackgroundStartTone, replace: false));
+
+    /// <summary>The same two notes falling: work in the background ended. Provisional.</summary>
+    public static void BackgroundFinish() => Play("BackgroundFinish", () => Chimes.Play(BackgroundFinishTone, replace: false));
+
+    /// <summary>
+    /// The recurring sound while work runs in the background: <paramref name="notes"/> soft rising notes, one for each
+    /// thing running, five at most; nothing for none. Behind whatever plays. Recorded as "BackgroundPulse 2". Provisional.
+    /// </summary>
+    public static void BackgroundPulse(int notes)
+    {
+        if (notes < 1)
+        {
+            return;
+        }
+
+        var sound = BackgroundPulses[Math.Min(notes, BackgroundPulses.Length) - 1];
+        Play("BackgroundPulse " + Math.Min(notes, BackgroundPulses.Length), () => Chimes.Play(sound, replace: false));
+    }
 
     /// <summary>Starts the soft music loop that plays while Claude works (axClaude FR-7.9); nothing while it plays already.</summary>
     public static void StartMusic()

@@ -488,7 +488,7 @@ public abstract partial class AxKitForm
             title = Text,
             notice = NoticeOpen ? Overlay.Shown?.Title : null,
             noticeText = NoticeOpen ? Overlay.Shown?.Text : null,
-            status = Controls.OfType<StatusStrip>().SelectMany(strip => strip.Items.Cast<ToolStripItem>()).Select(item => item.Text).ToArray(),
+            status = StatusTexts(),
             focus = focused is null || focused.FindForm() != this ? null : new { name = focused.AccessibleName, value = WindowReading.ValueOf(focused) },
         };
     }

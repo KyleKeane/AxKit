@@ -497,8 +497,34 @@ public abstract partial class AxKitForm : Form
         process = Environment.ProcessId,
         // Whether the window is on view: false for a window put away by its close (axClaude FR-9.6).
         visible = Visible,
-        status = Controls.OfType<StatusStrip>().SelectMany(strip => strip.Items.Cast<ToolStripItem>()).Select(item => item.Text).ToArray(),
+        status = StatusTexts(),
     };
+
+    /// <summary>
+    /// The texts of the window's status bar, its labels in order: the one place that reads them, for Say the status
+    /// (<see cref="SayStatus"/>), the automation channel and the AI tools. Every kind of window puts a
+    /// <see cref="StatusStrip"/> among its controls (<see cref="StatusLayout.Pair"/>); a window without one gives none.
+    /// </summary>
+    internal string[] StatusTexts() =>
+        Controls.OfType<StatusStrip>().SelectMany(strip => strip.Items.Cast<ToolStripItem>()).Select(item => item.Text ?? string.Empty).ToArray();
+
+    /// <summary>
+    /// Say the status (AX-7.10, <see cref="BundleKeys.SayStatus"/>, F8, and Window, Say the status): the status bar's
+    /// texts as one interrupting announcement of the window's own, as NVDA+End would read them, on the notice while
+    /// one shows. NVDA finds a status bar by a lookup on the screen that can miss ("blank" over a full bar, the user,
+    /// 2026-11-15); this never depends on it.
+    /// </summary>
+    protected internal void SayStatus() => Announce(StatusWords(StatusTexts()), true);
+
+    /// <summary>What Say the status says when the window has no status bar, or one with no text.</summary>
+    public const string NoStatus = "No status";
+
+    /// <summary>"Claude: ready. C:\work": the status bar's texts in order, each without its own trailing full stop, parted by one so that they are heard as separate parts; <see cref="NoStatus"/> for none.</summary>
+    public static string StatusWords(IEnumerable<string> texts)
+    {
+        var parts = texts.Select(text => text.Trim().TrimEnd('.').TrimEnd()).Where(text => text.Length > 0).ToList();
+        return parts.Count == 0 ? NoStatus : string.Join(". ", parts);
+    }
 
     private void StartUpWork()
     {
@@ -590,7 +616,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// The common keys (AX-8.2): the text size keys work everywhere, a notice included; while a notice shows, its text
+    /// The common keys (AX-8.2): the text size keys and Say the status (F8, AX-7.10) work everywhere, a notice included; while a notice shows, its text
     /// takes the find keys (AX-7.2) and every other shortcut waits (not calling the base skips the menu shortcuts;
     /// Enter and Escape reach the notice's buttons through AcceptButton and CancelButton); F1 shows the shortcuts,
     /// Ctrl+Shift+P the palette, Ctrl+S saves; then the window's own keys.
@@ -606,6 +632,11 @@ public abstract partial class AxKitForm : Form
             case BundleKeys.SmallerText:
             case BundleKeys.SmallerTextNumpad:
                 ChangeTextSize(-1);
+                return true;
+            case BundleKeys.SayStatus when FromHandle(msg.HWnd) is not ToolStrip:
+                // AX-7.10: information and nothing else, so it works while a notice shows too, as the text size keys
+                // do (the status is still true behind the notice); an open menu keeps the key.
+                SayStatus();
                 return true;
         }
 

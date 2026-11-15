@@ -211,7 +211,7 @@ public sealed class KeyTests
     [Fact]
     public void Every_F1_text_names_the_AxKit_menu_and_its_first_items()
     {
-        const string line = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About";
+        const string line = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About";
         var missing = F1Texts.Where(pair => !pair.Value.Contains(line, StringComparison.Ordinal)).Select(pair => pair.Key).ToList();
         Assert.True(missing.Count == 0, "Without the axKit menu line: " + string.Join(", ", missing));
     }
@@ -220,7 +220,7 @@ public sealed class KeyTests
     [Fact]
     public void Every_F1_text_names_the_keys_every_window_has()
     {
-        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.MainAction, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
+        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.SayStatus, BundleKeys.MainAction, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
         var missing = new List<string>();
         foreach (var (window, text) in F1Texts)
         {
@@ -248,7 +248,7 @@ public sealed class KeyTests
         string[] known =
         [
             "Alt+Up", "Ctrl+Down", "Ctrl+J", "Ctrl+M", "Ctrl+Shift+N", "Ctrl+Up", "F2", "Left", "Right", "Shift+Tab", "Tab",
-            "Apps", "Backspace", "Ctrl+1", "Ctrl+2", "Ctrl+3", "Ctrl+4", "Ctrl+5", "Ctrl+6", "Ctrl+C", "Ctrl+D", "Ctrl+E", "Ctrl+G", "Ctrl+I", "Ctrl+K", "Ctrl+L",
+            "Apps", "Backspace", "Ctrl+1", "Ctrl+B", "Ctrl+2", "Ctrl+3", "Ctrl+4", "Ctrl+5", "Ctrl+6", "Ctrl+C", "Ctrl+D", "Ctrl+E", "Ctrl+G", "Ctrl+I", "Ctrl+K", "Ctrl+L",
             "Ctrl+N", "Ctrl+O", "Ctrl+P", "Ctrl+Q", "Ctrl+R", "Ctrl+Shift+A", "Ctrl+Shift+C", "Ctrl+Shift+F", "Ctrl+Shift+H", "Ctrl+Shift+I",
             "Ctrl+Shift+K", "Ctrl+Shift+L", "Ctrl+Shift+Q", "Ctrl+Shift+R", "Ctrl+Shift+S", "Ctrl+Shift+T", "Ctrl+Shift+W", "Ctrl+T",
             "Ctrl+W", "Ctrl+Z", "Delete", "Down", "Enter", "Escape", "F5", "O", "Shift+Enter", "Shift+Escape", "Shift+F10", "Space", "Up",

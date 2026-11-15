@@ -101,6 +101,12 @@ wait 1200
 # 1.3 The status bar: nothing on the left, the folder's full path on the right.
 expect state "status":["",
 expect state \\nav"]
+# F8, Say the status (bundle AX-7.10): the status bar said by axKit itself, from the list; the empty left part is
+# left out, so the folder's path is all of it.
+said
+keys f8
+expect said \nav
+refuse said No status
 
 # 1.4 Enter on a folder: "<folder>, N items, <entry>", once; the title names it.
 keys home

@@ -158,6 +158,12 @@ public static partial class ClaudeCodeTexts
     /// <summary>What the mode line counts for a queued feedback draft, "1 feedback draft": the words, as a counted part is tested for them.</summary>
     public const string FeedbackDraft = "feedback draft";
 
+    /// <summary>The word in what the mode line counts as background shells, "1 shell", "2 shells" (2.1.300): how <see cref="BackgroundWork.Count"/> knows the kind.</summary>
+    public const string CountedShell = "shell";
+
+    /// <summary>The word in what the mode line counts as background agents, "2 agents", "1 local agent" (the count is assumed from "1 shell, 2 agents"; a mode line with agents and only the manage hint was heard on 2026-11-15).</summary>
+    public const string CountedAgent = "agent";
+
     /// <summary>The same words with the space after the count, as the count in front of them is found. Two spellings since before this table; both kept.</summary>
     public const string FeedbackDraftAfterCount = " feedback draft";
 

@@ -13,13 +13,16 @@ public static class BundleHelp
     public const string InEveryWindow = "In every window of axKit";
 
     /// <summary>The bundle's menus in one line, the same in every F1 text (AX-9.1: Window, axKit, Help; <c>KeyTests</c> checks it whole).</summary>
-    public const string BundleMenusLine = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About";
+    public const string BundleMenusLine = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Check for updates, and About";
 
     /// <summary>F4's line, the same in every F1 text: the report is a form of standard controls (AX-8.10, reports.md RP-3).</summary>
     public const string ReportLine = "  F4: report a bug, an idea or feedback to axKit's maintainer: type your words, Enter makes a new line; Tab goes on to the kind, a box for more detail and what is sent with your report; Ctrl+Enter or the Send button sends; Escape cancels and keeps nothing. The report is encrypted on your computer, and only the maintainer can read it";
 
     /// <summary>Ctrl+Enter's line, the same in every F1 text (AX-8.10 rule 3).</summary>
     public const string MainActionLine = "  Ctrl+Enter: the main action of where you are: it sends a form from any of its fields, keeps a long text from inside its box, presses a notice's main button, and does a window's main action where it has one; anywhere else, the edge sound and nothing more";
+
+    /// <summary>F8's line, the same in every F1 text (AX-7.10, 2026-11-15).</summary>
+    public const string StatusLine = "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";
 
     /// <summary>
     /// The first line and the bundle's section, ending in a blank line so that the app's own sections follow. In the
@@ -55,6 +58,7 @@ public static class BundleHelp
         text.Append(ReportLine).Append("\r\n");
         text.Append(MainActionLine).Append("\r\n");
         text.Append("  Shift+F1: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more\r\n");
+        text.Append(StatusLine).Append("\r\n");
         foreach (var line in lines)
         {
             text.Append("  ").Append(line).Append("\r\n");

@@ -94,3 +94,15 @@ expect commands Options, Developer
 expect state Claude: ready |
 expect state mode on
 expect state \\fresh"
+# F8, Say the status (bundle AX-7.10): the same texts said by axKit itself, from the message field and from the
+# conversation, the focus staying; and the Window menu's item.
+keys f8
+expect said ! Claude: ready |
+expect focus Message to Claude
+keys ctrl+2
+keys f8
+expect said ! Claude: ready |
+expect focus Conversation
+menu Say the status
+expect said ! Claude: ready |
+expect commands Say the status, Window, F8
