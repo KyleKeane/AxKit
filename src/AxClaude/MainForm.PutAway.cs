@@ -211,6 +211,23 @@ internal sealed partial class MainForm
         }
     }
 
+    /// <summary>Said when the window is brought up with a message typed and not sent in its field (FR-9.6).</summary>
+    internal const string UnsentMessage = "Unsent message in the field";
+
+    /// <summary>
+    /// After a "show" bring-up: a message typed and not sent stays in the field (the user, 2026-11-15: kept, and said,
+    /// so that it is no surprise): the recall chime and a short line after NVDA has read the field. Not after a
+    /// "message" hand-over, which says what it added itself.
+    /// </summary>
+    private void SayUnsentMessage()
+    {
+        if (!NoticeOpen && BottomControl == Input && Input.Text.Trim().Length > 0)
+        {
+            Sounds.Recall();
+            Announce(UnsentMessage, false);
+        }
+    }
+
     /// <summary>Session, End Claude and close this window: the close for good, with the console window's question while Claude is in the middle of something (FR-1.7).</summary>
     private void EndForGood()
     {

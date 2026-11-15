@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axHelp: when its conversation comes back with a message you typed and did not send, it says so with a short chime, "Unsent message in the field", after NVDA has read the field. The message stays, as before.
 - axKit: Escape now ends the key test at once (Help, Diagnostics, Test a key), with "Key test ended". It needed Escape twice before; Escape is no longer named by the test, and in axStart it ends the test without hiding the window.
 
 ## 5.9.1

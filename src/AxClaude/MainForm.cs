@@ -222,6 +222,7 @@ internal sealed partial class MainForm : ConsoleForm
         {
             _keeperLeft = false;
             BringUp();
+            SayUnsentMessage();
         },
         AppMessage.End when _options.HideOnClose => EndRequested,
         _ => null,
