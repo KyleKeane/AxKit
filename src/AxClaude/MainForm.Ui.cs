@@ -55,6 +55,8 @@ internal sealed partial class MainForm
         // The interrupt key (FR-2.3). Ctrl+Escape opens the Start menu and never reaches the app.
         Add(claude, new Command("&Interrupt", AxClaudeKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
         Add(claude, new Command("Next &permission mode", AxClaudeKeys.NextPermissionMode, () => Write(ClaudeCodeKeys.ShiftTab)) { Mark = CommandMark.Act });
+        // FR-14.3: Choose the model, Choose the effort: Claude Code's own pickers, from ClaudeCodeSettings.
+        AddClaudeCodeCommands(claude);
         // FR-7.10: on demand, the number of things running in the background and each agent by type and description.
         Add(claude, new Command("What runs in the &background", AxClaudeKeys.BackgroundWork, SayBackgroundWork) { Mark = CommandMark.Read });
         claude.DropDownItems.Add(new ToolStripSeparator());
@@ -139,6 +141,9 @@ internal sealed partial class MainForm
         questions.DropDownItems.Add(Toggle("&Dismiss Claude's feedback surveys unheard", _settings.DismissSurveys, v => _settings.DismissSurveys = v));
         questions.DropDownItems.Add(Toggle("&Open Claude's feedback drafts by themselves", _settings.OpenFeedbackDrafts, v => _settings.OpenFeedbackDrafts = v));
         options.DropDownItems.Add(questions);
+        // FR-14: Claude Code's own settings, written into its user settings file at the user's choice; a submenu of
+        // Options, since they are settings, and one level deep (bundle AX-9.1).
+        options.DropDownItems.Add(CreateClaudeCodeSettingsMenu());
 
         options.DropDownItems.Add(CreateTextMenu(TranscriptTextItems()));
         options.DropDownItems.Add(CreateGeneralMenu(Toggle("&Keep recordings and exported conversations out of git", _settings.KeepFilesOutOfGit, v =>

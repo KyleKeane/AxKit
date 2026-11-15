@@ -209,6 +209,24 @@ since axHelp is what starts such a window and brings it up.
    next Alt+F4 hides again; Close anyway ends it.
 4. With such a window hidden, sign out of Windows: no question holds the sign-out up.
 
+## 21. Claude Code's own settings (FR-14, 2026-11-15)
+
+Script: `tests/scripts/axClaude/26-claude-code-settings.txt` (a stand-in for Claude Code, no network; the run's own
+settings file, never yours). By ear, with Claude Code signed in; the steps change your real `.claude\settings.json`
+and step 5 puts it back:
+
+1. Alt+O, C (Options, Claude Code settings): NVDA reads "Block Claude Code's feedback requests, not checked" first;
+   Down through the items: the card choice checked, every other item not checked; Escape.
+2. Alt+O, C, B: "Claude Code's feedback requests blocked, applies at once". Alt+O, C again: the item checked.
+3. Ask Claude something, a few times over the session: no "How is Claude doing this session?" comes (the survey is
+   rare anyway; this step only checks that nothing breaks).
+4. Alt+O, C, Q: "Claude-drafted feedback: quiet, counted without a card, applies at once"; Alt+O, C, C: back to the card.
+5. Alt+O, C, B again: "... back to Claude Code's own default, applies at once"; the item not checked. Open
+   `.claude\settings.json` in axJSON: no `feedbackSurveyRate`, no `feedbackDrafts`, and every key you had is there.
+6. Alt+A, O (Actions, Choose the model): "Sent", then Claude Code's model list in place of the message field, the
+   current model marked; Escape: the message field back. Alt+A, F (Choose the effort) the same. While Claude
+   writes a reply, Alt+A, O: "Not sent: Claude is busy".
+
 ## 22. Work in the background (FR-7.10, 2026-11-15)
 
 The automated part is `tests/scripts/axClaude/22-background-work.txt`, with a stand-in for Claude Code that draws the

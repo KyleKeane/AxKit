@@ -92,6 +92,9 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "v => _settings.ReviewAnswers = v, CommandMark.Act", "the review is the user's own check of what goes to Claude"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "}, CommandMark.Act))); // Writes into the project repository", "writes into the user's repository"),
         // The items given their marks on 2026-11-13 (R-11) whose act must never be lost.
+        // axClaude FR-14: Claude Code's own settings, written into its file or sent as a command.
+        (Path.Combine("src", "AxClaude", "MainForm.ClaudeCodeSettings.cs"), "CommandMark.Act); // Writes Claude Code's user settings file", "writes Claude Code's user settings file"),
+        (Path.Combine("src", "AxClaude", "MainForm.ClaudeCodeSettings.cs"), "CommandMark.Act)); // Types a command into Claude Code", "types a slash command into Claude Code"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => SendInput()) { ShortcutKeyDisplayString = \"Enter in the message field\" }, CommandMark.Act)", "sends the message field to Claude Code"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => Write(ClaudeCodeKeys.CtrlD)), CommandMark.Act)", "types a key into Claude Code"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "(_, _) => Write(ClaudeCodeKeys.ShiftUp)), CommandMark.Act)", "types a key into Claude Code"),

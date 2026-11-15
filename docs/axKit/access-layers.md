@@ -25,7 +25,9 @@ What every layer shares:
 - The program: Claude Code, the `claude` command, run on a pseudo console in its screen reader mode.
 - Its one place: `src/AxClaude.Core/Transcript/ClaudeCodeTexts.cs` holds every label, row, hint, mark and pattern
   of Claude Code's screen, with the version or fixture that shows each. `SlashCommands.All` is the table of the slash
-  command names. `src/AxClaude.Core/Pty/ClaudeLauncher.cs` builds the command line and the environment, and
+  command names. `src/AxClaude.Core/ClaudeCodeSettings.cs` is the table of Claude Code's settings the menus offer
+  (docs/axClaude/SPEC.md FR-14), with the Claude Code version it was checked against, and the one change of Claude
+  Code's user settings file. `src/AxClaude.Core/Pty/ClaudeLauncher.cs` builds the command line and the environment, and
   `src/AxKit.Core/ClaudeCodeProgram.cs` finds the program.
 - What is read and how: screen text. The byte stream goes through the bundle's parser and screen into lines, and
   `SessionModel`, `LineClassifier`, `QuestionReader`, `ScreenReader`, `ScreenActions` and `SurveyReader` recognise

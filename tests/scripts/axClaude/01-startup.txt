@@ -86,6 +86,7 @@ expect commands Options, Sounds,
 expect commands Options, Speech,
 expect commands Options, When Claude is done,
 expect commands Options, Questions,
+expect commands Options, Claude Code settings
 expect commands Options, Text,
 expect commands Options, General,
 expect commands Options, Developer
