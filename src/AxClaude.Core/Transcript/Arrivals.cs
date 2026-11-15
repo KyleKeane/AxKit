@@ -36,6 +36,10 @@ public readonly record struct Arrival(bool NewLine, bool ToolCall, string? Speec
 /// moment ago holds the first reply line next. The <c>tool:</c> row of each tool call joins the utterance when
 /// asked for, whatever the reply mode; it is printed whole and the tool then runs under it, so it is final at once.
 /// The same rows, new or rewritten in place for the next call, are reported for the tool tick whatever is spoken.
+/// The record Claude Code prints in an answered question's place ("User answered Claude's questions:" and a row per
+/// question, <see cref="LineKind.AnswerRecord"/>) is skipped like a marker (FR-7.4b): until 2026-11-14 its rows were
+/// reply lines, and the row with the old question, the last visible line while Claude worked, was spoken seconds
+/// later with the next reply, into the next question.
 /// </summary>
 public sealed class Arrivals
 {
@@ -104,6 +108,13 @@ public sealed class Arrivals
             }
 
             if (!afterMarker || (mode == ReplySpeechMode.None && !toolCalls))
+            {
+                continue;
+            }
+
+            // Claude Code's record of an answered question (FR-7.4b) is not Claude's reply: never spoken, since the
+            // user heard "Sent" with the answer, and the reply's own lines after it are spoken as those before it.
+            if (line.Kind == LineKind.AnswerRecord)
             {
                 continue;
             }

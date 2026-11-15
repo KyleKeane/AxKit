@@ -66,6 +66,9 @@ internal sealed partial class MainForm
 
     private void UserActedNow() => _userActedAt = Environment.TickCount64;
 
+    /// <summary>About when NVDA has read the reply text spoken last (<see cref="LeftoverSpeech"/>, FR-7.4b); 0 while none is counted as running.</summary>
+    private long _replySpeechEnds;
+
     /// <summary>
     /// Claude waits on something the control area reads, so its rows are not read as reply lines too. Not a feedback
     /// survey: it comes after a turn, and the end of the reply still held when it arrives is spoken, where a question
@@ -101,6 +104,21 @@ internal sealed partial class MainForm
         // question without a jump.
         var interrupt = !NoticeOpen && (unprompted ? _settings.InterruptForQuestions : Area.ContainsFocus || Input.ContainsFocus);
         var focus = !NoticeOpen && (interrupt || Input.ContainsFocus || Area.ContainsFocus);
+        // FR-7.4b: a question of Claude's that opens while NVDA may still be reading reply text the window spoke cuts
+        // that speech off with its own announcement, whatever Go to them at once says: the reply is in the conversation,
+        // and read to its end it ran into the question (2026-11-14). The option still decides alone whether the focus
+        // moves at once (interrupt and focus above are untouched). Reply text still held, not yet spoken, is dropped
+        // rather than spoken after the question. Not a feedback survey, which leaves the reply's end be (R-19), and
+        // not an offered command: QuestionShown is false for both.
+        var cut = false;
+        if (QuestionShown)
+        {
+            cut = !NoticeOpen && LeftoverSpeech.Running(Environment.TickCount64, _replySpeechEnds);
+            _replySpeechEnds = 0;
+            _speechHold.Stop();
+            _heldLines.Clear();
+        }
+
         if (unprompted && _settings.SoundOnBell && !(_settings.BackgroundAlert && !ContainsFocus))
         {
             // An offered command has a chime of its own (FR-2.12), so that it is told from a question of Claude's.
@@ -112,17 +130,21 @@ internal sealed partial class MainForm
         Area.Visible = !NoticeOpen;
         _wait = new Wait(signature, Shown: true, text);
         var actedBefore = _userActedAt;
-        if (interrupt)
+        var question = (Area.CurrentItem.Length == 0 ? name : name + Stop(name) + Area.CurrentItem).TrimEnd(' ', '.');
+        // After NVDA has taken the focus change, so that the question comes last: raised at once, it was cut off.
+        void Interrupt() => After(FocusSettleMs, () =>
         {
-            // After NVDA has taken the focus change, so that the question comes last: raised at once, it was cut off.
-            var question = (Area.CurrentItem.Length == 0 ? name : name + Stop(name) + Area.CurrentItem).TrimEnd(' ', '.');
-            After(FocusSettleMs, () =>
+            if (AreaShows(signature) && _userActedAt == actedBefore)
             {
-                if (AreaShows(signature) && _userActedAt == actedBefore)
-                {
-                    Announce(question, true);
-                }
-            });
+                Announce(question, true);
+            }
+        });
+
+        if (interrupt || (cut && focus))
+        {
+            // With the focus moved at once from the bottom of the window and reply speech to cut off, the question
+            // interrupts as under Go to them at once (FR-7.4b).
+            Interrupt();
         }
         else if (!focus && !NoticeOpen && (Transcript.ContainsFocus || !ContainsFocus))
         {
@@ -135,6 +157,12 @@ internal sealed partial class MainForm
                 if (AreaShows(signature) && _userActedAt == actedBefore && !NoticeOpen && Area.Current is { } current && !current.ContainsFocus)
                 {
                     current.Focus();
+                    if (cut)
+                    {
+                        // Reply speech to cut off (FR-7.4b): the question interrupts once the focus is there, so that
+                        // it is heard once; raised before the focus moved, NVDA read the question a second time on arrival.
+                        Interrupt();
+                    }
                 }
             });
         }

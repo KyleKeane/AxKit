@@ -279,6 +279,88 @@ public class ArrivalsTests
         Assert.DoesNotContain(heard.Speech, text => text.Contains("Running") && !text.Contains("claude:"));
     }
 
+    // ---- Claude Code's record of an answered question (FR-7.4b): shown, a kind of its own, never reply speech ----
+
+    [Fact]
+    public void The_record_of_an_answered_question_is_shown_and_not_spoken_and_the_reply_around_it_is()
+    {
+        // Recorded with 2.1.319: two reply lines, the question, the answer 2, the record in the question's place, the reply.
+        const string fixture = "one-question-claude2.1.319-240x50.vt";
+        var model = new SessionModel(240, 50);
+        var heard = Listen(model, ReplySpeechMode.All);
+        Replay(model, fixture, ["First write two short sentences on two lines saying that you are about to ask me something."]);
+
+        // As Claude Code prints it: a no-break space and a space after the bullet.
+        const string label = "●  User answered Claude's questions:";
+        const string row = "· Which colour do you prefer? → Green";
+        Assert.Equal([label, row], model.Lines.Where(l => l.Kind == LineKind.AnswerRecord && !l.Hidden).Select(l => l.Text));
+        var visible = Visible(model);
+        Assert.Equal(visible.IndexOf(label) + 1, visible.IndexOf(row));
+        Assert.Equal(visible.IndexOf(row) + 1, visible.IndexOf("claude: You prefer green."));
+
+        var spoken = string.Join(" | ", heard.Speech);
+        Assert.DoesNotContain("User answered", spoken);
+        Assert.DoesNotContain("→ Green", spoken);
+        Assert.Contains("claude: I am about to ask you a question.", spoken);
+        Assert.Contains("This is a single colour preference question.", spoken);
+        Assert.Contains("claude: You prefer green.", spoken);
+    }
+
+    [Theory]
+    [InlineData("several-questions-claude2.1.281-240x50.vt", "Please use the AskUserQuestion tool once, with two questions in the same call.", "· Which colour do you prefer? → Green|· Which fruits do you like? → Apple, Cherry", "claude: You prefer green")]
+    [InlineData("several-questions-claude2.1.316-240x50.vt", "Please use the AskUserQuestion tool once, with two questions in the same call.", "· Which colour do you prefer? → Green|· Which fruits do you like? → Apple, Cherry", "claude: You prefer green")]
+    // The answer typed after Other stands where an answer's name does.
+    [InlineData("other-answer-claude2.1.281-240x50.vt", "Please use the AskUserQuestion tool to ask me which flower I enjoy thinking about", "· Which flower do you enjoy thinking about? → tulip", "claude: You like thinking about tulips.")]
+    public void The_record_has_a_row_for_every_question_answered_and_none_is_spoken(string fixture, string sent, string rows, string reply)
+    {
+        var model = new SessionModel(240, 50);
+        var heard = Listen(model, ReplySpeechMode.All);
+        Replay(model, fixture, [sent]);
+
+        string[] record = ["●  User answered Claude's questions:", .. rows.Split('|')];
+        Assert.Equal(record, model.Lines.Where(l => l.Kind == LineKind.AnswerRecord && !l.Hidden).Select(l => l.Text));
+        Assert.All(record, text => Assert.Contains(text, Visible(model)));
+
+        var spoken = string.Join(" | ", heard.Speech);
+        Assert.DoesNotContain("User answered", spoken);
+        Assert.DoesNotContain("→", spoken);
+        Assert.Contains(reply, spoken);
+    }
+
+    [Fact]
+    public void A_reply_goes_on_after_a_record_in_its_middle_and_a_wrapped_record_row_stays_whole()
+    {
+        var model = new SessionModel(80, 16);
+        var heard = Listen(model, ReplySpeechMode.All);
+        Feed(model, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        model.Send("ask me");
+        Feed(model, $"{Esc}[?25l{Esc}[1;1Hyou: ask me{Esc}[K\r\nThinking…{Esc}[K\r\nauto mode on (shift+tab to cycle)  ·  esc to interrupt{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        // The second row of the record is as wide as the console, so the row under it is the rest of it.
+        var wide = "· Which of the colours that were named a moment ago do you like best of all the".PadRight(79, '?');
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hclaude: Before the record.{Esc}[K\r\n●  User answered Claude's questions:{Esc}[K\r\n· Which fruit? → Apple{Esc}[K\r\n{wide}{Esc}[K\r\ncolours? → Green{Esc}[K\r\nAfter the record, still the reply.{Esc}[K\r\nBaked for 1s · done 2:47 PM{Esc}[K\r\nauto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K{Esc}[?25h");
+
+        Assert.Equal(
+            ["●  User answered Claude's questions:", "· Which fruit? → Apple", wide, "colours? → Green"],
+            model.Lines.Where(l => l.Kind == LineKind.AnswerRecord).Select(l => l.Text));
+        Assert.Equal(LineKind.Plain, model.Lines.Single(l => l.Text.StartsWith("After the record", StringComparison.Ordinal)).Kind);
+        Assert.DoesNotContain(model.Lines, l => l.Kind == LineKind.AnswerRecord && l.JoinedToPrevious);
+        Assert.Equal(["claude: Before the record. After the record, still the reply."], heard.Speech);
+    }
+
+    [Fact]
+    public void A_reply_row_that_starts_like_a_record_row_is_a_reply_row_without_the_label_above_it()
+    {
+        var model = new SessionModel(80, 14);
+        var heard = Listen(model, ReplySpeechMode.All);
+        Feed(model, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        model.Send("list");
+        Feed(model, $"{Esc}[?25l{Esc}[1;1Hyou: list{Esc}[K\r\nThinking…{Esc}[K\r\nauto mode on (shift+tab to cycle)  ·  esc to interrupt{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hclaude: Two things.{Esc}[K\r\n· input → output{Esc}[K\r\nBaked for 1s · done 2:47 PM{Esc}[K\r\nauto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K{Esc}[?25h");
+
+        Assert.DoesNotContain(model.Lines, l => l.Kind == LineKind.AnswerRecord);
+        Assert.Equal(["claude: Two things. · input → output"], heard.Speech);
+    }
+
     private sealed class Heard
     {
         public List<string> Speech { get; } = [];

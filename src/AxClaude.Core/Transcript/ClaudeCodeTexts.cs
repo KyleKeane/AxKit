@@ -260,6 +260,22 @@ public static partial class ClaudeCodeTexts
     /// <summary>What stands between an answer's name and Claude's explanation of it.</summary>
     public const string AnswerDash = " — ";
 
+    /// <summary>
+    /// The record Claude Code prints in an answered question's place, its first row: "●  User answered Claude's
+    /// questions:" (2.1.281 to 2.1.319; the one-question, several-questions and other-answer fixtures). Claude Code's
+    /// own words about the user, not Claude's reply. After the bullet stand a no-break space and a space; any white
+    /// space is taken.
+    /// </summary>
+    [GeneratedRegex(@"^●\s+User answered Claude's questions:$")]
+    public static partial Regex AnsweredLabel();
+
+    /// <summary>
+    /// What each row under that label starts with, one row per question answered: "· Which colour do you prefer? →
+    /// Green", the whole question, an arrow, then the answer's name, the names of several ("Apple, Cherry") or the
+    /// words typed after Other ("tulip").
+    /// </summary>
+    public const string AnsweredRowStart = "· ";
+
     // ---- /config's rows ("Show tips: true", "Thinking mode: true (Thinking can't be turned off …)"; 2.1.282) ----
 
     public const string SettingSeparator = ": ";

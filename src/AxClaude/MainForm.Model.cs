@@ -126,6 +126,8 @@ internal sealed partial class MainForm
             if (text.Length > 0)
             {
                 Announce(text.ToString(), false);
+                // Until about when NVDA reads it: a question that opens meanwhile cuts it off (FR-7.4b, ShowInArea).
+                _replySpeechEnds = LeftoverSpeech.EndsAt(Environment.TickCount64, _replySpeechEnds, text.Length);
             }
         }
 

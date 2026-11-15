@@ -148,8 +148,27 @@ public static partial class LineClassifier
     public static string? TextPromptAnswer(string text) =>
         ClaudeCodeTexts.TextPrompt().Match(text) is { Success: true } m ? m.Groups[1].Value : null;
 
+    /// <summary>The first row of the record Claude Code prints in an answered question's place, "●  User answered Claude's questions:".</summary>
+    public static bool IsAnsweredLabel(string text) => ClaudeCodeTexts.AnsweredLabel().IsMatch(text);
+
+    /// <summary>
+    /// Whether a row under that label still belongs to the record: a row that starts an answered question ("· Which
+    /// colour? → Green"), or the rest of such a row that Claude Code wrapped at the console width (the row before it
+    /// is a record row within 20 characters of <paramref name="columns"/>, the rule of FR-3.2a). Only under the label:
+    /// a reply's own row may start with the same mark.
+    /// </summary>
+    public static bool ContinuesAnswerRecord(string text, string previousRecordRow, int columns) =>
+        text.StartsWith(ClaudeCodeTexts.AnsweredRowStart, StringComparison.Ordinal)
+        || (text.Length > 0 && !IsAnsweredLabel(previousRecordRow) && previousRecordRow.Length >= columns - 20
+            && Classify(text, inPromptBlock: false) == LineKind.Plain);
+
     public static LineKind Classify(string text, bool inPromptBlock)
     {
+        if (IsAnsweredLabel(text))
+        {
+            return LineKind.AnswerRecord;
+        }
+
         if (text.StartsWith(ClaudeCodeTexts.YouLabel, StringComparison.Ordinal))
         {
             return LineKind.UserEcho;

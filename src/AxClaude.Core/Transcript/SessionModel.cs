@@ -887,12 +887,16 @@ public sealed partial class SessionModel : LineStore
     /// <summary>
     /// Classifies the rows on screen. The reply block state (from a <c>claude:</c> row up to the next row of another
     /// kind) and the previous visible row's text run through the whole transcript, committed rows included, because
-    /// a heading is only a heading inside a reply and after a blank row (§7.6).
+    /// a heading is only a heading inside a reply and after a blank row (§7.6). The rows under the label of an
+    /// answered question's record (<see cref="LineKind.AnswerRecord"/>) are the record's while they continue it
+    /// (<see cref="LineClassifier.ContinuesAnswerRecord"/>); the record is Claude Code's, so it neither is the reply
+    /// nor ends it.
     /// </summary>
     private void Classify()
     {
         var inReply = false;
         string? previousText = null;
+        Line? record = null;
         for (var i = 0; i < _lines.Count; i++)
         {
             var line = _lines[i];
@@ -921,6 +925,10 @@ public sealed partial class SessionModel : LineStore
                 }
 
                 line.Kind = LineClassifier.Classify(line.Text, inPromptBlock);
+                if (line.Kind == LineKind.Plain && record is not null && LineClassifier.ContinuesAnswerRecord(line.Text, record.Text, Columns))
+                {
+                    line.Kind = LineKind.AnswerRecord;
+                }
 
                 string? next = null;
                 for (var j = i + 1; j < _lines.Count; j++)
@@ -943,11 +951,12 @@ public sealed partial class SessionModel : LineStore
                 continue;
             }
 
+            record = line.Kind == LineKind.AnswerRecord ? line : null;
             if (line.Kind == LineKind.ClaudeReply)
             {
                 inReply = true;
             }
-            else if (line.Kind != LineKind.Plain)
+            else if (line.Kind is not (LineKind.Plain or LineKind.AnswerRecord))
             {
                 inReply = false;
             }
@@ -983,6 +992,18 @@ public sealed partial class SessionModel : LineStore
 
             if (line.Hidden)
             {
+                continue;
+            }
+
+            if (line.Kind == LineKind.AnswerRecord)
+            {
+                // Claude Code's record of an answered question: no row of the reply joins to it, and the reply goes on after it.
+                if (!line.Committed)
+                {
+                    line.JoinedToPrevious = false;
+                }
+
+                previous = null;
                 continue;
             }
 

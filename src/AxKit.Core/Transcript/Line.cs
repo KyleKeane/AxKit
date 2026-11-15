@@ -28,6 +28,13 @@ public enum LineKind
     /// and found again with q (D33). Claude redraws an answered question as a one-line result, so this is what stays.
     /// </summary>
     Question,
+
+    /// <summary>
+    /// A row of the record Claude Code prints in an answered question's place (<c>●  User answered Claude's
+    /// questions:</c>, then <c>· Which colour? → Green</c> for each question): Claude Code's words, not Claude's reply,
+    /// so shown and never spoken as one (axClaude FR-7.4b). A row of the screen, classified by its text like any other.
+    /// </summary>
+    AnswerRecord,
 }
 
 /// <summary>
