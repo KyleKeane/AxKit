@@ -140,6 +140,14 @@ approval before you can use them in your app: runFullTrust", is the same as at t
 by the reason given in the submission options. Before any of it: Microsoft's sign-in may stop on an offer to set up
 a passkey, which only the maintainer answers, in that Edge window.
 
+What the third submission taught (5.9.1, 2026-11-15): the recipe held, with one trap. A drop at the centre of the
+"Drag your packages here" area lands on its "browse your files" link, and Edge then downloads the file instead of
+uploading it; drop on the area's empty part (`eval` with `document.elementFromPoint(x, y)` should name the area's
+`DIV`, not an `A`), which uploaded at once. The support contact lives on Properties, under "Support info (optional)",
+as the third text field after the privacy policy URL and the website; the Properties page's Save lands on the overview
+like the others. Start update made Submission 3; Save on Packages dropped 5.8.0 by itself; the survey's Cancel is the
+first `Cancel` that `find` lists (the second is "Cancel certification").
+
 ## 7. The support request for the API route (dropped on 2026-11-13)
 
 This section held the words of a request to Partner Center's support to open the submission API to the account. The
