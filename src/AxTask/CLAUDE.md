@@ -45,6 +45,7 @@ The bundle rules are in the root `CLAUDE.md`.
 
 ## Gotchas
 
+- A row may be a file that does not read as an item (SPEC.md TK-4.6): its `Tag` is an `UnreadableTag` with the path, or without one on the gathering lists' last row that counts such files (`_unreadable`, set by `GatheredItems`). Enter on it is the command "Open the file in axJSON" (`OpenUnreadable`), registered before the shared keys; a command that falls through to "a list" for a row it does not know needs a case for this tag (`RenameRefused`, `DeleteRow`, `OpenInAxJson`, `ShowInAxFile`, `DetailOf` have one).
 - The reads and writes run on the UI thread: items are small local files. All tasks reads every file under the top
   folder on each fill (TK-D3); a slow share would stall the window.
 - Enter, Space, Delete, Escape, Backspace, Tab and the arrows reach `ProcessCmdKey` while a list has the focus; they are

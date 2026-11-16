@@ -86,7 +86,10 @@ public sealed class GitSettings : WindowSettings
     public override void Save(string path)
     {
         Seal = SettingsSeal.Of(path, SealedText());
-        if (SettingsFile.Save(path, this))
+        // R-62: what another window saved meanwhile is kept, from a file whose seal checks, and sealed anew.
+        if (SettingsFile.Save(path, this,
+            file => SettingsSeal.Checks(path, file.Seal, file.SealedText(), new GitSettings().SealedText()),
+            merged => merged.Seal = SettingsSeal.Of(path, merged.SealedText())))
         {
             SettingsSeal.Remember(path);
         }

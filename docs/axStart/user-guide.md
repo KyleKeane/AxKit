@@ -54,6 +54,7 @@ axStart offers a new axKit release as every axKit window does. An update stops a
 ## If something goes wrong
 
 - **The hotkey does nothing**: axStart may not be running. Start it from the Start menu, `axKit axStart`. If the field comes up with a notice that the hotkey is taken, choose another in Options, Hotkey.
+- **The hotkey does nothing and starting axStart again asks a question**: when the running axStart has stopped answering, the new start says "axStart is running but does not answer. End it and start again?". No is the default and changes nothing; Yes ends that axStart alone and starts it again.
 - **A program is missing**: axStart lists what the Start menu's All apps list has. Press F5 to read it again.
 - **A program will not start**: axStart says why, in Windows' words, and stays open.
 - The log is in `%LOCALAPPDATA%\AxKit\logs\axStart.log`; it never holds the names of the programs you start.

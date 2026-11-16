@@ -80,6 +80,29 @@ public static class BundleWindows
 
     private static bool Reachable(uint processId) => ThisProgram.Runs(processId) && RunMembership.Reaches((int)processId);
 
+    /// <summary>
+    /// The other processes of this very program file in this Windows session, by id, and in a test run only the
+    /// run's own: for a background app's start that ends a copy which does not answer (<see cref="AppHost.OneCopy"/>,
+    /// AX-1.9), which then keeps those started with its verb.
+    /// </summary>
+    public static IReadOnlyList<int> OtherProcesses()
+    {
+        using var self = Process.GetCurrentProcess();
+        var ids = new List<int>();
+        foreach (var process in Process.GetProcessesByName(self.ProcessName))
+        {
+            using (process)
+            {
+                if (process.Id != self.Id && process.SessionId == self.SessionId && Reachable((uint)process.Id))
+                {
+                    ids.Add(process.Id);
+                }
+            }
+        }
+
+        return ids;
+    }
+
     private static string TitleOf(nint handle)
     {
         var length = GetWindowTextLength(handle);

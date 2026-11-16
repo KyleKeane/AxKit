@@ -69,6 +69,103 @@ public static class AppHost
     }
 
     /// <summary>
+    /// The start of a background app that runs one copy (axStart, axClip, axHelp; docs/axKit/SPEC.md AX-1.9;
+    /// repairs.md R-65). True when this process is that copy and goes on to make its window. Otherwise the first
+    /// copy's window is looked for by <paramref name="title"/> (for three seconds, since a copy that is still
+    /// starting has none yet) and <paramref name="handOver"/> gives it this start's wish and says whether it took
+    /// it; this process then ends (false), unless the first copy did not answer and the user, asked in a message box
+    /// whose default is No, has it ended: then every process of this very program file started with
+    /// <paramref name="verb"/> is ended, and this process is the copy (true). The decision and the words are
+    /// <see cref="BackgroundStart"/>'s. With --hidden and in a test run nothing is asked.
+    /// </summary>
+    /// <param name="handOver">Given the first copy's window: hands over what this start wants (or only asks whether it answers) and returns whether it answered.</param>
+    public static bool OneCopy(string name, string app, string verb, string title, bool hidden, Func<nint, bool> handOver)
+    {
+        if (FirstInstance(app))
+        {
+            return true;
+        }
+
+        nint running = 0;
+        for (var tries = 0; tries < 30 && (running = HotkeyForm.FindRunning(title)) == 0; tries++)
+        {
+            Thread.Sleep(100);
+        }
+
+        var answered = running != 0 && handOver(running);
+        if (BackgroundStart.Decide(running != 0, answered, hidden, AutomationEnvironment.Home is not null) == SecondStart.End)
+        {
+            if (!answered)
+            {
+                Log.Info($"{name} is running and did not answer; this start ends without asking");
+            }
+
+            return false;
+        }
+
+        Log.Info($"{name} is running and did not answer; asking whether to end it");
+        if (MessageBox.Show(BackgroundStart.Question(name), name, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+        {
+            return false;
+        }
+
+        var ended = EndCopies(verb);
+        Log.Info($"{name}: ended {ended} process(es) that did not answer");
+        // The mutex goes with the last process that held it; a moment may pass.
+        for (var tries = 0; tries < 30; tries++)
+        {
+            if (FirstInstance(app))
+            {
+                return true;
+            }
+
+            Thread.Sleep(100);
+        }
+
+        MessageBox.Show(BackgroundStart.NotEnded(name), name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return false;
+    }
+
+    /// <summary>
+    /// Ends the other processes of this very program file whose command line names <paramref name="verb"/>, in this
+    /// Windows session, and returns how many: never a process by its name alone, never another app of the bundle,
+    /// never another program (AX-1.9).
+    /// </summary>
+    private static int EndCopies(string verb)
+    {
+        var ended = 0;
+        // The processes of this very program file come from the one place that finds other processes (BundleWindows).
+        foreach (var id in BundleWindows.OtherProcesses())
+        {
+            if (!BackgroundStart.IsCopyOf(ThisProgram.CommandLineOf((uint)id), verb))
+            {
+                continue;
+            }
+
+            try
+            {
+                using var process = System.Diagnostics.Process.GetProcessById(id);
+                // The image path again, on the process object that is ended: an id can be given to another process meanwhile.
+                if (!string.Equals(process.MainModule?.FileName, Environment.ProcessPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                process.Kill();
+                process.WaitForExit(3000);
+                ended++;
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception or NotSupportedException)
+            {
+                // Gone already, or not ours to end: the mutex tells whether the start can go on.
+                Log.Info("A process that did not answer could not be ended: " + ex.Message);
+            }
+        }
+
+        return ended;
+    }
+
+    /// <summary>
     /// The one path an app takes on its command line (a file, a folder): the full path, or null for none. False,
     /// with the command line reported, when there is more than one argument or an option the app does not know.
     /// </summary>

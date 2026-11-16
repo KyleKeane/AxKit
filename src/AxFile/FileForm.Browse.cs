@@ -85,11 +85,13 @@ public sealed partial class FileForm
         string? select = null;
         if (path is not null)
         {
-            if (Directory.Exists(path))
+            // R-64: a path of the command line is the user's own ask, looked at off the window's thread (a share can take the network's time limit).
+            var (isFolder, isFile) = await Task.Run(() => (Directory.Exists(path), File.Exists(path)));
+            if (isFolder)
             {
                 folder = path;
             }
-            else if (File.Exists(path))
+            else if (isFile)
             {
                 folder = Path.GetDirectoryName(path);
                 select = Path.GetFileName(path);
@@ -100,7 +102,13 @@ public sealed partial class FileForm
             }
         }
 
-        folder ??= _settings.LastFolder is { } last && Directory.Exists(last) ? last : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        if (folder is null)
+        {
+            // AX-9.5a: the remembered folder is looked at only on a drive of this computer; one on the network is said and left for Open recent folder.
+            folder = LocalPaths.AtStart(_settings.LastFolder, Directory.Exists, out var notOpened) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            SayAtStart(notOpened);
+        }
+
         // NVDA reads the window, the list and its entry as the window opens; nothing is added (AF-3.1).
         await ShowFolderAsync(folder, select, remember: true, announce: false);
     }

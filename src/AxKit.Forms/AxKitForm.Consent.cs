@@ -55,7 +55,7 @@ public abstract partial class AxKitForm
         // AX-11.5: agreements a program other than axKit wrote into the file do not count, and the question says so.
         var text =
             (Consent.Problem(AppPaths.ConsentFile) is { } problem ? problem + "\n" : string.Empty) +
-            $"A reminder: {who} is only an access layer. It shows what {target.Program} does and passes your commands to it; {target.Program} is not part of axKit.\n" +
+            $"A reminder: {who} is only an access layer. It shows what {target.Name} does and passes your commands to it; {target.Name} is not part of axKit.\n" +
             $"{target.Work}\n" +
             $"Its terms are {target.Terms}, between you and its maker{(target.TermsUrl.Length > 0 ? ": " + target.TermsUrl : "; no address is known for them.")}\n" +
             "axKit is a set of personal tools shared as they are, not a product or a service (Help, About, Licence).";
@@ -70,7 +70,7 @@ public abstract partial class AxKitForm
             new OverlayChoice("&Not now", notNow, IsCancel: true),
         ])
         {
-            Consent = ConsentBox(app ?? AppTitle, target.Program),
+            Consent = ConsentBox(app ?? AppTitle, target.Name),
         };
     }
 }

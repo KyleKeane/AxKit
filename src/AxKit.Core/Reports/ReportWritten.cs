@@ -9,23 +9,29 @@ public sealed class ReportWrittenList
 }
 
 /// <summary>
-/// The names of the report files axKit's report form wrote (docs/axKit/reports.md RP-6.9; repairs.md R-57), kept
-/// under the settings' seal (<see cref="SettingsSeal"/>) so that the sender sends those and no other: an item file
-/// another program put into the reports folder stays where it is and never goes out with the user's next report.
-/// By name, not by content: a report the user changed in axTask is still theirs. The list is "not kept yet" until
-/// the first report this version saves, so that a report an earlier version saved and could not send is not left
-/// behind: until then the sender sends as it did, and the first save takes the reports that wait at that moment
-/// onto the list. Tested in <c>tests/AxKit.Tests/ReportWrittenTests</c>.
+/// The report files axKit's report form wrote (docs/axKit/reports.md RP-6.9; repairs.md R-57), kept under the
+/// settings' seal (<see cref="SettingsSeal"/>) so that the sender sends those and no other: an item file another
+/// program put into the reports folder stays where it is and never goes out with the user's next report.
+/// Each report is on the list twice: by its file's name, and by the id the form wrote into the file
+/// (<see cref="ReportFiles.IdKey"/>, an entry that starts with <see cref="IdMark"/>, which no file name can). Not by
+/// content: a report the user changed in axTask is still theirs, and by its id it stays so when axTask renamed its
+/// file with its title. The list is "not kept yet" until the first report this version saves, so that a report an
+/// earlier version saved and could not send is not left behind: until then the sender sends as it did, and the first
+/// save takes the reports that wait at that moment onto the list, by name alone, since they carry no id. Tested in
+/// <c>tests/AxKit.Tests/ReportSenderTests</c>.
 /// </summary>
 public static class ReportWritten
 {
     /// <summary>What the log says when the list's seal does not check; the list is then empty, and nothing it does not name is sent.</summary>
     public const string ListNotUsed = "The list of the reports axKit's report form wrote was changed outside axKit and is not used: reports saved before now are not sent.";
 
+    /// <summary>What an id's entry of the list starts with; a colon, so that it is no file's name.</summary>
+    public const string IdMark = "id:";
+
     /// <summary>
-    /// The file names on the list, in lower case; null while the list is not kept yet. A list this install has
-    /// sealed and that is gone, or whose seal does not check, is kept and empty: taking the list away does not
-    /// bring back the time before it.
+    /// The list's entries, in lower case: file names and ids; null while the list is not kept yet. A list this
+    /// install has sealed and that is gone, or whose seal does not check, is kept and empty: taking the list away
+    /// does not bring back the time before it.
     /// </summary>
     public static IReadOnlyList<string>? Names(string file)
     {
@@ -44,23 +50,31 @@ public static class ReportWritten
         return list.Names.Where(name => name is not null).Select(name => name.ToLowerInvariant()).ToList();
     }
 
-    /// <summary>Whether a report file is one the form wrote: its name is on the list, or the list is not kept yet.</summary>
-    public static bool Holds(IReadOnlyList<string>? names, string path) =>
-        names is null || names.Contains(Path.GetFileName(path).ToLowerInvariant());
+    /// <summary>
+    /// Whether a report file is one the form wrote: the list is not kept yet, or its name is on the list, or the id
+    /// it carries is (<paramref name="id"/>, <see cref="ReportFiles.IdOf"/>; null for a file without one).
+    /// </summary>
+    public static bool Holds(IReadOnlyList<string>? names, string path, string? id) =>
+        names is null
+        || names.Contains(Path.GetFileName(path).ToLowerInvariant())
+        || (id is not null && names.Contains(IdMark + id.ToLowerInvariant()));
 
     /// <summary>
-    /// A report file's name put on the list, before the file itself is written (<see cref="ReportFiles.Save"/>).
-    /// The first time, the list starts with the reports that wait in <paramref name="folder"/> at that moment
-    /// (those an earlier version saved). Throws as <see cref="File.WriteAllText(string, string)"/> does.
+    /// A report file's name and its id put on the list, before the file itself is written
+    /// (<see cref="ReportFiles.Save"/>). The first time, the list starts with the reports that wait in
+    /// <paramref name="folder"/> at that moment (those an earlier version saved). Throws as
+    /// <see cref="File.WriteAllText(string, string)"/> does.
     /// </summary>
-    public static void Add(string file, string path, string folder)
+    public static void Add(string file, string path, string folder, string id)
     {
         var names = Names(file)?.ToList()
             ?? ReportFiles.Unsent(folder).Select(unsent => Path.GetFileName(unsent.Path).ToLowerInvariant()).ToList();
-        var name = Path.GetFileName(path).ToLowerInvariant();
-        if (!names.Contains(name))
+        foreach (var entry in new[] { Path.GetFileName(path).ToLowerInvariant(), IdMark + id.ToLowerInvariant() })
         {
-            names.Add(name);
+            if (!names.Contains(entry))
+            {
+                names.Add(entry);
+            }
         }
 
         var list = new ReportWrittenList { Names = names, Seal = SettingsSeal.Of(file, SealedText(names)) };
@@ -78,7 +92,7 @@ public static class ReportWritten
         _ => $"{count} files in the reports folder were not written by axKit's report form and were not sent.",
     };
 
-    /// <summary>The sealed text: "kept" and the names; nothing while the list is not kept, the default no seal is asked for.</summary>
+    /// <summary>The sealed text: "kept" and the entries; nothing while the list is not kept, the default no seal is asked for.</summary>
     private static string SealedText(IReadOnlyList<string>? names) =>
         names is null ? SettingsSeal.Text([]) : SettingsSeal.Text(["kept", .. names]);
 }

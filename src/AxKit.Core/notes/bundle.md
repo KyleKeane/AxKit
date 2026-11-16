@@ -48,7 +48,9 @@
   Under the bundle's seal since 2026-11-16 (AX-5.6, R-53; `notes/safety.md`): `Read` gives nothing when the seal does
   not check, `Problem` gives the sentence `NotUsed` for the question that follows, every write seals (app, target,
   version; not the date); `CommandLineShell`, the target of axTerminal's custom shell and the user's shells, names
-  the command line, so that one line's agreement is not another's. Tested in `SettingsSealTests`.
+  the command line, so that one line's agreement is not another's. Tested in `SettingsSealTests`. `ConsentTarget.Name`
+  (R-61) is what the notice's sentences call the program: `Program` itself unless the target is longer than a name
+  (axMCP's `ServerConsent`, whose target holds the whole of what would run).
 - `Theme` with `ThemeColor` (docs/axKit/theme.md, 2026-11-09): the theme file `%APPDATA%\AxKit\theme.json`, one for the
   bundle, a colour (`#RRGGBB`) or `system` for every class of object the windows draw (`Classes`, `Keys`); `Load` and
   `Read` give the theme or null with the reason, `Template` the whole file with `system` everywhere, `SetEnabled` writes
@@ -58,12 +60,17 @@
 - `SettingsFile` (AX-5.2, AX-5.3): how every app's settings file is read and written, an unreadable one copied to
   `.bad` once, and the take-over of an old file. A value that does not read costs that value alone
   (`WithoutWhatDoesNotRead`); a file that is there and cannot be opened is tried again, then never saved over in
-  that process (`NotRead`, R-51). `Save` returns whether it wrote, for `SettingsSeal.Remember`.
+  that process (`NotRead`, R-51). `Save` returns whether it wrote, for `SettingsSeal.Remember`. A save keeps what
+  another window saved meanwhile (AX-5.7, R-62): `Views` holds this window's settings per file as JSON (set by `Load`
+  and by each `Save`), `Merged` takes the file's value of every top-level member this window did not change, whole
+  (no list merging); a sealed class hands `Save` its seal check for the file and its sealing for what is written.
+  `NotWritten` and `NotWrittenOnce` are the sentence of a file that could not be written (AX-5.9, R-63).
 - `FileCase` (AX-5.1, 2026-11-10): `Match(path)` renames a file that exists under another case to the path's own
   spelling, so that a settings or log file an earlier version left as `axdown.json` becomes `axDown.json`, the name
   NVDA says as the app is said; `SettingsFile.Load` and `Log.UseApp` call it first. Tested in `FileCaseTests`.
 - `WindowSettings` (AX-6.5): the base of every app's settings class, the font, the update check and the window's
-  place with their sanitising; `WindowPlacement` is the window's place and size.
+  place with their sanitising; `WindowPlacement` is the window's place and size. `OtherMembers` keeps the file's
+  members this version does not know (AX-5.8, R-67); the consent list and the recently closed list have the same.
 - `ConsoleSettings` (AX-6.5, 2026-10-23): on `WindowSettings`, the base of axClaude's and axTerminal's classes: the
   console size, the recent folders (`RememberRecentFolder`), the sounds and the signals, the transcript options, with
   `SanitizeConsole`; the JSON names are the ones the two files had.

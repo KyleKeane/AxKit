@@ -160,6 +160,35 @@ public abstract partial class AxKitForm : Form
     /// </summary>
     protected virtual Action? TakeHandOver(HandOver message) => null;
 
+    private string? _startNote;
+
+    private bool _startUpDone;
+
+    /// <summary>
+    /// A sentence about the start itself, said once the window shows (AX-9.5a, R-64: a remembered path on the network
+    /// that was not opened, <see cref="LocalPaths.AtStart"/>): kept until the first showing when the window is still
+    /// being made, said at once after it. Null says nothing.
+    /// </summary>
+    protected void SayAtStart(string? sentence)
+    {
+        if (sentence is null)
+        {
+            return;
+        }
+
+        if (_startUpDone)
+        {
+            StartNote(sentence);
+        }
+        else
+        {
+            _startNote = sentence;
+        }
+    }
+
+    /// <summary>How <see cref="SayAtStart"/> says it: one announcement that interrupts nothing, unless the window says it another way (the console windows write a system line).</summary>
+    protected virtual void StartNote(string sentence) => Announce(sentence, false);
+
     /// <summary>The settings file could not be read and the defaults are in use (AX-5.2): a notice at the first showing, unless the window says it another way (the console windows write a system line).</summary>
     protected virtual void SettingsNotRead(string error) =>
         ShowNotice(Notice.Plain("Settings", SettingsSeal.IsRefusal(error) ? error : $"The settings file could not be read, so the defaults are used.\n{error}") with { Unprompted = true });
@@ -553,6 +582,13 @@ public abstract partial class AxKitForm : Form
             SettingsNotRead(error);
         }
 
+        _startUpDone = true;
+        if (_startNote is { } note)
+        {
+            _startNote = null;
+            StartNote(note);
+        }
+
         // Never in a test run (docs/axKit/automation.md): a network call, and a logged error when it fails. Never in the
         // Store's copy, which the Microsoft Store keeps current and which asks GitHub only on Check for updates (AX-13.3).
         if (Settings.CheckForUpdates && !BundleInfo.IsDevelopmentBuild && !AutomationChannel.Requested && !PackageIdentity.IsPackaged)
@@ -583,7 +619,7 @@ public abstract partial class AxKitForm : Form
                 SaveWindow();
             }
 
-            SaveSettings();
+            SaveSettings(say: false);
             StartInstalledVersion();
         }
 
@@ -964,8 +1000,15 @@ public abstract partial class AxKitForm : Form
         };
     }
 
-    /// <summary>The settings into their file; a file that cannot be written is logged, not reported.</summary>
-    protected void SaveSettings()
+    /// <summary>
+    /// The settings into their file. A file that cannot be written (read-only, a full disk) is logged every time and
+    /// said once in a run (AX-5.9; repairs.md R-63), the way a file that could not be read is said
+    /// (<see cref="SettingsNotSaved"/>).
+    /// </summary>
+    protected void SaveSettings() => SaveSettings(say: true);
+
+    /// <param name="say">False for the save of a closing window, which has nothing left to say it in.</param>
+    private void SaveSettings(bool say)
     {
         try
         {
@@ -974,8 +1017,16 @@ public abstract partial class AxKitForm : Form
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             Log.Error("Settings could not be saved", ex);
+            if (say && Visible && SettingsFile.NotWrittenOnce(ex.Message) is { } sentence)
+            {
+                SettingsNotSaved(sentence);
+            }
         }
     }
+
+    /// <summary>The settings file could not be written (AX-5.9): a notice, unless the window says it another way (the console windows write a system line).</summary>
+    protected virtual void SettingsNotSaved(string sentence) =>
+        ShowNotice(Notice.Plain("Settings", sentence) with { Unprompted = true });
 
     // ---- the ways out to the system (AX-7.2: the only separate windows) ----
 

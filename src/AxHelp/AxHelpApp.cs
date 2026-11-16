@@ -65,20 +65,13 @@ public static class AxHelpApp
                 return null;
             }
 
-            if (!AppHost.FirstInstance("AxHelp"))
+            // One axHelp: the running one takes the picture or shows its window, unless this start only wanted it
+            // running. A running one that does not answer is asked about (bundle AX-1.9).
+            if (!AppHost.OneCopy(Name, "AxHelp", Dispatch.AxHelp, WindowTitle, hidden,
+                running => picture is not null ? AppMessage.SendTo(running, Name, AppMessage.Open, [picture])
+                    : hidden ? AppMessage.Answers(running)
+                    : AppMessage.SendTo(running, Name, AppMessage.Show, [])))
             {
-                if (HotkeyForm.FindRunning(WindowTitle) is var running and not 0)
-                {
-                    if (picture is not null)
-                    {
-                        AppMessage.SendTo(running, Name, AppMessage.Open, [picture]);
-                    }
-                    else if (!hidden)
-                    {
-                        AppMessage.SendTo(running, Name, AppMessage.Show, []);
-                    }
-                }
-
                 return null;
             }
 

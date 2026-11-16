@@ -65,7 +65,10 @@ opens in the editor for its type (AG-1.4, AG-D1).
   folder). Without a path, the last repository opened, or none: the window opens with "No repository" and Open
   repository… (Ctrl+O), the Windows folder picker, which resolves the chosen folder the same way. A folder in no
   repository gives the notice "Not a git repository" naming the folder; a repository already open stays open behind
-  the notice (until 2026-10-23 it was dropped first).
+  the notice (until 2026-10-23 it was dropped first). A recent repository that is not on a drive of this computer is
+  not looked at during the start (bundle AX-9.5a): the newest one on this computer opens, or none, and when the last
+  repository was on the network the window says "<path> is on the network and was not opened at start; Open recent
+  opens it." A path given, and one chosen from Open recent repository, is looked at off the window's thread.
 - AG-1.3 `AxGitApp.Run(args)` is the entry point (AX-1.7): `Log.UseApp("axGIT")`, the crash handling, `--help` and
   `--version`, the settings (`axGIT.json`), then `GitForm`.
 - AG-1.4 **To and from the other windows.** axClaude's Session → Show current folder in ▸ **axGIT** starts axGIT on

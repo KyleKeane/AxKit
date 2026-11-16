@@ -220,6 +220,12 @@ F1 lists every key. Shift+F10 or the Applications key opens Context, what acts o
 - "The item changed on disk; it has been read again": another program changed the file. Look at it again and repeat
   the change.
 - A file that is not an item is not shown; the list's name counts such files.
+- An item whose file is damaged (a `.json` file that is no longer an item, after a sync that went wrong or an edit by
+  hand) is a row at the end of its list: "Broken.json, not readable as an item, Enter opens it in axJSON". Enter or
+  Ctrl+J opens the file in axJSON to mend, Ctrl+E shows it in axFile; F2 and Delete leave it alone. The list's name
+  says how many there are ("Home, 3 items, 1 not readable"). All tasks, the date lists, the tags and your smart
+  lists cannot show such an item, so their name says how many they could not read and their last row says where:
+  "1 item not readable, in Home". Go to that list to find the file.
 - Help, Diagnostics, Copy diagnostics puts what is needed for a bug report on the clipboard.
 
 ## About

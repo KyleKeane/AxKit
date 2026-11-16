@@ -514,3 +514,29 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Escape.
     You hear: Key test ended.
+
+## Find and mend a task whose file is damaged
+
+Starts with: Open axTask with the folder tasks.
+
+### Hear a damaged item in its list
+
+1. Type: Home
+2. Press Right.
+    You hear: Home, 1 item, 1 not readable, Fix the tap.
+3. Press Down.
+
+### Open a damaged item's file in axJSON
+
+1. Press Enter.
+2. A new window opens: go to it.
+3. Close the window.
+4. Go to the axTask window.
+
+### Hear how many items a gathering list could not read
+
+1. Press Ctrl+0 (All tasks; Navigation menu).
+    You hear: All tasks, 1 item, 1 not readable, Fix the tap.
+2. Press End.
+3. Press Enter.
+    You hear: 1 item not readable, in Home.

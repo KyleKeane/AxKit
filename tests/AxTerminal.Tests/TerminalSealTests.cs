@@ -134,4 +134,76 @@ public sealed class TerminalSealTests
         Assert.Contains("cmd.exe /k", agreed.Program);
         Assert.Contains("cmd.exe /k", agreed.Work);
     }
+
+    [Fact]
+    public void A_save_keeps_another_windows_shells_under_a_seal_that_checks()
+    {
+        // R-62 (bundle AX-5.7): the other window's save, made first so that its text carries a real seal.
+        using var temp = new TempFolder("axterminal-seal");
+        var path = Saved(temp);
+        var before = File.ReadAllText(path);
+        var other = TerminalSettings.Load(path, out _);
+        other.UserShells.Add(new UserShell("Plain", "powershell -NoProfile"));
+        other.OutputSpeech = OutputSpeechMode.All;
+        other.Save(path);
+        var theirs = File.ReadAllText(path);
+        File.WriteAllText(path, before);
+
+        // This window loaded the file before that save, and changes another sealed field.
+        var mine = TerminalSettings.Load(path, out _);
+        File.WriteAllText(path, theirs);
+        mine.CustomShell = "pwsh -NoLogo";
+        mine.Save(path);
+
+        var now = TerminalSettings.Load(path, out var error);
+        Assert.Null(error);
+        Assert.Equal("pwsh -NoLogo", now.CustomShell);
+        Assert.Equal([new UserShell("Dev cmd", "cmd.exe /k"), new UserShell("Plain", "powershell -NoProfile")], now.UserShells);
+        Assert.Equal(OutputSpeechMode.All, now.OutputSpeech);
+    }
+
+    [Fact]
+    public void A_save_takes_nothing_from_a_file_whose_seal_does_not_check()
+    {
+        // R-53 stands under R-62: a shell written into the file while a window is open is not carried into its save.
+        using var temp = new TempFolder("axterminal-seal");
+        var path = Saved(temp);
+        var mine = TerminalSettings.Load(path, out _);
+        SettingsText.Change(path, whole =>
+        {
+            whole["userShells"]![0]!["commandLine"] = @"C:\elsewhere\other.exe";
+            whole["outputSpeech"] = "all";
+        });
+        mine.AnnounceQuestions = false;
+        mine.Save(path);
+
+        var now = TerminalSettings.Load(path, out var error);
+        Assert.Null(error);
+        Assert.Equal([new UserShell("Dev cmd", "cmd.exe /k")], now.UserShells);
+        Assert.Equal(OutputSpeechMode.None, now.OutputSpeech);
+        Assert.False(now.AnnounceQuestions);
+        // What was found is kept beside the file, as at a load (AX-5.6).
+        Assert.True(File.Exists(path + ".changed"));
+    }
+
+    [Fact]
+    public void A_member_this_version_does_not_know_is_kept_and_is_under_no_seal()
+    {
+        // R-67 (bundle AX-5.8): a setting a newer version wrote stays in the file through a load and a save.
+        using var temp = new TempFolder("axterminal-seal");
+        var path = Saved(temp);
+        SettingsText.Change(path, whole => whole["aNewerSetting"] = new System.Text.Json.Nodes.JsonObject { ["level"] = 3 });
+
+        var settings = TerminalSettings.Load(path, out var error);
+        Assert.Null(error);
+        Assert.Single(settings.UserShells);
+        settings.OutputSpeech = OutputSpeechMode.All;
+        settings.Save(path);
+
+        var whole = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(path))!.AsObject();
+        Assert.Equal(3, whole["aNewerSetting"]!["level"]!.GetValue<int>());
+        Assert.False(whole.ContainsKey("otherMembers"));
+        Assert.Single(TerminalSettings.Load(path, out error).UserShells);
+        Assert.Null(error);
+    }
 }

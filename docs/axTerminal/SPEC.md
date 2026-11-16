@@ -64,7 +64,10 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 - AT-1.1 `AxKit.exe terminal [<folder>]`; the console command `axTerminal`; the Start menu entry "axKit axTerminal";
   axTerminal under "Open with axKit" on folders in File Explorer (AX-2.3). A folder given alone to `AxKit.exe` still
   means axClaude (AX-1.2); axTerminal is always named by its verb. Without a folder: the process's current folder
-  (the Start menu entry starts it in the user's profile folder, as the shells do).
+  (the Start menu entry starts it in the user's profile folder, as the shells do). The window itself takes the last
+  folder of the settings first when it is there; one that is not on a drive of this computer is not looked at
+  during the start (bundle AX-9.5a): the shell starts in the current folder, and a system line says "<path> is on
+  the network and was not opened at start; Open recent opens it."
 - AT-1.2a **Only the shells there are** (the user's ask, 2026-10-24): the New session notice and Switch shell list the
   shells this computer has; Windows always has Windows PowerShell and Command Prompt. PowerShell 7 and Git Bash, when
   missing, are not listed; Session offers "Install PowerShell 7…" and "Install Git, for Git Bash…" after Switch shell instead

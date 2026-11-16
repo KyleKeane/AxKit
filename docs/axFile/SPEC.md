@@ -67,7 +67,10 @@ folder of the file or project in hand, and sends back. It works entirely offline
 - AF-1.1 `AxKit.exe file [<folder or file>]` (a file opens its folder with the file selected); the console command
   `axFile`; the Start menu entry "axKit axFile"; axFile under "Open with axKit" on folders and on files in File
   Explorer (AX-2.3). A folder or file given alone to `AxKit.exe` still means axClaude or an editor (AX-1.2); axFile is
-  always named by its verb. Without a path: the last folder opened, or the user's profile folder.
+  always named by its verb. Without a path: the last folder opened, or the user's profile folder. A last folder that
+  is not on a drive of this computer is not looked at during the start (bundle AX-9.5a): the profile folder opens
+  and the window says "<path> is on the network and was not opened at start; Open recent opens it." A path given is
+  looked at off the window's thread.
 - AF-1.2 `AxFileApp.Run(args)` is the entry point (AX-1.7), one call into `AppHost.Run` with the log name `axFile`,
   the usage text, the settings (`axFile.json`) and the window. The process moves its working directory to the
   program's own folder first (the path of the command line already being full): a folder that is some process's

@@ -80,7 +80,10 @@ internal sealed partial class TerminalForm : ConsoleForm
     {
         _settings = settings;
         _model = model;
-        _folder = folder ?? (settings.LastFolder is { } last && Directory.Exists(last) ? last : Environment.CurrentDirectory);
+        // Bundle AX-9.5a: the remembered folder is looked at only on a drive of this computer.
+        string? notOpened = null;
+        _folder = folder ?? LocalPaths.AtStart(settings.LastFolder, Directory.Exists, out notOpened) ?? Environment.CurrentDirectory;
+        SayAtStart(notOpened);
         _shell = settings.ShellKind;
         _customShell = settings.CustomShell;
         _userShell = _shell == ShellKind.Custom ? settings.FindUserShell(settings.UserShellName) : null;

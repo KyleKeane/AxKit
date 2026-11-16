@@ -2,7 +2,9 @@
 
 - `LocalPaths` (AX-9.4, AX-9.5; 2026-10-23): whether a path is on a drive of this computer, where asking whether it
   exists answers at once, and `ExistsQuickly`, which asks of a local path only, since a share can take the network's
-  timeout, which no menu may wait for.
+  timeout, which no menu may wait for. `AtStart` (AX-9.5a, R-64, 2026-11-16) is the path a window remembered, to
+  start on: asked about only on a drive of this computer, and `NotOpenedAtStart`, the sentence for one that is
+  not; `LocalPathsTests` reads the sources for a remembered path asked about another way.
 - `FileSize` (2026-10-24; from AxFile.Core's `FolderListing.FormatSize`, axPreview): a size as people say it,
   "512 bytes", "12 KB", "1.2 MB", "3.5 GB".
 - `PathName` (AX-9.5): `Of`, the name of a path for a title, a label or an announcement, the last part or the drive's

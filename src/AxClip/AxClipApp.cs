@@ -40,13 +40,11 @@ public static class AxClipApp
                 }
             }
 
-            if (!AppHost.FirstInstance("AxClip"))
+            // One axClip; the running one shows its field, unless this start only wanted it running. A running one
+            // that does not answer is asked about (bundle AX-1.9).
+            if (!AppHost.OneCopy(Name, "AxClip", Dispatch.AxClip, Name, hidden,
+                running => hidden ? AppMessage.Answers(running) : AppMessage.SendTo(running, Name, AppMessage.Show, [])))
             {
-                if (!hidden && HotkeyForm.FindRunning(Name) is var running and not 0)
-                {
-                    AppMessage.SendTo(running, Name, AppMessage.Show, []);
-                }
-
                 return null;
             }
 

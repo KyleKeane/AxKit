@@ -142,6 +142,30 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   for an app that takes one file or folder, `AppHost.BadCommandLine` for the rest).
 - AX-1.8 In the Store's copy (AX-13), a process started from one of the package's entries takes the entry's verb when
   the command line carries none (`Dispatch.WithApplicationVerb` with `PackageIdentity.ApplicationId`, before `Decide`).
+- AX-1.9 **A background app that does not answer** (2026-11-16, `repairs.md` R-65; `AxKit.Core/BackgroundStart`,
+  tested in `BackgroundStartTests`, and `AxKit.Forms/AppHost.OneCopy`, the one start of axStart, axClip and axHelp).
+  Each runs one copy, hidden, held by a named mutex; a second start hands its wish to the first copy's window ("show",
+  or axHelp's picture) and ends. When the first copy hung, its hotkey was dead and starting the app again did
+  nothing, without a word. Now the second start waits up to three seconds for the first copy's window (a copy that
+  is still starting has none yet), hands over, and takes the hand-over's answer within its five seconds as the sign
+  that the copy lives; a start with `--hidden`, which has nothing to hand over, sends an empty message instead.
+  - The copy answered: this start ends, as before.
+  - The window is there and did not answer, or there is no window although the mutex is held: one message box (no
+    window of the app exists yet, AX-7.2), titled with the app's name: "axClip is running but does not answer. End
+    it and start again?", Yes and No, No the default. No, Escape or closing it ends this start and changes nothing.
+  - Yes ends every process of this very program file (`ThisProgram.Runs`, the image path) in this Windows session
+    whose command line, as Windows keeps it, names the app's verb as its first argument (`ThisProgram.CommandLineOf`,
+    `BackgroundStart.IsCopyOf`): never a process by its name alone, never another app of the bundle, never another
+    program. Then this process takes the mutex and starts as the app. If the mutex is still held after three seconds
+    (the copy runs another program file, or would not end), a message box says "axClip could not be ended, so it was
+    not started again. Sign out of Windows and in again, or end its AxKit.exe in Task Manager, then start axClip."
+  - Nothing is asked by a start with `--hidden` (the sign-in's: nobody asked for anything) or inside a test run;
+    such a start ends, and the log says that the copy did not answer.
+  - What the ended copy had only in memory is lost: axClip's history when it is not kept on disk.
+  - The limits: a copy whose command line does not carry the verb is not ended and the second message box comes: a
+    process the Store's package started from an entry without parameters (AX-1.8), and an axHelp started as
+    `AxKit.exe describe`, its former verb. Not checked against a copy that really hangs by any script: a test run
+    never asks.
 
 ### AX-2 Installation
 
@@ -437,6 +461,37 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     that knows axKit, not a file changed in passing.
   - A test never touches the user's key: for a settings file outside `%APPDATA%\AxKit` the key file is beside the
     settings file (`SettingsSeal.KeyFileOf`), and a test run's home holds both in one folder.
+- AX-5.7 **Two windows of one app keep each other's settings** (2026-11-16, `repairs.md` R-62; `SettingsFile.Save`,
+  `SettingsFile.Merged`, tested in `SettingsFileTests` and `TerminalSealTests`). `SettingsFile` remembers, per file,
+  the settings of this window as JSON: as it loaded them, then as each of its saves was given them. A save reads the
+  file as it is now, and for each top-level setting it writes the file's value, unless this window changed the
+  setting, which is when its value differs from the remembered one. So a favourite, a shell, a trusted repository or
+  a server added in one window is no longer lost when a window opened earlier saves anything; before, each save wrote
+  the whole of one window's memory over the file. Nothing is asked and nothing is said.
+  - The limits. A setting is taken whole: a list that both windows changed is this window's list, and the other
+    window's addition to that same list is lost; lists are not merged. A window does not take the other's change
+    into its own memory, so it shows it only after its next start. A setting the file no longer has keeps this
+    window's value. A member the file gained that this window never held is kept; one this window held as loaded
+    and writes no longer (axGIT's `trustedRepositories` of before the seal) stays gone.
+  - A file that is not a JSON object, or one of whose values does not read, gives nothing: this window's settings
+    are written as they are, as before.
+  - Under the seal (AX-5.6): nothing at all is taken from a file whose sealed fields do not check (the file as found
+    is kept as `.changed`), so a setting written into the file while a window is open is not carried into that
+    window's save. What is written after a merge is sealed anew over the merged fields, and checks at the next load.
+- AX-5.8 **Settings a version does not know are kept** (2026-11-16, `repairs.md` R-67). The base of the windows'
+  settings classes (`WindowSettings`), the consent list and the recently closed list each hold the members of their
+  file that this version has no property for (`OtherMembers`, the serializer's extension data) and write them back
+  as they were at every save, so a setting a newer version added survives an older copy's save. It helps from this
+  version on: a copy older than this one still drops them, the seal among them (the file then counts as changed
+  outside axKit, AX-5.6). Such members are under no seal. The two lists are read again as they are written, and
+  only their entries replaced. A setting an app itself retired is not such a member: the app takes it out as it
+  loads (axClaude's `backgroundPulseSeconds`), so it goes with the next save. AI help's settings, the AI tools'
+  settings and the reports' settings are not on that base and keep only what they know.
+- AX-5.9 **A settings file that cannot be written is said** (2026-11-16, `repairs.md` R-63). When a save fails (a
+  read-only file, a full disk, a folder that refuses), the window says once in a run, as a notice, or as a system
+  line in the console windows: "Settings could not be saved: <the system's reason>. What you change lasts until this
+  window closes." (`SettingsFile.NotWritten`). Every failure is logged; the save of a closing window says nothing.
+  Until this the failure was only logged.
 
 ### AX-6 Shared pieces
 
@@ -892,6 +947,30 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   ("No other open windows", "No open axDown windows", "Nothing recently closed"; the apps' own lists likewise, "No
   recent folders", "No recent files"): WinForms skips disabled items when the keyboard moves through a menu, so a
   submenu of only a disabled item opens with nothing selected and leaves the screen reader with nothing to read.
+- AX-9.5a **A remembered path that is not on this computer is not looked at during a start** (2026-11-16,
+  `repairs.md` R-64; `LocalPaths.AtStart`, tested in `LocalPathsTests`). A window that starts without a path opens
+  what it remembered: axFile its last folder, axGIT its last repository (the newest of the recent ones that is
+  there), axTerminal and axClaude their last folder, axPass its last database, axTask the list of the last run,
+  axAutomate its folder. Asking whether such a path exists can take the network's time limit when it is on a share
+  or a mapped network drive that is away, and that wait was on the window's thread before the window showed, in
+  silence. So the path is asked about only when it is on a drive of this computer (`LocalPaths.IsLocal`, which
+  touches no network). One that is not is not looked at: the window opens on what it opens when nothing is
+  remembered (the profile folder, "No repository", the current folder, the folder question, no database, the top
+  level, no folder) and says, once it shows, without interrupting, or as a system line in the console windows:
+  "<path> is on the network and was not opened at start; Open recent opens it." (`LocalPaths.NotOpenedAtStart`).
+  Where the window has no Open recent submenu the sentence names its own command: "Open database" in axPass, "Open a
+  folder of workflows" in axAutomate, "Right on its list" in axTask. Nothing is asked.
+  - A path given on the command line is the user's own ask and is opened. axFile and axGIT look at it off the
+    window's thread; axPass takes a database that is not on this computer as given, and KeePassXC's tool says so
+    when it is not there. Left as they were, each a wait before the window when the path is on a share that is away:
+    the folder or file given to axTask and axAutomate, which read their folder on the window's thread in any case,
+    the folder given to axClaude and axTerminal, and `AxKit.exe <path>` without a verb, which must know whether the
+    path is a folder or a file to choose the app (AX-1.2).
+  - `LocalPathsTests` reads the sources and fails on a line that asks `Directory.Exists` or `File.Exists` of a path
+    the settings remember (`settings.Last…`, `settings.Recent…`, `settings.Folder`) outside `LocalPaths` and
+    `RecentMenu`. It reads one line at a time; a check written over two lines is not seen.
+  - axTask's limit: its top folder is read on the window's thread whatever it is on (docs/axTask/SPEC.md TK-D3), so
+    a top folder on a share that is away still waits.
 - AX-9.6 The windows are the visible, unowned, titled top-level windows of every process named as this one, told
   apart by the end of their title (" - axClaude", " - axDown"; AD-10, axClaude's `<folder> (<path>) - axClaude`); a window of
   none of the apps (the bundle's own message box, AX-1.4) is listed nowhere. The lists are pure code in

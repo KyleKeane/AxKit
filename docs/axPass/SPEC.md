@@ -45,6 +45,10 @@ forgets the master password and shows only the notice that asks for it.
 
 - **PW-4.1** axPass opens the `.kdbx` file of its command line, or the one it had last, or asks with the Windows
   file picker (Session, Open, Ctrl+O). A new database is Session, New: a file name, then the master password twice.
+  The database it had last is looked at during the start only on a drive of this computer (bundle AX-9.5a): one on
+  the network is not opened, and the window says "<path> is on the network and was not opened at start; Open
+  database opens it." A database of the command line that is not on this computer is taken as given; KeePassXC's
+  tool says so when it is not there.
 - **PW-4.2** The master password is asked in a notice whose field hides what is typed (the shared `OverlayInput`
   gains a hidden form for it). A wrong password says "The password does not open mine" and asks again.
 - **PW-4.3** Lock (Ctrl+L, after ten minutes without a key, a setting, and at once when Windows locks, the user switches or disconnects, or the computer sleeps, security audit S-18): the panes are cleared, the password

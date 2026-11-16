@@ -1,0 +1,40 @@
+# Workflow: Find and mend a task whose file is damaged
+# axTask: a JSON file that does not read as an item is a row of its list, and the lists that gather items say how
+# many they could not read and where (docs/axTask/SPEC.md TK-4.6; docs/axKit/repairs.md R-66). A scratch folder of
+# lists with one whole task and one file that is not JSON.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file home\AxKit\axJSON.json {"checkForUpdates": false}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Home\Broken.json { "format": "axkit-item 1", "fields": [ nope
+
+start task {temp}\tasks
+expect state Lists - axTask
+
+# Goal: Hear a damaged item in its list
+# The list's name counts it, and it is the row after the items.
+type Home
+expect focus Home, list
+keys right
+expect said ! Home, 1 item, 1 not readable, Fix the tap
+keys down
+expect focus Broken.json, not readable as an item, Enter opens it in axJSON
+# Check: Rename and Delete leave a damaged item's file alone
+keys f2
+expect said ! Not readable as an item: Enter opens it in axJSON
+keys delete
+expect said ! Not readable as an item: Enter opens it in axJSON
+# Goal: Open a damaged item's file in axJSON
+keys enter
+adopt
+expect state Broken.json - axJSON
+close
+use 1
+
+# Goal: Hear how many items a gathering list could not read
+# All tasks: the count in its name, and the last row says where the files are.
+do All tasks
+expect said ! All tasks, 1 item, 1 not readable, Fix the tap
+keys end
+expect focus 1 item not readable, in Home
+keys enter
+expect said ! 1 item not readable, in Home

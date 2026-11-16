@@ -835,6 +835,7 @@ every window" or under a heading that names the windows without it; under an app
 - Next heading level 3. Menu: none, a key alone. Key: Ctrl+3. Mark: read. Never run by AI tools.
 - Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Open it where it lives. Menu: none, a key alone. Key: Right. Also: Enter. Mark: open. Never run by AI tools.
+- Open the file in axJSON. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Previous heading level 1. Menu: none, a key alone. Key: Ctrl+Shift+1. Mark: read. Never run by AI tools.
 - Previous heading level 2. Menu: none, a key alone. Key: Ctrl+Shift+2. Mark: read. Never run by AI tools.
 - Previous heading level 3. Menu: none, a key alone. Key: Ctrl+Shift+3. Mark: read. Never run by AI tools.

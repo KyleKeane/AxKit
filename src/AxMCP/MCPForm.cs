@@ -495,18 +495,25 @@ public sealed class MCPForm : ItemForm
             return;
         }
 
-        if (HasConsent(ConsentFor(server), () => StartServer(server), () => Announce($"Not connected to {server.Name}", true)))
+        // R-61 (SPEC.md MP-2.1a): the agreement is for the whole of what would run, so the program and the folder
+        // are found first; a definition that differs from the one agreed to is asked about again.
+        string program;
+        try
+        {
+            program = StdioServer.Resolve(server.Command, Environment.GetEnvironmentVariable("PATH"));
+        }
+        catch (FileNotFoundException ex)
+        {
+            ShowError($"Could not start {server.Name}", ex.Message);
+            return;
+        }
+
+        var target = ServerConsent.For(server, program, StdioServer.FolderOf(server.Folder ?? _folder));
+        if (HasConsent(target, $"Before axMCP starts {server.Name}", "&Connect", () => StartServer(server), () => Announce($"Not connected to {server.Name}", true)))
         {
             StartServer(server);
         }
     }
-
-    /// <summary>AX-11.4: the program the server is, in the consent notice's words.</summary>
-    private static ConsentTarget ConsentFor(McpServer server) => new(
-        $"{server.Name} ({Path.GetFileNameWithoutExtension(server.Command)})",
-        $"The MCP server {server.Name} is a program on this computer, {server.CommandLine}, which axMCP starts and talks to for you: it does whatever its maker built it to do, on this computer and on any network it reaches, with your rights.",
-        "the server's own licence and terms",
-        "https://modelcontextprotocol.io/");
 
     private void StartServer(McpServer server)
     {

@@ -23,9 +23,16 @@ command's in this version of axKit.
 ### Start a server and open its tools
 
 1. Press Right.
+    You hear: Before axMCP starts fake.
+    You hear: -NoProfile -ExecutionPolicy Bypass -File fake.ps1.
+2. Press Tab.
+    You hear: I understand that axMCP.
+3. Press Space.
+    You hear: checked.
+4. Press Enter.
     You hear: fake, starting.
     You hear: fake, running, Tools 1, Resources 1, Prompts 0.
-2. Press Right.
+5. Press Right.
     You hear: Tools, 1 tool, echo, tool, Says the text back.
 
 ### Read a tool's description and its arguments
@@ -113,6 +120,11 @@ Starts with: Open axMCP with the test folder.
 
 1. Type: fake
 2. Press Right.
+    You hear: Before axMCP starts fake.
+3. Press Tab.
+4. Press Space.
+    You hear: checked.
+5. Press Enter.
     You hear: fake, running, Tools 4, Resources 2, Prompts 1.
 
 ### Tick a yes-or-no argument and call the tool

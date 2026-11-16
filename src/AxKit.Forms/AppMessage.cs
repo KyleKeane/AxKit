@@ -187,6 +187,19 @@ public static class AppMessage
     /// </summary>
     private static bool IsThisProgram(nint window) => BundleWindows.Reachable(window);
 
+    /// <summary>
+    /// Whether a window of this program answers at all (docs/axKit/SPEC.md AX-1.9; repairs.md R-65): an empty message
+    /// it must only return from, given the hand-over's own time. False for a window that hangs, and for one that is
+    /// not this program's. For a start that has nothing to hand over (a background app's start with --hidden).
+    /// </summary>
+    public static bool Answers(nint target) =>
+        IsThisProgram(target) && SendMessageTimeoutW(target, WM_NULL, 0, 0, SMTO_NORMAL | SMTO_ABORTIFHUNG, TimeoutMs, out _) != 0;
+
+    private const uint WM_NULL = 0;
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    private static extern nint SendMessageTimeoutW(nint hWnd, uint msg, nint wParam, nint lParam, uint flags, uint timeout, out nint result);
+
     /// <summary>COPYDATASTRUCT: a number of the sender's choosing, the byte count, and the bytes.</summary>
     [StructLayout(LayoutKind.Sequential)]
     private struct CopyData

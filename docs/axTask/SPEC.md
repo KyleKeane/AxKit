@@ -83,6 +83,28 @@ marks a task done.
 - **TK-4.3 The row summary** (IA-6): the Title, then "done" when Done is true, then "due" and the Due date when there is
   one: "Fix the tap, done, due 30 October". Overdue reads "overdue since 30 October".
 - **TK-4.4 Space in the navigator** toggles Done on a task; on a plain item, the edge earcon and "Not a task".
+- **TK-4.5 The start.** Without a path the window opens the list of the last run. That list is looked at during the
+  start only on a drive of this computer (bundle AX-9.5a, 2026-11-16): elsewhere the top level shows and the window
+  says "<path> is on the network and was not opened at start; Right on its list opens it." The top folder itself is
+  read on the window's thread wherever it is (TK-D3).
+- **TK-4.6 A damaged item is a row** (2026-11-16, `repairs.md` R-66). A `.json` file in a list that does not read as
+  an item (not JSON, not an object, no list of fields, or a file that cannot be opened) was only counted with the
+  files not shown, and the lists that gather items said nothing at all, so a due task whose file broke vanished from
+  Due today without a word (confirmed by reading the code that day: `ItemFolder.AllItems` dropped it).
+  - In its list it is a row after the items: "<file name>, not readable as an item, Enter opens it in axJSON"
+    (`ItemFolder.UnreadableRow`), and the list's name says how many: "Home, 3 items, 1 not readable". Enter or Ctrl+J
+    opens the file in axJSON, Ctrl+E shows it in axFile. F2 and Delete say "Not readable as an item: Enter opens it
+    in axJSON, Ctrl+E shows it in axFile" and change nothing; Space sounds the edge. The detail pane holds the row's
+    words, what to do, and the file's path. A file that is not `.json` is still only counted (IA-4.6).
+  - A list that gathers items (All tasks, a date list, a tag's list, a smart list of the user's) says in its name how
+    many files it could not read, "Due today, 2 items, 1 not readable", and ends with one row that says where:
+    "1 item not readable, in Home" or "3 items not readable, in Home, Work" (`ItemFolder.UnreadableSummary`), the
+    lists in their order. Enter on it says the row again; its detail pane lists the files' paths. The files are
+    found in the same reading as the items (`ItemFolder.ReadAll`), so nothing is read twice.
+  - The limits: the counts at the top level's rows ("All tasks, 3 not done") do not say it; the Archive is not
+    looked at; and the projects' items, read off the window's thread by the look for projects (TK-5.6), are
+    gathered without their damaged files, which show in the project's own lists once it is entered.
+  - Checked by `tests/scripts/axTask/10-damaged-item.txt` and `FolderTests`.
 
 ## 5. All tasks and the smart lists
 

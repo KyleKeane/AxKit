@@ -81,7 +81,7 @@ with Enter; a prompt is filled and fetched like a tool.
 ### MP-2 Starting and stopping
 
 - MP-2.1 Right or Enter on a stopped stdio server shows its level and starts it: the consent notice first, once per
-  server (AX-11.4, AX-11.5; the target is the server's name with its program's file name, "github (npx)"), then the
+  definition of a server (AX-11.4, AX-11.5, MP-2.1a), then the
   process (`// Outside call, program, MCP servers`) with the server's `env` added to its environment, in the server's
   folder (or the folder in hand, or the user's profile), its standard error to axMCP's log line by line; then
   `initialize` (protocol version 2025-06-18, `clientInfo` axMCP and its version, no client capabilities),
@@ -89,6 +89,20 @@ with Enter; a prompt is filled and fetched like a tool.
   the capabilities the server declared, each page followed by its cursor until the last. While it starts the level
   reads "Starting <name>"; then it is filled anew and announced once: "axkit, running, Tools 8, Resources 2, Prompts
   0". The status bar's first label is the level's name, the second the server's state.
+- MP-2.1a **The agreement is for what would run** (2026-11-16, `repairs.md` R-61; `ServerConsent`). Before the notice
+  the program is found (the command's path, or the bare name in the PATH's full folders; a program not found is
+  "Could not start <name>" and nothing is asked) and the folder it would start in. The consent's target is the whole:
+  "<name>, command line <the program's path and the arguments>, environment variables <their names> (or "no
+  environment variables"), folder <folder>, mark <SHA-256>", the mark being the SHA-256 of the name, the program,
+  every argument, every environment variable's name and value and the folder, exactly as they are. A definition that
+  differs in any of these, in Claude Code's files or in Your servers, has another target and is asked about again:
+  until 2026-11-16 the target was the name with the program's file name ("github (npx)"), so a rewritten server of a
+  name agreed to earlier started without a question, and the agreements of that time no longer count. The notice is
+  titled "Before axMCP starts <name>" and reads the command line, the folder and the names of the environment
+  variables the definition sets, "their values are not read out, since they may be tokens", and "axMCP asks again
+  when the program, an argument, an environment variable or the folder changes". A variable's value is never in the
+  consent record, the notice or a log; only the mark stands for it. The limit: the mark is of the definition, not of
+  what the program's file or its script holds.
 - MP-2.2 The server's level shows one row per capability it declared: "Tools, 8", "Resources, 2" (the templates
   counted in), "Prompts, 0"; Right into one. Left goes back up and leaves the server running.
 - MP-2.3 **Stop**: Ctrl+Shift+S on a running server (the level's, or the one selected at the top), or closing the
@@ -174,7 +188,7 @@ server of Claude Code's goes with claude mcp remove"; "A server of Claude Code's
 claude mcp add"; "Names here are the server's"; "Select a server first", "Select a tool first: Right into a server,
 then into Tools", "Select a tool or a prompt first", "Select a resource first"; "No description" or the description
 whole (Enter on it); a field's change as the item apps say it ("path (required): C:\work"). Notices: the consent notice
-(AX-11.4); "Could not start <server>"; "Result of <tool>"; "<tool> failed"; a resource's text under its name; a prompt's
+(AX-11.4, "Before axMCP starts <server>", MP-2.1a); "Could not start <server>"; "Result of <tool>"; "<tool> failed"; a resource's text under its name; a prompt's
 messages under its title; "Remove <name>?" (yes or cancel); the form Add server and the one-field notice of a
 resource template; "Last result" when the file cannot be written.
 
@@ -182,7 +196,7 @@ resource template; "Last result" when the file cannot be written.
 
 `%APPDATA%\AxKit\axMCP.json`: the window base's settings (`WindowSettings`) and `servers`, a list of `{ "name",
 "commandLine", "folder" }`; no environment variables, since a token belongs in the user's own environment or in
-Claude Code's file. The consents are the bundle's (`consent.json`, app axMCP, target "<name> (<program>)").
+Claude Code's file. The consents are the bundle's (`consent.json`, app axMCP, the target of MP-2.1a).
 
 MP-8.2 **Your servers are sealed** (bundle AX-5.6, 2026-11-16, `repairs.md` R-53): the file's `seal` covers every
 server's name, command line and folder. A file whose seal does not check lists none of them, keeps every other

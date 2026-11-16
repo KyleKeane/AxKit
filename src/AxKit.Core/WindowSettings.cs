@@ -21,6 +21,13 @@ public abstract class WindowSettings
 
     public WindowPlacement? Window { get; set; }
 
+    /// <summary>
+    /// The members of the file this version does not know (AX-5.8; repairs.md R-67): a setting a newer version added is
+    /// kept as it was and written back at every save. They are under no seal.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonExtensionData]
+    public Dictionary<string, System.Text.Json.JsonElement>? OtherMembers { get; set; }
+
     /// <summary>Into the file; each class writes its own type, so that the serializer sees every property, not only these.</summary>
     public abstract void Save(string path);
 

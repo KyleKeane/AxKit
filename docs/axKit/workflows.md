@@ -714,6 +714,10 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
 9. **Find out whether a key arrives and what it does, in an item window**
     - Test what a key does
     - End the key test
+10. **Find and mend a task whose file is damaged**
+    - Hear a damaged item in its list
+    - Open a damaged item's file in axJSON
+    - Hear how many items a gathering list could not read
 
 ## axTerminal
 

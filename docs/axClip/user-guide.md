@@ -52,6 +52,8 @@ axClip checks for a newer axKit when it starts and offers it in a notice; the He
 
 ## If something goes wrong
 
+If the hotkey does nothing, start axClip again from the Start menu. When the running axClip has stopped answering, the new start asks "axClip is running but does not answer. End it and start again?". No is the default and changes nothing; Yes ends that axClip alone and starts it again, and a history you do not keep on disk starts empty.
+
 axClip's log is `%LOCALAPPDATA%\AxKit\logs\axClip.log`. If Enter does not paste, the program you were in did not come back to the front in time, or it runs as administrator, where Windows does not let axClip press keys: the text is on the clipboard, so press Ctrl+V there yourself.
 
 ## About axClip

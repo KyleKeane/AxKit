@@ -21,6 +21,9 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   `CheckFresh`), `ReadList`, `NameOf`, `RefusedListName`, `AllItems` (the Archive
   left out), `ArchiveFolder`, `IsArchive`, `ListName`, `LinkTo` and `Resolve` (IA-D3). `FileStem` and `FreePath`
   (IA-4.5) are `AxKit.Core/ItemFiles` since their second use, the reports list (2026-11-07).
+  A `.json` file that does not read as an item is in `FolderLevel.Unreadable` (TK-4.6, R-66), not in the count of
+  files not shown; `ReadAll` gives a top folder's items and those files in one reading, `UnreadableRow` and
+  `UnreadableSummary` are the two sentences.
 - `Changes`, `Step` and `FileChange` (IA-5.4): a change as parts, writes and moves, `Apply`, `CheckUndo` (every path
   as the step left it), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,

@@ -21,6 +21,13 @@ public static class ReportFiles
     public const string IssueField = "Issue";
     public const string NumberField = "Number";
 
+    /// <summary>The key of an item's root that holds the report's id (RP-6.9): random, written when the report form saves the report, kept by axTask through every change and rename.</summary>
+    public const string IdKey = "reportId";
+
+    /// <summary>The id an item carries, or null: a report an earlier version saved, or a file that is not the form's.</summary>
+    public static string? IdOf(ItemDocument item) =>
+        item.Extra(IdKey) is JsonValue value && value.TryGetValue<string>(out var id) && id.Length > 0 ? id : null;
+
     private static readonly UTF8Encoding Utf8 = new(false);
 
     /// <summary>The template of a report item (RP-5.2), in the order the detail pane shows the fields.</summary>
@@ -154,16 +161,19 @@ public static class ReportFiles
     {
         EnsureList(folder);
         var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(report.Title), ".json");
+        // RP-6.9: the report's own id, written into its file and onto the list, so that the report is still the
+        // form's after axTask renamed its file with its title.
+        var id = Guid.NewGuid().ToString("N");
         try
         {
-            ReportWritten.Add(writtenFile, path, folder);
+            ReportWritten.Add(writtenFile, path, folder, id);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             Log.Error("The list of the reports axKit's report form wrote could not be written, so this report waits unsent: " + ex.Message);
         }
 
-        SafeFile.WriteAllText(path, ToItem(report, status).ToText(), Utf8);
+        SafeFile.WriteAllText(path, ToItem(report, status).WithExtra(IdKey, JsonValue.Create(id)).ToText(), Utf8);
         return path;
     }
 
@@ -180,7 +190,7 @@ public static class ReportFiles
         }
 
         var names = ReportWritten.Names(writtenFile);
-        var ours = unsent.Where(entry => ReportWritten.Holds(names, entry.Path)).ToList();
+        var ours = unsent.Where(entry => ReportWritten.Holds(names, entry.Path, IdOf(entry.Item))).ToList();
         return (ours, unsent.Count - ours.Count);
     }
 

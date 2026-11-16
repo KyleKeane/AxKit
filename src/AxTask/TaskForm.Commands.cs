@@ -209,6 +209,7 @@ public sealed partial class TaskForm
         { Tag: FoundItem } => "Open it where it lives first: Enter",
         { Tag: ProjectTag } => "A project's folder is renamed in axFile: Ctrl+E",
         { Tag: ProjectSectionTag } => "A project folder's section keeps its folder's name",
+        { Tag: UnreadableTag } => NotAnItem,
         _ when ReferenceEquals(row.Tag, ArchivedItemsTag) || IsArchiveFolder(row.Key) => "The Archive keeps its name",
         _ => null,
     };
@@ -276,6 +277,12 @@ public sealed partial class TaskForm
     /// <summary>Delete in the navigator (IA-D4): the item or list into the Archive list, the links to it kept; Ctrl+Z brings it back.</summary>
     protected override void DeleteRow(ItemRow row)
     {
+        if (row.Tag is UnreadableTag)
+        {
+            Announce(NotAnItem, true);
+            return;
+        }
+
         if (row.Tag is SmartList)
         {
             Announce("A smart list's file is deleted in axFile: Ctrl+E", true);
@@ -471,6 +478,9 @@ public sealed partial class TaskForm
         Announce(_settings.HideDone ? "Done tasks hidden" : "Done tasks shown", true);
     }
 
+    /// <summary>What F2 and Delete say on a file that does not read as an item (TK-4.6): nothing of axTask's changes it.</summary>
+    private const string NotAnItem = "Not readable as an item: Enter opens it in axJSON, Ctrl+E shows it in axFile";
+
     /// <summary>Ctrl+J: the item, the list's details or the smart list in axJSON (G3).</summary>
     private void OpenInAxJson()
     {
@@ -481,6 +491,9 @@ public sealed partial class TaskForm
                 return;
             case { Tag: FoundItem found }:
                 WindowMenu.Start(Dispatch.AxJSON, found.Item.Path);
+                return;
+            case { Tag: UnreadableTag }:
+                OpenUnreadable();
                 return;
             case { Tag: ProjectTag }:
                 Announce("A project is a folder: Ctrl+E shows it in axFile", true);
@@ -520,7 +533,7 @@ public sealed partial class TaskForm
         WindowMenu.Start(Dispatch.AxFile, SelectedRow() switch
         {
             { Tag: ProjectSectionTag header } => header.Root,
-            { Tag: SmartList { BuiltIn: true } or SectionTag } => TopFolder,
+            { Tag: SmartList { BuiltIn: true } or SectionTag or UnreadableTag { Path: null } } => TopFolder,
             { } row => row.Key,
             null => _smart is null ? _folder : TopFolder,
         });

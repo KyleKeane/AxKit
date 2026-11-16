@@ -48,7 +48,9 @@ agreement (AX-11.4) asked the first time.
   axHelp has no startup task (bundle AX-13.2) and is started from any window's Window menu, New window.
 - HE-1.2 One axHelp at a time (a named mutex, `AppPaths.OneAtATime`): a second start hands "show", or "open" with its
   picture, to the running one's window (`AppMessage`), found by its title "axHelp hotkeys" (never "axHelp", which is the
-  conversation's), and ends; with `--hidden` it just ends.
+  conversation's), and ends; with `--hidden` it just ends. A running axHelp that does not answer is asked about:
+  "axHelp is running but does not answer. End it and start again?", No the default (bundle AX-1.9); only axHelp's own
+  process is ended, never the conversation's window, which is axClaude's.
 - HE-1.3 Alt+F4 and Close all windows hide axHelp's window; Session, Quit axHelp ends the process. **The conversation
   hides too** (2026-11-15; the fault the user found: Alt+F4 on the conversation, then the hotkey, started a new
   axClaude that loaded Claude Code and replayed the conversation). It is an axClaude window started with

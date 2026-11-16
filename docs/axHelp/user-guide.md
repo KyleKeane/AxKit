@@ -117,6 +117,10 @@ picture axHelp can pass to Claude": only .png, .jpg, .jpeg, .gif and .webp files
 not logged in: the conversation says so, as axClaude does, with Install Claude Code now. Options, Developer, Copy
 diagnostics copies what helps a bug report; F4 sends one.
 
+If the hotkeys do nothing, start axHelp again from the Start menu. When the running axHelp has stopped answering, the
+new start asks "axHelp is running but does not answer. End it and start again?". No is the default and changes
+nothing; Yes ends that axHelp alone and starts it again; the conversation's window is not ended.
+
 ## About
 
 Help, About.

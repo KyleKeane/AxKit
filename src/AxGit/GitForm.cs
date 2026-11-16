@@ -246,14 +246,24 @@ public sealed partial class GitForm : AxKitForm
             return;
         }
 
-        var target = path ?? _settings.RecentRepositories.FirstOrDefault(Directory.Exists);
+        var target = path;
+        if (target is null)
+        {
+            // AX-9.5a: the remembered repositories are looked at only on a drive of this computer; when the last one
+            // is on the network that is said, and Open recent repository opens it.
+            target = _settings.RecentRepositories.FirstOrDefault(recent => LocalPaths.AtStart(recent, Directory.Exists, out _) is not null);
+            LocalPaths.AtStart(_settings.RecentRepositories.FirstOrDefault(), Directory.Exists, out var notOpened);
+            SayAtStart(notOpened);
+        }
+
         if (target is null)
         {
             SetNoRepository();
             return;
         }
 
-        if (!Directory.Exists(target))
+        // A path given (the command line, Open recent repository) is the user's own ask: looked at off the window's thread (R-64).
+        if (!await Task.Run(() => Directory.Exists(target)))
         {
             // A recent repository on a share that is gone, listed without the check (AX-9.5): said, the open one kept.
             Fail($"{target} no longer exists.");

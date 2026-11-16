@@ -5,8 +5,11 @@ namespace AxTask.Core;
 /// <summary>An item read from its file: where it is, its document, and the text it was read from (for the check against the file before a change, IA-5.5).</summary>
 public sealed record ItemFile(string Path, ItemDocument Document, string Text);
 
-/// <summary>A list's items (IA-2.2), and how many files and folders in it are not shown (IA-4.6; a folder inside a list, TK-D4).</summary>
-public sealed record FolderLevel(IReadOnlyList<ItemFile> Items, int NotShown);
+/// <summary>
+/// A list's items (IA-2.2), how many files and folders in it are not shown (IA-4.6; a folder inside a list, TK-D4), and
+/// the JSON files in it that do not read as items (TK-4.6; repairs.md R-66), each of which the window shows as a row.
+/// </summary>
+public sealed record FolderLevel(IReadOnlyList<ItemFile> Items, int NotShown, IReadOnlyList<string> Unreadable);
 
 /// <summary>The top folder (TK-3a): its lists by name, the Archive's lists, how many items the Archive holds of its own, and what is not shown (items kept in the top folder itself, files that are not filters).</summary>
 public sealed record TopLevel(IReadOnlyList<string> Lists, IReadOnlyList<string> ArchivedLists, int ArchivedItems, int NotShown);
@@ -27,11 +30,12 @@ public static class ItemFolder
     {
         if (!Directory.Exists(folder))
         {
-            return new FolderLevel([], 0);
+            return new FolderLevel([], 0, []);
         }
 
         var notShown = new DirectoryInfo(folder).EnumerateDirectories().Count(directory => !Hidden(directory));
         var items = new List<ItemFile>();
+        var unreadable = new List<string>();
         foreach (var file in new DirectoryInfo(folder).EnumerateFiles())
         {
             if (Hidden(file) || file.Name.Equals(ItemDocument.ListFile, StringComparison.OrdinalIgnoreCase))
@@ -45,12 +49,21 @@ public static class ItemFolder
             }
             else
             {
-                notShown++;
+                // A JSON file that does not read as an item is a damaged item, shown as a row; any other file is counted.
+                if (file.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                {
+                    unreadable.Add(file.FullName);
+                }
+                else
+                {
+                    notShown++;
+                }
             }
         }
 
         items.Sort((a, b) => NaturalOrder.Instance.Compare(NameOf(a), NameOf(b)));
-        return new FolderLevel(items, notShown);
+        unreadable.Sort(NaturalOrder.Instance.Compare);
+        return new FolderLevel(items, notShown, unreadable);
     }
 
     /// <summary>The top folder's lists and the Archive's (TK-3a.1), each by name.</summary>
@@ -140,9 +153,35 @@ public static class ItemFolder
             : null;
     }
 
+    /// <summary>What a list says of a JSON file in it that does not read as an item (TK-4.6): the row's words.</summary>
+    public static string UnreadableRow(string path) => $"{Path.GetFileName(path)}, not readable as an item, Enter opens it in axJSON";
+
+    /// <summary>
+    /// What a list that gathers items (All tasks, a date list, a tag, a filter) says of the files it could not read
+    /// (TK-4.6): "2 items not readable, in Home, Work", the lists by name in their order; empty when there are none.
+    /// </summary>
+    public static string UnreadableSummary(string top, IReadOnlyList<string> paths)
+    {
+        if (paths.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        var lists = paths.Select(path => ListName(top, Path.GetDirectoryName(path)!)).Distinct(StringComparer.OrdinalIgnoreCase);
+        return $"{(paths.Count == 1 ? "1 item" : paths.Count + " items")} not readable, in {string.Join(", ", lists)}";
+    }
+
+    /// <summary>Every item in a list of the top folder and every JSON file there that does not read as one, the Archive left out, in one reading (TK-5.1, TK-4.6).</summary>
+    public static (IReadOnlyList<ItemFile> Items, IReadOnlyList<string> Unreadable) ReadAll(string top)
+    {
+        var levels = ReadTop(top).Lists.Select(Read).ToList();
+        return (levels.SelectMany(level => level.Items).ToList(), levels.SelectMany(level => level.Unreadable).ToList());
+    }
+
     /// <summary>Every item in a list of the top folder, the Archive left out (TK-5.1).</summary>
     public static IReadOnlyList<ItemFile> AllItems(string top) =>
-        ReadTop(top).Lists.SelectMany(list => Read(list).Items).ToList();
+        ReadAll(top).Items;
+
     public static string ArchiveFolder(string top) => Path.Combine(top, ArchiveName);
 
     /// <summary>Whether a path is the Archive or inside it.</summary>

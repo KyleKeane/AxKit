@@ -165,7 +165,10 @@ public sealed class AppSettings : ConsoleSettings
     public override void Save(string path)
     {
         Seal = SettingsSeal.Of(path, SealedText());
-        if (SettingsFile.Save(path, this))
+        // R-62: what another window saved meanwhile is kept, from a file whose seal checks, and sealed anew.
+        if (SettingsFile.Save(path, this,
+            file => SettingsSeal.Checks(path, file.Seal, file.SealedText(), new AppSettings().SealedText()),
+            merged => merged.Seal = SettingsSeal.Of(path, merged.SealedText())))
         {
             SettingsSeal.Remember(path);
         }
@@ -181,6 +184,9 @@ public sealed class AppSettings : ConsoleSettings
     private void Sanitize()
     {
         SanitizeConsole();
+        // A setting this app itself retired is not one a newer version wrote: it goes with the next save and is not
+        // kept with the members this version does not know (bundle AX-5.8).
+        OtherMembers?.Remove("backgroundPulseSeconds");
         if (SpeakReplies && ReplySpeech == ReplySpeechMode.None)
         {
             ReplySpeech = ReplySpeechMode.All;

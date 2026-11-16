@@ -66,6 +66,58 @@ public static class ThisProgram
         }
     }
 
+    /// <summary>
+    /// The command line a process was started with, as Windows keeps it (docs/axKit/SPEC.md AX-1.9; repairs.md R-65);
+    /// null when the process is gone or may not be asked. For telling which app of the bundle a process of this
+    /// program file is, by its verb (<see cref="AxKit.Core.BackgroundStart.IsCopyOf"/>).
+    /// </summary>
+    public static string? CommandLineOf(uint processId)
+    {
+        var process = OpenProcess(ProcessQueryLimitedInformation, false, processId);
+        if (process == 0)
+        {
+            return null;
+        }
+
+        try
+        {
+            // The first call says how many bytes the answer takes: a UNICODE_STRING, then the text it points into.
+            NtQueryInformationProcess(process, ProcessCommandLineInformation, 0, 0, out var needed);
+            if (needed <= 0)
+            {
+                return null;
+            }
+
+            var buffer = Marshal.AllocHGlobal(needed);
+            try
+            {
+                if (NtQueryInformationProcess(process, ProcessCommandLineInformation, buffer, needed, out _) != 0)
+                {
+                    return null;
+                }
+
+                // UNICODE_STRING: the length in bytes (two bytes), the capacity (two bytes), then, at the pointer's own alignment, the text's address.
+                var bytes = (ushort)Marshal.ReadInt16(buffer);
+                var text = Marshal.ReadIntPtr(buffer, IntPtr.Size);
+                return text == 0 ? null : Marshal.PtrToStringUni(text, bytes / 2);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(buffer);
+            }
+        }
+        finally
+        {
+            CloseHandle(process);
+        }
+    }
+
+    /// <summary>NtQueryInformationProcess's class for the command line (Windows 8.1 and later).</summary>
+    private const int ProcessCommandLineInformation = 60;
+
+    [DllImport("ntdll.dll")]
+    private static extern int NtQueryInformationProcess(nint process, int informationClass, nint information, int length, out int returned);
+
     private const uint ProcessQueryLimitedInformation = 0x1000;
 
     [StructLayout(LayoutKind.Sequential)]

@@ -83,4 +83,27 @@ public sealed class ConsentTests
             "Update to axKit 4.0.0, 29 October 2026",
             Consent.Line(new ConsentRecord(Consent.UpdateApp, "axKit 4.0.0", "3.7.6", new DateTime(2026, 10, 29))));
     }
+
+    [Fact]
+    public void Members_this_version_does_not_know_are_kept_in_the_consent_file_and_in_the_recently_closed_list()
+    {
+        // R-67 (AX-5.8): what a newer version wrote beside the list stays through this version's writes.
+        using var temp = new AxKit.TestShared.TempFolder("axkit-consent");
+        var consent = Path.Combine(temp.Path, "consent.json");
+        Consent.Record(consent, "axGIT", "Git", "1", new DateTime(2026, 11, 16));
+        AxKit.TestShared.SettingsText.Change(consent, whole => whole["aNewerMember"] = "kept");
+        Consent.Record(consent, "axPass", "KeePassXC", "1", new DateTime(2026, 11, 16));
+        Assert.Contains("\"aNewerMember\": \"kept\"", File.ReadAllText(consent));
+        // The seal covers the agreements alone: both still count.
+        Assert.True(Consent.Given(consent, "axGIT", "Git"));
+        Assert.True(Consent.Given(consent, "axPass", "KeePassXC"));
+        Assert.Null(Consent.Problem(consent));
+
+        var closed = Path.Combine(temp.Path, "recently-closed.json");
+        RecentlyClosed.Write(closed, [new("axDown", @"C:\work\a.md")]);
+        AxKit.TestShared.SettingsText.Change(closed, whole => whole["aNewerMember"] = 7);
+        RecentlyClosed.Write(closed, RecentlyClosed.Add(RecentlyClosed.Read(closed), new ClosedItem("axClaude", @"C:\work")));
+        Assert.Contains("\"aNewerMember\": 7", File.ReadAllText(closed));
+        Assert.Equal(["axClaude", "axDown"], RecentlyClosed.Read(closed).Select(item => item.App));
+    }
 }

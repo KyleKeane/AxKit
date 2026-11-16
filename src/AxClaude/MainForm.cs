@@ -95,7 +95,10 @@ internal sealed partial class MainForm : ConsoleForm
         // The core (docs/axClaude/events-and-grounding.md EG-4): everything that happens reaches it from here on (MainForm.Flow.cs).
         _flow = new SessionFlow(_health);
         // FR-8.1: a remembered folder that is never a project (Windows' own, from a start before 2026-11-09) is not taken.
-        _folder = options.Folder ?? (settings.LastProjectFolder is { } last && Directory.Exists(last) && !StartupOptions.IsNeverAProject(last) ? last : null);
+        // Bundle AX-9.5a: the remembered folder is looked at only on a drive of this computer.
+        string? notOpened = null;
+        _folder = options.Folder ?? (LocalPaths.AtStart(settings.LastProjectFolder, Directory.Exists, out notOpened) is { } last && !StartupOptions.IsNeverAProject(last) ? last : null);
+        SayAtStart(notOpened);
         _model.ResponseStarted += () =>
         {
             // FR-7.3a: each of the window's own status words can be switched off in Options, Announcements.

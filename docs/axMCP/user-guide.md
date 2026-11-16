@@ -26,7 +26,11 @@ environment variables (never their values) and its state.
 
 - Right or Enter on a server starts it. The first time, a notice asks your agreement: the server is a program on your
   computer that does whatever its maker built it to do, on this computer and on any network it reaches, with your
-  rights. Then "starting", and once it answers, "running, Tools 8, Resources 2, Prompts 0".
+  rights. The notice reads what would run: the program's full path with its arguments, the folder it starts in, and
+  the names of the environment variables its definition sets, never their values. Your agreement is for exactly
+  that: when the program, an argument, an environment variable or the folder of a server changes, in Claude Code's
+  files or in your own list, axMCP asks again before it starts it. Then "starting", and once it answers, "running,
+  Tools 8, Resources 2, Prompts 0".
 - Right on Tools, Resources or Prompts shows its list. Left or Backspace goes back up; the server keeps running.
 - Ctrl+Shift+S stops the server of the level you are in, or the one selected at the top. Closing the window stops
   every server.

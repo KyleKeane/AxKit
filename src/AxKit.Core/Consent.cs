@@ -15,6 +15,12 @@ public sealed record ConsentRecord(string App, string Target, string Version, Da
 /// </summary>
 public sealed record ConsentTarget(string Program, string Work, string Terms, string TermsUrl)
 {
+    /// <summary>
+    /// What the notice's sentences and its check box call the program: <see cref="Program"/> itself, unless the target
+    /// is longer than a name (an MCP server's, which holds the whole of what would run, repairs.md R-61).
+    /// </summary>
+    public string Name { get; init; } = Program;
+
     public static readonly ConsentTarget ClaudeCode = new(
         "Claude Code",
         "Claude Code, Anthropic's program, and Anthropic's service behind it do the work under your own Anthropic account: everything you type goes to them, and Claude Code can create, change and delete files, run commands and use your account's usage or money.",
@@ -131,6 +137,10 @@ internal sealed class ConsentList
     /// <summary>The seal over the agreements (AX-5.6, AX-11.5): written at every write, checked at every read.</summary>
     public string Seal { get; set; } = string.Empty;
 
+    /// <summary>The members of the file this version does not know, kept and written back (AX-5.8; repairs.md R-67); under no seal.</summary>
+    [System.Text.Json.Serialization.JsonExtensionData]
+    public Dictionary<string, System.Text.Json.JsonElement>? OtherMembers { get; set; }
+
     /// <summary>The sealed fields: each agreement as its app, its target and axKit's version; not the date, which reads differently in another time zone.</summary>
     public string SealedText() =>
         SettingsSeal.Text((Items ?? []).SelectMany(item => new[] { item?.App, item?.Target, item?.Version }));
@@ -215,7 +225,10 @@ public static class Consent
     {
         try
         {
-            var list = new ConsentList { Items = [.. items] };
+            // The file as it is, with the agreements replaced: what a newer version keeps beside them stays (AX-5.8).
+            List<ConsentRecord> agreed = [.. items];
+            var list = SettingsFile.Load<ConsentList>(file, out _);
+            list.Items = agreed;
             list.Seal = SettingsSeal.Of(file, list.SealedText());
             if (SettingsFile.Save(file, list))
             {

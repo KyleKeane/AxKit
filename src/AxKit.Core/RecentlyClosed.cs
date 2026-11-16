@@ -7,6 +7,10 @@ public sealed record ClosedItem(string App, string Path);
 internal sealed class RecentlyClosedList
 {
     public List<ClosedItem> Items { get; set; } = [];
+
+    /// <summary>The members of the file this version does not know, kept and written back (AX-5.8; repairs.md R-67).</summary>
+    [System.Text.Json.Serialization.JsonExtensionData]
+    public Dictionary<string, System.Text.Json.JsonElement>? OtherMembers { get; set; }
 }
 
 /// <summary>
@@ -43,8 +47,13 @@ public static class RecentlyClosed
 
     public static IReadOnlyList<ClosedItem> Read(string file) => SettingsFile.Load<RecentlyClosedList>(file, out _).Items;
 
-    public static void Write(string file, IReadOnlyList<ClosedItem> items) =>
-        SettingsFile.Save(file, new RecentlyClosedList { Items = [.. items] });
+    /// <summary>The file as it is, with the list replaced: what a newer version keeps beside it stays (AX-5.8).</summary>
+    public static void Write(string file, IReadOnlyList<ClosedItem> items)
+    {
+        var list = SettingsFile.Load<RecentlyClosedList>(file, out _);
+        list.Items = [.. items];
+        SettingsFile.Save(file, list);
+    }
 
     /// <summary>"notes.md (C:\notes\notes.md) - axDown", "myproject (C:\src\myproject) - axClaude": the name, the full path in parentheses, the app (AX-9.5).</summary>
     public static string Title(ClosedItem item)

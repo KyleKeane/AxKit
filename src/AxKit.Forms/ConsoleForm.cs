@@ -284,6 +284,12 @@ public abstract partial class ConsoleForm : AxKitForm
     protected override void SettingsNotRead(string error) =>
         Model.AddSystemLine(SettingsSeal.IsRefusal(error) ? error : "The settings file could not be read, so the defaults are in use: " + error);
 
+    /// <summary>A sentence about the start is a system line (AX-9.5a).</summary>
+    protected override void StartNote(string sentence) => Model.AddSystemLine(sentence);
+
+    /// <summary>A settings file that could not be written is a system line too (AX-5.9).</summary>
+    protected override void SettingsNotSaved(string sentence) => Model.AddSystemLine(sentence);
+
     /// <summary>An error the user must see: logged, a system line in the transcript, the status, and the notice (axClaude FR-13.1).</summary>
     protected sealed override void Fail(string message)
     {

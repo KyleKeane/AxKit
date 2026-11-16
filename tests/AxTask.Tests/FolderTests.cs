@@ -44,11 +44,39 @@ public sealed class FolderTests : IDisposable
         Assert.Equal(1, top.NotShown);
         var home = ItemFolder.Read(Path.Combine(_top.Path, "Home"));
         Assert.Equal(["Fix the tap", "Milk", "Water plants"], home.Items.Select(ItemFolder.NameOf));
-        Assert.Equal(2, home.NotShown);
+        // notes.txt is no item and is counted; broken.json is a damaged item and is named (TK-4.6).
+        Assert.Equal(1, home.NotShown);
+        Assert.Equal(["broken.json"], home.Unreadable.Select(Path.GetFileName));
         // TK-D4: a list holds items, not lists; the folder inside it is counted, not shown.
         Assert.Equal(1, ItemFolder.Read(Path.Combine(_top.Path, "Work")).NotShown);
         Assert.Equal("Work", ItemFolder.SectionOf(Path.Combine(_top.Path, "Course plan")));
         Assert.Equal(string.Empty, ItemFolder.SectionOf(Path.Combine(_top.Path, "Home")));
+    }
+
+    [Fact]
+    public void A_damaged_item_is_named_in_its_list_and_counted_with_its_lists_by_what_gathers_items()
+    {
+        // R-66 (TK-4.6): a due task whose file broke no longer vanishes without a word.
+        File.WriteAllText(Path.Combine(_top.Path, "Work", "Report.json"), "{ \"fields\": 5 }");
+        File.WriteAllText(Path.Combine(_top.Path, "Work", "Also.json"), "");
+        File.WriteAllText(Path.Combine(_top.Path, "Archive", "Old broken.json"), "{");
+
+        var (items, unreadable) = ItemFolder.ReadAll(_top.Path);
+        Assert.Equal(ItemFolder.AllItems(_top.Path).Select(item => item.Path), items.Select(item => item.Path));
+        Assert.DoesNotContain(items, item => ItemFolder.NameOf(item) == "Report");
+        // The Archive is not gathered; the lists come in their order, each file by name.
+        Assert.Equal(["broken.json", "Also.json", "Report.json"], unreadable.Select(Path.GetFileName));
+
+        var row = ItemFolder.UnreadableRow(unreadable[0]);
+        Assert.StartsWith("broken.json, ", row);
+        Assert.Contains("axJSON", row);
+
+        var summary = ItemFolder.UnreadableSummary(_top.Path, unreadable);
+        Assert.StartsWith("3 items ", summary);
+        Assert.EndsWith(", in Home, Work", summary);
+        Assert.StartsWith("1 item ", ItemFolder.UnreadableSummary(_top.Path, [unreadable[0]]));
+        Assert.EndsWith(", in Home", ItemFolder.UnreadableSummary(_top.Path, [unreadable[0]]));
+        Assert.Equal(string.Empty, ItemFolder.UnreadableSummary(_top.Path, []));
     }
 
     [Fact]

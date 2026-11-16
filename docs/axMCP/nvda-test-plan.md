@@ -20,8 +20,10 @@ script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a f
 
 ## 2. A server started (MP-2)
 
-1. Right on a stdio server never started before: the consent notice, "<name> (<program>) asks…", its check box,
-   Connect disabled until the box is checked, Not now: "Not connected to name". Right again, check the box, Connect.
+1. Right on a stdio server never started before: the consent notice, "Before axMCP starts name", which reads the
+   program's path with its arguments, the folder and the names of its environment variables, never a value
+   (MP-2.1a); its check box, Connect refused until the box is checked, Not now: "Not connected to name". Right again,
+   check the box, Connect. A server whose command line, folder or environment changed since asks again.
 2. "name, starting", then within a few seconds "name, running, Tools N, Resources N, Prompts N"; the navigator reads
    "Tools, N" selected; the title ends "name - axMCP, access layer for MCP servers"; NVDA+End reads the state in the
    status bar.

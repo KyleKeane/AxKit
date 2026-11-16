@@ -53,7 +53,8 @@ taskbar. It works entirely offline (bundle G6).
   (AX-9). No path is taken; axStart is not in File Explorer's Open with axKit submenu.
 - AS-1.2 **One axStart.** A start while axStart runs hands over to the running one, which shows its window, and ends
   (the bundle's `AppMessage`, `docs/axMedia/SPEC.md` AM-1.3, with a new verb `show`); with `--hidden` it ends without
-  showing anything.
+  showing anything. A running axStart that does not answer is asked about: "axStart is running but does not answer.
+  End it and start again?", No the default (bundle AX-1.9).
 - AS-1.3 **Start with Windows** (Options → General, a setting, on by default): the value `axKit axStart` under the
   user's Run key (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`), `"<installed AxKit.exe>" start --hidden`,
   written or removed when the setting flips and checked at each start; only the installed program writes it, naming

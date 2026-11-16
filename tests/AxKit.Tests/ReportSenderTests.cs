@@ -315,7 +315,9 @@ public sealed class ReportSenderTests : IDisposable
     {
         var waiting = Plant("Waiting since the version before.json", "older words", minutesAgo: 50);
         var own = Save("Mine", "my words");
-        Assert.Equal(["waiting since the version before.json", "mine.json"], ReportWritten.Names(_written));
+        // The earlier version's report by its name alone; the form's own by its name and by the id in its file.
+        var ownId = ReportFiles.IdOf(ItemDocument.Parse(File.ReadAllText(own)))!;
+        Assert.Equal(["waiting since the version before.json", "mine.json", ReportWritten.IdMark + ownId], ReportWritten.Names(_written));
         var late = Plant("Came later.json", "planted", minutesAgo: 1);
 
         var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(41)).Answer(HttpStatusCode.Created, Issue(42));
@@ -337,6 +339,31 @@ public sealed class ReportSenderTests : IDisposable
         var outcome = await Send(fake);
         Assert.Equal(1, outcome.Sent);
         Assert.Contains("my words, with more", ReportSeal.Open(Posted(fake.Requests[1].Body).Body, ReportSealTests.Keys.Private));
+    }
+
+    [Fact]
+    public async Task A_report_whose_title_was_changed_in_axTask_is_still_sent_since_its_id_is_on_the_list()
+    {
+        // The leftover of R-57: axTask renames an item's file when its title changes (IA-4.5), which took an unsent
+        // report off a list kept by name. The id the form wrote into the file goes with it.
+        var own = Save("Mine", "my words");
+        var item = ItemDocument.Parse(File.ReadAllText(own));
+        var renamed = Path.Combine(_folder, "A better title.json");
+        File.WriteAllText(renamed, item.WithValue(item.IndexOf(ItemDocument.TitleField), System.Text.Json.Nodes.JsonValue.Create("A better title")).ToText());
+        File.Delete(own);
+        // A planted file under a name of its own with an id nobody wrote on the list, and one without an id.
+        var planted = Plant("Planted.json", "planted");
+        var plantedItem = ItemDocument.Parse(File.ReadAllText(planted));
+        File.WriteAllText(Path.Combine(_folder, "Planted with an id.json"), plantedItem.WithExtra(ReportFiles.IdKey, System.Text.Json.Nodes.JsonValue.Create("0123456789abcdef0123456789abcdef")).ToText());
+
+        var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(61));
+        var outcome = await Send(fake);
+        Assert.Equal(1, outcome.Sent);
+        Assert.Equal(2, outcome.NotOfTheForm);
+        Assert.Contains("my words", ReportSeal.Open(Posted(fake.Requests[1].Body).Body, ReportSealTests.Keys.Private));
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(renamed))));
+        // The id never leaves the computer: it is no part of what is sent.
+        Assert.DoesNotContain(ReportFiles.IdOf(item)!, ReportSeal.Open(Posted(fake.Requests[1].Body).Body, ReportSealTests.Keys.Private));
     }
 
     [Fact]

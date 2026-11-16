@@ -139,6 +139,8 @@ A folder. Its details are `list.json` in it, the same shape as an item, never sh
   `AxKit.Core/ItemFiles` (`FileStem`, `FreePath`) since the bundle's reports list used it too (2026-11-07,
   docs/axKit/reports.md RP-5.1).
 - **IA-4.6** A file that is not JSON, or not an item, is not shown; the status bar counts them ("2 files not shown").
+  In axTask a `.json` file that does not read as an item is a damaged item and is shown as a row (docs/axTask/SPEC.md
+  TK-4.6, 2026-11-16); only the other files are counted.
 
 ## 5. Changing a field
 

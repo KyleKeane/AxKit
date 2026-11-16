@@ -124,6 +124,8 @@ public sealed partial class TaskForm : ItemForm
         AddKey(new Command("Open it where it lives", ItemKeys.Into, OpenFound) { When = InSearch, Mark = CommandMark.Open });
         AddKey(new Command("Open it where it lives", ItemKeys.Open, OpenFound) { When = InSearch, Mark = CommandMark.Open });
         AddKey(new Command("Back from the search", ItemKeys.Back, UpLevel) { When = InSearch, Mark = CommandMark.Open });
+        // TK-4.6: Enter on a file that does not read as an item opens it in axJSON; on the gathering lists' row of them it reads the row.
+        AddKey(new Command("Open the file in axJSON", ItemKeys.Open, OpenUnreadable) { When = OnUnreadable, Mark = CommandMark.Open });
         PlaceControls(_menu);
         Start(path);
     }
@@ -190,7 +192,9 @@ public sealed partial class TaskForm : ItemForm
         }
         else
         {
-            _folder = _settings.LastList is { } last && Directory.Exists(Path.Combine(TopFolder, last)) ? Path.Combine(TopFolder, last) : TopFolder;
+            // Bundle AX-9.5a: the list of the last run is looked at only on a drive of this computer; elsewhere the top level shows.
+            _folder = LocalPaths.AtStart(_settings.LastList is { } last ? Path.Combine(TopFolder, last) : null, Directory.Exists, out var notOpened, "Right on its list") ?? TopFolder;
+            SayAtStart(notOpened);
         }
 
         SaveSettings();
@@ -331,6 +335,12 @@ public sealed partial class TaskForm : ItemForm
             }
 
             name = smart.NotUnderstood is { } why ? $"{smart.Name}, a condition not understood: {why}" : $"{smart.Name}, {Count(items.Count, "item")}";
+            // TK-4.6: the files the gathering could not read, said in the name and as the last row.
+            if (ItemFolder.UnreadableSummary(TopFolder, _unreadable) is { Length: > 0 } notRead)
+            {
+                rows.Add(new ItemRow(false, UnreadableKey, notRead, notRead, new UnreadableTag(null)));
+                name += $", {_unreadable.Count} not readable";
+            }
         }
         else if (AtTop)
         {
@@ -357,6 +367,17 @@ public sealed partial class TaskForm : ItemForm
             if (hidden > 0)
             {
                 name += $", {hidden} done hidden";
+            }
+
+            // TK-4.6: a JSON file that does not read as an item is a row of its list, after the items.
+            foreach (var path in level.Unreadable)
+            {
+                rows.Add(new ItemRow(false, path, Path.GetFileName(path), ItemFolder.UnreadableRow(path), new UnreadableTag(path)));
+            }
+
+            if (level.Unreadable.Count > 0)
+            {
+                name += $", {level.Unreadable.Count} not readable";
             }
 
             if (level.NotShown > 0)
@@ -391,11 +412,39 @@ public sealed partial class TaskForm : ItemForm
     /// The items the smart lists and the date lists gather (TK-5.6): the folder shown as the top read now, and, at the
     /// user's own top, every project's as the last look read them off the UI thread (<see cref="_projectItems"/>).
     /// </summary>
-    private IReadOnlyList<GatheredItem> GatheredItems() =>
-    [
-        .. ItemFolder.AllItems(TopFolder).Select(item => new GatheredItem(item, TopFolder, string.Empty)),
-        .. _project is null ? _projectItems ?? [] : [],
-    ];
+    private IReadOnlyList<GatheredItem> GatheredItems()
+    {
+        var (items, unreadable) = ItemFolder.ReadAll(TopFolder);
+        _unreadable = unreadable;
+        return
+        [
+            .. items.Select(item => new GatheredItem(item, TopFolder, string.Empty)),
+            .. _project is null ? _projectItems ?? [] : [],
+        ];
+    }
+
+    /// <summary>The JSON files of the folder shown as the top that the last gathering could not read as items (TK-4.6); a project's own are not looked for from the user's top.</summary>
+    private IReadOnlyList<string> _unreadable = [];
+
+    /// <summary>The Tag of a row for a file that does not read as an item (TK-4.6); no path on the gathering lists' row that counts them.</summary>
+    private sealed record UnreadableTag(string? Path);
+
+    private const string UnreadableKey = "unreadable:";
+
+    private bool OnUnreadable() => InNavigator() && NotRenaming() && SelectedRow() is { Tag: UnreadableTag };
+
+    /// <summary>Enter on such a row: the file in axJSON, or the counting row read again.</summary>
+    private void OpenUnreadable()
+    {
+        if (SelectedRow() is { Tag: UnreadableTag { Path: { } path } })
+        {
+            WindowMenu.Start(Dispatch.AxJSON, path);
+        }
+        else if (SelectedRow() is { } row)
+        {
+            Announce(row.Label, true);
+        }
+    }
 
     /// <summary>
     /// The top level under two levels of headings (TK-3a.1, asked 2026-11-11; TK-D13): Your lists, with a heading of
@@ -548,6 +597,12 @@ public sealed partial class TaskForm : ItemForm
             case { Tag: FoundItem found }:
                 return new ItemDetail("Fields of " + row.Name, found.Item.Path, found.Item.Document,
                     [new ItemDetailLine($"In {found.Hit.Place} / {found.Hit.List}; Enter in the navigator opens it there")], new FileSource(found.Item.Path, found.Item.Text));
+            case { Tag: UnreadableTag { Path: { } unreadable } }:
+                return new ItemDetail("Details of " + row.Name, null, null,
+                    [new ItemDetailLine(row.Label), new ItemDetailLine("The file is JSON that is not an item, or not JSON: Enter in the navigator or Ctrl+J opens it in axJSON to mend; Ctrl+E shows it in axFile"), new ItemDetailLine(unreadable)]);
+            case { Tag: UnreadableTag }:
+                return new ItemDetail("Details of files not readable", null, null,
+                    [new ItemDetailLine(row.Label), .. _unreadable.Select(path => new ItemDetailLine(path)), new ItemDetailLine("Each is a row of its own list, where Enter opens it in axJSON")]);
             case { Tag: ProjectTag or ProjectSectionTag }:
                 return ProjectDetail(row);
             case { Tag: SectionTag section }:

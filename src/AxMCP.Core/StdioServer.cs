@@ -56,6 +56,10 @@ public sealed class StdioServer : IDisposable
         throw new FileNotFoundException($"The program {command} is not in any folder of the PATH: give its full path in the server's command line (docs/axMCP/user-guide.md, Your servers).");
     }
 
+    /// <summary>The folder a server starts in (MP-2.1): its own or the one in hand when that is there, the user's profile otherwise. The consent names the same (<see cref="ServerConsent"/>).</summary>
+    public static string FolderOf(string? folder) =>
+        folder is not null && Directory.Exists(folder) ? folder : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
     private static bool IsBatch(string program) =>
         program.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase) || program.EndsWith(".bat", StringComparison.OrdinalIgnoreCase);
 
@@ -79,7 +83,7 @@ public sealed class StdioServer : IDisposable
             StandardInputEncoding = new UTF8Encoding(false),
             StandardOutputEncoding = new UTF8Encoding(false),
             StandardErrorEncoding = new UTF8Encoding(false),
-            WorkingDirectory = folder is not null && Directory.Exists(folder) ? folder : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            WorkingDirectory = FolderOf(folder),
         };
         foreach (var argument in server.Args)
         {

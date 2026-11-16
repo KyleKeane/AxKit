@@ -1567,6 +1567,7 @@
         {"label": "Next heading level 3", "menu": "", "key": "ctrl+3", "also": [], "keyText": "Ctrl+3", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Open", "menu": "", "key": "enter", "also": [], "keyText": "Enter", "mark": "open", "keyOnly": true, "ai": false},
         {"label": "Open it where it lives", "menu": "", "key": "right", "also": ["enter"], "keyText": "Right", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Open the file in axJSON", "menu": "", "key": "enter", "also": [], "keyText": "Enter", "mark": "open", "keyOnly": true, "ai": false},
         {"label": "Previous heading level 1", "menu": "", "key": "ctrl+shift+1", "also": [], "keyText": "Ctrl+Shift+1", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Previous heading level 2", "menu": "", "key": "ctrl+shift+2", "also": [], "keyText": "Ctrl+Shift+2", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Previous heading level 3", "menu": "", "key": "ctrl+shift+3", "also": [], "keyText": "Ctrl+Shift+3", "mark": "read", "keyOnly": true, "ai": false},

@@ -41,7 +41,9 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 
 - CP-1.1 `AxKit.exe clip [--hidden]`; the console command `axClip`; the Start menu entry "axKit axClip". One axClip runs
   at a time (the mutex `Local\AxKit.AxClip`); a second start shows the running one's window (AS-1.2), or with
-  `--hidden` just ends. Without `--hidden` the window shows at once.
+  `--hidden` just ends. Without `--hidden` the window shows at once. A running axClip that does not answer is asked
+  about: "axClip is running but does not answer. End it and start again?", No the default (bundle AX-1.9); a history
+  that is not kept on disk goes with the copy that is ended.
 - CP-1.2 Start with Windows (a setting, on at first): the value "axKit axClip" under the user's Run key,
   `"…\AxKit.exe" clip --hidden`, written only by the installed program (`SignInStart`, AS-1.3). The installer stops
   axClip before it changes anything and starts it again, hidden, after an install when the setting is on (AS-1.5).

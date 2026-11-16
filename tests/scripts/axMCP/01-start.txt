@@ -2,11 +2,10 @@
 # axMCP: the servers, a server started, its tool called, its resource read, stopped (docs/axMCP/nvda-test-plan.md
 # sections 1 to 4 and 6), run by tools/AxAutomate on a desktop of its own (docs/axKit/automation.md). The server is a
 # fake in Windows PowerShell, written here: it answers the handshake, one tool (echo) and one resource. The agreement
-# for it is recorded already (AX-11.5), as the other access layers' scripts do; the server is one of Your servers, so
+# for it is given in the run, since it is for the whole command line and the folder (MP-2.1a); the server is one of Your servers, so
 # the run never touches Claude Code's files, and its row is found by name since this computer may have servers of its own.
 file home\AxKit\axMCP.json {"checkForUpdates": false, "servers": [{"name": "fake", "commandLine": "powershell -NoProfile -ExecutionPolicy Bypass -File fake.ps1"}]}
 file home\AxKit\axJSON.json {"checkForUpdates": false}
-file home\AxKit\consent.json {"items":[{"app":"axMCP","target":"fake (powershell)","version":"0","when":"2026-11-09T00:00:00"}]}
 file fake.ps1 $in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}}]}' }\n    'tools/call' { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"fake://readme","mimeType":"text/plain","text":"Hello from the fake server."}]}' }\n    'prompts/list' { $r = '{"prompts":[]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"Method not found"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
 
 # Goal: Find a server by its name
@@ -30,7 +29,15 @@ expect focus fake, stdio, stopped
 # Goal: Start a server and open its tools
 # 2.2 Right starts it: the level says starting, then the server's announcement with its counts; Tools selected.
 keys right
-expect said ! fake, starting
+# MP-2.1a: the agreement first, which reads the command line; the box, then Connect.
+expect said Before axMCP starts fake
+expect said -NoProfile -ExecutionPolicy Bypass -File fake.ps1
+keys tab
+expect said I understand that axMCP
+keys space
+expect said ! checked
+keys enter
+expect said fake, starting
 expect said ! fake, running, Tools 1, Resources 1, Prompts 0
 expect focus Tools, 1
 expect state fake - axMCP, access layer for MCP servers

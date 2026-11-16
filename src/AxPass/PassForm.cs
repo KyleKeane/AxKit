@@ -120,8 +120,13 @@ public sealed partial class PassForm : ItemForm
 
         _lockTimer.Tick += (_, _) => LockWhenIdle();
         _clipboardTimer.Tick += (_, _) => ClearCopiedPassword();
-        _database = path is not null && File.Exists(path) ? Path.GetFullPath(path)
-            : _settings.LastDatabase is { } last && File.Exists(last) ? last : null;
+        // Bundle AX-9.5a (R-64): a database of the command line that is not on a drive of this computer is taken as
+        // given, and KeePassXC's tool, off this thread, says so when it is not there; the remembered one is looked at
+        // only on a drive of this computer.
+        string? notOpened = null;
+        _database = path is not null && LocalPaths.ExistsQuickly(path, File.Exists) ? Path.GetFullPath(path)
+            : LocalPaths.AtStart(_settings.LastDatabase, File.Exists, out notOpened, "Open database");
+        SayAtStart(notOpened);
         Fill(select: null);
     }
 

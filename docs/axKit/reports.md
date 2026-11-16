@@ -338,8 +338,14 @@ levers are built now.
   they are, are not marked and are never sent, and the outcome counts them (`SendOutcome.NotOfTheForm`). When the
   count is not zero, what the window says after a send ends with one sentence: "2 files in the reports folder were
   not written by axKit's report form and were not sent." ("1 file ... was not ..."). The list is by name, not by
-  content: a report the user changes in axTask is still sent. Its limit: axTask names an item's file after its
-  title, so a waiting report whose title the user changes there gets a new file name and is no longer sent.
+  content: a report the user changes in axTask is still sent. **By its id as well** (2026-11-16, the leftover of
+  R-57): axTask names an item's file after its title, so a waiting report whose title the user changed there got a
+  new file name, fell off the list and was never sent. The form now writes a random id into each report's file as
+  it saves it (the root key `reportId`, `ReportFiles.IdKey`, which axTask keeps through every change and rename)
+  and puts it on the list beside the name, as an entry "id:" and the id, which no file name can be. A waiting item
+  is the form's when its file name or its id is on the list. The id stays on the computer: it is no part of what is
+  sent. Its limits: a report an earlier version saved has no id and is known by its name alone; a file that copies
+  a listed report's id counts as that report, as a file put in the place of a listed name does.
   **Reports from before the list.** A report an earlier version saved and could not send is on no list. The list
   counts as "not kept yet" until the first report this version saves; until then the sender sends as before, and
   that first save takes the names of the reports that wait in the folder at that moment onto the list, so that

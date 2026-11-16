@@ -40,13 +40,18 @@ public sealed partial class AutomateForm : ItemForm
         : base(AxAutomateApp.Name, settings, AutomateSettings.DefaultPath, settingsError)
     {
         _settings = settings;
-        if ((path ?? settings.Folder) is { } folder && Directory.Exists(folder))
+        // Bundle AX-9.5a: the remembered folder is looked at only on a drive of this computer; a folder of the
+        // command line is the user's own ask and is read here in any case.
+        string? notOpened = null;
+        if ((path ?? LocalPaths.AtStart(settings.Folder, Directory.Exists, out notOpened, "Open a folder of workflows")) is { } folder && (path is null || Directory.Exists(folder)))
         {
             _folders.Add(Path.GetFullPath(folder));
             // AU-4.1: the folder used last is the one a start named as well as Ctrl+O's (as axTask keeps the folder
             // it was started on); written with the settings as the window closes. Until 2026-11-14 Ctrl+O's alone.
             _settings.Folder = _folders[0];
         }
+
+        SayAtStart(notOpened);
 
         // ---- menus and keys: one command list (docs/axKit/app-kit.md AK-2), each key from the tables (AU-4.4) ----
         Add(_sessionMenu, new Command("&Open a folder of workflows...", AxAutomateKeys.OpenFolder, OpenFolder) { When = NotRenaming, Mark = CommandMark.Open });

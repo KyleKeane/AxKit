@@ -122,7 +122,10 @@ keys in place of its words on a line:
 ## 4. The window
 
 - AU-4.1 `AxKit.exe automate [<folder or workflow>]`, Start entry `axKit axAutomate`, command `axAutomate`. Without a
-  path, the folder used last, or `tests\workflows` of the repository the user names once in Options.
+  path, the folder used last, or `tests\workflows` of the repository the user names once in Options. A folder used
+  last that is not on a drive of this computer is not looked at during the start (bundle AX-9.5a): the window opens
+  without a folder and says "<path> is on the network and was not opened at start; Open a folder of workflows opens
+  it."
 - AU-4.2 The item apps' window (`AxKit.Forms/ItemForm`; the user's choice of 2026-11-11, "full window with all the
   features since the list name will give a simple overview"): the navigator lists the folder's folders, then its
   workflows by title, with "N steps" and, after a run, "passed" or "failed at step 7"; Right or Enter goes into a

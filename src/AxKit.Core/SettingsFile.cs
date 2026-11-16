@@ -25,7 +25,21 @@ public static class SettingsFile
     /// <summary>Loads the file, or returns defaults. <paramref name="error"/> describes an unreadable file.</summary>
     public static T Load<T>(string path, out string? error) where T : class, new()
     {
+        var settings = Read<T>(path, out error, out var opened);
+        if (opened)
+        {
+            // R-62: what this window holds as loaded, against which its next save tells what it changed itself.
+            View(path, JsonSerializer.Serialize(settings, JsonOptions));
+        }
+
+        return settings;
+    }
+
+    /// <summary>The file read; <paramref name="opened"/> is false when it was there and could not be opened (R-51).</summary>
+    private static T Read<T>(string path, out string? error, out bool opened) where T : class, new()
+    {
         error = null;
+        opened = true;
         // A file an earlier version left in another case takes the path's spelling (AX-5.1, 5.6.0).
         FileCase.Match(path);
         if (!File.Exists(path))
@@ -48,6 +62,7 @@ public static class SettingsFile
                 NotRead.Add(Path.GetFullPath(path));
             }
 
+            opened = false;
             error = $"{path}: {ex.Message} {NotSaved}";
             Log.Error("Settings not readable, using defaults and saving none: " + error);
             return new T();
@@ -82,6 +97,31 @@ public static class SettingsFile
 
     /// <summary>What the error text of a file that could not be opened ends with (R-51).</summary>
     public const string NotSaved = "Settings are not saved in this run, so that the file is not replaced. Close the window and start it again.";
+
+    /// <summary>
+    /// What a window says when its settings file could not be written (AX-5.9; repairs.md R-63): why, in the system's
+    /// words, and what that means for the user.
+    /// </summary>
+    public static string NotWritten(string reason) =>
+        $"Settings could not be saved: {reason.Trim().TrimEnd('.')}. What you change lasts until this window closes.";
+
+    /// <summary><see cref="NotWritten"/> the first time in this process, null after that: it is said once in a run, and the log holds every failure.</summary>
+    public static string? NotWrittenOnce(string reason)
+    {
+        lock (NotRead)
+        {
+            if (_notWrittenSaid)
+            {
+                return null;
+            }
+
+            _notWrittenSaid = true;
+        }
+
+        return NotWritten(reason);
+    }
+
+    private static bool _notWrittenSaid;
 
     /// <summary>The files that were there and could not be opened in this process, by full path: <see cref="Save{T}"/> writes none of them.</summary>
     private static readonly HashSet<string> NotRead = new(StringComparer.OrdinalIgnoreCase);
@@ -167,8 +207,132 @@ public static class SettingsFile
         }
     }
 
-    /// <summary>Writes the file whole or not at all (<see cref="SafeFile"/>): a temporary file of its own name next to it is put in its place. False when the file was passed over (R-51), so that a sealed file joins the list of sealed files only once it is written (<see cref="SettingsSeal"/>).</summary>
-    public static bool Save<T>(string path, T settings) where T : class
+    /// <summary>
+    /// What each window of this process holds of a settings file, by full path, as JSON text: the settings as
+    /// <see cref="Load{T}"/> gave them, then as each <see cref="Save{T}"/> was given them (R-62). A member that
+    /// differs from it at a save is one this window changed.
+    /// </summary>
+    private static readonly Dictionary<string, string> Views = new(StringComparer.OrdinalIgnoreCase);
+
+    private static void View(string path, string text)
+    {
+        lock (Views)
+        {
+            Views[Path.GetFullPath(path)] = text;
+        }
+    }
+
+    /// <summary>
+    /// What a save writes when the file may hold what another window saved meanwhile (AX-5.7; repairs.md R-62), as a
+    /// JSON object: for each top-level member the file's value, unless this window changed the member, which is when
+    /// <paramref name="mine"/> differs from <paramref name="view"/>, what this window held as loaded or last saved.
+    /// A member the file does not have keeps this window's value; a member the file gained that this window never
+    /// held is kept, and one this window held and writes no longer is dropped. A list both
+    /// windows changed is this window's, whole: lists are not merged. Null when the file's text is no JSON object,
+    /// or when nothing of it differs from <paramref name="mine"/>.
+    /// </summary>
+    public static System.Text.Json.Nodes.JsonObject? Merged(string view, string mine, string file)
+    {
+        var options = new System.Text.Json.Nodes.JsonNodeOptions { PropertyNameCaseInsensitive = true };
+        var reading = new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true };
+        System.Text.Json.Nodes.JsonObject? held, own, there;
+        try
+        {
+            held = System.Text.Json.Nodes.JsonNode.Parse(view, options, reading) as System.Text.Json.Nodes.JsonObject;
+            own = System.Text.Json.Nodes.JsonNode.Parse(mine, options, reading) as System.Text.Json.Nodes.JsonObject;
+            there = System.Text.Json.Nodes.JsonNode.Parse(file, options, reading) as System.Text.Json.Nodes.JsonObject;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+
+        if (held is null || own is null || there is null)
+        {
+            return null;
+        }
+
+        var merged = new System.Text.Json.Nodes.JsonObject();
+        var differs = false;
+        foreach (var (name, value) in own)
+        {
+            var changedHere = !held.ContainsKey(name) || !System.Text.Json.Nodes.JsonNode.DeepEquals(value, held[name]);
+            if (changedHere || !there.ContainsKey(name))
+            {
+                merged[name] = value?.DeepClone();
+            }
+            else
+            {
+                merged[name] = there[name]?.DeepClone();
+                differs |= !System.Text.Json.Nodes.JsonNode.DeepEquals(value, there[name]);
+            }
+        }
+
+        foreach (var (name, value) in there)
+        {
+            // A member this window does not write: kept when the file gained it since this window loaded it (another
+            // window's, a newer version's), dropped when this window held it and writes it no longer (axGIT's old
+            // list of trusted paths, read once and then gone).
+            if (!own.ContainsKey(name) && !held.ContainsKey(name))
+            {
+                merged[name] = value?.DeepClone();
+                differs = true;
+            }
+        }
+
+        return differs ? merged : null;
+    }
+
+    /// <summary>
+    /// The settings a save writes (R-62): <paramref name="settings"/> themselves, or, when this process loaded the
+    /// file and the file now holds something else that reads, those with what the file gained (<see cref="Merged"/>).
+    /// A file <paramref name="fileChecks"/> refuses (its seal does not check, AX-5.6) gives nothing.
+    /// </summary>
+    private static T WithWhatTheFileGained<T>(string path, T settings, string mine, Func<T, bool>? fileChecks) where T : class
+    {
+        string? view;
+        lock (Views)
+        {
+            Views.TryGetValue(Path.GetFullPath(path), out view);
+        }
+
+        if (view is null || !File.Exists(path))
+        {
+            return settings;
+        }
+
+        try
+        {
+            var file = ReadText(path);
+            if (file == mine || Merged(view, mine, file) is not { } merged)
+            {
+                return settings;
+            }
+
+            if (fileChecks is not null && (JsonSerializer.Deserialize<T>(file, JsonOptions) is not { } there || !fileChecks(there)))
+            {
+                return settings;
+            }
+
+            return JsonSerializer.Deserialize<T>(merged.ToJsonString(), JsonOptions) ?? settings;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or ArgumentException)
+        {
+            // The file cannot be opened, a value of it does not read, or it names a member twice: this window's settings are written as they are.
+            return settings;
+        }
+    }
+
+    /// <summary>
+    /// Writes the file whole or not at all (<see cref="SafeFile"/>): a temporary file of its own name next to it is
+    /// put in its place. False when the file was passed over (R-51), so that a sealed file joins the list of sealed
+    /// files only once it is written (<see cref="SettingsSeal"/>). What another window of the app saved since this
+    /// one loaded the file is kept (R-62, <see cref="Merged"/>). A sealed class gives <paramref name="fileChecks"/>,
+    /// whether the file's sealed fields check, so that nothing is taken from a file whose seal does not, and
+    /// <paramref name="seal"/>, which writes the seal into the settings: it is called on what is written when that
+    /// is not <paramref name="settings"/> themselves.
+    /// </summary>
+    public static bool Save<T>(string path, T settings, Func<T, bool>? fileChecks = null, Action<T>? seal = null) where T : class
     {
         // R-51: a file that was there and could not be opened is not replaced by the defaults that stood in for it.
         lock (NotRead)
@@ -185,7 +349,20 @@ public static class SettingsFile
             Directory.CreateDirectory(directory);
         }
 
-        SafeFile.WriteAllText(path, JsonSerializer.Serialize(settings, JsonOptions));
+        var mine = JsonSerializer.Serialize(settings, JsonOptions);
+        var written = WithWhatTheFileGained(path, settings, mine, fileChecks);
+        if (ReferenceEquals(written, settings))
+        {
+            SafeFile.WriteAllText(path, mine);
+        }
+        else
+        {
+            seal?.Invoke(written);
+            SafeFile.WriteAllText(path, JsonSerializer.Serialize(written, JsonOptions));
+        }
+
+        // This window's own settings, not what was written: a member another window changed stays one this window did not.
+        View(path, mine);
         return true;
     }
 
