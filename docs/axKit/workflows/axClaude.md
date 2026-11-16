@@ -1503,6 +1503,37 @@ You hear: Ready.
     You hear: Done.
 3. Press Ctrl+2.
 
+## See the session file followed, without Claude Code
+
+Starts with: Open axClaude with the folder sf.
+
+You hear: Ready.
+1. Choose the menu item Say the event sources.
+    You hear: Session file: not found.
+2. Type: Say ok
+3. Press Enter.
+    You hear: Sent.
+    You hear: Done.
+4. Choose the menu item Say the event sources.
+    You hear: Session file: followed, 3 entries.
+5. Choose the menu item Say the event sources.
+    You hear: Session file: stopped, json.
+6. Choose the menu item Ground the conversation in Claude Code's session file.
+    You hear: Grounding in Claude Code's session file off.
+7. Choose the menu item Say the event sources.
+    You hear: Session file: off.
+8. Choose the menu item Ground the conversation in Claude Code's session file.
+    You hear: Grounding in Claude Code's session file on.
+9. Choose the menu item Say the event sources.
+    You hear: Session file: not found.
+10. Type: Say more
+11. Press Enter.
+    You hear: Sent.
+    You hear: Done.
+12. Choose the menu item Say the event sources.
+    You hear: Session file: followed, 6 entries.
+13. Press Ctrl+2.
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

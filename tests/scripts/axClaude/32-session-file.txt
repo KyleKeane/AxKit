@@ -1,0 +1,66 @@
+# Workflow: See the session file followed, without Claude Code
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/events-and-grounding.md EG-3.2, EG-3.3, EG-3.6 and EG-9.2 (2026-11-15): the window reads the
+# session file Claude Code keeps for the conversation, on a thread of its own, and Say the event sources says in
+# numbers what became of it. The stand-in (tools/AxAutomate/StandIn.cs) says it is Claude Code 2.1.324, below the
+# version the hooks are passed from, so no event names the file and the folder rule has to find it: once a message
+# was sent, the file of the project folder that gains a prompt with that message's letters. The file lies under the
+# run's own folder, never among the user's sessions. Two turns: after the first the file is followed and its three
+# entries are counted (the prompt, the reply, the turn's end); three lines that are no JSON, appended as a broken
+# writer would, stop the reader for the session; the switch off says off; on again, the reader starts with what the
+# file gains from then on, so the second turn's three entries are read and the three broken lines behind it are not.
+# Nothing here is heard that was not heard before: "Done" comes by the bell and the settle, as in script 28.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir sf
+# The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.324 (stand-in)","session":"11111111-2222-4333-8444-666666666666","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"wait":600},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["ok"]},{"turnEnd":2345},{"waitFile":"go2"},{"mark":"A"},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","you: Say more","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say more"],"source":"typed"},{"wait":600},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","you: Say more","claude: more","Sautéed for 1s · done 4:08 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["more"]},{"turnEnd":1200},{"idle":true}]}
+
+start claude {temp}\sf --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+# Before a message is sent nothing is looked for: no file is known.
+menu Say the event sources
+expect said Session file: not found.
+
+# The first turn. The message's letters are what the folder rule looks for; the stand-in writes the prompt's entry as
+# Claude takes the message up, and the reply's entry and the turn's end after the reply's rows.
+type Say ok
+keys enter
+expect said Sent
+file sf\go1 x
+expect said Done
+# The reader looks at the file every 50 ms for 5 s after a turn; the wait is for a busy computer.
+wait 2000
+menu Say the event sources
+expect said Session file: followed, 3 entries.
+
+# Three lines that are no JSON in a row: the reader stops for this session and says why in one word (EG-3.6).
+run for /r home\.claude\projects %f in (*.jsonl) do @(echo not json one>>"%f"& echo not json two>>"%f"& echo not json three>>"%f")
+wait 2000
+menu Say the event sources
+expect said Session file: stopped, json.
+
+# The switch off: no record, said as off. On again: a new reader, which knows no file until a message is sent.
+menu Ground the conversation in Claude Code's session file
+expect said ! Grounding in Claude Code's session file off
+menu Say the event sources
+expect said Session file: off.
+menu Ground the conversation in Claude Code's session file
+expect said ! Grounding in Claude Code's session file on
+menu Say the event sources
+expect said Session file: not found.
+
+# The second turn: the file is found again by the new message, and read from where it stood when the switch went
+# on: the three entries of this turn join the three counted before, and the broken lines are never read again.
+type Say more
+keys enter
+expect said Sent
+file sf\go2 x
+expect said Done
+wait 2000
+menu Say the event sources
+expect said Session file: followed, 6 entries.
+# The conversation is the screen's, as before: both replies stand in it.
+keys ctrl+2
+expect text claude: more

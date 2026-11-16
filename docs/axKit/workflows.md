@@ -212,8 +212,9 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Hide the live progress rows again
 28. **Hear where axClaude's events come from**
 29. **Follow a turn played by the stand-in**
-30. **Have a short exchange with Claude**
-31. **Answer a set of two questions from Claude**
+30. **See the session file followed, without Claude Code**
+31. **Have a short exchange with Claude**
+32. **Answer a set of two questions from Claude**
 
 ## axClip
 
