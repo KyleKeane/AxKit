@@ -12,7 +12,7 @@ file myproject\listed.txt x
 start terminal {temp}\myproject
 expect said ♪ Ready
 # Clear the transcript first, so that the blocks are the window's first lines (PowerShell's PSReadLine line is long).
-keys ctrl+l
+do Clear transcript
 expect said Cleared
 
 # Goal: Run a command and read its output by headings
@@ -23,7 +23,7 @@ expect said Sent
 expect said ♪ Sent
 expect said Done
 expect said ♪ Done
-keys ctrl+3
+do Latest output
 expect said Output 1 heading level 1
 expect focus Terminal
 expect text "# Output 1","","hello"
@@ -61,7 +61,7 @@ expect said heading level
 menu Markers in the text
 keys shift+i
 expect focus "value":"# Input 1"}
-keys ctrl+1
+do Command field
 expect focus "name":"Command"
 
 # Check: A failing command says its exit code, and a listing has no prompt rows
@@ -75,11 +75,11 @@ keys enter
 expect said ♪ Click
 expect said Done
 expect said ♪ Done
-keys ctrl+3
+do Latest output
 expect said Output 3 heading level 1
 expect focus "name":"Terminal"
 expect text listed.txt
-keys ctrl+1
+do Command field
 expect focus "name":"Command"
 
 # Goal: Answer a program that asks
@@ -94,11 +94,11 @@ keys enter
 expect said Sent
 expect said Done
 expect said ♪ Done
-keys ctrl+2
+do Terminal
 expect text Continue? (y/n): y
 expect text "# Input 5","## Folder"
 expect text "## Command","y",""
-keys ctrl+1
+do Command field
 
 # Goal: Send a command of several lines
 # Step 4: a command of several lines with Shift+Enter; no continuation rows in the output.
@@ -114,14 +114,14 @@ expect said Done
 expect said ♪ Done
 # "yes" reaches the view only after "Done" here (a tick follows it): a Down pressed at once finds no line below.
 wait 600
-keys ctrl+3
+do Latest output
 expect said Output 6 heading level 1
 expect focus "name":"Terminal"
 keys down
 keys down
 expect focus "value":"yes"}
 expect text "# Output 6","","yes"
-keys ctrl+1
+do Command field
 
 # Goal: Send a command without recording it
 # Step 5: Actions, Send without recording (AT-3.4; no key since 2026-11-14, the menu and the palette run it) sends
@@ -136,12 +136,12 @@ type Start-Sleep 5
 menu Send without recording
 expect said Sent, not recorded
 expect state Running: a command sent without recording
-keys ctrl+q
+do What is running
 expect said Running: a command sent without recording,
 refuse said Start-Sleep
 expect said Done
 expect said ♪ Done
-keys ctrl+r
+do Recent commands
 expect focus "name":"Recent commands"
 expect list "items":["if ($true) {
 keys escape
@@ -149,22 +149,22 @@ expect focus "name":"Command"
 # Check: Ctrl+Enter sends as Enter does, and does nothing in the terminal
 # Ctrl+Enter in the command field sends the command exactly as Enter does (bundle AX-8.10 rule 3): recorded, block 7.
 type Write-Output seven
-keys ctrl+enter
+do Send the command
 expect said Sent
 refuse said not recorded
 expect said Done
 expect said ♪ Done
-keys ctrl+3
+do Latest output
 expect said Output 7 heading level 1
 expect focus "name":"Terminal"
 # In the terminal Ctrl+Enter has no main action: the edge sound, nothing sent.
 keys ctrl+enter
 expect said ♪ Edge
-keys ctrl+1
+do Command field
 
 # Goal: Put a recent command back in the field
 # Step 6: Ctrl+R lists the recent commands, the newest first; Enter puts one in the field; Escape goes back.
-keys ctrl+r
+do Recent commands
 expect focus "name":"Recent commands"
 expect focus "value":"Write-Output seven
 expect list Get-ChildItem
@@ -174,14 +174,14 @@ expect focus "name":"Command"
 expect text "if ($true) {",
 keys ctrl+a
 keys delete
-keys ctrl+r
+do Recent commands
 expect focus "name":"Recent commands"
 keys escape
 expect focus "name":"Command"
 
 # Goal: Copy a command line of the terminal into the field
 # Step 7: Enter on a command line of the terminal copies it into the field.
-keys ctrl+3
+do Latest output
 expect said Output 7 heading level 1
 expect focus "name":"Terminal"
 keys shift+i
@@ -205,9 +205,9 @@ keys enter
 expect said Sent
 expect state Running: Start-Sleep 30
 wait 1500
-keys ctrl+q
+do What is running
 expect said Running: Start-Sleep 30,
-keys ctrl+shift+c
+do Interrupt
 expect said Interrupt sent
 # "Done" or "Failed": the chime comes with either.
 expect said ♪ Done
@@ -226,13 +226,13 @@ expect said ♪ StartMusic
 expect said ♪ StopMusic
 expect said Done
 expect said ♪ Done
-keys ctrl+m
+do Background music on or off
 expect said Background music off
 
 # Check: A command wider than the console is not read back in its output
 # AT-3.2: a command longer than the console is wide. The rows its echo wraps onto are hidden with the prompt row:
 # after "Sent" only the output is said, and the command's text is not in the Output block (it was, until 2026-11-14).
-keys ctrl+l
+do Clear transcript
 expect said Cleared
 type $n = 'abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij tailmark'; Write-Output finished
 keys enter
@@ -240,5 +240,5 @@ expect said Sent
 refuse said tailmark
 expect said finished
 expect said Done
-keys ctrl+3
+do Latest output
 expect text "# Output 1","","finished"

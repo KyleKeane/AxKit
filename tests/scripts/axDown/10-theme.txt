@@ -27,7 +27,7 @@ menu Theme on
 expect said ! Theme on
 # Check: Word wrap is kept in the theme file
 # TH-6: Ctrl+Shift+W writes the editors' word wrap into the same file; axJSON on it shows the value; back on for the scripts after.
-keys ctrl+shift+w
+do Word wrap
 expect said ! Word wrap off
 menu Edit theme file
 adopt
@@ -35,5 +35,5 @@ expect state theme.json - axJSON
 expect text "wordWrap": false
 close
 use 1
-keys ctrl+shift+w
+do Word wrap
 expect said ! Word wrap on

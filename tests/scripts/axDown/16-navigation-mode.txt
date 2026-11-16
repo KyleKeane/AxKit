@@ -37,7 +37,7 @@ keys shift+i
 expect said ! one
 # Check: The jumps with the control key work as in edit mode
 # The Ctrl jumps work as in edit mode.
-keys ctrl+shift+h
+do Heading, Navigation, Previous
 expect said ! List, heading level 2
 
 # Check: Keys that would type or delete change nothing
@@ -52,7 +52,7 @@ keys backspace
 expect said ♪ Edge
 keys delete
 expect said ♪ Edge
-keys ctrl+z
+do Undo
 expect said ♪ Edge
 # A character sent with no key of its own is stopped too.
 type xyz
@@ -91,5 +91,5 @@ keys home
 type X
 expect focus {"name":"modes.md","role":"Text","value":"X- one"}
 expect state *modes.md
-keys ctrl+z
+do Undo
 expect said ! Undone

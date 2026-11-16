@@ -171,11 +171,21 @@ public sealed class Run(string exe, string temp, bool hosted = false)
                 return (true, null);
             case "keys":
                 // One press at a time: each goes to the control that has the focus after the one before.
-                foreach (var press in rest.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                var presses = rest.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                for (var place = 0; place < presses.Length; place++)
                 {
+                    var press = presses[place];
                     if (press.Equals("alt+f4", StringComparison.OrdinalIgnoreCase))
                     {
                         Current.Closing();
+                    }
+                    else if (Converting && !_doing && KeyChord.IsCommandChord(press)
+                        && Converter.NameFor(CommandListing.Read(Current.Send("commands data")), press) is { } command)
+                    {
+                        // WF-10.1: the window as it is right before the press says whether the press is one command
+                        // of its list; the press itself goes on as written. Alt+F4 stays a keys press: it tells the
+                        // run that the end is meant.
+                        _conversions.Add((place, command));
                     }
 
                     var pressed = Current.Send("keys " + press);
@@ -194,6 +204,31 @@ public sealed class Run(string exe, string temp, bool hosted = false)
             default:
                 return (false, $"unknown step {verb}");
         }
+    }
+
+    /// <summary>
+    /// The converter's run (docs/axKit/user-workflows.md WF-10.1), on the hidden desktop alone: before each press of a
+    /// <c>keys</c> step that <see cref="KeyChord.IsCommandChord"/> holds for, the window is asked for its commands as
+    /// data and <see cref="Converter.NameFor"/> for the command the press runs; a name is kept with the press's place
+    /// on its line (<see cref="TakeConversions"/>). Nothing else of the run changes: every press is pressed as written.
+    /// </summary>
+    public bool Converting { get; set; }
+
+    private readonly List<(int Press, string Name)> _conversions = [];
+
+    /// <summary>Whether the keys step being played is a <c>do</c> step's own press, which is a command's name already.</summary>
+    private bool _doing;
+
+    /// <summary>
+    /// The presses of the line just played that the converter would write as <c>do</c> lines (<see cref="Converting"/>):
+    /// each press's place among its line's presses, from 0, and the command's canonical name. Taken: the next call
+    /// gives only what came after this one.
+    /// </summary>
+    public IReadOnlyList<(int Press, string Name)> TakeConversions()
+    {
+        (int Press, string Name)[] taken = [.. _conversions];
+        _conversions.Clear();
+        return taken;
     }
 
     private readonly List<WindowCommands> _snapshots = [];
@@ -229,7 +264,17 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         switch (decision.Kind)
         {
             case DoKind.Press:
-                var pressed = Step("keys " + decision.Chord);
+                _doing = true;
+                (bool Ok, string? Detail) pressed;
+                try
+                {
+                    pressed = Step("keys " + decision.Chord);
+                }
+                finally
+                {
+                    _doing = false;
+                }
+
                 return pressed.Ok ? (true, decision.Detail) : pressed;
             case DoKind.Choose:
                 var before = Nvda ? Speech.LogLength() : 0;

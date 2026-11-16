@@ -16,7 +16,7 @@ refuse said ♪ Heading
 keys down
 expect said ♪ Heading
 # The section jumps (Ctrl+Up, Ctrl+Down) land on headings too.
-keys ctrl+up
+do Previous section
 expect said ♪ Heading
 keys end
 refuse said ♪ Heading

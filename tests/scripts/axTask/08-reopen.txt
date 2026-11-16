@@ -34,7 +34,7 @@ expect state Lists - axTask
 expect focus Your lists, heading level 1, 2 lists
 # Check: A smart list open at the close leaves the next start at the top
 # A smart list open at the close is not a list of the folder: the next start is at the top level too.
-keys ctrl+0
+do All tasks
 expect said ! All tasks, 2 items
 close
 start task

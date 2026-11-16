@@ -33,7 +33,7 @@ keys ctrl+down
 expect state Line 9, Column 1 \u00B7
 # Goal: Hear the line and column
 # F8, Say the status (bundle AX-7.10), from the text: the status bar's two parts as one announcement, the caret unmoved.
-keys f8
+do Say the status
 expect said Line 9, Column 1
 expect state Line 9, Column 1 \u00B7
 # Check: Moving by paragraph stops at a paragraph's start and at the file's end
@@ -60,11 +60,11 @@ expect quiet 1000
 # Goal: Turn word wrap off and on
 # 2.4: word wrap off and on, the caret on the same character.
 keys ctrl+home ctrl+down ctrl+down right right right
-keys ctrl+shift+w
+do Word wrap
 expect said ! Word wrap off
 expect focus This line is longer than the window
 expect state Line 5, Column 4 \u00B7
-keys ctrl+shift+w
+do Word wrap
 expect said ! Word wrap on
 expect state Line 5, Column 4 \u00B7
 
@@ -91,10 +91,10 @@ expect text A sentence!
 expect focus {"name":"new.md","role":"Text","value":"\tSecond line."}
 expect state *new.md - axDown
 wait 1500
-keys ctrl+z
+do Undo
 expect said ! Undone
 expect focus {"name":"new.md","role":"Text","value":""}
-keys ctrl+y
+do Redo
 expect said ! Redone
 expect text A sentence!
 
@@ -103,6 +103,7 @@ expect text A sentence!
 start down {temp}\empty.md
 # A key sent before the editor has the focus goes to the form and can arrive as a typed letter (see the report).
 expect focus empty.md
+# These four stay key presses: the check is about the chords themselves, not the commands two of them run.
 keys ctrl+m ctrl+h ctrl+i ctrl+j
 expect said No next list item
 expect state "title":"empty.md - axDown"
@@ -113,20 +114,20 @@ expect focus {"name":"empty.md","role":"Text","value":""}
 type alpha
 wait 1500
 type  beta
-keys ctrl+z
+do Undo
 expect said ! Undone
 expect focus {"name":"empty.md","role":"Text","value":"alpha"}
-keys ctrl+z
+do Undo
 expect said ! Undone
 expect focus {"name":"empty.md","role":"Text","value":""}
-keys ctrl+z
+do Undo
 expect said ! Nothing to undo
-keys ctrl+y
+do Redo
 expect said ! Redone
-keys ctrl+y
+do Redo
 expect said ! Redone
 expect focus {"name":"empty.md","role":"Text","value":"alpha beta"}
-keys ctrl+y
+do Redo
 expect said ! Nothing to redo
 # 2.6 manual: paste a line (Ctrl+V) and type after it; the clipboard is the user's, shared with the test desktop.
 # Check: Letters deleted in a row are put back in one step
@@ -135,17 +136,17 @@ wait 1500
 keys backspace backspace backspace backspace backspace
 expect focus {"name":"empty.md","role":"Text","value":"alpha"}
 wait 1500
-keys ctrl+z
+do Undo
 expect said ! Undone
 expect focus {"name":"empty.md","role":"Text","value":"alpha beta"}
 expect state Column 11
 # Check: Undo goes back past a save
 # 2.6: typing, Ctrl+S ("Saved"), Ctrl+Z: undone past the save, the star back.
 type  gamma
-keys ctrl+s
+do Save
 expect said ! Saved
 expect state "title":"empty.md - axDown"
-keys ctrl+z
+do Undo
 expect said ! Undone
 expect state *empty.md - axDown
 expect focus {"name":"empty.md","role":"Text","value":"alpha beta"}
@@ -167,20 +168,20 @@ expect focus {"name":"empty.md","role":"Text","value":"alpha"}
 menu Select all
 type x
 expect focus {"name":"empty.md","role":"Text","value":"x"}
-keys ctrl+z
+do Undo
 expect said ! Undone
 expect focus {"name":"empty.md","role":"Text","value":"alpha"}
 # 2.6 manual: Shift+F10 opens the text's context menu, a real menu, which needs the foreground.
 # Check: A new document starts with nothing to undo
 # 2.6: after another document (New, which ends the history as Open does) Ctrl+Z has nothing to undo.
-keys ctrl+n
+do New
 expect state Save changes to empty.md?
 expect focus Enter: Save. Escape: Cancel.
 keys tab tab
 expect focus Don\u0027t save
 keys enter
 expect state Untitled - axDown
-keys ctrl+z
+do Undo
 expect said ! Nothing to undo
 refuse said Saved
 # What Don't save left on disk: the text of the save.

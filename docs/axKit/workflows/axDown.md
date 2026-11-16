@@ -313,28 +313,29 @@ Starts with: Open axDown with the file long.md.
 
 ### Move back to the previous heading
 
-1. Press Ctrl+Shift+H 4 times.
+1. Press Ctrl+Shift+H 4 times (Heading; Navigation menu, Previous).
     You hear: Code, heading level 2.
-2. Press Ctrl+Shift+H 4 times.
+2. Press Ctrl+Shift+H 4 times (Heading; Navigation menu, Previous).
     You hear: Long Markdown file for navigation, heading level 1.
 3. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
     You hear: No previous heading.
 
 ### Move to a heading of one level
 
-1. Press Ctrl+Home, Ctrl+2.
-    You hear: Second heading, level 2, heading level 2.
+1. Press Ctrl+Home.
 2. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
+    You hear: Second heading, level 2, heading level 2.
+3. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
     You hear: Lists, heading level 2.
-3. Press Ctrl+2 2 times.
+4. Press Ctrl+2 2 times (Heading level 2; Navigation menu, Next).
     You hear: Code, heading level 2.
-4. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
+5. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
     You hear: No next heading level 2.
-5. Press Ctrl+Shift+2 (Heading level 2; Navigation menu, Previous).
+6. Press Ctrl+Shift+2 (Heading level 2; Navigation menu, Previous).
     You hear: Quote and table, heading level 2.
-6. Press Ctrl+4 (Heading level 4; Navigation menu, Next).
+7. Press Ctrl+4 (Heading level 4; Navigation menu, Next).
     You hear: Fourth level heading, heading level 4.
-7. Press Ctrl+Shift+4 (Heading level 4; Navigation menu, Previous).
+8. Press Ctrl+Shift+4 (Heading level 4; Navigation menu, Previous).
     You hear: No previous heading level 4.
 
 ### Move by heading from the menu
@@ -351,13 +352,14 @@ Starts with: Open axDown with the file long.md.
 
 ### Move to the next link
 
-1. Press Ctrl+Home, Ctrl+K.
-    You hear: GitHub, link.
+1. Press Ctrl+Home.
 2. Press Ctrl+K (Link; Navigation menu, Next).
-    You hear: https://www.example.com, link.
+    You hear: GitHub, link.
 3. Press Ctrl+K (Link; Navigation menu, Next).
-    You hear: https://example.org, link.
+    You hear: https://www.example.com, link.
 4. Press Ctrl+K (Link; Navigation menu, Next).
+    You hear: https://example.org, link.
+5. Press Ctrl+K (Link; Navigation menu, Next).
     You hear: No next link.
 
 ### Move back to the previous link
@@ -370,32 +372,36 @@ Starts with: Open axDown with the file long.md.
 
 ### Move by list and by list item
 
-1. Press Ctrl+Home, Ctrl+L.
+1. Press Ctrl+Home.
+2. Press Ctrl+L (List; Navigation menu, Next).
     You hear: List with 3 items, one.
-2. Press Ctrl+I (List item; Navigation menu, Next).
-    You hear: two.
 3. Press Ctrl+I (List item; Navigation menu, Next).
-    You hear: two, nested.
+    You hear: two.
 4. Press Ctrl+I (List item; Navigation menu, Next).
-    You hear: three.
+    You hear: two, nested.
 5. Press Ctrl+I (List item; Navigation menu, Next).
+    You hear: three.
+6. Press Ctrl+I (List item; Navigation menu, Next).
     You hear: numbered one.
-6. Press Ctrl+Home, Ctrl+L, Ctrl+L.
+7. Press Ctrl+Home.
+8. Press Ctrl+L 2 times (List; Navigation menu, Next).
     You hear: List with 2 items, numbered one.
-7. Press Ctrl+L (List; Navigation menu, Next).
+9. Press Ctrl+L (List; Navigation menu, Next).
     You hear: No next list.
-8. Press Ctrl+Shift+L (List; Navigation menu, Previous).
+10. Press Ctrl+Shift+L (List; Navigation menu, Previous).
     You hear: List with 3 items, one.
 
 ### Move to a block quote or a table
 
-1. Press Ctrl+Home, Ctrl+Q.
-    You hear: Block quote, A block quote, line one.
+1. Press Ctrl+Home.
 2. Press Ctrl+Q (Block quote; Navigation menu, Next).
+    You hear: Block quote, A block quote, line one.
+3. Press Ctrl+Q (Block quote; Navigation menu, Next).
     You hear: No next block quote.
-3. Press Ctrl+Home, Ctrl+T.
+4. Press Ctrl+Home.
+5. Press Ctrl+T (Table; Navigation menu, Next).
     You hear: Table with 3 rows and 2 columns.
-4. Press Ctrl+T (Table; Navigation menu, Next).
+6. Press Ctrl+T (Table; Navigation menu, Next).
     You hear: No next table.
 
 ## Show the current file in another app

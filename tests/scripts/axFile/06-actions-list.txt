@@ -38,7 +38,7 @@ keys shift+tab
 expect focus "name":"6 items"
 # Goal: See the last operation in the Actions list
 # Ctrl+Shift+N temp: "Created temp", the focus stays in the folder list, the status bar's left text the line.
-keys ctrl+shift+n
+do New folder
 expect focus "name":"Name"
 type temp
 keys enter
@@ -66,7 +66,7 @@ expect focus "value":"temp, folder"
 
 # Check: The Actions list is on the newest line after an operation
 # 6.2 F2 on temp, notes: the Actions list is on the newest line while the focus was in the folder list.
-keys f2
+do Rename
 expect focus "name":"New name"
 type notes
 keys enter
@@ -133,7 +133,7 @@ keys home
 expect focus "value":"subfolder-for-inner, folder"
 keys enter
 expect said ! subfolder-for-inner, 1 item, readme.txt
-keys ctrl+shift+n
+do New folder
 expect focus "name":"Name"
 type inner
 keys enter
@@ -153,7 +153,7 @@ expect said ! act, 7 items, subfolder-for-inner, folder
 # Check: A compress and a delete of several files each add one line
 # 6.5 Compress two selected files: the last line "Compressed to act.zip". Delete two: "Deleted 2 items"; Enter on that line.
 # Manual (6.5): the copy of a big folder and its running line use the clipboard; the zip open in another program needs that program.
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type zip-two
 keys enter
@@ -166,9 +166,9 @@ keys tab
 expect focus "value":"Compressed to act.zip"
 keys escape
 # The two stay selected after the compress; cleared before the next selection.
-keys ctrl+shift+a
+do Deselect all
 expect said ! None selected
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type delete-two
 keys enter
@@ -189,12 +189,12 @@ expect said ! act,
 expect focus "name":"6 items"
 # Check: A rename refused before it ran adds no line
 # A rename refused before it ran (a name taken) adds no line.
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type start-here
 keys enter
 expect focus "value":"start-here.txt"
-keys f2
+do Rename
 expect focus "name":"New name"
 type zip-two-files-1
 keys enter
@@ -220,7 +220,7 @@ expect said ! Not undone: temp has files now
 keys escape
 # Goal: Undo the newest operation from the folder list
 # Ctrl+Z in the folder list: the newest undoable line, here the delete of two.
-keys ctrl+z
+do Undo delete
 expect said ! Undone: 2 items restored
 
 # Check: The keyboard shortcuts from the Actions list return to it
@@ -229,14 +229,14 @@ expect said ! Undone: 2 items restored
 wait 500
 keys tab
 expect focus "name":"Actions"
-keys f1
+do Keyboard shortcuts
 expect focus "name":"Keyboard shortcuts"
 keys escape
 expect focus "name":"Actions"
 keys escape
 # Check: Nothing is said for a line added while in the folder list
 # Nothing is spoken for a line added while the focus is in the folder list: only the operation's own words.
-keys ctrl+shift+n
+do New folder
 expect focus "name":"Name"
 type quiet
 keys enter
@@ -245,7 +245,7 @@ expect quiet 1000
 
 # Goal: See what was selected in the Actions list
 # 6.8 Selection lines: Space on a file, Tab, End: "Selected <name>" under the header "Selection".
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type start-here
 keys enter
@@ -271,7 +271,7 @@ expect focus "value":"Selected 3 items"
 keys up
 expect focus "value":"Deselected start-here.txt"
 keys escape
-keys ctrl+shift+a
+do Deselect all
 expect said ! None selected
 keys tab
 keys end
@@ -283,7 +283,7 @@ expect focus "name":"9 items"
 expect list "items":["quiet, folder, selected","subfolder-for-inner, folder, selected","temp, folder, selected"
 # Check: Undo in the folder list never undoes the selection
 # Ctrl+Z in the folder list undoes an operation, never the selection.
-keys ctrl+z
+do Undo new folder
 expect said ! Undone: quiet removed
 expect list "subfolder-for-inner, folder, selected","temp, folder, selected"
 # The status bar never reads a selection line.
@@ -308,7 +308,7 @@ keys down down down
 keys shift+space
 expect said ! Selected, 4 selected
 expect list "subfolder-for-inner, folder","temp, folder, selected","act.zip, selected","delete-two-1.txt, selected","delete-two-2.txt, selected","start-here.txt"
-keys ctrl+shift+a
+do Deselect all
 expect said ! None selected
 keys shift+space
 expect said ! Selected
@@ -323,257 +323,257 @@ start file {temp}\fifty
 expect focus "value":"q0.txt"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
-keys f2
+do Rename
 expect focus "name":"New name"
 type q1
 keys enter
 expect said ! Renamed to q1.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q2
 keys enter
 expect said ! Renamed to q2.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q3
 keys enter
 expect said ! Renamed to q3.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q4
 keys enter
 expect said ! Renamed to q4.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q5
 keys enter
 expect said ! Renamed to q5.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q6
 keys enter
 expect said ! Renamed to q6.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q7
 keys enter
 expect said ! Renamed to q7.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q8
 keys enter
 expect said ! Renamed to q8.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q9
 keys enter
 expect said ! Renamed to q9.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q10
 keys enter
 expect said ! Renamed to q10.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q11
 keys enter
 expect said ! Renamed to q11.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q12
 keys enter
 expect said ! Renamed to q12.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q13
 keys enter
 expect said ! Renamed to q13.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q14
 keys enter
 expect said ! Renamed to q14.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q15
 keys enter
 expect said ! Renamed to q15.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q16
 keys enter
 expect said ! Renamed to q16.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q17
 keys enter
 expect said ! Renamed to q17.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q18
 keys enter
 expect said ! Renamed to q18.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q19
 keys enter
 expect said ! Renamed to q19.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q20
 keys enter
 expect said ! Renamed to q20.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q21
 keys enter
 expect said ! Renamed to q21.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q22
 keys enter
 expect said ! Renamed to q22.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q23
 keys enter
 expect said ! Renamed to q23.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q24
 keys enter
 expect said ! Renamed to q24.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q25
 keys enter
 expect said ! Renamed to q25.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q26
 keys enter
 expect said ! Renamed to q26.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q27
 keys enter
 expect said ! Renamed to q27.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q28
 keys enter
 expect said ! Renamed to q28.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q29
 keys enter
 expect said ! Renamed to q29.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q30
 keys enter
 expect said ! Renamed to q30.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q31
 keys enter
 expect said ! Renamed to q31.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q32
 keys enter
 expect said ! Renamed to q32.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q33
 keys enter
 expect said ! Renamed to q33.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q34
 keys enter
 expect said ! Renamed to q34.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q35
 keys enter
 expect said ! Renamed to q35.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q36
 keys enter
 expect said ! Renamed to q36.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q37
 keys enter
 expect said ! Renamed to q37.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q38
 keys enter
 expect said ! Renamed to q38.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q39
 keys enter
 expect said ! Renamed to q39.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q40
 keys enter
 expect said ! Renamed to q40.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q41
 keys enter
 expect said ! Renamed to q41.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q42
 keys enter
 expect said ! Renamed to q42.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q43
 keys enter
 expect said ! Renamed to q43.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q44
 keys enter
 expect said ! Renamed to q44.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q45
 keys enter
 expect said ! Renamed to q45.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q46
 keys enter
 expect said ! Renamed to q46.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q47
 keys enter
 expect said ! Renamed to q47.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q48
 keys enter
 expect said ! Renamed to q48.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q49
 keys enter
 expect said ! Renamed to q49.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q50
 keys enter
 expect said ! Renamed to q50.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type q51
 keys enter

@@ -1782,10 +1782,13 @@ for every app's scripts (five parts, a to e; the plan had three). One package wa
 read, WP-B8b, the how-to written for the ear (WF-7 as it now stands, WF-D-31). WP-B11 built the traces and kept none:
 the values a window reports come from a watch every 50 ms, and no goal's trace came out equal three times running
 (the commit d95bf84 says what was seen); no script carries `# Stable` yet. WP-B13, the record in the
-command line, was built on 2026-11-16, axDown's goals the first entered. Not built: WP-B15 (the converter), WP-B16 (the AI tools mode) and
-WP-B17 (axClaude and axHelp join the inventory). So `--convert` and `--ai-tools` are still refused by
-the runner as not built, the scripts but one press their keys through `keys` (the pages name the command a chord
-belongs to from the inventory), and `docs/axKit/workflow-record.json` holds the `desktop` tier of axDown alone until the next recorded runs. The pass of WP-B18 was made
+command line, was built on 2026-11-16, axDown's goals the first entered. WP-B15, the converter, was built the same
+day, and the scripts of axDown, axFile, axTask, axStart, axClip and axTerminal were converted by it: 498 presses in 44
+scripts are `do` lines, each script played again as rewritten, none put back, and each folder then run whole with
+`--record`. Not built: WP-B16 (the AI tools mode) and WP-B17 (axClaude and axHelp join the inventory). So `--ai-tools`
+is still refused by the runner as not built, the scripts of the other apps press their command keys through `keys`
+(the pages name the command a chord belongs to from the inventory), and `docs/axKit/workflow-record.json` holds the
+`desktop` tier of those six apps alone until the next recorded runs. The pass of WP-B18 was made
 that night on 2ef04f4, without the record: 139 scripts with NVDA listening, all passed
 (`docs/axKit/nvda-test-record.md`). The packages' own sections below stay as the plan for what is left, which is
 why this section is not folded into one paragraph as WP-B18's step 4 says.

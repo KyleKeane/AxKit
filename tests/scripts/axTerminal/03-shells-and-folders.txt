@@ -11,7 +11,7 @@ expect said ♪ Ready
 
 # Goal: Start a new session in another shell
 # Step 1: Ctrl+N, the New session notice: its text and controls; Command Prompt chosen and started.
-keys ctrl+n
+do New session
 expect state "notice":"New session"
 expect state Choose the shell and the folder.
 expect focus "name":"New session"
@@ -37,10 +37,10 @@ keys enter
 expect said New session in myproject
 expect said Ready
 expect state - Command Prompt - axTerminal, access layer for your shell"
-keys ctrl+2
+do Terminal
 expect focus "name":"Terminal"
 expect text "System: New session: Command Prompt in
-keys ctrl+1
+do Command field
 type echo hello
 keys enter
 expect said Done
@@ -55,25 +55,25 @@ file work\myproject\hello.cmd @echo planted
 type hello
 keys enter
 expect said Done
-keys ctrl+2
+do Terminal
 expect text not recognized
-keys ctrl+1
+do Command field
 type .\hello
 keys enter
 expect said Done
-keys ctrl+2
+do Terminal
 expect text planted
-keys ctrl+1
+do Command field
 # Goal: Switch to another shell
 # The Switch shell submenu with Command Prompt checked (the palette's list carries the check), then Windows PowerShell.
 expect commands Command Prompt, Session, Switch shell, checked
 menu Windows PowerShell
 expect said Windows PowerShell
 expect said Ready
-keys ctrl+2
+do Terminal
 expect text "System: Switched to Windows PowerShell in
 expect text "echo hello"
-keys ctrl+1
+do Command field
 
 # Check: Git Bash shows its prompt, its exit codes and its folder in the title
 # Step 2: Git Bash: the status bar shows $, the title names the folder and Git Bash; ls; a failing command; cd ..
@@ -93,7 +93,7 @@ type (exit 3)
 keys enter
 expect said Failed, exit code 3
 expect said ♪ Done
-keys ctrl+q
+do What is running
 expect said Idle, Git Bash,
 type cd ..
 keys enter
@@ -117,7 +117,7 @@ expect said Done
 expect said ♪ Done
 expect state "work - Windows PowerShell - axTerminal, access layer for your shell"
 expect state \\work\u003E"]
-keys ctrl+p
+do Say current folder
 expect said {temp}\work
 # Ctrl+W (File Explorer) and Alt+S, I, C (axClaude on the folder) stay manual: both start a program of their own
 # outside the test desktop's control, and the Alt keys need menu mode.
@@ -128,25 +128,25 @@ expect said ♪ Done
 
 # Goal: Restart the shell
 # Step 4: Ctrl+Shift+R while idle restarts at once, keeping the transcript; while a command runs, a notice asks first.
-keys ctrl+shift+r
+do Restart shell
 expect said Restarting
 expect said Ready
-keys ctrl+2
+do Terminal
 # The view's text answer holds the last 60 lines: the transcript kept is checked by the last command before.
 expect text "cd myproject"
 expect text "System: Restarting the shell","System: Shell started:
-keys ctrl+1
+do Command field
 type ping -n 30 127.0.0.1
 keys enter
 expect said Sent
 expect state Running: ping
-keys ctrl+shift+r
+do Restart shell
 expect state "notice":"Restart the shell?"
 keys escape
 expect focus "name":"Command"
 expect state "notice":null
 expect state Running: ping
-keys ctrl+shift+r
+do Restart shell
 expect state "notice":"Restart the shell?"
 keys enter
 expect said Restarting
@@ -162,12 +162,12 @@ type exit
 keys enter
 expect said The shell ended
 expect state "status":["Shell ended"
-keys ctrl+2
+do Terminal
 expect text "System: The shell ended with code 0"
-keys ctrl+1
+do Command field
 type echo kept
 keys enter
 expect said The shell ended. Ctrl+Shift+R starts it again
 expect focus "value":"echo kept"}
-keys ctrl+shift+r
+do Restart shell
 expect said Ready

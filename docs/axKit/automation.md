@@ -55,6 +55,22 @@ recorded run changes that one file and no page, and the file is committed with t
 with the line `Item: none, the workflow record of the <tier> run of <date>`. An entry whose label or title no script
 has any more is dropped by the next recorded run. What a pass found stays in `docs/axKit/nvda-test-record.md`.
 
+**The converter.** A run given `--convert` moves a script's command keys to `do` lines (user-workflows.md WF-10), on
+the desktop of their own alone. Each script is played with the window asked for its commands before every press of a
+`keys` line that carries Ctrl or Alt or is a function key (Alt+F4 aside, which tells the run that the end is meant). A
+press becomes `do <name>` only when exactly one row of the window's list at that moment has it as its key and would run
+by it now, and `do` with that name would press that very key; the name is the command's canonical one. Everything else
+stays `keys`: plain letters, the arrows, Enter, Escape, Tab, a chord that is only a further key of its command, a chord
+pressed while a notice shows. A `keys` line of several presses is written as several lines in the same order, an
+`iffound` before it on each; comments, blank lines and line ends stay. A script that did not pass is left alone. A
+rewritten script is played once more as it then stands, and when it does not pass the file is put back byte for byte and
+named after the summary. The rows the `do` lines ran are merged into the command inventory, written at the run's end
+when it changed. Each script gets one line (`04-find.txt: 3 presses converted`, `no press to convert`, `left as it is:
+it did not pass`, `put back as it was: ...`), and the run's last lines count them. The mode compares and writes no
+trace, and is refused with `--nvda`, with `--inventory write` or `rewrite`, and without a repository. An app's folder
+is converted whole: `tests\scripts\<app> --build --convert`, then the same folder without the option and with
+`--record`, then `tools\workflows.ps1`, and the scripts, the inventory, the pages and the record go into one commit.
+
 The steps, the run on its own desktop and the report are the engine in `src/AxAutomate.Core` (`ScriptRunner`, `Run`,
 `Window`; moved there on 2026-11-11, docs/axAutomate/SPEC.md AU-5.1), which axAutomate's window plays workflows
 through as well; `tools/AxAutomate` is the command line over it, with the same arguments and output. It runs a

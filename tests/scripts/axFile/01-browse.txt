@@ -113,7 +113,7 @@ expect state \\nav"]
 # F8, Say the status (bundle AX-7.10): the status bar said by axKit itself, from the list; the empty left part is
 # left out, so the folder's path is all of it.
 said
-keys f8
+do Say the status
 expect said \nav
 refuse said No status
 
@@ -141,15 +141,15 @@ keys enter
 expect said ! empty-folder-no-items, No items in this folder
 keys enter
 expect said ! No items in this folder
-keys ctrl+i
+do Information
 expect said ! No items in this folder
-keys f2
+do Rename
 expect said ! No items in this folder
 keys backspace
 expect said nav, 13 items, empty-folder-no-items, folder
 # Goal: Go to a folder by its path
 # Ctrl+G to another folder says the folder, its count and the entry the same way.
-keys ctrl+g
+do Go to folder
 expect state "notice":"Go to folder"
 expect focus "name":"Path"
 type {temp}\nav\level-1-enter-me\level-2-enter-me
@@ -166,7 +166,7 @@ keys escape
 expect focus level-3-enter-me, folder
 # Goal: Go to the drives of This PC
 # This PC (1.4): at a drive's root Backspace gives This PC with the drive selected; reading the list only.
-keys ctrl+g
+do Go to folder
 expect state "notice":"Go to folder"
 expect focus "name":"Path"
 type C:\
@@ -176,9 +176,9 @@ keys backspace
 expect said (C:), drive
 expect state "title":"This PC - axFile"
 expect focus (C:), drive
-keys ctrl+i
+do Information
 expect said GB free of
-keys ctrl+shift+n
+do New folder
 expect said ! Choose a drive first
 keys backspace
 expect said ! Top
@@ -201,7 +201,7 @@ expect said ! This PC,
 
 # Goal: Move down and up the folder tree
 # 1.4b Left and Right.
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\nav
 keys enter
@@ -226,17 +226,17 @@ expect said ! nav, 13 items, level-1-enter-me, folder
 
 # Goal: Hear the details of a folder or a file
 # 1.5 Ctrl+I on a folder and on a file.
-keys ctrl+i
+do Information
 expect said ! level-1-enter-me, folder, modified
 keys end
-keys ctrl+i
+do Information
 expect said ! fig.txt, 13 bytes, modified
 
 # 1.6 Manual: Enter on a file starts the user's default program for it, and Ctrl+E starts axDown or axJSON, windows outside this one.
 
 # Check: The path field starts with the current folder
 # 1.7 Go to folder: the field "Path" holds the current folder with a backslash at its end.
-keys ctrl+g
+do Go to folder
 expect state "notice":"Go to folder"
 expect focus "name":"Path"
 expect focus \\nav\\"
@@ -250,7 +250,7 @@ expect said ! Windows,
 expect state "title":"Windows - axFile"
 # Goal: Go to a file by its path
 # A file's path: its folder with the file selected.
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\nav\level-1-enter-me\level-1-file.txt
 keys enter
@@ -258,7 +258,7 @@ expect said ! level-1-enter-me, 2 items, level-1-file.txt
 expect focus level-1-file.txt
 # Check: A path that does not exist is said as not found
 # A place that does not exist: "Not found: <path>".
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type C:\nope-axkit-test
 keys enter
@@ -267,7 +267,7 @@ keys escape
 # Goal: Complete a path from its first letters
 # Completion: Down and Up complete the name after the last backslash; past either end the earcon.
 # The field's text is selected when the notice opens, so typing replaces it.
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\nav\lev
 keys down
@@ -291,7 +291,7 @@ expect focus level-2-enter-me\\level-2-file.txt"
 keys escape
 # Check: Several matches come in order, and no match plays the edge sound
 # Several matches in order, and a text nothing starts with: the earcon.
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\nav\a
 keys down
@@ -299,7 +299,7 @@ expect said ! aardvark.txt, 1 of 4
 keys down
 expect said ! apple.txt, 2 of 4
 keys escape
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\nav\zzz
 keys down
@@ -307,7 +307,7 @@ expect said ♪ Edge
 keys escape
 # Check: A drive letter completes to the drive
 # The drives from "C:".
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type C:
 keys down
@@ -315,7 +315,7 @@ expect said (C:), drive, 1 of 1
 keys escape
 # Goal: Open a completed path
 # Enter on a completed path: the list there.
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\nav\level-1-enter-me\level-2
 keys down
@@ -339,7 +339,7 @@ expect said ! Removed from Favorites
 keys end
 expect focus fig.txt
 file nav\added-from-outside.txt Added while axFile shows the folder.
-keys f5
+do Refresh
 expect said ! Refreshed
 expect focus fig.txt
 expect list added-from-outside.txt
@@ -350,7 +350,7 @@ file hid\visible-file.txt Always shown.
 file hid\hidden-file.txt Shown only with Show hidden files and folders.
 file hid\.period-file Shown only with Show files and folders starting with a period.
 run attrib +h hid\hidden-file.txt
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\hid
 keys enter
@@ -386,28 +386,28 @@ wait 1100
 file fs\sort-middle-age-and-size.bin 0123456789012345678901234567890123456789012345678901234567890123456789
 wait 1100
 file fs\sort-newest-and-largest.bin 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\fs
 keys enter
 expect said ! fs, 9 items, chapter-01-notes.txt
-keys ctrl+f
+do Find
 expect state "notice":"Find"
 expect focus "name":"Name contains"
 type find
 keys enter
 expect focus find-me-somewhere-down-the-list.txt
 keys home
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type notes
 keys enter
 expect focus chapter-02-notes.txt
-keys f3
+do Find next
 expect focus chapter-03-notes.txt
-keys shift+f3
+do Find previous
 expect focus chapter-02-notes.txt
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type zzz
 keys enter
@@ -418,7 +418,7 @@ expect focus chapter-02-notes.txt
 # Goal: Show only the entries whose names contain a word
 # 1.10a Filter: Ctrl+Shift+F, the notice "Filter" with the field "Name contains".
 keys home
-keys ctrl+shift+f
+do Filter
 expect state "notice":"Filter"
 expect focus "name":"Name contains"
 type chap
@@ -427,13 +427,13 @@ expect said ! 5 of 9 items, filter chap, chapter-01-notes.txt
 expect list "count":5
 keys down
 expect focus chapter-02-notes.txt
-keys ctrl+i
+do Information
 expect said ! chapter-02-notes.txt, 
 keys escape
 expect said ! Filter cleared
 expect list "count":9
 expect focus chapter-02-notes.txt
-keys ctrl+shift+f
+do Filter
 expect focus "name":"Name contains"
 type zzz
 keys enter
@@ -466,7 +466,7 @@ expect focus chapter-01-notes.txt
 # 1.11 Ctrl+S: "Nothing to save here". F1: the Keyboard shortcuts notice; Escape closes it.
 keys ctrl+s
 expect said ! Nothing to save here
-keys f1
+do Keyboard shortcuts
 expect focus "name":"Keyboard shortcuts"
 keys escape
 expect focus chapter-01-notes.txt
@@ -476,13 +476,13 @@ expect state "notice":null
 # 1.12 The folder shown is deleted from outside: F5 gives the notice "Folder not found" naming it; Enter: the folder above.
 # (Coming back with Alt+Tab is manual: the test window is never activated.)
 file gone\stand-here.txt Stand in this folder.
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\gone
 keys enter
 expect said ! gone, 1 item, stand-here.txt
 run rmdir /s /q gone
-keys f5
+do Refresh
 expect state "notice":"Folder not found"
 expect state \\gone does not exist
 # A notice that came by itself holds its answering keys for a second (KeyHold).
@@ -508,7 +508,7 @@ file sel\select-11.txt Entry 11.
 file sel\select-12.txt Entry 12.
 mkdir sel\select-folder-a
 mkdir sel\select-folder-b
-keys ctrl+g
+do Go to folder
 expect focus "name":"Path"
 type {temp}\sel
 keys enter
@@ -526,16 +526,16 @@ keys up
 expect focus "value":"select-01.txt, selected"
 keys down space
 expect said ! Selected, 2 selected
-keys ctrl+i
+do Information
 # The information with the count: "select-02.txt, 8 bytes, modified <date time>, 2 selected".
 expect said , 2 selected
 keys space
 expect said ! Deselected, 1 selected
-keys ctrl+a
+do Select all
 expect said ! 14 selected
 keys down
 expect focus "value":"select-03.txt, selected"
-keys ctrl+shift+a
+do Deselect all
 expect said ! None selected
 keys down
 expect focus "value":"select-04.txt"
@@ -552,7 +552,7 @@ keys escape
 expect quiet 1000
 # Check: Under a filter the first Escape clears the selection and keeps the filter
 # Under a filter: Escape deselects first, the filter stays; the next Escape clears it.
-keys ctrl+shift+f
+do Filter
 expect focus "name":"Name contains"
 type select-0
 keys enter
@@ -589,7 +589,7 @@ expect quiet 500
 keys shift+up
 expect focus "value":"select-03.txt, selected"
 expect list "select-04.txt",
-keys ctrl+i
+do Information
 # "select-03.txt, 8 bytes, modified <date time>, 3 selected".
 expect said , 3 selected
 # Down without Shift, then Shift+End: every entry from there to the last, the earlier three kept.
@@ -597,9 +597,9 @@ keys down
 keys shift+end
 expect focus "value":"select-12.txt, selected"
 expect list "select-01.txt, selected","select-02.txt, selected","select-03.txt, selected","select-04.txt, selected"
-keys ctrl+i
+do Information
 expect said , 12 selected
-keys ctrl+shift+a
+do Deselect all
 expect said ! None selected
 
 # Check: A selection that the filter hides is dropped
@@ -610,12 +610,12 @@ keys space
 keys down
 keys space
 expect said ! Selected, 2 selected
-keys ctrl+shift+f
+do Filter
 expect focus "name":"Name contains"
 type select-01
 keys enter
 expect said ! 1 of 14 items, filter select-01, select-01.txt
-keys ctrl+i
+do Information
 expect said , 1 selected
 # Manual (1.13a): Ctrl+X "Cut <name>" writes to the system clipboard, which the test desktop shares with the user.
 keys escape

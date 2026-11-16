@@ -42,7 +42,7 @@ expect focus "value":"docs, folder"
 
 # Goal: Open a folder from the command palette
 # 5.6 The command palette: the start of a folder's name, after a moment "<name>, folder, 1 of …"; Enter opens it.
-keys ctrl+shift+p
+do Command palette
 expect focus "role":"Text"
 type oth
 expect said other, folder, 1 of
@@ -53,7 +53,7 @@ keys backspace
 expect said ! pal, 3 items, other, folder
 # Manual (5.6): Enter on a file's entry in the palette opens it in its program.
 # Goal: Run a command from the command palette
-keys ctrl+shift+p
+do Command palette
 type refresh
 expect said Refresh, Session, F5, 1 of 1
 keys enter
@@ -63,7 +63,7 @@ expect focus "value":"other, folder"
 # From the Actions list, Ctrl+Shift+P, Escape: back on the same Actions line.
 keys tab
 expect focus "name":"Actions"
-keys ctrl+shift+p
+do Command palette
 expect focus "role":"Text"
 keys escape
 expect focus "name":"Actions"

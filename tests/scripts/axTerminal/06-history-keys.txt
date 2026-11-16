@@ -58,12 +58,12 @@ expect said ♪ Edge
 expect focus {"name":"Command","role":"Text","value":"echo two --x"}
 # Check: The terminal has no edit mode
 # The terminal cannot be edited: the key says so and changes nothing.
-keys ctrl+2
+do Terminal
 keys ctrl+space
 expect said ! Read only: there is no edit mode here
 # Goal: Go back to edit mode in the field
 # Back in the field: edit mode again, and typing types.
-keys ctrl+1
+do Command field
 keys ctrl+space
 expect said ! Edit mode
 refuse state navigation mode
@@ -72,8 +72,8 @@ type !
 expect focus {"name":"Command","role":"Text","value":"echo two --x!"}
 # Check: The music key is taken before the field
 # The music key moved to Ctrl+M on 2026-11-15, and it is taken before the field, where it would be a line break.
-keys ctrl+m
+do Background music on or off
 expect said ! Background music on, nothing is running
-keys ctrl+m
+do Background music on or off
 expect said ! Background music off
 expect focus {"name":"Command","role":"Text","value":"echo two --x!"}

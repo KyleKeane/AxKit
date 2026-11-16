@@ -263,6 +263,11 @@ every window" or under a heading that names the windows without it; under an app
 - Paste. Menu: Actions. Key: Ctrl+V. Mark: act.
 - Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: act.
+- Undo compress. Menu: Actions. Key: Ctrl+Z. Mark: act.
+- Undo delete. Menu: Actions. Key: Ctrl+Z. Mark: act.
+- Undo move. Menu: Actions. Key: Ctrl+Z. Mark: act.
+- Undo new folder. Menu: Actions. Key: Ctrl+Z. Mark: act.
+- Undo rename. Menu: Actions. Key: Ctrl+Z. Mark: act.
 - Add to axMedia's queue. Menu: Context. Key: Ctrl+Shift+Q. Mark: open.
 - Compress to zip. Menu: Context. Key: none. Mark: act.
 - Copy. Menu: Context. Key: Ctrl+C. Mark: act.
@@ -684,6 +689,9 @@ every window" or under a heading that names the windows without it; under an app
 - Remove Done from every item. Menu: Actions. Key: none. Mark: act.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change.
 - A heading: nothing to act on. Menu: Context. Key: none. Mark: read.
+- Move to section. Menu: Context. Key: Ctrl+M. Mark: change.
+- Read in full. Menu: Context. Key: Ctrl+Q. Mark: read.
+- Rename. Menu: Context. Key: F2. Mark: change.
 - JSON. Menu: Help, Item resources. Key: none. Mark: act.
 - All tasks. Menu: Navigation. Key: Ctrl+0. Mark: open.
 - Find in every list. Menu: Navigation. Key: Ctrl+Shift+F. Mark: read.

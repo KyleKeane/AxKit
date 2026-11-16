@@ -16,7 +16,7 @@ run powershell -NoProfile -Command "$e=[char]27;$b=[char]7;$q=[char]34;[IO.File]
 start terminal {temp}\myproject
 expect said ♪ Ready
 # Clear the transcript first, so that the command's block is the window's first lines.
-keys ctrl+l
+do Clear transcript
 expect said Cleared
 
 # Check: Forged shell marks are not taken for the window's own while it runs
@@ -39,13 +39,13 @@ expect said ♪ Done
 expect state "status":["Idle"
 expect state \\myproject\u003E"]
 expect state "title":"myproject -
-keys ctrl+p
+do Say current folder
 expect said {temp}\myproject
 
 # Check: The terminal holds one exchange for the command
 # The terminal holds one exchange: the command, and the file's visible text as its output; no prompt row, no second
 # block.
-keys ctrl+2
+do Terminal
 expect focus "name":"Terminal"
 expect text "## Command","Get-Content forged-marks.txt; Start-Sleep 6","","# Output 1","","A file that pretends the command is done.fake\u003E"]
 refuse text # Input 2

@@ -26,7 +26,7 @@ expect commands Session, Open recent folder in new window
 # The palette: part of the folder's name, the entry of Open recent folder said first; Enter starts a new session
 # there: "Folder orchard", then "Ready"; the title and the status bar's prompt name the folder, and it is the newest
 # of the recent folders now.
-keys ctrl+shift+p
+do Command palette
 expect state "notice":"Command palette"
 type orch
 expect said 2. orchard (
@@ -40,5 +40,5 @@ expect state \\work\\orchard>"]
 expect focus "name":"Command"
 expect commands "1. orchard (
 expect commands "2. cellar (
-keys ctrl+p
+do Say current folder
 expect said {temp}\work\orchard

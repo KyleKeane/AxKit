@@ -27,7 +27,7 @@ expect said axkitkeep one, 2 of 2
 # 2.3 The first text copied again: it is the newest, and in the list once.
 run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep one"
 wait 500
-keys ctrl+home
+do First match
 expect said axkitkeep one, 1 of 2
 keys down
 expect said axkitkeep two, 2 of 2
@@ -38,9 +38,9 @@ expect said ♪ Edge
 # 2.4 A text of three lines: its first line and the count; Ctrl+Q the whole text in a notice; Escape closes it.
 run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep first" second third
 wait 500
-keys ctrl+home
+do First match
 expect said axkitkeep first, 3 lines, 1 of 3
-keys ctrl+q
+do Read in full
 expect state "notice":"Clipboard text, 3 lines"
 expect text second
 expect text third
@@ -68,7 +68,7 @@ expect focus Search the clipboard
 type axkitkeep
 keys down
 expect said axkitkeep one, 2 of 3
-keys ctrl+end
+do Last match
 expect said axkitkeep two, 3 of 3
 
 # Check: With the option off, nothing of the history is left after a new start

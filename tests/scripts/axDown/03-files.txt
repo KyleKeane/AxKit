@@ -15,7 +15,7 @@ expect focus bom.md
 expect state UTF-8 with BOM \u00B7 LF
 keys end
 type !
-keys ctrl+s
+do Save
 expect said ! Saved
 run powershell -NoProfile -Command "$b = [IO.File]::ReadAllBytes('bom.md'); if ($b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq 0xBF -and $b -notcontains 13 -and $b[-1] -ne 10) { exit 0 } else { exit 1 }"
 run findstr /c:"mark!" bom.md
@@ -27,7 +27,7 @@ expect focus wide.txt
 expect state UTF-16 LE \u00B7 CRLF
 keys ctrl+end
 type  Edited.
-keys ctrl+s
+do Save
 expect said ! Saved
 run powershell -NoProfile -Command "$b = [IO.File]::ReadAllBytes('wide.txt'); $t = [Text.Encoding]::Unicode.GetString($b, 2, $b.Length - 2); if ($b[0] -eq 0xFF -and $b[1] -eq 0xFE -and $t.EndsWith('UTF-16. Edited.')) { exit 0 } else { exit 1 }"
 start down {temp}\ansi.txt
@@ -35,7 +35,7 @@ expect focus ansi.txt
 expect state Windows-1252
 keys ctrl+end
 type  Edited.
-keys ctrl+s
+do Save
 expect said ! Saved
 run powershell -NoProfile -Command "$b = [IO.File]::ReadAllBytes('ansi.txt'); if ($b -contains 0xE9 -and $b -notcontains 0xC3) { exit 0 } else { exit 1 }"
 
@@ -44,13 +44,13 @@ run powershell -NoProfile -Command "$b = [IO.File]::ReadAllBytes('ansi.txt'); if
 run copy /b plain.txt plain.before
 start down {temp}\plain.txt
 expect focus plain.txt
-keys ctrl+s
+do Save
 expect said ! Saved
 run fc /b plain.txt plain.before
 
 # Goal: Open a new empty window
 # 3.4a: Ctrl+Shift+N: a new axDown window on Untitled, empty; this one is unchanged (AD-4.1, 2026-11-09).
-keys ctrl+shift+n
+do New window
 adopt
 expect state Untitled - axDown
 expect focus {"name":"Untitled","role":"Text","value":""}
@@ -60,13 +60,13 @@ expect state plain.txt - axDown
 # Goal: Start a new document when the text has changes
 # 3.4: Ctrl+N with unsaved changes: the question; Escape cancels and the text stays; Enter saves, then Untitled.
 type Added.
-keys ctrl+n
+do New
 expect state "notice":"Save changes to plain.txt?"
 keys escape
 expect state "notice":null
 expect focus Added.Plain text file, line 1.
 expect state *plain.txt - axDown
-keys ctrl+n
+do New
 expect state "notice":"Save changes to plain.txt?"
 keys enter
 expect said ! Saved
@@ -86,7 +86,7 @@ expect focus plain.txt
 type X
 wait 1100
 run echo Another line, added by another program.>> plain.txt
-keys ctrl+s
+do Save
 expect state "notice":"The file changed on disk"
 expect state was changed by another program since you opened it.
 # Escape keeps both: the character here, the line on disk.
@@ -96,7 +96,7 @@ expect focus XAdded.Plain text file, line 1.
 run findstr /c:"Another line, added by another program." plain.txt
 # Goal: Reload a file that another program changed
 # Reload and lose mine: "Reloaded", the character gone and the new line there.
-keys ctrl+s
+do Save
 expect state "notice":"The file changed on disk"
 keys tab tab
 expect focus Reload and lose mine
@@ -110,7 +110,7 @@ expect state "title":"plain.txt - axDown"
 wait 1100
 run echo A second line from another program.>> plain.txt
 type Y
-keys ctrl+s
+do Save
 expect state "notice":"The file changed on disk"
 keys enter
 expect said ! Saved
@@ -124,7 +124,7 @@ run findstr /c:"A second line from another program." plain.txt && exit 1 || exit
 start down {temp}\created.md
 expect focus created.md
 type Created by Ctrl+S.
-keys ctrl+s
+do Save
 expect said ! Saved
 run findstr /c:"Created by Ctrl+S." created.md
 
@@ -135,7 +135,7 @@ run findstr /c:"Created by Ctrl+S." created.md
 # 3.11 manual: with a file, Ctrl+W opens a File Explorer window, which would open on the user's desktop.
 start down
 expect focus Untitled
-keys ctrl+w
+do File Explorer
 expect said ! No file yet
 
 # Goal: Close a window without saving its changes

@@ -23,17 +23,17 @@ expect said ♪ Ready
 # Goal: Move between the command field and the terminal
 # Step 2: Ctrl+2 lands on the terminal; its first lines are the system line and PowerShell's PSReadLine line; no
 # prompt row. Ctrl+1 back to the field.
-keys ctrl+2
+do Terminal
 expect said → Terminal
 expect focus Terminal
 expect text "System: Shell started:
 expect text PSReadLine
 # That no prompt row ("PS C:\...>") is in the text cannot be checked: the runner has no "refuse text".
-keys ctrl+2
+do Terminal
 expect said ! Terminal
-keys ctrl+1
+do Command field
 expect said → Command
-keys ctrl+1
+do Command field
 expect said ! Command
 
 # Check: The status bar holds Idle and the prompt
@@ -44,5 +44,5 @@ expect state myproject\u003E"]
 
 # Goal: Hear the state, the shell and the prompt
 # Step 4: Ctrl+Q says the state, the shell and the prompt.
-keys ctrl+q
+do What is running
 expect said PowerShell, PS {temp}\myproject>

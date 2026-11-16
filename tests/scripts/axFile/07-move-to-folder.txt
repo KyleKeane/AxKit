@@ -28,7 +28,7 @@ expect list "count":2
 
 # Goal: Undo the move
 # Ctrl+Z moves it back, and docs stays: it was not made by the move.
-keys ctrl+z
+do Undo move
 expect said ! Undone: moved back
 expect list "count":3
 

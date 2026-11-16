@@ -24,27 +24,27 @@ type echo after
 keys enter
 expect said Done
 expect said ♪ Done
-keys ctrl+2
+do Terminal
 expect focus "name":"Terminal"
 expect text "# Output 1","","before","# Input 2"
 expect text "## Command","cls","","# Output 2","","# Input 3"
 expect text "# Output 3","","after"]
 # Goal: Clear the window
-keys ctrl+l
+do Clear transcript
 expect said Cleared
 expect text "lines":[]
-keys ctrl+1
+do Command field
 type echo first
 keys enter
 expect said Done
 expect said ♪ Done
-keys ctrl+2
+do Terminal
 expect text "lines":["# Input 1","## Folder"
 expect text "# Output 1","","first"]
 
 # Goal: Set a bookmark and go back to it
 # Step 2: a bookmark with m, found with k from the top; find with Ctrl+F, F3 for the next match, "Not found" otherwise.
-keys ctrl+3
+do Latest output
 expect said Output 1 heading level 1
 expect focus "name":"Terminal"
 keys down
@@ -60,7 +60,7 @@ keys k
 expect said ! Bookmark 1, first
 # Goal: Find text in the terminal
 keys ctrl+home
-keys ctrl+f
+do Find
 expect state "notice":"Find"
 expect focus "name":"Text to find"
 type first
@@ -68,10 +68,10 @@ keys enter
 expect said ! echo first
 expect focus "name":"Terminal"
 expect focus "value":"echo first"}
-keys f3
+do Find next
 expect said ! first
 # Check: Text that is not there is said as not found
-keys ctrl+f
+do Find
 expect focus "name":"Text to find"
 keys ctrl+a
 type zzzz
@@ -83,7 +83,7 @@ expect focus "name":"Terminal"
 
 # Goal: Read the keyboard shortcuts
 # Step 4: F1, the shortcuts as a notice; h moves by its headings; Escape closes it. Help, User guide likewise.
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect focus "name":"Keyboard shortcuts"
 keys h
@@ -110,7 +110,7 @@ expect commands axTerminal, access layer for your shell, Window, New window
 # Step 5 (last, since it closes the window): Alt+F4 while a command runs asks first; Escape keeps it; Alt+F4 again
 # (here the channel's close, which is Alt+F4's path, so that the runner knows the window closes on purpose), Enter
 # closes.
-keys ctrl+1
+do Command field
 expect focus "name":"Command"
 type ping -n 30 127.0.0.1
 keys enter

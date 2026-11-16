@@ -35,16 +35,26 @@ public sealed record ScriptResult(bool Ok, string Log, LineResult? Failed, IRead
     /// played with <see cref="PlayOptions.Trace"/>.
     /// </summary>
     public IReadOnlyList<TraceSection> Trace { get; init; } = [];
+
+    /// <summary>
+    /// The presses of the script's <c>keys</c> lines that the converter would write as <c>do</c> lines (WF-10.1), each
+    /// with its line's number, in the order they were pressed; none unless the run was played with
+    /// <see cref="PlayOptions.Convert"/>.
+    /// </summary>
+    public IReadOnlyList<Conversion> Conversions { get; init; } = [];
 }
 
 /// <summary>
 /// What a run of the command line adds to playing the lines: the script's sections (<see cref="ScriptReader.Goals"/>),
 /// whose lines the report then gives (WF-3.10) and whose results <see cref="ScriptResult.Goals"/> holds; and, with
 /// <paramref name="Trace"/>, the run's trace (WF-5.1) in <see cref="ScriptResult.Trace"/>: after each line every
-/// window is asked once more for what it recorded, and nothing else of the run changes. axAutomate's window plays
-/// without options and its run says what it said before (WF-D-21).
+/// window is asked once more for what it recorded, and nothing else of the run changes. With
+/// <paramref name="Convert"/>, the converter's run (WF-10.1, <see cref="Run.Converting"/>): the window is asked for
+/// its commands before each press that may be a command's, and <see cref="ScriptResult.Conversions"/> holds the
+/// presses to write as <c>do</c> lines. axAutomate's window plays without options and its run says what it said
+/// before (WF-D-21).
 /// </summary>
-public sealed record PlayOptions(IReadOnlyList<Goal>? Goals = null, bool Trace = false);
+public sealed record PlayOptions(IReadOnlyList<Goal>? Goals = null, bool Trace = false, bool Convert = false);
 
 /// <summary>
 /// The runner's engine (SPEC.md AU-5.1), moved here from <c>tools/AxAutomate</c> unchanged: the lines of one
@@ -64,7 +74,8 @@ public static class ScriptRunner
     /// each section's first step (<c>-- Setup</c>, <c>-- Goal: </c>, <c>-- Check: </c>) and, after the last step and
     /// what failed after it, the counts and each section's result (<see cref="GoalResults.Lines"/>); with
     /// <see cref="PlayOptions.Trace"/> the run's trace is collected line by line (<see cref="Run.TakeTraceEvents"/>,
-    /// WF-5.1), which prints nothing.
+    /// WF-5.1), which prints nothing; with <see cref="PlayOptions.Convert"/> the presses the converter would move
+    /// are collected (<see cref="Run.TakeConversions"/>, WF-10.1), which prints nothing either.
     /// </summary>
     public static ScriptResult Play(IReadOnlyList<ScriptLine> lines, string exe, string temp, Action<string> output, Action<LineResult>? stepEnded = null, Func<bool>? stop = null, bool hosted = false, Action<Run>? begun = null, PlayOptions? options = null)
     {
@@ -81,7 +92,9 @@ public static class ScriptRunner
         var trace = options?.Trace ?? false;
         var traced = new List<TracedLine>();
         var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        var run = new Run(exe, temp, hosted);
+        var convert = options?.Convert ?? false;
+        var conversions = new List<Conversion>();
+        var run = new Run(exe, temp, hosted) { Converting = convert };
         begun?.Invoke(run);
         try
         {
@@ -127,6 +140,12 @@ public static class ScriptRunner
                 log.AppendLine(shown);
                 var ended = new LineResult(script, result.Ok, result.Detail);
                 stepEnded?.Invoke(ended);
+                if (convert)
+                {
+                    // WF-10.1: the line's presses the window listed as one command each, with the line's number.
+                    conversions.AddRange(run.TakeConversions().Select(taken => new Conversion(script.Number, taken.Press, taken.Name)));
+                }
+
                 if (trace)
                 {
                     // WF-5.1, WF-5.3: the line as an input step (the script's own line, before {temp} is filled),
@@ -195,6 +214,7 @@ public static class ScriptRunner
             Goals = results,
             Commands = run.Snapshots,
             Trace = trace ? Traces.Sections(traced, goals) : [],
+            Conversions = conversions,
         };
     }
 }

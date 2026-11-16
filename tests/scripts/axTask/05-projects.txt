@@ -19,17 +19,17 @@ start task {temp}\tasks
 expect focus Your lists, heading level 1, 1 list
 check commands
 # Goal: Find the project folders by their headings
-keys ctrl+1
+do Next heading level 1
 expect focus Projects, heading level 1, 1 project folder
-keys ctrl+2
+do Next heading level 2
 expect focus Projects in projects, heading level 2, 2 projects
 keys down
 expect focus tasks in alpha, project, 1 list
 keys down
 expect focus tasks in beta, project, 1 list
-keys ctrl+2
+do Next heading level 2
 expect said ♪ Edge
-keys ctrl+1
+do Next heading level 1
 expect focus Smart lists, heading level 1, 1 smart list
 
 # Goal: Mark a project's task done from All tasks
@@ -45,35 +45,35 @@ keys space
 expect said ! Done: Fix the tap
 run findstr /l /c:"true" "projects\alpha\tasks\Home\Fix the tap.json"
 expect focus Buy a tap, in Home
-keys ctrl+z
+do Undo
 expect said ! Undone: Done: Fix the tap
 run findstr /l /c:"false" "projects\alpha\tasks\Home\Fix the tap.json"
 keys left
 expect said ! Lists, 1 list, All tasks, 2 not done
-keys ctrl+1
+do Next heading level 1
 expect focus Date lists, heading level 1, 4 date lists
 keys end
 expect focus No due date, 2
-keys ctrl+shift+1
-keys ctrl+shift+1
-keys ctrl+shift+1
+do Previous heading level 1
+do Previous heading level 1
+do Previous heading level 1
 expect focus Projects, heading level 1
-keys ctrl+2
+do Next heading level 2
 keys down
 expect focus tasks in alpha, project, 1 list
 # Check: A project refuses a new list, a delete and a rename
-keys ctrl+shift+n
+do New list
 expect said ! A project's lists are made inside it: Right on a project first
 keys delete
 expect said ! A project stays: Options, Remove a project folder removes the folder it was found in
-keys f2
+do Rename
 expect said ! A project's folder is renamed in axFile: Ctrl+E
 
 # Goal: Open a project and mark a task done in it
 # 6.5 A project is a top folder of its own: its headings, its All tasks, a task marked done in place and undone.
 keys right
 expect said ! tasks in alpha, 1 list, Your lists, heading level 1, 1 list
-keys ctrl+down
+do Next section
 expect focus Smart lists, heading level 1, 1 smart list
 keys down
 expect focus All tasks, 1 not done
@@ -85,7 +85,7 @@ expect said ! Home, 1 item, Fix the tap
 keys space
 expect said ! Done: Fix the tap
 run findstr /l /c:"true" "projects\alpha\tasks\Home\Fix the tap.json"
-keys ctrl+z
+do Undo
 expect said ! Undone: Done: Fix the tap
 keys left
 expect said ! tasks in alpha, 1 list, Home, list, 1 item
@@ -110,20 +110,20 @@ type {temp}\more
 keys enter
 expect said ! Added Projects in more, looking for lists
 expect focus Projects in more, heading level 2, 1 project
-keys f5
+do Refresh
 expect focus Projects in more, heading level 2, 1 project
 keys down
 expect focus gamma, project, 1 list
 
 # Goal: Search every list
 # 6.7 to 6.9 The search across every list: nothing found, then three items, one opened where it lives, then back.
-keys ctrl+shift+f
+do Find in every list
 expect state "notice":"Find in every list"
 type zebra
 keys enter
 expect said ! Searching every list
 expect said ! Nothing found for zebra
-keys ctrl+shift+f
+do Find in every list
 keys ctrl+a
 type TAP
 keys enter
@@ -143,15 +143,15 @@ expect focus Home, list, 1 item
 keys right
 expect said ! Home, 1 item, Buy a tap
 run powershell -NoProfile -Command "if (-not ((Get-Content 'home\AxKit\axTask.json' -Raw -ErrorAction Stop) -match 'lastList.:\s*.Home')) { exit 1 }"
-keys ctrl+shift+f
+do Find in every list
 keys ctrl+a
 type washer 15
 keys enter
 expect said ! Found washer 15, 1 item, Fix the tap, in tasks in alpha / Home
 # Check: A found item is changed only where it lives
-keys f2
+do Rename
 expect said ! Open it where it lives first: Enter
-keys ctrl+n
+do New item
 expect said ! Items are made in a list: open the item where it lives first, Enter
 menu Use these fields for new items
 expect said ! Open it where it lives first: Enter

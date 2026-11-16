@@ -14,12 +14,12 @@ expect state Lists - axTask
 # Check: Action keys act only inside a list
 # Step 1: the digits act in a list only; at the top Ctrl+1 to Ctrl+3 go by heading (TK-D14); Ctrl+0 is All tasks
 # (TK-7a.1, RP-8.4).
-keys ctrl+4
+do Action key 4
 expect said ♪ Edge
 expect said Action keys act in a list: open one first
-keys ctrl+1
+do Next heading level 1
 expect focus Smart lists, heading level 1
-keys ctrl+0
+do All tasks
 expect said All tasks
 # Goal: Run an action key on an item
 # Into Home: Ctrl+3 has no action; Ctrl+1 sets Done as one step, which Ctrl+Z takes back.
@@ -29,13 +29,13 @@ keys down
 expect focus Home, list, 1 item
 keys right
 expect focus Fix the tap
-keys ctrl+3
+do Action key 3
 expect said ♪ Edge
 expect said No action on Ctrl+3 in this list; Actions, Action keys sets one
-keys ctrl+1
+do Action key 1
 expect said Done: Done: done
 expect focus Fix the tap, done
-keys ctrl+z
+do Undo
 expect said Undone: Done: Done: done
 expect focus Fix the tap
 # Check: The Context menu names the list's action keys
@@ -44,10 +44,10 @@ expect commands Done, Context, Action keys
 expect commands Later, Context, Action keys
 # Goal: Move an item to another list with an action key
 # Step 4: Ctrl+2 moves the item to Later, the links following; Ctrl+Z brings it back.
-keys ctrl+2
+do Action key 2
 expect said Later: Fix the tap moved to Later
 expect focus Home, empty
-keys ctrl+z
+do Undo
 expect said Undone: Later: Fix the tap moved to Later
 expect focus Fix the tap
 # Goal: Set up an action key
@@ -78,10 +78,10 @@ type Done: done
 keys ctrl+enter
 expect said Ctrl+4: Finish, sets Done: done
 expect state "notice":null
-keys ctrl+4
+do Action key 4
 expect said Finish: Done: done
 expect focus Fix the tap, done
-keys ctrl+z
+do Undo
 expect said Undone: Finish: Done: done
 # Check: No command of the GitHub lists is left
 # Step 6: axTask is local only (TK-7a.2, 2026-11-14): no command of the GitHub lists is left.
@@ -98,25 +98,25 @@ keys down
 expect focus Issues, list, 1 item
 keys right
 expect said ! Issues, 1 item, The list loses my place
-keys f5
+do Refresh
 expect said Refreshed: Issues, 1 item
 wait 1500
 refuse said GitHub
 # Check: A former GitHub list's action keys set a field as in every list
 # Its keys work as in every list: one that sets Kind writes the field, as one step that Ctrl+Z takes back.
-keys ctrl+1
+do Action key 1
 expect said Make it a bug: Kind: Bug
 keys tab
 keys home
 keys down down
 expect focus Kind, choice, Bug
 keys escape
-keys ctrl+z
+do Undo
 expect said Undone: Make it a bug: Kind: Bug
 # Check: An action key that opens an empty or missing field says so
 # Step 5: a key that opens a field opens its web address in the browser; this Issue field is empty. The axClaude
 # target went with the GitHub lists.
-keys ctrl+5
+do Action key 5
 expect said Issue is empty
-keys ctrl+6
+do Action key 6
 expect said No field called axClaude, and no app called that

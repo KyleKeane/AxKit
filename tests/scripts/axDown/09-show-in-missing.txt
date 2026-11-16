@@ -7,5 +7,5 @@ file sub\notes.md # Notes\n\nA line.
 start down {temp}\sub\notes.md
 expect focus notes.md
 run rmdir /s /q sub
-keys ctrl+w
+do File Explorer
 expect said ! File missing

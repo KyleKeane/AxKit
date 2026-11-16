@@ -18,13 +18,13 @@ check commands
 expect state Lists - axTask
 expect focus Your lists, heading level 1, 3 lists
 # Goal: Move among the lists by their headings
-keys ctrl+up
+do Previous section
 expect said ♪ Edge
-keys ctrl+down
+do Next section
 expect focus Smart lists, heading level 1, 1 smart list
 keys down
 expect focus All tasks, 3 not done
-keys ctrl+1
+do Next heading level 1
 expect focus Date lists, heading level 1, 4 date lists
 keys down
 expect focus Overdue, 0
@@ -34,17 +34,17 @@ keys down
 expect focus Due in the next 7 days, 0
 keys down
 expect focus No due date, 2
-keys ctrl+1
+do Next heading level 1
 expect said ♪ Edge
-keys ctrl+2
+do Next heading level 2
 expect said ♪ Edge
-keys ctrl+down
+do Next section
 expect said ♪ Edge
-keys ctrl+up
+do Previous section
 expect focus Date lists, heading level 1
-keys ctrl+shift+1
+do Previous heading level 1
 expect focus Smart lists, heading level 1
-keys ctrl+shift+1
+do Previous heading level 1
 expect focus Your lists, heading level 1
 keys right
 expect said ! A section: Down goes into it
@@ -60,7 +60,7 @@ expect said ! Home, 2 items, 1 file not shown, Fix the tap, due 30 October 2099
 expect state Home - axTask
 # Goal: Hear the status bar
 # F8, Say the status (bundle AX-7.10), from the navigator: the status bar said by axKit itself.
-keys f8
+do Say the status
 expect said \tasks
 refuse said No status
 keys down
@@ -96,7 +96,7 @@ expect focus Due, date, 30 October 2099, Friday
 keys shift+tab
 expect focus Fix the tap, due 30 October 2099
 # The bundle's pane keys do the same from either pane (AX-8.2).
-keys ctrl+tab
+do Switch between the navigator and the detail pane
 expect focus Due, date, 30 October 2099, Friday
 keys f6
 expect focus Fix the tap, due 30 October 2099
@@ -168,7 +168,7 @@ keys right
 expect said ! Priority: Low
 keys right
 expect said ♪ Edge
-keys ctrl+z
+do Undo
 expect said ! Undone: Priority: Low
 expect focus Priority, choice, High
 keys right
@@ -208,7 +208,7 @@ keys f2
 expect said ! The Title field keeps its name
 # Goal: Rename an item
 keys escape
-keys f2
+do Rename
 type Fix the sink
 keys enter
 expect said ! Renamed Fix the sink
@@ -219,7 +219,7 @@ run cmd /c if exist "tasks\Home\Fix the sink.json" (exit 0) else (exit 1)
 keys left
 type s
 keys right
-keys ctrl+n
+do New item
 type Bread
 keys enter
 expect said ! Added Bread
@@ -229,7 +229,7 @@ run findstr /l /c:"\"Due\"" "tasks\Shopping\Bread.json"
 keys delete
 expect said ! Archived Bread
 run cmd /c if exist "tasks\Archive\Bread.json" (exit 0) else (exit 1)
-keys ctrl+z
+do Undo
 expect said ! Undone: Archived Bread
 run cmd /c if exist "tasks\Shopping\Bread.json" (exit 0) else (exit 1)
 
@@ -242,12 +242,12 @@ expect said ! Not a task
 # Goal: Hear every field of an item
 # IA-3 Ctrl+Q reads every field of the selection; an empty long text reads "empty" as every empty field does ("Notes: "
 # and nothing after it until 2026-11-14).
-keys ctrl+q
+do Read in full
 expect said ! Milk. Notes: empty
 
 # Goal: Show all tasks, the soonest due first
 # 1.7 Ctrl+0: All tasks (Ctrl+1 until 2026-11-07, TK-7a.1), the soonest due first, each with its list.
-keys ctrl+0
+do All tasks
 expect said ! All tasks, 4 items, Fix the sink, due 
 keys left
 expect focus All tasks, 4 not done

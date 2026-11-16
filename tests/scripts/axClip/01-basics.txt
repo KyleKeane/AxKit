@@ -39,11 +39,11 @@ expect said axkitclip gamma, 1 of 3
 
 # Goal: Jump to the newest or oldest item, or by a page
 # Ctrl+End the oldest (Down there is the edge), Ctrl+Home the newest; Page Down and Page Up by a page.
-keys ctrl+end
+do Last match
 expect said axkitclip alpha, 3 of 3
 keys down
 expect said ♪ Edge
-keys ctrl+home
+do First match
 expect said axkitclip gamma, 1 of 3
 keys pagedown
 expect said axkitclip alpha, 3 of 3
@@ -52,17 +52,17 @@ expect said axkitclip gamma, 1 of 3
 
 # Goal: Read an item's whole text
 # CP-4.3: Ctrl+Q the whole text in a notice; Escape closes it.
-keys ctrl+q
+do Read in full
 expect state "notice":"Clipboard text, 1 line"
 keys escape
 expect state "notice":null
 
 # Goal: Pause the recording and start it again
 # Ctrl+P pauses the recording and starts it again.
-keys ctrl+p
+do Pause recording
 expect said ! Recording paused
 expect state Paused
-keys ctrl+p
+do Pause recording
 expect said ! Recording
 expect state Recording
 
@@ -70,12 +70,12 @@ expect state Recording
 # Delete removes the selected item.
 keys delete
 expect said ! Removed
-keys ctrl+end
+do Last match
 expect said , 2 of 2
 
 # Goal: Clear the clipboard history
 # Ctrl+Shift+Delete asks first; Clear empties the history.
-keys ctrl+shift+delete
+do Clear history
 expect state "notice":"Clear the clipboard history?"
 keys enter
 expect said ! Clipboard history cleared
@@ -88,7 +88,7 @@ expect said ♪ Edge
 # Check: The shortcuts end with the Notices section and give the field back
 # F1: the shortcuts end with the Notices section every window of axKit has (2026-11-09); Escape closes the text and the
 # focus is back in the field.
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect text Notices
 keys escape

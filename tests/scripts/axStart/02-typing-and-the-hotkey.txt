@@ -37,7 +37,7 @@ expect focus "name":"Search programs","role":"Text","value":"win power"
 # 2.9 Ctrl+S: nothing to save; F1: the shortcuts, and Escape gives the field back with its text.
 keys ctrl+s
 expect said Nothing to save here
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 keys escape
 expect state "notice":null
@@ -48,9 +48,9 @@ expect focus "name":"Search programs","role":"Text","value":"win power"
 keys ctrl+a
 type calculator
 expect said Calculator, 1 of
-keys ctrl+shift+enter
+do Start as administrator
 expect said Cannot start as administrator
-keys ctrl+o
+do Open file location
 expect said No file location for Calculator
 
 # Goal: Change the hotkey

@@ -18,11 +18,11 @@ start task {temp}\tasks
 expect focus Your lists, heading level 1, 1 list
 check commands
 # Goal: Move among the tags by their symbols
-keys ctrl+3
+do Next heading level 3
 expect focus @ at sign, heading level 3, 1 smart list
 keys down
 expect focus @Sam, 1
-keys ctrl+3
+do Next heading level 3
 expect focus # number sign, heading level 3, 1 smart list
 keys down
 expect focus #garden, 2
@@ -35,28 +35,28 @@ keys down
 expect focus Fix #garden, in tasks / Home
 keys left
 expect said ! Lists, 1 list, #garden, 2
-keys ctrl+3
+do Next heading level 3
 expect focus $ dollar sign, heading level 3, 1 smart list
 keys down
 expect focus $budget, 1
-keys ctrl+3
+do Next heading level 3
 expect said ♪ Edge
 
 # Goal: Find the smart lists that share a first word
 # 3.3 Ctrl+Shift+2 back to Tags, then to App, the first word two smart lists share; its lists by their full names.
-keys ctrl+shift+2
+do Previous heading level 2
 expect focus Tags, heading level 2, 3 symbols
-keys ctrl+shift+2
+do Previous heading level 2
 expect focus App, heading level 2, 2 smart lists
 keys down
 expect focus App one, smart list, 3
 keys down
 expect focus App two, smart list, 3
-keys ctrl+shift+1
+do Previous heading level 1
 expect focus Smart lists, heading level 1, 4 smart lists
 keys down
 expect focus All tasks, 3 not done
 keys down
 expect focus Soon, smart list, 3
-keys ctrl+shift+3
+do Previous heading level 3
 expect said ♪ Edge

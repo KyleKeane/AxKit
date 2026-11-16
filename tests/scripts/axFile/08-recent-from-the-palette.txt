@@ -15,7 +15,7 @@ start file {temp}\orchard
 expect focus "name":"2 items"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
-keys ctrl+g
+do Go to folder
 expect state "notice":"Go to folder"
 expect focus "name":"Path"
 type {temp}\cellar
@@ -27,7 +27,7 @@ expect commands "2. orchard (
 
 # The palette: part of the folder's name, the entry said with its menu; Enter shows the folder, said as every change
 # of folder is, and it is the newest of the recent folders now.
-keys ctrl+shift+p
+do Command palette
 expect state "notice":"Command palette"
 type orch
 expect said 2. orchard (

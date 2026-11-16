@@ -10,32 +10,38 @@ expect focus long.md
 
 # Goal: Move to the next heading
 # 8.1: Ctrl+H to each heading, its line spoken; the one in the fenced code block skipped (8.2); at the last, "No next heading".
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! Second heading, level 2, heading level 2
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! Third heading, level 3, heading level 3
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! Lists, heading level 2
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! Quote and table, heading level 2
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! Code, heading level 2
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! Fourth level heading, heading level 4
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! Fifth level heading, heading level 5
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! Sixth level heading, heading level 6
-keys ctrl+h
+do Heading, Navigation, Next
 expect said ! No next heading
 expect state Line 50, Column 1 \u00B7
 # Goal: Move back to the previous heading
 # Ctrl+Shift+H back, the fenced line skipped again; at the first, "No previous heading".
-keys ctrl+shift+h ctrl+shift+h ctrl+shift+h ctrl+shift+h
+do Heading, Navigation, Previous
+do Heading, Navigation, Previous
+do Heading, Navigation, Previous
+do Heading, Navigation, Previous
 expect said ! Code, heading level 2
-keys ctrl+shift+h ctrl+shift+h ctrl+shift+h ctrl+shift+h
+do Heading, Navigation, Previous
+do Heading, Navigation, Previous
+do Heading, Navigation, Previous
+do Heading, Navigation, Previous
 expect said ! Long Markdown file for navigation, heading level 1
-keys ctrl+shift+h
+do Heading, Navigation, Previous
 expect said ! No previous heading
 expect state Line 1, Column 1 \u00B7
 
@@ -46,19 +52,21 @@ expect quiet 1000
 
 # Goal: Move to a heading of one level
 # 8.4: Ctrl+2, the next level-2 heading, other levels skipped; Ctrl+Shift+2 back; past the last, "No next heading level 2".
-keys ctrl+home ctrl+2
+keys ctrl+home
+do Heading level 2, Navigation, Next
 expect said ! Second heading, level 2, heading level 2
-keys ctrl+2
+do Heading level 2, Navigation, Next
 expect said ! Lists, heading level 2
-keys ctrl+2 ctrl+2
+do Heading level 2, Navigation, Next
+do Heading level 2, Navigation, Next
 expect said ! Code, heading level 2
-keys ctrl+2
+do Heading level 2, Navigation, Next
 expect said ! No next heading level 2
-keys ctrl+shift+2
+do Heading level 2, Navigation, Previous
 expect said ! Quote and table, heading level 2
-keys ctrl+4
+do Heading level 4, Navigation, Next
 expect said ! Fourth level heading, heading level 4
-keys ctrl+shift+4
+do Heading level 4, Navigation, Previous
 expect said ! No previous heading level 4
 # Goal: Move by heading from the menu
 # Navigation, Next and Previous list Heading and Heading level 1 to 6 with their keys; the items do what the keys do.
@@ -81,59 +89,66 @@ expect said ! Long Markdown file for navigation, heading level 1
 # Goal: Move to the next link
 # 8.5: Ctrl+K, the caret on the link's first character; a bare and an angle address count, an image does not, nor
 # anything in the fenced code block.
-keys ctrl+home ctrl+k
+keys ctrl+home
+do Link, Navigation, Next
 expect said ! GitHub, link
 expect state Line 14, Column 8 \u00B7
-keys ctrl+k
+do Link, Navigation, Next
 expect said ! https://www.example.com, link
-keys ctrl+k
+do Link, Navigation, Next
 expect said ! https://example.org, link
-keys ctrl+k
+do Link, Navigation, Next
 expect said ! No next link
 # Goal: Move back to the previous link
 # Ctrl+Shift+K from inside a link: the link before it.
-keys ctrl+shift+k
+do Link, Navigation, Previous
 expect said ! https://www.example.com, link
 keys right right right
-keys ctrl+shift+k
+do Link, Navigation, Previous
 expect said ! GitHub, link
 
 # Goal: Move by list and by list item
 # 8.6: Ctrl+L, "List with 3 items, one" at the first item; Ctrl+I, the next item's text, nested items included; a
 # numbered list after a bulleted one is a second list.
-keys ctrl+home ctrl+l
+keys ctrl+home
+do List, Navigation, Next
 expect said ! List with 3 items, one
-keys ctrl+i
+do List item, Navigation, Next
 expect said ! two
-keys ctrl+i
+do List item, Navigation, Next
 expect said ! two, nested
-keys ctrl+i
+do List item, Navigation, Next
 expect said ! three
-keys ctrl+i
+do List item, Navigation, Next
 expect said ! numbered one
-keys ctrl+home ctrl+l ctrl+l
+keys ctrl+home
+do List, Navigation, Next
+do List, Navigation, Next
 expect said ! List with 2 items, numbered one
-keys ctrl+l
+do List, Navigation, Next
 expect said ! No next list
-keys ctrl+shift+l
+do List, Navigation, Previous
 expect said ! List with 3 items, one
 
 # Goal: Move to a block quote or a table
 # 8.7: Ctrl+Q, "Block quote, " and the first line; Ctrl+T, the table at its header line; nothing in the fenced code block.
-keys ctrl+home ctrl+q
+keys ctrl+home
+do Block quote, Navigation, Next
 expect said ! Block quote, A block quote, line one.
-keys ctrl+q
+do Block quote, Navigation, Next
 expect said ! No next block quote
-keys ctrl+home ctrl+t
+keys ctrl+home
+do Table, Navigation, Next
 expect said ! Table with 3 rows and 2 columns
 expect state Line 32, Column 1 \u00B7
-keys ctrl+t
+do Table, Navigation, Next
 expect said ! No next table
 # Check: The previous table is one on a line before the caret
 # From the header line itself the previous table is none: previous means on a line before the caret's.
-keys ctrl+shift+t
+do Table, Navigation, Previous
 expect said ! No previous table
-keys ctrl+end ctrl+shift+t
+keys ctrl+end
+do Table, Navigation, Previous
 expect said ! Table with 3 rows and 2 columns
 # Check: The menu lists the moves by link, list, quote and table with their keys
 # Navigation, Next and Previous list Link, List, List item, Block quote and Table with their keys.

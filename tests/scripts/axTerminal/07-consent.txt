@@ -24,7 +24,7 @@ expect said Ready
 
 # Check: Each shell asks its own reminder
 # Each shell is its own consent: a new session with Command Prompt asks its reminder, then starts.
-keys ctrl+n
+do New session
 expect state "notice":"New session"
 keys tab
 expect focus folder..."}

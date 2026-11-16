@@ -15,7 +15,7 @@ wait 500
 
 # Goal: Open a recent file from the palette
 # Open recent file from the palette: a few letters of the file's name, the first match said, Enter opens it here.
-keys ctrl+shift+p
+do Command palette
 expect state "notice":"Command palette"
 type one.md
 expect said one.md
@@ -26,7 +26,7 @@ expect state "title":"one.md - axDown"
 
 # Goal: Find another open window from the palette
 # The Window menu's lists are there too: the other window by its title, and nothing recently closed yet.
-keys ctrl+shift+p
+do Command palette
 type open windows
 expect said one.md - axDown, Window, Open windows
 keys escape
@@ -40,7 +40,7 @@ use 1
 close
 expect closed
 use 2
-keys ctrl+shift+p
+do Command palette
 type recently closed
 expect said 1. one.md
 expect said Window, Recently closed

@@ -20,7 +20,7 @@ wait 500
 
 # Goal: Make a new folder
 # 3.1 New folder: the notice "New folder" with the field "Name"; Enter on the empty field: "Type a name", the notice stays.
-keys ctrl+shift+n
+do New folder
 expect state "notice":"New folder"
 expect focus "name":"Name"
 keys enter
@@ -42,7 +42,7 @@ expect state "status":["Created notes",
 
 # Goal: Make a new text file
 # 3.1a New text file: the rename box on the whole name "New file.txt"; the name typed replaces it.
-keys ctrl+shift+t
+do New text file
 expect focus "name":"New name"
 expect focus "value":"New file.txt"
 type todo.md
@@ -51,7 +51,7 @@ expect said ! Renamed to todo.md
 expect focus "value":"todo.md"
 # Check: Escape in the rename box keeps the new file's name
 # Ctrl+Shift+T, Escape: the box closes on "New file.txt", which stays.
-keys ctrl+shift+t
+do New text file
 expect focus "name":"New name"
 keys escape
 expect focus "value":"New file.txt"
@@ -85,19 +85,19 @@ expect said ! ops,
 keys home
 keys down down
 expect focus "value":"notes, folder"
-keys f2
+do Rename
 expect focus "name":"New name"
 expect focus "value":"notes"
 type Notes
 keys enter
 expect said ! Renamed to Notes
 expect focus "value":"Notes, folder"
-keys f2
+do Rename
 expect focus "name":"New name"
 type Notes2
 keys enter
 expect said ! Renamed to Notes2
-keys f2
+do Rename
 expect focus "name":"New name"
 type Notes
 keys enter
@@ -106,12 +106,12 @@ expect focus "value":"Notes, folder"
 # Manual (3.2): the "In use by another program" failure needs axTerminal (or another program) started in the folder.
 # Check: Renaming a file selects its name without the extension
 # F2 on a file: the part before the extension is selected, so typing replaces the name and keeps the extension.
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type a.txt
 keys enter
 expect focus "value":"a.txt"
-keys f2
+do Rename
 expect focus "name":"New name"
 expect focus "value":"a.txt"
 type b
@@ -119,7 +119,7 @@ expect focus "value":"b.txt"
 keys escape
 expect focus "value":"a.txt"
 expect list "a.txt"
-keys f2
+do Rename
 expect focus "name":"New name"
 keys enter
 expect said ! Name unchanged
@@ -127,13 +127,13 @@ expect focus "value":"a.txt"
 
 # Check: A name that is taken or refused is said and the box stays
 # 3.5 Refusals: a name taken, a character Windows refuses, a name that reads the same as another entry's.
-keys ctrl+shift+n
+do New folder
 expect focus "name":"Name"
 type Notes
 keys enter
 expect said ! Failed: There is already an entry named
 keys escape
-keys f2
+do Rename
 expect focus "name":"New name"
 type a?b
 keys enter
@@ -142,7 +142,7 @@ expect focus "name":"New name"
 keys escape
 expect focus "value":"a.txt"
 # Another entry's name with a doubled space inside (the plan's trailing space cannot be typed: the runner trims a step's line).
-keys f2
+do Rename
 expect focus "name":"New name"
 type two  words
 keys enter
@@ -153,9 +153,9 @@ expect focus "value":"a.txt"
 
 # Check: Refreshing while renaming closes the box and keeps the name
 # 3.6a F2, then F5: the box closes with the name kept.
-keys f2
+do Rename
 expect focus "name":"New name"
-keys f5
+do Refresh
 expect said ! Refreshed
 expect focus "value":"a.txt"
 expect list "a.txt"
@@ -222,7 +222,7 @@ expect focus "value":"docs, folder"
 menu Compress to zip, Context
 expect said ! Compressed to docs.zip
 expect focus "value":"docs.zip"
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type docs
 keys enter
@@ -232,7 +232,7 @@ expect said ! Compressed to docs - 2.zip
 expect focus "value":"docs - 2.zip"
 # Goal: Compress selected files into one zip file
 # Two files selected: the zip is named after the folder shown.
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type move-into
 keys enter
@@ -243,7 +243,7 @@ menu Compress to zip, Context
 expect said ! Compressed to ops.zip
 expect focus "value":"ops.zip"
 # Goal: Extract a zip file here
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type docs.zip
 keys enter
@@ -261,7 +261,7 @@ expect said ! docs - 2, 1 item, docs, folder
 keys backspace
 expect said ! ops,
 # Check: A file that is not a zip is refused
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type not-a-zip
 keys enter
@@ -285,32 +285,32 @@ expect focus "value":"compress-then-undo, folder"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
 expect commands "Undo, Actions, Ctrl\u002BZ"
-keys ctrl+z
+do Undo
 expect said ! Nothing to undo
 # Goal: Undo a rename
 # A rename: the Folder menu's item names it; Ctrl+Z renames back and selects it.
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type rename-then
 keys enter
 expect focus "value":"rename-then-undo.txt"
-keys f2
+do Rename
 expect focus "name":"New name"
 type renamed
 keys enter
 expect said ! Renamed to renamed.txt
 expect commands "Undo rename, Actions, Ctrl\u002BZ"
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to rename-then-undo.txt
 expect focus "value":"rename-then-undo.txt"
 # Goal: Undo a new folder
 # A new folder: removed while empty.
-keys ctrl+shift+n
+do New folder
 expect focus "name":"Name"
 type temp
 keys enter
 expect said ! Created temp
-keys ctrl+z
+do Undo new folder
 expect said ! Undone: temp removed
 refuse said ! Created temp
 expect list "count":8
@@ -318,30 +318,30 @@ expect list "count":8
 # A new folder that has a file now: "Not undone: temp has files now", and the next Ctrl+Z goes on to an older
 # operation. The file is put in temp from outside: made in axFile (Enter, Ctrl+Shift+T, Escape, Backspace, as the plan
 # says) it is itself the newest operation, and Ctrl+Z takes it back first (AF-4.14, the newest that can be taken back).
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type rename-then
 keys enter
 expect focus "value":"rename-then-undo.txt"
-keys f2
+do Rename
 expect focus "name":"New name"
 type second-rename
 keys enter
 expect said ! Renamed to second-rename.txt
-keys ctrl+shift+n
+do New folder
 expect focus "name":"Name"
 type temp
 keys enter
 expect said ! Created temp
 file undo\temp\made-outside.txt A file inside temp.
-keys ctrl+z
+do Undo new folder
 expect said ! Not undone: temp has files now
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to rename-then-undo.txt
 expect focus "value":"rename-then-undo.txt"
 # Goal: Undo a move to a folder
 # Move to folder, then Ctrl+Z: moved back, the first file selected, the new folder gone.
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type move-two
 keys enter
@@ -354,7 +354,7 @@ type bundle
 keys enter
 expect said ! Moved 2 items into bundle
 expect focus "value":"bundle, folder"
-keys ctrl+z
+do Undo move
 expect said ! Undone: moved back
 expect focus "value":"move-two-then-undo-1.txt"
 refuse said ! Not undone
@@ -367,12 +367,12 @@ keys home
 expect focus "value":"compress-then-undo, folder"
 menu Compress to zip, Context
 expect said ! Compressed to compress-then-undo.zip
-keys ctrl+z
+do Undo compress
 expect said ! Undone: compress-then-undo.zip sent to the Recycle Bin
 expect list "count":9
 # Goal: Undo a delete
 # Delete a file, then Ctrl+Z: restored from the Recycle Bin and selected.
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type delete-then
 keys enter
@@ -382,12 +382,12 @@ expect state "notice":"Delete delete-then-undo.txt?"
 expect state It goes to the Recycle Bin.
 keys enter
 expect said ! Deleted delete-then-undo.txt
-keys ctrl+z
+do Undo delete
 expect said ! Undone: delete-then-undo.txt restored
 expect focus "value":"delete-then-undo.txt"
 # Goal: Undo the delete of several entries
 # Delete two selected entries, then Ctrl+Z: both restored.
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type delete-two
 keys enter
@@ -400,24 +400,24 @@ expect state They go to the Recycle Bin.
 keys enter
 expect said ! Deleted 2 items
 expect list "count":7
-keys ctrl+z
+do Undo delete
 expect said ! Undone: 2 items restored
 expect list "delete-two-then-undo-1.txt","delete-two-then-undo-2.txt"
 # Manual (3.14): that the restored files are gone from the Recycle Bin is read in File Explorer.
 # Check: A file renamed outside since is not undone
 # Renamed here, then renamed outside: "Not undone: <name> has changed".
-keys ctrl+f
+do Find
 expect focus "name":"Name contains"
 type rename-here
 keys enter
 expect focus "value":"rename-here-then-outside.txt"
-keys f2
+do Rename
 expect focus "name":"New name"
 type renamed-here
 keys enter
 expect said ! Renamed to renamed-here.txt
 run ren "undo\renamed-here.txt" "renamed-outside.txt"
-keys ctrl+z
+do Undo rename
 expect said ! Not undone: renamed-here.txt has changed
 
 # Check: Only the last twenty operations can be undone, and a new window has none
@@ -428,153 +428,153 @@ start file {temp}\undo21
 expect focus "value":"r0.txt"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
-keys f2
+do Rename
 expect focus "name":"New name"
 type r1
 keys enter
 expect said ! Renamed to r1.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r2
 keys enter
 expect said ! Renamed to r2.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r3
 keys enter
 expect said ! Renamed to r3.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r4
 keys enter
 expect said ! Renamed to r4.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r5
 keys enter
 expect said ! Renamed to r5.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r6
 keys enter
 expect said ! Renamed to r6.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r7
 keys enter
 expect said ! Renamed to r7.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r8
 keys enter
 expect said ! Renamed to r8.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r9
 keys enter
 expect said ! Renamed to r9.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r10
 keys enter
 expect said ! Renamed to r10.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r11
 keys enter
 expect said ! Renamed to r11.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r12
 keys enter
 expect said ! Renamed to r12.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r13
 keys enter
 expect said ! Renamed to r13.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r14
 keys enter
 expect said ! Renamed to r14.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r15
 keys enter
 expect said ! Renamed to r15.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r16
 keys enter
 expect said ! Renamed to r16.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r17
 keys enter
 expect said ! Renamed to r17.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r18
 keys enter
 expect said ! Renamed to r18.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r19
 keys enter
 expect said ! Renamed to r19.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r20
 keys enter
 expect said ! Renamed to r20.txt
-keys f2
+do Rename
 expect focus "name":"New name"
 type r21
 keys enter
 expect said ! Renamed to r21.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r20.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r19.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r18.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r17.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r16.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r15.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r14.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r13.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r12.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r11.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r10.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r9.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r8.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r7.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r6.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r5.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r4.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r3.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r2.txt
-keys ctrl+z
+do Undo rename
 expect said ! Undone: renamed back to r1.txt
 # The twenty-first: the oldest rename is past the twenty that can be undone.
-keys ctrl+z
+do Undo
 expect said ! Nothing to undo
 expect focus "value":"r1.txt"
 close
@@ -582,5 +582,5 @@ start file {temp}\undo21
 expect focus "value":"r1.txt"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
-keys ctrl+z
+do Undo
 expect said ! Nothing to undo

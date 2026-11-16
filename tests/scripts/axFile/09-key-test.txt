@@ -17,14 +17,14 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 
 # Goal: Hear what a key does without doing it
 # Bundle keys.
-keys f8
+do Say the status
 expect said ! F8: Say the status
-keys f4
+do Send a report
 expect said ! F4: Send a report
 # Window keys of the command list, each as it acts in the folder list.
-keys f5
+do Refresh
 expect said ! F5: Refresh
-keys ctrl+g
+do Go to folder
 expect said ! Ctrl+G: Go to folder
 keys delete
 expect said ! Delete: Delete
@@ -32,7 +32,7 @@ keys enter
 expect said ! Enter: Open
 keys backspace
 expect said ! Backspace: Up one level
-keys ctrl+f
+do Find
 expect said ! Ctrl+F: Find
 # The list's own keys, and a key nothing has.
 keys down
@@ -62,7 +62,7 @@ keys down
 expect focus "value":"apple.txt
 keys b
 expect focus "value":"berry.txt
-keys ctrl+g
+do Go to folder
 expect state "notice":"Go to folder"
 keys escape
 expect state "notice":null

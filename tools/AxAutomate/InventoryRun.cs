@@ -139,6 +139,29 @@ internal static class InventoryRun
         }
     }
 
+    /// <summary>Whether <see cref="Converted"/> merged rows in: the file is then written at the end under <c>check</c> too.</summary>
+    private static bool _converted;
+
+    /// <summary>
+    /// The rows the converter's <c>do</c> lines ran, merged into the inventory (WF-10.2, <see cref="ConvertRun"/>), so
+    /// that the cheap check passes for the lines it wrote; the file is written at the run's end when it changed,
+    /// whatever the mode but <c>off</c>. Only for an app the inventory holds rows for: an app joins it whole, by
+    /// <c>--inventory write</c>, never by the few rows of one script.
+    /// </summary>
+    public static void Converted(IEnumerable<WindowCommands> rows)
+    {
+        if (_mode == RunOptions.Off)
+        {
+            return;
+        }
+
+        foreach (var snapshot in rows.Where(snapshot => CommandInventory.Holds(_apps, snapshot.App)))
+        {
+            _apps = CommandInventory.Merge(_apps, snapshot, _temp, _profile);
+            _converted = true;
+        }
+    }
+
     /// <summary>
     /// The run's end: the lines said after the summary, and whether the inventory was found stale (exit code 3 when
     /// every script passed, WF-11.5). <c>check</c>: WF-2.10's words and one line per row that differs, then one line
@@ -164,6 +187,14 @@ internal static class InventoryRun
             }
 
             lines.AddRange(Unheld.Select(app => $"The command inventory has no rows for {app} yet: its commands were not checked"));
+            var merged = CommandInventory.Write(_apps);
+            if (_converted && System.IO.File.Exists(_path) && Lf(System.IO.File.ReadAllText(_path)) != merged)
+            {
+                // WF-10.2: the rows of the converted do lines, as the windows listed them; CRLF, as below.
+                System.IO.File.WriteAllText(_path, merged.Replace("\n", "\r\n", StringComparison.Ordinal), new UTF8Encoding(false));
+                lines.Add($"The command inventory ({File}) written: the rows of the converted do lines merged in. Run tools\\workflows.ps1, and commit both with the scripts.");
+            }
+
             return (lines, StaleLines.Count > 0);
         }
 

@@ -14,11 +14,11 @@ expect focus "name":"Search programs","role":"Text","value":"windows"
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
-keys f8
+do Say the status
 expect said ! F8: Say the status
-keys f5
+do Refresh programs
 expect said ! F5: Refresh programs
-keys ctrl+i
+do Information
 expect said ! Ctrl+I: Information
 keys down
 expect said ! Down: Next match

@@ -17,11 +17,11 @@ Starts with: Open axTask with the folder tasks.
     You hear the sound Edge.
 2. Press Ctrl+Down (Next section; Navigation menu).
 3. Press Down.
-4. Press Ctrl+1.
+4. Press Ctrl+1 (Next heading level 1).
 5. Press Down 4 times.
-6. Press Ctrl+1.
+6. Press Ctrl+1 (Next heading level 1).
     You hear the sound Edge.
-7. Press Ctrl+2.
+7. Press Ctrl+2 (Next heading level 2).
     You hear the sound Edge.
 8. Press Ctrl+Down (Next section; Navigation menu).
     You hear the sound Edge.
@@ -134,7 +134,7 @@ Starts with: Open axTask with the folder tasks.
 ### Rename an item
 
 1. Press Escape.
-2. Press F2.
+2. Press F2 (Rename; Context menu).
 3. Type: Fix the sink
 4. Press Enter.
     You hear: Renamed Fix the sink.
@@ -144,7 +144,7 @@ Starts with: Open axTask with the folder tasks.
 1. Press Left.
 2. Type: s
 3. Press Right.
-4. Press Ctrl+N.
+4. Press Ctrl+N (New item; Actions menu).
 5. Type: Bread
 6. Press Enter.
     You hear: Added Bread.
@@ -158,7 +158,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Hear every field of an item
 
-1. Press Ctrl+Q (Read in full).
+1. Press Ctrl+Q (Read in full; Context menu).
     You hear: Milk. Notes: empty.
 
 ### Show all tasks, the soonest due first
@@ -188,7 +188,7 @@ Starts with: Open axTask with the folder tasks.
 6. Press Tab.
 7. Press Enter.
     You hear: Notes: First line, and 1 more line.
-8. Press Ctrl+Q (Read in full).
+8. Press Ctrl+Q (Read in full; Context menu).
     You hear: Notes: First line. Second line.
 
 ### Link one item to another
@@ -238,7 +238,7 @@ Starts with: Open axTask with the folder tasks.
 ### Move a list into a new section
 
 1. Type: w
-2. Press Ctrl+M.
+2. Press Ctrl+M (Move to section; Context menu).
 3. Press End.
 4. Press Enter.
     You hear the sound Edge.
@@ -252,7 +252,7 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Ctrl+Up (Previous section; Navigation menu).
 2. Press Ctrl+Down 2 times (Next section; Navigation menu).
-3. Press Ctrl+1 2 times.
+3. Press Ctrl+1 2 times (Next heading level 1).
     You hear the sound Edge.
 4. Press Ctrl+Shift+2 (Previous heading level 2).
 
@@ -279,7 +279,7 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Ctrl+Up (Previous section; Navigation menu).
 2. Type: h
-3. Press Ctrl+M.
+3. Press Ctrl+M (Move to section; Context menu).
 4. Press Home.
 5. Press Enter.
     You hear: Moved Home to Your lists.
@@ -304,17 +304,17 @@ Starts with: Open axTask with the folder tasks.
 2. Press Home.
 3. Press Down.
 4. Press Right.
-5. Press Ctrl+3.
+5. Press Ctrl+3 (Action key 3).
     You hear the sound Edge.
     You hear: No action on Ctrl+3 in this list; Actions, Action keys sets one.
-6. Press Ctrl+1.
+6. Press Ctrl+1 (Action key 1).
     You hear: Done: Done: done.
 7. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Done: Done: done.
 
 ### Move an item to another list with an action key
 
-1. Press Ctrl+2.
+1. Press Ctrl+2 (Action key 2).
     You hear: Later: Fix the tap moved to Later.
 2. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Later: Fix the tap moved to Later.
@@ -345,12 +345,12 @@ Starts with: Open axTask with the folder tasks.
 
 ### Find the project folders by their headings
 
-1. Press Ctrl+1.
-2. Press Ctrl+2.
+1. Press Ctrl+1 (Next heading level 1).
+2. Press Ctrl+2 (Next heading level 2).
 3. Press Down 2 times.
-4. Press Ctrl+2.
+4. Press Ctrl+2 (Next heading level 2).
     You hear the sound Edge.
-5. Press Ctrl+1.
+5. Press Ctrl+1 (Next heading level 1).
 
 ### Mark a project's task done from All tasks
 
@@ -364,10 +364,10 @@ Starts with: Open axTask with the folder tasks.
     You hear: Undone: Done: Fix the tap.
 6. Press Left.
     You hear: Lists, 1 list, All tasks, 2 not done.
-7. Press Ctrl+1.
+7. Press Ctrl+1 (Next heading level 1).
 8. Press End.
 9. Press Ctrl+Shift+1 3 times (Previous heading level 1).
-10. Press Ctrl+2.
+10. Press Ctrl+2 (Next heading level 2).
 11. Press Down.
 
 ### Open a project and mark a task done in it
@@ -439,9 +439,9 @@ Starts with: Open axTask with the folder tasks.
 
 ### Move among the tags by their symbols
 
-1. Press Ctrl+3.
+1. Press Ctrl+3 (Next heading level 3).
 2. Press Down.
-3. Press Ctrl+3.
+3. Press Ctrl+3 (Next heading level 3).
 4. Press Down.
 
 ### Gather a tag's items from every list
@@ -451,9 +451,9 @@ Starts with: Open axTask with the folder tasks.
 2. Press Down.
 3. Press Left.
     You hear: Lists, 1 list, #garden, 2.
-4. Press Ctrl+3.
+4. Press Ctrl+3 (Next heading level 3).
 5. Press Down.
-6. Press Ctrl+3.
+6. Press Ctrl+3 (Next heading level 3).
     You hear the sound Edge.
 
 ### Find the smart lists that share a first word
@@ -497,7 +497,7 @@ Starts with: Open axTask with the folder tasks.
     You hear: F8: Say the status.
 3. Press F1 (Keyboard shortcuts; Help menu).
     You hear: F1: Keyboard shortcuts.
-4. Press Ctrl+N.
+4. Press Ctrl+N (New item; Actions menu).
     You hear: Ctrl+N: New item.
 5. Press Ctrl+Up (Previous section; Navigation menu).
     You hear: Ctrl+Up: Previous section.

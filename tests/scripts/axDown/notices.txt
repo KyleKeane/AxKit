@@ -3,12 +3,12 @@
 start down {temp}\notes.md
 expect focus Text
 # Goal: Read the keyboard shortcuts
-keys f1
+do Keyboard shortcuts
 expect state Keyboard shortcuts
 keys escape
 expect focus Text
 # Goal: Find a command in the command palette
-keys ctrl+shift+p
+do Command palette
 type save as
 expect said Save as
 keys escape

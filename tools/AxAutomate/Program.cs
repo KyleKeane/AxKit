@@ -6,6 +6,7 @@
 // Usage:
 //   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep] [--nvda]
 //              [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record]
+//              [--convert]
 //   AxAutomate --reference [--check] [--repository <folder>]
 //   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
 //   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
@@ -59,8 +60,21 @@
 //   --record     the workflow record (RecordRun, WF-6): after the last script every section the run played is entered
 //                into the repository's docs/axKit/workflow-record.json for the run's tier (desktop, or nvda under
 //                --nvda) with its result, the version, the commit and the date; one line says how many.
-//   Options that later packages of docs/axKit/user-workflows.md build (--convert, --ai-tools) are refused
-//   as not built yet.
+//   --convert    the converter (ConvertRun, WF-10), on the hidden desktop alone: moves a script's command keys to do
+//                lines. Each script is played with the window asked for its commands before every press of a keys
+//                line that carries ctrl or alt or is a function key (alt+f4 aside); a press becomes "do <name>" only
+//                when exactly one row of the window's list at that moment has it as its key and would run by it now,
+//                and do would press that very key. Everything else stays keys: plain keys, a further key of a
+//                command, a key in a notice. A keys line of several presses becomes several lines in the same order,
+//                an iffound before it on each; comments, blank lines and line ends stay. A script that did not pass
+//                is left alone. A rewritten script is played once more as it then stands: when it does not pass, the
+//                file is put back byte for byte and named after the summary. The rows the new do lines ran are merged
+//                into the command inventory, written at the end when it changed. One line per script
+//                ("<script>: 3 presses converted", or why not), and a count after the summary. No traces (--traces
+//                check or write are refused with it); refused with --nvda, with --inventory write or rewrite and
+//                without a repository. Afterwards: the folder once more without the option and with --record, then
+//                tools\workflows.ps1.
+//   The option that a later package of docs/axKit/user-workflows.md builds (--ai-tools) is refused as not built yet.
 //   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}. The exit code
 //   (WF-11.5) is 0 when every script passed and nothing is stale, 1 when a script failed (a "# Stable" section whose
 //   trace differs from the kept one, or has none, fails its script), 2 when the run could not
@@ -243,6 +257,9 @@ internal static class Program
         // The workflow record (RecordRun, WF-6): entered after the last script, under --record.
         RecordRun.Start(options.Record, options.Repository, options.Nvda, exe);
 
+        // The converter (ConvertRun, WF-10): each script's command keys moved to do lines, proved by a second play.
+        ConvertRun.Start(options.Convert);
+
         // A run that ended without its end (the runner killed, its console closed) left NVDA's capture on, and the add-on
         // then wrote everything NVDA spoke into a file (R-33): an earlier run's flag goes first, in every run.
         File.Delete(Speech.FlagPath);
@@ -297,7 +314,9 @@ internal static class Program
                 Directory.CreateDirectory(temp);
                 // WF-5.5, WF-5.8: a stable section's trace held against the kept one, or written, before anything
                 // reads the script's result.
-                var result = TraceRun.After(RunScript(script, exe, temp), Console.WriteLine);
+                var result = TraceRun.After(RunScript(script, exe, temp, ConvertRun.On), Console.WriteLine);
+                // WF-10.3, WF-10.4: under --convert the script rewritten and played once more, in a folder of its own.
+                result = ConvertRun.After(script, name, result, () => RunScript(script, exe, Directory.CreateDirectory(temp + "-converted").FullName, false), Console.WriteLine);
                 var (ok, log, goals) = (result.Ok, result.Log, result.Goals);
                 InventoryRun.After(result);
                 RecordRun.After(script, result);
@@ -380,6 +399,12 @@ internal static class Program
             summary += "\n" + line;
         }
 
+        // WF-10.4: how many presses the converter moved, and each script it put back.
+        foreach (var line in ConvertRun.End())
+        {
+            summary += "\n" + line;
+        }
+
         // WF-6.2: the run's sections entered into the workflow record, and the line that says so.
         foreach (var line in RecordRun.End())
         {
@@ -409,7 +434,7 @@ internal static class Program
         return Run.Stopped is not null ? CannotStart : failed.Count > 0 ? ScriptsFailed : inventory.Stale ? InventoryStale : 0;
     }
 
-    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
 
     /// <summary>
     /// The exit codes (docs/axKit/user-workflows.md WF-11.5): 0 every script passed and nothing is stale, 1 a script
@@ -429,9 +454,10 @@ internal static class Program
     /// (ScriptReader.Goals, docs/axKit/user-workflows.md WF-3) and their results come back; a workflow file has none.
     /// The result also holds the listings of the windows' commands the run saw (WF-2.7), for the command inventory,
     /// and, when TraceRun asks for it (a script with a stable section; a run with a report and --traces named), the
-    /// run's trace (WF-5.1).
+    /// run's trace (WF-5.1). With <paramref name="convert"/> (ConvertRun, WF-10.1) a script is played as the converter
+    /// plays it, and the result holds the presses to write as do lines; a workflow file never is.
     /// </summary>
-    private static ScriptResult RunScript(string script, string exe, string temp)
+    private static ScriptResult RunScript(string script, string exe, string temp, bool convert)
     {
         IReadOnlyList<ScriptLine> lines;
         IReadOnlyList<Goal> goals = [];
@@ -459,7 +485,7 @@ internal static class Program
             goals = workflow.Goals;
         }
 
-        return ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals, TraceRun.Playing(script, workflow)));
+        return ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals, TraceRun.Playing(script, workflow), convert && workflow is not null));
     }
 
     /// <summary>src\AxKit in Release into a folder of the run's, never into the running app's bin.</summary>

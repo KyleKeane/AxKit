@@ -71,7 +71,7 @@ command's in this version of axKit.
     You hear words such as: C:\.
 4. Press Backspace.
     You hear: (C:), drive.
-5. Press Ctrl+I.
+5. Press Ctrl+I (Information; Context menu).
     You hear words such as: GB free.
 6. Press Ctrl+Shift+N (New folder; Actions menu).
     You hear: Choose a drive first.
@@ -113,10 +113,10 @@ command's in this version of axKit.
 
 ### Hear the details of a folder or a file
 
-1. Press Ctrl+I.
+1. Press Ctrl+I (Information; Context menu).
     You hear: level-1-enter-me, folder, modified.
 2. Press End.
-3. Press Ctrl+I.
+3. Press Ctrl+I (Information; Context menu).
     You hear: fig.txt, 13 bytes, modified.
 
 ### Go to a folder named by an environment variable
@@ -222,7 +222,7 @@ command's in this version of axKit.
 4. Press Enter.
     You hear: 5 of 9 items, filter chap, chapter-01-notes.txt.
 5. Press Down.
-6. Press Ctrl+I.
+6. Press Ctrl+I (Information; Context menu).
     You hear words such as: chapter-02-notes.txt.
 7. Press Escape.
     You hear: Filter cleared.
@@ -262,7 +262,7 @@ command's in this version of axKit.
 7. Press Up.
 8. Press Down, Space.
     You hear: Selected, 2 selected.
-9. Press Ctrl+I.
+9. Press Ctrl+I (Information; Context menu).
     You hear words such as: 2 selected.
 10. Press Space.
     You hear: Deselected, 1 selected.
@@ -286,11 +286,11 @@ command's in this version of axKit.
 
 1. Press Shift+Down 3 times.
 2. Press Shift+Up.
-3. Press Ctrl+I.
+3. Press Ctrl+I (Information; Context menu).
     You hear words such as: 3 selected.
 4. Press Down.
 5. Press Shift+End.
-6. Press Ctrl+I.
+6. Press Ctrl+I (Information; Context menu).
     You hear words such as: 12 selected.
 7. Press Ctrl+Shift+A (Deselect all; Actions menu).
     You hear: None selected.
@@ -417,7 +417,7 @@ Starts with: Open axFile with the folder ops.
 5. Type: renamed
 6. Press Enter.
     You hear: Renamed to renamed.txt.
-7. Press Ctrl+Z.
+7. Press Ctrl+Z (Undo rename; Actions menu).
     You hear: Undone: renamed back to rename-then-undo.txt.
 
 ### Undo a new folder
@@ -426,7 +426,7 @@ Starts with: Open axFile with the folder ops.
 2. Type: temp
 3. Press Enter.
     You hear: Created temp.
-4. Press Ctrl+Z.
+4. Press Ctrl+Z (Undo new folder; Actions menu).
     You hear: Undone: temp removed.
 
 ### Undo a move to a folder
@@ -439,7 +439,7 @@ Starts with: Open axFile with the folder ops.
 6. Type: bundle
 7. Press Enter.
     You hear: Moved 2 items into bundle.
-8. Press Ctrl+Z.
+8. Press Ctrl+Z (Undo move; Actions menu).
     You hear: Undone: moved back.
 
 ### Undo a compress
@@ -447,7 +447,7 @@ Starts with: Open axFile with the folder ops.
 1. Press Home.
 2. Choose the menu item Compress to zip, Context.
     You hear: Compressed to compress-then-undo.zip.
-3. Press Ctrl+Z.
+3. Press Ctrl+Z (Undo compress; Actions menu).
     You hear: Undone: compress-then-undo.zip sent to the Recycle Bin.
 
 ### Undo a delete
@@ -458,7 +458,7 @@ Starts with: Open axFile with the folder ops.
 4. Press Delete.
 5. Press Enter.
     You hear: Deleted delete-then-undo.txt.
-6. Press Ctrl+Z.
+6. Press Ctrl+Z (Undo delete; Actions menu).
     You hear: Undone: delete-then-undo.txt restored.
 
 ### Undo the delete of several entries
@@ -470,7 +470,7 @@ Starts with: Open axFile with the folder ops.
 5. Press Delete.
 6. Press Enter.
     You hear: Deleted 2 items.
-7. Press Ctrl+Z.
+7. Press Ctrl+Z (Undo delete; Actions menu).
     You hear: Undone: 2 items restored.
 
 ## Play or read a file from axFile
@@ -611,7 +611,7 @@ Starts with: Open axFile with the folder act.
 
 ### Undo the newest operation from the folder list
 
-1. Press Ctrl+Z.
+1. Press Ctrl+Z (Undo delete; Actions menu).
     You hear: Undone: 2 items restored.
 
 ### See what was selected in the Actions list
@@ -662,7 +662,7 @@ Starts with: Open axFile with the folder ops.
 
 ### Undo the move
 
-1. Press Ctrl+Z.
+1. Press Ctrl+Z (Undo move; Actions menu).
     You hear: Undone: moved back.
 
 ## Open a recent folder in axFile from the command palette

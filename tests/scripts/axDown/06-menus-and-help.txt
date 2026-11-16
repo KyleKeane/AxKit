@@ -19,7 +19,7 @@ expect commands "Keyboard shortcuts, Help, F1"
 # Goal: Open the keyboard shortcuts
 # 6.2: F1, the shortcuts notice, its first line naming the text's own keys.
 keys down right right
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect focus {"name":"Keyboard shortcuts","role":"Text","value":"In this text: h and Shift\u002BH move by heading
 # Goal: Move through the keyboard shortcuts by heading
@@ -101,13 +101,13 @@ expect focus a.md
 # Goal: Turn the update check at start on or off
 # 6.5: Options, General, Check for updates at start, a checked item that says its new state.
 # Through the palette, which says the new state; the runner's menu step runs the item without saying it.
-keys ctrl+shift+p
+do Command palette
 expect focus Search commands
 type check for updates at start
 expect said Check for updates at start, Options, General, 1 of 1
 keys enter
 expect said Check for updates at start, checked
-keys ctrl+shift+p
+do Command palette
 expect focus Search commands
 type check for updates at start
 expect said Check for updates at start, Options, General, checked, 1 of 1
@@ -119,7 +119,7 @@ expect focus a.md
 
 # Goal: Move through the commands of the palette
 # 6.6: the command palette, with the caret in the middle of a line.
-keys ctrl+shift+p
+do Command palette
 expect state "notice":"Command palette"
 expect focus Search commands
 keys down
@@ -147,11 +147,11 @@ expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 \u00B7
 expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW","Say new line, Options, Text
 # Back on: the setting is the run's theme file, which the scripts after this one share (docs/axKit/theme.md TH-6).
-keys ctrl+shift+w
+do Word wrap
 expect said ! Word wrap on
 # Check: A search with no match says so and runs nothing
 # No match: "No commands match xyz"; Enter says it again and the palette stays; Escape: back, nothing run.
-keys ctrl+shift+p
+do Command palette
 expect focus Search commands
 type xyz
 expect said No commands match xyz

@@ -15,7 +15,7 @@ expect focus Search programs
 # Goal: Refresh the list of programs
 # F5 reads the programs again and says how many, once the first read is done: the list is there before the typing.
 wait 5000
-keys f5
+do Refresh programs
 expect said ! Programs refreshed
 
 # Goal: Move through the matches
@@ -31,11 +31,11 @@ expect said , 1 of
 
 # Goal: Jump to the first or last match, or by a page
 # Ctrl+End the last match (Down there is the edge), Ctrl+Home the first; Page Down and Page Up by a page.
-keys ctrl+end
+do Last match
 expect said of
 keys down
 expect said ♪ Edge
-keys ctrl+home
+do First match
 expect said , 1 of
 keys pagedown
 expect said of
@@ -44,7 +44,7 @@ expect said , 1 of
 
 # Goal: Hear the selected match's kind and path
 # Ctrl+I the selected match, its kind and its path.
-keys ctrl+i
+do Information
 expect said Windows
 
 # Check: A text nothing matches is said as no match
@@ -53,7 +53,7 @@ type zzqqxx
 keys down
 expect said ♪ Edge
 expect said ! No programs match
-keys ctrl+end
+do Last match
 expect said ! No programs match
 
 # Enter (Start), Ctrl+Shift+Enter (Start as administrator) and Ctrl+O (Open file location in axFile) start programs

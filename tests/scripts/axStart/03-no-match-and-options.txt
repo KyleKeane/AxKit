@@ -26,7 +26,7 @@ expect said ! No programs match zzqqx
 keys ctrl+a
 type calculator
 expect said ! Calculator, 1 of
-keys ctrl+i
+do Information
 expect said ! Calculator, Store app
 
 # Goal: Turn the spoken first match off and on
@@ -37,7 +37,7 @@ keys ctrl+a
 type calculato
 expect focus "value":"calculato"
 expect quiet 2000
-keys ctrl+i
+do Information
 expect said ! Calculator, Store app
 menu Say the first match while typing
 expect said ! Say the first match while typing, checked

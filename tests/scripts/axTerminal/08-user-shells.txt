@@ -59,18 +59,18 @@ menu 1. Test cmd
 expect said Test cmd
 expect state "myproject - Test cmd - axTerminal, access layer for your shell"
 expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell, checked
-keys ctrl+2
+do Terminal
 expect text "System: Switched to Test cmd in
-keys ctrl+1
+do Command field
 type echo hello-user-shell
 keys enter
-keys ctrl+2
+do Terminal
 expect text hello-user-shell
-keys ctrl+1
+do Command field
 
 # Check: The New session notice lists the shell of your own, selected
 # The New session notice lists it after the built-in shells, selected while it is the shell in use.
-keys ctrl+n
+do New session
 expect state "notice":"New session"
 keys tab
 expect focus folder..."}
@@ -85,9 +85,9 @@ close
 # Remembered for the next window: the same shell starts again.
 start terminal {temp}\work\myproject
 expect state "myproject - Test cmd - axTerminal, access layer for your shell"
-keys ctrl+2
+do Terminal
 expect text "System: Shell started: Test cmd in
-keys ctrl+1
+do Command field
 
 # Goal: Remove a shell of your own
 # Removed while in use: off both lists, the machine's default shell started in its place in the same folder.
