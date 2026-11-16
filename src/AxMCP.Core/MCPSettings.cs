@@ -24,14 +24,37 @@ public sealed class MCPSettings : WindowSettings
 
     public static string DefaultPath => AppPaths.SettingsFile("axMCP");
 
+    /// <summary>The seal over the servers (bundle AX-5.6, MP-8.2): written at every save, checked at every load.</summary>
+    public string Seal { get; set; } = string.Empty;
+
+    /// <summary>What the load's error text says when the seal does not check (MP-8.2).</summary>
+    public const string ServersNotUsed = "Your servers in axMCP's settings were changed outside axKit and are not used. Add them again with Ctrl+N at the top level.";
+
+    /// <summary>The sealed fields: each server as its name, its command line and its folder.</summary>
+    private string SealedText() =>
+        SettingsSeal.Text((Servers ?? []).SelectMany(server => new[] { server?.Name, server?.CommandLine, server?.Folder }));
+
     public static MCPSettings Load(string path, out string? error)
     {
         var settings = SettingsFile.Load<MCPSettings>(path, out error);
+        if (!SettingsSeal.Checks(path, settings.Seal, settings.SealedText(), new MCPSettings().SealedText()))
+        {
+            settings.Servers = [];
+            error = SettingsSeal.Refused(error, ServersNotUsed);
+        }
+
         settings.Sanitize();
         return settings;
     }
 
-    public override void Save(string path) => SettingsFile.Save(path, this);
+    public override void Save(string path)
+    {
+        Seal = SettingsSeal.Of(path, SealedText());
+        if (SettingsFile.Save(path, this))
+        {
+            SettingsSeal.Remember(path);
+        }
+    }
 
     /// <summary>The own servers as the navigator lists them (MP-1.1), under <see cref="ServerSources.Own"/>.</summary>
     public IReadOnlyList<McpServer> OwnServers()

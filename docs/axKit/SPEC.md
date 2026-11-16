@@ -399,6 +399,44 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   `AppPathsTests`.
 - AX-5.5 In the Store's copy the same paths are Windows' to redirect: a new file under AppData lands in the package's
   private folder and goes with the package when it is uninstalled, an existing one is modified in place (AX-13.5).
+- AX-5.6 **The seal on the settings that decide what is run or what Claude may read** (2026-11-16, `repairs.md` R-53;
+  `AxKit.Core/SettingsSeal`, the one piece, tested in `SettingsSealTests` and in each app's tests). Such a setting
+  counts only as axKit wrote it. The sealed settings: axTerminal's `shell`, `customShell` and `userShells`
+  (docs/axTerminal/SPEC.md AT-8.1a); axGIT's trusted repositories (docs/axGIT/SPEC.md AG-8.1a); AI help's `enabled`,
+  `folders`, `claudePath` and `workingFolder` (docs/axKit/ai-help.md AH-1.1a); axClaude's `claudePath`
+  (docs/axClaude/SPEC.md Appendix C); axMCP's `servers` (docs/axMCP/SPEC.md MP-8.2); axFile's `programs`
+  (docs/axFile/SPEC.md AF-8.1a); and the agreements in `consent.json` (AX-11.5). The AI tools' setting has had its own
+  seal since 3.7.0 (docs/axKit/mcp.md MC-6.1), with its own file and key, unchanged; it takes the HMAC from this piece.
+  - The seal is the file's key `seal`: an HMAC-SHA256, under a key of 32 random bytes kept with Windows' protection
+    for this user (DPAPI), over the file's name and the sealed fields in a fixed order, each with its length in front,
+    so that no field can run into the next. Each settings class lists its sealed fields in one small method
+    (`SealedText`) and writes the seal at every save, so a change through axKit's own menus is sealed as it is saved.
+  - At every load the seal is checked. When it checks, nothing changes. When it does not, the sealed fields are put
+    to their defaults and not used, every other setting of the file is kept, and the load's error text says in one
+    sentence what was not used and where to add it again ("Your shells in axTerminal's settings were changed outside
+    axKit and are not used. Add them again from Session, Add a shell."); the window says it the way it says a file
+    that could not be read (a notice at its first showing, a system line in the console windows, AX-5.3) and without
+    the words "could not be read", and the log holds it once. The window's next save writes the file as it is now in
+    use, sealed, so the sentence is heard once. Sealed fields that are all at their defaults need no seal: there is
+    nothing in them to refuse.
+  - **A file from before the seal.** A file that carries no seal and that this install has never sealed is accepted
+    as it is and sealed at its next save, so that the shells, repositories, folders and agreements of 5.9.0 and
+    earlier stay. So that taking the seal out of a file is no way around it, the names of the files this install has
+    sealed are kept with the key, in the one file `%LOCALAPPDATA%\AxKit\settings-seal.key`, whole under Windows'
+    protection: a file on that list without its seal, or with a wrong one, was changed outside axKit. A key file that
+    is there and cannot be read (made for another user or computer, damaged) refuses every sealed setting; the next
+    save makes a new key, and from then on every file counts as sealed before. A sealed file on a computer without
+    the key file (the settings roam, the key does not) is refused the same way.
+  - **Changing a sealed setting by hand** (Options, Developer, Open settings file) is therefore refused at the next
+    start, with the same sentence: it is set in the app's menus. AI help's `claudePath` and `workingFolder` and
+    axClaude's `claudePath` when Claude Code is found have no menu item yet; until they have, they can be set by hand
+    only in a file axKit has not sealed yet.
+  - **The limit.** A program running as the user can ask Windows for the same key; the seal holds against a file
+    edited by another program or by hand, a profile copied or synced from elsewhere, and an AI tool writing files.
+    Deleting the key file together with the seals puts the files back to "from before the seal"; that takes a program
+    that knows axKit, not a file changed in passing.
+  - A test never touches the user's key: for a settings file outside `%APPDATA%\AxKit` the key file is beside the
+    settings file (`SettingsSeal.KeyFileOf`), and a test run's home holds both in one folder.
 
 ### AX-6 Shared pieces
 
@@ -1005,7 +1043,9 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   updates included (AX-11.7 covers those). The pairs:
   - axClaude, Claude Code: before it first starts Claude Code.
   - axTerminal, each shell on its own: before it first starts PowerShell, Command Prompt, Git Bash or PowerShell 7,
-    those that come with Windows included.
+    those that come with Windows included. A command line of the user's own (Custom, one of the user's shells) is
+    agreed to as that command line (`ConsentTarget.CommandLineShell`, docs/axTerminal/SPEC.md AT-1.6b, since
+    2026-11-16): the agreement for one command line is not one for another, and the question names the line.
   - axGIT, Git: on first opening a repository; and each server on its own (github.com, a company's server), before
     the first fetch, pull or push that reaches it, by the host of the remote's address, since that is a new service
     with its own terms.
@@ -1022,6 +1062,11 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
     connection, so the user agrees once, in the step they were already taking.
   The notice is the window base's (`AxKitForm.HasConsent`, the one check: true goes on, false has shown the reminder, whose Connect runs the caller again), the programs' words and addresses `ConsentTarget` in `AxKit.Core/Consent.cs`.
   A custom shell has no address for its terms: its notice says so.
+  The file is under the bundle's seal (AX-5.6, 2026-11-16): an agreement that something other than axKit wrote into
+  it is not the user's, so a file whose seal does not check holds no agreement at all, every app asks again, and the
+  question starts with "The record of what you agreed to was changed outside axKit and is not used, so axKit asks
+  again." (`Consent.Problem`). The seal covers each agreement's app, program and version, not its date. A file from
+  before the seal counts as it is until the next agreement is recorded, which seals it.
 - AX-11.6 **Reminders at sign-in.** One line says whose account it is, without a check box: axClaude, on sending
   `/login`: "You are signing in to Anthropic through Claude Code; the account and its terms are between you and
   Anthropic", spoken after "Sent" and kept as a system line. axGIT, the first time a window reaches each server

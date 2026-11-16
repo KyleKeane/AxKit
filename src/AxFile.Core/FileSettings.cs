@@ -35,14 +35,37 @@ public sealed class FileSettings : WindowSettings
 
     public static string DefaultPath => AppPaths.SettingsFile("axFile");
 
+    /// <summary>The seal over the user's own programs (bundle AX-5.6, AF-8.1a): written at every save, checked at every load.</summary>
+    public string Seal { get; set; } = string.Empty;
+
+    /// <summary>What the load's error text says when the seal does not check (AF-8.1a).</summary>
+    public const string ProgramsNotUsed = "Your programs of Open with in axFile's settings were changed outside axKit and are not used. Add them again from Options, Add a program to Open with.";
+
+    /// <summary>The sealed fields: each program as its name and its path.</summary>
+    private string SealedText() =>
+        SettingsSeal.Text((Programs ?? []).SelectMany(program => new[] { program?.Name, program?.Path }));
+
     public static FileSettings Load(string path, out string? error)
     {
         var settings = SettingsFile.Load<FileSettings>(path, out error);
+        if (!SettingsSeal.Checks(path, settings.Seal, settings.SealedText(), new FileSettings().SealedText()))
+        {
+            settings.Programs = [];
+            error = SettingsSeal.Refused(error, ProgramsNotUsed);
+        }
+
         settings.Sanitize();
         return settings;
     }
 
-    public override void Save(string path) => SettingsFile.Save(path, this);
+    public override void Save(string path)
+    {
+        Seal = SettingsSeal.Of(path, SealedText());
+        if (SettingsFile.Save(path, this))
+        {
+            SettingsSeal.Remember(path);
+        }
+    }
 
     /// <summary>Puts the folder at the front of <see cref="RecentFolders"/>, once, keeps the list to <see cref="RecentPaths.Max"/>, and makes it the last folder.</summary>
     public void RememberFolder(string folder)

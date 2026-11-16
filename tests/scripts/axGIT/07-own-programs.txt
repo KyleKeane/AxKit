@@ -50,3 +50,12 @@ start git {temp}\repo
 expect focus Changes, 1 file
 expect state "notice":null
 refuse said This repository runs programs of its own
+close
+
+# Check: A trusted repository that gains a hook is asked about again
+# AG-1.6: the trust was for the hook the repository had; with one more, its programs are set aside again and the
+# notice says that what it would run has changed.
+file repo\.git\hooks\pre-commit #!/bin/sh\nexit 0
+start git {temp}\repo
+expect state "notice":"This repository runs programs of its own"
+expect state What this repository would run has changed since you trusted it, so it is not trusted now. Its settings or hooks name programs git would run: hook post-checkout, hook pre-commit.

@@ -44,15 +44,41 @@ public sealed class AiSettings
 
     public static string DefaultPath => AppPaths.AiHelpFile;
 
+    /// <summary>The seal over the switch, the folders, Claude Code's program and the working folder (bundle AX-5.6, AH-1.1a): written at every save, checked at every load.</summary>
+    public string Seal { get; set; } = string.Empty;
+
+    /// <summary>What the load's error text says when the seal does not check (AH-1.1a).</summary>
+    public const string NotUsed = "AI help's settings were changed outside axKit and are not used: Claude is off, it may read no folder of yours, and Claude Code and its working folder are the usual ones. Turn Claude on and add the folders again from the axKit menu, AI help.";
+
+    /// <summary>The sealed fields, in their order: the switch, Claude Code's program, the working folder, then each folder Claude may read.</summary>
+    private string SealedText() =>
+        SettingsSeal.Text([Enabled ? "on" : "off", ClaudePath, WorkingFolder, .. Folders ?? []]);
+
     public static AiSettings Load(string path, out string? error)
     {
         var settings = SettingsFile.Load<AiSettings>(path, out error);
+        if (!SettingsSeal.Checks(path, settings.Seal, settings.SealedText(), new AiSettings().SealedText()))
+        {
+            settings.Enabled = false;
+            settings.Folders = [];
+            settings.ClaudePath = null;
+            settings.WorkingFolder = null;
+            error = SettingsSeal.Refused(error, NotUsed);
+        }
+
         settings.Folder = Path.GetDirectoryName(path) ?? string.Empty;
         settings.Sanitize();
         return settings;
     }
 
-    public void Save(string path) => SettingsFile.Save(path, this);
+    public void Save(string path)
+    {
+        Seal = SettingsSeal.Of(path, SealedText());
+        if (SettingsFile.Save(path, this))
+        {
+            SettingsSeal.Remember(path);
+        }
+    }
 
     /// <summary>Claude Code's program file: the one named here, made absolute from the settings folder, or the one axClaude would find; null when there is none.</summary>
     public string? FindClaude() => ClaudeCodeProgram.Find(ResolvedClaudePath());

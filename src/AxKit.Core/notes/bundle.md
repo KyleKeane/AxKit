@@ -20,12 +20,14 @@
   the web page, the `winget install` line).
 - `BundleInfo`: the version, read from the executable.
 - `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `AxKit` folders; `ConsentFile`;
+  `SettingsFolder` and `SettingsSealFile` (AX-5.6);
   `TakeOverOldFolders` (AX-5.4, 2026-11-05), the Axit folders of up to 4.0.0 moved into them on the first start, entry
   by entry through `TakeOverFolder`, tested in `AppPathsTests`; `OneAtATime` (2026-11-09), the name of the mutex that
   keeps one process of a background app (axStart, axClip, axHelp, axDescribe), marked with the run's folder in a test
   run so that the run's app and the user's own never count as one.
 - `Ai` (docs/axKit/ai-help.md, 2026-11-09): `AiSettings` (AH-1.1: `ai-help.json`, the switch, the folders Claude
-  may read, the model, `claudePath`, and `WorkingFolder` with `DefaultWorkingFolder`, `Documents\axKit Claude` or the
+  may read, the model, `claudePath`, and `WorkingFolder` (the switch, the folders, `claudePath` and the working
+  folder under the bundle's seal, AH-1.1a, `notes/safety.md`; a refused file gives Claude off and no folders) with `DefaultWorkingFolder`, `Documents\axKit Claude` or the
   test run's home, `EnsureWorkingFolder`, AH-2.1, AH-D6, 5.6.0), `AiRequest` (the command line of `claude -p`, the
   process started in the working folder with every allowed folder as `--add-dir`, the run with the prompt on standard
   input; `Line` is `ClaudeCodeProgram.LineFor` over `Arguments`, and a refused line, a `claude.cmd` with a folder
@@ -43,6 +45,10 @@
   window keeps the agreement for its session), `Withdraw`, `WithdrawAll` (Forget AI tools), `Line` for About, Licence;
   the targets' words and addresses (`ClaudeCode`, `Git`, `KeePassXC`, `Shell` per shell, `Server` per host, `AiTool`,
   `For` from an installed program's name, which throws for a name it does not know). Tested in `ConsentTests`.
+  Under the bundle's seal since 2026-11-16 (AX-5.6, R-53; `notes/safety.md`): `Read` gives nothing when the seal does
+  not check, `Problem` gives the sentence `NotUsed` for the question that follows, every write seals (app, target,
+  version; not the date); `CommandLineShell`, the target of axTerminal's custom shell and the user's shells, names
+  the command line, so that one line's agreement is not another's. Tested in `SettingsSealTests`.
 - `Theme` with `ThemeColor` (docs/axKit/theme.md, 2026-11-09): the theme file `%APPDATA%\AxKit\theme.json`, one for the
   bundle, a colour (`#RRGGBB`) or `system` for every class of object the windows draw (`Classes`, `Keys`); `Load` and
   `Read` give the theme or null with the reason, `Template` the whole file with `system` everywhere, `SetEnabled` writes
@@ -52,7 +58,7 @@
 - `SettingsFile` (AX-5.2, AX-5.3): how every app's settings file is read and written, an unreadable one copied to
   `.bad` once, and the take-over of an old file. A value that does not read costs that value alone
   (`WithoutWhatDoesNotRead`); a file that is there and cannot be opened is tried again, then never saved over in
-  that process (`NotRead`, R-51).
+  that process (`NotRead`, R-51). `Save` returns whether it wrote, for `SettingsSeal.Remember`.
 - `FileCase` (AX-5.1, 2026-11-10): `Match(path)` renames a file that exists under another case to the path's own
   spelling, so that a settings or log file an earlier version left as `axdown.json` becomes `axDown.json`, the name
   NVDA says as the app is said; `SettingsFile.Load` and `Log.UseApp` call it first. Tested in `FileCaseTests`.

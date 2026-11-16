@@ -91,8 +91,13 @@ opens in the editor for its type (AG-1.4, AG-D1).
   --list`, which runs nothing) and its hooks folder (`git rev-parse --git-path hooks`); each that runs a program
   (`GitTrust`) is set to nothing on every command (`-c <name>=`, the hooks folder `NUL`), and the notice **This
   repository runs programs of its own** names them, with **Keep them off** (Enter, Escape) and **Trust this
-  repository**, which keeps the repository in the settings (`trustedRepositories`) and lets git run them as in a
-  console from then on.
+  repository**, which keeps the repository in the settings (`trusted`, AG-8.1a) and lets git run them as in a
+  console from then on. The trust is for what the repository would run when it was given (2026-11-16, `repairs.md`
+  R-53): it is kept with a mark of those programs (`GitTrust.Mark`, the SHA-256 of their names, lower case and
+  sorted), and a trusted repository that would now run something else (a hook more or fewer, another configured
+  program) is not trusted: its programs are set aside again and the notice comes back, starting "What this
+  repository would run has changed since you trusted it, so it is not trusted now."; Trust this repository then
+  trusts what it runs now. The mark is of the names: a hook's file changed under the same name is not seen.
 
 ### AG-2 The window
 
@@ -209,8 +214,15 @@ one). A failure that git explains in one line is announced as "Failed: <line>"; 
 ### AG-8 Settings, status
 
 - AG-8.1 `%APPDATA%\AxKit\axGIT.json` (AX-5.3; `GitSettings`): `fontFamily`, `fontSize`, `fontBold`,
-  `checkForUpdates`, `recentRepositories` (ten, newest first), `window`. The defaults are the Windows font, the update
-  check on, no repositories.
+  `checkForUpdates`, `recentRepositories` (ten, newest first), `trusted`, `seal`, `window`. The defaults are the
+  Windows font, the update check on, no repositories.
+- AG-8.1a **The trusted repositories are sealed** (bundle AX-5.6, 2026-11-16): `trusted` is a list of `{"path",
+  "risks"}`, the repository's root and the mark of AG-1.6, and `seal` covers the list. A file whose seal does not
+  check trusts no repository, keeps every other setting, and says once: "The repositories you trusted in axGIT's
+  settings were changed outside axKit and are not used: git runs none of their own programs. To trust one again, open
+  it and choose Trust this repository." A file of 5.9.0 or earlier holds `trustedRepositories`, bare paths: read while
+  the file has never been sealed, each such trust counts for what the repository runs at its next opening and is
+  bound to it then, and the key is no longer written. `GitSettings`, tested in `GitSealTests`.
 - AG-8.2 The log is `%LOCALAPPDATA%\AxKit\logs\axGIT.log`: every git command by its subcommand ("git commit") with its
   exit code and duration, never its arguments (a commit's message, the paths; until 2026-10-23 the whole argument
   list was logged) nor its output beyond the first line of an error. A git command that cannot end (a program it

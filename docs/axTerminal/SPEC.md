@@ -158,9 +158,16 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   line (`customShell`) is never changed by a removal (2026-11-11, the review: the first draft made the removed shell
   the custom shell, overwriting the line the user had typed under Custom; `TerminalSettings.RemoveUserShell`, tested).
   A user's shell starts as the custom shell
-  does (no snippet, no marks unless its prompt prints them, the reminder of the custom shell, AX-11.5), under its own
-  name in the title, the system lines (`Switched to <name> in …`, `Shell started: <name> in …`), Ctrl+Q and the
-  announcement of Switch shell; the name in use is remembered (`userShellName`) for the next window.
+  does (no snippet, no marks unless its prompt prints them, a reminder of its own, AT-1.6b), under its own
+  name in the title, the system lines (`Switched to <name> in …`, `Shell started: <name>, command line <line>, in …`),
+  Ctrl+Q and the announcement of Switch shell; the name in use is remembered (`userShellName`) for the next window.
+- AT-1.6b **A command line of the user's own is agreed to as that command line** (2026-11-16, `repairs.md` R-53;
+  bundle AX-11.5). The reminder before the custom shell or one of the user's shells first starts is for the name
+  with the command line (`ConsentTarget.CommandLineShell`, the target "<name>, command line <line>"; the notice says
+  "<name> is a shell of your own, started with the command line <line>"): another command line, under Custom or
+  under the same name, asks again, and so does every custom or user's shell agreed to in 5.9.0 or earlier, once, since that
+  agreement was for the name "Custom shell" alone. The system line of the start names the command line (AT-4.3).
+  The command lines themselves are under the settings' seal (AT-8.1a).
 - AT-1.7 **The shell ends** (`exit` typed, a crash): the system line `The shell ended with code 0`, the announcement
   "The shell ended", the status `Shell ended`; Enter in the field then keeps its text and announces "The shell ended.
   Ctrl+Shift+R starts it again" (axClaude FR-2.1). Closing the window ends the shell and whatever runs in it; while a
@@ -266,7 +273,8 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   frame end while the command runs. No row number is kept past the frame it was read in (2026-10-23; until then a
   two-row prompt printed from the bottom row lost its first row, and an output line that began like a continuation
   row vanished, since both were judged by row numbers that had scrolled).
-- AT-4.3 **System lines** (`System: …`, found with `s`): the shell started (`Shell started: PowerShell 7 in C:\path`),
+- AT-4.3 **System lines** (`System: …`, found with `s`): the shell started (`Shell started: PowerShell 7 in C:\path`;
+  for the custom shell and the user's own, with the command line: `Shell started: Dev cmd, command line cmd.exe /k, in C:\path`, AT-1.6b),
   ended, restarted, a new shell, the update's steps (the window base, AX-6.5), a recording started or stopped.
 - AT-4.4 **Clear transcript** (Ctrl+L; Session → Clear transcript): empties the window, the recent commands
   staying; the count of the blocks starts again; "Cleared". The lines off the screen go; the lines still on the
@@ -368,6 +376,12 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
   `soundOnBell` on, `clickOnNewLine` on, `workingMusic` off, `backgroundAlert` off, `flashTaskbar` on, `outputSpeech`
   `none`, `announceQuestions` on, `markerTimeStamps` off, `showMarkers` on, `joinWrappedLines` on, `maxTranscriptLines` 20000, and the
   window base's font, update check and window fields. Unknown or out-of-range values fall back to the defaults.
+- AT-8.1a **The shells are sealed** (bundle AX-5.6, 2026-11-16, `repairs.md` R-53): `shell`, `customShell` and
+  `userShells` are under the file's `seal`, written at every save. A file whose seal does not check starts the
+  machine's default shell, holds no custom command line and no shells of the user's, keeps every other setting, and
+  says once, as a system line at the start: "Your shells in axTerminal's settings were changed outside axKit and are
+  not used. Add them again from Session, Add a shell." A file from before the seal is accepted and sealed at its next
+  save, which the first start of a shell is. `TerminalSettings`, tested in `TerminalSealTests`.
 - AT-8.2 The log is `%LOCALAPPDATA%\AxKit\logs\axTerminal.log`: the shell's start with its command line and folder,
   its exit code, restarts, errors; never a command or a line of output (a command can hold a secret). Options →
   Developer → Record raw stream writes the console stream to a `.vt` file in the PtyCapture format for a fixture

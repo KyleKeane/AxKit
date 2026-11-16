@@ -142,12 +142,34 @@ public sealed class AppSettings : ConsoleSettings
     public static AppSettings Load(string path, out string? error)
     {
         var settings = SettingsFile.Load<AppSettings>(path, out error);
+        if (!SettingsSeal.Checks(path, settings.Seal, settings.SealedText(), new AppSettings().SealedText()))
+        {
+            settings.ClaudePath = null;
+            error = SettingsSeal.Refused(error, ClaudePathNotUsed);
+        }
+
         settings.Sanitize();
         return settings;
     }
 
-    /// <summary>Writes the file atomically: a temporary file next to it is moved into place.</summary>
-    public override void Save(string path) => SettingsFile.Save(path, this);
+    /// <summary>The seal over <see cref="ClaudePath"/> (bundle AX-5.6, Appendix C): written at every save, checked at every load.</summary>
+    public string Seal { get; set; } = string.Empty;
+
+    /// <summary>What the load's error text says when the seal does not check (Appendix C).</summary>
+    public const string ClaudePathNotUsed = "The place of Claude Code in axClaude's settings, claudePath, was changed outside axKit and is not used: axClaude looks for Claude Code in the usual places. If it is not found, choose it again with Locate claude.exe in the notice that says so.";
+
+    /// <summary>The sealed field: the program started as Claude Code.</summary>
+    private string SealedText() => SettingsSeal.Text([ClaudePath]);
+
+    /// <summary>Writes the file atomically: a temporary file next to it is moved into place; with its seal.</summary>
+    public override void Save(string path)
+    {
+        Seal = SettingsSeal.Of(path, SealedText());
+        if (SettingsFile.Save(path, this))
+        {
+            SettingsSeal.Remember(path);
+        }
+    }
 
     /// <summary>The folder Claude starts in: the last one, and the front of the recent list (FR-8.1).</summary>
     public void RememberFolder(string folder)

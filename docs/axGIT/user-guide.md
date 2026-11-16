@@ -17,7 +17,7 @@ axGIT is part of axKit. Installing axKit (see the axKit guide: Help, About, axKi
 
 The window is named after the repository's folder: "myproject - axGIT".
 
-A repository can name programs of its own that git runs, hooks for example. When the one you open does, axGIT says so in a notice, "This repository runs programs of its own", with their names, and runs git without them. Choose Trust this repository only for a repository you know, your own for example; from then on git runs them as it would in a console.
+A repository can name programs of its own that git runs, hooks for example. When the one you open does, axGIT says so in a notice, "This repository runs programs of its own", with their names, and runs git without them. Choose Trust this repository only for a repository you know, your own for example; from then on git runs them as it would in a console. Your trust is for the programs the repository named when you gave it: if it later names another, a new hook for example, axGIT sets them aside again and asks again, saying that what the repository would run has changed.
 
 ## The list and its views
 
@@ -63,6 +63,8 @@ The menu bar is the same eight menus in every axKit window.
 ## Settings
 
 Everything you change is kept in `%APPDATA%\AxKit\axGIT.json`: the font and text size, the update check and the recent repositories. Options, Developer, Open settings file opens it in axJSON.
+
+The repositories you trusted (`trusted`) are sealed in that file: they decide whether git runs a repository's own programs, so they count only as axGIT wrote them. If you change them in the file by hand, or another program does, axGIT trusts none, keeps your other settings, and says once: "The repositories you trusted in axGIT's settings were changed outside axKit and are not used: git runs none of their own programs. To trust one again, open it and choose Trust this repository." The seal's key is kept by Windows for your account; a program running as you could ask Windows for it, so the seal protects against a file changed by another program or by hand, a profile copied or synced from another computer, and an AI tool writing files, and not against a program that sets out to forge it.
 
 ## Updates
 

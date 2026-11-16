@@ -6,8 +6,8 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 3 (2 high, 1 low)
-- **done**: 51 (9 high, 23 medium, 19 low)
+- **open**: 2 (1 high, 1 low)
+- **done**: 52 (10 high, 23 medium, 19 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 5 (4 medium, 1 low)
 
@@ -23,13 +23,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - **P8. Documents describe the present.** Reference text says what is true now, in small files a reader with little context can hold; history lives in the changelog and git; open work lives in the priorities list. (9 findings)
 
 ## Open
-
-### R-53, high, security: Settings that name what is run are plain files nothing checks
-
-- Where: src/AxTerminal.Core/TerminalSettings.cs; src/AxGit.Core/GitSettings.cs; src/AxKit.Core/Ai/AiSettings.cs; src/AxKit.Core/Consent.cs; src/AxKit.Core/Mcp/McpAccess.cs
-- Principle: P1
-- Fix: The seal of McpAccess moves to AxKit.Core on its second use; each settings class seals its run-deciding fields; a field whose seal does not check is not used and the user is told once.
-- Note: Found on 2026-11-16 by the resilience audit. Parts: axTerminal's custom and user shells (the consent is by name, not by command line); axGIT's trusted repositories (trust is a bare path, not bound to what the repository would run); the path of Claude Code in axClaude's and AI help's settings; axMCP's servers and axFile's programs; consent.json; the folders Claude may read in ai-help.json. The limit, to be written in the guide: a program running as the user can call Windows' protection itself; the seal holds against file writers, a copied or synced profile and an AI tool's own file writing.
 
 ### R-54, high, security: Files Claude Code obeys in Claude's working folder are outside the self-repair
 
@@ -124,6 +117,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: Load tries again three times; a file still unreadable gives defaults that are never saved over it, and the window says so.
 - Checked by: tests/AxKit.Tests/SettingsFileTests (A_file_that_cannot_be_opened_is_never_replaced_by_the_defaults)
 - Note: Found on 2026-11-16 by the resilience audit the user asked for (user error and tampering, fixes in code alone). A sync client, a backup or a virus scanner holding the file for a moment at start loses a user's shells, trusted repositories, servers, programs, favourites and hotkeys.
+
+### R-53, high, security: Settings that name what is run are plain files nothing checks
+
+- Where: src/AxTerminal.Core/TerminalSettings.cs; src/AxGit.Core/GitSettings.cs; src/AxKit.Core/Ai/AiSettings.cs; src/AxKit.Core/Consent.cs; src/AxKit.Core/Mcp/McpAccess.cs; src/AxKit.Core/SettingsSeal.cs; src/AxMCP.Core/MCPSettings.cs; src/AxFile.Core/FileSettings.cs; src/AxClaude.Core/AppSettings.cs
+- Principle: P1
+- Fix: One seal in AxKit.Core, SettingsSeal (docs/axKit/SPEC.md AX-5.6): each settings class seals its run-deciding fields at every save; a field whose seal does not check is put to its default, not used, and the user is told once; a file from before the seal is accepted and sealed at its next save, and the files this install has sealed are listed with the key. McpAccess keeps its file, key and seal value and takes the HMAC from it. A custom shell's consent is for its command line; a repository's trust is for the programs it named.
+- Checked by: tests/AxKit.Tests/SettingsSealTests (the piece, AI help's settings, the consents, the AI tools' seal value); tests/AxTerminal.Tests/TerminalSealTests; tests/AxGit.Tests/GitSealTests; tests/AxMCP.Tests/MCPSealTests; tests/AxFile.Tests/FileSealTests; tests/AxClaude.Tests/SettingsSealTests; tests/scripts/axTerminal/08-user-shells and tests/scripts/axGIT/07-own-programs for the window; the refusal sentences in the windows are owed a hearing
+- Note: Found on 2026-11-16 by the resilience audit. Every part is done: axTerminal's shell, custom command line and user shells, with the consent bound to the command line and the command line in the start line; AI help's switch, folders, claudePath and working folder, and axClaude's claudePath; consent.json; axGIT's trusted repositories, each with the SHA-256 of the names of what it would run, asked again when that differs; axMCP's servers and axFile's programs. The limit, written in SPEC AX-5.6, SECURITY.md and the guides: a program running as the user can ask Windows for the same key; the seal holds against a file edited by another program or by hand, a profile copied or synced from elsewhere, and an AI tool writing files. Left as open work: AI help's claudePath and workingFolder, and axClaude's claudePath while Claude Code is found, have no menu item, so once their file is sealed they cannot be changed by hand; a trust's mark is of the names of a repository's programs, not of what a hook's file holds.
 
 ### R-01, medium, security: Recent folders of axClaude and axTerminal started Claude Code or a shell for an AI tool without asking
 

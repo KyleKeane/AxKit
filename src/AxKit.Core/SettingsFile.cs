@@ -167,15 +167,15 @@ public static class SettingsFile
         }
     }
 
-    /// <summary>Writes the file whole or not at all (<see cref="SafeFile"/>): a temporary file of its own name next to it is put in its place.</summary>
-    public static void Save<T>(string path, T settings) where T : class
+    /// <summary>Writes the file whole or not at all (<see cref="SafeFile"/>): a temporary file of its own name next to it is put in its place. False when the file was passed over (R-51), so that a sealed file joins the list of sealed files only once it is written (<see cref="SettingsSeal"/>).</summary>
+    public static bool Save<T>(string path, T settings) where T : class
     {
         // R-51: a file that was there and could not be opened is not replaced by the defaults that stood in for it.
         lock (NotRead)
         {
             if (NotRead.Contains(Path.GetFullPath(path)))
             {
-                return;
+                return false;
             }
         }
 
@@ -186,6 +186,7 @@ public static class SettingsFile
         }
 
         SafeFile.WriteAllText(path, JsonSerializer.Serialize(settings, JsonOptions));
+        return true;
     }
 
     /// <summary>

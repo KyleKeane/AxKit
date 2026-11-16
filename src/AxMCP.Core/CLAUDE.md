@@ -17,7 +17,7 @@ Everything of axMCP that needs no window: the servers from Claude Code's files a
 - `StdioServer` (MP-2.1, MP-2.3): the server's process with its standard input and output wired to a client, its standard error logged, `Stop` closing the input and ending the tree after two seconds, `Exited` with the exit code and whether Stop asked. The one outside call (`// Outside call, program, MCP servers`).
 - `ArgumentFields` (MP-3.2, MP-3.3, MP-5.2): `ForTool` and `ForPrompt` make the detail pane's document (Description first, fixed, then the arguments, " (required)" in the title), `ToArguments` and `ToPromptArguments` the call's object, `MissingRequired` the first required argument left empty, `TypeOf` a schema property's field type and options.
 - `ResultText` (MP-3.5, MP-4.2, MP-5.2): `OfCall`, `OfResource`, `OfPrompt`, `Item`.
-- `MCPSettings` with `OwnServer` (MP-8): the window base's settings and Your servers (`name`, `commandLine`, `folder`), cleaned on load; `OwnServers()` as `McpServer`s.
+- `MCPSettings` with `OwnServer` (MP-8): the window base's settings and Your servers (`name`, `commandLine`, `folder`), cleaned on load; `OwnServers()` as `McpServer`s. The servers are under the bundle's seal (MP-8.2, `ServersNotUsed`; `src/AxKit.Core/notes/safety.md`); `MCPSealTests`.
 
 ## Gotchas
 

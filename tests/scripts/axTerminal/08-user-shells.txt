@@ -2,10 +2,12 @@
 # axTerminal: the user's own shells (AT-1.6a), section 3 of docs/axTerminal/nvda-test-plan.md, the steps on Add a
 # shell and Remove a shell. Switch shell needs menu mode, which only the foreground window enters: "menu" runs the
 # same items by their palette names ("1. Test cmd (cmd.exe /k)" to switch, "1. Remove Test cmd" to remove).
+# The last check has the window refuse shells written into its settings file: that refusal is logged as an error.
+allow error were changed outside axKit and are not used
 mkdir work\myproject
 file home\AxKit\axTerminal.json {"checkForUpdates": false, "shell": "powershell"}
-# The reminders agreed to already (AX-11.5): a user's shell starts as the custom shell does, under its consent.
-file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Custom shell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"}]}
+# The reminders agreed to already (AX-11.5): a user's shell is agreed to by its name and its command line (AT-1.6b).
+file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Test cmd, command line cmd.exe /k","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"}]}
 start terminal {temp}\work\myproject
 expect said Ready
 
@@ -86,7 +88,7 @@ close
 start terminal {temp}\work\myproject
 expect state "myproject - Test cmd - axTerminal, access layer for your shell"
 do Terminal
-expect text "System: Shell started: Test cmd in
+expect text "System: Shell started: Test cmd, command line cmd.exe /k, in
 do Command field
 
 # Goal: Remove a shell of your own
@@ -99,3 +101,19 @@ refuse state - Test cmd - axTerminal
 # (docs/axKit/app-kit.md AK-2.5: the line that says a list is empty is never an entry).
 refuse commands No shells of your own yet
 refuse commands Test cmd
+close
+
+# Check: Shells another program wrote into the settings file are not used
+# AT-8.1a: the window sealed the file as it saved it; a file written over it without the seal starts the default shell,
+# keeps none of its shells, and says so once as a system line.
+# The closed window writes its settings as it goes: the file is written over only after that.
+wait 2000
+file home\AxKit\axTerminal.json {"checkForUpdates": false, "shell": "custom", "customShell": "cmd.exe /k", "userShells": [{"name": "Planted", "commandLine": "cmd.exe /k"}]}
+start terminal {temp}\work\myproject
+expect said Ready
+refuse state - Planted - axTerminal
+refuse state - Custom shell - axTerminal
+refuse commands Planted
+do Terminal
+# The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.
+expect text settings were changed outside axKit and are not used. Add them again from Session, Add a shell.

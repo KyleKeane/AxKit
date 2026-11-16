@@ -15,7 +15,7 @@ dotnet test tests/AxGit.Tests/AxGit.Tests.csproj
 
 - `AxGitApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run` with the one folder or file of the command line, the settings and the window; the log (`axGIT.log`), the crash handling, `--help` and `--version` are the host's.
 - `GitForm`: the window (SPEC.md AG-2), in five partial files since 2026-10-29:
-  - `GitForm.cs` (the controls, the menus, the hooks, the keys, the repository);
+  - `GitForm.cs` (the controls, the menus, the hooks, the keys, the repository; `CheckTrustAsync` asks `GitSettings.Trusts(root, risks)`, so a trusted repository that would run something else is asked about again, AG-1.6);
   - `GitForm.Run.cs` (running git);
   - `GitForm.Views.cs` (the views, the details, the status bar);
   - `GitForm.Commands.cs` (changes, history, branches);

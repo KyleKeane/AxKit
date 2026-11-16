@@ -2,7 +2,7 @@
 
 - `Mcp/McpAccess` with `McpSettings` and `McpClient`: the bundle's one setting in `%APPDATA%\AxKit\mcp.json` (off
   until the user turns it on, the paired clients by their program file), read again at every connection; the key in
-  `%LOCALAPPDATA%\AxKit\mcp.key` through `UserSecret`, `NewChallenge`, `Proof` and `Proves` (HMAC-SHA256).
+  `%LOCALAPPDATA%\AxKit\mcp.key` through `UserSecret`, `NewChallenge`, `Proof` and `Proves` (HMAC-SHA256). The HMAC, the comparison and the key file's reading are `SettingsSeal`'s since 2026-11-16 (`notes/safety.md`); the file, the key and the seal's value are as they were.
 - `Mcp/McpPipeName` (MC-6.2, 2026-11-12): a window's pipe name after the user's prefix, the random digits, after
   "run", the run's mark and a dash in a test run (`AppPaths.RunMark`, which `OneAtATime` uses too); `SameKind`, the
   broker's filter, so that a run's broker never knocks on the user's windows. Tested in `McpPipeNameTests`.

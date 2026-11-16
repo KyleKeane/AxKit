@@ -162,7 +162,7 @@ public abstract partial class AxKitForm : Form
 
     /// <summary>The settings file could not be read and the defaults are in use (AX-5.2): a notice at the first showing, unless the window says it another way (the console windows write a system line).</summary>
     protected virtual void SettingsNotRead(string error) =>
-        ShowNotice(Notice.Plain("Settings", $"The settings file could not be read, so the defaults are used.\n{error}") with { Unprompted = true });
+        ShowNotice(Notice.Plain("Settings", SettingsSeal.IsRefusal(error) ? error : $"The settings file could not be read, so the defaults are used.\n{error}") with { Unprompted = true });
 
     // ---- the menus every window has (AX-6.5, AX-9) ----
 

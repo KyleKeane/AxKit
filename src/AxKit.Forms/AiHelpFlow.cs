@@ -118,7 +118,12 @@ internal sealed class AiHelpFlow
     /// <summary>The switch (AH-1.1): off at once, said; on through <see cref="TurnOnAi"/>.</summary>
     public void ToggleAiHelp()
     {
-        var settings = AiSettings.Load(AiSettings.DefaultPath, out _);
+        var settings = AiSettings.Load(AiSettings.DefaultPath, out var problem);
+        if (ChangedOutside(settings, problem))
+        {
+            return;
+        }
+
         if (settings.Enabled)
         {
             settings.Enabled = false;
@@ -155,6 +160,23 @@ internal sealed class AiHelpFlow
         }
     }
 
+    /// <summary>
+    /// AH-1.1a: the file's switch, folders, program or working folder were changed outside axKit and are not used. Said
+    /// once, as a notice: the settings are saved as they are now in use (Claude off, no folders), which seals them, and
+    /// what was asked for is not done, so that nothing goes on as if the folders were still there.
+    /// </summary>
+    private bool ChangedOutside(AiSettings settings, string? problem)
+    {
+        if (problem is null || !SettingsSeal.IsRefusal(problem))
+        {
+            return false;
+        }
+
+        SaveAi(settings);
+        _form.ShowNotice(Notice.Plain("AI help", problem));
+        return true;
+    }
+
     private bool SaveAi(AiSettings settings)
     {
         try
@@ -179,6 +201,11 @@ internal sealed class AiHelpFlow
     {
         settings = AiSettings.Load(AiSettings.DefaultPath, out var problem);
         claude = string.Empty;
+        if (ChangedOutside(settings, problem))
+        {
+            return false;
+        }
+
         if (problem is not null)
         {
             Log.Error("AI help: the settings file was not read: " + problem);
@@ -305,7 +332,12 @@ internal sealed class AiHelpFlow
     /// <summary>axKit, AI help, Folders Claude may read: the list as a notice, with Add and Remove.</summary>
     public void ShowAiFolders()
     {
-        var settings = AiSettings.Load(AiSettings.DefaultPath, out _);
+        var settings = AiSettings.Load(AiSettings.DefaultPath, out var problem);
+        if (ChangedOutside(settings, problem))
+        {
+            return;
+        }
+
         var list = settings.Folders.Count == 0
             ? "No folders yet: beyond its working folder, Claude reads nothing of yours until you add one. A question about a window or a screen needs none."
             : string.Join("\n", settings.Folders.Select((folder, index) => $"{index + 1}. {folder}"));

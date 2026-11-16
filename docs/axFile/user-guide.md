@@ -89,6 +89,8 @@ The menu bar is the same eight menus in every axKit window.
 
 Everything you change is kept in `%APPDATA%\AxKit\axFile.json`: the last folder, the recent folders, the favorites, the sort order, the font and text size, the update check, your custom programs (`programs`, a name and a path each), and the two switches of Options, General (`showHidden`, `showDotFiles`). Options, Developer, Open settings file opens it in axJSON. The player's settings of earlier versions are axMedia's now, in `axMedia.json`.
 
+Your custom programs (`programs`) are sealed in that file: they name programs axFile starts, so they count only as axFile wrote them. Add and remove them in the Options menu. If you change one in the file by hand, or another program does, axFile offers none of them, keeps your other settings, and says once: "Your programs of Open with in axFile's settings were changed outside axKit and are not used. Add them again from Options, Add a program to Open with." The seal's key is kept by Windows for your account; a program running as you could ask Windows for it, so the seal protects against a file changed by another program or by hand, a profile copied or synced from another computer, and an AI tool writing files, and not against a program that sets out to forge it.
+
 ## Updates
 
 axFile checks for a newer axKit when it starts and offers it in a notice; the Help menu has Check for updates at any time. One update brings every app of axKit up to date.

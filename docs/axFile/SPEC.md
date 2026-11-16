@@ -502,6 +502,11 @@ and a typed name no entry starts with (AF-3.6).
   `name` and a `path`, AF-4.11; an entry without either is dropped), and the window base's font, update check and
   window fields. The player's keys of an older file (`speed`, `seekSeconds`, `sayEachFile`) are axMedia's now
   (`axMedia.json`, with its own defaults) and are ignored here.
+- AF-8.1a **The user's own programs are sealed** (bundle AX-5.6, 2026-11-16, `repairs.md` R-53): the file's `seal`
+  covers every program's name and path. A file whose seal does not check offers none of them, keeps every other
+  setting, and says once, as a notice at the start: "Your programs of Open with in axFile's settings were changed
+  outside axKit and are not used. Add them again from Options, Add a program to Open with." A file from before the
+  seal is accepted and sealed at its next save. `FileSettings`, tested in `FileSealTests`.
 - AF-8.2 The log is `%LOCALAPPDATA%\AxKit\logs\axFile.log`: the start, the exit, the errors of the operations with
   Windows' message; no names of files or folders.
 

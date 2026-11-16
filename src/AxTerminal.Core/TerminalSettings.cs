@@ -43,14 +43,40 @@ public sealed class TerminalSettings : ConsoleSettings
 
     public static string DefaultPath => AppPaths.SettingsFile("axTerminal");
 
+    /// <summary>The seal over the fields that decide what is run (bundle AX-5.6, AT-8.1a): written at every save, checked at every load.</summary>
+    public string Seal { get; set; } = string.Empty;
+
+    /// <summary>What the load's error text says when the seal does not check (AT-8.1a).</summary>
+    public const string ShellsNotUsed = "Your shells in axTerminal's settings were changed outside axKit and are not used. Add them again from Session, Add a shell.";
+
+    /// <summary>The sealed fields, in their order: the shell, the custom command line, and each of the user's shells as its name and its command line.</summary>
+    private string SealedText() =>
+        SettingsSeal.Text([Shell, CustomShell, .. (UserShells ?? []).SelectMany(shell => new[] { shell?.Name, shell?.CommandLine })]);
+
     public static TerminalSettings Load(string path, out string? error)
     {
         var settings = SettingsFile.Load<TerminalSettings>(path, out error);
+        if (!SettingsSeal.Checks(path, settings.Seal, settings.SealedText(), new TerminalSettings().SealedText()))
+        {
+            // AT-8.1a: the shell is the machine's default again and no shell of the file's is started; the rest is kept.
+            settings.Shell = null;
+            settings.CustomShell = null;
+            settings.UserShells = [];
+            error = SettingsSeal.Refused(error, ShellsNotUsed);
+        }
+
         settings.Sanitize();
         return settings;
     }
 
-    public override void Save(string path) => SettingsFile.Save(path, this);
+    public override void Save(string path)
+    {
+        Seal = SettingsSeal.Of(path, SealedText());
+        if (SettingsFile.Save(path, this))
+        {
+            SettingsSeal.Remember(path);
+        }
+    }
 
     /// <summary>The shell the settings name, or the machine's default.</summary>
     public ShellKind ShellKind => ShellLauncher.Parse(Shell);

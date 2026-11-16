@@ -94,6 +94,17 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
             _ => "https://www.microsoft.com/useterms",
         });
 
+    /// <summary>
+    /// A shell started from a command line of the user's own (axTerminal's Custom shell and the user's shells, AT-1.6a;
+    /// repairs.md R-53): the consent's target is the name with the command line, so that agreeing to one command line
+    /// is not agreeing to another, and a command line put under an agreed name is asked about. No address for its terms.
+    /// </summary>
+    public static ConsentTarget CommandLineShell(string name, string commandLine) => new(
+        $"{name}, command line {commandLine}",
+        $"{name} is a shell of your own, started with the command line {commandLine}. It runs every command you type, with your rights, on your computer and on any network the commands reach.",
+        "the terms of the program you set",
+        string.Empty);
+
     /// <summary>A server a repository's remote points at (github.com): a new service with its own terms, asked before the first fetch, pull or push that reaches it.</summary>
     public static ConsentTarget Server(string host) => new(
         host,
@@ -116,6 +127,13 @@ public sealed record ConsentTarget(string Program, string Work, string Terms, st
 internal sealed class ConsentList
 {
     public List<ConsentRecord> Items { get; set; } = [];
+
+    /// <summary>The seal over the agreements (AX-5.6, AX-11.5): written at every write, checked at every read.</summary>
+    public string Seal { get; set; } = string.Empty;
+
+    /// <summary>The sealed fields: each agreement as its app, its target and axKit's version; not the date, which reads differently in another time zone.</summary>
+    public string SealedText() =>
+        SettingsSeal.Text((Items ?? []).SelectMany(item => new[] { item?.App, item?.Target, item?.Version }));
 }
 
 /// <summary>
@@ -130,7 +148,32 @@ public static class Consent
     /// <summary>The App of an update's acceptance (AX-11.7).</summary>
     public const string UpdateApp = "Update";
 
-    public static IReadOnlyList<ConsentRecord> Read(string file) => SettingsFile.Load<ConsentList>(file, out _).Items;
+    /// <summary>What a window says with its question when <see cref="Problem"/> finds the file changed outside axKit (AX-11.5, repairs.md R-53).</summary>
+    public const string NotUsed = "The record of what you agreed to was changed outside axKit and is not used, so axKit asks again.";
+
+    /// <summary>
+    /// The agreements axKit wrote: none when the file's seal does not check (<see cref="SettingsSeal"/>), since an
+    /// agreement another program wrote into the file is not the user's. A file from before the seal counts as it is
+    /// until the next agreement is recorded, which seals it.
+    /// </summary>
+    public static IReadOnlyList<ConsentRecord> Read(string file)
+    {
+        var list = SettingsFile.Load<ConsentList>(file, out _);
+        if (SettingsSeal.Checks(file, list.Seal, list.SealedText(), new ConsentList().SealedText()))
+        {
+            return [.. (list.Items ?? []).Where(item => item is not null)];
+        }
+
+        SettingsSeal.Refused(null, NotUsed);
+        return [];
+    }
+
+    /// <summary><see cref="NotUsed"/> when the file holds agreements that are not used, for the question that follows; null otherwise.</summary>
+    public static string? Problem(string file)
+    {
+        var list = SettingsFile.Load<ConsentList>(file, out _);
+        return SettingsSeal.Checks(file, list.Seal, list.SealedText(), new ConsentList().SealedText()) ? null : NotUsed;
+    }
 
     public static bool Given(string file, string app, string target) => Read(file).Any(item => Same(item, app, target));
 
@@ -172,7 +215,13 @@ public static class Consent
     {
         try
         {
-            SettingsFile.Save(file, new ConsentList { Items = [.. items] });
+            var list = new ConsentList { Items = [.. items] };
+            list.Seal = SettingsSeal.Of(file, list.SealedText());
+            if (SettingsFile.Save(file, list))
+            {
+                SettingsSeal.Remember(file);
+            }
+
             return true;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

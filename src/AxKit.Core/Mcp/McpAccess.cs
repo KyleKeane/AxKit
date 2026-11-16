@@ -26,7 +26,9 @@ public sealed class McpSettings
 /// access at its next call, and the key the broker answers the windows' challenges with. The file is written whole
 /// through <see cref="SettingsFile"/>, sealed with an HMAC under the key: a file whose seal does not check, written by
 /// anything but these methods (an AI tool's own file writing, say), reads as off with no clients. The pure parts (the
-/// client rule, the proof, the seal, the hosts refused) are tested in <c>tests/AxKit.Tests</c>.
+/// client rule, the proof, the seal, the hosts refused) are tested in <c>tests/AxKit.Tests</c>. The HMAC, the
+/// comparison and the reading of a key file are <see cref="SettingsSeal"/>'s since 2026-11-16 (repairs.md R-53); the
+/// seal's value, this file and its key are as they were.
 /// </summary>
 public static class McpAccess
 {
@@ -199,7 +201,7 @@ public static class McpAccess
             text.Append('\n').Append(OneField(client.Program)).Append('\t').Append(OneField(client.Name)).Append('\t').Append(OneField(client.Paired));
         }
 
-        return Convert.ToBase64String(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(text.ToString())));
+        return SettingsSeal.Hmac(key, text.ToString());
     }
 
     /// <summary>
@@ -212,8 +214,7 @@ public static class McpAccess
 
     /// <summary>Whether the file's seal is the one its content has under the key, compared in constant time.</summary>
     public static bool Checks(byte[] key, McpSettings settings) =>
-        settings.Seal.Length > 0
-        && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(SealOf(key, settings)), Encoding.UTF8.GetBytes(settings.Seal));
+        settings.Seal.Length > 0 && SettingsSeal.Same(SealOf(key, settings), settings.Seal);
 
     /// <summary>The key, made once: 32 random bytes kept with DPAPI for this user (MC-6.3).</summary>
     private static void MakeKey()
@@ -228,32 +229,16 @@ public static class McpAccess
     }
 
     /// <summary>The key, or null when there is none or it was made for another user.</summary>
-    public static byte[]? ReadKey()
-    {
-        try
-        {
-            if (!File.Exists(AppPaths.McpKeyFile) || UserSecret.Unprotect(File.ReadAllText(AppPaths.McpKeyFile).Trim()) is not { } text)
-            {
-                return null;
-            }
-
-            var key = Convert.FromBase64String(text);
-            return key.Length == 32 ? key : null;
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or FormatException)
-        {
-            return null;
-        }
-    }
+    public static byte[]? ReadKey() => SettingsSeal.ReadKey(AppPaths.McpKeyFile);
 
     /// <summary>A fresh challenge for a connection: 32 random bytes as base64.</summary>
     public static string NewChallenge() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
 
     /// <summary>The answer to a challenge: HMAC-SHA256 of its text under the key, as base64.</summary>
     public static string Proof(byte[] key, string challenge) =>
-        Convert.ToBase64String(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(challenge)));
+        SettingsSeal.Hmac(key, challenge);
 
     /// <summary>Whether the answer proves the key, compared in constant time.</summary>
     public static bool Proves(byte[] key, string challenge, string? answer) =>
-        answer is not null && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(Proof(key, challenge)), Encoding.UTF8.GetBytes(answer));
+        answer is not null && SettingsSeal.Same(Proof(key, challenge), answer);
 }

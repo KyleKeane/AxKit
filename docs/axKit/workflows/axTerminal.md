@@ -405,6 +405,7 @@ Starts with: Open axTerminal with the folder work\myproject.
 
 1. Choose the menu item 1. Remove Test cmd.
     You hear: Removed Test cmd.
+2. Close the window.
 
 ## Use axTerminal's Context menu
 

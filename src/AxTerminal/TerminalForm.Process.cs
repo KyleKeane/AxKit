@@ -30,7 +30,11 @@ internal sealed partial class TerminalForm
         }
 
         // Bundle AX-11.5: each shell asks once before its first start, those that come with Windows included.
-        var target = AxKit.Core.ConsentTarget.Shell(ShellLauncher.Describe(_shell));
+        // A command line of the user's own (Custom, a shell of the user's) is agreed to as that command line (AT-1.6b):
+        // another line under the same name asks again.
+        var target = _shell == ShellKind.Custom
+            ? AxKit.Core.ConsentTarget.CommandLineShell(ShellName, commandLine)
+            : AxKit.Core.ConsentTarget.Shell(ShellLauncher.Describe(_shell));
         if (!HasConsent(target, StartShell, () => _model.AddSystemLine($"Not connected to {target.Program}. Press Ctrl+N to start a shell.")))
         {
             return;
@@ -42,7 +46,10 @@ internal sealed partial class TerminalForm
         }
 
         _askedRow = null;
-        _model.AddSystemLine($"Shell started: {ShellName} in {_folder}");
+        // AT-4.3: a shell of the user's own says the command line it was started with.
+        _model.AddSystemLine(_shell == ShellKind.Custom
+            ? $"Shell started: {ShellName}, command line {commandLine}, in {_folder}"
+            : $"Shell started: {ShellName} in {_folder}");
         _settings.RememberFolder(_folder);
         _settings.Shell = ShellLauncher.Key(_shell);
         _settings.CustomShell = _customShell;

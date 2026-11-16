@@ -10,6 +10,14 @@ public static class AppPaths
     public static string SettingsFile(string app) =>
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", app + ".json");
 
+    /// <summary>The folder every settings file is in.</summary>
+    public static string SettingsFolder { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit");
+
+    /// <summary>The key of the settings' seal and the names of the sealed files (AX-5.6), kept with DPAPI; beside the AI tools' key, never roamed.</summary>
+    public static string SettingsSealFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "settings-seal.key");
+
     /// <summary>The bundle's one list of recently closed files and folders, for the Window menu (AX-9.4).</summary>
     public static string RecentlyClosedFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "recently-closed.json");

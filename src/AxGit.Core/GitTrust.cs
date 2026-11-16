@@ -86,6 +86,15 @@ public static partial class GitTrust
         return list;
     }
 
+    /// <summary>
+    /// The mark of what a repository would run (AG-1.6, repairs.md R-53): the SHA-256, as hexadecimal, of the risks in
+    /// lower case and sorted, each with its length in front. A trust is kept with it, so that a repository that gains
+    /// or loses a hook or a configured program is asked about again. It marks the names, not what a hook's file holds.
+    /// </summary>
+    public static string Mark(IReadOnlyList<string> risks) =>
+        Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(
+            AxKit.Core.SettingsSeal.Text(risks.Select(risk => risk.ToLowerInvariant()).Order(StringComparer.Ordinal)))));
+
     /// <summary>The names that run a program: the core programs, diff, merge and filter drivers, credential helpers, signing, the remote's own programs; an included file's names are listed among the repository's own (<c>--includes</c>), and aliases run only when called by name, which axGIT never does.</summary>
     [GeneratedRegex(@"^(core\.(fsmonitor|hookspath|sshcommand|pager|editor|askpass|gitproxy|alternaterefscommand)|(diff|merge|filter|difftool|mergetool)\..+\.(command|textconv|driver|clean|smudge|process|cmd|path)|credential(\..+)?\.helper|gpg(\..+)?\.program|sequence\.editor|remote\..+\.(uploadpack|receivepack|proxy)|(uploadpack|receivepack)\..+)$", RegexOptions.IgnoreCase)]
     private static partial Regex ProgramNames();

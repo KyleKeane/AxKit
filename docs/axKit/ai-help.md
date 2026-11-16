@@ -62,6 +62,16 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   everything of Claude in one submenu, the same in every window (the Window menu's shape, AX-9.1; until 5.6.0 an AI
   help submenu and the AI tools stood side by side, and the switch was "Let Claude help in the apps"). The file is
   read again at every use, so a switch in one window counts in every other at its next question.
+- AH-1.1a **The settings that decide what is run and read are sealed** (bundle AX-5.6, 2026-11-16, `repairs.md`
+  R-53): `enabled`, `folders`, `claudePath` and `workingFolder` are under the file's `seal`; `model` is not. A file
+  whose seal does not check gives Claude off, no folders, the usual search for Claude Code and the default working
+  folder, with the model kept. The next thing that needs the settings (the switch, a question, Folders Claude may
+  read) saves them as they are then in use, shows the notice **AI help** with "AI help's settings were changed
+  outside axKit and are not used: Claude is off, it may read no folder of yours, and Claude Code and its working
+  folder are the usual ones. Turn Claude on and add the folders again from the axKit menu, AI help." and does not go
+  on with what was asked (`AiHelpFlow.ChangedOutside`), so the notice is shown once. `claudePath` and `workingFolder`
+  have no menu item yet: they can be set by hand only in a file axKit has not sealed yet (a new one, as the
+  automation's is); afterwards a hand change is refused as above. Tested in `SettingsSealTests`.
 - AH-1.2 Turning it on shows the consent notice of AX-11.4 for Claude Code, recorded under the app "AI help" and the
   target Claude Code (one agreement for the service, however many windows use it); the notice says what goes to
   Anthropic: the question, what the window gathered, and the files Claude reads in the allowed folders, under the

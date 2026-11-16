@@ -324,18 +324,31 @@ public sealed partial class GitForm : AxKitForm
             var hooks = await GitRunner.RunAsync(root, GitTrust.HooksArguments, GitRunner.Short);
             var hooksFolder = hooks.Ok ? GitTrust.HooksFolder(hooks.Output, root) : null;
             var risks = GitTrust.Risks(config.Ok ? config.Output : string.Empty, hooksFolder);
-            if (risks.Count == 0 || _settings.Trusts(root) || IsDisposed)
+            if (risks.Count == 0 || IsDisposed)
             {
                 return;
             }
 
+            if (_settings.Trusts(root, risks))
+            {
+                // A trust from before the marks (2026-11-16) is bound to what the repository runs now.
+                if (_settings.Trust(root, risks))
+                {
+                    SaveSettings();
+                }
+
+                return;
+            }
+
+            // AG-1.6: a trust is for what the repository ran when it was given; anything else is asked about again.
+            var changed = _settings.WasTrusted(root) ? "What this repository would run has changed since you trusted it, so it is not trusted now. " : string.Empty;
             _overrides = GitTrust.Overrides(risks);
             Log.Info($"Untrusted repository: {risks.Count} programs of its own set aside");
             ShowNotice(new Notice("This repository runs programs of its own",
-                $"Its settings or hooks name programs git would run: {string.Join(", ", risks)}. axGIT runs git without them. Trust the repository only if you know where it comes from: then git runs them as it would in a console.",
+                $"{changed}Its settings or hooks name programs git would run: {string.Join(", ", risks)}. axGIT runs git without them. Trust the repository only if you know where it comes from: then git runs them as it would in a console.",
             [
                 new OverlayChoice("Keep them &off", IsDefault: true, IsCancel: true),
-                new OverlayChoice("&Trust this repository", () => TrustRepository(root)),
+                new OverlayChoice("&Trust this repository", () => TrustRepository(root, risks)),
             ]) { Unprompted = true });
         }
         catch (GitNotFoundException)
@@ -344,9 +357,9 @@ public sealed partial class GitForm : AxKitForm
         }
     }
 
-    private void TrustRepository(string root)
+    private void TrustRepository(string root, IReadOnlyList<string> risks)
     {
-        _settings.TrustedRepositories.Add(root);
+        _settings.Trust(root, risks);
         SaveSettings();
         _overrides = [];
         Announce("Trusted", true);

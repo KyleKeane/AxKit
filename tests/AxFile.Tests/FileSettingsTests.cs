@@ -48,7 +48,9 @@ public sealed class FileSettingsTests
     [Fact]
     public void Nonsense_in_the_file_falls_back()
     {
-        var path = Path.Combine(Path.GetTempPath(), "axfile-settings-" + Guid.NewGuid().ToString("N") + ".json");
+        // A folder of its own: the seal's key file is made beside a settings file outside axKit's folder (AX-5.6).
+        using var temp = new TempFolder("axfile-settings");
+        var path = Path.Combine(temp.Path, "axFile.json");
         File.WriteAllText(path, """{ "speed": 9, "seekSeconds": 0, "lastFolder": " ", "recentFolders": ["", "C:\\x"], "favorites": ["C:\\f", " ", "c:\\F"], "fontSize": 500, "programs": [{ "name": "", "path": "C:\\a.exe" }, { "name": "b", "path": "C:\\b.exe" }] }""");
         try
         {
@@ -70,7 +72,9 @@ public sealed class FileSettingsTests
     [Fact]
     public void Round_trip()
     {
-        var path = Path.Combine(Path.GetTempPath(), "axfile-settings-" + Guid.NewGuid().ToString("N") + ".json");
+        // A folder of its own: the seal's key file is made beside a settings file outside axKit's folder (AX-5.6).
+        using var temp = new TempFolder("axfile-settings");
+        var path = Path.Combine(temp.Path, "axFile.json");
         try
         {
             var settings = new FileSettings { ShowHidden = true, SortBy = SortBy.Date };

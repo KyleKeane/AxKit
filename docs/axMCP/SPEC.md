@@ -184,6 +184,12 @@ resource template; "Last result" when the file cannot be written.
 "commandLine", "folder" }`; no environment variables, since a token belongs in the user's own environment or in
 Claude Code's file. The consents are the bundle's (`consent.json`, app axMCP, target "<name> (<program>)").
 
+MP-8.2 **Your servers are sealed** (bundle AX-5.6, 2026-11-16, `repairs.md` R-53): the file's `seal` covers every
+server's name, command line and folder. A file whose seal does not check lists none of them, keeps every other
+setting, and says once, as a notice at the start: "Your servers in axMCP's settings were changed outside axKit and
+are not used. Add them again with Ctrl+N at the top level." A file from before the seal is accepted and sealed at its
+next save. `MCPSettings`, tested in `MCPSealTests`.
+
 ### MP-9 Title and status bar
 
 The title is "Servers - axMCP, access layer for MCP servers" at the top, "<server> - axMCP, access layer for MCP
