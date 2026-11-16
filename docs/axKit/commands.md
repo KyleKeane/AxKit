@@ -24,7 +24,10 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   inventory, `docs/axKit/window-commands.json`, and says after its summary when a window lists a command the file does
   not hold as it is (exit code 3 when every script passed). `--inventory write` merges what the windows list into the
   file, `rewrite` also drops what a whole app no longer lists, `off` leaves it alone; `--repository <folder>` names
-  the repository when the program is not built inside one (`automation.md`, "The command inventory"). Exit codes: 0
+  the repository when the program is not built inside one (`automation.md`, "The command inventory"). It also holds
+  the trace of every section a script marks `# Stable` against the kept one in `tests/traces`, and a trace that
+  differs or is missing fails the script; `--traces write` writes a script's kept file (read it whole before the
+  commit), `--traces off` neither compares nor writes (`automation.md`, "The traces"). Exit codes: 0
   passed, 1 a script failed, 2 the run could not start, 3 the inventory is stale. Its other form,
   `tools/AxAutomate --reference [--check]`, plays nothing: it writes the workflow pages, or checks them, for
   `tools/workflows.ps1` (below). `tools/QaRun` runs Claude sessions without windows, always with `--model haiku`.

@@ -5,20 +5,22 @@
 //
 // Usage:
 //   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep] [--nvda]
-//              [--repository <folder>] [--inventory check|write|rewrite|off]
+//              [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off]
 //   AxAutomate --reference [--check] [--repository <folder>]
 //   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
 //   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
-//   --report     writes every script's steps and its whole timeline, with times, to a Markdown file
+//   --report     writes every script's steps and its whole timeline, with times, to a Markdown file; with --traces
+//                check or write given by name, also every script's trace under its steps, section by section, the
+//                setup among them
 //   --nvda       the NVDA tier (tier 3): the windows open on the user's own desktop and come to the front, the keys go
 //                through SendInput as a keyboard's do, and NVDA's speech is read from its capture add-on
 //                (tools/nvda-capture). It takes over the machine: only at the user's word, with the user away.
 //                When no window of the run is in front the runner takes the foreground itself (one Alt key press);
 //                when the run's first window cannot come to the front at all, the run stops with one line, exit 2.
 //   --keep       keeps %TEMP%\axkit-automate\<process id>, the run's folder ({temp} in a script), with its logs
-//   --repository the repository whose docs/axKit/window-commands.json the run reads and writes; by default the folder
-//                above this program that holds AxKit.sln, and none when no folder does (a runner built into %TEMP%):
-//                without one the command inventory is off
+//   --repository the repository whose docs/axKit/window-commands.json and tests/traces the run reads and writes; by
+//                default the folder above this program that holds AxKit.sln, and none when no folder does (a runner
+//                built into %TEMP%): without one the command inventory and the traces are off
 //   --inventory  the command inventory, docs/axKit/window-commands.json (docs/axKit/user-workflows.md WF-2), from the
 //                snapshots of the windows' commands that every "check commands" and "do" step takes:
 //                check    (the default) every snapshot held against the file; what a window lists that the file does
@@ -29,6 +31,23 @@
 //                rewrite  as write, and an app every script of which passed, one snapshot of it without a notice,
 //                         keeps only the rows this run saw: how a command that left a window leaves the file
 //                off      nothing (a build that is not the repository's; tools\upstream.ps1 -Verify)
+//   --traces     the kept traces (docs/axKit/user-workflows.md WF-5, TraceRun): a trace is, for each section of a
+//                script, each input step as a line ("do Find = ctrl+f", "type apple") and under it what the windows
+//                said, without times, the run's folder written {temp}. A trace is kept in the repository only for a
+//                section marked "# Stable", in tests/traces/<folder>/<script>.trace.txt; a script is found there by
+//                its own path, or, played from elsewhere, by its label. The trace is collected only for a script with
+//                such a section, and for every script when --report and --traces check or write are both given by
+//                name: each window is then asked once more after each line for what it recorded. A run that names no
+//                --traces plays every script without such a section exactly as before.
+//                check    (the default) after a script whose steps passed, the trace of each "# Stable" section is
+//                         held against its kept section: one that differs, or has none, fails its section and so the
+//                         script ("FAIL after the steps: the trace of the stable goal ... differs at its line n: kept
+//                         ...; now ..."), and the sections' lines are said once more as they then stand; the run's
+//                         last lines count the stable sections equal, differing and without a kept trace
+//                write    after a script that passed, its file is written whole, or deleted when the script has no
+//                         "# Stable" section; read the file whole before it is committed (WF-5.6)
+//                off      nothing is collected, compared or written; always so with --nvda and without a repository
+//                         (check and write are refused with --nvda), and what tools\upstream.ps1 -Verify runs with
 //   --reference  plays nothing (no build, no desktop, no lock): writes the workflow pages for people
 //                (docs/axKit/user-workflows.md WF-7, ReferenceRun) from every script of tests\scripts and
 //                tests\nvda-scripts and the command inventory: docs/axKit/workflows.md, the index;
@@ -37,10 +56,11 @@
 //                docs/axKit/workflows no group makes any more is deleted. tools\workflows.ps1 runs it.
 //     --check    writes and deletes nothing, compares line ends aside: exit 0 when every page is current, 1 naming each
 //                page that is not (missing, different, left over). A script without its label: exit 1, named.
-//   Options that later packages of docs/axKit/user-workflows.md build (--traces, --record, --convert, --ai-tools)
-//   are refused as not built yet.
+//   Options that later packages of docs/axKit/user-workflows.md build (--record, --convert, --ai-tools) are refused
+//   as not built yet.
 //   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}. The exit code
-//   (WF-11.5) is 0 when every script passed and nothing is stale, 1 when a script failed, 2 when the run could not
+//   (WF-11.5) is 0 when every script passed and nothing is stale, 1 when a script failed (a "# Stable" section whose
+//   trace differs from the kept one, or has none, fails its script), 2 when the run could not
 //   start (the command line, the build, the program, another window run that did not end within the lock's hour), 3
 //   when every script passed and the command inventory is stale.
 //   One window run plays at a time on a computer (RunLock): the clipboard and the system hotkeys are shared, so a
@@ -214,6 +234,9 @@ internal static class Program
 
         scripts = InventoryRun.Playing(scripts, Console.WriteLine);
 
+        // The traces (TraceRun, WF-5.4 to WF-5.8): off on the NVDA tier and without a repository (Options.cs).
+        TraceRun.Start(options.Traces, options.Repository, options.TraceReport);
+
         // A run that ended without its end (the runner killed, its console closed) left NVDA's capture on, and the add-on
         // then wrote everything NVDA spoke into a file (R-33): an earlier run's flag goes first, in every run.
         File.Delete(Speech.FlagPath);
@@ -266,12 +289,14 @@ internal static class Program
                 Console.WriteLine($"== {name}");
                 var temp = Path.Combine(root, Path.GetFileNameWithoutExtension(script) + "-" + scripts.IndexOf(script));
                 Directory.CreateDirectory(temp);
-                var result = RunScript(script, exe, temp);
+                // WF-5.5, WF-5.8: a stable section's trace held against the kept one, or written, before anything
+                // reads the script's result.
+                var result = TraceRun.After(RunScript(script, exe, temp), Console.WriteLine);
                 var (ok, log, goals) = (result.Ok, result.Log, result.Goals);
                 InventoryRun.After(result);
                 goalResults.AddRange(goals);
                 anySections |= goals.Any(goal => goal.Goal.Named);
-                report.Append($"## {name}: {(ok ? "PASS" : "FAIL")}\n\n```\n{log}```\n\n");
+                report.Append($"## {name}: {(ok ? "PASS" : "FAIL")}\n\n```\n{log}```\n\n{TraceRun.Report(result)}");
                 if (!ok)
                 {
                     failed.Add(name);
@@ -335,6 +360,12 @@ internal static class Program
             summary += "\nGoals: " + GoalResults.Counts(goalResults);
         }
 
+        // WF-5.5: the stable sections of the run, counted, when it met one.
+        foreach (var line in TraceRun.End())
+        {
+            summary += "\n" + line;
+        }
+
         // WF-2.9, WF-2.10: the command inventory's lines after the summary, its file written under write or rewrite.
         var inventory = InventoryRun.End(Run.Stopped is not null);
         foreach (var line in inventory.Lines)
@@ -365,7 +396,7 @@ internal static class Program
         return Run.Stopped is not null ? CannotStart : failed.Count > 0 ? ScriptsFailed : inventory.Stale ? InventoryStale : 0;
     }
 
-    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
 
     /// <summary>
     /// The exit codes (docs/axKit/user-workflows.md WF-11.5): 0 every script passed and nothing is stale, 1 a script
@@ -383,12 +414,15 @@ internal static class Program
     /// One script or workflow with its own windows and folder, played by the engine (ScriptRunner); the console gets
     /// each step, the report the steps and the timeline. A script's sections, its goals and checks, are read with it
     /// (ScriptReader.Goals, docs/axKit/user-workflows.md WF-3) and their results come back; a workflow file has none.
-    /// The result also holds the listings of the windows' commands the run saw (WF-2.7), for the command inventory.
+    /// The result also holds the listings of the windows' commands the run saw (WF-2.7), for the command inventory,
+    /// and, when TraceRun asks for it (a script with a stable section; a run with a report and --traces named), the
+    /// run's trace (WF-5.1).
     /// </summary>
     private static ScriptResult RunScript(string script, string exe, string temp)
     {
         IReadOnlyList<ScriptLine> lines;
         IReadOnlyList<Goal> goals = [];
+        Workflow? workflow = null;
         if (script.EndsWith(WorkflowFile.Extension, StringComparison.OrdinalIgnoreCase))
         {
             var (prepared, refusal) = ScriptLines.Prepare(WorkflowFile.Read(script), Run.Nvda);
@@ -396,6 +430,7 @@ internal static class Program
             {
                 var text = "FAIL: the workflow cannot run: " + refusal;
                 Console.WriteLine(text);
+                TraceRun.Playing(script, null);
                 return new ScriptResult(false, text + "\n", null, [], false);
             }
 
@@ -407,10 +442,11 @@ internal static class Program
             // one goal of a script without a goal or check line titled by its label.
             var fileLines = File.ReadAllLines(script);
             lines = ScriptLines.FromScript(fileLines, null);
-            goals = ScriptReader.Parse(fileLines, Path.GetFileNameWithoutExtension(script), script).Goals;
+            workflow = ScriptReader.Parse(fileLines, Path.GetFileNameWithoutExtension(script), script);
+            goals = workflow.Goals;
         }
 
-        return ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals));
+        return ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals, TraceRun.Playing(script, workflow)));
     }
 
     /// <summary>src\AxKit in Release into a folder of the run's, never into the running app's bin.</summary>

@@ -55,6 +55,25 @@ public static class GoalResults
     }
 
     /// <summary>
+    /// The results with one section failed after the steps (WF-3.9, WF-5.5: its trace differs from the kept one, or it
+    /// has none): the first section of that title that had passed is failed, at no line, with
+    /// <paramref name="detail"/> as the words the report gives after its title ("after the steps: ..."); every other
+    /// section is as it was. Unlike a failure after the steps that is no one section's (<see cref="Of"/>), it fails
+    /// this section alone.
+    /// </summary>
+    public static IReadOnlyList<GoalResult> WithFailed(IReadOnlyList<GoalResult> results, string title, string detail)
+    {
+        var changed = results.ToList();
+        var index = changed.FindIndex(result => result.Outcome == Passed && result.Goal.Title == title);
+        if (index >= 0)
+        {
+            changed[index] = changed[index] with { Outcome = Failed, FailedLine = 0, Detail = detail };
+        }
+
+        return changed;
+    }
+
+    /// <summary>
     /// The line the report gives before a section's first step (WF-3.10): <c>-- Setup</c> for the setup (null), else
     /// <c>-- Goal: &lt;title&gt;</c> or <c>-- Check: &lt;title&gt;</c>.
     /// </summary>

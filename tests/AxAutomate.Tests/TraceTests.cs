@@ -261,6 +261,74 @@ public sealed class TraceTests
     }
 
     [Fact]
+    public void The_events_between_two_sections_belong_to_the_one_before()
+    {
+        string[] lines =
+        [
+            "# Workflow: W",              // 1
+            "start down {temp}\\a.md",    // 2
+            "expect focus a.md",          // 3
+            "# Goal: First",              // 4
+            "keys ctrl+f",                // 5
+            "expect focus Text to find",  // 6
+            "# Check: Second",            // 7
+            "expect state Line 1",        // 8
+            "keys f3",                    // 9
+            "# Goal: Third",              // 10
+            "keys ctrl+g",                // 11
+        ];
+        var goals = ScriptReader.Goals(lines, "W");
+
+        // What a run played, line by line: the input line when the line is one, and what the windows had recorded
+        // by the line's end. The announcement that came after the first goal's last step was taken with that step
+        // (line 6), so it is the first goal's, not the check's, whose first line (8) took nothing.
+        TracedLine[] played =
+        [
+            new(2, "start down {temp}\\a.md", []),
+            new(3, null, ["  → a.md (Text):"]),
+            new(5, "keys ctrl+f", ["  → Text to find (Text):"]),
+            new(6, null, ["  Find"]),
+            new(8, null, []),
+            new(9, "keys f3", ["  ! Not found"]),
+        ];
+        var sections = Traces.Sections(played, goals);
+        Assert.Equal([Traces.Setup, "Goal: First", "Check: Second"], sections.Select(section => section.Heading));
+        Assert.Equal(["start down {temp}\\a.md", "  → a.md (Text):"], sections[0].Lines);
+        Assert.Equal(["keys ctrl+f", "  → Text to find (Text):", "  Find"], sections[1].Lines);
+        Assert.Equal(["keys f3", "  ! Not found"], sections[2].Lines);
+
+        // A section whose lines gave nothing is there without lines; one no line of which was played is not there.
+        Assert.Equal(
+            [Traces.Setup, "Goal: First"],
+            Traces.Sections([new(2, null, []), new(5, "keys ctrl+f", [])], goals).Select(section => section.Heading));
+        Assert.Empty(Traces.Sections([new(3, null, [])], goals)[0].Lines);
+        Assert.Empty(Traces.Sections([], goals));
+
+        // A script without sections is its one goal, and a workflow file (no goals) is all setup.
+        string[] whole = ["# Workflow: W", "keys ctrl+f", "expect focus Text to find"];
+        Assert.Equal(["Goal: W"], Traces.Sections([new(2, "keys ctrl+f", []), new(3, null, ["  Find"])], ScriptReader.Goals(whole, "W")).Select(section => section.Heading));
+        Assert.Equal([Traces.Setup], Traces.Sections([new(1, "keys ctrl+f", [])], []).Select(section => section.Heading));
+    }
+
+    [Fact]
+    public void A_difference_is_said_with_its_section_its_line_and_both_texts()
+    {
+        // WF-5.5's two sentences, the words after "FAIL after the steps: "; "check" for a check.
+        Assert.Equal(
+            "the trace of the stable goal Find a word in the text differs at its line 2: kept → Text to find (Text):; now → Find (Text):",
+            Traces.Problem(new TraceDifference("Goal: Find a word in the text", 2, "  → Text to find (Text):", "  → Find (Text):")));
+        Assert.Equal(
+            "the trace of the stable check A word is refused differs at its line 3: kept (nothing); now ! Not found",
+            Traces.Problem(new TraceDifference("Check: A word is refused", 3, "(nothing)", "  ! Not found")));
+        Assert.Equal(
+            "the stable goal Find a word in the text has no kept trace: run with --traces write",
+            Traces.Problem(new TraceDifference("Goal: Find a word in the text", 0, "", "")));
+        Assert.Equal(
+            "the stable check A word is refused has no kept trace: run with --traces write",
+            Traces.Problem(new TraceDifference("Check: A word is refused", 0, "", "")));
+    }
+
+    [Fact]
     public void A_script_of_a_window_that_reads_the_computer_or_with_a_needs_line_may_keep_no_trace()
     {
         Assert.True(Traces.MayKeep("tests/scripts/axDown/04-x.txt", ""));

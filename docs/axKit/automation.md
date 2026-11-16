@@ -32,7 +32,8 @@ The run names the program it drives: `--build` builds the sources as they are in
 src\AxKit\AxKit.csproj -c Release -o <folder>` and give `--exe <folder>\AxKit.exe`). There is no default: until
 2026-11-13 a run with neither drove whatever lay in `src\AxKit\bin\Release`, and a pass or a failure against a stale
 build read like a real one. The console and the report's first lines say the program's version and when it was
-built. Exit code 0 when every script passed and nothing is stale, 1 when one failed, 2 when the run could not start,
+built. Exit code 0 when every script passed and nothing is stale, 1 when one failed (also by a `# Stable` section
+whose trace differs from the kept one; below, "The traces"), 2 when the run could not start,
 3 when every script passed and the command inventory is stale (below, "The command inventory"). One window run
 plays at a time on a computer: a second run waits for the first, for an hour at most, and says once that it waits,
 since the clipboard and the system hotkeys are shared (`tools/AxAutomate/RunLock.cs`, `user-workflows.md` WF-D-29);
@@ -201,6 +202,8 @@ including while the user works, because nothing takes the foreground.
   - What a run keeps of the windows' commands (WF-2.7): the current window's whole listing at every
     `check commands` step, and the one row its name came to at every `do` step (`ScriptResult.Commands`), held
     against the command inventory (below).
+  - `# Stable` (2026-11-15, WF-3.5): a comment line of that one word among the comment lines that begin with a goal
+    or check line marks a section whose trace is kept in the repository and must not change ("The traces", below).
 
 ### The command inventory (2026-11-15)
 
@@ -244,6 +247,70 @@ not, the window changed by itself, which is the finding. The cheap check, in `te
 holds no row the inventory never keeps and no account path, and every `do` step of every script names a command of
 it under the app of the window the step reaches (a step whose app has no rows yet is passed over). That the file is
 current is the window runs' check, not this one.
+
+### The traces (2026-11-15)
+
+A trace is what one section of one run came to, without times (`user-workflows.md` WF-5, format in section 5.4): each
+input step as a line (`do Find = ctrl+f` with the key the window gave, `type apple`, `keys enter`, the steps that
+open, choose and close windows) and, under it and indented by two spaces, everything the run's windows recorded up to
+the next input: announcements, sounds, focus moves, value changes, as the report's timeline writes them. The steps
+that prepare and the steps that only look are no lines; what they waited for is. Every line is written with the run's
+folder as `{temp}` and the profile folder as `{home}`, then redacted (`Traces.Clean`). The setup is a section of its
+own.
+
+A trace is kept in the repository only for a section marked `# Stable`, in
+`tests/traces/<folder>/<script>.trace.txt`, the folder and the name those of the script under `tests/scripts`; the
+file is written by the runner and never by hand. A kept trace must not change: there is no difference that is only a
+note. The engine collects a trace only where one is used: for a script with a `# Stable` section, and, in a run
+given both `--report` and `--traces check` or `write` by name, for every script, whose report then holds each
+section's trace under the script's steps. Collecting asks every window once more after each line for what it
+recorded and changes nothing else of a run; that one request more can still shift a script that races a timer of its
+window (axDown's script 04 does, at its `expect state` after Find: on 2026-11-15 it failed there in 4 of 10 traced
+plays and in 1 of 7 untraced ones, on a busy computer), which is why it is done only where asked for: a run that
+names no `--traces` plays every script without a `# Stable` section exactly as it did before there were traces.
+
+The option `--traces` of the runner:
+
+- `check`, the default on the hidden desktop when the runner finds the repository: after a script whose steps
+  passed, the trace of each `# Stable` section is held against its kept section, line by line. One that differs
+  fails its section, and so its script, after the steps: "FAIL after the steps: the trace of the stable goal Find a
+  word in the text differs at its line 2: kept ...; now ..." (the first line that differs; "check" for a check); one
+  with no kept section fails the same way: "FAIL after the steps: the stable goal ... has no kept trace: run with
+  --traces write". The sections' lines are then said once more as they stand, the failed one with "after the steps:
+  its trace differs from the kept one at line 2". The run's last lines count them: `Traces: 2 stable sections equal,
+  0 differ, 0 without a kept trace`. The exit code is 1, as for any failed script.
+- `write`: after a script that passed, its file is written whole, the header and the traces of its `# Stable`
+  sections in the script's order; a script with no `# Stable` section has no file, and one it had is deleted. A
+  deliberate change is reviewed as the file's difference in git.
+- `off`: nothing is collected, compared or written. Always so on the NVDA tier (`--nvda`; `check` and `write` are
+  refused there) and for a runner that finds no repository; `tools\upstream.ps1 -Verify` runs with it.
+
+The runner finds a script's kept file by the script's own path in the repository; a copy played from elsewhere is
+the repository's script of the same `# Workflow:` label, and a script with no such label keeps and compares nothing.
+
+What may be marked (WF-5.6): only a section in which the windows say axKit's own words and the script's own texts.
+By rule (`Traces.MayKeep`), never a script of `tests/scripts/axClip` (the test desktop shares the clipboard with the
+user's session), `axStart` (the programs installed), `axProcess` (the programs running), `axTerminal` and `axGIT` (a
+shell's and git's output) or `axMedia` (the sound devices), none of `tests/nvda-scripts`, and none with a `# Needs:`
+line. By reading: no section that shows axFile's drives or its Open with list, or anything else that is the
+computer's or the user's. A mark is earned (WF-5.7): add the `# Stable` line, run the script once with
+`--traces write`, read the kept file whole, then run it twice with the default; a section that differs in either
+loses the line again, and the next `--traces write` removes its kept section, since an announcement and a focus
+move can change places with a run's timing and such a section is not one to hold equal. Whoever marks a section
+says in the commit message that the kept section was read. Which goals are kept stable is the user's to name
+(WF-5.10). No section is marked yet, and `tests/traces` holds no file. The two goals of
+`tests/scripts/axDown/04-find-and-go-to-line.txt` were marked on 2026-11-15 to prove the mechanism, their file was
+written, and both lost the mark in the compare runs that followed, as WF-5.7 has it: a window puts a focus move and a
+value change on its timeline from a watch that looks every 50 ms, and the script presses Enter right after
+`type apple` and `type 5`, so the line `· apple` stood under `type apple` in one run, under `keys enter` in the next
+and nowhere in a third. A section to hold equal waits for what each input caused before the next input
+(`expect focus` with the value, `expect said`); a `type` step followed at once by the key that closes its field is
+the case to look for before a section is marked.
+
+The cheap check, in `test.ps1` and CI without a window (`RepositoryWorkflowTests`): every `# Stable` section has its
+kept section, every kept section and every file of `tests/traces` belongs to a `# Stable` section of a script that
+exists, and no script that may keep none holds a `# Stable` line; `PrivacyTests` reads the kept files as it reads
+every file. That a kept trace is what a window says today is the window runs' check.
 
 ### What the scripts cover, and what stays manual (2026-10-23)
 
@@ -454,8 +521,8 @@ in daily work. The upstream watch lets the assistant notice first. It has no sid
   verified one, "changed" where they differ; no build, a few seconds. Exit code 0 when none changed, 1 when one did.
 - **When one changed**: `.\tools\upstream.ps1 -Verify` before other work (or `-Verify <id>` for one program, changed
   or not). Each check of the changed programs runs once: the test projects through `test.ps1 <App>`, the scripts
-  through `tools\AxAutomate ... --build --inventory off` on the desktop of their own (the windows' menus are not the
-  question here, the outside program is: the runner's exit codes stay 0, 1 and 2). Where all pass, the new version and the date are
+  through `tools\AxAutomate ... --build --inventory off --traces off` on the desktop of their own (the windows' menus
+  and the kept traces are not the question here, the outside program is: the runner's exit codes stay 0, 1 and 2). Where all pass, the new version and the date are
   written into the record: commit it. Where one fails, the record keeps the program as it was, the last lines name the
   script and the failing step, and the exit code is 1: fix it in that program's one place (its launcher, its parser,
   its table of texts), with a new recording where the parser reads one (the `record-fixture` skill for Claude Code),

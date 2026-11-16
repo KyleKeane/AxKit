@@ -28,14 +28,23 @@ public sealed record ScriptResult(bool Ok, string Log, LineResult? Failed, IRead
     /// has neither step or the window does not list its commands as data.
     /// </summary>
     public IReadOnlyList<AxKit.Core.WindowCommands> Commands { get; init; } = [];
+
+    /// <summary>
+    /// The run's trace (WF-5.1, <see cref="Traces.Sections"/>), section by section in the script's order, the setup
+    /// among them: each input step and what the windows said under it, as far as the run got; none unless the run was
+    /// played with <see cref="PlayOptions.Trace"/>.
+    /// </summary>
+    public IReadOnlyList<TraceSection> Trace { get; init; } = [];
 }
 
 /// <summary>
 /// What a run of the command line adds to playing the lines: the script's sections (<see cref="ScriptReader.Goals"/>),
-/// whose lines the report then gives (WF-3.10) and whose results <see cref="ScriptResult.Goals"/> holds. axAutomate's
-/// window plays without options and its run says what it said before (WF-D-21).
+/// whose lines the report then gives (WF-3.10) and whose results <see cref="ScriptResult.Goals"/> holds; and, with
+/// <paramref name="Trace"/>, the run's trace (WF-5.1) in <see cref="ScriptResult.Trace"/>: after each line every
+/// window is asked once more for what it recorded, and nothing else of the run changes. axAutomate's window plays
+/// without options and its run says what it said before (WF-D-21).
 /// </summary>
-public sealed record PlayOptions(IReadOnlyList<Goal>? Goals = null);
+public sealed record PlayOptions(IReadOnlyList<Goal>? Goals = null, bool Trace = false);
 
 /// <summary>
 /// The runner's engine (SPEC.md AU-5.1), moved here from <c>tools/AxAutomate</c> unchanged: the lines of one
@@ -53,7 +62,9 @@ public static class ScriptRunner
     /// <paramref name="begun"/> gets the run as it begins, for <see cref="Run.Abandon"/> when the window closes.
     /// <paramref name="options"/>: the script's sections; when one is named by a goal or check line, a line before
     /// each section's first step (<c>-- Setup</c>, <c>-- Goal: </c>, <c>-- Check: </c>) and, after the last step and
-    /// what failed after it, the counts and each section's result (<see cref="GoalResults.Lines"/>).
+    /// what failed after it, the counts and each section's result (<see cref="GoalResults.Lines"/>); with
+    /// <see cref="PlayOptions.Trace"/> the run's trace is collected line by line (<see cref="Run.TakeTraceEvents"/>,
+    /// WF-5.1), which prints nothing.
     /// </summary>
     public static ScriptResult Play(IReadOnlyList<ScriptLine> lines, string exe, string temp, Action<string> output, Action<LineResult>? stepEnded = null, Func<bool>? stop = null, bool hosted = false, Action<Run>? begun = null, PlayOptions? options = null)
     {
@@ -67,6 +78,9 @@ public static class ScriptRunner
         var headed = false;
         Goal? section = null;
         var lastLinePlayed = int.MaxValue;
+        var trace = options?.Trace ?? false;
+        var traced = new List<TracedLine>();
+        var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var run = new Run(exe, temp, hosted);
         begun?.Invoke(run);
         try
@@ -113,6 +127,17 @@ public static class ScriptRunner
                 log.AppendLine(shown);
                 var ended = new LineResult(script, result.Ok, result.Detail);
                 stepEnded?.Invoke(ended);
+                if (trace)
+                {
+                    // WF-5.1, WF-5.3: the line as an input step (the script's own line, before {temp} is filled),
+                    // then what every window recorded up to here, each line without the run's folder and the profile.
+                    var input = Traces.InputLine(script.Text, result.Detail);
+                    traced.Add(new TracedLine(
+                        script.Number,
+                        input is null ? null : Traces.Clean(input, temp, profile),
+                        [.. run.TakeTraceEvents().Select(taken => Traces.Clean(taken, temp, profile))]));
+                }
+
                 if (!result.Ok)
                 {
                     ok = false;
@@ -165,6 +190,11 @@ public static class ScriptRunner
             log.Append(run.Timeline());
         }
 
-        return new ScriptResult(ok, log.ToString(), failed, problems, stopped) { Goals = results, Commands = run.Snapshots };
+        return new ScriptResult(ok, log.ToString(), failed, problems, stopped)
+        {
+            Goals = results,
+            Commands = run.Snapshots,
+            Trace = trace ? Traces.Sections(traced, goals) : [],
+        };
     }
 }

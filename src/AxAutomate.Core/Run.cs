@@ -709,6 +709,49 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         return (false, "no new axKit window within 15 s");
     }
 
+    /// <summary>How many events of each window the trace has taken (<see cref="TakeTraceEvents"/>), by the window's place in the run.</summary>
+    private readonly List<int> _traced = [];
+
+    /// <summary>
+    /// Every window's events since the last call, as lines of a trace (docs/axKit/user-workflows.md WF-5.1,
+    /// <see cref="Traces.EventLine"/>): for each window in the order the run got them, what its timeline holds after
+    /// the events already taken here. A window is numbered in its lines when the run has several at that moment. It
+    /// only reads: what an expectation has taken and has yet to take is not changed. A window that cannot answer
+    /// gives nothing here and fails nothing; the step that needs it says so. Only a run that is traced calls it
+    /// (<see cref="PlayOptions.Trace"/>).
+    /// </summary>
+    public IReadOnlyList<string> TakeTraceEvents()
+    {
+        var lines = new List<string>();
+        for (var i = 0; i < _windows.Count; i++)
+        {
+            if (_traced.Count <= i)
+            {
+                _traced.Add(0);
+            }
+
+            List<Event> all;
+            try
+            {
+                all = _windows[i].Everything();
+            }
+            catch (Exception)
+            {
+                // Whatever the window's answer lacked: the trace never ends a run or fails a step.
+                continue;
+            }
+
+            for (var j = _traced[i]; j < all.Count; j++)
+            {
+                lines.Add(Traces.EventLine(i + 1, _windows.Count, all[j]));
+            }
+
+            _traced[i] = all.Count;
+        }
+
+        return lines;
+    }
+
     /// <summary>Every window's whole timeline, for the report.</summary>
     public string Timeline()
     {

@@ -309,6 +309,30 @@ public sealed class GoalTests
     }
 
     [Fact]
+    public void A_trace_that_differs_fails_its_own_section_and_no_other()
+    {
+        // WF-3.9, WF-5.5: every step passed; the kept trace of one stable goal differs.
+        var passed = GoalResults.Of(MarkedGoals(), 0, int.MaxValue, []);
+        var title = passed[2].Goal.Title;
+        var results = GoalResults.WithFailed(passed, title, "after the steps: its trace differs from the kept one at line 3");
+        Assert.Equal(GoalResults.Failed, results[2].Outcome);
+        Assert.Equal(0, results[2].FailedLine);
+        Assert.Equal("after the steps: its trace differs from the kept one at line 3", results[2].Detail);
+        Assert.Equal(passed.Where((_, index) => index != 2), results.Where((_, index) => index != 2));
+        Assert.Equal($"{passed.Count - 1} passed, 1 failed", GoalResults.Counts(results));
+        Assert.Equal($"  FAILED   {title}, after the steps: its trace differs from the kept one at line 3", GoalResults.Lines(results, 0)[3]);
+
+        // The results given are not changed, and a title no section has changes nothing.
+        Assert.All(passed, result => Assert.Equal(GoalResults.Passed, result.Outcome));
+        Assert.Equal(passed, GoalResults.WithFailed(passed, "No such section", "after the steps: x"));
+
+        // Only a section that had passed: one that failed at its own line keeps that, one not run stays not run.
+        var stopped = GoalResults.Of(MarkedGoals(), 39, int.MaxValue, []);
+        Assert.Equal(stopped, GoalResults.WithFailed(stopped, stopped[2].Goal.Title, "after the steps: x"));
+        Assert.Equal(stopped, GoalResults.WithFailed(stopped, stopped[4].Goal.Title, "after the steps: x"));
+    }
+
+    [Fact]
     public void The_reports_lines_count_the_goals_and_name_each_with_its_result()
     {
         var goals = MarkedGoals();

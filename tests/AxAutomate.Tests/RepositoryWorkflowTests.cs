@@ -7,7 +7,9 @@ namespace AxAutomate.Tests;
 /// The repository's own workflow files, read without a window (docs/axKit/user-workflows.md WF-2.11, WF-11.1): the
 /// command inventory, <c>docs/axKit/window-commands.json</c>, is well formed and written as its writer writes it, holds
 /// nothing that never enters it, and names every command a script's <c>do</c> step runs. That it is current is the
-/// window runs' check (WF-2.10), not this one.
+/// window runs' check (WF-2.10), not this one. And the kept traces, <c>tests/traces</c> (WF-5.9): every
+/// <c># Stable</c> section has its kept section, no other trace is kept, and no script that may keep none is marked.
+/// That a kept trace is what a window says today is the window runs' check too (WF-5.5).
 /// </summary>
 public sealed class RepositoryWorkflowTests
 {
@@ -90,6 +92,89 @@ public sealed class RepositoryWorkflowTests
         Assert.Null(DoName("# do Find"));
         Assert.Null(DoName("done"));
         Assert.Null(DoName("expect said do Find"));
+    }
+
+    [Fact]
+    public void Every_stable_section_has_its_kept_trace_and_no_other_trace_is_kept()
+    {
+        // WF-5.9, without a window. The files a script's stable sections give, by the kept file's path.
+        var problems = new List<string>();
+        var expected = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var path in RepositoryScripts())
+        {
+            var script = Relative(path);
+            var lines = File.ReadAllLines(path);
+            var workflow = ScriptReader.Parse(lines, Path.GetFileNameWithoutExtension(path), path);
+            if (!Traces.MayKeep(script, workflow.Needs))
+            {
+                // WF-5.6: a window that reads the computer, the user's session or a model: no mark at all, not even
+                // one that marks nothing.
+                if (lines.Any(IsStableLine))
+                {
+                    problems.Add($"{script} holds a # Stable line and may keep no trace (WF-5.6): take the line away");
+                }
+
+                continue;
+            }
+
+            var stable = workflow.Goals.Where(goal => goal.Stable).Select(Traces.Heading).ToList();
+            if (stable.Count == 0)
+            {
+                continue;
+            }
+
+            var kept = Traces.PathFor(script);
+            expected.Add(kept);
+            var file = Path.Combine(Root(), kept.Replace('/', Path.DirectorySeparatorChar));
+            if (!File.Exists(file))
+            {
+                problems.Add($"{script} has {stable.Count} stable section(s) and no kept trace {kept}: run it with --traces write");
+                continue;
+            }
+
+            var text = Lf(File.ReadAllText(file));
+            if (!text.StartsWith("# Trace of " + script + "\n", StringComparison.Ordinal))
+            {
+                problems.Add($"{kept} does not begin with the line \"# Trace of {script}\": it is written by --traces write, never by hand");
+            }
+
+            var sections = Traces.Read(text).Select(section => section.Heading).ToList();
+            problems.AddRange(stable.Except(sections).Select(heading => $"{script}: the stable section \"{heading}\" has no kept section in {kept}: run it with --traces write"));
+            problems.AddRange(sections.Except(stable).Select(heading => $"{kept}: the kept section \"{heading}\" belongs to no # Stable section of {script}: run it with --traces write"));
+            if (sections.Count != sections.Distinct().Count())
+            {
+                problems.Add($"{kept} holds a section twice");
+            }
+        }
+
+        // No other file: every file of tests/traces is the kept trace of a script that exists and has a stable section.
+        var folder = Path.Combine(Root(), "tests", "traces");
+        if (Directory.Exists(folder))
+        {
+            problems.AddRange(Directory.GetFiles(folder, "*", SearchOption.AllDirectories)
+                .Select(Relative)
+                .Where(file => !expected.Contains(file))
+                .Select(file => $"{file} is the kept trace of no script with a # Stable section: delete it, or run the script with --traces write"));
+        }
+
+        Assert.Empty(problems);
+    }
+
+    [Fact]
+    public void A_stable_line_is_a_comment_whose_whole_text_is_the_word()
+    {
+        Assert.True(IsStableLine("# Stable"));
+        Assert.True(IsStableLine("  #stable "));
+        Assert.False(IsStableLine("# Stable goals come later"));
+        Assert.False(IsStableLine("type # Stable"));
+        Assert.False(IsStableLine("Stable"));
+    }
+
+    /// <summary>Whether a script's line is a <c># Stable</c> line (WF-3.5), wherever it stands: a comment whose whole text is the word, in any case.</summary>
+    private static bool IsStableLine(string line)
+    {
+        var text = line.Trim();
+        return text.StartsWith('#') && string.Equals(text.TrimStart('#').Trim(), ScriptReader.StableWord, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>The name a <c>do</c> step runs, after any <c>iffound</c>, as the runner reads it; null for any other line.</summary>

@@ -14,8 +14,8 @@ Quick, no build: run it at the start of a session. Exit code 0 when none changed
 
 -Verify [<program>]: runs the checks of every changed program, or of the one named (by its id or its name), each
 check once: the test projects through test.ps1, the scripts through tools\AxAutomate on its own desktop, with
---inventory off: the question is the outside program, not the windows' menus, so the runner's exit codes stay 0, 1
-and 2 (docs/axKit/user-workflows.md WF-2.10, WF-11.5). Where all of
+--inventory off --traces off: the question is the outside program, not the windows' menus or the kept traces, so the
+runner's exit codes stay 0, 1 and 2 (docs/axKit/user-workflows.md WF-2.10, WF-5.8, WF-11.5). Where all of
 a program's checks pass, its new version and today's date are written into the file. Where one fails, the file keeps
 that program as it was, the failing script and step are printed, and the exit code is 1. Where the checks cannot run
 (the program is not installed, Claude Code is not signed in, the network is off, the build failed), the output says
@@ -201,7 +201,7 @@ function Invoke-Check([string]$kind, [string]$target) {
         $current = ''
         $steps = New-Object System.Collections.Generic.List[string]
         try {
-            & dotnet run --project (Join-Path $root 'tools\AxAutomate') -c Release -- (Join-Path $root (Join-Path 'tests\scripts' $target)) --build --inventory off | ForEach-Object {
+            & dotnet run --project (Join-Path $root 'tools\AxAutomate') -c Release -- (Join-Path $root (Join-Path 'tests\scripts' $target)) --build --inventory off --traces off | ForEach-Object {
                 Write-Host $_
                 if ($_ -match '^== (.+)$') { $current = $Matches[1] }
                 elseif ($_ -match '^FAIL') { $steps.Add("$(if ($current) { $current } else { $target }): $_") }

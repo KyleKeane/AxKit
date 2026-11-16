@@ -16,10 +16,19 @@ public sealed record TraceSection(string Heading, IReadOnlyList<string> Lines);
 public sealed record TraceDifference(string Heading, int Line, string Kept, string Now);
 
 /// <summary>
+/// One line of a script as a traced run played it (WF-5.1): its number in the script, its input line
+/// (<see cref="Traces.InputLine"/>; null for a step that is no input) and what every window of the run recorded up to
+/// the line's end and after the line before it, as trace lines (<see cref="Traces.EventLine"/>), all cleaned
+/// (<see cref="Traces.Clean"/>).
+/// </summary>
+public sealed record TracedLine(int Number, string? Input, IReadOnlyList<string> Events);
+
+/// <summary>
 /// A run's trace, pure (docs/axKit/user-workflows.md WF-5, format 5.4): the line of an input step and of an event, the
-/// cleaning of every line, the file of a script's kept sections, which sections are kept and how a kept one is
-/// compared, and which scripts may keep any. The engine collects the lines and the command line reads and writes the
-/// files; tested in <c>TraceTests</c>.
+/// cleaning of every line, a run's lines as its sections, the file of a script's kept sections, which sections are kept
+/// and how a kept one is compared, and which scripts may keep any. The engine collects the lines
+/// (<see cref="ScriptRunner.Play"/> with <see cref="PlayOptions.Trace"/>) and the command line reads and writes the
+/// files (<c>tools/AxAutomate/TraceRun.cs</c>); tested in <c>TraceTests</c>.
 /// </summary>
 public static class Traces
 {
@@ -50,8 +59,11 @@ public static class Traces
         "axMedia",    // the sound devices
     ];
 
+    private const string GoalHeading = "Goal: ";
+    private const string CheckHeading = "Check: ";
+
     /// <summary>A section's heading (5.4): "Goal: &lt;title&gt;" or "Check: &lt;title&gt;".</summary>
-    public static string Heading(Goal goal) => (goal.Check ? "Check: " : "Goal: ") + goal.Title;
+    public static string Heading(Goal goal) => (goal.Check ? CheckHeading : GoalHeading) + goal.Title;
 
     /// <summary>
     /// Whether a script may keep a trace in the repository (WF-5.6), by its path from the repository's root and its
@@ -158,6 +170,55 @@ public static class Traces
         text = text.Replace(plain.Replace("\\", "\\\\"), placeholder, StringComparison.OrdinalIgnoreCase);
         text = text.Replace(plain, placeholder, StringComparison.OrdinalIgnoreCase);
         return text.Replace(plain.Replace('\\', '/'), placeholder, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// A run's trace as its sections (WF-5.1), from the lines it played, in their order: a line belongs to the section
+    /// that holds its number (<see cref="ScriptReader.GoalAt"/>; the setup before the first), and a section's lines are,
+    /// for each of its played lines, the input line when it is one and then the line's events. So what the windows
+    /// said after a section's last step and before the next section's first is the earlier section's: it was taken
+    /// with that last step. A section no line of which was played has none; one whose lines gave nothing has no lines.
+    /// </summary>
+    public static IReadOnlyList<TraceSection> Sections(IReadOnlyList<TracedLine> played, IReadOnlyList<Goal> goals)
+    {
+        var sections = new List<TraceSection>();
+        Goal? current = null;
+        List<string>? lines = null;
+        foreach (var line in played)
+        {
+            var goal = ScriptReader.GoalAt(goals, line.Number);
+            if (lines is null || goal != current)
+            {
+                current = goal;
+                lines = [];
+                sections.Add(new TraceSection(goal is null ? Setup : Heading(goal), lines));
+            }
+
+            if (line.Input is not null)
+            {
+                lines.Add(line.Input);
+            }
+
+            lines.AddRange(line.Events);
+        }
+
+        return sections;
+    }
+
+    /// <summary>
+    /// What a difference is called after the steps (WF-5.5), the words after "FAIL after the steps: ": "the trace of
+    /// the stable goal &lt;title&gt; differs at its line &lt;n&gt;: kept &lt;line&gt;; now &lt;line&gt;", or, for a
+    /// section with no kept trace (line 0), "the stable goal &lt;title&gt; has no kept trace: run with --traces
+    /// write"; "check" in place of "goal" for a check. The two lines are given without the spaces they begin with.
+    /// </summary>
+    public static string Problem(TraceDifference difference)
+    {
+        var check = difference.Heading.StartsWith(CheckHeading, StringComparison.Ordinal);
+        var title = difference.Heading[(check ? CheckHeading : GoalHeading).Length..];
+        var section = check ? "check" : "goal";
+        return difference.Line == 0
+            ? $"the stable {section} {title} has no kept trace: run with --traces write"
+            : $"the trace of the stable {section} {title} differs at its line {difference.Line}: kept {difference.Kept.Trim()}; now {difference.Now.Trim()}";
     }
 
     /// <summary>
