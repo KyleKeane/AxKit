@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- For developers: a run of the automated checks given `--record` writes when each goal and check last ran and last passed into `docs/axKit/workflow-record.json`, for the checks' own desktop and for NVDA apart, with the version, the commit and the date. `nvda-pass.ps1` always records, so when a goal last passed no longer depends on anyone writing it down.
 - axClaude: a new option, Options, Developer, Events from Claude Code's hooks, off at first. With it on, Claude Code tells the window when a session starts, a turn stops, an agent starts or stops and a permission is asked, through a hook for that one session and a pipe on this computer; nothing is listened for and nothing leaves the computer (PRIVACY.md). Nothing you hear changes yet: the events feed the new core, which runs beside the window and does not decide anything yet.
 - axKit: the scripts of axProcess, axPass, axMCP, axAutomate and the AI tools name their goals and checks (88 goals, 66 checks), so the workflow pages show these apps as how-tos.
 - axKit: the automated checks of axCalc, axJSON, axGIT, axMedia and axPreview now name their goals and checks, so the workflow pages show those apps' tasks one by one.

@@ -20,7 +20,9 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   Never `dotnet test AxKit.sln` while axKit runs: it writes into the running program's `bin\Debug`. Debug alone misses
   what Release treats as errors, which cost 3.3.0.
 - `tools/AxAutomate <script or folder> (--build | --exe <AxKit.exe>)` plays the automated window checks of
-  `tests/scripts` on a desktop of their own (`automation.md`). It holds the windows' commands against the command
+  `tests/scripts` on a desktop of their own (`automation.md`). The run of an app's folder after a change to a window is
+  given `--record`: `dotnet run --project tools\AxAutomate -c Release -- tests\scripts\<app> --build --record` enters
+  each goal's result into `docs/axKit/workflow-record.json`, which is committed with the change. It holds the windows' commands against the command
   inventory, `docs/axKit/window-commands.json`, and says after its summary when a window lists a command the file does
   not hold as it is (exit code 3 when every script passed). `--inventory write` merges what the windows list into the
   file, `rewrite` also drops what a whole app no longer lists, `off` leaves it alone; `--repository <folder>` names

@@ -43,8 +43,17 @@ not answer a step within 30 seconds fails the step, and the run goes on to its e
 **Where these checks run.** On the developer's computer, by hand or by the assistant: `tools/AxAutomate` for one
 script or folder, `nvda-pass.ps1` for all of them with NVDA listening. Never in CI: `build.yml` builds the solution,
 runs the unit tests and checks the generated pages, and that is all it proves. A workflow of
-`docs/axKit/workflows.md` is kept working by the runs recorded in `docs/axKit/nvda-test-record.md`, so a change to a
+`docs/axKit/workflows.md` is kept working by the runs recorded in `docs/axKit/workflow-record.json`, so a change to a
 window is followed by its scripts before it is pushed, and a release by a full pass.
+
+**The workflow record.** A run given `--record` enters every goal and check it played into
+`docs/axKit/workflow-record.json` after its last script (user-workflows.md WF-6): for the run's tier (`desktop`, or
+`nvda` under `--nvda`) the last result with the version, the commit (a `+` after it when `src` or `tests` held a
+change not committed) and the date, and the last pass. `nvda-pass.ps1` always records. On the desktop of their own,
+the run of an app's folder after a change to a window is given `--record`; a run of one script during work is not. A
+recorded run changes that one file and no page, and the file is committed with the change the run checked, or alone
+with the line `Item: none, the workflow record of the <tier> run of <date>`. An entry whose label or title no script
+has any more is dropped by the next recorded run. What a pass found stays in `docs/axKit/nvda-test-record.md`.
 
 The steps, the run on its own desktop and the report are the engine in `src/AxAutomate.Core` (`ScriptRunner`, `Run`,
 `Window`; moved there on 2026-11-11, docs/axAutomate/SPEC.md AU-5.1), which axAutomate's window plays workflows
@@ -500,7 +509,8 @@ runner puts the user's text back after the last script), and axPass's leaves the
 to the front of the user's desktop and go again.
 
 When to run it: after a change to focus, keys, announcements or an edit control (the app's alone), and the whole pass
-before a merge or a release, in place of asking the user for a pass by ear. A pass is written into
+before a merge or a release, in place of asking the user for a pass by ear. A pass writes when each goal
+last passed into `docs/axKit/workflow-record.json` by itself, and what it found is written into
 `docs/axKit/nvda-test-record.md` as "run by the assistant through nvda-pass.ps1" with the commit. What stays the
 user's: sound and video quality, the Start menu and Explorer (outside the windows), and how a change feels to use.
 

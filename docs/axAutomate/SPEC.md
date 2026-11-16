@@ -292,7 +292,9 @@ keys in place of its words on a line:
   checks. The command line keeps running a folder whole. To reverse: `WorkflowFolder` read recursively in
   `RunCommand`.
 - AU-D10 The outcome of a run lives in the window until it closes, not in a file: the files are the user's workflows,
-  and a run's record beside them would be a second thing to keep (the assistant, 2026-11-11).
+  and a run's record beside them would be a second thing to keep (the assistant, 2026-11-11). The command line's
+  record of the repository's own scripts, `docs/axKit/workflow-record.json` (`tools/AxAutomate --record`,
+  `docs/axKit/user-workflows.md` WF-6), is not the window's.
 - AU-D11 From the window, a workflow with a `run` step plays only after a notice has named its command lines: "This
   workflow runs commands on your computer: git init. Run it?" (for a folder, "These workflows run ... Run them?"),
   with Run and Cancel, Cancel the default, so that Enter and Escape both decline; Cancel says "Not run" and nothing of

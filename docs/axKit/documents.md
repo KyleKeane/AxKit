@@ -63,7 +63,10 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `upstream.json`: the outside programs (Claude Code, Git, KeePassXC's tool, the shells), each with the version the
   checks last passed with; read and written by `tools/upstream.ps1` (`automation.md`, "When an outside program
   changes").
-- `nvda-test-record.md`: every NVDA pass, by step, newest first.
+- `workflow-record.json` (written by runs of the automated checks with `--record`, never by hand): when each goal
+  and check last ran and last passed, on the checks' own desktop and under NVDA.
+- `nvda-test-record.md`: what every NVDA pass found, newest first; when each goal last passed is in
+  `workflow-record.json`.
 - `repairs.md` (generated from `repairs.json`): what the audits found and what became of each finding.
 - `security-audit-2026-10-24.md` (S-n): the security audit and its fixes.
 - `outside-calls.md` (generated): everything axKit reaches outside its process (SPEC B-17).

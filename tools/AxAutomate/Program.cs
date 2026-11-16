@@ -5,7 +5,7 @@
 //
 // Usage:
 //   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep] [--nvda]
-//              [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off]
+//              [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record]
 //   AxAutomate --reference [--check] [--repository <folder>]
 //   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
 //   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
@@ -56,7 +56,10 @@
 //                docs/axKit/workflows no group makes any more is deleted. tools\workflows.ps1 runs it.
 //     --check    writes and deletes nothing, compares line ends aside: exit 0 when every page is current, 1 naming each
 //                page that is not (missing, different, left over). A script without its label: exit 1, named.
-//   Options that later packages of docs/axKit/user-workflows.md build (--record, --convert, --ai-tools) are refused
+//   --record     the workflow record (RecordRun, WF-6): after the last script every section the run played is entered
+//                into the repository's docs/axKit/workflow-record.json for the run's tier (desktop, or nvda under
+//                --nvda) with its result, the version, the commit and the date; one line says how many.
+//   Options that later packages of docs/axKit/user-workflows.md build (--convert, --ai-tools) are refused
 //   as not built yet.
 //   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}. The exit code
 //   (WF-11.5) is 0 when every script passed and nothing is stale, 1 when a script failed (a "# Stable" section whose
@@ -237,6 +240,9 @@ internal static class Program
         // The traces (TraceRun, WF-5.4 to WF-5.8): off on the NVDA tier and without a repository (Options.cs).
         TraceRun.Start(options.Traces, options.Repository, options.TraceReport);
 
+        // The workflow record (RecordRun, WF-6): entered after the last script, under --record.
+        RecordRun.Start(options.Record, options.Repository, options.Nvda, exe);
+
         // A run that ended without its end (the runner killed, its console closed) left NVDA's capture on, and the add-on
         // then wrote everything NVDA spoke into a file (R-33): an earlier run's flag goes first, in every run.
         File.Delete(Speech.FlagPath);
@@ -294,6 +300,7 @@ internal static class Program
                 var result = TraceRun.After(RunScript(script, exe, temp), Console.WriteLine);
                 var (ok, log, goals) = (result.Ok, result.Log, result.Goals);
                 InventoryRun.After(result);
+                RecordRun.After(script, result);
                 goalResults.AddRange(goals);
                 anySections |= goals.Any(goal => goal.Goal.Named);
                 report.Append($"## {name}: {(ok ? "PASS" : "FAIL")}\n\n```\n{log}```\n\n{TraceRun.Report(result)}");
@@ -373,6 +380,12 @@ internal static class Program
             summary += "\n" + line;
         }
 
+        // WF-6.2: the run's sections entered into the workflow record, and the line that says so.
+        foreach (var line in RecordRun.End())
+        {
+            summary += "\n" + line;
+        }
+
         report.Append(summary).Append('\n');
         if (reportPath is not null)
         {
@@ -396,7 +409,7 @@ internal static class Program
         return Run.Stopped is not null ? CannotStart : failed.Count > 0 ? ScriptsFailed : inventory.Stale ? InventoryStale : 0;
     }
 
-    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
 
     /// <summary>
     /// The exit codes (docs/axKit/user-workflows.md WF-11.5): 0 every script passed and nothing is stale, 1 a script

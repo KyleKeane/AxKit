@@ -9,7 +9,8 @@ namespace AxAutomate.Tests;
 /// nothing that never enters it, and names every command a script's <c>do</c> step runs. That it is current is the
 /// window runs' check (WF-2.10), not this one. And the kept traces, <c>tests/traces</c> (WF-5.9): every
 /// <c># Stable</c> section has its kept section, no other trace is kept, and no script that may keep none is marked.
-/// That a kept trace is what a window says today is the window runs' check too (WF-5.5).
+/// That a kept trace is what a window says today is the window runs' check too (WF-5.5). And the workflow
+/// record, <c>docs/axKit/workflow-record.json</c> (WF-6): well formed, written as its writer writes it, no account path.
 /// </summary>
 public sealed class RepositoryWorkflowTests
 {
@@ -25,6 +26,34 @@ public sealed class RepositoryWorkflowTests
 
         // One order, one row a line: the file is exactly what the writer gives for what it holds, line ends aside.
         Assert.Equal(text, CommandInventory.Write(apps));
+    }
+
+    [Fact]
+    public void The_record_is_well_formed()
+    {
+        // WF-6, format 5.5. The file is made by the first recorded run; an entry no script has any more fails
+        // nothing here: the next recorded run drops it (WF-6.2).
+        var path = Path.Combine(Root(), "docs", "axKit", "workflow-record.json");
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
+        var text = Lf(File.ReadAllText(path));
+        var goals = WorkflowRecord.Read(text);
+        Assert.StartsWith("{\n  \"format\": \"" + WorkflowRecord.Format + "\",\n", text, StringComparison.Ordinal);
+        Assert.Equal(text, WorkflowRecord.Write(goals));
+
+        // Labels, titles, script paths, versions, commits and dates, nothing else (WF-6.4): no account path, no
+        // backslash, and every script a path of the repository with forward slashes.
+        Assert.Empty(Redaction.Find(text));
+        Assert.DoesNotContain('\\', text);
+        Assert.All(goals, goal => Assert.StartsWith("tests/", goal.Script, StringComparison.Ordinal));
+        var dates = goals.SelectMany(goal => goal.Tiers.Values)
+            .SelectMany(tier => tier.Passed is null ? new[] { tier.Last.Date } : new[] { tier.Last.Date, tier.Passed.Date });
+        Assert.All(dates, date => Assert.True(
+            DateTime.TryParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out _),
+            date));
     }
 
     [Fact]

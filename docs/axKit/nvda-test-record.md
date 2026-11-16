@@ -1,6 +1,6 @@
 # NVDA test record
 
-What was checked with NVDA, against which version, and with what result. When a bug comes up, this says when its step last passed, and so which changes since then to look at. The plans are each app's `docs/<app>/nvda-test-plan.md`; the files they use are made by `manual_tests/prepare.ps1` (`manual_tests/_main.md`).
+What was checked with NVDA, against which version, and with what result. When each goal last passed is in `docs/axKit/workflow-record.json`, written by the pass itself from 2026-11-16 on; this page keeps what a pass found, and for the passes before that day it says when a step last passed. The plans are each app's `docs/<app>/nvda-test-plan.md`; the files they use are made by `manual_tests/prepare.ps1` (`manual_tests/_main.md`).
 
 ## How to add a pass
 

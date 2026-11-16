@@ -1395,7 +1395,8 @@ November 2028; the move to the next LTS is those two files and a run of the test
 CLAUDE.md               the map of the bundle and its rules (short); each project has its own CLAUDE.md with its notes
 README.md, CONTRIBUTING.md, SECURITY.md, PRIVACY.md, GOVERNANCE.md, CODE_OF_CONDUCT.md, THIRD-PARTY-NOTICES.md   the repository's own pages (AX-4.5)
 docs/axKit/              SPEC.md (this), README.md (the zip's guide: install, the apps, uninstall), adding-an-app.md, plan.md,
-                        nvda-test-record.md (every NVDA pass, by step), axfile-split.md (the inventory of the split),
+                        nvda-test-record.md (what every NVDA pass found; when
+                        each goal last passed is in workflow-record.json), axfile-split.md (the inventory of the split),
                         review-2026-10-23.md (the review of the code and documents), inventory-2026-10-24.md (the copies and drift, and what is open) and longevity.md (the practices for the years ahead)
 docs/<app>/             SPEC.md, user-guide.md (embedded by the app's project), nvda-test-plan.md, for each app of section 3;
                         docs/axClaude also claude-screens.md, docs/axDown also tutorial.md

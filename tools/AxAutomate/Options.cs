@@ -3,7 +3,7 @@ namespace AxAutomate;
 /// <summary>
 /// The command line of a run, read once (docs/axKit/user-workflows.md section 6.4):
 /// <c>AxAutomate &lt;script or folder&gt; (--exe &lt;AxKit.exe&gt; | --build) [--report &lt;file.md&gt;] [--keep]
-/// [--nvda] [--repository &lt;folder&gt;] [--inventory check|write|rewrite|off] [--traces check|write|off]</c>.
+/// [--nvda] [--repository &lt;folder&gt;] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record]</c>.
 /// <paramref name="Repository"/> is the folder named by <c>--repository</c>, else the one above the program that holds
 /// <c>AxKit.sln</c> (<see cref="FindRepository"/>), else null: without one the command inventory and the traces are
 /// off. <paramref name="Inventory"/> is one of <see cref="Check"/> (the default), <see cref="Write"/>,
@@ -11,11 +11,12 @@ namespace AxAutomate;
 /// (the default), <see cref="Write"/> or <see cref="Off"/>, and always <see cref="Off"/> on the NVDA tier and without
 /// a repository: only the hidden desktop writes and compares kept traces (WF-5.4). <paramref name="TraceReport"/>:
 /// the report holds every script's trace, which is so when <c>--report</c> and <c>--traces check</c> or
-/// <c>write</c> are both given by name.
+/// <c>write</c> are both given by name. <paramref name="Record"/>: the run enters its sections
+/// into the workflow record (RecordRun, WF-6), which needs a repository.
 /// The command line's other form, <c>AxAutomate --reference [--check] [--repository &lt;folder&gt;]</c>, plays nothing
 /// and is read by <see cref="ReadReference"/>.
 /// </summary>
-internal sealed record RunOptions(string Target, string? Exe, bool Build, string? Report, bool Keep, bool Nvda, string? Repository, string Inventory, string Traces, bool TraceReport)
+internal sealed record RunOptions(string Target, string? Exe, bool Build, string? Report, bool Keep, bool Nvda, string? Repository, string Inventory, string Traces, bool TraceReport, bool Record)
 {
     public const string Check = "check";
     public const string Write = "write";
@@ -31,7 +32,6 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
     /// </summary>
     private static readonly Dictionary<string, string> NotBuilt = new(StringComparer.Ordinal)
     {
-        ["--record"] = "WP-B13",
         ["--convert"] = "WP-B15",
         ["--ai-tools"] = "WP-B16",
     };
@@ -60,6 +60,7 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
         var keep = false;
         var build = false;
         var nvda = false;
+        var record = false;
         var inventory = Check;
         string? traces = null;
         for (var i = 1; i < args.Count; i++)
@@ -82,6 +83,7 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
                 case "--report": report = args[++i]; break;
                 case "--keep": keep = true; break;
                 case "--nvda": nvda = true; break;
+                case "--record": record = true; break;
                 case "--repository": repository = args[++i]; break;
                 case "--inventory":
                     inventory = args[++i];
@@ -136,8 +138,13 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
         // Every script's trace goes into the report only when the traces were asked for by name: a traced script is
         // asked once more after each line, and a run that names no --traces plays its unmarked scripts as before.
         var asked = traces is Check or Write;
+        if (record && repository is null)
+        {
+            return (null, "--record writes the repository's docs/axKit/workflow-record.json, and this program is not in a repository: name it with --repository.");
+        }
+
         traces = nvda || repository is null ? Off : traces ?? Check;
-        return (new RunOptions(args[0], exe, build, report, keep, nvda, repository, inventory, traces, report is not null && asked && traces != Off), string.Empty);
+        return (new RunOptions(args[0], exe, build, report, keep, nvda, repository, inventory, traces, report is not null && asked && traces != Off, record), string.Empty);
     }
 
     /// <summary>
