@@ -15,7 +15,9 @@ namespace AxClaude.Core.Flow;
 /// prompt entry of the record; and at the screen's sign of work, whichever speaks first. The end mark closes it
 /// and a bell is awaited for <see cref="BellAfterEndMs"/>: with the bell the turn finished and Done is owed
 /// (EG-5.6), unless the user's Send now cut it; without the bell it was interrupted, or was a note that no turn
-/// stood behind, and nothing is said. A bell with no end mark before it is a question's bell, the window's to
+/// stood behind, and nothing is said. An interrupted turn stays ending for <see cref="DoneCapMs"/> after its end
+/// mark, as a turn the screen closed does: the part of the cut reply that was shown is drawn after the mark, and
+/// is still that turn's. A bell with no end mark before it is a question's bell, the window's to
 /// settle. Where the marks are missing the record and the screen stand in, and the core says no Done of its own:
 /// the window's settle after the bell says it, as before the core.
 ///
@@ -118,6 +120,9 @@ public sealed partial class SessionFlow
     private bool _doneConfirmed;
     private bool _doneLine;
 
+    /// <summary>A frame after the bell of the turn whose Done is owed added a visible line; it counts for Done once the screen no longer shows that turn at work.</summary>
+    private bool _doneAdded;
+
     // The state as last told, the generation, the model's epoch.
     private bool _working;
     private int _generation;
@@ -145,8 +150,8 @@ public sealed partial class SessionFlow
     public bool Working => _working;
 
     /// <summary>
-    /// A turn has ended and is not yet over: its bell is awaited, its Done is owed, or, closed by the screen alone,
-    /// its last rows may still come. A message sent now goes after that turn's reply (EG-6.4).
+    /// A turn has ended and is not yet over: its bell is awaited, its Done is owed, or, closed by the screen alone
+    /// or interrupted, its last rows may still come. A message sent now goes after that turn's reply (EG-6.4).
     /// </summary>
     public bool Ending => _phase == Phase.Closing || _doneTurn != 0 || _now < _lingerUntil;
 
@@ -460,6 +465,10 @@ public sealed partial class SessionFlow
         else
         {
             _health.TurnsInterrupted++;
+            // The part of a cut reply that was shown is drawn after the end mark, and its entry is read later
+            // still (measured: the row 30 after the mark, the entry 128 to 180): the turn stays ending for those
+            // rows, with no Done, as a turn the screen closed does.
+            _lingerUntil = _endAt + DoneCapMs;
         }
     }
 
@@ -499,6 +508,7 @@ public sealed partial class SessionFlow
         _doneBellAt = now;
         _doneConfirmed = confirmed;
         _doneLine = false;
+        _doneAdded = false;
     }
 
     private void Frame(FrameSeen frame, long now)
@@ -549,10 +559,22 @@ public sealed partial class SessionFlow
             Open(Opener.Screen, now);
         }
 
-        if (_doneTurn != 0 && frame.LineAdded)
+        if (_doneTurn != 0)
         {
             // A frame after the bell added a visible line: the last reply's rows, or the turn summary row.
-            _doneLine = true;
+            _doneAdded |= frame.LineAdded;
+
+            // It counts once the screen no longer shows the work of the turn that ended. A frame that still shows
+            // it was cut in the middle of the redraw that ends the turn: the reply's row in it is not final yet,
+            // and the screen proposes it only with the next frame (measured in the timelines: the second of the
+            // plain turns and the tool question's turn, 32 and 31 later). Done said on the cut frame closed the
+            // turn in front of the reply, which was then dropped unspoken. Where a message waits or a turn is open
+            // again the work shown is the next turn's, and the frame counts as it is.
+            var nextTurn = _phase == Phase.Open || (_record && _queued > 0) || _waitingShown > 0;
+            if (_doneAdded && (frame.Work != WorkSeen.Working || nextTurn))
+            {
+                _doneLine = true;
+            }
         }
 
         GateFrame(frame, now);
@@ -671,11 +693,12 @@ public sealed partial class SessionFlow
     // ---- Done (EG-5.6) ----
 
     /// <summary>
-    /// Done for a turn that closed with its bell, at the first moment when no proposed line is pending in the gate,
-    /// the end is confirmed (the stop event, the record's turn end, or <see cref="DoneNoRecordMs"/> after the bell)
-    /// and a frame after the bell added a visible line; or <see cref="DoneCapMs"/> after the bell, which
-    /// <see cref="Due"/> sees to. It is tried last in a call, so lines released by the same input are spoken before
-    /// it. No generation drops it (EG-5.7).
+    /// Done for a turn that closed with its bell, at the first moment when the gate holds nothing back (no proposed
+    /// line is pending, no reply is half drawn, and the record holds no reply whose head the screen has still to
+    /// propose), the end is confirmed (the stop event, the record's turn end, or <see cref="DoneNoRecordMs"/> after
+    /// the bell) and a frame after the bell added a visible line and the screen shows that turn's work no more; or
+    /// <see cref="DoneCapMs"/> after the bell, which <see cref="Due"/> sees to. It is tried last in a call, so lines
+    /// released by the same input are spoken before it. No generation drops it (EG-5.7).
     /// </summary>
     private void TryDone(long now)
     {

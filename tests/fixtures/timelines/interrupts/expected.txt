@@ -1,0 +1,16 @@
+1733 follow
+3641 state working
+5823 state idle
+5951 speak lines=1 letters=24
+5951 bound head=6
+15927 state working
+17726 state idle
+17864 speak lines=1 letters=24
+17864 bound head=14
+27842 state working
+31783 state idle
+42020 state working
+42036 state idle
+42581 state working
+42581 done turn=4 after=545
+42781 state idle

@@ -94,6 +94,9 @@ public class SessionFlowTests
     private static FrameSeen Frame(WorkSeen work, bool added = false, int waiting = 0, int epoch = 1, bool asking = false, params Proposed[] proposed) =>
         new(epoch, work, asking, added, SpeechOn: true, waiting, proposed);
 
+    /// <summary>A frame while replies are not spoken: the gate then holds nothing and awaits no reply's head, so Done goes by its end's confirmation and the frame alone.</summary>
+    private static FrameSeen Unspoken(WorkSeen work, bool added = false) => new(1, work, false, added, SpeechOn: false, 0, []);
+
     private static Proposed Head(int id, string text) => new(new Line(id, LineKind.ClaudeReply, text), id, ProposedKind.Head);
 
     private static Proposed Row(int id, int head, string text) => new(new Line(id, LineKind.Plain, text), head, ProposedKind.Row);
@@ -171,13 +174,16 @@ public class SessionFlowTests
         // the prompt's entry 6182, the stop event 7988, C and D 8010, the bell 8011, the reply's rows 8086, the
         // reply's entry and the record's turn end 8121. Events and entries share no clock with the console's
         // frames, so the core accepts every order of them (EG-4.8), with a source missing too (EG-11.2).
+        // Replies are not spoken here: Done goes by its end's confirmation and the frame that adds the reply's
+        // rows. With replies spoken Done also follows the reply's speech, which SpeechGateTests plays in the same
+        // orders (A_plain_turns_reply_is_spoken_once_and_before_Done_in_every_order_of_its_sources).
         (long, FlowInput)[] marks = [(5845, A), (8010, C), (8010, D)];
         (long, FlowInput)[] screen =
         [
             (5649, new UserActed(UserAction.Sent, "replywiththesinglewordok")),
-            (5846, Frame(WorkSeen.Working)),
+            (5846, Unspoken(WorkSeen.Working)),
             (8011, Bell),
-            (8086, Frame(WorkSeen.Idle, added: true)),
+            (8086, Unspoken(WorkSeen.Idle, added: true)),
         ];
         static (long, FlowInput)[] Events(long shift) => [(7988 + shift, Stop)];
         static (long, FlowInput)[] Entries(long shift) =>
@@ -233,8 +239,14 @@ public class SessionFlowTests
         Assert.Empty(s.At(5952, Entry(EntryKind.ReplyText, cut: true)));
         Assert.Empty(s.At(5952, Entry(EntryKind.Interrupt)));
 
-        // A tick at 150 after D: the bell's time is over.
+        // A tick at 150 after D: the bell's time is over. The turn stays ending, with no Done owed, until
+        // DoneCapMs after D: the shown part of the cut reply is drawn after the end mark and its entry is read
+        // later still, and both are still the turn's (the interrupts timeline: the row 30, the entry 128 after D).
         Assert.Empty(s.At(5974, Tick));
+        Assert.True(s.Flow.Ending);
+        Assert.False(s.Flow.Working);
+        Assert.Equal([5974, 6424], s.Wakes);
+        Assert.Empty(s.At(6424, Tick));
         Assert.False(s.Flow.Ending);
         Assert.Empty(s.At(6600, Tick));
         Assert.DoesNotContain(s.Said, line => line.Contains("done"));
@@ -329,12 +341,13 @@ public class SessionFlowTests
         Assert.Empty(s.At(7499, Frame(WorkSeen.Working, added: true)));
         Assert.True(s.Flow.Working);
 
-        // The queued message's own turn finishes, and that end is said.
+        // The queued message's own turn finishes, and that end is said, behind its reply: with a record, Done
+        // waits for the head of the reply the stop event named, which the frame of the reply's rows proposes.
         s.At(9994, Stop);
         Assert.Equal(["state idle"], s.At(10010, D));
         s.At(10011, Bell);
-        Assert.Equal(["done turn=2 after=29"], s.At(10040, Frame(WorkSeen.Idle, added: true)));
-        Assert.Equal(["5085 state working", "10010 state idle", "10040 done turn=2 after=29"], s.Said);
+        Assert.Equal(["speak lines=1 letters=2", "done turn=2 after=29"], s.At(10040, Frame(WorkSeen.Idle, added: true, proposed: Head(8, "claude: ok"))));
+        Assert.Equal(["5085 state working", "10010 state idle", "10040 speak lines=1 letters=2", "10040 done turn=2 after=29"], s.Said);
         Assert.Equal(1, s.Health.TurnsCut);
         Assert.Equal(1, s.Health.TurnsFinished);
 
@@ -561,8 +574,14 @@ public class SessionFlowTests
         s.At(1990, Stop);
         Assert.Equal(["state idle"], s.At(2000, D));
         s.At(2001, Bell);
-        Assert.Equal(["done turn=1 after=49"], s.At(2050, Frame(WorkSeen.Working, added: true)));
+
+        // The frame that adds the reply's rows still shows the spinner: it was cut in the middle of the redraw
+        // that ends the turn, and Done waits for the frame that shows the turn's work gone (EG-5.6; measured in
+        // the timelines, where Done on the cut frame came in front of the reply's own row).
+        Assert.Empty(s.At(2050, Frame(WorkSeen.Working, added: true)));
         Assert.Empty(s.At(2100, Frame(WorkSeen.Working)));
+        Assert.False(s.Flow.Working);
+        Assert.Equal(["done turn=1 after=117"], s.At(2118, Frame(WorkSeen.Idle)));
         Assert.Empty(s.At(2399, Frame(WorkSeen.Working)));
         Assert.False(s.Flow.Working);
 
@@ -621,13 +640,16 @@ public class SessionFlowTests
         note.At(14241, A);
         note.At(14242, C);
         note.At(14242, D);
-        note.At(14285, Frame(WorkSeen.Idle, added: true));
+        note.At(14285, Frame(WorkSeen.Idle, added: true, proposed: Head(31, "claude: done")));
         Assert.Empty(note.At(14392, Tick));
         Assert.Empty(note.At(14401, new EntryRead(EntryKind.Prompt, "u9", "tasknotification", SelfStarted: true)));
         Assert.Empty(note.At(20000, Tick));
         Assert.False(note.Flow.Working || note.Flow.Ending);
         Assert.Equal(
-            ["12838 state working", "14152 state idle", "14241 state working", "14242 state idle", "14285 done turn=1 after=133"],
+            [
+                "12838 state working", "14152 state idle", "14241 state working", "14242 state idle",
+                "14285 speak lines=1 letters=4", "14285 done turn=1 after=133",
+            ],
             note.Said);
     }
 
@@ -814,8 +836,9 @@ public class SessionFlowTests
         Assert.True(s.Flow.Ending);
         Assert.Empty(s.At(12446, Bell));
 
-        // Done is said for the turn that finished, also when a queued turn follows at once (EG-D-14).
-        Assert.Equal(["done turn=1 after=6"], s.At(12452, Frame(WorkSeen.Working, added: true, waiting: 1)));
+        // Done is said for the turn that finished, also when a queued turn follows at once (EG-D-14), behind the
+        // reply the stop event named. The frame still shows work, the waiting message's: it counts as it is.
+        Assert.Equal(["speak lines=1 letters=2", "done turn=1 after=6"], s.At(12452, Frame(WorkSeen.Working, added: true, waiting: 1, proposed: Head(40, "claude: ok"))));
         Assert.Empty(s.At(12496, A));
         Assert.Empty(s.At(12551, Entry(EntryKind.ReplyText)));
         Assert.Empty(s.At(12551, Entry(EntryKind.Dequeued)));
@@ -830,7 +853,7 @@ public class SessionFlowTests
         Assert.Equal(["state idle"], s.At(13409, D));
         s.At(13409, Bell);
         Assert.Equal(["done turn=2 after=24"], s.At(13433, Frame(WorkSeen.Idle, added: true)));
-        Assert.Equal(["5085 state working", "12452 done turn=1 after=6", "13409 state idle", "13433 done turn=2 after=24"], s.Said);
+        Assert.Equal(["5085 state working", "12452 speak lines=1 letters=2", "12452 done turn=1 after=6", "13409 state idle", "13433 done turn=2 after=24"], s.Said);
 
         // Without a record the screen's hint row says that a message waits; and when no start mark follows within
         // the 150, the state is idle then.

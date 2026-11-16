@@ -1,0 +1,18 @@
+8683 follow
+10092 state working
+17916 background tasks=1
+17931 state idle
+17985 speak lines=1 letters=7
+17985 done turn=1 after=53
+18032 bound head=8
+23964 state working
+25395 background tasks=0
+25408 state idle
+25453 speak lines=1 letters=38
+25453 done turn=2 after=43
+25519 bound head=16
+40725 state working
+44253 state idle
+44286 speak lines=1 letters=121
+44286 done turn=3 after=32
+44332 bound head=25

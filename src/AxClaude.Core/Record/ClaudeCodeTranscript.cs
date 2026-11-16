@@ -50,6 +50,13 @@ public static partial class ClaudeCodeTranscript
     private const string IsCompactSummaryField = "isCompactSummary";
     private const string IsSidechainField = "isSidechain";
     private const string IsAbortedField = "isAbortedMidStream";
+
+    /// <summary>
+    /// A user entry written for the conversation's record alone, with no turn behind it: the note Claude Code keeps
+    /// of a background task's or agent's hand-back after that hand-back's own turn has ended (EG 4.1, "A hand-back
+    /// note with no turn"; measured 159 after the note's end mark, with the source <c>system</c>).
+    /// </summary>
+    private const string QueueOnlyField = "queueTranscriptOnly";
     private const string TimestampField = "timestamp";
     private const string SubtypeField = "subtype";
     private const string DurationField = "durationMs";
@@ -315,6 +322,7 @@ public static partial class ClaudeCodeTranscript
         public bool IsCompactSummary;
         public bool IsSidechain;
         public bool IsAborted;
+        public bool QueueOnly;
         public Subtype Subtype;
         public Operation Operation;
         public long DurationMs;
@@ -412,6 +420,10 @@ public static partial class ClaudeCodeTranscript
             else if (reader.ValueTextEquals(IsAbortedField))
             {
                 found.IsAborted = IsTrue(ref reader);
+            }
+            else if (reader.ValueTextEquals(QueueOnlyField))
+            {
+                found.QueueOnly = IsTrue(ref reader);
             }
             else if (reader.ValueTextEquals(SubtypeField))
             {
@@ -566,7 +578,9 @@ public static partial class ClaudeCodeTranscript
     /// its own (<c>isMeta</c>) is a Note; an array of blocks is a tool's result, an interrupt or Other; a text is a
     /// Note when it starts with one of Claude Code's tags, an interrupt, Other when it starts with another tag, and
     /// otherwise the user's prompt with its text. A Note whose source is <c>system</c> opened a turn Claude Code
-    /// started itself: it is a Prompt of that origin, without text.
+    /// started itself: it is a Prompt of that origin, without text. Not an entry written for the record alone
+    /// (<c>queueTranscriptOnly</c>): it names the source <c>system</c> too and has no turn behind it, so it is a
+    /// Note whatever else it says, and never a Prompt: a turn opened for it would have nothing to close it.
     /// </summary>
     private static RecordEntry UserEntry(ReadOnlySpan<byte> line, long offset, Found found, out RecordLine what)
     {
@@ -586,6 +600,11 @@ public static partial class ClaudeCodeTranscript
         if (found.IsCompactSummary)
         {
             return new(RecordKind.CompactSummary, id);
+        }
+
+        if (found.QueueOnly)
+        {
+            return new(RecordKind.Note, id, StringOrNull(line, found.PromptId), Origin: found.Origin);
         }
 
         if (found.IsMeta)

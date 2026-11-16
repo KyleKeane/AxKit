@@ -1,0 +1,24 @@
+4343 follow
+6300 state working
+8240 bell attention
+11932 state idle
+11967 speak lines=1 letters=5
+11967 done turn=1 after=34
+11980 bound head=8
+15228 state working
+17211 bell attention
+24300 state idle
+24321 speak lines=1 letters=7
+24321 done turn=2 after=21
+24385 bound head=24
+27579 state working
+30138 bell attention
+36064 state idle
+36101 speak lines=1 letters=17
+36101 done turn=3 after=36
+36147 bound head=29
+39549 state working
+39593 state idle
+40132 state working
+40132 done turn=4 after=538
+40332 state idle

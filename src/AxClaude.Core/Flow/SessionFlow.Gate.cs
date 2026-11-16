@@ -41,9 +41,13 @@ namespace AxClaude.Core.Flow;
 /// were released and its key goes on behind them. The last row of a long reply can come in a write of its own,
 /// shown 100 ms after the others (measured), when the turn's end is already confirmed; said then, Done would
 /// close the turn's window in front of that row. The rows are given up <see cref="GateCapMs"/> after the last one.
+/// Done waits a third time while the record holds a reply whose head the screen has not proposed yet, for
+/// <see cref="GateCapMs"/> after the record first showed it (<see cref="GateReplyAwaitedUntil"/>): the entry or the
+/// stop event can come before the reply's own row is proposed.
 ///
 /// What <c>SessionFlow.cs</c> gives: <c>InTurn</c>, <c>HasRecord</c>, the generation, the time of the input
-/// (<c>_now</c>), <c>Decide</c> and the list it fills, and the calls of the methods below. Every member of this
+/// (<c>_now</c>), whether a Done is owed (<c>_doneTurn</c>), <c>Decide</c> and the list it fills, and the calls of
+/// the methods below. Every member of this
 /// file is named Gate or _gate: the class is shared with two other files.
 /// </summary>
 public sealed partial class SessionFlow
@@ -63,12 +67,16 @@ public sealed partial class SessionFlow
     /// <summary>One reply as the record holds it: a reply text entry, or a stop event's last message until its entry arrives.</summary>
     private sealed class GateReply
     {
-        public GateReply(string id, string key, bool provisional)
+        public GateReply(string id, string key, bool provisional, long at)
         {
             Id = id;
             Key = key;
             Provisional = provisional;
+            At = at;
         }
+
+        /// <summary>When the record first showed it: its entry was read, or the stop event's last message stood in for it.</summary>
+        public readonly long At;
 
         /// <summary>The entry's id; empty while only a stop event's last message stands for the entry.</summary>
         public string Id;
@@ -160,29 +168,84 @@ public sealed partial class SessionFlow
     /// </summary>
     private bool GateRowsAwaited => _gateDrawn is { } reply && reply.Matched < reply.Key.Length && _now - _gateDrawnAt < GateCapMs;
 
+    /// <summary>Whether the last frame said that replies are spoken: only then does the screen propose a reply's head.</summary>
+    private bool _gateSpeechOn;
+
+    /// <summary>When the generation last rose: the head of a reply the record showed by then is awaited no more, as the rows of one are not.</summary>
+    private long _gateBumpedAt = Past;
+
     /// <summary>
-    /// A proposed line waits for the record, or a reply is half drawn: Done waits for both (EG-5.6, the first
-    /// condition), so that a reply's last rows are spoken before Done and not dropped behind it.
+    /// Until when the record holds a reply whose head the screen has not proposed yet: a reply with letters that no
+    /// head has taken and no prompt has closed, for <see cref="GateCapMs"/> after the record first showed it;
+    /// <see cref="Past"/> when there is none, or replies are not spoken. Its rows are still to be drawn, or are drawn
+    /// and not yet final. Measured (the timelines): the record's entry, or the stop event, came before the reply's
+    /// own row was proposed, and the frame between them added another line, the turn summary row (the compact
+    /// recording, second turn) or the reply's row while the screen still showed work (the tool question's turn);
+    /// Done was said on that frame and the reply was dropped behind it, unspoken. A reply the record showed before
+    /// the user moved on is not waited for: what he has moved on from holds nothing back (EG-5.7).
     /// </summary>
-    private bool GatePending => _gateLines.Count > 0 || GateRowsAwaited;
+    private long GateReplyAwaitedUntil
+    {
+        get
+        {
+            if (!_gateSpeechOn || !HasRecord)
+            {
+                return Past;
+            }
+
+            var until = Past;
+            foreach (var reply in _gateReplies)
+            {
+                if (!reply.Taken && reply.Key.Length > 0 && reply.At > _gateBumpedAt)
+                {
+                    var open = Math.Min(reply.At + GateCapMs, reply.ClosedAt);
+                    if (_now < open)
+                    {
+                        until = until == Past ? open : Math.Min(until, open);
+                    }
+                }
+            }
+
+            return until;
+        }
+    }
+
+    /// <summary>
+    /// A proposed line waits for the record, a reply is half drawn, or the record holds a reply whose head the
+    /// screen has not proposed yet: Done waits for all three (EG-5.6, the first condition), so that the last
+    /// reply's rows are spoken before Done and not dropped behind it.
+    /// </summary>
+    private bool GatePending => _gateLines.Count > 0 || GateRowsAwaited || GateReplyAwaitedUntil != Past;
 
     /// <summary>
     /// The earliest time the gate is due, for the core's one wake time; <see cref="Never"/> with nothing due. The
     /// pending lines stand in the order of their times, so the first one is the earliest: its cap with a record,
-    /// the end of its hold without one. Rows awaited are given up <see cref="GateCapMs"/> after the last one.
+    /// the end of its hold without one. Rows awaited are given up <see cref="GateCapMs"/> after the last one. A
+    /// reply whose head is awaited is due only while a Done waits for it: nothing else minds it.
     /// </summary>
     private long GateDue
     {
         get
         {
             var due = _gateLines.Count == 0 ? Never : _gateLines[0].At + (HasRecord ? GateCapMs : UnconfirmedHoldMs);
-            return GateRowsAwaited ? Math.Min(due, _gateDrawnAt + GateCapMs) : due;
+            if (GateRowsAwaited)
+            {
+                due = Math.Min(due, _gateDrawnAt + GateCapMs);
+            }
+
+            if (_doneTurn != 0 && GateReplyAwaitedUntil is var until && until != Past)
+            {
+                due = Math.Min(due, until);
+            }
+
+            return due;
         }
     }
 
     /// <summary>A frame's proposals: each is held, and all that is pending is tried; outside a turn they are dropped.</summary>
     private void GateFrame(FrameSeen frame, long now)
     {
+        _gateSpeechOn = frame.SpeechOn;
         if (!frame.SpeechOn && _gateLines.Count > 0)
         {
             // Replies are no longer spoken: what waited to be spoken is not wanted.
@@ -269,7 +332,7 @@ public sealed partial class SessionFlow
             }
         }
 
-        GateKeep(new GateReply("", key, provisional: true));
+        GateKeep(new GateReply("", key, provisional: true, now));
         GateTry(now);
     }
 
@@ -303,6 +366,7 @@ public sealed partial class SessionFlow
     {
         _health.GateStale += GateEmpty();
         _gateDrawn = null;
+        _gateBumpedAt = _now;
     }
 
     /// <summary>The conversation or the run started afresh: the pending lines, the heads and the reply records go (EG-4.9).</summary>
@@ -313,6 +377,7 @@ public sealed partial class SessionFlow
         _gateHeads.Clear();
         _gateDrawn = null;
         _gateSaid = null;
+        _gateSpeechOn = false;
     }
 
     /// <summary>Drops every pending line and says how many there were, for the caller's number.</summary>
@@ -392,7 +457,7 @@ public sealed partial class SessionFlow
 
         if (standIn is null)
         {
-            GateKeep(new GateReply(entry.Id, key, provisional: false));
+            GateKeep(new GateReply(entry.Id, key, provisional: false, now));
         }
         else
         {

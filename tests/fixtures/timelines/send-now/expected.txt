@@ -1,0 +1,13 @@
+4162 follow
+5215 state working
+7498 speak lines=1 letters=22
+7498 bound head=6
+10010 state idle
+10058 speak lines=1 letters=6
+10058 done turn=2 after=47
+10111 bound head=8
+19883 state working
+19917 state idle
+20518 done turn=3 after=600
+20598 state working
+20798 state idle

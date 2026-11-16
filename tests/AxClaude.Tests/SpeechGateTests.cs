@@ -610,6 +610,105 @@ public class SpeechGateTests
     }
 
     [Fact]
+    public void Done_waits_for_the_head_of_a_reply_the_record_holds()
+    {
+        // Measured (the compact recording, its second turn): the stop event 14 before C and D, the bell, the
+        // reply's entry 1 after the bell, the turn summary row in a frame of its own 20 after the bell, and the
+        // reply's own row 15 after that. The end is confirmed and a frame added a line when the summary row comes,
+        // but the record holds a reply whose head the screen has not proposed: Done waits for it and follows it.
+        static Session UntilTheReplysEntry()
+        {
+            var s = Turn();
+            s.At(11933, Stop("blue"));
+            s.At(11947, D);
+            s.At(11948, Bell);
+            Assert.Empty(s.At(11949, Reply("r2", "blue")));
+            return s;
+        }
+
+        var s = UntilTheReplysEntry();
+        Assert.Empty(s.At(11968, Frame(WorkSeen.Idle)));
+        Assert.True(s.Flow.Ending);
+        Assert.Equal(["speak lines=1 letters=4", "bound head=9", "done turn=1 after=35"], s.At(11983, Frame(WorkSeen.Idle, proposed: Head(9, "claude: blue"))));
+        Assert.False(s.Flow.Ending);
+
+        // The head never comes (its row stands where the screen proposes nothing): the wait is over GateCapMs after
+        // the record first showed the reply, here by the stop event, and Done is said then. A wake is asked for it.
+        var never = UntilTheReplysEntry();
+        never.At(11968, Frame(WorkSeen.Idle));
+        Assert.Equal(12433, never.Wakes[^1]);
+        Assert.Empty(never.At(12432, Tick));
+        Assert.Equal(["done turn=1 after=485"], never.At(12433, Tick));
+
+        // With replies not spoken the screen proposes no head, and Done waits for none.
+        var silent = UntilTheReplysEntry();
+        Assert.Equal(["done turn=1 after=20"], silent.At(11968, Frame(WorkSeen.Idle, speech: false)));
+
+        // He moved on while the head was awaited: what he has moved on from holds Done back no more.
+        var moved = UntilTheReplysEntry();
+        moved.At(11968, Frame(WorkSeen.Idle));
+        Assert.Equal(["done turn=1 after=52"], moved.At(12000, new UserActed(UserAction.Sent, "thenextmessage")));
+
+        // A reply without a letter is no head's to take, and holds nothing back.
+        var empty = Turn();
+        empty.At(11947, D);
+        empty.At(11948, Bell);
+        empty.At(11949, Reply("r3", "```\n```"));
+        empty.At(11949, new EntryRead(EntryKind.TurnEnd, "t1"));
+        Assert.Equal(["done turn=1 after=20"], empty.At(11968, Frame(WorkSeen.Idle)));
+    }
+
+    [Fact]
+    public void The_shown_part_of_an_interrupted_reply_is_released_after_the_bells_time()
+    {
+        // 4.1 "An interrupt (Escape)", as the interrupts recording has it: C and D with no bell 70 after the key,
+        // the shown part of the cut reply and Claude Code's own row under it 29 after the end mark, the cut entry
+        // 128 to 180 after it. The turn is closed at the end mark without its bell and stays ending, with no Done,
+        // for DoneCapMs after the mark: those rows are still the turn's (EG-5.2).
+        Proposed[] rows = [Head(6, "claude: The Last Light at Gannet Rock"), Row(7, 6, "Interrupted. What should Claude do instead?")];
+        var s = Turn();
+        s.At(5753, new UserActed(UserAction.Escaped));
+        s.At(5823, D);
+        Assert.Empty(s.At(5852, Frame(WorkSeen.Idle, proposed: rows)));
+
+        // The bell's time is over: no bell, an interrupt.
+        Assert.Empty(s.At(5973, Tick));
+        Assert.True(s.Flow.Ending);
+        Assert.False(s.Flow.Working);
+        Assert.Equal(2, s.Health.GatePending);
+
+        // The cut entry, 180 after the end mark: it confirms the head, which is released once.
+        var cut = new EntryRead(EntryKind.ReplyText, "cut", ClaudeCodeTranscript.ScreenKey("# The Last Light at Gannet Rock\n\nElias had kept the light for"), Cut: true);
+        Assert.Equal(["speak lines=1 letters=24", "bound head=6"], s.At(6003, cut));
+        Assert.Equal([6], s.Spoken());
+
+        // Claude Code's own row under it stands in no entry: dropped at its cap, never spoken. Then the turn is over.
+        Assert.Empty(s.At(6352, Tick));
+        Assert.Equal((1, 1, 0), (s.Health.GateReleased, s.Health.GateUnconfirmed, s.Health.GatePending));
+        Assert.True(s.Flow.Ending);
+        Assert.Empty(s.At(6423, Tick));
+        Assert.False(s.Flow.Ending);
+        Assert.DoesNotContain(s.Said, line => line.Contains("done"));
+        Assert.Equal(1, s.Health.TurnsInterrupted);
+
+        // Without a record the hold of 250 ends 279 after the end mark, past the bell's time: both rows are
+        // released, as before the core.
+        var open = Turn(record: false);
+        open.At(5823, D);
+        open.At(5852, Frame(WorkSeen.Idle, proposed: rows));
+        Assert.Empty(open.At(5973, Tick));
+        Assert.Equal(["speak lines=2 letters=60"], open.At(6102, Tick));
+
+        // A note that no turn stood behind (A, C and D at once, no bell) leaves nothing ending.
+        var note = new Session();
+        note.At(1000, A);
+        note.At(1001, D);
+        note.At(1151, Tick);
+        Assert.False(note.Flow.Ending);
+        Assert.Equal(0, note.Health.TurnsInterrupted);
+    }
+
+    [Fact]
     public void A_line_still_pending_when_Done_is_said_at_its_cap_is_dropped()
     {
         // The last rows come late, 399 after the bell, with no record: their hold would end 649 after the bell,

@@ -1,0 +1,12 @@
+3611 follow
+6599 state working
+6600 state idle
+7200 done turn=1 after=600
+8498 state working
+8540 state idle
+8743 follow
+15010 state working
+15099 state idle
+15709 done turn=3 after=600
+16070 state working
+16270 state idle

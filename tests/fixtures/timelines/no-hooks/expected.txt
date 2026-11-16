@@ -1,0 +1,20 @@
+5190 state working
+6689 state idle
+6880 speak lines=1 letters=2
+6880 bound head=5
+6880 done turn=1 after=190
+10007 state working
+11327 state idle
+11450 speak lines=1 letters=2
+11450 bound head=8
+11450 done turn=2 after=122
+14620 state working
+15833 state idle
+15964 speak lines=1 letters=2
+15964 bound head=21
+15964 done turn=3 after=130
+19457 state working
+19471 state idle
+19975 state working
+19975 done turn=4 after=504
+20175 state idle
