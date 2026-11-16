@@ -1,4 +1,5 @@
 using System.Text;
+using AxClaude.Core.Flow;
 using AxClaude.Core.Transcript;
 using AxKit.Forms;
 
@@ -129,6 +130,8 @@ internal sealed partial class MainForm
         Input.Visible = false;
         Area.Visible = !NoticeOpen;
         _wait = new Wait(signature, Shown: true, text);
+        // Something new is under the user's fingers: the core learns of it (MainForm.Flow.cs).
+        FlowQuestionShown();
         var actedBefore = _userActedAt;
         var question = (Area.CurrentItem.Length == 0 ? name : name + Stop(name) + Area.CurrentItem).TrimEnd(' ', '.');
         // After NVDA has taken the focus change, so that the question comes last: raised at once, it was cut off.
@@ -658,6 +661,8 @@ internal sealed partial class MainForm
 
         _screenNotice = Overlay.Shown;
         _wait = new Wait(signature, Shown: true, summary);
+        // A screen that only informs is shown as this notice, where another would be shown in the control area.
+        FlowQuestionShown();
         if (interrupt)
         {
             // As a question's: after NVDA has taken the focus, so that it comes last and cuts off what was read.
@@ -706,6 +711,7 @@ internal sealed partial class MainForm
         // A key that changes nothing draws no frame: the timer brings the screen back all the same.
         _attention.Stop();
         _attention.Start();
+        FlowActed(UserAction.ScreenKey);
     }
 
     /// <summary>
@@ -717,6 +723,7 @@ internal sealed partial class MainForm
         UserActedNow();
         Area.Hold(UserActionMs);
         Write(ClaudeCodeKeys.Escape);
+        FlowActed(UserAction.Escaped);
     }
 
     /// <summary>
@@ -734,6 +741,7 @@ internal sealed partial class MainForm
 
         TypeAnswer(key, enter: _model.PendingQuestion is not { KeyOnly: true });
         UserActedNow();
+        FlowActed(UserAction.Answered);
         Area.Hold(UserActionMs);
         if (_settings.SoundOnBell)
         {
@@ -841,6 +849,7 @@ internal sealed partial class MainForm
             Handled(question.Signature, mark: false);
             UserActedNow();
             Write(ClaudeCodeKeys.Escape);
+            FlowActed(UserAction.Escaped);
             return true;
         }
 

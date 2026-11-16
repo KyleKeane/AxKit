@@ -151,8 +151,15 @@ internal sealed partial class MainForm
             _settings.KeepFilesOutOfGit = v;
             KeepFilesOutOfGit();
         }, CommandMark.Act))); // Writes into the project repository's exclude file: act for the AI tools (R-04).
-        // What only a developer or a bug report needs (FR-12.3, FR-13.3, FR-9.2), in one place.
-        options.DropDownItems.Add(CreateDeveloperMenu(RecordItem));
+        // What only a developer or a bug report needs (FR-12.3, FR-13.3, FR-9.2), in one place. Since 2026-11-15 also
+        // where axClaude's events come from (docs/axClaude/events-and-grounding.md EG-9.1 to EG-9.3): the two sources
+        // that can be switched off, and their numbers on demand.
+        options.DropDownItems.Add(CreateDeveloperMenu(
+            RecordItem,
+            new ToolStripSeparator(),
+            Toggle("Events from Claude Code's &hooks", _settings.ClaudeHooks, SetClaudeHooks, CommandMark.Act), // Changes what Claude Code is started with: on, it starts "AxKit.exe hook" for the session's events.
+            Toggle("&Ground the conversation in Claude Code's session file", _settings.GroundInSessionFile, SetGroundInSessionFile, CommandMark.Act), // Decides whether a file of Claude Code's, the user's conversation, is read.
+            CommandPalette.Marked(new ToolStripMenuItem("Say the &event sources", null, (_, _) => SayEventSources()), CommandMark.Read)));
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Claude Code &resources",
         [

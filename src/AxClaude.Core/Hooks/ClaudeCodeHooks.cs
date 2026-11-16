@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using AxClaude.Core.Flow;
 
 namespace AxClaude.Core.Hooks;
 
@@ -41,6 +42,12 @@ public static partial class ClaudeCodeHooks
     public const string SourceResume = "resume";
     public const string SourceClear = "clear";
     public const string SourceCompact = "compact";
+
+    // The source of a session that --fork-session made, as events-and-grounding.md EG-3.2 names it; not seen in a recording.
+    private const string SourceFork = "fork";
+
+    // A listed task's status while it runs (M13 6 and 7); a task of any other status no longer runs.
+    private const string TaskRunning = "running";
 
     /// <summary>Claude Code's option that loads one more settings file for a session (EG-2.3).</summary>
     public const string SettingsOption = "--settings";
@@ -105,6 +112,27 @@ public static partial class ClaudeCodeHooks
     /// </summary>
     public static bool Supports(string? versionLine) =>
         VersionOf(versionLine) is { } version && version >= VersionOf(TableVersion)!;
+
+    /// <summary>
+    /// Why a session was named, as the neutral word the core takes (events-and-grounding.md section 6.4), from
+    /// SessionStart's <c>source</c>: Claude Code's words stay here, and what feeds the core (<c>FlowFeed</c>) holds
+    /// none of them. A word not known, or none, is <see cref="SessionSource.Other"/>.
+    /// </summary>
+    public static SessionSource SourceOf(string? source) => source switch
+    {
+        SourceStartup => SessionSource.Startup,
+        SourceResume => SessionSource.Resume,
+        SourceClear => SessionSource.Clear,
+        SourceCompact => SessionSource.Compact,
+        SourceFork => SessionSource.Fork,
+        _ => SessionSource.Other,
+    };
+
+    /// <summary>
+    /// Whether a task a Stop event listed still runs (EG-7.1): its status is Claude Code's word for running. The
+    /// event lists a task with whatever status it has, and one that has ended must not count as work in the background.
+    /// </summary>
+    public static bool IsRunning(ListedTask task) => task.Status == TaskRunning;
 
     private static readonly JsonSerializerOptions WriteOptions = new()
     {

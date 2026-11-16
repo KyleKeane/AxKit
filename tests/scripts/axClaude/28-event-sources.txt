@@ -1,0 +1,71 @@
+# Workflow: Hear where axClaude's events come from
+# axClaude, docs/axClaude/nvda-test-plan.md section 25 step 1 (docs/axClaude/events-and-grounding.md EG-9.1 to EG-9.3;
+# 2026-11-15): Options, Developer has Events from Claude Code's hooks and Ground the conversation in Claude Code's
+# session file, both on at first, and Say the event sources, which says on demand, in numbers and fixed words, where
+# the window's events come from: the marks of a turn in the console stream, the hooks, the session file, and whether
+# the core is in charge or in shadow. In this build the core computes beside the window and changes nothing that is
+# heard: "Done" still comes by the bell and the settle. Needs no Claude Code, no network and no model: a stand-in
+# batch file draws a turn as Claude Code does, one frame for each file the script makes in the project folder, with
+# the marks a turn has in the stream (OSC 133 A at its start; C, D and the bell at its end).
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir es
+# The stand-in: the escape character from cmd's own prompt; a mark is the escape character, ]133; and its letter,
+# ended by the escape character and a backslash, written without a line end; the bell is the character 7.
+file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait1\nif exist go1 goto frame1\nping -n 2 127.0.0.1 >nul\ngoto wait1\n:frame1\n<nul set /p "=%E%]133;A%E%\"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Say ok\necho Thinking…\necho auto mode on (shift+tab to cycle)  ·  esc to interrupt\n<nul set /p "=$%E%[?25h"\n:wait2\nif exist go2 goto frame2\nping -n 2 127.0.0.1 >nul\ngoto wait2\n:frame2\n<nul set /p "=%E%]133;C%E%\%E%]133;D%E%\\u0007"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Say ok\necho claude: ok\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\necho 0.0.0 (stand-in)
+
+start claude {temp}\es --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+# The two switches and the command are in Options, Developer; both switches are on.
+expect commands Events from Claude Code's hooks, Options, Developer, checked
+expect commands Ground the conversation in Claude Code's session file, Options, Developer, checked
+expect commands Say the event sources, Options, Developer
+# Before a turn: no mark yet; no hooks are passed and no session file is followed in this build; the core in shadow.
+menu Say the event sources
+expect said ! Events. Marks: 0. Hooks: not passed. Session file: not found. Core: in shadow.
+
+# A turn: the start mark and a working frame; then the two end marks, the bell and the reply's frame. "Done" comes by
+# the old rule, the bell and the settle, and the status bar says working and ready as before.
+type Say ok
+keys enter
+expect said Sent
+file es\go1 x
+expect state Claude: working
+file es\go2 x
+expect said Done
+expect state Claude: ready
+# The three marks were counted, and the rest stands as it was.
+menu Say the event sources
+expect said ! Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+
+# Grounding off: said, and at once there is no record to look for; on again, as before.
+menu Ground the conversation in Claude Code's session file
+expect said ! Grounding in Claude Code's session file off
+refuse commands Ground the conversation in Claude Code's session file, Options, Developer, checked
+menu Say the event sources
+expect said ! Events. Marks: 3. Hooks: not passed. Session file: off. Core: in shadow.
+menu Ground the conversation in Claude Code's session file
+expect said ! Grounding in Claude Code's session file on
+expect commands Ground the conversation in Claude Code's session file, Options, Developer, checked
+menu Say the event sources
+expect said ! Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+
+# The hooks' switch off: said with when it applies, the next start of Claude; this run's words stay until then.
+menu Events from Claude Code's hooks
+expect said ! Events from Claude Code's hooks off, from the next start of Claude
+refuse commands Events from Claude Code's hooks, Options, Developer, checked
+menu Say the event sources
+expect said ! Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+# Claude started again (the stand-in waits for its first file again): the numbers begin afresh, and the hooks are off.
+run del es\go1 es\go2
+keys ctrl+shift+r
+expect state "notice":"Force Claude to restart?"
+keys enter
+expect said Restarting
+expect said Ready
+menu Say the event sources
+expect said ! Events. Marks: 0. Hooks: off. Session file: not found. Core: in shadow.
+# On again, for the start after this one.
+menu Events from Claude Code's hooks
+expect said ! Events from Claude Code's hooks on, from the next start of Claude
+expect commands Events from Claude Code's hooks, Options, Developer, checked

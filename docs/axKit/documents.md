@@ -24,6 +24,15 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `access-layers.md`: the programs under the access layers (Claude Code, Git, KeePassXC's tool, the shells, MCP
   servers), where each one's texts, options and protocol are written, what is read from it and how, what guards it,
   and what is still outside that one place (root `CLAUDE.md`, rule 12).
+- `docs/axClaude/events-and-grounding.md` (EG-n.m, EG-D-n): how axClaude learns what happens in a Claude Code session
+  and how the conversation is tied to Claude Code's own record; it amends `docs/axClaude/SPEC.md` (FR-15). Where each
+  piece is written: the marks of a turn, EG-1; Claude Code's events and the settings file with the hooks, EG-2 and
+  its sections 6.1 and 6.2 (code: `src/AxClaude.Core/Hooks`); the session file's reader, "the record", EG-3 and 6.3
+  (`src/AxClaude.Core/Record`); the core that takes all of it, EG-4 to EG-7, 6.4 and 6.5 (`src/AxClaude.Core/Flow`,
+  and `MainForm.Flow.cs` in the window); the build plan, section 10. The fixtures: `tests/fixtures/timelines` (a
+  recorded session's console stream, events and session file entries on one clock, made and masked by
+  `tools/ClaudeProbe`) and `tests/fixtures/records` (session file lines written by hand), both under the rules of
+  `tests/fixtures/README.md`.
 - `reports.md` (RP-n): the reports from every window (F4), encrypted on the user's computer and sent to GitHub as
   issues of the private reports repository; the envelope; axTask's action keys, and why its GitHub lists were
   removed.

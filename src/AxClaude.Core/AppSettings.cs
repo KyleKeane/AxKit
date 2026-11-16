@@ -103,6 +103,32 @@ public sealed class AppSettings : ConsoleSettings
     /// </summary>
     public bool KeepFilesOutOfGit { get; set; } = true;
 
+    /// <summary>
+    /// Events from Claude Code's hooks (docs/axClaude/events-and-grounding.md EG-9.1; Options, Developer): on, the
+    /// settings file with the hooks is passed at a start of Claude Code and the window serves their pipe. Off: neither,
+    /// from the next start, and the window works from the marks, the session file and the screen.
+    /// </summary>
+    public bool ClaudeHooks { get; set; } = true;
+
+    /// <summary>
+    /// Ground the conversation in Claude Code's session file (EG-9.2; Options, Developer): on, the window reads the
+    /// file Claude Code keeps for the session, in memory only. Off: no record, and nothing is bound, pinned or moved.
+    /// </summary>
+    public bool GroundInSessionFile { get; set; } = true;
+
+    /// <summary>The word of <see cref="EventCore"/> that puts every family of the core's decisions back in shadow.</summary>
+    public const string EventCoreShadow = "shadow";
+
+    /// <summary>The word of <see cref="EventCore"/> at first: the core is in charge of what the build puts it in charge of.</summary>
+    public const string EventCoreOn = "on";
+
+    /// <summary>
+    /// The way back without a rebuild (EG-9.6, EG-4.11), set in the file alone: <c>on</c>, the core is in charge of
+    /// the families of decisions the build gives it; <c>shadow</c>, the window's own code acts for all of them and the
+    /// core only computes beside it. Any other word is read as <c>on</c>.
+    /// </summary>
+    public string EventCore { get; set; } = EventCoreOn;
+
     public static string DefaultPath => AppPaths.SettingsFile("axClaude");
 
     /// <summary>Where axClaude 1.x kept the file, before the axKit bundle.</summary>
@@ -141,5 +167,6 @@ public sealed class AppSettings : ConsoleSettings
         SpeakReplies = false;
         BackgroundChordPauseSeconds = BackgroundChords.SanitizePauseSeconds(BackgroundChordPauseSeconds);
         SilentWords = SpeechFilter.Words(SpeechFilter.Text(SilentWords ?? []));
+        EventCore = string.Equals(EventCore?.Trim(), EventCoreShadow, StringComparison.OrdinalIgnoreCase) ? EventCoreShadow : EventCoreOn;
     }
 }

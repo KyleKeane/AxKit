@@ -167,7 +167,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxClaude` (the window), `src/AxClaude.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxClaude.Tests`.
 - Documents: `docs/axClaude/` (`claude-screens.md`, `events-and-grounding.md`, `nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axClaude/`, 29 scripts (their workflows are in `docs/axKit/workflows.md`).
+- Automated checks: `tests/scripts/axClaude/`, 30 scripts (their workflows are in `docs/axKit/workflows.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axClaude.ps1`, or `run.ps1 -App claude`.
 
 ### axMCP

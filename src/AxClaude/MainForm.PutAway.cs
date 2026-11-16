@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using AxClaude.Core.Flow;
 using AxKit.Core;
 using AxKit.Forms;
 using static AxKit.Forms.User32;
@@ -140,6 +141,8 @@ internal sealed partial class MainForm
         Sounds.Muted = true;
         _speechHold.Stop();
         _heldLines.Clear();
+        // The core drops what it held for speech, as the lines above drop this code's (MainForm.Flow.cs).
+        FlowActed(UserAction.PutAway);
         SaveSettings();
         Hide();
         _front.GiveBack(Handle);

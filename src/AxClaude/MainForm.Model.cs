@@ -16,6 +16,8 @@ internal sealed partial class MainForm
         // spoken before Claude is ready in this run: what it prints until then is the replayed conversation, there for
         // reading. The chimes hang on the send, the first reply line and the bell (FR-7.3), never on the working status.
         var arrival = _arrivals.Update(_model.Lines, _model.Working, _readyAnnounced ? _settings.ReplySpeech : ReplySpeechMode.None, _readyAnnounced && _settings.SpeakToolCalls);
+        // The same pass is the core's input (MainForm.Flow.cs): the core computes beside what follows here and changes nothing of it.
+        FlowFrame(arrival);
         if (_settings.ClickOnNewLine)
         {
             // A frame that brings a tool call gets the tool tick in place of the line's (FR-7.8).
@@ -117,6 +119,8 @@ internal sealed partial class MainForm
         _speechHold.Stop();
         if (_heldLines.Count > 0)
         {
+            // For the shadow's count (MainForm.Flow.cs): the lines this code speaks, before the user's silent words.
+            FlowSpoke(_heldLines.Count);
             var text = new StringBuilder();
             // FR-7.4a: a line holding one of the user's silent words stays in the conversation, unspoken, whole: its
             // row and the rows its wrapping joined to it.
@@ -163,6 +167,7 @@ internal sealed partial class MainForm
                     }
 
                     Signal(question: false);
+                    FlowSaidDone();
                     _bellPending = false;
                 }
 
@@ -214,6 +219,8 @@ internal sealed partial class MainForm
                 }
 
                 Signal(question: false);
+                // For the shadow's count (MainForm.Flow.cs): Done by this code's rule, the bell and the settle.
+                FlowSaidDone();
             }
         }
 

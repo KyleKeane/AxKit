@@ -1,4 +1,5 @@
 using AxClaude.Core;
+using AxClaude.Core.Flow;
 using AxClaude.Core.Pty;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
@@ -91,6 +92,8 @@ internal sealed partial class MainForm : ConsoleForm
         _model = model;
         _model.DetectScreens = settings.QuestionNotices;
         _model.ShowProgressRows = settings.ShowProgressRows;
+        // The core (docs/axClaude/events-and-grounding.md EG-4): everything that happens reaches it from here on (MainForm.Flow.cs).
+        _flow = new SessionFlow(_health);
         // FR-8.1: a remembered folder that is never a project (Windows' own, from a start before 2026-11-09) is not taken.
         _folder = options.Folder ?? (settings.LastProjectFolder is { } last && Directory.Exists(last) && !StartupOptions.IsNeverAProject(last) ? last : null);
         _model.ResponseStarted += () =>
@@ -118,7 +121,10 @@ internal sealed partial class MainForm : ConsoleForm
             _bellPending = true;
             _attention.Stop();
             _attention.Start();
+            // The bell and the marks are raised inside the model's Feed, as a frame's end is: in the stream's order (EG-1.5).
+            EnqueueFlow(new BellSeen());
         };
+        _model.Marked += letter => EnqueueFlow(FlowFeed.FromMark(letter));
         _attention.Tick += (_, _) =>
         {
             _attention.Stop();
@@ -133,6 +139,7 @@ internal sealed partial class MainForm : ConsoleForm
         };
         _speechHold.Tick += (_, _) => SpeakHeld();
         WireBackground();
+        WireFlow();
         Input.KeyDown += OnInputKeyDown;
         Transcript.LineChosen += QuoteLineInMessage;
         BuildMenus();
@@ -364,5 +371,7 @@ internal sealed partial class MainForm : ConsoleForm
         $"Project folder: {_folder ?? "(none)"}",
         $"Console size: {_model.Columns}x{_model.Rows}",
         $"Claude state: {StateLabel.Text}",
+        // Where the events come from (events-and-grounding.md EG-9.4): numbers and fixed words only.
+        .. FlowDiagnostics(),
     ];
 }

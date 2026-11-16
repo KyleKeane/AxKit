@@ -1,3 +1,4 @@
+using AxClaude.Core.Flow;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
 using AxKit.Forms;
@@ -148,7 +149,8 @@ internal sealed partial class MainForm
     /// <summary>
     /// Queues a message or a command for Claude: the text and Enter as separate writes, since text plus CR in one
     /// chunk is treated as a paste (SPEC.md 4.4); the lines of a multi-line message are joined with a lone newline
-    /// write, Claude's Ctrl+J.
+    /// write, Claude's Ctrl+J. Every message and command passes here (the field's, an offered command's line, a
+    /// command of the menus, the app's own /feedback), so here the core learns that one was sent (MainForm.Flow.cs).
     /// </summary>
     private void QueueWrites(string text)
     {
@@ -164,6 +166,7 @@ internal sealed partial class MainForm
 
         Enqueue(ClaudeCodeKeys.Enter, 50);
         StartWrites();
+        FlowSent(text);
     }
 
     /// <summary>How long a sent message may sit on Claude's prompt row before its Enter counts as dropped, and how often it is sent again.</summary>
@@ -211,6 +214,7 @@ internal sealed partial class MainForm
         Enqueue(ClaudeCodeKeys.CtrlX, 30);
         Enqueue(ClaudeCodeKeys.CtrlS, 30);
         StartWrites();
+        FlowActed(UserAction.SentNow);
 
         Announce("Sending now", false);
     }
@@ -221,5 +225,6 @@ internal sealed partial class MainForm
     {
         ClearWrites();
         Write(ClaudeCodeKeys.Escape);
+        FlowActed(UserAction.Escaped);
     }
 }

@@ -143,6 +143,8 @@ internal sealed partial class MainForm
         }
 
         _readyAnnounced = false;
+        // The core and the record's reader learn of the new run (MainForm.Flow.cs).
+        FlowProcessStarted();
         // The old Claude's background work is gone with it, unsignalled (FR-7.10).
         ForgetBackground();
         // Nothing of the old Claude's is handled: its question, if any, is gone with it.
@@ -288,11 +290,20 @@ internal sealed partial class MainForm
     /// <summary>Said when Claude's process ended; a window put away keeps it for its bringing up (<see cref="SaidWhilePutAway"/>).</summary>
     private const string StoppedText = "Claude stopped";
 
-    /// <summary>The attention timer stops with Claude; the console window stops the process, the writes and the control area.</summary>
+    /// <summary>
+    /// The attention timer stops with Claude; the console window stops the process, the writes and the control area.
+    /// The core and the record's reader are told here and nowhere else that a Claude that ran is gone: every end passes
+    /// here, and <see cref="OnProcessExited"/> only follows it (events-and-grounding.md EG-4.6).
+    /// </summary>
     protected override void StopProcess(bool terminateAtOnce = false)
     {
         _attention.Stop();
+        var ran = ProcessRunning;
         base.StopProcess(terminateAtOnce);
+        if (ran)
+        {
+            FlowProcessEnded();
+        }
     }
 
     /// <summary>

@@ -310,3 +310,24 @@ conversation, since the fault of 2026-11-15 came after hours:
    newest Input heading is the message just sent, and the line the caret was left on has nothing new around it.
 4. After a long session, Help, Diagnostics, Copy diagnostics (or the log file `axClaude.log`): no line "the view's
    text was not the transcript's". When there is one, send it with F4: it says which edit went wrong.
+
+## 25. Events and grounding (FR-15, docs/axClaude/events-and-grounding.md, 2026-11-15)
+
+How axClaude learns what Claude Code is doing (events-and-grounding.md EG-11.6, which calls this section 23; 23 and 24
+were taken). A step is added with each step of that document's build plan. While the core is in shadow, every
+section above is the check that nothing heard has changed.
+
+Script: `tests/scripts/axClaude/28-event-sources.txt` (a stand-in for Claude Code that also writes a turn's marks and
+the bell, no network).
+
+1. Options, Developer: Events from Claude Code's hooks and Ground the conversation in Claude Code's session file are
+   both checked. Say the event sources: "Events. Marks: 0. Hooks: not passed. Session file: not found. Core: in
+   shadow.", cutting off other speech. A message, and "Done" as before; the command again: "Marks: 3". Ground the
+   conversation in Claude Code's session file: "Grounding in Claude Code's session file off", and the command says
+   "Session file: off"; the item again: "... on", and "Session file: not found". Events from Claude Code's hooks:
+   "Events from Claude Code's hooks off, from the next start of Claude", and the command still says "Hooks: not
+   passed"; Ctrl+Shift+R, Enter, "Ready": "Marks: 0. Hooks: off."; the item again: "... on, from the next start of
+   Claude". By ear, in a real conversation with either switch on or off: nothing sounds different from before, the
+   command's Marks number grows by three with each turn, and Help, Diagnostics, Copy diagnostics holds the lines
+   that start "Event core:", "Marks:", "Hooks:", "Session file:", "Gate:" and "Grounding:", numbers and fixed words
+   only.
