@@ -163,6 +163,15 @@ page by hand; run its script and commit the page.
   registration places (`adding-an-app.md`).
 - `tools/make-icon.ps1`: the apps' icons from `Dispatch.Apps`. `tools/make-test-pictures.ps1`: the three test
   pictures of axHelp's screenshots in `tests/fixtures/pictures`, run only to change them.
+- `tools/session-start.ps1`: the start of a working session in one run, four checks in order, each by the script that
+  owns it: `git fetch origin` and whether `main` (and the branch in hand) lacks commits of `origin/main`;
+  `tools/sync-repos.ps1 -Status`; `tools/reports-check.ps1`; `tools/upstream.ps1`. One line each, starting with what
+  was checked and ending with "ok" or with what to do ("code: main is 2 commits behind origin/main: git pull
+  --ff-only"; "reports: 1 open report without an item: read it and write its item"), the owning script's own lines
+  indented under a line that asks for something. It commits and pushes nothing, here or beside, and says the same
+  when run twice; without the network it says so and compares with what was fetched last; a folder that is not
+  beside the repository is said and passed over; no path of the computer is printed. Exit code 0 when nothing is
+  asked, 1 otherwise.
 - `tools/sync-repos.ps1`: the two repositories beside this one on the maintainer's computer, `..\axkit-reports` (the
   clone of the reports repository) and `..\axkit-management` (the private axTask lists): fetched, the lists committed
   as one dated commit, pulled fast-forward, pushed, one line each, nothing forced. `-Status` only says where they

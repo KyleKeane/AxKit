@@ -17,6 +17,10 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   modularity rules.
 - `app-kit.md` (AK-n): the shape of an app's window and commands; one source for the menus, the palette and the AI
   tools (AK-2.5, AK-2.6).
+- `command-language.md` (CL-n): the commands as one language, stated from the code: what a command is, where an
+  action can come from (the key, the menu, the palette, a script's `do`, an AI tool), the table of who may run a
+  command of which mark and what the user hears (section 3), the path each origin takes, how a name finds a command,
+  the boundary of what axKit promises, and what is not built yet.
 - `item-apps.md` (IA-n): the shape axTask, axPass, axMCP and axAutomate share, the navigator and the detail pane.
 - `mcp.md` (MC-n): the AI tools, what an AI client may read and run in axKit's windows and how the user stays in
   control.

@@ -212,7 +212,8 @@ the user's windows, setting or pairing. The mode is described in `docs/axKit/aut
 The first part of the user's request of 2026-11-10, "everything in axkit should be very clearly operational via mcp
 servers so that you can perform any and all operations yourself directly": one tool that runs a named command of a
 window, so that every menu command of every app is reachable at once. Typed tools for data without a window (an
-axTask item made in a folder) are the next part.
+axTask item made in a folder) are the next part. The rules of MC-7 are read together with those of the key, the
+menu, the palette and the automated checks in the table of `command-language.md` section 3.
 
 - MC-7.1 **The tool** `axkit_window_run`: a window's id from `axkit_windows`, a command's label as
   `axkit_window_commands` lists it (and the palette shows it; the letter's marker, the trailing dots and case do not

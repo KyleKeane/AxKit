@@ -72,6 +72,8 @@ After the kit:
   (`docs/axKit/window-commands.json`) and the workflow reference for people are written from as those are built
   (WF-2.6, WF-7); `choose` runs one entry by exactly its name and its menus, as the AI tools' run finds it
   (`CommandPalette.Find`).
+  Where the rules are read together, who may run a command of which mark and what the user hears, is the table of
+  `command-language.md` section 3.
 - AK-2.6 **The exceptions**, all here and nowhere else, each for security:
   1. axPass and axClip answer no AI tool (MC-4.3): secrets and the clipboard.
   2. An act entry asks the user before an AI tool runs it, naming its target (MC-7.3).
