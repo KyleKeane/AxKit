@@ -37,6 +37,8 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 
 - `automation.md`: the automated checks of the windows, the runner, and the NVDA pass.
 - `workflows.md` (generated): every workflow the automated checks keep working, by app.
+- `user-workflows.md` (WF-n): workflows as one source for the checks, the how-to, axHelp and the AI tools: goals, the
+  step `do`, the command inventory, the workflow record.
 - `upstream.json`: the outside programs (Claude Code, Git, KeePassXC's tool, the shells), each with the version the
   checks last passed with; read and written by `tools/upstream.ps1` (`automation.md`, "When an outside program
   changes").
