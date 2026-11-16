@@ -368,28 +368,33 @@ Each origin, by function and file, down to the code that runs the command.
 
 ## 10. Differences found between the specifications and the code
 
-Written as the code behaves; no code was changed for this document.
+Written as the code behaves; no code was changed for this document. All seven were settled on 2026-11-16 by
+correcting the documents to the code, which decided; each line says where. Nothing is open here.
 
-1. **`mcp.md` MC-5.1 says a change or act run is announced and "Reads are silent".** In code every command an AI tool
-   runs is said, a read or an open as well ("Claude ran Say the status"): `AxKitForm.RunForMcp` asks no mark. MC-7.5
-   agrees with the code; MC-5.1 is the earlier design's text.
-2. **`app-kit.md` AK-2.6, exception 3, names three items withheld from the AI tools** (Let AI tools read and open
-   axKit, Let AI tools run commands, Forget). The code withholds the whole AI tools submenu, so also Add axKit to
-   Claude Code and Read the log, and AI help's Use Claude in axKit and Folders Claude may read
-   (`AxKitForm.CreateMcpMenu`, `AxKitForm.Ai.cs`). `mcp.md` MC-7.1 names AI help's two; no document names the other
-   two.
-3. **`app-kit.md` AK-2.5 says "nothing is added to one reader alone".** The palette holds axFile's folder entries,
-   which no menu, no AI tool and no listing has (`FileForm.PaletteEntries`). `SPEC.md` AX-10.5 specifies them, so the
-   two specifications disagree and the code follows AX-10.5; AK-2.6 does not list it among the exceptions.
-4. **`app-kit.md` AK-2.5 names `CommandPalette.Commands` as the one function every reader goes through.** In code it
+1. **`mcp.md` MC-5.1 said a change or act run is announced and "Reads are silent".** In code every command an AI tool
+   runs is said, a read or an open as well ("Claude ran Say the status"): `AxKitForm.RunForMcp` asks no mark. Settled
+   2026-11-16: MC-5.1 now says what MC-7.5 and the code do, and names the first design's text as not built.
+2. **`app-kit.md` AK-2.6, exception 3, named three items withheld from the AI tools.** The code withholds the whole
+   AI tools submenu, so also Add axKit to Claude Code and Read the log, and AI help's Use Claude in axKit and Folders
+   Claude may read (`AxKitForm.CreateMcpMenu`, `AxKitForm.Ai.cs`). Settled 2026-11-16: exception 3 names the submenu
+   with its five items and AI help's two.
+3. **`app-kit.md` AK-2.5 said "nothing is added to one reader alone".** The palette holds axFile's folder entries,
+   which no menu, no AI tool and no listing has (`FileForm.PaletteEntries`), as `SPEC.md` AX-10.5 specifies. Settled
+   2026-11-16: AK-2.6 lists the palette's own entries among the exceptions that are not for security, and AK-2.5
+   points there.
+4. **`app-kit.md` AK-2.5 named `CommandPalette.Commands` as the one function every reader goes through.** In code it
    is `CommandPalette.Entries`; `Commands` is the palette's lines made from it, which the channel's `menu` and
-   `commands` also read.
+   `commands` also read. Settled 2026-11-16: AK-2.5 names `Entries` and says what `Commands` is.
 5. **The recent actions hold commands of the list alone.** The comment on `AxKitForm.Recent` and `reports.md` RP-4.1
-   speak of "every command run by key, menu or palette"; a setting, a recent file or any other item not made from a
-   `Command` record is not written there when chosen (CL-4.8, 3).
+   spoke of every command run by key, menu or palette; a setting, a recent file or any other item not made from a
+   `Command` record is not written there when chosen (CL-4.8, 3). Settled 2026-11-16: the comment and RP-4.1 say what
+   is recorded.
 6. **The key test holds every origin but the channel's `choose` and `menu`.** `user-workflows.md` WF-2.5 has the `do`
    step wait there, which it does by the listing; `AxKitForm.Choose` itself asks nothing about the key test. Only a
-   test run can send it.
+   test run can send it. Settled 2026-11-16 by stating it as it is: `SPEC.md` AX-8.12 and WF-2.5 say that the
+   channel's two steps are not held and why no user or AI tool can reach them. That one run function should hold
+   the condition for every origin stays proposed in CL-4.8 and section 8.
 7. **`mcp.md` sections 3 to 6 (MC-2 to MC-5) describe the first design**: scopes per client and app, one tool per
-   command, "Allow for this session", folders granted to a client, reads counted in the status bar. None of it is
-   built; MC-6.7 and MC-7.7 say so, and sections 7 and 8 there are what the code does.
+   command, "Allow for this session", folders granted to a client, reads counted in the status bar. Settled
+   2026-11-16: each of the four sections says at its head that it is the first design, not built as written, and
+   points to MC-6 and MC-7 for what the code does.

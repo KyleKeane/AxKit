@@ -805,6 +805,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     user is trying keys, and nothing is carried out meanwhile. Commands run once the user has ended it."
     (`KeyTest.AiToolsRefusal`). Test a key itself is marked act, so an AI tool that asks for it asks the user first:
     it takes the window's keys until the user ends it.
+  - **What the key test does not hold: the automation channel's `choose` and `menu`.** They click a menu item by
+    its name and send no key, and `AxKitForm.Choose` asks nothing about the key test, so a command sent that way
+    would run while the test is on. Only a test run has the channel (its own secret, docs/axKit/automation.md); a
+    script's `do` step never sends it there, since the listing gives no key that acts (docs/axKit/user-workflows.md
+    WF-2.5), and a test fails on a `do` step inside a key test (R-60). No user and no AI tool can reach it. Stated as
+    it is on 2026-11-16 (docs/axKit/command-language.md CL-4.8).
   - In every F1 text (`BundleHelp.KeyTestLine`) and in the bundle's guide ("If a key does nothing").
 - AX-8.13 **Edit mode and navigation mode: Ctrl+Space, the mode key** (the user's decision of 2026-11-15: "the magic
   key"; he is not sure it is the right key and will take his own confusion in use as the sign to change it, so it is

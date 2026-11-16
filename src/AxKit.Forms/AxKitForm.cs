@@ -814,8 +814,10 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// The window's last actions for a report (docs/axKit/reports.md RP-4.1): every command run by key, menu or palette,
-    /// what the window said, and the notices it showed; twenty at most.
+    /// The window's last actions for a report (docs/axKit/reports.md RP-4.1): every command of the window's command
+    /// list that was run (<c>Run</c>, whichever way it was asked for), what the window said, and the notices it
+    /// showed; twenty at most. A menu item that is not made from a <see cref="Command"/> (a setting, a recent file, a
+    /// window of the Window menu) is not written here when chosen; what it says is.
     /// </summary>
     protected internal RecentActions Recent { get; } = new();
 

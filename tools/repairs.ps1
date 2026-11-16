@@ -15,6 +15,11 @@ it). It holds the principles the repairs follow, each with an id, and the items,
     principle  the id of the principle it broke
     fix        what is done about it
     verify     how the fix is checked: the test, the script, the command
+    owed       only where a done fix is tested in code and still owed a check no test makes: a list of short
+               sentences, each starting with its kind and a colon, "hearing: " (to be heard with NVDA), "live: " (a
+               real outside program or situation) or "window: " (a window check on the hidden desktop).
+               tools\owed.ps1 writes docs\axKit\owed.md from them; an entry is taken out when the thing was heard or
+               tried, and verify then says how
     status     open, done, deferred (with why in note), declined (with why in note)
     commit     the commit that fixed it, when done
     note       anything else
@@ -24,7 +29,8 @@ page is written by this script and never by hand. test.ps1 and build.yml run -Ch
 never part. A done item stays, as the record of what was repaired and how it was checked.
 
 Every run, with or without -Check, first holds the list to its fields: an id used once, a known severity, status and
-principle, a done item with its verify, a deferred or declined one with its note, and a commit that is named being a
+principle, a done item with its verify, a deferred or declined one with its note, what is owed only on a done item
+and each with its kind, and a commit that is named being a
 commit of this repository (looked up where the whole history is, so not on CI's shallow checkout).
 #>
 [CmdletBinding()]
@@ -53,6 +59,11 @@ foreach ($item in $data.items) {
     if ($principleIds -notcontains $item.principle) { $problems += "$($item.id): principle '$($item.principle)' is not in the list" }
     if ($item.status -eq 'done' -and -not $item.verify) { $problems += "$($item.id): done without saying how it was checked (verify)" }
     if (($item.status -eq 'deferred' -or $item.status -eq 'declined') -and -not $item.note) { $problems += "$($item.id): $($item.status) without saying why (note)" }
+    # What is owed (tools\owed.ps1 reads it): only of a fix that is done, each entry with its kind in front.
+    if ($item.owed -and $item.status -ne 'done') { $problems += "$($item.id): owed on an item that is not done" }
+    foreach ($entry in @($item.owed)) {
+        if ($entry -and $entry -notmatch '^(hearing|live|window): \S') { $problems += "$($item.id): the owed entry '$entry' does not start with hearing: , live: or window: " }
+    }
     # A commit that is named is one this repository has: a mistyped one would send the reader of the record nowhere.
     if ($item.commit -and $history -and -not $knownCommits.ContainsKey($item.commit)) {
         # --quiet: nothing on the error stream, which Windows PowerShell would turn into an error under Stop.

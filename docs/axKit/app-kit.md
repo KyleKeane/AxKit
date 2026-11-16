@@ -59,11 +59,13 @@ After the kit:
   the command palette and the AI tools, with as few exceptions as possible, each one deliberate and for security).
   The menu bar is the one source of what a window can do: every command, every setting (a check item or a choice),
   and every list a menu fills as it opens (Open recent, Open windows, Recently closed). The palette, the AI tools'
-  `axkit_window_commands` and `axkit_window_run`, the F1 text and the tests all read it through one function, the
-  entries `CommandPalette.Commands` makes, each with its name, its menu path, its key, its checked state and its mark.
+  `axkit_window_commands` and `axkit_window_run`, the F1 text and the tests all read it through one function,
+  `CommandPalette.Entries`, whose entries each have their name, menu path, key, checked state and mark
+  (`CommandPalette.Commands` is the palette's lines made from them, which the channel's `menu` and `commands` read).
   A command of the list keeps its own mark (AK-2.1); an item that is not one takes its kind's: a setting is change, a
   recent file or window is open, Recently closed is open. Nothing is added to one reader alone: a new action is a menu
-  item, and it is in all of them at once.
+  item, and it is in all of them at once. The one thing a single reader has is listed in AK-2.6: the palette's own
+  entries of a window (axFile's folder entries, `SPEC.md` AX-10.5).
   One more reader since 2026-11-15 (`user-workflows.md` WF-2.3 to WF-2.5): the automation channel's `commands data`,
   the window's commands as data (`AxKitForm.CommandRows`, `AxKit.Core/CommandListing`). It reads the same entries,
   each with its key as a value in the words a script presses (`BundleKeys.Chord`, `AxKit.Core/KeyChord`), adds the
@@ -77,12 +79,19 @@ After the kit:
 - AK-2.6 **The exceptions**, all here and nowhere else, each for security:
   1. axPass and axClip answer no AI tool (MC-4.3): secrets and the clipboard.
   2. An act entry asks the user before an AI tool runs it, naming its target (MC-7.3).
-  3. The AI tools' own switches (Let AI tools read and open axKit, Let AI tools run commands, Forget) are never
-     offered to an AI tool: a client never widens its own access.
+  3. The AI tools' own menu and AI help's two settings are never offered to an AI tool: a client never widens its
+     own access. Withheld are the whole submenu axKit, AI tools, with everything in it (Let AI tools read and open
+     axKit, Let AI tools run commands, Add axKit to Claude Code, Forget AI tools, Read the log;
+     `AxKitForm.CreateMcpMenu`), and of AI help Use Claude in axKit and Folders Claude may read (`AxKitForm.Ai.cs`;
+     `mcp.md` MC-7.1).
   4. A setting that an AI tool changes is said in the window like any command it runs (MC-5.1); the consent and
      access settings of AX-11 are under exception 3.
   Not security, and kept as few as possible: axFile's Drives and the Open with submenus are filled only when opened,
   since reading them can stall on a network drive or the shell's handlers; the menus themselves and their keys work.
+  And one reader has entries the others have not: the command palette holds a window's own entries after the
+  commands (`AxKitForm.PaletteEntries`, `SPEC.md` AX-10.5), which today are axFile's, the shown folder's files and
+  folders (`FileForm.PaletteEntries`). They are no commands: no menu, no AI tool and no listing has them, and Enter
+  on one does what Enter on it in the folder list does.
   Built 2026-11-13: the palette reads every menu, the recent lists included; `axkit_window_commands` and
   `axkit_window_run` read the same entries (`AxKitForm.ToolEntries`); exception 3 is `CommandPalette.NeverForAiTools`
   on the menus it covers; marks are given where items are made (`CommandPalette.Marked`: a command's through `Add`,

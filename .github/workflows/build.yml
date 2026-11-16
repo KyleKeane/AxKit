@@ -40,6 +40,10 @@ jobs:
       - name: Keys are mapped
         # docs/axKit/key-map.md is what the command inventory, BundleKeys and the proposed key families give.
         run: ./tools/key-map.ps1 -Check
+      - name: What is owed is listed
+        # docs/axKit/owed.md is what the cases, the repairs and the NVDA test record's Owed sections give: everything
+        # tested in code and not yet heard or tried for real.
+        run: ./tools/owed.ps1 -Check
       - name: The outside programs' record is well formed
         # docs/axKit/upstream.json has its fields and names checks that exist; the installed versions are never
         # compared here, this computer has its own (docs/axKit/automation.md, When an outside program changes).

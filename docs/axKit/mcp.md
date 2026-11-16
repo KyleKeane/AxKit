@@ -34,6 +34,10 @@ and the command lists of `app-kit.md`, which are what the tools are made from. R
 
 ## 3. Pairing and authentication
 
+**The first design (2026-10-24), not built as written.** This section is kept as the record of what was first
+specified. What the code does is section 7 (MC-6, read and open) and section 8 (MC-7, running a window's command);
+where they differ from this section, they hold (MC-6.7 and MC-7.7 name what was left out).
+
 - MC-2.1 **Off by default.** axKit menu → AI tools → "Let AI tools read and open axKit" in every window (MC-6.1), one setting for the
   bundle. Off: the broker answers every call with "axKit's MCP access is off" and nothing else.
 - MC-2.2 **Pairing**: the first call of a client that is not paired shows a notice in the axKit window in front (or
@@ -45,6 +49,10 @@ and the command lists of `app-kit.md`, which are what the tools are made from. R
   Let AI tools read and open axKit, unchecked in the axKit menu's AI tools, turns the setting off at once and ends every connection.
 
 ## 4. Tools and what each may do
+
+**The first design (2026-10-24), not built as written.** This section is kept as the record of what was first
+specified. What the code does is section 7 (MC-6, read and open) and section 8 (MC-7, running a window's command);
+where they differ from this section, they hold (MC-6.7 and MC-7.7 name what was left out).
 
 - MC-3.1 **Scopes**, granted per client and per app at pairing and changed in "MCP clients…":
   - **read**: list the apps and their open windows; a window's title, status and focused item; a list's items; a
@@ -68,6 +76,10 @@ and the command lists of `app-kit.md`, which are what the tools are made from. R
 
 ## 5. What is never exposed
 
+**The first design (2026-10-24), not built as written.** This section is kept as the record of what was first
+specified. What the code does is section 7 (MC-6, read and open) and section 8 (MC-7, running a window's command);
+where they differ from this section, they hold (MC-6.7 and MC-7.7 name what was left out).
+
 - MC-4.1 axPass: no tool reads or copies a password, the master password, a key file, notes, a generated password or a
   field marked secret. With the read scope a client may know whether a database is open and locked, and the titles of
   entries in the group shown, only after a pairing that names axPass explicitly. No tool unlocks.
@@ -78,8 +90,15 @@ and the command lists of `app-kit.md`, which are what the tools are made from. R
 
 ## 6. Heard and recorded
 
-- MC-5.1 Every change or act tool run is announced in the window it acts on, as a user's command is, prefixed with the
-  client's name: "Claude Code: deleted notes.md". Reads are silent, counted in the status bar ("AI read 3 times").
+**The first design (2026-10-24), not built as written.** This section is kept as the record of what was first
+specified. What the code does is section 7 (MC-6, read and open) and section 8 (MC-7, running a window's command);
+where they differ from this section, they hold (MC-6.7 and MC-7.7 name what was left out).
+
+- MC-5.1 Every command an AI tool runs is said in the window it acts on, whatever its mark, a read or an open as well
+  as a change or an act: "Claude ran Say the status" (`AxKitForm.RunForMcp` asks no mark; MC-7.5 has the words).
+  Corrected on 2026-11-16 to what the code does: the first design had only a change or act run announced, as "Claude
+  Code: deleted notes.md", and reads silent, counted in the status bar ("AI read 3 times"); neither was built
+  (MC-6.7).
 - MC-5.2 The audit log, `%LOCALAPPDATA%\AxKit\mcp-audit.log`: the time, the client, the tool, a hash of the arguments
   and their kinds, the result, whether the user confirmed. axKit menu → AI tools → Read the log opens it in
   axPreview.

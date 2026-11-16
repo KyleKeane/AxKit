@@ -80,22 +80,11 @@ if ($named.Count -eq 0) {
     Refuse 'the message names no item.'
 }
 
-# The items: each file's Title, and the file.
-$items = @()
-foreach ($file in Get-ChildItem -LiteralPath $Lists -Filter *.json) {
-    if ($file.Name -eq 'list.json') { continue }
-    try {
-        $document = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json
-    } catch {
-        continue
-    }
-    $title = ($document.fields | Where-Object { $_.title -eq 'Title' } | Select-Object -First 1).value
-    if (-not $title) { $title = $file.BaseName }
-    $items += [pscustomobject]@{ Title = "$title"; File = $file.FullName; Document = $document }
-}
+# The items, and how words name one: tools\items.ps1, which tools\item.ps1 reads the same way.
+. (Join-Path $PSScriptRoot 'items.ps1')
+$items = @(Get-ListItems $Lists)
 
 $today = (Get-Date).ToString('yyyy-MM-dd')
-$utf8 = New-Object System.Text.UTF8Encoding($false)
 foreach ($one in $named) {
     if ($one.Words -match '^none\b[\s,:.-]*(.*)$') {
         if ($one.Done) { Refuse '"Item done: none" finishes nothing; write "Item: none, <the reason>".' }
@@ -104,9 +93,7 @@ foreach ($one in $named) {
     }
 
     $words = $one.Words.TrimEnd('.')
-    $found = @($items | Where-Object { $_.Title.IndexOf($words, [StringComparison]::OrdinalIgnoreCase) -ge 0 })
-    $exact = @($found | Where-Object { $_.Title -ieq $words })
-    if ($exact.Count -eq 1) { $found = $exact }
+    $found = @(Find-ListItems $items $words)
     if ($found.Count -eq 0) {
         Refuse "no item's title holds '$words'. Write the item first (rule 9), or correct the words."
     }
@@ -142,7 +129,7 @@ foreach ($one in $named) {
     }
     if ($changed) {
         $item.Document.fields = $fields.ToArray()
-        [System.IO.File]::WriteAllText($item.File, ($item.Document | ConvertTo-Json -Depth 10), $utf8)
+        Save-ListItem $item.File $item.Document
         Write-Host "Priorities list, marked ${what}: $($item.Title)"
     }
 }

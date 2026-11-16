@@ -16,7 +16,8 @@ Its head holds the format line and two closed lists, the things acted on and the
     words      where the words are constants in the code, their names as Type.Member (left out when there are none)
     proof      the test as Project/Class.Method, or the window script as tests/scripts/<app>/<file>: <title of the goal
                or check>; empty when nothing proves the case yet
-    owed       what would prove a case that has no proof (only then)
+    owed       what would prove a case that has no proof (only then). It starts with its kind, which tools\owed.ps1
+               reads for docs\axKit\owed.md: "a window script ...", "a run of a real ..." or "a test ..."
     source     the requirement or the repair the case comes from
     file       for a file of the settings folder that is not an app's own, its member of AppPaths (only then)
 

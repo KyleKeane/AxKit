@@ -49,7 +49,20 @@ points here. Each app's own commands are in its `CLAUDE.md`.
 - `tools/window-passes.ps1 [-Check]` says which apps' window code has a commit newer than the app's last recorded
   pass on the desktop tier (`workflow-record.json`). `release.ps1` and its rehearsal run it with `-Check` and refuse
   while it names an app; `test.ps1` does not run it, since during ordinary work the windows are ahead of their
-  record. It reads and asks git; it writes nothing.
+  record. It reads and asks git; it writes nothing. `-Run` does what its lines ask for: AxKit built once into a
+  scratch folder, then the scripts folder of each app it names run on the hidden desktop with `--record`, one line per
+  app (passed, or the failing scripts), last what is still named; `-Run -Only <app>, ...` runs the named apps, changed
+  or not. A script whose `# Needs:` line names Claude Code signed in, the network or GitHub is never run by it: such
+  an app is run script by script without them and its line says how many were left out. It refuses while `src` or
+  `tests` hold a change not committed, since a pass recorded over such work counts as changed again with the commit.
+  The record it changes stays in the working tree, to be committed. Exit codes: 0 passed, 1 a script failed, 2
+  refused or the build failed. `tools/window-run.ps1` holds the functions it shares with the next.
+- `tools/nightly.ps1`, for the maintainer to schedule (its header has the one `schtasks` line; the script makes no
+  task): the same run over every app, changed or not, with the same scripts left out. It writes a short dated report
+  to `%LOCALAPPDATA%\AxKit\logs\nightly.txt` (each app passed, or its failing scripts; no path of the computer) and
+  leaves the record's changes in the working tree only when the tree was clean before and every script passed;
+  otherwise it puts that one file back as it was, so a working session never finds changes it did not make. It never
+  commits or pushes.
 - `nvda-pass.ps1 [<app>]` runs the same scripts with NVDA listening, plus `tests/nvda-scripts`: the NVDA test plans as
   the assistant runs them. It takes the keyboard, so only after the user has stepped away: it does not start while
   the last key or mouse input is under 20 seconds old (it waits a minute for that), when NVDA is not running, or
@@ -95,7 +108,8 @@ page by hand; run its script and commit the page.
 - `tools/repairs.ps1` writes `repairs.md` from `repairs.json`: what an audit found and what became of each finding,
   with the principles the repairs follow. `-Open` prints what is open. A defect found is entered there, and its status
   changed in the same commit as its fix. Every run holds the list to its fields: a done finding says how it was
-  checked, a deferred or declined one why, and a commit that is named exists in the repository.
+  checked, a deferred or declined one why, and a commit that is named exists in the repository; a done finding that
+  is still owed a hearing or a live check says so in `owed`, each entry with its kind in front, for `tools/owed.ps1`.
 - `tools/apps-page.ps1` writes `apps.md`: the apps from `Dispatch.Apps`, each with its command and its folders.
   `tools/apps.ps1` is the reader the other scripts share.
 - `tools/cases.ps1` writes `cases.md` from `cases.json`, the table of how each unexpected situation is handled (SPEC
@@ -105,6 +119,10 @@ page by hand; run its script and commit the page.
   proposed `key-families.json`: every key, its scope and what it does in each app. Every run holds the families file
   to the inventory: a key named there as not fitting is a command the inventory has. Run it after the inventory is
   written again.
+- `tools/owed.ps1` writes `owed.md`: everything tested in code and not yet heard or tried for real, by kind (a
+  hearing with NVDA, a live check with a real outside program or situation, a window check on the hidden desktop, a
+  test in code), from the rows of `cases.json` that carry `owed`, the `owed` entries of `repairs.json` and the Owed
+  sections of `nvda-test-record.md`. An entry leaves when its source changes; then the script is run.
 - Each of these scripts takes `-Check`, which writes nothing and fails when its page is stale; `test.ps1` and the
   Build workflow run it.
 
@@ -184,6 +202,13 @@ page by hand; run its script and commit the page.
   message without such a line, or with words that name no item or several, is refused. Git runs it for every commit
   through the hook `tools/hooks/commit-msg`; where the lists are not beside the repository, every commit passes.
   `-Check` says what it would mark and writes nothing; `-Lists <folder>` names another list.
+- `tools/item.ps1`: an item of the priorities list written, noted and finished, in place of a script made up for the
+  occasion. `new -Title -App -Priority -Where -Notes` writes a new item with the list's own fields, its file named
+  from the title as axTask names it, and refuses a name that exists and a priority the list does not have; `note
+  -Name <words of the title> -Text` puts the text, dated today, in front of the item's Notes; `done -Name <words>`
+  checks its Done. The words must name exactly one item, as a commit message's (`tools/items.ps1` is the matching
+  both scripts use). One line says what was written, with the title and nothing else of the item. It never commits
+  or pushes; without the lists beside the repository it says so, exit code 1. `-Lists <folder>` names another list.
 - `tools/reports-check.ps1`: the reports on GitHub (the issues of `KyleKeane/AxKit-reports`) against the items of the
   priorities list (the root `CLAUDE.md`, rule 9). An item points at its reports in Where it is written with
   `KyleKeane/AxKit-reports issue 8` or `issues 8 and 9`, up to the next semicolon. One line per disagreement: "new" (an
