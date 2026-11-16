@@ -1463,25 +1463,25 @@ Starts with: Open axClaude with the folder es.
 
 You hear: Ready.
 1. Choose the menu item Say the event sources.
-    You hear: Events. Marks: 0. Hooks: not passed. Session file: not found. Core: in shadow.
+    You hear: Events. Marks: 0. Hooks: not passed, version. Session file: not found. Core: in shadow.
 2. Type: Say ok
 3. Press Enter.
     You hear: Sent.
     You hear: Done.
 4. Choose the menu item Say the event sources.
-    You hear: Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 5. Choose the menu item Ground the conversation in Claude Code's session file.
     You hear: Grounding in Claude Code's session file off.
 6. Choose the menu item Say the event sources.
-    You hear: Events. Marks: 3. Hooks: not passed. Session file: off. Core: in shadow.
+    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: off. Core: in shadow.
 7. Choose the menu item Ground the conversation in Claude Code's session file.
     You hear: Grounding in Claude Code's session file on.
 8. Choose the menu item Say the event sources.
-    You hear: Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 9. Choose the menu item Events from Claude Code's hooks.
     You hear: Events from Claude Code's hooks off, from the next start of Claude.
 10. Choose the menu item Say the event sources.
-    You hear: Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 11. Press Ctrl+Shift+R.
 12. Press Enter.
     You hear: Restarting.
@@ -1501,6 +1501,48 @@ You hear: Ready.
     You hear: Sent.
     You hear: Done.
 3. Press Ctrl+2.
+
+## See Claude Code's events arrive, without Claude Code
+
+Starts with: Open axClaude with the folder a.
+
+### Hear whether Claude Code's events reach the window
+
+1. Choose the menu item Say the event sources.
+    You hear: Hooks: on, 1 received.
+
+### Turn Claude Code's events off and on again
+
+1. Go to the other axClaude window.
+2. Choose the menu item Events from Claude Code's hooks.
+    You hear: Events from Claude Code's hooks off, from the next start of Claude.
+3. Press Ctrl+Shift+R.
+4. Press Enter.
+    You hear: Restarting.
+    You hear: Ready.
+5. Choose the menu item Say the event sources.
+    You hear: Hooks: off.
+6. Choose the menu item Events from Claude Code's hooks.
+    You hear: Events from Claude Code's hooks on, from the next start of Claude.
+7. Press Ctrl+Shift+R.
+8. Press Enter.
+    You hear: Restarting.
+    You hear: Ready.
+9. Choose the menu item Say the event sources.
+    You hear: Hooks: on, 1 received.
+
+## Start Claude Code with axClaude's hooks
+
+Starts with: Open axClaude with the folder hooked.
+
+### Hear that Claude Code's events arrived after a turn
+
+1. Type: Reply with the single word ok.
+2. Press Enter.
+    You hear: Sent.
+    You hear: Done.
+3. Choose the menu item Say the event sources.
+    You hear words such as: Hooks: on.
 
 ## See the session file followed, without Claude Code
 

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: a new option, Options, Developer, Events from Claude Code's hooks, off at first. With it on, Claude Code tells the window when a session starts, a turn stops, an agent starts or stops and a permission is asked, through a hook for that one session and a pipe on this computer; nothing is listened for and nothing leaves the computer (PRIVACY.md). Nothing you hear changes yet: the events feed the new core, which runs beside the window and does not decide anything yet.
 - axKit: the scripts of axProcess, axPass, axMCP, axAutomate and the AI tools name their goals and checks (88 goals, 66 checks), so the workflow pages show these apps as how-tos.
 - axKit: the automated checks of axCalc, axJSON, axGIT, axMedia and axPreview now name their goals and checks, so the workflow pages show those apps' tasks one by one.
 - For developers: the workflow pages are written to be heard. A window is named by its app ("Go to the axFile window."), a start leaves out the options that only serve the check, keys are named as on a keyboard (Page Down, NVDA+A), equal presses in a row are one line ("Press Tab 7 times."), typed text ends its line ("Type: apple"), words a script cut short read "You hear words such as: ...", and the commands every window shares stand once on docs/axKit/window-commands.md, under "In every window".

@@ -114,6 +114,14 @@ public static partial class ClaudeCodeHooks
         VersionOf(versionLine) is { } version && version >= VersionOf(TableVersion)!;
 
     /// <summary>
+    /// The first three numbers of what <c>claude --version</c> printed (<c>2.1.325</c> for <c>2.1.325 (Claude
+    /// Code)</c>), as the diagnostics name the installed Claude Code beside <see cref="TableVersion"/> (EG-9.4); empty
+    /// for no line or one without three numbers. The window asks here and never reads the line itself.
+    /// </summary>
+    public static string VersionNumbers(string? versionLine) =>
+        VersionOf(versionLine)?.ToString(3) ?? string.Empty;
+
+    /// <summary>
     /// Why a session was named, as the neutral word the core takes (events-and-grounding.md section 6.4), from
     /// SessionStart's <c>source</c>: Claude Code's words stay here, and what feeds the core (<c>FlowFeed</c>) holds
     /// none of them. A word not known, or none, is <see cref="SessionSource.Other"/>.

@@ -106,9 +106,9 @@ public sealed class AppSettings : ConsoleSettings
     /// <summary>
     /// Events from Claude Code's hooks (docs/axClaude/events-and-grounding.md EG-9.1; Options, Developer): on, the
     /// settings file with the hooks is passed at a start of Claude Code and the window serves their pipe. Off: neither,
-    /// from the next start, and the window works from the marks, the session file and the screen.
+    /// from the next start, and the window works from the marks, the session file and the screen. Off at first (EG-D-9 as amended on 2026-11-15): passing hooks changes how the user's Claude Code runs, so it is his to turn on.
     /// </summary>
-    public bool ClaudeHooks { get; set; } = true;
+    public bool ClaudeHooks { get; set; } = false;
 
     /// <summary>
     /// Ground the conversation in Claude Code's session file (EG-9.2; Options, Developer): on, the window reads the

@@ -1,0 +1,39 @@
+# Workflow: Start Claude Code with axClaude's hooks
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+# axClaude, docs/axClaude/nvda-test-plan.md section 25 (docs/axClaude/events-and-grounding.md EG-2.3, EG-2.4, EG-2.10,
+# EG-11.5; 2026-11-15): Claude Code itself, started with axKit's own settings file. The check for a new Claude Code
+# (tools/upstream.ps1 -Verify runs it with the others of this folder): an event name Claude Code no longer knows
+# stops its start with a "Settings Warning" question, and a change of how hooks are run shows as "none received".
+# A fresh folder, the trust answer, one turn; then the window says, on demand, that the hooks are on and events
+# were received, and the log holds the turn's stop event. The update check is off (GitHub's limit for unsigned
+# requests made it fail and log an ERROR in runs).
+file home\AxKit\axClaude.json {"checkForUpdates":false,"claudeHooks":true}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir hooked
+start claude {temp}\hooked -- --model haiku
+expect said trust
+wait 1500
+keys enter
+expect said Ready
+# Check: Claude Code takes the hooks' file without a settings warning
+# The file is on its line right after the screen reader option (as written for claude.exe, or with every argument in
+# quotes for npm's claude.cmd, a dot for each quote), and neither the window's state nor the conversation holds the
+# warning.
+run findstr /r /c:"--ax-screen-reader --settings" /c:"--ax-screen-reader. .--settings" home\AxKit\logs\axClaude.log
+refuse state Settings Warning
+keys ctrl+2
+refuse text Settings Warning
+keys ctrl+1
+# Goal: Hear that Claude Code's events arrived after a turn
+# One turn: "Done" as always. Then, on demand: the hooks are on and events were received, the session's start and
+# the turn's stop among them; the stop event is in the log with its time after the end mark.
+type Reply with the single word ok.
+keys enter
+expect said Sent
+expect said Done
+wait 3000
+menu Say the event sources
+expect said Hooks: on,
+refuse said none received
+run findstr /c:"Events: stop event" home\AxKit\logs\axClaude.log

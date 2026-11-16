@@ -112,6 +112,39 @@ All three are interface rows now, out of the conversation and never spoken (SPEC
 
 Not seen, and to be read off the recording before anything else is built on them: the row at 0 percent and whether it shows before the first step; a finished workflow's row and a failed one's (another word, a last frame at 100 percent, or the row simply gone); two workflows at once (one row each, as the agents have, or one row that counts them); the row without the warning (a workflow not large); where the prompt row and the cursor stand among these rows (the tests put the prompt under the live row; the cursor on the live row itself is allowed); whether the mode line ever counts workflows (`1 workflow` is assumed and counted like agents, never added to the rows); and whether the waiting row can name agents and workflows together.
 
+## The marks of a turn, and what hooks put on the screen
+
+Measured on 2026-11-15 with Claude Code 2.1.325 in screen reader mode; `events-and-grounding.md` section 4 has the whole table, with the times.
+
+The marks. Claude Code writes the shells' own marks of a turn into the console stream, OSC 133 with a letter, and the bell. They carry no text and draw nothing; `SessionModel.Marked` and `Bell` raise them in the stream's order.
+
+- A (`ESC ] 133 ; A ; redraw=0`): Claude took a prompt up, 14 to 62 ms after Enter at the idle prompt, or right after the bell of the turn before for a message that waited. Two messages that waited give one A.
+- C and D in one write, then the bell within 150 ms (measured: at most 53): a turn finished, or a command Claude Code handled itself (`/exit`, `/clear`, `/usage` at its Escape).
+- C and D and no bell: an interrupt (Escape), or a hand-back note with no turn behind it (` Agent "..." finished`: A, C and D within a millisecond).
+- C, D and the bell right after Send now (Ctrl+X Ctrl+S): the running reply was cut for the waiting message, and the next A opens its turn.
+- A bell with no D before it: a question from a tool.
+- At a turn's end the order is C and D, the bell, the reply's rows, the turn summary row; once in 16 turns the rows came 7 ms before the marks.
+
+The spinner's note while a hook runs. With a hook registered for a turn's end, the spinner row carries a note for a frame or two as the turn ends: `Pollinating…   ( running Stop hook )`, and with two hooks `( running Stop hooks… 0/2 )`, then `1/2`. It is the spinner row still, an interface row by the spinner's pattern, never in the conversation and never spoken. It comes in every turn for a hook Claude Code waits for, and in some turns for one it does not wait for, as axClaude's are: in one turn of two when it was tried.
+
+The rows a failed hook prints. A hook of axClaude's does not fail: `AxKit.exe hook` prints nothing and ends with code 0 whatever happens. Should rows like these stand in a conversation, a hook failed, axClaude's or one of the user's own. Seen with hooks whose receiver was gone (the reason is the transport's own text):
+
+```
+UserPromptSubmit hook error
+<the reason>
+PreToolUse:Read hook error
+<the reason>
+claude: alpha
+Ran 1 stop hook (ctrl+o to expand)
+Stop hook error: <the reason>
+Churned for 3s · done 4:22 PM
+Stop hook error occurred · ctrl+o to see
+```
+
+The last row stayed under the input row to the session's end. The model takes each for a plain line of the conversation today; none is a pattern of `ClaudeCodeTexts`, and none becomes one before a recording shows them. A hook on PreCompact or PostCompact, which axClaude does not register for this reason, prints a row after a compaction with the hook's whole command line: `PreCompact [<the command line>] completed successfully`.
+
+The settings warning. An event name in a settings file that this Claude Code does not know stops its start, after the trust answer, with a question: the title `Settings Warning`, the file's path, `hooks.<name>: Unknown hook event "<name>" was ignored. Valid events: ...` with every name it knows, `The values listed above were skipped; the rest of the file is in effect.`, then `1. Continue`, `2. Fix with Claude` and `3. Exit and fix manually` over `Select with numbers [1-3]. Then Enter to submit:`. It is a list of answers like any other and shows in the control area. axClaude passes its hooks' file only to a Claude Code at least as new as the events it names (`events-and-grounding.md` EG-2.4), so the question does not come from that file; the script `tests/scripts/axClaude/31-hooks-live.txt` fails when it does.
+
 ## The feedback surveys
 
 Now and then Claude Code asks how the session is going, above its prompt, with the cursor on the bare `$` row (recorded with 2.1.323 in the `survey` fixture, forced with the environment variable `CLAUDE_FORCE_DISPLAY_SURVEY=1`):

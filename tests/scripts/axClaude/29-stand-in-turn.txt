@@ -5,9 +5,10 @@
 # scenario beside the script's claude.cmd: a frame at the prompt and the session's start event; at the file go1 the
 # mark A, a working frame and the prompt's entry in the session file; the Stop event, the marks C and D and the bell;
 # the reply's frame, the reply's entry and the turn's end in the session file, which lies under the run's own folder,
-# never the user's. Its events reach a hook only when Claude Code is given a settings file, which the window does not
-# pass yet: here they start nothing. Speak replies is all lines, so the reply is said. The working frame stays 1.5 s,
-# so that the state can be read while it shows.
+# never the user's. Its events reach a hook only when Claude Code is given a settings file: this stand-in says it is
+# version 2.1.325, so the window passes it the hooks' file and the two events arrive (30-hooks-stand-in.txt checks
+# them); what is heard is the same with them and without. Speak replies is all lines, so the reply is said. The
+# working frame stays 1.5 s, so that the state can be read while it shows.
 file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st

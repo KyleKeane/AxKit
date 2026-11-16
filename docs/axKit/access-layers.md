@@ -38,6 +38,35 @@ What every layer shares:
 - Still outside the table: the key sequences sent to Claude Code (`ScreenReader` for a hint row's keys, the window's
   menus), and the session presets of the window, which name command line options. They are few and sit next to the
   commands that send them. The F1 text names Claude's labels for the user and is allowed by name in the test.
+- Two more places since 2026-11-15, for what the screen cannot say (`docs/axClaude/events-and-grounding.md`):
+  `src/AxClaude.Core/Hooks/ClaudeCodeHooks.cs`, the events of Claude Code's hooks, and
+  `src/AxClaude.Core/Record/ClaudeCodeTranscript.cs`, the session file Claude Code keeps for a conversation.
+- What is read from the hooks and how, while the user has Options, Developer, Events from Claude Code's hooks turned on (off at first): eight kinds of events, the table `ClaudeCodeHooks.Events` with the Claude Code
+  version each was verified with. The window passes axKit's own settings file with each start (`--settings`,
+  `ClaudeCodeHooks.SettingsText`), only to a Claude Code at least as new as the table (`Supports`), since an event
+  name Claude Code does not know stops its start with a question. Claude Code starts `AxKit.exe hook` for an event
+  and writes the event as JSON to its standard input; the verb (`HookRelay`) passes the bytes unread through the
+  window's pipe (`HookFrame`; the window's end is `HookChannel` in `src/AxClaude/MainForm.Hooks.cs`), and
+  `ClaudeCodeHooks.Parse` reads the event's name and the few fields of that kind, nothing else, down to the neutral
+  `HookEvent`. Claude Code does not wait for these hooks, but for the one of the session's end, so an event reaches
+  the window a few hundred milliseconds after the moment it reports, after the turn's marks in the console stream.
+- What is read from the session file and how: its lines, one JSON object each, in file order, in memory only.
+  `ClaudeCodeTranscript` knows where the file lies (`ProjectsFolders`, `IsSessionFile`), reads a line down to the
+  neutral `RecordEntry` by its type, before any text of a kind it does not need becomes a string (`Parse`), and makes
+  a reply's key as the screen would show it (`ScreenKey`).
+- What guards the two: the timeline fixtures under `tests/fixtures/timelines` (the console stream, the events and the
+  session file's entries of scratch sessions on one clock, made through the whitelist of `tools/ClaudeProbe`) with
+  the replayer that feeds them through the window's own code, and the entries under `tests/fixtures/records`;
+  `ClaudeCodeHooksTests` and `ClaudeCodeTranscriptTests`; `ClaudeCodePlacesTests`, which fails when an event name or
+  a field name of the session file stands in a string outside the two places; and the script
+  `tests/scripts/axClaude/31-hooks-live.txt`, which starts the installed Claude Code with the hooks' file and fails on
+  a "Settings Warning" or when no event arrives (`tools/upstream.ps1 -Verify` runs it; `30-hooks-stand-in.txt` checks
+  the window's side without Claude Code).
+- Neutral, with no word of Claude Code's: `HookFrame`, `HookRelay`, `HookEvent`, `HookChannel`, `RecordEntry`,
+  `RecordTail`, `RecordFinder`, and the core that takes both as plain records (`SessionFlow`, `FlowFeed`,
+  `SourceHealth`). A second agent program supplies a place of its own for its events and one for its record, mapped
+  to the same records, or nothing where it has none; the neutral pieces move to a shared project on that second use,
+  unchanged, one for each commit (rule 4).
 
 ## axGIT: Git
 

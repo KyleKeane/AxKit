@@ -1,13 +1,13 @@
 # Workflow: Hear where axClaude's events come from
 # axClaude, docs/axClaude/nvda-test-plan.md section 25 step 1 (docs/axClaude/events-and-grounding.md EG-9.1 to EG-9.3;
 # 2026-11-15): Options, Developer has Events from Claude Code's hooks and Ground the conversation in Claude Code's
-# session file, both on at first, and Say the event sources, which says on demand, in numbers and fixed words, where
+# session file (the first off at first and turned on by this run's settings, the second on), and Say the event sources, which says on demand, in numbers and fixed words, where
 # the window's events come from: the marks of a turn in the console stream, the hooks, the session file, and whether
 # the core is in charge or in shadow. In this build the core computes beside the window and changes nothing that is
 # heard: "Done" still comes by the bell and the settle. Needs no Claude Code, no network and no model: a stand-in
 # batch file draws a turn as Claude Code does, one frame for each file the script makes in the project folder, with
 # the marks a turn has in the stream (OSC 133 A at its start; C, D and the bell at its end).
-file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\axClaude.json {"checkForUpdates":false,"claudeHooks":true}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir es
 # The stand-in: the escape character from cmd's own prompt; a mark is the escape character, ]133; and its letter,
@@ -20,9 +20,10 @@ expect said Ready
 expect commands Events from Claude Code's hooks, Options, Developer, checked
 expect commands Ground the conversation in Claude Code's session file, Options, Developer, checked
 expect commands Say the event sources, Options, Developer
-# Before a turn: no mark yet; no hooks are passed and no session file is followed in this build; the core in shadow.
+# Before a turn: no mark yet; the hooks' file is not passed, since the stand-in says it is version 0.0.0, older than
+# the events' table (EG-2.4; 30-hooks-stand-in.txt has a stand-in that gets it); no session file; the core in shadow.
 menu Say the event sources
-expect said ! Events. Marks: 0. Hooks: not passed. Session file: not found. Core: in shadow.
+expect said ! Events. Marks: 0. Hooks: not passed, version. Session file: not found. Core: in shadow.
 
 # A turn: the start mark and a working frame; then the two end marks, the bell and the reply's frame. "Done" comes by
 # the old rule, the bell and the settle, and the status bar says working and ready as before.
@@ -36,26 +37,26 @@ expect said Done
 expect state Claude: ready
 # The three marks were counted, and the rest stands as it was.
 menu Say the event sources
-expect said ! Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 
 # Grounding off: said, and at once there is no record to look for; on again, as before.
 menu Ground the conversation in Claude Code's session file
 expect said ! Grounding in Claude Code's session file off
 refuse commands Ground the conversation in Claude Code's session file, Options, Developer, checked
 menu Say the event sources
-expect said ! Events. Marks: 3. Hooks: not passed. Session file: off. Core: in shadow.
+expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: off. Core: in shadow.
 menu Ground the conversation in Claude Code's session file
 expect said ! Grounding in Claude Code's session file on
 expect commands Ground the conversation in Claude Code's session file, Options, Developer, checked
 menu Say the event sources
-expect said ! Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 
 # The hooks' switch off: said with when it applies, the next start of Claude; this run's words stay until then.
 menu Events from Claude Code's hooks
 expect said ! Events from Claude Code's hooks off, from the next start of Claude
 refuse commands Events from Claude Code's hooks, Options, Developer, checked
 menu Say the event sources
-expect said ! Events. Marks: 3. Hooks: not passed. Session file: not found. Core: in shadow.
+expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 # Claude started again (the stand-in waits for its first file again): the numbers begin afresh, and the hooks are off.
 run del es\go1 es\go2
 keys ctrl+shift+r

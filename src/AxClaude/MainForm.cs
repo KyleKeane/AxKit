@@ -140,6 +140,8 @@ internal sealed partial class MainForm : ConsoleForm
         _speechHold.Tick += (_, _) => SpeakHeld();
         WireBackground();
         WireFlow();
+        // Claude Code's hooks (MainForm.Hooks.cs): its version is asked here already, so that the start does not wait for it.
+        WireHooks();
         Input.KeyDown += OnInputKeyDown;
         Transcript.LineChosen += QuoteLineInMessage;
         BuildMenus();

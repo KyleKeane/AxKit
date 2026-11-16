@@ -71,8 +71,9 @@ internal sealed partial class MainForm
     {
         if (!ProcessRunning)
         {
-            // The text stays in the field: nothing was sent, and it is wanted again after a restart.
-            Announce("Claude stopped. Ctrl+Shift+R starts it", true);
+            // The text stays in the field: nothing was sent, and it is wanted again after a restart; or in a moment,
+            // while a start still waits for Claude Code's version (events-and-grounding.md EG-2.4).
+            Announce(_hookVersionWait ? "Claude is starting" : "Claude stopped. Ctrl+Shift+R starts it", true);
             return;
         }
 

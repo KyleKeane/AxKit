@@ -1,0 +1,114 @@
+# Workflow: See Claude Code's events arrive, without Claude Code
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/nvda-test-plan.md section 25 (docs/axClaude/events-and-grounding.md EG-2.2 to EG-2.5, EG-2.7,
+# EG-2.9, EG-9.1, EG-9.3; 2026-11-15): with a start of Claude Code the window passes axKit's own settings file, and
+# Claude Code then starts "AxKit.exe hook" for an event of the session, which tells the window over a pipe of this
+# computer that the event happened. Here the stand-in (tools/AxAutomate/StandIn.cs) plays Claude Code: it answers
+# --version, reads the file it was given with --settings and starts the hook the file names, the event on its
+# standard input, as Claude Code does. Nothing that is heard changes: Say the event sources, on demand, gives the
+# numbers. A stand-in that says it is Claude Code 2.1.325 gets the file; one that says 2.1.324, older than the events'
+# table, does not (an event name a Claude Code does not know would stop its start with a question); one that answers
+# its version too late starts without it, and its next start has it; with the switch off no start passes it. An
+# event takes a moment to arrive, since a program is started for each: the waits.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"claudeHooks":true}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir a
+mkdir b
+mkdir c
+mkdir old
+mkdir slow
+# The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.
+# The scenario: the prompt and the session's start event; at the file go1 a turn (the mark A, the working frame, the
+# end marks and the bell, the reply) and then its stop event, which Claude Code's hook delivers after the end mark; at
+# the file go2 a stop event that names another session and a start event that names a file outside Claude Code's
+# projects folder.
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-555555555555","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"wait":300},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["ok"]},{"turnEnd":2345},{"hook":"Stop","last":["ok"],"tasks":[]},{"waitFile":"go2"},{"hook":"Stop","fields":{"session_id":"99999999-9999-4999-8999-999999999999"},"last":["no"],"tasks":[]},{"hook":"SessionStart","fields":{"source":"startup","transcript_path":"C:/Temp/elsewhere/other.jsonl"}},{"idle":true}]}
+# The older stand-in, in a folder of its own: only the version differs, and its start event has no hook to start.
+file old\claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file old\scenario.json {"version":"2.1.324 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"idle":true}]}
+
+start claude {temp}\a --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+# Goal: Hear whether Claude Code's events reach the window
+# The session's start event has arrived: the hooks are on, one event received.
+wait 3000
+menu Say the event sources
+expect said Hooks: on, 1 received.
+# Check: The hooks' file stands on Claude Code's line right after the screen reader option
+# Before the window's own arguments (--model here), and it is axKit's own file in the run's folder. The log has the
+# line as it went to cmd.exe for a claude.cmd, every argument in quotes: a dot in the pattern stands for each quote.
+run findstr /r /c:"--ax-screen-reader. .--settings. .*claude-hooks.json. .--model" home\AxKit\logs\axClaude.log
+# Check: A turn's stop event comes after the turn's end and is counted
+# "Done" as before, by the bell and the settle; the stop event comes after the end mark and is the second event.
+type Say ok
+keys enter
+expect said Sent
+file a\go1 x
+expect said Done
+wait 3000
+menu Say the event sources
+expect said Hooks: on, 2 received.
+run findstr /c:"Events: stop event" home\AxKit\logs\axClaude.log
+# Check: An event of another session and a file outside Claude Code's projects folder are not used
+# The stop event of another session is counted apart and ignored; the start event counts, its path does not: three received.
+file a\go2 x
+wait 3000
+menu Say the event sources
+expect said Hooks: on, 3 received.
+run findstr /c:"Events: an event of another session was ignored" home\AxKit\logs\axClaude.log
+run findstr /c:"its path was not used" home\AxKit\logs\axClaude.log
+
+# Check: A Claude Code older than the events' table gets no hooks
+# A second window on the stand-in that says 2.1.324: the file is not passed, and the window works as it always did.
+start claude {temp}\b --claude {temp}\old\claude.cmd -- --model haiku
+expect said Ready
+wait 1500
+menu Say the event sources
+expect said Hooks: not passed, version.
+
+# Check: A Claude Code that answers its version too late starts without hooks, and the next start has them
+# A third window, on a batch stand-in that takes four seconds to say it is version 2.1.325: the window waits for the
+# answer two seconds at most, then starts Claude without the hooks' file, which the log says; "Ready" comes as always.
+# The answer is in a moment later: Claude started again gets the file (a batch file starts no hook: none received).
+file slow\claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\nping -n 5 127.0.0.1 >nul\necho 2.1.325 (stand-in)
+start claude {temp}\c --claude {temp}\slow\claude.cmd -- --model haiku
+expect said Ready
+menu Say the event sources
+expect said Hooks: not passed, version.
+run findstr /c:"for Claude Code's version, which has not answered" home\AxKit\logs\axClaude.log
+wait 3000
+keys ctrl+shift+r
+expect state "notice":"Force Claude to restart?"
+keys enter
+expect said Restarting
+expect said Ready
+menu Say the event sources
+expect said Hooks: on, 0 received.
+
+# Goal: Turn Claude Code's events off and on again
+# Back in the first window: the switch off, said with when it applies; Claude started again (the stand-in waits for
+# its first file again): the hooks are off.
+use 1
+menu Events from Claude Code's hooks
+expect said ! Events from Claude Code's hooks off, from the next start of Claude
+run del a\go1 a\go2
+keys ctrl+shift+r
+expect state "notice":"Force Claude to restart?"
+keys enter
+expect said Restarting
+expect said Ready
+wait 1500
+menu Say the event sources
+expect said Hooks: off.
+# On again, and Claude started again: a new pipe and a new secret for this start, and its start event arrives.
+menu Events from Claude Code's hooks
+expect said ! Events from Claude Code's hooks on, from the next start of Claude
+keys ctrl+shift+r
+expect state "notice":"Force Claude to restart?"
+keys enter
+expect said Restarting
+expect said Ready
+wait 3000
+menu Say the event sources
+expect said Hooks: on, 1 received.

@@ -321,8 +321,9 @@ Script: `tests/scripts/axClaude/28-event-sources.txt` (a stand-in for Claude Cod
 the bell, no network).
 
 1. Options, Developer: Events from Claude Code's hooks and Ground the conversation in Claude Code's session file are
-   both checked. Say the event sources: "Events. Marks: 0. Hooks: not passed. Session file: not found. Core: in
-   shadow.", cutting off other speech. A message, and "Done" as before; the command again: "Marks: 3". Ground the
+   both checked. Say the event sources: "Events. Marks: 0. Hooks: not passed, version. Session file: not found. Core: in
+   shadow.", cutting off other speech (the script's stand-in says it is version 0.0.0, older than the events' table, so
+   it gets no hooks; step 2 has one that does). A message, and "Done" as before; the command again: "Marks: 3". Ground the
    conversation in Claude Code's session file: "Grounding in Claude Code's session file off", and the command says
    "Session file: off"; the item again: "... on", and "Session file: not found". Events from Claude Code's hooks:
    "Events from Claude Code's hooks off, from the next start of Claude", and the command still says "Hooks: not
@@ -331,3 +332,25 @@ the bell, no network).
    command's Marks number grows by three with each turn, and Help, Diagnostics, Copy diagnostics holds the lines
    that start "Event core:", "Marks:", "Hooks:", "Session file:", "Gate:" and "Grounding:", numbers and fixed words
    only.
+2. Claude Code's events through its hooks, without Claude Code (script `30-hooks-stand-in.txt`: the stand-in of
+   `tools/AxAutomate` plays Claude Code, reads the file the window passed with `--settings` and starts `AxKit.exe hook`
+   for each event; EG-2). "Ready"; a few seconds later Say the event sources: "Hooks: on, 1 received." (the session's
+   start). A message, "Done" as before; then "Hooks: on, 2 received." (the turn's stop, which comes after the turn's
+   end). An event that names another session and a start event that names a file outside Claude Code's projects
+   folder: "Hooks: on, 3 received.", the first counted apart, the second's path not used. A second window on a
+   stand-in that says it is Claude Code 2.1.324: "Hooks: not passed, version.". A third window on a stand-in that
+   takes four seconds to say its version: "Ready" comes as always, about two seconds after the window opened, and
+   "Hooks: not passed, version."; some seconds later Ctrl+Shift+R, Enter, "Ready": "Hooks: on, 0 received." (that
+   stand-in starts no hook). In the first window, Events from
+   Claude Code's hooks, Ctrl+Shift+R, Enter, "Ready": "Hooks: off."; the item again, Ctrl+Shift+R, Enter, "Ready":
+   "Hooks: on, 1 received.". Nothing else is said in any of this, and nothing sounds different from step 1.
+3. Claude Code itself with the hooks (script `31-hooks-live.txt`, a live session; the check for a new Claude Code,
+   docs/axKit/automation.md section 4). A fresh folder, the trust answer, "Ready": no question titled "Settings
+   Warning" comes, at the start or later. "Reply with the single word ok.", "Done"; a few seconds later Say the event
+   sources: "Hooks: on, " and a number, never "passed, none received". By ear, at the window's start: "Ready" comes
+   as soon as it did before (the window may wait up to two seconds for Claude Code's version before it starts Claude
+   Code; in the runs of 2026-11-15 the answer was there already or came within 78 ms), and a message sent in that
+   moment says "Claude is starting" and stays in its field. By ear, Ctrl+Shift+R, Enter and closing the window:
+   whether either takes noticeably longer than with Events from Claude Code's hooks off (measured that day on a busy
+   computer: 0.8 s without hooks, 0.8 to 1.7 s with them, since Claude Code runs its hook for the session's end
+   before it ends).

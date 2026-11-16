@@ -534,6 +534,13 @@ in daily work. The upstream watch lets the assistant notice first. It has no sid
   before the parser is blamed.
 - **`-Check`**, in `test.ps1` and `build.yml`: only that the record is well formed (every field, every named check
   exists). It never asks an installed version: CI's computer has other versions.
+- **Claude Code's hooks** (2026-11-15, `docs/axClaude/events-and-grounding.md` EG-2.4, EG-11.5):
+  `tests/scripts/axClaude/31-hooks-live.txt` is the check of the hooks' start for a new Claude Code, run by `-Verify`
+  with the other scripts of that folder. It starts the installed Claude Code with axKit's own settings file and one
+  turn, and fails when Claude Code asks its "Settings Warning" question (an event name it no longer knows), when the
+  file was not passed, or when no event has arrived after the turn. The place to adjust then is
+  `src/AxClaude.Core/Hooks/ClaudeCodeHooks.cs`: the events' table with the version each event was verified with.
+  `30-hooks-stand-in.txt` checks the window's side without Claude Code, with the stand-in of section 2.
 
 Windows' own programs change with Windows' monthly updates, so Command Prompt and Windows PowerShell are "changed"
 about once a month; their check is axTerminal's, run once for all the shells.

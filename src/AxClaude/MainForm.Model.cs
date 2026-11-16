@@ -298,7 +298,8 @@ internal sealed partial class MainForm
     /// <summary>The status bar (FR-10.2): Claude's state with what waits and runs, the mode and the session name on the left; the folder on the right.</summary>
     protected override void UpdateStatus()
     {
-        var state = !ProcessRunning ? "stopped"
+        // A start that waits a moment for Claude Code's version (events-and-grounding.md EG-2.4) is a start, not a stop.
+        var state = !ProcessRunning ? (_hookVersionWait ? "starting" : "stopped")
             : _model.TranscriptViewOpen ? "detailed view on, Ctrl+O turns it off"
             : _model.PendingScreen is { } screen && ScreenActions.IsInformation(screen) ? "showing " + ScreenActions.StatusName(screen)
             : _model.PromptPending ? "waiting for your answer"

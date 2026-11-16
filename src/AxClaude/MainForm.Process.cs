@@ -1,3 +1,4 @@
+using AxClaude.Core.Hooks;
 using AxClaude.Core.Pty;
 using AxKit.Core;
 using AxKit.Core.Pty;
@@ -43,22 +44,38 @@ internal sealed partial class MainForm
         Relaunch("Restarting Claude");
     }
 
-    /// <summary>FR-13.2: Claude Code's version, asked once per run of the app; null until Claude has been found once (FR-13.3 names it).</summary>
+    /// <summary>FR-13.2: Claude Code's version, asked once for each program file in a run of the app; null until Claude has been found once (FR-13.3 names it).</summary>
     private string? _claudeVersion;
 
     /// <summary>How long claude --version may take before it is given up on and ended.</summary>
     private static readonly TimeSpan ClaudeVersionTimeout = TimeSpan.FromSeconds(15);
 
-    private async Task LogClaudeVersionAsync(string claude)
+    /// <summary>
+    /// Asks Claude Code's version, for the log and the diagnostics (FR-13.2) and for the hooks' gate, which is why
+    /// the answer is the task's result (events-and-grounding.md EG-2.4; <c>HookVersionOf</c> keeps the task for each
+    /// program file): what <c>claude --version</c> printed, null for no answer.
+    /// </summary>
+    private async Task<string?> AskClaudeVersionAsync(string claude)
     {
         _claudeVersion = "(not answered yet)";
         var version = await ClaudeLauncher.VersionAsync(claude, ClaudeVersionTimeout);
         _claudeVersion = version ?? "(no answer to --version)";
+        _health.ProgramVersion = ClaudeCodeHooks.VersionNumbers(version);
         Log.Info($"Claude Code version: {_claudeVersion} ({claude})");
+        return version;
     }
 
+    /// <summary>
+    /// Starts Claude in the project folder: the folder, the program and the user's consent first. Then Claude Code's
+    /// version, which decides whether this start may pass the hooks (events-and-grounding.md EG-2.4): it was asked as
+    /// the window opened and is in by now, or the start waits for what is left of its two seconds, without holding
+    /// the window, and goes on in <see cref="StartClaudeNow"/>. A start that passes no hooks whatever the version
+    /// says never waits.
+    /// </summary>
     private void StartClaude()
     {
+        // A start that still waited for the version is over: this one takes its place.
+        HookCancelStart();
         if (!Directory.Exists(_folder))
         {
             Fail($"The project folder no longer exists: {_folder}. Press Ctrl+N to choose another.");
@@ -87,12 +104,20 @@ internal sealed partial class MainForm
             return;
         }
 
-        if (_claudeVersion is null)
+        // Asked once for each program file, here at the latest and never before the consent above (FR-13.2).
+        var version = HookVersionOf(claude);
+        if (HookWaitLeft(version) is var left and > 0)
         {
-            // Asked alongside the start, never before it: the version is for the log and the diagnostics (FR-13.2).
-            _ = LogClaudeVersionAsync(claude);
+            HookStartWhenAnswered(claude, version.Answer, left);
+            return;
         }
 
+        StartClaudeNow(claude);
+    }
+
+    /// <summary>The start itself: Claude Code's command line and environment, the process in its pseudo console, and the window's state for a new run.</summary>
+    private void StartClaudeNow(string claude)
+    {
         var arguments = new List<string>();
         if (!_options.NoAx)
         {
@@ -112,6 +137,26 @@ internal sealed partial class MainForm
         _model.StartName = nameAt >= 0 && nameAt + 1 < ClaudeArgs.Count ? ClaudeArgs[nameAt + 1] : null;
         // FR-1.2: npm's claude.cmd runs through cmd.exe, and an argument cmd.exe would act on is refused, said as any failed start.
         var line = ClaudeLauncher.BuildCommandLine(claude, arguments);
+        // The hooks (events-and-grounding.md EG-2.3): --settings with axKit's own file right after --ax-screen-reader,
+        // before the user's own arguments, on every start that may pass it (--continue and --resume do not restore
+        // it); its pipe is served from here on. A line cmd.exe would refuse because of the file's path starts
+        // without the hooks rather than not at all. Without them the line and the environment are what they were.
+        if (HookArguments(claude) is { Count: > 0 } hooks)
+        {
+            List<string> withHooks = [.. arguments];
+            withHooks.InsertRange(_options.NoAx ? 0 : 1, hooks);
+            var hooksLine = ClaudeLauncher.BuildCommandLine(claude, withHooks);
+            if (hooksLine.Refusal is null)
+            {
+                arguments = withHooks;
+                line = hooksLine;
+            }
+            else
+            {
+                HookNotPassed(HookReasonPath);
+            }
+        }
+
         // --ai-tools (FR-9.7, docs/axKit/mcp.md MC-6.9): axKit's AI tools for this start of Claude, only while the user
         // has them on. Last on the line, since --mcp-config takes every word up to the next option. A line cmd.exe
         // would refuse because of the file's path starts without the tools rather than not at all.
@@ -130,15 +175,18 @@ internal sealed partial class MainForm
 
         if (line.Refusal is { } refusal)
         {
+            HookStartFailed();
             Fail("Claude Code was not started. " + refusal);
             return;
         }
 
         _launchedFolder = _folder;
         KeepFilesOutOfGit();
-        var options = new PtyOptions(line.CommandLine, _folder!, _model.Columns, _model.Rows, ClaudeLauncher.BuildEnvironment());
+        // The hooks' pipe and its secret reach a hook's process through Claude Code's environment (EG-2.8); null without hooks.
+        var options = new PtyOptions(line.CommandLine, _folder!, _model.Columns, _model.Rows, ClaudeLauncher.BuildEnvironment(_hookChannel?.VariableValue));
         if (!StartProcess(options, "Claude"))
         {
+            HookStartFailed();
             return;
         }
 
@@ -293,15 +341,25 @@ internal sealed partial class MainForm
     /// <summary>
     /// The attention timer stops with Claude; the console window stops the process, the writes and the control area.
     /// The core and the record's reader are told here and nowhere else that a Claude that ran is gone: every end passes
-    /// here, and <see cref="OnProcessExited"/> only follows it (events-and-grounding.md EG-4.6).
+    /// here, and <see cref="OnProcessExited"/> only follows it (events-and-grounding.md EG-4.6). A start that still
+    /// waited for Claude Code's version is over too. The hooks' pipe is stopped after the base has ended Claude Code,
+    /// not before: Claude Code runs its hook for the session's end while it ends, and that hook then finds the pipe
+    /// at once instead of waiting half a second for one that is gone; what it posts is dropped as the old run's (EG-2.7).
     /// </summary>
     protected override void StopProcess(bool terminateAtOnce = false)
     {
         _attention.Stop();
+        HookCancelStart();
         var ran = ProcessRunning;
+        var hooks = _hookChannel is not null;
+        var since = Environment.TickCount64;
         base.StopProcess(terminateAtOnce);
+        HookStopChannel();
         if (ran)
         {
+            // How long the window stood still while Claude Code ended: with hooks, the hook of the session's end
+            // runs inside that time (events-and-grounding.md EG-2.5), and a slow end is found here.
+            Log.Info($"Events: Claude's end took {Environment.TickCount64 - since} ms, hooks {(hooks ? "passed" : "not passed")}{(terminateAtOnce ? ", ended at once" : string.Empty)}");
             FlowProcessEnded();
         }
     }

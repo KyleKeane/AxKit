@@ -146,6 +146,20 @@ public class ClaudeCodeHooksTests
         Assert.Equal(expected, ClaudeCodeHooks.Supports(versionLine));
     }
 
+    [Theory]
+    [InlineData("2.1.325 (Claude Code)", "2.1.325")]
+    [InlineData("2.10.0", "2.10.0")]
+    [InlineData("2.1.324 (stand-in)", "2.1.324")]
+    [InlineData("Claude Code 3.0.1 beta", "3.0.1")]
+    [InlineData(null, "")]
+    [InlineData("", "")]
+    [InlineData("2.1 (Claude Code)", "")]
+    [InlineData("(no answer to --version)", "")]
+    public void The_version_lines_first_three_numbers_are_what_the_diagnostics_name(string? versionLine, string expected)
+    {
+        Assert.Equal(expected, ClaudeCodeHooks.VersionNumbers(versionLine));
+    }
+
     [Fact]
     public void The_users_own_settings_argument_is_seen()
     {

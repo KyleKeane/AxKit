@@ -75,3 +75,12 @@ The app records the raw stream with `--record file.vt` or Options → Developer 
 - In shadow: `Built` names no family, so the window's own code decides everything and tells `FlowShadow` what it did (`FlowSaidDone`, `FlowSpoke`); the log gets one `Events: shadow` line for each turn. No timer of the window was replaced. Moving a family to the core adds it to `Built` and asks `FlowDecides` where the old code acts; the old path stays, for the screen alone and for the setting `eventCore`.
 - `_flowTimer` is the core's one timer. An exception from the core is logged as an ERROR and switches the core off until Claude starts again; it must never take the window down.
 - The record's reader is told through the partial methods declared there (`RecordTurn` and six more); the hooks' pipe and the reader get files of their own.
+
+## Claude Code's hooks in the window (2026-11-15)
+
+`MainForm.Hooks.cs`. The specification is `docs/axClaude/events-and-grounding.md` (EG-2, EG-9.1, EG-10) and is not restated here.
+
+- A start that passes no hooks is the old start: no file, no pipe, no variable, no wait. `HookArguments` decides for each start and gives `_health` the one word why not; `HookNotPassed` and `HookStopChannel` undo what a start that fails afterwards had begun.
+- The version gate needs `claude --version` before the line is built. `WireHooks` asks it as the window is made, never before the consent to Claude Code; `HookVersionOf` keeps the answer for each program file; `StartClaude` waits only for what is left of its two seconds (`HookStartWhenAnswered`, then `StartClaudeNow`). `_hookStart` drops a wait that another start or a stop overtook; `_hookVersionWait` makes the status bar say starting and keeps a message in its field.
+- `HookChannel`: one pipe instance served in turn on a thread of its own, every wait and read under a token; `Stop` cancels and never joins. Do not copy the blocking wait of `McpChannel`: such a pipe cannot close with its Claude Code. Faults are counted and get one `Log.Info` line for each start; an ERROR line fails every window script.
+- `StopProcess` stops the pipe after the base has ended Claude Code, so that the hook of the session's end finds it at once. `HookArrived` checks the session and the file's path, counts, and calls `EnqueueFlow`; nothing an event carries is logged.

@@ -85,6 +85,18 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   to Anthropic under Anthropic's own terms and privacy policy (<https://www.anthropic.com/legal/privacy>). axKit does
   not read, keep or send your conversation anywhere else; it shows what Claude Code prints, and records it to a file
   only when you turn recording on (Options, Developer).
+  While you have Options, Developer, Events from Claude Code's hooks turned on (it is off at first), axClaude also asks Claude Code to start `AxKit.exe hook` for eight kinds of events of it (the
+  session started or ended, a turn stopped or failed, an agent started or stopped, a permission was asked, a
+  notification): that process tells the axClaude window, over a pipe on your computer that only your Windows account
+  may open, that the event happened, and ends. The hooks are registered for that one start of Claude Code with a file
+  of axKit's own, never in a settings file of yours or of a project, and they only observe: none answers, allows or
+  changes anything Claude Code does. This sends nothing anywhere, axKit still listens on no port, and nothing an
+  event carries enters a log, a report or the diagnostics. Options, Developer, Events from Claude Code's hooks turns
+  it off (`docs/axClaude/events-and-grounding.md`).
+  axClaude also reads the session file Claude Code keeps for the conversation (in Claude Code's `projects` folder in
+  your profile), in memory only, to check and order what it shows. This sends nothing anywhere either, and nothing
+  of that file enters a log, a report or the diagnostics. Options, Developer, Ground the conversation in Claude
+  Code's session file turns it off.
 - **axGIT, access layer for Git** runs git, your own installed program, one process per command, with its prompts
   turned off (`GIT_TERMINAL_PROMPT=0`). Three commands reach a remote (GitHub, or wherever your repository's remotes
   point): fetch, pull and push, each only when you choose it and, the first time axKit reaches that server, after your
@@ -157,6 +169,9 @@ turning the access off ends access at the next call and turns Let AI tools run c
 - **Settings**: `%APPDATA%\AxKit`, one file per app.
 - **Logs**: `%LOCALAPPDATA%\AxKit\logs`. They hold starts, errors and what an update did; never what you type, copy,
   read or say to Claude. Each rolls over at 1 MB.
+- **The hooks' file**: `%LOCALAPPDATA%\AxKit\claude-hooks.json`, which axClaude writes before it starts Claude Code.
+  It names this axKit as the program Claude Code starts for an event of that session (axClaude, above) and holds
+  nothing of yours but that program's path.
 - **axClip** keeps its history in memory; on disk only when you choose Keep history, and then encrypted for your
   Windows account.
 - **axPass** never stores your passwords: KeePassXC's own tool reads and writes your database, and the master password
@@ -172,6 +187,10 @@ axKit starts only Windows' own programs by their full paths (PowerShell for the 
 batch files), the programs you installed and chose (Claude Code, git, your shells, KeePassXC's tool, the programs of
 Open with), and itself. It never runs anything with administrator rights; an installer you choose in Install it now
 may ask Windows for them, and Windows asks you.
+
+One start of axKit is made by Claude Code, at axClaude's request: for an event of an axClaude session, Claude Code
+starts `AxKit.exe hook`, a process without a window that passes the event to the axClaude window over the pipe named
+above and ends, after two seconds at the latest. It starts nothing itself and prints nothing.
 
 Windows PowerShell also runs axPreview's own small script when a picture opens there, which asks Windows' text reader
 (`Windows.Media.Ocr`, part of Windows) for the text in the picture: the reading happens on this computer and nothing

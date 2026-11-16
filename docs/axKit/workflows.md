@@ -212,9 +212,14 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Hide the live progress rows again
 28. **Hear where axClaude's events come from**
 29. **Follow a turn played by the stand-in**
-30. **See the session file followed, without Claude Code**
-31. **Have a short exchange with Claude**
-32. **Answer a set of two questions from Claude**
+30. **See Claude Code's events arrive, without Claude Code**
+    - Hear whether Claude Code's events reach the window
+    - Turn Claude Code's events off and on again
+31. **Start Claude Code with axClaude's hooks**
+    - Hear that Claude Code's events arrived after a turn
+32. **See the session file followed, without Claude Code**
+33. **Have a short exchange with Claude**
+34. **Answer a set of two questions from Claude**
 
 ## axClip
 

@@ -89,20 +89,20 @@ public class SettingsTests
     [Fact]
     public void The_event_settings_are_on_at_first_and_keep_their_names_in_the_file()
     {
-        // docs/axClaude/events-and-grounding.md EG-9.1, EG-9.2, EG-9.6: the two Developer switches, both on at first,
+        // docs/axClaude/events-and-grounding.md EG-9.1, EG-9.2, EG-9.6: the two Developer switches (the session file's on at first, the hooks' off at first),
         // and the file-only word that puts the core back in shadow.
         var path = Path.Combine(Path.GetTempPath(), "axclaude-tests", Guid.NewGuid().ToString("N"), "settings.json");
         try
         {
             var missing = AppSettings.Load(path, out var error);
             Assert.Null(error);
-            Assert.True(missing.ClaudeHooks);
+            Assert.False(missing.ClaudeHooks);
             Assert.True(missing.GroundInSessionFile);
             Assert.Equal("on", missing.EventCore);
 
             missing.Save(path);
             var text = File.ReadAllText(path);
-            Assert.Contains("\"claudeHooks\": true", text);
+            Assert.Contains("\"claudeHooks\": false", text);
             Assert.Contains("\"groundInSessionFile\": true", text);
             Assert.Contains("\"eventCore\": \"on\"", text);
 

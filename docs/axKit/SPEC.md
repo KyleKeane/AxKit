@@ -372,6 +372,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   the spelling is what a screen reader says in a folder listing. A settings or log file an earlier version left in
   lower case is renamed to the app's case the first time it is read (`FileCase`). The bundle's own folders and the
   program file keep `AxKit`, the repository's spelling.
+  Two files name this program file for Claude Code and so never roam, both in `%LOCALAPPDATA%\AxKit`:
+  `claude-mcp.json`, the AI tools for axHelp's conversation (docs/axKit/mcp.md MC-6.9), and `claude-hooks.json`
+  (2026-11-15), the hooks axClaude registers for each start of Claude Code (docs/axClaude/events-and-grounding.md
+  EG-2.2); each is written before a start when it is missing or names another program file.
 - AX-5.2 On its first start under axKit, axClaude copies `%APPDATA%\AxClaude\settings.json` to `axClaude.json` when the
   new file does not exist; the old file is left alone.
 - AX-5.3 The load-and-save pattern of a settings file (JSON, a missing or unreadable file falls back to the defaults
@@ -1061,6 +1065,14 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   installers' (AX-2.9: winget from its own source, Anthropic's installer script). `PRIVACY.md`, `README.md`,
   `docs/axKit/README.md` and `SECURITY.md` say this in these terms, and a change here changes them in the same commit;
   `docs/axKit/outside-calls.md` lists every such call in the code, written from the sources (B-17).
+  Since 2026-11-15 axClaude can follow a session, while the user has its option Events from Claude Code's hooks turned on (off at first), through one more program start and one more pipe, both on the
+  computer and neither a network contact (docs/axClaude/events-and-grounding.md EG-2, EG-10): for eight kinds of
+  events of the session Claude Code starts `AxKit.exe hook`, at axClaude's request, registered for that one start
+  with `--settings` and axKit's own file and never in a settings file of the user's or a project's; that process
+  writes the event to a named pipe of the window's own, for this Windows account alone, with a secret new for each
+  start, and ends. A hook returns nothing and so decides nothing Claude Code does. axKit still listens on no port,
+  also not on this computer (docs/axKit/mcp.md section 1).
+  axClaude also reads the session file Claude Code keeps for the conversation, in memory only (EG-3, EG-10.3).
 
 - AX-11.12 **What an AI wrote or asks for says so (2026-11-13, the user's decision).** Wherever a window shows text an
   AI wrote for the user to act on, or lets something an AI asked for happen, it says in plain words who wrote it, that
@@ -1202,6 +1214,12 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   `%LOCALAPPDATA%\Microsoft\WindowsApps\axKit.exe`, since the package folder changes with every update (the AI tools'
   `claude mcp add` command line, AiToolsSetup.cs). The capability that turns virtualization off,
   `unvirtualizedResources`, is restricted to games and not used.
+  Not yet confirmed by use in the Store's copy (2026-11-15): the two files that name this program for Claude Code,
+  `claude-mcp.json` (the AI tools of axHelp's conversation, docs/axHelp/SPEC.md HE-2.8) and `claude-hooks.json`
+  (axClaude's hooks, AX-5.1), are new files under AppData and so private to the package, while Claude Code runs
+  outside it and may not find them at the path it is given. Until that is settled, the Store's copy passes no hooks
+  to Claude Code (docs/axClaude/events-and-grounding.md EG-2.11), and axClaude works there from the screen, the
+  marks and the session file.
 - AX-13.6 **The listing and the release.** The listing (name axKit, category Developer tools, free, every market,
   discoverable; its texts in `docs/axKit/store-listing.md`) begins with the programs the access layers need (Store
   policy 10.2.4), discloses that axClaude shows the output of a live generative AI (11.16; the F4 report is the means
