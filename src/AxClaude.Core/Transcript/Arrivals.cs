@@ -15,13 +15,30 @@ public enum ReplySpeechMode
     All,
 }
 
+/// <summary>What a line proposed for speech is: the <c>claude:</c> row that heads a reply, a row under such a head, an <c>error:</c> row or a row under one, or a tool call's row.</summary>
+public enum ProposedKind
+{
+    Head,
+    Row,
+    Error,
+    Tool,
+}
+
+/// <summary>
+/// One line the screen proposes for speech (events-and-grounding.md EG-5.1), with the line id of the head it belongs
+/// to: the nearest <c>claude:</c> or <c>error:</c> row above it in the same reply. A head names itself, and so does a
+/// tool row, which stands under no head. The core's gate holds a row with its head until the record confirms it.
+/// </summary>
+public readonly record struct Proposed(Line Line, int HeadId, ProposedKind Kind);
+
 /// <summary>
 /// What a frame brought from Claude: a new visible line (the tick, FR-7.8), a tool call row that is new or rewritten
-/// (the tool tick, FR-7.8), the reply and tool call text that became final (speech, FR-7.4), and the lines behind
-/// that text in order (the window holds them while Claude may turn out to be asking, D33; the list is reused by the
-/// next pass, so it is read at once).
+/// (the tool tick, FR-7.8), the reply and tool call text that became final (speech, FR-7.4), the lines behind
+/// that text in order (the window holds them while Claude may turn out to be asking, D33), and the same lines as
+/// proposals, each with its head and its kind, for the core (EG-5.1). Both lists are reused by the next pass, so
+/// they are read at once.
 /// </summary>
-public readonly record struct Arrival(bool NewLine, bool ToolCall, string? Speech, IReadOnlyList<Line> SpokenLines);
+public readonly record struct Arrival(bool NewLine, bool ToolCall, string? Speech, IReadOnlyList<Line> SpokenLines, IReadOnlyList<Proposed> Proposed);
 
 /// <summary>
 /// One pass over the transcript at the end of every frame, shared by the tick and by speaking replies. The tick
@@ -52,8 +69,9 @@ public sealed class Arrivals
     private readonly Dictionary<int, string> _toolRows = [];
     private readonly HashSet<int> _present = [];
     private Line? _first;
-    private readonly List<Line> _candidates = [];
+    private readonly List<Proposed> _candidates = [];
     private readonly List<Line> _spokenNow = [];
+    private readonly List<Proposed> _proposedNow = [];
     private readonly StringBuilder _text = new();
     private int _contentLines;
 
@@ -78,6 +96,8 @@ public sealed class Arrivals
         var lastVisible = -1;
         var afterMarker = false;
         var inReply = false;
+        var head = 0;
+        var errorReply = false;
         var marker = -1;
         for (var i = 0; i < lines.Count; i++)
         {
@@ -126,7 +146,10 @@ public sealed class Arrivals
             // An error: row opens a reply like a claude: row: it is Claude's whole answer when the login has lapsed.
             if (line.Kind is LineKind.ClaudeReply or LineKind.Error)
             {
+                // The head of the rows that follow it, down to the next labelled row (EG-5.1).
                 inReply = true;
+                head = line.Id;
+                errorReply = line.Kind == LineKind.Error;
             }
             else if (line.Kind != LineKind.Plain)
             {
@@ -138,7 +161,8 @@ public sealed class Arrivals
                 : toolCalls && IsToolCall(line);
             if (wanted && line.Text.Length > 0)
             {
-                _candidates.Add(line);
+                _candidates.Add(!inReply ? new Proposed(line, line.Id, ProposedKind.Tool)
+                    : new Proposed(line, head, errorReply ? ProposedKind.Error : line.Id == head ? ProposedKind.Head : ProposedKind.Row));
             }
         }
 
@@ -165,7 +189,7 @@ public sealed class Arrivals
 
         var newLine = content > _contentLines;
         _contentLines = content;
-        return new Arrival(newLine, toolCall, Speech(lines, lastVisible, working), _spokenNow);
+        return new Arrival(newLine, toolCall, Speech(lines, lastVisible, working), _spokenNow, _proposedNow);
     }
 
     /// <summary>A line's text as spoken: a tool row loses its expand hint.</summary>
@@ -205,14 +229,16 @@ public sealed class Arrivals
     private string? Speech(IReadOnlyList<Line> lines, int lastVisible, bool working)
     {
         _spokenNow.Clear();
+        _proposedNow.Clear();
         if (_candidates.Count == 0)
         {
             return null;
         }
 
         _text.Clear();
-        foreach (var line in _candidates)
+        foreach (var candidate in _candidates)
         {
+            var line = candidate.Line;
             // Every candidate but the last visible line has a visible line after it. A tool row is complete when it
             // is printed, and waiting for the next line would hold it until the tool has finished.
             var final = line.Committed || !working || line.Kind == LineKind.Tool || !ReferenceEquals(line, lines[lastVisible]);
@@ -225,6 +251,7 @@ public sealed class Arrivals
                     // The lines join as one utterance (Utterance).
                     Utterance.Append(_text, SpokenText(line), line.JoinedToPrevious);
                     _spokenNow.Add(line);
+                    _proposedNow.Add(candidate);
                 }
             }
         }

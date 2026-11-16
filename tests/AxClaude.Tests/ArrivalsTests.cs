@@ -81,6 +81,59 @@ public class ArrivalsTests
     }
 
     [Fact]
+    public void Each_proposed_line_names_its_head_and_its_kind()
+    {
+        // docs/axClaude/events-and-grounding.md EG-5.1: the lines behind the speech are proposals for the core's
+        // gate, each with the line id of the claude: or error: row that heads its reply (a head names itself) and
+        // with what it is.
+        var arrivals = new Arrivals();
+        var lines = new List<Line>
+        {
+            new(1, LineKind.OutputMarker, "claude"),
+            new(2, LineKind.ClaudeReply, "claude: Looking at the file."),
+            new(3, LineKind.Plain, "It has three lines."),
+            new(4, LineKind.Tool, "tool: Read (a.txt)"),
+            new(5, LineKind.Tool, "1 line of output"),
+            new(6, LineKind.Error, "error: API Error: 401 Invalid API key"),
+            new(7, LineKind.Plain, "Please run /login"),
+            new(8, LineKind.ClaudeReply, "claude: The file is short."),
+            new(9, LineKind.Plain, "Nothing else is in it."),
+        };
+        var arrival = arrivals.Update(lines, working: false, ReplySpeechMode.All, toolCalls: true);
+        Assert.Equal(
+            [
+                (2, 2, ProposedKind.Head),
+                (3, 2, ProposedKind.Row),
+                (4, 4, ProposedKind.Tool),
+                (6, 6, ProposedKind.Error),
+                (7, 6, ProposedKind.Error),
+                (8, 8, ProposedKind.Head),
+                (9, 8, ProposedKind.Row),
+            ],
+            arrival.Proposed.Select(proposed => (proposed.Line.Id, proposed.HeadId, proposed.Kind)));
+
+        // They are the spoken lines, one for one and in the same order.
+        Assert.Equal(arrival.SpokenLines, arrival.Proposed.Select(proposed => proposed.Line));
+
+        // A row that arrives in a later frame still names its head, which was spoken before.
+        lines.Add(new Line(10, LineKind.Plain, "One more row."));
+        arrival = arrivals.Update(lines, working: false, ReplySpeechMode.All, toolCalls: true);
+        Assert.Equal([(10, 8, ProposedKind.Row)], arrival.Proposed.Select(proposed => (proposed.Line.Id, proposed.HeadId, proposed.Kind)));
+
+        // A frame that makes nothing final proposes nothing.
+        arrival = arrivals.Update(lines, working: false, ReplySpeechMode.All, toolCalls: true);
+        Assert.Empty(arrival.Proposed);
+        Assert.Empty(arrival.SpokenLines);
+
+        // With the first lines alone, the heads and the error rows are proposed; with replies off and tool calls
+        // on, the tool rows.
+        var heads = new Arrivals().Update(lines, working: false, ReplySpeechMode.FirstLines, toolCalls: false);
+        Assert.Equal([(2, ProposedKind.Head), (6, ProposedKind.Error), (8, ProposedKind.Head)], heads.Proposed.Select(proposed => (proposed.HeadId, proposed.Kind)));
+        var tools = new Arrivals().Update(lines, working: false, ReplySpeechMode.None, toolCalls: true);
+        Assert.Equal([(4, 4, ProposedKind.Tool)], tools.Proposed.Select(proposed => (proposed.Line.Id, proposed.HeadId, proposed.Kind)));
+    }
+
+    [Fact]
     public void What_was_remembered_about_trimmed_lines_is_forgotten()
     {
         var arrivals = new Arrivals();
