@@ -1,4 +1,5 @@
 using System.Windows.Forms;
+using AxKit.Core;
 using AxKit.Forms;
 
 namespace AxKit.Tests;
@@ -168,7 +169,8 @@ public sealed class CommandPaletteTests
         CommandPalette.RefreshedOnOpening(recent, Fill);
         var said = new List<string>();
 
-        var line = Assert.Single(CommandPalette.Commands(bar, said.Add));
+        // The click is the window's (AxKitForm.ClickFor); here, the item's own.
+        var line = Assert.Single(CommandPalette.Commands(bar, said.Add, (item, _) => item.PerformClick()));
         // The list is made anew before the line runs, as an AI tool's reading or the menu's opening does.
         Fill();
         line.Run();

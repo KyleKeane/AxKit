@@ -26,7 +26,8 @@ After the kit:
 - AK-2.1 `Command(Label, Key, Run)` with `When` and `Mark` (`AxKit.Forms/Command.cs`): the menu's label with its
   letter, the key (from the window's key table, so that the collision test keeps static data), what runs, where the
   key acts (`When`: the list has the focus, the field has it; null for anywhere; the menu item always runs), and its
-  mark for the AI tools (read, open, change, act; `mcp.md` MC-3.1).
+  mark for the AI tools (read, open, change, act; `mcp.md` MC-3.1; the marks are `AxKit.Core/CommandMark.cs` since
+  2026-11-16, where the pure gate decides by them).
 - AK-2.2 **Three ways an item is made, each with its mark** (as built; the menu specifications first planned here,
   `MenuSpec` and a scope per command, were never needed and are not built): `Add(menu, command)` for a command, which
   makes the item, handles the key and gives the item the command's mark; `Item(text, action, key, mark)` for an item
@@ -61,7 +62,9 @@ After the kit:
   and every list a menu fills as it opens (Open recent, Open windows, Recently closed). The palette, the AI tools'
   `axkit_window_commands` and `axkit_window_run`, the F1 text and the tests all read it through one function,
   `CommandPalette.Entries`, whose entries each have their name, menu path, key, checked state and mark
-  (`CommandPalette.Commands` is the palette's lines made from them, which the channel's `menu` and `commands` read).
+  (`CommandPalette.Commands` is the palette's lines made from them, which the palette and the channel's `menu` and
+  `commands` take through `AxKitForm.MenuLines`, each line clicking its item through the window's one click,
+  `AxKitForm.ClickFor`).
   A command of the list keeps its own mark (AK-2.1); an item that is not one takes its kind's: a setting is change, a
   recent file or window is open, Recently closed is open. Nothing is added to one reader alone: a new action is a menu
   item, and it is in all of them at once. The one thing a single reader has is listed in AK-2.6: the palette's own
@@ -75,7 +78,10 @@ After the kit:
   (WF-2.6, WF-7); `choose` runs one entry by exactly its name and its menus, as the AI tools' run finds it
   (`CommandPalette.Find`).
   Where the rules are read together, who may run a command of which mark and what the user hears, is the table of
-  `command-language.md` section 3.
+  `command-language.md` section 3. Since 2026-11-16 the table is one pure function with its tests,
+  `AxKit.Core/CommandGate.Decide(origin, mark, state)` and `tests/AxKit.Tests/CommandGateTests`; the AI tool's run
+  asks it (`AxKitForm.McpRunCommand`), and for the user's key, menu and palette it describes what WinForms' message
+  handling and the key test's filter enforce (`command-language.md` CL-3.2, CL-4.9).
 - AK-2.6 **The exceptions**, all here and nowhere else, each for security:
   1. axPass and axClip answer no AI tool (MC-4.3): secrets and the clipboard.
   2. An act entry asks the user before an AI tool runs it, naming its target (MC-7.3).

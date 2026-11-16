@@ -1,3 +1,5 @@
+using AxKit.Core;
+
 namespace AxKit.Forms;
 
 public abstract partial class AxKitForm

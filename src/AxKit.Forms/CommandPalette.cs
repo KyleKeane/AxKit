@@ -166,11 +166,12 @@ public static class CommandPalette
         Entries(menu).FirstOrDefault(entry => entry.Name == name && entry.Menu == menus);
 
     /// <summary>
-    /// The entries as the palette's lines, each clicking its item (AX-10.2). A checked setting says its new state after
-    /// the click through <paramref name="say"/>, "Word wrap, checked". An entry whose item was made again since the
-    /// palette read it is found again by its name; one that is gone says so.
+    /// The entries as the palette's lines (AX-10.2), each handing its item and its name to <paramref name="click"/>,
+    /// which is the window's one click (<c>AxKitForm.ClickFor</c>: the click, and a checked setting's new state said
+    /// after it, "Word wrap, checked"). An entry whose item was made again since the palette read it is found again by
+    /// its name; one that is gone says so through <paramref name="say"/>.
     /// </summary>
-    public static List<PaletteEntry> Commands(MenuStrip? menu, Action<string> say) =>
+    public static List<PaletteEntry> Commands(MenuStrip? menu, Action<string> say, Action<ToolStripMenuItem, string> click) =>
         Entries(menu).Select(entry => new PaletteEntry(Palette.Text(entry.Name, [.. entry.Path], entry.Key, entry.Checked), () =>
         {
             // An item no longer in a menu was replaced when its list was filled again.
@@ -181,11 +182,7 @@ public static class CommandPalette
                 return;
             }
 
-            item.PerformClick();
-            if (item.CheckOnClick)
-            {
-                say($"{entry.Name}, {(item.Checked ? "checked" : "not checked")}");
-            }
+            click(item, entry.Name);
         })).ToList();
 
     /// <summary>The menu items over an item, the bar's first.</summary>

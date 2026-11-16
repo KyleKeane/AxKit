@@ -27,7 +27,7 @@ tools mode).
   - its **mark** (CL-1.2);
   - its **state** at a moment: whether it is checked (a setting), whether its menu item is offered (enabled, in a
     menu as it stands), and whether its key acts now (`Command.When`: the list has the focus, the field has it).
-- CL-1.2 **The mark says how far a command reaches**, in the user's words (`AxKit.Forms/Command.cs`, `CommandMark`;
+- CL-1.2 **The mark says how far a command reaches**, in the user's words (`AxKit.Core/CommandMark.cs`, `CommandMark`;
   `mcp.md` MC-3.1):
   - **read**: it says or shows something and changes nothing (Say the status, Keyboard shortcuts);
   - **open**: it opens a window or a file, or moves within the window (Go to line, a recent file);
@@ -181,8 +181,22 @@ The conditions:
   everything under it from the AI tools and nothing from the palette), `tests/AxKit.Tests/CommandMarkTests`,
   `tests/AxAutomate.Tests/DoStepTests` and `AiToolsModeTests`, `tests/AxKit.Tests/KeyTestTests`, and the window
   scripts `tests/scripts/mcp/02-run-commands.txt`, `03-run-asks-first.txt` and `05-run-asks-in-a-list.txt`.
-- CL-3.2 **No test reads this table as a table.** Each rule is held where it is built; nothing fails when a new origin
-  forgets a condition. That is the first piece of section 8.
+- CL-3.2 **The table is a test** (2026-11-16). One pure function answers every cell,
+  `CommandGate.Decide(origin, mark, state)` (`src/AxKit.Core/CommandGate.cs`): the origin (`CommandOrigin`: Key, Menu,
+  Palette, Script, Choose, AiTool), the mark, and a record of the facts the conditions ask about (`CommandState`: a
+  notice, a Windows dialog, the key test, no test run, the app that serves no AI tool, the two switches, the user's
+  hands, a key that does not act where the focus is, a bundle key that is information alone, a key with no menu item,
+  an item never for AI tools, an item the menus do not offer now, a No within the last minute). It answers one of the
+  four things a cell says (`CommandVerdict`: runs, runs and is said, asks first, never), and for never the reason as a
+  code (`CommandRefusal`); the words of a refusal stay where they are written, and each caller gives its own for the
+  code. `tests/AxKit.Tests/CommandGateTests` has one test per cell and per condition of each origin, named after it:
+  the origin, then the mark or `condition` and its number (`Key_read_runs`,
+  `AiTool_condition_11_never_under_the_user_s_hands`). Two of its tests read this section: a cell named here that no
+  test is named after fails, and so does an origin written here that the tests do not know. How the lines above are
+  read: an origin is a line that starts with its name in bold; its marks are the lines under it that start with
+  `read`, `open`, `change`, `act` or several of them and a colon; its conditions are the numbers of its `Conditions:`
+  line, "7 to 15" being every number between, texts in quotes and in brackets left out. Where the code asks the gate
+  and where the gate only describes is CL-4.9.
 
 ## 4. The path a command takes
 
@@ -212,26 +226,44 @@ Each origin, by function and file, down to the code that runs the command.
   with the text, its action, `PerformClick`.
 - CL-4.6 **An AI tool.** The client starts `AxKit.exe mcp` (`McpBroker`), which reaches the window's pipe
   (`McpChannel`: both ends proved, the setting, the pairing); `McpChannel.Run` reads the switch from the sealed file
-  and calls `AxKitForm.McpRunCommand` (`AxKitForm.Mcp.cs`) on the window's thread: `McpRun.AppRefusal`, the switch,
-  `McpChangeRefusal`, then `ToolEntries` (`CommandPalette.Entries` without the withheld items) and `McpRun.Find`
-  (`src/AxKit.Core/Mcp/McpRun.cs`, which calls `CommandNames.Resolve`). An act: `AskToRunMcp`, the question
-  (`ShowOfferedRequest`, or `ShowNotice`), and on Yes `ToolItem` and `RunForMcp`. Any other mark: posted, checked
-  again (`WhyNotRunForMcp`, the busy rule), `ToolItem` (`CommandPalette.Find`), `RunForMcp`: the words that say who
-  ran it (`McpRun.Said`), the chime for a window behind, `PerformClick`. From there, CL-4.2.
+  and calls `AxKitForm.McpRunCommand` (`AxKitForm.Mcp.cs`) on the window's thread: the gate's conditions of the
+  window (`CommandGate.Window` with the facts of `McpGateState`: the app, the switch, the key test, a notice, a
+  Windows dialog, the user's hands, in that order; the words of each from `McpRun.Refusal`), then `ToolEntries`
+  (`CommandPalette.Entries` without the withheld items) and `McpRun.Find` (`src/AxKit.Core/Mcp/McpRun.cs`, which calls
+  `CommandNames.Resolve`), then the cell for the entry's mark (`CommandGate.Decide`, with the minute after a No). An
+  act: `AskToRunMcp`, the question (`ShowOfferedRequest`, or `ShowNotice`), and on Yes `ToolItem` and `RunForMcp`. Any
+  other mark: posted, checked again (`WhyNotRunForMcp`, the busy rule), `ToolItem` (`CommandPalette.Find`),
+  `RunForMcp`, which is the window's one click for this origin (`ClickFor`): the words that say who ran it
+  (`McpRun.Said`), the chime for a window behind, `PerformClick`. From there, CL-4.2.
 - CL-4.7 **Where the paths join.**
   - Every origin but the key ends in a click on the menu item (`PerformClick`), found through
     `CommandPalette.Entries`. So what a menu item does is written once, and no origin can do something a menu item
     does not.
+  - **Every click axKit itself makes is one function** (2026-11-16), `AxKitForm.ClickFor(origin, item, name, client)`
+    (`AxKitForm.Commands.cs`): the palette's line and the channel's `menu` (through `AxKitForm.MenuLines`, which hands
+    `CommandPalette.Commands` the click), the channel's `choose` (`AxKitForm.Choose`) and the AI tool's run
+    (`RunForMcp`). Each caller keeps its own checks before it. The function does for an origin what that origin did
+    before, no more: for the AI tool the words that say who ran it and the chime, ahead of the click; for the palette
+    and the channel a check item's new state after it. The user's own choice in a menu is WinForms' click and does not
+    pass there.
+  - **The words of a check item's new state are written once**, `MenuText.CheckSaid` (`src/AxKit.Core/MenuText.cs`):
+    "Word wrap, checked", "Word wrap, not checked". The palette says them through the window's `Announce`, the channel
+    straight through `Announcer.Raise`, as each did before (`AxKitForm.SayFor`).
   - The key and the menu item of a `Command` join one step later, in `AxKitForm.Run(Command)`.
   - The names of `do` and of the AI tool are resolved by one function, `CommandNames.Resolve`.
+  - **One function knows the origin and the mark together**, `CommandGate.Decide` (CL-3.2, CL-4.9).
 - CL-4.8 **Where they do not join yet.**
-  1. **No one function knows the origin and the mark together.** The conditions of section 3 are placed per origin:
-     the key's in `ProcessCmdKey` and the key test's filter, the AI tool's in `McpRunCommand`, none in `Choose`. So
-     `choose` is not held by the key test (the `do` step never sends it there, by the listing; the channel itself
-     would run it), and a new origin would have to remember every condition by itself.
-  2. **Four places click a menu item**: WinForms' own click, the palette's line (`CommandPalette.Commands`),
-     `AxKitForm.Choose` and `RunForMcp`. The palette and `choose` say a check item's new state after the click, each
-     with its own copy of the words; the menu and the AI tool do not.
+  1. **Only the AI tool's path asks the gate.** The other conditions of section 3 are enforced where they were: the
+     key's in `ProcessCmdKey` and the key test's filter, the menu's by the disabled bar, the palette's in
+     `ShowCommandPalette`, `do`'s by the listing, none in `Choose`. So `choose` is still not held by the key test (the
+     `do` step never sends it there, by the listing; the channel itself would run it), which the gate says as it is
+     (`Choose_condition_2_the_key_test_does_not_hold_it`). A new origin starts at the gate and its tests, and still
+     has to call it.
+  2. **Two kinds of click**: WinForms' own, for the user's choice in a menu, and `AxKitForm.ClickFor`, for every
+     click axKit makes. The menu and the AI tool do not say a check item's new state; the palette and the channel do.
+     The AI tool's second checks, at the moment a posted run or the user's Yes runs (`WhyNotRunForMcp`, the busy rule,
+     `ToolItem`, `McpRun.TargetRefusal`), are their own function with their own words and their own order (a notice
+     or a dialog before the key test), not the gate's.
   3. **A menu item not made from a `Command` has no run function of axKit's.** Its click is the end. So the window's
      recent actions (for a report) hold "Find, Ctrl+F" for a command of the list, by key, menu, palette or AI tool,
      and nothing for a setting or a recent file chosen.
@@ -240,6 +272,24 @@ Each origin, by function and file, down to the code that runs the command.
      method.
   5. **A key with no menu item** runs by its key alone (and by `do`, which presses it): no other origin reaches it.
   6. **axFile's palette entries** (the folder's files) are in the palette alone: no menu, no name, no mark.
+- CL-4.9 **Where the gate decides and where it describes** (2026-11-16).
+  - **It decides for the AI tool.** `AxKitForm.McpRunCommand` asks `CommandGate.Window` before it reads the menus
+    (reading them fills the lists that fill as they open, so nothing is read for a call that is refused anyway) and
+    `CommandGate.Decide` once the name gave an entry and its mark. A typed data tool that changes something asks the
+    same conditions of the window through `McpChangeRefusal`, after its own checks of the app and the switch. The
+    order in which the gate asks is the order the code asked before, and decides which words a client gets when two
+    conditions hold at once: the app, Let AI tools run commands, the key test, a notice, a Windows dialog, the user's
+    hands, then the name, then the minute after a No. `CommandGateTests` holds every pair
+    (`Of_two_conditions_that_hold_at_once_the_AI_tool_gets_the_earlier_one_s_refusal`), and each reason's sentence,
+    by its constant or word for word.
+  - **It describes the user's key, menu and palette, and the checks' `do` and `choose`.** For those the table says
+    "runs" in every cell, and their conditions (a notice, the key test, `Command.When`, what the menus offer) are
+    enforced by WinForms' message handling, the key test's filter, the disabled menu bar and the window's listing.
+    Moving that enforcement behind the gate is a larger change with a real risk to what the user's keys do, and was
+    left out on purpose. The tests hold the description: a change of the table changes a test.
+  - **What the gate cannot see.** A Windows dialog is asked for the AI tool alone: the user's own keys go to the
+    dialog. The key test holds the menu and the palette by the keyboard, since its filter takes key messages; a
+    mouse click on the menu bar is not a key message.
 
 ## 5. Finding a command by name
 
@@ -319,13 +369,23 @@ Each origin, by function and file, down to the code that runs the command.
 
 ## 8. Not built, in the order to build it
 
-- (a) **One function every origin calls to run a command**, with the table of section 3 as its test. It takes the
-  entry, the origin and who asks; it holds the conditions once (a notice, the key test, the never lists, the mark's
-  rule), writes the recent action, clicks, and says the check item's state. Touches `AxKitForm.cs` (`Run`,
-  `RunCommandKey`), `AxKitForm.Mcp.cs`, `AxKitForm.Commands.cs` (`Choose`), `CommandPalette.cs` (`Commands`),
-  `AxKitForm.Palette.cs`; the pure decision (origin, mark, state to a verdict) goes into `AxKit.Core` with a test that
-  is the table, cell by cell. No words the user hears change. Middle-sized: one shared file set, every app's window
-  checks run after it, an NVDA pass of the AI tools' scripts.
+- (a) **One function every origin calls to run a command**, with the table of section 3 as its test. **Built as far
+  as it changes nothing a user meets** (2026-11-16): the pure decision, `CommandGate.Decide`, with the table as its
+  test (CL-3.2); the one click axKit makes, `AxKitForm.ClickFor`, with the one place for a check item's words
+  (CL-4.7); and the AI tool's path asking the gate in place of its own chain (CL-4.9). No word, no order of
+  announcements, no question and no refusal changed: the AI tools' window scripts say the same lines before and
+  after. **Left, each for its stated reason:**
+  1. The user's key and menu do not pass the gate or `ClickFor` (CL-4.9): the enforcement would move out of WinForms'
+     message handling and the key test's filter, which is where a mistake costs the user his keys. To be done alone,
+     with every app's window checks and an NVDA pass.
+  2. The bundle keys handled in `ProcessCmdKey` itself still do not pass `RunCommandKey` (CL-4.8, 4), for the same
+     reason.
+  3. The recent actions still hold commands of the list alone (CL-4.8, 3): writing every click there changes what a
+     report holds (`reports.md` RP-4.1), which is a change a user meets, so it is a decision and not a consolidation.
+  4. `choose` is still not held by the key test (CL-4.8, 1): holding it changes which origin is refused when. Only a
+     test run reaches it.
+  5. The AI tool's second checks (CL-4.8, 2) keep their own function: their words and their order differ from the
+     first check's, so joining them changes which sentence is said when a notice and the key test hold at once.
 - (b) **One name matcher** shared by the palette, `do`, the AI tool and later speech: `CommandNames` for the exact
   name, `TextMatch` for the offer, and one rule for the nearest candidates, so that the AI tool's refusal names them
   as `do`'s does; `choose` and the `menu` step move onto it (WF-1.8). Touches `AxKit.Core` (`CommandNames`, `Palette`,

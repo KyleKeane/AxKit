@@ -1,20 +1,6 @@
+using AxKit.Core;
+
 namespace AxKit.Forms;
-
-/// <summary>What a command does beyond reading its window, for the control of AI clients (docs/axKit/mcp.md MC-3.1).</summary>
-public enum CommandMark
-{
-    /// <summary>Says or shows something; changes nothing.</summary>
-    Read,
-
-    /// <summary>Opens a window or a file, moves in the window.</summary>
-    Open,
-
-    /// <summary>Changes the window's own state or the file it holds.</summary>
-    Change,
-
-    /// <summary>Acts outside the window: deletes, moves, runs, sends, installs. An AI client never runs one on its own word.</summary>
-    Act,
-}
 
 /// <summary>
 /// One command of a window (docs/axKit/app-kit.md AK-2): its menu label with its letter, its key from the window's key

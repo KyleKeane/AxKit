@@ -41,7 +41,35 @@ public static class McpRun
                 : "axClip's commands are never run by AI tools: its window holds the clipboard's history. The user runs them."
             : null;
 
-    /// <summary>A label or a menu path as it is matched: the letter's marker and the trailing dots gone, the spaces trimmed (<see cref="CommandNames.Plain"/>).</summary>
+    /// <summary>What the tool answers while the window shows a Windows dialog (MC-7.3).</summary>
+    public const string DialogShown = "The window shows the user a Windows dialog: commands run once the user has closed it.";
+
+    /// <summary>What the tool answers for an act within a minute of the user's No (MC-7.3): whichever client asks, the window asks no more.</summary>
+    public const string DeniedLately = "The user denied running a command a moment ago; this window asks no more within a minute.";
+
+    /// <summary>What the tool answers while the window shows a notice (MC-7.3), which it names by its title.</summary>
+    public static string NoticeShown(string? title) =>
+        $"The window shows the user a notice, {title}: commands run once the user has answered it, and AI tools never answer it.";
+
+    /// <summary>
+    /// The words of a refusal the gate gave the AI tool's path (<see cref="CommandGate"/>,
+    /// docs/axKit/command-language.md section 3): one sentence per reason, each written once, here or where this
+    /// points. Only the reasons that path can get: a name's refusals are <see cref="Find"/>'s, and the first switch is
+    /// the pipe's own answer; any other reason is a mistake of the caller.
+    /// </summary>
+    public static string Refusal(CommandRefusal why, string appVerb, string? noticeTitle) => why switch
+    {
+        CommandRefusal.AppNeverRun => AppRefusal(appVerb) ?? throw new ArgumentOutOfRangeException(nameof(appVerb), appVerb, "an app whose commands AI tools may run"),
+        CommandRefusal.RunCommandsOff => SwitchOff,
+        CommandRefusal.KeyTest => KeyTest.AiToolsRefusal,
+        CommandRefusal.Notice => NoticeShown(noticeTitle),
+        CommandRefusal.Dialog => DialogShown,
+        CommandRefusal.UserBusy => UserBusy,
+        CommandRefusal.DeniedLately => DeniedLately,
+        _ => throw new ArgumentOutOfRangeException(nameof(why), why, "no refusal of axkit_window_run"),
+    };
+
+    /// <summary>A label or a menu path as it is matched:the letter's marker and the trailing dots gone, the spaces trimmed (<see cref="CommandNames.Plain"/>).</summary>
     public static string Plain(string text) => CommandNames.Plain(text);
 
     /// <summary>

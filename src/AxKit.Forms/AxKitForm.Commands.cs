@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Mcp;
 
 namespace AxKit.Forms;
 
@@ -74,10 +75,10 @@ public abstract partial class AxKitForm
     /// <summary>
     /// Runs one menu item for the automation channel's <c>choose</c> (docs/axKit/user-workflows.md section 5.2): the
     /// entry of exactly that name under exactly those menus as the bar stands now (<see cref="CommandPalette.Find"/>),
-    /// clicked as the command palette clicks it: a command says what it says, and a setting that is a check item has
-    /// its new state said as the palette says it ("Check for updates at start, checked"). Null when the item was
-    /// clicked; otherwise why not: the menus do not offer such an item now (it is gone, disabled, or a notice holds
-    /// the window).
+    /// clicked as the command palette clicks it (<see cref="ClickFor"/>): a command says what it says, and a setting
+    /// that is a check item has its new state said as the palette says it ("Check for updates at start, checked").
+    /// Null when the item was clicked; otherwise why not: the menus do not offer such an item now (it is gone,
+    /// disabled, or a notice holds the window).
     /// </summary>
     internal string? Choose(string label, string menus)
     {
@@ -86,12 +87,60 @@ public abstract partial class AxKitForm
             return $"no menu item {label} in {menus} now";
         }
 
-        entry.Item.PerformClick();
-        if (entry.Item.CheckOnClick)
+        ClickFor(CommandOrigin.Choose, entry.Item, entry.Name);
+        return null;
+    }
+
+    // ---- the one click (docs/axKit/command-language.md CL-4.7) ----
+
+    /// <summary>
+    /// The menu bar's entries as the palette's lines (<see cref="CommandPalette.Commands"/>), each clicking its item
+    /// for <paramref name="origin"/>: <see cref="CommandOrigin.Palette"/> for the command palette,
+    /// <see cref="CommandOrigin.Choose"/> for the automation channel's <c>commands</c> and its older <c>menu</c> step.
+    /// </summary>
+    internal List<PaletteEntry> MenuLines(CommandOrigin origin) =>
+        CommandPalette.Commands(MainMenuStrip, text => SayFor(origin, text), (item, name) => ClickFor(origin, item, name));
+
+    /// <summary>
+    /// The one place where axKit itself clicks a menu item (CL-4.7): for the command palette's line, for the
+    /// automation channel's <c>choose</c> and <c>menu</c>, and for an AI tool's run. Each caller has made its own
+    /// checks before (<see cref="CommandGate"/> says which belong to which origin); here are the click and what goes
+    /// with it for that origin, no more than each did before 2026-11-16: for an AI tool the words that say who ran
+    /// it, ahead of the click so that they join what the command says, and the chime of a window behind (MC-7.5);
+    /// for the palette and the channel a check item's new state after the click (<see cref="MenuText.CheckSaid"/>),
+    /// since no menu shows it. A command of the window's list is written into the recent actions by its item's own
+    /// click (<c>Run</c>), whoever clicks. The user's own choice in a menu is WinForms' click and does not
+    /// pass here.
+    /// </summary>
+    private void ClickFor(CommandOrigin origin, ToolStripMenuItem item, string name, string? client = null)
+    {
+        if (origin == CommandOrigin.AiTool)
         {
-            Announcer.Raise(this, $"{entry.Name}, {(entry.Item.Checked ? "checked" : "not checked")}", true);
+            AnnounceBefore(McpRun.Said(client ?? string.Empty, name));
+            // One chime and flash for a burst of runs, not one per run.
+            ChimeForMcp();
         }
 
-        return null;
+        item.PerformClick();
+        if (origin != CommandOrigin.AiTool && item.CheckOnClick)
+        {
+            SayFor(origin, MenuText.CheckSaid(name, item.Checked));
+        }
+    }
+
+    /// <summary>
+    /// What a click for an origin says beside the command's own words, as each said it before: the palette through
+    /// the window's <see cref="Announce"/>, the automation channel straight through <see cref="Announcer.Raise"/>.
+    /// </summary>
+    private void SayFor(CommandOrigin origin, string text)
+    {
+        if (origin == CommandOrigin.Palette)
+        {
+            Announce(text, true);
+        }
+        else
+        {
+            Announcer.Raise(this, text, true);
+        }
     }
 }

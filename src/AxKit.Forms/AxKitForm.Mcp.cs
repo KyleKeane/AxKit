@@ -38,19 +38,13 @@ public abstract partial class AxKitForm
     /// </summary>
     internal (string? Error, string Label, bool Asked, int Ticket) McpRunCommand(string? name, string? menu, string client, bool allowed)
     {
-        if (McpRun.AppRefusal(AppVerb) is { } refused)
+        // The gate's part that needs no command (docs/axKit/command-language.md section 3), asked before the menus
+        // are read, since reading them fills the lists that fill as they open: the app, the switch, the key test, a
+        // notice, a Windows dialog, the user's hands, in that order.
+        var state = McpGateState(allowed);
+        if (CommandGate.Window(CommandOrigin.AiTool, state) is { } held)
         {
-            return (refused, string.Empty, false, 0);
-        }
-
-        if (!allowed)
-        {
-            return (McpRun.SwitchOff, string.Empty, false, 0);
-        }
-
-        if (McpChangeRefusal() is { } busy)
-        {
-            return (busy, string.Empty, false, 0);
+            return (McpRefusal(held), string.Empty, false, 0);
         }
 
         var entries = ToolEntries();
@@ -65,16 +59,19 @@ public abstract partial class AxKitForm
         var found = entries[index];
         var label = found.Name;
         var menus = found.Menu;
-        if (CommandPalette.MarkOf(found.Item) == CommandMark.Act)
+        // The cell of the table for this command's mark, with the same facts as above and the one fact of the command:
+        // after the user's Deny, the same window asks no more for a minute, so that a client that asks again at once
+        // does not wear the user down (as the pairing's Deny, MC-6.4); per window, whichever client asks, since the
+        // broker does not learn of the user's Deny (MC-7.3). The entry found is one the AI tools may see and the menus
+        // offer now, so the gate's other facts of a command are not set.
+        var verdict = CommandGate.Decide(CommandOrigin.AiTool, CommandPalette.MarkOf(found.Item), state with { DeniedLately = Environment.TickCount64 < _mcpRunDeniedUntil });
+        if (verdict.Answer == CommandAnswer.Never)
         {
-            // After the user's Deny, the same window asks no more for a minute: a client that asks again at once does not
-            // wear the user down (as the pairing's Deny, MC-6.4).
-            // Per window, whichever client asks: the broker does not learn of the user's Deny (MC-7.3).
-            if (Environment.TickCount64 < _mcpRunDeniedUntil)
-            {
-                return ("The user denied running a command a moment ago; this window asks no more within a minute.", label, false, 0);
-            }
+            return (McpRefusal(verdict.Why), label, false, 0);
+        }
 
+        if (verdict.Answer == CommandAnswer.AsksFirst)
+        {
             AskToRunMcp(client, label, menus, McpTarget());
             return (null, label, true, 0);
         }
@@ -113,26 +110,30 @@ public abstract partial class AxKitForm
     /// hand (MC-7.3), or the user working in the window in front (MC-7.8), since a change may move the caret, the focus
     /// or the selection as the user's own key would. A run and a typed data tool that changes (MC-8.3) both ask it.
     /// </summary>
-    protected string? McpChangeRefusal()
+    protected string? McpChangeRefusal() =>
+        // The gate's conditions of the window for an AI tool, without the app and the switch, which a typed data tool
+        // asks in its own order before this (McpApp): the key test (AX-8.12: nothing is carried out while the user
+        // tries keys, an AI tool's command no more than a key's), a notice, a Windows dialog, the user's hands.
+        CommandGate.Window(CommandOrigin.AiTool, McpGateState(allowed: true) with { AppServesNoAiTool = false }) is { } held ? McpRefusal(held) : null;
+
+    /// <summary>
+    /// The facts of this window the gate asks for an AI tool (<see cref="CommandGate.Window"/>), read once, on the
+    /// window's thread: the app, the switch as the pipe's thread read it, the key test, a notice, a Windows dialog,
+    /// and whether the user is working in the window in front. The first switch is not asked here: the pipe answers
+    /// no request while it is off or the client is not paired (<see cref="McpChannel"/>).
+    /// </summary>
+    private CommandState McpGateState(bool allowed) => new()
     {
-        if (KeyTestRunning)
-        {
-            // AX-8.12: nothing is carried out while the user tries keys, an AI tool's command no more than a key's.
-            return KeyTest.AiToolsRefusal;
-        }
+        AppServesNoAiTool = McpRun.AppRefusal(AppVerb) is not null,
+        RunCommandsOff = !allowed,
+        KeyTestRunning = KeyTestRunning,
+        NoticeOpen = NoticeOpen,
+        DialogShowing = DialogShowing,
+        UserBusy = McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()),
+    };
 
-        if (NoticeOpen)
-        {
-            return $"The window shows the user a notice, {Overlay.Shown?.Title}: commands run once the user has answered it, and AI tools never answer it.";
-        }
-
-        if (DialogShowing)
-        {
-            return "The window shows the user a Windows dialog: commands run once the user has closed it.";
-        }
-
-        return McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()) ? McpRun.UserBusy : null;
-    }
+    /// <summary>The words of a refusal the gate gave an AI tool in this window (<see cref="McpRun.Refusal"/>), a notice named by its title.</summary>
+    private string McpRefusal(CommandRefusal why) => McpRun.Refusal(why, AppVerb, Overlay.Shown?.Title);
 
     /// <summary>
     /// MC-8: a typed data tool of this window's app (<see cref="McpTools.AppTools"/>), on the window's thread: the
@@ -243,13 +244,7 @@ public abstract partial class AxKitForm
     /// would. A window that is not in front chimes and flashes on the taskbar as well, since NVDA does not speak the
     /// notifications of a window behind (<see cref="Raise"/>).
     /// </summary>
-    private void RunForMcp(string client, string label, ToolStripMenuItem item)
-    {
-        AnnounceBefore(McpRun.Said(client, label));
-        // One chime and flash for a burst of runs, not one per run.
-        ChimeForMcp();
-        item.PerformClick();
-    }
+    private void RunForMcp(string client, string label, ToolStripMenuItem item) => ClickFor(CommandOrigin.AiTool, item, label, client);
 
     /// <summary>When a run in this window behind last chimed (<see cref="Environment.TickCount64"/>), -1 for never.</summary>
     private long _mcpLastChime = -1;

@@ -26,6 +26,8 @@
   ("&1. notes.md - axDown"; the apps' recent lists use the same `Label`).
 - `MenuText` (AX-6.4, AX-10.2): `Plain`, a menu item's or a button's text as spoken or searched, the mnemonic marker
   and the trailing dots gone; the palette's names, the notices' key line and the Speech menu choices read it.
+  `CheckSaid` (2026-11-16): what a check item says after it was chosen where no menu shows it, "Word wrap, checked",
+  the one place for the words, which the palette and the automation channel's choose each had a copy of.
 - `Palette` and `PaletteEntry` (AX-10): the command palette's lines: `Text` (a command's name with its menu path and
   key), `Find` (the matches for a typed text through `TextMatch`), `Spoken` ("Save as, File, Ctrl+Shift+S, 1 of 3")
   and `NoMatch`.

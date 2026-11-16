@@ -286,7 +286,7 @@ internal sealed class AutomationChannel : IMessageFilter
     }
 
     /// <summary>Every command of the window's menus as the command palette lists it, with its menu and key.</summary>
-    private object Commands() => CommandPalette.Commands(_form.MainMenuStrip, _ => { }).Select(entry => entry.Text).ToArray();
+    private object Commands() => _form.MenuLines(CommandOrigin.Choose).Select(entry => entry.Text).ToArray();
 
     /// <summary>The focused text control's lines, the last 60, for a script that checks what a transcript or an editor holds.</summary>
     private static object Text()
@@ -318,8 +318,9 @@ internal sealed class AutomationChannel : IMessageFilter
 
     private object Menu(string name)
     {
-        // A checked setting says its new state, as the palette makes it say (AX-10.2).
-        var entry = CommandPalette.Commands(_form.MainMenuStrip, said => Announcer.Raise(_form, said, true))
+        // A checked setting says its new state, as the palette makes it say (AX-10.2): the window's one click
+        // (AxKitForm.ClickFor), for the channel's origin.
+        var entry = _form.MenuLines(CommandOrigin.Choose)
             .FirstOrDefault(entry => entry.Text.StartsWith(name, StringComparison.OrdinalIgnoreCase));
         if (entry is null)
         {

@@ -24,7 +24,7 @@ public abstract partial class AxKitForm
             return;
         }
 
-        _paletteAll = [.. CommandPalette.Commands(MainMenuStrip, text => Announce(text, true)), .. PaletteEntries()];
+        _paletteAll = [.. MenuLines(CommandOrigin.Palette), .. PaletteEntries()];
         _paletteShown = _paletteAll;
         ShowNotice(new Notice("Command palette", string.Empty,
         [
