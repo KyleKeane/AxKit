@@ -41,6 +41,19 @@ the restart by the app itself (2.3.0).
 
 ## Still to come
 
+- **Guided learning, step by step** (the user's direction, 2026-11-16; recorded as a direction, not to be built
+  yet): new users are coming, and on some days a person wants a thing done for them, on others they have the
+  capacity to learn it. Three ways to one goal, all from the same source, the goals of `docs/axKit/workflows.md`
+  (`user-workflows.md`): read the steps (built: the how-to pages, axHelp); have Claude do it (the list item "axHelp:
+  after the steps, offer to carry them out", through the AI tools, each action asked first, rule 11); and be talked
+  through it, one step at a time, each step marked done as the user does it, the next one said only then. The
+  third is this entry. What it would rest on, all of which exists or is being built: a goal's steps as data (the
+  scripts' goal lines and `do` steps), the windows' own events to tell that a step happened (the automation
+  channel's trace lines, WF-5.1, show what a window said and where the focus went), and the workflow record's shape
+  for "done" per step. What it needs first: the foundations stable (the converter, the AI tools mode of the checks,
+  axClaude and axHelp in the command inventory), the goal titles heard and settled by the user, and a specification
+  of its own with its cautions. Its heuristics for learners are the bundle's rules already: a key has one meaning in
+  every window (rule 5, AX-8), every action says a short message, nothing happens that the user did not ask for.
 - **The Microsoft Store, MSIX and winget** (asked 2026-11-08, the day the Partner Center account was opened; planned in `store-distribution.md`; built on branch `store` the same day, SPEC AX-13; built, and live in the Store since 2026-11-10 as the 5.2.1 package, Store ID 9PK01L2K5000): axKit as one MSIX package the Store signs, installs and updates, one Application per app, the Store page in place of the updater in that copy, `winget install` from the Store source as the command-line path, the zip kept for developers; the account work and every release's upload by hand in Partner Center (the route through the Store's API was built, never switched on, and removed on 2026-11-13); the decisions still open are its section 4.
 - Reports (asked 2026-11-07, specified in `docs/axKit/reports.md`; built, released in 5.1.0): F4 in every window opens a report with
   the last actions and the focus filled in, three kinds (feedback, bug, feature request), saved as an axTask item
