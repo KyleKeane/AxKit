@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 571 commands with a key in 17 apps, on 114 different keys, counting the
+The inventory holds 575 commands with a key in 17 apps, on 114 different keys, counting the
 second keys some commands answer. 49 keys have one meaning wherever they are; 65 have several.
 19 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -71,11 +71,12 @@ The most spread first: the number of meanings, then the number of apps.
 
 ### Enter
 
-Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axPass, axPreview, axStart and axTask. 15 meanings.
+Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axPass, axPreview, axProcess, axStart and axTask. 16 meanings.
 
 - axAutomate, axFile, axMCP, axPass and axTask: Open.
 - axAutomate, axMCP, axPass and axTask: Change the field.
 - axCalc: Answer.
+- axProcess: Details.
 - axFile: Go to the action's place.
 - axTask: Open it where it lives.
 - axHelp: Open the conversation.
@@ -163,6 +164,18 @@ Window key, in axAutomate, axCalc, axClaude, axClip, axDown, axMCP, axMedia, axP
 - axMedia: What is playing.
 - axTerminal: What is running.
 
+### Delete
+
+Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axMCP, axPass, axProcess and axTask. 7 meanings.
+
+- axAutomate, axFile, axMCP, axPass and axTask: Delete.
+- axAutomate, axMCP, axPass and axTask: Remove the field.
+- axGIT: Discard changes.
+- axProcess: End process.
+- axClip: Remove.
+- axCalc: Remove the entry.
+- axPass: To the Recycle Bin.
+
 ### Escape
 
 Window key, in axAutomate, axCalc, axClip, axFile, axHelp, axMCP, axPass, axStart and axTask. 7 meanings.
@@ -223,17 +236,6 @@ Window key, in axAutomate, axDown, axFile, axJSON, axMCP, axPass and axTask. 7 m
 - axFile: Undo rename.
 - axFile: Undo the action.
 
-### Delete
-
-Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axMCP, axPass and axTask. 6 meanings.
-
-- axAutomate, axFile, axMCP, axPass and axTask: Delete.
-- axAutomate, axMCP, axPass and axTask: Remove the field.
-- axGIT: Discard changes.
-- axClip: Remove.
-- axCalc: Remove the entry.
-- axPass: To the Recycle Bin.
-
 ### Ctrl+F
 
 Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal. 5 meanings.
@@ -284,6 +286,16 @@ Window key, in axCalc, axDown, axFile, axJSON, axPreview and axStart. 5 meanings
 - axJSON: Item.
 - axFile: The action's number and time.
 
+### Ctrl+E
+
+Window key, in axFile, axGIT, axJSON, axPreview and axProcess. 5 meanings.
+
+- axPreview: Edit in axDown.
+- axFile: Editor.
+- axJSON: Error.
+- axGIT: Open file in editor.
+- axProcess: Show program in axFile.
+
 ### Ctrl+Shift+C
 
 Window key, in axCalc, axClaude, axFile and axTerminal. 5 meanings.
@@ -329,15 +341,6 @@ Window key, in axDown, axJSON, axPass, axPreview and axTerminal. 4 meanings.
 - axJSON: Array.
 - axTerminal: Clear transcript.
 - axPass: Lock.
-
-### Ctrl+E
-
-Window key, in axFile, axGIT, axJSON and axPreview. 4 meanings.
-
-- axPreview: Edit in axDown.
-- axFile: Editor.
-- axJSON: Error.
-- axGIT: Open file in editor.
 
 ### Ctrl+Enter
 
@@ -396,6 +399,14 @@ Window key, in axDown, axGIT, axJSON and axPreview. 3 meanings.
 - axDown and axPreview: List.
 - axJSON: Array.
 - axGIT: Pull.
+
+### Ctrl+C
+
+Window key, in axFile, axPreview and axProcess. 3 meanings.
+
+- axFile: Copy.
+- axProcess: Copy line.
+- axPreview: Copy the detail's value.
 
 ### Ctrl+P
 
@@ -587,13 +598,6 @@ Window key, in axDown, axFile and axPreview. 2 meanings.
 
 - axDown and axPreview: Table.
 - axFile: New text file.
-
-### Ctrl+C
-
-Window key, in axFile and axPreview. 2 meanings.
-
-- axFile: Copy.
-- axPreview: Copy the detail's value.
 
 ### Ctrl+J
 

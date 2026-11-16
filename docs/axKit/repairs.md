@@ -362,7 +362,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Where: src/AxTask/TaskForm.cs; src/AxKit.Core
 - Principle: P1
 - Fix: Each unreadable item file is a row of its list, named and openable in axJSON, and the lists that gather items say how many could not be read and where.
-- Checked by: tests/AxTask.Tests/FolderTests (ReadsALevel, A_damaged_item_is_named_in_its_list_and_counted_with_its_lists_by_what_gathers_items); tests/scripts/axTask/10-damaged-item; owed: a hearing with NVDA (nvda-test-plan section 4, step 5)
+- Checked by: tests/AxTask.Tests/FolderTests (ReadsALevel, A_damaged_item_is_named_in_its_list_and_counted_with_its_lists_by_what_gathers_items); tests/scripts/axTask/10-damaged-item; heard with NVDA in the pass of 2026-11-16 (f93f1e64)
 - Note: Found on 2026-11-16 by the second reading: a due task whose file broke vanishes from Due today. That the gathering lists say nothing was inferred and is to be confirmed first.
 
 ### R-67, medium, core: Settings a newer version adds are dropped when an older copy saves the file
@@ -554,7 +554,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Where: src/AxClip.Core/ClipSettings.cs; src/AxClip/ClipForm.cs
 - Principle: P1
 - Fix: The unreadable history is kept once beside the file and the window says the history starts empty; the kept total has a limit.
-- Checked by: tests/AxClip.Tests/ClipHistoryTests (A_kept_history_that_cannot_be_opened_is_kept_once_as_bad_and_is_said, What_Windows_gives_back_must_be_a_list_of_items_and_no_kept_history_says_nothing, The_kept_history_has_a_limit_and_the_oldest_are_dropped_first); tests/scripts/axClip/03-history-not-read for the window; owed: a hearing of the sentence with NVDA at the first showing after a hidden start (nvda-test-plan 4.2a)
+- Checked by: tests/AxClip.Tests/ClipHistoryTests (A_kept_history_that_cannot_be_opened_is_kept_once_as_bad_and_is_said, What_Windows_gives_back_must_be_a_list_of_items_and_no_kept_history_says_nothing, The_kept_history_has_a_limit_and_the_oldest_are_dropped_first); tests/scripts/axClip/03-history-not-read for the window; heard with NVDA in the pass of 2026-11-16 (f93f1e64)
 - Note: Found on 2026-11-16 by the second reading: a profile moved to another computer, a password reset. The window says once, at its first showing, "The kept clipboard history could not be read on this computer and starts empty."; the settings file as it was is copied once to axClip.json.bad, the history in it still encrypted, and Clear history deletes the copy; the kept total is 8 MB of text, the oldest left out first (docs/axClip/SPEC.md CP-3.6). Left open: axClip started hidden and ended before it was ever shown saves the empty history without the sentence having been said; the log and the copy hold it.
 
 ### R-70, low, security: git and PowerShell 7 are taken from the PATH before Program Files
@@ -578,7 +578,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Where: src/AxTask/TaskForm.ActionKeys.cs
 - Principle: P1
 - Fix: An action key that opens or moves says what it now does and waits for a second press when the list's keys differ from the ones this install wrote or accepted.
-- Checked by: tests/AxTask.Tests/ActionKeysTests (A_key_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not, An_acceptance_is_for_one_list_one_key_and_one_action_and_is_kept_under_the_seal, The_acceptances_are_kept_to_a_limit_the_oldest_going_first); tests/scripts/axTask/04-action-keys for the window (the first press says, the second does, the third acts at once); owed: a hearing with NVDA (nvda-test-plan section 5, step 5a)
+- Checked by: tests/AxTask.Tests/ActionKeysTests (A_key_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not, An_acceptance_is_for_one_list_one_key_and_one_action_and_is_kept_under_the_seal, The_acceptances_are_kept_to_a_limit_the_oldest_going_first); tests/scripts/axTask/04-action-keys for the window (the first press says, the second does, the third acts at once); heard with NVDA in the pass of 2026-11-16 (f93f1e64)
 - Note: Found on 2026-11-16 by the second reading: a shared or rewritten list. The words: "Ctrl+2 in this list now moves to ../Later. Press it again to do it." The seal is per list and key, not per list: an acceptance is the bundle's seal (SettingsSeal.Of) over the list's folder, the digit and the action, kept in axTask's settings as acceptedActionKeys, so that accepting one key says nothing of the eight others the user has not heard (docs/axTask/SPEC.md TK-7a.3). A key written in Actions, Action keys is accepted as it is written. Left open: every move or open key of a list made before this version asks once; a key set in the form and then taken back by Ctrl+Z stays accepted.
 
 ### R-74, low, apps: An MCP server's error lines go into axMCP's log

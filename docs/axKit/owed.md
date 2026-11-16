@@ -8,8 +8,8 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 35 owed in all.
-- Owed a hearing with NVDA: 16.
+- 32 owed in all.
+- Owed a hearing with NVDA: 13.
 - Owed a live check with a real outside program or situation: 9.
 - Owed a window check on the hidden desktop: 9.
 - Owed a test in code: 1.
@@ -28,9 +28,6 @@ dated pass; then the script writes this page again.
 - R-61: axMCP's notice that reads a server's whole command line before it is agreed to.
 - R-63: the notice of an item window and the system line of a console window when the settings cannot be saved.
 - R-64: the sentence that a remembered path is on the network and was not opened.
-- R-66: a damaged item named in its list in axTask (docs/axTask/nvda-test-plan.md section 4, step 5).
-- R-69: axClip's sentence at its first showing after a hidden start, when the kept history could not be read (docs/axClip/nvda-test-plan.md 4.2a).
-- R-72: the first press of a list's action key that moves or opens, in axTask (docs/axTask/nvda-test-plan.md section 5, step 5a).
 - R-74: the details of a started server in axMCP with their error lines.
 
 ## Owed a live check with a real outside program or situation

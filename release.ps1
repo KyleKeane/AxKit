@@ -105,7 +105,7 @@ function Get-ReleaseKeyProblem {
 }
 
 # A window that changed is checked by its scripts before it is released: no app's window code has a commit newer than
-# the app's last recorded pass on the desktop tier (docs/axKit/workflow-record.json, written by a run with --record).
+# the app's last recorded pass, desktop tier or with NVDA (docs/axKit/workflow-record.json, written by a run with --record).
 # The decision, and why the tests do not make it, is tools/window-passes.ps1's; its lines name the apps.
 function Get-WindowPassProblem {
     & (Join-Path $root 'tools\window-passes.ps1') -Check | Out-Host

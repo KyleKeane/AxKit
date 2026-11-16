@@ -47,7 +47,7 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   `tools/AxAutomate --reference [--check]`, plays nothing: it writes the workflow pages, or checks them, for
   `tools/workflows.ps1` (below). `tools/QaRun` runs Claude sessions without windows, always with `--model haiku`.
 - `tools/window-passes.ps1 [-Check]` says which apps' window code has a commit newer than the app's last recorded
-  pass on the desktop tier (`workflow-record.json`). `release.ps1` and its rehearsal run it with `-Check` and refuse
+  pass on the desktop tier or with NVDA listening (`workflow-record.json`). `release.ps1` and its rehearsal run it with `-Check` and refuse
   while it names an app; `test.ps1` does not run it, since during ordinary work the windows are ahead of their
   record. It reads and asks git; it writes nothing. `-Run` does what its lines ask for: AxKit built once into a
   scratch folder, then the scripts folder of each app it names run on the hidden desktop with `--record`, one line per
@@ -117,8 +117,9 @@ page by hand; run its script and commit the page.
   at the top of the script.
 - `tools/key-map.ps1` writes `key-map.md` from the command inventory `window-commands.json`, `BundleKeys.cs` and the
   proposed `key-families.json`: every key, its scope and what it does in each app. Every run holds the families file
-  to the inventory: a key named there as not fitting is a command the inventory has. Run it after the inventory is
-  written again.
+  to the inventory: a key named there as not fitting is a command the inventory has. `tools/workflows.ps1` runs it after
+  its own pages, so writing the pages after an inventory change writes the key map too; alone it is run after a
+  change to `BundleKeys.cs` or the families file.
 - `tools/owed.ps1` writes `owed.md`: everything tested in code and not yet heard or tried for real, by kind (a
   hearing with NVDA, a live check with a real outside program or situation, a window check on the hidden desktop, a
   test in code), from the rows of `cases.json` that carry `owed`, the `owed` entries of `repairs.json` and the Owed

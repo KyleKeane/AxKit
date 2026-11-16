@@ -748,7 +748,12 @@ every window" or under a heading that names the windows without it; under an app
 ## axProcess
 
 - Summary. Menu: Actions. Key: Ctrl+Q. Mark: read.
+- Copy line. Menu: Context. Key: Ctrl+C. Mark: act.
+- Details. Menu: Context. Key: Enter. Mark: read.
+- End process. Menu: Context. Key: Delete. Mark: act.
+- End process tree. Menu: Context. Key: none. Mark: act.
 - Nothing selected. Menu: Context. Key: none. Mark: read.
+- Show program in axFile. Menu: Context. Key: Ctrl+E. Mark: open.
 - Services. Menu: Help, Windows resources. Key: none. Mark: act.
 - Task Manager. Menu: Help, Windows resources. Key: none. Mark: act.
 - Processes. Menu: Navigation. Key: Ctrl+1. Mark: open.

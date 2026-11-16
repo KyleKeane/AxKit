@@ -6,6 +6,40 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-16: every app, after the day of consolidation; by the assistant with NVDA listening (`main` f93f1e64)
+
+`.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, the build 5.9.1 of commit f93f1e64:
+137 scripts of `tests/scripts` and the four of `tests/nvda-scripts`, 141 in all. 139 passed with every announcement
+also spoken by NVDA; 978 goals and checks passed, 2 failed and 12 were not run after them. The pass wrote each result
+into `docs/axKit/workflow-record.json` itself.
+
+| What | Scripts | Result |
+|---|---|---|
+| Every script but two | 139 | Passed |
+| `axAutomate/02-run.txt`, `axCalc/01-basics.txt` | 2 | Failed in the pass, passed on the runner's own desktop afterwards |
+
+What it found:
+
+- The two failures were a key from outside the scripts. In both, the window's Keyboard shortcuts notice opened
+  where no step presses F1 (in axCalc one second after the start, in axAutomate right after the Escape that stops a
+  run), and in axAutomate NVDA also spoke a single letter no step types. Both were within the first minutes of the
+  pass, and the user's own axClaude window stood with its Keyboard shortcuts notice open through the whole pass. Where
+  the key came from was not found. Both scripts passed whole on the runner's own desktop right after (9 and 8 goals),
+  so their goals are recorded at that tier and not as heard in this pass.
+- The command inventory was stale for axProcess: the five commands of a process's context menu (Details, End
+  process, End process tree, Show program in axFile, Copy line) were not in it. The snapshot of its first script is
+  taken while the first read runs, when the menu holds only "Nothing selected"; with NVDA the read was over by then.
+  `axProcess/01-start.txt` now takes a second snapshot once the list is read, and the five rows are in the inventory.
+- Heard for the first time, and taken off `docs/axKit/owed.md`: a damaged item named in its list in axTask (R-66),
+  axClip's sentence when the kept history could not be read (R-69), and the first press of an action key that moves
+  (R-72).
+- Still owed a hearing, since no script reaches them: the refusals of a settings file whose seal does not check
+  (R-53), the notice about a changed file in Claude's working folder (R-54), the AI tools submenu after a change from
+  outside (R-56), the count of waiting reports (R-57), the settings that cannot be saved (R-63), the remembered path
+  on the network (R-64) and a server's error lines in axMCP (R-74). axMCP's notice before a server starts was heard
+  by its title and first lines; its command line further down was not read out by NVDA in the pass, so R-61 stays
+  owed.
+
 ## 2026-11-15, night: every app, after the workflows work and axClaude's event sources; by the assistant with NVDA listening (branch `workflows` 2ef04f4)
 
 `.\nvda-pass.ps1`, the user away at his own word (asleep, and told that NVDA would speak), Windows 11 Pro

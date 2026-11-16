@@ -10,12 +10,12 @@ It was an instruction, "run them after a change to a window", and nothing held a
 The record is docs\axKit\workflow-record.json, which a run of the scripts writes when given --record
 (docs/axKit/user-workflows.md WF-6): for every goal of every script, on the desktop tier, the commit of its last
 pass. For each app of Dispatch.Apps the script takes the newest commit at which a goal of the app's scripts
-(tests\scripts\<app>) passed on the desktop tier, and asks git whether the app's window code has a commit after it:
+(tests\scripts\<app>) passed on the desktop tier or with NVDA listening (the nvda tier), and asks git whether the app's window code has a commit after it:
 the app's own folders (src\<App>, src\<App>.Core) and the two every window stands on (src\AxKit.Forms,
 src\AxKit.Core). An app is named when
 
   - its window code has a commit after its last recorded pass,
-  - it has no recorded pass on the desktop tier at all, or
+  - it has no recorded pass on either tier at all, or
   - the commit of its pass is not in this repository.
 
 A pass recorded over work not yet committed carries a + after its commit (WF-6.3). The record cannot say what that
@@ -59,10 +59,13 @@ function Get-ChangedWindows {
     foreach ($goal in $record.goals) {
         if ($goal.script -notmatch '^tests/scripts/([^/]+)/') { continue }
         $folder = $Matches[1].ToLowerInvariant()
-        $desktop = $goal.tiers.desktop
-        if (-not $desktop -or -not $desktop.passed -or -not $desktop.passed.commit) { continue }
-        if (-not $passes.ContainsKey($folder)) { $passes[$folder] = @{} }
-        $passes[$folder][$desktop.passed.commit] = $true
+        # A pass with NVDA listening plays the same script on the real desktop and counts as well: it is the only
+        # tier at which a script that talks to the real Claude Code is run (axHelp's two).
+        foreach ($tier in @($goal.tiers.desktop, $goal.tiers.nvda)) {
+            if (-not $tier -or -not $tier.passed -or -not $tier.passed.commit) { continue }
+            if (-not $passes.ContainsKey($folder)) { $passes[$folder] = @{} }
+            $passes[$folder][$tier.passed.commit] = $true
+        }
     }
 
     foreach ($app in @(Get-AxKitApps $root)) {

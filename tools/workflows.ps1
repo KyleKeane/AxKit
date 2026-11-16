@@ -40,4 +40,13 @@ try {
     dotnet build-server shutdown | Out-Null
 }
 
+# The key map is written from the same inventory, so it is written with these pages: whoever runs this script after
+# an inventory change (the runner's own message says to) leaves no page behind. On 2026-11-16 five new rows of
+# axProcess left the key map stale until test.ps1 named it. A check (-Check) writes nothing; test.ps1 checks the key
+# map itself.
+if (-not $Check -and $exitCode -eq 0) {
+    & (Join-Path $root 'tools\key-map.ps1')
+    if ($LASTEXITCODE -ne 0) { $exitCode = $LASTEXITCODE }
+}
+
 exit $exitCode

@@ -605,7 +605,7 @@ about once a month; their check is axTerminal's, run once for all the shells.
 - Test folders are fresh under `%TEMP%`; recordings and reports follow the privacy rule (Redaction, never `--raw`).
 - A window that changed is checked by its scripts, run with `--record`, before it is released: `release.ps1` and its
   rehearsal refuse while an app's window code (`src/<App>`, `src/<App>.Core`, `src/AxKit.Forms`, `src/AxKit.Core`) has
-  a commit newer than the app's last recorded pass on the desktop tier, and name the apps
+  a commit newer than the app's last recorded pass on the desktop tier or with NVDA listening, and name the apps
   (`tools/window-passes.ps1 -Check`, whose header says how it decides; run it without `-Check` at any time to see
   what a release would say). `test.ps1` does not run it: during ordinary work the windows are ahead of their record.
 - `nvda-pass.ps1` does not start while the last key or mouse input is under 20 seconds old, nor with a capture add-on
