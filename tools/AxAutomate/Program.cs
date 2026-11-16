@@ -4,7 +4,8 @@
 // recorded and not played, and the windows keep their settings and logs in the run's own folder (AXKIT_HOME).
 //
 // Usage:
-//   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep]
+//   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep] [--nvda]
+//              [--repository <folder>] [--inventory check|write|rewrite|off]
 //   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
 //   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
 //   --report     writes every script's steps and its whole timeline, with times, to a Markdown file
@@ -14,8 +15,25 @@
 //                When no window of the run is in front the runner takes the foreground itself (one Alt key press);
 //                when the run's first window cannot come to the front at all, the run stops with one line, exit 2.
 //   --keep       keeps %TEMP%\axkit-automate\<process id>, the run's folder ({temp} in a script), with its logs
-//   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}; the exit code
-//   is 0 when every script passed, 1 when one failed, 2 when the run could not start.
+//   --repository the repository whose docs/axKit/window-commands.json the run reads and writes; by default the folder
+//                above this program that holds AxKit.sln, and none when no folder does (a runner built into %TEMP%):
+//                without one the command inventory is off
+//   --inventory  the command inventory, docs/axKit/window-commands.json (docs/axKit/user-workflows.md WF-2), from the
+//                snapshots of the windows' commands that every "check commands" and "do" step takes:
+//                check    (the default) every snapshot held against the file; what a window lists that the file does
+//                         not hold as it is is named after the summary, under "The command inventory is stale"; an
+//                         app the file holds no row for is named once and not checked
+//                write    every snapshot merged into the file, written at the end when it changed; only the scripts
+//                         with a "check commands" or "do" step play, and a line says how many were passed over
+//                rewrite  as write, and an app every script of which passed, one snapshot of it without a notice,
+//                         keeps only the rows this run saw: how a command that left a window leaves the file
+//                off      nothing (a build that is not the repository's; tools\upstream.ps1 -Verify)
+//   Options that later packages of docs/axKit/user-workflows.md build (--traces, --record, --convert, --ai-tools,
+//   --reference) are refused as not built yet.
+//   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}. The exit code
+//   (WF-11.5) is 0 when every script passed and nothing is stale, 1 when a script failed, 2 when the run could not
+//   start (the command line, the build, the program, another window run that did not end within the lock's hour), 3
+//   when every script passed and the command inventory is stale.
 //   One window run plays at a time on a computer (RunLock): the clipboard and the system hotkeys are shared, so a
 //   second run waits for the first, for an hour at most, and says once that it waits.
 //
@@ -115,37 +133,25 @@ internal static class Program
         }
 
         Console.OutputEncoding = Encoding.UTF8;
-        var target = args[0];
-        string? exe = null;
-        string? reportPath = null;
-        var keep = false;
-        var build = false;
-        for (var i = 1; i < args.Length; i++)
+        // Every option read once (Options.cs, docs/axKit/user-workflows.md section 6.4).
+        var (options, refusal) = RunOptions.Read(args);
+        if (options is null)
         {
-            switch (args[i])
-            {
-                case "--exe" or "--report" when i + 1 >= args.Length:
-                    Console.Error.WriteLine($"{args[i]} needs a value. {Usage}");
-                    return CannotStart;
-                case "--exe": exe = args[++i]; break;
-                case "--build": build = true; break;
-                case "--report": reportPath = args[++i]; break;
-                case "--keep": keep = true; break;
-                case "--nvda": Run.Nvda = true; break;
-                default:
-                    Console.Error.WriteLine($"Unknown option: {args[i]}. {Usage}");
-                    return CannotStart;
-            }
+            Console.Error.WriteLine($"{refusal} {Usage}");
+            return CannotStart;
         }
+
+        var (target, exe, build, reportPath, keep) = (options.Target, options.Exe, options.Build, options.Report, options.Keep);
+        Run.Nvda = options.Nvda;
 
         // The process id and the time: a reused process id never meets an old folder (git's read-only objects in it
         // stopped a run once).
         var root = Path.Combine(Path.GetTempPath(), "axkit-automate", $"{Environment.ProcessId}-{DateTime.Now:HHmmss}");
         Directory.CreateDirectory(root);
-        var repository = FindRepository();
         if (build)
         {
-            exe = Build(repository, Path.Combine(root, "build"));
+            // The build keeps its own fallback to the current folder (6.4); the inventory has none.
+            exe = Build(options.Repository ?? Environment.CurrentDirectory, Path.Combine(root, "build"));
             if (exe is null)
             {
                 return CannotStart;
@@ -173,6 +179,16 @@ internal static class Program
                 .Concat(Directory.GetFiles(target, "*" + WorkflowFile.Extension, SearchOption.AllDirectories))
                 .OrderBy(path => path, StringComparer.OrdinalIgnoreCase).ToList()
             : [target];
+
+        // The command inventory (InventoryRun, WF-2.7 to WF-2.10): read now; under write or rewrite only the scripts
+        // that list a window's commands play.
+        if (InventoryRun.Start(options.Inventory, options.Repository, root) is { } unreadable)
+        {
+            Console.Error.WriteLine(unreadable);
+            return CannotStart;
+        }
+
+        scripts = InventoryRun.Playing(scripts, Console.WriteLine);
 
         // A run that ended without its end (the runner killed, its console closed) left NVDA's capture on, and the add-on
         // then wrote everything NVDA spoke into a file (R-33): an earlier run's flag goes first, in every run.
@@ -226,7 +242,9 @@ internal static class Program
                 Console.WriteLine($"== {name}");
                 var temp = Path.Combine(root, Path.GetFileNameWithoutExtension(script) + "-" + scripts.IndexOf(script));
                 Directory.CreateDirectory(temp);
-                var (ok, log, goals) = RunScript(script, exe, temp);
+                var result = RunScript(script, exe, temp);
+                var (ok, log, goals) = (result.Ok, result.Log, result.Goals);
+                InventoryRun.After(result);
                 goalResults.AddRange(goals);
                 anySections |= goals.Any(goal => goal.Goal.Named);
                 report.Append($"## {name}: {(ok ? "PASS" : "FAIL")}\n\n```\n{log}```\n\n");
@@ -293,6 +311,13 @@ internal static class Program
             summary += "\nGoals: " + GoalResults.Counts(goalResults);
         }
 
+        // WF-2.9, WF-2.10: the command inventory's lines after the summary, its file written under write or rewrite.
+        var inventory = InventoryRun.End(Run.Stopped is not null);
+        foreach (var line in inventory.Lines)
+        {
+            summary += "\n" + line;
+        }
+
         report.Append(summary).Append('\n');
         if (reportPath is not null)
         {
@@ -313,22 +338,30 @@ internal static class Program
 
         Console.WriteLine();
         Console.WriteLine(summary);
-        return Run.Stopped is not null ? CannotStart : failed.Count == 0 ? 0 : ScriptsFailed;
+        return Run.Stopped is not null ? CannotStart : failed.Count > 0 ? ScriptsFailed : inventory.Stale ? InventoryStale : 0;
     }
 
-    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda]. See docs/axKit/automation.md.";
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off]. See docs/axKit/automation.md.";
 
-    /// <summary>The exit codes: 0 every script passed, 1 a script failed, 2 the run could not start (the command line, the build, the program). Until 2026-11-13 the number of failed scripts, which two failures shared with a usage error.</summary>
+    /// <summary>
+    /// The exit codes (docs/axKit/user-workflows.md WF-11.5): 0 every script passed and nothing is stale, 1 a script
+    /// failed, 2 the run could not start (the command line, the build, the program, the lock), 3 every script passed
+    /// and the command inventory is stale. Until 2026-11-13 the number of failed scripts, which two failures shared
+    /// with a usage error.
+    /// </summary>
     private const int ScriptsFailed = 1;
 
     private const int CannotStart = 2;
+
+    private const int InventoryStale = 3;
 
     /// <summary>
     /// One script or workflow with its own windows and folder, played by the engine (ScriptRunner); the console gets
     /// each step, the report the steps and the timeline. A script's sections, its goals and checks, are read with it
     /// (ScriptReader.Goals, docs/axKit/user-workflows.md WF-3) and their results come back; a workflow file has none.
+    /// The result also holds the listings of the windows' commands the run saw (WF-2.7), for the command inventory.
     /// </summary>
-    private static (bool Ok, string Log, IReadOnlyList<GoalResult> Goals) RunScript(string script, string exe, string temp)
+    private static ScriptResult RunScript(string script, string exe, string temp)
     {
         IReadOnlyList<ScriptLine> lines;
         IReadOnlyList<Goal> goals = [];
@@ -339,7 +372,7 @@ internal static class Program
             {
                 var text = "FAIL: the workflow cannot run: " + refusal;
                 Console.WriteLine(text);
-                return (false, text + "\n", []);
+                return new ScriptResult(false, text + "\n", null, [], false);
             }
 
             lines = prepared;
@@ -353,21 +386,7 @@ internal static class Program
             goals = ScriptReader.Parse(fileLines, Path.GetFileNameWithoutExtension(script), script).Goals;
         }
 
-        var result = ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals));
-        return (result.Ok, result.Log, result.Goals);
-    }
-
-    private static string FindRepository()
-    {
-        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
-        {
-            if (File.Exists(Path.Combine(dir.FullName, "AxKit.sln")))
-            {
-                return dir.FullName;
-            }
-        }
-
-        return Environment.CurrentDirectory;
+        return ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals));
     }
 
     /// <summary>src\AxKit in Release into a folder of the run's, never into the running app's bin.</summary>

@@ -20,8 +20,13 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   Never `dotnet test AxKit.sln` while axKit runs: it writes into the running program's `bin\Debug`. Debug alone misses
   what Release treats as errors, which cost 3.3.0.
 - `tools/AxAutomate <script or folder> (--build | --exe <AxKit.exe>)` plays the automated window checks of
-  `tests/scripts` on a desktop of their own (`automation.md`). `tools/QaRun` runs Claude sessions without windows,
-  always with `--model haiku`.
+  `tests/scripts` on a desktop of their own (`automation.md`). It holds the windows' commands against the command
+  inventory, `docs/axKit/window-commands.json`, and says after its summary when a window lists a command the file does
+  not hold as it is (exit code 3 when every script passed). `--inventory write` merges what the windows list into the
+  file, `rewrite` also drops what a whole app no longer lists, `off` leaves it alone; `--repository <folder>` names
+  the repository when the program is not built inside one (`automation.md`, "The command inventory"). Exit codes: 0
+  passed, 1 a script failed, 2 the run could not start, 3 the inventory is stale. `tools/QaRun` runs Claude sessions
+  without windows, always with `--model haiku`.
 - `nvda-pass.ps1 [<app>]` runs the same scripts with NVDA listening, plus `tests/nvda-scripts`: the NVDA test plans as
   the assistant runs them. It takes the keyboard, so only after the user has stepped away.
 - `tools/upstream.ps1` is the upstream watch (`automation.md`, "When an outside program changes"): for each outside

@@ -100,10 +100,13 @@ public static class CommandInventory
     /// without regard to case. <paramref name="temp"/> is the run's folder; the folder that holds every script's own
     /// folder of one run of the command line leaves out what names any of them. An empty folder leaves out nothing.
     /// A row whose label is the name of a program, a device, a folder or a shell of the computer the run was made on
-    /// (the user's, and stale on the next computer) gets a rule of its own here, named for what it leaves out.
+    /// (the user's, and stale on the next computer) gets a rule of its own here, named for what it leaves out
+    /// (<see cref="IsShellOfTheComputer"/>, <see cref="InstallsAMissingShell"/>); so does a row whose label holds axKit's
+    /// version (<see cref="NamesVersion"/>), stale with every release.
     /// </summary>
     public static bool Kept(ListedCommand row, string temp, string profile) =>
-        !IsNumberedEntry(row.Label) && !NamesFolder(row, temp) && !NamesFolder(row, profile);
+        !IsNumberedEntry(row.Label) && !NamesFolder(row, temp) && !NamesFolder(row, profile) && !NamesVersion(row.Label)
+        && !IsShellOfTheComputer(row) && !InstallsAMissingShell(row);
 
     /// <summary>A row as the inventory stores it: what is state, <c>checked</c> and <c>now</c>, gone (WF-D-11).</summary>
     public static ListedCommand Stored(ListedCommand row) => row with { Also = [.. row.Also], Checked = null, Now = string.Empty };
@@ -310,6 +313,41 @@ public static class CommandInventory
         var plain = CommandNames.Plain(label);
         return plain.Length > 3 && (plain[0] is (>= '1' and <= '9') or (>= 'a' and <= 'z')) && plain[1] == '.' && plain[2] == ' ';
     }
+
+    /// <summary>
+    /// A label that holds axKit's version, "axKit" and a space before a digit, without regard to case: every window's
+    /// Help, "Check for updates (axKit 5.9.1)" (first inventory, 2026-11-15), and "Update to axKit n" where a check found
+    /// a newer release. Kept, the inventory would be stale after every release, and no script could name the command
+    /// from one version to the next.
+    /// </summary>
+    private static bool NamesVersion(string label)
+    {
+        var plain = CommandNames.Plain(label);
+        for (var at = plain.IndexOf("axKit ", StringComparison.OrdinalIgnoreCase); at >= 0; at = plain.IndexOf("axKit ", at + 1, StringComparison.OrdinalIgnoreCase))
+        {
+            if (at + 6 < plain.Length && char.IsAsciiDigit(plain[at + 6]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// A shell of axTerminal's Session, Switch shell (first inventory, 2026-11-15): the shells the computer the run was
+    /// made on has (Git Bash only with Git for Windows, PowerShell 7 only where it is installed) and the user's own,
+    /// named by the user.
+    /// </summary>
+    private static bool IsShellOfTheComputer(ListedCommand row) => SameText(row.Menu, "Session, Switch shell");
+
+    /// <summary>
+    /// An installer of a shell the computer lacks, shown only there: axTerminal's Session, "Install PowerShell 7..." and
+    /// "Install Git, for Git Bash..." (first inventory, 2026-11-15). A link of a Help menu that starts with the same word
+    /// ("Install or update Claude Code") is there on every computer and kept.
+    /// </summary>
+    private static bool InstallsAMissingShell(ListedCommand row) =>
+        SameText(row.Menu, "Session") && CommandNames.Plain(row.Label).StartsWith("Install ", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>Whether the row's label, menus or key text holds the folder, with either separator, without regard to case.</summary>
     private static bool NamesFolder(ListedCommand row, string folder)

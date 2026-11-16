@@ -208,6 +208,58 @@ public sealed class CommandInventoryTests
     }
 
     [Fact]
+    public void A_label_that_holds_axKits_version_is_left_out()
+    {
+        // Every window's Help as the first inventory found it (2026-11-15): stale with every release if kept.
+        Assert.False(CommandInventory.Kept(Row("Check for updates (axKit 5.9.1)", "Help", mark: "act"), Temp, Profile));
+        Assert.False(CommandInventory.Kept(Row("Check for &updates (axKit 6.0.0)", "Help", mark: "act"), Temp, Profile));
+        Assert.False(CommandInventory.Kept(Row("About AXKIT 5", "Help"), Temp, Profile));
+
+        // axKit named without a version, and a number not after it, are kept.
+        Assert.True(CommandInventory.Kept(Row("axKit guide", "Help, About"), Temp, Profile));
+        Assert.True(CommandInventory.Kept(Row("axKit on GitHub", "Help, About"), Temp, Profile));
+        Assert.True(CommandInventory.Kept(Row("Heading level 1", "Navigation, Next", "ctrl+1", "Ctrl+1"), Temp, Profile));
+        Assert.True(CommandInventory.Kept(Row("axKit", "Window"), Temp, Profile));
+
+        var apps = Inventory(new WindowCommands("axDown", null,
+        [
+            Row("Keyboard shortcuts", "Help", "f1", "F1"),
+            Row("Check for updates (axKit 5.9.1)", "Help", mark: "act"),
+        ]));
+        Assert.Equal(["Keyboard shortcuts"], Labels(apps, "axDown"));
+        // Nor is the next version's label named as missing.
+        Assert.Empty(CommandInventory.Stale(apps, new WindowCommands("axDown", null, [Row("Check for updates (axKit 5.9.2)", "Help", mark: "act")]), Temp, Profile));
+    }
+
+    [Fact]
+    public void A_shell_of_the_computer_and_the_installer_of_a_missing_one_are_left_out()
+    {
+        // axTerminal's Session, Switch shell, as the first inventory found it (2026-11-15), and a shell of the user's own.
+        Assert.False(CommandInventory.Kept(Row("Windows PowerShell", "Session, Switch shell", mark: "act"), Temp, Profile));
+        Assert.False(CommandInventory.Kept(Row("&Git Bash", "Session, Switch shell", mark: "act"), Temp, Profile));
+        Assert.False(CommandInventory.Kept(Row("My Nushell", "session, switch SHELL", mark: "act"), Temp, Profile));
+        // The installers of a shell the computer lacks, as the menu shows them.
+        Assert.False(CommandInventory.Kept(Row("Install &PowerShell 7...", "Session", mark: "act"), Temp, Profile));
+        Assert.False(CommandInventory.Kept(Row("Install Git, for Git &Bash...", "Session", mark: "act"), Temp, Profile));
+
+        // Session's own items, and a Help link that starts with the same word, are there on every computer.
+        Assert.True(CommandInventory.Kept(Row("Add a shell", "Session", mark: "act"), Temp, Profile));
+        Assert.True(CommandInventory.Kept(Row("Restart shell", "Session", "ctrl+shift+r", "Ctrl+Shift+R", "act"), Temp, Profile));
+        Assert.True(CommandInventory.Kept(Row("Install or update Claude Code", "Help, Claude Code resources", mark: "act"), Temp, Profile));
+        Assert.True(CommandInventory.Kept(Row("Switch shell", "Session", mark: "act"), Temp, Profile));
+
+        var apps = Inventory(new WindowCommands("axTerminal", null,
+        [
+            Row("Restart shell", "Session", "ctrl+shift+r", "Ctrl+Shift+R", "act"),
+            Row("Command Prompt", "Session, Switch shell", mark: "act"),
+            Row("Install PowerShell 7...", "Session", mark: "act"),
+        ]));
+        Assert.Equal(["Restart shell"], Labels(apps, "axTerminal"));
+        // A computer with PowerShell 7 lists it, and the inventory is not stale for that.
+        Assert.Empty(CommandInventory.Stale(apps, new WindowCommands("axTerminal", null, [Row("PowerShell 7", "Session, Switch shell", mark: "act")]), Temp, Profile));
+    }
+
+    [Fact]
     public void What_is_state_is_not_stored()
     {
         var stored = CommandInventory.Stored(Row("Word wrap", "Options, Text", "ctrl+shift+w", "Ctrl+Shift+W", "change", isChecked: true, now: "ctrl+shift+w"));

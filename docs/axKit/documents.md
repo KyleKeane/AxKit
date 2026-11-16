@@ -48,6 +48,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `workflows.md` (generated): every workflow the automated checks keep working, by app.
 - `user-workflows.md` (WF-n): workflows as one source for the checks, the how-to, axHelp and the AI tools: goals, the
   step `do`, the command inventory, the workflow record.
+- `window-commands.json` (written by the runner, never by hand): the command inventory, every window's commands by
+  app as the windows list them; `tools/AxAutomate --inventory write` writes it, every window run checks it
+  (`automation.md`, "The command inventory").
 - `upstream.json`: the outside programs (Claude Code, Git, KeePassXC's tool, the shells), each with the version the
   checks last passed with; read and written by `tools/upstream.ps1` (`automation.md`, "When an outside program
   changes").

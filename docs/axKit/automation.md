@@ -32,7 +32,8 @@ The run names the program it drives: `--build` builds the sources as they are in
 src\AxKit\AxKit.csproj -c Release -o <folder>` and give `--exe <folder>\AxKit.exe`). There is no default: until
 2026-11-13 a run with neither drove whatever lay in `src\AxKit\bin\Release`, and a pass or a failure against a stale
 build read like a real one. The console and the report's first lines say the program's version and when it was
-built. Exit code 0 when every script passed, 1 when one failed, 2 when the run could not start. One window run
+built. Exit code 0 when every script passed and nothing is stale, 1 when one failed, 2 when the run could not start,
+3 when every script passed and the command inventory is stale (below, "The command inventory"). One window run
 plays at a time on a computer: a second run waits for the first, for an hour at most, and says once that it waits,
 since the clipboard and the system hotkeys are shared (`tools/AxAutomate/RunLock.cs`, `user-workflows.md` WF-D-29);
 the builds before the scripts run side by side. A window that does
@@ -198,7 +199,51 @@ including while the user works, because nothing takes the foreground.
     before. `tests/scripts/axDown/04-find-and-go-to-line.txt` is the first script written this way: two goals and
     five checks, its commands run by `do`.
   - What a run keeps of the windows' commands (WF-2.7): the current window's whole listing at every
-    `check commands` step, and the one row its name came to at every `do` step (`ScriptResult.Commands`).
+    `check commands` step, and the one row its name came to at every `do` step (`ScriptResult.Commands`), held
+    against the command inventory (below).
+
+### The command inventory (2026-11-15)
+
+`docs/axKit/window-commands.json` holds, by app, every command the windows list as data (`commands data`): its label,
+its menus, its key and further keys, the key as the menu shows it, its mark, whether it is a key with no menu item,
+and whether the AI tools may run it; never what is state (checked, which key acts now). It is written from live
+windows by the runner and never by hand (`user-workflows.md` WF-2.6 to WF-2.11, format in section 5.3), and the
+reference pages, axHelp and the cheap check read it. The rows come from the snapshots a run takes at every
+`check commands` and `do` step (every app's first script has a `check commands` after its start; a script places a
+further one where a window offers commands its start does not). Never in it (WF-2.8, `CommandInventory.Kept`): a
+numbered entry of a list (recent files, open windows), a row that names the run's folder or the profile folder, a
+row whose label holds axKit's version ("Check for updates (axKit 5.9.1)", stale with every release), and a row whose
+label is the name of something of the computer the run was made on (a program, a device, a folder, a shell): each
+such row found gets a rule of its own there, and whoever writes the file reads it whole first. The first inventory
+found two: axTerminal's Session, Switch shell (the shells this computer has, and the user's own) and its Session,
+Install PowerShell 7 and Install Git, for Git Bash (shown only where that shell is missing).
+
+The option `--inventory` of the runner says what a run does with it:
+
+- `check`, the default whenever the runner finds the repository (the folder above the program that holds
+  `AxKit.sln`, or `--repository <folder>`): every snapshot is held against the file. A row a window lists that the
+  file does not hold as it is (a label, menus, key, further keys, key text, mark, key alone or AI flag that differs)
+  is named after the run's summary, each once, under "The command inventory is stale (docs/axKit/window-commands.json):
+  ...", and the exit code is 3 when every script passed; a failed script's 1 stands. An app the file holds no row
+  for is not checked, and the run says so once ("The command inventory has no rows for axClaude yet: its commands
+  were not checked"): that is how an app joins later. axClaude and axHelp are not in the first inventory, since
+  their windows were being redesigned (`user-workflows.md` WF-D-22).
+- `write`: every snapshot merged in (a row of the same label and menus replaced, other rows kept), the file written at
+  the end when it changed, and one line saying how many rows were added, replaced and removed. Only the scripts with
+  a `check commands` or a `do` step play; a line says how many were passed over.
+- `rewrite`: as `write`, and an app is written with only the rows this run saw when it is whole: every script that
+  gave a snapshot of it passed, and one of those snapshots was taken with no notice showing. It is how a command that
+  left a window leaves the file; run it over a whole folder of `tests/scripts` or over all of it.
+- `off`: nothing. For a run against a build that is not the repository's, and for `tools\upstream.ps1 -Verify`.
+  A runner built outside the repository (`nvda-pass.ps1` builds it into `%TEMP%`) finds none and checks nothing.
+
+When a run says the inventory is stale: if you changed a menu, a key or a label, run the same scripts with
+`--inventory write`, then `tools\workflows.ps1`, and commit the file with the change that made it differ; if you did
+not, the window changed by itself, which is the finding. The cheap check, in `test.ps1` and CI without a window
+(`tests/AxAutomate.Tests/RepositoryWorkflowTests.cs`): the file is well formed and written as the writer writes it,
+holds no row the inventory never keeps and no account path, and every `do` step of every script names a command of
+it under the app of the window the step reaches (a step whose app has no rows yet is passed over). That the file is
+current is the window runs' check, not this one.
 
 ### What the scripts cover, and what stays manual (2026-10-23)
 
@@ -409,7 +454,8 @@ in daily work. The upstream watch lets the assistant notice first. It has no sid
   verified one, "changed" where they differ; no build, a few seconds. Exit code 0 when none changed, 1 when one did.
 - **When one changed**: `.\tools\upstream.ps1 -Verify` before other work (or `-Verify <id>` for one program, changed
   or not). Each check of the changed programs runs once: the test projects through `test.ps1 <App>`, the scripts
-  through `tools\AxAutomate ... --build` on the desktop of their own. Where all pass, the new version and the date are
+  through `tools\AxAutomate ... --build --inventory off` on the desktop of their own (the windows' menus are not the
+  question here, the outside program is: the runner's exit codes stay 0, 1 and 2). Where all pass, the new version and the date are
   written into the record: commit it. Where one fails, the record keeps the program as it was, the last lines name the
   script and the failing step, and the exit code is 1: fix it in that program's one place (its launcher, its parser,
   its table of texts), with a new recording where the parser reads one (the `record-fixture` skill for Claude Code),

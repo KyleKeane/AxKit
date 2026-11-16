@@ -32,6 +32,7 @@ type test-master-1
 keys enter
 expect said ! test, 3 items, Email, group, 1 item
 expect state test - axPass
+check commands
 
 # F5 reads the database again through the tool, as File → Refresh does (item-apps.md), and says so.
 keys f5
