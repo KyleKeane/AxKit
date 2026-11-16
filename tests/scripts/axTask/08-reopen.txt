@@ -10,6 +10,7 @@ file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": 
 # The first start names the folder, which becomes the top folder of the next starts; Shopping opened, Washer selected.
 start task {temp}\tasks
 expect state Lists - axTask
+# Goal: Come back to the list you had
 type s
 expect focus Shopping, list, 2 items
 keys right
@@ -26,10 +27,12 @@ keys left
 expect said ! Lists, 2 lists, Shopping, list, 2 items
 close
 
+# Check: Closed at the top level, the next start is at the top level
 # Closed at the top level: the next start is at the top level.
 start task
 expect state Lists - axTask
 expect focus Your lists, heading level 1, 2 lists
+# Check: A smart list open at the close leaves the next start at the top
 # A smart list open at the close is not a list of the folder: the next start is at the top level too.
 keys ctrl+0
 expect said ! All tasks, 2 items
@@ -41,6 +44,7 @@ keys right
 expect said ! Home, 1 item, Fix the tap
 close
 
+# Check: A start that names the folder opens its top level
 # Started on the folder by name: its top level, whatever was open last.
 start task {temp}\tasks
 expect state Lists - axTask

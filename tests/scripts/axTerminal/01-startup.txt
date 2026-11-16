@@ -9,8 +9,10 @@ file home\AxKit\axTerminal.json {"checkForUpdates": false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 start terminal {temp}\myproject
+# Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
+# Check: The window opens on the command field and says Ready
 # Step 1: the window and the field; after a moment the ping and "Ready".
 expect focus Command
 expect state "title":"myproject -
@@ -18,6 +20,7 @@ expect state - axTerminal, access layer for your shell"
 expect said Ready
 expect said ♪ Ready
 
+# Goal: Move between the command field and the terminal
 # Step 2: Ctrl+2 lands on the terminal; its first lines are the system line and PowerShell's PSReadLine line; no
 # prompt row. Ctrl+1 back to the field.
 keys ctrl+2
@@ -33,11 +36,13 @@ expect said → Command
 keys ctrl+1
 expect said ! Command
 
+# Check: The status bar holds Idle and the prompt
 # Step 3: the status bar holds "Idle" and the prompt text. The state answer is raw JSON, where a backslash is
 # doubled and ">" is written \u003E, so the prompt is matched by its ends.
 expect state "status":["Idle","PS
 expect state myproject\u003E"]
 
+# Goal: Hear the state, the shell and the prompt
 # Step 4: Ctrl+Q says the state, the shell and the prompt.
 keys ctrl+q
 expect said PowerShell, PS {temp}\myproject>

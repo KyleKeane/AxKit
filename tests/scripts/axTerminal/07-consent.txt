@@ -6,6 +6,7 @@ mkdir myproject
 file home\AxKit\axTerminal.json {"checkForUpdates": false}
 start terminal {temp}\myproject
 
+# Goal: Agree to the reminder and start the shell
 expect said Before axTerminal connects to
 keys tab
 expect said I understand that axTerminal
@@ -21,6 +22,7 @@ expect said ! checked
 keys enter
 expect said Ready
 
+# Check: Each shell asks its own reminder
 # Each shell is its own consent: a new session with Command Prompt asks its reminder, then starts.
 keys ctrl+n
 expect state "notice":"New session"
@@ -40,6 +42,7 @@ keys enter
 expect said Ready
 close
 
+# Check: The second start asks nothing
 # The second start asks nothing and starts the shell.
 start terminal {temp}\myproject
 expect said Ready

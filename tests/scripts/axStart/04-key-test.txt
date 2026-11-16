@@ -10,6 +10,7 @@ wait 5000
 expect commands "Test a key, Help, Diagnostics"
 type windows
 expect focus "name":"Search programs","role":"Text","value":"windows"
+# Goal: Test what a key does
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
@@ -27,10 +28,12 @@ keys a
 expect said ! A: types the letter
 keys f9
 expect said ! F9: no command of this window
+# Check: Nothing is carried out during the key test
 # Nothing was carried out: the field as it was, the window on view.
 expect focus "name":"Search programs","role":"Text","value":"windows"
 expect state "visible":true
 
+# Check: Escape ends the key test and hides nothing
 # Escape is the window's Hide, but in the test it only ends the test: never named, nothing hidden.
 keys escape
 expect said ! Key test ended
@@ -38,6 +41,7 @@ refuse said Escape: Hide
 expect state "visible":true
 expect focus "name":"Search programs","role":"Text","value":"windows"
 
+# Check: The keys act again after the test
 # The same keys act again: Down moves to a match, and Escape hides the window.
 keys down
 expect said , 2 of

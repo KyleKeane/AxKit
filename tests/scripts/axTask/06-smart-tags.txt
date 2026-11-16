@@ -17,6 +17,7 @@ run powershell -NoProfile -Command "[IO.File]::WriteAllText('home\AxKit\axTask.j
 start task {temp}\tasks
 expect focus Your lists, heading level 1, 1 list
 check commands
+# Goal: Move among the tags by their symbols
 keys ctrl+3
 expect focus @ at sign, heading level 3, 1 smart list
 keys down
@@ -26,6 +27,7 @@ expect focus # number sign, heading level 3, 1 smart list
 keys down
 expect focus #garden, 2
 
+# Goal: Gather a tag's items from every list
 # TK-5.6: one #garden list over the user's own lists and the project's.
 keys right
 expect said ! #garden, 2 items, Call @Sam about #garden, in Home
@@ -40,6 +42,7 @@ expect focus $budget, 1
 keys ctrl+3
 expect said ♪ Edge
 
+# Goal: Find the smart lists that share a first word
 # 3.3 Ctrl+Shift+2 back to Tags, then to App, the first word two smart lists share; its lists by their full names.
 keys ctrl+shift+2
 expect focus Tags, heading level 2, 3 symbols

@@ -24,6 +24,7 @@ expect focus "name":"Message to Claude"
 # Words left in the field, to know the window again by.
 type the same window
 
+# Goal: Hide the conversation
 # 6.1 Alt+F4 hides the conversation: no question, nothing said, its process and Claude Code running on.
 said
 close
@@ -31,6 +32,7 @@ expect state "visible":false
 expect quiet 2000
 expect state Claude: ready
 
+# Goal: Bring the same conversation back
 # 6.2 The conversation's hotkey (axHelp's Open the conversation) shows the same window: the words still in the field, the
 # focus there, no start and no "Ready" again.
 use 1
@@ -43,6 +45,7 @@ refuse said Ready
 expect said Unsent message in the field
 expect said ♪ Recall
 
+# Check: The focus stays in the conversation view when the window comes back
 # 6.3 The focus in the conversation view (Ctrl+2); coming back to the window as Alt+Tab does leaves it there.
 keys ctrl+2
 expect focus "name":"Conversation"
@@ -55,6 +58,7 @@ menu Open the conversation
 use 2
 expect focus "name":"Message to Claude","role":"Text","value":"the same window"
 
+# Goal: Hand a picture to the hidden conversation
 # 6.4 Hidden again, then a picture (the screenshot's hand-over): the window shows with the picture's line added.
 keys ctrl+a delete
 close
@@ -64,6 +68,7 @@ expect state "visible":true
 expect said Text added to your message from another window, not sent
 expect focus Picture blocks.png:
 
+# Check: A conversation with words unsent asks before Quit ends it
 # 6.5 Hidden once more, the picture's line still typed and not sent. Quit axHelp asks the conversation to end, and
 # it does not go with words unsent: it comes up and asks, Keep it open the answer Enter gives. Kept, the words are
 # still there, and the window, its keeper gone, now closes on Alt+F4 as any axClaude window does.

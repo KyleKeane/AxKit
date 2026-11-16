@@ -13,6 +13,7 @@ expect focus Search programs
 # The programs are read once at the start.
 wait 5000
 
+# Check: A text nothing matches is said while typing and after a deleted letter
 # 2.5 A text nothing matches is said after the pause, with the text; Backspace: the new text, said again.
 type zzqqxx
 expect said ! No programs match zzqqxx
@@ -20,6 +21,7 @@ keys backspace
 expect focus "value":"zzqqx"
 expect said ! No programs match zzqqx
 
+# Check: A Store app's information names its kind
 # 3.6 Ctrl+I on a Store app: its name and its kind.
 keys ctrl+a
 type calculator
@@ -27,6 +29,7 @@ expect said ! Calculator, 1 of
 keys ctrl+i
 expect said ! Calculator, Store app
 
+# Goal: Turn the spoken first match off and on
 # 5.3 Say the first match while typing off: typing says nothing, Ctrl+I says the match all the same; on again.
 menu Say the first match while typing
 expect said ! Say the first match while typing, not checked
@@ -41,6 +44,7 @@ expect said ! Say the first match while typing, checked
 keys backspace
 expect said ! Calculator, 1 of
 
+# Check: The hotkey notice names the key in use and refuses Shift with a letter
 # 4.2 The Hotkey notice names the key in use; Shift with a letter is refused like a letter alone.
 menu Hotkey
 expect state "notice":"Hotkey"
@@ -53,6 +57,7 @@ expect focus "value":"Ctrl+Alt+Shift+F8"
 keys escape
 expect state "notice":null
 
+# Goal: Quit axStart
 # Quit axStart, so that its hotkey goes with it.
 menu Quit axStart
 expect closed

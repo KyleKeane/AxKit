@@ -13,6 +13,7 @@ file copy.ps1 # Copies its arguments, one line each, and reads the clipboard bac
 # the user's own axClip and NVDA read the same clipboard, and a copy was missing from the history (2026-11-15).
 
 start clip
+# Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
 expect focus Search the clipboard
@@ -24,6 +25,7 @@ wait 500
 run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitclip gamma"
 wait 500
 
+# Goal: Move through the copied items
 # CP-2.4: Down and Up move the selection, newest first, with the caret kept in the field; at an end the edge sound,
 # and the item said.
 type axkitclip
@@ -35,6 +37,7 @@ keys up
 expect said ♪ Edge
 expect said axkitclip gamma, 1 of 3
 
+# Goal: Jump to the newest or oldest item, or by a page
 # Ctrl+End the oldest (Down there is the edge), Ctrl+Home the newest; Page Down and Page Up by a page.
 keys ctrl+end
 expect said axkitclip alpha, 3 of 3
@@ -47,12 +50,14 @@ expect said axkitclip alpha, 3 of 3
 keys pageup
 expect said axkitclip gamma, 1 of 3
 
+# Goal: Read an item's whole text
 # CP-4.3: Ctrl+Q the whole text in a notice; Escape closes it.
 keys ctrl+q
 expect state "notice":"Clipboard text, 1 line"
 keys escape
 expect state "notice":null
 
+# Goal: Pause the recording and start it again
 # Ctrl+P pauses the recording and starts it again.
 keys ctrl+p
 expect said ! Recording paused
@@ -61,12 +66,14 @@ keys ctrl+p
 expect said ! Recording
 expect state Recording
 
+# Goal: Remove an item
 # Delete removes the selected item.
 keys delete
 expect said ! Removed
 keys ctrl+end
 expect said , 2 of 2
 
+# Goal: Clear the clipboard history
 # Ctrl+Shift+Delete asks first; Clear empties the history.
 keys ctrl+shift+delete
 expect state "notice":"Clear the clipboard history?"
@@ -78,6 +85,7 @@ expect said ♪ Edge
 # Enter (Paste into the program in front) and Shift+Enter (Copy without pasting) put an item on the clipboard and
 # act outside the window: not run here, they stay for the NVDA plan.
 
+# Check: The shortcuts end with the Notices section and give the field back
 # F1: the shortcuts end with the Notices section every window of axKit has (2026-11-09); Escape closes the text and the
 # focus is back in the field.
 keys f1
@@ -87,11 +95,13 @@ keys escape
 expect state "notice":null
 expect focus Search the clipboard
 
+# Goal: Hide the window and show it again
 # Escape hides the window whatever the field holds; a second start shows it again with the field empty.
 keys escape
 launch clip
 expect focus "name":"Search the clipboard","role":"Text","value":""
 
+# Goal: Quit axClip
 # Quit axClip, the one close that ends the process.
 menu Quit axClip
 expect closed

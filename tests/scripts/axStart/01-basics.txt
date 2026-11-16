@@ -7,15 +7,18 @@
 file home\AxKit\axStart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
 
 start start
+# Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
 expect focus Search programs
 
+# Goal: Read the programs again
 # F5 reads the programs again and says how many, once the first read is done: the list is there before the typing.
 wait 5000
 keys f5
 expect said ! Programs refreshed
 
+# Goal: Move through the matches
 # AS-3.3: Down and Up move the selection with the caret kept in the field; at an end the edge sound, and the match said.
 type windows
 keys down
@@ -26,6 +29,7 @@ keys up
 expect said ♪ Edge
 expect said , 1 of
 
+# Goal: Jump to the first or last match, or by a page
 # Ctrl+End the last match (Down there is the edge), Ctrl+Home the first; Page Down and Page Up by a page.
 keys ctrl+end
 expect said of
@@ -38,10 +42,12 @@ expect said of
 keys pageup
 expect said , 1 of
 
+# Goal: Hear the selected match's kind and path
 # Ctrl+I the selected match, its kind and its path.
 keys ctrl+i
 expect said Windows
 
+# Check: A text nothing matches is said as no match
 # A text nothing matches: the match keys say so, with the edge.
 type zzqqxx
 keys down
@@ -53,11 +59,13 @@ expect said ! No programs match
 # Enter (Start), Ctrl+Shift+Enter (Start as administrator) and Ctrl+O (Open file location in axFile) start programs
 # outside the window: not run here, they stay for the NVDA plan.
 
+# Goal: Hide the window and show it again
 # AS-3.4: Escape hides the window whatever the field holds; a second start shows it again with the field empty.
 keys escape
 launch start
 expect focus "name":"Search programs","role":"Text","value":""
 
+# Goal: Quit axStart
 # Quit axStart, the one close that ends the process (AS-1.4).
 menu Quit axStart
 expect closed

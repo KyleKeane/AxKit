@@ -17,6 +17,7 @@ expect said ♪ Ready
 keys ctrl+l
 expect said Cleared
 
+# Check: Context lists its three commands with their keys
 # Context as the palette reads it: the three commands, each with the key that does the same in the terminal.
 expect commands "Copy this line into the command field, Context, Enter in the terminal"
 expect commands "Bookmark this line, Context, Ctrl+Shift+K, or M in the terminal"
@@ -34,6 +35,7 @@ keys down
 keys down
 expect focus "value":"hello"}
 
+# Goal: Bookmark a line and take the bookmark away
 # Bookmark this line: the bookmark is added, and taken away by the same command on the same line.
 menu Bookmark this line, Context
 expect said ! Bookmark 1 added
@@ -44,6 +46,7 @@ expect said ! Bookmark 1 removed
 wait 400
 expect focus "value":"hello"}
 
+# Goal: Copy a line into the command field
 # Copy this line into the command field: "Line copied", the focus in the field with the line.
 menu Copy this line into the command field, Context
 expect said ! Line copied
@@ -52,6 +55,7 @@ expect focus "value":"hello"}
 keys ctrl+a
 keys delete
 
+# Goal: Run a Context command from the palette
 # From the palette, opened in the command field: the commands act on the line the terminal's caret is on. Bookmark
 # this line is said with its menu and keys; Enter bookmarks the line and the focus is in the terminal, on it.
 keys ctrl+shift+p

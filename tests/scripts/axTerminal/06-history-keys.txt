@@ -13,6 +13,7 @@ type echo two
 keys enter
 expect said Done
 
+# Goal: Go back through earlier commands
 # Ctrl+Up goes back, the newest first, with the recall earcon; at the oldest the low note.
 type half
 keys ctrl+up
@@ -22,6 +23,7 @@ expect said ! echo one
 keys ctrl+up
 expect said ♪ Edge
 
+# Goal: Come forward again to what was typed
 # Ctrl+Down comes forward, and past the newest gives back what was typed.
 keys ctrl+down
 expect said ! echo two
@@ -30,6 +32,7 @@ expect said ! half
 keys ctrl+down
 expect said ♪ Edge
 
+# Check: A command changed and left becomes the last item
 # A command changed and left becomes the last item: Ctrl+Down to the end gets it back.
 keys ctrl+up
 expect said ♪ Recall
@@ -40,6 +43,7 @@ expect said ! echo one
 keys ctrl+down ctrl+down
 expect said ! echo two --x
 
+# Goal: Read the field in navigation mode
 # The mode key in the field (docs/axKit/SPEC.md AX-8.13): navigation mode, said and in the status bar; Ctrl+Up and
 # Ctrl+Down go by paragraph there instead of through the history, Enter and typing play the edge sound and change nothing.
 keys ctrl+space
@@ -52,10 +56,12 @@ expect said ♪ Edge
 type zz
 expect said ♪ Edge
 expect focus {"name":"Command","role":"Text","value":"echo two --x"}
+# Check: The terminal has no edit mode
 # The terminal cannot be edited: the key says so and changes nothing.
 keys ctrl+2
 keys ctrl+space
 expect said ! Read only: there is no edit mode here
+# Goal: Go back to edit mode in the field
 # Back in the field: edit mode again, and typing types.
 keys ctrl+1
 keys ctrl+space
@@ -64,6 +70,7 @@ refuse state navigation mode
 keys end
 type !
 expect focus {"name":"Command","role":"Text","value":"echo two --x!"}
+# Check: The music key is taken before the field
 # The music key moved to Ctrl+M on 2026-11-15, and it is taken before the field, where it would be a line break.
 keys ctrl+m
 expect said ! Background music on, nothing is running

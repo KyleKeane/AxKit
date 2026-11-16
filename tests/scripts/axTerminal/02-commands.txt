@@ -15,6 +15,7 @@ expect said ♪ Ready
 keys ctrl+l
 expect said Cleared
 
+# Goal: Run a command and read its output by headings
 # Step 1: a command, its block and the heading keys.
 type Write-Output hello
 keys enter
@@ -46,6 +47,7 @@ keys 2
 expect said Folder heading level 2
 keys 2
 expect said Command heading level 2
+# Goal: Turn the heading marks in the text off and on
 # Options, Text, Markers in the text off: the lines read without the hashes; h still says the level.
 menu Markers in the text
 keys shift+i
@@ -62,6 +64,7 @@ expect focus "value":"# Input 1"}
 keys ctrl+1
 expect focus "name":"Command"
 
+# Check: A failing command says its exit code, and a listing has no prompt rows
 # Step 2: a failing command; a listing without prompt rows.
 type cmd /c exit 3
 keys enter
@@ -79,6 +82,7 @@ expect text listed.txt
 keys ctrl+1
 expect focus "name":"Command"
 
+# Goal: Answer a program that asks
 # Step 3: a program that asks; the answer is an exchange of its own.
 type Read-Host "Continue? (y/n)"
 keys enter
@@ -96,6 +100,7 @@ expect text "# Input 5","## Folder"
 expect text "## Command","y",""
 keys ctrl+1
 
+# Goal: Send a command of several lines
 # Step 4: a command of several lines with Shift+Enter; no continuation rows in the output.
 type if ($true) {
 keys shift+enter
@@ -118,6 +123,7 @@ expect focus "value":"yes"}
 expect text "# Output 6","","yes"
 keys ctrl+1
 
+# Goal: Send a command without recording it
 # Step 5: Actions, Send without recording (AT-3.4; no key since 2026-11-14, the menu and the palette run it) sends
 # without a record: no block (the next block is number 7), no recent command.
 expect commands Send without recording, Actions
@@ -140,6 +146,7 @@ expect focus "name":"Recent commands"
 expect list "items":["if ($true) {
 keys escape
 expect focus "name":"Command"
+# Check: Ctrl+Enter sends as Enter does, and does nothing in the terminal
 # Ctrl+Enter in the command field sends the command exactly as Enter does (bundle AX-8.10 rule 3): recorded, block 7.
 type Write-Output seven
 keys ctrl+enter
@@ -155,6 +162,7 @@ keys ctrl+enter
 expect said ♪ Edge
 keys ctrl+1
 
+# Goal: Put a recent command back in the field
 # Step 6: Ctrl+R lists the recent commands, the newest first; Enter puts one in the field; Escape goes back.
 keys ctrl+r
 expect focus "name":"Recent commands"
@@ -171,6 +179,7 @@ expect focus "name":"Recent commands"
 keys escape
 expect focus "name":"Command"
 
+# Goal: Copy a command line of the terminal into the field
 # Step 7: Enter on a command line of the terminal copies it into the field.
 keys ctrl+3
 expect said Output 7 heading level 1
@@ -189,6 +198,7 @@ expect focus "value":"Write-Output seven
 keys ctrl+a
 keys delete
 
+# Goal: Interrupt a long command
 # Step 8: a long command, Ctrl+Q while it runs, the interrupt; Shift+Escape.
 type Start-Sleep 30
 keys enter
@@ -204,6 +214,7 @@ expect said ♪ Done
 keys shift+escape
 expect said Escape sent
 
+# Goal: Play music while a command runs
 # Step 10: the background music while a command runs, until "Done"; Ctrl+M turns it off (Ctrl+Space until 2026-11-15). The menu command
 # itself says nothing here: the palette's spoken new state is the palette notice's, which "menu" skips.
 # Step 9, Speak output, is in 02b-speak-output.txt, since it fails at present too.
@@ -218,6 +229,7 @@ expect said ♪ Done
 keys ctrl+m
 expect said Background music off
 
+# Check: A command wider than the console is not read back in its output
 # AT-3.2: a command longer than the console is wide. The rows its echo wraps onto are hidden with the prompt row:
 # after "Sent" only the output is said, and the command's text is not in the Output block (it was, until 2026-11-14).
 keys ctrl+l

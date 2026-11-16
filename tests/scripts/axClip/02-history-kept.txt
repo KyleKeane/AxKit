@@ -23,6 +23,7 @@ type axkitkeep
 keys down
 expect said axkitkeep one, 2 of 2
 
+# Check: A text copied again moves to the top and is listed once
 # 2.3 The first text copied again: it is the newest, and in the list once.
 run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep one"
 wait 500
@@ -33,6 +34,7 @@ expect said axkitkeep two, 2 of 2
 keys down
 expect said ♪ Edge
 
+# Goal: Read a copy of several lines in full
 # 2.4 A text of three lines: its first line and the count; Ctrl+Q the whole text in a notice; Escape closes it.
 run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep first" second third
 wait 500
@@ -46,6 +48,7 @@ keys escape
 expect state "notice":null
 expect focus Search the clipboard
 
+# Check: Closing the window hides it, and a second start shows its items
 # 1.5 Alt+F4 hides the window and does not end axClip; 1.4 a second start ends by itself and shows the running window,
 # the field empty and the items still there.
 keys alt+f4
@@ -55,6 +58,7 @@ type axkitkeep
 keys down
 expect said axkitkeep one, 2 of 3
 
+# Goal: Keep the history between runs
 # 4.2 Keep history between runs on, Quit, a new start: the items are there.
 menu Keep history between runs
 menu Quit axClip
@@ -67,6 +71,7 @@ expect said axkitkeep one, 2 of 3
 keys ctrl+end
 expect said axkitkeep two, 3 of 3
 
+# Check: With the option off, nothing of the history is left after a new start
 # 4.2 The option off, Quit, a new start: nothing of the history is left.
 menu Keep history between runs
 menu Quit axClip

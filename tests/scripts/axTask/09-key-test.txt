@@ -13,6 +13,7 @@ expect focus Shopping, list, 2 items
 keys right
 expect said ! Shopping, 2 items, Milk
 expect commands "Test a key, Help, Diagnostics"
+# Goal: Test what a key does
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
@@ -32,16 +33,19 @@ keys w
 expect said ! W: finds the next item that starts with what you type
 keys f9
 expect said ! F9: no command of this window
+# Check: Nothing is carried out during the key test
 # Nothing was carried out: the same list, the same item, no notice.
 expect state "notice":null
 expect state Shopping - axTask
 expect focus "value":"Milk"
 
+# Goal: End the key test
 # Escape ends the test at once, and leaves the list as it was.
 keys escape
 expect said ! Key test ended
 expect state Shopping - axTask
 
+# Check: The keys act again after the test
 # The same keys act again.
 keys w
 expect focus "value":"Washer"

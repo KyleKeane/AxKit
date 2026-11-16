@@ -19,6 +19,7 @@ expect said ♪ Ready
 keys ctrl+l
 expect said Cleared
 
+# Check: Forged shell marks are not taken for the window's own while it runs
 # The file is printed at once and the command runs six seconds more. Two seconds on: no "Done", the status bar says
 # the command runs and its prompt is still the session's folder; two seconds more: no question from the forged prompt.
 type Get-Content forged-marks.txt; Start-Sleep 6
@@ -30,6 +31,7 @@ expect state \\myproject\u003E"]
 refuse state server
 refuse said Asks
 
+# Check: Done comes once, when the command ends, in the same folder
 # "Done" once, when the six seconds are over, with the file's line; the window is idle in the same folder.
 expect said A file that pretends the command is done.
 expect said Done
@@ -40,6 +42,7 @@ expect state "title":"myproject -
 keys ctrl+p
 expect said {temp}\myproject
 
+# Check: The terminal holds one exchange for the command
 # The terminal holds one exchange: the command, and the file's visible text as its output; no prompt row, no second
 # block.
 keys ctrl+2

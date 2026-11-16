@@ -9,6 +9,7 @@ file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows Pow
 start terminal {temp}\work\myproject
 expect said Ready
 
+# Goal: Add a shell of your own
 # Add a shell: one form (bundle AX-8.10), the name then the command line, the focus in the name and the explanation
 # said once; a blank or taken name, or a blank command line, is said with the focus in that field, the form kept.
 # With none yet, Remove a shell holds one line that says so; it does nothing, so it is no command of the list
@@ -47,10 +48,12 @@ expect said Added Test cmd
 expect state "notice":null
 refuse said New session
 
+# Check: A new shell is listed in Switch shell and in Remove a shell
 # Listed in Switch shell after the built-in shells, and in Remove a shell.
 expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell
 expect commands 1. Remove Test cmd, Session, Remove a shell
 
+# Goal: Switch to a shell of your own
 # Started from Switch shell: the title and the system line name it; cmd's own output in the terminal.
 menu 1. Test cmd
 expect said Test cmd
@@ -65,6 +68,7 @@ keys ctrl+2
 expect text hello-user-shell
 keys ctrl+1
 
+# Check: The New session notice lists the shell of your own, selected
 # The New session notice lists it after the built-in shells, selected while it is the shell in use.
 keys ctrl+n
 expect state "notice":"New session"
@@ -77,6 +81,7 @@ keys escape
 expect state "notice":null
 close
 
+# Check: The shell in use starts again in the next window
 # Remembered for the next window: the same shell starts again.
 start terminal {temp}\work\myproject
 expect state "myproject - Test cmd - axTerminal, access layer for your shell"
@@ -84,6 +89,7 @@ keys ctrl+2
 expect text "System: Shell started: Test cmd in
 keys ctrl+1
 
+# Goal: Remove a shell of your own
 # Removed while in use: off both lists, the machine's default shell started in its place in the same folder.
 menu 1. Remove Test cmd
 expect said Removed Test cmd

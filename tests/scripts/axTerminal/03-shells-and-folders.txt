@@ -9,6 +9,7 @@ file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code",
 start terminal {temp}\work\myproject
 expect said ♪ Ready
 
+# Goal: Start a new session in another shell
 # Step 1: Ctrl+N, the New session notice: its text and controls; Command Prompt chosen and started.
 keys ctrl+n
 expect state "notice":"New session"
@@ -44,8 +45,10 @@ type echo hello
 keys enter
 expect said Done
 expect said ♪ Done
+# Check: Command Prompt says Done, never Failed
 # Command Prompt gives no exit code: "Done", never "Failed".
 refuse said Failed
+# Check: A program in the current folder runs only by its path
 # A program in the current folder is run as .\name since 2026-11-09 (NoDefaultCurrentDirectoryInExePath, security audit
 # S-1): the bare name is not found, .\hello runs it.
 file work\myproject\hello.cmd @echo planted
@@ -61,6 +64,7 @@ expect said Done
 keys ctrl+2
 expect text planted
 keys ctrl+1
+# Goal: Switch to another shell
 # The Switch shell submenu with Command Prompt checked (the palette's list carries the check), then Windows PowerShell.
 expect commands Command Prompt, Session, Switch shell, checked
 menu Windows PowerShell
@@ -71,6 +75,7 @@ expect text "System: Switched to Windows PowerShell in
 expect text "echo hello"
 keys ctrl+1
 
+# Check: Git Bash shows its prompt, its exit codes and its folder in the title
 # Step 2: Git Bash: the status bar shows $, the title names the folder and Git Bash; ls; a failing command; cd ..
 # follows in the title; Ctrl+Q; back to Windows PowerShell. Fails at once where Git for Windows is not installed.
 menu Git Bash
@@ -104,6 +109,7 @@ expect said Windows PowerShell
 expect said Ready
 expect state "myproject - Windows PowerShell - axTerminal, access layer for your shell"
 
+# Goal: Hear the current folder's full path
 # Step 3: cd .. in PowerShell: the title and the status bar name the parent folder; Ctrl+P says its full path.
 type cd ..
 keys enter
@@ -120,6 +126,7 @@ keys enter
 expect said Done
 expect said ♪ Done
 
+# Goal: Restart the shell
 # Step 4: Ctrl+Shift+R while idle restarts at once, keeping the transcript; while a command runs, a notice asks first.
 keys ctrl+shift+r
 expect said Restarting
@@ -149,6 +156,7 @@ expect state "status":["Idle"
 # Step 5: Session, Open recent folder stays manual: the submenu is filled as it opens, so the palette (and "menu")
 # does not list its folders, and opening it needs menu mode.
 
+# Goal: Start the shell again after it ended
 # Step 6: exit ends the shell; Enter in the field says so; Ctrl+Shift+R starts it again.
 type exit
 keys enter

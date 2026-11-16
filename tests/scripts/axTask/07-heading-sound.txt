@@ -5,9 +5,11 @@ file home\AxKit\axTask.json {"checkForUpdates": false}
 file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
 
 start task {temp}\tasks
+# Check: The window's own fill plays no heading sound
 # The level filled on its first row, a heading: no sound for the window's own fill.
 expect focus Your lists, heading level 1
 refuse said ♪ Heading
+# Check: A key that lands on a heading plays the heading sound
 # Down to a row that is no heading, then to the next heading.
 keys down
 refuse said ♪ Heading

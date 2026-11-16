@@ -11,6 +11,7 @@ file tasks\Later\list.json {"format": "axkit-list 1", "fields": [{"title": "Note
 start task {temp}\tasks
 check commands
 expect state Lists - axTask
+# Check: Action keys act only inside a list
 # Step 1: the digits act in a list only; at the top Ctrl+1 to Ctrl+3 go by heading (TK-D14); Ctrl+0 is All tasks
 # (TK-7a.1, RP-8.4).
 keys ctrl+4
@@ -20,6 +21,7 @@ keys ctrl+1
 expect focus Smart lists, heading level 1
 keys ctrl+0
 expect said All tasks
+# Goal: Run an action key on an item
 # Into Home: Ctrl+3 has no action; Ctrl+1 sets Done as one step, which Ctrl+Z takes back.
 keys left
 keys home
@@ -36,9 +38,11 @@ expect focus Fix the tap, done
 keys ctrl+z
 expect said Undone: Done: Done: done
 expect focus Fix the tap
+# Check: The Context menu names the list's action keys
 # Context's Action keys submenu on an item names the list's actions (RP-8.3).
 expect commands Done, Context, Action keys
 expect commands Later, Context, Action keys
+# Goal: Move an item to another list with an action key
 # Step 4: Ctrl+2 moves the item to Later, the links following; Ctrl+Z brings it back.
 keys ctrl+2
 expect said Later: Fix the tap moved to Later
@@ -46,6 +50,7 @@ expect focus Home, empty
 keys ctrl+z
 expect said Undone: Later: Fix the tap moved to Later
 expect focus Fix the tap
+# Goal: Set up an action key
 # Step 2: List, Action keys: one form (bundle AX-8.10): the nine keys read by digit, then the name, what the key
 # does and its value; moving through the keys fills the fields. Ctrl+4 made "Finish", a set of Done: done, as one
 # undo step; a name without a value is refused with the focus in the value's box.
@@ -78,12 +83,14 @@ expect said Finish: Done: done
 expect focus Fix the tap, done
 keys ctrl+z
 expect said Undone: Finish: Done: done
+# Check: No command of the GitHub lists is left
 # Step 6: axTask is local only (TK-7a.2, 2026-11-14): no command of the GitHub lists is left.
 refuse commands New GitHub list
 refuse commands GitHub account
 refuse commands Open on GitHub
 refuse commands Open in axClaude
 refuse commands Make it a bug
+# Check: A list made as a GitHub list opens as an ordinary list
 # A list made as a GitHub list is an ordinary list: it opens and refreshes with nothing read and nothing said of GitHub.
 keys left
 expect focus Home, list, 1 item
@@ -95,6 +102,7 @@ keys f5
 expect said Refreshed: Issues, 1 item
 wait 1500
 refuse said GitHub
+# Check: A former GitHub list's action keys set a field as in every list
 # Its keys work as in every list: one that sets Kind writes the field, as one step that Ctrl+Z takes back.
 keys ctrl+1
 expect said Make it a bug: Kind: Bug
@@ -105,6 +113,7 @@ expect focus Kind, choice, Bug
 keys escape
 keys ctrl+z
 expect said Undone: Make it a bug: Kind: Bug
+# Check: An action key that opens an empty or missing field says so
 # Step 5: a key that opens a field opens its web address in the browser; this Issue field is empty. The axClaude
 # target went with the GitHub lists.
 keys ctrl+5

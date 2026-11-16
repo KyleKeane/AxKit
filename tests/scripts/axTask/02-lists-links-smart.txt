@@ -10,6 +10,7 @@ file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": 
 start task {temp}\tasks
 expect focus Your lists, heading level 1, 2 lists
 
+# Goal: Read a list's details
 # 1.8 A list's details: its fields, then the fields its new items get.
 keys down
 expect focus Home, list, 2 items
@@ -20,6 +21,7 @@ expect focus Notes, long text, empty
 keys down
 expect focus Fields of a new item: Done, Start, Due
 
+# Goal: Write notes of several lines
 # 2.4 A long text of two lines: the field takes Enter as a new line; Save keeps it; Ctrl+Q reads both lines.
 keys up
 keys enter
@@ -35,6 +37,7 @@ run findstr /l /c:"First line\nSecond line" "tasks\Home\list.json"
 keys ctrl+q
 expect said ! Notes: First line. Second line
 
+# Goal: Link one item to another
 # 3.1 A link set by the other item's title; renamed, the link follows; archived, it still reads it.
 keys escape
 keys right
@@ -47,12 +50,14 @@ type Washer
 keys enter
 expect said ! Waits on: Washer
 run findstr /l /c:"../Shopping/Washer.json" "tasks\Home\Fix the tap.json"
+# Check: A link to an item that does not exist is refused
 keys enter
 type Nothing like it
 keys enter
 expect said ! No item is called Nothing like it
 keys escape
 keys escape
+# Check: A link follows its item through a rename and an archive
 keys left
 type s
 keys right
@@ -67,6 +72,7 @@ keys delete
 expect said ! Archived Washer 15 mm
 run findstr /l /c:"../Archive/Washer 15 mm.json" "tasks\Home\Fix the tap.json"
 
+# Goal: Make a checklist a plain list and back
 # 2.8 Shopping made a plain list and back.
 keys left
 expect focus Shopping, list
@@ -78,6 +84,7 @@ menu Add Done to every item
 expect said ! Shopping is a checklist: Done added to 1 item
 run findstr /l /c:"\"Done\"" tasks\Shopping\Milk.json
 
+# Goal: Make a new list
 # 2.10 A new list, and its undo.
 keys ctrl+shift+n
 type Garden
@@ -88,6 +95,7 @@ keys ctrl+z
 expect said ! Undone: Made Garden
 run cmd /c if not exist tasks\Garden (exit 0) else (exit 1)
 
+# Check: An item changed on disk is read again, not written over
 # 2.9 A change on disk since the item was shown: read again, not written over.
 type h
 keys right
@@ -97,6 +105,7 @@ keys space
 expect said ! The item changed on disk; it has been read again
 expect focus Fix the tap, due 2 November 2099
 
+# Goal: Hide and show done tasks
 # 4.1 Done tasks hidden and shown.
 keys ctrl+shift+d
 expect said ! Done tasks hidden
@@ -106,6 +115,7 @@ expect said ! Home, 1 item, 1 done hidden
 keys ctrl+shift+d
 expect said ! Done tasks shown
 
+# Check: A smart list with a condition not understood shows nothing and says so
 # 3.2 A smart list with a condition not understood shows nothing and says so.
 file tasks\Odd.filter.json {"conditions": [{"field": "Due", "soon": true}]}
 file tasks\Soon.filter.json {"format": "axkit-filter 1", "match": "all", "conditions": [{"field": "Done", "is": false}, {"field": "Due", "before": "2099-11-30"}]}

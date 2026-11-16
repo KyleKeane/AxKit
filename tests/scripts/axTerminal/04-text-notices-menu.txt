@@ -9,6 +9,7 @@ file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code",
 start terminal {temp}\myproject
 expect said ♪ Ready
 
+# Check: Clearing the shell's screen keeps the lines before
 # Step 1: cls clears only the shell's screen: the lines before stay, the next output comes at the end. Ctrl+L empties
 # the window, and the next command's block is the first.
 type echo before
@@ -28,6 +29,7 @@ expect focus "name":"Terminal"
 expect text "# Output 1","","before","# Input 2"
 expect text "## Command","cls","","# Output 2","","# Input 3"
 expect text "# Output 3","","after"]
+# Goal: Clear the window
 keys ctrl+l
 expect said Cleared
 expect text "lines":[]
@@ -40,6 +42,7 @@ keys ctrl+2
 expect text "lines":["# Input 1","## Folder"
 expect text "# Output 1","","first"]
 
+# Goal: Set a bookmark and go back to it
 # Step 2: a bookmark with m, found with k from the top; find with Ctrl+F, F3 for the next match, "Not found" otherwise.
 keys ctrl+3
 expect said Output 1 heading level 1
@@ -55,6 +58,7 @@ keys ctrl+home
 expect focus "value":"# Input 1"}
 keys k
 expect said ! Bookmark 1, first
+# Goal: Find text in the terminal
 keys ctrl+home
 keys ctrl+f
 expect state "notice":"Find"
@@ -66,6 +70,7 @@ expect focus "name":"Terminal"
 expect focus "value":"echo first"}
 keys f3
 expect said ! first
+# Check: Text that is not there is said as not found
 keys ctrl+f
 expect focus "name":"Text to find"
 keys ctrl+a
@@ -76,6 +81,7 @@ expect focus "name":"Terminal"
 
 # Step 3, Ctrl+S, stays manual: it opens the Windows file picker, a window of its own outside the channel.
 
+# Goal: Read the keyboard shortcuts
 # Step 4: F1, the shortcuts as a notice; h moves by its headings; Escape closes it. Help, User guide likewise.
 keys f1
 expect state "notice":"Keyboard shortcuts"
@@ -85,6 +91,7 @@ expect said heading level 2
 keys escape
 expect state "notice":null
 expect focus "name":"Terminal"
+# Goal: Read the user guide
 menu User guide
 expect state "notice":"User guide"
 expect focus "name":"User guide"
@@ -94,10 +101,12 @@ keys escape
 expect state "notice":null
 expect focus "name":"Terminal"
 
+# Check: The Window menu lists axTerminal under New window
 # Step 6: the Window menu's New window lists axTerminal (Alt+W itself needs menu mode; the palette's list is the same
 # menu). Open windows by type stays manual: it is filled as it opens, so the palette does not list it.
 expect commands axTerminal, access layer for your shell, Window, New window
 
+# Goal: Close the window while a command runs
 # Step 5 (last, since it closes the window): Alt+F4 while a command runs asks first; Escape keeps it; Alt+F4 again
 # (here the channel's close, which is Alt+F4's path, so that the runner knows the window closes on purpose), Enter
 # closes.

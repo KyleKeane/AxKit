@@ -11,6 +11,7 @@ file tasks\Work\Nested\Hidden.json {"format": "axkit-item 1", "fields": [{"title
 start task {temp}\tasks
 expect focus Your lists, heading level 1, 3 lists
 
+# Goal: Move a list into a new section
 # TK-3a.3 Ctrl+M on Work: one form (bundle AX-8.10), the sections as a list, then the new section's name. A new
 # section without a name is refused with the focus in the name's field; then Jobs.
 type w
@@ -34,6 +35,7 @@ run findstr /l /c:"Jobs" tasks\Work\list.json
 keys up
 expect focus Jobs, heading level 2, 1 list
 
+# Goal: Move among the sections by their headings
 # TK-3a.2 Ctrl+Up back to Your lists; Ctrl+Down to Jobs, a heading of level 2, then Smart lists; Ctrl+1 to Date lists,
 # the last of level 1: past it the edge sound; Ctrl+Shift+2 back to Jobs (TK-D14).
 keys ctrl+up
@@ -49,6 +51,7 @@ expect said ♪ Edge
 keys ctrl+shift+2
 expect focus Jobs, heading level 2
 
+# Goal: Make a new list in a section
 # TK-3a.3 A new list joins the section selected.
 keys ctrl+shift+n
 type Clients
@@ -58,6 +61,7 @@ expect focus Clients, list, 0 items
 keys up
 expect focus Jobs, heading level 2, 2 lists
 
+# Goal: Put a list in a section from its details
 # The Section field: Home joins Jobs from its details, then back to Your lists with Ctrl+M.
 keys ctrl+up
 keys down
@@ -70,6 +74,7 @@ keys enter
 expect said ! Section: Jobs
 keys escape
 expect focus Home, list, 1 item
+# Goal: Move a list back to Your lists
 keys ctrl+up
 expect focus Jobs, heading level 2, 3 lists
 type h
@@ -80,12 +85,14 @@ keys home
 keys enter
 expect said ! Moved Home to Your lists
 
+# Check: A folder inside a list is counted, not shown
 # TK-D4: a folder inside a list is counted, not shown.
 type w
 expect focus Work, list, 1 item
 keys right
 expect said ! Work, 1 item, 1 file not shown, Report
 
+# Goal: Archive a list and bring it back
 # IA-D4: an archived list goes to Archived lists, its own section.
 keys left
 keys delete
