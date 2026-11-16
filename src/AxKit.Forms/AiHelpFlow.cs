@@ -49,48 +49,55 @@ internal sealed class AiHelpFlow
     }
 
     /// <summary>
-    /// The folders whose guides this process has seen to, whatever came of it: once per process and folder, so that
-    /// a marker that cannot be written, or a press repeated while a window comes up, never writes again.
+    /// The folders whose guides this process has seen to once: a development build writes every file again at the
+    /// first use of a folder and only then. The comparison of AH-7.7 runs at every use.
     /// </summary>
     private static readonly HashSet<string> GuidesSeenTo = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
-    /// axKit's guides in the working folder (AH-7.1), written where missing and again by a new version of axKit, once
-    /// per process and folder. Off the window's thread (bundle rule 3): the question does not wait for some twenty
-    /// files. The one case that waits is a folder that never had them, two checks for a file to tell: Claude Code
-    /// reads the rule file as it starts, moments from now, so the rule and the guides must be there first; in every
-    /// other case the files of the version before serve until the refresh is done. A failure is logged and nothing
+    /// axKit's guides in the working folder (AH-7.1), written where missing or changed and again by a new version of
+    /// axKit, at every use of the folder (AH-7.7). Off the window's thread (bundle rule 3): the question does not wait
+    /// for some thirty files. The cases that wait: a folder that never had them, and a rule file that is missing or no
+    /// longer holds axKit's text, since Claude Code reads the rule files as it starts, moments from now; in every
+    /// other case the comparison and any repair of a guide run beside the start. A failure is logged and nothing
     /// else: the question or the conversation goes on without them.
     /// </summary>
     private static void WriteDocumentation(string folder)
     {
+        bool first;
         lock (GuidesSeenTo)
         {
-            if (!GuidesSeenTo.Add(folder))
-            {
-                return;
-            }
+            first = GuidesSeenTo.Add(folder);
         }
 
-        if (AiDocumentation.IsMissing(folder))
+        // AH-7.7: at every use, not once: a file of axKit's that was deleted or changed since is put right. The two
+        // rule files are compared here (two small reads), since Claude Code reads them as it starts; the guides are
+        // compared off the window's thread.
+        if (AiDocumentation.IsMissing(folder) || AiDocumentation.RulesNeedRepair(folder))
         {
-            WriteGuides(folder);
+            WriteGuides(folder, first);
         }
         else
         {
-            _ = Task.Run(() => WriteGuides(folder));
+            _ = Task.Run(() => WriteGuides(folder, first));
         }
     }
 
-    private static void WriteGuides(string folder)
+    /// <summary>One writer at a time: two presses close together compare and write one after the other.</summary>
+    private static readonly object GuidesWriting = new();
+
+    private static void WriteGuides(string folder, bool first)
     {
         try
         {
-            // A development build's guides change without its version: written again, this once in the process.
-            var written = AiDocumentation.Write(folder, BundleInfo.Version, rewrite: BundleInfo.IsDevelopmentBuild);
-            if (written.Count > 0)
+            lock (GuidesWriting)
             {
-                Log.Info($"Wrote axKit's guides into Claude's working folder: {written.Count} files");
+                // A development build's guides change without its version: written again, once in the process.
+                var written = AiDocumentation.Write(folder, BundleInfo.Version, rewrite: first && BundleInfo.IsDevelopmentBuild);
+                if (written.Count > 0)
+                {
+                    Log.Info($"Wrote axKit's guides into Claude's working folder: {written.Count} files");
+                }
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

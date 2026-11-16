@@ -12,7 +12,8 @@ namespace AxKit.Core.Ai;
 /// docs/axKit/user-workflows.md WF-8, the workflow pages beside the guides, from which the rule tells Claude to give a
 /// goal's steps as they are written (<see cref="WorkflowPages"/>). Claude Code's own
 /// Read, Grep and Glob do the finding: no index service, no embeddings, no network (AH-7.5). The files are axKit's,
-/// not the user's: written where missing, and all written again when the version in the folder's marker is not this
+/// not the user's: written where missing or changed (AH-7.7: a file that no longer holds axKit's text is put right at
+/// the next use, by comparison alone), and all written again when the version in the folder's marker is not this
 /// axKit's, so that they follow each release; a file of the user's own in the folder is never touched. The texts are
 /// embedded by AxKit.Core.csproj once more (an app's project keeps its own copy for Help, User guide; this project
 /// may not reference an app).
@@ -176,7 +177,33 @@ public static class AiDocumentation
         || !File.Exists(Path.Combine(workingFolder, AiToolsRule.RulePath));
 
     /// <summary>
-    /// The files written into <paramref name="workingFolder"/> (AH-7.1): those that are missing, and every one when
+    /// Whether one of the two rule files is missing or no longer holds axKit's text (AH-7.7). Claude Code reads the
+    /// rules as it starts, so a changed rule is put right before the start, not in the background after it: two small
+    /// files read and compared, no more.
+    /// </summary>
+    public static bool RulesNeedRepair(string workingFolder) =>
+        !Holds(Path.Combine(workingFolder, RulePath), AsWritten(Rule))
+        || !Holds(Path.Combine(workingFolder, AiToolsRule.RulePath), AsWritten(AiToolsRule.Text));
+
+    /// <summary>A text as <see cref="Write"/> puts it into its file: Windows line ends, one at the end.</summary>
+    private static string AsWritten(string text) => text.ReplaceLineEndings("\r\n").TrimEnd() + "\r\n";
+
+    /// <summary>Whether the file is there and holds exactly the text; a file that cannot be read does not.</summary>
+    private static bool Holds(string path, string text)
+    {
+        try
+        {
+            return File.Exists(path) && File.ReadAllText(path) == text;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// The files written into <paramref name="workingFolder"/> (AH-7.1): those that are missing or no longer hold
+    /// axKit's text (AH-7.7), and every one when
     /// the folder's marker does not hold <paramref name="version"/> or <paramref name="rewrite"/> asks for it (a
     /// development build, whose guides change without its version). The marker holds the version on its first line
     /// and then the path of every file axKit wrote, one a line; it is written last, so that a write that failed half
@@ -195,13 +222,16 @@ public static class AiDocumentation
         foreach (var (name, text) in files)
         {
             var path = Path.Combine(workingFolder, name);
-            if (current && File.Exists(path))
+            // A file of axKit's that is there but no longer holds axKit's text (changed by the user, by another
+            // program or by Claude itself, which may write in its working folder) is written again: what Claude
+            // answers from is always what this version of axKit wrote (AH-7.7).
+            if (current && Holds(path, AsWritten(text)))
             {
                 continue;
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            File.WriteAllText(path, text.ReplaceLineEndings("\r\n").TrimEnd() + "\r\n");
+            File.WriteAllText(path, AsWritten(text));
             written.Add(name);
         }
 

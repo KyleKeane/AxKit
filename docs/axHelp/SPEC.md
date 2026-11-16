@@ -134,7 +134,9 @@ agreement (AX-11.4) asked the first time.
   menu that no workflows file, `window-commands.md` or guide names, `window-commands.md` deciding where a guide
   differs; and, where no goal covers the question, the app's guide and `window-commands.md`, saying when it is not
   sure. Nothing there tells Claude to offer to do the steps. These files are axKit's, unlike the
-  two of HE-2.4: written where missing and written again by each new version of axKit (the marker
+  two of HE-2.4: written where missing, written again where one no longer holds axKit's text (`ai-help.md` AH-7.7:
+  compared with the text built into axKit, in code alone, so that a file a user, another program or Claude itself
+  changed cannot mislead an answer) and written again by each new version of axKit (the marker
   `documentation\axkit-version.txt`), at every use of the folder (the hotkeys, Enter, Claude's working folder); a
   file of the user's own beside them is left alone, and the user's CLAUDE.md is never read or changed for it. A new
   folder's CLAUDE.md names the guides too (`WorkingFolderFiles.Instructions`). Nothing is indexed and nothing leaves

@@ -193,10 +193,11 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   when it names a Markdown file directly in `documentation` or the rule file (`AiDocumentation.IsOurs`): a marker is a
   file in the user's folder and is not believed about any other place. The write is seen to when a window asks for
   the working folder (`AiHelpFlow.AiWorkingFolder`: a question, the start of axHelp's conversation, a screenshot,
-  Claude's working folder in the menu), once per process and folder whatever comes of it, and off the window's
-  thread (bundle rule 3). One case waits for it: a folder that never had the guides (the index or the rule file is
-  missing, two checks for a file), since Claude Code reads the rule as it starts moments later; in every other case
-  the files of the version before serve until the refresh is done. A failure is logged and the ask goes on.
+  Claude's working folder in the menu), at every such use (AH-7.7), and off the window's
+  thread (bundle rule 3). Two cases wait for it: a folder that never had the guides (the index or a rule file is
+  missing), and a rule file that no longer holds axKit's text (two small files read and compared), since Claude Code
+  reads the rules as it starts moments later; in every other case the comparison and any repair of a guide run
+  beside the start. A failure is logged and the ask goes on.
 - AH-7.2 **Where the texts come from.** `AxKit.Core.csproj` embeds every app's guide once more, one line per app
   (`Guide.axFile.md`), beside the bundle's guide it embeds already. An app's own project keeps its copy for Help, User
   guide; the shared code may not reference an app (bundle 5.3 M2), so it embeds the files, which is no reference.
@@ -232,6 +233,16 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   of axKit's. The retrieval is Claude Code's own read-only tools (Read, Grep, Glob) over plain files. A guide's text
   goes to Anthropic only as any file does that Claude reads for an answer; the guides are public text of axKit's
   repository and hold nothing of the user's.
+- AH-7.7 **The files repair themselves** (the user's ask of 2026-11-16: the folder must not be able to break axHelp
+  when a user deletes or damages it, and the repair must be code alone, with no network and no AI reasoning). At
+  every use of the folder each file of AH-7.1 and the two rule files are compared with the text this version of axKit
+  holds built in (`AiDocumentation.Write`; the rules before Claude Code starts, `AiDocumentation.RulesNeedRepair`): a
+  file that is missing, emptied or changed in any character is written again, whoever changed it, the user, another
+  program, or Claude, which may write in its working folder. The whole folder deleted is the same case: everything
+  of axKit's is there again at the next use. Nothing but axKit's own files is read or written for it: `CLAUDE.md`
+  and the agent file stay the user's (written only when missing, so deleting one resets it), and so does every file
+  the user adds. What decides what axKit itself does (the AI tools' switch and pairing, the consent, `ai-help.json`)
+  was never in this folder: it is under `%LOCALAPPDATA%\AxKit`. `AiDocumentationTests`.
 - AH-7.6 The cautions are unchanged (bundle AX-11.12): an answer of Shift+F1 still ends with `AiCaution.Written`,
   and the conversation is axClaude's with its own.
 
