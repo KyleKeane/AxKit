@@ -655,6 +655,10 @@ From `docs/axKit/key-families.json`. A family is a pattern of keys and the one k
 a misfit is a command on a key of the pattern that does another kind of thing today. The families are a draft
 for the maintainer to settle: no key was moved for them and no test holds a key to its family.
 
+### Ctrl+Shift+Space and Ctrl+Shift+punctuation: bring up axKit from anywhere in Windows
+
+0 keys of the inventory. No misfits.
+
 ### Space and Ctrl+Space: toggle or play
 
 1 key of the inventory. No misfits.
@@ -696,10 +700,23 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - Ctrl+T, axDown and axPreview: Table. Its kind: go to a place.
 - Ctrl+T, axMedia: Go to time. Its kind: go to a place.
 
-### Ctrl+digit: go to a place
+### Ctrl+digit: go to the next heading of that level
 
-10 keys of the inventory. 9 misfits.
+10 keys of the inventory. 22 misfits.
 
+- Ctrl+0, axTask: All tasks. Its kind: go to a place or view.
+- Ctrl+1, axClaude: Message field. Its kind: go to a place or view; moves to Alt+1 (decided 2026-11-16).
+- Ctrl+2, axClaude: Conversation. Its kind: go to a place or view; moves to Alt+2 (decided 2026-11-16).
+- Ctrl+3, axClaude: Latest response. Its kind: go to a place or view; moves to Alt+3 (decided 2026-11-16).
+- Ctrl+1, axTerminal: Command field. Its kind: go to a place or view; moves to Alt+1 (decided 2026-11-16).
+- Ctrl+2, axTerminal: Terminal. Its kind: go to a place or view; moves to Alt+2 (decided 2026-11-16).
+- Ctrl+3, axTerminal: Latest output. Its kind: go to a place or view; moves to Alt+3 (decided 2026-11-16).
+- Ctrl+1, axGIT: Changes. Its kind: go to a place or view; moves to Alt+1 (decided 2026-11-16).
+- Ctrl+2, axGIT: Log. Its kind: go to a place or view; moves to Alt+2 (decided 2026-11-16).
+- Ctrl+3, axGIT: Branches. Its kind: go to a place or view; moves to Alt+3 (decided 2026-11-16).
+- Ctrl+1, axProcess: Processes. Its kind: go to a place or view; moves to Alt+1 (decided 2026-11-16).
+- Ctrl+2, axProcess: Services. Its kind: go to a place or view; moves to Alt+2 (decided 2026-11-16).
+- Ctrl+3, axProcess: Startup. Its kind: go to a place or view; moves to Alt+3 (decided 2026-11-16).
 - Ctrl+1, axTask: Action key 1. Its kind: act on what is selected.
 - Ctrl+2, axTask: Action key 2. Its kind: act on what is selected.
 - Ctrl+3, axTask: Action key 3. Its kind: act on what is selected.
@@ -709,6 +726,14 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - Ctrl+7, axTask: Action key 7. Its kind: act on what is selected.
 - Ctrl+8, axTask: Action key 8. Its kind: act on what is selected.
 - Ctrl+9, axTask: Action key 9. Its kind: act on what is selected.
+
+### Ctrl+Shift+digit: go to the previous heading of that level
+
+6 keys of the inventory. No misfits.
+
+### Alt+digit: go to a place or view of the window
+
+0 keys of the inventory. No misfits.
 
 ### Ctrl+Shift+letter: the reverse or the wider form of the same letter with Ctrl
 
@@ -753,6 +778,12 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - F6, axMedia: Back to the list. Its kind: move between panes.
 - F6, axCalc: Switch between the history and the field. Its kind: move between panes.
 - F6, axFile: Switch between the folder list and the Actions list. Its kind: move between panes.
+
+### Shift+F-key: the reverse or the other form of the same F-key
+
+3 keys of the inventory. No misfits.
+
+Windows' own keys, not counted: Shift+F10.
 
 ### Enter: open or confirm
 

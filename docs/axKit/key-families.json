@@ -1,21 +1,41 @@
 {
   "format": "axkit-key-families 1",
   "status": "proposed",
-  "note": "A draft for the maintainer to settle: no key was moved for it and no test holds a key to its family. Each family is a pattern of keys and the one kind of thing such a key would do. A misfit is a command of docs/axKit/window-commands.json on a key of the pattern that does another kind of thing; 'does' is the command's label there, 'kind' is what kind of thing it is instead. 'windows' names the keys of a pattern that are Windows' own (Ctrl+C, Ctrl+S and the like), which stay as every Windows user knows them and are not counted as misfits. tools/key-map.ps1 checks that every key named here is of its family's pattern and that every command named here is in the inventory, and writes the families at the end of docs/axKit/key-map.md.",
+  "scopes": [
+    { "id": "anywhere", "title": "From anywhere in Windows", "learn": "These keys work in any program, with no axKit window open: they bring an axKit app up. Each is a setting of its app and can be changed there." },
+    { "id": "every-window", "title": "The same in every axKit window", "learn": "These keys do the same kind of thing in every window of axKit, so they are learned once." },
+    { "id": "window", "title": "Inside one app's window", "learn": "These keys belong to the window you are in. The pattern says what kind of thing the key does; what exactly it does depends on the app." }
+  ],
+  "note": "A draft for the maintainer to settle: no key was moved for it and no test holds a key to its family. Each family is a pattern of keys and the one kind of thing such a key would do. A misfit is a command of docs/axKit/window-commands.json on a key of the pattern that does another kind of thing; 'does' is the command's label there, 'kind' is what kind of thing it is instead. 'windows' names the keys of a pattern that are Windows' own (Ctrl+C, Ctrl+S and the like), which stay as every Windows user knows them and are not counted as misfits. tools/key-map.ps1 checks that every key named here is of its family's pattern and that every command named here is in the inventory, and writes the families at the end of docs/axKit/key-map.md. 'learn' is the family as a user is told it, one or two sentences for the ear; the script writes docs/axKit/key-groups.md from it, the keys by group, which is the page a user learns the keys from. A family with 'source': 'system-wide' takes its keys from BundleKeys.SystemWide (the hotkeys, which are in no window's inventory).",
   "families": [
     {
+      "id": "system-wide",
+      "scope": "anywhere",
+      "pattern": "Ctrl+Shift+Space and Ctrl+Shift+punctuation",
+      "match": "^ctrl\\+shift\\+(space|slash|comma|semicolon|period)$",
+      "does": "bring up axKit from anywhere in Windows",
+      "learn": "Hold Ctrl and Shift and press Space or a punctuation key, in any program: an axKit app comes up. These are the only keys of axKit that work outside its windows (SPEC AX-8.11).",
+      "source": "system-wide",
+      "windows": [],
+      "misfits": []
+    },
+    {
       "id": "space",
+      "scope": "every-window",
       "pattern": "Space and Ctrl+Space",
       "match": "^(ctrl\\+)?space$",
       "does": "toggle or play",
+      "learn": "Space switches something on and off or plays it. Ctrl+Space switches between navigating and editing.",
       "windows": [],
       "misfits": []
     },
     {
       "id": "ctrl-letter",
+      "scope": "window",
       "pattern": "Ctrl+letter",
       "match": "^ctrl\\+[a-z]$",
       "does": "act on what is selected",
+      "learn": "Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be. The keys every Windows program has (copy, paste, save, find) are the same here.",
       "windows": ["ctrl+a", "ctrl+c", "ctrl+f", "ctrl+n", "ctrl+o", "ctrl+s", "ctrl+v", "ctrl+x", "ctrl+y", "ctrl+z"],
       "misfits": [
         { "chord": "ctrl+b", "apps": ["axClaude"], "does": "What runs in the background", "kind": "say or show" },
@@ -52,11 +72,26 @@
     },
     {
       "id": "ctrl-digit",
+      "scope": "window",
       "pattern": "Ctrl+digit",
       "match": "^ctrl\\+[0-9]$",
-      "does": "go to a place",
+      "does": "go to the next heading of that level",
+      "learn": "Ctrl and a number from 1 to 6 goes to the next heading of that level in a text or a list with headings.",
       "windows": [],
       "misfits": [
+        { "chord": "ctrl+0", "apps": ["axTask"], "does": "All tasks", "kind": "go to a place or view" },
+        { "chord": "ctrl+1", "apps": ["axClaude"], "does": "Message field", "kind": "go to a place or view; moves to Alt+1 (decided 2026-11-16)" },
+        { "chord": "ctrl+2", "apps": ["axClaude"], "does": "Conversation", "kind": "go to a place or view; moves to Alt+2 (decided 2026-11-16)" },
+        { "chord": "ctrl+3", "apps": ["axClaude"], "does": "Latest response", "kind": "go to a place or view; moves to Alt+3 (decided 2026-11-16)" },
+        { "chord": "ctrl+1", "apps": ["axTerminal"], "does": "Command field", "kind": "go to a place or view; moves to Alt+1 (decided 2026-11-16)" },
+        { "chord": "ctrl+2", "apps": ["axTerminal"], "does": "Terminal", "kind": "go to a place or view; moves to Alt+2 (decided 2026-11-16)" },
+        { "chord": "ctrl+3", "apps": ["axTerminal"], "does": "Latest output", "kind": "go to a place or view; moves to Alt+3 (decided 2026-11-16)" },
+        { "chord": "ctrl+1", "apps": ["axGIT"], "does": "Changes", "kind": "go to a place or view; moves to Alt+1 (decided 2026-11-16)" },
+        { "chord": "ctrl+2", "apps": ["axGIT"], "does": "Log", "kind": "go to a place or view; moves to Alt+2 (decided 2026-11-16)" },
+        { "chord": "ctrl+3", "apps": ["axGIT"], "does": "Branches", "kind": "go to a place or view; moves to Alt+3 (decided 2026-11-16)" },
+        { "chord": "ctrl+1", "apps": ["axProcess"], "does": "Processes", "kind": "go to a place or view; moves to Alt+1 (decided 2026-11-16)" },
+        { "chord": "ctrl+2", "apps": ["axProcess"], "does": "Services", "kind": "go to a place or view; moves to Alt+2 (decided 2026-11-16)" },
+        { "chord": "ctrl+3", "apps": ["axProcess"], "does": "Startup", "kind": "go to a place or view; moves to Alt+3 (decided 2026-11-16)" },
         { "chord": "ctrl+1", "apps": ["axTask"], "does": "Action key 1", "kind": "act on what is selected" },
         { "chord": "ctrl+2", "apps": ["axTask"], "does": "Action key 2", "kind": "act on what is selected" },
         { "chord": "ctrl+3", "apps": ["axTask"], "does": "Action key 3", "kind": "act on what is selected" },
@@ -69,10 +104,32 @@
       ]
     },
     {
+      "id": "ctrl-shift-digit",
+      "scope": "window",
+      "pattern": "Ctrl+Shift+digit",
+      "match": "^ctrl\\+shift\\+[0-9]$",
+      "does": "go to the previous heading of that level",
+      "learn": "Adding Shift to Ctrl and a number goes backwards: the previous heading of that level.",
+      "windows": [],
+      "misfits": []
+    },
+    {
+      "id": "alt-digit",
+      "scope": "window",
+      "pattern": "Alt+digit",
+      "match": "^alt\\+[0-9]$",
+      "does": "go to a place or view of the window",
+      "learn": "Alt and a number goes to one of the window's main places or views: the first, the second, the third. Decided on 2026-11-16 and not built yet: until then these are on Ctrl+1, 2 and 3 in axClaude, axTerminal, axGIT and axProcess.",
+      "windows": [],
+      "misfits": []
+    },
+    {
       "id": "ctrl-shift-letter",
+      "scope": "window",
       "pattern": "Ctrl+Shift+letter",
       "match": "^ctrl\\+shift\\+[a-z]$",
       "does": "the reverse or the wider form of the same letter with Ctrl",
+      "learn": "Adding Shift to Ctrl and a letter gives the reverse or the bigger form of that command. A letter or a number is always inside the window; Space or punctuation with Ctrl+Shift is always the whole of axKit.",
       "windows": [],
       "misfits": [
         { "chord": "ctrl+shift+c", "apps": ["axTerminal"], "does": "Interrupt", "kind": "sends Ctrl+C to the program" },
@@ -97,9 +154,11 @@
     },
     {
       "id": "f-keys",
+      "scope": "every-window",
       "pattern": "F-keys (F1 to F12 alone)",
       "match": "^f[0-9]+$",
       "does": "say or show",
+      "learn": "The function keys are the same in every window: F1 help, F3 find next, F4 send a report, F6 the other pane. F2 and F5 are Windows' own rename and refresh.",
       "windows": [],
       "misfits": [
         { "chord": "f2", "apps": ["axAutomate", "axFile", "axMCP", "axPass", "axTask"], "does": "Rename", "kind": "act on what is selected; Windows' own key for it" },
@@ -121,18 +180,32 @@
       ]
     },
     {
+      "id": "shift-f-keys",
+      "scope": "every-window",
+      "pattern": "Shift+F-key",
+      "match": "^shift\\+f[0-9]+$",
+      "does": "the reverse or the other form of the same F-key",
+      "learn": "Shift with a function key is that key's other form: Shift+F3 finds the previous, Shift+F1 asks Claude about the window instead of reading the help. Shift+F10 is Windows' own key for the context menu.",
+      "windows": ["shift+f10"],
+      "misfits": []
+    },
+    {
       "id": "enter",
+      "scope": "every-window",
       "pattern": "Enter",
       "match": "^enter$",
       "does": "open or confirm",
+      "learn": "Enter opens what you are on or says yes to a question.",
       "windows": [],
       "misfits": []
     },
     {
       "id": "escape",
+      "scope": "every-window",
       "pattern": "Escape",
       "match": "^escape$",
       "does": "go back or close",
+      "learn": "Escape goes back one step or closes what is open. It never loses work without asking.",
       "windows": [],
       "misfits": [
         { "chord": "escape", "apps": ["axFile"], "does": "Clear the selection or the filter", "kind": "remove: it clears and stays where it is" },
@@ -141,25 +214,31 @@
     },
     {
       "id": "delete",
+      "scope": "every-window",
       "pattern": "Delete",
       "match": "^delete$",
       "does": "remove",
+      "learn": "Delete removes what you are on, and what can be lost asks first or can be undone.",
       "windows": [],
       "misfits": []
     },
     {
       "id": "ctrl-tab",
+      "scope": "every-window",
       "pattern": "Ctrl+Tab and Ctrl+Shift+Tab",
       "match": "^ctrl\\+(shift\\+)?tab$",
       "does": "move between panes",
+      "learn": "Ctrl+Tab goes to the next part of the window and Ctrl+Shift+Tab to the one before.",
       "windows": [],
       "misfits": []
     },
     {
       "id": "alt-letter",
+      "scope": "every-window",
       "pattern": "Alt+letter",
       "match": "^alt\\+[a-z]$",
       "does": "open a menu",
+      "learn": "Alt and a letter opens the menu that starts with that letter, as in every Windows program.",
       "windows": [],
       "misfits": [
         { "chord": "alt+d", "apps": ["axFile"], "does": "Go to folder", "kind": "go to a place; File Explorer's own key for its address bar" }

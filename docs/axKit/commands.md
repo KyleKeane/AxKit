@@ -115,7 +115,7 @@ page by hand; run its script and commit the page.
 - `tools/cases.ps1` writes `cases.md` from `cases.json`, the table of how each unexpected situation is handled (SPEC
   AX-5.10). A change to how a situation is handled changes its row, then the script is run; the fields are described
   at the top of the script.
-- `tools/key-map.ps1` writes `key-map.md` from the command inventory `window-commands.json`, `BundleKeys.cs` and the
+- `tools/key-map.ps1` writes `key-map.md` (every key, by key) and `key-groups.md` (the same keys by group and context, the page a user learns the patterns from) from the command inventory `window-commands.json`, `BundleKeys.cs` and the
   proposed `key-families.json`: every key, its scope and what it does in each app. Every run holds the families file
   to the inventory: a key named there as not fitting is a command the inventory has. `tools/workflows.ps1` runs it after
   its own pages, so writing the pages after an inventory change writes the key map too; alone it is run after a

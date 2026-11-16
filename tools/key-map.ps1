@@ -78,6 +78,20 @@ foreach ($line in [IO.File]::ReadAllLines($bundlePath)) {
 }
 if ($bundle.Count -eq 0) { $problems.Add('src/AxKit.Forms/BundleKeys.cs: no "public const Keys" line was found') }
 
+# The system-wide keys (SPEC AX-8.11): the lines of BundleKeys.SystemWide, '("axStart''s search field", Keys.Control | ...),'.
+# They are hotkeys, in no window's inventory; KeyTests holds the list to the background apps' defaults.
+$systemWide = New-Object System.Collections.Generic.List[object]
+$inSystemWide = $false
+foreach ($line in [IO.File]::ReadAllLines($bundlePath)) {
+    if ($line -match 'SystemWide\s*=\s*$') { $inSystemWide = $true; continue }
+    if (-not $inSystemWide) { continue }
+    if ($line -match '^\s*\];') { break }
+    if ($line -match '^\s*\("([^"]+)",\s*([^)]+)\),') {
+        $systemWide.Add([pscustomobject]@{ Chord = (ConvertTo-Chord $Matches[2]); Does = $Matches[1] })
+    }
+}
+if ($systemWide.Count -eq 0) { $problems.Add('src/AxKit.Forms/BundleKeys.cs: no line of SystemWide was found') }
+
 # One row per key of a command: the app, the chord, the label.
 $rows = New-Object System.Collections.Generic.List[object]
 $appNames = @($inventory.apps | ForEach-Object { $_.app })
@@ -175,8 +189,15 @@ foreach ($family in $families.families) {
     $where = "docs/axKit/key-families.json: family '$($family.id)'"
     if (-not $family.id -or $familyIds.ContainsKey($family.id)) { $problems.Add("${where}: the id is missing or used twice") }
     $familyIds[$family.id] = $true
-    foreach ($field in 'pattern', 'match', 'does') {
+    foreach ($field in 'pattern', 'match', 'does', 'learn', 'scope') {
         if (-not $family.$field) { $problems.Add("${where}: '$field' is missing") }
+    }
+    if (@($families.scopes | ForEach-Object { $_.id }) -notcontains $family.scope) { $problems.Add("${where}: the scope '$($family.scope)' is none of the file's scopes") }
+    if ($family.source -and $family.source -ne 'system-wide') { $problems.Add("${where}: the source '$($family.source)' is not system-wide") }
+    if ($family.source -eq 'system-wide') {
+        foreach ($hotkey in $systemWide) {
+            if ($hotkey.Chord -notmatch $family.match) { $problems.Add("${where}: the system-wide key '$($hotkey.Chord)' of BundleKeys.SystemWide is not of the pattern") }
+        }
     }
     foreach ($chord in @($family.windows)) {
         if ($chord -notmatch $family.match) { $problems.Add("${where}: the Windows key '$chord' is not of the pattern") }
@@ -298,17 +319,122 @@ foreach ($family in $families.families) {
 
 $text = ($lines -join "`r`n") + "`r`n"
 $summary = "$($chords.Count) keys, $($same.Count) with one meaning, $($differ.Count) with several, $(@($families.families).Count) families."
+
+# ---- The inverse page, docs\axKit\key-groups.md: the keys by group, for a user to learn the patterns from. ----
+# By context first (from anywhere, the same in every window, inside one window), then by family: what the user is
+# told, the keys that fit with what each does, and the exceptions, each named as one.
+$groupsPath = Join-Path $root 'docs\axKit\key-groups.md'
+$isMisfit = @{}
+foreach ($family in $families.families) {
+    foreach ($misfit in @($family.misfits)) {
+        $appsOfMisfit = if ($misfit.apps -is [string]) { $appNames } else { @($misfit.apps) }
+        foreach ($name in $appsOfMisfit) { $isMisfit["$($misfit.chord)|$name|$($misfit.does)".ToLowerInvariant()] = $true }
+    }
+}
+$inFamily = @{}
+$g = New-Object System.Collections.Generic.List[string]
+$g.Add('# Key groups')
+$g.Add('')
+$g.Add('Written by `tools/key-map.ps1` from `docs/axKit/key-families.json`, `docs/axKit/window-commands.json` and')
+$g.Add('`src/AxKit.Forms/BundleKeys.cs`; never edit it by hand. The keys of axKit by group: what kind of thing each')
+$g.Add('pattern of keys does, so that a key can be guessed before it is looked up. The same keys by key, with every app,')
+$g.Add('are in `key-map.md`.')
+$g.Add('')
+$g.Add("The groups are $($families.status): an exception is a command that sits on a key of a group and does another kind of thing today.")
+$g.Add('')
+$g.Add('## The groups in short')
+foreach ($scope in $families.scopes) {
+    $g.Add('')
+    $g.Add("$($scope.title):")
+    $g.Add('')
+    foreach ($family in @($families.families | Where-Object { $_.scope -eq $scope.id })) {
+        $g.Add("- $($family.pattern): $($family.does).")
+    }
+}
+foreach ($scope in $families.scopes) {
+    $g.Add('')
+    $g.Add("## $($scope.title)")
+    $g.Add('')
+    $g.Add($scope.learn)
+    foreach ($family in @($families.families | Where-Object { $_.scope -eq $scope.id })) {
+        $g.Add('')
+        $g.Add("### $($family.pattern): $($family.does)")
+        $g.Add('')
+        $g.Add($family.learn)
+        $fits = New-Object System.Collections.Generic.List[string]
+        $own = New-Object System.Collections.Generic.List[string]
+        $exceptions = New-Object System.Collections.Generic.List[string]
+        if ($family.source -eq 'system-wide') {
+            foreach ($hotkey in $systemWide) { $fits.Add("- $(Get-Spoken $hotkey.Chord): $($hotkey.Does).") }
+        }
+        foreach ($entry in (Sort-Ordinal ($chords | Where-Object { $_.Chord -match $family.match }) { param($item) $item.Order })) {
+            $inFamily[$entry.Chord] = $true
+            foreach ($meaning in (Sort-Ordinal $entry.Meanings { param($item) (Get-Falling $item.Apps.Count) + $item.Label })) {
+                $fitting = @($meaning.Apps | Where-Object { -not $isMisfit.ContainsKey("$($entry.Chord)|$_|$($meaning.Label)".ToLowerInvariant()) })
+                $other = @($meaning.Apps | Where-Object { $isMisfit.ContainsKey("$($entry.Chord)|$_|$($meaning.Label)".ToLowerInvariant()) })
+                $whoFits = if ($fitting.Count -eq $appNames.Count) { 'every app' } else { Join-Names $fitting }
+                if ($fitting.Count -gt 0) {
+                    $line = "- $(Get-Spoken $entry.Chord), ${whoFits}: $($meaning.Label)."
+                    if (@($family.windows) -contains $entry.Chord) { $own.Add($line) } else { $fits.Add($line) }
+                }
+                if ($other.Count -gt 0) {
+                    $whoOther = if ($other.Count -eq $appNames.Count) { 'every app' } else { Join-Names $other }
+                    $exceptions.Add("- $(Get-Spoken $entry.Chord), ${whoOther}: $($meaning.Label).")
+                }
+            }
+        }
+        if ($fits.Count -gt 0) {
+            $g.Add('')
+            $g.Add('The keys:')
+            $g.Add('')
+            foreach ($line in $fits) { $g.Add($line) }
+        } elseif ($own.Count -eq 0 -and $exceptions.Count -eq 0) {
+            $g.Add('')
+            $g.Add('No key of this group is in use yet.')
+        }
+        if ($own.Count -gt 0) {
+            $g.Add('')
+            $g.Add('Windows'' own keys, as in every program:')
+            $g.Add('')
+            foreach ($line in $own) { $g.Add($line) }
+        }
+        if ($exceptions.Count -gt 0) {
+            $g.Add('')
+            $g.Add('Exceptions today, which do another kind of thing:')
+            $g.Add('')
+            foreach ($line in $exceptions) { $g.Add($line) }
+        }
+    }
+}
+$outside = Sort-Ordinal ($chords | Where-Object { -not $inFamily.ContainsKey($_.Chord) }) { param($item) $item.Order }
+$g.Add('')
+$g.Add('## Keys in no group yet')
+$g.Add('')
+if ($outside.Count -eq 0) {
+    $g.Add('None: every key of the inventory is in a group.')
+} else {
+    $g.Add('These keys of the inventory match no group''s pattern. Most are the arrows and the keys of a list or a text.')
+    $g.Add('')
+    foreach ($entry in $outside) {
+        $g.Add("- $(Get-Spoken $entry.Chord): $((@($entry.Meanings | ForEach-Object { $_.Label }) | Select-Object -First 3) -join '; ')$(if ($entry.Meanings.Count -gt 3) { '; and more' }).")
+    }
+}
+$groupsText = ($g -join "`r`n") + "`r`n"
+
 if ($Check) {
-    $current = if (Test-Path $documentPath) { [IO.File]::ReadAllText($documentPath) } else { '' }
-    # Line endings aside: the checkout's are native, LF on CI.
-    if (($current -replace "`r`n", "`n") -cne ($text -replace "`r`n", "`n")) {
-        Write-Host 'docs/axKit/key-map.md is not what the inventory, BundleKeys and the families give: run tools\key-map.ps1 and commit the page.'
-        exit 1
+    foreach ($page in @(@($documentPath, $text, 'key-map.md'), @($groupsPath, $groupsText, 'key-groups.md'))) {
+        $current = if (Test-Path $page[0]) { [IO.File]::ReadAllText($page[0]) } else { '' }
+        # Line endings aside: the checkout's are native, LF on CI.
+        if (($current -replace "`r`n", "`n") -cne ($page[1] -replace "`r`n", "`n")) {
+            Write-Host "docs/axKit/$($page[2]) is not what the inventory, BundleKeys and the families give: run tools\key-map.ps1 and commit the page."
+            exit 1
+        }
     }
 
-    Write-Host "docs/axKit/key-map.md is current: $summary"
+    Write-Host "docs/axKit/key-map.md and key-groups.md are current: $summary"
     exit 0
 }
 
 [IO.File]::WriteAllText($documentPath, $text, (New-Object System.Text.UTF8Encoding($false)))
-Write-Host "Wrote docs/axKit/key-map.md: $summary"
+[IO.File]::WriteAllText($groupsPath, $groupsText, (New-Object System.Text.UTF8Encoding($false)))
+Write-Host "Wrote docs/axKit/key-map.md and key-groups.md: $summary"
