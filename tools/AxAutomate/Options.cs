@@ -7,6 +7,8 @@ namespace AxAutomate;
 /// the folder named by <c>--repository</c>, else the one above the program that holds <c>AxKit.sln</c>
 /// (<see cref="FindRepository"/>), else null: without one the command inventory is off. <paramref name="Inventory"/>
 /// is one of <see cref="Check"/> (the default), <see cref="Write"/>, <see cref="Rewrite"/> and <see cref="Off"/>.
+/// The command line's other form, <c>AxAutomate --reference [--check] [--repository &lt;folder&gt;]</c>, plays nothing
+/// and is read by <see cref="ReadReference"/>.
 /// </summary>
 internal sealed record RunOptions(string Target, string? Exe, bool Build, string? Report, bool Keep, bool Nvda, string? Repository, string Inventory)
 {
@@ -14,6 +16,9 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
     public const string Write = "write";
     public const string Rewrite = "rewrite";
     public const string Off = "off";
+
+    /// <summary>The first word of the reference's form: the workflow pages written, or checked (ReferenceRun, WF-7.1).</summary>
+    public const string ReferenceOption = "--reference";
 
     /// <summary>
     /// The options of 6.4 that a later package of user-workflows.md builds, with that package: refused until then, so
@@ -25,8 +30,6 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
         ["--record"] = "WP-B13",
         ["--convert"] = "WP-B15",
         ["--ai-tools"] = "WP-B16",
-        ["--reference"] = "WP-B8",
-        ["--check"] = "WP-B8",
     };
 
     /// <summary>
@@ -82,6 +85,8 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
                     }
 
                     break;
+                case ReferenceOption or "--check":
+                    return (null, $"{option} goes with the form that writes the workflow pages and plays nothing: AxAutomate {ReferenceOption} [--check] [--repository <folder>].");
                 default:
                     return (null, $"Unknown option: {option}.");
             }
@@ -103,6 +108,45 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
         }
 
         return (new RunOptions(args[0], exe, build, report, keep, nvda, repository, inventory), string.Empty);
+    }
+
+    /// <summary>
+    /// The reference's form read (6.4, WF-7.1): <c>AxAutomate --reference [--check] [--repository &lt;folder&gt;]</c>,
+    /// the first word <see cref="ReferenceOption"/>. Whether it checks or writes, and the repository whose pages it
+    /// writes, <c>--repository</c> or else the one above the program (<see cref="FindRepository"/>). The repository is
+    /// null with why it cannot run: an option not known, a repository without <c>AxKit.sln</c>, none found; every
+    /// refusal ends the run with exit code 2.
+    /// </summary>
+    public static (string? Repository, bool CheckPages, string Refusal) ReadReference(IReadOnlyList<string> args)
+    {
+        string? repository = null;
+        var checkPages = false;
+        for (var i = 1; i < args.Count; i++)
+        {
+            switch (args[i])
+            {
+                case "--check":
+                    checkPages = true;
+                    break;
+                case "--repository" when i + 1 < args.Count:
+                    repository = Path.GetFullPath(args[++i]);
+                    if (!File.Exists(Path.Combine(repository, "AxKit.sln")))
+                    {
+                        return (null, false, $"--repository names a folder without AxKit.sln: {repository}.");
+                    }
+
+                    break;
+                case "--repository":
+                    return (null, false, "--repository needs a value.");
+                default:
+                    return (null, false, $"{ReferenceOption} takes --check and --repository <folder> alone, not {args[i]}.");
+            }
+        }
+
+        repository ??= FindRepository();
+        return repository is null
+            ? (null, false, $"{ReferenceOption} writes the pages of a repository, and this program is not in one: name it with --repository.")
+            : (repository, checkPages, string.Empty);
     }
 
     /// <summary>

@@ -6,6 +6,7 @@
 // Usage:
 //   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep] [--nvda]
 //              [--repository <folder>] [--inventory check|write|rewrite|off]
+//   AxAutomate --reference [--check] [--repository <folder>]
 //   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
 //   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
 //   --report     writes every script's steps and its whole timeline, with times, to a Markdown file
@@ -28,8 +29,16 @@
 //                rewrite  as write, and an app every script of which passed, one snapshot of it without a notice,
 //                         keeps only the rows this run saw: how a command that left a window leaves the file
 //                off      nothing (a build that is not the repository's; tools\upstream.ps1 -Verify)
-//   Options that later packages of docs/axKit/user-workflows.md build (--traces, --record, --convert, --ai-tools,
-//   --reference) are refused as not built yet.
+//   --reference  plays nothing (no build, no desktop, no lock): writes the workflow pages for people
+//                (docs/axKit/user-workflows.md WF-7, ReferenceRun) from every script of tests\scripts and
+//                tests\nvda-scripts and the command inventory: docs/axKit/workflows.md, the index;
+//                docs/axKit/workflows/<group>.md, each goal's steps; docs/axKit/window-commands.md, every command. Each
+//                page with CRLF, UTF-8 without a byte order mark, one line per page written; a page of
+//                docs/axKit/workflows no group makes any more is deleted. tools\workflows.ps1 runs it.
+//     --check    writes and deletes nothing, compares line ends aside: exit 0 when every page is current, 1 naming each
+//                page that is not (missing, different, left over). A script without its label: exit 1, named.
+//   Options that later packages of docs/axKit/user-workflows.md build (--traces, --record, --convert, --ai-tools)
+//   are refused as not built yet.
 //   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}. The exit code
 //   (WF-11.5) is 0 when every script passed and nothing is stale, 1 when a script failed, 2 when the run could not
 //   start (the command line, the build, the program, another window run that did not end within the lock's hour), 3
@@ -133,6 +142,21 @@ internal static class Program
         }
 
         Console.OutputEncoding = Encoding.UTF8;
+
+        // The workflow pages (ReferenceRun.cs, docs/axKit/user-workflows.md WF-7.1): this form plays nothing, so it
+        // comes before anything of a run: no build, no desktop, no lock.
+        if (args[0] == RunOptions.ReferenceOption)
+        {
+            var (repository, checkPages, refused) = RunOptions.ReadReference(args);
+            if (repository is null)
+            {
+                Console.Error.WriteLine($"{refused} {Usage}");
+                return CannotStart;
+            }
+
+            return ReferenceRun.Run(repository, checkPages, Console.WriteLine);
+        }
+
         // Every option read once (Options.cs, docs/axKit/user-workflows.md section 6.4).
         var (options, refusal) = RunOptions.Read(args);
         if (options is null)
@@ -341,7 +365,7 @@ internal static class Program
         return Run.Stopped is not null ? CannotStart : failed.Count > 0 ? ScriptsFailed : inventory.Stale ? InventoryStale : 0;
     }
 
-    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off]. See docs/axKit/automation.md.";
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
 
     /// <summary>
     /// The exit codes (docs/axKit/user-workflows.md WF-11.5): 0 every script passed and nothing is stale, 1 a script

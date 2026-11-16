@@ -1,201 +1,596 @@
 # Workflows
 
-Written by `tools/workflows.ps1` from the scripts of `tests/scripts` and `tests/nvda-scripts`; never edit it by hand.
-Every workflow below is played by the automated checks (`docs/axKit/automation.md`), with NVDA listening in
-`nvda-pass.ps1`, so each is kept working from release to release. The label is the task in the words a user asks
-for help with, and the script is its steps; together they are the start of a tutorial for it. The scripts run on
-the developer's computer (`tools/AxAutomate`, `nvda-pass.ps1`), never in CI; the last full pass is the first entry
-of `docs/axKit/nvda-test-record.md`.
+Written by `tools/workflows.ps1` from the scripts of `tests/scripts` and `tests/nvda-scripts` and the command
+inventory (`docs/axKit/window-commands.json`); never edit it by hand. What a user can do in axKit, by app: each
+workflow is one script of the automated checks, found by its label, a task in the user's words, and under it are its
+goals. The steps of every goal, with the keys as they are now, are in the app's page. The checks run on the
+developer's computer (`tools/AxAutomate`, `nvda-pass.ps1`), never in CI (`docs/axKit/automation.md`,
+`docs/axKit/user-workflows.md`).
 
 ## axAutomate
 
-1. **Browse a folder of workflows and read their steps** (`tests/scripts/axAutomate/01-start.txt`): axAutomate: a folder of workflows, a workflow's steps with a then block, a step's details and what this version refuses (docs/axAutomate/nvda-test-plan.md sections 1 to 3; SPEC.md AU-4), run by tools/AxAutomate on a desktop of its own (docs/axKit/automation.md).
-2. **Run a workflow and hear how it went** (`tests/scripts/axAutomate/02-run.txt`): axAutomate: running workflows from the window, a folder's and one, a failing step said, the rows after the run, and Escape stopping a run (docs/axAutomate/nvda-test-plan.md section 5; SPEC.md AU-4.4, AU-4.5), run by tools/AxAutomate on a desktop of its own; the window's runs start their windows on a further desktop of their own. In the workflows' lines {temp} is the inner run's {temp} (this runner fills in its own first), and a file name never starts with n after a backslash, which a file step reads as a new line.
-3. **Close axAutomate and come back to the folder you had** (`tests/scripts/axAutomate/03-reopen.txt`): axAutomate: started with no folder, the folder used last opens (docs/axAutomate/nvda-test-plan.md 4.2; SPEC.md AU-4.1, AU-6a.1). The folder used last is the one a start named or Ctrl+O chose (Ctrl+O's alone until 2026-11-14). Ctrl+O itself, step 4.1, is Windows' folder picker, which the channel cannot drive: the script names the folder at its first start, and checks that a start without a folder opens it, twice.
+Steps and keys: `docs/axKit/workflows/axAutomate.md` (in Claude's working folder: `workflows-axAutomate.md`).
+
+1. **Browse a folder of workflows and read their steps**
+2. **Run a workflow and hear how it went**
+3. **Close axAutomate and come back to the folder you had**
 
 ## axCalc
 
-1. **Calculate and reuse earlier answers** (`tests/scripts/axCalc/01-basics.txt`): axCalc: the field, the answer, the history and its keys (docs/axCalc/nvda-test-plan.md; SPEC AC-3 to AC-6). Every key here is a command of the window's one list (docs/axKit/app-kit.md AK-2), so this script is also the check that the list does what the key switch did before it.
-2. **Use variables, earlier answers and the history in axCalc** (`tests/scripts/axCalc/02-answers-variables-history.txt`): axCalc, docs/axCalc/nvda-test-plan.md sections 2 to 5 beyond 01-basics: ans, variables, errors that keep the expression, Up and Down left to the field, angles, bases of a fraction, editing a history entry, Find landing on a match, clearing the history and the variables, and the history kept between runs. Ctrl+S and the copy to the clipboard (4.6, 3.3) are the Windows save dialog and the user's clipboard (manual).
-3. **Move through axCalc's history, find in it and remove an entry** (`tests/scripts/axCalc/03-history-keys.txt`): axCalc, docs/axCalc/nvda-test-plan.md, what 01-basics and 02-answers-variables-history leave of sections 3, 4 and 6: 3.1 and 4.2 (the bases of the last answer and of the selected entry), 4.1 (Up and Down read one entry, the edge at an end), 4.4 (Delete selects the next entry), 4.5 (F3 and Shift+F3 the next and the one before, "Not found"), 4.7 (the question's text with the number of entries), AC-5.7 (a letter typed in the history finds an entry), 6.1 (the text size) and 6.4 (the palette). SPEC AC-4.1, AC-5. Not run: 3.3 and 4.2's Ctrl+Shift+C (the user's clipboard), 4.6 (the Windows save dialog).
+Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `workflows-axCalc.md`).
+
+1. **Calculate and reuse earlier answers**
+2. **Use variables, earlier answers and the history in axCalc**
+3. **Move through axCalc's history, find in it and remove an entry**
 
 ## axClaude
 
-1. **Start a conversation with Claude** (`tests/scripts/axClaude/01-startup.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 1: startup and focus. The update check is off: GitHub's limit for unsigned requests made it fail and log an ERROR in runs (section 11 checks it). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-2. **Send Claude a message and hear the reply** (`tests/scripts/axClaude/02-conversation.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 2: dialogs and plain conversation. Options, Questions, "Answer from a list" off for steps 1 and 2, set in the run's own settings file before the start; the update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-3. **Read the conversation while Claude is writing** (`tests/scripts/axClaude/03-reading.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 3: reading while output arrives. The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-4. **Move through a reply by headings and quick keys** (`tests/scripts/axClaude/04-headings.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 4: headings and quick keys. The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-5. **Change the permission mode and interrupt Claude** (`tests/scripts/axClaude/05-modes.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 5: permission mode, prompts and interruption. Options, Questions, "Answer from a list" off for steps 2, 3 and 7, set in the run's own settings file; the update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Claude starts in its manual (default) permission mode, so that creating a file and running a command ask first. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-6. **Send messages while Claude is still working** (`tests/scripts/axClaude/06-queue.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 6: sending while Claude works. The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Claude starts in its manual permission mode, so that the slow command asks first. Claude Code 2.1.309 blocks "sleep 20" (it asks for a waiting tool instead), so the slow command is a ping of about 20 seconds, allowed with 1 in the question's list. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-7. **Change Claude's project folder** (`tests/scripts/axClaude/07-folder.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 7: project folder. The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-8. **Restart, stop and close a conversation** (`tests/scripts/axClaude/08-lifecycle.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 8: lifecycle. The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Claude starts in its manual permission mode, so that the slow command asks first; Claude Code 2.1.309 blocks "sleep 20" and asks for a waiting tool instead, so the slow command is a ping, allowed with 1 in the question's list. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-9. **Choose axClaude's speech, sounds and text** (`tests/scripts/axClaude/09-options.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 9: options and diagnostics; with it the sounds of section 8 steps 6 to 8, by name on the timeline (the run records sounds and plays none: how they sound is for the ear). The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-10. **Install Claude Code when it is missing** (`tests/scripts/axClaude/10-missing.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 10: Claude Code missing, and the installer. The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs).
-11. **Check for an update from a conversation** (`tests/scripts/axClaude/11-updates.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 11: updates. This script asks GitHub (the update check at start is on, as it is by default); GitHub's limit for unsigned requests, sixty an hour, can make the check fail, and the window then logs an ERROR, which fails the run after its steps. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently; GitHub for the update check.
-12. **Answer Claude's questions and screens** (`tests/scripts/axClaude/12-questions.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 12: Claude's questions and screens, the control area (D33). The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Every question the window shows on its own is answered after 1.5 s: its keys are held for a second (KeyHold). Steps 2, 3, 11, 12 and 20 of the plan use /model or /config, and step 7 /status: this run never sends them (/model and /config save their choices as the user's settings; /status prints the account). Steps 3, 12, 17 and 20 run on a question Claude asks with its AskUserQuestion tool instead. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-13. **Use the axKit menu from a conversation** (`tests/scripts/axClaude/13-axkit-menu.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 13: the axKit menu (bundle AX-9). The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-14. **Read a side answer and other information screens** (`tests/scripts/axClaude/14-side-answer.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 12, step 22: a side answer (/btw) and /goal, information screens shown as read-only text in a notice (SPEC.md FR-2.11), never as a list in the control area. The update check off (GitHub's limit for unsigned requests made it fail and log an ERROR in runs). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-15. **Agree to the reminder before Claude Code first starts** (`tests/scripts/axClaude/15-consent.txt`): axClaude: the reminder before Claude Code first starts (docs/axKit/SPEC.md AX-11.4, AX-11.5; the Owed list of docs/axKit/nvda-test-record.md). A fresh run's home has no consent, so the reminder comes before Claude starts; Connect starts it, and Claude's own trust question follows. With --nvda (nvda-pass.ps1) every expected line must be spoken by NVDA too. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-16. **Report a bug or an idea from a conversation** (`tests/scripts/axClaude/16-report.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 13 step 0: a report from the window (docs/axKit/reports.md RP-2, RP-3, RP-6.6, RP-D13, RP-D14; a form of standard controls, docs/axKit/SPEC.md AX-8.10). The run's own home has no agreement to the reports yet, so Send asks it, and Not now leaves the report saved and unsent: nothing reaches GitHub from a test run. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-17. **Choose which words axClaude says by itself** (`tests/scripts/axClaude/17-what-is-spoken.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 9 step 2a (SPEC.md FR-7.3a, FR-7.4a, D33; 2026-11-12): the announcement switches, the words that keep a reply line silent, and the two feedback items under Questions. A switch silences the word only: the chime stays. The survey itself cannot be forced in a run (the launcher strips Claude's variables), so its dismissal is a unit of the window left to ordinary use; its switch is checked here. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-18. **Run a command Claude offers you** (`tests/scripts/axClaude/18-offered-command.txt`): axkit_offer_command (docs/axKit/mcp.md MC-9, docs/axClaude/SPEC.md FR-2.12): a command an AI tool offers is a question in the control area once Claude is idle, starting on Explain; only Yes, run it sends it, as a ! line, and what it prints joins the conversation. The runner is the MCP client, so it names the window; Claude Code itself is found by the window it runs in. Needs: Claude Code signed in and the network; Claude Code's shell for a ! line is Bash (the arithmetic in the last command is Bash's).
-19. **See an offered command wait its turn** (`tests/scripts/axClaude/19-offered-command-waits.txt`): axkit_offer_command (docs/axKit/mcp.md MC-9.3, MC-9.4): an offer never interrupts. It waits behind a notice the user reads and behind Claude's turn; three wait at most; they are asked one after another; Escape is No. Needs: Claude Code signed in, the network and a live model (Haiku): the step that offers a command while Claude works needs a reply that takes a few seconds.
-20. **A conversation window that starts hidden and hides on closing** (`tests/scripts/axClaude/20-hide-on-close.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 20 (SPEC.md FR-9.6): --hide-on-close with --hidden, as axHelp starts its conversation ahead (docs/axHelp/SPEC.md HE-2.7). The window starts hidden with Claude loaded, says and plays nothing while hidden, keeps Claude's first question unspoken until it is shown, then acts on it as on one that has just arrived; Alt+F4 hides it again; its own command ends it. What brings it up is the "show" hand-over, which axHelp's Open the conversation sends to the window titled axHelp: axHelp's window is the second one here. The window place saved maximized, as a user's is: a hidden start must not lose it (20.5). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-21. **See what happened while a hidden conversation was away** (`tests/scripts/axClaude/21-put-away-waits.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 20 (SPEC.md FR-9.6): what happens while a window that hides on closing is put away is neither heard nor lost. The AI tools do not see the hidden window; a command offered before it was hidden is not asked while it is hidden; brought up, the window says "Done" for the turn that ended and then asks the offer, with its chime and its caution; and a Claude that stopped while hidden is said on the bringing up. axHelp's window, the second one here, is what brings the window titled axHelp up. Needs: Claude Code signed in, the network and a live model (Haiku): the step that hides the window while Claude works needs a reply that takes a few seconds.
-22. **Hear and ask what Claude runs in the background** (`tests/scripts/axClaude/22-background-work.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 22 (SPEC.md FR-7.10, FR-10.2; bundle AX-7.10): the number of things running in the background in the status bar, the start and finish sounds, the recurring chords and their pause, the words when the user turns them on, Ctrl+B and F8. Needs no Claude Code, no network and no model: a stand-in batch file draws the rows Claude Code draws (the mode line's count of shells, the panel's agent rows, the waiting row; heard live on 2026-11-15, docs/axClaude/claude-screens.md), one frame for each file the script makes in the project folder. The sounds are checked by name on the timeline; how they sound is for the ear (the plan's section 22). The recurring chords with the first pause, 2 seconds, so that the run hears them soon.
-23. **Find out whether a key arrives and what it does, in axClaude** (`tests/scripts/axClaude/23-key-test.txt`): axClaude: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axClaude/nvda-test-plan.md section 23). The user's own case of 2026-11-15: a function key that never reached the window. Every key is said with what it does where the focus is, the message field and then the conversation, and none is carried out: nothing typed, nothing sent to Claude, no notice; Escape ends it. Needs no Claude Code, no network and no model: a stand-in batch file draws one screen and waits, as in 22-background-work.
-24. **Read back in the conversation while Claude writes on, and find every line in its place** (`tests/scripts/axClaude/24-view-keeps-order.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 24 (SPEC.md FR-3.3, FR-3.3a, FR-3.11): the conversation view holds its output back while text is selected in it, then takes everything that came meanwhile at once; a message sent with the caret left far up in the conversation, and one sent from a quoted line, go to the end of the conversation, never to the caret. The view checks its own text against the transcript's with every change and as it takes the focus, and a difference is an ERROR line in the log, which fails this run. Needs no Claude Code, no network and no model: a stand-in batch file draws one frame for each file the script makes in the project folder.
-25. **Read back a long message before sending it, and turn the music on with Ctrl+M** (`tests/scripts/axClaude/25-edit-modes.txt`): axClaude: the bundle's mode key, Ctrl+Space (docs/axKit/SPEC.md AX-8.13; docs/axClaude/SPEC.md §6.3; nvda-test-plan section 6). In the message field it toggles navigation mode, where the letters move by the message's headings, links and lists and nothing changes the message, Enter included; in the conversation, which cannot be edited, it says so. The music key is Ctrl+M since 2026-11-15 (FR-7.9). Needs no Claude Code, no network and no model: a stand-in batch file draws one screen and waits, as in 23-key-test.
-26. **Block Claude Code's feedback requests from the Options menu, and turn it off again** (`tests/scripts/axClaude/26-claude-code-settings.txt`): axClaude: Claude Code's own settings (docs/axClaude/SPEC.md FR-14; nvda-test-plan section 21). Options, Claude Code settings writes one key of Claude Code's user settings file and keeps the rest of the file; off removes the key, which is Claude Code's own default. In a run the file is the run's own, home\.claude\settings.json, never the user's. Needs no Claude Code, no network and no model: a stand-in batch file draws one screen and waits, as in 25-edit-modes.
-27. **Follow a workflow Claude runs in the background without hearing its live row** (`tests/scripts/axClaude/27-workflow-progress.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 22 steps 10 and 11 (SPEC.md FR-7.10, FR-3.5; 2026-11-15): Claude Code's live row of a dynamic workflow, the lowest row of its screen under the spinner and the mode line, and the row "Waiting for 1 dynamic workflow to finish" after the turn. Never said, and never keeping the spinner or the mode line in the conversation; the status bar counts the workflow, the start and finish sounds come as for agents, Ctrl+B says how far it is; and with Options, Background work, Show Claude Code's live progress rows in the conversation, the rows stand in the conversation and are still never said. Needs no Claude Code, no network and no model: a stand-in batch file draws the rows as the user's window held them on 2026-11-15 (Claude Code 2.1.325, docs/axClaude/claude-screens.md), one frame for each file the script makes in the project folder. Speak replies is all lines, so that a row taken for reply text would be said.
-28. **Hear where axClaude's events come from** (`tests/scripts/axClaude/28-event-sources.txt`): axClaude, docs/axClaude/nvda-test-plan.md section 25 step 1 (docs/axClaude/events-and-grounding.md EG-9.1 to EG-9.3; 2026-11-15): Options, Developer has Events from Claude Code's hooks and Ground the conversation in Claude Code's session file, both on at first, and Say the event sources, which says on demand, in numbers and fixed words, where the window's events come from: the marks of a turn in the console stream, the hooks, the session file, and whether the core is in charge or in shadow. In this build the core computes beside the window and changes nothing that is heard: "Done" still comes by the bell and the settle. Needs no Claude Code, no network and no model: a stand-in batch file draws a turn as Claude Code does, one frame for each file the script makes in the project folder, with the marks a turn has in the stream (OSC 133 A at its start; C, D and the bell at its end).
-29. **Follow a turn played by the stand-in** (`tests/scripts/axClaude/29-stand-in-turn.txt`): axClaude, docs/axClaude/events-and-grounding.md EG-11.3 and section 6.7 (2026-11-15): the stand-in, a mode of the test runner (tools/AxAutomate/StandIn.cs), plays one turn as Claude Code 2.1.325 does in screen reader mode, from a scenario beside the script's claude.cmd: a frame at the prompt and the session's start event; at the file go1 the mark A, a working frame and the prompt's entry in the session file; the Stop event, the marks C and D and the bell; the reply's frame, the reply's entry and the turn's end in the session file, which lies under the run's own folder, never the user's. Its events reach a hook only when Claude Code is given a settings file, which the window does not pass yet: here they start nothing. Speak replies is all lines, so the reply is said. The working frame stays 1.5 s, so that the state can be read while it shows. Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
-30. **Have a short exchange with Claude** (`tests/scripts/axClaude/message.txt`): axClaude: a fresh session with Haiku, a message, its reply and Done (docs/axClaude/nvda-test-plan.md sections 1 and 2). Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-31. **Answer a set of two questions from Claude** (`tests/scripts/axClaude/two-questions.txt`): axClaude: a set of two questions (docs/axClaude/nvda-test-plan.md section 12 step 19). The first question reads itself; after its answer the second cuts in and reads itself, with nothing of the first read again. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: `workflows-axClaude.md`).
+
+1. **Start a conversation with Claude**
+   - Move between the conversation and Claude's question, then answer it
+   - Switch between the message field and the conversation
+   - Jump straight to the conversation or the message field
+   - Go to the conversation from the menu
+   - Hear the status
+2. **Send Claude a message and hear the reply**
+   - Read Claude's question as lines in the conversation
+   - Answer a question by typing in the message field
+   - Send a message of two lines
+   - Go to Claude's reply and read it
+   - Go back to the message you sent
+   - Move through a long message by page
+   - Move through a message by paragraph
+   - Read the keyboard shortcuts
+3. **Read the conversation while Claude is writing**
+   - Read the conversation while Claude writes
+   - Go to Claude's latest reply
+   - Quote a line of a reply in your next message
+   - Select lines of a reply and clear the selection
+4. **Move through a reply by headings and quick keys**
+   - Move through the conversation by headings
+   - Move by heading level
+   - Hide the markers in the text
+   - Move through the conversation by paragraph
+   - Jump between replies, messages, tools, errors and system lines
+   - Go back to the message field from the conversation
+   - Move through a long reply a screen at a time
+   - Skip over a run of lines in a reply
+   - Hear the line number
+   - Find text in the conversation
+   - Find the next match from the message field
+   - Go back to where you were before a jump
+   - Bookmark lines and move between them
+   - Hear a reply's paragraphs, headings or bookmarks without moving
+   - Quote two lines in a message and send it
+   - Quote a long paragraph whole
+   - Send the quote with your comment
+5. **Change the permission mode and interrupt Claude**
+   - Change the permission mode
+   - Read a permission question in the conversation
+   - Answer a permission question by its number
+   - Interrupt Claude while it works
+   - Interrupt Claude from the menu or the message field
+   - Send Claude a key from the menu
+6. **Send messages while Claude is still working**
+   - Send a message while Claude works
+   - Send a waiting message at once
+7. **Change Claude's project folder**
+   - Continue the last conversation in a folder
+   - Restart Claude
+   - Start a new session with arguments of your own
+8. **Restart, stop and close a conversation**
+   - Stop Claude from the message field
+   - Start a stopped Claude again
+   - Restart Claude while it runs
+   - Decide whether to close the window while Claude works
+   - Carry on the conversation after closing
+   - Close the window while Claude is ready
+9. **Choose axClaude's speech, sounds and text**
+   - Make the text larger or smaller
+   - Turn off the ticks for new lines and tool calls
+   - Turn off the chimes
+   - Play background music while Claude works
+   - Stop recording the raw stream
+   - Have Claude's replies spoken
+   - Hear each tool call as it starts
+   - Read the keyboard shortcuts
+   - Find a word in the keyboard shortcuts
+   - Read the user guide
+   - Read the version, the licence and the axKit guide
+   - Show the time on Input and Output lines
+10. **Install Claude Code when it is missing**
+   - Hear the ways to install Claude Code
+   - Close the notice that Claude Code is missing
+11. **Check for an update from a conversation**
+   - Check for an update
+   - Turn off the update check at start
+12. **Answer Claude's questions and screens**
+   - Answer the trust question from the list
+   - Move between a question and the conversation
+   - Hear the question again
+   - Cancel a question
+   - Answer a question that follows a reply
+   - Have questions come without interrupting speech
+   - Open and close Claude's list of background tasks
+   - Answer a question in your own words
+   - Move through Claude's questions in the conversation
+   - Close a question without answering it
+   - Interrupt Claude from a permission question
+   - Answer a set of two questions
+   - Open and close Claude's permissions screen
+   - Answer a question with several answers
+   - Review answers before they go to Claude
+13. **Use the axKit menu from a conversation**
+   - Close every window at once
+14. **Read a side answer and other information screens**
+   - Ask a side question and hear the answer
+   - Close a side answer
+   - Browse earlier side answers
+   - Look at Claude's goal
+   - Find side answers in the conversation
+15. **Agree to the reminder before Claude Code first starts**
+   - Agree to the reminder before Claude Code starts
+16. **Report a bug or an idea from a conversation**
+   - Open the report form
+   - Type a report of several lines
+   - Add detail that may name your files
+   - Send the report
+   - Cancel a report
+17. **Choose which words axClaude says by itself**
+   - Silence Claude's own notices
+   - Turn the words Sent and Responding back on
+   - Keep reply lines with chosen words silent
+   - Have every reply line spoken again
+18. **Run a command Claude offers you**
+   - Read the explanation of an offered command
+   - Hear the offered command again
+   - Turn down an offered command
+   - Run an offered command
+   - Let an AI tool run a window command
+19. **See an offered command wait its turn**
+   - Turn down waiting offers one after another
+20. **A conversation window that starts hidden and hides on closing**
+   - Bring up the hidden conversation
+   - Hide the conversation again
+   - End Claude and close the window for good
+21. **See what happened while a hidden conversation was away**
+   - Bring up the window and hear what happened while it was away
+22. **Hear and ask what Claude runs in the background**
+   - Ask what runs in the background
+   - Hear background work as it starts and ends
+23. **Find out whether a key arrives and what it does, in axClaude**
+   - Hear what a key does without doing it
+   - End the key test
+   - Hear what the conversation's keys do
+24. **Read back in the conversation while Claude writes on, and find every line in its place**
+25. **Read back a long message before sending it, and turn the music on with Ctrl+M**
+   - Move through a message by its headings, links and lists
+   - Go back to editing the message
+   - Turn the background music on and off
+26. **Block Claude Code's feedback requests from the Options menu, and turn it off again**
+   - Block Claude Code's feedback requests
+   - Turn the block on feedback requests off again
+   - Choose how Claude-drafted feedback comes
+27. **Follow a workflow Claude runs in the background without hearing its live row**
+   - Hear how far a workflow is
+   - Show Claude Code's live progress rows in the conversation
+   - Hide the live progress rows again
+28. **Hear where axClaude's events come from**
+29. **Follow a turn played by the stand-in**
+30. **Have a short exchange with Claude**
+31. **Answer a set of two questions from Claude**
 
 ## axClip
 
-1. **Find and paste something you copied earlier** (`tests/scripts/axClip/01-basics.txt`): axClip: the search field, the match keys and the commands that stay inside the window (docs/axClip/nvda-test-plan.md; SPEC CP-2, CP-4, CP-5.2). Every key here is a command of the window's one list (docs/axKit/app-kit.md AK-2), the match keys HotkeyForm's, so this script is also the check that the list does what the key switch did before it. The hotkey is one nobody uses, so that the run never takes the user's; Start with Windows stays on, which a development build never writes (SignInStart), since off would remove the user's own sign-in value.  The test desktop shares the clipboard with the user's session: the script copies three texts of its own, which stay on the clipboard after the run, and every step filters on them, so that nothing the user copies is ever said here.
-2. **Copy again, read a long copy and keep the history between runs** (`tests/scripts/axClip/02-history-kept.txt`): axClip: a text copied again moves to the top and stays one item (docs/axClip/nvda-test-plan.md 2.3; SPEC CP-3.2), a copy of three lines says its count and reads in full (2.4; CP-2.5, CP-4.3), Alt+F4 hides and a second start shows the running window with its items (1.4, 1.5; CP-1.1, CP-1.4), and the history is kept between runs only while the option is on (4.2; CP-3.4). The hotkey is one nobody uses, as in 01-basics.  The test desktop shares the clipboard with the user's session: as 01-basics does, the script copies texts of its own through clip, which stay on the clipboard after the run, and every step filters on them, so that nothing the user copies is ever said here.
+Steps and keys: `docs/axKit/workflows/axClip.md` (in Claude's working folder: `workflows-axClip.md`).
+
+1. **Find and paste something you copied earlier**
+   - Move through the copied items
+   - Jump to the newest or oldest item, or by a page
+   - Read an item's whole text
+   - Pause the recording and start it again
+   - Remove an item
+   - Clear the clipboard history
+   - Hide the window and show it again
+   - Quit axClip
+2. **Copy again, read a long copy and keep the history between runs**
+   - Read a copy of several lines in full
+   - Keep the history between runs
 
 ## axDown
 
-1. **Open a text file in axDown** (`tests/scripts/axDown/01-start.txt`): axDown, test plan section 1 (Install and start), driven from inside the window (docs/axDown/nvda-test-plan.md). 1.1 manual: the Start menu entry and the installer need publish.ps1 and the real Start menu. 1.2 manual: File Explorer's Open with axKit submenu is the shell's menu, outside the window. 1.4 manual: Alt+Tab is the system's window switcher, which needs the foreground. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-2. **Read and write text in axDown** (`tests/scripts/axDown/02-reading-and-writing.txt`): axDown, test plan section 2 (Reading and writing), driven from inside the window (docs/axDown/nvda-test-plan.md). What NVDA reads by itself (say-all, words) is tier 3; here the caret's line is checked and axDown's silence.
-3. **Hear why a file that is not text will not open** (`tests/scripts/axDown/03-files-not-text.txt`): axDown, test plan section 3 step 9 (a file that is not text), apart from 03-files.txt: the window logs the refused file as an ERROR, and the runner fails a run with an ERROR in its logs (see the report), so this script fails after its steps.
-4. **Open, save and switch files in axDown** (`tests/scripts/axDown/03-files.txt`): axDown, test plan section 3 (Files), driven from inside the window (docs/axDown/nvda-test-plan.md). The files are made here with their encodings, and checked byte by byte after a save through PowerShell. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-5. **Find text and go to a line** (`tests/scripts/axDown/04-find-and-go-to-line.txt`): axDown, test plan section 4 (Find and go to line), driven from inside the window (docs/axDown/nvda-test-plan.md). The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-6. **Change the text size and the font** (`tests/scripts/axDown/05-text-size-and-font.txt`): axDown, test plan section 5 (Text size and font), driven from inside the window (docs/axDown/nvda-test-plan.md). The runner's keys have no plus or minus key, so Ctrl+Plus and Ctrl+Minus run as their menu items, Options, Text, Larger text and Smaller text, which the keys stand for. The sizes assume the Windows system font at 9 points, which a run's fresh settings start from. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-7. **Find a command in the menus, the palette and the help** (`tests/scripts/axDown/06-menus-and-help.txt`): axDown, test plan section 6 (Menus and help), driven from inside the window (docs/axDown/nvda-test-plan.md). The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-8. **Check for updates and remove axKit** (`tests/scripts/axDown/07-updates-and-uninstall.txt`): axDown, test plan section 7 (Updates and uninstall), the part a window shows (docs/axDown/nvda-test-plan.md). 7.2 manual: an older build installed with publish.ps1, the update notice, the download and the restart replace the installed program, which a test run must not touch. 7.3 manual: Settings, Apps, axKit, Uninstall is Windows' own and removes the installation. The run's own settings: no update check at start; the one check below is the one the step asks for. Needs: GitHub for the update check.
-9. **Move through a Markdown file by headings, lists and links** (`tests/scripts/axDown/08-navigation.txt`): axDown, test plan section 8 (Navigation), driven from inside the window (docs/axDown/nvda-test-plan.md, SPEC.md §9). The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-10. **Show the current file in another app** (`tests/scripts/axDown/09-show-in-missing.txt`): axDown: Show current file in on a file that is gone says "File missing" and starts nothing (bundle AX-9.10; one wording in every window since 2026-11-09, where axDown started File Explorer on the folder before).
-11. **Change the colours with the theme file** (`tests/scripts/axDown/10-theme.txt`): axDown: the theme items every window has (docs/axKit/theme.md TH-4, TH-5.3). The theme file lives in the run's own home, so nothing of the user's is touched: Reload with no file says what makes one; Edit theme file writes the template and opens it in axJSON; Reload then says so; Theme on toggles the file's switch and says which.
-12. **Ask Claude about the window you are in** (`tests/scripts/axDown/11-ask-claude.txt`): axDown: AI help in a window (docs/axKit/ai-help.md AH-1, AH-6): off, the first ask opens the reminder at once (AH-1.3, 5.6.0) and Turn on records the agreement, turns Claude on and asks; the switch in the axKit menu, Claude; Shift+F1 asks Claude about this window and the answer is a notice with a field for more; the folders notice; off again for the scripts after this one, which share the run's home. Claude is a fake in cmd in the run's own settings folder, named by ai-help.json's relative claudePath, so the run never reaches Anthropic. No agreement is recorded beforehand here, unlike the scripts of earlier versions, so that the reminder's path runs. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-13. **Hear a line break as you type it** (`tests/scripts/axDown/12-say-new-line.txt`): axDown: a line break typed is said, "new line" (docs/axKit/SPEC.md AX-7.8, docs/axDown/SPEC.md AD-2.8; report 1 of the reports repository). NVDA says nothing for Enter; the window says it, unless Options, Text, Say new line is off, which is written into the theme file of the run's own home, so nothing of the user's is touched.
-14. **Hear the heading sound as you move** (`tests/scripts/axDown/13-heading-sound.txt`): axDown: the heading sound (docs/axKit/SPEC.md AX-7.9, theme.md TH-6.6; asked 2026-11-11). A key that takes the caret onto a Markdown heading's line plays it before NVDA reads the line, unless Options, Text, Sound on headings is off, which is written into the theme file of the run's own home, so nothing of the user's is touched.
-15. **Open a recent file or window from the command palette** (`tests/scripts/axDown/14-recent-from-the-palette.txt`): The recent lists in the command palette (docs/axKit/SPEC.md AX-10.2, the user's ask of 2026-11-13): Session, Open recent file, and the Window menu's Open windows and Recently closed are filled before the palette reads them, so that each entry is one search away, Ctrl+Shift+P, a few letters, Enter. Shown in axDown; every app's Open recent and every Window menu are the same pieces.
-16. **Find out whether a key arrives and what it does** (`tests/scripts/axDown/15-key-test.txt`): axDown: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axDown/nvda-test-plan.md, section 6). While the test runs every key is said with what it does here and none is carried out; Escape ends it.
-17. **Move through a file with single letters without changing it, then type again** (`tests/scripts/axDown/16-navigation-mode.txt`): axDown: Ctrl+Space, the mode key (docs/axKit/SPEC.md AX-8.13; docs/axDown/SPEC.md AD-5.3; docs/axDown/nvda-test-plan.md, section 8). Navigation mode: the letters jump, a key that would type plays the edge sound and changes nothing; Ctrl+Space again: edit mode, and typing types.
-18. **Answer a notice and use the command palette** (`tests/scripts/axDown/notices.txt`): The notice focus rule and the palette in axDown, driven from inside (docs/axKit/automation.md).
+Steps and keys: `docs/axKit/workflows/axDown.md` (in Claude's working folder: `workflows-axDown.md`).
+
+1. **Open a text file in axDown**
+   - Open axDown with an empty document
+   - Open a file in axDown
+   - Open a text file without naming an app
+   - Start a new file by its name
+2. **Read and write text in axDown**
+   - Read the text line by line and word by word
+   - Move from paragraph to paragraph
+   - Hear the line and column
+   - Select text a paragraph at a time
+   - Turn word wrap off and on
+   - Move a page at a time
+   - Type text, then undo and redo it
+   - Undo and redo from the menu
+3. **Hear why a file that is not text will not open**
+4. **Open, save and switch files in axDown**
+   - Save a change to a file
+   - Open a new empty window
+   - Start a new document when the text has changes
+   - Reload a file that another program changed
+   - Save over the changes of another program
+   - Create a file by saving it
+   - Close a window without saving its changes
+5. **Find text and go to a line**
+   - Find a word in the text
+   - Go to a line by its number
+6. **Change the text size and the font**
+   - Make the text larger or smaller
+7. **Find a command in the menus, the palette and the help**
+   - Open the keyboard shortcuts
+   - Move through the shortcuts by heading
+   - Find a word in the shortcuts
+   - Close the shortcuts and return to the text
+   - Read the user guide
+   - Hear the version of axKit
+   - Read the licence, the attribution and the axKit guide
+   - Turn the update check at start on or off
+   - Move through the commands of the palette
+   - Run a command found by its name
+8. **Check for updates and remove axKit**
+   - Hear the version of axKit
+   - Check for updates
+9. **Move through a Markdown file by headings, lists and links**
+   - Move to the next heading
+   - Move back to the previous heading
+   - Move to a heading of one level
+   - Move by heading from the menu
+   - Move to the next link
+   - Move back to the previous link
+   - Move by list and by list item
+   - Move to a block quote or a table
+10. **Show the current file in another app**
+11. **Change the colours with the theme file**
+   - Make a theme file and open it
+   - Reload the theme
+   - Turn the theme off and on
+12. **Ask Claude about the window you are in**
+   - Turn Claude on by agreeing to the reminder
+   - Turn Claude off and on
+   - Ask Claude about this window
+   - Ask more about an answer
+   - See the folders Claude may read
+13. **Hear a line break as you type it**
+   - Start a new line and hear it said
+   - Split a line in two
+   - Turn the spoken new line off and on
+14. **Hear the heading sound as you move**
+   - Hear the sound when the caret reaches a heading
+   - Turn the heading sound off and on
+15. **Open a recent file or window from the command palette**
+   - Open a recent file from the palette
+   - Find another open window from the palette
+   - Reopen a window that was closed
+16. **Find out whether a key arrives and what it does**
+   - Start testing keys
+   - Hear what a key does without carrying it out
+   - End the key test
+17. **Move through a file with single letters without changing it, then type again**
+   - Turn on navigation mode
+   - Move by single letters
+   - Return to edit mode and type
+18. **Answer a notice and use the command palette**
+   - Read the keyboard shortcuts
+   - Find a command in the command palette
 
 ## axFile
 
-1. **Browse folders and files** (`tests/scripts/axFile/01-browse.txt`): axFile, test plan section 1: start, the list, browsing (docs/axFile/nvda-test-plan.md 1.1 to 1.12b; AF-1, AF-2, AF-3). The folders are those of manual_tests/prepare.ps1 axfile, made in {temp}.
-2. **Open a folder in axFile from another app** (`tests/scripts/axFile/02-other-windows.txt`): axFile, test plan section 2: from and to the other windows (docs/axFile/nvda-test-plan.md 2.1 to 2.4; AF-1.3). Every step of this section starts another window (axClaude, axDown, axJSON, axPreview, axGIT, axTerminal, axMedia, axFile itself) or File Explorer, which the runner cannot reach or close: Manual (2.1): axClaude's Session, Show current folder in, axFile starts a new axFile window. 2.2 from axDown is driven at the end (the runner takes over the axFile window axDown starts); from axJSON and axPreview it is the same shared item of the editor shell. Manual (2.3): the same from axGIT, axTerminal and axMedia. Manual (2.4): Enter on axTerminal starts a shell; Ctrl+W and Ctrl+Shift+W start File Explorer. What can be checked from inside: the Folder menu's Show current folder in submenu holds its four items (2.4).
-3. **Copy, move, rename and delete files** (`tests/scripts/axFile/03-operations.txt`): axFile, test plan section 3: file operations and the entry's menu (docs/axFile/nvda-test-plan.md 3.1 to 3.14; AF-4). The files are those of manual_tests/prepare.ps1 axfile (file-operations, undo-ctrl-z), made in {temp}. Not here: every step that puts something on the clipboard (Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+Shift+C, the Selection menu's Cut, Copy and Copy paths): the test desktop shares the system clipboard with the user.
-4. **Play or read a file from axFile** (`tests/scripts/axFile/04-hand-overs.txt`): axFile, test plan section 4: sound, video and reading, the hand-overs (docs/axFile/nvda-test-plan.md 4.1 to 4.5; AF-5). 4.1 is driven at the end: the window axFile starts is taken over by the runner (adopt), and a second Shift+Enter is handed to the axPreview window already open (AP-1.2). Manual (4.2): Ctrl+Enter in a folder of chapters starts axMedia. Manual (4.3): Ctrl+Shift+Q on two folders with media and Shift+F10, Q on a chapter start axMedia (behind this window). Manual (4.4): Shift+F10, A, M on a chapter or a folder and A, P on README.md start axMedia or axPreview. Manual (4.5): Enter with axMedia or axPreview made the default program needs Windows' Default apps.
-5. **Use axFile's text, notices and axKit menu** (`tests/scripts/axFile/05-text-notices-axkit-menu.txt`): axFile, test plan section 5: text, notices, the axKit menu, the command palette (docs/axFile/nvda-test-plan.md 5.1 to 5.6; AF-6).
-6. **Undo a file operation from the Actions list** (`tests/scripts/axFile/06-actions-list.txt`): axFile, test plan section 6: the Actions list (docs/axFile/nvda-test-plan.md 6.1 to 6.9; AF-9). The files are those of manual_tests/prepare.ps1 axfile (actions-list, selection), made in {temp}.
-7. **Move files to a folder you type** (`tests/scripts/axFile/07-move-to-folder.txt`): axFile, test plan section 3 step 1a's second half: Move to folder with Go to folder's completion (AF-4.13, 2026-10-23).
-8. **Open a recent folder in axFile from the command palette** (`tests/scripts/axFile/08-recent-from-the-palette.txt`): axFile, plan step 1.8 (docs/axFile/nvda-test-plan.md; SPEC.md AF-3.3, Session, Open recent folder): the folders opened by command, "1. name (path)", the newest first; choosing one shows it. The submenu needs menu mode, which only the foreground window enters; since 2026-11-13 the command palette reads every Open recent list (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter.
-9. **Find out whether a key arrives and what it does, in a list** (`tests/scripts/axFile/09-key-test.txt`): axFile: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axFile/nvda-test-plan.md, section 5). Every key is said with what it does where the focus is, the folder list here, and none is carried out; Escape ends it.
+Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `workflows-axFile.md`).
+
+1. **Browse folders and files**
+   - Open a folder in axFile
+   - Move through the list of files
+   - Select a file by typing its name
+   - Move between the list and the Actions list
+   - Hear the status bar
+   - Open a folder in the list
+   - Go back to the folder above
+   - Go to a folder by its path
+   - Go to the drives of This PC
+   - Open a drive
+   - Move down and up the folder tree
+   - Hear the details of a folder or a file
+   - Go to a folder named by an environment variable
+   - Go to a file by its path
+   - Complete a path from its first letters
+   - Open a completed path
+   - Add a folder to the favorites and remove it
+   - Read the folder again after a change from outside
+   - Show hidden files and names that start with a period
+   - Find a file by part of its name
+   - Show only the entries whose names contain a word
+   - Sort the list by date, size or name
+   - Select several entries
+   - Clear the selection
+   - Select a run of entries in a row
+2. **Open a folder in axFile from another app**
+   - Show the file of an axDown window in axFile
+3. **Copy, move, rename and delete files**
+   - Make a new folder
+   - Make a new text file
+   - Move selected files into a new folder
+   - Rename a folder
+   - Delete a folder to the Recycle Bin
+   - Compress a folder to a zip file
+   - Compress selected files into one zip file
+   - Extract a zip file here
+   - Undo a rename
+   - Undo a new folder
+   - Undo a move to a folder
+   - Undo a compress
+   - Undo a delete
+   - Undo the delete of several entries
+4. **Play or read a file from axFile**
+   - Read a file in axPreview
+   - Read another file in the same axPreview window
+   - Open a folder in a new axFile window
+5. **Use axFile's text, notices and axKit menu**
+   - Make the text larger or smaller
+   - Read the user guide
+   - Hear the version of axKit
+   - Open a folder from the command palette
+   - Run a command from the command palette
+   - Open axFile on the last folder
+6. **Undo a file operation from the Actions list**
+   - Move to the Actions list from the menu
+   - See the last operation in the Actions list
+   - Go to the folder of an operation from its line
+   - Undo an operation from the Actions list
+   - Go to an operation done in another folder
+   - Undo the newest operation from the folder list
+   - See what was selected in the Actions list
+   - Select every entry from the marked one to here
+7. **Move files to a folder you type**
+   - Move a file into a folder by typing its name
+   - Undo the move
+8. **Open a recent folder in axFile from the command palette**
+9. **Find out whether a key arrives and what it does, in a list**
+   - Start testing keys
+   - Hear what a key does without carrying it out
+   - End the key test
 
 ## axGIT
 
-1. **Open a repository in axGIT** (`tests/scripts/axGIT/01-start.txt`): axGIT: start (docs/axGIT/nvda-test-plan.md section 1; SPEC AG-1, AG-2, AG-6.2). A scratch repository with two commits, a second branch and two changes: a modified tracked file and an untracked one. The update check off in the run's own settings (AXKIT_HOME): a network call, and its failure is a logged ERROR. Needs: Git installed.
-2. **Open axGIT from another app** (`tests/scripts/axGIT/02-other-windows.txt`): axGIT: from and to the other windows (docs/axGIT/nvda-test-plan.md section 2; SPEC AG-1.4). What the runner can check is that each way in and out is in its menu. Running one starts a new axKit process that the runner did not start and so can neither drive nor close (it would stay behind on the test desktop), so these steps are manual: 2.1 Enter on axClaude's Session, Show current folder in, axGIT: a new axGIT window on the repository, focused. 2.2 Alt+W, O, the open windows, most recent first, and Enter back to one: the list fills itself as the menu opens, and switching windows needs the foreground. 2.3 Enter on axDown's File, Show current file in, axGIT. 2.4 Enter on axGIT's Repository, Show current repository in, axClaude. 2.5 Ctrl+E on a .md file (axDown opens it) and on a .json file (axJSON). The update check off in the run's own settings (AXKIT_HOME): a network call, and its failure is a logged ERROR. Needs: Git installed.
-3. **Review and commit changes** (`tests/scripts/axGIT/03-changes.txt`): axGIT: changes (docs/axGIT/nvda-test-plan.md section 3; SPEC AG-3, AG-7). A scratch repository with one commit, then a modified tracked file and an untracked one. The update check off in the run's own settings (AXKIT_HOME): a network call, and its failure is a logged ERROR. Needs: Git installed.
-4. **Read the history and switch branches** (`tests/scripts/axGIT/04-log-branches.txt`): axGIT: log and branches (docs/axGIT/nvda-test-plan.md section 4; SPEC AG-4, AG-5, AG-7). A scratch repository with a bare repository in {temp} as its remote (never a network remote), a second branch, and a clone that pushes a commit the scratch repository has not fetched yet. The update check off in the run's own settings (AXKIT_HOME): a network call, and its failure is a logged ERROR. Needs: Git installed.
-5. **Use axGIT's text, notices and axKit menu** (`tests/scripts/axGIT/05-text-notices.txt`): axGIT: text, notices, the axKit menu (docs/axGIT/nvda-test-plan.md section 5; SPEC AG-2.4, AG-6, AG-7). The update check off in the run's own settings (AXKIT_HOME): a network call, and its failure is a logged ERROR. Needs: Git installed.
-6. **Agree to the reminder before the first repository opens** (`tests/scripts/axGIT/06-consent.txt`): axGIT: the reminder before the first repository opens (docs/axKit/SPEC.md AX-11.4, AX-11.5; the Owed list of docs/axKit/nvda-test-record.md). A fresh run's home has no consent, so the reminder comes first. With --nvda (nvda-pass.ps1) every expected line must be spoken by NVDA too. Needs: Git installed.
-7. **Open a repository that runs programs of its own** (`tests/scripts/axGIT/07-own-programs.txt`): axGIT: a repository with a hook of its own (docs/axGIT/nvda-test-plan.md 1.7; SPEC AG-6): the notice names the hook, Enter keeps the programs off and the Changes list comes; opened again, Trust this repository says "Trusted", and the opening after that shows no notice. Needs: Git installed.
+Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `workflows-axGIT.md`).
+
+1. **Open a repository in axGIT**
+2. **Open axGIT from another app**
+3. **Review and commit changes**
+4. **Read the history and switch branches**
+5. **Use axGIT's text, notices and axKit menu**
+6. **Agree to the reminder before the first repository opens**
+7. **Open a repository that runs programs of its own**
 
 ## axHelp
 
-1. **Ask Claude for help from anywhere, with a picture of the screen** (`tests/scripts/axHelp/01-start.txt`): axHelp: its window, the conversation brought up from it, and a picture handed into the conversation's message field (docs/axHelp/nvda-test-plan.md sections 1 to 3; SPEC.md HE-1 to HE-3). The conversation is a real axClaude window on the run's own working folder (AI help's, under the run's home), titled axHelp, with Claude Code on Haiku, axHelp's fast model; axClaude's agreement is recorded already, as the other access layers' scripts do. The hotkeys are keys nobody uses: the scripts reach the conversation through Enter in axHelp's window and through a start with a picture. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
-2. **Close axHelp's conversation and bring the same one back** (`tests/scripts/axHelp/02-hide-and-show.txt`): axHelp, docs/axHelp/nvda-test-plan.md section 6 (SPEC.md HE-1.3, HE-2.1; axClaude FR-9.6): closing the conversation hides it with Claude Code running on, and bringing it up shows the same window at once, nothing started or read again, the focus in the message field wherever it was. The hotkeys are keys nobody uses: the command Open the conversation of axHelp's window is the conversation's hotkey in everything it does, and a start with a picture is the hand-over the screenshot's hotkey makes. Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+Steps and keys: `docs/axKit/workflows/axHelp.md` (in Claude's working folder: `workflows-axHelp.md`).
+
+1. **Ask Claude for help from anywhere, with a picture of the screen**
+   - Turn on the AI tools
+   - Open a conversation with Claude
+   - Hand a picture to a new conversation
+   - Quit axHelp
+2. **Close axHelp's conversation and bring the same one back**
+   - Hide the conversation
+   - Bring the same conversation back
+   - Hand a picture to the hidden conversation
 
 ## axJSON
 
-1. **Open a JSON file in axJSON** (`tests/scripts/axJSON/01-start.txt`): axJSON, test plan section 1 (Start), driven from inside the window (docs/axJSON/nvda-test-plan.md). 1.1 manual: the Start menu entry needs the installed bundle and the real Start menu. 1.3 manual: File Explorer's Open with axKit submenu and Windows' Open with are the shell's menus, outside the window. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-2. **Move through a JSON file by its structure** (`tests/scripts/axJSON/02-navigation.txt`): axJSON, test plan section 2 (Navigation, AJ-2.2), driven from inside the window (docs/axJSON/nvda-test-plan.md). The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-3. **Format a JSON file** (`tests/scripts/axJSON/03-format.txt`): axJSON, test plan section 3 (Format, AJ-2.3), driven from inside the window (docs/axJSON/nvda-test-plan.md). The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-4. **Use axJSON's axKit menu and About** (`tests/scripts/axJSON/04-axkit-menu-and-about.txt`): axJSON, test plan section 4 (The axKit menu and About), driven from inside the window (docs/axJSON/nvda-test-plan.md). The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-5. **Use axJSON's Context menu** (`tests/scripts/axJSON/05-context-menu.txt`): axJSON, the bar's Context menu (docs/axKit/SPEC.md AX-9.1, AX-9.11; docs/axDown/SPEC.md AD-4.2, the text editor shell's): Cut, Copy, Paste and Select all on the text, run by name through the command list and found in the command palette, since Shift+F10 and Alt+C open the menu in menu mode, which only the foreground window enters. Cut, Copy and Paste are only checked to be listed: the test desktop shares the clipboard with the user's session. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
+Steps and keys: `docs/axKit/workflows/axJSON.md` (in Claude's working folder: `workflows-axJSON.md`).
+
+1. **Open a JSON file in axJSON**
+2. **Move through a JSON file by its structure**
+3. **Format a JSON file**
+4. **Use axJSON's axKit menu and About**
+5. **Use axJSON's Context menu**
 
 ## axMCP
 
-1. **Start an MCP server and use its tools** (`tests/scripts/axMCP/01-start.txt`): axMCP: the servers, a server started, its tool called, its resource read, stopped (docs/axMCP/nvda-test-plan.md sections 1 to 4 and 6), run by tools/AxAutomate on a desktop of its own (docs/axKit/automation.md). The server is a fake in Windows PowerShell, written here: it answers the handshake, one tool (echo) and one resource. The agreement for it is recorded already (AX-11.5), as the other access layers' scripts do; the server is one of Your servers, so the run never touches Claude Code's files, and its row is found by name since this computer may have servers of its own.
-2. **Add, rename and remove a server of your own in axMCP** (`tests/scripts/axMCP/02-your-servers-errors-prompts.txt`): axMCP, docs/axMCP/nvda-test-plan.md beyond 01-start: section 5 (Your servers: Ctrl+N, F2, Delete, Ctrl+Z, and the sentences for a server of Claude Code's), 3.4 (a check), 3.6 (Ctrl+J before any call), 3.7 (a tool that reports an error, a server error), 4.1 (a resource template) and 4.2 (a prompt filled and fetched); SPEC MP-1.3, MP-3.5, MP-4.2, MP-5. The fake server is 01-start's with three more tools, a template and a prompt. The server of Claude Code's is the one of the run folder's own .mcp.json (the project scope), so the run neither needs nor changes Claude Code's files; the server added here has a command line that is never started. Rows are found by name, since this computer may have servers of its own. Also 1.4 (Right and Enter on an http server say why and the level stays, MP-1.4; a level of the server's opened until 2026-11-14), with a second, remote server in the same .mcp.json, which is never reached.
+Steps and keys: `docs/axKit/workflows/axMCP.md` (in Claude's working folder: `workflows-axMCP.md`).
+
+1. **Start an MCP server and use its tools**
+2. **Add, rename and remove a server of your own in axMCP**
 
 ## axMedia
 
-1. **Build and move through a play queue** (`tests/scripts/axMedia/01-queue.txt`): axMedia: start and the queue (docs/axMedia/nvda-test-plan.md section 1; SPEC.md AM-1, AM-2, AM-3). Every sound is the runner's silence; nothing reaches the speakers. The names start with letters so that a typed letter has something to jump to; the queue's order is name order: alpha, beta, delta, gamma.
-2. **Add files to the queue from another app** (`tests/scripts/axMedia/02-hand-over.txt`): axMedia: the hand-over (docs/axMedia/nvda-test-plan.md section 2; SPEC.md AM-1.1, AM-1.2, AM-1.3). The starts that open a window of their own (a play on a file, an add with no window open, --new beside an open window), and the hand-over proper: a start that hands its paths to the open window and ends without a window (the runner's launch, which waits for the process to end).  Step 1, 1a, 2, 3 and 4 (first half): axFile's Open in axKit, Ctrl+Enter, Ctrl+Shift+Q, with axMedia open; a hand-over each, from another app's window (above), and the front window and NVDA's reading of it are tier 3. Step 5: Windows' default program and File Explorer are the system's, outside the test desktop.
-3. **Play, pause and seek** (`tests/scripts/axMedia/03-playing.txt`): axMedia: playing (docs/axMedia/nvda-test-plan.md section 3; SPEC.md AM-4, AM-3.3, AM-6). Every sound is the runner's silence. Whether the sound starts, stops, jumps or keeps its pitch is for the ear and stays with the NVDA pass; here the announcements, the list, the title and the status bar are checked.
-4. **Hear why a file cannot be played** (`tests/scripts/axMedia/03b-cannot-play.txt`): axMedia: a file Windows cannot decode (docs/axMedia/nvda-test-plan.md section 3 step 8; SPEC.md AM-4.1, AM-6). A text file named .mp3 stands for it: "Cannot play <name>: <reason>", and the next file plays. The window logs the player's error as an ERROR (AM-7.2), as it should, and the runner fails a run on any ERROR in its logs, so this script fails after its steps until the runner can be told which ERROR a script expects; it is kept apart so that 03-playing.txt is not failed by it. The .opus without the Store codec, and the .txt picked through Ctrl+O's All files, need a real codec state and the file picker; left to the NVDA pass.
-5. **Use axMedia's text, notices and axKit menu** (`tests/scripts/axMedia/04-text-notices.txt`): axMedia: text, notices, the axKit menu (docs/axMedia/nvda-test-plan.md section 4; SPEC.md AM-5, AM-6).
-6. **Use axMedia's Context menu** (`tests/scripts/axMedia/05-context-menu.txt`): axMedia, plan step 1.9 (docs/axMedia/nvda-test-plan.md; SPEC.md AM-5.1, bundle AX-9.11): Context holds what acts on the file selected in the queue, Play, Remove and Information, and one item, "Nothing in the queue", while the queue is empty. The commands are run by name through the command list and found in the command palette, since Shift+F10 and Alt+C open the menu in menu mode, which only the foreground window enters. Every sound is the runner's silence; nothing reaches the speakers.
-7. **Add a recent folder to the queue from the command palette** (`tests/scripts/axMedia/06-recent-from-the-palette.txt`): axMedia, plan step 1.3 (docs/axMedia/nvda-test-plan.md; SPEC.md AM-3, Session, Open recent): the folders and files added by command, "1. name (path)"; choosing a folder adds its files, "Added n". Alt+S, R is menu mode, which only the foreground window enters; since 2026-11-13 the command palette reads every Open recent list (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter. Every sound is the runner's silence; nothing reaches the speakers.
+Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `workflows-axMedia.md`).
+
+1. **Build and move through a play queue**
+2. **Add files to the queue from another app**
+3. **Play, pause and seek**
+4. **Hear why a file cannot be played**
+5. **Use axMedia's text, notices and axKit menu**
+6. **Use axMedia's Context menu**
+7. **Add a recent folder to the queue from the command palette**
 
 ## axPass
 
-1. **Unlock a password database and change an entry** (`tests/scripts/axPass/01-unlock-read-change.txt`): axPass: unlocking, the levels, an entry's fields, a change and its undo, an entry added and archived, a group's question, locking (docs/axPass/nvda-test-plan.md sections 1, 2, 4 and 5; SPEC PW-4, PW-6). Needs KeePassXC installed: the database is made by its own tool, the master password a test value. The copies (Ctrl+B, Ctrl+C) are left to the NVDA pass, since they would change the clipboard of whoever runs this. The idle lock off: it counts real input only, which the runner's keys are not, so it would lock mid-run when nobody is at the computer. Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
-2. **Agree to the reminder before the first unlock** (`tests/scripts/axPass/02-consent.txt`): axPass: the reminder before the first master password goes to KeePassXC's tool (docs/axKit/SPEC.md AX-11.4, AX-11.5; the Owed list of docs/axKit/nvda-test-record.md). Needs KeePassXC installed, as 01 does. A fresh run's home has no consent, so the reminder comes before the unlock notice. With --nvda (nvda-pass.ps1) every expected line must be spoken by NVDA too. Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
-3. **Read an entry in full and come back to the same database** (`tests/scripts/axPass/03-read-and-reopen.txt`): axPass: Ctrl+Q on a field and on an entry, the password never read (docs/axPass/nvda-test-plan.md 2.3; SPEC PW-6), the Lock after setting said (5.3, the words only: the lock itself waits minutes on the real keyboard's idle time, which a run cannot make), and a start without a file asking for the database it had last (5.4; PW-4.1). The idle lock off at first, as in 01; it is chosen only while the database is locked, where it has nothing to lock. Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
+Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `workflows-axPass.md`).
+
+1. **Unlock a password database and change an entry**
+2. **Agree to the reminder before the first unlock**
+3. **Read an entry in full and come back to the same database**
 
 ## axPreview
 
-1. **Preview a file that is almost text** (`tests/scripts/axPreview/01-start-and-the-text-nul.txt`): axPreview, test plan section 1 step 9a, the second half: a file whose first eight kilobytes are text with a NUL further in: the error notice, and what the window showed is kept. Apart from 01-start-and-the-text.txt: the window logs the refused read as an ERROR, and the runner fails a run with an ERROR in its logs (see the report), so this script fails after its steps. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-2. **Preview a text file** (`tests/scripts/axPreview/01-start-and-the-text.txt`): axPreview, test plan section 1 (Start and the text), driven from inside the window (docs/axPreview/nvda-test-plan.md). A second axPreview start hands its file to the open window and ends (AP-1.2), so every window after the first is started with --new. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-3. **Preview a file from another app** (`tests/scripts/axPreview/02-the-hand-over.txt`): axPreview, test plan section 2 (The hand-over, AP-1.2, AP-1.3), what can be driven from inside the windows (docs/axPreview/nvda-test-plan.md). 2.1 to 2.4 from axFile are in axFile's 04-hand-overs; 2.5, File Explorer's Open with axKit and Windows' default program, are outside the windows (manual). The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-4. **Use axPreview's text, notices and axKit menu** (`tests/scripts/axPreview/03-text-notices-axkit-menu.txt`): axPreview, test plan section 3 (Text, notices, the axKit menu, AP-3), driven from inside the window (docs/axPreview/nvda-test-plan.md). The runner's keys have no plus or minus key, so Ctrl+Plus and Ctrl+Minus run as their menu items, Options, Text, Larger text and Smaller text. The sizes assume the Windows system font at 9 points, which fresh settings start from. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-5. **Read a file's details** (`tests/scripts/axPreview/04-details-and-kinds.txt`): axPreview, test plan section 5 (the Details list and the kinds of file, docs/axPreview/SPEC.md AP-6, AP-7), driven from inside the window. Every window after the first is started with --new, since a start otherwise hands its file to the open window (AP-1.2). The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-6. **Use axPreview's Context menu** (`tests/scripts/axPreview/05-context-menu.txt`): axPreview, the bar's Context menu (docs/axKit/SPEC.md AX-9.1, AX-9.11; the text editor shell's, in the viewer Copy and Select all alone, AP-3.1), run by name through the command list and found in the command palette, since Shift+F10 and Alt+C open the menu in menu mode, which only the foreground window enters. Copy is only checked to be listed: the test desktop shares the clipboard with the user's session. The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
+Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder: `workflows-axPreview.md`).
+
+1. **Preview a file that is almost text**
+2. **Preview a text file**
+3. **Preview a file from another app**
+4. **Use axPreview's text, notices and axKit menu**
+5. **Read a file's details**
+6. **Use axPreview's Context menu**
 
 ## axProcess
 
-1. **Find and end a process** (`tests/scripts/axProcess/01-start.txt`): axProcess: start, the Processes view, ending a process (docs/axProcess/nvda-test-plan.md sections 1 and 2; SPEC PR-2, PR-3). The lists are this computer's, so the steps match the fixed words, never a count. Something safe to end: a hidden ping that runs for two minutes with its window hidden, started apart from the runner's command (run's own children end with the command, since it reads their output).
-2. **Manage services and startup programs** (`tests/scripts/axProcess/02-services-startup.txt`): axProcess: the Services and Startup views (docs/axProcess/nvda-test-plan.md sections 3 and 4; SPEC PR-4, PR-5). Read only: no service is started or stopped here, since a run with administrator rights would do it for real.
-3. **Jump to a process by typing its name and read a startup program's details** (`tests/scripts/axProcess/03-type-to-find-own-window-startup.txt`): axProcess, docs/axProcess/nvda-test-plan.md, what 01-start and 02-services-startup leave: 1.9b (letters typed in the processes) and 4.2 (a startup program's details); SPEC PR-3, PR-5.3, AX-8.6. The processes are this computer's, so the steps match the fixed words; the startup programs are the run's stand-in (PR-5.8), one file in its stand-in for your Startup folder, so 4.2 always runs (until 2026-11-14 it read this computer's own and was skipped when there were none). Nothing is ended here, and Delete is never pressed. Not run: 2.6 (Delete and Enter on a system process): it would really ask Windows to end a process the script did not start. 2.7 (Delete on this window's own process is refused): the window's own row cannot be told from the user's other axKit windows by its name, and a check must never press Delete on the user's own windows, even to cancel the question; it stays a step of the manual plan. 1.9b's Shift with a letter: the channel's type has no Shift (02-services-startup says the same). 4.2's Show program in axFile. An entry turned off reading "disabled" is in 04-startup-turn-off-remove.
-4. **Turn a startup program off, on again, or remove it** (`tests/scripts/axProcess/04-startup-turn-off-remove.txt`): axProcess: Turn off, Turn on and Remove in the Startup view (docs/axProcess/nvda-test-plan.md section 4; SPEC PR-5.4 to PR-5.8). SAFETY: nothing here reads or changes what starts with Windows on this computer. In a test run the Startup view's five places are a stand-in of the run's own (PR-5.8): the registry key HKEY_CURRENT_USER\Software\AxKit\Runs\<the run's mark>\Startup, where the Run keys and the StartupApproved keys lie under User and Computer, and the folders home\AxKit\startup\yours and \everyone of the run's folder. The stand-in is seeded, looked at and deleted by stand-in.ps1, written here: it finds the key from the run's folder as AppPaths.MarkOf does (the first six bytes of the SHA-256 of the folder's path in capitals) and touches nothing outside it.
+Steps and keys: `docs/axKit/workflows/axProcess.md` (in Claude's working folder: `workflows-axProcess.md`).
+
+1. **Find and end a process**
+2. **Manage services and startup programs**
+3. **Jump to a process by typing its name and read a startup program's details**
+4. **Turn a startup program off, on again, or remove it**
 
 ## axStart
 
-1. **Find and start a program** (`tests/scripts/axStart/01-basics.txt`): axStart: the search field, the match keys and the commands that stay inside the window (docs/axStart/nvda-test-plan.md; SPEC AS-3, AS-5.3). Every key here is a command of the window's one list (docs/axKit/app-kit.md AK-2), the match keys HotkeyForm's, so this script is also the check that the list does what the key switch did before it. The hotkey is one nobody uses, so that the run never takes the user's; Start with Windows stays on, which a development build never writes (SignInStart), since off would remove the user's own sign-in value.
-2. **Search programs as you type and change axStart's hotkey** (`tests/scripts/axStart/02-typing-and-the-hotkey.txt`): axStart, docs/axStart/nvda-test-plan.md sections 2 to 4 beyond 01-basics, with the first match said as the user has it by default (AS-3.2, plan 5.3): the first match after a pause, Backspace narrowing again, several words, Tab and the notices keeping the field's text, the refusals for a Store app, and the Hotkey notice. Starting a program, File Explorer and the Start menu are outside the window (manual). The hotkey is one nobody uses, unlike 01-basics', so that the two never meet.
-3. **Hear that nothing matches and turn the spoken match off** (`tests/scripts/axStart/03-no-match-and-options.txt`): axStart, docs/axStart/nvda-test-plan.md, what 01-basics and 02-typing-and-the-hotkey leave: 2.5 (nothing matches, said while typing, and again after Backspace), 3.6 (Ctrl+I on a Store app), 5.3 (Say the first match while typing off: typing says nothing, Ctrl+I says the match; on again) and 4.2 (Shift with a letter refused). SPEC AS-3.2, AS-4. Not run: 4.5 (a key another program holds): it needs a program that really holds a system hotkey, and with NVDA listening the keys are real, so the key goes to that program and never reaches the field; it stays a step of the manual plan. 2.6's name with an accent (it needs such a program in the user's Start menu), starting programs, File Explorer, the Start menu and signing in (outside the window).
-4. **Find out whether a key arrives and what it does, in a hotkey window** (`tests/scripts/axStart/04-key-test.txt`): axStart: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12). Every key is said with what it does in the search field and none is carried out: no letter typed, no match moved to, the window not hidden; Escape ends it at once and hides nothing, and only after that does Escape hide the window again. The hotkey is one nobody uses, as in 01-basics.
+Steps and keys: `docs/axKit/workflows/axStart.md` (in Claude's working folder: `workflows-axStart.md`).
+
+1. **Find and start a program**
+   - Read the programs again
+   - Move through the matches
+   - Jump to the first or last match, or by a page
+   - Hear the selected match's kind and path
+   - Hide the window and show it again
+   - Quit axStart
+2. **Search programs as you type and change axStart's hotkey**
+   - Hear the first match as you type
+   - Hear the new first match after deleting a letter
+   - Search by several words
+   - Change the hotkey
+   - Quit axStart
+3. **Hear that nothing matches and turn the spoken match off**
+   - Turn the spoken first match off and on
+   - Quit axStart
+4. **Find out whether a key arrives and what it does, in a hotkey window**
+   - Test what a key does
 
 ## axTask
 
-1. **Move through tasks and change an item's fields** (`tests/scripts/axTask/01-navigate-and-fields.txt`): axTask: the navigator, the detail pane and every change to a field (docs/axTask/nvda-test-plan.md sections 1 and 2; docs/axKit/item-apps.md IA-2, IA-3, IA-5). A scratch folder of lists; findstr checks what reached the file.
-2. **Make lists, link items and use smart lists** (`tests/scripts/axTask/02-lists-links-smart.txt`): axTask: a list's details, plain lists and checklists, links, smart lists, a change on disk (docs/axTask/nvda-test-plan.md sections 1.8, 2.4, 2.8 to 2.10, 3 and 4; docs/axKit/item-apps.md IA-4.3, IA-5.5, IA-D3; SPEC TK-4, TK-5).
-3. **Group lists into sections** (`tests/scripts/axTask/03-sections.txt`): axTask: the top level's sections (docs/axTask/SPEC.md TK-3a, TK-D4, TK-D5): a list moved to a section of the user's own with Ctrl+M, a new section, the Section field, a new list joining the selected section, the Archived lists section, Ctrl+Up and Ctrl+Down across them, a folder inside a list not shown.
-4. **Act on items with action keys** (`tests/scripts/axTask/04-action-keys.txt`): axTask: the action keys (docs/axTask/nvda-test-plan.md section 5; docs/axTask/SPEC.md TK-7a; docs/axKit/reports.md RP-8). A scratch folder with three lists; Home's list.json assigns Ctrl+1 and Ctrl+2; Issues was made as a GitHub list, with the "github" member and the keys such a list had, and is an ordinary list now.
-5. **Add project folders and search every list** (`tests/scripts/axTask/05-projects.txt`): axTask: the project folders (docs/axTask/SPEC.md TK-7b, TK-D6 to TK-D9; docs/axTask/nvda-test-plan.md section 6): the folders of lists found under them in a section for each project folder, a project entered and changed in place, a project folder added by its typed path, and the search across every list.
-6. **Group smart lists and find items by tag** (`tests/scripts/axTask/06-smart-tags.txt`): axTask: the smart lists grouped by a shared first word and the smart tags by symbol (docs/axTask/SPEC.md TK-5.2a, TK-5.5, TK-D17 to TK-D20; docs/axTask/nvda-test-plan.md 3.3 and 3.4): three heading levels, Ctrl+3 and Ctrl+Shift+3, a tag gathered from the user's own lists and a project's together.
-7. **Hear the heading sound in the item apps** (`tests/scripts/axTask/07-heading-sound.txt`): The item apps' heading sound (docs/axKit/SPEC.md AX-7.9; asked 2026-11-11), heard in axTask: the user's key that takes the navigator's selection onto a heading row plays it before NVDA reads the row; a fill never does.
-8. **Close axTask and come back to the list you had** (`tests/scripts/axTask/08-reopen.txt`): axTask: the list open when the window closed opens at the next start without a folder (docs/axTask/nvda-test-plan.md 4.4); a smart list or the top level open at the close leaves the next start at the top; a start that names the folder opens its top level whatever was open last.
-9. **Find out whether a key arrives and what it does, in an item window** (`tests/scripts/axTask/09-key-test.txt`): axTask: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12). Every key is said with what it does where the focus is, the navigator here, and none is carried out; Escape ends it. Ctrl+Up and Ctrl+Down are the item windows' section keys in the navigator, in the bundle's paragraph keys' place (docs/axKit/item-apps.md IA-2.3a).
+Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `workflows-axTask.md`).
+
+1. **Move through tasks and change an item's fields**
+   - Move among the lists by their headings
+   - Open a list
+   - Hear the status bar
+   - Open an item's fields
+   - Move between the list and the fields
+   - Mark a task done or not done
+   - Set a due date by typing a weekday
+   - Add a field with a choice of values
+   - Change a choice to its previous or next value
+   - Move a field up
+   - Set a check field on or off
+   - Rename an item
+   - Add an item
+   - Archive an item and bring it back
+   - Hear every field of an item
+   - Show all tasks, the soonest due first
+2. **Make lists, link items and use smart lists**
+   - Read a list's details
+   - Write notes of several lines
+   - Link one item to another
+   - Make a checklist a plain list and back
+   - Make a new list
+   - Hide and show done tasks
+3. **Group lists into sections**
+   - Move a list into a new section
+   - Move among the sections by their headings
+   - Make a new list in a section
+   - Put a list in a section from its details
+   - Move a list back to Your lists
+   - Archive a list and bring it back
+4. **Act on items with action keys**
+   - Run an action key on an item
+   - Move an item to another list with an action key
+   - Set up an action key
+5. **Add project folders and search every list**
+   - Find the project folders by their headings
+   - Mark a project's task done from All tasks
+   - Open a project and mark a task done in it
+   - Add a project folder by its path
+   - Search every list
+   - Remove a project folder
+6. **Group smart lists and find items by tag**
+   - Move among the tags by their symbols
+   - Gather a tag's items from every list
+   - Find the smart lists that share a first word
+7. **Hear the heading sound in the item apps**
+8. **Close axTask and come back to the list you had**
+   - Come back to the list you had
+9. **Find out whether a key arrives and what it does, in an item window**
+   - Test what a key does
+   - End the key test
 
 ## axTerminal
 
-1. **Start a terminal** (`tests/scripts/axTerminal/01-startup.txt`): axTerminal, section 1 of docs/axTerminal/nvda-test-plan.md: start (AT-1, AT-2). The shell is the default one of a fresh settings file: PowerShell 7 when installed, otherwise Windows PowerShell; the texts below name neither. Plan step 1 by the Start menu entry stays manual: the Start menu is the system's, outside the window. NVDA's own reading of the window's name on opening is tier 3 (NVDA in the loop); here the title is checked.
-2. **Run commands and read their output** (`tests/scripts/axTerminal/02-commands.txt`): axTerminal, section 2 of docs/axTerminal/nvda-test-plan.md: commands (AT-3, AT-5), in Windows PowerShell or PowerShell 7, the default shell of a fresh settings file.
-3. **Hear a command's output as it arrives** (`tests/scripts/axTerminal/02b-speak-output.txt`): axTerminal, section 2 of docs/axTerminal/nvda-test-plan.md, step 9: Speak output (AT-5.3), in a script of its own because it fails at present (seen 2026-10-23: the listing's last line comes after "Done", in an utterance of its own), so that 02-commands.txt checks the rest of the section.
-4. **Switch shells and folders** (`tests/scripts/axTerminal/03-shells-and-folders.txt`): axTerminal, section 3 of docs/axTerminal/nvda-test-plan.md: shells and folders (AT-1.2, AT-1.6, AT-1.7). Alt+S, W (the Switch shell submenu) needs menu mode, which only the foreground window enters: "menu" runs the same items.
-5. **Use axTerminal's text, notices and axKit menu** (`tests/scripts/axTerminal/04-text-notices-menu.txt`): axTerminal, section 4 of docs/axTerminal/nvda-test-plan.md: text, notices, the axKit menu (AT-4, AT-6).
-6. **Repeat an earlier command** (`tests/scripts/axTerminal/06-history-keys.txt`): axTerminal, Ctrl+Up and Ctrl+Down in the command field (AT-3.9, 2026-10-23): the recent list with the draft as its last item.
-7. **Agree to the reminder before a shell first starts** (`tests/scripts/axTerminal/07-consent.txt`): axTerminal: the reminder before a shell first starts (docs/axKit/SPEC.md AX-11.4, AX-11.5; the Owed list of docs/axKit/nvda-test-record.md). Each shell is its own consent; the default shell here is Windows PowerShell or PowerShell 7, so the texts name neither. With --nvda (nvda-pass.ps1) every expected line must be spoken by NVDA too.
-8. **Add a shell of your own** (`tests/scripts/axTerminal/08-user-shells.txt`): axTerminal: the user's own shells (AT-1.6a), section 3 of docs/axTerminal/nvda-test-plan.md, the steps on Add a shell and Remove a shell. Switch shell needs menu mode, which only the foreground window enters: "menu" runs the same items by their palette names ("1. Test cmd (cmd.exe /k)" to switch, "1. Remove Test cmd" to remove).
-9. **Use axTerminal's Context menu** (`tests/scripts/axTerminal/09-context-menu.txt`): axTerminal, "The menu bar and Context" of docs/axTerminal/nvda-test-plan.md (bundle AX-9.1, AX-9.11): Context holds what acts on the terminal's line and the selection: Copy this line into the command field (it writes the field, "Line copied", never the clipboard), Bookmark this line and Copy the selection. They are run by name through the command list and found in the command palette, since Shift+F10 opens the menu in menu mode, which only the foreground window enters. Copy the selection is only checked to be listed: the test desktop shares the clipboard with the user's session.
-10. **Start a shell in a recent folder from the command palette** (`tests/scripts/axTerminal/10-recent-from-the-palette.txt`): axTerminal, section 3 of docs/axTerminal/nvda-test-plan.md, "Session, Open recent folder: the folders as 1. name (path); Enter on one: a new session there" (SPEC.md AT-6, "Folder <name>"). The submenu needs menu mode, which only the foreground window enters; since 2026-11-13 the command palette reads every Open recent list (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter.
-11. **Read a file that imitates the shell's marks** (`tests/scripts/axTerminal/11-forged-marks.txt`): axTerminal, section 2 of docs/axTerminal/nvda-test-plan.md, the step "Get-Content forged-marks.txt; Start-Sleep 5" (SPEC.md AT-1.3; security audit S-37, S-38): text a program prints that holds the shell marks without the session's secret (a "done", a prompt, a folder on a share) is not taken for the window's own: no "Done" and no question while the command still runs, the folder stays, "Done" comes only when the command ends. The file is the one manual_tests/prepare.ps1 makes, written here by Windows PowerShell since a script's text holds no escape character.
+Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder: `workflows-axTerminal.md`).
+
+1. **Start a terminal**
+   - Move between the command field and the terminal
+   - Hear the state, the shell and the prompt
+2. **Run commands and read their output**
+   - Run a command and read its output by headings
+   - Turn the heading marks in the text off and on
+   - Answer a program that asks
+   - Send a command of several lines
+   - Send a command without recording it
+   - Put a recent command back in the field
+   - Copy a command line of the terminal into the field
+   - Interrupt a long command
+   - Play music while a command runs
+3. **Hear a command's output as it arrives**
+4. **Switch shells and folders**
+   - Start a new session in another shell
+   - Switch to another shell
+   - Hear the current folder's full path
+   - Restart the shell
+   - Start the shell again after it ended
+5. **Use axTerminal's text, notices and axKit menu**
+   - Clear the window
+   - Set a bookmark and go back to it
+   - Find text in the terminal
+   - Read the keyboard shortcuts
+   - Read the user guide
+   - Close the window while a command runs
+6. **Repeat an earlier command**
+   - Go back through earlier commands
+   - Come forward again to what was typed
+   - Read the field in navigation mode
+   - Go back to edit mode in the field
+7. **Agree to the reminder before a shell first starts**
+   - Agree to the reminder and start the shell
+8. **Add a shell of your own**
+   - Add a shell of your own
+   - Switch to a shell of your own
+   - Remove a shell of your own
+9. **Use axTerminal's Context menu**
+   - Bookmark a line and take the bookmark away
+   - Copy a line into the command field
+   - Run a Context command from the palette
+10. **Start a shell in a recent folder from the command palette**
+11. **Read a file that imitates the shell's marks**
 
 ## AI tools
 
-1. **Let an AI tool read axKit, once you allow it** (`tests/scripts/mcp/01-read-and-pair.txt`): The AI tools' first stage (docs/axKit/mcp.md MC-6): off by default, turned on from the menu, a client paired in the window, the reads, the refusals, off again. The runner is the MCP client (mcp start, mcp call, expect mcp); it never calls axkit_open on an app it may open, which would start a window on the user's own desktop.
-2. **Let an AI tool run a window's commands** (`tests/scripts/mcp/02-run-commands.txt`): axkit_window_run (docs/axKit/mcp.md MC-7): a window's command run by its name for a paired client, only while the user allows it (axKit menu, AI tools, Let AI tools run commands), said in the window as it runs; a name that names two commands, a notice the user has in hand, and the switch off are refused. The runner is the MCP client.
-3. **Approve or deny an AI tool before it acts** (`tests/scripts/mcp/03-run-asks-first.txt`): axkit_window_run (docs/axKit/mcp.md MC-7.3): a command that acts outside its window (axFile's New folder, marked act) is asked of the user in the window first, as the list an offered command's question is: the offer's sound, a name that starts with Command offer, the first answer only explains, Yes, run it runs it once, said with who asked, Escape is No. axFile has no section to leave in view, so the list covers the whole window and the arrows answer it.
-4. **Let an AI tool read and add tasks** (`tests/scripts/mcp/04-task-items.txt`): axTask's typed data tools (docs/axKit/mcp.md MC-8, docs/axTask/SPEC.md TK-8): the lists and the items read through the open axTask window, an item added there by words with a Due date, said in the window and seen in its list, taken back with Ctrl+Z; an add into another list and into a project's list, the selection left where it was; a list elsewhere refused; the add refused while Let AI tools run commands is off. The runner is the MCP client. A list made as a GitHub list (TK-7a.2): the "github" member of its list.json means nothing now; it is an ordinary list.
-5. **Answer an AI tool's request in a list, with the text still there** (`tests/scripts/mcp/05-run-asks-in-a-list.txt`): axkit_window_run (docs/axKit/mcp.md MC-7.3): where a window has a place for it (the editors, the console windows), a command that acts outside the window is asked as the list an offered command's question is: the offer's sound, a name that starts with Command offer, the first answer only explains, Yes, run it runs it once, Escape is No. The text stays there to read while the question waits.
-6. **Let an AI tool read a console window's conversation while you type** (`tests/scripts/mcp/06-console-text.txt`): docs/axKit/mcp.md MC-6.5 (2026-11-15): in axClaude and axTerminal, axkit_window_text reads the view, the conversation or the terminal, while the focus is in the field at the bottom, which is nearly always; the field is named beside it, never read. Until then the tool read the empty field. axTerminal stands in for both: the same console window, and no Claude Code or network needed.
+Steps and keys: `docs/axKit/workflows/ai-tools.md` (in Claude's working folder: `workflows-ai-tools.md`).
+
+1. **Let an AI tool read axKit, once you allow it**
+2. **Let an AI tool run a window's commands**
+3. **Approve or deny an AI tool before it acts**
+4. **Let an AI tool read and add tasks**
+5. **Answer an AI tool's request in a list, with the text still there**
+6. **Let an AI tool read a console window's conversation while you type**
 
 ## NVDA only
 
-1. **Hear an offered command as NVDA reads it** (`tests/nvda-scripts/axClaude-offered-command.txt`): NVDA tier (docs/axKit/automation.md, tier 3): what only NVDA can show of a command an AI tool offers (docs/axKit/mcp.md MC-9.4, docs/axClaude/nvda-test-plan.md section 12a): the question is spoken whole with its first answer as it arrives; each answer is read as the arrows reach it; the explanation is read as a notice and the list is read again, by its name with the command, when the focus comes back from it and from the conversation; the concern's field is read by its instruction. Needs: Claude Code signed in and the network; run only with --nvda, the user away.
-2. **Read a long reply with Say all while Claude writes** (`tests/nvda-scripts/axClaude-say-all.txt`): NVDA tier (docs/axKit/automation.md, tier 3): Say all over axClaude's conversation while Claude streams a long reply (docs/axClaude/SPEC.md FR-3.3, 2026-11-09): the view holds its output while NVDA moves the caret as it reads, so the reading goes on; the lines are there once it stops. Run only with --nvda, the user away. NVDA+A starts Say all in NVDA's laptop layout, which this computer uses (NVDA+Down, the desktop layout's, only read the next line here).
-3. **Come back to the right place after a Windows dialog** (`tests/nvda-scripts/axDown-dialog-focus.txt`): NVDA tier (docs/axKit/automation.md, tier 3): after a Windows dialog the focus goes back to the control that opened it, OK or cancel alike (bundle AX-6.5, one rule since 2026-11-09): Ctrl+O then Escape in axDown, the text again. Run only with --nvda, with the user away: the window comes to the front, and the Windows picker opens on the user's desktop.
-4. **Hear axDown's notices and palette with NVDA** (`tests/nvda-scripts/axDown-notices.txt`): NVDA tier (docs/axKit/automation.md, tier 3): axDown's notices and the palette as NVDA speaks them. Run only with --nvda, at the user's word, with the user away from the keyboard: the window comes to the front.
+Steps and keys: `docs/axKit/workflows/nvda-only.md` (in Claude's working folder: `workflows-nvda-only.md`).
+
+1. **Hear an offered command as NVDA reads it**
+2. **Read a long reply with Say all while Claude writes**
+3. **Come back to the right place after a Windows dialog**
+4. **Hear axDown's notices and palette with NVDA**

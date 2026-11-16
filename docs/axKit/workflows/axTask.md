@@ -1,0 +1,529 @@
+# axTask: workflows
+
+Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
+is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
+line "You hear" gives words of what axKit says there, not always the whole sentence. The file names and the words
+typed are the check's examples: use your own. Where a step names a command after its key, the key is that command's
+in this version of axKit.
+
+## Move through tasks and change an item's fields
+
+Starts with: Open axTask with tasks.
+
+### Move among the lists by their headings
+
+1. Press Ctrl+Up (Previous section).
+   You hear the sound Edge.
+2. Press Ctrl+Down (Next section).
+3. Press Down.
+4. Press Ctrl+1.
+5. Press Down.
+6. Press Down.
+7. Press Down.
+8. Press Down.
+9. Press Ctrl+1.
+   You hear the sound Edge.
+10. Press Ctrl+2.
+   You hear the sound Edge.
+11. Press Ctrl+Down (Next section).
+   You hear the sound Edge.
+12. Press Ctrl+Up (Previous section).
+13. Press Ctrl+Shift+1 (Previous heading level 1).
+14. Press Ctrl+Shift+1 (Previous heading level 1).
+15. Press Right.
+   You hear: A section: Down goes into it.
+16. Press Down.
+17. Press Down.
+
+### Open a list
+
+1. Press Right.
+   You hear: Home, 2 items, 1 file not shown, Fix the tap, due 30 October 2099.
+
+### Hear the status bar
+
+1. Press F8 (Say the status).
+2. Press Down.
+
+### Open an item's fields
+
+1. Press Enter.
+   You hear: Home, 2 items.
+2. Press Enter.
+3. Press Down.
+4. Press Down.
+5. Press Down.
+
+### Move between the list and the fields
+
+1. Press Escape.
+2. Press Tab.
+3. Press Shift+Tab.
+4. Press Ctrl+Tab (Switch between the navigator and the detail pane).
+5. Press F6 (Switch between the navigator and the detail pane).
+6. Press Ctrl+Shift+Tab (Switch between the navigator and the detail pane).
+7. Press Escape.
+
+### Mark a task done or not done
+
+1. Press Space.
+   You hear: Done: Fix the tap.
+2. Press Space.
+   You hear: Not done: Fix the tap.
+
+### Set a due date by typing a weekday
+
+1. Press Tab.
+2. Press Enter.
+3. Type friday.
+4. Press Enter.
+
+### Add a field with a choice of values
+
+1. Press Ctrl+N.
+2. Type Priority.
+3. Press Tab.
+4. Type cc.
+5. Press Enter.
+   You hear the sound Edge.
+   You hear: Type at least one option.
+6. Type High, Low.
+7. Press Enter.
+   You hear: Added Priority, choice of 2.
+8. Press Enter.
+9. Press Down.
+10. Press Enter.
+   You hear: Priority: Low.
+
+### Change a choice to its previous or next value
+
+1. Press Left.
+   You hear: Priority: High.
+2. Press Left.
+   You hear the sound Edge.
+3. Press Right.
+   You hear: Priority: Low.
+4. Press Right.
+   You hear the sound Edge.
+5. Press Ctrl+Z (Undo).
+   You hear: Undone: Priority: Low.
+6. Press Right.
+   You hear: Priority: Low.
+
+### Move a field up
+
+1. Press Alt+Up (Move the field up).
+   You hear: Moved up: Priority.
+2. Press Home.
+3. Press Alt+Up (Move the field up).
+   You hear: Top of the fields.
+
+### Set a check field on or off
+
+1. Press Right.
+   You hear the sound Edge.
+2. Press Left.
+   You hear the sound Edge.
+3. Press Down.
+4. Press Left.
+   You hear the sound Edge.
+5. Press Right.
+   You hear: Done: done.
+6. Press Right.
+   You hear the sound Edge.
+7. Press Left.
+   You hear: Done: not done.
+8. Press Home.
+
+### Rename an item
+
+1. Press Escape.
+2. Press F2.
+3. Type Fix the sink.
+4. Press Enter.
+   You hear: Renamed Fix the sink.
+
+### Add an item
+
+1. Press Left.
+2. Type s.
+3. Press Right.
+4. Press Ctrl+N.
+5. Type Bread.
+6. Press Enter.
+   You hear: Added Bread.
+
+### Archive an item and bring it back
+
+1. Press Delete.
+   You hear: Archived Bread.
+2. Press Ctrl+Z (Undo).
+   You hear: Undone: Archived Bread.
+
+### Hear every field of an item
+
+1. Press Ctrl+Q (Read in full).
+   You hear: Milk. Notes: empty.
+
+### Show all tasks, the soonest due first
+
+1. Press Ctrl+0 (All tasks).
+   You hear: All tasks, 4 items, Fix the sink, due.
+2. Press Left.
+
+## Make lists, link items and use smart lists
+
+Starts with: Open axTask with tasks.
+
+### Read a list's details
+
+1. Press Down.
+2. Press Tab.
+3. Press Down.
+4. Press Down.
+
+### Write notes of several lines
+
+1. Press Up.
+2. Press Enter.
+3. Type First line.
+4. Press Enter.
+   You hear: new line.
+5. Type Second line.
+6. Press Tab.
+7. Press Enter.
+   You hear: Notes: First line, and 1 more line.
+8. Press Ctrl+Q (Read in full).
+   You hear: Notes: First line. Second line.
+
+### Link one item to another
+
+1. Press Escape.
+2. Press Right.
+3. Press Tab.
+4. Press End.
+5. Press Enter.
+6. Type Washer.
+7. Press Enter.
+   You hear: Waits on: Washer.
+
+### Make a checklist a plain list and back
+
+1. Press Left.
+2. Choose Remove Done from every item in the Actions menu.
+   You hear: Shopping is a plain list: Done removed from 0 items.
+3. Press Ctrl+Z (Undo).
+   You hear: Undone: Shopping is a plain list.
+4. Choose Add Done to every item in the Actions menu.
+   You hear: Shopping is a checklist: Done added to 1 item.
+
+### Make a new list
+
+1. Press Ctrl+Shift+N (New list).
+2. Type Garden.
+3. Press Enter.
+   You hear: Made Garden.
+4. Press Ctrl+Z (Undo).
+   You hear: Undone: Made Garden.
+
+### Hide and show done tasks
+
+1. Press Ctrl+Shift+D (Hide done tasks).
+   You hear: Done tasks hidden.
+2. Press Left.
+3. Press Right.
+   You hear: Home, 1 item, 1 done hidden.
+4. Press Ctrl+Shift+D (Hide done tasks).
+   You hear: Done tasks shown.
+
+## Group lists into sections
+
+Starts with: Open axTask with tasks.
+
+### Move a list into a new section
+
+1. Type w.
+2. Press Ctrl+M.
+3. Press End.
+4. Press Enter.
+   You hear the sound Edge.
+   You hear: Type the section's name.
+5. Type Jobs.
+6. Press Enter.
+   You hear: Moved Work to Jobs.
+7. Press Up.
+
+### Move among the sections by their headings
+
+1. Press Ctrl+Up (Previous section).
+2. Press Ctrl+Down (Next section).
+3. Press Ctrl+Down (Next section).
+4. Press Ctrl+1.
+5. Press Ctrl+1.
+   You hear the sound Edge.
+6. Press Ctrl+Shift+2 (Previous heading level 2).
+
+### Make a new list in a section
+
+1. Press Ctrl+Shift+N (New list).
+2. Type Clients.
+3. Press Enter.
+   You hear: Made Clients.
+4. Press Up.
+
+### Put a list in a section from its details
+
+1. Press Ctrl+Up (Previous section).
+2. Press Down.
+3. Press Tab.
+4. Press Enter.
+5. Type Jobs.
+6. Press Enter.
+   You hear: Section: Jobs.
+7. Press Escape.
+
+### Move a list back to Your lists
+
+1. Press Ctrl+Up (Previous section).
+2. Type h.
+3. Press Ctrl+M.
+4. Press Home.
+5. Press Enter.
+   You hear: Moved Home to Your lists.
+
+### Archive a list and bring it back
+
+1. Press Left.
+2. Press Delete.
+   You hear: Archived Work.
+3. Press End.
+4. Press Up.
+5. Press Ctrl+Z (Undo).
+   You hear: Undone: Archived Work.
+
+## Act on items with action keys
+
+Starts with: Open axTask with tasks.
+
+### Run an action key on an item
+
+1. Press Left.
+2. Press Home.
+3. Press Down.
+4. Press Right.
+5. Press Ctrl+3.
+   You hear the sound Edge.
+   You hear: No action on Ctrl+3 in this list; Actions, Action keys sets one.
+6. Press Ctrl+1.
+   You hear: Done: Done: done.
+7. Press Ctrl+Z (Undo).
+   You hear: Undone: Done: Done: done.
+
+### Move an item to another list with an action key
+
+1. Press Ctrl+2.
+   You hear: Later: Fix the tap moved to Later.
+2. Press Ctrl+Z (Undo).
+   You hear: Undone: Later: Fix the tap moved to Later.
+
+### Set up an action key
+
+1. Choose Action keys in the Actions menu.
+2. Press Tab.
+3. Press Shift+Tab.
+4. Press Down, Down, Down.
+5. Press Tab.
+6. Type Finish.
+7. Press Tab.
+8. Press Ctrl+Enter.
+   You hear the sound Edge.
+   You hear: Type at least one line as Field: value.
+9. Type Done: done.
+10. Press Ctrl+Enter.
+   You hear: Ctrl+4: Finish, sets Done: done.
+11. Press Ctrl+4 (Action key 4).
+   You hear: Finish: Done: done.
+12. Press Ctrl+Z (Undo).
+   You hear: Undone: Finish: Done: done.
+
+## Add project folders and search every list
+
+Starts with: Open axTask with tasks.
+
+### Find the project folders by their headings
+
+1. Press Ctrl+1.
+2. Press Ctrl+2.
+3. Press Down.
+4. Press Down.
+5. Press Ctrl+2.
+   You hear the sound Edge.
+6. Press Ctrl+1.
+
+### Mark a project's task done from All tasks
+
+1. Press Down.
+2. Press Right.
+   You hear: All tasks, 2 items, Buy a tap, in Home.
+3. Press Down.
+4. Press Space.
+   You hear: Done: Fix the tap.
+5. Press Ctrl+Z (Undo).
+   You hear: Undone: Done: Fix the tap.
+6. Press Left.
+   You hear: Lists, 1 list, All tasks, 2 not done.
+7. Press Ctrl+1.
+8. Press End.
+9. Press Ctrl+Shift+1 (Previous heading level 1).
+10. Press Ctrl+Shift+1 (Previous heading level 1).
+11. Press Ctrl+Shift+1 (Previous heading level 1).
+12. Press Ctrl+2.
+13. Press Down.
+
+### Open a project and mark a task done in it
+
+1. Press Right.
+   You hear: tasks in alpha, 1 list, Your lists, heading level 1, 1 list.
+2. Press Ctrl+Down (Next section).
+3. Press Down.
+4. Press Home.
+5. Press Down.
+6. Press Right.
+   You hear: Home, 1 item, Fix the tap.
+7. Press Space.
+   You hear: Done: Fix the tap.
+8. Press Ctrl+Z (Undo).
+   You hear: Undone: Done: Fix the tap.
+9. Press Left.
+   You hear: tasks in alpha, 1 list, Home, list, 1 item.
+10. Press Left.
+   You hear: Lists, 1 list, tasks in alpha, project, 1 list.
+11. Press Left.
+   You hear the sound Edge.
+
+### Add a project folder by its path
+
+1. Choose Add a project folder in the Options menu.
+2. Type nowhere.
+3. Press Enter.
+   You hear: No folder is there.
+4. Press Ctrl+A.
+5. Type tasks.
+6. Press Enter.
+   You hear: That is your own top folder: its lists show at the top already.
+7. Press Ctrl+A.
+8. Type more.
+9. Press Enter.
+   You hear: Added Projects in more, looking for lists.
+10. Press F5 (Refresh).
+11. Press Down.
+
+### Search every list
+
+1. Press Ctrl+Shift+F (Find in every list).
+2. Type zebra.
+3. Press Enter.
+   You hear: Searching every list.
+   You hear: Nothing found for zebra.
+4. Press Ctrl+Shift+F (Find in every list).
+5. Press Ctrl+A.
+6. Type TAP.
+7. Press Enter.
+   You hear: Found TAP, 3 items, Buy a tap, in tasks / Home.
+8. Press Down.
+9. Press Tab.
+10. Press Shift+Tab.
+11. Press Escape.
+   You hear: Lists, 1 list, gamma, project, 1 list.
+
+### Remove a project folder
+
+1. Choose the menu item 1. projects.
+   You hear: Removed projects. Lists, 1 list.
+2. Choose the menu item 1. more.
+   You hear: Removed more.
+
+## Group smart lists and find items by tag
+
+Starts with: Open axTask with tasks.
+
+### Move among the tags by their symbols
+
+1. Press Ctrl+3.
+2. Press Down.
+3. Press Ctrl+3.
+4. Press Down.
+
+### Gather a tag's items from every list
+
+1. Press Right.
+   You hear: #garden, 2 items, Call @Sam about #garden, in Home.
+2. Press Down.
+3. Press Left.
+   You hear: Lists, 1 list, #garden, 2.
+4. Press Ctrl+3.
+5. Press Down.
+6. Press Ctrl+3.
+   You hear the sound Edge.
+
+### Find the smart lists that share a first word
+
+1. Press Ctrl+Shift+2 (Previous heading level 2).
+2. Press Ctrl+Shift+2 (Previous heading level 2).
+3. Press Down.
+4. Press Down.
+5. Press Ctrl+Shift+1 (Previous heading level 1).
+6. Press Down.
+7. Press Down.
+8. Press Ctrl+Shift+3 (Previous heading level 3).
+   You hear the sound Edge.
+
+## Hear the heading sound in the item apps
+
+Starts with: Open axTask with tasks.
+
+## Close axTask and come back to the list you had
+
+Starts with: Open axTask with tasks.
+
+### Come back to the list you had
+
+1. Type s.
+2. Press Right.
+   You hear: Shopping, 2 items, Milk.
+3. Press Down.
+4. Close the window.
+5. Open axTask.
+6. Press Left.
+   You hear: Lists, 2 lists, Shopping, list, 2 items.
+7. Close the window.
+
+## Find out whether a key arrives and what it does, in an item window
+
+Starts with: Open axTask with tasks.
+
+### Test what a key does
+
+1. Choose Test a key in the Help menu, Diagnostics.
+   You hear: Key test. Press any key to hear its name and what it does here. Press Escape to end.
+2. Press F8 (Say the status).
+   You hear: F8: Say the status.
+3. Press F1 (Keyboard shortcuts).
+   You hear: F1: Keyboard shortcuts.
+4. Press Ctrl+N.
+   You hear: Ctrl+N: New item.
+5. Press Ctrl+Up (Previous section).
+   You hear: Ctrl+Up: Previous section.
+6. Press Left.
+   You hear: Left: Up a level.
+7. Press Down.
+   You hear: Down: moves in the list.
+8. Press W.
+   You hear: W: finds the next item that starts with what you type.
+9. Press F9.
+   You hear: F9: no command of this window.
+
+### End the key test
+
+1. Press Escape.
+   You hear: Key test ended.

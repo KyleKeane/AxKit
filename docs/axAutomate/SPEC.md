@@ -162,9 +162,11 @@ keys in place of its words on a line:
   stabilize, each with a high-level label that can become a tutorial for a user who asks for help). A script gives it
   as its first line, `# Workflow: Answer Claude's questions and screens`; the window lists the workflow by it in place
   of the file's name, and it is not among what the workflow covers. A test fails on a script without one or on two
-  with the same label. `tools/workflows.ps1` writes `docs/axKit/workflows.md`, every workflow by app with its label,
-  what it covers and its script; `build.yml` checks the page is current. A new workflow worth keeping working is a new
-  script with its label.
+  with the same label. `tools/workflows.ps1` writes the workflow pages (2026-11-15; `docs/axKit/user-workflows.md`
+  WF-7) through the command line's `--reference`, from the scripts and the command inventory:
+  `docs/axKit/workflows.md`, every workflow by app with its label and under it its goals, and
+  `docs/axKit/workflows/<app>.md`, each goal's steps with their keys and what is heard; `test.ps1` and `build.yml`
+  check the pages are current. A new workflow worth keeping working is a new script with its label.
 - AU-5.2b Goals and checks inside a script (2026-11-15; `docs/axKit/user-workflows.md` WF-3, which holds the whole
   of it). A comment line `# Goal: <title>` starts a goal, what a user gets done by the steps under it; `# Check:
   <title>` starts a check, steps that only test; either runs to the next such line or to the script's end, both in

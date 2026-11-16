@@ -28,7 +28,7 @@ The ones used every day; all of them, with their options, are in `docs/axKit/com
 - `.\run.ps1 [-App <verb>] [<path>]`, or `& '.\scripts to run-individual-apps\run-ax<Name>.ps1'`: build and start one app.
 - `dotnet run --project tools\AxAutomate -c Release -- tests\scripts\<app> --build`: the app's automated window checks, on a desktop of their own (`docs/axKit/automation.md`). They never run in CI: run them after a change to a window.
 - `.\nvda-pass.ps1 [<app>]`: the same checks with NVDA listening. It takes the keyboard: only after the user has stepped away.
-- The generated pages (`outside-calls.md`, `workflows.md`, `repairs.md`, `apps.md` in `docs/axKit`) are each written by a script in `tools` and never by hand; `test.ps1` says which script to run when one is stale.
+- The generated pages (`outside-calls.md`, `workflows.md` and `workflows/`, `window-commands.md`, `repairs.md`, `apps.md` in `docs/axKit`) are each written by a script in `tools` and never by hand; `test.ps1` says which script to run when one is stale. The command inventory `window-commands.json` is written by a run with `--inventory write`.
 - `.\tools\reports-check.ps1` at the start of a session: the reports on GitHub against the priorities list (rule 9); act on every line it says.
 - `.\tools\upstream.ps1` at the start of a session: when it says an outside program changed, run it with `-Verify` before other work and fix what fails in that program's one place (rule 12).
 - After a bare `dotnet build` or `dotnet test`, run `dotnet build-server shutdown`: the development computer has 7 GB.

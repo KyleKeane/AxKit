@@ -25,8 +25,9 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   not hold as it is (exit code 3 when every script passed). `--inventory write` merges what the windows list into the
   file, `rewrite` also drops what a whole app no longer lists, `off` leaves it alone; `--repository <folder>` names
   the repository when the program is not built inside one (`automation.md`, "The command inventory"). Exit codes: 0
-  passed, 1 a script failed, 2 the run could not start, 3 the inventory is stale. `tools/QaRun` runs Claude sessions
-  without windows, always with `--model haiku`.
+  passed, 1 a script failed, 2 the run could not start, 3 the inventory is stale. Its other form,
+  `tools/AxAutomate --reference [--check]`, plays nothing: it writes the workflow pages, or checks them, for
+  `tools/workflows.ps1` (below). `tools/QaRun` runs Claude sessions without windows, always with `--model haiku`.
 - `nvda-pass.ps1 [<app>]` runs the same scripts with NVDA listening, plus `tests/nvda-scripts`: the NVDA test plans as
   the assistant runs them. It takes the keyboard, so only after the user has stepped away.
 - `tools/upstream.ps1` is the upstream watch (`automation.md`, "When an outside program changes"): for each outside
@@ -55,14 +56,18 @@ points here. Each app's own commands are in its `CLAUDE.md`.
 
 ## The generated pages
 
-Each is written by its script from one source and checked by `test.ps1` and `build.yml` with `-Check`. Never edit a
+Each is written by its script from its sources and checked by `test.ps1` and `build.yml` with `-Check`. Never edit a
 page by hand; run its script and commit the page.
 
 - `tools/outside-calls.ps1` writes `outside-calls.md`: everything axKit reaches outside its process, from the
   `Outside call, <kind>, <what is reached>:` comment that every network request, program start and pipe in `src`
   carries. The check fails on a call without one. Run it before a commit that touches such a call (SPEC B-17).
-- `tools/workflows.ps1` writes `workflows.md`: every automated script by app under its `# Workflow:` label, the
-  workflows kept working and the start of their tutorials. A new script gets its label (axAutomate SPEC AU-5.2a).
+- `tools/workflows.ps1` writes the workflow pages (`user-workflows.md` WF-7) from the scripts of `tests/scripts` and
+  `tests/nvda-scripts` and the command inventory `window-commands.json`: `workflows.md`, the index, by app every
+  workflow's label and under it its goals; `workflows/<app>.md`, each goal's steps with their keys and what is heard;
+  `window-commands.md`, every window's commands. The generator is C#, run as `tools/AxAutomate --reference`; it
+  builds the runner and plays nothing. A new script gets its label (axAutomate SPEC AU-5.2a). After a run with
+  `--inventory write`, or a change to a script, run it and commit the pages with that change (WF-11.4).
 - `tools/repairs.ps1` writes `repairs.md` from `repairs.json`: what an audit found and what became of each finding,
   with the principles the repairs follow. `-Open` prints what is open. A defect found is entered there, and its status
   changed in the same commit as its fix.

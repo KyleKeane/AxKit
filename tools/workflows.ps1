@@ -1,97 +1,43 @@
 <#
 .SYNOPSIS
-Writes docs\axKit\workflows.md, the page of every workflow the automated checks keep working, by app, each under its
-label in the user's words; or checks that the page is current (-Check).
+Writes the workflow pages from the scripts of the automated checks and the command inventory, or checks that they are
+current (-Check).
 
 .DESCRIPTION
-Every script of tests\scripts and tests\nvda-scripts starts with a line
+The pages for people (docs/axKit/user-workflows.md WF-7): docs\axKit\workflows.md, the index, by app each workflow's
+label and under it its goals; docs\axKit\workflows\<app>.md, one page per group, each goal's steps with their keys
+and what is heard; docs\axKit\window-commands.md, every command of every window. They come from two inputs and
+nothing else: the scripts of tests\scripts and tests\nvda-scripts, and the command inventory
+docs\axKit\window-commands.json. The generator is C# (AxAutomate.Core's Reference), run by the command line of the
+automated checks, "AxAutomate --reference" (tools\AxAutomate\ReferenceRun.cs), which plays nothing and needs no
+window. Every script starts with its label, "# Workflow: <a task in the user's words>" (docs/axAutomate/SPEC.md
+AU-5.2a): the generator refuses a script without one and names it.
 
-    # Workflow: <a task in the user's words>
-
-(docs/axAutomate/SPEC.md AU-5.2a; tests/AxAutomate.Tests fails on a script without one or on two with the same
-label). The page lists, for each app, every workflow's label, what the script's header says it covers, and the script.
-A script that depends on something outside axKit says so in a second header line,
-
-    # Needs: Claude Code signed in, the network and a live model
-
-and the page repeats it, so that a failure of such a script is read with that in mind (docs/axKit/repairs.json R-35).
-The labels are the names a user asks for help by, and the start of a tutorial for each.
-
--Check writes nothing and exits with 1 when the page on disk is not what the scripts give; then run the script without
--Check and commit the page. build.yml runs the check on every push.
+-Check writes nothing and exits with 1 when a page on disk is not what the inputs give (line ends aside), or is
+missing, or is left over; then run the script without -Check and commit the pages with the change that made them
+differ (WF-11.4). test.ps1 and build.yml run the check.
 #>
 [CmdletBinding()]
 param([switch]$Check)
 
 $ErrorActionPreference = 'Stop'
+# The repository from this script's own path: test.ps1 starts it by its full path from whatever folder it was in.
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path | Split-Path -Parent
-$documentPath = Join-Path $root 'docs\axKit\workflows.md'
+$runnerProject = Join-Path $root 'tools\AxAutomate\AxAutomate.Runner.csproj'
+# No --nologo: dotnet run does not take it and would hand it to the program as its first word.
+$runArguments = @('run', '--project', $runnerProject, '-c', 'Release', '-v', 'q', '--', '--reference', '--repository', $root)
+if ($Check) { $runArguments += '--check' }
 
-function Read-Workflow([string]$path) {
-    $label = $null
-    $needs = $null
-    $covers = New-Object System.Collections.Generic.List[string]
-    foreach ($line in [IO.File]::ReadAllLines($path)) {
-        $text = $line.Trim()
-        if ($text.Length -eq 0) { if ($covers.Count -gt 0) { break } else { continue } }
-        if (-not $text.StartsWith('#')) { break }
-        $comment = $text.TrimStart('#').Trim()
-        if ($comment -match '^(?i)workflow:\s*(.+)$') { $label = $Matches[1].Trim() }
-        elseif ($comment -match '^(?i)needs:\s*(.+)$') { $needs = $Matches[1].Trim() }
-        else { $covers.Add($comment) }
-    }
-    [pscustomobject]@{ Label = $label; Needs = $needs; Covers = ($covers -join ' ') }
+# A line the runner writes to stderr must not end this script under Stop when its output is redirected (Windows
+# PowerShell 5.1); the exit code is the result.
+$ErrorActionPreference = 'Continue'
+$exitCode = 2
+try {
+    & dotnet @runArguments
+    $exitCode = $LASTEXITCODE
+} finally {
+    # The build servers end with the run instead of idling on several hundred megabytes (Directory.Build.rsp).
+    dotnet build-server shutdown | Out-Null
 }
 
-$lines = New-Object System.Collections.Generic.List[string]
-$lines.Add('# Workflows')
-$lines.Add('')
-$lines.Add('Written by `tools/workflows.ps1` from the scripts of `tests/scripts` and `tests/nvda-scripts`; never edit it by hand.')
-$lines.Add('Every workflow below is played by the automated checks (`docs/axKit/automation.md`), with NVDA listening in')
-$lines.Add('`nvda-pass.ps1`, so each is kept working from release to release. The label is the task in the words a user asks')
-$lines.Add('for help with, and the script is its steps; together they are the start of a tutorial for it. The scripts run on')
-$lines.Add('the developer''s computer (`tools/AxAutomate`, `nvda-pass.ps1`), never in CI; the last full pass is the first entry')
-$lines.Add('of `docs/axKit/nvda-test-record.md`.')
-
-# Ordinal order: Windows PowerShell and PowerShell 7 (CI) sort a hyphen differently by culture.
-$files = [System.Collections.Generic.List[System.IO.FileInfo]]::new()
-Get-ChildItem (Join-Path $root 'tests\scripts'), (Join-Path $root 'tests\nvda-scripts') -Recurse -File -Filter *.txt | ForEach-Object { $files.Add($_) }
-$files.Sort([Comparison[System.IO.FileInfo]] { param($a, $b) [string]::CompareOrdinal($a.FullName.ToLowerInvariant(), $b.FullName.ToLowerInvariant()) })
-$groups = $files |
-    Group-Object { if ($_.Directory.Name -eq 'nvda-scripts') { 'NVDA only' } elseif ($_.Directory.Name -eq 'mcp') { 'AI tools' } else { $_.Directory.Name } } |
-    Sort-Object { if ($_.Name -eq 'NVDA only') { 2 } elseif ($_.Name -eq 'AI tools') { 1 } else { 0 } }, { $_.Name.ToLowerInvariant() }
-$missing = @()
-foreach ($group in $groups) {
-    $lines.Add('')
-    $lines.Add('## ' + $group.Name)
-    $lines.Add('')
-    $number = 0
-    foreach ($file in $group.Group) {
-        $workflow = Read-Workflow $file.FullName
-        $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
-        if (-not $workflow.Label) { $missing += $relative; continue }
-        $number++
-        $lines.Add("$number. **$($workflow.Label)** (``$relative``): $($workflow.Covers)$(if ($workflow.Needs) { " Needs: $($workflow.Needs)" })")
-    }
-}
-
-if ($missing.Count -gt 0) {
-    $missing | ForEach-Object { Write-Host "No '# Workflow:' line: $_" }
-    exit 1
-}
-
-$text = ($lines -join "`r`n") + "`r`n"
-if ($Check) {
-    $current = if (Test-Path $documentPath) { [IO.File]::ReadAllText($documentPath) } else { '' }
-    # Line endings aside: the checkout's are native, LF on CI.
-    if (($current -replace "`r`n", "`n") -cne ($text -replace "`r`n", "`n")) {
-        Write-Host 'docs/axKit/workflows.md is not current: run tools\workflows.ps1 and commit the page.'
-        exit 1
-    }
-
-    Write-Host "docs/axKit/workflows.md is current: $(($groups | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum) workflows."
-    exit 0
-}
-
-[IO.File]::WriteAllText($documentPath, $text, (New-Object System.Text.UTF8Encoding($false)))
-Write-Host "Wrote docs/axKit/workflows.md: $(($groups | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum) workflows."
+exit $exitCode
