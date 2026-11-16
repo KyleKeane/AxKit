@@ -154,6 +154,12 @@ list, or open something (a field holding a web address, or an app such as axJSON
 Ctrl+1 to Ctrl+9 do that to the item selected, and Context's Action keys submenu on an item names them. Ctrl+Z takes a set
 or a move back. All tasks is Ctrl+0.
 
+A key that moves an item or opens something acts at once when you set it in this form on this computer. When the
+list's keys came another way (a list someone shared, a folder that syncs, a `list.json` edited outside axTask), the
+first press does nothing and says what the key now does: "Ctrl+2 in this list now moves to ../Later. Press it again to
+do it." Press it again and it does it; from then on it acts at the first press, until the key's action changes. A key
+that only sets fields is never asked about: Ctrl+Z takes it back.
+
 ## Local only
 
 axTask works on the files of your computer and asks the network nothing. An action key that opens a field's web

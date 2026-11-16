@@ -28,6 +28,8 @@ An item reads as its first line, cut at 120 characters, and says how many lines 
 
 The history is kept in memory only: it is gone when axClip ends, unless you turn on Options, Keep history between runs, which keeps it in axClip's settings file, encrypted so that only your Windows account can read it back. Password managers that mark a copy as private (most do) are respected: such a copy is never kept. axClip keeps only text, never pictures or files, and its log never holds what you copied.
 
+A kept history can be read only by the Windows account that wrote it. After a move to another computer, or a password reset by an administrator, axClip says once, the first time you bring it up: "The kept clipboard history could not be read on this computer and starts empty." Nothing else changes: Keep history between runs stays on and the new history is kept from then on. The settings file as it was is kept once beside itself, with .bad at the end of its name, the old history in it still encrypted; Actions, Clear history deletes that copy too. The kept history holds 8 MB of text at most: beyond that the oldest items are left out of the file.
+
 ## Menus
 
 - **Session**: Hide (Escape), Quit axClip.

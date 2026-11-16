@@ -72,7 +72,11 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   shells this computer has; Windows always has Windows PowerShell and Command Prompt. PowerShell 7 and Git Bash, when
   missing, are not listed; Session offers "Install PowerShell 7…" and "Install Git, for Git Bash…" after Switch shell instead
   (bundle AX-2.9), and switches to the shell once it is installed.
-- AT-1.2 **The shell.** One of PowerShell 7 (`pwsh.exe`, found on the PATH or under `%ProgramFiles%\PowerShell\7`),
+- AT-1.2 **The shell.** One of PowerShell 7 (`pwsh.exe`, found under `PowerShell\7` in Program Files or Program Files (x86), which only an
+  administrator can write, and only when it is not there in the PATH's folders that are on a drive of this computer,
+  `ShellLauncher.Find`, `SystemPrograms.Installed`; bundle AX-11.5 and `repairs.md` R-70, 2026-11-16: the agreement
+  and the start line name PowerShell 7, not its path, so a `pwsh.exe` put earlier in the PATH or on a share must not
+  be what starts; until then the PATH came first),
   Windows PowerShell (`powershell.exe`), Command Prompt (`cmd.exe` from System32 by its full path, never the `ComSpec`
   variable, which a program or a profile can point at another program; bundle security audit S-1, the user's choice of
   2026-11-09), Git Bash (Git for Windows' `Git\bin\bash.exe`

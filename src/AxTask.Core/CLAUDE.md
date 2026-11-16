@@ -40,14 +40,16 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   Markdown symbols `Excluded` (`IsSymbol`, `In`, `Has`), an item's words (`TextOf`: Title and text fields), the tags of
   the tasks not done by symbol, @ and # first (`InTasks`), and a symbol's spoken name from a small table (`Spoken`, "@
   at sign", the code point otherwise). Tested in `SmartListTests`.
-- `TaskSettings`: the top folder, the list open last, whether done tasks are hidden, the project folders (`ProjectFolders`, `RefusedProjectFolder`, `AddProjectFolder`; full paths once, TK-7b.1).
+- `TaskSettings`: the top folder, the list open last, whether done tasks are hidden, the project folders (`ProjectFolders`, `RefusedProjectFolder`, `AddProjectFolder`; full paths once, TK-7b.1), and the action keys this install wrote or the user accepted (`AcceptedActionKeys`, TK-7a.3, bundle repairs R-72: each a seal of `ActionKeys.MarkText` under the key of the bundle's `SettingsSeal`, so a line written into the file accepts nothing; `ActionKeyMark`, `AcceptsActionKey`, `AcceptActionKey`, `MaxAcceptedActionKeys`).
 - `Projects` with `TaskProject` (its `Root`, the project folder it was found under, TK-7b.3), `GatheredItem` (an item with its top and its place's name; `Where`, "Home" or "alpha / Home", TK-5.6) and `SearchHit` (TK-7b, 2026-11-11): `Find` (the folders of lists under the project folders, four folders down, hidden folders and `.git`, `node_modules`, `bin`, `obj` skipped, the top folder left out, names told apart by the folder above), `Gather` (every item of each place, the Archive left out), `GatherOne` (one file read again as a project's item, or null), `Inside`, `Words`, `Matches` (every word in the Title or a text field, case not minded) and `Search` (over places, or over items already gathered). Read-only; the window calls them off the UI thread. Tested in `ProjectsTests`.
 - `TaskTools` with `ReachableList` (TK-8, docs/axKit/mcp.md MC-8, 2026-11-11): the AI tools' pure half: `Lists` (the top folder's lists by name, then each project's as "project / list"), `Find` (a list by its name, its own name when unique, or its full path when reached; a path elsewhere refused), `ItemOf` (an item as JSON, a password or user name field "protected"), `NewItem` (`ItemDocument.NewItem` with the template, then each typed value through `FieldTypes.Parse`; a missing field added, Notes as long text; link, password, user name refused). Tested in `TaskToolsTests`.
 - `ActionKeys` and `ListAction` (docs/axKit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions under
   `"keys"` in its `list.json` (`ItemDocument.Extra`): `Read`, `With`, `Spoken` ("Ctrl+1. Done"), `ApplySet`
   (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines), and the form of one key, `KindNames`, `KindIndex`, `ValueText` and `FromForm` (what its fields make, or why they are refused); an
   action is `set`, `move` or `open`, with `Described`; `OpenRefusal` keeps an `open` of axClaude or axTerminal off a
-  folder that is not on a drive of this computer (S-5's rule, 2026-11-09). Tested in `ActionKeysTests`. The GitHub
+  folder that is not on a drive of this computer (S-5's rule, 2026-11-09); `AsksFirst` (a move or an open), `AskText`
+  ("Ctrl+2 in this list now moves to Later. Press it again to do it.") and `MarkText` (the list's folder, the digit and
+  the action, what an acceptance is for) are TK-7a.3's. Tested in `ActionKeysTests`. The GitHub
   lists that came with them (RP-7) were removed on 2026-11-14, when axTask became local only: a `"github"` member in a
   `list.json` is kept as any member axTask does not know and means nothing (TK-7a.2).
 

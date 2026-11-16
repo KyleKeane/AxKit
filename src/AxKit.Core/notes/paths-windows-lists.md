@@ -10,11 +10,16 @@
 - `PathName` (AX-9.5): `Of`, the name of a path for a title, a label or an announcement, the last part or the drive's
   root itself (four copies until 2026-10-23).
 - `RecentPaths` (AX-9.5): what every settings class does to its recent-path list, `Remember` (the newest first, once
-  whatever the case, ten at most) and `Sanitize` after loading; the list property stays in each class so that its file
-  keeps its shape.
+  whatever the case, ten at most) and `Sanitize` after loading, which keeps whole paths only (`IsWhole`, repairs R-68:
+  an entry is handed to an app as an argument and must never read as an option); the list property stays in each
+  class so that its file keeps its shape.
 - `RecentlyClosed` (AX-9.4): the bundle's list of the last ten files and folders the windows held when they closed or
   swapped them, in `%APPDATA%\AxKit\recently-closed.json` through `SettingsFile`: `Remember` from a window, `Load` for
-  the menu (entries whose path still exists), `Title` as "notes.md (C:\notes\notes.md) - axDown".
+  the menu (entries whose path still exists), `Title` as "notes.md (C:\notes\notes.md) - axDown". Since 2026-11-16
+  (R-68): `Keeps`, the entries the list holds (an app's name, and a whole path or none), applied by `Read` and by
+  `Remember`; and one writer at a time, `Remember` reading, adding and writing under a mutex named after the file
+  (`MutexName`), given up after `WaitMilliseconds` with a line in the log and nothing written, never a hang. Never
+  write the file another way.
 - `AxKitWindows` (AX-9): the window lists of the axKit menu from the windows `AxKit.Forms.WindowMenu` reads off the system
   in Z order, which is recency: the app from a title's ending (" - axDown"), Open windows without the current window,
   each app's windows with it, and the item labels with the number as the mnemonic and a full stop as a pause

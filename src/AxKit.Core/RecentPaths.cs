@@ -19,14 +19,22 @@ public static class RecentPaths
         Trim(paths, max);
     }
 
-    /// <summary>A list as loaded from the file: null becomes empty, blank entries go, and the list is kept to <paramref name="max"/>. Returns the list to assign back.</summary>
+    /// <summary>
+    /// A list as loaded from the file: null becomes empty, every entry that is not a whole path goes
+    /// (<see cref="IsWhole"/>), and the list is kept to <paramref name="max"/>. Returns the list to assign back. Only
+    /// whole paths are kept so that an entry written into the file by hand or by another program can never be read
+    /// as an option by the app it is handed to (repairs.md R-68).
+    /// </summary>
     public static List<string> Sanitize(List<string>? paths, int max = Max)
     {
         var list = paths ?? [];
-        list.RemoveAll(string.IsNullOrWhiteSpace);
+        list.RemoveAll(path => !IsWhole(path));
         Trim(list, max);
         return list;
     }
+
+    /// <summary>Whether the text is a whole path: not blank, with its drive or share, as <see cref="Path.IsPathFullyQualified(string)"/> says. "--help", "notes.md" and "\work" are not.</summary>
+    public static bool IsWhole(string? path) => !string.IsNullOrWhiteSpace(path) && Path.IsPathFullyQualified(path);
 
     private static void Trim(List<string> paths, int max)
     {

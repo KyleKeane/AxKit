@@ -138,15 +138,21 @@ public static class ShellLauncher
     /// <summary>PowerShell 7 when it is installed, otherwise Windows PowerShell (SPEC.md AT-1.2).</summary>
     public static ShellKind DefaultKind() => Find(ShellKind.PowerShell7) is not null ? ShellKind.PowerShell7 : ShellKind.WindowsPowerShell;
 
+    /// <summary>Where PowerShell 7 is when it is installed for the whole computer: <c>PowerShell\7</c> under Program Files and Program Files (x86).</summary>
+    public static IReadOnlyList<string> PowerShell7Folders { get; } = SystemPrograms.ProgramFilesFolders("PowerShell", "7");
+
     /// <summary>The program of a shell, or null when it is not installed (Custom has none).</summary>
     public static string? Find(ShellKind kind)
     {
         switch (kind)
         {
             case ShellKind.PowerShell7:
-                return SystemPrograms.OnPath("pwsh.exe") ?? Existing(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "PowerShell", "7", "pwsh.exe"));
+                // R-70: the agreement is for PowerShell 7 by its name, so its own folder under Program Files, which
+                // only an administrator can write, comes before the PATH, and PATH folders off this computer are
+                // passed over (a copy from the Store or of the user's own is found there).
+                return SystemPrograms.Installed("pwsh.exe", PowerShell7Folders);
             case ShellKind.WindowsPowerShell:
-                return Existing(SystemPrograms.PowerShell) ?? SystemPrograms.OnPath("powershell.exe");
+                return Existing(SystemPrograms.PowerShell) ?? SystemPrograms.Installed("powershell.exe", []);
             case ShellKind.CommandPrompt:
                 // Windows' own cmd by its full path, never ComSpec, which a program or a profile can point at another
                 // program (security audit S-1; the user's choice of 2026-11-09).
@@ -173,7 +179,7 @@ public static class ShellLauncher
             }
         }
 
-        if (SystemPrograms.OnPath("git.exe") is { } git && Path.GetDirectoryName(git) is { } dir)
+        if (SystemPrograms.Installed("git.exe", []) is { } git && Path.GetDirectoryName(git) is { } dir)
         {
             return Existing(Path.GetFullPath(Path.Combine(dir, "..", "bin", "bash.exe")))
                 ?? Existing(Path.GetFullPath(Path.Combine(dir, "..", "..", "bin", "bash.exe")));

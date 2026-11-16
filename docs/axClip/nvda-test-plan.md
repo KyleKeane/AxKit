@@ -30,6 +30,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axClip
 1. Options, Hotkey: the notice "Press the key that brings axClip up…"; press Ctrl+Alt+Shift+V: the field says it; Enter: "Hotkey Ctrl+Alt+Shift+V"; the new key shows axClip. Set it back to Ctrl+Shift+Semicolon.
 1a. The key taken over (CP-D1, 2026-11-14): with axClip ended, set `"hotkey": "Windows+Alt+V"` in `%APPDATA%\AxKit\axClip.json`, as 5.8.0 left it. Start axClip: Windows+Alt+V does nothing, Ctrl+Shift+Semicolon brings it up, and Options, Hotkey says "Now: Ctrl+Shift+Semicolon". Then choose Ctrl+Alt+Shift+V, quit and start again: that key still brings axClip up. Set it back.
 2. Options, Keep history between runs (checked), copy two lines, Session, Quit axClip, start it again: the two lines are there. Turn the option off, quit, start again: the history is empty.
+2a. A kept history that cannot be opened (CP-3.6, 2026-11-16): with axClip ended and Keep history on, put `"protectedHistory": "bm90IHByb3RlY3RlZA=="` into `%APPDATA%\AxKit\axClip.json` in place of the value there. Start axClip and bring it up: after the field's name NVDA says "The kept clipboard history could not be read on this computer and starts empty." once; the list is empty, `axClip.json.bad` is beside the file, and Keep history between runs is still checked. Hide it, quit, start again: nothing is said.
 3. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide.
 4. Alt+H, About, Version names axClip among the apps.
 

@@ -80,8 +80,12 @@ opens in the editor for its type (AG-1.4, AG-D1).
   the selected file in axJSON for `.json` and axDown otherwise.
 - AG-1.5a When git is missing (neither on the PATH nor in Program Files, `GitRunner.Program`), its notice offers
   Install Git now (bundle AX-2.9) and, once git is there, opens the repository.
-- AG-1.5 Git itself: `git.exe` in the PATH's full folders, never the current folder (`GitRunner.Program`,
-  `SystemPrograms.OnPath`; the tests point it at a fake `git.cmd` for the output, the timeout and the open pipe),
+- AG-1.5 Git itself: `git.exe` in Git for Windows' install folder (`Git\cmd` under Program Files or Program Files
+  (x86), which only an administrator can write), and only when it is not there in the PATH's full folders that are
+  on a drive of this computer, never the current folder and never a share (`GitRunner.Program`,
+  `SystemPrograms.Installed`; bundle AX-11.5 and `repairs.md` R-70, 2026-11-16: the agreement is for Git by its
+  name, so a `git.exe` put earlier in the PATH must not be what runs; until then the PATH came first; the tests
+  point it at a fake `git.cmd` for the output, the timeout and the open pipe),
   run with `-C <repository>`, `-c core.quotepath=false`, `-c color.ui=never`, `-c core.fsmonitor=false`,
   `-c protocol.ext.allow=never` (security audit S-1, S-2), diffs and `show` with `--no-ext-diff --no-textconv`,
   `GIT_TERMINAL_PROMPT=0` and UTF-8 output; one command at a time, on a background task, never on the UI thread

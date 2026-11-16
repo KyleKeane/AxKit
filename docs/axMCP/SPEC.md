@@ -83,7 +83,7 @@ with Enter; a prompt is filled and fetched like a tool.
 - MP-2.1 Right or Enter on a stopped stdio server shows its level and starts it: the consent notice first, once per
   definition of a server (AX-11.4, AX-11.5, MP-2.1a), then the
   process (`// Outside call, program, MCP servers`) with the server's `env` added to its environment, in the server's
-  folder (or the folder in hand, or the user's profile), its standard error to axMCP's log line by line; then
+  folder (or the folder in hand, or the user's profile), its standard error kept line by line for the server's details (MP-10); then
   `initialize` (protocol version 2025-06-18, `clientInfo` axMCP and its version, no client capabilities),
   `notifications/initialized`, and `tools/list`, `resources/list`, `resources/templates/list` and `prompts/list` for
   the capabilities the server declared, each page followed by its cursor until the last. While it starts the level
@@ -215,7 +215,18 @@ the left ("Tools, 8 tools"), the server's state on the right (the folder in hand
 A server that does not start, or fails its handshake, is a notice naming the server and the system's or the server's
 message; the row stays stopped. A line from the server that is not JSON is logged and skipped. A server that answers
 a request with an error is the notice of MP-3.5. The log holds every method sent and answered with its id and the
-answer's size, and the server's standard error lines, never the arguments or the results, which may hold secrets.
+answer's size, never the arguments or the results, which may hold secrets.
+
+What a server writes to its standard error stays in the window (2026-11-16, bundle `repairs.md` R-74; until then
+the lines went into the log, which the fuller form of a report carries, and a server writes what it likes there, a
+path, an address or a token among it). The last 50 lines since the server's start are kept in memory, each cut at
+2000 characters, and are gone when the window closes (`ServerErrorLines`). The details of a server that was started
+(Tab on its row at the top) end with "Error lines: none", "Error lines: 3, shown below" or "Error lines: 80, the
+last 10 shown below" and then the newest ten lines, one a line, with characters that cannot be seen written out
+(`DisplayText.Visible`); the pane is filled when the row is selected, so going to the row again shows what came
+since. Nothing is said when a line arrives. The log holds, for each line, the server's name, the line's number and
+its length: "fake: error line 3, 41 characters". Tested in `StdioServerTests`, the second test through a real
+process.
 
 ## 5. Architecture
 

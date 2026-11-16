@@ -89,7 +89,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxClip` (the window), `src/AxClip.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxClip.Tests`.
 - Documents: `docs/axClip/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axClip/`, 2 scripts (their workflows are in `docs/axKit/workflows.md`).
+- Automated checks: `tests/scripts/axClip/`, 3 scripts (their workflows are in `docs/axKit/workflows.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axClip.ps1`, or `run.ps1 -App clip`.
 
 ### axCalc

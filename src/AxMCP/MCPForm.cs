@@ -43,6 +43,9 @@ public sealed class MCPForm : ItemForm
 
     private sealed record SectionTag(string Name, string Key);
 
+    /// <summary>How many of a server's newest error lines its details show (MP-10).</summary>
+    private const int ErrorLinesShown = 10;
+
     private static readonly object StartTag = new();
 
     private static readonly SectionTag ToolsSection = new("Tools", "tools");
@@ -305,6 +308,15 @@ public sealed class MCPForm : ItemForm
                 if (RunningOf(server) is { Info: { } info })
                 {
                     lines.Add(new ItemDetailLine($"Server: {info.Name} {info.Version}".TrimEnd()));
+                }
+
+                // MP-10: what the server wrote to its standard error since its last start, here and nowhere else
+                // (the log holds each line's length alone): the count, then the newest lines.
+                if (RunningOf(server) is { } started)
+                {
+                    var errors = started.Server.ErrorLines.Last(ErrorLinesShown);
+                    lines.Add(new ItemDetailLine(ServerErrorLines.Summary(started.Server.ErrorLines.Count, errors.Count)));
+                    lines.AddRange(errors.Select(line => new ItemDetailLine(DisplayText.Visible(line))));
                 }
 
                 return new ItemDetail("Details of " + server.Name, row.Key, null, lines);

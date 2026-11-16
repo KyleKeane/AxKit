@@ -138,4 +138,77 @@ public sealed class ClipHistoryTests
         File.WriteAllText(path, """{ "hotkey": "Windows+Alt+C" }""");
         Assert.Equal("Windows+Alt+C", ClipSettings.Load(path, out _).HotkeyText);
     }
+
+    /// <summary>CP-3.6 (bundle repairs.md R-69): a kept history Windows does not give back is kept once as .bad, the history starts empty and the settings say so for one start.</summary>
+    [Theory]
+    [InlineData("bm90IHByb3RlY3RlZCBmb3IgdGhpcyBhY2NvdW50")]
+    [InlineData("not even base64")]
+    public void A_kept_history_that_cannot_be_opened_is_kept_once_as_bad_and_is_said(string kept)
+    {
+        using var temp = new TempFolder("axclip-tests");
+        var path = Path.Combine(temp.Path, "axClip.json");
+        var text = $$"""{ "hotkey": "Ctrl+Alt+Shift+V", "keepHistory": true, "protectedHistory": "{{kept}}" }""";
+        File.WriteAllText(path, text);
+
+        var settings = ClipSettings.Load(path, out var error);
+        Assert.Null(error);
+        Assert.True(settings.HistoryNotRead);
+        Assert.Empty(settings.History);
+        Assert.True(settings.KeepHistory);
+        Assert.Equal("Ctrl+Alt+Shift+V", settings.HotkeyText);
+        Assert.Equal(text, File.ReadAllText(path + ".bad"));
+
+        // Read again before a save: the copy is not made again.
+        var copied = File.GetLastWriteTimeUtc(path + ".bad");
+        Assert.True(ClipSettings.Load(path, out _).HistoryNotRead);
+        Assert.Equal(copied, File.GetLastWriteTimeUtc(path + ".bad"));
+
+        // The save writes the empty history, so the next start has nothing to say, and the copy stays as it was.
+        settings.Keep([new ClipEntry("new", Now)]);
+        settings.Save(path);
+        var back = ClipSettings.Load(path, out _);
+        Assert.False(back.HistoryNotRead);
+        Assert.Equal("new", back.History.Single().Text);
+        Assert.Equal(text, File.ReadAllText(path + ".bad"));
+    }
+
+    /// <summary>CP-3.6: a history this account protected that is no list of items is not read either; one that is off or absent says nothing.</summary>
+    [Fact]
+    public void What_Windows_gives_back_must_be_a_list_of_items_and_no_kept_history_says_nothing()
+    {
+        using var temp = new TempFolder("axclip-tests");
+        var path = Path.Combine(temp.Path, "axClip.json");
+        var notAList = AxKit.Core.UserSecret.Protect("{ \"text\": 5 }");
+        File.WriteAllText(path, $$"""{ "keepHistory": true, "protectedHistory": "{{notAList}}" }""");
+        Assert.True(ClipSettings.Load(path, out _).HistoryNotRead);
+
+        File.WriteAllText(path, """{ "keepHistory": true }""");
+        Assert.False(ClipSettings.Load(path, out _).HistoryNotRead);
+        File.WriteAllText(path, """{ "keepHistory": false, "protectedHistory": "bm90IHByb3RlY3RlZA==" }""");
+        Assert.False(ClipSettings.Load(path, out _).HistoryNotRead);
+        Assert.Equal("The kept clipboard history could not be read on this computer and starts empty.", ClipSettings.HistoryNotReadText);
+    }
+
+    /// <summary>CP-3.6: the kept total has a limit, and the oldest items are the ones left out.</summary>
+    [Fact]
+    public void The_kept_history_has_a_limit_and_the_oldest_are_dropped_first()
+    {
+        Assert.Equal(8 * 1024 * 1024, ClipSettings.MaxKeptCharacters);
+        List<ClipEntry> newestFirst = [new("aaaa", Now), new("bbbb", Now), new("cc", Now), new("d", Now)];
+        Assert.Equal(["aaaa", "bbbb"], ClipSettings.WithinTheLimit(newestFirst, maxCharacters: 9).Select(entry => entry.Text));
+        // No newer item is kept behind a dropped one: "d" would fit, and is older than "cc", which does not.
+        Assert.Equal(["aaaa", "bbbb", "cc"], ClipSettings.WithinTheLimit(newestFirst, maxCharacters: 10).Select(entry => entry.Text));
+        Assert.Equal(4, ClipSettings.WithinTheLimit(newestFirst).Count);
+
+        // Ten copies of a million characters: eight are kept, the newest ones, through a save and a load.
+        using var temp = new TempFolder("axclip-tests");
+        var path = Path.Combine(temp.Path, "axClip.json");
+        var settings = ClipSettings.Load(path, out _);
+        settings.KeepHistory = true;
+        settings.Keep(Enumerable.Range(0, 10).Select(i => new ClipEntry(new string((char)('a' + i), ClipPolicy.MaxLength), Now)));
+        Assert.Equal(8, settings.History.Count);
+        settings.Save(path);
+        var back = ClipSettings.Load(path, out _);
+        Assert.Equal("abcdefgh", string.Concat(back.History.Select(entry => entry.Text[0])));
+    }
 }

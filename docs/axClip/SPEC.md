@@ -83,6 +83,18 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
   hides and when the process ends, and read at the next start; off, the file holds none, and turning it off empties the
   file's history at once.
 - CP-3.5 Options, Pause recording (Ctrl+P): "Recording paused", "Recording" again; it is off at every start.
+- CP-3.6 **A kept history that cannot be opened, and the limit** (2026-11-16, bundle `repairs.md` R-69;
+  `ClipSettings`, tested). The kept history is encrypted for the Windows account (CP-6.1), so a profile moved to
+  another computer, or a password reset by an administrator, leaves a history Windows no longer gives back. axClip
+  then starts with an empty history, copies the settings file as it was beside itself once, as `axClip.json.bad`
+  (the history in it still encrypted, readable again only on the account that wrote it; Clear history deletes the
+  copy, CP-6.1), writes one line to the log, and says at its first showing, once: "The kept clipboard history
+  could not be read on this computer and starts empty." (`ClipSettings.HistoryNotReadText`; an announcement that
+  interrupts nothing, no notice and no question). Keep history stays on, and the hide that follows saves the new
+  history, so the sentence is said for one start. What Windows gives back and is no list of items counts the same.
+  The kept total has a limit, 8 MB of text (`ClipSettings.MaxKeptCharacters`, 8 x 1024 x 1024 characters): the
+  newest items are kept up to it and the older ones are left out of the file, oldest first, with nothing said; the
+  history in memory keeps its 200 items (CP-3.2).
 
 ### CP-4 Using an item
 
@@ -119,7 +131,8 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
   `checkForUpdates`, `hotkey` (`Ctrl+Shift+Semicolon`), `startWithWindows` (true), `sayFirstMatch` (true), `keepHistory`
   (false), `protectedHistory` (the items, newest first, only while Keep history is on, as JSON of `text` and `copied`, the time, encrypted for the Windows account with DPAPI, `AxKit.Core/UserSecret`, so that the file elsewhere shows nothing; security audit S-21; Clear history also removes a `.bad` copy of the file).
 - CP-6.2 Announcements (AX-7.3): the matches as in CP-2.3 and CP-2.4; "Copied"; "Removed"; "Clipboard history
-  cleared"; "Recording paused"; "Recording"; "The clipboard history is empty"; the Hotkey notice's words (AS-4.2);
+  cleared"; "Recording paused"; "Recording"; "The clipboard history is empty"; "The kept clipboard history could not be read
+  on this computer and starts empty." (CP-3.6); the Hotkey notice's words (AS-4.2);
   the bundle's. Nothing is said when the window hides, and nothing when a copy is kept.
 - CP-6.3 The log is `%LOCALAPPDATA%\AxKit\logs\axClip.log`: the start, the hotkey, the showing and hiding, a paste or a
   paste left undone, errors; never a copied text.

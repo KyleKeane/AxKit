@@ -121,6 +121,24 @@ If the hotkeys do nothing, start axHelp again from the Start menu. When the runn
 new start asks "axHelp is running but does not answer. End it and start again?". No is the default and changes
 nothing; Yes ends that axHelp alone and starts it again; the conversation's window is not ended.
 
+If Claude's working folder is deleted (Documents, axKit Claude), nothing breaks. axHelp makes the folder again the
+next time you use it, and axKit's own files in it, the guides and the two rule files, are written back; CLAUDE.md and
+the agent come back as axHelp first wrote them. What is lost is what was not axKit's: the answers you gave Claude
+Code with "always allow", so it asks again, and every file of your own there, your changes to CLAUDE.md and the
+screenshots among them.
+
+A mistyped value in a settings file, axHelp's or any app's, costs that value alone. The app starts with that one
+setting at its default and every other setting as you had it, and it names the value as it starts: "these settings
+were not understood and are at their defaults", then the names. A copy of the file as it was is kept beside it, with .bad
+at the end of its name.
+
+A setting that decides what is run or what Claude may read counts only as axKit wrote it: the place of Claude Code,
+the switch Use Claude in axKit, the folders Claude may read and Claude's working folder, and in the other apps a
+shell, a server, a program or a trusted repository. When such a setting was changed in its settings file outside
+axKit, by hand or by another program, it is not used: it is at its default, the app says that it was changed outside
+axKit and is not used, and your other settings stay. The file as it was found is kept beside it, with .changed at the
+end of its name.
+
 ## About
 
 Help, About.

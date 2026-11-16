@@ -6,10 +6,9 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 7 (7 low)
-- **done**: 61 (12 high, 29 medium, 20 low)
+- **done**: 67 (12 high, 29 medium, 26 low)
 - **deferred**: 1 (1 medium)
-- **declined**: 5 (4 medium, 1 low)
+- **declined**: 6 (4 medium, 2 low)
 
 ## The principles
 
@@ -21,57 +20,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - **P6. Writes are whole or not at all.** A file a user or the app depends on is written through a temporary file and put in place in one step; an undo step is dropped only once it has been applied. (2 findings)
 - **P7. Tests check the built thing.** What matters is checked on the running window or the built data; a test that reads source text is lint, a help and never the proof. (1 finding)
 - **P8. Documents describe the present.** Reference text says what is true now, in small files a reader with little context can hold; history lives in the changelog and git; open work lives in the priorities list. (9 findings)
-
-## Open
-
-### R-68, low, core: The recently closed list takes any text as a path and is written by several windows at once
-
-- Where: src/AxKit.Core/RecentlyClosed.cs; src/AxKit.Core/RecentPaths.cs; src/AxKit.Forms/WindowMenu.cs
-- Principle: P4
-- Fix: Only full paths are kept, so that an entry can never be read as an option; one writer at a time.
-- Note: Found on 2026-11-16 by the second reading.
-
-### R-69, low, apps: A kept clipboard history that can no longer be opened is dropped without a word
-
-- Where: src/AxClip.Core/ClipSettings.cs; src/AxClip/ClipForm.cs
-- Principle: P1
-- Fix: The unreadable history is kept once beside the file and the window says the history starts empty; the kept total has a limit.
-- Note: Found on 2026-11-16 by the second reading: a profile moved to another computer, a password reset.
-
-### R-70, low, security: git and PowerShell 7 are taken from the PATH before Program Files
-
-- Where: src/AxGit.Core/GitRunner.cs; src/AxTerminal.Core/ShellLauncher.cs
-- Principle: P1
-- Fix: The install folders only an administrator can write come first, and PATH folders that are not local are passed over.
-- Note: Found on 2026-11-16 by the second reading, plausible: what the consent and the start line say of the path is to be read first.
-
-### R-71, low, security: axHelp's model setting reaches Claude Code's command line unchecked
-
-- Where: src/AxHelp.Core/HelpSettings.cs
-- Principle: P1
-- Fix: A model name is letters, digits, dots, hyphens and brackets, starting with a letter or digit; anything else is the default.
-- Note: Found on 2026-11-16 by the second reading, plausible.
-
-### R-72, low, apps: A list's action keys in list.json are not checked
-
-- Where: src/AxTask/TaskForm.ActionKeys.cs
-- Principle: P1
-- Fix: An action key that opens or moves says what it now does and waits for a second press when the list's keys differ from the ones this install wrote or accepted.
-- Note: Found on 2026-11-16 by the second reading: a shared or rewritten list.
-
-### R-73, low, security: A window started as a test run looks like the user's own
-
-- Where: src/AxKit.Core/AutomationEnvironment.cs
-- Principle: P1
-- Fix: Such a window's title says that it is a test run.
-- Note: Found on 2026-11-16 by the second reading, plausible: any program can start the exe with a secret and a home folder of its own choosing.
-
-### R-74, low, apps: An MCP server's error lines go into axMCP's log
-
-- Where: src/AxMCP.Core/StdioServer.cs; src/AxMCP/MCPForm.cs
-- Principle: P4
-- Fix: The log holds a line's length; the text stays in the window.
-- Note: Found on 2026-11-16 by the second reading: the fuller form of a report would carry the lines.
 
 ## Done
 
@@ -593,6 +541,54 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: read; the update flow is exercised only by a real update, so this is owed a run at the next release
 - Note: Found on 2026-11-16 by the resilience audit. Low: a program that can write there can write the install folder too.
 
+### R-68, low, core: The recently closed list takes any text as a path and is written by several windows at once
+
+- Where: src/AxKit.Core/RecentlyClosed.cs; src/AxKit.Core/RecentPaths.cs; src/AxKit.Forms/WindowMenu.cs
+- Principle: P4
+- Fix: Only full paths are kept, so that an entry can never be read as an option; one writer at a time.
+- Checked by: tests/AxKit.Tests/RecentPathsTests (Only_whole_paths_are_kept_so_no_entry_can_be_read_as_an_option); tests/AxKit.Tests/RecentlyClosedTests (Only_whole_paths_are_read_from_the_file_and_written_to_it, Writers_at_the_same_time_all_end_up_on_the_list, A_writer_that_waits_too_long_writes_nothing_and_does_not_hang)
+- Note: Found on 2026-11-16 by the second reading. RecentPaths.Sanitize and RecentlyClosed.Read keep whole paths only (RecentPaths.IsWhole, RecentlyClosed.Keeps); RecentlyClosed.Remember reads, adds and writes under a mutex named after the file and gives up after half a second with a line in the log (SPEC AX-9.4). Left as it is: a settings class's own save of its recent list is the merge of R-62, where a list both windows changed is the last writer's.
+
+### R-69, low, apps: A kept clipboard history that can no longer be opened is dropped without a word
+
+- Where: src/AxClip.Core/ClipSettings.cs; src/AxClip/ClipForm.cs
+- Principle: P1
+- Fix: The unreadable history is kept once beside the file and the window says the history starts empty; the kept total has a limit.
+- Checked by: tests/AxClip.Tests/ClipHistoryTests (A_kept_history_that_cannot_be_opened_is_kept_once_as_bad_and_is_said, What_Windows_gives_back_must_be_a_list_of_items_and_no_kept_history_says_nothing, The_kept_history_has_a_limit_and_the_oldest_are_dropped_first); tests/scripts/axClip/03-history-not-read for the window; owed: a hearing of the sentence with NVDA at the first showing after a hidden start (nvda-test-plan 4.2a)
+- Note: Found on 2026-11-16 by the second reading: a profile moved to another computer, a password reset. The window says once, at its first showing, "The kept clipboard history could not be read on this computer and starts empty."; the settings file as it was is copied once to axClip.json.bad, the history in it still encrypted, and Clear history deletes the copy; the kept total is 8 MB of text, the oldest left out first (docs/axClip/SPEC.md CP-3.6). Left open: axClip started hidden and ended before it was ever shown saves the empty history without the sentence having been said; the log and the copy hold it.
+
+### R-70, low, security: git and PowerShell 7 are taken from the PATH before Program Files
+
+- Where: src/AxGit.Core/GitRunner.cs; src/AxTerminal.Core/ShellLauncher.cs
+- Principle: P1
+- Fix: The install folders only an administrator can write come first, and PATH folders that are not local are passed over.
+- Checked by: tests/AxKit.Tests/SystemProgramsTests (An_installed_program_is_found_in_its_install_folder_before_the_path_and_never_in_a_path_folder_off_this_computer, The_install_folders_are_under_Program_Files_as_Windows_names_them); tests/AxGit.Tests and tests/AxTerminal.Tests still pass with the installed git and PowerShell; owed: a live start of axGIT and of PowerShell 7 in axTerminal on a computer where the program is installed for the user alone (found through the PATH)
+- Note: Found on 2026-11-16 by the second reading. Read first, as asked: the agreements are for the program's name alone (the consent's targets are "Git" and "PowerShell 7"; only a custom shell's target holds its command line, R-53), the question's words name no path, and axTerminal's start line is "Shell started: PowerShell 7 in <folder>", again without the path; axGIT says no path of git anywhere. So nothing told the user which file ran, and the finding stands. git.exe and pwsh.exe are now looked for in Git\cmd and PowerShell\7 under Program Files and Program Files (x86), as Windows names those folders, before the PATH, and PATH folders that are not on a drive of this computer are passed over (SystemPrograms.Installed; SPEC AX-11.5; the same for the git.exe Git Bash is found beside and for a powershell.exe on the PATH). Left as they are: axMCP's servers and KeePassXC's tool are still found through the whole PATH (a server's agreement is for its resolved path, R-61; KeePassXC's tool must carry its publisher's signature, R-55).
+
+### R-71, low, security: axHelp's model setting reaches Claude Code's command line unchecked
+
+- Where: src/AxHelp.Core/HelpSettings.cs
+- Principle: P1
+- Fix: A model name is letters, digits, dots, hyphens and brackets, starting with a letter or digit; anything else is the default.
+- Checked by: tests/AxHelp.Tests/HelpTests (Only_a_models_name_is_kept_and_reaches_the_command_line)
+- Note: Found on 2026-11-16 by the second reading. HelpSettings.IsModelName, the pattern ^[A-Za-z0-9][A-Za-z0-9._\[\]-]*$ with a hundred characters at most, checked at the load and once more where the command line is made; a refused value is the fast model, with its length in the log and nothing said (docs/axHelp/SPEC.md HE-2.3). Not touched: axClaude's own --model, which is the user's command line and passed on as typed.
+
+### R-72, low, apps: A list's action keys in list.json are not checked
+
+- Where: src/AxTask/TaskForm.ActionKeys.cs
+- Principle: P1
+- Fix: An action key that opens or moves says what it now does and waits for a second press when the list's keys differ from the ones this install wrote or accepted.
+- Checked by: tests/AxTask.Tests/ActionKeysTests (A_key_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not, An_acceptance_is_for_one_list_one_key_and_one_action_and_is_kept_under_the_seal, The_acceptances_are_kept_to_a_limit_the_oldest_going_first); tests/scripts/axTask/04-action-keys for the window (the first press says, the second does, the third acts at once); owed: a hearing with NVDA (nvda-test-plan section 5, step 5a)
+- Note: Found on 2026-11-16 by the second reading: a shared or rewritten list. The words: "Ctrl+2 in this list now moves to ../Later. Press it again to do it." The seal is per list and key, not per list: an acceptance is the bundle's seal (SettingsSeal.Of) over the list's folder, the digit and the action, kept in axTask's settings as acceptedActionKeys, so that accepting one key says nothing of the eight others the user has not heard (docs/axTask/SPEC.md TK-7a.3). A key written in Actions, Action keys is accepted as it is written. Left open: every move or open key of a list made before this version asks once; a key set in the form and then taken back by Ctrl+Z stays accepted.
+
+### R-74, low, apps: An MCP server's error lines go into axMCP's log
+
+- Where: src/AxMCP.Core/StdioServer.cs; src/AxMCP/MCPForm.cs
+- Principle: P4
+- Fix: The log holds a line's length; the text stays in the window.
+- Checked by: tests/AxMCP.Tests/StdioServerTests (An_error_line_is_kept_for_the_window_and_only_its_length_is_logged, What_a_started_server_writes_to_its_standard_error_is_not_in_the_log, the second through a real process); tests/scripts/axMCP still pass; owed: a window check and a hearing of a server's details with error lines, which the fake server of the scripts does not write
+- Note: Found on 2026-11-16 by the second reading: the fuller form of a report would carry the lines. Until now the lines were nowhere in the window, only in the log. They are kept in memory, the last 50 since the server's start, and the details of a started server end with "Error lines: none" or their number and the newest ten; the log holds "<server>: error line 3, 41 characters" (docs/axMCP/SPEC.md MP-10).
+
 ## Deferred
 
 ### R-15, medium, framework: AxKitForm is one class of about 3,400 lines in twelve files that every app inherits whole
@@ -644,3 +640,10 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: The window keeps the denied-until time by client program, as it does for a denied run.
 - Checked by: tests/scripts/mcp/01-read-and-pair.txt, a second broker after Deny
 - Note: Declined 2026-11-13: that a new session of a client is asked again is the design (MC-6.4, held by tests/scripts/mcp/01-read-and-pair.txt): a user who denied by mistake restarts the client to be asked. The question is unprompted with Deny as default and a moment in which keys do nothing, so a client that restarts its broker gains a repeated question, never an answer.
+
+### R-73, low, security: A window started as a test run looks like the user's own
+
+- Where: src/AxKit.Core/AutomationEnvironment.cs
+- Principle: P1
+- Fix: Such a window's title says that it is a test run.
+- Note: Declined on 2026-11-16 under the boundary the user set that day: axKit answers for what axKit does, and a program that can start AxKit.exe with a home and a secret of its own choosing already runs as the user and can do anything the user can. A mark in the title would also cost 64 pinned titles in 26 scripts and the exact-title lookups of the background apps. Found on 2026-11-16 by the second reading, plausible: any program can start the exe with a secret and a home folder of its own choosing. Left open on 2026-11-16 after reading how a title is made: 26 scripts of tests/scripts pin 64 whole titles ("title":"..." with its closing quote), each of which ", test run" at the end would change, and the title is more than a label: a second start of axStart, axClip, axHelp and of axHelp's conversation finds the running window by its exact title (BundleWindows.Titled), and titles are set in four kinds of place (AxKitForm.SetTitle, ConsoleForm, HotkeyForm and the windows' own UpdateTitle). So the words in the title mean either editing those 26 scripts or making a test run's windows look themselves up differently from the user's, which is the code the scripts are there to check. A way that changes no title is to be chosen first, for example the words in the window's accessible description or as the first thing a test run's window says.

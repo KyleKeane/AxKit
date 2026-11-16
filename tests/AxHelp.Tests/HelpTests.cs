@@ -148,6 +148,36 @@ public sealed class HelpTests : IDisposable
         Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools", "--hidden"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null, hidden: true));
     }
 
+    /// <summary>HE-2.3 (bundle repairs.md R-71): only a model's name is kept and reaches Claude Code's command line; anything else is the default.</summary>
+    [Theory]
+    [InlineData("haiku", "haiku")]
+    [InlineData(" opus ", "opus")]
+    [InlineData("claude-sonnet-4-5", "claude-sonnet-4-5")]
+    [InlineData("opus[1m]", "opus[1m]")]
+    [InlineData("claude_3.7", "claude_3.7")]
+    [InlineData("--dangerously-skip-permissions", HelpSettings.FastModel)]
+    [InlineData("-p", HelpSettings.FastModel)]
+    [InlineData("opus --add-dir C:\\", HelpSettings.FastModel)]
+    [InlineData("opus\" --x", HelpSettings.FastModel)]
+    [InlineData("opus&calc", HelpSettings.FastModel)]
+    [InlineData(".hidden", HelpSettings.FastModel)]
+    [InlineData("op\nus", HelpSettings.FastModel)]
+    [InlineData("opüs", HelpSettings.FastModel)]
+    [InlineData("", HelpSettings.FastModel)]
+    [InlineData(null, HelpSettings.FastModel)]
+    public void Only_a_models_name_is_kept_and_reaches_the_command_line(string? written, string kept)
+    {
+        Assert.Equal(kept, HelpSettings.ModelOrDefault(written));
+        Assert.Equal(kept, HelpSettings.ConversationArguments(@"C:\w", written!, null)[4]);
+
+        Directory.CreateDirectory(_folder);
+        var path = Path.Combine(_folder, "axHelp.json");
+        File.WriteAllText(path, System.Text.Json.JsonSerializer.Serialize(new { model = written }));
+        Assert.Equal(kept, HelpSettings.Load(path, out _).Model);
+        Assert.False(HelpSettings.IsModelName(new string('a', HelpSettings.MaxModelLength + 1)));
+        Assert.All(HelpSettings.Models, choice => Assert.True(HelpSettings.IsModelName(choice.Model)));
+    }
+
     /// <summary>HE-2.7: the conversation is started ahead only when axHelp started hidden, the setting is on, the agreement is given and Claude Code is installed.</summary>
     [Fact]
     public void The_conversation_is_started_hidden_only_with_all_four_conditions()

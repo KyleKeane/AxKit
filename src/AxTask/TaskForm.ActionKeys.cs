@@ -69,6 +69,11 @@ public sealed partial class TaskForm
             return;
         }
 
+        if (ActionKeys.AsksFirst(action) && !AcceptedOrAsked(digit, action))
+        {
+            return;
+        }
+
         if (action.Set is { } set)
         {
             SetFields(item, set, action.Name);
@@ -81,6 +86,40 @@ public sealed partial class TaskForm
         {
             OpenTarget(item, open);
         }
+    }
+
+    /// <summary>The key and action the window last asked about (TK-7a.3), as <see cref="ActionKeys.MarkText"/>; null when none waits for its second press.</summary>
+    private string? _askedActionKey;
+
+    /// <summary>
+    /// Whether a key that moves or opens may act now (SPEC.md TK-7a.3; bundle repairs.md R-72): yes when this install
+    /// wrote the action or the user accepted it before. Otherwise the first press says what the key now does in this
+    /// list and does nothing; the same key pressed again, with the list's action still the same, accepts it, for good
+    /// where the settings can be saved, and acts. A list whose <c>list.json</c> came from elsewhere or was rewritten
+    /// so never moves an item or opens a program or an address on the first press.
+    /// </summary>
+    private bool AcceptedOrAsked(int digit, ListAction action)
+    {
+        if (_settings.AcceptsActionKey(SettingsPath, _folder, digit, action))
+        {
+            return true;
+        }
+
+        var asked = ActionKeys.MarkText(_folder, digit, action);
+        if (_askedActionKey == asked)
+        {
+            _askedActionKey = null;
+            if (_settings.AcceptActionKey(SettingsPath, _folder, digit, action))
+            {
+                SaveSettings();
+            }
+
+            return true;
+        }
+
+        _askedActionKey = asked;
+        Announce(ActionKeys.AskText(digit, action), true);
+        return false;
     }
 
     /// <summary>A Set action (RP-8.1): the fields written as one step.</summary>
@@ -198,6 +237,12 @@ public sealed partial class TaskForm
         var before = Changes.ReadOrNull(listFile);
         var details = ItemFolder.ReadList(folder) ?? ItemDocument.NewList(TaskRules.TemplateOf(null));
         var changed = ActionKeys.With(details, digit, action);
+        // TK-7a.3: an action written here is this install's own and is not asked about.
+        if (action is not null && ActionKeys.AsksFirst(action) && _settings.AcceptActionKey(SettingsPath, folder, digit, action))
+        {
+            SaveSettings();
+        }
+
         Commit(new Step([FileChange.Write(listFile, before, changed.ToText())], action is null ? $"Ctrl+{digit} cleared" : $"Ctrl+{digit}: {action.Name}, {action.Described}"), SelectedKey());
     }
 }

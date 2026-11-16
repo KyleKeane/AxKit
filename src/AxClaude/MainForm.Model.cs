@@ -120,7 +120,7 @@ internal sealed partial class MainForm
         if (_heldLines.Count > 0)
         {
             // For the shadow's count (MainForm.Flow.cs): the lines this code speaks, before the user's silent words.
-            FlowSpoke(_heldLines.Count);
+            FlowSpoke(_heldLines);
             var text = new StringBuilder();
             // FR-7.4a: a line holding one of the user's silent words stays in the conversation, unspoken, whole: its
             // row and the rows its wrapping joined to it.

@@ -38,7 +38,10 @@
   names of `Dispatch.Apps`, ai-tools and nvda-only, never by listing resources) as `WorkflowPageName`, and
   `WindowCommandsName`, embedded from `docs/axKit` as `tools/workflows.ps1` wrote them when axKit is built (a new group
   that is not an app needs its name in `WorkflowPages`; `AiDocumentationTests` fails on a page left out); `Rule`
-  tells Claude how to answer from them.
+  tells Claude how to answer from them and ends with `Manner` (AH-7.3a, 2026-11-16: no remark on the user's rest,
+  health or the time of day unless asked; in axKit's rule file, which is kept at its text, never in the user's
+  CLAUDE.md). The tools' rule (`AiToolsRule`) has `ListedNotLoaded`, one bullet: tools listed and not yet loaded are
+  loaded without a word to the user. A sentence added to either rule is a constant the tests compare.
 - `AiCaution` (AX-11.12, root rule 11, 2026-11-13): the words that go with anything an AI wrote or asks to do, one place for every window: `Written` (under an answer of AI help), `Short` (in the name of an offered command's question), `Command` (the first section of its explanation), `Asked` (in the name of the list an AI tool's run of a window command asks through) and `Request` (in that question's text and explanation). A new feature of the kind takes its words from here.
 - `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
   for the bundle, `%APPDATA%\AxKit\consent.json`: `Given`, `Record` (a file that cannot be written is logged and the

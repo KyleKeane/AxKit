@@ -33,10 +33,33 @@ public sealed class ClipSettings : HotkeySettings
 
     public static string DefaultPath => AppPaths.SettingsFile("axClip");
 
+    /// <summary>What the window says once when <see cref="HistoryNotRead"/> (CP-3.6; bundle repairs.md R-69).</summary>
+    public const string HistoryNotReadText = "The kept clipboard history could not be read on this computer and starts empty.";
+
+    /// <summary>
+    /// The most text a kept history holds, in characters (CP-3.6): about 8 MB. The newest items are kept up to it and
+    /// the older ones are left out of the file; the history in memory is not cut by it.
+    /// </summary>
+    public const int MaxKeptCharacters = 8 * 1024 * 1024;
+
+    /// <summary>
+    /// The file held a kept history that could not be opened (CP-3.6): Windows did not give it back (a profile moved
+    /// to another computer, a password reset) or what it gave was no list of items. The history starts empty, the
+    /// file as it was is kept beside it once, and the window says <see cref="HistoryNotReadText"/>.
+    /// </summary>
+    [JsonIgnore]
+    public bool HistoryNotRead { get; private set; }
+
     public static ClipSettings Load(string path, out string? error)
     {
         var settings = SettingsFile.Load<ClipSettings>(path, out error);
         settings.Sanitize();
+        if (settings.HistoryNotRead)
+        {
+            // Not an error of axClip's: the account or the computer changed. The window says it.
+            Log.Info("The kept clipboard history could not be read and starts empty" + (KeepUnreadCopy(path) ? "; the file as it was is kept with .bad at the end of its name" : string.Empty));
+        }
+
         return settings;
     }
 
@@ -48,16 +71,46 @@ public sealed class ClipSettings : HotkeySettings
 
     /// <summary>The window's history into the settings, or nothing of it with Keep history off.</summary>
     public void Keep(IEnumerable<ClipEntry> history) =>
-        History = KeepHistory ? history.Take(ClipHistory.MaxItems).ToList() : [];
+        History = KeepHistory ? WithinTheLimit(history) : [];
+
+    /// <summary>
+    /// The newest items of a history, at most <see cref="ClipHistory.MaxItems"/> and at most
+    /// <see cref="MaxKeptCharacters"/> of text together (CP-3.6): the list ends before the first item that would go
+    /// over, so the oldest are the ones dropped and no newer item is kept behind a dropped one.
+    /// </summary>
+    public static List<ClipEntry> WithinTheLimit(IEnumerable<ClipEntry> newestFirst, int maxCharacters = MaxKeptCharacters)
+    {
+        var kept = new List<ClipEntry>();
+        long total = 0;
+        foreach (var entry in newestFirst.Take(ClipHistory.MaxItems))
+        {
+            total += entry.Text.Length;
+            if (total > maxCharacters)
+            {
+                break;
+            }
+
+            kept.Add(entry);
+        }
+
+        return kept;
+    }
 
     private void Sanitize()
     {
         SanitizeHotkey();
-        History = KeepHistory && ProtectedHistory is { } kept && UserSecret.Unprotect(kept) is { } json ? Read(json) : [];
-        History = History.Where(entry => entry is { Text.Length: > 0 and <= ClipPolicy.MaxLength }).Take(ClipHistory.MaxItems).ToList();
+        List<ClipEntry>? read = null;
+        if (KeepHistory && !string.IsNullOrEmpty(ProtectedHistory))
+        {
+            read = UserSecret.Unprotect(ProtectedHistory) is { } json ? Read(json) : null;
+            HistoryNotRead = read is null;
+        }
+
+        History = WithinTheLimit((read ?? []).Where(entry => entry is { Text.Length: > 0 and <= ClipPolicy.MaxLength }));
     }
 
-    private static List<ClipEntry> Read(string json)
+    /// <summary>The items of the JSON; null when it is no list of items.</summary>
+    private static List<ClipEntry>? Read(string json)
     {
         try
         {
@@ -65,7 +118,32 @@ public sealed class ClipSettings : HotkeySettings
         }
         catch (JsonException)
         {
-            return [];
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// The settings file copied beside itself as <c>.bad</c> (CP-3.6), since the next save writes the empty history
+    /// over the one that could not be opened: on the computer or account it was kept on it can still be read. The
+    /// copy holds the history only as the file did, encrypted. Once: not again while the copy is as new as the file.
+    /// False when the copy is there already or cannot be made. Clear history removes it (CP-6.1).
+    /// </summary>
+    private static bool KeepUnreadCopy(string path)
+    {
+        var bad = path + ".bad";
+        try
+        {
+            if (!File.Exists(path) || (File.Exists(bad) && File.GetLastWriteTimeUtc(bad) >= File.GetLastWriteTimeUtc(path)))
+            {
+                return false;
+            }
+
+            File.Copy(path, bad, overwrite: true);
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
         }
     }
 }

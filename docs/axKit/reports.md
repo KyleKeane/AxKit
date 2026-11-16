@@ -402,7 +402,9 @@ levers are built now.
   `claude` or `terminal` starts its program only in a folder on a drive of this computer: on
   a share or a mapped drive the key says "Not started: axTerminal would run in a folder that is not on a drive of this
   computer" and starts nothing, since a `list.json` may come from a list the user did not write (security audit S-5's
-  rule; the AI tools' `axkit_open` never starts the two at all, mcp.md; 2026-11-09).
+  rule; the AI tools' `axkit_open` never starts the two at all, mcp.md; 2026-11-09). For the same reason a `move` or
+  an `open` that this install neither wrote nor accepted is said at the first press and done at the second
+  (docs/axTask/SPEC.md TK-7a.3, 2026-11-16).
 - **RP-8.2 Assigning them.** Actions → "Action keys…": one form of standard controls (bundle AX-8.10, since
   2026-11-14; a list of the keys and then up to three notices before): the list of the nine keys with their names
   ("Ctrl+1. Done", the full stop as AX-8.5's pause); the name, where an empty one removes the key; a list of what the

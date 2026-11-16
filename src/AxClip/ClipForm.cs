@@ -42,6 +42,9 @@ public sealed class ClipForm : HotkeyForm
     {
         _settings = settings;
         _history = new ClipHistory(settings.History);
+        // CP-3.6: a kept history that could not be opened is said at the first showing; the hide after it saves the
+        // empty one, so it is said for one start.
+        SayAtStart(settings.HistoryNotRead ? ClipSettings.HistoryNotReadText : null);
 
         // ---- menus and keys (CP-2.4, CP-5.1, CP-5.2): one command list (docs/axKit/app-kit.md AK-2), each key from the
         // table; the match keys first, as the switch had them ----

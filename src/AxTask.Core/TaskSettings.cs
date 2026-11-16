@@ -63,6 +63,44 @@ public sealed class TaskSettings : WindowSettings
         return full;
     }
 
+    /// <summary>The most acceptances kept (TK-7a.3): the newest; beyond them the oldest goes, and its key asks once more.</summary>
+    public const int MaxAcceptedActionKeys = 500;
+
+    /// <summary>
+    /// The action keys of the kinds that move or open (<see cref="ActionKeys.AsksFirst"/>) that this install wrote in
+    /// Actions, Action keys or the user accepted by a second press (SPEC.md TK-7a.3; bundle repairs.md R-72), the
+    /// newest last: each the seal of <see cref="ActionKeys.MarkText"/> under the key of the bundle's settings seal
+    /// (<see cref="SettingsSeal.Of"/>, bundle AX-5.6), so that a line written into this file by hand or by another
+    /// program accepts nothing. Nothing of a list is readable from it.
+    /// </summary>
+    public List<string> AcceptedActionKeys { get; set; } = [];
+
+    /// <summary>The seal of one list's key and action for the settings file at <paramref name="settingsPath"/>; empty when no key of the seal can be had, and then nothing is ever accepted beyond the window's run.</summary>
+    public static string ActionKeyMark(string settingsPath, string listFolder, int digit, ListAction action) =>
+        SettingsSeal.Of(settingsPath, ActionKeys.MarkText(listFolder, digit, action));
+
+    /// <summary>Whether the key's action in that list is one this install wrote or the user accepted.</summary>
+    public bool AcceptsActionKey(string settingsPath, string listFolder, int digit, ListAction action) =>
+        ActionKeyMark(settingsPath, listFolder, digit, action) is { Length: > 0 } mark && AcceptedActionKeys.Contains(mark);
+
+    /// <summary>The key's action in that list is accepted from now on; false when nothing changed (it was already, or there is no seal).</summary>
+    public bool AcceptActionKey(string settingsPath, string listFolder, int digit, ListAction action)
+    {
+        var mark = ActionKeyMark(settingsPath, listFolder, digit, action);
+        if (mark.Length == 0 || AcceptedActionKeys.Contains(mark))
+        {
+            return false;
+        }
+
+        AcceptedActionKeys.Add(mark);
+        if (AcceptedActionKeys.Count > MaxAcceptedActionKeys)
+        {
+            AcceptedActionKeys.RemoveRange(0, AcceptedActionKeys.Count - MaxAcceptedActionKeys);
+        }
+
+        return true;
+    }
+
     public static string DefaultPath => AppPaths.SettingsFile("axTask");
 
     /// <summary>The top folder in use: the chosen one, or the default.</summary>
@@ -80,6 +118,7 @@ public sealed class TaskSettings : WindowSettings
     private void Sanitize()
     {
         SanitizeWindow();
+        AcceptedActionKeys = [.. (AcceptedActionKeys ?? []).Where(mark => !string.IsNullOrWhiteSpace(mark)).Distinct().TakeLast(MaxAcceptedActionKeys)];
         if (string.IsNullOrWhiteSpace(Folder))
         {
             Folder = null;

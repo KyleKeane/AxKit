@@ -169,6 +169,38 @@ public sealed class AiDocumentationTests
         Assert.StartsWith("# axKit's guides", AiDocumentation.Rule, StringComparison.Ordinal);
     }
 
+    /// <summary>AH-7.3a: axKit's own rule file, the one it keeps at its text, ends with what Claude does not remark on unless asked.</summary>
+    [Fact]
+    public void The_rule_ends_with_what_claude_does_not_remark_on_unless_asked()
+    {
+        Assert.EndsWith(AiDocumentation.Manner, AiDocumentation.Rule, StringComparison.Ordinal);
+        var manner = Regex.Replace(AiDocumentation.Manner, @"\s+", " ");
+        foreach (var word in new[] { "rest", "health", "time of day", "unless the user asks", "clock may not be the user's time" })
+        {
+            Assert.Contains(word, manner, StringComparison.Ordinal);
+        }
+
+        // It is in the file axKit repairs, and is written with it.
+        var written = AiDocumentation.Files("1.2.3").Single(file => file.Path == AiDocumentation.RulePath).Text;
+        Assert.Contains(AiDocumentation.Manner, written, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// axHelp's guide, from which Claude answers, says what is true of a deleted working folder (AH-7.7) and of a
+    /// settings file with a mistyped value (AX-5.3) or one changed outside axKit (AX-5.6), in the windows' own words.
+    /// </summary>
+    [Fact]
+    public void AxHelps_guide_says_what_a_deleted_working_folder_and_a_changed_settings_file_cost()
+    {
+        var guide = Regex.Replace(AiDocumentation.Guide(Dispatch.Of(Dispatch.AxHelp))!, @"\s+", " ");
+        Assert.Contains(SettingsFile.NotUnderstood, guide, StringComparison.Ordinal);
+        Assert.Contains(SettingsSeal.CopyKept, guide, StringComparison.Ordinal);
+        Assert.Contains(SettingsSeal.ChangedOutside, guide, StringComparison.Ordinal);
+        Assert.Contains(Path.GetFileName(AiSettings.DefaultWorkingFolder), guide, StringComparison.Ordinal);
+        Assert.Contains("If Claude's working folder is deleted", guide, StringComparison.Ordinal);
+        Assert.Contains("\"always allow\"", guide, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void The_files_are_written_where_missing_and_left_alone_while_the_version_is_current()
     {
@@ -220,7 +252,7 @@ public sealed class AiDocumentationTests
             written.Order());
         Assert.Equal(right, File.ReadAllText(guide));
         Assert.Equal(rightRule, File.ReadAllText(rule));
-        Assert.DoesNotContain("without asking", File.ReadAllText(toolsRule), StringComparison.Ordinal);
+        Assert.DoesNotContain("Always run every command", File.ReadAllText(toolsRule), StringComparison.Ordinal);
         Assert.False(AiDocumentation.RulesNeedRepair(temp.Path));
         Assert.Equal("mine", File.ReadAllText(mine));
         Assert.Equal("my own instructions", File.ReadAllText(instructions));

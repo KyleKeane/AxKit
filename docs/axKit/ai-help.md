@@ -246,7 +246,12 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   user's own, and nothing else is changed; a key or a menu is never invented, and where a guide and
   `window-commands.md` differ, `window-commands.md` is right; when no goal covers the question, the app's guide and
   `window-commands.md`, saying when it is not sure. Nothing in it tells Claude to offer to do the steps (WF-D-24):
-  when Claude may run a command stays the AI tools' rule file's (AH-8). Claude Code loads every Markdown file
+  when Claude may run a command stays the AI tools' rule file's (AH-8). **AH-7.3a** (2026-11-16, from the user's own
+  axHelp session, in which Claude remarked on the hour and on rest): the file ends with one paragraph
+  (`AiDocumentation.Manner`): never remark on the user's rest, health or the time of day unless the user asks, no
+  word that it is late or early, no suggestion of a break, sleep or stopping for the day; the computer's clock may
+  not be the user's time. It is in this file, which axKit keeps at its text (AH-7.7), and not in the user's
+  CLAUDE.md, which is the user's to change. Claude Code loads every Markdown file
   of a folder's `.claude\rules` at its start, with CLAUDE.md, in print mode and in a conversation alike
   (code.claude.com/docs/en/memory, "Organize rules with .claude/rules/"; read 2026-11-15). So the instruction also
   reaches a user whose CLAUDE.md exists already: that file is theirs, written once, and is never read or changed for
@@ -320,7 +325,11 @@ file of the working folder.
 - AH-8.2 **What it says** (`AxKit.Core/Ai/AiToolsRule.Text`), plain Markdown for a model, about 150 lines:
   1. what the tools are for; that the user is blind and hears every action, so one short sentence before an action
      and one after; reading before acting; that every call is in the user's log; that the first call may make an
-     axKit window ask the user to allow Claude Code;
+     axKit window ask the user to allow Claude Code; and (`AiToolsRule.ListedNotLoaded`, 2026-11-16, from the user's
+     own axHelp session: Claude Code may list a server's tools by name and load each at its first use, and Claude
+     told the user they were not loaded and asked whether to load them) that tools listed and not yet loaded are
+     loaded as needed without asking the user and without saying that they were not loaded, and that, asked whether
+     axKit's tools are there, the answer is yes;
   2. **the language rules**: what the user is likely to say and what answers it. "What is on my screen", "what is
      open": `axkit_windows`, then `axkit_window_state`, then `axkit_window_text` or `axkit_window_list`. "What did
      it just say": `axkit_window_said`. "Open ...": `axkit_apps`, `axkit_open`, never axClaude or axTerminal.

@@ -242,6 +242,7 @@ Steps and keys: `docs/axKit/workflows/axClip.md` (in Claude's working folder: `w
 2. **Copy again, read a long copy and keep the history between runs**
     - Read a copy of several lines in full
     - Keep the history between runs
+3. **Start with a kept history that can no longer be read**
 
 ## axDown
 

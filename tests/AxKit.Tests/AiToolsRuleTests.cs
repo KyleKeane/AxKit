@@ -63,6 +63,22 @@ public sealed class AiToolsRuleTests
         Assert.Contains(AiCaution.Command("Claude"), AiToolsRule.Text, StringComparison.Ordinal);
     }
 
+    /// <summary>AH-8.2: tools that are listed and not yet loaded are loaded without a word to the user, and are there when asked.</summary>
+    [Fact]
+    public void Tools_listed_and_not_yet_loaded_are_loaded_without_asking_and_are_there_when_asked()
+    {
+        var bullet = AiToolsRule.ListedNotLoaded.ReplaceLineEndings("\n");
+        Assert.Contains("\n" + bullet + "\n", AiToolsRule.Text, StringComparison.Ordinal);
+        // In "How to work with them", before the list of what the user says.
+        var at = AiToolsRule.Text.IndexOf(bullet, StringComparison.Ordinal);
+        Assert.InRange(at, AiToolsRule.Text.IndexOf("## How to work with them", StringComparison.Ordinal), AiToolsRule.Text.IndexOf("## What the user says", StringComparison.Ordinal));
+        var words = System.Text.RegularExpressions.Regex.Replace(bullet, @"\s+", " ");
+        foreach (var part in new[] { "listed by name but not yet loaded", "without asking the user", "without saying that they were not loaded", "the answer is yes" })
+        {
+            Assert.Contains(part, words, StringComparison.Ordinal);
+        }
+    }
+
     [Fact]
     public void The_file_is_short_and_its_own_lines_are_short()
     {

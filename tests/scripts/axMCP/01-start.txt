@@ -6,7 +6,7 @@
 # the run never touches Claude Code's files, and its row is found by name since this computer may have servers of its own.
 file home\AxKit\axMCP.json {"checkForUpdates": false, "servers": [{"name": "fake", "commandLine": "powershell -NoProfile -ExecutionPolicy Bypass -File fake.ps1"}]}
 file home\AxKit\axJSON.json {"checkForUpdates": false}
-file fake.ps1 $in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}}]}' }\n    'tools/call' { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"fake://readme","mimeType":"text/plain","text":"Hello from the fake server."}]}' }\n    'prompts/list' { $r = '{"prompts":[]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"Method not found"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
+file fake.ps1 [Console]::Error.WriteLine('axkitfake warns of nothing')\n$in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}}]}' }\n    'tools/call' { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"fake://readme","mimeType":"text/plain","text":"Hello from the fake server."}]}' }\n    'prompts/list' { $r = '{"prompts":[]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"Method not found"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
 
 # Goal: Find a server by its name
 # 1.1 The window: the servers in sections, the title; the fake found by name (type-to-find).
@@ -100,4 +100,16 @@ expect said ! Stopped fake
 keys left
 expect focus Stopped (exit code
 keys left
+expect focus fake, stdio, stopped (exit code
+
+# Check: What a server wrote to its standard error is in its details
+# MP-10: the fake writes one line to its standard error as it starts. The details of the server end with the number
+# of such lines and then the lines; the log holds their lengths alone (docs/axKit/repairs.json R-74).
+keys tab
+expect focus Source: Your servers
+keys end
+expect focus axkitfake warns of nothing
+keys up
+expect focus Error lines: 1, shown below
+keys escape
 expect focus fake, stdio, stopped (exit code

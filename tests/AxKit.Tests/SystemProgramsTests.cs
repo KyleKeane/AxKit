@@ -144,4 +144,43 @@ public sealed class SystemProgramsTests
             Environment.CurrentDirectory = current;
         }
     }
+
+    /// <summary>repairs.md R-70: a program run under an agreement for its name is looked for in its install folders before the PATH, and PATH folders off this computer are passed over.</summary>
+    [Fact]
+    public void An_installed_program_is_found_in_its_install_folder_before_the_path_and_never_in_a_path_folder_off_this_computer()
+    {
+        using var temp = new TempFolder("axkit-installed");
+        var install = Directory.CreateDirectory(Path.Combine(temp.Path, "install")).FullName;
+        var early = Directory.CreateDirectory(Path.Combine(temp.Path, "early")).FullName;
+        var share = Directory.CreateDirectory(Path.Combine(temp.Path, "share")).FullName;
+        var late = Directory.CreateDirectory(Path.Combine(temp.Path, "late")).FullName;
+        foreach (var folder in new[] { early, share, late })
+        {
+            File.WriteAllText(Path.Combine(folder, "tool.exe"), string.Empty);
+        }
+
+        var path = $"{early};{share};{late}";
+        bool NotTheShare(string folder) => folder != share;
+
+        // Not installed: the PATH, in its order.
+        Assert.Equal(Path.Combine(early, "tool.exe"), SystemPrograms.Installed("tool.exe", [install], path, NotTheShare));
+        // A folder that is not local is passed over, though it comes first and holds the program.
+        Assert.Equal(Path.Combine(late, "tool.exe"), SystemPrograms.Installed("tool.exe", [install], $"{share};{late}", NotTheShare));
+        Assert.Null(SystemPrograms.Installed("tool.exe", [install], share, NotTheShare));
+        // Installed: the install folder wins over a folder earlier in the PATH.
+        File.WriteAllText(Path.Combine(install, "tool.exe"), string.Empty);
+        Assert.Equal(Path.Combine(install, "tool.exe"), SystemPrograms.Installed("tool.exe", [install], path, NotTheShare));
+        // A relative PATH entry is still never searched.
+        Assert.Null(SystemPrograms.Installed("absent.exe", [install], ".;sub", NotTheShare));
+    }
+
+    [Fact]
+    public void The_install_folders_are_under_Program_Files_as_Windows_names_them()
+    {
+        var folders = SystemPrograms.ProgramFilesFolders("Git", "cmd");
+        Assert.NotEmpty(folders);
+        Assert.Equal(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Git", "cmd"), folders[0]);
+        Assert.All(folders, folder => Assert.True(Path.IsPathFullyQualified(folder)));
+        Assert.Equal(folders.Count, folders.Distinct(StringComparer.OrdinalIgnoreCase).Count());
+    }
 }

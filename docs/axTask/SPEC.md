@@ -216,6 +216,21 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   a list and up to three notices, one after the other, until 2026-11-14)
   (RP-8.2). Context's Action keys submenu on an item shows the nine with the names the list gives them, so the palette and
   F1 list them (RP-8.3). All tasks moved to Ctrl+0 for them (RP-8.4).
+- **TK-7a.3 A key that moves or opens is said first when the list's file was not this install's** (2026-11-16,
+  bundle `repairs.md` R-72). A `list.json` can come from elsewhere (a shared folder, a sync, another program
+  rewriting it), and its `keys` decide what Ctrl+1 to Ctrl+9 do. So an action that moves the item or opens something
+  (`ActionKeys.AsksFirst`; a `set` is one undo step in the list and is never asked about) runs at the first press
+  only when this install wrote it in Actions, Action keys or the user accepted it before. Otherwise the first press
+  does nothing and says what the key now does: "Ctrl+2 in this list now moves to ../Later. Press it again to do
+  it." (`ActionKeys.AskText`, with the words of the form's line, `ListAction.Described`); the same key pressed
+  again, the action still the same, does it and accepts it, so that it is not asked about again. Another key, or
+  the same key after the file changed, starts over. The acceptances are kept in axTask's settings as
+  `acceptedActionKeys`, the newest 500: each is the bundle's seal (AX-5.6, `SettingsSeal.Of`) over the list's
+  folder, the digit and the action as the file holds it, name included (`ActionKeys.MarkText`), so that a line
+  written into the settings file accepts nothing, the file says nothing of a list, and another computer's
+  acceptances do not count on this one. Where the seal has no key, the second press still acts and nothing is
+  kept. A list made before this version is asked about once for each such key. The item of Context's Action keys
+  submenu does the same as the key. Tested in `ActionKeysTests`; the window in `tests/scripts/axTask/04-action-keys`.
 - **TK-7a.2 axTask is local only; the GitHub lists are gone** (the user's decision, 2026-11-14; RP-7, RP-D10).
   axTask makes no network request and keeps no token. From 2026-11-07 to 2026-11-14 a list whose `list.json` had
   `"github": {"repository": "owner/name"}` filled itself from that repository's issues, and its items could change an

@@ -193,6 +193,44 @@ public static class SystemPrograms
         return null;
     }
 
+    /// <summary>
+    /// Where a program a maker installs for the whole computer is: the given folders under Program Files and Program
+    /// Files (x86), which only an administrator can write. Asked of Windows, not of the environment, which the
+    /// program that started axKit sets.
+    /// </summary>
+    public static IReadOnlyList<string> ProgramFilesFolders(params string[] parts) =>
+        new[] { Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) }
+            .Where(root => root.Length > 0)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Select(root => Path.Combine([root, .. parts]))
+            .ToList();
+
+    /// <summary>
+    /// An installed program an access layer runs under an agreement that names the program, not its path (git,
+    /// PowerShell 7; repairs.md R-70): looked for first in its install folders, which only an administrator can
+    /// write (<see cref="ProgramFilesFolders"/>), and only then in the PATH's folders, of which those that are not on
+    /// a drive of this computer are passed over (<see cref="LocalPaths.IsLocal"/>). So a program of the same name put
+    /// into a folder of the PATH a user's program can write, or on a share, is not what runs while the real one is
+    /// installed. Null when there is none.
+    /// </summary>
+    public static string? Installed(string fileName, IReadOnlyList<string> installFolders) =>
+        Installed(fileName, installFolders, Environment.GetEnvironmentVariable("PATH"), LocalPaths.IsLocal);
+
+    /// <summary>The same over a given PATH and a given answer to what is local, for the tests.</summary>
+    public static string? Installed(string fileName, IReadOnlyList<string> installFolders, string? path, Func<string, bool> isLocal)
+    {
+        foreach (var folder in installFolders.Concat(PathFolders(path).Where(isLocal)))
+        {
+            var candidate = Path.Combine(folder, fileName);
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>The PATH's folders that are full paths, in order: where a program may be looked for.</summary>
     public static IReadOnlyList<string> PathFolders() => PathFolders(Environment.GetEnvironmentVariable("PATH"));
 

@@ -43,10 +43,20 @@ expect focus Fix the tap
 expect commands Done, Context, Action keys
 expect commands Later, Context, Action keys
 # Goal: Move an item to another list with an action key
-# Step 4: Ctrl+2 moves the item to Later, the links following; Ctrl+Z brings it back.
+# Step 4: Ctrl+2 moves the item to Later, the links following; Ctrl+Z brings it back. The list's file was not written
+# by this install, so the first press of a key that moves says what it does and waits (TK-7a.3); the second moves.
+do Action key 2
+expect said Ctrl+2 in this list now moves to ../Later. Press it again to do it.
+expect focus Fix the tap
 do Action key 2
 expect said Later: Fix the tap moved to Later
 expect focus Home, empty
+do Undo
+expect said Undone: Later: Fix the tap moved to Later
+expect focus Fix the tap
+# Check: An action key accepted once acts at the first press from then on
+do Action key 2
+expect said Later: Fix the tap moved to Later
 do Undo
 expect said Undone: Later: Fix the tap moved to Later
 expect focus Fix the tap
@@ -117,6 +127,10 @@ expect said Undone: Make it a bug: Kind: Bug
 # Step 5: a key that opens a field opens its web address in the browser; this Issue field is empty. The axClaude
 # target went with the GitHub lists.
 do Action key 5
+expect said Ctrl+5 in this list now opens Issue. Press it again to do it.
+do Action key 5
 expect said Issue is empty
+do Action key 6
+expect said Ctrl+6 in this list now opens axClaude. Press it again to do it.
 do Action key 6
 expect said No field called axClaude, and no app called that

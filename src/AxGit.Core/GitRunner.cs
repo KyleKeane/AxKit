@@ -48,14 +48,19 @@ public static class GitRunner
     public static readonly TimeSpan Short = TimeSpan.FromSeconds(60);
     public static readonly TimeSpan Long = TimeSpan.FromMinutes(10);
 
-    /// <summary>The program run: git, found on the PATH (AG-1.5); the tests point it at a fake git.cmd of their own.</summary>
+    /// <summary>The program run: git, in Git for Windows' install folder or else on the PATH (AG-1.5); the tests point it at a fake git.cmd of their own.</summary>
     public static string Program
     {
-        // S-1: git found on the PATH's full folders, never by a bare name that Windows would look for in the current
-        // folder first; without one, Git for Windows' usual place, whose absence gives "git is not installed".
-        get => _program ?? SystemPrograms.OnPath("git.exe") ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Git", "cmd", "git.exe");
+        // R-70: the agreement is for Git by its name, so Git for Windows' own folder under Program Files, which only
+        // an administrator can write, comes before the PATH, and PATH folders off this computer are passed over.
+        // S-1: never a bare name that Windows would look for in the current folder first; with no git anywhere, Git
+        // for Windows' usual place, whose absence gives "git is not installed".
+        get => _program ?? SystemPrograms.Installed("git.exe", InstallFolders) ?? Path.Combine(InstallFolders[0], "git.exe");
         set => _program = value;
     }
+
+    /// <summary>Where Git for Windows puts git.exe when it is installed for the whole computer: <c>Git\cmd</c> under Program Files and Program Files (x86).</summary>
+    public static IReadOnlyList<string> InstallFolders { get; } = SystemPrograms.ProgramFilesFolders("Git", "cmd");
 
     private static string? _program;
 

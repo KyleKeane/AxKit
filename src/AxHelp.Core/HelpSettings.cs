@@ -53,6 +53,37 @@ public sealed class HelpSettings : HotkeySettings
     /// </summary>
     public string Model { get; set; } = FastModel;
 
+    /// <summary>The longest model name kept: Claude Code's own names are well under it.</summary>
+    public const int MaxModelLength = 100;
+
+    /// <summary>
+    /// Whether a text is a model's name (HE-2.3; bundle repairs.md R-71): it starts with a letter or a digit of
+    /// ASCII and holds nothing but those, dots, hyphens, underscores and square brackets ("haiku",
+    /// "claude-sonnet-4-5", "opus[1m]"), as <c>^[A-Za-z0-9][A-Za-z0-9._\[\]-]*$</c> says. The name goes onto Claude
+    /// Code's command line after <c>--model</c>: one that starts with a hyphen would be read as an option, and a
+    /// space or a quote has no place there.
+    /// </summary>
+    public static bool IsModelName(string? text)
+    {
+        if (string.IsNullOrEmpty(text) || text.Length > MaxModelLength || !char.IsAsciiLetterOrDigit(text[0]))
+        {
+            return false;
+        }
+
+        foreach (var c in text)
+        {
+            if (!char.IsAsciiLetterOrDigit(c) && c is not ('.' or '_' or '[' or ']' or '-'))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>The model's name as it is kept and given to Claude Code: the text trimmed when it is a model's name (<see cref="IsModelName"/>), otherwise <see cref="FastModel"/>.</summary>
+    public static string ModelOrDefault(string? text) => IsModelName(text?.Trim()) ? text!.Trim() : FastModel;
+
     /// <summary>
     /// Options, Keep the conversation ready in the background (HE-2.7), off at first (HE-D9, the user's decision of
     /// 2026-11-15: by default Claude Code never starts, and so never contacts Anthropic, before the user acts). On,
@@ -78,7 +109,14 @@ public sealed class HelpSettings : HotkeySettings
         settings.SanitizeHotkey();
         settings.ScreenshotHotkeyText = TakenOver(settings.ScreenshotHotkeyText, RetiredScreenshotHotkey, DefaultScreenshotHotkey) ?? string.Empty;
         settings.ScreenshotHotkeyText = settings.ScreenshotKey.ToString();
-        settings.Model = string.IsNullOrWhiteSpace(settings.Model) ? FastModel : settings.Model.Trim();
+        var model = ModelOrDefault(settings.Model);
+        if (!string.IsNullOrWhiteSpace(settings.Model) && model != settings.Model.Trim())
+        {
+            // The text itself is not written: it is what was refused.
+            Log.Info($"The conversation's model in the settings file is not a model's name ({settings.Model.Length} characters); the default is used");
+        }
+
+        settings.Model = model;
         return settings;
     }
 
@@ -92,7 +130,8 @@ public sealed class HelpSettings : HotkeySettings
     /// </summary>
     public static IReadOnlyList<string> ConversationArguments(string folder, string model, string? message, bool hidden = false)
     {
-        var arguments = new List<string> { folder, "--title", "axHelp", "--model", model, "--hide-on-close", "--ai-tools" };
+        // R-71: the model is checked here too, so that nothing but a model's name is ever on the command line.
+        var arguments = new List<string> { folder, "--title", "axHelp", "--model", ModelOrDefault(model), "--hide-on-close", "--ai-tools" };
         if (hidden)
         {
             arguments.Add("--hidden");

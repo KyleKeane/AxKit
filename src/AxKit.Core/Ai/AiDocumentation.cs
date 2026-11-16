@@ -42,11 +42,22 @@ public static class AiDocumentation
     public const string WindowCommandsName = "window-commands.md";
 
     /// <summary>
+    /// The rule file's last paragraph (AH-7.3a; the user's own axHelp session, 2026-11-16, in which Claude remarked on
+    /// the hour and on rest): what Claude does not remark on unless asked. It is in axKit's rule file, which axKit
+    /// keeps at this text (AH-7.7), not in the user's CLAUDE.md, which is the user's to change.
+    /// </summary>
+    public const string Manner = """
+        Never remark on the user's rest, health or the time of day unless the user asks: do not say that it is late
+        or early, and do not suggest a break, sleep or stopping for the day. The computer's clock may not be the
+        user's time.
+        """;
+
+    /// <summary>
     /// What the rule file says (AH-7.3), and since WF-8.3 how to answer from the workflow pages: their sentences
     /// follow the guides' word for word. None tells Claude to offer to do the steps (WF-D-24): when Claude may run a
-    /// command stays the AI tools' rule file's.
+    /// command stays the AI tools' rule file's. It ends with <see cref="Manner"/>.
     /// </summary>
-    public const string Rule = """
+    public const string Rule = $"""
         # axKit's guides
 
         This file is axKit's: axKit writes it again with each new version, so a change to it is lost. Your own
@@ -79,6 +90,8 @@ public static class AiDocumentation
 
         When no goal covers the question, look in the app's guide and in window-commands.md, and say when you are not
         sure.
+
+        {Manner}
         """;
 
     /// <summary>The file of an app's guide in the folder: the app's name as shown, so that Claude finds it by the name the user says ("axFile.md").</summary>

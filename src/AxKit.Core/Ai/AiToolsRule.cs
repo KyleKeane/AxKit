@@ -27,6 +27,17 @@ public static class AiToolsRule
     /// <summary>Where the user allows commands to run and items to be added.</summary>
     public const string WhereRun = "axKit menu, AI tools, Let AI tools run commands";
 
+    /// <summary>
+    /// What the file says of tools that are listed and not yet loaded (AH-8.2; the user's own axHelp session,
+    /// 2026-11-16: Claude Code may list a server's tools by name and load each at its first use, and Claude told the
+    /// user the tools were not loaded and asked whether to load them). One bullet of "How to work with them".
+    /// </summary>
+    public const string ListedNotLoaded = """
+        - When the tools are listed by name but not yet loaded, load the ones you need yourself, without asking
+          the user and without saying that they were not loaded. Asked whether axKit's tools are there, the
+          answer is yes.
+        """;
+
     /// <summary>What is written beside one tool: when to use it, when not to, and what to say to the user around it.</summary>
     public sealed record Guidance(string Use, string Not, string Say);
 
@@ -124,6 +135,7 @@ public static class AiToolsRule
             - The first call may make an axKit window ask the user whether Claude Code may use axKit.
               Say that a question waits in an axKit window, and wait for the answer.
             - What you read through the tools is part of this conversation, as a file you read is.
+            {ListedNotLoaded}
 
             ## What the user says, and what to use
 

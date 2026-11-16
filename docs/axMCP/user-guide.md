@@ -79,8 +79,10 @@ Help, Check for updates says whether a newer axKit exists.
 
 ## If something goes wrong
 
-A server that does not start says why in a notice; its standard error goes to axMCP's log, which Help, Diagnostics,
-Copy diagnostics includes. A server that stops by itself is announced with its exit code; Enter on its level starts it
+A server that does not start says why in a notice. What a server writes to its standard error, its own error lines,
+is in its details: at the top, go to the server's row and press Tab; after the state the details say "Error lines:"
+with their number, then the newest ten. They stay in the window and are gone when it closes: axMCP's log, which a
+report can carry, holds only how long each line was, since a server may write a path or a token there. A server that stops by itself is announced with its exit code; Enter on its level starts it
 again. A call that gets no answer in 60 seconds is given up and said.
 
 ## About

@@ -104,6 +104,72 @@ public sealed class ActionKeysTests
         Assert.Null(ActionKeys.OpenRefusal(Dispatch.AxClaude, Path.Combine(Path.GetTempPath(), "code")));
     }
 
+    // ---- a key that moves or opens is asked about first (TK-7a.3; bundle repairs.md R-72) ----
+
+    [Fact]
+    public void A_key_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not()
+    {
+        var keys = ActionKeys.Read(ItemDocument.Parse(ListText));
+        Assert.False(ActionKeys.AsksFirst(keys[1]));
+        Assert.True(ActionKeys.AsksFirst(keys[7]));
+        Assert.True(ActionKeys.AsksFirst(keys[8]));
+        Assert.Equal("Ctrl+7 in this list now moves to ../Later. Press it again to do it.", ActionKeys.AskText(7, keys[7]));
+        Assert.Equal("Ctrl+8 in this list now opens Issue. Press it again to do it.", ActionKeys.AskText(8, keys[8]));
+    }
+
+    [Fact]
+    public void An_acceptance_is_for_one_list_one_key_and_one_action_and_is_kept_under_the_seal()
+    {
+        using var temp = new TempFolder("axtask-keys");
+        var path = Path.Combine(temp.Path, "axTask.json");
+        var home = Path.Combine(temp.Path, "tasks", "Home");
+        var move = new ListAction("Later", Move: "../Later");
+        var settings = TaskSettings.Load(path, out _);
+        Assert.False(settings.AcceptsActionKey(path, home, 2, move));
+
+        Assert.True(settings.AcceptActionKey(path, home, 2, move));
+        Assert.False(settings.AcceptActionKey(path, home, 2, move));
+        settings.Save(path);
+        var back = TaskSettings.Load(path, out _);
+        Assert.True(back.AcceptsActionKey(path, home.ToUpperInvariant() + Path.DirectorySeparatorChar, 2, move));
+
+        // Another list, another key, another target, another kind and another name are each not accepted.
+        Assert.False(back.AcceptsActionKey(path, Path.Combine(temp.Path, "tasks", "Work"), 2, move));
+        Assert.False(back.AcceptsActionKey(path, home, 3, move));
+        Assert.False(back.AcceptsActionKey(path, home, 2, move with { Move = "../Archive" }));
+        Assert.False(back.AcceptsActionKey(path, home, 2, new ListAction("Later", Open: "../Later")));
+        Assert.False(back.AcceptsActionKey(path, home, 2, move with { Name = "Sooner" }));
+
+        // Nothing of the list is readable in the file, and a line written into it by hand accepts nothing.
+        Assert.DoesNotContain("Later", File.ReadAllText(path), StringComparison.Ordinal);
+        var open = new ListAction("Shell", Open: "terminal");
+        back.AcceptedActionKeys.Add(ActionKeys.MarkText(home, 5, open));
+        back.AcceptedActionKeys.Add(Convert.ToBase64String(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(ActionKeys.MarkText(home, 5, open)))));
+        Assert.False(back.AcceptsActionKey(path, home, 5, open));
+
+        // The settings of another install (another key) accept nothing of this file's.
+        using var other = new TempFolder("axtask-keys");
+        var otherPath = Path.Combine(other.Path, "axTask.json");
+        File.Copy(path, otherPath);
+        Assert.False(TaskSettings.Load(otherPath, out _).AcceptsActionKey(otherPath, home, 2, move));
+    }
+
+    [Fact]
+    public void The_acceptances_are_kept_to_a_limit_the_oldest_going_first()
+    {
+        using var temp = new TempFolder("axtask-keys");
+        var path = Path.Combine(temp.Path, "axTask.json");
+        var settings = TaskSettings.Load(path, out _);
+        var first = new ListAction("First", Move: "../Later");
+        settings.AcceptActionKey(path, temp.Path, 1, first);
+        settings.AcceptedActionKeys.AddRange(Enumerable.Range(0, TaskSettings.MaxAcceptedActionKeys - 1).Select(i => "mark " + i));
+        Assert.True(settings.AcceptsActionKey(path, temp.Path, 1, first));
+        settings.AcceptActionKey(path, temp.Path, 2, first);
+        Assert.Equal(TaskSettings.MaxAcceptedActionKeys, settings.AcceptedActionKeys.Count);
+        Assert.False(settings.AcceptsActionKey(path, temp.Path, 1, first));
+        Assert.True(settings.AcceptsActionKey(path, temp.Path, 2, first));
+    }
+
     // ---- the form of one key (RP-8.2, bundle AX-8.10) ----
 
     private static bool Later(string list) => list == "Later";

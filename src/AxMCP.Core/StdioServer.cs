@@ -6,8 +6,9 @@ namespace AxMCP.Core;
 
 /// <summary>
 /// A stdio server as a running process (SPEC.md MP-2.1, MP-2.3): started with its command, arguments and environment
-/// in its folder, its standard input and output wired to a <see cref="McpClient"/>, its standard error to the log line
-/// by line. <see cref="Stop"/> closes its input, gives it two seconds, and ends it with its children. The one outside
+/// in its folder, its standard input and output wired to a <see cref="McpClient"/>, its standard error kept line by
+/// line for the window (<see cref="ErrorLines"/>), with only each line's length in the log (MP-10; bundle repairs.md
+/// R-74). <see cref="Stop"/> closes its input, gives it two seconds, and ends it with its children. The one outside
 /// call of axMCP (bundle B-17).
 /// </summary>
 public sealed class StdioServer : IDisposable
@@ -22,6 +23,9 @@ public sealed class StdioServer : IDisposable
     }
 
     public McpClient Client { get; }
+
+    /// <summary>What the server wrote to its standard error since it started, for the window alone (MP-10).</summary>
+    public ServerErrorLines ErrorLines { get; } = new();
 
     /// <summary>The process ended, by itself or by <see cref="Stop"/>; the exit code, and whether Stop asked for it.</summary>
     public event Action<int, bool>? Exited;
@@ -109,7 +113,8 @@ public sealed class StdioServer : IDisposable
             {
                 while (process.StandardError.ReadLine() is { } line)
                 {
-                    log($"{server.Name}: {line}");
+                    // R-74: the text stays in the window; the log holds that a line came and how long it was.
+                    log(running.ErrorLines.Add(server.Name, line));
                 }
             }
             catch (Exception ex) when (ex is IOException or ObjectDisposedException or InvalidOperationException)

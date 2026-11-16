@@ -83,7 +83,7 @@ public static class SettingsFile
             var (settings, dropped) = WithoutWhatDoesNotRead<T>(text);
             error = settings is null
                 ? $"{path}: {ex.Message}"
-                : $"{path}: these settings were not understood and are at their defaults: {string.Join(", ", dropped)}.";
+                : $"{path}: {NotUnderstood}: {string.Join(", ", dropped)}.";
             if (KeepBadCopy(path))
             {
                 error += $" A copy is kept as {path}.bad.";
@@ -94,6 +94,9 @@ public static class SettingsFile
             return settings ?? new T();
         }
     }
+
+    /// <summary>What the error text says before the names of the values that did not read (R-52); axHelp's guide quotes it, so that Claude can explain it.</summary>
+    public const string NotUnderstood = "these settings were not understood and are at their defaults";
 
     /// <summary>What the error text of a file that could not be opened ends with (R-51).</summary>
     public const string NotSaved = "Settings are not saved in this run, so that the file is not replaced. Close the window and start it again.";

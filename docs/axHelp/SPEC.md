@@ -106,7 +106,12 @@ agreement (AX-11.4) asked the first time.
   a change counts from the conversation's next start (its Session, End Claude and close this window, then the
   hotkey: closing alone hides it, HE-1.3). `/model` typed inside the conversation changes that session and
   is saved by Claude Code as its default for new sessions everywhere, axClaude's included; the guide says to choose
-  axHelp's model in its Options instead.
+  axHelp's model in its Options instead. The file's `model` is kept only when it is a model's name
+  (`HelpSettings.IsModelName`: `^[A-Za-z0-9][A-Za-z0-9._\[\]-]*$`, a hundred characters at most, so `haiku`,
+  `claude-sonnet-4-5` and `opus[1m]`); anything else is the default, with a line in the log that holds the value's
+  length and not the value, and nothing said. The name goes onto Claude Code's command line, where a value that
+  starts with a hyphen would be read as an option (bundle `repairs.md` R-71, 2026-11-16);
+  `HelpSettings.ConversationArguments` checks it once more.
 - HE-2.4 **The working folder** is AI help's (`ai-help.md` AH-2.1, AH-D6): `Documents\axKit Claude` unless
   `ai-help.json` names another. Claude Code keeps per folder the conversations, the "always allow" answers and the
   CLAUDE.md, so nothing of axHelp reaches the user's projects. Before the conversation's start axHelp writes, each only

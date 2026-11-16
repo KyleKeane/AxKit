@@ -431,6 +431,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   (docs/axClaude/SPEC.md Appendix C); axMCP's `servers` (docs/axMCP/SPEC.md MP-8.2); axFile's `programs`
   (docs/axFile/SPEC.md AF-8.1a); and the agreements in `consent.json` (AX-11.5). The AI tools' setting has had its own
   seal since 3.7.0 (docs/axKit/mcp.md MC-6.1), with its own file and key, unchanged; it takes the HMAC from this piece.
+  axTask's accepted action keys (docs/axTask/SPEC.md TK-7a.3, `repairs.md` R-72) use the same key another way: each
+  entry of `acceptedActionKeys` is itself a seal, of one list's key and action, so there is no field to refuse and
+  an entry that is no seal of this install's simply accepts nothing.
   - The seal is the file's key `seal`: an HMAC-SHA256, under a key of 32 random bytes kept with Windows' protection
     for this user (DPAPI), over the file's name and the sealed fields in a fixed order, each with its length in front,
     so that no field can run into the next. Each settings class lists its sealed fields in one small method
@@ -936,8 +939,13 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   holds none, which is the default, so that a new app is listed without a line of its own; nothing for a window with
   nothing to open again, an untitled text or axFile at This PC); a window that swaps its file or folder remembers the
   old one itself. A background app's window (axStart, axClip) hides on Alt+F4 and is listed when Quit ends it. The list is one file for the bundle, `%APPDATA%\AxKit\recently-closed.json`
-  (AX-5.1), written whole by the window that closes or swaps (`AxKit.Core/RecentlyClosed`, through `SettingsFile`; two
-  windows closing in the same instant leave the last writer's list). Nothing else about windows is stored.
+  (AX-5.1), written whole by the window that closes or swaps (`AxKit.Core/RecentlyClosed`, through `SettingsFile`).
+  One window writes at a time (2026-11-16, `repairs.md` R-68): the reading, the adding and the writing happen under a
+  mutex named after the file, so that windows closing in the same instant are all on the list; a window that does
+  not get its turn within half a second writes nothing, logs that and closes, and never waits longer. Only whole
+  paths are kept, in this list and in the apps' recent lists (`RecentPaths.IsWhole`: a drive or a share and what
+  follows): an entry that is anything else, written into a file by hand or by another program, is neither listed nor
+  handed to an app, where text such as `--secret` would be read as an option. Nothing else about windows is stored.
 - AX-9.5 A window's or a file's item is its number, a full stop and a title, "1. notes.md (C:\notes\notes.md) - axDown":
   the number is the mnemonic (1 to 9, then a to z), so that Alt+W, O, 1 or Alt+W, R, 1 acts without an arrow key, and
   the full stop is a pause before the name (AX-8.5). A window's title is the window's own; a closed item's is the
@@ -1128,6 +1136,14 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   - axGIT, Git: on first opening a repository; and each server on its own (github.com, a company's server), before
     the first fetch, pull or push that reaches it, by the host of the remote's address, since that is a new service
     with its own terms.
+  - Where the program is found (2026-11-16, `repairs.md` R-70). The agreements for Git and for PowerShell 7 name the
+    program, not its path, and neither the question nor axTerminal's "Shell started" line says a path. So
+    `git.exe` and `pwsh.exe` are looked for first in their install folders, which only an administrator can write
+    (`Git\cmd` and `PowerShell\7` under Program Files and Program Files (x86), asked of Windows, not of the
+    environment), and only then in the PATH's folders, of which those that are not on a drive of this computer are
+    passed over (`SystemPrograms.Installed`, `LocalPaths.IsLocal`; tested). A program of the same name in a folder
+    earlier in the PATH, or on a share, is then not what runs under the agreement while the real one is installed.
+    A copy installed for the user alone or from the Store is still found through the PATH.
   - axPass, KeePassXC: before the first master password goes to it (unlocking a database) and before File, New
     database.
   - The AI tools (AX-9, `docs/axKit/mcp.md`): the pairing notice (MC-6.4) carries the check box, which Allow needs;

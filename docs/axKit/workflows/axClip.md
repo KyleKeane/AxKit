@@ -91,3 +91,5 @@ Starts with: Open axClip.
     You hear: axkitkeep one, 2 of 3.
 6. Press Ctrl+End (Last match).
     You hear: axkitkeep two, 3 of 3.
+
+## Start with a kept history that can no longer be read

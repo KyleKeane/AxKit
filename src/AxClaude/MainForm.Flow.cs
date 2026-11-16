@@ -248,6 +248,12 @@ internal sealed partial class MainForm
         }
 
         FlowWindowState();
+        if (_model.PromptPending)
+        {
+            // For the shadow's line of a turn that differs: Claude waited on a question, a permission prompt or a screen.
+            _shadow.QuestionOpen();
+        }
+
         EnqueueFlow(FlowFeed.FromFrame(_model, arrival, _model.PromptPending, _readyAnnounced && _settings.ReplySpeech != ReplySpeechMode.None));
     }
 
@@ -258,15 +264,15 @@ internal sealed partial class MainForm
         if (working != _flowWindowWorking)
         {
             _flowWindowWorking = working;
-            _shadow.Window(working ? ShadowFact.Working : ShadowFact.Idle, 0, Environment.TickCount64);
+            _shadow.Window(working ? ShadowFact.Working : ShadowFact.Idle, Environment.TickCount64);
         }
     }
 
     /// <summary>The window's own code said Done: a turn's end by the old rule, the bell and the settle (FR-7.2).</summary>
-    private void FlowSaidDone() => _shadow.Window(ShadowFact.SaidDone, 0, Environment.TickCount64);
+    private void FlowSaidDone() => _shadow.Window(ShadowFact.SaidDone, Environment.TickCount64);
 
-    /// <summary>The window's own code spoke this many reply lines after its hold (FR-7.4).</summary>
-    private void FlowSpoke(int lines) => _shadow.Window(ShadowFact.SpokeLines, lines, Environment.TickCount64);
+    /// <summary>The window's own code spoke these reply lines after its hold (FR-7.4): the shadow counts them and keeps their kinds, never their text.</summary>
+    private void FlowSpoke(IReadOnlyList<AxKit.Core.Transcript.Line> lines) => _shadow.WindowSpoke(lines, Environment.TickCount64);
 
     /// <summary>The user acted, or the app for him: he has moved on from what was held for him (EG-4.7).</summary>
     private void FlowActed(UserAction action) => EnqueueFlow(new UserActed(action));

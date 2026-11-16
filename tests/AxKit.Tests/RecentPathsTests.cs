@@ -42,4 +42,15 @@ public sealed class RecentPathsTests
         Assert.Same(list, cleaned);
         Assert.Equal([@"C:\a"], cleaned);
     }
+
+    /// <summary>repairs.md R-68: text that is no whole path never stays in a list, so no entry can be read as an option.</summary>
+    [Fact]
+    public void Only_whole_paths_are_kept_so_no_entry_can_be_read_as_an_option()
+    {
+        var list = new List<string> { "--secret", @"C:\work\a.md", "/update", "notes.md", @"\work", @"C:relative", @"\\server\share\b.md", "-" };
+        Assert.Equal([@"C:\work\a.md", @"\\server\share\b.md"], RecentPaths.Sanitize(list));
+        Assert.False(RecentPaths.IsWhole(null));
+        Assert.False(RecentPaths.IsWhole("--automation-home C:\\x"));
+        Assert.True(RecentPaths.IsWhole(@"C:\"));
+    }
 }

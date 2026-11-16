@@ -121,6 +121,23 @@ public static class ActionKeys
         return list.WithExtra(RootKey, root.Count == 0 ? null : root);
     }
 
+    /// <summary>
+    /// Whether an action is of the kinds that are asked about before their first run on this install (TK-7a.3; bundle
+    /// repairs.md R-72): one that moves the item or opens something. A set of fields is one undo step in the list and
+    /// is never asked about.
+    /// </summary>
+    public static bool AsksFirst(ListAction action) => action.Move is not null || action.Open is not null;
+
+    /// <summary>What the window says at the first press of such a key whose action this install neither wrote nor accepted (TK-7a.3): "Ctrl+2 in this list now moves to Later. Press it again to do it."</summary>
+    public static string AskText(int digit, ListAction action) => $"Ctrl+{digit} in this list now {action.Described}. Press it again to do it.";
+
+    /// <summary>
+    /// What an acceptance is for (TK-7a.3), as one text for the seal: the list's folder whatever its case, the digit
+    /// and the action as the file holds it, name and all. Another list, another key or another action is another text.
+    /// </summary>
+    public static string MarkText(string listFolder, int digit, ListAction action) =>
+        SettingsSeal.Text([Path.TrimEndingDirectorySeparator(Path.GetFullPath(listFolder)).ToLowerInvariant(), digit.ToString(System.Globalization.CultureInfo.InvariantCulture), action.ToJson().ToJsonString()]);
+
     /// <summary>"Ctrl+1. Make it a bug", or "Ctrl+3. not set"; the full stop is NVDA's pause after the digit (AX-8.5).</summary>
     public static string Spoken(int digit, ListAction? action) => $"Ctrl+{digit}. {action?.Name ?? "not set"}";
 

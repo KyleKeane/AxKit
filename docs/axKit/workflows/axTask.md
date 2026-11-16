@@ -315,8 +315,10 @@ Starts with: Open axTask with the folder tasks.
 ### Move an item to another list with an action key
 
 1. Press Ctrl+2 (Action key 2).
+    You hear: Ctrl+2 in this list now moves to ../Later. Press it again to do it.
+2. Press Ctrl+2 (Action key 2).
     You hear: Later: Fix the tap moved to Later.
-2. Press Ctrl+Z (Undo; Actions menu).
+3. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Later: Fix the tap moved to Later.
 
 ### Set up an action key
