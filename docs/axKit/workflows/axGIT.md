@@ -9,7 +9,11 @@ command's in this version of axKit.
 
 ## Open a repository in axGIT
 
-Starts with: Open axGIT with the folder repo.
+### Open a repository
+
+1. Open axGIT with the folder repo.
+
+### Move between the list and the details
 
 1. Press Down.
     It reads Untracked new.txt.
@@ -21,40 +25,30 @@ Starts with: Open axGIT with the folder repo.
     The focus moves to Details (Text).
 5. Press Ctrl+Tab (Switch between the list and the details).
     The focus moves to Changes, 2 files (List): Untracked new.txt.
-6. Press Ctrl+1 (Changes; Navigation menu).
+
+### Switch between the views
+
+1. Press Ctrl+1 (Changes; Navigation menu).
     You hear: Changes, 2 files. Untracked new.txt.
-7. Press Ctrl+2 (Log; Navigation menu).
+2. Press Ctrl+2 (Log; Navigation menu).
     You hear: Log, 2 commits.
     You hear: Test: second.
-8. Press Ctrl+3 (Branches; Navigation menu).
+3. Press Ctrl+3 (Branches; Navigation menu).
     You hear: Branches, 2. main, current, no upstream.
-9. Press Ctrl+1 (Changes; Navigation menu).
+4. Press Ctrl+1 (Changes; Navigation menu).
     You hear: Changes, 2 files. Untracked new.txt.
-10. Press Ctrl+2 (Log; Navigation menu).
-    You hear: Log, 2 commits.
-11. Press Space.
-    You hear: Changes view first: Ctrl+1.
-12. Press Delete.
-    You hear: Changes view first: Ctrl+1.
-13. Press Ctrl+1 (Changes; Navigation menu).
-    You hear: Changes, 2 files.
-14. Close the window.
-15. Open axGIT with the folder plain.
-16. Press Enter.
+
+### Close the window
+
+1. Close the window.
 
 ## Open axGIT from another app
-
-Starts with: Open axGIT with the folder repo.
-
-1. Press Ctrl+E (Open file in editor; Context menu).
-    You hear: No file selected.
-2. Open axDown with the file repo\notes.md.
-3. Close the window.
-4. Open axClaude with the folder repo.
 
 ## Review and commit changes
 
 Starts with: Open axGIT with the folder repo.
+
+### Stage and unstage a file
 
 1. Press Space.
     You hear: Staged a.txt.
@@ -64,68 +58,75 @@ Starts with: Open axGIT with the folder repo.
     It reads Modified a.txt, staged.
 4. Press Space.
     You hear: Unstaged a.txt.
-5. Press Enter.
+
+### Read the diff of a changed file
+
+1. Press Enter.
     You hear: Diff of a.txt, 10 lines.
-6. Press Down.
+2. Press Down.
     It reads index.
-7. Press Down 4 times.
+3. Press Down 4 times.
     It reads hello.
-8. Press Down.
+4. Press Down.
     It reads -world.
-9. Press Down.
+5. Press Down.
     It reads  No newline at end of file.
-10. Press Down.
+6. Press Down.
     It reads +changed world.
-11. Press Ctrl+Tab (Switch between the list and the details).
+7. Press Ctrl+Tab (Switch between the list and the details).
     The focus moves to Changes, 2 files (List): Modified a.txt, unstaged.
-12. Press Down.
+
+### Read an untracked file
+
+1. Press Down.
     It reads Untracked new.txt.
-13. Press Enter.
+2. Press Enter.
     You hear: Diff of new.txt, 4 lines.
-14. Press Down.
+3. Press Down.
     It reads one.
-15. Press Ctrl+Tab (Switch between the list and the details).
+4. Press Ctrl+Tab (Switch between the list and the details).
     The focus moves to Changes, 2 files (List): Untracked new.txt.
-16. Press Ctrl+Shift+A (Stage all; Actions menu).
+
+### Stage all and unstage all
+
+1. Press Ctrl+Shift+A (Stage all; Actions menu).
     You hear: Staged all.
-17. Press Ctrl+Shift+U (Unstage all; Actions menu).
+2. Press Ctrl+Shift+U (Unstage all; Actions menu).
     You hear: Unstaged all.
-18. Press Ctrl+Enter (Commit; Actions menu).
-    You hear: Nothing staged. Space stages a file.
-19. Press Up.
+
+### Commit the staged changes
+
+1. Press Up.
     It reads Modified a.txt, unstaged.
-20. Press Space.
+2. Press Space.
     You hear: Staged a.txt.
-21. Press Ctrl+Enter (Commit; Actions menu).
-22. Press Enter.
+3. Press Ctrl+Enter (Commit; Actions menu).
+4. Press Enter.
     You hear: Type the commit message.
-23. Type: Test commit
-24. Press Enter.
+5. Type: Test commit
+6. Press Enter.
     You hear: Committed.
-25. Press Ctrl+2 (Log; Navigation menu).
+7. Press Ctrl+2 (Log; Navigation menu).
     You hear: Log, 2 commits.
-26. Press Ctrl+1 (Changes; Navigation menu).
+8. Press Ctrl+1 (Changes; Navigation menu).
     You hear: Changes, 1 file.
-27. Press F5 (Refresh; Session menu).
+
+### Discard the changes to a file
+
+1. Press F5 (Refresh; Session menu).
     You hear: Refreshed: Changes, 2 files.
-28. Press Home.
-29. Press Delete.
-30. Press Escape.
-31. Press Delete.
-32. Press Enter.
+2. Press Home.
+3. Press Delete.
+4. Press Escape.
+5. Press Delete.
+6. Press Enter.
     You hear: Discarded a.txt.
-33. Press Delete.
-    You hear: Untracked file: delete it in File Explorer.
-34. Press Ctrl+S.
-    You hear: Nothing to save here. Space stages, Ctrl+Enter commits.
-35. Press F5 (Refresh; Session menu).
-    You hear: Refreshed: Changes, 2 files.
-36. Press Home.
-37. Press Space, Ctrl+Enter.
 
 ## Read the history and switch branches
 
 Starts with: Open axGIT with the folder repo.
+
+### Read a commit of the log
 
 1. Press Ctrl+2 (Log; Navigation menu).
     You hear: Log, 2 commits.
@@ -141,52 +142,58 @@ Starts with: Open axGIT with the folder repo.
     You hear: a.txt.
 7. Press Ctrl+Tab (Switch between the list and the details).
     The focus moves to Log, 2 commits (List).
-8. Press Ctrl+3 (Branches; Navigation menu).
+
+### Switch branches
+
+1. Press Ctrl+3 (Branches; Navigation menu).
     You hear: Branches, 2.
-9. Press Enter.
+2. Press Enter.
     You hear: Already on main.
-10. Press Down.
+3. Press Down.
     It reads other.
-11. Press Enter.
+4. Press Enter.
     You hear: Switched to other.
-12. Press Ctrl+1 (Changes; Navigation menu).
+5. Press Ctrl+1 (Changes; Navigation menu).
     You hear: Changes, no changes.
-13. Press Ctrl+3 (Branches; Navigation menu).
+6. Press Ctrl+3 (Branches; Navigation menu).
     You hear: Branches, 2.
-14. Press Up.
+7. Press Up.
     It reads main.
-15. Press Enter.
+8. Press Enter.
     You hear: Switched to main.
-16. Press Ctrl+N (New branch; Actions menu).
-17. Type: scratch-test
-18. Press Enter.
+
+### Make a new branch
+
+1. Press Ctrl+N (New branch; Actions menu).
+2. Type: scratch-test
+3. Press Enter.
     You hear: Switched to scratch-test.
-19. Press Ctrl+3 (Branches; Navigation menu).
+4. Press Ctrl+3 (Branches; Navigation menu).
     You hear: Branches, 3.
-20. Press Home.
-21. Press Enter.
+5. Press Home.
+6. Press Enter.
     You hear: Switched to main.
-22. Press Ctrl+Shift+F (Fetch; Actions menu).
+
+### Fetch, pull and push
+
+1. Press Ctrl+Shift+F (Fetch; Actions menu).
     You hear: Fetched.
-23. Press Ctrl+Shift+L (Pull; Actions menu).
+2. Press Ctrl+Shift+L (Pull; Actions menu).
     You hear: Pulled.
-24. Press Ctrl+Shift+L (Pull; Actions menu).
+3. Press Ctrl+Shift+L (Pull; Actions menu).
     You hear: Already up to date.
-25. Press F5 (Refresh; Session menu).
+4. Press F5 (Refresh; Session menu).
     You hear: Refreshed.
-26. Press Ctrl+Shift+H (Push; Actions menu).
+5. Press Ctrl+Shift+H (Push; Actions menu).
     You hear: Pushed.
-27. Press Ctrl+Shift+H (Push; Actions menu).
+6. Press Ctrl+Shift+H (Push; Actions menu).
     You hear: Pushed.
-28. Press Ctrl+Shift+F, Ctrl+Shift+L.
-    You hear: Working…
-    You hear: Fetched.
-29. Press Ctrl+Shift+F (Fetch; Actions menu).
-30. Press Escape.
 
 ## Use axGIT's text, notices and axKit menu
 
 Starts with: Open axGIT with the folder repo.
+
+### Find a word in a diff
 
 1. Press Enter.
     You hear: Diff of a.txt.
@@ -198,45 +205,60 @@ Starts with: Open axGIT with the folder repo.
     It reads +second paragraph marker.
 6. Press F3.
     It reads +first paragraph marker.
-7. Press Ctrl+F.
-8. Press Ctrl+A.
-9. Type: absent
-10. Press Enter.
-    You hear: Not found.
-    The focus moves to Diff of a.txt (Text): +first paragraph marker.
-11. Press Ctrl+Home.
+
+### Move a screen down in the details
+
+The focus moves to Diff of a.txt (Text): +first paragraph marker.
+1. Press Ctrl+Home.
     It reads diff --git.
-12. Press Page Down.
-13. Press Ctrl+Tab (Switch between the list and the details).
-14. Press Ctrl+2 (Log; Navigation menu).
+2. Press Page Down.
+
+### Move by paragraph in a commit's details
+
+1. Press Ctrl+Tab (Switch between the list and the details).
+2. Press Ctrl+2 (Log; Navigation menu).
     You hear: Log, 1 commit.
-15. Press Enter.
+3. Press Enter.
     You hear: lines.
-16. Press Ctrl+Down.
+4. Press Ctrl+Down.
     It reads first.
-17. Press Ctrl+Down.
+5. Press Ctrl+Down.
     It reads a.txt.
-18. Press Ctrl+Tab (Switch between the list and the details).
-19. Press Ctrl+1 (Changes; Navigation menu).
+6. Press Ctrl+Tab (Switch between the list and the details).
+7. Press Ctrl+1 (Changes; Navigation menu).
     You hear: Changes, 1 file.
-20. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
+
+### Change the text size
+
+1. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
     You hear: Text size.
-21. Choose Smaller text in the Options menu, Text (key: Ctrl+Minus).
+2. Choose Smaller text in the Options menu, Text (key: Ctrl+Minus).
     You hear: Text size.
-22. Choose Windows text size in the Options menu, Text.
+3. Choose Windows text size in the Options menu, Text.
     You hear: Windows text size.
-23. Press F1 (Keyboard shortcuts; Help menu).
-24. Press Escape.
-25. Choose User guide in the Help menu.
-26. Press Escape.
-27. Choose Version in the Help menu, About.
-28. Press Escape.
-29. Close the window.
-30. Open axGIT.
+
+### Read the keyboard shortcuts and the user guide
+
+1. Press F1 (Keyboard shortcuts; Help menu).
+2. Press Escape.
+3. Choose User guide in the Help menu.
+4. Press Escape.
+
+### Hear the version of axKit
+
+1. Choose Version in the Help menu, About.
+2. Press Escape.
+
+### Open the last repository again
+
+1. Close the window.
+2. Open axGIT.
 
 ## Agree to the reminder before the first repository opens
 
 Starts with: Open axGIT with the folder repo.
+
+### Agree to the reminder and open the repository
 
 You hear: Before axGIT connects to Git.
 1. Press Tab.
@@ -250,20 +272,25 @@ You hear: Before axGIT connects to Git.
 5. Press Space.
     You hear: checked.
 6. Press Enter.
-7. Choose Licence in the Help menu, About.
-8. Press Escape.
-9. Close the window.
-10. Open axGIT with the folder repo.
+
+### Read what was agreed to on this computer
+
+1. Choose Licence in the Help menu, About.
+2. Press Escape.
+3. Close the window.
 
 ## Open a repository that runs programs of its own
 
-Starts with: Open axGIT with the folder repo.
+### Open a repository with its own programs kept off
 
-1. Press Enter.
-2. Close the window.
-3. Open axGIT with the folder repo.
-4. Press Tab 2 times.
-5. Press Space.
+1. Open axGIT with the folder repo.
+2. Press Enter.
+3. Close the window.
+
+### Trust a repository
+
+1. Open axGIT with the folder repo.
+2. Press Tab 2 times.
+3. Press Space.
     You hear: Trusted.
-6. Close the window.
-7. Open axGIT with the folder repo.
+4. Close the window.

@@ -9,18 +9,30 @@ command's in this version of axKit.
 
 ## Open a JSON file in axJSON
 
-Starts with: Open axJSON. Open axJSON with the file settings.json. Open the file settings.json. Go to the axJSON window.
+### Open axJSON with an empty document
 
-1. Press Down.
-2. Type: X
-3. Press Ctrl+S (Save; Session menu).
-4. Press Tab 2 times.
-5. Press Enter.
+1. Open axJSON.
+
+### Open a JSON file
+
+1. Open axJSON with the file settings.json.
+2. Open the file settings.json.
+
+### Reload a file that another program changed
+
+1. Go to the axJSON window.
+2. Press Down.
+3. Type: X
+4. Press Ctrl+S (Save; Session menu).
+5. Press Tab 2 times.
+6. Press Enter.
     You hear: Reloaded.
 
 ## Move through a JSON file by its structure
 
 Starts with: Open axJSON with the file settings.json.
+
+### Move from key to key
 
 1. Press Ctrl+K (Key; Navigation menu, Next).
     You hear: model: opus.
@@ -34,133 +46,119 @@ Starts with: Open axJSON with the file settings.json.
     You hear: count: 3.
 6. Press Ctrl+K (Key; Navigation menu, Next).
     You hear: on: true.
-7. Press Ctrl+K (Key; Navigation menu, Next).
-    You hear: No next key.
-8. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
+
+### Move back from key to key
+
+1. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
     You hear: count: 3.
-9. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
+2. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
     You hear: deny, empty array.
-10. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
+3. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
     You hear: allow, array with 2 items.
-11. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
+4. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
     You hear: permissions, object with 2 keys.
-12. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
+5. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
     You hear: model: opus.
-13. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
-    You hear: No previous key.
-14. Press Ctrl+Home, Ctrl+J.
+
+### Move to the next object and back to the whole file
+
+1. Press Ctrl+Home, Ctrl+J.
     You hear: permissions, object with 2 keys.
-15. Press Ctrl+J (Object; Navigation menu, Next).
+2. Press Ctrl+J (Object; Navigation menu, Next).
     You hear: No next object.
-16. Press Ctrl+Shift+J (Object; Navigation menu, Previous).
+3. Press Ctrl+Shift+J (Object; Navigation menu, Previous).
     You hear: object with 4 keys.
-17. Press Ctrl+Home, Ctrl+L.
+
+### Move through arrays and their items
+
+1. Press Ctrl+Home, Ctrl+L.
     You hear: allow, array with 2 items.
-18. Press Ctrl+L (Array; Navigation menu, Next).
+2. Press Ctrl+L (Array; Navigation menu, Next).
     You hear: deny, empty array.
-19. Press Ctrl+Home, Ctrl+I.
+3. Press Ctrl+Home, Ctrl+I.
     You hear: Item 1 of 2, Bash.
-20. Press Ctrl+I (Item; Navigation menu, Next).
+4. Press Ctrl+I (Item; Navigation menu, Next).
     You hear: Item 2 of 2, Read.
-21. Press Ctrl+I (Item; Navigation menu, Next).
+5. Press Ctrl+I (Item; Navigation menu, Next).
     You hear: No next item.
-22. Press Ctrl+Home, Ctrl+E.
-    You hear: No next error.
-23. Press Down, Down, Right, Right, Left, Up, End, Home.
-24. Press Ctrl+Home.
-25. Choose Key in the Navigation menu, Next (key: Ctrl+K).
+
+### Move by the structure from the Navigation menu
+
+1. Press Ctrl+Home.
+2. Choose Key in the Navigation menu, Next (key: Ctrl+K).
     You hear: model: opus.
-26. Choose Object in the Navigation menu, Next (key: Ctrl+J).
+3. Choose Object in the Navigation menu, Next (key: Ctrl+J).
     You hear: permissions, object with 2 keys.
-27. Choose Array in the Navigation menu, Next (key: Ctrl+L).
+4. Choose Array in the Navigation menu, Next (key: Ctrl+L).
     You hear: allow, array with 2 items.
-28. Choose Item in the Navigation menu, Next (key: Ctrl+I).
+5. Choose Item in the Navigation menu, Next (key: Ctrl+I).
     You hear: Item 1 of 2, Bash.
-29. Choose Item in the Navigation menu, Previous (key: Ctrl+Shift+I).
+6. Choose Item in the Navigation menu, Previous (key: Ctrl+Shift+I).
     You hear: No previous item.
-30. Choose Array in the Navigation menu, Previous (key: Ctrl+Shift+L).
+7. Choose Array in the Navigation menu, Previous (key: Ctrl+Shift+L).
     You hear: allow, array with 2 items.
-31. Choose Object in the Navigation menu, Previous (key: Ctrl+Shift+J).
+8. Choose Object in the Navigation menu, Previous (key: Ctrl+Shift+J).
     You hear: permissions, object with 2 keys.
-32. Choose Object in the Navigation menu, Previous (key: Ctrl+Shift+J).
+9. Choose Object in the Navigation menu, Previous (key: Ctrl+Shift+J).
     You hear: object with 4 keys.
-33. Choose Key in the Navigation menu, Previous (key: Ctrl+Shift+K).
+10. Choose Key in the Navigation menu, Previous (key: Ctrl+Shift+K).
     You hear: No previous key.
-34. Choose Error in the Navigation menu, Next (key: Ctrl+E).
+11. Choose Error in the Navigation menu, Next (key: Ctrl+E).
     You hear: No next error.
-35. Choose Error in the Navigation menu, Previous (key: Ctrl+Shift+E).
+12. Choose Error in the Navigation menu, Previous (key: Ctrl+Shift+E).
     You hear: No previous error.
-36. Choose User guide in the Help menu.
-37. Press Ctrl+K (Key; Navigation menu, Next).
-    You hear: No next key.
-38. Press Escape.
-39. Open axJSON with the file broken.json.
-40. Press Ctrl+Home, Ctrl+E.
+
+### Go to the next and the previous error
+
+1. Open axJSON with the file broken.json.
+2. Press Ctrl+Home, Ctrl+E.
     You hear: No next error.
-41. Open axJSON with the file missing-value.json.
-42. Press Ctrl+Home, Ctrl+E.
+3. Open axJSON with the file missing-value.json.
+4. Press Ctrl+Home, Ctrl+E.
     You hear: Error, line 4: expected a value, found ','.
-43. Press Ctrl+End, Ctrl+Shift+E.
+5. Press Ctrl+End, Ctrl+Shift+E.
     You hear: Error, line 4: expected a value, found ','.
-44. Go to the other axJSON window.
-45. Press Ctrl+Home, Ctrl+J.
-    You hear: permissions, object with 2 keys.
-46. Press Ctrl+Shift+J (Object; Navigation menu, Previous).
-    You hear: object with 4 keys.
 
 ## Format a JSON file
 
-Starts with: Open axJSON with the file one-line.json.
+### Format a file written on one line
 
-1. Press Ctrl+Shift+F (Format; Actions menu).
+1. Open axJSON with the file one-line.json.
+2. Press Ctrl+Shift+F (Format; Actions menu).
     You hear: Formatted.
-2. Press Ctrl+Home.
-3. Press Down.
-4. Open axJSON with the file broken.json.
-5. Press Ctrl+Shift+F (Format; Actions menu).
+3. Press Ctrl+Home.
+4. Press Down.
+
+### Format and repair a broken file
+
+1. Open axJSON with the file broken.json.
+2. Press Ctrl+Shift+F (Format; Actions menu).
     You hear: Formatted, repaired: 1 trailing comma, 1 missing comma.
-6. Press Ctrl+E (Error; Navigation menu, Next).
+3. Press Ctrl+E (Error; Navigation menu, Next).
     You hear: No next error.
-7. Press Ctrl+Home, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K.
+
+### Repair a single-quoted value
+
+1. Press Ctrl+Home, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K.
     You hear: on: true.
-8. Press End.
-9. Type: , "q": 'x'
-10. Press Ctrl+Shift+F (Format; Actions menu).
+2. Press End.
+3. Type: , "q": 'x'
+4. Press Ctrl+Shift+F (Format; Actions menu).
     You hear: Formatted, repaired: 1 single-quoted string.
-11. Open axJSON with the file missing-value.json.
-12. Press Ctrl+Shift+F (Format; Actions menu).
-    You hear: Not valid JSON: line 4, expected a value, found ','.
-13. Choose Format in the Actions menu (key: Ctrl+Shift+F).
-    You hear: Not valid JSON: line 4, expected a value, found ','.
-14. Open axJSON with the file formatted.json.
-15. Press Ctrl+Shift+F (Format; Actions menu).
-    You hear: Already formatted.
-16. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Nothing to undo.
-17. Go to the other axJSON window.
-18. Press Ctrl+Z (Undo; Actions menu).
+
+### Undo and redo a format
+
+1. Go to the other axJSON window.
+2. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone.
-19. Press Ctrl+Y (Redo; Actions menu).
+3. Press Ctrl+Y (Redo; Actions menu).
     You hear: Redone.
-20. Press Ctrl+End.
-21. Type: abc
-22. Type: def
-23. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone.
-24. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone.
-25. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone.
-26. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Nothing to undo.
-27. Press Ctrl+Y 3 times.
-    You hear: Redone.
-28. Press Ctrl+Y (Redo; Actions menu).
-    You hear: Nothing to redo.
 
 ## Use axJSON's axKit menu and About
 
 Starts with: Open axJSON with the file settings.json.
+
+### Hear the version of axKit
 
 1. Choose Version in the Help menu, About.
 2. Press Escape.
@@ -169,10 +167,15 @@ Starts with: Open axJSON with the file settings.json.
 
 Starts with: Open axJSON with the file settings.json.
 
+### Select all the text
+
 1. Choose Select all in the Context menu (key: Ctrl+A).
 2. Press Right.
-3. Press Ctrl+Shift+P (Command palette; Help menu).
-4. Type: select all, context
+
+### Select all the text from the command palette
+
+1. Press Ctrl+Shift+P (Command palette; Help menu).
+2. Type: select all, context
     You hear: Select all, Context, Ctrl+A.
-5. Press Enter.
-6. Press Left.
+3. Press Enter.
+4. Press Left.

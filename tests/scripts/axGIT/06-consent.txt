@@ -8,6 +8,7 @@ run git init -q -b main repo
 file repo\a.txt hello
 start git {temp}\repo
 
+# Goal: Agree to the reminder and open the repository
 # The reminder's title and text, read on the focus.
 expect said Before axGIT connects to Git
 # Tab to the box, named with what it agrees to.
@@ -26,6 +27,7 @@ expect said ! checked
 # Enter connects: the repository opens on its Changes list.
 keys enter
 expect focus Changes, 1 file
+# Goal: Read what was agreed to on this computer
 # About, Licence ends with what was agreed to on this computer (AX-11.8): this one, with the date and the version.
 menu Licence
 expect state What you have agreed to on this computer
@@ -34,6 +36,7 @@ keys escape
 expect focus Changes, 1 file
 close
 
+# Check: The second start asks nothing
 # The second start asks nothing.
 start git {temp}\repo
 expect focus Changes, 1 file

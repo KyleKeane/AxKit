@@ -21,6 +21,7 @@ file repo\notes.md # Notes
 run git -C repo add .
 run git -C repo -c user.name=Test -c user.email=none commit -q -m first
 
+# Check: Show current repository in lists its four places
 # 2.4 axGIT's Repository, Show current repository in: File Explorer (Ctrl+W), axClaude, axTerminal, axFile.
 start git {temp}\repo
 expect focus Changes, no changes
@@ -28,17 +29,20 @@ expect commands "File Explorer, Session, Show current repository in, Ctrl
 expect commands "axClaude, access layer for Claude Code, Session, Show current repository in"
 expect commands "axTerminal, access layer for your shell, Session, Show current repository in"
 expect commands "axFile, Session, Show current repository in"
+# Check: Open file in editor with no file selected says so
 # 2.5 Ctrl+E with no file in the list says so and starts nothing.
 keys ctrl+e
 expect said ! No file selected
 expect commands "Open file in editor, Context, Ctrl
 
+# Check: axDown's Show current file in lists axGIT
 # 2.3 axDown on a file of the repository: File, Show current file in, axGIT.
 start down {temp}\repo\notes.md
 expect focus notes.md
 expect commands "axGIT, access layer for Git, Session, Show current file in"
 close
 
+# Check: axClaude's Show current folder in lists axGIT
 # 2.1 axClaude on the repository: Session, Show current folder in, axGIT (Claude on Haiku; the trust question is
 # left unanswered, the menu is there from the start).
 start claude {temp}\repo -- --model haiku

@@ -9,6 +9,7 @@ silence p\first.wav 60000
 silence p\second.wav 60000
 silence p\third.wav 60000
 
+# Goal: Play, pause and resume
 # Step 1: play, pause and resume with Space and Ctrl+P; Ctrl+P in Go to time's field is the field's own.
 # The waits between the presses are a user's pace: the engine changes its state a moment after a call, and a press
 # within that moment reads the old state (see the report).
@@ -26,6 +27,7 @@ wait 300
 keys ctrl+p
 expect said ! Playing
 wait 300
+# Check: In the Go to time field the pause key is the field's own
 keys ctrl+t
 expect state "notice":"Go to time"
 expect focus Time
@@ -34,6 +36,7 @@ expect quiet 500
 keys escape
 expect focus first.wav (playing)
 
+# Goal: Move forward, back and to a time
 # Step 2: 15 seconds forward and back, the position reached said; Go to time.
 keys space
 expect said ! Paused at 0:0
@@ -49,6 +52,7 @@ expect focus first.wav (playing)
 keys space
 expect said ! Playing
 
+# Goal: Change the playing speed
 # Step 3: the speed in steps of 0.25 with Ctrl+Up and Ctrl+Down (AM-D8, 2026-11-14; Ctrl+Shift+Period and
 # Ctrl+Shift+Comma until then), the selection left where it is, and once through the menu commands, which run the
 # same code; Normal speed back to 1. That the voice is faster at the same pitch is for the ear.
@@ -72,6 +76,7 @@ menu Faster
 expect said ! Speed 1.5
 expect state "1 of 3, speed 1.5"
 
+# Goal: Hear what is playing and go to the next or the previous file
 # Step 4: what is playing; the next and the previous file; "First file" at the start. (A Ctrl+Q sent at once after
 # the step before was twice not taken at all; the pause is a user's pace, see the report.)
 wait 300
@@ -84,10 +89,12 @@ keys ctrl+shift+right
 expect said ! Playing second.wav
 keys ctrl+shift+left
 expect said ! Playing first.wav
+# Check: Before the first file First file is said
 keys ctrl+shift+left
 expect said ! First file
 expect list "first.wav (playing)","second.wav","third.wav"
 
+# Check: A time past the end goes to the end and the next file plays
 # Step 2a: Go to time past the end says the file's length, not a time past it; the file then ends and the next
 # plays, said on its own, the selection where it was (on the first file: Ctrl+Shift+Right and Left move the mark,
 # not the selection) and the mark moved (step 5).
@@ -101,6 +108,7 @@ refuse said 9:00
 expect said Playing third.wav
 expect list "first.wav","second.wav","third.wav (playing)"],"selected":0
 
+# Check: The end of the queue is said with the done sound
 # Step 2a: Ctrl+Right near the end says the file's length. Step 6: then "End of queue" with the done chime, the
 # title and the status bar empty, Ctrl+Q "Nothing playing". Ctrl+Shift+Right on the last file says "End of queue".
 keys ctrl+shift+right
@@ -120,6 +128,7 @@ wait 300
 keys ctrl+q
 expect said ! Nothing playing
 
+# Check: The speed is kept for the next window
 # Step 3 (last part): the speed is kept for the next window.
 close
 wait 2000
@@ -137,6 +146,7 @@ expect said , speed 1.5
 menu Normal speed
 expect said ! Speed 1
 
+# Goal: Stop saying each file as it starts
 # Step 5: a file ends and the next plays, "Playing <next>" said without interrupting; the selection stays and the
 # mark moves. Say each file as it starts, off: the next one is not said.
 expect said Playing s2.wav
@@ -147,6 +157,7 @@ refuse said Playing s3.wav
 expect list "s4.wav (playing)"
 refuse said Playing s4.wav
 
+# Check: A queue that ends by itself says End of queue
 # Step 6 again from a file ending on its own.
 expect said ♪ Done
 expect said End of queue
@@ -165,6 +176,7 @@ wait 2000
 # File Explorer, a system window outside the test desktop; Show current file in, axFile starts a window the runner
 # cannot reach or close; that Alt+F4 stops the sound is for the ear. All left to the NVDA pass.
 
+# Check: A time that is not one is refused and the notice stays
 # Step 2: a time that is not one says "Not a time" and the notice stays. Last in the script, since it fails today:
 # the notice closes on Go whatever the field holds.
 start media {temp}\p

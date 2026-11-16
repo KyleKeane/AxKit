@@ -8,6 +8,7 @@ allow error is not a text file
 file home\AxKit\axPreview.json {"checkForUpdates": false}
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('nul-later.txt', ('A line of text.' + [char]13 + [char]10) * 700 + [char]0 + 'after the NUL')"
 
+# Check: A file with a NUL further in is refused and the window keeps what it showed
 # 9a manual: Ctrl+O is the Windows file picker, so the file is given at the start of a window of its own, which has
 # nothing to keep but Untitled.
 start preview {temp}\nul-later.txt

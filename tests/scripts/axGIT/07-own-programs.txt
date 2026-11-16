@@ -13,6 +13,7 @@ run git -C repo -c user.name=Test -c user.email=none commit -q -m first
 file repo\a.txt hello\nchanged
 file repo\.git\hooks\post-checkout #!/bin/sh\nexit 0
 
+# Goal: Open a repository with its own programs kept off
 # 1.7 The notice names the hook; Enter keeps the programs off, and the Changes list comes.
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
@@ -28,6 +29,7 @@ expect focus Modified a.txt, unstaged
 refuse said Trusted
 close
 
+# Goal: Trust a repository
 # Opened again: the notice again, since nothing was trusted; Trust this repository.
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
@@ -42,6 +44,7 @@ expect state "notice":null
 expect focus Changes, 1 file
 close
 
+# Check: A trusted repository opens without the notice
 # The next opening shows no notice: the Changes list at once.
 start git {temp}\repo
 expect focus Changes, 1 file

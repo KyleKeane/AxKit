@@ -5,16 +5,19 @@
 file home\AxKit\axCalc.json {"checkForUpdates": false, "keepHistory": false}
 
 start calc
+# Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
 expect focus Expression
 
+# Goal: Calculate an expression
 # AC-6.1: Enter answers, the answer said alone, the field emptied.
 type 1920*1080*4
 keys enter
 expect said ! 8294400
 expect focus "name":"Expression","role":"Text","value":""
 
+# Goal: Empty the field
 # AC-6.1: Escape empties a field with text ("Cleared") and says "Empty" on an empty one.
 type 2+2
 keys escape
@@ -22,23 +25,27 @@ expect said ! Cleared
 keys escape
 expect said ! Empty
 
+# Goal: Go on from the last answer
 # An expression starting with an operator continues from the last answer (AC-3).
 type /2
 keys enter
 expect said ! 4147200
 
+# Goal: Hear the last answer and its other bases
 # Ctrl+Q says the last answer; Ctrl+I the answer in other bases.
 keys ctrl+q
 expect said 4147200
 keys ctrl+i
 expect said hex
 
+# Goal: Put an earlier expression back in the field
 # Tab to the history: the newest entry; Enter puts its expression back in the field (AC-5.2).
 keys tab
 expect focus History
 keys enter
 expect focus "name":"Expression"
 
+# Goal: Remove an entry from the history
 # In the history Escape goes back to the field, Delete removes the entry.
 keys tab
 expect focus History
@@ -48,12 +55,14 @@ keys tab
 keys delete
 expect said ! Removed
 
+# Check: Find in the history opens and closes
 # Ctrl+F finds in the history; Escape closes the find.
 keys ctrl+f
 expect state "notice":"Find"
 keys escape
 expect state "notice":null
 
+# Goal: Read the keyboard shortcuts
 # F1: the shortcuts end with the Notices section every window of axKit has (2026-11-09); Escape closes the text.
 keys f1
 expect state "notice":"Keyboard shortcuts"

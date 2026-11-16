@@ -11,8 +11,10 @@ file data.json {\n  "model": "opus"\n}
 run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('tool.exe', [byte[]](77,90,144,0,3,0,0,0,4,0,0,0,255,255,0,0) * 16)"
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('too-large.txt', ('a' * 34000000))"
 
+# Goal: Open a text file in axPreview
 # 1.1: README.md: the title, the text named after the file with its first line; nothing else spoken.
 start preview {temp}\README.md
+# Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
 expect state "title":"README.md - axPreview"
@@ -26,21 +28,25 @@ expect commands "Find, Navigation, Ctrl\u002BF"
 expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW, checked"
 expect commands "Keyboard shortcuts, Help, F1"
 
+# Goal: Read the text line by line
 # 1.2: Down reads the next line; typing a letter changes nothing and says nothing; Ctrl+V does nothing.
 keys down
 expect focus {"name":"README.md","role":"Text","value":""}
 keys down
 expect focus This file has headings, links, lists
+# Check: Typing and pasting change nothing and say nothing
 type xyz
 keys ctrl+v
 expect quiet 1000
 expect state "title":"README.md - axPreview"
 expect focus {"name":"README.md","role":"Text","value":"This file has headings, links, lists, a block quote and a table, for the navigation keys."}
+# Check: Selecting a line says nothing of axPreview's own
 # Shift+Down selects a line, without a word of axPreview's.
 keys shift+down
 expect quiet 1000
 # 1.2 manual: Ctrl+A, Ctrl+C puts the text on the clipboard, which is the user's, shared with the test desktop.
 
+# Goal: Go to a line by its number
 # 1.3: l says the line; Ctrl+G, the field with the line and column; 5, Enter: "Line 5 of 32"; a word: "Not a line number".
 keys ctrl+home down
 keys l
@@ -51,10 +57,12 @@ type 5
 keys enter
 expect said ! Line 5 of 32
 expect focus {"name":"README.md","role":"Text","value":"## Install"}
+# Check: A word in place of a number is refused
 keys ctrl+g
 type x
 keys enter
 expect said ! Not a line number
+# Check: The letter l in the Go to line field is typed there
 # The l key typed into the Go to line field is an l in the field.
 keys ctrl+g
 expect focus Go to line (now line 5, column 1)
@@ -64,6 +72,7 @@ refuse said Line 5 of 32
 keys escape
 expect focus README.md
 
+# Goal: Move by headings, links, lists, quotes and tables
 # 1.4: the navigation keys.
 keys ctrl+home ctrl+h
 expect said ! Install, heading level 2
@@ -87,11 +96,13 @@ keys ctrl+t
 expect said ! Table with 3 rows and 2 columns
 keys ctrl+t
 expect said ! No next table
+# Check: The Navigation menu lists the moves with their keys
 # 1.4 manual: Alt+N, X opens the Next submenu, a real menu; the palette lists its items with their keys.
 expect commands "Heading, Navigation, Next, Ctrl\u002BH"
 expect commands "Link, Navigation, Next, Ctrl\u002BK"
 expect commands "Table, Navigation, Previous, Ctrl\u002BShift\u002BT"
 
+# Goal: Find a word in the text
 # 1.5: Ctrl+F, update, Enter: the match selected; F3 the next; Shift+F3 back.
 keys ctrl+home ctrl+f
 expect focus Text to find
@@ -105,6 +116,7 @@ keys f3
 expect state Line 32, Column 38 \u00B7
 keys shift+f3
 expect state Line 7, Column 84 \u00B7
+# Goal: Move by page and by paragraph
 # Page Down, Page Up, Ctrl+Down, Ctrl+Up as in axDown.
 keys ctrl+home pagedown
 expect quiet 500
@@ -117,6 +129,7 @@ expect state Line 5, Column 1 \u00B7
 keys ctrl+up
 expect state Line 3, Column 1 \u00B7
 
+# Goal: Turn word wrap off and on
 # 1.6: the status bar (NVDA+End): the name, then "Line 5, Column 1 · UTF-8 · CRLF". Word wrap off and on, the caret kept.
 keys ctrl+g
 type 5
@@ -130,9 +143,11 @@ keys ctrl+shift+w
 expect said ! Word wrap on
 expect state Line 5, Column 1 \u00B7
 
+# Check: Save has nothing to save here
 # 1.7: Ctrl+S: "Nothing to save here". F1, the Keyboard shortcuts notice; Ctrl+H in it jumps to its headings; Escape.
 keys ctrl+s
 expect said ! Nothing to save here
+# Goal: Read the keyboard shortcuts
 keys f1
 expect state "notice":"Keyboard shortcuts"
 keys ctrl+h
@@ -141,6 +156,7 @@ keys escape
 expect state "notice":null
 expect focus README.md
 
+# Goal: Reload the file after a change
 # 1.10: F5: "Reloaded", the caret on the same line, the text as the file now is.
 run echo An added line.>> README.md
 keys f5
@@ -149,11 +165,13 @@ expect state Line 5, Column 1 \u00B7
 expect text An added line.
 # 1.10 manual: the reload on coming back to the window (Alt+Tab) needs its activation, which a test window never gets.
 
+# Check: The Session menu offers Edit in axDown for a Markdown file
 # 1.11: on a .json file the File menu's item reads "Edit in axJSON Ctrl+E"; on README.md "Edit in axDown".
 expect commands "Edit in axDown, Session, Ctrl\u002BE"
 # 1.11 manual: Ctrl+E starts an editor window, and the Show current file in items start File Explorer, axGIT,
 # axTerminal and axFile, processes the runner does not reach (File Explorer on the user's desktop).
 
+# Check: A plain text file has no headings
 # 1.8: a plain text file has no headings: Ctrl+H, "No next heading".
 # 1.8 manual: Ctrl+O is the Windows file picker; Alt+F, R, Open recent, is a submenu filled as it opens.
 start preview --new {temp}\plain.txt
@@ -162,6 +180,7 @@ expect focus plain.txt
 keys ctrl+h
 expect said ! No next heading
 
+# Check: A program, a file too large and a log each open as they should
 # 1.9: the files Ctrl+O would pick, given at the start instead (the same read, AP-2.2): an .exe opens, as its readable
 # text (AP-7.2, since 2026-10-24; "Not a text file" before), this one having none; over 32 MB a text is "Too large",
 # naming the size; a .log opens.
@@ -180,6 +199,7 @@ start preview --new {temp}\app.log
 expect state "title":"app.log - axPreview"
 expect focus 2026-10-22 09:00:01 INFO  The log file starts.
 
+# Check: A file that does not exist is said in a notice and the window has no file
 # 1.9a: a file that does not exist: the notice "File not found" naming it, the window empty, "Untitled - axPreview";
 # Enter closes it; Ctrl+E: "No file yet".
 start preview --new {temp}\gone.txt
@@ -201,6 +221,7 @@ expect said ! No file yet
 # 1.12 manual: Ctrl+N starts a second axPreview window, a process the runner does not reach.
 # 1.9a, a NUL further in: 01-start-and-the-text-nul.txt, apart, since its error notice is logged as an ERROR.
 
+# Check: The Session menu offers Edit in axJSON for a JSON file
 # 1.11: on the .json file, "Edit in axJSON".
 start preview --new {temp}\data.json
 expect focus data.json

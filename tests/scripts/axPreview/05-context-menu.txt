@@ -11,18 +11,21 @@ start preview {temp}\README.md
 expect focus README.md
 expect state Line 1, Column 1 ·
 
+# Check: The Context menu holds Copy and Select all only
 # Context as the palette reads it: Copy and Select all; the viewer changes nothing, so no Cut and no Paste.
 expect commands "Copy, Context, Ctrl+C"
 expect commands "Select all, Context, Ctrl+A"
 refuse commands "Cut, Context
 refuse commands "Paste, Context
 
+# Goal: Select all the text
 # Select all: the whole text is selected, so Right lets go of the selection at its end, the last line's.
 menu Select all, Context
 keys right
 expect state Line 5, Column 19 ·
 expect focus {"name":"README.md","role":"Text","value":"Run the installer."}
 
+# Goal: Select all the text from the command palette
 # The same command from the palette: its name, its menu and its key are said; Enter runs it and the focus is back in
 # the text. Left lets go of the selection at its start.
 keys ctrl+shift+p

@@ -10,11 +10,13 @@ run powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression
 run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('song.mp3', [byte[]](73,68,51,3,0,0,0,0,0,0))"
 run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('tool.bin', [byte[]](0,1,2) + [Text.Encoding]::ASCII.GetBytes('Readable inside') + [byte[]](0,0,7))"
 
+# Check: A text file opens on its text and its command list is whole
 # 5.1: a text file opens on its text as before; its window's command list is whole (AK-2.4).
 start preview {temp}\notes.md
 check commands
 expect focus {"name":"notes.md","role":"Text","value":"# Notes"}
 expect state Line 1, Column 1 · UTF-8
+# Goal: Read a file's details
 # 5.2: Tab moves to the Details list, on its first line, the File heading; Down reads the file's lines.
 keys tab
 expect focus {"name":"Details","role":"List","value":"File"}
@@ -22,12 +24,15 @@ keys down
 expect focus "value":"Name: notes.md"
 keys down down
 expect focus "value":"Size: 25 bytes"
+# Check: Enter on a line other than the Folder line opens nothing
 # 5.3: Enter on a line that is not the Folder line says what Enter does; nothing opens.
 keys enter
 expect said ! Enter opens the Folder line in axFile
+# Goal: Find a line of the details by typing its first letters
 # 5.4: the Contents group: the text's encoding and its words, found by typing its first letters.
 type wor
 expect focus "value":"Words: 5"
+# Goal: Move between the text and the details
 # 5.5: F6 goes back to the text, where the caret was; F6 again, the list, on the same line.
 keys f6
 expect focus "name":"notes.md","role":"Text"
@@ -36,6 +41,7 @@ expect focus "value":"Words: 5"
 # 5.5 manual: Ctrl+C on a line copies its value; the clipboard is the user's, shared with the test desktop.
 # 5.5 manual: Enter on the Folder line opens axFile, a window the runner does not reach.
 
+# Goal: Read a Word document
 # 5.6: a Word document is its text, its heading a Markdown heading, so Ctrl+H finds it; the status bar names the kind.
 start preview --new {temp}\report.docx
 expect state "title":"report.docx - axPreview"
@@ -46,6 +52,7 @@ keys ctrl+shift+h
 expect said ! Install, heading level 1
 expect commands "Open in Windows\u0027 program, Session, Ctrl\u002BE"
 
+# Goal: Read the contents of a zip
 # 5.7: a zip is its listing, its contents counted in the Details list.
 start preview --new {temp}\bundle.zip
 expect focus word/document.xml, 
@@ -53,6 +60,7 @@ keys tab
 type file
 expect focus "value":"Files: 1"
 
+# Check: A zip of more than 1,000 entries lists the first 1,000
 # A zip of more than 1,000 entries lists the first 1,000 and one line "and N more"; the Details list says what is shown
 # (2026-11-09).
 start preview --new {temp}\big.zip
@@ -63,6 +71,7 @@ keys tab
 type shown
 expect focus "value":"Shown: the first 1,000 entries"
 
+# Goal: Read the text in a picture
 # 5.8a: a picture with two lines of text, drawn here: first what it is, then, when Windows' reader answers, its text
 # under the line naming it, said once; the Contents group counts the lines (AP-7.2 item 4, 2026-11-09).
 run powershell -NoProfile -Command "Add-Type -AssemblyName System.Drawing; $b = New-Object System.Drawing.Bitmap 640, 160; $g = [System.Drawing.Graphics]::FromImage($b); $g.Clear([System.Drawing.Color]::White); $f = New-Object System.Drawing.Font 'Segoe UI', 32; $g.DrawString('Hello from axKit', $f, [System.Drawing.Brushes]::Black, 16, 20); $g.DrawString('Second line 2026', $f, [System.Drawing.Brushes]::Black, 16, 84); $b.Save('text.png', [System.Drawing.Imaging.ImageFormat]::Png)"
@@ -79,6 +88,7 @@ expect focus Second line 2026
 keys tab
 type text l
 expect focus "value":"Text lines: 2"
+# Goal: Read the text of a picture on the clipboard
 # Ctrl+Shift+V reads the picture on the clipboard, saved beside the logs under a dated name. The test desktop shares the
 # clipboard with the user's session, so the same picture goes there first (as axClip's script leaves texts there).
 run powershell -NoProfile -STA -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('text.png'))"
@@ -89,11 +99,13 @@ expect state clipboard-
 keys shift+tab
 expect focus "value":"clipboard-
 
+# Goal: Preview a sound file
 # 5.8: a sound file says what it is and that Ctrl+E plays it; the item is named so.
 start preview --new {temp}\song.mp3
 expect focus song.mp3 is a sound file (MP3).
 expect commands "Play in axMedia, Session, Ctrl\u002BE"
 
+# Goal: Read the text inside any other file
 # 5.9: any other file is its readable text, under the line that says so.
 start preview --new {temp}\tool.bin
 expect focus No preview for this kind yet; the readable text inside it follows.

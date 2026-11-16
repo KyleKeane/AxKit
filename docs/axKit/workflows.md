@@ -20,8 +20,32 @@ Steps and keys: `docs/axKit/workflows/axAutomate.md` (in Claude's working folder
 Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `workflows-axCalc.md`).
 
 1. **Calculate and reuse earlier answers**
+    - Calculate an expression
+    - Empty the field
+    - Go on from the last answer
+    - Hear the last answer and its other bases
+    - Put an earlier expression back in the field
+    - Remove an entry from the history
+    - Read the keyboard shortcuts
 2. **Use variables, earlier answers and the history in axCalc**
+    - Go on from the last answer and use ans
+    - Set a variable and use it
+    - Switch angles between degrees and radians
+    - Change an entry of the history and answer it again
+    - Find an entry in the history
+    - See the variables and clear them
+    - Clear the history
+    - Stop keeping the history between runs
 3. **Move through axCalc's history, find in it and remove an entry**
+    - Hear the last answer in other bases
+    - Move through the history one entry at a time
+    - Hear the answer of an entry in other bases
+    - Find the next and the previous match in the history
+    - Remove entries from the history
+    - Find an entry by typing its first characters
+    - Go back to the field from the history
+    - Change the text size
+    - Hear the bases from the command palette
 
 ## axClaude
 
@@ -368,12 +392,37 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
 Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `workflows-axGIT.md`).
 
 1. **Open a repository in axGIT**
+    - Open a repository
+    - Move between the list and the details
+    - Switch between the views
+    - Close the window
 2. **Open axGIT from another app**
 3. **Review and commit changes**
+    - Stage and unstage a file
+    - Read the diff of a changed file
+    - Read an untracked file
+    - Stage all and unstage all
+    - Commit the staged changes
+    - Discard the changes to a file
 4. **Read the history and switch branches**
+    - Read a commit of the log
+    - Switch branches
+    - Make a new branch
+    - Fetch, pull and push
 5. **Use axGIT's text, notices and axKit menu**
+    - Find a word in a diff
+    - Move a screen down in the details
+    - Move by paragraph in a commit's details
+    - Change the text size
+    - Read the keyboard shortcuts and the user guide
+    - Hear the version of axKit
+    - Open the last repository again
 6. **Agree to the reminder before the first repository opens**
+    - Agree to the reminder and open the repository
+    - Read what was agreed to on this computer
 7. **Open a repository that runs programs of its own**
+    - Open a repository with its own programs kept off
+    - Trust a repository
 
 ## axHelp
 
@@ -394,10 +443,26 @@ Steps and keys: `docs/axKit/workflows/axHelp.md` (in Claude's working folder: `w
 Steps and keys: `docs/axKit/workflows/axJSON.md` (in Claude's working folder: `workflows-axJSON.md`).
 
 1. **Open a JSON file in axJSON**
+    - Open axJSON with an empty document
+    - Open a JSON file
+    - Reload a file that another program changed
 2. **Move through a JSON file by its structure**
+    - Move from key to key
+    - Move back from key to key
+    - Move to the next object and back to the whole file
+    - Move through arrays and their items
+    - Move by the structure from the Navigation menu
+    - Go to the next and the previous error
 3. **Format a JSON file**
+    - Format a file written on one line
+    - Format and repair a broken file
+    - Repair a single-quoted value
+    - Undo and redo a format
 4. **Use axJSON's axKit menu and About**
+    - Hear the version of axKit
 5. **Use axJSON's Context menu**
+    - Select all the text
+    - Select all the text from the command palette
 
 ## axMCP
 
@@ -411,12 +476,35 @@ Steps and keys: `docs/axKit/workflows/axMCP.md` (in Claude's working folder: `wo
 Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `workflows-axMedia.md`).
 
 1. **Build and move through a play queue**
+    - Open axMedia with an empty queue
+    - Play a folder of sound files
+    - Move through the queue
+    - Find a file by part of its name
+    - Play another file of the queue
+    - Hear the information of a file
+    - Remove files and clear the queue
 2. **Add files to the queue from another app**
+    - Add a folder to the queue with no window open
+    - Play a file with its folder around it
+    - Play a file in the open window
+    - Add a folder to the open window's queue
+    - Open a second window on a file
 3. **Play, pause and seek**
+    - Play, pause and resume
+    - Move forward, back and to a time
+    - Change the playing speed
+    - Hear what is playing and go to the next or the previous file
+    - Stop saying each file as it starts
 4. **Hear why a file cannot be played**
 5. **Use axMedia's text, notices and axKit menu**
+    - Change the text size
+    - Read the keyboard shortcuts and the user guide
 6. **Use axMedia's Context menu**
+    - Hear a file's information from the Context menu
+    - Play the selected file from the Context menu
+    - Remove a file found in the command palette
 7. **Add a recent folder to the queue from the command palette**
+    - Add a recent folder to the queue from the palette
 
 ## axPass
 
@@ -432,10 +520,35 @@ Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder:
 
 1. **Preview a file that is almost text**
 2. **Preview a text file**
+    - Open a text file in axPreview
+    - Read the text line by line
+    - Go to a line by its number
+    - Move by headings, links, lists, quotes and tables
+    - Find a word in the text
+    - Move by page and by paragraph
+    - Turn word wrap off and on
+    - Read the keyboard shortcuts
+    - Reload the file after a change
 3. **Preview a file from another app**
+    - Show a file in the open window
+    - Open a second window
 4. **Use axPreview's text, notices and axKit menu**
+    - Change the text size
+    - Read the user guide
+    - Close the window
 5. **Read a file's details**
+    - Read a file's details
+    - Find a line of the details by typing its first letters
+    - Move between the text and the details
+    - Read a Word document
+    - Read the contents of a zip
+    - Read the text in a picture
+    - Read the text of a picture on the clipboard
+    - Preview a sound file
+    - Read the text inside any other file
 6. **Use axPreview's Context menu**
+    - Select all the text
+    - Select all the text from the command palette
 
 ## axProcess
 

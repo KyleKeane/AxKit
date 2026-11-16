@@ -8,6 +8,7 @@
 # The run's own settings (AXKIT_HOME): no update check at start, which goes to the network.
 file home\AxKit\axMedia.json {"checkForUpdates":false}
 
+# Check: An empty queue's Context menu says there is nothing in it
 # An empty queue: Context's one item says that there is nothing to act on, and says it again when chosen.
 start media
 expect focus Queue is empty
@@ -18,6 +19,7 @@ expect said ! Nothing in the queue
 close
 wait 1500
 
+# Check: Context holds the commands of the selected file
 # A queue of two: Context is the selected file's.
 mkdir ch
 silence ch\alpha.wav 30000
@@ -28,6 +30,7 @@ expect focus Queue, 2 items
 expect commands "Play, Context, Enter","Remove, Context, Delete","Information, Context, Ctrl+I"
 refuse commands "Nothing in the queue, Context"
 
+# Goal: Hear a file's information from the Context menu
 # Information on the playing file, with its position; on the other, its place only.
 menu Information, Context
 expect said ! alpha.wav, 1 of 2, playing, 0:0
@@ -37,12 +40,14 @@ menu Information, Context
 expect said ! beta.wav, 2 of 2
 refuse said playing,
 
+# Goal: Play the selected file from the Context menu
 # Play on the selected file: it plays and carries the mark.
 menu Play, Context
 expect said ! Playing beta.wav
 expect list ["alpha.wav","beta.wav (playing)"]
 expect state "title":"beta.wav - axMedia"
 
+# Goal: Remove a file found in the command palette
 # Remove, found in the palette: its name, its menu and its key are said; Enter removes the selected file, which was
 # playing, and the queue's last file gone, nothing plays.
 keys ctrl+shift+p
@@ -55,6 +60,7 @@ expect said ! Removed beta.wav
 expect list "name":"Queue, 1 item"
 expect list "items":["alpha.wav"]
 
+# Check: Removing the last file empties the queue and Context says so
 # Remove on the last file: the queue is empty, and Context says so again.
 menu Remove, Context
 expect said ! Removed alpha.wav

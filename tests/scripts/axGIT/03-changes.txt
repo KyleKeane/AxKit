@@ -19,6 +19,7 @@ start git {temp}\repo
 expect focus Changes, 2 files
 expect focus Modified a.txt, unstaged
 
+# Goal: Stage and unstage a file
 # 3.1 Space stages and unstages in place; the status bar's staged count follows.
 keys space
 expect said ! Staged a.txt
@@ -33,6 +34,7 @@ expect said ! Unstaged a.txt
 expect focus Modified a.txt, unstaged
 expect state 0 staged
 
+# Goal: Read the diff of a changed file
 # 3.2 Enter on a changed file: the diff in the details, the focus on its first line, then the name and length said.
 # (The timeline polls the focus every 50 ms, so the announcement can be listed before the focus move it follows.)
 keys enter
@@ -53,6 +55,7 @@ expect said · +changed world
 keys ctrl+tab
 expect said → Changes, 2 files (List): Modified a.txt, unstaged
 
+# Goal: Read an untracked file
 # 3.3 Enter on the untracked file: "Untracked file, N lines" and its text.
 keys down
 expect said · Untracked new.txt
@@ -64,6 +67,7 @@ expect said · one
 keys ctrl+tab
 expect said → Changes, 2 files (List): Untracked new.txt
 
+# Goal: Stage all and unstage all
 # 3.4 Stage all and unstage all.
 keys ctrl+shift+a
 expect said ! Staged all
@@ -72,10 +76,12 @@ keys ctrl+shift+u
 expect said ! Unstaged all
 expect list "Modified a.txt, unstaged","Untracked new.txt"
 
+# Check: A commit with nothing staged is refused
 # 3.5 Commit: refused with nothing staged; the notice with its Message field; refused empty; then the commit.
 keys ctrl+enter
 expect said ! Nothing staged. Space stages a file
 expect state "notice":null
+# Goal: Commit the staged changes
 keys up
 expect said · Modified a.txt, unstaged
 keys space
@@ -103,6 +109,7 @@ expect focus Test: Test commit
 keys ctrl+1
 expect said ! Changes, 1 file.
 
+# Goal: Discard the changes to a file
 # 3.6 F5 after an edit; Discard asks first; Escape leaves it; Enter discards; an untracked file is not discarded.
 file repo\a.txt hello\nagain
 keys f5
@@ -124,14 +131,17 @@ keys enter
 expect said ! Discarded a.txt
 expect focus Changes, 1 file
 expect list "Untracked new.txt"
+# Check: An untracked file is not discarded
 keys delete
 expect said ! Untracked file: delete it in File Explorer
 expect state "notice":null
 
+# Check: Save has nothing to save here
 # 3.7 Ctrl+S has nothing to save.
 keys ctrl+s
 expect said ! Nothing to save here. Space stages, Ctrl+Enter commits
 
+# Check: A commit asked while a stage runs does not say nothing is staged
 # AG-5.4, AG-7: a command asked for while one runs says "Working…". Space and Ctrl+Enter pressed together: the commit
 # is asked while the stage (or the refresh after it) still runs. Fails today (reported): Ctrl+Enter does not check
 # for a running command, reads the staged count from before the stage and says "Nothing staged. Space stages a file".

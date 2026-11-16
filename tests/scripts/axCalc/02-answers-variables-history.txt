@@ -7,12 +7,14 @@ file home\AxKit\axCalc.json {"checkForUpdates": false}
 
 start calc
 expect focus Expression
+# Check: The empty history is named as empty
 # 1.2 The history's name when it is empty.
 keys shift+tab
 expect focus History, empty
 keys tab
 expect focus Expression
 
+# Goal: Go on from the last answer and use ans
 # 2.2 ans and an answer continued.
 type 1920*1080*4
 keys enter
@@ -27,6 +29,7 @@ type ans*2
 keys enter
 expect said ! -6
 
+# Goal: Set a variable and use it
 # 2.3 A variable: set, said, used; the status bar counts it.
 type rate = 1.25
 keys enter
@@ -36,6 +39,7 @@ keys enter
 expect said ! 500
 expect state 1 variable
 
+# Check: An error is said and the expression stays in the field to be fixed
 # 2.4 An error is said and the expression stays in the field to be fixed.
 type sqrt(-1)
 keys enter
@@ -52,10 +56,12 @@ keys enter
 expect said ! Error: unknown name foo
 keys escape
 expect said ! Cleared
+# Check: Enter on the empty field asks for an expression
 # 2.5 Enter on the empty field.
 keys enter
 expect said ! Type an expression
 
+# Check: Up and Down leave the field's text as it is
 # 2.7 Up and Down are the field's own: its text is not replaced by a history line.
 type 7+
 keys up
@@ -63,6 +69,7 @@ keys down
 expect focus "value":"7+"
 keys escape
 
+# Goal: Switch angles between degrees and radians
 # 2.8 Degrees by default, radians from Options, Angles.
 type sin(30)
 keys enter
@@ -75,6 +82,7 @@ expect said ! 1
 menu Degrees
 expect said Degrees
 
+# Check: A fraction is said to have no other bases
 # 3.2 The bases of a fraction.
 type 2.5
 keys enter
@@ -82,6 +90,7 @@ expect said ! 2.5
 keys ctrl+i
 expect said 2.5 is not a whole number
 
+# Goal: Change an entry of the history and answer it again
 # 4.3 A history entry back in the field with Enter, changed and answered again.
 keys shift+tab
 expect focus History
@@ -95,6 +104,7 @@ type 30)
 keys enter
 expect said ! 0.5
 
+# Goal: Find an entry in the history
 # 4.5 Find lands on a match in the history.
 keys ctrl+f
 expect state "notice":"Find"
@@ -103,6 +113,7 @@ keys enter
 expect state "notice":null
 expect focus rate = 1.25
 
+# Goal: See the variables and clear them
 # 4.8 The variables notice, then Clear variables.
 menu Variables
 expect state "notice":"Variables"
@@ -112,6 +123,7 @@ menu Clear variables
 keys enter
 expect said Variables cleared
 
+# Check: The history and the last answer come back after a restart
 # 5.1 Two answers kept between runs: the history and the last answer come back.
 keys f6
 type 6*7
@@ -125,6 +137,7 @@ expect said 42
 keys shift+tab
 expect focus 6*7 = 42
 
+# Goal: Clear the history
 # 4.7 Clear the history: Escape keeps it, Enter clears it.
 keys ctrl+shift+delete
 expect state "notice":"Clear the history?"
@@ -134,9 +147,11 @@ keys ctrl+shift+delete
 expect state "notice":"Clear the history?"
 keys enter
 expect said History cleared
+# Check: After the clearing the focus stays in the empty history
 # The focus is still in the history, now empty.
 expect focus History, empty
 
+# Goal: Stop keeping the history between runs
 # 5.2 Keep history between runs off: the next start has none.
 keys tab
 type 1+1

@@ -12,6 +12,7 @@ expect focus Expression
 type 255
 keys enter
 expect said ! 255
+# Goal: Hear the last answer in other bases
 # 3.1 Ctrl+I in the field: the last answer in other bases.
 keys ctrl+i
 expect said ! 255, hex FF, binary 1111 1111, octal 377
@@ -25,6 +26,7 @@ type 10*3
 keys enter
 expect said ! 30
 
+# Goal: Move through the history one entry at a time
 # 4.1 The history: the newest entry first; Up reads one entry at a time, nothing announced; the edge at the first.
 keys shift+tab
 expect focus "name":"History, 4 entries","role":"List","value":"10*3 = 30"
@@ -35,10 +37,12 @@ expect focus "value":"10+1 = 11"
 keys up
 expect focus "value":"255 = 255"
 expect quiet 1500
+# Check: Up on the first entry plays the edge sound and stays
 keys up
 expect said ♪ Edge
 expect focus "value":"255 = 255"
 
+# Goal: Hear the answer of an entry in other bases
 # 4.2 Ctrl+I in the history: the selected entry's answer, not the last one (AC-4.1).
 keys ctrl+i
 expect said ! 255, hex FF, binary 1111 1111, octal 377
@@ -46,6 +50,7 @@ keys down
 keys ctrl+i
 expect said ! 11, hex B, binary 1011, octal 13
 
+# Goal: Find the next and the previous match in the history
 # 4.5 Find from the selected entry on: the next match, F3 the one after it round the end, Shift+F3 back.
 keys ctrl+f
 expect state "notice":"Find"
@@ -59,6 +64,7 @@ keys f3
 expect focus "value":"10*3 = 30"
 keys shift+f3
 expect focus "value":"10+1 = 11"
+# Check: A text no entry holds is said as not found
 # A text no entry holds: "Not found", the selection kept.
 keys ctrl+f
 expect state "notice":"Find"
@@ -67,6 +73,7 @@ keys enter
 expect said ! Not found
 expect focus "value":"10+1 = 11"
 
+# Goal: Remove entries from the history
 # 4.4 Delete: the entry is gone and the next one is selected; on the last entry the one before it.
 keys delete
 expect said ! Removed
@@ -78,10 +85,12 @@ keys delete
 expect said ! Removed
 expect focus "name":"History, 2 entries","role":"List","value":"2.5*2 = 5"
 
+# Goal: Find an entry by typing its first characters
 # AC-5.7 A character typed in the history finds the entry starting with it, round the end.
 type 255
 expect focus "value":"255 = 255"
 
+# Check: The clear question counts the entries and Escape keeps them
 # 4.7 The question says how many entries go; Escape keeps them and gives the history back.
 keys ctrl+shift+delete
 expect state "notice":"Clear the history?","noticeText":"The 2 entries cannot be brought back."
@@ -89,16 +98,19 @@ keys escape
 expect state "notice":null
 expect focus "name":"History, 2 entries","role":"List","value":"255 = 255"
 
+# Goal: Go back to the field from the history
 # 4.4 Escape: back to the field.
 keys escape
 expect focus "name":"Expression","role":"Text","value":""
 
+# Goal: Change the text size
 # 6.1 The text size, up and back.
 keys ctrl+plus
 expect said ! Text size
 keys ctrl+minus
 expect said ! Text size
 
+# Goal: Hear the bases from the command palette
 # 6.4 The palette: "bases" says the bases of the last answer.
 keys ctrl+shift+p
 expect state "notice":"Command palette"

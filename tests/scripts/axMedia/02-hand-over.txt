@@ -14,6 +14,7 @@ silence ch\alpha.wav 30000
 silence ch\beta.wav 30000
 silence ch\gamma.wav 30000
 
+# Goal: Add a folder to the queue with no window open
 # Step 4 (second half, AM-1.2, AM-D3): an add with no axMedia window open opens one with the queue and nothing
 # playing; an add says nothing in axMedia (axFile says it).
 # The app shows that window without activation; the runner activates it, as the user's switching to it would (every
@@ -28,6 +29,7 @@ expect said ! alpha.wav, 1 of 3
 close
 wait 1500
 
+# Goal: Play a file with its folder around it
 # Step 1 as a start (AM-1.1): a file plays with its folder's media files around it, the file selected and marked;
 # the window is named after the file from its first moment.
 start media {temp}\ch\beta.wav
@@ -37,15 +39,18 @@ expect focus beta.wav (playing)
 expect state "title":"beta.wav - axMedia"
 expect state "2 of 3, speed 1"
 
+# Goal: Play a file in the open window
 # Step 6 (first part): axmedia <file> with a window open: handed over, the open window plays it, no second window.
 launch media {temp}\ch\alpha.wav
 expect said ! Playing alpha.wav
 expect state "title":"alpha.wav - axMedia"
+# Goal: Add a folder to the open window's queue
 # Step 6 (second part): axmedia --add <folder> with a window open: the open window's queue grows.
 launch media --add {temp}\ch
 expect list "Queue, 6 items"
 expect list ["alpha.wav (playing)","beta.wav","gamma.wav","alpha.wav","beta.wav","gamma.wav"]
 
+# Goal: Open a second window on a file
 # Step 6 (third part): --new with a window open: a second window of its own, on the file, the first left alone.
 start media --new {temp}\ch\gamma.wav
 expect said ! Playing gamma.wav

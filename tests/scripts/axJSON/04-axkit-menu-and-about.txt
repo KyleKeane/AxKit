@@ -6,6 +6,7 @@ file settings.json {\n  "model": "opus"\n}
 
 start json {temp}\settings.json
 expect focus settings.json
+# Check: New window lists every app of the bundle
 # 4.1: axKit, New window lists every app of the bundle, as the palette reads the menu.
 expect commands "axClaude, access layer for Claude Code, Window, New window"
 expect commands "axDown, Window, New window"
@@ -19,6 +20,7 @@ expect commands "axStart, Window, New window"
 # 4.1 manual: Alt+W, N, J needs the menu bar's menu mode; the new axJSON window it starts is a process the runner
 # does not reach.
 # 4.2 manual: Open windows by type is a submenu filled as it opens, which the palette leaves out.
+# Goal: Hear the version of axKit
 # 4.2: axKit, About, Version names the apps in their two kinds.
 menu Version
 expect state "notice":"axKit

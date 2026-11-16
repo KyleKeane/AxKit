@@ -8,6 +8,7 @@ file home\AxKit\axPreview.json {"checkForUpdates": false}
 file README.md # Readme\n\nThe first window's file.
 file plain.txt Plain text file, line 1.\nLine 2.
 
+# Goal: Show a file in the open window
 # 2.6, the first half: axpreview plain.txt while a window is open: a second process hands the file over and ends
 # without a window of its own (launch waits for it to end); the open window shows it.
 start preview {temp}\README.md
@@ -16,6 +17,7 @@ launch preview {temp}\plain.txt
 expect state "title":"plain.txt - axPreview"
 expect focus {"name":"plain.txt","role":"Text","value":"Plain text file, line 1."}
 
+# Goal: Open a second window
 # 2.6, the second half: axpreview --new README.md opens a second window while one is open.
 start preview --new {temp}\README.md
 expect state "title":"README.md - axPreview"

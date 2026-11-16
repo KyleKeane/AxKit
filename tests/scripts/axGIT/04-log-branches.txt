@@ -30,6 +30,7 @@ run git -C clone push -q origin main
 start git {temp}\repo
 expect focus Changes, no changes
 
+# Goal: Read a commit of the log
 # 4.1 Enter on the first commit of the log: the commit in the details, the focus on "commit <full hash>".
 keys ctrl+2
 expect said ! Log, 2 commits.
@@ -49,6 +50,7 @@ expect said a.txt
 keys ctrl+tab
 expect said → Log, 2 commits (List)
 
+# Goal: Switch branches
 # 4.2 The branches: the current one reads current; Enter on it says so; Enter on another switches; back again.
 keys ctrl+3
 expect said ! Branches, 2.
@@ -72,6 +74,7 @@ keys enter
 expect said ! Switched to main
 expect state "status":["main
 
+# Goal: Make a new branch
 # 4.3 New branch: the notice with its Name field; the branch made and checked out; then back to main.
 keys ctrl+n
 expect state "notice":"New branch"
@@ -93,6 +96,7 @@ expect said ! Switched to main
 expect state "status":["main
 run git -C repo branch -d scratch-test
 
+# Goal: Fetch, pull and push
 # 4.4 Fetch: "Working: fetch…" on the status bar while it runs, then "Fetched" and one behind; Pull; Pull again;
 # Push with a commit to push, and with nothing to push. (Reading the status bar with NVDA+End is manual.)
 keys ctrl+shift+f
@@ -119,6 +123,7 @@ keys ctrl+shift+h
 expect said ! Pushed
 expect state changed,
 
+# Check: A pull asked while a fetch runs says Working
 # 4.5 Fetch and at once Pull: "Working…" for the second; the first finishes on its own.
 keys ctrl+shift+f ctrl+shift+l
 expect said ! Working…
@@ -126,6 +131,7 @@ expect said ! Fetched
 refuse said Pulled
 expect state changed,
 
+# Check: A failed fetch shows git's message in a notice
 # 4.4 With the network off, Fetch: the notice "Fetch failed" with git's message. The remote pointed at a folder
 # that does not exist stands in for the network.
 run git -C repo remote set-url origin {temp}\missing.git

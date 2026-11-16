@@ -13,6 +13,7 @@ file repo\a.txt start\n\nfirst paragraph marker\n\nsecond paragraph marker\n\nth
 start git {temp}\repo
 expect focus Modified a.txt, unstaged
 
+# Goal: Find a word in a diff
 # 5.1 Find in the details after a diff: the match selected and read, F3 the next, "Not found" at the end.
 keys enter
 expect said Diff of a.txt
@@ -31,6 +32,7 @@ expect said · +second paragraph marker
 # comes only for a text with no match at all (SPEC AG-2.4). The plan's "Not found at the end" is out of date.
 keys f3
 expect said · +first paragraph marker
+# Check: A text with no match is said as not found
 keys ctrl+f
 expect state "notice":"Find"
 wait 1200
@@ -38,6 +40,7 @@ keys ctrl+a
 type absent
 keys enter
 expect said ! Not found
+# Goal: Move a screen down in the details
 # Ctrl+Home, Page Down: a screen down (how far depends on the window's height on the test desktop).
 # The focus back in the details from the Find notice, on the match it had.
 expect said → Diff of a.txt (Text): +first paragraph marker
@@ -45,6 +48,7 @@ keys ctrl+home
 expect said · diff --git
 keys pagedown
 expect said ·
+# Goal: Move by paragraph in a commit's details
 # Ctrl+Down: the next paragraph. A diff has no blank lines (a blank context line is one space), so a commit's
 # details, which have them, stand in: from the top to the message, then to the files.
 keys ctrl+tab
@@ -61,6 +65,7 @@ keys ctrl+tab
 keys ctrl+1
 expect said ! Changes, 1 file.
 
+# Goal: Change the text size
 # 5.2 Larger and smaller text (Ctrl+Plus and Ctrl+Minus: the runner has no names for those keys, so the menu
 # commands they stand for), then Windows text size.
 menu Larger text
@@ -70,6 +75,7 @@ expect said ! Text size
 menu Windows text size
 expect said ! Windows text size
 
+# Goal: Read the keyboard shortcuts and the user guide
 # 5.3 F1: the Keyboard shortcuts notice; Escape closes it. Help, User guide; Escape.
 keys f1
 expect state "notice":"Keyboard shortcuts"
@@ -85,6 +91,7 @@ wait 1200
 keys escape
 expect state "notice":null
 
+# Goal: Hear the version of axKit
 # 5.4 The axKit menu's commands; About, Version names the version and axGIT among the apps.
 # (Recently closed and Open windows fill themselves as the menu opens, and the menu bar's menu mode needs the
 # foreground: those two lists are manual.)
@@ -103,6 +110,7 @@ expect state "notice":null
 # 5.5 Options, Developer, Copy diagnostics: manual. It writes to the clipboard, which the test desktop shares with
 # the user's, and the check is pasting it somewhere.
 
+# Goal: Open the last repository again
 # 5.6 Closed and started without a folder: the same repository, the last one opened. (Repository, Open recent
 # repository fills itself as the menu opens: its "1. repo (path)" item is manual.)
 close

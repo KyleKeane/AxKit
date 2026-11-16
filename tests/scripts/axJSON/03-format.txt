@@ -7,6 +7,7 @@ file broken.json {\n  "model": "opus"\n  "permissions": { "allow": ["Bash", "Rea
 file missing-value.json {\n  "model": "opus",\n  "permissions": { "allow": ["Bash", "Read"], "deny": [] },\n  "count": ,\n  "on": true\n}
 file formatted.json {\n  "name": "formatted",\n  "items": [\n    1,\n    2\n  ]\n}\n
 
+# Goal: Format a file written on one line
 # 3.1: everything on one line, Ctrl+Shift+F: "Formatted"; two spaces per level, one key per line.
 start json {temp}\one-line.json
 expect focus one-line.json
@@ -20,6 +21,7 @@ expect text     \u0022Bash\u0022,
 expect state *one-line.json - axJSON
 # 3.1, Ctrl+Z and Ctrl+Y after the Format: at the end of this script, since it fails (see the report).
 
+# Goal: Format and repair a broken file
 # 3.2: broken.json: "Formatted, repaired: 1 trailing comma, 1 missing comma"; then Ctrl+E says "No next error".
 start json {temp}\broken.json
 expect focus broken.json
@@ -27,6 +29,7 @@ keys ctrl+shift+f
 expect said ! Formatted, repaired: 1 trailing comma, 1 missing comma
 keys ctrl+e
 expect said ! No next error
+# Goal: Repair a single-quoted value
 # A single-quoted value typed in, then Ctrl+Shift+F: "Formatted, repaired: 1 single-quoted string".
 keys ctrl+home ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k
 expect said ! on: true
@@ -36,6 +39,7 @@ keys ctrl+shift+f
 expect said ! Formatted, repaired: 1 single-quoted string
 expect text "  \u0022q\u0022: \u0022x\u0022"
 
+# Check: A file that is not valid JSON is not formatted and stays as it was
 # 3.3: a value deleted, "count": , then Ctrl+Shift+F: "Not valid JSON: line 4, expected a value, found ','"; the text unchanged.
 start json {temp}\missing-value.json
 expect focus missing-value.json
@@ -48,6 +52,7 @@ menu Format
 expect said ! Not valid JSON: line 4, expected a value, found ','
 expect state "title":"missing-value.json - axJSON"
 
+# Check: A formatted file is said as already formatted
 # 3.4: Ctrl+Shift+F on a formatted file: "Already formatted", nothing changes, no star in the title.
 start json {temp}\formatted.json
 expect focus formatted.json
@@ -57,6 +62,7 @@ expect state "title":"formatted.json - axJSON"
 keys ctrl+z
 expect said ! Nothing to undo
 
+# Goal: Undo and redo a format
 # 3.1: Ctrl+Z after the Format puts the one line back ("Undone"), one step (SPEC.md AJ-2.3). Fails: the Format is
 # recorded as two steps, the text removed and the text put in, so the first Ctrl+Z leaves an empty document (see the report).
 use 1
@@ -66,6 +72,7 @@ expect text {"lines":["{\u0022model\u0022:\u0022opus\u0022,
 keys ctrl+y
 expect said ! Redone
 expect text "  \u0022on\u0022: true"
+# Check: Two runs of typing and the format are undone one step each
 # axDown's section 2, step 6 holds here too: two runs of typing are two steps, the Format a third, and the ends say so.
 keys ctrl+end
 type abc

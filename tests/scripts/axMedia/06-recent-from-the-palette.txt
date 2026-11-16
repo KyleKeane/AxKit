@@ -19,6 +19,7 @@ menu Clear queue
 expect said ! Queue cleared
 expect list ["Queue is empty"]
 
+# Goal: Add a recent folder to the queue from the palette
 # The palette: part of the folder's name, the entry said with its menu; Enter adds the folder's files, nothing plays.
 keys ctrl+shift+p
 expect state "notice":"Command palette"

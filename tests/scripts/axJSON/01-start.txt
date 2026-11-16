@@ -6,14 +6,17 @@
 file home\AxKit\axJSON.json {"checkForUpdates": false}
 file settings.json {\n  "model": "opus",\n  "permissions": { "allow": ["Bash", "Read"], "deny": [] },\n  "count": 3,\n  "on": true\n}
 
+# Goal: Open axJSON with an empty document
 # 1.1, the window part: no file, an empty Untitled document; nothing of axJSON's own is said.
 start json
+# Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
 expect state Untitled - axJSON
 expect focus {"name":"Untitled","role":"Text","value":""}
 expect quiet 1000
 
+# Goal: Open a JSON file
 # 1.2: the json verb (axjson settings.json) and a .json file alone (axkit settings.json) both open axJSON on the file.
 start json {temp}\settings.json
 expect state "title":"settings.json - axJSON"
@@ -23,6 +26,7 @@ start {temp}\settings.json
 expect state "title":"settings.json - axJSON"
 expect focus settings.json
 
+# Goal: Reload a file that another program changed
 # 1.4: the shell's file flows on a .json file, the part at the save (axDown's section 3, step 7); the announcements
 # name the file.
 # 1.4 manual: the reload on coming back to the window needs its activation (Alt+Tab), which a test window never gets.

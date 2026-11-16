@@ -7,12 +7,15 @@
 # the network cannot be reached, failing the run.
 file home\AxKit\axMedia.json {"checkForUpdates":false}
 
+# Goal: Open axMedia with an empty queue
 # Step 1: no path, an empty queue; the list reads "Queue is empty", and every command on that line says so.
 start media
+# Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
 expect focus Queue is empty
 expect state "title":"axMedia"
+# Check: Every command on an empty queue says so
 keys enter
 expect said ! Queue is empty
 keys delete
@@ -33,6 +36,7 @@ wait 1500
 # Step 3: Alt+Q, R is the menu bar's menu mode, which needs the foreground, and Open recent is a submenu filled on
 # opening, which the command palette (and so the channel's menu step) leaves out; left to the NVDA pass.
 
+# Check: A folder without sound or video files is said as such
 # Step 2a (AM-1.1, AM-6): a start on a folder without media says so.
 mkdir empty
 file empty\readme.txt nothing to play
@@ -42,6 +46,7 @@ expect focus Queue is empty
 close
 wait 1500
 
+# Goal: Play a folder of sound files
 # Steps 4 to 7 on a folder of four silent files and a text file, which is not queued.
 mkdir ch
 silence ch\alpha.wav 30000
@@ -57,6 +62,7 @@ keys space
 expect said ! Paused at
 expect quiet 300
 
+# Goal: Move through the queue
 # Step 4: the list's own keys move the selection and nothing is spoken (AM-2.1, AX-7.3).
 keys down
 expect said · beta.wav
@@ -66,11 +72,13 @@ keys home
 expect said · alpha.wav (playing)
 type g
 expect said · gamma.wav
+# Check: Letters typed after a pause start a new search
 # Letters within a second build one prefix (AX-8.6): a pause, and b is a search of its own.
 wait 1100
 type b
 expect said · beta.wav
 expect quiet 300
+# Check: Tab and the other pane keys keep the focus in the list
 # One control: Tab, Shift+Tab, F6 and Ctrl+Tab keep the focus in the list and say nothing.
 keys tab
 keys shift+tab
@@ -78,6 +86,7 @@ keys f6
 keys ctrl+tab
 expect focus beta.wav
 refuse said →
+# Goal: Find a file by part of its name
 # Ctrl+F, part of a name, Enter: that file is selected (NVDA reads the selection); F3 goes on; "Not found".
 # (The focus moves to the Find field and back within the channel's 50 ms watch, so the timeline may record the
 # found item as a focus move or as a value: the focus answer is checked instead.)
@@ -95,12 +104,14 @@ keys f3
 expect focus delta.wav
 keys f3
 expect focus beta.wav
+# Check: A name no file holds is said as not found
 keys ctrl+f
 type zzz
 keys enter
 expect said ! Not found
 expect focus Queue, 4 items
 
+# Goal: Play another file of the queue
 # Step 5: Enter on the second file plays it; Down then Up reads it with its mark; the title and the status bar.
 keys home
 keys down
@@ -114,6 +125,7 @@ expect state "title":"beta.wav - axMedia"
 expect state Playing beta.wav 0:0
 expect state / 0:30","2 of 4, speed 1"]
 
+# Goal: Hear the information of a file
 # Step 6: Ctrl+I on the playing file, with its position; on another, its place only.
 keys ctrl+i
 expect said ! beta.wav, 2 of 4, playing, 0:0
@@ -122,6 +134,7 @@ keys ctrl+i
 expect said ! delta.wav, 3 of 4
 refuse said playing,
 
+# Goal: Remove files and clear the queue
 # Step 7: Delete on another file; the mark stays. Delete on the playing file: the next plays, said (not
 # interrupting) since Say each file is on. Clear queue empties and stops; the title is axMedia again.
 keys delete
@@ -145,6 +158,7 @@ expect said ! Nothing playing
 # left running on the test desktop), and Alt+W, O, 1 is menu mode; left to the NVDA pass. A second window by
 # --new is in 02-hand-over.txt.
 
+# Check: With nothing playing the status bar is empty
 # AM-2.2: with nothing playing both status labels are empty. Last in the script, since it fails today: the label
 # keeps the state read just before the engine stopped ("Playing  0:00 / 0:30").
 expect state "status":["",""]

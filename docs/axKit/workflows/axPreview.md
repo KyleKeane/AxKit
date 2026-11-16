@@ -9,163 +9,192 @@ command's in this version of axKit.
 
 ## Preview a file that is almost text
 
-Starts with: Open axPreview with the file nul-later.txt.
-
-1. Press Escape.
-
 ## Preview a text file
 
-Starts with: Open axPreview with the file README.md.
+### Open a text file in axPreview
+
+1. Open axPreview with the file README.md.
+
+### Read the text line by line
 
 1. Press Down 2 times.
-2. Type: xyz
-3. Press Ctrl+V.
-4. Press Shift+Down.
-5. Press Ctrl+Home, Down.
-6. Press L.
+
+### Go to a line by its number
+
+1. Press Ctrl+Home, Down.
+2. Press L.
     You hear: Line 2 of 32.
-7. Press Ctrl+G (Go to line; Navigation menu).
-8. Type: 5
-9. Press Enter.
+3. Press Ctrl+G (Go to line; Navigation menu).
+4. Type: 5
+5. Press Enter.
     You hear: Line 5 of 32.
-10. Press Ctrl+G (Go to line; Navigation menu).
-11. Type: x
-12. Press Enter.
-    You hear: Not a line number.
-13. Press Ctrl+G (Go to line; Navigation menu).
-14. Press L.
-15. Press Escape.
-16. Press Ctrl+Home, Ctrl+H.
+
+### Move by headings, links, lists, quotes and tables
+
+1. Press Ctrl+Home, Ctrl+H.
     You hear: Install, heading level 2.
-17. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
+2. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
     You hear: Readme for the preview tests, heading level 1.
-18. Press Ctrl+2 2 times.
+3. Press Ctrl+2 2 times.
     You hear: Links, heading level 2.
-19. Press Ctrl+Home, Ctrl+K.
+4. Press Ctrl+Home, Ctrl+K.
     You hear: axKit on GitHub, link.
-20. Press Ctrl+K (Link; Navigation menu, Next).
+5. Press Ctrl+K (Link; Navigation menu, Next).
     You hear: https://www.example.com, link.
-21. Press Ctrl+L (List; Navigation menu, Next).
+6. Press Ctrl+L (List; Navigation menu, Next).
     You hear: List with 3 items, first item of the list.
-22. Press Ctrl+I (List item; Navigation menu, Next).
+7. Press Ctrl+I (List item; Navigation menu, Next).
     You hear: second item of the list.
-23. Press Ctrl+Q (Block quote; Navigation menu, Next).
+8. Press Ctrl+Q (Block quote; Navigation menu, Next).
     You hear: Block quote, A block quote, for Ctrl+Q.
-24. Press Ctrl+Q (Block quote; Navigation menu, Next).
+9. Press Ctrl+Q (Block quote; Navigation menu, Next).
     You hear: No next block quote.
-25. Press Ctrl+T (Table; Navigation menu, Next).
+10. Press Ctrl+T (Table; Navigation menu, Next).
     You hear: Table with 3 rows and 2 columns.
-26. Press Ctrl+T (Table; Navigation menu, Next).
+11. Press Ctrl+T (Table; Navigation menu, Next).
     You hear: No next table.
-27. Press Ctrl+Home, Ctrl+F.
-28. Type: update
-29. Press Enter.
-30. Press F3 2 times (Find next; Navigation menu).
-31. Press Shift+F3 (Find previous; Navigation menu).
-32. Press Ctrl+Home, Page Down.
-33. Press Ctrl+End, Page Up.
-34. Press Ctrl+Home, Ctrl+Down.
-35. Press Ctrl+Down.
-36. Press Ctrl+Up.
-37. Press Ctrl+G (Go to line; Navigation menu).
-38. Type: 5
-39. Press Enter.
+
+### Find a word in the text
+
+1. Press Ctrl+Home, Ctrl+F.
+2. Type: update
+3. Press Enter.
+4. Press F3 2 times (Find next; Navigation menu).
+5. Press Shift+F3 (Find previous; Navigation menu).
+
+### Move by page and by paragraph
+
+1. Press Ctrl+Home, Page Down.
+2. Press Ctrl+End, Page Up.
+3. Press Ctrl+Home, Ctrl+Down.
+4. Press Ctrl+Down.
+5. Press Ctrl+Up.
+
+### Turn word wrap off and on
+
+1. Press Ctrl+G (Go to line; Navigation menu).
+2. Type: 5
+3. Press Enter.
     You hear: Line 5 of 32.
-40. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+4. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
     You hear: Word wrap off.
-41. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+5. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
     You hear: Word wrap on.
-42. Press Ctrl+S.
-    You hear: Nothing to save here.
-43. Press F1 (Keyboard shortcuts; Help menu).
-44. Press Ctrl+H (Heading; Navigation menu, Next).
+
+### Read the keyboard shortcuts
+
+1. Press F1 (Keyboard shortcuts; Help menu).
+2. Press Ctrl+H (Heading; Navigation menu, Next).
     You hear: heading level 2.
-45. Press Escape.
-46. Press F5 (Reload; Session menu).
+3. Press Escape.
+
+### Reload the file after a change
+
+1. Press F5 (Reload; Session menu).
     You hear: Reloaded.
-47. Open axPreview with --new the file plain.txt.
-48. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: No next heading.
-49. Open axPreview with --new the file tool.exe.
-50. Open axPreview with --new the file too-large.txt.
-51. Press Enter.
-52. Open axPreview with --new the file app.log.
-53. Open axPreview with --new the file gone.txt.
-54. Press Enter.
-55. Press Ctrl+E (Edit in axDown; Session menu).
-    You hear: No file yet.
-56. Press Ctrl+W (File Explorer; Session menu, Show current file in).
-    You hear: No file yet.
-57. Press F5 (Reload; Session menu).
-    You hear: No file yet.
-58. Open axPreview with --new the file data.json.
 
 ## Preview a file from another app
 
+### Show a file in the open window
+
 1. Open axPreview with the file README.md.
 2. Start axPreview again with the file plain.txt.
-3. Open axPreview with --new the file README.md.
-4. Go to the other axPreview window.
+
+### Open a second window
+
+1. Open axPreview with --new the file README.md.
+2. Go to the other axPreview window.
 
 ## Use axPreview's text, notices and axKit menu
 
 Starts with: Open axPreview with the file README.md.
+
+### Change the text size
 
 1. Press Down 2 times.
 2. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
     You hear: Text size 10.
 3. Choose Smaller text in the Options menu, Text (key: Ctrl+Minus).
     You hear: Text size 9.
-4. Choose User guide in the Help menu.
-5. Press Ctrl+H (Heading; Navigation menu, Next).
+
+### Read the user guide
+
+1. Choose User guide in the Help menu.
+2. Press Ctrl+H (Heading; Navigation menu, Next).
     You hear: heading level 2.
-6. Press Ctrl+H (Heading; Navigation menu, Next).
+3. Press Ctrl+H (Heading; Navigation menu, Next).
     You hear: heading level 2.
-7. Press Escape.
-8. Close the window.
+4. Press Escape.
+
+### Close the window
+
+1. Close the window.
 
 ## Read a file's details
 
-Starts with: Open axPreview with the file notes.md.
+### Read a file's details
 
 1. Press Tab.
 2. Press Down 3 times.
-3. Press Enter.
-    You hear: Enter opens the Folder line in axFile.
-4. Type: wor
-5. Press F6 2 times (Between the text and the details).
-6. Open axPreview with --new the file report.docx.
-7. Press Ctrl+End.
-8. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
+
+### Find a line of the details by typing its first letters
+
+1. Type: wor
+
+### Move between the text and the details
+
+1. Press F6 2 times (Between the text and the details).
+
+### Read a Word document
+
+1. Open axPreview with --new the file report.docx.
+2. Press Ctrl+End.
+3. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
     You hear: Install, heading level 1.
-9. Open axPreview with --new the file bundle.zip.
-10. Press Tab.
-11. Type: file
-12. Open axPreview with --new the file big.zip.
-13. Press Ctrl+End.
-14. Press Tab.
-15. Type: shown
-16. Open axPreview with --new the file text.png.
+
+### Read the contents of a zip
+
+1. Open axPreview with --new the file bundle.zip.
+2. Press Tab.
+3. Type: file
+
+### Read the text in a picture
+
+1. Open axPreview with --new the file text.png.
     You hear: Text read: 2 lines.
-17. Press Ctrl+Down.
-18. Press Down.
-19. Press Tab.
-20. Type: text l
-21. Press Ctrl+Shift+V (Read the clipboard's picture; Session menu).
+2. Press Ctrl+Down.
+3. Press Down.
+4. Press Tab.
+5. Type: text l
+
+### Read the text of a picture on the clipboard
+
+1. Press Ctrl+Shift+V (Read the clipboard's picture; Session menu).
     You hear: Text read: 2 lines.
-22. Press Shift+Tab.
-23. Open axPreview with --new the file song.mp3.
-24. Open axPreview with --new the file tool.bin.
-25. Press Down.
+2. Press Shift+Tab.
+
+### Preview a sound file
+
+1. Open axPreview with --new the file song.mp3.
+
+### Read the text inside any other file
+
+1. Open axPreview with --new the file tool.bin.
+2. Press Down.
 
 ## Use axPreview's Context menu
 
 Starts with: Open axPreview with the file README.md.
 
+### Select all the text
+
 1. Choose Select all in the Context menu (key: Ctrl+A).
 2. Press Right.
-3. Press Ctrl+Shift+P (Command palette; Help menu).
-4. Type: select all, context
+
+### Select all the text from the command palette
+
+1. Press Ctrl+Shift+P (Command palette; Help menu).
+2. Type: select all, context
     You hear: Select all, Context, Ctrl+A.
-5. Press Enter.
-6. Press Left.
+3. Press Enter.
+4. Press Left.
