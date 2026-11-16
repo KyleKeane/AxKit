@@ -22,6 +22,28 @@
 - `Palette` and `PaletteEntry` (AX-10): the command palette's lines: `Text` (a command's name with its menu path and
   key), `Find` (the matches for a typed text through `TextMatch`), `Spoken` ("Save as, File, Ctrl+Shift+S, 1 of 3")
   and `NoMatch`.
+- `KeyChord` (docs/axKit/user-workflows.md WF-2.2, 2026-11-15): the one chord vocabulary, the names a key press is
+  written with, each with its virtual key code: a letter or a digit by itself, enter, escape (also esc), tab, space,
+  backspace, delete, insert, the arrows, home, end, pageup, pagedown, plus, minus, period, comma, apps, f1 to f12,
+  slash, semicolon, and add and subtract for the numeric keypad's plus and minus. `Code` (a name's code, in any case,
+  null for none), `Name` (a code's first name), `Text` (a chord, the modifiers in the order ctrl, shift, alt and the
+  key, in lower case: "ctrl+shift+w"; empty for a code without a name), `Normal` (a press put in that order, as given
+  when a part is unknown) and `IsCommandChord` (it carries ctrl or alt, or its key is a function key). The automation
+  channel's keys step reads a key's code here and the window writes its commands' keys with it
+  (`AxKit.Forms/BundleKeys.Chord`); the names and codes are the ones the channel's and the NVDA tier's own tables
+  held, pinned by `KeyChordTests`. A new name is added to the table `Named` with its code, and `KeyTests` fails when
+  a key table holds a key without one.
+- `CommandListing` (WF-2.3 to WF-2.5, section 5.2; 2026-11-15): a window's commands as data. `Rows` makes them from
+  the menu bar's entries (`MenuCommand`) and every command of the window's list that has a key (`KeyCommand`, with
+  whether its key acts now and whether it is a key with no menu item): the menu rows in menu order, then the keys with
+  no menu item folded by label, without regard to case (a menu row of that label with the same chord takes the key in,
+  else the first row of that label gains the chord in `Also`; keys of one label with no menu row are one row, the
+  first its key), and for each row `Now`, the first of its chords that would run it at this moment (a menu row's chord
+  acts when no command has it or one that has it acts; a row of keys alone has a chord only when the first command
+  acting on it carries the row's label). `Ai` is false for every row of an app of `McpTools.NeverRead`. `Write` gives
+  the one line the automation channel answers `commands data` with (`WindowCommands`, its rows `ListedCommand`) and
+  `Read` reads it back, null for any answer that is no listing (the palette's lines, an error, a JSON string). The
+  window side is `AxKit.Forms/AxKitForm.Commands.cs`.
 - `TextMatch` (AX-10.3): whether a name holds every word of a typed text, case and accents folded away (`Fold`,
   `Words`), and its `Rank` by the first word (the name starts with it, a word does, anywhere), null when a word is
   missing; from AxStart.Core's `ProgramMatch`, the command palette (2026-10-22).

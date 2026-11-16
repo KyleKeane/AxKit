@@ -150,4 +150,13 @@ public static class BundleKeys
         var text = string.Join("+", parts);
         return code is >= Keys.D0 and <= Keys.D9 ? text + "." : text;
     }
+
+    /// <summary>
+    /// "ctrl+shift+s", "f3", "ctrl+1", "ctrl+enter", "ctrl+plus": a key as data, in the words a script presses it with
+    /// (<see cref="AxKit.Core.KeyChord"/>, docs/axKit/user-workflows.md WF-2.2), for the window's list of its commands
+    /// (<see cref="AxKitForm.CommandRows"/>). Empty for <see cref="Keys.None"/> and for a key the vocabulary has no
+    /// name for; <see cref="Text"/> is what a person reads, this is what a program compares and presses.
+    /// </summary>
+    public static string Chord(Keys key) =>
+        AxKit.Core.KeyChord.Text((int)(key & Keys.KeyCode), key.HasFlag(Keys.Control), key.HasFlag(Keys.Shift), key.HasFlag(Keys.Alt));
 }

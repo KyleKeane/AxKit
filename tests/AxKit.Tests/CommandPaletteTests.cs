@@ -180,4 +180,51 @@ public sealed class CommandPaletteTests
         Assert.Equal(["C:\\a.md"], opened);
         Assert.Equal(["1. C:\\a.md (C:\\a.md) is not available now"], said);
     }
+
+    [Fact]
+    public void An_item_keeps_the_key_it_was_given()
+    {
+        // docs/axKit/user-workflows.md WF-2.1: the key an item shows is held as a value where its text is set, and
+        // read as a value; the text the menu shows is never parsed for it.
+        var (bar, session) = Bar();
+        var find = new ToolStripMenuItem("&Find...", null, (_, _) => { }) { ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Find) };
+        Assert.Same(find, CommandPalette.Keyed(find, BundleKeys.Find));
+        session.DropDownItems.Add(find);
+        // An item that has WinForms' own shortcut says that one.
+        var save = new ToolStripMenuItem("&Save", null, (_, _) => { }) { ShortcutKeys = Keys.Control | Keys.S };
+        session.DropDownItems.Add(save);
+
+        Assert.Equal(BundleKeys.Find, CommandPalette.KeyOf(find));
+        Assert.Equal(Keys.Control | Keys.S, CommandPalette.KeyOf(save));
+        var entries = CommandPalette.Entries(bar);
+        Assert.Equal(["Find", "Save"], entries.Select(entry => entry.Name));
+        Assert.Equal(BundleKeys.Find, entries[0].KeyData);
+        Assert.Equal("Ctrl+F", entries[0].Key);
+        Assert.Equal(Keys.Control | Keys.S, entries[1].KeyData);
+        Assert.Equal("ctrl+f", BundleKeys.Chord(entries[0].KeyData));
+
+        // The key given is the one read, whatever the item shows or has besides.
+        CommandPalette.Keyed(save, Keys.F2);
+        Assert.Equal(Keys.F2, CommandPalette.KeyOf(save));
+    }
+
+    [Fact]
+    public void An_item_given_no_key_has_none()
+    {
+        var (bar, session) = Bar();
+        // A text that describes a place is a key text and no key: nothing reads a key out of it.
+        var send = new ToolStripMenuItem("&Send", null, (_, _) => { }) { ShortcutKeyDisplayString = "Enter in the message field" };
+        var exit = new ToolStripMenuItem("E&xit", null, (_, _) => { }) { ShortcutKeyDisplayString = "Alt+F4" };
+        var plain = CommandPalette.Marked(Item("User &guide"), CommandMark.Read);
+        session.DropDownItems.Add(send);
+        session.DropDownItems.Add(exit);
+        session.DropDownItems.Add(plain);
+
+        Assert.All(CommandPalette.Entries(bar), entry => Assert.Equal(Keys.None, entry.KeyData));
+        Assert.Equal(Keys.None, CommandPalette.KeyOf(send));
+        Assert.Equal("Alt+F4", CommandPalette.Entries(bar)[1].Key);
+        Assert.Equal(string.Empty, BundleKeys.Chord(CommandPalette.KeyOf(exit)));
+        // A separator is no menu item and has no key either.
+        Assert.Equal(Keys.None, CommandPalette.KeyOf(new ToolStripSeparator()));
+    }
 }

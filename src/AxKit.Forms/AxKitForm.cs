@@ -12,7 +12,8 @@ namespace AxKit.Forms;
 /// window has, the keys, the window's place, the settings, the ways out to the system), <c>AxKitForm.Notices.cs</c>
 /// (the notice flow with its one focus rule, and <see cref="Announce"/>), <c>AxKitForm.Find.cs</c> (find in a text
 /// box, a list, a transcript and a notice's text), <c>AxKitForm.Fonts.cs</c> (the text font with its size keys and
-/// picker) and <c>AxKitForm.Palette.cs</c> (the command palette, AX-10). The services with a flow of their own are
+/// picker), <c>AxKitForm.Palette.cs</c> (the command palette, AX-10) and <c>AxKitForm.Commands.cs</c> (the window's
+/// commands as data, for the automation channel). The services with a flow of their own are
 /// plain classes the window holds, each made in the constructor with the window as its one collaborator
 /// (docs/axKit/repairs.json R-15, 2026-11-14): <see cref="UpdateFlow"/> (AX-3), <see cref="ProgramInstaller"/>
 /// (AX-2.9), <see cref="ReportFlow"/>, <see cref="AiHelpFlow"/> and <see cref="AiToolsSetup"/>; the partial file of
@@ -292,13 +293,17 @@ public abstract partial class AxKitForm : Form
         return true;
     }
 
-    /// <summary>A menu item whose key the window handles itself: the item only shows the key (AX-8).</summary>
+    /// <summary>
+    /// A menu item whose key the window handles itself: the item only shows the key (AX-8), and holds it as a value
+    /// for the window's list of its commands (<see cref="CommandPalette.Keyed"/>, docs/axKit/user-workflows.md WF-2.1).
+    /// </summary>
     protected static ToolStripMenuItem Item(string text, Action action, Keys key, CommandMark mark)
     {
         var item = CommandPalette.Marked(new ToolStripMenuItem(text, null, (_, _) => action()), mark);
         if (key != Keys.None)
         {
             item.ShortcutKeyDisplayString = BundleKeys.Text(key);
+            CommandPalette.Keyed(item, key);
         }
 
         return item;
@@ -404,11 +409,12 @@ public abstract partial class AxKitForm : Form
 
         help.DropDownItems.Add(resources);
         help.DropDownItems.Add(new ToolStripSeparator());
-        // Reports (RP-2.2): the report itself, with its bundle key shown, and the list of them in axTask.
-        help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Send a report...", null, (_, _) => ShowReport())
+        // Reports (RP-2.2): the report itself, with its bundle key shown and held as a value (WF-2.1), and the list of
+        // them in axTask.
+        help.DropDownItems.Add(CommandPalette.Keyed(CommandPalette.Marked(new ToolStripMenuItem("&Send a report...", null, (_, _) => ShowReport())
         {
             ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Report),
-        }, CommandMark.Open));
+        }, CommandMark.Open), BundleKeys.Report));
         help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Your reports", null, (_, _) => OpenReports()), CommandMark.Act));
         help.DropDownItems.Add(CreateDiagnosticsMenu());
         help.DropDownItems.Add(new ToolStripSeparator());
@@ -798,8 +804,18 @@ public abstract partial class AxKitForm : Form
         command.Run();
     }
 
+    /// <summary>
+    /// The commands added as keys alone (<see cref="AddKey"/>), which are in <see cref="_commands"/> too: what tells a
+    /// key with no menu item from a command's key when the window lists its commands as data (<see cref="CommandRows"/>).
+    /// </summary>
+    private readonly List<Command> _keyOnly = [];
+
     /// <summary>A command that is a key and no menu item (Tab between a window's panes, a list's Enter).</summary>
-    protected void AddKey(Command command) => _commands.Add(command);
+    protected void AddKey(Command command)
+    {
+        _commands.Add(command);
+        _keyOnly.Add(command);
+    }
 
     /// <summary>
     /// What is wrong with the window's command list (app-kit AK-2.4), for the automated checks' <c>check commands</c>:

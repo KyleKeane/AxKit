@@ -35,12 +35,13 @@ public sealed class WindowMenu : ToolStripMenuItem
         DropDownItems.Add(_openWindows);
         DropDownItems.Add(_recentlyClosed);
         DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Close all windows", null, (_, _) => CloseAll()), CommandMark.Act));
-        // AX-7.10: this window's status bar, said by axKit itself; the bundle's key, shown here and handled by the base.
+        // AX-7.10: this window's status bar, said by axKit itself; the bundle's key, shown here, held as a value for
+        // the window's list of its commands (docs/axKit/user-workflows.md WF-2.1) and handled by the base.
         DropDownItems.Add(new ToolStripSeparator());
-        DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Say the status", null, (_, _) => owner.SayStatus())
+        DropDownItems.Add(CommandPalette.Keyed(CommandPalette.Marked(new ToolStripMenuItem("&Say the status", null, (_, _) => owner.SayStatus())
         {
             ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.SayStatus),
-        }, CommandMark.Read));
+        }, CommandMark.Read), BundleKeys.SayStatus));
         CommandPalette.RefreshedOnOpening(this, Fill);
         Fill();
     }

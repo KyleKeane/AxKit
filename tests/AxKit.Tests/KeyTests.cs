@@ -5,7 +5,8 @@ namespace AxKit.Tests;
 /// <summary>
 /// The key tables (docs/axKit/SPEC.md AX-8.4): no window-specific key equals a bundle-wide key, no table repeats a
 /// key, and the keys two windows use for different actions are listed so that a collision between apps is seen
-/// before it is felt. The text a menu shows for a key (AX-8.5) is checked here too.
+/// before it is felt. The text a menu shows for a key (AX-8.5) is checked here too, and the key as a chord, the words
+/// a script presses it with (docs/axKit/user-workflows.md WF-2.2).
 /// </summary>
 public sealed class KeyTests
 {
@@ -284,5 +285,64 @@ public sealed class KeyTests
     public void Menu_text_of_a_key(Keys key, string expected)
     {
         Assert.Equal(expected, BundleKeys.Text(key));
+    }
+
+    /// <summary>
+    /// docs/axKit/user-workflows.md WF-2.2: a key as data, in the words a script's <c>keys</c> step presses it with
+    /// (<c>AxKit.Core/KeyChord</c>): lower case, the modifiers in the order ctrl, shift, alt, no full stop after a
+    /// number-row key; empty for no key and for a key the vocabulary has no name for.
+    /// </summary>
+    [Theory]
+    [InlineData(Keys.Control | Keys.Shift | Keys.W, "ctrl+shift+w")]
+    [InlineData(Keys.Control | Keys.D1, "ctrl+1")]
+    [InlineData(Keys.Control | Keys.Return, "ctrl+enter")]
+    [InlineData(Keys.Control | Keys.Oemplus, "ctrl+plus")]
+    [InlineData(Keys.Control | Keys.Add, "ctrl+add")]
+    [InlineData(Keys.Control | Keys.Shift | Keys.OemQuestion, "ctrl+shift+slash")]
+    [InlineData(Keys.Control | Keys.Shift | Keys.OemSemicolon, "ctrl+shift+semicolon")]
+    [InlineData(Keys.Alt | Keys.Shift | Keys.Control | Keys.Up, "ctrl+shift+alt+up")]
+    [InlineData(Keys.F3, "f3")]
+    [InlineData(Keys.Shift | Keys.Escape, "shift+escape")]
+    [InlineData(Keys.Back, "backspace")]
+    [InlineData(Keys.Apps, "apps")]
+    [InlineData(Keys.None, "")]
+    [InlineData(Keys.Control | Keys.Scroll, "")]
+    public void A_key_is_a_chord_in_the_scripts_words(Keys key, string expected)
+    {
+        Assert.Equal(expected, BundleKeys.Chord(key));
+    }
+
+    /// <summary>
+    /// WF-2.2: every key of the bundle's table and of every window's has a chord, and the chord names that very key,
+    /// so that a window can list each of its commands' keys as data and a script can press what the window listed. A
+    /// key without a name in <c>KeyChord</c> would be listed with its menu text alone, and no step could press it by
+    /// the command's name: give the vocabulary its name, with its code, when a table gains such a key.
+    /// </summary>
+    [Fact]
+    public void Every_key_of_the_tables_has_a_chord_that_names_it()
+    {
+        var tables = new Dictionary<string, IReadOnlyList<(string Name, Keys Key)>>(Windows) { ["Bundle"] = BundleKeys.All };
+        var wrong = new List<string>();
+        foreach (var (table, keys) in tables)
+        {
+            foreach (var (name, key) in keys)
+            {
+                // Modifiers alone stand for several keys (the console windows' Ctrl+Alt with a quick key letter): no
+                // one key, and so no chord.
+                if ((key & Keys.KeyCode) == Keys.None)
+                {
+                    continue;
+                }
+
+                var chord = BundleKeys.Chord(key);
+                var code = AxKit.Core.KeyChord.Code(chord.Split('+')[^1]);
+                if (chord.Length == 0 || code != (int)(key & Keys.KeyCode))
+                {
+                    wrong.Add($"{table}: {name} ({BundleKeys.Text(key)}) has the chord \"{chord}\"");
+                }
+            }
+        }
+
+        Assert.True(wrong.Count == 0, "A key of a table without a chord of its own (AxKit.Core/KeyChord): " + string.Join("; ", wrong));
     }
 }

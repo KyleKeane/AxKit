@@ -13,9 +13,13 @@ namespace AxKit.Forms;
 /// The automation channel of a window (docs/axKit/automation.md, tier 2): on only when the environment variable
 /// <c>AXKIT_AUTOMATION</c> is set, as the test runner sets it for the processes it starts on its own desktop. One named
 /// pipe, <c>axkit-auto-&lt;process id&gt;</c>, one command per line and one JSON answer per line: <c>keys</c>,
-/// <c>type</c>, <c>focus</c>, <c>text</c>, <c>said</c>, <c>state</c>, <c>menu</c>, <c>close</c>, <c>problems</c> (the command list's, AK-2.4). Keys are posted to the focused
-/// control through the window's own message queue with the modifiers set in the thread's keyboard state, so that
-/// <c>ProcessCmdKey</c> and the controls see them as typed; nothing reaches another program.
+/// <c>type</c>, <c>focus</c>, <c>text</c>, <c>list</c>, <c>said</c>, <c>state</c>, <c>menu</c>, <c>close</c>,
+/// <c>activate</c>, <c>problems</c> (the command list's, AK-2.4), <c>commands</c> (the palette's lines),
+/// <c>commands data</c> (the window's commands as data, each with its key as a chord and the chord that would run it
+/// now, docs/axKit/user-workflows.md WF-2.3) and <c>choose</c> (one menu item by exactly its label and its menus).
+/// Keys are posted to the focused control through the window's own message queue with the modifiers set in the
+/// thread's keyboard state, so that <c>ProcessCmdKey</c> and the controls see them as typed; nothing reaches another
+/// program. A key's name is one of <see cref="KeyChord"/>'s, the vocabulary the listing writes its chords in.
 /// </summary>
 internal sealed class AutomationChannel : IMessageFilter
 {
@@ -177,6 +181,14 @@ internal sealed class AutomationChannel : IMessageFilter
         var space = line.IndexOf(' ');
         var verb = space < 0 ? line : line[..space];
         var argument = space < 0 ? string.Empty : line[(space + 1)..];
+        if (verb == "commands" && argument.Trim() == "data")
+        {
+            // The listing's text is the JSON object already (docs/axKit/user-workflows.md section 5.2): through the
+            // serializer below, where every other answer goes, it would arrive as a JSON string, which
+            // CommandListing.Read takes for no listing.
+            return CommandListing.Write(_form.CommandRows());
+        }
+
         object result = verb switch
         {
             "keys" => Keys(argument),
@@ -189,6 +201,7 @@ internal sealed class AutomationChannel : IMessageFilter
             "said" => Said(),
             "state" => _form.AutomationState(),
             "menu" => Menu(argument),
+            "choose" => Choose(argument),
             "close" => Close(),
             "activate" => Activate(),
             _ => new { error = $"unknown command {verb}" },
@@ -317,6 +330,40 @@ internal sealed class AutomationChannel : IMessageFilter
         return new { ok = true, command = entry.Text };
     }
 
+    /// <summary>
+    /// One menu item run by exactly its label and its menus, <c>choose {"label": "Word wrap", "menu": "Options, Text"}</c>
+    /// (docs/axKit/user-workflows.md section 5.2): how a command with no key that acts is run by its name, where
+    /// <c>menu</c> takes the first palette line that starts with a text. The window finds and clicks the item
+    /// (<see cref="AxKitForm.Choose"/>); its refusal is the answer's error.
+    /// </summary>
+    private object Choose(string json)
+    {
+        string? label;
+        string? menu;
+        try
+        {
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+            label = Property(root, "label");
+            menu = Property(root, "menu");
+        }
+        catch (JsonException)
+        {
+            label = null;
+            menu = null;
+        }
+
+        if (label is null || menu is null)
+        {
+            return new { error = "choose takes one JSON object with the texts label and menu" };
+        }
+
+        return _form.Choose(label, menu) is { } refusal ? new { error = refusal } : new { ok = true };
+
+        static string? Property(JsonElement root, string name) =>
+            root.ValueKind == JsonValueKind.Object && root.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() : null;
+    }
+
     /// <summary>The NVDA tier (docs/axKit/automation.md, tier 3): the window to the front, so that NVDA follows it and the keyboard reaches it; only on the user's desktop, at the user's word.</summary>
     private object Activate()
     {
@@ -374,34 +421,10 @@ internal sealed class AutomationChannel : IMessageFilter
             };
         }
 
+        // The key's code from the one chord vocabulary (docs/axKit/user-workflows.md WF-2.2), which held this method's
+        // own table of names until 2026-11-15: a virtual key code is the value of the key in WinForms' Keys.
         var name = parts[^1];
-        var key = name.Length == 1 && char.IsLetterOrDigit(name[0])
-            ? (Keys)char.ToUpperInvariant(name[0])
-            : name.ToLowerInvariant() switch
-            {
-                "enter" => System.Windows.Forms.Keys.Enter,
-                "escape" or "esc" => System.Windows.Forms.Keys.Escape,
-                "tab" => System.Windows.Forms.Keys.Tab,
-                "space" => System.Windows.Forms.Keys.Space,
-                "backspace" => System.Windows.Forms.Keys.Back,
-                "delete" => System.Windows.Forms.Keys.Delete,
-                "up" => System.Windows.Forms.Keys.Up,
-                "down" => System.Windows.Forms.Keys.Down,
-                "left" => System.Windows.Forms.Keys.Left,
-                "right" => System.Windows.Forms.Keys.Right,
-                "home" => System.Windows.Forms.Keys.Home,
-                "end" => System.Windows.Forms.Keys.End,
-                "pageup" => System.Windows.Forms.Keys.PageUp,
-                "pagedown" => System.Windows.Forms.Keys.PageDown,
-                "plus" => System.Windows.Forms.Keys.Oemplus,
-                "minus" => System.Windows.Forms.Keys.OemMinus,
-                "period" => System.Windows.Forms.Keys.OemPeriod,
-                "comma" => System.Windows.Forms.Keys.Oemcomma,
-                "insert" => System.Windows.Forms.Keys.Insert,
-                "apps" => System.Windows.Forms.Keys.Apps,
-                _ when name.StartsWith('f') && int.TryParse(name[1..], out var f) && f is >= 1 and <= 12 => System.Windows.Forms.Keys.F1 + (f - 1),
-                _ => throw new ArgumentException($"unknown key {name}"),
-            };
+        var key = KeyChord.Code(name) is { } code ? (Keys)code : throw new ArgumentException($"unknown key {name}");
         return (key, modifiers);
     }
 

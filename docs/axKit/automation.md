@@ -125,7 +125,11 @@ including while the user works, because nothing takes the foreground.
 - **Commands**:
   - `keys <keys>`: key presses as a user makes them, `ctrl+shift+p`, `escape`, `down`, posted to the focused
     control through the window's own message queue with the modifiers set for the window's thread, so that
-    `ProcessCmdKey`, the menus' shortcuts and the controls see them as typed.
+    `ProcessCmdKey`, the menus' shortcuts and the controls see them as typed. A key's name is one of the chord
+    vocabulary's (`AxKit.Core/KeyChord`, `user-workflows.md` WF-2.2): a letter or a digit, `enter`, `escape` or
+    `esc`, `tab`, `space`, `backspace`, `delete`, `insert`, `up`, `down`, `left`, `right`, `home`, `end`, `pageup`,
+    `pagedown`, `plus`, `minus`, `period`, `comma`, `apps`, `f1` to `f12`, `slash`, `semicolon`, and `add` and
+    `subtract` for the numeric keypad's plus and minus; any other name is an error of the step.
   - `type <text>`: characters into the focused control, as typed.
   - `focus`: the focused control's accessible name and role, its text or the selected item, the caret's line.
   - `said`: what the window announced since the last `said`, each notification with its kind (interrupting or not),
@@ -133,6 +137,27 @@ including while the user works, because nothing takes the foreground.
   - `state`: the title, the status bar's texts, whether a notice shows and its title, the control area's name, and
     `visible`, false for a window hidden by its own close (axClaude FR-9.6), which `activate` leaves hidden.
   - `menu <name>`: runs a menu command by the name the command palette knows it by.
+  - `commands`: the menus' commands as the command palette lists them, each a line with its menus, its key and
+    "checked" (what `expect commands` reads).
+  - `commands data` (2026-11-15, `user-workflows.md` WF-2.3 to WF-2.5 and section 5.2): the window's commands as
+    data, one JSON object on one line: the app's name, the title of the notice the window shows or null, and a row
+    per menu item the palette would list, then a row per label of the keys with no menu item. A row holds `label`,
+    `menu` (the menus from the bar down; empty for a key alone), `key` (the command's key as a chord in the words
+    `keys` takes, lower case, the modifiers in the order ctrl, shift, alt; empty for none), `also` (further chords of
+    the same command: axDown's Redo is `ctrl+y`, also `ctrl+shift+z`), `keyText` (the key as the menu shows it),
+    `mark` (read, open, change, act), `checked` (null for an item that is no check item), `keyOnly`, `ai` (whether
+    the AI tools may see and run it: never a key alone, never a row of axPass or axClip) and `now`, the chord that
+    would run the command if pressed at this moment, empty when none would (the focus is elsewhere, a notice
+    shows). The key is the one its menu item was given where it was made (`CommandPalette.Keyed`), never read out of
+    the text the menu shows: an item whose text describes a place ("Alt+F4", "Enter in the message field"), and the
+    editor shell's Cut, Copy, Paste and Select all, whose keys are the edit control's own, have a `keyText` and no
+    `key`. A window built before this request answers `commands data` with the palette's lines, which is no listing.
+  - `choose <json>` (2026-11-15): runs one menu item, found by exactly its label and its menus as the bar stands
+    now, `choose {"label": "Word wrap", "menu": "Options, Text"}`, where `menu` takes the first palette line that
+    starts with a text. The item is clicked as the palette clicks it: a command says what it says (axDown's "Word
+    wrap off"), and a setting that is a check item has its new state said as the palette says it ("Check for updates
+    at start, checked"). The answer is `{"ok":true}`, or the error "no menu item <label> in <menus> now" (no such
+    item, a disabled one, or a notice that holds the window).
   - `close`: closes the window as Alt+F4 does.
   - `problems`: what is wrong with the window's command list (app-kit AK-2.4): a key of its own the F1 text does not
     name, a command an earlier one shadows. Every app's first script runs it as `check commands`, after its start.

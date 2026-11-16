@@ -10,8 +10,9 @@ namespace AxKit.Forms;
 /// <see cref="Palette"/>, tested.
 ///
 /// What an item says of itself is one record per item (<see cref="ItemInfo"/>), kept beside the item and never in its
-/// Tag: its mark, whether it is withheld from the AI tools, whether it is no entry at all, and what refreshes it before
-/// it is read. Until 2026-11-13 these were three stores, and the Tag held one refresh, which a second one replaced
+/// Tag: its mark, whether it is withheld from the AI tools, whether it is no entry at all, what refreshes it before
+/// it is read, and the key it shows as a value (<see cref="Keyed"/>, docs/axKit/user-workflows.md WF-2.1). Until
+/// 2026-11-13 the first three were three stores, and the Tag held one refresh, which a second one replaced
 /// (docs/axKit/repairs.json R-09).
 /// </summary>
 public static class CommandPalette
@@ -32,6 +33,9 @@ public static class CommandPalette
     {
         /// <summary>The menus as one text, "Session, Open recent file", as the palette and the AI tools name them.</summary>
         public string Menu => string.Join(", ", Path);
+
+        /// <summary>The item's key as a value (<see cref="KeyOf"/>), beside <see cref="Key"/>, the text the menu shows; none for an item that only shows a text.</summary>
+        public Keys KeyData => KeyOf(Item);
     }
 
     /// <summary>What one menu item says of itself for the readers.</summary>
@@ -48,6 +52,9 @@ public static class CommandPalette
 
         /// <summary>What makes the menu's items current, run before it is read, in the order they were attached.</summary>
         public List<Action> Refreshes { get; } = [];
+
+        /// <summary>The key the item shows, as a value; none when nobody gave one (<see cref="Keyed"/>).</summary>
+        public Keys Key { get; set; }
     }
 
     private static readonly ConditionalWeakTable<ToolStripItem, ItemInfo> Infos = [];
@@ -73,6 +80,31 @@ public static class CommandPalette
 
     /// <summary>Whether the item states its mark: for the check that every entry of a built window does.</summary>
     public static bool StatesMark(ToolStripItem item) => InfoOf(item)?.Mark is not null;
+
+    /// <summary>
+    /// Gives an item the key it shows, as a value (docs/axKit/user-workflows.md WF-2.1), where its display text is set:
+    /// the window base's <c>Item</c> for every command and every item it makes, and by hand for an item that sets its
+    /// own text from a real key (Send a report, Say the status). The text a menu shows is never parsed for a key. An
+    /// item whose text describes a place ("Enter in the message field", "Alt+F4"), or whose key is the focused
+    /// control's own and not the window's (the editor shell's Cut, Copy, Paste and Select all), is given none. Returns
+    /// the item.
+    /// </summary>
+    public static ToolStripMenuItem Keyed(ToolStripMenuItem item, Keys key)
+    {
+        Infos.GetOrCreateValue(item).Key = key;
+        return item;
+    }
+
+    /// <summary>An item's key as a value: the one it was given (<see cref="Keyed"/>), else its own <c>ShortcutKeys</c> when that is set, else none.</summary>
+    public static Keys KeyOf(ToolStripItem item)
+    {
+        if (InfoOf(item)?.Key is { } key && key != Keys.None)
+        {
+            return key;
+        }
+
+        return item is ToolStripMenuItem menuItem ? menuItem.ShortcutKeys : Keys.None;
+    }
 
     /// <summary>Withholds a menu or an item from the AI tools, with everything under it (AK-2.6, exception 3: the AI tools' own switches). Returns the item.</summary>
     public static ToolStripMenuItem NeverForAiTools(ToolStripMenuItem item)

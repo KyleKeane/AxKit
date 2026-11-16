@@ -33,7 +33,13 @@ After the kit:
   whose key another command of the list handles (the item apps' Context menus, whose keys are `ItemForm`'s shared
   commands), the mark a required argument; and `CommandPalette.Marked(new ToolStripMenuItem(...), mark)` for an item
   made where the menu is filled (a list of drives, programs, shells, apps). `Toggle` and `ChoiceItems` mark a setting
-  change unless told otherwise. A submenu that only holds items needs no mark.- AK-2.3 **The window base builds from them**: the menu bar with the bundle's frame, the same eight menus in every
+  change unless told otherwise. A submenu that only holds items needs no mark. `Item` also gives its item the key as
+  a value (`CommandPalette.Keyed`, 2026-11-15, `user-workflows.md` WF-2.1), which covers every command made by `Add`
+  as well; an item made by hand that shows a real key is given it in the same way where it is made (Send a report,
+  Say the status), and `CommandPalette.KeyOf` reads it. The text an item shows for its key is never parsed: an item
+  whose text describes a place ("Alt+F4", "Enter in the message field"), or whose key is the focused control's own
+  (the editor shell's Cut, Copy, Paste and Select all), has a key text and no key as a value.
+- AK-2.3 **The window base builds from them**: the menu bar with the bundle's frame, the same eight menus in every
   window (SPEC AX-9.1, B-19, since 2026-11-11 put together by `AxKitForm.PlaceMenuBar`): Session (S, what the window
   holds, ending in Exit), Actions (A, what the app does, the same wherever the focus is), Navigation (N, the moves and
   the finds), Context (C, what acts on the focus, `ContextBarMenu`, opened by Shift+F10, AX-9.11), Options (O, the
@@ -58,6 +64,14 @@ After the kit:
   A command of the list keeps its own mark (AK-2.1); an item that is not one takes its kind's: a setting is change, a
   recent file or window is open, Recently closed is open. Nothing is added to one reader alone: a new action is a menu
   item, and it is in all of them at once.
+  One more reader since 2026-11-15 (`user-workflows.md` WF-2.3 to WF-2.5): the automation channel's `commands data`,
+  the window's commands as data (`AxKitForm.CommandRows`, `AxKit.Core/CommandListing`). It reads the same entries,
+  each with its key as a value in the words a script presses (`BundleKeys.Chord`, `AxKit.Core/KeyChord`), adds the
+  keys of the command list that have no menu item, folded by label, and says for every row which chord would run it
+  at this moment. It is the listing a script's step names a command by, and the one the command inventory
+  (`docs/axKit/window-commands.json`) and the workflow reference for people are written from as those are built
+  (WF-2.6, WF-7); `choose` runs one entry by exactly its name and its menus, as the AI tools' run finds it
+  (`CommandPalette.Find`).
 - AK-2.6 **The exceptions**, all here and nowhere else, each for security:
   1. axPass and axClip answer no AI tool (MC-4.3): secrets and the clipboard.
   2. An act entry asks the user before an AI tool runs it, naming its target (MC-7.3).
