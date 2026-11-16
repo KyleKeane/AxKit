@@ -28,154 +28,154 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
 Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: `workflows-axClaude.md`).
 
 1. **Start a conversation with Claude**
-   - Move between the conversation and Claude's question, then answer it
-   - Switch between the message field and the conversation
-   - Jump straight to the conversation or the message field
-   - Go to the conversation from the menu
-   - Hear the status
+    - Move between the conversation and Claude's question, then answer it
+    - Switch between the message field and the conversation
+    - Jump straight to the conversation or the message field
+    - Go to the conversation from the menu
+    - Hear the status
 2. **Send Claude a message and hear the reply**
-   - Read Claude's question as lines in the conversation
-   - Answer a question by typing in the message field
-   - Send a message of two lines
-   - Go to Claude's reply and read it
-   - Go back to the message you sent
-   - Move through a long message by page
-   - Move through a message by paragraph
-   - Read the keyboard shortcuts
+    - Read Claude's question as lines in the conversation
+    - Answer a question by typing in the message field
+    - Send a message of two lines
+    - Go to Claude's reply and read it
+    - Go back to the message you sent
+    - Move through a long message by page
+    - Move through a message by paragraph
+    - Read the keyboard shortcuts
 3. **Read the conversation while Claude is writing**
-   - Read the conversation while Claude writes
-   - Go to Claude's latest reply
-   - Quote a line of a reply in your next message
-   - Select lines of a reply and clear the selection
+    - Read the conversation while Claude writes
+    - Go to Claude's latest reply
+    - Quote a line of a reply in your next message
+    - Select lines of a reply and clear the selection
 4. **Move through a reply by headings and quick keys**
-   - Move through the conversation by headings
-   - Move by heading level
-   - Hide the markers in the text
-   - Move through the conversation by paragraph
-   - Jump between replies, messages, tools, errors and system lines
-   - Go back to the message field from the conversation
-   - Move through a long reply a screen at a time
-   - Skip over a run of lines in a reply
-   - Hear the line number
-   - Find text in the conversation
-   - Find the next match from the message field
-   - Go back to where you were before a jump
-   - Bookmark lines and move between them
-   - Hear a reply's paragraphs, headings or bookmarks without moving
-   - Quote two lines in a message and send it
-   - Quote a long paragraph whole
-   - Send the quote with your comment
+    - Move through the conversation by headings
+    - Move by heading level
+    - Hide the markers in the text
+    - Move through the conversation by paragraph
+    - Jump between replies, messages, tools, errors and system lines
+    - Go back to the message field from the conversation
+    - Move through a long reply a screen at a time
+    - Skip over a run of lines in a reply
+    - Hear the line number
+    - Find text in the conversation
+    - Find the next match from the message field
+    - Go back to where you were before a jump
+    - Bookmark lines and move between them
+    - Hear a reply's paragraphs, headings or bookmarks without moving
+    - Quote two lines in a message and send it
+    - Quote a long paragraph whole
+    - Send the quote with your comment
 5. **Change the permission mode and interrupt Claude**
-   - Change the permission mode
-   - Read a permission question in the conversation
-   - Answer a permission question by its number
-   - Interrupt Claude while it works
-   - Interrupt Claude from the menu or the message field
-   - Send Claude a key from the menu
+    - Change the permission mode
+    - Read a permission question in the conversation
+    - Answer a permission question by its number
+    - Interrupt Claude while it works
+    - Interrupt Claude from the menu or the message field
+    - Send Claude a key from the menu
 6. **Send messages while Claude is still working**
-   - Send a message while Claude works
-   - Send a waiting message at once
+    - Send a message while Claude works
+    - Send a waiting message at once
 7. **Change Claude's project folder**
-   - Continue the last conversation in a folder
-   - Restart Claude
-   - Start a new session with arguments of your own
+    - Continue the last conversation in a folder
+    - Restart Claude
+    - Start a new session with arguments of your own
 8. **Restart, stop and close a conversation**
-   - Stop Claude from the message field
-   - Start a stopped Claude again
-   - Restart Claude while it runs
-   - Decide whether to close the window while Claude works
-   - Carry on the conversation after closing
-   - Close the window while Claude is ready
+    - Stop Claude from the message field
+    - Start a stopped Claude again
+    - Restart Claude while it runs
+    - Decide whether to close the window while Claude works
+    - Carry on the conversation after closing
+    - Close the window while Claude is ready
 9. **Choose axClaude's speech, sounds and text**
-   - Make the text larger or smaller
-   - Turn off the ticks for new lines and tool calls
-   - Turn off the chimes
-   - Play background music while Claude works
-   - Stop recording the raw stream
-   - Have Claude's replies spoken
-   - Hear each tool call as it starts
-   - Read the keyboard shortcuts
-   - Find a word in the keyboard shortcuts
-   - Read the user guide
-   - Read the version, the licence and the axKit guide
-   - Show the time on Input and Output lines
+    - Make the text larger or smaller
+    - Turn off the ticks for new lines and tool calls
+    - Turn off the chimes
+    - Play background music while Claude works
+    - Stop recording the raw stream
+    - Have Claude's replies spoken
+    - Hear each tool call as it starts
+    - Read the keyboard shortcuts
+    - Find a word in the keyboard shortcuts
+    - Read the user guide
+    - Read the version, the licence and the axKit guide
+    - Show the time on Input and Output lines
 10. **Install Claude Code when it is missing**
-   - Hear the ways to install Claude Code
-   - Close the notice that Claude Code is missing
+    - Hear the ways to install Claude Code
+    - Close the notice that Claude Code is missing
 11. **Check for an update from a conversation**
-   - Check for an update
-   - Turn off the update check at start
+    - Check for an update
+    - Turn off the update check at start
 12. **Answer Claude's questions and screens**
-   - Answer the trust question from the list
-   - Move between a question and the conversation
-   - Hear the question again
-   - Cancel a question
-   - Answer a question that follows a reply
-   - Have questions come without interrupting speech
-   - Open and close Claude's list of background tasks
-   - Answer a question in your own words
-   - Move through Claude's questions in the conversation
-   - Close a question without answering it
-   - Interrupt Claude from a permission question
-   - Answer a set of two questions
-   - Open and close Claude's permissions screen
-   - Answer a question with several answers
-   - Review answers before they go to Claude
+    - Answer the trust question from the list
+    - Move between a question and the conversation
+    - Hear the question again
+    - Cancel a question
+    - Answer a question that follows a reply
+    - Have questions come without interrupting speech
+    - Open and close Claude's list of background tasks
+    - Answer a question in your own words
+    - Move through Claude's questions in the conversation
+    - Close a question without answering it
+    - Interrupt Claude from a permission question
+    - Answer a set of two questions
+    - Open and close Claude's permissions screen
+    - Answer a question with several answers
+    - Review answers before they go to Claude
 13. **Use the axKit menu from a conversation**
-   - Close every window at once
+    - Close every window at once
 14. **Read a side answer and other information screens**
-   - Ask a side question and hear the answer
-   - Close a side answer
-   - Browse earlier side answers
-   - Look at Claude's goal
-   - Find side answers in the conversation
+    - Ask a side question and hear the answer
+    - Close a side answer
+    - Browse earlier side answers
+    - Look at Claude's goal
+    - Find side answers in the conversation
 15. **Agree to the reminder before Claude Code first starts**
-   - Agree to the reminder before Claude Code starts
+    - Agree to the reminder before Claude Code starts
 16. **Report a bug or an idea from a conversation**
-   - Open the report form
-   - Type a report of several lines
-   - Add detail that may name your files
-   - Send the report
-   - Cancel a report
+    - Open the report form
+    - Type a report of several lines
+    - Add detail that may name your files
+    - Send the report
+    - Cancel a report
 17. **Choose which words axClaude says by itself**
-   - Silence Claude's own notices
-   - Turn the words Sent and Responding back on
-   - Keep reply lines with chosen words silent
-   - Have every reply line spoken again
+    - Silence Claude's own notices
+    - Turn the words Sent and Responding back on
+    - Keep reply lines with chosen words silent
+    - Have every reply line spoken again
 18. **Run a command Claude offers you**
-   - Read the explanation of an offered command
-   - Hear the offered command again
-   - Turn down an offered command
-   - Run an offered command
-   - Let an AI tool run a window command
+    - Read the explanation of an offered command
+    - Hear the offered command again
+    - Turn down an offered command
+    - Run an offered command
+    - Let an AI tool run a window command
 19. **See an offered command wait its turn**
-   - Turn down waiting offers one after another
+    - Turn down waiting offers one after another
 20. **A conversation window that starts hidden and hides on closing**
-   - Bring up the hidden conversation
-   - Hide the conversation again
-   - End Claude and close the window for good
+    - Bring up the hidden conversation
+    - Hide the conversation again
+    - End Claude and close the window for good
 21. **See what happened while a hidden conversation was away**
-   - Bring up the window and hear what happened while it was away
+    - Bring up the window and hear what happened while it was away
 22. **Hear and ask what Claude runs in the background**
-   - Ask what runs in the background
-   - Hear background work as it starts and ends
+    - Ask what runs in the background
+    - Hear background work as it starts and ends
 23. **Find out whether a key arrives and what it does, in axClaude**
-   - Hear what a key does without doing it
-   - End the key test
-   - Hear what the conversation's keys do
+    - Hear what a key does without doing it
+    - End the key test
+    - Hear what the conversation's keys do
 24. **Read back in the conversation while Claude writes on, and find every line in its place**
 25. **Read back a long message before sending it, and turn the music on with Ctrl+M**
-   - Move through a message by its headings, links and lists
-   - Go back to editing the message
-   - Turn the background music on and off
+    - Move through a message by its headings, links and lists
+    - Go back to editing the message
+    - Turn the background music on and off
 26. **Block Claude Code's feedback requests from the Options menu, and turn it off again**
-   - Block Claude Code's feedback requests
-   - Turn the block on feedback requests off again
-   - Choose how Claude-drafted feedback comes
+    - Block Claude Code's feedback requests
+    - Turn the block on feedback requests off again
+    - Choose how Claude-drafted feedback comes
 27. **Follow a workflow Claude runs in the background without hearing its live row**
-   - Hear how far a workflow is
-   - Show Claude Code's live progress rows in the conversation
-   - Hide the live progress rows again
+    - Hear how far a workflow is
+    - Show Claude Code's live progress rows in the conversation
+    - Hide the live progress rows again
 28. **Hear where axClaude's events come from**
 29. **Follow a turn played by the stand-in**
 30. **Have a short exchange with Claude**
@@ -186,182 +186,182 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 Steps and keys: `docs/axKit/workflows/axClip.md` (in Claude's working folder: `workflows-axClip.md`).
 
 1. **Find and paste something you copied earlier**
-   - Move through the copied items
-   - Jump to the newest or oldest item, or by a page
-   - Read an item's whole text
-   - Pause the recording and start it again
-   - Remove an item
-   - Clear the clipboard history
-   - Hide the window and show it again
-   - Quit axClip
+    - Move through the copied items
+    - Jump to the newest or oldest item, or by a page
+    - Read an item's whole text
+    - Pause the recording and start it again
+    - Remove an item
+    - Clear the clipboard history
+    - Hide the window and show it again
+    - Quit axClip
 2. **Copy again, read a long copy and keep the history between runs**
-   - Read a copy of several lines in full
-   - Keep the history between runs
+    - Read a copy of several lines in full
+    - Keep the history between runs
 
 ## axDown
 
 Steps and keys: `docs/axKit/workflows/axDown.md` (in Claude's working folder: `workflows-axDown.md`).
 
 1. **Open a text file in axDown**
-   - Open axDown with an empty document
-   - Open a file in axDown
-   - Open a text file without naming an app
-   - Start a new file by its name
+    - Open axDown with an empty document
+    - Open a file in axDown
+    - Open a text file without naming an app
+    - Start a new file by its name
 2. **Read and write text in axDown**
-   - Read the text line by line and word by word
-   - Move from paragraph to paragraph
-   - Hear the line and column
-   - Select text a paragraph at a time
-   - Turn word wrap off and on
-   - Move a page at a time
-   - Type text, then undo and redo it
-   - Undo and redo from the menu
+    - Read the text line by line and word by word
+    - Move from paragraph to paragraph
+    - Hear the line and column
+    - Select text a paragraph at a time
+    - Turn word wrap off and on
+    - Move a page at a time
+    - Type text, then undo and redo it
+    - Undo and redo from the menu
 3. **Hear why a file that is not text will not open**
 4. **Open, save and switch files in axDown**
-   - Save a change to a file
-   - Open a new empty window
-   - Start a new document when the text has changes
-   - Reload a file that another program changed
-   - Save over the changes of another program
-   - Create a file by saving it
-   - Close a window without saving its changes
+    - Save a change to a file
+    - Open a new empty window
+    - Start a new document when the text has changes
+    - Reload a file that another program changed
+    - Save over the changes of another program
+    - Create a file by saving it
+    - Close a window without saving its changes
 5. **Find text and go to a line**
-   - Find a word in the text
-   - Go to a line by its number
+    - Find a word in the text
+    - Go to a line by its number
 6. **Change the text size and the font**
-   - Make the text larger or smaller
+    - Make the text larger or smaller
 7. **Find a command in the menus, the palette and the help**
-   - Open the keyboard shortcuts
-   - Move through the shortcuts by heading
-   - Find a word in the shortcuts
-   - Close the shortcuts and return to the text
-   - Read the user guide
-   - Hear the version of axKit
-   - Read the licence, the attribution and the axKit guide
-   - Turn the update check at start on or off
-   - Move through the commands of the palette
-   - Run a command found by its name
+    - Open the keyboard shortcuts
+    - Move through the shortcuts by heading
+    - Find a word in the shortcuts
+    - Close the shortcuts and return to the text
+    - Read the user guide
+    - Hear the version of axKit
+    - Read the licence, the attribution and the axKit guide
+    - Turn the update check at start on or off
+    - Move through the commands of the palette
+    - Run a command found by its name
 8. **Check for updates and remove axKit**
-   - Hear the version of axKit
-   - Check for updates
+    - Hear the version of axKit
+    - Check for updates
 9. **Move through a Markdown file by headings, lists and links**
-   - Move to the next heading
-   - Move back to the previous heading
-   - Move to a heading of one level
-   - Move by heading from the menu
-   - Move to the next link
-   - Move back to the previous link
-   - Move by list and by list item
-   - Move to a block quote or a table
+    - Move to the next heading
+    - Move back to the previous heading
+    - Move to a heading of one level
+    - Move by heading from the menu
+    - Move to the next link
+    - Move back to the previous link
+    - Move by list and by list item
+    - Move to a block quote or a table
 10. **Show the current file in another app**
 11. **Change the colours with the theme file**
-   - Make a theme file and open it
-   - Reload the theme
-   - Turn the theme off and on
+    - Make a theme file and open it
+    - Reload the theme
+    - Turn the theme off and on
 12. **Ask Claude about the window you are in**
-   - Turn Claude on by agreeing to the reminder
-   - Turn Claude off and on
-   - Ask Claude about this window
-   - Ask more about an answer
-   - See the folders Claude may read
+    - Turn Claude on by agreeing to the reminder
+    - Turn Claude off and on
+    - Ask Claude about this window
+    - Ask more about an answer
+    - See the folders Claude may read
 13. **Hear a line break as you type it**
-   - Start a new line and hear it said
-   - Split a line in two
-   - Turn the spoken new line off and on
+    - Start a new line and hear it said
+    - Split a line in two
+    - Turn the spoken new line off and on
 14. **Hear the heading sound as you move**
-   - Hear the sound when the caret reaches a heading
-   - Turn the heading sound off and on
+    - Hear the sound when the caret reaches a heading
+    - Turn the heading sound off and on
 15. **Open a recent file or window from the command palette**
-   - Open a recent file from the palette
-   - Find another open window from the palette
-   - Reopen a window that was closed
+    - Open a recent file from the palette
+    - Find another open window from the palette
+    - Reopen a window that was closed
 16. **Find out whether a key arrives and what it does**
-   - Start testing keys
-   - Hear what a key does without carrying it out
-   - End the key test
+    - Start testing keys
+    - Hear what a key does without carrying it out
+    - End the key test
 17. **Move through a file with single letters without changing it, then type again**
-   - Turn on navigation mode
-   - Move by single letters
-   - Return to edit mode and type
+    - Turn on navigation mode
+    - Move by single letters
+    - Return to edit mode and type
 18. **Answer a notice and use the command palette**
-   - Read the keyboard shortcuts
-   - Find a command in the command palette
+    - Read the keyboard shortcuts
+    - Find a command in the command palette
 
 ## axFile
 
 Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `workflows-axFile.md`).
 
 1. **Browse folders and files**
-   - Open a folder in axFile
-   - Move through the list of files
-   - Select a file by typing its name
-   - Move between the list and the Actions list
-   - Hear the status bar
-   - Open a folder in the list
-   - Go back to the folder above
-   - Go to a folder by its path
-   - Go to the drives of This PC
-   - Open a drive
-   - Move down and up the folder tree
-   - Hear the details of a folder or a file
-   - Go to a folder named by an environment variable
-   - Go to a file by its path
-   - Complete a path from its first letters
-   - Open a completed path
-   - Add a folder to the favorites and remove it
-   - Read the folder again after a change from outside
-   - Show hidden files and names that start with a period
-   - Find a file by part of its name
-   - Show only the entries whose names contain a word
-   - Sort the list by date, size or name
-   - Select several entries
-   - Clear the selection
-   - Select a run of entries in a row
+    - Open a folder in axFile
+    - Move through the list of files
+    - Select a file by typing its name
+    - Move between the list and the Actions list
+    - Hear the status bar
+    - Open a folder in the list
+    - Go back to the folder above
+    - Go to a folder by its path
+    - Go to the drives of This PC
+    - Open a drive
+    - Move down and up the folder tree
+    - Hear the details of a folder or a file
+    - Go to a folder named by an environment variable
+    - Go to a file by its path
+    - Complete a path from its first letters
+    - Open a completed path
+    - Add a folder to the favorites and remove it
+    - Read the folder again after a change from outside
+    - Show hidden files and names that start with a period
+    - Find a file by part of its name
+    - Show only the entries whose names contain a word
+    - Sort the list by date, size or name
+    - Select several entries
+    - Clear the selection
+    - Select a run of entries in a row
 2. **Open a folder in axFile from another app**
-   - Show the file of an axDown window in axFile
+    - Show the file of an axDown window in axFile
 3. **Copy, move, rename and delete files**
-   - Make a new folder
-   - Make a new text file
-   - Move selected files into a new folder
-   - Rename a folder
-   - Delete a folder to the Recycle Bin
-   - Compress a folder to a zip file
-   - Compress selected files into one zip file
-   - Extract a zip file here
-   - Undo a rename
-   - Undo a new folder
-   - Undo a move to a folder
-   - Undo a compress
-   - Undo a delete
-   - Undo the delete of several entries
+    - Make a new folder
+    - Make a new text file
+    - Move selected files into a new folder
+    - Rename a folder
+    - Delete a folder to the Recycle Bin
+    - Compress a folder to a zip file
+    - Compress selected files into one zip file
+    - Extract a zip file here
+    - Undo a rename
+    - Undo a new folder
+    - Undo a move to a folder
+    - Undo a compress
+    - Undo a delete
+    - Undo the delete of several entries
 4. **Play or read a file from axFile**
-   - Read a file in axPreview
-   - Read another file in the same axPreview window
-   - Open a folder in a new axFile window
+    - Read a file in axPreview
+    - Read another file in the same axPreview window
+    - Open a folder in a new axFile window
 5. **Use axFile's text, notices and axKit menu**
-   - Make the text larger or smaller
-   - Read the user guide
-   - Hear the version of axKit
-   - Open a folder from the command palette
-   - Run a command from the command palette
-   - Open axFile on the last folder
+    - Make the text larger or smaller
+    - Read the user guide
+    - Hear the version of axKit
+    - Open a folder from the command palette
+    - Run a command from the command palette
+    - Open axFile on the last folder
 6. **Undo a file operation from the Actions list**
-   - Move to the Actions list from the menu
-   - See the last operation in the Actions list
-   - Go to the folder of an operation from its line
-   - Undo an operation from the Actions list
-   - Go to an operation done in another folder
-   - Undo the newest operation from the folder list
-   - See what was selected in the Actions list
-   - Select every entry from the marked one to here
+    - Move to the Actions list from the menu
+    - See the last operation in the Actions list
+    - Go to the folder of an operation from its line
+    - Undo an operation from the Actions list
+    - Go to an operation done in another folder
+    - Undo the newest operation from the folder list
+    - See what was selected in the Actions list
+    - Select every entry from the marked one to here
 7. **Move files to a folder you type**
-   - Move a file into a folder by typing its name
-   - Undo the move
+    - Move a file into a folder by typing its name
+    - Undo the move
 8. **Open a recent folder in axFile from the command palette**
 9. **Find out whether a key arrives and what it does, in a list**
-   - Start testing keys
-   - Hear what a key does without carrying it out
-   - End the key test
+    - Start testing keys
+    - Hear what a key does without carrying it out
+    - End the key test
 
 ## axGIT
 
@@ -380,14 +380,14 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
 Steps and keys: `docs/axKit/workflows/axHelp.md` (in Claude's working folder: `workflows-axHelp.md`).
 
 1. **Ask Claude for help from anywhere, with a picture of the screen**
-   - Turn on the AI tools
-   - Open a conversation with Claude
-   - Hand a picture to a new conversation
-   - Quit axHelp
+    - Turn on the AI tools
+    - Open a conversation with Claude
+    - Hand a picture to a new conversation
+    - Quit axHelp
 2. **Close axHelp's conversation and bring the same one back**
-   - Hide the conversation
-   - Bring the same conversation back
-   - Hand a picture to the hidden conversation
+    - Hide the conversation
+    - Bring the same conversation back
+    - Hand a picture to the hidden conversation
 
 ## axJSON
 
@@ -451,127 +451,127 @@ Steps and keys: `docs/axKit/workflows/axProcess.md` (in Claude's working folder:
 Steps and keys: `docs/axKit/workflows/axStart.md` (in Claude's working folder: `workflows-axStart.md`).
 
 1. **Find and start a program**
-   - Read the programs again
-   - Move through the matches
-   - Jump to the first or last match, or by a page
-   - Hear the selected match's kind and path
-   - Hide the window and show it again
-   - Quit axStart
+    - Read the programs again
+    - Move through the matches
+    - Jump to the first or last match, or by a page
+    - Hear the selected match's kind and path
+    - Hide the window and show it again
+    - Quit axStart
 2. **Search programs as you type and change axStart's hotkey**
-   - Hear the first match as you type
-   - Hear the new first match after deleting a letter
-   - Search by several words
-   - Change the hotkey
-   - Quit axStart
+    - Hear the first match as you type
+    - Hear the new first match after deleting a letter
+    - Search by several words
+    - Change the hotkey
+    - Quit axStart
 3. **Hear that nothing matches and turn the spoken match off**
-   - Turn the spoken first match off and on
-   - Quit axStart
+    - Turn the spoken first match off and on
+    - Quit axStart
 4. **Find out whether a key arrives and what it does, in a hotkey window**
-   - Test what a key does
+    - Test what a key does
 
 ## axTask
 
 Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `workflows-axTask.md`).
 
 1. **Move through tasks and change an item's fields**
-   - Move among the lists by their headings
-   - Open a list
-   - Hear the status bar
-   - Open an item's fields
-   - Move between the list and the fields
-   - Mark a task done or not done
-   - Set a due date by typing a weekday
-   - Add a field with a choice of values
-   - Change a choice to its previous or next value
-   - Move a field up
-   - Set a check field on or off
-   - Rename an item
-   - Add an item
-   - Archive an item and bring it back
-   - Hear every field of an item
-   - Show all tasks, the soonest due first
+    - Move among the lists by their headings
+    - Open a list
+    - Hear the status bar
+    - Open an item's fields
+    - Move between the list and the fields
+    - Mark a task done or not done
+    - Set a due date by typing a weekday
+    - Add a field with a choice of values
+    - Change a choice to its previous or next value
+    - Move a field up
+    - Set a check field on or off
+    - Rename an item
+    - Add an item
+    - Archive an item and bring it back
+    - Hear every field of an item
+    - Show all tasks, the soonest due first
 2. **Make lists, link items and use smart lists**
-   - Read a list's details
-   - Write notes of several lines
-   - Link one item to another
-   - Make a checklist a plain list and back
-   - Make a new list
-   - Hide and show done tasks
+    - Read a list's details
+    - Write notes of several lines
+    - Link one item to another
+    - Make a checklist a plain list and back
+    - Make a new list
+    - Hide and show done tasks
 3. **Group lists into sections**
-   - Move a list into a new section
-   - Move among the sections by their headings
-   - Make a new list in a section
-   - Put a list in a section from its details
-   - Move a list back to Your lists
-   - Archive a list and bring it back
+    - Move a list into a new section
+    - Move among the sections by their headings
+    - Make a new list in a section
+    - Put a list in a section from its details
+    - Move a list back to Your lists
+    - Archive a list and bring it back
 4. **Act on items with action keys**
-   - Run an action key on an item
-   - Move an item to another list with an action key
-   - Set up an action key
+    - Run an action key on an item
+    - Move an item to another list with an action key
+    - Set up an action key
 5. **Add project folders and search every list**
-   - Find the project folders by their headings
-   - Mark a project's task done from All tasks
-   - Open a project and mark a task done in it
-   - Add a project folder by its path
-   - Search every list
-   - Remove a project folder
+    - Find the project folders by their headings
+    - Mark a project's task done from All tasks
+    - Open a project and mark a task done in it
+    - Add a project folder by its path
+    - Search every list
+    - Remove a project folder
 6. **Group smart lists and find items by tag**
-   - Move among the tags by their symbols
-   - Gather a tag's items from every list
-   - Find the smart lists that share a first word
+    - Move among the tags by their symbols
+    - Gather a tag's items from every list
+    - Find the smart lists that share a first word
 7. **Hear the heading sound in the item apps**
 8. **Close axTask and come back to the list you had**
-   - Come back to the list you had
+    - Come back to the list you had
 9. **Find out whether a key arrives and what it does, in an item window**
-   - Test what a key does
-   - End the key test
+    - Test what a key does
+    - End the key test
 
 ## axTerminal
 
 Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder: `workflows-axTerminal.md`).
 
 1. **Start a terminal**
-   - Move between the command field and the terminal
-   - Hear the state, the shell and the prompt
+    - Move between the command field and the terminal
+    - Hear the state, the shell and the prompt
 2. **Run commands and read their output**
-   - Run a command and read its output by headings
-   - Turn the heading marks in the text off and on
-   - Answer a program that asks
-   - Send a command of several lines
-   - Send a command without recording it
-   - Put a recent command back in the field
-   - Copy a command line of the terminal into the field
-   - Interrupt a long command
-   - Play music while a command runs
+    - Run a command and read its output by headings
+    - Turn the heading marks in the text off and on
+    - Answer a program that asks
+    - Send a command of several lines
+    - Send a command without recording it
+    - Put a recent command back in the field
+    - Copy a command line of the terminal into the field
+    - Interrupt a long command
+    - Play music while a command runs
 3. **Hear a command's output as it arrives**
 4. **Switch shells and folders**
-   - Start a new session in another shell
-   - Switch to another shell
-   - Hear the current folder's full path
-   - Restart the shell
-   - Start the shell again after it ended
+    - Start a new session in another shell
+    - Switch to another shell
+    - Hear the current folder's full path
+    - Restart the shell
+    - Start the shell again after it ended
 5. **Use axTerminal's text, notices and axKit menu**
-   - Clear the window
-   - Set a bookmark and go back to it
-   - Find text in the terminal
-   - Read the keyboard shortcuts
-   - Read the user guide
-   - Close the window while a command runs
+    - Clear the window
+    - Set a bookmark and go back to it
+    - Find text in the terminal
+    - Read the keyboard shortcuts
+    - Read the user guide
+    - Close the window while a command runs
 6. **Repeat an earlier command**
-   - Go back through earlier commands
-   - Come forward again to what was typed
-   - Read the field in navigation mode
-   - Go back to edit mode in the field
+    - Go back through earlier commands
+    - Come forward again to what was typed
+    - Read the field in navigation mode
+    - Go back to edit mode in the field
 7. **Agree to the reminder before a shell first starts**
-   - Agree to the reminder and start the shell
+    - Agree to the reminder and start the shell
 8. **Add a shell of your own**
-   - Add a shell of your own
-   - Switch to a shell of your own
-   - Remove a shell of your own
+    - Add a shell of your own
+    - Switch to a shell of your own
+    - Remove a shell of your own
 9. **Use axTerminal's Context menu**
-   - Bookmark a line and take the bookmark away
-   - Copy a line into the command field
-   - Run a Context command from the palette
+    - Bookmark a line and take the bookmark away
+    - Copy a line into the command field
+    - Run a Context command from the palette
 10. **Start a shell in a recent folder from the command palette**
 11. **Read a file that imitates the shell's marks**
 

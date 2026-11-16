@@ -92,9 +92,10 @@ public sealed class ReferenceTests
     private const string GroupPreamble = """
         Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
         is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-        line "You hear" gives words of what axKit says there, not always the whole sentence. The file names and the words
-        typed are the check's examples: use your own. Where a step names a command after its key, the key is that command's
-        in this version of axKit.
+        line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
+        cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
+        the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+        command's in this version of axKit.
         """;
 
     private static ListedCommand Row(string label, string menu, string key = "", string keyText = "", string mark = "read", IReadOnlyList<string>? also = null,
@@ -178,15 +179,15 @@ public sealed class ReferenceTests
 
                 1. **Open a text file in axDown**
                 2. **Find text and go to a line**
-                   - Find a word in the text
-                   - Go to a line by its number
+                    - Find a word in the text
+                    - Go to a line by its number
 
                 ## AI tools
 
                 Steps and keys: `docs/axKit/workflows/ai-tools.md` (in Claude's working folder: `workflows-ai-tools.md`).
 
                 1. **Let an AI tool read a window**
-                   - Turn the AI tools on
+                    - Turn the AI tools on
 
                 ## NVDA only
 
@@ -257,12 +258,12 @@ public sealed class ReferenceTests
 
                 ## Find text and go to a line
 
-                Starts with: Open axDown with find.md.
+                Starts with: Open axDown with the file find.md.
 
                 ### Find a word in the text
 
                 1. Press Ctrl+F (Find; Navigation menu).
-                2. Type apple.
+                2. Type: apple
                 3. Press Enter.
                 4. Press F3 (Find next; Navigation menu).
                 5. Press Shift+F3 (Find previous; Navigation menu).
@@ -270,9 +271,9 @@ public sealed class ReferenceTests
                 ### Go to a line by its number
 
                 1. Press Ctrl+G (Go to line; Navigation menu).
-                2. Type 5.
+                2. Type: 5
                 3. Press Enter.
-                   You hear: Line 5 of 7.
+                    You hear: Line 5 of 7.
                 """),
             Page(pages, "docs/axKit/workflows/axDown.md"));
     }
@@ -283,6 +284,8 @@ public sealed class ReferenceTests
         var pages = Reference.Pages([new("tests/scripts/axDown/01-start.txt", Open)], Inventory);
 
         // The window steps before the first other input are how it starts; the steps follow with no goal's heading.
+        // What is heard before step 1 has no spaces before it (four would make it a code block in Markdown); under a
+        // step it has four, so that it stays inside an item numbered 10 or more.
         Assert.Equal(
             Text($"""
                 # axDown: workflows
@@ -291,11 +294,11 @@ public sealed class ReferenceTests
 
                 ## Open a text file in axDown
 
-                Starts with: Open axDown with notes.md.
+                Starts with: Open axDown with the file notes.md.
 
-                   You hear: notes.md, line 1.
+                You hear: notes.md, line 1.
                 1. Press Ctrl+End.
-                   You hear: Line 3 of 3.
+                    You hear: Line 3 of 3.
                 """),
             Page(pages, "docs/axKit/workflows/axDown.md"));
         Assert.DoesNotContain("   - ", Page(pages, Reference.IndexPath));
@@ -309,7 +312,7 @@ public sealed class ReferenceTests
             Inventory);
 
         var page = Page(pages, "docs/axKit/workflows/axDown.md");
-        Assert.EndsWith("## Open axDown with an empty document\n\n1. Open axDown.\n   You hear: Untitled, empty document.\n", page);
+        Assert.EndsWith("## Open axDown with an empty document\n\n1. Open axDown.\n    You hear: Untitled, empty document.\n", page);
         Assert.DoesNotContain("Starts with:", page);
     }
 
@@ -334,7 +337,7 @@ public sealed class ReferenceTests
 
         // The setup's window steps as sentences, each with its full stop; its key press is no part of how it starts.
         Assert.Contains(
-            "## Work in two windows\n\nStarts with: Open axDown with a.md. Open axFile with the test folder. Use window 1.\n\n### Find a word\n\n1. Press Ctrl+F (Find; Navigation menu).\n",
+            "## Work in two windows\n\nStarts with: Open axDown with the file a.md. Open axFile with the test folder. Go to the axDown window.\n\n### Find a word\n\n1. Press Ctrl+F (Find; Navigation menu).\n",
             Page(pages, "docs/axKit/workflows/axDown.md"));
     }
 
@@ -348,7 +351,7 @@ public sealed class ReferenceTests
             Assert.DoesNotContain("A word that is not in the text is said as not found", page.Text);
             Assert.DoesNotContain("The status bar holds", page.Text);
             // The checks' own steps and words.
-            Assert.DoesNotContain("Type pear", page.Text);
+            Assert.DoesNotContain("Type: pear", page.Text);
             Assert.DoesNotContain("Not found here", page.Text);
             Assert.DoesNotContain("Not a line number", page.Text);
             Assert.DoesNotContain("Check:", page.Text);
@@ -376,11 +379,11 @@ public sealed class ReferenceTests
 
         // WF-D-28: a how-to with nothing to do is no how-to; the generator leaves it out of the index and of the page.
         Assert.DoesNotContain("See the field", Page(pages, Reference.IndexPath));
-        Assert.Contains("1. **Calculate**\n   - Add two numbers\n", Page(pages, Reference.IndexPath));
+        Assert.Contains("1. **Calculate**\n    - Add two numbers\n", Page(pages, Reference.IndexPath));
         var page = Page(pages, "docs/axKit/workflows/axCalc.md");
         Assert.DoesNotContain("See the field", page);
         Assert.DoesNotContain("Expression", page);
-        Assert.EndsWith("### Add two numbers\n\n1. Type 1+1.\n2. Press Enter.\n", page);
+        Assert.EndsWith("### Add two numbers\n\n1. Type: 1+1\n2. Press Enter.\n", page);
 
         Assert.Empty(Lines("expect focus Expression", "expect said Expression, edit"));
     }
@@ -390,17 +393,17 @@ public sealed class ReferenceTests
     {
         Assert.Equal(
             [
-                "1. Open axDown with find.md.",
+                "1. Open axDown with the file find.md.",
                 "2. Press Ctrl+G (Go to line; Navigation menu).",
-                "3. Type 5.",
+                "3. Type: 5",
                 "4. Press Enter.",
-                "   You hear: Line 5 of 7.",
-                "   You hear the sound Edge.",
-                "5. Take the window the app opened.",
-                "6. Use window 1.",
+                "    You hear: Line 5 of 7.",
+                "    You hear the sound Edge.",
+                "5. A new window opens: go to it.",
+                "6. Go to the axDown window.",
                 "7. Call the tool axkit_windows.",
-                "   The tool answers: \"app\": \"axDown\".",
-                "8. Launch down other.md.",
+                "    The tool answers with app: axDown.",
+                "8. Start axDown again with the file other.md.",
                 "9. Close the window.",
             ],
             Lines(
@@ -422,7 +425,7 @@ public sealed class ReferenceTests
     public void An_expectation_before_the_first_input_is_a_line_before_step_one()
     {
         Assert.Equal(
-            ["   You hear: Go to line, edit.", "1. Type 5.", "   You hear: Line 5 of 7."],
+            ["You hear: Go to line, edit.", "1. Type: 5", "    You hear: Line 5 of 7."],
             Lines("expect said Go to line, edit", "type 5", "expect said ! Line 5 of 7"));
     }
 
@@ -435,11 +438,11 @@ public sealed class ReferenceTests
 
         // A window the script's lines do not name (adopt): every app is asked, and the key is written when all that have
         // the command read the same, never the key of another app's command of that name.
-        Assert.Equal(["1. Take the window the app opened.", "2. Press Ctrl+G (Go to line; Navigation menu)."], Lines("adopt", "do Go to line"));
+        Assert.Equal(["1. A new window opens: go to it.", "2. Press Ctrl+G (Go to line; Navigation menu)."], Lines("adopt", "do Go to line"));
         IReadOnlyList<InventoryApp> same = [new("axDown", [Row("Find", "Navigation", "ctrl+f", "Ctrl+F")]), new("axJSON", [Row("Find", "Navigation", "ctrl+f", "Ctrl+F")])];
-        Assert.Equal(["1. Take the window the app opened.", "2. Press Ctrl+F (Find; Navigation menu)."], Lines(same, "adopt", "do Find"));
+        Assert.Equal(["1. A new window opens: go to it.", "2. Press Ctrl+F (Find; Navigation menu)."], Lines(same, "adopt", "do Find"));
         IReadOnlyList<InventoryApp> other = [new("axCalc", [Row("Find", "History", "f3", "F3")]), new("axDown", [Row("Find", "Navigation", "ctrl+f", "Ctrl+F")])];
-        Assert.Equal(["1. Take the window the app opened.", "2. Do the command Find."], Lines(other, "adopt", "do Find"));
+        Assert.Equal(["1. A new window opens: go to it.", "2. Do the command Find."], Lines(other, "adopt", "do Find"));
         Assert.Equal(["1. Open axDown.", "2. Press Ctrl+F (Find; Navigation menu)."], Lines(other, "start down", "do Find"));
     }
 
@@ -484,10 +487,11 @@ public sealed class ReferenceTests
     [Fact]
     public void A_rows_key_text_is_printed_where_it_differs_from_the_chords_words()
     {
-        // The window's own spelling is what its menu shows: "Ctrl++" for the chord ctrl+plus. A keys line is in key words.
+        // The window's own spelling is what its menu shows: "Ctrl++" for the chord ctrl+plus. A keys line of that chord
+        // reads the same way, so that one key has one spelling on a page.
         Assert.Equal(
-            ["1. Open axDown.", "2. Press Ctrl++ (Larger text; Options menu, Text).", "3. Press Ctrl+Plus (Larger text)."],
-            Lines("start down", "do Larger text", "keys ctrl+plus"));
+            ["1. Open axDown.", "2. Press Ctrl++ (Larger text; Options menu, Text).", "3. Type: x", "4. Press Ctrl++ (Larger text; Options menu, Text)."],
+            Lines("start down", "do Larger text", "type x", "keys ctrl+plus"));
 
         // A row whose only chord was folded in from a key with no menu item: that chord, in key words.
         IReadOnlyList<InventoryApp> folded = [new("axDown", [Row("Redo", "Actions", also: ["ctrl+shift+z"])])];
@@ -500,13 +504,14 @@ public sealed class ReferenceTests
         Assert.Equal(
             [
                 "1. Open axDown.",
-                "2. Press Ctrl+G (Go to line).",
-                // Among a row's further chords, and written in another order and case.
-                "3. Press Ctrl+Shift+Z (Redo).",
-                "4. Press Shift+Ctrl+Z (Redo).",
+                // The command is named as a do step names it: its label, then its menus from the bar down.
+                "2. Press Ctrl+G (Go to line; Navigation menu).",
+                // Among a row's further chords, and written in another order and case: the key is the one pressed.
+                "3. Press Ctrl+Shift+Z (Redo; Actions menu).",
+                "4. Press Shift+Ctrl+Z (Redo; Actions menu).",
                 "5. Press F6 (Between the text and the details).",
-                // A label two menu items share is named by its whole line, the canonical name.
-                "6. Press Ctrl+H (Heading, Navigation, Next).",
+                // A label two menu items share: the menus tell them apart, as after a do step.
+                "6. Press Ctrl+H (Heading; Navigation menu, Next).",
                 // No row holds it.
                 "7. Press Ctrl+Q.",
             ],
@@ -515,7 +520,7 @@ public sealed class ReferenceTests
         // Two rows hold the chord, and a window the lines do not name: no command is named.
         IReadOnlyList<InventoryApp> twice = [new("axDown", [Row("Find", "Navigation", "ctrl+f", "Ctrl+F"), Row("Filter", "Navigation", "ctrl+f", "Ctrl+F")])];
         Assert.Equal(["1. Open axDown.", "2. Press Ctrl+F."], Lines(twice, "start down", "keys ctrl+f"));
-        Assert.Equal(["1. Take the window the app opened.", "2. Press Ctrl+G."], Lines("adopt", "keys ctrl+g"));
+        Assert.Equal(["1. A new window opens: go to it.", "2. Press Ctrl+G."], Lines("adopt", "keys ctrl+g"));
     }
 
     [Fact]
@@ -524,7 +529,7 @@ public sealed class ReferenceTests
         // axFile has Enter for Open and Backspace for Up one level; in the field of a notice they are the field's keys,
         // and the page cannot know where the focus is: only a chord with Ctrl or Alt, or a function key, is named.
         Assert.Equal(
-            ["1. Open axFile.", "2. Press Ctrl+Shift+N (New folder).", "3. Type notes.", "4. Press Backspace.", "5. Press Enter.", "6. Press Alt+Up (Up one level)."],
+            ["1. Open axFile.", "2. Press Ctrl+Shift+N (New folder; Session menu).", "3. Type: notes", "4. Press Backspace.", "5. Press Enter.", "6. Press Alt+Up (Up one level; Navigation menu)."],
             Lines("start file", "keys ctrl+shift+n", "type notes", "keys backspace", "keys enter", "keys alt+up"));
     }
 
@@ -562,8 +567,170 @@ public sealed class ReferenceTests
     public void A_start_reads_as_opening_the_app_by_its_name()
     {
         Assert.Equal(
-            ["1. Open axDown with find.md.", "2. Open axDown.", "3. Open settings.json.", "4. Open axFile with the test folder.", "5. Open axTask with tasks."],
+            ["1. Open axDown with the file find.md.", "2. Open axDown.", "3. Open the file settings.json.", "4. Open axFile with the test folder.", "5. Open axTask with the folder tasks."],
             Lines("start down {temp}\\find.md", "start down", "start {temp}\\settings.json", "start file {temp}", "start Task {temp}\\tasks"));
+
+        // A path in the run's folder is named by what it is, a name with an extension a file; a path of the user's own
+        // stands as it is, and a name in quotes is one name.
+        Assert.Equal(
+            ["1. Open axMedia with the file ch\\alpha.wav.", "2. Open axDown with C:\\notes\\a.md.", "3. Open axTerminal with the folder work\\my project."],
+            Lines("start media {temp}\\ch\\alpha.wav", "start down C:\\notes\\a.md", "start terminal \"{temp}\\work\\my project\""));
+    }
+
+    [Fact]
+    public void A_starts_options_that_only_serve_the_check_are_left_out()
+    {
+        Assert.Equal(
+            [
+                // What follows " -- " in a start of axClaude is Claude Code's own options: the check's model.
+                "1. Open axClaude with the folder fresh.",
+                "2. Open axClaude with the folder proj.",
+                // --record with its file, --model with its value, and --claude with the check's stand-in in the run's folder.
+                "3. Open axClaude with the folder opts.",
+                "4. Open axClaude with the folder st.",
+                // A program of the user's own stays, and so does an option a person gives.
+                "5. Open axClaude with the folder gone --claude C:\\nowhere\\claude.exe.",
+                "6. Open axMedia with --add the folder ch.",
+                "7. Open axPreview with --new the file plain.txt.",
+                // In another app's start a bare -- is no end of what the user gives.
+                "8. Open axDown with -- the file a.md.",
+            ],
+            Lines(
+                "start claude {temp}\\fresh -- --model haiku",
+                "start claude {temp}\\proj -- --model haiku --continue",
+                "start claude {temp}\\opts --record {temp}\\raw.vt -- --model haiku",
+                "start claude {temp}\\st --claude {temp}\\claude.cmd -- --model haiku",
+                "start claude {temp}\\gone --claude C:\\nowhere\\claude.exe -- --model haiku",
+                "start media --add {temp}\\ch",
+                "start preview --new {temp}\\plain.txt",
+                "start down -- {temp}\\a.md"));
+    }
+
+    [Fact]
+    public void Window_steps_read_as_what_a_person_does()
+    {
+        Assert.Equal(
+            [
+                "1. Open axDown with the file a.md.",
+                "2. Open axFile with the test folder.",
+                // use: the window is named by its app, read off the script's own start lines.
+                "3. Go to the axDown window.",
+                "4. Go to the axFile window.",
+                // adopt: the app opened a window of its own.
+                "5. A new window opens: go to it.",
+                // The window adopted has no app in the script's lines.
+                "6. Go to the axDown window.",
+                "7. Go to the other window.",
+                // launch hands over to an open window: for a person, starting the app again.
+                "8. Start axClip again.",
+                "9. Start axMedia again with --add the folder ch.",
+                "10. Start axPreview again with the file plain.txt.",
+                "11. Open the file b.md again.",
+                "12. Close the window.",
+            ],
+            Lines(
+                "start down {temp}\\a.md",
+                "start file {temp}",
+                "use 1",
+                "use 2",
+                "adopt",
+                "use 1",
+                "use 3",
+                "launch clip",
+                "launch media --add {temp}\\ch",
+                "launch preview {temp}\\plain.txt",
+                "launch {temp}\\b.md",
+                "close"));
+
+        // Two windows of one app: the one gone to is the other one. A number no window has: the other window.
+        Assert.Equal(
+            ["1. Open axDown with the file one.md.", "2. Open axDown with the file two.md.", "3. Go to the other axDown window.", "4. Go to the other window."],
+            Lines("start down {temp}\\one.md", "start down {temp}\\two.md", "use 1", "use 7"));
+    }
+
+    [Fact]
+    public void Keys_are_named_as_a_keyboard_names_them()
+    {
+        Assert.Equal(
+            ["1. Press Page Down.", "2. Press Ctrl+Page Up.", "3. Press NVDA+A.", "4. Press Escape, Shift+Page Down.", "5. Press Ctrl+Shift+P, Down."],
+            Lines("keys pagedown", "keys ctrl+pageup", "keys nvda+a", "keys esc shift+pagedown", "keys ctrl+shift+p down"));
+
+        // The commands page's further chords are in the same key words; a row's own key text is the window's, as it is.
+        IReadOnlyList<InventoryApp> paging = [new("axClip", [KeyAlone("Page down", "pagedown", "Next", "ctrl+pagedown")])];
+        Assert.Contains("- Page down. Menu: none, a key alone. Key: Next. Also: Ctrl+Page Down. Mark: open. Never run by AI tools.\n", Page(Reference.Pages([], paging), Reference.CommandsPath));
+    }
+
+    [Fact]
+    public void Equal_presses_in_a_row_are_one_line()
+    {
+        Assert.Equal(
+            [
+                "1. Open axTerminal.",
+                // Seven steps, with checks of state between them, which are on no page.
+                "2. Press Tab 7 times.",
+                // One line of one key several times, and the same key again after it.
+                "3. Press Down 5 times.",
+                "4. Press Enter.",
+                "    You hear: Opened.",
+                // What is heard between two presses keeps them apart.
+                "5. Press Enter.",
+                // Another key, and a line of several keys, stay as they are.
+                "6. Press Down, Enter.",
+                "7. Press Down, Enter.",
+            ],
+            Lines(
+                "start terminal",
+                "keys tab",
+                "expect focus Shell",
+                "keys tab",
+                "keys tab",
+                "wait 200",
+                "keys tab",
+                "keys tab",
+                "keys tab",
+                "keys tab",
+                "keys down down down",
+                "keys down",
+                "keys down",
+                "keys enter",
+                "expect said Opened",
+                "keys enter",
+                "keys down enter",
+                "keys down enter"));
+
+        // A command named after its key keeps its name after the count; typed text is never counted.
+        Assert.Equal(
+            ["1. Open axDown.", "2. Press F3 3 times (Find next; Navigation menu).", "3. Type: a", "4. Type: a"],
+            Lines("start down", "do Find next", "keys f3", "do Find next", "type a", "type a"));
+
+        // A step that runs only when words came is a line of its own.
+        Assert.Equal(
+            ["1. Press Enter.", "    You may hear: trust.", "2. If that came: Press Enter.", "3. Press Enter."],
+            Lines("keys enter", "try said trust", "iffound keys enter", "keys enter"));
+    }
+
+    [Fact]
+    public void Typed_text_ends_its_line_with_nothing_added()
+    {
+        // A listener must know that no full stop is typed: the line ends with the text, also after "If that came".
+        Assert.Equal(
+            ["1. Type: if ($true) {", "2. Type: }", "3. Type: cmd.exe /k", "4. Type: cd ..", "    You may hear: sure.", "5. If that came: Type: y"],
+            Lines("type if ($true) {", "type }", "type cmd.exe /k", "type cd ..", "try said sure", "iffound type y"));
+    }
+
+    [Fact]
+    public void A_menu_text_cut_short_reads_whole_from_the_inventory_or_without_its_open_bracket()
+    {
+        // The script names the item by its first words, since the rest changes with every release.
+        IReadOnlyList<InventoryApp> one = [new("axDown", [Row("Check for updates (axKit 5.9.1)", "Help", mark: "act"), Row("Check for updates at start", "Options, General", mark: "act")])];
+        Assert.Equal(
+            ["1. Open axDown.", "2. Choose Check for updates (axKit 5.9.1) in the Help menu."],
+            Lines(one, "start down", "menu Check for updates (axKit"));
+
+        // No row, or several, begin with it: as the script has it, without the bracket that never closes.
+        Assert.Equal(["1. Open axDown.", "2. Choose the menu item Check for updates."], Lines("start down", "menu Check for updates (axKit"));
+        Assert.Equal(["1. Open axDown.", "2. Choose the menu item Check for updates."], Lines(one, "start down", "menu Check for updates"));
+        Assert.Equal(["1. Open axDown.", "2. Choose the menu item Save as (Ctrl+Shift+S)."], Lines("start down", "menu Save as (Ctrl+Shift+S)"));
     }
 
     [Fact]
@@ -572,16 +739,16 @@ public sealed class ReferenceTests
         Assert.Equal(
             [
                 "1. Press F1.",
-                "   You hear: Line 5 of 7.",
-                "   You hear the sound Edge.",
-                "   You hear the sound BackgroundChord 3.",
-                "   The focus moves to Message to Claude (Text).",
-                "   The focus moves to Terminal.",
-                "   It reads beta.wav.",
-                "   You may hear: Not in a test run.",
-                "   You may hear the sound Notice.",
-                "   NVDA says: Yes, run it.",
-                "   The tool answers: \"offered\": true.",
+                "    You hear: Line 5 of 7.",
+                "    You hear the sound Edge.",
+                "    You hear the sound BackgroundChord 3.",
+                "    The focus moves to Message to Claude (Text).",
+                "    The focus moves to Terminal.",
+                "    It reads beta.wav.",
+                "    You may hear: Not in a test run.",
+                "    You may hear the sound Notice.",
+                "    NVDA says: Yes, run it.",
+                "    The tool answers with offered: true.",
             ],
             Lines(
                 "keys f1",
@@ -598,30 +765,142 @@ public sealed class ReferenceTests
     }
 
     [Fact]
-    public void An_expectations_edge_punctuation_is_dropped_and_one_of_fewer_than_two_words_is_left_out()
+    public void A_text_that_reads_whole_is_heard_and_one_cut_short_is_words_such_as()
     {
         Assert.Equal(
-            ["1. Press Down.", "   You hear: 2 of.", "   You hear: Sent: 1.", "   You hear: bundle, 2 items, New file.txt.", "   NVDA says: Save as."],
+            [
+                "1. Press Down.",
+                // Whole: written without a comma or colon at either end, every bracket closed, no joining word last.
+                "    You hear: Sent: 1.",
+                "    You hear: bundle, 2 items, New file.txt.",
+                "    You hear: Turn on AI tools?",
+                "    You hear: Input 11 (from Claude).",
+                "    You hear: AI tools on.",
+                // Cut short at a comma or a colon, at either end.
+                "    You hear words such as: 13 items.",
+                "    You hear words such as: nav, 13 items.",
+                "    NVDA says words such as: Save as.",
+                // A bracket that opens and never closes goes, with what follows it.
+                "    You hear words such as: 2. orchard.",
+                "    You hear words such as: Output 11 Reply from Claude.",
+                // A joining word at the end goes when two words stay without it.
+                "    You hear words such as: Before axTerminal connects.",
+                "    You hear words such as: New window, Session, Ctrl+Shift+N, 2.",
+                "    You hear words such as: Paused at.",
+                "    You hear words such as: 2 of.",
+                "    You may hear words such as: Line 1.",
+                // A bar at the end; a text with no letter and no digit, and a joining word alone, are left out.
+                "    You hear words such as: Claude: ready.",
+                "    You hear words such as: tasks.",
+                "    You hear: Working…",
+            ],
             Lines(
                 "keys down",
-                "expect said , 2 of",
                 "expect said Sent: 1.",
                 "expect said ! bundle, 2 items, New file.txt",
-                // One word of an announcement, and "!" alone, any interrupting announcement: nothing to read.
-                "try said trust",
-                "expect said ! checked",
-                "expect said ! ops,",
-                "expect said !",
-                "expect spoken notes.md",
+                "expect said Turn on AI tools?",
+                "expect said Input 11 (from Claude)",
+                "expect said AI tools on",
+                "expect said , 13 items",
+                "expect said nav, 13 items,",
                 "expect spoken Save as:",
-                "expect mcp notes.md"));
+                "expect said 2. orchard (",
+                "expect said Output 11 Reply from Claude (",
+                "expect said Before axTerminal connects to",
+                "expect said New window, Session, Ctrl+Shift+N, 2 of",
+                "expect said Paused at",
+                "expect said , 2 of",
+                "try said Line 1 of",
+                "expect said Claude: ready |",
+                "expect said · @@",
+                "expect said of",
+                "expect said !",
+                // A backslash first is the middle of a path; an ellipsis is an end of its own.
+                "expect said \\tasks",
+                "expect said Working\\u2026"));
 
         Assert.Equal("2 of", Reference.Heard(", 2 of"));
         Assert.Equal("Line 5 of 7", Reference.Heard("! Line 5 of 7."));
-        Assert.Equal(string.Empty, Reference.Heard("trust"));
-        Assert.Equal(string.Empty, Reference.Heard("! checked"));
+        Assert.Equal("Before axTerminal connects", Reference.Heard("Before axTerminal connects to"));
+        Assert.Equal("2. orchard", Reference.Heard("2. orchard ("));
+        Assert.Equal("trust", Reference.Heard("trust"));
+        Assert.Equal("Edge", Reference.Heard("♪ Edge"));
         Assert.Equal(string.Empty, Reference.Heard("!"));
-        Assert.Equal(string.Empty, Reference.Heard("♪ Edge"));
+        Assert.Equal(string.Empty, Reference.Heard("· @@"));
+        Assert.True(Reference.IsWhole("! Line 5 of 7."));
+        Assert.False(Reference.IsWhole(", 2 of"));
+        Assert.False(Reference.IsWhole("2. orchard ("));
+        Assert.False(Reference.IsWhole("Line 1 of"));
+    }
+
+    [Fact]
+    public void One_word_heard_is_kept_unless_the_line_before_it_already_holds_it()
+    {
+        Assert.Equal(
+            [
+                "1. Type: 1920*1080*4",
+                "2. Press Enter.",
+                // One number is the whole point after a sum; one word after a key says what the key did.
+                "    You hear: 8294400.",
+                "3. Press Escape.",
+                "    You hear: Cleared.",
+                "    You may hear: Empty.",
+                // NVDA saying the same word again only repeats the line before it; another word stays.
+                "    The tool answers: notes.md.",
+                // The word typed, said back, and the key's own name tell nothing new.
+                "4. Type: apple",
+                "5. Press Enter.",
+                // The file's name under the step that opens it, from the window and from a tool: both only repeat it.
+                "6. Open axDown with the file notes.md.",
+                "    You hear: Ready.",
+            ],
+            Lines(
+                "type 1920*1080*4",
+                "keys enter",
+                "expect said ! 8294400",
+                "keys escape",
+                "expect said ! Cleared",
+                "try said Empty",
+                "expect spoken Empty",
+                "expect mcp notes.md",
+                "type apple",
+                "expect said apple",
+                "keys enter",
+                "expect said Enter",
+                "start down {temp}\\notes.md",
+                "expect said notes.md",
+                "expect mcp notes.md",
+                "expect said Ready",
+                "expect spoken ready"));
+    }
+
+    [Fact]
+    public void A_tools_answer_written_as_data_reads_as_a_sentence()
+    {
+        Assert.Equal(
+            [
+                "1. Call the tool axkit_windows.",
+                "    The tool answers with app: axDown.",
+                "    The tool answers with title: notes.md - axDown.",
+                "    The tool answers with offered: true.",
+                // A name of data in plain words, and a value the check cut short.
+                "    The tool answers with not done: 1.",
+                "    The tool answers with done left out: 1.",
+                "    The tool answers with notice: Find.",
+                // Any other text as it is.
+                "    The tool answers: error: The user did not allow axAutomate.",
+                "    The tool answers: First line of the notes.",
+            ],
+            Lines(
+                "mcp call axkit_windows",
+                "expect mcp \"app\": \"axDown\"",
+                "expect mcp \"title\": \"notes.md - axDown\"",
+                "expect mcp \"offered\": true",
+                "expect mcp \"notDone\": 1",
+                "expect mcp \"doneLeftOut\": 1",
+                "expect mcp \"notice\": \"Find",
+                "expect mcp error: The user did not allow axAutomate",
+                "expect mcp First line of the notes."));
     }
 
     [Fact]
@@ -630,13 +909,13 @@ public sealed class ReferenceTests
         // The try's one word stays, since the step under it says "If that came"; the waits are left out.
         Assert.Equal(
             [
-                "1. Open axClaude with fresh.",
-                "   You may hear: trust.",
+                "1. Open axClaude with the folder fresh.",
+                "    You may hear: trust.",
                 "2. If that came: Press Enter.",
-                "3. Type hello.",
-                "   You may hear the sound Notice.",
+                "3. Type: hello",
+                "    You may hear the sound Notice.",
                 "4. If that came: Press 1, Enter.",
-                "   You hear: Sent: 1.",
+                "    You hear: Sent: 1.",
             ],
             Lines(
                 "start claude {temp}\\fresh",
@@ -651,7 +930,7 @@ public sealed class ReferenceTests
 
         // Words that only come with the try's, before any step of theirs: they may come or not.
         Assert.Equal(
-            ["1. Press F1.", "   You may hear: Claude asks.", "   You may hear: Closed the list."],
+            ["1. Press F1.", "    You may hear: Claude asks.", "    You may hear: Closed the list."],
             Lines("keys f1", "try said Claude asks", "iffound expect said Closed the list"));
     }
 
@@ -659,7 +938,7 @@ public sealed class ReferenceTests
     public void Set_up_steps_waits_and_checks_of_state_are_left_out()
     {
         Assert.Equal(
-            ["1. Open axDown with a.md.", "2. Press Ctrl+S."],
+            ["1. Open axDown with the file a.md.", "2. Press Ctrl+S."],
             Lines(
                 "file a.md Hello",
                 "mkdir sub",
@@ -691,10 +970,10 @@ public sealed class ReferenceTests
         Assert.Equal(
             [
                 "1. Open axFile with the test folder.",
-                "2. Type sub\\notes.md.",
-                "   You hear: Saved · notes.md in the test folder.",
-                "   You hear the sound Edge.",
-                "3. Type café.",
+                "2. Type: sub\\notes.md",
+                "    You hear: Saved · notes.md in the test folder.",
+                "    You hear the sound Edge.",
+                "3. Type: café",
             ],
             Lines(
                 "start file {temp}",
@@ -712,8 +991,8 @@ public sealed class ReferenceTests
     public void A_sentence_that_ends_itself_gets_no_second_full_stop()
     {
         Assert.Equal(
-            ["1. Type Reply with the single word second.", "   You hear: Turn on AI tools?", "2. Type What is 2+2?", "3. Type a?b."],
-            Lines("type Reply with the single word second.", "expect said Turn on AI tools?", "type What is 2+2?", "type a?b"));
+            ["1. Type: Reply with the single word second.", "    You hear: Turn on AI tools?", "2. Type: What is 2+2?", "3. Type: a?b", "4. Choose the menu item Save as..."],
+            Lines("type Reply with the single word second.", "expect said Turn on AI tools?", "type What is 2+2?", "type a?b", "menu Save as..."));
     }
 
     [Fact]
@@ -762,7 +1041,8 @@ public sealed class ReferenceTests
 
                 Written by `tools/workflows.ps1` from `docs/axKit/window-commands.json`, which the automated checks write from the
                 windows themselves; never edit it by hand. One line a command: its name, its menu, its key, and its mark, what it
-                does beyond reading (read, open, change, act).
+                does beyond reading (read, open, change, act). A command that all or nearly all windows have stands once, under "In
+                every window" or under a heading that names the windows without it; under an app's name are the commands of its own.
 
                 ## axClaude
 
@@ -792,7 +1072,68 @@ public sealed class ReferenceTests
             Page(Reference.Pages([], inventory), Reference.CommandsPath));
 
         // An empty inventory, as before the first run that writes it: the preamble alone.
-        Assert.EndsWith("does beyond reading (read, open, change, act).\n", Page(Reference.Pages([], []), Reference.CommandsPath));
+        Assert.EndsWith("under an app's name are the commands of its own.\n", Page(Reference.Pages([], []), Reference.CommandsPath));
+    }
+
+    [Fact]
+    public void The_commands_every_window_has_are_written_once()
+    {
+        // Four apps: the two rows of the axKit menu in all of them, Exit in three of the four (three in four is enough),
+        // Refresh in two (too few), and a row whose key differs in one app, which is that app's own there.
+        var forget = Row("Forget AI tools", "axKit, AI tools", mark: "act", ai: false);
+        var theme = Row("Reload theme", "axKit, Theme", mark: "change");
+        var exit = Row("Exit", "Session", "alt+f4", "Alt+F4", "act");
+        var refresh = Row("Refresh", "Session", "f5", "F5");
+        var status = Row("Say the status", "Window", "f8", "F8");
+        IReadOnlyList<InventoryApp> inventory =
+        [
+            new("axFile", [forget, theme, exit, refresh, status, Row("New folder", "Session", "ctrl+shift+n", "Ctrl+Shift+N", "change")]),
+            new("axClip", [forget, theme, status, Row("Paste", "Actions", "enter", "Enter", "act")]),
+            new("axDown", [forget, theme, exit, status, Row("Find", "Navigation", "ctrl+f", "Ctrl+F")]),
+            new("axGIT", [forget, theme, exit, refresh, Row("Say the status", "Window", "f9", "F9")]),
+        ];
+
+        Assert.Equal(
+            Text("""
+                ## In every window
+
+                - Forget AI tools. Menu: axKit, AI tools. Key: none. Mark: act. Never run by AI tools.
+                - Reload theme. Menu: axKit, Theme. Key: none. Mark: change.
+
+                ## In every window but axClip
+
+                - Exit. Menu: Session. Key: Alt+F4. Mark: act.
+
+                ## In every window but axGIT
+
+                - Say the status. Menu: Window. Key: F8. Mark: read.
+
+                ## axClip
+
+                - Paste. Menu: Actions. Key: Enter. Mark: act.
+
+                ## axDown
+
+                - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
+
+                ## axFile
+
+                - Refresh. Menu: Session. Key: F5. Mark: read.
+                - New folder. Menu: Session. Key: Ctrl+Shift+N. Mark: change.
+
+                ## axGIT
+
+                - Refresh. Menu: Session. Key: F5. Mark: read.
+                - Say the status. Menu: Window. Key: F9. Mark: read.
+                """),
+            Page(Reference.Pages([], inventory), Reference.CommandsPath).Split("commands of its own.\n\n")[1]);
+
+        // Two apps share only what both have; one app shares nothing; every row of the inventory is on the page once.
+        var two = Page(Reference.Pages([], [inventory[0], inventory[2]]), Reference.CommandsPath);
+        Assert.Contains("## In every window\n\n- Forget AI tools.", two);
+        Assert.DoesNotContain("## In every window but", two);
+        Assert.Equal(1, two.Split('\n').Count(line => line.StartsWith("- Exit.", StringComparison.Ordinal)));
+        Assert.DoesNotContain(Reference.EveryWindow, Page(Reference.Pages([], [inventory[0]]), Reference.CommandsPath));
     }
 
     [Fact]
@@ -857,12 +1198,30 @@ public sealed class ReferenceTests
                 || line.StartsWith("### Check:", StringComparison.Ordinal));
         }
 
-        // Every step and every line of what is heard is a sentence with its end.
-        var steps = pages.Where(page => page.Path.StartsWith(Reference.PagesFolder + "/", StringComparison.Ordinal))
+        // Every step and every line of what is heard is a sentence with its end, but typed text, which ends its line.
+        var groupPages = pages.Where(page => page.Path.StartsWith(Reference.PagesFolder + "/", StringComparison.Ordinal)).ToList();
+        var steps = groupPages
             .SelectMany(page => page.Text.Split('\n'))
-            .Where(line => line.StartsWith("   ", StringComparison.Ordinal) || (line.Length > 0 && char.IsAsciiDigit(line[0])))
+            .Where(line => line.StartsWith("    ", StringComparison.Ordinal) || line.StartsWith("You ", StringComparison.Ordinal) || (line.Length > 0 && char.IsAsciiDigit(line[0])))
+            .Where(line => !line.Contains(" Type: ", StringComparison.Ordinal))
             .ToList();
         Assert.NotEmpty(steps);
-        Assert.All(steps, line => Assert.True(line[^1] is '.' or '?' or '!', line));
+        Assert.All(steps, line => Assert.True(line[^1] is '.' or '?' or '!' or '…', line));
+
+        // WF-7.9: nothing of the runner's mechanics, no option of the check, no key by the script's spelling, and no
+        // line under a step with fewer than four spaces before it.
+        foreach (var page in groupPages)
+        {
+            Assert.DoesNotContain("Use window", page.Text);
+            Assert.DoesNotContain("Take the window", page.Text);
+            Assert.DoesNotContain("Launch ", page.Text);
+            Assert.DoesNotContain("--model", page.Text.Split('\n').Where(line => line.Contains("Open ax", StringComparison.Ordinal)).DefaultIfEmpty(string.Empty).Aggregate((one, other) => one + "\n" + other));
+            Assert.DoesNotContain("Pagedown", page.Text);
+            Assert.DoesNotContain("Pageup", page.Text);
+            Assert.DoesNotContain("Nvda+", page.Text);
+            Assert.DoesNotContain("\n   You", page.Text);
+            Assert.DoesNotContain("\n   The", page.Text);
+            Assert.DoesNotContain("The tool answers: \"", page.Text);
+        }
     }
 }

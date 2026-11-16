@@ -16,8 +16,10 @@ public sealed record ReferencePage(string Path, string Text);
 /// commands page holds one line a command. Each script is read by the engine's own reader
 /// (<see cref="ScriptReader.Parse"/>, <see cref="ScriptApps.ByLine"/>), so a page and a run cannot read a script
 /// differently. Nothing of the checks stands on a page (WF-7.5): no check, no script path, no needs line, nothing of
-/// a run. The command line writes the pages and compares them (<c>tools/workflows.ps1</c>); tested in
-/// <c>tests/AxAutomate.Tests/ReferenceTests</c>.
+/// a run. The pages are heard, so every sentence is one a person can follow by ear (WF-7.9, WF-D-31): a window is
+/// named by its app, a key as a keyboard names it, a text cut short says so. The words here are the pages' own:
+/// axAutomate's window keeps <see cref="StepText"/>'s. The command line writes the pages and compares them
+/// (<c>tools/workflows.ps1</c>); tested in <c>tests/AxAutomate.Tests/ReferenceTests</c>.
 /// </summary>
 public static class Reference
 {
@@ -36,11 +38,27 @@ public static class Reference
     /// <summary>The group of <c>tests/nvda-scripts</c>.</summary>
     public const string NvdaOnly = "NVDA only";
 
+    /// <summary>The heading of the commands page under which the rows of every app stand once (WF-7.6).</summary>
+    public const string EveryWindow = "In every window";
+
     /// <summary>What a <c>{temp}</c> that stands alone is written as (WF-7.7): no path of a run is on a page.</summary>
     private const string TestFolder = "the test folder";
 
+    /// <summary>The run's folder as a script writes it before a path in it.</summary>
+    private const string TempFolder = @"{temp}\";
+
+    /// <summary>
+    /// What a line under a numbered step starts with: four spaces, so that it stays inside its item in Markdown also
+    /// from item 10 on, whose text starts four characters in. A line before step 1 has none: four spaces there would
+    /// make it a code block.
+    /// </summary>
+    private const string Under = "    ";
+
     /// <summary>What is dropped from the ends of an expectation's text (WF-7.4): the scripts match parts of announcements.</summary>
-    private static readonly char[] Edges = [',', ':', '.', ' '];
+    private static readonly char[] Edges = [',', ':', ';', '|', '.', ' '];
+
+    /// <summary>The words an announcement never ends with (WF-7.4): a text that ends with one was cut short in the script.</summary>
+    private static readonly string[] Joining = ["of", "to", "the", "and", "a", "an", "or", "at"];
 
     // The three preambles of 5.6, word for word and line for line.
     private static readonly string[] IndexPreamble =
@@ -57,16 +75,18 @@ public static class Reference
     [
         "Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it",
         "is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A",
-        "line \"You hear\" gives words of what axKit says there, not always the whole sentence. The file names and the words",
-        "typed are the check's examples: use your own. Where a step names a command after its key, the key is that command's",
-        "in this version of axKit.",
+        "line \"You hear\" gives words of what axKit says there, not always the whole sentence; after \"words such as\" they are",
+        "cut short. After \"Type:\" comes the text to type, to the end of the line, with no full stop added. The file names and",
+        "the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that",
+        "command's in this version of axKit.",
     ];
 
     private static readonly string[] CommandsPreamble =
     [
         "Written by `tools/workflows.ps1` from `docs/axKit/window-commands.json`, which the automated checks write from the",
         "windows themselves; never edit it by hand. One line a command: its name, its menu, its key, and its mark, what it",
-        "does beyond reading (read, open, change, act).",
+        "does beyond reading (read, open, change, act). A command that all or nearly all windows have stands once, under \"In",
+        "every window\" or under a heading that names the windows without it; under an app's name are the commands of its own.",
     ];
 
     /// <summary>A goal as a page shows it: its title and its lines (<see cref="GoalLines"/>).</summary>
@@ -80,6 +100,16 @@ public static class Reference
     private sealed record ShownWorkflow(string Label, string Starts, IReadOnlyList<string> Steps, IReadOnlyList<ShownGoal> Goals);
 
     private sealed record ShownGroup(string Name, IReadOnlyList<ShownWorkflow> Workflows);
+
+    /// <summary>
+    /// A step that presses keys, as its line is written: the keys, the command named after them (" (Find; Navigation
+    /// menu)", or nothing) and how many times in a row, "Press Tab 7 times." (WF-7.3). <c>One</c> says that it is one
+    /// key: only such presses are counted together, since "Press Down, Enter 2 times" would not say what is pressed twice.
+    /// </summary>
+    private sealed record Press(string Keys, string Hint, int Count, bool One)
+    {
+        public string Text => $"Press {Keys}{(Count > 1 ? $" {Count} times" : string.Empty)}{Hint}.";
+    }
 
     /// <summary>
     /// The pages (WF-7.2), each line ended by a line feed: the index first, then one page per group in the groups'
@@ -126,27 +156,44 @@ public static class Reference
     /// <summary>
     /// A goal's lines (WF-7.3, WF-7.4, format 5.6) from its steps, a <c>try</c> with its <c>iffound</c> steps in it
     /// (<see cref="WorkflowStep.Then"/>): each input step (<see cref="ScriptReader.IsInput"/>) a numbered sentence
-    /// ended by a full stop, an <c>iffound</c> one after "If that came: "; each expectation of speech a line of three
-    /// spaces and what is heard, under the input step before it, or before step 1 when none came yet. Every other step
-    /// is left out: the set-up, the waits, the checks of state, the refusals. <paramref name="apps"/> is the script's
-    /// <see cref="ScriptApps.ByLine"/>, by which a step's command is found among its app's rows of the inventory.
-    /// None when the steps hold no input step: a how-to with nothing to do is no how-to (WF-D-28).
+    /// ended by a full stop (typed text ends the line itself, with nothing added), an <c>iffound</c> one after "If
+    /// that came: "; presses that are equal and follow each other with nothing heard between them are one line,
+    /// "Press Tab 7 times."; each expectation of speech a line of four spaces and what is heard, under the input step
+    /// before it, or without the spaces before step 1 when none came yet. Every other step is left out: the set-up,
+    /// the waits, the checks of state, the refusals. <paramref name="apps"/> is the script's
+    /// <see cref="ScriptApps.ByLine"/>, by which a step's command is found among its app's rows of the inventory and a
+    /// window is named. None when the steps hold no input step: a how-to with nothing to do is no how-to (WF-D-28).
     /// </summary>
     public static IReadOnlyList<string> GoalLines(IReadOnlyList<WorkflowStep> steps, IReadOnlyList<string?> apps, IReadOnlyList<InventoryApp> inventory)
     {
         var lines = new List<string>();
         var number = 0;
+
+        // The press the last line is, while nothing stands after it: an equal press that follows joins it.
+        Press? last = null;
         foreach (var step in steps.Where(step => !step.IsNote))
         {
             var conditional = step.Then.Where(then => !then.IsNote).ToList();
             if (ScriptReader.IsInput(step.Do))
             {
-                number++;
-                lines.Add($"{number}. {Stopped(Sentence(step, AppAt(apps, step.Line), inventory))}");
+                var sentence = Sentence(step, apps, inventory);
+                var press = AsPress(sentence);
+                if (press is { One: true } && last is { One: true } && last.Keys == press.Keys && last.Hint == press.Hint)
+                {
+                    last = last with { Count = last.Count + press.Count };
+                    lines[^1] = $"{number}. {last.Text}";
+                }
+                else
+                {
+                    number++;
+                    last = press;
+                    lines.Add($"{number}. {press?.Text ?? Ended(step, sentence)}");
+                }
             }
-            else if (HeardLine(step, step.OnFailure == WorkflowStep.Continue, conditional.Any(then => ScriptReader.IsInput(then.Do))) is { } heard)
+            else if (HeardLine(step, step.OnFailure == WorkflowStep.Continue, conditional.Any(then => ScriptReader.IsInput(then.Do)), Before(lines)) is { } heard)
             {
-                lines.Add("   " + heard);
+                lines.Add((number == 0 ? string.Empty : Under) + heard);
+                last = null;
             }
 
             // The steps that run only when the try's words came: each input says so; what is heard before the first
@@ -158,11 +205,13 @@ public static class Reference
                 {
                     number++;
                     acted = true;
-                    lines.Add($"{number}. If that came: {Stopped(Sentence(then, AppAt(apps, then.Line), inventory))}");
+                    last = null;
+                    lines.Add($"{number}. If that came: {Ended(then, Sentence(then, apps, inventory))}");
                 }
-                else if (HeardLine(then, !acted || then.OnFailure == WorkflowStep.Continue, keepShort: false) is { } heard)
+                else if (HeardLine(then, !acted || then.OnFailure == WorkflowStep.Continue, keepShort: false, Before(lines)) is { } heard)
                 {
-                    lines.Add("   " + heard);
+                    lines.Add((number == 0 ? string.Empty : Under) + heard);
+                    last = null;
                 }
             }
         }
@@ -172,11 +221,19 @@ public static class Reference
 
     /// <summary>
     /// An expectation's text as words to read (WF-7.4): without its mark ("! " an interrupting announcement, the marks
-    /// of a sound, a focus move and a value, as <see cref="Event.Spoken"/> writes them) and without a leading or
-    /// trailing comma, colon, full stop or space; empty when fewer than two words are left, since one word of an
-    /// announcement tells a reader nothing ("trust", "checked").
+    /// of a sound, a focus move and a value, as <see cref="Event.Spoken"/> writes them), without a comma, colon,
+    /// semicolon, bar, full stop or space at either end, without a bracket that opens and never closes and what
+    /// follows it, and without a joining word at its end ("of", "to", "the", "and", "a", "an", "or", "at") when two
+    /// words stay without it. Empty when no letter and no digit is left.
     /// </summary>
-    public static string Heard(string text) => Enough(Unmarked(text).Trim(Edges));
+    public static string Heard(string text) => Read(Unmarked(text)).Words;
+
+    /// <summary>
+    /// Whether an expectation's text reads as a whole announcement (WF-7.4): the script wrote it without a comma or
+    /// colon at either end, with every bracket closed and with no joining word last. A text that is not whole was cut
+    /// short, and its line says "words such as".
+    /// </summary>
+    public static bool IsWhole(string text) => Read(Unmarked(text)).Whole;
 
     /// <summary>
     /// The groups with their workflows as the pages show them, in the pages' order (WF-7.8): the apps by name without
@@ -234,11 +291,14 @@ public static class Reference
     /// <summary>A step that opens, chooses or closes a window (section 3): what a workflow starts with.</summary>
     private static bool IsWindowStep(WorkflowStep step) => step.Do is "start" or "launch" or "adopt" or "use" or "close";
 
-    /// <summary>The window steps a workflow starts with, as sentences: "Open axDown with find.md."; empty for none.</summary>
+    /// <summary>The window steps a workflow starts with, as sentences: "Open axDown with the file find.md."; empty for none.</summary>
     private static string Starts(IReadOnlyList<WorkflowStep> windowSteps, IReadOnlyList<string?> apps, IReadOnlyList<InventoryApp> inventory) =>
-        string.Join(" ", windowSteps.Select(step => Stopped(Sentence(step, AppAt(apps, step.Line), inventory))));
+        string.Join(" ", windowSteps.Select(step => Stopped(Sentence(step, apps, inventory))));
 
-    /// <summary>The index (5.6): its preamble, then for each group where its steps are, and each workflow's label, numbered, with its goals' titles under it.</summary>
+    /// <summary>
+    /// The index (5.6): its preamble, then for each group where its steps are, and each workflow's label, numbered,
+    /// with its goals' titles under it, four spaces in, so that they stay under a label numbered 10 or more.
+    /// </summary>
     private static string Index(IReadOnlyList<ShownGroup> groups)
     {
         var blocks = new List<IReadOnlyList<string>> { new[] { "# Workflows" }, IndexPreamble };
@@ -251,7 +311,7 @@ public static class Reference
             for (var i = 0; i < group.Workflows.Count; i++)
             {
                 list.Add($"{i + 1}. **{group.Workflows[i].Label}**");
-                list.AddRange(group.Workflows[i].Goals.Select(goal => "   - " + goal.Title));
+                list.AddRange(group.Workflows[i].Goals.Select(goal => Under + "- " + goal.Title));
             }
 
             blocks.Add(list);
@@ -287,23 +347,55 @@ public static class Reference
         return Text(blocks);
     }
 
-    /// <summary>The commands page (WF-7.6, 5.6): its preamble, then each app of the inventory that has rows, by name, and one line a row in the inventory's order.</summary>
+    /// <summary>
+    /// The commands page (WF-7.6, 5.6): its preamble, then the rows that all or nearly all apps have, each once: under
+    /// <see cref="EveryWindow"/> the rows of every app, then under "In every window but axClip and axStart" the rows
+    /// of three apps in four or more, by the apps without them; then each app of the inventory, by name, with the
+    /// rows that are its own, in the inventory's order. A row is the same in two apps when its whole line is. With
+    /// one app nothing is shared.
+    /// </summary>
     private static string CommandsPage(IReadOnlyList<InventoryApp> inventory)
     {
+        var apps = inventory.Where(app => app.Commands.Count > 0).OrderBy(app => app.App, StringComparer.OrdinalIgnoreCase).ToList();
+        var rows = apps.Select(app => (app.App, Lines: app.Commands.Select(CommandLine).ToList())).ToList();
+
+        // Each line once, in the order the apps give it, with the apps that have it.
+        var order = rows.SelectMany(app => app.Lines).Distinct().ToList();
+        var holders = order.ToDictionary(line => line, line => rows.Where(app => app.Lines.Contains(line)).Select(app => app.App).ToList());
+        var shared = order.Where(line => holders[line].Count >= 2 && holders[line].Count * 4 >= apps.Count * 3).ToHashSet();
+
         var blocks = new List<IReadOnlyList<string>> { new[] { "# The commands of every window" }, CommandsPreamble };
-        foreach (var app in inventory.Where(app => app.Commands.Count > 0).OrderBy(app => app.App, StringComparer.OrdinalIgnoreCase))
+        var sections = order.Where(shared.Contains)
+            .GroupBy(line => string.Join(", ", apps.Select(app => app.App).Where(app => !holders[line].Contains(app))))
+            .OrderBy(section => apps.Count - holders[section.First()].Count)
+            .ThenBy(section => section.Key, StringComparer.OrdinalIgnoreCase);
+        foreach (var section in sections)
         {
-            blocks.Add(["## " + app.App]);
-            blocks.Add([.. app.Commands.Select(CommandLine)]);
+            blocks.Add(["## " + EveryWindow + (section.Key.Length > 0 ? " but " + Listed(section.Key.Split(", ")) : string.Empty)]);
+            blocks.Add([.. section]);
+        }
+
+        foreach (var (app, lines) in rows)
+        {
+            var own = lines.Where(line => !shared.Contains(line)).ToList();
+            if (own.Count > 0)
+            {
+                blocks.Add(["## " + app]);
+                blocks.Add(own);
+            }
         }
 
         return Text(blocks);
     }
 
+    /// <summary>Names as a sentence lists them: "axClip", "axClip and axStart", "axClip, axStart and axTerminal".</summary>
+    private static string Listed(IReadOnlyList<string> names) =>
+        names.Count == 1 ? names[0] : string.Join(", ", names.Take(names.Count - 1)) + " and " + names[^1];
+
     /// <summary>
     /// A row's line of the commands page: "- Redo. Menu: Actions. Key: Ctrl+Y. Also: Ctrl+Shift+Z. Mark: change." The
-    /// key is the row's key text, the further chords are in key words (<see cref="StepText.Keys"/>), a key with no
-    /// menu item says so, and a row the AI tools never run ends with that.
+    /// key is the row's key text, the further chords are in key words (<see cref="Keys"/>), a key with no menu item
+    /// says so, and a row the AI tools never run ends with that.
     /// </summary>
     private static string CommandLine(ListedCommand row)
     {
@@ -315,7 +407,7 @@ public static class Reference
         };
         if (row.Also.Count > 0)
         {
-            parts.Add($"Also: {StepText.Keys(string.Join(' ', row.Also))}.");
+            parts.Add($"Also: {Keys(string.Join(' ', row.Also))}.");
         }
 
         if (row.Mark.Length > 0)
@@ -336,18 +428,54 @@ public static class Reference
         string.Join("\n\n", blocks.Select(block => string.Join("\n", block))) + "\n";
 
     /// <summary>
-    /// An input step's sentence without its full stop (WF-7.3): <c>do</c>, <c>keys</c>, <c>menu</c> and <c>start</c> in
-    /// the page's own words, every other step in <see cref="StepText.Sentence"/>'s; then without the run's folder and
-    /// with the escapes filled in (<see cref="Filled"/>).
+    /// An input step's sentence without its end (WF-7.3), in the page's own words: what a person does, never the
+    /// runner's mechanics. <c>do</c>, <c>keys</c> and <c>menu</c> with the command's key and menus; <c>start</c> and
+    /// <c>launch</c> as opening the app; <c>adopt</c> and <c>use</c> as going to a window, named by its app where the
+    /// script's lines say it; <c>type</c> as "Type: " and the text; the rest (<c>close</c>, <c>mcp call</c>) in
+    /// <see cref="StepText.Sentence"/>'s words. Then without the run's folder and with the escapes filled in
+    /// (<see cref="Filled"/>).
     /// </summary>
-    private static string Sentence(WorkflowStep step, string? app, IReadOnlyList<InventoryApp> inventory) => Filled(step.Do switch
+    private static string Sentence(WorkflowStep step, IReadOnlyList<string?> apps, IReadOnlyList<InventoryApp> inventory)
     {
-        "do" => DoSentence(step, app, inventory),
-        "keys" => KeysSentence(step, app, inventory),
-        "menu" => MenuSentence(step, app, inventory),
-        "start" => StartSentence(step),
-        _ => StepText.Sentence(step),
-    });
+        var app = AppAt(apps, step.Line);
+        return Filled(step.Do switch
+        {
+            "do" => DoSentence(step, app, inventory),
+            "keys" => KeysSentence(step, app, inventory),
+            "menu" => MenuSentence(step, app, inventory),
+            "start" => StartSentence(step, again: false),
+            "launch" => StartSentence(step, again: true),
+            "adopt" => "A new window opens: go to it",
+            "use" => UseSentence(app, AppAt(apps, step.Line - 1)),
+            "type" => "Type: " + step.Value("text"),
+            _ => StepText.Sentence(step),
+        });
+    }
+
+    /// <summary>
+    /// A step's sentence with its end: a full stop, except after typed text, where the line ends with the text, so
+    /// that a listener knows that no full stop is typed.
+    /// </summary>
+    private static string Ended(WorkflowStep step, string sentence) => step.Do == "type" ? sentence : Stopped(sentence);
+
+    /// <summary>
+    /// A sentence that presses keys, as a <see cref="Press"/>: its keys, the command named after them, and how many
+    /// times when it is one key several times ("Press Down, Down, Down" is Down 3 times); null for any other sentence.
+    /// </summary>
+    private static Press? AsPress(string sentence)
+    {
+        const string Opening = "Press ";
+        if (!sentence.StartsWith(Opening, StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        var open = sentence.EndsWith(')') ? sentence.IndexOf(" (", StringComparison.Ordinal) : -1;
+        var keys = (open < 0 ? sentence : sentence[..open])[Opening.Length..];
+        var parts = keys.Split(", ");
+        var same = parts.All(part => part == parts[0]);
+        return new Press(same ? parts[0] : keys, open < 0 ? string.Empty : sentence[open..], same ? parts.Length : 1, same);
+    }
 
     /// <summary>
     /// The step <c>do</c> with the command's key and menus from the inventory: "Press Ctrl+H (Heading; Navigation menu,
@@ -377,44 +505,61 @@ public static class Reference
     /// <summary>A row as a <c>do</c> step reads: pressed by its key, with its label and its menus after it, or chosen in its menus when it has no chord; null for a row with neither.</summary>
     private static string? RowSentence(ListedCommand row)
     {
-        var label = CommandNames.Plain(row.Label);
-        var menus = Menus(row.Menu);
         var key = PressedKey(row);
         if (key.Length > 0)
         {
-            return menus.Length > 0 ? $"Press {key} ({label}; {menus})" : $"Press {key} ({label})";
+            return $"Press {key} ({Named(row)})";
         }
 
-        return menus.Length > 0 ? $"Choose {label} in the {menus}" : null;
+        var menus = Menus(row.Menu);
+        return menus.Length > 0 ? $"Choose {CommandNames.Plain(row.Label)} in the {menus}" : null;
     }
 
     /// <summary>
-    /// The step <c>keys</c>: "Press Ctrl+F", the chords in key words. A line of one chord that carries Ctrl or Alt or
-    /// is a function key (<see cref="KeyChord.IsCommandChord"/>) and that exactly one row of the app holds names that
-    /// command, "Press Ctrl+G (Go to line)": a hint from the inventory, since the script's state is not known here.
-    /// A plain key names none: Enter, Backspace or a letter is a field's or a list's own key far more often than the
-    /// command the inventory has for it, and "Press Backspace (Up one level)" in a field would be wrong.
+    /// A command as it is named after its key, the same after a <c>do</c> step and after a <c>keys</c> step, so that
+    /// one key reads one way on a page: its label and its menus from the bar down, "Heading; Navigation menu, Next",
+    /// or its label alone for a key with no menu item.
+    /// </summary>
+    private static string Named(ListedCommand row)
+    {
+        var label = CommandNames.Plain(row.Label);
+        var menus = Menus(row.Menu);
+        return menus.Length > 0 ? $"{label}; {menus}" : label;
+    }
+
+    /// <summary>
+    /// The step <c>keys</c>: "Press Ctrl+F", the chords in key words (<see cref="Keys"/>). A line of one chord that
+    /// carries Ctrl or Alt or is a function key (<see cref="KeyChord.IsCommandChord"/>) and that exactly one row of the
+    /// app holds names that command as a <c>do</c> step would, "Press Ctrl+G (Go to line; Navigation menu)": a hint
+    /// from the inventory, since the script's state is not known here. The key is the one the script presses: the
+    /// row's key as its menu shows it when that is the chord, else the chord in key words. A plain key names none:
+    /// Enter, Backspace or a letter is a field's or a list's own key far more often than the command the inventory
+    /// has for it, and "Press Backspace (Up one level)" in a field would be wrong.
     /// </summary>
     private static string KeysSentence(WorkflowStep step, string? app, IReadOnlyList<InventoryApp> inventory)
     {
-        var sentence = StepText.Sentence(step);
         var presses = step.Value("keys").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return presses.Length == 1 && KeyChord.IsCommandChord(presses[0]) && CommandInventory.OfChord(inventory, app, presses[0]) is { } row
-            ? $"{sentence} ({NameAmong(CommandInventory.Of(inventory, app ?? string.Empty), row)})"
-            : sentence;
+        if (presses.Length != 1 || !KeyChord.IsCommandChord(presses[0]) || CommandInventory.OfChord(inventory, app, presses[0]) is not { } row)
+        {
+            return "Press " + Keys(step.Value("keys"));
+        }
+
+        var own = row.Key.Length > 0 && KeyChord.Normal(row.Key) == KeyChord.Normal(presses[0]);
+        return $"Press {(own ? PressedKey(row) : Keys(presses[0]))} ({Named(row)})";
     }
 
     /// <summary>
     /// The step <c>menu</c>: a text that exactly one row of the app answers (<see cref="CommandInventory.OfMenuText"/>)
-    /// reads with that row's menus, and its key when it has one, "Choose Larger text in the Options menu, Text (key:
-    /// Ctrl+Plus)": as the choice it is, since the check chose the item and did not press the key. Otherwise the
-    /// step's own words, "Choose the menu item &lt;text&gt;".
+    /// reads with that row's whole label and menus, and its key when it has one, "Choose Larger text in the Options
+    /// menu, Text (key: Ctrl+Plus)": as the choice it is, since the check chose the item and did not press the key.
+    /// Otherwise the text as the script has it, "Choose the menu item &lt;text&gt;", without a bracket that opens
+    /// and never closes: a script may name an item by its first words ("Check for updates (axKit").
     /// </summary>
     private static string MenuSentence(WorkflowStep step, string? app, IReadOnlyList<InventoryApp> inventory)
     {
         if (CommandInventory.OfMenuText(inventory, app, step.Value("name")) is not { } row || Menus(row.Menu) is not { Length: > 0 } menus)
         {
-            return StepText.Sentence(step);
+            return "Choose the menu item " + Closed(step.Value("name")).TrimEnd();
         }
 
         var key = ShownKey(row);
@@ -422,22 +567,104 @@ public static class Reference
     }
 
     /// <summary>
-    /// The step <c>start</c>: "Open axDown with find.md" for a start whose first word is a verb of
-    /// <see cref="Dispatch.Apps"/>, "Open axDown" without arguments, "Open settings.json" for a start by a file alone.
+    /// The steps <c>start</c> and <c>launch</c> (the second hands over to a window that is open, which for a person is
+    /// starting the app again): "Open axDown with the file find.md" for a start whose first word is a verb of
+    /// <see cref="Dispatch.Apps"/>, "Open axDown" without arguments, "Open the file settings.json" for a start by a
+    /// file alone; "Start axClip again", "Start axMedia again with --add the folder ch", "Open the file a.md again".
+    /// The arguments are the ones a person gives (<see cref="Given"/>).
     /// </summary>
-    private static string StartSentence(WorkflowStep step)
+    private static string StartSentence(WorkflowStep step, bool again)
     {
-        var arguments = step.Value("arguments").Trim();
-        var space = arguments.IndexOf(' ');
-        var first = space < 0 ? arguments : arguments[..space];
-        var rest = space < 0 ? string.Empty : arguments[(space + 1)..].Trim();
-        if (Dispatch.Apps.FirstOrDefault(app => Same(app.Verb, first)) is not { } named)
+        var words = Words(step.Value("arguments"));
+        var named = words.Count > 0 ? Dispatch.Apps.FirstOrDefault(app => Same(app.Verb, words[0])) : null;
+        var what = string.Join(" ", Given(named is null ? words : [.. words.Skip(1)], named?.Name));
+        if (named is null)
         {
-            return arguments.Length > 0 ? "Open " + arguments : "Open axKit";
+            return what.Length == 0 ? "Open axKit" + (again ? " again" : string.Empty) : $"Open {what}{(again ? " again" : string.Empty)}";
         }
 
-        return rest.Length > 0 ? $"Open {named.Name} with {rest}" : $"Open {named.Name}";
+        var opening = again ? $"Start {named.Name} again" : $"Open {named.Name}";
+        return what.Length > 0 ? $"{opening} with {what}" : opening;
     }
+
+    /// <summary>
+    /// A start's arguments as a person gives them (WF-7.3). What only serves the check is left out: in a start of
+    /// axClaude or axHelp everything after a bare <c>--</c> (Claude Code's own options, by which a check picks its
+    /// model), <c>--record</c> with its file, <c>--model</c> with its value, and <c>--claude</c> with a program in the
+    /// run's folder (the check's stand-in for Claude Code). A path in the run's folder is named by what it is, "the
+    /// folder notes" or "the file find.md" (a name with an extension is a file), and the run's folder itself is "the
+    /// test folder": <c>{temp}</c> is never on a page.
+    /// </summary>
+    private static List<string> Given(IReadOnlyList<string> words, string? app)
+    {
+        var given = new List<string>();
+        for (var i = 0; i < words.Count; i++)
+        {
+            var word = words[i];
+            if (word == "--" && (app is "axClaude" or "axHelp"))
+            {
+                break;
+            }
+
+            var value = i + 1 < words.Count ? words[i + 1].Trim('"') : string.Empty;
+            if (word is "--record" or "--model" || (word == "--claude" && value.StartsWith(TempFolder, StringComparison.Ordinal)))
+            {
+                i++;
+                continue;
+            }
+
+            var path = word.Trim('"');
+            given.Add(path == "{temp}" ? TestFolder
+                : path.StartsWith(TempFolder, StringComparison.Ordinal) ? (IsFileName(path) ? "the file " : "the folder ") + path[TempFolder.Length..]
+                : word);
+        }
+
+        return given;
+    }
+
+    /// <summary>Whether a path's last part has an extension, as a file's name has and a folder's seldom.</summary>
+    private static bool IsFileName(string path) => path[(path.LastIndexOfAny(['\\', '/']) + 1)..].IndexOf('.') > 0;
+
+    /// <summary>A command line's words: split at spaces, a part in double quotes kept as one word with its quotes.</summary>
+    private static List<string> Words(string arguments)
+    {
+        var words = new List<string>();
+        var word = new System.Text.StringBuilder();
+        var quoted = false;
+        foreach (var character in arguments)
+        {
+            if (character == ' ' && !quoted)
+            {
+                if (word.Length > 0)
+                {
+                    words.Add(word.ToString());
+                    word.Clear();
+                }
+
+                continue;
+            }
+
+            quoted ^= character == '"';
+            word.Append(character);
+        }
+
+        if (word.Length > 0)
+        {
+            words.Add(word.ToString());
+        }
+
+        return words;
+    }
+
+    /// <summary>
+    /// The step <c>use</c>, as going to a window: "Go to the axFile window" where the script's lines name its app
+    /// (<see cref="ScriptApps.ByLine"/>), "Go to the other axDown window" when the window left is of the same app, "Go
+    /// to the other window" where the app is not known. A window's number is the run's, and no person counts windows.
+    /// </summary>
+    private static string UseSentence(string? app, string? left) =>
+        app is null ? "Go to the other window"
+        : app == left ? $"Go to the other {app} window"
+        : $"Go to the {app} window";
 
     /// <summary>A row's menus from the bar down, the word "menu" after the first: "Navigation menu", "Navigation menu, Next"; empty for a row without menus.</summary>
     private static string Menus(string menu)
@@ -448,76 +675,163 @@ public static class Reference
     }
 
     /// <summary>
+    /// Keys as a keyboard names them (WF-7.3): "ctrl+shift+p pagedown" is "Ctrl+Shift+P, Page Down", "nvda+a" is
+    /// "NVDA+A". Each key's name with a capital, and the few that are two words or an abbreviation by name. A row's
+    /// own key text, which is what its menu shows, never passes through here.
+    /// </summary>
+    private static string Keys(string keys) =>
+        string.Join(", ", keys.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(chord => string.Join("+", chord.Split('+').Select(KeyWord))));
+
+    private static string KeyWord(string key) => key.ToLowerInvariant() switch
+    {
+        "pagedown" => "Page Down",
+        "pageup" => "Page Up",
+        "nvda" => "NVDA",
+        "esc" => "Escape",
+        _ => key.Length == 0 ? key : char.ToUpperInvariant(key[0]) + key[1..],
+    };
+
+    /// <summary>
     /// The key a <c>do</c> step is read with: the row's key as its menu shows it (the window's own spelling, where it
     /// differs from the chord's words), else the first of its further chords in key words, else, for a key with no
     /// menu item, its key text. Empty for a menu item with no chord, which is chosen and not pressed.
     /// </summary>
     private static string PressedKey(ListedCommand row) =>
-        row.Key.Length > 0 ? (row.KeyText.Length > 0 ? row.KeyText : StepText.Keys(row.Key))
-        : row.Also.Count > 0 ? StepText.Keys(row.Also[0])
+        row.Key.Length > 0 ? (row.KeyText.Length > 0 ? row.KeyText : Keys(row.Key))
+        : row.Also.Count > 0 ? Keys(row.Also[0])
         : row.KeyOnly ? row.KeyText
         : string.Empty;
 
     /// <summary>The key a menu item is named with after a <c>menu</c> step: its key text as the menu shows it, else its first chord in key words; empty for an item without a key.</summary>
     private static string ShownKey(ListedCommand row) =>
         row.KeyText.Length > 0 ? row.KeyText
-        : row.Key.Length > 0 ? StepText.Keys(row.Key)
-        : row.Also.Count > 0 ? StepText.Keys(row.Also[0])
+        : row.Key.Length > 0 ? Keys(row.Key)
+        : row.Also.Count > 0 ? Keys(row.Also[0])
         : string.Empty;
-
-    /// <summary>A command's canonical name among its app's rows (WF-1.1): its label, and where several menu items of the app share the label, its whole line, "Heading, Navigation, Next".</summary>
-    private static string NameAmong(IReadOnlyList<ListedCommand> rows, ListedCommand row)
-    {
-        var label = CommandNames.Plain(row.Label);
-        var shared = rows.Count(other => !other.KeyOnly && Same(CommandNames.Plain(other.Label), label)) > 1;
-        return shared ? CommandNames.Line(new CommandName(row.Label, row.Menu)) : label;
-    }
 
     /// <summary>
     /// The line of an expectation of speech (WF-7.4), ended by a full stop, or null for a step that is none or leaves
     /// nothing to read: <c>expect said</c> "You hear: ...", a sound "You hear the sound Edge.", a focus move "The focus
     /// moves to ...", a value "It reads ..."; <c>expect spoken</c> "NVDA says: ..."; <c>expect mcp</c> "The tool
-    /// answers: ...". With <paramref name="may"/> (a <c>try said</c>, which may not come) "You may hear: ...". The
-    /// name of a sound, a control or a value is whole in one word; words of an announcement need two
-    /// (<see cref="Heard"/>), except with <paramref name="keepShort"/>: the words of a try that steps hang on stay,
-    /// since "If that came" under it must have what came.
+    /// answers: ..." (<see cref="ToolLine"/>). With <paramref name="may"/> (a <c>try said</c>, which may not come)
+    /// "You may hear: ...". Words that were cut short in the script (<see cref="IsWhole"/>) say so: "You hear words
+    /// such as: ...". One word is kept, since one word or one number can be the whole point ("8294400" after a sum),
+    /// unless the line before it (<paramref name="before"/>) already holds that word: then it only repeats it. With
+    /// <paramref name="keepShort"/> it always stays: the words of a try that steps hang on, since "If that came"
+    /// under it must have what came.
     /// </summary>
-    private static string? HeardLine(WorkflowStep step, bool may, bool keepShort)
+    private static string? HeardLine(WorkflowStep step, bool may, bool keepShort, string before)
     {
         var text = Filled(step.Value("text"));
         switch (step.Do)
         {
             case "expect spoken":
-                return Line("NVDA says: ", Enough(text.Trim(Edges)));
+                return Announced("NVDA says", Read(text), keepShort: false, before);
             case "expect mcp":
-                return Line("The tool answers: ", Enough(text.Trim(Edges)));
+                return ToolLine(text, before);
             case "expect said":
                 break;
             default:
                 return null;
         }
 
-        var words = Unmarked(text).Trim(Edges);
+        var read = Read(Unmarked(text));
         if (text.StartsWith('♪'))
         {
-            return Line(may ? "You may hear the sound " : "You hear the sound ", words);
+            return Line(may ? "You may hear the sound " : "You hear the sound ", read.Words);
         }
 
         if (text.StartsWith("→ ", StringComparison.Ordinal))
         {
-            return Line(may ? "The focus may move to " : "The focus moves to ", words);
+            return Line(may ? "The focus may move to " : "The focus moves to ", read.Words);
         }
 
         if (text.StartsWith("· ", StringComparison.Ordinal))
         {
-            return Line(may ? "It may read " : "It reads ", words);
+            return Line(may ? "It may read " : "It reads ", read.Words);
         }
 
-        return Line(may ? "You may hear: " : "You hear: ", keepShort ? words : Enough(words));
+        return Announced(may ? "You may hear" : "You hear", read, keepShort, before);
     }
+
+    /// <summary>Words of an announcement after who says them: "You hear: Line 5 of 7." for a whole text, "You hear words such as: Line 5." for one cut short; null for no words, and for one word that the line before already holds.</summary>
+    private static string? Announced(string opening, (string Words, bool Whole) read, bool keepShort, string before) =>
+        !keepShort && Repeats(read.Words, before) ? null : Line(opening + (read.Whole ? ": " : " words such as: "), read.Words);
+
+    /// <summary>
+    /// The line of a tool's answer (WF-7.4): a text the check wrote as a piece of JSON, <c>"app": "axDown"</c>, reads as
+    /// a sentence, "The tool answers with app: axDown.", the name in plain words ("notDone" is "not done"); any other
+    /// text reads "The tool answers: ...". Null for no words, and for one word that the line before already holds.
+    /// </summary>
+    private static string? ToolLine(string text, string before)
+    {
+        var trimmed = text.Trim();
+        var end = trimmed.StartsWith('"') ? trimmed.IndexOf("\":", 1, StringComparison.Ordinal) : -1;
+        if (end > 1)
+        {
+            var value = trimmed[(end + 2)..].Trim().Trim('"').Trim(Edges);
+            return value.Length > 0 ? Stopped($"The tool answers with {Spaced(trimmed[1..end])}: {value}") : null;
+        }
+
+        var words = Read(text).Words;
+        return Repeats(words, before) ? null : Line("The tool answers: ", words);
+    }
+
+    /// <summary>A name of data in plain words: "notDone" is "not done", "doneLeftOut" is "done left out".</summary>
+    private static string Spaced(string name) =>
+        string.Concat(name.Select((character, index) => char.IsUpper(character) && index > 0 ? " " + char.ToLowerInvariant(character) : character.ToString()));
 
     /// <summary>What is heard after its opening words, ended by a full stop; null when no words are left.</summary>
     private static string? Line(string opening, string words) => words.Length > 0 ? Stopped(opening + words) : null;
+
+    /// <summary>Whether what is heard is one word that the line before it already holds, without regard to case: "You hear: apple." under "Type: apple" tells nothing.</summary>
+    private static bool Repeats(string words, string before) =>
+        words.Length > 0 && !words.Contains(' ')
+        && before.Split(' ', StringSplitOptions.RemoveEmptyEntries).Any(word => Same(word.Trim('.', ',', ':', ';', '(', ')', '"'), words));
+
+    /// <summary>The line before the one being written; empty at a goal's start.</summary>
+    private static string Before(List<string> lines) => lines.Count > 0 ? lines[^1] : string.Empty;
+
+    /// <summary>
+    /// An expectation's text, without its mark, as words to read and whether it reads as a whole announcement
+    /// (WF-7.4). The edges are dropped (<see cref="Edges"/>); a bracket that opens and never closes goes with what
+    /// follows it (<see cref="Closed"/>); a joining word at the end (<see cref="Joining"/>) goes when two words stay
+    /// without it. The text is whole when nothing but a full stop at its end went. No words when no letter and no
+    /// digit is left ("@@"), and for a joining word alone.
+    /// </summary>
+    private static (string Words, bool Whole) Read(string text)
+    {
+        var given = text.Trim().TrimEnd('.', ' ');
+
+        // A backslash first is the middle of a path ("\tasks"): the name after it is what is read.
+        var words = Closed(given).Trim(Edges).TrimStart('\\');
+        var last = words.LastIndexOf(' ');
+        var joining = Joining.Any(word => Same(word, words[(last + 1)..]));
+        if (joining && words.IndexOf(' ') < last)
+        {
+            words = words[..last].Trim(Edges);
+        }
+
+        // A joining word alone ("of") tells nothing.
+        var nothing = !words.Any(char.IsLetterOrDigit) || (joining && last < 0);
+        return nothing ? (string.Empty, false) : (words, !joining && words == given);
+    }
+
+    /// <summary>A text without a round or square bracket that opens and never closes, and without what follows it: "2. orchard (" is "2. orchard ".</summary>
+    private static string Closed(string text)
+    {
+        var cut = text.Length;
+        foreach (var (open, close) in new[] { ('(', ')'), ('[', ']') })
+        {
+            var at = text.LastIndexOf(open);
+            if (at >= 0 && text.IndexOf(close, at) < 0)
+            {
+                cut = Math.Min(cut, at);
+            }
+        }
+
+        return text[..cut];
+    }
 
     /// <summary>An expectation's text without its mark, as <see cref="Window.Wanted"/> reads the marks: "!" alone asks for any interrupting announcement and leaves no words.</summary>
     private static string Unmarked(string text) =>
@@ -526,21 +840,18 @@ public static class Reference
         : text.StartsWith("! ", StringComparison.Ordinal) || text.StartsWith("→ ", StringComparison.Ordinal) || text.StartsWith("· ", StringComparison.Ordinal) ? text[2..]
         : text;
 
-    /// <summary>The words when there are two or more of them, else nothing (WF-7.4).</summary>
-    private static string Enough(string words) => words.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length < 2 ? string.Empty : words;
-
     /// <summary>
     /// A text without the run's folder and with its escapes filled in (WF-7.7): <c>{temp}\</c> is dropped, a
     /// <c>{temp}</c> left is "the test folder", and each <c>\uXXXX</c> is its character, as the engine fills a line
     /// (<see cref="ScriptLines.Filled"/>).
     /// </summary>
-    private static string Filled(string text) => ScriptLines.Filled(text.Replace(@"{temp}\", string.Empty, StringComparison.Ordinal), TestFolder);
+    private static string Filled(string text) => ScriptLines.Filled(text.Replace(TempFolder, string.Empty, StringComparison.Ordinal), TestFolder);
 
-    /// <summary>A sentence ended by a full stop; one that ends with a full stop, a question mark or an exclamation mark already has its end.</summary>
+    /// <summary>A sentence ended by a full stop; one that ends with a full stop, a question mark, an exclamation mark or an ellipsis already has its end.</summary>
     private static string Stopped(string sentence)
     {
         var text = sentence.TrimEnd();
-        return text.Length > 0 && text[^1] is '.' or '?' or '!' ? text : text + ".";
+        return text.Length > 0 && text[^1] is '.' or '?' or '!' or '…' ? text : text + ".";
     }
 
     /// <summary>The app a line of the script reaches (lines from 1), or null where <see cref="ScriptApps.ByLine"/> could not read it.</summary>

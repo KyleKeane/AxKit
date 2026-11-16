@@ -417,35 +417,75 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   starts, and each goal with its steps and what is heard; `docs/axKit/window-commands.md`, every command of the
   inventory. One page of everything would be several hundred kilobytes, more than a person follows and more than
   Claude's Read tool takes at once; the index stays small enough to read whole (WF-D-8).
-- WF-7.3 **A goal's steps** are its input steps as numbered sentences, each ended by a full stop:
+- WF-7.3 **A goal's steps** are its input steps as numbered sentences, each ended by a full stop (typed text ends
+  its line itself). Each says what a person does, never the runner's mechanics (WF-7.9):
   - `do`: with the command's key and menus from the inventory. The menus are written from the bar down, the word
     "menu" after the first: "Press Ctrl+F (Find; Navigation menu).", "Press Ctrl+H (Heading; Navigation menu,
     Next)."; for a key with no menu item, "Press Ctrl+Tab (Between the text and the details)."; for a command with
     no chord, "Choose Send message in the Actions menu.", "Choose Heading in the Navigation menu, Next."; for a
     name the inventory does not resolve, "Do the command Find."
-  - The key's words: a chord is written in key words by `StepText.Keys` ("Ctrl+Shift+Z"), for `keys` lines and for
-    the commands page's "Also:". For a `do` row the sentence prints the row's key text where that differs from
-    `StepText.Keys` of its chord: the window's own spelling is what its menu shows.
-  - `keys`: "Press Ctrl+F." A line of one chord that exactly one command of the app has in the inventory (as `key`
-    or among `also`) names it: "Press Ctrl+G (Go to line)." This is how a script not yet moved to `do` still names
-    its commands; it is a hint from the inventory, since a script's state is not known to the generator.
+  - The key's words: a chord is written as a keyboard names its keys ("Ctrl+Shift+Z", "Page Down", "Page Up",
+    "NVDA+A"), in `Reference`'s own key words, for `keys` lines and for the commands page's "Also:"
+    (`StepText.Keys` keeps "Pagedown" and "Nvda+A" for axAutomate's window). For a `do` row the sentence prints the
+    row's key text where that differs from the chord's words: the window's own spelling is what its menu shows, and
+    the pages never change it.
+  - `keys`: "Press Ctrl+F." A line of one chord that carries Ctrl or Alt or is a function key, and that exactly one
+    command of the app has in the inventory (as `key` or among `also`), names that command exactly as a `do` step
+    does: "Press Ctrl+G (Go to line; Navigation menu)." So one key reads one way on a page, whichever step pressed
+    it. The key printed is the one pressed: the row's key text when the chord is the row's key, else the chord in
+    key words. This is how a script not yet moved to `do` still names its commands; it is a hint from the
+    inventory, since a script's state is not known to the generator. A plain key (Enter, Backspace, a letter)
+    names no command: it is a field's or a list's own key far more often.
+  - Equal presses in a row are one line: presses of one key that follow each other with nothing heard between them
+    read "Press Tab 7 times.", with a command named after the count, "Press F3 3 times (Find next; Navigation
+    menu)."; a `keys` line of one key several times counts the same way. A line of several different keys is never
+    counted, and neither is typed text or a step after "If that came: ".
   - `menu`: a line whose text exactly one row of the app answers (the row's label, or its label, a comma, a space
-    and its menus, starts with the text, without regard to case) names that row's menus, and its key when it has
-    one: "Choose Larger text in the Options menu, Text (key: Ctrl+Plus)." It is written as the choice it is, since
-    the check chose the item and did not press the key. Otherwise "Choose the menu item <text>."
-  - `start`: "Open <the app's name> with <arguments>." for a start whose first word is a verb of `Dispatch.Apps`
-    ("Open axDown with find.md."), "Open <the app's name>." without arguments, "Open <arguments>." for a start by a
-    file alone. `StepText.Sentence` keeps its own words ("Start down find.md") for axAutomate's window.
-  - `type`, `launch`, `adopt`, `use`, `close`, `mcp call`: their sentences of `StepText` as they are.
+    and its menus, starts with the text, without regard to case) names that row's whole label and menus, and its
+    key when it has one: "Choose Larger text in the Options menu, Text (key: Ctrl+Plus)." It is written as the
+    choice it is, since the check chose the item and did not press the key. Otherwise "Choose the menu item
+    <text>.", the text as the script has it, without a bracket that opens and never closes: a script that names an
+    item by its first words, `menu Check for updates (axKit`, reads "Choose the menu item Check for updates."
+  - `start`: "Open <the app's name> with <what>." for a start whose first word is a verb of `Dispatch.Apps`
+    ("Open axDown with the file find.md."), "Open <the app's name>." without arguments, "Open <what>." for a start
+    by a file alone. What only serves the check is not in the sentence: in a start of axClaude or axHelp everything
+    after a bare `--` (Claude Code's own options, by which a check picks its model), `--record` with its file,
+    `--model` with its value, and `--claude` with a program in the run's folder (the check's stand-in for Claude
+    Code). A path in the run's folder is named by what it is, "the folder notes" or "the file find.md" (a name with
+    an extension is a file), and the run's folder itself is "the test folder". Any other argument stands as the
+    script has it. `StepText.Sentence` keeps its own words ("Start down find.md") for axAutomate's window.
+  - `launch` hands over to a window that is open, which for a person is starting the app again: "Start axClip
+    again.", "Start axMedia again with --add the folder ch."; by a file alone, "Open the file b.md again."
+  - `adopt`: "A new window opens: go to it."
+  - `use`: "Go to the axFile window.", the app read off the script's own start lines (`ScriptApps.ByLine`); "Go to
+    the other axDown window." when the window left is of the same app; "Go to the other window." where the lines
+    do not say whose window it is. A window's number is the run's, and no person counts windows.
+  - `type`: "Type: <text>", the line ending with the text and nothing added, so that a listener knows that no full
+    stop is typed.
+  - `close`, `mcp call`: their sentences of `StepText` as they are ("Close the window.", "Call the tool
+    axkit_windows.").
   - `iffound <step>`: the step's sentence after "If that came: ".
-- WF-7.4 **What you hear.** Each expectation of speech is a line under the input step before it; one that stands
-  before the goal's first input step is a line of its own before step 1. `expect said <text>` reads "You hear:
-  <text>." (`! ` dropped; `♪ <name>` as "You hear the sound <name>."; `→ <text>` as "The focus moves to <text>.";
-  `· <text>` as "It reads <text>."); `try said` reads "You may hear: <text>."; `expect spoken` "NVDA says: <text>.";
-  `expect mcp` "The tool answers: <text>." The scripts match parts of announcements (`expect said , 2 of`), so the
-  text is written without a leading or trailing comma, colon, full stop or space, and an expectation left with
-  fewer than two words is left out. Every other step is left out: the set-up, the waits, the checks of state, the
-  refusals.
+- WF-7.4 **What you hear.** Each expectation of speech is a line under the input step before it, four spaces in, so
+  that it stays inside an item numbered 10 or more in Markdown; one that stands before the goal's first input step
+  is a line of its own before step 1, without the spaces (four there would make it a code block). `expect said
+  <text>` reads "You hear: <text>." (`! ` dropped; `♪ <name>` as "You hear the sound <name>."; `→ <text>` as "The
+  focus moves to <text>."; `· <text>` as "It reads <text>."); `try said` reads "You may hear: <text>."; `expect
+  spoken` "NVDA says: <text>."; `expect mcp` "The tool answers: <text>.", and a text the check wrote as a piece of
+  data, `"app": "axDown"`, as a sentence, "The tool answers with app: axDown." (the name in plain words: `notDone`
+  is "not done"). The scripts match parts of announcements (`expect said , 2 of`), so a text is read by one rule:
+  - What is dropped: a comma, colon, semicolon, bar, full stop or space at either end; a bracket that opens and
+    never closes, with what follows it ("2. orchard (" is "2. orchard"); a backslash first; and a joining word at
+    the end (of, to, the, and, a, an, or, at) when two words stay without it ("Before axTerminal connects to" is
+    "Before axTerminal connects"; "2 of" stays).
+  - Whole or cut short: a text from which nothing but a full stop at its end was dropped, and that ends with no
+    joining word, reads as a whole announcement, "You hear: <text>." Every other text was cut short in the script
+    and says so: "You hear words such as: <text>." (also "You may hear words such as:" and "NVDA says words such
+    as:"). Whether a text ends in the middle of a word the scripts do not say: such a text reads as it stands.
+  - Left out: a text with no letter and no digit left ("@@"), and a joining word alone.
+  - One word is kept, since one word or one number can be the whole point ("You hear: 8294400." after a sum). It
+    is left out only when the line before it already holds that word and it so only repeats it ("apple" said back
+    under "Type: apple"). The words of a `try said` with `iffound` steps under it always stay.
+  Every other step is left out: the set-up, the waits, the checks of state, the refusals.
 - WF-7.5 **Nothing of the checks' bookkeeping.** A group's page holds, under a workflow, "Starts with:" and the
   setup's window steps as sentences (when it has any), then its goals, and under a goal its numbered steps and what
   is heard: nothing else. No script path, no needs line, no tier, date, version or commit, no sentence about the AI
@@ -454,13 +494,26 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   goal last passed is in `docs/axKit/workflow-record.json`, one section a line, found by searching for the goal's
   title. A check (WF-3.1a) is on no page, and neither is a section the generator finds without an input step.
 - WF-7.6 **The commands page**: by app, one line per row of the inventory: the label, "Menu:" its menus (or "none,
-  a key alone"), "Key:" its key text (or "none"), "Also:" the further chords in key words (`StepText.Keys`) when
+  a key alone"), "Key:" its key text (or "none"), "Also:" the further chords in key words (WF-7.3) when
   there are any, and its mark; "Never run by AI tools." for a row with `ai` false. One command a line, so that a
-  search for a label finds it.
+  search for a label finds it. A row that the apps share is written once: under "## In every window" when every
+  app of the inventory has it, under "## In every window but <the apps without it>" when three in four of the apps
+  or more have it (and at least two); under an app's own heading are then the rows that are its own. A row is the
+  same in two apps when its whole line is, so a command with another key or another mark in one app stands under
+  that app. The inventory file itself does not change: it keeps every row under its app.
 - WF-7.7 **No path of a run**: `{temp}\` is dropped from every sentence and a `{temp}` left is written "the test
-  folder"; `\uXXXX` escapes are filled in.
+  folder"; in a start a path in the run's folder is named "the folder <name>" or "the file <name>" (WF-7.3);
+  `\uXXXX` escapes are filled in.
 - WF-7.8 **Order**: the groups as today (the apps by name without regard to case, then AI tools, then NVDA only);
   in a group the scripts by their path, ordinal, lower case; in a script the goals as they stand.
+- WF-7.9 **The how-to reads well aloud** (WF-D-31). The pages are heard: by a blind user through NVDA, and through
+  axHelp's Claude, which answers from them. Every sentence is short and linear and says what a person does or
+  hears: no window by its number and no word of the runner (use, adopt, launch); no option of a start that only
+  serves the check; no key in the script's spelling; one spelling for one key on a page; no piece of JSON; no text
+  that sounds finished where the script cut it short; no full stop after typed text; no run of equal steps. Where
+  the scripts do not hold what a better sentence would need, the line stays as it is. The words are `Reference`'s
+  own: `StepText`'s sentences, which axAutomate's window shows, do not change. `ReferenceTests` pins every
+  sentence form. (WP-B8b)
 
 ### WF-8 axHelp's reference and rules
 
@@ -922,9 +975,10 @@ developer's computer (`tools/AxAutomate`, `nvda-pass.ps1`), never in CI (`docs/a
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence. The file names and the words
-typed are the check's examples: use your own. Where a step names a command after its key, the key is that command's
-in this version of axKit.
+line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
+cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
+the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+command's in this version of axKit.
 ```
 
 ```
@@ -932,7 +986,8 @@ in this version of axKit.
 
 Written by `tools/workflows.ps1` from `docs/axKit/window-commands.json`, which the automated checks write from the
 windows themselves; never edit it by hand. One line a command: its name, its menu, its key, and its mark, what it
-does beyond reading (read, open, change, act).
+does beyond reading (read, open, change, act). A command that all or nearly all windows have stands once, under "In
+every window" or under a heading that names the windows without it; under an app's name are the commands of its own.
 ```
 
 The index, `docs/axKit/workflows.md`: its preamble, then for each group:
@@ -943,10 +998,12 @@ The index, `docs/axKit/workflows.md`: its preamble, then for each group:
 Steps and keys: `docs/axKit/workflows/<page>.md` (in Claude's working folder: `workflows-<page>.md`).
 
 <n>. **<the workflow's label>**
-   - <a goal's title>                    one line per goal; none for a check, none for a script with no goal line
+    - <a goal's title>                   four spaces; one line per goal; none for a check, none for a script with no goal line
 ```
 
-`<page>` is the group's name for an app (`axDown`), `ai-tools` and `nvda-only` for the two others. For the example:
+`<page>` is the group's name for an app (`axDown`), `ai-tools` and `nvda-only` for the two others. A goal's line
+and a line under a step start with four spaces, not three: the text of an item numbered 10 or more starts four
+characters in, and a line with fewer falls out of its item in a Markdown viewer. For the example:
 
 ```
 ## axDown
@@ -955,8 +1012,8 @@ Steps and keys: `docs/axKit/workflows/axDown.md` (in Claude's working folder: `w
 
 1. **Open a text file in axDown**
 5. **Find text and go to a line**
-   - Find a word in the text
-   - Go to a line by its number
+    - Find a word in the text
+    - Go to a line by its number
 ```
 
 A group's page, `docs/axKit/workflows/<page>.md`: its preamble, then for each workflow:
@@ -968,9 +1025,9 @@ Starts with: <the setup's window steps as sentences>.     only when it has any
 
 ### <a goal's title>                                      no such heading for a script with no goal line; none for a check
 
-   <what you hear before the first step>.                 only when an expectation of speech stands before it
-<n>. <an input step's sentence>.
-   <what you hear after it>.                              three spaces; one line per expectation of speech
+<what you hear before the first step>.                    no spaces; only when an expectation of speech stands before it
+<n>. <an input step's sentence>.                          typed text ends its line without a full stop
+    <what you hear after it>.                             four spaces; one line per expectation of speech
 ```
 
 Nothing else stands under a workflow or a goal (WF-7.5). A script with no goal line has its numbered steps right
@@ -979,12 +1036,12 @@ under "Starts with:". For the example:
 ```
 ## Find text and go to a line
 
-Starts with: Open axDown with find.md.
+Starts with: Open axDown with the file find.md.
 
 ### Find a word in the text
 
 1. Press Ctrl+F (Find; Navigation menu).
-2. Type apple.
+2. Type: apple
 3. Press Enter.
 4. Press F3 (Find next; Navigation menu).
 5. Press Shift+F3 (Find previous; Navigation menu).
@@ -992,9 +1049,37 @@ Starts with: Open axDown with find.md.
 ### Go to a line by its number
 
 1. Press Ctrl+G (Go to line; Navigation menu).
-2. Type 5.
+2. Type: 5
 3. Press Enter.
-   You hear: Line 5 of 7.
+    You hear: Line 5 of 7.
+```
+
+Every sentence form the generator writes (WF-7.3, WF-7.4, WF-7.9), each pinned in `ReferenceTests`:
+
+```
+Press <keys>.                                             Press Ctrl+F.  Press Ctrl+2, Ctrl+Home.  Press Page Down.
+Press <key> (<label>; <menus>).                           Press Ctrl+H (Heading; Navigation menu, Next).
+Press <key> (<label>).                                    a key with no menu item
+Press <key> <n> times.                                    also with the command after it: Press F3 3 times (Find next; Navigation menu).
+Choose <label> in the <menus>.                            a command with no chord; after a menu step also: (key: <key>).
+Choose the menu item <text>.
+Do the command <name>.                                    a name the inventory does not resolve
+Type: <text>                                              no full stop
+Open <app>.  Open <app> with <what>.  Open <what>.        <what>: the folder <name>, the file <name>, the test folder, an option
+Start <app> again.  Start <app> again with <what>.  Open <what> again.
+A new window opens: go to it.
+Go to the <app> window.  Go to the other <app> window.  Go to the other window.
+Close the window.
+Call the tool <tool>.
+If that came: <any of the sentences above>
+
+You hear: <text>.                                         You hear words such as: <text>.
+You may hear: <text>.                                     You may hear words such as: <text>.
+NVDA says: <text>.                                        NVDA says words such as: <text>.
+You hear the sound <name>.                                You may hear the sound <name>.
+The focus moves to <text>.                                The focus may move to <text>.
+It reads <text>.                                          It may read <text>.
+The tool answers: <text>.                                 The tool answers with <name>: <value>.
 ```
 
 The script's five checks (the word that is not in the text, the number past the end, the word in place of a number,
@@ -1261,7 +1346,9 @@ public static class Reference
     public static string Group(string scriptPath);                                  // "axDown", "AI tools", "NVDA only"
     public static string PageName(string group);                                    // "axDown", "ai-tools", "nvda-only"
     public static IReadOnlyList<string> GoalLines(IReadOnlyList<WorkflowStep> steps, IReadOnlyList<string?> apps, IReadOnlyList<InventoryApp> inventory);   // WF-7.3, WF-7.4
-    public static string Heard(string text);                                        // WF-7.4: without its marks and its edge punctuation; "" when fewer than two words are left
+    public static string Heard(string text);                                        // WF-7.4: the words as read: without its mark, its edges, an open bracket, a joining word last; "" when no letter or digit is left
+    public static bool IsWhole(string text);                                        // WF-7.4: reads as a whole announcement; false for a text cut short ("words such as") (WP-B8b)
+    public const string EveryWindow = "In every window";                            // WF-7.6: the commands page's heading for the rows of every app (WP-B8b)
 }
 
 // Converter.cs (WP-B15)
@@ -1584,6 +1671,24 @@ what it was before. One item of the priorities list holds them all for the user 
   keep their key text, the commands page shows it, scripts press them with `keys`, and `do Copy` chooses the menu
   item. To reverse: a `When` on such an item, so that `now` can know where the focus is. (Taken by the assistant on
   2026-11-15 for the user to confirm.)
+- **WF-D-31 The how-to is written for the ear, in words of its own.** The first pages were read after the generator
+  was wired, and they read like a test: "Use window 4.", "Take the window the app opened.", "Open axClaude with read
+  -- --model haiku.", "Press Pagedown.", seven "Press Tab." in a row, "You hear: 2. orchard (.", "Type }." (is the
+  full stop typed?), "The tool answers: "app": "axDown".", and a calculator's how-to of nineteen steps with not one
+  "You hear", because one number was too short to keep. A blind user has these pages read to him and axHelp's
+  Claude answers from them, so each of these is a sentence he would have to decode. The choices (WF-7.3, WF-7.4,
+  WF-7.6, WF-7.9): a window is named by its app, since no person counts windows; what a start carries only for the
+  check is left out; a key is named as a keyboard names it, and one key reads one way on a page; typed text ends
+  its line with nothing added; equal presses in a row are counted; a text the script cut short says "words such
+  as" instead of sounding whole, by one rule a reader can hold (nothing but a final full stop dropped, and no
+  joining word last); one word is kept unless it only repeats the line before it; the rows every window shares
+  stand once on the commands page, which falls from 103 KB to 58 KB. The words are `Reference`'s own and
+  `StepText` is untouched, so axAutomate's window says what it said. Two limits are accepted: the rule for a text
+  cut short knows only what the script wrote, so a whole announcement that ends with "to" reads as cut ("Nothing
+  to go back"), and a text cut in the middle of a word is not seen; and an option the user could give himself
+  (`--add`, `--new`, `--title`) stays in the sentence as the script has it. To reverse any one choice: its switch
+  in `Reference` and the test that pins its sentence. (Taken by the assistant on 2026-11-15 for the user to
+  confirm.)
 
 ## 8. What changes in other documents and notes
 
