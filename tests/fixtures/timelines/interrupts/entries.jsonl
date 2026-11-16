@@ -1,0 +1,59 @@
+{"t":3757,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"mode"}}
+{"t":3757,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"permission-mode"}}
+{"t":3757,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"session-owner"}}
+{"t":3757,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"atis-latch"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"file-history-snapshot"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"bf1438a9-a541-49bb-9306-dfc1ab0778c9","promptId":"c3d44187-a983-4445-9d27-2d22f395b9c2","promptSource":"typed","timestamp":"2026-11-16T00:13:36.558Z","isSidechain":false,"message":{"content":"Write a story of 600 words about a lighthouse keeper."}}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request-shape"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request-blob"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request-blob"}}
+{"t":3885.3,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request"}}
+{"t":3903.5,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"last-prompt"}}
+{"t":3903.5,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"mode"}}
+{"t":3903.5,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"permission-mode"}}
+{"t":3903.5,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"session-owner"}}
+{"t":3903.5,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"atis-latch"}}
+{"t":4680.5,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"ai-title"}}
+{"t":5951.6,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"assistant","uuid":"fe762182-434c-4cfc-801d-adc6714a8e74","timestamp":"2026-11-16T00:13:38.786Z","isSidechain":false,"isAbortedMidStream":true,"message":{"id":"msg_011Ch5e8VNeKPnM1v3W8fa4G","stop_reason":null,"content":[{"type":"text","text":"# The Last Light at Gannet Rock\n\nFor thirty-one years, Walter Penhallow had climbed the iron stairs of Gannet Rock at dusk, wound the clockwork that turned the great lens, and trimmed the wick of the"}]}}}
+{"t":5951.6,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"6fd17bd0-21f5-4cf6-b9b3-dce6c14bb4e2","promptId":"c3d44187-a983-4445-9d27-2d22f395b9c2","timestamp":"2026-11-16T00:13:38.791Z","isSidechain":false,"message":{"content":[{"type":"text","text":"[Request interrupted by user]"}]}}}
+{"t":16045.8,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"file-history-snapshot"}}
+{"t":16045.8,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request-blob"}}
+{"t":16045.8,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request-blob"}}
+{"t":16045.8,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request"}}
+{"t":16045.8,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"6c4e8571-be09-4174-9d3a-86a72ac9c0e9","promptId":"8737fa4e-fc20-450a-91da-81013f203936","promptSource":"typed","timestamp":"2026-11-16T00:13:48.851Z","isSidechain":false,"message":{"content":"Write a story of 600 words about a lighthouse keeper."}}}
+{"t":16045.8,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":17864.7,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"assistant","uuid":"2ec0b1d2-73a3-4419-9a47-621da7dda6fe","timestamp":"2026-11-16T00:13:50.692Z","isSidechain":false,"isAbortedMidStream":true,"message":{"id":"msg_011Ch5e9P3Rp2t19qdweXrbd","stop_reason":null,"content":[{"type":"text","text":"# The Last Light at Gannet Rock\n\nFor thirty-one years, Walter Penhallow had climbed the iron stairs of Gannet Rock at dusk, wound the clockwork that turned the great lens, and trimmed the wick of the lamp. He had done it in"}]}}}
+{"t":17864.7,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"1ca6b43e-4698-4e27-960b-25e56b1867ea","promptId":"8737fa4e-fc20-450a-91da-81013f203936","timestamp":"2026-11-16T00:13:50.696Z","isSidechain":false,"message":{"content":[{"type":"text","text":"[Request interrupted by user]"}]}}}
+{"t":27966.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"file-history-snapshot"}}
+{"t":27966.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request-blob"}}
+{"t":27966.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"api-request"}}
+{"t":27966.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"f74b9fb7-952e-4449-b23e-0f0f8b51f1e2","promptId":"5c706182-863d-47b8-96bd-4f0fca86b291","promptSource":"typed","timestamp":"2026-11-16T00:14:00.771Z","isSidechain":false,"message":{"content":"Use the Bash tool to run: ping -n 12 127.0.0.1. Then reply with the single word done."}}}
+{"t":27966.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"tools-used"}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"assistant","uuid":"18a1d73a-d9ef-4e31-bb34-aa7d02bdcbb4","timestamp":"2026-11-16T00:14:02.621Z","isSidechain":false,"message":{"id":"msg_011Ch5eAGG9zASfPW1yDG5d2","stop_reason":"tool_use","content":[{"type":"tool_use","id":"toolu_01E7je9RGfPHVkevyiJfyjnZ","name":"Bash"}]}}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"e87bb322-e004-4e22-8428-86c375e06d31","promptId":"5c706182-863d-47b8-96bd-4f0fca86b291","timestamp":"2026-11-16T00:14:04.747Z","isSidechain":false,"message":{"content":[{"type":"tool_result","tool_use_id":"toolu_01E7je9RGfPHVkevyiJfyjnZ","is_error":true}]}}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"attachment"}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"ef2470ae-1272-4161-91d5-027db6e38bfc","promptId":"5c706182-863d-47b8-96bd-4f0fca86b291","timestamp":"2026-11-16T00:14:04.751Z","isSidechain":false,"message":{"content":[{"type":"text","text":"[Request interrupted by user for tool use]"}]}}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"last-prompt"}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"ai-title"}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"mode"}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"permission-mode"}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"session-owner"}}
+{"t":31915.9,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"atis-latch"}}
+{"t":42049.4,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"file-history-snapshot"}}
+{"t":42064.7,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"9bb889ba-a729-478a-89a9-7c7983b67cd0","promptId":"a892cb01-3a3a-4cea-ad89-06d8108e9925","timestamp":"2026-11-16T00:14:15.001Z","isSidechain":false,"isMeta":true,"message":{"content":""}}}
+{"t":42064.7,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"2a85ae73-6171-477f-9abd-ce0a259bd300","promptId":"a892cb01-3a3a-4cea-ad89-06d8108e9925","timestamp":"2026-11-16T00:14:15.000Z","isSidechain":false,"message":{"content":"<command-name>"}}}
+{"t":42064.7,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"user","uuid":"13869660-fff6-41bd-8a5e-02ab294abaa1","promptId":"a892cb01-3a3a-4cea-ad89-06d8108e9925","timestamp":"2026-11-16T00:14:15.000Z","isSidechain":false,"message":{"content":"<local-command-stdout>"}}}
+{"t":42086.1,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"last-prompt"}}
+{"t":42086.1,"session":"49963d08-c091-4d51-aa2d-0abc543a088e","entry":{"type":"cost-state"}}

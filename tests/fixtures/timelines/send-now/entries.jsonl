@@ -1,0 +1,52 @@
+{"t":5554.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"mode"}}
+{"t":5554.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"permission-mode"}}
+{"t":5554.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"session-owner"}}
+{"t":5554.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"atis-latch"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"file-history-snapshot"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"user","uuid":"c55dd3c0-f9c5-4f4e-bb7c-99d17187dc70","promptId":"a0fa94ae-7824-45ef-b798-8a62d9f84e59","promptSource":"typed","timestamp":"2026-11-16T00:11:24.444Z","isSidechain":false,"message":{"content":"Write a story of 600 words about a lighthouse keeper."}}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"api-request-shape"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"api-request-blob"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"api-request-blob"}}
+{"t":5665.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"api-request"}}
+{"t":5740.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"last-prompt"}}
+{"t":5740.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"mode"}}
+{"t":5740.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"permission-mode"}}
+{"t":5740.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"session-owner"}}
+{"t":5740.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"atis-latch"}}
+{"t":6405.5,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"ai-title"}}
+{"t":7170.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"queue-operation","operation":"enqueue","timestamp":"2026-11-16T00:11:26.390Z","content":"Reply with the single word second."}}
+{"t":7491.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"queue-operation","operation":"dequeue","timestamp":"2026-11-16T00:11:26.707Z"}}
+{"t":7491.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"assistant","uuid":"f87e892c-42e1-4e00-bed3-884b9c0fde08","timestamp":"2026-11-16T00:11:26.658Z","isSidechain":false,"isAbortedMidStream":true,"message":{"id":"msg_011Ch5dxmNXsPJPLvGDhfuqZ","stop_reason":null,"content":[{"type":"text","text":"**The Keeper of Halden Point**\n\nFor thirty-one years, Walter Abernathy clim"}]}}}
+{"t":7491.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"file-history-snapshot"}}
+{"t":7491.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"api-request-blob"}}
+{"t":7491.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"api-request-blob"}}
+{"t":7491.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"api-request"}}
+{"t":7491.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"user","uuid":"a0e7fc95-9340-475e-9de8-d9152016464c","promptId":"aef4c2d5-2ec9-4187-9ba0-22483e9babab","promptSource":"queued","timestamp":"2026-11-16T00:11:26.741Z","isSidechain":false,"message":{"content":"Reply with the single word second."}}}
+{"t":7491.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":10111.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"assistant","uuid":"b5e82bf1-fa18-421b-a864-4b19a2c63ee1","timestamp":"2026-11-16T00:11:29.239Z","isSidechain":false,"message":{"id":"msg_011Ch5dxuPz8xFv3dCZJGaqq","stop_reason":"end_turn","content":[{"type":"text","text":"second"}]}}}
+{"t":10111.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"attachment"}}
+{"t":10111.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"system","subtype":"stop_hook_summary","uuid":"bdaa0816-43a5-4901-9bcd-53f4f683e48c"}}
+{"t":10111.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"system","subtype":"turn_duration","uuid":"838e1d1a-2506-4316-a66a-8705396c90aa","durationMs":2642}}
+{"t":10130.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"last-prompt"}}
+{"t":10130.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"ai-title"}}
+{"t":10130.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"mode"}}
+{"t":10130.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"permission-mode"}}
+{"t":10130.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"session-owner"}}
+{"t":10130.8,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"atis-latch"}}
+{"t":19934,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"file-history-snapshot"}}
+{"t":19958.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"user","uuid":"966ff883-4958-4516-b336-c82f8e1b66e7","promptId":"71558dc1-be1b-4c22-abe0-3ad43deb6ecd","timestamp":"2026-11-16T00:11:39.247Z","isSidechain":false,"isMeta":true,"message":{"content":""}}}
+{"t":19958.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"user","uuid":"c387a6ab-9149-49a7-ba14-5e4eea3d7468","promptId":"71558dc1-be1b-4c22-abe0-3ad43deb6ecd","timestamp":"2026-11-16T00:11:39.246Z","isSidechain":false,"message":{"content":"<command-name>"}}}
+{"t":19958.1,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"user","uuid":"aa394eb4-be1f-415e-8185-365b4528c569","promptId":"71558dc1-be1b-4c22-abe0-3ad43deb6ecd","timestamp":"2026-11-16T00:11:39.246Z","isSidechain":false,"message":{"content":"<local-command-stdout>"}}}
+{"t":19972.2,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"last-prompt"}}
+{"t":19986.3,"session":"c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a","entry":{"type":"cost-state"}}

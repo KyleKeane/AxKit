@@ -1,0 +1,108 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[?25lPermission Required: Accessing workspace:
+C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b2e
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[9;12H[?25h[>0q[?u]7501;? y[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?25l[2;1H[?25h[?2004h[?2031h[?1004h]0;✳ Claude CodeClaude Code v2.1.325
+Haiku 5.5 · Claude Ultra
+~\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b2e
+manual mode on
+effort: medium · /effort
+$[>0q  Use the Bash tool to run: echo hi > hi.txt. Then reply with the single word finished.]0;◐ Claude Code[?25l[5;1Hyou: Use the Bash tool to run: echo hi > hi.txt. Then reply with the single word finished.[K
+Hashing…   ( running UserPromptSubmit hook )[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]133;A;redraw=0[?25l[6;1HHashing…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Write hi.txt via Bash]0;◐ Write hi.txt via Bash[?25l[6;1HMustering…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[6;11H   ( running PreToolUse hook )[9;2H[?25h]0;◑ Write hi.txt via Bash[?25l[6;1HMustering…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[6;1Htool: Bash (echo hi > hi.txt)[K
+Running…[K
+Mustering…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◐ Write hi.txt via Bash]0;◑ Write hi.txt via Bash]0;◐ Write hi.txt via Bash]0;◑ Write hi.txt via Bash[?25l[10;1H$[K
+[K[10;2H[?25h]0;◐ Write hi.txt via Bash]0;◑ Write hi.txt via Bash]0;◐ Write hi.txt via Bash[?25l[8;11H   ( running PostToolUse hook )[10;2H[?25h[?25l[7;1HWaiting…[K
+Mustering…   ( running PostToolBatch hook )[K
+manual mode on  ·  esc to interrupt[K
+$[K[?25h[?25l[8;1HMustering…[K
+manual mode on  ·  esc to interrupt[K
+$[K[?25h[?25l[7;1HShell cwd was reset to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b2e[K
+Mustering…[K
+manual mode on  ·  esc to interrupt[K
+$[K[?25h]0;◑ Write hi.txt via Bash[?25l[8;11H   ( running Stop hook )[10;2H[?25h]0;◐ Write hi.txt via Bash]133;C]133;D]0;✳ Write hi.txt via Bash[?25l[8;1Hclaude: finished[K
+Cogitated for 12s · done 4:13 PM[K
+manual mode on[K
+$[?25h[?2004h  First write the sentence: Starting now. Then use the Bash tool to run: echo hi. After the tool has run, write the single word finished.]0;◐ Write hi.txt via Bash[?25l[10;1Hyou: First write the sentence: Starting now. Then use the Bash tool to run: echo hi. After the tool has run, write the single word finished.[K
+Wandering…   ( running UserPromptSubmit hook )[K
+manual mode on  ·  esc to interrupt
+$[?25h]133;A;redraw=0[?25l[11;1HWandering…[K
+manual mode on  ·  esc to interrupt[K
+$[K[?25h]0;◑ Write hi.txt via Bash]0;◐ Write hi.txt via Bash[?25l[11;11H   ( running PreToolUse hook )[13;2H[?25h[?25l[11;1HWandering…[K
+manual mode on  ·  esc to interrupt[K
+$[K[?25h[?25l[11;1Hclaude: Starting now.[K
+tool: Bash (echo hi)[K
+Running…[K
+Wandering…
+manual mode on  ·  esc to interrupt
+$[?25h[?25l[14;11H   ( running PostToolUse hook )[16;2H[?25h[?25l[13;1HWaiting…[K
+Wandering…   ( running PostToolBatch hook )[K
+manual mode on  ·  esc to interrupt[K
+$[K[?25h[?25l[14;1HWandering…[K
+manual mode on  ·  esc to interrupt[K
+$[K[?25h[?25l[13;1Hhi[K
+Shell cwd was reset to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b2e[K
+Wandering…[K
+manual mode on  ·  esc to interrupt[K
+$[?25h]0;◑ Write hi.txt via Bash]0;◐ Write hi.txt via Bash[?25l[15;11H   ( running Stop hook )[17;2H[?25h]133;C]133;D]0;✳ Write hi.txt via Bash[?25l[15;1Hclaude: finished[K
+Crunched for 4s · done 4:13 PM[K
+manual mode on[K
+$[?25h[?2004h[?25l[17;1H/exit                               Exit the CLI[K
+/context                            Visualize current context usage as a colored grid[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[42;1H$  /exit[?25h]0;◐ Write hi.txt via Bash[?25l[17;1Hyou: /exit[K
+Schlepping…[K
+manual mode on  ·  esc to interrupt[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[20;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume a80ec48d-7554-408a-bee8-991711ed340e
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Write hi.txt via Bash[?9001l[?1004l

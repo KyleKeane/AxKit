@@ -1,0 +1,145 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[>0q[?u]7501;?[?25lPermission Required: Accessing workspace:
+C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r3\e
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[9;12H[?25h y[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?2004h[?2031h[?1004h[?25l[2;1H]0;✳ Claude Code[?25hClaude Code v2.1.325
+Haiku 5.5 · Claude Ultra
+~\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r3\e
+Debug mode enabled · logging to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r3\e-out\claude-debug.txt
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q  Reply with the single word red.]0;◐ Claude Code[?25l[6;1Hyou: Reply with the single word red.[K
+Cultivating…   ( running UserPromptSubmit hooks… 0/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h[?25l[7;1HCultivating…   ( running UserPromptSubmit hooks… 1/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]133;A;redraw=0[?25l[7;1HCultivating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Claude Code]0;◑ Single word reply[?25l[7;1HPropagating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[7;13H   ( running Stop hooks… 0/2 )[10;2H[?25h[?25l[7;1HPropagating…   ( running Stop hooks… 1/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]133;C]133;D[?25l[7;1Hclaude: red[K
+Sautéed for 2s · done 4:13 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$]0;✳ Single word reply[?25h  Reply with the single word blue.]0;◐ Single word reply[?25l[9;1Hyou: Reply with the single word blue.[K
+Hyperspacing…   ( running UserPromptSubmit hooks… 0/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h[?25l[10;1HHyperspacing…   ( running UserPromptSubmit hooks… 1/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]133;A;redraw=0[?25l[10;1HHyperspacing…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Single word reply]0;◐ Single word reply[?25l[10;14H   ( running Stop hooks… 0/2 )[13;2H[?25h[?25l[10;1HHyperspacing…   ( running Stop hooks… 1/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]133;C]133;D[?25l[10;1HBrewed for 2s · done 4:13 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[K]0;✳ Single word reply[?25h[?25l[10;1Hclaude: blue[K
+Brewed for 2s · done 4:13 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[?25h[?25l[13;1H$[K
+[K[13;2H[?25h[?25l[12;1H/compact                            Free up context by summarizing the conversation so far[K
+/autocompact                        Set how full the context gets before auto-summarizing[K
+/computer-use                       Read this skill before the first step of any request to do something in an app on the person's own computer (Notes, Finder, System Settings, any desktop app), to look at their screen, or for "computer
+                                    use". Computer use (desktop control) lets Claude take screenshots of the person's desktop and control it with clicks, typing and scrolling through the Claude desktop app; its tools are named mcp__com…[37;1H$  /compact[?25h]133;A;redraw=0]0;◐ Single word reply[?25l[12;1Hyou: /compact[K
+Running PreCompact hooks…   ( running PreCompact hooks… 0/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[15;2H[?25h[?25l[13;1HRunning PreCompact hooks…   ( running PreCompact hooks… 1/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[?25h[?25l[13;1HCompacting conversation…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[?25h]0;◑ Single word reply]0;◐ Single word reply]0;◑ Single word reply]0;◐ Single word reply]0;◑ Single word reply[?25l[13;1HRunning SessionStart hooks…   ( running SessionStart hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[?25h[?25l[13;1HRunning PostCompact hooks…   ( running PostCompact hooks… 0/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[?25h[?25l[13;1HRunning PostCompact hooks…   ( running PostCompact hooks… 1/2 )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[?25h]133;C]133;D]0;✳ Single word reply[?25l[6;1HConversation compacted (ctrl+o for the summary)[K
+Earlier messages are saved in ~\.claude\projects\C--xxxxx-xxxx-AppData-Local-Temp-claude-4d1aa98d0cd8ebcc-46368cbc-93dc-4f7e-972b-6d2d2495d133-scratchpad-design-runs-r3-e\76b33c76-13a3-4010-bb38-b54e71ef06ca.jsonl[K
+claude: blue[K
+Brewed for 2s · done 4:13 PM[K
+you: /compact[K
+Compacted (ctrl+o to see full summary)[K
+PreCompact [C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\probe\bin\probe.exe relay 62586 PreCompact] completed successfully[K
+PreCompact [http://127.0.0.1:62586/hook/PreCompact?via=http] completed successfully[K
+PostCompact [C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\probe\bin\probe.exe relay 62586 PostCompact] completed successfully[K
+PostCompact [http://127.0.0.1:62586/hook/PostCompact?via=http] completed successfully[K
+auto mode on (shift+tab to cycle)
+$[?25h[?2004h[?25l[16;1H/exit                               Exit the CLI[K
+/context                            Visualize current context usage as a colored grid[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[41;1H$  /exit[?25h]0;◑ Single word reply[?25l[16;1Hyou: /exit[K
+Osmosing…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[19;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume 76b33c76-13a3-4010-bb38-b54e71ef06ca
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Single word reply[?9001l[?1004l

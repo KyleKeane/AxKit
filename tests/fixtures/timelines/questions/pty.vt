@@ -1,0 +1,193 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[>0q[?u]7501;?[?25lPermission Required: Accessing workspace:
+C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r2\c1
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[9;12H[?25h y[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?2004h[?2031h[?1004h[?25l[2;1H]0;✳ Claude Code[?25hClaude Code v2.1.325
+Haiku 5.5 · Claude Ultra
+~\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r2\c1
+Debug mode enabled · logging to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r2\c1-out\claude-debug.txt
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q  Use the AskUserQuestion tool to ask me which of red, green or blue I prefer, then reply with my answer in one word.]0;◐ Claude Code[?25l[6;1Hyou: Use the AskUserQuestion tool to ask me which of red, green or blue I prefer, then reply with my answer in one word.[K
+Wandering…   ( running UserPromptSubmit hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]133;A;redraw=0[?25l[7;1HWandering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Claude Code]0;◑ Color preference question[?25l[7;1HSpinning…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[7;10H   ( running PreToolUse hook )[10;2H[?25h[?25l[7;1HQuestion: Color[K
+> Which of these colors do you prefer: red, green, or blue?[K
+1. Red — Choose red as your preferred color.[K
+2. Green — Choose green as your preferred color.[K
+3. Blue — Choose blue as your preferred color.
+4. Other
+5. Chat about this
+Select with numbers [1-5]. Then Enter to submit or Escape to cancel:[1C]0;✳ Color preference question[?25h 2]0;◐ Color preference question[?25l[7;1HSpinning…   ( running PostToolUse hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K[10;2H[?25h[?25l[7;1HSpinning…   ( running PostToolBatch hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[7;1HSpinning…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[7;1H●  User answered Claude's questions:[K
+· Which of these colors do you prefer: red, green, or blue? → Green[K
+Spinning…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◑ Color preference question[?25l[9;10H   ( running Stop hook )[12;2H[?25h]133;C]133;D[?25l[9;1Hclaude: Green[K
+Churned for 3s · done 4:15 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$]0;✳ Color preference question[?25h  Use the AskUserQuestion tool once, with two questions in that one call: which of red, green or blue I prefer, and which of apple or pear I prefer. Then reply with my two answers in two words.]0;◑ Color preference question[?25l[11;1Hyou: Use the AskUserQuestion tool once, with two questions in that one call: which of red, green or blue I prefer, and which of apple or pear I prefer. Then reply with my two answers in two words.[K
+Unfurling…   ( running UserPromptSubmit hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]133;A;redraw=0[?25l[12;1HUnfurling…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◐ Color preference question]0;◑ Color preference question[?25l[12;11H   ( running PreToolUse hook )[15;2H[?25h]0;✳ Color preference question[?25l[12;1HQuestions: Color, Fruit[K
+> Which of these colors do you prefer: red, green, or blue?[K
+1. Red — Choose red as your preferred color.[K
+2. Green — Choose green as your preferred color.[K
+3. Blue — Choose blue as your preferred color.
+4. Other
+5. Chat about this
+Select with numbers [1-5]. Then Enter to submit or Escape to cancel:[1C[?25h 1[?25l[12;1HQuestions: Color (answered), Fruit[K
+> Which of these fruits do you prefer: apple or pear?[K
+1. Apple — Choose apple as your preferred fruit.[K
+2. Pear — Choose pear as your preferred fruit.[K
+3. Other[K
+4. Chat about this[K
+Select with numbers [1-4]. Then Enter to submit or Escape to cancel:[K
+[K[18;70H[?25h 2[?25l[12;1HQuestions: Color (answered), Fruit (answered)[K
+Review your answers[K
+> Which of these colors do you prefer: red, green, or blue?[K
+→ Red[K
+> Which of these fruits do you prefer: apple or pear?[K
+→ Pear[K
+Ready to submit your answers?[K
+y. Submit answers
+n. Cancel
+Enter y/n:[1C[?25h y]0;◑ Color preference question[?25l[12;1HUnfurling…   ( running PostToolUse hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K[15;2H[?25h[?25l[12;1HUnfurling…   ( running PostToolBatch hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[12;1H●  User answered Claude's questions:[K
+· Which of these colors do you prefer: red, green, or blue? → Red[K
+· Which of these fruits do you prefer: apple or pear? → Pear[K
+Unfurling…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+effort: medium · /effort
+$[?25h]0;◐ Color preference question[?25l[15;11H   ( running Stop hook )[18;2H[?25h]133;C]133;D[?25l[15;1Hclaude: Red Pear[K
+Churned for 3s · done 4:15 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$]0;✳ Color preference question[?25h  Use the AskUserQuestion tool with multiSelect set to true to ask me which of red, green and blue I like. Then reply with my answers.]0;◐ Color preference question[?25l[17;1Hyou: Use the AskUserQuestion tool with multiSelect set to true to ask me which of red, green and blue I like. Then reply with my answers.[K
+Sketching…   ( running UserPromptSubmit hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]133;A;redraw=0[?25l[18;1HSketching…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Color preference question]0;◐ Color preference question[?25l[18;11H   ( running PreToolUse hook )[21;2H[?25h]0;✳ Color preference question[?25l[18;1HQuestion: Colors[K
+> Which of these colors do you like: red, green, or blue? (Select all that apply.)[K
+1. Red — You like red.[K
+2. Green — You like green.[K
+3. Blue — You like blue.
+4. Other
+Select with numbers [1-4] (comma- or space-separated for several). Then Enter to Submit or Escape to cancel:[1C[?25h 1,3[?25l[18;1HQuestion: Colors (answered)[K
+> Which of these colors do you like: red, green, or blue? (Select all that apply.)[K
+1. (selected) Red — You like red.[K
+2. Green — You like green.[K
+3. (selected) Blue — You like blue.[K
+4. Other[K
+Select with numbers [1-4] (comma- or space-separated for several). Then Enter to Submit, bare Enter for defaults, or Escape to cancel:[K[1C[?25h[?25l[19;1HReview your answers[K
+> Which of these colors do you like: red, green, or blue? (Select all that apply.)[K
+→ Red, Blue[K
+Ready to submit your answers?[K
+y. Submit answers[K
+n. Cancel[K
+Enter y/n:[1C[?25h y]0;◐ Color preference question[?25l[18;1HSketching…   ( running PostToolUse hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K[21;2H[?25h[?25l[18;1HSketching…   ( running PostToolBatch hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[18;1HSketching…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[18;1H●  User answered Claude's questions:[K
+· Which of these colors do you like: red, green, or blue? (Select all that apply.) → Red, Blue[K
+Sketching…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◑ Color preference question[?25l[20;11H   ( running Stop hook )[23;2H[?25h]133;C]133;D]0;✳ Color preference question[?25l[20;1Hclaude: You like red and blue.[K
+Baked for 3s · done 4:16 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[?25h[?25l[22;1H/exit                               Exit the CLI[K
+/context                            Visualize current context usage as a colored grid[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[K[47;1H$  /exit[?25h]0;◑ Color preference question[?25l[22;1Hyou: /exit[K
+Newspapering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[26;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume 503a7fd5-88f0-49a2-83f4-34e9c818d06c
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Color preference question[?9001l[?1004l

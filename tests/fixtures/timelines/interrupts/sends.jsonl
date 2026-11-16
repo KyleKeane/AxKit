@@ -1,0 +1,8 @@
+{"t":3443.9,"kind":"message","text":"Write a story of 600 words about a lighthouse keeper."}
+{"t":5753.2,"kind":"key","name":"Escape"}
+{"t":15759.1,"kind":"message","text":"Write a story of 600 words about a lighthouse keeper."}
+{"t":17664.6,"kind":"key","name":"Escape"}
+{"t":27674.5,"kind":"message","text":"Use the Bash tool to run: ping -n 12 127.0.0.1. Then reply with the single word done."}
+{"t":31672.2,"kind":"key","name":"Escape"}
+{"t":41682.8,"kind":"text","text":"/exit"}
+{"t":41983.5,"kind":"key","name":"Enter"}

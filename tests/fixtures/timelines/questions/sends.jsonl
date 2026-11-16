@@ -1,0 +1,21 @@
+{"t":2790.4,"kind":"key","name":"y"}
+{"t":3092.5,"kind":"key","name":"Enter"}
+{"t":6118.9,"kind":"message","text":"Use the AskUserQuestion tool to ask me which of red, green or blue I prefer, then reply with my answer in one word."}
+{"t":10169.2,"kind":"key","name":"2"}
+{"t":10470.7,"kind":"key","name":"Enter"}
+{"t":15096.9,"kind":"message","text":"Use the AskUserQuestion tool once, with two questions in that one call: which of red, green or blue I prefer, and which of apple or pear I prefer. Then reply with my two answers in two words."}
+{"t":19149.9,"kind":"key","name":"1"}
+{"t":19450.8,"kind":"key","name":"Enter"}
+{"t":20952.8,"kind":"key","name":"2"}
+{"t":21252.9,"kind":"key","name":"Enter"}
+{"t":22753.6,"kind":"key","name":"y"}
+{"t":23055.7,"kind":"key","name":"Enter"}
+{"t":27440.9,"kind":"message","text":"Use the AskUserQuestion tool with multiSelect set to true to ask me which of red, green and blue I like. Then reply with my answers."}
+{"t":32082.8,"kind":"key","name":"1"}
+{"t":32383.4,"kind":"key","name":","}
+{"t":32684.4,"kind":"key","name":"3"}
+{"t":32984.6,"kind":"key","name":"Enter"}
+{"t":34485.3,"kind":"key","name":"y"}
+{"t":34786.9,"kind":"key","name":"Enter"}
+{"t":39207.9,"kind":"text","text":"/exit"}
+{"t":39508.5,"kind":"key","name":"Enter"}

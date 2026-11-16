@@ -148,3 +148,14 @@ page by hand; run its script and commit the page.
   Without the key or its backup, no sealed report can be read.
 - `tools/PtyCapture`: records Claude Code's screen stream for a fixture (`--dump` reads a recording with personal data
   replaced; never `--raw`). The `record-fixture` skill has the steps.
+- `tools/ClaudeProbe` (built into a scratch folder: `dotnet build tools\ClaudeProbe -c Release -o <folder>`, then
+  `dotnet build-server shutdown`): the measuring tool of axClaude's events (`docs/axClaude/events-and-grounding.md`
+  EG-11.4), never shipped and never started by axKit; while a recording runs it listens on 127.0.0.1 for the hooks it
+  measures. `run <config.json>` records one live session of Claude Code (the console stream, every hook event, every
+  line of the session file, on one clock) into a scratch folder; `timeline <run folder>` prints the streams merged by
+  time and `shape <run folder>` the fields of the events and entries, the profile folder, e-mail addresses and the
+  account name replaced; `settings <config.json>` prints the hooks a configuration gives; `keys` the key names of a
+  script; `fixture <run folder> <fixture folder>` makes a run a timeline fixture through the whitelist of EG-11.1,
+  printing counts and "written", or refusing it (exit code 4) when it still holds an e-mail address, an account path
+  or the account's name. Its `README.md` has the configuration and the script; the `record-fixture` skill the steps
+  of a timeline.

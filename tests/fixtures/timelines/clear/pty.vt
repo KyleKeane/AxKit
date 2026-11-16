@@ -1,0 +1,121 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[?25lPermission Required: Accessing workspace:
+C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r3\d0
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[9;12H[?25h[>0q[?u]7501;? y[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?2004h[?2031h[?1004h[?25l[2;1H]0;✳ Claude Code[?25hClaude Code v2.1.325
+Haiku 5.5 · Claude Ultra
+~\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r3\d0
+Debug mode enabled · logging to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r3\d0-out\claude-debug.txt
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q[?25l[6;1H/hooks                              View hook configurations for tool events[K
+/update-config                      Change settings: hooks, permissions, environment variables[K
+/doctor                             Health-check your setup and fix issues: installation, unused extensions, duplicated or bloated memory files, slow hooks, updates, permissions[K
+/plugin-authoring                   Write a mod: a live pane, view or behaviour change in Claude Code[31;1H$  /hooks[?25h[?25l[6;1Hyou: /hooks[K
+Hooks[K
+no hooks yet[K
+This menu is read-only. To add or change a hook, edit settings.json or ask Claude. Learn more[K
+1. All events[K
+Select with numbers [1-1]. Then Enter to submit:[K
+Esc to close[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[11;50H[?25h]133;A;redraw=0]133;C]133;D[?25l[7;1HHooks dialog dismissed[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[K
+[K
+[K[10;2H[?25h[?25l[8;1H/clear                              Start a new session with empty context; previous session stays on disk (resumable with /resume)[K
+[K
+[K[33;1H$  /clear[?25h]0;◐ Claude Code[?25l[8;1Hyou: /clear[K
+Meandering…   ( running SessionEnd hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[12;2H[?25h]133;A;redraw=0]133;C]133;D]0;✳ Claude Code[?25l[6;1Hyou: /clear[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K[9;2H[?25h[?2004h[?25l[7;1H/exit                               Exit the CLI[K
+/context                            Visualize current context usage as a colored grid[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[K[32;1H$  /exit[?25h]0;◐ Claude Code[?25l[7;1Hyou: /exit[K
+Mustering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[11;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume 6a1ed97c-c737-4897-ac05-0161199ac842
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Claude Code[?9001l[?1004l

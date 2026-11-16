@@ -1,6 +1,6 @@
 ---
 name: record-fixture
-description: Record a new ConPTY fixture of Claude Code in screen reader mode with tools/PtyCapture, review it for personal data, and add it to tests/fixtures with an expected transcript. Use when a parser bug needs a reproduction or a new Claude Code version needs pinning.
+description: Record a new ConPTY fixture of Claude Code in screen reader mode with tools/PtyCapture, review it for personal data, and add it to tests/fixtures with an expected transcript. Use when a parser bug needs a reproduction or a new Claude Code version needs pinning; also for a timeline fixture (hook events and the session file on one clock) made with tools/ClaudeProbe.
 ---
 
 # Record a fixture
@@ -34,3 +34,15 @@ When to record one: a parser bug that needs a reproduction, and every Claude Cod
 4. Copy the `.vt` file to `tests/fixtures/`, name it `<topic>-claude<version>-<cols>x<rows>.vt`, and add its expected transcript `<same name>.expected.txt` produced by the parser once it exists (review the transcript by hand the first time).
 
 5. Add a line to `tests/fixtures/README.md` with the date, Claude Code version, script used and what the fixture demonstrates. Commit fixture and expected file together.
+
+## A timeline with events and the session file
+
+A timeline fixture (`tests/fixtures/timelines/<name>/`, `docs/axClaude/events-and-grounding.md` EG-11.1) holds the console stream, Claude Code's hook events, the session file's entries and what was sent, on one clock, for the replayer. It is recorded with `tools/ClaudeProbe` (its `README.md` has the configuration, the script steps and the rules), never with PtyCapture.
+
+1. Build the tool into a scratch folder, then shut the build servers down: `dotnet build tools\ClaudeProbe -c Release -o <scratch>\claude-probe` and `dotnet build-server shutdown`.
+2. Write a configuration in the scratchpad: `cwd` a fresh folder under `C:\Temp\axclaude-fixture`, `out` a folder beside it, the model Haiku, the hook plan, and a script that answers the trust question conditionally. Nothing that prints the account (`/status`, `/usage`, `/cost`). One live session at a time.
+3. Record: `<scratch>\claude-probe\ClaudeProbe.exe run <config.json>`.
+4. Read what happened with `ClaudeProbe.exe timeline <out>` (and `shape <out>`), which replace the profile folder, e-mail addresses and the account name in what they print. Never print a run's files themselves: they are not redacted.
+5. Make the fixture: `ClaudeProbe.exe fixture <out> tests\fixtures\timelines\<name>`. It prints counts and "written", or "refused" with the file and what it held in numbers, and then has deleted what it wrote. A refused run is recorded again; the fixture is never edited by hand.
+6. Read the stream with `dotnet run --project tools/PtyCapture -- --dump tests\fixtures\timelines\<name>\pty.vt` and look for anything personal the check cannot know (a name in a reply, a file's content).
+7. Add the fixture's row to `tests/fixtures/timelines/README.md`. Its `expected.txt` comes from the replayer's tests (`AXCLAUDE_UPDATE_EXPECTED=1`), reviewed by hand the first time.

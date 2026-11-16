@@ -1,0 +1,2 @@
+{"t":1733.9,"event":{"hook_event_name":"SessionStart","session_id":"49963d08-c091-4d51-aa2d-0abc543a088e","transcript_path":"C:\\xxxxx\\xxxx\\.claude\\projects\\C--xxxxx-xxxx-AppData-Local-Temp-claude-4d1aa98d0cd8ebcc-46368cbc-93dc-4f7e-972b-6d2d2495d133-scratchpad-design-runs-r2-b1\\49963d08-c091-4d51-aa2d-0abc543a088e.jsonl","source":"startup"}}
+{"t":42081.8,"event":{"hook_event_name":"SessionEnd","session_id":"49963d08-c091-4d51-aa2d-0abc543a088e","prompt_id":"a892cb01-3a3a-4cea-ad89-06d8108e9925","reason":"prompt_input_exit"}}

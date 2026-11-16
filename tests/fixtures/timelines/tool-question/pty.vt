@@ -1,0 +1,115 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[>0q[?u]7501;?[?25lPermission Required: Accessing workspace:
+C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b1b
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[9;12H[?25h y[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?2004h[?2031h[?1004h[?25l[2;1H]0;✳ Claude Code[?25hClaude Code v2.1.325
+Haiku 5.5 · Claude Ultra
+~\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b1b
+manual mode on
+effort: medium · /effort
+$[>0q  Use the Bash tool to run: echo hi > hi.txt. Then reply with the single word finished.]0;◐ Claude Code[?25l[5;1Hyou: Use the Bash tool to run: echo hi > hi.txt. Then reply with the single word finished.[K
+Doing…   ( running UserPromptSubmit hook )[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]133;A;redraw=0[?25l[6;1HDoing…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Claude Code]0;◑ Write hi.txt file[?25l[6;1HPolishing…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◐ Write hi.txt file[?25l[6;11H   ( running PreToolUse hook )[9;2H[?25h]0;✳ Write hi.txt file[?25l[6;1HPermission Required: Bash command[K
+Tip: auto mode handles these prompts for you — choose "switch to auto mode" below[K
+> Write "hi" into hi.txt in the working directory[K
+> echo hi > hi.txt[K
+Do you want to proceed?
+1. Yes
+2. Yes, and always allow access to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b1b from this project
+3. Yes, and switch to auto mode — · auto mode handles these prompts for you
+4. No
+Select with numbers [1-4]. Then Enter to submit or Escape to cancel:
+Esc to cancel[15;70H[?25h[?25l[6;1Htool: Bash (echo hi > hi.txt)[K
+Waiting…[K
+Permission Required: Bash command[K
+Tip: auto mode handles these prompts for you — choose "switch to auto mode" below[K
+> Write "hi" into hi.txt in the working directory[K
+> echo hi > hi.txt[K
+Do you want to proceed?[K
+1. Yes[K
+2. Yes, and always allow access to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b1b from this project[K
+3. Yes, and switch to auto mode — · auto mode handles these prompts for you[K
+4. No[K
+Select with numbers [1-4]. Then Enter to submit or Escape to cancel:
+Esc to cancel[17;70H[?25h[?2004h 1]0;◐ Write hi.txt file[?25l[7;1HRunning…[K
+Polishing…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[11;2H[?25h]0;◑ Write hi.txt file[?25l[8;11H   ( running PostToolUse hook )[11;2H[?25h[?25l[7;1HWaiting…[K
+Polishing…   ( running PostToolBatch hook )[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[8;1HPolishing…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h[?25l[7;1HShell cwd was reset to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\b1b[K
+Polishing…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◐ Write hi.txt file[?25l[8;11H   ( running Stop hook )[11;2H[?25h]133;C]133;D[?25l[8;1Hclaude: finished[K
+Polishing…   ( running Stop hook )[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[?25h]0;✳ Write hi.txt file[?25l[9;1HChurned for 5s · done 4:11 PM[K
+manual mode on[K
+effort: medium · /effort[K
+$[K[?25h[?2004h[?25l[10;1H/exit                               Exit the CLI[K
+/context                            Visualize current context usage as a colored grid[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[K[35;1H$  /exit[?25h]0;◐ Write hi.txt file[?25l[10;1Hyou: /exit[K
+Metamorphosing…[K
+manual mode on  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[14;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume e9ca636f-a29e-442a-96f9-3f193620b2ab
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Write hi.txt file[?9001l[?1004l

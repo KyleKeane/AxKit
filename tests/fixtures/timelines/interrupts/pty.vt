@@ -1,0 +1,77 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h]0;✳ Claude CodeClaude Code v2.1.325
+Haiku 5.5 · Claude Ultra
+~\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r2\b1
+Debug mode enabled · logging to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r2\b1-out\claude-debug.txt
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q[?u]7501;?  Write a story of 600 words about a lighthouse keeper.]0;◐ Claude Code[?25l[6;1Hyou: Write a story of 600 words about a lighthouse keeper.[K
+Actioning…   ( running UserPromptSubmit hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]133;A;redraw=0[?25l[7;1HActioning…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Claude Code]0;◑ Lighthouse keeper story[?25l[7;1HGitifying…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◐ Lighthouse keeper story]133;C]133;D]0;✳ Lighthouse keeper story[?25l[7;1Hclaude: The Last Light at Gannet Rock[K
+Interrupted  · What should Claude do instead?[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[?25h[?25l[10;1H$[K
+[K[10;2H[?25h[?2004h  Write a story of 600 words about a lighthouse keeper.]0;◐ Lighthouse keeper story[?25l[9;1Hyou: Write a story of 600 words about a lighthouse keeper.[K
+Churning…   ( running UserPromptSubmit hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+$[?25h]133;A;redraw=0[?25l[10;1HChurning…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[?25h]0;◑ Lighthouse keeper story]133;C]133;D[?25l[10;1Hclaude: The Last Light at Gannet Rock[K
+Interrupted  · What should Claude do instead?[K
+auto mode on (shift+tab to cycle)[K
+$]0;✳ Lighthouse keeper story[?25h[?2004h  Use the Bash tool to run: ping -n 12 127.0.0.1. Then reply with the single word done.]0;◑ Lighthouse keeper story[?25l[12;1Hyou: Use the Bash tool to run: ping -n 12 127.0.0.1. Then reply with the single word done.[K
+Considering…   ( running UserPromptSubmit hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+$[?25h]133;A;redraw=0[?25l[13;1HConsidering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[?25h]0;◐ Lighthouse keeper story[?25l[13;13H   ( running PreToolUse hook )[15;2H[?25h[?25l[13;1HConsidering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K[?25h[?25l[13;1Htool: Bash (ping -n 12 127.0.0.1)[K
+Running…[K
+Considering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+$]0;◑ Lighthouse keeper story[?25h]0;◐ Lighthouse keeper story]0;◑ Lighthouse keeper story]0;✳ Lighthouse keeper story[?25l[15;1Hauto mode on (shift+tab to cycle)[K
+$[K
+[K[16;2H[?25h]133;C]133;D[?25l[13;1Htool error: Bash (ping -n 12 127.0.0.1)[K
+Interrupted  · What should Claude do instead?[K
+auto mode on (shift+tab to cycle)[K
+$[K[?25h[?2004h[?25l[15;1H/exit                               Exit the CLI[K
+/context                            Visualize current context usage as a colored grid[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[40;1H$  /exit[?25h]0;◑ Lighthouse keeper story[?25l[15;1Hyou: /exit[K
+Finagling…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[18;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume 49963d08-c091-4d51-aa2d-0abc543a088e
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Lighthouse keeper story[?9001l[?1004l

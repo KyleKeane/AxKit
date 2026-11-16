@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- A measuring tool of the repository, never shipped and never started by axKit (docs/axClaude/events-and-grounding.md
+       EG-11.4, EG-D-15): Claude Code under axKit's own pseudo console pieces, hooks registered for one session through
+       the settings option, three streams on one clock; and the whitelist that makes a recording a timeline fixture
+       (EG-11.1). README.md says how to run it. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(AxKitDotNet)</TargetFramework>
+    <AssemblyName>ClaudeProbe</AssemblyName>
+    <RootNamespace>Probe</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- The relay mode is started once per command hook: a little less to do at its start. -->
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- PtyHost, ClaudeCodeProgram, Redaction, the screen and the lines. -->
+    <ProjectReference Include="..\..\src\AxKit.Core\AxKit.Core.csproj" />
+    <!-- ClaudeLauncher, SessionModel, ClaudeCodeKeys. -->
+    <ProjectReference Include="..\..\src\AxClaude.Core\AxClaude.Core.csproj" />
+  </ItemGroup>
+
+</Project>

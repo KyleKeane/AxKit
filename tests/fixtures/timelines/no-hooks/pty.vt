@@ -1,0 +1,77 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[>0q[?u]7501;?[?25lPermission Required: Accessing workspace:
+C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\g
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[9;12H[?25h y[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?2004h[?2031h[?1004h[?25l[2;1H]0;✳ Claude Code[?25hClaude Code v2.1.325
+Haiku 5.5 · Claude Ultra
+~\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r1\g
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q  Reply with the single word ok.]133;A;redraw=0]0;◐ Claude Code[?25l[5;1Hyou: Reply with the single word ok.[K
+Ideating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◑ Claude Code]0;◑ Single word reply]133;C]133;D[?25l[6;1Hclaude: ok[K
+Worked for 1s · done 4:19 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$]0;✳ Single word reply[?25h  Reply with the single word ok.]133;A;redraw=0]0;◑ Single word reply[?25l[8;1Hyou: Reply with the single word ok.[K
+Forming…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]0;◐ Single word reply]133;C]133;D[?25l[9;1Hclaude: ok[K
+Cogitated for 1s · done 4:19 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$]0;✳ Single word reply[?25h[?25l[12;1H$[K
+[K[12;2H[?25h  Reply with the single word ok.]133;A;redraw=0]0;◐ Single word reply[?25l[11;1Hyou: Reply with the single word ok.[K
+Kneading…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+$[?25h]0;◑ Single word reply]133;C]133;D[?25l[12;1Hclaude: ok[K
+Cooked for 1s · done 4:19 PM[K
+auto mode on (shift+tab to cycle)[K
+$]0;✳ Single word reply[?25h[?25l[14;1H/exit                               Exit the CLI[K
+/context                            Visualize current context usage as a colored grid[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[39;1H$  /exit[?25h]0;◑ Single word reply[?25l[14;1Hyou: /exit[K
+Cerebrating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[17;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume d6e985db-ab5f-4e26-9d96-4b99cfd56706
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Single word reply[?9001l[?1004l

@@ -1,0 +1,6 @@
+{"t":2745.2,"kind":"key","name":"y"}
+{"t":3047.3,"kind":"key","name":"Enter"}
+{"t":5162.1,"kind":"message","text":"Write 40 numbered lines, each one short sentence about lighthouses. Do not use any tools."}
+{"t":17268.8,"kind":"message","text":"Without using any tools, reply in Markdown with exactly these parts in this order: a level 1 heading; a level 2 heading; a bulleted list of three items; a numbered list of three items; one sentence with a bold word, an italic word and an inline code span; a fenced Python code block of exactly three lines; a second level 2 heading; a table of two columns and three rows under its header row; one sentence with a link to https://example.com; a block quote; and one paragraph of more than 300 characters about lighthouses."}
+{"t":26404.6,"kind":"text","text":"/exit"}
+{"t":26731.5,"kind":"key","name":"Enter"}

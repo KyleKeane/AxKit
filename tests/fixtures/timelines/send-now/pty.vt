@@ -1,0 +1,89 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[?25lPermission Required: Accessing workspace:
+C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r2\a4
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[9;12H[?25h[>0q[?u]7501;? y[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?2004h[?2031h[?1004h[?25l[2;1H]0;✳ Claude Code[?25hClaude Code v2.1.325
+Haiku 5.5 · Claude Ultra
+~\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r2\a4
+Debug mode enabled · logging to C:\xxxxx\xxxx\AppData\Local\Temp\claude\4d1aa98d0cd8ebcc\46368cbc-93dc-4f7e-972b-6d2d2495d133\scratchpad\design\runs\r2\a4-out\claude-debug.txt
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q  Write a story of 600 words about a lighthouse keeper.]0;◐ Claude Code[?25l[6;1Hyou: Write a story of 600 words about a lighthouse keeper.[K
+Calculating…   ( running UserPromptSubmit hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort
+$[?25h]133;A;redraw=0[?25l[7;1HCalculating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Claude Code]0;◑ Lighthouse keeper story[?25l[8;1Hauto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$  Reply with the single word second.[K[?25h[?25l[7;1Hyou: Reply with the single word second.[K
+Calculating…   ( running UserPromptSubmit hook )[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[?25h[?25l[8;1Hctrl+x ctrl+s to send now[K
+Calculating…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[?25h[?25l[9;1HPuttering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K[?25h]0;◐ Lighthouse keeper story]133;C]133;D]0;✳ Lighthouse keeper story]0;◐ Lighthouse keeper story[?25l[8;1HFluttering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[K
+[K[11;2H[?25h]133;A;redraw=0[?25l[7;1Hclaude: The Keeper of Halden Point[K
+you: Reply with the single word second.[K
+Fluttering…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+effort: medium · /effort[K
+$[?25h]0;◑ Lighthouse keeper story]0;◐ Lighthouse keeper story[?25l[9;12H   ( running Stop hook )[12;2H[?25h]133;C]133;D]0;✳ Lighthouse keeper story[?25l[9;1Hclaude: second[K
+Cooked for 2s · done 4:11 PM[K
+auto mode on (shift+tab to cycle)[K
+effort: medium · /effort[K
+$[?25h[?25l[12;1H$[K
+[K[12;2H[?25h[?2004h[?25l[11;1H/exit                               Exit the CLI[K
+/context                            Visualize current context usage as a colored grid[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[36;1H$  /exit[?25h]0;◐ Lighthouse keeper story[?25l[11;1Hyou: /exit[K
+Clauding…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[14;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume c8ce8fa6-61e5-40da-a3a0-a5f3021c0b1a
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Lighthouse keeper story[?9001l[?1004l

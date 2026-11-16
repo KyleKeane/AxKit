@@ -1,0 +1,15 @@
+{"t":5545.4,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"file-history-snapshot"}}
+{"t":5676.9,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"user","uuid":"013b2603-40e0-4627-916e-ba41a37a1f47","promptId":"30e79c93-c908-4c51-9fd4-8eefb301b363","promptSource":"typed","timestamp":"2026-11-16T00:09:31.261Z","isSidechain":false,"message":{"content":"Reply with the single word banana."}}}
+{"t":5676.9,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"api-request-blob"}}
+{"t":5676.9,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"api-request-blob"}}
+{"t":5676.9,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"api-request"}}
+{"t":5676.9,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"attachment"}}
+{"t":7232.2,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"assistant","uuid":"53f6879e-0d12-4052-abd3-113104131dc0","timestamp":"2026-11-16T00:09:33.113Z","isSidechain":false,"message":{"id":"msg_011Ch5dpQkaaMUCRiQYMDQdB","stop_reason":"end_turn","content":[{"type":"text","text":"banana"}]}}}
+{"t":7367.6,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"system","subtype":"stop_hook_summary","uuid":"d9628f1b-bbfc-4639-923d-721ad45b6fcf"}}
+{"t":7367.6,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"system","subtype":"turn_duration","uuid":"b432f0aa-c7f2-49d1-bd40-f7ccf9f6e27b","durationMs":2065}}
+{"t":10761.7,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"file-history-snapshot"}}
+{"t":10775,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"user","uuid":"7d878ac9-6aeb-4b09-b7ad-5b8851305390","promptId":"8f01dbf0-53c7-40c1-9df5-d849fea38f8a","timestamp":"2026-11-16T00:09:36.791Z","isSidechain":false,"isMeta":true,"message":{"content":""}}}
+{"t":10775,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"user","uuid":"411fd907-7e5c-4ad5-97f5-403e45f9b286","promptId":"8f01dbf0-53c7-40c1-9df5-d849fea38f8a","timestamp":"2026-11-16T00:09:36.789Z","isSidechain":false,"message":{"content":"<command-name>"}}}
+{"t":10775,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"user","uuid":"bb455962-40bc-47ee-9666-4b09e670c4c2","promptId":"8f01dbf0-53c7-40c1-9df5-d849fea38f8a","timestamp":"2026-11-16T00:09:36.789Z","isSidechain":false,"message":{"content":"<local-command-stdout>"}}}
+{"t":10786.1,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"last-prompt"}}
+{"t":10797.4,"session":"03829094-55e6-4477-998c-1ea383c04c89","entry":{"type":"cost-state"}}

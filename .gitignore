@@ -31,6 +31,9 @@ captures/
 *.vt.chunks.txt
 !tests/fixtures/*.vt
 !tests/fixtures/*.vt.chunks.txt
+# The timeline fixtures' streams, masked and checked by tools/ClaudeProbe's whitelist (tests/fixtures/timelines/README.md).
+!tests/fixtures/timelines/*/pty.vt
+!tests/fixtures/timelines/*/pty.vt.chunks.txt
 
 ## AxClaude's own saved files and logs
 axClaude-*.txt

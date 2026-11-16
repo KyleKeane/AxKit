@@ -34,6 +34,10 @@ Review every recording before committing it: the session header names the accoun
 
 `*.vt.chunks.txt` next to a recording lists the chunk boundaries (`offset length elapsedMs`), so a test can replay a recording chunk by chunk with the app's timing and its `Send` calls: `ReplayTests` (`long-message`, `steering`), `QuestionTests` (`model-picker`, `permission-prompt`, `several-questions`, `other-answer`, `wrapped-answers`) `FeedbackCardTests` (`feedback-card`) and `SurveyTests` (`survey`). The `background` and `tasks-screen` chunk files are read by no test and stay as provenance.
 
+## Timelines
+
+`timelines/<name>/` holds recorded sessions on one clock: the console stream, the hook events, the session file's entries and what the script sent (`docs/axClaude/events-and-grounding.md` EG-11.1; `timelines/README.md` lists them). They are made by `tools/ClaudeProbe fixture` through its whitelist, which also masks the account's, the computer's and the domain's names in the stream length for length, so that no position moves, and refuses a run that still holds an e-mail address, an account path or one of those names. That masking by the tool is the one exception to "never edit bytes" above: it keeps every position, and it is checked by the tool after. A timeline is never masked or changed by hand.
+
 ## Other fixtures
 
 - `picture-text.png` (2026-11-09): a picture drawn with two lines of text, "Hello from axKit" and "Second line 2026", for axPreview's picture renderer (`tests/AxPreview.Tests/PictureTextTests`): Windows' reader must find both lines when this Windows has a recognition language.
