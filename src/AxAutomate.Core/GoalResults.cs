@@ -6,7 +6,14 @@ namespace AxAutomate.Core;
 /// it failed after the steps) and the words the report gives after its title: "at line 39", or "after the steps: "
 /// and the first problem.
 /// </summary>
-public sealed record GoalResult(Goal Goal, string Outcome, int FailedLine, string Detail);
+public sealed record GoalResult(Goal Goal, string Outcome, int FailedLine, string Detail)
+{
+    /// <summary>The section's input steps that were played, counted only in the AI tools mode (WF-9.5); 0 otherwise.</summary>
+    public int Inputs { get; init; }
+
+    /// <summary>Those of <see cref="Inputs"/> that went through the AI tools (WF-9.4).</summary>
+    public int ToolInputs { get; init; }
+}
 
 /// <summary>
 /// Which sections of a script passed, failed and were not run (WF-3.9), and the report's lines of them (WF-3.10,
@@ -84,7 +91,9 @@ public static class GoalResults
     /// The report's lines after the last step (section 5.1, from "Goals:" on): when the setup failed (at
     /// <paramref name="setupFailedLine"/>, 0 when it did not), "The setup failed at line n" first; then the counts; then
     /// one line per section in the script's order: two spaces, the result in a column of nine characters, the title (a
-    /// check's after "check: "), and for a failed one its detail after a comma.
+    /// check's after "check: "), and for a failed one its detail after a comma. A section whose inputs were counted
+    /// (the AI tools mode, WF-9.5) ends ", through the AI tools: n of m inputs"; one with no input played says nothing
+    /// of them.
     /// </summary>
     public static IReadOnlyList<string> Lines(IReadOnlyList<GoalResult> results, int setupFailedLine)
     {
@@ -100,7 +109,9 @@ public static class GoalResults
             var outcome = result.Outcome == Failed ? "FAILED" : result.Outcome;
             var title = result.Goal.Check ? "check: " + result.Goal.Title : result.Goal.Title;
             var detail = result.Outcome == Failed && result.Detail.Length > 0 ? ", " + result.Detail : string.Empty;
-            lines.Add("  " + outcome.PadRight(9) + title + detail);
+            // WF-9.5: in the AI tools mode, how many of the section's inputs went through the tools.
+            var tools = result.Inputs > 0 ? $", through the AI tools: {result.ToolInputs} of {result.Inputs} inputs" : string.Empty;
+            lines.Add("  " + outcome.PadRight(9) + title + detail + tools);
         }
 
         return lines;

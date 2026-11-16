@@ -51,10 +51,13 @@ public sealed record ScriptResult(bool Ok, string Log, LineResult? Failed, IRead
 /// window is asked once more for what it recorded, and nothing else of the run changes. With
 /// <paramref name="Convert"/>, the converter's run (WF-10.1, <see cref="Run.Converting"/>): the window is asked for
 /// its commands before each press that may be a command's, and <see cref="ScriptResult.Conversions"/> holds the
-/// presses to write as <c>do</c> lines. axAutomate's window plays without options and its run says what it said
-/// before (WF-D-21).
+/// presses to write as <c>do</c> lines. With <paramref name="AiTools"/>, the AI tools mode (WF-9,
+/// <see cref="Run.AiTools"/>): the access is turned on before the script's first input step after its start, the
+/// <c>do</c> steps the tools may run go through them, and each section's result holds how many of its inputs did
+/// (<see cref="GoalResult.Inputs"/>, <see cref="GoalResult.ToolInputs"/>). axAutomate's window plays without options
+/// and its run says what it said before (WF-D-21).
 /// </summary>
-public sealed record PlayOptions(IReadOnlyList<Goal>? Goals = null, bool Trace = false, bool Convert = false);
+public sealed record PlayOptions(IReadOnlyList<Goal>? Goals = null, bool Trace = false, bool Convert = false, bool AiTools = false);
 
 /// <summary>
 /// The runner's engine (SPEC.md AU-5.1), moved here from <c>tools/AxAutomate</c> unchanged: the lines of one
@@ -75,7 +78,10 @@ public static class ScriptRunner
     /// what failed after it, the counts and each section's result (<see cref="GoalResults.Lines"/>); with
     /// <see cref="PlayOptions.Trace"/> the run's trace is collected line by line (<see cref="Run.TakeTraceEvents"/>,
     /// WF-5.1), which prints nothing; with <see cref="PlayOptions.Convert"/> the presses the converter would move
-    /// are collected (<see cref="Run.TakeConversions"/>, WF-10.1), which prints nothing either.
+    /// are collected (<see cref="Run.TakeConversions"/>, WF-10.1), which prints nothing either; with
+    /// <see cref="PlayOptions.AiTools"/> the steps that turn the AI tools on are printed once, before the line they
+    /// were played for, each marked "AI tools:", and a section's line ends with how many of its inputs went through
+    /// the tools (WF-9.5).
     /// </summary>
     public static ScriptResult Play(IReadOnlyList<ScriptLine> lines, string exe, string temp, Action<string> output, Action<LineResult>? stepEnded = null, Func<bool>? stop = null, bool hosted = false, Action<Run>? begun = null, PlayOptions? options = null)
     {
@@ -94,7 +100,9 @@ public static class ScriptRunner
         var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var convert = options?.Convert ?? false;
         var conversions = new List<Conversion>();
-        var run = new Run(exe, temp, hosted) { Converting = convert };
+        var aiTools = options?.AiTools ?? false;
+        var inputs = new Dictionary<Goal, (int Played, int Tools)>();
+        var run = new Run(exe, temp, hosted) { Converting = convert, AiTools = aiTools };
         begun?.Invoke(run);
         try
         {
@@ -133,6 +141,25 @@ public static class ScriptRunner
                     // Any exception fails the step and never the process: in axAutomate's window an escaped one would
                     // end the user's app (a malformed number, a window gone mid-step).
                     result = (false, $"{ex.GetType().Name}: {ex.Message}");
+                }
+
+                if (aiTools)
+                {
+                    // WF-9.3: the steps that turned the AI tools on, said once, before the line they were played for.
+                    foreach (var preamble in run.TakePreambleLines())
+                    {
+                        output(preamble);
+                        log.AppendLine(preamble);
+                    }
+
+                    // WF-9.5: the section's input steps that were played (a skipped iffound was not), and those of
+                    // them that went through the tools.
+                    var through = run.TakeThroughTools();
+                    if (ScriptReader.GoalAt(goals, script.Number) is { } counted && ScriptReader.IsInput(script.Text) && result.Detail != "skipped")
+                    {
+                        var (played, tools) = inputs.GetValueOrDefault(counted);
+                        inputs[counted] = (played + 1, tools + (through ? 1 : 0));
+                    }
                 }
 
                 var shown = $"{(result.Ok ? "ok  " : "FAIL")} {script.Number}: {script.Text}{(result.Detail is null ? string.Empty : "  -> " + result.Detail)}";
@@ -193,6 +220,10 @@ public static class ScriptRunner
         // WF-3.9: which sections passed, failed and were not run; said only for a script that names its sections.
         var failedLine = failed?.Line.Number ?? 0;
         IReadOnlyList<GoalResult> results = goals.Count == 0 ? [] : GoalResults.Of(goals, failedLine, lastLinePlayed, problems);
+        if (aiTools)
+        {
+            results = [.. results.Select(result => inputs.TryGetValue(result.Goal, out var had) ? result with { Inputs = had.Played, ToolInputs = had.Tools } : result)];
+        }
         if (sections)
         {
             var setupFailed = failed is not null && ScriptReader.GoalAt(goals, failedLine) is null ? failedLine : 0;

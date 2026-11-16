@@ -3,7 +3,7 @@ namespace AxAutomate;
 /// <summary>
 /// The command line of a run, read once (docs/axKit/user-workflows.md section 6.4):
 /// <c>AxAutomate &lt;script or folder&gt; (--exe &lt;AxKit.exe&gt; | --build) [--report &lt;file.md&gt;] [--keep]
-/// [--nvda] [--repository &lt;folder&gt;] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert]</c>.
+/// [--nvda] [--repository &lt;folder&gt;] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert] [--ai-tools]</c>.
 /// <paramref name="Repository"/> is the folder named by <c>--repository</c>, else the one above the program that holds
 /// <c>AxKit.sln</c> (<see cref="FindRepository"/>), else null: without one the command inventory and the traces are
 /// off. <paramref name="Inventory"/> is one of <see cref="Check"/> (the default), <see cref="Write"/>,
@@ -14,10 +14,12 @@ namespace AxAutomate;
 /// <c>write</c> are both given by name. <paramref name="Record"/>: the run enters its sections
 /// into the workflow record (RecordRun, WF-6), which needs a repository. <paramref name="Convert"/>: the converter's
 /// run (ConvertRun, WF-10), on the hidden desktop alone and with a repository; the traces are off under it.
+/// <paramref name="AiTools"/>: the AI tools mode (WF-9, <c>--ai-tools</c>), on the hidden desktop alone, never with
+/// the converter; the traces are off under it too.
 /// The command line's other form, <c>AxAutomate --reference [--check] [--repository &lt;folder&gt;]</c>, plays nothing
 /// and is read by <see cref="ReadReference"/>.
 /// </summary>
-internal sealed record RunOptions(string Target, string? Exe, bool Build, string? Report, bool Keep, bool Nvda, string? Repository, string Inventory, string Traces, bool TraceReport, bool Record, bool Convert)
+internal sealed record RunOptions(string Target, string? Exe, bool Build, string? Report, bool Keep, bool Nvda, string? Repository, string Inventory, string Traces, bool TraceReport, bool Record, bool Convert, bool AiTools)
 {
     public const string Check = "check";
     public const string Write = "write";
@@ -28,28 +30,15 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
     public const string ReferenceOption = "--reference";
 
     /// <summary>
-    /// The options of 6.4 that a later package of user-workflows.md builds, with that package: refused until then, so
-    /// that a run never seems to do what it does not.
-    /// </summary>
-    private static readonly Dictionary<string, string> NotBuilt = new(StringComparer.Ordinal)
-    {
-        ["--ai-tools"] = "WP-B16",
-    };
-
-    /// <summary>
     /// The options of a command line, or why it cannot run: an option not known, one without its value, an inventory
-    /// or traces mode not known, a repository without <c>AxKit.sln</c>, an option not built yet ("not built yet"), a
+    /// or traces mode not known, a repository without <c>AxKit.sln</c>, a
     /// writing inventory or <c>--traces write</c> without a repository, and <c>--traces check</c> or <c>write</c>
-    /// with <c>--nvda</c> or <c>--convert</c>, and <c>--convert</c> with <c>--nvda</c>, with a writing inventory or
-    /// without a repository. Every refusal ends the run with exit code 2.
+    /// with <c>--nvda</c>, <c>--convert</c> or <c>--ai-tools</c>, <c>--convert</c> with <c>--nvda</c>, with a writing
+    /// inventory or without a repository, and <c>--ai-tools</c> with <c>--nvda</c> or <c>--convert</c>. Every refusal
+    /// ends the run with exit code 2.
     /// </summary>
     public static (RunOptions? Options, string Refusal) Read(IReadOnlyList<string> args)
     {
-        if (NotBuilt.TryGetValue(args[0], out var later))
-        {
-            return (null, $"{args[0]} is not built yet (docs/axKit/user-workflows.md {later}).");
-        }
-
         if (args[0].StartsWith("--", StringComparison.Ordinal))
         {
             return (null, $"Name the script or folder first, then the options: {args[0]} came first.");
@@ -63,16 +52,12 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
         var nvda = false;
         var record = false;
         var convert = false;
+        var aiTools = false;
         var inventory = Check;
         string? traces = null;
         for (var i = 1; i < args.Count; i++)
         {
             var option = args[i];
-            if (NotBuilt.TryGetValue(option, out var package))
-            {
-                return (null, $"{option} is not built yet (docs/axKit/user-workflows.md {package}).");
-            }
-
             if (option is "--exe" or "--report" or "--repository" or "--inventory" or "--traces" && i + 1 >= args.Count)
             {
                 return (null, $"{option} needs a value.");
@@ -87,6 +72,7 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
                 case "--nvda": nvda = true; break;
                 case "--record": record = true; break;
                 case "--convert": convert = true; break;
+                case "--ai-tools": aiTools = true; break;
                 case "--repository": repository = args[++i]; break;
                 case "--inventory":
                     inventory = args[++i];
@@ -160,6 +146,24 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
             return (null, $"--traces {traces} does not go with --convert: the converter's run asks the windows more than a run does, and neither writes nor compares kept traces (docs/axKit/user-workflows.md section 6.4).");
         }
 
+        // The AI tools mode (WF-9.1): the hidden desktop's alone, never with the converter, whose run is its own, and
+        // without kept traces: its windows are in another state (the access on, a client paired) and say who ran a
+        // command (6.4).
+        if (aiTools && nvda)
+        {
+            return (null, "--ai-tools is for the hidden desktop alone: it does not run with --nvda (docs/axKit/user-workflows.md WF-9.1).");
+        }
+
+        if (aiTools && convert)
+        {
+            return (null, "--ai-tools does not go with --convert: the converter plays a script by its keys to rewrite it, and the AI tools mode runs its do steps through the tools: run the two apart.");
+        }
+
+        if (aiTools && traces is Check or Write)
+        {
+            return (null, $"--traces {traces} does not go with --ai-tools: a window says who ran a command there, so the mode neither writes nor compares kept traces (docs/axKit/user-workflows.md section 6.4).");
+        }
+
         // Every script's trace goes into the report only when the traces were asked for by name: a traced script is
         // asked once more after each line, and a run that names no --traces plays its unmarked scripts as before.
         var asked = traces is Check or Write;
@@ -168,8 +172,8 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
             return (null, "--record writes the repository's docs/axKit/workflow-record.json, and this program is not in a repository: name it with --repository.");
         }
 
-        traces = nvda || convert || repository is null ? Off : traces ?? Check;
-        return (new RunOptions(args[0], exe, build, report, keep, nvda, repository, inventory, traces, report is not null && asked && traces != Off, record, convert), string.Empty);
+        traces = nvda || convert || aiTools || repository is null ? Off : traces ?? Check;
+        return (new RunOptions(args[0], exe, build, report, keep, nvda, repository, inventory, traces, report is not null && asked && traces != Off, record, convert, aiTools), string.Empty);
     }
 
     /// <summary>

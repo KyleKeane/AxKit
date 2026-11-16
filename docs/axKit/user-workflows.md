@@ -1243,7 +1243,10 @@ Changed files:
   `commands data` and keeps the listing; `IReadOnlyList<WindowCommands> Snapshots`. (WP-B11):
   `IReadOnlyList<string> TakeTraceEvents()`, every window's events since the last call as trace lines. (WP-B15):
   `bool Converting` and `IReadOnlyList<(int Press, string Name)> TakeConversions()`. (WP-B16): `bool AiTools`, the
-  preamble before the first input step, and the tools' call in the case `do`.
+  preamble before the first input step, and the tools' call in the case `do`; as built, also `bool TakeThroughTools()`
+  (whether the line just played made a call of the tool) and `IReadOnlyList<string> TakePreambleLines()` (the
+  preamble's steps as the report shows them, once), which `ScriptRunner.Play` reads after each line, and in
+  `Broker.cs` `string? TakeFirst()`, the first answer waiting, whatever it holds.
 - `Window.cs` (WP-B16): `public sealed record TakeState(...)`, `TakeState Hold()` and `void Resume(TakeState held)`.
   `Hold` fetches and gives what the expectations have taken so far: the taken indexes, the last match and where it
   ended, the last batch, the last text's time, and how many events there are. `Resume` puts all of that back and
@@ -1783,12 +1786,19 @@ read, WP-B8b, the how-to written for the ear (WF-7 as it now stands, WF-D-31). W
 the values a window reports come from a watch every 50 ms, and no goal's trace came out equal three times running
 (the commit d95bf84 says what was seen); no script carries `# Stable` yet. WP-B13, the record in the
 command line, was built on 2026-11-16, axDown's goals the first entered. WP-B15, the converter, was built the same
-day, and the scripts of axDown, axFile, axTask, axStart, axClip and axTerminal were converted by it: 498 presses in 44
+day, and the scripts of axDown, axFile, axTask, axStart, axClip and axTerminal were converted by it: 496 presses in 44
 scripts are `do` lines, each script played again as rewritten, none put back, and each folder then run whole with
-`--record`. Not built: WP-B16 (the AI tools mode) and WP-B17 (axClaude and axHelp join the inventory). So `--ai-tools`
-is still refused by the runner as not built, the scripts of the other apps press their command keys through `keys`
-(the pages name the command a chord belongs to from the inventory), and `docs/axKit/workflow-record.json` holds the
-`desktop` tier of those six apps alone until the next recorded runs. The pass of WP-B18 was made
+`--record`. WP-B16, the AI tools mode, was built the same day: `--ai-tools` plays the scripts WF-9.2 covers, and its
+first runs gave the tier's first findings, which are items of the priorities list and changed no script and no window
+(WF-9.6). Of axDown's 18 scripts 10 were passed over and 8 played, 55 `do` steps going through `axkit_window_run`; 4
+scripts passed and 4 failed where the window does or says something else for the tools than for the key (the status
+bar's line and column after a Find the tools opened; a joined announcement's last full stop; the key test, which
+refuses the tools; Undo in navigation mode, which plays no edge sound for them). `04-find-and-go-to-line.txt`, the
+proof script, stops at its line 17 on the first of these, so the record holds its first goal as failed for
+`ai-tools`. Not built: WP-B17 (axClaude and axHelp join the inventory). So the scripts of the other apps press their
+command keys through `keys` (the pages name the command a chord belongs to from the inventory), and
+`docs/axKit/workflow-record.json` holds the `desktop` tier of those six apps and that one `ai-tools` entry until the
+next recorded runs. The pass of WP-B18 was made
 that night on 2ef04f4, without the record: 139 scripts with NVDA listening, all passed
 (`docs/axKit/nvda-test-record.md`). The packages' own sections below stay as the plan for what is left, which is
 why this section is not folded into one paragraph as WP-B18's step 4 says.
@@ -2399,8 +2409,7 @@ every wave's end is a place to stop: the repository is whole after each, and WP-
   `yyyy-MM-dd`, no account path. It does not fail on an entry no script has any more: the next recorded run drops
   it, WF-6.2).
 - Behaviour: WF-6.2 to WF-6.6. The tier is `nvda` under `--nvda`; under `--ai-tools` it is `ai-tools`, and only the
-  sections with a step that ran through the tools are entered (WF-9.5; until WP-B16 is built that option is
-  refused); else `desktop`. The commit is read once by starting `git` in the repository (`rev-parse --short HEAD`,
+  sections with a step that ran through the tools are entered (WF-9.5); else `desktop`. The commit is read once by starting `git` in the repository (`rev-parse --short HEAD`,
   then `status --porcelain -- src tests`); a failure of either gives "unknown". The version is the product version
   of the AxKit.exe driven, cut at a `+`. At the end the record is read, every section's result of the run entered
   with `WorkflowRecord.With`, pruned against the repository's scripts, and written when it changed. One line says

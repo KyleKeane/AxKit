@@ -195,6 +195,16 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
 - MC-6.7 **Not in this stage**: change and act tools and their confirmation (MC-3.3; since 2026-11-11 section 8), the "MCP clients…" list with
   scopes per app and folders (MC-2.3, MC-3.4), the reads counted in the status bar (MC-5.1), axPass's titles (MC-4.1).
 
+The test runner is a client like any other (2026-11-16, `docs/axKit/user-workflows.md` WF-9): a run of
+`tools/AxAutomate` given `--ai-tools` runs the `do` steps of the scripts through `axkit_window_run`, as the client it
+already is in the scripts of `tests/scripts/mcp`. It adds no tool and changes no gate, no rule and no word of this
+document. In each script it turns the access on in the window's menu, answers the pairing in the window's notice and
+turns Let AI tools run commands on, by the very steps of `tests/scripts/mcp/02-run-commands.txt`, and writes nothing
+into a settings file; it runs only commands the tools run without asking (never an act command, whose question only
+the user answers, MC-7.3), and each is said in the window as it runs (MC-7.5). Its broker is started with the run's
+home folder, so it reads the run's own `mcp.json` and key and lists only the run's own windows (MC-6.2, MC-6.3): never
+the user's windows, setting or pairing. The mode is described in `docs/axKit/automation.md`.
+
 ## 8. Running a window's command (2026-11-11, the branch `push2/mcp-run`)
 
 The first part of the user's request of 2026-11-10, "everything in axkit should be very clearly operational via mcp

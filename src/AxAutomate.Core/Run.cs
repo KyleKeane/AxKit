@@ -65,6 +65,16 @@ public sealed class Run(string exe, string temp, bool hosted = false)
 
     public (bool Ok, string? Detail) Step(string line)
     {
+        if (AiTools && !Nvda && !_toolsAsked && _current is not null && ScriptReader.IsInput(line))
+        {
+            // WF-9.3: once per script, right before its first input step after its start.
+            _toolsAsked = true;
+            if (TurnOnTools() is { } problem)
+            {
+                return (false, problem);
+            }
+        }
+
         var space = line.IndexOf(' ');
         var verb = space < 0 ? line : line[..space];
         var rest = space < 0 ? string.Empty : line[(space + 1)..];
@@ -207,6 +217,137 @@ public sealed class Run(string exe, string temp, bool hosted = false)
     }
 
     /// <summary>
+    /// The AI tools mode (docs/axKit/user-workflows.md WF-9), on the hidden desktop alone, for a script of one window
+    /// (<see cref="AiToolsMode.Covers"/>): before the script's first input step after its <c>start</c> the access is
+    /// turned on as a user turns it on (<see cref="TurnOnTools"/>), and every <c>do</c> step whose command the tools
+    /// may run without asking (<see cref="AiToolsMode.MayRun"/>) is run with <c>axkit_window_run</c> in place of its
+    /// key press (<see cref="ThroughTools"/>). Every other step plays as written. The runner is the MCP client it is
+    /// in a script's own <c>mcp</c> steps (<see cref="Broker"/>): the run's broker, the run's home folder and key, the
+    /// run's windows; every gate of docs/axKit/mcp.md is passed as a user and a paired client pass it.
+    /// </summary>
+    public bool AiTools { get; set; }
+
+    /// <summary>Whether the preamble has been played, or tried: once per script.</summary>
+    private bool _toolsAsked;
+
+    /// <summary>Whether the step just played made a call of <c>axkit_window_run</c> (<see cref="TakeThroughTools"/>).</summary>
+    private bool _throughTools;
+
+    private readonly List<string> _preambleLines = [];
+
+    /// <summary>Whether the line just played went through the AI tools (WF-9.5: the count of a section's inputs that did), a step the tool refused included. Taken: false until the next such step.</summary>
+    public bool TakeThroughTools()
+    {
+        var through = _throughTools;
+        _throughTools = false;
+        return through;
+    }
+
+    /// <summary>The preamble's steps as the report shows them, once, before the line they were played for: each as a step's line reads, marked "AI tools:" in place of a line number. Taken.</summary>
+    public IReadOnlyList<string> TakePreambleLines()
+    {
+        string[] taken = [.. _preambleLines];
+        _preambleLines.Clear();
+        return taken;
+    }
+
+    /// <summary>
+    /// WF-9.3: the lines of <see cref="AiToolsMode.Preamble"/> played through <see cref="Step"/>, as the script
+    /// <c>tests/scripts/mcp/02-run-commands.txt</c> plays them: the access on in the menu, the runner paired in the
+    /// window's notice, Let AI tools run commands on. What the script's expectations had taken and had yet to take is
+    /// held before and put back after, with what the preamble made the window say taken (<see cref="Window.Hold"/>,
+    /// <see cref="Window.Resume"/>), and the result of the script's last <c>try</c> is as it was. Null when every
+    /// line passed; else why the step about to be played fails.
+    /// </summary>
+    private string? TurnOnTools()
+    {
+        var window = Current;
+        var held = window.Hold();
+        var found = _found;
+        try
+        {
+            foreach (var line in AiToolsMode.Preamble)
+            {
+                (bool Ok, string? Detail) played;
+                try
+                {
+                    played = Step(line);
+                }
+                catch (Exception ex) when (ex is IOException or InvalidOperationException or ArgumentException or TimeoutException or JsonException)
+                {
+                    played = (false, $"{ex.GetType().Name}: {ex.Message}");
+                }
+
+                _preambleLines.Add($"{(played.Ok ? "ok  " : "FAIL")} AI tools: {line}{(played.Detail is null ? string.Empty : "  -> " + played.Detail)}");
+                if (!played.Ok)
+                {
+                    return $"the AI tools could not be turned on: {line}: {played.Detail}";
+                }
+            }
+
+            return null;
+        }
+        finally
+        {
+            _found = found;
+            window.Resume(held);
+        }
+    }
+
+    /// <summary>
+    /// WF-9.4: a <c>do</c> step's command run with <c>axkit_window_run</c> by the row's label and menus, in the
+    /// script's one window: the line of <see cref="AiToolsMode.Call"/> is played as an <c>mcp call</c>, and the step
+    /// waits for the tool's answer, up to 60 s, in place of the key press. An answer that holds <c>"ran"</c> passes
+    /// the step, with the detail "AI tools: " and the label. A refusal ("error: ...") fails it with the tool's words,
+    /// but the refusal of docs/axKit/mcp.md MC-7.8 (the user at work, which counts the whole session's last key
+    /// press): the call is sent again after 3.5 s, three times at most. Any other answer (the command did not run, the
+    /// window asks the user, the window closed) fails the step with that answer.
+    /// </summary>
+    private (bool, string?) ThroughTools(ListedCommand row)
+    {
+        _throughTools = true;
+        for (var again = 0; ; again++)
+        {
+            var sent = Step("mcp call " + AiToolsMode.Call(row));
+            if (!sent.Ok)
+            {
+                return sent;
+            }
+
+            string? answer = null;
+            var waited = Stopwatch.StartNew();
+            while (answer is null && waited.ElapsedMilliseconds < 60_000)
+            {
+                answer = _broker?.TakeFirst();
+                if (answer is null)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+
+            if (answer is null)
+            {
+                return (false, $"the AI tools did not answer the run of {row.Label} within 60 s");
+            }
+
+            if (answer.StartsWith("error:", StringComparison.Ordinal))
+            {
+                if (AiToolsMode.IsBusyRefusal(answer) && again < AiToolsMode.BusyRetries)
+                {
+                    Thread.Sleep(AiToolsMode.BusyWaitMs);
+                    continue;
+                }
+
+                return (false, $"{AiToolsMode.Detail}{row.Label}: {answer}");
+            }
+
+            return answer.Contains("\"ran\"", StringComparison.Ordinal)
+                ? (true, AiToolsMode.Detail + row.Label)
+                : (false, $"{AiToolsMode.Detail}{row.Label}: {(answer.Length > 400 ? answer[..400] + " …" : answer)}");
+        }
+    }
+
+    /// <summary>
     /// The converter's run (docs/axKit/user-workflows.md WF-10.1), on the hidden desktop alone: before each press of a
     /// <c>keys</c> step that <see cref="KeyChord.IsCommandChord"/> holds for, the window is asked for its commands as
     /// data and <see cref="Converter.NameFor"/> for the command the press runs; a name is kept with the press's place
@@ -259,6 +400,13 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         {
             // WF-2.7: the one row the name came to, as the window listed it.
             _snapshots.Add(new WindowCommands(listing.App, listing.Notice, [row]));
+        }
+
+        if (AiTools && !Nvda && _toolsAsked && listing is not null && decision.Row is { } forTools
+            && decision.Kind is DoKind.Press or DoKind.Choose && AiToolsMode.MayRun(listing, forTools))
+        {
+            // WF-9.4: a command the keyboard would run now and the tools may run without asking goes through the tools.
+            return ThroughTools(forTools);
         }
 
         switch (decision.Kind)

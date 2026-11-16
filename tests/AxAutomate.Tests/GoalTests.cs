@@ -357,6 +357,28 @@ public sealed class GoalTests
     }
 
     [Fact]
+    public void A_sections_line_says_how_many_inputs_went_through_the_tools()
+    {
+        // WF-9.5: in the AI tools mode a section's line ends with the count; a failed one after its line; a section
+        // none of whose inputs was played (not run, or it only looks) says nothing of them.
+        var results = GoalResults.Of(MarkedGoals(), 39, int.MaxValue, []).ToList();
+        results[0] = results[0] with { Inputs = 5, ToolInputs = 3 };
+        results[1] = results[1] with { Inputs = 3, ToolInputs = 1 };
+        results[2] = results[2] with { Inputs = 3, ToolInputs = 1 };
+        var lines = GoalResults.Lines(results, 0);
+        Assert.Equal("  passed   Find a word in the text, through the AI tools: 3 of 5 inputs", lines[1]);
+        Assert.Equal("  passed   check: A word that is not in the text is said as not found, through the AI tools: 1 of 3 inputs", lines[2]);
+        Assert.Equal("  FAILED   Go to a line by its number, at line 39, through the AI tools: 1 of 3 inputs", lines[3]);
+        Assert.Equal("  not run  check: A number past the end lands on the last line", lines[4]);
+
+        // Inputs played and none through the tools: said, as 0.
+        Assert.Equal("  passed   Find a word in the text, through the AI tools: 0 of 5 inputs", GoalResults.Lines([results[0] with { ToolInputs = 0 }], 0)[1]);
+
+        // Failing a section after the steps keeps its counts.
+        Assert.Equal(3, GoalResults.WithFailed(results, results[0].Goal.Title, "after the steps: x")[0].ToolInputs);
+    }
+
+    [Fact]
     public void A_line_is_an_input_step_by_its_step_word()
     {
         string[] inputs =

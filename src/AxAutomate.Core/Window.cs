@@ -6,6 +6,13 @@ using System.Text.Json;
 
 namespace AxAutomate.Core;
 
+/// <summary>
+/// What a window's expectations have taken at one moment (<see cref="Window.Hold"/>, docs/axKit/user-workflows.md
+/// WF-9.3): the taken events' indexes, the last text match and where it ended, the events that match took, the last
+/// text's time, and how many events the window had recorded.
+/// </summary>
+public sealed record TakeState(IReadOnlyList<int> Taken, int LastSay, int LastSayEnd, IReadOnlyList<int> LastBatch, long LastTextMs, int Count);
+
 /// <summary>One axKit process on the test desktop, its automation pipe and its timeline.</summary>
 public sealed class Window : IDisposable
 {
@@ -371,6 +378,34 @@ public sealed class Window : IDisposable
         _lastBatch = [];
         _lastTextMs = _all.Count > 0 ? _all[^1].Ms : _lastTextMs;
         return pending;
+    }
+
+    /// <summary>
+    /// What the expectations have taken so far, after fetching what the window has recorded (docs/axKit/user-workflows.md
+    /// WF-9.3): for a run of steps played in between that is not the script's own, the AI tools mode's preamble.
+    /// <see cref="Resume"/> puts it back. Nothing outside that mode calls either.
+    /// </summary>
+    public TakeState Hold()
+    {
+        Fetch();
+        return new TakeState([.. _taken], _lastSay, _lastSayEnd, [.. _lastBatch], _lastTextMs, _all.Count);
+    }
+
+    /// <summary>
+    /// Puts back what <see cref="Hold"/> gave and then takes every event recorded after the held count: the script's
+    /// pending events are pending as they were, the last match is the script's own, and what the steps in between
+    /// made the window say is taken.
+    /// </summary>
+    public void Resume(TakeState held)
+    {
+        Fetch();
+        _taken.Clear();
+        _taken.UnionWith(held.Taken);
+        _lastSay = held.LastSay;
+        _lastSayEnd = held.LastSayEnd;
+        _lastBatch = [.. held.LastBatch];
+        _lastTextMs = held.LastTextMs;
+        _taken.UnionWith(Enumerable.Range(held.Count, Math.Max(0, _all.Count - held.Count)));
     }
 
     public List<Event> Everything()

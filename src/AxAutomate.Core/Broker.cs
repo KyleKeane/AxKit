@@ -96,6 +96,22 @@ internal sealed partial class Broker : IDisposable
         }
     }
 
+    /// <summary>The first answer line waiting, taken; null when none has come. For a call whose answer may be any of several (the AI tools mode's run, docs/axKit/user-workflows.md WF-9.4).</summary>
+    public string? TakeFirst()
+    {
+        lock (_gate)
+        {
+            if (_lines.Count == 0)
+            {
+                return null;
+            }
+
+            var line = _lines[0];
+            _lines.RemoveAt(0);
+            return line;
+        }
+    }
+
     /// <summary>An answer as a script reads it: a tool's text with "error: " before it when the tool refused; any other line as it came.</summary>
     private static string Decoded(string line)
     {

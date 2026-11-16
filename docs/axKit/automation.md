@@ -47,8 +47,8 @@ runs the unit tests and checks the generated pages, and that is all it proves. A
 window is followed by its scripts before it is pushed, and a release by a full pass.
 
 **The workflow record.** A run given `--record` enters every goal and check it played into
-`docs/axKit/workflow-record.json` after its last script (user-workflows.md WF-6): for the run's tier (`desktop`, or
-`nvda` under `--nvda`) the last result with the version, the commit (a `+` after it when `src` or `tests` held a
+`docs/axKit/workflow-record.json` after its last script (user-workflows.md WF-6): for the run's tier (`desktop`,
+`nvda` under `--nvda`, `ai-tools` under `--ai-tools`) the last result with the version, the commit (a `+` after it when `src` or `tests` held a
 change not committed) and the date, and the last pass. `nvda-pass.ps1` always records. On the desktop of their own,
 the run of an app's folder after a change to a window is given `--record`; a run of one script during work is not. A
 recorded run changes that one file and no page, and the file is committed with the change the run checked, or alone
@@ -70,6 +70,28 @@ it did not pass`, `put back as it was: ...`), and the run's last lines count the
 trace, and is refused with `--nvda`, with `--inventory write` or `rewrite`, and without a repository. An app's folder
 is converted whole: `tests\scripts\<app> --build --convert`, then the same folder without the option and with
 `--record`, then `tools\workflows.ps1`, and the scripts, the inventory, the pages and the record go into one commit.
+
+**The AI tools mode.** A run given `--ai-tools` runs the scripts' `do` steps through the AI tools (user-workflows.md
+WF-9), on the desktop of their own alone, with the runner as the MCP client it is in a script's own `mcp` steps. It
+plays only a script of one window (one `start`; no `launch`, `adopt` or `use`), of an app the AI tools read (not
+axPass, not axClip), with a `do` step and no `mcp` step; one line at the start says how many scripts were passed over,
+and the keyboard run is where those are checked. Right before such a script's first input step after its `start`, the
+access is turned on as a user turns it on, by twenty steps that are lines of `tests/scripts/mcp/02-run-commands.txt`
+(`AiToolsMode.Preamble`; a test holds them to that script): Let AI tools read and open axKit in the menu, the pairing
+answered in the window's notice with its check box and Allow, Let AI tools run commands. The report shows them once,
+each marked `AI tools:`; what they made the window say is taken, and what the script's own expectations had yet to
+take stays. Nothing is written into a settings file and no gate of `mcp.md` is passed by: the run's broker reads the
+run's own home folder and key and lists only the run's own windows (MC-6.2). Then every `do` step whose command the
+tools may run without asking (a menu command that is for them and is not marked act, while no notice shows) is run
+with `axkit_window_run` by its label and menus, and the step waits for the tool's answer; its detail is
+`AI tools: <label>`. A refusal fails the step with the tool's words, but the one for a user at work ("The user is
+working in this window right now", which counts the whole session's last key press, the user's own in his own windows
+included): the call is sent again 3.5 seconds later, three times at most. Every other step plays by the keyboard as
+written. A section's line of the report ends `, through the AI tools: 3 of 5 inputs`; with `--record` only the
+sections with a step that went through the tools are entered, for the tier `ai-tools`, and nothing for `desktop`,
+since the windows are in another state. A step that fails only in this mode is the tier's finding: it is recorded and
+written as an item of the priorities list, and no script and no window is changed to make the mode pass. The mode
+compares and writes no trace, and is refused with `--nvda` and with `--convert`.
 
 The steps, the run on its own desktop and the report are the engine in `src/AxAutomate.Core` (`ScriptRunner`, `Run`,
 `Window`; moved there on 2026-11-11, docs/axAutomate/SPEC.md AU-5.1), which axAutomate's window plays workflows

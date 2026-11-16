@@ -8,7 +8,9 @@ namespace AxAutomate;
 /// The workflow record in the command line (docs/axKit/user-workflows.md WF-6, WP-B13): under <c>--record</c> every
 /// section of every script the run played is entered into <c>docs/axKit/workflow-record.json</c> for the run's tier,
 /// after the last script. A section is known by its workflow's label and its title, so a script played from a copy
-/// (<c>nvda-pass.ps1</c>) finds its entry; a script that is none of the repository's is not entered. The pure part is
+/// (<c>nvda-pass.ps1</c>) finds its entry; a script that is none of the repository's is not entered. Under
+/// <c>--ai-tools</c> the tier is <c>ai-tools</c> and only the sections with a step that went through the tools are
+/// entered (WF-9.5). The pure part is
 /// <see cref="WorkflowRecord"/>; this class reads the scripts, asks git for the commit and writes the file. A recorded
 /// run changes this one file and no page (WF-6.6).
 /// </summary>
@@ -25,12 +27,12 @@ internal static class RecordRun
     /// <summary>The sections the run played: the workflow's label, the section's title and its result.</summary>
     private static readonly List<(string Workflow, string Goal, string Result)> Played = [];
 
-    /// <summary>Whether the run records, its repository, its tier (<c>nvda</c> under <c>--nvda</c>, else <c>desktop</c>) and the AxKit.exe it drives, whose product version up to a <c>+</c> is the version written (WF-6.3).</summary>
-    public static void Start(bool record, string? repository, bool nvda, string exe)
+    /// <summary>Whether the run records, its repository, its tier (<c>nvda</c> under <c>--nvda</c>, <c>ai-tools</c> under <c>--ai-tools</c>, else <c>desktop</c>) and the AxKit.exe it drives, whose product version up to a <c>+</c> is the version written (WF-6.3).</summary>
+    public static void Start(bool record, string? repository, bool nvda, bool aiTools, string exe)
     {
         _on = record && repository is not null;
         _repository = repository ?? string.Empty;
-        _tier = nvda ? WorkflowRecord.Nvda : WorkflowRecord.Desktop;
+        _tier = nvda ? WorkflowRecord.Nvda : aiTools ? WorkflowRecord.AiTools : WorkflowRecord.Desktop;
         var product = FileVersionInfo.GetVersionInfo(exe).ProductVersion;
         _version = string.IsNullOrEmpty(product) ? "unknown" : product.Split('+')[0];
         Played.Clear();
@@ -52,6 +54,13 @@ internal static class RecordRun
 
         foreach (var goal in result.Goals)
         {
+            // WF-9.5: in the AI tools mode only a section with a step that went through the tools is entered; the
+            // others were played by the keyboard, in windows whose state is not the desktop tier's.
+            if (_tier == WorkflowRecord.AiTools && goal.ToolInputs == 0)
+            {
+                continue;
+            }
+
             Played.Add((label, goal.Goal.Title, goal.Outcome));
         }
     }

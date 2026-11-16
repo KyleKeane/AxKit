@@ -6,7 +6,7 @@
 // Usage:
 //   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep] [--nvda]
 //              [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record]
-//              [--convert]
+//              [--convert] [--ai-tools]
 //   AxAutomate --reference [--check] [--repository <folder>]
 //   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
 //   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
@@ -58,8 +58,9 @@
 //     --check    writes and deletes nothing, compares line ends aside: exit 0 when every page is current, 1 naming each
 //                page that is not (missing, different, left over). A script without its label: exit 1, named.
 //   --record     the workflow record (RecordRun, WF-6): after the last script every section the run played is entered
-//                into the repository's docs/axKit/workflow-record.json for the run's tier (desktop, or nvda under
-//                --nvda) with its result, the version, the commit and the date; one line says how many.
+//                into the repository's docs/axKit/workflow-record.json for the run's tier (desktop, nvda under
+//                --nvda, ai-tools under --ai-tools) with its result, the version, the commit and the date; one line
+//                says how many.
 //   --convert    the converter (ConvertRun, WF-10), on the hidden desktop alone: moves a script's command keys to do
 //                lines. Each script is played with the window asked for its commands before every press of a keys
 //                line that carries ctrl or alt or is a function key (alt+f4 aside); a press becomes "do <name>" only
@@ -74,7 +75,23 @@
 //                check or write are refused with it); refused with --nvda, with --inventory write or rewrite and
 //                without a repository. Afterwards: the folder once more without the option and with --record, then
 //                tools\workflows.ps1.
-//   The option that a later package of docs/axKit/user-workflows.md builds (--ai-tools) is refused as not built yet.
+//   --ai-tools   the AI tools mode (AiToolsMode, WF-9), on the hidden desktop alone: the scripts' do steps run through
+//                the AI tools, with the runner as the MCP client it is in a script's own mcp steps. Only a script of
+//                one window (one start; no launch, adopt or use), of an app the AI tools read (not axPass, not
+//                axClip), with a do step and no mcp step plays; a line says how many were passed over. Right before
+//                such a script's first input step after its start, the access is turned on as a user turns it on, by
+//                the steps of tests\scripts\mcp\02-run-commands.txt: the menu item, the pairing answered in the
+//                window's notice, Let AI tools run commands; the report shows them once, each marked "AI tools:".
+//                Nothing is written into a settings file and no gate of docs/axKit/mcp.md is passed by. Then every do
+//                step whose command the tools may run without asking (a menu command that is for them and is not
+//                marked act, no notice showing) is run with axkit_window_run by its label and menus, and the step
+//                waits for the tool's answer ("-> AI tools: Find"); a refusal fails the step with the tool's words,
+//                but "The user is working in this window right now", after which the call is sent again 3.5 s later,
+//                three times at most. Every other step plays by the keyboard as written. A section's line of the
+//                report ends ", through the AI tools: 3 of 5 inputs"; with --record the sections with such a step are
+//                entered for the tier ai-tools and nothing for desktop. A step that fails only here is the tier's
+//                finding: no script and no window is changed for it. No traces (--traces check or write are refused
+//                with it); refused with --nvda and with --convert.
 //   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}. The exit code
 //   (WF-11.5) is 0 when every script passed and nothing is stale, 1 when a script failed (a "# Stable" section whose
 //   trace differs from the kept one, or has none, fails its script), 2 when the run could not
@@ -255,7 +272,19 @@ internal static class Program
         TraceRun.Start(options.Traces, options.Repository, options.TraceReport);
 
         // The workflow record (RecordRun, WF-6): entered after the last script, under --record.
-        RecordRun.Start(options.Record, options.Repository, options.Nvda, exe);
+        RecordRun.Start(options.Record, options.Repository, options.Nvda, options.AiTools, exe);
+
+        // The AI tools mode (WF-9.2): only the scripts it covers play; the keyboard run is where the others are checked.
+        if (options.AiTools)
+        {
+            var covered = scripts.Where(script => !script.EndsWith(WorkflowFile.Extension, StringComparison.OrdinalIgnoreCase) && AiToolsMode.Covers(File.ReadAllLines(script))).ToList();
+            if (covered.Count < scripts.Count)
+            {
+                Console.WriteLine($"--ai-tools: {scripts.Count - covered.Count} of {scripts.Count} script(s) passed over, since the mode plays a script of one window, of an app the AI tools read, with a do step and no mcp step.");
+            }
+
+            scripts = covered;
+        }
 
         // The converter (ConvertRun, WF-10): each script's command keys moved to do lines, proved by a second play.
         ConvertRun.Start(options.Convert);
@@ -314,9 +343,9 @@ internal static class Program
                 Directory.CreateDirectory(temp);
                 // WF-5.5, WF-5.8: a stable section's trace held against the kept one, or written, before anything
                 // reads the script's result.
-                var result = TraceRun.After(RunScript(script, exe, temp, ConvertRun.On), Console.WriteLine);
+                var result = TraceRun.After(RunScript(script, exe, temp, ConvertRun.On, options.AiTools), Console.WriteLine);
                 // WF-10.3, WF-10.4: under --convert the script rewritten and played once more, in a folder of its own.
-                result = ConvertRun.After(script, name, result, () => RunScript(script, exe, Directory.CreateDirectory(temp + "-converted").FullName, false), Console.WriteLine);
+                result = ConvertRun.After(script, name, result, () => RunScript(script, exe, Directory.CreateDirectory(temp + "-converted").FullName, false, false), Console.WriteLine);
                 var (ok, log, goals) = (result.Ok, result.Log, result.Goals);
                 InventoryRun.After(result);
                 RecordRun.After(script, result);
@@ -434,7 +463,7 @@ internal static class Program
         return Run.Stopped is not null ? CannotStart : failed.Count > 0 ? ScriptsFailed : inventory.Stale ? InventoryStale : 0;
     }
 
-    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert] [--ai-tools], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
 
     /// <summary>
     /// The exit codes (docs/axKit/user-workflows.md WF-11.5): 0 every script passed and nothing is stale, 1 a script
@@ -455,9 +484,11 @@ internal static class Program
     /// The result also holds the listings of the windows' commands the run saw (WF-2.7), for the command inventory,
     /// and, when TraceRun asks for it (a script with a stable section; a run with a report and --traces named), the
     /// run's trace (WF-5.1). With <paramref name="convert"/> (ConvertRun, WF-10.1) a script is played as the converter
-    /// plays it, and the result holds the presses to write as do lines; a workflow file never is.
+    /// plays it, and the result holds the presses to write as do lines; a workflow file never is. With
+    /// <paramref name="aiTools"/> (WF-9) a script is played in the AI tools mode: the access turned on before its
+    /// first input step after its start, the do steps the tools may run through them.
     /// </summary>
-    private static ScriptResult RunScript(string script, string exe, string temp, bool convert)
+    private static ScriptResult RunScript(string script, string exe, string temp, bool convert, bool aiTools)
     {
         IReadOnlyList<ScriptLine> lines;
         IReadOnlyList<Goal> goals = [];
@@ -485,7 +516,7 @@ internal static class Program
             goals = workflow.Goals;
         }
 
-        return ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals, TraceRun.Playing(script, workflow), convert && workflow is not null));
+        return ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals, TraceRun.Playing(script, workflow), convert && workflow is not null, aiTools && workflow is not null));
     }
 
     /// <summary>src\AxKit in Release into a folder of the run's, never into the running app's bin.</summary>
