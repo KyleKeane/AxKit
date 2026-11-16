@@ -210,17 +210,34 @@ public class BackgroundWorkflowsTests
     {
         // The live rows stand under every frame while work runs: reading them again adds nothing to what a frame end
         // costs without them (D24; the mode line's own reading allocates, measured 2026-11-15, and is not this test's).
-        var without = FrameEndAllocation(shown, "claude: The workflow runs in the background.", Ready);
-        var with = FrameEndAllocation(shown, "claude: The workflow runs in the background.", Waiting, Ready, EightyEight, "  ◯  general-purpose Checking callers running", Unknown);
-        Assert.Equal(without, with);
+        var without = Warmed(shown, "claude: The workflow runs in the background.", Ready);
+        var with = Warmed(shown, "claude: The workflow runs in the background.", Waiting, Ready, EightyEight, "  ◯  general-purpose Checking callers running", Unknown);
+
+        // The two are measured again and again until they agree, for five seconds at most. What a frame end allocates
+        // depends on how far the runtime has compiled the code it runs: a method not yet compiled for speed puts small
+        // objects on the heap that the compiled one keeps off it, and on a busy computer that compiling comes late.
+        // One measurement, and then the least of eight, failed in whole runs of the project while other builds ran
+        // (2026-11-15). Rows that really are read again at every frame never agree, however long this waits.
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        long plain;
+        long rows;
+        while (true)
+        {
+            plain = LeastFrameEnd(without);
+            rows = LeastFrameEnd(with);
+            if (plain == rows || clock.ElapsedMilliseconds > 5000)
+            {
+                break;
+            }
+
+            Thread.Sleep(50);
+        }
+
+        Assert.Equal(plain, rows);
     }
 
-    /// <summary>
-    /// What a frame end over the same screen allocates once everything is warm: the least of several. One frame end
-    /// alone was compared until 2026-11-15, and failed now and then while other builds ran on the computer: a first
-    /// use elsewhere (a cache filled, a method compiled anew) adds to a single measurement, never to the least.
-    /// </summary>
-    private static long FrameEndAllocation(bool shown, params string[] rows)
+    /// <summary>A model over the given screen, with five frame ends behind it.</summary>
+    private static SessionModel Warmed(bool shown, params string[] rows)
     {
         var model = new SessionModel(160, 20) { ShowProgressRows = shown };
         Feed(model, Frame(rows));
@@ -229,8 +246,14 @@ public class BackgroundWorkflowsTests
             model.EndFrame();
         }
 
+        return model;
+    }
+
+    /// <summary>The least that one of fifty frame ends over the same screen allocates.</summary>
+    private static long LeastFrameEnd(SessionModel model)
+    {
         var least = long.MaxValue;
-        for (var measured = 0; measured < 8; measured++)
+        for (var measured = 0; measured < 50; measured++)
         {
             var before = GC.GetAllocatedBytesForCurrentThread();
             model.EndFrame();
