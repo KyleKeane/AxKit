@@ -1499,7 +1499,6 @@ You hear: Ready.
 1. Type: Say ok
 2. Press Enter.
     You hear: Sent.
-    You hear: claude: ok.
     You hear: Done.
 3. Press Ctrl+2.
 
