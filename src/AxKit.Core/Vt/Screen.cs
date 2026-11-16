@@ -104,7 +104,8 @@ public sealed class Screen
     /// <summary>
     /// A shell integration mark, OSC 133 (docs/axTerminal/SPEC.md AT-1.3): the letter (A the prompt starts, B the
     /// command starts, C the output starts, D the command finished) and what follows the letter's semicolon (a D's
-    /// exit code), or null. Claude Code emits C and D marks too; axClaude does not listen.
+    /// exit code), or null. axClaude listens too: its turn marks, A when Claude takes a prompt up, C and D when the turn
+    /// ends (SessionModel.Marked; docs/axClaude/events-and-grounding.md EG-1.1).
     /// </summary>
     public event Action<char, string?>? Mark;
 

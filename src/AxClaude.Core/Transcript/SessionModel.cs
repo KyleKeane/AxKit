@@ -4,6 +4,14 @@ using AxKit.Core.Transcript;
 namespace AxClaude.Core.Transcript;
 
 /// <summary>
+/// What the last frame showed of Claude's work (<see cref="SessionModel.Work"/>; docs/axClaude/events-and-grounding.md
+/// EG-1.2): a spinner row or "esc to interrupt" (<see cref="ScreenWork.Working"/>), a mode line with neither
+/// (<see cref="ScreenWork.Idle"/>), or no mode line read in that frame, so the screen says nothing either way
+/// (<see cref="ScreenWork.Unknown"/>).
+/// </summary>
+public enum ScreenWork { Unknown, Idle, Working }
+
+/// <summary>
 /// Owns the transcript: the ordered list of lines built from the screen plus the marker and system lines the app
 /// inserts, on the bundle's <see cref="LineStore"/>, which holds the lines, the screen, the parser, the bookmarks and
 /// the cap. Feed it the raw console bytes; it raises <see cref="LineStore.Changed"/> at the end of every frame.
@@ -83,6 +91,35 @@ public sealed partial class SessionModel : LineStore
 
     /// <summary>A spinner row or an "esc to interrupt" hint was on screen at the end of the last frame.</summary>
     public bool Working { get; private set; }
+
+    /// <summary>
+    /// What the last frame showed of Claude's work, telling a frame that showed Claude idle from one that showed no
+    /// mode line at all, which <see cref="Working"/> cannot (EG-1.2): a screen of Claude's over the prompt, a question,
+    /// the moments before the first mode line. <see cref="ScreenWork.Unknown"/> from the start of a run.
+    /// </summary>
+    public ScreenWork Work { get; private set; }
+
+    /// <summary>
+    /// Rises by one whenever the conversation or the run starts afresh: a start, a restart, New session and a folder
+    /// change (<see cref="StartRun"/>), and Claude's own /clear (<see cref="ClearConversation"/>). Whoever keeps state
+    /// about the turn in progress forgets it when the number changes (EG-1.3, EG-4.9).
+    /// </summary>
+    public int Epoch { get; private set; }
+
+    /// <summary>
+    /// Whether a turn of Claude's is open, as the window learns it from better evidence than the screen (Claude Code's
+    /// turn marks and events, EG-1.4); null while the window has none, and then the screen decides, as
+    /// <see cref="Working"/> says. With a value it takes <see cref="Working"/>'s place where a sent message's block is
+    /// held or placed (<see cref="Busy"/>), and nowhere else.
+    /// </summary>
+    public bool? TurnOpen { get; set; }
+
+    /// <summary>
+    /// Claude is busy with a turn, for the three rules that hold a sent message's block back until Claude takes it up
+    /// (<see cref="Send"/>, <see cref="PlaceBlocksWithoutEcho"/>, the expiry of a send in <see cref="CompleteFrame"/>):
+    /// the window's word when it has one, else the screen's. A screen can show no sign of work while a turn runs.
+    /// </summary>
+    private bool Busy => TurnOpen ?? Working;
 
     /// <summary>
     /// While set, every line Claude prints is hidden: a restart in the same folder with --continue replays a
@@ -182,6 +219,14 @@ public sealed partial class SessionModel : LineStore
 
     /// <summary>Raised with the text of one of Claude's own bracketed announcement rows, such as "accept edits on".</summary>
     public event Action<string>? Announcement;
+
+    /// <summary>
+    /// Raised with the letter of each of Claude Code's turn marks in the console stream (OSC 133; EG-1.1): <c>A</c> a
+    /// turn starts, <c>C</c> and <c>D</c> it ends. Other letters are not raised. Raised inside <see cref="LineStore.Feed"/>,
+    /// as <see cref="LineStore.Bell"/> and the frame end's <see cref="LineStore.Changed"/> are, so the three arrive in the
+    /// order of the stream.
+    /// </summary>
+    public event Action<char>? Marked;
 
     /// <summary>
     /// The output went quiet (the app calls this after 100 ms without output, and at exit): the frame work of
@@ -284,7 +329,7 @@ public sealed partial class SessionModel : LineStore
     /// <summary>Recomputes chrome, classification, echo handling and status from the current screen.</summary>
     protected override void CompleteFrame()
     {
-        if (!Working && QueuedMessages == 0)
+        if (!Busy && QueuedMessages == 0)
         {
             // A loop, not RemoveAll with a lambda: that captured the clock and allocated on every idle frame (D24).
             var now = Clock();
@@ -315,6 +360,7 @@ public sealed partial class SessionModel : LineStore
 
         Mode = mode ?? Mode;
         Working = working;
+        Work = working ? ScreenWork.Working : mode is not null ? ScreenWork.Idle : ScreenWork.Unknown;
         Classify();
         JoinWrappedRows();
         HandleEchoes();
@@ -372,7 +418,7 @@ public sealed partial class SessionModel : LineStore
         block.Add(NewLine(LineKind.UserMessage, string.Empty));
         var send = new PendingSend(trimmed, block, Clock());
         _pending.Add(send);
-        if (!Working)
+        if (!Busy)
         {
             InsertBlock(send, AnchorIndex());
             RaiseChanged();
@@ -636,6 +682,7 @@ public sealed partial class SessionModel : LineStore
         ResetBookmarks();
         QueuedMessages = 0;
         SessionName = null;
+        Epoch++;
         AddSystemLine("Conversation cleared by /clear; the previous one stays on disk, and /resume brings it back");
         for (var r = 0; r < _screen.CursorRow; r++)
         {
@@ -649,7 +696,9 @@ public sealed partial class SessionModel : LineStore
     {
         AttachScreen();
         _banner = null;
+        Epoch++;
         Working = false;
+        Work = ScreenWork.Unknown;
         Spinner = null;
         PromptPending = false;
         PendingQuestion = null;
@@ -720,14 +769,27 @@ public sealed partial class SessionModel : LineStore
 
     // ---- internals ----
 
-    /// <summary>The base's fresh screen with Claude's handlers on it: the repaint on a home, the session name from the title.</summary>
+    /// <summary>The base's fresh screen with Claude's handlers on it: the repaint on a home, the session name from the title, the turn marks.</summary>
     private void AttachScreen()
     {
         var screen = NewScreen();
         screen.Homed += OnHomed;
         screen.TitleChanged += OnTitle;
+        screen.Mark += OnMark;
         _repainting = false;
         _anchor = null;
+    }
+
+    /// <summary>
+    /// A shell integration mark in Claude Code's stream: A when Claude takes a prompt up, C and D together when the
+    /// turn ends (docs/axClaude/events-and-grounding.md section 4.1). B and what follows a letter mean nothing here.
+    /// </summary>
+    private void OnMark(char letter, string? rest)
+    {
+        if (letter is 'A' or 'C' or 'D')
+        {
+            Marked?.Invoke(letter);
+        }
     }
 
     /// <summary>
@@ -1281,7 +1343,7 @@ public sealed partial class SessionModel : LineStore
     /// </summary>
     private void PlaceBlocksWithoutEcho()
     {
-        if (Working || QueuedMessages > 0)
+        if (Busy || QueuedMessages > 0)
         {
             return;
         }
