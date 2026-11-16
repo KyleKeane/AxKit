@@ -6,20 +6,86 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
+- **open**: 9 (3 high, 2 medium, 4 low)
 - **done**: 44 (8 high, 20 medium, 16 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 5 (4 medium, 1 low)
 
 ## The principles
 
-- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (10 findings)
+- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (15 findings)
 - **P2. One source, generated views.** A fact lives in one place (the menu bar, Dispatch.Apps, a JSON list); every page or list that repeats it is written by a script and checked by the same gate on the developer's computer and in CI. (6 findings)
 - **P3. A failure says what, why and where to read.** Every refusal, error and failed check names the thing, the reason and the document or command that helps; nothing fails silently and nothing passes silently against the wrong thing. (7 findings)
-- **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (11 findings)
+- **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (15 findings)
 - **P5. An entry is its name, never a held object.** What is found in one moment and used in another (a menu item, a file, a selection) is found again by its identity when it is used, and refused when it is gone or changed. (4 findings)
 - **P6. Writes are whole or not at all.** A file a user or the app depends on is written through a temporary file and put in place in one step; an undo step is dropped only once it has been applied. (2 findings)
 - **P7. Tests check the built thing.** What matters is checked on the running window or the built data; a test that reads source text is lint, a help and never the proof. (1 finding)
 - **P8. Documents describe the present.** Reference text says what is true now, in small files a reader with little context can hold; history lives in the changelog and git; open work lives in the priorities list. (9 findings)
+
+## Open
+
+### R-51, high, core: A settings file that cannot be opened at start is overwritten with defaults by the next save
+
+- Where: src/AxKit.Core/SettingsFile.cs; src/AxKit.Forms/AxKitForm.cs
+- Principle: P4
+- Fix: Load tries again three times; a file still unreadable gives defaults that are never saved over it, and the window says so.
+- Note: Found on 2026-11-16 by the resilience audit the user asked for (user error and tampering, fixes in code alone). A sync client, a backup or a virus scanner holding the file for a moment at start loses a user's shells, trusted repositories, servers, programs, favourites and hotkeys.
+
+### R-53, high, security: Settings that name what is run are plain files nothing checks
+
+- Where: src/AxTerminal.Core/TerminalSettings.cs; src/AxGit.Core/GitSettings.cs; src/AxKit.Core/Ai/AiSettings.cs; src/AxKit.Core/Consent.cs; src/AxKit.Core/Mcp/McpAccess.cs
+- Principle: P1
+- Fix: The seal of McpAccess moves to AxKit.Core on its second use; each settings class seals its run-deciding fields; a field whose seal does not check is not used and the user is told once.
+- Note: Found on 2026-11-16 by the resilience audit. Parts: axTerminal's custom and user shells (the consent is by name, not by command line); axGIT's trusted repositories (trust is a bare path, not bound to what the repository would run); the path of Claude Code in axClaude's and AI help's settings; axMCP's servers and axFile's programs; consent.json; the folders Claude may read in ai-help.json. The limit, to be written in the guide: a program running as the user can call Windows' protection itself; the seal holds against file writers, a copied or synced profile and an AI tool's own file writing.
+
+### R-54, high, security: Files Claude Code obeys in Claude's working folder are outside the self-repair
+
+- Where: src/AxKit.Core/Ai/AiDocumentation.cs; src/AxKit.Core/Ai/AiRequest.cs
+- Principle: P1
+- Fix: Before each start the obeyed files axKit did not write are listed with a hash each and compared with the list the user last accepted; a new or changed one is named in a notice whose default is Cancel. Shift+F1's print mode leaves project settings and project servers out where Claude Code has an option for it.
+- Note: Found on 2026-11-16 by the resilience audit. A settings file with hooks, a project server file, a third rule file or a changed CLAUDE.md there is loaded by Claude Code at every later start; Claude itself may write them. What Claude Code loads from the folder, and its options, are to be verified against the installed version first (rule 12).
+
+### R-52, medium, core: One wrongly typed value in a settings file discards every setting of the file
+
+- Where: src/AxKit.Core/SettingsFile.cs
+- Principle: P4
+- Fix: A property that does not read is dropped alone and named; the rest of the file is loaded; the copy is kept as now.
+- Note: Found on 2026-11-16 by the resilience audit. Text that is not a JSON object behaves as now.
+
+### R-55, medium, security: axPass takes any validly signed file as KeePassXC's tool
+
+- Where: src/AxKit.Core/Signatures.cs; src/AxPass.Core/KeePassCli.cs
+- Principle: P1
+- Fix: The signer's name is read after the signature checks, and only KeePassXC's publisher is accepted; another is refused with its name and the master password is not given to it.
+- Note: Found on 2026-11-16 by the resilience audit: the earlier audit's S-19 says the publisher is checked, the code checks only that some trusted publisher signed. The real subject of an installed copy's certificate is read first.
+
+### R-56, low, security: The AI tools read as off without a word when their seal or key fails
+
+- Where: src/AxKit.Core/Mcp/McpAccess.cs
+- Principle: P1
+- Fix: Load gives the reason; the next use of the AI tools says once that the setting was changed outside axKit or its key is gone, and the log holds it.
+- Note: Found on 2026-11-16 by the resilience audit. The default is the safe one; what is missing is that the user learns pairings were dropped or something wrote the file.
+
+### R-57, low, security: Report items planted in the reports folder go out with the user's next report
+
+- Where: src/AxKit.Core/Reports/ReportSender.cs
+- Principle: P1
+- Fix: Before anything beyond the report just written is sent, the earlier unsent ones are counted and named and the user is asked, No the default.
+- Note: Found on 2026-11-16 by the resilience audit, plausible and not followed to the end: what the report flow says today is to be read first.
+
+### R-58, low, forms: A stored window place can put a window almost wholly off the screen
+
+- Where: src/AxKit.Core/WindowSettings.cs; src/AxKit.Forms/AxKitForm.cs
+- Principle: P4
+- Fix: The place is fitted into the working area of the screen it meets most, by a pure function with tests.
+- Note: Found on 2026-11-16 by the resilience audit.
+
+### R-59, low, security: A downloaded update is not checked again between its hash and its extraction
+
+- Where: src/AxKit.Core/Updates/Updater.cs
+- Principle: P4
+- Fix: The bytes that were hashed are the bytes that are extracted.
+- Note: Found on 2026-11-16 by the resilience audit. Low: a program that can write there can write the install folder too.
 
 ## Done
 
