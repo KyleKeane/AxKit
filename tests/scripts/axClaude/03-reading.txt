@@ -31,6 +31,11 @@ refuse said ·
 # The reply done: the status bar's state, not the "Done" announcement, which a fast reply can say before the reads
 # above and their "said" takes (2026-10-24: haiku answered within 3 s and the step waited 60 s for a "Done" gone).
 expect state Claude: ready
+# "Done" itself comes 0.4 s after the bell (FR-7.2), so it may still be on its way when the status bar says ready. It
+# is waited out and taken here: on the runner's own desktop the steps below ran ahead of it, and the "expect said
+# Done" of the second reply took this one (2026-11-15, when Haiku needed 5 s for the numbers).
+wait 1000
+said
 # Goal: Go to Claude's latest reply
 # Step 3: after "Done", Ctrl+3: the newest output marker, focus in the conversation; Ctrl+1 and Ctrl+3 again: the same
 # line; Down: the blank line, then the first line of the reply.

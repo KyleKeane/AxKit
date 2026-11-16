@@ -19,6 +19,13 @@ open throughout and was left as it was.
 |---|---|---|
 | Every script | 139 | Passed |
 
+After the pass the 135 scripts of `tests/scripts` were played on the runner's own desktop with the same build: 134
+passed. `axClaude/03-reading.txt` failed at step 69, by a race of the script: "Done" is said 0.4 s after the bell, and
+when Haiku needed longer for the numbers than the script's reads, the first reply's Done was still on its way when
+the status bar said ready, and the script took it for the second reply's. The script now waits a second there and
+takes what was said; with that it passed three times on that desktop, each time in the slow case. That wait is the
+one line of the scripts this pass has not heard.
+
 This is the pass that the section "Owed after the workflows work" asked for, and it stands in that section's place.
 Of what that section listed as built without NVDA:
 
