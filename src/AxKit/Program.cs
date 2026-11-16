@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using AxCalc;
 using AxClaude;
+using AxClaude.Core.Hooks;
 using AxClip;
 using AxDown;
 using AxFile;
@@ -29,6 +30,21 @@ internal static class Program
 {
     [STAThread]
     private static void Main(string[] args)
+    {
+        // The hook a Claude Code session of axClaude's starts for an event (docs/axClaude/events-and-grounding.md
+        // EG-2.6): no app and no window, decided before anything else runs, so that the process loads nothing of the
+        // windows and ends within the time Claude Code gives a hook. Everything else is Start's.
+        if (args.Length > 0 && args[0] == HookRelay.Verb)
+        {
+            HookRelay.Run();
+            return;
+        }
+
+        Start(args);
+    }
+
+    /// <summary>Every start but the hook's: the Open with links, a test run's variables, then the app the command line means.</summary>
+    private static void Start(string[] args)
     {
         if (StartedAsOpenWithLink(args))
         {

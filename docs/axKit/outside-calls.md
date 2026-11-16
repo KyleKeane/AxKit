@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 6 network requests, 32 program starts and 5 pipes, in 31 files, under the 12 headings below.
+Today: 6 network requests, 32 program starts and 7 pipes, in 32 files, under the 13 headings below.
 
 ## What axKit reaches
 
@@ -224,6 +224,21 @@ Calls (3):
 - **shared by every app**, `src/AxKit.Forms/McpChannel.cs`, in `McpChannel.Serve`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where the MCP server asks the window what it shows while the AI tools are on; each connection must answer the challenge with the paired key.
   Code: `using var pipe = NamedPipeServerStreamAcl.Create(_name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, UserPipe.Security());`
 
+#### Claude Code events
+
+- **What**: the events of an axClaude session that Claude Code's hooks report, eight kinds (a session started, a turn stopped or failed, a helper agent started or stopped, a permission asked, a notification, the session ended; docs/axClaude/events-and-grounding.md EG-2.1): for each, Claude Code starts `AxKit.exe hook` at axClaude's request, and that process tells the axClaude window that started this Claude Code that the event happened.
+- **How**: the hooks are registered for each start of Claude Code with `--settings` and axKit's own file `claude-hooks.json` (`%LOCALAPPDATA%\AxKit`), never in a settings file of the user's or a project's. Claude Code writes the event as JSON to the standard input of `AxKit.exe hook`, which connects to the window's named pipe (`AxKit-hook-<user>-<random>`, named with its secret in the variable `AXKIT_HOOK_PIPE` of the environment the window gave Claude Code, both new for each start), writes the secret, the length and the event, and ends, printing nothing and always with exit code 0. The pipe is the window's own, which only this Windows account may open and the network may not; a connection that does not send the window's secret is dropped. Nothing an event carries is run, sent to Claude Code, shown or written to a file (EG-2.9).
+- **What it reaches**: nothing on the network: a program start that Claude Code makes and a pipe on this computer. axKit listens on no port, not even on this computer (docs/axKit/mcp.md section 1).
+- **Documentation**: https://code.claude.com/docs/en/hooks; docs/axClaude/events-and-grounding.md EG-2, EG-10.
+- **Apps**: axClaude, access layer for Claude Code.
+
+Calls (2):
+
+- **axClaude**, `src/AxClaude.Core/Hooks/HookRelay.cs`, in `HookRelay.Run`, by `Console.OpenStandardInput`: the standard input of "AxKit.exe hook", on which Claude Code writes the event it started the hook for.
+  Code: `using var input = Console.OpenStandardInput();`
+- **axClaude**, `src/AxClaude.Core/Hooks/HookRelay.cs`, in `HookRelay.Connect`, by `new NamedPipeClientStream`: connects to the pipe of the axClaude window that started this Claude Code, named in the environment it gave, and writes the event; on this computer, never over the network.
+  Code: `var pipe = new NamedPipeClientStream(".", name, PipeDirection.Out);`
+
 #### Test automation
 
 - **What**: the automation channel of a window of a workflow's run, in a run only: axAutomate's window (F5) or tools/AxAutomate, the bundle's own test driver, starts the run's windows on a desktop of the run's own with the run's secret (`AXKIT_AUTOMATION`), and each opens the pipe `axkit-auto-<process id>` for it. Never in normal use; the user's own windows never open it.
@@ -376,9 +391,10 @@ Used in 1 place:
 
 Defined in .NET, System.IO.Pipes: connects to a named pipe on this computer.
 
-Used in 2 places:
+Used in 3 places:
 
 - `src/AxAutomate.Core/Window.cs`, in `Window.Window`, for Test automation.
+- `src/AxClaude.Core/Hooks/HookRelay.cs`, in `HookRelay.Connect`, for Claude Code events.
 - `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Exchange`, for AI tools.
 
 ### NamedPipeServerStreamAcl.Create, pipe
@@ -394,8 +410,9 @@ Used in 2 places:
 
 Defined in .NET, System: the standard input, which the process that started this one writes to.
 
-Used in 1 place:
+Used in 2 places:
 
+- `src/AxClaude.Core/Hooks/HookRelay.cs`, in `HookRelay.Run`, for Claude Code events.
 - `src/AxKit.Forms/McpBroker.cs`, in `McpBroker.Run`, for AI tools.
 
 Watched for and not used today: HttpClient.GetStreamAsync (network); HttpClient.GetByteArrayAsync (network); HttpClient.PostAsync (network); WebRequest.Create (network); new WebClient (network); new Socket (network); new TcpClient (network); new TcpListener (network); new UdpClient (network); new HttpListener (network); Dns.GetHostEntry, Dns.GetHostAddresses (network).

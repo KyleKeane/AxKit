@@ -2,6 +2,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using AxClaude.Core.Hooks;
 using AxKit.Core;
 
 namespace AxClaude.Core.Pty;
@@ -64,9 +65,13 @@ public static class ClaudeLauncher
 
     /// <summary>
     /// The current environment without any CLAUDE* variable (so a nested session is not detected), plus the
-    /// variables that make screen reader mode immediate.
+    /// variables that make screen reader mode immediate. The hooks' pipe (docs/axClaude/events-and-grounding.md EG-2.8):
+    /// a value of <see cref="HookFrame.Variable"/> this process inherited is always taken out, so that a window started
+    /// from inside another axClaude's session never reports to that window, and <paramref name="hookPipe"/>, the
+    /// variable's value for this start (<see cref="HookFrame.VariableValue"/>), is put in when given; a hook's process
+    /// inherits it from Claude Code.
     /// </summary>
-    public static Dictionary<string, string> BuildEnvironment()
+    public static Dictionary<string, string> BuildEnvironment(string? hookPipe = null)
     {
         var env = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
@@ -84,6 +89,12 @@ public static class ClaudeLauncher
         env["CLAUDE_AX_STARTUP_QUIET_MS"] = "0";
         env["CLAUDE_AX_PREPARK_MS"] = "0";
         env["CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN"] = "1";
+        env.Remove(HookFrame.Variable);
+        if (!string.IsNullOrEmpty(hookPipe))
+        {
+            env[HookFrame.Variable] = hookPipe;
+        }
+
         return env;
     }
 

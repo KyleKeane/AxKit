@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using AxClaude.Core.Hooks;
 using AxClaude.Core.Pty;
 
 namespace AxClaude.Tests;
@@ -36,6 +37,31 @@ public class ClaudeLauncherTests
         {
             Environment.SetEnvironmentVariable("CLAUDE_CONFIG_DIR", before.Item1);
             Environment.SetEnvironmentVariable("CLAUDECODE", before.Item2);
+        }
+    }
+
+    [Fact]
+    public void The_child_environment_carries_the_hook_pipe_when_given_and_never_an_inherited_one()
+    {
+        // docs/axClaude/events-and-grounding.md EG-2.8: a window started from inside another axClaude's session
+        // inherits that window's variable, and its Claude Code must never report there.
+        var before = Environment.GetEnvironmentVariable(HookFrame.Variable);
+        try
+        {
+            Environment.SetEnvironmentVariable(HookFrame.Variable, "AxKit-hook-outer;" + new string('0', 64));
+            Assert.False(ClaudeLauncher.BuildEnvironment().ContainsKey(HookFrame.Variable));
+            Assert.False(ClaudeLauncher.BuildEnvironment(string.Empty).ContainsKey(HookFrame.Variable));
+
+            var mine = HookFrame.VariableValue(HookFrame.NewPipeName("S-1-5-21-1"), HookFrame.NewSecret());
+            var env = ClaudeLauncher.BuildEnvironment(mine);
+            Assert.Equal(mine, env[HookFrame.Variable]);
+            Assert.Single(env.Keys, key => key.Equals(HookFrame.Variable, StringComparison.OrdinalIgnoreCase));
+            // The rest is as without it.
+            Assert.Equal("xterm-256color", env["TERM"]);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(HookFrame.Variable, before);
         }
     }
 

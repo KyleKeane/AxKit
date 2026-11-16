@@ -45,6 +45,15 @@ public static class AppPaths
     public static string McpClaudeConfigFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "claude-mcp.json");
 
+    /// <summary>
+    /// The hooks axClaude registers for each start of Claude Code with <c>--settings</c>
+    /// (docs/axClaude/events-and-grounding.md EG-2.2, section 6.1): one command hook for each event, this program file
+    /// with the verb <c>hook</c>. Beside <see cref="McpClaudeConfigFile"/> and for the same reason: it names a program
+    /// file of this computer, so it never roams; a test run's own folder in a run.
+    /// </summary>
+    public static string ClaudeHooksFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "claude-hooks.json");
+
     public static string LogsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "logs");
 
