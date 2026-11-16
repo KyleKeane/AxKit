@@ -7,54 +7,61 @@ file find.md # Find and go to line\n\nThe first apple is on line 3.\nNothing her
 start down {temp}\find.md
 expect focus find.md
 
+# Goal: Find a word in the text
 # 4.1: Ctrl+F, the field "Text to find"; Enter lands on the match and the focus is back in the text there.
-keys ctrl+f
+do Find
 expect focus Text to find
 type apple
 keys enter
 expect focus {"name":"find.md","role":"Text","value":"The first apple is on line 3."}
 expect state Line 3, Column 11 \u00B7
 # F3 the next match; Shift+F3 back.
-keys f3
+do Find next
 expect focus The second apple is on line 5.
-keys shift+f3
+do Find previous
 expect focus The first apple is on line 3.
 expect quiet 1000
+# Check: A word that is not in the text is said as not found
 # A word that is not there: "Not found".
-keys ctrl+f
+do Find
 expect focus Text to find
 type pear
 keys enter
 expect said Not found
 expect focus find.md
 
+# Goal: Go to a line by its number
 # 4.2: Ctrl+G, the field named with the line and column; a number, Enter: "Line n of m", the caret at that line's start.
-keys ctrl+g
+do Go to line
 expect focus Go to line (now line 3, column 11)
 type 5
 keys enter
 expect said ! Line 5 of 7
 expect focus {"name":"find.md","role":"Text","value":"The second apple is on line 5."}
 expect state Line 5, Column 1 \u00B7
+# Check: A number past the end lands on the last line
 # A number past the end lands on the last line.
-keys ctrl+g
+do Go to line
 expect focus Go to line (now line 5, column 1)
 type 99
 keys enter
 expect said ! Line 7 of 7
 expect focus The last line, line 7.
+# Check: A word in place of a number is refused and the caret stays
 # A word: "Not a line number", the caret where it was.
-keys ctrl+g
+do Go to line
 type five
 keys enter
 expect said ! Not a line number
 expect focus The last line, line 7.
 expect state Line 7, Column 1 \u00B7
+# Check: Escape in the field returns to the text where it was
 # Escape returns to the text where it was.
-keys ctrl+g
+do Go to line
 expect focus Go to line (now line 7, column 1)
 keys escape
 expect focus {"name":"find.md","role":"Text","value":"The last line, line 7."}
 
+# Check: The status bar holds the name, the line and column, the encoding and the line ending
 # 4.3: the status bar holds the name, "Line n, Column m", the encoding and the line ending (NVDA+End reads it).
 expect state "status":["find.md","Line 7, Column 1 \u00B7 UTF-8 \u00B7 CRLF"]

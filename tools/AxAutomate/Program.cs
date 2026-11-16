@@ -33,6 +33,14 @@
 //   keys <key> ...            key presses: ctrl+shift+p, escape, down, enter, f1, alt+f4 ...
 //   type <text>               characters into the focused control
 //   menu <name>               a menu command by the command palette's name ("Force Claude to restart")
+//   do <name>                 a command of the current window by its name, run as a user runs it: the window is asked
+//                             for its commands, and the key that runs this one now is pressed ("-> key ctrl+f"); a
+//                             command with no key runs by its menu item ("-> menu item"). The name is the command's
+//                             label ("Find"), or, where two commands share a label, the label and its menus
+//                             ("Heading, Navigation, Next"). Fails with nothing pressed when no key of the command
+//                             acts where the focus is, when a notice shows, and when the name finds no one command
+//                             (docs/axKit/user-workflows.md WF-4). Not for a command that closes the window (close,
+//                             keys alt+f4), a control's or a notice's own keys (keys, type)
 //   said                      prints the timeline since the last look (! interrupting, ♪ sound, → focus, · value)
 //   text | list | commands | state | focus   prints the focused text's lines, the focused list's items, the menus'
 //                             commands, the window's state (title, notice and its text, status bar), the focus

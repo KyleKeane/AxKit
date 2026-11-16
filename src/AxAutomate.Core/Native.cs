@@ -365,35 +365,13 @@ internal static class Native
         return new() { type = INPUT_KEYBOARD, ki = new KEYBDINPUT { wVk = vk, wScan = (ushort)MapVirtualKeyW(vk, 0), dwFlags = flags } };
     }
 
-    private static ushort VirtualKey(string name)
-    {
-        if (name.Length == 1 && char.IsLetterOrDigit(name[0]))
-        {
-            return char.ToUpperInvariant(name[0]);
-        }
-
-        return name.ToLowerInvariant() switch
-        {
-            "enter" => 0x0D,
-            "escape" or "esc" => 0x1B,
-            "tab" => 0x09,
-            "space" => 0x20,
-            "backspace" => 0x08,
-            "delete" => 0x2E,
-            "insert" => 0x2D,
-            "up" => 0x26,
-            "down" => 0x28,
-            "left" => 0x25,
-            "right" => 0x27,
-            "home" => 0x24,
-            "end" => 0x23,
-            "pageup" => 0x21,
-            "pagedown" => 0x22,
-            // The text size keys, as the window's own channel names them (AutomationChannel): the main keyboard's plus and minus.
-            "plus" => 0xBB,
-            "minus" => 0xBD,
-            _ when name.StartsWith('f') && int.TryParse(name[1..], out var f) && f is >= 1 and <= 12 => (ushort)(0x70 + f - 1),
-            _ => throw new ArgumentException($"unknown key {name}"),
-        };
-    }
+    /// <summary>
+    /// A key's code by its name in the one chord vocabulary (<see cref="AxKit.Core.KeyChord"/>,
+    /// docs/axKit/user-workflows.md WF-2.2), which held this method's own table of names until 2026-11-15: the names
+    /// the channel's <c>keys</c> takes and the window writes its commands' chords in, so that a chord a window lists
+    /// is one this tier can press too (the step <c>do</c>). The modifiers, NVDA's own among them, stay
+    /// <see cref="Keys"/>'s.
+    /// </summary>
+    private static ushort VirtualKey(string name) =>
+        AxKit.Core.KeyChord.Code(name) is { } code ? (ushort)code : throw new ArgumentException($"unknown key {name}");
 }

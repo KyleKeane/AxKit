@@ -328,7 +328,8 @@ public static class ScriptReader
             "menu" => "name",
             "start" or "launch" => "arguments",
             "use" => "window",
-            "run" => "command",
+            // WF-4.7: the step do names a command of the window, by its canonical name.
+            "run" or "do" => "command",
             "wait" or "expect quiet" => "ms",
             "mkdir" => "path",
             _ => "text",

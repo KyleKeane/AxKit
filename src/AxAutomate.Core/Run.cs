@@ -3,6 +3,8 @@ using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using AxKit.Core;
 
 namespace AxAutomate.Core;
 
@@ -144,7 +146,15 @@ public sealed class Run(string exe, string temp, bool hosted = false)
             case "check" when rest == "commands":
                 // The window's command list (docs/axKit/app-kit.md AK-2.4): every key in the F1 text, none shadowed.
                 var problems = Current.Send("problems");
+                // And its commands as data, kept for the run (WF-2.7); a window from before that request gives none.
+                if (CommandListing.Read(Current.Send("commands data")) is { } listed)
+                {
+                    _snapshots.Add(listed);
+                }
+
                 return (problems.Contains("\"problems\":[]", StringComparison.Ordinal), problems);
+            case "do":
+                return Do(rest.Trim());
             case "spoken":
                 return (true, string.Join(" | ", _speech.TakeAll()));
             case "keys" when Nvda:
@@ -183,6 +193,85 @@ public sealed class Run(string exe, string temp, bool hosted = false)
                 return (!reply.Contains("\"error\""), reply.Contains("\"error\"") ? reply : null);
             default:
                 return (false, $"unknown step {verb}");
+        }
+    }
+
+    private readonly List<WindowCommands> _snapshots = [];
+
+    /// <summary>
+    /// The listings the run saw (docs/axKit/user-workflows.md WF-2.7), in the order of its steps: the current window's
+    /// whole listing at every <c>check commands</c> step, and at every <c>do</c> step whose name found a command a
+    /// listing of that one row. They outlive the windows: <see cref="ScriptRunner.Play"/> hands them on in its result.
+    /// </summary>
+    public IReadOnlyList<WindowCommands> Snapshots => [.. _snapshots];
+
+    /// <summary>
+    /// The step <c>do &lt;name&gt;</c> (docs/axKit/user-workflows.md WF-4): the current window is asked for its
+    /// commands as data at this moment, the name is resolved among them (<see cref="DoStep.Decide"/>), and the command
+    /// is run the way a user runs it. Its key that acts now is pressed exactly as a <c>keys</c> step presses it on
+    /// this tier (the channel's keys on the run's desktop; <c>SendInput</c> with NVDA, only while a window of the run
+    /// is in front), with that step's wait. A command with no key as data runs by its menu item, the channel's
+    /// <c>choose</c>, found by exactly its label and its menus. A passed step's detail says which: "key ctrl+f",
+    /// "menu item". Everything else fails the step with nothing pressed: no listing, a notice, a name that finds no
+    /// one command, and a key that does not act where the focus is, with the focused control named.
+    /// </summary>
+    private (bool, string?) Do(string name)
+    {
+        var window = Current;
+        var listing = CommandListing.Read(window.Send("commands data"));
+        var decision = DoStep.Decide(listing, name);
+        if (listing is not null && decision.Row is { } row)
+        {
+            // WF-2.7: the one row the name came to, as the window listed it.
+            _snapshots.Add(new WindowCommands(listing.App, listing.Notice, [row]));
+        }
+
+        switch (decision.Kind)
+        {
+            case DoKind.Press:
+                var pressed = Step("keys " + decision.Chord);
+                return pressed.Ok ? (true, decision.Detail) : pressed;
+            case DoKind.Choose:
+                var before = Nvda ? Speech.LogLength() : 0;
+                var chosen = window.Send("choose " + new JsonObject { ["label"] = decision.Row!.Label, ["menu"] = decision.Row.Menu }.ToJsonString());
+                if (chosen.Contains("\"error\""))
+                {
+                    return (false, chosen);
+                }
+
+                // The wait of a key press (WF-4.6): a moment on the run's desktop; with NVDA, until it starts to speak.
+                if (Nvda)
+                {
+                    Speech.SettleAfterKey(before, 400);
+                }
+                else
+                {
+                    Thread.Sleep(60);
+                }
+
+                return (true, decision.Detail);
+            case DoKind.NoAct:
+                return (false, $"{decision.Detail}: {FocusName(window)}");
+            default:
+                return (false, decision.Detail);
+        }
+    }
+
+    /// <summary>The accessible name of the control that has the focus in the window, for a step that says where the focus is; "no control" when none has it.</summary>
+    private static string FocusName(Window window)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(window.Send("focus"));
+            return document.RootElement.ValueKind == JsonValueKind.Object
+                && document.RootElement.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.String
+                && name.GetString() is { Length: > 0 } text
+                    ? text
+                    : "no control";
+        }
+        catch (JsonException)
+        {
+            return "no control";
         }
     }
 

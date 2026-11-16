@@ -6,6 +6,30 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## Owed after the workflows work (branch `workflows`)
+
+A pass of `nvda-pass.ps1` over every app. The keys of every script now go through `KeyChord` (WP-B2, WP-B4), `do`
+presses through `SendInput` under NVDA, and the pass writes the first workflow record for the `nvda` tier. The branch
+is not merged to `main` before it. (`docs/axKit/user-workflows.md`, sections 8 and 9; the pass of WP-B18 replaces this
+section with its own.)
+
+What was built without NVDA and is not proven until that pass. On the runner's own desktop, where the keys go
+through the window's channel, the same steps pass (`tests/scripts/axDown` whole, 2026-11-15); nothing below has run
+with NVDA:
+
+- The NVDA tier's key codes. `Native.VirtualKey` reads a key's name from `AxKit.Core/KeyChord` and no longer from a
+  table of its own. Every name the scripts press today has the code it had before, so nothing should change; the
+  names that are new to this tier (`period`, `comma`, `apps`, `slash`, `semicolon`, `add`, `subtract`) have never
+  been pressed through `SendInput`, and no script presses one yet.
+- `do` with NVDA listening: the command's key pressed through `SendInput` while the run's window is in front, and
+  what the command says heard by NVDA, as with the `keys` step it replaced. First in
+  `tests/scripts/axDown/04-find-and-go-to-line.txt`: Find (Ctrl+F), Find next (F3), Find previous (Shift+F3) and Go
+  to line (Ctrl+G).
+- `do` for a command with no key, which runs through the channel's `choose` and then waits for NVDA to start
+  speaking, as after a key: no script uses it yet, so the pass hears it only once a script does.
+- The window lists its commands at every `do` and `check commands` step (`commands data`), reading its menus as
+  `expect commands` always has; that NVDA says nothing of it has not been heard.
+
 ## 2026-11-15, evening: every app, after 5.9.1; by the assistant with NVDA listening (`main` 1db380e, then the fix of axClip's scripts)
 
 `.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, NVDA 2025.3.3, Claude Code 2.1.325:

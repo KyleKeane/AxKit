@@ -171,6 +171,34 @@ including while the user works, because nothing takes the foreground.
   path in quotes when it holds a space; the header of its `Program.cs` lists them),
   each step's result in a report; what a window said stays queued until an expectation takes it; a failing step prints what was said and focused instead. The NVDA test plans become scripts in
   `tests/scripts/<app>/`, one per section, with Claude always on `--model haiku`.
+  - `do <name>` (2026-11-15, `user-workflows.md` WF-4): runs a command of the current window by its name, the way a
+    user runs it. The runner asks the window for its commands (`commands data`), finds the one command the name gives
+    and presses the chord the window says would run it at this moment (the row's `now`), through the same key path as
+    `keys`: `ProcessCmdKey`, the key's own condition and, with NVDA, NVDA's handling of the key are what is checked.
+    The step's detail says what was pressed: `do Find  -> key ctrl+f`. The name is the command's label ("Find"), or,
+    where two commands of the window share a label, the label with its menus as the palette lists them ("Heading,
+    Navigation, Next"); it is compared whole, without regard to case, by the one resolver (`AxKit.Core/CommandNames`),
+    never as the start of a name. The key is the window's own, read at the moment of the step, so a key changed in a
+    key table changes no script. A command with no key as data (none at all, or one its menu item only shows as a
+    text) runs by its menu item through `choose`, and the detail says `menu item`. The step fails, with nothing
+    pressed: when the command has keys and none acts where the focus is ("the key of Find next (F3) does not act
+    where the focus is: " and the focused control's name); when the window shows a notice ("the window shows the
+    notice Find: its commands wait"; a notice's own keys are `keys` steps); when the name is unknown or ambiguous,
+    with the nearest commands or what to write named; and against an AxKit.exe from before `commands data`. It is not
+    for a command that ends the window (`close` and `keys alt+f4` tell the run that the end is meant), nor for a
+    control's own keys (`keys`, `type`) or a system-wide hotkey. `menu <name>` is as it was: the first palette line
+    that starts with the text.
+  - Goals and checks (2026-11-15, `user-workflows.md` WF-3): a comment line `# Goal: <title>` starts a goal, what a
+    user gets done by the steps under it, and `# Check: <title>` a check, steps that only test (a refusal, a wrong
+    input, a state). Each runs to the next such line or to the script's end; the lines before the first are the
+    setup. A failing step still stops its script, and the run says for each section whether it passed, failed (with
+    the line) or was not run: `-- Goal: <title>` or `-- Check: <title>` before a section's first step, and after the
+    last step `Goals: 2 passed, 1 failed, 4 not run` with one line per section; the run's last lines add the counts
+    over all scripts. A script without such a line is one goal, titled by its `# Workflow:` label, and prints as
+    before. `tests/scripts/axDown/04-find-and-go-to-line.txt` is the first script written this way: two goals and
+    five checks, its commands run by `do`.
+  - What a run keeps of the windows' commands (WF-2.7): the current window's whole listing at every
+    `check commands` step, and the one row its name came to at every `do` step (`ScriptResult.Commands`).
 
 ### What the scripts cover, and what stays manual (2026-10-23)
 
@@ -210,7 +238,10 @@ NVDA refuses to be started from the assistant's process ("Access is denied"), so
   `%TEMP%\axkit-nvda-speech.log`, only while the file `%TEMP%\axkit-nvda-capture.on` exists, so that nothing the user
   hears in daily use is recorded. Installed once with the user's consent through NVDA's add-on store dialog.
 - **The same scripts**, run with `--nvda`: the window is activated, the keys go through `SendInput` as a keyboard's
-  do, and `expect spoken <text>` reads the capture file.
+  do, and `expect spoken <text>` reads the capture file. A `do` step presses its command's key the same way, and a
+  command with no key runs through the channel's `choose`, as `menu` does; the key's name is read from the same
+  vocabulary as the channel's (`AxKit.Core/KeyChord`, since 2026-11-15), so a chord a window lists is one this tier
+  can press. NVDA's own modifier (`nvda+1`) is this tier's alone.
 
 Built 2026-10-23: `--nvda` in `tools/AxAutomate` (the windows on the user's desktop, brought to the front through the
 channel's `activate`, keys and characters through `SendInput`, `expect spoken`, `refuse spoken` and `spoken` over the

@@ -93,6 +93,7 @@ keys in place of its words on a line:
 | `keys` | `keys` | Press Ctrl+Shift+P |
 | `type` | `text` | Type hello |
 | `menu` | `name` | Choose the menu item Close all windows |
+| `do` | `command` | Do the command Find |
 | `expect said`, `expect focus`, `expect state`, `expect list`, `expect text` | `text` | Expect said: Command palette |
 | `refuse said` and the other refusals | `text` | Must not say: Error |
 | `expect closed`, `expect quiet` | none; `ms` | Expect the window closed |
@@ -106,6 +107,12 @@ keys in place of its words on a line:
 - AU-3.3.1 `try said` and `iffound` are not operations of their own: they are `expect said` with
   `"on failure": "continue"` and `then` (AU-3.2.1).
 - AU-3.3.2 An operation the engine does not know makes the workflow read-only and unrunnable, with the step said.
+- AU-3.3.3 The operation `do` (2026-11-15; `docs/axKit/user-workflows.md` WF-4, which holds the whole of it) runs a
+  command of the current window by its name: its label, or the label with its menus where two commands share one.
+  The window is asked for its commands at that moment and the key that runs the command there is pressed, so the
+  step names no key; a command with no key runs by its menu item. It fails when no key of the command acts where
+  the focus is, when a notice shows, and for a name that finds no one command. In a workflow file it is
+  `{"do": "do", "command": "Find"}`; it runs from the window as from the command line.
 
 ### 3.4 Placeholders
 

@@ -27,6 +27,7 @@ public static class StepText
             "keys" => "Press " + Keys(step.Value("keys")),
             "type" => "Type " + text,
             "menu" => "Choose the menu item " + step.Value("name"),
+            "do" => "Do the command " + step.Value("command"),
             "start" => "Start " + step.Value("arguments"),
             "launch" => "Launch " + step.Value("arguments"),
             "adopt" => "Take the window the app opened",

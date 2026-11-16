@@ -21,6 +21,13 @@ public sealed record ScriptResult(bool Ok, string Log, LineResult? Failed, IRead
 {
     /// <summary>Each section's result (docs/axKit/user-workflows.md WF-3.9), in the script's order; none when the run was given no sections.</summary>
     public IReadOnlyList<GoalResult> Goals { get; init; } = [];
+
+    /// <summary>
+    /// The listings the run saw (<see cref="Run.Snapshots"/>, WF-2.7), in the order of its steps: a window's whole
+    /// listing at each <c>check commands</c> step, the one resolved row at each <c>do</c> step; none when the script
+    /// has neither step or the window does not list its commands as data.
+    /// </summary>
+    public IReadOnlyList<AxKit.Core.WindowCommands> Commands { get; init; } = [];
 }
 
 /// <summary>
@@ -158,6 +165,6 @@ public static class ScriptRunner
             log.Append(run.Timeline());
         }
 
-        return new ScriptResult(ok, log.ToString(), failed, problems, stopped) { Goals = results };
+        return new ScriptResult(ok, log.ToString(), failed, problems, stopped) { Goals = results, Commands = run.Snapshots };
     }
 }
