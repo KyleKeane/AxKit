@@ -76,7 +76,8 @@ New-Picture 760 440 {
     foreach ($line in $lines) { $g.DrawString($line, $font, $black, 12, $y); $y += 26 }
     $g.FillRectangle($grey, 0, 410, 760, 30)
     $g.DrawString('notes.md', $font, $black, 10, 415)
-    $g.DrawString('Line 3, Column 1 · UTF-8 · CRLF', $font, $black, 500, 415)
+    # The middle dot by its number: a script stays ASCII (tools\script-lint.ps1).
+    $g.DrawString(('Line 3, Column 1 {0} UTF-8 {0} CRLF' -f [char]0xB7), $font, $black, 500, 415)
 } 'editor.png'
 
 New-Picture 640 420 {

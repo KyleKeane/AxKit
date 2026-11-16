@@ -22,6 +22,10 @@ it). It holds the principles the repairs follow, each with an id, and the items,
 An item is added when a defect is found and its status changed when it is fixed, in the same commit as the fix. The
 page is written by this script and never by hand. test.ps1 and build.yml run -Check, so that the list and its page
 never part. A done item stays, as the record of what was repaired and how it was checked.
+
+Every run, with or without -Check, first holds the list to its fields: an id used once, a known severity, status and
+principle, a done item with its verify, a deferred or declined one with its note, and a commit that is named being a
+commit of this repository (looked up where the whole history is, so not on CI's shallow checkout).
 #>
 [CmdletBinding()]
 param([switch]$Check, [switch]$Open)
@@ -37,6 +41,10 @@ $statuses = 'open', 'done', 'deferred', 'declined'
 $principleIds = @($data.principles | ForEach-Object { $_.id })
 $problems = @()
 $seen = @{}
+# The commits are looked up only where the whole history is: CI checks out the newest commit alone (a shallow clone),
+# and a copy without git has none.
+$history = (Get-Command git -ErrorAction SilentlyContinue) -and ("$(git -C $root rev-parse --is-shallow-repository)".Trim() -eq 'false')
+$knownCommits = @{}
 foreach ($item in $data.items) {
     if ($seen.ContainsKey($item.id)) { $problems += "$($item.id): the id is used twice" }
     $seen[$item.id] = $true
@@ -45,6 +53,13 @@ foreach ($item in $data.items) {
     if ($principleIds -notcontains $item.principle) { $problems += "$($item.id): principle '$($item.principle)' is not in the list" }
     if ($item.status -eq 'done' -and -not $item.verify) { $problems += "$($item.id): done without saying how it was checked (verify)" }
     if (($item.status -eq 'deferred' -or $item.status -eq 'declined') -and -not $item.note) { $problems += "$($item.id): $($item.status) without saying why (note)" }
+    # A commit that is named is one this repository has: a mistyped one would send the reader of the record nowhere.
+    if ($item.commit -and $history -and -not $knownCommits.ContainsKey($item.commit)) {
+        # --quiet: nothing on the error stream, which Windows PowerShell would turn into an error under Stop.
+        git -C $root rev-parse --verify --quiet "$($item.commit)^{commit}" | Out-Null
+        if ($LASTEXITCODE -ne 0) { $problems += "$($item.id): the commit '$($item.commit)' is not in this repository" }
+        else { $knownCommits[$item.commit] = $true }
+    }
 }
 
 if ($problems.Count -gt 0) {

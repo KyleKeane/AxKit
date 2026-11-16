@@ -501,7 +501,7 @@ src/AxKit.Forms/           shared window pieces, moved from here unchanged (bund
                           (§7.7; the keys handed in from AxClaudeKeys.Transcript), moved for axTerminal; since 2026-10-23
                           ConsoleForm, the console window both apps derive from (bundle AX-6.5)
 tests/AxClaude.Tests/     xunit: FixtureTests, ReplayTests, SessionModelTests, ArrivalsTests, TranscriptMirrorTests, ReadingBreakTests,
-                          ScreenTests, QuestionTests, SettingsTests, GitExcludeTests, PrivacyTests, ClaudeLauncherTests, UtteranceTests,
+                          ScreenTests, QuestionTests, SettingsTests, GitExcludeTests, ClaudeLauncherTests, UtteranceTests,
                           StartupOptionsTests; for FR-15 TurnMarkTests, ClaudeCodeHooksTests, HookFrameTests, HookRelayTests,
                           ClaudeCodeTranscriptTests, RecordTextTests, SessionFlowTests, FlowFeedTests, FlowShadowTests; TestHelpers
 tests/AxKit.Tests/         the bundle's tests: DispatchTests, KeyTests, LayoutTests, ParagraphsTests, SettingsFileTests, UpdateCheckTests, WaveToneTests
@@ -659,7 +659,7 @@ Unit tests (xunit, `tests/AxClaude.Tests`; `TestHelpers` holds what they share: 
 - SettingsTests: round trip; a missing or broken file falls back to the defaults; the 1.1 `speakReplies` key.
 - ClaudeCodeSettingsTests (FR-14): every entry of the table has its mechanism, its default and fitting choices, the commands are pickers the app knows, nothing of FR-14.4 is offered; the user settings file's path with and without `CLAUDE_CONFIG_DIR`; one key set, replaced and removed with every other key and nested value kept; a missing or empty file; nothing to change leaves the text; a file that is not one JSON object (a comment, a trailing comma, a key twice, an array) never rewritten, a syntax error named with its line; the choice read from the file. The window's part is `tests/scripts/axClaude/26-claude-code-settings.txt`.
 - GitExcludeTests: the marked block in `.git\info\exclude` added once and removed, a plain folder left alone, a linked worktree, and the names the app offers matching the patterns (D34).
-- PrivacyTests: `Redaction` on what `/status` prints, and no e-mail address or account path in any file of the repository.
+- PrivacyTests (in `tests/AxKit.Tests` since 2026-11-16, with the bundle's own checks): `Redaction` on what `/status` prints, and no e-mail address, account path, GitHub token or private key in any file of the repository.
 - ClaudeLauncherTests: splitting and joining the Custom arguments of New session; `claude --version` against a fake claude.cmd: the first line, the timeout that ends a claude that does not answer, a claude that cannot start; the command line of a `claude.cmd` (FR-1.2): a folder named `R&D` in quotes, the refusals with their character and argument, and a real batch file run by cmd.exe that receives its arguments as they were sent and runs no second command.
 - UtteranceTests: the joining rule of a spoken frame (D32).
 - StartupOptionsTests: the command line (FR-9): the options, their errors, and everything after `--` passed on verbatim.

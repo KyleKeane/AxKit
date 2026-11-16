@@ -409,7 +409,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   soon after loading, which would otherwise write the defaults over every other setting in the file. Two cases lose
   less than that (the resilience audit of 2026-11-16, `repairs.md` R-51 and R-52). A file one or more of whose values
   do not read (a word where a number belongs, a kind that does not exist) loses those values alone: each is left at
-  its default and named in the error, the rest of the file is loaded, and the copy is kept as before. A file that is
+  its default and named in the error, the rest of the file is loaded, and the copy is kept as before; the window says
+  before the error "The settings file was read, except for the settings named here.", and "The settings file could
+  not be read, so the defaults are used." only of a file nothing could be taken from (`SettingsFile.Heading`). A file that is
   there and cannot be opened (another program holds it: a sync client, a backup, a virus scanner) is tried again
   three times, a tenth of a second apart; if it still cannot be opened, the defaults serve that run and are never
   saved over it: `SettingsFile.Save` passes that path over until a later load has read the file, and the error says

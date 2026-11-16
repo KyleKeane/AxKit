@@ -9,8 +9,10 @@
   script then runs install.ps1 from publish\win-x64 on this machine (Start menu entries, File Explorer entries and
   the console commands; see install.ps1 -? for details and -Uninstall).
 
-  The release workflow calls it twice (docs/axKit/code-signing.md): -NoInstall -NoZip builds the folder, AxKit.exe is
-  signed for Windows in it, then -ZipOnly zips the folder as it is. Neither installs anything.
+  The release workflow calls it twice: -NoInstall -NoZip builds the folder, then -ZipOnly zips the folder as it is.
+  Neither installs anything. Nothing signs AxKit.exe for Windows between the two: that step was retired on 2026-11-09
+  (docs/axKit/code-signing.md), the signed copy of axKit is the Microsoft Store's, and the zip is signed with the
+  release key afterwards (tools\sign-release.ps1).
 
   -Msix builds the MSIX package for the Microsoft Store instead (docs/axKit/store-distribution.md 3.1): a folder
   publish into publish\msix\package (every file as a file; the package is the single file), AppxManifest.xml from the
@@ -131,7 +133,7 @@ if ($Msix) {
 }
 
 if ($ZipOnly) {
-    # The folder of an earlier -NoZip run, with AxKit.exe signed in place: nothing is built or copied again.
+    # The folder of an earlier -NoZip run, as it is: nothing is built or copied again.
     if (-not (Test-Path $exe)) {
         Write-Host "Nothing to zip: $exe is not there. Run publish.ps1 -NoInstall -NoZip first."
         exit 1

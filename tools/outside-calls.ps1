@@ -51,13 +51,13 @@ $targets = @(
         @('Documentation', 'https://code.claude.com/docs/en/cli-reference and https://code.claude.com/docs/en/setup; Anthropic''s privacy policy, https://www.anthropic.com/legal/privacy.'),
         @('Apps', 'axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window; AI help in every window (Shift+F1, the axKit menu, Claude); axHelp, access layer for Claude Code, through axClaude: at the user''s key, and, only when the user turned on Keep the conversation ready in the background (off at first) and has agreed to Claude Code, hidden as axHelp starts in the background at sign-in (docs/axHelp/SPEC.md HE-2.7).')) }
     @{ Key = 'Git'; Kind = 'program'; Lines = @(
-        @('What', 'Git for Windows, the user''s `git.exe` on the PATH.'),
+        @('What', 'Git for Windows, the user''s `git.exe`: looked for in `Git\cmd` under Program Files first, then in the folders of the PATH that are on a drive of this computer.'),
         @('How', 'one process per command, `git -C <repository> -c core.quotepath=false -c color.ui=never <command>`, with `GIT_TERMINAL_PROMPT=0`, `LC_ALL=C.UTF-8` and `GIT_PAGER=cat`; both outputs are read under a time limit.'),
         @('What it reaches', 'the repository''s remotes on fetch, pull and push alone, after the user''s consent for that server (AX-11.5); git''s credential helper may ask for a sign-in in its own window. Every other command works on the repository on disk.'),
         @('Documentation', 'https://git-scm.com/docs.'),
         @('Apps', 'axGIT, access layer for Git.')) }
     @{ Key = 'Shells'; Kind = 'program'; Lines = @(
-        @('What', 'the user''s shell for axTerminal: Windows PowerShell (`powershell.exe`) and Command Prompt (`cmd.exe`), Windows'' own by their full paths; Git Bash (`Git\bin\bash.exe` of Git for Windows, never a bash.exe on the PATH); PowerShell 7 (`pwsh.exe` on the PATH or under Program Files).'),
+        @('What', 'the user''s shell for axTerminal: Windows PowerShell (`powershell.exe`) and Command Prompt (`cmd.exe`), Windows'' own by their full paths; Git Bash (`Git\bin\bash.exe` of Git for Windows, never a bash.exe on the PATH); PowerShell 7 (`pwsh.exe` in `PowerShell\7` under Program Files first, then in the folders of the PATH that are on a drive of this computer).'),
         @('How', 'in a ConPTY pseudo console (PtyHost), as a terminal runs it, with axTerminal''s prompt marks handed in through the environment.'),
         @('What it reaches', 'whatever the commands the user types reach, with the user''s rights.'),
         @('Documentation', 'https://learn.microsoft.com/windows/console/pseudoconsoles; docs/axTerminal/SPEC.md.'),
@@ -70,7 +70,7 @@ $targets = @(
         @('Apps', 'axPass, access layer for KeePassXC.')) }
     @{ Key = 'MCP servers'; Kind = 'program'; Lines = @(
         @('What', 'the MCP server the user starts in axMCP: a program defined in Claude Code''s configuration (`%USERPROFILE%\.claude.json`, a folder''s `.mcp.json`, read and never written) or in axMCP''s own list, by the command line that definition gives.'),
-        @('How', 'a child process without a window, the Model Context Protocol''s JSON-RPC one line per message on its standard input and output, its standard error to axMCP''s log, the environment variables of its definition added; stopped by closing its input, then ending its process tree after two seconds.'),
+        @('How', 'a child process without a window, the Model Context Protocol''s JSON-RPC one line per message on its standard input and output, its standard error kept in the window''s memory for the server''s details (the log holds each line''s length alone), the environment variables of its definition added; stopped by closing its input, then ending its process tree after two seconds.'),
         @('What it reaches', 'whatever the server''s maker built it to reach, on this computer and on any network, with the user''s rights, after the user''s consent for that server (AX-11.4). Remote servers (http, sse) are listed and never started by this version (docs/axMCP/SPEC.md MP-D2).'),
         @('Documentation', 'https://modelcontextprotocol.io/specification; https://code.claude.com/docs/en/mcp; docs/axMCP/SPEC.md.'),
         @('Apps', 'axMCP, access layer for MCP servers.')) }
@@ -148,6 +148,10 @@ $functions = @(
     @{ Name = 'new HttpListener';                       Kind = 'network'; Pattern = 'new HttpListener\b';            Defined = '.NET, System.Net' }
     @{ Name = 'Dns.GetHostEntry, Dns.GetHostAddresses'; Kind = 'network'; Pattern = '\bDns\.GetHost\w*\(';           Defined = '.NET, System.Net' }
     @{ Name = 'Process.Start';                          Kind = 'program'; Pattern = '\bProcess\.Start\(';            Defined = '.NET, System.Diagnostics: starts a program, through the Windows shell when UseShellExecute is set' }
+    # A process object made and then started through its own Start method, which the pattern above does not see: until
+    # 2026-11-16 axMCP's start of a server was so missing from the page. Found where the object is made, whatever its
+    # variable is called; "new ProcessStartInfo" is another word and does not match.
+    @{ Name = 'new Process';                            Kind = 'program'; Pattern = '\bnew Process\b';               Defined = '.NET, System.Diagnostics: a process object, whose Start method starts the program of its start info' }
     @{ Name = 'ProcessRun.Run';                         Kind = 'program'; Pattern = '\bProcessRun\.Run\(';           Defined = @{ Find = 'public static .*\bRun\(ProcessStartInfo' } }
     @{ Name = 'ProcessRun.RunAsync';                    Kind = 'program'; Pattern = '\bProcessRun\.RunAsync\(';      Defined = @{ Find = 'public static .*\bRunAsync\(ProcessStartInfo' } }
     @{ Name = 'PtyHost.Start';                          Kind = 'program'; Pattern = '\bPtyHost\.Start\(';            Defined = @{ Find = 'public static PtyHost Start\(' } }
@@ -167,7 +171,8 @@ $kindNames = [ordered]@{ network = 'Network'; program = 'Programs'; pipe = 'Pipe
 $apps = @{
     AxClaude = 'axClaude'; AxDown = 'axDown'; AxJSON = 'axJSON'; AxGit = 'axGIT'; AxTerminal = 'axTerminal'; AxFile = 'axFile'
     AxMedia = 'axMedia'; AxPreview = 'axPreview'; AxStart = 'axStart'; AxProcess = 'axProcess'; AxTask = 'axTask'
-    AxPass = 'axPass'; AxCalc = 'axCalc'; AxClip = 'axClip'; AxAutomate = 'axAutomate'; AxKit = 'shared by every app'
+    AxPass = 'axPass'; AxCalc = 'axCalc'; AxClip = 'axClip'; AxAutomate = 'axAutomate'; AxMCP = 'axMCP'; AxHelp = 'axHelp'
+    AxKit = 'shared by every app'
 }
 
 $marker = [regex]'//\s*Outside call, (\w+), ([^:]+):\s*(.*)$'

@@ -104,7 +104,9 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   connection before anything else, so that turning it off in one window ends every client's access at its next call.
   The file carries a seal, HMAC-SHA256 of the setting and the clients under the key (MC-6.3); a file whose seal does
   not check, written by hand or by an AI tool's own file writing, reads as off with no clients, so that turning the
-  access on or pairing takes code that runs as the user, not a written file (the review of 2026-10-24).
+  access on or pairing takes code that runs as the user, not a written file (the review of 2026-10-24). The window
+  says so when the AI tools submenu opens (2026-11-16, `repairs.md` R-56): "The AI tools' setting was changed outside
+  axKit, or its key is gone: AI tools are off, and every AI tool must be allowed again."; the log holds it once.
 - MC-6.2 **The windows' pipes**: every window serves its own pipe, `\\.\pipe\AxKit-mcp-<user SID>-<random>`, for the
   current user alone and refused over the network (the access list of S-11). The broker finds them by listing the
   pipes with that prefix, so no file names them. A window of axPass or axClip serves none (MC-4.1, MC-4.2): those apps

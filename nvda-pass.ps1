@@ -9,8 +9,11 @@
   the windows come to the front of the user's desktop, the keys go through SendInput, and every announcement and focus
   move a script expects must also be spoken by NVDA, read from the axkitCapture add-on (tools\nvda-capture).
 
-  It takes the keyboard and the mouse. Run it only at the user's word, after asking them to step away; Windows' voice
-  repeats the warning through the run and says when it is over. The report is %TEMP%\axkit-nvda\report.md; the result
+  It takes the keyboard and the mouse. Run it only at the user's word, after asking them to step away: it refuses to
+  start (exit code 2) when NVDA is not running, when the installed capture add-on is not the repository's, and,
+  right before the runner takes the keyboard, while the last key or mouse input is under 20 seconds old (it waits a
+  minute for that quiet first). Windows' voice repeats the warning through the run and says
+  when it is over. The report is %TEMP%\axkit-nvda\report.md; the result
   lines are printed without the account's paths. Exit code 0 when every script passed.
 
 .EXAMPLE
@@ -36,6 +39,41 @@ $work = Join-Path $env:TEMP 'axkit-nvda'
 $exe = Join-Path $work 'axkit\AxKit.exe'
 $runner = Join-Path $work 'runner\AxAutomate.exe'
 
+# The run takes the keyboard and the mouse, so the user must have stepped away (docs/axKit/automation.md section 3):
+# a key or a mouse move in the last 20 seconds means someone is at the computer, and the run does not start. Windows
+# keeps the time of the last input of the session (GetLastInputInfo); the runner's own keys come later and are not
+# asked about. Asked once, right before the runner takes the keyboard: the build before it is usually longer than
+# the 20 seconds after the user's answer to "step away". When the input is newer, the script waits for the quiet, a
+# minute at most, and then refuses.
+Add-Type -Namespace AxKitNvdaPass -Name LastInput -MemberDefinition @'
+[StructLayout(LayoutKind.Sequential)]
+public struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
+[DllImport("user32.dll")]
+public static extern bool GetLastInputInfo(ref LASTINPUTINFO info);
+public static int SecondsAgo() {
+    LASTINPUTINFO info = new LASTINPUTINFO();
+    info.cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO));
+    if (!GetLastInputInfo(ref info)) { return -1; }
+    return (int)(unchecked((uint)Environment.TickCount - info.dwTime) / 1000);
+}
+'@
+function Stop-WhenSomeoneIsThere {
+    $seconds = [AxKitNvdaPass.LastInput]::SecondsAgo()
+    for ($waited = 0; $seconds -ge 0 -and $seconds -lt 20 -and $waited -lt 60; $waited++) {
+        if ($waited -eq 0) { Write-Host "The last key or mouse input was $seconds seconds ago: waiting for 20 seconds without input..." }
+        Start-Sleep -Seconds 1
+        $seconds = [AxKitNvdaPass.LastInput]::SecondsAgo()
+    }
+    if ($seconds -lt 0) {
+        Write-Host 'Not started: Windows did not say when the last key or mouse input was, so nobody is known to have stepped away.'
+        exit 2
+    }
+    if ($seconds -lt 20) {
+        Write-Host "Not started: the last key or mouse input was $seconds seconds ago, so someone is at the computer. The run takes the keyboard: ask the user to step away, then start it again (-NoBuild runs the build that is there)."
+        exit 2
+    }
+}
+
 $capture = Join-Path $env:APPDATA 'nvda\addons\axkitCapture\globalPlugins\axkitCapture.py'
 if (-not (Test-Path $capture)) {
     Write-Host 'The NVDA capture add-on is not installed: copy tools\nvda-capture to %APPDATA%\nvda\addons\axkitCapture and restart NVDA.'
@@ -45,9 +83,12 @@ if (-not (Get-Process nvda -ErrorAction SilentlyContinue)) {
     Write-Host 'NVDA is not running.'
     exit 2
 }
-# Compared line by line, not by hash: the installed copy may differ in its line endings alone.
+# The installed add-on is the repository's: a pass heard through another version of it proves nothing about this one's
+# scripts, so the run stops (a warning until 2026-11-16). Compared line by line, not by hash: the installed copy may
+# differ in its line endings alone.
 if (Compare-Object @(Get-Content $capture) @(Get-Content (Join-Path $root 'tools\nvda-capture\globalPlugins\axkitCapture.py'))) {
-    Write-Host 'The installed capture add-on differs from tools\nvda-capture: copy the folder to %APPDATA%\nvda\addons\axkitCapture and restart NVDA. Running with the installed one.'
+    Write-Host 'Not started: the installed capture add-on differs from tools\nvda-capture. Copy the folder to %APPDATA%\nvda\addons\axkitCapture, restart NVDA and start the pass again.'
+    exit 2
 }
 
 if (-not $NoBuild) {
@@ -79,6 +120,7 @@ Get-ChildItem (Join-Path $root 'tests\nvda-scripts') -Filter *.txt |
     Copy-Item -Destination $nvdaOnly
 
 $report = Join-Path $work 'report.md'
+Stop-WhenSomeoneIsThere
 # The runner's error output is not redirected: under $ErrorActionPreference = 'Stop', Windows PowerShell 5.1 would turn
 # its first line into a terminating error and end this script before the summary (the root CLAUDE.md's 2>&1 gotcha).
 & $runner $scripts --exe $exe --nvda --record --repository $root --report $report |

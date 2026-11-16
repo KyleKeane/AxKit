@@ -38,6 +38,10 @@ jobs:
         # docs/axKit/upstream.json has its fields and names checks that exist; the installed versions are never
         # compared here, this computer has its own (docs/axKit/automation.md, When an outside program changes).
         run: ./tools/upstream.ps1 -Check
+      - name: The scripts hold their rules
+        # Every .ps1 is ASCII, parses, and assigns no local named like one of its parameters (tools/script-lint.ps1
+        # says why each rule is there).
+        run: ./tools/script-lint.ps1 -Check
       - name: Build and test
         # ContinuousIntegrationBuild: deterministic paths; the test packages restore exactly as their lock files say (S-34).
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true

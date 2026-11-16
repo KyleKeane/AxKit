@@ -72,7 +72,7 @@ axGIT checks for a newer axKit when it starts and offers it in a notice; the Hel
 
 ## If something goes wrong
 
-axGIT's log is `%LOCALAPPDATA%\AxKit\logs\axGIT.log`; Help, Diagnostics, Copy diagnostics copies its end with the versions, for a bug report. "Git was not found" means git is not on your PATH: install it from https://git-scm.com and start axGIT again. "Not a git repository" means the folder you gave is not inside one; Open repository (Ctrl+O) takes another.
+axGIT's log is `%LOCALAPPDATA%\AxKit\logs\axGIT.log`; Help, Diagnostics, Copy diagnostics copies its end with the versions, for a bug report. "Git was not found" means git is neither in Git for Windows' folder under Program Files nor in a folder of your PATH on this computer: install it from https://git-scm.com and start axGIT again. "Not a git repository" means the folder you gave is not inside one; Open repository (Ctrl+O) takes another.
 
 ## About axGIT
 

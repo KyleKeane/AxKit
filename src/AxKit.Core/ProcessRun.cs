@@ -27,6 +27,9 @@ public static class ProcessRun
         start.RedirectStandardInput = true;
         start.RedirectStandardOutput = true;
         start.RedirectStandardError = true;
+        // Outside call, program, Claude Code, Git, KeePassXC, Windows: the one place a program is started without a
+        // window and run to its end with both outputs read; which program and why is said at each call of Run and
+        // RunAsync, in its own comment.
         using var process = new Process { StartInfo = start };
         process.Start();
 

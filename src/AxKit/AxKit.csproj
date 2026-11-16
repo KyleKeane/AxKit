@@ -24,6 +24,20 @@
        copies every one of them next to the executable, since a single-file publish would bundle a project item
        into the executable, and install.ps1 copies them on. -->
 
+  <!-- The build guard: a build over an axKit that runs from the output folder stops here, in one plain line, before
+       anything is compiled or copied. Windows lets nobody write an executable that is running, so the build would
+       fail late, on the first file in use, after replacing some of the folder's files and leaving the rest: a folder
+       half of one build and half of another (the reason for "never build into the running app's bin", a note of the
+       root CLAUDE.md until 2026-11-16). The executable is opened for appending and nothing is written: it opens when
+       nothing runs from the folder, and is refused when something does. Only where the executable is already there;
+       a build into a scratch folder (-o) asks about that folder's copy. -->
+  <Target Name="StopOverRunningAxKit" BeforeTargets="BeforeBuild" Condition="'$(OS)' == 'Windows_NT' And Exists('$(TargetDir)$(AssemblyName).exe')">
+    <Exec Command="(type nul &gt;&gt; &quot;$(TargetDir)$(AssemblyName).exe&quot;) 2&gt;nul || exit 1" IgnoreExitCode="true" StandardOutputImportance="low">
+      <Output TaskParameter="ExitCode" PropertyName="AxKitExeOpened" />
+    </Exec>
+    <Error Condition="'$(AxKitExeOpened)' != '0'" Text="axKit is running from this folder: close it or build with -o &lt;scratch folder&gt; ($(TargetDir)$(AssemblyName).exe cannot be written)" />
+  </Target>
+
   <!-- Every project of src: the apps' windows and their Cores, and the shared projects (docs/axKit/app-kit.md AK-4.1),
        so that a new app's projects are referenced by being there. -->
   <ItemGroup>

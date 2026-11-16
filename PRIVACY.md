@@ -61,7 +61,8 @@ when you send a report:
   the install and nothing else; it carries no name, e-mail address or account of yours unless you write one into the
   report. The first report asks your agreement once. A report that cannot be sent (no network, a blocked install, a
   build without the sending token) stays in Your reports as "Not sent yet" with the reason, and goes with the next
-  one; where this copy cannot send at all, the notice offers to copy the report, not encrypted, to your own
+  one. Only reports that axKit's report form saved are sent: any other file in the reports folder stays where it is;
+  where this copy cannot send at all, the notice offers to copy the report, not encrypted, to your own
   clipboard. GitHub's privacy statement applies to what is posted: <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>.
 
 axTask is local only and makes no network request. Versions 5.1.0 to 5.8.0 had GitHub lists in axTask, which read a
@@ -137,8 +138,8 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   only when you send the message. A picture file of yours (Ctrl+D, or `axHelp <picture>`) is passed by its path and
   read where it is. axHelp writes two files into that folder once, where they are missing: `CLAUDE.md`, Claude's
   instructions, and `.claude\agents\agent.md`, a helper on the strongest model; both are yours to change. axKit also
-  keeps its own guides there, in the folder `documentation`, with a note for Claude in `.claude\rules`, and writes
-  them again with each version: they are axKit's public texts, hold nothing of yours, and Claude Code reads them on
+  keeps its own guides there, in the folder `documentation`, with a note for Claude in `.claude\rules`, and puts
+  them back as axKit has them at every use, so a change you make to one of them does not stay: they are axKit's public texts, hold nothing of yours, and Claude Code reads them on
   this computer when a question is about axKit; what it reads for an answer goes to Anthropic as any file it reads.
 - **Install it now.** When an app needs a program that is missing (Git, KeePassXC, Claude Code, PowerShell 7), its
   notice offers to install it, and does so only when you choose to. Git (`Git.Git`), KeePassXC
@@ -184,8 +185,8 @@ turning the access off ends access at the next call and turns Let AI tools run c
 ## Programs axKit runs
 
 axKit starts only Windows' own programs by their full paths (PowerShell for the installer, File Explorer, cmd for
-batch files), the programs you installed and chose (Claude Code, git, your shells, KeePassXC's tool, the programs of
-Open with), and itself. It never runs anything with administrator rights; an installer you choose in Install it now
+batch files), the programs you installed and chose (Claude Code, git, your shells, KeePassXC's tool, the MCP servers you start in
+axMCP, the programs of Open with and of axStart, and the installers of Install it now), and itself. It never runs anything with administrator rights; an installer you choose in Install it now
 may ask Windows for them, and Windows asks you.
 
 One start of axKit is made by Claude Code, at axClaude's request: for an event of an axClaude session, Claude Code

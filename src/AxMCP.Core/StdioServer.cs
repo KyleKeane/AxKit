@@ -99,10 +99,10 @@ public sealed class StdioServer : IDisposable
             start.Environment[variable.Key] = variable.Value;
         }
 
-        var process = new Process { StartInfo = start, EnableRaisingEvents = true };
         // Outside call, program, MCP servers: the MCP server the user chose to start (its command line from Claude
         // Code's configuration or from axMCP's own list), as a child process speaking the protocol on its standard
         // input and output; it does whatever its maker built it to do, under the user's consent (AX-11.4).
+        var process = new Process { StartInfo = start, EnableRaisingEvents = true };
         process.Start();
         var client = new McpClient(process.StandardOutput, process.StandardInput, log);
         var running = new StdioServer(process, client);

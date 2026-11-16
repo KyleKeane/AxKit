@@ -231,8 +231,8 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   so and change neither (docs/axKit/user-workflows.md WF-11.4)." The scripts keep their own results, and the exit
   code is 3 when every script passed (WF-11.5): never the 1 of a failed script. An app the command inventory holds
   no row for is not checked: the run says once "The command inventory has no rows for <app> yet: its commands were
-  not checked", and the exit code does not change. That is how an app joins later: tonight axClaude and axHelp,
-  whose windows the redesign is changing (WF-D-22). `--inventory off` is for a run against a build that is not the
+  not checked", and the exit code does not change. That is how an app joins later: axClaude and axHelp, whose
+  windows the redesign was changing in the first night (WF-D-22), joined so on 2026-11-16 (WP-B17). `--inventory off` is for a run against a build that is not the
   repository's, and for `tools/upstream.ps1 -Verify`, whose question is the outside program and not the windows'
   menus (WF-D-13). (WP-B6)
 - WF-2.11 **The cheap check**, in `test.ps1` and CI, without a window: every `do` step of every script names a
@@ -622,8 +622,9 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   answers it), and rewrites the line to `menu <canonical name>`; when every script is rewritten and passes,
   `AutomationChannel.Menu` resolves through `CommandNames.Resolve` in place of its prefix search. Not tonight
   (section 10).
-- WF-10.7 **Tonight the converter passes over `tests/scripts/axClaude` and `tests/scripts/axHelp`**: the redesign
-  is changing their steps the same night (WF-D-22). They are converted after it has merged (WP-B17).
+- WF-10.7 **In the first night the converter passed over `tests/scripts/axClaude` and `tests/scripts/axHelp`**: the
+  redesign was changing their steps the same night (WF-D-22). After it had merged, the scripts of axClaude that need
+  no live model were converted (WP-B17, 2026-11-16); axHelp's two scripts hold no `do` line yet.
 
 ### WF-11 The checks
 
@@ -1783,7 +1784,8 @@ Each change goes in the commit of the package that makes it true.
 
 ## 9. The build plan
 
-**State on 2026-11-15, the end of the first night.** Built, on the branch `workflows`: WP-B0 to WP-B12, and WP-B14
+**State on 2026-11-16: every package is built, and the work is on `main` (since 0257f90).** Built in the first
+night, 2026-11-15, on the branch `workflows`: WP-B0 to WP-B12, and WP-B14
 for every app's scripts (five parts, a to e; the plan had three). One package was added after the first pages were
 read, WP-B8b, the how-to written for the ear (WF-7 as it now stands, WF-D-31). WP-B11 built the traces and kept none:
 the values a window reports come from a watch every 50 ms, and no goal's trace came out equal three times running
@@ -1798,13 +1800,15 @@ scripts passed and 4 failed where the window does or says something else for the
 bar's line and column after a Find the tools opened; a joined announcement's last full stop; the key test, which
 refuses the tools; Undo in navigation mode, which plays no edge sound for them). `04-find-and-go-to-line.txt`, the
 proof script, stops at its line 17 on the first of these, so the record holds its first goal as failed for
-`ai-tools`. Not built: WP-B17 (axClaude and axHelp join the inventory). So the scripts of the other apps press their
-command keys through `keys` (the pages name the command a chord belongs to from the inventory), and
-`docs/axKit/workflow-record.json` holds the `desktop` tier of those six apps and that one `ai-tools` entry until the
-next recorded runs. The pass of WP-B18 was made
-that night on 2ef04f4, without the record: 139 scripts with NVDA listening, all passed
-(`docs/axKit/nvda-test-record.md`). The packages' own sections below stay as the plan for what is left, which is
-why this section is not folded into one paragraph as WP-B18's step 4 says.
+`ai-tools`. WP-B17 was built the same day (426dd7c7): the command inventory gained axClaude's and axHelp's commands,
+so it holds every app, and the scripts of axClaude that need no live model run their commands by name. The scripts
+of the other ten apps (axAutomate, axCalc, axGIT, axHelp, axJSON, axMCP, axMedia, axPass, axPreview, axProcess) hold
+no `do` line yet: they press their command keys through `keys` (the pages name the command a chord belongs to
+from the inventory). `docs/axKit/workflow-record.json` holds the `desktop` tier of every app, from the recorded runs
+of 2026-11-16, and that one `ai-tools` entry; no pass with NVDA has been recorded in it yet. The pass of WP-B18 was
+made in the first night on 2ef04f4, without the record: 139 scripts with NVDA listening, all passed
+(`docs/axKit/nvda-test-record.md`). The packages' own sections below stay as the record of how each was planned;
+they are no longer a list of what is left, which section 10 holds.
 
 Nineteen work packages, WP-B0 to WP-B18 (WP-B14 is three parts), in the order of their value. Each is for one agent
 and leaves the repository building with every test passing; 9.1 gives each its size. A package of pure code is
@@ -1837,7 +1841,7 @@ In a package:
 
 - Read first: this document's requirements the package names, the root `CLAUDE.md`, the `CLAUDE.md` of each folder
   the package changes, and the files it changes. This document is in the worktree because WP-B0 committed it.
-- Before handing over: `.\test.ps1` in the worktree. `PrivacyTests` (in `tests/AxClaude.Tests`) passes over a
+- Before handing over: `.\test.ps1` in the worktree. `PrivacyTests` (in `tests/AxKit.Tests`) passes over a
   worktree's own `.git` file by its name, so the run should end with "All <n> test projects passed." there as in
   the main checkout. If a project fails in the worktree for a reason that is the worktree's and not the change's
   (the failing test's own words say so: a path beside the checkout, git's folder), say which test and why; then run
@@ -2673,7 +2677,9 @@ Left for later, each with where it would start:
 - A key as data on the items made by hand with a real key's display string: axClaude's and axTerminal's Export
   items, the console window's music item, axTask's action keys (WF-D-22), one `CommandPalette.Keyed` call each; and
   the editor shell's Cut, Copy, Paste and Select all, once an item can say when its key acts (WF-D-30).
-- Goals and checks marked in the other nine apps' scripts, and scripts split where a file holds unrelated tasks.
+- Scripts split where a file holds unrelated tasks (goals and checks are marked in every app's scripts since
+  WP-B14), and `do` lines in the ten apps' scripts that still press their command keys through `keys` (section 9's
+  first paragraph names them).
 - Shift+F1's prompt with the current window's goals beside the F1 text (`AiPrompts`); it reads the same folder
   today, so the rule already reaches it.
 - Workflow files (`.workflow.json`) with goals (WF-3.8), with the converter of AU-5.2.

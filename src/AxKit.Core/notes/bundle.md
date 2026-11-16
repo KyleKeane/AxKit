@@ -63,7 +63,9 @@
 - `SettingsFile` (AX-5.2, AX-5.3): how every app's settings file is read and written, an unreadable one copied to
   `.bad` once, and the take-over of an old file. A value that does not read costs that value alone
   (`WithoutWhatDoesNotRead`); a file that is there and cannot be opened is tried again, then never saved over in
-  that process (`NotRead`, R-51). `Save` returns whether it wrote, for `SettingsSeal.Remember`. A save keeps what
+  that process (`NotRead`, R-51). `Heading` is the sentence a window says before a load's error text: that the file
+  was read except for the settings named (`PartlyReadHeading`), or that it could not be read and the defaults are
+  used (`NotReadHeading`). `Save` returns whether it wrote, for `SettingsSeal.Remember`. A save keeps what
   another window saved meanwhile (AX-5.7, R-62): `Views` holds this window's settings per file as JSON (set by `Load`
   and by each `Save`), `Merged` takes the file's value of every top-level member this window did not change, whole
   (no list merging); a sealed class hands `Save` its seal check for the file and its sealing for what is written.

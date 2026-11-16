@@ -162,8 +162,8 @@ public sealed class ReleaseScriptTests
         // one the release runs.
         (string Script, string[] Functions)[] shared =
         [
-            ("release.ps1", ["Get-VersionProblem", "Get-BranchProblem", "Get-BehindProblem", "Get-HooksProblem", "Get-UncommittedFiles", "Get-TagProblem",
-                "Get-ChangelogProblem", "Get-ProjectWithVersion", "Find-BuildRun", "Get-RunStatus", "Get-RunConclusion"]),
+            ("release.ps1", ["Get-VersionProblem", "Get-BranchProblem", "Get-BehindProblem", "Get-HooksProblem", "Get-ReleaseKeyProblem", "Get-UncommittedFiles", "Get-TagProblem",
+                "Get-ChangelogProblem", "Get-WindowPassProblem", "Get-ProjectWithVersion", "Find-BuildRun", "Get-RunStatus", "Get-RunConclusion"]),
             ("tools/sign-release.ps1", ["Find-ReleaseRun", "Watch-Run", "Get-ReleaseIsDraft", "Get-ReleaseFiles"]),
         ];
         foreach (var (script, functions) in shared)

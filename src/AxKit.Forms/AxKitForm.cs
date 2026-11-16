@@ -189,9 +189,9 @@ public abstract partial class AxKitForm : Form
     /// <summary>How <see cref="SayAtStart"/> says it: one announcement that interrupts nothing, unless the window says it another way (the console windows write a system line).</summary>
     protected virtual void StartNote(string sentence) => Announce(sentence, false);
 
-    /// <summary>The settings file could not be read and the defaults are in use (AX-5.2): a notice at the first showing, unless the window says it another way (the console windows write a system line).</summary>
+    /// <summary>The settings file could not be read and the defaults are in use, or some of its values were not understood and the rest is in use (AX-5.3; <c>SettingsFile.Heading</c> says which): a notice at the first showing, unless the window says it another way (the console windows write a system line).</summary>
     protected virtual void SettingsNotRead(string error) =>
-        ShowNotice(Notice.Plain("Settings", SettingsSeal.IsRefusal(error) ? error : $"The settings file could not be read, so the defaults are used.\n{error}") with { Unprompted = true });
+        ShowNotice(Notice.Plain("Settings", SettingsSeal.IsRefusal(error) ? error : $"{SettingsFile.Heading(error)}\n{error}") with { Unprompted = true });
 
     // ---- the menus every window has (AX-6.5, AX-9) ----
 

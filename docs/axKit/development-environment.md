@@ -17,7 +17,7 @@ the new program until it is opened again (the PATH is read at start).
 |---|---|---|---|
 | Windows 11, 64-bit | The platform. axKit runs on Windows 10 1809 and later; the development computer is Windows 11 | - | `winver` |
 | winget (App Installer) | Installs the rest, and upgrades it (`winget upgrade`) | Comes with Windows | `winget --version` (1.29) |
-| Windows PowerShell 5.1 | Every script of the repository: `run.ps1`, `test.ps1`, `publish.ps1`, `install.ps1`, `release.ps1`, `nvda-pass.ps1`, `manual_tests/prepare.ps1`, `tools/*.ps1`. Its pitfalls are in `CLAUDE.md` (Environment gotchas). PowerShell 7 is not needed; the workflows use it on GitHub's runners only | Comes with Windows | `$PSVersionTable.PSVersion` reads 5.1 |
+| Windows PowerShell 5.1 | Every script of the repository: `run.ps1`, `test.ps1`, `publish.ps1`, `install.ps1`, `release.ps1`, `nvda-pass.ps1`, `manual_tests/prepare.ps1`, `tools/*.ps1`. Its pitfalls with a script's text (a character outside ASCII, a local named like a parameter) are held by `tools/script-lint.ps1`, which `test.ps1` runs. PowerShell 7 is not needed; the workflows use it on GitHub's runners only | Comes with Windows | `$PSVersionTable.PSVersion` reads 5.1 |
 | .NET SDK 10 | Build, test and publish; the only build dependency (`GOVERNANCE.md`): no NuGet package in the apps, the test packages alone | `Microsoft.DotNet.SDK.10` | `dotnet --version` is `global.json`'s version or a later patch of its feature band (10.0.300 today, `rollForward: latestFeature`) |
 | Git, with Git Bash and Git Credential Manager | The repository; Git Bash is one of axTerminal's shells and the source of the `shell-*` fixtures | `Git.Git` | `git --version` (2.53); `git config user.email` is GitHub's no-reply address for the account, never a personal one; `git config credential.helper` reads `manager` |
 | GitHub CLI, `gh` | `release.ps1` (waits for the build, pushes the tag), `tools/sign-release.ps1` (downloads the draft, checks the attestation, uploads the signature, publishes), `gh run watch`, and the repository's environment, secrets and variables (`docs/axKit/store-setup.md`) | `GitHub.cli` | `gh --version` (2.96); `gh auth status` is signed in as the repository's owner, whose GitHub account has two-factor sign-in |
@@ -25,7 +25,7 @@ the new program until it is opened again (the PATH is read at start).
 | Claude Code, `claude` | axClaude's program (`claude --ax-screen-reader` in a pseudo console), and the assistant that works in this repository from `CLAUDE.md`; `tools/QaRun` and `tools/AxAutomate` drive it without windows, always with `--model haiku`. axKit's MCP server is registered in it as `axkit` from any window's axKit menu, AI tools | Anthropic's installer, `irm https://claude.ai/install.ps1 \| iex`, into `%USERPROFILE%\.local\bin` (the folder axKit's console commands use too) | `claude --version` (2.1); `claude mcp list` names `axkit` once the AI tools are on |
 | KeePassXC, with `keepassxc-cli` | axPass's program, and its NVDA pass (`manual_tests/prepare.ps1 axPass` makes the test database) | `KeePassXCTeam.KeePassXC` (2.8) | `keepassxc-cli --version` |
 | Windows Terminal | The maintainer's console; nothing in the repository needs it | `Microsoft.WindowsTerminal` | - |
-| Windows SDK packaging tools, `makeappx.exe` | `publish.ps1 -Msix` packs the MSIX package for the Microsoft Store (`docs/axKit/store-distribution.md`). The GitHub runners have the Windows SDK; this computer has none, so `tools/get-sdk-tools.ps1` fetches Microsoft's package `Microsoft.Windows.SDK.BuildTools` (a pinned version) from nuget.org once into `tools/sdk`, checking Microsoft's signature on every program and library; git ignores the folder, and deleting it removes the tools | `publish.ps1 -Msix` runs the fetch itself when Windows Kits has no makeappx; or `.	oolsget-sdk-tools.ps1` | `toolssdk<version>dmakeappx.exe` exists; the script prints its path |
+| Windows SDK packaging tools, `makeappx.exe` | `publish.ps1 -Msix` packs the MSIX package for the Microsoft Store (`docs/axKit/store-distribution.md`). The GitHub runners have the Windows SDK; this computer has none, so `tools/get-sdk-tools.ps1` fetches Microsoft's package `Microsoft.Windows.SDK.BuildTools` (a pinned version) from nuget.org once into `tools/sdk`, checking Microsoft's signature on every program and library; git ignores the folder, and deleting it removes the tools | `publish.ps1 -Msix` runs the fetch itself when Windows Kits has no makeappx; or `.\tools\get-sdk-tools.ps1` | `tools\sdk\<version>\x64\makeappx.exe` exists; the script prints its path |
 
 ## 2. Sign-ins, keys and where they live
 
@@ -76,14 +76,14 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
 
 | Task | Command | Tools it uses |
 |---|---|---|
-| Build and start one app | `run.ps1 -App <app> [<path>]`, `scripts to run-individual-apps\run-ax<app>.ps1` | .NET SDK, PowerShell. A running app locks its `bin`: a change is checked from a build elsewhere (`dotnet build <project> -o <scratch dir>`), and the development axStart runs from `src\AxKit\bin\Debug` on this computer, where no axKit is installed |
-| Tests | `test.ps1 [<App>]` | .NET SDK: every test project in Release, one by one, as the workflows do. Before every commit |
+| Build and start one app | `run.ps1 -App <app> [<path>]`, `scripts to run-individual-apps\run-ax<app>.ps1` | .NET SDK, PowerShell. A running app locks its `bin`, and a build of `src/AxKit` over it stops in one line (the build guard in `AxKit.csproj`): a change is checked from a build elsewhere (`dotnet build <project> -o <scratch dir>`), and the development axStart runs from `src\AxKit\bin\Debug` on this computer, where no axKit is installed |
+| Tests | `test.ps1 [<App>]` | .NET SDK: every test project in Release, one by one, then the checks of the generated pages and of the scripts; the workflows also build the solution in one go and the Store package. Before every commit |
 | The outside-calls page | `tools/outside-calls.ps1` (`-Check`) | PowerShell; the sources' `Outside call` comments (SPEC B-17) |
 | The repositories beside this one | `tools/sync-repos.ps1` (`-Status`); git runs it on every push through `tools/hooks/pre-push` | git. `..\axkit-reports` (the clone of the reports repository, private since 2026-11-14: the issue forms, the workflow, the blocklist) and `..\axkit-management` (the private repository of axTask's lists: the issues read from GitHub and the maintainer's priorities, `CLAUDE.md` rule 9) are fetched, the lists committed as one dated commit, pulled fast-forward and pushed; one line each, nothing forced, a sibling's trouble never stops the push. A clone without the two folders beside it skips them. `..\axkit-keys` is not among them: it is committed and pushed by hand when a backup changes (section 2) |
 | NVDA passes | `manual_tests/prepare.ps1 [<app>]`, then `nvda-pass.ps1 [<app>]` after the user has stepped away | NVDA with the add-on, `tools/AxAutomate`; takes the keyboard |
 | Automated checks and Claude sessions | `tools/AxAutomate <script>`, `tools/QaRun` | .NET SDK, Claude Code with `--model haiku` |
 | Publish and install locally | `publish.ps1 [-NoInstall]`, `install.ps1 [-Uninstall]` | .NET SDK; not on the development computer, which keeps no installed copy |
-| The MSIX package for the Store | `publish.ps1 -Msix` | .NET SDK, `tools/make-manifest.ps1`, `tools/make-icon.ps1 -Png`, makeappx (Windows Kits, or `tools/sdk` through `tools/get-sdk-tools.ps1`). A local test registers the published folder as the package, `Add-AppxPackage -Register publishmsixpackageAppxManifest.xml`, which needs Developer Mode (Settings, System, For developers); `Remove-AppxPackage` removes it |
+| The MSIX package for the Store | `publish.ps1 -Msix` | .NET SDK, `tools/make-manifest.ps1`, `tools/make-icon.ps1 -Png`, makeappx (Windows Kits, or `tools/sdk` through `tools/get-sdk-tools.ps1`). A local test registers the published folder as the package, `Add-AppxPackage -Register publish\msix\package\AppxManifest.xml`, which needs Developer Mode (Settings, System, For developers); `Remove-AppxPackage` removes it |
 | The Store submission | No command: after `release.ps1`, the release's `AxKit-<version>.msix` is uploaded in Partner Center's website by hand, or with `tools/EdgeDrive` driving the maintainer's signed-in Edge window | A browser, `tools/EdgeDrive` (`docs/axKit/store-setup.md` sections 5 and 6) |
 | Release | `release.ps1 <version>` after a `## <version>` section in `CHANGELOG.md`. Rehearse before a release: `release.ps1 -Rehearse` makes the checks and asks git and GitHub the real run's questions without releasing (`docs/axKit/commands.md`) | git, gh, `test.ps1`, `tools/outside-calls.ps1`, the .NET SDK; then GitHub Actions (`release.yml`: build, package, draft) and `tools/sign-release.ps1` with gh and the release key |
 | The Windows signature | None on the GitHub release's `AxKit.exe`; the Store signs its package after certification (`docs/axKit/store-distribution.md`). The Azure signing was retired on 2026-11-09 (`docs/axKit/code-signing.md` section 7) | Partner Center |
@@ -100,19 +100,17 @@ Nothing of this is in the repository, and nothing of it is written into a sessio
    folders of axKit's development. `tools/sync-repos.ps1` finds the reports clone and the management lists by name;
    the keys repository is only read from. In the code's clone, `git config user.name` and
    `git config user.email` with GitHub's no-reply address, and `git config core.hooksPath tools/hooks`, so that every
-   push also syncs the two beside it (`release.ps1` refuses to run until it is set) and every commit names its item
-   of the priorities list and marks it started or done there (`tools/hooks/commit-msg`, `tools/item-of-commit.ps1`;
-   the root `CLAUDE.md`, rule 9).
+   push also syncs the two beside it and every commit names its item of the priorities list and marks it started or
+   done there (`tools/hooks/commit-msg`, `tools/item-of-commit.ps1`; the root `CLAUDE.md`, rule 9). `test.ps1` and
+   `release.ps1` refuse to run until it is set, and name the command.
 4. `gh auth login` as the owner. `gh auth status` says so.
-5. (Nothing since 2026-11-13: this step set up the Azure CLI for code signing, which was retired on 2026-11-09 and
-   whose Azure resources are deleted, `code-signing.md` section 7. The Azure CLI is not needed.)
-6. Copy `tools/nvda-capture` to `%APPDATA%\nvda\addons\axkitCapture`, restart NVDA.
-7. `dotnet build AxKit.sln`, then `.\test.ps1`: every project green. `.\manual_tests\prepare.ps1` makes the files of
+5. Copy `tools/nvda-capture` to `%APPDATA%\nvda\addons\axkitCapture`, restart NVDA.
+6. `dotnet build AxKit.sln`, then `.\test.ps1`: every project green. `.\manual_tests\prepare.ps1` makes the files of
    the NVDA passes.
-8. To release from this computer, or read the reports: the two keys imported from `..\axkit-keys` (section 2), and
+7. To release from this computer, or read the reports: the two keys imported from `..\axkit-keys` (section 2), and
    `gh` signed in. `tools/release-key.ps1 public` prints the release key's public half, which must equal the one in
    `AxKit.Core/Updates/ReleaseSigning`.
-9. Claude Code opened in the repository's folder reads `CLAUDE.md`; the AI tools of axKit are turned on from any
+8. Claude Code opened in the repository's folder reads `CLAUDE.md`; the AI tools of axKit are turned on from any
    window's axKit menu, AI tools, when wanted, which registers the `axkit` MCP server in Claude Code.
 
 ## 5. Gotchas of this computer, and keeping it current
@@ -188,16 +186,16 @@ What it needs:
 - [ ] Claude Code, signed in with the maintainer's Anthropic account.
 - [ ] The four repositories side by side in one folder: `axkit`, `axkit-reports`, `axkit-management` and
   `axkit-keys` (section 4, step 3).
-- [ ] In `axkit`: `git config core.hooksPath tools/hooks`. `release.ps1` refuses to run without it (it accepts the
-  folder written so or as its full path), and with it every push runs `tools/sync-repos.ps1` and every commit
-  `tools/hooks/commit-msg`.
+- [ ] In `axkit`: `git config core.hooksPath tools/hooks`. `test.ps1` and `release.ps1` refuse to run without it
+  (they accept the folder written so or as its full path), and with it every push runs `tools/sync-repos.ps1` and
+  every commit `tools/hooks/commit-msg`.
 - [ ] The two keys imported from `..\axkit-keys` (section 2), each import's public half checked against the code's.
-  Import the release key before `release.ps1`: neither the release nor its rehearsal checks for the key beforehand,
-  and without it the run stops at the signing, after the tag is pushed, leaving the draft unpublished; import the
-  key then and run `.\tools\sign-release.ps1 <version>`, which signs and publishes that draft.
+  `release.ps1` and its rehearsal check that the release key's file is on the computer before anything is tagged,
+  and name the import command when it is not; whether the file opens for this Windows account is found out only at
+  the signing (`tools/sign-release.ps1`).
 - [ ] For `nvda-pass.ps1`: NVDA, with the add-on: `tools\nvda-capture` copied to
   `%APPDATA%\nvda\addons\axkitCapture`, then NVDA restarted (`docs/axKit/automation.md` section 3); the script stops
-  when the add-on is missing and says when it differs from the repository's.
+  when the add-on is missing or differs from the repository's.
 
 What is made anew there, never copied:
 

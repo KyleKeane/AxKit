@@ -8,7 +8,8 @@
   is what the update notice in the app shows. Everything else must be committed. The script then
     1. fetches origin and stops if origin/main has commits that main here does not (skipped with -NoPush),
     2. checks the "## <version>" section: it is not empty, and every bullet starts with its app or apps ("- axFile: ",
-       "- axDown, axJSON: ") or with "- For developers: ",
+       "- axDown, axJSON: ") or with "- For developers: "; and checks that no app's window code changed after its last
+       recorded pass of the automated window checks (tools/window-passes.ps1 -Check, which names the apps),
     3. writes docs/axKit/outside-calls.md from the sources (tools/outside-calls.ps1; a call without its explanation
        stops here, docs/axKit/SPEC.md B-17) and runs every test project in Release, as the workflows do (test.ps1),
     4. sets <Version> in src/AxKit/AxKit.csproj,
@@ -100,6 +101,16 @@ function Get-ReleaseKeyProblem {
     $keyFile = Join-Path $env:LOCALAPPDATA 'AxKit-release\release-key.bin'
     if (-not (Test-Path -LiteralPath $keyFile)) {
         return "No release key on this computer ($keyFile). Import it first: Get-Content ..\axkit-keys\release-key.passphrase.txt | .\tools\release-key.ps1 import ..\axkit-keys\release-key.backup"
+    }
+}
+
+# A window that changed is checked by its scripts before it is released: no app's window code has a commit newer than
+# the app's last recorded pass on the desktop tier (docs/axKit/workflow-record.json, written by a run with --record).
+# The decision, and why the tests do not make it, is tools/window-passes.ps1's; its lines name the apps.
+function Get-WindowPassProblem {
+    & (Join-Path $root 'tools\window-passes.ps1') -Check | Out-Host
+    if ($LASTEXITCODE -ne 0) {
+        return "The windows named above changed after their last recorded pass. Run each one's scripts with --record, commit the record, then run this again."
     }
 }
 
@@ -228,6 +239,7 @@ if ($Rehearse) {
             Write-Host "Not checked: that the tag is free (v$rehearsed is released; give the next version to check its tag)."
         }
         Write-Check "the changelog section of $rehearsed" (Get-ChangelogProblem $rehearsed)
+        Write-Check 'no window changed after its last recorded pass (tools\window-passes.ps1)' (Get-WindowPassProblem)
         $withVersion = Get-ProjectWithVersion $rehearsed
         Write-Check 'the project file has its <Version> element' $(if (-not $withVersion) { "No <Version> element was found in $project." })
 
@@ -319,6 +331,7 @@ if ($dirty.Count -gt 0) {
 
 Stop-OnProblem (Get-TagProblem $tag)
 Stop-OnProblem (Get-ChangelogProblem $Version)
+Stop-OnProblem (Get-WindowPassProblem)
 
 # The page of everything axKit reaches outside its process, written from the sources and committed with the release
 # (docs/axKit/SPEC.md B-17): a call without its explanation stops the release here.

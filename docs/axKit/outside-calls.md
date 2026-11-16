@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 6 network requests, 32 program starts and 8 pipes, in 33 files, under the 13 headings below.
+Today: 6 network requests, 34 program starts and 8 pipes, in 35 files, under the 14 headings below.
 
 ## What axKit reaches
 
@@ -46,12 +46,14 @@ Calls (6):
 - **Documentation**: https://code.claude.com/docs/en/cli-reference and https://code.claude.com/docs/en/setup; Anthropic's privacy policy, https://www.anthropic.com/legal/privacy.
 - **Apps**: axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window; AI help in every window (Shift+F1, the axKit menu, Claude); axHelp, access layer for Claude Code, through axClaude: at the user's key, and, only when the user turned on Keep the conversation ready in the background (off at first) and has agreed to Claude Code, hidden as axHelp starts in the background at sign-in (docs/axHelp/SPEC.md HE-2.7).
 
-Calls (5):
+Calls (6):
 
 - **axClaude**, `src/AxClaude.Core/Pty/ClaudeLauncher.cs`, in `ClaudeLauncher.VersionAsync`, by `ProcessRun.RunAsync`: runs the user's Claude Code once with --version, without a window, so that axClaude knows which Claude Code it found and that it runs.
   Code: `var result = await ProcessRun.RunAsync(start, [], timeout).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/Ai/AiRequest.cs`, in `AiRequest.AskAsync`, by `ProcessRun.RunAsync`: claude -p in its working folder with the folders the user allowed, with read-only tools, without the folder's servers and hooks, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
   Code: `var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);`
+- **shared by every app**, `src/AxKit.Core/ProcessRun.cs`, in `ProcessRun.RunAsync`, by `new Process`: the one place a program is started without a window and run to its end with both outputs read; which program and why is said at each call of Run and RunAsync, in its own comment.
+  Code: `using var process = new Process { StartInfo = start };`
 - **shared by every app**, `src/AxKit.Core/Pty/PtyHost.cs`, in `PtyHost.Start`, by `CreateProcess (Windows)`: the one place a program is started in a ConPTY pseudo console: Claude Code for axClaude, the user's shell for axTerminal; what the program prints is read from the console and the user's keys are written to it.
   Code: `created = Native.CreateProcess(null, options.CommandLine, IntPtr.Zero, IntPtr.Zero, false,`
 - **shared by every app**, `src/AxKit.Forms/AiToolsSetup.cs`, in `AiToolsSetup.RunClaude`, by `Process.Start`: runs the user's Claude Code without a window for "claude mcp add" and "claude mcp remove", so that Add axKit to Claude Code registers axKit's AI tools there (docs/axKit/mcp.md MC-6.8).
@@ -61,20 +63,22 @@ Calls (5):
 
 #### Git
 
-- **What**: Git for Windows, the user's `git.exe` on the PATH.
+- **What**: Git for Windows, the user's `git.exe`: looked for in `Git\cmd` under Program Files first, then in the folders of the PATH that are on a drive of this computer.
 - **How**: one process per command, `git -C <repository> -c core.quotepath=false -c color.ui=never <command>`, with `GIT_TERMINAL_PROMPT=0`, `LC_ALL=C.UTF-8` and `GIT_PAGER=cat`; both outputs are read under a time limit.
 - **What it reaches**: the repository's remotes on fetch, pull and push alone, after the user's consent for that server (AX-11.5); git's credential helper may ask for a sign-in in its own window. Every other command works on the repository on disk.
 - **Documentation**: https://git-scm.com/docs.
 - **Apps**: axGIT, access layer for Git.
 
-Calls (1):
+Calls (2):
 
 - **axGIT**, `src/AxGit.Core/GitRunner.cs`, in `GitRunner.RunAsync`, by `ProcessRun.RunAsync`: runs the user's installed git on the repository for one command and reads what it prints, one process per command, its terminal prompts off; fetch, pull and push reach the repository's remotes, every other command works on disk (AX-11.11).
   Code: `result = await ProcessRun.RunAsync(info, [], timeout, cancellation);`
+- **shared by every app**, `src/AxKit.Core/ProcessRun.cs`, in `ProcessRun.RunAsync`, by `new Process`: the one place a program is started without a window and run to its end with both outputs read; which program and why is said at each call of Run and RunAsync, in its own comment.
+  Code: `using var process = new Process { StartInfo = start };`
 
 #### Shells
 
-- **What**: the user's shell for axTerminal: Windows PowerShell (`powershell.exe`) and Command Prompt (`cmd.exe`), Windows' own by their full paths; Git Bash (`Git\bin\bash.exe` of Git for Windows, never a bash.exe on the PATH); PowerShell 7 (`pwsh.exe` on the PATH or under Program Files).
+- **What**: the user's shell for axTerminal: Windows PowerShell (`powershell.exe`) and Command Prompt (`cmd.exe`), Windows' own by their full paths; Git Bash (`Git\bin\bash.exe` of Git for Windows, never a bash.exe on the PATH); PowerShell 7 (`pwsh.exe` in `PowerShell\7` under Program Files first, then in the folders of the PATH that are on a drive of this computer).
 - **How**: in a ConPTY pseudo console (PtyHost), as a terminal runs it, with axTerminal's prompt marks handed in through the environment.
 - **What it reaches**: whatever the commands the user types reach, with the user's rights.
 - **Documentation**: https://learn.microsoft.com/windows/console/pseudoconsoles; docs/axTerminal/SPEC.md.
@@ -95,10 +99,25 @@ Calls (2):
 - **Documentation**: https://keepassxc.org/docs/KeePassXC_UserGuide#_command_line_tool; docs/axPass/kdbx-notes.md.
 - **Apps**: axPass, access layer for KeePassXC.
 
-Calls (1):
+Calls (2):
 
+- **shared by every app**, `src/AxKit.Core/ProcessRun.cs`, in `ProcessRun.RunAsync`, by `new Process`: the one place a program is started without a window and run to its end with both outputs read; which program and why is said at each call of Run and RunAsync, in its own comment.
+  Code: `using var process = new Process { StartInfo = start };`
 - **axPass**, `src/AxPass.Core/KeePassCli.cs`, in `KeePassCli.Run`, by `ProcessRun.Run`: runs the user's installed keepassxc-cli.exe for one command on the database, the master password on its standard input, and reads what it prints; the tool has no network feature.
   Code: `var result = ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs));`
+
+#### MCP servers
+
+- **What**: the MCP server the user starts in axMCP: a program defined in Claude Code's configuration (`%USERPROFILE%\.claude.json`, a folder's `.mcp.json`, read and never written) or in axMCP's own list, by the command line that definition gives.
+- **How**: a child process without a window, the Model Context Protocol's JSON-RPC one line per message on its standard input and output, its standard error kept in the window's memory for the server's details (the log holds each line's length alone), the environment variables of its definition added; stopped by closing its input, then ending its process tree after two seconds.
+- **What it reaches**: whatever the server's maker built it to reach, on this computer and on any network, with the user's rights, after the user's consent for that server (AX-11.4). Remote servers (http, sse) are listed and never started by this version (docs/axMCP/SPEC.md MP-D2).
+- **Documentation**: https://modelcontextprotocol.io/specification; https://code.claude.com/docs/en/mcp; docs/axMCP/SPEC.md.
+- **Apps**: axMCP, access layer for MCP servers.
+
+Calls (1):
+
+- **axMCP**, `src/AxMCP.Core/StdioServer.cs`, in `StdioServer.Start`, by `new Process`: the MCP server the user chose to start (its command line from Claude Code's configuration or from axMCP's own list), as a child process speaking the protocol on its standard input and output; it does whatever its maker built it to do, under the user's consent (AX-11.4).
+  Code: `var process = new Process { StartInfo = start, EnableRaisingEvents = true };`
 
 #### Installers
 
@@ -121,7 +140,7 @@ Calls (1):
 - **Documentation**: https://learn.microsoft.com/windows/win32/shell/launch; https://learn.microsoft.com/windows/win32/api/shobjidl_core/nn-shobjidl_core-icontextmenu; https://learn.microsoft.com/windows/win32/services/starting-a-service.
 - **Apps**: every window (links, Show in File Explorer, updates); axFile; axPreview; axProcess.
 
-Calls (14):
+Calls (15):
 
 - **axFile**, `src/AxFile/FileForm.Operations.cs`, in `FileForm.ShowFolderInExplorer`, by `Process.Start`: opens File Explorer on This PC when the user asks for the current folder in File Explorer while at the drives level; Windows' own program by its full path.
   Code: `Process.Start(new ProcessStartInfo(SystemPrograms.Explorer, "shell:MyComputerFolder") { UseShellExecute = false })?.Dispose();`
@@ -133,6 +152,8 @@ Calls (14):
   Code: `var hr = ((IContextMenu)parts.Handler).InvokeCommand(ref info);`
 - **axFile**, `src/AxFile/Shell.cs`, in `Shell.Invoke`, by `IContextMenu.InvokeCommand (Windows)`: runs one command of the shell's own menu for an entry or a drive without showing the menu: the Windows operations axFile's items stand for (the shell's cut, copy and paste; Eject for a drive).
   Code: `var hr = contextMenu.InvokeCommand(ref info);`
+- **shared by every app**, `src/AxKit.Core/ProcessRun.cs`, in `ProcessRun.RunAsync`, by `new Process`: the one place a program is started without a window and run to its end with both outputs read; which program and why is said at each call of Run and RunAsync, in its own comment.
+  Code: `using var process = new Process { StartInfo = start };`
 - **shared by every app**, `src/AxKit.Core/SignInStart.cs`, in `SignInStart.OpenWindowsStartupSettings`, by `Process.Start`: opens Windows' Startup apps page in the Settings app through the Windows shell (the ms-settings: address), from the Store's copy's Start with Windows item (AX-13.4).
   Code: `Process.Start(new ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true })?.Dispose();`
 - **shared by every app**, `src/AxKit.Core/Updates/Updater.cs`, in `Updater.InstallInPlaceAsync`, by `Process.Start`: runs the downloaded version's install.ps1 in Windows PowerShell, by its full path, to install the update for this user while the app keeps running (AX-2.8).
@@ -319,6 +340,15 @@ Used in 19 places:
 - `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, for axKit.
 - `src/AxKit/Program.cs`, in `Program.StartBackgroundAppsOnce`, for axKit.
 - `src/AxStart/AppsFolder.cs`, in `AppsFolder.Start`, for User programs.
+
+### new Process, program
+
+Defined in .NET, System.Diagnostics: a process object, whose Start method starts the program of its start info.
+
+Used in 2 places:
+
+- `src/AxKit.Core/ProcessRun.cs`, in `ProcessRun.RunAsync`, for Claude Code and Git and KeePassXC and Windows.
+- `src/AxMCP.Core/StdioServer.cs`, in `StdioServer.Start`, for MCP servers.
 
 ### ProcessRun.Run, program
 

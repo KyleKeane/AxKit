@@ -124,6 +124,14 @@ public sealed class SettingsFileTests
         Assert.Equal(5, loaded.Size);
         Assert.Equal(SampleKind.One, loaded.Kind);
         Assert.Contains("at their defaults: kind.", error);
+        // The window's sentence before it says the file was read: "could not be read, so the defaults are used" is
+        // true only of a file nothing could be taken from.
+        Assert.Equal(SettingsFile.PartlyReadHeading, SettingsFile.Heading(error!));
+
+        File.WriteAllText(path, "no JSON at all");
+        File.SetLastWriteTimeUtc(path, DateTime.UtcNow.AddMinutes(2));
+        SettingsFile.Load<SampleSettings>(path, out error);
+        Assert.Equal(SettingsFile.NotReadHeading, SettingsFile.Heading(error!));
     }
 
     [Fact]

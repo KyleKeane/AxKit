@@ -9,16 +9,29 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   scripts run `dotnet build-server shutdown` after theirs. After a bare `dotnet build` or `dotnet test`, run it
   yourself: the development computer has 7 GB, and a build otherwise leaves about 1 GB of idle build servers behind for
   ten to fifteen minutes (`development-environment.md` section 5).
-- Never build into the running app's `bin`: to check a change while axKit runs, `dotnet build <project> -o <scratch
-  folder>`.
+- To check a change while axKit runs, `dotnet build <project> -o <scratch folder>`. A build of `src/AxKit` over an
+  axKit that runs from the output folder stops in one line, before anything is compiled or copied (the target
+  `StopOverRunningAxKit` in `src/AxKit/AxKit.csproj`).
 
 ## Test
 
 - `test.ps1 [<App>]` runs every test project (or one) in Release, one by one, so that a running axKit's `bin` is never
-  touched, and then checks the generated pages (below). It is what `release.ps1` and `run.ps1 -Test` call. Run it
-  before a commit. The workflows `build.yml` and `release.yml` run `dotnet test AxKit.sln`, the solution, in Release.
-  Never `dotnet test AxKit.sln` while axKit runs: it writes into the running program's `bin\Debug`. Debug alone misses
-  what Release treats as errors, which cost 3.3.0.
+  touched, and then checks the generated pages and the scripts (below). It is what `release.ps1` and `run.ps1 -Test`
+  call. Run it before a commit. The workflows `build.yml` and `release.yml` run `dotnet test AxKit.sln`, the solution,
+  in Release, and `build.yml` also builds the Store package (`publish.ps1 -Msix`); `test.ps1` does neither.
+  Never `dotnet test AxKit.sln` while axKit runs: it builds into the running program's `bin`. Debug alone misses
+  what Release treats as errors, which cost 3.3.0. On the computer that has the management lists beside the
+  repository, it first refuses a clone whose hooks are not installed and names the command
+  (`git config core.hooksPath tools/hooks`).
+- `tools/script-lint.ps1 -Check`, run by `test.ps1` and `build.yml`: every `.ps1` is ASCII, parses, and assigns no
+  local variable named like one of its parameters; its header says what each rule cost.
+- The rules of the bundle that the tests hold, read off the sources in `tests/AxKit.Tests`: `LayoutTests` (references
+  point one way), `ListTests` (every list is `AxKitList`), `SecondWindowTests` (no message box, dialog or bare form
+  outside its list of files), `StackTests` (no package, WPF or web view outside the tests), `KeyTests` (no key
+  collides, and its tables name exactly the apps of `Dispatch.Apps`), `InventoryTests` (every app in every place),
+  `NotesTests` (the notes name what exists and stay small), `PrivacyTests` (no e-mail address, account path, GitHub
+  token or private key in any file, `.claude` included), `HookTests` and `ReleaseScriptTests` (the hooks' and the
+  release scripts' shape).
 - `tools/AxAutomate <script or folder> (--build | --exe <AxKit.exe>)` plays the automated window checks of
   `tests/scripts` on a desktop of their own (`automation.md`). The run of an app's folder after a change to a window is
   given `--record`: `dotnet run --project tools\AxAutomate -c Release -- tests\scripts\<app> --build --record` enters
@@ -33,8 +46,14 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   passed, 1 a script failed, 2 the run could not start, 3 the inventory is stale. Its other form,
   `tools/AxAutomate --reference [--check]`, plays nothing: it writes the workflow pages, or checks them, for
   `tools/workflows.ps1` (below). `tools/QaRun` runs Claude sessions without windows, always with `--model haiku`.
+- `tools/window-passes.ps1 [-Check]` says which apps' window code has a commit newer than the app's last recorded
+  pass on the desktop tier (`workflow-record.json`). `release.ps1` and its rehearsal run it with `-Check` and refuse
+  while it names an app; `test.ps1` does not run it, since during ordinary work the windows are ahead of their
+  record. It reads and asks git; it writes nothing.
 - `nvda-pass.ps1 [<app>]` runs the same scripts with NVDA listening, plus `tests/nvda-scripts`: the NVDA test plans as
-  the assistant runs them. It takes the keyboard, so only after the user has stepped away.
+  the assistant runs them. It takes the keyboard, so only after the user has stepped away: it does not start while
+  the last key or mouse input is under 20 seconds old (it waits a minute for that), when NVDA is not running, or
+  when the installed capture add-on differs from `tools/nvda-capture`.
 - `tools/upstream.ps1` is the upstream watch (`automation.md`, "When an outside program changes"): for each outside
   program (Claude Code, Git, KeePassXC's tool, the shells) the installed version beside the one the checks last passed
   with, from `upstream.json`, and "changed" where they differ; exit code 1 when one did. Quick, no build: run it at
@@ -75,7 +94,8 @@ page by hand; run its script and commit the page.
   `--inventory write`, or a change to a script, run it and commit the pages with that change (WF-11.4).
 - `tools/repairs.ps1` writes `repairs.md` from `repairs.json`: what an audit found and what became of each finding,
   with the principles the repairs follow. `-Open` prints what is open. A defect found is entered there, and its status
-  changed in the same commit as its fix.
+  changed in the same commit as its fix. Every run holds the list to its fields: a done finding says how it was
+  checked, a deferred or declined one why, and a commit that is named exists in the repository.
 - `tools/apps-page.ps1` writes `apps.md`: the apps from `Dispatch.Apps`, each with its command and its folders.
   `tools/apps.ps1` is the reader the other scripts share.
 
@@ -89,12 +109,14 @@ page by hand; run its script and commit the page.
   fetches the Windows SDK's packaging tools into `tools/sdk` once. A local test registers
   `publish\msix\package\AppxManifest.xml` with `Add-AppxPackage -Register`, Developer Mode on.
 - `install.ps1` and `install.cmd`: the per-user install (`-Uninstall`).
-- `release.ps1 <version>`, after a `## <version>` section in `CHANGELOG.md`: the pages, the tests, the version, the
-  commit, the tag, the push. GitHub Actions publishes the release the apps update from. Only at the maintainer's
-  word. `gh run watch` follows the workflow.
+- `release.ps1 <version>`, after a `## <version>` section in `CHANGELOG.md`: its checks (below), the pages, the
+  tests, the version, the commit, the tag, the push; then it waits for the draft GitHub Actions builds, signs its zip
+  with the release key and publishes it (`tools/sign-release.ps1`), and that release is what the apps update from.
+  Only at the maintainer's word.
 - `release.ps1 -Rehearse [<version>] [-WithTests]`, before a release: the rehearsal. It makes the real run's checks
-  (the branch, behind origin, the hooks setting, uncommitted files, the changelog section and the version; of the
-  given version, or of the newest released section) and asks GitHub every question the real run and
+  (the branch, behind origin, the hooks setting, the release key's file, uncommitted files, the changelog section,
+  the windows' recorded passes and the version; of the given version, or of the newest released section) and asks
+  GitHub every question the real run and
   `tools/sign-release.ps1` ask, through the same functions and so with the same command lines, about what is already
   there: the build of main's newest commit and the newest published release. It commits, tags, pushes, signs and
   publishes nothing (it only fetches origin), takes a few seconds, and runs `test.ps1` only with `-WithTests`. Exit
@@ -112,8 +134,11 @@ page by hand; run its script and commit the page.
   the private repository `KyleKeane/AxKit-keys`, cloned as `..\axkit-keys` (`development-environment.md` section 2):
   `Get-Content ..\axkit-keys\release-key.passphrase.txt | .\tools\release-key.ps1 import ..\axkit-keys\release-key.backup`,
   and the same with `export` and a new file name for a new backup.
+- `tools/release-notes.ps1 <version>` prints a version's section of `CHANGELOG.md`: the release notes, for the release
+  workflow and `release.ps1`'s check. `tools/reporter-token.ps1` writes the reporter token's file for a release build
+  from the workflow's secret and removes it after (`reports.md` RP-6.2); `publish.ps1` calls it.
 - `.github/workflows`: `build.yml` tests every push to every branch and every pull request; `release.yml` builds a
-  `v*` tag into a GitHub release; `dependabot.yml` keeps the actions and the test packages current.
+  `v*` tag into a draft GitHub release. `.github/dependabot.yml` keeps the actions and the test packages current.
 
 ## The Store
 
@@ -127,12 +152,13 @@ page by hand; run its script and commit the page.
 
 - `tools/new-app.ps1 <Name> <verb> <group> <opens>`: a new app, its folders, a first window, its documents and its
   registration places (`adding-an-app.md`).
-- `tools/make-icon.ps1`: the apps' icons from `Dispatch.Apps`.
+- `tools/make-icon.ps1`: the apps' icons from `Dispatch.Apps`. `tools/make-test-pictures.ps1`: the three test
+  pictures of axHelp's screenshots in `tests/fixtures/pictures`, run only to change them.
 - `tools/sync-repos.ps1`: the two repositories beside this one on the maintainer's computer, `..\axkit-reports` (the
   clone of the reports repository) and `..\axkit-management` (the private axTask lists): fetched, the lists committed
   as one dated commit, pulled fast-forward, pushed, one line each, nothing forced. `-Status` only says where they
   stand. Git runs it on every push of this repository through the pre-push hook `tools/hooks/pre-push`, installed once
-  per clone with `git config core.hooksPath tools/hooks`, which `release.ps1` checks. The fourth folder,
+  per clone with `git config core.hooksPath tools/hooks`, which `test.ps1` and `release.ps1` check. The fourth folder,
   `..\axkit-keys`, is not synced by it: it is committed and pushed by hand when a backup changes.
 - `tools/item-of-commit.ps1 <message file>`: the priorities list's bookkeeping from a commit message (the root
   `CLAUDE.md`, rule 9). The message names its item on a line of its own: `Item: <words of the title>` (the item's

@@ -98,6 +98,16 @@ public static class SettingsFile
     /// <summary>What the error text says before the names of the values that did not read (R-52); axHelp's guide quotes it, so that Claude can explain it.</summary>
     public const string NotUnderstood = "these settings were not understood and are at their defaults";
 
+    /// <summary>What a window says before a load's error text when the file could not be read at all: not opened (R-51), or no JSON a setting could be taken from.</summary>
+    public const string NotReadHeading = "The settings file could not be read, so the defaults are used.";
+
+    /// <summary>What a window says before the error text of <see cref="NotUnderstood"/> (R-52): the file was read and is in use, so <see cref="NotReadHeading"/> would be untrue of it.</summary>
+    public const string PartlyReadHeading = "The settings file was read, except for the settings named here.";
+
+    /// <summary>The sentence a window puts before a load's error text: which of the two cases the text is of.</summary>
+    public static string Heading(string error) =>
+        error.Contains(NotUnderstood, StringComparison.Ordinal) ? PartlyReadHeading : NotReadHeading;
+
     /// <summary>What the error text of a file that could not be opened ends with (R-51).</summary>
     public const string NotSaved = "Settings are not saved in this run, so that the file is not replaced. Close the window and start it again.";
 

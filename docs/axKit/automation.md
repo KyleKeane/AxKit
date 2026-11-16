@@ -276,8 +276,9 @@ The option `--inventory` of the runner says what a run does with it:
   is named after the run's summary, each once, under "The command inventory is stale (docs/axKit/window-commands.json):
   ...", and the exit code is 3 when every script passed; a failed script's 1 stands. An app the file holds no row
   for is not checked, and the run says so once ("The command inventory has no rows for axClaude yet: its commands
-  were not checked"): that is how an app joins later. axClaude and axHelp are not in the first inventory, since
-  their windows were being redesigned (`user-workflows.md` WF-D-22).
+  were not checked"): that is how an app joins later. Every app of the bundle has its rows: axClaude and axHelp, left
+  out of the first inventory while their windows were being redesigned (`user-workflows.md` WF-D-22), joined on
+  2026-11-16.
 - `write`: every snapshot merged in (a row of the same label and menus replaced, other rows kept), the file written at
   the end when it changed, and one line saying how many rows were added, replaced and removed. Only the scripts with
   a `check commands` or a `do` step play; a line says how many were passed over.
@@ -362,8 +363,9 @@ every file. That a kept trace is what a window says today is the window runs' ch
 ### What the scripts cover, and what stays manual (2026-10-23)
 
 The NVDA test plans of axDown, axJSON, axPreview, axFile, axGIT, axTerminal, axMedia and axProcess (2026-10-24; the services only read, never started or stopped, since a run with administrator rights would do it for real) are scripts in
-`tests/scripts/<app>`, one per section of the plan, about two thousand steps, all passing; axClaude's are being written,
-on Haiku. Every step a script cannot drive is a `#` line naming the plan step and why. What stays manual, for now:
+`tests/scripts/<app>`, one per section of the plan. Every app of the bundle has its folder there now
+(`docs/axKit/apps.md` gives each one's count), axClaude among them, whose scripts with a live Claude Code run on
+Haiku. Every step a script cannot drive is a `#` line naming the plan step and why. What stays manual, for now:
 
 - The menu bar and context menus opened with Alt, F10 or Shift+F10: menu mode needs the foreground; `menu` runs the
   same command by its name. Submenus that fill as they open (Open recent, Recently closed, Open windows) are not in
@@ -449,15 +451,18 @@ dotnet run --project tools\AxAutomate -c Release -- tests\nvda-scripts --build -
 
 The assistant runs this tier itself to hear a change as NVDA speaks it, in the same session as the change:
 
-1. Check the add-on is installed and current: `%APPDATA%\nvda\addons\axkitCapture\globalPlugins\axkitCapture.py` the
-   same lines as `tools/nvda-capture`'s (a changed add-on is copied by the user and NVDA restarted). Nothing else of
+1. The add-on is installed and current: `%APPDATA%\nvda\addons\axkitCapture\globalPlugins\axkitCapture.py` the
+   same lines as `tools/nvda-capture`'s (a changed add-on is copied by the user and NVDA restarted); `nvda-pass.ps1`
+   compares them and stops when they differ. Nothing else of
    NVDA's is needed: not the Speech Viewer, not the user's own plugins in `%APPDATA%\nvda\globalPlugins` or the
    scratchpad.
 2. Build `AxKit.exe` and the runner into scratch folders (never the running app's `bin`; `nvda-pass.ps1` does both),
    and write the steps into the app's script in `tests/scripts/<app>`, or into a script of `tests/nvda-scripts` for
    what only NVDA shows; a first run without `--nvda` on the test desktop finds the focus order and the texts without
    taking the machine.
-3. Ask the user through the question tool to step away, saying how long. The answer is the go: the run starts at once.
+3. Ask the user through the question tool to step away, saying how long. The answer is the go: the run is started at
+   once. `nvda-pass.ps1` itself holds the rule: right before the runner takes the keyboard it asks Windows when the
+   last key or mouse input was, waits up to a minute for 20 seconds without any, and refuses to start otherwise.
 4. The run records "Running NVDA tests. Please do not touch the keyboard or mouse." in Windows' own voice (SAPI, not
    NVDA, so the capture holds only what the windows made NVDA say, and no window takes the focus) into a wave file and
    plays it in a loop for the whole run (the user's ask), then takes the foreground and the keys; when it is over the
@@ -598,4 +603,10 @@ about once a month; their check is axTerminal's, run once for all the shells.
 - Claude sessions in tests use Haiku through `--model haiku` and leave the user's settings alone.
 - A test never activates a window or sends keys to the system outside tier 3, and tier 3 runs only at the user's word.
 - Test folders are fresh under `%TEMP%`; recordings and reports follow the privacy rule (Redaction, never `--raw`).
-- The scripts are run before a release (`release.ps1` names them), and after a change to a window as a spot check.
+- A window that changed is checked by its scripts, run with `--record`, before it is released: `release.ps1` and its
+  rehearsal refuse while an app's window code (`src/<App>`, `src/<App>.Core`, `src/AxKit.Forms`, `src/AxKit.Core`) has
+  a commit newer than the app's last recorded pass on the desktop tier, and name the apps
+  (`tools/window-passes.ps1 -Check`, whose header says how it decides; run it without `-Check` at any time to see
+  what a release would say). `test.ps1` does not run it: during ordinary work the windows are ahead of their record.
+- `nvda-pass.ps1` does not start while the last key or mouse input is under 20 seconds old, nor with a capture add-on
+  that differs from `tools/nvda-capture`.

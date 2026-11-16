@@ -55,6 +55,20 @@ public sealed class KeyTests
         ("axMedia", Keys.Control | Keys.Down),
     ];
 
+    /// <summary>
+    /// The table above and the F1 texts below are written by hand, so they are held to <c>Dispatch.Apps</c>, the one
+    /// list of the apps: every app has a window, and every window its key table and its F1 text here. An app added to
+    /// <c>Dispatch.Apps</c> and forgotten here would have its keys checked by nothing (the root CLAUDE.md, rule 5); an
+    /// app without a window, should one come, is taken out of the expected names in this test, by name.
+    /// </summary>
+    [Fact]
+    public void The_tables_name_exactly_the_apps()
+    {
+        var apps = AxKit.Core.Dispatch.Apps.Select(app => app.Name).OrderBy(name => name, StringComparer.Ordinal).ToList();
+        Assert.Equal(apps, Windows.Keys.OrderBy(name => name, StringComparer.Ordinal));
+        Assert.Equal(apps, F1Texts.Keys.OrderBy(name => name, StringComparer.Ordinal));
+    }
+
     [Fact]
     public void No_window_key_equals_a_bundle_key()
     {

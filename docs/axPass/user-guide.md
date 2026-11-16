@@ -74,7 +74,9 @@ in a password field rather than in the notes.
 ## If something goes wrong
 
 - "KeePassXC is not installed": install it, then start axPass again. If it is installed somewhere unusual, Options,
-  KeePassXC's tool tells axPass where `keepassxc-cli.exe` is.
+  KeePassXC's tool tells axPass where `keepassxc-cli.exe` is. A tool outside Program Files is used only when it
+  carries the signature of KeePassXC's publisher; any other file is not used and never gets your master password,
+  and the log says who signed it.
 - "Still working on the last command": a large database takes a moment for each command; wait for the last one.
 - Help, Diagnostics, Copy diagnostics puts what is needed for a bug report on the clipboard. It never holds a
   password or anything from the database.

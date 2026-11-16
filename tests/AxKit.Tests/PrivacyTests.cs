@@ -1,8 +1,15 @@
+using System.Text.RegularExpressions;
 using AxKit.Core;
 
-namespace AxClaude.Tests;
+namespace AxKit.Tests;
 
-public class PrivacyTests
+/// <summary>
+/// Personal data never enters the repository (the root CLAUDE.md, rule 6): <c>AxKit.Core/Redaction</c> takes it out of
+/// what a tool prints, and no file a commit can carry holds an e-mail address, a path into a Windows account, a
+/// GitHub token or a private key. In this project since 2026-11-16 (in tests/AxClaude.Tests before), so that
+/// <c>.\test.ps1 axKit</c>, the bundle's own checks, runs it.
+/// </summary>
+public partial class PrivacyTests
 {
     [Fact]
     public void Redact_replaces_what_status_prints_about_the_account()
@@ -47,7 +54,7 @@ public class PrivacyTests
     [Fact]
     public void The_repository_holds_no_email_address_or_account_path()
     {
-        var root = RepositoryRoot();
+        var root = LayoutTests.RepositoryRoot();
         var found = new List<string>();
         foreach (var file in RepositoryFiles(root))
         {
@@ -60,29 +67,54 @@ public class PrivacyTests
         Assert.Empty(found);
     }
 
-    private static string RepositoryRoot()
+    /// <summary>
+    /// No file in the repository holds a GitHub token or a private key (the root CLAUDE.md: a key, a passphrase or a
+    /// token is never written into this repository). A token is known by its prefix and a run of letters and digits
+    /// after it, so that a document may name the prefix; a key by the first line of its PEM text. The failure names
+    /// the file and the kind and never the text itself, which would put the secret into the test's output.
+    /// </summary>
+    [Fact]
+    public void The_repository_holds_no_token_or_private_key()
     {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AxKit.sln")))
+        var root = LayoutTests.RepositoryRoot();
+        var found = new List<string>();
+        foreach (var file in RepositoryFiles(root))
         {
-            dir = dir.Parent;
+            var text = File.ReadAllText(file);
+            if (GitHubToken().IsMatch(text))
+            {
+                found.Add($"{Path.GetRelativePath(root, file)}: a GitHub token");
+            }
+
+            if (PrivateKey().IsMatch(text))
+            {
+                found.Add($"{Path.GetRelativePath(root, file)}: a private key");
+            }
         }
 
-        return dir?.FullName ?? throw new InvalidOperationException("AxKit.sln not found above the test directory.");
+        Assert.True(found.Count == 0, "A secret in a file a commit can carry (take it out, and revoke it: it has been on disk in the clear): " + string.Join("; ", found));
     }
 
-    // Text files outside build output and git's own folder, which is what a commit can carry.
+    /// <summary>
+    /// Text files outside build output and git's own folder, which is what a commit can carry. The Claude Code folder
+    /// .claude is read too (the shared settings and the skills are committed), but for the two things in it that never
+    /// are: the worktrees, each a checkout of its own, and settings.local.json, the computer's own permissions, which
+    /// hold its paths.
+    /// </summary>
     private static IEnumerable<string> RepositoryFiles(string root)
     {
-        string[] skipped = ["bin", "obj", ".git", ".vs", "publish", "artifacts", "TestResults", ".claude"];
+        string[] skipped = ["bin", "obj", ".git", ".vs", "publish", "artifacts", "TestResults"];
         string[] binary = [".ico", ".png", ".dll", ".exe", ".zip", ".pdb"];
+        var worktrees = Path.Combine(root, ".claude", "worktrees");
+        var localSettings = Path.Combine(root, ".claude", "settings.local.json");
         var pending = new Stack<string>([root]);
         while (pending.Count > 0)
         {
             var dir = pending.Pop();
             foreach (var sub in Directory.EnumerateDirectories(dir))
             {
-                if (!skipped.Contains(Path.GetFileName(sub), StringComparer.OrdinalIgnoreCase))
+                if (!skipped.Contains(Path.GetFileName(sub), StringComparer.OrdinalIgnoreCase)
+                    && !string.Equals(sub, worktrees, StringComparison.OrdinalIgnoreCase))
                 {
                     pending.Push(sub);
                 }
@@ -92,11 +124,20 @@ public class PrivacyTests
             {
                 // In a worktree, .git is a file naming the main checkout's path: git's own, never committed.
                 if (!binary.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase)
-                    && !skipped.Contains(Path.GetFileName(file), StringComparer.OrdinalIgnoreCase))
+                    && !skipped.Contains(Path.GetFileName(file), StringComparer.OrdinalIgnoreCase)
+                    && !string.Equals(file, localSettings, StringComparison.OrdinalIgnoreCase))
                 {
                     yield return file;
                 }
             }
         }
     }
+
+    /// <summary>GitHub's tokens: a classic personal token, an OAuth token (the gh tool's), a fine-grained personal token.</summary>
+    [GeneratedRegex(@"\b(ghp|gho)_[A-Za-z0-9]{20,}|\bgithub_pat_[A-Za-z0-9_]{20,}")]
+    private static partial Regex GitHubToken();
+
+    /// <summary>The first line of a private key in PEM text, of any kind (RSA, EC, OPENSSH, none).</summary>
+    [GeneratedRegex(@"-----BEGIN [A-Z ]*PRIVATE KEY-----")]
+    private static partial Regex PrivateKey();
 }
