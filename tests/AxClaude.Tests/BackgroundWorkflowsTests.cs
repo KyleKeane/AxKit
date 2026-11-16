@@ -215,16 +215,29 @@ public class BackgroundWorkflowsTests
         Assert.Equal(without, with);
     }
 
-    /// <summary>What the third frame end over the same screen allocates, after two that warm everything up.</summary>
+    /// <summary>
+    /// What a frame end over the same screen allocates once everything is warm: the least of several. One frame end
+    /// alone was compared until 2026-11-15, and failed now and then while other builds ran on the computer: a first
+    /// use elsewhere (a cache filled, a method compiled anew) adds to a single measurement, never to the least.
+    /// </summary>
     private static long FrameEndAllocation(bool shown, params string[] rows)
     {
         var model = new SessionModel(160, 20) { ShowProgressRows = shown };
         Feed(model, Frame(rows));
-        model.EndFrame();
-        model.EndFrame();
-        var before = GC.GetAllocatedBytesForCurrentThread();
-        model.EndFrame();
-        return GC.GetAllocatedBytesForCurrentThread() - before;
+        for (var warm = 0; warm < 5; warm++)
+        {
+            model.EndFrame();
+        }
+
+        var least = long.MaxValue;
+        for (var measured = 0; measured < 8; measured++)
+        {
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            model.EndFrame();
+            least = Math.Min(least, GC.GetAllocatedBytesForCurrentThread() - before);
+        }
+
+        return least;
     }
 
     [Fact]
