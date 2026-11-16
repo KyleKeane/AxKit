@@ -48,7 +48,7 @@ public sealed class AiSettings
     public string Seal { get; set; } = string.Empty;
 
     /// <summary>What the load's error text says when the seal does not check (AH-1.1a).</summary>
-    public const string NotUsed = "AI help's settings were changed outside axKit and are not used: Claude is off, it may read no folder of yours, and Claude Code and its working folder are the usual ones. Turn Claude on and add the folders again from the axKit menu, AI help.";
+    public const string NotUsed = "AI help's settings were changed outside axKit and are not used: Claude is off, it may read no folder of yours, and Claude Code and its working folder are the usual ones. Turn Claude on and add the folders again from the axKit menu, Claude.";
 
     /// <summary>The sealed fields, in their order: the switch, Claude Code's program, the working folder, then each folder Claude may read.</summary>
     private string SealedText() =>

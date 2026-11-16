@@ -68,7 +68,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   folder, with the model kept. The next thing that needs the settings (the switch, a question, Folders Claude may
   read) saves them as they are then in use, shows the notice **AI help** with "AI help's settings were changed
   outside axKit and are not used: Claude is off, it may read no folder of yours, and Claude Code and its working
-  folder are the usual ones. Turn Claude on and add the folders again from the axKit menu, AI help." and does not go
+  folder are the usual ones. Turn Claude on and add the folders again from the axKit menu, Claude." and does not go
   on with what was asked (`AiHelpFlow.ChangedOutside`), so the notice is shown once. `claudePath` and `workingFolder`
   have no menu item yet: they can be set by hand only in a file axKit has not sealed yet (a new one, as the
   automation's is); afterwards a hand change is refused as above. Tested in `SettingsSealTests`.
@@ -273,7 +273,9 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   of axKit's is there again at the next use. Nothing but axKit's own files is read or written for it: `CLAUDE.md`
   and the agent file stay the user's (written only when missing, so deleting one resets it), and so does every file
   the user adds. What decides what axKit itself does (the AI tools' switch and pairing, the consent, `ai-help.json`)
-  was never in this folder: it is under `%LOCALAPPDATA%\AxKit`. `AiDocumentationTests`.
+  was never in this folder: `mcp.json`, `consent.json` and `ai-help.json` are under `%APPDATA%\AxKit`
+  (`AppPaths.McpFile`, `ConsentFile`, `AiHelpFile`), and the keys their seals are made with under
+  `%LOCALAPPDATA%\AxKit`. `AiDocumentationTests`.
 - AH-7.8 **Files Claude Code obeys that axKit did not write are asked about** (2026-11-16, `repairs.md` R-54; the
   maintainer's requirement: mechanical, plain code, no network and no AI reasoning, no interaction that is not
   needed). The self-repair of AH-7.7 covers axKit's own files; Claude Code obeys others in the folder, which the

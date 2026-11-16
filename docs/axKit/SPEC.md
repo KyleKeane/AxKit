@@ -497,6 +497,16 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   line in the console windows: "Settings could not be saved: <the system's reason>. What you change lasts until this
   window closes." (`SettingsFile.NotWritten`). Every failure is logged; the save of a closing window says nothing.
   Until this the failure was only logged.
+- AX-5.10 **The table of cases** (2026-11-16, the maintainer's ask for a stability reference). How axKit handles
+  each unexpected situation is written once, as data: `docs/axKit/cases.json`, one row per case, with the thing acted
+  on and the situation (each from a closed list in the file's head), the apps, what axKit does, the exact words it
+  says, the test or window script that proves it, and the requirement it comes from; `tools/cases.ps1` writes
+  `cases.md` from it for reading. A change to how an unexpected situation is handled changes its row in the same
+  commit, and a new kind of failure that is handled gets a row. `CasesTests` holds this in part: a row whose proof
+  names a test method or a script's goal that no longer exists fails, a row whose sentence is a constant of the code
+  fails when the constant's text changes, a row without a proof must say what is owed, and every settings file of
+  `AppPaths` and every settings class has a row. What it cannot hold is that a change of behaviour whose test and
+  words stay the same reaches its row: that is the commit's to do.
 
 ### AX-6 Shared pieces
 

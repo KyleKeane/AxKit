@@ -68,7 +68,8 @@ kept, apart from the last result Ctrl+J writes beside the logs.
 Your servers (`servers`) are sealed in that file: they name programs axMCP starts, so they count only as axMCP wrote
 them. Add, rename and remove them in the window (Ctrl+N, F2, Delete). If you change one in the file by hand, or
 another program does, axMCP lists none of them, keeps your other settings, and says once: "Your servers in axMCP's
-settings were changed outside axKit and are not used. Add them again with Ctrl+N at the top level." The seal's key is
+settings were changed outside axKit and are not used. Add them again with Ctrl+N at the top level." The file as
+it was found is kept beside it, with `.changed` at the end of its name (`axMCP.json.changed`). The seal's key is
 kept by Windows for your account; a program running as you could ask Windows for it, so the seal protects against a
 file changed by another program or by hand, a profile copied or synced from another computer, and an AI tool writing
 files, and not against a program that sets out to forge it.

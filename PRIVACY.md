@@ -122,7 +122,10 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   your question; for Shift+F1 in an axKit window, that window's name and title, the name and place of the control you
   are in, your last actions there, the window's keyboard shortcuts and its user guide, never the text of what you are
   working on; and the files Claude reads in its working folder (axKit's own guides are there, public texts) and in the
-  folders you listed under Folders Claude may read, none by default.
+  folders you listed under Folders Claude may read, none by default. Such a question starts Claude Code with the
+  servers a folder's `.mcp.json` names left out and with its hooks turned off for that run (`--strict-mcp-config`, and
+  `--settings` on axKit's file `%LOCALAPPDATA%\AxKit\claude-no-hooks.json`, which holds that one switch and nothing of
+  yours), so that no file in the working folder starts a program or reaches a server when you ask.
 - **axHelp, access layer for Claude Code** is a conversation in axClaude (above) on Claude's working folder,
   `Documents\axKit Claude`, started with a model of axHelp's own; what goes to Anthropic is what axClaude sends.
   Closing that conversation hides it, and Claude Code keeps running until you end it there (Session, End Claude and
@@ -141,6 +144,10 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   keeps its own guides there, in the folder `documentation`, with a note for Claude in `.claude\rules`, and puts
   them back as axKit has them at every use, so a change you make to one of them does not stay: they are axKit's public texts, hold nothing of yours, and Claude Code reads them on
   this computer when a question is about axKit; what it reads for an answer goes to Anthropic as any file it reads.
+  Before axHelp starts its conversation, axKit looks in that folder for files Claude Code would obey that axKit did not
+  write (a `.mcp.json`, hooks in the folder's settings files, skills, commands, plugins, agents, rules), by their
+  names and a hash, on this computer alone. When one is new or changed, a notice names them and Claude Code starts
+  only when you choose Start anyway and remember these files; nothing of this is sent anywhere.
 - **Install it now.** When an app needs a program that is missing (Git, KeePassXC, Claude Code, PowerShell 7), its
   notice offers to install it, and does so only when you choose to. Git (`Git.Git`), KeePassXC
   (`KeePassXCTeam.KeePassXC`) and PowerShell 7 (`Microsoft.PowerShell`) come through Windows' own package manager,
@@ -168,6 +175,14 @@ turning the access off ends access at the next call and turns Let AI tools run c
 ## What stays on your computer
 
 - **Settings**: `%APPDATA%\AxKit`, one file per app.
+- **The settings' seal**: `%LOCALAPPDATA%\AxKit\settings-seal.key`, a key made on this computer and kept encrypted for
+  your Windows account, with the names of the settings files it has sealed. With it axKit knows whether a setting that
+  decides what is run or read was written by axKit. A file refused for a changed setting is kept beside the settings
+  file with `.changed` at the end of its name.
+- **The files you accepted in Claude's working folder**: `%APPDATA%\AxKit\ai-folder-files.json`, with the folder, each
+  file's path and a hash of it, never a file's text.
+- **The list of reports axKit wrote**: `%APPDATA%\AxKit\reports-written.json`, the file name and the id of each report
+  the report form saved, so that only those are ever sent; a report's file name holds its title.
 - **Logs**: `%LOCALAPPDATA%\AxKit\logs`. They hold starts, errors and what an update did; never what you type, copy,
   read or say to Claude. Each rolls over at 1 MB.
 - **The hooks' file**: `%LOCALAPPDATA%\AxKit\claude-hooks.json`, which axClaude writes before it starts Claude Code.

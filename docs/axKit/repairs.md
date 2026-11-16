@@ -313,7 +313,7 @@ found and what became of each finding: change the JSON in the same commit as the
 
 - Where: src/AxKit.Core/Signatures.cs; src/AxPass.Core/KeePassCli.cs
 - Principle: P1
-- Fix: The signer's name is read after the signature checks, and only KeePassXC's publisher is accepted; another is refused with its name and the master password is not given to it.
+- Fix: The signer's name is read after the signature checks, and only KeePassXC's publisher is accepted; a file another signed is not taken as the tool, the log holds the signer's name, the master password is not given to it, and the window says what it says when KeePassXC is not installed.
 - Checked by: tests/AxPass.Tests/PassTests (OnlyKeePassXCsPublisherIsTheTool), with the installed KeePassXC on the development computer
 - Note: Found on 2026-11-16 by the resilience audit: the earlier audit's S-19 says the publisher is checked, the code checks only that some trusted publisher signed. The real subject of an installed copy's certificate is read first.
 
@@ -513,7 +513,7 @@ found and what became of each finding: change the JSON in the same commit as the
 
 - Where: src/AxKit.Core/Mcp/McpAccess.cs
 - Principle: P1
-- Fix: Load gives the reason; the next use of the AI tools says once that the setting was changed outside axKit or its key is gone, and the log holds it.
+- Fix: McpAccess.Problem gives the reason; the axKit menu's AI tools submenu says at every opening that the setting was changed outside axKit or its key is gone, until the tools are turned on again or forgotten, which writes the file anew; the log holds it once in a process.
 - Checked by: tests/AxKit.Tests/McpTests (A_file_counts_only_with_its_seal: ChangedOutsideAxKit); the sentence in the window is owed a hearing
 - Note: Found on 2026-11-16 by the resilience audit. The default is the safe one; what is missing is that the user learns pairings were dropped or something wrote the file.
 

@@ -98,6 +98,15 @@ page by hand; run its script and commit the page.
   checked, a deferred or declined one why, and a commit that is named exists in the repository.
 - `tools/apps-page.ps1` writes `apps.md`: the apps from `Dispatch.Apps`, each with its command and its folders.
   `tools/apps.ps1` is the reader the other scripts share.
+- `tools/cases.ps1` writes `cases.md` from `cases.json`, the table of how each unexpected situation is handled (SPEC
+  AX-5.10). A change to how a situation is handled changes its row, then the script is run; the fields are described
+  at the top of the script.
+- `tools/key-map.ps1` writes `key-map.md` from the command inventory `window-commands.json`, `BundleKeys.cs` and the
+  proposed `key-families.json`: every key, its scope and what it does in each app. Every run holds the families file
+  to the inventory: a key named there as not fitting is a command the inventory has. Run it after the inventory is
+  written again.
+- Each of these scripts takes `-Check`, which writes nothing and fails when its page is stale; `test.ps1` and the
+  Build workflow run it.
 
 ## Publish, install, release
 

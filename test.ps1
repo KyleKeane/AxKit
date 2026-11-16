@@ -9,7 +9,7 @@
   (Directory.Build.props), so a test that passes in Debug can still stop a release; 3.3.0 was lost that way.
   release.ps1 and run.ps1 -Test call this script. Exit code 0 when every project passed, otherwise the first failure's.
   A run of every project ends with the checks build.yml also makes: the generated pages (outside calls, workflows,
-  repairs, apps), the outside programs' record (tools\upstream.ps1 -Check) and the scripts' rules
+  repairs, apps, cases, the key map), the outside programs' record (tools\upstream.ps1 -Check) and the scripts' rules
   (tools\script-lint.ps1). CI does two things this script does not: it builds and tests the whole solution in one go,
   and it builds the Store package (publish.ps1 -Msix).
 
@@ -83,7 +83,7 @@ if ($Only -eq '') {
     # The pages a script writes from the sources (docs/axKit/repairs.json R-30): build.yml checks them, and until
     # 2026-11-13 this script did not, so a stale page was found only by CI, six times in three days. Each check says
     # which script writes its page again.
-    foreach ($page in 'outside-calls', 'workflows', 'repairs', 'apps-page') {
+    foreach ($page in 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map') {
         & (Join-Path $root "tools\$page.ps1") -Check
         if ($LASTEXITCODE -ne 0) {
             Write-Host "The page check tools\$page.ps1 -Check failed: run tools\$page.ps1 (without -Check) and commit the page it writes."

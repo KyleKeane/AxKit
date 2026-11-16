@@ -117,7 +117,7 @@ public static class GitRunner
         }
         catch (Win32Exception ex)
         {
-            throw new GitNotFoundException("git was not found on the PATH.", ex);
+            throw new GitNotFoundException("git was not found on this computer.", ex);
         }
 
         if (!result.TimedOut)

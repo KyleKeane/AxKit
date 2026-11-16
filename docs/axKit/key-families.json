@@ -1,0 +1,169 @@
+{
+  "format": "axkit-key-families 1",
+  "status": "proposed",
+  "note": "A draft for the maintainer to settle: no key was moved for it and no test holds a key to its family. Each family is a pattern of keys and the one kind of thing such a key would do. A misfit is a command of docs/axKit/window-commands.json on a key of the pattern that does another kind of thing; 'does' is the command's label there, 'kind' is what kind of thing it is instead. 'windows' names the keys of a pattern that are Windows' own (Ctrl+C, Ctrl+S and the like), which stay as every Windows user knows them and are not counted as misfits. tools/key-map.ps1 checks that every key named here is of its family's pattern and that every command named here is in the inventory, and writes the families at the end of docs/axKit/key-map.md.",
+  "families": [
+    {
+      "id": "space",
+      "pattern": "Space and Ctrl+Space",
+      "match": "^(ctrl\\+)?space$",
+      "does": "toggle or play",
+      "windows": [],
+      "misfits": []
+    },
+    {
+      "id": "ctrl-letter",
+      "pattern": "Ctrl+letter",
+      "match": "^ctrl\\+[a-z]$",
+      "does": "act on what is selected",
+      "windows": ["ctrl+a", "ctrl+c", "ctrl+f", "ctrl+n", "ctrl+o", "ctrl+s", "ctrl+v", "ctrl+x", "ctrl+y", "ctrl+z"],
+      "misfits": [
+        { "chord": "ctrl+b", "apps": ["axClaude"], "does": "What runs in the background", "kind": "say or show" },
+        { "chord": "ctrl+e", "apps": ["axJSON"], "does": "Error", "kind": "go to a place" },
+        { "chord": "ctrl+g", "apps": ["axDown", "axJSON", "axPreview"], "does": "Go to line", "kind": "go to a place" },
+        { "chord": "ctrl+g", "apps": ["axFile"], "does": "Go to folder", "kind": "go to a place" },
+        { "chord": "ctrl+h", "apps": ["axDown", "axPreview"], "does": "Heading", "kind": "go to a place" },
+        { "chord": "ctrl+i", "apps": ["axDown", "axPreview"], "does": "List item", "kind": "go to a place" },
+        { "chord": "ctrl+i", "apps": ["axJSON"], "does": "Item", "kind": "go to a place" },
+        { "chord": "ctrl+i", "apps": ["axFile", "axStart"], "does": "Information", "kind": "say or show" },
+        { "chord": "ctrl+i", "apps": ["axFile"], "does": "The action's number and time", "kind": "say or show" },
+        { "chord": "ctrl+i", "apps": ["axCalc"], "does": "Answer in other bases", "kind": "say or show" },
+        { "chord": "ctrl+j", "apps": ["axJSON"], "does": "Object", "kind": "go to a place" },
+        { "chord": "ctrl+k", "apps": ["axDown", "axPreview"], "does": "Link", "kind": "go to a place" },
+        { "chord": "ctrl+k", "apps": ["axJSON"], "does": "Key", "kind": "go to a place" },
+        { "chord": "ctrl+l", "apps": ["axDown", "axPreview"], "does": "List", "kind": "go to a place" },
+        { "chord": "ctrl+l", "apps": ["axJSON"], "does": "Array", "kind": "go to a place" },
+        { "chord": "ctrl+m", "apps": ["axClaude", "axTerminal"], "does": "Background music on or off", "kind": "toggle or play" },
+        { "chord": "ctrl+p", "apps": ["axTerminal"], "does": "Say current folder", "kind": "say or show" },
+        { "chord": "ctrl+p", "apps": ["axMedia"], "does": "Pause or resume", "kind": "toggle or play" },
+        { "chord": "ctrl+p", "apps": ["axClip"], "does": "Pause recording", "kind": "toggle or play" },
+        { "chord": "ctrl+q", "apps": ["axAutomate", "axClip", "axMCP", "axPass", "axTask"], "does": "Read in full", "kind": "say or show" },
+        { "chord": "ctrl+q", "apps": ["axDown", "axPreview"], "does": "Block quote", "kind": "go to a place" },
+        { "chord": "ctrl+q", "apps": ["axProcess"], "does": "Summary", "kind": "say or show" },
+        { "chord": "ctrl+q", "apps": ["axTerminal"], "does": "What is running", "kind": "say or show" },
+        { "chord": "ctrl+q", "apps": ["axMedia"], "does": "What is playing", "kind": "say or show" },
+        { "chord": "ctrl+q", "apps": ["axClaude"], "does": "Claude's question again", "kind": "say or show" },
+        { "chord": "ctrl+q", "apps": ["axCalc"], "does": "Say the last answer", "kind": "say or show" },
+        { "chord": "ctrl+r", "apps": ["axTerminal"], "does": "Recent commands", "kind": "say or show" },
+        { "chord": "ctrl+r", "apps": ["axAutomate"], "does": "The last run's report", "kind": "say or show" },
+        { "chord": "ctrl+t", "apps": ["axDown", "axPreview"], "does": "Table", "kind": "go to a place" },
+        { "chord": "ctrl+t", "apps": ["axMedia"], "does": "Go to time", "kind": "go to a place" }
+      ]
+    },
+    {
+      "id": "ctrl-digit",
+      "pattern": "Ctrl+digit",
+      "match": "^ctrl\\+[0-9]$",
+      "does": "go to a place",
+      "windows": [],
+      "misfits": [
+        { "chord": "ctrl+1", "apps": ["axTask"], "does": "Action key 1", "kind": "act on what is selected" },
+        { "chord": "ctrl+2", "apps": ["axTask"], "does": "Action key 2", "kind": "act on what is selected" },
+        { "chord": "ctrl+3", "apps": ["axTask"], "does": "Action key 3", "kind": "act on what is selected" },
+        { "chord": "ctrl+4", "apps": ["axTask"], "does": "Action key 4", "kind": "act on what is selected" },
+        { "chord": "ctrl+5", "apps": ["axTask"], "does": "Action key 5", "kind": "act on what is selected" },
+        { "chord": "ctrl+6", "apps": ["axTask"], "does": "Action key 6", "kind": "act on what is selected" },
+        { "chord": "ctrl+7", "apps": ["axTask"], "does": "Action key 7", "kind": "act on what is selected" },
+        { "chord": "ctrl+8", "apps": ["axTask"], "does": "Action key 8", "kind": "act on what is selected" },
+        { "chord": "ctrl+9", "apps": ["axTask"], "does": "Action key 9", "kind": "act on what is selected" }
+      ]
+    },
+    {
+      "id": "ctrl-shift-letter",
+      "pattern": "Ctrl+Shift+letter",
+      "match": "^ctrl\\+shift\\+[a-z]$",
+      "does": "the reverse or the wider form of the same letter with Ctrl",
+      "windows": [],
+      "misfits": [
+        { "chord": "ctrl+shift+c", "apps": ["axTerminal"], "does": "Interrupt", "kind": "sends Ctrl+C to the program" },
+        { "chord": "ctrl+shift+c", "apps": ["axClaude"], "does": "Ctrl+C", "kind": "sends Ctrl+C to the program" },
+        { "chord": "ctrl+shift+d", "apps": ["axTask"], "does": "Hide done tasks", "kind": "toggle or play" },
+        { "chord": "ctrl+shift+f", "apps": ["axJSON"], "does": "Format", "kind": "act on what is selected" },
+        { "chord": "ctrl+shift+f", "apps": ["axFile"], "does": "Filter", "kind": "narrows the list, where Ctrl+F finds in it" },
+        { "chord": "ctrl+shift+f", "apps": ["axGIT"], "does": "Fetch", "kind": "acts on the repository" },
+        { "chord": "ctrl+shift+h", "apps": ["axGIT"], "does": "Push", "kind": "acts on the repository" },
+        { "chord": "ctrl+shift+k", "apps": ["axClaude", "axTerminal"], "does": "Bookmark this line", "kind": "act on what is selected" },
+        { "chord": "ctrl+shift+l", "apps": ["axGIT"], "does": "Pull", "kind": "acts on the repository" },
+        { "chord": "ctrl+shift+m", "apps": ["axClaude"], "does": "Next permission mode", "kind": "toggle or play; Ctrl+M there is the background music" },
+        { "chord": "ctrl+shift+n", "apps": ["axFile"], "does": "New folder", "kind": "makes a new thing; Ctrl+N there is New window" },
+        { "chord": "ctrl+shift+p", "apps": "all", "does": "Command palette", "kind": "say or show; a bundle key" },
+        { "chord": "ctrl+shift+q", "apps": ["axFile"], "does": "Add to axMedia's queue", "kind": "act on what is selected" },
+        { "chord": "ctrl+shift+r", "apps": ["axTerminal"], "does": "Restart shell", "kind": "acts on the program; Ctrl+R there is Recent commands" },
+        { "chord": "ctrl+shift+r", "apps": ["axClaude"], "does": "Force Claude to restart", "kind": "acts on the program" },
+        { "chord": "ctrl+shift+s", "apps": ["axClaude"], "does": "Send queued messages now", "kind": "acts on the program; Ctrl+S there saves the conversation" },
+        { "chord": "ctrl+shift+t", "apps": ["axFile"], "does": "New text file", "kind": "makes a new thing" },
+        { "chord": "ctrl+shift+w", "apps": ["axDown", "axJSON", "axPreview"], "does": "Word wrap", "kind": "toggle or play" }
+      ]
+    },
+    {
+      "id": "f-keys",
+      "pattern": "F-keys (F1 to F12 alone)",
+      "match": "^f[0-9]+$",
+      "does": "say or show",
+      "windows": [],
+      "misfits": [
+        { "chord": "f2", "apps": ["axAutomate", "axFile", "axMCP", "axPass", "axTask"], "does": "Rename", "kind": "act on what is selected; Windows' own key for it" },
+        { "chord": "f2", "apps": ["axAutomate", "axMCP", "axPass", "axTask"], "does": "Rename the field", "kind": "act on what is selected" },
+        { "chord": "f3", "apps": ["axAutomate", "axCalc", "axClaude", "axDown", "axFile", "axGIT", "axJSON", "axMCP", "axMedia", "axPass", "axPreview", "axProcess", "axTask", "axTerminal"], "does": "Find next", "kind": "go to a place; a bundle key" },
+        { "chord": "f3", "apps": ["axGIT"], "does": "Find next in the list", "kind": "go to a place" },
+        { "chord": "f4", "apps": "all", "does": "Send a report", "kind": "open or confirm; a bundle key" },
+        { "chord": "f5", "apps": ["axAutomate", "axFile", "axGIT", "axMCP", "axPass", "axProcess", "axTask"], "does": "Refresh", "kind": "reads again; Windows' own key for it" },
+        { "chord": "f5", "apps": ["axStart"], "does": "Refresh programs", "kind": "reads again" },
+        { "chord": "f5", "apps": ["axPreview"], "does": "Reload", "kind": "reads again" },
+        { "chord": "f5", "apps": ["axAutomate"], "does": "Run", "kind": "act on what is selected" },
+        { "chord": "f6", "apps": ["axAutomate", "axMCP", "axPass", "axTask"], "does": "Switch between the navigator and the detail pane", "kind": "move between panes; a bundle key" },
+        { "chord": "f6", "apps": ["axDown", "axJSON", "axPreview"], "does": "Between the text and the details", "kind": "move between panes" },
+        { "chord": "f6", "apps": ["axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes" },
+        { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the details", "kind": "move between panes" },
+        { "chord": "f6", "apps": ["axMedia"], "does": "Back to the list", "kind": "move between panes" },
+        { "chord": "f6", "apps": ["axCalc"], "does": "Switch between the history and the field", "kind": "move between panes" },
+        { "chord": "f6", "apps": ["axFile"], "does": "Switch between the folder list and the Actions list", "kind": "move between panes" }
+      ]
+    },
+    {
+      "id": "enter",
+      "pattern": "Enter",
+      "match": "^enter$",
+      "does": "open or confirm",
+      "windows": [],
+      "misfits": []
+    },
+    {
+      "id": "escape",
+      "pattern": "Escape",
+      "match": "^escape$",
+      "does": "go back or close",
+      "windows": [],
+      "misfits": [
+        { "chord": "escape", "apps": ["axFile"], "does": "Clear the selection or the filter", "kind": "remove: it clears and stays where it is" },
+        { "chord": "escape", "apps": ["axCalc"], "does": "Clear the field", "kind": "remove: it clears and stays where it is" }
+      ]
+    },
+    {
+      "id": "delete",
+      "pattern": "Delete",
+      "match": "^delete$",
+      "does": "remove",
+      "windows": [],
+      "misfits": []
+    },
+    {
+      "id": "ctrl-tab",
+      "pattern": "Ctrl+Tab and Ctrl+Shift+Tab",
+      "match": "^ctrl\\+(shift\\+)?tab$",
+      "does": "move between panes",
+      "windows": [],
+      "misfits": []
+    },
+    {
+      "id": "alt-letter",
+      "pattern": "Alt+letter",
+      "match": "^alt\\+[a-z]$",
+      "does": "open a menu",
+      "windows": [],
+      "misfits": [
+        { "chord": "alt+d", "apps": ["axFile"], "does": "Go to folder", "kind": "go to a place; File Explorer's own key for its address bar" }
+      ]
+    }
+  ]
+}
