@@ -223,6 +223,40 @@ command's last line, two undo steps for Format, axPreview's size in whole megaby
 a clear and Go to time closing on a wrong time, and in axClaude the banner shown twice and the refused Enter of
 Claude's first seconds. They also found plan steps the apps had outgrown, corrected in the plans.
 
+### The stand-in of Claude Code (2026-11-15)
+
+For axClaude's scripts that follow a turn by Claude Code's own signals (`docs/axClaude/events-and-grounding.md`
+EG-11.3, section 6.7, decision EG-D-17): a mode of the runner itself, `tools/AxAutomate/StandIn.cs`, whose header is
+its manual. It plays a scenario as Claude Code would in the window's pseudo console: frames, the turn's marks (OSC 133
+A, C, D) and bells on the console, entries appended to a session file, and the command hooks of the `--settings` file
+the window gave it, each started without a shell or a window with the event on its standard input, not waited for
+when the hook says `async`. It needs no Claude Code, no network and no model, and never reads standard input.
+
+- **`AXKIT_STANDIN`.** The runner puts its own program's path into this variable as it starts (`Program.Main`), so
+  every window of the run, and the cmd.exe and the stand-in under them, inherit it. A script's `claude.cmd` is one
+  line: `@"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*`, started as the batch stand-ins are, `start claude
+  {temp}\<folder> --claude {temp}\claude.cmd`. With `--version` first the stand-in prints the scenario's version and
+  ends, which is what the window's version gate reads. Only the command line sets the variable: a stand-in script
+  says in its `# Needs:` line that it needs `tools/AxAutomate`, and does not run in axAutomate's window.
+- **The scenario**: a JSON file the script writes with its `file` step, beside `claude.cmd`. That step turns `\n` into
+  a line end and `\uXXXX` into its character, so no string in it holds an escape: rows and lines are arrays of strings.
+  It names the `version`, the `session` id and the `home` folder, and holds `steps`: `frame` (rows, `clear`), `mark`,
+  `bell`, `hook` (the event's name, `fields`, `last`, `tasks`), `user`, `assistant` (`cut`), `toolUse`, `toolResult`,
+  `turnEnd`, `queue`, `raw`, `wait`, `waitFile` (a file the script makes in the working folder: the moment Claude
+  would take the message up) and `idle`. `tests/scripts/axClaude/29-stand-in-turn.txt` plays one whole turn.
+- **The session file** is `<the scenario's folder>\home\.claude\projects\<the working folder's project name>\<session>.jsonl`:
+  with `home` the run's own folder (`AXKIT_HOME`, `{temp}\home`), whose `.claude\projects` axClaude counts as a
+  projects folder in a test run alone (EG-3.1), so nothing of a run lands among the user's sessions. A script reads it
+  with a `run` step (`findstr /s /c:"turn_duration" home\.claude\projects\*.jsonl`).
+- **A session with a history**: `run "%AXKIT_STANDIN%" standin --prepare scenario.json <folder>` before the start
+  appends the scenario's `history` steps to that folder's session file and ends, so that a window starts on turns
+  already recorded, as `--continue` does.
+- **What it did**: `standin.log` beside the scenario, kept with the run's folder by `--keep`: each step's kind, each
+  hook's program and how it ended, never a text. A scenario it cannot play ends it with exit code 2 and one line,
+  `stand-in: ...`, drawn on the window's screen.
+- The batch stand-ins of the earlier scripts (22, 27 and the others) stay as they are: they draw no marks and send no
+  events, so they are the test of the window that has only the screen.
+
 ## 3. NVDA in the loop
 
 For what only NVDA can show: what it reads on a focus change, whether a notification cut it off, the order of

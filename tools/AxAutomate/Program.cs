@@ -99,6 +99,15 @@ internal static class Program
 {
     private static int Main(string[] args)
     {
+        // The stand-in of Claude Code (StandIn.cs, docs/axClaude/events-and-grounding.md EG-11.3): a script's claude.cmd
+        // calls this program through AXKIT_STANDIN, which every window, cmd.exe and stand-in of the run inherits.
+        if (args.Length > 0 && args[0] == StandIn.Verb)
+        {
+            return StandIn.Run(args[1..]);
+        }
+
+        Environment.SetEnvironmentVariable(StandIn.Variable, Environment.ProcessPath);
+
         if (args.Length == 0)
         {
             Console.Error.WriteLine(Usage);

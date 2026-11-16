@@ -1,0 +1,37 @@
+# Workflow: Follow a turn played by the stand-in
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/events-and-grounding.md EG-11.3 and section 6.7 (2026-11-15): the stand-in, a mode of the test
+# runner (tools/AxAutomate/StandIn.cs), plays one turn as Claude Code 2.1.325 does in screen reader mode, from a
+# scenario beside the script's claude.cmd: a frame at the prompt and the session's start event; at the file go1 the
+# mark A, a working frame and the prompt's entry in the session file; the Stop event, the marks C and D and the bell;
+# the reply's frame, the reply's entry and the turn's end in the session file, which lies under the run's own folder,
+# never the user's. Its events reach a hook only when Claude Code is given a settings file, which the window does not
+# pass yet: here they start nothing. Speak replies is all lines, so the reply is said. The working frame stays 1.5 s,
+# so that the state can be read while it shows.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+# The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-555555555555","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"wait":1500},{"hook":"Stop","last":["ok"],"tasks":[]},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["ok"]},{"turnEnd":2345},{"idle":true}],"history":[{"user":["An earlier question"]},{"assistant":["An earlier answer"]},{"turnEnd":1200}]}
+
+start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+type Say ok
+keys enter
+expect said Sent
+# Claude takes the message up: the mark A and the working frame.
+file st\go1 x
+expect state Claude: working
+# The turn ends: the reply is said once, then Done.
+expect said claude: ok
+expect said Done
+keys ctrl+2
+expect text claude: ok
+# The session file under the run's own folder holds the turn's end.
+run findstr /s /c:"turn_duration" home\.claude\projects\*.jsonl
+
+# A session's earlier turns written before a start (standin --prepare, for a script that starts on a history), here for
+# a folder no window of this run uses: its file holds the history's prompt.
+run "%AXKIT_STANDIN%" standin --prepare scenario.json earlier
+run findstr /s /c:"An earlier question" home\.claude\projects\*.jsonl
