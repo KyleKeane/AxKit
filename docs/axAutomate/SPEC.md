@@ -158,6 +158,17 @@ keys in place of its words on a line:
   with the same label. `tools/workflows.ps1` writes `docs/axKit/workflows.md`, every workflow by app with its label,
   what it covers and its script; `build.yml` checks the page is current. A new workflow worth keeping working is a new
   script with its label.
+- AU-5.2b Goals and checks inside a script (2026-11-15; `docs/axKit/user-workflows.md` WF-3, which holds the whole
+  of it). A comment line `# Goal: <title>` starts a goal, what a user gets done by the steps under it; `# Check:
+  <title>` starts a check, steps that only test; either runs to the next such line or to the script's end, both in
+  any case, and the lines before the first are the setup. A goal or check line ends the header and is never among
+  what the workflow covers; a `# Stable` line among a section's own comments marks it; the header's `# Needs:` line
+  is read as `Needs` and stays among what the workflow covers. A script with neither line is one goal, titled by its
+  label, so every script is valid as it is. A failing step still stops its script (AU-D2): the command line says
+  each section as it begins and, after the last step, which passed, failed and were not run (`ScriptReader.Goals`,
+  `GoalResults`). A test fails on two sections of one title in a script and on a goal without an input step (a
+  section that only looks is a check). The window reads a goal or check line as the note it is and says nothing new
+  (WF-D-21).
 - AU-5.3 The automation channel stays as the security audit left it (S-11): on only in a run, only for the runner's
   own windows, with the run's secret. The window starts the runs; it never opens the channel of the user's own
   windows. As built (2026-11-11): the run's windows are this very program file (`Environment.ProcessPath`), started

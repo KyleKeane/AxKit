@@ -30,11 +30,27 @@ public sealed record WorkflowStep(
 }
 
 /// <summary>
+/// A section of a script (docs/axKit/user-workflows.md WF-3, SPEC.md AU-5.2b): a goal, what a user gets done by the
+/// steps under a <c># Goal: &lt;title&gt;</c> line, or a check (<see cref="Check"/>), steps under a
+/// <c># Check: &lt;title&gt;</c> line that only test. It runs from its own line to the line before the next goal or check
+/// line, or to the script's end, lines numbered from 1. <see cref="Stable"/>: a <c># Stable</c> line marks it (WF-3.5).
+/// <see cref="Named"/> is false for the one goal of a script with neither line, titled by the workflow's label and
+/// covering the whole script (WF-3.3).
+/// </summary>
+public sealed record Goal(string Title, int FirstLine, int LastLine, bool Stable, bool Named, bool Check);
+
+/// <summary>
 /// A workflow (SPEC.md AU-3.1): its title, what it covers, its steps in order, the file it was read from, and what in
 /// the file was not understood (null when everything was).
 /// </summary>
 public sealed record Workflow(string Title, string Covers, IReadOnlyList<WorkflowStep> Steps, string Path, string? Problem)
 {
+    /// <summary>A script's sections, goals and checks, in the script's order (<see cref="ScriptReader.Goals"/>); none for a workflow file.</summary>
+    public IReadOnlyList<Goal> Goals { get; init; } = [];
+
+    /// <summary>What the header's <c># Needs:</c> line says the script depends on outside axKit (WF-3.6); empty without one.</summary>
+    public string Needs { get; init; } = "";
+
     /// <summary>The steps that run, nested ones included; notes left out.</summary>
     public int StepCount => Count(Steps);
 

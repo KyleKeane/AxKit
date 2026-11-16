@@ -62,6 +62,13 @@
 //   iffound <step>            the step, only when the last try found its text (a trust prompt that may not come)
 //   wait <ms>                 waits
 //   close                     closes the current window as Alt+F4 does
+// Goals and checks (docs/axKit/user-workflows.md WF-3): a comment line "# Goal: <title>" starts a goal, what a user
+// gets done by the steps under it, and "# Check: <title>" a check, steps that only test; each runs to the next such
+// line or to the script's end, and the lines before the first are the setup. A failing step still stops its script.
+// For a script with such lines the console says "-- Setup", "-- Goal: <title>" or "-- Check: <title>" before a
+// section's first step, and after the last step "Goals: <n> passed[, <n> failed][, <n> not run]" with one line per
+// section; the run's last lines add "Goals:" with the counts over all scripts. A script without one is one goal and
+// prints as before.
 // The clipboard's text is read before the first script and put back after the last (ClipboardText): the run's desktop
 // shares the clipboard with the user's. A clipboard without text is left as the run left it.
 // After the last step every window is closed, and the run fails when a window's process ended on its own or a log of
@@ -160,6 +167,8 @@ internal static class Program
         var report = new StringBuilder($"# AxAutomate report\n\n{DateTime.Now:yyyy-MM-dd HH:mm}, {exe}\n{built}\n\n");
         var failed = new List<string>();
         var notHeard = new List<string>();
+        var goalResults = new List<GoalResult>();
+        var anySections = false;
 
         // One window run at a time on this computer (RunLock, docs/axKit/user-workflows.md WF-D-29): taken after the
         // build and before the first script, released in the finally that puts the clipboard back.
@@ -200,7 +209,9 @@ internal static class Program
                 Console.WriteLine($"== {name}");
                 var temp = Path.Combine(root, Path.GetFileNameWithoutExtension(script) + "-" + scripts.IndexOf(script));
                 Directory.CreateDirectory(temp);
-                var (ok, log) = RunScript(script, exe, temp);
+                var (ok, log, goals) = RunScript(script, exe, temp);
+                goalResults.AddRange(goals);
+                anySections |= goals.Any(goal => goal.Goal.Named);
                 report.Append($"## {name}: {(ok ? "PASS" : "FAIL")}\n\n```\n{log}```\n\n");
                 if (!ok)
                 {
@@ -258,6 +269,13 @@ internal static class Program
             summary = $"{stopped}\nSTOPPED: {scripts.Count} script(s), none run to its end.";
         }
 
+        if (anySections)
+        {
+            // WF-3.10: the sections over all scripts, when a script of the run names its own; a script without a goal
+            // or check line counts as its one goal.
+            summary += "\nGoals: " + GoalResults.Counts(goalResults);
+        }
+
         report.Append(summary).Append('\n');
         if (reportPath is not null)
         {
@@ -288,10 +306,15 @@ internal static class Program
 
     private const int CannotStart = 2;
 
-    /// <summary>One script or workflow with its own windows and folder, played by the engine (ScriptRunner); the console gets each step, the report the steps and the timeline.</summary>
-    private static (bool Ok, string Log) RunScript(string script, string exe, string temp)
+    /// <summary>
+    /// One script or workflow with its own windows and folder, played by the engine (ScriptRunner); the console gets
+    /// each step, the report the steps and the timeline. A script's sections, its goals and checks, are read with it
+    /// (ScriptReader.Goals, docs/axKit/user-workflows.md WF-3) and their results come back; a workflow file has none.
+    /// </summary>
+    private static (bool Ok, string Log, IReadOnlyList<GoalResult> Goals) RunScript(string script, string exe, string temp)
     {
         IReadOnlyList<ScriptLine> lines;
+        IReadOnlyList<Goal> goals = [];
         if (script.EndsWith(WorkflowFile.Extension, StringComparison.OrdinalIgnoreCase))
         {
             var (prepared, refusal) = ScriptLines.Prepare(WorkflowFile.Read(script), Run.Nvda);
@@ -299,19 +322,22 @@ internal static class Program
             {
                 var text = "FAIL: the workflow cannot run: " + refusal;
                 Console.WriteLine(text);
-                return (false, text + "\n");
+                return (false, text + "\n", []);
             }
 
             lines = prepared;
         }
         else
         {
-            // A script's own lines, exactly as the runner always read them.
-            lines = ScriptLines.FromScript(File.ReadAllLines(script), null);
+            // A script's own lines, exactly as the runner always read them; its sections from the same lines, the
+            // one goal of a script without a goal or check line titled by its label.
+            var fileLines = File.ReadAllLines(script);
+            lines = ScriptLines.FromScript(fileLines, null);
+            goals = ScriptReader.Parse(fileLines, Path.GetFileNameWithoutExtension(script), script).Goals;
         }
 
-        var result = ScriptRunner.Play(lines, exe, temp, Console.WriteLine);
-        return (result.Ok, result.Log);
+        var result = ScriptRunner.Play(lines, exe, temp, Console.WriteLine, options: new PlayOptions(goals));
+        return (result.Ok, result.Log, result.Goals);
     }
 
     private static string FindRepository()
