@@ -1,4 +1,5 @@
 using AxClaude.Core;
+using AxClaude.Core.Flow;
 using AxClaude.Core.Transcript;
 
 namespace AxClaude.Tests;
@@ -76,6 +77,115 @@ public class BackgroundWorkTests
     public void Nothing_running_is_the_same_object_so_a_frame_costs_nothing()
     {
         Assert.Same(BackgroundCount.None, BackgroundWork.Count(null, 0, 0));
+    }
+
+    // The tasks a stop event listed (events-and-grounding.md EG-7.2, EG-7.3), as Claude Code 2.1.325 listed them on
+    // 2026-11-15 (M13 sections 6 and 7).
+    private static readonly FlowTask PingShell = new("b0jdigiy3", SessionFlow.BackgroundShellType, "Run ping in background", null);
+    private static readonly FlowTask SecondShell = new("b1kfjhq7x", SessionFlow.BackgroundShellType, "Watch the build", null);
+    private static readonly FlowTask CallersAgent = new("a98ad9d19db77d218", SessionFlow.BackgroundAgentType, "Checking callers", "general-purpose");
+    private static readonly FlowTask SpecAgent = new("ab5b9a61663d76c97", SessionFlow.BackgroundAgentType, "Reading the spec", "Explore");
+    private static readonly FlowTask Monitor = new("m0000001", "monitor", "Watching the log", null);
+
+    [Theory]
+    // A listed agent alone: one agent.
+    [InlineData(null, 0, 0, 1, 1)]
+    // The rows, the waiting row and the mode line count the same agents as the list: the largest, never the sum.
+    [InlineData(null, 1, 0, 1, 1)]
+    [InlineData(null, 2, 0, 1, 2)]
+    [InlineData(null, 0, 2, 1, 2)]
+    [InlineData(null, 1, 1, 2, 2)]
+    [InlineData("1 shell, 2 agents", 1, 0, 3, 3)]
+    [InlineData("1 shell, 2 agents", 1, 0, 1, 2)]
+    // A mode line that only says there is something to manage: the listed agent is counted, nothing is uncounted.
+    [InlineData("see /tasks", 0, 0, 1, 1)]
+    public void Listed_agents_are_one_more_place_never_a_sum(string? modeLine, int shown, int awaited, int listed, int agents)
+    {
+        var count = BackgroundWork.Count(modeLine, shown, awaited, listedAgents: listed);
+        Assert.Equal(agents, count.Agents);
+        Assert.Equal(0, count.Uncounted);
+        Assert.Equal(count.Shells + agents, count.Total);
+    }
+
+    [Theory]
+    // No mode line read since the stop: the listed shells, newer than any mode line read before the event.
+    [InlineData(null, 1, false, 1)]
+    [InlineData("1 shell", 0, false, 0)]
+    [InlineData("1 shell", 2, false, 2)]
+    [InlineData("see /tasks", 1, false, 1)]
+    // A mode line read after the stop is the newer: its count alone.
+    [InlineData(null, 1, true, 0)]
+    [InlineData("2 shells", 1, true, 2)]
+    [InlineData("1 shell", 0, true, 1)]
+    public void Listed_shells_count_until_a_mode_line_was_read_after_the_stop(string? modeLine, int listed, bool modeLineAfterStop, int shells)
+    {
+        var count = BackgroundWork.Count(modeLine, 0, 0, listedShells: listed, modeLineAfterStop: modeLineAfterStop);
+        Assert.Equal(shells, count.Shells);
+        Assert.Equal(shells, count.Total);
+
+        // The agents and the other kinds the mode line counts are its own whichever is newer for the shells.
+        var mixed = BackgroundWork.Count("1 shell, 2 agents, 1 monitor", 0, 0, listedShells: listed, modeLineAfterStop: modeLineAfterStop);
+        Assert.Equal(modeLineAfterStop ? 1 : listed, mixed.Shells);
+        Assert.Equal(2, mixed.Agents);
+        Assert.Equal(1, mixed.Other);
+
+        // Without events the number is the screen's, exactly (EG-7.5): nothing listed, a mode line as read after.
+        Assert.Equal(BackgroundWork.Count(modeLine, 0, 0), BackgroundWork.Count(modeLine, 0, 0, 0, 0, 0, 0, 0, 0, true));
+    }
+
+    [Theory]
+    // A listed task of another type: another kind of task.
+    [InlineData(null, 0, 1, 1)]
+    // What the mode line counts under another word, the progress rows of a kind not known and the list may count the
+    // same things: the largest.
+    [InlineData("1 monitor", 0, 1, 1)]
+    [InlineData("2 monitors", 0, 1, 2)]
+    [InlineData("1 monitor", 0, 2, 2)]
+    [InlineData(null, 1, 2, 2)]
+    [InlineData(null, 2, 1, 2)]
+    public void Listed_tasks_of_other_types_count_as_other(string? modeLine, int unknownShown, int listed, int other)
+    {
+        var count = BackgroundWork.Count(modeLine, 0, 0, unknownShown: unknownShown, listedOther: listed);
+        Assert.Equal(new BackgroundCount(0, 0, other), count);
+
+        // The kinds of a list as a stop event gives it: the core's words for a shell and an agent, any other word another type.
+        Assert.Equal((2, 1, 1), BackgroundWork.ListedKinds([CallersAgent, PingShell, Monitor, SpecAgent]));
+        Assert.Equal((0, 0, 0), BackgroundWork.ListedKinds([]));
+    }
+
+    [Fact]
+    public void What_runs_names_a_listed_task_the_rows_do_not_name()
+    {
+        // EG-7.3, its own example: a shell no row names, by its description.
+        Assert.Equal("1 shell in the background. Shell: Run ping in background",
+            BackgroundWork.Said(new BackgroundCount(1, 0), [], listed: [PingShell]));
+
+        // An agent the rows show is named once, by its row; one they do not show by its type and description.
+        Assert.Equal("1 agent in the background. general-purpose: Checking callers",
+            BackgroundWork.Said(new BackgroundCount(0, 1), [Callers], listed: [CallersAgent]));
+        Assert.Equal("2 agents in the background. general-purpose: Checking callers. Explore: Reading the spec",
+            BackgroundWork.Said(new BackgroundCount(0, 2), [Callers], listed: [CallersAgent, SpecAgent]));
+        Assert.Equal("1 agent in the background. Agent: Reading the spec",
+            BackgroundWork.Said(new BackgroundCount(0, 1), [], listed: [SpecAgent with { WorkerType = null }]));
+
+        // Another type by its description; each kind in the status bar's order, the rows' agents before the listed ones.
+        Assert.Equal("1 other task in the background. Other task: Watching the log", BackgroundWork.Said(new BackgroundCount(0, 0, 1), [], listed: [Monitor]));
+        Assert.Equal("4 in the background: 1 shell, 2 agents, 1 other task. Shell: Run ping in background. general-purpose: Checking callers. Explore: Reading the spec. Other task: Watching the log",
+            BackgroundWork.Said(new BackgroundCount(1, 2, 1), [Callers], listed: [Monitor, SpecAgent, PingShell, CallersAgent]));
+
+        // Fewer named than counted: the rest counted, as for the agents' rows.
+        Assert.Equal("2 shells in the background. Shell: Run ping in background. 1 more shell, not named",
+            BackgroundWork.Said(new BackgroundCount(2, 0), [], listed: [PingShell]));
+
+        // More listed than counted: a mode line or the rows read after the stop show that some ended, and which is not
+        // known, so the number stands alone.
+        Assert.Equal("1 shell in the background", BackgroundWork.Said(new BackgroundCount(1, 0), [], listed: [PingShell, SecondShell]));
+        Assert.Equal("1 agent in the background. Explore: Reading the spec",
+            BackgroundWork.Said(new BackgroundCount(0, 1), [Spec], listed: [CallersAgent]));
+        Assert.Equal("Nothing runs in the background", BackgroundWork.Said(BackgroundCount.None, [], listed: [PingShell]));
+
+        // Without a list the answer is today's.
+        Assert.Equal(BackgroundWork.Said(new BackgroundCount(1, 2), [Callers, Spec]), BackgroundWork.Said(new BackgroundCount(1, 2), [Callers, Spec], [], []));
     }
 
     [Fact]

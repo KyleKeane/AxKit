@@ -1,3 +1,5 @@
+using AxClaude.Core.Flow;
+
 namespace AxClaude.Core.Transcript;
 
 /// <summary>
@@ -27,32 +29,38 @@ public enum BackgroundSound
 
 /// <summary>
 /// The rules of axClaude's signals for background work (SPEC.md FR-7.10, the user's decisions of 2026-11-15): the one
-/// number from what Claude Code shows in two places, the words of the status bar, which sound a change gets, the lines
-/// spoken when the user asks for them, and the answer to "What runs in the background"; when the recurring chords
-/// play is <see cref="BackgroundChords"/>. Pure: the window only wires
-/// it to the model, the sounds and the settings. The texts read here are the model's own
+/// number from what Claude Code shows in two places and, with events, the tasks the core keeps from the last stop
+/// event (<see cref="SessionFlow.Tasks"/>, events-and-grounding.md EG-7), the words of the status bar, which sound a
+/// change gets, the lines spoken when the user asks for them, and the answer to "What runs in the background"; when
+/// the recurring chords play is <see cref="BackgroundChords"/>. Pure: the window only wires
+/// it to the model, the core, the sounds and the settings. The texts read here are the model's own
 /// (<see cref="SessionModel.Background"/>, made by <see cref="LineClassifier.BackgroundText"/>), with Claude Code's
-/// two words for a kind from <see cref="ClaudeCodeTexts"/>.
+/// two words for a kind from <see cref="ClaudeCodeTexts"/>, and the listed tasks' types are the core's words.
 /// </summary>
 public static class BackgroundWork
 {
     /// <summary>
-    /// The one number, from the two places Claude Code shows background work in. The mode line counts shells
-    /// ("1 shell") and may count agents and other kinds ("1 shell, 2 agents"); the live block shows one row per agent
-    /// and one per dynamic workflow, and the waiting row says how many agents or workflows a finished turn still waits
-    /// for. The rule:
+    /// The one number, from the places background work is shown in: two of Claude Code's screen, and the tasks its
+    /// last stop event listed (events-and-grounding.md EG-7.2). The mode line counts shells ("1 shell") and may count
+    /// agents and other kinds ("1 shell, 2 agents"); the live block shows one row per agent and one per dynamic
+    /// workflow, and the waiting row says how many agents or workflows a finished turn still waits for; the stop
+    /// event lists the shells, the agents and the tasks of other types that run when a turn ends. The rule:
     /// <list type="bullet">
-    /// <item>shells: what the mode line counts as shells; nothing else knows them;</item>
-    /// <item>agents: the largest of the rows shown, the waiting row's number and the mode line's own count of agents,
-    /// never their sum, since all three count the same agents;</item>
+    /// <item>shells: what the mode line counts as shells once a mode line was read after the last stop event; before
+    /// that, the listed shells, which are newer than any mode line read before the event; nothing else knows them;</item>
+    /// <item>agents: the largest of the rows shown, the waiting row's number, the mode line's own count of agents and
+    /// the listed agents, never their sum, since all four count the same agents;</item>
     /// <item>workflows: the same rule, the largest of the workflows' rows, the waiting row's number for workflows and
     /// a mode line's own count of workflows;</item>
     /// <item>other: what the mode line counts under any other word, each added, since no other place shows them; or,
     /// when larger, <paramref name="unknownShown"/>, the progress rows of a kind axClaude does not know (each one thing),
-    /// which may be the same things the mode line counts, so never added to them;</item>
+    /// or <paramref name="listedOther"/>, the listed tasks of other types, which may be the same things the mode line
+    /// counts, so never added to them;</item>
     /// <item>when all of that is zero and the mode line still shows background work (<paramref name="modeLineCounts"/>
     /// without a number, "see /tasks"), one thing, uncounted.</item>
     /// </list>
+    /// Without events the listed numbers are zero and a mode line counts as read after the stop: the number is the
+    /// screen's, exactly (EG-7.5).
     /// </summary>
     /// <param name="modeLineCounts"><see cref="SessionModel.Background"/>: "1 shell", "1 shell, 2 agents", "see /tasks" or null.</param>
     /// <param name="agentsShown">The rows of <see cref="SessionModel.BackgroundAgents"/>.</param>
@@ -60,7 +68,12 @@ public static class BackgroundWork
     /// <param name="workflowsShown">The rows of <see cref="SessionModel.BackgroundWorkflows"/>.</param>
     /// <param name="workflowsAwaited"><see cref="SessionModel.BackgroundWorkflowsAwaited"/>.</param>
     /// <param name="unknownShown"><see cref="SessionModel.BackgroundUnknown"/>.</param>
-    public static BackgroundCount Count(string? modeLineCounts, int agentsShown, int agentsAwaited, int workflowsShown = 0, int workflowsAwaited = 0, int unknownShown = 0)
+    /// <param name="listedAgents">The listed tasks that are agents (<see cref="ListedKinds"/> of <see cref="SessionFlow.Tasks"/>).</param>
+    /// <param name="listedShells">The listed tasks that are shells.</param>
+    /// <param name="listedOther">The listed tasks of any other type.</param>
+    /// <param name="modeLineAfterStop">A mode line was read after the last stop event, or no stop event came.</param>
+    public static BackgroundCount Count(string? modeLineCounts, int agentsShown, int agentsAwaited, int workflowsShown = 0, int workflowsAwaited = 0, int unknownShown = 0,
+        int listedAgents = 0, int listedShells = 0, int listedOther = 0, bool modeLineAfterStop = true)
     {
         var shells = 0;
         var lineAgents = 0;
@@ -105,9 +118,14 @@ public static class BackgroundWork
             }
         }
 
-        var agents = Math.Max(Math.Max(agentsShown, agentsAwaited), lineAgents);
+        if (!modeLineAfterStop)
+        {
+            shells = listedShells;
+        }
+
+        var agents = Math.Max(Math.Max(agentsShown, agentsAwaited), Math.Max(lineAgents, listedAgents));
         var workflows = Math.Max(Math.Max(workflowsShown, workflowsAwaited), lineWorkflows);
-        other = Math.Max(other, unknownShown);
+        other = Math.Max(Math.Max(other, unknownShown), listedOther);
         var uncounted = modeLineCounts is not null && !counted && shells + agents + workflows + other == 0 ? 1 : 0;
         return shells == 0 && agents == 0 && workflows == 0 && other == 0 && uncounted == 0
             ? BackgroundCount.None
@@ -242,13 +260,19 @@ public static class BackgroundWork
 
     /// <summary>
     /// The answer to "What runs in the background" (FR-7.10, on demand): the number and its kinds as the status bar
-    /// says them, then each agent's type and description, then the agents counted and not named, then each workflow
-    /// with how far it is ("Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done, 20m18s"), then the
-    /// workflows counted and not named.
+    /// says them, then each listed shell by its description ("Shell: Run ping in background", EG-7.3), then each
+    /// agent's type and description, then each listed agent the rows do not name, then the agents counted and not
+    /// named, then each workflow with how far it is ("Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done,
+    /// 20m18s"), then the workflows counted and not named, then each listed task of another type ("Other task: …").
+    /// The listed tasks of a kind are named only while they and the rows of that kind are no more than its count:
+    /// when more are listed, a mode line or the rows read after the stop event show that some have ended, and which
+    /// ones is not known, so the number stands alone.
     /// </summary>
-    public static string Said(BackgroundCount count, IReadOnlyList<BackgroundAgent> agents, IReadOnlyList<BackgroundWorkflow>? workflows = null)
+    /// <param name="listed"><see cref="SessionFlow.Tasks"/>: the tasks the last stop event listed; null or empty without events.</param>
+    public static string Said(BackgroundCount count, IReadOnlyList<BackgroundAgent> agents, IReadOnlyList<BackgroundWorkflow>? workflows = null, IReadOnlyList<FlowTask>? listed = null)
     {
         workflows ??= [];
+        listed ??= [];
         if (count.Total == 0)
         {
             return Nothing;
@@ -260,28 +284,129 @@ public static class BackgroundWork
         }
 
         var parts = new List<string> { Status(count)! };
+        var shells = NotOnTheRows(listed, ListedKind.Shell, [], count.Shells);
+        foreach (var task in shells)
+        {
+            parts.Add(Named("Shell", task.Description));
+        }
+
+        More(parts, count.Shells, shells.Count, "1 more shell", "more shells");
         foreach (var agent in agents)
         {
             parts.Add(agent.Description.Length > 0 ? $"{agent.Type}: {agent.Description}" : agent.Type);
         }
 
-        var unnamed = count.Agents - agents.Count;
-        if (unnamed > 0 && agents.Count > 0)
+        var listedAgents = NotOnTheRows(listed, ListedKind.Agent, agents, count.Agents);
+        foreach (var task in listedAgents)
         {
-            parts.Add(unnamed == 1 ? "1 more agent, not named" : $"{unnamed} more agents, not named");
+            parts.Add(Named(string.IsNullOrEmpty(task.WorkerType) ? "Agent" : task.WorkerType, task.Description));
         }
 
+        More(parts, count.Agents, agents.Count + listedAgents.Count, "1 more agent", "more agents");
         foreach (var workflow in workflows)
         {
             parts.Add($"Workflow {workflow.Name}: {workflow.Percent} percent, {workflow.Done} of {workflow.Total} done, {workflow.Elapsed}");
         }
 
-        var unnamedWorkflows = count.Workflows - workflows.Count;
-        if (unnamedWorkflows > 0 && workflows.Count > 0)
+        More(parts, count.Workflows, workflows.Count, "1 more workflow", "more workflows");
+        var others = NotOnTheRows(listed, ListedKind.Other, [], count.Other);
+        foreach (var task in others)
         {
-            parts.Add(unnamedWorkflows == 1 ? "1 more workflow, not named" : $"{unnamedWorkflows} more workflows, not named");
+            parts.Add(Named("Other task", task.Description));
         }
 
+        More(parts, count.Other, others.Count, "1 more other task", "more other tasks");
         return string.Join(". ", parts);
+    }
+
+    /// <summary>"1 more agent, not named": said when some of a kind were named and fewer than its count.</summary>
+    private static void More(List<string> parts, int counted, int named, string one, string many)
+    {
+        var unnamed = counted - named;
+        if (unnamed > 0 && named > 0)
+        {
+            parts.Add(unnamed == 1 ? one + ", not named" : $"{unnamed} {many}, not named");
+        }
+    }
+
+    /// <summary>"Shell: Run ping in background", or the word alone for a task without a description.</summary>
+    private static string Named(string word, string description) => description.Length > 0 ? $"{word}: {description}" : word;
+
+    /// <summary>What a listed task is, as the count and the answer group it.</summary>
+    private enum ListedKind
+    {
+        Shell,
+        Agent,
+        Other,
+    }
+
+    private static ListedKind KindOf(FlowTask task) =>
+        string.Equals(task.Type, SessionFlow.BackgroundShellType, StringComparison.Ordinal) ? ListedKind.Shell
+        : string.Equals(task.Type, SessionFlow.BackgroundAgentType, StringComparison.Ordinal) ? ListedKind.Agent
+        : ListedKind.Other;
+
+    /// <summary>
+    /// How many of the tasks the last stop event listed are agents, shells and of other types: the listed numbers of
+    /// <see cref="Count"/>. The types are the core's words (<see cref="SessionFlow.BackgroundShellType"/>,
+    /// <see cref="SessionFlow.BackgroundAgentType"/>); any other word is another type.
+    /// </summary>
+    public static (int Agents, int Shells, int Other) ListedKinds(IReadOnlyList<FlowTask> listed)
+    {
+        int agents = 0, shells = 0, other = 0;
+        foreach (var task in listed)
+        {
+            switch (KindOf(task))
+            {
+                case ListedKind.Shell:
+                    shells++;
+                    break;
+                case ListedKind.Agent:
+                    agents++;
+                    break;
+                default:
+                    other++;
+                    break;
+            }
+        }
+
+        return (agents, shells, other);
+    }
+
+    /// <summary>
+    /// The listed tasks of one kind that no row names, in the list's order: an agent is named by a row of the same
+    /// description, and of the same type when the task names its worker's type. Empty when they and the rows are
+    /// more than <paramref name="counted"/>: the list is then older than what the screen shows of that kind.
+    /// </summary>
+    private static List<FlowTask> NotOnTheRows(IReadOnlyList<FlowTask> listed, ListedKind kind, IReadOnlyList<BackgroundAgent> rows, int counted)
+    {
+        var tasks = new List<FlowTask>();
+        foreach (var task in listed)
+        {
+            if (KindOf(task) == kind && !OnTheRows(task, rows))
+            {
+                tasks.Add(task);
+            }
+        }
+
+        if (rows.Count + tasks.Count > counted)
+        {
+            tasks.Clear();
+        }
+
+        return tasks;
+    }
+
+    private static bool OnTheRows(FlowTask task, IReadOnlyList<BackgroundAgent> rows)
+    {
+        foreach (var row in rows)
+        {
+            if (string.Equals(row.Description, task.Description, StringComparison.Ordinal)
+                && (string.IsNullOrEmpty(task.WorkerType) || string.Equals(row.Type, task.WorkerType, StringComparison.Ordinal)))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
