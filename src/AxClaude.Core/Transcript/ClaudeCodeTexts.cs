@@ -97,9 +97,10 @@ public static partial class ClaudeCodeTexts
     /// <summary>
     /// A running subagent, one row each above the spinner, redrawn every second with its time and token count
     /// (§4.4 item 21): "◯  general-purpose Checking callers 2m 15s · ↓ 1.2k tokens". The groups are named type (the
-    /// agent's type, the first word) and description (what follows, without the time and the tokens).
+    /// agent's type, the first word) and description (what follows, without the time and the tokens). Millions are
+    /// taken in either case: the workflow's row of 2.1.325 writes "↓ 1.7m tokens" with a small m (2026-11-15).
     /// </summary>
-    [GeneratedRegex(@"^\s*◯\s+(?<type>\S+)(?:\s+(?<description>.*?))?\s+\d+[hms](?: \d+[ms])?(?: · [↓↑] [\d.]+[kM]? tokens)?$")]
+    [GeneratedRegex(@"^\s*◯\s+(?<type>\S+)(?:\s+(?<description>.*?))?\s+\d+[hms](?: \d+[ms])?(?: · [↓↑] [\d.]+[kmM]? tokens)?$")]
     public static partial Regex AgentRow();
 
     /// <summary>
@@ -115,15 +116,50 @@ public static partial class ClaudeCodeTexts
     public static partial Regex IdleAgentRow();
 
     /// <summary>
-    /// The row Claude Code draws over its mode line when a turn has ended and background agents still run:
+    /// The row Claude Code draws over its mode line when a turn has ended and background work still runs:
     /// "Waiting for 2 background agents to finish", "Waiting for 1 background agent to finish" (heard live on
-    /// 2026-11-15, no recording yet; the singular is assumed). The whole row and nothing else, so that a reply's
-    /// sentence with a full stop, a list mark or other words stays the reply's. The group named count is the number.
+    /// 2026-11-15, no recording yet; the singular is assumed), "Waiting for 1 dynamic workflow to finish" (seen in the
+    /// user's window on 2026-11-15, Claude Code 2.1.325, under a workflow's row, <see cref="WorkflowRow"/>). The whole
+    /// row and nothing else, so that a reply's sentence with a full stop, a list mark or other words stays the reply's.
+    /// The group named count is the number and the group named kind the two words of what is waited for ("background
+    /// agents", "dynamic workflow"): a kind that names neither <see cref="CountedAgent"/> nor
+    /// <see cref="CountedWorkflow"/> ("background" or "dynamic", then one word, as these two are) is still this row,
+    /// so that the next kind Claude Code waits for stays out of the reply.
     /// </summary>
-    [GeneratedRegex(@"^\s*Waiting for (?<count>\d+) background agents? to finish$")]
+    [GeneratedRegex(@"^\s*Waiting for (?<count>\d{1,6}) (?<kind>(?:background|dynamic) [a-z]+) to finish$")]
     public static partial Regex BackgroundWait();
 
-    /// <summary>The mark an agent's row starts with: the cheap test before <see cref="AgentRow"/> and <see cref="IdleAgentRow"/> are tried.</summary>
+    /// <summary>
+    /// The live row of a dynamic workflow that runs in the background, drawn as the lowest row of the screen, under the
+    /// mode line, and redrawn as the workflow goes on; after the turn has ended <see cref="BackgroundWait"/> stands
+    /// over the mode line too. Seen in the user's window on 2026-11-15 (Claude Code 2.1.325, screen reader mode; no
+    /// recording yet), exactly as the window held it: three spaces, the large circle U+25EF, two spaces, the name, the
+    /// percent, two spaces, the steps done of all, then parts after the separator U+00B7:
+    /// "   ◯  axkit-design-map-and-verify 14%  1/7 · 9m27s · ↓ 1.7m tokens · ⚠ Large workflow · /workflows to stop"
+    /// (U+2193 before the tokens, U+26A0 before the warning). The groups are named name, percent, done, total and
+    /// elapsed (the time, "9m27s"); the token count, the warning and the hint after the time are optional parts that
+    /// may change, so any parts after a separator are taken. Unknown: the row at 0 percent, a finished or failed
+    /// workflow's row, two workflows at once, the row without the warning (docs/axClaude/claude-screens.md).
+    /// </summary>
+    [GeneratedRegex(@"^\s*◯\s+(?<name>\S(?:.*?\S)?)\s+(?<percent>\d{1,3})%\s+(?<done>\d{1,6})/(?<total>\d{1,6})\s+·\s+(?<elapsed>\d+[hms](?: ?\d+[hms])*)(?:\s+·\s.*)?$")]
+    public static partial Regex WorkflowRow();
+
+    /// <summary>
+    /// Any live progress row of work in the background: spaces or none, the large circle, two spaces or more, then
+    /// text. The agents' rows (<see cref="AgentRow"/>, 2.1.300; <see cref="IdleAgentRow"/>, 2026-11-15) and the
+    /// workflow's row (<see cref="WorkflowRow"/>, 2.1.325) all have this shape. A row of this class whose details match
+    /// none of them is a progress row still, counted as one thing running of a kind axClaude does not know, so that the
+    /// next kind Claude Code invents stays out of the reply and out of reply speech. One space after the mark is not
+    /// enough ("◯ running"), and a row that starts with anything else ("- ◯ …") is a reply's own.
+    /// </summary>
+    [GeneratedRegex(@"^\s*◯\s{2,}\S.*$")]
+    public static partial Regex ProgressRow();
+
+    /// <summary>
+    /// The mark the progress rows of background work start with, an agent's row (where the name comes from) and a
+    /// workflow's alike: the cheap test before <see cref="AgentRow"/>, <see cref="IdleAgentRow"/>,
+    /// <see cref="WorkflowRow"/> and <see cref="ProgressRow"/> are tried.
+    /// </summary>
     public const char AgentMark = '◯';
 
     /// <summary>
@@ -163,6 +199,13 @@ public static partial class ClaudeCodeTexts
 
     /// <summary>The word in what the mode line counts as background agents, "2 agents", "1 local agent" (the count is assumed from "1 shell, 2 agents"; a mode line with agents and only the manage hint was heard on 2026-11-15).</summary>
     public const string CountedAgent = "agent";
+
+    /// <summary>
+    /// The word for a dynamic workflow in what the waiting row waits for, "Waiting for 1 dynamic workflow to finish"
+    /// (2.1.325, 2026-11-15), and in what a mode line counts should it ever count workflows ("1 workflow" is assumed,
+    /// not seen): how <see cref="BackgroundWork.Count"/> knows the kind.
+    /// </summary>
+    public const string CountedWorkflow = "workflow";
 
     /// <summary>The same words with the space after the count, as the count in front of them is found. Two spellings since before this table; both kept.</summary>
     public const string FeedbackDraftAfterCount = " feedback draft";

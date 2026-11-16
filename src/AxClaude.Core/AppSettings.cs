@@ -74,6 +74,12 @@ public sealed class AppSettings : ConsoleSettings
     public bool SayBackgroundWork { get; set; }
 
     /// <summary>
+    /// Show Claude Code's live progress rows in the conversation (FR-7.10; the user's decision of 2026-11-15, "an
+    /// option, hidden at first"): the rows of running agents and workflows and the waiting row, never spoken either way.
+    /// </summary>
+    public bool ShowProgressRows { get; set; }
+
+    /// <summary>
     /// Recognise what Claude waits on and show it in the control area in the message field's place, and keep
     /// messages out of a waiting question (D33, FR-2.10). Off: questions are only announced, as before 1.4.0.
     /// </summary>

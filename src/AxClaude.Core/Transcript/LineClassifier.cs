@@ -17,19 +17,34 @@ public static partial class LineClassifier
     public static bool IsChrome(string text) =>
         ClaudeCodeTexts.ModeLine().IsMatch(text) || ClaudeCodeTexts.Spinner().IsMatch(text) || ClaudeCodeTexts.Tip().IsMatch(text)
         || ClaudeCodeTexts.NotepadHint().IsMatch(text) || ClaudeCodeTexts.EffortHint().IsMatch(text) || ClaudeCodeTexts.BackgroundHint().IsMatch(text)
-        || ClaudeCodeTexts.QueuedHint().IsMatch(text) || ClaudeCodeTexts.AnnouncementRow().IsMatch(text) || ClaudeCodeTexts.AgentRow().IsMatch(text)
+        || ClaudeCodeTexts.QueuedHint().IsMatch(text) || ClaudeCodeTexts.AnnouncementRow().IsMatch(text)
         || ClaudeCodeTexts.BranchRow().IsMatch(text) || ClaudeCodeTexts.FeedbackCardHint().IsMatch(text) || ClaudeCodeTexts.ToolTimer().IsMatch(text)
-        || ClaudeCodeTexts.IdleAgentRow().IsMatch(text) || ClaudeCodeTexts.BackgroundWait().IsMatch(text);
+        || IsProgressRow(text);
+
+    /// <summary>
+    /// A live progress row of work in the background (SPEC.md FR-7.10): a row of the panel of running agents in either
+    /// form, a dynamic workflow's row, any other row with the mark and the spacing these rows have
+    /// (<see cref="ClaudeCodeTexts.ProgressRow"/>), or the waiting row. Interface rows like the mode line: out of the
+    /// conversation, or shown as <see cref="LineKind.Progress"/> rows when the user asks for them, never reply speech.
+    /// </summary>
+    public static bool IsProgressRow(string text) =>
+        text.Contains(ClaudeCodeTexts.AgentMark)
+            ? ClaudeCodeTexts.WorkflowRow().IsMatch(text) || ClaudeCodeTexts.IdleAgentRow().IsMatch(text)
+              || ClaudeCodeTexts.AgentRow().IsMatch(text) || ClaudeCodeTexts.ProgressRow().IsMatch(text)
+            // A match of the waiting row allocates (96 bytes, measured 2026-11-15): SessionModel knows the row it read
+            // last by its text and does not ask again for it.
+            : ClaudeCodeTexts.BackgroundWait().IsMatch(text);
 
     /// <summary>
     /// The agent a row of Claude Code's panel of running agents names, in either form ("◯  general-purpose Checking
     /// callers 2m 15s · ↓ 1.2k tokens" while the Agent tool runs, "◯  general-purpose Checking callers running"
-    /// after the turn has ended): its type and its description; null for any other row.
+    /// after the turn has ended): its type and its description; null for any other row, a workflow's row too (whose
+    /// time alone, "· 45s", would read as an agent's).
     /// </summary>
     public static BackgroundAgent? AgentOf(string text)
     {
         // Runs for the chrome rows of every frame: no regex unless the row holds the mark.
-        if (!text.Contains(ClaudeCodeTexts.AgentMark))
+        if (!text.Contains(ClaudeCodeTexts.AgentMark) || ClaudeCodeTexts.WorkflowRow().IsMatch(text))
         {
             return null;
         }
@@ -43,9 +58,46 @@ public static partial class LineClassifier
         return m.Success ? new BackgroundAgent(m.Groups["type"].Value, m.Groups["description"].Value.Trim()) : null;
     }
 
-    /// <summary>The number in "Waiting for 2 background agents to finish"; zero for any other row.</summary>
-    public static int BackgroundWaitCount(string text) =>
-        text.Length > 0 && ClaudeCodeTexts.BackgroundWait().Match(text) is { Success: true } m && int.TryParse(m.Groups["count"].ValueSpan, out var count) ? count : 0;
+    /// <summary>
+    /// The workflow a dynamic workflow's row names ("   ◯  axkit-design-map-and-verify 14%  1/7 · 9m27s · ↓ 1.7m tokens
+    /// · ⚠ Large workflow · /workflows to stop"): its name, the percent, the steps done and all of them, and the time
+    /// as Claude Code writes it; null for any other row.
+    /// </summary>
+    public static BackgroundWorkflow? WorkflowOf(string text)
+    {
+        if (!text.Contains(ClaudeCodeTexts.AgentMark) || ClaudeCodeTexts.WorkflowRow().Match(text) is not { Success: true } m)
+        {
+            return null;
+        }
+
+        return new BackgroundWorkflow(m.Groups["name"].Value, int.Parse(m.Groups["percent"].ValueSpan), int.Parse(m.Groups["done"].ValueSpan),
+            int.Parse(m.Groups["total"].ValueSpan), m.Groups["elapsed"].Value);
+    }
+
+    /// <summary>The number in "Waiting for 2 background agents to finish"; zero for any other row, a waiting row of another kind too.</summary>
+    public static int BackgroundWaitCount(string text) => BackgroundWaitOf(text, out var count) == BackgroundKind.Agent ? count : 0;
+
+    /// <summary>
+    /// What a waiting row waits for: <see cref="BackgroundKind.Agent"/> for "Waiting for 2 background agents to
+    /// finish", <see cref="BackgroundKind.Workflow"/> for "Waiting for 1 dynamic workflow to finish",
+    /// <see cref="BackgroundKind.Other"/> for a kind of neither, with the number in <paramref name="count"/>;
+    /// <see cref="BackgroundKind.None"/> and zero for any other row.
+    /// </summary>
+    public static BackgroundKind BackgroundWaitOf(string text, out int count)
+    {
+        count = 0;
+        // Runs for the chrome rows of every frame: a row that cannot be one is passed without a match.
+        if (text.Length == 0 || text.Contains(ClaudeCodeTexts.AgentMark) || ClaudeCodeTexts.BackgroundWait().Match(text) is not { Success: true } m
+            || !int.TryParse(m.Groups["count"].ValueSpan, out count))
+        {
+            return BackgroundKind.None;
+        }
+
+        var kind = m.Groups["kind"].ValueSpan;
+        return kind.Contains(ClaudeCodeTexts.CountedAgent, StringComparison.Ordinal) ? BackgroundKind.Agent
+            : kind.Contains(ClaudeCodeTexts.CountedWorkflow, StringComparison.Ordinal) ? BackgroundKind.Workflow
+            : BackgroundKind.Other;
+    }
 
     /// <summary>The key-hint row of the feedback card, <c>1 to review · 2 to send · 0 to dismiss</c> (D33).</summary>
     public static bool IsFeedbackCardHint(string text) => ClaudeCodeTexts.FeedbackCardHint().IsMatch(text);

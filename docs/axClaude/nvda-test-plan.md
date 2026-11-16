@@ -260,6 +260,16 @@ same day, after the breath was heard in the app and rejected; this is the chords
 8. With background work running and Speak replies on all lines, send a message with a long reply: while the reply
    is read, no new chord starts; the next comes soon after the reading ends.
 9. Ctrl+Shift+R with background work running, Restart now: no falling sound, and no new chord afterwards.
+10. A dynamic workflow (FR-7.10, §4.4 item 24; the automated part is `tests/scripts/axClaude/27-workflow-progress.txt`):
+    with Speak replies on all lines, ask Claude to run a workflow in the background and reply at once. The reply is
+    spoken alone: never the workflow's row with its percent, never "Jitterbugging" or the mode line, never "Waiting for
+    1 dynamic workflow to finish" after the turn; Ctrl+End in the conversation ends on the reply. One rising sound as
+    the workflow starts, F8 says "1 workflow in the background", Ctrl+B says "Workflow <name>: <n> percent, <done> of
+    <all> done, <time>", and again later with the new numbers. When the workflow ends, the falling sound.
+11. Options, Background work, Show Claude Code's live progress rows in the conversation (not checked at first): checked,
+    the workflow's row and the waiting row stand at the end of the conversation as Claude Code draws them, the mode line
+    above them does not, and nothing of them is spoken as they change; the caret and NVDA's reading stay where you put
+    them while the row changes. Unchecked: the rows leave the conversation at once.
 
 ## 23. The key test (bundle AX-8.12, 2026-11-15)
 

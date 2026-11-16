@@ -124,8 +124,10 @@ public class FeedbackCardTests
         // "running" without a time, and a waiting row stands over the mode line.
         Assert.True(LineClassifier.IsChrome("    ◯  general-purpose Inspect the transcript for garbling running"));
         Assert.True(LineClassifier.IsChrome("◯  Explore Reading the spec running"));
-        Assert.False(LineClassifier.IsChrome("◯  general-purpose Inspect the transcript for garbling"));
-        Assert.False(LineClassifier.IsChrome("◯  general-purpose Inspect the transcript done"));
+        // Since the workflow's row (2026-11-15) every row of the mark and two spaces is a live progress row, a form not
+        // seen yet too (an agent's row with another state word): interface, counted as one thing of a kind not known.
+        Assert.True(LineClassifier.IsChrome("◯  general-purpose Inspect the transcript for garbling"));
+        Assert.True(LineClassifier.IsChrome("◯  general-purpose Inspect the transcript done"));
         Assert.False(LineClassifier.IsChrome("- ◯ the second agent is still running"));
         Assert.False(LineClassifier.IsChrome("The agent ◯ is running"));
         Assert.False(LineClassifier.IsChrome("◯ running"));

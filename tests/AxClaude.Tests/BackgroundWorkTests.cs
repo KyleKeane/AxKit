@@ -45,6 +45,33 @@ public class BackgroundWorkTests
         Assert.Equal(shells + agents + other + uncounted, count.Total);
     }
 
+    [Theory]
+    // A workflow's live row: one workflow.
+    [InlineData(null, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0)]
+    // Its row and the waiting row count the same workflow: never added; the waiting row alone counts it too.
+    [InlineData(null, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0)]
+    [InlineData(null, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0)]
+    [InlineData(null, 0, 0, 1, 2, 0, 0, 0, 2, 0, 0)]
+    // A mode line that only says there is something to manage: the workflow is counted, nothing is uncounted.
+    [InlineData("see /tasks", 0, 0, 1, 1, 0, 0, 0, 1, 0, 0)]
+    // A workflow and an agent and a shell: each kind once.
+    [InlineData("1 shell", 1, 1, 1, 1, 0, 1, 1, 1, 0, 0)]
+    // A mode line that counts workflows itself (assumed, not seen): the same workflows as the row's.
+    [InlineData("1 workflow", 0, 0, 1, 0, 0, 0, 0, 1, 0, 0)]
+    // A progress row of a kind not known: one thing; with a kind the mode line counts under another word, the larger.
+    [InlineData(null, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0)]
+    [InlineData("1 monitor", 0, 0, 0, 0, 1, 0, 0, 0, 1, 0)]
+    [InlineData("2 monitors", 0, 0, 0, 0, 1, 0, 0, 0, 2, 0)]
+    [InlineData("see /tasks", 0, 0, 0, 0, 1, 0, 0, 0, 1, 0)]
+    [InlineData(null, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0)]
+    public void Workflows_and_rows_of_kinds_not_known_are_counted_once(string? modeLine, int agentsShown, int agentsAwaited, int workflowsShown,
+        int workflowsAwaited, int unknown, int shells, int agents, int workflows, int other, int uncounted)
+    {
+        var count = BackgroundWork.Count(modeLine, agentsShown, agentsAwaited, workflowsShown, workflowsAwaited, unknown);
+        Assert.Equal(new BackgroundCount(shells, agents, other, uncounted, workflows), count);
+        Assert.Equal(shells + agents + workflows + other + uncounted, count.Total);
+    }
+
     [Fact]
     public void Nothing_running_is_the_same_object_so_a_frame_costs_nothing()
     {
@@ -63,6 +90,68 @@ public class BackgroundWorkTests
         Assert.Equal("2 other tasks in the background", BackgroundWork.Status(new BackgroundCount(0, 0, 2)));
         // Only when nothing can be counted.
         Assert.Equal("see /tasks in the background", BackgroundWork.Status(new BackgroundCount(0, 0, 0, 1)));
+
+        // Dynamic workflows, after the agents and before the other kinds.
+        Assert.Equal("1 workflow in the background", BackgroundWork.Status(new BackgroundCount(0, 0, Workflows: 1)));
+        Assert.Equal("2 workflows in the background", BackgroundWork.Status(new BackgroundCount(0, 0, Workflows: 2)));
+        Assert.Equal("2 in the background: 1 agent, 1 workflow", BackgroundWork.Status(new BackgroundCount(0, 1, Workflows: 1)));
+        Assert.Equal("4 in the background: 1 shell, 1 agent, 1 workflow, 1 other task", BackgroundWork.Status(new BackgroundCount(1, 1, 1, Workflows: 1)));
+        // A progress row of a kind not known, alone.
+        Assert.Equal("1 other task in the background", BackgroundWork.Status(new BackgroundCount(0, 0, 1)));
+    }
+
+    private static readonly BackgroundWorkflow Design = new("axkit-design-map-and-verify", 88, 8, 9, "20m18s");
+    private static readonly BackgroundWorkflow Nightly = new("nightly", 5, 1, 20, "2m");
+
+    [Fact]
+    public void A_workflow_is_said_with_how_far_it_is_and_named_as_it_starts_and_ends()
+    {
+        var one = new BackgroundCount(0, 0, Workflows: 1);
+        Assert.Equal("1 workflow in the background. Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done, 20m18s",
+            BackgroundWork.Said(one, [], [Design]));
+        Assert.Equal("2 in the background: 1 agent, 1 workflow. general-purpose: Checking callers. Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done, 20m18s",
+            BackgroundWork.Said(new BackgroundCount(0, 1, Workflows: 1), [Callers], [Design]));
+        Assert.Equal("2 workflows in the background. Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done, 20m18s. 1 more workflow, not named",
+            BackgroundWork.Said(new BackgroundCount(0, 0, Workflows: 2), [], [Design]));
+        // The waiting row alone, the row gone: the number.
+        Assert.Equal("1 workflow in the background", BackgroundWork.Said(one, [], []));
+        // A progress row of a kind not known: counted, not named.
+        Assert.Equal("1 other task in the background", BackgroundWork.Said(new BackgroundCount(0, 0, 1), [], []));
+
+        // The words of a change, when asked for.
+        var started = new BackgroundWorkflowChanges([Design], []);
+        var finished = new BackgroundWorkflowChanges([], [Design]);
+        Assert.Equal(["Workflow axkit-design-map-and-verify started"], BackgroundWork.ChangeLines(BackgroundCount.None, one, BackgroundAgentChanges.None, started));
+        Assert.Equal(["Workflow axkit-design-map-and-verify finished"], BackgroundWork.ChangeLines(one, BackgroundCount.None, BackgroundAgentChanges.None, finished));
+        Assert.Equal(["general-purpose started: Checking callers", "Workflow axkit-design-map-and-verify started"],
+            BackgroundWork.ChangeLines(BackgroundCount.None, new BackgroundCount(0, 1, Workflows: 1), new BackgroundAgentChanges([Callers], []), started));
+        // A redraw at another percent is no change; a workflow counted and not named is counted.
+        Assert.Empty(BackgroundWork.ChangeLines(one, one, BackgroundAgentChanges.None, BackgroundWorkflowChanges.None));
+        Assert.Equal(["1 workflow started"], BackgroundWork.ChangeLines(BackgroundCount.None, one, BackgroundAgentChanges.None));
+        Assert.Equal(["1 other task started"], BackgroundWork.ChangeLines(BackgroundCount.None, new BackgroundCount(0, 0, 1), BackgroundAgentChanges.None));
+
+        // The sounds: a rise, a fall, and one workflow taking another's place.
+        Assert.Equal(BackgroundSound.Start, BackgroundWork.Sound(BackgroundCount.None, one, BackgroundAgentChanges.None, started));
+        Assert.Equal(BackgroundSound.Finish, BackgroundWork.Sound(one, BackgroundCount.None, BackgroundAgentChanges.None, finished));
+        Assert.Equal(BackgroundSound.None, BackgroundWork.Sound(one, one, BackgroundAgentChanges.None, BackgroundWorkflowChanges.None));
+        Assert.Equal(BackgroundSound.Start, BackgroundWork.Sound(one, one, BackgroundAgentChanges.None, new BackgroundWorkflowChanges([Nightly], [Design])));
+    }
+
+    /// <summary>The model's own texts feed the count: a workflow's row, an agent's row and a shell on the mode line, the rows as Claude Code draws them.</summary>
+    [Fact]
+    public void A_frame_with_a_workflow_an_agent_and_a_shell_counts_three()
+    {
+        var model = new SessionModel(160, 20);
+        const string esc = "\x1b";
+        TestHelpers.Feed(model, $"{esc}[?25l{esc}[2J{esc}[Hclaude: started\r\nWaiting for 1 background agent to finish\r\nauto mode on  ·  1 shell  ·  ↓ to manage\r\n"
+            + "  ◯  general-purpose Checking callers running\r\n   ◯  axkit-design-map-and-verify 88%  8/9 · 20m18s · ↓ 2.5m tokens · ⚠ Large workflow · /workflows to stop\r\n"
+            + $"${esc}[?25h");
+        var count = BackgroundWork.Count(model.Background, model.BackgroundAgents.Count, model.BackgroundAgentsAwaited,
+            model.BackgroundWorkflows.Count, model.BackgroundWorkflowsAwaited, model.BackgroundUnknown);
+        Assert.Equal(new BackgroundCount(1, 1, Workflows: 1), count);
+        Assert.Equal("3 in the background: 1 shell, 1 agent, 1 workflow", BackgroundWork.Status(count));
+        Assert.Equal("3 in the background: 1 shell, 1 agent, 1 workflow. general-purpose: Checking callers. Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done, 20m18s",
+            BackgroundWork.Said(count, model.BackgroundAgents, model.BackgroundWorkflows));
     }
 
     [Fact]
@@ -235,6 +324,8 @@ public class BackgroundWorkTests
         Assert.True(settings.SoundOnBackgroundWork);
         Assert.True(settings.BackgroundPulse);
         Assert.False(settings.SayBackgroundWork);
+        // The live progress rows: hidden at first (the user's decision of 2026-11-15).
+        Assert.False(settings.ShowProgressRows);
         Assert.Equal(2, settings.BackgroundChordPauseSeconds);
         Assert.Equal([2, 5, 10, 20], BackgroundChords.PauseSeconds);
         Assert.Equal(5, BackgroundChords.SanitizePauseSeconds(5));
@@ -309,6 +400,13 @@ public class BackgroundWorkTests
             Assert.True(settings.BackgroundPulse);
             Assert.False(settings.SayBackgroundWork);
             Assert.Equal(2, settings.BackgroundChordPauseSeconds);
+            Assert.False(settings.ShowProgressRows);
+
+            // The option turned on is kept in the file under its name.
+            settings.ShowProgressRows = true;
+            settings.Save(path);
+            Assert.Contains("\"showProgressRows\": true", File.ReadAllText(path), StringComparison.Ordinal);
+            Assert.True(AppSettings.Load(path, out _).ShowProgressRows);
         }
         finally
         {

@@ -122,10 +122,50 @@ public sealed partial class SessionModel : LineStore
     /// </summary>
     public int BackgroundAgentsAwaited { get; private set; }
 
+    /// <summary>
+    /// The dynamic workflows Claude Code's live rows show, top to bottom (<see cref="LineClassifier.WorkflowOf"/>: the
+    /// name, the percent, the steps done of all, the time); empty when no such row is shown. Kept like
+    /// <see cref="BackgroundAgents"/>, and the same list object for as long as the rows read the same.
+    /// </summary>
+    public IReadOnlyList<BackgroundWorkflow> BackgroundWorkflows { get; private set; } = [];
+
+    /// <summary>The number in Claude Code's row "Waiting for 1 dynamic workflow to finish"; zero while the row is not shown. Kept like <see cref="BackgroundAgents"/>.</summary>
+    public int BackgroundWorkflowsAwaited { get; private set; }
+
+    /// <summary>
+    /// Work in the background of a kind axClaude does not know: the progress rows with the mark whose details match
+    /// no known form (<see cref="ClaudeCodeTexts.ProgressRow"/>), one thing each, or the number of a waiting row of
+    /// another kind, the larger of the two, since both may show the same things. Kept like <see cref="BackgroundAgents"/>.
+    /// </summary>
+    public int BackgroundUnknown { get; private set; }
+
+    /// <summary>
+    /// Show Claude Code's live progress rows in the conversation (FR-7.10; the user's option, off at first): the agents'
+    /// rows, the workflows' rows, the waiting row, as <see cref="LineKind.Progress"/> lines, which are never spoken.
+    /// Off, they are hidden with the mode line. Either way they count as interface rows for the chrome block, so the
+    /// spinner and the mode line above them stay hidden. Applies from the next frame end.
+    /// </summary>
+    public bool ShowProgressRows { get; set; }
+
     /// <summary>The agent rows of the frame being read, bottom to top, and those <see cref="BackgroundAgents"/> was made from.</summary>
     private readonly List<string> _agentRows = [];
     private readonly List<string> _agentRowsShown = [];
     private int _agentsAwaited;
+
+    /// <summary>The same for the workflows' rows and <see cref="BackgroundWorkflows"/>, and the counts of the frame being read.</summary>
+    private readonly List<string> _workflowRows = [];
+    private readonly List<string> _workflowRowsShown = [];
+    private int _workflowsAwaited;
+    private int _unknownRows;
+    private int _unknownAwaited;
+
+    /// <summary>The last waiting row read and what it said, so that an unchanged one is not matched again.</summary>
+    private string? _waitText;
+    private BackgroundKind _waitKind;
+    private int _waitCount;
+
+    /// <summary>The lines of the progress rows of the frame being read, which <see cref="Classify"/> gives <see cref="LineKind.Progress"/>.</summary>
+    private readonly List<Line> _progressLines = [];
 
     public string? SessionName { get; private set; }
 
@@ -267,7 +307,10 @@ public sealed partial class SessionModel : LineStore
             Background = background;
             FeedbackDrafts = drafts;
             BackgroundAgentsAwaited = _agentsAwaited;
+            BackgroundWorkflowsAwaited = _workflowsAwaited;
+            BackgroundUnknown = Math.Max(_unknownRows, _unknownAwaited);
             ReadAgents();
+            ReadWorkflows();
         }
 
         Mode = mode ?? Mode;
@@ -620,6 +663,10 @@ public sealed partial class SessionModel : LineStore
         BackgroundAgents = [];
         BackgroundAgentsAwaited = 0;
         _agentRowsShown.Clear();
+        BackgroundWorkflows = [];
+        BackgroundWorkflowsAwaited = 0;
+        BackgroundUnknown = 0;
+        _workflowRowsShown.Clear();
         SessionName = null;
         RaiseChanged();
     }
@@ -636,9 +683,16 @@ public sealed partial class SessionModel : LineStore
 
     protected override void Commit(Line line)
     {
-        if (!line.IsMarker && line.Kind == LineKind.Plain)
+        if (line.Kind == LineKind.Progress && line.StickyChromeText == line.Text)
         {
-            // Written and scrolled away inside one frame: the frame-end pass never saw it.
+            // A live progress row that scrolled away as it was: a moment of the live block, no longer live, so it
+            // goes out of the conversation with the option on too (FR-7.10).
+            line.ChromeHidden = true;
+        }
+        else if (!line.IsMarker && line.Kind is LineKind.Plain or LineKind.Progress)
+        {
+            // Written and scrolled away inside one frame: the frame-end pass never saw it. A progress row's line that
+            // was written over since is whatever it holds now.
             line.Kind = LineClassifier.Classify(line.Text, false);
         }
 
@@ -714,9 +768,10 @@ public sealed partial class SessionModel : LineStore
     /// <summary>
     /// Hides interface rows: everything below the cursor row, the prompt row itself, and the contiguous block of
     /// mode, spinner and tip rows directly above it; then the slash-command completion list and the draft row
-    /// (<see cref="HideCompletionRows"/>). On the way it reads the spinner, the mode line, the background count and
-    /// whether Claude works, counts the queued messages, follows Claude's detailed view and raises Claude's own
-    /// announcements. Returns the topmost line of the chrome block, which is where the next marker is inserted.
+    /// (<see cref="HideCompletionRows"/>). On the way it reads the spinner, the mode line, the background count, the
+    /// live progress rows of background work (left shown with <see cref="ShowProgressRows"/>) and whether Claude
+    /// works, counts the queued messages, follows Claude's detailed view and raises Claude's own announcements.
+    /// Returns the topmost line of the chrome block, which is where the next marker is inserted.
     /// </summary>
     private Line? ApplyChrome(out string? spinner, out string? mode, out string? background, out int drafts, out bool working)
     {
@@ -736,6 +791,11 @@ public sealed partial class SessionModel : LineStore
         List<string>? announcements = null;
         _agentRows.Clear();
         _agentsAwaited = 0;
+        _workflowRows.Clear();
+        _workflowsAwaited = 0;
+        _unknownRows = 0;
+        _unknownAwaited = 0;
+        _progressLines.Clear();
         for (var r = Rows - 1; r >= 0; r--)
         {
             var line = _screen.LineAt(r);
@@ -762,8 +822,10 @@ public sealed partial class SessionModel : LineStore
                 transcriptView = LineClassifier.IsTranscriptViewRow(line.Text);
                 // On a full screen Claude can leave the cursor on the mode line at the bottom row while it works, with
                 // the spinner above it: those are chrome as they are above the cursor, or they were spoken as the reply.
+                // The same for a live progress row, which a workflow draws as the lowest row (FR-7.10; the cursor on it
+                // is not seen yet, and costs nothing to allow).
                 chrome = LineClassifier.IsPromptRow(line.Text) || underAnnouncement || transcriptView
-                    || LineClassifier.ModeText(line.Text) is not null;
+                    || LineClassifier.ModeText(line.Text) is not null || LineClassifier.IsProgressRow(line.Text);
             }
             else if (inQueued)
             {
@@ -787,7 +849,8 @@ public sealed partial class SessionModel : LineStore
             }
             else
             {
-                chrome = line.Text.Length == 0 || LineClassifier.IsChrome(line.Text)
+                // The waiting row read before is known by its text: its pattern's match allocates (D24).
+                chrome = line.Text.Length == 0 || line.Text == _waitText || LineClassifier.IsChrome(line.Text)
                     || (underAnnouncement && LineClassifier.IsBarePrompt(line.Text))
                     || (StartName is { Length: > 0 } startName && line.Text.Length > 1 && line.Text[0] == ' ' && line.Text.Trim() == startName);
                 underAnnouncement = false;
@@ -837,23 +900,15 @@ public sealed partial class SessionModel : LineStore
                 line.StickyChromeText = line.Text;
             }
 
-            if (chrome && line.Text.Length > 0 && (r > cy || blockOpen))
+            // The live progress rows of work in the background, in the live block or under the cursor (FR-7.10): read
+            // into the agents, the workflows and the counts, and given their own kind; shown only with the option.
+            var progress = chrome && line.Text.Length > 0 && (r > cy || blockOpen) && ReadProgressRow(line.Text);
+            if (progress)
             {
-                // The panel of running agents, in the live block or under the cursor: its rows and the waiting row's count.
-                if (line.Text.Contains(ClaudeCodeTexts.AgentMark))
-                {
-                    if (ClaudeCodeTexts.IdleAgentRow().IsMatch(line.Text) || ClaudeCodeTexts.AgentRow().IsMatch(line.Text))
-                    {
-                        _agentRows.Add(line.Text);
-                    }
-                }
-                else if (_agentsAwaited == 0)
-                {
-                    _agentsAwaited = LineClassifier.BackgroundWaitCount(line.Text);
-                }
+                _progressLines.Add(line);
             }
 
-            line.ChromeHidden = chrome;
+            line.ChromeHidden = chrome && !(progress && ShowProgressRows);
         }
 
         working |= spinner is not null;
@@ -882,24 +937,121 @@ public sealed partial class SessionModel : LineStore
     }
 
     /// <summary>
+    /// Reads one interface row of the live block as a progress row of work in the background, if it is one: a
+    /// workflow's row (first, since its time alone would read as an agent's), an agent's row in either form, another
+    /// row with the mark (one thing of a kind not known), or the waiting row (its number, by the kind it names; the
+    /// lowest of each kind counts). False for every other row. No allocation: the rows are kept as they are.
+    /// </summary>
+    private bool ReadProgressRow(string text)
+    {
+        if (text.Contains(ClaudeCodeTexts.AgentMark))
+        {
+            if (ClaudeCodeTexts.WorkflowRow().IsMatch(text))
+            {
+                _workflowRows.Add(text);
+            }
+            else if (ClaudeCodeTexts.IdleAgentRow().IsMatch(text) || ClaudeCodeTexts.AgentRow().IsMatch(text))
+            {
+                _agentRows.Add(text);
+            }
+            else if (ClaudeCodeTexts.ProgressRow().IsMatch(text))
+            {
+                _unknownRows++;
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        // The waiting row stands under every frame of a finished turn while work runs: its reading is kept, since a
+        // match allocates and a frame that changes nothing must not (D24).
+        BackgroundKind kind;
+        int count;
+        if (text == _waitText)
+        {
+            (kind, count) = (_waitKind, _waitCount);
+        }
+        else
+        {
+            kind = LineClassifier.BackgroundWaitOf(text, out count);
+            if (kind != BackgroundKind.None)
+            {
+                (_waitText, _waitKind, _waitCount) = (text, kind, count);
+            }
+        }
+
+        switch (kind)
+        {
+            case BackgroundKind.Agent:
+                _agentsAwaited = _agentsAwaited == 0 ? count : _agentsAwaited;
+                return true;
+            case BackgroundKind.Workflow:
+                _workflowsAwaited = _workflowsAwaited == 0 ? count : _workflowsAwaited;
+                return true;
+            case BackgroundKind.Other:
+                _unknownAwaited = _unknownAwaited == 0 ? count : _unknownAwaited;
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>Whether the rows of this frame differ from those last read; when they do, they become the rows read.</summary>
+    private static bool RowsChanged(List<string> rows, List<string> shown)
+    {
+        var same = rows.Count == shown.Count;
+        for (var i = 0; same && i < rows.Count; i++)
+        {
+            same = rows[i] == shown[i];
+        }
+
+        if (same)
+        {
+            return false;
+        }
+
+        shown.Clear();
+        shown.AddRange(rows);
+        return true;
+    }
+
+    /// <summary>
+    /// Makes <see cref="BackgroundWorkflows"/> from the workflows' rows <see cref="ApplyChrome"/> found, only when the
+    /// rows are not the ones it was made from, as <see cref="ReadAgents"/> does.
+    /// </summary>
+    private void ReadWorkflows()
+    {
+        if (!RowsChanged(_workflowRows, _workflowRowsShown))
+        {
+            return;
+        }
+
+        var workflows = new List<BackgroundWorkflow>(_workflowRows.Count);
+        for (var i = _workflowRows.Count - 1; i >= 0; i--)
+        {
+            if (LineClassifier.WorkflowOf(_workflowRows[i]) is { } workflow)
+            {
+                workflows.Add(workflow);
+            }
+        }
+
+        BackgroundWorkflows = workflows;
+    }
+
+    /// <summary>
     /// Makes <see cref="BackgroundAgents"/> from the agent rows <see cref="ApplyChrome"/> found, only when the rows
     /// are not the ones it was made from: the panel is redrawn often, and a frame that changes nothing must not allocate.
     /// </summary>
     private void ReadAgents()
     {
-        var same = _agentRows.Count == _agentRowsShown.Count;
-        for (var i = 0; same && i < _agentRows.Count; i++)
-        {
-            same = _agentRows[i] == _agentRowsShown[i];
-        }
-
-        if (same)
+        if (!RowsChanged(_agentRows, _agentRowsShown))
         {
             return;
         }
 
-        _agentRowsShown.Clear();
-        _agentRowsShown.AddRange(_agentRows);
         var agents = new List<BackgroundAgent>(_agentRows.Count);
         for (var i = _agentRows.Count - 1; i >= 0; i--)
         {
@@ -1005,7 +1157,12 @@ public sealed partial class SessionModel : LineStore
                 }
 
                 line.Kind = LineClassifier.Classify(line.Text, inPromptBlock);
-                if (line.Kind == LineKind.Plain && record is not null && LineClassifier.ContinuesAnswerRecord(line.Text, record.Text, Columns))
+                if (_progressLines.Count > 0 && _progressLines.Contains(line))
+                {
+                    // A live progress row of the live block (FR-7.10), by its place and its text, never by text alone.
+                    line.Kind = LineKind.Progress;
+                }
+                else if (line.Kind == LineKind.Plain && record is not null && LineClassifier.ContinuesAnswerRecord(line.Text, record.Text, Columns))
                 {
                     line.Kind = LineKind.AnswerRecord;
                 }

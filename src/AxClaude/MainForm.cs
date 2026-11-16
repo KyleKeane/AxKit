@@ -90,6 +90,7 @@ internal sealed partial class MainForm : ConsoleForm
         _settings = settings;
         _model = model;
         _model.DetectScreens = settings.QuestionNotices;
+        _model.ShowProgressRows = settings.ShowProgressRows;
         // FR-8.1: a remembered folder that is never a project (Windows' own, from a start before 2026-11-09) is not taken.
         _folder = options.Folder ?? (settings.LastProjectFolder is { } last && Directory.Exists(last) && !StartupOptions.IsNeverAProject(last) ? last : null);
         _model.ResponseStarted += () =>

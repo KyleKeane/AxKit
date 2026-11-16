@@ -39,7 +39,9 @@ public readonly record struct Arrival(bool NewLine, bool ToolCall, string? Speec
 /// The record Claude Code prints in an answered question's place ("User answered Claude's questions:" and a row per
 /// question, <see cref="LineKind.AnswerRecord"/>) is skipped like a marker (FR-7.4b): until 2026-11-14 its rows were
 /// reply lines, and the row with the old question, the last visible line while Claude worked, was spoken seconds
-/// later with the next reply, into the next question.
+/// later with the next reply, into the next question. A live progress row of background work
+/// (<see cref="LineKind.Progress"/>, in the conversation only with the user's option, FR-7.10) is passed over like a
+/// hidden line: Claude Code redraws it every second, and as a reply line each redraw was spoken.
 /// </summary>
 public sealed class Arrivals
 {
@@ -80,7 +82,9 @@ public sealed class Arrivals
         for (var i = 0; i < lines.Count; i++)
         {
             var line = lines[i];
-            if (line.Hidden)
+            // A live progress row of background work, shown at the user's wish (FR-7.10), is passed as if hidden: never
+            // spoken, no tick for its redraws, and no visible line after a reply's last one that would make it final.
+            if (line.Hidden || line.Kind == LineKind.Progress)
             {
                 continue;
             }

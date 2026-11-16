@@ -42,6 +42,14 @@ public enum LineKind
     /// so shown and never spoken as one (axClaude FR-7.4b). A row of the screen, classified by its text like any other.
     /// </summary>
     AnswerRecord,
+
+    /// <summary>
+    /// A live progress row of work in the background at the bottom of Claude Code's screen (a running agent's row, a
+    /// dynamic workflow's row, <c>Waiting for 1 dynamic workflow to finish</c>; axClaude FR-7.10): an interface row,
+    /// hidden with the rows around it, and shown in the conversation only when the user asks for it in Options, so
+    /// never spoken, no tick, never part of a reply. Given by the model to the rows of the live block, not by text.
+    /// </summary>
+    Progress,
 }
 
 /// <summary>

@@ -393,6 +393,54 @@ public class ArrivalsTests
         Assert.Equal("1 shell", model.Background);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void A_workflows_live_row_is_never_spoken_and_keeps_nothing_above_it_in_the_reply(bool shown)
+    {
+        // Seen in the user's window on 2026-11-15 (Claude Code 2.1.325): a dynamic workflow's live row as the lowest
+        // row, under the spinner and the mode line, redrawn as it goes; after the turn the waiting row over the mode
+        // line. Unknown and lowest, the live row kept the spinner and the mode line in the conversation, and in all
+        // lines every redraw was spoken. Shown with the option, the rows are progress lines: never spoken either.
+        const string fourteen = "   ◯  axkit-design-map-and-verify 14%  1/7 · 9m27s · ↓ 1.7m tokens · ⚠ Large workflow · /workflows to stop";
+        const string eightyEight = "   ◯  axkit-design-map-and-verify 88%  8/9 · 20m18s · ↓ 2.5m tokens · ⚠ Large workflow · /workflows to stop";
+        var model = new SessionModel(160, 20) { ShowProgressRows = shown };
+        var heard = Listen(model, ReplySpeechMode.All);
+        Feed(model, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        model.Send("go");
+        Feed(model, $"{Esc}[?25l{Esc}[1;1Hyou: go{Esc}[K\r\nThinking…{Esc}[K\r\nauto mode on (shift+tab to cycle)  ·  esc to interrupt{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hclaude: The workflow runs in the background.{Esc}[K\r\nJitterbugging…{Esc}[K\r\n"
+            + $"auto mode on (shift+tab to cycle)  ·  esc to interrupt{Esc}[K\r\n{fourteen}{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        model.EndFrame();
+        var ticks = heard.Ticks.Count;
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hclaude: The workflow runs in the background.{Esc}[K\r\nJitterbugging…{Esc}[K\r\n"
+            + $"auto mode on (shift+tab to cycle)  ·  esc to interrupt{Esc}[K\r\n{eightyEight}{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        model.EndFrame();
+
+        // While Claude works the reply's row is the last of the conversation: held, as a reply's last row is. The
+        // row's redraw is no new line.
+        Assert.Empty(heard.Speech);
+        Assert.DoesNotContain(true, heard.Ticks.Skip(ticks));
+        Assert.True(model.Working);
+        Assert.Equal(shown ? ["claude: The workflow runs in the background.", eightyEight] : ["claude: The workflow runs in the background."],
+            model.Lines.Where(l => !l.Hidden && !l.IsMarker && l.Text.Length > 0 && l.Kind != LineKind.UserEcho).Select(l => l.Text));
+
+        // The turn ends with the workflow still running: the reply alone is spoken.
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hclaude: The workflow runs in the background.{Esc}[K\r\nWaiting for 1 dynamic workflow to finish{Esc}[K\r\n"
+            + $"auto mode on (shift+tab to cycle){Esc}[K\r\n{eightyEight}{Esc}[K\r\n${Esc}[K{Esc}[?25h");
+        model.EndFrame();
+        Assert.Equal(["claude: The workflow runs in the background."], heard.Speech);
+        Assert.False(model.Working);
+        Assert.Single(model.BackgroundWorkflows);
+
+        // The workflow ends: nothing more is spoken.
+        Feed(model, $"{Esc}[?25l{Esc}[2;1Hclaude: The workflow runs in the background.{Esc}[K\r\nauto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K\r\n{Esc}[K\r\n{Esc}[K{Esc}[4;2H{Esc}[?25h");
+        model.EndFrame();
+        Assert.Equal(["claude: The workflow runs in the background."], heard.Speech);
+        Assert.Empty(model.BackgroundWorkflows);
+        Assert.Equal("claude: The workflow runs in the background.", model.Lines.Last(line => !line.Hidden && line.Text.Length > 0).Text);
+    }
+
     [Fact]
     public void A_replys_own_sentence_about_waiting_for_agents_is_spoken()
     {

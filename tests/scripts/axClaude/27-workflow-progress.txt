@@ -1,0 +1,91 @@
+# Workflow: Follow a workflow Claude runs in the background without hearing its live row
+# axClaude, docs/axClaude/nvda-test-plan.md section 22 steps 10 and 11 (SPEC.md FR-7.10, FR-3.5; 2026-11-15): Claude
+# Code's live row of a dynamic workflow, the lowest row of its screen under the spinner and the mode line, and the row
+# "Waiting for 1 dynamic workflow to finish" after the turn. Never said, and never keeping the spinner or the mode line
+# in the conversation; the status bar counts the workflow, the start and finish sounds come as for agents, Ctrl+B says
+# how far it is; and with Options, Background work, Show Claude Code's live progress rows in the conversation, the rows
+# stand in the conversation and are still never said. Needs no Claude Code, no network and no model: a stand-in batch
+# file draws the rows as the user's window held them on 2026-11-15 (Claude Code 2.1.325, docs/axClaude/claude-screens.md),
+# one frame for each file the script makes in the project folder. Speak replies is all lines, so that a row taken for
+# reply text would be said.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir wf
+# The stand-in: the escape character from cmd's own prompt, then a frame, then it waits for the next file. A percent
+# sign is written twice in a batch file.
+file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait1\nif exist go1 goto frame1\nping -n 2 127.0.0.1 >nul\ngoto wait1\n:frame1\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Run the workflow\necho claude: The workflow runs in the background.\necho Jitterbugging…\necho auto mode on (shift+tab to cycle)  ·  esc to interrupt\necho    ◯  axkit-design-map-and-verify 14%%  1/7 · 9m27s · ↓ 1.7m tokens · ⚠ Large workflow · /workflows to stop\n<nul set /p "=$%E%[?25h"\n:wait2\nif exist go2 goto frame2\nping -n 2 127.0.0.1 >nul\ngoto wait2\n:frame2\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Run the workflow\necho claude: The workflow runs in the background.\necho Jitterbugging…\necho auto mode on (shift+tab to cycle)  ·  esc to interrupt\necho    ◯  axkit-design-map-and-verify 88%%  8/9 · 20m18s · ↓ 2.5m tokens · ⚠ Large workflow · /workflows to stop\n<nul set /p "=$%E%[?25h"\n:wait3\nif exist go3 goto frame3\nping -n 2 127.0.0.1 >nul\ngoto wait3\n:frame3\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Run the workflow\necho claude: The workflow runs in the background.\necho Waiting for 1 dynamic workflow to finish\necho auto mode on (shift+tab to cycle)\necho    ◯  axkit-design-map-and-verify 88%%  8/9 · 20m18s · ↓ 2.5m tokens · ⚠ Large workflow · /workflows to stop\n<nul set /p "=$%E%[?25h"\n:wait4\nif exist go4 goto frame4\nping -n 2 127.0.0.1 >nul\ngoto wait4\n:frame4\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Run the workflow\necho claude: The workflow runs in the background.\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait5\nif exist go5 goto frame5\nping -n 2 127.0.0.1 >nul\ngoto wait5\n:frame5\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Run the workflow\necho claude: The workflow runs in the background.\necho Waiting for 1 dynamic workflow to finish\necho auto mode on (shift+tab to cycle)\necho    ◯  axkit-design-map-and-verify 88%%  8/9 · 20m18s · ↓ 2.5m tokens · ⚠ Large workflow · /workflows to stop\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\necho 0.0.0 (stand-in)
+
+start claude {temp}\wf --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+refuse state in the background
+# The option is there, off at first.
+expect commands Show Claude Code's live progress rows in the conversation, Options, Background work
+refuse commands Show Claude Code's live progress rows in the conversation, Options, Background work, checked
+
+# A message, and Claude starts a workflow: its live row under the spinner and the mode line. One start sound; the status
+# bar counts the workflow; neither the row nor the spinner nor the mode line is said, and the reply's row waits for the
+# turn's end, as a reply's last row does while Claude works.
+type Run the workflow
+keys enter
+expect said Sent
+file wf\go1 x
+expect said ♪ BackgroundStart
+expect state 1 workflow in the background
+refuse said axkit-design-map-and-verify
+refuse said Jitterbugging
+refuse said shift+tab
+# The row moves on: a redraw, no sound; on demand, Ctrl+B says how far the workflow is, and F8 the status bar.
+file wf\go2 x
+expect state working Jitterbugging
+wait 2500
+refuse said ♪ BackgroundStart
+refuse said ♪ BackgroundFinish
+keys ctrl+b
+expect said ! 1 workflow in the background. Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done, 20m18s
+keys f8
+expect said ! 1 workflow in the background
+refuse said 14 percent
+
+# The turn ends with the workflow still running: the reply alone is said; the waiting row is not, and the number stays.
+file wf\go3 x
+expect said The workflow runs in the background
+expect state Claude: ready | 1 workflow in the background | auto mode on
+refuse said Waiting for
+refuse said axkit-design-map-and-verify
+refuse said ♪ BackgroundFinish
+keys ctrl+2 ctrl+end
+refuse text Waiting for
+refuse text axkit-design-map-and-verify
+refuse text auto mode on
+
+# The workflow ends: one finish sound, no background part in the status bar, and Ctrl+B says nothing runs.
+file wf\go4 x
+expect said ♪ BackgroundFinish
+refuse state in the background
+keys ctrl+1
+keys ctrl+b
+expect said ! Nothing runs in the background
+
+# The option on: the live row and the waiting row stand in the conversation as Claude Code draws them, and are still
+# never said; the mode line above the live row stays out.
+menu Show Claude Code's live progress rows in the conversation
+expect commands Show Claude Code's live progress rows in the conversation, Options, Background work, checked
+said
+file wf\go5 x
+expect said ♪ BackgroundStart
+# No tick either: the rows are Claude Code's interface, not lines from Claude.
+refuse said ♪ Click
+refuse said axkit-design-map-and-verify
+refuse said Waiting for
+keys ctrl+2 ctrl+end
+expect text Waiting for 1 dynamic workflow to finish
+expect text axkit-design-map-and-verify 88%
+refuse text auto mode on
+# The caret's line, the live row, read as the user moved there: his own command. Nothing after it is said by itself.
+expect said → Conversation
+said
+# Off again: out of the conversation at once, without a new frame.
+menu Show Claude Code's live progress rows in the conversation
+refuse text axkit-design-map-and-verify
+refuse text Waiting for
+refuse said axkit-design-map-and-verify

@@ -26,14 +26,18 @@ internal sealed partial class MainForm
     /// <summary>When the chords play and which (FR-7.10): Core's schedule, with the shared random numbers.</summary>
     private readonly BackgroundChords _backgroundChords = new(AxKit.Core.Audio.AmbientSounds.ChordNames.Count, Random.Shared.Next);
 
-    /// <summary>What the model showed at the last frame, by which a frame that changes nothing costs three comparisons.</summary>
+    /// <summary>What the model showed at the last frame, by which a frame that changes nothing costs a few comparisons.</summary>
     private string? _backgroundSeenText;
     private IReadOnlyList<BackgroundAgent> _backgroundSeenAgents = [];
     private int _backgroundSeenAwaited;
+    private IReadOnlyList<BackgroundWorkflow> _backgroundSeenWorkflows = [];
+    private int _backgroundSeenWorkflowsAwaited;
+    private int _backgroundSeenUnknown;
 
     /// <summary>What was last signalled: the sounds and the words are for the change from this.</summary>
     private BackgroundCount _backgroundHeard = BackgroundCount.None;
     private IReadOnlyList<BackgroundAgent> _backgroundAgentsHeard = [];
+    private IReadOnlyList<BackgroundWorkflow> _backgroundWorkflowsHeard = [];
 
     private ChoiceItems<int>? _pauseItems;
 
@@ -48,15 +52,19 @@ internal sealed partial class MainForm
         _backgroundChordTimer.Tick += (_, _) => PlayBackgroundChord();
     }
 
-    /// <summary>The number now (FR-7.10): the agents shown or awaited and what the mode line counts; nothing while Claude is stopped.</summary>
+    /// <summary>The number now (FR-7.10): the agents and workflows shown or awaited, the rows of kinds not known and what the mode line counts; nothing while Claude is stopped.</summary>
     private BackgroundCount BackgroundNow =>
-        ProcessRunning ? BackgroundWork.Count(_model.Background, _model.BackgroundAgents.Count, _model.BackgroundAgentsAwaited) : BackgroundCount.None;
+        ProcessRunning
+            ? BackgroundWork.Count(_model.Background, _model.BackgroundAgents.Count, _model.BackgroundAgentsAwaited,
+                workflowsShown: _model.BackgroundWorkflows.Count, workflowsAwaited: _model.BackgroundWorkflowsAwaited, unknownShown: _model.BackgroundUnknown)
+            : BackgroundCount.None;
 
     /// <summary>Every frame: when what the model shows of the background work differs from the frame before, the settle starts again.</summary>
     private void WatchBackground()
     {
         if (ReferenceEquals(_backgroundSeenAgents, _model.BackgroundAgents) && _backgroundSeenAwaited == _model.BackgroundAgentsAwaited
-            && string.Equals(_backgroundSeenText, _model.Background, StringComparison.Ordinal))
+            && ReferenceEquals(_backgroundSeenWorkflows, _model.BackgroundWorkflows) && _backgroundSeenWorkflowsAwaited == _model.BackgroundWorkflowsAwaited
+            && _backgroundSeenUnknown == _model.BackgroundUnknown && string.Equals(_backgroundSeenText, _model.Background, StringComparison.Ordinal))
         {
             return;
         }
@@ -64,6 +72,9 @@ internal sealed partial class MainForm
         _backgroundSeenText = _model.Background;
         _backgroundSeenAgents = _model.BackgroundAgents;
         _backgroundSeenAwaited = _model.BackgroundAgentsAwaited;
+        _backgroundSeenWorkflows = _model.BackgroundWorkflows;
+        _backgroundSeenWorkflowsAwaited = _model.BackgroundWorkflowsAwaited;
+        _backgroundSeenUnknown = _model.BackgroundUnknown;
         _backgroundSettle.Stop();
         _backgroundSettle.Start();
     }
@@ -73,11 +84,14 @@ internal sealed partial class MainForm
     {
         var now = BackgroundNow;
         var agents = ProcessRunning ? _model.BackgroundAgents : [];
+        var workflows = ProcessRunning ? _model.BackgroundWorkflows : [];
         var changes = AgentPanel.Changes(_backgroundAgentsHeard, agents);
-        var sound = BackgroundWork.Sound(_backgroundHeard, now, changes);
+        var workflowChanges = AgentPanel.WorkflowChanges(_backgroundWorkflowsHeard, workflows);
+        var sound = BackgroundWork.Sound(_backgroundHeard, now, changes, workflowChanges);
         var before = _backgroundHeard;
         _backgroundHeard = now;
         _backgroundAgentsHeard = agents;
+        _backgroundWorkflowsHeard = workflows;
         if (sound != BackgroundSound.None)
         {
             if (_settings.SoundOnBackgroundWork)
@@ -92,7 +106,7 @@ internal sealed partial class MainForm
                 }
             }
 
-            if (_settings.SayBackgroundWork && BackgroundWork.ChangeLines(before, now, changes) is { Count: > 0 } lines)
+            if (_settings.SayBackgroundWork && BackgroundWork.ChangeLines(before, now, changes, workflowChanges) is { Count: > 0 } lines)
             {
                 // Never interrupting: behind a reply being read, joined to what the window says at the same moment (AX-7.3).
                 Announce(string.Join(". ", lines), false);
@@ -109,6 +123,7 @@ internal sealed partial class MainForm
         _backgroundChordTimer.Stop();
         _backgroundHeard = BackgroundCount.None;
         _backgroundAgentsHeard = [];
+        _backgroundWorkflowsHeard = [];
     }
 
     /// <summary>
@@ -148,11 +163,14 @@ internal sealed partial class MainForm
         }
     }
 
-    /// <summary>Actions, What runs in the background (Ctrl+B): the number, each agent's type and description, on demand.</summary>
+    /// <summary>Actions, What runs in the background (Ctrl+B): the number, each agent's type and description, each workflow's progress, on demand.</summary>
     private void SayBackgroundWork() =>
-        Announce(BackgroundWork.Said(BackgroundNow, ProcessRunning ? _model.BackgroundAgents : []), true);
+        Announce(BackgroundWork.Said(BackgroundNow, ProcessRunning ? _model.BackgroundAgents : [], ProcessRunning ? _model.BackgroundWorkflows : []), true);
 
-    /// <summary>Options, Background work (FR-7.10): the two sounds, the words, and the pause between the recurring chords.</summary>
+    /// <summary>
+    /// Options, Background work (FR-7.10): the two sounds, the words, Claude Code's live progress rows in the
+    /// conversation, and the pause between the recurring chords.
+    /// </summary>
     private ToolStripMenuItem CreateBackgroundMenu()
     {
         var menu = new ToolStripMenuItem("&Background work");
@@ -163,6 +181,14 @@ internal sealed partial class MainForm
             FollowBackgroundChords();
         }));
         menu.DropDownItems.Add(Toggle("Sa&y background work as it starts and ends", _settings.SayBackgroundWork, v => _settings.SayBackgroundWork = v));
+        // The user's decision of 2026-11-15, "an option, hidden at first": the rows shown, never spoken. Applied to the
+        // screen as it stands at once (a frame end now, as the quiet timer gives one), not at Claude Code's next redraw.
+        menu.DropDownItems.Add(Toggle("Show Claude Code's live &progress rows in the conversation", _settings.ShowProgressRows, v =>
+        {
+            _settings.ShowProgressRows = v;
+            _model.ShowProgressRows = v;
+            _model.EndFrame();
+        }));
         menu.DropDownItems.Add(new ToolStripSeparator());
         _pauseItems = new ChoiceItems<int>(menu, BackgroundChords.PauseSeconds.Select(seconds => (seconds, PauseChoice(seconds))), _settings.BackgroundChordPauseSeconds, SetPauseSeconds);
         return menu;
