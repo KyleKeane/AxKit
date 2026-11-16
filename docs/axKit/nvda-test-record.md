@@ -23,8 +23,8 @@ What it found:
 - The two failures were a key from outside the scripts. In both, the window's Keyboard shortcuts notice opened
   where no step presses F1 (in axCalc one second after the start, in axAutomate right after the Escape that stops a
   run), and in axAutomate NVDA also spoke a single letter no step types. Both were within the first minutes of the
-  pass, and the user's own axClaude window stood with its Keyboard shortcuts notice open through the whole pass. Where
-  the key came from was not found. Both scripts passed whole on the runner's own desktop right after (9 and 8 goals),
+  pass, and the user's own axClaude window stood with its Keyboard shortcuts notice open through the whole pass. The
+  user said afterwards that he may have pressed a key by accident; nothing in axKit is suspected. Both scripts passed whole on the runner's own desktop right after (9 and 8 goals),
   so their goals are recorded at that tier and not as heard in this pass.
 - The command inventory was stale for axProcess: the five commands of a process's context menu (Details, End
   process, End process tree, Show program in axFile, Copy line) were not in it. The snapshot of its first script is
