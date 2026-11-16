@@ -15,7 +15,7 @@ command's in this version of axKit.
 2. Press Enter.
     You hear: test, 3 items, Email, group, 1 item.
 
-### Read the database again
+### Refresh the database
 
 1. Press F5 (Refresh; Session menu).
     You hear: Refreshed: test, 3 items.
@@ -71,7 +71,7 @@ command's in this version of axKit.
 3. Press Enter.
     You hear: Added Bank.
 
-### Move an entry to the Recycle Bin and take it back
+### Move an entry to the Recycle Bin and undo it
 
 1. Press Delete.
     You hear: Moved Bank to the Recycle Bin.

@@ -31,7 +31,7 @@ type /2
 keys enter
 expect said ! 4147200
 
-# Goal: Hear the last answer and its other bases
+# Goal: Hear the last answer in other bases
 # Ctrl+Q says the last answer; Ctrl+I the answer in other bases.
 keys ctrl+q
 expect said 4147200

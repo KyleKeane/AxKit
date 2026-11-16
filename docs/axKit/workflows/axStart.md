@@ -11,7 +11,7 @@ command's in this version of axKit.
 
 Starts with: Open axStart.
 
-### Read the programs again
+### Refresh the list of programs
 
 1. Press F5 (Refresh programs; Session menu).
     You hear: Programs refreshed.

@@ -22,7 +22,7 @@ keys down right right
 keys f1
 expect state "notice":"Keyboard shortcuts"
 expect focus {"name":"Keyboard shortcuts","role":"Text","value":"In this text: h and Shift\u002BH move by heading
-# Goal: Move through the shortcuts by heading
+# Goal: Move through the keyboard shortcuts by heading
 # h and Ctrl+H alike: the next section's heading; Shift+H back.
 keys h
 expect said ! In every window of axKit, heading level 2
@@ -36,7 +36,7 @@ expect said ! The text, heading level 2
 # Page Down and Page Up move a screen of its text, Ctrl+Down and Ctrl+Up a paragraph; the notice says nothing on them.
 keys pagedown pageup ctrl+down ctrl+up
 expect quiet 1000
-# Goal: Find a word in the shortcuts
+# Goal: Find a word in the keyboard shortcuts
 # Ctrl+F, wrap, Enter: the shortcuts text is back, then F3; Ctrl+F then Escape: the text is back.
 keys ctrl+f
 expect focus Text to find
@@ -51,7 +51,7 @@ expect focus Text to find
 keys escape
 expect focus Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
-# Goal: Close the shortcuts and return to the text
+# Goal: Close the keyboard shortcuts and go back to the text
 # Escape closes the notice and the focus is back in the editor at the same place.
 keys escape
 expect state "notice":null

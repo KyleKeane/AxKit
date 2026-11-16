@@ -36,7 +36,7 @@ expect said ! test, 3 items, Email, group, 1 item
 expect state test - axPass
 check commands
 
-# Goal: Read the database again
+# Goal: Refresh the database
 # F5 reads the database again through the tool, as File → Refresh does (item-apps.md), and says so.
 keys f5
 expect said ! Refreshed: test, 3 items
@@ -122,7 +122,7 @@ type Bank
 keys enter
 expect said ! Added Bank
 expect focus Bank
-# Goal: Move an entry to the Recycle Bin and take it back
+# Goal: Move an entry to the Recycle Bin and undo it
 keys delete
 expect said ! Moved Bank to the Recycle Bin
 keys ctrl+z

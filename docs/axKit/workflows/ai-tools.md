@@ -63,13 +63,13 @@ Starts with: Open axDown with the file notes.md.
 1. Choose Let AI tools run commands in the axKit menu, AI tools.
     You hear: AI tools may run commands: each is said as it runs.
 
-### Have an AI tool run a window's command
+### Let an AI tool run a window's command
 
 1. Call the tool axkit_window_run.
     The tool answers: axAutomate ran Word wrap. Word wrap.
     You hear: axAutomate ran Word wrap. Word wrap.
 
-### Have an AI tool change a setting
+### Let an AI tool change a setting
 
 1. Call the tool axkit_window_run.
     You hear: axAutomate ran Say new line. Say new line off.

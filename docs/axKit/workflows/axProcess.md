@@ -14,7 +14,7 @@ command's in this version of axKit.
 1. Press Ctrl+Q (Summary; Actions menu).
     You hear: GB in use.
 
-### Read the list again
+### Refresh the list
 
 1. Press F5 (Refresh; Session menu).
     You hear words such as: Refreshed: Processes.
@@ -61,7 +61,7 @@ Starts with: Open axProcess.
 1. Press Ctrl+2 (Services; Navigation menu).
 2. Press Ctrl+1 (Processes; Navigation menu).
 
-### Show the programs that start with Windows
+### Show the startup programs
 
 1. Press Ctrl+3 (Startup; Navigation menu).
     You hear: Startup, 1. Morning, enabled, your Startup folder.
@@ -71,7 +71,7 @@ Starts with: Open axProcess.
 1. Press F1 (Keyboard shortcuts; Help menu).
 2. Press Escape.
 
-### Go round the views one after another
+### Move through the views one after another
 
 1. Press Ctrl+1 (Processes; Navigation menu).
 2. Press Tab.
@@ -83,16 +83,16 @@ Starts with: Open axProcess.
 5. Press Shift+Tab.
     You hear words such as: Startup.
 
-### Jump to a service by typing its name
+### Find a service by typing its name
 
 1. Press Ctrl+2 (Services; Navigation menu).
 2. Type: windows event l
 
-## Jump to a process by typing its name and read a startup program's details
+## Find a process by typing its name and read a startup program's details
 
 Starts with: Open axProcess.
 
-### Jump to a process by typing its name
+### Find a process by typing its name
 
 1. Choose Name in the Options menu, Sort processes by.
     You hear: Sorted by name.
@@ -111,12 +111,12 @@ Starts with: Open axProcess.
 
 Starts with: Open axProcess.
 
-### List the programs that start with Windows
+### Show the startup programs
 
 1. Press Ctrl+3 (Startup; Navigation menu).
     You hear: Startup, 4. Check Alpha, enabled, current user's Run key.
 
-### Turn off a program that starts with Windows
+### Turn a startup program off
 
 1. Choose the menu item Turn off.
     You hear: Check Alpha turned off: it no longer starts with Windows.
@@ -126,7 +126,7 @@ Starts with: Open axProcess.
 1. Choose the menu item Turn on.
     You hear: Check Alpha turned on: it starts with Windows again.
 
-### Remove a program from those that start with Windows
+### Remove a startup program
 
 1. Press Delete.
 2. Press Alt+R.

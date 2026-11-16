@@ -30,7 +30,7 @@ expect focus "role":"List"
 keys enter
 expect said Ready
 expect focus Message to Claude
-# Goal: Switch between the message field and the conversation
+# Goal: Move between the message field and the conversation
 # Step 2: Ctrl+Tab, the conversation. Step 3: Ctrl+Tab again, the message field.
 keys ctrl+tab
 expect focus Conversation

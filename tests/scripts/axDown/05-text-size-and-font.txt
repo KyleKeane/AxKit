@@ -9,7 +9,7 @@ file size.md # Text size\n\nA line of text.
 
 start down {temp}\size.md
 expect focus size.md
-# Goal: Make the text larger or smaller
+# Goal: Change the text size
 # 5.1: larger: "Text size n"; smaller back; the focus stays in the text.
 menu Larger text
 expect said ! Text size 10

@@ -88,7 +88,7 @@ Starts with: Open axMCP with the test folder.
 9. Press Down.
 10. Press Escape.
 
-### Rename a server and take the rename back
+### Rename a server and undo the rename
 
 1. Press F2.
 2. Press Ctrl+A.
@@ -104,7 +104,7 @@ Starts with: Open axMCP with the test folder.
 2. Press Enter.
     You hear: Removed probe.
 
-### Bring a removed server back
+### Undo the removal of a server
 
 1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: removed probe.

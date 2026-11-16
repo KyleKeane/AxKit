@@ -19,7 +19,7 @@ keys ctrl+right ctrl+right
 expect quiet 1000
 expect state Line 3, Column 11
 
-# Goal: Move from paragraph to paragraph
+# Goal: Move by paragraph
 # 2.3a: Ctrl+Down to the next paragraph, a heading with blank lines around it being one of its own; Ctrl+Up back.
 keys ctrl+home
 keys ctrl+down
@@ -68,7 +68,7 @@ keys ctrl+shift+w
 expect said ! Word wrap on
 expect state Line 5, Column 4 \u00B7
 
-# Goal: Move a page at a time
+# Goal: Move by page
 # 2.3: Page Down reaches the last line in a short file, Page Up the first.
 start down {temp}\short.md
 expect focus short.md

@@ -225,7 +225,7 @@ keys enter
 expect said ! Added Bread
 expect focus Bread
 run findstr /l /c:"\"Due\"" "tasks\Shopping\Bread.json"
-# Goal: Archive an item and bring it back
+# Goal: Archive an item and undo it
 keys delete
 expect said ! Archived Bread
 run cmd /c if exist "tasks\Archive\Bread.json" (exit 0) else (exit 1)

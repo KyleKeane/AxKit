@@ -12,7 +12,7 @@ start start
 check commands
 expect focus Search programs
 
-# Goal: Read the programs again
+# Goal: Refresh the list of programs
 # F5 reads the programs again and says how many, once the first read is done: the list is there before the typing.
 wait 5000
 keys f5

@@ -19,7 +19,7 @@ command's in this version of axKit.
 2. Press End.
 3. Press Home.
 
-### Select a file by typing its name
+### Find a file by typing its name
 
 1. Type: ban
     It reads banana.txt.
@@ -172,7 +172,7 @@ command's in this version of axKit.
 2. Press Ctrl+D.
     You hear: Removed from Favorites.
 
-### Read the folder again after a change from outside
+### Refresh the folder after a change from outside
 
 1. Press End.
 2. Press F5 (Refresh; Session menu).
@@ -501,7 +501,7 @@ Starts with: Open axFile with the folder hand.
 
 Starts with: Open axFile with the folder pal.
 
-### Make the text larger or smaller
+### Change the text size
 
 1. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
     You hear: Text size.
@@ -684,12 +684,12 @@ Starts with: Open axFile with the folder orchard.
 
 Starts with: Open axFile with the folder orchard.
 
-### Start testing keys
+### Start the key test
 
 1. Choose Test a key in the Help menu, Diagnostics.
     You hear: Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
-### Hear what a key does without carrying it out
+### Hear what a key does without doing it
 
 1. Press F8 (Say the status; Window menu).
     You hear: F8: Say the status.

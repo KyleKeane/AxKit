@@ -17,7 +17,7 @@ keys enter
 expect said Ready
 expect said ♪ Ready
 wait 3000
-# Goal: Make the text larger or smaller
+# Goal: Change the text size
 # Step 1: Larger text and Smaller text (Ctrl+Plus and Ctrl+Minus: the channel has no names for those keys, so the
 # menu items run; they are the same commands): "Text size 10", one more than the default 9, then back. Windows text size.
 # The font dialog is a Windows dialog (manual).

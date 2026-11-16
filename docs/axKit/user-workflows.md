@@ -1638,8 +1638,10 @@ what it was before. One item of the priorities list holds them all for the user 
   (Taken by the assistant on 2026-11-15 for the user to confirm.)
 - **WF-D-26 The goals' titles, and where each goal begins, were chosen by the build agents from the scripts'
   comments.** They are the user's vocabulary: a title is one comment line in a script and his to change, and the
-  index (`docs/axKit/workflows.md`) is where he reads them all at once. (Taken by the assistant on 2026-11-15 for
-  the user to confirm.)
+  index (`docs/axKit/workflows.md`) is where he reads them all at once. (Taken by the assistant on 2026-11-15; on
+  2026-11-16 the user chose a consistency pass by the assistant before he hears them, and it gave one wording to
+  each action that several apps share: refresh, undo, find by typing, move by page and by paragraph, the key test,
+  the text size, the keyboard shortcuts, the startup programs, 38 lines in all.)
 - **WF-D-27 The work runs on a branch and reaches `main` when its checks have passed, the NVDA pass among them.**
   One review asked that this document be committed to `main` and every worktree made from there; the other that the
   work stay on a branch, unpushed, until the user's word. The root notes settle it: larger work runs on a branch and

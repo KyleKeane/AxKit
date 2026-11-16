@@ -43,7 +43,7 @@ expect said ! Services,
 keys ctrl+1
 expect said ! Processes,
 
-# Goal: Show the programs that start with Windows
+# Goal: Show the startup programs
 # 4.1 Ctrl+3: the startup programs: the run's stand-in, with its one entry (until 2026-11-14 this computer's own, whatever
 # it starts).
 keys ctrl+3
@@ -58,7 +58,7 @@ expect state Ctrl+1, Ctrl+2, Ctrl+3
 keys escape
 expect state "notice":null
 
-# Goal: Go round the views one after another
+# Goal: Move through the views one after another
 # 2.2 Tab and Shift+Tab go round the views, said as their keys say them.
 keys ctrl+1
 expect said ! Processes,
@@ -91,7 +91,7 @@ keys end
 keys down
 expect said ♪ Edge
 
-# Goal: Jump to a service by typing its name
+# Goal: Find a service by typing its name
 # AX-8.6 Type-to-find in the services: a prefix lands on its item; Shift with the letter goes back the other way.
 keys ctrl+2
 expect said ! Services,

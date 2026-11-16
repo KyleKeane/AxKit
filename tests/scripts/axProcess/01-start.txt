@@ -31,7 +31,7 @@ expect said GB in use
 # 1.5 Nothing is said while no key is pressed: the list never refreshes by itself (PR-D2).
 expect quiet 3000
 
-# Goal: Read the list again
+# Goal: Refresh the list
 # 1.6 F5: read again, said, the selection kept.
 keys f5
 expect said ! Refreshed: Processes,

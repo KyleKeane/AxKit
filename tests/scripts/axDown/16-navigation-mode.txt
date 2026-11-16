@@ -82,7 +82,7 @@ expect said ! Ctrl+Space: Edit mode or navigation mode: to edit mode
 keys escape
 expect said ! Key test ended
 
-# Goal: Return to edit mode and type
+# Goal: Go back to edit mode and type
 # Off: said, the status bar without it, and typing types.
 keys ctrl+space
 expect said ! Edit mode

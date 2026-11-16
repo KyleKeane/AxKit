@@ -40,7 +40,7 @@ keys ctrl+a
 type absent
 keys enter
 expect said ! Not found
-# Goal: Move a screen down in the details
+# Goal: Move down the details by page
 # Ctrl+Home, Page Down: a screen down (how far depends on the window's height on the test desktop).
 # The focus back in the details from the Find notice, on the match it had.
 expect said → Diff of a.txt (Text): +first paragraph marker

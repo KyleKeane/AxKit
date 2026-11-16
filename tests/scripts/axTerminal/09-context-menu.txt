@@ -35,7 +35,7 @@ keys down
 keys down
 expect focus "value":"hello"}
 
-# Goal: Bookmark a line and take the bookmark away
+# Goal: Bookmark a line and remove the bookmark
 # Bookmark this line: the bookmark is added, and taken away by the same command on the same line.
 menu Bookmark this line, Context
 expect said ! Bookmark 1 added

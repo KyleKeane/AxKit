@@ -34,7 +34,7 @@ Starts with: Open axDown with the file long.md.
 1. Press Down 2 times.
 2. Press Ctrl+Right 2 times.
 
-### Move from paragraph to paragraph
+### Move by paragraph
 
 1. Press Ctrl+Home.
 2. Press Ctrl+Down 4 times.
@@ -57,7 +57,7 @@ Starts with: Open axDown with the file long.md.
 3. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
     You hear: Word wrap on.
 
-### Move a page at a time
+### Move by page
 
 1. Open axDown with the file short.md.
 2. Press Page Down.
@@ -169,7 +169,7 @@ Starts with: Open axDown with the file find.md.
 
 Starts with: Open axDown with the file size.md.
 
-### Make the text larger or smaller
+### Change the text size
 
 1. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
     You hear: Text size 10.
@@ -188,7 +188,7 @@ Starts with: Open axDown with the file a.md.
 1. Press Down, Right, Right.
 2. Press F1 (Keyboard shortcuts; Help menu).
 
-### Move through the shortcuts by heading
+### Move through the keyboard shortcuts by heading
 
 1. Press H.
     You hear: In every window of axKit, heading level 2.
@@ -199,7 +199,7 @@ Starts with: Open axDown with the file a.md.
 4. Press H 2 times.
     You hear: The text, heading level 2.
 
-### Find a word in the shortcuts
+### Find a word in the keyboard shortcuts
 
 1. Press Ctrl+F (Find; Navigation menu).
 2. Type: wrap
@@ -208,7 +208,7 @@ Starts with: Open axDown with the file a.md.
 5. Press Ctrl+F (Find; Navigation menu).
 6. Press Escape.
 
-### Close the shortcuts and return to the text
+### Close the keyboard shortcuts and go back to the text
 
 1. Press Escape.
 
@@ -552,13 +552,13 @@ Starts with: Open axDown with the file one.md. Open axDown with the file two.md.
 
 Starts with: Open axDown with the file a.md.
 
-### Start testing keys
+### Start the key test
 
 1. Press Down, Down, Right.
 2. Choose Test a key in the Help menu, Diagnostics.
     You hear: Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
-### Hear what a key does without carrying it out
+### Hear what a key does without doing it
 
 1. Press F8 (Say the status; Window menu).
     You hear: F8: Say the status.
@@ -618,7 +618,7 @@ Starts with: Open axDown with the file modes.md.
 9. Press Shift+I.
     You hear: one.
 
-### Return to edit mode and type
+### Go back to edit mode and type
 
 1. Press Ctrl+Space.
     You hear: Edit mode.

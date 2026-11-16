@@ -1,4 +1,4 @@
-# Workflow: Jump to a process by typing its name and read a startup program's details
+# Workflow: Find a process by typing its name and read a startup program's details
 # axProcess, docs/axProcess/nvda-test-plan.md, what 01-start and 02-services-startup leave: 1.9b (letters typed in the
 # processes) and 4.2 (a startup program's details); SPEC PR-3, PR-5.3, AX-8.6. The processes are this computer's, so the
 # steps match the fixed words; the startup programs are the run's stand-in (PR-5.8), one file in its stand-in for your
@@ -17,7 +17,7 @@ start process
 expect state "status":["Processes,
 expect said Processes,
 
-# Goal: Jump to a process by typing its name
+# Goal: Find a process by typing its name
 # 1.9b Letters typed in the list: the first process whose name starts with them (every Windows runs svchost, many of
 # them); a letter after a pause: the next name starting with it. By name, so that the next one is a svchost too.
 menu Name

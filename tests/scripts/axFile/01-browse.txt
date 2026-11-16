@@ -58,7 +58,7 @@ keys end
 expect said ♪ Edge
 expect focus fig.txt
 keys home
-# Goal: Select a file by typing its name
+# Goal: Find a file by typing its name
 # Typing a name: the first three letters quickly select it, once.
 type ban
 expect said · banana.txt
@@ -334,7 +334,7 @@ expect said ! Added to Favorites
 keys ctrl+d
 expect said ! Removed from Favorites
 
-# Goal: Read the folder again after a change from outside
+# Goal: Refresh the folder after a change from outside
 # 1.9 A file added from outside: F5 reads the folder again, "Refreshed", the entry kept. (Coming back to the window with Alt+Tab is manual: the test window is never activated.)
 keys end
 expect focus fig.txt

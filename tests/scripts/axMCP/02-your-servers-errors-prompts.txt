@@ -88,7 +88,7 @@ keys escape
 expect state "notice":null
 expect focus probe, stdio, stopped
 
-# Goal: Rename a server and take the rename back
+# Goal: Rename a server and undo the rename
 # 5.2 F2: the rename box with the name; a new name, Enter; Ctrl+Z takes it back.
 keys f2
 expect focus "name":"New name","role":"Text","value":"probe"
@@ -118,7 +118,7 @@ wait 1200
 keys enter
 expect said ! Removed probe
 refuse list probe, stdio
-# Goal: Bring a removed server back
+# Goal: Undo the removal of a server
 keys ctrl+z
 expect said ! Undone: removed probe
 expect focus probe, stdio, stopped

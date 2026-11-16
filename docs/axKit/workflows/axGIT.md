@@ -206,7 +206,7 @@ Starts with: Open axGIT with the folder repo.
 6. Press F3.
     It reads +first paragraph marker.
 
-### Move a screen down in the details
+### Move down the details by page
 
 The focus moves to Diff of a.txt (Text): +first paragraph marker.
 1. Press Ctrl+Home.

@@ -410,7 +410,7 @@ Starts with: Open axTerminal with the folder work\myproject.
 
 Starts with: Open axTerminal with the folder myproject.
 
-### Bookmark a line and take the bookmark away
+### Bookmark a line and remove the bookmark
 
 1. Choose Bookmark this line in the Context menu (key: Ctrl+Shift+K, or M in the terminal).
     You hear: Bookmark 1 added.

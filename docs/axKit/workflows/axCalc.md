@@ -31,7 +31,7 @@ Starts with: Open axCalc.
 2. Press Enter.
     You hear: 4147200.
 
-### Hear the last answer and its other bases
+### Hear the last answer in other bases
 
 1. Press Ctrl+Q (Say the last answer; Actions menu).
     You hear: 4147200.

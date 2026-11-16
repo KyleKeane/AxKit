@@ -92,7 +92,7 @@ expect focus Work, list, 1 item
 keys right
 expect said ! Work, 1 item, 1 file not shown, Report
 
-# Goal: Archive a list and bring it back
+# Goal: Archive a list and undo it
 # IA-D4: an archived list goes to Archived lists, its own section.
 keys left
 keys delete

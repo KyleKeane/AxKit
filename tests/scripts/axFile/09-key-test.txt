@@ -9,13 +9,13 @@ file home\AxKit\axFile.json {"checkForUpdates": false}
 start file {temp}\orchard
 expect focus "name":"3 items"
 wait 500
-# Goal: Start testing keys
+# Goal: Start the key test
 expect commands "Test a key, Help, Diagnostics"
 expect focus "value":"inner
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
-# Goal: Hear what a key does without carrying it out
+# Goal: Hear what a key does without doing it
 # Bundle keys.
 keys f8
 expect said ! F8: Say the status

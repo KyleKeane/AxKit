@@ -12,14 +12,14 @@ expect commands "Test a key, Help, Diagnostics"
 expect commands "Copy diagnostics, Help, Diagnostics"
 refuse commands Copy diagnostics, Options
 
-# Goal: Start testing keys
+# Goal: Start the key test
 # The caret in the middle of a line, so that a move or a typed letter would show.
 keys down down right
 expect state Line 3, Column 2 ·
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
-# Goal: Hear what a key does without carrying it out
+# Goal: Hear what a key does without doing it
 # Bundle keys: said by their command's name, and not carried out (no status said, no notice opened).
 keys f8
 expect said ! F8: Say the status

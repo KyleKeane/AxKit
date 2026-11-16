@@ -40,7 +40,7 @@ refuse said ran Word wrap
 menu Let AI tools run commands
 expect said AI tools may run commands: each is said as it runs
 
-# Goal: Have an AI tool run a window's command
+# Goal: Let an AI tool run a window's command
 # MC-7.1, MC-7.5: run as the menu item would; the window says who ran it with the command's own words, and the
 # answer gives them back.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
@@ -71,7 +71,7 @@ expect said axAutomate ran Heading
 wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"No such command"}
 expect mcp error: The window has no command No such command
-# Goal: Have an AI tool change a setting
+# Goal: Let an AI tool change a setting
 # docs/axKit/app-kit.md AK-2.5: a setting runs as a command does, said in the window (out of the AI tools' reach until
 # 2026-11-13, when they began to read the palette's entries); twice, so that the run's shared theme file is as it was.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).

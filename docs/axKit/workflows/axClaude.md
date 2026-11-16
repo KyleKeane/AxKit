@@ -19,7 +19,7 @@ You hear: trust.
 3. Press Enter.
     You hear: Ready.
 
-### Switch between the message field and the conversation
+### Move between the message field and the conversation
 
 1. Press Ctrl+Tab 2 times.
 2. Press F6 2 times.
@@ -286,7 +286,7 @@ Starts with: Open axClaude with the folder keys.
 1. Press Ctrl+2.
 2. Press Escape.
 
-### Move through a long reply a screen at a time
+### Move through a long reply by page
 
 1. Type: Write 60 numbered lines, 1. to 60., each with just its number, nothing else.
 2. Press Enter.
@@ -672,7 +672,7 @@ Starts with: Open axClaude with the folder life.
 
 Starts with: Open axClaude with the folder opts.
 
-### Make the text larger or smaller
+### Change the text size
 
 1. Choose the menu item Larger text.
     You hear: Text size 10.

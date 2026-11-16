@@ -149,7 +149,7 @@ Starts with: Open axTask with the folder tasks.
 6. Press Enter.
     You hear: Added Bread.
 
-### Archive an item and bring it back
+### Archive an item and undo it
 
 1. Press Delete.
     You hear: Archived Bread.
@@ -284,7 +284,7 @@ Starts with: Open axTask with the folder tasks.
 5. Press Enter.
     You hear: Moved Home to Your lists.
 
-### Archive a list and bring it back
+### Archive a list and undo it
 
 1. Press Left.
 2. Press Delete.

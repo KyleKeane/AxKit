@@ -16,7 +16,7 @@ start process
 check commands
 expect state "status":["Processes,
 
-# Goal: List the programs that start with Windows
+# Goal: Show the startup programs
 # 4.1 Ctrl+3: the stand-in's four entries and no other, so nothing of this computer's own is listed.
 keys ctrl+3
 expect said ! Startup, 4. Check Alpha, enabled, current user's Run key
@@ -30,7 +30,7 @@ expect commands Turn on
 expect commands Remove
 refuse commands End process
 
-# Goal: Turn off a program that starts with Windows
+# Goal: Turn a startup program off
 # 4.4 Turn off: one sentence, the line reads disabled, the selection stays; the switch is Task Manager's byte 03.
 menu Turn off
 expect said ! Check Alpha turned off: it no longer starts with Windows
@@ -76,7 +76,7 @@ keys escape
 expect state "notice":null
 expect focus Startup, 4
 
-# Goal: Remove a program from those that start with Windows
+# Goal: Remove a startup program
 # 4.7 Delete, then Remove (Alt+R): one sentence, the entry gone with its switch, the selection on the entry after it.
 keys delete
 expect state "notice":"Remove Check Alpha

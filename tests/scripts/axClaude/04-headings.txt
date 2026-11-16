@@ -131,7 +131,7 @@ keys escape
 expect focus Message to Claude
 refuse said Sent
 expect state Claude: ready
-# Goal: Move through a long reply a screen at a time
+# Goal: Move through a long reply by page
 # Step 7: the long reply. Ctrl+Tab: the newest line; Page Up a screen higher, Page Down back to the last line, which
 # then repeats; Page Up from the first line stays there. The app says nothing itself.
 type Write 60 numbered lines, 1. to 60., each with just its number, nothing else.
