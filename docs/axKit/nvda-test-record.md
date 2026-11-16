@@ -6,29 +6,55 @@ What was checked with NVDA, against which version, and with what result. When a 
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
-## Owed after the workflows work (branch `workflows`)
+## 2026-11-15, night: every app, after the workflows work and axClaude's event sources; by the assistant with NVDA listening (branch `workflows` 2ef04f4)
 
-A pass of `nvda-pass.ps1` over every app. The keys of every script now go through `KeyChord` (WP-B2, WP-B4), `do`
-presses through `SendInput` under NVDA, and the pass writes the first workflow record for the `nvda` tier. The branch
-is not merged to `main` before it. (`docs/axKit/user-workflows.md`, sections 8 and 9; the pass of WP-B18 replaces this
-section with its own.)
+`.\nvda-pass.ps1`, the user away at his own word (asleep, and told that NVDA would speak), Windows 11 Pro
+10.0.26200, NVDA 2025.3.3, Claude Code 2.1.325, the build 5.9.1 of commit 2ef04f4: 135 scripts of `tests/scripts`
+and the four of `tests/nvda-scripts`, 139 in all (3650 s). All 139 passed in the one full run, with every
+announcement also spoken by NVDA, and with them every section the scripts mark: 576 goals (15 of them scripts that
+mark none and count whole) and 399 checks. The runner took the foreground itself; the user's own axClaude window was
+open throughout and was left as it was.
 
-What was built without NVDA and is not proven until that pass. On the runner's own desktop, where the keys go
-through the window's channel, the same steps pass (`tests/scripts/axDown` whole, 2026-11-15); nothing below has run
-with NVDA:
+| What | Scripts | Result |
+|---|---|---|
+| Every script | 139 | Passed |
 
-- The NVDA tier's key codes. `Native.VirtualKey` reads a key's name from `AxKit.Core/KeyChord` and no longer from a
-  table of its own. Every name the scripts press today has the code it had before, so nothing should change; the
-  names that are new to this tier (`period`, `comma`, `apps`, `slash`, `semicolon`, `add`, `subtract`) have never
-  been pressed through `SendInput`, and no script presses one yet.
-- `do` with NVDA listening: the command's key pressed through `SendInput` while the run's window is in front, and
-  what the command says heard by NVDA, as with the `keys` step it replaced. First in
-  `tests/scripts/axDown/04-find-and-go-to-line.txt`: Find (Ctrl+F), Find next (F3), Find previous (Shift+F3) and Go
-  to line (Ctrl+G).
-- `do` for a command with no key, which runs through the channel's `choose` and then waits for NVDA to start
-  speaking, as after a key: no script uses it yet, so the pass hears it only once a script does.
-- The window lists its commands at every `do` and `check commands` step (`commands data`), reading its menus as
-  `expect commands` always has; that NVDA says nothing of it has not been heard.
+This is the pass that the section "Owed after the workflows work" asked for, and it stands in that section's place.
+Of what that section listed as built without NVDA:
+
+- The NVDA tier's key codes, read from `AxKit.Core/KeyChord`: proven for every key name the scripts press. The names
+  new to this tier (`period`, `comma`, `apps`, `slash`, `semicolon`, `add`, `subtract`) are still pressed by no
+  script, so they are still unheard.
+- `do` with NVDA listening: heard in `axDown/04-find-and-go-to-line.txt`, eight steps: Find (Ctrl+F), Find next
+  (F3), Find previous (Shift+F3) and Go to line (Ctrl+G), each pressed through `SendInput` and what it says spoken
+  by NVDA. It is the one script that uses the step so far.
+- `do` for a command with no key (through the channel's `choose`): still unheard, since no script uses it.
+- The window listing its commands at every `do` and `check commands` step (23 scripts have the check): NVDA said
+  nothing of it; the speech taken around those steps holds only what the window itself said.
+- The workflow record for the `nvda` tier was not written. The option that writes it (`--record`, WP-B13 of
+  `docs/axKit/user-workflows.md`) is not built, so `docs/axKit/workflow-record.json` does not exist yet and what
+  this pass found is in this section alone.
+
+What this pass is the first to hear:
+
+- A background workflow's live progress rows kept out of the conversation and never said, the count of what runs in
+  the status bar, how far the workflow is on Ctrl+B, and Options, Background work, "Show Claude Code's live progress
+  rows in the conversation" (`axClaude/27`).
+- Options, Developer: "Say the event sources" ("Events. Marks: 3. Hooks: on, 2 received. Session file: followed, 4
+  entries. Core: in shadow."), and "Events from Claude Code's hooks" and "Ground the conversation in Claude Code's
+  session file" with what each says when it is turned off and on (`axClaude/28`, `30`, `32`).
+- A turn against the stand-in of Claude Code, with its marks, its events and its session file (`axClaude/29`, `30`,
+  `32`), and a turn of the real Claude Code with the hooks' file passed (`axClaude/31`): no settings warning, two
+  events received, the session file followed, the stop event 63 ms after the turn's end mark.
+- The goals and checks that the scripts now mark: they change nothing that is said.
+
+Still unheard after this pass: `do` for a command without a key, and the seven key names above.
+
+Owed to the user's ear: a real background workflow with the live rows hidden (that nothing of them is heard, and
+Ctrl+B when he asks); "Say the event sources" in his own session, and whether its sentence is good aloud; the how-to
+pages of `docs/axKit/workflows` read with NVDA, and axHelp's answers from them; his own session with "Events from
+Claude Code's hooks" turned on, when he chooses to (that nothing is heard differently, and whether Claude Code's end
+at a restart or a close feels slower).
 
 ## 2026-11-15, evening: every app, after 5.9.1; by the assistant with NVDA listening (`main` 1db380e, then the fix of axClip's scripts)
 

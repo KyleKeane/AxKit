@@ -1775,6 +1775,19 @@ Each change goes in the commit of the package that makes it true.
 
 ## 9. The build plan
 
+**State on 2026-11-15, the end of the first night.** Built, on the branch `workflows`: WP-B0 to WP-B12, and WP-B14
+for every app's scripts (five parts, a to e; the plan had three). One package was added after the first pages were
+read, WP-B8b, the how-to written for the ear (WF-7 as it now stands, WF-D-31). WP-B11 built the traces and kept none:
+the values a window reports come from a watch every 50 ms, and no goal's trace came out equal three times running
+(the commit d95bf84 says what was seen); no script carries `# Stable` yet. Not built: WP-B13 (the record in the
+command line; its pure code, `WorkflowRecord`, exists), WP-B15 (the converter), WP-B16 (the AI tools mode) and
+WP-B17 (axClaude and axHelp join the inventory). So `--record`, `--convert` and `--ai-tools` are still refused by
+the runner as not built, the scripts but one press their keys through `keys` (the pages name the command a chord
+belongs to from the inventory), and `docs/axKit/workflow-record.json` does not exist. The pass of WP-B18 was made
+that night on 2ef04f4, without the record: 139 scripts with NVDA listening, all passed
+(`docs/axKit/nvda-test-record.md`). The packages' own sections below stay as the plan for what is left, which is
+why this section is not folded into one paragraph as WP-B18's step 4 says.
+
 Nineteen work packages, WP-B0 to WP-B18 (WP-B14 is three parts), in the order of their value. Each is for one agent
 and leaves the repository building with every test passing; 9.1 gives each its size. A package of pure code is
 unused until the package that wires it; it is covered by its own tests, as `app-kit.md` section 5 did it.
