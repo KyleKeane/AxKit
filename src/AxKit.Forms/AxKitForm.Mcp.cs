@@ -83,7 +83,7 @@ public abstract partial class AxKitForm
             // The outcome is kept before the click, which may hold this thread in a Windows dialog. The user may have
             // started typing in the window between the check and now (MC-7.8).
             var notRun = WhyNotRunForMcp(allowed: true)
-                ?? (McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()) ? "the user was working in the window" : null);
+                ?? (McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()) ? McpRun.UserWasBusy : null);
             var item = notRun is null ? ToolItem(label, menus) : null;
             notRun ??= item is null ? NotAvailableNow : null;
             _mcpRun = (ticket, true, notRun);

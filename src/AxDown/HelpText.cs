@@ -44,7 +44,7 @@ public static class HelpText
           Ctrl+Space: navigation mode, said "Navigation mode"; again: edit mode, said "Edit mode". The status bar shows "navigation mode" after the file's name. Every window starts in edit mode
           The letters of the Ctrl keys above, without Ctrl: h and Shift+H heading, 1 to 6 and Shift with them a heading of that level, k link, l list, i list item, q block quote, t table, each the next one and with Shift the previous one
           The arrows, Home, End, Page Up, Page Down and the paragraph keys move, and with Shift select, as in edit mode. Ctrl+C copies, Ctrl+A selects all, and the Ctrl jumps above work too
-          Nothing changes the text: a letter that is no jump, a digit, Space, Enter, Tab, Backspace, Delete, Ctrl+V, Ctrl+X, Ctrl+Z and Ctrl+Y play the edge sound; Undo, Redo, Cut and Paste from the menus say "Navigation mode: press Ctrl+Space to edit"
+          Nothing changes the text: a letter that is no jump, a digit, Space, Enter, Tab, Backspace, Delete, Ctrl+V, Ctrl+X, Ctrl+Z and Ctrl+Y play the edge sound; Undo, Redo, Cut and Paste from the menus play it too and say "Navigation mode: press Ctrl+Space to edit"
         """ + BundleHelp.NoticesSection("axDown", "the text", navigateMenu: true);
 
     /// <summary>docs/axDown/user-guide.md, embedded in the executable at build time.</summary>

@@ -726,6 +726,16 @@ Space in the box said nothing.
 | Space: "checked", once | Passed |
 | Space again: "not checked", once | Passed |
 
+## Owed: a menu's refusal in navigation mode and the last full stop of joined words (2026-11-16, `docs/axKit/SPEC.md` AX-8.13 and AX-7.3)
+
+Two changes that are heard, made with the repair of what axDown answered an AI tool differently than a key; the
+scripts of axDown, axJSON, axPreview, axTerminal, axTask and the AI tools pass on the runner's desktop. With NVDA:
+
+1. In axDown, in navigation mode, choose Edit, Undo from the menu: the edge sound, then "Navigation mode: press
+   Ctrl+Space to edit". Before, the words came without the sound.
+2. Any announcement that joins several pieces, such as the words after an AI tool ran a command: the last piece keeps
+   its full stop, so the sentence ends as it does when said alone. Listen for a changed pause at the end.
+
 ## Owed: the AI tools run a window's command (the branch `push2/mcp-run`, 2026-11-11, `docs/axKit/mcp.md` MC-7)
 
 New steps, none heard yet; `tests/scripts/mcp/02-run-commands.txt` and `03-run-asks-first.txt` drive them on the

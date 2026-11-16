@@ -588,10 +588,19 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   label and menus, in the script's one window, which the preamble's `axkit_windows` answer named, and the step waits
   for the tool's answer. A refusal fails the step with the tool's words; only the refusal of `mcp.md` MC-7.8 ("The
   user is working in this window right now", which counts the whole session's last key press, the user's own in his
-  own windows included) is waited out: the call is sent again after 3.5 seconds, three times at most. Every other
+  own windows included) is waited out: the call is sent again after 3.5 seconds, three times at most. The same
+  check made a second time as the window takes the run up gives no refusal but an answer whose `notRun` ends "the
+  user was working in the window": nothing ran, and the call is sent again once, after the same wait
+  (`AiToolsMode.IsBusyAtTakeUp`, 2026-11-16). A `do` step in the window's key test never goes through the tools:
+  the window's listing names the key test where a notice's title stands, so `MayRun` is false, and the step is the
+  keyboard's, where it fails as under any notice (WF-4, R-60); the scripts press the key test's keys with `keys`.
+  Every other
   step plays by the keyboard as written, so the script's state holds. The expectations stay as they are: what the
-  window says of the command is on its timeline as ever, after the words that say who ran it. The detail of such a
-  step is `AI tools: <label>`.
+  window says of the command is on its timeline as ever, after the words that say who ran it. One expectation
+  knows of the mode: `expect quiet` does not count an announcement that is those words alone, for a command the mode
+  ran ("axAutomate ran Find": by its key the command says nothing, which is what the step checks), and its detail
+  names what it left out; the command's own words joined to them are counted (`AiToolsMode.IsOwnWords`,
+  2026-11-16). The detail of such a step is `AI tools: <label>`.
 - WF-9.5 **What is reported and recorded.** Each section's line of the report ends with how many of its input
   steps went through the tools: "through the AI tools: 3 of 8 inputs". A section is entered in the workflow record
   for the `ai-tools` tier when at least one of its steps ran through the tools; one with none gets no entry, and a
@@ -1375,6 +1384,7 @@ public static class AiToolsMode
     public static bool Covers(IReadOnlyList<string> fileLines);                    // WF-9.2: which scripts the mode plays
     public static bool MayRun(WindowCommands listing, ListedCommand row);          // WF-9.4: no notice, not a key alone, ai true, mark not act
     public static bool IsBusyRefusal(string answer);                               // WF-9.4: the refusal of MC-7.8, which is waited out
+    public static bool IsBusyAtTakeUp(string answer);                              // WF-9.4: accepted, then not taken up for the user at work; sent again once
     public static string Call(ListedCommand row);                                  // the mcp call line of WF-9.4, for the window the preamble's answer named
 }
 ```
@@ -1802,7 +1812,10 @@ scripts passed and 4 failed where the window does or says something else for the
 bar's line and column after a Find the tools opened; a joined announcement's last full stop; the key test, which
 refuses the tools; Undo in navigation mode, which plays no edge sound for them). `04-find-and-go-to-line.txt`, the
 proof script, stops at its line 17 on the first of these, so the record holds its first goal as failed for
-`ai-tools`. WP-B17 was built the same day (426dd7c7): the command inventory gained axClaude's and axHelp's commands,
+`ai-tools`. The four were taken up the same day: the editor's Find notice searches through the window's own find,
+so the status bar follows; a joined announcement's last piece keeps its full stop (`SaidTogether`); a menu command
+refused in navigation mode plays the edge sound; and the key test needed nothing more, since the window's listing
+names it (R-60) and the script presses its keys with `keys`. All 8 scripts then passed in the mode. WP-B17 was built the same day (426dd7c7): the command inventory gained axClaude's and axHelp's commands,
 so it holds every app, and the scripts of axClaude that need no live model run their commands by name. The scripts
 of the other ten apps (axAutomate, axCalc, axGIT, axHelp, axJSON, axMCP, axMedia, axPass, axPreview, axProcess) hold
 no `do` line yet: they press their command keys through `keys` (the pages name the command a chord belongs to

@@ -227,7 +227,8 @@ Ctrl+Backspace, Tab (types a tab), Enter (a new line).
   the page and paragraph keys move and with Shift select; Ctrl+C and Ctrl+A act; a key that would change the text (a
   letter that is no jump, a digit, Space, Enter, Tab, Backspace, Delete, Ctrl+V, Ctrl+X, Ctrl+Z, Ctrl+Y) plays the
   edge sound and the file stays unchanged (no star in the title); Undo, Redo, Cut, Paste and an app's command
-  (axJSON's Format) from the menus say "Navigation mode: press Ctrl+Space to edit". The status bar's left part ends in
+  (axJSON's Format) from the menus play the edge sound and say "Navigation mode: press Ctrl+Space to edit" (bundle
+  AX-8.13, the same when an AI tool runs one). The status bar's left part ends in
   ", navigation mode" (AD-9). Ctrl+Space again says "Edit mode". The mode is not remembered: every window starts in
   edit mode, and New and Open keep the mode the window is in. axJSON is the same shell (its letters k, j, l, i, e);
   axPreview's text is read only, and Ctrl+Space there says "Read only: there is no edit mode here".
@@ -245,7 +246,10 @@ never a separate window.
   About. In the text of any of them, the navigation keys of section 9 work as in the editor (bundle AX-7.2).
 - AD-6.3 Find: the notice with the field "Text to find" (as axClaude's); Enter finds the next match from the caret,
   wrapping once at the end, selects it and returns the focus to the editor, where NVDA reads the selection's line.
-  "Not found" is spoken when there is none. F3 and Shift+F3 repeat without the notice.
+  "Not found" is spoken when there is none. F3 and Shift+F3 repeat without the notice. The status bar's line and
+  column follow every match, whatever opened the notice and whatever answered it (a key, the menu, the command
+  palette, an AI tool's run): the notice's Find next is the window's own find (`TextEditorForm.FindInEditor`,
+  2026-11-16; until then they followed only by the key-up of the key pressed).
 - AD-6.4 Go to line: a field in the question area under the editor, named "Go to line (now line 12, column 4)";
   Enter moves the caret to the start of that line (clamped to the last) and says "Line n of m", or "Not a line
   number" when the text is not a number, the caret staying; Escape cancels; the name is how the position is read on
@@ -258,7 +262,7 @@ window has the accessible role Window, as axClaude's has, so that NVDA names it;
 then. Afterwards, spoken through one UI Automation notification on the editor (AX-7.3), and only these: "Saved" (after a save and
 after Save as); "Reloaded, <name> changed on disk" and "<name> changed on disk; Save will ask" on coming back to the window, "Reloaded" after Reload and lose mine (AD-3.6); "Not found" (find); "Line n of m" after Go to line, or "Not a line number"; "Word wrap on" / "Word wrap off"; "Undone", "Redone", "Nothing to undo", "Nothing to redo" (AD-2.5); "Text size n"; "No file yet" (Show current file in on Untitled);
 "Install, heading level 2" after a heading jump, "No next heading" / "No previous heading" when there is none;
-"Navigation mode" / "Edit mode" on Ctrl+Space, and "Navigation mode: press Ctrl+Space to edit" for a menu command that would change the text in navigation mode (AD-5.3);
+"Navigation mode" / "Edit mode" on Ctrl+Space, and "Navigation mode: press Ctrl+Space to edit", after the edge sound, for a menu command that would change the text in navigation mode (AD-5.3);
 "Copied" is NVDA's own. Opening a file speaks nothing of its own: the focus arrives in the editor and NVDA reads
 its name (the file's) and the first line.
 

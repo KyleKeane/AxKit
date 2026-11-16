@@ -235,6 +235,9 @@ public sealed class Run(string exe, string temp, bool hosted = false)
 
     private readonly List<string> _preambleLines = [];
 
+    /// <summary>The labels of the commands the mode ran through the tools in this script, for <c>expect quiet</c> (<see cref="AiToolsMode.IsOwnWords"/>).</summary>
+    private readonly HashSet<string> _ranThroughTools = new(StringComparer.Ordinal);
+
     /// <summary>Whether the line just played went through the AI tools (WF-9.5: the count of a section's inputs that did), a step the tool refused included. Taken: false until the next such step.</summary>
     public bool TakeThroughTools()
     {
@@ -300,7 +303,9 @@ public sealed class Run(string exe, string temp, bool hosted = false)
     /// waits for the tool's answer, up to 60 s, in place of the key press. An answer that holds <c>"ran"</c> passes
     /// the step, with the detail "AI tools: " and the label. A refusal ("error: ...") fails it with the tool's words,
     /// but the refusal of docs/axKit/mcp.md MC-7.8 (the user at work, which counts the whole session's last key
-    /// press): the call is sent again after 3.5 s, three times at most. Any other answer (the command did not run, the
+    /// press): the call is sent again after 3.5 s, three times at most. An answer that the run was accepted and not
+    /// taken up for the same reason (<see cref="AiToolsMode.IsBusyAtTakeUp"/>) is sent again once, after the same
+    /// wait, since nothing ran. Any other answer (the command did not run, the
     /// window asks the user, the window closed) fails the step with that answer.
     /// </summary>
     private (bool, string?) ThroughTools(ListedCommand row)
@@ -341,9 +346,20 @@ public sealed class Run(string exe, string temp, bool hosted = false)
                 return (false, $"{AiToolsMode.Detail}{row.Label}: {answer}");
             }
 
-            return answer.Contains("\"ran\"", StringComparison.Ordinal)
-                ? (true, AiToolsMode.Detail + row.Label)
-                : (false, $"{AiToolsMode.Detail}{row.Label}: {(answer.Length > 400 ? answer[..400] + " …" : answer)}");
+            if (AiToolsMode.IsBusyAtTakeUp(answer) && again < AiToolsMode.TakeUpRetries)
+            {
+                // MC-7.8's second check: accepted, then not taken up for the user at work. Nothing ran: once more.
+                Thread.Sleep(AiToolsMode.BusyWaitMs);
+                continue;
+            }
+
+            if (answer.Contains("\"ran\"", StringComparison.Ordinal))
+            {
+                _ranThroughTools.Add(row.Label);
+                return (true, AiToolsMode.Detail + row.Label);
+            }
+
+            return (false, $"{AiToolsMode.Detail}{row.Label}: {(answer.Length > 400 ? answer[..400] + " …" : answer)}");
         }
     }
 
@@ -569,9 +585,14 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         if (what == "quiet")
         {
             Thread.Sleep(Number(text, "expect " + rest));
-            var said = window.Pending().Where(e => e.Kind == "say").ToList();
+            var all = window.Pending().Where(e => e.Kind == "say").ToList();
+            // WF-9.4: the words that say who ran a command the mode ran, said alone, are the mode's own.
+            var own = AiTools ? all.Where(e => AiToolsMode.IsOwnWords(e.Text, _ranThroughTools)).ToList() : [];
+            var said = all.Except(own).ToList();
             window.TakeAll();
-            return (said.Count == 0, said.Count == 0 ? null : "said: " + string.Join(" | ", said.Select(e => e.Spoken)));
+            return said.Count > 0
+                ? (false, "said: " + string.Join(" | ", said.Select(e => e.Spoken)))
+                : (true, own.Count == 0 ? null : AiToolsMode.QuietDetail + string.Join(" | ", own.Select(e => e.Spoken)));
         }
 
         var timeout = timeoutMs > 0 ? timeoutMs : what == "said" ? 60_000 : 10_000;

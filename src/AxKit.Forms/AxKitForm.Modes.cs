@@ -77,7 +77,9 @@ public abstract partial class AxKitForm
 
     /// <summary>
     /// A menu command that would change <paramref name="text"/> (Undo, Redo, Cut, Paste, an editor's command on the
-    /// whole text): true, with "Navigation mode: press Ctrl+Space to edit" said, while the text is in navigation mode.
+    /// whole text): true, with the edge sound and "Navigation mode: press Ctrl+Space to edit" said, while the text is
+    /// in navigation mode. The sound is the one the command's key gives there (<see cref="TakeNavigationKey"/>), so a
+    /// refusal sounds the same from the menu, from the palette and for an AI tool (2026-11-16; words alone until then).
     /// </summary>
     protected bool RefusedInNavigation(AxKitTextBox text)
     {
@@ -86,6 +88,7 @@ public abstract partial class AxKitForm
             return false;
         }
 
+        Sounds.Edge();
         Announce(TextModes.Refused(BundleKeys.Text(BundleKeys.ToggleMode)), true);
         return true;
     }

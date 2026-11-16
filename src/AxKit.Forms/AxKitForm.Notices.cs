@@ -469,9 +469,8 @@ public abstract partial class AxKitForm
         return NoticeOpen ? Overlay.Announce(text, interrupt) : Announcer.Raise(AnnounceSource, text, interrupt);
     }
 
-    /// <summary>"hello. Done": the pieces without their own trailing full stops, joined by one.</summary>
-    private static string Sentence(IEnumerable<string> pieces) =>
-        string.Join(". ", pieces.Select(piece => piece.TrimEnd('.', ' ')).Where(piece => piece.Length > 0));
+    /// <summary>Several announcements as one, the last with its own ending (<see cref="SaidTogether.Sentence"/>).</summary>
+    private static string Sentence(IEnumerable<string> pieces) => SaidTogether.Sentence(pieces);
 
     /// <summary>The first activation: what waited for it is said half a second on, so that NVDA has the window in front when the notifications arrive.</summary>
     private void SayWhatWaitedForActivation()

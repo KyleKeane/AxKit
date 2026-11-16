@@ -311,7 +311,9 @@ menu, the palette and the automated checks in the table of `command-language.md`
   "Claudette" is said as Claudette; otherwise the name the pairing recorded, its hidden characters made visible,
   at most 40 characters), joined to the command's own words in one notification ("Claude ran Word wrap. Word wrap
   off", AX-7.3), so that the command's interrupting announcement never cuts it off; alone when the command says
-  nothing. NVDA does not speak the notifications of a window that is not in front, so a run in such a window also
+  nothing. The command's own words arrive after those words exactly as its key gives them, a full stop at their end
+  included ("Claude ran Block quote. Block quote, A block quote, line one.", `SaidTogether.Sentence`), and a command
+  that refuses with a sound sounds it for the tool too (the edge sound of navigation mode, AX-8.13). NVDA does not speak the notifications of a window that is not in front, so a run in such a window also
   plays the notice chime and flashes the window on the taskbar until the user comes to it (once for a burst: no chime
   again in the same window within 5 s of the last, `McpRun.Chimes`); its words are then in the
   window's recent actions and in `axkit_window_said`, not spoken. The run is in the window's recent actions as a
@@ -327,7 +329,8 @@ menu, the palette and the automated checks in the table of `command-language.md`
   (Navigate's jumps, Message field, Find). While the window is in front and the user pressed a key or moved the mouse
   within the last 3 seconds (`GetLastInputInfo`), every run is refused: "The user is working in this window right
   now ...; try again in a moment" (`McpRun.IsUserBusy`), and checked again as the posted run is taken up, when it
-  ends in `notRun` "the user was working in the window". A window behind is never typed in, so it runs there, heard as
+  ends in `notRun` "the user was working in the window" (`McpRun.UserWasBusy`; nothing ran, so a client may ask
+  again). A window behind is never typed in, so it runs there, heard as
   MC-7.5 says. The user's own Run of an act command is not held to it, since that Run is the key just pressed.
 - MC-7.7 **Not in this part**: arguments for a command (a path, a name, a text: a command that needs one asks the
   user in its own notice), typed data tools (section 9, through a window rather than without one, MC-D10), the scopes

@@ -864,8 +864,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
        undo message are stopped by the control itself, with the edge sound. The edge sound, not a sentence: it comes
        on every stray key, where words would be noise (`Sounds.Edge`, AX-8.6).
     5. **A menu command that would change the text** (the editors' Undo, Redo, Cut, Paste and axJSON's Format) does
-       nothing and says "Navigation mode: press Ctrl+Space to edit", since a command chosen from a menu needs its
-       reason.
+       nothing, plays the edge sound and says "Navigation mode: press Ctrl+Space to edit", since a command chosen
+       from a menu needs its reason. The sound is the one the command's key gives (Ctrl+Z, rule 4), so the refusal
+       sounds the same from the menu, from the command palette and when an AI tool runs the command (MC-7.5), which
+       gives what the menu item gives (2026-11-16; words alone until then).
   - The key test (AX-8.12) says the mode key by what it does where the focus is ("Ctrl+Space: Edit mode or
     navigation mode: to navigation mode", "...: says this text is read only", "...: there is no text with modes where
     you are"), and in a text in navigation mode its letters and refused keys by what they do there ("H: moves to the
@@ -1437,7 +1439,10 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
 - AX-7.3 The caret never moves except as the direct result of the user's own command. The result of a navigation
   command is announced through a UI Automation notification, joined into one notification when several things arrive
   at once. Nothing speaks on a plain arrow key; information is given on demand. Two notifications raised back to back
-  are not both spoken (NVDA drops the second), so what a window has to say at one moment goes as one. What a window
+  are not both spoken (NVDA drops the second), so what a window has to say at one moment goes as one: the pieces
+  joined by a full stop and a space, each piece that another follows without its own trailing full stop, the last
+  piece exactly as it was given, its own full stop included (`AxKit.Core/SaidTogether`; until 2026-11-16 the last
+  piece lost its full stop as well, so a sentence ended differently joined than said alone). What a window
   announces before it has been activated for the first time waits for the activation and is said then, in order
   (`AxKitForm.Announce`, 2026-11-01): NVDA ignores a window that is not in front, and a window started by a program in
   the background comes up behind until it is activated, so what it said as it opened was lost.

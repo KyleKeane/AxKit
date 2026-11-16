@@ -169,7 +169,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 8. Navigation mode (bundle AX-8.13, AD-5.3): Ctrl+Space: "Navigation mode", and NVDA+End (or F8) reads ", navigation mode"
    after the file's name. h, Shift+H, 2, k, l, i: the same jumps and words as Ctrl with the letter. A letter that is
    no jump, Space, Enter, Backspace, Delete, Ctrl+V and Ctrl+Z: the edge sound, the text and the title unchanged.
-   Actions, Undo: "Navigation mode: press Ctrl+Space to edit". Arrows and Shift+arrows move and select as ever.
+   Actions, Undo: the edge sound and "Navigation mode: press Ctrl+Space to edit". Arrows and Shift+arrows move and select as ever.
    Ctrl+Space: "Edit mode"; a letter types. In Help, User guide (a read-only text), Ctrl+Space: "Read only: there is
    no edit mode here".
 

@@ -119,6 +119,33 @@ public static class AiToolsMode
         answer.Contains("The user is working in this window right now", StringComparison.Ordinal);
 
     /// <summary>
+    /// WF-9.4: whether a tool's answer says that the run was accepted and then not taken up, because the user began to
+    /// work in the session in between (docs/axKit/mcp.md MC-7.8, <see cref="McpRun.UserWasBusy"/>): nothing ran, and
+    /// the call is sent again, once (<see cref="TakeUpRetries"/>).
+    /// </summary>
+    public static bool IsBusyAtTakeUp(string answer) =>
+        !answer.Contains("\"ran\"", StringComparison.Ordinal) && answer.Contains("did not run: " + McpRun.UserWasBusy, StringComparison.Ordinal);
+
+    /// <summary>The name the runner gives itself as an MCP client (<see cref="Broker"/>'s <c>initialize</c>), which a window says when it ran a command for it: "axAutomate ran Find". A test holds it to the broker's line.</summary>
+    public const string Client = "axAutomate";
+
+    /// <summary>
+    /// WF-9.4: whether an announcement is the mode's own and nothing else: the words that say who ran a command the
+    /// mode ran through the tools (<see cref="McpRun.Said"/>, docs/axKit/mcp.md MC-7.5), alone, as a window says them
+    /// when the command itself says nothing. An <c>expect quiet</c> step does not count such an announcement: by its
+    /// key the command says nothing, and that is what the step checks. Words of the command's own joined to them
+    /// ("axAutomate ran Word wrap. Word wrap off") are no such announcement, and are counted.
+    /// </summary>
+    public static bool IsOwnWords(string said, IReadOnlyCollection<string> ranLabels) =>
+        ranLabels.Any(label => string.Equals(said, McpRun.Said(Client, label), StringComparison.Ordinal));
+
+    /// <summary>What an <c>expect quiet</c> step that passed shows when it left the mode's own words out, before them (WF-9.4).</summary>
+    public const string QuietDetail = "AI tools: not counted, the words that say who ran a command: ";
+
+    /// <summary>How many times a run not taken up for the user at work is sent again (<see cref="IsBusyAtTakeUp"/>), each after <see cref="BusyWaitMs"/>.</summary>
+    public const int TakeUpRetries = 1;
+
+    /// <summary>
     /// WF-9.4: what follows <c>mcp call</c> for the row: <c>axkit_window_run</c> with the window (<c>{window}</c>,
     /// which the runner fills with the id the preamble's <c>axkit_windows</c> answer named), the command's label, and
     /// the menus that hold it, left out for a row with none.

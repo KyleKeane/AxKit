@@ -78,7 +78,7 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
   problem ends the outline there, with the elements before it still listed.
   In navigation mode (Ctrl+Space, bundle AX-8.13, axDown AD-5.3: the same shell) the letters alone do what Ctrl with
   them does here: k, j, l, i, e, and with Shift the previous one; nothing changes the text, and Format from the menu
-  says "Navigation mode: press Ctrl+Space to edit".
+  plays the edge sound and says "Navigation mode: press Ctrl+Space to edit".
 - AJ-2.3 **Format**, Edit → Format (Ctrl+Shift+F): the document written out again with two spaces per level, one member
   or item per line, keys and strings in double quotes with JSON's escapes, the keys in their order, the text's own line
   ending and one at the end; empty containers as `{}` and `[]`. The repairs of AJ-2.2 are made on the way and named:

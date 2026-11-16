@@ -8,14 +8,15 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 32 owed in all.
-- Owed a hearing with NVDA: 13.
+- 33 owed in all.
+- Owed a hearing with NVDA: 14.
 - Owed a live check with a real outside program or situation: 9.
 - Owed a window check on the hidden desktop: 9.
 - Owed a test in code: 1.
 
 ## Owed a hearing with NVDA
 
+- The NVDA test record: a menu's refusal in navigation mode and the last full stop of joined words (2026-11-16, `docs/axKit/SPEC.md` AX-8.13 and AX-7.3). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the AI tools run a window's command (the branch `push2/mcp-run`, 2026-11-11, `docs/axKit/mcp.md` MC-7). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the twelve decided changes (the branch `improvements`, 2026-11-09, `docs/axKit/inventory-2026-11-09.md` section 11). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the reports, what the scripts leave (2026-11-08, `docs/axKit/reports.md`). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.

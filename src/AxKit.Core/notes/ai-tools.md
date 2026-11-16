@@ -32,7 +32,8 @@
   axClip) with `AppRefusal`, `SwitchOff`, `Find` (since 2026-11-15 a call of `CommandNames.Resolve` and a switch over
   its match, in the tool's own four refusals word for word; the whole line too, MC-7.1), `Plain` (`CommandNames.Plain`),
   `Speaker` (Claude Code's own names matched whole, `ClaudeCodeNames`), `Said` ("Claude ran Word wrap"), `AskTitle`, `AskText` with `Names`, `ShownTarget` and `TargetRefusal` (MC-7.3: the question names what the command would act on, and a Run after the selection changed is refused, by `RunTarget`'s identity, never its shown words), `Chimes` (MC-7.5: one chime for a burst),
-  and `IsUserBusy` with `UserBusy` (MC-7.8: no run in a window in front within 3 s of the user's last input); the
+  and `IsUserBusy` with `UserBusy` (MC-7.8: no run in a window in front within 3 s of the user's last input) and
+  `UserWasBusy` (the reason in `notRun` when the second check, as the run is taken up, stops it; 2026-11-16); the
   switch itself is `McpSettings.RunCommands`, sealed (its " run" in the seal only while on, so older files still
   check), `McpAccess.RunsCommands` over the pure `RunsCommandsIn`, and `SetRunCommands`; `Switched` (the access off
   takes the switch with it) and `Forgotten` (Forget: the clients and the switch) are the pure halves of `SetEnabled`

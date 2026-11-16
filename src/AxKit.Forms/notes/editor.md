@@ -19,6 +19,12 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
   - The whole text is read on every change (`_editor.Text`), accepted for the files the editors hold.
   - `LoadDocument` is the read (`ReadDocument`: what the window keeps on a refusal, a missing file in the viewer, a failed read) and the showing (`ShowDocument`).
   - The text's context menu is the bar's Context (Cut, Copy, Paste, Select all; `ContextFromControl`, AX-9.11, 2026-11-11) and the control's undo buffer is emptied after each change (AD-D1); Actions holds Undo, Redo and the app's commands, Navigation the finds, Go to line and the jumps.
+  - Find (AD-6.3): Ctrl+F is `ShowFindInEditor`, the base's Find notice whose Find next is `FindInEditor`, the same
+    function as F3, so the status bar is scheduled after every match. Never hand the editor to the base's
+    `ShowFind` for a text box: its search moves the caret and the status bar followed only by a key-up in the
+    editor, which an AI tool's run, the palette and the menu do not give (found by the AI tools mode, 2026-11-16).
+  - A menu command refused in navigation mode (`RefusedInNavigation`, the window base's) plays the edge sound its
+    key plays and says why (AX-8.13); a new command that changes the text asks it first.
   - `OnActivated` waits while a dialog closes (`DialogShowing`); the caret arithmetic is `AxKit.Core.TextLines`.
   - The viewer's own part (the read-only setup, its File items, its keys, the hand-over, Reload, Edit in axDown or axJSON) is `TextEditorForm.Viewer.cs` (2026-10-23).
     - Since 2026-10-24 the read-only mode also takes `EditorApp.Render` (a `ViewerPage`: the document, the renderer's name for the status bar, the Contents lines and the `ViewerWayOut`) and `EditorApp.Details` (the lines of a Details list, `AxKitList`, docked under the text, read on a task, the same file's lines kept until the new ones come);

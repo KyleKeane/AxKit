@@ -133,7 +133,7 @@ public sealed partial class TextEditorForm : AxKitForm
         }
 
         var navigate = new ToolStripMenuItem();
-        Add(navigate, new Command("&Find...", BundleKeys.Find, () => ShowFind(_editor)) { Mark = CommandMark.Read });
+        Add(navigate, new Command("&Find...", BundleKeys.Find, ShowFindInEditor) { Mark = CommandMark.Read });
         Add(navigate, new Command("Find &next", BundleKeys.FindNext, () => FindInEditor(1)) { Mark = CommandMark.Read });
         Add(navigate, new Command("Find pre&vious", BundleKeys.FindPrevious, () => FindInEditor(-1)) { Mark = CommandMark.Read });
         Add(navigate, new Command("&Go to line...", EditorKeys.GoToLine, ShowGoToLine) { Mark = CommandMark.Read });
@@ -513,9 +513,23 @@ public sealed partial class TextEditorForm : AxKitForm
 
     // ---- find and go to line (AD-6.3, AD-6.4) ----
 
-    /// <summary>F3 and Shift+F3: the base's find on the editor, then the status bar for the new caret.</summary>
+    /// <summary>
+    /// Ctrl+F: the Find notice, whose Find next is <see cref="FindInEditor"/>, so that the status bar follows the
+    /// match whoever opened the notice. Until 2026-11-16 the notice searched by the base alone, and the line and
+    /// column came right only by the key-up of the key that had opened or answered it: wrong after a Find an AI tool
+    /// ran (docs/axKit/user-workflows.md WF-9.6).
+    /// </summary>
+    private void ShowFindInEditor() => ShowFind(_ => FindInEditor(1));
+
+    /// <summary>F3 and Shift+F3, and the Find notice's Find next: the base's find on the editor, then the status bar for the new caret; the Find notice when nothing was searched for yet.</summary>
     private void FindInEditor(int direction)
     {
+        if (FindText.Length == 0)
+        {
+            ShowFindInEditor();
+            return;
+        }
+
         if (FindNext(_editor, direction))
         {
             ScheduleStatus();

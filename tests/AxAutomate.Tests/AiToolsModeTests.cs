@@ -129,4 +129,49 @@ public sealed class AiToolsModeTests
         Assert.False(AiToolsMode.IsBusyRefusal("{\"ran\": \"Find\"}"));
         Assert.False(AiToolsMode.IsBusyRefusal(string.Empty));
     }
+
+    [Fact]
+    public void The_words_that_say_who_ran_a_command_are_the_modes_own_only_when_said_alone()
+    {
+        // WF-9.4: what a window says for a command the mode ran, by AxKit.Core's McpRun.Said and the runner's own name.
+        string[] ran = ["Find", "Find next"];
+        Assert.True(AiToolsMode.IsOwnWords(AxKit.Core.Mcp.McpRun.Said(AiToolsMode.Client, "Find"), ran));
+        Assert.True(AiToolsMode.IsOwnWords(AxKit.Core.Mcp.McpRun.Said(AiToolsMode.Client, "Find next"), ran));
+
+        // The command's own words joined to them, a command the mode did not run, another client and other words count.
+        Assert.False(AiToolsMode.IsOwnWords(AxKit.Core.Mcp.McpRun.Said(AiToolsMode.Client, "Find") + ". Not found", ran));
+        Assert.False(AiToolsMode.IsOwnWords(AxKit.Core.Mcp.McpRun.Said(AiToolsMode.Client, "Undo"), ran));
+        Assert.False(AiToolsMode.IsOwnWords(AxKit.Core.Mcp.McpRun.Said("claude-code", "Find"), ran));
+        Assert.False(AiToolsMode.IsOwnWords("Not found", ran));
+        Assert.False(AiToolsMode.IsOwnWords(AxKit.Core.Mcp.McpRun.Said(AiToolsMode.Client, "Find"), []));
+    }
+
+    [Fact]
+    public void The_modes_client_name_is_the_one_the_broker_gives()
+    {
+        var root = AppContext.BaseDirectory;
+        while (!File.Exists(Path.Combine(root, "AxKit.sln")))
+        {
+            root = Path.GetDirectoryName(root) ?? throw new InvalidOperationException("No repository above the tests.");
+        }
+
+        var broker = File.ReadAllText(Path.Combine(root, "src", "AxAutomate.Core", "Broker.cs"));
+        Assert.Contains("\"clientInfo\":{\"name\":\"" + AiToolsMode.Client + "\"}", broker, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_run_not_taken_up_for_a_user_at_work_is_told_apart()
+    {
+        // mcp.md MC-7.8: the run's answer as the window's pipe writes it, its reason AxKit.Core's McpRun.UserWasBusy.
+        var notTakenUp = "{\"notRun\": \"Find did not run: " + AxKit.Core.Mcp.McpRun.UserWasBusy + ".\", \"said\": []}";
+        Assert.True(AiToolsMode.IsBusyAtTakeUp(notTakenUp));
+        Assert.False(AiToolsMode.IsBusyRefusal(notTakenUp));
+        Assert.Equal(1, AiToolsMode.TakeUpRetries);
+
+        // Another reason, a refusal and a run that ran are not it.
+        Assert.False(AiToolsMode.IsBusyAtTakeUp("{\"notRun\": \"Find did not run: its menu item is not available now.\"}"));
+        Assert.False(AiToolsMode.IsBusyAtTakeUp("error: " + AxKit.Core.Mcp.McpRun.UserBusy));
+        Assert.False(AiToolsMode.IsBusyAtTakeUp("{\"ran\": \"Find\", \"said\": [\"axAutomate ran Find\"]}"));
+        Assert.False(AiToolsMode.IsBusyAtTakeUp(string.Empty));
+    }
 }

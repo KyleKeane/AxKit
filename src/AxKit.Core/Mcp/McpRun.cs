@@ -105,6 +105,13 @@ public static class McpRun
     /// <summary>The refusal while the user works in the window (MC-7.8).</summary>
     public const string UserBusy = "The user is working in this window right now (a key or the mouse within the last 3 seconds): commands run in a window in front only while the user pauses. Try again in a moment.";
 
+    /// <summary>
+    /// Why a run that was accepted did not happen (MC-7.8): the user began to work in the window between the check
+    /// and the moment the window took the run up. The answer's <c>notRun</c> holds it ("Find did not run: the user
+    /// was working in the window."), and nothing ran, so a client may ask again.
+    /// </summary>
+    public const string UserWasBusy = "the user was working in the window";
+
     /// <summary>MC-7.8: whether a run is refused because the user is working in the window: it is in front and the user's last input is more recent than <see cref="UserBusyMs"/>.</summary>
     public static bool IsUserBusy(bool inFront, long idleMs) => inFront && idleMs >= 0 && idleMs < UserBusyMs;
 
