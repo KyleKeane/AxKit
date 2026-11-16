@@ -7,11 +7,13 @@ file notes.md First line.
 
 start down {temp}\notes.md
 expect focus notes.md
+# Goal: Start a new line and hear it said
 keys ctrl+end
 keys enter
 expect said new line
 type Second line.
 expect focus {"name":"notes.md","role":"Text","value":"Second line."}
+# Goal: Split a line in two
 # Enter in the middle of a line splits it, and is said the same way.
 keys home
 keys right right right right right right
@@ -19,6 +21,7 @@ keys enter
 expect said new line
 expect focus {"name":"notes.md","role":"Text","value":" line."}
 
+# Goal: Turn the spoken new line off and on
 # The setting: off, then Enter puts the line break in silently; on again for the scripts after.
 menu Say new line
 expect said ! Say new line off
@@ -29,6 +32,7 @@ expect said ! Say new line on
 keys enter
 expect said new line
 
+# Check: Keys that put in no line break say nothing of one
 # Keys that put no line break in say nothing of it.
 keys ctrl+home
 keys down

@@ -16,6 +16,7 @@ expect focus "value":"a-folder-for-not-a-file, folder"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
 
+# Check: A folder without sound or video says so
 # 4.2 Ctrl+Enter in a folder without media: "No sound or video files here".
 keys down
 expect focus "value":"no-media-here, folder"
@@ -26,6 +27,7 @@ expect said ! No sound or video files here
 keys backspace
 expect said ! hand, 4 items, no-media-here, folder
 
+# Check: A text file has no sound or video to add
 # 4.3 Ctrl+Shift+Q on a text file: "No sound or video files to add".
 keys end
 expect focus "value":"README.md"
@@ -35,12 +37,14 @@ expect said ! No sound or video files to add
 menu Add to axMedia's queue, Context
 expect said ! No sound or video files to add
 
+# Check: A folder is not a file for axPreview
 # 4.4 Open in axKit, axPreview on a folder: "Not a file".
 keys home
 expect focus "value":"a-folder-for-not-a-file, folder"
 menu axPreview, Context, Open in axKit
 expect said ! Not a file
 
+# Goal: Read a file in axPreview
 # 4.1 Shift+Enter on README.md: an axPreview window on it, in front.
 keys end
 expect focus "value":"README.md"
@@ -48,6 +52,7 @@ keys shift+enter
 adopt
 expect state "title":"README.md - axPreview"
 expect focus README.md
+# Goal: Read another file in the same axPreview window
 # Shift+Enter on plain.txt in axFile: the open axPreview window takes it; no second axPreview.
 use 1
 keys up
@@ -57,6 +62,7 @@ keys shift+enter
 use 2
 expect state "title":"plain.txt - axPreview"
 expect focus plain.txt
+# Goal: Open a folder in a new axFile window
 # Shift+Enter on a folder: a new axFile window on that folder, not axPreview.
 use 1
 keys home

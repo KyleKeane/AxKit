@@ -8,28 +8,34 @@ file headings.md # First heading\n\nA paragraph.\n\n## Second heading\nA line un
 start down {temp}\headings.md
 expect focus # First heading
 
+# Check: Moving off a heading plays no sound
 # Down off the heading: no sound; Down to the blank line and the paragraph: none.
 keys down
 refuse said ♪ Heading
 keys down down
 refuse said ♪ Heading
+# Goal: Hear the sound when the caret reaches a heading
 # Down onto the second heading: the sound.
 keys down
 expect said ♪ Heading
 expect focus ## Second heading
+# Check: Moving off and back onto a heading plays the sound again
 # Up and back down: off it, then onto it again.
 keys down
 refuse said ♪ Heading
 keys up
 expect said ♪ Heading
+# Check: A hash line in a fenced block plays no sound
 # A hash line in a fenced block is no heading.
 keys down down down down
 expect focus # not a heading in a fence
 refuse said ♪ Heading
+# Check: Going to the top onto a heading plays the sound
 # Ctrl+Home onto the first heading.
 keys ctrl+home
 expect said ♪ Heading
 
+# Goal: Turn the heading sound off and on
 # The setting: off, then no sound; on again for the scripts after.
 menu Sound on headings
 expect said ! Sound on headings off

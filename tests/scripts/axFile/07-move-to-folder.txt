@@ -10,6 +10,7 @@ wait 500
 keys down down
 expect focus a.txt
 
+# Goal: Move a file into a folder by typing its name
 # Down completes among the folders alone (a.txt is left out); Up at the first: the low note, then the same.
 menu Move to folder, Context
 expect state "notice":"Move to folder"
@@ -25,11 +26,13 @@ keys enter
 expect said ! Moved a.txt into docs
 expect list "count":2
 
+# Goal: Undo the move
 # Ctrl+Z moves it back, and docs stays: it was not made by the move.
 keys ctrl+z
 expect said ! Undone: moved back
 expect list "count":3
 
+# Check: A folder into itself and a path that does not exist are refused
 # A folder into itself, and a path elsewhere that does not exist.
 keys home
 expect focus docs, folder

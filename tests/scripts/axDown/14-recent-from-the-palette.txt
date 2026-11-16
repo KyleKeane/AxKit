@@ -13,6 +13,7 @@ start down {temp}\two.md
 expect state "title":"two.md - axDown"
 wait 500
 
+# Goal: Open a recent file from the palette
 # Open recent file from the palette: a few letters of the file's name, the first match said, Enter opens it here.
 keys ctrl+shift+p
 expect state "notice":"Command palette"
@@ -23,6 +24,7 @@ keys enter
 expect state "notice":null
 expect state "title":"one.md - axDown"
 
+# Goal: Find another open window from the palette
 # The Window menu's lists are there too: the other window by its title, and nothing recently closed yet.
 keys ctrl+shift+p
 type open windows
@@ -30,6 +32,7 @@ expect said one.md - axDown, Window, Open windows
 keys escape
 expect state "notice":null
 
+# Goal: Reopen a window that was closed
 # Recently closed: the first window closes, and its file is the newest of the closed (before it two.md, which this
 # window showed before it opened one.md). The close is waited for, so that the list holds it: read too early, the
 # list was one entry short on some runs (2026-11-13). The entry is one search away and opens in a new window.

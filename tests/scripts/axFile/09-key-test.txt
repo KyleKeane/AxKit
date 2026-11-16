@@ -9,11 +9,13 @@ file home\AxKit\axFile.json {"checkForUpdates": false}
 start file {temp}\orchard
 expect focus "name":"3 items"
 wait 500
+# Goal: Start testing keys
 expect commands "Test a key, Help, Diagnostics"
 expect focus "value":"inner
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
+# Goal: Hear what a key does without carrying it out
 # Bundle keys.
 keys f8
 expect said ! F8: Say the status
@@ -41,17 +43,20 @@ keys f9
 expect said ! F9: no command of this window
 keys alt+f4
 expect said ! Alt+F4: Exit
+# Check: Nothing pressed in the key test was carried out
 # Nothing was carried out: the same folder, the same entry, no notice.
 expect state "notice":null
 expect state "title":"orchard - axFile"
 expect focus "value":"inner
 expect list "count":3
 
+# Goal: End the key test
 # Escape ends the test at once.
 keys escape
 expect said ! Key test ended
 expect focus "value":"inner
 
+# Check: The keys act again after the test
 # The same keys act again.
 keys down
 expect focus "value":"apple.txt

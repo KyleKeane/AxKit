@@ -7,6 +7,7 @@
 file home\AxKit\axDown.json {"checkForUpdates": false}
 file plain.txt Plain text file, line 1.\nLine 2 of the plain text file.\nLine 3: nothing special here.\nLine 4, the last line.
 
+# Goal: Open axDown with an empty document
 # 1.1, the window part: no file gives an empty Untitled document, named so in the title and the editor.
 start down
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
@@ -15,25 +16,30 @@ expect state Untitled - axDown
 expect focus {"name":"Untitled","role":"Text","value":""}
 expect quiet 1000
 
+# Goal: Open a file in axDown
 # 1.3: the down verb with a file opens it, the caret on the first line; nothing of axDown's own is said.
 start down {temp}\plain.txt
 expect state plain.txt - axDown
 expect focus {"name":"plain.txt","role":"Text","value":"Plain text file, line 1."}
 expect quiet 1000
 
+# Goal: Open a text file without naming an app
 # 1.3: a file alone (axkit plain.txt) opens axDown.
 start {temp}\plain.txt
 expect state plain.txt - axDown
 expect focus plain.txt
 
+# Goal: Start a new file by its name
 # 1.3: a missing file opens an empty document of that name.
 start down {temp}\missing.md
 expect state missing.md - axDown
 expect focus {"name":"missing.md","role":"Text","value":""}
+# Check: A new file is not written until it is saved
 # Nothing is written until the first save.
 run if exist missing.md (exit 1) else (exit 0)
 # 1.3 manual: axkit <folder> opens axClaude, which starts a Claude session; axClaude's own scripts cover that window.
 
+# Check: Each file opens in a window of its own
 # 1.4, the window part: two files, two windows, each its own.
 use 2
 expect state plain.txt - axDown

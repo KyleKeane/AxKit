@@ -9,11 +9,13 @@ start down {temp}\modes.md
 expect focus modes.md
 refuse state navigation mode
 
+# Goal: Turn on navigation mode
 # On: said, and the status bar shows it after the file's name.
 keys ctrl+space
 expect said ! Navigation mode
 expect state modes.md, navigation mode
 
+# Goal: Move by single letters
 # h and Shift+H by heading, 2 by level, k by link, l by list, i by list item; the words are the editor's own jumps'.
 keys h
 expect said ! Links, heading level 2
@@ -33,10 +35,12 @@ keys i
 expect said ! two
 keys shift+i
 expect said ! one
+# Check: The jumps with the control key work as in edit mode
 # The Ctrl jumps work as in edit mode.
 keys ctrl+shift+h
 expect said ! List, heading level 2
 
+# Check: Keys that would type or delete change nothing
 # Keys that would type or delete: the edge sound, nothing changes, the title has no star.
 keys a
 expect said ♪ Edge
@@ -63,6 +67,7 @@ expect said ! Navigation mode: press Ctrl+Space to edit
 keys down down
 expect focus {"name":"modes.md","role":"Text","value":"- one"}
 
+# Check: The key test names the letters by what they do in this mode
 # The key test names the letters by what they do in this mode.
 menu Test a key
 expect said ! Key test.
@@ -77,6 +82,7 @@ expect said ! Ctrl+Space: Edit mode or navigation mode: to edit mode
 keys escape
 expect said ! Key test ended
 
+# Goal: Return to edit mode and type
 # Off: said, the status bar without it, and typing types.
 keys ctrl+space
 expect said ! Edit mode

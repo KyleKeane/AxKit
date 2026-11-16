@@ -13,6 +13,7 @@ expect focus "value":"subfolder-for-inner, folder"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
 
+# Check: An empty Actions list says so on every key
 # 6.1 Tab: "Actions, No actions yet"; Enter, Ctrl+Z, Ctrl+I there say the line; Up or Down: the earcon; Escape back.
 keys tab
 expect focus "name":"Actions"
@@ -29,11 +30,13 @@ keys down
 expect said ♪ Edge
 keys escape
 expect focus "name":"6 items"
+# Goal: Move to the Actions list from the menu
 # Folder, Actions: the focus in the Actions list; Shift+Tab: the folder list.
 menu The Actions list, Navigation
 expect focus "name":"Actions"
 keys shift+tab
 expect focus "name":"6 items"
+# Goal: See the last operation in the Actions list
 # Ctrl+Shift+N temp: "Created temp", the focus stays in the folder list, the status bar's left text the line.
 keys ctrl+shift+n
 expect focus "name":"Name"
@@ -61,6 +64,7 @@ expect focus "name":"Actions"
 keys shift+tab
 expect focus "value":"temp, folder"
 
+# Check: The Actions list is on the newest line after an operation
 # 6.2 F2 on temp, notes: the Actions list is on the newest line while the focus was in the folder list.
 keys f2
 expect focus "name":"New name"
@@ -80,6 +84,7 @@ expect focus "value":"Operations"
 keys end
 keys down
 expect said ♪ Edge
+# Goal: Go to the folder of an operation from its line
 # Enter on "Created temp": the folder list on notes, the folder it became; the folder is not said when it is the one shown.
 keys up
 expect focus "value":"Created temp"
@@ -94,6 +99,7 @@ expect focus "value":"Renamed temp to notes"
 keys enter
 expect focus "value":"notes, folder"
 
+# Goal: Undo an operation from the Actions list
 # 6.3 Ctrl+Z on "Renamed temp to notes" in the Actions list: renamed back, the folder list on temp.
 keys tab
 expect focus "value":"Renamed temp to notes"
@@ -120,6 +126,7 @@ keys ctrl+i
 expect said ! Operations
 keys escape
 
+# Goal: Go to an operation done in another folder
 # 6.4 and 6.3a A line of another folder: Enter on a folder, Ctrl+Shift+N inner, Backspace; Tab: "Created inner";
 # Enter: the focus goes to the folder list first, then "<folder>, N items, <entry>" is said.
 keys home
@@ -143,6 +150,7 @@ expect focus "value":"inner, folder"
 keys backspace
 expect said ! act, 7 items, subfolder-for-inner, folder
 
+# Check: A compress and a delete of several files each add one line
 # 6.5 Compress two selected files: the last line "Compressed to act.zip". Delete two: "Deleted 2 items"; Enter on that line.
 # Manual (6.5): the copy of a big folder and its running line use the clipboard; the zip open in another program needs that program.
 keys ctrl+f
@@ -179,6 +187,7 @@ expect focus "value":"Deleted 2 items"
 keys enter
 expect said ! act,
 expect focus "name":"6 items"
+# Check: A rename refused before it ran adds no line
 # A rename refused before it ran (a name taken) adds no line.
 keys ctrl+f
 expect focus "name":"Name contains"
@@ -196,6 +205,7 @@ expect focus "value":"Deleted 2 items"
 expect list "count":6
 keys escape
 
+# Check: A folder that has files now is not undone and its line says so
 # 6.6 A folder that has files now: "Not undone: temp has files now", the line says so, and again on a second Ctrl+Z.
 file act\temp\made-outside.txt A file in temp.
 keys tab
@@ -208,10 +218,12 @@ expect focus "value":"Created temp, not undone: temp has files now"
 keys ctrl+z
 expect said ! Not undone: temp has files now
 keys escape
+# Goal: Undo the newest operation from the folder list
 # Ctrl+Z in the folder list: the newest undoable line, here the delete of two.
 keys ctrl+z
 expect said ! Undone: 2 items restored
 
+# Check: The keyboard shortcuts from the Actions list return to it
 # 6.7 F1 in the Actions list, Escape: the focus back in the Actions list. A moment first: the undo's pane is still
 # going when Tab comes right after "Undone" (the NVDA tier's slower keys found it, 2026-11-01).
 wait 500
@@ -222,6 +234,7 @@ expect focus "name":"Keyboard shortcuts"
 keys escape
 expect focus "name":"Actions"
 keys escape
+# Check: Nothing is said for a line added while in the folder list
 # Nothing is spoken for a line added while the focus is in the folder list: only the operation's own words.
 keys ctrl+shift+n
 expect focus "name":"Name"
@@ -230,6 +243,7 @@ keys enter
 expect said ! Created quiet
 expect quiet 1000
 
+# Goal: See what was selected in the Actions list
 # 6.8 Selection lines: Space on a file, Tab, End: "Selected <name>" under the header "Selection".
 keys ctrl+f
 expect focus "name":"Name contains"
@@ -246,6 +260,7 @@ expect focus "value":"Selection"
 keys escape
 keys space
 expect said ! Deselected
+# Check: A run of selections is one line
 # Shift+Down twice: one line "Selected 3 items", not three.
 keys home
 keys shift+down shift+down
@@ -266,6 +281,7 @@ expect said ! Undone: 3 selected
 keys escape
 expect focus "name":"9 items"
 expect list "items":["quiet, folder, selected","subfolder-for-inner, folder, selected","temp, folder, selected"
+# Check: Undo in the folder list never undoes the selection
 # Ctrl+Z in the folder list undoes an operation, never the selection.
 keys ctrl+z
 expect said ! Undone: quiet removed
@@ -282,6 +298,7 @@ keys escape
 keys backspace
 expect said ! act,
 
+# Goal: Select every entry from the marked one to here
 # 6.9 Shift+Space: Space on the second entry, Down three times, Shift+Space: entries two to five.
 keys home
 keys down
@@ -298,6 +315,7 @@ expect said ! Selected
 keys shift+space
 expect said ! Deselected
 
+# Check: The Actions list keeps fifty lines, and a new window starts empty
 # 6.7 Fifty-one operations: the first line is gone, fifty stay; a new window reads "No actions yet".
 close
 file fifty\q0.txt Renamed fifty-one times.

@@ -14,6 +14,7 @@ file notes.md # Notes\n\nA line.
 start down {temp}\notes.md
 expect focus notes.md
 
+# Check: Not now on the reminder leaves Claude off
 # AH-1.3: off, Shift+F1 opens the reminder at once; Not now (Escape) leaves Claude off and asks nothing.
 keys shift+f1
 expect state "notice":"Before Claude helps in axKit"
@@ -21,6 +22,7 @@ keys escape
 expect said ! Claude stays off
 expect focus notes.md
 
+# Goal: Turn Claude on by agreeing to the reminder
 # AH-1.2: the reminder again; Enter without the box says so; Space checks it; Turn on records the agreement, turns
 # Claude on and goes on to the question.
 keys shift+f1
@@ -37,12 +39,14 @@ expect focus Your question about this window
 keys escape
 expect focus notes.md
 
+# Goal: Turn Claude off and on
 # AH-1.1: the switch, in the axKit menu, Claude: off, then on again at once since the agreement is recorded.
 menu Use Claude in axKit
 expect said ! Claude off
 menu Use Claude in axKit
 expect said ! Claude on
 
+# Goal: Ask Claude about this window
 # AH-6.1: Shift+F1, the question field; Enter asks; the answer notice, the text first.
 keys shift+f1
 expect focus Your question about this window
@@ -50,6 +54,7 @@ type how do I turn word wrap off
 keys enter
 expect state Claude says
 expect state The fake answer: Ctrl+Shift+W
+# Goal: Ask more about an answer
 # AH-6.3: Tab to the field for more; Enter asks in the same session.
 keys tab
 expect focus Ask more about this answer
@@ -60,12 +65,14 @@ expect state Claude says
 keys escape
 expect focus notes.md
 
+# Check: Escape in the question field asks nothing
 # Escape in the question field asks nothing.
 keys shift+f1
 expect focus Your question about this window
 keys escape
 expect focus notes.md
 
+# Goal: See the folders Claude may read
 # AH-2.3: the folders notice, none yet, naming Claude's working folder.
 menu Folders Claude may read
 expect state No folders yet
@@ -73,6 +80,7 @@ expect state axKit Claude
 keys escape
 expect focus notes.md
 
+# Check: Claude is off again at the end
 # Off again.
 menu Use Claude in axKit
 expect said ! Claude off

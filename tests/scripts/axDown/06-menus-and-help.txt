@@ -7,6 +7,7 @@ file a.md # A file for the menus\n\nSome text here.\nMore text.
 start down {temp}\a.md
 expect focus a.md
 
+# Check: Every menu item is in the command list with its shortcut
 # 6.1 manual: Alt opens the menu bar, whose menu mode needs the foreground. Every item with its shortcut, as the
 # palette reads them from the menus:
 expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW, checked"
@@ -15,11 +16,13 @@ expect commands "Heading level 2, Navigation, Next, Ctrl\u002B2."
 expect commands "Undo, Actions, Ctrl\u002BZ"
 expect commands "Keyboard shortcuts, Help, F1"
 
+# Goal: Open the keyboard shortcuts
 # 6.2: F1, the shortcuts notice, its first line naming the text's own keys.
 keys down right right
 keys f1
 expect state "notice":"Keyboard shortcuts"
 expect focus {"name":"Keyboard shortcuts","role":"Text","value":"In this text: h and Shift\u002BH move by heading
+# Goal: Move through the shortcuts by heading
 # h and Ctrl+H alike: the next section's heading; Shift+H back.
 keys h
 expect said ! In every window of axKit, heading level 2
@@ -29,9 +32,11 @@ keys shift+h
 expect said ! In every window of axKit, heading level 2
 keys h h
 expect said ! The text, heading level 2
+# Check: Moving by page or paragraph in the shortcuts says nothing
 # Page Down and Page Up move a screen of its text, Ctrl+Down and Ctrl+Up a paragraph; the notice says nothing on them.
 keys pagedown pageup ctrl+down ctrl+up
 expect quiet 1000
+# Goal: Find a word in the shortcuts
 # Ctrl+F, wrap, Enter: the shortcuts text is back, then F3; Ctrl+F then Escape: the text is back.
 keys ctrl+f
 expect focus Text to find
@@ -46,12 +51,14 @@ expect focus Text to find
 keys escape
 expect focus Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
+# Goal: Close the shortcuts and return to the text
 # Escape closes the notice and the focus is back in the editor at the same place.
 keys escape
 expect state "notice":null
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 \u00B7
 
+# Goal: Read the user guide
 # 6.3: Help, User guide: this app's guide; the navigation keys move through it, spoken as in the editor.
 menu User guide
 expect state "notice":"User guide","noticeText":"# axDown user guide
@@ -61,6 +68,7 @@ keys ctrl+t
 expect said ! No next table
 keys escape
 expect focus a.md
+# Goal: Hear the version of axKit
 # axKit, About, Version names the version of axKit, the apps in their two kinds and the folders.
 menu Version
 expect state "notice":"axKit
@@ -70,6 +78,7 @@ expect state Settings:
 expect state Logs: 
 keys escape
 expect focus a.md
+# Goal: Read the licence, the attribution and the axKit guide
 # About, Licence, Attribution and axKit guide open their notices; Escape closes each.
 menu Licence
 expect state "notice":"Licence"
@@ -89,6 +98,7 @@ expect focus a.md
 # 14-recent-from-the-palette; Alt+W needs the foreground (manual); Close all windows closes every axKit window on the
 # desktop (manual).
 
+# Goal: Turn the update check at start on or off
 # 6.5: Options, General, Check for updates at start, a checked item that says its new state.
 # Through the palette, which says the new state; the runner's menu step runs the item without saying it.
 keys ctrl+shift+p
@@ -107,6 +117,7 @@ expect focus a.md
 # 6.5 manual: Copy diagnostics writes the user's clipboard; Open settings file starts an axJSON window the runner does
 # not reach; the Markdown resources open the browser.
 
+# Goal: Move through the commands of the palette
 # 6.6: the command palette, with the caret in the middle of a line.
 keys ctrl+shift+p
 expect state "notice":"Command palette"
@@ -117,11 +128,13 @@ keys down
 expect said ! Open, Session, Ctrl+O, 3 of
 keys up
 expect said ! New window, Session, Ctrl+Shift+N, 2 of
+# Check: The first command plays the edge sound when moved past
 # Ctrl+Home at the first match: the low note and the first match again.
 keys up ctrl+home
 expect said ! New, Session, Ctrl+N, 1 of
 expect said ♪ Edge
 expect said ! New, Session, Ctrl+N, 1 of
+# Goal: Run a command found by its name
 type wrap
 expect said ! Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1
 keys down
@@ -136,6 +149,7 @@ expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW","Say new line
 # Back on: the setting is the run's theme file, which the scripts after this one share (docs/axKit/theme.md TH-6).
 keys ctrl+shift+w
 expect said ! Word wrap on
+# Check: A search with no match says so and runs nothing
 # No match: "No commands match xyz"; Enter says it again and the palette stays; Escape: back, nothing run.
 keys ctrl+shift+p
 expect focus Search commands
@@ -149,5 +163,6 @@ expect state "notice":null
 expect focus a.md
 expect quiet 1000
 # 6.6 manual: save as, Enter opens the Windows Save as picker; Alt+H, P needs the menu bar's menu mode.
+# Check: The command for a new axDown window is in the palette
 # Alt+W, New window, axDown is in the palette; the recent lists are too, played in 14-recent-from-the-palette.
 expect commands "axDown, Window, New window"

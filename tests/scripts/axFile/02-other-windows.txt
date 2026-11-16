@@ -14,9 +14,11 @@ start file {temp}\here
 expect focus "value":"a.txt"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
+# Check: The menu to show the current folder in another app holds its items
 expect commands "File Explorer, Session, Show current folder in, Ctrl\u002BW","axTerminal, access layer for your shell, Session, Show current folder in","axGIT, access layer for Git, Session, Show current folder in","axClaude, access layer for Claude Code, Session, Show current folder in"
 expect commands "Show in File Explorer, Context, Ctrl\u002BShift\u002BW"
 
+# Goal: Show the file of an axDown window in axFile
 # 2.2 axDown on b.txt: Session, Show current file in, axFile: a new axFile window on the folder, b.txt selected (not
 # the first entry, so that the selection is seen to follow the file).
 file here\b.txt A second file.

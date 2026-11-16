@@ -6,17 +6,20 @@ file a.md # A file for the key test\n\nSome text here.\nMore text.
 
 start down {temp}\a.md
 expect focus a.md
+# Check: Test a key is in the menus and the palette
 # The command is in the menus and the palette, with Copy diagnostics, which came from Options, Developer.
 expect commands "Test a key, Help, Diagnostics"
 expect commands "Copy diagnostics, Help, Diagnostics"
 refuse commands Copy diagnostics, Options
 
+# Goal: Start testing keys
 # The caret in the middle of a line, so that a move or a typed letter would show.
 keys down down right
 expect state Line 3, Column 2 ·
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
+# Goal: Hear what a key does without carrying it out
 # Bundle keys: said by their command's name, and not carried out (no status said, no notice opened).
 keys f8
 expect said ! F8: Say the status
@@ -44,9 +47,11 @@ keys ctrl+down
 expect said ! Ctrl+Down: Paragraph down
 keys f9
 expect said ! F9: no command of this window
+# Check: A character sent without a key press is said and not typed
 # A character sent with no key press is said and not typed.
 type z
 expect said ! z: a character sent without a key press; it types the character
+# Check: Windows' own keys are said and the window stays
 # Windows' own keys for a window: said (Alt+F4 by the name of the menu item that shows it), and the window stays, its menu bar closed.
 keys alt+f4
 expect said ! Alt+F4: Exit
@@ -54,17 +59,20 @@ keys f10
 expect said ! F10: opens the menu bar
 keys alt+h
 expect said ! Alt+H: opens the Help menu
+# Check: Nothing pressed in the key test was carried out
 # Nothing was carried out: the text, the caret and the title are as they were.
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 ·
 refuse state a.md*
 
+# Goal: End the key test
 # Escape ends the test at once; Escape itself is never named by the test.
 keys escape
 expect said ! Key test ended
 refuse said Escape:
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 
+# Check: The keys act again after the test
 # The same keys act again.
 keys f8
 expect said ! Line 3, Column 2
@@ -75,6 +83,7 @@ expect focus Go to line (now line 3, column 3)
 keys escape
 expect focus a.md
 
+# Check: A notice that opens ends the key test
 # A notice that arrives ends the test: F1's does not arrive (the key is only said), so through the menu.
 menu Test a key
 expect said ! Key test. Press any key
