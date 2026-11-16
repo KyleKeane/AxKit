@@ -259,8 +259,16 @@ public sealed class HelpForm : HotkeyForm
             return;
         }
 
-        Log.Info("The conversation started hidden, to be ready for the hotkey");
         PrepareWorkingFolder(folder);
+        // HE-2.9: never a silent start in a folder with files Claude Code would obey and the user has not accepted;
+        // the start waits for the user's next ask, which shows the notice.
+        if (AiFolderCheck.NewOrChanged(folder, AppPaths.AiFolderFilesFile, WorkingFolderFiles.Obeyed) is { Count: > 0 } files)
+        {
+            Log.Info($"The conversation not started ahead: {files.Count} files in Claude's working folder wait for the user's word");
+            return;
+        }
+
+        Log.Info("The conversation started hidden, to be ready for the hotkey");
         // A moment at which Claude Code runs and may contact Anthropic without the user's key: axHelp's own start in
         // the background (sign-in), only with the setting the user turned on (HE-2.7, HE-D9; PRIVACY.md names it).
         // The start itself is WindowMenu.StartKept's outside call; Claude Code's is the console window's.
@@ -300,10 +308,13 @@ public sealed class HelpForm : HotkeyForm
     /// The conversation brought up (HE-2.1): the open one to the front, with <paramref name="message"/> put into its
     /// message field (axClaude's "message" hand-over); or a new axClaude window on Claude's working folder with
     /// <c>--title axHelp</c> and <c>--message</c>, which continues the folder's last conversation (axClaude FR-9.1).
-    /// This window hides first, so that the conversation comes up in front.
+    /// This window hides first, so that the conversation comes up in front. Before a start, the files in the folder
+    /// that Claude Code would obey and the user has not accepted are asked about (HE-2.9, <see cref="AskAboutFiles"/>);
+    /// <paramref name="accepted"/> is the user's Start anyway.
     /// </summary>
-    private void OpenConversation(string? message)
+    private void OpenConversation(string? message, bool accepted = false)
     {
+        var shown = Visible;
         if (Visible)
         {
             HideWindow(giveBack: false);
@@ -340,10 +351,45 @@ public sealed class HelpForm : HotkeyForm
             return;
         }
 
-        Log.Info("The conversation started");
         PrepareWorkingFolder(folder);
+        if (!accepted && AiFolderCheck.NewOrChanged(folder, AppPaths.AiFolderFilesFile, WorkingFolderFiles.Obeyed) is { Count: > 0 } files)
+        {
+            AskAboutFiles(folder, files, message, shown);
+            return;
+        }
+
+        Log.Info("The conversation started");
         StartConversation(HelpSettings.ConversationArguments(folder, _settings.Model, message));
         Do(GiveForegroundBackLaterAsync);
+    }
+
+    /// <summary>
+    /// HE-2.9 (`ai-help.md` AH-7.8): before Claude Code starts in a folder with files it would obey that axKit did
+    /// not write and the user has not accepted, this window comes up with the notice that names them. Open the
+    /// folder leaves the notice open; Start anyway remembers the files as they were named and starts; Cancel, the
+    /// answer to Enter and Escape, starts nothing, and the window goes back out of sight when it was.
+    /// </summary>
+    private void AskAboutFiles(string folder, IReadOnlyList<ObeyedFile> files, string? message, bool shown)
+    {
+        Log.Info($"The conversation waits: {files.Count} files in Claude's working folder that axKit did not write");
+        ShowWindowInFront();
+        ShowNotice(new Notice(AiFolderCheck.NoticeTitle, AiFolderCheck.NoticeText(files),
+        [
+            new OverlayChoice("&Open the folder", OpenAiWorkingFolder, StaysOpen: true),
+            new OverlayChoice("&Start anyway and remember these files", () =>
+            {
+                AiFolderCheck.Accept(folder, AppPaths.AiFolderFilesFile, files);
+                OpenConversation(message, accepted: true);
+            }),
+            new OverlayChoice("&Cancel", () =>
+            {
+                Announce("Not started", true);
+                if (!shown)
+                {
+                    HideWindow();
+                }
+            }, IsDefault: true, IsCancel: true),
+        ]));
     }
 
     /// <summary>The working folder's two files, written where missing before a start (HE-2.4); a failure is logged, the conversation starts all the same.</summary>

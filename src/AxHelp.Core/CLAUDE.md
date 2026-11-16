@@ -19,3 +19,4 @@ Everything of axHelp that needs no window: the settings, the conversation's comm
 - A settings file of 5.6.0 holds `exchanges`; System.Text.Json leaves an unknown property alone, so it still reads.
 
 - `Conversation` (SPEC.md HE-2.1, HE-1.3): the two pure decisions that keep one conversation at a time, `Next` (hand over to the window, wait for the process axHelp started, start only when there is neither) and `AtQuit` (ask the window to end, end a started process that has no window yet, nothing). The window keeps the started process; never go back to a wait by the clock.
+- `WorkingFolderFiles.Obeyed` (SPEC.md HE-2.9, 2026-11-16): the agent file's path and its text as written, for `AxKit.Core/Ai/AiFolderCheck`: while `agent.md` holds exactly that text it is not asked about. Change `Agent` and an agent file written by an earlier version is asked about once.

@@ -19,6 +19,9 @@ public sealed class ReportSettings
 public sealed record SendOutcome(int Sent, int Left, string? Reason, IssueCreated? Last)
 {
     public static readonly SendOutcome Nothing = new(0, 0, null, null);
+
+    /// <summary>The waiting items of the folder that the report form did not write (RP-6.9): never sent, never changed, counted here.</summary>
+    public int NotOfTheForm { get; init; }
 }
 
 /// <summary>
@@ -73,20 +76,22 @@ public static class ReportSender
     /// and every item says so; a blocked install or version sends nothing; a send within half a minute of the last
     /// waits; the first failure stops the run, its
     /// reason written into that item, the rest left as they were for the next run. A report that cannot be sealed is
-    /// never sent plain: the run stops with <see cref="SealReason"/>.
+    /// never sent plain: the run stops with <see cref="SealReason"/>. Only the items the report form wrote go
+    /// (RP-6.9, <see cref="ReportWritten"/>, <paramref name="writtenFile"/>): another waiting item of the folder is
+    /// neither sent nor marked, and the outcome counts it.
     /// </summary>
-    public static async Task<SendOutcome> SendUnsentAsync(string folder, string settingsFile, string version, string? token, string publicKey, HttpClient http, Func<DateTime>? clock, CancellationToken cancellation)
+    public static async Task<SendOutcome> SendUnsentAsync(string folder, string settingsFile, string writtenFile, string version, string? token, string publicKey, HttpClient http, Func<DateTime>? clock, CancellationToken cancellation)
     {
-        var unsent = ReportFiles.Unsent(folder);
+        var (unsent, others) = ReportFiles.UnsentOfTheForm(folder, writtenFile);
         if (unsent.Count == 0)
         {
-            return SendOutcome.Nothing;
+            return others == 0 ? SendOutcome.Nothing : SendOutcome.Nothing with { NotOfTheForm = others };
         }
 
         if (string.IsNullOrWhiteSpace(token))
         {
             Mark(unsent, NoTokenReason);
-            return new SendOutcome(0, unsent.Count, NoTokenReason, null);
+            return new SendOutcome(0, unsent.Count, NoTokenReason, null) { NotOfTheForm = others };
         }
 
         var now = clock?.Invoke() ?? DateTime.UtcNow;
@@ -100,7 +105,7 @@ public static class ReportSender
         if (settings.LastSentUtc is { } lastSent && now - lastSent < MinimumGap && now >= lastSent)
         {
             SettingsFile.Save(settingsFile, settings);
-            return new SendOutcome(0, unsent.Count, GapReason, null);
+            return new SendOutcome(0, unsent.Count, GapReason, null) { NotOfTheForm = others };
         }
 
         Blocklist blocklist;
@@ -113,7 +118,7 @@ public static class ReportSender
             var reason = GitHubIssues.ReasonOf(ex);
             Mark(unsent, reason);
             SettingsFile.Save(settingsFile, settings);
-            return new SendOutcome(0, unsent.Count, reason, null);
+            return new SendOutcome(0, unsent.Count, reason, null) { NotOfTheForm = others };
         }
 
         // A blocked install or version posts nothing, of this report or of an older unsent one; the list is asked
@@ -123,7 +128,7 @@ public static class ReportSender
             var blocked = blocklist.BlocksReporter(reporter) ? BlockedInstallReason : BlockedVersionReason;
             Mark(unsent, blocked);
             SettingsFile.Save(settingsFile, settings);
-            return new SendOutcome(0, unsent.Count, blocked, null);
+            return new SendOutcome(0, unsent.Count, blocked, null) { NotOfTheForm = others };
         }
 
         var sent = 0;
@@ -181,7 +186,7 @@ public static class ReportSender
         }
 
         SettingsFile.Save(settingsFile, settings);
-        return new SendOutcome(sent, unsent.Count - sent, stopped, last);
+        return new SendOutcome(sent, unsent.Count - sent, stopped, last) { NotOfTheForm = others };
     }
 
     /// <summary>The blocklist kept a day in the settings, read again from its public repository when older (RP-6.4).</summary>

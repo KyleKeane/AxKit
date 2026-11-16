@@ -84,7 +84,7 @@ internal sealed class ReportFlow
             return;
         }
 
-        if (ReportFiles.Unsent(AppPaths.ReportsFolder).Count > 0 && ReporterToken.Token is not null && ReportsAgreed())
+        if (ReportFiles.UnsentOfTheForm(AppPaths.ReportsFolder, AppPaths.ReportsWrittenFile).Ours.Count > 0 && ReporterToken.Token is not null && ReportsAgreed())
         {
             _form.Do(async () =>
             {
@@ -94,7 +94,7 @@ internal sealed class ReportFlow
                     0 => $"Not sent yet, {outcome.Reason}",
                     1 => "1 report sent",
                     _ => $"{outcome.Sent} reports sent",
-                }, false);
+                } + NotOfTheForm(outcome), false);
                 WindowMenu.Start(Dispatch.AxTask, AppPaths.ReportsFolder);
             });
             return;
@@ -109,7 +109,7 @@ internal sealed class ReportFlow
         var report = controls.ToReport();
         try
         {
-            ReportFiles.Save(report, ReportStatus.NotSent(null), AppPaths.ReportsFolder);
+            ReportFiles.Save(report, ReportStatus.NotSent(null), AppPaths.ReportsFolder, AppPaths.ReportsWrittenFile);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -172,7 +172,7 @@ internal sealed class ReportFlow
         {
             // The number is the report's in the maintainer's private list: said so that it can be quoted to him, and
             // never as an issue, which would be a place the user could open.
-            _form.Announce(outcome.Sent == 1 ? $"Sent, report {last.Number}" : $"Sent, report {last.Number}, with {outcome.Sent - 1} earlier", false);
+            _form.Announce((outcome.Sent == 1 ? $"Sent, report {last.Number}" : $"Sent, report {last.Number}, with {outcome.Sent - 1} earlier") + NotOfTheForm(outcome), false);
             return;
         }
 
@@ -193,16 +193,20 @@ internal sealed class ReportFlow
                 ShowCannotSend("This version can no longer send reports", "GitHub no longer takes reports from this version of axKit. Update axKit from the Help menu and send it again from Your reports. " + CopyInstead, saved);
                 break;
             case null:
-                _form.Announce("Saved", false);
+                _form.Announce("Saved" + NotOfTheForm(outcome), false);
                 break;
             default:
-                _form.Announce($"Saved; not sent yet, {outcome.Reason}. It goes with the next report", false);
+                _form.Announce($"Saved; not sent yet, {outcome.Reason}. It goes with the next report" + NotOfTheForm(outcome), false);
                 break;
         }
     });
 
+    /// <summary>RP-6.9: after what was sent, the one sentence about waiting files the report form did not write; nothing when there are none.</summary>
+    private static string NotOfTheForm(SendOutcome outcome) =>
+        outcome.NotOfTheForm == 0 ? string.Empty : ". " + ReportWritten.NotSentSentence(outcome.NotOfTheForm);
+
     private static Task<SendOutcome> SendUnsentAsync() =>
-        ReportSender.SendUnsentAsync(AppPaths.ReportsFolder, AppPaths.ReportsFile, BundleInfo.Version, ReporterToken.Token, ReportSeal.PublicKey, AxKitHttp.Client, null, CancellationToken.None);
+        ReportSender.SendUnsentAsync(AppPaths.ReportsFolder, AppPaths.ReportsFile, AppPaths.ReportsWrittenFile, BundleInfo.Version, ReporterToken.Token, ReportSeal.PublicKey, AxKitHttp.Client, null, CancellationToken.None);
 
     /// <summary>
     /// The notice of RP-6.5: why the report cannot go, with Copy report, the plain report to the user's own clipboard;

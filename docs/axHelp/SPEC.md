@@ -192,6 +192,21 @@ agreement (AX-11.4) asked the first time.
   - **Shift+F1 stays without the tools.** Its print-mode questions allow `Read`, `Glob` and `Grep` alone
     (`ai-help.md` AH-2.2), and a tool not allowed is refused in print mode; it gets the window's text from axKit
     itself already (AH-6).
+- HE-2.9 **Files in the working folder that Claude Code would obey are asked about before a start** (2026-11-16,
+  `repairs.md` R-54; `ai-help.md` AH-7.8, which says which files and why). The conversation is Claude Code in its
+  interactive mode: once the folder is trusted, a hook in its settings files runs without a further word, and a
+  skill, a command, an agent or a rule file there leads Claude. Before axHelp starts the conversation
+  (`OpenConversation`, after `PrepareWorkingFolder`), `AxKit.Core/Ai/AiFolderCheck.NewOrChanged` lists such files
+  that axKit did not write and the user has not accepted (`WorkingFolderFiles.Obeyed` names the agent file as
+  axHelp writes it, which is not asked about while it holds that text). When there is one, axHelp's own window
+  comes up with the notice "Claude's working folder holds files that can run commands" (AH-7.8's text), before
+  Claude Code starts: Open the folder (the notice stays open), Start anyway and remember these files, and Cancel,
+  the answer to Enter and Escape, which starts nothing and puts the window back out of sight when it was. When
+  there is none, nothing is said and nothing is asked. The start ahead of HE-2.7 never starts in such a folder: it
+  writes one log line and leaves the start to the user's next ask, which shows the notice. A conversation that is
+  already running is brought up as before, without a check. Pure part tested in `HelpTests` and
+  `tests/AxKit.Tests/AiFolderCheckTests`; the notice itself is owed a window check and a hearing with NVDA (no
+  script starts the conversation without a live Claude Code).
 
 ### HE-3 Screenshots and pictures
 

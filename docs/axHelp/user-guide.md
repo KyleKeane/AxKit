@@ -63,6 +63,13 @@ conversations, the permissions you give with "always" and its instructions stay 
 file CLAUDE.md there holds Claude's standing instructions for axHelp, short spoken replies among them; change it as you
 like. The folder `.claude\agents` holds the agent.
 
+Some files in that folder can make Claude Code run commands by itself: a hook in a settings file, a file of servers,
+a skill, a command, an agent or a rule. When axHelp finds one there that axKit did not write, it asks before it
+starts the conversation, in the notice "Claude's working folder holds files that can run commands", which names the
+files. Open the folder shows them in axFile; Start anyway and remember these files starts the conversation and does
+not ask again until one of them changes or a new one comes; Cancel, which Enter and Escape choose, starts nothing.
+The files may well be your own.
+
 You can ask about axKit itself: "how do I select several files in axFile?" The folder `documentation` there holds
 axKit's own guides, one file per app and an index, and Claude reads the fitting one before it answers, and says when
 the guides do not cover your question. Beside the guides are axKit's workflow pages, plain files that open in axDown,

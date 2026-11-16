@@ -52,6 +52,23 @@ public sealed class SettingsSealTests
     }
 
     [Fact]
+    public void Whether_this_install_has_sealed_a_file_is_known_after_the_file_is_gone()
+    {
+        using var temp = new TempFolder("axkit-seal");
+        var one = Path.Combine(temp.Path, "one.json");
+        var two = Path.Combine(temp.Path, "two.json");
+        Assert.False(SettingsSeal.WasSealed(one));
+        SettingsSeal.Of(one, "text");
+        Assert.False(SettingsSeal.WasSealed(one));
+        SettingsSeal.Remember(one);
+        Assert.True(SettingsSeal.WasSealed(one));
+        Assert.False(SettingsSeal.WasSealed(two));
+        // A key file that cannot be read: every file counts as sealed before, as for a missing seal.
+        File.WriteAllText(SettingsSeal.KeyFileOf(one), "damaged");
+        Assert.True(SettingsSeal.WasSealed(two));
+    }
+
+    [Fact]
     public void A_file_without_a_seal_counts_until_this_install_has_sealed_it()
     {
         using var temp = new TempFolder("axkit-seal");

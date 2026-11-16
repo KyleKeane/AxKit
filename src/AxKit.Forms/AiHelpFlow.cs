@@ -279,7 +279,7 @@ internal sealed class AiHelpFlow
             AiAnswer answer;
             try
             {
-                answer = await AiRequest.AskAsync(claude, prompt, workingFolder, folders, settings.Model, resume, asking.Token);
+                answer = await AiRequest.AskAsync(claude, prompt, workingFolder, folders, settings.Model, resume, AppPaths.ClaudeNoHooksFile, asking.Token);
             }
             catch (OperationCanceledException)
             {

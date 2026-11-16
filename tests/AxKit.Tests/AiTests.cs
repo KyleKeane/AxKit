@@ -40,22 +40,25 @@ public sealed class AiTests
         Assert.Contains("exit code 3", nothing.Text);
     }
 
+    private const string NoHooks = @"C:\x\claude-no-hooks.json";
+
     [Fact]
     public void The_command_line_is_print_mode_with_the_read_tools_the_other_folders_the_model_and_the_session()
     {
-        var arguments = AiRequest.Arguments([@"C:\notes", @"C:\work"], @"C:\notes", null, null);
-        Assert.Equal(["-p", "--output-format", "json", "--allowedTools", "Read,Glob,Grep", "--add-dir", @"C:\work"], arguments);
+        // AH-2.6: no server of the folder's .mcp.json and no hook of its settings files, by Claude Code's own options.
+        var arguments = AiRequest.Arguments([@"C:\notes", @"C:\work"], @"C:\notes", null, null, NoHooks);
+        Assert.Equal(["-p", "--output-format", "json", "--allowedTools", "Read,Glob,Grep", "--strict-mcp-config", "--settings", NoHooks, "--add-dir", @"C:\work"], arguments);
 
-        var full = AiRequest.Arguments([@"C:\notes"], @"c:\NOTES", "haiku", "s1");
-        Assert.Equal(["-p", "--output-format", "json", "--allowedTools", "Read,Glob,Grep", "--model", "haiku", "--resume", "s1"], full);
+        var full = AiRequest.Arguments([@"C:\notes"], @"c:\NOTES", "haiku", "s1", NoHooks);
+        Assert.Equal(["-p", "--output-format", "json", "--allowedTools", "Read,Glob,Grep", "--strict-mcp-config", "--settings", NoHooks, "--model", "haiku", "--resume", "s1"], full);
 
         // Claude Code starts in its working folder (AH-2.1), which is never an --add-dir of its own.
-        var line = AiRequest.Line(@"C:\bin\claude.exe", @"C:\work\claude", [@"C:\work\claude", @"C:\my notes"], null, null);
+        var line = AiRequest.Line(@"C:\bin\claude.exe", @"C:\work\claude", [@"C:\work\claude", @"C:\my notes"], null, null, NoHooks);
         Assert.Null(line.Refusal);
         var start = AiRequest.StartInfo(line, @"C:\work\claude");
         Assert.Equal(@"C:\bin\claude.exe", start.FileName);
         Assert.Equal(@"C:\work\claude", start.WorkingDirectory);
-        Assert.Equal(@"-p --output-format json --allowedTools Read,Glob,Grep --add-dir ""C:\my notes""", start.Arguments);
+        Assert.Equal(@"-p --output-format json --allowedTools Read,Glob,Grep --strict-mcp-config --settings C:\x\claude-no-hooks.json --add-dir ""C:\my notes""", start.Arguments);
     }
 
     [Fact]
@@ -63,16 +66,16 @@ public sealed class AiTests
     {
         // docs/axKit/repairs.json R-24: claude.cmd runs through cmd.exe, which reads & as text only inside quotes
         // and % as a variable everywhere.
-        var line = AiRequest.Line(@"C:\npm\claude.cmd", @"C:\work\claude", [@"C:\work\R&D"], null, null);
+        var line = AiRequest.Line(@"C:\npm\claude.cmd", @"C:\work\claude", [@"C:\work\R&D"], null, null, NoHooks);
         Assert.Null(line.Refusal);
         Assert.Equal(AxKit.Core.SystemPrograms.Cmd, line.FileName);
-        Assert.Equal(@"/d /s /c """"C:\npm\claude.cmd"" ""-p"" ""--output-format"" ""json"" ""--allowedTools"" ""Read,Glob,Grep"" ""--add-dir"" ""C:\work\R&D""""", line.Arguments);
+        Assert.Equal(@"/d /s /c """"C:\npm\claude.cmd"" ""-p"" ""--output-format"" ""json"" ""--allowedTools"" ""Read,Glob,Grep"" ""--strict-mcp-config"" ""--settings"" ""C:\x\claude-no-hooks.json"" ""--add-dir"" ""C:\work\R&D""""", line.Arguments);
 
-        var refused = AiRequest.Line(@"C:\npm\claude.cmd", @"C:\work\claude", [@"C:\work\100%"], null, null);
+        var refused = AiRequest.Line(@"C:\npm\claude.cmd", @"C:\work\claude", [@"C:\work\100%"], null, null, NoHooks);
         Assert.Contains(@"""C:\work\100%"" holds a percent sign (%)", refused.Refusal, StringComparison.Ordinal);
         Assert.EndsWith(AxKit.Core.ClaudeCodeProgram.BatchAdvice, refused.Refusal, StringComparison.Ordinal);
         // The native program takes both.
-        Assert.Null(AiRequest.Line(@"C:\bin\claude.exe", @"C:\work\claude", [@"C:\work\R&D", @"C:\work\100%"], null, null).Refusal);
+        Assert.Null(AiRequest.Line(@"C:\bin\claude.exe", @"C:\work\claude", [@"C:\work\R&D", @"C:\work\100%"], null, null, NoHooks).Refusal);
     }
 
     [Fact]
@@ -81,14 +84,21 @@ public sealed class AiTests
         using var temp = new TempFolder("axkit-ai-batch");
         var claude = temp.File("claude.cmd", "@echo off\r\n>\"%~dp0out.txt\" echo %*\r\necho {\"type\":\"result\",\"is_error\":false,\"result\":\"ok\",\"session_id\":\"s\"}\r\n");
         var folder = Directory.CreateDirectory(Path.Combine(temp.Path, "R&D")).FullName;
-        var answer = await AiRequest.AskAsync(claude, "a question", temp.Path, [folder], null, null, CancellationToken.None);
+        var noHooks = Path.Combine(temp.Path, "local", "claude-no-hooks.json");
+        var answer = await AiRequest.AskAsync(claude, "a question", temp.Path, [folder], null, null, noHooks, CancellationToken.None);
         Assert.False(answer.IsError, answer.Text);
         Assert.Equal("ok", answer.Text);
         var output = Path.Combine(temp.Path, "out.txt");
-        Assert.EndsWith($"\"--add-dir\" \"{folder}\"", File.ReadAllText(output).Trim(), StringComparison.Ordinal);
+        Assert.EndsWith($"\"--strict-mcp-config\" \"--settings\" \"{noHooks}\" \"--add-dir\" \"{folder}\"", File.ReadAllText(output).Trim(), StringComparison.Ordinal);
+        // AH-2.6: the file Claude Code is handed holds axKit's text, written before the run; changed by another
+        // program, it is put right before the next one.
+        Assert.Equal("{\"disableAllHooks\":true}", File.ReadAllText(noHooks));
+        File.WriteAllText(noHooks, "{\"hooks\":{\"SessionStart\":[]}}");
+        Assert.False((await AiRequest.AskAsync(claude, "a question", temp.Path, [folder], null, null, noHooks, CancellationToken.None)).IsError);
+        Assert.Equal(AxKit.Core.ClaudeCodeProgram.NoHooksSettings, File.ReadAllText(noHooks));
 
         File.Delete(output);
-        var refused = await AiRequest.AskAsync(claude, "a question", temp.Path, [Path.Combine(temp.Path, "100%")], null, null, CancellationToken.None);
+        var refused = await AiRequest.AskAsync(claude, "a question", temp.Path, [Path.Combine(temp.Path, "100%")], null, null, noHooks, CancellationToken.None);
         Assert.True(refused.IsError);
         Assert.StartsWith("Claude Code was not run. claude.cmd is a batch program", refused.Text, StringComparison.Ordinal);
         Assert.Contains("a percent sign (%)", refused.Text, StringComparison.Ordinal);

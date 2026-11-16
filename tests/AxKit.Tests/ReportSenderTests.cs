@@ -10,12 +10,15 @@ public sealed class ReportSenderTests : IDisposable
 {
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "axkit-tests", "sender-" + Guid.NewGuid().ToString("N"));
     private readonly string _settings;
+    private readonly string _written;
     private DateTime _now = new(2026, 11, 7, 15, 0, 0, DateTimeKind.Utc);
 
     public ReportSenderTests()
     {
         Directory.CreateDirectory(_folder);
         _settings = Path.Combine(_folder, "reports.json");
+        // RP-6.9: the list of the files the report form wrote, with its key beside it, in a folder of the test's own.
+        _written = Path.Combine(_folder, "kept", "reports-written.json");
     }
 
     public void Dispose() => Directory.Delete(_folder, recursive: true);
@@ -43,10 +46,10 @@ public sealed class ReportSenderTests : IDisposable
     private static string Issue(int number) => $"{{\"number\": {number}, \"html_url\": \"https://github.com/KyleKeane/AxKit-reports/issues/{number}\"}}";
 
     private string Save(string title, string words, ReportKind kind = ReportKind.Bug, int minutesAgo = 10) =>
-        ReportFiles.Save(new Report(title, kind, words, "axFile 5.1.0", "Files, item 1 of 3", ["5 s ago: Find, Ctrl+F"], [], _now.AddMinutes(-minutesAgo)), ReportStatus.NotSent(null), _folder);
+        ReportFiles.Save(new Report(title, kind, words, "axFile 5.1.0", "Files, item 1 of 3", ["5 s ago: Find, Ctrl+F"], [], _now.AddMinutes(-minutesAgo)), ReportStatus.NotSent(null), _folder, _written);
 
     private Task<SendOutcome> Send(Fake fake, string? token = "tok") =>
-        ReportSender.SendUnsentAsync(_folder, _settings, "5.1.0", token, ReportSealTests.Keys.Public, new HttpClient(fake), () => _now, CancellationToken.None);
+        ReportSender.SendUnsentAsync(_folder, _settings, _written, "5.1.0", token, ReportSealTests.Keys.Public, new HttpClient(fake), () => _now, CancellationToken.None);
 
     /// <summary>The title and the body of the issue a request asked GitHub to make.</summary>
     private static (string Title, string Body) Posted(string? request)
@@ -141,7 +144,7 @@ public sealed class ReportSenderTests : IDisposable
     {
         var path = Save("Unsealed", "words that stay here");
         var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(12));
-        var outcome = await ReportSender.SendUnsentAsync(_folder, _settings, "5.1.0", "tok", "not a key", new HttpClient(fake), () => _now, CancellationToken.None);
+        var outcome = await ReportSender.SendUnsentAsync(_folder, _settings, _written, "5.1.0", "tok", "not a key", new HttpClient(fake), () => _now, CancellationToken.None);
         Assert.Equal(0, outcome.Sent);
         Assert.Equal(1, outcome.Left);
         Assert.Equal(ReportSender.SealReason, outcome.Reason);
@@ -241,7 +244,7 @@ public sealed class ReportSenderTests : IDisposable
     public async Task No_network_is_said_in_two_words_and_nothing_is_lost()
     {
         var path = Save("Offline", "words");
-        var outcome = await ReportSender.SendUnsentAsync(_folder, _settings, "5.1.0", "tok", ReportSealTests.Keys.Public, new HttpClient(new Throwing()), () => _now, CancellationToken.None);
+        var outcome = await ReportSender.SendUnsentAsync(_folder, _settings, _written, "5.1.0", "tok", ReportSealTests.Keys.Public, new HttpClient(new Throwing()), () => _now, CancellationToken.None);
         Assert.Equal("no network", outcome.Reason);
         Assert.Equal("Not sent yet: no network", ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(path))));
         Assert.Single(ReportFiles.Unsent(_folder));
@@ -251,6 +254,119 @@ public sealed class ReportSenderTests : IDisposable
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
             throw new HttpRequestException("The remote name could not be resolved");
+    }
+
+    // ---- RP-6.9 (repairs.md R-57): only the files the report form wrote are sent ----
+
+    /// <summary>An item file put into the reports folder by something other than the report form, waiting like a report.</summary>
+    private string Plant(string name, string words, int minutesAgo = 30)
+    {
+        var report = new Report(Path.GetFileNameWithoutExtension(name), ReportKind.Bug, words, "axFile 5.1.0", "Files", [], [], _now.AddMinutes(-minutesAgo));
+        var path = Path.Combine(_folder, name);
+        File.WriteAllText(path, ReportFiles.ToItem(report, ReportStatus.NotSent(null)).ToText());
+        return path;
+    }
+
+    [Fact]
+    public async Task A_planted_item_is_not_sent_and_is_counted_and_the_forms_own_report_is_sent()
+    {
+        var own = Save("Mine", "my words");
+        var planted = Plant("Planted.json", "the contents of a file of the user's");
+        var before = File.ReadAllText(planted);
+        var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(21));
+
+        var outcome = await Send(fake);
+        Assert.Equal(1, outcome.Sent);
+        Assert.Equal(0, outcome.Left);
+        Assert.Equal(1, outcome.NotOfTheForm);
+        // One issue, the form's; the planted file is as it was, not sent and not marked.
+        Assert.Equal(2, fake.Requests.Count);
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(own))));
+        Assert.Equal(before, File.ReadAllText(planted));
+        Assert.Equal("1 file in the reports folder was not written by axKit's report form and was not sent.", ReportWritten.NotSentSentence(outcome.NotOfTheForm));
+        Assert.Equal("3 files in the reports folder were not written by axKit's report form and were not sent.", ReportWritten.NotSentSentence(3));
+        Assert.Equal(string.Empty, ReportWritten.NotSentSentence(0));
+
+        // With nothing of the form's waiting, nothing is asked of GitHub at all, and a run without a token marks nothing.
+        var again = new Fake();
+        var nothing = await Send(again);
+        Assert.Equal(0, nothing.Sent);
+        Assert.Equal(1, nothing.NotOfTheForm);
+        Assert.Empty(again.Requests);
+        await Send(new Fake(), token: null);
+        Assert.Equal(before, File.ReadAllText(planted));
+    }
+
+    [Fact]
+    public async Task Before_the_first_report_of_this_version_older_waiting_reports_are_still_sent()
+    {
+        // No list yet: the two items are an earlier version's, and go as they always did.
+        Plant("Older one.json", "one", minutesAgo: 50);
+        Plant("Older two.json", "two", minutesAgo: 40);
+        Assert.Null(ReportWritten.Names(_written));
+        var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(31)).Answer(HttpStatusCode.Created, Issue(32));
+        var outcome = await Send(fake);
+        Assert.Equal(2, outcome.Sent);
+        Assert.Equal(0, outcome.NotOfTheForm);
+    }
+
+    [Fact]
+    public async Task The_first_save_takes_the_waiting_reports_onto_the_list_and_a_later_file_is_not_the_forms()
+    {
+        var waiting = Plant("Waiting since the version before.json", "older words", minutesAgo: 50);
+        var own = Save("Mine", "my words");
+        Assert.Equal(["waiting since the version before.json", "mine.json"], ReportWritten.Names(_written));
+        var late = Plant("Came later.json", "planted", minutesAgo: 1);
+
+        var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(41)).Answer(HttpStatusCode.Created, Issue(42));
+        var outcome = await Send(fake);
+        Assert.Equal(2, outcome.Sent);
+        Assert.Equal(1, outcome.NotOfTheForm);
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(waiting))));
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(own))));
+        Assert.True(ReportStatus.AwaitsSending(ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(late)))));
+    }
+
+    [Fact]
+    public async Task A_report_changed_in_axTask_is_still_sent_since_the_list_is_by_name()
+    {
+        var own = Save("Mine", "my words");
+        var item = ItemDocument.Parse(File.ReadAllText(own));
+        ReportFiles.Write(own, item.WithValue(item.IndexOf(ReportFiles.ReportField), System.Text.Json.Nodes.JsonValue.Create("my words, with more")));
+        var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(51));
+        var outcome = await Send(fake);
+        Assert.Equal(1, outcome.Sent);
+        Assert.Contains("my words, with more", ReportSeal.Open(Posted(fake.Requests[1].Body).Body, ReportSealTests.Keys.Private));
+    }
+
+    [Fact]
+    public async Task The_list_refuses_a_hand_edit_and_taking_it_away_does_not_bring_back_the_time_before_it()
+    {
+        Save("Mine", "my words");
+        Plant("Planted.json", "planted");
+
+        // A name written into the list by hand: the seal does not check, the list counts as empty, nothing goes.
+        var text = File.ReadAllText(_written);
+        File.WriteAllText(_written, text.Replace("\"mine.json\"", "\"mine.json\", \"planted.json\"", StringComparison.Ordinal));
+        Assert.Empty(ReportWritten.Names(_written)!);
+        var edited = new Fake();
+        var outcome = await Send(edited);
+        Assert.Equal(0, outcome.Sent);
+        Assert.Equal(2, outcome.NotOfTheForm);
+        Assert.Empty(edited.Requests);
+
+        // The list deleted: this install kept one, so it is kept and empty, never "not kept yet".
+        File.Delete(_written);
+        Assert.Empty(ReportWritten.Names(_written)!);
+        var deleted = new Fake();
+        Assert.Equal(2, (await Send(deleted)).NotOfTheForm);
+        Assert.Empty(deleted.Requests);
+
+        // The next report of the form's is on the list again and goes; the others stay.
+        Save("Next", "next words", minutesAgo: 1);
+        var next = await Send(new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(61)));
+        Assert.Equal(1, next.Sent);
+        Assert.Equal(2, next.NotOfTheForm);
     }
 
     [Fact]

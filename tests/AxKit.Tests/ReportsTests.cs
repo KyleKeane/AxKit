@@ -108,8 +108,8 @@ public sealed class ReportsTests
         var folder = Path.Combine(Path.GetTempPath(), "axkit-tests", "reports-" + Guid.NewGuid().ToString("N"));
         try
         {
-            var first = ReportFiles.Save(Sample(), ReportStatus.NotSent("no network"), folder);
-            var second = ReportFiles.Save(Sample() with { Words = "again" }, ReportStatus.Sent, folder);
+            var first = ReportFiles.Save(Sample(), ReportStatus.NotSent("no network"), folder, Path.Combine(folder, "kept", "reports-written.json"));
+            var second = ReportFiles.Save(Sample() with { Words = "again" }, ReportStatus.Sent, folder, Path.Combine(folder, "kept", "reports-written.json"));
             Assert.Equal("The list loses my place.json", Path.GetFileName(first));
             Assert.Equal("The list loses my place - 2.json", Path.GetFileName(second));
 

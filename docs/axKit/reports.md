@@ -328,6 +328,24 @@ levers are built now.
   `docs/axKit/outside-calls.md` (B-17). The security audit gets entries for the token in the build, the reporter id
   and the redaction of what is sent. Since 2026-11-14 those pages also say that the report is encrypted on the
   user's computer and that the repository is private (RP-6.1a, RP-4.4).
+- **RP-6.9 Only what the report form wrote is sent** (2026-11-16, `repairs.md` R-57). The sender used to send every
+  waiting item file it found in the reports folder, so an item another program put there, holding anything, would
+  have gone out with the user's next report. axKit now keeps the names of the report files its own form saved, in
+  `%APPDATA%\AxKit\reports-written.json` under the settings' seal (bundle AX-5.6, `SettingsSeal`;
+  `AxKit.Core/Reports/ReportWritten`): the name is written when the report is saved (`ReportFiles.Save`, the name
+  first, then the item; when the list cannot be written the report is saved all the same and waits). The sender
+  sends only waiting items whose file name is on the list (`ReportFiles.UnsentOfTheForm`); the others stay where
+  they are, are not marked and are never sent, and the outcome counts them (`SendOutcome.NotOfTheForm`). When the
+  count is not zero, what the window says after a send ends with one sentence: "2 files in the reports folder were
+  not written by axKit's report form and were not sent." ("1 file ... was not ..."). The list is by name, not by
+  content: a report the user changes in axTask is still sent. Its limit: axTask names an item's file after its
+  title, so a waiting report whose title the user changes there gets a new file name and is no longer sent.
+  **Reports from before the list.** A report an earlier version saved and could not send is on no list. The list
+  counts as "not kept yet" until the first report this version saves; until then the sender sends as before, and
+  that first save takes the names of the reports that wait in the folder at that moment onto the list, so that
+  none is left behind. After that, a list that is deleted, or whose seal does not check, counts as kept and empty
+  (`SettingsSeal.WasSealed`): taking the list away does not bring the earlier time back. No network contact is
+  added or changed. `ReportSenderTests`, `SettingsSealTests`.
 
 ## 7. The maintainer's side: the GitHub lists of axTask, removed
 

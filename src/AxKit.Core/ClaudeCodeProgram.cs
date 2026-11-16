@@ -53,6 +53,35 @@ public static class ClaudeCodeProgram
         return line.Refusal is null ? line : line with { Refusal = line.Refusal + " " + BatchAdvice };
     }
 
+    // Claude Code's own words for a run that obeys nothing of the folder it starts in (docs/axKit/ai-help.md AH-2.6;
+    // code.claude.com/docs/en/cli-reference and settings, checked against 2.1.325 on 2026-11-16).
+
+    /// <summary>Claude Code's option that loads only the servers named with <c>--mcp-config</c>: none of a folder's <c>.mcp.json</c>.</summary>
+    public const string StrictMcpConfigOption = "--strict-mcp-config";
+
+    /// <summary>Claude Code's option that loads one more settings file for a run; what it holds goes before the folder's settings files.</summary>
+    public const string SettingsOption = "--settings";
+
+    /// <summary>The settings that turn every hook off for a run, Claude Code's <c>disableAllHooks</c>.</summary>
+    public const string NoHooksSettings = "{\"disableAllHooks\":true}";
+
+    /// <summary>
+    /// The file of <see cref="NoHooksSettings"/> for <see cref="SettingsOption"/>, written when it is missing or holds
+    /// anything else, so that a file changed by another program never reaches Claude Code. A file and not the text
+    /// on the command line: npm's <c>claude.cmd</c> runs through cmd.exe, where no argument may hold a double quote
+    /// (<see cref="SystemPrograms.CmdNeverSafe"/>). Throws as <see cref="File.WriteAllText(string, string)"/> does.
+    /// </summary>
+    public static void WriteNoHooksSettings(string file)
+    {
+        if (File.Exists(file) && File.ReadAllText(file) == NoHooksSettings)
+        {
+            return;
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+        File.WriteAllText(file, NoHooksSettings);
+    }
+
     /// <summary>The first of <see cref="Candidates"/> that exists; null when Claude Code is not installed.</summary>
     public static string? Find(string? explicitPath, string? pathVariable = null)
     {

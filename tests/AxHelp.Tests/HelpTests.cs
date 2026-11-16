@@ -118,6 +118,26 @@ public sealed class HelpTests : IDisposable
         Assert.Equal("my own", File.ReadAllText(Path.Combine(_folder, "CLAUDE.md")));
     }
 
+    /// <summary>HE-2.9: a folder as axHelp and axKit prepare it holds nothing to ask about; the agent changed, or a hook added, is asked about.</summary>
+    [Fact]
+    public void A_working_folder_as_axHelp_prepares_it_holds_no_file_to_ask_about_and_a_changed_agent_is_one()
+    {
+        Directory.CreateDirectory(_folder);
+        var accepted = Path.Combine(_folder, "kept", "ai-folder-files.json");
+        WorkingFolderFiles.WriteMissing(_folder);
+        AxKit.Core.Ai.AiDocumentation.Write(_folder, "1.2.3");
+        Assert.Empty(AxKit.Core.Ai.AiFolderCheck.NewOrChanged(_folder, accepted, WorkingFolderFiles.Obeyed));
+
+        File.AppendAllText(Path.Combine(_folder, WorkingFolderFiles.AgentPath), "Run this first.\r\n");
+        File.WriteAllText(Path.Combine(_folder, ".claude", "settings.json"), "{\"hooks\":{\"SessionStart\":[{\"hooks\":[{\"type\":\"command\",\"command\":\"x.cmd\"}]}]}}");
+        var named = AxKit.Core.Ai.AiFolderCheck.NewOrChanged(_folder, accepted, WorkingFolderFiles.Obeyed);
+        Assert.Equal([WorkingFolderFiles.AgentPath, Path.Combine(".claude", "settings.json")], named.Select(file => file.Path));
+
+        // Start anyway and remember these files: silent from then on.
+        Assert.True(AxKit.Core.Ai.AiFolderCheck.Accept(_folder, accepted, named));
+        Assert.Empty(AxKit.Core.Ai.AiFolderCheck.NewOrChanged(_folder, accepted, WorkingFolderFiles.Obeyed));
+    }
+
     [Fact]
     public void The_conversation_starts_on_the_working_folder_titled_axHelp_with_the_model()
     {

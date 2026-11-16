@@ -50,6 +50,16 @@ public static class WorkingFolderFiles
         three plain sentences what you did and where the result is.
         """;
 
+    /// <summary>A text as <see cref="WriteMissing"/> puts it into its file: Windows line ends, one at the end.</summary>
+    private static string AsWritten(string text) => text.ReplaceLineEndings("\r\n") + "\r\n";
+
+    /// <summary>
+    /// The agent file as axHelp writes it, for the check of the files Claude Code obeys in the folder
+    /// (<c>AxKit.Core.Ai.AiFolderCheck</c>, SPEC.md HE-2.9): while it holds exactly this text it is axHelp's and is
+    /// not asked about; changed, it is the user's or another program's, and is.
+    /// </summary>
+    public static IReadOnlyList<(string Path, string Text)> Obeyed { get; } = [(AgentPath, AsWritten(Agent))];
+
     /// <summary>The two files written into <paramref name="folder"/> where missing; the names of those written.</summary>
     public static IReadOnlyList<string> WriteMissing(string folder)
     {
@@ -63,7 +73,7 @@ public static class WorkingFolderFiles
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            File.WriteAllText(path, text.ReplaceLineEndings("\r\n") + "\r\n");
+            File.WriteAllText(path, AsWritten(text));
             written.Add(name);
         }
 

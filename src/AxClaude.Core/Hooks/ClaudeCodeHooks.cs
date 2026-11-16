@@ -50,7 +50,7 @@ public static partial class ClaudeCodeHooks
     private const string TaskRunning = "running";
 
     /// <summary>Claude Code's option that loads one more settings file for a session (EG-2.3).</summary>
-    public const string SettingsOption = "--settings";
+    public const string SettingsOption = AxKit.Core.ClaudeCodeProgram.SettingsOption;
 
     /// <summary>How long Claude Code lets a hook run, in seconds (EG-2.5); the verb ends itself well before (EG-2.6).</summary>
     public const int TimeoutSeconds = 5;

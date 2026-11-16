@@ -6,17 +6,17 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 2 (1 high, 1 low)
-- **done**: 52 (10 high, 23 medium, 19 low)
+- **open**: 14 (1 high, 6 medium, 7 low)
+- **done**: 54 (11 high, 23 medium, 20 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 5 (4 medium, 1 low)
 
 ## The principles
 
-- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (16 findings)
+- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (25 findings)
 - **P2. One source, generated views.** A fact lives in one place (the menu bar, Dispatch.Apps, a JSON list); every page or list that repeats it is written by a script and checked by the same gate on the developer's computer and in CI. (6 findings)
 - **P3. A failure says what, why and where to read.** Every refusal, error and failed check names the thing, the reason and the document or command that helps; nothing fails silently and nothing passes silently against the wrong thing. (7 findings)
-- **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (15 findings)
+- **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (20 findings)
 - **P5. An entry is its name, never a held object.** What is found in one moment and used in another (a menu item, a file, a selection) is found again by its identity when it is used, and refused when it is gone or changed. (4 findings)
 - **P6. Writes are whole or not at all.** A file a user or the app depends on is written through a temporary file and put in place in one step; an undo step is dropped only once it has been applied. (2 findings)
 - **P7. Tests check the built thing.** What matters is checked on the running window or the built data; a test that reads source text is lint, a help and never the proof. (1 finding)
@@ -24,19 +24,103 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Open
 
-### R-54, high, security: Files Claude Code obeys in Claude's working folder are outside the self-repair
+### R-61, high, security: axMCP's consent is for a server's name, not for its command line
 
-- Where: src/AxKit.Core/Ai/AiDocumentation.cs; src/AxKit.Core/Ai/AiRequest.cs
+- Where: src/AxMCP/MCPForm.cs
 - Principle: P1
-- Fix: Before each start the obeyed files axKit did not write are listed with a hash each and compared with the list the user last accepted; a new or changed one is named in a notice whose default is Cancel. Shift+F1's print mode leaves project settings and project servers out where Claude Code has an option for it.
-- Note: Found on 2026-11-16 by the resilience audit. A settings file with hooks, a project server file, a third rule file or a changed CLAUDE.md there is loaded by Claude Code at every later start; Claude itself may write them. What Claude Code loads from the folder, and its options, are to be verified against the installed version first (rule 12).
+- Fix: The consent's target is the whole of what would run: the name, the program's resolved path, the arguments, the environment's names with a hash of their values, and the folder; a differing one asks again and the notice reads the command line.
+- Note: Found on 2026-11-16 by the second reading of the resilience audit. The servers of Claude Code's own files (.claude.json, a folder's .mcp.json) are not axKit's to seal, so a rewritten one of a name agreed to earlier started without a question.
 
-### R-57, low, security: Report items planted in the reports folder go out with the user's next report
+### R-62, medium, core: Two windows of one app overwrite each other's settings
 
-- Where: src/AxKit.Core/Reports/ReportSender.cs
+- Where: src/AxKit.Core/SettingsFile.cs; src/AxKit.Forms/AxKitForm.cs
+- Principle: P4
+- Fix: A save keeps what the file gained since this window loaded it: for each top-level setting the file's value stands unless this window changed it.
+- Note: Found on 2026-11-16 by the second reading. A favourite, a shell, a trusted repository or a server added in one window is lost when a window opened earlier saves anything.
+
+### R-63, medium, forms: A settings file that cannot be written is only logged
+
+- Where: src/AxKit.Forms/AxKitForm.cs
 - Principle: P1
-- Fix: Before anything beyond the report just written is sent, the earlier unsent ones are counted and named and the user is asked, No the default.
-- Note: Found on 2026-11-16 by the resilience audit, plausible and not followed to the end: what the report flow says today is to be read first.
+- Fix: Said once in a run: the settings could not be saved, why, and that what is changed lasts until the window closes.
+- Note: Found on 2026-11-16 by the second reading: a read-only file or a full disk.
+
+### R-64, medium, framework: A remembered path on a network share is checked on the window's thread before the window appears
+
+- Where: src/AxFile/FileForm.Browse.cs; src/AxGit/GitForm.cs; src/AxTerminal/TerminalForm.cs; src/AxClaude/MainForm.cs; src/AxPass/PassForm.cs; src/AxTask/TaskForm.cs; src/AxAutomate/AutomateForm.cs; src/AxKit.Core/Dispatch.cs
+- Principle: P4
+- Fix: A remembered path that is not local is not looked at during the start: the window opens on its fallback and says the path is on the network and was not opened; a test fails on an existence check of a settings path outside LocalPaths.
+- Note: Found on 2026-11-16 by the second reading (rule 3): a laptop away from its network waits in silence for the network's time limit, once per path.
+
+### R-65, medium, apps: A background app that hangs has no spoken way out
+
+- Where: src/AxClip/AxClipApp.cs; src/AxStart/AxStartApp.cs; src/AxHelp/AxHelpApp.cs
+- Principle: P1
+- Fix: A second start that finds the first not answering asks whether to end it and start again, and ends only this program's own process of that app.
+- Note: Found on 2026-11-16 by the second reading: the hotkey is dead and starting the app again does nothing, without a word.
+
+### R-66, medium, apps: A damaged axTask item is only a count
+
+- Where: src/AxTask/TaskForm.cs; src/AxKit.Core
+- Principle: P1
+- Fix: Each unreadable item file is a row of its list, named and openable in axJSON, and the lists that gather items say how many could not be read and where.
+- Note: Found on 2026-11-16 by the second reading: a due task whose file broke vanishes from Due today. That the gathering lists say nothing was inferred and is to be confirmed first.
+
+### R-67, medium, core: Settings a newer version adds are dropped when an older copy saves the file
+
+- Where: src/AxKit.Core/WindowSettings.cs; src/AxKit.Core/Consent.cs; src/AxKit.Core/RecentlyClosed.cs
+- Principle: P4
+- Fix: Members a version does not know are kept and written back as they were.
+- Note: Found on 2026-11-16 by the second reading. It helps from this version on: an older copy on the same computer still drops them, the seal of R-53 among them.
+
+### R-68, low, core: The recently closed list takes any text as a path and is written by several windows at once
+
+- Where: src/AxKit.Core/RecentlyClosed.cs; src/AxKit.Core/RecentPaths.cs; src/AxKit.Forms/WindowMenu.cs
+- Principle: P4
+- Fix: Only full paths are kept, so that an entry can never be read as an option; one writer at a time.
+- Note: Found on 2026-11-16 by the second reading.
+
+### R-69, low, apps: A kept clipboard history that can no longer be opened is dropped without a word
+
+- Where: src/AxClip.Core/ClipSettings.cs; src/AxClip/ClipForm.cs
+- Principle: P1
+- Fix: The unreadable history is kept once beside the file and the window says the history starts empty; the kept total has a limit.
+- Note: Found on 2026-11-16 by the second reading: a profile moved to another computer, a password reset.
+
+### R-70, low, security: git and PowerShell 7 are taken from the PATH before Program Files
+
+- Where: src/AxGit.Core/GitRunner.cs; src/AxTerminal.Core/ShellLauncher.cs
+- Principle: P1
+- Fix: The install folders only an administrator can write come first, and PATH folders that are not local are passed over.
+- Note: Found on 2026-11-16 by the second reading, plausible: what the consent and the start line say of the path is to be read first.
+
+### R-71, low, security: axHelp's model setting reaches Claude Code's command line unchecked
+
+- Where: src/AxHelp.Core/HelpSettings.cs
+- Principle: P1
+- Fix: A model name is letters, digits, dots, hyphens and brackets, starting with a letter or digit; anything else is the default.
+- Note: Found on 2026-11-16 by the second reading, plausible.
+
+### R-72, low, apps: A list's action keys in list.json are not checked
+
+- Where: src/AxTask/TaskForm.ActionKeys.cs
+- Principle: P1
+- Fix: An action key that opens or moves says what it now does and waits for a second press when the list's keys differ from the ones this install wrote or accepted.
+- Note: Found on 2026-11-16 by the second reading: a shared or rewritten list.
+
+### R-73, low, security: A window started as a test run looks like the user's own
+
+- Where: src/AxKit.Core/AutomationEnvironment.cs
+- Principle: P1
+- Fix: Such a window's title says that it is a test run.
+- Note: Found on 2026-11-16 by the second reading, plausible: any program can start the exe with a secret and a home folder of its own choosing.
+
+### R-74, low, apps: An MCP server's error lines go into axMCP's log
+
+- Where: src/AxMCP.Core/StdioServer.cs; src/AxMCP/MCPForm.cs
+- Principle: P4
+- Fix: The log holds a line's length; the text stays in the window.
+- Note: Found on 2026-11-16 by the second reading: the fuller form of a report would carry the lines.
 
 ## Done
 
@@ -125,6 +209,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: One seal in AxKit.Core, SettingsSeal (docs/axKit/SPEC.md AX-5.6): each settings class seals its run-deciding fields at every save; a field whose seal does not check is put to its default, not used, and the user is told once; a file from before the seal is accepted and sealed at its next save, and the files this install has sealed are listed with the key. McpAccess keeps its file, key and seal value and takes the HMAC from it. A custom shell's consent is for its command line; a repository's trust is for the programs it named.
 - Checked by: tests/AxKit.Tests/SettingsSealTests (the piece, AI help's settings, the consents, the AI tools' seal value); tests/AxTerminal.Tests/TerminalSealTests; tests/AxGit.Tests/GitSealTests; tests/AxMCP.Tests/MCPSealTests; tests/AxFile.Tests/FileSealTests; tests/AxClaude.Tests/SettingsSealTests; tests/scripts/axTerminal/08-user-shells and tests/scripts/axGIT/07-own-programs for the window; the refusal sentences in the windows are owed a hearing
 - Note: Found on 2026-11-16 by the resilience audit. Every part is done: axTerminal's shell, custom command line and user shells, with the consent bound to the command line and the command line in the start line; AI help's switch, folders, claudePath and working folder, and axClaude's claudePath; consent.json; axGIT's trusted repositories, each with the SHA-256 of the names of what it would run, asked again when that differs; axMCP's servers and axFile's programs. The limit, written in SPEC AX-5.6, SECURITY.md and the guides: a program running as the user can ask Windows for the same key; the seal holds against a file edited by another program or by hand, a profile copied or synced from elsewhere, and an AI tool writing files. Left as open work: AI help's claudePath and workingFolder, and axClaude's claudePath while Claude Code is found, have no menu item, so once their file is sealed they cannot be changed by hand; a trust's mark is of the names of a repository's programs, not of what a hook's file holds.
+
+### R-54, high, security: Files Claude Code obeys in Claude's working folder are outside the self-repair
+
+- Where: src/AxKit.Core/Ai/AiFolderCheck.cs; src/AxKit.Core/Ai/AiRequest.cs; src/AxKit.Core/ClaudeCodeProgram.cs; src/AxHelp/HelpForm.cs; src/AxHelp.Core/WorkingFolderFiles.cs
+- Principle: P1
+- Fix: Shift+F1's print mode runs Claude Code with --strict-mcp-config and --settings on a file of axKit's own that holds disableAllHooks, written again before each question (ai-help.md AH-2.6). Before axHelp starts its conversation, AiFolderCheck lists the obeyed files axKit did not write (.mcp.json, a hooks member of the folder's settings files, the files under .claude's skills, commands, output-styles, plugins, agents and rules but axKit's own), each with a SHA-256, and compares them with the list the user last accepted, kept under the settings' seal; a new or changed one is named in a notice in axHelp's window whose default is Cancel, and the start in the background does not happen in such a folder (AH-7.8, axHelp HE-2.9).
+- Checked by: tests/AxKit.Tests/AiFolderCheckTests; tests/AxKit.Tests/AiTests (the command line, the file put right before a run); tests/AxHelp.Tests/HelpTests (A_working_folder_as_axHelp_prepares_it_holds_no_file_to_ask_about_and_a_changed_agent_is_one); owed: a live print-mode question with a hook and a .mcp.json in the folder (tools/upstream.ps1 -Verify), and a window check and a hearing of the notice, which no script reaches without a live Claude Code
+- Note: Found on 2026-11-16 by the resilience audit. Checked against Claude Code's documentation and claude --help of 2.1.325 that day: print mode shows no trust question and obeys a folder's hooks and servers; --strict-mcp-config and --settings exist; --setting-sources user is not used, since it would drop the folder's rules, axKit's two among them. The JSON goes in a file because npm's claude.cmd is refused an argument with a double quote. By decision CLAUDE.md and CLAUDE.local.md are not on the list. Left open: an axClaude window started in that folder by the user is Claude Code's own trust question's; a running conversation is not checked again when brought up; settings members other than hooks that name a command (statusLine, apiKeyHelper) are not checked.
 
 ### R-01, medium, security: Recent folders of axClaude and axTerminal started Claude Code or a shell for an AI tool without asking
 
@@ -469,6 +561,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: Load gives the reason; the next use of the AI tools says once that the setting was changed outside axKit or its key is gone, and the log holds it.
 - Checked by: tests/AxKit.Tests/McpTests (A_file_counts_only_with_its_seal: ChangedOutsideAxKit); the sentence in the window is owed a hearing
 - Note: Found on 2026-11-16 by the resilience audit. The default is the safe one; what is missing is that the user learns pairings were dropped or something wrote the file.
+
+### R-57, low, security: Report items planted in the reports folder go out with the user's next report
+
+- Where: src/AxKit.Core/Reports/ReportWritten.cs; src/AxKit.Core/Reports/ReportFiles.cs; src/AxKit.Core/Reports/ReportSender.cs; src/AxKit.Forms/ReportFlow.cs; src/AxKit.Core/SettingsSeal.cs
+- Principle: P1
+- Fix: axKit keeps the names of the report files its own form saved, under the settings' seal, written as each report is saved; the sender sends only waiting items on that list, leaves the others untouched and counts them, and what the window says after a send ends with how many were not sent (reports.md RP-6.9). No question is asked. Until the first report this version saves the list is not kept and the sender sends as before; that save takes the waiting reports onto the list; afterwards a deleted or refused list is empty.
+- Checked by: tests/AxKit.Tests/ReportSenderTests (A_planted_item_is_not_sent_and_is_counted_and_the_forms_own_report_is_sent, Before_the_first_report_of_this_version_older_waiting_reports_are_still_sent, The_first_save_takes_the_waiting_reports_onto_the_list_and_a_later_file_is_not_the_forms, A_report_changed_in_axTask_is_still_sent_since_the_list_is_by_name, The_list_refuses_a_hand_edit_and_taking_it_away_does_not_bring_back_the_time_before_it); tests/AxKit.Tests/SettingsSealTests (Whether_this_install_has_sealed_a_file_is_known_after_the_file_is_gone); the added sentence is owed a hearing
+- Note: Found on 2026-11-16 by the resilience audit. The fix first proposed, a question before earlier reports go, was replaced the same day by the list, which needs no interaction. Left open: axTask names an item's file after its title, so a waiting report whose title is changed there falls off the list and is counted as not the form's; an item planted before this version's first report is taken onto the list with the real ones.
 
 ### R-58, low, forms: A stored window place can put a window almost wholly off the screen
 

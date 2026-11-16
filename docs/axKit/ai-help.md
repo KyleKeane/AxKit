@@ -90,7 +90,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 ### AH-2 How the service reaches Claude
 
 - AH-2.1 Claude Code in print mode, one process per question (`ClaudeCodeProgram` finds it as axClaude does, after
-  the file's `claudePath`): `claude -p --output-format json --allowedTools Read,Glob,Grep [--add-dir <folder>]…
+  the file's `claudePath`): `claude -p --output-format json --allowedTools Read,Glob,Grep --strict-mcp-config --settings <file> [--add-dir <folder>]…
   [--model <model>] [--resume <session>]`, started without a window in **Claude's working folder** (AH-D6, 5.6.0:
   `Documents\axKit Claude` unless the file's `workingFolder` names another, made when first needed,
   `AiSettings.EnsureWorkingFolder`; axKit menu, Claude, Claude's working folder, and axHelp's first menu, open it in
@@ -119,6 +119,22 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   notice ends it at once.
 - AH-2.5 The log holds the time, the window, the prompt's length, the folders and the outcome, never the prompt or
   the answer (they are the user's text).
+- AH-2.6 **A question obeys nothing of the working folder that can run a command** (2026-11-16, `repairs.md` R-54).
+  Print mode shows no trust question: Claude Code's documentation says it runs the hooks of a folder's
+  `.claude\settings.json` and connects the servers of its `.mcp.json` even in a folder never trusted. So every
+  question carries two of Claude Code's own options (code.claude.com/docs/en/cli-reference, checked against
+  2.1.325): `--strict-mcp-config`, which loads only servers named with `--mcp-config`, and the question names none;
+  and `--settings <file>`, where the file holds `{"disableAllHooks":true}`, which turns every hook off for the run
+  and goes before the folder's own settings files. The file is `%LOCALAPPDATA%\AxKit\claude-no-hooks.json`
+  (`AppPaths.ClaudeNoHooksFile`), written again before each question when it does not hold exactly that text, and
+  when it cannot be written Claude Code is not run and the answer says so. A file and not the text on the command
+  line: npm's `claude.cmd` is refused any argument with a double quote (AH-2.1a). `--setting-sources user` is not
+  used: it would drop the folder's rules too, which is how axKit's two rule files reach Claude (AH-7.3). The words
+  are in Claude Code's place in the bundle, `AxKit.Core/ClaudeCodeProgram` (`StrictMcpConfigOption`,
+  `SettingsOption`, `NoHooksSettings`, `WriteNoHooksSettings`); `AiTests`. **Owed a live check**: a real question
+  through a signed-in Claude Code with a hook and a `.mcp.json` in the working folder, to see that neither runs
+  (`tools\upstream.ps1 -Verify` is the place for it; not run when this was built, since it needs the account and
+  the network).
 
 ### AH-3 What a window may do with an answer
 
@@ -253,6 +269,37 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   and the agent file stay the user's (written only when missing, so deleting one resets it), and so does every file
   the user adds. What decides what axKit itself does (the AI tools' switch and pairing, the consent, `ai-help.json`)
   was never in this folder: it is under `%LOCALAPPDATA%\AxKit`. `AiDocumentationTests`.
+- AH-7.8 **Files Claude Code obeys that axKit did not write are asked about** (2026-11-16, `repairs.md` R-54; the
+  maintainer's requirement: mechanical, plain code, no network and no AI reasoning, no interaction that is not
+  needed). The self-repair of AH-7.7 covers axKit's own files; Claude Code obeys others in the folder, which the
+  user, another program or Claude itself may have written. `AxKit.Core/Ai/AiFolderCheck` lists them by name and
+  place alone, each with a SHA-256:
+  - `.mcp.json`;
+  - `.claude\settings.json` and `.claude\settings.local.json`, only when they hold a `hooks` member that names
+    anything, or are no JSON at all. The hash is of the `hooks` member's text, so that an "always allow" answer
+    Claude Code writes beside it changes nothing; their other members are the user's and are never asked about;
+  - every file under `.claude\skills`, `.claude\commands`, `.claude\output-styles`, `.claude\plugins`;
+  - every file under `.claude\agents`, but `agent.md` while it holds exactly the text axHelp writes;
+  - every file under `.claude\rules`, but axKit's two, which AH-7.7 keeps at axKit's text.
+
+  Not on the list, by decision: `CLAUDE.md` and `CLAUDE.local.md` (the user's standing instructions; words, not
+  commands) and anything outside `.claude` but `.mcp.json`. The files the user accepted are kept, by working folder,
+  path and hash, in `%APPDATA%\AxKit\ai-folder-files.json` under the settings' seal (bundle AX-5.6, `SettingsSeal`):
+  a list changed by hand or by another program is not used, and every file is asked about again. The check returns
+  the files that are new or changed against that list. Before axHelp starts its conversation in the folder (axHelp
+  HE-2.9) and the check returns anything, axHelp's window shows the notice **"Claude's working folder holds files
+  that can run commands"** before Claude Code starts: how many, their names one a line (the first twenty), that
+  axKit did not write them, that Claude Code would obey them from its start, and that they may be the user's own;
+  **Open the folder** (the notice stays), **Start anyway and remember these files**, which writes them onto the
+  list as they were named and starts, and **Cancel**, the answer to Enter and Escape, which starts nothing. When
+  the check returns nothing, nothing is said and nothing is asked. A conversation kept ready in the background
+  (HE-2.7) is not started while the check returns anything: the start waits for the user's next ask, which shows
+  the notice. The notice is axKit's own text, not an AI's, so AX-11.12 asks nothing of it. Shift+F1's questions
+  need no notice: they obey neither hooks nor servers (AH-2.6), and print mode allows the three reading tools
+  alone. Limits, stated: an axClaude window the user starts in the folder themselves is Claude Code's own trust
+  question's; a conversation that is already running is not checked again when it is brought up; settings members
+  other than `hooks` that name a command (`statusLine`, `apiKeyHelper`) are not on the list.
+  `AiFolderCheckTests`, `HelpTests`; the notice in the window is owed a window check and a hearing.
 - AH-7.6 The cautions are unchanged (bundle AX-11.12): an answer of Shift+F1 still ends with `AiCaution.Written`,
   and the conversation is axClaude's with its own.
 

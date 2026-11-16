@@ -145,14 +145,43 @@ public static class ReportFiles
 
     /// <summary>
     /// Writes a report into the folder (RP-5.1): the folder and its <c>list.json</c> made when missing, the item named
-    /// after its title beside the taken names; the item's path.
+    /// after its title beside the taken names; the item's path. The file's name goes onto the list of the files the
+    /// report form wrote first (RP-6.9, <see cref="ReportWritten"/>, <paramref name="writtenFile"/>), since the
+    /// sender sends no other; when that list cannot be written the report is saved all the same, the words kept
+    /// (RP-3.2), and waits unsent.
     /// </summary>
-    public static string Save(Report report, string status, string folder)
+    public static string Save(Report report, string status, string folder, string writtenFile)
     {
         EnsureList(folder);
         var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(report.Title), ".json");
+        try
+        {
+            ReportWritten.Add(writtenFile, path, folder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Log.Error("The list of the reports axKit's report form wrote could not be written, so this report waits unsent: " + ex.Message);
+        }
+
         SafeFile.WriteAllText(path, ToItem(report, status).ToText(), Utf8);
         return path;
+    }
+
+    /// <summary>
+    /// The waiting items the report form wrote (RP-6.9), oldest first, and how many other waiting items the folder
+    /// holds, which are never sent or changed. While the list is not kept yet, every waiting item is the form's.
+    /// </summary>
+    public static (IReadOnlyList<(string Path, ItemDocument Item)> Ours, int Others) UnsentOfTheForm(string folder, string writtenFile)
+    {
+        var unsent = Unsent(folder);
+        if (unsent.Count == 0)
+        {
+            return (unsent, 0);
+        }
+
+        var names = ReportWritten.Names(writtenFile);
+        var ours = unsent.Where(entry => ReportWritten.Holds(names, entry.Path)).ToList();
+        return (ours, unsent.Count - ours.Count);
     }
 
     /// <summary>Writes an item back to its file (the status changed, the issue known).</summary>

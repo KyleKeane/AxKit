@@ -62,6 +62,18 @@ public static class AppPaths
     public static string ClaudeHooksFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "claude-hooks.json");
 
+    /// <summary>
+    /// The settings file a question of AI help hands Claude Code with <c>--settings</c> (docs/axKit/ai-help.md
+    /// AH-2.6): it turns the hooks off for that run. Written again before each question when it does not hold
+    /// axKit's text; beside <see cref="McpClaudeConfigFile"/>.
+    /// </summary>
+    public static string ClaudeNoHooksFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "claude-no-hooks.json");
+
+    /// <summary>The files in Claude's working folder the user accepted (AH-7.8), each with its hash, under the settings' seal.</summary>
+    public static string AiFolderFilesFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "ai-folder-files.json");
+
     public static string LogsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "logs");
 
@@ -72,6 +84,10 @@ public static class AppPaths
     /// <summary>The reports' own settings (RP-6.3): the install's reporter id, and the blocklist last read.</summary>
     public static string ReportsFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "reports.json");
+
+    /// <summary>The names of the report files axKit's report form wrote (RP-6.9), under the settings' seal: the sender sends no other.</summary>
+    public static string ReportsWrittenFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "reports-written.json");
 
     public static string UpdatesFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "updates");

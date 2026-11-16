@@ -136,6 +136,17 @@ public static class SettingsSeal
         return false;
     }
 
+    /// <summary>
+    /// Whether this install has sealed the file before: its name is on the list, or the list went with a key that
+    /// could not be read. For a file whose defaults are not the safe case (the list of the report files axKit wrote,
+    /// which is "not kept yet" until its first save): deleting such a file does not bring the time before it back.
+    /// </summary>
+    public static bool WasSealed(string settingsFile)
+    {
+        var keyFile = KeyFileOf(settingsFile);
+        return Read(keyFile) is { } state ? state.All || state.Files.Contains(NameOf(settingsFile)) : File.Exists(keyFile);
+    }
+
     /// <summary>What a refusal's text ends with: where the file as it was found is kept.</summary>
     public const string CopyKept = "The file as it was found is kept beside it, with .changed at the end of its name.";
 
