@@ -6,7 +6,7 @@
 // Usage:
 //   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep]
 //   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
-//   --exe        the AxKit.exe to drive (default: src\AxKit\bin\Release\net10.0-windows\AxKit.exe)
+//   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
 //   --report     writes every script's steps and its whole timeline, with times, to a Markdown file
 //   --nvda       the NVDA tier (tier 3): the windows open on the user's own desktop and come to the front, the keys go
 //                through SendInput as a keyboard's do, and NVDA's speech is read from its capture add-on
@@ -15,7 +15,9 @@
 //                when the run's first window cannot come to the front at all, the run stops with one line, exit 2.
 //   --keep       keeps %TEMP%\axkit-automate\<process id>, the run's folder ({temp} in a script), with its logs
 //   A folder runs every *.txt under it, one after another, each with fresh windows and a fresh {temp}; the exit code
-//   is the number of scripts that failed.
+//   is 0 when every script passed, 1 when one failed, 2 when the run could not start.
+//   One window run plays at a time on a computer (RunLock): the clipboard and the system hotkeys are shared, so a
+//   second run waits for the first, for an hour at most, and says once that it waits.
 //
 // Script steps, one per line, '#' starts a comment:
 //   mkdir <name>              a fresh folder {temp}\<name>
@@ -158,6 +160,16 @@ internal static class Program
         var report = new StringBuilder($"# AxAutomate report\n\n{DateTime.Now:yyyy-MM-dd HH:mm}, {exe}\n{built}\n\n");
         var failed = new List<string>();
         var notHeard = new List<string>();
+
+        // One window run at a time on this computer (RunLock, docs/axKit/user-workflows.md WF-D-29): taken after the
+        // build and before the first script, released in the finally that puts the clipboard back.
+        var runLock = RunLock.Take(TimeSpan.FromMinutes(60), Console.WriteLine);
+        if (runLock is null)
+        {
+            Console.Error.WriteLine(RunLock.GaveUp);
+            return CannotStart;
+        }
+
         var clock = Stopwatch.StartNew();
 
         // The run's desktop shares the clipboard with the user's, and some scripts write it (axClip's): its text is
@@ -226,6 +238,9 @@ internal static class Program
                 File.Delete(Speech.LogPath);
                 HandsOff.Say("NVDA tests finished. The keyboard is yours.");
             }
+
+            runLock.ReleaseMutex();
+            runLock.Dispose();
         }
 
         var summary = failed.Count == 0

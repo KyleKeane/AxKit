@@ -32,7 +32,10 @@ The run names the program it drives: `--build` builds the sources as they are in
 src\AxKit\AxKit.csproj -c Release -o <folder>` and give `--exe <folder>\AxKit.exe`). There is no default: until
 2026-11-13 a run with neither drove whatever lay in `src\AxKit\bin\Release`, and a pass or a failure against a stale
 build read like a real one. The console and the report's first lines say the program's version and when it was
-built. Exit code 0 when every script passed, 1 when one failed, 2 when the run could not start. A window that does
+built. Exit code 0 when every script passed, 1 when one failed, 2 when the run could not start. One window run
+plays at a time on a computer: a second run waits for the first, for an hour at most, and says once that it waits,
+since the clipboard and the system hotkeys are shared (`tools/AxAutomate/RunLock.cs`, `user-workflows.md` WF-D-29);
+the builds before the scripts run side by side. A window that does
 not answer a step within 30 seconds fails the step, and the run goes on to its end.
 
 **Where these checks run.** On the developer's computer, by hand or by the assistant: `tools/AxAutomate` for one
