@@ -12,9 +12,9 @@ The window is called "This computer - axProcess". It opens on the Processes view
 
 ## The views
 
-- **Processes** (Ctrl+1): every running program, "chrome, 350 MB, 3% CPU, process 9120": its name, the memory it uses, its share of the processor over the last second, and its process ID. The largest first; View, Sort processes by, changes the order to processor or name.
-- **Services** (Ctrl+2): every Windows service, "Windows Update (wuauserv), running, manual": its name, its short name, whether it runs, and how it starts.
-- **Startup** (Ctrl+3): what starts when you sign in, "OneDrive, enabled, current user's Run key": its name, whether it is turned off ("disabled"), and where it is set. You can turn an entry off, on again, or remove it: see "Programs that start with Windows" below.
+- **Processes** (Alt+1): every running program, "chrome, 350 MB, 3% CPU, process 9120": its name, the memory it uses, its share of the processor over the last second, and its process ID. The largest first; View, Sort processes by, changes the order to processor or name.
+- **Services** (Alt+2): every Windows service, "Windows Update (wuauserv), running, manual": its name, its short name, whether it runs, and how it starts.
+- **Startup** (Alt+3): what starts when you sign in, "OneDrive, enabled, current user's Run key": its name, whether it is turned off ("disabled"), and where it is set. You can turn an entry off, on again, or remove it: see "Programs that start with Windows" below.
 
 Type the start of a name to jump to it, as in File Explorer: letters typed within a second of each other build one search, the same letter again goes to the next name starting with it, and Shift with a letter goes backwards. Tab and Shift+Tab move to the next and the previous view, round from Startup back to Processes. Pressing a view's key while the view already shows says its name again. At the first or the last item, Up, Down, Home and End play a short low sound, since there is nowhere to move. **F5** reads the view again and says "Refreshed". **Ctrl+Q** says the summary: how many processes run, how much memory is in use, and how busy the processor was.
 
@@ -29,7 +29,7 @@ Type the start of a name to jump to it, as in File Explorer: letters typed withi
 
 ## Programs that start with Windows
 
-In the Startup view (Ctrl+3) you can stop a program from starting when you sign in. The commands are in Context (Shift+F10) and on the details notice (Enter).
+In the Startup view (Alt+3) you can stop a program from starting when you sign in. The commands are in Context (Shift+F10) and on the details notice (Enter).
 
 - **Turn off**: the program no longer starts with Windows. Nothing is deleted: this sets the same switch as Task Manager's Startup apps tab, and the line then reads "disabled". axProcess says "KeePassXC turned off: it no longer starts with Windows". The program itself is not closed if it runs now; it stays away from the next sign-in on.
 - **Turn on**: the program starts with Windows again. "KeePassXC turned on: it starts with Windows again".
@@ -47,7 +47,7 @@ The menu bar is the same eight menus in every axKit window.
 
 - **Session**: Refresh (F5), Exit.
 - **Actions**: Summary (Ctrl+Q).
-- **Navigation**: Processes (Ctrl+1), Services (Ctrl+2), Startup (Ctrl+3).
+- **Navigation**: Processes (Alt+1), Services (Alt+2), Startup (Alt+3). Ctrl+1, Ctrl+2 and Ctrl+3, the keys for these until now, still work.
 - **Context**: what acts on the line selected, for the view you are in. Processes: Details (Enter), End process (Delete), End process tree, Show program in axFile (Ctrl+E), Copy line (Ctrl+C). Services: Details, Start, Stop, Restart, Copy line. Startup: Details, Turn off, Turn on, Remove (Delete), Show program in axFile, Copy line. So you never end a process from the services or the reverse. Shift+F10 opens it.
 - **Options**: Sort processes by, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.

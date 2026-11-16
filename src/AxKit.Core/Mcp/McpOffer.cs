@@ -127,7 +127,7 @@ public static class McpOffer
             + "# What your answers do\n\n"
             + "Yes, run it sends the command to Claude Code as a line that starts with an exclamation mark, as if you had typed it. It runs in Claude Code's own shell, in this session's folder, without Claude Code's permission check, and what it prints joins the conversation.\n\n"
             + "No, do not run it sends nothing. No, copy it to the clipboard instead puts the command on your clipboard, in place of what was there, and sends nothing. No, and report a concern about it asks for your words, then opens Claude Code's own feedback with the command and your concern, where you review the report before anything goes to Anthropic.\n\n"
-            + "While the question shows you can read the conversation: Tab or Ctrl+2 goes there, and Tab or Ctrl+1 comes back.";
+            + "While the question shows you can read the conversation: Tab or Alt+2 goes there, and Tab or Alt+1 comes back.";
     }
 
     /// <summary>The line sent to Claude Code: its shell mode's mark, a space, the command.</summary>

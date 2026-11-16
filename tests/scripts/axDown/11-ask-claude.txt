@@ -72,6 +72,17 @@ expect focus Your question about this window
 keys escape
 expect focus notes.md
 
+# Check: Ctrl+Slash asks about this window as Shift+F1 does
+# AX-8.15: both keys of the command, each from the text.
+keys ctrl+slash
+expect focus Your question about this window
+keys escape
+expect focus notes.md
+keys shift+f1
+expect focus Your question about this window
+keys escape
+expect focus notes.md
+
 # Goal: See the folders Claude may read
 # AH-2.3: the folders notice, none yet, naming Claude's working folder.
 menu Folders Claude may read

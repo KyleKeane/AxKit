@@ -95,7 +95,7 @@ wait 3000
 # Start it again (with --continue after the run's --model): the conversation is back.
 start claude {temp}\life -- --model haiku --continue
 expect said Ready
-keys ctrl+2 ctrl+home
+keys alt+2 ctrl+home
 keys i
 expect said from previous session heading level 1
 wait 2000
@@ -103,7 +103,7 @@ wait 2000
 # Step 2a, with a command running in the background: the notice starts "Claude has work running in the background
 # (1 shell)."; Escape keeps it; Enter restarts Claude, which ends the background work. (The permission question for the
 # command comes or not, as Claude words it.)
-keys ctrl+1
+keys alt+1
 type Use your Bash tool with run_in_background true to run: ping -n 120 127.0.0.1 then reply with the word started.
 keys enter
 try said ♪ Notice

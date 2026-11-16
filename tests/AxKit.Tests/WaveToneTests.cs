@@ -195,4 +195,70 @@ public class WaveToneTests
         Assert.InRange(first, 25, 45);
         Assert.InRange(last, 60, 80);
     }
+
+    /// <summary>
+    /// The navigation key's click (docs/axKit/SPEC.md AX-8.13), as the maintainer chose it by ear on 2026-11-16: 8 ms,
+    /// 176 samples, rising over 20 samples from nothing, its loudest sample 0.35 of full scale and early, all but
+    /// silent at the end (exp(-600 t) is under a hundredth by then), and the same samples every time.
+    /// </summary>
+    [Fact]
+    public void A_click_is_eight_milliseconds_starts_at_nothing_and_dies_away()
+    {
+        var wav = WaveTone.Click(0.35, 2200, 0.008, 20, 600);
+        var samples = (wav.Length - WaveTone.HeaderLength) / 2;
+        Assert.Equal(176, samples);
+
+        int At(int i) => BitConverter.ToInt16(wav, WaveTone.HeaderLength + i * 2);
+
+        var peak = 0;
+        var peakAt = 0;
+        for (var i = 0; i < samples; i++)
+        {
+            if (Math.Abs(At(i)) > peak)
+            {
+                (peak, peakAt) = (Math.Abs(At(i)), i);
+            }
+        }
+
+        Assert.Equal(0, At(0));
+        Assert.Equal(0.35 * short.MaxValue, peak, 1.5);
+        Assert.InRange(peakAt, 1, samples / 2);
+        for (var i = samples - 10; i < samples; i++)
+        {
+            Assert.True(Math.Abs(At(i)) < peak / 20, "the click should end at nothing");
+        }
+
+        Assert.Equal(wav, WaveTone.Click(0.35, 2200, 0.008, 20, 600));
+    }
+
+    /// <summary>The flat tone of a navigation key that found nothing (AX-8.13): its length, its peak, silent ends, and one pitch from start to end.</summary>
+    [Fact]
+    public void A_flat_tone_keeps_its_pitch_and_fades_at_both_ends()
+    {
+        var wav = WaveTone.Flat(0.3, 180, 90, 5);
+        var samples = (wav.Length - WaveTone.HeaderLength) / 2;
+        Assert.Equal(90 * WaveTone.SampleRate / 1000, samples);
+
+        int At(int i) => BitConverter.ToInt16(wav, WaveTone.HeaderLength + i * 2);
+
+        var peak = 0;
+        var rising = new List<int>();
+        for (var i = 0; i < samples; i++)
+        {
+            peak = Math.Max(peak, Math.Abs(At(i)));
+            if (i > 0 && At(i - 1) < 0 && At(i) >= 0)
+            {
+                rising.Add(i);
+            }
+        }
+
+        Assert.InRange(peak, (int)(0.29 * short.MaxValue), (int)(0.3 * short.MaxValue) + 1);
+        Assert.Equal(0, At(0));
+        Assert.Equal(0, At(samples - 1));
+
+        // 180 Hz is 122.5 samples a cycle, the same at the start and at the end.
+        Assert.True(rising.Count >= 10);
+        Assert.InRange(rising[1] - rising[0], 121, 124);
+        Assert.InRange(rising[^1] - rising[^2], 121, 124);
+    }
 }

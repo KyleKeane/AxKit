@@ -21,8 +21,8 @@ expect said Ready
 expect said ♪ Ready
 
 # Goal: Move between the command field and the terminal
-# Step 2: Ctrl+2 lands on the terminal; its first lines are the system line and PowerShell's PSReadLine line; no
-# prompt row. Ctrl+1 back to the field.
+# Step 2: Alt+2 lands on the terminal; its first lines are the system line and PowerShell's PSReadLine line; no
+# prompt row. Alt+1 back to the field.
 do Terminal
 expect said → Terminal
 expect focus Terminal
@@ -35,6 +35,34 @@ do Command field
 expect said → Command
 do Command field
 expect said ! Command
+
+# Check: Alt and a number reaches the window from the command field and from the terminal
+# Step 2a: the keys themselves, pressed in the field and in the terminal: Alt+2, Alt+1, and Alt+3, which says that
+# there is no output yet and goes to the terminal.
+keys alt+2
+expect said → Terminal
+expect focus Terminal
+keys alt+2
+expect said ! Terminal
+keys alt+1
+expect said → Command
+expect focus Command
+keys alt+3
+expect focus Terminal
+keys alt+1
+expect focus Command
+
+# Check: The older keys of the places still work
+# Step 2b: Ctrl+1, Ctrl+2 and Ctrl+3, the places' keys until 2026-11-16, still go there, with nothing more said.
+keys ctrl+2
+expect said → Terminal
+keys ctrl+2
+expect said ! Terminal
+keys ctrl+3
+expect focus Terminal
+keys ctrl+1
+expect said → Command
+expect focus Command
 
 # Check: The status bar holds Idle and the prompt
 # Step 3: the status bar holds "Idle" and the prompt text. The state answer is raw JSON, where a backslash is

@@ -218,7 +218,7 @@ public abstract partial class AxKitForm
     [
         BundleKeys.LargerText, BundleKeys.LargerTextNumpad, BundleKeys.SmallerText, BundleKeys.SmallerTextNumpad, BundleKeys.SayStatus,
         BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.Save,
-        BundleKeys.ToggleMode,
+        BundleKeys.ToggleMode, BundleKeys.AskClaudeAlso, BundleKeys.ContextMenu,
     ];
 
     /// <summary>The bundle's keys (<see cref="BundleKeys.All"/>): one the base handles applies everywhere, under its menu item's name where a menu shows it; the others mean something only through a window's command or the focused control.</summary>

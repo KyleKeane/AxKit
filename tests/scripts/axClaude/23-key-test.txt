@@ -11,6 +11,9 @@ file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\n
 
 start claude {temp}\kt --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
+# The window's command list, here too (01-startup's needs a live Claude Code): every key of its own in the F1 text,
+# none shadowed, and the command inventory can be written from this script with the stand-in alone.
+check commands
 expect commands "Test a key, Help, Diagnostics"
 do Message field
 expect focus Message
@@ -26,6 +29,9 @@ keys f4
 expect said ! F4: Send a report
 keys ctrl+b
 expect said ! Ctrl+B: What runs in the background
+keys alt+2
+expect said ! Alt+2: Conversation
+# The place's older key is still a key of the same command (bundle AX-8.14).
 keys ctrl+2
 expect said ! Ctrl+2: Conversation
 keys shift+escape
@@ -47,7 +53,7 @@ expect said ! Key test ended
 expect focus "value":"hello"
 
 # Check: The keys act again after the key test
-# The same keys act again: F8 says the status, Ctrl+2 goes to the conversation.
+# The same keys act again: F8 says the status, Alt+2 goes to the conversation.
 do Say the status
 expect said ! Claude: ready
 do Conversation

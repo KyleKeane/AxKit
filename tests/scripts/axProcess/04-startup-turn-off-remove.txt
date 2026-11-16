@@ -17,8 +17,8 @@ check commands
 expect state "status":["Processes,
 
 # Goal: Show the startup programs
-# 4.1 Ctrl+3: the stand-in's four entries and no other, so nothing of this computer's own is listed.
-keys ctrl+3
+# 4.1 Alt+3: the stand-in's four entries and no other, so nothing of this computer's own is listed.
+keys alt+3
 expect said ! Startup, 4. Check Alpha, enabled, current user's Run key
 expect list Check Beta, enabled, current user's Run key
 expect list Check Everyone, enabled, computer's Run key
@@ -130,10 +130,10 @@ run if exist "home\AxKit\startup\yours\Check Morning.lnk" (exit 1) else (exit 0)
 
 # Check: Ending a process from the Services view says which view first
 # PR-6.2 Delete in the Services view is still the Processes view's command, and says which view first.
-keys ctrl+2
+keys alt+2
 expect said ! Services,
 keys delete
-expect said ! Processes view first: Ctrl+1
+expect said ! Processes view first: Alt+1
 
 # Check: The stand-in's registry key is deleted at the end
 # The stand-in's key deleted: nothing of the run is left in the registry.

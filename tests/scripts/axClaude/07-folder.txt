@@ -39,7 +39,7 @@ wait 2000
 start claude {temp}\proj -- --model haiku --continue
 expect said Ready
 refuse said Responding
-keys ctrl+2 ctrl+home
+keys alt+2 ctrl+home
 keys i
 expect said ! Input 1 from previous session heading level 1
 keys down
@@ -58,13 +58,13 @@ keys i
 expect said ! No next input
 # Check: A message after the replay counts from one
 # A message now: "# Input 1" of this run.
-keys ctrl+1
+keys alt+1
 wait 2000
 type Reply with the single word three.
 keys enter
 expect said Done
 wait 1000
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 keys shift+i
 expect said ! Input 1 heading level 1
 # Goal: Restart Claude
@@ -77,19 +77,19 @@ keys enter
 expect said Restarting
 expect said Ready
 refuse said Responding
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 text
 keys shift+i
 expect said ! Input 1 heading level 1
 keys shift+i
 expect said ! Input 2 from previous session heading level 1
-keys ctrl+1
+keys alt+1
 wait 2000
 type Reply with the single word four.
 keys enter
 expect said Done
 wait 1000
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 keys shift+i
 expect said ! Input 2 heading level 1
 # Goal: Start a new session with arguments of your own
@@ -140,20 +140,20 @@ keys enter
 expect said New session in proj
 expect state "notice":null
 expect said Ready
-keys ctrl+2 ctrl+home
+keys alt+2 ctrl+home
 expect focus "value":"System: New session in
 expect focus with --model haiku --continue --name demo
 keys i
 expect said from previous session heading level 1
 # Check: A message in the new session counts from one
 # A message: "# Input 1".
-keys ctrl+1
+keys alt+1
 wait 2000
 type Reply with the single word five.
 keys enter
 expect said Done
 wait 1000
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 keys shift+i
 expect said ! Input 1 heading level 1
 # Check: The new session notice keeps the arguments, and Escape keeps Claude running

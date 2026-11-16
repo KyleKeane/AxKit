@@ -354,6 +354,58 @@ public static class WaveTone
         return Wav(samples);
     }
 
+    /// <summary>
+    /// A click, a key's tick: a sine of <paramref name="hertz"/> mixed half and half with white noise, rising in a
+    /// straight line over <paramref name="attackSamples"/> samples and dying away as exp(-<paramref name="decay"/> t),
+    /// over in <paramref name="seconds"/>. The whole is scaled so that its loudest sample is <paramref name="peak"/>.
+    /// The noise is the same every time. The sound of a letter taken as a command in a text's navigation mode
+    /// (docs/axKit/SPEC.md AX-8.13): 8 ms at 2200 Hz, a peak of 0.35, 20 samples of attack, a decay of 600, chosen by
+    /// the maintainer by ear on 2026-11-16, so that it is over before the screen reader speaks.
+    /// </summary>
+    public static byte[] Click(double peak, double hertz, double seconds, int attackSamples, double decay)
+    {
+        var count = (int)(SampleRate * seconds);
+        var mix = new double[count];
+        var random = new Random(7);
+        var loudest = 1e-9;
+        for (var i = 0; i < count; i++)
+        {
+            var t = i / (double)SampleRate;
+            var attack = Math.Min(1.0, (double)i / attackSamples);
+            var noise = random.NextDouble() * 2 - 1;
+            mix[i] = attack * Math.Exp(-decay * t) * (0.5 * Math.Sin(2 * Math.PI * hertz * t) + 0.5 * noise);
+            loudest = Math.Max(loudest, Math.Abs(mix[i]));
+        }
+
+        var scale = peak / loudest;
+        var samples = new short[count];
+        for (var i = 0; i < count; i++)
+        {
+            samples[i] = (short)Math.Round(mix[i] * scale * short.MaxValue);
+        }
+
+        return Wav(samples);
+    }
+
+    /// <summary>
+    /// One flat tone: a sine of <paramref name="hertz"/> that never moves in pitch, <paramref name="milliseconds"/>
+    /// long, at <paramref name="peak"/>, faded in and out in a straight line over <paramref name="fadeMilliseconds"/>.
+    /// The sound of a navigation key that found nothing of its kind (AX-8.13).
+    /// </summary>
+    public static byte[] Flat(double peak, double hertz, int milliseconds, int fadeMilliseconds)
+    {
+        var count = Samples(milliseconds);
+        var fade = Math.Min(count / 2, Samples(fadeMilliseconds));
+        var samples = new short[count];
+        for (var i = 0; i < count; i++)
+        {
+            var envelope = Math.Min(1.0, Math.Min((double)i / fade, (double)(count - 1 - i) / fade));
+            samples[i] = Sample(hertz, i, peak * envelope);
+        }
+
+        return Wav(samples);
+    }
+
     private static int Samples(int milliseconds) => milliseconds * SampleRate / 1000;
 
     private static short Sample(double hertz, int index, double amplitude) =>

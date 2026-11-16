@@ -8,10 +8,16 @@ namespace AxProcess;
 public static class AxProcessKeys
 {
     /// <summary>The three views of the list (PR-2.2); the key names the view when it already shows (axClaude D26).</summary>
-    public const Keys ViewProcesses = Keys.Control | Keys.D1;
+    public const Keys ViewProcesses = Keys.Alt | Keys.D1;
 
-    public const Keys ViewServices = Keys.Control | Keys.D2;
-    public const Keys ViewStartup = Keys.Control | Keys.D3;
+    public const Keys ViewServices = Keys.Alt | Keys.D2;
+    public const Keys ViewStartup = Keys.Alt | Keys.D3;
+
+    /// <summary>The same three on Ctrl, their key until 2026-11-16, when the views moved to Alt+1, 2 and 3 (bundle AX-8.14): further keys of the same commands, shown in no menu, with nothing extra said.</summary>
+    public const Keys ViewProcessesAlso = Keys.Control | Keys.D1;
+
+    public const Keys ViewServicesAlso = Keys.Control | Keys.D2;
+    public const Keys ViewStartupAlso = Keys.Control | Keys.D3;
 
     /// <summary>The views in turn (PR-2.2): the window has one control, so Tab and Shift+Tab go round the views (the user's ask, 2026-10-24).</summary>
     public const Keys NextView = Keys.Tab;
@@ -41,6 +47,9 @@ public static class AxProcessKeys
         ("Processes view", ViewProcesses),
         ("Services view", ViewServices),
         ("Startup view", ViewStartup),
+        ("Processes view (Ctrl+1, the older key)", ViewProcessesAlso),
+        ("Services view (Ctrl+2, the older key)", ViewServicesAlso),
+        ("Startup view (Ctrl+3, the older key)", ViewStartupAlso),
         ("Next view", NextView),
         ("Previous view", PreviousView),
         ("Refresh", Refresh),

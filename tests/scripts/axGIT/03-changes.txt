@@ -103,10 +103,10 @@ expect said ! Committed
 expect state "notice":null
 expect focus Changes, 1 file
 expect list "Untracked new.txt"
-keys ctrl+2
+keys alt+2
 expect said ! Log, 2 commits.
 expect focus Test: Test commit
-keys ctrl+1
+keys alt+1
 expect said ! Changes, 1 file.
 
 # Goal: Discard the changes to a file

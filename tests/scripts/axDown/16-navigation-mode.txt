@@ -18,11 +18,16 @@ expect state modes.md, navigation mode
 # Goal: Move by single letters
 # h and Shift+H by heading, 2 by level, k by link, l by list, i by list item; the words are the editor's own jumps'.
 keys h
+expect said ♪ NavKey
 expect said ! Links, heading level 2
 keys h
 expect said ! List, heading level 2
+# Nothing of that kind to go to: the flat tone in place of the click, then the words as ever.
+said
 keys h
+expect said ♪ Nothing
 expect said ! No next heading
+refuse said ♪ NavKey
 keys shift+h
 expect said ! Links, heading level 2
 keys ctrl+home 2
@@ -41,11 +46,16 @@ do Heading, Navigation, Previous
 expect said ! List, heading level 2
 
 # Check: Keys that would type or delete change nothing
-# Keys that would type or delete: the edge sound, nothing changes, the title has no star.
+# A key that would type has no command here: the two blips. A key that would delete or break the line: the edge
+# sound. Nothing changes, the title has no star.
+said
 keys a
-expect said ♪ Edge
+expect said ♪ Unassigned
+refuse said ♪ Edge
 keys space
-expect said ♪ Edge
+expect said ♪ Unassigned
+keys 9
+expect said ♪ Unassigned
 keys enter
 expect said ♪ Edge
 keys backspace

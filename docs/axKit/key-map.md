@@ -3,9 +3,9 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 575 commands with a key in 17 apps, on 114 different keys, counting the
-second keys some commands answer. 49 keys have one meaning wherever they are; 65 have several.
-19 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
+The inventory holds 576 commands with a key in 17 apps, on 119 different keys, counting the
+second keys some commands answer. 50 keys have one meaning wherever they are; 69 have several.
+21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
 
 A key has one meaning when every command on it carries the same name in every app. The inventory lists the
@@ -40,6 +40,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Minus. Bundle key, in every app: Smaller text.
 - Ctrl+Plus. Bundle key, in every app: Larger text.
 - Ctrl+Right arrow. Window key, in axMedia alone: Forward 15 seconds.
+- Ctrl+Slash. Bundle key, in axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask and axTerminal: Ask about this window.
 - Ctrl+Shift+4. Window key, in axDown and axPreview: Heading level 4.
 - Ctrl+Shift+5. Window key, in axDown and axPreview: Heading level 5.
 - Ctrl+Shift+6. Window key, in axDown and axPreview: Heading level 6.
@@ -360,6 +361,33 @@ Window key, in axFile, axGIT, axJSON and axTask. 4 meanings.
 - axTask: Find in every list.
 - axJSON: Format.
 
+### Alt+1
+
+Window key, in axClaude, axGIT, axProcess and axTerminal. 4 meanings.
+
+- axGIT: Changes.
+- axTerminal: Command field.
+- axClaude: Message field.
+- axProcess: Processes.
+
+### Alt+2
+
+Window key, in axClaude, axGIT, axProcess and axTerminal. 4 meanings.
+
+- axClaude: Conversation.
+- axGIT: Log.
+- axProcess: Services.
+- axTerminal: Terminal.
+
+### Alt+3
+
+Window key, in axClaude, axGIT, axProcess and axTerminal. 4 meanings.
+
+- axGIT: Branches.
+- axTerminal: Latest output.
+- axClaude: Latest response.
+- axProcess: Startup.
+
 ### Applications key
 
 Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 3 meanings.
@@ -371,6 +399,14 @@ Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and 
 ### Shift+F10
 
 Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 3 meanings.
+
+- axFile, axGIT, axMedia and axProcess: Context menu.
+- axAutomate, axMCP, axPass and axTask: The Context menu.
+- axAutomate, axMCP, axPass and axTask: The field's menu.
+
+### Ctrl+Period
+
+Bundle key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 3 meanings.
 
 - axFile, axGIT, axMedia and axProcess: Context menu.
 - axAutomate, axMCP, axPass and axTask: The Context menu.
@@ -653,11 +689,15 @@ These are keys of `BundleKeys` that work inside a text or a control and are no c
 
 From `docs/axKit/key-families.json`. A family is a pattern of keys and the one kind of thing such a key would do;
 a misfit is a command on a key of the pattern that does another kind of thing today. The families are a draft
-for the maintainer to settle: no key was moved for them and no test holds a key to its family.
+for the maintainer to settle: the first keys moved for them on 2026-11-16 (the places and views, to Alt+1, 2 and 3), and no test holds a key to its family.
 
 ### Ctrl+Shift+Space and Ctrl+Shift+punctuation: bring up axKit from anywhere in Windows
 
 0 keys of the inventory. No misfits.
+
+### Ctrl+punctuation: the in-window partner of the same key with Ctrl+Shift
+
+2 keys of the inventory. No misfits.
 
 ### Space and Ctrl+Space: toggle or play
 
@@ -705,18 +745,18 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 10 keys of the inventory. 22 misfits.
 
 - Ctrl+0, axTask: All tasks. Its kind: go to a place or view.
-- Ctrl+1, axClaude: Message field. Its kind: go to a place or view; moves to Alt+1 (decided 2026-11-16).
-- Ctrl+2, axClaude: Conversation. Its kind: go to a place or view; moves to Alt+2 (decided 2026-11-16).
-- Ctrl+3, axClaude: Latest response. Its kind: go to a place or view; moves to Alt+3 (decided 2026-11-16).
-- Ctrl+1, axTerminal: Command field. Its kind: go to a place or view; moves to Alt+1 (decided 2026-11-16).
-- Ctrl+2, axTerminal: Terminal. Its kind: go to a place or view; moves to Alt+2 (decided 2026-11-16).
-- Ctrl+3, axTerminal: Latest output. Its kind: go to a place or view; moves to Alt+3 (decided 2026-11-16).
-- Ctrl+1, axGIT: Changes. Its kind: go to a place or view; moves to Alt+1 (decided 2026-11-16).
-- Ctrl+2, axGIT: Log. Its kind: go to a place or view; moves to Alt+2 (decided 2026-11-16).
-- Ctrl+3, axGIT: Branches. Its kind: go to a place or view; moves to Alt+3 (decided 2026-11-16).
-- Ctrl+1, axProcess: Processes. Its kind: go to a place or view; moves to Alt+1 (decided 2026-11-16).
-- Ctrl+2, axProcess: Services. Its kind: go to a place or view; moves to Alt+2 (decided 2026-11-16).
-- Ctrl+3, axProcess: Startup. Its kind: go to a place or view; moves to Alt+3 (decided 2026-11-16).
+- Ctrl+1, axClaude: Message field. Its kind: go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16).
+- Ctrl+2, axClaude: Conversation. Its kind: go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16).
+- Ctrl+3, axClaude: Latest response. Its kind: go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16).
+- Ctrl+1, axTerminal: Command field. Its kind: go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16).
+- Ctrl+2, axTerminal: Terminal. Its kind: go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16).
+- Ctrl+3, axTerminal: Latest output. Its kind: go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16).
+- Ctrl+1, axGIT: Changes. Its kind: go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16).
+- Ctrl+2, axGIT: Log. Its kind: go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16).
+- Ctrl+3, axGIT: Branches. Its kind: go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16).
+- Ctrl+1, axProcess: Processes. Its kind: go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16).
+- Ctrl+2, axProcess: Services. Its kind: go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16).
+- Ctrl+3, axProcess: Startup. Its kind: go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16).
 - Ctrl+1, axTask: Action key 1. Its kind: act on what is selected.
 - Ctrl+2, axTask: Action key 2. Its kind: act on what is selected.
 - Ctrl+3, axTask: Action key 3. Its kind: act on what is selected.
@@ -733,7 +773,7 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 
 ### Alt+digit: go to a place or view of the window
 
-0 keys of the inventory. No misfits.
+3 keys of the inventory. No misfits.
 
 ### Ctrl+Shift+letter: the reverse or the wider form of the same letter with Ctrl
 

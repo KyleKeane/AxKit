@@ -37,14 +37,14 @@ expect state Claude: ready
 wait 1000
 said
 # Goal: Go to Claude's latest reply
-# Step 3: after "Done", Ctrl+3: the newest output marker, focus in the conversation; Ctrl+1 and Ctrl+3 again: the same
+# Step 3: after "Done", Alt+3: the newest output marker, focus in the conversation; Alt+1 and Alt+3 again: the same
 # line; Down: the blank line, then the first line of the reply.
-keys ctrl+3
+keys alt+3
 expect said ! Output 1 Reply from Claude heading level 1
 expect focus "value":"# Output 1 Reply from Claude"
-keys ctrl+1
+keys alt+1
 expect focus Message to Claude
-keys ctrl+3
+keys alt+3
 expect said ! Output 1 Reply from Claude heading level 1
 expect focus "value":"# Output 1 Reply from Claude"
 keys down
@@ -56,11 +56,11 @@ expect focus "value":"claude: 1"
 # the reading breaks, are what NVDA reads at the caret; the channel's caret line counts the view's wrapped rows, so it
 # cannot follow a wrapped paragraph (left manual). Checked: l gives one line number for the paragraph, before and after
 # it is done, and Enter quotes it as one line.
-keys ctrl+1
+keys alt+1
 type Write one paragraph of 120 words about rivers, with no line breaks.
 keys enter
 expect said Done
-keys ctrl+3
+keys alt+3
 expect said Output 2
 # c, the next Claude reply line, rather than two Downs: a reply of one wrapped paragraph has one line, and the second
 # Down landed on the empty line after it (seen with Haiku, 2026-11-01).
@@ -78,7 +78,7 @@ keys ctrl+a delete
 # Step 5: selection. Shift+Down twice from the first reply line of the numbers; Ctrl+C and Ctrl+V go through the
 # Windows clipboard, which the test desktop shares with the user's desktop, so copying is left manual. Escape with a
 # selection: "Selection cleared"; Escape again: the message field.
-keys ctrl+2
+keys alt+2
 keys ctrl+home
 keys o
 expect said Output 1
@@ -95,7 +95,7 @@ expect focus Message to Claude
 type Write the numbers 1 to 30, one per line, nothing else.
 keys enter
 expect said Sent
-keys ctrl+2
+keys alt+2
 keys ctrl+end
 keys shift+up
 expect said Done

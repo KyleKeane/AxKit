@@ -21,6 +21,11 @@ keys f8
 expect said ! F8: Say the status
 keys f1
 expect said ! F1: Keyboard shortcuts
+# The bundle's two keys on Ctrl and punctuation (AX-8.15), named by the keys they stand beside.
+keys ctrl+period
+expect said ! Ctrl+Period: The Context menu, as Shift+F10
+keys ctrl+slash
+expect said ! Ctrl+Slash: Ask Claude about this window, as Shift+F1
 keys ctrl+n
 expect said ! Ctrl+N: New item
 keys ctrl+up

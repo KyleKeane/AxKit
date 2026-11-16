@@ -13,10 +13,16 @@ public static class AxGitKeys
     public const Keys ShowInExplorer = Keys.Control | Keys.W;
 
     /// <summary>The three views of the list (AG-2.2); the key names the view when it already shows (axClaude D26).</summary>
-    public const Keys ViewChanges = Keys.Control | Keys.D1;
+    public const Keys ViewChanges = Keys.Alt | Keys.D1;
 
-    public const Keys ViewLog = Keys.Control | Keys.D2;
-    public const Keys ViewBranches = Keys.Control | Keys.D3;
+    public const Keys ViewLog = Keys.Alt | Keys.D2;
+    public const Keys ViewBranches = Keys.Alt | Keys.D3;
+
+    /// <summary>The same three on Ctrl, their key until 2026-11-16, when the views moved to Alt+1, 2 and 3 (bundle AX-8.14): further keys of the same commands, shown in no menu, with nothing extra said.</summary>
+    public const Keys ViewChangesAlso = Keys.Control | Keys.D1;
+
+    public const Keys ViewLogAlso = Keys.Control | Keys.D2;
+    public const Keys ViewBranchesAlso = Keys.Control | Keys.D3;
 
     /// <summary>In the list: Space stages or unstages, Enter acts on the item (diff, commit, switch), Delete discards.</summary>
     public const Keys StageToggle = Keys.Space;
@@ -45,6 +51,9 @@ public static class AxGitKeys
         ("Changes view", ViewChanges),
         ("Log view", ViewLog),
         ("Branches view", ViewBranches),
+        ("Changes view (Ctrl+1, the older key)", ViewChangesAlso),
+        ("Log view (Ctrl+2, the older key)", ViewLogAlso),
+        ("Branches view (Ctrl+3, the older key)", ViewBranchesAlso),
         ("Stage or unstage (in the list)", StageToggle),
         ("Act on the item (in the list)", Act),
         ("Discard changes (in the list)", Discard),

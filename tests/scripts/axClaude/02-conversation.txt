@@ -11,7 +11,7 @@ start claude {temp}\plain -- --model haiku
 # Goal: Read Claude's question as lines in the conversation
 # Step 1: the trust prompt as plain lines in the conversation, read with Down Arrow.
 expect said Claude asks
-keys ctrl+2
+keys alt+2
 keys ctrl+home
 expect focus [Screen Reader Mode
 # The app's record of the question comes first (it stays with the option off, SPEC D33), then Claude's lines.
@@ -211,7 +211,7 @@ keys shift+enter
 type Answer in one line.
 keys enter
 expect said Done
-keys ctrl+3
+keys alt+3
 expect said ! Output 1 Reply from Claude heading level 1
 keys down down
 expect focus "value":"claude:

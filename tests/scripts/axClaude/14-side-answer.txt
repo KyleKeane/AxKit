@@ -87,7 +87,7 @@ expect state Claude: ready
 # Goal: Find side answers in the conversation
 # The records in the conversation (SPEC.md FR-5, D33; 2026-11-14): each /btw is a "btw:" line with its question,
 # found with b in order, not with q; /goal stays a "Question:" line.
-keys ctrl+2 ctrl+home
+keys alt+2 ctrl+home
 keys b
 expect said ! btw: what is two plus two? answer in one word
 keys b

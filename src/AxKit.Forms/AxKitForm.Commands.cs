@@ -57,7 +57,15 @@ public abstract partial class AxKitForm
                 command.Mark.ToString().ToLowerInvariant(),
                 !NoticeOpen && (command.When?.Invoke() ?? true),
                 _keyOnly.Any(known => ReferenceEquals(known, command))));
+            if (command.Key == ContextMenuOfWindows)
+            {
+                // AX-8.15: Ctrl+Period runs what Shift+F10 runs (ProcessCmdKey), so it is a further key of that command.
+                keys.Add(keys[^1] with { Key = BundleKeys.Chord(BundleKeys.ContextMenu), KeyText = BundleKeys.Text(BundleKeys.ContextMenu), KeyOnly = true });
+            }
         }
+
+        // AX-8.15: Ctrl+Slash, the base's further key of Ask about this window, which is no command of the list.
+        keys.Add(new KeyCommand(MenuText.Plain(AskAboutThisWindowLabel), BundleKeys.Chord(BundleKeys.AskClaudeAlso), BundleKeys.Text(BundleKeys.AskClaudeAlso), "act", !NoticeOpen, KeyOnly: true));
 
         var rows = CommandListing.Rows(menus, keys);
         if (KeyTestRunning)

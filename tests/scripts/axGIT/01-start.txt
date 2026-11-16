@@ -53,33 +53,43 @@ expect state 2 changed, 0 staged
 expect state \\repo"]
 
 # Goal: Switch between the views
-# 1.4 The views by Ctrl+1, 2, 3, each said with the item it is on; Ctrl+1 back on the item it had.
-keys ctrl+1
+# 1.4 The views by Alt+1, 2, 3, each said with the item it is on; Alt+1 back on the item it had.
+keys alt+1
 expect said ! Changes, 2 files. Untracked new.txt
-keys ctrl+2
+keys alt+2
 expect said ! Log, 2 commits.
 expect said Test: second
 expect focus Log, 2 commits
-keys ctrl+3
+keys alt+3
 expect said ! Branches, 2. main, current, no upstream
-keys ctrl+1
+keys alt+1
 expect said ! Changes, 2 files. Untracked new.txt
 expect focus Untracked new.txt
 
 # Check: A command of another view says which view first
 # 1.4a A command of another view says which view first, and the view stays.
-keys ctrl+2
+keys alt+2
 expect said ! Log, 2 commits.
 keys space
-expect said ! Changes view first: Ctrl+1
+expect said ! Changes view first: Alt+1
 keys delete
-expect said ! Changes view first: Ctrl+1
+expect said ! Changes view first: Alt+1
 # Context holds the view's own commands only (bundle AX-9.11), so Show diff is not offered in the Log.
 expect commands Show the commit, Context
 expect focus Log, 2 commits
-keys ctrl+1
+keys alt+1
 expect said ! Changes, 2 files.
 expect commands Stage or unstage, Context
+expect focus Changes, 2 files
+
+# Check: The older keys of the views still work
+# 1.4b Ctrl+1, Ctrl+2 and Ctrl+3, the views' keys until 2026-11-16, still switch the view, with nothing more said.
+keys ctrl+2
+expect said ! Log, 2 commits.
+keys ctrl+3
+expect said ! Branches, 2. main, current, no upstream
+keys ctrl+1
+expect said ! Changes, 2 files.
 expect focus Changes, 2 files
 
 # Goal: Close the window

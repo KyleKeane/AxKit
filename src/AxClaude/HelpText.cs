@@ -11,8 +11,9 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axClaude",
         [
-            "Ctrl+1: go to the message field. Ctrl+2: go to the conversation. Both say where you are, also when you are there already",
-            "Ctrl+3: go to the latest reply, in the conversation",
+            "Alt+1: go to the message field. Alt+2: go to the conversation. Both say where you are, also when you are there already",
+            "Alt+3: go to the latest reply, in the conversation",
+            "Ctrl+1, Ctrl+2 and Ctrl+3, the keys of these three places until now, still work",
             "Tab, Shift+Tab, Ctrl+Tab or F6: switch between the message field (or Claude's question in its place) and the conversation",
             "Shift+Escape: interrupt Claude, or close one of Claude's dialogs",
             "Ctrl+Shift+S: make Claude take up the waiting message now instead of after its current step",

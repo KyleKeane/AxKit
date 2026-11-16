@@ -46,22 +46,28 @@ expect focus Conversation
 keys ctrl+shift+tab
 expect focus Message to Claude
 # Goal: Jump straight to the conversation or the message field
-# Step 4a: Ctrl+2 moves to the conversation and says nothing itself; Ctrl+2 again says "Conversation" and the caret
+# Step 4a: Alt+2 moves to the conversation and says nothing itself; Alt+2 again says "Conversation" and the caret
 # stays (no value change on the timeline).
 said
-keys ctrl+2
+keys alt+2
 expect said → Conversation (Text)
 expect quiet 1000
-keys ctrl+2
+keys alt+2
 expect said ! Conversation
 refuse said ·
+keys alt+1
+expect said → Message to Claude (Text)
+keys alt+1
+expect said ! Message to Claude
+# Check: The older keys of the places still work
+# Ctrl+1 and Ctrl+2, the places' keys until 2026-11-16, still go there, with nothing more said.
+keys ctrl+2
+expect said → Conversation (Text)
 keys ctrl+1
 expect said → Message to Claude (Text)
-keys ctrl+1
-expect said ! Message to Claude
 # Check: Asking for the latest reply before the first says there is none yet
-# Ctrl+3 before the first reply: "No response yet", the focus in the conversation.
-keys ctrl+3
+# Alt+3 before the first reply: "No response yet", the focus in the conversation.
+keys alt+3
 expect said No response yet
 expect focus Conversation
 # Goal: Go to the conversation from the menu
@@ -71,7 +77,7 @@ menu Conversation
 expect said ! Conversation
 # Check: Tab moves only between the message field and the conversation
 # Step 5: Tab and Shift+Tab between the field and the conversation.
-keys ctrl+1
+keys alt+1
 expect focus Message to Claude
 keys tab
 expect focus Conversation
@@ -109,7 +115,7 @@ expect state \\fresh"
 keys f8
 expect said ! Claude: ready |
 expect focus Message to Claude
-keys ctrl+2
+keys alt+2
 keys f8
 expect said ! Claude: ready |
 expect focus Conversation

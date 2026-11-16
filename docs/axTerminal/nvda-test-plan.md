@@ -7,18 +7,18 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 ## 1. Start (AT-1, AT-2)
 
 - `axterminal C:\src\myproject` (or Start menu, axKit axTerminal): NVDA says the window ("myproject - axTerminal window"), then "Command, edit, multi line". After a moment: the ping and "Ready".
-- Ctrl+2: "Terminal". The first lines: a system line "Shell started: Windows PowerShell in …" and, with NVDA running, PowerShell's line that it turned PSReadLine off. No prompt row anywhere. Ctrl+1: "Command".
+- Alt+2: "Terminal". The first lines: a system line "Shell started: Windows PowerShell in …" and, with NVDA running, PowerShell's line that it turned PSReadLine off. No prompt row anywhere. Alt+1: "Command". No menu opens and Windows makes no sound for Alt and the number, in the field as in the view; the menu bar stays closed when Alt is let go. Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, do the same with nothing more said.
 - NVDA+End (the status bar): "Idle" and the prompt text "PS C:\src\myproject>".
 - Ctrl+Q: "Idle, PS C:\src\myproject>".
 
 ## 2. Commands (AT-3, AT-5)
 
-- Type `Write-Output hello`, Enter: "Sent" with its note; a tick; the chime and "Done". Ctrl+3: "Output 1 heading level 1"; Down: "hello". Shift+I: "Input 1 heading level 1"; Down: "## Folder"; Down: the folder; Down: "## Command"; Down: "Write-Output hello". `2`: "Folder heading level 2"; `2`: "Command heading level 2". Options → Text → Markers in the text off: Up and Down read "Input 1" and "Folder" without the hashes, `h` still says "heading level 1"; on again.
-- `cmd /c exit 3`, Enter: "Failed, exit code 3". `Get-ChildItem`, Enter: ticks, "Done"; Ctrl+3 and read down: the listing, no prompt rows.
+- Type `Write-Output hello`, Enter: "Sent" with its note; a tick; the chime and "Done". Alt+3: "Output 1 heading level 1"; Down: "hello". Shift+I: "Input 1 heading level 1"; Down: "## Folder"; Down: the folder; Down: "## Command"; Down: "Write-Output hello". `2`: "Folder heading level 2"; `2`: "Command heading level 2". Options → Text → Markers in the text off: Up and Down read "Input 1" and "Folder" without the hashes, `h` still says "heading level 1"; on again.
+- `cmd /c exit 3`, Enter: "Failed, exit code 3". `Get-ChildItem`, Enter: ticks, "Done"; Alt+3 and read down: the listing, no prompt rows.
 - `Read-Host "Continue? (y/n)"`, Enter: after two seconds of quiet, the question chime and "Asks: Continue? (y/n):". Type `y`, Enter: "Sent", then "Done"; the terminal shows the question row with the answer, then `# Input 2` with y.
-- Type `if ($true) {`, Shift+Enter, `"yes"`, Shift+Enter, `}`, Enter: "Done"; Ctrl+3, Down: "yes"; no `>>` rows.
+- Type `if ($true) {`, Shift+Enter, `"yes"`, Shift+Enter, `}`, Enter: "Done"; Alt+3, Down: "yes"; no `>>` rows.
 - Type `echo secret`, then Alt+A, W (Actions, Send without recording): "Sent, not recorded"; no Input line for it; Ctrl+R does not list it. The same with `Start-Sleep 5`, then NVDA+End: "Running: a command sent without recording"; Ctrl+Q says the same, not the command. The menu item shows no key.
-- Type `echo main`, Ctrl+Enter: "Sent", as Enter; an Input line for it, and Ctrl+R lists it. Ctrl+2, Ctrl+Enter in the terminal: the edge sound, nothing sent.
+- Type `echo main`, Ctrl+Enter: "Sent", as Enter; an Input line for it, and Ctrl+R lists it. Alt+2, Ctrl+Enter in the terminal: the edge sound, nothing sent.
 - Ctrl+R: "Recent commands, list" with the newest first; Down, Enter: the command is in the field ("Command" with the text); Ctrl+R, Escape: back in the field.
 - In the terminal, on a command line, Enter: "Line copied", the focus in the field with the line.
 - `Get-Content forged-marks.txt; Start-Sleep 5`, Enter (security audit S-37, S-38): the file's line is read, no "Done"
@@ -27,7 +27,7 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 - `Start-Sleep 30`, Enter; NVDA+End: "Running: Start-Sleep 30"; Ctrl+Q: "Running: Start-Sleep 30, n seconds, …"; Ctrl+Shift+C: "Interrupt sent", then "Done" or "Failed". Shift+Escape: "Escape sent".
 - Options, Speech, Speak output: all lines; `Get-ChildItem`, Enter: the lines spoken as one utterance, then "Done". Back to none.
 - Options, Sounds, Background music while a command runs on; `Start-Sleep 5`: the music plays until "Done". Ctrl+M: "Background music off" (Ctrl+Space until 2026-11-15).
-- The mode key (bundle AX-8.13): type `echo one`, then Ctrl+Space: "Navigation mode", and F8 ends in "field in navigation mode". A letter or Enter: the edge sound, nothing typed, nothing sent; Ctrl+Up: the caret to the start of the field, no command from the history. Ctrl+2, Ctrl+Space: "Read only: there is no edit mode here". Ctrl+1, Ctrl+Space: "Edit mode"; typing types again.
+- The mode key (bundle AX-8.13): type `echo one`, then Ctrl+Space: "Navigation mode", and F8 ends in "field in navigation mode". A letter that is no jump: two quick blips, nothing typed; Enter: the edge sound, nothing sent; h with no heading in the field: one flat low tone, then "No next heading"; Ctrl+Up: the caret to the start of the field, no command from the history. Alt+2, Ctrl+Space: "Read only: there is no edit mode here". Alt+1, Ctrl+Space: "Edit mode"; typing types again.
 
 ## 3. Shells and folders (AT-1.2, AT-1.6)
 

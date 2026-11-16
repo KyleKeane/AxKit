@@ -91,7 +91,7 @@ public sealed partial class GitForm
         }
     }
 
-    /// <summary>View → Changes, Log, Branches (Ctrl+1, 2, 3): the list refilled, read on the first visit or when stale, and its name said with the item the focus is on (axClaude D26).</summary>
+    /// <summary>View → Changes, Log, Branches (Alt+1, 2, 3): the list refilled, read on the first visit or when stale, and its name said with the item the focus is on (axClaude D26).</summary>
     private async Task ShowViewAsync(View view)
     {
         if (_root is null)
@@ -136,7 +136,7 @@ public sealed partial class GitForm
 
     /// <summary>
     /// Whether the list shows the view a command belongs to; otherwise which view first is said, "Changes view
-    /// first: Ctrl+1" (AG-6.2). One rule for every command of a view since 2026-10-23: Space, Enter and the menu's
+    /// first: Alt+1" (AG-6.2), the key from the table. One rule for every command of a view since 2026-10-23: Space, Enter and the menu's
     /// Show diff switched the view silently, Delete said this, and Switch to branch switched too.
     /// </summary>
     private bool InView(View view)
@@ -148,9 +148,9 @@ public sealed partial class GitForm
 
         Announce(view switch
         {
-            View.Changes => "Changes view first: Ctrl+1",
-            View.Log => "Log view first: Ctrl+2",
-            _ => "Branches view first: Ctrl+3",
+            View.Changes => "Changes view first: " + BundleKeys.Text(AxGitKeys.ViewChanges).TrimEnd('.'),
+            View.Log => "Log view first: " + BundleKeys.Text(AxGitKeys.ViewLog).TrimEnd('.'),
+            _ => "Branches view first: " + BundleKeys.Text(AxGitKeys.ViewBranches).TrimEnd('.'),
         }, true);
         return false;
     }

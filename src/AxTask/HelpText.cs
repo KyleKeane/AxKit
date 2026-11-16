@@ -33,7 +33,7 @@ public static class HelpText
           Ctrl+Shift+F: find words in every list, your own and every project's. "Searching every list" is said, then what was found; another notice opened meanwhile drops the result. In what was found, Right or Enter opens the item where it lives, Left or Escape goes back
           Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9: the list's own action keys on the item selected, set in Actions, Action keys: fields set, the item moved to a list, or something opened; Context's Action keys submenu on an item names them
           Ctrl+Shift+D: hide or show the done tasks of a list
-          Shift+F10 or the Applications key: the Context menu, what acts on the selection
+          Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the selection
 
         ## The detail pane, on the right
           It shows the fields of the item selected in the navigator, or the details of the list

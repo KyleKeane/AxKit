@@ -20,6 +20,19 @@ public static class BundleKeys
     public const Keys AskClaude = Keys.Shift | Keys.F1;
 
     /// <summary>
+    /// A further key of the same command (AX-8.15, 2026-11-16): Ctrl+Slash, the in-window partner of the system-wide
+    /// Ctrl+Shift+Slash, which brings up axHelp's conversation from anywhere (AX-8.11).
+    /// </summary>
+    public const Keys AskClaudeAlso = Keys.Control | Keys.OemQuestion;
+
+    /// <summary>
+    /// The context menu where the focus is (AX-8.15, 2026-11-16): whatever Shift+F10 and the Applications key do there,
+    /// which stay. The window base runs the window's command on Shift+F10 for it (a list's Context menu), and makes
+    /// Windows' own request for a context menu where no command takes that (<c>AxKitForm.ProcessCmdKey</c>).
+    /// </summary>
+    public const Keys ContextMenu = Keys.Control | Keys.OemPeriod;
+
+    /// <summary>
     /// Say the status (AX-7.10, the user's key of 2026-11-15): the window's status bar as one announcement of axKit's
     /// own, so that the status never depends on NVDA finding the status bar (NVDA+End said "blank" over a full bar).
     /// </summary>
@@ -79,6 +92,8 @@ public static class BundleKeys
         ("Command palette", CommandPalette),
         ("Report", Report),
         ("Ask Claude about this window", AskClaude),
+        ("Ask Claude about this window, as Shift+F1", AskClaudeAlso),
+        ("The Context menu, as Shift+F10", ContextMenu),
         ("Say the status", SayStatus),
         ("The main action", MainAction),
         ("Edit mode or navigation mode", ToggleMode),

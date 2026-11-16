@@ -39,10 +39,10 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 2. Down to a program that hangs, Delete: the notice "End notepad (process 4410)? Anything unsaved in it is lost." with
    End process and Cancel; Enter: "Ended notepad"; the list is read again.
 3. Ctrl+Q: "214 processes. Memory 9.1 of 15.9 GB in use, 57%. Processor 12%".
-4. Ctrl+2: "Services, 280 list, Windows Update (wuauserv), running, manual, 1 of 280". Enter on a stopped one: its
+4. Alt+2: "Services, 280 list, Windows Update (wuauserv), running, manual, 1 of 280". Enter on a stopped one: its
    details with Start, and a "needs administrator rights" notice when Windows refuses.
-5. Ctrl+3: "Startup, 9 list, OneDrive, enabled, current user's Run key". Enter: the command and where it is set.
-6. An installer set KeePassXC to start at sign-in, and its window gets in the screen reader's way. Ctrl+3, type `kee`,
+5. Alt+3: "Startup, 9 list, OneDrive, enabled, current user's Run key". Enter: the command and where it is set.
+6. An installer set KeePassXC to start at sign-in, and its window gets in the screen reader's way. Alt+3, type `kee`,
    Shift+F10, Turn off: "KeePassXC turned off: it no longer starts with Windows"; the line reads "KeePassXC, disabled,
    current user's Run key". Or Delete: the question "Remove KeePassXC from the programs that start with Windows?",
    Cancel the default; Alt+R: "KeePassXC removed from the programs that start with Windows".
@@ -64,7 +64,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 
 - PR-2.1 From the top: the menu bar; the list, named with its view and count ("Processes, 214", "Services, 280",
   "Startup, 9"); the status bar. A notice takes the list's place while it shows (AX-6.4). The focus starts in the list.
-- PR-2.2 Views: Ctrl+1 Processes, Ctrl+2 Services, Ctrl+3 Startup (Navigation), and Tab and Shift+Tab to the next and the
+- PR-2.2 Views: Alt+1 Processes, Alt+2 Services, Alt+3 Startup (Navigation; Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, shown in no menu, with nothing extra said (bundle AX-8.14).), and Tab and Shift+Tab to the next and the
   previous view, round from Startup to Processes (the window has one control; the user's ask, 2026-10-24). The key says the list's name and the
   item the selection is on, also when the list already shows the view (axClaude D26). A view is read the first time it
   shows and on F5; each keeps its selection by the item's key (the process ID, the service's name, the startup entry's
@@ -179,7 +179,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 ### PR-6 Menus, keys, texts
 
 - PR-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Refresh F5 | ─ | Exit Alt+F4.
-  **Actions (A):** Summary Ctrl+Q. **Navigation (N):** Processes Ctrl+1 | Services Ctrl+2 | Startup Ctrl+3.
+  **Actions (A):** Summary Ctrl+Q. **Navigation (N):** Processes Alt+1 | Services Alt+2 | Startup Alt+3.
   **Context (C)**, what acts on the line selected, by the view shown (AX-9.11): in Processes, Details Enter | End
   process… Delete | End process tree… | Show program in axFile Ctrl+E | Copy line Ctrl+C; in Services, Details Enter |
   Start | Stop | Restart | Copy line Ctrl+C; in Startup, Details Enter | Turn off | Turn on | Remove… Delete | Show
@@ -191,13 +191,13 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   Context, as Alt and C open it, so that NVDA reads its first item (the window base's `OpenBarMenu`, axFile's AF-D13;
   2026-10-24).
 - PR-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here. F5
-  refreshes, Delete ends a process"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxProcessKeys`): Ctrl+1,
-  Ctrl+2, Ctrl+3, Tab, Shift+Tab, F5, Enter, Delete, Ctrl+E, Ctrl+C, Ctrl+Q, Shift+F10 and the Applications key, and Up,
+  refreshes, Delete ends a process"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxProcessKeys`): Alt+1 (with Ctrl+1, Ctrl+2, Ctrl+3 as further keys of the three views, AX-8.14),
+  Alt+2, Alt+3, Tab, Shift+Tab, F5, Enter, Delete, Ctrl+E, Ctrl+C, Ctrl+Q, Shift+F10 and the Applications key, and Up,
   Down, Home and End at the ends of the list. Enter and Delete act while the list has the focus. Delete
   is one key and two commands, by the view shown: Remove in the Startup view (PR-5.6), End process in the other two
-  (which in the Services view says "Processes view first: Ctrl+1", as before). A
-  command of one view asked for in another says which view first: "Processes view first: Ctrl+1", "Services view first:
-  Ctrl+2", "Startup view first: Ctrl+3". End process, End process tree, Start, Stop, Restart, Turn off, Turn on, Remove
+  (which in the Services view says "Processes view first: Alt+1", as before). A
+  command of one view asked for in another says which view first: "Processes view first: Alt+1", "Services view first:
+  Alt+2", "Startup view first: Alt+3". End process, End process tree, Start, Stop, Restart, Turn off, Turn on, Remove
   and Copy line are marked act (`CommandMark.Act`): an AI tool asks the user before it runs one (`docs/axKit/mcp.md`
   MC-7.3).
 - PR-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axProcess/user-guide.md` is embedded (Help, User
@@ -212,7 +212,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   "Started", "Stopped", "Restarted <display name>", "<display name> is still starting" and the refusals of PR-4.3;
   the sentences of PR-5.7 for a startup program turned off, turned on or removed and of PR-5.5 for one of the whole
   computer; "Sorted by memory", "Sorted by processor", "Sorted by name"; "Copied"; "Nothing selected"; "Processes view
-  first: Ctrl+1", "Services view first: Ctrl+2", "Startup view first: Ctrl+3"; "Not found" (find); the bundle's text size and diagnostics announcements.
+  first: Alt+1", "Services view first: Alt+2", "Startup view first: Alt+3"; "Not found" (find); the bundle's text size and diagnostics announcements.
   Nothing is spoken on an arrow key.
 - PR-7.3 The log is `%LOCALAPPDATA%\AxKit\logs\axProcess.log`: the start, the exit, every process ended, every
   service started or stopped and every startup program turned off, turned on or removed, by its name with what it

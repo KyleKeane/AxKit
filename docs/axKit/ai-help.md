@@ -208,8 +208,10 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   app, as workflows and their goals), one `workflows-<page>.md` per group in the order of `Dispatch.Apps` and then
   `workflows-ai-tools.md` and `workflows-nvda-only.md` (`docs/axKit/workflows/<page>.md`, the steps of the group's
   goals with their keys), and `window-commands.md` (`docs/axKit/window-commands.md`, every command of every window
-  with its menu and its key; never `commands.md`, which in the repository is the developer's commands), each with
-  its line in `index.md`. These files are axKit's, not the user's: each is
+  with its menu and its key; never `commands.md`, which in the repository is the developer's commands), and, since
+  2026-11-16, the two key pages: `key-groups.md` (`docs/axKit/key-groups.md`, how axKit's keys are grouped, to
+  explain the patterns and to guess a key) and `key-map.md` (`docs/axKit/key-map.md`, every key and what it does in
+  each app), each with its line in `index.md`. These files are axKit's, not the user's: each is
   written where it is missing, and all are written again when `documentation\axkit-version.txt`, the marker, does not
   hold this axKit's version, so that they follow each release (a development build writes them once in each process,
   since its guides change without its version). A changed copy is overwritten by the next version, which `index.md` and
@@ -235,6 +237,8 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   `AiDocumentation.WorkflowPages` finds a group's page by trying each name of `Dispatch.Apps` and the two other pages,
   never by listing the resources; `AiDocumentationTests` fails when a page differs from the repository's or a page of
   `docs/axKit/workflows` is not among the files (WF-8.2). They cost about 350 KB more before compression (2026-11-15).
+  The key pages, as `tools/key-map.ps1` wrote them, are `KeyGroups.md` and `KeyMap.md`, held to their files by the
+  same test; about 50 KB more (2026-11-16).
 - AH-7.3 **Claude is told by a rule file.** `<working folder>\.claude\rules\axkit-documentation.md`, written and
   kept current with the guides, says: for a question about axKit or one of its apps, read `documentation/index.md`
   and the fitting guide with the Read tool before answering, answer from the guide, search the folder with Grep when

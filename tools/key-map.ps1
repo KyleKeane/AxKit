@@ -295,7 +295,7 @@ $lines.Add("## Key families, $($families.status)")
 $lines.Add('')
 $lines.Add('From `docs/axKit/key-families.json`. A family is a pattern of keys and the one kind of thing such a key would do;')
 $lines.Add('a misfit is a command on a key of the pattern that does another kind of thing today. The families are a draft')
-$lines.Add('for the maintainer to settle: no key was moved for them and no test holds a key to its family.')
+$lines.Add('for the maintainer to settle: the first keys moved for them on 2026-11-16 (the places and views, to Alt+1, 2 and 3), and no test holds a key to its family.')
 foreach ($family in $families.families) {
     $ofFamily = @($chords | Where-Object { $_.Chord -match $family.match })
     $misfits = @($family.misfits)

@@ -47,7 +47,7 @@ Starts with: Open axProcess.
 
 ### Show the services
 
-1. Press Ctrl+2 (Services; Navigation menu).
+1. Press Alt+2 (Services; Navigation menu).
 
 ### Read a service's details
 
@@ -58,12 +58,12 @@ Starts with: Open axProcess.
 
 ### Go back from the services to the processes
 
-1. Press Ctrl+2 (Services; Navigation menu).
-2. Press Ctrl+1 (Processes; Navigation menu).
+1. Press Alt+2 (Services; Navigation menu).
+2. Press Alt+1 (Processes; Navigation menu).
 
 ### Show the startup programs
 
-1. Press Ctrl+3 (Startup; Navigation menu).
+1. Press Alt+3 (Startup; Navigation menu).
     You hear: Startup, 1. Morning, enabled, your Startup folder.
 
 ### Read the keyboard shortcuts
@@ -73,7 +73,7 @@ Starts with: Open axProcess.
 
 ### Move through the views one after another
 
-1. Press Ctrl+1 (Processes; Navigation menu).
+1. Press Alt+1 (Processes; Navigation menu).
 2. Press Tab.
     You hear words such as: Services.
 3. Press Tab.
@@ -85,7 +85,7 @@ Starts with: Open axProcess.
 
 ### Find a service by typing its name
 
-1. Press Ctrl+2 (Services; Navigation menu).
+1. Press Alt+2 (Services; Navigation menu).
 2. Type: windows event l
 
 ## Find a process by typing its name and read a startup program's details
@@ -102,7 +102,7 @@ Starts with: Open axProcess.
 
 ### Read a startup program's details
 
-1. Press Ctrl+3 (Startup; Navigation menu).
+1. Press Alt+3 (Startup; Navigation menu).
     You hear: Startup, 1. Morning notes, enabled, your Startup folder.
 2. Press Enter.
 3. Press Escape.
@@ -113,7 +113,7 @@ Starts with: Open axProcess.
 
 ### Show the startup programs
 
-1. Press Ctrl+3 (Startup; Navigation menu).
+1. Press Alt+3 (Startup; Navigation menu).
     You hear: Startup, 4. Check Alpha, enabled, current user's Run key.
 
 ### Turn a startup program off

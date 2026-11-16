@@ -71,11 +71,11 @@ expect said Not run
 expect focus "name":"Message to Claude"
 # Check: Nothing is sent when the offers are turned down
 # Nothing was sent: no line of the conversation holds a command.
-keys ctrl+2
+keys alt+2
 expect focus Conversation
 refuse text echo first
 refuse text echo third
-keys ctrl+1
+keys alt+1
 expect focus "name":"Message to Claude"
 
 # Check: An offer made while Claude works waits for the turn's end

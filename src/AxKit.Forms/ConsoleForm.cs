@@ -410,7 +410,7 @@ public abstract partial class ConsoleForm : AxKitForm
     }
 
     /// <summary>
-    /// Ctrl+1, Ctrl+2 and the Navigate menu (axClaude FR-6.5, D26): the control takes the focus, and NVDA announces the
+    /// Alt+1, Alt+2 and the Navigate menu (axClaude FR-6.5, D26): the control takes the focus, and NVDA announces the
     /// change. When it has the focus already, its name is spoken instead, so the key also answers "where am I".
     /// </summary>
     protected void GoTo(Control control)

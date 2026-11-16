@@ -460,7 +460,7 @@ which overwrote what the user had there. Now it offers the command through a too
   than 1000 characters; Claude Code not running in the window; three offers already waiting in that window.
 - MC-9.4 **The question** is a list in the control area, in the message field's place, as Claude's own questions are
   (the user's decision of 2026-11-13, after hearing the first version, a notice that covered the window): the
-  conversation stays there to read for context (Tab, Ctrl+2), and the question is told from a notice by where it is.
+  conversation stays there to read for context (Tab, Alt+2), and the question is told from a notice by where it is.
   It shows only once Claude has been idle for a second and a half, asks nothing and no notice or question shows; an
   offer made during a turn waits for the turn's end, and several are asked one after another. It comes with a
   chime of its own and a moment in which keys do nothing. It is answered as a question of Claude's is and must still

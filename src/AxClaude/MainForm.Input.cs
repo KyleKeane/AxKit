@@ -36,7 +36,7 @@ internal sealed partial class MainForm
     /// Enter on a conversation line appends the line to the message under the marker and a line naming its number,
     /// separated from what is there by a blank line, then the comment marker, and moves the focus into the field
     /// with the caret on the empty line under it, ready for the comment (FR-2.9). The conversation caret stays
-    /// where it is, so Ctrl+2 comes back to the same line.
+    /// where it is, so Alt+2 comes back to the same line.
     /// </summary>
     private void QuoteLineInMessage(int number, int count, string text)
     {

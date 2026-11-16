@@ -726,6 +726,37 @@ Space in the box said nothing.
 | Space: "checked", once | Passed |
 | Space again: "not checked", once | Passed |
 
+## Owed: the keys and sounds of 2026-11-16 (Alt+1 to 3, Ctrl+Period, Ctrl+Slash, navigation mode's three sounds; `docs/axKit/SPEC.md` AX-8.13 to AX-8.15)
+
+Built and passing on the runner's desktop, which posts a key's message and plays no sound, so none of this is heard
+or pressed for real yet.
+
+On the real keyboard, by the user:
+
+1. Alt+1, Alt+2 and Alt+3 in axClaude, axTerminal, axGIT and axProcess: the place or view changes, no menu opens,
+   nothing beeps, and the menu bar stays closed when Alt is let go. Ctrl+1 to 3 still do the same.
+2. Ctrl+Period in a list (axFile, axTask), in an editor's text (axDown) and in a notice's field: the Context menu
+   opens once both keys are up, as with Shift+F10.
+3. Ctrl+Slash in any window: the question of "Ask about this window" opens, as with Shift+F1.
+
+By the user's ear, in axDown's navigation mode:
+
+4. A letter that jumps (H with a next heading): the small click, then the move and the words. Whether the click is
+   over before NVDA speaks, and whether it is told apart from the conversation's line click in axClaude. Landing on a
+   heading, the heading sound follows at once and cuts the click.
+5. A letter with nothing of its kind (H on the last heading): one flat low tone, then "No next heading". The tone is
+   a candidate, not chosen by ear.
+6. A plain key with no command (a letter that is no jump, Space, a digit): two quick blips. A candidate, not chosen
+   by ear. Enter, Backspace and Delete keep the edge sound.
+
+With NVDA, in a pass:
+
+7. The sentences that name the new keys: "Changes view first: Alt+1" and its siblings in axGIT and axProcess; the
+   key test's "Alt+2: Conversation", "Ctrl+Period: The Context menu, as Shift+F10" and "Ctrl+Slash: Ask Claude about
+   this window, as Shift+F1"; the menus' shortcut read as "Alt+1."; the F1 texts' new lines.
+8. axHelp's row "Ask about this window" in the command inventory lacks its further key Ctrl+Slash until a pass
+   writes it: its only scripts start the real Claude Code.
+
 ## Owed: a menu's refusal in navigation mode and the last full stop of joined words (2026-11-16, `docs/axKit/SPEC.md` AX-8.13 and AX-7.3)
 
 Two changes that are heard, made with the repair of what axDown answered an AI tool differently than a key; the

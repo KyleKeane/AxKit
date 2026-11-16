@@ -15,6 +15,7 @@ From anywhere in Windows:
 
 The same in every axKit window:
 
+- Ctrl+punctuation: the in-window partner of the same key with Ctrl+Shift.
 - Space and Ctrl+Space: toggle or play.
 - F-keys (F1 to F12 alone): say or show.
 - Shift+F-key: the reverse or the other form of the same F-key.
@@ -51,6 +52,17 @@ The keys:
 ## The same in every axKit window
 
 These keys do the same kind of thing in every window of axKit, so they are learned once.
+
+### Ctrl+punctuation: the in-window partner of the same key with Ctrl+Shift
+
+Ctrl and a punctuation key stays inside the window you are in, where the same key with Ctrl and Shift works from anywhere. Ctrl+Slash asks Claude about this window, as Shift+F1 does; with Shift added it brings up axHelp's conversation from any program. Ctrl+Period opens the Context menu, as Shift+F10 does; its partner with Shift is kept for later.
+
+The keys:
+
+- Ctrl+Period, axFile, axGIT, axMedia and axProcess: Context menu.
+- Ctrl+Period, axAutomate, axMCP, axPass and axTask: The Context menu.
+- Ctrl+Period, axAutomate, axMCP, axPass and axTask: The field's menu.
+- Ctrl+Slash, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask and axTerminal: Ask about this window.
 
 ### Space and Ctrl+Space: toggle or play
 
@@ -347,9 +359,22 @@ The keys:
 
 ### Alt+digit: go to a place or view of the window
 
-Alt and a number goes to one of the window's main places or views: the first, the second, the third. Decided on 2026-11-16 and not built yet: until then these are on Ctrl+1, 2 and 3 in axClaude, axTerminal, axGIT and axProcess.
+Alt and a number goes to one of the window's main places or views: the first, the second, the third. Built on 2026-11-16 in axClaude, axTerminal, axGIT and axProcess. Ctrl+1, 2 and 3, the keys of these places until then, still work there for now.
 
-No key of this group is in use yet.
+The keys:
+
+- Alt+1, axGIT: Changes.
+- Alt+1, axTerminal: Command field.
+- Alt+1, axClaude: Message field.
+- Alt+1, axProcess: Processes.
+- Alt+2, axClaude: Conversation.
+- Alt+2, axGIT: Log.
+- Alt+2, axProcess: Services.
+- Alt+2, axTerminal: Terminal.
+- Alt+3, axGIT: Branches.
+- Alt+3, axTerminal: Latest output.
+- Alt+3, axClaude: Latest response.
+- Alt+3, axProcess: Startup.
 
 ### Ctrl+Shift+letter: the reverse or the wider form of the same letter with Ctrl
 

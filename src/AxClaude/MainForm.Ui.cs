@@ -74,9 +74,17 @@ internal sealed partial class MainForm
         claude.DropDownItems.Add(sendKey);
 
         var navigate = new ToolStripMenuItem();
-        Add(navigate, new Command("&Message field", AxClaudeKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open });
-        Add(navigate, new Command("&Conversation", AxClaudeKeys.GoToConversation, () => GoTo(Transcript)) { Mark = CommandMark.Open });
-        Add(navigate, new Command("&Latest response", AxClaudeKeys.LatestResponse, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open });
+        // The places on Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
+        Place(new Command("&Message field", AxClaudeKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open }, AxClaudeKeys.GoToFieldAlso);
+        Place(new Command("&Conversation", AxClaudeKeys.GoToConversation, () => GoTo(Transcript)) { Mark = CommandMark.Open }, AxClaudeKeys.GoToConversationAlso);
+        Place(new Command("&Latest response", AxClaudeKeys.LatestResponse, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open }, AxClaudeKeys.LatestResponseAlso);
+        void Place(Command command, Keys also)
+        {
+            Add(navigate, command);
+            AddKey(command with { Key = also });
+        }
+
+
         Add(navigate, new Command("Claude's &question again", AxClaudeKeys.ReadQuestion, ReadQuestionAgain) { Mark = CommandMark.Read });
         navigate.DropDownItems.Add(new ToolStripSeparator());
         AddFindItems(navigate);

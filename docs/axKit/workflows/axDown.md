@@ -606,10 +606,12 @@ Starts with: Open axDown with the file modes.md.
 ### Move by single letters
 
 1. Press H.
+    You hear the sound NavKey.
     You hear: Links, heading level 2.
 2. Press H.
     You hear: List, heading level 2.
 3. Press H.
+    You hear the sound Nothing.
     You hear: No next heading.
 4. Press Shift+H.
     You hear: Links, heading level 2.

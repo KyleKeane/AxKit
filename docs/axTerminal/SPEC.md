@@ -18,7 +18,7 @@ line-by-line transcript in a read-only text view, the user types in a plain fiel
 its markers, and the end of a turn is spoken. axTerminal is the same window around a shell. The shell (PowerShell by
 default) runs in a Windows pseudo console (ConPTY); every row it prints is a line of the transcript; a command typed in
 the field goes to the shell on Enter and gets an exchange block, `# Input n` with the command and `# Output n` before
-what it printed, so that `i`, `o`, Ctrl+3 and the heading keys work as they do in axClaude; the shell's prompt rows
+what it printed, so that `i`, `o`, Alt+3 and the heading keys work as they do in axClaude; the shell's prompt rows
 stay out of the transcript and show in the status bar; and the shell's integration marks tell the window when a
 command is done and with what exit code, which is spoken with the chimes the user knows.
 
@@ -29,7 +29,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 
 - **G1 axClaude's window, learnt once.** The same field, view, quick keys, markers, chimes, ticks and speech options;
   a user of axClaude knows axTerminal on opening it.
-- **G2 A command and its output as one block.** Every command is found again with `i`, its output with `o` and Ctrl+3,
+- **G2 A command and its output as one block.** Every command is found again with `i`, its output with `o` and Alt+3,
   read down with the arrows, exported as Markdown.
 - **G3 Prompts answered in place.** A program that asks (`y/n`, a passphrase, a choice) shows its question as lines;
   the field answers it; the window says that something asks.
@@ -46,8 +46,8 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 
 1. In axClaude on a project, Alt+S, I, T: axTerminal opens on the project folder with the field focused; the status
    bar reads `PS C:\src\myproject>`. Type `dotnet test`, Enter: "Sent", a tick per frame of output, then the done
-   chime and "Done". Ctrl+3 lands on `# Output 1`; Down reads the output line by line.
-2. A command fails: the chime and "Failed, exit code 1". Ctrl+3, then Ctrl+End and Up for the last lines.
+   chime and "Done". Alt+3 lands on `# Output 1`; Down reads the output line by line.
+2. A command fails: the chime and "Failed, exit code 1". Alt+3, then Ctrl+End and Up for the last lines.
 3. `git push` asks for a passphrase: after a moment of quiet, the question chime and "Asks: Enter passphrase for
    key". Actions, Send without recording sends the field's text without recording it; "Sent, not recorded". The push goes on; "Done".
 4. `npm start` runs on: lines arrive with their ticks; Ctrl+Shift+C: "Interrupt sent"; the prompt returns, "Done".
@@ -194,7 +194,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   shows its name on screen, in the place of axClaude's message field (axClaude §6.1); the status bar. A notice takes the place of the view and the field (AX-6.4); the
   recent commands list (AT-3.6) takes the field's place while it shows.
 - AT-2.2 Focus: Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 toggle between the view and the bottom control
-  (bundle AX-8.2); Ctrl+1 the field, Ctrl+2 the view, Ctrl+3 the view at the latest output marker, from anywhere, each
+  (bundle AX-8.2); Alt+1 the field, Alt+2 the view, Alt+3 the view at the latest output marker, from anywhere (Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, bundle AX-8.14), each
   naming the control when it has the focus already (axClaude FR-6.5, D26). The focus starts in the field and stays
   there after sending.
 - AT-2.3 The title is `<current directory's name> - <the shell's name> - axTerminal`, the directory being the shell's (9;9) and the start
@@ -324,7 +324,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   (`flashTaskbar`), the louder background alert (`backgroundAlert`) and the working music while a command runs, with
   Ctrl+M (Ctrl+Space until 2026-11-15, now the bundle's mode key, AX-8.13; `workingMusic`, axClaude FR-7.9), all
   through the shared `Sounds`.
-- AT-5.6 Nothing speaks on an arrow key; a jump announces its line; Ctrl+1 and Ctrl+2 name the control they land on
+- AT-5.6 Nothing speaks on an arrow key; a jump announces its line; Alt+1 and Alt+2 name the control they land on
   (AX-7.3, axClaude D26).
 
 ### AT-6 Menus, keys, texts
@@ -336,8 +336,8 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   Export transcript… Ctrl+S | Exit Alt+F4. **Actions (A)** ("Operations" in 5.7.0; the bundle's eight since 2026-11-11, AX-9.1):
   Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent
   commands… Ctrl+R | Send without recording (no key) | ─ | What is running Ctrl+Q.
-  **Navigation (N):** axClaude's Navigation menu with the kinds the terminal has: Command field Ctrl+1 | Terminal
-  Ctrl+2 | Latest output Ctrl+3 | ─ | Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | ─ | Next bookmark |
+  **Navigation (N):** axClaude's Navigation menu with the kinds the terminal has: Command field Alt+1 | Terminal
+  Alt+2 | Latest output Alt+3 | ─ | Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | ─ | Next bookmark |
   Previous bookmark (the other quick keys are the terminal's letters, named in the F1 text). **Context (C)** (AX-9.11): Copy
   this line into the command field (Enter in the terminal) | Bookmark this line Ctrl+Shift+K | Copy the selection; Shift+F10,
   the Applications key and a right click in the terminal or the field open it. **Options (O):** Sounds ▸ (Chimes ✓ | Ticks for new lines ✓ |
@@ -351,7 +351,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   is about; Shell takes E, S being Session's.
 - AT-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P (the command palette, AX-10), the control keys, Ctrl+F, F3,
   Shift+F3, Ctrl+S, Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up and Ctrl+Down with Shift, Ctrl+Space (edit mode or navigation mode in the command field, and in the terminal "Read only: there is no edit mode here", AX-8.13; in navigation mode Ctrl+Up and Ctrl+Down go by paragraph in the field, not through the history, and Enter sends nothing), Alt+F4. Window-specific (`AxTerminalKeys`): Ctrl+N, Ctrl+Shift+R,
-  Ctrl+L, Ctrl+W, Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+Shift+C, Shift+Escape, Ctrl+R, Ctrl+Q, Ctrl+P, Ctrl+M, Ctrl+Shift+K; in
+  Ctrl+L, Ctrl+W, Alt+1, Alt+2, Alt+3 (with Ctrl+1, Ctrl+2, Ctrl+3 as their further keys), Ctrl+Shift+C, Shift+Escape, Ctrl+R, Ctrl+Q, Ctrl+P, Ctrl+M, Ctrl+Shift+K; in
   the field Enter, Shift+Enter, Escape (Ctrl+Enter there is the bundle's main action, AX-8.10: it sends as Enter does); in the view the quick keys `i`, `o`, `h`, `1` to `6`, `p`, `s`,
   `k` with Shift, `m`, `l`, Enter, Escape, Backspace, and Ctrl+Alt with `i`, `o`, `h`, `p`, `s`, `k`. axClaude's `c`,
   `t`, `d`, `e`, `q` and `r` have no kind here and do nothing. The collision test covers the table and lists the keys

@@ -18,6 +18,27 @@ public class TextModesTests
         Assert.Equal("moves to the previous heading level 2", TextModes.KeyTestJump("heading level 2", previous: true));
     }
 
+    /// <summary>
+    /// AX-8.13: among the refused keys, the plain ones that would type have no command at all and get the sound of an
+    /// unassigned key; an edit refused (Enter, Backspace, Delete, a paste) and every key with Ctrl or Alt keep the edge.
+    /// </summary>
+    [Theory]
+    [InlineData('A', false, false, true)]
+    [InlineData('7', false, false, true)]
+    [InlineData(Space, false, false, true)]
+    [InlineData(NumPad5, false, false, true)]
+    [InlineData(Period, false, false, true)]
+    [InlineData(Enter, false, false, false)]
+    [InlineData(Back, false, false, false)]
+    [InlineData(Delete, false, false, false)]
+    [InlineData(Insert, false, false, false)]
+    [InlineData('V', true, false, false)]
+    [InlineData('A', false, true, false)]
+    public void A_plain_key_that_would_type_is_unassigned(int code, bool ctrl, bool alt, bool unassigned)
+    {
+        Assert.Equal(unassigned, TextModes.Unassigned(code, ctrl, alt));
+    }
+
     [Theory]
     [InlineData('A', false)]
     [InlineData('Q', true)]

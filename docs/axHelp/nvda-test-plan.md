@@ -17,7 +17,7 @@ need a real reply and a real screen and are the user's by ear.
 1. In Notepad, press Ctrl+Shift+Slash: "axHelp window", then "Message to Claude, edit". The first time, axClaude's reminder
    and Claude Code's trust question come first; answer them. `Documents\axKit Claude` now has CLAUDE.md and
    `.claude\agents\agent.md`.
-2. Type "what is the capital of France", Enter: the reply, spoken by axClaude's Speak replies setting (real). Ctrl+3:
+2. Type "what is the capital of France", Enter: the reply, spoken by axClaude's Speak replies setting (real). Alt+3:
    the reply. The status bar names the folder.
 3. Alt+Tab to Notepad, Ctrl+Shift+Slash: the same window, the reply still there; no second window starts (Window menu,
    Open windows lists one "axHelp").
@@ -82,10 +82,10 @@ what the foreground and NVDA do on the real desktop is by ear.
    Open windows in another axKit window does not either.
 2. Ctrl+Shift+Slash: NVDA says "axHelp" and "Message to Claude, edit" with your words, at once; nothing of the
    conversation is read again, no "Ready", no chime.
-3. Ctrl+2 into the conversation, Up a few lines. Alt+Tab away and back: the caret is on the same line.
+3. Alt+2 into the conversation, Up a few lines. Alt+Tab away and back: the caret is on the same line.
    Ctrl+Shift+Slash from another program: the focus is in the message field.
 4. Send "count slowly to five", Alt+F4 at once: nothing is spoken, no tick or chime while it is hidden.
-   Ctrl+Shift+Slash a little later: "Done" is said once, the reply is in the conversation (h, Ctrl+3).
+   Ctrl+Shift+Slash a little later: "Done" is said once, the reply is in the conversation (h, Alt+3).
 5. With the conversation hidden, Ctrl+Shift+Comma in Notepad: the conversation comes up with the screenshot's line.
 6. In the conversation, Session, End Claude and close this window: the window closes (Task Manager: its `AxKit.exe
    claude` and Claude Code are gone). Ctrl+Shift+Slash starts it afresh, the conversation continued.

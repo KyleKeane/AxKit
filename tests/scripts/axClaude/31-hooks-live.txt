@@ -22,9 +22,9 @@ expect said Ready
 # warning.
 run findstr /r /c:"--ax-screen-reader --settings" /c:"--ax-screen-reader. .--settings" home\AxKit\logs\axClaude.log
 refuse state Settings Warning
-keys ctrl+2
+keys alt+2
 refuse text Settings Warning
-keys ctrl+1
+keys alt+1
 # Goal: Hear that Claude Code's events arrived after a turn
 # One turn: "Done" as always. Then, on demand: the hooks are on and events were received, the session's start and
 # the turn's stop among them; the stop event is in the log with its time after the end mark.

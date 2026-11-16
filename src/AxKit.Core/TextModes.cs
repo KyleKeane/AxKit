@@ -87,6 +87,14 @@ public static class TextModes
     }
 
     /// <summary>
+    /// Whether a refused key is a plain key with no command at all: one that would type a character (a letter, a
+    /// digit, Space, a sign, the number pad) with no Ctrl or Alt held. In navigation mode the plain keys are
+    /// commands, so such a key gets the sound of a key that is not assigned; a key that is an edit refused (Enter,
+    /// Backspace, Delete, Ctrl+V, Ctrl+Z, Shift+Insert, Ctrl+Enter) keeps the edge sound.
+    /// </summary>
+    public static bool Unassigned(int code, bool ctrl, bool alt) => !ctrl && !alt && Types(code);
+
+    /// <summary>
     /// Whether a character message may reach the edit control in navigation mode: only Ctrl+C's and Ctrl+A's control
     /// characters, which copy and select. Every other character, a typed one, a line break, a tab or Backspace's, would
     /// change the text.

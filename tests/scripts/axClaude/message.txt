@@ -15,9 +15,9 @@ expect focus "name":"Message to Claude"
 type Reply with the single word hello.
 keys enter
 expect said Done
-keys ctrl+2
+keys alt+2
 expect focus Conversation
-keys ctrl+3
+keys alt+3
 expect said Output 1
 # The reply is in the conversation, wherever Claude Code's own lines put it: a line of its own before the reply (a
 # warning that the login expires soon, seen 2026-11-13) once moved it one line down from where this step looked.

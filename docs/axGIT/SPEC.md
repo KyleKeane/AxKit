@@ -47,11 +47,11 @@ opens in the editor for its type (AG-1.4, AG-D1).
    "Committed 3a1f2c0". Alt+W, O, 1 back to axClaude.
 2. Enter on a changed file: the diff in the details text, the focus on its first line; Down Arrow reads it line by
    line; Ctrl+Tab back to the list.
-3. Ctrl+2: "Log, 200 commits. 3a1f2c0 2026-10-18 Kyle: Release 2.11.0, 1 of 200". Enter: the commit's files and
+3. Alt+2: "Log, 200 commits. 3a1f2c0 2026-10-18 Kyle: Release 2.11.0, 1 of 200". Enter: the commit's files and
    message in the details.
-4. Ctrl+3: "Branches, 2. main, current, origin/main, 1 ahead". Down, Enter on `axkit`: "Switched to axkit". Ctrl+Shift+H:
+4. Alt+3: "Branches, 2. main, current, origin/main, 1 ahead". Down, Enter on `axkit`: "Switched to axkit". Ctrl+Shift+H:
    "Pushed".
-5. In axDown on `docs/plan.md`, Alt+F, I, G: axGIT on the repository that holds the file. Ctrl+1 shows it among the
+5. In axDown on `docs/plan.md`, Alt+F, I, G: axGIT on the repository that holds the file. Alt+1 shows it among the
    changes if it changed.
 
 ## 4. Functional requirements
@@ -112,7 +112,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   "Branches, 2"); the details text under it, read-only, named "Details" and, after a diff, "Diff of <file>"; the
   status bar. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move between the list and the details (AX-8.2); a
   notice takes the place of both while it shows (AX-6.4).
-- AG-2.2 Views: Ctrl+1 Changes, Ctrl+2 Log, Ctrl+3 Branches (Navigation). The key says the list's name and the item
+- AG-2.2 Views: Alt+1 Changes, Alt+2 Log, Alt+3 Branches (Navigation). Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, shown in no menu, with nothing extra said (bundle AX-8.14). The key says the list's name and the item
   the selection is on, also when the list already shows the view (axClaude D26); while a command runs it says
   "Working…" and the view stays (2026-10-23: the switch went through with an empty list under the new name). Each
   view keeps its selection while the window is open, by the item's key (the file's path, the commit's hash, the
@@ -186,7 +186,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   repository ▸ (ten, "1. name (path)", AX-9.5; "No recent repositories" when none) | ─ | Refresh F5 | ─ | Show current
   repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Actions (A):** Stage all
   Ctrl+Shift+A | Unstage all Ctrl+Shift+U | Commit… Ctrl+Enter | ─ | New branch… Ctrl+N | Fetch Ctrl+Shift+F | Pull
-  Ctrl+Shift+L | Push Ctrl+Shift+H. **Navigation (N):** Changes Ctrl+1 | Log Ctrl+2 | Branches Ctrl+3 (the View menu's
+  Ctrl+Shift+L | Push Ctrl+Shift+H. **Navigation (N):** Changes Alt+1 | Log Alt+2 | Branches Alt+3 (the View menu's
   until 2026-11-11). **Context (C)**, what acts on the line selected by the view shown (AX-9.11; Shift+F10, the
   Applications key and a right click in the list): in Changes, Stage or unstage Space | Show diff Enter | Open file in
   editor Ctrl+E | Discard changes… Delete; in Log, Show the commit Enter; in Branches, Switch to branch Enter; "Nothing
@@ -196,11 +196,11 @@ opens in the editor for its type (AG-1.4, AG-D1).
   guide | ─ | Git resources ▸ (git-scm.com | Pro Git book). Every item has a mnemonic (AX-7.4).
 - AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
   "Nothing to save here. Space stages, Ctrl+Enter commits"), Ctrl+Enter (the bundle's main action, AX-8.10: here Commit, AG-3.5, a command on `BundleKeys.MainAction`), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
-  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Ctrl+1, Ctrl+2, Ctrl+3, Shift+F10 and the Applications key, Space and Enter and Delete in the
+  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Alt+1, Alt+2, Alt+3 (with Ctrl+1, Ctrl+2, Ctrl+3 as their further keys, AX-8.14), Shift+F10 and the Applications key, Space and Enter and Delete in the
   list, Ctrl+Shift+A, Ctrl+Shift+U, Ctrl+E, Ctrl+N, Ctrl+Shift+F, Ctrl+Shift+L, Ctrl+Shift+H. Space,
   Enter and Delete act only while the list has the focus; in the details they are the control's own. The collision
   test covers the table. A command of one view asked for in another says which view first: "Changes view first:
-  Ctrl+1" for Space, Delete, Stage or unstage, Show diff and Discard changes, "Branches view first: Ctrl+3" for
+  Alt+1" for Space, Delete, Stage or unstage, Show diff and Discard changes, "Branches view first: Alt+3" for
   Switch to branch (one rule since 2026-10-23: Space, Enter and Show diff switched the view silently, Delete said this).
 - AG-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axGIT/user-guide.md` is embedded (Help → User guide);
   About is the bundle's (AX-9.9).
@@ -214,8 +214,8 @@ lines", "Switched to <name>", "Already on <name>", "Fetched", "Pulled", "Already
 <list name>", "Changes, N files" and the other view names when the view's key is pressed on the view already shown,
 "Working…" when a command is asked for while one runs, "Nothing to save here. Space stages, Ctrl+Enter commits",
 "Not found" (find), "Text size n", "Windows text size", "Copied diagnostics", "No repository" (a command without
-one), "No file selected", "No commit selected", "No branch selected", "Changes view first: Ctrl+1", "Branches view first:
-Ctrl+3" (a command of one view asked for in another, AG-6.2), "A conflict: resolve it in the editor or the terminal first" (a pull or a switch that git refuses for
+one), "No file selected", "No commit selected", "No branch selected", "Changes view first: Alt+1", "Branches view first:
+Alt+3" (a command of one view asked for in another, AG-6.2), "A conflict: resolve it in the editor or the terminal first" (a pull or a switch that git refuses for
 one). A failure that git explains in one line is announced as "Failed: <line>"; more than one line is a notice.
 
 ### AG-8 Settings, status

@@ -495,7 +495,8 @@ public abstract partial class AxKitForm : Form
         timer.Tick += (_, _) =>
         {
             waited += timer.Interval;
-            if (IsDown(VK_SHIFT) || IsDown(VK_F10) || IsDown(VK_APPS))
+            // Ctrl and the period key too (BundleKeys.ContextMenu, AX-8.15): with Ctrl down the letter is no letter.
+            if (IsDown(VK_SHIFT) || IsDown(VK_F10) || IsDown(VK_APPS) || IsDown(VK_CONTROL) || IsDown(VK_OEM_PERIOD))
             {
                 if (waited < 3000)
                 {
@@ -518,6 +519,12 @@ public abstract partial class AxKitForm : Form
     private const int VK_SHIFT = 0x10;
     private const int VK_F10 = 0x79;
     private const int VK_APPS = 0x5D;
+    private const int VK_CONTROL = 0x11;
+    private const int VK_OEM_PERIOD = 0xBE;
+    private const int WM_CONTEXTMENU = 0x007B;
+
+    /// <summary>Windows' own key for the context menu, which the windows' tables hold for their lists; <see cref="BundleKeys.ContextMenu"/> runs what it runs.</summary>
+    private const Keys ContextMenuOfWindows = Keys.Shift | Keys.F10;
 
     // ---- the window ----
 
@@ -694,6 +701,19 @@ public abstract partial class AxKitForm : Form
                 // do (the status is still true behind the notice); an open menu keeps the key.
                 SayStatus();
                 return true;
+            case BundleKeys.ContextMenu when FromHandle(msg.HWnd) is not ToolStrip:
+                // AX-8.15: what Shift+F10 does where the focus is. A command of the window on Shift+F10 (a list's
+                // Context menu), never while a notice holds the window's commands; otherwise Windows' own request
+                // for a context menu, to the focused control, as Windows makes it for Shift+F10: the control's
+                // stand-in opens the bar's Context menu (ContextFromControl), a plain edit control shows its own
+                // menu, and a control with neither does nothing. Posted, so the menu's loop starts after this key.
+                if (NoticeOpen || !(ProcessWindowKey(ContextMenuOfWindows) || RunCommandKey(ContextMenuOfWindows)))
+                {
+                    var focus = User32.GetFocus();
+                    User32.PostMessage(focus, WM_CONTEXTMENU, focus, -1);
+                }
+
+                return true;
         }
 
         // AX-8.13: the mode key, for the control the key is addressed to, in a notice too (a notice's field has the
@@ -761,6 +781,7 @@ public abstract partial class AxKitForm : Form
                 ShowReport();
                 return true;
             case BundleKeys.AskClaude:
+            case BundleKeys.AskClaudeAlso:
                 AskAboutThisWindow();
                 return true;
             case BundleKeys.Save:

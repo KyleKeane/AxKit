@@ -80,7 +80,7 @@ type Write a story of 1500 words about a lighthouse keeper.
 keys enter
 expect said Sent
 expect state Claude: working
-keys ctrl+2
+keys alt+2
 keys ctrl+m
 expect said ♪ StartMusic
 expect said ! Background music on
@@ -99,7 +99,7 @@ expect quiet 1000
 # away with Alt+Tab and the taskbar flash need the real desktop (manual). In this window, which the run keeps active,
 # the next turn ends with the falling notes, no alert.
 menu Louder alert when the window is in the background
-keys ctrl+1
+keys alt+1
 type Reply with the single word alert.
 keys enter
 expect said ♪ Done
@@ -111,7 +111,7 @@ menu Louder alert when the window is in the background
 menu Stop recording
 expect said Recording stopped
 run dir /b raw.vt raw.vt.chunks.txt
-keys ctrl+2
+keys alt+2
 expect text System: Recording stopped:
 expect text bytes in
 # Step 4, Copy diagnostics, writes the Windows clipboard, which the test desktop shares with the user's: left manual.
@@ -120,7 +120,7 @@ expect text bytes in
 # moving the caret; the ticks still sound.
 menu Speak replies: all lines
 expect said Speak replies: all lines
-keys ctrl+1
+keys alt+1
 type Markdown only: ## Alpha, a five-word sentence, ## Beta, three one-word bullets.
 keys enter
 expect said claude: Alpha
@@ -216,7 +216,7 @@ expect focus Message to Claude
 # Check: Closing the shortcuts returns to the same line of the conversation
 # F1 from the conversation, then close: the focus is back on the same line. The second line is the recording's system
 # line (--record above); until Claude Code 2.1.3xx it was Claude's "[Screen Reader Mode" banner, no longer printed there.
-keys ctrl+2 ctrl+home down
+keys alt+2 ctrl+home down
 expect focus "value":"System: Recording to 
 keys f1
 expect state "notice":"Keyboard shortcuts"
@@ -269,11 +269,11 @@ expect state "notice":null
 # Step 9: Options, Text, Time stamps on Input and Output lines: the next markers carry the time; earlier ones are
 # unchanged; off again.
 menu Time stamps on Input and Output lines
-keys ctrl+1
+keys alt+1
 type Reply with the single word stamped.
 keys enter
 expect said Done
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 keys shift+i
 expect said Input 11 (
 keys shift+o

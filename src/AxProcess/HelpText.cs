@@ -13,7 +13,7 @@ public static class HelpText
             "Ctrl+F: find an item in the list. F3 and Shift+F3: next or previous match",
         ]) + """
         ## axProcess
-          Ctrl+1, Ctrl+2, Ctrl+3: the Processes, Services and Startup view of the list; pressed on the view already shown, the key says its name
+          Alt+1, Alt+2, Alt+3: the Processes, Services and Startup view of the list; pressed on the view already shown, the key says its name. Ctrl+1, Ctrl+2 and Ctrl+3, their keys until now, still work
           Tab, Shift+Tab: the next or the previous view, round from Startup to Processes
           F5: read the view again; nothing changes by itself
           Ctrl+Q: the summary: the processes, the memory in use, the processor
@@ -22,7 +22,7 @@ public static class HelpText
             Enter: the item's details, with what can be done to it: end a process, start or stop a service, turn a startup program off or on, remove it
             Delete: end the process, after a question; in the Startup view, remove the startup program, after a question whose default is Cancel
             Context, Turn off and Turn on, in the Startup view: the startup program no longer starts with Windows, or starts again; nothing is deleted
-            Shift+F10 or the Applications key: the Context menu, what acts on the line selected in the view shown
+            Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the line selected in the view shown
             Up or Home on the first item, Down or End on the last: the edge sound, since nothing moves
           Ctrl+E: show the program file in axFile
           Ctrl+C: copy the line

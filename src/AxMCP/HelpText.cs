@@ -26,7 +26,7 @@ public static class HelpText
           Ctrl+N at the top level: add a server of your own, in one form: a name, its command line, a folder, Tab between them, Enter or Ctrl+Enter adds it. F2: rename one of yours. Delete: remove one of yours, after a question
           Ctrl+Shift+N: nothing here; servers are added with Ctrl+N
           Ctrl+Q: read every field of the selection
-          Shift+F10 or the Applications key: the menu of the selection
+          Shift+F10, the Applications key or Ctrl+Period: the menu of the selection
 
         ## The detail pane, on the right
           On a server: where it is defined, its command line, its folder, the names of its environment variables, its state

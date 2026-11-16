@@ -55,7 +55,10 @@ public abstract partial class AxKitForm
         }
 
         var modifiers = keyData & Keys.Modifiers;
-        if (modifiers is Keys.None or Keys.Shift && TextJump.Handle(text, text.NavigationJumps, keyData, Announce))
+        // One sound for each plain key (AX-8.13, 2026-11-16), before anything moves or is said: the click when the
+        // letter's command has somewhere to go, the flat tone alone when there is nothing of its kind (the words
+        // "No next heading" follow as ever), and further down the two blips for a key with no command at all.
+        if (modifiers is Keys.None or Keys.Shift && TextJump.Handle(text, text.NavigationJumps, keyData, Announce, NavigationSound))
         {
             return true;
         }
@@ -68,11 +71,33 @@ public abstract partial class AxKitForm
 
         if (TextModes.InNavigation((int)(keyData & Keys.KeyCode), keyData.HasFlag(Keys.Control), keyData.HasFlag(Keys.Shift), keyData.HasFlag(Keys.Alt)) == NavigationKey.Refused)
         {
-            Sounds.Edge();
+            // A plain key that would type has no command here: the blips. An edit refused keeps the edge sound.
+            if (TextModes.Unassigned((int)(keyData & Keys.KeyCode), keyData.HasFlag(Keys.Control), keyData.HasFlag(Keys.Alt)))
+            {
+                Sounds.Unassigned();
+            }
+            else
+            {
+                Sounds.Edge();
+            }
+
             return true;
         }
 
         return false;
+    }
+
+    /// <summary>The sound of a navigation letter's command: the click when it has somewhere to go, the flat tone when it has not.</summary>
+    private static void NavigationSound(bool found)
+    {
+        if (found)
+        {
+            Sounds.NavKey();
+        }
+        else
+        {
+            Sounds.Nothing();
+        }
     }
 
     /// <summary>

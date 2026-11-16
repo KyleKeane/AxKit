@@ -23,6 +23,9 @@ public abstract partial class AxKitForm
     /// as the menu opens since another window may have changed it; the question, Ask about this window; what Claude may
     /// read, the folders and Claude's working folder.
     /// </summary>
+    /// <summary>The question's menu item, whose name the window's list of commands gives Ctrl+Slash under too (<see cref="CommandRows"/>).</summary>
+    private const string AskAboutThisWindowLabel = "&Ask about this window...";
+
     internal ToolStripMenuItem CreateClaudeMenu()
     {
         var menu = new ToolStripMenuItem("&Claude");
@@ -30,7 +33,7 @@ public abstract partial class AxKitForm
         var on = CommandPalette.NeverForAiTools(new ToolStripMenuItem("&Use Claude in axKit", null, (_, _) => _ai.ToggleAiHelp()));
         menu.DropDownItems.Add(on);
         menu.DropDownItems.Add(new ToolStripSeparator());
-        menu.DropDownItems.Add(Item("&Ask about this window...", AskAboutThisWindow, BundleKeys.AskClaude, CommandMark.Act));
+        menu.DropDownItems.Add(Item(AskAboutThisWindowLabel, AskAboutThisWindow, BundleKeys.AskClaude, CommandMark.Act));
         menu.DropDownItems.Add(new ToolStripSeparator());
         menu.DropDownItems.Add(CommandPalette.NeverForAiTools(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders())));
         menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()), CommandMark.Open));

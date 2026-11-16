@@ -28,14 +28,14 @@ command's in this version of axKit.
 
 ### Switch between the views
 
-1. Press Ctrl+1 (Changes; Navigation menu).
+1. Press Alt+1 (Changes; Navigation menu).
     You hear: Changes, 2 files. Untracked new.txt.
-2. Press Ctrl+2 (Log; Navigation menu).
+2. Press Alt+2 (Log; Navigation menu).
     You hear: Log, 2 commits.
     You hear: Test: second.
-3. Press Ctrl+3 (Branches; Navigation menu).
+3. Press Alt+3 (Branches; Navigation menu).
     You hear: Branches, 2. main, current, no upstream.
-4. Press Ctrl+1 (Changes; Navigation menu).
+4. Press Alt+1 (Changes; Navigation menu).
     You hear: Changes, 2 files. Untracked new.txt.
 
 ### Close the window
@@ -106,9 +106,9 @@ Starts with: Open axGIT with the folder repo.
 5. Type: Test commit
 6. Press Enter.
     You hear: Committed.
-7. Press Ctrl+2 (Log; Navigation menu).
+7. Press Alt+2 (Log; Navigation menu).
     You hear: Log, 2 commits.
-8. Press Ctrl+1 (Changes; Navigation menu).
+8. Press Alt+1 (Changes; Navigation menu).
     You hear: Changes, 1 file.
 
 ### Discard the changes to a file
@@ -128,7 +128,7 @@ Starts with: Open axGIT with the folder repo.
 
 ### Read a commit of the log
 
-1. Press Ctrl+2 (Log; Navigation menu).
+1. Press Alt+2 (Log; Navigation menu).
     You hear: Log, 2 commits.
 2. Press Enter.
     You hear words such as: 8 lines.
@@ -145,7 +145,7 @@ Starts with: Open axGIT with the folder repo.
 
 ### Switch branches
 
-1. Press Ctrl+3 (Branches; Navigation menu).
+1. Press Alt+3 (Branches; Navigation menu).
     You hear: Branches, 2.
 2. Press Enter.
     You hear: Already on main.
@@ -153,9 +153,9 @@ Starts with: Open axGIT with the folder repo.
     It reads other.
 4. Press Enter.
     You hear: Switched to other.
-5. Press Ctrl+1 (Changes; Navigation menu).
+5. Press Alt+1 (Changes; Navigation menu).
     You hear: Changes, no changes.
-6. Press Ctrl+3 (Branches; Navigation menu).
+6. Press Alt+3 (Branches; Navigation menu).
     You hear: Branches, 2.
 7. Press Up.
     It reads main.
@@ -168,7 +168,7 @@ Starts with: Open axGIT with the folder repo.
 2. Type: scratch-test
 3. Press Enter.
     You hear: Switched to scratch-test.
-4. Press Ctrl+3 (Branches; Navigation menu).
+4. Press Alt+3 (Branches; Navigation menu).
     You hear: Branches, 3.
 5. Press Home.
 6. Press Enter.
@@ -216,7 +216,7 @@ The focus moves to Diff of a.txt (Text): +first paragraph marker.
 ### Move by paragraph in a commit's details
 
 1. Press Ctrl+Tab (Switch between the list and the details).
-2. Press Ctrl+2 (Log; Navigation menu).
+2. Press Alt+2 (Log; Navigation menu).
     You hear: Log, 1 commit.
 3. Press Enter.
     You hear: lines.
@@ -225,7 +225,7 @@ The focus moves to Diff of a.txt (Text): +first paragraph marker.
 5. Press Ctrl+Down.
     It reads a.txt.
 6. Press Ctrl+Tab (Switch between the list and the details).
-7. Press Ctrl+1 (Changes; Navigation menu).
+7. Press Alt+1 (Changes; Navigation menu).
     You hear: Changes, 1 file.
 
 ### Change the text size

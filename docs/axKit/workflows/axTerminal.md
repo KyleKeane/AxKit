@@ -13,12 +13,12 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Move between the command field and the terminal
 
-1. Press Ctrl+2 (Terminal; Navigation menu).
+1. Press Alt+2 (Terminal; Navigation menu).
     The focus moves to Terminal.
-2. Press Ctrl+2 (Terminal; Navigation menu).
-3. Press Ctrl+1 (Command field; Navigation menu).
+2. Press Alt+2 (Terminal; Navigation menu).
+3. Press Alt+1 (Command field; Navigation menu).
     The focus moves to Command.
-4. Press Ctrl+1 (Command field; Navigation menu).
+4. Press Alt+1 (Command field; Navigation menu).
 
 ### Hear the state, the shell and the prompt
 
@@ -37,7 +37,7 @@ Starts with: Open axTerminal with the folder myproject.
     You hear the sound Sent.
     You hear: Done.
     You hear the sound Done.
-3. Press Ctrl+3 (Latest output; Navigation menu).
+3. Press Alt+3 (Latest output; Navigation menu).
     You hear: Output 1 heading level 1.
 4. Press Down 2 times.
 5. Press Shift+I.
@@ -61,7 +61,7 @@ Starts with: Open axTerminal with the folder myproject.
     You hear: heading level.
 6. Choose Markers in the text in the Options menu, Text.
 7. Press Shift+I.
-8. Press Ctrl+1 (Command field; Navigation menu).
+8. Press Alt+1 (Command field; Navigation menu).
 
 ### Answer a program that asks
 
@@ -75,8 +75,8 @@ Starts with: Open axTerminal with the folder myproject.
     You hear: Sent.
     You hear: Done.
     You hear the sound Done.
-5. Press Ctrl+2 (Terminal; Navigation menu).
-6. Press Ctrl+1 (Command field; Navigation menu).
+5. Press Alt+2 (Terminal; Navigation menu).
+6. Press Alt+1 (Command field; Navigation menu).
 
 ### Send a command of several lines
 
@@ -89,10 +89,10 @@ Starts with: Open axTerminal with the folder myproject.
 6. Press Enter.
     You hear: Done.
     You hear the sound Done.
-7. Press Ctrl+3 (Latest output; Navigation menu).
+7. Press Alt+3 (Latest output; Navigation menu).
     You hear: Output 6 heading level 1.
 8. Press Down 2 times.
-9. Press Ctrl+1 (Command field; Navigation menu).
+9. Press Alt+1 (Command field; Navigation menu).
 
 ### Send a command without recording it
 
@@ -123,7 +123,7 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Copy a command line of the terminal into the field
 
-1. Press Ctrl+3 (Latest output; Navigation menu).
+1. Press Alt+3 (Latest output; Navigation menu).
     You hear: Output 7 heading level 1.
 2. Press Shift+I.
     You hear: Input 7 heading level 1.
@@ -186,8 +186,8 @@ Starts with: Open axTerminal with the folder work\myproject.
 4. Press Enter.
     You hear: New session in myproject.
     You hear: Ready.
-5. Press Ctrl+2 (Terminal; Navigation menu).
-6. Press Ctrl+1 (Command field; Navigation menu).
+5. Press Alt+2 (Terminal; Navigation menu).
+6. Press Alt+1 (Command field; Navigation menu).
 7. Type: echo hello
 8. Press Enter.
     You hear: Done.
@@ -198,8 +198,8 @@ Starts with: Open axTerminal with the folder work\myproject.
 1. Choose the menu item Windows PowerShell.
     You hear: Windows PowerShell.
     You hear: Ready.
-2. Press Ctrl+2 (Terminal; Navigation menu).
-3. Press Ctrl+1 (Command field; Navigation menu).
+2. Press Alt+2 (Terminal; Navigation menu).
+3. Press Alt+1 (Command field; Navigation menu).
 
 ### Hear the current folder's full path
 
@@ -219,8 +219,8 @@ Starts with: Open axTerminal with the folder work\myproject.
 1. Press Ctrl+Shift+R (Restart shell; Session menu).
     You hear: Restarting.
     You hear: Ready.
-2. Press Ctrl+2 (Terminal; Navigation menu).
-3. Press Ctrl+1 (Command field; Navigation menu).
+2. Press Alt+2 (Terminal; Navigation menu).
+3. Press Alt+1 (Command field; Navigation menu).
 4. Type: ping -n 30 127.0.0.1
 5. Press Enter.
     You hear: Sent.
@@ -236,8 +236,8 @@ Starts with: Open axTerminal with the folder work\myproject.
 1. Type: exit
 2. Press Enter.
     You hear: The shell ended.
-3. Press Ctrl+2 (Terminal; Navigation menu).
-4. Press Ctrl+1 (Command field; Navigation menu).
+3. Press Alt+2 (Terminal; Navigation menu).
+4. Press Alt+1 (Command field; Navigation menu).
 5. Type: echo kept
 6. Press Enter.
     You hear: The shell ended. Ctrl+Shift+R starts it again.
@@ -252,16 +252,16 @@ Starts with: Open axTerminal with the folder myproject.
 
 1. Press Ctrl+L (Clear transcript; Session menu).
     You hear: Cleared.
-2. Press Ctrl+1 (Command field; Navigation menu).
+2. Press Alt+1 (Command field; Navigation menu).
 3. Type: echo first
 4. Press Enter.
     You hear: Done.
     You hear the sound Done.
-5. Press Ctrl+2 (Terminal; Navigation menu).
+5. Press Alt+2 (Terminal; Navigation menu).
 
 ### Set a bookmark and go back to it
 
-1. Press Ctrl+3 (Latest output; Navigation menu).
+1. Press Alt+3 (Latest output; Navigation menu).
     You hear: Output 1 heading level 1.
 2. Press Down 2 times.
 3. Press M.
@@ -296,7 +296,7 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Close the window while a command runs
 
-1. Press Ctrl+1 (Command field; Navigation menu).
+1. Press Alt+1 (Command field; Navigation menu).
 2. Type: ping -n 30 127.0.0.1
 3. Press Enter.
     You hear: Sent.
@@ -340,7 +340,7 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Go back to edit mode in the field
 
-1. Press Ctrl+1 (Command field; Navigation menu).
+1. Press Alt+1 (Command field; Navigation menu).
 2. Press Ctrl+Space.
     You hear: Edit mode.
 3. Press End.
@@ -394,12 +394,12 @@ Starts with: Open axTerminal with the folder work\myproject.
 
 1. Choose the menu item 1. Test cmd.
     You hear: Test cmd.
-2. Press Ctrl+2 (Terminal; Navigation menu).
-3. Press Ctrl+1 (Command field; Navigation menu).
+2. Press Alt+2 (Terminal; Navigation menu).
+3. Press Alt+1 (Command field; Navigation menu).
 4. Type: echo hello-user-shell
 5. Press Enter.
-6. Press Ctrl+2 (Terminal; Navigation menu).
-7. Press Ctrl+1 (Command field; Navigation menu).
+6. Press Alt+2 (Terminal; Navigation menu).
+7. Press Alt+1 (Command field; Navigation menu).
 
 ### Remove a shell of your own
 

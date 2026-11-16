@@ -49,6 +49,10 @@
     <EmbeddedResource Include="../../docs/axKit/workflows.md" LogicalName="Workflows.md" />
     <EmbeddedResource Include="../../docs/axKit/workflows/*.md" LogicalName="Workflows.%(Filename).md" />
     <EmbeddedResource Include="../../docs/axKit/window-commands.md" LogicalName="WindowCommands.md" />
+    <!-- The key pages (docs/axKit/ai-help.md AH-7.1, 2026-11-16), as tools/key-map.ps1 wrote them: the keys by group
+         and every key by key; AiDocumentationTests fails when one differs from its file. -->
+    <EmbeddedResource Include="../../docs/axKit/key-groups.md" LogicalName="KeyGroups.md" />
+    <EmbeddedResource Include="../../docs/axKit/key-map.md" LogicalName="KeyMap.md" />
   </ItemGroup>
 
 </Project>

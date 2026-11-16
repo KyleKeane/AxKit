@@ -224,9 +224,12 @@ Ctrl+Backspace, Tab (types a tab), Enter (a new line).
   starts in edit mode, as above. Ctrl+Space says "Navigation mode": the letters of the Ctrl jumps of section 9 move
   without Ctrl, h and Shift+H heading, 1 to 6 (Shift with them back) a heading of that level, k link, l list, i list
   item, q block quote, t table, spoken as the Ctrl keys' jumps are; the Ctrl keys still work; the arrows, Home, End,
-  the page and paragraph keys move and with Shift select; Ctrl+C and Ctrl+A act; a key that would change the text (a
-  letter that is no jump, a digit, Space, Enter, Tab, Backspace, Delete, Ctrl+V, Ctrl+X, Ctrl+Z, Ctrl+Y) plays the
-  edge sound and the file stays unchanged (no star in the title); Undo, Redo, Cut, Paste and an app's command
+  the page and paragraph keys move and with Shift select; Ctrl+C and Ctrl+A act; a key that would change the text
+  changes nothing and the file stays unchanged (no star in the title): a plain key that would type (a letter that is
+  no jump, a digit, Space, a sign) plays the two blips of a key with no command, and Enter, Tab, Backspace, Delete,
+  Ctrl+V, Ctrl+X, Ctrl+Z and Ctrl+Y play the edge sound. A letter that jumps gives a click first, and one flat low
+  tone in its place when there is nothing of its kind to go to (the three sounds are the bundle's, AX-8.13,
+  2026-11-16). Undo, Redo, Cut, Paste and an app's command
   (axJSON's Format) from the menus play the edge sound and say "Navigation mode: press Ctrl+Space to edit" (bundle
   AX-8.13, the same when an AI tool runs one). The status bar's left part ends in
   ", navigation mode" (AD-9). Ctrl+Space again says "Edit mode". The mode is not remembered: every window starts in

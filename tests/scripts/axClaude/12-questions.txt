@@ -93,7 +93,7 @@ expect said ! Claude is not asking anything
 type Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.
 keys enter
 expect said Sent
-keys ctrl+2
+keys alt+2
 expect said ♪ Notice
 expect said !
 expect focus "role":"List"
@@ -109,11 +109,11 @@ wait 2000
 # Options, Questions, "Go to them at once, interrupting speech" off, the same again: nothing interrupts, and about a
 # second after the trill the focus moves from the conversation to the list by itself.
 menu Go to them at once, interrupting speech
-keys ctrl+1
+keys alt+1
 type Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.
 keys enter
 expect said Sent
-keys ctrl+2
+keys alt+2
 expect said ♪ Notice
 refuse said !
 expect focus "role":"List"
@@ -181,9 +181,9 @@ type tulips in the garden by the old stone wall where the morning light falls fi
 keys enter
 expect said Sent: tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early
 expect said Done
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 expect text bees arrive early
-keys ctrl+1
+keys alt+1
 wait 2000
 type Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.
 keys enter
@@ -199,7 +199,7 @@ expect said Done
 wait 2000
 # Goal: Move through Claude's questions in the conversation
 # Step 10: q from the top: "Question: <title>" for each question, in order; Shift+Q back; "No next question".
-keys ctrl+2 ctrl+home
+keys alt+2 ctrl+home
 keys q
 expect said ! Question: Permission Required: Accessing workspace
 keys q
@@ -211,7 +211,7 @@ keys shift+q
 expect said ! Question:
 # Goal: Close a question without answering it
 # Step 13: Shift+Escape with a question in the list closes it without an answer and the field comes back.
-keys ctrl+1
+keys alt+1
 type Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.
 keys enter
 expect said ♪ Notice
@@ -331,7 +331,7 @@ wait 2000
 # message field is back. Observed: Claude is done and ready, and the second question's list still holds the place of
 # the message field, with the focus; the next message typed went into it as an answer. The same after any set of two
 # questions (steps 15 and 19 above restart Claude to clear it). Escape in that list says "Cancelled" and leaves it.
-keys ctrl+1
+keys alt+1
 type Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry).
 keys enter
 expect said ♪ Notice
@@ -345,11 +345,11 @@ keys home space down down space enter
 expect said Sent: 1, Apple, 3, Cherry
 refuse said Review
 expect said Done
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 expect text green
 expect text apple
 expect text cherry
-keys ctrl+1
+keys alt+1
 expect focus Message to Claude
 wait 2000
 # Goal: Review answers before they go to Claude
@@ -376,7 +376,7 @@ wait 2000
 # Step 10, the records of a set of two questions (not reached while step 8 above fails): q reads "Question: <the
 # question>". Observed on this build: the records of a set carry the quote marker Claude draws in front of each
 # question, "Question: > What is your favourite colour?", while a single question's record is "Question: Flower".
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 keys shift+q
 expect said ! Question: Review your answers
 keys shift+q
@@ -386,7 +386,7 @@ expect said ! Question: Which fruits do you like?
 # question alone that takes several answers. Claude Code follows it with "Review your answers" too, which the app
 # submits itself while Review answers is off: "Sent: 1, Apple, 3, Cherry", no review, Claude's reply names apple and
 # cherry, and the message field is back.
-keys ctrl+1
+keys alt+1
 expect focus Message to Claude
 wait 2000
 type Use the AskUserQuestion tool once with one question only, with multiSelect: which fruits I like (apple, banana, cherry).
@@ -397,8 +397,8 @@ keys home space down down space enter
 expect said Sent: 1, Apple, 3, Cherry
 refuse said Review
 expect said Done
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 expect text apple
 expect text cherry
-keys ctrl+1
+keys alt+1
 expect focus Message to Claude

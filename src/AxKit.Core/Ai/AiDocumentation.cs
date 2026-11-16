@@ -41,6 +41,12 @@ public static class AiDocumentation
     /// <summary>The commands page (docs/axKit/window-commands.md, WF-8.1), under the name it has in the repository; never commands.md, which there is the developer's commands.</summary>
     public const string WindowCommandsName = "window-commands.md";
 
+    /// <summary>The keys by group (docs/axKit/key-groups.md): what kind of thing each pattern of keys does, the page a user learns the keys from.</summary>
+    public const string KeyGroupsName = "key-groups.md";
+
+    /// <summary>The keys by key (docs/axKit/key-map.md): every key and what it does in each app.</summary>
+    public const string KeyMapName = "key-map.md";
+
     /// <summary>
     /// The rule file's last paragraph (AH-7.3a; the user's own axHelp session, 2026-11-16, in which Claude remarked on
     /// the hour and on rest): what Claude does not remark on unless asked. It is in axKit's rule file, which axKit
@@ -169,6 +175,19 @@ public static class AiDocumentation
         {
             files.Add((Path.Combine(FolderName, WindowCommandsName), commands));
             index.Append("- ").Append(WindowCommandsName).Append(": every command of every window with its menu and its key, one a line.\n");
+        }
+
+        // The key pages (2026-11-16), as tools/key-map.ps1 wrote them: the keys by group, then every key by key.
+        if (Embedded("KeyGroups.md") is { } groups)
+        {
+            files.Add((Path.Combine(FolderName, KeyGroupsName), groups));
+            index.Append("- ").Append(KeyGroupsName).Append(": how axKit's keys are grouped, to explain the patterns and to guess a key.\n");
+        }
+
+        if (Embedded("KeyMap.md") is { } map)
+        {
+            files.Add((Path.Combine(FolderName, KeyMapName), map));
+            index.Append("- ").Append(KeyMapName).Append(": every key and what it does in each app.\n");
         }
 
         files.Insert(0, (Path.Combine(FolderName, IndexName), index.ToString()));

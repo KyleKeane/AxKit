@@ -28,7 +28,7 @@ wait 1000
 # Goal: Move through the conversation by headings
 # Step 2: Ctrl+Home, then h: the markers without the hash as level 1, Claude's headings as level 2, in order; Shift+H
 # goes back; 1: only the markers.
-keys ctrl+2
+keys alt+2
 keys ctrl+home
 said
 # Step 12, the end of the jump history: before any jump, Backspace says "Nothing to go back to".
@@ -126,7 +126,7 @@ expect said ! No next system line
 # Goal: Go back to the message field from the conversation
 # Step 6: Escape in the conversation: the message field, nothing sent, the status still ready.
 said
-keys ctrl+2
+keys alt+2
 keys escape
 expect focus Message to Claude
 refuse said Sent
@@ -154,7 +154,7 @@ expect quiet 500
 # Goal: Skip over a run of lines in a reply
 # Step 7a: from the output marker of the long reply, Ctrl+Down: the first reply line; the next Ctrl+Down goes past the
 # numbered lines to the end of the conversation; Ctrl+Up back to the first reply line, then the marker.
-keys ctrl+3
+keys alt+3
 expect said ! Output 3 Reply from Claude heading level 1
 keys ctrl+down
 expect focus "value":"claude: 1."
@@ -169,8 +169,8 @@ keys ctrl+shift+down
 keys escape
 expect said ! Selection cleared
 # Check: Moving by a run of lines is not a jump to go back from
-# Ctrl+Up and Ctrl+Down are not jumps: Backspace goes back to the line before the last quick key (here Ctrl+3's).
-keys ctrl+2
+# Ctrl+Up and Ctrl+Down are not jumps: Backspace goes back to the line before the last quick key (here Alt+3's).
+keys alt+2
 keys ctrl+down
 keys backspace
 expect said Back to
@@ -221,11 +221,11 @@ expect state "notice":null
 expect focus Conversation
 # Goal: Find the next match from the message field
 # F3 in the message field works too and moves the focus to the conversation.
-keys ctrl+1
+keys alt+1
 keys ctrl+f
 type single word
 keys enter
-keys ctrl+1
+keys alt+1
 keys f3
 expect said Use the Bash tool
 expect focus Conversation
@@ -254,7 +254,7 @@ expect said ! Back to [Screen Reader Mode
 # Step 13: m on a reply line: "Bookmark 1 added", the caret stays; Up reads the bookmark line, Down the line again.
 # (A wait after each bookmark: the view applies its edits 250 ms after the last key, FR-3.3, which a person's
 # next key never beats and the runner's does.)
-keys ctrl+3
+keys alt+3
 keys down down down
 keys m
 expect said ! Bookmark 1 added
@@ -290,7 +290,7 @@ keys m
 expect said ! Bookmark 2 removed
 wait 400
 # Ctrl+Shift+K from the message field: the focus moves to the conversation and the bookmark is added.
-keys ctrl+1
+keys alt+1
 keys ctrl+shift+k
 expect said ! Bookmark 3 added
 wait 400
@@ -309,25 +309,25 @@ menu Previous bookmark
 expect said ! Bookmark 3,
 # Ctrl+S saving the bookmark lines goes through the Save dialog (manual).
 # Goal: Hear a reply's paragraphs, headings or bookmarks without moving
-# Step 14: Ctrl+3 on the first reply... the newest reply here is the numbered one; Ctrl+Alt+P reads its paragraphs
+# Step 14: Alt+3 on the first reply... the newest reply here is the numbered one; Ctrl+Alt+P reads its paragraphs
 # without moving the caret; Ctrl+Alt+H its headings (none after it: "No next heading"); from the first output marker
 # Ctrl+Alt+H reads the headings with their levels; Ctrl+Alt+C from the field the claude: lines, the focus staying;
 # Ctrl+Alt+K the bookmarks; Ctrl+End, Ctrl+Alt+P: "No next paragraph"; Ctrl+Alt+O the output markers; Ctrl+Alt+L and
 # Ctrl+Alt+M: nothing. Control stopping NVDA is NVDA's (manual).
-keys ctrl+3
+keys alt+3
 keys ctrl+alt+p
 expect said claude: 1.
 expect focus "value":"# Output 3 Reply from Claude"
 keys ctrl+home o
 keys ctrl+alt+h
 expect said Beta heading level 2
-keys ctrl+1
+keys alt+1
 keys ctrl+alt+c
 expect said finished
 expect focus Message to Claude
 keys ctrl+alt+k
 expect said Bookmark 3
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 keys ctrl+alt+p
 expect said ! No next paragraph
 keys ctrl+home
@@ -361,15 +361,15 @@ expect state "notice":null
 # Goal: Quote two lines in a message and send it
 # Step 12, the second half: Enter on two lines with text already in the field: each quote is a block of its own under
 # a blank line; sent, the message shows in full between "# Input 4" and "# Output 4 Reply from Claude".
-keys ctrl+1
+keys alt+1
 type Reply with the single word ok.
-keys ctrl+2 ctrl+home
+keys alt+2 ctrl+home
 keys i
 keys enter
 # The line's number is not checked: Claude Code prints more or fewer lines before Input 1 from one day to the next
 # (a warning that the login expires soon was one of them: line 7 with it, line 6 without, 2026-11-13).
 expect said copied
-keys ctrl+2 ctrl+home
+keys alt+2 ctrl+home
 keys c
 keys enter
 expect text Reply with the single word ok.
@@ -384,7 +384,7 @@ keys enter
 expect said Sent
 expect said Done
 wait 1000
-keys ctrl+3
+keys alt+3
 keys shift+i
 expect said ! Input 4 heading level 1
 keys down
@@ -409,13 +409,13 @@ refuse said · you:
 # its second row: the last two say the same number (the view wraps it, so Down moves by rows; the runner cannot
 # compare two answers, so the numbers are printed for the report; the channel's caret line
 # is wrong below a wrapped line, so only announcements and lines above it are checked from here).
-keys ctrl+1
+keys alt+1
 type Write one paragraph of 120 words about rivers, with no line breaks.
 keys enter
 expect said Sent
 expect said Done
 wait 1000
-keys ctrl+3
+keys alt+3
 keys down
 keys l
 expect said ! Line
@@ -465,13 +465,13 @@ expect focus Cancel"
 keys escape
 # Goal: Send the quote with your comment
 # Step 11, the comment: sent with the quote, Claude answers; then, without the focus, the conversation's caret has
-# followed the newest line (FR-3.3), so Ctrl+2 lands on the reply; before the comment is sent, Ctrl+2 returns to the
+# followed the newest line (FR-3.3), so Alt+2 lands on the reply; before the comment is sent, Alt+2 returns to the
 # copied line (FR-2.9, checked above).
-keys ctrl+1
+keys alt+1
 type Reply with the single word yes.
 keys enter
 expect said Sent
 expect said Done
 wait 1000
-keys ctrl+2
+keys alt+2
 expect focus Conversation

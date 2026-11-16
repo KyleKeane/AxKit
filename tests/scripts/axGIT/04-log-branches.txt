@@ -32,7 +32,7 @@ expect focus Changes, no changes
 
 # Goal: Read a commit of the log
 # 4.1 Enter on the first commit of the log: the commit in the details, the focus on "commit <full hash>".
-keys ctrl+2
+keys alt+2
 expect said ! Log, 2 commits.
 expect focus Test: second commit
 keys enter
@@ -52,7 +52,7 @@ expect said → Log, 2 commits (List)
 
 # Goal: Switch branches
 # 4.2 The branches: the current one reads current; Enter on it says so; Enter on another switches; back again.
-keys ctrl+3
+keys alt+3
 expect said ! Branches, 2.
 expect list "main, current, origin/main, up to date"
 expect focus main, current
@@ -63,9 +63,9 @@ expect said · other
 keys enter
 expect said ! Switched to other
 expect state "status":["other
-keys ctrl+1
+keys alt+1
 expect said ! Changes, no changes
-keys ctrl+3
+keys alt+3
 expect said ! Branches, 2.
 expect focus other, current
 keys up
@@ -86,7 +86,7 @@ expect said ! Switched to scratch-test
 expect state "notice":null
 # The refresh after the switch runs on; a view key meanwhile says "Working…" (AG-2.2), so the script waits for it.
 expect state "status":["scratch-test
-keys ctrl+3
+keys alt+3
 expect said ! Branches, 3.
 expect list scratch-test, current
 keys home

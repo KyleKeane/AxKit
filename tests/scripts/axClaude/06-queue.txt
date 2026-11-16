@@ -47,7 +47,7 @@ expect focus "name":"Message to Claude","role":"Text","value":""
 expect said Done
 wait 2000
 expect state Claude: ready |
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 keys shift+i
 expect said ! Input 2 heading level 1
 keys down
@@ -72,7 +72,7 @@ refuse said ctrl+x ctrl+s
 # is in the conversation while the status still says working. Ctrl+Shift+S with nothing waiting: "Nothing queued".
 # (Ctrl+Shift+S goes once the status bar shows the waiting message: pressed at once after "Queued", before Claude has
 # drawn it, it says "Nothing queued", as FR-2.8 has it.)
-keys ctrl+1
+keys alt+1
 type Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.
 keys enter
 expect said Sent
@@ -89,7 +89,7 @@ expect said Queued
 expect state 1 message waiting
 keys ctrl+shift+s
 expect said Sending now
-keys ctrl+2
+keys alt+2
 expect text # Input 4
 expect state Claude: working
 expect said Done

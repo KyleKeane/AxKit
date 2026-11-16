@@ -11,7 +11,7 @@ public static class HelpText
         "axGIT",
         [
             "Tab, Shift+Tab, Ctrl+Tab or F6: switch between the list and the details",
-            "Shift+F10 or the Applications key: the Context menu, what acts on the line selected in the view shown",
+            "Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the line selected in the view shown",
             "Ctrl+F: find in the list while the list has the focus, in the details otherwise. F3 and Shift+F3: next or previous match",
         ]) + """
         ## axGIT
@@ -19,7 +19,7 @@ public static class HelpText
           Ctrl+O: open a repository (the Windows folder picker; any folder inside it will do)
           F5: refresh the list and the status bar
           Ctrl+W: show the repository's folder in File Explorer
-          Ctrl+1, Ctrl+2, Ctrl+3: the Changes, Log and Branches view of the list; pressed on the view already shown, the key says its name
+          Alt+1, Alt+2, Alt+3: the Changes, Log and Branches view of the list; pressed on the view already shown, the key says its name. Ctrl+1, Ctrl+2 and Ctrl+3, their keys until now, still work
           In the list
             Space: stage the file, or unstage it when it is staged; axGIT says which
             Enter: in Changes, the file's diff in the details; in Log, the commit's details; in Branches, switch to the branch

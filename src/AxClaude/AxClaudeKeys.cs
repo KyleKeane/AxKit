@@ -13,10 +13,15 @@ namespace AxClaude;
 public static class AxClaudeKeys
 {
     // Anywhere in the window.
-    public const Keys GoToField = Keys.Control | Keys.D1;
-    public const Keys GoToConversation = Keys.Control | Keys.D2;
+    // The window's places are on Alt+1, 2 and 3 (bundle AX-8.14, the maintainer's decision of 2026-11-16).
+    public const Keys GoToField = Keys.Alt | Keys.D1;
+    public const Keys GoToConversation = Keys.Alt | Keys.D2;
+    /// <summary>The same three on Ctrl, their key until 2026-11-16: further keys of the same commands, shown in no menu, with nothing extra said (AX-8.14).</summary>
+    public const Keys GoToFieldAlso = Keys.Control | Keys.D1;
+    public const Keys GoToConversationAlso = Keys.Control | Keys.D2;
+    public const Keys LatestResponseAlso = Keys.Control | Keys.D3;
     /// <summary>Navigate → Latest response: the newest output marker, from anywhere, the third place after the field and the conversation (FR-5, FR-6.5); Ctrl+Shift+O until 2.6.1.</summary>
-    public const Keys LatestResponse = Keys.Control | Keys.D3;
+    public const Keys LatestResponse = Keys.Alt | Keys.D3;
     public const Keys Interrupt = Keys.Shift | Keys.Escape;
     public const Keys SendNow = Keys.Control | Keys.Shift | Keys.S;
     public const Keys SendCtrlC = Keys.Control | Keys.Shift | Keys.C;
@@ -88,6 +93,9 @@ public static class AxClaudeKeys
         ("Send Ctrl+C", SendCtrlC),
         ("Next permission mode", NextPermissionMode),
         ("Latest response", LatestResponse),
+        ("Go to the message field (Ctrl+1, the older key)", GoToFieldAlso),
+        ("Go to the conversation (Ctrl+2, the older key)", GoToConversationAlso),
+        ("Latest response (Ctrl+3, the older key)", LatestResponseAlso),
         ("Read to the end: Ctrl+Alt with a quick key letter", ReadToEnd),
         ("Bookmark this line", BookmarkLine),
         ("Show the folder in File Explorer", ShowInExplorer),

@@ -97,9 +97,17 @@ public sealed class ProcessForm : AxKitForm
 
         // Navigation: the three views (the View menu's until 2026-11-11, AX-9.1).
         var view = new ToolStripMenuItem();
-        Add(view, new Command("&Processes", AxProcessKeys.ViewProcesses, () => Do(() => ShowViewAsync(View.Processes))) { Mark = CommandMark.Open });
-        Add(view, new Command("&Services", AxProcessKeys.ViewServices, () => Do(() => ShowViewAsync(View.Services))) { Mark = CommandMark.Open });
-        Add(view, new Command("Start&up", AxProcessKeys.ViewStartup, () => Do(() => ShowViewAsync(View.Startup))) { Mark = CommandMark.Open });
+        // On Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
+        Place(new Command("&Processes", AxProcessKeys.ViewProcesses, () => Do(() => ShowViewAsync(View.Processes))) { Mark = CommandMark.Open }, AxProcessKeys.ViewProcessesAlso);
+        Place(new Command("&Services", AxProcessKeys.ViewServices, () => Do(() => ShowViewAsync(View.Services))) { Mark = CommandMark.Open }, AxProcessKeys.ViewServicesAlso);
+        Place(new Command("Start&up", AxProcessKeys.ViewStartup, () => Do(() => ShowViewAsync(View.Startup))) { Mark = CommandMark.Open }, AxProcessKeys.ViewStartupAlso);
+        void Place(Command command, Keys also)
+        {
+            Add(view, command);
+            AddKey(command with { Key = also });
+        }
+
+
         var sort = new ToolStripMenuItem("Sort processes &by");
         _sortItems = new ChoiceItems<ProcessSort>(sort, [(ProcessSort.Memory, "&Memory"), (ProcessSort.Processor, "&Processor"), (ProcessSort.Name, "&Name")], settings.SortBy, SetSort);
 
@@ -294,7 +302,7 @@ public sealed class ProcessForm : AxKitForm
         return (ProcessTable.Rows(first, second, watch.Elapsed, Environment.ProcessorCount), SystemTimes.Busy(timesBefore, timesAfter));
     }
 
-    /// <summary>View → Processes, Services, Startup (Ctrl+1, 2, 3): the list refilled, read on the first visit, and its name said with the item the selection is on.</summary>
+    /// <summary>View → Processes, Services, Startup (Alt+1, 2, 3): the list refilled, read on the first visit, and its name said with the item the selection is on.</summary>
     private async Task ShowViewAsync(View view)
     {
         if (_busy is not null)
@@ -344,9 +352,17 @@ public sealed class ProcessForm : AxKitForm
             return true;
         }
 
-        Announce(view switch { View.Processes => "Processes view first: Ctrl+1", View.Services => "Services view first: Ctrl+2", _ => "Startup view first: Ctrl+3" }, true);
+        Announce(ViewFirst(view), true);
         return false;
     }
+
+    /// <summary>"Processes view first: Alt+1": the view a command belongs to and its key, from the table.</summary>
+    private static string ViewFirst(View view) => view switch
+    {
+        View.Processes => "Processes view first: " + BundleKeys.Text(AxProcessKeys.ViewProcesses).TrimEnd('.'),
+        View.Services => "Services view first: " + BundleKeys.Text(AxProcessKeys.ViewServices).TrimEnd('.'),
+        _ => "Startup view first: " + BundleKeys.Text(AxProcessKeys.ViewStartup).TrimEnd('.'),
+    };
 
     /// <summary>View → Sort processes by (PR-3.2): the rows put in the new order without a new read.</summary>
     private void SetSort(ProcessSort sort)
@@ -496,7 +512,7 @@ public sealed class ProcessForm : AxKitForm
                 name = entry.Name;
                 break;
             case View.Services:
-                Announce("Processes view first: Ctrl+1", true);
+                Announce(ViewFirst(View.Processes), true);
                 return;
             default:
                 Announce("Nothing selected", true);

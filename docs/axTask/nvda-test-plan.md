@@ -74,7 +74,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 - New line (bundle AX-7.8): in a long text field such as a list's Notes, Enter says "new line"; the steps are axDown's plan, step 2.5a.
 
 1. Ctrl+Shift+D: "Done tasks hidden"; the list's name says "1 done hidden".
-2. Shift+F10 in each pane: Context opens with the commands of the list, the item or the field the focus is on, and NVDA reads its first item.
+2. Shift+F10 in each pane: Context opens with the commands of the list, the item or the field the focus is on, and NVDA reads its first item. Ctrl+Period, then let go of both keys: the same menu, read the same way (bundle AX-8.15); in a text field of a notice, Ctrl+Period shows what Shift+F10 shows there.
 3. F1: the keys; Help, User guide: this guide. Alt+H, About, Version names axTask.
 4. Close and start again without a folder: the list you had.
 5. A damaged item (TK-4.6): put a file `Broken.json` holding `{ nope` into Home. Right on Home: "Home, 2 items, 1 not readable, ..."; the last row reads "Broken.json, not readable as an item, Enter opens it in axJSON". F2 and Delete: "Not readable as an item: Enter opens it in axJSON, Ctrl+E shows it in axFile". Enter: axJSON opens the file. Ctrl+0: "All tasks, ..., 1 not readable"; End: "1 item not readable, in Home".

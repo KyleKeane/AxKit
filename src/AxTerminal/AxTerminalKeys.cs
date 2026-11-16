@@ -13,10 +13,15 @@ namespace AxTerminal;
 public static class AxTerminalKeys
 {
     // Anywhere in the window.
-    public const Keys GoToField = Keys.Control | Keys.D1;
-    public const Keys GoToTerminal = Keys.Control | Keys.D2;
+    // The window's places are on Alt+1, 2 and 3 (bundle AX-8.14, the maintainer's decision of 2026-11-16).
+    public const Keys GoToField = Keys.Alt | Keys.D1;
+    public const Keys GoToTerminal = Keys.Alt | Keys.D2;
+    /// <summary>The same three on Ctrl, their key until 2026-11-16: further keys of the same commands, shown in no menu, with nothing extra said (AX-8.14).</summary>
+    public const Keys GoToFieldAlso = Keys.Control | Keys.D1;
+    public const Keys GoToTerminalAlso = Keys.Control | Keys.D2;
+    public const Keys LatestOutputAlso = Keys.Control | Keys.D3;
     /// <summary>Navigate → Latest output: the newest output marker, from anywhere, the third place after the field and the terminal (AT-2.2).</summary>
-    public const Keys LatestOutput = Keys.Control | Keys.D3;
+    public const Keys LatestOutput = Keys.Alt | Keys.D3;
     /// <summary>Escape to the shell (AT-3.5); Ctrl+Escape is Windows' own.</summary>
     public const Keys SendEscape = Keys.Shift | Keys.Escape;
     /// <summary>Ctrl+C to the shell, the interrupt (AT-3.5); plain Ctrl+C copies.</summary>
@@ -77,6 +82,9 @@ public static class AxTerminalKeys
         ("Go to the command field", GoToField),
         ("Go to the terminal", GoToTerminal),
         ("Latest output", LatestOutput),
+        ("Go to the command field (Ctrl+1, the older key)", GoToFieldAlso),
+        ("Go to the terminal (Ctrl+2, the older key)", GoToTerminalAlso),
+        ("Latest output (Ctrl+3, the older key)", LatestOutputAlso),
         ("Send Escape to the shell", SendEscape),
         ("Interrupt (Ctrl+C to the shell)", Interrupt),
         ("Read to the end: Ctrl+Alt with a quick key letter", ReadToEnd),
@@ -114,7 +122,7 @@ public static class AxTerminalKeys
     /// <summary>k and Shift+K: the bookmarks dropped with m; the Navigate menu reaches them too.</summary>
     private static readonly QuickKey BookmarkKey = new(Bookmark, "bookmark", l => l.Kind == LineKind.Bookmark);
 
-    /// <summary>o and Shift+O: the output markers; Ctrl+3 goes to the newest one.</summary>
+    /// <summary>o and Shift+O: the output markers; Alt+3 goes to the newest one.</summary>
     private static readonly QuickKey OutputKey = new(Output, "output", l => l.Kind == LineKind.OutputMarker);
 
     /// <summary>

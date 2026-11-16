@@ -27,23 +27,23 @@ You hear: trust.
 
 ### Jump straight to the conversation or the message field
 
-1. Press Ctrl+2 (Conversation; Navigation menu).
+1. Press Alt+2 (Conversation; Navigation menu).
     The focus moves to Conversation (Text).
-2. Press Ctrl+2 (Conversation; Navigation menu).
-3. Press Ctrl+1 (Message field; Navigation menu).
+2. Press Alt+2 (Conversation; Navigation menu).
+3. Press Alt+1 (Message field; Navigation menu).
     The focus moves to Message to Claude (Text).
-4. Press Ctrl+1 (Message field; Navigation menu).
+4. Press Alt+1 (Message field; Navigation menu).
     You hear: Message to Claude.
 
 ### Go to the conversation from the menu
 
-1. Choose Conversation in the Navigation menu (key: Ctrl+2).
+1. Choose Conversation in the Navigation menu (key: Alt+2).
 
 ### Hear the status
 
 1. Press F8 (Say the status; Window menu).
     You hear words such as: Claude: ready.
-2. Press Ctrl+2 (Conversation; Navigation menu).
+2. Press Alt+2 (Conversation; Navigation menu).
 3. Press F8 (Say the status; Window menu).
     You hear words such as: Claude: ready.
 4. Choose Say the status in the Window menu (key: F8).
@@ -56,7 +56,7 @@ Starts with: Open axClaude with the folder plain.
 ### Read Claude's question as lines in the conversation
 
 You hear: Claude asks.
-1. Press Ctrl+2 (Conversation; Navigation menu).
+1. Press Alt+2 (Conversation; Navigation menu).
 2. Press Ctrl+Home.
 3. Press Down 3 times.
 
@@ -162,20 +162,20 @@ Starts with: Open axClaude with the folder read.
 
 ### Go to Claude's latest reply
 
-1. Press Ctrl+3 (Latest response; Navigation menu).
+1. Press Alt+3 (Latest response; Navigation menu).
     You hear: Output 1 Reply from Claude heading level 1.
-2. Press Ctrl+1 (Message field; Navigation menu).
-3. Press Ctrl+3 (Latest response; Navigation menu).
+2. Press Alt+1 (Message field; Navigation menu).
+3. Press Alt+3 (Latest response; Navigation menu).
     You hear: Output 1 Reply from Claude heading level 1.
 4. Press Down 2 times.
 
 ### Quote a line of a reply in your next message
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Type: Write one paragraph of 120 words about rivers, with no line breaks.
 3. Press Enter.
     You hear: Done.
-4. Press Ctrl+3 (Latest response; Navigation menu).
+4. Press Alt+3 (Latest response; Navigation menu).
     You hear: Output 2.
 5. Press C.
 6. Press L.
@@ -186,7 +186,7 @@ Starts with: Open axClaude with the folder read.
 
 ### Select lines of a reply and clear the selection
 
-1. Press Ctrl+2 (Conversation; Navigation menu).
+1. Press Alt+2 (Conversation; Navigation menu).
 2. Press Ctrl+Home.
 3. Press O.
     You hear: Output 1.
@@ -202,7 +202,7 @@ Starts with: Open axClaude with the folder keys.
 
 ### Move through the conversation by headings
 
-1. Press Ctrl+2 (Conversation; Navigation menu).
+1. Press Alt+2 (Conversation; Navigation menu).
 2. Press Ctrl+Home.
 3. Press Backspace.
     You hear words such as: Nothing to go back.
@@ -282,7 +282,7 @@ Starts with: Open axClaude with the folder keys.
 
 ### Go back to the message field from the conversation
 
-1. Press Ctrl+2 (Conversation; Navigation menu).
+1. Press Alt+2 (Conversation; Navigation menu).
 2. Press Escape.
 
 ### Move through a long reply by page
@@ -298,7 +298,7 @@ Starts with: Open axClaude with the folder keys.
 
 ### Skip over a run of lines in a reply
 
-1. Press Ctrl+3 (Latest response; Navigation menu).
+1. Press Alt+3 (Latest response; Navigation menu).
     You hear: Output 3 Reply from Claude heading level 1.
 2. Press Ctrl+Down 2 times.
 3. Press Ctrl+Up 2 times.
@@ -329,11 +329,11 @@ Starts with: Open axClaude with the folder keys.
 
 ### Find the next match from the message field
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Press Ctrl+F (Find; Navigation menu).
 3. Type: single word
 4. Press Enter.
-5. Press Ctrl+1 (Message field; Navigation menu).
+5. Press Alt+1 (Message field; Navigation menu).
 6. Press F3 (Find next; Navigation menu).
     You hear: Use the Bash tool.
 
@@ -356,7 +356,7 @@ Starts with: Open axClaude with the folder keys.
 
 ### Bookmark lines and move between them
 
-1. Press Ctrl+3 (Latest response; Navigation menu).
+1. Press Alt+3 (Latest response; Navigation menu).
 2. Press Down 3 times.
 3. Press M.
     You hear: Bookmark 1 added.
@@ -381,7 +381,7 @@ Starts with: Open axClaude with the folder keys.
     You hear: Bookmark 2, 5.
 16. Press M.
     You hear: Bookmark 2 removed.
-17. Press Ctrl+1 (Message field; Navigation menu).
+17. Press Alt+1 (Message field; Navigation menu).
 18. Press Ctrl+Shift+K, or M in the conversation (Bookmark this line; Context menu).
     You hear: Bookmark 3 added.
 19. Press Down.
@@ -397,18 +397,18 @@ Starts with: Open axClaude with the folder keys.
 
 ### Hear a reply's paragraphs, headings or bookmarks without moving
 
-1. Press Ctrl+3 (Latest response; Navigation menu).
+1. Press Alt+3 (Latest response; Navigation menu).
 2. Press Ctrl+Alt+P.
     You hear: claude: 1.
 3. Press Ctrl+Home, O.
 4. Press Ctrl+Alt+H.
     You hear: Beta heading level 2.
-5. Press Ctrl+1 (Message field; Navigation menu).
+5. Press Alt+1 (Message field; Navigation menu).
 6. Press Ctrl+Alt+C.
     You hear: finished.
 7. Press Ctrl+Alt+K.
     You hear: Bookmark 3.
-8. Press Ctrl+2, Ctrl+End.
+8. Press Alt+2, Ctrl+End.
 9. Press Ctrl+Alt+P.
     You hear: No next paragraph.
 10. Press Ctrl+Home.
@@ -418,13 +418,13 @@ Starts with: Open axClaude with the folder keys.
 
 ### Quote two lines in a message and send it
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Type: Reply with the single word ok.
-3. Press Ctrl+2, Ctrl+Home.
+3. Press Alt+2, Ctrl+Home.
 4. Press I.
 5. Press Enter.
     You hear: copied.
-6. Press Ctrl+2, Ctrl+Home.
+6. Press Alt+2, Ctrl+Home.
 7. Press C.
 8. Press Enter.
 9. Press Ctrl+Home.
@@ -432,7 +432,7 @@ Starts with: Open axClaude with the folder keys.
 11. Press Enter.
     You hear: Sent.
     You hear: Done.
-12. Press Ctrl+3 (Latest response; Navigation menu).
+12. Press Alt+3 (Latest response; Navigation menu).
 13. Press Shift+I.
     You hear: Input 4 heading level 1.
 14. Press Down 8 times.
@@ -444,12 +444,12 @@ Starts with: Open axClaude with the folder keys.
 
 ### Send the quote with your comment
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Type: Reply with the single word yes.
 3. Press Enter.
     You hear: Sent.
     You hear: Done.
-4. Press Ctrl+2 (Conversation; Navigation menu).
+4. Press Alt+2 (Conversation; Navigation menu).
 
 ## Change the permission mode and interrupt Claude
 
@@ -473,7 +473,7 @@ Starts with: Open axClaude with the folder modes.
     You hear: Sent.
     You hear: Claude asks.
     You hear the sound Question.
-3. Press Ctrl+2, Ctrl+End.
+3. Press Alt+2, Ctrl+End.
 4. Press Up 7 times.
 
 ### Answer a permission question by its number
@@ -497,11 +497,11 @@ Starts with: Open axClaude with the folder modes.
 6. Press Ctrl+O.
     You hear: Ctrl+O is off. For tool output, start with --verbose.
 7. Press Shift+Escape.
-8. Press Ctrl+2, Ctrl+End.
+8. Press Alt+2, Ctrl+End.
 
 ### Interrupt Claude from the menu or the message field
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Type: Write a story of 1500 words about a lighthouse keeper.
 3. Press Enter.
     You hear: Sent.
@@ -544,7 +544,7 @@ Starts with: Open axClaude with the folder queue.
 
 ### Send a waiting message at once
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Type: Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.
 3. Press Enter.
     You hear: Sent.
@@ -556,7 +556,7 @@ Starts with: Open axClaude with the folder queue.
     You hear: Queued.
 7. Press Ctrl+Shift+S (Send queued messages now; Actions menu).
     You hear: Sending now.
-8. Press Ctrl+2 (Conversation; Navigation menu).
+8. Press Alt+2 (Conversation; Navigation menu).
     You hear: Done.
 9. Press Ctrl+Shift+S (Send queued messages now; Actions menu).
     You hear: Nothing queued.
@@ -569,7 +569,7 @@ Starts with: Open axClaude with the folder proj. Close the window.
 
 1. Open axClaude with the folder proj.
     You hear: Ready.
-2. Press Ctrl+2, Ctrl+Home.
+2. Press Alt+2, Ctrl+Home.
 3. Press I.
     You hear: Input 1 from previous session heading level 1.
 4. Press Down 5 times.
@@ -584,16 +584,16 @@ Starts with: Open axClaude with the folder proj. Close the window.
 2. Press Enter.
     You hear: Restarting.
     You hear: Ready.
-3. Press Ctrl+2, Ctrl+End.
+3. Press Alt+2, Ctrl+End.
 4. Press Shift+I.
     You hear: Input 1 heading level 1.
 5. Press Shift+I.
     You hear: Input 2 from previous session heading level 1.
-6. Press Ctrl+1 (Message field; Navigation menu).
+6. Press Alt+1 (Message field; Navigation menu).
 7. Type: Reply with the single word four.
 8. Press Enter.
     You hear: Done.
-9. Press Ctrl+2, Ctrl+End.
+9. Press Alt+2, Ctrl+End.
 10. Press Shift+I.
     You hear: Input 2 heading level 1.
 
@@ -613,7 +613,7 @@ Starts with: Open axClaude with the folder proj. Close the window.
 12. Press Enter.
     You hear: New session in proj.
     You hear: Ready.
-13. Press Ctrl+2, Ctrl+Home.
+13. Press Alt+2, Ctrl+Home.
 14. Press I.
     You hear: from previous session heading level 1.
 
@@ -659,7 +659,7 @@ Starts with: Open axClaude with the folder life.
 
 1. Open axClaude with the folder life.
     You hear: Ready.
-2. Press Ctrl+2, Ctrl+Home.
+2. Press Alt+2, Ctrl+Home.
 3. Press I.
     You hear: from previous session heading level 1.
 
@@ -712,7 +712,7 @@ Starts with: Open axClaude with the folder opts.
 5. Type: Write a story of 1500 words about a lighthouse keeper.
 6. Press Enter.
     You hear: Sent.
-7. Press Ctrl+2 (Conversation; Navigation menu).
+7. Press Alt+2 (Conversation; Navigation menu).
 8. Press Ctrl+M (Background music on or off).
     You hear the sound StartMusic.
     You hear: Background music on.
@@ -725,13 +725,13 @@ Starts with: Open axClaude with the folder opts.
 
 1. Choose the menu item Stop recording.
     You hear: Recording stopped.
-2. Press Ctrl+2 (Conversation; Navigation menu).
+2. Press Alt+2 (Conversation; Navigation menu).
 
 ### Have Claude's replies spoken
 
 1. Choose Speak replies: all lines in the Options menu, Speech.
     You hear: Speak replies: all lines.
-2. Press Ctrl+1 (Message field; Navigation menu).
+2. Press Alt+1 (Message field; Navigation menu).
 3. Type: Markdown only: ## Alpha, a five-word sentence, ## Beta, three one-word bullets.
 4. Press Enter.
     You hear: claude: Alpha.
@@ -810,11 +810,11 @@ Starts with: Open axClaude with the folder opts.
 ### Show the time on Input and Output lines
 
 1. Choose Time stamps on Input and Output lines in the Options menu, Text.
-2. Press Ctrl+1 (Message field; Navigation menu).
+2. Press Alt+1 (Message field; Navigation menu).
 3. Type: Reply with the single word stamped.
 4. Press Enter.
     You hear: Done.
-5. Press Ctrl+2, Ctrl+End.
+5. Press Alt+2, Ctrl+End.
 6. Press Shift+I.
     You hear words such as: Input 11.
 7. Press Shift+O.
@@ -834,7 +834,7 @@ Starts with: Open axClaude with the folder gone --claude C:\nowhere\claude.exe.
 ### Close the notice that Claude Code is missing
 
 1. Press Enter.
-2. Press Ctrl+2 (Conversation; Navigation menu).
+2. Press Alt+2 (Conversation; Navigation menu).
 
 ## Check for an update from a conversation
 
@@ -900,7 +900,7 @@ You hear: Permission Required: Accessing workspace.
 1. Type: Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.
 2. Press Enter.
     You hear: Sent.
-3. Press Ctrl+2 (Conversation; Navigation menu).
+3. Press Alt+2 (Conversation; Navigation menu).
     You hear the sound Notice.
 4. Press Ctrl+Tab 2 times (Switch between the view and the field).
 5. Press 1, Enter.
@@ -910,11 +910,11 @@ You hear: Permission Required: Accessing workspace.
 ### Have questions come without interrupting speech
 
 1. Choose Go to them at once, interrupting speech in the Options menu, Questions.
-2. Press Ctrl+1 (Message field; Navigation menu).
+2. Press Alt+1 (Message field; Navigation menu).
 3. Type: Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.
 4. Press Enter.
     You hear: Sent.
-5. Press Ctrl+2 (Conversation; Navigation menu).
+5. Press Alt+2 (Conversation; Navigation menu).
     You hear the sound Notice.
 6. Press 1, Enter.
     You hear: Sent: 1.
@@ -942,8 +942,8 @@ You hear: Permission Required: Accessing workspace.
 5. Press Enter.
     You hear: Sent: tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early.
     You hear: Done.
-6. Press Ctrl+2, Ctrl+End.
-7. Press Ctrl+1 (Message field; Navigation menu).
+6. Press Alt+2, Ctrl+End.
+7. Press Alt+1 (Message field; Navigation menu).
 8. Type: Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.
 9. Press Enter.
     You hear the sound Notice.
@@ -954,7 +954,7 @@ You hear: Permission Required: Accessing workspace.
 
 ### Move through Claude's questions in the conversation
 
-1. Press Ctrl+2, Ctrl+Home.
+1. Press Alt+2, Ctrl+Home.
 2. Press Q.
     You hear: Question: Permission Required: Accessing workspace.
 3. Press Q.
@@ -967,7 +967,7 @@ You hear: Permission Required: Accessing workspace.
 
 ### Close a question without answering it
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Type: Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.
 3. Press Enter.
     You hear the sound Notice.
@@ -1007,7 +1007,7 @@ You hear: Permission Required: Accessing workspace.
 
 ### Answer a question with several answers
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Type: Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry).
 3. Press Enter.
     You hear the sound Notice.
@@ -1016,8 +1016,8 @@ You hear: Permission Required: Accessing workspace.
 5. Press Home, Space, Down, Down, Space, Enter.
     You hear: Sent: 1, Apple, 3, Cherry.
     You hear: Done.
-6. Press Ctrl+2, Ctrl+End.
-7. Press Ctrl+1 (Message field; Navigation menu).
+6. Press Alt+2, Ctrl+End.
+7. Press Alt+1 (Message field; Navigation menu).
 
 ### Review answers before they go to Claude
 
@@ -1043,7 +1043,7 @@ Starts with: Open axClaude with the folder menu.
 2. Press Ctrl+End.
 3. Type: more
 4. Go to the axClaude window.
-5. Press Ctrl+1 (Message field; Navigation menu).
+5. Press Alt+1 (Message field; Navigation menu).
 6. Type: Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.
 7. Press Enter.
     You hear: Sent.
@@ -1093,7 +1093,7 @@ Starts with: Open axClaude with the folder side.
 
 ### Find side answers in the conversation
 
-1. Press Ctrl+2, Ctrl+Home.
+1. Press Alt+2, Ctrl+Home.
 2. Press B.
     You hear: btw: what is two plus two? answer in one word.
 3. Press B.
@@ -1200,14 +1200,14 @@ Starts with: Open axClaude with the folder spoken.
 6. Press Enter.
     You hear: green apples.
     You hear: Done.
-7. Press Ctrl+2, Ctrl+End.
+7. Press Alt+2, Ctrl+End.
 
 ### Have every reply line spoken again
 
 1. Choose Words that keep a reply line silent in the Options menu, Speech.
 2. Press Ctrl+A, Delete, Enter.
     You hear: Every reply line is spoken.
-3. Press Ctrl+1 (Message field; Navigation menu).
+3. Press Alt+1 (Message field; Navigation menu).
 4. Type: Reply with exactly one line: the words pelican again.
 5. Press Enter.
     You hear: pelican again.
@@ -1222,8 +1222,8 @@ Starts with: Open axClaude with the folder offer.
 1. Call the tool axkit_offer_command.
     The tool answers with offered: true.
     You hear the sound Offer.
-2. Press Ctrl+2 (Conversation; Navigation menu).
-3. Press Ctrl+1 (Message field; Navigation menu).
+2. Press Alt+2 (Conversation; Navigation menu).
+3. Press Alt+1 (Message field; Navigation menu).
 4. Press Enter 2 times.
 
 ### Hear the offered command again
@@ -1244,7 +1244,7 @@ Starts with: Open axClaude with the folder offer.
 2. Press Down.
 3. Press Enter.
     You hear: Sent.
-4. Press Ctrl+2 (Conversation; Navigation menu).
+4. Press Alt+2 (Conversation; Navigation menu).
 
 ### Let an AI tool run a window command
 
@@ -1342,15 +1342,17 @@ Starts with: Open axClaude with the folder kt.
     You hear: F4: Send a report.
 3. Press Ctrl+B (What runs in the background; Actions menu).
     You hear: Ctrl+B: What runs in the background.
-4. Press Ctrl+2 (Conversation; Navigation menu).
+4. Press Alt+2 (Conversation; Navigation menu).
+    You hear: Alt+2: Conversation.
+5. Press Ctrl+2 (Conversation; Navigation menu).
     You hear: Ctrl+2: Conversation.
-5. Press Shift+Escape.
+6. Press Shift+Escape.
     You hear: Shift+Escape: Interrupt.
-6. Press A.
+7. Press A.
     You hear: A: types the letter.
-7. Press Enter.
+8. Press Enter.
     You hear: Enter: sends what the field holds.
-8. Press F9.
+9. Press F9.
     You hear: F9: no command of this window.
 
 ### End the key test
@@ -1400,7 +1402,7 @@ Starts with: Open axClaude with the folder em.
 
 ### Go back to editing the message
 
-1. Press Ctrl+1 (Message field; Navigation menu).
+1. Press Alt+1 (Message field; Navigation menu).
 2. Press Ctrl+Space.
     You hear: Edit mode.
 3. Press End.
@@ -1410,7 +1412,7 @@ Starts with: Open axClaude with the folder em.
 
 1. Press Ctrl+M (Background music on or off).
     You hear: Background music on, nothing is running.
-2. Press Ctrl+2 (Conversation; Navigation menu).
+2. Press Alt+2 (Conversation; Navigation menu).
 3. Press Ctrl+M (Background music on or off).
     You hear: Background music off.
 
@@ -1450,7 +1452,7 @@ Starts with: Open axClaude with the folder wf.
 
 1. Choose Show Claude Code's live progress rows in the conversation in the Options menu, Background work.
     You hear the sound BackgroundStart.
-2. Press Ctrl+2 (Conversation; Navigation menu).
+2. Press Alt+2 (Conversation; Navigation menu).
 3. Press Ctrl+End.
     The focus moves to Conversation.
 
@@ -1502,7 +1504,7 @@ You hear: Ready.
 2. Press Enter.
     You hear: Sent.
     You hear: Done.
-3. Press Ctrl+2 (Conversation; Navigation menu).
+3. Press Alt+2 (Conversation; Navigation menu).
 
 ## See Claude Code's events arrive, without Claude Code
 
@@ -1580,8 +1582,8 @@ You may hear: trust.
 2. Type: Reply with the single word hello.
 3. Press Enter.
     You hear: Done.
-4. Press Ctrl+2 (Conversation; Navigation menu).
-5. Press Ctrl+3 (Latest response; Navigation menu).
+4. Press Alt+2 (Conversation; Navigation menu).
+5. Press Alt+3 (Latest response; Navigation menu).
     You hear: Output 1.
 
 ## Answer a set of two questions from Claude

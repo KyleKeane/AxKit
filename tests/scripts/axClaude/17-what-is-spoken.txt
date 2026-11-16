@@ -79,7 +79,7 @@ keys enter
 expect said green apples
 refuse said feathers
 expect said Done
-keys ctrl+2 ctrl+end
+keys alt+2 ctrl+end
 expect text pelican feathers
 # Goal: Have every reply line spoken again
 # The field emptied: every line spoken again.
@@ -87,8 +87,8 @@ menu Words that keep a reply line silent
 expect focus Words that keep a reply line silent
 keys ctrl+a delete enter
 expect said Every reply line is spoken
-# The notice gives the focus back to the conversation, where it was; Ctrl+1 to the message field.
-keys ctrl+1
+# The notice gives the focus back to the conversation, where it was; Alt+1 to the message field.
+keys alt+1
 type Reply with exactly one line: the words pelican again.
 keys enter
 expect said pelican again

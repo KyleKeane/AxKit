@@ -92,9 +92,17 @@ internal sealed partial class TerminalForm
         Add(shell, new Command("What is r&unning", AxTerminalKeys.WhatIsRunning, SayWhatIsRunning) { Mark = CommandMark.Read });
 
         var navigate = new ToolStripMenuItem();
-        Add(navigate, new Command("&Command field", AxTerminalKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open });
-        Add(navigate, new Command("&Terminal", AxTerminalKeys.GoToTerminal, () => GoTo(Transcript)) { Mark = CommandMark.Open });
-        Add(navigate, new Command("&Latest output", AxTerminalKeys.LatestOutput, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open });
+        // The places on Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
+        Place(new Command("&Command field", AxTerminalKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open }, AxTerminalKeys.GoToFieldAlso);
+        Place(new Command("&Terminal", AxTerminalKeys.GoToTerminal, () => GoTo(Transcript)) { Mark = CommandMark.Open }, AxTerminalKeys.GoToTerminalAlso);
+        Place(new Command("&Latest output", AxTerminalKeys.LatestOutput, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open }, AxTerminalKeys.LatestOutputAlso);
+        void Place(Command command, Keys also)
+        {
+            Add(navigate, command);
+            AddKey(command with { Key = also });
+        }
+
+
         navigate.DropDownItems.Add(new ToolStripSeparator());
         AddFindItems(navigate);
         navigate.DropDownItems.Add(new ToolStripSeparator());

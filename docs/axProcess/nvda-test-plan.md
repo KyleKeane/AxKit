@@ -12,7 +12,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axProc
 6. F5: "Refreshed: Processes, N"; the selection is on the same process.
 7. Home, then Up: the low edge sound, nothing spoken. End, then Down: the same.
 8. Tab: "Services, N. <service>"; Tab: "Startup, N. <entry>"; Tab: "Processes, N. <process>". Shift+Tab: "Startup, …".
-9. On a process, Shift+F10: Context opens with the process commands and NVDA reads "Details Enter". Escape. Ctrl+2, Shift+F10: Context with the service commands; Ctrl+3, Shift+F10: the startup commands. The Applications key does the same.
+9. On a process, Shift+F10: Context opens with the process commands and NVDA reads "Details Enter". Escape. Alt+2, Shift+F10: Context with the service commands; Alt+3, Shift+F10: the startup commands. The Applications key does the same.
 9a. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help, the same in every view; Context holds the view's commands.
 9b. Type `svc`: the first process starting with svc; `s` again after a pause: the next name starting with s; Shift+S: back to the one before.
 10. Close axProcess, then in another axKit window Alt+W, R: "1. axProcess" is in Recently closed; Enter starts it.
@@ -31,14 +31,14 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axProc
 
 ## 3. Services (PR-4)
 
-1. Ctrl+2: "Services, N. <first service>" after a moment. Down: "<display name> (<name>), running, automatic" and the like.
+1. Alt+2: "Services, N. <first service>" after a moment. Down: "<display name> (<name>), running, automatic" and the like.
 2. Enter on a running service: its details with Stop, Restart, Close. Stop: "Could not stop …: access is denied. Services need administrator rights to start and stop" (unless axProcess runs elevated).
-3. Delete in the Services view: "Processes view first: Ctrl+1". Ctrl+E: the same.
-4. Ctrl+2 again: "Services, N. <item>"; Ctrl+1: back on the process you had.
+3. Delete in the Services view: "Processes view first: Alt+1". Ctrl+E: the same.
+4. Alt+2 again: "Services, N. <item>"; Alt+1: back on the process you had. No menu opens and Windows makes no sound for Alt and the number; the menu bar stays closed when Alt is let go. Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, do the same with nothing more said.
 
 ## 4. Startup (PR-5)
 
-1. Ctrl+3: "Startup, N. <first entry>". Down: "<name>, enabled, current user's Run key" and the like.
+1. Alt+3: "Startup, N. <first entry>". Down: "<name>, enabled, current user's Run key" and the like.
 2. Enter: the details, "Command …", "Set in …", "Enabled", "Program …"; Show program in axFile opens axFile on it.
 3. An entry turned off in Task Manager's Startup apps reads "disabled".
 
@@ -49,7 +49,7 @@ Steps 4 to 9 change what starts with Windows. By ear, run them on an entry of yo
 6. Delete: a notice, "Remove <name> from the programs that start with Windows?", with "Command ...", "Set in your Startup folder", "The file in the Startup folder is deleted for good, not sent to the Recycle Bin. The program itself stays on the computer." and "Turn off is the gentler way: it keeps the entry, and Turn on brings it back."; the buttons Remove and Cancel, Cancel the default. Enter: the notice closes, nothing is said about a removal, the entry is still there. Delete, Escape: the same.
 7. Delete, Alt+R: "<name> removed from the programs that start with Windows", once; the list has one entry fewer and the selection is on the entry that followed it (the one before it when it was the last); the shortcut is gone from the Startup folder.
 8. On an entry that reads "computer's Run key" or "all users' Startup folder" (if the computer has one), Context, Turn off: "<name> is set for every user of this computer: turning it off needs administrator rights. Use Task Manager's Startup apps tab, or Settings, Apps, Startup"; no Windows prompt appears and the line still reads as before. Delete: "<name> is set for every user of this computer: removing it needs administrator rights. Task Manager's Startup apps tab, or Settings, Apps, Startup, turns it off", with no question.
-9. Enter on an enabled entry: the details' buttons are Turn off, Remove, Show program in axFile, Close; on a disabled one the first is Turn on. Delete in the Services view still says "Processes view first: Ctrl+1"; Delete on a process still asks to end it.
+9. Enter on an enabled entry: the details' buttons are Turn off, Remove, Show program in axFile, Close; on a disabled one the first is Turn on. Delete in the Services view still says "Processes view first: Alt+1"; Delete on a process still asks to end it.
 
 ## 5. Text, notices, the Window, axKit and Help menus (PR-6)
 

@@ -43,20 +43,24 @@ public sealed record TextJump(Keys Next, Keys Previous, string Name, Func<string
     // (<see cref="TextJump"/>), the elements from the pair's own outline, and the result is one announcement, the
     // element's text, or "No next heading" and the like with the caret staying. Tested in <c>tests/AxKit.Tests</c>.
 
-    /// <summary>Acts on the key when it is one of the pairs and says so; false when it is none of them.</summary>
-    public static bool Handle(TextBoxBase text, IReadOnlyList<TextJump> jumps, Keys key, Func<string, bool, bool> announce)
+    /// <summary>
+    /// Acts on the key when it is one of the pairs and says so; false when it is none of them. <paramref name="before"/>
+    /// is told whether there is an element to go to, once that is known and before the caret moves or anything is
+    /// said: navigation mode's sounds (AX-8.13).
+    /// </summary>
+    public static bool Handle(TextBoxBase text, IReadOnlyList<TextJump> jumps, Keys key, Func<string, bool, bool> announce, Action<bool>? before = null)
     {
         foreach (var jump in jumps)
         {
             if (key == jump.Next)
             {
-                Jump(text, jump, 1, announce);
+                Jump(text, jump, 1, announce, before);
                 return true;
             }
 
             if (key == jump.Previous)
             {
-                Jump(text, jump, -1, announce);
+                Jump(text, jump, -1, announce, before);
                 return true;
             }
         }
@@ -65,11 +69,12 @@ public sealed record TextJump(Keys Next, Keys Previous, string Name, Func<string
     }
 
     /// <summary>The caret to the start of the next (direction 1) or previous (-1) element of the pair's kind, spoken.</summary>
-    public static void Jump(TextBoxBase text, TextJump jump, int direction, Func<string, bool, bool> announce)
+    public static void Jump(TextBoxBase text, TextJump jump, int direction, Func<string, bool, bool> announce, Action<bool>? before = null)
     {
         var element = direction > 0
             ? jump.NextOf(text.Text, text.SelectionStart)
             : jump.PreviousOf(text.Text, text.SelectionStart);
+        before?.Invoke(element is not null);
         if (element is null)
         {
             announce($"No {(direction > 0 ? "next" : "previous")} {jump.Name}", true);

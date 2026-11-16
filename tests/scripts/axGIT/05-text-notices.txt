@@ -52,7 +52,7 @@ expect said ·
 # Ctrl+Down: the next paragraph. A diff has no blank lines (a blank context line is one space), so a commit's
 # details, which have them, stand in: from the top to the message, then to the files.
 keys ctrl+tab
-keys ctrl+2
+keys alt+2
 expect said ! Log, 1 commit.
 keys enter
 expect said lines
@@ -62,7 +62,7 @@ expect said ·     first
 keys ctrl+down
 expect said ·  a.txt
 keys ctrl+tab
-keys ctrl+1
+keys alt+1
 expect said ! Changes, 1 file.
 
 # Goal: Change the text size

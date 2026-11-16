@@ -40,7 +40,7 @@ expect focus Text
 keys ctrl+end
 type more
 use 1
-keys ctrl+1
+keys alt+1
 type Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.
 keys enter
 expect said Sent

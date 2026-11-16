@@ -28,8 +28,8 @@ public sealed class AiDocumentationTests
 
         Assert.Equal(Normal(File.ReadAllText(Path.Combine(root, "docs", "axKit", "README.md"))), Normal(files[Path.Combine("documentation", "axKit.md")]));
         // The index, the bundle's guide, one guide per app, the two rules, and the workflows' index, their pages and
-        // the commands page (WF-8.1): nothing else.
-        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + AiDocumentation.WorkflowPages().Count, files.Count);
+        // the commands page (WF-8.1), and the two key pages: nothing else.
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count, files.Count);
     }
 
     [Fact]
@@ -42,6 +42,9 @@ public sealed class AiDocumentationTests
         var files = AiDocumentation.Files("1.2.3").ToDictionary(file => file.Path, file => file.Text);
         Assert.Equal(Normal(File.ReadAllText(Path.Combine(docs, "workflows.md"))), Normal(files[Path.Combine("documentation", "workflows.md")]));
         Assert.Equal(Normal(File.ReadAllText(Path.Combine(docs, "window-commands.md"))), Normal(files[Path.Combine("documentation", "window-commands.md")]));
+        // The key pages (AH-7.1, 2026-11-16), as tools/key-map.ps1 wrote them.
+        Assert.Equal(Normal(File.ReadAllText(Path.Combine(docs, "key-groups.md"))), Normal(files[Path.Combine("documentation", AiDocumentation.KeyGroupsName)]));
+        Assert.Equal(Normal(File.ReadAllText(Path.Combine(docs, "key-map.md"))), Normal(files[Path.Combine("documentation", AiDocumentation.KeyMapName)]));
 
         // Every page of docs/axKit/workflows is among them: a group whose page has a name AiDocumentation.WorkflowPages
         // does not try fails here.
@@ -69,6 +72,8 @@ public sealed class AiDocumentationTests
             Path.Combine("documentation", "workflows.md"),
             .. names.Select(name => Path.Combine("documentation", "workflows-" + name + ".md")),
             Path.Combine("documentation", "window-commands.md"),
+            Path.Combine("documentation", "key-groups.md"),
+            Path.Combine("documentation", "key-map.md"),
             AiDocumentation.RulePath,
             AiToolsRule.RulePath,
         ];
@@ -90,6 +95,8 @@ public sealed class AiDocumentationTests
         }
 
         Assert.Contains("\n- window-commands.md: every command of every window with its menu and its key, one a line.\n", index, StringComparison.Ordinal);
+        Assert.Contains("\n- key-groups.md: how axKit's keys are grouped, to explain the patterns and to guess a key.\n", index, StringComparison.Ordinal);
+        Assert.Contains("\n- key-map.md: every key and what it does in each app.\n", index, StringComparison.Ordinal);
         // Never commands.md, which in the repository is the developer's commands.
         Assert.DoesNotContain("- commands.md", index, StringComparison.Ordinal);
     }
@@ -132,9 +139,9 @@ public sealed class AiDocumentationTests
     {
         // WF-8.1: directly in documentation, so that the marker's list may delete one that a later version no longer has.
         var paths = AiDocumentation.Files("1.2.3").Select(file => file.Path)
-            .Where(path => Path.GetFileName(path).StartsWith("workflows", StringComparison.Ordinal) || Path.GetFileName(path) == "window-commands.md")
+            .Where(path => Path.GetFileName(path).StartsWith("workflows", StringComparison.Ordinal) || Path.GetFileName(path) is "window-commands.md" or AiDocumentation.KeyGroupsName or AiDocumentation.KeyMapName)
             .ToList();
-        Assert.Equal(2 + AiDocumentation.WorkflowPages().Count, paths.Count);
+        Assert.Equal(4 + AiDocumentation.WorkflowPages().Count, paths.Count);
         Assert.All(paths, path => Assert.True(AiDocumentation.IsOurs(path), $"{path} is not a file axKit may delete."));
 
         // Written there, and named in the marker.
@@ -277,7 +284,7 @@ public sealed class AiDocumentationTests
         var rule = temp.File(Path.Combine(".claude", "rules", "mine.md"), "my rule");
 
         var written = AiDocumentation.Write(temp.Path, "1.3.0");
-        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + AiDocumentation.WorkflowPages().Count, written.Count);
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count, written.Count);
         Assert.StartsWith("# axFile", File.ReadAllText(Path.Combine(folder, "axFile.md")), StringComparison.Ordinal);
         Assert.Contains("axKit 1.3.0", File.ReadAllText(Path.Combine(folder, "index.md")), StringComparison.Ordinal);
         Assert.Equal("1.3.0", File.ReadLines(Path.Combine(folder, "axkit-version.txt")).First());
@@ -288,7 +295,7 @@ public sealed class AiDocumentationTests
 
         // A development build asks for every file again whatever the marker says: its guides change without its version.
         File.WriteAllText(Path.Combine(folder, "axFile.md"), "an old guide");
-        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + AiDocumentation.WorkflowPages().Count, AiDocumentation.Write(temp.Path, "1.3.0", rewrite: true).Count);
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count, AiDocumentation.Write(temp.Path, "1.3.0", rewrite: true).Count);
         Assert.StartsWith("# axFile", File.ReadAllText(Path.Combine(folder, "axFile.md")), StringComparison.Ordinal);
         Assert.Equal("my own", File.ReadAllText(own));
     }

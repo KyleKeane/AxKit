@@ -499,17 +499,21 @@ Starts with: Open axTask with the folder tasks.
     You hear: F8: Say the status.
 3. Press F1 (Keyboard shortcuts; Help menu).
     You hear: F1: Keyboard shortcuts.
-4. Press Ctrl+N.
+4. Press Ctrl+Period.
+    You hear: Ctrl+Period: The Context menu, as Shift+F10.
+5. Press Ctrl+Slash (Ask about this window; axKit menu, Claude).
+    You hear: Ctrl+Slash: Ask Claude about this window, as Shift+F1.
+6. Press Ctrl+N.
     You hear: Ctrl+N: New item.
-5. Press Ctrl+Up (Previous section; Navigation menu).
+7. Press Ctrl+Up (Previous section; Navigation menu).
     You hear: Ctrl+Up: Previous section.
-6. Press Left.
+8. Press Left.
     You hear: Left: Up a level.
-7. Press Down.
+9. Press Down.
     You hear: Down: moves in the list.
-8. Press W.
+10. Press W.
     You hear: W: finds the next item that starts with what you type.
-9. Press F9.
+11. Press F9.
     You hear: F9: no command of this window.
 
 ### End the key test

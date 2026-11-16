@@ -52,6 +52,9 @@ is the variant.
 | The edge: nothing further that way, or the key did nothing | A4 falling to A3, loud | exists (`Sounds.Edge`) |
 | A command recalled into the field | E5 rising a fourth to A5 | exists (`Sounds.Recall`) |
 | Moved onto a heading | G4 leaping an octave to G5 | exists (`Sounds.Heading`) |
+| A letter taken as a command in navigation mode (SPEC AX-8.13) | a click of 8 ms, 2200 Hz with noise, before the command runs | exists (`Sounds.NavKey`), chosen by ear 2026-11-16 |
+| A navigation letter that found nothing of its kind | one flat tone, 180 Hz, 90 ms, in place of the click | exists (`Sounds.Nothing`), a candidate, not yet chosen by ear |
+| A plain key in navigation mode with no command | two flat blips at 300 Hz, 25 ms each | exists (`Sounds.Unassigned`), a candidate, not yet chosen by ear |
 | A value changed by Right or Left in a list of fields | proposed: a rise of one step for the next value, a fall of one step for the previous | proposed, with the forms paradigm |
 
 ### 3. Turns: where the conversation stands

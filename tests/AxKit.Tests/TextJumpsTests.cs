@@ -37,6 +37,24 @@ public sealed class TextJumpsTests
         Assert.Equal(3, spoken.Count);
     }
 
+    /// <summary>
+    /// AX-8.13: a jump tells its caller whether there is something to go to before anything is said, so that
+    /// navigation mode's sound for the key comes first; a key that is no jump tells nothing.
+    /// </summary>
+    [Fact]
+    public void A_jump_says_whether_it_found_something_before_it_speaks()
+    {
+        var (box, spoken, announce) = Editor();
+        var told = new List<(bool Found, int SpokenBefore)>();
+        void Before(bool found) => told.Add((found, spoken.Count));
+
+        Assert.True(TextJump.Handle(box, TextJump.HeadingLetters, Keys.D2, announce, Before));
+        Assert.True(TextJump.Handle(box, TextJump.HeadingLetters, Keys.D6, announce, Before));
+        Assert.False(TextJump.Handle(box, TextJump.HeadingLetters, Keys.K, announce, Before));
+        Assert.Equal([(true, 0), (false, 1)], told);
+        Assert.Equal(2, spoken.Count);
+    }
+
     /// <summary>The heading letters every notice's text takes (AX-7.2): h, Shift+H, 1 to 6, the same values as axClaude's transcript keys.</summary>
     [Fact]
     public void The_heading_letters_work_in_a_notice_text()

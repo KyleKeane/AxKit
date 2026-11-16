@@ -29,12 +29,12 @@ With a screen reader running, PowerShell turns its line editor (PSReadLine) off 
 
 From the top: the menu bar (Alt), the terminal (the text of everything so far), the command field (three lines), and the status bar.
 
-- Ctrl+1 goes to the command field, Ctrl+2 to the terminal, Ctrl+3 to the latest output. Each says where you are when you are there already.
+- Alt+1 goes to the command field, Alt+2 to the terminal, Alt+3 to the latest output. Each says where you are when you are there already. Ctrl+1, Ctrl+2 and Ctrl+3, the keys for these until now, still work.
 - Tab, Shift+Tab, Ctrl+Tab or F6 switch between the terminal and the field.
 
 ## Run a command
 
-Type the command in the field and press Enter. You hear "Sent" with a low note. The terminal gets a `# Input 1` heading, `## Folder` with the folder the command runs in under it, `## Command` with your command under it, then `# Output 1`, and what the shell prints follows, with a short tick for each new line. When the prompt comes back you hear "Done" with the falling chime, or "Failed, exit code 1" when the command failed (PowerShell says "Failed" for an error of its own; Command Prompt gives no code). Ctrl+3 then takes you to the start of the output; read down with the arrow keys.
+Type the command in the field and press Enter. You hear "Sent" with a low note. The terminal gets a `# Input 1` heading, `## Folder` with the folder the command runs in under it, `## Command` with your command under it, then `# Output 1`, and what the shell prints follows, with a short tick for each new line. When the prompt comes back you hear "Done" with the falling chime, or "Failed, exit code 1" when the command failed (PowerShell says "Failed" for an error of its own; Command Prompt gives no code). Alt+3 then takes you to the start of the output; read down with the arrow keys.
 
 - Shift+Enter starts a new line in the field. A command of several lines goes to the shell line by line; for PowerShell one more Enter follows, which its console host wants to end a block.
 - An empty field sends a plain Enter.
@@ -44,7 +44,7 @@ Type the command in the field and press Enter. You hear "Sent" with a low note. 
 - Enter on a line of the terminal copies that line into the field, to run it again or change it.
 - Ctrl+Shift+C interrupts (it sends Ctrl+C to the shell). Shift+Escape sends Escape. The Actions menu's Send key sends Up, Down or Ctrl+D for a program that wants them.
 - Escape in the field does nothing but remind you of those two keys.
-- Ctrl+Space in the field: "Navigation mode", for reading a long command back without changing it. The arrows move and select; Ctrl+Up and Ctrl+Down go by paragraph instead of through the history; Enter sends nothing, and a key that would type or delete plays the low edge sound. Ctrl+Space again: "Edit mode". In the terminal, which you cannot type in, Ctrl+Space says "Read only: there is no edit mode here".
+- Ctrl+Space in the field: "Navigation mode", for reading a long command back without changing it. The arrows move and select; Ctrl+Up and Ctrl+Down go by paragraph instead of through the history; Enter sends nothing and plays the low edge sound, as Backspace and Delete do; a letter that moves gives a small click first, one that finds nothing of its kind a flat low tone, and a letter with no command two quick blips. Ctrl+Space again: "Edit mode". In the terminal, which you cannot type in, Ctrl+Space says "Read only: there is no edit mode here".
 
 A program that asks a question (y/n, a passphrase) prints it as a line; when the output has been quiet for a couple of seconds and the last line ends like a question, you hear "Asks:" and the line, with the question chime. Type the answer in the field and press Enter. Ctrl+Q says what is running, for how long, and the prompt, at any time. "Asks:" is always the program's own line, never axTerminal asking: a program, or a file you print, can word a line to look like any question, a password prompt included, so answer only what you know the program you ran asks.
 

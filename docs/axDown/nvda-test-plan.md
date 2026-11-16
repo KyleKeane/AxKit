@@ -167,8 +167,12 @@ letter), and a `long.md` with headings and lines longer than the window.
    inside a fenced code block counts. Navigation, Next and Navigation, Previous list Link, List, List item, Block quote
    and Table with their keys.
 8. Navigation mode (bundle AX-8.13, AD-5.3): Ctrl+Space: "Navigation mode", and NVDA+End (or F8) reads ", navigation mode"
-   after the file's name. h, Shift+H, 2, k, l, i: the same jumps and words as Ctrl with the letter. A letter that is
-   no jump, Space, Enter, Backspace, Delete, Ctrl+V and Ctrl+Z: the edge sound, the text and the title unchanged.
+   after the file's name. h, Shift+H, 2, k, l, i: the same jumps and words as Ctrl with the letter, each after a
+   small click that is over before NVDA speaks (on a heading the heading sound follows it). h past the last heading:
+   one flat low tone and no click, then "No next heading". A letter or a digit that is no jump, Space or a sign: two
+   quick blips, the text and the title unchanged. Enter, Backspace, Delete, Ctrl+V and Ctrl+Z: the edge sound, the
+   text and the title unchanged. By ear: the three sounds are told apart from each other and from the edge sound,
+   and none of them is heard in edit mode.
    Actions, Undo: the edge sound and "Navigation mode: press Ctrl+Space to edit". Arrows and Shift+arrows move and select as ever.
    Ctrl+Space: "Edit mode"; a letter types. In Help, User guide (a read-only text), Ctrl+Space: "Read only: there is
    no edit mode here".
@@ -190,7 +194,7 @@ Claude Code installed and logged in, and are the user's by ear.
 4. Tab: "Ask more about this answer, edit"; type "and back on?", Enter: "Asking Claude", then a new "Claude says" in
    the same conversation (real). Tab twice: the Copy button; Enter: "Copied"; the notice stays. Escape: the editor has
    the focus again, on the same line as before.
-5. Shift+F1, then Escape: nothing asked, the editor has the focus.
+5. Shift+F1, then Escape: nothing asked, the editor has the focus. Ctrl+Slash: the same notice as Shift+F1 opens, and no character is typed into the text (bundle AX-8.15); Escape.
 6. Alt+A, C, F: "Folders Claude may read", "No folders yet…", the text naming Claude's working folder; Tab to Add a
    folder, Enter: the folder picker; Escape it: the notice comes back; Escape closes it. Alt+A, C, W: axFile opens on
    `Documents\axKit Claude`; Alt+F4.

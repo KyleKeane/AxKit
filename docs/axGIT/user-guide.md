@@ -23,9 +23,9 @@ A repository can name programs of its own that git runs, hooks for example. When
 
 The list at the top has three views, each named with what it holds:
 
-- **Changes** (Ctrl+1): one item per changed file, "Modified src/Foo.cs, unstaged". The last words say whether the file is staged for the next commit, unstaged, or both; a new file not yet in git reads "Untracked", a file in conflict after a merge reads "Conflict".
-- **Log** (Ctrl+2): the last 200 commits, "3a1f2c0 2026-10-18 Kyle: Release 2.11.0".
-- **Branches** (Ctrl+3): your branches, "main, current, origin/main, 1 ahead".
+- **Changes** (Alt+1): one item per changed file, "Modified src/Foo.cs, unstaged". The last words say whether the file is staged for the next commit, unstaged, or both; a new file not yet in git reads "Untracked", a file in conflict after a merge reads "Conflict".
+- **Log** (Alt+2): the last 200 commits, "3a1f2c0 2026-10-18 Kyle: Release 2.11.0".
+- **Branches** (Alt+3): your branches, "main, current, origin/main, 1 ahead".
 
 Arrow keys move through the items and nothing happens until you press a key. Type the start of an item to jump to it; the same letter again goes to the next one, and Shift with a letter goes backwards. Pressing a view's key while the view already shows says its name again, so you always know where you are. F5 refreshes the view after you changed something outside axGIT.
 
@@ -55,7 +55,7 @@ The menu bar is the same eight menus in every axKit window.
 
 - **Session**: Open repository (Ctrl+O), Open recent repository, Refresh (F5), Show current repository in (File Explorer Ctrl+W, axClaude, axTerminal, axFile), Exit.
 - **Actions**: Stage all, Unstage all, Commit (Ctrl+Enter), New branch (Ctrl+N), Fetch, Pull, Push.
-- **Navigation**: Changes (Ctrl+1), Log (Ctrl+2), Branches (Ctrl+3).
+- **Navigation**: Changes (Alt+1), Log (Alt+2), Branches (Alt+3). Ctrl+1, Ctrl+2 and Ctrl+3, the keys for these until now, still work.
 - **Context**: what acts on the line you are on, by the view: in Changes, Stage or unstage (Space), Show diff (Enter), Open file in editor (Ctrl+E), Discard changes (Delete); in Log, Show the commit (Enter); in Branches, Switch to branch (Enter). Shift+F10 opens it.
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.

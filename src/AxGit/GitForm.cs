@@ -95,9 +95,15 @@ public sealed partial class GitForm : AxKitForm
 
         // Navigation (AX-9.1): the three views (the View menu's until 2026-11-11).
         var navigation = new ToolStripMenuItem();
-        Add(navigation, new Command("&Changes", AxGitKeys.ViewChanges, () => Do(() => ShowViewAsync(View.Changes))) { Mark = CommandMark.Open });
-        Add(navigation, new Command("&Log", AxGitKeys.ViewLog, () => Do(() => ShowViewAsync(View.Log))) { Mark = CommandMark.Open });
-        Add(navigation, new Command("&Branches", AxGitKeys.ViewBranches, () => Do(() => ShowViewAsync(View.Branches))) { Mark = CommandMark.Open });
+        // On Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
+        Place(new Command("&Changes", AxGitKeys.ViewChanges, () => Do(() => ShowViewAsync(View.Changes))) { Mark = CommandMark.Open }, AxGitKeys.ViewChangesAlso);
+        Place(new Command("&Log", AxGitKeys.ViewLog, () => Do(() => ShowViewAsync(View.Log))) { Mark = CommandMark.Open }, AxGitKeys.ViewLogAlso);
+        Place(new Command("&Branches", AxGitKeys.ViewBranches, () => Do(() => ShowViewAsync(View.Branches))) { Mark = CommandMark.Open }, AxGitKeys.ViewBranchesAlso);
+        void Place(Command command, Keys also)
+        {
+            Add(navigation, command);
+            AddKey(command with { Key = also });
+        }
 
         // Context (AX-9.11): what acts on the line selected, by the view shown. Space, Enter and Delete act in the list
         // only; in the details they are the control's own (AG-6.2). Enter acts on the item of the view shown: Show

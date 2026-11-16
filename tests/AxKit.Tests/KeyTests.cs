@@ -235,7 +235,7 @@ public sealed class KeyTests
     [Fact]
     public void Every_F1_text_names_the_keys_every_window_has()
     {
-        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.SayStatus, BundleKeys.MainAction, BundleKeys.ToggleMode, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
+        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.AskClaudeAlso, BundleKeys.ContextMenu, BundleKeys.SayStatus, BundleKeys.MainAction, BundleKeys.ToggleMode, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
         var missing = new List<string>();
         foreach (var (window, text) in F1Texts)
         {
@@ -262,7 +262,7 @@ public sealed class KeyTests
     {
         string[] known =
         [
-            "Alt+Up", "Ctrl+Down", "Ctrl+J", "Ctrl+M", "Ctrl+Shift+N", "Ctrl+Up", "F2", "Left", "Right", "Shift+Tab", "Tab",
+            "Alt+1", "Alt+2", "Alt+3", "Alt+Up", "Ctrl+Down", "Ctrl+J", "Ctrl+M", "Ctrl+Shift+N", "Ctrl+Up", "F2", "Left", "Right", "Shift+Tab", "Tab",
             "Apps", "Backspace", "Ctrl+1", "Ctrl+B", "Ctrl+2", "Ctrl+3", "Ctrl+4", "Ctrl+5", "Ctrl+6", "Ctrl+C", "Ctrl+D", "Ctrl+E", "Ctrl+G", "Ctrl+I", "Ctrl+K", "Ctrl+L",
             "Ctrl+N", "Ctrl+O", "Ctrl+P", "Ctrl+Q", "Ctrl+R", "Ctrl+Shift+A", "Ctrl+Shift+C", "Ctrl+Shift+F", "Ctrl+Shift+H", "Ctrl+Shift+I",
             "Ctrl+Shift+K", "Ctrl+Shift+L", "Ctrl+Shift+Q", "Ctrl+Shift+R", "Ctrl+Shift+S", "Ctrl+Shift+T", "Ctrl+Shift+W", "Ctrl+T",
@@ -284,6 +284,9 @@ public sealed class KeyTests
     [Theory]
     [InlineData(Keys.Control | Keys.D1, "Ctrl+1.")]
     [InlineData(Keys.Control | Keys.D3, "Ctrl+3.")]
+    [InlineData(Keys.Alt | Keys.D1, "Alt+1.")]
+    [InlineData(Keys.Control | Keys.OemPeriod, "Ctrl+Period")]
+    [InlineData(Keys.Control | Keys.OemQuestion, "Ctrl+Slash")]
     [InlineData(Keys.Control | Keys.Shift | Keys.S, "Ctrl+Shift+S")]
     [InlineData(Keys.F3, "F3")]
     [InlineData(Keys.Shift | Keys.Escape, "Shift+Escape")]
