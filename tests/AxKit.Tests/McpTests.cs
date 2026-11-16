@@ -359,6 +359,7 @@ public sealed class McpTests
     [InlineData("Save as", null, 1)]
     [InlineData("Heading", "Navigate, Next", 2)]
     [InlineData("heading", "navigate, previous", 3)]
+    [InlineData("Heading, Navigate, Next", null, 2)]
     [InlineData("Between the text and the details", null, 4)]
     public void A_command_is_found_by_its_label_and_where_needed_its_menu(string name, string? menu, int index)
     {

@@ -205,7 +205,11 @@ axTask item made in a folder) are the next part.
 - MC-7.1 **The tool** `axkit_window_run`: a window's id from `axkit_windows`, a command's label as
   `axkit_window_commands` lists it (and the palette shows it; the letter's marker, the trailing dots and case do not
   matter), and, where two commands share a label (Heading under Next and under Previous), `menu`, the menus that hold
-  it as `axkit_window_commands` now lists them ("Navigate, Next"). Since 2026-11-13 (app-kit AK-2.5, the user's rule
+  it as `axkit_window_commands` now lists them ("Navigate, Next"). Since 2026-11-15 the name may also be the whole
+  line as the palette lists it without its key, the label and its menus ("Heading, Navigate, Next"), with no `menu`:
+  the command is found by the bundle's one resolver of command names (`CommandNames`, docs/axKit/user-workflows.md
+  WF-1); a label always wins over a line, so every name found before is found the same, and every refusal keeps its
+  words. Since 2026-11-13 (app-kit AK-2.5, the user's rule
   of one source) both tools read the command palette's entries, every menu item the palette would offer now (its
   menus refreshed and its recent lists filled as on opening, the item and every menu over it available and enabled):
   the commands, the settings with their checked state, the recent files and windows; an item's mark is its command's,

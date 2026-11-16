@@ -20,8 +20,16 @@
   and `OpenArguments`, the check of `axkit_open`'s app and path. `Mcp/McpAudit` (one line a call, the arguments
   hashed) and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).
 - `Mcp/McpOffer` (MC-9, 2026-11-13): the pure rules of `axkit_offer_command`, a command an AI tool offers the user to run themselves in axClaude: `Refusal` (none, a control character or line break, too long), `Answers` (Explain first, then Yes, No and Copy), `AskName`, `AskText`, `ExplainText` with `Details`, `Line` (the `!` line), `MaxWaiting`. Tested in `McpOfferTests`.
+- `CommandNames` with `CommandName`, `CommandMatch` and `CommandResolution` (docs/axKit/user-workflows.md WF-1,
+  2026-11-15): the one resolver of a command's canonical name, its label plain and, where two share it, the label with
+  its menus as the palette lists it without its key ("Heading, Navigation, Next"). `Resolve` compares whole plain
+  texts without regard to case, never searches (the palette's search is `Palette.Find`): a menu given, the label in
+  those menus; else the label, and only when no label is the name, the whole line, so a label always wins; it gives
+  the candidates as indexes (the commands that share an ambiguous name, at most five near an unknown one). `Line`,
+  `CanonicalOf`, and `Refusal`, the checks' words; `McpRun.Find` keeps its own. Tested in `CommandNamesTests`.
 - `Mcp/McpRun` with `McpCommandName` (MC-7, 2026-11-11): the pure rules of `axkit_window_run`, `NeverRun` (axPass,
-  axClip) with `AppRefusal`, `SwitchOff`, `Find` (a command by its label and, where two share one, its menus),
+  axClip) with `AppRefusal`, `SwitchOff`, `Find` (since 2026-11-15 a call of `CommandNames.Resolve` and a switch over
+  its match, in the tool's own four refusals word for word; the whole line too, MC-7.1), `Plain` (`CommandNames.Plain`),
   `Speaker` (Claude Code's own names matched whole, `ClaudeCodeNames`), `Said` ("Claude ran Word wrap"), `AskTitle`, `AskText` with `Names`, `ShownTarget` and `TargetRefusal` (MC-7.3: the question names what the command would act on, and a Run after the selection changed is refused, by `RunTarget`'s identity, never its shown words), `Chimes` (MC-7.5: one chime for a burst),
   and `IsUserBusy` with `UserBusy` (MC-7.8: no run in a window in front within 3 s of the user's last input); the
   switch itself is `McpSettings.RunCommands`, sealed (its " run" in the seal only while on, so older files still

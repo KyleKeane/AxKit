@@ -41,46 +41,28 @@ public static class McpRun
                 : "axClip's commands are never run by AI tools: its window holds the clipboard's history. The user runs them."
             : null;
 
-    /// <summary>A label or a menu path as it is matched: the letter's marker and the trailing dots gone, the spaces trimmed.</summary>
-    public static string Plain(string text) => MenuText.Plain(text).Trim();
+    /// <summary>A label or a menu path as it is matched: the letter's marker and the trailing dots gone, the spaces trimmed (<see cref="CommandNames.Plain"/>).</summary>
+    public static string Plain(string text) => CommandNames.Plain(text);
 
     /// <summary>
-    /// The command a name gives (MC-7.1): the label as <c>axkit_window_commands</c> lists it or as the palette shows it
-    /// (its letter's marker and dots do not matter, nor case); <paramref name="menu"/>, when given, the menus that hold
-    /// it ("Navigate, Next"), which tells apart two commands of one name. The index in <paramref name="commands"/>, or
-    /// the refusal that says why none.
+    /// The command a name gives (MC-7.1), found by the bundle's one resolver (<see cref="CommandNames.Resolve"/>,
+    /// docs/axKit/user-workflows.md WF-1.7): the label as <c>axkit_window_commands</c> lists it or as the palette shows
+    /// it (its letter's marker and dots do not matter, nor case); <paramref name="menu"/>, when given, the menus that
+    /// hold it ("Navigate, Next"), which tells apart two commands of one name; or, without a menu, the whole line as the
+    /// palette lists it without its key ("Heading, Navigate, Next"). The index in <paramref name="commands"/>, or the
+    /// refusal that says why none, in this tool's own sentences, which scripts and tests expect word for word.
     /// </summary>
     public static (int Index, string? Refusal) Find(IReadOnlyList<McpCommandName> commands, string? name, string? menu)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        var found = CommandNames.Resolve([.. commands.Select(command => new CommandName(command.Label, command.Menu))], name, menu);
+        return found.Match switch
         {
-            return (-1, "Name the command, as axkit_window_commands lists it.");
-        }
-
-        var wanted = Plain(name);
-        var named = Enumerable.Range(0, commands.Count)
-            .Where(i => string.Equals(Plain(commands[i].Label), wanted, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-        if (!string.IsNullOrWhiteSpace(menu))
-        {
-            var place = Plain(menu);
-            named = [.. named.Where(i => string.Equals(Plain(commands[i].Menu), place, StringComparison.OrdinalIgnoreCase))];
-        }
-
-        if (named.Count == 0)
-        {
-            return (-1, string.IsNullOrWhiteSpace(menu)
-                ? $"The window has no command {wanted}: axkit_window_commands lists them."
-                : $"The window has no command {wanted} in the menu {Plain(menu)}: axkit_window_commands lists the commands with their menus.");
-        }
-
-        if (named.Count > 1)
-        {
-            var places = string.Join("; ", named.Select(i => commands[i].Menu.Length > 0 ? commands[i].Menu : "no menu"));
-            return (-1, $"The window has several commands named {wanted}: give the menu too, one of: {places}.");
-        }
-
-        return (named[0], null);
+            CommandMatch.Found => (found.Index, null),
+            CommandMatch.NoName => (-1, "Name the command, as axkit_window_commands lists it."),
+            CommandMatch.Unknown => (-1, $"The window has no command {found.Wanted}: axkit_window_commands lists them."),
+            CommandMatch.UnknownInMenu => (-1, $"The window has no command {found.Wanted} in the menu {found.WantedMenu}: axkit_window_commands lists the commands with their menus."),
+            _ => (-1, $"The window has several commands named {found.Wanted}: give the menu too, one of: {string.Join("; ", found.Candidates.Select(i => commands[i].Menu.Length > 0 ? commands[i].Menu : "no menu"))}."),
+        };
     }
 
     /// <summary>
