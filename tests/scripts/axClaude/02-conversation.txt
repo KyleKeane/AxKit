@@ -8,6 +8,7 @@ file home\AxKit\axClaude.json {"checkForUpdates":false,"questionNotices":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir plain
 start claude {temp}\plain -- --model haiku
+# Goal: Read Claude's question as lines in the conversation
 # Step 1: the trust prompt as plain lines in the conversation, read with Down Arrow.
 expect said Claude asks
 keys ctrl+2
@@ -23,6 +24,7 @@ expect focus \\plain
 expect text y. Yes, I trust this folder
 expect text n. No, exit
 expect text Enter y/n:
+# Goal: Answer a question by typing in the message field
 # Step 2: y and Enter from the field: "Sent", then Claude comes up ("Ready"; a second dialog would say "Claude asks").
 keys ctrl+tab
 expect focus Message to Claude
@@ -30,6 +32,7 @@ type y
 keys enter
 expect said Sent
 expect said Ready
+# Goal: Send a message of two lines
 # Step 3: a two-line message; Enter: "Sent" with its note, the field empties and keeps the focus, then "Responding"
 # with its chime and "Done" with its chime. Sent a few seconds after "Ready", as a user does (the end of this script
 # sends one at once).
@@ -49,6 +52,7 @@ expect said Done
 expect said ♪ Done
 # Step 1, section 1 step 7: once Claude has named the session, the status bar shows the state, the mode and the path.
 expect state Claude: ready |
+# Goal: Go to Claude's reply and read it
 # Step 4: Shift+O from the end: the output marker, spoken without the hash; Down reads the blank line, then the reply;
 # Up from the marker reads the blank line, the message's two lines and the input marker. No "you:" line.
 keys ctrl+tab
@@ -70,12 +74,14 @@ expect focus "value":"What is 2
 keys up
 expect focus "value":"# Input 1"
 refuse said · you:
+# Goal: Go back to the message you sent
 # Step 5: i past the last input, then Shift+I (from the end: the caret on the "# Input 1" line itself has no previous one).
 keys ctrl+end
 keys i
 expect said ! No next input
 keys shift+i
 expect said ! Input 1 heading level 1
+# Check: Arrows in the empty message field put nothing into it
 # Step 6: Up and Down in the empty field: nothing goes into it and the app says nothing.
 keys ctrl+tab
 expect focus Message to Claude
@@ -83,6 +89,7 @@ said
 keys up down up
 expect quiet 1000
 expect focus "name":"Message to Claude","role":"Text","value":""
+# Goal: Move through a long message by page
 # Step 7: page keys in the field. One line: Page Down and Page Up keep the caret on it.
 type alpha
 keys pagedown
@@ -129,6 +136,7 @@ keys ctrl+home
 expect focus "value":"l1"
 expect quiet 500
 keys ctrl+a delete
+# Goal: Move through a message by paragraph
 # Step 7a: paragraph keys in the field: one / blank / two, three / blank / four.
 type one
 keys shift+enter shift+enter
@@ -154,12 +162,14 @@ keys ctrl+up
 expect focus "value":"one"
 keys ctrl+up
 expect focus "value":"one"
+# Check: Selecting by paragraph in the field makes axClaude say nothing
 # End, then Ctrl+Shift+Up and Ctrl+Shift+Down: NVDA's "selected four" / "unselected four" is NVDA's own reading of the
 # selection (left manual); the app says nothing.
 keys ctrl+end ctrl+shift+up ctrl+shift+down
 expect quiet 1000
 keys ctrl+a delete
 expect focus "name":"Message to Claude","role":"Text","value":""
+# Goal: Read the keyboard shortcuts
 # Step 8: F1, the shortcuts in a notice; Page Down and Page Up move a screen; Ctrl+Down and Ctrl+Up go by section
 # heading; Escape closes the notice and the focus is back in the field.
 keys f1
@@ -180,6 +190,7 @@ expect said ! Message field, heading level 2
 keys escape
 expect state "notice":null
 expect focus Message to Claude
+# Check: A message sent the moment Claude is ready reads like any other
 # Step 3 again, the same two-line message sent the moment "Ready" is said, in a second window on a fresh folder (the
 # list on: settings are read at start, and this window's questions use the list). Claude refuses the first Enter and
 # strips an invisible character (SPEC 4.4 item 23, FR-2.1); the window sends Enter again. The conversation must hold

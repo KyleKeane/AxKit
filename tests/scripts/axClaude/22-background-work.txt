@@ -30,6 +30,7 @@ expect said ! A pause of 5 seconds between chords
 menu A pause of 2 seconds between chords
 expect said ! A pause of 2 seconds between chords
 
+# Goal: Ask what runs in the background
 # A shell and two agents start: one start sound, however many started; the status bar says the number and its kinds;
 # nothing is spoken (Say background work is off at first).
 file bg\go1 x
@@ -47,12 +48,14 @@ expect said ! 3 in the background: 1 shell, 2 agents. general-purpose: Checking 
 # While it runs: the recurring chords, a tone more for each of the three things.
 expect said ♪ BackgroundChord 3
 
+# Check: A redraw of the same panel makes no sound
 # A redraw of the same panel is no change: no start sound and no finish sound.
 file bg\go2 x
 wait 2500
 refuse said ♪ BackgroundStart
 refuse said ♪ BackgroundFinish
 
+# Goal: Hear background work as it starts and ends
 # The words, turned on: one agent leaves; the finish sound and "Checking callers finished", never interrupting.
 menu Say background work as it starts and ends
 file bg\go3 x
@@ -61,6 +64,7 @@ expect said Checking callers finished
 expect state Claude: ready | 2 in the background: 1 shell, 1 agent | auto mode on
 expect said ♪ BackgroundChord 2
 
+# Check: When everything ends, the chords stop and nothing runs
 # Everything ends: one finish sound, the words, no background part in the status bar, and no new chord starts.
 file bg\go4 x
 expect said ♪ BackgroundFinish

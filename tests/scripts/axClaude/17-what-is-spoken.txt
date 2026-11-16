@@ -12,6 +12,7 @@ start claude {temp}\spoken -- --model haiku --permission-mode default
 try said trust
 iffound wait 1500
 iffound keys enter
+# Check: With Ready off only its chime is heard
 # "Ready" off: the chime alone, the status bar says it.
 expect said ♪ Ready
 expect state Claude: ready
@@ -22,6 +23,7 @@ expect focus "name":"Message to Claude"
 said
 wait 3000
 
+# Goal: Silence Claude's own notices
 # Claude's own notices off: the mode changes and the status bar shows it, nothing is said. Before the first message, as
 # in 05-modes: after a turn the same key was not taken in the runs of 2026-11-13.
 keys ctrl+shift+m
@@ -36,6 +38,7 @@ keys ctrl+shift+m
 expect state | manual mode on
 said
 
+# Check: With Sent and Responding off only their chimes are heard
 # "Sent" and "Responding" off: their chimes, no words; "Done" keeps its own switch and is said.
 type Reply with the single word one.
 keys enter
@@ -44,6 +47,7 @@ refuse said Sent
 refuse said Responding
 expect said Done
 
+# Goal: Turn the words Sent and Responding back on
 # The switches back on from Options, Announcements: the words come again.
 menu "Sent" and "Queued" after a message
 menu "Responding" when a reply starts
@@ -55,6 +59,7 @@ expect said Responding
 expect said Done
 said
 
+# Goal: Keep reply lines with chosen words silent
 # Words that keep a reply line silent: every line spoken, then two words typed into the notice's field.
 menu Speak replies: all lines
 expect said Speak replies: all lines
@@ -76,6 +81,7 @@ refuse said feathers
 expect said Done
 keys ctrl+2 ctrl+end
 expect text pelican feathers
+# Goal: Have every reply line spoken again
 # The field emptied: every line spoken again.
 menu Words that keep a reply line silent
 expect focus Words that keep a reply line silent
@@ -88,6 +94,7 @@ keys enter
 expect said pelican again
 expect said Done
 
+# Check: The two feedback items switch like the others
 # The two feedback items under Options, Questions are switches like the others, saved as they are toggled.
 menu Dismiss Claude's feedback surveys unheard
 menu Open Claude's feedback drafts by themselves

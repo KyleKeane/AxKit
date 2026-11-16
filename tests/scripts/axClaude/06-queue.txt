@@ -14,6 +14,7 @@ wait 1500
 keys enter
 expect said Ready
 wait 3000
+# Goal: Send a message while Claude works
 # Step 1: while Claude works, a second message: "Queued"; the status bar says "1 message waiting"; the conversation has
 # only "# Input 1"; the field is empty and Up puts nothing into it.
 type Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.
@@ -40,6 +41,7 @@ keys ctrl+tab
 expect focus "name":"Message to Claude","role":"Text","value":""
 keys up
 expect focus "name":"Message to Claude","role":"Text","value":""
+# Check: A queued message reads in order once Claude takes it up
 # Step 2: once Claude has taken the message up and is done: "# Input 2", the message, a blank line, "# Output 2 Reply
 # from Claude", a blank line, the reply to it; Shift+I back to "# Input 2", then again: "# Input 1"; no "you:" or "ctrl+x ctrl+s" line.
 expect said Done
@@ -65,6 +67,7 @@ expect said ! Input 1 heading level 1
 keys ctrl+home down down down down down down down down down down down down down down down down down down down down
 refuse said · you:
 refuse said ctrl+x ctrl+s
+# Goal: Send a waiting message at once
 # Step 3: again a slow command and a second message; Ctrl+Shift+S: "Sending now", and within a few seconds "# Input 4"
 # is in the conversation while the status still says working. Ctrl+Shift+S with nothing waiting: "Nothing queued".
 # (Ctrl+Shift+S goes once the status bar shows the waiting message: pressed at once after "Queued", before Claude has

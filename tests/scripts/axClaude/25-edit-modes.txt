@@ -24,6 +24,7 @@ type - two
 keys ctrl+home
 refuse state navigation mode
 
+# Goal: Move through a message by its headings, links and lists
 # On: said, and the status bar says the field is in navigation mode.
 keys ctrl+space
 expect said ! Navigation mode
@@ -37,6 +38,7 @@ keys i
 expect said ! two
 keys shift+h
 expect said ! Plan, heading level 1
+# Check: Enter and letters that are no jump change nothing in navigation mode
 # Enter does not send and a letter that is no jump types nothing: the edge sound, the message as it was.
 keys enter
 expect said ♪ Edge
@@ -45,6 +47,7 @@ expect said ♪ Edge
 refuse said Sent
 expect focus {"name":"Message to Claude","role":"Text","value":"# Plan"}
 
+# Check: The conversation says it has no edit mode
 # The conversation cannot be edited: the key says so and the mode of the field stays.
 keys ctrl+2
 expect focus Conversation
@@ -52,6 +55,7 @@ keys ctrl+space
 expect said ! Read only: there is no edit mode here
 expect state field in navigation mode
 
+# Goal: Go back to editing the message
 # Back in the field, Ctrl+Space again: edit mode, and typing types.
 keys ctrl+1
 keys ctrl+space
@@ -61,12 +65,14 @@ keys end
 type !
 expect focus {"name":"Message to Claude","role":"Text","value":"# Plan!"}
 
+# Goal: Turn the background music on and off
 # The music moved to Ctrl+M: from the field it is taken before the field (no line break), and from the conversation.
 keys ctrl+m
 expect said ! Background music on, nothing is running
 expect focus {"name":"Message to Claude","role":"Text","value":"# Plan!"}
 keys ctrl+2 ctrl+m
 expect said ! Background music off
+# Check: The key test names the mode key and the music key
 # The key test names both keys.
 menu Test a key
 expect said ! Key test.

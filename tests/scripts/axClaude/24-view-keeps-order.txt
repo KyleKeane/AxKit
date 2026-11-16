@@ -16,6 +16,7 @@ file order\go1 x
 keys ctrl+2
 expect text "claude: two","claude: three"
 
+# Check: What Claude writes waits while a line is selected
 # The caret at the top and a line selected: what Claude writes now waits (FR-3.11).
 keys ctrl+home
 keys shift+down
@@ -30,6 +31,7 @@ expect said ! Selection cleared
 expect text "claude: three","claude: four","claude: five"
 expect text "caretLine":0
 
+# Check: A message sent from the top of the conversation goes to its end
 # A message sent with the caret left at the top of the conversation: its block stands at the end, after the last
 # line, and the reply after it.
 keys ctrl+1
@@ -41,6 +43,7 @@ keys ctrl+2
 expect text "claude: five","# Input 1","hello there","","# Output 1 Reply from Claude","","claude: six"
 refuse text "hello there","","# Output 1 Reply from Claude","","claude: one
 
+# Check: A message from a quoted line goes to the end too
 # The same from a quoted line: Enter on the first line copies it into the message, and the message goes to the end.
 keys ctrl+home
 keys enter

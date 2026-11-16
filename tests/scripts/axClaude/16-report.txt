@@ -13,18 +13,21 @@ iffound wait 1500
 iffound keys enter
 expect said Ready
 expect focus Message to Claude
+# Goal: Open the report form
 # F4: the form opens with the focus in the words, ready to type, and its explanation and disclaimer, the notice's
 # text, are said once (AX-8.10 rules 1 and 10).
 keys f4
 expect state "notice":"Report to axKit"
 expect focus "name":"Your report"
 expect said A report goes to axKit's maintainer. It is encrypted on your computer
+# Check: A report with no words is refused
 # Ctrl+Enter, the main action, with nothing typed: refused with the edge sound and the words, the form still open.
 keys ctrl+enter
 expect said ♪ Edge
 expect said Type a few words first
 expect focus "name":"Your report"
 expect state "notice":"Report to axKit"
+# Goal: Type a report of several lines
 # Enter in the words makes a new line, said, and never sends: the form is still open, the focus still in the words.
 type The list loses my place
 keys enter
@@ -33,6 +36,7 @@ expect state "notice":"Report to axKit"
 expect focus "name":"Your report"
 type every time
 expect text "The list loses my place","every time"
+# Check: Tab moves through the form's controls in order
 # Tab through the controls in their order (RP-3): four stops, then the two buttons. The kind NVDA reads itself.
 keys tab
 expect focus "name":"Kind"
@@ -52,6 +56,7 @@ expect text a text field, line 1 of 1
 expect text Log lines:
 refuse text window:
 refuse text Message to Claude
+# Goal: Add detail that may name your files
 # Checked, the box holds the fuller form: the title and the control's name; unchecked, the plain form again.
 keys shift+tab
 expect focus Add detail that may name your files
@@ -67,11 +72,13 @@ expect said not checked
 keys tab
 expect text a text field, line 1 of 1
 refuse text window:
+# Check: The form has two buttons and no title field
 # Then the buttons; there is no title field.
 keys tab
 expect focus Send
 keys tab
 expect focus Cancel
+# Goal: Send the report
 # Back in the words (Cancel, Send, the box, the check box, the kind, the words), Ctrl+Enter sends. A build made with
 # the sending token asks the agreement first (RP-6.6) and Escape says "Saved; not sent yet"; a development build made
 # without the token, which this pass's build is, says "This build cannot send reports" (RP-6.5) and offers Copy
@@ -85,8 +92,10 @@ try said ! Saved
 keys escape
 expect state "notice":null
 expect focus Message to Claude
+# Check: The saved report is titled with its first line
 # The report saved is titled with the first line of the words (RP-3 item 7).
 run cmd /c if exist "home\AxKit\reports\The list loses my place.json" (exit 0) else (exit 1)
+# Goal: Cancel a report
 # Escape cancels the form whole, words typed or not, and keeps no draft (AX-8.10 rule 7, RP-D13).
 keys f4
 expect state "notice":"Report to axKit"
@@ -102,6 +111,7 @@ expect said Cancelled
 expect state "notice":null
 expect focus Message to Claude
 run cmd /c if exist "home\AxKit\reports\Draft words.json" (exit 1) else (exit 0)
+# Check: The menu holds the two report items
 # The two items of the axKit menu, by their palette names (RP-2.2).
 expect commands Send a report, Help
 expect commands Your reports, Help

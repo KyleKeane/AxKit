@@ -14,12 +14,14 @@ file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\n
 start claude {temp}\cs --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
 
+# Check: Feedback requests are not blocked at first
 # Off at first: Claude Code's own experience, the user's decision of 2026-11-15.
 expect commands feedback requests, Options, Claude Code settings
 refuse commands feedback requests, Options, Claude Code settings, checked
 expect commands Choose the model, Actions
 expect commands Choose the effort, Actions
 
+# Goal: Block Claude Code's feedback requests
 # On: the key written, "applies at once", the item checked, the user's keys kept, the old file kept beside it.
 menu Block Claude Code's feedback requests
 expect said ! Claude Code's feedback requests blocked, applies at once
@@ -30,6 +32,7 @@ run findstr theme home\.claude\settings.json
 run findstr theme home\.claude\settings.json.axkit-backup
 run findstr feedbackSurveyRate home\.claude\settings.json.axkit-backup & if errorlevel 1 (exit 0) else (exit 1)
 
+# Goal: Turn the block on feedback requests off again
 # Off: the key removed, Claude Code's default back, the rest still there.
 menu Block Claude Code's feedback requests
 expect said ! Claude Code's feedback requests back to Claude Code's own default, applies at once
@@ -37,6 +40,7 @@ refuse commands feedback requests, Options, Claude Code settings, checked
 run findstr feedbackSurveyRate home\.claude\settings.json & if errorlevel 1 (exit 0) else (exit 1)
 run findstr /c:"Bash(git status)" home\.claude\settings.json
 
+# Goal: Choose how Claude-drafted feedback comes
 # Claude-drafted feedback, a choice of three: quiet written, then the default, which removes the key again.
 menu Claude-drafted feedback: quiet
 expect said ! Claude-drafted feedback: quiet, counted without a card, applies at once
@@ -46,6 +50,7 @@ menu Claude-drafted feedback: a card for each
 expect said ! Claude-drafted feedback: a card for each, Claude Code
 run findstr feedbackDrafts home\.claude\settings.json & if errorlevel 1 (exit 0) else (exit 1)
 
+# Check: A settings file that is not valid JSON is never written
 # A file that is not valid JSON is never written: the error says so and the file stays as it was.
 file home\.claude\settings.json { "theme": "dark", }
 allow error Claude Code's settings file was not changed

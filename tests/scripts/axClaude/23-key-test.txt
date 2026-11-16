@@ -18,6 +18,7 @@ type hello
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
+# Goal: Hear what a key does without doing it
 # Bundle keys and window keys, by their commands' names.
 keys f8
 expect said ! F8: Say the status
@@ -39,17 +40,20 @@ expect said ! F9: no command of this window
 expect state "notice":null
 expect focus "value":"hello"
 
+# Goal: End the key test
 # Escape ends the test at once, the field as it was.
 keys escape
 expect said ! Key test ended
 expect focus "value":"hello"
 
+# Check: The keys act again after the key test
 # The same keys act again: F8 says the status, Ctrl+2 goes to the conversation.
 keys f8
 expect said ! Claude: ready
 keys ctrl+2
 expect focus Conversation
 
+# Goal: Hear what the conversation's keys do
 # In the conversation its quick keys are named, a letter the view moves by and Ctrl+Alt with it; nothing moves.
 menu Test a key
 expect said ! Key test. Press any key

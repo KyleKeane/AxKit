@@ -15,6 +15,7 @@ wait 1500
 expect focus "name":"Claude Code was not found","role":"Text"
 expect state C:\\nowhere\\claude.exe
 expect state irm https://claude.ai/install.ps1 | iex
+# Goal: Hear the ways to install Claude Code
 # Tab reaches Install Claude Code now (bundle AX-2.9, 3.7.0), Copy install command, Open install instructions, Locate
 # claude.exe... and Close. (Install runs Claude Code's installer; Copy install command writes the Windows clipboard,
 # which the test desktop shares with the user's; Open install instructions opens the browser on the user's desktop;
@@ -29,6 +30,7 @@ keys tab
 expect focus claude.exe..."
 keys tab
 expect focus Close"
+# Goal: Close the notice that Claude Code is missing
 # Close: the notice goes, the message field has the focus, the status says stopped, and a "System:" line says Claude
 # Code was not found.
 keys enter
@@ -38,6 +40,7 @@ expect state Claude: stopped
 keys ctrl+2
 expect text System:
 expect text not found
+# Check: A restart without Claude Code shows the notice again
 # Ctrl+Shift+R shows the notice again.
 keys ctrl+shift+r
 expect state "notice":"Claude Code was not found"

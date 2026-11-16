@@ -20,6 +20,7 @@ refuse said trust
 refuse said Ready
 expect state "visible":false
 
+# Goal: Bring up the hidden conversation
 # 20.2 Brought up: the window on view, and the question that waited is asked now.
 start help
 menu Open the conversation
@@ -31,6 +32,7 @@ iffound keys enter
 expect said Ready
 expect focus "name":"Message to Claude"
 
+# Goal: Hide the conversation again
 # 20.3 Alt+F4 hides it, without a question and without a word; brought up again it is the same window, ready.
 said
 close
@@ -44,10 +46,12 @@ expect state Claude: ready
 expect focus "name":"Message to Claude"
 refuse said Ready
 
+# Goal: End Claude and close the window for good
 # 20.4 Session, End Claude and close this window ends it for good.
 menu End Claude and close this window
 expect closed
 
+# Check: A hidden window never brought up ends at once and keeps its saved place
 # 20.5 A hidden start that is never brought up: axHelp's Quit asks it to end, and with nothing to lose it ends at
 # once, unseen. It was never where the user put a window, so the saved place stays as it was: still maximized.
 start claude "{temp}\home\axKit Claude" --title axHelp --hide-on-close --hidden -- --model haiku

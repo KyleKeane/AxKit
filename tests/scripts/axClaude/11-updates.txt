@@ -11,6 +11,7 @@ expect said trust
 wait 1500
 keys enter
 expect said Ready
+# Goal: Check for an update
 # Step 1, on the newest version: axKit, Check for updates: the notice "Check for updates" says this is the newest
 # version and names it; Escape closes it. The axKit menu's item names the version in use and no Update item follows it.
 # About, Version: "axKit <version>" first and "Latest release on GitHub: axKit <version> (this version)".
@@ -27,6 +28,7 @@ expect state "noticeText":"axKit
 expect state (this version)
 keys escape
 # Step 2, with the network off (flight mode), changes the user's machine: left manual.
+# Goal: Turn off the update check at start
 # Steps 3 to 6 install an older build and update it in place: they change the installed axKit, left manual. Options,
 # General, "Check for updates at start" off, then a start: nothing said, About, Version says "not checked yet":
 menu Check for updates at start

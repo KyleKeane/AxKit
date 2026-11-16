@@ -18,10 +18,12 @@ file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\n
 start claude {temp}\wf --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
 refuse state in the background
+# Check: The live rows option is there and off at first
 # The option is there, off at first.
 expect commands Show Claude Code's live progress rows in the conversation, Options, Background work
 refuse commands Show Claude Code's live progress rows in the conversation, Options, Background work, checked
 
+# Check: A workflow's live row is counted and never said
 # A message, and Claude starts a workflow: its live row under the spinner and the mode line. One start sound; the status
 # bar counts the workflow; neither the row nor the spinner nor the mode line is said, and the reply's row waits for the
 # turn's end, as a reply's last row does while Claude works.
@@ -34,6 +36,7 @@ expect state 1 workflow in the background
 refuse said axkit-design-map-and-verify
 refuse said Jitterbugging
 refuse said shift+tab
+# Goal: Hear how far a workflow is
 # The row moves on: a redraw, no sound; on demand, Ctrl+B says how far the workflow is, and F8 the status bar.
 file wf\go2 x
 expect state working Jitterbugging
@@ -46,6 +49,7 @@ keys f8
 expect said ! 1 workflow in the background
 refuse said 14 percent
 
+# Check: When the turn ends only the reply is said
 # The turn ends with the workflow still running: the reply alone is said; the waiting row is not, and the number stays.
 file wf\go3 x
 expect said The workflow runs in the background
@@ -58,6 +62,7 @@ refuse text Waiting for
 refuse text axkit-design-map-and-verify
 refuse text auto mode on
 
+# Check: When the workflow ends, its finish sound plays and nothing runs
 # The workflow ends: one finish sound, no background part in the status bar, and Ctrl+B says nothing runs.
 file wf\go4 x
 expect said ♪ BackgroundFinish
@@ -66,6 +71,7 @@ keys ctrl+1
 keys ctrl+b
 expect said ! Nothing runs in the background
 
+# Goal: Show Claude Code's live progress rows in the conversation
 # The option on: the live row and the waiting row stand in the conversation as Claude Code draws them, and are still
 # never said; the mode line above the live row stays out.
 menu Show Claude Code's live progress rows in the conversation
@@ -84,6 +90,7 @@ refuse text auto mode on
 # The caret's line, the live row, read as the user moved there: his own command. Nothing after it is said by itself.
 expect said → Conversation
 said
+# Goal: Hide the live progress rows again
 # Off again: out of the conversation at once, without a new frame.
 menu Show Claude Code's live progress rows in the conversation
 refuse text axkit-design-map-and-verify

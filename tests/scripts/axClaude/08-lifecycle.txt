@@ -14,6 +14,7 @@ wait 1500
 keys enter
 expect said Ready
 wait 3000
+# Goal: Stop Claude from the message field
 # Step 1: /exit: "Claude stopped", the status stopped; the field still works: a word and Enter: "Claude stopped.
 # Ctrl+Shift+R starts it", the word still in the field.
 type /exit
@@ -26,11 +27,13 @@ keys enter
 expect said Claude stopped. Ctrl+Shift+R starts it
 expect focus "name":"Message to Claude","role":"Text","value":"hello"
 keys ctrl+a delete
+# Goal: Start a stopped Claude again
 # Step 2: Ctrl+Shift+R restarts a stopped Claude at once, without a notice: "Ready" again.
 keys ctrl+shift+r
 expect state "notice":null
 expect said Ready
 wait 3000
+# Goal: Restart Claude while it runs
 # Step 2a: with Claude running, Ctrl+Shift+R: the "Force Claude to restart?" notice, its text ending with the key line;
 # Escape: the focus is back in the field and Claude still runs; again, Enter: "Restarting", then "Ready".
 keys ctrl+shift+r
@@ -48,6 +51,7 @@ keys enter
 expect said Restarting
 expect said Ready
 wait 3000
+# Goal: Decide whether to close the window while Claude works
 # Step 4: Alt+F4 while Claude works: the window stays; the notice "Close axClaude?" with its first line "Claude is
 # still working. If you close now, Claude stops in the middle of its work.", then the line about carrying on and the
 # key line (not checkable, as above); Tab: Close anyway, Tab: Keep working; Escape: the notice goes, the focus is back
@@ -72,6 +76,7 @@ keys escape
 expect state "notice":null
 expect focus Message to Claude
 expect state Claude: working
+# Check: The close question names a message still waiting
 # A second message, then Alt+F4 again: the first line ends "and a message you sent is still waiting for it".
 type Reply with the single word later.
 keys enter
@@ -86,6 +91,7 @@ close
 expect state "notice":"Close axClaude?"
 keys enter
 wait 3000
+# Goal: Carry on the conversation after closing
 # Start it again (with --continue after the run's --model): the conversation is back.
 start claude {temp}\life -- --model haiku --continue
 expect said Ready
@@ -93,6 +99,7 @@ keys ctrl+2 ctrl+home
 keys i
 expect said from previous session heading level 1
 wait 2000
+# Check: A restart with work in the background names that work first
 # Step 2a, with a command running in the background: the notice starts "Claude has work running in the background
 # (1 shell)."; Escape keeps it; Enter restarts Claude, which ends the background work. (The permission question for the
 # command comes or not, as Claude words it.)
@@ -115,6 +122,7 @@ keys ctrl+shift+r
 keys enter
 expect said Restarting
 expect said Ready
+# Goal: Close the window while Claude is ready
 # Step 3: Alt+F4 while the status says ready: the app closes within two seconds, and Claude with it. That no
 # claude.exe is left is a Task Manager check (manual); the runner fails a run whose window does not close in 5 s.
 expect state Claude: ready

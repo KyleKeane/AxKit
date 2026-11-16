@@ -17,6 +17,7 @@ keys enter
 expect said Ready
 expect said ♪ Ready
 wait 3000
+# Goal: Make the text larger or smaller
 # Step 1: Larger text and Smaller text (Ctrl+Plus and Ctrl+Minus: the channel has no names for those keys, so the
 # menu items run; they are the same commands): "Text size 10", one more than the default 9, then back. Windows text size.
 # The font dialog is a Windows dialog (manual).
@@ -26,6 +27,7 @@ menu Smaller text
 expect said Text size 9
 menu Larger text
 expect said Text size 10
+# Check: A message with a tool plays its sounds in order
 # Section 8 step 6: a message that needs a tool: the low note with "Sent", the rising notes with "Responding", ticks
 # for lines, the tool tick for the tool, the falling notes with "Done".
 type Use the Bash tool to run: echo hi. Then reply with the single word finished.
@@ -39,6 +41,7 @@ expect said ♪ Click
 expect said Done
 expect said ♪ Done
 wait 1000
+# Goal: Turn off the ticks for new lines and tool calls
 # Ticks for new lines and tool calls off: no tick and no tool tick in the next reply; the chimes stay.
 menu Ticks for new lines and tool calls
 type Use the Bash tool to run: echo hi. Then reply with the single word again.
@@ -49,6 +52,7 @@ refuse said ♪ Click
 refuse said ♪ Tool
 menu Ticks for new lines and tool calls
 said
+# Goal: Turn off the chimes
 # Chimes off: no chimes, the ticks still there.
 menu Chimes
 type Reply with the single word quiet.
@@ -59,6 +63,7 @@ refuse said ♪ Sent
 refuse said ♪ Done
 menu Chimes
 said
+# Goal: Play background music while Claude works
 # Section 8 step 7: Ctrl+M (Ctrl+Space until 2026-11-15, now the mode key, AX-8.13) in the field with Claude idle: "Background music on, nothing is running"; a turn: the
 # music starts as the status turns to working and stops before the falling notes; Ctrl+M: "Background music off".
 keys ctrl+m
@@ -84,10 +89,12 @@ keys ctrl+m
 expect said ♪ StopMusic
 expect said Background music off
 expect said Done
+# Check: Space in the conversation does nothing
 # Plain Space in the conversation does nothing.
 said
 keys space
 expect quiet 1000
+# Check: The louder alert stays silent while the window is in front
 # Section 8 step 8: the louder alert replaces the done chime only while the window is in the background; switching
 # away with Alt+Tab and the taskbar flash need the real desktop (manual). In this window, which the run keeps active,
 # the next turn ends with the falling notes, no alert.
@@ -98,6 +105,7 @@ keys enter
 expect said ♪ Done
 refuse said ♪ Alert
 menu Louder alert when the window is in the background
+# Goal: Stop recording the raw stream
 # Step 3: Options, Developer, Stop recording: "Recording stopped" and a system line with the size; the .vt file and
 # its .chunks.txt exist.
 menu Stop recording
@@ -107,6 +115,7 @@ keys ctrl+2
 expect text System: Recording stopped:
 expect text bytes in
 # Step 4, Copy diagnostics, writes the Windows clipboard, which the test desktop shares with the user's: left manual.
+# Goal: Have Claude's replies spoken
 # Step 2: Speak replies. Options, Speech: choosing "all lines" says it; a markdown answer is spoken in one piece without
 # moving the caret; the ticks still sound.
 menu Speak replies: all lines
@@ -125,6 +134,7 @@ keys enter
 expect said claude: first
 refuse said second
 expect said Done
+# Check: A restart speaks nothing of the conversation again
 # Ctrl+Shift+R: nothing of the conversation is spoken again, "Ready", and the next reply is spoken.
 keys ctrl+shift+r
 expect state "notice":"Force Claude to restart?"
@@ -139,6 +149,7 @@ expect said claude:
 expect said Done
 # An error from Claude spoken in both modes needs Claude started with a bad API key in its environment, which the
 # runner cannot set for one window: left manual.
+# Goal: Hear each tool call as it starts
 # Speak each tool call: the tool: row spoken as it appears, tool output not spoken.
 menu Speak replies: none
 expect said Speak replies: none
@@ -149,6 +160,7 @@ expect said tool: Bash
 refuse said tooled
 expect said Done
 menu Speak each tool call
+# Goal: Read the keyboard shortcuts
 # Step 5: F1, the shortcuts in the window's place: the text's first line names its own keys; h: "Anywhere, heading
 # level 2", h: "Message field, heading level 2", Shift+H back, 2: the next level-2 heading.
 keys f1
@@ -162,6 +174,7 @@ keys shift+h
 expect said ! Anywhere, heading level 2
 keys 2
 expect said ! Message field, heading level 2
+# Goal: Find a word in the keyboard shortcuts
 # Ctrl+F: the Find notice in its place; "palette", Enter: the shortcuts are back with the line read; F3 the next line
 # with "palette", Shift+F3 back; Ctrl+F, Escape: the shortcuts back.
 keys ctrl+f
@@ -182,6 +195,7 @@ expect state "notice":"Find"
 keys escape
 expect state "notice":"Keyboard shortcuts"
 expect focus Keyboard shortcuts
+# Check: The shortcuts end with Claude Code itself and the notices
 # The text ends with Claude Code itself and then the Notices section every window has (2026-11-09): Ctrl+End, then
 # Shift+H back twice.
 keys ctrl+end
@@ -189,6 +203,7 @@ keys shift+h
 expect said ! Notices, heading level 2
 keys shift+h
 expect said ! Claude Code itself, heading level 2
+# Check: The shortcuts' Close button and Escape lead back to the message field
 # Tab: the Close button; Tab again: the text. NVDA+End reading the status bar is NVDA's (manual). Escape closes it and
 # the focus is back in the message field, where F1 was pressed.
 keys tab
@@ -198,6 +213,7 @@ expect focus Keyboard shortcuts
 keys escape
 expect state "notice":null
 expect focus Message to Claude
+# Check: Closing the shortcuts returns to the same line of the conversation
 # F1 from the conversation, then close: the focus is back on the same line. The second line is the recording's system
 # line (--record above); until Claude Code 2.1.3xx it was Claude's "[Screen Reader Mode" banner, no longer printed there.
 keys ctrl+2 ctrl+home down
@@ -206,6 +222,7 @@ keys f1
 expect state "notice":"Keyboard shortcuts"
 keys escape
 expect focus "value":"System: Recording to 
+# Goal: Read the user guide
 # Step 6: Help, User guide: "axClaude user guide" first; h moves by heading, "No next heading" at the end; Escape.
 menu User guide
 expect state "notice":"User guide"
@@ -218,6 +235,7 @@ keys ctrl+end h
 expect said ! No next heading
 keys escape
 expect state "notice":null
+# Goal: Read the version, the licence and the axKit guide
 # axKit, About, Version: "axKit <version>", the nine apps, the latest release, the folders; Licence; Attribution; the
 # axKit guide with h by heading (Install, Start, Update, Remove, About).
 menu Version
@@ -247,6 +265,7 @@ keys escape
 expect state "notice":null
 # Step 7, the web pages, open the browser on the user's desktop (manual). Step 8, Export conversation, goes through the
 # Save dialog (manual). Step 10, dark mode, is a sighted check (manual).
+# Goal: Show the time on Input and Output lines
 # Step 9: Options, Text, Time stamps on Input and Output lines: the next markers carry the time; earlier ones are
 # unchanged; off again.
 menu Time stamps on Input and Output lines
@@ -262,6 +281,7 @@ expect said Output 10 Reply from Claude heading level 1
 keys o
 expect said Output 11 Reply from Claude (
 menu Time stamps on Input and Output lines
+# Check: The text size is kept when the window starts again
 # Step 1, the end: close and start again: the larger text is still in use (Larger text says 11).
 close
 wait 2000

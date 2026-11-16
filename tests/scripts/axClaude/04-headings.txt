@@ -25,6 +25,7 @@ keys enter
 expect said Sent
 expect said Done
 wait 1000
+# Goal: Move through the conversation by headings
 # Step 2: Ctrl+Home, then h: the markers without the hash as level 1, Claude's headings as level 2, in order; Shift+H
 # goes back; 1: only the markers.
 keys ctrl+2
@@ -52,6 +53,7 @@ keys 1
 expect said ! Output 1 Reply from Claude heading level 1
 keys 1
 expect said ! Input 2 heading level 1
+# Goal: Move by heading level
 # Step 3: 2, only Claude's level 2 headings; 3: none.
 keys ctrl+home
 keys 2
@@ -60,6 +62,7 @@ keys 2
 expect said ! Beta heading level 2
 keys 3
 expect said ! No next heading level 3
+# Goal: Hide the markers in the text
 # Step 3, Options, Text, Markers in the text off: h still says "Input 1 heading level 1", the line reads without the
 # hash, the caret stays on its line; on again. The export keeping "# Input 1" goes through the Save dialog (manual).
 menu Markers in the text
@@ -69,6 +72,7 @@ expect said ! Input 1 heading level 1
 expect focus "value":"Input 1"
 menu Markers in the text
 expect focus "value":"# Input 1"
+# Goal: Move through the conversation by paragraph
 # Step 4: p, the first line of the next paragraph; Shift+P back; past the last one "No next paragraph".
 # (the startup lines and "# Input 1" have no blank line between them, so the first stop is the output marker)
 keys ctrl+home
@@ -79,6 +83,7 @@ expect said ! [Screen Reader Mode
 keys ctrl+end
 keys p
 expect said ! No next paragraph
+# Check: Moving by paragraph passes over the tool lines
 # Step 4, after the turn with a tool call: from its output marker p stops at Claude's message, never at the tool line;
 # Ctrl+Alt+P from the marker reads the same stops, and the tool line is not among them.
 keys ctrl+home
@@ -93,6 +98,7 @@ expect said ! Output 2 Reply from Claude heading level 1
 keys ctrl+alt+p
 expect said claude:
 refuse said tool:
+# Goal: Jump between replies, messages, tools, errors and system lines
 # Step 5: o / Shift+O, r / Shift+R, i / Shift+I, c, t, e, d, s, each as SPEC 6.4 says.
 keys ctrl+home
 keys o
@@ -117,6 +123,7 @@ keys d
 expect said done
 keys s
 expect said ! No next system line
+# Goal: Go back to the message field from the conversation
 # Step 6: Escape in the conversation: the message field, nothing sent, the status still ready.
 said
 keys ctrl+2
@@ -124,6 +131,7 @@ keys escape
 expect focus Message to Claude
 refuse said Sent
 expect state Claude: ready
+# Goal: Move through a long reply a screen at a time
 # Step 7: the long reply. Ctrl+Tab: the newest line; Page Up a screen higher, Page Down back to the last line, which
 # then repeats; Page Up from the first line stays there. The app says nothing itself.
 type Write 60 numbered lines, 1. to 60., each with just its number, nothing else.
@@ -143,6 +151,7 @@ expect focus done
 keys ctrl+home pageup
 expect focus [Screen Reader Mode
 expect quiet 500
+# Goal: Skip over a run of lines in a reply
 # Step 7a: from the output marker of the long reply, Ctrl+Down: the first reply line; the next Ctrl+Down goes past the
 # numbered lines to the end of the conversation; Ctrl+Up back to the first reply line, then the marker.
 keys ctrl+3
@@ -159,11 +168,13 @@ expect focus "value":"# Output 3 Reply from Claude"
 keys ctrl+shift+down
 keys escape
 expect said ! Selection cleared
+# Check: Moving by a run of lines is not a jump to go back from
 # Ctrl+Up and Ctrl+Down are not jumps: Backspace goes back to the line before the last quick key (here Ctrl+3's).
 keys ctrl+2
 keys ctrl+down
 keys backspace
 expect said Back to
+# Goal: Hear the line number
 # Step 8: l, "Line N of M"; Ctrl+Home: "Line 1 of M"; Ctrl+End: the last number equals the total.
 keys l
 expect said ! Line
@@ -173,6 +184,7 @@ expect said ! Line 1 of
 keys ctrl+end
 keys l
 said
+# Goal: Find text in the conversation
 # Step 10: Ctrl+F, the Find notice in the window's place with "Text to find" focused; Shift+Tab reaches the text with
 # the key line; a word, Enter: the notice closes and the line with the word is said, focus in the conversation.
 # (Shift+Tab to the text is checked at the end of this script.)
@@ -189,12 +201,14 @@ keys f3
 expect said ! From the top,
 keys shift+f3
 expect said ! From the end,
+# Check: Text that is not there is said as not found
 # Ctrl+F again: the field holds the word, selected; zzqqx: "Not found: zzqqx", the caret stays.
 keys ctrl+f
 expect focus "value":"single word"
 type zzqqx
 keys enter
 expect said ! Not found: zzqqx
+# Check: An empty search asks for the text and keeps the focus
 # An empty field: "Type the text to find", the field keeps the focus (the Tab order is checked at the end of this
 # script). Alt not opening the menu needs the foreground (manual). Escape: the notice closes, the focus returns.
 keys ctrl+f
@@ -205,6 +219,7 @@ expect focus Text to find
 keys escape
 expect state "notice":null
 expect focus Conversation
+# Goal: Find the next match from the message field
 # F3 in the message field works too and moves the focus to the conversation.
 keys ctrl+1
 keys ctrl+f
@@ -214,6 +229,7 @@ keys ctrl+1
 keys f3
 expect said Use the Bash tool
 expect focus Conversation
+# Goal: Go back to where you were before a jump
 # Step 12: Ctrl+Home, h three times, p twice; Backspace: "Back to" the line before the last p; four more back to the
 # first line; one more: "Nothing to go back to".
 keys ctrl+home
@@ -234,6 +250,7 @@ expect said ! Back to [Screen Reader Mode
 # Page Down, Backspace: back to the line before the page.
 keys pagedown backspace
 expect said ! Back to [Screen Reader Mode
+# Goal: Bookmark lines and move between them
 # Step 13: m on a reply line: "Bookmark 1 added", the caret stays; Up reads the bookmark line, Down the line again.
 # (A wait after each bookmark: the view applies its edits 250 ms after the last key, FR-3.3, which a person's
 # next key never beats and the runner's does.)
@@ -291,6 +308,7 @@ expect said ! Bookmark 4,
 menu Previous bookmark
 expect said ! Bookmark 3,
 # Ctrl+S saving the bookmark lines goes through the Save dialog (manual).
+# Goal: Hear a reply's paragraphs, headings or bookmarks without moving
 # Step 14: Ctrl+3 on the first reply... the newest reply here is the numbered one; Ctrl+Alt+P reads its paragraphs
 # without moving the caret; Ctrl+Alt+H its headings (none after it: "No next heading"); from the first output marker
 # Ctrl+Alt+H reads the headings with their levels; Ctrl+Alt+C from the field the claude: lines, the focus staying;
@@ -318,6 +336,7 @@ expect said Output 1 Reply from Claude heading level 1
 said
 keys ctrl+alt+l ctrl+alt+m
 expect quiet 1000
+# Check: Shifted letters at the end of the conversation keep their own jobs
 # Step 15: Ctrl+End, Shift+I: the last input; Shift+H: the last heading. Ctrl+Shift+S, Ctrl+Shift+R keep their jobs;
 # Ctrl+Shift+O does nothing; Ctrl+Shift+P opens the command palette.
 keys ctrl+end
@@ -339,6 +358,7 @@ keys ctrl+shift+p
 expect state "notice":"Command palette"
 keys escape
 expect state "notice":null
+# Goal: Quote two lines in a message and send it
 # Step 12, the second half: Enter on two lines with text already in the field: each quote is a block of its own under
 # a blank line; sent, the message shows in full between "# Input 4" and "# Output 4 Reply from Claude".
 keys ctrl+1
@@ -384,6 +404,7 @@ expect focus "value":""
 keys down
 expect focus "value":"_ start of copied line from conversation history _"
 refuse said · you:
+# Check: A long paragraph is one line
 # Step 9: one paragraph of about 120 words is one line: l on the blank line under its marker, on its first row and on
 # its second row: the last two say the same number (the view wraps it, so Down moves by rows; the runner cannot
 # compare two answers, so the numbers are printed for the report; the channel's caret line
@@ -404,6 +425,7 @@ expect said ! Line
 keys down
 keys l
 expect said ! Line
+# Check: A bookmark on a long paragraph stands above it
 # Step 13, on the long paragraph: m, then Up: the bookmark line sits above the whole paragraph, Down reads it as one
 # line still.
 keys up
@@ -415,6 +437,7 @@ keys up
 expect focus "value":"Bookmark 5"
 keys down
 expect focus "value":"claude: Rivers
+# Goal: Quote a long paragraph whole
 # Step 11: Enter on the paragraph quotes it whole in the field, "Line N copied", with the marker lines.
 keys enter
 expect said copied
@@ -423,6 +446,7 @@ expect text _ start of copied line from conversation history _
 expect text Line 
 expect text claude: Rivers
 expect text _ start of comment on the copied line _
+# Check: The find notice's Tab order follows the screen
 # Step 10: the Find notice's Tab order follows the screen, the field above the text: from the field, Tab: the text,
 # "Enter: Find next. Escape: Cancel.", Tab: Find next, Tab: Cancel; Shift+Tab from the field: Cancel (the plan's
 # order was text first; corrected 2026-10-23).
@@ -439,6 +463,7 @@ expect focus Text to find
 keys shift+tab
 expect focus Cancel"
 keys escape
+# Goal: Send the quote with your comment
 # Step 11, the comment: sent with the quote, Claude answers; then, without the focus, the conversation's caret has
 # followed the newest line (FR-3.3), so Ctrl+2 lands on the reply; before the comment is sent, Ctrl+2 returns to the
 # copied line (FR-2.9, checked above).

@@ -11,6 +11,7 @@ file home\AxKit\axClaude.json {"checkForUpdates":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir ask
 start claude {temp}\ask -- --model haiku
+# Goal: Answer the trust question from the list
 # Step 1: a folder Claude has not seen, the focus in the message field: the trill, then "Permission Required:
 # Accessing workspace. <folder>, list, y. Yes, I trust this folder, 1 of 2" (the app's part: the question and the
 # answer the focus is on, interrupting); the message field is gone; y, Enter: "Sent: y, Yes, I trust this folder",
@@ -26,6 +27,7 @@ expect said Sent: y, Yes, I trust this folder
 expect said → Message to Claude
 expect said Ready
 wait 3000
+# Goal: Move between a question and the conversation
 # Step 3, on a question of Claude's: Ctrl+Tab, the conversation, where the question is; Ctrl+Tab again: the list,
 # its name the question; Tab from the list: the conversation; Shift+Tab back; Escape in the list: "Cancelled", the
 # message field comes back.
@@ -44,6 +46,7 @@ keys tab
 expect focus Conversation
 keys shift+tab
 expect focus "role":"List"
+# Goal: Hear the question again
 # Step 17: Down twice, then Ctrl+Q: the question and the answer the focus is on, the focus unchanged; from the
 # conversation the same, the caret unchanged.
 keys down down
@@ -57,11 +60,13 @@ expect focus Conversation
 keys ctrl+q
 expect said 3.
 expect focus Conversation
+# Check: Enter in the conversation while Claude asks sends nothing
 # Step 14: Enter on a conversation line while the question shows: "Answer Claude first; the message field is hidden
 # while it asks", the focus stays in the conversation.
 keys enter
 expect said ! Answer Claude first; the message field is hidden while it asks
 expect focus Conversation
+# Check: The mode key while a question shows leaves the focus on it
 # Step 12: Ctrl+Shift+M while the list shows: the focus stays. (The plan's list is /model's, where Claude changes its
 # mode; on a question of the AskUserQuestion tool, Claude Code 2.1.309 keeps its mode and says nothing, as seen in
 # this run, so the mode change itself is left to the manual pass.)
@@ -70,6 +75,7 @@ expect focus "role":"List"
 keys ctrl+shift+m
 wait 1500
 expect focus "role":"List"
+# Goal: Cancel a question
 # Step 3: Escape in the list: "Cancelled", the message field comes back.
 keys escape
 expect said Cancelled
@@ -77,9 +83,11 @@ expect focus Message to Claude
 expect said Done
 wait 2000
 expect state | auto mode on
+# Check: Asking for the question when none waits says so
 # Step 17: Ctrl+Q with the message field back: "Claude is not asking anything".
 keys ctrl+q
 expect said ! Claude is not asking anything
+# Goal: Answer a question that follows a reply
 # Step 4: a reply followed by a question, the focus in the conversation: the trill, the question and its answer
 # interrupt, the focus on the list; Ctrl+Tab: the conversation, where the reply is.
 type Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.
@@ -97,6 +105,7 @@ keys 1 enter
 expect said Sent: 1
 expect said Done
 wait 2000
+# Goal: Have questions come without interrupting speech
 # Options, Questions, "Go to them at once, interrupting speech" off, the same again: nothing interrupts, and about a
 # second after the trill the focus moves from the conversation to the list by itself.
 menu Go to them at once, interrupting speech
@@ -116,6 +125,7 @@ menu Go to them at once, interrupting speech
 wait 2000
 # Step 4a, a question arriving while the Session menu is open, needs a real menu opened with Alt (the foreground):
 # left manual.
+# Check: Keys typed as a question appears do nothing
 # Step 5: a question that comes while a message is being typed: the keys typed in the first second after the list
 # appears do nothing (the list's selection stays on its first answer); the field keeps what was typed before.
 type Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.
@@ -132,6 +142,7 @@ expect focus "value":"draft"
 keys ctrl+a delete
 expect said Done
 wait 2000
+# Goal: Open and close Claude's list of background tasks
 # Step 6: /tasks with no task. Claude Code 2.1.309 to 2.1.316 offered Escape alone ("Esc to close"), an information
 # screen (SPEC.md FR-2.11): the trill, the notice "Background" with "No tasks currently running", Enter or Escape
 # "Closed". Since 2.1.319 the same screen names Enter, so it is a question list ("Claude asks", the Question trill),
@@ -153,6 +164,7 @@ iffound keys escape
 iffound expect said Closed
 expect focus Message to Claude
 wait 2000
+# Goal: Answer a question in your own words
 # Step 9: Other: 4, Enter: "Sent: 4, Other. Your words next", then the field "<question>. You chose Other. Your
 # answer"; tulip, Enter: "Sent: tulip"; Claude's reply names tulips. Again, Other, Escape in the field: the list back.
 type Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.
@@ -185,6 +197,7 @@ wait 1500
 keys 1 enter
 expect said Done
 wait 2000
+# Goal: Move through Claude's questions in the conversation
 # Step 10: q from the top: "Question: <title>" for each question, in order; Shift+Q back; "No next question".
 keys ctrl+2 ctrl+home
 keys q
@@ -196,6 +209,7 @@ keys q
 expect said ! No next question
 keys shift+q
 expect said ! Question:
+# Goal: Close a question without answering it
 # Step 13: Shift+Escape with a question in the list closes it without an answer and the field comes back.
 keys ctrl+1
 type Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.
@@ -205,6 +219,7 @@ wait 1500
 keys shift+escape
 expect focus Message to Claude
 wait 3000
+# Goal: Interrupt Claude from a permission question
 # Step 13, a permission prompt in the list while Claude works: Shift+Escape interrupts Claude (its interruption line,
 # the status ready). Claude's manual mode is one Ctrl+Shift+M from auto, and three more bring auto back.
 keys ctrl+shift+m
@@ -221,6 +236,7 @@ expect focus Message to Claude
 keys ctrl+shift+m ctrl+shift+m ctrl+shift+m
 expect said auto mode on
 wait 2000
+# Check: A question left waiting is announced only once
 # Step 15: two questions, the first left unanswered for a minute while its answers are arrowed through: one trill and
 # one reading; the focus stays on the answer moved to; both answered, each comes once.
 type Use your AskUserQuestion tool once with two questions of three options each: a colour and a season.
@@ -252,6 +268,7 @@ keys enter
 expect said Ready
 expect focus Message to Claude
 wait 2000
+# Goal: Answer a set of two questions
 # Step 19: a sentence, then two questions: the trill and the first question; its answer: the second interrupts and
 # reads itself, nothing of the first read again (tests/scripts/axClaude/two-questions.txt covers the same).
 type Reply with one sentence about tulips, then use the AskUserQuestion tool to ask me two questions, which colour I prefer and which season.
@@ -273,6 +290,7 @@ keys enter
 expect said Ready
 expect focus Message to Claude
 wait 2000
+# Check: Cancelling right at the trill leaves the question unspoken
 # Step 20: Escape as soon as the trill sounds: "Cancelled", the message field back, the question not spoken after it.
 # SPEC D33 holds Escape, Enter, Space and typed keys for a second after a question the user did not cause appears, so
 # an Escape at the trill does nothing (the plan's step predates the hold or overlooks it); the Escape goes as soon as
@@ -287,6 +305,7 @@ expect said Cancelled
 refuse said !
 expect focus Message to Claude
 wait 3000
+# Goal: Open and close Claude's permissions screen
 # Step 21: /permissions. The plan has its panel stay in Claude with the message field in place, for the guard "Not
 # sent, Claude asks: <title>. Enter again sends" (FR-2.10). This build reads the panel as a screen: the trill and the
 # list "Tabs: Permissions, Recently denied, Allow, Ask, Deny, Auto mode, Workspace" in the field's place; Escape:
@@ -305,6 +324,7 @@ wait 2000
 # other sessions: left manual.
 # Step 18, the louder alert in the background and the taskbar flash, needs the window in the background on the real
 # desktop: left manual.
+# Goal: Answer a question with several answers
 # Step 8, last because it fails on this build: two questions, the second with several answers. The first: "Question 1
 # of 2: ..."; 2, Enter: "Sent: 2, Green. Next question". The second has check boxes: Down to Apple, Space, Down twice to
 # Cherry, Space, Enter: "Sent: 1, Apple, 3, Cherry", no review; Claude's reply names green, apple and cherry, and the
@@ -332,6 +352,7 @@ expect text cherry
 keys ctrl+1
 expect focus Message to Claude
 wait 2000
+# Goal: Review answers before they go to Claude
 # With Options, Questions, "Review answers before they go to Claude" on: the second answer says "Review next", the
 # review comes as a question; y, Enter. Off again.
 menu Review answers before they go to Claude
@@ -351,6 +372,7 @@ keys y enter
 expect said Done
 menu Review answers before they go to Claude
 wait 2000
+# Check: The records of a set of questions read in order
 # Step 10, the records of a set of two questions (not reached while step 8 above fails): q reads "Question: <the
 # question>". Observed on this build: the records of a set carry the quote marker Claude draws in front of each
 # question, "Question: > What is your favourite colour?", while a single question's record is "Question: Flower".
@@ -359,6 +381,7 @@ keys shift+q
 expect said ! Question: Review your answers
 keys shift+q
 expect said ! Question: Which fruits do you like?
+# Check: A single question with several answers needs no review
 # Step 8a (2026-11-15, the item "a question with several answers to tick still asks to review and submit"): one
 # question alone that takes several answers. Claude Code follows it with "Review your answers" too, which the app
 # submits itself while Review answers is off: "Sent: 1, Apple, 3, Cherry", no review, Claude's reply names apple and

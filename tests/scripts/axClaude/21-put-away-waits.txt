@@ -37,6 +37,7 @@ expect said axAutomate may read axKit
 expect mcp "app": "axClaude"
 start help
 
+# Check: An offer and the turn's end wait unheard while the window is hidden
 # 21.1 An offer made while Claude works waits for the turn's end; the window is hidden before that end.
 use 1
 said
@@ -56,6 +57,7 @@ refuse focus Explain this command
 mcp call axkit_windows
 refuse mcp "app": "axClaude"
 
+# Goal: Bring up the window and hear what happened while it was away
 # 21.2 Brought up: "Done" for the turn that ended, then the offer, asked with its chime and its caution.
 use 2
 menu Open the conversation
@@ -69,6 +71,7 @@ keys escape
 expect said Not run
 expect focus "name":"Message to Claude"
 
+# Check: Claude stopping while hidden is said when the window comes up
 # 21.3 Claude stops while the window is hidden (/exit, hidden at once): said when the window is brought up.
 said
 type /exit

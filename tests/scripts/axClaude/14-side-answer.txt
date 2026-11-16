@@ -13,6 +13,7 @@ wait 1500
 keys enter
 expect said Ready
 wait 2000
+# Goal: Ask a side question and hear the answer
 # /btw from the message field: the trill, then the notice titled with the question, its text the answer, the focus
 # in the text; the status says "showing a side answer", not "waiting for your answer"; no list in the field's place.
 type /btw what is two plus two? answer in one word
@@ -26,6 +27,7 @@ expect focus /btw what is two plus two? answer in one word
 expect text Four
 expect text Enter or Escape: Close.
 refuse focus "role":"List"
+# Check: The side answer's buttons are the keys of its hint row
 # Tab reaches the buttons: Close, then Copy (c) and Fork (f), the keys of the hint row; the scroll keys are not buttons.
 keys tab
 expect focus Close
@@ -36,6 +38,7 @@ expect focus Fork (f)
 refuse focus Scroll
 keys shift+tab shift+tab shift+tab
 expect focus /btw what is two plus two?
+# Goal: Close a side answer
 # Escape closes the notice and the screen in Claude: "Closed", the message field back, the status ready.
 wait 1000
 keys escape
@@ -45,6 +48,7 @@ expect state "notice":null
 expect state Claude: ready
 refuse list Close (Escape)
 wait 2000
+# Goal: Browse earlier side answers
 # A second /btw in the session: Claude Code 2.1.310 keeps a history, its hint row "⇧←/→ to browse · c to copy · f to
 # fork · x to clear history · Esc to close". Its title is the first question, the newest question and answer its
 # text. Browse (Shift+Left) shows the earlier answer: the text changes in place, the focus stays on the button.
@@ -66,6 +70,7 @@ expect said Closed
 expect focus Message to Claude
 expect state Claude: ready
 wait 3500
+# Goal: Look at Claude's goal
 # /goal with no goal set: the notice "Goal", its text "No goal set", Close alone; Enter closes it.
 type /goal
 keys enter
@@ -79,6 +84,7 @@ keys enter
 expect said Closed
 expect focus Message to Claude
 expect state Claude: ready
+# Goal: Find side answers in the conversation
 # The records in the conversation (SPEC.md FR-5, D33; 2026-11-14): each /btw is a "btw:" line with its question,
 # found with b in order, not with q; /goal stays a "Question:" line.
 keys ctrl+2 ctrl+home
@@ -91,6 +97,7 @@ expect said ! No next btw
 # The caret stayed on the second record: Shift+B goes back to the first. Browsing the history added no record.
 keys shift+b
 expect said ! btw: what is two plus two? answer in one word
+# Check: Moving by question passes over the side answers
 # Ctrl+End lands on the last line, the record of /goal; Shift+Q from there passes over both btw records to the trust
 # question at the start.
 keys ctrl+end

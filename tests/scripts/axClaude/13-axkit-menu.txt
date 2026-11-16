@@ -13,6 +13,7 @@ expect said trust
 wait 1500
 keys enter
 expect said Ready
+# Check: The Window, axKit and Help menus hold their items
 # Step 1: the Window, axKit and Help menus opened with Alt+W, Alt+A and Alt+H and read item by item needs a real menu (the foreground): left manual. What
 # it holds, through the command list: New window with an item per app, Close all windows, Check for updates naming the
 # version, and About with Version, Licence, Attribution, axKit guide and axKit on GitHub (which opens the browser on the
@@ -29,6 +30,7 @@ expect commands axKit guide, Help, About
 expect commands axKit on GitHub, Help, About
 # Step 3, New window, axDown and axClaude: the new windows are started by the window, not the runner, so the run could
 # neither drive nor close them, and a new axClaude would start Claude without --model: left manual.
+# Goal: Close every window at once
 # Step 6: an axDown window with unsaved changes and Claude working here; axKit, Close all windows: the axDown window
 # asks "Save changes?" and stays until answered; this window asks "Close axClaude?" (section 8). Answering both closes
 # every window. (The runner counts a window that closes without its own close step as ended by itself, so each
