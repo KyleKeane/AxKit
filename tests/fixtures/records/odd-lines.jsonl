@@ -1,0 +1,27 @@
+this line is no json MUST-NOT-BE-READ
+["MUST-NOT-BE-READ"]
+{"type":"user","message":{"role":"user","content":"MUST-NOT-BE-READ"
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000099"} MUST-NOT-BE-READ
+{"type":"brand-new-kind","text":"MUST-NOT-BE-READ","uuid":"50000000-0000-4000-8000-000000000098"}
+{"text":"MUST-NOT-BE-READ","uuid":"50000000-0000-4000-8000-000000000097"}
+{"type":7,"text":"MUST-NOT-BE-READ"}
+{"uuid":"50000000-0000-4000-8000-000000000001","message":{"content":"Café au lait,\nplease.","role":"user"},"promptSource":"typed","timestamp":"2026-11-16T04:00:00.000Z","promptId":"50000000-0000-4000-8000-0000000000b1","cwd":"MUST-NOT-BE-READ","type":"user"}
+{"type":"user","message":{"role":"user","content":"A prompt without its id."},"promptSource":"typed","promptId":"50000000-0000-4000-8000-0000000000b2"}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000002","isSidechain":false,"toolUseResult":"MUST-NOT-BE-READ"}
+{"type":"assistant","uuid":"50000000-0000-4000-8000-000000000003","message":{"id":"msg_05UnknownBlock","content":[{"type":"server_tool_use","id":"srvtoolu_05Search","name":"web_search","input":{"query":"MUST-NOT-BE-READ"}}],"stop_reason":"tool_use"}}
+{"type":"assistant","uuid":"50000000-0000-4000-8000-000000000004","message":{"id":"msg_05Empty","content":[],"stop_reason":"end_turn"}}
+{"type":"system","subtype":"brand_new_subtype","content":"MUST-NOT-BE-READ","uuid":"50000000-0000-4000-8000-000000000005","level":"info"}
+{"type":"system","subtype":"local_command","content":"MUST-NOT-BE-READ","commandRun":{"command":"MUST-NOT-BE-READ","args":""},"uuid":"50000000-0000-4000-8000-000000000006","level":"info"}
+{"type":"queue-operation","operation":"shuffle","content":"MUST-NOT-BE-READ","sessionId":"50000000-0000-4000-8000-0000000000aa"}
+{"type":"assistant","isSidechain":true,"agentId":"a0000000000000005","uuid":"50000000-0000-4000-8000-000000000007","message":{"id":"msg_05Agent","content":[{"type":"text","text":"MUST-NOT-BE-READ"}],"stop_reason":"end_turn"}}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000008","promptId":"50000000-0000-4000-8000-0000000000b3","message":{"role":"user","content":"<command-name>/compact</command-name> MUST-NOT-BE-READ"}}
+{"parentUuid":null,"logicalParentUuid":"50000000-0000-4000-8000-000000000008","type":"system","subtype":"compact_boundary","content":"MUST-NOT-BE-READ","compactMetadata":{"trigger":"manual","preTokens":44570,"postTokens":6828},"uuid":"50000000-0000-4000-8000-000000000009","isMeta":false,"timestamp":"2026-11-16T04:05:00.000Z"}
+{"type":"user","isCompactSummary":true,"isVisibleInTranscriptOnly":true,"uuid":"50000000-0000-4000-8000-000000000010","promptId":"50000000-0000-4000-8000-0000000000b3","message":{"role":"user","content":"MUST-NOT-BE-READ"}}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000011","promptId":"50000000-0000-4000-8000-0000000000b3","message":{"role":"user","content":"<local-command-stdout>MUST-NOT-BE-READ</local-command-stdout>"},"repeatsCompactSummary":true}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000012","promptId":"50000000-0000-4000-8000-0000000000b4","message":{"role":"user","content":"<bash-input>MUST-NOT-BE-READ</bash-input>"}}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000013","promptId":"50000000-0000-4000-8000-0000000000b4","message":{"role":"user","content":"<bash-stdout>MUST-NOT-BE-READ</bash-stdout><bash-stderr></bash-stderr>"},"turnOrigin":"human"}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000014","message":{"role":"user","content":"<agent-message from=\"MUST-NOT-BE-READ\">MUST-NOT-BE-READ</agent-message>"}}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000015","message":{"role":"user","content":"<user-memory-input>MUST-NOT-BE-READ</user-memory-input>"}}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000016","message":{"role":"user","content":[{"type":"text","text":"MUST-NOT-BE-READ"},{"type":"image","source":{"type":"base64","data":"MUST-NOT-BE-READ"}}]}}
+{"type":"user","uuid":"50000000-0000-4000-8000-000000000017","message":{"role":"user","content":null}}
+{"type":"system","subtype":"turn_duration","durationMs":1234.0,"uuid":"50000000-0000-4000-8000-000000000018"}
