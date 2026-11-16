@@ -30,6 +30,7 @@ keys enter
 expect said axAutomate may read axKit
 expect mcp "app": "axFile"
 
+# Check: The question names the command and starts on the answer that only explains
 # The question in the window, the answer to the client that the user is asked. The list names the command and what it
 # would act on, and starts on the answer that only explains; no notice shows.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
@@ -43,6 +44,7 @@ expect focus Asked by axAutomate, an AI: read the explanation before you allow i
 expect focus 1. Explain this command
 expect state "notice":null
 
+# Goal: Read the explanation of a command an AI tool asks to run
 # Enter on Explain opens a text with one button, the caution first; closing it comes back to the list.
 wait 1500
 keys enter
@@ -52,6 +54,7 @@ expect state # What it would act on\n\nnotes.md in files
 keys enter
 expect focus 1. Explain this command
 
+# Goal: Allow a command an AI tool asks to run
 # Yes, run it is the second answer: it runs the command as from its menu item (its own notice for the folder's name
 # follows, which the user answers).
 keys down
@@ -62,6 +65,7 @@ expect focus Name
 keys escape
 expect focus notes.md
 
+# Goal: Deny a command an AI tool asks to run
 # MC-D7: Open starts the file's program (a script or a program among them), so it is act and asked first too. Escape
 # is No; nothing opens, and the files have the focus again.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
@@ -75,6 +79,7 @@ expect said Open not run
 refuse said axAutomate ran Open
 expect focus notes.md
 
+# Check: After a No the window asks no more for a minute
 # After a No the window asks no more for a minute, whatever the command.
 # Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
 wait 3500

@@ -18,6 +18,7 @@ mkdir cmds
 file cmds\07-commands.txt # A workflow with a command of its own.\n\nrun echo one \u005cu003e \u007btemp}\one.txt
 file cmds\08-outside.txt # A workflow that writes outside its run's folder.\n\nfile ..\x.md Some text\nclose
 
+# Goal: Run every workflow of a folder
 # 5.1 F5 at the folder's level runs every workflow of the folder, one after another; nothing is said for a step that
 # passes, a failing step is said as it ends, one line at each workflow's end and one at the run's.
 start automate {temp}\flows
@@ -34,6 +35,7 @@ expect said Later cannot run: step 2 has otherwise steps
 expect said 06-bad cannot run: the step "wait 2s" needs a whole number of milliseconds
 expect said Run finished: 3 of 6 workflows passed, 1 failed, 2 could not run
 
+# Goal: Read how a workflow's last run went
 # 5.2 The rows carry the outcome, and the details what the runner saw.
 expect focus 01-passes, workflow, 4 steps, passed
 keys down
@@ -48,6 +50,7 @@ keys tab down
 expect focus Last run: failed. Not within 10 s
 keys escape
 
+# Goal: Read the report of a workflow's last run
 # 5.2a Ctrl+R: the report of the workflow's last run, its end then the lines played, as a notice (AU-4.5, AU-6b.6).
 keys ctrl+r
 expect state "notice":"Report of 02-fails"
@@ -57,6 +60,7 @@ keys escape
 expect state "notice":null
 expect focus 2. Expect the focus: Nothing like this, failed
 
+# Goal: Run one workflow and stop it partway
 # 5.3 F5 inside a workflow runs it alone; Escape stops a run after the step going on.
 keys left down
 expect focus 03-waits, workflow, 4 steps, passed
@@ -69,6 +73,7 @@ expect said 03-waits stopped
 keys left
 expect focus 03-waits, workflow, 4 steps, stopped
 
+# Check: A workflow this version cannot run says why
 # 5.4 A workflow this version cannot run says why.
 keys end right f5
 expect said This workflow cannot run: the step "wait 2s" needs a whole number of milliseconds
@@ -76,6 +81,7 @@ keys left up right f5
 expect said This workflow cannot run: step 2 has otherwise steps
 close
 
+# Check: A workflow that runs commands names them first, and Cancel is the default
 # 5.6 A workflow with a run step names its command lines first, as they will run; nothing of running is said before
 # the answer; Cancel is the default and says "Not run" alone, and Run runs it.
 start automate {temp}\cmds
@@ -90,6 +96,7 @@ keys enter
 expect state "notice":null
 expect said Not run
 expect quiet 500
+# Goal: Run a workflow that runs commands
 keys f5
 expect state "notice":"Run commands"
 keys tab
@@ -98,6 +105,7 @@ keys space
 expect said ! Running 07-commands; Escape stops it
 expect said 07-commands passed, 1 step
 
+# Check: A file step that leaves the run's folder cannot run from the window
 # 5.7 A file step that leaves the run's folder cannot run from the window.
 keys left down
 expect focus 08-outside, workflow, 2 steps

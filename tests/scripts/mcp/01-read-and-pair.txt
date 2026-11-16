@@ -6,11 +6,13 @@ file home\AxKit\axDown.json {"checkForUpdates": false}
 file notes.md First line of the notes.\nSecond line, for the AI tools.
 start down {temp}\notes.md
 
+# Check: Every call is refused while the AI tools are off
 # MC-6.1: off until the user turns it on; every call is refused before anything else.
 mcp start
 mcp call axkit_windows
 expect mcp error: axKit's AI tools access is off
 
+# Goal: Turn on the AI tools
 # On from the axKit menu, AI tools: asked once. The default turns it on and adds axKit to Claude Code, which a test run
 # never does (the user's Claude Code settings), and says so; or, without Claude Code here, Turn on alone.
 menu Let AI tools read and open axKit
@@ -19,6 +21,7 @@ keys enter
 expect said AI tools on
 try said Not in a test run
 
+# Check: A tool not yet allowed is asked about, and closing the question denies it
 # MC-6.4: a client not paired is asked about in the window; Deny is the default, so Escape refuses.
 mcp call axkit_windows
 expect state "notice":"axAutomate asks to use axKit"
@@ -26,11 +29,13 @@ wait 1500
 keys escape
 expect mcp error: The user did not allow axAutomate
 
+# Check: A denied tool is not asked again within a minute
 # A Deny holds for a minute: asked again at once, the client is refused without a notice.
 mcp call axkit_windows
 expect mcp not asked again within a minute
 refuse state asks to use axKit
 
+# Goal: Allow an AI tool to use axKit
 # A new session of the client (a new broker) is asked again; Allow pairs, and the call that waited goes on.
 mcp start
 mcp call axkit_windows
@@ -47,6 +52,7 @@ keys enter
 expect said axAutomate may read axKit
 expect mcp "app": "axDown"
 
+# Goal: Let an AI tool read a window's text, state and commands
 # MC-6.5: the reads, by the id axkit_windows gave.
 mcp call axkit_window_text {"window":"{window}"}
 expect mcp First line of the notes.
@@ -68,6 +74,7 @@ expect mcp "verb": "pass"
 mcp call axkit_window_said {"window":"{window}"}
 expect mcp axAutomate may read axKit
 
+# Check: An axPass window is never listed to the AI tools
 # MC-4.1: an axPass window serves no pipe, so it is never listed.
 file home\AxKit\axPass.json {"checkForUpdates": false}
 start pass
@@ -76,6 +83,7 @@ mcp call axkit_windows
 refuse mcp axPass
 expect mcp "title": "notes.md - axDown"
 
+# Check: Opening a program's app, a missing window and a partial path are refused
 # The refusals: an app that starts a program, a window that is not there, a path that is not a full one.
 mcp call axkit_open {"app":"claude"}
 expect mcp error: axClaude starts a program
@@ -84,9 +92,11 @@ expect mcp error: No such window
 mcp call axkit_open {"app":"down","path":"notes.md"}
 expect mcp error: The path must be a full path
 
+# Check: Every call is in the log
 # MC-6.6: every call in the log, by its tool.
 run findstr /c:"axkit_window_text" home\AxKit\mcp-audit.log
 
+# Goal: Turn the AI tools off
 # Off again from the menu: the next call is refused at once.
 menu Let AI tools read and open axKit
 expect said AI tools off

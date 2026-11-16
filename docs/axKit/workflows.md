@@ -12,8 +12,18 @@ developer's computer (`tools/AxAutomate`, `nvda-pass.ps1`), never in CI (`docs/a
 Steps and keys: `docs/axKit/workflows/axAutomate.md` (in Claude's working folder: `workflows-axAutomate.md`).
 
 1. **Browse a folder of workflows and read their steps**
+    - Open a folder of workflows
+    - Open a workflow and read its steps
+    - Read a step's details
 2. **Run a workflow and hear how it went**
+    - Run every workflow of a folder
+    - Read how a workflow's last run went
+    - Read the report of a workflow's last run
+    - Run one workflow and stop it partway
+    - Run a workflow that runs commands
 3. **Close axAutomate and come back to the folder you had**
+    - Open a folder of workflows
+    - Come back to the folder used last
 
 ## axCalc
 
@@ -469,7 +479,24 @@ Steps and keys: `docs/axKit/workflows/axJSON.md` (in Claude's working folder: `w
 Steps and keys: `docs/axKit/workflows/axMCP.md` (in Claude's working folder: `workflows-axMCP.md`).
 
 1. **Start an MCP server and use its tools**
+    - Find a server by its name
+    - Read a server's details
+    - Start a server and open its tools
+    - Read a tool's description and its arguments
+    - Fill in an argument and call the tool
+    - Open a tool's answer in axJSON
+    - Read a resource
+    - Stop a server
 2. **Add, rename and remove a server of your own in axMCP**
+    - Add a server of your own
+    - Rename a server and take the rename back
+    - Remove a server
+    - Bring a removed server back
+    - Start a server
+    - Tick a yes-or-no argument and call the tool
+    - Read a resource from a template
+    - Read a prompt's arguments
+    - Fill in a prompt and fetch it
 
 ## axMedia
 
@@ -511,8 +538,26 @@ Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `
 Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `workflows-axPass.md`).
 
 1. **Unlock a password database and change an entry**
+    - Unlock a password database
+    - Read the database again
+    - Open a group and go back up
+    - Read an entry's fields
+    - Move between the entries and the fields
+    - Change a user name
+    - Undo a change
+    - Rename an entry
+    - Add an entry
+    - Move an entry to the Recycle Bin and take it back
+    - Set a generated password
+    - Move an entry to another group
+    - Lock the database
 2. **Agree to the reminder before the first unlock**
+    - Agree to the reminder and unlock the database
 3. **Read an entry in full and come back to the same database**
+    - Hear one field of an entry
+    - Hear every field of an entry at once
+    - Choose when axPass locks by itself
+    - Open the last database again without naming it
 
 ## axPreview
 
@@ -555,9 +600,29 @@ Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder:
 Steps and keys: `docs/axKit/workflows/axProcess.md` (in Claude's working folder: `workflows-axProcess.md`).
 
 1. **Find and end a process**
+    - Hear how much memory is in use
+    - Read the list again
+    - Sort the processes by name, processor or memory
+    - Find a process and read its details
+    - End a process
 2. **Manage services and startup programs**
+    - Show the services
+    - Read a service's details
+    - Go back from the services to the processes
+    - Show the programs that start with Windows
+    - Read the keyboard shortcuts
+    - Go round the views one after another
+    - Jump to a service by typing its name
 3. **Jump to a process by typing its name and read a startup program's details**
+    - Jump to a process by typing its name
+    - Read a startup program's details
 4. **Turn a startup program off, on again, or remove it**
+    - List the programs that start with Windows
+    - Turn off a program that starts with Windows
+    - Turn a startup program on again
+    - Remove a program from those that start with Windows
+    - Turn a Startup folder shortcut off and on again from its details
+    - Remove a shortcut from the Startup folder
 
 ## axStart
 
@@ -693,11 +758,34 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
 Steps and keys: `docs/axKit/workflows/ai-tools.md` (in Claude's working folder: `workflows-ai-tools.md`).
 
 1. **Let an AI tool read axKit, once you allow it**
+    - Turn on the AI tools
+    - Allow an AI tool to use axKit
+    - Let an AI tool read a window's text, state and commands
+    - Turn the AI tools off
 2. **Let an AI tool run a window's commands**
+    - Let AI tools run commands
+    - Have an AI tool run a window's command
+    - Have an AI tool change a setting
+    - Stop AI tools from running commands
 3. **Approve or deny an AI tool before it acts**
+    - Read the explanation of a command an AI tool asks to run
+    - Allow a command an AI tool asks to run
+    - Deny a command an AI tool asks to run
 4. **Let an AI tool read and add tasks**
+    - Let an AI tool read the task lists
+    - Let an AI tool read a list's items
+    - Let AI tools run commands
+    - Let an AI tool add a task
+    - Undo a task an AI tool added
+    - Let an AI tool add a task to another list
+    - Let an AI tool add a task to a project's list
+    - Stop AI tools from running commands
 5. **Answer an AI tool's request in a list, with the text still there**
+    - Read the explanation of a command an AI tool asks to run
+    - Deny a command an AI tool asks to run
 6. **Let an AI tool read a console window's conversation while you type**
+    - Let an AI tool read the terminal while you type
+    - Turn the AI tools off
 
 ## NVDA only
 

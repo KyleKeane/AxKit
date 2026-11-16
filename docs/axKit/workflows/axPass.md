@@ -9,96 +9,111 @@ command's in this version of axKit.
 
 ## Unlock a password database and change an entry
 
-Starts with: Open axPass with the file test.kdbx.
+### Unlock a password database
 
-1. Type: wrong
+1. Type: test-master-1
 2. Press Enter.
-    You hear: Unlocking test.
-3. Type: test-master-1
-4. Press Enter.
     You hear: test, 3 items, Email, group, 1 item.
-5. Press F5 (Refresh; Session menu).
+
+### Read the database again
+
+1. Press F5 (Refresh; Session menu).
     You hear: Refreshed: test, 3 items.
-6. Press Right.
+
+### Open a group and go back up
+
+1. Press Right.
     You hear: Email, 1 item, Gmail.
-7. Press Right.
+2. Press Right.
     You hear the sound Edge.
-8. Press Left.
+3. Press Left.
     You hear: test, 3 items, Email, group, 1 item.
-9. Press Right.
-10. Press Enter.
-11. Press Down 3 times.
-12. Press Escape.
-13. Press Ctrl+Tab (Switch between the navigator and the detail pane).
-14. Press Ctrl+Shift+Tab (Switch between the navigator and the detail pane).
-15. Press F6 2 times (Switch between the navigator and the detail pane).
-16. Press Tab.
-17. Press Home.
-18. Press Down.
-19. Press Enter.
-20. Type: sam2
-21. Press Enter.
+4. Press Right.
+
+### Read an entry's fields
+
+1. Press Enter.
+2. Press Down 3 times.
+
+### Move between the entries and the fields
+
+1. Press Ctrl+Tab (Switch between the navigator and the detail pane).
+2. Press Ctrl+Shift+Tab (Switch between the navigator and the detail pane).
+3. Press F6 2 times (Switch between the navigator and the detail pane).
+
+### Change a user name
+
+1. Press Tab.
+2. Press Home.
+3. Press Down.
+4. Press Enter.
+5. Type: sam2
+6. Press Enter.
     You hear: UserName: sam2.
-22. Press Ctrl+Z (Undo; Actions menu).
+
+### Undo a change
+
+1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: UserName: sam2.
-23. Press Ctrl+N.
-    You hear: An entry has KeePass's own fields here.
-24. Press Escape.
-25. Press F2.
-26. Type: a/b
-27. Press Enter.
-    You hear: A name cannot hold a slash.
-28. Press Escape.
-29. Press F2.
-30. Type: Gmail personal
-31. Press Enter.
+
+### Rename an entry
+
+1. Press Escape.
+2. Press F2.
+3. Type: Gmail personal
+4. Press Enter.
     You hear: Renamed Gmail personal.
-32. Press Ctrl+N.
-33. Type: Bank
-34. Press Enter.
+
+### Add an entry
+
+1. Press Ctrl+N.
+2. Type: Bank
+3. Press Enter.
     You hear: Added Bank.
-35. Press Delete.
+
+### Move an entry to the Recycle Bin and take it back
+
+1. Press Delete.
     You hear: Moved Bank to the Recycle Bin.
-36. Press Ctrl+Z (Undo; Actions menu).
+2. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Moved Bank to the Recycle Bin.
-37. Press Up.
-38. Press Tab.
-39. Press Home.
-40. Press Down 2 times.
-41. Press Enter.
-42. Press Alt+G.
+
+### Set a generated password
+
+1. Press Up.
+2. Press Tab.
+3. Press Home.
+4. Press Down 2 times.
+5. Press Enter.
+6. Press Alt+G.
     You hear: Generated a password of 20 characters.
-43. Press Enter.
+7. Press Enter.
     You hear: Password set for Gmail personal.
-44. Press Enter.
-45. Type: one
-46. Press Enter.
-47. Type: two
-48. Press Enter.
-    You hear: The two passwords differ: nothing changed.
-49. Press Escape.
-50. Type: b
-51. Press Left.
-52. Type: w
-53. Press Delete.
-54. Press Enter.
-55. Press Home.
-56. Press Right.
-57. Type: g
-58. Press Ctrl+M.
-59. Press Down.
-60. Press Enter.
+
+### Move an entry to another group
+
+1. Press Home.
+2. Press Right.
+3. Type: g
+4. Press Ctrl+M.
+5. Press Down.
+6. Press Enter.
     You hear: Moved Gmail personal to Work.
-61. Press Ctrl+Z (Undo; Actions menu).
+7. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Moved Gmail personal to Work.
-62. Press Left.
-63. Press Ctrl+L (Lock; Actions menu).
+8. Press Left.
+
+### Lock the database
+
+1. Press Ctrl+L (Lock; Actions menu).
     You hear: Locked.
-64. Press Escape.
+2. Press Escape.
 
 ## Agree to the reminder before the first unlock
 
 Starts with: Open axPass with the file test.kdbx.
+
+### Agree to the reminder and unlock the database
 
 You hear: Before axPass connects to KeePassXC.
 1. Press Tab.
@@ -112,33 +127,38 @@ You hear: Before axPass connects to KeePassXC.
 6. Press Enter.
     You hear: test, 1 item, Email, group, 0 items.
 7. Close the window.
-8. Open axPass with the file test.kdbx.
 
 ## Read an entry in full and come back to the same database
 
 Starts with: Open axPass with the file test.kdbx.
 
-1. Type: test-master-1
-2. Press Enter.
-    You hear: test, 1 item, Email, group, 1 item.
-3. Press Right.
-    You hear: Email, 1 item, Gmail.
-4. Press Enter.
-5. Press Down 2 times.
-6. Press Ctrl+Q (Read in full).
+### Hear one field of an entry
+
+1. Press Enter.
+2. Press Down 2 times.
+3. Press Ctrl+Q (Read in full).
     You hear: Password, password, hidden.
-7. Press Escape.
-8. Press Ctrl+Q (Read in full).
+
+### Hear every field of an entry at once
+
+1. Press Escape.
+2. Press Ctrl+Q (Read in full).
     You hear words such as: Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes.
-9. Press Ctrl+L (Lock; Actions menu).
+
+### Choose when axPass locks by itself
+
+1. Press Ctrl+L (Lock; Actions menu).
     You hear: Locked.
-10. Press Escape.
-11. Choose 5 minutes in the Options menu, Lock after.
+2. Press Escape.
+3. Choose 5 minutes in the Options menu, Lock after.
     You hear: axPass locks after 5 minutes without a key.
-12. Choose Never in the Options menu, Lock after.
+4. Choose Never in the Options menu, Lock after.
     You hear: axPass locks only on Ctrl+L.
-13. Close the window.
-14. Open axPass.
-15. Type: test-master-1
-16. Press Enter.
+5. Close the window.
+
+### Open the last database again without naming it
+
+1. Open axPass.
+2. Type: test-master-1
+3. Press Enter.
     You hear: test, 1 item, Email, group, 1 item.

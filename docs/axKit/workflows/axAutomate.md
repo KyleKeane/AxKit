@@ -9,27 +9,31 @@ command's in this version of axKit.
 
 ## Browse a folder of workflows and read their steps
 
-Starts with: Open axAutomate with the folder flows.
+### Open a folder of workflows
 
-1. Press Down.
-2. Press Up, Right.
+1. Open axAutomate with the folder flows.
+2. Press Down.
+
+### Open a workflow and read its steps
+
+1. Press Up, Right.
     You hear: axDown, 1 workflow, 0 folders, 02-palette, workflow, 6 steps.
-3. Press Enter.
+2. Press Enter.
     You hear: 02-palette, 6 steps, 1. Start down.
-4. Press Down 4 times.
-5. Press Up, Tab.
-6. Press Down.
-7. Press Escape.
-8. Press Delete.
-    You hear: This version views and runs the workflows.
-9. Press Left 2 times.
-10. Close the window.
+3. Press Down 4 times.
+
+### Read a step's details
+
+1. Press Up, Tab.
+2. Press Down.
+3. Press Escape.
 
 ## Run a workflow and hear how it went
 
-Starts with: Open axAutomate with the folder flows.
+### Run every workflow of a folder
 
-1. Press F5.
+1. Open axAutomate with the folder flows.
+2. Press F5.
     You hear: Running 6 workflows.
     You hear: 01-passes passed, 4 steps.
     You hear: Step 2 failed: Expect the focus: Nothing like this. Not within 10 s.
@@ -39,49 +43,47 @@ Starts with: Open axAutomate with the folder flows.
     You hear: Later cannot run: step 2 has otherwise steps.
     You hear: 06-bad cannot run: the step "wait 2s" needs a whole number of milliseconds.
     You hear: Run finished: 3 of 6 workflows passed, 1 failed, 2 could not run.
-2. Press Down.
-3. Press Tab.
-4. Press Escape, Right.
+
+### Read how a workflow's last run went
+
+1. Press Down.
+2. Press Tab.
+3. Press Escape, Right.
     You hear: 02-fails, 3 steps, 1. Start down.
-5. Press Down.
-6. Press Tab, Down.
-7. Press Escape.
-8. Press Ctrl+R (The last run's report; Actions menu).
-9. Press Escape.
-10. Press Left, Down.
-11. Press Right, F5.
+4. Press Down.
+5. Press Tab, Down.
+6. Press Escape.
+
+### Read the report of a workflow's last run
+
+1. Press Ctrl+R (The last run's report; Actions menu).
+2. Press Escape.
+
+### Run one workflow and stop it partway
+
+1. Press Left, Down.
+2. Press Right, F5.
     You hear: Running 03-waits.
-12. Press Escape.
+3. Press Escape.
     You hear: Stopping after the current step.
     You hear: 03-waits stopped.
-13. Press Left.
-14. Press End, Right, F5.
-    You hear: This workflow cannot run: the step "wait 2s" needs a whole number of milliseconds.
-15. Press Left, Up, Right, F5.
-    You hear: This workflow cannot run: step 2 has otherwise steps.
-16. Close the window.
-17. Open axAutomate with the folder cmds.
-18. Press Right.
-    You hear: 07-commands, 1 step.
-19. Press F5.
-20. Press Enter.
-    You hear: Not run.
-21. Press F5.
-22. Press Tab.
-23. Press Space.
+4. Press Left.
+
+### Run a workflow that runs commands
+
+1. Press F5.
+2. Press Tab.
+3. Press Space.
     You hear: Running 07-commands; Escape stops it.
     You hear: 07-commands passed, 1 step.
-24. Press Left, Down.
-25. Press Tab.
-26. Press Escape, Right, F5.
-    You hear: This workflow cannot run: step 1 writes outside the run's folder.
-27. Close the window.
 
 ## Close axAutomate and come back to the folder you had
 
-Starts with: Open axAutomate with the folder flows. Close the window. Open axAutomate.
+### Open a folder of workflows
 
-1. Press Right.
-    You hear: 02-two, 3 steps, 1. Start down.
+1. Open axAutomate with the folder flows.
 2. Close the window.
-3. Open axAutomate.
+
+### Come back to the folder used last
+
+1. Open axAutomate.

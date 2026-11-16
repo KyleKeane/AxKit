@@ -7,6 +7,7 @@ mkdir flows
 file flows\02-two.txt # A workflow.\n\nstart down\nwait 100\nclose
 file home\AxKit\axAutomate.json {"checkForUpdates": false}
 
+# Goal: Open a folder of workflows
 # AU-4.1 Started on a folder: it opens, and is the folder used last from then on.
 start automate {temp}\flows
 expect state "title":"flows - axAutomate"
@@ -14,10 +15,12 @@ expect focus 02-two, workflow, 3 steps
 close
 expect closed
 
+# Goal: Come back to the folder used last
 # 4.2 Started with no folder: the folder used last, at its first row.
 start automate
 expect state "title":"flows - axAutomate"
 expect focus 02-two, workflow, 3 steps
+# Check: A window closed inside a workflow opens at the folder again next time
 # Inside the workflow when the window closes (Alt+F4): the next start is at the folder again, not in the workflow.
 keys right
 expect said 02-two, 3 steps, 1. Start down

@@ -11,6 +11,7 @@ run "C:\Program Files\KeePassXC\keepassxc-cli.exe" db-create -q -p test.kdbx < t
 run "C:\Program Files\KeePassXC\keepassxc-cli.exe" mkdir -q test.kdbx Email < once.txt
 start pass {temp}\test.kdbx
 
+# Goal: Agree to the reminder and unlock the database
 expect said Before axPass connects to KeePassXC
 keys tab
 expect said I understand that axPass
@@ -27,6 +28,7 @@ keys enter
 expect said ! test, 1 item, Email, group, 0 items
 close
 
+# Check: A second start asks nothing before the unlock
 # The second start asks nothing: the unlock notice comes first.
 start pass {temp}\test.kdbx
 expect state Unlock test

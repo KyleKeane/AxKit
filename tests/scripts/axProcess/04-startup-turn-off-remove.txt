@@ -16,36 +16,43 @@ start process
 check commands
 expect state "status":["Processes,
 
+# Goal: List the programs that start with Windows
 # 4.1 Ctrl+3: the stand-in's four entries and no other, so nothing of this computer's own is listed.
 keys ctrl+3
 expect said ! Startup, 4. Check Alpha, enabled, current user's Run key
 expect list Check Beta, enabled, current user's Run key
 expect list Check Everyone, enabled, computer's Run key
 expect list Check Morning, enabled, your Startup folder
+# Check: The Startup view offers its own commands and no other view's
 # The view's commands, and none of the other views'.
 expect commands Turn off
 expect commands Turn on
 expect commands Remove
 refuse commands End process
 
+# Goal: Turn off a program that starts with Windows
 # 4.4 Turn off: one sentence, the line reads disabled, the selection stays; the switch is Task Manager's byte 03.
 menu Turn off
 expect said ! Check Alpha turned off: it no longer starts with Windows
 expect focus Check Alpha, disabled, current user's Run key
 expect focus Startup, 4
 run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" off
+# Check: Turning off a program already off is said and changes nothing
 # Turned off already: said, nothing done.
 menu Turn off
 expect said ! Check Alpha is already turned off
 
+# Goal: Turn a startup program on again
 # 4.5 Turn on: the entry starts again; the switch is byte 02, and nothing was deleted.
 menu Turn on
 expect said ! Check Alpha turned on: it starts with Windows again
 expect focus Check Alpha, enabled, current user's Run key
 run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" on
+# Check: Turning on a program already on is said and changes nothing
 menu Turn on
 expect said ! Check Alpha is already turned on
 
+# Check: The remove question's default answer is Cancel and keeps the entry
 # 4.6 Delete asks first, naming the entry, its command and its place, and that Turn off is the gentler way; Enter is
 # Cancel, and the entry stays.
 keys delete
@@ -60,6 +67,7 @@ keys enter
 expect state "notice":null
 expect focus Check Alpha, enabled, current user's Run key
 run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" on
+# Check: Closing the remove question keeps the entry too
 # Escape is Cancel too.
 keys delete
 expect state "notice":"Remove Check Alpha
@@ -68,6 +76,7 @@ keys escape
 expect state "notice":null
 expect focus Startup, 4
 
+# Goal: Remove a program from those that start with Windows
 # 4.7 Delete, then Remove (Alt+R): one sentence, the entry gone with its switch, the selection on the entry after it.
 keys delete
 expect state "notice":"Remove Check Alpha
@@ -79,6 +88,7 @@ expect focus Check Beta, enabled, current user's Run key
 refuse list Check Alpha
 run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" removed
 
+# Check: An entry set for every user is refused with where to change it
 # 4.8 An entry set for every user of the computer: each command says so and names Windows' own place; no question is
 # asked, nothing is tried, and the entry is as it was.
 keys down
@@ -91,6 +101,7 @@ expect state "notice":null
 expect focus Check Everyone, enabled, computer's Run key
 run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" computer
 
+# Goal: Turn a Startup folder shortcut off and on again from its details
 # 4.9 A file of the Startup folder: turned off, its details say Disabled and offer Turn on; removed, the file is
 # deleted, and the selection goes to the entry before it, since it was the last.
 keys down
@@ -106,6 +117,7 @@ keys alt+n
 expect said ! Check Morning turned on: it starts with Windows again
 expect state "notice":null
 expect focus Check Morning, enabled, your Startup folder
+# Goal: Remove a shortcut from the Startup folder
 keys delete
 expect state "notice":"Remove Check Morning from the programs that start with Windows?"
 expect state The file in the Startup folder is deleted for good, not sent to the Recycle Bin.
@@ -116,11 +128,13 @@ expect focus Startup, 2
 expect focus Check Everyone, enabled, computer's Run key
 run if exist "home\AxKit\startup\yours\Check Morning.lnk" (exit 1) else (exit 0)
 
+# Check: Ending a process from the Services view says which view first
 # PR-6.2 Delete in the Services view is still the Processes view's command, and says which view first.
 keys ctrl+2
 expect said ! Services,
 keys delete
 expect said ! Processes view first: Ctrl+1
 
+# Check: The stand-in's registry key is deleted at the end
 # The stand-in's key deleted: nothing of the run is left in the registry.
 run powershell -NoProfile -ExecutionPolicy Bypass -File stand-in.ps1 "{temp}\home" clean

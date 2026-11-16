@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: the scripts of axProcess, axPass, axMCP, axAutomate and the AI tools name their goals and checks (88 goals, 66 checks), so the workflow pages show these apps as how-tos.
 - axKit: the automated checks of axCalc, axJSON, axGIT, axMedia and axPreview now name their goals and checks, so the workflow pages show those apps' tasks one by one.
 - For developers: the workflow pages are written to be heard. A window is named by its app ("Go to the axFile window."), a start leaves out the options that only serve the check, keys are named as on a keyboard (Page Down, NVDA+A), equal presses in a row are one line ("Press Tab 7 times."), typed text ends its line ("Type: apple"), words a script cut short read "You hear words such as: ...", and the commands every window shares stand once on docs/axKit/window-commands.md, under "In every window".
 - For developers: a run of the automated checks can keep a trace of what a goal came to: each input step and, under it, everything the windows said, without times. A goal or check marked `# Stable` in its script has its trace kept in tests/traces, written by `--traces write` and never by hand; every run on the hidden desktop then holds the goal against it and fails the goal when a line differs or the kept trace is missing. `--traces off` leaves it alone, as the NVDA tier always does. No goal is marked yet: the two goals of axDown's script for Find and Go to line were tried and came out differently from run to run, so they keep no trace.

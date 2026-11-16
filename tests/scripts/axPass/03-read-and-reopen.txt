@@ -21,6 +21,7 @@ expect said ! test, 1 item, Email, group, 1 item
 keys right
 expect said ! Email, 1 item, Gmail
 
+# Goal: Hear one field of an entry
 # 2.3 Ctrl+Q on the Password field: its line, the password hidden.
 keys enter
 expect focus Title, text, Gmail
@@ -29,12 +30,14 @@ expect focus Password, password, hidden
 keys ctrl+q
 expect said ! Password, password, hidden
 
+# Goal: Hear every field of an entry at once
 # 2.3 Escape; Ctrl+Q in the navigator: every field, the password "hidden".
 keys escape
 expect focus Gmail, sam
 keys ctrl+q
 expect said ! Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes:
 
+# Goal: Choose when axPass locks by itself
 # 1.3, 5.3 Locked, the Lock after setting says what it does.
 keys ctrl+l
 expect said ! Locked
@@ -46,6 +49,7 @@ menu Never
 expect said ! axPass locks only on Ctrl+L
 close
 
+# Goal: Open the last database again without naming it
 # 5.4 Started again without a file: the unlock notice for the same database, which the password opens.
 start pass
 expect state Unlock test

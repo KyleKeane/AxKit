@@ -17,6 +17,7 @@ start process
 expect state "status":["Processes,
 expect said Processes,
 
+# Goal: Jump to a process by typing its name
 # 1.9b Letters typed in the list: the first process whose name starts with them (every Windows runs svchost, many of
 # them); a letter after a pause: the next name starting with it. By name, so that the next one is a svchost too.
 menu Name
@@ -27,9 +28,11 @@ expect focus "value":"svchost,
 wait 1100
 type s
 expect focus "value":"svchost,
+# Check: Letters typed in the list are not announced
 # Nothing is announced by the letters: the list's own selection is what NVDA reads.
 expect quiet 1500
 
+# Goal: Read a startup program's details
 # 4.2 Ctrl+3, Enter on the startup program: its details, the command, where it is set and whether it is enabled, with
 # what can be done to it; Escape closes them.
 keys ctrl+3

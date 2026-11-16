@@ -9,121 +9,140 @@ command's in this version of axKit.
 
 ## Find and end a process
 
-Starts with: Open axProcess.
+### Hear how much memory is in use
 
-You hear words such as: Processes.
 1. Press Ctrl+Q (Summary; Actions menu).
     You hear: GB in use.
-2. Press F5 (Refresh; Session menu).
+
+### Read the list again
+
+1. Press F5 (Refresh; Session menu).
     You hear words such as: Refreshed: Processes.
-3. Choose Name in the Options menu, Sort processes by.
+
+### Sort the processes by name, processor or memory
+
+1. Choose Name in the Options menu, Sort processes by.
     You hear: Sorted by name.
-4. Choose Processor in the Options menu, Sort processes by.
+2. Choose Processor in the Options menu, Sort processes by.
     You hear: Sorted by processor.
-5. Choose Memory in the Options menu, Sort processes by.
+3. Choose Memory in the Options menu, Sort processes by.
     You hear: Sorted by memory.
-6. Press Ctrl+F (Find in the list).
-7. Type: PING
-8. Press Enter 2 times.
-9. Press Escape.
-10. Press Delete.
-11. Press Escape.
-12. Press Delete.
-13. Press Enter.
+
+### Find a process and read its details
+
+1. Press Ctrl+F (Find in the list).
+2. Type: PING
+3. Press Enter 2 times.
+4. Press Escape.
+
+### End a process
+
+1. Press Delete.
+2. Press Enter.
     You hear: Ended PING.
-14. Press Ctrl+S.
-    You hear: Nothing to save here. F5 refreshes, Delete ends a process.
 
 ## Manage services and startup programs
 
 Starts with: Open axProcess.
 
+### Show the services
+
 1. Press Ctrl+2 (Services; Navigation menu).
-2. Press Ctrl+F (Find in the list).
-3. Type: (EventLog)
-4. Press Enter 2 times.
-5. Press Escape.
-6. Press Delete.
-    You hear: Processes view first: Ctrl+1.
-7. Press Ctrl+E.
-    You hear: Processes view first: Ctrl+1.
-8. Press Ctrl+2 (Services; Navigation menu).
-9. Press Ctrl+1 (Processes; Navigation menu).
-10. Press Ctrl+3 (Startup; Navigation menu).
+
+### Read a service's details
+
+1. Press Ctrl+F (Find in the list).
+2. Type: (EventLog)
+3. Press Enter 2 times.
+4. Press Escape.
+
+### Go back from the services to the processes
+
+1. Press Ctrl+2 (Services; Navigation menu).
+2. Press Ctrl+1 (Processes; Navigation menu).
+
+### Show the programs that start with Windows
+
+1. Press Ctrl+3 (Startup; Navigation menu).
     You hear: Startup, 1. Morning, enabled, your Startup folder.
-11. Press F1 (Keyboard shortcuts; Help menu).
-12. Press Escape.
-13. Press Ctrl+1 (Processes; Navigation menu).
-14. Press Tab.
+
+### Read the keyboard shortcuts
+
+1. Press F1 (Keyboard shortcuts; Help menu).
+2. Press Escape.
+
+### Go round the views one after another
+
+1. Press Ctrl+1 (Processes; Navigation menu).
+2. Press Tab.
     You hear words such as: Services.
-15. Press Tab.
+3. Press Tab.
     You hear words such as: Startup.
-16. Press Tab.
+4. Press Tab.
     You hear words such as: Processes.
-17. Press Shift+Tab.
+5. Press Shift+Tab.
     You hear words such as: Startup.
-18. Press Ctrl+2 (Services; Navigation menu).
-19. Press Home.
-20. Press Up.
-    You hear the sound Edge.
-21. Press End.
-22. Press Down.
-    You hear the sound Edge.
-23. Press Ctrl+2 (Services; Navigation menu).
-24. Type: windows event l
-25. Press End.
-26. Type: w
+
+### Jump to a service by typing its name
+
+1. Press Ctrl+2 (Services; Navigation menu).
+2. Type: windows event l
 
 ## Jump to a process by typing its name and read a startup program's details
 
 Starts with: Open axProcess.
 
-You hear words such as: Processes.
+### Jump to a process by typing its name
+
 1. Choose Name in the Options menu, Sort processes by.
     You hear: Sorted by name.
 2. Press Home.
 3. Type: svc
 4. Type: s
-5. Press Ctrl+3 (Startup; Navigation menu).
+
+### Read a startup program's details
+
+1. Press Ctrl+3 (Startup; Navigation menu).
     You hear: Startup, 1. Morning notes, enabled, your Startup folder.
-6. Press Enter.
-7. Press Escape.
+2. Press Enter.
+3. Press Escape.
 
 ## Turn a startup program off, on again, or remove it
 
 Starts with: Open axProcess.
 
+### List the programs that start with Windows
+
 1. Press Ctrl+3 (Startup; Navigation menu).
     You hear: Startup, 4. Check Alpha, enabled, current user's Run key.
-2. Choose the menu item Turn off.
+
+### Turn off a program that starts with Windows
+
+1. Choose the menu item Turn off.
     You hear: Check Alpha turned off: it no longer starts with Windows.
-3. Choose the menu item Turn off.
-    You hear: Check Alpha is already turned off.
-4. Choose the menu item Turn on.
+
+### Turn a startup program on again
+
+1. Choose the menu item Turn on.
     You hear: Check Alpha turned on: it starts with Windows again.
-5. Choose the menu item Turn on.
-    You hear: Check Alpha is already turned on.
-6. Press Delete.
-7. Press Enter.
-8. Press Delete.
-9. Press Escape.
-10. Press Delete.
-11. Press Alt+R.
+
+### Remove a program from those that start with Windows
+
+1. Press Delete.
+2. Press Alt+R.
     You hear: Check Alpha removed from the programs that start with Windows.
-12. Press Down.
-13. Choose the menu item Turn off.
-    You hear: Check Everyone is set for every user of this computer: turning it off needs administrator rights. Use Task Manager's Startup apps tab, or Settings, Apps, Startup.
-14. Press Delete.
-    You hear: Check Everyone is set for every user of this computer: removing it needs administrator rights. Task Manager's Startup apps tab, or Settings, Apps, Startup, turns it off.
-15. Press Down.
-16. Choose the menu item Turn off.
+
+### Turn a Startup folder shortcut off and on again from its details
+
+1. Press Down.
+2. Choose the menu item Turn off.
     You hear: Check Morning turned off: it no longer starts with Windows.
-17. Press Enter.
-18. Press Alt+N.
+3. Press Enter.
+4. Press Alt+N.
     You hear: Check Morning turned on: it starts with Windows again.
-19. Press Delete.
-20. Press Alt+R.
+
+### Remove a shortcut from the Startup folder
+
+1. Press Delete.
+2. Press Alt+R.
     You hear: Check Morning removed from the programs that start with Windows.
-21. Press Ctrl+2 (Services; Navigation menu).
-22. Press Delete.
-    You hear: Processes view first: Ctrl+1.

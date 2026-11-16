@@ -34,6 +34,7 @@ keys enter
 expect said axAutomate may read axKit
 expect mcp "app": "axTerminal"
 
+# Goal: Let an AI tool read the terminal while you type
 # The focus is back in the empty command field: the text is the terminal's, and the field is named beside it.
 expect focus Command
 mcp call axkit_window_text {"window":"{window}"}
@@ -41,6 +42,7 @@ expect mcp marker-for-the-ai-tools
 mcp call axkit_window_text {"window":"{window}"}
 expect mcp "name": "Command"
 
+# Goal: Turn the AI tools off
 # Off again from the menu.
 menu Let AI tools read and open axKit
 expect said AI tools off

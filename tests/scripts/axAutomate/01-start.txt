@@ -8,6 +8,7 @@ mkdir flows\axDown
 file flows\axDown\02-palette.txt # axDown: the palette.\n\nstart down\nkeys ctrl+shift+p\n\n# 2.2 The trust question may come.\ntry said trust\niffound wait 1500\niffound keys enter\nclose
 file flows\10-json.workflow.json {"format": "axkit-workflow 1", "title": "A workflow file", "steps": [{"do": "menu", "name": "Close all windows", "report": "Not closed"}]}
 
+# Goal: Open a folder of workflows
 # 1. The folder: its folders first, then its workflows, with their counts.
 start automate {temp}\flows
 check commands
@@ -16,6 +17,7 @@ expect state "title":"flows - axAutomate"
 keys down
 expect focus A workflow file, workflow, 1 step
 
+# Goal: Open a workflow and read its steps
 # 2. Into the folder and a workflow: one row per step, the then block after its step.
 keys up right
 expect said axDown, 1 workflow, 0 folders, 02-palette, workflow, 6 steps
@@ -30,12 +32,14 @@ expect focus 3. Expect said: trust, may not come, then 2 steps
 keys down
 expect focus 3.1 then: Wait 1.5 seconds
 
+# Goal: Read a step's details
 # 3. A step's details, and what this version refuses.
 keys up tab
 expect focus Step 3
 keys down
 expect focus Does: expect said
 keys escape
+# Check: Deleting a step is refused in this version
 keys delete
 expect said This version views and runs the workflows
 keys left left
