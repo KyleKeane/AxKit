@@ -78,7 +78,7 @@ menu Say the event sources
 expect said Hooks: not passed, version.
 run findstr /c:"for Claude Code's version, which has not answered" home\AxKit\logs\axClaude.log
 wait 3000
-keys ctrl+shift+r
+do Force Claude to restart
 expect state "notice":"Force Claude to restart?"
 keys enter
 expect said Restarting
@@ -93,7 +93,7 @@ use 1
 menu Events from Claude Code's hooks
 expect said ! Events from Claude Code's hooks off, from the next start of Claude
 run del a\go1 a\go2
-keys ctrl+shift+r
+do Force Claude to restart
 expect state "notice":"Force Claude to restart?"
 keys enter
 expect said Restarting
@@ -104,7 +104,7 @@ expect said Hooks: off.
 # On again, and Claude started again: a new pipe and a new secret for this start, and its start event arrives.
 menu Events from Claude Code's hooks
 expect said ! Events from Claude Code's hooks on, from the next start of Claude
-keys ctrl+shift+r
+do Force Claude to restart
 expect state "notice":"Force Claude to restart?"
 keys enter
 expect said Restarting

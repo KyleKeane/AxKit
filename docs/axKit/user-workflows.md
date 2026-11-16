@@ -188,7 +188,10 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   `AxKitForm.RunCommandKey` asks them. A menu row's chord acts when no command of the list has it (the window base
   or the window handles it itself: F1, Ctrl+S) or when one that has it acts. A row of keys alone acts by a chord
   when the first command that acts on it carries the row's label. `now` is the first chord that acts; empty when
-  none does or the row has no chord.
+  none does or the row has no chord. While the window's key test runs (AX-8.12) a key is named and nothing is run:
+  every row's `now` is empty and the listing gives "Key test" where a notice's title stands, so a `do` step waits
+  there as it does at a notice, the converter converts no press of a key test, and a test fails on a `do` step
+  between a script's `menu Test a key` and the Escape that ends it (2026-11-16, `repairs.md` R-60).
 - WF-2.6 **The inventory**, `docs/axKit/window-commands.json` (section 5.3): by app, the rows the windows listed,
   without what is state (`checked`, `now`). It is produced from live windows by a run of the automation on a
   desktop of its own, never by constructing a form in a test (a hotkey window's handle registers a system hotkey

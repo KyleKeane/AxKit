@@ -43,9 +43,9 @@ expect state working Jitterbugging
 wait 2500
 refuse said ♪ BackgroundStart
 refuse said ♪ BackgroundFinish
-keys ctrl+b
+do What runs in the background
 expect said ! 1 workflow in the background. Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done, 20m18s
-keys f8
+do Say the status
 expect said ! 1 workflow in the background
 refuse said 14 percent
 
@@ -57,7 +57,8 @@ expect state Claude: ready | 1 workflow in the background | auto mode on
 refuse said Waiting for
 refuse said axkit-design-map-and-verify
 refuse said ♪ BackgroundFinish
-keys ctrl+2 ctrl+end
+do Conversation
+keys ctrl+end
 refuse text Waiting for
 refuse text axkit-design-map-and-verify
 refuse text auto mode on
@@ -67,8 +68,8 @@ refuse text auto mode on
 file wf\go4 x
 expect said ♪ BackgroundFinish
 refuse state in the background
-keys ctrl+1
-keys ctrl+b
+do Message field
+do What runs in the background
 expect said ! Nothing runs in the background
 
 # Goal: Show Claude Code's live progress rows in the conversation
@@ -83,7 +84,8 @@ expect said ♪ BackgroundStart
 refuse said ♪ Click
 refuse said axkit-design-map-and-verify
 refuse said Waiting for
-keys ctrl+2 ctrl+end
+do Conversation
+keys ctrl+end
 expect text Waiting for 1 dynamic workflow to finish
 expect text axkit-design-map-and-verify 88%
 refuse text auto mode on

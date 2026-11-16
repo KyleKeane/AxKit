@@ -17,7 +17,7 @@ start claude {temp}\bg --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
 expect state Claude: ready | auto mode on
 refuse state in the background
-keys ctrl+b
+do What runs in the background
 expect said ! Nothing runs in the background
 refuse said ♪ BackgroundStart
 expect commands What runs in the background, Actions, Ctrl\u002BB
@@ -39,9 +39,9 @@ expect state Claude: ready | 3 in the background: 1 shell, 2 agents | auto mode 
 expect quiet 1500
 refuse said general-purpose started
 # On demand: Ctrl+B, the number, then each agent's type and description; F8, the status bar.
-keys ctrl+b
+do What runs in the background
 expect said ! 3 in the background: 1 shell, 2 agents. general-purpose: Checking callers. Explore: Reading the spec
-keys f8
+do Say the status
 expect said ! Claude: ready | 3 in the background: 1 shell, 2 agents | auto mode on
 menu What runs in the background
 expect said ! 3 in the background: 1 shell, 2 agents. general-purpose: Checking callers. Explore: Reading the spec
@@ -70,7 +70,7 @@ file bg\go4 x
 expect said ♪ BackgroundFinish
 expect said Reading the spec finished. 1 shell finished
 refuse state in the background
-keys ctrl+b
+do What runs in the background
 expect said ! Nothing runs in the background
 said
 wait 8000

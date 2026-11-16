@@ -13,7 +13,7 @@ file claude.cmd @echo off\nif "%~1"=="--version" goto version\nfor /f %%a in ('e
 start claude {temp}\order --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
 file order\go1 x
-keys ctrl+2
+do Conversation
 expect text "claude: two","claude: three"
 
 # Check: What Claude writes waits while a line is selected
@@ -34,12 +34,12 @@ expect text "caretLine":0
 # Check: A message sent from the top of the conversation goes to its end
 # A message sent with the caret left at the top of the conversation: its block stands at the end, after the last
 # line, and the reply after it.
-keys ctrl+1
+do Message field
 type hello there
 keys enter
 expect said Sent
 file order\go4 x
-keys ctrl+2
+do Conversation
 expect text "claude: five","# Input 1","hello there","","# Output 1 Reply from Claude","","claude: six"
 refuse text "hello there","","# Output 1 Reply from Claude","","claude: one
 
@@ -52,7 +52,7 @@ type and again
 keys enter
 expect said Sent
 file order\go5 x
-keys ctrl+2
+do Conversation
 expect text "claude: six","# Input 2","_ start of copied line from conversation history _","Line 1 of 12:","claude: started","_ start of comment on the copied line _","and again","","# Output 2 Reply from Claude",""
 # The stand-in's own row for the message is no echo of the several lines sent, so it stays; the reply ends the text.
 expect text "# Output 2 Reply from Claude","","you: and again","claude: seven"]

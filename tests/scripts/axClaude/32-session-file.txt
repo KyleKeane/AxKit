@@ -19,10 +19,12 @@ file scenario.json {"version":"2.1.324 (stand-in)","session":"11111111-2222-4333
 
 start claude {temp}\sf --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
+# Check: No session file is known before a message is sent
 # Before a message is sent nothing is looked for: no file is known.
 menu Say the event sources
 expect said Session file: not found.
 
+# Goal: Hear whether Claude Code's session file is followed
 # The first turn. The message's letters are what the folder rule looks for; the stand-in writes the prompt's entry as
 # Claude takes the message up, and the reply's entry and the turn's end after the reply's rows.
 type Say ok
@@ -35,12 +37,14 @@ wait 2000
 menu Say the event sources
 expect said Session file: followed, 3 entries.
 
+# Check: Three broken lines stop the reading of the session file
 # Three lines that are no JSON in a row: the reader stops for this session and says why in one word (EG-3.6).
 run for /r home\.claude\projects %f in (*.jsonl) do @(echo not json one>>"%f"& echo not json two>>"%f"& echo not json three>>"%f")
 wait 2000
 menu Say the event sources
 expect said Session file: stopped, json.
 
+# Goal: Turn the grounding in Claude Code's session file off and on again
 # The switch off: no record, said as off. On again: a new reader, which knows no file until a message is sent.
 menu Ground the conversation in Claude Code's session file
 expect said ! Grounding in Claude Code's session file off
@@ -51,6 +55,7 @@ expect said ! Grounding in Claude Code's session file on
 menu Say the event sources
 expect said Session file: not found.
 
+# Check: After the switch the file is read from where it then stood
 # The second turn: the file is found again by the new message, and read from where it stood when the switch went
 # on: the three entries of this turn join the three counted before, and the broken lines are never read again.
 type Say more
@@ -62,5 +67,5 @@ wait 2000
 menu Say the event sources
 expect said Session file: followed, 6 entries.
 # The conversation is the screen's, as before: both replies stand in it.
-keys ctrl+2
+do Conversation
 expect text claude: more

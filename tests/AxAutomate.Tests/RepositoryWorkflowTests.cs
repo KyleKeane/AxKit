@@ -29,6 +29,43 @@ public sealed class RepositoryWorkflowTests
     }
 
     [Fact]
+    public void No_script_runs_a_command_by_name_inside_a_key_test()
+    {
+        // AX-8.12, R-60: in the key test a key is named and nothing is run, so a press there is a keys step. A do
+        // step would wait at the window, and through the AI tools it would ask for the command itself.
+        var inside = new List<string>();
+        foreach (var script in RepositoryScripts())
+        {
+            var testing = false;
+            var number = 0;
+            foreach (var line in File.ReadLines(script))
+            {
+                number++;
+                var step = line.Trim();
+                while (step.StartsWith("iffound ", StringComparison.Ordinal))
+                {
+                    step = step[8..].TrimStart();
+                }
+
+                if (step == "menu Test a key" || step == "do Test a key")
+                {
+                    testing = true;
+                }
+                else if (testing && step.StartsWith("keys ", StringComparison.Ordinal) && step[5..].Split(' ').Contains("escape"))
+                {
+                    testing = false;
+                }
+                else if (testing && step.StartsWith("do ", StringComparison.Ordinal))
+                {
+                    inside.Add($"{Relative(script)} line {number}: {step}");
+                }
+            }
+        }
+
+        Assert.Empty(inside);
+    }
+
+    [Fact]
     public void The_record_is_well_formed()
     {
         // WF-6, format 5.5. The file is made by the first recorded run; an entry no script has any more fails

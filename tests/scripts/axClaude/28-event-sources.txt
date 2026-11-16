@@ -20,11 +20,13 @@ expect said Ready
 expect commands Events from Claude Code's hooks, Options, Developer, checked
 expect commands Ground the conversation in Claude Code's session file, Options, Developer, checked
 expect commands Say the event sources, Options, Developer
+# Goal: Hear where the window's events come from
 # Before a turn: no mark yet; the hooks' file is not passed, since the stand-in says it is version 0.0.0, older than
 # the events' table (EG-2.4; 30-hooks-stand-in.txt has a stand-in that gets it); no session file; the core in shadow.
 menu Say the event sources
 expect said ! Events. Marks: 0. Hooks: not passed, version. Session file: not found. Core: in shadow.
 
+# Check: A turn's three marks are counted
 # A turn: the start mark and a working frame; then the two end marks, the bell and the reply's frame. "Done" comes by
 # the old rule, the bell and the settle, and the status bar says working and ready as before.
 type Say ok
@@ -39,6 +41,7 @@ expect state Claude: ready
 menu Say the event sources
 expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 
+# Goal: Turn the grounding in Claude Code's session file off and on again
 # Grounding off: said, and at once there is no record to look for; on again, as before.
 menu Ground the conversation in Claude Code's session file
 expect said ! Grounding in Claude Code's session file off
@@ -51,6 +54,7 @@ expect commands Ground the conversation in Claude Code's session file, Options, 
 menu Say the event sources
 expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 
+# Goal: Turn Claude Code's events off and on again
 # The hooks' switch off: said with when it applies, the next start of Claude; this run's words stay until then.
 menu Events from Claude Code's hooks
 expect said ! Events from Claude Code's hooks off, from the next start of Claude
@@ -59,7 +63,7 @@ menu Say the event sources
 expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
 # Claude started again (the stand-in waits for its first file again): the numbers begin afresh, and the hooks are off.
 run del es\go1 es\go2
-keys ctrl+shift+r
+do Force Claude to restart
 expect state "notice":"Force Claude to restart?"
 keys enter
 expect said Restarting

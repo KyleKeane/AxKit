@@ -64,7 +64,7 @@ every window" or under a heading that names the windows without it; under an app
 - axTask. Menu: Window, New window. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act.
 
-## In every window but axClip, axPass and axStart
+## In every window but axClip, axHelp, axPass and axStart
 
 - Exit. Menu: Session. Key: Alt+F4. Mark: act.
 
@@ -134,6 +134,96 @@ every window" or under a heading that names the windows without it; under an app
 - Recall the entry. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Remove the entry. Menu: none, a key alone. Key: Delete. Mark: change. Never run by AI tools.
 - Switch between the history and the field. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+
+## axClaude
+
+- Choose the effort. Menu: Actions. Key: none. Mark: act.
+- Choose the model. Menu: Actions. Key: none. Mark: act.
+- Force Claude to restart. Menu: Actions. Key: Ctrl+Shift+R. Mark: act.
+- Interrupt. Menu: Actions. Key: Shift+Escape. Mark: act.
+- Next permission mode. Menu: Actions. Key: Ctrl+Shift+M. Mark: act.
+- Send message. Menu: Actions. Key: Enter in the message field. Mark: act.
+- Send queued messages now. Menu: Actions. Key: Ctrl+Shift+S. Mark: act.
+- What runs in the background. Menu: Actions. Key: Ctrl+B. Mark: read.
+- Ctrl+C. Menu: Actions, Send key. Key: Ctrl+Shift+C. Mark: act.
+- Ctrl+D. Menu: Actions, Send key. Key: none. Mark: act.
+- Down. Menu: Actions, Send key. Key: none. Mark: act.
+- Shift+Down. Menu: Actions, Send key. Key: none. Mark: act.
+- Shift+Up. Menu: Actions, Send key. Key: none. Mark: act.
+- Tab. Menu: Actions, Send key. Key: none. Mark: act.
+- Up. Menu: Actions, Send key. Key: none. Mark: act.
+- Bookmark this line. Menu: Context. Key: Ctrl+Shift+K, or M in the conversation. Mark: change.
+- Copy the selection. Menu: Context. Key: Ctrl+C in the conversation. Mark: act.
+- Quote this line in the message. Menu: Context. Key: Enter in the conversation. Mark: change.
+- Command line. Menu: Help, Claude Code resources. Key: none. Mark: act.
+- Documentation. Menu: Help, Claude Code resources. Key: none. Mark: act.
+- Install or update Claude Code. Menu: Help, Claude Code resources. Key: none. Mark: act.
+- Keys. Menu: Help, Claude Code resources. Key: none. Mark: act.
+- Slash commands. Menu: Help, Claude Code resources. Key: none. Mark: act.
+- Claude's question again. Menu: Navigation. Key: Ctrl+Q. Mark: read.
+- Conversation. Menu: Navigation. Key: Ctrl+2. Mark: open.
+- Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
+- Find next. Menu: Navigation. Key: F3. Mark: read.
+- Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
+- Latest response. Menu: Navigation. Key: Ctrl+3. Mark: open.
+- Message field. Menu: Navigation. Key: Ctrl+1. Mark: open.
+- Next bookmark. Menu: Navigation. Key: K in the conversation. Mark: open.
+- Previous bookmark. Menu: Navigation. Key: Shift+K in the conversation. Mark: open.
+- "Question closed" when Claude closes one. Menu: Options, Announcements. Key: none. Mark: change.
+- "Ready" when Claude starts. Menu: Options, Announcements. Key: none. Mark: change.
+- "Responding" when a reply starts. Menu: Options, Announcements. Key: none. Mark: change.
+- "Sent" and "Queued" after a message. Menu: Options, Announcements. Key: none. Mark: change.
+- Claude's own notices, such as "accept edits on". Menu: Options, Announcements. Key: none. Mark: change.
+- A pause of 10 seconds between chords. Menu: Options, Background work. Key: none. Mark: change.
+- A pause of 2 seconds between chords. Menu: Options, Background work. Key: none. Mark: change.
+- A pause of 20 seconds between chords. Menu: Options, Background work. Key: none. Mark: change.
+- A pause of 5 seconds between chords. Menu: Options, Background work. Key: none. Mark: change.
+- Play a sound when background work starts and ends. Menu: Options, Background work. Key: none. Mark: change.
+- Play a sound while background work runs. Menu: Options, Background work. Key: none. Mark: change.
+- Say background work as it starts and ends. Menu: Options, Background work. Key: none. Mark: change.
+- Show Claude Code's live progress rows in the conversation. Menu: Options, Background work. Key: none. Mark: change.
+- Block Claude Code's feedback requests. Menu: Options, Claude Code settings. Key: none. Mark: act.
+- Claude-drafted feedback: a card for each, Claude Code's default. Menu: Options, Claude Code settings. Key: none. Mark: act.
+- Claude-drafted feedback: off, Claude drafts none. Menu: Options, Claude Code settings. Key: none. Mark: act.
+- Claude-drafted feedback: quiet, counted without a card. Menu: Options, Claude Code settings. Key: none. Mark: act.
+- Hide the session recap after time away. Menu: Options, Claude Code settings. Key: none. Mark: act.
+- Hide the turn duration after each reply. Menu: Options, Claude Code settings. Key: none. Mark: act.
+- Hide tips while Claude works. Menu: Options, Claude Code settings. Key: none. Mark: act.
+- No reply from Claude after my ! commands. Menu: Options, Claude Code settings. Key: none. Mark: act.
+- Events from Claude Code's hooks. Menu: Options, Developer. Key: none. Mark: act.
+- Ground the conversation in Claude Code's session file. Menu: Options, Developer. Key: none. Mark: act.
+- Record raw stream for a bug report. Menu: Options, Developer. Key: none. Mark: act.
+- Say the event sources. Menu: Options, Developer. Key: none. Mark: read.
+- Keep recordings and exported conversations out of git. Menu: Options, General. Key: none. Mark: act.
+- Answer from a list. Menu: Options, Questions. Key: none. Mark: change.
+- Dismiss Claude's feedback surveys unheard. Menu: Options, Questions. Key: none. Mark: change.
+- Go to them at once, interrupting speech. Menu: Options, Questions. Key: none. Mark: change.
+- Open Claude's feedback drafts by themselves. Menu: Options, Questions. Key: none. Mark: change.
+- Review answers before they go to Claude. Menu: Options, Questions. Key: none. Mark: act.
+- Background music while Claude works. Menu: Options, Sounds. Key: Ctrl+M. Mark: change.
+- Chimes: ready, sent, replying, done, question. Menu: Options, Sounds. Key: none. Mark: change.
+- Ticks for new lines and tool calls. Menu: Options, Sounds. Key: none. Mark: change.
+- Speak each tool call. Menu: Options, Speech. Key: none. Mark: change.
+- Speak replies: all lines. Menu: Options, Speech. Key: none. Mark: change.
+- Speak replies: first lines. Menu: Options, Speech. Key: none. Mark: change.
+- Speak replies: none. Menu: Options, Speech. Key: none. Mark: change.
+- Words that keep a reply line silent. Menu: Options, Speech. Key: none. Mark: change.
+- Markers in the text. Menu: Options, Text. Key: none. Mark: change.
+- Time stamps on Input and Output lines. Menu: Options, Text. Key: none. Mark: change.
+- Announce "Done". Menu: Options, When Claude is done. Key: none. Mark: change.
+- Flash the taskbar button. Menu: Options, When Claude is done. Key: none. Mark: change.
+- Louder alert when the window is in the background. Menu: Options, When Claude is done. Key: none. Mark: change.
+- Export conversation. Menu: Session. Key: Ctrl+S. Mark: change.
+- New session. Menu: Session. Key: Ctrl+N. Mark: act.
+- Open folder. Menu: Session. Key: none. Mark: act.
+- Open folder in new window. Menu: Session. Key: none. Mark: act.
+- axFile. Menu: Session, Show current folder in. Key: none. Mark: open.
+- axGIT, access layer for Git. Menu: Session, Show current folder in. Key: none. Mark: open.
+- axTerminal, access layer for your shell. Menu: Session, Show current folder in. Key: none. Mark: act.
+- File Explorer. Menu: Session, Show current folder in. Key: Ctrl+W. Mark: open.
+- Background music on or off. Menu: none, a key alone. Key: Ctrl+M. Mark: change. Never run by AI tools.
+- Send the message. Menu: none, a key alone. Key: Ctrl+Enter. Mark: act. Never run by AI tools.
+- Switch between the view and the field. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 
 ## axClip
 
@@ -376,6 +466,24 @@ every window" or under a heading that names the windows without it; under an app
 - Find previous in the list. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
 - Show the commit. Menu: none, a key alone. Key: Enter. Mark: read. Never run by AI tools.
 - Switch between the list and the details. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+
+## axHelp
+
+- Claude's working folder. Menu: Actions. Key: none. Mark: open.
+- Open the conversation. Menu: Actions. Key: Enter. Mark: act.
+- Open the last screenshot in axPreview. Menu: Actions. Key: Ctrl+O. Mark: open.
+- Put a picture file into the conversation. Menu: Actions. Key: Ctrl+D. Mark: act.
+- Nothing for the focus here yet. Menu: Context. Key: none. Mark: read.
+- Claude Code. Menu: Help, Claude resources. Key: none. Mark: act.
+- Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
+- Hotkey. Menu: Options. Key: none. Mark: open.
+- Keep the conversation ready in the background. Menu: Options. Key: none. Mark: act.
+- Balanced (Sonnet). Menu: Options, Conversation model. Key: none. Mark: change.
+- Fast (Haiku). Menu: Options, Conversation model. Key: none. Mark: change.
+- Strongest (Opus). Menu: Options, Conversation model. Key: none. Mark: change.
+- Start with Windows. Menu: Options, General. Key: none. Mark: act.
+- Hide. Menu: Session. Key: Escape. Mark: change.
+- Quit axHelp. Menu: Session. Key: none. Mark: act.
 
 ## axJSON
 

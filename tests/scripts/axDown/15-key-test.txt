@@ -21,19 +21,19 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 
 # Goal: Hear what a key does without doing it
 # Bundle keys: said by their command's name, and not carried out (no status said, no notice opened).
-do Say the status
+keys f8
 expect said ! F8: Say the status
-do Send a report
+keys f4
 expect said ! F4: Send a report
-do Keyboard shortcuts
+keys f1
 expect said ! F1: Keyboard shortcuts
-do Command palette
+keys ctrl+shift+p
 expect said ! Ctrl+Shift+P: Command palette
 expect state "notice":null
 # Window keys, from the window's command list.
-do Go to line
+keys ctrl+g
 expect said ! Ctrl+G: Go to line
-do Heading, Navigation, Next
+keys ctrl+h
 expect said ! Ctrl+H: Next, Heading
 expect state "notice":null
 # The text's own keys: a letter, an arrow, Enter, a paragraph key; a key nothing has.

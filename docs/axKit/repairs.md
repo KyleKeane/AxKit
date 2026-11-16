@@ -7,13 +7,13 @@ found and what became of each finding: change the JSON in the same commit as the
 ## Where it stands
 
 - **open**: 9 (3 high, 2 medium, 4 low)
-- **done**: 44 (8 high, 20 medium, 16 low)
+- **done**: 45 (8 high, 21 medium, 16 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 5 (4 medium, 1 low)
 
 ## The principles
 
-- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (15 findings)
+- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (16 findings)
 - **P2. One source, generated views.** A fact lives in one place (the menu bar, Dispatch.Apps, a JSON list); every page or list that repeats it is written by a script and checked by the same gate on the developer's computer and in CI. (6 findings)
 - **P3. A failure says what, why and where to read.** Every refusal, error and failed check names the thing, the reason and the document or command that helps; nothing fails silently and nothing passes silently against the wrong thing. (7 findings)
 - **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (15 findings)
@@ -334,6 +334,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: The three places stated in the same terms everywhere: the updater, the report sender, and axTask's GitHub lists with the user's own token.
 - Checked by: reading against docs/axKit/outside-calls.md
 - Commit: af0fac3
+
+### R-60, medium, framework: A window in its key test listed its keys as acting
+
+- Where: src/AxKit.Forms/AxKitForm.Commands.cs; tests/AxAutomate.Tests/RepositoryWorkflowTests.cs
+- Principle: P1
+- Fix: While the key test runs the listing gives no chord as acting and names the key test where a notice's title stands, so a do step waits and the converter takes no tested key for a command; a test fails on a do step inside a key test.
+- Checked by: tests/AxAutomate.Tests/RepositoryWorkflowTests (No_script_runs_a_command_by_name_inside_a_key_test); the converter over axDown's script 15 on the hidden desktop: 2 presses converted where it had taken 8
+- Note: Found on 2026-11-16 when the converter turned the presses of six key-test scripts into named commands, Send a report among them: by the key nothing is run there, through the AI tools the command itself would have been asked for (the window refuses that, AX-8.12, so nothing was sent). The tested keys are key presses again.
 
 ### R-04, low, security: Settings whose effect is more than a setting were marked change
 

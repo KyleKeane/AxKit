@@ -17,13 +17,13 @@ expect commands "Test a key, Help, Diagnostics"
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
-do Say the status
+keys f8
 expect said ! F8: Say the status
-do Keyboard shortcuts
+keys f1
 expect said ! F1: Keyboard shortcuts
-do New item
+keys ctrl+n
 expect said ! Ctrl+N: New item
-do Previous section
+keys ctrl+up
 expect said ! Ctrl+Up: Previous section
 keys left
 expect said ! Left: Up a level

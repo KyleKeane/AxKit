@@ -28,7 +28,7 @@ expect state Claude: working
 # order WP-A17 makes sure of (docs/axClaude/events-and-grounding.md); until then the window's own timers decide it,
 # and under load Done came first (seen 2026-11-15), so this script does not ask for the order yet.
 expect said Done
-keys ctrl+2
+do Conversation
 expect text claude: ok
 # The session file under the run's own folder holds the turn's end.
 run findstr /s /c:"turn_duration" home\.claude\projects\*.jsonl

@@ -37,12 +37,12 @@ keys enter
 expect state "notice":null
 expect focus Message to Claude
 expect state Claude: stopped
-keys ctrl+2
+do Conversation
 expect text System:
 expect text not found
 # Check: A restart without Claude Code shows the notice again
 # Ctrl+Shift+R shows the notice again.
-keys ctrl+shift+r
+do Force Claude to restart
 expect state "notice":"Claude Code was not found"
 keys escape
 expect state "notice":null

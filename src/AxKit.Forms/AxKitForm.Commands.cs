@@ -18,8 +18,12 @@ public abstract partial class AxKitForm
     ///
     /// While a notice shows, the menu bar is disabled and has no entries, and no command's key acts: the window base's
     /// key handling runs none of the list then (<see cref="ProcessCmdKey"/>), so each is given as not acting whatever
-    /// its <see cref="Command.When"/> says.
+    /// its <see cref="Command.When"/> says. While the key test runs (AX-8.12) no chord acts either: every row's
+    /// <c>now</c> is empty and the listing names the key test where a notice's title stands.
     /// </summary>
+    /// <summary>What the listing gives in a notice's place while the key test runs.</summary>
+    private const string KeyTestTitle = "Key test";
+
     internal WindowCommands CommandRows()
     {
         var verb = AppVerb;
@@ -54,7 +58,17 @@ public abstract partial class AxKitForm
                 _keyOnly.Any(known => ReferenceEquals(known, command))));
         }
 
-        return new WindowCommands(AppName, NoticeOpen ? Overlay.Shown?.Title : null, CommandListing.Rows(menus, keys));
+        var rows = CommandListing.Rows(menus, keys);
+        if (KeyTestRunning)
+        {
+            // AX-8.12: in the key test a key is named and nothing is run, so no chord acts now, and the listing says
+            // that the window holds its commands, as it does for a notice. A script's do step then waits instead of
+            // choosing the menu item, and the converter takes no tested key for a command (R-60).
+            rows = [.. rows.Select(row => row with { Now = string.Empty })];
+            return new WindowCommands(AppName, KeyTestTitle, rows);
+        }
+
+        return new WindowCommands(AppName, NoticeOpen ? Overlay.Shown?.Title : null, rows);
     }
 
     /// <summary>

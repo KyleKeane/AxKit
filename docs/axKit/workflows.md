@@ -211,6 +211,9 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Show Claude Code's live progress rows in the conversation
     - Hide the live progress rows again
 28. **Hear where axClaude's events come from**
+    - Hear where the window's events come from
+    - Turn the grounding in Claude Code's session file off and on again
+    - Turn Claude Code's events off and on again
 29. **Follow a turn played by the stand-in**
 30. **See Claude Code's events arrive, without Claude Code**
     - Hear whether Claude Code's events reach the window
@@ -218,6 +221,8 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 31. **Start Claude Code with axClaude's hooks**
     - Hear that Claude Code's events arrived after a turn
 32. **See the session file followed, without Claude Code**
+    - Hear whether Claude Code's session file is followed
+    - Turn the grounding in Claude Code's session file off and on again
 33. **Have a short exchange with Claude**
 34. **Answer a set of two questions from Claude**
 

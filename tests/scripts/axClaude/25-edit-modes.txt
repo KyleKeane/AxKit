@@ -11,7 +11,7 @@ file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\n
 
 start claude {temp}\em --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
-keys ctrl+1
+do Message field
 expect focus Message
 # A message of a few lines with a heading, a link and a list (Shift+Enter makes a new line).
 type # Plan
@@ -49,7 +49,7 @@ expect focus {"name":"Message to Claude","role":"Text","value":"# Plan"}
 
 # Check: The conversation says it has no edit mode
 # The conversation cannot be edited: the key says so and the mode of the field stays.
-keys ctrl+2
+do Conversation
 expect focus Conversation
 keys ctrl+space
 expect said ! Read only: there is no edit mode here
@@ -57,7 +57,7 @@ expect state field in navigation mode
 
 # Goal: Go back to editing the message
 # Back in the field, Ctrl+Space again: edit mode, and typing types.
-keys ctrl+1
+do Message field
 keys ctrl+space
 expect said ! Edit mode
 refuse state navigation mode
@@ -67,10 +67,11 @@ expect focus {"name":"Message to Claude","role":"Text","value":"# Plan!"}
 
 # Goal: Turn the background music on and off
 # The music moved to Ctrl+M: from the field it is taken before the field (no line break), and from the conversation.
-keys ctrl+m
+do Background music on or off
 expect said ! Background music on, nothing is running
 expect focus {"name":"Message to Claude","role":"Text","value":"# Plan!"}
-keys ctrl+2 ctrl+m
+do Conversation
+do Background music on or off
 expect said ! Background music off
 # Check: The key test names the mode key and the music key
 # The key test names both keys.

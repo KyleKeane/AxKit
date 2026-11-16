@@ -13,7 +13,7 @@ Starts with: Open axHelp.
 
 ### Turn on the AI tools
 
-1. Choose the menu item Let AI tools read and open axKit.
+1. Choose Let AI tools read and open axKit in the axKit menu, AI tools.
 2. Press Enter.
     You hear: AI tools on.
     You may hear: Not in a test run.
@@ -37,7 +37,7 @@ Starts with: Open axHelp.
 ### Quit axHelp
 
 1. Go to the axHelp window.
-2. Choose the menu item Quit axHelp.
+2. Choose Quit axHelp in the Session menu.
 3. Go to the other window.
 4. Press Tab.
 5. Press Enter.
@@ -53,7 +53,7 @@ Starts with: Open axHelp. A new window opens: go to it.
 ### Bring the same conversation back
 
 1. Go to the axHelp window.
-2. Choose the menu item Open the conversation.
+2. Choose Open the conversation in the Actions menu (key: Enter).
 3. Go to the other window.
     You hear: Unsent message in the field.
     You hear the sound Recall.

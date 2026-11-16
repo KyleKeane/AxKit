@@ -497,7 +497,7 @@ Starts with: Open axTask with the folder tasks.
     You hear: F8: Say the status.
 3. Press F1 (Keyboard shortcuts; Help menu).
     You hear: F1: Keyboard shortcuts.
-4. Press Ctrl+N (New item; Actions menu).
+4. Press Ctrl+N.
     You hear: Ctrl+N: New item.
 5. Press Ctrl+Up (Previous section; Navigation menu).
     You hear: Ctrl+Up: Previous section.
