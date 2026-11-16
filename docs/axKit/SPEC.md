@@ -382,7 +382,14 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   and the error is reported once) is one piece of shared code, `AxKit.Core/SettingsFile`; each app's settings class is
   its own plain record of properties. A file that is not valid JSON (a typo after Options → Developer → Open settings file) is
   copied to `<app>.json.bad` before the defaults are used, and the error names the copy: the app saves its settings
-  soon after loading, which would otherwise write the defaults over every other setting in the file.
+  soon after loading, which would otherwise write the defaults over every other setting in the file. Two cases lose
+  less than that (the resilience audit of 2026-11-16, `repairs.md` R-51 and R-52). A file one or more of whose values
+  do not read (a word where a number belongs, a kind that does not exist) loses those values alone: each is left at
+  its default and named in the error, the rest of the file is loaded, and the copy is kept as before. A file that is
+  there and cannot be opened (another program holds it: a sync client, a backup, a virus scanner) is tried again
+  three times, a tenth of a second apart; if it still cannot be opened, the defaults serve that run and are never
+  saved over it: `SettingsFile.Save` passes that path over until a later load has read the file, and the error says
+  that settings are not saved in this run and to close the window and start it again.
 - AX-5.4 The first start after the rename (B-16, 5.0.0) moves what Axit, the bundle's name up to 4.0.0, kept in
   `%APPDATA%\Axit` and `%LOCALAPPDATA%\Axit` into the AxKit folders (`AppPaths.TakeOverOldFolders`, called by `Program`
   before anything reads a setting), entry by entry: a file the new folder lacks is moved, one it has stays, a subfolder

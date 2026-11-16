@@ -6,8 +6,8 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 9 (3 high, 2 medium, 4 low)
-- **done**: 45 (8 high, 21 medium, 16 low)
+- **open**: 7 (2 high, 1 medium, 4 low)
+- **done**: 47 (9 high, 22 medium, 16 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 5 (4 medium, 1 low)
 
@@ -24,13 +24,6 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Open
 
-### R-51, high, core: A settings file that cannot be opened at start is overwritten with defaults by the next save
-
-- Where: src/AxKit.Core/SettingsFile.cs; src/AxKit.Forms/AxKitForm.cs
-- Principle: P4
-- Fix: Load tries again three times; a file still unreadable gives defaults that are never saved over it, and the window says so.
-- Note: Found on 2026-11-16 by the resilience audit the user asked for (user error and tampering, fixes in code alone). A sync client, a backup or a virus scanner holding the file for a moment at start loses a user's shells, trusted repositories, servers, programs, favourites and hotkeys.
-
 ### R-53, high, security: Settings that name what is run are plain files nothing checks
 
 - Where: src/AxTerminal.Core/TerminalSettings.cs; src/AxGit.Core/GitSettings.cs; src/AxKit.Core/Ai/AiSettings.cs; src/AxKit.Core/Consent.cs; src/AxKit.Core/Mcp/McpAccess.cs
@@ -44,13 +37,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P1
 - Fix: Before each start the obeyed files axKit did not write are listed with a hash each and compared with the list the user last accepted; a new or changed one is named in a notice whose default is Cancel. Shift+F1's print mode leaves project settings and project servers out where Claude Code has an option for it.
 - Note: Found on 2026-11-16 by the resilience audit. A settings file with hooks, a project server file, a third rule file or a changed CLAUDE.md there is loaded by Claude Code at every later start; Claude itself may write them. What Claude Code loads from the folder, and its options, are to be verified against the installed version first (rule 12).
-
-### R-52, medium, core: One wrongly typed value in a settings file discards every setting of the file
-
-- Where: src/AxKit.Core/SettingsFile.cs
-- Principle: P4
-- Fix: A property that does not read is dropped alone and named; the rest of the file is loaded; the copy is kept as now.
-- Note: Found on 2026-11-16 by the resilience audit. Text that is not a JSON object behaves as now.
 
 ### R-55, medium, security: axPass takes any validly signed file as KeePassXC's tool
 
@@ -158,6 +144,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tools/apps.ps1 -Check in test.ps1 and build.yml
 - Commit: af0fac3
 - Note: tools/apps-page.ps1 writes docs/axKit/apps.md; the root CLAUDE.md, tools/new-app.ps1 and InventoryTests use it. Still by hand, and checked by InventoryTests for every app: the user-facing lists of README.md and docs/axKit/README.md, which are prose for readers.
+
+### R-51, high, core: A settings file that cannot be opened at start is overwritten with defaults by the next save
+
+- Where: src/AxKit.Core/SettingsFile.cs; src/AxKit.Forms/AxKitForm.cs
+- Principle: P4
+- Fix: Load tries again three times; a file still unreadable gives defaults that are never saved over it, and the window says so.
+- Checked by: tests/AxKit.Tests/SettingsFileTests (A_file_that_cannot_be_opened_is_never_replaced_by_the_defaults)
+- Note: Found on 2026-11-16 by the resilience audit the user asked for (user error and tampering, fixes in code alone). A sync client, a backup or a virus scanner holding the file for a moment at start loses a user's shells, trusted repositories, servers, programs, favourites and hotkeys.
 
 ### R-01, medium, security: Recent folders of axClaude and axTerminal started Claude Code or a shell for an AI tool without asking
 
@@ -334,6 +328,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: The three places stated in the same terms everywhere: the updater, the report sender, and axTask's GitHub lists with the user's own token.
 - Checked by: reading against docs/axKit/outside-calls.md
 - Commit: af0fac3
+
+### R-52, medium, core: One wrongly typed value in a settings file discards every setting of the file
+
+- Where: src/AxKit.Core/SettingsFile.cs
+- Principle: P4
+- Fix: A property that does not read is dropped alone and named; the rest of the file is loaded; the copy is kept as now.
+- Checked by: tests/AxKit.Tests/SettingsFileTests (One_value_that_does_not_read_costs_that_value_alone)
+- Note: Found on 2026-11-16 by the resilience audit. Text that is not a JSON object behaves as now.
 
 ### R-60, medium, framework: A window in its key test listed its keys as acting
 

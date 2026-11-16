@@ -50,7 +50,9 @@
   the project stays off the desktop assemblies. Tested in `ThemeTests`, which also fails on a colour named outside
   `AxKit.Forms/ThemePainter.cs` and axMedia's video surface (TH-5.2).
 - `SettingsFile` (AX-5.2, AX-5.3): how every app's settings file is read and written, an unreadable one copied to
-  `.bad` once, and the take-over of an old file.
+  `.bad` once, and the take-over of an old file. A value that does not read costs that value alone
+  (`WithoutWhatDoesNotRead`); a file that is there and cannot be opened is tried again, then never saved over in
+  that process (`NotRead`, R-51).
 - `FileCase` (AX-5.1, 2026-11-10): `Match(path)` renames a file that exists under another case to the path's own
   spelling, so that a settings or log file an earlier version left as `axdown.json` becomes `axDown.json`, the name
   NVDA says as the app is said; `SettingsFile.Load` and `Log.UseApp` call it first. Tested in `FileCaseTests`.

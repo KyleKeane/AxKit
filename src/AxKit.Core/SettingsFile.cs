@@ -33,13 +33,42 @@ public static class SettingsFile
             return new T();
         }
 
+        string text;
         try
         {
-            return JsonSerializer.Deserialize<T>(File.ReadAllText(path), JsonOptions) ?? new T();
+            text = ReadText(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // R-51: the file is there and could not be opened (a sync client, a backup or a virus scanner held it).
+            // The defaults serve this run and are never written over it: Save passes the path over until a later
+            // Load reads it.
+            lock (NotRead)
+            {
+                NotRead.Add(Path.GetFullPath(path));
+            }
+
+            error = $"{path}: {ex.Message} {NotSaved}";
+            Log.Error("Settings not readable, using defaults and saving none: " + error);
+            return new T();
+        }
+
+        lock (NotRead)
+        {
+            NotRead.Remove(Path.GetFullPath(path));
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<T>(text, JsonOptions) ?? new T();
         }
         catch (JsonException ex)
         {
-            error = $"{path}: {ex.Message}";
+            // R-52: one value that does not read costs that value alone, when the text is an object at all.
+            var (settings, dropped) = WithoutWhatDoesNotRead<T>(text);
+            error = settings is null
+                ? $"{path}: {ex.Message}"
+                : $"{path}: these settings were not understood and are at their defaults: {string.Join(", ", dropped)}.";
             if (KeepBadCopy(path))
             {
                 error += $" A copy is kept as {path}.bad.";
@@ -47,13 +76,69 @@ public static class SettingsFile
                 Log.Error("Settings not readable, using defaults: " + error);
             }
 
-            return new T();
+            return settings ?? new T();
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+    }
+
+    /// <summary>What the error text of a file that could not be opened ends with (R-51).</summary>
+    public const string NotSaved = "Settings are not saved in this run, so that the file is not replaced. Close the window and start it again.";
+
+    /// <summary>The files that were there and could not be opened in this process, by full path: <see cref="Save{T}"/> writes none of them.</summary>
+    private static readonly HashSet<string> NotRead = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The file's text; a file another program holds is tried again three times, a tenth of a second apart, before the failure counts.</summary>
+    private static string ReadText(string path)
+    {
+        for (var attempt = 0; ; attempt++)
         {
-            error = $"{path}: {ex.Message}";
-            Log.Error("Settings not readable, using defaults: " + error);
-            return new T();
+            try
+            {
+                return File.ReadAllText(path);
+            }
+            catch (IOException) when (attempt < 3)
+            {
+                Thread.Sleep(100);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The settings of a text one or more of whose values do not read (R-52): each top-level property is tried by
+    /// itself, those that do not read are left out and named, and the rest is loaded. Null when the text is no JSON
+    /// object or still does not read without them.
+    /// </summary>
+    private static (T? Settings, IReadOnlyList<string> Dropped) WithoutWhatDoesNotRead<T>(string text) where T : class, new()
+    {
+        var dropped = new List<string>();
+        try
+        {
+            var options = new System.Text.Json.Nodes.JsonNodeOptions { PropertyNameCaseInsensitive = true };
+            var reading = new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true };
+            if (System.Text.Json.Nodes.JsonNode.Parse(text, options, reading) is not System.Text.Json.Nodes.JsonObject whole)
+            {
+                return (null, dropped);
+            }
+
+            var kept = new System.Text.Json.Nodes.JsonObject();
+            foreach (var (name, value) in whole)
+            {
+                var one = new System.Text.Json.Nodes.JsonObject { [name] = value?.DeepClone() };
+                try
+                {
+                    JsonSerializer.Deserialize<T>(one.ToJsonString(), JsonOptions);
+                    kept[name] = value?.DeepClone();
+                }
+                catch (JsonException)
+                {
+                    dropped.Add(name);
+                }
+            }
+
+            return dropped.Count == 0 ? (null, dropped) : (JsonSerializer.Deserialize<T>(kept.ToJsonString(), JsonOptions) ?? new T(), dropped);
+        }
+        catch (JsonException)
+        {
+            return (null, dropped);
         }
     }
 
@@ -85,6 +170,15 @@ public static class SettingsFile
     /// <summary>Writes the file whole or not at all (<see cref="SafeFile"/>): a temporary file of its own name next to it is put in its place.</summary>
     public static void Save<T>(string path, T settings) where T : class
     {
+        // R-51: a file that was there and could not be opened is not replaced by the defaults that stood in for it.
+        lock (NotRead)
+        {
+            if (NotRead.Contains(Path.GetFullPath(path)))
+            {
+                return;
+            }
+        }
+
         var directory = Path.GetDirectoryName(path);
         if (!string.IsNullOrEmpty(directory))
         {

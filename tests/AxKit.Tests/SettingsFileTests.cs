@@ -73,6 +73,59 @@ public sealed class SettingsFileTests
     }
 
     [Fact]
+    public void A_file_that_cannot_be_opened_is_never_replaced_by_the_defaults()
+    {
+        // R-51: another program holds the file while the app starts; the app's next save must not write over it.
+        using var temp = new TempFolder("axkit-tests");
+        var path = Path.Combine(temp.Path, "sample.json");
+        File.WriteAllText(path, "{ \"name\": \"mine\", \"size\": 7 }");
+        var before = File.ReadAllBytes(path);
+        using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            var loaded = SettingsFile.Load<SampleSettings>(path, out var error);
+            Assert.Equal("default", loaded.Name);
+            Assert.NotNull(error);
+            Assert.Contains(SettingsFile.NotSaved, error);
+            Assert.False(File.Exists(path + ".bad"));
+        }
+
+        SettingsFile.Save(path, new SampleSettings());
+        Assert.Equal(before, File.ReadAllBytes(path));
+
+        // Read once it is free: the settings are the user's again, and saving works again.
+        var again = SettingsFile.Load<SampleSettings>(path, out var none);
+        Assert.Null(none);
+        Assert.Equal("mine", again.Name);
+        again.Size = 9;
+        SettingsFile.Save(path, again);
+        Assert.Equal(9, SettingsFile.Load<SampleSettings>(path, out _).Size);
+    }
+
+    [Fact]
+    public void One_value_that_does_not_read_costs_that_value_alone()
+    {
+        // R-52: a typed word where a number belongs, and a kind that does not exist.
+        using var temp = new TempFolder("axkit-tests");
+        var path = Path.Combine(temp.Path, "sample.json");
+        File.WriteAllText(path, "{ \"name\": \"mine\", \"size\": \"wide\", \"kind\": \"twoWords\" }");
+        var loaded = SettingsFile.Load<SampleSettings>(path, out var error);
+        Assert.Equal("mine", loaded.Name);
+        Assert.Equal(3, loaded.Size);
+        Assert.Equal(SampleKind.TwoWords, loaded.Kind);
+        Assert.NotNull(error);
+        Assert.Contains("at their defaults: size.", error);
+        Assert.Contains(path + ".bad", error);
+        Assert.True(File.Exists(path + ".bad"));
+
+        File.WriteAllText(path, "{ \"name\": \"mine\", \"size\": 5, \"kind\": \"no such kind\" }");
+        File.SetLastWriteTimeUtc(path, DateTime.UtcNow.AddMinutes(1));
+        loaded = SettingsFile.Load<SampleSettings>(path, out error);
+        Assert.Equal(5, loaded.Size);
+        Assert.Equal(SampleKind.One, loaded.Kind);
+        Assert.Contains("at their defaults: kind.", error);
+    }
+
+    [Fact]
     public void Old_file_is_copied_once_and_never_over_a_new_one()
     {
         using var temp = new TempFolder("axkit-tests");
