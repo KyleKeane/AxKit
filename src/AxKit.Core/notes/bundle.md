@@ -31,7 +31,12 @@
   input; `Line` is `ClaudeCodeProgram.LineFor` over `Arguments`, and a refused line, a `claude.cmd` with a folder
   holding `%`, is an error answer without a run, AH-2.1a), `AiAnswer` (the JSON result read), `AiPrompts` with `WindowContext` (the prompts: about this window, from
   anywhere, a screen's picture, a picture file, a follow-up); tested in `AiTests`. `AiDocumentation` (AH-7): axKit's guides in
-  the working folder; a new app needs its `Guide.<name>.md` line in the csproj.
+  the working folder; a new app needs its `Guide.<name>.md` line in the csproj. Beside them the workflow pages
+  (`docs/axKit/user-workflows.md` WF-8): `WorkflowsName`, `WorkflowPages` (each group's page, found by trying the
+  names of `Dispatch.Apps`, ai-tools and nvda-only, never by listing resources) as `WorkflowPageName`, and
+  `WindowCommandsName`, embedded from `docs/axKit` as `tools/workflows.ps1` wrote them when axKit is built (a new group
+  that is not an app needs its name in `WorkflowPages`; `AiDocumentationTests` fails on a page left out); `Rule`
+  tells Claude how to answer from them.
 - `AiCaution` (AX-11.12, root rule 11, 2026-11-13): the words that go with anything an AI wrote or asks to do, one place for every window: `Written` (under an answer of AI help), `Short` (in the name of an offered command's question), `Command` (the first section of its explanation), `Asked` (in the name of the list an AI tool's run of a window command asks through) and `Request` (in that question's text and explanation). A new feature of the kind takes its words from here.
 - `Consent` with `ConsentRecord` and `ConsentTarget` (AX-11.4, AX-11.5, 2026-10-29): what the user agreed to, one file
   for the bundle, `%APPDATA%\AxKit\consent.json`: `Given`, `Record` (a file that cannot be written is logged and the

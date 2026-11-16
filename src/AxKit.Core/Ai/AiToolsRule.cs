@@ -138,7 +138,8 @@ public static class AiToolsRule
               Only while the user allows commands to run.
             - "Add a task", "remind me", "put it on my list": {McpTools.TaskLists}, then {McpTools.TaskAdd}.
             - "What are my tasks", "what is due": {McpTools.TaskLists}, then {McpTools.TaskItems}.
-            - "How do I ... in axFile", "which key ...": the guides in the folder documentation, not a tool.
+            - "How do I ... in axFile", "which key ...": the workflows and
+              the guides in the folder documentation, not a tool.
             - A command the user must run themselves: {McpTools.Offer}, with its caution (below).
             - A message that starts with "Screenshot of" or "Picture": read the picture file with your Read tool
               first. A picture shows any program; the tools read only axKit's windows.

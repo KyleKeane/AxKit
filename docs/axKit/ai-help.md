@@ -177,7 +177,13 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
 - AH-7.1 **The folder.** `<working folder>\documentation` holds axKit's own guides as Markdown: `index.md` (one line
   per file saying what it is, and the version of axKit that wrote it), `axKit.md` (the bundle's guide,
   `docs/axKit/README.md`) and one file per app of `Dispatch.Apps` under the app's name as the user says it
-  (`axFile.md`, `axGIT.md`: its `docs/ax<Name>/user-guide.md`). These files are axKit's, not the user's: each is
+  (`axFile.md`, `axGIT.md`: its `docs/ax<Name>/user-guide.md`); and, after the guides, the workflow pages
+  (`docs/axKit/user-workflows.md` WF-8.1): `workflows.md` (`docs/axKit/workflows.md`, what a user can do in each
+  app, as workflows and their goals), one `workflows-<page>.md` per group in the order of `Dispatch.Apps` and then
+  `workflows-ai-tools.md` and `workflows-nvda-only.md` (`docs/axKit/workflows/<page>.md`, the steps of the group's
+  goals with their keys), and `window-commands.md` (`docs/axKit/window-commands.md`, every command of every window
+  with its menu and its key; never `commands.md`, which in the repository is the developer's commands), each with
+  its line in `index.md`. These files are axKit's, not the user's: each is
   written where it is missing, and all are written again when `documentation\axkit-version.txt`, the marker, does not
   hold this axKit's version, so that they follow each release (a development build writes them once in each process,
   since its guides change without its version). A changed copy is overwritten by the next version, which `index.md` and
@@ -196,11 +202,24 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   guide; the shared code may not reference an app (bundle 5.3 M2), so it embeds the files, which is no reference.
   `AiDocumentationTests` fails on an app of `Dispatch.Apps` whose guide is not among the files, or differs from the
   repository's; `tools/new-app.ps1` writes a new app's line. The cost is the guides' size once more in the program,
-  about 180 KB before compression.
+  about 180 KB before compression. The workflow pages are embedded the same way (WF-8.1), as `tools/workflows.ps1`
+  wrote them when axKit is built: `docs/axKit/workflows.md` as `Workflows.md`, every page of `docs/axKit/workflows`
+  by one line as `Workflows.<page>.md`, and `docs/axKit/window-commands.md` as `WindowCommands.md`.
+  `AiDocumentation.WorkflowPages` finds a group's page by trying each name of `Dispatch.Apps` and the two other pages,
+  never by listing the resources; `AiDocumentationTests` fails when a page differs from the repository's or a page of
+  `docs/axKit/workflows` is not among the files (WF-8.2). They cost about 350 KB more before compression (2026-11-15).
 - AH-7.3 **Claude is told by a rule file.** `<working folder>\.claude\rules\axkit-documentation.md`, written and
   kept current with the guides, says: for a question about axKit or one of its apps, read `documentation/index.md`
   and the fitting guide with the Read tool before answering, answer from the guide, search the folder with Grep when
-  the guide is not obvious, and say when the guides do not cover the question. Claude Code loads every Markdown file
+  the guide is not obvious, and say when the guides do not cover the question. Since WF-8.3 it also says how to
+  answer from the workflow pages, in that section's words: what the files are; what axKit or an app can do is
+  answered from `workflows.md`, naming the workflows and goals that fit; how to do something is answered by finding
+  the goal in the app's workflows file (by its title, with Grep) and giving its steps as written there, keys
+  included; a file name or a word typed in the steps is the checks' example, said to be one and replaced by the
+  user's own, and nothing else is changed; a key or a menu is never invented, and where a guide and
+  `window-commands.md` differ, `window-commands.md` is right; when no goal covers the question, the app's guide and
+  `window-commands.md`, saying when it is not sure. Nothing in it tells Claude to offer to do the steps (WF-D-24):
+  when Claude may run a command stays the AI tools' rule file's (AH-8). Claude Code loads every Markdown file
   of a folder's `.claude\rules` at its start, with CLAUDE.md, in print mode and in a conversation alike
   (code.claude.com/docs/en/memory, "Organize rules with .claude/rules/"; read 2026-11-15). So the instruction also
   reaches a user whose CLAUDE.md exists already: that file is theirs, written once, and is never read or changed for
@@ -240,7 +259,8 @@ file of the working folder.
      "Press, run, turn on, do X in that window": `axkit_window_commands` for the label, the command said first,
      then `axkit_window_run`, only while the user allows commands to run. "Add a task", "remind me":
      `axkit_task_lists`, `axkit_task_add`. "What are my tasks": `axkit_task_lists`, `axkit_task_items`. "How do
-     I ... in axFile": the guides of AH-7, not a tool. A command the user must run themselves:
+     I ... in axFile": the workflows and the guides of AH-7, not a tool (one entry on two lines, WF-8.4, since a
+     hand-written line holds at most 112 characters). A command the user must run themselves:
      `axkit_offer_command`. A screenshot's message: the picture read first;
   3. **every tool** of `McpTools.All`, in its order, each with its own description as the tool gives it, then
      three lines written by hand (`AiToolsRule.Tools`): when to use it, when not, what to say;
@@ -261,8 +281,9 @@ file of the working folder.
 
 ## 5. Architecture
 
-- `AxKit.Core/Ai/AiDocumentation` (AH-7): `Files(version)`, the guides, the index and the rule with their paths, and
-  `Write(workingFolder, version, rewrite)`; tested in `AiDocumentationTests`. `AxKit.Core/Ai/AiToolsRule` (AH-8):
+- `AxKit.Core/Ai/AiDocumentation` (AH-7): `Files(version)`, the guides, the workflow pages (`WorkflowsName`,
+  `WorkflowPages`, `WorkflowPageName`, `WindowCommandsName`; `user-workflows.md` WF-8), the index and the rule with
+  their paths, and `Write(workingFolder, version, rewrite)`; tested in `AiDocumentationTests`. `AxKit.Core/Ai/AiToolsRule` (AH-8):
   the AI tools' rule file, `Text` made from `McpTools.All` and the hand-written `Tools`; `AiToolsRuleTests`.
 
 - `AxKit.Core/Ai/AiSettings` (AH-1.1), `AiRequest` (the command line and the process, AH-2), `AiAnswer` (the JSON

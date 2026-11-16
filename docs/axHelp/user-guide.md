@@ -65,7 +65,10 @@ like. The folder `.claude\agents` holds the agent.
 
 You can ask about axKit itself: "how do I select several files in axFile?" The folder `documentation` there holds
 axKit's own guides, one file per app and an index, and Claude reads the fitting one before it answers, and says when
-the guides do not cover your question. axKit writes these guides again with each new version, so do not keep your own
+the guides do not cover your question. Beside the guides are axKit's workflow pages, plain files that open in axDown,
+from which Claude can say what an app can do and give the steps of a task with their keys as they are in your
+version: `workflows.md` lists what you can do in each app, `workflows-axFile.md` and its like hold the steps, and
+`window-commands.md` every window's commands. axKit writes these guides again with each new version, so do not keep your own
 changes in them; a file of your own that you add beside them stays. Nothing is sent anywhere for this: Claude Code
 reads the files on your computer as it reads any file for an answer. The screenshots have their own folder there too,
 `screenshots`, so the top of the folder stays short: CLAUDE.md, `documentation` and `screenshots`.

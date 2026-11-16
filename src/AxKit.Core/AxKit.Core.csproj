@@ -41,4 +41,14 @@
     <EmbeddedResource Include="../../docs/axHelp/user-guide.md" LogicalName="Guide.axHelp.md" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The workflow pages for Claude's working folder too (docs/axKit/user-workflows.md WF-8.1, Ai/AiDocumentation):
+         the index, every group's page and the commands page, as tools/workflows.ps1 wrote them when axKit is built.
+         A group's page is Workflows.<its file name>, found by trying each name, never by listing the resources;
+         AiDocumentationTests fails when one differs from its file or a file of docs/axKit/workflows is not among them. -->
+    <EmbeddedResource Include="../../docs/axKit/workflows.md" LogicalName="Workflows.md" />
+    <EmbeddedResource Include="../../docs/axKit/workflows/*.md" LogicalName="Workflows.%(Filename).md" />
+    <EmbeddedResource Include="../../docs/axKit/window-commands.md" LogicalName="WindowCommands.md" />
+  </ItemGroup>
+
 </Project>

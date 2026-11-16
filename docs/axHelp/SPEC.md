@@ -122,9 +122,18 @@ agreement (AX-11.4) asked the first time.
 - HE-2.6 **axKit's guides** (the user's ask of 2026-11-15: "a better developed RAG system by copying the relevant
   documentation for axKit into the axHelp folder"; the whole of it is `ai-help.md` AH-7, since Shift+F1 uses the same
   folder). The working folder holds `documentation`: `index.md`, `axKit.md` (the bundle's guide) and one guide per
-  app under its name (`axFile.md`), and `.claude\rules\axkit-documentation.md`, which Claude Code loads at every start
-  beside CLAUDE.md and which tells Claude: for a question about axKit or one of its apps, read the index and the
-  fitting guide first, answer from it, and say when the guides do not cover it. These files are axKit's, unlike the
+  app under its name (`axFile.md`); beside them the workflow pages (`docs/axKit/user-workflows.md` WF-8):
+  `workflows.md`, what a user can do in each app as workflows and their goals, one `workflows-<page>.md` per group
+  with the steps of its goals and their keys (`workflows-axFile.md`, `workflows-ai-tools.md`,
+  `workflows-nvda-only.md`), and `window-commands.md`, every command of every window with its menu and its key; and
+  `.claude\rules\axkit-documentation.md`, which Claude Code loads at every start beside CLAUDE.md and which tells
+  Claude: for a question about axKit or one of its apps, read the index and the fitting guide first, answer from it,
+  and say when the guides do not cover it; what an app can do, from `workflows.md`, naming the workflows and goals
+  that fit; how to do something, by the goal's steps as written in the app's workflows file, keys included, the
+  checks' example names said to be examples and replaced by the user's own, nothing else changed; never a key or a
+  menu that no workflows file, `window-commands.md` or guide names, `window-commands.md` deciding where a guide
+  differs; and, where no goal covers the question, the app's guide and `window-commands.md`, saying when it is not
+  sure. Nothing there tells Claude to offer to do the steps. These files are axKit's, unlike the
   two of HE-2.4: written where missing and written again by each new version of axKit (the marker
   `documentation\axkit-version.txt`), at every use of the folder (the hotkeys, Enter, Claude's working folder); a
   file of the user's own beside them is left alone, and the user's CLAUDE.md is never read or changed for it. A new

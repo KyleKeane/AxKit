@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using AxKit.Core;
 using AxKit.Core.Ai;
 
@@ -26,8 +27,122 @@ public sealed class AiDocumentationTests
         }
 
         Assert.Equal(Normal(File.ReadAllText(Path.Combine(root, "docs", "axKit", "README.md"))), Normal(files[Path.Combine("documentation", "axKit.md")]));
-        // The index, the bundle's guide, one guide per app, the two rules: nothing else.
-        Assert.Equal(Dispatch.Apps.Count + 4, files.Count);
+        // The index, the bundle's guide, one guide per app, the two rules, and the workflows' index, their pages and
+        // the commands page (WF-8.1): nothing else.
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + AiDocumentation.WorkflowPages().Count, files.Count);
+    }
+
+    [Fact]
+    public void The_workflow_pages_and_the_commands_are_among_the_files_as_the_repository_has_them()
+    {
+        // WF-8.1, WF-8.2: the pages tools/workflows.ps1 wrote, embedded as they were when axKit was built; their text
+        // is the generator's, so what is pinned here is which files there are, where, and in what order.
+        var root = LayoutTests.RepositoryRoot();
+        var docs = Path.Combine(root, "docs", "axKit");
+        var files = AiDocumentation.Files("1.2.3").ToDictionary(file => file.Path, file => file.Text);
+        Assert.Equal(Normal(File.ReadAllText(Path.Combine(docs, "workflows.md"))), Normal(files[Path.Combine("documentation", "workflows.md")]));
+        Assert.Equal(Normal(File.ReadAllText(Path.Combine(docs, "window-commands.md"))), Normal(files[Path.Combine("documentation", "window-commands.md")]));
+
+        // Every page of docs/axKit/workflows is among them: a group whose page has a name AiDocumentation.WorkflowPages
+        // does not try fails here.
+        var pages = Directory.GetFiles(Path.Combine(docs, "workflows"), "*.md");
+        Assert.NotEmpty(pages);
+        foreach (var page in pages)
+        {
+            var name = Path.GetFileNameWithoutExtension(page);
+            Assert.True(files.TryGetValue(Path.Combine("documentation", "workflows-" + name + ".md"), out var text),
+                $"docs/axKit/workflows/{name}.md is not among the files of Claude's working folder. AiDocumentation.WorkflowPages tries the names of Dispatch.Apps, ai-tools and nvda-only.");
+            Assert.Equal(Normal(File.ReadAllText(page)), Normal(text!));
+        }
+
+        Assert.Equal(pages.Length, AiDocumentation.WorkflowPages().Count);
+
+        // After the guides: the workflows' index, each group's page in the order of Dispatch.Apps and then the AI
+        // tools' and the NVDA-only page, the commands page; then the two rules.
+        var names = Dispatch.Apps.Select(app => app.Name).Append("ai-tools").Append("nvda-only")
+            .Where(name => File.Exists(Path.Combine(docs, "workflows", name + ".md")));
+        string[] expected =
+        [
+            Path.Combine("documentation", "index.md"),
+            Path.Combine("documentation", "axKit.md"),
+            .. Dispatch.Apps.Select(app => Path.Combine("documentation", app.Name + ".md")),
+            Path.Combine("documentation", "workflows.md"),
+            .. names.Select(name => Path.Combine("documentation", "workflows-" + name + ".md")),
+            Path.Combine("documentation", "window-commands.md"),
+            AiDocumentation.RulePath,
+            AiToolsRule.RulePath,
+        ];
+        Assert.Equal(expected, AiDocumentation.Files("1.2.3").Select(file => file.Path));
+        Assert.Equal("workflows-axFile.md", AiDocumentation.WorkflowPageName("axFile"));
+    }
+
+    [Fact]
+    public void The_index_names_the_workflow_files_and_the_commands()
+    {
+        var index = AiDocumentation.Files("1.2.3")[0].Text;
+        Assert.Contains("\n- workflows.md: what a user can do in each app, as workflows and their goals.\n", index, StringComparison.Ordinal);
+        Assert.Contains("\n- workflows-axFile.md: the steps of axFile's goals with their keys.\n", index, StringComparison.Ordinal);
+        Assert.Contains("\n- workflows-ai-tools.md: the steps of the AI tools' goals with their keys.\n", index, StringComparison.Ordinal);
+        Assert.Contains("\n- workflows-nvda-only.md: the steps of the NVDA-only goals with their keys.\n", index, StringComparison.Ordinal);
+        foreach (var (page, goals, _) in AiDocumentation.WorkflowPages())
+        {
+            Assert.Contains($"\n- workflows-{page}.md: the steps of {goals} with their keys.\n", index, StringComparison.Ordinal);
+        }
+
+        Assert.Contains("\n- window-commands.md: every command of every window with its menu and its key, one a line.\n", index, StringComparison.Ordinal);
+        // Never commands.md, which in the repository is the developer's commands.
+        Assert.DoesNotContain("- commands.md", index, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_rule_tells_claude_to_name_workflows_to_give_a_goals_steps_as_written_and_never_to_invent_a_key()
+    {
+        // WF-8.3, in its words; the rule's lines are wrapped, so the sentences are looked for with one space between words.
+        var rule = Regex.Replace(AiDocumentation.Rule, @"\s+", " ");
+        string[] sentences =
+        [
+            "workflows.md lists what a user can do in each app: its workflows, and under each its goals.",
+            "The steps of an app's goals, with the keys as they are in this version, are in workflows-<app>.md (workflows-axFile.md).",
+            "window-commands.md lists every command of every window with its menu and its key, one a line.",
+            "When the user asks what axKit or one of its apps can do, answer from workflows.md: name the workflows and goals that fit.",
+            "When the user asks how to do something, find its goal in the app's workflows file (search for the goal's title with your Grep tool, the files are long) and give its steps as they are written there, keys included.",
+            "The steps come from axKit's own checks: a file name or a word they type is an example.",
+            "Say so in a few words and put the user's own in its place; change nothing else, not a key, not a menu, not the order.",
+            "Never invent a key or a menu: a key you name comes from a workflows file, window-commands.md or a guide.",
+            "Where a guide and window-commands.md name different keys for one command, window-commands.md is right: it is written from the windows themselves.",
+            "When no goal covers the question, look in the app's guide and in window-commands.md, and say when you are not sure.",
+        ];
+        foreach (var sentence in sentences)
+        {
+            Assert.Contains(sentence, rule, StringComparison.Ordinal);
+        }
+
+        // The two the rule had stay, before the new ones.
+        var read = rule.IndexOf("read documentation/index.md and the guide that fits with your Read tool before you answer, and answer from the guide.", StringComparison.Ordinal);
+        var notCovered = rule.IndexOf("When the guides do not cover the question, say so, and say what you answer from instead.", StringComparison.Ordinal);
+        Assert.True(read > 0 && notCovered > read, "The rule's own sentences are kept, word for word.");
+        Assert.True(rule.IndexOf(sentences[0], StringComparison.Ordinal) > notCovered, "The sentences of WF-8.3 come after the rule's own.");
+
+        // WF-D-24: nothing tells Claude to offer to do the steps; when Claude may run a command is the AI tools' rule's.
+        Assert.DoesNotContain("offer", rule, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Every_file_of_the_workflows_is_one_axKit_may_delete()
+    {
+        // WF-8.1: directly in documentation, so that the marker's list may delete one that a later version no longer has.
+        var paths = AiDocumentation.Files("1.2.3").Select(file => file.Path)
+            .Where(path => Path.GetFileName(path).StartsWith("workflows", StringComparison.Ordinal) || Path.GetFileName(path) == "window-commands.md")
+            .ToList();
+        Assert.Equal(2 + AiDocumentation.WorkflowPages().Count, paths.Count);
+        Assert.All(paths, path => Assert.True(AiDocumentation.IsOurs(path), $"{path} is not a file axKit may delete."));
+
+        // Written there, and named in the marker.
+        using var temp = new TempFolder("axkit-ai-documentation");
+        AiDocumentation.Write(temp.Path, "1.2.3");
+        var marker = File.ReadAllLines(Path.Combine(temp.Path, "documentation", "axkit-version.txt"));
+        Assert.All(paths, path => Assert.True(File.Exists(Path.Combine(temp.Path, path)), $"{path} was not written."));
+        Assert.All(paths, path => Assert.Contains(path, marker));
     }
 
     [Fact]
@@ -90,7 +205,7 @@ public sealed class AiDocumentationTests
         var rule = temp.File(Path.Combine(".claude", "rules", "mine.md"), "my rule");
 
         var written = AiDocumentation.Write(temp.Path, "1.3.0");
-        Assert.Equal(Dispatch.Apps.Count + 4, written.Count);
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + AiDocumentation.WorkflowPages().Count, written.Count);
         Assert.StartsWith("# axFile", File.ReadAllText(Path.Combine(folder, "axFile.md")), StringComparison.Ordinal);
         Assert.Contains("axKit 1.3.0", File.ReadAllText(Path.Combine(folder, "index.md")), StringComparison.Ordinal);
         Assert.Equal("1.3.0", File.ReadLines(Path.Combine(folder, "axkit-version.txt")).First());
@@ -101,7 +216,7 @@ public sealed class AiDocumentationTests
 
         // A development build asks for every file again whatever the marker says: its guides change without its version.
         File.WriteAllText(Path.Combine(folder, "axFile.md"), "an old guide");
-        Assert.Equal(Dispatch.Apps.Count + 4, AiDocumentation.Write(temp.Path, "1.3.0", rewrite: true).Count);
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + AiDocumentation.WorkflowPages().Count, AiDocumentation.Write(temp.Path, "1.3.0", rewrite: true).Count);
         Assert.StartsWith("# axFile", File.ReadAllText(Path.Combine(folder, "axFile.md")), StringComparison.Ordinal);
         Assert.Equal("my own", File.ReadAllText(own));
     }
