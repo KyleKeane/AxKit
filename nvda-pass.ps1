@@ -129,4 +129,7 @@ Stop-WhenSomeoneIsThere
     ForEach-Object { $_ -replace '[A-Za-z]:(\\\\|\\)Users(\\\\|\\)[^\\"\s]+', '%USERPROFILE%' }
 $code = $LASTEXITCODE
 Write-Host 'Report: %TEMP%\axkit-nvda\report.md'
+# The pass has written what it heard into the workflow record: the owed page is written again from it, so a hearing
+# that names its script (tools\owed.ps1) leaves the page with the pass and not by anyone reading the report.
+& (Join-Path $root 'tools\owed.ps1')
 exit $code

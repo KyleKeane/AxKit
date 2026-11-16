@@ -13,7 +13,9 @@ into one page, so that what is owed never rests on anyone's memory. The three so
                              check, "a run of a real ..." a live check, "a test ..." a test in code. A row that
                              starts otherwise is refused, with these words.
   docs\axKit\repairs.json    an item with "owed" (tools\repairs.ps1 describes the fields): each entry starts with
-                             its kind, "hearing: ", "live: " or "window: ".
+                             its kind, "hearing: ", "live: " or "window: ". A hearing that a script reaches ends
+                             with "(heard by tests/scripts/<app>/<name>.txt)": it leaves the page by itself when
+                             docs\axKit\workflow-record.json holds a pass of that script with NVDA listening.
   docs\axKit\nvda-test-record.md   every section whose heading starts with "Owed:". The page names the heading and
                              points there; the steps stay in the record.
 
@@ -58,6 +60,9 @@ $kinds = [ordered]@{
 $entries = @{}
 foreach ($kind in $kinds.Keys) { $entries[$kind] = New-Object System.Collections.Generic.List[string] }
 $problems = @()
+# The hearings the workflow record itself proves (below), listed at the page's end and not counted as owed.
+$heard = New-Object System.Collections.Generic.List[string]
+$record = [IO.File]::ReadAllText((Join-Path $root 'docs\axKit\workflow-record.json')) | ConvertFrom-Json
 
 # The NVDA test record's own Owed sections: named, with the place, never copied.
 foreach ($line in $recordLines) {
@@ -73,7 +78,29 @@ foreach ($item in $repairs.items) {
             $problems += "docs/axKit/repairs.json: $($item.id): the owed entry '$entry' does not start with hearing: , live: or window: "
             continue
         }
-        $entries[$Matches[1]].Add("- $($item.id): $(Sentence $Matches[2])")
+        $kind = $Matches[1]
+        $what = $Matches[2]
+        # A hearing that names the script which says the sentence, "... (heard by tests/scripts/<app>/<name>.txt)",
+        # leaves the page by itself once the workflow record holds a pass of every goal of that script with NVDA
+        # listening: in such a pass every expected sentence must also be spoken by NVDA. Nobody reads a pass's report
+        # for it (done by hand after the pass of 2026-11-16). The script is written with the repair, so any pass of it
+        # with NVDA is one after the repair.
+        if ($kind -eq 'hearing' -and $what -match '^(.*\S)\s*\(heard by (tests/[^)\s]+)\)$') {
+            $what = $Matches[1]
+            $script = $Matches[2]
+            if (-not (Test-Path (Join-Path $root $script))) {
+                $problems += "docs/axKit/repairs.json: $($item.id): the owed entry names the script $script, which is not there"
+                continue
+            }
+            $goals = @($record.goals | Where-Object { $_.script -eq $script })
+            $unheard = @($goals | Where-Object { -not $_.tiers.nvda -or $_.tiers.nvda.last.result -ne 'passed' })
+            if ($goals.Count -gt 0 -and $unheard.Count -eq 0) {
+                $heard.Add("- $($item.id): $(Sentence $what) Heard: ``$script`` passed with NVDA at $($goals[0].tiers.nvda.last.commit).")
+                continue
+            }
+            $what = "$what (leaves when ``$script`` has passed with NVDA)"
+        }
+        $entries[$kind].Add("- $($item.id): $(Sentence $what)")
     }
 }
 
@@ -119,6 +146,15 @@ foreach ($kind in $kinds.Keys) {
     $lines.Add('## ' + $kinds[$kind])
     $lines.Add('')
     foreach ($entry in $entries[$kind]) { $lines.Add($entry) }
+}
+
+if ($heard.Count -gt 0) {
+    $lines.Add('')
+    $lines.Add('## Heard since, by the workflow record')
+    $lines.Add('')
+    $lines.Add('No longer owed: the script each names passed with NVDA listening (`docs/axKit/workflow-record.json`).')
+    $lines.Add('')
+    foreach ($entry in $heard) { $lines.Add($entry) }
 }
 
 $text = ($lines -join "`r`n") + "`r`n"

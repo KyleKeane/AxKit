@@ -57,3 +57,11 @@ dated pass; then the script writes this page again.
 ## Owed a test in code
 
 - C-55, every app, Claude's working folder cannot be written: a test of AiRequest's run with a no-hooks file that cannot be written.
+
+## Heard since, by the workflow record
+
+No longer owed: the script each names passed with NVDA listening (`docs/axKit/workflow-record.json`).
+
+- R-66: a damaged item named in its list in axTask. Heard: `tests/scripts/axTask/10-damaged-item.txt` passed with NVDA at f93f1e64.
+- R-69: the sentence of axClip at its first showing when the kept history could not be read. Heard: `tests/scripts/axClip/03-history-not-read.txt` passed with NVDA at f93f1e64.
+- R-72: the first press of an action key of a list that moves or opens, in axTask. Heard: `tests/scripts/axTask/04-action-keys.txt` passed with NVDA at f93f1e64.

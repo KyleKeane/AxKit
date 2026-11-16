@@ -19,7 +19,9 @@ it). It holds the principles the repairs follow, each with an id, and the items,
                sentences, each starting with its kind and a colon, "hearing: " (to be heard with NVDA), "live: " (a
                real outside program or situation) or "window: " (a window check on the hidden desktop).
                tools\owed.ps1 writes docs\axKit\owed.md from them; an entry is taken out when the thing was heard or
-               tried, and verify then says how
+               tried, and verify then says how. A hearing that a script reaches names it at its end, "(heard by
+               tests/scripts/<app>/<name>.txt)", and stays: the page drops it by itself once that script has
+               passed with NVDA listening (tools\owed.ps1)
     status     open, done, deferred (with why in note), declined (with why in note)
     commit     the commit that fixed it, when done
     note       anything else
