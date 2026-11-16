@@ -174,6 +174,14 @@ public sealed class McpTests
         settings.Seal = McpAccess.SealOf(key, settings);
         Assert.True(McpAccess.Checks(key, settings));
 
+        // repairs.md R-56: a setting the key does not bear out is told to the user; one never turned on is not.
+        Assert.False(McpAccess.ChangedOutsideAxKit(settings, key));
+        Assert.True(McpAccess.ChangedOutsideAxKit(settings, null));
+        Assert.True(McpAccess.ChangedOutsideAxKit(settings, System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)));
+        Assert.False(McpAccess.ChangedOutsideAxKit(new McpSettings(), null));
+        Assert.True(McpAccess.ChangedOutsideAxKit(new McpSettings { Enabled = true }, key));
+        Assert.True(McpAccess.ChangedOutsideAxKit(new McpSettings { RunCommands = true }, key));
+
         // A client added by hand, or the setting turned on by hand, breaks the seal.
         settings.Clients.Add(new McpClient(@"C:\evil.exe", "x", "2026-10-24 21:01"));
         Assert.False(McpAccess.Checks(key, settings));

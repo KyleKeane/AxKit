@@ -528,6 +528,12 @@ public abstract partial class AxKitForm
             var settings = McpAccess.Load();
             access.Checked = settings.Enabled;
             run.Checked = settings.RunCommands;
+            // R-56: off because the file was changed outside axKit or the key is gone: said as the submenu opens,
+            // every time until the user turns the tools on again or forgets them, which writes the file anew.
+            if (McpAccess.Problem() is { } problem)
+            {
+                Announce(problem, true);
+            }
         });
         return menu;
     }

@@ -39,7 +39,33 @@ public static class KeePassCli
     /// signed by a publisher it trusts, since a folder the user can write could hold a planted program that would
     /// receive the password. Null when there is none.
     /// </summary>
-    public static string? Find(string? setPath) => Find(setPath, Signatures.IsTrusted);
+    public static string? Find(string? setPath) => Find(setPath, SignedByKeePassXC);
+
+    /// <summary>
+    /// Whether the file is signed, the signature holds, and the signer is KeePassXC's publisher
+    /// (<see cref="KeePassCliTexts.Publishers"/>; repairs.md R-55): a program signed by anyone else, however validly,
+    /// is not the tool and never gets the master password. A refusal for the signer is logged with the signer's name.
+    /// </summary>
+    public static bool SignedByKeePassXC(string file)
+    {
+        if (!Signatures.IsTrusted(file))
+        {
+            return false;
+        }
+
+        var signer = Signatures.SignerName(file);
+        if (IsPublisher(signer))
+        {
+            return true;
+        }
+
+        Log.Error($"{ExeName} at {file} is signed by {signer ?? "an unnamed publisher"}, not by KeePassXC's publisher: the master password is not given to it.");
+        return false;
+    }
+
+    /// <summary>Whether the name is one of KeePassXC's publishers, without regard to case or the spaces around it.</summary>
+    public static bool IsPublisher(string? signer) =>
+        signer is not null && KeePassCliTexts.Publishers.Contains(signer.Trim(), StringComparer.OrdinalIgnoreCase);
 
     /// <summary>The same with the signature check given, for the tests.</summary>
     public static string? Find(string? setPath, Func<string, bool> trusted)

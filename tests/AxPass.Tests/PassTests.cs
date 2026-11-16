@@ -95,6 +95,39 @@ public class PassTests
         Assert.False(Backups.Changes("show"));
     }
 
+    [Fact]
+    public void OnlyKeePassXCsPublisherIsTheTool()
+    {
+        // repairs.md R-55: a valid signature is not enough, the signer must be KeePassXC's publisher.
+        Assert.True(KeePassCli.IsPublisher("DroidMonkey Apps, LLC"));
+        Assert.True(KeePassCli.IsPublisher(" droidmonkey apps, llc "));
+        Assert.False(KeePassCli.IsPublisher("Microsoft Corporation"));
+        Assert.False(KeePassCli.IsPublisher("DroidMonkey Apps"));
+        Assert.False(KeePassCli.IsPublisher(string.Empty));
+        Assert.False(KeePassCli.IsPublisher(null));
+
+        // A file nobody signed.
+        using var temp = new TempFolder("axpass-tests");
+        var planted = Path.Combine(temp.Path, KeePassCli.ExeName);
+        File.WriteAllText(planted, "not a program");
+        Assert.Null(AxKit.Core.Signatures.SignerName(planted));
+        Assert.False(KeePassCli.SignedByKeePassXC(planted));
+
+        // A program another publisher signed validly: the one running these tests, where it is signed.
+        if (Environment.ProcessPath is { } running && AxKit.Core.Signatures.IsTrusted(running))
+        {
+            Assert.NotNull(AxKit.Core.Signatures.SignerName(running));
+            Assert.False(KeePassCli.SignedByKeePassXC(running));
+        }
+
+        // KeePassXC's own tool, where it is installed (not on the build servers).
+        var installed = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "KeePassXC", KeePassCli.ExeName);
+        if (File.Exists(installed))
+        {
+            Assert.True(KeePassCli.SignedByKeePassXC(installed));
+        }
+    }
+
     /// <summary>The tool itself on a throwaway database, when KeePassXC is installed (not on the build servers, where it passes without running).</summary>
     [Fact]
     public void TheToolTakesThePasswordOnAPipe()

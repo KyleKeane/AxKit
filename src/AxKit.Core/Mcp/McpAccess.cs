@@ -58,6 +58,46 @@ public static class McpAccess
         return ReadKey() is { } key && Checks(key, settings) ? settings : new McpSettings();
     }
 
+    /// <summary>What a window says when <see cref="Problem"/> finds the setting changed outside axKit (repairs.md R-56).</summary>
+    public const string ChangedOutside = "The AI tools' setting was changed outside axKit, or its key is gone: AI tools are off, and every AI tool must be allowed again.";
+
+    /// <summary>
+    /// Why the setting reads as off although its file says otherwise (repairs.md R-56): the file holds an access, a run
+    /// switch, a client or a seal, and there is no key for this user or the seal does not check (a hand edit, a file
+    /// put back from a backup, a key deleted, a password reset that closed the key). Null when the setting is as axKit
+    /// wrote it, or was never turned on. The safe default stays what <see cref="Load"/> gives; this is so that the
+    /// user learns of it. Logged once in a process.
+    /// </summary>
+    public static string? Problem()
+    {
+        if (!File.Exists(AppPaths.McpFile))
+        {
+            return null;
+        }
+
+        if (!ChangedOutsideAxKit(SettingsFile.Load<McpSettings>(AppPaths.McpFile, out _), ReadKey()))
+        {
+            return null;
+        }
+
+        if (!_problemLogged)
+        {
+            _problemLogged = true;
+            Log.Error(ChangedOutside);
+        }
+
+        return ChangedOutside;
+    }
+
+    private static bool _problemLogged;
+
+    /// <summary>Whether a file's setting says something (an access, a run switch, a client, a seal) that the key does not bear out; the key null when there is none for this user.</summary>
+    public static bool ChangedOutsideAxKit(McpSettings settings, byte[]? key)
+    {
+        var says = settings.Enabled || settings.RunCommands || settings.Clients.Count > 0 || settings.Seal.Length > 0;
+        return says && (key is null || !Checks(key, settings));
+    }
+
     public static bool Enabled => Load().Enabled;
 
     /// <summary>MC-7.2: whether AI tools may run commands, read from the sealed file; false whenever the access itself is off.</summary>

@@ -928,8 +928,10 @@ public abstract partial class AxKitForm : Form
             return;
         }
 
-        var bounds = new Rectangle(placement.X, placement.Y, placement.Width, placement.Height);
-        if (!Screen.AllScreens.Any(s => s.WorkingArea.IntersectsWith(bounds)))
+        // R-58: fitted into the screen it shares the most with, so a damaged or hand-edited place cannot put the
+        // window where it is not found; on no screen at all, Windows places the window.
+        var stored = new Rectangle(placement.X, placement.Y, placement.Width, placement.Height);
+        if (WindowPlace.Fit(stored, [.. Screen.AllScreens.Select(s => s.WorkingArea)]) is not { } bounds)
         {
             return;
         }

@@ -15,6 +15,16 @@ namespace AxPass.Core;
 /// </summary>
 public static class KeePassCliTexts
 {
+    // ---- The publisher ----
+
+    /// <summary>
+    /// The names on the certificate KeePassXC's releases for Windows are signed with (read from the installed
+    /// keepassxc-cli.exe on 2026-11-16). A tool found outside Program Files gets the master password only when one of
+    /// these signed it (<see cref="KeePassCli.SignedByKeePassXC"/>, repairs.md R-55). When KeePassXC changes its
+    /// publisher, the new name joins this list.
+    /// </summary>
+    public static readonly IReadOnlyList<string> Publishers = ["DroidMonkey Apps, LLC"];
+
     // ---- Commands ----
 
     /// <summary>Lists groups and entries; with <see cref="ListOptions"/> the whole database, one full path per line.</summary>

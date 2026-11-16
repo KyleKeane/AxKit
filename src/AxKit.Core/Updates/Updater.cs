@@ -141,7 +141,21 @@ public static class Updater
             Directory.Delete(folder, recursive: true);
         }
 
-        ZipFile.ExtractToDirectory(zip, folder);
+        // R-59: the bytes that were checked are the bytes that are extracted. The file is opened so that nothing can
+        // write it, hashed once more as it stands on the disk, and extracted from that same open file.
+        using (var checkedZip = new FileStream(zip, FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+            if (!SHA256.HashData(checkedZip).AsSpan().SequenceEqual(sha256))
+            {
+                checkedZip.Dispose();
+                File.Delete(zip);
+                throw new InvalidOperationException("The downloaded zip changed on the disk after it was checked, so it was deleted and nothing was installed. Try again; if it happens again, report it on GitHub.");
+            }
+
+            checkedZip.Position = 0;
+            ZipFile.ExtractToDirectory(checkedZip, folder);
+        }
+
         File.Delete(zip);
         if (!IsComplete(folder))
         {

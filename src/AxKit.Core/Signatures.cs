@@ -41,6 +41,33 @@ public static class Signatures
         }
     }
 
+    /// <summary>
+    /// The name of the publisher whose certificate signed the file (the certificate's simple name, "DroidMonkey Apps,
+    /// LLC"), or null when the file carries no signature that can be read. It says who signed, not that the signature
+    /// holds: ask <see cref="IsTrusted"/> first (repairs.md R-55).
+    /// </summary>
+    public static string? SignerName(string file)
+    {
+        if (!OperatingSystem.IsWindows() || !File.Exists(file))
+        {
+            return null;
+        }
+
+        try
+        {
+#pragma warning disable SYSLIB0057 // The one .NET call that reads the certificate a file is signed with.
+            using var signer = new System.Security.Cryptography.X509Certificates.X509Certificate2(
+                System.Security.Cryptography.X509Certificates.X509Certificate.CreateFromSignedFile(file));
+#pragma warning restore SYSLIB0057
+            var name = signer.GetNameInfo(System.Security.Cryptography.X509Certificates.X509NameType.SimpleName, false);
+            return string.IsNullOrWhiteSpace(name) ? null : name;
+        }
+        catch (System.Security.Cryptography.CryptographicException)
+        {
+            return null;
+        }
+    }
+
     private const uint WtdUiNone = 2;
     private const uint WtdRevokeNone = 0;
     private const uint WtdChoiceFile = 1;

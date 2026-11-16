@@ -6,8 +6,8 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 7 (2 high, 1 medium, 4 low)
-- **done**: 47 (9 high, 22 medium, 16 low)
+- **open**: 3 (2 high, 1 low)
+- **done**: 51 (9 high, 23 medium, 19 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 5 (4 medium, 1 low)
 
@@ -38,40 +38,12 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: Before each start the obeyed files axKit did not write are listed with a hash each and compared with the list the user last accepted; a new or changed one is named in a notice whose default is Cancel. Shift+F1's print mode leaves project settings and project servers out where Claude Code has an option for it.
 - Note: Found on 2026-11-16 by the resilience audit. A settings file with hooks, a project server file, a third rule file or a changed CLAUDE.md there is loaded by Claude Code at every later start; Claude itself may write them. What Claude Code loads from the folder, and its options, are to be verified against the installed version first (rule 12).
 
-### R-55, medium, security: axPass takes any validly signed file as KeePassXC's tool
-
-- Where: src/AxKit.Core/Signatures.cs; src/AxPass.Core/KeePassCli.cs
-- Principle: P1
-- Fix: The signer's name is read after the signature checks, and only KeePassXC's publisher is accepted; another is refused with its name and the master password is not given to it.
-- Note: Found on 2026-11-16 by the resilience audit: the earlier audit's S-19 says the publisher is checked, the code checks only that some trusted publisher signed. The real subject of an installed copy's certificate is read first.
-
-### R-56, low, security: The AI tools read as off without a word when their seal or key fails
-
-- Where: src/AxKit.Core/Mcp/McpAccess.cs
-- Principle: P1
-- Fix: Load gives the reason; the next use of the AI tools says once that the setting was changed outside axKit or its key is gone, and the log holds it.
-- Note: Found on 2026-11-16 by the resilience audit. The default is the safe one; what is missing is that the user learns pairings were dropped or something wrote the file.
-
 ### R-57, low, security: Report items planted in the reports folder go out with the user's next report
 
 - Where: src/AxKit.Core/Reports/ReportSender.cs
 - Principle: P1
 - Fix: Before anything beyond the report just written is sent, the earlier unsent ones are counted and named and the user is asked, No the default.
 - Note: Found on 2026-11-16 by the resilience audit, plausible and not followed to the end: what the report flow says today is to be read first.
-
-### R-58, low, forms: A stored window place can put a window almost wholly off the screen
-
-- Where: src/AxKit.Core/WindowSettings.cs; src/AxKit.Forms/AxKitForm.cs
-- Principle: P4
-- Fix: The place is fitted into the working area of the screen it meets most, by a pure function with tests.
-- Note: Found on 2026-11-16 by the resilience audit.
-
-### R-59, low, security: A downloaded update is not checked again between its hash and its extraction
-
-- Where: src/AxKit.Core/Updates/Updater.cs
-- Principle: P4
-- Fix: The bytes that were hashed are the bytes that are extracted.
-- Note: Found on 2026-11-16 by the resilience audit. Low: a program that can write there can write the install folder too.
 
 ## Done
 
@@ -337,6 +309,14 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxKit.Tests/SettingsFileTests (One_value_that_does_not_read_costs_that_value_alone)
 - Note: Found on 2026-11-16 by the resilience audit. Text that is not a JSON object behaves as now.
 
+### R-55, medium, security: axPass takes any validly signed file as KeePassXC's tool
+
+- Where: src/AxKit.Core/Signatures.cs; src/AxPass.Core/KeePassCli.cs
+- Principle: P1
+- Fix: The signer's name is read after the signature checks, and only KeePassXC's publisher is accepted; another is refused with its name and the master password is not given to it.
+- Checked by: tests/AxPass.Tests/PassTests (OnlyKeePassXCsPublisherIsTheTool), with the installed KeePassXC on the development computer
+- Note: Found on 2026-11-16 by the resilience audit: the earlier audit's S-19 says the publisher is checked, the code checks only that some trusted publisher signed. The real subject of an installed copy's certificate is read first.
+
 ### R-60, medium, framework: A window in its key test listed its keys as acting
 
 - Where: src/AxKit.Forms/AxKitForm.Commands.cs; tests/AxAutomate.Tests/RepositoryWorkflowTests.cs
@@ -480,6 +460,30 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: CreateGeneralMenu makes a General without items not Available, so the menu bar and the command list pass over it.
 - Checked by: the apps' scripts on the Store copy: check commands
 - Note: Found on 2026-11-14 by the NVDA pass of the Store copy of 5.8.0: Check for updates at start is left out of a packaged copy (AX-13.3), which left General empty in thirteen windows, and check commands named it in eighteen scripts as an entry without a mark. Fixed after 5.8.0; the Store has the fix with the next release's package.
+
+### R-56, low, security: The AI tools read as off without a word when their seal or key fails
+
+- Where: src/AxKit.Core/Mcp/McpAccess.cs
+- Principle: P1
+- Fix: Load gives the reason; the next use of the AI tools says once that the setting was changed outside axKit or its key is gone, and the log holds it.
+- Checked by: tests/AxKit.Tests/McpTests (A_file_counts_only_with_its_seal: ChangedOutsideAxKit); the sentence in the window is owed a hearing
+- Note: Found on 2026-11-16 by the resilience audit. The default is the safe one; what is missing is that the user learns pairings were dropped or something wrote the file.
+
+### R-58, low, forms: A stored window place can put a window almost wholly off the screen
+
+- Where: src/AxKit.Core/WindowSettings.cs; src/AxKit.Forms/AxKitForm.cs
+- Principle: P4
+- Fix: The place is fitted into the working area of the screen it meets most, by a pure function with tests.
+- Checked by: tests/AxKit.Tests/WindowPlaceTests
+- Note: Found on 2026-11-16 by the resilience audit.
+
+### R-59, low, security: A downloaded update is not checked again between its hash and its extraction
+
+- Where: src/AxKit.Core/Updates/Updater.cs
+- Principle: P4
+- Fix: The bytes that were hashed are the bytes that are extracted.
+- Checked by: read; the update flow is exercised only by a real update, so this is owed a run at the next release
+- Note: Found on 2026-11-16 by the resilience audit. Low: a program that can write there can write the install folder too.
 
 ## Deferred
 

@@ -20,7 +20,8 @@ section 8. The window is `src/AxPass`, with its own `CLAUDE.md`. The item format
   `EmptyMark`, `RecycleBin`) and the names `show` prints. Every class here and the window name a command or an option
   by its constant; `KeePassCliTextsTests` fails when one is written as a string anywhere else, or when something
   searches the tool's error text. No prompt and no error text of the tool is matched anywhere.
-- `KeePassCli` and `CliResult` (PW-5): `Find` (the path set, KeePassXC's install folder, the PATH), `Run` (one command,
+- `KeePassCli` and `CliResult` (PW-5): `Find` (KeePassXC's install folder, then the path set and the PATH, those two
+  only for a file `SignedByKeePassXC`: signed, the signature holding, the signer one of `KeePassCliTexts.Publishers`), `Run` (one command,
   the arguments in `ArgumentList`, the input lines on standard input, a timeout; through `AxKit.Core/ProcessRun`),
   `On` (the command, `-q`, the options, the database, the paths); `CliResult.Why` (the tool's own words for a
   failure) and `SaidNothing` (a failure without words, which with `-q` is a wrong master password).

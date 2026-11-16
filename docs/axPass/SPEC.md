@@ -59,7 +59,7 @@ forgets the master password and shows only the notice that asks for it.
 
 ## 5. The engine (PW-D1)
 
-- **PW-5.1** `keepassxc-cli.exe`, found in KeePassXC's install folder first (Program Files, which only an administrator can write), then at a path the user sets (Options) or on the PATH, those two only when Windows finds the file signed by a publisher it trusts (`AxKit.Core/Signatures`; security audit S-19: a program planted where the user can write would receive the master password).
+- **PW-5.1** `keepassxc-cli.exe`, found in KeePassXC's install folder first (Program Files, which only an administrator can write), then at a path the user sets (Options) or on the PATH, those two only when Windows finds the file signed, the signature holding, and the signer KeePassXC's own publisher (`AxKit.Core/Signatures`, `KeePassCli.SignedByKeePassXC`, the names in `KeePassCliTexts.Publishers`; security audit S-19 and `repairs.md` R-55: a program planted where the user can write would receive the master password, and a valid signature of some other publisher does not make it the tool). A file refused for its signer is logged with the signer's name.
   Without it, the notice "KeePassXC is not installed" offers Install KeePassXC now (bundle AX-2.9, one
   administrator prompt) and its download page; once installed, the unlock notice follows.
 - **PW-5.2** One process per command, the database's path and the entry's path as arguments, the master password as
