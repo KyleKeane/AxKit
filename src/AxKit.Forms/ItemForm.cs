@@ -456,7 +456,8 @@ public abstract partial class ItemForm : AxKitForm
         {
             if (_rows[i].IsSection)
             {
-                Navigator.SelectedIndex = i;
+                // The user's move from wherever the command came (AxKitList.SelectForCommand): the heading sound too.
+                Navigator.SelectForCommand(i);
                 return;
             }
         }

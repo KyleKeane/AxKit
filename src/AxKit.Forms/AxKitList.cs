@@ -182,6 +182,25 @@ public class AxKitList : ListBox
 
     private static bool IsKey(int msg) => msg is WM_KEYDOWN or WM_CHAR or WM_SYSKEYDOWN;
 
+    /// <summary>
+    /// Selects a row for a window's command the user asked for (a section jump), as its key would: the move is the
+    /// user's (<see cref="UserMovedSelection"/>) also when the command came from the menu, the command palette or an AI
+    /// tool's run, where no key passes through this list. Found 2026-11-16 by the AI tools mode of the checks: axTask's
+    /// Previous section, run by an AI tool, landed on a heading without the heading sound its key plays.
+    /// </summary>
+    public void SelectForCommand(int index)
+    {
+        _userKey++;
+        try
+        {
+            SelectedIndex = index;
+        }
+        finally
+        {
+            _userKey--;
+        }
+    }
+
     public override bool PreProcessMessage(ref Message msg)
     {
         if (!IsKey(msg.Msg))

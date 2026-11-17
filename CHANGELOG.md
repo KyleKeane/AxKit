@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axTask, axPass, axMCP, axAutomate: Previous section and Next section, and axTask's heading keys at the top level, play the heading sound when they land on a heading also when they are chosen from the menu or the command palette or run by an AI tool, as their keys always did.
 - axClaude: with Claude Code 2.1.326, a message sent while Claude works is counted again: the status bar says "1 message waiting" and Ctrl+Shift+S sends it, since Claude Code now draws "Queued" before its hint. And when the reply that runs is longer than the screen, the message's own Input and Output lines no longer land in the middle of that reply; they wait for the place where Claude takes the message up.
 - axClaude, axTerminal, axGIT, axProcess: the window's three places or views are on Alt+1, Alt+2 and Alt+3 now: the message field, the conversation and the latest response; the command field, the terminal and the latest output; Changes, Log and Branches; Processes, Services and Startup. The menus and the help text show the Alt keys, and "Changes view first" names Alt+1. Ctrl+1, Ctrl+2 and Ctrl+3 still work as before. Ctrl and a number stays a heading of that level in axDown, axPreview and axTask.
 - axKit: Ctrl+Period opens the Context menu in every window, wherever Shift+F10 and the Applications key open it; both stay. Let go of the keys and the menu opens.
