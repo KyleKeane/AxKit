@@ -130,9 +130,7 @@ keys ctrl+a delete
 # The arguments, on two lines (Shift+Enter), the model first, as every run keeps Claude on Haiku; Enter starts:
 # "New session in proj", the conversation emptied, the system line first, "starting" until "Ready", and the replay of
 # the last conversation under it with its "from previous session" blocks.
-# Fails on this build: with --name demo, "Ready" never comes; the status stays "Claude: starting | demo", the replay
-# gets no blocks, and Claude's mode line ("auto mode on (shift+tab to cycle)") and a row " demo" are left in the
-# conversation as lines. (The steps after it are not reached while it fails.)
+# (This failed on an earlier build, where Ready never came with --name demo; it passes since, with 2.1.326 on 2026-11-16.)
 type --model haiku
 keys shift+enter
 type --continue --name demo

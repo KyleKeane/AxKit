@@ -504,7 +504,7 @@ Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does t
 The keys:
 
 - Ctrl+Enter, axGIT: Commit.
-- Ctrl+Enter, axFile: Play folder in AxMedia.
+- Ctrl+Enter, axFile: Play folder in axMedia.
 - Ctrl+Enter, axTerminal: Send the command.
 - Ctrl+Enter, axClaude: Send the message.
 - Shift+Enter, axClip: Copy without pasting.

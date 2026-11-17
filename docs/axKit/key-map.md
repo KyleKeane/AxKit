@@ -348,7 +348,7 @@ Window key, in axDown, axJSON, axPass, axPreview and axTerminal. 4 meanings.
 Bundle key, in axClaude, axFile, axGIT and axTerminal. 4 meanings.
 
 - axGIT: Commit.
-- axFile: Play folder in AxMedia.
+- axFile: Play folder in axMedia.
 - axTerminal: Send the command.
 - axClaude: Send the message.
 

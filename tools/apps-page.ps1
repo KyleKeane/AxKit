@@ -69,7 +69,7 @@ foreach ($app in $apps) {
     $scripts = Join-Path $root "tests\scripts\$($app.Name)"
     if (Test-Path -LiteralPath $scripts) {
         $count = @(Get-ChildItem -LiteralPath $scripts -Filter *.txt).Count
-        $lines.Add("- Automated checks: ``tests/scripts/$($app.Name)/``, $count script$(if ($count -ne 1) { 's' }) (their workflows are in ``docs/axKit/workflows.md``).")
+        $lines.Add("- Automated checks: ``tests/scripts/$($app.Name)/``, $count script$(if ($count -ne 1) { 's' }) (their workflows are in ``docs/axKit/workflows/$($app.Name).md``).")
     }
 
     $run = Existing "scripts to run-individual-apps\run-$($app.Name).ps1"

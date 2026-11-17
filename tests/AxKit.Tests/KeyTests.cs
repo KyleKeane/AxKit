@@ -299,6 +299,8 @@ public sealed class KeyTests
     [InlineData(Keys.Back, "Backspace")]
     [InlineData(Keys.Return, "Enter")]
     [InlineData(Keys.Alt | Keys.Return, "Alt+Enter")]
+    [InlineData(Keys.PageDown, "Page Down")]
+    [InlineData(Keys.Control | Keys.PageUp, "Ctrl+Page Up")]
     public void Menu_text_of_a_key(Keys key, string expected)
     {
         Assert.Equal(expected, BundleKeys.Text(key));

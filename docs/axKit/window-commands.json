@@ -399,8 +399,8 @@
         {"label": "First match", "menu": "", "key": "ctrl+home", "also": [], "keyText": "Ctrl+Home", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Last match", "menu": "", "key": "ctrl+end", "also": [], "keyText": "Ctrl+End", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Next match", "menu": "", "key": "down", "also": [], "keyText": "Down", "mark": "read", "keyOnly": true, "ai": false},
-        {"label": "Page down", "menu": "", "key": "pagedown", "also": [], "keyText": "Next", "mark": "read", "keyOnly": true, "ai": false},
-        {"label": "Page up", "menu": "", "key": "pageup", "also": [], "keyText": "PageUp", "mark": "read", "keyOnly": true, "ai": false},
+        {"label": "Page down", "menu": "", "key": "pagedown", "also": [], "keyText": "Page Down", "mark": "read", "keyOnly": true, "ai": false},
+        {"label": "Page up", "menu": "", "key": "pageup", "also": [], "keyText": "Page Up", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Previous match", "menu": "", "key": "up", "also": [], "keyText": "Up", "mark": "read", "keyOnly": true, "ai": false}
       ]
     },
@@ -547,7 +547,7 @@
         {"label": "Information", "menu": "Context", "key": "ctrl+i", "also": [], "keyText": "Ctrl+I", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Move to folder", "menu": "Context", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Open", "menu": "Context", "key": "enter", "also": [], "keyText": "Enter", "mark": "act", "keyOnly": false, "ai": true},
-        {"label": "Play folder in AxMedia", "menu": "Context", "key": "ctrl+enter", "also": [], "keyText": "Ctrl+Enter", "mark": "open", "keyOnly": false, "ai": true},
+        {"label": "Play folder in axMedia", "menu": "Context", "key": "ctrl+enter", "also": [], "keyText": "Ctrl+Enter", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Preview", "menu": "Context", "key": "shift+enter", "also": [], "keyText": "Shift+Enter", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Properties", "menu": "Context", "key": "alt+enter", "also": [], "keyText": "Alt+Enter", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Rename", "menu": "Context", "key": "f2", "also": [], "keyText": "F2", "mark": "act", "keyOnly": false, "ai": true},
@@ -1465,8 +1465,8 @@
         {"label": "First match", "menu": "", "key": "ctrl+home", "also": [], "keyText": "Ctrl+Home", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Last match", "menu": "", "key": "ctrl+end", "also": [], "keyText": "Ctrl+End", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Next match", "menu": "", "key": "down", "also": [], "keyText": "Down", "mark": "read", "keyOnly": true, "ai": false},
-        {"label": "Page down", "menu": "", "key": "pagedown", "also": [], "keyText": "Next", "mark": "read", "keyOnly": true, "ai": false},
-        {"label": "Page up", "menu": "", "key": "pageup", "also": [], "keyText": "PageUp", "mark": "read", "keyOnly": true, "ai": false},
+        {"label": "Page down", "menu": "", "key": "pagedown", "also": [], "keyText": "Page Down", "mark": "read", "keyOnly": true, "ai": false},
+        {"label": "Page up", "menu": "", "key": "pageup", "also": [], "keyText": "Page Up", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Previous match", "menu": "", "key": "up", "also": [], "keyText": "Up", "mark": "read", "keyOnly": true, "ai": false}
       ]
     },

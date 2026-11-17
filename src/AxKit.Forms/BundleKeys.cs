@@ -159,6 +159,10 @@ public static class BundleKeys
             Keys.OemQuestion => "Slash",
             Keys.OemSemicolon => "Semicolon",
             Keys.Back => "Backspace",
+            // The enumeration gives Page Down its other name, Next, and Page Up as one word (found 2026-11-15 in the
+            // command inventory, where axStart's and axClip's Page down read "Next").
+            Keys.PageDown => "Page Down",
+            Keys.PageUp => "Page Up",
             >= Keys.D0 and <= Keys.D9 => ((char)('0' + (code - Keys.D0))).ToString(),
             _ => code.ToString(),
         });

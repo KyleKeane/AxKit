@@ -42,6 +42,9 @@ expect focus "name":"Message to Claude"
 run dir /b "home\axKit Claude\CLAUDE.md" "home\axKit Claude\.claude\agents\agent.md"
 # axKit's guides too (HE-2.6): the index, the bundle's guide, an app's, the marker, and the rule that tells Claude of them.
 run dir /b "home\axKit Claude\documentation\index.md" "home\axKit Claude\documentation\axKit.md" "home\axKit Claude\documentation\axFile.md" "home\axKit Claude\documentation\axkit-version.txt" "home\axKit Claude\.claude\rules\axkit-documentation.md"
+# The pages Claude answers how-to questions from (docs/axKit/user-workflows.md WF-8.1): the workflows' index, an app's
+# workflows, every window's commands, and the two key pages.
+run dir /b "home\axKit Claude\documentation\workflows.md" "home\axKit Claude\documentation\workflows-axFile.md" "home\axKit Claude\documentation\window-commands.md" "home\axKit Claude\documentation\key-groups.md" "home\axKit Claude\documentation\key-map.md"
 # The rule that tells Claude when to use which of axKit's AI tools (HE-2.8), every tool named in it, and the file
 # Claude Code was started with, which names this run's AxKit.exe as the server axkit.
 run dir /b "home\axKit Claude\.claude\rules\axkit-tools.md" "home\AxKit\claude-mcp.json"

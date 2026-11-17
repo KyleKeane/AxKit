@@ -24,17 +24,26 @@ $ErrorActionPreference = 'Stop'
 # The repository from this script's own path: test.ps1 starts it by its full path from whatever folder it was in.
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path | Split-Path -Parent
 $runnerProject = Join-Path $root 'tools\AxAutomate\AxAutomate.Runner.csproj'
-# No --nologo: dotnet run does not take it and would hand it to the program as its first word.
-$runArguments = @('run', '--project', $runnerProject, '-c', 'Release', '-v', 'q', '--', '--reference', '--repository', $root)
-if ($Check) { $runArguments += '--check' }
+# The runner is built into a folder of its own and started from there. Built and run in place (dotnet run), it could
+# not be built while a window run started the same way was alive in this checkout: that run's AxAutomate.exe holds
+# tools\AxAutomate\bin, and the build failed with MSB3027 after ten tries (found 2026-11-15, when several runs shared
+# a night). The folder is under the temporary folder, by the checkout's name, so two checkouts do not share it.
+$runnerFolder = Join-Path ([IO.Path]::GetTempPath()) ('axkit-reference-runner-' + (Split-Path -Leaf $root))
+$runnerArguments = @('--reference', '--repository', $root)
+if ($Check) { $runnerArguments += '--check' }
 
 # A line the runner writes to stderr must not end this script under Stop when its output is redirected (Windows
 # PowerShell 5.1); the exit code is the result.
 $ErrorActionPreference = 'Continue'
 $exitCode = 2
 try {
-    & dotnet @runArguments
-    $exitCode = $LASTEXITCODE
+    & dotnet build $runnerProject -c Release -v q -nologo -o $runnerFolder | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        & (Join-Path $runnerFolder 'AxAutomate.exe') @runnerArguments
+        $exitCode = $LASTEXITCODE
+    } else {
+        Write-Host "The runner could not be built (dotnet build $runnerProject -c Release -o $runnerFolder)."
+    }
 } finally {
     # The build servers end with the run instead of idling on several hundred megabytes (Directory.Build.rsp).
     dotnet build-server shutdown | Out-Null

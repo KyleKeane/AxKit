@@ -325,7 +325,7 @@ wait 2000
 # Step 18, the louder alert in the background and the taskbar flash, needs the window in the background on the real
 # desktop: left manual.
 # Goal: Answer a question with several answers
-# Step 8, last because it fails on this build: two questions, the second with several answers. The first: "Question 1
+# Step 8, last because it failed on an earlier build (it passes since, with 2.1.326 on 2026-11-16): two questions, the second with several answers. The first: "Question 1
 # of 2: ..."; 2, Enter: "Sent: 2, Green. Next question". The second has check boxes: Down to Apple, Space, Down twice to
 # Cherry, Space, Enter: "Sent: 1, Apple, 3, Cherry", no review; Claude's reply names green, apple and cherry, and the
 # message field is back. Observed: Claude is done and ready, and the second question's list still holds the place of

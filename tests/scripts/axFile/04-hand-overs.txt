@@ -22,7 +22,7 @@ keys down
 expect focus "value":"no-media-here, folder"
 keys enter
 expect said ! no-media-here, 1 item, only-text.txt
-do Play folder in AxMedia
+do Play folder in axMedia
 expect said ! No sound or video files here
 keys backspace
 expect said ! hand, 4 items, no-media-here, folder

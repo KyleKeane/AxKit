@@ -196,8 +196,7 @@ expect focus Message to Claude
 # strips an invisible character (SPEC 4.4 item 23, FR-2.1); the window sends Enter again. The conversation must hold
 # the same block as above: the reply directly after the blank line under the marker, no line of the echo, and no
 # chrome row (the mode line, Claude's "Removed 1 invisible character" row) as a line of the conversation.
-# Fails on this build: the second line of the message ("Answer in one line, with no tool.") stands between the blank line and the
-# reply, and the mode line and "Removed 1 invisible character · review and press Enter to send" end the conversation.
+# (This failed on an earlier build and passes since; with Claude Code 2.1.326 on 2026-11-16.)
 close
 file home\AxKit\axClaude.json {"checkForUpdates":false}
 mkdir fast

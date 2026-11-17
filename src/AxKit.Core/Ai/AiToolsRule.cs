@@ -46,7 +46,7 @@ public static class AiToolsRule
     {
         [McpTools.Apps] = new(
             "when you need an app's verb for axkit_open, or the user asks what axKit has.",
-            "to explain what an app does or how it is used: the guides in documentation do that.",
+            "to explain what an app does or how it is used: the guides and the workflow pages in documentation do that.",
             "nothing before; afterwards name the apps that matter, never the whole list."),
         [McpTools.Windows] = new(
             "first, before any window tool: it gives the ids. Call it again when a window was opened or closed.",
@@ -66,7 +66,7 @@ public static class AiToolsRule
             "what you found, in your own short words; quote only the lines the user asked about."),
         [McpTools.Commands] = new(
             "before every axkit_window_run, to find the command's exact label, its menus and its mark.",
-            "to teach the user the app's keys in general: the guides do that. Here it is the live window's own list.",
+            "to teach the user the app's keys in general: the guides and the key pages do that. Here it is the live window's own list.",
             "nothing before; afterwards the command you found and its key, so the user can press it themselves."),
         [McpTools.Said] = new(
             "for \"what did it just say\", \"I missed that\", and after a run to hear what the window answered.",

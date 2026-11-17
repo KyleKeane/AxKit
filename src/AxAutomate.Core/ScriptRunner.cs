@@ -102,6 +102,7 @@ public static class ScriptRunner
         var conversions = new List<Conversion>();
         var aiTools = options?.AiTools ?? false;
         var inputs = new Dictionary<Goal, (int Played, int Tools)>();
+        var timeline = string.Empty;
         var run = new Run(exe, temp, hosted) { Converting = convert, AiTools = aiTools };
         begun?.Invoke(run);
         try
@@ -200,6 +201,9 @@ public static class ScriptRunner
         }
         finally
         {
+            // Read before the end: Finish closes the windows and forgets them, and a passing script's report then
+            // ended in an empty timeline (found 2026-11-15 by reading).
+            timeline = run.Timeline();
             foreach (var problem in run.Finish())
             {
                 ok = false;
@@ -237,7 +241,7 @@ public static class ScriptRunner
         if (ok)
         {
             log.AppendLine("The timeline:");
-            log.Append(run.Timeline());
+            log.Append(timeline);
         }
 
         return new ScriptResult(ok, log.ToString(), failed, problems, stopped)

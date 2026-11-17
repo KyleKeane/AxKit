@@ -45,7 +45,12 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   commit), `--traces off` neither compares nor writes (`automation.md`, "The traces"). Exit codes: 0
   passed, 1 a script failed, 2 the run could not start, 3 the inventory is stale. Its other form,
   `tools/AxAutomate --reference [--check]`, plays nothing: it writes the workflow pages, or checks them, for
-  `tools/workflows.ps1` (below). `tools/QaRun` runs Claude sessions without windows, always with `--model haiku`.
+  `tools/workflows.ps1` (below). A third form is never typed by hand: `AxAutomate standin <scenario.json> <Claude
+  Code's arguments>` is the stand-in of Claude Code, which a script's `claude.cmd` calls through `AXKIT_STANDIN` to
+  play a scenario of frames, marks, hook events and session file entries with no Claude Code, no network and no
+  model, and `AxAutomate standin --prepare <scenario.json> <folder>` writes a session's earlier turns before a start
+  (`tools/AxAutomate/StandIn.cs` has the scenario's keys; `automation.md` section 2, "The stand-in of Claude Code").
+  `tools/QaRun` runs Claude sessions without windows, always with `--model haiku`.
 - `tools/window-passes.ps1 [-Check]` says which apps' window code has a commit newer than the app's last recorded
   pass on the desktop tier or with NVDA listening (`workflow-record.json`). `release.ps1` and its rehearsal run it with `-Check` and refuse
   while it names an app; `test.ps1` does not run it, since during ordinary work the windows are ahead of their

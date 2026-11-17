@@ -293,8 +293,8 @@ every window" or under a heading that names the windows without it; under an app
 - First match. Menu: none, a key alone. Key: Ctrl+Home. Mark: read. Never run by AI tools.
 - Last match. Menu: none, a key alone. Key: Ctrl+End. Mark: read. Never run by AI tools.
 - Next match. Menu: none, a key alone. Key: Down. Mark: read. Never run by AI tools.
-- Page down. Menu: none, a key alone. Key: Next. Mark: read. Never run by AI tools.
-- Page up. Menu: none, a key alone. Key: PageUp. Mark: read. Never run by AI tools.
+- Page down. Menu: none, a key alone. Key: Page Down. Mark: read. Never run by AI tools.
+- Page up. Menu: none, a key alone. Key: Page Up. Mark: read. Never run by AI tools.
 - Previous match. Menu: none, a key alone. Key: Up. Mark: read. Never run by AI tools.
 
 ## axDown
@@ -371,7 +371,7 @@ every window" or under a heading that names the windows without it; under an app
 - Information. Menu: Context. Key: Ctrl+I. Mark: read.
 - Move to folder. Menu: Context. Key: none. Mark: act.
 - Open. Menu: Context. Key: Enter. Mark: act.
-- Play folder in AxMedia. Menu: Context. Key: Ctrl+Enter. Mark: open.
+- Play folder in axMedia. Menu: Context. Key: Ctrl+Enter. Mark: open.
 - Preview. Menu: Context. Key: Shift+Enter. Mark: open.
 - Properties. Menu: Context. Key: Alt+Enter. Mark: act.
 - Rename. Menu: Context. Key: F2. Mark: act.
@@ -793,8 +793,8 @@ every window" or under a heading that names the windows without it; under an app
 - First match. Menu: none, a key alone. Key: Ctrl+Home. Mark: read. Never run by AI tools.
 - Last match. Menu: none, a key alone. Key: Ctrl+End. Mark: read. Never run by AI tools.
 - Next match. Menu: none, a key alone. Key: Down. Mark: read. Never run by AI tools.
-- Page down. Menu: none, a key alone. Key: Next. Mark: read. Never run by AI tools.
-- Page up. Menu: none, a key alone. Key: PageUp. Mark: read. Never run by AI tools.
+- Page down. Menu: none, a key alone. Key: Page Down. Mark: read. Never run by AI tools.
+- Page up. Menu: none, a key alone. Key: Page Up. Mark: read. Never run by AI tools.
 - Previous match. Menu: none, a key alone. Key: Up. Mark: read. Never run by AI tools.
 
 ## axTask
