@@ -162,3 +162,95 @@ Starts with: Open axPass with the file test.kdbx.
 2. Type: test-master-1
 3. Press Enter.
     You hear: test, 1 item, Email, group, 1 item.
+
+## Change an entry's fields, keep a backup and delete for good
+
+Starts with: Open axPass with the file test.kdbx.
+
+### Make a backup now
+
+1. Choose Back up now in the Session menu.
+    You hear: Backed up: test.
+    You hear words such as: in test backups.
+
+### Show the backups in axFile
+
+1. Choose Show backups in axFile in the Session menu.
+2. A new window opens: go to it.
+3. Close the window.
+4. Go to the axPass window.
+
+### Open a group with Enter and go back up with Backspace
+
+1. Press Enter.
+    You hear: Email, 2 items, Gmail.
+2. Press Backspace.
+    You hear: test, 2 items, Email, group, 2 items.
+3. Press Enter.
+    You hear: Email, 2 items, Gmail.
+
+### Write an entry's notes over two lines
+
+1. Press Enter.
+2. Press End.
+3. Press Enter.
+4. Type: First line of the notes
+5. Press Enter.
+    You hear: new line.
+6. Type: Second line
+7. Press Tab.
+8. Press Enter.
+    You hear: Notes: First line of the notes, and 1 more line.
+
+### Change an entry's URL
+
+1. Press Up.
+2. Press Enter.
+3. Type: https://example.org/login
+4. Press Enter.
+    You hear: URL: https://example.org/login.
+
+### Set a password typed twice
+
+1. Press Up.
+2. Press Enter.
+3. Type: made-up-pass-1
+4. Press Enter.
+5. Type: made-up-pass-1
+6. Press Enter.
+    You hear: Password set for Gmail.
+
+### Change an entry's title in its fields
+
+1. Press Home.
+2. Press Enter.
+3. Type: Gmail work
+4. Press Enter.
+    You hear: Renamed Gmail work.
+
+### Move an entry to the Recycle Bin
+
+1. Press Delete.
+    You hear: Moved Share to the Recycle Bin.
+
+### Make a new group
+
+1. Press Backspace.
+    You hear: test, 3 items, Email, group, 1 item.
+2. Press Ctrl+Shift+N.
+3. Type: Archive
+4. Press Enter.
+    You hear: Made Archive.
+
+### Move a group to the Recycle Bin
+
+1. Type: w
+2. Press Delete.
+3. Press Alt+M.
+    You hear: Moved Work to the Recycle Bin.
+
+### Delete an entry for good from the Recycle Bin
+
+1. Press Delete.
+2. Press Alt+D.
+    You hear: Deleted Share.

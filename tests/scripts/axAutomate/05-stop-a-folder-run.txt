@@ -1,0 +1,50 @@
+# Workflow: Stop the run of a folder and see which checks need NVDA
+# axAutomate, docs/axAutomate/user-guide.md "Running workflows": a folder's run you stop says where it stopped and how
+# many workflows it did not reach, "Run stopped at 03-waits: 1 passed, 1 failed, 3 not run"; and the checks that need
+# NVDA listening run only in the NVDA pass, not from the window (SPEC.md AU-4.4, AU-4.5; 02-run stops one workflow
+# and has the other reasons a workflow cannot run). Run by tools/AxAutomate on a desktop of its own; the window's runs
+# start their windows on a further desktop of their own. In the workflows' lines a file name never starts with n
+# after a backslash, which a file step reads as a new line.
+file home\AxKit\axAutomate.json {"checkForUpdates": false}
+mkdir flows
+file flows\01-quick.txt # A workflow that passes at once.\n\nstart down\nclose
+file flows\02-waits.txt # A workflow that takes its time.\n\nstart down\nwait 3000\nwait 3000\nclose
+file flows\03-later.txt # A workflow the stopped run never reaches.\n\nstart down\nclose
+mkdir heard
+file heard\04-heard.txt # A check that needs NVDA listening.\n\nstart down\nexpect spoken Untitled\nclose
+
+# Goal: Stop the run of a folder partway
+# F5 at the folder's level; once the first workflow has passed and the second is going on, Escape: the second stops
+# after its step, the third is never started, and one line says where the run stopped and what it did not reach.
+start automate {temp}\flows
+expect focus 01-quick, workflow, 2 steps
+keys f5
+expect said Running 3 workflows
+expect said 01-quick passed, 2 steps
+# A user's pace: the second workflow has started by now, and its two waits take six seconds.
+wait 2500
+keys escape
+expect said Stopping after the current step
+expect said 02-waits stopped
+expect said Run stopped at 02-waits: 1 passed, 1 not run
+# Goal: Read on the rows how far a stopped run came
+expect list "items":["01-quick, workflow, 2 steps, passed","02-waits, workflow, 4 steps, stopped","03-later, workflow, 2 steps"]
+close
+
+# Check: A check that needs NVDA listening cannot run from the window
+# A script with a step for NVDA's speech: its details say why it cannot run, F5 in its folder and F5 inside it say
+# the same, and its step reads "Expect NVDA to say".
+start automate {temp}\heard
+expect focus 04-heard, workflow, 3 steps
+keys tab
+expect list "Cannot run: the operation expect spoken needs NVDA listening, which only the NVDA pass has"
+keys escape
+expect focus 04-heard, workflow, 3 steps
+keys f5
+expect said 04-heard cannot run: the operation expect spoken needs NVDA listening, which only the NVDA pass has
+keys right
+expect said ! 04-heard, 3 steps, 1. Start down
+keys down
+expect focus 2. Expect NVDA to say: Untitled
+keys f5
+expect said ! This workflow cannot run: the operation expect spoken needs NVDA listening, which only the NVDA pass has

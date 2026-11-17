@@ -40,6 +40,11 @@ command's in this version of axKit.
 5. Type: ta.w
 6. Press Enter.
 7. Press F3 2 times (Find next).
+8. Press Ctrl+F (Find in the queue).
+9. Type: a.wav
+10. Press Enter.
+11. Press Shift+F3 2 times (Find previous).
+12. Press F3 (Find next).
 
 ### Play another file of the queue
 
@@ -170,12 +175,9 @@ You hear: Playing s2.wav.
 
 ## Hear why a file cannot be played
 
-Starts with: Open axMedia with the folder c.
+### Hear that a file cannot be played, and the next one plays
 
-You hear words such as: Cannot play a-broken.mp3.
-You hear: Playing b-good.wav.
-1. Press Home.
-2. Press Enter.
+1. Open axMedia with the folder c.
     You hear words such as: Cannot play a-broken.mp3.
     You hear: Playing b-good.wav.
 

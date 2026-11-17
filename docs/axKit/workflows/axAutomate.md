@@ -87,3 +87,69 @@ command's in this version of axKit.
 ### Come back to the folder used last
 
 1. Open axAutomate.
+
+## Read a workflow's marks and open its file as text
+
+Starts with: Open axAutomate with the folder flows.
+
+### Find a workflow by typing the start of its name
+
+1. Type: mar
+
+### Read what a workflow covers and whether it can run
+
+1. Press Tab.
+2. Press Escape.
+
+### Read the marks after a step's sentence
+
+1. Press Right.
+    You hear: Marks, 5 steps, 1. Start down.
+2. Press Down 4 times.
+
+### Read what a step does when it fails and what it reports
+
+1. Press Up 2 times.
+2. Press Tab.
+
+### Read the folder again after a workflow was added
+
+1. Choose Refresh in the Session menu (key: F5).
+    You hear: Refreshed: flows, 3 workflows, 0 folders.
+
+### Read every key of the window
+
+1. Press F1 (Keyboard shortcuts; Help menu).
+2. Press Escape.
+
+### Open a workflow file as text in axJSON
+
+1. Press Ctrl+J (The workflow's file as text; Context menu).
+2. A new window opens: go to it.
+3. Close the window.
+4. Go to the axAutomate window.
+
+### Open a script as text in axDown
+
+1. Press Home.
+2. Press Ctrl+J (The workflow's file as text; Context menu).
+3. A new window opens: go to it.
+4. Close the window.
+5. Go to the axAutomate window.
+
+## Stop the run of a folder and see which checks need NVDA
+
+### Stop the run of a folder partway
+
+1. Open axAutomate with the folder flows.
+2. Press F5.
+    You hear: Running 3 workflows.
+    You hear: 01-quick passed, 2 steps.
+3. Press Escape.
+    You hear: Stopping after the current step.
+    You hear: 02-waits stopped.
+    You hear: Run stopped at 02-waits: 1 passed, 1 not run.
+
+### Read on the rows how far a stopped run came
+
+1. Close the window.

@@ -1,0 +1,72 @@
+# Workflow: End a process with the processes it started
+# axProcess, docs/axProcess/user-guide.md "Acting on an item" (SPEC PR-3.3, PR-2): Context, End process tree ends a
+# process with the programs it started, after a question; Ctrl+F finds an item by its text, F3 the next match and
+# Shift+F3 the one before, round the ends.
+# The list is this computer's, and the script ends something in it, so it ends only what it started itself, under
+# names no other program has: three copies of Windows' own programs, made in the run's folder as axkitscript05a.exe
+# and axkitscript05b.exe (the command prompt) and axkitscript05c.exe (ping). The first starts the second, the second
+# the third, which asks this computer itself for 110 echoes (under two minutes, nothing leaves the computer) and
+# ends; the other two end with it. Nothing else is ever selected for an end: the text typed into Find is the copies'
+# own name, the step right before End process tree fails unless the row selected is axkitscript05a, the question must
+# name it, and a script stops at its first failing step. The copies are started apart from the runner's command
+# (run's own children end with the command, since it reads their output), as 01-start starts its ping; each copy is
+# named with its folder (.\), since a command prompt may be set not to look for a program in the folder it is in.
+file home\AxKit\axProcess.json {"checkForUpdates": false}
+run copy /y %SystemRoot%\System32\cmd.exe axkitscript05a.exe
+run copy /y %SystemRoot%\System32\cmd.exe axkitscript05b.exe
+run copy /y %SystemRoot%\System32\PING.EXE axkitscript05c.exe
+run powershell -NoProfile -Command "Start-Process '.\axkitscript05a.exe' -ArgumentList '/d','/c','.\axkitscript05b.exe /d /c .\axkitscript05c.exe -n 110 127.0.0.1' -WindowStyle Hidden"
+start process
+# The first read done: the status bar says "Reading..." until then.
+expect state "status":["Processes,
+expect said Processes,
+# By name, so that the three copies stand in the order a, b, c.
+menu Name
+expect said ! Sorted by name
+keys home
+
+# Goal: Find a process and go to the next and the previous match
+# Ctrl+F, the copies' name, Enter: the first of the three; F3 the next, and round the end to the first again;
+# Shift+F3 back, round the start to the last.
+do Find in the list
+expect state "notice":"Find"
+type axkitscript05
+keys enter
+expect focus "value":"axkitscript05a,
+do Find next
+expect focus "value":"axkitscript05b,
+do Find next
+expect focus "value":"axkitscript05c,
+do Find next
+expect focus "value":"axkitscript05a,
+do Find previous
+expect focus "value":"axkitscript05c,
+do Find previous
+expect focus "value":"axkitscript05b,
+do Find previous
+# The row every later step acts on: the first copy, which started the other two.
+expect focus "value":"axkitscript05a,
+
+# Check: Closing the question keeps the process and what it started
+# End process tree asks, naming the process; Escape keeps all three.
+do End process tree
+expect state "notice":"End axkitscript05a and the processes it started?"
+expect state Anything unsaved in it is lost.
+# A notice holds its answering keys for a moment after it appears (KeyHold).
+wait 1200
+keys escape
+expect state "notice":null
+expect focus "value":"axkitscript05a,
+expect list axkitscript05c,
+
+# Goal: End a process with the processes it started
+# The question again, Enter: the process is ended with the two it started, and the list is read again without them.
+expect focus "value":"axkitscript05a,
+do End process tree
+expect state "notice":"End axkitscript05a and the processes it started?"
+wait 1200
+keys enter
+expect said ! Ended axkitscript05a
+refuse list axkitscript05
+# Windows itself has none of the three any more (a read by name, of the copies' own name alone).
+run powershell -NoProfile -Command "if (Get-Process -Name axkitscript05a, axkitscript05b, axkitscript05c -ErrorAction SilentlyContinue) { exit 1 }"

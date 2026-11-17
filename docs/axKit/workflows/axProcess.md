@@ -146,3 +146,21 @@ Starts with: Open axProcess.
 1. Press Delete.
 2. Press Alt+R.
     You hear: Check Morning removed from the programs that start with Windows.
+
+## End a process with the processes it started
+
+Starts with: Open axProcess.
+
+### Find a process and go to the next and the previous match
+
+1. Press Ctrl+F (Find in the list).
+2. Type: axkitscript05
+3. Press Enter.
+4. Press F3 3 times (Find next).
+5. Press Shift+F3 3 times (Find previous).
+
+### End a process with the processes it started
+
+1. Choose End process tree in the Context menu.
+2. Press Enter.
+    You hear: Ended axkitscript05a.

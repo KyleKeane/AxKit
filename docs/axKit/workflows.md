@@ -24,6 +24,18 @@ Steps and keys: `docs/axKit/workflows/axAutomate.md` (in Claude's working folder
 3. **Close axAutomate and come back to the folder you had**
     - Open a folder of workflows
     - Come back to the folder used last
+4. **Read a workflow's marks and open its file as text**
+    - Find a workflow by typing the start of its name
+    - Read what a workflow covers and whether it can run
+    - Read the marks after a step's sentence
+    - Read what a step does when it fails and what it reports
+    - Read the folder again after a workflow was added
+    - Read every key of the window
+    - Open a workflow file as text in axJSON
+    - Open a script as text in axDown
+5. **Stop the run of a folder and see which checks need NVDA**
+    - Stop the run of a folder partway
+    - Read on the rows how far a stopped run came
 
 ## axCalc
 
@@ -429,6 +441,8 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Change one setting in each of two windows
 12. **Take back a new text file**
     - Undo a new text file
+13. **Hear why a folder a program runs in cannot be renamed**
+    - Rename the folder once the program has ended
 
 ## axGIT
 
@@ -536,6 +550,16 @@ Steps and keys: `docs/axKit/workflows/axMCP.md` (in Claude's working folder: `wo
     - Read a resource from a template
     - Read a prompt's arguments
     - Fill in a prompt and fetch it
+3. **Fill in a number and a choice, and start a server again**
+    - Read the names of a server's environment variables
+    - Start a server with Enter
+    - Stop the server selected at the top level
+    - Fill in a number
+    - Step through a choice with Right and Left
+    - Choose from a choice's list
+    - Call the tool and move by the headings of its result
+    - Find a word in a result
+    - Start a server again after it stopped
 
 ## axMedia
 
@@ -562,6 +586,7 @@ Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `
     - Hear what is playing and go to the next or the previous file
     - Stop saying each file as it starts
 4. **Hear why a file cannot be played**
+    - Hear that a file cannot be played, and the next one plays
 5. **Use axMedia's text, notices and axKit menu**
     - Change the text size
     - Read the keyboard shortcuts and the user guide
@@ -597,6 +622,18 @@ Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `w
     - Hear every field of an entry at once
     - Choose when axPass locks by itself
     - Open the last database again without naming it
+4. **Change an entry's fields, keep a backup and delete for good**
+    - Make a backup now
+    - Show the backups in axFile
+    - Open a group with Enter and go back up with Backspace
+    - Write an entry's notes over two lines
+    - Change an entry's URL
+    - Set a password typed twice
+    - Change an entry's title in its fields
+    - Move an entry to the Recycle Bin
+    - Make a new group
+    - Move a group to the Recycle Bin
+    - Delete an entry for good from the Recycle Bin
 
 ## axPreview
 
@@ -633,6 +670,8 @@ Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder:
 6. **Use axPreview's Context menu**
     - Select all the text
     - Select all the text from the command palette
+7. **Open a recent file in axPreview from the command palette**
+    - Open a recent file from the palette
 
 ## axProcess
 
@@ -662,6 +701,9 @@ Steps and keys: `docs/axKit/workflows/axProcess.md` (in Claude's working folder:
     - Remove a startup program
     - Turn a Startup folder shortcut off and on again from its details
     - Remove a shortcut from the Startup folder
+5. **End a process with the processes it started**
+    - Find a process and go to the next and the previous match
+    - End a process with the processes it started
 
 ## axStart
 

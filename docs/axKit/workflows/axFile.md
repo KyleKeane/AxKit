@@ -751,3 +751,14 @@ Starts with: Open axFile with the folder u.
 2. Press Escape.
 3. Press Ctrl+Z.
     You hear: Undone: New file.txt removed.
+
+## Hear why a folder a program runs in cannot be renamed
+
+Starts with: Open axFile with the folder r.
+
+### Rename the folder once the program has ended
+
+1. Press F2 (Rename; Context menu).
+2. Type: kept
+3. Press Enter.
+    You hear: Renamed to kept.

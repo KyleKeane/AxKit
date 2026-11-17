@@ -104,6 +104,20 @@ keys f3
 expect focus delta.wav
 keys f3
 expect focus beta.wav
+# Shift+F3 goes back (the guide's "F3 and Shift+F3 the next and the previous match"): with a text every name holds,
+# the match before is another file than the match after. From beta.wav the next is delta.wav; Shift+F3 goes back to
+# beta.wav and on back to alpha.wav, and F3 forward again.
+keys ctrl+f
+expect focus Name contains
+type a.wav
+keys enter
+expect focus delta.wav
+keys shift+f3
+expect focus beta.wav
+keys shift+f3
+expect focus alpha.wav
+keys f3
+expect focus beta.wav
 # Check: A name no file holds is said as not found
 keys ctrl+f
 type zzz

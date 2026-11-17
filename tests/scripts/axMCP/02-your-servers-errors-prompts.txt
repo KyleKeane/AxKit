@@ -275,3 +275,5 @@ start mcpclient {temp}
 expect state "notice":"Settings"
 # The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.
 expect state settings were changed outside axKit and are not used. Add them again with Ctrl+N at the top level.
+# The file as it was found is kept beside the settings, with .changed at the end of its name (the guide, "Settings").
+run cmd /c if exist "home\AxKit\axMCP.json.changed" (exit 0) else (exit 1)

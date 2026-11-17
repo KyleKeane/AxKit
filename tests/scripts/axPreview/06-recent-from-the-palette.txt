@@ -1,0 +1,36 @@
+# Workflow: Open a recent file in axPreview from the command palette
+# axPreview, plan step 1.8 (docs/axPreview/nvda-test-plan.md; docs/axPreview/user-guide.md "Reading": Session, Open
+# recent lists the last ten, "1. README.md (C:\notes\README.md)"): the files shown lately, the newest first; choosing
+# one shows it in this window. The submenu needs menu mode, which only the foreground window enters; since 2026-11-13
+# the command palette reads every Open recent list (docs/axKit/SPEC.md AX-10.2), so the entry is one search away:
+# Ctrl+Shift+P, part of the name, Enter.
+# The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
+file home\AxKit\axPreview.json {"checkForUpdates": false}
+file orchard.md # Orchard\n\nThe apple file.
+file cellar.txt The barrel file, line 1.\nLine 2.
+
+# The start and the file handed over to the open window (AP-1.2) each make a recent entry, the newest first.
+start preview {temp}\orchard.md
+expect state "title":"orchard.md - axPreview"
+launch preview {temp}\cellar.txt
+expect state "title":"cellar.txt - axPreview"
+expect focus {"name":"cellar.txt","role":"Text","value":"The barrel file, line 1."}
+expect commands "1. cellar.txt (
+expect commands "2. orchard.md (
+# A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
+wait 500
+
+# Goal: Open a recent file from the palette
+# The palette: part of the file's name, the entry said with its menu; Enter shows the file here, and it is the newest
+# of the recent files now.
+do Command palette
+expect state "notice":"Command palette"
+type orch
+expect said 2. orchard.md (
+expect said Session, Open recent
+keys enter
+expect state "notice":null
+expect state "title":"orchard.md - axPreview"
+expect focus {"name":"orchard.md","role":"Text","value":"# Orchard"}
+expect commands "1. orchard.md (
+expect commands "2. cellar.txt (

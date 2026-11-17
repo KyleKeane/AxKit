@@ -172,3 +172,78 @@ Starts with: Open axMCP with the test folder.
     You hear: Fetching greet.
 5. Press Escape.
 6. Close the window.
+
+## Fill in a number and a choice, and start a server again
+
+Starts with: Open axMCP with the test folder.
+
+### Read the names of a server's environment variables
+
+1. Type: zzfake
+2. Press Tab.
+3. Press Escape.
+
+### Start a server with Enter
+
+1. Press Enter.
+    You hear: Before axMCP starts zzfake.
+2. Press Tab.
+    You hear: I understand that axMCP.
+3. Press Space.
+    You hear: checked.
+4. Press Enter.
+    You hear: zzfake, running, Tools 2, Resources 0, Prompts 0.
+
+### Stop the server selected at the top level
+
+1. Press Ctrl+Shift+S.
+    You hear: Stopped zzfake.
+
+### Fill in a number
+
+1. Press Ctrl+A.
+2. Type: 3
+3. Press Enter.
+    You hear: count (required): 3.
+
+### Step through a choice with Right and Left
+
+1. Press Down.
+2. Press Right.
+    You hear: size: medium.
+3. Press Right.
+    You hear: size: large.
+4. Press Right.
+    You hear the sound Edge.
+5. Press Left.
+    You hear: size: medium.
+
+### Choose from a choice's list
+
+1. Press Enter.
+2. Press Down.
+3. Press Enter.
+    You hear: size: large.
+
+### Call the tool and move by the headings of its result
+
+1. Press Ctrl+Enter.
+    You hear: Calling order.
+2. Press H.
+    You hear: Thanks, heading level 2.
+3. Press H.
+    You hear: No next heading.
+
+### Find a word in a result
+
+1. Press Ctrl+F (Find in the list).
+2. Type: made up
+3. Press Enter.
+4. Press Escape.
+
+### Start a server again after it stopped
+
+1. Press Left.
+    You hear: zzfake, stopped (exit code 3), Stopped (exit code 3): Enter starts it again.
+2. Press Enter.
+    You hear: zzfake, running, Tools 2, Resources 0, Prompts 0.

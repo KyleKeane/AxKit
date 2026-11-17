@@ -1,0 +1,44 @@
+# Workflow: Hear why a folder a program runs in cannot be renamed
+# axFile, plan step 3.2 (docs/axFile/nvda-test-plan.md) and docs/axFile/user-guide.md "If something goes wrong"
+# (SPEC AF-4.5): a folder that is a running program's current directory is not renamed by Windows, and axFile says
+# what that means, "In use by another program: a terminal or an app runs in it, or the file is open"; once the program
+# has ended the same rename works.
+# The program is Windows' own ping, asked for 25 echoes from this computer itself (about 24 seconds, nothing leaves the
+# computer), its window hidden and its working folder the folder to rename. It is started apart from the runner's
+# command (run's own children end with the command, since it reads their output), as axProcess/01-start starts its
+# ping. Nothing ends it: the script waits for it to end by itself, by the process id it wrote down at the start.
+file home\AxKit\axFile.json {"checkForUpdates": false}
+mkdir r\held
+file r\held\inside.txt A file inside the folder a program runs in.
+file r\other.txt Another entry of the folder shown.
+run powershell -NoProfile -Command "$p = Start-Process ping -ArgumentList '-n','25','127.0.0.1' -WindowStyle Hidden -WorkingDirectory 'r\held' -PassThru; Set-Content holder.txt $p.Id"
+start file {temp}\r
+expect focus "value":"held, folder"
+# A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
+wait 500
+
+# Check: A folder a program runs in is not renamed, and the reason is said
+# F2 on the folder, a new name, Enter: Windows refuses, and the folder keeps its name on the disk and in the list.
+do Rename
+expect focus "name":"New name"
+expect focus "value":"held"
+type kept
+keys enter
+expect said ! Failed: In use by another program: a terminal or an app runs in it, or the file is open
+# The rename box has closed, and the focus is on the folder again, under its old name.
+expect focus "value":"held, folder"
+run cmd /c if exist "r\held\inside.txt" (exit 0) else (exit 1)
+run cmd /c if exist "r\kept" (exit 1) else (exit 0)
+expect list "held, folder"
+
+# Goal: Rename the folder once the program has ended
+# The program ends by itself; the wait is for its process id, at most 50 seconds. Then F2 again renames the folder.
+run powershell -NoProfile -Command "$id = [int](Get-Content holder.txt); for ($i = 0; $i -lt 50; $i++) { if (-not (Get-Process -Id $id -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -eq 'PING' })) { exit 0 }; Start-Sleep -Seconds 1 }; exit 1"
+do Rename
+expect focus "name":"New name"
+expect focus "value":"held"
+type kept
+keys enter
+expect said ! Renamed to kept
+expect focus "value":"kept, folder"
+run cmd /c if exist "r\kept\inside.txt" (exit 0) else (exit 1)

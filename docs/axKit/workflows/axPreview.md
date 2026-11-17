@@ -198,3 +198,15 @@ Starts with: Open axPreview with the file README.md.
     You hear: Select all, Context, Ctrl+A.
 3. Press Enter.
 4. Press Left.
+
+## Open a recent file in axPreview from the command palette
+
+Starts with: Open axPreview with the file orchard.md. Start axPreview again with the file cellar.txt.
+
+### Open a recent file from the palette
+
+1. Press Ctrl+Shift+P (Command palette; Help menu).
+2. Type: orch
+    You hear words such as: 2. orchard.md.
+    You hear: Session, Open recent.
+3. Press Enter.
