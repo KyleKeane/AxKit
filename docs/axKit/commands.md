@@ -243,6 +243,12 @@ page by hand; run its script and commit the page.
   Without the key or its backup, no sealed report can be read.
 - `tools/PtyCapture`: records Claude Code's screen stream for a fixture (`--dump` reads a recording with personal data
   replaced; never `--raw`). The `record-fixture` skill has the steps.
+- `tools/ClaudeProbe stream [--only <case>] [--shape <file>] [--keep <folder>]` measures Claude Code's
+  non-interactive stream (`docs/axClaude/stream.md`): eleven cases played against the installed Claude Code, each a
+  process of its own with the smallest model, no session saved and no MCP server but the probe's own stand-in
+  permission tool (the same program, `permission-tool`); kinds, names and times are printed, never a text, a path or
+  an id; exit code 1 when a case fails. `tools/upstream.ps1 -Verify claude` runs it as Claude Code's probe
+  (`"probes": ["stream"]` in `upstream.json`) and writes `docs/axClaude/stream-shape.json` again.
 - `tools/ClaudeProbe` (built into a scratch folder: `dotnet build tools\ClaudeProbe -c Release -o <folder>`, then
   `dotnet build-server shutdown`): the measuring tool of axClaude's events (`docs/axClaude/events-and-grounding.md`
   EG-11.4), never shipped and never started by axKit; while a recording runs it listens on 127.0.0.1 for the hooks it

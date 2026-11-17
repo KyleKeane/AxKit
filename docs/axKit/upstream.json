@@ -10,6 +10,7 @@
       "date": "2026-11-16",
       "tests": ["AxClaude", "AxHelp"],
       "scripts": ["axClaude", "axHelp", "axDown/11-ask-claude.txt"],
+      "probes": ["stream"],
       "needs": "Claude Code signed in, the network and a live model",
       "signedIn": ["auth", "status"],
       "host": "api.anthropic.com"

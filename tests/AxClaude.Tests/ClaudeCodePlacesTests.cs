@@ -17,6 +17,9 @@ public sealed class ClaudeCodePlacesTests
     private const string HooksPlace = "ClaudeCodeHooks";
     private const string RecordPlace = "ClaudeCodeTranscript";
 
+    /// <summary>The third place since 2026-11-17: the non-interactive stream, whose lines hold some of the same words (a tool's call and result, the session's id).</summary>
+    private const string StreamPlace = "ClaudeCodeStream";
+
     /// <summary>The fields of an event that only Claude Code names so.</summary>
     private static readonly string[] EventFields =
     [
@@ -49,7 +52,7 @@ public sealed class ClaudeCodePlacesTests
             {
                 // The two places, and files beside them of the same name should either ever be split.
                 var file = Path.GetFileName(literal.File);
-                var place = file.StartsWith(HooksPlace, StringComparison.Ordinal) || file.StartsWith(RecordPlace, StringComparison.Ordinal);
+                var place = file.StartsWith(HooksPlace, StringComparison.Ordinal) || file.StartsWith(RecordPlace, StringComparison.Ordinal) || file.StartsWith(StreamPlace, StringComparison.Ordinal);
                 foreach (var word in words)
                 {
                     if (!HoldsWord(literal.Text, word))
@@ -69,7 +72,7 @@ public sealed class ClaudeCodePlacesTests
             }
         }
 
-        Assert.True(offenders.Count == 0, "A word of Claude Code's events or session file outside ClaudeCodeHooks and ClaudeCodeTranscript, where it belongs (rule 12): " + string.Join("; ", offenders));
+        Assert.True(offenders.Count == 0, "A word of Claude Code's events, session file or stream outside ClaudeCodeHooks, ClaudeCodeTranscript and ClaudeCodeStream, where it belongs (rule 12): " + string.Join("; ", offenders));
 
         // The list is no stale one: each word watched is written in one of the two places, and the table has the
         // six names of two words among its eight.

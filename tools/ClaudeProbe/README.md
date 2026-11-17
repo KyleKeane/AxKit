@@ -272,3 +272,20 @@ Options: `--from <ms>`, `--to <ms>`, `--only PTY,HOOK,FILE` (any of PTY, HOOK, F
 7. **The check**: every file written is read back; when `Redaction.Find` finds an e-mail address or an account path in one, or one of the masked names is still anywhere in it (the console stream also with its escape sequences taken out), the fixture is refused, what was written is deleted, and the tool says in numbers which file held what. Exit code 0 written, 4 refused, 2 not a run folder.
 
 It prints counts and fixed words, never a text of the run. `expected.txt` is not its: the replayer's tests write it (`AXCLAUDE_UPDATE_EXPECTED=1`), and a remade fixture keeps it. A fixture is never edited by hand; a run the tool refuses is recorded again from a neutral folder (`C:\Temp\axclaude-fixture`), with nothing in its script that prints the account (`/status`, `/usage`, `/cost`).
+
+## 9. The stream probe
+
+`probe stream` is a second measurement, of Claude Code's non-interactive stream and with no pseudo console
+(`StreamProbe.cs`; the findings are `docs/axClaude/stream.md`). It plays a fixed set of cases, each a process started
+with `ClaudeCodeStream.Options`: messages are written on standard input, every line of standard output is read
+through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
+
+- It prints kinds, names and times only. `--keep <folder>` copies the raw lines there for the developer's eyes; they
+  hold what Claude wrote and the session's ids, and are never committed.
+- It saves no session, loads no MCP server but its own stand-in permission tool (`probe permission-tool`, started by
+  Claude Code, answering as the case says), works in a folder of its own under the temporary folder and deletes it.
+- It uses the smallest model, so its cost is a few short turns.
+- `--shape <file>` writes the keys of every kind of line seen. The repository's copy is
+  `docs/axClaude/stream-shape.json`, written by `tools\upstream.ps1 -Verify claude`.
+- A new case is a `Case` in `StreamProbe.cs`: its options, its steps, what must hold, and what is only reported. What
+  the model may or may not do (follow an instruction, hand work to a subagent) is reported, not required.

@@ -11,6 +11,10 @@
 //   probe fixture <output folder> <fixture folder>
 //                                      a run made into a timeline fixture through the whitelist (EG-11.1, FixtureMaker)
 //   probe relay <port> <event>         (what a command hook runs) standard input posted to the listener; prints nothing
+//   probe stream [--only <case>] [--shape <file>] [--keep <folder>]
+//                                      Claude Code's non-interactive stream measured: a set of cases played against the
+//                                      installed Claude Code, kinds and times only (StreamProbe.cs, docs/axClaude/stream.md)
+//   probe permission-tool              (what Claude Code starts for "probe stream") the stand-in permission tool
 //
 // See README.md in this folder.
 
@@ -26,6 +30,12 @@ internal static class Program
     private static int Main(string[] args)
     {
         // First, and touching nothing else: this mode is one process per command hook.
+        if (args.Length >= 1 && args[0] == "permission-tool")
+        {
+            // The stand-in permission tool of "probe stream": a server over standard input and output, started by Claude Code.
+            return StreamProbe.PermissionTool();
+        }
+
         return args.Length >= 3 && args[0] == "relay" ? Relay.Run(args) : Commands(args);
     }
 
@@ -42,6 +52,8 @@ internal static class Program
                     return Timeline.Run(args.Skip(1).ToArray());
                 case "shape" when args.Length >= 2:
                     return Shape.Run(args.Skip(1).ToArray());
+                case "stream":
+                    return StreamProbe.Run(args.Skip(1).ToArray());
                 case "settings" when args.Length >= 2:
                     return Runner.PrintSettings(args[1]);
                 case "fixture" when args.Length >= 3:

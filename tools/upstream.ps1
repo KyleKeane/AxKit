@@ -137,6 +137,7 @@ function Write-Entries($document) {
         $fields.Add('      "date": ' + (ConvertTo-JsonText $entry.date))
         $fields.Add('      "tests": ' + (ConvertTo-JsonList $entry.tests))
         $fields.Add('      "scripts": ' + (ConvertTo-JsonList $entry.scripts))
+        if ($entry.PSObject.Properties['probes']) { $fields.Add('      "probes": ' + (ConvertTo-JsonList $entry.probes)) }
         if ($entry.PSObject.Properties['needs']) { $fields.Add('      "needs": ' + (ConvertTo-JsonText $entry.needs)) }
         if ($entry.PSObject.Properties['signedIn']) { $fields.Add('      "signedIn": ' + (ConvertTo-JsonList $entry.signedIn)) }
         if ($entry.PSObject.Properties['host']) { $fields.Add('      "host": ' + (ConvertTo-JsonText $entry.host)) }
@@ -152,7 +153,7 @@ function Write-Entries($document) {
 # What is wrong with the file, one line each; nothing when it is well formed.
 function Get-Problems($document) {
     $problems = New-Object System.Collections.Generic.List[string]
-    $known = 'id', 'name', 'places', 'arguments', 'verified', 'date', 'tests', 'scripts', 'needs', 'signedIn', 'host'
+    $known = 'id', 'name', 'places', 'arguments', 'verified', 'date', 'tests', 'scripts', 'probes', 'needs', 'signedIn', 'host'
     $seen = @{}
     $entries = @($document.programs)
     if ($entries.Count -eq 0) { $problems.Add('no programs') }
@@ -180,6 +181,12 @@ function Get-Problems($document) {
         foreach ($scriptName in @($entry.scripts)) {
             if (-not (Test-Path -LiteralPath (Join-Path $root (Join-Path 'tests\scripts' $scriptName)))) { $problems.Add("${label}: no tests/scripts/$scriptName") }
         }
+        if ($entry.PSObject.Properties['probes']) {
+            # A probe is a measurement of tools\ClaudeProbe played against the installed program; one is known.
+            foreach ($probe in @($entry.probes)) {
+                if ($probe -cne 'stream') { $problems.Add("${label}: no probe named $probe (known: stream)") }
+            }
+        }
     }
     return $problems
 }
@@ -196,6 +203,36 @@ function Invoke-Check([string]$kind, [string]$target) {
         Write-Host "Running the test project $target..."
         & (Join-Path $root 'test.ps1') $target | ForEach-Object { Write-Host $_ }
         if ($LASTEXITCODE -ne 0) { $state = 'failed'; $detail.Add("the test project tests/$target.Tests failed (its failing tests are named above)") }
+    } elseif ($kind -eq 'probes') {
+        # Claude Code's non-interactive stream, measured (tools\ClaudeProbe stream, docs/axClaude/stream.md): its cases
+        # played against the installed program, and the shape of every kind of line written into the repository, so
+        # that a new version shows what changed as a diff of that file.
+        Write-Host "Running the probe $target against the installed program..."
+        $probeFolder = Join-Path ([IO.Path]::GetTempPath()) ('axkit-probe-' + (Split-Path -Leaf $root))
+        $failedCases = New-Object System.Collections.Generic.List[string]
+        $code = 2
+        try {
+            & dotnet build (Join-Path $root 'tools\ClaudeProbe\ClaudeProbe.csproj') -c Release -v q -nologo -o $probeFolder | Out-Null
+            if ($LASTEXITCODE -eq 0) {
+                $current = ''
+                & (Join-Path $probeFolder 'ClaudeProbe.exe') $target --shape (Join-Path $root 'docs\axClaude\stream-shape.json') | ForEach-Object {
+                    Write-Host $_
+                    if ($_ -match '^== ([^:]+):') { $current = $Matches[1] }
+                    elseif ($_ -match '^\s+FAILED: (.+)$') { $failedCases.Add("${current}: $($Matches[1])") }
+                }
+                $code = $LASTEXITCODE
+            }
+        } finally {
+            dotnet build-server shutdown | Out-Null
+        }
+        if ($code -eq 1) {
+            $state = 'failed'
+            $detail.Add("the probe $target failed at:")
+            foreach ($case in $failedCases) { $detail.Add("  $case") }
+        } elseif ($code -ne 0) {
+            $state = 'could not run'
+            $detail.Add("the probe $target could not start (the build or the program, see above): nothing was measured")
+        }
     } else {
         Write-Host "Running the window scripts tests/scripts/$target on a desktop of their own..."
         $current = ''
@@ -314,6 +351,12 @@ foreach ($entry in $chosen) {
     foreach ($scriptName in @($entry.scripts)) {
         $result = Invoke-Check 'scripts' $scriptName
         if ($result.State -ne 'passed') { if ($state -ne 'failed') { $state = $result.State }; $detail.AddRange($result.Detail) }
+    }
+    if ($entry.PSObject.Properties['probes']) {
+        foreach ($probe in @($entry.probes)) {
+            $result = Invoke-Check 'probes' $probe
+            if ($result.State -ne 'passed') { if ($state -ne 'failed') { $state = $result.State }; $detail.AddRange($result.Detail) }
+        }
     }
     if ($state -eq 'passed') {
         $entry.verified = $installed[$entry.id]
