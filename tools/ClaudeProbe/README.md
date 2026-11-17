@@ -289,6 +289,10 @@ through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
   `docs/axClaude/stream-shape.json`, written by `tools\upstream.ps1 -Verify claude`.
 - A new case is a `Case` in `StreamProbe.cs`: its options, its steps, what must hold, and what is only reported. What
   the model may or may not do (follow an instruction, hand work to a subagent) is reported, not required.
+- Three cases are of axKit's own relay (`relay`, `relay-refused`, `relay-gone`; `AskRelay`, the verb `AxKit.exe ask`).
+  Claude Code is given the relay's own configuration and the pipe's name and secret in its environment, as a window
+  will give them, and starts this program with the verb `ask`, which runs the same code as `AxKit.exe ask`; the probe
+  plays the window's end of the pipe on a thread of its own and answers as the case says, or nobody does.
 - `--record <folder>` (2026-11-17) plays another set of cases, the recordings (`Recordings` in `StreamProbe.cs`), and
   writes each as a stream fixture, `<case>.jsonl`: every line Claude Code wrote and what the host wrote between them,
   on one clock (docs/axClaude/stream-mode.md SM-10.1; `tests/fixtures/streams/README.md` says what a file holds and

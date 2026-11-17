@@ -30,7 +30,7 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   and what is still outside that one place (root `CLAUDE.md`, rule 12).
 - `docs/axClaude/stream.md` (a report, 2026-11-17, deciding nothing): Claude Code's non-interactive stream as a third
   way for axClaude to learn what Claude does, beside the screen and the session file with the hooks: what the
-  documentation says, what `tools/ClaudeProbe stream` measured in twenty cases, the stream in the kinds of event of
+  documentation says, what `tools/ClaudeProbe stream` measured in twenty-three cases, the stream in the kinds of event of
   `families.json`, what a window over it would and would not need, and the ways to go. `stream-shape.json` beside it
   (written by the probe, never by hand) holds the keys of every kind of line seen, without a value. The code that
   knows the stream's words is `src/AxClaude.Core/Streaming/ClaudeCodeStream.cs`; no window uses it yet.

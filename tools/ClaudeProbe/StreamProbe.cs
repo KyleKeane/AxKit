@@ -70,7 +70,13 @@ internal static class StreamProbe
     /// case is over. <see cref="Next"/>: a second process played after this one in the same folder, made from what
     /// the first saw.
     /// </summary>
-    private sealed record Case(string Name, string What, string[] Options, string Permission, Step[] Steps, Func<Outcome, IEnumerable<string>> Problems, Func<Outcome, IEnumerable<string>>? Findings = null, int LimitSeconds = 90, bool Keeps = false, Func<Outcome, Case>? Next = null);
+    /// <param name="Relay">
+    /// For a case of axKit's own relay (<see cref="AskRelay"/>, the verb <c>ask</c>, which this program runs too): how
+    /// the probe, playing the window's end of the pipe, answers (<c>allow</c>, <c>deny</c>), or <c>gone</c> for no
+    /// window at all. Claude Code is then given the relay's own configuration (<see cref="AskRelay.ConfigText"/>)
+    /// and the pipe in its environment, as a window will give them. Empty for every other case.
+    /// </param>
+    private sealed record Case(string Name, string What, string[] Options, string Permission, Step[] Steps, Func<Outcome, IEnumerable<string>> Problems, Func<Outcome, IEnumerable<string>>? Findings = null, int LimitSeconds = 90, bool Keeps = false, Func<Outcome, Case>? Next = null, string Relay = "");
 
     private static Step Say(string text, Func<StreamLine, bool>? when = null, int delayMs = 0, string? what = null) =>
         new(when, delayMs, ClaudeCodeStream.UserLine(text), what ?? "a message");
@@ -271,6 +277,28 @@ internal static class StreamProbe
                 .Concat(Unless(o.Ends.Count() == 3 && !o.Ends.Any(end => end.Failed), $"three turns should end well; {o.Ends.Count()} ended")),
             o => [$"the compaction took {CompactionMs(o)} ms from its status note to its boundary"],
             LimitSeconds: 150),
+
+        // ---- axKit's own relay (docs/axClaude/stream-mode.md SM-7.3), with the probe as the window's end of its pipe ----
+
+        new("relay", "a question through axKit's own relay, answered yes by a stand-in of the window", ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, AskRelay.ToolName], string.Empty,
+            [Say("Use the Write tool to create a file named relay-allowed.txt in the current folder with the content hi. Then reply with exactly: written"), Close(Ended)],
+            o => Unless(o.Asked.Contains("Write"), "the window's stand-in should be asked about Write through the relay")
+                .Concat(Unless(File.Exists(Path.Combine(o.Folder, "relay-allowed.txt")), "the file should be made after the window's yes"))
+                .Concat(Unless(o.Ends.Any() && o.Ends.Last().Denials == 0, "no denial should be counted")),
+            Relay: "allow"),
+
+        new("relay-refused", "the same, answered no by the stand-in of the window", ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, AskRelay.ToolName], string.Empty,
+            [Say("Use the Write tool to create a file named relay-refused.txt in the current folder with the content hi. Then say in one short sentence whether it was created."), Close(Ended)],
+            o => Unless(o.Asked.Contains("Write"), "the window's stand-in should be asked about Write through the relay")
+                .Concat(Unless(!File.Exists(Path.Combine(o.Folder, "relay-refused.txt")), "the file must not be made after the window's no"))
+                .Concat(Unless(o.Ends.Any() && o.Ends.Last().Denials == 1, "one denial should be counted at the turn's end")),
+            Relay: "deny"),
+
+        new("relay-gone", "the relay with no window to ask: its answer is no", ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, AskRelay.ToolName], string.Empty,
+            [Say("Use the Write tool to create a file named relay-gone.txt in the current folder with the content hi. Then say in one short sentence whether it was created."), Close(Ended)],
+            o => Unless(!File.Exists(Path.Combine(o.Folder, "relay-gone.txt")), "the file must not be made when the window cannot be asked")
+                .Concat(Unless(o.Parts.Any(part => part.Kind == StreamKind.ToolResult && part.Error), "the tool's result should be an error")),
+            Relay: "gone"),
     ];
 
     private static IEnumerable<string> EndedAtLeast(Outcome outcome, int turns) =>
@@ -519,6 +547,7 @@ internal static class StreamProbe
         try
         {
             // The stand-in permission tool is this program: its path goes into a file of the work folder only.
+            var relayConfig = Path.Combine(work, "relay.json");
             var config = Path.Combine(work, "mcp.json");
             File.WriteAllText(config, JsonSerializer.Serialize(new Dictionary<string, object>
             {
@@ -540,8 +569,14 @@ internal static class StreamProbe
                     // A case's own model option (the one that does not exist) goes last, so that it wins. A recording
                     // is played with what the window will start Claude Code with: each message sent back when it is
                     // taken, and the permission tool for every question.
+                    // A case of the relay is given the relay's own configuration, as a window will write it.
+                    if (c.Relay.Length > 0)
+                    {
+                        File.WriteAllText(relayConfig, AskRelay.ConfigText(Environment.ProcessPath!));
+                    }
+
                     string[] options = recordFolder is null
-                        ? [.. ClaudeCodeStream.Options, .. c.Keeps ? Array.Empty<string>() : [ClaudeCodeStream.NoSessionOption], ClaudeCodeProgram.StrictMcpConfigOption, "--mcp-config", config, "--model", model, .. c.Options]
+                        ? [.. ClaudeCodeStream.Options, .. c.Keeps ? Array.Empty<string>() : [ClaudeCodeStream.NoSessionOption], ClaudeCodeProgram.StrictMcpConfigOption, "--mcp-config", c.Relay.Length > 0 ? relayConfig : config, "--model", model, .. c.Options]
                         : [.. ClaudeCodeStream.Options, ClaudeCodeStream.ReplayOption, ClaudeCodeStream.NoSessionOption, ClaudeCodeProgram.StrictMcpConfigOption, "--mcp-config", config, "--model", model, .. Asking, .. c.Options];
                     var record = recordFolder is null ? null : new List<(long Ms, string Kind, string Text)>();
                     var outcome = Play(claude, options, c, folder, shapes, blocks, asked, keep, record);
@@ -652,6 +687,20 @@ internal static class StreamProbe
         };
         start.Environment[PermissionVariable] = c.Permission;
         start.Environment[LogVariable] = log;
+        // A case of the relay: the pipe and its secret go into Claude Code's environment, which the relay it starts
+        // inherits, and the probe plays the window's end, or nobody does.
+        var throughRelay = new List<string>();
+        if (c.Relay.Length > 0)
+        {
+            var pipeName = AskRelay.NewPipeName(System.Security.Principal.WindowsIdentity.GetCurrent().User?.Value ?? "probe");
+            var secret = AxClaude.Core.Hooks.HookFrame.NewSecret();
+            start.Environment[AskRelay.Variable] = AskRelay.VariableValue(pipeName, secret);
+            if (c.Relay != "gone")
+            {
+                PlayWindow(pipeName, secret, c.Relay, throughRelay);
+            }
+        }
+
         var startedUtcTicks = DateTime.UtcNow.Ticks;
         var clock = Stopwatch.StartNew();
         // Outside call, process, Claude Code: the non-interactive stream of the installed program, for a measurement.
@@ -799,6 +848,15 @@ internal static class StreamProbe
             }
         }
 
+        lock (throughRelay)
+        {
+            if (throughRelay.Count > 0)
+            {
+                tools.AddRange(throughRelay);
+                Console.WriteLine("  the window's stand-in was asked through the relay about: " + string.Join(", ", throughRelay));
+            }
+        }
+
         if (keep is not null)
         {
             Directory.CreateDirectory(keep);
@@ -806,6 +864,52 @@ internal static class StreamProbe
         }
 
         return new Outcome(lines, tools, code, folder, timedOut) { StartedUtcTicks = startedUtcTicks, ToolLog = log };
+    }
+
+    /// <summary>
+    /// The window's end of the relay's pipe, played by the probe on a thread of its own: each question is read as
+    /// one frame, its tool noted by name, and answered as the case says, with the words a window will answer with.
+    /// The pipe is open to this Windows account alone. The thread ends with the probe.
+    /// </summary>
+    private static void PlayWindow(string pipeName, string secret, string answerWith, List<string> asked)
+    {
+        var window = new Thread(() =>
+        {
+            try
+            {
+                while (true)
+                {
+                    using var server = new System.IO.Pipes.NamedPipeServerStream(pipeName, System.IO.Pipes.PipeDirection.InOut, 1, System.IO.Pipes.PipeTransmissionMode.Byte, System.IO.Pipes.PipeOptions.CurrentUserOnly);
+                    server.WaitForConnection();
+                    if (AxClaude.Core.Hooks.HookFrame.Read(server, secret, out _) is not { } question)
+                    {
+                        continue;
+                    }
+
+                    using var document = JsonDocument.Parse(question);
+                    var root = document.RootElement;
+                    lock (asked)
+                    {
+                        asked.Add(root.TryGetProperty("tool_name", out var named) ? named.GetString() ?? string.Empty : string.Empty);
+                    }
+
+                    var answer = answerWith == "deny" || !root.TryGetProperty("input", out var input)
+                        ? ClaudeCodeStream.DenyAnswer(ClaudeCodeStream.RefusedWords)
+                        : ClaudeCodeStream.AllowAnswer(input);
+                    AxClaude.Core.Hooks.HookFrame.Write(server, secret, Encoding.UTF8.GetBytes(answer));
+                    server.WaitForPipeDrain();
+                }
+            }
+            catch (Exception ex) when (ex is IOException or JsonException or ObjectDisposedException or InvalidOperationException)
+            {
+                // The case is over, or a frame was not one: the stand-in has nothing more to answer.
+            }
+        })
+        {
+            IsBackground = true,
+            Name = "probe window stand-in",
+        };
+        window.Start();
     }
 
     /// <summary>A line in kinds and names: never a text.</summary>

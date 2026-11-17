@@ -50,6 +50,15 @@ What every layer shares:
   `ClaudeCodeHooks.Parse` reads the event's name and the few fields of that kind, nothing else, down to the neutral
   `HookEvent`. Claude Code does not wait for these hooks, but for the one of the session's end, so an event reaches
   the window a few hundred milliseconds after the moment it reports, after the turn's marks in the console stream.
+- A further place since 2026-11-17, used by no window yet (`docs/axClaude/stream-mode.md`):
+  `src/AxClaude.Core/Streaming/ClaudeCodeStream.cs`, Claude Code's non-interactive stream: the options that start
+  it, the lines a host writes, each line of its output read down, and what its permission tool is called with. Beside
+  it, neutral towards Claude Code's words: `StreamModel` (the conversation and the facts from those lines, built
+  from the recordings in `tests/fixtures/streams`), `StreamHost` (the process over its pipes) and `AskRelay`, the
+  verb `AxKit.exe ask`, which Claude Code starts as its permission tool and which passes each question to the
+  window's pipe and the answer back (`HookFrame` carries both). The check for a new Claude Code is the probe
+  (`tools/ClaudeProbe stream`, run by `tools\upstream.ps1 -Verify claude`), and a behaviour the model must follow is
+  recorded first (`--record`).
 - What is read from the session file and how: its lines, one JSON object each, in file order, in memory only.
   `ClaudeCodeTranscript` knows where the file lies (`ProjectsFolders`, `IsSessionFile`), reads a line down to the
   neutral `RecordEntry` by its type, before any text of a kind it does not need becomes a string (`Parse`), and makes

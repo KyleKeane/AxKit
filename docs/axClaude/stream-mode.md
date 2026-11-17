@@ -3,8 +3,9 @@
 A specification, written 2026-11-17 for the maintainer's decision of that day (`stream.md`, section 7 (a); `docs/axKit/events.md`,
 section 7, step 3): Claude Code's non-interactive stream becomes a second way for axClaude's window to learn what
 Claude does, off at first, with the screen as the default and the way back. Requirements are numbered SM-n.m. Stage 1
-of section 11, the seam, is built and changes no behaviour, and stage 2 is built: the stream's reader, its model
-and its host, from recordings of the real stream, used by no window yet (section 13). The stages after it wait for the decisions
+of section 11, the seam, is built and changes no behaviour, and stages 2 and 3 are built: the stream's reader, its
+model and its host, from recordings of the real stream, and the relay of Claude's questions; no window uses them
+yet (section 13). The stages after it wait for the decisions
 of section 12, where each says so.
 
 It rests on three things made the same day: the measurements (`stream.md`, twenty cases, all passing), the door
@@ -332,3 +333,17 @@ recordings, the reader, the model, the host. No window uses any of them.
 Noted for stage 4, from the recordings: before the first message the stream names no mode, and a request that sets
 the mode is answered with it; whether a request that changes nothing can be asked for the mode is to be measured,
 since the window's rule for Ready waits for a mode.
+
+**Stage 3, the relay (2026-11-17).** `AxKit.exe ask` (`AskRelay`, decided first in the program's entry point, as the
+hooks' verb is): a server of one tool over its standard input and output, which Claude Code starts from the
+configuration `AskRelay.ConfigText` gives and asks through `--permission-prompt-tool`. It passes each question as it
+came to the window's pipe and the answer back as it came, both as the frames the hooks' pipe carries, under a
+prefix and a variable of its own; the pipe's name and secret travel in the environment the window gives Claude Code
+and are written to no file. It holds no logic and fails closed: a window that is not there, a pipe that breaks, a
+wrong secret or a text that is no answer all become a no, with words that tell Claude the window could not be
+reached. It waits for the user without a limit. Tested with both sides stood in and over one real pipe
+(`AskRelayTests`), and live: three cases of the probe, which plays the window's end, against the installed Claude
+Code: a yes (the file made), a no (not made, one refusal counted), and no window at all (a no after the two
+seconds the relay waits for the pipe). That showed what the design rested on and no documentation says: the relay
+Claude Code starts inherits Claude Code's environment, so the secret needs no file. The window's end of the pipe is
+stage 4's; no window starts Claude Code this way yet.

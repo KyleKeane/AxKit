@@ -146,6 +146,12 @@ public static class ClaudeCodeStream
     /// <summary>The option that names the MCP tool Claude Code asks before a tool call that needs the user's word, and for Claude's own questions.</summary>
     public const string PermissionToolOption = "--permission-prompt-tool";
 
+    /// <summary>
+    /// What Claude Code calls such a tool with, as the JSON schema the tool declares for its input: the name of the
+    /// tool asked about, that tool's input, and the call's id (measured: the question brings exactly these three).
+    /// </summary>
+    public const string PermissionToolInputSchema = "{\"type\":\"object\",\"properties\":{\"tool_name\":{\"type\":\"string\"},\"input\":{\"type\":\"object\"},\"tool_use_id\":{\"type\":\"string\"}},\"required\":[\"tool_name\",\"input\"]}";
+
     /// <summary>The option that keeps the run's session out of Claude Code's store; for a check, never for the user's conversation.</summary>
     public const string NoSessionOption = "--no-session-persistence";
 

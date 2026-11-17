@@ -45,8 +45,11 @@ public static class HookFrame
     }
 
     /// <summary>A new pipe name for one start of the program: the prefix, the user's SID and 16 random hex digits (EG-2.7).</summary>
-    public static string NewPipeName(string userSid) =>
-        PipePrefix + userSid + "-" + Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(8));
+    public static string NewPipeName(string userSid) => NewPipeName(PipePrefix, userSid);
+
+    /// <summary>The same for a second kind of pipe that carries frames, under a prefix of its own (the questions of a Claude Code run over its stream, <c>AskRelay</c>).</summary>
+    public static string NewPipeName(string prefix, string userSid) =>
+        prefix + userSid + "-" + Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(8));
 
     /// <summary>A new secret for one start of the program: 64 random hex digits.</summary>
     public static string NewSecret() => Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(SecretLength / 2));
@@ -60,7 +63,11 @@ public static class HookFrame
     /// pipes (the prefix, then letters, digits and hyphens: never a path to another pipe) or a secret that is not
     /// <see cref="SecretLength"/> hex digits.
     /// </summary>
-    public static bool TryParseVariable(string? value, out string pipeName, out string secret)
+    public static bool TryParseVariable(string? value, out string pipeName, out string secret) =>
+        TryParseVariable(value, PipePrefix, out pipeName, out secret);
+
+    /// <summary>The same for a pipe of another kind, whose names start with <paramref name="prefix"/>: a name of any other pipe is refused, so that a variable can never point a relay at a pipe that is not its own.</summary>
+    public static bool TryParseVariable(string? value, string prefix, out string pipeName, out string secret)
     {
         pipeName = string.Empty;
         secret = string.Empty;
@@ -72,7 +79,7 @@ public static class HookFrame
 
         var name = value[..split];
         var rest = value[(split + 1)..];
-        if (name.Length <= PipePrefix.Length || !name.StartsWith(PipePrefix, StringComparison.Ordinal) || !name.All(c => char.IsAsciiLetterOrDigit(c) || c == '-')
+        if (name.Length <= prefix.Length || !name.StartsWith(prefix, StringComparison.Ordinal) || !name.All(c => char.IsAsciiLetterOrDigit(c) || c == '-')
             || rest.Length != SecretLength || !rest.All(char.IsAsciiHexDigit))
         {
             return false;

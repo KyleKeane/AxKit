@@ -70,7 +70,8 @@ reference, commands, and the Agent SDK's pages on permissions, user input and st
 
 ## 3. What was measured
 
-`tools/ClaudeProbe stream` plays twenty cases, each a process of its own in a folder under the temporary folder,
+`tools/ClaudeProbe stream` plays twenty-three cases (twenty when this page was written; the three of axKit's own
+relay came with it, below), each a process of its own in a folder under the temporary folder,
 with the smallest model, no session saved (but in the one case that takes a session up again, which deletes its
 session's file afterwards), and no MCP server but its own stand-in permission tool. It prints kinds, names and times
 only: never a text Claude wrote, a path or an id. Every case passed on 2026-11-17. The first eleven:
@@ -129,6 +130,18 @@ The nine added the same day, for what section 6 had listed as not yet measured:
   commands on the development computer, the user's own among them.
 - **compact**: `/compact` gave a status note that says compacting, 3.6 s later a status note that says nothing, then
   a note that marks the boundary and a line that ends it; the word given before it was still known after.
+
+The three added with axKit's own relay (`AxKit.exe ask`, `docs/axClaude/stream-mode.md` SM-7.3), the probe playing
+the window's end of the relay's pipe:
+
+- **relay**: Claude Code started the relay from the configuration a window will write, asked it about the tool,
+  and the relay, which had the pipe's name and secret from Claude Code's own environment and from no file, passed
+  the question to the stand-in of the window and its yes back: the file was made, some 100 ms from the call to its
+  result.
+- **relay-refused**: the window's no came back as the call's result marked as an error; the file was not made, and
+  the turn's end counted one denial.
+- **relay-gone**: with no window to ask, the relay waited its two seconds for the pipe and answered no; the file
+  was not made.
 
 Seen across all cases: the start line comes at the beginning of every turn, not once at the process's start; and
 every case ran in a folder Claude Code had never seen, and none was asked whether the folder is trusted.

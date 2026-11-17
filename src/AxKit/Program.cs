@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using AxCalc;
 using AxClaude;
 using AxClaude.Core.Hooks;
+using AxClaude.Core.Streaming;
 using AxClip;
 using AxDown;
 using AxFile;
@@ -37,6 +38,15 @@ internal static class Program
         if (args.Length > 0 && args[0] == HookRelay.Verb)
         {
             HookRelay.Run();
+            return;
+        }
+
+        // The permission tool of a Claude Code that axClaude runs over its stream (docs/axClaude/stream-mode.md
+        // SM-7.3): no app and no window either, and decided here for the same reason. It passes each question to
+        // the window that started that Claude Code and the answer back, until Claude Code ends it.
+        if (args.Length > 0 && args[0] == AskRelay.Verb)
+        {
+            AskRelay.Run();
             return;
         }
 

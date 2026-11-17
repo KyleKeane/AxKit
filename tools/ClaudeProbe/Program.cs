@@ -36,6 +36,15 @@ internal static class Program
             return StreamProbe.PermissionTool();
         }
 
+        // axKit's own relay of a Claude Code's questions, the verb AxKit.exe has too (AskRelay): Claude Code starts
+        // this program with it in the stream probe's cases of the relay, so that the code a window will depend on is
+        // what answers. Decided here, before anything of the probe's own, as AxKit.exe decides it.
+        if (args.Length >= 1 && args[0] == AxClaude.Core.Streaming.AskRelay.Verb)
+        {
+            AxClaude.Core.Streaming.AskRelay.Run();
+            return 0;
+        }
+
         return args.Length >= 3 && args[0] == "relay" ? Relay.Run(args) : Commands(args);
     }
 

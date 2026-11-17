@@ -110,6 +110,12 @@ $targets = @(
         @('What it reaches', 'nothing on the network: a program start that Claude Code makes and a pipe on this computer. axKit listens on no port, not even on this computer (docs/axKit/mcp.md section 1).'),
         @('Documentation', 'https://code.claude.com/docs/en/hooks; docs/axClaude/events-and-grounding.md EG-2, EG-10.'),
         @('Apps', 'axClaude, access layer for Claude Code.')) }
+    @{ Key = 'Claude Code questions'; Kind = 'pipe'; Lines = @(
+        @('What', 'the questions of a Claude Code that axClaude runs over its non-interactive stream: whether a tool call may run, and Claude''s own questions to the user. Claude Code starts `AxKit.exe ask` as its permission tool, and that process passes each question to the axClaude window that started this Claude Code and the user''s answer back. Being built (docs/axClaude/stream-mode.md): no window starts Claude Code this way yet, so today nothing starts this verb.'),
+        @('How', 'Claude Code is given the tool with `--permission-prompt-tool` and a configuration that names `AxKit.exe ask` as its one server; it writes each question as MCP''s JSON-RPC, one line per message, to that process''s standard input and reads the answer from its standard output. The process connects to the window''s named pipe (`AxKit-ask-<user>-<random>`, named with its secret in the variable `AXKIT_ASK_PIPE` of the environment the window gives Claude Code, never in a file), writes the secret, the length and the question, and reads the answer the same way. A name that is no pipe of the questions is never connected to. Where the window cannot be asked, or what comes back is no answer, the process answers no. The window''s end of the pipe is not built yet.'),
+        @('What it reaches', 'nothing on the network: a program start that Claude Code makes and a pipe on this computer.'),
+        @('Documentation', 'https://code.claude.com/docs/en/cli-reference (the option that names the tool); docs/axClaude/stream-mode.md SM-7.'),
+        @('Apps', 'axClaude, access layer for Claude Code.')) }
     @{ Key = 'Workflow commands'; Kind = 'program'; Lines = @(
         @('What', 'the command line of a workflow''s `run` step (a test''s `git init`, `findstr`, `copy`), through Windows'' own `cmd.exe`, when a workflow runs: in axAutomate''s window (F5) or with tools/AxAutomate.'),
         @('How', '`cmd.exe /d /s /c "<command line>"` without a window, in the run''s own folder, both outputs read, waited for up to 60 seconds and ended with its process tree after that.'),

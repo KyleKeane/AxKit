@@ -1288,6 +1288,12 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   start, and ends. A hook returns nothing and so decides nothing Claude Code does. axKit still listens on no port,
   also not on this computer (docs/axKit/mcp.md section 1).
   axClaude also reads the session file Claude Code keeps for the conversation, in memory only (EG-3, EG-10.3).
+  Being built since 2026-11-17 and started by no window yet (docs/axClaude/stream-mode.md): Claude Code as one
+  process over pipes in place of the pseudo console, with one more verb, `AxKit.exe ask`, which that Claude Code
+  starts as its permission tool; it passes each question to the window over a named pipe of the same kind as the
+  hooks' and the user's answer back, and answers no where the window cannot be asked. Again a program start and a
+  pipe on the computer, no network contact of axKit's own. The four documents named above say it in the commit
+  that lets a window use it.
 
 - AX-11.12 **What an AI wrote or asks for says so (2026-11-13, the user's decision).** Wherever a window shows text an
   AI wrote for the user to act on, or lets something an AI asked for happen, it says in plain words who wrote it, that
