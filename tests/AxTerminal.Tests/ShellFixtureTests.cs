@@ -96,7 +96,8 @@ public sealed class ShellFixtureTests
         var path = Path.Combine(Fixtures.Folder(), fixture + ".expected.txt");
         if (Environment.GetEnvironmentVariable("AXTERMINAL_UPDATE_EXPECTED") == "1")
         {
-            File.WriteAllText(path, actual + "\n");
+            // Only a file that differs is written: the others keep their bytes, and git lists the one that changed.
+            Fixtures.WriteExpected(path, actual + "\n");
         }
 
         Assert.Equal(File.ReadAllText(path).Replace("\r\n", "\n").TrimEnd('\n'), actual);

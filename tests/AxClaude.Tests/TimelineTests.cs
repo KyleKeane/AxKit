@@ -83,7 +83,8 @@ public class TimelineTests
         var path = Path.Combine(TimelineReplay.FolderOf(fixture), "expected.txt");
         if (Environment.GetEnvironmentVariable("AXCLAUDE_UPDATE_EXPECTED") == "1")
         {
-            File.WriteAllText(path, actual, new UTF8Encoding(false));
+            // Only a file that differs is written: the others keep their bytes, and git lists the one that changed.
+            AxKit.TestShared.Fixtures.WriteExpected(path, actual);
             return;
         }
 

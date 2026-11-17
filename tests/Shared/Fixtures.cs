@@ -20,4 +20,22 @@ internal static class Fixtures
 
         throw new DirectoryNotFoundException("tests/fixtures was not found above " + AppContext.BaseDirectory);
     }
+
+    /// <summary>
+    /// Writes an expected file again in a test's update mode, and only when what it holds differs, line ends aside.
+    /// A file written again with the same text has other line ends than git checked out, and git then lists it as
+    /// changed: on 2026-11-17 the update for one new fixture listed 32 expected files so, each to be compared with
+    /// its commit and put back by hand. Written as UTF-8 without a byte order mark, its lines ended as the text has
+    /// them. True when the file was written.
+    /// </summary>
+    public static bool WriteExpected(string path, string text)
+    {
+        if (File.Exists(path) && File.ReadAllText(path).Replace("\r\n", "\n") == text.Replace("\r\n", "\n"))
+        {
+            return false;
+        }
+
+        File.WriteAllText(path, text, new System.Text.UTF8Encoding(false));
+        return true;
+    }
 }

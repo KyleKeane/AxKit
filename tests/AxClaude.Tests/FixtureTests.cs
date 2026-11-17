@@ -23,7 +23,8 @@ public class FixtureTests
 
         if (Environment.GetEnvironmentVariable("AXCLAUDE_UPDATE_EXPECTED") == "1")
         {
-            File.WriteAllText(expectedPath, actual, new UTF8Encoding(false));
+            // Only a file that differs is written: the others keep their bytes, and git lists the one that changed.
+            AxKit.TestShared.Fixtures.WriteExpected(expectedPath, actual);
             return;
         }
 
