@@ -42,6 +42,10 @@ internal static class Program
     private static int Commands(string[] args)
     {
         Console.OutputEncoding = new UTF8Encoding(false);
+
+        // One measurement, one version of Claude Code: it checks for updates as it starts and while it runs, and
+        // the cases after an update would be another program's (2026-11-17). What this program starts inherits it.
+        Environment.SetEnvironmentVariable(AxKit.Core.ClaudeCodeProgram.NoBackgroundUpdateVariable, "1");
         try
         {
             switch (args.Length > 0 ? args[0] : string.Empty)

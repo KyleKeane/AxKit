@@ -57,7 +57,7 @@ JSON; `//` comments and trailing commas are allowed. In `cwd`, `out`, `claude`, 
 | `debugFile` | `true` | Adds `--debug-file <out>\claude-debug.txt`. It changes the screen: see section 7. Set `false` when the screen itself is what you measure. |
 | `screenReader` | `true` | `--ax-screen-reader`. |
 | `passSettings` | `true` | `false` leaves `--settings` out altogether. |
-| `env` | `{}` | More environment variables for Claude Code. |
+| `env` | `{}` | More environment variables for Claude Code. The tool itself always sets Claude Code's variable against background updates for what it starts (`ClaudeCodeProgram.NoBackgroundUpdateVariable`), so that one run or one set of cases meets one version (docs/axKit/automation.md, section 4). |
 | `claude` | found as the app finds it | Path of the Claude Code program. |
 | `port` | 0 | The listener's port; 0 takes a free one. |
 | `maxRunMs` | 300000 | After this the script is dropped and the session ended. |

@@ -94,4 +94,37 @@ public sealed class UpstreamTests
         Assert.Contains("./tools/upstream.ps1 -Check", File.ReadAllText(Path.Combine(root, ".github", "workflows", "build.yml")), StringComparison.Ordinal);
         Assert.Contains("tools\\upstream.ps1", File.ReadAllText(Path.Combine(root, "CLAUDE.md")), StringComparison.Ordinal);
     }
+
+    /// <summary>
+    /// One run meets one version of Claude Code. On 2026-11-17 it installed a new version two minutes into a run of
+    /// the checks: the scripts after that ran another program than the one whose version the run had asked, and a
+    /// step that failed was read against the wrong version. So the two tools that start Claude Code for a check
+    /// keep it from updating itself under them, with its own documented variable; no app does, since whether Claude
+    /// Code updates is the user's; and the watch asks the version again when a program's checks are over, since a
+    /// session of the user's own can still update it meanwhile.
+    /// </summary>
+    [Fact]
+    public void A_run_meets_one_version_of_Claude_Code_and_the_watch_says_when_it_did_not()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        Assert.Equal("DISABLE_AUTOUPDATER", AxKit.Core.ClaudeCodeProgram.NoBackgroundUpdateVariable);
+
+        foreach (var tool in new[] { Path.Combine("tools", "AxAutomate", "Program.cs"), Path.Combine("tools", "ClaudeProbe", "Program.cs") })
+        {
+            Assert.Contains("Environment.SetEnvironmentVariable(AxKit.Core.ClaudeCodeProgram.NoBackgroundUpdateVariable, \"1\")", File.ReadAllText(Path.Combine(root, tool)), StringComparison.Ordinal);
+        }
+
+        var separator = Path.DirectorySeparatorChar;
+        var apps = Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
+            .Where(file => !file.Contains($"{separator}obj{separator}", StringComparison.Ordinal) && !file.Contains($"{separator}bin{separator}", StringComparison.Ordinal))
+            .Where(file => Path.GetFileName(file) != "ClaudeCodeProgram.cs")
+            .Where(file => File.ReadAllText(file) is var text && (text.Contains("NoBackgroundUpdateVariable", StringComparison.Ordinal) || text.Contains("DISABLE_AUTOUPDATER", StringComparison.Ordinal)))
+            .Select(file => Path.GetRelativePath(root, file))
+            .ToList();
+        Assert.True(apps.Count == 0, "No app keeps Claude Code from updating itself, only the tools that check it: " + string.Join(", ", apps));
+
+        var script = File.ReadAllText(Path.Combine(root, "tools", "upstream.ps1"));
+        Assert.Contains("$after = Get-Installed $entry", script, StringComparison.Ordinal);
+        Assert.Contains("while its checks ran", script, StringComparison.Ordinal);
+    }
 }

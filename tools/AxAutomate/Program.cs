@@ -191,6 +191,11 @@ internal static class Program
 
         Environment.SetEnvironmentVariable(StandIn.Variable, Environment.ProcessPath);
 
+        // One run, one version of Claude Code: it checks for updates as it starts and while it runs, and a window
+        // started after an update runs another program than the windows before it (2026-11-17, two minutes into a
+        // run). Every window, cmd.exe and Claude Code of the run inherits this; the user's own sessions do not.
+        Environment.SetEnvironmentVariable(AxKit.Core.ClaudeCodeProgram.NoBackgroundUpdateVariable, "1");
+
         if (args.Length == 0)
         {
             Console.Error.WriteLine(Usage);

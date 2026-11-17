@@ -588,6 +588,16 @@ in daily work. The upstream watch lets the assistant notice first. It has no sid
   parser. Claude Code's scripts need the network, a signed-in Claude Code and a live model, and take about a quarter
   of an hour; a step that waits for the model's words can fail on the wording, so a failure there is read at its step
   before the parser is blamed.
+- **One run, one version** (2026-11-17): Claude Code checks for updates as it starts and while it runs, and installed
+  2.1.327 two minutes into a run of its checks that day; the scripts after that ran another program than the one whose
+  version the run had asked, and the one step that failed had to be told apart from a change made the same hour. So
+  the two tools that start Claude Code for a check, `tools\AxAutomate` and `tools\ClaudeProbe`, set Claude Code's own
+  variable against background updates for what they start (`ClaudeCodeProgram.NoBackgroundUpdateVariable`; no app
+  sets it, and the user's own sessions update as ever), and the watch asks the version again when a program's checks
+  are over: where it still changed, a pass is not written (exit code 2: run it again), and a failure says that the
+  failing step may be the new version's. To tell a new version's change from one's own: the first rows of a script's
+  conversation name the version it ran; the older program files stay in the versions folder beside Claude Code's
+  data, and the same recording script played with the old one and the new one shows what the new one draws.
 - **`-Check`**, in `test.ps1` and `build.yml`: only that the record is well formed (every field, every named check
   exists). It never asks an installed version: CI's computer has other versions.
 - **Claude Code's hooks** (2026-11-15, `docs/axClaude/events-and-grounding.md` EG-2.4, EG-11.5):

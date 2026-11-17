@@ -66,6 +66,18 @@ public static class ClaudeCodeProgram
     public const string NoHooksSettings = "{\"disableAllHooks\":true}";
 
     /// <summary>
+    /// Claude Code's variable that stops it from updating itself in the background, set to <c>1</c> (its
+    /// documentation, the pages env-vars and setup, read 2026-11-17: "Set to 1 to disable automatic background
+    /// updates"; it checks for updates as it starts and while it runs, and an update takes effect at the next start).
+    /// No app of axKit sets it: whether Claude Code updates is the user's own. The tools that check Claude Code set
+    /// it for what they start (tools/AxAutomate, tools/ClaudeProbe), so that one run meets one version: on
+    /// 2026-11-17 Claude Code installed 2.1.327 two minutes into a run, and every script after that ran another
+    /// program than the one whose version the run had asked. A session of the user's own can still update it
+    /// meanwhile, which <c>tools/upstream.ps1</c> says when it finds the version changed under a run.
+    /// </summary>
+    public const string NoBackgroundUpdateVariable = "DISABLE_AUTOUPDATER";
+
+    /// <summary>
     /// The file of <see cref="NoHooksSettings"/> for <see cref="SettingsOption"/>, written when it is missing or holds
     /// anything else, so that a file changed by another program never reaches Claude Code. A file and not the text
     /// on the command line: npm's <c>claude.cmd</c> runs through cmd.exe, where no argument may hold a double quote

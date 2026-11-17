@@ -13,7 +13,10 @@
   folder, the installer's `.local\bin`, npm's folder; a PATH text can stand in for the process's in tests) and `Find`
   (the first that exists); `LineFor` (R-24, 2026-11-14), how it is started with a list of arguments, by every caller
   (axClaude's session and version, `AiRequest`, the registration): `SystemPrograms.LineFor` with `BatchAdvice` after
-  a refusal. Tested in `ClaudeCodeProgramTests`, `SystemProgramsTests` and `AiTests`.
+  a refusal. Tested in `ClaudeCodeProgramTests`, `SystemProgramsTests` and `AiTests`. `NoBackgroundUpdateVariable`
+  (2026-11-17) is Claude Code's variable against background updates: never set by an app, set by the two tools that
+  start Claude Code for a check so that one run meets one version (`UpstreamTests`; docs/axKit/automation.md
+  section 4).
 - `Mcp/McpClaudeCode` (MC-6.8): the `claude mcp add` and `remove` command lines that register this AxKit.exe for every
   folder of the user; the window runs them on the Claude Code `ClaudeCodeProgram` finds (`AxKit.Forms/AiToolsSetup.cs`).
 - `Mcp/McpTools`: the tools, `AppTools` (MC-8, 2026-11-11: the typed data tools of one app by its verb, and whether each changes something; axTask's three), `NeverRead` (axPass, axClip) and `NeverOpened` (axClaude, axTerminal),

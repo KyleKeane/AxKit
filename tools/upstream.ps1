@@ -19,7 +19,10 @@ runner's exit codes stay 0, 1 and 2 (docs/axKit/user-workflows.md WF-2.10, WF-5.
 a program's checks pass, its new version and today's date are written into the file. Where one fails, the file keeps
 that program as it was, the failing script and step are printed, and the exit code is 1. Where the checks cannot run
 (the program is not installed, Claude Code is not signed in, the network is off, the build failed), the output says
-so, nothing is written for that program, and the exit code is 2: that is not a failure of a parser.
+so, nothing is written for that program, and the exit code is 2: that is not a failure of a parser. The version is
+asked again when a program's checks are over: where it changed while they ran (Claude Code updates itself), a pass
+is not written, since which version passed cannot be said (exit code 2), and a failure says that the failing step
+may be the new version's.
 
 -Check: only that the file is well formed: every entry has its fields, the checks it names exist. It never asks an
 installed version, since CI's computer has other versions. test.ps1 runs it.
@@ -358,7 +361,16 @@ foreach ($entry in $chosen) {
             if ($result.State -ne 'passed') { if ($state -ne 'failed') { $state = $result.State }; $detail.AddRange($result.Detail) }
         }
     }
-    if ($state -eq 'passed') {
+    # A program can update itself while its checks run: Claude Code did on 2026-11-17, two minutes into them, and
+    # the run was read as the old version's. So the version is asked again, and a run that met two versions
+    # verifies neither. The tools that start Claude Code for a check keep it from updating (ClaudeCodeProgram's
+    # NoBackgroundUpdateVariable); a session of the user's own can still install an update meanwhile.
+    $after = Get-Installed $entry
+    $moved = $after -cne $installed[$entry.id] -and $after -ne 'no answer' -and $after -ne 'not installed'
+    if ($state -eq 'passed' -and $moved) {
+        $blockedAny = $true
+        $summary.Add("$($entry.name): not verified. It changed from $($installed[$entry.id]) to $after while its checks ran: they passed, and on which of the two cannot be said. $shownName keeps $($entry.verified). Run -Verify $($entry.id) again.")
+    } elseif ($state -eq 'passed') {
         $entry.verified = $installed[$entry.id]
         $entry.date = Get-Date -Format 'yyyy-MM-dd'
         Write-Entries $document
@@ -366,6 +378,9 @@ foreach ($entry in $chosen) {
     } elseif ($state -eq 'failed') {
         $failedAny = $true
         $summary.Add("$($entry.name): FAILED with $($installed[$entry.id]); $shownName keeps $($entry.verified).")
+        if ($moved) {
+            $summary.Add("  It changed to $after while its checks ran, so a failing step may be the new version's and not the fault of a change made here. Run -Verify $($entry.id) again, which then meets one version.")
+        }
         foreach ($line in $detail) { $summary.Add("  $line") }
         if ($entry.PSObject.Properties['needs']) {
             $summary.Add("  These checks need: $($entry.needs). Read the failing step before the parser is blamed: a step that waits for a model's words can fail on the wording.")
