@@ -142,3 +142,8 @@ permission answered "always", and two hours of real use.
   repaired for the replies between tool calls.
 
 Whichever is chosen, Done and the state from the event core help today and do not depend on the choice.
+
+**Decided on 2026-11-17: (a)**, by the maintainer through the question tool, together with the event schema
+(`docs/axKit/events.md`, section 9 point 1): the stream is built as the second adapter of that schema, behind a
+switch that is off at first, after the sounds have gone through the door. What section 6 lists as not yet measured
+is measured before it is built. (b) is looked at again once (a) has been used for a while.

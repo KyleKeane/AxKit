@@ -1,7 +1,7 @@
 # axKit: one event schema, and the boundary that holds it
 
-A proposal for the maintainer to read, written 2026-11-17 at his question of that day. Nothing here is built, and
-nothing is built from it before he has read it. Requirements are numbered EV-n.m; decisions left to him are in
+Written 2026-11-17 at the maintainer's question of that day, and taken as the direction by him the same day
+(section 9, point 1). Nothing of it is built yet; the steps of section 7 are planned from here. Requirements are numbered EV-n.m; decisions left to him are in
 section 9.
 
 His words: "should we abstract our own event schema and then focus on forcing anything we are interfacing with to
@@ -132,7 +132,10 @@ Steps 2 and 3 do not depend on each other and are the next work on sounds and on
 
 ## 9. For the maintainer to decide
 
-1. Whether this is the direction. If so, steps 2 and 3 are planned from here.
+1. Whether this is the direction. If so, steps 2 and 3 are planned from here. **Decided on 2026-11-17: yes**, by
+   the maintainer through the question tool, in the order of section 7: the sounds through the door first, then
+   axClaude's two adapters. For step 3 he chose the stream as a second mode behind a switch, off at first, the
+   screen the default and the fallback (`docs/axClaude/stream.md`, section 7 (a)).
 2. The kinds' names, heard: `families.md` reads them in one sitting. A name he would not say is changed before it is
    code.
 3. The ten sound choices on the earcon item, met in step 2: for each, one sound, two kinds, or as it is.
