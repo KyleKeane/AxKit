@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Core.Mcp;
 using static AxKit.Forms.User32;
 
@@ -193,7 +194,7 @@ public abstract partial class AxKitForm
         if (GetForegroundWindow() != Handle && McpRun.Chimes(_mcpLastChime, Environment.TickCount64))
         {
             _mcpLastChime = Environment.TickCount64;
-            Sounds.Notice();
+            EventDoor.Raise(EventKind.AiRan);
             FlashIfBehind();
         }
     }
@@ -362,7 +363,7 @@ public abstract partial class AxKitForm
         // Elsewhere a notice, with the offer's chime, name and order of answers; its text is the explanation.
         if (NoticeChime)
         {
-            Sounds.Offer();
+            EventDoor.Raise(EventKind.AiAsksToRun);
         }
 
         ShowNotice(new Notice(McpRun.AskTitle(client, label), request.Text,
@@ -445,7 +446,7 @@ public abstract partial class AxKitForm
 
         if (NoticeChime)
         {
-            Sounds.Offer();
+            EventDoor.Raise(EventKind.AiAsksToRun);
         }
 
         void Answer(int answer)

@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using AxKit.Core;
+using AxKit.Core.Events;
 using static AxKit.Forms.User32;
 
 namespace AxKit.Forms;
@@ -252,7 +253,7 @@ public abstract class HotkeyForm : AxKitForm
         _speak.Stop();
         if (MatchCount == 0)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
             Announce(NothingSaid, true);
             return;
         }
@@ -260,7 +261,7 @@ public abstract class HotkeyForm : AxKitForm
         target = Math.Clamp(target, 0, MatchCount - 1);
         if (target == Matches.SelectedIndex)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
         }
         else
         {

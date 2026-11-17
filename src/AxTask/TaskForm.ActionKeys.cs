@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 using AxTask.Core;
 
@@ -50,21 +51,21 @@ public sealed partial class TaskForm
     {
         if (_smart is not null || AtTop)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
             Announce("Action keys act in a list: open one first", true);
             return;
         }
 
         if (!ActionKeys.Read(CurrentListDetails).TryGetValue(digit, out var action))
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
             Announce($"No action on Ctrl+{digit} in this list; Actions, Action keys sets one", true);
             return;
         }
 
         if (SelectedRow() is not { Tag: ItemFile item })
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Refused);
             Announce("Select an item first", true);
             return;
         }

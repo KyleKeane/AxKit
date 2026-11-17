@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -33,7 +34,7 @@ public abstract partial class AxKitForm
                     Announce(TextModes.ReadOnly, true);
                     break;
                 default:
-                    Sounds.Edge();
+                    EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
                     break;
             }
 
@@ -74,11 +75,11 @@ public abstract partial class AxKitForm
             // A plain key that would type has no command here: the blips. An edit refused keeps the edge sound.
             if (TextModes.Unassigned((int)(keyData & Keys.KeyCode), keyData.HasFlag(Keys.Control), keyData.HasFlag(Keys.Alt)))
             {
-                Sounds.Unassigned();
+                EventDoor.Raise(EventKind.NoCommand, EventSound.Unassigned);
             }
             else
             {
-                Sounds.Edge();
+                EventDoor.Raise(EventKind.Refused);
             }
 
             return true;
@@ -92,11 +93,11 @@ public abstract partial class AxKitForm
     {
         if (found)
         {
-            Sounds.NavKey();
+            EventDoor.Raise(EventKind.Taken);
         }
         else
         {
-            Sounds.Nothing();
+            EventDoor.Raise(EventKind.NothingFound, EventSound.Nothing);
         }
     }
 
@@ -113,7 +114,7 @@ public abstract partial class AxKitForm
             return false;
         }
 
-        Sounds.Edge();
+        EventDoor.Raise(EventKind.Refused);
         Announce(TextModes.Refused(BundleKeys.Text(BundleKeys.ToggleMode)), true);
         return true;
     }

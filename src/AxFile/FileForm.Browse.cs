@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using AxFile.Core;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 
 namespace AxFile;
@@ -725,7 +726,7 @@ public sealed partial class FileForm
             return;
         }
 
-        Sounds.Edge();
+        EventDoor.Raise(EventKind.Edge);
     }
 
     /// <summary>Left Arrow in the list (AF-3.1, AF-D12): up one level, as Backspace; the edge earcon at This PC.</summary>
@@ -733,7 +734,7 @@ public sealed partial class FileForm
     {
         if (FolderListing.IsThisPC(_folder))
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
             return;
         }
 

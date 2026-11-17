@@ -21,8 +21,8 @@ from, a new menu or a new family of keys shows as a line to correct and not as a
   - every id is used once; every action, event and sound named by another entry exists;
   - every public method of Sounds is a sound here (its "methods", or its id), and every sound here is a method;
   - every sound is the sound of at least one kind of event;
-  - every file under src that calls a sound is named in "where" by a kind of event with that sound, and every file
-    named in "where" exists;
+  - every file under src that raises a kind of event through the door (EventDoor.Raise(EventKind.X), and the door's
+    calls for the sounds that last) is named in that kind's "where", and every file named in "where" exists;
   - every top menu of docs\axKit\window-commands.json is a family of functions and the other way round;
   - every family of docs\axKit\key-families.json is in "keys" and the other way round.
 
@@ -96,49 +96,79 @@ foreach ($method in $methodOf.Keys) {
     if ($declared -notcontains $method) { $problems.Add("sounds: '$method' is named in the file and Sounds.cs has no public method of that name.") }
 }
 
-# sound id -> the files under src that call it, as "src/..." with forward slashes.
-$callers = @{}
+# kind id -> the files under src that raise it through the door, as "src/..." with forward slashes. Since the door
+# (docs\axKit\events.md EV-5, 2026-11-17) no file plays a sound itself: it raises a kind, EventDoor.Raise(EventKind.X),
+# and the kind's name in code is its id here with a capital in place of each hyphen (AxKit.Core EventPresenter.Id).
+# The two sounds that last, and the done sound of a window that is put away, have calls of their own.
+$doorPath = Join-Path $root 'src\AxKit.Forms\EventDoor.cs'
+# The door's own calls: the kind each raises, and the sound it plays.
+$doorCalls = @{
+    'Working'             = @('working', 'Music')
+    'BackgroundRunning'   = @('background-running', 'BackgroundChord')
+    'TurnDoneThroughMute' = @('turn-done', 'Done')
+}
+# Each raise found: the file, the kind's id, and the sound when the raise names one (a kind with two sounds), else ''.
+$raises = New-Object System.Collections.Generic.List[object]
 $sourceRoot = Join-Path $root 'src'
 foreach ($source in Get-ChildItem -Path $sourceRoot -Recurse -Filter *.cs) {
-    if ($source.FullName -match '\\(bin|obj)\\' -or $source.FullName -eq $soundsPath) { continue }
-    # A comment that names a sound is no call: each line is cut at its comment first.
+    if ($source.FullName -match '\\(bin|obj)\\' -or $source.FullName -eq $soundsPath -or $source.FullName -eq $doorPath) { continue }
+    # A comment that names a raise is no raise: each line is cut at its comment first.
     $code = (@([IO.File]::ReadAllLines($source.FullName) | ForEach-Object { ($_ -split '//')[0] })) -join "`n"
-    # A call, or the method handed over as a value (axClaude's control area takes its chime so).
-    foreach ($match in [regex]::Matches($code, '\bSounds\.(\w+)\b')) {
-        $method = $match.Groups[1].Value
-        if (-not $methodOf.ContainsKey($method)) { continue }
-        $relative = 'src/' + $source.FullName.Substring($sourceRoot.Length + 1).Replace('\', '/')
-        $id = $methodOf[$method]
-        if (-not $callers.ContainsKey($id)) { $callers[$id] = New-Object System.Collections.Generic.List[string] }
-        if (-not $callers[$id].Contains($relative)) { $callers[$id].Add($relative) }
+    $relative = 'src/' + $source.FullName.Substring($sourceRoot.Length + 1).Replace('\', '/')
+    foreach ($match in [regex]::Matches($code, '\bEventDoor\.Raise\(\s*EventKind\.(\w+)\s*(?:,\s*EventSound\.(\w+))?')) {
+        $kindId = [regex]::Replace($match.Groups[1].Value, '(?<!^)([A-Z])', '-$1').ToLowerInvariant()
+        $raises.Add([pscustomobject]@{ File = $relative; Kind = $kindId; Sound = $match.Groups[2].Value })
+    }
+    foreach ($match in [regex]::Matches($code, '\bEventDoor\.(Working|BackgroundRunning|TurnDoneThroughMute)\(')) {
+        $call = $doorCalls[$match.Groups[1].Value]
+        $raises.Add([pscustomobject]@{ File = $relative; Kind = $call[0]; Sound = $call[1] })
     }
 }
 
-# --- The events: what each names exists; the sounds' callers are all named.
+# --- The events: what each names exists; every file that raises a kind is named by that kind.
 $eventsOfSound = @{}
-$whereOfSound = @{}
+$whereOfEvent = @{}
+$soundsOfEvent = @{}
 foreach ($family in $file.events) {
     foreach ($member in $family.members) {
+        $whereOfEvent[$member.id] = @{}
+        $soundsOfEvent[$member.id] = @($member.sounds | Where-Object { $_ })
         foreach ($start in @($member.starts | Where-Object { $_ })) {
             if (-not $actionIds.ContainsKey($start)) { $problems.Add("events: '$($member.id)' is started by '$start', which is no action of the file.") }
         }
-        foreach ($sound in @($member.sounds | Where-Object { $_ })) {
+        foreach ($sound in $soundsOfEvent[$member.id]) {
             if (-not $soundIds.ContainsKey($sound)) { $problems.Add("events: '$($member.id)' has the sound '$sound', which is no sound of the file."); continue }
-            if (-not $eventsOfSound.ContainsKey($sound)) { $eventsOfSound[$sound] = New-Object System.Collections.Generic.List[string]; $whereOfSound[$sound] = @{} }
+            if (-not $eventsOfSound.ContainsKey($sound)) { $eventsOfSound[$sound] = New-Object System.Collections.Generic.List[string] }
             $eventsOfSound[$sound].Add($member.id)
-            foreach ($place in @($member.where | Where-Object { $_ })) { $whereOfSound[$sound][$place] = $true }
         }
         foreach ($place in @($member.where | Where-Object { $_ })) {
+            $whereOfEvent[$member.id][$place] = $true
             if (-not (Test-Path (Join-Path $root $place.Replace('/', '\')))) { $problems.Add("events: '$($member.id)' names $place, which does not exist.") }
         }
     }
 }
 foreach ($sound in $soundIds.Keys) {
-    if (-not $eventsOfSound.ContainsKey($sound)) { $problems.Add("sounds: '$sound' is the sound of no kind of event."); continue }
-    if (-not $callers.ContainsKey($sound)) { continue }
-    foreach ($caller in $callers[$sound]) {
-        if (-not $whereOfSound[$sound].ContainsKey($caller)) { $problems.Add("events: $caller plays Sounds.$sound and no kind of event with that sound names the file in its 'where'.") }
+    if (-not $eventsOfSound.ContainsKey($sound)) { $problems.Add("sounds: '$sound' is the sound of no kind of event.") }
+}
+
+# sound id -> the files under src it is played from, for the page: the sound a raise names, else its kind's one sound.
+$callers = @{}
+foreach ($raise in $raises) {
+    if (-not $whereOfEvent.ContainsKey($raise.Kind)) { $problems.Add("events: $($raise.File) raises '$($raise.Kind)', which is no kind of event of the file."); continue }
+    if (-not $whereOfEvent[$raise.Kind].ContainsKey($raise.File)) {
+        $line = "events: $($raise.File) raises '$($raise.Kind)' and the kind does not name the file in its 'where'."
+        if (-not $problems.Contains($line)) { $problems.Add($line) }
     }
+    $played = $raise.Sound
+    if (-not $played -and $soundsOfEvent[$raise.Kind].Count -gt 0) { $played = $soundsOfEvent[$raise.Kind][0] }
+    if (-not $played) { continue }
+    if ($soundsOfEvent[$raise.Kind] -cnotcontains $played) {
+        $line = "events: $($raise.File) raises '$($raise.Kind)' with the sound '$played', which the kind does not have."
+        if (-not $problems.Contains($line)) { $problems.Add($line) }
+        continue
+    }
+    if (-not $callers.ContainsKey($played)) { $callers[$played] = New-Object System.Collections.Generic.List[string] }
+    if (-not $callers[$played].Contains($raise.File)) { $callers[$played].Add($raise.File) }
 }
 
 # --- The functions against the inventory: the top menus, and the commands that are a key alone.

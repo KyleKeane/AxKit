@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 using AxTask.Core;
 
@@ -578,7 +579,7 @@ public sealed partial class TaskForm : ItemForm
             }
         }
 
-        Sounds.Edge();
+        EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
     }
 
     /// <summary>Where the heading keys act: the navigator at a top level, not renaming (TK-D14); elsewhere Ctrl+1 and Ctrl+2 are the list's action keys.</summary>

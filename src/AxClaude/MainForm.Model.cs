@@ -1,6 +1,7 @@
 using System.Text;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Core.Transcript;
 using AxKit.Forms;
 
@@ -29,11 +30,11 @@ internal sealed partial class MainForm
             // A frame that brings a tool call gets the tool tick in place of the line's (FR-7.8).
             if (arrival.ToolCall)
             {
-                Sounds.Tool();
+                EventDoor.Raise(EventKind.ToolCall);
             }
             else if (arrival.NewLine)
             {
-                Sounds.Click();
+                EventDoor.Raise(EventKind.Line);
             }
         }
 
@@ -109,7 +110,7 @@ internal sealed partial class MainForm
 
             if (_settings.SoundOnBell)
             {
-                Sounds.Ready();
+                EventDoor.Raise(EventKind.Ready);
             }
         }
 

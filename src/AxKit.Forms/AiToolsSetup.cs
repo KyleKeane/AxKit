@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Core.Mcp;
 
 namespace AxKit.Forms;
@@ -283,6 +284,7 @@ internal sealed class AiToolsSetup
         ])
         {
             Unprompted = true,
+            Kind = EventKind.Pairing,
             Consent = AxKitForm.ConsentBox("axKit", name),
         });
         // The window closing refuses; the handler goes with the answer, so that requests do not pile handlers up.

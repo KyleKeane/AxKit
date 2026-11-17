@@ -1,3 +1,4 @@
+using AxKit.Core.Events;
 using AxKit.Forms;
 using AxTerminal.Core;
 
@@ -45,13 +46,13 @@ internal sealed partial class TerminalForm
     {
         if (command is null)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
             return;
         }
 
         Input.Text = command.Replace("\n", "\r\n");
         Input.Select(Input.TextLength, 0);
-        Sounds.Recall();
+        EventDoor.Raise(EventKind.Recalled);
         Announce(command.Length == 0 ? "blank" : command.Replace("\n", " "), true);
     }
 
@@ -87,7 +88,7 @@ internal sealed partial class TerminalForm
         Announce(record ? "Sent" : "Sent, not recorded", false);
         if (_settings.SoundOnBell)
         {
-            Sounds.Sent();
+            EventDoor.Raise(EventKind.Sent);
         }
     }
 

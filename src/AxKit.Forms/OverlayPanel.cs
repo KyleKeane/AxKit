@@ -1,5 +1,6 @@
 
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -63,6 +64,14 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// notice chime and ignores the answering keys for a moment, since the user may be typing elsewhere when it appears.
     /// </summary>
     public bool Unprompted { get; init; }
+
+    /// <summary>
+    /// Which kind of event the notice is when it opens by itself (docs/axKit/events.md EV-3), for the sound the
+    /// window base raises with it: a notice no command of the user's asked for, unless the place that makes it says
+    /// that a command failed (<see cref="EventKind.Failed"/>) or that an AI client asks to use axKit
+    /// (<see cref="EventKind.Pairing"/>). It changes nothing a notice shows or says.
+    /// </summary>
+    public EventKind Kind { get; init; } = EventKind.NoticeByItself;
 
     /// <summary>
     /// A progress bar under the text, for a download (bundle AX-3.2). The window moves it with
@@ -355,7 +364,7 @@ public sealed class OverlayPanel : Panel
         }
         else
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
         }
     }
 

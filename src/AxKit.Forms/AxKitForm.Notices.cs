@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -41,7 +42,20 @@ public abstract partial class AxKitForm
         Recent.Add(RecentActionKind.Notice, notice.Title, DateTime.UtcNow);
         if (notice.Unprompted && !notice.Silent && NoticeChime)
         {
-            Sounds.Notice();
+            // The notice says which kind of event it is (Notice.Kind); each of the three has the notice sound today,
+            // and each is raised by its name, so that the door knows which it was.
+            switch (notice.Kind)
+            {
+                case EventKind.Failed:
+                    EventDoor.Raise(EventKind.Failed);
+                    break;
+                case EventKind.Pairing:
+                    EventDoor.Raise(EventKind.Pairing);
+                    break;
+                default:
+                    EventDoor.Raise(EventKind.NoticeByItself);
+                    break;
+            }
         }
 
         if (!NoticeOpen && !_chaining)
@@ -187,7 +201,7 @@ public abstract partial class AxKitForm
     {
         if (text.Contains('\n'))
         {
-            ShowNotice(Notice.Plain(title, text) with { Unprompted = true });
+            ShowNotice(Notice.Plain(title, text) with { Unprompted = true, Kind = EventKind.Failed });
         }
         else
         {
@@ -253,7 +267,7 @@ public abstract partial class AxKitForm
                     return true;
                 }
 
-                Sounds.Edge();
+                EventDoor.Raise(EventKind.Refused);
                 Announce(lacking.Said, true);
                 lacking.Field.Select();
                 return false;

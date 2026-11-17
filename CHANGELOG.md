@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: every sound is now played from one place, by the kind of event that happened, so that the same thing sounds the same in every window. Nothing you hear has changed with it.
 - axHelp and Shift+F1: Claude's working folder now also holds what each sound and event means, what axKit does when something goes wrong, the privacy statement with the exact list of what axKit contacts and runs, and the changelog, and Claude is told which of them answers which question.
 - axClaude: when Claude Code starts a turn by itself, because work in the background has finished, axClaude says "Claude goes on by itself", once and without cutting off other speech, so that the music and the reply that follow have a reason. Options, Announcements has its switch, on at first.
 - axClaude: "Done" comes when the turn has ended and its last reply is in the conversation, without the fixed pause; an interrupted reply and a reply cut by Send queued messages now say no "Done".

@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 using AxTask.Core;
 
@@ -401,7 +402,7 @@ public sealed partial class TaskForm
 
             if (hits.Count == 0)
             {
-                Sounds.Edge();
+                EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
                 Announce("Nothing found for " + words, true);
                 return;
             }
@@ -423,7 +424,7 @@ public sealed partial class TaskForm
     {
         if (SelectedRow() is not { Tag: FoundItem found })
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
             return;
         }
 

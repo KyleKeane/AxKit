@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Core.Mcp;
 using AxKit.Forms;
 
@@ -124,9 +125,14 @@ internal sealed partial class MainForm
         _offerShown = offer;
         var name = offer.Request?.Name ?? McpOffer.AskName(offer.Client, offer.Command);
         var text = offer.Request?.Text ?? McpOffer.AskText(offer.Client, offer.Command, offer.Reason);
+        // The offer's sound, raised by its kind: a command Claude offers for the user to run (FR-2.12), or an AI
+        // tool's request to run a command of this window, which is shown in the same list (MC-7.3).
+        Action chime = offer.Request is null
+            ? () => EventDoor.Raise(EventKind.CommandOffer)
+            : () => EventDoor.Raise(EventKind.AiAsksToRun);
         ShowInArea(OfferSignature, name, text, unprompted, (focus, hold) =>
             Area.ShowList(name, offer.Request?.Answers ?? McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen),
-                () => AnswerOffer(offer, offer.Request?.No ?? McpOffer.No)), Sounds.Offer);
+                () => AnswerOffer(offer, offer.Request?.No ?? McpOffer.No)), chime);
         if (unprompted)
         {
             // An offer has no signal of Claude's: the taskbar button flashes for it when the window is behind.
@@ -263,7 +269,7 @@ internal sealed partial class MainForm
         Announce("Sent", false);
         if (_settings.SoundOnBell)
         {
-            Sounds.Sent();
+            EventDoor.Raise(EventKind.Sent);
         }
     }
 }

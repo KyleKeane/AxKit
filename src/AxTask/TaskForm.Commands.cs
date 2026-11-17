@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 using AxTask.Core;
 
@@ -31,14 +32,14 @@ public sealed partial class TaskForm
         };
         if (item is null)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
             return;
         }
 
         var done = TaskRules.DoneIndex(item.Document);
         if (done < 0)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Refused);
             Announce("Not a task", true);
             return;
         }

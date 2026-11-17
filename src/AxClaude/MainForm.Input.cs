@@ -1,6 +1,7 @@
 using AxClaude.Core.Flow;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 
 namespace AxClaude;
@@ -145,7 +146,7 @@ internal sealed partial class MainForm
         }
         if (_settings.SoundOnBell)
         {
-            Sounds.Sent();
+            EventDoor.Raise(EventKind.Sent);
         }
     }
 

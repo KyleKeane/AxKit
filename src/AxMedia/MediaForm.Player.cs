@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 using AxMedia.Core;
 
@@ -93,7 +94,7 @@ public sealed partial class MediaForm
         }
 
         StopPlayback();
-        Sounds.Done();
+        EventDoor.Raise(EventKind.TurnDone);
         Announce("End of queue", false);
     }
 

@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using AxClaude.Core.Flow;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 using static AxKit.Forms.User32;
 
@@ -145,7 +146,7 @@ internal sealed partial class MainForm
     {
         Log.Info("Put away on closing; Claude runs on");
         _putAway = true;
-        Sounds.Muted = true;
+        EventDoor.Muted = true;
         _speechHold.Stop();
         _heldLines.Clear();
         // The core drops what it held for speech, as the lines above drop this code's (MainForm.Flow.cs).
@@ -161,7 +162,7 @@ internal sealed partial class MainForm
         _attentionWaits = true;
         if (DoneChimeWhilePutAway && DoneBySettle && WaitSignature is null && _settings.SoundOnBell)
         {
-            Sounds.DoneWhileMuted();
+            EventDoor.TurnDoneThroughMute();
         }
     }
 
@@ -180,7 +181,7 @@ internal sealed partial class MainForm
         {
             Log.Info("Brought up again");
             _putAway = false;
-            Sounds.Muted = false;
+            EventDoor.Muted = false;
             Opacity = 1;
             if (_stateWhenBroughtUp is { } state)
             {
@@ -233,7 +234,7 @@ internal sealed partial class MainForm
     {
         if (!NoticeOpen && BottomControl == Input && Input.Text.Trim().Length > 0)
         {
-            Sounds.Recall();
+            EventDoor.Raise(EventKind.BroughtUp);
             Announce(UnsentMessage, false);
         }
     }

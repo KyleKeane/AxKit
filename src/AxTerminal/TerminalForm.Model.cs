@@ -1,3 +1,4 @@
+using AxKit.Core.Events;
 using AxKit.Forms;
 using AxTerminal.Core;
 
@@ -15,7 +16,7 @@ internal sealed partial class TerminalForm
         var arrival = _arrivals.Update(_model.Lines, _model.Running, _settings.OutputSpeech == OutputSpeechMode.All);
         if (_settings.ClickOnNewLine && arrival.NewLine)
         {
-            Sounds.Click();
+            EventDoor.Raise(EventKind.Line);
         }
 
         SayWithFinished(arrival.Speech);
@@ -49,7 +50,7 @@ internal sealed partial class TerminalForm
         {
             if (_settings.SoundOnBell)
             {
-                Sounds.Ready();
+                EventDoor.Raise(EventKind.Ready);
             }
         }
         else if (word is not null)

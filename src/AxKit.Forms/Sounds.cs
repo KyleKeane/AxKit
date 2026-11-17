@@ -15,8 +15,13 @@ namespace AxKit.Forms;
 /// with the loop flags, on a second device of its own, where no chime's reset can cut it off and no tick waits
 /// behind it, and stopped with a reset of that device. The recurring chords of background work (FR-7.10), 4.6 s
 /// each, have a third device for the same reasons; they are made off the UI thread at their first use. UI thread only.
+///
+/// Internal since 2026-11-17 (docs/axKit/events.md EV-5.1): no window and no control plays a sound from here. They
+/// raise a kind of event at the door, <see cref="EventDoor"/>, which is this class's one caller; an app cannot name
+/// this class at all, and inside these shared pieces <c>EventDoorTests</c> holds it. The automation channel listens
+/// to <see cref="Played"/>.
 /// </summary>
-public static class Sounds
+internal static class Sounds
 {
     private const uint WAVE_MAPPER = 0xFFFFFFFF;
     private const int WHDR_BEGINLOOP = 0x0004;

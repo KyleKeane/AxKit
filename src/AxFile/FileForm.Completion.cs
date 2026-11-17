@@ -1,4 +1,5 @@
 using AxFile.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 
 namespace AxFile;
@@ -80,7 +81,7 @@ public sealed partial class FileForm
         var next = _completionAt + step;
         if (next < 0 || next >= _completions.Count)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
             if (_completionAt >= 0 && _completionAt < _completions.Count)
             {
                 Announce(PathCompletion.Spoken(_completions[_completionAt], _completionAt, _completions.Count), true);

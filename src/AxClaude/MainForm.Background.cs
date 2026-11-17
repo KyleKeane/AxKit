@@ -1,4 +1,5 @@
 using AxClaude.Core.Transcript;
+using AxKit.Core.Events;
 using AxKit.Forms;
 
 namespace AxClaude;
@@ -98,11 +99,11 @@ internal sealed partial class MainForm
             {
                 if (sound == BackgroundSound.Start)
                 {
-                    Sounds.BackgroundStart();
+                    EventDoor.Raise(EventKind.BackgroundStarted);
                 }
                 else
                 {
-                    Sounds.BackgroundFinish();
+                    EventDoor.Raise(EventKind.BackgroundFinished);
                 }
             }
 
@@ -146,7 +147,7 @@ internal sealed partial class MainForm
     /// A tick of the chords' timer: a chord when one is due (<see cref="BackgroundChords.Next"/>: the last one and its
     /// pause over), with a tone for each thing running now. Chords play under speech too: held back while a reply was
     /// estimated to be read, they were never heard (the user, 2026-11-15), since Claude speaks most of the time work
-    /// runs. A window put away is silent through <see cref="Sounds.Muted"/>.
+    /// runs. A window put away is silent through <see cref="EventDoor.Muted"/>.
     /// </summary>
     private void PlayBackgroundChord()
     {
@@ -159,7 +160,7 @@ internal sealed partial class MainForm
         var now = Environment.TickCount64;
         if (_backgroundChords.Next(now, _backgroundHeard.Total, _settings.BackgroundChordPauseSeconds, held: false) is { } chord)
         {
-            Sounds.BackgroundChord(chord.Chord, chord.Things);
+            EventDoor.BackgroundRunning(chord.Chord, chord.Things);
         }
     }
 

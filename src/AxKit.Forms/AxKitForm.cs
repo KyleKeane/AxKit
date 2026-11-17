@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Core.Mcp;
 using AxKit.Core.Updates;
 using static AxKit.Forms.User32;
@@ -799,7 +800,7 @@ public abstract partial class AxKitForm : Form
         {
             // AX-8.10 rule 3: no main action where the focus is (no command of the window took the key): the edge
             // sound and nothing else, never a line break in a text or a control's own meaning.
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
             return true;
         }
 

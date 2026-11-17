@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -133,7 +134,7 @@ public abstract partial class ItemForm
         }
         else
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
         }
     }
 
@@ -323,7 +324,7 @@ public abstract partial class ItemForm
 
         if (_shown.Document!.WithFieldMoved(index, direction) is null)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
             Announce(direction < 0 ? "Top of the fields" : "Bottom of the fields", true);
             return;
         }

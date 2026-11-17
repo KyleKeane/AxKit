@@ -6,7 +6,9 @@ one and only the one he picks goes into `AxKit.Forms/Sounds` (as the command off
 
 The sounds that exist, each with the events it is the sound of, the files that play it and its switch, are on
 `families.md` (written from `families.json`, 2026-11-16), with every kind of event that has no sound. This page
-stays the design: the classes, and what is proposed.
+stays the design: the classes, and what is proposed. Since 2026-11-17 a sound is not played where something happens:
+the place raises the kind of event, and the kind's sound comes from one table (`events.md`, section 10), so a sound
+chosen here by ear is given to its kind in that table and in `families.json`.
 
 ## Why classes
 

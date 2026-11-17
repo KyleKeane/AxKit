@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -23,17 +24,17 @@ public abstract partial class ConsoleForm
         var away = !ContainsFocus;
         if (ConsoleSettings.BackgroundAlert && away)
         {
-            Sounds.Alert();
+            EventDoor.Raise(EventKind.CalledFromBehind);
         }
         else if (ConsoleSettings.SoundOnBell && chime)
         {
             if (question)
             {
-                Sounds.Question();
+                EventDoor.Raise(EventKind.ProgramAsks, EventSound.Question);
             }
             else
             {
-                Sounds.Done();
+                EventDoor.Raise(EventKind.TurnDone);
             }
         }
 
@@ -65,14 +66,7 @@ public abstract partial class ConsoleForm
         }
 
         _musicOn = play;
-        if (play)
-        {
-            Sounds.StartMusic();
-        }
-        else
-        {
-            Sounds.StopMusic();
-        }
+        EventDoor.Working(play);
     }
 
     /// <summary>

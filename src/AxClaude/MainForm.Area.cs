@@ -1,6 +1,7 @@
 using System.Text;
 using AxClaude.Core.Flow;
 using AxClaude.Core.Transcript;
+using AxKit.Core.Events;
 using AxKit.Forms;
 
 namespace AxClaude;
@@ -127,7 +128,16 @@ internal sealed partial class MainForm
         // (until 2026-11-16 an offer in the background with the alert on made no sound at all).
         if (AreaChime.Plays(unprompted, _settings.SoundOnBell, _settings.BackgroundAlert, ContainsFocus, offer: chime is not null))
         {
-            (chime ?? Sounds.Notice)();
+            if (chime is not null)
+            {
+                chime();
+            }
+            else
+            {
+                // What Claude waits on, shown here as a list or a field: the kind has two sounds still (EV-3.3), and
+                // this place plays the notice sound; the two notes are the signal's, for what cannot be shown so.
+                EventDoor.Raise(EventKind.ProgramAsks, EventSound.Notice);
+            }
         }
 
         show(focus, unprompted);
@@ -575,7 +585,7 @@ internal sealed partial class MainForm
 
         if (unprompted && _settings.SoundOnBell && !(_settings.BackgroundAlert && !ContainsFocus))
         {
-            Sounds.Notice();
+            EventDoor.Raise(EventKind.ProgramScreen);
         }
 
         if (!NoticeOpen && (interrupt || bottom))
@@ -749,7 +759,7 @@ internal sealed partial class MainForm
         Area.Hold(UserActionMs);
         if (_settings.SoundOnBell)
         {
-            Sounds.Sent();
+            EventDoor.Raise(EventKind.Sent);
         }
     }
 

@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -155,7 +156,7 @@ public class AxKitTextBox : TextBox
             // AX-8.13: nothing changes the text in navigation mode. The keys are refused before they get here (the window
             // base's ProcessCmdKey); this stops what comes another way: Tab in an editor, a character a program sends,
             // one that Ctrl+Alt makes on some keyboards, the menus' Cut and Paste.
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Refused);
             return;
         }
 

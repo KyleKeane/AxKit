@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -11,7 +12,7 @@ namespace AxKit.Forms;
 /// <see cref="TypeAhead"/> finds among the names; a run of one letter cycles through the names starting with it; Shift
 /// with a letter searches backwards; a new prefix starts after a second's pause; the edge earcon when no name starts
 /// with it. The list box's own one-letter jump gives way to it.</item>
-/// <item>The edge earcon (<see cref="Sounds.Edge"/>) for Up or Home on the first item and Down or End on the last,
+/// <item>The edge earcon (the kind <see cref="EventKind.Edge"/>, raised at the door) for Up or Home on the first item and Down or End on the last,
 /// where the key moves nothing and NVDA would say nothing.</item>
 /// </list>
 /// The names are the items' texts unless the window gives others (<see cref="Names"/>: fewer when the list ends in a
@@ -249,7 +250,7 @@ public class AxKitList : ListBox
         // The key moves nothing at an end: the earcon instead of silence (axFile's AF-3.6, every list since 2026-10-24).
         if ((e.KeyCode is Keys.Up or Keys.Home && SelectedIndex == 0) || (e.KeyCode is Keys.Down or Keys.End && SelectedIndex == Items.Count - 1))
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
         }
     }
 
@@ -376,7 +377,7 @@ public class AxKitList : ListBox
         }
         else
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
         }
     }
 }

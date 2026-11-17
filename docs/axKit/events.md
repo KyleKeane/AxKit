@@ -1,7 +1,8 @@
 # axKit: one event schema, and the boundary that holds it
 
 Written 2026-11-17 at the maintainer's question of that day, and taken as the direction by him the same day
-(section 9, point 1). Nothing of it is built yet; the steps of section 7 are planned from here. Requirements are numbered EV-n.m; decisions left to him are in
+(section 9, point 1). Step 2 of section 7, the sounds through the door, was built that day; section 10 says
+exactly what was built and what was left for the later steps. Requirements are numbered EV-n.m; decisions left to him are in
 section 9.
 
 His words: "should we abstract our own event schema and then focus on forcing anything we are interfacing with to
@@ -107,7 +108,7 @@ Each line is a test over the sources, of the kind the repository has (`LayoutTes
 ## 7. The path, in four steps, each small and each leaving every app working
 
 1. **This document read and changed by the maintainer.** No code.
-2. **Sounds through the door.** The enumeration of kinds; the presenter's table; `Raise`; then the 69 places that
+2. **Sounds through the door** (built 2026-11-17: section 10, where the count is exact). The enumeration of kinds; the presenter's table; `Raise`; then the 69 places that
    play a sound today, moved a window at a time, each raising its kind. `tools/families.ps1` knows every place
    already. Here the ten inconsistencies noted on the earcon item are met one by one and settled by ear, and the
    kinds with no sound stay silent until one is chosen. Checked by every window's scripts and an NVDA pass. No
@@ -153,3 +154,49 @@ Steps 2 and 3 do not depend on each other and are the next work on sounds and on
    goes on by itself", never interrupting, no sound, with a switch under Options, Announcements (axClaude's SPEC.md
    FR-7.3b; the kind is `turn-self-started` in `families.json`). The words and their moment are owed his ear
    (`nvda-test-record.md`, the Owed section of the state from the event core).
+
+## 10. As built
+
+### Step 2, the sounds through the door (2026-11-17)
+
+Nothing a user hears changed with it: each place plays the sound it played before, at the same moment, by the same
+switch. What changed is that no place plays a sound any more; it names what happened.
+
+- **The kinds in code** (EV-3.2): `AxKit.Core/Events/EventKind`, 52 values in the order and the six classes of
+  `families.json`; a kind's id in the file is its name in small letters with hyphens (`EventPresenter.Id`). The sounds
+  by name are `EventSound`, the 20 of the file. `EventKindTests` holds both lists to the file, both ways.
+- **The presenter's table** (EV-5.2): `EventPresenter.SoundsOf(kind)`: none for 25 kinds, one sound for 24, and two
+  for the three kinds that sounded two ways before the door (EV-3.3): nothing-found (the buzz, the edge), no-command
+  (the bonk, the edge), program-asks (the trill, the two notes). The test holds the table to the file, and pins
+  exactly those three, so that none joins them unnoticed.
+- **The door** (EV-5.1): `AxKit.Forms/EventDoor`. `Raise(EventKind)` for a kind with one sound.
+  `Raise(EventKind, EventSound)` for the three kinds with two: the place names the sound it played until now, so
+  that every undecided place reads `EventSound.` in the code and can be listed; when one is decided by ear, its
+  second sound leaves the table and the name leaves the calls. `Working(on)` for the working music and
+  `BackgroundRunning(chord, things)` for the chords of background work, the two sounds that last;
+  `TurnDoneThroughMute()` and `Muted` for a window that is put away.
+- **Every place moved**: the 65 places that played a sound and the 3 that muted the sounds, in 29 files of the
+  shared window pieces, axClaude, axTerminal, axTask, axFile and axMedia, each read in its context and given its
+  kind; 17 of the raises name a sound, the places of the three kinds with two. A notice says its own kind (`Notice.Kind`: opened by itself,
+  a failure, a pairing), and the window base raises it.
+- **The boundary** (EV-6.2): `Sounds` is internal to `AxKit.Forms`, so the compiler refuses an app that names it.
+  Inside the shared pieces `EventDoorTests` reads the sources: no file but the door plays a sound (the automation
+  channel alone listens to what was played); every raise is written whole on one line and names its kind in so many
+  words, never a variable, so that each can be found and checked; a sound is named at a raise only for the three
+  kinds; the door sends each sound to the method of its own name.
+- **Held to the inventory** (EV-6.4): `tools/families.ps1` fails when a file raises a kind whose "where" in
+  `families.json` does not name the file. Run after the move, it found nothing: every choice of a kind agrees with
+  the inventory of 2026-11-16, made by reading the same places a day earlier. And the page it writes came out
+  unchanged, which shows that every sound is played from the same files as before.
+
+Left for the later steps, on purpose:
+
+- **The words** (EV-5.3, section 9 point 4). Each window still says its words through its own `Announce`, in the
+  order it had with its sound. An event does not carry its words yet.
+- **The switches** (EV-5.2). Whether an event is raised at all (the chimes' switch, the ticks' switch, the sound on
+  headings, a window that is not in front) is still decided where it happens; the table has no switch column.
+- **The record of kinds for the automated checks** (EV-5.5). A script still expects a sound by its name.
+- **The three kinds with two sounds** (EV-3.3, section 9 point 3), which wait for the maintainer's ear. The other
+  inconsistencies noted on the earcon item are places that say words and play no sound, or one sound with two
+  meanings; they are met when the words go through the door.
+- **EV-6.1, EV-6.3 and EV-6.5**, which are the adapters' (steps 3 and 4).

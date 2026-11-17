@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -215,7 +216,7 @@ public abstract partial class ItemForm : AxKitForm
     private static IReadOnlyList<string> NewFieldTypes => FieldTypes.All;
 
     /// <summary>Space in the navigator (axTask: a task done); the edge sound otherwise.</summary>
-    protected virtual void CheckInNavigator(ItemRow? row) => Sounds.Edge();
+    protected virtual void CheckInNavigator(ItemRow? row) => EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
 
     /// <summary>F5, before the level is read again.</summary>
     protected virtual void BeforeRefresh()
@@ -414,7 +415,7 @@ public abstract partial class ItemForm : AxKitForm
         }
         else
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
         }
     }
 
@@ -441,7 +442,7 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>Right or Enter on a section's header (IA-2.3a): nothing to go into.</summary>
     private void OnSectionHeader()
     {
-        Sounds.Edge();
+        EventDoor.Raise(EventKind.Edge);
         Announce("A section: Down goes into it", true);
     }
 
@@ -462,7 +463,7 @@ public abstract partial class ItemForm : AxKitForm
             }
         }
 
-        Sounds.Edge();
+        EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
     }
 
     private void OpenList(ItemRow row)
@@ -484,7 +485,7 @@ public abstract partial class ItemForm : AxKitForm
     {
         if (LeaveList() is not { } select)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
             return;
         }
 

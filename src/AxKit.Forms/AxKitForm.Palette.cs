@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -89,7 +90,7 @@ public abstract partial class AxKitForm
         _paletteSpeak.Stop();
         if (_paletteShown.Count == 0)
         {
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
             Announce(Palette.NoMatch(Overlay.InputText), true);
             return true;
         }
@@ -99,7 +100,7 @@ public abstract partial class AxKitForm
         {
             // At an end nothing moves: the edge earcon, and then the match again, so that the last thing heard is
             // the position and not the typed text (AX-10.4).
-            Sounds.Edge();
+            EventDoor.Raise(EventKind.Edge);
         }
         else
         {

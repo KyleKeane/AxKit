@@ -3,6 +3,7 @@ using AxClaude.Core.Flow;
 using AxClaude.Core.Pty;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Core.Transcript;
 using AxKit.Forms;
 
@@ -112,7 +113,7 @@ internal sealed partial class MainForm : ConsoleForm
 
             if (_settings.SoundOnBell)
             {
-                Sounds.Responding();
+                EventDoor.Raise(EventKind.Responding);
             }
         };
         _model.Announcement += text =>
@@ -169,7 +170,7 @@ internal sealed partial class MainForm : ConsoleForm
             // (ShowWithoutActivation; a maximized window would be activated as it shows, so it starts at its normal
             // size and takes its own state when it is first brought up).
             _putAway = true;
-            Sounds.Muted = true;
+            EventDoor.Muted = true;
             _stateWhenBroughtUp = WindowState;
             WindowState = FormWindowState.Normal;
             Opacity = 0;

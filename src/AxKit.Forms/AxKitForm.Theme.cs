@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -96,7 +97,7 @@ public abstract partial class AxKitForm
     {
         if (_theme?.HeadingSound ?? true)
         {
-            Sounds.Heading();
+            EventDoor.Raise(EventKind.LandedOnHeading);
         }
     }
 
