@@ -251,6 +251,10 @@ through all of them.
 
 ## 12. For the maintainer to decide
 
+Point 1 is decided. Points 2 to 7 are taken as proposed here for the building, on the assistant's own judgement
+(2026-11-17), since each is a default that can be changed in one place and the mode stays behind a switch that is
+off: they are the maintainer's to change by ear once the mode can be used, and each is asked then, one at a time.
+
 1. Whether this is the seam: one model with two sources, the screen's machinery left where it is. Decided
    2026-11-17: yes, and the first stage built at once.
 2. The trust question's words, and whether a yes is remembered for a folder or asked at every first start.
