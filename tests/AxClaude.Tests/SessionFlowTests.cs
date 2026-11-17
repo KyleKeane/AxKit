@@ -601,9 +601,10 @@ public class SessionFlowTests
         Assert.Equal(["state working"], s.At(5800, new EntryRead(EntryKind.Prompt, "u1", "hello")));
         Assert.True(s.Flow.Working);
 
-        // 4.1 "A background shell": a prompt Claude Code started by itself opens one as well.
+        // 4.1 "A background shell": a prompt Claude Code started by itself opens one as well, and the turn is said
+        // to be one the user did not send (the test below).
         var self = new Session();
-        Assert.Equal(["state working"], self.At(100, new EntryRead(EntryKind.Prompt, "u2", "task", SelfStarted: true)));
+        Assert.Equal(["state working", "self-started"], self.At(100, new EntryRead(EntryKind.Prompt, "u2", "task", SelfStarted: true)));
 
         // With the mark first, the entry opens nothing more.
         var marked = new Session();
@@ -651,6 +652,87 @@ public class SessionFlowTests
                 "14285 speak lines=1 letters=4", "14285 done turn=1 after=133",
             ],
             note.Said);
+    }
+
+    [Fact]
+    public void A_turn_the_program_began_by_itself_is_said_so_once()
+    {
+        // 4.1 "A background shell", as measured (the background-shell timeline): the shell ends, Claude Code starts
+        // a turn by itself, A 23964, and the turn's prompt, of the source system, is in the file 73 later. EG-4.6:
+        // the turn is said to be self-started when that prompt is read while the turn is open, once.
+        static EntryRead Self(string id) => new(EntryKind.Prompt, id, null, SelfStarted: true);
+        var s = new Session();
+        s.At(0, new RecordFound());
+        Assert.Equal(["state working"], s.At(23964, A));
+        Assert.Equal(["self-started"], s.At(24037, Self("u5")));
+        Assert.Equal(s.Flow.Generation, Assert.IsType<TurnSelfStarted>(s.Last[0]).Generation);
+
+        // Not twice in one turn: a second such prompt read in it says nothing more.
+        Assert.Empty(s.At(24500, Self("u6")));
+        s.At(25395, Stop);
+        Assert.Equal(["state idle"], s.At(25408, D));
+        s.At(25409, Bell);
+        Assert.Equal(["done turn=1 after=600"], s.At(26009, Tick));
+
+        // The next turn the program begins is said again: the flag is the turn's.
+        Assert.Equal(["state working"], s.At(40725, A));
+        Assert.Equal(["self-started"], s.At(40800, Self("u7")));
+
+        // A prompt the user typed, or one that waited in the queue, says nothing: open by the mark, or opened by
+        // the entry itself in a run without marks.
+        var typed = new Session();
+        typed.At(0, new RecordFound());
+        typed.At(5845, A);
+        Assert.Empty(typed.At(6182, new EntryRead(EntryKind.Prompt, "u1", "hello")));
+        var unmarked = new Session();
+        unmarked.At(0, new RecordFound());
+        Assert.Equal(["state working"], unmarked.At(5800, new EntryRead(EntryKind.Prompt, "u1", "hello")));
+
+        // In a run without marks the prompt itself opens the turn: the state first, then that the program began it.
+        var opened = new Session();
+        opened.At(0, new RecordFound());
+        Assert.Equal(["state working", "self-started"], opened.At(100, Self("u2")));
+        Assert.Empty(opened.At(200, Self("u3")));
+
+        // A turn the screen's sign of work opened, and the prompt read inside it: said as well.
+        var screen = new Session();
+        screen.At(0, new RecordFound());
+        Assert.Equal(["state working"], screen.At(100, Frame(WorkSeen.Working)));
+        Assert.Equal(["self-started"], screen.At(180, Self("u2")));
+
+        // With no turn open in a run whose marks speak, nothing: the prompt is a turn's that has ended (read after
+        // its end mark and its bell), or a note's for the record alone (the test above, the hand-back note).
+        var late = new Session();
+        late.At(0, new RecordFound());
+        late.At(1000, A);
+        late.At(1990, Stop);
+        late.At(2000, D);
+        late.At(2001, Bell);
+        Assert.Empty(late.At(2100, Self("u4")));
+        Assert.Equal(["done turn=1 after=600"], late.At(2601, Tick));
+        Assert.Empty(late.At(5000, Self("u5")));
+        Assert.False(late.Flow.Working || late.Flow.Ending);
+        Assert.DoesNotContain(late.Said, line => line.EndsWith("self-started", StringComparison.Ordinal));
+
+        // Between the end mark and its bell the turn is closing, not open: nothing either.
+        var closing = new Session();
+        closing.At(0, new RecordFound());
+        closing.At(1000, A);
+        closing.At(2000, D);
+        Assert.Empty(closing.At(2050, Self("u4")));
+
+        // Whatever the order of the sources: the prompt read before the start mark, in a run that has shown marks,
+        // opens nothing and says nothing; the turn's own mark then opens it, unsaid. Never a turn said twice.
+        var early = new Session();
+        early.At(0, new RecordFound());
+        early.At(100, A);
+        early.At(200, D);
+        early.At(201, Bell);
+        early.At(900, Tick);
+        Assert.Empty(early.At(5000, Self("u8")));
+        Assert.Equal(["state working"], early.At(5010, A));
+        Assert.Empty(early.At(5020, new EntryRead(EntryKind.ToolCall, "t1")));
+        Assert.DoesNotContain(early.Said, line => line.EndsWith("self-started", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -1062,6 +1144,7 @@ public class SessionFlowTests
             (new StateChanged(3, FlowState.Idle), "state idle"),
             (new AttentionBell(3, NoMarks: false), "bell attention"),
             (new AttentionBell(3, NoMarks: true), "bell attention no-marks"),
+            (new TurnSelfStarted(3), "self-started"),
             (new SayDone(3, 1, 74), "done turn=1 after=74"),
             (new SpeakReply(3, [reply]), "speak lines=1 letters=2"),
             (new SpeakReply(3, [reply, row]), "speak lines=2 letters=12"),

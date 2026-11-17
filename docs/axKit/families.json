@@ -356,6 +356,16 @@
           "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs"]
         },
         {
+          "id": "turn-self-started",
+          "when": "The program began a turn by itself: work in the background ended and Claude Code took it up, with no message of yours.",
+          "starts": ["program"],
+          "sounds": [],
+          "words": "'Claude goes on by itself'.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.Flow.cs"],
+          "note": "Words only, by a switch of Options, Announcements; the working music has started just before them."
+        },
+        {
           "id": "turn-done",
           "when": "The turn is over: Claude finished, a shell command finished, the last file of axMedia's queue ended.",
           "starts": ["program"],

@@ -301,6 +301,35 @@ public class TimelineTests
     }
 
     [Fact]
+    public void A_turn_Claude_Code_began_by_itself_is_said_so_once_and_no_other_turn_is()
+    {
+        // 4.1 "A background shell" and the agents' hand-backs: the turn Claude Code starts when work in the
+        // background ends has a prompt of the source system in the file, read inside the turn (73, 202 and 228
+        // after its start mark). EG-4.6: the core says once that the program began it. The shell's recording has
+        // one such turn, the agents' two; the agents' two hand-back notes, whose entries are read after their
+        // turns' ends, say nothing; and no turn of any other recording is said to be one.
+        foreach (var fixture in TimelineReplay.Names())
+        {
+            foreach (var order in Orders)
+            {
+                var replay = TimelineReplay.Run(fixture, order);
+                var said = replay.Decisions.Where(d => d.Decision is TurnSelfStarted).ToList();
+
+                // The record alone says whose a turn is: without its entries nothing is said, in any recording.
+                var withRecord = RecordInTime.Contains(order) || order == ReplayOrder.EntriesLate1000;
+                var expected = !withRecord ? 0 : fixture == "background-shell" ? 1 : fixture == "background-agents" ? 2 : 0;
+                Assert.True(said.Count == expected, Shown(replay, $"{said.Count} turns said to be self-started, not {expected}"));
+
+                // Each inside its turn: the last mark before it is that turn's start mark.
+                foreach (var decided in said)
+                {
+                    Assert.True(replay.Marks.Last(mark => mark.At <= decided.At).Letter == 'A', Shown(replay, $"self-started at {decided.At}"));
+                }
+            }
+        }
+    }
+
+    [Fact]
     public void Clear_asks_for_the_new_file()
     {
         // 4.1 "/clear": a new session id and a new file at once, named by the session's start event (EG-3.2, EG-4.9).

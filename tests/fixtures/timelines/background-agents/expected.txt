@@ -7,6 +7,7 @@
 10046 bound head=8
 12793 state working
 12833 background tasks=0
+12995 self-started
 14284 speak lines=1 letters=4
 14284 bound head=16
 14392 state idle
@@ -19,6 +20,7 @@
 21478 bound head=26
 29353 state working
 29382 background tasks=0
+29581 self-started
 31629 speak lines=1 letters=95
 31681 bound head=29
 31758 state idle

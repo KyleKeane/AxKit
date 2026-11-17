@@ -146,4 +146,7 @@ Steps 2 and 3 do not depend on each other and are the next work on sounds and on
    Code starts a turn when work in the background finishes, and axClaude plays the music, speaks the reply and says
    Done with no word of why, which he took for axClaude restarting. Claude Code's record names such a turn. Whether
    it gets words ("Claude goes on: background work finished"), a sound, or neither; the item is "axClaude: a turn
-   that starts by itself says why".
+   that starts by itself says why". Decided by him on 2026-11-17 and built the same day: one short line, "Claude
+   goes on by itself", never interrupting, no sound, with a switch under Options, Announcements (axClaude's SPEC.md
+   FR-7.3b; the kind is `turn-self-started` in `families.json`). The words and their moment are owed his ear
+   (`nvda-test-record.md`, the Owed section of the state from the event core).

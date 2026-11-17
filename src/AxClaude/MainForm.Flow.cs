@@ -36,6 +36,9 @@ internal sealed partial class MainForm
     /// <summary>The families the core is in charge of in this build: the state (EG-6.1 to EG-6.4) and Done (EG-5.6, EG-6.5); reply speech and the background are in shadow. Each package that moves a family to the core adds it here (events-and-grounding.md section 10).</summary>
     private const FlowCharge Built = FlowCharge.State | FlowCharge.Done;
 
+    /// <summary>What is said when a turn begins that the user did not send (SPEC.md FR-7.3b, section 6.4): Claude Code took up work that ended in the background.</summary>
+    private const string SelfStartedWords = "Claude goes on by itself";
+
     /// <summary>The numbers of where the events come from (EG-9.3, EG-9.4), counted on this thread alone: the core counts in it, and what a background thread counted is added here when its post arrives.</summary>
     private readonly SourceHealth _health = new();
 
@@ -224,7 +227,8 @@ internal sealed partial class MainForm
     /// the record to follow or to forget (the reader). The state, while the core decides it: the model's rule for a
     /// sent message, the status bar and the music, at once, since a mark, an event or a tick changes it with no frame
     /// behind it. Done, while the core decides it: the word and its chime (<see cref="FlowDone"/>), and a bell that
-    /// is no turn's end starts the window's settle (<see cref="FlowBell"/>). Every other decision belongs to a family
+    /// is no turn's end starts the window's settle (<see cref="FlowBell"/>). A turn the program began by itself, while
+    /// the core decides the state: its one line, by its switch. Every other decision belongs to a family
     /// that is in shadow in this build: the window's own code acts, and the decision only goes to the shadow's count.
     /// </summary>
     private void Carry(FlowDecision decision)
@@ -246,6 +250,16 @@ internal sealed partial class MainForm
                 break;
             case AttentionBell bell when FlowDecides(FlowCharge.Done):
                 FlowBell(bell.NoMarks);
+                break;
+            case TurnSelfStarted when FlowDecides(FlowCharge.State):
+                // A turn the user did not send (FR-7.3b): one short line by its switch, never interrupting, no sound.
+                // While the window is put away the base drops it, as every announcement. The shadow has no word for it.
+                Log.Info("Events: " + decision.ToLine());
+                if (_settings.AnnounceSelfStarted)
+                {
+                    Announce(SelfStartedWords, false);
+                }
+
                 break;
             case WakeAt wake:
                 _flowWakeAt = wake.AtMs;

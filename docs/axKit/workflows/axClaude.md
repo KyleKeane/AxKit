@@ -1606,6 +1606,15 @@ Starts with: Open axClaude with the folder dn.
     You hear: Done.
     You hear the sound Done.
 
+## Hear that Claude goes on by itself after background work
+
+Starts with: Open axClaude with the folder by.
+
+### Stop hearing that Claude goes on by itself
+
+1. Choose "Claude goes on by itself" when a turn starts that you did not send in the Options menu, Announcements.
+    You hear: "Claude goes on by itself" when a turn starts that you did not send, not checked.
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

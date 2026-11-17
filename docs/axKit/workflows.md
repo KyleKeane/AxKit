@@ -235,8 +235,10 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Send a message while a reply's rows are still arriving
 35. **Hear Done after the reply, and not after an interrupt**
     - Hear Done after the reply's words
-36. **Have a short exchange with Claude**
-37. **Answer a set of two questions from Claude**
+36. **Hear that Claude goes on by itself after background work**
+    - Stop hearing that Claude goes on by itself
+37. **Have a short exchange with Claude**
+38. **Answer a set of two questions from Claude**
 
 ## axClip
 

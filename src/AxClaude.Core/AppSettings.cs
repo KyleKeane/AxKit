@@ -41,6 +41,9 @@ public sealed class AppSettings : ConsoleSettings
     /// <summary>Say "Responding" when Claude's reply starts (FR-7.3a).</summary>
     public bool AnnounceResponding { get; set; } = true;
 
+    /// <summary>Say "Claude goes on by itself" when a turn begins that the user did not send (FR-7.3b): work in the background ended and Claude Code took it up.</summary>
+    public bool AnnounceSelfStarted { get; set; } = true;
+
     /// <summary>Say "Question closed" when Claude closes what it asked by itself (FR-7.3a).</summary>
     public bool AnnounceQuestionClosed { get; set; } = true;
 

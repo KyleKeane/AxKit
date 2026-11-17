@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: when Claude Code starts a turn by itself, because work in the background has finished, axClaude says "Claude goes on by itself", once and without cutting off other speech, so that the music and the reply that follow have a reason. Options, Announcements has its switch, on at first.
 - axClaude: "Done" comes when the turn has ended and its last reply is in the conversation, without the fixed pause; an interrupted reply and a reply cut by Send queued messages now say no "Done".
 - axClaude: the status says working for as long as a turn runs, from Claude Code's own turn marks, and a message sent while a reply is still arriving goes after that reply.
 - axClaude: a command Claude offers, or an AI tool's request to run one, now plays its alarm and flashes the taskbar button when the window is behind another one, also with "Louder alert when the window is in the background" switched on. With that option on, such an offer made no sound at all until now.

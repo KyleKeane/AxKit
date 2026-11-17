@@ -29,6 +29,15 @@ public sealed record StateChanged(int Generation, FlowState State) : FlowDecisio
 }
 
 /// <summary>
+/// The turn that is open was begun by the program itself and not by a message of the user's: work in the background
+/// ended and the program took it up (EG-4.6). Decided once for a turn, when the record shows its prompt.
+/// </summary>
+public sealed record TurnSelfStarted(int Generation) : FlowDecision(Generation)
+{
+    public override string ToLine() => "self-started";
+}
+
+/// <summary>
 /// A bell with no end of a turn before it: the window's question flow starts its settle.
 /// <paramref name="NoMarks"/>: no mark was seen in this run, so the bell may be Done by the old rule.
 /// </summary>

@@ -19,7 +19,9 @@ namespace AxClaude.Core.Flow;
 /// mark, as a turn the screen closed does: the part of the cut reply that was shown is drawn after the mark, and
 /// is still that turn's. A bell with no end mark before it is a question's bell, the window's to
 /// settle. Where the marks are missing the record and the screen stand in, and the core says no Done of its own:
-/// the window's settle after the bell says it, as before the core.
+/// the window's settle after the bell says it, as before the core. A turn whose prompt in the record is one the
+/// program started by itself is said to be so, once (<see cref="TurnSelfStarted"/>), when that prompt is read
+/// while the turn is open or opens it.
 ///
 /// What the window must know:
 /// - <see cref="Working"/> changes only with a <see cref="StateChanged"/> decision. <see cref="Ending"/> changes
@@ -97,6 +99,9 @@ public sealed partial class SessionFlow
 
     /// <summary>The stop event or the record's turn end has come for the turn that is open or closing: Done's second condition.</summary>
     private bool _endConfirmed;
+
+    /// <summary>The open turn was said to be one the program began by itself (<see cref="TurnSelfStarted"/>): once for a turn.</summary>
+    private bool _selfStartedSaid;
 
     /// <summary>Since when every frame has shown the program idle while the turn is open; <see cref="Never"/> when the last one did not.</summary>
     private long _idleSince = Never;
@@ -372,6 +377,7 @@ public sealed partial class SessionFlow
         _openedAt = now;
         _confirmed = opener == Opener.Entry;
         _endConfirmed = false;
+        _selfStartedSaid = false;
         // The screen showed the idle prompt before the mark and shows it still, until a frame says otherwise.
         _idleSince = opener == Opener.Mark && _work == WorkSeen.Idle && !_asking ? now : Never;
         _failBy = Never;
@@ -597,6 +603,15 @@ public sealed partial class SessionFlow
                     // (measured: the hand-back note's entry 159 after the note's end mark): a turn opened for it
                     // would have nothing to close it.
                     Open(Opener.Entry, now);
+                }
+
+                if (entry.SelfStarted && _phase == Phase.Open && !_selfStartedSaid)
+                {
+                    // A prompt the program started by itself, read while a turn is open or as what opened it: the
+                    // turn is one the user did not send, said once. Read with no turn open where the marks speak
+                    // it is a turn's that has ended, or a note's, and nothing is said of it.
+                    _selfStartedSaid = true;
+                    Decide(new TurnSelfStarted(_generation));
                 }
 
                 break;

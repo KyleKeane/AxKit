@@ -254,7 +254,7 @@ Constants are named here once and used by name afterwards. All times are millise
 - EG-4.1 One plain class, `SessionFlow`, in `AxClaude.Core/Flow`. Pure: no window, no file, no clock, no thread of its own. One method takes one input and the time and returns the decisions it leads to: `Handle(FlowInput input, long nowMs)`. It is called on one thread, never from inside itself. No event bus, no interface, no subscription.
 - EG-4.2 **Inputs**, plain records (section 6.4): the process started or ended; a mark; a bell; a frame ended (the screen's work, whether Claude asks, the reply lines the screen proposes, whether a visible line was added, the model's epoch, whether replies are spoken); the user acted (sent, answered, escaped, sent now, a key to a screen); a question was shown; a session was named (id, file, source); a turn stopped (the last message's key, the listed tasks) or failed; a worker started or stopped; attention was asked (a permission request, a notification); the session ended; an entry was read; the record was found or lost; a tick of the clock. None of them names Claude Code.
 - EG-4.3 **State**: the turn (none, open, ending) with what opened it and when; the generation; the gate's pending lines, heads and reply records; the tasks listed at the last stop; which sources are alive in this run (marks seen, events seen, record bound); the queue count from the record; the model's epoch.
-- EG-4.4 **Decisions**, plain records (section 6.5): the state changed; an attention bell (the window's question flow starts its settle); say Done; speak these reply lines; follow this session file; forget the record; an entry was bound to a head; the background list changed; wake me at this time; a note for the log (numbers only). Each carries the generation it was made in.
+- EG-4.4 **Decisions**, plain records (section 6.5): the state changed; the open turn is one the program began by itself (2026-11-17); an attention bell (the window's question flow starts its settle); say Done; speak these reply lines; follow this session file; forget the record; an entry was bound to a head; the background list changed; wake me at this time; a note for the log (numbers only). Each carries the generation it was made in.
 - EG-4.5 **Evidence.** Each fact has its sources in order; the first that speaks decides, the later ones confirm or stand in.
 
   | Fact | Evidence, in order | With none of it |
@@ -278,6 +278,7 @@ Constants are named here once and used by name afterwards. All times are millise
   - The record's TurnEnd closes a turn that is still open `BellAfterEndMs` after it was read (a missed mark).
   - The process's end closes everything; a Done not yet said is dropped.
   - Between a turn's end and the A of a queued turn the state is not "ready" when the record or the window says a message waits: the state stays working for `BellAfterEndMs` after such an end.
+  - **A turn the program began by itself** (2026-11-17, the user's decision of that day; SPEC.md FR-7.3b). When a Prompt entry that the program started by itself (the record's `SelfStarted`: Claude Code's `promptSource` `system`, written when work in the background ends) is read while a turn is open, or is the entry that opens the turn in a run without marks, the core decides once for that turn that the program began it (`TurnSelfStarted`); the flag is cleared where a turn opens. Read with no turn open in a run whose marks speak, such an entry is a turn's that has ended or a note's for the record alone (4.2, the hand-back note), and nothing is decided. No timer and no state but the one flag. It holds in every order of the sources in the sense of EG-11.2: never twice for a turn, never without a record. What an order can still do: an entry read only after its turn's end mark is not said at all, and one read that late that the next turn is already open is said of that turn; measured, the entry is in the file 73 to 228 ms after the start mark of a turn that lasts more than a second. The window says it while the core is in charge of the state (EG-6.8).
 - EG-4.7 **Generations.** The generation rises when the user sends a message, answers a question, sends Escape, Send now or a key to a screen of Claude's, when a question or screen is shown in the control area, when a PermissionRequest event arrives, and when the window is put away. Moving in the conversation raises nothing. What rises it drops every line pending in the gate (EG-5.7).
 - EG-4.8 **The queue and the threads.** The window keeps one queue of inputs. Everything that happens puts its input at the end: the model's events on the UI thread, the hook pipe's and the reader's posts when they arrive there, the window's own actions. One loop drains it: it takes an input, calls `Handle`, carries out each decision in order, and takes the next; a decision whose carrying out raises new inputs (a system line, a question's record) finds the loop running and only queues. So the core never runs nested, and decisions come in arrival order. Hook events and entries share the UI thread's message queue with the console's frames but not a clock: the core accepts every order of them (EG-11.2).
 - EG-4.9 **Starting afresh.** When a frame's epoch differs from the last one, the core closes the turn without a word, empties the gate and the reply records, and keeps the generation rising. A session named with source `clear` or `fork` does the same and asks for the new file.
@@ -315,6 +316,7 @@ Constants are named here once and used by name afterwards. All times are millise
 - EG-6.5 The Done chime comes with the core's Done. A bell alone starts the window's question settle as today. While the core is in charge of Done, that settle says Done by itself only when no mark has been seen in this run: the screen-only path, where the bell and the settle are all there is (EG-4.6).
 - EG-6.6 "N messages waiting" is the record's count while there is a record, the hint rows' count otherwise.
 - EG-6.7 No sound changes, and none is added.
+- EG-6.8 (2026-11-17) A turn the program began by itself (EG-4.6) is said: "Claude goes on by itself", one line that never interrupts, with no sound and nothing in the status bar, by its switch (`announceSelfStarted`, on at first; Options, Announcements) and only while the core is in charge of the state. The words are the window's (SPEC.md FR-7.3b); the core's decision holds none.
 
 ### EG-7 Background work
 
@@ -529,6 +531,7 @@ public enum FlowState { Idle, Working }
 
 public abstract record FlowDecision(int Generation);
 public sealed record StateChanged(int Generation, FlowState State) : FlowDecision(Generation);
+public sealed record TurnSelfStarted(int Generation) : FlowDecision(Generation);   // the open turn was begun by the program itself; once for a turn (EG-4.6)
 public sealed record AttentionBell(int Generation, bool NoMarks) : FlowDecision(Generation);   // NoMarks: no mark was seen in this run, so the bell may be Done by the old rule
 public sealed record SayDone(int Generation, int Turn, long AfterBellMs) : FlowDecision(Generation);
 public sealed record SpeakReply(int Generation, IReadOnlyList<Line> Lines) : FlowDecision(Generation);
@@ -540,7 +543,7 @@ public sealed record WakeAt(int Generation, long AtMs) : FlowDecision(Generation
 public sealed record Note(int Generation, string Text) : FlowDecision(Generation);
 ```
 
-Each has `ToLine()`, one line of numbers and fixed words for the log and the kept files: `state working`, `bell attention`, `done turn=1 after=74`, `speak lines=1 letters=2`, `follow`, `forget`, `bound head=412`, `background tasks=1`, `note stale-turn after=2004`. Never a text of the conversation. The plain turn of 6.4 gives: `state working`, `state idle`, `speak lines=1 letters=2`, `bound head=412`, `done turn=1 after=74`.
+Each has `ToLine()`, one line of numbers and fixed words for the log and the kept files: `state working`, `self-started`, `bell attention`, `done turn=1 after=74`, `speak lines=1 letters=2`, `follow`, `forget`, `bound head=412`, `background tasks=1`, `note stale-turn after=2004`. Never a text of the conversation. The plain turn of 6.4 gives: `state working`, `state idle`, `speak lines=1 letters=2`, `bound head=412`, `done turn=1 after=74`.
 
 ### 6.6 A timeline fixture's files
 

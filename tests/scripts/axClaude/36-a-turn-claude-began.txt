@@ -1,0 +1,79 @@
+# Workflow: Hear that Claude goes on by itself after background work
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/nvda-test-plan.md section 25 step 6 (SPEC.md FR-7.3b; docs/axClaude/events-and-grounding.md
+# EG-4.6; 2026-11-17): when work in the background ends, Claude Code starts a turn by itself, and the window says one
+# short line of why the music plays and a reply comes that nobody sent for: "Claude goes on by itself", once for the
+# turn, never interrupting, with its switch under Options, Announcements. The core decides it, from the turn's prompt in
+# the session file, which Claude Code writes with the source system. The stand-in (tools/AxAutomate/StandIn.cs) plays
+# three turns as Claude Code 2.1.325 writes them, each step at a file the script makes, and writes the session file
+# under the run's own folder as it goes: a turn of a message the user sent, which says nothing of the kind, and two
+# turns Claude Code began, the first with the switch on, the second with it off. Speak replies is all lines, so that the
+# reply's words are heard after the line. No hooks: the session file is found by the first message sent.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir by
+# The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.
+# The scenario: the prompt; at the file go1 the mark A, a working frame and the typed prompt's entry; at go2 the marks
+# C and D and the bell, 80 ms, then the reply's frame, the reply's entry and the turn's end. At go3 a turn nobody sent:
+# the mark A, a working frame with no echo, and a prompt's entry of the source system, the notification of the work
+# that ended; at go4 its end as the first turn's. At go5 and go6 a second such turn.
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-999999999999","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"waitFile":"go2"},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":80},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["ok"]},{"turnEnd":2345},{"waitFile":"go3"},{"mark":"A"},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["<task-notification>"],"source":"system"},{"waitFile":"go4"},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":80},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","claude: The first shell has ended","Sautéed for 1s · done 4:08 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["The first shell has ended"]},{"turnEnd":1200},{"waitFile":"go5"},{"mark":"A"},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","claude: The first shell has ended","Sautéed for 1s · done 4:08 PM","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["<task-notification>"],"source":"system"},{"waitFile":"go6"},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":80},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","claude: The first shell has ended","Sautéed for 1s · done 4:08 PM","claude: The second shell has ended","Sautéed for 1s · done 4:09 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["The second shell has ended"]},{"turnEnd":1300},{"idle":true}]}
+
+start claude {temp}\by --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+# Check: A turn of a message the user sent says nothing of the kind
+# The message, its turn and its reply: "Sent", the reply's words, "Done", and never "Claude goes on by itself". The
+# session file is found by this message: the reader looks for it for some seconds after a send, and the wait is for a
+# busy computer.
+type Say ok
+keys enter
+expect said Sent
+file by\go1 x
+expect state Claude: working
+refuse said Claude goes on by itself
+file by\go2 x
+expect said claude: ok
+expect said Done
+refuse said Claude goes on by itself
+expect state Claude: ready
+wait 2000
+menu Say the event sources
+expect said Session file: followed
+expect said Core: in charge of state and Done.
+
+# Check: A turn Claude Code began by itself says so once, without interrupting
+# Nothing is sent, so this is a check and no goal: the user does nothing. Claude Code starts a turn: the start mark, a working frame, and the turn's prompt in the session
+# file, of the source system. The status bar says working, and the window says "Claude goes on by itself", not
+# interrupting. Then the turn's end: the reply's words and "Done", and the line was said once.
+said
+file by\go3 x
+expect state Claude: working
+refuse said ! Claude goes on by itself
+expect said Claude goes on by itself
+refuse said Claude goes on by itself
+file by\go4 x
+expect said claude: The first shell has ended
+expect said Done
+refuse said Claude goes on by itself
+expect state Claude: ready
+
+# Goal: Stop hearing that Claude goes on by itself
+# Options, Announcements: the switch "Claude goes on by itself" when a turn starts that you did not send, off.
+menu "Claude goes on by itself" when a turn starts that you did not send
+expect said ! "Claude goes on by itself" when a turn starts that you did not send, not checked
+
+# Check: With the switch off such a turn says nothing of how it began
+# The next turn Claude Code begins says its reply and "Done" and not the line. The switch's own answer was taken
+# before the turn starts.
+said
+file by\go5 x
+expect state Claude: working
+refuse said Claude goes on by itself
+file by\go6 x
+expect said claude: The second shell has ended
+expect said Done
+refuse said Claude goes on by itself
+expect state Claude: ready
+menu Say the event sources
+expect said Marks: 9.

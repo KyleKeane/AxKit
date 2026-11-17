@@ -389,3 +389,13 @@ the bell, no network).
    answered turn has ended; in a window put away with Alt+F4 while Claude works (section 20), nothing is heard when
    the turn ends, and one "Done" with its chime comes after the window is brought up, also when several turns ended
    meanwhile.
+6. A turn Claude Code begins by itself (script `36-a-turn-claude-began.txt`, the stand-in of `tools/AxAutomate` with
+   its session file, Speak replies all lines; SPEC.md FR-7.3b, EG-4.6, 2026-11-17). A message, its reply and "Done":
+   "Claude goes on by itself" is not said. Then a turn nobody sent, as Claude Code starts one when work in the
+   background ends: F8 says "Claude: working", and "Claude goes on by itself" is said once, without cutting off other
+   speech; then the reply's words and "Done". Options, Announcements, "Claude goes on by itself" when a turn starts
+   that you did not send: "..., not checked"; the next such turn says its reply and "Done" and not the line. By ear,
+   in a real conversation: ask Claude to run a command in the background that takes some seconds (`sleep 20`), and
+   wait without sending anything; when the command ends, the working music starts, "Claude goes on by itself" is
+   said, and Claude's reply and "Done" follow. Whether the words are right and come at the right moment, and
+   whether a turn you sent yourself ever says them.

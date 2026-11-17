@@ -6,6 +6,7 @@
 17985 done turn=1 after=53
 18032 bound head=8
 23964 state working
+24037 self-started
 25395 background tasks=0
 25408 state idle
 25453 speak lines=1 letters=38

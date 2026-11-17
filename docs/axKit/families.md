@@ -2,7 +2,7 @@
 
 Written by `tools/families.ps1` from `docs/axKit/families.json`; never by hand. One data structure for the four families of axKit and the links between them, asked by the maintainer on 2026-11-16 so that he and the assistant name the same things by the same short names. It describes what the code does today, read from the code that day; it changes no behaviour. Each of the four lists has the same shape, a family with its members. The keys stay in docs/axKit/key-families.json and the commands in docs/axKit/window-commands.json; this file names them and does not copy them. Where the same kind of event sounds one way in one place and another way elsewhere, the event's note says so: those are the open choices, and a sound is added or changed only when the maintainer has chosen it by ear (docs/axKit/earcons.md).
 
-Status: proposed. In numbers: 51 kinds of event, 27 with a sound, 24 without; 20 sounds; 10 families of functions; 13 kinds of start.
+Status: proposed. In numbers: 52 kinds of event, 27 with a sound, 25 without; 20 sounds; 10 families of functions; 13 kinds of start.
 
 ## How to read it
 
@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1612 in the inventory, of which 199 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1613 in the inventory, of which 199 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -81,7 +81,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1612 in 
 - `context`, the Context menu: Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it.
   - 86 commands in 17 apps: read 13, open 24, change 10, act 39.
 - `options`, the Options menu: Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done.
-  - 230 commands in 17 apps: read 1, open 20, change 173, act 36.
+  - 231 commands in 17 apps: read 1, open 20, change 174, act 36.
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.
   - 323 commands in 17 apps: read 17, open 255, act 51.
 - `axkit`, the axKit menu: The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme.
@@ -264,6 +264,12 @@ The steps of a turn with the program underneath: it is ready, it began to answer
   - Heard: sound `Music`.
   - Said: None; the status bar says working.
   - In: axClaude and axTerminal.
+- `turn-self-started`: The program began a turn by itself: work in the background ended and Claude Code took it up, with no message of yours.
+  - Started by: `program`.
+  - Heard: no sound.
+  - Said: 'Claude goes on by itself'.
+  - In: axClaude.
+  - Note: Words only, by a switch of Options, Announcements; the working music has started just before them.
 - `turn-done`: The turn is over: Claude finished, a shell command finished, the last file of axMedia's queue ended.
   - Started by: `program`.
   - Heard: sound `Done`.
@@ -677,6 +683,7 @@ Every kind of event that has words or a change on the screen and no sound of its
   - `handed-over`: Another axKit window handed something to this one: a file to open, files to play, text for the message.
 
 - Where the program stands:
+  - `turn-self-started`: The program began a turn by itself: work in the background ended and Claude Code took it up, with no message of yours.
   - `next-track`: The next file of the queue started playing.
   - `program-ended`: The program underneath ended or crashed.
 

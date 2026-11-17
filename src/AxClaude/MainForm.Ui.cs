@@ -119,6 +119,8 @@ internal sealed partial class MainForm
         // FR-7.3a: each of the window's own status words, and Claude's bracketed notices, on or off.
         var announcements = new ToolStripMenuItem("&Announcements");
         announcements.DropDownItems.Add(Toggle("\"&Ready\" when Claude starts", _settings.AnnounceReady, v => _settings.AnnounceReady = v));
+        // FR-7.3b: a turn Claude Code begins by itself, when work in the background ends, says so.
+        announcements.DropDownItems.Add(Toggle("\"Claude goes on by &itself\" when a turn starts that you did not send", _settings.AnnounceSelfStarted, v => _settings.AnnounceSelfStarted = v));
         announcements.DropDownItems.Add(Toggle("\"&Sent\" and \"Queued\" after a message", _settings.AnnounceSent, v => _settings.AnnounceSent = v));
         announcements.DropDownItems.Add(Toggle("\"Res&ponding\" when a reply starts", _settings.AnnounceResponding, v => _settings.AnnounceResponding = v));
         announcements.DropDownItems.Add(Toggle("\"Question &closed\" when Claude closes one", _settings.AnnounceQuestionClosed, v => _settings.AnnounceQuestionClosed = v));

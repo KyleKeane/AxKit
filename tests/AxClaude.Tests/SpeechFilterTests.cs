@@ -51,6 +51,7 @@ public class SpeechFilterTests
     {
         var settings = new AppSettings();
         Assert.True(settings.AnnounceReady && settings.AnnounceSent && settings.AnnounceResponding && settings.AnnounceQuestionClosed && settings.AnnounceClaudeNotices);
+        Assert.True(settings.AnnounceSelfStarted);
         Assert.False(settings.DismissSurveys);
         Assert.True(settings.OpenFeedbackDrafts);
         Assert.Empty(settings.SilentWords);
@@ -60,10 +61,13 @@ public class SpeechFilterTests
     public void The_silent_words_survive_the_settings_file_tidied()
     {
         using var temp = new TempFolder("axclaude-speechfilter");
-        var path = temp.File("axClaude.json", """{ "SilentWords": [" Tip ", "", "tip", "Cost:"], "DismissSurveys": true }""");
+        var path = temp.File("axClaude.json", """{ "SilentWords": [" Tip ", "", "tip", "Cost:"], "DismissSurveys": true, "announceSelfStarted": false }""");
         var settings = AppSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal(["Tip", "Cost:"], settings.SilentWords);
         Assert.True(settings.DismissSurveys);
+        // A switch of Options, Announcements turned off is read as off, under the name the file is written with.
+        Assert.False(settings.AnnounceSelfStarted);
+        Assert.True(settings.AnnounceReady);
     }
 }

@@ -241,6 +241,7 @@
         {"label": "Message field", "menu": "Navigation", "key": "alt+1", "also": ["ctrl+1"], "keyText": "Alt+1", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Next bookmark", "menu": "Navigation", "key": "", "also": [], "keyText": "K in the conversation", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Previous bookmark", "menu": "Navigation", "key": "", "also": [], "keyText": "Shift+K in the conversation", "mark": "open", "keyOnly": false, "ai": true},
+        {"label": "\"Claude goes on by itself\" when a turn starts that you did not send", "menu": "Options, Announcements", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "\"Question closed\" when Claude closes one", "menu": "Options, Announcements", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "\"Ready\" when Claude starts", "menu": "Options, Announcements", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "\"Responding\" when a reply starts", "menu": "Options, Announcements", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},

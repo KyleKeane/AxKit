@@ -753,7 +753,16 @@ the 37 scripts of axClaude against Claude Code 2.1.326. By the user's ear, in th
    usually before. Whether the order is still right when one shows.
 9. axHelp's conversation put away and brought back after a turn ended meanwhile: one "Done" on the way back.
 
-With NVDA, in a pass: `nvda-test-plan.md` section 25, steps 4 and 5.
+A turn Claude Code begins by itself, the same day (`docs/axClaude/SPEC.md` FR-7.3b, EG-4.6), built and passing every
+test and, on the runner's desktop, the stand-in script 36 with scripts 34 and 35 beside it, each alone; axClaude's
+whole folder of scripts was not run for it. By the user's ear, in the same use:
+
+10. The line "Claude goes on by itself" when work in the background wakes Claude (a shell or an agent ends and
+    Claude Code starts a turn nobody sent): whether the words are right, whether it comes at the right moment (after
+    the music starts, before the reply) and never in a turn he sent himself, and whether its switch under Options,
+    Announcements is where he would look for it.
+
+With NVDA, in a pass: `nvda-test-plan.md` section 25, steps 4, 5 and 6.
 ## Owed: the keys and sounds of 2026-11-16 (Alt+1 to 3, Ctrl+Period, Ctrl+Slash, navigation mode's three sounds; `docs/axKit/SPEC.md` AX-8.13 to AX-8.15)
 
 Built and passing on the runner's desktop, which posts a key's message and plays no sound, so none of this is heard

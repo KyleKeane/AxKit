@@ -172,6 +172,7 @@ every window" or under a heading that names the windows without it; under an app
 - Message field. Menu: Navigation. Key: Alt+1. Also: Ctrl+1. Mark: open.
 - Next bookmark. Menu: Navigation. Key: K in the conversation. Mark: open.
 - Previous bookmark. Menu: Navigation. Key: Shift+K in the conversation. Mark: open.
+- "Claude goes on by itself" when a turn starts that you did not send. Menu: Options, Announcements. Key: none. Mark: change.
 - "Question closed" when Claude closes one. Menu: Options, Announcements. Key: none. Mark: change.
 - "Ready" when Claude starts. Menu: Options, Announcements. Key: none. Mark: change.
 - "Responding" when a reply starts. Menu: Options, Announcements. Key: none. Mark: change.
