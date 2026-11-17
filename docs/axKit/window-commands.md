@@ -810,6 +810,7 @@ every window" or under a heading that names the windows without it; under an app
 - Move to section. Menu: Context. Key: Ctrl+M. Mark: change.
 - Read in full. Menu: Context. Key: Ctrl+Q. Mark: read.
 - Rename. Menu: Context. Key: F2. Mark: change.
+- Use these fields for new items. Menu: Context. Key: none. Mark: change.
 - JSON. Menu: Help, Item resources. Key: none. Mark: act.
 - All tasks. Menu: Navigation. Key: Ctrl+0. Mark: open.
 - Find in every list. Menu: Navigation. Key: Ctrl+Shift+F. Mark: read.

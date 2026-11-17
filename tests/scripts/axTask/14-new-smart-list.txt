@@ -1,0 +1,30 @@
+# Workflow: Make a smart list of your own
+# axTask, docs/axTask/user-guide.md "Smart lists": Actions, New smart list asks its name, makes a small file whose
+# conditions start as All tasks', says so, and opens the file in axJSON to change. The new list stands under Smart
+# lists with the number of tasks it shows.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
+file "tasks\Home\Old job.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Old job"}, {"title": "Done", "type": "check", "value": true}]}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+
+# Goal: Make a smart list and see its file open in axJSON
+# The name in a notice; Enter makes Soon.filter.json in the top folder and opens it in an axJSON window.
+do New smart list
+expect state "notice":"New smart list"
+expect state Its conditions start as All tasks', and open in axJSON to change.
+type Soon
+keys enter
+expect said ! Made the smart list Soon
+adopt
+expect state Soon.filter.json - axJSON
+expect text axkit-filter 1
+close
+use 1
+# Check: The new smart list shows the tasks not done
+# It starts as All tasks: the one task not done, and not the one that is.
+expect focus Soon, smart list, 1
+run cmd /c if exist "tasks\Soon.filter.json" (exit 0) else (exit 1)
+keys right
+expect focus Fix the tap
+refuse list Old job

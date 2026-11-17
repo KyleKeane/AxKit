@@ -100,3 +100,12 @@ NVDA says: notes.md.
     NVDA says: Save as.
 5. Press Escape.
     NVDA says: notes.md.
+
+## Find a name backwards with Shift and a letter
+
+Starts with: Open axFile with the folder f.
+
+### Go back to the name before with Shift and its letter
+
+1. Press End.
+2. Press Shift+C 2 times.

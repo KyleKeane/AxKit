@@ -1,0 +1,57 @@
+# Workflow: Set a date in words, and give new items a task's fields
+# axTask, docs/axTask/user-guide.md "Changing things", in the detail pane: Enter on a date and time field takes a date
+# in words, a space and a time ("tomorrow 14:00"); Context, Use these fields for new items gives the list's new items
+# the fields of the item selected, emptied (docs/axTask/SPEC.md, the list's "new item" fields in list.json).
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "datetime", "value": ""}, {"title": "Room", "type": "text", "value": "Kitchen"}]}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+expect focus Home, list, 1 item
+keys right
+expect focus Fix the tap
+
+# Goal: Give a task a date and time in words
+# Tab to the fields, Down to Due, Enter: the notice says what the field takes. "tomorrow 14:00" is kept as tomorrow's
+# date with the time, said once; the day itself changes with the calendar, so only the time is asked for here.
+keys tab
+expect focus Title, text, Fix the tap
+keys down down
+expect focus Due, date and time, empty
+keys enter
+expect state "notice":"Change Due"
+expect state A date, a space and a time: tomorrow 14:00. Empty for none.
+type tomorrow 14:00
+keys enter
+expect said ! Due:
+expect state "notice":null
+expect focus Due, date and time
+expect focus 14:00
+run findstr /l /c:"14:00" "tasks\Home\Fix the tap.json"
+# Check: The item's line in the list says when it is due
+keys shift+tab
+expect focus Fix the tap, due
+
+# Goal: Give a list's new items the fields of a task
+# Context, Use these fields for new items: the fields of the item selected, without the Title, are the list's own
+# from now on, and a new item starts with them, emptied.
+do Use these fields for new items
+expect said ! New items in Home get: Done, Due, Room
+run findstr /l /c:"\"new item\"" "tasks\Home\list.json"
+keys ctrl+n
+expect state "notice":"New item"
+type Paint the door
+keys enter
+expect state "notice":null
+expect focus Paint the door
+keys tab
+expect focus Title, text, Paint the door
+keys down
+expect focus Done, check, not done
+keys down
+expect focus Due, date and time, empty
+keys down
+expect focus Room, text, empty
+# Check: The new item's fields are empty, the first item keeps its own
+run powershell -NoProfile -Command "if ((Get-Content -Raw 'tasks\Home\Paint the door.json').Contains('Kitchen')) { exit 1 } else { exit 0 }"
+run findstr /l /c:"Kitchen" "tasks\Home\Fix the tap.json"

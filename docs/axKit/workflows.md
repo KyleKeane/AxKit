@@ -250,6 +250,8 @@ Steps and keys: `docs/axKit/workflows/axClip.md` (in Claude's working folder: `w
     - Read a copy of several lines in full
     - Keep the history between runs
 3. **Start with a kept history that can no longer be read**
+4. **Narrow the clipboard history with several words**
+    - Type a second word to narrow the list
 
 ## axDown
 
@@ -742,6 +744,11 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Rename a list
     - Rename a field of an item
     - Remove a field of an item and undo it
+13. **Set a date in words, and give new items a task's fields**
+    - Give a task a date and time in words
+    - Give a list's new items the fields of a task
+14. **Make a smart list of your own**
+    - Make a smart list and see its file open in axJSON
 
 ## axTerminal
 
@@ -835,3 +842,5 @@ Steps and keys: `docs/axKit/workflows/nvda-only.md` (in Claude's working folder:
 2. **Read a long reply with Say all while Claude writes**
 3. **Come back to the right place after a Windows dialog**
 4. **Hear axDown's notices and palette with NVDA**
+5. **Find a name backwards with Shift and a letter**
+    - Go back to the name before with Shift and its letter

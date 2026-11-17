@@ -1,0 +1,37 @@
+# Workflow: Find a name backwards with Shift and a letter
+# Needs: the real keyboard's Shift key: run only with --nvda, the user away.
+# NVDA tier (docs/axKit/automation.md, tier 3). axFile, docs/axFile/user-guide.md "Moving around" (SPEC AF-3.6; the
+# bundle's lists, AX-8.6): a letter jumps to the next name starting with it, and Shift with the letter searches
+# backwards, from the entry before yours and round the end. The list reads the Shift key itself, which the desktop
+# tier's posted keys do not hold down (found 2026-11-17: there Shift+C went forwards), so only this tier can check it;
+# the rule itself is tested in TypeAheadTests.
+file home\AxKit\axFile.json {"checkForUpdates": false}
+mkdir f
+file f\apple.txt a
+file f\banana.txt b
+file f\cherry.txt c
+file f\coconut.txt c
+file f\cranberry.txt c
+start file {temp}\f
+expect focus apple.txt
+
+# Goal: Go back to the name before with Shift and its letter
+# From the last entry, Shift+C: the name before it that starts with c; after a pause, again the one before that.
+keys end
+expect focus cranberry.txt
+keys shift+c
+expect focus coconut.txt
+wait 1200
+keys shift+c
+expect focus cherry.txt
+# Check: Forwards again with the letter alone
+wait 1200
+keys c
+expect focus coconut.txt
+# Check: Backwards from the first name of that letter goes round the end
+wait 1200
+keys up
+expect focus cherry.txt
+wait 1200
+keys shift+c
+expect focus cranberry.txt

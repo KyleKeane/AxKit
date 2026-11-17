@@ -1,0 +1,50 @@
+# Workflow: Narrow the clipboard history with several words
+# axClip, docs/axClip/user-guide.md "Using it", step 4 (SPEC CP-2): only the items with every word typed stay, in
+# whatever order the words are typed, and a word more narrows the list further. The hotkey is one nobody uses, as in
+# 01-basics.
+#
+# The test desktop shares the clipboard with the user's session: as 01-basics does, the script copies texts of its own,
+# which stay on the clipboard after the run, and every step filters on them, so that nothing the user copies is ever
+# said here.
+file home\AxKit\axClip.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F9", "sayFirstMatch": false}
+file copy.ps1 # Copies its arguments, one line each, and reads the clipboard back: clip.exe gives up silently when another program holds the clipboard open (the NVDA pass, 2026-11-15).\n$v = $args -join "`r`n"\nfor ($i = 0; $i -lt 20; $i++) { try { Set-Clipboard -Value $v; if ((Get-Clipboard -Raw) -eq $v) { exit 0 } } catch { }; Start-Sleep -Milliseconds 100 }\nexit 1
+
+start clip
+expect focus Search the clipboard
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitword red apple"
+wait 500
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitword green apple"
+wait 500
+run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitword red pear"
+wait 500
+
+# Goal: Type a second word to narrow the list
+# One word of the script's own: its three copies, the newest first. A second word leaves the two that hold both.
+type axkitword
+do First match
+expect said axkitword red pear, 1 of 3
+type  red
+do First match
+expect said axkitword red pear, 1 of 2
+keys down
+expect said axkitword red apple, 2 of 2
+# A third word leaves one.
+type  apple
+do First match
+expect said axkitword red apple, 1 of 1
+
+# Check: The words match in any order
+keys ctrl+a
+type apple axkitword
+do First match
+expect said axkitword green apple, 1 of 2
+keys down
+expect said axkitword red apple, 2 of 2
+
+# Check: A word no item holds leaves a line that says so, with the edge sound on a move
+type  plum
+keys down
+expect said ♪ Edge
+expect list Nothing in the clipboard history matches apple axkitword plum
+menu Quit axClip
+expect closed

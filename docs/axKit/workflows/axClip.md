@@ -93,3 +93,21 @@ Starts with: Open axClip.
     You hear: axkitkeep two, 3 of 3.
 
 ## Start with a kept history that can no longer be read
+
+## Narrow the clipboard history with several words
+
+Starts with: Open axClip.
+
+### Type a second word to narrow the list
+
+1. Type: axkitword
+2. Press Ctrl+Home (First match).
+    You hear: axkitword red pear, 1 of 3.
+3. Type: red
+4. Press Ctrl+Home (First match).
+    You hear: axkitword red pear, 1 of 2.
+5. Press Down.
+    You hear: axkitword red apple, 2 of 2.
+6. Type: apple
+7. Press Ctrl+Home (First match).
+    You hear: axkitword red apple, 1 of 1.

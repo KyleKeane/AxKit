@@ -67,7 +67,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxTask` (the window), `src/AxTask.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxTask.Tests`.
 - Documents: `docs/axTask/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axTask/`, 12 scripts (their workflows are in `docs/axKit/workflows/axTask.md`).
+- Automated checks: `tests/scripts/axTask/`, 14 scripts (their workflows are in `docs/axKit/workflows/axTask.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axTask.ps1`, or `run.ps1 -App task`.
 
 ## Utilities
@@ -89,7 +89,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxClip` (the window), `src/AxClip.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxClip.Tests`.
 - Documents: `docs/axClip/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axClip/`, 3 scripts (their workflows are in `docs/axKit/workflows/axClip.md`).
+- Automated checks: `tests/scripts/axClip/`, 4 scripts (their workflows are in `docs/axKit/workflows/axClip.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axClip.ps1`, or `run.ps1 -App clip`.
 
 ### axCalc

@@ -580,3 +580,40 @@ Starts with: Open axTask with the folder tasks.
     You hear: Removed Place.
 2. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Removed Place.
+
+## Set a date in words, and give new items a task's fields
+
+Starts with: Open axTask with the folder tasks.
+
+### Give a task a date and time in words
+
+1. Press Tab.
+2. Press Down 2 times.
+3. Press Enter.
+4. Type: tomorrow 14:00
+5. Press Enter.
+    You hear words such as: Due.
+
+### Give a list's new items the fields of a task
+
+1. Choose Use these fields for new items in the Context menu.
+    You hear: New items in Home get: Done, Due, Room.
+2. Press Ctrl+N.
+3. Type: Paint the door
+4. Press Enter.
+5. Press Tab.
+6. Press Down 3 times.
+
+## Make a smart list of your own
+
+Starts with: Open axTask with the folder tasks.
+
+### Make a smart list and see its file open in axJSON
+
+1. Choose New smart list in the Actions menu.
+2. Type: Soon
+3. Press Enter.
+    You hear: Made the smart list Soon.
+4. A new window opens: go to it.
+5. Close the window.
+6. Go to the axTask window.
