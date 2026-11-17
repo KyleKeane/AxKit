@@ -468,7 +468,7 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>The window flashed on the taskbar until it comes to the front, when it is not in front: a notice an AI tool caused waits for the user there.</summary>
-    internal void FlashIfBehind()
+    protected internal void FlashIfBehind()
     {
         if (GetForegroundWindow() != Handle)
         {

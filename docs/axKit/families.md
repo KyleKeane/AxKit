@@ -307,7 +307,7 @@ Something wants an answer or your attention, and you did not start it at that mo
   - Heard: sound `Offer`.
   - Said: 'Claude offers a command for you to run', the command, and the caution. Running is never where the list starts.
   - In: axClaude.
-  - Note: With the louder background alert on and the window behind, this offer makes no sound and no flash today.
+  - Note: Its sound plays wherever the window is, and the taskbar button flashes when the window is behind; the louder background alert never takes its place.
 - `ai-asks-to-run`: An AI tool asks to run a command of this window that acts outside the window.
   - Started by: `ai-tool`.
   - Heard: sound `Offer`.

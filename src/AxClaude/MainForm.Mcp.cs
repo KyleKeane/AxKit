@@ -127,6 +127,11 @@ internal sealed partial class MainForm
         ShowInArea(OfferSignature, name, text, unprompted, (focus, hold) =>
             Area.ShowList(name, offer.Request?.Answers ?? McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen),
                 () => AnswerOffer(offer, offer.Request?.No ?? McpOffer.No)), Sounds.Offer);
+        if (unprompted)
+        {
+            // An offer has no signal of Claude's: the taskbar button flashes for it when the window is behind.
+            FlashIfBehind();
+        }
     }
 
     private void AnswerOffer(Offer offer, int answer)

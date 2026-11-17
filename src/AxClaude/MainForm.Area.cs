@@ -86,8 +86,9 @@ internal sealed partial class MainForm
     /// <summary>
     /// Shows what Claude waits on in the control area, in place of the message field (D33). <paramref name="show"/>
     /// puts the control there, given whether it takes the focus and whether it holds its answering keys for a moment
-    /// (when the user did not cause it, since they may be typing). Such a control also plays the notice chime, or <paramref name="chime"/> in its place, unless
-    /// the window is in the background with the louder alert on, which the signal then plays in its place (FR-7.3).
+    /// (when the user did not cause it, since they may be typing). Such a control also plays the notice chime, unless
+    /// the window is in the background with the louder alert on, which the signal then plays in its place (FR-7.3);
+    /// or it plays <paramref name="chime"/>, an offered command's, wherever the window is.
     /// With Go to them at once, interrupting speech (the default) it takes the focus wherever it was, and the question
     /// with the answer the focus is on is spoken as an interrupting notification 300 ms after the focus moved: it cuts
     /// off what NVDA was reading, a reply included, and comes last (raised before the focus, or at once after it, it
@@ -120,9 +121,12 @@ internal sealed partial class MainForm
             _heldLines.Clear();
         }
 
-        if (unprompted && _settings.SoundOnBell && !(_settings.BackgroundAlert && !ContainsFocus))
+        // In the background with the louder alert on, the signal plays the alert in the notice chime's place (FR-7.3).
+        // An offered command has a chime of its own (FR-2.12), so that it is told from a question of Claude's, and no
+        // signal: its chime plays wherever the window is, since what asks to run code must be known at once anywhere
+        // (until 2026-11-16 an offer in the background with the alert on made no sound at all).
+        if (AreaChime.Plays(unprompted, _settings.SoundOnBell, _settings.BackgroundAlert, ContainsFocus, offer: chime is not null))
         {
-            // An offered command has a chime of its own (FR-2.12), so that it is told from a question of Claude's.
             (chime ?? Sounds.Notice)();
         }
 

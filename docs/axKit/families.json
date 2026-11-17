@@ -424,7 +424,7 @@
           "words": "'Claude offers a command for you to run', the command, and the caution. Running is never where the list starts.",
           "apps": "axClaude.",
           "where": ["src/AxClaude/MainForm.Mcp.cs"],
-          "note": "With the louder background alert on and the window behind, this offer makes no sound and no flash today."
+          "note": "Its sound plays wherever the window is, and the taskbar button flashes when the window is behind; the louder background alert never takes its place."
         },
         {
           "id": "ai-asks-to-run",

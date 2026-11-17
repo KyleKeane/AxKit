@@ -741,14 +741,17 @@ On the real keyboard, by the user:
 
 By the user's ear, in axDown's navigation mode:
 
-4. A letter that jumps (H with a next heading): the small click, then the move and the words. Whether the click is
-   over before NVDA speaks, and whether it is told apart from the conversation's line click in axClaude. Landing on a
-   heading, the heading sound follows at once and cuts the click.
-5. A letter with nothing of its kind (H on the last heading): one flat low tone, then "No next heading". The tone is
-   a candidate, not chosen by ear.
-6. A plain key with no command (a letter that is no jump, Space, a digit): two quick blips. A candidate, not chosen
-   by ear. Enter, Backspace and Delete keep the edge sound.
-
+4. A letter that jumps (H with a next heading): the high glassy tick, then the move and the words. Chosen by ear on
+   2026-11-16 from a script; owed in the app itself: that it is over before NVDA speaks, and that landing on a
+   heading the heading sound follows at once and cuts it.
+5. A letter with nothing of its kind (H on the last heading): the low buzz, then "No next heading". Chosen by ear
+   the same day; owed in the app.
+6. A plain key with no command (a letter that is no jump, Space, a digit): the wooden bonk. Chosen by ear the same
+   day; owed in the app. Enter, Backspace and Delete keep the edge sound.
+7. In axClaude, with Options, When Claude is done, Louder alert when the window is in the background switched on:
+   go to another program and have Claude offer a command (ask it to offer one through axKit). The alarm of five
+   falling swoops plays and the taskbar button flashes; before 2026-11-16 nothing was heard. The rule is tested in
+   code (`AreaChimeTests`); a window behind another cannot be made on the runner's desktop.
 With NVDA, in a pass:
 
 7. The sentences that name the new keys: "Changes view first: Alt+1" and its siblings in axGIT and axProcess; the
