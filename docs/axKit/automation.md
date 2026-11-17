@@ -38,7 +38,10 @@ whose trace differs from the kept one; below, "The traces"), 2 when the run coul
 plays at a time on a computer: a second run waits for the first, for an hour at most, and says once that it waits,
 since the clipboard and the system hotkeys are shared (`tools/AxAutomate/RunLock.cs`, `user-workflows.md` WF-D-29);
 the builds before the scripts run side by side. A window that does
-not answer a step within 30 seconds fails the step, and the run goes on to its end.
+not answer a step within 30 seconds fails the step, and the run goes on to its end. The run's folder is deleted at
+the end unless `--keep` is given; the windows' logs of a script that failed are copied first to
+`%TEMP%\axkit-automate-failed\<run>\<script>`, and the summary's last lines say where, so that a failure seen once
+leaves its exception to read (the newest ten runs stay; `AxAutomate.Core/FailedLogs.cs`).
 
 **Where these checks run.** On the developer's computer, by hand or by the assistant: `tools/AxAutomate` for one
 script or folder, `nvda-pass.ps1` for all of them with NVDA listening. Never in CI: `build.yml` builds the solution,

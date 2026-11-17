@@ -18,7 +18,9 @@
 //                (tools/nvda-capture). It takes over the machine: only at the user's word, with the user away.
 //                When no window of the run is in front the runner takes the foreground itself (one Alt key press);
 //                when the run's first window cannot come to the front at all, the run stops with one line, exit 2.
-//   --keep       keeps %TEMP%\axkit-automate\<process id>, the run's folder ({temp} in a script), with its logs
+//   --keep       keeps %TEMP%\axkit-automate\<process id>, the run's folder ({temp} in a script), with its logs;
+//                without it the folder goes, but a failed script's logs are kept in %TEMP%\axkit-automate-failed
+//                (the newest ten runs; AxAutomate.Core FailedLogs), and the summary's last lines say where
 //   --repository the repository whose docs/axKit/window-commands.json and tests/traces the run reads and writes; by
 //                default the folder above this program that holds AxKit.sln, and none when no folder does (a runner
 //                built into %TEMP%): without one the command inventory and the traces are off
@@ -301,6 +303,7 @@ internal static class Program
         var notHeard = new List<string>();
         var goalResults = new List<GoalResult>();
         var anySections = false;
+        var logsKept = false;
 
         // One window run at a time on this computer (RunLock, docs/axKit/user-workflows.md WF-D-29): taken after the
         // build and before the first script, released in the finally that puts the clipboard back.
@@ -355,6 +358,11 @@ internal static class Program
                 if (!ok)
                 {
                     failed.Add(name);
+                    // A failed script's logs outlive a run without --keep (FailedLogs): a rare failure leaves its exception.
+                    if (!keep && FailedLogs.Keep(temp, name, Path.Combine(FailedLogs.Folder, Path.GetFileName(root))) is not null)
+                    {
+                        logsKept = true;
+                    }
                     if (log.Contains("|| NVDA did not speak", StringComparison.Ordinal) || log.Contains("|| NVDA spoke it only after", StringComparison.Ordinal))
                     {
                         notHeard.Add(name);
@@ -406,6 +414,13 @@ internal static class Program
         {
             // One plain line, the whole result: the scripts did not fail, they were not run.
             summary = $"{stopped}\nSTOPPED: {scripts.Count} script(s), none run to its end.";
+        }
+
+        if (logsKept)
+        {
+            // The failed scripts' logs, kept for reading though the run's folder goes (FailedLogs).
+            FailedLogs.Prune(FailedLogs.Folder);
+            summary += $"\nThe logs of the failed scripts are kept in {Path.Combine(FailedLogs.Folder, Path.GetFileName(root))}.";
         }
 
         if (anySections)
