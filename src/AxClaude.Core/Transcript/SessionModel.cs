@@ -1340,10 +1340,14 @@ public sealed partial class SessionModel : LineStore
     /// <summary>
     /// A send whose block is still held back (sent while Claude worked) but whose echo never came: once Claude is
     /// idle and shows nothing queued, the block goes in at the end of the conversation, where it would have gone at once.
+    /// A frame with no mode line (<see cref="ScreenWork.Unknown"/>) says nothing either way and waits: Claude Code
+    /// 2.1.326 draws a reply longer than the screen as a frame that ends on the reply's rows, after the turn's end mark
+    /// and with the queued row drawn over, and the echo of the queued message comes a frame later (the queued
+    /// fixture); placed at that frame, the block stood in the middle of the reply.
     /// </summary>
     private void PlaceBlocksWithoutEcho()
     {
-        if (Busy || QueuedMessages > 0)
+        if (Busy || QueuedMessages > 0 || Work == ScreenWork.Unknown)
         {
             return;
         }

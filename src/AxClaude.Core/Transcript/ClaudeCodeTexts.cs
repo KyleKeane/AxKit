@@ -169,8 +169,12 @@ public static partial class ClaudeCodeTexts
     [GeneratedRegex(@"^\s*● \S+$")]
     public static partial Regex BranchRow();
 
-    /// <summary>Shown under a message that was sent while Claude was busy; the message itself is drawn just above it (the steering fixture).</summary>
-    [GeneratedRegex(@"^ctrl\+x ctrl\+s to send now$")]
+    /// <summary>
+    /// Shown under a message that was sent while Claude was busy; the message itself is drawn just above it. The bare
+    /// hint until 2.1.325 (the steering fixture); from 2.1.326 one row "Queued  ·  ctrl+x ctrl+s to send now" (the
+    /// queued fixture). Both are taken, so that either version is read.
+    /// </summary>
+    [GeneratedRegex(@"^(Queued\s+·\s+)?ctrl\+x ctrl\+s to send now$")]
     public static partial Regex QueuedHint();
 
     [GeneratedRegex(@"^\(ctrl\+b to run in background\)$")]

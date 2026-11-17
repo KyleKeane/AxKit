@@ -14,6 +14,13 @@ internal static partial class TestHelpers
     /// <summary>The recordings replayed with the messages they were made with (<see cref="Replay"/>).</summary>
     public const string LongMessage = "long-message-claude2.1.278-240x50.vt";
     public const string Steering = "steering-claude2.1.278-240x50.vt";
+    public const string Queued326 = "queued-claude2.1.326-240x50.vt";
+
+    public static readonly string[] Queued326Messages =
+    [
+        "Write a story of 900 words about a lighthouse keeper. No tools.",
+        "Reply with the single word second.",
+    ];
 
     public static readonly string[] LongMessages =
     [

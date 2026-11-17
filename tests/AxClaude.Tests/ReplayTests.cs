@@ -43,6 +43,20 @@ public class ReplayTests
         Assert.Equal(3, lines.Count(l => l.Kind == LineKind.InputMarker));
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Message_queued_under_the_hint_of_2_1_326_is_counted_and_its_hint_never_shows(bool quietFrameDuringDraft)
+    {
+        // Claude Code 2.1.326 draws the hint under a queued message as one row, "Queued  ·  ctrl+x ctrl+s to send now".
+        var lines = ReplayedLines(Queued326, Queued326Messages, quietFrameDuringDraft);
+        var texts = lines.Select(l => l.Text).ToList();
+
+        AssertExchange(texts, 1, Queued326Messages[0], "claude: The Last Winter at Carrick Point");
+        AssertExchange(texts, 2, Queued326Messages[1], "claude: second");
+        Assert.DoesNotContain(texts, t => t.Contains("ctrl+x ctrl+s") || t.StartsWith("Queued"));
+    }
+
     /// <summary>The exchange block of message n, exactly as FR-4.1 prints it, directly followed by the first reply line.</summary>
     private static void AssertExchange(List<string> texts, int n, string sent, string firstReplyLine)
     {
@@ -54,14 +68,14 @@ public class ReplayTests
         Assert.Equal(expected, texts.Skip(input).Take(expected.Count).ToList());
     }
 
-    /// <summary>The visible lines after a replay; the steering recording alone queues a message, and nothing stays queued.</summary>
+    /// <summary>The visible lines after a replay; the steering and queued recordings each queue one message, and nothing stays queued.</summary>
     private static List<Line> ReplayedLines(string fixture, string[] sent, bool quietFrameDuringDraft)
     {
         var model = new SessionModel(240, 50);
         var maxQueued = 0;
         model.Changed += () => maxQueued = Math.Max(maxQueued, model.QueuedMessages);
         Replay(model, fixture, sent, quietFrameDuringDraft);
-        Assert.Equal(fixture == Steering ? 1 : 0, maxQueued);
+        Assert.Equal(fixture is Steering or Queued326 ? 1 : 0, maxQueued);
         Assert.Equal(0, model.QueuedMessages);
         return model.Lines.Where(l => !l.Hidden).ToList();
     }
