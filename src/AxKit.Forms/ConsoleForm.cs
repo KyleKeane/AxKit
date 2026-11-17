@@ -7,7 +7,7 @@ namespace AxKit.Forms;
 /// The window of a console app (docs/axKit/SPEC.md AX-6.5; docs/axTerminal/SPEC.md AT-2): a program in a pseudo
 /// console shown as a transcript with single-key navigation (<see cref="TranscriptView"/>), a multi-line field at
 /// the bottom (or the control area in its place), a status bar with two labels, and everything axClaude's window and
-/// axTerminal's window had twice until 2026-10-23 (docs/axKit/review-2026-10-23.md, 5.1): the pty bridge with its
+/// axTerminal's window had twice until 2026-10-23: the pty bridge with its
 /// inbox and quiet timer, the paced write queue with one pump, the recording, the export, the find, the signals and
 /// the music, the focus keys, the bookmark toggle, the notice hooks and the font. One class in partial files: this
 /// one (the controls, the hooks a console window fills in, the keys, the focus, the close), <c>ConsoleForm.Process.cs</c>

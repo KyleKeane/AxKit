@@ -8,7 +8,7 @@ document is kept in step with the code (a behaviour change updates it in the sam
 Requirements are numbered `AM-n.m` and decisions `AM-Dn`; the bundle's rules, AX-7 (accessibility), AX-8 (keys) and
 AX-9 (the Window, axKit and Help menus), are cited by number and not repeated. In axMedia's code and documents, "SPEC.md" means this
 file. The inventory of the split of axFile, what leaves it, what is shared and what is new, with the order of the
-commits, is `docs/axKit/axfile-split.md`; axPreview (`docs/axPreview/SPEC.md`) is the other half of it.
+commits, is the split's inventory of 2026-10-22, in the git history; axPreview (`docs/axPreview/SPEC.md`) is the other half of it.
 
 ## 1. Summary
 
@@ -219,7 +219,7 @@ src/AxMedia/        class library (net10.0-windows): AxMediaApp (Run, Usage), Me
                     AxKit.Forms
 tests/AxMedia.Tests/ PlayQueueTests (moved), MediaFolderTests over a temporary folder, MediaSettingsTests, the
                     player's reason texts; the player itself is checked by ear
-docs/axMedia/       this spec, user-guide.md (embedded), nvda-test-plan.md; the inventory is docs/axKit/axfile-split.md
+docs/axMedia/       this spec, user-guide.md (embedded), nvda-test-plan.md; the inventory of the split is in the git history
 ```
 
 Shared on the second use (AX-6.3), unchanged: `MediaFiles` (the extensions, `IsMedia`, the time format and the
@@ -287,7 +287,7 @@ events are posted back to it (AX-7.5).
 
 ## 10. Status
 
-- 2026-10-22: specified at the user's ask, with the inventory of the split in `docs/axKit/axfile-split.md`.
+- 2026-10-22: specified at the user's ask, with the inventory of the split, which is in the git history.
 - 2026-10-22, later the same day, on the branch `split`: built. `MediaFiles` and `NaturalOrder` to `AxKit.Core`,
   `AppMessage` in `AxKit.Forms`, `AxMedia.Core` (the player and the queue from AxFile.Core, `MediaFolder`,
   `MediaSettings`, 13 tests), the window (`MediaForm`), the keys, the texts, the guide, the test plan and the

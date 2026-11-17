@@ -21,7 +21,7 @@ namespace AxKit.Forms;
 /// members a window calls, the menu items and the hooks. A window derives from it, adds its controls (the
 /// <see cref="Overlay"/> first, so that it docks over the rest), and fills in the hooks listed under "what the window
 /// fills in". It grew out of axDown's window (the editor shell) on the third copy, axGIT (2026-10-18); the notice and
-/// focus core was written again on 2026-10-23 (docs/axKit/review-2026-10-23.md, 5.3).
+/// focus core was written again on 2026-10-23 (the review of that day, in the git history).
 /// </summary>
 public abstract partial class AxKitForm : Form
 {

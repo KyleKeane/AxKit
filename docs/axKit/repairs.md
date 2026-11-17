@@ -627,7 +627,7 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ### R-46, medium, docs: plan.md mixes built and unbuilt work; dated reviews stand among the reference documents
 
-- Where: docs/axKit/plan.md; docs/axKit/review-2026-10-23.md; docs/axKit/inventory-2026-10-24.md; docs/axKit/inventory-2026-11-09.md; docs/axKit/cleanup-run.md
+- Where: docs/axKit/plan.md
 - Principle: P8
 - Fix: plan.md keeps the unbuilt apps only; the dated documents move to docs/axKit/archive once their open lines are in the priorities list.
 - Checked by: reading

@@ -8,7 +8,7 @@ tight hand-over (AP-D1). The document is kept in step with the code (a behaviour
 the same commit). Requirements are numbered `AP-n.m` and decisions `AP-Dn`; the bundle's rules, AX-7 (accessibility),
 AX-8 (keys) and AX-9 (the Window, axKit and Help menus), and axDown's (`docs/axDown/SPEC.md`, cited as "axDown AD-n.m") are cited by
 number and not repeated. In axPreview's code and documents, "SPEC.md" means this file. The inventory of the split
-of axFile, of which this app is one part, is `docs/axKit/axfile-split.md`.
+of axFile, of which this app is one part, is the split's inventory of 2026-10-22, in the git history.
 
 ## 1. Summary
 
@@ -360,7 +360,7 @@ details' lines, AP-6), and the shell's read-only mode adds the Details list unde
   clipboard's picture (Ctrl+Shift+V); the renderer's two-step page (AP-7.1); `PictureTextTests`, the picture steps of
   `tests/scripts/axPreview/04-details-and-kinds.txt`, run under NVDA through `nvda-pass.ps1 axPreview`.
 
-- 2026-10-22: specified at the user's ask, with the inventory of the split in `docs/axKit/axfile-split.md`.
+- 2026-10-22: specified at the user's ask, with the inventory of the split, which is in the git history.
 - 2026-10-22, later the same day, on the branch `split`: built as the editor shell's read-only mode (AP-D4), with
   `TextSniff` in `AxPreview.Core` (tested), the keys, the texts, the guide, the test plan and the wiring (the
   dispatcher, the installer's block with Open with for the text kinds, the icon, `scripts to run-individual-apps\run-axPreview.ps1`); a file alone

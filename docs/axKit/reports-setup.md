@@ -1,7 +1,7 @@
 # Reports: what exists on GitHub and how it is set up
 
 The reports of `docs/axKit/reports.md` (RP-6.2 to RP-6.4, RP-7) rest on a few things outside this repository. This page
-records them and the steps to make them again, as `code-signing.md` does for the Windows signing. Written 2026-11-07.
+records them and the steps to make them again, as the code signing record of 2026-11 did for the Windows signing. Written 2026-11-07.
 
 ## 1. What exists
 

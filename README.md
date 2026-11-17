@@ -74,7 +74,7 @@ The access layers meet the network only through the program each runs, as a chil
 
 Every release is built by GitHub Actions from this repository's source, with GitHub's attestation of where it was built, and approved by the maintainer before it is published. Its zip is signed with axKit's release key, which is kept on the maintainer's computer, with a passphrase-encrypted backup in his private GitHub repository since 2026-11-15 ([SECURITY.md](SECURITY.md)); the installed apps and `install.cmd` install nothing whose signature does not check ([docs/axKit/SPEC.md](docs/axKit/SPEC.md) AX-3.4).
 
-**Windows code signing through the Microsoft Store.** The Store's copy of axKit is an MSIX package that Microsoft signs with its own certificate after certification, installs and updates ([docs/axKit/store-distribution.md](docs/axKit/store-distribution.md)); Windows' Smart App Control accepts it. The GitHub release's `AxKit.exe` carries no Authenticode signature, every release's notes say so, and Smart App Control may refuse it; an update it refuses stops without changing anything. A signing service for the GitHub release (Azure Artifact Signing) was set up in 2026-11 and retired on 2026-11-09 before it signed a release, in favour of the Store ([docs/axKit/code-signing.md](docs/axKit/code-signing.md), the record).
+**Windows code signing through the Microsoft Store.** The Store's copy of axKit is an MSIX package that Microsoft signs with its own certificate after certification, installs and updates ([docs/axKit/store-distribution.md](docs/axKit/store-distribution.md)); Windows' Smart App Control accepts it. The GitHub release's `AxKit.exe` carries no Authenticode signature, every release's notes say so, and Smart App Control may refuse it; an update it refuses stops without changing anything. A signing service for the GitHub release (Azure Artifact Signing) was set up in 2026-11 and retired on 2026-11-09 before it signed a release, in favour of the Store (the record of it is in the git history).
 
 Team and roles ([GOVERNANCE.md](GOVERNANCE.md)): Dr. Kyle Keane (www.kylekeane.com), author, reviewer and approver.
 
@@ -123,7 +123,7 @@ Without GitHub Actions (a runner image or an action changed under the workflow, 
 - `src/<App>` and `src/<App>.Core`: each app's window and its pure code. Each folder has a `CLAUDE.md` with its notes.
 - `tests/`: the unit tests, one project per app, and the recorded console fixtures.
 - `docs/<app>/`: each app's `SPEC.md`, `user-guide.md` (Help, User guide in the app) and `nvda-test-plan.md`. The specifications are the source of truth.
-- `docs/axKit/`: the bundle's `SPEC.md` (launch, install, update, release, the accessibility and modularity rules), `plan.md`, `adding-an-app.md`, the test record, `review-2026-10-23.md` (the review of the code and documents, what was fixed and what is proposed), `inventory-2026-10-24.md` (the copies, dead code and drift, what was cleaned up and what is open) and `longevity.md` (the practices that keep the repository stable for years, with its calendar).
+- `docs/axKit/`: the bundle's `SPEC.md` (launch, install, update, release, the accessibility and modularity rules), `plan.md`, `adding-an-app.md`, the test record and `longevity.md` (the practices that keep the repository stable for years, with its calendar).
 - `manual_tests/`: the script that makes the files for the NVDA passes.
 - `CLAUDE.md`: the map and the rules for working on this repository with Claude Code.
 

@@ -4,7 +4,7 @@ Asked by the user on 2026-10-24: "programmatic access to all the features with v
 absolute protection". Specification first (the user's order: spec, infrastructure, build); the first stage, read and
 open, is built (section 7, 2026-10-24), and since 2026-11-11 one tool runs a window's command (section 8) and the
 first typed data tools read and add to axTask's lists (section 9).
-It depends on two things before it: the security fixes of `security-audit-2026-10-24.md` (S-11 to S-13 above all),
+It depends on two things before it: the security fixes of the security audit of 2026-10-24 (S-11 to S-13 above all),
 and the command lists of `app-kit.md`, which are what the tools are made from. Requirements are numbered MC-n.m.
 
 ## 1. Goals and non-goals

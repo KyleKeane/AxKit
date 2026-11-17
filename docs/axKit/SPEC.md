@@ -66,11 +66,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   on folders and on files, command `axFile`. A file manager for one folder as one list, Enter the verb (a folder
   here, a file in the user's default program, as in File Explorer), the file operations with Undo and an Actions
   list of every operation; its player and preview became axMedia and axPreview on 2026-10-22
-  (`docs/axKit/axfile-split.md`). Specification `docs/axFile/SPEC.md`, guide `docs/axFile/user-guide.md`, test plan
+  (the split's inventory of 2026-10-22, in the git history). Specification `docs/axFile/SPEC.md`, guide `docs/axFile/user-guide.md`, test plan
   `docs/axFile/nvda-test-plan.md`.
 - **axMedia** (2026-10-22): `AxKit.exe media [<file or folder>...] [--add] [--new]`, Start entry `axKit axMedia`, Open
   with axKit on sound and video files and Open with for their kinds, command `axMedia`. A player with one queue, the
-  player axFile carried until the split (`docs/axKit/axfile-split.md`); a start with paths hands them to the open
+  player axFile carried until the split (the split's inventory of 2026-10-22, in the git history); a start with paths hands them to the open
   axMedia window (`AppMessage`). Specification `docs/axMedia/SPEC.md`, guide `docs/axMedia/user-guide.md`, test plan
   `docs/axMedia/nvda-test-plan.md`.
 - **axPreview** (2026-10-22): `AxKit.exe preview [<file>] [--new]`, Start entry `axKit axPreview`, Open with axKit on
@@ -341,7 +341,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   Control may refuse it, and an update it refuses stops without changing anything (AX-3.6). The signed copy of axKit
   is the Microsoft Store's, which Microsoft signs after certification (AX-13; `docs/axKit/store-distribution.md`
   4.4). Azure Artifact Signing was set up for the release workflow on 2026-11-06 and retired on 2026-11-09 before it
-  signed a release, on the user's decision to sign through the Store (`docs/axKit/code-signing.md`, the record). The
+  signed a release, on the user's decision to sign through the Store (the code signing record of 2026-11, in the git history). The
   release key signs the zip as before.
 - AX-3.7 The Store's copy has no updater: the Microsoft Store installs its updates, signed with Microsoft's
   certificate, and Check for updates there says where the copy stands and opens the Store page (AX-13.3).
@@ -378,7 +378,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   `THIRD-PARTY-NOTICES.md` (the .NET runtime and Windows Forms in the program, under MIT), since 2026-10-29
   `NOTICE.md` (the licence's section 7 terms, the disclaimer and the risks app by app; `LICENSE` is the GNU AGPL 3 only,
   and `CONTRIBUTING.md` holds the contributor licence), with the README's code signing
-  policy linked from every release page (`docs/axKit/code-signing.md`); issue forms in
+  policy linked from every release page (the code signing record of 2026-11, in the git history); issue forms in
   `.github/ISSUE_TEMPLATE` (a bug asks for the app, the versions and the test plan step), a pull request checklist,
   and Dependabot (`.github/dependabot.yml`) keeping the workflow actions and the test packages current, monthly; the
   apps themselves have no packages (G4, B-10).
@@ -573,7 +573,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   It grew out of the editor shell on the third copy, axGIT (2026-10-18); axClaude's `MainForm` moved onto it the same
   day, its own extras (the sound setting for the chime, the reader's kept caret, system lines for the update's steps)
   as hooks; the notice and focus core was written again, and what every window still copied moved in, on 2026-10-23
-  (`docs/axKit/review-2026-10-23.md`, 5.3 and 6).
+  (the review of that day, in the git history).
 
 ### AX-8 Keys
 
@@ -1614,8 +1614,9 @@ CLAUDE.md               the map of the bundle and its rules (short); each projec
 README.md, CONTRIBUTING.md, SECURITY.md, PRIVACY.md, GOVERNANCE.md, CODE_OF_CONDUCT.md, THIRD-PARTY-NOTICES.md   the repository's own pages (AX-4.5)
 docs/axKit/              SPEC.md (this), README.md (the zip's guide: install, the apps, uninstall), adding-an-app.md, plan.md,
                         nvda-test-record.md (what every NVDA pass found; when
-                        each goal last passed is in workflow-record.json), axfile-split.md (the inventory of the split),
-                        review-2026-10-23.md (the review of the code and documents), inventory-2026-10-24.md (the copies and drift, and what is open) and longevity.md (the practices for the years ahead)
+                        each goal last passed is in workflow-record.json)
+                        and longevity.md (the practices for the years ahead); a finished review, inventory or
+                        report is deleted and stays in the git history
 docs/<app>/             SPEC.md, user-guide.md (embedded by the app's project), nvda-test-plan.md, for each app of section 3;
                         docs/axClaude also claude-screens.md, docs/axDown also tutorial.md
 ```
@@ -1762,7 +1763,7 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   reaches Claude, what it may change in a window, the database) is a specification of its own, not yet written
   (`docs/axKit/plan.md`).
 - **B-16 The bundle is axKit (2026-11-05, 5.0.0).** Axit, its name from 2.0.0 to 4.0.0, is a commercial product's name
-  elsewhere, so the bundle took a new one before applying for code signing (`docs/axKit/code-signing.md`): ax, the
+  elsewhere, so the bundle took a new one before applying for code signing (the code signing record of 2026-11, in the git history): ax, the
   prefix every app carries, and kit, the kit of them; checked free of software products, packages, GitHub names and
   trademarks. Written axKit where it is shown, spoken or written, as the apps are (axClaude), and AxKit in code,
   files, paths, namespaces, registry names and the program file (`AxKit.exe`), as the apps' code is (AxClaude): the
@@ -1850,7 +1851,7 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
 - 3.0.0 to 3.2.2 (2026-10-19 to 2026-10-21): axTerminal with the console pieces shared (AX-6.1), the in-place update
   clearing old remnants (AX-2.8), one Open with axKit submenu (AX-2.3); axFile (3.1.0) with its operations, Undo and
   pane; the delayed question focus in axClaude (3.2.1); the editors' undo and redo (3.2.2). `CHANGELOG.md` has each.
-- 3.3.1 (2026-10-22), developed on `split`: the split of axFile (`docs/axKit/axfile-split.md`): axMedia, the player
+- 3.3.1 (2026-10-22), developed on `split`: the split of axFile (the split's inventory of 2026-10-22, in the git history): axMedia, the player
   with one queue, and axPreview, the viewer as the editor shell's read-only mode, as apps of their own with a
   hand-over from a starting process to the open window (`AxKit.Forms/AppMessage`, AX-6.2); axFile lean, Enter the
   user's default program, the pane its Actions list; `MediaFiles`, `NaturalOrder` and the find in a list shared
@@ -1861,7 +1862,7 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
   `test.ps1` running the tests as CI does (AX-4.4); the repository's pages (AX-4.5).
 - Unreleased (2026-10-23), developed on `palette`: the command palette in every window (AX-10); the heading letters
   and Ctrl+F in every notice's text (AX-7.2); the review of the code and documents of 2026-10-18 to 2026-10-22
-  (`docs/axKit/review-2026-10-23.md`) with its fixes, the tests run without the globalization data as the program
+  (in the git history) with its fixes, the tests run without the globalization data as the program
   runs (AX-6.1, `Accents`), and the practices for the years ahead (`docs/axKit/longevity.md`). The same day, the
   rewrites the review asked for (one console window for axClaude and axTerminal with one settings class, AX-6.1;
   the notice and focus core of the window base as one rule, AX-6.5; axClaude's wait as one record; axFile's

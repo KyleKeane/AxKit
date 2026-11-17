@@ -11,7 +11,7 @@ namespace AxMedia;
 /// back to this thread; the queue is <see cref="PlayQueue"/>. A start with paths while this window is open arrives as
 /// a hand-over message (AM-1.2, <see cref="AppMessage"/>) in <see cref="WndProc"/>. The notices, the fonts, the
 /// window's place, the update flow, find and the announcements are the bundle's window base (<see cref="AxKitForm"/>).
-/// Grown from axFile's player and queue pane (docs/axKit/axfile-split.md).
+/// Grown from axFile's player and queue pane (the split's inventory of 2026-10-22, in the git history).
 /// </summary>
 public sealed partial class MediaForm : AxKitForm
 {

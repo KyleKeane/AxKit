@@ -6,7 +6,7 @@ on:
     branches: ['**']
   pull_request:
 
-# Read only: a build never writes to the repository (docs/axKit/security-audit-2026-10-24.md S-33).
+# Read only: a build never writes to the repository (the security audit of 2026-10-24 S-33).
 permissions:
   contents: read
 

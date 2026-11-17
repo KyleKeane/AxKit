@@ -31,7 +31,7 @@ decision. Every release's package is uploaded in Partner Center's website (`stor
 
 Today axKit is a zip with `install.ps1` and an updater of its own (AX-2, AX-3). Windows 11's Smart App Control blocks
 a program file that carries no Authenticode signature, so every update is a risk on such a computer, and Azure
-Artifact Signing was set up for that (`docs/axKit/code-signing.md`), its identity check still pending. The Microsoft
+Artifact Signing was set up for that (the code signing record of 2026-11, in the git history), its identity check still pending. The Microsoft
 Store removes the problem at the root: the Store re-signs every package with Microsoft's own certificate after
 certification, so a Store copy of axKit passes Smart App Control with no certificate of ours; the Store installs,
 updates and uninstalls it; and Windows Package Manager's `msstore` source makes `winget install` the command-line
@@ -224,8 +224,7 @@ The recommendation came first in each; on 2026-11-08 the maintainer took the rec
 - 4.3 The folder context menu is absent from the Store build for now (3.3). Taken; the COM server is section 8.
 - 4.4 Azure Artifact Signing retired on 2026-11-09, before the first Store release was checked, on the user's
   decision ("we will use the Windows Store for signing"): the Store's signature is the one, and the zip's `AxKit.exe`
-  stays unsigned, as it always was, its notes pointing here. Settled; `docs/axKit/code-signing.md` section 7 has what
-  is deleted on Azure.
+  stays unsigned, as it always was, its notes pointing here. Settled; everything of the signing set-up was deleted on Azure on 2026-11-13.
 - 4.5 Start at sign-in in the Store build is Windows' own Startup page (3.3), built as `HotkeyForm.StartWithWindowsItem`.
   Taken.
 - 4.6 The clicks in Partner Center are the maintainer's, with NVDA, from my step lists (phase 1 and 6). Taken.

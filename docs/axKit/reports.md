@@ -258,7 +258,7 @@ levers are built now.
   "This build cannot send reports" and offers RP-6.5's Copy report. GitHub's terms ask that credentials be kept
   confidential; the machine user with one repository and one permission is the closest a token in a program comes to
   that, and a revocation by GitHub costs one release (RP-6.4). The setup page `docs/axKit/reports-setup.md` records
-  the account, the repository, the token's scope and the secret, as `code-signing.md` does for signing.
+  the account, the repository, the token's scope and the secret, as the code signing record of 2026-11 did for signing.
 - **RP-6.3 The reporter id.** A random GUID made on the first report and kept in `%APPDATA%\AxKit\reports.json`,
   in every report's last line. It names the install, not the person: no account, no name, no hardware id, and
   deleting the file gives a new one. The maintainer filters and, if need be, blocks by it (RP-6.4). `PRIVACY.md` says

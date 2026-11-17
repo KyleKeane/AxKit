@@ -3,8 +3,8 @@
 Asked by the user on 2026-10-24: "an extensive consolidation and refactor to minimize the codebase … as much reusable
 composable modular infrastructure as possible … future apps extremely lightweight … through easy processes that do
 not require you to ever touch core code unless there is a new control or interaction". Specification first; built
-after the security fixes, one app per step. Requirements AK-n.m. The evidence (line counts, the copies) is in
-`inventory-2026-10-24.md` and the review of the windows the same day.
+after the security fixes, one app per step. Requirements AK-n.m. The evidence (line counts, the copies) was the
+inventory of 2026-10-24 and the review of the windows the same day, both in the git history.
 
 ## 1. What an app is today, and what it becomes
 

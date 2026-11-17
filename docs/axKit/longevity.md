@@ -3,7 +3,7 @@
 The user's aim, set 2026-10-23: a repository and a program that stay a stable resource for decades, as long as .NET
 is supported, so that anyone who relies on axKit can go on relying on it. This page is the plan: what already keeps
 axKit stable, what was adopted on 2026-10-23, what is proposed with its cost, and the calendar. It is kept with the
-code like the specs; `review-2026-10-23.md` is the review it came out of.
+code like the specs; it came out of the review of 2026-10-23, which is in the git history.
 
 ## 1. What already keeps axKit stable
 

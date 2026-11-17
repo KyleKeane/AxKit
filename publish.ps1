@@ -11,7 +11,7 @@
 
   The release workflow calls it twice: -NoInstall -NoZip builds the folder, then -ZipOnly zips the folder as it is.
   Neither installs anything. Nothing signs AxKit.exe for Windows between the two: that step was retired on 2026-11-09
-  (docs/axKit/code-signing.md), the signed copy of axKit is the Microsoft Store's, and the zip is signed with the
+  (the code signing record of 2026-11, in the git history), the signed copy of axKit is the Microsoft Store's, and the zip is signed with the
   release key afterwards (tools\sign-release.ps1).
 
   -Msix builds the MSIX package for the Microsoft Store instead (docs/axKit/store-distribution.md 3.1): a folder

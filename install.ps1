@@ -112,7 +112,7 @@ if (-not $Uninstall) {
     $newExe = Join-Path $source 'AxKit.exe'
     $newVersion = if (Test-Path -LiteralPath $newExe) { (Get-Item -LiteralPath $newExe).VersionInfo.FileVersion } else { 'with no AxKit.exe beside install.ps1' }
     Say "Installing axKit $newVersion$(if ($InPlace) { ' in place, the app running' }) on Windows $([Environment]::OSVersion.Version), PowerShell $($PSVersionTable.PSVersion)"
-    # What the installation changes and what axKit sends, said before anything is changed (docs/axKit/code-signing.md: the
+    # What the installation changes and what axKit sends, said before anything is changed (the code signing record of 2026-11, in the git history: the
     # signing service's rule that system changes come with a warning and a privacy statement is shown at installation).
     Say "It installs for your Windows account only, without administrator rights: the program in $target, Start menu entries, console commands in $bin (added to your PATH), File Explorer's Open with axKit and Open with entries, axStart and axClip at sign-in, and an entry in Settings, Apps that uninstalls all of it."
     Say "Privacy: axKit collects nothing and has no telemetry. On its own it only asks GitHub for the latest release when a window starts; Options, General, Check for updates at start turns that off. PRIVACY.md beside the program says everything axKit contacts and when."

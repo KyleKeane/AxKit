@@ -3,7 +3,7 @@
 axFile is an app of the axKit bundle (`docs/axKit/SPEC.md`): a file manager for one folder, for a blind developer who
 uses the NVDA screen reader. Specified 2026-10-18 and built as a first draft 2026-10-19; on 2026-10-22 the player it
 had carried became axMedia and the preview pane axPreview, so that axFile is file operations and management only
-(section 8; `docs/axKit/axfile-split.md`). The document is kept in step with the code (a behaviour change updates it in
+(section 8; the split's inventory of 2026-10-22, in the git history). The document is kept in step with the code (a behaviour change updates it in
 the same commit). Requirements are numbered `AF-n.m` and decisions `AF-Dn`; the bundle's rules, AX-7
 (accessibility), AX-8 (keys) and AX-9 (the Window, axKit and Help menus), are cited by number and not repeated. In axFile's code and
 documents, "SPEC.md" means this file.
@@ -685,7 +685,7 @@ AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the
   menu as one flat list (AF-4.6, AX-6.6), the Drives menu (AF-3.11); then the queue pane, Undo (AF-4.14), the preview
   pane, the lookalike guard (AF-4.2) and the Shift range (AF-3.7); released in 3.2.0, 3.2.1 and 3.2.2. Not yet checked
   with NVDA from Ctrl+N on.
-- 2026-10-22: the split, on the branch `split` (`docs/axKit/axfile-split.md`): the player became axMedia and the
+- 2026-10-22: the split, on the branch `split` (the split's inventory of 2026-10-22, in the git history): the player became axMedia and the
   preview axPreview; Enter follows Windows' default program (AF-D2); the pane became the Actions list (AF-9, AF-D3)
   with Enter to the action's place and Ctrl+Z on a line, at the user's ask; the Player menu, its keys, the video area,
   the queue and the settings `speed`, `seekSeconds` and `sayEachFile` left the window; `MediaFiles` and `NaturalOrder`

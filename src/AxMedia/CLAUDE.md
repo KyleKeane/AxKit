@@ -1,6 +1,6 @@
 # axMedia, the window
 
-The WinForms side of axMedia: one list with the queue, a video area shown only while a video plays, a status bar, the bundle's notices. The pure code (the player seam, the queue, a folder's media files, the settings) is `src/AxMedia.Core`, with its own `CLAUDE.md`. The spec is `docs/axMedia/SPEC.md` ("SPEC.md" below); the guide `docs/axMedia/user-guide.md` is embedded by `AxMedia.csproj` for Help → User guide; the manual test plan is `docs/axMedia/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`. The window grew out of axFile's player and queue pane on 2026-10-22 (`docs/axKit/axfile-split.md`).
+The WinForms side of axMedia: one list with the queue, a video area shown only while a video plays, a status bar, the bundle's notices. The pure code (the player seam, the queue, a folder's media files, the settings) is `src/AxMedia.Core`, with its own `CLAUDE.md`. The spec is `docs/axMedia/SPEC.md` ("SPEC.md" below); the guide `docs/axMedia/user-guide.md` is embedded by `AxMedia.csproj` for Help → User guide; the manual test plan is `docs/axMedia/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`. The window grew out of axFile's player and queue pane on 2026-10-22 (the split's inventory of 2026-10-22, in the git history).
 
 ## Commands
 

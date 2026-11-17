@@ -146,7 +146,6 @@ public sealed class AiDocumentationTests
             ["docs/axKit/command-language.md"] = "a proposal for the commands",
             ["docs/axKit/events.md"] = "a proposal for the events",
             ["docs/axKit/earcons.md"] = "the design of the sounds; families.md says what each means",
-            ["docs/axKit/axfile-split.md"] = "a plan for axFile's code",
             ["docs/axKit/longevity.md"] = "the plan for the years ahead",
             ["docs/axKit/plan.md"] = "the plan and the apps still to come",
             // docs/axKit: how the repository is worked on.
@@ -155,7 +154,6 @@ public sealed class AiDocumentationTests
             ["docs/axKit/documents.md"] = "where each thing is written, for developers",
             ["docs/axKit/development-environment.md"] = "how a development computer is set up",
             ["docs/axKit/apps.md"] = "the apps with their code and tests",
-            ["docs/axKit/code-signing.md"] = "how a release is signed",
             ["docs/axKit/reports-setup.md"] = "how the reports' repository is set up",
             ["docs/axKit/store-distribution.md"] = "the plan for the Store",
             ["docs/axKit/store-listing.md"] = "the Store's listing text",
@@ -164,12 +162,6 @@ public sealed class AiDocumentationTests
             ["docs/axKit/nvda-test-record.md"] = "the record of the NVDA passes",
             ["docs/axKit/owed.md"] = "what is still owed a hearing",
             ["docs/axKit/repairs.md"] = "what the audits found and what became of it",
-            ["docs/axKit/cleanup-run.md"] = "a cleanup's plan",
-            ["docs/axKit/cleanup-run-report.md"] = "a cleanup's report",
-            ["docs/axKit/inventory-2026-10-24.md"] = "an inventory of the code",
-            ["docs/axKit/inventory-2026-11-09.md"] = "an inventory of the code",
-            ["docs/axKit/review-2026-10-23.md"] = "a review",
-            ["docs/axKit/security-audit-2026-10-24.md"] = "a security audit",
             // The repository's top.
             ["README.md"] = "the repository's front page; the bundle's guide says the same for a user",
             ["CLAUDE.md"] = "the working rules of the repository",

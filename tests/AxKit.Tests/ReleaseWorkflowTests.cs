@@ -7,7 +7,7 @@ namespace AxKit.Tests;
 /// (docs/axKit/SPEC.md AX-3.4), and says in every release's notes that the program carries no Windows signature. Read
 /// off .github/workflows/release.yml, as <see cref="LayoutTests"/> reads the sources, so that a later edit cannot put
 /// the environment's secret beside the tests and their packages (security audit S-30) or drop the sentence. The
-/// Azure signing steps that sat here were retired on 2026-11-09 (docs/axKit/code-signing.md).
+/// Azure signing steps that sat here were retired on 2026-11-09 (the code signing record of 2026-11, in the git history).
 /// </summary>
 public sealed class ReleaseWorkflowTests
 {

@@ -101,7 +101,7 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   (`ScriptReader.IsInput`).
 - **Command inventory**: the commands of every app's window as the windows listed them, kept in
   `docs/axKit/window-commands.json`. Always by both words in what a run prints and in the other documents:
-  `docs/axKit/inventory-2026-10-24.md` and the gap list are other inventories. Inside this document "the inventory"
+  the gap list is another inventory. Inside this document "the inventory"
   is this one.
 - **Trace**: for one section of one run, each input in order and everything the window said in between, without
   times. Every run can write its traces into its report; a trace is kept in the repository only for a section marked

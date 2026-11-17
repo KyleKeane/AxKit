@@ -2,7 +2,7 @@ namespace AxKit.Core;
 
 /// <summary>
 /// The programs the apps start, found so that a file planted where axKit was started can never stand in for them
-/// (docs/axKit/security-audit-2026-10-24.md S-1). Windows starts a bare name ("git", "cmd.exe") from the current folder
+/// (the security audit of 2026-10-24 S-1). Windows starts a bare name ("git", "cmd.exe") from the current folder
 /// before System32 and the PATH, and an app started from Explorer or a console keeps the folder it was started in: a
 /// downloaded repository, a folder of downloads. So Windows' own programs are named by their full path, and any other
 /// is looked for on the PATH by axKit itself, in folders that are full paths only (a relative entry, "." included,
