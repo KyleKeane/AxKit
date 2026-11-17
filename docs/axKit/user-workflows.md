@@ -1072,7 +1072,7 @@ Starts with: Open axDown with the file find.md.
 Every sentence form the generator writes (WF-7.3, WF-7.4, WF-7.9), each pinned in `ReferenceTests`:
 
 ```
-Press <keys>.                                             Press Ctrl+F.  Press Ctrl+2, Ctrl+Home.  Press Page Down.
+Press <keys>.                                             Press Ctrl+F.  Press Alt+2, Ctrl+Home.  Press Page Down.
 Press <key> (<label>; <menus>).                           Press Ctrl+H (Heading; Navigation menu, Next).
 Press <key> (<label>).                                    a key with no menu item
 Press <key> <n> times.                                    also with the command after it: Press F3 3 times (Find next; Navigation menu).

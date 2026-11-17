@@ -30,7 +30,7 @@ public sealed class BundleHelpTests
                 "  A key that lands on a heading, in a list or a text, plays a short rising sound before it is read; Options, Text, Sound on headings turns that off for every window",
                 "  Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on what you are on",
                 "  A key that seems to do nothing: Help, Diagnostics, Test a key says each key you press and what it does here, and carries none of them out; Escape ends it. A key that is not said never reached axKit",
-            "  Alt: the menu. Alt+F4: close axThing",
+                "  Alt: the menu. Alt+F4: close axThing",
                 "  " + BundleHelp.BundleMenusLine,
                 "",
                 "",

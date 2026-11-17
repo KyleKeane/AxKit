@@ -39,8 +39,8 @@ expect said Ready
 wait 4000
 type What is 2+2?
 keys shift+enter
-type Answer in one line.
-expect focus Answer in one line.
+type Answer in one line, with no tool.
+expect focus Answer in one line, with no tool.
 said
 keys enter
 expect said Sent
@@ -68,7 +68,7 @@ expect focus done
 keys up up up up
 expect focus "value":""
 keys up
-expect focus "value":"Answer in one line."
+expect focus "value":"Answer in one line, with no tool."
 keys up
 expect focus "value":"What is 2
 keys up
@@ -196,7 +196,7 @@ expect focus Message to Claude
 # strips an invisible character (SPEC 4.4 item 23, FR-2.1); the window sends Enter again. The conversation must hold
 # the same block as above: the reply directly after the blank line under the marker, no line of the echo, and no
 # chrome row (the mode line, Claude's "Removed 1 invisible character" row) as a line of the conversation.
-# Fails on this build: the second line of the message ("Answer in one line.") stands between the blank line and the
+# Fails on this build: the second line of the message ("Answer in one line, with no tool.") stands between the blank line and the
 # reply, and the mode line and "Removed 1 invisible character · review and press Enter to send" end the conversation.
 close
 file home\AxKit\axClaude.json {"checkForUpdates":false}
@@ -208,7 +208,7 @@ keys enter
 expect said Ready
 type What is 2+2?
 keys shift+enter
-type Answer in one line.
+type Answer in one line, with no tool.
 keys enter
 expect said Done
 keys alt+3
