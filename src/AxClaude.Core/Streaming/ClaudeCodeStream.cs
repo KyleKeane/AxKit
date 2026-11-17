@@ -45,12 +45,26 @@ public sealed record StreamPart(StreamKind Kind, string Text, string Tool, bool 
 /// handed to a subagent. For an <see cref="StreamKind.Ended"/> line: <see cref="Failed"/>, <see cref="Terminal"/>
 /// (Claude Code's word for how the turn ended), <see cref="Denials"/> (tool calls refused in the turn) and
 /// <see cref="Queued"/> (messages still waiting). For a <see cref="StreamKind.Started"/> line: Claude Code's
-/// <see cref="Version"/> and the permission <see cref="Mode"/> in force.
+/// <see cref="Version"/>, the permission <see cref="Mode"/> in force, the <see cref="Session"/> and the
+/// <see cref="Commands"/> the run takes.
 /// </summary>
 public sealed record StreamLine(IReadOnlyList<StreamPart> Parts, bool FromWorker, bool Failed, string Terminal, int Denials, int Queued, string Version, string Mode)
 {
     /// <summary>A line with nothing known in it.</summary>
     public static readonly StreamLine Nothing = new([], false, false, string.Empty, 0, 0, string.Empty, string.Empty);
+
+    /// <summary>The session's id, on a <see cref="StreamKind.Started"/> line: what a later run is given to take the conversation up again. An id: never shown, said or logged.</summary>
+    public string Session { get; init; } = string.Empty;
+
+    /// <summary>The slash commands this run takes as a message, by name without the slash, on a <see cref="StreamKind.Started"/> line; the user's own commands and skills are among them, so the names are never logged as a list.</summary>
+    public IReadOnlyList<string> Commands { get; init; } = [];
+
+    /// <summary>
+    /// On a note of the kind status: Claude Code's word for what it is doing beside a turn (<c>compacting</c> while
+    /// it shortens the conversation), empty when that is over. Such a note can also name the permission mode now in
+    /// force (<see cref="Mode"/>), after the host or Claude Code changed it.
+    /// </summary>
+    public string Status { get; init; } = string.Empty;
 
     /// <summary>Whether the line holds a part of this kind.</summary>
     public bool Has(StreamKind kind) => Parts.Any(part => part.Kind == kind);
@@ -78,11 +92,20 @@ public static class ClaudeCodeStream
     /// <summary>With it, a message is also written piece by piece (<see cref="StreamKind.Delta"/>) before its whole line.</summary>
     public const string PartialOption = "--include-partial-messages";
 
+    /// <summary>With it, each message the host writes comes back on the output as a line of the user's, as an acknowledgement that it was taken.</summary>
+    public const string ReplayOption = "--replay-user-messages";
+
     /// <summary>The option that names the MCP tool Claude Code asks before a tool call that needs the user's word, and for Claude's own questions.</summary>
     public const string PermissionToolOption = "--permission-prompt-tool";
 
     /// <summary>The option that keeps the run's session out of Claude Code's store; for a check, never for the user's conversation.</summary>
     public const string NoSessionOption = "--no-session-persistence";
+
+    /// <summary>The option that takes up a saved session, followed by the session's id (<see cref="StreamLine.Session"/>).</summary>
+    public const string ResumeOption = "--resume";
+
+    /// <summary>The option that takes up the folder's last session.</summary>
+    public const string ContinueOption = "--continue";
 
     /// <summary>The tool whose call is Claude's own question to the user: its input holds the questions, and the answer goes back with the same input and <c>answers</c>.</summary>
     public const string QuestionTool = "AskUserQuestion";
@@ -113,6 +136,47 @@ public static class ClaudeCodeStream
         writer.WriteString("behavior", "allow");
         writer.WritePropertyName("updatedInput");
         input.WriteTo(writer);
+    });
+
+    /// <summary>
+    /// The permission tool's answer that lets the call run and, for the rest of this session, every later call of
+    /// the same tool without asking: the user's "always" (documented for the Agent SDK's callback as an answer with
+    /// <c>updatedPermissions</c>; measured for the raw tool by the probe's case permission-always). The rule is the
+    /// session's alone: it is written to no settings file, and a new session asks again.
+    /// </summary>
+    public static string AlwaysAnswer(JsonElement input, string tool) => Json(writer =>
+    {
+        writer.WriteString("behavior", "allow");
+        writer.WritePropertyName("updatedInput");
+        input.WriteTo(writer);
+        writer.WriteStartArray("updatedPermissions");
+        writer.WriteStartObject();
+        writer.WriteString("type", "addRules");
+        writer.WriteStartArray("rules");
+        writer.WriteStartObject();
+        writer.WriteString("toolName", tool);
+        writer.WriteEndObject();
+        writer.WriteEndArray();
+        writer.WriteString("behavior", "allow");
+        writer.WriteString("destination", "session");
+        writer.WriteEndObject();
+        writer.WriteEndArray();
+    });
+
+    /// <summary>
+    /// The line that sets the permission mode of the running session (the interactive program's Shift+Tab); Claude Code
+    /// answers it with a <see cref="StreamKind.Control"/> line that carries the same id. The mode is one of Claude
+    /// Code's own names (<see cref="StreamLine.Mode"/> gives the one in force at the start). Documented as a method of
+    /// the Agent SDK only; the line is measured by the probe's case mode.
+    /// </summary>
+    public static string ModeLine(string id, string mode) => Json(writer =>
+    {
+        writer.WriteString("type", "control_request");
+        writer.WriteString("request_id", id);
+        writer.WriteStartObject("request");
+        writer.WriteString("subtype", "set_permission_mode");
+        writer.WriteString("mode", mode);
+        writer.WriteEndObject();
     });
 
     /// <summary>The permission tool's answer to a question of Claude's: the input as asked, with the answer chosen for each question's text.</summary>
@@ -172,10 +236,22 @@ public static class ClaudeCodeStream
             switch (type)
             {
                 case "system" when subtype == "init":
-                    return StreamLine.Nothing with { Parts = [new(StreamKind.Started, string.Empty, string.Empty, false)], Version = Text(root, "claude_code_version"), Mode = Text(root, "permissionMode") };
+                    return StreamLine.Nothing with
+                    {
+                        Parts = [new(StreamKind.Started, string.Empty, string.Empty, false)],
+                        Version = Text(root, "claude_code_version"),
+                        Mode = Text(root, "permissionMode"),
+                        Session = Text(root, "session_id"),
+                        Commands = Texts(root, "slash_commands"),
+                    };
+                case "system" when subtype == "status":
+                    return StreamLine.Nothing with { Parts = [new(StreamKind.Note, subtype, string.Empty, false)], Status = Text(root, "status"), Mode = Text(root, "permissionMode") };
                 case "system":
                     return StreamLine.Nothing with { Parts = [new(StreamKind.Note, subtype, string.Empty, false)] };
                 case "rate_limit_event":
+                // The conversation was emptied and a new session begins (the slash command /clear, measured 2026-11-17):
+                // the start line that follows names the new session.
+                case "conversation_reset":
                     return StreamLine.Nothing with { Parts = [new(StreamKind.Note, type, string.Empty, false)] };
                 case "assistant":
                 case "user":
@@ -286,6 +362,26 @@ public static class ClaudeCodeStream
 
     private static bool Flag(JsonElement element, string name) =>
         element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.True;
+
+    /// <summary>The texts of a list of texts; empty for a key that is missing or holds something else.</summary>
+    private static IReadOnlyList<string> Texts(JsonElement element, string name)
+    {
+        if (element.ValueKind != JsonValueKind.Object || !element.TryGetProperty(name, out var list) || list.ValueKind != JsonValueKind.Array)
+        {
+            return [];
+        }
+
+        var texts = new List<string>();
+        foreach (var item in list.EnumerateArray())
+        {
+            if (item.ValueKind == JsonValueKind.String && item.GetString() is { Length: > 0 } text)
+            {
+                texts.Add(text);
+            }
+        }
+
+        return texts;
+    }
 
     private static List<string> Keys(JsonElement element) =>
         [.. element.EnumerateObject().Select(property => property.Name).Order(StringComparer.Ordinal)];

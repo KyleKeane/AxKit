@@ -46,11 +46,34 @@ pages, hooks, sessions, accessibility, errors).
 - Not documented: the exact line a host writes for a message when it does not use the SDK, the reply format of a
   control request, whether Claude's own questions reach the permission tool, whether `--verbose` is required.
 
+Read again the same day for the cases of section 3 that were still missing (the headless page, sessions, the CLI
+reference, commands, and the Agent SDK's pages on permissions, user input and streaming):
+
+- Slash commands: "User-invoked skills and custom commands work"; "Built-in commands that only run in the terminal
+  interface, such as /login, aren't available"; `/model`, `/effort` and a few others "accept the value as an
+  argument". The start line lists the commands a run takes. Not documented: that a message written on standard
+  input is run as a command when it starts with a slash, and what `/clear` does to the session.
+- Sessions: a session of a `-p` run is resumed by its id from anywhere (`--resume <id>`), and "Claude Code leaves
+  sessions created with claude -p or the Agent SDK out of the session picker and out of claude --continue". So the
+  interactive program and a stream hand a conversation to each other by its id, and by nothing else. Not documented:
+  whether the earlier conversation is written again as lines.
+- `--replay-user-messages`: "Re-emit user messages from stdin back on stdout for acknowledgment."
+- A yes that lasts: documented for the Agent SDK's callback, as an answer that carries `updatedPermissions`, a rule
+  with a destination, of which `session` is written to no file. Not documented: whether the raw permission tool's
+  answer takes the same field, and whether its question brings ready-made suggestions.
+- The requests a host may write beside the interrupt (the permission mode, the model) are documented as methods of
+  the SDK only; their lines are not.
+- A status note says `compacting` while Claude Code shortens the conversation and nothing when that is over; a
+  note of its own marks the boundary.
+- Stability: no page promises the lines' shape. The start line's `capabilities` are there "to feature-detect instead
+  of comparing version strings", and unknown values are to be ignored.
+
 ## 3. What was measured
 
-`tools/ClaudeProbe stream` plays eleven cases, each a process of its own in a folder under the temporary folder,
-with the smallest model, no session saved, and no MCP server but its own stand-in permission tool. It prints kinds,
-names and times only: never a text Claude wrote, a path or an id. Every case passed on 2026-11-17.
+`tools/ClaudeProbe stream` plays twenty cases, each a process of its own in a folder under the temporary folder,
+with the smallest model, no session saved (but in the one case that takes a session up again, which deletes its
+session's file afterwards), and no MCP server but its own stand-in permission tool. It prints kinds, names and times
+only: never a text Claude wrote, a path or an id. Every case passed on 2026-11-17. The first eleven:
 
 - **turn**: one message, one reply, the turn's end. The process was up 0.7 s after its start and the turn over 1 s
   later. Without `--verbose` the run ends at once with exit code 1 and a line that says so.
@@ -79,6 +102,37 @@ names and times only: never a text Claude wrote, a path or an id. Every case pas
 - **unknown-model**: a failure looks like this: the error's words as a text line, a turn's end marked failed with
   Claude Code's word `api_error`, exit code 1.
 
+The nine added the same day, for what section 6 had listed as not yet measured:
+
+- **long-reply**: a reply of about 300 words came in some 160 pieces, the first 1.6 s after the start, never more
+  than about a ninth of a second apart, at close to 500 characters a second; the whole message's line followed 5 ms
+  after the last piece. That is some ten times the pace of speech: a reply is whole long before it can be heard.
+- **resume**: a second process started with `--resume` and the session's id knew what the first had been told, and
+  its start line named the same session. Nothing of the earlier conversation was written again: no line of the
+  user's, no reply. What a window shows of an older conversation has to come from somewhere else.
+- **replay**: with `--replay-user-messages` the message came back as a line of the user's, but only with the reply,
+  some 3 ms before it. It acknowledges; it is no early sign that the message was taken.
+- **continue-nothing**: `--continue` in a folder with no session started a new one and answered. No error, where the
+  interactive program says that there is nothing to continue and ends.
+- **interrupt-idle**: an interrupt with no turn running is answered as done and changes nothing; the next message
+  is answered.
+- **mode**: the permission mode set by the host (the interactive program's Shift+Tab) was taken 0.6 s after the
+  start, before any message; a status note followed, the next start line named the new mode, and a file was then
+  written without the permission tool being asked.
+- **permission-always**: the raw permission tool's answer with a rule of the session's (`updatedPermissions`, the
+  destination `session`) held: two files written, the tool asked once. The question itself brings three keys, the
+  tool's name, its input and the call's id, and no suggestion: the rule is the host's to write.
+- **slash-command**: a message that is a slash command is run as that command, with no call of the model. `/context`
+  gave its print as a text of Claude's and a line that ends it like a turn, with no word for how it ended, 5 ms
+  after the start line. `/model` with a name answered with one short text. `/clear` gave a line of a kind of its own
+  that says the conversation was emptied, and the next start line named a new session. The start line listed 68
+  commands on the development computer, the user's own among them.
+- **compact**: `/compact` gave a status note that says compacting, 3.6 s later a status note that says nothing, then
+  a note that marks the boundary and a line that ends it; the word given before it was still known after.
+
+Seen across all cases: the start line comes at the beginning of every turn, not once at the process's start; and
+every case ran in a folder Claude Code had never seen, and none was asked whether the folder is trusted.
+
 The shape of every kind of line seen, key names without values, is `stream-shape.json` beside this page, written by
 the probe. `tools/upstream.ps1 -Verify claude` runs the probe with the other checks of Claude Code and writes the
 file again, so a new version shows what it changed as a diff.
@@ -87,7 +141,10 @@ file again, so a new version shows what it changed as a diff.
 
 The kinds are those of `docs/axKit/families.json`.
 
-- `ready`: the `Started` line, with Claude Code's version and the permission mode in force.
+- `ready`: the process being up. The `Started` line, with Claude Code's version, the permission mode in force and
+  the session's id, comes with each turn, the first included, so it cannot say ready before the first message.
+- `program-said`: a status note (compacting, and when that is over), the note that the conversation was emptied,
+  and the permission mode a status note or a start line names after a change.
 - `working`: from the message written to the turn's end; nothing to infer from a spinner.
 - `responding`: the first line of a turn that is Claude's, or with pieces, the first piece.
 - `line` and `reply-spoken`: a `Text` part, whole, in order. A reply between two tool calls is a line of its own.
@@ -128,9 +185,28 @@ It would need:
   start;
 - an answer to what the interactive program gives that the stream does not, before anything is taken away.
 
-Not yet measured, and to be measured before any of it is built: compaction, a slash command sent as a message, a
-session resumed from the interactive program and back, a long reply's pieces against the speed of speech, a
-permission answered "always", and two hours of real use.
+Measured since (section 3, the nine cases added on 2026-11-17): compaction, slash commands sent as messages, a
+session taken up again, a long reply's pieces against the speed of speech, a permission answered "always", the
+permission mode set by the host, an interrupt with nothing running, `--continue` with nothing to continue.
+
+What those measurements ask of a window over the stream, beyond the list above:
+
+- **The older conversation.** A session taken up again writes nothing of what was said before. The window shows it
+  from the session's file, which axClaude reads already (`ClaudeCodeTranscript`), or keeps what it showed.
+- **The folder's trust.** The interactive program asks before it works in a folder it has not seen; the stream
+  does not. A window over the stream asks that question itself, before the first start in a folder, since a
+  project's own settings can name programs to run.
+- **Ready.** The start line comes with each turn, so it cannot say that Claude Code is ready before the first
+  message. The process being up is the sign; a request of the host's is answered within about 0.6 s of the start.
+- **Sent.** The acknowledgement of a message comes with its reply, so "Sent" is said when the line is written.
+- **Handing a conversation over.** A session of the stream is left out of the interactive program's own list and of
+  its `--continue`: each side takes the other's conversation up by the session's id, which the start line gives.
+- **`/login`** and the other commands of the terminal alone are not there: signing in stays the interactive
+  program's.
+
+Still not measured: a session handed from the interactive program to the stream and back (the documentation says
+by its id; the probe has only taken a stream's session up with a stream), and two hours of real use, which need
+the mode to exist.
 
 ## 7. Ways to go, for the maintainer to choose
 

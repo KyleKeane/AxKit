@@ -7,9 +7,11 @@
 //
 //   probe stream [--only <case>] [--shape <file>] [--keep <folder>] [--model <name>]
 //
-// Every run uses the smallest model unless --model says otherwise, saves no session (ClaudeCodeStream.NoSessionOption),
-// loads no MCP server but its own stand-in permission tool, and works in a folder of its own under the temporary
-// folder, deleted at the end. --keep copies the raw lines there for the developer's eyes; they hold what Claude wrote
+// Every run uses the smallest model unless --model says otherwise, saves no session (ClaudeCodeStream.NoSessionOption;
+// the one case that takes a session up again saves it, and the probe deletes that session's file from Claude Code's
+// store when the case is over), loads no MCP server but its own stand-in permission tool, and works in a folder of
+// its own under the temporary folder, deleted at the end. A yes that lasts is only ever a rule of the session's: no
+// case writes a settings file, and none uses a mode that asks nothing. --keep copies the raw lines there for the developer's eyes; they hold what Claude wrote
 // and the session's ids, and are never committed.
 //
 // The stand-in permission tool is this program again, "probe permission-tool": a server of one MCP tool over standard
@@ -20,6 +22,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using AxClaude.Core.Record;
 using AxClaude.Core.Streaming;
 using AxKit.Core;
 
@@ -44,10 +47,24 @@ internal static class StreamProbe
         public bool Says(string word) => Parts.Any(part => part.Kind == StreamKind.Text && part.Text.Contains(word, StringComparison.OrdinalIgnoreCase));
 
         public IEnumerable<StreamLine> Ends => Lines.Select(entry => entry.Line).Where(line => line.Has(StreamKind.Ended));
+
+        /// <summary>The session's id as the first start line gave it; kept in memory for a second process to take up, never printed.</summary>
+        public string Session => Lines.Select(entry => entry.Line.Session).FirstOrDefault(id => id.Length > 0) ?? string.Empty;
+
+        /// <summary>The slash commands the start line listed. The user's own are among them: only asked about by a name the probe gives, never printed as a list.</summary>
+        public IReadOnlyList<string> Commands => Lines.Select(entry => entry.Line.Commands).FirstOrDefault(list => list.Count > 0) ?? [];
+
+        public bool Noted(string subtype) => Parts.Any(part => part.Kind == StreamKind.Note && part.Text == subtype);
     }
 
-    /// <summary>One case: its options beside the stream's own, how the permission tool answers (empty: no tool), its steps, what must hold (each a sentence said when it does not), and what is only reported.</summary>
-    private sealed record Case(string Name, string What, string[] Options, string Permission, Step[] Steps, Func<Outcome, IEnumerable<string>> Problems, Func<Outcome, IEnumerable<string>>? Findings = null, int LimitSeconds = 90);
+    /// <summary>
+    /// One case: its options beside the stream's own, how the permission tool answers (empty: no tool), its steps, what
+    /// must hold (each a sentence said when it does not), and what is only reported. <see cref="Keeps"/>: the session is
+    /// saved in Claude Code's store, for a case that takes it up again; the probe deletes the session's file when the
+    /// case is over. <see cref="Next"/>: a second process played after this one in the same folder, made from what
+    /// the first saw.
+    /// </summary>
+    private sealed record Case(string Name, string What, string[] Options, string Permission, Step[] Steps, Func<Outcome, IEnumerable<string>> Problems, Func<Outcome, IEnumerable<string>>? Findings = null, int LimitSeconds = 90, bool Keeps = false, Func<Outcome, Case>? Next = null);
 
     private static Step Say(string text, Func<StreamLine, bool>? when = null, int delayMs = 0, string? what = null) =>
         new(when, delayMs, ClaudeCodeStream.UserLine(text), what ?? "a message");
@@ -158,7 +175,192 @@ internal static class StreamProbe
             _ => [],
             o => [$"exit code {o.ExitCode}; turns ended: {o.Ends.Count()}, failed: {o.Ends.Count(end => end.Failed)}; lines read: {o.Lines.Count}", "Claude Code's own notes seen: " + Notes(o)],
             LimitSeconds: 60),
+
+        // ---- What docs/axClaude/stream.md, section 6, listed on 2026-11-17 as not yet measured ----
+
+        new("long-reply", "a long reply's pieces against the clock", [ClaudeCodeStream.PartialOption], string.Empty,
+            [Say("Write about 300 words on lighthouses, in plain sentences, with no list and no heading."), Close(Ended)],
+            o => Unless(o.Count(StreamKind.Delta) > 0, "pieces should arrive before the whole message")
+                .Concat(Unless(o.Ends.Any() && !o.Ends.Last().Failed, "the turn should end well")),
+            o => [Pieces(o)],
+            LimitSeconds: 120),
+
+        new("resume", "a saved session taken up again by a second process", [], string.Empty,
+            [Say("Remember this word for later: kiwi. Reply with exactly: noted"), Close(Ended)],
+            o => Unless(o.Session.Length > 0, "the start line should name the session")
+                .Concat(Unless(o.Ends.Any() && !o.Ends.Last().Failed, "the first turn should end well")),
+            Keeps: true,
+            Next: first => new("resume, the second process", "the same session, named by its id", [ClaudeCodeStream.ResumeOption, first.Session], string.Empty,
+                [Say("Which word did I ask you to remember? Reply with that word alone."), Close(Ended)],
+                o => Unless(o.Says("kiwi"), "the second process should know the word given to the first"),
+                o => [$"the session's id was the same: {(o.Session == first.Session ? "yes" : "no")}; the first run's reply came again as a line: {(o.Says("noted") ? "yes" : "no")}; lines of the user's before the answer: {o.Parts.Count(part => part.Kind == StreamKind.Note && part.Text == "user text")}; the process was up after {StartedMs(o)} ms"],
+                Keeps: true)),
+
+        new("replay", "each message written back as an acknowledgement", [ClaudeCodeStream.ReplayOption], string.Empty,
+            [Say("Reply with exactly: ok"), Close(Ended)],
+            o => Unless(o.Says("ok"), "the reply should arrive"),
+            o => [$"a line of the user's came back before the reply: {(InOrder(o, StreamKind.Note, StreamKind.Text) && o.Noted("user text") ? "yes" : "no")}, {UserTextMs(o)} ms after the start"]),
+
+        new("continue-nothing", "taking up the last session in a folder that has none (reported)", [ClaudeCodeStream.ContinueOption], string.Empty,
+            [Say("Reply with exactly: ok"), Close(Ended)],
+            _ => [],
+            o => [$"exit code {o.ExitCode}; the process said it was up: {(o.Count(StreamKind.Started) > 0 ? "yes" : "no")}; turns ended: {o.Ends.Count()}, failed: {o.Ends.Count(end => end.Failed)}; the reply arrived: {(o.Says("ok") ? "yes" : "no")}", "Claude Code's own notes seen: " + Notes(o)],
+            LimitSeconds: 60),
+
+        new("interrupt-idle", "an interrupt while no turn runs", [], string.Empty,
+            [
+                Say("Reply with exactly: ok"),
+                new(Ended, 300, ClaudeCodeStream.InterruptLine("probe-2"), "an interrupt, with nothing running"),
+                Say("Reply with exactly: after", line => line.Has(StreamKind.Control), 300, "a message after it"),
+                Close(Ended),
+            ],
+            o => Unless(o.Parts.Any(part => part.Kind == StreamKind.Control && part.Text == "probe-2"), "the interrupt should be answered with its id")
+                .Concat(Unless(o.Says("after"), "the process should answer a message after the interrupt"))
+                .Concat(Unless(o.ExitCode == 0, $"the process ended with code {o.ExitCode}")),
+            o => [$"the interrupt was {(o.Parts.Any(part => part.Kind == StreamKind.Control && part.Text == "probe-2" && !part.Error) ? "taken" : "refused")}; turns ended: {o.Ends.Count()}, failed: {o.Ends.Count(end => end.Failed)}"]),
+
+        new("mode", "the permission mode changed by the host, as Shift+Tab does in the interactive program", Asking, "deny",
+            [
+                new(null, 0, ClaudeCodeStream.ModeLine("probe-3", "acceptEdits"), "the permission mode set to acceptEdits"),
+                Say("Use the Write tool to create a file named probe-mode.txt in the current folder with the content hi. Then reply with exactly: written", line => line.Has(StreamKind.Control), 200),
+                Close(Ended),
+            ],
+            o => Unless(o.Parts.Any(part => part.Kind == StreamKind.Control && part.Text == "probe-3"), "the request should be answered with its id"),
+            o => [$"the request was {(o.Parts.Any(part => part.Kind == StreamKind.Control && part.Text == "probe-3" && !part.Error) ? "taken" : "refused")}; the file was made without the permission tool being asked: {(File.Exists(Path.Combine(o.Folder, "probe-mode.txt")) && !o.Asked.Contains("Write") ? "yes" : "no")} (asked about: {(o.Asked.Count == 0 ? "nothing" : string.Join(", ", o.Asked))})", "Claude Code's own notes seen: " + Notes(o)]),
+
+        new("permission-always", "a yes for the rest of the session: the same tool is not asked about again", Asking, "always",
+            [Say("Use the Write tool to create a file named always-1.txt in the current folder with the content hi. After that, use the Write tool again to create a file named always-2.txt with the content hi. Then reply with exactly: both written"), Close(Ended)],
+            o => Unless(File.Exists(Path.Combine(o.Folder, "always-1.txt")) && File.Exists(Path.Combine(o.Folder, "always-2.txt")), "both files should be made"),
+            o => [$"the permission tool was asked about Write {o.Asked.Count(tool => tool == "Write")} time(s) for two files (1: the first yes held for the session)"]),
+
+        // Measured 2026-11-17: a message that is a slash command is run as that command, with no call of the model:
+        // what it prints comes as a text of Claude's, and a line ends it as a turn, with no word for how it ended.
+        new("slash-command", "slash commands written as messages: one that prints, the model, a new conversation", [], string.Empty,
+            [
+                Say("/context", what: "the slash command /context"),
+                Say("/model haiku", Ended, 200, "the slash command /model with a name"),
+                Say("/clear", Ended, 200, "the slash command /clear"),
+                Say("Reply with exactly: ok", Ended, 200, "a message after them"),
+                Close(Ended),
+            ],
+            o => Unless(o.Ends.Count() == 4 && !o.Ends.Any(end => end.Failed), $"four turns should end well, one for each command and the message; {o.Ends.Count()} ended, {o.Ends.Count(end => end.Failed)} failed")
+                .Concat(Unless(o.Count(StreamKind.Text) >= 2, "the command that prints and the message should each bring a text"))
+                .Concat(Unless(o.Says("ok"), "the message after the commands should be answered")),
+            o => [$"the start line lists {o.Commands.Count} slash commands; among them compact: {Listed(o, "compact")}, clear: {Listed(o, "clear")}, model: {Listed(o, "model")}, context: {Listed(o, "context")}, cost: {Listed(o, "cost")}",
+                $"ids of the session seen on start lines: {o.Lines.Select(entry => entry.Line.Session).Where(id => id.Length > 0).Distinct().Count()} (2: /clear began a new session)",
+                "Claude Code's own notes seen: " + Notes(o)],
+            LimitSeconds: 120),
+
+        // Measured 2026-11-17: a status note when the compaction starts and one when it is over, then the boundary.
+        new("compact", "the conversation compacted by its slash command, and still known after", [], string.Empty,
+            [
+                Say("Remember this word for later: mango. Reply with exactly: noted"),
+                Say("/compact", Ended, 200, "the slash command /compact"),
+                Say("Which word did I ask you to remember? Reply with that word alone.", Ended, 300, "a message after the compaction"),
+                Close(Ended),
+            ],
+            o => Unless(o.Noted("compact_boundary"), "a note should mark where the compaction cut")
+                .Concat(Unless(o.Lines.Any(entry => entry.Line.Status == "compacting"), "a status note should say that Claude Code is compacting"))
+                .Concat(Unless(o.Says("mango"), "the word given before the compaction should still be known"))
+                .Concat(Unless(o.Ends.Count() == 3 && !o.Ends.Any(end => end.Failed), $"three turns should end well; {o.Ends.Count()} ended")),
+            o => [$"the compaction took {CompactionMs(o)} ms from its status note to its boundary"],
+            LimitSeconds: 150),
     ];
+
+    /// <summary>From the status note that says compacting to the note of the boundary.</summary>
+    private static long CompactionMs(Outcome outcome)
+    {
+        var from = outcome.Lines.FirstOrDefault(entry => entry.Line.Status == "compacting").Ms;
+        var to = outcome.Lines.FirstOrDefault(entry => entry.Line.Parts.Any(part => part.Kind == StreamKind.Note && part.Text == "compact_boundary")).Ms;
+        return to - from;
+    }
+
+    private static string Listed(Outcome outcome, string command) => outcome.Commands.Contains(command) ? "yes" : "no";
+
+    private static long StartedMs(Outcome outcome) => outcome.Lines.FirstOrDefault(entry => entry.Line.Has(StreamKind.Started)).Ms;
+
+    private static long UserTextMs(Outcome outcome) =>
+        outcome.Lines.FirstOrDefault(entry => entry.Line.Parts.Any(part => part.Kind == StreamKind.Note && part.Text == "user text")).Ms;
+
+    /// <summary>A reply's pieces in numbers: how many, how much text, when the first and the last came, the longest wait between two, and the pace.</summary>
+    private static string Pieces(Outcome outcome)
+    {
+        var pieces = outcome.Lines
+            .Select(entry => (entry.Ms, Characters: entry.Line.Parts.Where(part => part.Kind == StreamKind.Delta).Sum(part => part.Text.Length)))
+            .Where(piece => piece.Characters > 0)
+            .ToList();
+        if (pieces.Count < 2)
+        {
+            return $"pieces with text: {pieces.Count}";
+        }
+
+        long longest = 0;
+        for (var i = 1; i < pieces.Count; i++)
+        {
+            longest = Math.Max(longest, pieces[i].Ms - pieces[i - 1].Ms);
+        }
+
+        var characters = pieces.Sum(piece => piece.Characters);
+        var span = pieces[^1].Ms - pieces[0].Ms;
+        var whole = outcome.Lines.FirstOrDefault(entry => entry.Line.Has(StreamKind.Text)).Ms;
+        return $"pieces with text: {pieces.Count}, {characters} characters in all; the first {pieces[0].Ms} ms after the start, the last at {pieces[^1].Ms} ms; "
+            + $"the longest wait between two pieces {longest} ms; {(span > 0 ? characters * 1000 / span : 0)} characters a second while it was written; the whole message's line at {whole} ms";
+    }
+
+    /// <summary>
+    /// The sessions a case saved are taken out of Claude Code's store again. Each is the probe's own: the session of
+    /// a folder under the temporary folder that this run made, found by the id its start line gave and by nothing else.
+    /// </summary>
+    private static void Forget(string folder, List<string> sessions)
+    {
+        if (sessions.Count == 0)
+        {
+            return;
+        }
+
+        var environment = new Dictionary<string, string>();
+        if (Environment.GetEnvironmentVariable(ConfigFolderVariable) is { Length: > 0 } configured)
+        {
+            environment[ConfigFolderVariable] = configured;
+        }
+
+        var removed = 0;
+        foreach (var projects in ClaudeCodeTranscript.ProjectsFolders(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), environment, null))
+        {
+            var project = Path.Combine(projects, ClaudeCodeTranscript.ProjectFolderName(folder));
+            if (!Directory.Exists(project))
+            {
+                continue;
+            }
+
+            foreach (var session in sessions.Distinct())
+            {
+                var file = Path.Combine(project, session + ClaudeCodeTranscript.SessionFileExtension);
+                if (ClaudeCodeTranscript.IsSessionFile(file, [projects]) && File.Exists(file))
+                {
+                    File.Delete(file);
+                    removed++;
+                }
+
+                // What Claude Code keeps beside a session under its id (a subagent's lines, large results).
+                var beside = Path.Combine(project, session);
+                if (Directory.Exists(beside))
+                {
+                    Directory.Delete(beside, recursive: true);
+                }
+            }
+
+            if (!Directory.EnumerateFileSystemEntries(project).Any())
+            {
+                Directory.Delete(project);
+            }
+        }
+
+        Console.WriteLine($"  the probe's own saved sessions were taken out of Claude Code's store again: {removed} of {sessions.Distinct().Count()}");
+    }
+
+    /// <summary>The variable that names Claude Code's configuration folder when the user moved it.</summary>
+    private const string ConfigFolderVariable = "CLAUDE_CONFIG_DIR";
 
     public static int Run(string[] args)
     {
@@ -205,33 +407,51 @@ internal static class StreamProbe
                 },
             }));
 
-            foreach (var c in Cases.Where(c => only is null || c.Name == only))
+            foreach (var first in Cases.Where(c => only is null || c.Name == only))
             {
-                Console.WriteLine($"== {c.Name}: {c.What}");
-                var folder = Path.Combine(work, c.Name);
+                var folder = Path.Combine(work, first.Name);
                 Directory.CreateDirectory(folder);
-                // A case's own model option (the one that does not exist) goes last, so that it wins.
-                string[] options = [.. ClaudeCodeStream.Options, ClaudeCodeStream.NoSessionOption, ClaudeCodeProgram.StrictMcpConfigOption, "--mcp-config", config, "--model", model, .. c.Options];
-                var outcome = Play(claude, options, c, folder, shapes, blocks, asked, keep);
-                version = outcome.Lines.Select(entry => entry.Line.Version).FirstOrDefault(v => v.Length > 0) ?? version;
-                var problems = outcome.TimedOut ? new List<string> { $"no end within {c.LimitSeconds} s; the process was ended" } : c.Problems(outcome).ToList();
-                foreach (var finding in c.Findings?.Invoke(outcome) ?? [])
+                var sessions = new List<string>();
+                // A case, and then the process it asks for after it, in the same folder.
+                for (var c = first; c is not null;)
                 {
-                    Console.WriteLine("  found: " + finding);
+                    Console.WriteLine($"== {c.Name}: {c.What}");
+                    // A case's own model option (the one that does not exist) goes last, so that it wins.
+                    string[] options = [.. ClaudeCodeStream.Options, .. c.Keeps ? Array.Empty<string>() : [ClaudeCodeStream.NoSessionOption], ClaudeCodeProgram.StrictMcpConfigOption, "--mcp-config", config, "--model", model, .. c.Options];
+                    var outcome = Play(claude, options, c, folder, shapes, blocks, asked, keep);
+                    version = outcome.Lines.Select(entry => entry.Line.Version).FirstOrDefault(v => v.Length > 0) ?? version;
+                    if (c.Keeps && outcome.Session.Length > 0)
+                    {
+                        sessions.Add(outcome.Session);
+                    }
+
+                    var problems = outcome.TimedOut ? new List<string> { $"no end within {c.LimitSeconds} s; the process was ended" } : c.Problems(outcome).ToList();
+                    foreach (var finding in c.Findings?.Invoke(outcome) ?? [])
+                    {
+                        Console.WriteLine("  found: " + finding);
+                    }
+
+                    if (problems.Count == 0)
+                    {
+                        Console.WriteLine("  passed");
+                    }
+                    else
+                    {
+                        if (!failed.Contains(first.Name))
+                        {
+                            failed.Add(first.Name);
+                        }
+
+                        foreach (var problem in problems)
+                        {
+                            Console.WriteLine("  FAILED: " + problem);
+                        }
+                    }
+
+                    c = problems.Count == 0 && c.Next is not null ? c.Next(outcome) : null;
                 }
 
-                if (problems.Count == 0)
-                {
-                    Console.WriteLine("  passed");
-                }
-                else
-                {
-                    failed.Add(c.Name);
-                    foreach (var problem in problems)
-                    {
-                        Console.WriteLine("  FAILED: " + problem);
-                    }
-                }
+                Forget(folder, sessions);
             }
         }
         finally
@@ -404,13 +624,21 @@ internal static class StreamProbe
         {
             foreach (var entry in File.ReadAllLines(log))
             {
-                // "tool<TAB>key,key": written by the permission tool below.
+                // "tool<TAB>key,key<TAB>key,key": written by the permission tool below: the tool, its input's keys, the question's own keys.
                 var parts = entry.Split('\t');
                 tools.Add(parts[0]);
                 Add(asked, parts[0], parts.Length > 1 ? parts[1].Split(',', StringSplitOptions.RemoveEmptyEntries) : []);
+                if (parts.Length > 2)
+                {
+                    Add(asked, "(the question itself)", parts[2].Split(',', StringSplitOptions.RemoveEmptyEntries));
+                }
             }
 
             Console.WriteLine("  the permission tool was asked about: " + string.Join(", ", tools));
+            if (asked.TryGetValue("(the question itself)", out var own))
+            {
+                Console.WriteLine("  the question itself came with the keys: " + string.Join(", ", own));
+            }
         }
 
         if (keep is not null)
@@ -572,8 +800,10 @@ internal static class StreamProbe
         var hasInput = arguments.TryGetProperty("input", out var input) && input.ValueKind == JsonValueKind.Object;
         if (log is not null)
         {
+            // The tool asked about, the keys of its input, and the keys of the question itself (does it bring suggestions?): names, no value.
             var keys = hasInput ? string.Join(",", input.EnumerateObject().Select(property => property.Name).Order(StringComparer.Ordinal)) : string.Empty;
-            File.AppendAllText(log, tool + "\t" + keys + "\n");
+            var own = string.Join(",", arguments.EnumerateObject().Select(property => property.Name).Order(StringComparer.Ordinal));
+            File.AppendAllText(log, tool + "\t" + keys + "\t" + own + "\n");
         }
 
         if (!hasInput)
@@ -596,6 +826,12 @@ internal static class StreamProbe
             return ClaudeCodeStream.QuestionAnswer(input, answers);
         }
 
-        return mode == "deny" ? ClaudeCodeStream.DenyAnswer("The user said no.") : ClaudeCodeStream.AllowAnswer(input);
+        return mode switch
+        {
+            "deny" => ClaudeCodeStream.DenyAnswer("The user said no."),
+            // A yes for the rest of the session: a rule of the session's alone, written to no settings file.
+            "always" => ClaudeCodeStream.AlwaysAnswer(input, tool),
+            _ => ClaudeCodeStream.AllowAnswer(input),
+        };
     }
 }
