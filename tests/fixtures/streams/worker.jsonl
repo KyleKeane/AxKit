@@ -1,0 +1,21 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
+{"t":4,"k":"in","what":"message","text":"Use the Agent tool to start a general-purpose subagent whose whole task is to reply with exactly: from the worker. Then reply with exactly: handed over"}
+{"t":779,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1869,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Use the Agent tool to start a general-purpose subagent whose whole task is to reply with exactly: from the worker. Then reply with exactly: handed over"}}}
+{"t":1871,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"Agent","input":{"description":"Reply with fixed text","prompt":"Reply with exactly this text and nothing else: from the worker","subagent_type":"general-purpose"}}]}}}
+{"t":1889,"k":"out","line":{"type":"system","subtype":"background_tasks_changed","tasks":[{"task_type":"local_agent","subagent_type":"general-purpose","description":"Reply with fixed text","id":"task-1","tool_use_id":null}]}}
+{"t":1890,"k":"out","line":{"type":"system","subtype":"task_started","description":"Reply with fixed text","subagent_type":"general-purpose","is_backgrounded":true,"spawn_depth":1,"task_type":"local_agent","task_id":"task-1","tool_use_id":"call-1"}}
+{"t":1902,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1"}]}}}
+{"t":1916,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":2779,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"I started the general-purpose subagent with the instruction to reply with exactly \"from the worker.\" It is running in the background, so its result hasn't arrived yet.\n\nhanded over"}]}}}
+{"t":2799,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":2,"subtype":"success","result":"I started the general-purpose subagent with the instruction to reply with exactly \"from the worker.\" It is running in the background, so its result hasn't arrived yet.\n\nhanded over","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":2842,"k":"out","line":{"type":"assistant","parent_tool_use_id":"call-1","message":{"content":[{"type":"thinking"}]}}}
+{"t":2862,"k":"out","line":{"type":"assistant","parent_tool_use_id":"call-1","message":{"content":[{"type":"text","text":"from the worker"}]}}}
+{"t":2909,"k":"out","line":{"type":"system","subtype":"task_updated","task_id":"task-1","patch":{"status":"completed"}}}
+{"t":2910,"k":"out","line":{"type":"system","subtype":"task_notification","status":"completed","summary":"from the worker","task_id":"task-1","tool_use_id":"call-1"}}
+{"t":2911,"k":"out","line":{"type":"system","subtype":"background_tasks_changed","tasks":[]}}
+{"t":2923,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":3644,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"from the worker"}]}}}
+{"t":3658,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"from the worker","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":27801,"k":"in","what":"closed"}
+{"t":27801,"k":"exit","code":0}

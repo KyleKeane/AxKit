@@ -1,0 +1,9 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
+{"t":5,"k":"in","what":"message","text":"Write a short answer about the colour blue in Markdown: a level-two heading, two sentences with one word in bold, a list of three items, a second level-two heading, and one line of code in a fenced block. Use no tool."}
+{"t":750,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1946,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Write a short answer about the colour blue in Markdown: a level-two heading, two sentences with one word in bold, a list of three items, a second level-two heading, and one line of code in a fenced block. Use no tool."}}}
+{"t":1948,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"# Blue\n\nBlue is the colour of a clear sky and deep ocean, and it is often linked with calm and trust. **Designers** use it widely because it reads as stable and dependable.\n\n- Sky and sea\n- Calm and trust\n- Common in logos\n\n## Example\n\n```css\ncolor: blue;\n```"}]}}}
+{"t":1961,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1970,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"# Blue\n\nBlue is the colour of a clear sky and deep ocean, and it is often linked with calm and trust. **Designers** use it widely because it reads as stable and dependable.\n\n- Sky and sea\n- Calm and trust\n- Common in logos\n\n## Example\n\n```css\ncolor: blue;\n```","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":1970,"k":"in","what":"closed"}
+{"t":1970,"k":"exit","code":0}

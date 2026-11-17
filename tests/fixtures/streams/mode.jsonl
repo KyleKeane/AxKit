@@ -1,0 +1,14 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"deny"}
+{"t":5,"k":"in","what":"mode","id":"host-2","mode":"acceptEdits"}
+{"t":564,"k":"out","line":{"type":"control_response","response":{"subtype":"success","request_id":"host-2"}}}
+{"t":564,"k":"out","line":{"type":"system","subtype":"status","permissionMode":"acceptEdits"}}
+{"t":776,"k":"in","what":"message","text":"Use the Write tool to create a file named probe-mode.txt in the current folder with the content hi. Then reply with exactly: written"}
+{"t":915,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"acceptEdits","session_id":"session-1"}}
+{"t":1892,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Use the Write tool to create a file named probe-mode.txt in the current folder with the content hi. Then reply with exactly: written"}}}
+{"t":1895,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"Write","input":{"file_path":"C:\\work\\probe-mode.txt","content":"hi"}}]}}}
+{"t":1925,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1954,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1"}]}}}
+{"t":2490,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"written"}]}}}
+{"t":2501,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":2,"subtype":"success","result":"written","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":2501,"k":"in","what":"closed"}
+{"t":2501,"k":"exit","code":0}

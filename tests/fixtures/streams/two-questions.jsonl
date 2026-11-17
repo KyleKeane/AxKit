@@ -1,0 +1,13 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
+{"t":4,"k":"in","what":"message","text":"Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry). Then reply with exactly: thanks"}
+{"t":768,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":2141,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry). Then reply with exactly: thanks"}}}
+{"t":2144,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"AskUserQuestion","input":{"questions":[{"question":"What is your favourite colour?","header":"Colour","multiSelect":false,"options":[{"label":"Red","description":"Red"},{"label":"Green","description":"Green"},{"label":"Blue","description":"Blue"}]},{"question":"Which fruits do you like?","header":"Fruits","multiSelect":true,"options":[{"label":"Apple","description":"Apple"},{"label":"Banana","description":"Banana"},{"label":"Cherry","description":"Cherry"}]}]}}]}}}
+{"t":2159,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":2162,"k":"ask","tool":"AskUserQuestion","call":"call-1","input":{"questions":[{"question":"What is your favourite colour?","header":"Colour","multiSelect":false,"options":[{"label":"Red","description":"Red"},{"label":"Green","description":"Green"},{"label":"Blue","description":"Blue"}]},{"question":"Which fruits do you like?","header":"Fruits","multiSelect":true,"options":[{"label":"Apple","description":"Apple"},{"label":"Banana","description":"Banana"},{"label":"Cherry","description":"Cherry"}]}]}}
+{"t":2162,"k":"answer","behavior":"answered"}
+{"t":2189,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1"}]}}}
+{"t":2731,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"thanks"}]}}}
+{"t":2744,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":2,"subtype":"success","result":"thanks","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":2744,"k":"in","what":"closed"}
+{"t":2744,"k":"exit","code":0}

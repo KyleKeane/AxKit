@@ -1,0 +1,63 @@
+# Stream fixtures
+
+Each `*.jsonl` file here is one recorded case of Claude Code's non-interactive stream (`claude -p --input-format stream-json --output-format stream-json --verbose`), for the tests that replay the stream's model (docs/axClaude/stream-mode.md SM-10.1). They are written by the probe and never by hand:
+
+```
+dotnet build tools\ClaudeProbe -c Release -o <scratch>\claude-probe
+<scratch>\claude-probe\ClaudeProbe.exe stream --record tests\fixtures\streams [--only <case>]
+```
+
+Every case is played against the installed Claude Code with the smallest model, with what axClaude's window will start it with: the stream's own options, each message sent back when it is taken (`--replay-user-messages`), and a permission tool for every question, which a stand-in answers as the case says. No session is saved.
+
+## What a file holds
+
+The first line is the recording's own: Claude Code's version, the day, and how the stand-in answered. Then one object a line, in the order of the clock, with `t`, the milliseconds since the process was started, and `k`:
+
+- `in`: what the host wrote. `what` is `message` (with its `text`), `interrupt` or `mode` (with the request's `id`), or `closed` for standard input closed.
+- `out`: a line Claude Code wrote, as `line`, reduced to the fields named for its kind in `tools/ClaudeProbe/StreamFixtureMaker.cs`. A kind not named there keeps its type alone.
+- `ask` and `answer`: the permission tool was asked about a `tool` with this `input`, and the stand-in answered `allow`, `deny`, `always`, or `answered` for a question of Claude's (the first option of each question).
+- `exit`: the process ended, with its `code`.
+
+## What a file does not hold
+
+The maker is the whitelist that makes a fixture safe to commit. A field it does not name is not kept. Ids are numbers in the order they were met (`session-1`, `call-1`, `task-1`). The folder a case ran in is `C:\work`. Of a tool's result only whether it failed is kept, and its text when it did. Thinking is kept as a kind without its text. The start line keeps the version, the permission mode and the session's number: nothing of the user's commands, servers, skills or paths. A file that still held an e-mail address, an account path, the account's or the computer's name would have been refused and deleted.
+
+## The cases
+
+| File | Shows |
+| :-- | :-- |
+| `turn` | One message, its reply, the turn's end. |
+| `two-turns` | A second message after the first turn's end: a start line for each turn. |
+| `headings` | A reply written in Markdown: two headings, a word in bold, a list, a fenced line of code, as one text. |
+| `tool` | A tool call the user allows: the call, the question to the permission tool, the result, the reply. |
+| `denied` | A tool call the user refuses: the result is an error with the answer's words, and the end counts the refusal. |
+| `always` | A yes for the rest of the session: two calls of the same tool, one question. |
+| `question` | A question of Claude's: the call carries the question, and so does the request to the permission tool. |
+| `two-questions` | Two questions in one call, the second with several answers allowed. |
+| `interrupt` | A running tool interrupted by the host, then a message that is answered. |
+| `mid-turn` | A second message written while a tool runs. |
+| `while-writing` | A second message written while a reply is being written. |
+| `mode` | The permission mode set by the host before the first message. |
+| `compact` | A turn, `/compact`, and a message after it. |
+| `clear` | A turn, `/clear`, and a message after it. |
+| `model` | `/model` with a name, which answers with one line, then a message. |
+| `worker` | Work handed to a subagent, and the turn Claude Code starts by itself when it hands back. |
+| `background` | A command run in the background, and the turn Claude Code starts by itself when it ends. |
+| `failure` | A model that does not exist: the error's words, a failed end, the process gone. |
+
+## What the recordings showed (Claude Code 2.1.327, 2026-11-17)
+
+These are what the model is built on. Each is in the files; none is taken from the documentation alone.
+
+- **The start line** comes at the beginning of every turn, also of a turn Claude Code starts by itself, and names the session and the permission mode.
+- **A message comes back** as a line of the user's marked as a replay, a few milliseconds before the first line of the reply it starts. It is no early sign that the message was taken.
+- **A message written while a tool runs** is taken up inside the running turn, after the tool's result: its replay line comes there, and one end line ends the turn for both messages (`mid-turn`).
+- **A message written while a reply is being written** is not taken into that turn. The turn ends, its end line saying that nothing waits, and a turn of its own starts some 16 ms later (`while-writing`). So the count of waiting messages on an end line cannot say whether another turn follows.
+- **A slash command** brings no replay of its own text. `/model` answers with one text of the assistant's and an end line that counts no turn (`num_turns` 0). `/clear` gives a line that says the conversation was emptied, a start line with a new session, and such an end line. `/compact` gives a status line that says compacting, some seconds later a status line that says nothing, a start line, the boundary, a line written in the user's place that holds the summary, a replay line that holds the command's own output in a tag, and such an end line.
+- **A permission question** reaches the permission tool some 25 to 40 ms after the line of the call. A no comes back as the call's result marked as an error, with the words the tool answered, and the turn's end names the tool refused.
+- **A question of Claude's** is a call of a tool of its own: the call's line carries the questions, each with its header, its options and whether several may be chosen, and the permission tool is asked with the same. Its result is a sentence for the model.
+- **An interrupt** is answered at once; the running tool's result comes back as an error, then a line of the user's that says the request was interrupted, then an end line marked as an error with Claude Code's word for it. The process answers the next message.
+- **Work in the background** is listed whole each time it changes: each task with its kind (a shell's command, an agent), its description and, for an agent, its type. A task's start, change and end come as lines of their own. When a task in the background ends, Claude Code starts a turn by itself: a start line, a reply, an end, with no line of the user's before it.
+- **A subagent's own lines** carry the id of the call that started it; the lines of the conversation itself carry none.
+- **A failure of the service** (a model that does not exist) is a text of the assistant's marked as an error with a word for its kind, an end line marked as an error, and the process ends with code 1.
+- **The permission mode** set by the host is answered, a status line names the new mode, and the next start line names it too.

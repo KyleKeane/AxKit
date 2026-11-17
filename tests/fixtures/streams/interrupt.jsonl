@@ -1,0 +1,20 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
+{"t":4,"k":"in","what":"message","text":"Run this command with the Bash tool: ping -n 20 127.0.0.1\nAfter it finishes, reply with exactly: finished"}
+{"t":771,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1664,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Run this command with the Bash tool: ping -n 20 127.0.0.1\nAfter it finishes, reply with exactly: finished"}}}
+{"t":1669,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"Bash","input":{"command":"ping -n 20 127.0.0.1","description":"Ping localhost 20 times"}}]}}}
+{"t":1693,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1695,"k":"ask","tool":"Bash","call":"call-1","input":{"command":"ping -n 20 127.0.0.1","description":"Ping localhost 20 times"}}
+{"t":1695,"k":"answer","behavior":"allow"}
+{"t":5181,"k":"in","what":"interrupt","id":"host-1"}
+{"t":5193,"k":"out","line":{"type":"control_response","response":{"subtype":"success","request_id":"host-1"}}}
+{"t":5206,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1","is_error":true,"content":"The user doesn't want to proceed with this tool use. The tool use was rejected (eg. if it was a file edit, the new_string was NOT written to the file). STOP what you are doing and wait for the user to tell you how to proceed. Correction to the text above: this call was stopped while running, not refused before it ran. It may have run in part or in full, and its changes may have been written. No pe…"}]}}}
+{"t":5207,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"[Request interrupted by user for tool use]"}]}}}
+{"t":5211,"k":"out","line":{"stop_reason":"tool_use","terminal_reason":"aborted_tools","is_error":true,"num_turns":3,"subtype":"error_during_execution","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":5525,"k":"in","what":"message","text":"Reply with exactly: still here"}
+{"t":5545,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":6158,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: still here"}}}
+{"t":6159,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"still here"}]}}}
+{"t":6181,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"still here","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":6181,"k":"in","what":"closed"}
+{"t":6181,"k":"exit","code":0}

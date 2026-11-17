@@ -1,0 +1,20 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
+{"t":4,"k":"in","what":"message","text":"Run this command with the Bash tool: ping -n 5 127.0.0.1\nAfter it finishes, reply with exactly: first done"}
+{"t":741,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1589,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Run this command with the Bash tool: ping -n 5 127.0.0.1\nAfter it finishes, reply with exactly: first done"}}}
+{"t":1595,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"Bash","input":{"command":"ping -n 5 127.0.0.1","description":"Ping localhost 5 times"}}]}}}
+{"t":1624,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1625,"k":"ask","tool":"Bash","call":"call-1","input":{"command":"ping -n 5 127.0.0.1","description":"Ping localhost 5 times"}}
+{"t":1625,"k":"answer","behavior":"allow"}
+{"t":3605,"k":"in","what":"message","text":"Reply with exactly: second answer"}
+{"t":5314,"k":"out","line":{"type":"system","subtype":"task_started","description":"Ping localhost 5 times","is_backgrounded":false,"task_type":"local_bash","task_id":"task-1","tool_use_id":"call-1"}}
+{"t":6447,"k":"out","line":{"type":"system","subtype":"task_notification","status":"completed","summary":"Ping localhost 5 times","task_id":"task-1","tool_use_id":"call-1"}}
+{"t":6456,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1","is_error":false}]}}}
+{"t":6469,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: second answer"}}}
+{"t":7256,"k":"out","line":{"type":"system","subtype":"thinking_tokens"}}
+{"t":7889,"k":"out","line":{"type":"system","subtype":"thinking_tokens"}}
+{"t":7891,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"thinking"}]}}}
+{"t":7911,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"second answer"}]}}}
+{"t":7930,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":2,"subtype":"success","result":"second answer","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":16948,"k":"in","what":"closed"}
+{"t":16948,"k":"exit","code":0}

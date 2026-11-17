@@ -40,6 +40,12 @@ internal static class StreamProbe
     /// <summary>What a case saw: each line with its time, the tools the permission tool was asked about, the exit code, the folder the case ran in.</summary>
     private sealed record Outcome(List<(long Ms, StreamLine Line)> Lines, List<string> Asked, int ExitCode, string Folder, bool TimedOut)
     {
+        /// <summary>When the case's process was started, in UTC ticks: what the permission tool's own times are counted from.</summary>
+        public long StartedUtcTicks { get; init; }
+
+        /// <summary>The permission tool's log of the case.</summary>
+        public string ToolLog { get; init; } = string.Empty;
+
         public IEnumerable<StreamPart> Parts => Lines.SelectMany(entry => entry.Line.Parts);
 
         public int Count(StreamKind kind) => Parts.Count(part => part.Kind == kind);
@@ -267,6 +273,116 @@ internal static class StreamProbe
             LimitSeconds: 150),
     ];
 
+    private static IEnumerable<string> EndedAtLeast(Outcome outcome, int turns) =>
+        Unless(outcome.Ends.Count() >= turns, $"{turns} turn(s) should end, {outcome.Ends.Count()} did");
+
+    /// <summary>
+    /// The cases recorded as stream fixtures (<c>--record</c>, docs/axClaude/stream-mode.md SM-10.1): what the
+    /// stream's model is built and tested from. Each is played with what the window will start Claude Code with: the
+    /// stream's own options, each message sent back when it is taken (<see cref="ClaudeCodeStream.ReplayOption"/>),
+    /// and the permission tool for every question, answered as the case says (allow, deny, always; a question of
+    /// Claude's gets the first option of each question). Their options here are added to those. What a case expects
+    /// is only that its turns end: what happened is the fixture, read through before it is committed. Nothing of them
+    /// prints an account, a path of the user's or a list of the user's own commands.
+    /// </summary>
+    private static readonly Case[] Recordings =
+    [
+        new("turn", "one message and its reply", [], "allow",
+            [Say("Reply with exactly: ok"), Close(Ended)], o => EndedAtLeast(o, 1)),
+
+        new("two-turns", "a second message after the first turn's end", [], "allow",
+            [Say("Reply with exactly: one"), Say("Reply with exactly: two", Ended), Close(Ended)], o => EndedAtLeast(o, 2)),
+
+        new("headings", "a reply written with headings, a list and code", [], "allow",
+            [Say("Write a short answer about the colour blue in Markdown: a level-two heading, two sentences with one word in bold, a list of three items, a second level-two heading, and one line of code in a fenced block. Use no tool."), Close(Ended)],
+            o => EndedAtLeast(o, 1)),
+
+        new("tool", "a tool call the user allows", [], "allow",
+            [Say("Run this command with the Bash tool: ping -n 2 127.0.0.1\nAfter it finishes, reply with exactly: pinged"), Close(Ended)], o => EndedAtLeast(o, 1)),
+
+        new("denied", "a tool call the user refuses", [], "deny",
+            [Say("Use the Write tool to create a file named probe-denied.txt in the current folder with the content hi. Then say in one short sentence whether it was created."), Close(Ended)],
+            o => EndedAtLeast(o, 1)),
+
+        new("always", "a yes for the rest of the session", [], "always",
+            [Say("Use the Write tool to create a file named always-1.txt in the current folder with the content hi. After that, use the Write tool again to create a file named always-2.txt with the content hi. Then reply with exactly: both written"), Close(Ended)],
+            o => EndedAtLeast(o, 1)),
+
+        new("question", "a question of Claude's", [], "allow",
+            [Say("Use the AskUserQuestion tool to ask me one question: which colour I prefer, with the options Red and Blue. Then reply with the colour I chose and nothing else."), Close(Ended)],
+            o => EndedAtLeast(o, 1)),
+
+        new("two-questions", "two questions in one call, the second with several answers", [], "allow",
+            [Say("Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry). Then reply with exactly: thanks"), Close(Ended)],
+            o => EndedAtLeast(o, 1)),
+
+        new("interrupt", "a running turn ended by the host, and a message after it", [], "allow",
+            [
+                Say("Run this command with the Bash tool: ping -n 20 127.0.0.1\nAfter it finishes, reply with exactly: finished"),
+                new(Calls, 3500, ClaudeCodeStream.InterruptLine("host-1"), "an interrupt"),
+                Say("Reply with exactly: still here", Ended, 300, "a message after the interrupt"),
+                Close(Ended),
+            ],
+            o => EndedAtLeast(o, 2)),
+
+        new("mid-turn", "a second message written while a tool runs", [], "allow",
+            [
+                Say("Run this command with the Bash tool: ping -n 5 127.0.0.1\nAfter it finishes, reply with exactly: first done"),
+                Say("Reply with exactly: second answer", Calls, 2000, "a second message, while the tool runs"),
+                Close(Ended, 9000),
+            ],
+            o => EndedAtLeast(o, 1), LimitSeconds: 120),
+
+        new("while-writing", "a second message written while a long reply is written", [], "allow",
+            [
+                Say("Write about 200 words on lighthouses, in plain sentences, with no list and no heading. Use no tool."),
+                Say("Reply with exactly: second", line => line.Has(StreamKind.Started), 1500, "a second message, while the reply is written"),
+                Close(Ended, 12000),
+            ],
+            o => EndedAtLeast(o, 1), LimitSeconds: 120),
+
+        new("mode", "the permission mode set by the host", [], "deny",
+            [
+                new(null, 0, ClaudeCodeStream.ModeLine("host-2", "acceptEdits"), "the permission mode set to acceptEdits"),
+                Say("Use the Write tool to create a file named probe-mode.txt in the current folder with the content hi. Then reply with exactly: written", line => line.Has(StreamKind.Control), 200),
+                Close(Ended),
+            ],
+            o => EndedAtLeast(o, 1)),
+
+        new("compact", "the conversation compacted by its slash command", [], "allow",
+            [
+                Say("Remember this word for later: mango. Reply with exactly: noted"),
+                Say("/compact", Ended, 200, "the slash command /compact"),
+                Say("Which word did I ask you to remember? Reply with that word alone.", Ended, 300, "a message after the compaction"),
+                Close(Ended),
+            ],
+            o => EndedAtLeast(o, 3), LimitSeconds: 150),
+
+        new("clear", "the conversation emptied by its slash command", [], "allow",
+            [
+                Say("Reply with exactly: before"),
+                Say("/clear", Ended, 200, "the slash command /clear"),
+                Say("Reply with exactly: after", Ended, 300, "a message after it"),
+                Close(Ended),
+            ],
+            o => EndedAtLeast(o, 3), LimitSeconds: 120),
+
+        new("model", "a slash command that answers with one line", [], "allow",
+            [Say("/model haiku", what: "the slash command /model with a name"), Say("Reply with exactly: ok", Ended, 200), Close(Ended)],
+            o => EndedAtLeast(o, 2)),
+
+        new("worker", "work handed to a subagent, and the turn Claude Code starts by itself for its hand-back", [], "allow",
+            [Say("Use the Agent tool to start a general-purpose subagent whose whole task is to reply with exactly: from the worker. Then reply with exactly: handed over"), Close(Ended, 25000)],
+            o => EndedAtLeast(o, 1), LimitSeconds: 150),
+
+        new("background", "a command run in the background", [], "allow",
+            [Say("Use the Bash tool with run_in_background set to true to run the command: ping -n 6 127.0.0.1. Do not wait for it. Then reply with exactly: started"), Close(Ended, 15000)],
+            o => EndedAtLeast(o, 1), LimitSeconds: 120),
+
+        new("failure", "a turn that fails: a model that does not exist", ["--model", "no-such-model-of-the-probe"], "allow",
+            [Say("Reply with exactly: ok"), Close(Ended)], _ => [], LimitSeconds: 60),
+    ];
+
     /// <summary>From the status note that says compacting to the note of the boundary.</summary>
     private static long CompactionMs(Outcome outcome)
     {
@@ -364,7 +480,7 @@ internal static class StreamProbe
 
     public static int Run(string[] args)
     {
-        string? only = null, shapeFile = null, keep = null;
+        string? only = null, shapeFile = null, keep = null, recordFolder = null;
         var model = "haiku";
         for (var i = 0; i < args.Length; i++)
         {
@@ -374,9 +490,12 @@ internal static class StreamProbe
                 case "--shape" when i + 1 < args.Length: shapeFile = args[++i]; break;
                 case "--keep" when i + 1 < args.Length: keep = args[++i]; break;
                 case "--model" when i + 1 < args.Length: model = args[++i]; break;
+                case "--record" when i + 1 < args.Length: recordFolder = args[++i]; break;
                 default:
                     Console.Error.WriteLine("Usage: probe stream [--only <case>] [--shape <file>] [--keep <folder>] [--model <name>]");
+                    Console.Error.WriteLine("       probe stream --record <fixtures folder> [--only <case>] [--model <name>]");
                     Console.Error.WriteLine("Cases: " + string.Join(", ", Cases.Select(c => c.Name)));
+                    Console.Error.WriteLine("Recorded cases: " + string.Join(", ", Recordings.Select(c => c.Name)));
                     return 2;
             }
         }
@@ -395,6 +514,8 @@ internal static class StreamProbe
         var asked = new SortedDictionary<string, SortedSet<string>>(StringComparer.Ordinal);
         var version = string.Empty;
         var failed = new List<string>();
+        var refused = new List<string>();
+        var notKept = new SortedSet<string>(StringComparer.Ordinal);
         try
         {
             // The stand-in permission tool is this program: its path goes into a file of the work folder only.
@@ -407,7 +528,7 @@ internal static class StreamProbe
                 },
             }));
 
-            foreach (var first in Cases.Where(c => only is null || c.Name == only))
+            foreach (var first in (recordFolder is null ? Cases : Recordings).Where(c => only is null || c.Name == only))
             {
                 var folder = Path.Combine(work, first.Name);
                 Directory.CreateDirectory(folder);
@@ -416,9 +537,20 @@ internal static class StreamProbe
                 for (var c = first; c is not null;)
                 {
                     Console.WriteLine($"== {c.Name}: {c.What}");
-                    // A case's own model option (the one that does not exist) goes last, so that it wins.
-                    string[] options = [.. ClaudeCodeStream.Options, .. c.Keeps ? Array.Empty<string>() : [ClaudeCodeStream.NoSessionOption], ClaudeCodeProgram.StrictMcpConfigOption, "--mcp-config", config, "--model", model, .. c.Options];
-                    var outcome = Play(claude, options, c, folder, shapes, blocks, asked, keep);
+                    // A case's own model option (the one that does not exist) goes last, so that it wins. A recording
+                    // is played with what the window will start Claude Code with: each message sent back when it is
+                    // taken, and the permission tool for every question.
+                    string[] options = recordFolder is null
+                        ? [.. ClaudeCodeStream.Options, .. c.Keeps ? Array.Empty<string>() : [ClaudeCodeStream.NoSessionOption], ClaudeCodeProgram.StrictMcpConfigOption, "--mcp-config", config, "--model", model, .. c.Options]
+                        : [.. ClaudeCodeStream.Options, ClaudeCodeStream.ReplayOption, ClaudeCodeStream.NoSessionOption, ClaudeCodeProgram.StrictMcpConfigOption, "--mcp-config", config, "--model", model, .. Asking, .. c.Options];
+                    var record = recordFolder is null ? null : new List<(long Ms, string Kind, string Text)>();
+                    var outcome = Play(claude, options, c, folder, shapes, blocks, asked, keep, record);
+                    if (record is not null && !outcome.TimedOut
+                        && !StreamFixtureMaker.Write(recordFolder!, c.Name, outcome.Lines.Select(entry => entry.Line.Version).FirstOrDefault(v => v.Length > 0) ?? version, record, outcome.ToolLog, outcome.StartedUtcTicks, folder, c.Permission, outcome.ExitCode, notKept))
+                    {
+                        refused.Add(c.Name);
+                    }
+
                     version = outcome.Lines.Select(entry => entry.Line.Version).FirstOrDefault(v => v.Length > 0) ?? version;
                     if (c.Keeps && outcome.Session.Length > 0)
                     {
@@ -475,14 +607,29 @@ internal static class StreamProbe
             Console.WriteLine($"The shape of {shapes.Count} kinds of line is written to {Path.GetFileName(shapeFile)}.");
         }
 
+        if (notKept.Count > 0)
+        {
+            // Names of keys, never a value: what a fixture leaves out, so that a field the model needs is added by name.
+            Console.WriteLine("Keys the fixtures do not keep: " + string.Join(", ", notKept));
+        }
+
+        if (refused.Count > 0)
+        {
+            // The whitelist's own check found something personal left in a fixture and deleted it: record again.
+            Console.WriteLine($"Claude Code {version}: fixtures refused: {string.Join(", ", refused)}.");
+            return 4;
+        }
+
         Console.WriteLine(failed.Count == 0
             ? $"Claude Code {version}: every case of the stream passed."
             : $"Claude Code {version}: FAILED: {string.Join(", ", failed)}.");
         return failed.Count == 0 ? 0 : 1;
     }
 
+    /// <param name="record">For a recording: every line read (<c>out</c>) and every line written (<c>in</c>, empty for standard input closed) is added with its time, as it is, for the fixture's maker to reduce. Never written to a file here.</param>
     private static Outcome Play(string claude, string[] options, Case c, string folder,
-        SortedDictionary<string, SortedSet<string>> shapes, SortedDictionary<string, SortedSet<string>> blocks, SortedDictionary<string, SortedSet<string>> asked, string? keep)
+        SortedDictionary<string, SortedSet<string>> shapes, SortedDictionary<string, SortedSet<string>> blocks, SortedDictionary<string, SortedSet<string>> asked, string? keep,
+        List<(long Ms, string Kind, string Text)>? record = null)
     {
         var line = ClaudeCodeProgram.LineFor(claude, options);
         if (line.Refusal is not null)
@@ -505,6 +652,7 @@ internal static class StreamProbe
         };
         start.Environment[PermissionVariable] = c.Permission;
         start.Environment[LogVariable] = log;
+        var startedUtcTicks = DateTime.UtcNow.Ticks;
         var clock = Stopwatch.StartNew();
         // Outside call, process, Claude Code: the non-interactive stream of the installed program, for a measurement.
         using var process = Process.Start(start)!;
@@ -532,6 +680,7 @@ internal static class StreamProbe
                             input.WriteLine(step.Line);
                         }
 
+                        record?.Add((clock.ElapsedMilliseconds, "in", step.Line ?? string.Empty));
                         Console.WriteLine($"  {clock.ElapsedMilliseconds,6} ms  > {step.What}");
                     }
                     catch (IOException)
@@ -589,6 +738,15 @@ internal static class StreamProbe
             }
 
             raw.Add(text);
+            if (record is not null)
+            {
+                // The host's lines are added on another thread, under the same lock.
+                lock (gate)
+                {
+                    record.Add((clock.ElapsedMilliseconds, "out", text));
+                }
+            }
+
             var read = ClaudeCodeStream.Read(text);
             lines.Add((clock.ElapsedMilliseconds, read));
             if (ClaudeCodeStream.ShapeOf(text) is { } shape)
@@ -647,7 +805,7 @@ internal static class StreamProbe
             File.WriteAllLines(Path.Combine(keep, c.Name + ".jsonl"), raw);
         }
 
-        return new Outcome(lines, tools, code, folder, timedOut);
+        return new Outcome(lines, tools, code, folder, timedOut) { StartedUtcTicks = startedUtcTicks, ToolLog = log };
     }
 
     /// <summary>A line in kinds and names: never a text.</summary>
@@ -803,7 +961,9 @@ internal static class StreamProbe
             // The tool asked about, the keys of its input, and the keys of the question itself (does it bring suggestions?): names, no value.
             var keys = hasInput ? string.Join(",", input.EnumerateObject().Select(property => property.Name).Order(StringComparer.Ordinal)) : string.Empty;
             var own = string.Join(",", arguments.EnumerateObject().Select(property => property.Name).Order(StringComparer.Ordinal));
-            File.AppendAllText(log, tool + "\t" + keys + "\t" + own + "\n");
+            // Then, for a recording alone: the time and the question as it came, on one line. The log is the case's
+            // own, in its folder under the temporary folder, and goes with it; only the fixture's maker reads these two.
+            File.AppendAllText(log, tool + "\t" + keys + "\t" + own + "\t" + DateTime.UtcNow.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture) + "\t" + arguments.GetRawText().Replace("\r", string.Empty).Replace("\n", " ").Replace("\t", " ") + "\n");
         }
 
         if (!hasInput)

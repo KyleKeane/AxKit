@@ -284,3 +284,25 @@ through all of them.
   no longer showed its permissions screen in the window: a new key on that screen's row of keys, repaired in
   Claude Code's own table (`claude-screens.md`, Panels). The pure code as built before the seam read the recording
   the same way, which is how the two were told apart.
+
+**Stage 2, begun: the recordings (2026-11-17).** The probe records each of eighteen cases as a stream fixture
+(`tools/ClaudeProbe stream --record`, `StreamFixtureMaker`; `tests/fixtures/streams`, with a page that says what a
+file holds and what the recordings showed). What they showed that the model must follow, beyond section 4:
+
+- A message's line comes back just before its reply, never earlier. Written while a tool runs, it is taken inside
+  the running turn and one end line ends both. Written while a reply is being written, it starts a turn of its own
+  right after, and the first turn's end line says that nothing waits. So whether Claude works cannot be read off
+  the end line's count: it works from a message written while idle, or a start line, until an end line that leaves
+  no message of the user's still to come back.
+- A slash command's text does not come back. What it prints comes as a text of the assistant's in a turn that counts
+  no turn; so a text is a command's print, and no reply of Claude's, when the turn was started by a slash command
+  the window sent and no message has come back in it.
+- A turn Claude Code starts by itself (work in the background ended) is a start line with no message before it,
+  then a reply and an end, with no line of the user's.
+- A tool call that failed or was refused has its result marked as an error with the words; a refusal is also
+  counted on the turn's end line. A question of Claude's is a call of its own tool, so its line is no tool line.
+- A failure of the service ends the process.
+
+Still to build of stage 2: what the reader gives a model (a message come back with its text, a call's id and what
+it is about, a result's failure, the list of work in the background), the model itself replayed over the fixtures,
+and the host.

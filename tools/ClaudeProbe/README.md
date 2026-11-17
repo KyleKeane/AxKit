@@ -289,3 +289,14 @@ through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
   `docs/axClaude/stream-shape.json`, written by `tools\upstream.ps1 -Verify claude`.
 - A new case is a `Case` in `StreamProbe.cs`: its options, its steps, what must hold, and what is only reported. What
   the model may or may not do (follow an instruction, hand work to a subagent) is reported, not required.
+- `--record <folder>` (2026-11-17) plays another set of cases, the recordings (`Recordings` in `StreamProbe.cs`), and
+  writes each as a stream fixture, `<case>.jsonl`: every line Claude Code wrote and what the host wrote between them,
+  on one clock (docs/axClaude/stream-mode.md SM-10.1; `tests/fixtures/streams/README.md` says what a file holds and
+  what the recordings showed). They are played with what axClaude's window will start Claude Code with: the stream's
+  own options, each message sent back when it is taken, and the permission tool for every question. The maker,
+  `StreamFixtureMaker.cs`, is the whitelist, as `FixtureMaker.cs` is for a timeline: a line is reduced to the fields
+  named for its kind, ids become numbers, the case's folder becomes `C:\work`, a tool's result is kept only when it
+  failed, every kept string is masked, and a file that still holds an address, an account path or a name is refused
+  and deleted. The raw lines are never written to a file. It prints counts and, once at the end, the names of the
+  keys the fixtures do not keep, so that a field the model turns out to need is added by name. The repository's
+  fixtures are recorded with `--record tests\fixtures\streams`; read each through before it is committed.

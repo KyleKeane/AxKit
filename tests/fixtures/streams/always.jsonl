@@ -1,0 +1,15 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"always"}
+{"t":6,"k":"in","what":"message","text":"Use the Write tool to create a file named always-1.txt in the current folder with the content hi. After that, use the Write tool again to create a file named always-2.txt with the content hi. Then reply with exactly: both written"}
+{"t":783,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1806,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Use the Write tool to create a file named always-1.txt in the current folder with the content hi. After that, use the Write tool again to create a file named always-2.txt with the content hi. Then reply with exactly: both written"}}}
+{"t":1809,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"Write","input":{"file_path":"C:\\work\\always-1.txt","content":"hi"}}]}}}
+{"t":1819,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1862,"k":"ask","tool":"Write","call":"call-1","input":{"file_path":"C:\\work\\always-1.txt","content":"hi"}}
+{"t":1862,"k":"answer","behavior":"always"}
+{"t":1922,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1"}]}}}
+{"t":2933,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-2","name":"Write","input":{"file_path":"C:\\work\\always-2.txt","content":"hi"}}]}}}
+{"t":2967,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-2"}]}}}
+{"t":3534,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"both written"}]}}}
+{"t":3548,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":3,"subtype":"success","result":"both written","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":3548,"k":"in","what":"closed"}
+{"t":3548,"k":"exit","code":0}

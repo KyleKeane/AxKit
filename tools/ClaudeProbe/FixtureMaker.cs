@@ -127,7 +127,7 @@ internal static class FixtureMaker
     }
 
     /// <summary>The names to mask: the account's, the computer's and the domain's (Redaction.DefaultNames), the distinctive ones, longest first.</summary>
-    private static List<string> Names() =>
+    internal static List<string> Names() =>
         Redaction.DefaultNames()
             .Where(name => name.Length >= 3 && !name.Equals("user", StringComparison.OrdinalIgnoreCase) && !name.Equals("admin", StringComparison.OrdinalIgnoreCase))
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -135,7 +135,7 @@ internal static class FixtureMaker
             .ToList();
 
     /// <summary>What must never be committed, counted: e-mail addresses and account paths (Redaction.Find), and any occurrence of a masked name.</summary>
-    private static (int Emails, int Paths, int Names) Check(string text, IReadOnlyList<string> names)
+    internal static (int Emails, int Paths, int Names) Check(string text, IReadOnlyList<string> names)
     {
         var hits = Redaction.Find(text).ToList();
         var emails = hits.Count(hit => hit.Contains('@'));

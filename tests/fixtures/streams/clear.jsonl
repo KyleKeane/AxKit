@@ -1,0 +1,19 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
+{"t":4,"k":"in","what":"message","text":"Reply with exactly: before"}
+{"t":803,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1572,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: before"}}}
+{"t":1575,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"before"}]}}}
+{"t":1581,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1592,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"before","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":1793,"k":"in","what":"message","text":"/clear"}
+{"t":1957,"k":"out","line":{"type":"conversation_reset","trigger":"clear","session_id":"session-1","new_conversation_id":"session-2"}}
+{"t":1960,"k":"out","line":{"type":"system","subtype":"background_tasks_changed","tasks":[]}}
+{"t":1995,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-3"}}
+{"t":1997,"k":"out","line":{"is_error":false,"num_turns":0,"subtype":"success","result":"","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":2311,"k":"in","what":"message","text":"Reply with exactly: after"}
+{"t":2359,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-3"}}
+{"t":3069,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: after"}}}
+{"t":3070,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"after"}]}}}
+{"t":3078,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"after","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":3078,"k":"in","what":"closed"}
+{"t":3078,"k":"exit","code":0}
