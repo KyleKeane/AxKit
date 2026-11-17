@@ -48,8 +48,11 @@ internal sealed partial class MainForm : ConsoleForm
 
     private string? _folder;
 
-    /// <summary>The bell rang (FR-7.2): "Done" or "Claude asks" once the screen has settled.</summary>
+    /// <summary>The bell rang (FR-7.2): "Done" or "Claude asks" once the screen has settled. While the core decides Done, only a bell the core found to be no turn's end (<see cref="FlowBell"/>).</summary>
     private bool _bellPending;
+
+    /// <summary>The bell that is pending came in a run that has shown no mark (EG-6.5): the bell and the settle are all there is of a turn's end, and the settle says Done as before the core (<see cref="DoneBySettle"/>).</summary>
+    private bool _bellNoMarks;
 
     /// <summary>Whether a feedback draft Claude queued in the turn that just ended waits (D33): the mode line's count against the count before the turn.</summary>
     private readonly FeedbackDraftWatch _drafts = new();
@@ -121,9 +124,17 @@ internal sealed partial class MainForm : ConsoleForm
         };
         _model.Bell += () =>
         {
-            _bellPending = true;
-            _attention.Stop();
-            _attention.Start();
+            if (!FlowDecides(FlowCharge.Done))
+            {
+                // The old rule (the setting eventCore set to shadow, a core that failed): every bell starts the
+                // settle, which says "Done" or shows what Claude asks.
+                _bellPending = true;
+                _attention.Stop();
+                _attention.Start();
+            }
+
+            // While the core decides Done the bell is only queued for it (EG-6.5): the core tells a turn's end, whose
+            // Done it says itself, from a bell that is none, which it hands back to the settle (MainForm.Flow.cs).
             // The bell and the marks are raised inside the model's Feed, as a frame's end is: in the stream's order (EG-1.5).
             EnqueueFlow(new BellSeen());
         };

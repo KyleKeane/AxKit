@@ -53,6 +53,13 @@ internal sealed partial class MainForm
     /// <summary>The screen settled while the window was put away: what waits is acted on when the window is shown.</summary>
     private bool _attentionWaits;
 
+    /// <summary>
+    /// The core said Done while the window was put away (EG-5.6, <see cref="FlowDone"/>): one "Done" is owed, for
+    /// however many turns ended meanwhile, and the settle after <see cref="BringUp"/> says it, unless a question
+    /// waits then, which takes its place as it takes a bell's.
+    /// </summary>
+    private bool _doneOwed;
+
     /// <summary>Claude stopped while the window was put away: said when it is brought up.</summary>
     private bool _stoppedWhilePutAway;
 
@@ -148,11 +155,11 @@ internal sealed partial class MainForm
         _front.GiveBack(Handle);
     }
 
-    /// <summary>The attention timer's tick while the window is put away: nothing is acted on; it waits for <see cref="BringUp"/>.</summary>
+    /// <summary>The attention timer's tick while the window is put away, and the core's Done then (<see cref="FlowDone"/>): nothing is acted on; it waits for <see cref="BringUp"/>.</summary>
     private void SettledWhilePutAway()
     {
         _attentionWaits = true;
-        if (DoneChimeWhilePutAway && _bellPending && WaitSignature is null && _settings.SoundOnBell)
+        if (DoneChimeWhilePutAway && DoneBySettle && WaitSignature is null && _settings.SoundOnBell)
         {
             Sounds.DoneWhileMuted();
         }

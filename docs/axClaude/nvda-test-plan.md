@@ -315,17 +315,18 @@ conversation, since the fault of 2026-11-15 came after hours:
 
 How axClaude learns what Claude Code is doing (events-and-grounding.md EG-11.6, which calls this section 23; 23 and 24
 were taken). A step is added with each step of that document's build plan. For what the core is not yet in charge
-of (Done, reply speech, the background number), every section above is the check that nothing heard has changed;
+of (reply speech, the background number), every section above is the check that nothing heard has changed;
 since 2026-11-17 it is in charge of the state (step 4), and sections 2, 5, 6 and 8 are the check that the status,
-"Queued" and the close and restart questions are right with it.
+"Queued" and the close and restart questions are right with it, and of "Done" (step 5), for which sections 2, 5, 9,
+12 and 20 are the check that "Done" comes where it came before and is silent where step 5 says so.
 
 Script: `tests/scripts/axClaude/28-event-sources.txt` (a stand-in for Claude Code that also writes a turn's marks and
 the bell, no network).
 
 1. Options, Developer: Events from Claude Code's hooks and Ground the conversation in Claude Code's session file are
    both checked. Say the event sources: "Events. Marks: 0. Hooks: not passed, version. Session file: not found. Core: in
-   charge of state.", cutting off other speech (the script's stand-in says it is version 0.0.0, older than the events' table, so
-   it gets no hooks; step 2 has one that does). A message, and "Done" as before; the command again: "Marks: 3". Ground the
+   charge of state and Done.", cutting off other speech (the script's stand-in says it is version 0.0.0, older than the events' table, so
+   it gets no hooks; step 2 has one that does). A message, and "Done"; the command again: "Marks: 3". Ground the
    conversation in Claude Code's session file: "Grounding in Claude Code's session file off", and the command says
    "Session file: off"; the item again: "... on", and "Session file: not found". Events from Claude Code's hooks:
    "Events from Claude Code's hooks off, from the next start of Claude", and the command still says "Hooks: not
@@ -337,7 +338,7 @@ the bell, no network).
 2. Claude Code's events through its hooks, without Claude Code (script `30-hooks-stand-in.txt`: the stand-in of
    `tools/AxAutomate` plays Claude Code, reads the file the window passed with `--settings` and starts `AxKit.exe hook`
    for each event; EG-2). "Ready"; a few seconds later Say the event sources: "Hooks: on, 1 received." (the session's
-   start). A message, "Done" as before; then "Hooks: on, 2 received." (the turn's stop, which comes after the turn's
+   start). A message, "Done"; then "Hooks: on, 2 received." (the turn's stop, which comes after the turn's
    end). An event that names another session and a start event that names a file outside Claude Code's projects
    folder: "Hooks: on, 3 received.", the first counted apart, the second's path not used. A second window on a
    stand-in that says it is Claude Code 2.1.324: "Hooks: not passed, version.". A third window on a stand-in that
@@ -363,10 +364,28 @@ the bell, no network).
    moment says "Queued", not "Sent". The reply's rows arrive and Claude takes the second message up: in the
    conversation the first reply's last row and the turn's summary row stand before "# Input 2", the message, "# Output
    2 Reply from Claude" and its reply. Say the event sources: "Marks: 6", "Session file: followed" (the file the
-   session's start event named) and "Core: in charge of state.". A second window started with the file-only setting
+   session's start event named) and "Core: in charge of state and Done.". A second window started with the file-only setting
    `eventCore` set to `shadow`: "Core: in shadow."; the same start mark and screen: F8 says "Claude: ready", and a
    message sent then says "Sent", as before the core. By ear, in a real conversation (sections 2, 6 and 8 with
    their live scripts): the status says working from the moment Claude takes a message up until its turn ends, also
    between two tool calls when the spinner is off the screen for a moment; the background music, when on, starts and
    stops with it; a message sent in the half second after a turn's bell says "Queued" and stands after that turn's
-   reply; "Done", the reply speech and the sounds are as they were.
+   reply; the reply speech and the sounds are as they were ("Done" is step 5's).
+5. Done from the core (script `35-done-after-the-reply.txt`, the stand-in of `tools/AxAutomate` with its session
+   file, Speak replies all lines; EG-5.6, EG-6.5, 2026-11-17). A message; the turn's end marks and the bell, and the
+   reply's rows 80 ms later: the reply's words, then "Done" with the three falling notes, never "Done" first. A
+   second message, and Shift+Escape while Claude works: the end marks come with no bell, then what Claude had of
+   the reply and its "Interrupted" row, which are spoken; no "Done", no chime, and F8 says "Claude: ready". A third
+   message, for which a tool asks permission: the bell rings with no end mark, and the question is asked in the
+   message field's place with its own chime; no "Done". Its answer, the tool's output, the end marks and the bell,
+   the reply: its words, then "Done". A start mark and the end marks at once with no bell (the note Claude Code
+   writes when it hands the prompt back): nothing is said and nothing plays. Say the event sources: "Core: in charge
+   of state and Done.". A second window started with the file-only setting `eventCore` set to `shadow`: "Core: in
+   shadow.", and the first turn says "Done" 400 ms after its bell, as before the core. By ear, in a real conversation
+   (sections 2, 5, 9, 12 and 20 with their live scripts): "Done" comes right after the last reply, sooner than
+   before after a short reply and never in front of the reply's words with Speak replies on; Shift+Escape on a
+   running reply and Send queued messages now with a message waiting end that reply without "Done", and the queued
+   message's own turn ends with one; a question from a tool is asked without "Done", and "Done" comes when the
+   answered turn has ended; in a window put away with Alt+F4 while Claude works (section 20), nothing is heard when
+   the turn ends, and one "Done" with its chime comes after the window is brought up, also when several turns ended
+   meanwhile.

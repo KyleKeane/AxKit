@@ -233,8 +233,10 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 34. **Know that Claude works, and send a message while a reply arrives**
     - Know that Claude works while the screen shows no sign of it
     - Send a message while a reply's rows are still arriving
-35. **Have a short exchange with Claude**
-36. **Answer a set of two questions from Claude**
+35. **Hear Done after the reply, and not after an interrupt**
+    - Hear Done after the reply's words
+36. **Have a short exchange with Claude**
+37. **Answer a set of two questions from Claude**
 
 ## axClip
 

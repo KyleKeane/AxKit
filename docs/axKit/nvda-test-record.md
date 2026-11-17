@@ -740,9 +740,20 @@ By the user's ear, in axClaude over a day of ordinary use:
 3. A message sent while Claude works: "Queued", as before. A message sent in the first moment after an interrupt
    (Shift+Escape), within about half a second: also "Queued" now, and it goes after the interrupted reply's last rows.
    Whether that word is right there, or "Sent" would serve better.
-4. Options, Developer, Say the event sources: "Core: in charge of state".
+4. Options, Developer, Say the event sources: "Core: in charge of state and Done".
 
-With NVDA, in a pass: `nvda-test-plan.md` section 25, step 4.
+Done from the event core, the same day (EG-5.6, EG-6.5, WP-A17), built and passing the same checks, script 35 and
+the 37 scripts of axClaude against Claude Code 2.1.326. By the user's ear, in the same day of use:
+
+5. "Done" and its chime come after the last words of the reply, never before them or in the middle of a reply
+   (the old rule said Done early in 23 of 59 turns of 2026-11-16).
+6. After an interrupt (Shift+Escape) there is no "Done".
+7. A question of Claude's at a bell is heard as the question, and "Done" comes when the answer has ended the turn.
+8. A feedback survey at a turn's end: "Done" used to come before it by rule; now it comes at the core's moment,
+   usually before. Whether the order is still right when one shows.
+9. axHelp's conversation put away and brought back after a turn ended meanwhile: one "Done" on the way back.
+
+With NVDA, in a pass: `nvda-test-plan.md` section 25, steps 4 and 5.
 ## Owed: the keys and sounds of 2026-11-16 (Alt+1 to 3, Ctrl+Period, Ctrl+Slash, navigation mode's three sounds; `docs/axKit/SPEC.md` AX-8.13 to AX-8.15)
 
 Built and passing on the runner's desktop, which posts a key's message and plays no sound, so none of this is heard

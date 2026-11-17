@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: "Done" comes when the turn has ended and its last reply is in the conversation, without the fixed pause; an interrupted reply and a reply cut by Send queued messages now say no "Done".
 - axClaude: the status says working for as long as a turn runs, from Claude Code's own turn marks, and a message sent while a reply is still arriving goes after that reply.
 - axClaude: a command Claude offers, or an AI tool's request to run one, now plays its alarm and flashes the taskbar button when the window is behind another one, also with "Louder alert when the window is in the background" switched on. With that option on, such an offer made no sound at all until now.
 - axTask, axPass, axMCP, axAutomate: Previous section and Next section, and axTask's heading keys at the top level, play the heading sound when they land on a heading also when they are chosen from the menu or the command palette or run by an AI tool, as their keys always did.

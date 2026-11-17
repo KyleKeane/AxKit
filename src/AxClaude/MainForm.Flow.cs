@@ -33,8 +33,8 @@ internal sealed partial class MainForm
         Background = 8,
     }
 
-    /// <summary>The families the core is in charge of in this build: the state (EG-6.1 to EG-6.4); Done, reply speech and the background are in shadow. Each package that moves a family to the core adds it here (events-and-grounding.md section 10).</summary>
-    private const FlowCharge Built = FlowCharge.State;
+    /// <summary>The families the core is in charge of in this build: the state (EG-6.1 to EG-6.4) and Done (EG-5.6, EG-6.5); reply speech and the background are in shadow. Each package that moves a family to the core adds it here (events-and-grounding.md section 10).</summary>
+    private const FlowCharge Built = FlowCharge.State | FlowCharge.Done;
 
     /// <summary>The numbers of where the events come from (EG-9.3, EG-9.4), counted on this thread alone: the core counts in it, and what a background thread counted is added here when its post arrives.</summary>
     private readonly SourceHealth _health = new();
@@ -195,14 +195,21 @@ internal sealed partial class MainForm
                     // Every kind, on purpose: the core is new code beside code that works. An input prints as its
                     // type's name, and the exception's message is left out, since it could quote a key.
                     _flowFailed = true;
+                    // A bell handed to the core and not carried out: its handler only queued it (MainForm.cs).
+                    var bell = next is BellSeen || _flowInputs.Any(input => input is BellSeen);
                     _flowInputs.Clear();
                     _flowTimer.Stop();
                     _flowTimerAt = long.MaxValue;
                     Log.Error($"Events: the core failed on {next} with {ex.GetType().Name} and is off until Claude starts again\n{ex.StackTrace}");
-                    // What the core decided is the screen's again from here: the model's rule, the status bar and the music.
+                    // What the core decided is the screen's again from here: the model's rule, the status bar and the
+                    // music, and Done by the bell and the settle, that bell's too.
                     FlowTurnToModel();
                     UpdateStatus();
                     UpdateMusic();
+                    if (bell)
+                    {
+                        FlowBell(noMarks: true);
+                    }
                 }
             }
         }
@@ -216,8 +223,9 @@ internal sealed partial class MainForm
     /// Carries one decision out. Whatever the core is in charge of: the wake time (the timer), a note (the log), and
     /// the record to follow or to forget (the reader). The state, while the core decides it: the model's rule for a
     /// sent message, the status bar and the music, at once, since a mark, an event or a tick changes it with no frame
-    /// behind it. Every other decision belongs to a family that is in shadow in this build: the window's own code
-    /// acts, and the decision only goes to the shadow's count.
+    /// behind it. Done, while the core decides it: the word and its chime (<see cref="FlowDone"/>), and a bell that
+    /// is no turn's end starts the window's settle (<see cref="FlowBell"/>). Every other decision belongs to a family
+    /// that is in shadow in this build: the window's own code acts, and the decision only goes to the shadow's count.
     /// </summary>
     private void Carry(FlowDecision decision)
     {
@@ -232,6 +240,12 @@ internal sealed partial class MainForm
                 FlowTurnToModel();
                 UpdateStatus();
                 UpdateMusic();
+                break;
+            case SayDone done when FlowDecides(FlowCharge.Done):
+                FlowDone(done);
+                break;
+            case AttentionBell bell when FlowDecides(FlowCharge.Done):
+                FlowBell(bell.NoMarks);
                 break;
             case WakeAt wake:
                 _flowWakeAt = wake.AtMs;
@@ -250,6 +264,56 @@ internal sealed partial class MainForm
                 _shadow.Core(decision, _flowNow);
                 break;
         }
+    }
+
+    /// <summary>
+    /// The core's Done carried out (EG-5.6, EG-6.5): the turn has ended with its bell and its last reply is in the
+    /// conversation. While the window is put away it says and plays nothing (FR-9.6): the Done is owed, one for
+    /// several turns, and the settle that <see cref="BringUp"/> restarts says it (<see cref="OnFrameSettled"/>).
+    /// Else "Done" by its switch, the chime and the taskbar signal, as the settle gave them before the core.
+    ///
+    /// The shadow, as with the state: the window has no Done of its own beside this one, so both sides of its line
+    /// are told the one Done at the one time, and the line names no difference in it. That holds for a Done that is
+    /// owed too: it is told here, when it was decided, and not again when the settle says it.
+    /// </summary>
+    private void FlowDone(SayDone done)
+    {
+        if (_putAway)
+        {
+            _shadow.Core(done, _flowNow);
+            _shadow.Window(ShadowFact.SaidDone, _flowNow);
+            _doneOwed = true;
+            SettledWhilePutAway();
+            return;
+        }
+
+        // Reply speech is still the window's own (WP-A18), behind a hold of its own that knows nothing of this
+        // moment: with a record the core's Done comes some 40 ms after the reply's frame, the hold runs for 250, and
+        // the reply would be heard after its Done. Lines the core releases with a Done are spoken before it
+        // (EG-5.6), so what the window still holds goes first; a question that waits has emptied the hold already
+        // (OnTranscriptChanged). The shadow is told in the order heard: the lines, then Done.
+        SpeakHeld();
+        _shadow.Core(done, _flowNow);
+        _shadow.Window(ShadowFact.SaidDone, _flowNow);
+        if (_settings.AnnounceBell)
+        {
+            Announce("Done", false);
+        }
+
+        Signal(question: false);
+    }
+
+    /// <summary>
+    /// A bell that the core found to be no turn's end (EG-6.5, section 4.2), carried out as the bell's handler did
+    /// it before the core: the settle starts, which shows what Claude waits on. <paramref name="noMarks"/>: no mark
+    /// was seen in this run, so the bell is all there is of a turn's end, and the settle says Done by the old rule.
+    /// </summary>
+    private void FlowBell(bool noMarks)
+    {
+        _bellPending = true;
+        _bellNoMarks = noMarks;
+        _attention.Stop();
+        _attention.Start();
     }
 
     /// <summary>After an input's decisions: the reader is told when the turn opened or ended, the shadow's line for a turn both have ended goes to the log, and the timer is set for what is due next.</summary>
@@ -331,7 +395,12 @@ internal sealed partial class MainForm
         }
     }
 
-    /// <summary>The window's own code said Done: a turn's end by the old rule, the bell and the settle (FR-7.2).</summary>
+    /// <summary>
+    /// The window's own code said Done: a turn's end by the old rule, the bell and the settle (FR-7.2). That is every
+    /// Done while the core is in shadow, and, while the core decides Done, the Done of a run without marks, which the
+    /// core leaves to the settle (EG-6.5): the shadow's line for such a turn names Done as a difference, truly, since
+    /// the core said none.
+    /// </summary>
     private void FlowSaidDone() => _shadow.Window(ShadowFact.SaidDone, Environment.TickCount64);
 
     /// <summary>The window's own code spoke these reply lines after its hold (FR-7.4): the shadow counts them and keeps their kinds, never their text.</summary>

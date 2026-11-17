@@ -8,8 +8,8 @@
 # bar says working all the same. Then the end marks and the bell, with the reply's rows still to come: the turn has
 # ended and is not yet over, and a message sent in that moment is "Queued", its block held until Claude takes it up,
 # so that it stands after the reply and not in front of it. The moment is short, 600 ms after the bell at most: the
-# message is typed beforehand, and Enter goes as soon as the status bar says ready. "Done" still comes by the bell and
-# the settle (its turn is WP-A17's), so this script does not ask when. A second window, with the file-only setting
+# message is typed beforehand, and Enter goes as soon as the status bar says ready. When "Done" comes is the matter of
+# 35-done-after-the-reply.txt, and this script does not ask. A second window, with the file-only setting
 # eventCore set to shadow, is given the same turn and shows it as the window did before: the state is the screen's.
 file home\AxKit\axClaude.json {"checkForUpdates":false,"claudeHooks":true}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
@@ -59,7 +59,7 @@ wait 2000
 menu Say the event sources
 expect said Marks: 6.
 expect said Session file: followed
-expect said Core: in charge of state.
+expect said Core: in charge of state and Done.
 
 # Check: With the core in shadow the state is the screen's, as before
 # A second window, started with the file-only setting eventCore set to shadow: the core computes beside the window and

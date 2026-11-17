@@ -311,10 +311,11 @@ internal sealed partial class MainForm
             }
         }
 
-        if (e.Kind == HookKind.TurnStopped && _hookEndMarkAt != 0 && !FlowDecides(FlowCharge.Done))
+        if (e.Kind == HookKind.TurnStopped && _hookEndMarkAt != 0)
         {
-            // While Done is the window's own: when the event of a turn's end came against the end mark, for the day
-            // the core says Done (events-and-grounding.md 4.3: with hooks Claude Code does not wait for, after it).
+            // When the event of a turn's end came against the end mark (events-and-grounding.md 4.3: with hooks Claude
+            // Code does not wait for, after it). A number for the log, kept now that the core says Done (2026-11-17):
+            // it is what shows how long Done waits for the event, and script 30 looks for the line.
             Log.Info($"Events: stop event {Environment.TickCount64 - _hookEndMarkAt} ms after the last end mark");
         }
 

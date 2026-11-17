@@ -40,7 +40,7 @@ expect said Hooks: on, 1 received.
 # line as it went to cmd.exe for a claude.cmd, every argument in quotes: a dot in the pattern stands for each quote.
 run findstr /r /c:"--ax-screen-reader. .--settings. .*claude-hooks.json. .--model" home\AxKit\logs\axClaude.log
 # Check: A turn's stop event comes after the turn's end and is counted
-# "Done" as before, by the bell and the settle; the stop event comes after the end mark and is the second event.
+# "Done", which the event core says since 2026-11-17 (WP-A17), once the turn has ended and its reply is there; the stop event comes after the end mark and is the second event.
 type Say ok
 keys enter
 expect said Sent

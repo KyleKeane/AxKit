@@ -24,9 +24,11 @@ expect said Sent
 # Claude takes the message up: the mark A and the working frame.
 file st\go1 x
 expect state Claude: working
-# The turn ends with Done, and the reply stands in the conversation. That the reply is spoken before Done is the
-# order WP-A17 makes sure of (docs/axClaude/events-and-grounding.md); until then the window's own timers decide it,
-# and under load Done came first (seen 2026-11-15), so this script does not ask for the order yet.
+# The turn ends with Done, and the reply stands in the conversation. The reply is spoken before Done: the core
+# says Done once the turn has ended and its last reply is in the conversation, and what is still held of the reply
+# is spoken first (docs/axClaude/events-and-grounding.md EG-5.6, since 2026-11-17; before, the window's own timers
+# decided the order, and under load Done came first, seen 2026-11-15).
+expect said claude: ok
 expect said Done
 do Conversation
 expect text claude: ok

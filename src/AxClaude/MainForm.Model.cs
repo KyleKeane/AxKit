@@ -20,8 +20,9 @@ internal sealed partial class MainForm
         // word is the frame before's, and a reply's row drawn with the first working frame was spoken while Claude
         // worked (script 27). Reply speech is the window's own until it goes through the core's gate (WP-A18).
         var arrival = _arrivals.Update(_model.Lines, _model.Working, _readyAnnounced ? _settings.ReplySpeech : ReplySpeechMode.None, _readyAnnounced && _settings.SpeakToolCalls);
-        // The same pass is the core's input (MainForm.Flow.cs). Of what follows here the core decides one thing, whether
-        // Claude works (ClaudeWorks); Done and the speech it computes beside this code, which still acts.
+        // The same pass is the core's input (MainForm.Flow.cs). Of what follows here the core decides whether Claude
+        // works (ClaudeWorks) and when Done is said (OnFrameSettled says where the settle still says it); the speech
+        // it computes beside this code, which still acts.
         FlowFrame(arrival);
         if (_settings.ClickOnNewLine)
         {
@@ -150,7 +151,8 @@ internal sealed partial class MainForm
     /// the model says Claude waits on is compared with the one record of what the window did about it, and exactly
     /// one thing happens. Something new waits: it is shown in the control area, replacing what is there, or, when the
     /// area cannot show it, "Claude asks" is announced. Nothing waits any more: the area closes and the message field
-    /// comes back, "Question closed" when Claude closed it by itself, and a bell that rang is "Done".
+    /// comes back, "Question closed" when Claude closed it by itself, and a bell that rang is "Done" where the settle
+    /// says it (<see cref="DoneBySettle"/>).
     /// </summary>
     private void OnFrameSettled()
     {
@@ -164,16 +166,9 @@ internal sealed partial class MainForm
                 // A feedback survey comes after the turn, not in its place: the turn's end is said first, as without
                 // the survey (docs/axKit/repairs.json R-18; a question of Claude's about its work replaces "Done", a
                 // survey about Claude does not). Whether the survey is then shown or dismissed unheard is the user's setting.
-                if (_bellPending && _model.PendingQuestion is { KeyOnly: true })
+                if (DoneBySettle && _model.PendingQuestion is { KeyOnly: true })
                 {
-                    if (_settings.AnnounceBell)
-                    {
-                        Announce("Done", false);
-                    }
-
-                    Signal(question: false);
-                    FlowSaidDone();
-                    _bellPending = false;
+                    SayDoneBySettle();
                 }
 
                 if (_wait?.Signature != waiting && !ScreenNoticeShows(_model.PendingScreen))
@@ -216,20 +211,43 @@ internal sealed partial class MainForm
             {
                 _wait = null;
             }
-            if (_bellPending)
+            if (DoneBySettle)
             {
-                if (_settings.AnnounceBell)
-                {
-                    Announce("Done", false);
-                }
-
-                Signal(question: false);
-                // For the shadow's count (MainForm.Flow.cs): Done by this code's rule, the bell and the settle.
-                FlowSaidDone();
+                SayDoneBySettle();
             }
         }
 
+        // A bell is this settle's alone, and so is a Done that was owed: a question that waits now takes their place.
         _bellPending = false;
+        _doneOwed = false;
+    }
+
+    /// <summary>
+    /// Whether this settle says Done by itself (FR-7.2, EG-6.5). While the core decides Done, only for a Done the
+    /// core decided while the window was put away, which is owed to this settle (<see cref="FlowDone"/>), and for a
+    /// bell of a run without marks, where the bell and the settle are all there is of a turn's end. While the core
+    /// does not decide it (the setting eventCore set to shadow, a core that failed), for every bell, as before the core.
+    /// </summary>
+    private bool DoneBySettle => _doneOwed || (_bellPending && (_bellNoMarks || !FlowDecides(FlowCharge.Done)));
+
+    /// <summary>The settle's own Done: the word by its switch, the chime and the taskbar signal; the bell and a Done that was owed are used up.</summary>
+    private void SayDoneBySettle()
+    {
+        if (_settings.AnnounceBell)
+        {
+            Announce("Done", false);
+        }
+
+        Signal(question: false);
+        if (!_doneOwed)
+        {
+            // For the shadow's count (MainForm.Flow.cs): Done by this code's rule, the bell and the settle. A Done
+            // that was owed is the core's, counted when the core decided it.
+            FlowSaidDone();
+        }
+
+        _bellPending = false;
+        _doneOwed = false;
     }
 
     /// <summary>
