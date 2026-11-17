@@ -142,3 +142,8 @@ Steps 2 and 3 do not depend on each other and are the next work on sounds and on
    it is what a later item needs (axHelp learning from the questions asked), and what would show, as the shadow
    lines did for axClaude, where an app behaves oddly.
 6. Whether each app's own sound quality, proposed in `earcons.md`, is a column of the presenter's table.
+7. A kind the list lacks, found on 2026-11-17 by his own report: a turn that the program begins by itself. Claude
+   Code starts a turn when work in the background finishes, and axClaude plays the music, speaks the reply and says
+   Done with no word of why, which he took for axClaude restarting. Claude Code's record names such a turn. Whether
+   it gets words ("Claude goes on: background work finished"), a sound, or neither; the item is "axClaude: a turn
+   that starts by itself says why".
