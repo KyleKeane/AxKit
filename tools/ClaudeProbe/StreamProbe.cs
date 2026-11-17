@@ -85,12 +85,15 @@ internal static class StreamProbe
                 .Concat(Unless(o.ExitCode == 0, $"the process ended with code {o.ExitCode}")),
             o => o.Ends.Count() == 2 ? new[] { $"the second turn took {SecondTurnMs(o)} ms from its message to its end, with no new process" } : Array.Empty<string>()),
 
+        // Which tool the model reaches for first is its own: on 2026-11-17 it once tried another shell's tool, which no
+        // rule allowed, and then the one asked for. So a result that is no error must come, not no error at all.
         new("tool", "a tool call allowed by a rule: the call, its result, the reply", ["--permission-mode", "default", "--allowedTools", "Bash(ping *)"], string.Empty,
-            [Say("Use the Bash tool to run this command: ping -n 2 127.0.0.1 . Then reply with exactly: pinged"), Close(Ended)],
+            [Say("Run this command with the Bash tool: ping -n 2 127.0.0.1\nAfter it finishes, reply with exactly: pinged"), Close(Ended)],
             o => Unless(InOrder(o, StreamKind.ToolCall, StreamKind.ToolResult, StreamKind.Text, StreamKind.Ended), "the call, its result, the reply and the end should come in that order")
-                .Concat(Unless(o.Parts.Any(part => part.Kind == StreamKind.ToolCall && part.Tool == "Bash"), "the call should name the tool"))
-                .Concat(Unless(!o.Parts.Any(part => part.Kind == StreamKind.ToolResult && part.Error), "the result should not be an error")),
-            o => ["Claude Code's own notes seen: " + Notes(o)]),
+                .Concat(Unless(o.Parts.Any(part => part.Kind == StreamKind.ToolCall && part.Tool == "Bash"), "a call should name the tool asked for"))
+                .Concat(Unless(o.Parts.Any(part => part.Kind == StreamKind.ToolResult && !part.Error), "a result that is no error should come"))
+                .Concat(Unless(o.Says("pinged"), "the reply after the tool should arrive")),
+            o => [$"tools called: {string.Join(", ", o.Parts.Where(part => part.Kind == StreamKind.ToolCall).Select(part => part.Tool))}; results that were errors: {o.Parts.Count(part => part.Kind == StreamKind.ToolResult && part.Error)}", "Claude Code's own notes seen: " + Notes(o)]),
 
         new("permission-allowed", "a tool call that needs the user's word, answered yes by the permission tool", Asking, "allow",
             [Say("Use the Write tool to create a file named probe-allowed.txt in the current folder with the content hi. Then reply with exactly: written"), Close(Ended)],
@@ -112,7 +115,7 @@ internal static class StreamProbe
 
         new("interrupt", "a running turn ended by the host, the process kept", ["--permission-mode", "default", "--allowedTools", "Bash(ping *)"], string.Empty,
             [
-                Say("Use the Bash tool to run this command: ping -n 20 127.0.0.1 . Then reply with exactly: finished"),
+                Say("Run this command with the Bash tool: ping -n 20 127.0.0.1\nAfter it finishes, reply with exactly: finished"),
                 new(Calls, 2500, ClaudeCodeStream.InterruptLine("probe-1"), "an interrupt"),
                 Say("Reply with exactly: still here", Ended, 300, "a message after the interrupt"),
                 Close(Ended),
@@ -129,7 +132,7 @@ internal static class StreamProbe
         // must come; whether the first instruction was still followed is the model's, and only reported.
         new("message-mid-turn", "a second message written while a tool runs", ["--permission-mode", "default", "--allowedTools", "Bash(ping *)"], string.Empty,
             [
-                Say("Use the Bash tool to run this command: ping -n 5 127.0.0.1 . Then reply with exactly: first done"),
+                Say("Run this command with the Bash tool: ping -n 5 127.0.0.1\nAfter it finishes, reply with exactly: first done"),
                 Say("Reply with exactly: second answer", Calls, 1200, "a second message, while the tool runs"),
                 Close(Ended, 9000),
             ],
