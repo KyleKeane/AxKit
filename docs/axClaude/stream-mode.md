@@ -3,8 +3,8 @@
 A specification, written 2026-11-17 for the maintainer's decision of that day (`stream.md`, section 7 (a); `docs/axKit/events.md`,
 section 7, step 3): Claude Code's non-interactive stream becomes a second way for axClaude's window to learn what
 Claude does, off at first, with the screen as the default and the way back. Requirements are numbered SM-n.m. Stage 1
-of section 11, the seam, is built and changes no behaviour, and of stage 2 the stream's reader and model are built
-from recordings of the real stream, used by no window yet (section 13). The stages after it wait for the decisions
+of section 11, the seam, is built and changes no behaviour, and stage 2 is built: the stream's reader, its model
+and its host, from recordings of the real stream, used by no window yet (section 13). The stages after it wait for the decisions
 of section 12, where each says so.
 
 It rests on three things made the same day: the measurements (`stream.md`, twenty cases, all passing), the door
@@ -323,4 +323,12 @@ own. No window uses the model. Decided here, each open to the maintainer's ear w
 - The words said for a compaction are "Compacting the conversation" and "Conversation compacted", with a line of
   the app's at the boundary; for `/clear`, the screen model's own line and words (point 5 of section 12).
 
-Still to build of stage 2: the host, the process over its pipes.
+**Stage 2, the host (2026-11-17).** `StreamHost` runs a program as one process over three pipes: its output
+handed over line by line from a thread of its own, its input written from a queue by another, its error output
+drained and kept in part for the user's eyes, never for a log; its end reported once with the exit code. It knows
+no word of Claude Code's. Tested against Windows' own programs (`StreamHostTests`). With it stage 2 is whole: the
+recordings, the reader, the model, the host. No window uses any of them.
+
+Noted for stage 4, from the recordings: before the first message the stream names no mode, and a request that sets
+the mode is answered with it; whether a request that changes nothing can be asked for the mode is to be measured,
+since the window's rule for Ready waits for a mode.

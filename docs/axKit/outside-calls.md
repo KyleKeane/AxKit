@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 6 network requests, 34 program starts and 8 pipes, in 35 files, under the 14 headings below.
+Today: 6 network requests, 35 program starts and 8 pipes, in 36 files, under the 14 headings below.
 
 ## What axKit reaches
 
@@ -46,10 +46,12 @@ Calls (6):
 - **Documentation**: https://code.claude.com/docs/en/cli-reference and https://code.claude.com/docs/en/setup; Anthropic's privacy policy, https://www.anthropic.com/legal/privacy.
 - **Apps**: axClaude, access layer for Claude Code; Add axKit to Claude Code (axKit menu, AI tools) in every window; AI help in every window (Shift+F1, the axKit menu, Claude); axHelp, access layer for Claude Code, through axClaude: at the user's key, and, only when the user turned on Keep the conversation ready in the background (off at first) and has agreed to Claude Code, hidden as axHelp starts in the background at sign-in (docs/axHelp/SPEC.md HE-2.7).
 
-Calls (6):
+Calls (7):
 
 - **axClaude**, `src/AxClaude.Core/Pty/ClaudeLauncher.cs`, in `ClaudeLauncher.VersionAsync`, by `ProcessRun.RunAsync`: runs the user's Claude Code once with --version, without a window, so that axClaude knows which Claude Code it found and that it runs.
   Code: `var result = await ProcessRun.RunAsync(start, [], timeout).ConfigureAwait(false);`
+- **axClaude**, `src/AxClaude.Core/Streaming/StreamHost.cs`, in `StreamHost.Start`, by `Process.Start`: starts the user's Claude Code without a window as one process that takes messages on its standard input and writes what happens on its standard output, line by line (its non-interactive stream); Claude Code talks to Anthropic under the user's account. Used by no window yet.
+  Code: `var process = Process.Start(start) ?? throw new InvalidOperationException("The program was not started.");`
 - **shared by every app**, `src/AxKit.Core/Ai/AiRequest.cs`, in `AiRequest.AskAsync`, by `ProcessRun.RunAsync`: claude -p in its working folder with the folders the user allowed, with read-only tools, without the folder's servers and hooks, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
   Code: `var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);`
 - **shared by every app**, `src/AxKit.Core/ProcessRun.cs`, in `ProcessRun.RunAsync`, by `new Process`: the one place a program is started without a window and run to its end with both outputs read; which program and why is said at each call of Run and RunAsync, in its own comment.
@@ -319,10 +321,11 @@ Used in 1 place:
 
 Defined in .NET, System.Diagnostics: starts a program, through the Windows shell when UseShellExecute is set.
 
-Used in 19 places:
+Used in 20 places:
 
 - `src/AxAutomate.Core/Broker.cs`, in `Broker.Start`, for axKit.
 - `src/AxAutomate.Core/Run.cs`, in `Run.RunCommand`, for Workflow commands.
+- `src/AxClaude.Core/Streaming/StreamHost.cs`, in `StreamHost.Start`, for Claude Code.
 - `src/AxFile/FileForm.Operations.cs`, in `FileForm.ShowFolderInExplorer`, for Windows.
 - `src/AxFile/FileForm.Operations.cs`, in `FileForm.OpenWithWindows`, for Windows.
 - `src/AxFile/FileForm.Programs.cs`, in `FileForm.RunProgram`, for User programs.

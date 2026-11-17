@@ -483,7 +483,8 @@ src/AxClaude.Core/        class library (net10.0), no WinForms
               against the window's own code, one line of numbers for each turn)
   Streaming/  ClaudeCodeStream (Claude Code's non-interactive stream read down to neutral lines, and the lines a host
               writes), StreamModel (the stream's model, the second on ClaudeModel, built from the recordings in
-              tests/fixtures/streams); used by no window yet, stream.md and stream-mode.md
+              tests/fixtures/streams), StreamHost (a program as one process over three pipes); used by no window
+              yet, stream.md and stream-mode.md
   Privacy/    GitExclude (D34; `Redaction` is the bundle's, `AxKit.Core/Redaction.cs`, since 2026-10-24)
   AppSettings.cs, StartupOptions.cs (the command line, FR-9), ClaudeCodeSettings.cs (Claude Code's own settings the menus offer, FR-14)
 src/AxClaude/             class library (net10.0-windows), axClaude's window inside AxKit.exe: AxClaudeApp (the entry point
@@ -510,7 +511,8 @@ tests/AxClaude.Tests/     xunit: FixtureTests, ReplayTests, SessionModelTests, A
                           ScreenTests, QuestionTests, SettingsTests, GitExcludeTests, ClaudeLauncherTests, UtteranceTests,
                           StartupOptionsTests; for FR-15 TurnMarkTests, ClaudeCodeHooksTests, HookFrameTests, HookRelayTests,
                           ClaudeCodeTranscriptTests, RecordTextTests, SessionFlowTests, FlowFeedTests, FlowShadowTests;
-                          ClaudeCodeStreamTests, StreamModelTests (every stream fixture replayed, StreamReplay);
+                          ClaudeCodeStreamTests, StreamModelTests (every stream fixture replayed, StreamReplay),
+                          StreamHostTests;
                           SourceSeamTests (the window reads ClaudeModel alone); TestHelpers
 tests/AxKit.Tests/         the bundle's tests: DispatchTests, KeyTests, LayoutTests, ParagraphsTests, SettingsFileTests, UpdateCheckTests, WaveToneTests
 tests/fixtures/           *.vt recordings, *.vt.chunks.txt timing, *.expected.txt transcripts; records/ (session file lines written
