@@ -819,30 +819,71 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - F6, axCalc: Switch between the history and the field. Its kind: move between panes.
 - F6, axFile: Switch between the folder list and the Actions list. Its kind: move between panes.
 
-### Shift+F-key: the reverse or the other form of the same F-key
+### Shift+F-key, and the Applications key: the reverse or the other form of the same F-key
 
-3 keys of the inventory. No misfits.
+4 keys of the inventory. No misfits.
 
-Windows' own keys, not counted: Shift+F10.
+Windows' own keys, not counted: Shift+F10 and Applications key.
 
 ### Enter: open or confirm
 
 1 key of the inventory. No misfits.
 
-### Escape: go back or close
+### Enter with Ctrl, Shift or Alt: another form of open or confirm
 
-1 key of the inventory. 2 misfits.
+4 keys of the inventory. No misfits.
+
+Windows' own keys, not counted: Alt+Enter and Ctrl+Shift+Enter.
+
+### Escape and Shift+Escape: go back or close; with Shift, stop the program under the window
+
+2 keys of the inventory. 2 misfits.
 
 - Escape, axFile: Clear the selection or the filter. Its kind: remove: it clears and stays where it is.
 - Escape, axCalc: Clear the field. Its kind: remove: it clears and stays where it is.
 
-### Delete: remove
+### Delete and Ctrl+Shift+Delete: remove
 
-1 key of the inventory. No misfits.
+2 keys of the inventory. No misfits.
 
 ### Ctrl+Tab and Ctrl+Shift+Tab: move between panes
 
 2 keys of the inventory. No misfits.
+
+### The arrows, Page Up, Page Down, Tab, Shift+Tab and Backspace: move through what you are on
+
+9 keys of the inventory. No misfits.
+
+Windows' own keys, not counted: Up arrow, Down arrow, Left arrow, Right arrow, Page Up, Page Down, Tab, Shift+Tab and Backspace.
+
+### Shift with an arrow, Home, End or Space: select
+
+5 keys of the inventory. No misfits.
+
+Windows' own keys, not counted: Shift+Up arrow, Shift+Down arrow, Shift+Home and Shift+End.
+
+### Ctrl with an arrow, Home or End, and Ctrl+Shift with Left or Right arrow: a bigger step
+
+8 keys of the inventory. 2 misfits.
+
+- Ctrl+Up arrow, axMedia: Faster. Its kind: change a value: the speed of playing.
+- Ctrl+Down arrow, axMedia: Slower. Its kind: change a value: the speed of playing.
+
+### Alt+Up arrow and Alt+Down arrow: move what you are on up or down
+
+2 keys of the inventory. 1 misfit.
+
+- Alt+Up arrow, axFile: Up one level. Its kind: go to a place; File Explorer's own key for it.
+
+### Ctrl+Plus and Ctrl+Minus: make the text larger or smaller
+
+2 keys of the inventory. No misfits.
+
+Windows' own keys, not counted: Ctrl+Plus and Ctrl+Minus.
+
+### A letter alone: in a view you read, a quick command: go to the next thing of a kind, or say something
+
+1 key of the inventory. No misfits.
 
 ### Alt+letter: open a menu
 

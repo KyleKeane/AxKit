@@ -192,11 +192,11 @@
     {
       "id": "shift-f-keys",
       "scope": "every-window",
-      "pattern": "Shift+F-key",
-      "match": "^shift\\+f[0-9]+$",
+      "pattern": "Shift+F-key, and the Applications key",
+      "match": "^(shift\\+f[0-9]+|apps)$",
       "does": "the reverse or the other form of the same F-key",
-      "learn": "Shift with a function key is that key's other form: Shift+F3 finds the previous, Shift+F1 asks Claude about the window instead of reading the help. Shift+F10 is Windows' own key for the context menu.",
-      "windows": ["shift+f10"],
+      "learn": "Shift with a function key is that key's other form: Shift+F3 finds the previous, Shift+F1 asks Claude about the window instead of reading the help. Shift+F10 is Windows' own key for the context menu, and the Applications key does the same.",
+      "windows": ["shift+f10", "apps"],
       "misfits": []
     },
     {
@@ -210,12 +210,22 @@
       "misfits": []
     },
     {
+      "id": "enter-forms",
+      "scope": "window",
+      "pattern": "Enter with Ctrl, Shift or Alt",
+      "match": "^(ctrl\\+|shift\\+|alt\\+|ctrl\\+shift\\+)enter$",
+      "does": "another form of open or confirm",
+      "learn": "Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the window's main thing: it sends the message or the command, or commits. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows.",
+      "windows": ["alt+enter", "ctrl+shift+enter"],
+      "misfits": []
+    },
+    {
       "id": "escape",
       "scope": "every-window",
-      "pattern": "Escape",
-      "match": "^escape$",
-      "does": "go back or close",
-      "learn": "Escape goes back one step or closes what is open. It never loses work without asking.",
+      "pattern": "Escape and Shift+Escape",
+      "match": "^(shift\\+)?escape$",
+      "does": "go back or close; with Shift, stop the program under the window",
+      "learn": "Escape goes back one step or closes what is open. It never loses work without asking. Shift+Escape is for the program under an access layer: it interrupts Claude, or sends Escape to the terminal's program.",
       "windows": [],
       "misfits": [
         { "chord": "escape", "apps": ["axFile"], "does": "Clear the selection or the filter", "kind": "remove: it clears and stays where it is" },
@@ -225,10 +235,10 @@
     {
       "id": "delete",
       "scope": "every-window",
-      "pattern": "Delete",
-      "match": "^delete$",
+      "pattern": "Delete and Ctrl+Shift+Delete",
+      "match": "^(ctrl\\+shift\\+)?delete$",
       "does": "remove",
-      "learn": "Delete removes what you are on, and what can be lost asks first or can be undone.",
+      "learn": "Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Shift+Delete clears a whole history, as in a web browser.",
       "windows": [],
       "misfits": []
     },
@@ -239,6 +249,71 @@
       "match": "^ctrl\\+(shift\\+)?tab$",
       "does": "move between panes",
       "learn": "Ctrl+Tab goes to the next part of the window and Ctrl+Shift+Tab to the one before.",
+      "windows": [],
+      "misfits": []
+    },
+    {
+      "id": "moves",
+      "scope": "every-window",
+      "pattern": "The arrows, Page Up, Page Down, Tab, Shift+Tab and Backspace",
+      "match": "^(up|down|left|right|pageup|pagedown|tab|shift\\+tab|backspace)$",
+      "does": "move through what you are on",
+      "learn": "The arrows and Page Up and Page Down move through a list or a text, as in every Windows program. In a list of levels, Right arrow goes in and Left arrow or Backspace comes back out; on a field with a choice of values, Left and Right arrow choose the value. Tab and Shift+Tab go to the next and the previous part of the window.",
+      "windows": ["up", "down", "left", "right", "pageup", "pagedown", "tab", "shift+tab", "backspace"],
+      "misfits": []
+    },
+    {
+      "id": "shift-select",
+      "scope": "every-window",
+      "pattern": "Shift with an arrow, Home, End or Space",
+      "match": "^shift\\+(up|down|left|right|home|end|space)$",
+      "does": "select",
+      "learn": "Shift with an arrow, Home or End selects as it moves, as in every Windows list and text. Shift+Space selects from where the selection started to here.",
+      "windows": ["shift+up", "shift+down", "shift+home", "shift+end"],
+      "misfits": []
+    },
+    {
+      "id": "ctrl-arrows",
+      "scope": "window",
+      "pattern": "Ctrl with an arrow, Home or End, and Ctrl+Shift with Left or Right arrow",
+      "match": "^ctrl\\+((up|down|left|right|home|end)|shift\\+(left|right))$",
+      "does": "a bigger step",
+      "learn": "Ctrl with an arrow takes a bigger step: Ctrl+Up and Ctrl+Down go to the previous and the next section, Ctrl+Left and Ctrl+Right go back and forward 15 seconds in a recording. Ctrl+Home and Ctrl+End go to the first and the last. With Shift too, a bigger step still: the previous or the next file.",
+      "windows": [],
+      "misfits": [
+        { "chord": "ctrl+up", "apps": ["axMedia"], "does": "Faster", "kind": "change a value: the speed of playing" },
+        { "chord": "ctrl+down", "apps": ["axMedia"], "does": "Slower", "kind": "change a value: the speed of playing" }
+      ]
+    },
+    {
+      "id": "alt-arrows",
+      "scope": "window",
+      "pattern": "Alt+Up arrow and Alt+Down arrow",
+      "match": "^alt\\+(up|down)$",
+      "does": "move what you are on up or down",
+      "learn": "Alt+Up and Alt+Down move what you are on: a field of an item goes one place up or down in its list.",
+      "windows": [],
+      "misfits": [
+        { "chord": "alt+up", "apps": ["axFile"], "does": "Up one level", "kind": "go to a place; File Explorer's own key for it" }
+      ]
+    },
+    {
+      "id": "text-size",
+      "scope": "every-window",
+      "pattern": "Ctrl+Plus and Ctrl+Minus",
+      "match": "^ctrl\\+(plus|minus)$",
+      "does": "make the text larger or smaller",
+      "learn": "Ctrl+Plus makes the text larger and Ctrl+Minus smaller, in every window, as in a web browser.",
+      "windows": ["ctrl+plus", "ctrl+minus"],
+      "misfits": []
+    },
+    {
+      "id": "letter",
+      "scope": "window",
+      "pattern": "A letter alone",
+      "match": "^[a-z]$",
+      "does": "in a view you read, a quick command: go to the next thing of a kind, or say something",
+      "learn": "Where you read and do not type (a text in navigation mode, a preview), a letter alone is a command: H goes to the next heading and Shift+H to the one before, L says the line. In a text's navigation mode, a letter that moves plays a small click first, and a letter with no command plays two quick blips.",
       "windows": [],
       "misfits": []
     },

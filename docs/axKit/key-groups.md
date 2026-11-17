@@ -18,11 +18,14 @@ The same in every axKit window:
 - Ctrl+punctuation: the in-window partner of the same key with Ctrl+Shift.
 - Space and Ctrl+Space: toggle or play.
 - F-keys (F1 to F12 alone): say or show.
-- Shift+F-key: the reverse or the other form of the same F-key.
+- Shift+F-key, and the Applications key: the reverse or the other form of the same F-key.
 - Enter: open or confirm.
-- Escape: go back or close.
-- Delete: remove.
+- Escape and Shift+Escape: go back or close; with Shift, stop the program under the window.
+- Delete and Ctrl+Shift+Delete: remove.
 - Ctrl+Tab and Ctrl+Shift+Tab: move between panes.
+- The arrows, Page Up, Page Down, Tab, Shift+Tab and Backspace: move through what you are on.
+- Shift with an arrow, Home, End or Space: select.
+- Ctrl+Plus and Ctrl+Minus: make the text larger or smaller.
 - Alt+letter: open a menu.
 
 Inside one app's window:
@@ -32,6 +35,10 @@ Inside one app's window:
 - Ctrl+Shift+digit: go to the previous heading of that level.
 - Alt+digit: go to a place or view of the window.
 - Ctrl+Shift+letter: the reverse or the wider form of the same letter with Ctrl.
+- Enter with Ctrl, Shift or Alt: another form of open or confirm.
+- Ctrl with an arrow, Home or End, and Ctrl+Shift with Left or Right arrow: a bigger step.
+- Alt+Up arrow and Alt+Down arrow: move what you are on up or down.
+- A letter alone: in a view you read, a quick command: go to the next thing of a kind, or say something.
 
 ## From anywhere in Windows
 
@@ -104,9 +111,9 @@ Exceptions today, which do another kind of thing:
 - F6, axCalc: Switch between the history and the field.
 - F6, axGIT: Switch between the list and the details.
 
-### Shift+F-key: the reverse or the other form of the same F-key
+### Shift+F-key, and the Applications key: the reverse or the other form of the same F-key
 
-Shift with a function key is that key's other form: Shift+F3 finds the previous, Shift+F1 asks Claude about the window instead of reading the help. Shift+F10 is Windows' own key for the context menu.
+Shift with a function key is that key's other form: Shift+F3 finds the previous, Shift+F1 asks Claude about the window instead of reading the help. Shift+F10 is Windows' own key for the context menu, and the Applications key does the same.
 
 The keys:
 
@@ -116,6 +123,9 @@ The keys:
 
 Windows' own keys, as in every program:
 
+- Applications key, axFile, axGIT, axMedia and axProcess: Context menu.
+- Applications key, axAutomate, axMCP, axPass and axTask: The Context menu.
+- Applications key, axAutomate, axMCP, axPass and axTask: The field's menu.
 - Shift+F10, axFile, axGIT, axMedia and axProcess: Context menu.
 - Shift+F10, axAutomate, axMCP, axPass and axTask: The Context menu.
 - Shift+F10, axAutomate, axMCP, axPass and axTask: The field's menu.
@@ -143,9 +153,9 @@ The keys:
 - Enter, axStart: Start.
 - Enter, axPass: Unlock.
 
-### Escape: go back or close
+### Escape and Shift+Escape: go back or close; with Shift, stop the program under the window
 
-Escape goes back one step or closes what is open. It never loses work without asking.
+Escape goes back one step or closes what is open. It never loses work without asking. Shift+Escape is for the program under an access layer: it interrupts Claude, or sends Escape to the terminal's program.
 
 The keys:
 
@@ -154,15 +164,17 @@ The keys:
 - Escape, axTask: Back from the search.
 - Escape, axCalc: Back to the field.
 - Escape, axFile: Back to the folder list.
+- Shift+Escape, axClaude: Interrupt.
+- Shift+Escape, axTerminal: Send Escape.
 
 Exceptions today, which do another kind of thing:
 
 - Escape, axCalc: Clear the field.
 - Escape, axFile: Clear the selection or the filter.
 
-### Delete: remove
+### Delete and Ctrl+Shift+Delete: remove
 
-Delete removes what you are on, and what can be lost asks first or can be undone.
+Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Shift+Delete clears a whole history, as in a web browser.
 
 The keys:
 
@@ -173,6 +185,7 @@ The keys:
 - Delete, axClip: Remove.
 - Delete, axCalc: Remove the entry.
 - Delete, axPass: To the Recycle Bin.
+- Ctrl+Shift+Delete, axCalc and axClip: Clear history.
 
 ### Ctrl+Tab and Ctrl+Shift+Tab: move between panes
 
@@ -194,6 +207,60 @@ The keys:
 - Ctrl+Shift+Tab, axFile: Switch between the folder list and the Actions list.
 - Ctrl+Shift+Tab, axCalc: Switch between the history and the field.
 - Ctrl+Shift+Tab, axGIT: Switch between the list and the details.
+
+### The arrows, Page Up, Page Down, Tab, Shift+Tab and Backspace: move through what you are on
+
+The arrows and Page Up and Page Down move through a list or a text, as in every Windows program. In a list of levels, Right arrow goes in and Left arrow or Backspace comes back out; on a field with a choice of values, Left and Right arrow choose the value. Tab and Shift+Tab go to the next and the previous part of the window.
+
+Windows' own keys, as in every program:
+
+- Backspace, axAutomate, axMCP, axPass and axTask: Up a level.
+- Backspace, axFile: Up one level.
+- Down arrow, axClip and axStart: Next match.
+- Left arrow, axAutomate, axMCP, axPass and axTask: The previous value of the field.
+- Left arrow, axAutomate, axMCP, axPass and axTask: Up a level.
+- Left arrow, axFile: Up one level.
+- Page Down, axClip and axStart: Page down.
+- Page Up, axClip and axStart: Page up.
+- Right arrow, axAutomate, axMCP, axPass and axTask: Into the list.
+- Right arrow, axAutomate, axMCP, axPass and axTask: The next value of the field.
+- Right arrow, axFile: Into the folder.
+- Right arrow, axTask: Open it where it lives.
+- Tab, axAutomate, axMCP, axPass and axTask: To the detail pane.
+- Tab, axAutomate, axMCP, axPass and axTask: To the navigator.
+- Tab, axClaude and axTerminal: Switch between the view and the field.
+- Tab, axProcess: Next view.
+- Tab, axFile: Switch between the folder list and the Actions list.
+- Up arrow, axClip and axStart: Previous match.
+- Shift+Tab, axAutomate, axMCP, axPass and axTask: To the detail pane.
+- Shift+Tab, axAutomate, axMCP, axPass and axTask: To the navigator.
+- Shift+Tab, axClaude and axTerminal: Switch between the view and the field.
+- Shift+Tab, axProcess: Previous view.
+- Shift+Tab, axFile: Switch between the folder list and the Actions list.
+
+### Shift with an arrow, Home, End or Space: select
+
+Shift with an arrow, Home or End selects as it moves, as in every Windows list and text. Shift+Space selects from where the selection started to here.
+
+The keys:
+
+- Shift+Space, axFile: Select to here.
+
+Windows' own keys, as in every program:
+
+- Shift+Down arrow, axFile: Select to the next entry.
+- Shift+End, axFile: Select to the last entry.
+- Shift+Home, axFile: Select to the first entry.
+- Shift+Up arrow, axFile: Select to the previous entry.
+
+### Ctrl+Plus and Ctrl+Minus: make the text larger or smaller
+
+Ctrl+Plus makes the text larger and Ctrl+Minus smaller, in every window, as in a web browser.
+
+Windows' own keys, as in every program:
+
+- Ctrl+Minus, every app: Smaller text.
+- Ctrl+Plus, every app: Larger text.
 
 ### Alt+letter: open a menu
 
@@ -430,41 +497,65 @@ Exceptions today, which do another kind of thing:
 - Ctrl+Shift+T, axFile: New text file.
 - Ctrl+Shift+W, axDown, axJSON and axPreview: Word wrap.
 
+### Enter with Ctrl, Shift or Alt: another form of open or confirm
+
+Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the window's main thing: it sends the message or the command, or commits. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows.
+
+The keys:
+
+- Ctrl+Enter, axGIT: Commit.
+- Ctrl+Enter, axFile: Play folder in AxMedia.
+- Ctrl+Enter, axTerminal: Send the command.
+- Ctrl+Enter, axClaude: Send the message.
+- Shift+Enter, axClip: Copy without pasting.
+- Shift+Enter, axFile: Preview.
+
+Windows' own keys, as in every program:
+
+- Ctrl+Shift+Enter, axStart: Start as administrator.
+- Alt+Enter, axFile: Properties.
+
+### Ctrl with an arrow, Home or End, and Ctrl+Shift with Left or Right arrow: a bigger step
+
+Ctrl with an arrow takes a bigger step: Ctrl+Up and Ctrl+Down go to the previous and the next section, Ctrl+Left and Ctrl+Right go back and forward 15 seconds in a recording. Ctrl+Home and Ctrl+End go to the first and the last. With Shift too, a bigger step still: the previous or the next file.
+
+The keys:
+
+- Ctrl+Down arrow, axAutomate, axMCP, axPass and axTask: Next section.
+- Ctrl+End, axClip and axStart: Last match.
+- Ctrl+Home, axClip and axStart: First match.
+- Ctrl+Left arrow, axMedia: Back 15 seconds.
+- Ctrl+Right arrow, axMedia: Forward 15 seconds.
+- Ctrl+Up arrow, axAutomate, axMCP, axPass and axTask: Previous section.
+- Ctrl+Shift+Left arrow, axMedia: Previous file.
+- Ctrl+Shift+Right arrow, axMedia: Next file.
+
+Exceptions today, which do another kind of thing:
+
+- Ctrl+Down arrow, axMedia: Slower.
+- Ctrl+Up arrow, axMedia: Faster.
+
+### Alt+Up arrow and Alt+Down arrow: move what you are on up or down
+
+Alt+Up and Alt+Down move what you are on: a field of an item goes one place up or down in its list.
+
+The keys:
+
+- Alt+Down arrow, axAutomate, axMCP, axPass and axTask: Move the field down.
+- Alt+Up arrow, axAutomate, axMCP, axPass and axTask: Move the field up.
+
+Exceptions today, which do another kind of thing:
+
+- Alt+Up arrow, axFile: Up one level.
+
+### A letter alone: in a view you read, a quick command: go to the next thing of a kind, or say something
+
+Where you read and do not type (a text in navigation mode, a preview), a letter alone is a command: H goes to the next heading and Shift+H to the one before, L says the line. In a text's navigation mode, a letter that moves plays a small click first, and a letter with no command plays two quick blips.
+
+The keys:
+
+- L, axPreview: Say the line.
+
 ## Keys in no group yet
 
-These keys of the inventory match no group's pattern. Most are the arrows and the keys of a list or a text.
-
-- L: Say the line.
-- Applications key: The Context menu; The field's menu; Context menu.
-- Backspace: Up a level; Up one level.
-- Down arrow: Next match.
-- Left arrow: The previous value of the field; Up a level; Up one level.
-- Page Down: Page down.
-- Page Up: Page up.
-- Right arrow: Into the list; The next value of the field; Into the folder; and more.
-- Tab: To the detail pane; To the navigator; Switch between the view and the field; and more.
-- Up arrow: Previous match.
-- Ctrl+Down arrow: Next section; Slower.
-- Ctrl+End: Last match.
-- Ctrl+Enter: Send the message; Play folder in AxMedia; Commit; and more.
-- Ctrl+Home: First match.
-- Ctrl+Left arrow: Back 15 seconds.
-- Ctrl+Minus: Smaller text.
-- Ctrl+Plus: Larger text.
-- Ctrl+Right arrow: Forward 15 seconds.
-- Ctrl+Up arrow: Previous section; Faster.
-- Ctrl+Shift+Delete: Clear history.
-- Ctrl+Shift+Enter: Start as administrator.
-- Ctrl+Shift+Left arrow: Previous file.
-- Ctrl+Shift+Right arrow: Next file.
-- Alt+Down arrow: Move the field down.
-- Alt+Enter: Properties.
-- Alt+Up arrow: Move the field up; Up one level.
-- Shift+Down arrow: Select to the next entry.
-- Shift+End: Select to the last entry.
-- Shift+Enter: Copy without pasting; Preview.
-- Shift+Escape: Interrupt; Send Escape.
-- Shift+Home: Select to the first entry.
-- Shift+Space: Select to here.
-- Shift+Tab: To the detail pane; To the navigator; Switch between the view and the field; and more.
-- Shift+Up arrow: Select to the previous entry.
+None: every key of the inventory is in a group.
