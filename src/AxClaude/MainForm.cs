@@ -288,7 +288,7 @@ internal sealed partial class MainForm : ConsoleForm
     }
 
     /// <summary>Claude is in the middle of a turn: working, waiting for an answer, or holding a message sent while it worked.</summary>
-    private bool ClaudeBusy => ProcessRunning && (_model.Working || _model.PromptPending || _model.QueuedMessages > 0);
+    private bool ClaudeBusy => ProcessRunning && (ClaudeWorks || _model.PromptPending || _model.QueuedMessages > 0);
 
     /// <summary>The work Claude runs in the background, which outlives the turn ("1 shell"); null when none runs or Claude is stopped.</summary>
     private string? ClaudeBackground => ProcessRunning ? _model.Background : null;
@@ -324,7 +324,7 @@ internal sealed partial class MainForm : ConsoleForm
     protected override string Shortcuts => HelpText.Shortcuts;
 
     /// <summary>The music plays while Claude works and is not asking (FR-7.9).</summary>
-    protected override bool Working => _model.Working && !_model.PromptPending;
+    protected override bool Working => ClaudeWorks && !_model.PromptPending;
 
     /// <summary>Ctrl+S, the bundle's save key: the conversation exported as text (FR-3.8), since the window holds no document of its own.</summary>
     protected override void SaveCommand() => ExportConversation();

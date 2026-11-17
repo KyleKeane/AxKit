@@ -314,15 +314,17 @@ conversation, since the fault of 2026-11-15 came after hours:
 ## 25. Events and grounding (FR-15, docs/axClaude/events-and-grounding.md, 2026-11-15)
 
 How axClaude learns what Claude Code is doing (events-and-grounding.md EG-11.6, which calls this section 23; 23 and 24
-were taken). A step is added with each step of that document's build plan. While the core is in shadow, every
-section above is the check that nothing heard has changed.
+were taken). A step is added with each step of that document's build plan. For what the core is not yet in charge
+of (Done, reply speech, the background number), every section above is the check that nothing heard has changed;
+since 2026-11-17 it is in charge of the state (step 4), and sections 2, 5, 6 and 8 are the check that the status,
+"Queued" and the close and restart questions are right with it.
 
 Script: `tests/scripts/axClaude/28-event-sources.txt` (a stand-in for Claude Code that also writes a turn's marks and
 the bell, no network).
 
 1. Options, Developer: Events from Claude Code's hooks and Ground the conversation in Claude Code's session file are
    both checked. Say the event sources: "Events. Marks: 0. Hooks: not passed, version. Session file: not found. Core: in
-   shadow.", cutting off other speech (the script's stand-in says it is version 0.0.0, older than the events' table, so
+   charge of state.", cutting off other speech (the script's stand-in says it is version 0.0.0, older than the events' table, so
    it gets no hooks; step 2 has one that does). A message, and "Done" as before; the command again: "Marks: 3". Ground the
    conversation in Claude Code's session file: "Grounding in Claude Code's session file off", and the command says
    "Session file: off"; the item again: "... on", and "Session file: not found". Events from Claude Code's hooks:
@@ -354,3 +356,17 @@ the bell, no network).
    whether either takes noticeably longer than with Events from Claude Code's hooks off (measured that day on a busy
    computer: 0.8 s without hooks, 0.8 to 1.7 s with them, since Claude Code runs its hook for the session's end
    before it ends).
+4. The state from the core (script `34-state-from-events.txt`, the stand-in of `tools/AxAutomate` with hooks and the
+   session file; EG-6.1 to EG-6.4, 2026-11-17). A message, "Sent"; Claude takes it up with its start mark and a
+   screen that shows neither a spinner nor a mode line: F8 says "Claude: working" all the same. A second message is
+   typed. The turn's end marks and the bell come, the reply's rows not yet: F8 says "Claude: ready", and Enter in that
+   moment says "Queued", not "Sent". The reply's rows arrive and Claude takes the second message up: in the
+   conversation the first reply's last row and the turn's summary row stand before "# Input 2", the message, "# Output
+   2 Reply from Claude" and its reply. Say the event sources: "Marks: 6", "Session file: followed" (the file the
+   session's start event named) and "Core: in charge of state.". A second window started with the file-only setting
+   `eventCore` set to `shadow`: "Core: in shadow."; the same start mark and screen: F8 says "Claude: ready", and a
+   message sent then says "Sent", as before the core. By ear, in a real conversation (sections 2, 6 and 8 with
+   their live scripts): the status says working from the moment Claude takes a message up until its turn ends, also
+   between two tool calls when the spinner is off the screen for a moment; the background music, when on, starts and
+   stops with it; a message sent in the half second after a turn's bell says "Queued" and stands after that turn's
+   reply; "Done", the reply speech and the sounds are as they were.

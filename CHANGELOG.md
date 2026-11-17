@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: the status says working for as long as a turn runs, from Claude Code's own turn marks, and a message sent while a reply is still arriving goes after that reply.
 - axClaude: a command Claude offers, or an AI tool's request to run one, now plays its alarm and flashes the taskbar button when the window is behind another one, also with "Louder alert when the window is in the background" switched on. With that option on, such an offer made no sound at all until now.
 - axTask, axPass, axMCP, axAutomate: Previous section and Next section, and axTask's heading keys at the top level, play the heading sound when they land on a heading also when they are chosen from the menu or the command palette or run by an AI tool, as their keys always did.
 - axClaude: with Claude Code 2.1.326, a message sent while Claude works is counted again: the status bar says "1 message waiting" and Ctrl+Shift+S sends it, since Claude Code now draws "Queued" before its hint. And when the reply that runs is longer than the screen, the message's own Input and Output lines no longer land in the middle of that reply; they wait for the place where Claude takes the message up.

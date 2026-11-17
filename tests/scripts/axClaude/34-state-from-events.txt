@@ -1,0 +1,83 @@
+# Workflow: Know that Claude works, and send a message while a reply arrives
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/nvda-test-plan.md section 25 step 4 (docs/axClaude/events-and-grounding.md EG-6.1 to EG-6.4,
+# EG-1.4; 2026-11-17): whether Claude works is decided by the core, from the marks Claude Code writes at a turn's
+# start and end, and no longer by the spinner and the hint the screen shows. The stand-in (tools/AxAutomate/StandIn.cs)
+# says it is Claude Code 2.1.325, so it gets the hooks, and its start event names the session file. It plays a turn
+# whose screen never shows work: after the start mark, a frame with neither a spinner nor a mode line, and the status
+# bar says working all the same. Then the end marks and the bell, with the reply's rows still to come: the turn has
+# ended and is not yet over, and a message sent in that moment is "Queued", its block held until Claude takes it up,
+# so that it stands after the reply and not in front of it. The moment is short, 600 ms after the bell at most: the
+# message is typed beforehand, and Enter goes as soon as the status bar says ready. "Done" still comes by the bell and
+# the settle (its turn is WP-A17's), so this script does not ask when. A second window, with the file-only setting
+# eventCore set to shadow, is given the same turn and shows it as the window did before: the state is the screen's.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"claudeHooks":true}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir sw
+mkdir sh
+# The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.
+# The scenario: the prompt and the session's start event; at the file go1 the mark A, a frame without a spinner and
+# without a mode line, and the prompt's entry; at go2 the stop event, the marks C and D and the bell; at go3 the
+# reply's frame with its two rows, the reply's entry and the turn's end, and then the second message's turn whole:
+# the mark A, its echo in a working frame, its entry, its end and its reply.
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-777777777777","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"waitFile":"go2"},{"hook":"Stop","last":["A first row.","The last row of the reply."],"tasks":[]},{"mark":"C"},{"mark":"D"},{"bell":true},{"waitFile":"go3"},{"frame":["claude: started","you: Say ok","claude: A first row.","The last row of the reply.","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["A first row.","The last row of the reply."]},{"turnEnd":2345},{"wait":150},{"mark":"A"},{"frame":["claude: started","you: Say ok","claude: A first row.","The last row of the reply.","Sautéed for 2s · done 4:07 PM","you: Say more","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say more"],"source":"typed"},{"wait":400},{"hook":"Stop","last":["more"],"tasks":[]},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: A first row.","The last row of the reply.","Sautéed for 2s · done 4:07 PM","you: Say more","claude: more","Sautéed for 1s · done 4:08 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["more"]},{"turnEnd":1200},{"idle":true}]}
+
+start claude {temp}\sw --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+# Goal: Know that Claude works while the screen shows no sign of it
+# Claude takes the message up: the start mark, and a frame with no spinner and no mode line. The status bar says
+# working, from the mark; the screen alone would have said ready.
+type Say ok
+keys enter
+expect said Sent
+file sw\go1 x
+expect state Claude: working
+
+# Goal: Send a message while a reply's rows are still arriving
+# The second message is typed while Claude works. Then the turn's end marks and the bell: the status bar says ready,
+# and the reply's rows have not come. Enter in that moment: "Queued", not "Sent".
+type Say more
+file sw\go2 x
+expect state Claude: ready
+keys enter
+expect said Queued
+
+# Check: The message stands after the reply it was sent under
+# The reply's rows arrive, and Claude takes the second message up: its block stands after the first reply's last row
+# and the turn's summary row, never in front of them, and its own reply is under it.
+file sw\go3 x
+do Conversation
+expect text "claude: more"
+expect text "claude: A first row.","The last row of the reply.","Sautéed for 2s · done 4:07 PM","# Input 2","Say more","","# Output 2 Reply from Claude","","claude: more"
+expect state Claude: ready
+
+# Check: The session file is followed, and the core is in charge of the state
+# The file is the one the session's start event named. A hook is a program started for each event, and the reader
+# looks at the file every 50 ms after a turn: the wait is for a busy computer.
+wait 2000
+menu Say the event sources
+expect said Marks: 6.
+expect said Session file: followed
+expect said Core: in charge of state.
+
+# Check: With the core in shadow the state is the screen's, as before
+# A second window, started with the file-only setting eventCore set to shadow: the core computes beside the window and
+# decides nothing. The same turn: after the start mark and the frame that shows no work the status bar says ready, as
+# the screen has it, and a message sent then is "Sent".
+file home\AxKit\axClaude.json {"checkForUpdates":false,"claudeHooks":true,"eventCore":"shadow"}
+start claude {temp}\sh --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+menu Say the event sources
+expect said Core: in shadow.
+type Say ok
+keys enter
+expect said Sent
+file sh\go1 x
+wait 1500
+menu Say the event sources
+expect said Marks: 1.
+expect state Claude: ready
+type Say more
+keys enter
+expect said Sent

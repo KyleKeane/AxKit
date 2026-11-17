@@ -1467,31 +1467,31 @@ Starts with: Open axClaude with the folder es.
 ### Hear where the window's events come from
 
 1. Choose Say the event sources in the Options menu, Developer.
-    You hear: Events. Marks: 0. Hooks: not passed, version. Session file: not found. Core: in shadow.
+    You hear: Events. Marks: 0. Hooks: not passed, version. Session file: not found. Core: in charge of state.
 
 ### Turn the grounding in Claude Code's session file off and on again
 
 1. Choose Ground the conversation in Claude Code's session file in the Options menu, Developer.
     You hear: Grounding in Claude Code's session file off.
 2. Choose Say the event sources in the Options menu, Developer.
-    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: off. Core: in shadow.
+    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: off. Core: in charge of state.
 3. Choose Ground the conversation in Claude Code's session file in the Options menu, Developer.
     You hear: Grounding in Claude Code's session file on.
 4. Choose Say the event sources in the Options menu, Developer.
-    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
+    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in charge of state.
 
 ### Turn Claude Code's events off and on again
 
 1. Choose Events from Claude Code's hooks in the Options menu, Developer.
     You hear: Events from Claude Code's hooks off, from the next start of Claude.
 2. Choose Say the event sources in the Options menu, Developer.
-    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in shadow.
+    You hear: Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in charge of state.
 3. Press Ctrl+Shift+R (Force Claude to restart; Actions menu).
 4. Press Enter.
     You hear: Restarting.
     You hear: Ready.
 5. Choose Say the event sources in the Options menu, Developer.
-    You hear: Events. Marks: 0. Hooks: off. Session file: not found. Core: in shadow.
+    You hear: Events. Marks: 0. Hooks: off. Session file: not found. Core: in charge of state.
 6. Choose Events from Claude Code's hooks in the Options menu, Developer.
     You hear: Events from Claude Code's hooks on, from the next start of Claude.
 
@@ -1575,6 +1575,22 @@ Starts with: Open axClaude with the folder sf.
 ## Start axClaude with a place of Claude Code another program wrote
 
 Starts with: Open axClaude with the folder st. Close the window.
+
+## Know that Claude works, and send a message while a reply arrives
+
+Starts with: Open axClaude with the folder sw.
+
+### Know that Claude works while the screen shows no sign of it
+
+1. Type: Say ok
+2. Press Enter.
+    You hear: Sent.
+
+### Send a message while a reply's rows are still arriving
+
+1. Type: Say more
+2. Press Enter.
+    You hear: Queued.
 
 ## Have a short exchange with Claude
 

@@ -230,8 +230,11 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Hear whether Claude Code's session file is followed
     - Turn the grounding in Claude Code's session file off and on again
 33. **Start axClaude with a place of Claude Code another program wrote**
-34. **Have a short exchange with Claude**
-35. **Answer a set of two questions from Claude**
+34. **Know that Claude works, and send a message while a reply arrives**
+    - Know that Claude works while the screen shows no sign of it
+    - Send a message while a reply's rows are still arriving
+35. **Have a short exchange with Claude**
+36. **Answer a set of two questions from Claude**
 
 ## axClip
 

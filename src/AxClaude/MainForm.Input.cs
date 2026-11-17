@@ -119,7 +119,9 @@ internal sealed partial class MainForm
         }
 
         // A message sent into a question on purpose (the kept message sent again, or the guard off) gets its block too (FR-2.10).
-        var queued = _model.Working;
+        // "Queued" also for a turn that has ended and is not yet over (events-and-grounding.md EG-6.4): its reply's rows
+        // may still be arriving, and the model holds the message's block back until Claude takes the message up.
+        var queued = ClaudeInTurn;
         _model.Send(text, evenWhilePrompting: true);
         _messageSent = true;
         QueueWrites(text);
@@ -185,7 +187,7 @@ internal sealed partial class MainForm
     {
         After(EnterCheckMs, () =>
         {
-            if (!ProcessRunning || _model.Working || _model.PromptPending || !_model.PromptHolds(text))
+            if (!ProcessRunning || ClaudeWorks || _model.PromptPending || !_model.PromptHolds(text))
             {
                 return;
             }

@@ -726,6 +726,23 @@ Space in the box said nothing.
 | Space: "checked", once | Passed |
 | Space again: "not checked", once | Passed |
 
+## Owed: the state from the event core, 2026-11-17 (`docs/axClaude/events-and-grounding.md` EG-6.1 to EG-6.4, WP-A16)
+
+Built and passing: every test, the stand-in script 34, and all 36 scripts of axClaude against Claude Code 2.1.326 on
+the runner's desktop. Whether Claude works now comes from the marks Claude Code writes at a turn's start and end,
+no longer from the spinner on the screen. None of it is heard in the user's own use yet.
+
+By the user's ear, in axClaude over a day of ordinary use:
+
+1. F8, or the status bar, while Claude works through several tool calls: it says working for the whole turn, and no
+   longer goes ready and back in the middle (the old state did so 167 times in 59 turns of 2026-11-16).
+2. The working music, when it is on: it plays for the whole turn without stopping between tool calls.
+3. A message sent while Claude works: "Queued", as before. A message sent in the first moment after an interrupt
+   (Shift+Escape), within about half a second: also "Queued" now, and it goes after the interrupted reply's last rows.
+   Whether that word is right there, or "Sent" would serve better.
+4. Options, Developer, Say the event sources: "Core: in charge of state".
+
+With NVDA, in a pass: `nvda-test-plan.md` section 25, step 4.
 ## Owed: the keys and sounds of 2026-11-16 (Alt+1 to 3, Ctrl+Period, Ctrl+Slash, navigation mode's three sounds; `docs/axKit/SPEC.md` AX-8.13 to AX-8.15)
 
 Built and passing on the runner's desktop, which posts a key's message and plays no sound, so none of this is heard

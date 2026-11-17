@@ -15,8 +15,13 @@ internal sealed partial class MainForm
         // One pass over the transcript for the tick (FR-7.8) and the spoken reply and tool calls (FR-7.4). Nothing is
         // spoken before Claude is ready in this run: what it prints until then is the replayed conversation, there for
         // reading. The chimes hang on the send, the first reply line and the bell (FR-7.3), never on the working status.
+        // Whether the last line is final is still asked of the screen here, and of the core everywhere else
+        // (ClaudeWorks): the core learns of this frame only below, from this very pass, so in a run without marks its
+        // word is the frame before's, and a reply's row drawn with the first working frame was spoken while Claude
+        // worked (script 27). Reply speech is the window's own until it goes through the core's gate (WP-A18).
         var arrival = _arrivals.Update(_model.Lines, _model.Working, _readyAnnounced ? _settings.ReplySpeech : ReplySpeechMode.None, _readyAnnounced && _settings.SpeakToolCalls);
-        // The same pass is the core's input (MainForm.Flow.cs): the core computes beside what follows here and changes nothing of it.
+        // The same pass is the core's input (MainForm.Flow.cs). Of what follows here the core decides one thing, whether
+        // Claude works (ClaudeWorks); Done and the speech it computes beside this code, which still acts.
         FlowFrame(arrival);
         if (_settings.ClickOnNewLine)
         {
@@ -89,7 +94,7 @@ internal sealed partial class MainForm
             }
         }
 
-        if (!_readyAnnounced && ProcessRunning && _model.Mode is not null && !_model.Working && !_model.PromptPending)
+        if (!_readyAnnounced && ProcessRunning && _model.Mode is not null && !ClaudeWorks && !_model.PromptPending)
         {
             _readyAnnounced = true;
             _model.HideReplay = false;
@@ -303,7 +308,7 @@ internal sealed partial class MainForm
             : _model.TranscriptViewOpen ? "detailed view on, Ctrl+O turns it off"
             : _model.PendingScreen is { } screen && ScreenActions.IsInformation(screen) ? "showing " + ScreenActions.StatusName(screen)
             : _model.PromptPending ? "waiting for your answer"
-            : _model.Working ? ("working " + (_model.Spinner ?? string.Empty)).Trim()
+            : ClaudeWorks ? ("working " + (_model.Spinner ?? string.Empty)).Trim()
             : _model.Mode is not null ? "ready"
             : "starting";
         var parts = new List<string> { "Claude: " + state };

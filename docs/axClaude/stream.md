@@ -15,8 +15,9 @@ window uses, and the probe.
   the reply, which are Claude Code's own (the mode line, the spinner, a progress row), where a question waits. This
   is what the window runs on today. It gives everything Claude Code shows, its own screens included, and every
   release can move a row: 2.1.326 moved the queued message's hint.
-- **The session file and the hooks**, built on 2026-11-15 beside the screen and running in shadow
-  (`events-and-grounding.md`): the file gives each message whole, the hooks give the moments of a turn. Claude Code's
+- **The session file and the hooks**, built on 2026-11-15 beside the screen (`events-and-grounding.md`): the file
+  gives each message whole, the hooks give the moments of a turn. Since 2026-11-17 they decide the state (whether
+  Claude works); Done and what is spoken are still the screen's, with the rest in shadow. Claude Code's
   documentation says of the file's format that it is internal and "changes between versions, so scripts that parse
   these files directly can break on any release."
 - **The stream.** Claude Code started with `-p --input-format stream-json --output-format stream-json --verbose` is

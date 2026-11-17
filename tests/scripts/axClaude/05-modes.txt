@@ -101,6 +101,10 @@ expect text Interrupted
 # Step 6: Actions, Send key, Ctrl+C from the menu, and Ctrl+Shift+C from the field: the same as Shift+Escape. Each
 # interrupts Claude while it writes a long story (after the interruptions above, Claude did not always call a tool
 # again; a reply is printed in its final frame, so the story is interrupted while the status says working).
+# A moment first, as a person takes to type: for 600 ms after an interrupted turn its last rows may still come, and a
+# message sent in that moment is "Queued" and goes after them (events-and-grounding.md EG-6.4, since 2026-11-17, when
+# this step, sent 450 ms after the interrupt, said Queued).
+wait 1200
 keys alt+1
 type Write a story of 1500 words about a lighthouse keeper.
 keys enter

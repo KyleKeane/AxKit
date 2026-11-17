@@ -33,8 +33,8 @@ internal sealed partial class MainForm
         Background = 8,
     }
 
-    /// <summary>The families the core is in charge of in this build: none, the core runs in shadow. Each package that moves a family to the core adds it here (events-and-grounding.md section 10).</summary>
-    private const FlowCharge Built = FlowCharge.None;
+    /// <summary>The families the core is in charge of in this build: the state (EG-6.1 to EG-6.4); Done, reply speech and the background are in shadow. Each package that moves a family to the core adds it here (events-and-grounding.md section 10).</summary>
+    private const FlowCharge Built = FlowCharge.State;
 
     /// <summary>The numbers of where the events come from (EG-9.3, EG-9.4), counted on this thread alone: the core counts in it, and what a background thread counted is added here when its post arrives.</summary>
     private readonly SourceHealth _health = new();
@@ -107,6 +107,47 @@ internal sealed partial class MainForm
         (Built & family) != 0 && !_flowFailed && _settings.EventCore != AppSettings.EventCoreShadow;
 
     /// <summary>
+    /// Claude works: a turn is open. By the core while it decides the state (EG-6.1 to EG-6.3: the turn's marks, with
+    /// the record and the screen standing in where a run has none), else by the screen's spinner and hint, as before
+    /// the core. Everything in the window that asks whether Claude is busy or idle asks here. One place still reads
+    /// the screen's own word, the pass that says which reply line is final (<see cref="OnTranscriptChanged"/>, where
+    /// the reason stands).
+    /// </summary>
+    private bool ClaudeWorks => FlowDecides(FlowCharge.State) ? _flow.Working : _model.Working;
+
+    /// <summary>
+    /// A turn is open, or has ended and is not yet over, its last rows still to come: a message sent now is "Queued"
+    /// and goes after that turn's reply (EG-6.4). The ending is the core's alone; the screen knows none.
+    /// </summary>
+    private bool ClaudeInTurn => ClaudeWorks || (FlowDecides(FlowCharge.State) && _flow.Ending);
+
+    /// <summary>
+    /// The model is told whether a turn is open or ending, which is what holds a sent message's block back
+    /// (<see cref="SessionModel.TurnOpen"/>, EG-1.4): the core's word while the core decides the state, null while it
+    /// does not, and the model then reads the screen as before.
+    /// </summary>
+    private void FlowTurnToModel()
+    {
+        bool? open = FlowDecides(FlowCharge.State) ? _flow.Working || _flow.Ending : null;
+        var over = _model.TurnOpen == true && open != true;
+        _model.TurnOpen = open;
+        if (over)
+        {
+            // The model reads the value only as a frame ends, and a turn is over with no frame behind it (at Done, by
+            // time): a held block whose echo never came would then wait for Claude's next output, where the screen's
+            // own word placed it with the turn's last frame (SPEC.md FR-4.7). So one more frame end, of the screen as
+            // it stands, as the quiet timer gives one; after the pass that runs now, never inside it.
+            After(1, () =>
+            {
+                if (ProcessRunning && _model.TurnOpen != true)
+                {
+                    _model.EndFrame();
+                }
+            });
+        }
+    }
+
+    /// <summary>
     /// Puts an input at the end of the queue and, unless the loop already runs, takes the queue's inputs one by one:
     /// the core's decisions for one are carried out in order before the next is taken (EG-4.8). Null is no input, so
     /// that a source's mapping can be handed over as it is. Nothing the core does may take the window down while the
@@ -158,6 +199,10 @@ internal sealed partial class MainForm
                     _flowTimer.Stop();
                     _flowTimerAt = long.MaxValue;
                     Log.Error($"Events: the core failed on {next} with {ex.GetType().Name} and is off until Claude starts again\n{ex.StackTrace}");
+                    // What the core decided is the screen's again from here: the model's rule, the status bar and the music.
+                    FlowTurnToModel();
+                    UpdateStatus();
+                    UpdateMusic();
                 }
             }
         }
@@ -169,13 +214,25 @@ internal sealed partial class MainForm
 
     /// <summary>
     /// Carries one decision out. Whatever the core is in charge of: the wake time (the timer), a note (the log), and
-    /// the record to follow or to forget (the reader). Every other decision belongs to a family that is in shadow in
-    /// this build: the window's own code acts, and the decision only goes to the shadow's count.
+    /// the record to follow or to forget (the reader). The state, while the core decides it: the model's rule for a
+    /// sent message, the status bar and the music, at once, since a mark, an event or a tick changes it with no frame
+    /// behind it. Every other decision belongs to a family that is in shadow in this build: the window's own code
+    /// acts, and the decision only goes to the shadow's count.
     /// </summary>
     private void Carry(FlowDecision decision)
     {
         switch (decision)
         {
+            case StateChanged when FlowDecides(FlowCharge.State):
+                // The shadow still needs the state, of both sides: a turn of its line lasts until both are idle, and
+                // Done and reply speech are compared inside it. The window has no state of its own to compare any
+                // more, so both sides are told the one state at the one time, and the line says that they agree.
+                _shadow.Core(decision, _flowNow);
+                FlowWindowState(_flowNow);
+                FlowTurnToModel();
+                UpdateStatus();
+                UpdateMusic();
+                break;
             case WakeAt wake:
                 _flowWakeAt = wake.AtMs;
                 break;
@@ -206,11 +263,13 @@ internal sealed partial class MainForm
             RecordTurn(turn);
         }
 
+        // For the same reason the model is told here, and not only with a change of the state (EG-1.4).
+        FlowTurnToModel();
         var ended = handled is ProcessEnded;
         if (ended)
         {
             // Claude is gone: the window's own state is idle, and a turn the shadow holds is over for both.
-            FlowWindowState();
+            FlowWindowState(Environment.TickCount64);
         }
 
         if (_shadow.TurnLine(ended ? long.MaxValue : _flowNow) is { } line)
@@ -247,7 +306,7 @@ internal sealed partial class MainForm
             return;
         }
 
-        FlowWindowState();
+        FlowWindowState(Environment.TickCount64);
         if (_model.PromptPending)
         {
             // For the shadow's line of a turn that differs: Claude waited on a question, a permission prompt or a screen.
@@ -257,14 +316,18 @@ internal sealed partial class MainForm
         EnqueueFlow(FlowFeed.FromFrame(_model, arrival, _model.PromptPending, _readyAnnounced && _settings.ReplySpeech != ReplySpeechMode.None));
     }
 
-    /// <summary>The window's own working state, as the status bar has it (FR-10.2), told to the shadow when it changed.</summary>
-    private void FlowWindowState()
+    /// <summary>
+    /// The window's working state, as the status bar has it (FR-10.2), told to the shadow when it changed. While the
+    /// core is in shadow that is the screen's word, and the shadow's line says how long the two stood apart; while the
+    /// core decides the state it is the core's own, told with the decision (<see cref="Carry"/>).
+    /// </summary>
+    private void FlowWindowState(long now)
     {
-        var working = ProcessRunning && _model.Working;
+        var working = ProcessRunning && ClaudeWorks;
         if (working != _flowWindowWorking)
         {
             _flowWindowWorking = working;
-            _shadow.Window(working ? ShadowFact.Working : ShadowFact.Idle, Environment.TickCount64);
+            _shadow.Window(working ? ShadowFact.Working : ShadowFact.Idle, now);
         }
     }
 

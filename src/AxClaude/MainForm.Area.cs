@@ -800,7 +800,7 @@ internal sealed partial class MainForm
             _draft = null;
         }
 
-        if (!_drafts.Drafted(_model.Working, idle, _model.FeedbackDrafts))
+        if (!_drafts.Drafted(ClaudeWorks, idle, _model.FeedbackDrafts))
         {
             return;
         }
@@ -817,12 +817,12 @@ internal sealed partial class MainForm
     }
 
     /// <summary>Claude runs, waits on nothing, and no write of the user's is on its way to it.</summary>
-    private bool ClaudeIdle => ProcessRunning && !_model.Working && !_model.PromptPending && !WritesPending;
+    private bool ClaudeIdle => ProcessRunning && !ClaudeWorks && !_model.PromptPending && !WritesPending;
 
     /// <summary>Sends /feedback as the user's own command would go, without "Sent": the review of the draft announces itself. Skipped when Claude is no longer idle.</summary>
     private void OpenFeedbackDrafts()
     {
-        if (!ClaudeIdle || Area.Current is not null || !_drafts.Drafted(_model.Working, idle: true, _model.FeedbackDrafts))
+        if (!ClaudeIdle || Area.Current is not null || !_drafts.Drafted(ClaudeWorks, idle: true, _model.FeedbackDrafts))
         {
             _draft = null;
             return;
