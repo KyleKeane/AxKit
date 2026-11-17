@@ -41,6 +41,22 @@ expect said fake, starting
 expect said ! fake, running, Tools 1, Resources 1, Prompts 0
 expect focus Tools, 1
 expect state fake - axMCP, access layer for MCP servers
+
+# Check: A started server's details end with what it wrote to its standard error
+# MP-10 and the bundle's repair R-74: the count, then the newest lines, here and never in the log (the log holds each
+# line's length); the fake server writes one line as it starts.
+keys left
+expect focus fake, stdio, running
+keys tab
+expect focus Source: Your servers
+keys end
+expect focus axkitfake warns of nothing
+keys up
+expect focus Error lines: 1, shown below
+keys escape
+expect focus fake, stdio, running
+keys right
+expect focus Tools, 1
 keys right
 expect said ! Tools, 1 tool, echo, tool, Says the text back.
 

@@ -586,7 +586,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Where: src/AxMCP.Core/StdioServer.cs; src/AxMCP/MCPForm.cs
 - Principle: P4
 - Fix: The log holds a line's length; the text stays in the window.
-- Checked by: tests/AxMCP.Tests/StdioServerTests (An_error_line_is_kept_for_the_window_and_only_its_length_is_logged, What_a_started_server_writes_to_its_standard_error_is_not_in_the_log, the second through a real process); tests/scripts/axMCP still pass; owed: a window check and a hearing of a server's details with error lines, which the fake server of the scripts does not write
+- Checked by: tests/AxMCP.Tests/StdioServerTests (An_error_line_is_kept_for_the_window_and_only_its_length_is_logged, What_a_started_server_writes_to_its_standard_error_is_not_in_the_log, the second through a real process); tests/scripts/axMCP still pass; on the test desktop (2026-11-16): tests/scripts/axMCP/01-start, the fake server writes a line to its standard error as it starts and the started server's details end with the words Error lines: 1, shown below, and the line; owed: a hearing of them
 - Note: Found on 2026-11-16 by the second reading: the fuller form of a report would carry the lines. Until now the lines were nowhere in the window, only in the log. They are kept in memory, the last 50 since the server's start, and the details of a started server end with "Error lines: none" or their number and the newest ten; the log holds "<server>: error line 3, 41 characters" (docs/axMCP/SPEC.md MP-10).
 
 ## Deferred

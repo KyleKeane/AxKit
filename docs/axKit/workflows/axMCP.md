@@ -32,8 +32,6 @@ command's in this version of axKit.
 4. Press Enter.
     You hear: fake, starting.
     You hear: fake, running, Tools 1, Resources 1, Prompts 0.
-5. Press Right.
-    You hear: Tools, 1 tool, echo, tool, Says the text back.
 
 ### Read a tool's description and its arguments
 

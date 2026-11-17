@@ -8,10 +8,10 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 36 owed in all.
+- 35 owed in all.
 - Owed a hearing with NVDA: 19.
 - Owed a live check with a real outside program or situation: 7.
-- Owed a window check on the hidden desktop: 9.
+- Owed a window check on the hidden desktop: 8.
 - Owed a test in code: 1.
 
 ## Owed a hearing with NVDA
@@ -34,7 +34,7 @@ dated pass; then the script writes this page again.
 - R-63: the notice of an item window when the settings cannot be saved (leaves when `tests/scripts/axTask/11-settings-not-saved.txt` has passed with NVDA).
 - R-63: the system line of a console window when the settings cannot be saved (leaves when `tests/scripts/axTerminal/12-settings-not-saved.txt` has passed with NVDA).
 - R-64: the sentence that a remembered path is on the network and was not opened (leaves when `tests/scripts/axFile/10-settings-changed-outside.txt` has passed with NVDA).
-- R-74: the details of a started server in axMCP with their error lines.
+- R-74: the details of a started server in axMCP with their error lines (leaves when `tests/scripts/axMCP/01-start.txt` has passed with NVDA).
 
 ## Owed a live check with a real outside program or situation
 
@@ -49,7 +49,6 @@ dated pass; then the script writes this page again.
 ## Owed a window check on the hidden desktop
 
 - R-54: the notice about a changed file in Claude's working folder, which no script reaches without a live Claude Code.
-- R-74: the details of a started server that has written error lines, which the fake server of the scripts does not write.
 - C-34, axStart, axClip and axHelp, a key held by another program: a window script in which another process holds the hotkey before the app starts; no script registers a key of its own yet.
 - C-35, axStart, axClip and axHelp, a key held by another program: a window script in which another process holds the key that is chosen in the Hotkey notice.
 - C-39, axDown, axJSON and axPreview, a data folder or file changed outside axKit: a window script that activates the window after the change (a test window is never activated), or the step by ear of docs/axDown/nvda-test-plan.md.
