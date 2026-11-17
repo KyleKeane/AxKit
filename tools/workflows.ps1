@@ -47,6 +47,9 @@ try {
 if (-not $Check -and $exitCode -eq 0) {
     & (Join-Path $root 'tools\key-map.ps1')
     if ($LASTEXITCODE -ne 0) { $exitCode = $LASTEXITCODE }
+    # The families page counts the inventory's commands by menu, so it follows too.
+    & (Join-Path $root 'tools\families.ps1')
+    if ($LASTEXITCODE -ne 0) { $exitCode = $LASTEXITCODE }
 }
 
 exit $exitCode

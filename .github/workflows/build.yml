@@ -40,6 +40,10 @@ jobs:
       - name: Keys are mapped
         # docs/axKit/key-map.md is what the command inventory, BundleKeys and the proposed key families give.
         run: ./tools/key-map.ps1 -Check
+      - name: The four families hold
+        # docs/axKit/families.md is what docs/axKit/families.json gives, and that file names every sound of Sounds.cs,
+        # every file that plays one, every menu of the inventory and every family of keys.
+        run: ./tools/families.ps1 -Check
       - name: What is owed is listed
         # docs/axKit/owed.md is what the cases, the repairs and the NVDA test record's Owed sections give: everything
         # tested in code and not yet heard or tried for real.

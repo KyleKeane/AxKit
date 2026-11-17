@@ -120,6 +120,11 @@ page by hand; run its script and commit the page.
   to the inventory: a key named there as not fitting is a command the inventory has. `tools/workflows.ps1` runs it after
   its own pages, so writing the pages after an inventory change writes the key map too; alone it is run after a
   change to `BundleKeys.cs` or the families file.
+- `tools/families.ps1` writes `families.md` from `families.json`: the four families (what starts something, the
+  functions, the events, the sounds) and the links between them. Every run holds the file to the code: a new sound in
+  `Sounds.cs`, a new file that plays one, a new menu in the inventory or a new family of keys fails until the file
+  names it. It is run after a change to `families.json`, to `Sounds.cs` or to where a sound is played;
+  `tools/workflows.ps1` runs it after an inventory change.
 - `tools/owed.ps1` writes `owed.md`: everything tested in code and not yet heard or tried for real, by kind (a
   hearing with NVDA, a live check with a real outside program or situation, a window check on the hidden desktop, a
   test in code), from the rows of `cases.json` that carry `owed`, the `owed` entries of `repairs.json` and the Owed

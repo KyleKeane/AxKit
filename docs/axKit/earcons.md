@@ -4,6 +4,10 @@ A proposal, asked for by the user on 2026-11-14 and not built: the sounds that e
 is new is marked "proposed". A new sound is chosen by ear before it is built: candidates are played to the user one by
 one and only the one he picks goes into `AxKit.Forms/Sounds` (as the command offer's sound was chosen, 2026-11-13).
 
+The sounds that exist, each with the events it is the sound of, the files that play it and its switch, are on
+`families.md` (written from `families.json`, 2026-11-16), with every kind of event that has no sound. This page
+stays the design: the classes, and what is proposed.
+
 ## Why classes
 
 A screen reader user in a text field knows only that they are in a field. Nothing tells them whether Enter will

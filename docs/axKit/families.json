@@ -1,0 +1,678 @@
+{
+  "format": "axkit-families 1",
+  "status": "proposed",
+  "note": "One data structure for the four families of axKit and the links between them, asked by the maintainer on 2026-11-16 so that he and the assistant name the same things by the same short names. It describes what the code does today, read from the code that day; it changes no behaviour. Each of the four lists has the same shape, a family with its members. The keys stay in docs/axKit/key-families.json and the commands in docs/axKit/window-commands.json; this file names them and does not copy them. Where the same kind of event sounds one way in one place and another way elsewhere, the event's note says so: those are the open choices, and a sound is added or changed only when the maintainer has chosen it by ear (docs/axKit/earcons.md).",
+  "chain": "Read it as a chain. Something starts (your own hands, the program underneath, an AI, axKit itself, Windows). When it is your hands, a key or a menu runs a function, a command of the window. The function ends in an event, a kind of thing that happened. The event has a sound or none, and words or none. Events that nobody's hands started enter the chain at the event.",
+  "actions": [
+    {
+      "id": "hands",
+      "title": "Your own hands",
+      "learn": "What you do yourself, in the window that has the focus or from anywhere in Windows. Only these run a command without anything being asked or said about who ran it.",
+      "members": [
+        { "id": "key", "title": "A key of the window", "what": "A key of one of the families of keys (docs/axKit/key-groups.md). It runs the command that holds it, or it is the control's own key, as the arrows are." },
+        { "id": "typing", "title": "Typing", "what": "Characters typed into a field. Typing is no command: NVDA echoes it and axKit says nothing, except in a text's navigation mode, where a letter is a command or is refused." },
+        { "id": "menu", "title": "A menu item", "what": "A command chosen from the menu bar or the Context menu." },
+        { "id": "palette", "title": "The command palette", "what": "Ctrl+Shift+P, words typed, a line chosen with Enter. It runs what the menu item runs, and says a check item's new state since no menu shows it." },
+        { "id": "hotkey", "title": "A key from anywhere in Windows", "what": "Ctrl+Shift with Space or a punctuation key, in any program: it brings up axStart, axClip or axHelp." }
+      ]
+    },
+    {
+      "id": "underneath",
+      "title": "The program under an access layer",
+      "learn": "A program axKit runs and reads for you: Claude Code, a shell, Git, KeePassXC's tool, an MCP server, the media engine, an installer. What it prints, asks and ends with reaches you as events you did not start at that moment.",
+      "members": [
+        { "id": "program", "title": "The program underneath", "what": "Its output, its questions, its state (working, ready), its end." }
+      ]
+    },
+    {
+      "id": "ai",
+      "title": "An AI",
+      "learn": "An AI client the user paired, or AI help. What an AI starts always says so (rule 11): the words name who ran or asks, and anything that acts outside the window asks first.",
+      "members": [
+        { "id": "ai-tool", "title": "An AI tool's call", "what": "A paired AI client runs a command of a window by name, offers a command for you to run, adds a task, opens an app, or asks to be paired." },
+        { "id": "ai-help", "title": "AI help answering", "what": "Claude's answer to Shift+F1 or Ask about this window, which comes up to a minute after you asked." }
+      ]
+    },
+    {
+      "id": "axkit",
+      "title": "axKit itself",
+      "learn": "What axKit does on its own: something it started for you ends later, a wait runs out, or another axKit window hands something over.",
+      "members": [
+        { "id": "job", "title": "Work of axKit's that ends later", "what": "A copy, a git command, a download, an install, a report being sent, a workflow run, a search of every list: started by your command, finished in the background." },
+        { "id": "timer", "title": "A wait that ran out", "what": "A timer: axPass locking after idle minutes, the repeating chord of background work, a question shown once Claude is idle." },
+        { "id": "other-window", "title": "Another axKit window", "what": "A second start that hands its file or text to the window already open, or a hotkey app bringing a window up." }
+      ]
+    },
+    {
+      "id": "windows",
+      "title": "Windows",
+      "learn": "The system around axKit. axKit looks at these when its window comes to the front, not all the time.",
+      "members": [
+        { "id": "system", "title": "Windows", "what": "The clipboard changed, a file or folder changed on disk, the window came to the front or went behind, the computer was locked, the colours changed." }
+      ]
+    },
+    {
+      "id": "checks",
+      "title": "The automated checks",
+      "learn": "Only in a test run, on a desktop of its own, never in your windows.",
+      "members": [
+        { "id": "script", "title": "A window script", "what": "The runner presses the key a command has now, or chooses its menu item (docs/axKit/command-language.md CL-2.1)." }
+      ]
+    }
+  ],
+  "marks": [
+    { "id": "read", "learn": "It says or shows something and changes nothing.", "events": ["said", "opened"] },
+    { "id": "open", "learn": "It opens a window or a file, or moves within the window.", "events": ["landed", "landed-on-heading", "opened", "nothing-found", "edge"] },
+    { "id": "change", "learn": "It changes the window's own state or the file the window holds.", "events": ["changed", "done", "refused"] },
+    { "id": "act", "learn": "It reaches outside the window: it deletes, moves, sends, starts a program, writes the clipboard or uses the network. An AI tool must ask before one runs.", "events": ["done", "sent", "asked", "busy", "failed", "cancelled", "job-finished", "late-notice"] }
+  ],
+  "functions": [
+    { "id": "session", "menu": "Session", "learn": "What the window holds as a whole: open, new, save, refresh, restart, hide, exit, and the same place opened in another app." },
+    { "id": "navigation", "menu": "Navigation", "learn": "Go somewhere in what the window holds: find, the next heading, link or list, go to a line, a bookmark, the next file." },
+    { "id": "actions", "menu": "Actions", "learn": "Do something with the whole of what the window holds: undo and redo, run, push and pull, a new item, interrupt." },
+    { "id": "context", "menu": "Context", "learn": "Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it." },
+    { "id": "options", "menu": "Options", "learn": "Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done." },
+    { "id": "window", "menu": "Window", "learn": "The other windows of axKit: a new window of any app, close all windows, say the status." },
+    { "id": "axkit", "menu": "axKit", "learn": "The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme." },
+    { "id": "help", "menu": "Help", "learn": "The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test." },
+    { "id": "keys-alone", "learn": "Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these." },
+    { "id": "control-keys", "learn": "Not commands at all: the keys a control handles itself, the arrows in a list or a text and typing in a field. The inventory does not hold them; the families of keys do." }
+  ],
+  "events": [
+    {
+      "id": "result",
+      "title": "What came of your own command",
+      "learn": "You pressed a key, typed, or chose a command, and this is how it ended. Every command ends in one of these kinds, so nothing you do is ever silent. An AI tool that runs a command gets the same ending, with the words that say who ran it in front.",
+      "members": [
+        {
+          "id": "typed",
+          "when": "You typed a character into a field.",
+          "starts": ["typing"],
+          "sounds": [],
+          "words": "None from axKit: NVDA echoes what you type.",
+          "apps": "Every field."
+        },
+        {
+          "id": "landed",
+          "when": "The key or command moved you, and there is something there.",
+          "starts": ["key", "menu", "palette", "ai-tool", "script"],
+          "sounds": [],
+          "words": "NVDA reads the new place itself, or axKit says it: 'docs, 5 items, plan.md', 'Line 12 of 80', 'Install, heading level 2'.",
+          "apps": "Every window."
+        },
+        {
+          "id": "landed-on-heading",
+          "when": "The move landed on a heading of a text or on a section row of a list.",
+          "starts": ["key", "menu", "palette", "ai-tool", "script"],
+          "sounds": ["Heading"],
+          "words": "The heading itself, read after the sound.",
+          "apps": "Texts with Markdown headings (axDown, axPreview), the text of every notice, and the section rows of the item windows (axTask, axPass, axMCP, axAutomate).",
+          "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"],
+          "note": "Not in the conversations of axClaude and axTerminal, and not in axJSON."
+        },
+        {
+          "id": "taken",
+          "when": "In a text's navigation mode, a letter was taken as a command that has somewhere to go.",
+          "starts": ["key"],
+          "sounds": ["NavKey"],
+          "words": "What the jump lands on, after the sound.",
+          "apps": "Every text of several lines that you can type in, while it is in navigation mode.",
+          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs"],
+          "note": "Only for a letter alone. The same jump with Ctrl, from the menu or from the palette has no sound before it."
+        },
+        {
+          "id": "nothing-found",
+          "when": "The command ran and there is nothing of that kind to go to: no next heading, no match, nothing found.",
+          "starts": ["key", "menu", "palette", "ai-tool", "script"],
+          "sounds": ["Nothing", "Edge"],
+          "words": "Often the reason: 'No next heading', 'No commands match x', 'Nothing found for x', 'Not found'. Sometimes none.",
+          "apps": "Every window.",
+          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitList.cs", "src/AxKit.Forms/AxKitForm.Palette.cs", "src/AxKit.Forms/HotkeyForm.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxTask/TaskForm.cs", "src/AxTask/TaskForm.Projects.cs"],
+          "note": "Not one sound today. Nothing (the low buzz) only for a letter in navigation mode. Edge for a typed name that no entry starts with, for the palette and the hotkey windows with no match, for a section or heading jump in the item windows, and for axTask's search of every list. No sound at all, only words, for a Ctrl jump in an editor, for Find ('Not found') and for axFile's filter."
+        },
+        {
+          "id": "edge",
+          "when": "Nothing further that way: the first or last entry of a list, the top level, a row that cannot be gone into, the end of the history.",
+          "starts": ["key", "menu", "palette", "ai-tool", "script"],
+          "sounds": ["Edge"],
+          "words": "None in a plain list. In the palette, the hotkey windows and axFile's folder field, the entry you are on is said again. 'Top of the fields', 'A section: Down goes into it'.",
+          "apps": "Every list of every window.",
+          "where": ["src/AxKit.Forms/AxKitList.cs", "src/AxKit.Forms/AxKitForm.Palette.cs", "src/AxKit.Forms/HotkeyForm.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxFile/FileForm.Browse.cs", "src/AxFile/FileForm.Completion.cs", "src/AxTask/TaskForm.Projects.cs", "src/AxTerminal/TerminalForm.Input.cs"],
+          "note": "Two places give words and no sound for the same thing: axMedia's 'First file' and 'End of queue' on Ctrl+Shift+Left and Right, and axFile's 'Top' on Backspace at This PC, where Left at the same place plays the edge."
+        },
+        {
+          "id": "no-command",
+          "when": "The key has no command where you are.",
+          "starts": ["key"],
+          "sounds": ["Unassigned", "Edge"],
+          "words": "None, or the reason: 'No action on Ctrl+4 in this list'.",
+          "apps": "Navigation mode of a text; the item windows; every window for Ctrl+Enter.",
+          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitForm.cs", "src/AxKit.Forms/OverlayPanel.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.ActionKeys.cs"],
+          "note": "Unassigned (the wooden bonk) only for a plain key that would type in navigation mode. Edge for Ctrl+Enter where the window has no main action, for Ctrl+Space where there is no text with modes, for Space on a row that cannot be checked, and for an action key with no action. A key no window knows gets nothing from axKit."
+        },
+        {
+          "id": "refused",
+          "when": "The change you asked for is not allowed here and nothing changed: navigation mode, a read-only text, a locked database, a form with a field still empty.",
+          "starts": ["key", "typing", "menu", "palette", "ai-tool", "script"],
+          "sounds": ["Edge"],
+          "words": "None for a key in navigation mode. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.",
+          "apps": "Every window.",
+          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitTextBox.cs", "src/AxKit.Forms/AxKitForm.Notices.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.ActionKeys.cs"],
+          "note": "Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'."
+        },
+        {
+          "id": "said",
+          "when": "A command that only tells you something said it: the status, the line number, the current folder.",
+          "starts": ["key", "menu", "palette", "ai-tool", "script"],
+          "sounds": [],
+          "words": "The information itself.",
+          "apps": "Every window."
+        },
+        {
+          "id": "changed",
+          "when": "A setting or a state of the window changed.",
+          "starts": ["key", "menu", "palette", "ai-tool", "script"],
+          "sounds": [],
+          "words": "The new state: 'Word wrap off', 'Text size 14', 'Navigation mode', 'checked'. From the palette, 'Word wrap, checked'.",
+          "apps": "Every window.",
+          "note": "A plain menu toggle says nothing by itself where its own code does not; run by an AI tool, only 'Claude ran Word wrap' is sure to be said."
+        },
+        {
+          "id": "done",
+          "when": "The command did its work at once.",
+          "starts": ["key", "menu", "palette", "ai-tool", "script"],
+          "sounds": [],
+          "words": "A few words: 'Saved', 'Copied', 'Undone: rename', 'Refreshed: Processes', 'Pasted, 3 lines'.",
+          "apps": "Every window."
+        },
+        {
+          "id": "sent",
+          "when": "Your message, command or answer went out to the program underneath.",
+          "starts": ["key", "menu"],
+          "sounds": ["Sent"],
+          "words": "'Sent', 'Queued', 'Sent, not recorded', 'Sent: 1, Green'. In axClaude the word is a setting; in axTerminal it is always said.",
+          "apps": "axClaude and axTerminal.",
+          "where": ["src/AxClaude/MainForm.Input.cs", "src/AxClaude/MainForm.Area.cs", "src/AxClaude/MainForm.Mcp.cs", "src/AxTerminal/TerminalForm.Input.cs"],
+          "note": "In axClaude the sound plays a second time, with no words, when axClaude itself confirms the review after your last answer."
+        },
+        {
+          "id": "recalled",
+          "when": "An earlier command came back into the field from the history.",
+          "starts": ["key"],
+          "sounds": ["Recall"],
+          "words": "The command, or 'blank'.",
+          "apps": "axTerminal.",
+          "where": ["src/AxTerminal/TerminalForm.Input.cs"]
+        },
+        {
+          "id": "asked",
+          "when": "The command asks before it acts: 'Delete a.txt?', 'Save changes to notes.md?', a consent before the first connection.",
+          "starts": ["key", "menu", "palette", "script"],
+          "sounds": [],
+          "words": "The question, read as the notice opens; the answers are a list or buttons.",
+          "apps": "Every window."
+        },
+        {
+          "id": "opened",
+          "when": "Something opened at your command: a help text, the palette, a field or a form in the window, another axKit window, an outside program.",
+          "starts": ["key", "menu", "palette", "hotkey", "ai-tool", "script"],
+          "sounds": [],
+          "words": "NVDA reads what opened. 'Started Notepad', 'Opening x' for an outside program.",
+          "apps": "Every window."
+        },
+        {
+          "id": "busy",
+          "when": "The command started work that takes time.",
+          "starts": ["key", "menu", "palette", "script"],
+          "sounds": [],
+          "words": "'Unlocking x', 'Calling x', 'Searching every list', then after a second 'x, please wait'. Pressed again: 'Working'.",
+          "apps": "axFile, axGIT, axPass, axMCP, axTask, axAutomate, AI help, the updater.",
+          "note": "No sound for a start or an end outside axClaude; the end is the event job-finished."
+        },
+        {
+          "id": "failed",
+          "when": "The command could not do it.",
+          "starts": ["key", "menu", "palette", "ai-tool", "script"],
+          "sounds": ["Notice"],
+          "words": "One line is spoken with no sound: 'Failed: the reason'. Several lines, or an error with a title, open a notice, and that notice plays the notice sound.",
+          "apps": "Every window.",
+          "where": ["src/AxKit.Forms/AxKitForm.Notices.cs"],
+          "note": "The error notice chimes even though your own command caused it, because every error notice is marked as coming by itself."
+        },
+        {
+          "id": "cancelled",
+          "when": "You said no, pressed Escape, or the thing was called off.",
+          "starts": ["key", "menu"],
+          "sounds": [],
+          "words": "'Cancelled', 'Delete not run', 'Not started'.",
+          "apps": "Every window."
+        }
+      ]
+    },
+    {
+      "id": "arrival",
+      "title": "Something arrived",
+      "learn": "Something came in that you did not ask for at that moment: a line from the program underneath, a file changed by another program, a copy on the clipboard. Mostly there is nothing to do.",
+      "members": [
+        {
+          "id": "line",
+          "when": "A line of output arrived from the program.",
+          "starts": ["program"],
+          "sounds": ["Click"],
+          "words": "None with the sound; the line may be spoken after it (reply-spoken).",
+          "apps": "axClaude and axTerminal.",
+          "where": ["src/AxClaude/MainForm.Model.cs", "src/AxTerminal/TerminalForm.Model.cs"]
+        },
+        {
+          "id": "tool-call",
+          "when": "Claude called a tool.",
+          "starts": ["program"],
+          "sounds": ["Tool"],
+          "words": "The tool call's row, when Speak tool calls is on.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.Model.cs"]
+        },
+        {
+          "id": "reply-spoken",
+          "when": "Lines of a reply or of a command's output became final and are spoken.",
+          "starts": ["program"],
+          "sounds": [],
+          "words": "The lines, joined into one announcement that does not interrupt.",
+          "apps": "axClaude (Speak replies) and axTerminal (Speak output)."
+        },
+        {
+          "id": "program-said",
+          "when": "The program announced something of its own: Claude's bracketed rows such as accept edits on, its detailed view on or off, the conversation cleared.",
+          "starts": ["program"],
+          "sounds": [],
+          "words": "The row, or 'Conversation cleared', 'Claude's detailed view is on'.",
+          "apps": "axClaude."
+        },
+        {
+          "id": "status-changed",
+          "when": "The status bar or the title followed the program: working, waiting for your answer, 2 messages waiting, the mode line, the shell's folder.",
+          "starts": ["program", "timer"],
+          "sounds": [],
+          "words": "None. F8 says the status when you ask.",
+          "apps": "Every window with a status bar."
+        },
+        {
+          "id": "clipboard-entry",
+          "when": "Something was copied in any program while axClip keeps the history.",
+          "starts": ["system"],
+          "sounds": [],
+          "words": "None; the list is refilled with your place kept.",
+          "apps": "axClip."
+        },
+        {
+          "id": "changed-on-disk",
+          "when": "Another program changed the file or the folder the window shows. axKit looks when the window comes to the front.",
+          "starts": ["system"],
+          "sounds": [],
+          "words": "'Reloaded, notes.md changed on disk', or 'notes.md changed on disk; Save will ask'. axFile refills silently.",
+          "apps": "axDown, axJSON, axPreview, axFile; the item windows find it at a save."
+        },
+        {
+          "id": "handed-over",
+          "when": "Another axKit window handed something to this one: a file to open, files to play, text for the message.",
+          "starts": ["other-window"],
+          "sounds": [],
+          "words": "'Playing song.mp3', 'Text added to your message from another window, not sent', or NVDA reads the file that opened.",
+          "apps": "axPreview, axMedia, axClaude, the hotkey apps."
+        }
+      ]
+    },
+    {
+      "id": "turn",
+      "title": "Where the program stands",
+      "learn": "The steps of a turn with the program underneath: it is ready, it began to answer, it is working, it is done, it ended. Rising opens, falling closes.",
+      "members": [
+        {
+          "id": "ready",
+          "when": "The program is ready for your first message or command of this run.",
+          "starts": ["program"],
+          "sounds": ["Ready"],
+          "words": "'Ready'.",
+          "apps": "axClaude and axTerminal.",
+          "where": ["src/AxClaude/MainForm.Model.cs", "src/AxTerminal/TerminalForm.Model.cs"]
+        },
+        {
+          "id": "responding",
+          "when": "Claude began its reply.",
+          "starts": ["program"],
+          "sounds": ["Responding"],
+          "words": "'Responding'.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.cs"],
+          "note": "axTerminal has no such moment."
+        },
+        {
+          "id": "working",
+          "when": "The program is working: Claude on a turn, a command running in the shell.",
+          "starts": ["program"],
+          "sounds": ["Music"],
+          "words": "None; the status bar says working.",
+          "apps": "axClaude and axTerminal.",
+          "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs"]
+        },
+        {
+          "id": "turn-done",
+          "when": "The turn is over: Claude finished, a shell command finished, the last file of axMedia's queue ended.",
+          "starts": ["program"],
+          "sounds": ["Done"],
+          "words": "'Done'; in axTerminal also 'Failed' or 'Failed, exit code 2'; in axMedia 'End of queue'.",
+          "apps": "axClaude, axTerminal, axMedia.",
+          "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs", "src/AxMedia/MediaForm.Player.cs", "src/AxClaude/MainForm.PutAway.cs"],
+          "note": "A shell command that failed plays the same sound as one that worked. axMedia's sound has no switch. The call in MainForm.PutAway.cs, for a turn ending while axClaude is put away, is switched off in code."
+        },
+        {
+          "id": "next-track",
+          "when": "The next file of the queue started playing.",
+          "starts": ["program"],
+          "sounds": [],
+          "words": "'Playing song.mp3', when Say each file as it starts is on.",
+          "apps": "axMedia."
+        },
+        {
+          "id": "program-ended",
+          "when": "The program underneath ended or crashed.",
+          "starts": ["program"],
+          "sounds": [],
+          "words": "'Claude stopped', 'The shell ended', 'server stopped (exit code 1)'.",
+          "apps": "axClaude, axTerminal, axMCP.",
+          "note": "No sound today, although it ends everything the turn sounds announce."
+        }
+      ]
+    },
+    {
+      "id": "ask",
+      "title": "Something asks you",
+      "learn": "Something wants an answer or your attention, and you did not start it at that moment. What asks to run code is the loudest of all.",
+      "members": [
+        {
+          "id": "program-asks",
+          "when": "The program asks a question or a permission.",
+          "starts": ["program"],
+          "sounds": ["Notice", "Question"],
+          "words": "The question and the answer you are on, or 'Claude asks', or in axTerminal 'Asks: the row'.",
+          "apps": "axClaude and axTerminal.",
+          "where": ["src/AxClaude/MainForm.Area.cs", "src/AxKit.Forms/ConsoleForm.Signals.cs"],
+          "note": "Two sounds for one thing. Notice (the trill) when axClaude shows the question as a list in the window. Question (two notes) when it cannot be shown as a list, and for axTerminal's guess that a program asks."
+        },
+        {
+          "id": "program-screen",
+          "when": "Claude shows a screen that only informs: a side answer, a goal.",
+          "starts": ["program"],
+          "sounds": ["Notice"],
+          "words": "The title and the first line.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.Area.cs"]
+        },
+        {
+          "id": "question-closed",
+          "when": "The program took its question back by itself.",
+          "starts": ["program"],
+          "sounds": [],
+          "words": "'Question closed'.",
+          "apps": "axClaude."
+        },
+        {
+          "id": "command-offer",
+          "when": "Claude offers a command for you to run yourself on your computer.",
+          "starts": ["ai-tool"],
+          "sounds": ["Offer"],
+          "words": "'Claude offers a command for you to run', the command, and the caution. Running is never where the list starts.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.Mcp.cs"],
+          "note": "With the louder background alert on and the window behind, this offer makes no sound and no flash today."
+        },
+        {
+          "id": "ai-asks-to-run",
+          "when": "An AI tool asks to run a command of this window that acts outside the window.",
+          "starts": ["ai-tool"],
+          "sounds": ["Offer"],
+          "words": "'Command offer. Claude asks to run this window's command Delete on a.txt', with the caution; No is the default.",
+          "apps": "Every window but axPass and axClip.",
+          "where": ["src/AxKit.Forms/AxKitForm.Mcp.cs", "src/AxClaude/MainForm.Mcp.cs"],
+          "note": "The same sound as command-offer; docs/axKit/earcons.md proposes a variant of its own."
+        },
+        {
+          "id": "pairing",
+          "when": "A new AI client asks to use axKit.",
+          "starts": ["ai-tool"],
+          "sounds": ["Notice"],
+          "words": "'Claude asks to use axKit', with a consent box; Deny is the default.",
+          "apps": "Every window.",
+          "where": ["src/AxKit.Forms/AxKitForm.Notices.cs"]
+        },
+        {
+          "id": "notice-by-itself",
+          "when": "A notice opened that no command of yours asked for: an update was found at start, the settings could not be read or saved or were changed outside axKit, a hotkey is taken, a program is missing, the folder is gone, a repository wants to be trusted, the window met an unexpected error.",
+          "starts": ["job", "timer", "system", "program", "other-window"],
+          "sounds": ["Notice"],
+          "words": "The notice's own text, and Enter is held for a second so that a key already on its way answers nothing.",
+          "apps": "Every window.",
+          "where": ["src/AxKit.Forms/AxKitForm.Notices.cs"],
+          "note": "The sound can be switched off only in axClaude and axTerminal (with their chimes). In those two windows the settings notes are a line of the conversation and make no sound."
+        },
+        {
+          "id": "late-notice",
+          "when": "A notice that comes some time after your command, when its work is finished: 'Claude says', 'x is installed', 'Result of x', 'Report not sent', the unlock question after axPass locked itself.",
+          "starts": ["job", "ai-help", "timer", "system"],
+          "sounds": [],
+          "words": "The notice's own text.",
+          "apps": "Every window.",
+          "note": "No sound, although you may have moved on to something else: these notices are not marked as coming by themselves."
+        },
+        {
+          "id": "called-from-behind",
+          "when": "The program is done or asks while its window is not in front.",
+          "starts": ["program"],
+          "sounds": ["Alert"],
+          "words": "Those of the event behind it; the taskbar button flashes.",
+          "apps": "axClaude and axTerminal.",
+          "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs"],
+          "note": "Off at first. When on, it takes the place of the done and question sounds, and plays even with the chimes off."
+        }
+      ]
+    },
+    {
+      "id": "background",
+      "title": "Work that goes on behind",
+      "learn": "Work that runs while you do something else, and what is done on your behalf without your hands.",
+      "members": [
+        {
+          "id": "background-started",
+          "when": "Claude started work in the background: an agent, a shell, a workflow.",
+          "starts": ["program"],
+          "sounds": ["BackgroundStart"],
+          "words": "'Agent started: the description', when Say background work is on.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.Background.cs"]
+        },
+        {
+          "id": "background-running",
+          "when": "Work is still running in the background.",
+          "starts": ["timer"],
+          "sounds": ["BackgroundChord"],
+          "words": "None; the status bar counts what runs.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.Background.cs"]
+        },
+        {
+          "id": "background-finished",
+          "when": "Work in the background finished.",
+          "starts": ["program"],
+          "sounds": ["BackgroundFinish"],
+          "words": "'The description finished', when Say background work is on.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.Background.cs"]
+        },
+        {
+          "id": "job-finished",
+          "when": "Work of axKit's own that you started a while ago ended: a copy, a push, an install, a report sent, a server started, a workflow run, a picture's text read.",
+          "starts": ["job", "program"],
+          "sounds": [],
+          "words": "The result: 'Pasted 3 items', 'Pushed', 'Git is installed', 'Sent, report 12', 'Text read: 40'. A failure is 'Failed: the reason' or an error notice.",
+          "apps": "axFile, axGIT, axPass, axMCP, axAutomate, axPreview, the updater, the report sender.",
+          "note": "No sound for the end of any work outside axClaude."
+        },
+        {
+          "id": "ai-ran",
+          "when": "An AI tool ran a command of this window or added a task.",
+          "starts": ["ai-tool"],
+          "sounds": ["Notice"],
+          "words": "'Claude ran Word wrap', joined to what the command itself says; 'Claude added Buy milk to Home'.",
+          "apps": "Every window but axPass and axClip.",
+          "where": ["src/AxKit.Forms/AxKitForm.Mcp.cs"],
+          "note": "The sound and a flash of the taskbar only when the window is not in front, once for a burst, since NVDA does not speak for a window behind. This is the one use of the notice sound that no switch turns off."
+        },
+        {
+          "id": "locked-itself",
+          "when": "axPass locked the database: the idle minutes ran out, or Windows was locked.",
+          "starts": ["timer", "system"],
+          "sounds": [],
+          "words": "'Locked', then the unlock question.",
+          "apps": "axPass."
+        },
+        {
+          "id": "upkeep",
+          "when": "axKit did something small for you without a word: a list refilled, the theme repainted, a copied password cleared from the clipboard after 30 seconds, an entry's details read.",
+          "starts": ["timer", "system", "job"],
+          "sounds": [],
+          "words": "None, on purpose.",
+          "apps": "Every window."
+        }
+      ]
+    },
+    {
+      "id": "window-life",
+      "title": "The window itself",
+      "learn": "A window opening, coming back, or changing how its keys work.",
+      "members": [
+        {
+          "id": "window-opened",
+          "when": "A window opened or came to the front for the first time.",
+          "starts": ["key", "menu", "hotkey", "ai-tool", "other-window"],
+          "sounds": [],
+          "words": "NVDA reads the title and the focus; what the window had to say before it was in front follows as one sentence.",
+          "apps": "Every window.",
+          "note": "No sound today. docs/axKit/earcons.md proposes a short sound of each app's own, and one for the start of axKit."
+        },
+        {
+          "id": "brought-up",
+          "when": "A hotkey brought axClaude's window back while the message field still held unsent text.",
+          "starts": ["hotkey", "other-window"],
+          "sounds": ["Recall"],
+          "words": "'Unsent message in the field'.",
+          "apps": "axClaude.",
+          "where": ["src/AxClaude/MainForm.PutAway.cs"],
+          "note": "The recall sound has a second meaning here; its first is a command come back from the history."
+        },
+        {
+          "id": "start-note",
+          "when": "The window had something to tell at its start: a remembered folder on the network was not opened, no project folder is chosen.",
+          "starts": ["job"],
+          "sounds": [],
+          "words": "The note, said when the window comes to the front, or a line of the conversation in axClaude and axTerminal.",
+          "apps": "Every window."
+        }
+      ]
+    }
+  ],
+  "sounds": [
+    {
+      "id": "ticks",
+      "title": "Ticks: something arrived, nothing to do",
+      "learn": "Tiny and struck, over within a few hundredths of a second, never a held note. Ticks never wait behind each other.",
+      "members": [
+        { "id": "Click", "heard": "A typewriter strike: a burst of noise over a 1500 Hz tone, 10 ms.", "chosen": "The sound of 1.3.0, which the maintainer likes; softer ones tried in 2.4.0 went unheard under speech.", "switch": "Options, Sounds, Ticks for new lines, in axClaude and axTerminal." },
+        { "id": "Tool", "heard": "A tiny mouth pop, 30 ms, a round tone falling from 700 towards 300 Hz.", "chosen": "By ear, 2026-11-15, the first of three pops.", "switch": "Options, Sounds, Ticks for new lines and tool calls, in axClaude." }
+      ]
+    },
+    {
+      "id": "moves",
+      "title": "Moves: where your own key took you",
+      "learn": "Very short, right after your key and over before NVDA speaks. Each says how the move ended.",
+      "members": [
+        { "id": "Edge", "heard": "A4 falling to A3, loud, about an eighth of a second.", "chosen": "Asked 2026-10-22; made louder and given its upper note on 2026-10-23 after it was lost under speech. Not chosen from candidates.", "switch": "None: it always plays." },
+        { "id": "Heading", "heard": "G4 leaping an octave to G5, 85 ms.", "chosen": "Asked 2026-11-11. Not chosen from candidates.", "switch": "Options, Text, Sound on headings, in every window." },
+        { "id": "NavKey", "heard": "A high glassy tick: a pure 3800 Hz, 6 ms.", "chosen": "By ear, 2026-11-16, from five ticks; the first click was too like the line tick.", "switch": "None: it always plays." },
+        { "id": "Nothing", "heard": "A low buzz: 150 Hz with its third and fifth harmonics, 110 ms.", "chosen": "By ear, 2026-11-16, from four flat tones.", "switch": "None: it always plays." },
+        { "id": "Unassigned", "heard": "A wooden bonk, 70 ms, falling from 420 towards 260 Hz with a wood block's overtone.", "chosen": "By ear, 2026-11-16, from four bonks, after four kinds of blip were turned down.", "switch": "None: it always plays." },
+        { "id": "Recall", "heard": "E5 rising a fourth to A5, 85 ms.", "chosen": "Asked 2026-10-23. Not chosen from candidates.", "switch": "None: it always plays." }
+      ]
+    },
+    {
+      "id": "turns",
+      "title": "Turns: where the conversation stands",
+      "learn": "One to three smooth notes at an even pace. Rising opens, falling closes.",
+      "members": [
+        { "id": "Ready", "heard": "One high note, C6.", "chosen": "From the first versions. Not chosen from candidates.", "switch": "Options, Sounds, Chimes, in axClaude and axTerminal." },
+        { "id": "Sent", "heard": "One low note, A4.", "chosen": "From the first versions. Not chosen from candidates.", "switch": "Options, Sounds, Chimes, in axClaude and axTerminal." },
+        { "id": "Responding", "heard": "C5, E5, up to a held G5.", "chosen": "From the first versions. Not chosen from candidates.", "switch": "Options, Sounds, Chimes, in axClaude." },
+        { "id": "Done", "methods": ["Done", "DoneWhileMuted"], "heard": "G5, E5, down to a held C5.", "chosen": "From the first versions. Not chosen from candidates.", "switch": "Options, Sounds, Chimes, in axClaude and axTerminal. No switch in axMedia." }
+      ]
+    },
+    {
+      "id": "asks",
+      "title": "Asks: something wants an answer",
+      "learn": "Short figures on one or two notes. docs/axKit/earcons.md proposes to make these one scale of knocks, where the number of knocks says how much is asked.",
+      "members": [
+        { "id": "Question", "heard": "The same note twice, E5.", "chosen": "From the first versions. Not chosen from candidates.", "switch": "Options, Sounds, Chimes, in axClaude and axTerminal." },
+        { "id": "Notice", "heard": "A quick trill, C6 and E6 twice.", "chosen": "Not chosen from candidates. The earcons proposal retires it for the knocks.", "switch": "Options, Sounds, Chimes, in axClaude and axTerminal. No switch in the other windows." }
+      ]
+    },
+    {
+      "id": "code",
+      "title": "Code: something asks to run or to act beyond the window",
+      "learn": "An alarm and not a chime, the loudest class, and the only one that glides. Decide with care.",
+      "members": [
+        { "id": "Offer", "heard": "Five swoops falling from 2400 to 900 Hz, 400 ms in all.", "chosen": "By ear, 2026-11-13, played one by one.", "switch": "Options, Sounds, Chimes, in axClaude and axTerminal. No switch in the other windows; the words are said either way." }
+      ]
+    },
+    {
+      "id": "call",
+      "title": "The call from another window",
+      "learn": "Long and loud, the only sound longer than half a second: go to that window.",
+      "members": [
+        { "id": "Alert", "heard": "G5, C6 up to a held E6, and once more.", "chosen": "Not chosen from candidates.", "switch": "Options, When Claude is done (in axTerminal, When a command is done), Louder alert when the window is in the background. Off at first." }
+      ]
+    },
+    {
+      "id": "lasting",
+      "title": "Lasting sounds: work that goes on",
+      "learn": "Not a signal of a moment: sound that tells you something is still going on, soft enough to speak over.",
+      "members": [
+        { "id": "Music", "methods": ["StartMusic", "StopMusic"], "heard": "Four slow soft chords with a faint ping in each, 14 seconds, looping without a seam.", "chosen": "Made to the maintainer's description, 2026-11-15: gentler, like the lift of a building of the future.", "switch": "Options, Sounds, Background music, or Ctrl+M, in axClaude and axTerminal. Off at first." },
+        { "id": "BackgroundStart", "heard": "Three quick bell notes rising, with a sparkle.", "chosen": "By ear, 2026-11-15: what arrives rises.", "switch": "Options, Background work, Play a sound when background work starts and ends, in axClaude." },
+        { "id": "BackgroundFinish", "heard": "Three quick bell notes falling, with a sparkle.", "chosen": "By ear, 2026-11-15: what leaves falls.", "switch": "Options, Background work, Play a sound when background work starts and ends, in axClaude." },
+        { "id": "BackgroundChord", "heard": "A slow soft chord with a long tail, one of four at random, with a tone more for each thing running.", "chosen": "By ear, 2026-11-15.", "switch": "Options, Background work, Play a sound while background work runs, in axClaude; the pause between chords is chosen there too." }
+      ]
+    }
+  ],
+  "keys": [
+    { "family": "system-wide", "events": ["window-opened", "brought-up"] },
+    { "family": "ctrl-punct", "events": ["opened", "busy", "late-notice"], "note": "Ctrl+Period opens the Context menu. Ctrl+Slash asks Claude about the window: the answer is a late notice." },
+    { "family": "space", "events": ["changed", "no-command"], "note": "Ctrl+Space says the new mode. Space on a row that cannot be checked plays the edge." },
+    { "family": "ctrl-letter", "events": ["done", "changed", "said", "opened", "asked", "busy", "failed", "refused"] },
+    { "family": "ctrl-digit", "events": ["landed", "landed-on-heading", "nothing-found", "no-command", "refused"], "note": "In axTask, Ctrl with a digit is also an action key of a list, which is where no-command and refused come from." },
+    { "family": "ctrl-shift-digit", "events": ["landed", "landed-on-heading", "nothing-found"] },
+    { "family": "alt-digit", "events": ["landed"] },
+    { "family": "ctrl-shift-letter", "events": ["done", "changed", "opened", "asked", "busy", "failed"] },
+    { "family": "f-keys", "events": ["said", "opened", "landed", "nothing-found", "done"], "note": "F1 and F4 open, F3 lands or says Not found, F5 refreshes, F6 lands in the other pane, F8 says the status." },
+    { "family": "shift-f-keys", "events": ["opened", "landed", "nothing-found", "busy", "late-notice"] },
+    { "family": "enter", "events": ["opened", "landed", "sent", "asked", "edge", "refused"] },
+    { "family": "enter-forms", "events": ["sent", "done", "opened", "no-command", "refused"], "note": "Ctrl+Enter where the window has no main action plays the edge." },
+    { "family": "escape", "events": ["cancelled", "landed", "said", "done"], "note": "Escape in axClaude's message field only speaks; Shift+Escape interrupts the program." },
+    { "family": "delete", "events": ["asked", "done", "refused"] },
+    { "family": "ctrl-tab", "events": ["landed"] },
+    { "family": "moves", "events": ["landed", "landed-on-heading", "edge"] },
+    { "family": "shift-select", "events": ["landed", "edge"] },
+    { "family": "ctrl-arrows", "events": ["landed", "landed-on-heading", "nothing-found", "edge", "recalled"], "note": "In axTerminal's command field Ctrl+Up and Ctrl+Down go through the history: recalled, or the edge at its end." },
+    { "family": "alt-arrows", "events": ["done", "edge"] },
+    { "family": "text-size", "events": ["changed"] },
+    { "family": "letter", "events": ["taken", "landed", "landed-on-heading", "nothing-found", "no-command", "refused"], "note": "The three sounds of navigation mode belong to this family: the tick, the buzz and the bonk." },
+    { "family": "alt-letter", "events": ["opened"] }
+  ]
+}
