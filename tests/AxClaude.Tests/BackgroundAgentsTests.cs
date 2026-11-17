@@ -7,7 +7,7 @@ namespace AxClaude.Tests;
 /// Claude Code's panel of running agents, read as well as hidden: the agents the latest frame shows
 /// (<see cref="SessionModel.BackgroundAgents"/>), the count of the waiting row, and what changed between two
 /// readings (<see cref="AgentPanel.Changes"/>), so that a window can say so on a change and never on a redraw.
-/// The rows are those heard on 2026-11-15, with neutral descriptions; no recording yet.
+/// The rows are those heard on 2026-11-15, with neutral descriptions; the last test reads a recording.
 /// </summary>
 public class BackgroundAgentsTests
 {
@@ -126,4 +126,59 @@ public class BackgroundAgentsTests
     /// <summary>A frame that clears the screen and draws a reply row, the given rows under it and the prompt.</summary>
     private static string Panel(params string[] rows) =>
         $"{Esc}[?25l{Esc}[2J{Esc}[Hclaude: started\r\n{string.Join("\r\n", rows)}\r\n${Esc}[?25h";
+
+    /// <summary>
+    /// The window's own parser read off a recording of Claude Code with agents in the background
+    /// (tests/fixtures/timelines/background-agents, 2.1.325, made through the whitelist of tools/ClaudeProbe): what
+    /// <see cref="SessionModel.BackgroundAgents"/> and the waiting row give, frame by frame as the app ends frames
+    /// (a chunk 100 ms or more after the one before), each change once. The core's replay reads the same recording's
+    /// background list from the session file (TimelineTests); this is the screen's side of it.
+    /// </summary>
+    [Fact]
+    public void The_recording_with_background_agents_gives_the_window_its_agents()
+    {
+        const string fixture = "timelines/background-agents/pty.vt";
+        var model = new SessionModel(240, 50);
+        var bytes = Fixture(fixture);
+        var seen = new List<string>();
+        var previousMs = 0;
+
+        void Look()
+        {
+            model.EndFrame();
+            var now = $"{model.BackgroundAgents.Count} shown, {model.BackgroundAgentsAwaited} awaited, mode line: {model.Background ?? "none"}"
+                + string.Concat(model.BackgroundAgents.Select(a => $" [{a.Type}: {a.Description}]"));
+            if (seen.Count == 0 || seen[^1] != now)
+            {
+                seen.Add(now);
+            }
+        }
+
+        foreach (var chunk in Chunks(fixture))
+        {
+            if (chunk.Ms - previousMs >= 100)
+            {
+                Look();
+            }
+
+            model.Feed(bytes.AsSpan(chunk.Offset, chunk.Length));
+            previousMs = chunk.Ms;
+        }
+
+        Look();
+        // Two agents, one after the other: each is shown while the Agent tool runs, then awaited (the waiting row),
+        // then gone; the mode line says only that there is something to manage. The core's replay of the session
+        // file gives the same four changes (tasks 1, 0, 1, 0).
+        Assert.Equal(
+            [
+                "0 shown, 0 awaited, mode line: none",
+                "1 shown, 0 awaited, mode line: see /tasks [general-purpose: Run echo sub command]",
+                "1 shown, 1 awaited, mode line: see /tasks [general-purpose: Run echo sub command]",
+                "0 shown, 0 awaited, mode line: none",
+                "1 shown, 0 awaited, mode line: see /tasks [general-purpose: Run ping delay command]",
+                "1 shown, 1 awaited, mode line: see /tasks [general-purpose: Run ping delay command]",
+                "0 shown, 0 awaited, mode line: none",
+            ],
+            seen);
+    }
 }
