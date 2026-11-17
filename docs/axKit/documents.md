@@ -34,6 +34,10 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   `families.json`, what a window over it would and would not need, and the ways to go. `stream-shape.json` beside it
   (written by the probe, never by hand) holds the keys of every kind of line seen, without a value. The code that
   knows the stream's words is `src/AxClaude.Core/Streaming/ClaudeCodeStream.cs`; no window uses it yet.
+- `docs/axClaude/stream-mode.md` (SM-n.m; a specification, 2026-11-17, nothing of it built): the stream as a second
+  source of axClaude's window behind a switch: the seam (one model with two sources, `ClaudeModel`), the stream's
+  model, host and relay, what the window sends, what the stream does not have, the folder's trust and the
+  questions, sessions, the switch, the checks, the path in eight stages, and what is the maintainer's to decide.
 - `docs/axClaude/events-and-grounding.md` (EG-n.m, EG-D-n): how axClaude learns what happens in a Claude Code session
   and how the conversation is tied to Claude Code's own record; it amends `docs/axClaude/SPEC.md` (FR-15). Where each
   piece is written: the marks of a turn, EG-1; Claude Code's events and the settings file with the hooks, EG-2 and
