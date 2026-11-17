@@ -120,4 +120,89 @@ public class ScreenTests
         Assert.Null(ScreenReader.Read(["you: hi", "claude: It says Press Enter to continue…"], 1));
         Assert.Null(ScreenReader.Read(["you: hi", "Then run /rc to continue this session from your phone"], 1));
     }
+
+    [Fact]
+    public void The_permissions_screen_names_the_slash_key_since_2_1_327()
+    {
+        // Recorded with Claude Code 2.1.327 (2026-11-17), the day the version came. Its hint row names the key "/"
+        // itself, "/ to search", where the pattern of a hint's keys knew "/" only as what joins two keys. The row was
+        // taken for no hint row, so the screen was no screen: /permissions showed nothing in the window and said
+        // nothing (found by the live script 12-questions.txt). The rows are those of the frame.
+        string[] rows =
+        [
+            "you: /permissions",
+            "Permissions  Recently blocked   Allow   Ask   Deny   Auto mode   Workspace",
+            "Claude Code won't ask for these. Rules off in auto mode aren't listed.",
+            "Search…",
+            "1. Add a new rule…",
+            "↓ to navigate · ←/→ to switch · / to search · Esc to close",
+        ];
+        var screen = ScreenReader.Read(rows, 1)!;
+        Assert.Equal("Tabs: Permissions, Recently blocked, Allow, Ask, Deny, Auto mode, Workspace", screen.Title);
+        Assert.True(screen.Tabbed);
+        Assert.Equal(["Claude Code won't ask for these. Rules off in auto mode aren't listed.", "Search…", "1. Add a new rule…"], screen.Lines);
+
+        // The search's key is read and not offered: it opens a field that takes typed text, which the list of a
+        // screen cannot give (claude-screens.md). The other keys are the hint row's, in its order.
+        Assert.Equal([("Down", "navigate"), ("Left", "switch"), ("Right", "switch"), ("Escape", "close")], screen.Keys.Select(k => (k.Name, k.Action)));
+        Assert.True(ScreenActions.Closes(ScreenActions.LeaveKey(screen)));
+        Assert.Null(ScreenActions.LetterKey(screen, '/'));
+
+        // The row of 2.1.326, which named no such key, reads as it did.
+        Assert.Equal(["Left", "Right", "Down", "Escape"], ScreenReader.Keys("←/→ to switch · ↓ to select · Esc to cancel")!.Select(k => k.Name));
+
+        // The slash alone is a key; between two keys it joins them, as ever. A row without Escape is no hint row still.
+        Assert.Equal(["Escape"], ScreenReader.Keys("/ to search · Esc to close")!.Select(k => k.Name));
+        Assert.Equal(["Escape", "Enter", "Space"], ScreenReader.Keys("Esc/Enter/Space to close")!.Select(k => k.Name));
+        Assert.Null(ScreenReader.Keys("/ to search"));
+        Assert.Null(ScreenReader.Keys("Esc// to close"));
+    }
+
+    [Fact]
+    public void The_permissions_recording_of_2_1_327_is_a_screen_until_it_is_closed()
+    {
+        const string fixture = "permissions-claude2.1.327-240x50.vt";
+        var model = new SessionModel(240, 50);
+
+        // Up to the frame that draws the screen: the command's echo, the tab row with the cursor on the tab chosen,
+        // and the rows under it down to the hint row.
+        Replay(model, fixture, 0, 1216);
+        var screen = Assert.IsType<ClaudeScreen>(model.PendingScreen);
+        Assert.True(model.PromptPending);
+        Assert.Null(model.PendingQuestion);
+        Assert.Equal("Tabs: Permissions, Recently blocked, Allow, Ask, Deny, Auto mode, Workspace", screen.Title);
+        Assert.Equal(["Claude Code won't ask for these. Rules off in auto mode aren't listed.", "Search…", "1. Add a new rule…"], screen.Lines);
+        Assert.Equal(["Down", "Left", "Right", "Escape"], screen.Keys.Select(k => k.Name));
+
+        // Right: the next tab. Claude Code draws only the rows that changed, and it is the same screen with other lines.
+        Replay(model, fixture, 1626, 1626);
+        var next = Assert.IsType<ClaudeScreen>(model.PendingScreen);
+        Assert.Equal(screen.Signature, next.Signature);
+        Assert.Equal(["Claude Code will always ask for confirmation before using these tools.", "Search…", "1. Add a new rule…"], next.Lines);
+
+        // Escape, and then /exit: nothing waits any more.
+        Replay(model, fixture, 1831, int.MaxValue);
+        Assert.Null(model.PendingScreen);
+        Assert.False(model.PromptPending);
+        Assert.Contains("Permissions dialog dismissed", TestHelpers.Visible(model));
+    }
+
+    /// <summary>Feeds the chunks of a recording from one offset through another, the frames cut as the app's quiet rule cuts them, and ends the last frame.</summary>
+    private static void Replay(SessionModel model, string fixture, int from, int through)
+    {
+        var bytes = TestHelpers.Fixture(fixture);
+        var previous = -1;
+        foreach (var chunk in TestHelpers.Chunks(fixture).Where(chunk => chunk.Offset >= from && chunk.Offset <= through))
+        {
+            if (previous >= 0 && chunk.Ms - previous >= 100)
+            {
+                model.EndFrame();
+            }
+
+            model.Feed(bytes.AsSpan(chunk.Offset, chunk.Length));
+            previous = chunk.Ms;
+        }
+
+        model.EndFrame();
+    }
 }

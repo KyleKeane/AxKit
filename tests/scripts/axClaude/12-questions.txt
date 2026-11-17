@@ -308,7 +308,7 @@ wait 3000
 # Goal: Open and close Claude's permissions screen
 # Step 21: /permissions. The plan has its panel stay in Claude with the message field in place, for the guard "Not
 # sent, Claude asks: <title>. Enter again sends" (FR-2.10). This build reads the panel as a screen: the trill and the
-# list "Tabs: Permissions, Recently denied, Allow, Ask, Deny, Auto mode, Workspace" in the field's place; Escape:
+# list "Tabs: Permissions, Recently blocked, Allow, Ask, Deny, Auto mode, Workspace" in the field's place; Escape:
 # "Closed", the field back. The guard needs a panel the window does not read, which this run has no way to bring up:
 # left manual.
 type /permissions

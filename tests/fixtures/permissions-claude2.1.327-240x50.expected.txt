@@ -1,0 +1,9 @@
+[Screen Reader Mode: on via flag]
+Claude Code v2.1.327
+Fable 5.2 with high effort · Claude Ultra
+C:\Temp\axclaude-fixture
+you: /permissions
+Permissions dialog dismissed
+you: /exit
+Resume this session with:
+claude --ax-screen-reader --resume 02ea7c78-caf9-43a8-b924-a7ae7f887833

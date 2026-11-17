@@ -1,0 +1,75 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h]0;✳ Claude CodeClaude Code v2.1.327
+Fable 5.2 with high effort · Claude Ultra
+C:\Temp\axclaude-fixture
+auto mode on
+effort: high · /effort
+$[?25l[5;13H (shift+tab to cycle)[7;2H[?25h[>0q[?u]7501;?[?2004h[?25l[5;1H/permissions                        Manage allow and deny tool permission rules[K
+/fewer-permission-prompts           Pre-approve safe read-only commands based on your usage[K
+/update-config                      Change settings: hooks, permissions, environment variables[K
+/claude-in-chrome                   Let Claude browse and interact with pages in your Chrome
+/chrome-browser                     Read this skill before the first step that uses Claude in Chrome, the browser extension whose tools are named mcp__claude-in-chrome__* (also called Chrome, the browser extension, or the external
+                                    browser) and which acts in the person's real Chrome with their own sign-ins; before those tools are turned on there may be a single enable__mcp__claude-in-chrome tool instead. It covers loading the t…[30;1H$  /permissions[?25h[?25l[5;1Hyou: /permissions[K
+Permissions  Recently blocked   Allow   Ask   Deny   Auto mode   Workspace[K
+Claude Code won't ask for these. Rules off in auto mode aren't listed.[K
+Search…[K
+1. Add a new rule…[K
+↓ to navigate · ←/→ to switch · / to search · Esc to close[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[6;33H[?25h[?25l
+Claude Code will always ask for confirmation before using these tools.[K
+Search…[K
+1. Add a new rule…[K
+↓ to navigate · ←/→ to switch · / to search · Esc to close[K[6;41H[?25h]133;A;redraw=0]133;C]133;D[?25lPermissions dialog dismissed[K
+auto mode on[K
+$[K
+[K
+[K[8;2H[?25h[?25l[7;13H (shift+tab to cycle)[8;2H[?25h[?25l[7;1H/exit                               Exit the CLI[K
+/context                            Show what fills the context[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[32;1H$  /exit[?25h]0;◐ Claude Code[?25l[7;1Hyou: /exit[K
+Mulling…[K
+Tip: Double-tap esc to rewind the code and/or conversation to a previous point in time[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[11;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --ax-screen-reader --resume 02ea7c78-caf9-43a8-b924-a7ae7f887833
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Claude Code[?9001l[?1004l

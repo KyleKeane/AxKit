@@ -369,13 +369,22 @@ public static partial class ClaudeCodeTexts
     /// <summary>
     /// One part of a hint row: "Esc to close", "Esc/Enter/Space to close", "↑/↓ to select", "x to stop", "ctrl+j to
     /// new line": a key, or keys joined by "/", then "to". "⇧←/→ to browse" (a second /btw, 2.1.310) is Shift with
-    /// both arrows. The groups are named keys and action.
+    /// both arrows. "/ to search" (the permissions screen, 2.1.327) names the slash itself as the one key of its
+    /// part (<see cref="KeySlash"/>): until it was taken here, that part made the whole row no hint row, and the
+    /// screen no screen. The groups are named keys and action.
     /// </summary>
-    [GeneratedRegex(@"^(?<keys>(?:Esc|Enter|Space|Tab|ctrl\+[a-z]|⇧?[←→↑↓]|[a-z])(?:/(?:Esc|Enter|Space|Tab|ctrl\+[a-z]|⇧?[←→↑↓]|[a-z]))*) to (?<action>.+)$")]
+    [GeneratedRegex(@"^(?<keys>/|(?:Esc|Enter|Space|Tab|ctrl\+[a-z]|⇧?[←→↑↓]|[a-z])(?:/(?:Esc|Enter|Space|Tab|ctrl\+[a-z]|⇧?[←→↑↓]|[a-z]))*) to (?<action>.+)$")]
     public static partial Regex Hint();
 
     /// <summary>What joins the keys of one hint, "Esc/Enter/Space".</summary>
     public const char KeyJoin = '/';
+
+    /// <summary>
+    /// The slash as a key of its own, the whole of a hint's keys: "/ to search" (the permissions screen, 2.1.327,
+    /// recorded 2026-11-17). It opens a search field that takes typed text; <c>ScreenReader.Keys</c> reads it and
+    /// gives no key for it, since the control area's list of a screen has no way to type into Claude Code's field.
+    /// </summary>
+    public const string KeySlash = "/";
 
     /// <summary>The names a hint row gives its keys (all inside <see cref="Hint"/> too).</summary>
     public const string KeyEsc = "Esc";

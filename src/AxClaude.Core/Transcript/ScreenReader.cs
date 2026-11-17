@@ -173,7 +173,15 @@ public static class ScreenReader
             }
 
             var action = match.Groups["action"].Value;
-            var names = match.Groups["keys"].Value.Split(ClaudeCodeTexts.KeyJoin);
+            var named = match.Groups["keys"].Value;
+            if (named == ClaudeCodeTexts.KeySlash)
+            {
+                // "/ to search": a part of the hint row like any other, so the row stays a hint row; no key is given
+                // for it, since what it opens takes typed text (ClaudeCodeTexts.KeySlash).
+                continue;
+            }
+
+            var names = named.Split(ClaudeCodeTexts.KeyJoin);
             // "⇧←/→": the Shift of the first arrow holds for the arrows after it.
             var shift = names[0].StartsWith(ClaudeCodeTexts.KeyShift);
             foreach (var name in names)

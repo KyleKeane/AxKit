@@ -1,0 +1,17 @@
+mark
+wait 8000 Yes, I trust this folder
+iffound send y\r
+mark
+quiet 2500 30000
+send /permissions
+sleep 1500
+send \r
+sleep 3000
+send \e[C
+sleep 2000
+send \e
+sleep 2500
+send /exit
+sleep 300
+send \r
+exit 15000
