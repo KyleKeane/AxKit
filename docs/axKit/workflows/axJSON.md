@@ -179,3 +179,54 @@ Starts with: Open axJSON with the file settings.json.
     You hear: Select all, Context, Ctrl+A.
 3. Press Enter.
 4. Press Left.
+
+## Save, find, go to a line and wrap in axJSON
+
+Starts with: Open axJSON with the file settings.json.
+
+### Find text in a JSON file
+
+1. Press Ctrl+F (Find; Navigation menu).
+2. Type: apple
+3. Press Enter.
+4. Press F3 (Find next; Navigation menu).
+5. Press Shift+F3 (Find previous; Navigation menu).
+
+### Go to a line of a JSON file by its number
+
+1. Press Ctrl+G (Go to line; Navigation menu).
+2. Type: 5
+3. Press Enter.
+    You hear: Line 5 of 8.
+
+### Turn word wrap off and on in axJSON
+
+1. Press Ctrl+G (Go to line; Navigation menu).
+2. Type: 6
+3. Press Enter.
+    You hear: Line 6 of 8.
+4. Press Right 3 times.
+5. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+    You hear: Word wrap off.
+6. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+    You hear: Word wrap on.
+
+### Save a change to a JSON file
+
+1. Press Ctrl+G (Go to line; Navigation menu).
+2. Type: 4
+3. Press Enter.
+4. Press End, Left.
+5. Type: 0
+6. Press Ctrl+S (Save; Session menu).
+    You hear: Saved.
+
+### Close axJSON when the file has changes
+
+1. Press End.
+2. Type: ,
+3. Close the window.
+4. Press Escape.
+5. Close the window.
+6. Press Tab 2 times.
+7. Press Enter.

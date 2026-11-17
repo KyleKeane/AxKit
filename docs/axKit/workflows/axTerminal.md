@@ -457,3 +457,7 @@ You hear the sound Ready.
 ## Read a file that imitates the shell's marks
 
 Starts with: Open axTerminal with the folder myproject.
+
+## Change a setting of axTerminal when its settings file cannot be written
+
+Starts with: Open axTerminal with the folder myproject.

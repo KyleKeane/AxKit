@@ -3,6 +3,8 @@
 # axGIT: a repository with a hook of its own (docs/axGIT/nvda-test-plan.md 1.7; SPEC AG-6): the notice names the hook,
 # Enter keeps the programs off and the Changes list comes; opened again, Trust this repository says "Trusted", and the
 # opening after that shows no notice.
+# The last check has the window refuse trusts written into its settings file: that refusal is logged as an error.
+allow error were changed outside axKit and are not used
 file home\AxKit\axGIT.json {"checkForUpdates": false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
@@ -59,3 +61,18 @@ file repo\.git\hooks\pre-commit #!/bin/sh\nexit 0
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
 expect state What this repository would run has changed since you trusted it, so it is not trusted now. Its settings or hooks name programs git would run: hook post-checkout, hook pre-commit.
+wait 1200
+keys enter
+expect state "notice":null
+close
+
+# Check: Repositories another program trusted in the settings file are not used
+# AG-8.1a and the bundle's repair R-53: the window sealed the file as it saved the trust; a file written over it
+# without the seal trusts nothing, and the window says so in its Settings notice. Opened without a repository, so
+# that no notice of the repository's own comes in front of it.
+wait 2000
+file home\AxKit\axGIT.json {"checkForUpdates": false, "trustedRepositories": ["C:/planted"]}
+start git
+expect state "notice":"Settings"
+# The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.
+expect state settings were changed outside axKit and are not used: git runs none of their own programs.

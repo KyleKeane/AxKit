@@ -546,3 +546,37 @@ Starts with: Open axTask with the folder tasks.
 2. Press End.
 3. Press Enter.
     You hear: 1 item not readable, in Home.
+
+## Change a setting of axTask when its settings file cannot be written
+
+Starts with: Open axTask with the folder tasks.
+
+## Rename a list, and rename and remove a field
+
+Starts with: Open axTask with the folder tasks.
+
+### Rename a list
+
+1. Press F2.
+2. Press Ctrl+A.
+3. Type: House
+4. Press Enter.
+    You hear: Renamed Home to House.
+
+### Rename a field of an item
+
+1. Press Right.
+2. Press Tab.
+3. Press Down.
+4. Press F2.
+5. Press Ctrl+A.
+6. Type: Place
+7. Press Enter.
+    You hear: Renamed Room to Place.
+
+### Remove a field of an item and undo it
+
+1. Press Delete.
+    You hear: Removed Place.
+2. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Removed Place.

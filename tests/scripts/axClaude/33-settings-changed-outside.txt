@@ -1,0 +1,28 @@
+# Workflow: Start axClaude with a place of Claude Code another program wrote
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, SPEC Appendix C and the bundle's repair R-53 (docs/axKit/repairs.md): the place of Claude Code in the
+# settings, claudePath, is sealed; one that another program wrote into the file is not used, and the window says so
+# as a system line in the conversation. The stand-in of 29-stand-in-turn.txt only shows the prompt here.
+# The refusal is logged as an error.
+allow error was changed outside axKit and is not used
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-666666666666","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"idle":true}]}
+
+start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+# A change of an option saves the settings, and so seals them: from now on this install has sealed the file.
+do Say new line
+close
+
+# Check: A place of Claude Code another program wrote into the settings is not used
+# The closed window writes its settings as it goes: the file is written over only after that, without the seal.
+wait 2000
+file home\AxKit\axClaude.json {"checkForUpdates":false,"claudePath":"C:/planted/claude.exe"}
+start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+do Conversation
+# The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.
+expect text settings, claudePath, was changed outside axKit and is not used: axClaude looks for Claude Code in the usual places.

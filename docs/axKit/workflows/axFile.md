@@ -720,3 +720,23 @@ Starts with: Open axFile with the folder orchard.
 
 1. Press Escape.
     You hear: Key test ended.
+
+## Start axFile with settings another program changed
+
+Starts with: Open axFile with the folder here. Close the window.
+
+## Change settings in two windows of one app
+
+Starts with: Open axFile with the folder one. Open axFile with the folder two.
+
+### Change one setting in each of two windows
+
+1. Go to the other axFile window.
+2. Choose Show hidden files and folders in the Options menu, General.
+    You hear: Show hidden files and folders.
+3. Go to the other axFile window.
+4. Choose Show files and folders starting with a period in the Options menu, General.
+    You hear: Show files and folders starting with a period.
+5. Close the window.
+6. Go to the other axFile window.
+7. Close the window.

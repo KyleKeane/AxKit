@@ -1,0 +1,27 @@
+# Workflow: Change settings in two windows of one app
+# axFile, the bundle's repair R-62 (docs/axKit/repairs.md; SPEC AX-5): two windows of one app each change a setting;
+# the window that saves second keeps what the first saved meanwhile, so both changes are there at the next start.
+# Both windows read the settings before either changed them.
+file home\AxKit\axFile.json {"checkForUpdates": false}
+mkdir one
+mkdir two
+start file {temp}\one
+start file {temp}\two
+
+# Goal: Change one setting in each of two windows
+use 1
+do Show hidden files and folders
+expect said Show hidden files and folders
+use 2
+do Show files and folders starting with a period
+expect said Show files and folders starting with a period
+close
+use 1
+close
+
+# Check: Both changes are kept
+# The next window has both settings on: the second save did not put back the first window's old value.
+wait 2000
+start file {temp}\one
+expect commands Show hidden files and folders, Options, General, checked
+expect commands Show files and folders starting with a period, Options, General, checked

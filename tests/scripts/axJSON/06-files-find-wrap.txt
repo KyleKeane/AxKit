@@ -1,0 +1,80 @@
+# Workflow: Save, find, go to a line and wrap in axJSON
+# axJSON, the editor tasks its user guide shares with axDown (docs/axJSON/user-guide.md, Files, Find and go to a line,
+# Write and read): the same editor shell, so the same words; until 2026-11-16 only axDown's scripts drove them.
+# The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
+file home\AxKit\axJSON.json {"checkForUpdates": false}
+file settings.json {\n  "model": "opus",\n  "note": "apple one",\n  "count": 3,\n  "other": "apple two",\n  "long": "This value is a long line, longer than the window is wide, so that word wrap has something to wrap when it is on, and the caret stays on the same character when it is turned off and on again.",\n  "on": true\n}
+
+start json {temp}\settings.json
+expect focus settings.json
+
+# Goal: Find text in a JSON file
+# Ctrl+F, the field "Text to find"; Enter lands on the match and the focus is back in the text; F3 the next, Shift+F3 back.
+do Find
+expect focus Text to find
+type apple
+keys enter
+expect focus apple one
+do Find next
+expect focus apple two
+do Find previous
+expect focus apple one
+# Check: A word that is not in the file is said as not found
+do Find
+type pear
+keys enter
+expect said Not found
+expect focus settings.json
+
+# Goal: Go to a line of a JSON file by its number
+# Ctrl+G, the field named with the line and column; a number, Enter: "Line n of m".
+do Go to line
+expect focus Go to line (now line 3
+type 5
+keys enter
+expect said ! Line 5 of 8
+expect focus apple two
+
+# Goal: Turn word wrap off and on in axJSON
+# The long value's line, the caret a few characters in: off and on, the caret on the same character.
+do Go to line
+type 6
+keys enter
+expect said ! Line 6 of 8
+keys right right right
+do Word wrap
+expect said ! Word wrap off
+expect state Line 6, Column 4 ·
+do Word wrap
+expect said ! Word wrap on
+expect state Line 6, Column 4 ·
+
+# Goal: Save a change to a JSON file
+# A change, Ctrl+S: "Saved", and the file holds it.
+do Go to line
+type 4
+keys enter
+keys end left
+type 0
+do Save
+expect said ! Saved
+run findstr /c:"30," settings.json
+
+# Goal: Close axJSON when the file has changes
+# Closing with unsaved changes asks; Escape stays; Don't save closes, and the file keeps what was saved.
+keys end
+type ,
+close
+expect state "notice":"Save changes to settings.json?"
+keys escape
+expect state "notice":null
+expect state *settings.json - axJSON
+close
+expect state "notice":"Save changes to settings.json?"
+keys tab tab
+expect focus Don't save
+keys enter
+wait 1500
+# The file keeps what was saved, and not the comma typed after it.
+run findstr /c:"30," settings.json
+run powershell -NoProfile -Command "if ((Get-Content -Raw settings.json).Contains('30,,')) { exit 1 } else { exit 0 }"

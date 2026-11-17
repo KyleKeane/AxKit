@@ -8,6 +8,8 @@
 # servers of its own.
 # Also 1.4 (Right and Enter on an http server say why and the level stays, MP-1.4; a level of the server's opened
 # until 2026-11-14), with a second, remote server in the same .mcp.json, which is never reached.
+# The last check has the window refuse servers written into its settings file: that refusal is logged as an error.
+allow error were changed outside axKit and are not used
 file home\AxKit\axMCP.json {"checkForUpdates": false, "servers": [{"name": "fake", "commandLine": "powershell -NoProfile -ExecutionPolicy Bypass -File fake.ps1"}]}
 file .mcp.json {"mcpServers":{"zzproj":{"command":"cmd","args":["/c","echo"]},"zzremote":{"type":"http","url":"https://example.invalid/mcp"}}}
 file fake.ps1 $in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  $e = 'Method not found'\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}},{"name":"fail","description":"Reports an error.","inputSchema":{"type":"object","properties":{}}},{"name":"boom","description":"Breaks the server.","inputSchema":{"type":"object","properties":{}}},{"name":"snap","description":"Breaks in one line.","inputSchema":{"type":"object","properties":{}}}]}' }\n    'tools/call' {\n      if ($m.params.name -eq 'echo') { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n      if ($m.params.name -eq 'fail') { $r = '{"content":[{"type":"text","text":"It went wrong."}],"isError":true}' }\n      if ($m.params.name -eq 'boom') { $e = 'The server broke.' + [char]92 + 'nIt says so on two lines.' }\n    }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[{"name":"page","uriTemplate":"fake://page/1","description":"A page by its number."}]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"' + $m.params.uri + '","mimeType":"text/plain","text":"Text of ' + $m.params.uri + '"}]}' }\n    'prompts/list' { $r = '{"prompts":[{"name":"greet","description":"Greets someone. Politely.","arguments":[{"name":"who","description":"Who to greet","required":true}]}]}' }\n    'prompts/get' { $r = '{"description":"A greeting.","messages":[{"role":"user","content":{"type":"text","text":"Say hello to ' + $m.params.arguments.who + '"}}]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"' + $e + '"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
@@ -262,3 +264,14 @@ expect text user: Say hello to Ada
 keys escape
 expect state "notice":null
 expect focus who (required), text, Ada
+close
+
+# Check: Servers another program wrote into the settings file are not used
+# MP-5 and the bundle's repair R-53: the window sealed the file as it saved the servers added above; a file written
+# over it without the seal keeps none of them, and the window says so in its Settings notice.
+wait 2000
+file home\AxKit\axMCP.json {"checkForUpdates": false, "servers": [{"name": "planted", "commandLine": "cmd /c echo"}]}
+start mcpclient {temp}
+expect state "notice":"Settings"
+# The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.
+expect state settings were changed outside axKit and are not used. Add them again with Ctrl+N at the top level.

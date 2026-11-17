@@ -72,7 +72,7 @@ You hear: Claude asks.
 
 1. Type: What is 2+2?
 2. Press Shift+Enter.
-3. Type: Answer in one line.
+3. Type: Answer in one line, with no tool.
 4. Press Enter.
     You hear: Sent.
     You hear the sound Sent.
@@ -1571,6 +1571,10 @@ Starts with: Open axClaude with the folder sf.
     You hear: Grounding in Claude Code's session file on.
 4. Choose Say the event sources in the Options menu, Developer.
     You hear: Session file: not found.
+
+## Start axClaude with a place of Claude Code another program wrote
+
+Starts with: Open axClaude with the folder st. Close the window.
 
 ## Have a short exchange with Claude
 

@@ -94,7 +94,12 @@ foreach ($item in $repairs.items) {
             }
             $goals = @($record.goals | Where-Object { $_.script -eq $script })
             $unheard = @($goals | Where-Object { -not $_.tiers.nvda -or $_.tiers.nvda.last.result -ne 'passed' })
-            if ($goals.Count -gt 0 -and $unheard.Count -eq 0) {
+            # Every goal and check the script holds now must be in the record: a check added to an older script for
+            # the repair has no pass with NVDA yet, though the script's other goals have one (found 2026-11-16, when
+            # axGIT's and axMCP's refusals were taken off as heard by a pass made before their checks were written).
+            $titles = @(Get-Content -LiteralPath (Join-Path $root $script) -Encoding UTF8 | Where-Object { $_ -match '^# (Goal|Check): (.+?)\s*$' } | ForEach-Object { ($_ -replace '^# (Goal|Check): ', '').Trim() })
+            $missing = @($titles | Where-Object { $title = $_; -not ($goals | Where-Object { $_.goal -eq $title }) })
+            if ($goals.Count -gt 0 -and $unheard.Count -eq 0 -and $missing.Count -eq 0) {
                 $heard.Add("- $($item.id): $(Sentence $what) Heard: ``$script`` passed with NVDA at $($goals[0].tiers.nvda.last.commit).")
                 continue
             }

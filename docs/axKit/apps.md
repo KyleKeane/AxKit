@@ -15,7 +15,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxFile` (the window), `src/AxFile.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxFile.Tests`.
 - Documents: `docs/axFile/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axFile/`, 9 scripts (their workflows are in `docs/axKit/workflows.md`).
+- Automated checks: `tests/scripts/axFile/`, 11 scripts (their workflows are in `docs/axKit/workflows.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axFile.ps1`, or `run.ps1 -App file`.
 
 ### axDown
@@ -35,7 +35,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxJSON` (the window), `src/AxJSON.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxJSON.Tests`.
 - Documents: `docs/axJSON/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axJSON/`, 5 scripts (their workflows are in `docs/axKit/workflows.md`).
+- Automated checks: `tests/scripts/axJSON/`, 6 scripts (their workflows are in `docs/axKit/workflows.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axJSON.ps1`, or `run.ps1 -App json`.
 
 ### axPreview
@@ -67,7 +67,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxTask` (the window), `src/AxTask.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxTask.Tests`.
 - Documents: `docs/axTask/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axTask/`, 10 scripts (their workflows are in `docs/axKit/workflows.md`).
+- Automated checks: `tests/scripts/axTask/`, 12 scripts (their workflows are in `docs/axKit/workflows.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axTask.ps1`, or `run.ps1 -App task`.
 
 ## Utilities
@@ -132,7 +132,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxTerminal` (the window), `src/AxTerminal.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxTerminal.Tests`.
 - Documents: `docs/axTerminal/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axTerminal/`, 11 scripts (their workflows are in `docs/axKit/workflows.md`).
+- Automated checks: `tests/scripts/axTerminal/`, 12 scripts (their workflows are in `docs/axKit/workflows.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axTerminal.ps1`, or `run.ps1 -App terminal`.
 
 ### axGIT
@@ -167,7 +167,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxClaude` (the window), `src/AxClaude.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxClaude.Tests`.
 - Documents: `docs/axClaude/` (`claude-screens.md`, `events-and-grounding.md`, `nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axClaude/`, 34 scripts (their workflows are in `docs/axKit/workflows.md`).
+- Automated checks: `tests/scripts/axClaude/`, 35 scripts (their workflows are in `docs/axKit/workflows.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axClaude.ps1`, or `run.ps1 -App claude`.
 
 ### axMCP

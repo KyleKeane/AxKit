@@ -1,0 +1,20 @@
+# Workflow: Change a setting of axTerminal when its settings file cannot be written
+# axTerminal, a console window; SPEC AX-5.9 and the bundle's repair R-63 (docs/axKit/repairs.md): when the settings
+# file cannot be written, the window says so once in the run as a system line in the terminal, with the reason, and
+# the change lasts until the window closes. The run's own settings file is made read-only; the user's are never
+# touched. The failed save is logged as an error.
+allow error Settings could not be saved
+mkdir myproject
+file home\AxKit\axTerminal.json {"checkForUpdates": false}
+file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"}]}
+start terminal {temp}\myproject
+expect said Ready
+run attrib +r home\AxKit\axTerminal.json
+
+# Check: A setting that cannot be saved is said once, with the reason, as a system line
+do Ticks for new lines
+do Terminal
+expect text System: Settings could not be saved:
+expect text What you change lasts until this window closes.
+close
+run attrib -r home\AxKit\axTerminal.json

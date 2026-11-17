@@ -173,3 +173,4 @@ Starts with: Open axMCP with the test folder.
 4. Press Ctrl+Enter.
     You hear: Fetching greet.
 5. Press Escape.
+6. Close the window.

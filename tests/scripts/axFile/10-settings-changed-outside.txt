@@ -1,0 +1,37 @@
+# Workflow: Start axFile with settings another program changed
+# axFile, the bundle's repairs R-53 and R-64 (docs/axKit/repairs.md; SPEC AX-5.6 and AX-9.5a): programs of Open with
+# that another program wrote into the sealed settings file are not used, and the window says so in its Settings
+# notice; a remembered folder on the network is not looked at during the start, and the window says so. Both
+# sentences are heard by the next NVDA pass through this script.
+# The refusal of the planted programs is logged as an error.
+allow error were changed outside axKit and are not used
+file home\AxKit\axFile.json {"checkForUpdates": false}
+mkdir here
+mkdir here\one
+start file {temp}\here
+expect focus one
+# A change of an option saves the settings, and so seals them: from now on this install has sealed the file.
+do Show hidden files and folders
+expect said Show hidden files and folders
+close
+
+# Check: Programs of Open with another program wrote into the settings are not used
+# The closed window writes its settings as it goes: the file is written over only after that, without the seal.
+wait 2000
+file home\AxKit\axFile.json {"checkForUpdates": false, "programs": [{"name": "Planted", "path": "C:/planted/run.exe"}]}
+start file {temp}\here
+expect state "notice":"Settings"
+# The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.
+expect state settings were changed outside axKit and are not used. Add them again from Options, Add a program to Open with.
+refuse commands Planted
+keys escape
+expect state "notice":null
+close
+
+# Check: A remembered folder on the network is not opened at start
+# A start without a folder goes to the remembered one; on the network it is not looked at, the home folder is shown,
+# and the window says why. No request reaches the network: the path is never asked about.
+wait 2000
+file home\AxKit\axFile.json {"checkForUpdates": false, "lastFolder": "\\\\away-server\\share\\folder"}
+start file
+expect said is on the network and was not opened at start

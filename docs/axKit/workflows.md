@@ -223,8 +223,9 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 32. **See the session file followed, without Claude Code**
     - Hear whether Claude Code's session file is followed
     - Turn the grounding in Claude Code's session file off and on again
-33. **Have a short exchange with Claude**
-34. **Answer a set of two questions from Claude**
+33. **Start axClaude with a place of Claude Code another program wrote**
+34. **Have a short exchange with Claude**
+35. **Answer a set of two questions from Claude**
 
 ## axClip
 
@@ -408,6 +409,9 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Start the key test
     - Hear what a key does without doing it
     - End the key test
+10. **Start axFile with settings another program changed**
+11. **Change settings in two windows of one app**
+    - Change one setting in each of two windows
 
 ## axGIT
 
@@ -485,6 +489,12 @@ Steps and keys: `docs/axKit/workflows/axJSON.md` (in Claude's working folder: `w
 5. **Use axJSON's Context menu**
     - Select all the text
     - Select all the text from the command palette
+6. **Save, find, go to a line and wrap in axJSON**
+    - Find text in a JSON file
+    - Go to a line of a JSON file by its number
+    - Turn word wrap off and on in axJSON
+    - Save a change to a JSON file
+    - Close axJSON when the file has changes
 
 ## axMCP
 
@@ -719,6 +729,11 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Hear a damaged item in its list
     - Open a damaged item's file in axJSON
     - Hear how many items a gathering list could not read
+11. **Change a setting of axTask when its settings file cannot be written**
+12. **Rename a list, and rename and remove a field**
+    - Rename a list
+    - Rename a field of an item
+    - Remove a field of an item and undo it
 
 ## axTerminal
 
@@ -768,6 +783,7 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
     - Run a Context command from the palette
 10. **Start a shell in a recent folder from the command palette**
 11. **Read a file that imitates the shell's marks**
+12. **Change a setting of axTerminal when its settings file cannot be written**
 
 ## AI tools
 

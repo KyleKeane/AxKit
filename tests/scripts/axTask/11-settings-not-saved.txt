@@ -1,0 +1,26 @@
+# Workflow: Change a setting of axTask when its settings file cannot be written
+# axTask, an item window; SPEC AX-5.9 and the bundle's repair R-63 (docs/axKit/repairs.md): when the settings file
+# cannot be written, the window says so once in the run, in its Settings notice, with the reason, and the change
+# lasts until the window closes. The run's own settings file is made read-only; the user's are never touched.
+# The failed save is logged as an error.
+allow error Settings could not be saved
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+expect focus Shopping, list, 1 item
+run attrib +r home\AxKit\axTask.json
+
+# Check: A setting that cannot be saved is said once, with the reason
+do Hide done tasks
+expect state "notice":"Settings"
+expect state Settings could not be saved:
+expect state What you change lasts until this window closes.
+keys escape
+expect state "notice":null
+# Said once in a run: the next change says nothing more of it.
+do Hide done tasks
+refuse state "notice":"Settings"
+close
+run attrib -r home\AxKit\axTask.json

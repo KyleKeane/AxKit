@@ -1,0 +1,50 @@
+# Workflow: Rename a list, and rename and remove a field
+# axTask, docs/axTask/user-guide.md "Changing things": F2 on a list renames it and its folder; in the detail pane, F2
+# renames the field in focus and Delete removes it (the item window's shared field commands, docs/axKit/item-apps.md
+# IA-3); every change is one step for Ctrl+Z.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Room", "type": "text", "value": "Kitchen"}]}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+expect focus Home, list, 1 item
+
+# Goal: Rename a list
+# F2 on a list: its name in place; Enter renames the list and its folder.
+keys f2
+keys ctrl+a
+type House
+keys enter
+expect said ! Renamed Home to House
+run cmd /c if exist "tasks\House\Fix the tap.json" (exit 0) else (exit 1)
+expect focus House, list, 1 item
+
+# Goal: Rename a field of an item
+# In the detail pane, F2 on a field: its title in place; Enter renames it in the item's file.
+keys right
+expect focus Fix the tap
+keys tab
+expect focus Title, text, Fix the tap
+keys down
+expect focus Room, text, Kitchen
+keys f2
+keys ctrl+a
+type Place
+keys enter
+expect said ! Renamed Room to Place
+run findstr /l /c:"\"Place\"" "tasks\House\Fix the tap.json"
+
+# Goal: Remove a field of an item and undo it
+# Delete on a field removes it; Ctrl+Z brings it back. The Title stays.
+expect focus Place, text, Kitchen
+keys delete
+expect said ! Removed Place
+run powershell -NoProfile -Command "if ((Get-Content -Raw 'tasks\House\Fix the tap.json').Contains('Kitchen')) { exit 1 } else { exit 0 }"
+do Undo
+expect said ! Undone: Removed Place
+run findstr /l /c:"Kitchen" "tasks\House\Fix the tap.json"
+# Check: The Title field cannot be removed
+keys home
+expect focus Title, text, Fix the tap
+keys delete
+expect said ! The Title field stays
