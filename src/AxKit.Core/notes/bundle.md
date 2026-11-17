@@ -37,7 +37,10 @@
   (`docs/axKit/user-workflows.md` WF-8): `WorkflowsName`, `WorkflowPages` (each group's page, found by trying the
   names of `Dispatch.Apps`, ai-tools and nvda-only, never by listing resources) as `WorkflowPageName`, and
   `WindowCommandsName`, embedded from `docs/axKit` as `tools/workflows.ps1` wrote them when axKit is built (a new group
-  that is not an app needs its name in `WorkflowPages`; `AiDocumentationTests` fails on a page left out); `Rule`
+  that is not an app needs its name in `WorkflowPages`; `AiDocumentationTests` fails on a page left out); `FurtherPages`
+  (2026-11-17: `families.md`, `cases.md`, `outside-calls.md`, `privacy.md`, `changelog.md`, each a line of the table and
+  a line of the csproj; a new Markdown document of `docs/axKit` or the repository's top fails `AiDocumentationTests`
+  until it is added there or named in that test as a developer's); `Rule`
   tells Claude how to answer from them and ends with `Manner` (AH-7.3a, 2026-11-16: no remark on the user's rest,
   health or the time of day unless asked; in axKit's rule file, which is kept at its text, never in the user's
   CLAUDE.md). The tools' rule (`AiToolsRule`) has `ListedNotLoaded`, one bullet: tools listed and not yet loaded are

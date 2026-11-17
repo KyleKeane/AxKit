@@ -53,6 +53,15 @@
          and every key by key; AiDocumentationTests fails when one differs from its file. -->
     <EmbeddedResource Include="../../docs/axKit/key-groups.md" LogicalName="KeyGroups.md" />
     <EmbeddedResource Include="../../docs/axKit/key-map.md" LogicalName="KeyMap.md" />
+    <!-- The further pages (docs/axKit/ai-help.md AH-7.1, 2026-11-17; AiDocumentation.FurtherPages): what each sound
+         and event means, what axKit does when something goes wrong, what it reaches outside itself and what changed
+         in each version. The privacy statement is embedded above already. AiDocumentationTests fails when one
+         differs from its file, and on a document of docs/axKit or the repository's top that is neither carried nor
+         named there as a developer's. -->
+    <EmbeddedResource Include="../../docs/axKit/families.md" LogicalName="Families.md" />
+    <EmbeddedResource Include="../../docs/axKit/cases.md" LogicalName="Cases.md" />
+    <EmbeddedResource Include="../../docs/axKit/outside-calls.md" LogicalName="OutsideCalls.md" />
+    <EmbeddedResource Include="../../CHANGELOG.md" LogicalName="Changelog.md" />
   </ItemGroup>
 
 </Project>

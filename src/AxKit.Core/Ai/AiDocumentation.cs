@@ -48,6 +48,28 @@ public static class AiDocumentation
     public const string KeyMapName = "key-map.md";
 
     /// <summary>
+    /// The further pages (AH-7.1, 2026-11-17, the user's ask that the built app carry every document that says what
+    /// axKit does and how to reach a goal): each with the name AxKit.Core.csproj embeds it under, its file in the
+    /// folder (the name it has in the repository, in small letters), where it is in the repository, and its line of
+    /// the index. Three are written from axKit's source by a script and name its files and tests, which the rule
+    /// tells Claude to leave out of an answer. <c>AiDocumentationTests</c> holds each to its file, and fails on a
+    /// document of the repository that is neither carried nor named there as a developer's.
+    /// </summary>
+    public static readonly IReadOnlyList<(string Resource, string Name, string Source, string Says)> FurtherPages =
+    [
+        ("Families.md", "families.md", "docs/axKit/families.md",
+            "what starts something in axKit, what the menus' functions are, every kind of event with its sound and its words, and every sound with what it means."),
+        ("Cases.md", "cases.md", "docs/axKit/cases.md",
+            "what axKit does and says in each unexpected situation: a settings file that does not read, a setting changed outside axKit, a key another program holds, a file or a program that is gone."),
+        ("OutsideCalls.md", "outside-calls.md", "docs/axKit/outside-calls.md",
+            "everything axKit reaches outside its own process: each network request, each program it starts and each pipe, by what is reached."),
+        ("Privacy.md", "privacy.md", "PRIVACY.md",
+            "the privacy statement: what stays on the computer, what axKit contacts, when, and what it sends."),
+        ("Changelog.md", "changelog.md", "CHANGELOG.md",
+            "what changed in each version, the newest first; a long file, to be searched."),
+    ];
+
+    /// <summary>
     /// The rule file's last paragraph (AH-7.3a; the user's own axHelp session, 2026-11-16, in which Claude remarked on
     /// the hour and on rest): what Claude does not remark on unless asked. It is in axKit's rule file, which axKit
     /// keeps at this text (AH-7.7), not in the user's CLAUDE.md, which is the user's to change.
@@ -97,6 +119,14 @@ public static class AiDocumentation
         When no goal covers the question, look in the app's guide and in window-commands.md, and say when you are not
         sure.
 
+        For what a sound means, or what axKit says when something happens, read families.md. For what axKit does
+        when something goes wrong (a settings file that does not read, a program that is missing), read cases.md.
+        For what axKit contacts or runs outside itself, read privacy.md, and outside-calls.md for the exact list.
+        For what changed in a version, search changelog.md with your Grep tool: it is long, the newest version first.
+
+        families.md, cases.md and outside-calls.md are written from axKit's source and name its files and tests:
+        leave those names out of an answer unless the user asks for them.
+
         {Manner}
         """;
 
@@ -135,8 +165,8 @@ public static class AiDocumentation
     /// <summary>
     /// Every file axKit keeps in the working folder for the guides, each with its path from the working folder and
     /// its text: the bundle's guide, a guide per app of <see cref="Dispatch.Apps"/>, the workflow pages (WF-8.1: the
-    /// index of the workflows, each group's page and the commands page), the index, which names
-    /// <paramref name="version"/>, and the rule file.
+    /// index of the workflows, each group's page and the commands page), the two key pages, the further pages
+    /// (<see cref="FurtherPages"/>), the index, which names <paramref name="version"/>, and the two rule files.
     /// </summary>
     public static IReadOnlyList<(string Path, string Text)> Files(string version)
     {
@@ -188,6 +218,16 @@ public static class AiDocumentation
         {
             files.Add((Path.Combine(FolderName, KeyMapName), map));
             index.Append("- ").Append(KeyMapName).Append(": every key and what it does in each app.\n");
+        }
+
+        // The further pages (2026-11-17): sounds and events, the cases, the outside calls, privacy, the changelog.
+        foreach (var (resource, name, _, says) in FurtherPages)
+        {
+            if (Embedded(resource) is { } page)
+            {
+                files.Add((Path.Combine(FolderName, name), page));
+                index.Append("- ").Append(name).Append(": ").Append(says).Append('\n');
+            }
         }
 
         files.Insert(0, (Path.Combine(FolderName, IndexName), index.ToString()));

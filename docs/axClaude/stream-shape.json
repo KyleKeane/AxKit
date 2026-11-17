@@ -3,7 +3,7 @@
   "note": "Written by tools/ClaudeProbe stream --shape, never by hand: the keys of every kind of line Claude Code's non-interactive stream gave in the probe's cases, with no value. A key that comes only now and then (thinking) may be in one run and not the next: the cases' own expectations, not this file, say whether the stream still works.",
   "claudeCode": "2.1.326",
   "lines": {
-    "assistant": ["agent_id","api_error_status","api_error_type","error","is_api_error_message","message","parent_tool_use_id","request_id","session_id","subagent_type","task_description","timestamp","type","uuid","wire_tool_inputs"],
+    "assistant": ["agent_id","api_error_status","api_error_type","error","is_api_error_message","message","parent_tool_use_id","request_id","session_id","subagent_type","task_description","thinking_display","thinking_duration_ms","timestamp","type","uuid","wire_tool_inputs"],
     "control_response/success": ["response","type"],
     "rate_limit_event": ["rate_limit_info","session_id","type","uuid"],
     "result/error_during_execution": ["credential_expires_at","duration_api_ms","duration_ms","errors","fast_mode_disabled_reason","fast_mode_state","is_error","modelUsage","model_usage_since_last_result","num_turns","permission_denials","queued_turn_count","result_index","safety_stops","session_id","stop_reason","subagent_stats","subtype","terminal_reason","total_cost_usd","type","usage","uuid"],
@@ -20,6 +20,7 @@
     "system/task_notification": ["output_file","run_id","session_id","status","subtype","summary","summary_is_report","task_id","tool_use_id","type","usage","uuid"],
     "system/task_started": ["description","is_backgrounded","prompt","run_id","session_id","spawn_depth","subagent_type","subtype","task_id","task_type","tool_use_id","type","uuid"],
     "system/task_updated": ["patch","run_id","session_id","subtype","task_id","type","uuid"],
+    "system/thinking_tokens": ["estimated_tokens","estimated_tokens_delta","session_id","subtype","type","uuid"],
     "user": ["message","parent_tool_use_id","session_id","timestamp","tool_result_meta","tool_use_result","type","uuid"]
   },
   "blocks": {

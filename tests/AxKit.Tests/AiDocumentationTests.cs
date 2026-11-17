@@ -28,8 +28,8 @@ public sealed class AiDocumentationTests
 
         Assert.Equal(Normal(File.ReadAllText(Path.Combine(root, "docs", "axKit", "README.md"))), Normal(files[Path.Combine("documentation", "axKit.md")]));
         // The index, the bundle's guide, one guide per app, the two rules, and the workflows' index, their pages and
-        // the commands page (WF-8.1), and the two key pages: nothing else.
-        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count, files.Count);
+        // the commands page (WF-8.1), the two key pages and the further pages: nothing else.
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count + AiDocumentation.FurtherPages.Count, files.Count);
     }
 
     [Fact]
@@ -74,11 +74,135 @@ public sealed class AiDocumentationTests
             Path.Combine("documentation", "window-commands.md"),
             Path.Combine("documentation", "key-groups.md"),
             Path.Combine("documentation", "key-map.md"),
+            .. AiDocumentation.FurtherPages.Select(page => Path.Combine("documentation", page.Name)),
             AiDocumentation.RulePath,
             AiToolsRule.RulePath,
         ];
         Assert.Equal(expected, AiDocumentation.Files("1.2.3").Select(file => file.Path));
         Assert.Equal("workflows-axFile.md", AiDocumentation.WorkflowPageName("axFile"));
+    }
+
+    /// <summary>
+    /// AH-7.1 (2026-11-17): the further pages are among the files as the repository has them, each with its line in
+    /// the index, each a file axKit may delete, and the rule says which question each answers.
+    /// </summary>
+    [Fact]
+    public void The_further_pages_are_among_the_files_as_the_repository_has_them_and_the_rule_names_each()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var files = AiDocumentation.Files("1.2.3").ToDictionary(file => file.Path, file => file.Text);
+        var index = AiDocumentation.Files("1.2.3")[0].Text;
+        var rule = Regex.Replace(AiDocumentation.Rule, @"\s+", " ");
+        Assert.Equal(["families.md", "cases.md", "outside-calls.md", "privacy.md", "changelog.md"], AiDocumentation.FurtherPages.Select(page => page.Name));
+        foreach (var (resource, name, source, says) in AiDocumentation.FurtherPages)
+        {
+            var path = Path.Combine("documentation", name);
+            Assert.True(files.TryGetValue(path, out var text),
+                $"{name} is not among the files of Claude's working folder: src/AxKit.Core/AxKit.Core.csproj must embed {source} with LogicalName=\"{resource}\".");
+            Assert.Equal(Normal(File.ReadAllText(Path.Combine(root, source.Replace('/', Path.DirectorySeparatorChar)))), Normal(text!));
+            Assert.Contains($"\n- {name}: {says}\n", index, StringComparison.Ordinal);
+            Assert.True(AiDocumentation.IsOurs(path), $"{path} is not a file axKit may delete.");
+            Assert.Contains(name, rule, StringComparison.Ordinal);
+        }
+
+        string[] sentences =
+        [
+            "For what a sound means, or what axKit says when something happens, read families.md.",
+            "For what axKit does when something goes wrong (a settings file that does not read, a program that is missing), read cases.md.",
+            "For what axKit contacts or runs outside itself, read privacy.md, and outside-calls.md for the exact list.",
+            "For what changed in a version, search changelog.md with your Grep tool: it is long, the newest version first.",
+            "families.md, cases.md and outside-calls.md are written from axKit's source and name its files and tests: leave those names out of an answer unless the user asks for them.",
+        ];
+        foreach (var sentence in sentences)
+        {
+            Assert.Contains(sentence, rule, StringComparison.Ordinal);
+        }
+    }
+
+    /// <summary>
+    /// The guard of 2026-11-17 (the user's ask: "ensure we are feeding all the relevant docs to the built app"): every
+    /// Markdown document of docs/axKit and of the repository's top is either carried into Claude's working folder or
+    /// named here as a developer's, with the reason. A new document fails until it is put in one of the two; a name
+    /// here whose file is gone fails too, so that the list stays true. In an app's own folder (docs/ax&lt;Name&gt;) the
+    /// user's document is user-guide.md, which the first test holds for every app; everything else there (the
+    /// specification, the test plan, notes) is a developer's by that rule.
+    /// </summary>
+    [Fact]
+    public void Every_document_of_the_bundle_is_carried_or_named_as_a_developers()
+    {
+        var developers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            // docs/axKit: specifications, designs and proposals.
+            ["docs/axKit/SPEC.md"] = "the bundle's specification",
+            ["docs/axKit/ai-help.md"] = "the specification of AI help",
+            ["docs/axKit/mcp.md"] = "the specification of the AI tools; what a user needs is in the guides",
+            ["docs/axKit/reports.md"] = "the specification of the reports",
+            ["docs/axKit/automation.md"] = "the specification of the automated checks",
+            ["docs/axKit/user-workflows.md"] = "the specification of the workflow pages",
+            ["docs/axKit/app-kit.md"] = "the design of the window base",
+            ["docs/axKit/item-apps.md"] = "the design of the item apps",
+            ["docs/axKit/access-layers.md"] = "the design of the access layers",
+            ["docs/axKit/theme.md"] = "the specification of themes",
+            ["docs/axKit/command-language.md"] = "a proposal for the commands",
+            ["docs/axKit/events.md"] = "a proposal for the events",
+            ["docs/axKit/earcons.md"] = "the design of the sounds; families.md says what each means",
+            ["docs/axKit/axfile-split.md"] = "a plan for axFile's code",
+            ["docs/axKit/longevity.md"] = "the plan for the years ahead",
+            ["docs/axKit/plan.md"] = "the plan and the apps still to come",
+            // docs/axKit: how the repository is worked on.
+            ["docs/axKit/adding-an-app.md"] = "how a developer adds an app",
+            ["docs/axKit/commands.md"] = "the developer's commands",
+            ["docs/axKit/documents.md"] = "where each thing is written, for developers",
+            ["docs/axKit/development-environment.md"] = "how a development computer is set up",
+            ["docs/axKit/apps.md"] = "the apps with their code and tests",
+            ["docs/axKit/code-signing.md"] = "how a release is signed",
+            ["docs/axKit/reports-setup.md"] = "how the reports' repository is set up",
+            ["docs/axKit/store-distribution.md"] = "the plan for the Store",
+            ["docs/axKit/store-listing.md"] = "the Store's listing text",
+            ["docs/axKit/store-setup.md"] = "how a Store submission is made",
+            // docs/axKit: records, audits and reviews.
+            ["docs/axKit/nvda-test-record.md"] = "the record of the NVDA passes",
+            ["docs/axKit/owed.md"] = "what is still owed a hearing",
+            ["docs/axKit/repairs.md"] = "what the audits found and what became of it",
+            ["docs/axKit/cleanup-run.md"] = "a cleanup's plan",
+            ["docs/axKit/cleanup-run-report.md"] = "a cleanup's report",
+            ["docs/axKit/inventory-2026-10-24.md"] = "an inventory of the code",
+            ["docs/axKit/inventory-2026-11-09.md"] = "an inventory of the code",
+            ["docs/axKit/review-2026-10-23.md"] = "a review",
+            ["docs/axKit/security-audit-2026-10-24.md"] = "a security audit",
+            // The repository's top.
+            ["README.md"] = "the repository's front page; the bundle's guide says the same for a user",
+            ["CLAUDE.md"] = "the working rules of the repository",
+            ["CONTRIBUTING.md"] = "for contributors",
+            ["CODE_OF_CONDUCT.md"] = "for contributors",
+            ["GOVERNANCE.md"] = "for contributors",
+            ["SECURITY.md"] = "how a vulnerability is reported; the privacy statement and the guide cover a user's questions",
+            ["NOTICE.md"] = "the legal notice, shown by About",
+            ["THIRD-PARTY-NOTICES.md"] = "the legal notices, shown by About",
+        };
+        var carried = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "docs/axKit/README.md", "docs/axKit/workflows.md", "docs/axKit/window-commands.md",
+            "docs/axKit/key-groups.md", "docs/axKit/key-map.md",
+        };
+        carried.UnionWith(AiDocumentation.FurtherPages.Select(page => page.Source));
+
+        var root = LayoutTests.RepositoryRoot();
+        var found = Directory.GetFiles(Path.Combine(root, "docs", "axKit"), "*.md").Select(file => "docs/axKit/" + Path.GetFileName(file))
+            .Concat(Directory.GetFiles(root, "*.md").Select(file => Path.GetFileName(file)))
+            .ToList();
+        Assert.NotEmpty(found);
+        foreach (var document in found)
+        {
+            Assert.True(carried.Contains(document) || developers.ContainsKey(document),
+                $"{document} is neither carried into Claude's working folder nor named as a developer's document. If a user's question is answered from it, add it to AiDocumentation.FurtherPages and embed it in src/AxKit.Core/AxKit.Core.csproj; otherwise name it in this test with its reason.");
+            Assert.False(carried.Contains(document) && developers.ContainsKey(document), $"{document} is named both as carried and as a developer's.");
+        }
+
+        foreach (var named in developers.Keys.Concat(carried))
+        {
+            Assert.True(found.Contains(named, StringComparer.OrdinalIgnoreCase), $"{named} is named in this test and is not in the repository any more: take it out.");
+        }
     }
 
     [Fact]
@@ -284,7 +408,7 @@ public sealed class AiDocumentationTests
         var rule = temp.File(Path.Combine(".claude", "rules", "mine.md"), "my rule");
 
         var written = AiDocumentation.Write(temp.Path, "1.3.0");
-        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count, written.Count);
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count + AiDocumentation.FurtherPages.Count, written.Count);
         Assert.StartsWith("# axFile", File.ReadAllText(Path.Combine(folder, "axFile.md")), StringComparison.Ordinal);
         Assert.Contains("axKit 1.3.0", File.ReadAllText(Path.Combine(folder, "index.md")), StringComparison.Ordinal);
         Assert.Equal("1.3.0", File.ReadLines(Path.Combine(folder, "axkit-version.txt")).First());
@@ -295,7 +419,7 @@ public sealed class AiDocumentationTests
 
         // A development build asks for every file again whatever the marker says: its guides change without its version.
         File.WriteAllText(Path.Combine(folder, "axFile.md"), "an old guide");
-        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count, AiDocumentation.Write(temp.Path, "1.3.0", rewrite: true).Count);
+        Assert.Equal(Dispatch.Apps.Count + 4 + 2 + 2 + AiDocumentation.WorkflowPages().Count + AiDocumentation.FurtherPages.Count, AiDocumentation.Write(temp.Path, "1.3.0", rewrite: true).Count);
         Assert.StartsWith("# axFile", File.ReadAllText(Path.Combine(folder, "axFile.md")), StringComparison.Ordinal);
         Assert.Equal("my own", File.ReadAllText(own));
     }

@@ -44,7 +44,7 @@ run dir /b "home\axKit Claude\CLAUDE.md" "home\axKit Claude\.claude\agents\agent
 run dir /b "home\axKit Claude\documentation\index.md" "home\axKit Claude\documentation\axKit.md" "home\axKit Claude\documentation\axFile.md" "home\axKit Claude\documentation\axkit-version.txt" "home\axKit Claude\.claude\rules\axkit-documentation.md"
 # The pages Claude answers how-to questions from (docs/axKit/user-workflows.md WF-8.1): the workflows' index, an app's
 # workflows, every window's commands, and the two key pages.
-run dir /b "home\axKit Claude\documentation\workflows.md" "home\axKit Claude\documentation\workflows-axFile.md" "home\axKit Claude\documentation\window-commands.md" "home\axKit Claude\documentation\key-groups.md" "home\axKit Claude\documentation\key-map.md"
+run dir /b "home\axKit Claude\documentation\workflows.md" "home\axKit Claude\documentation\workflows-axFile.md" "home\axKit Claude\documentation\window-commands.md" "home\axKit Claude\documentation\key-groups.md" "home\axKit Claude\documentation\key-map.md" "home\axKit Claude\documentation\families.md" "home\axKit Claude\documentation\cases.md" "home\axKit Claude\documentation\outside-calls.md" "home\axKit Claude\documentation\privacy.md" "home\axKit Claude\documentation\changelog.md"
 # The rule that tells Claude when to use which of axKit's AI tools (HE-2.8), every tool named in it, and the file
 # Claude Code was started with, which names this run's AxKit.exe as the server axkit.
 run dir /b "home\axKit Claude\.claude\rules\axkit-tools.md" "home\AxKit\claude-mcp.json"

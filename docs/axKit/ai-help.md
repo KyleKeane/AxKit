@@ -211,7 +211,16 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   with its menu and its key; never `commands.md`, which in the repository is the developer's commands), and, since
   2026-11-16, the two key pages: `key-groups.md` (`docs/axKit/key-groups.md`, how axKit's keys are grouped, to
   explain the patterns and to guess a key) and `key-map.md` (`docs/axKit/key-map.md`, every key and what it does in
-  each app), each with its line in `index.md`. These files are axKit's, not the user's: each is
+  each app), each with its line in `index.md`; and, since 2026-11-17 (the user's ask of that day: "ensure we are
+  feeding all the relevant docs to the built app so it has full information about what the program does and how to
+  guide users"), the further pages (`AiDocumentation.FurtherPages`), each under the name it has in the repository:
+  `families.md` (`docs/axKit/families.md`: what starts something, the menus' functions, every kind of event with
+  its sound and words, every sound with what it means), `cases.md` (`docs/axKit/cases.md`: what axKit does and says
+  in each unexpected situation), `outside-calls.md` (`docs/axKit/outside-calls.md`: every network request, program
+  start and pipe), `privacy.md` (`PRIVACY.md`) and `changelog.md` (`CHANGELOG.md`: what changed in each version).
+  What is not carried is a developer's: the specifications, designs, plans, records and audits, and the
+  repository's own pages; `AiDocumentationTests` names each with its reason and fails on a new Markdown document of
+  `docs/axKit` or of the repository's top that is neither carried nor named there. These files are axKit's, not the user's: each is
   written where it is missing, and all are written again when `documentation\axkit-version.txt`, the marker, does not
   hold this axKit's version, so that they follow each release (a development build writes them once in each process,
   since its guides change without its version). A changed copy is overwritten by the next version, which `index.md` and
@@ -238,7 +247,9 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   never by listing the resources; `AiDocumentationTests` fails when a page differs from the repository's or a page of
   `docs/axKit/workflows` is not among the files (WF-8.2). They cost about 350 KB more before compression (2026-11-15).
   The key pages, as `tools/key-map.ps1` wrote them, are `KeyGroups.md` and `KeyMap.md`, held to their files by the
-  same test; about 50 KB more (2026-11-16).
+  same test; about 50 KB more (2026-11-16). The further pages are `Families.md`, `Cases.md`, `OutsideCalls.md`
+  and `Changelog.md`, with `Privacy.md`, which About embeds already; held to their files by the same test; about
+  340 KB more, most of it the changelog (2026-11-17).
 - AH-7.3 **Claude is told by a rule file.** `<working folder>\.claude\rules\axkit-documentation.md`, written and
   kept current with the guides, says: for a question about axKit or one of its apps, read `documentation/index.md`
   and the fitting guide with the Read tool before answering, answer from the guide, search the folder with Grep when
@@ -249,7 +260,12 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   included; a file name or a word typed in the steps is the checks' example, said to be one and replaced by the
   user's own, and nothing else is changed; a key or a menu is never invented, and where a guide and
   `window-commands.md` differ, `window-commands.md` is right; when no goal covers the question, the app's guide and
-  `window-commands.md`, saying when it is not sure. Nothing in it tells Claude to offer to do the steps (WF-D-24):
+  `window-commands.md`, saying when it is not sure. Since 2026-11-17 it names the further pages by the question
+  each answers: what a sound means or what axKit says when something happens, `families.md`; what axKit does when
+  something goes wrong, `cases.md`; what axKit contacts or runs outside itself, `privacy.md`, and `outside-calls.md`
+  for the exact list; what changed in a version, `changelog.md`, searched with Grep; and that `families.md`,
+  `cases.md` and `outside-calls.md` are written from axKit's source and name its files and tests, which stay out of
+  an answer unless the user asks for them. Nothing in it tells Claude to offer to do the steps (WF-D-24):
   when Claude may run a command stays the AI tools' rule file's (AH-8). **AH-7.3a** (2026-11-16, from the user's own
   axHelp session, in which Claude remarked on the hour and on rest): the file ends with one paragraph
   (`AiDocumentation.Manner`): never remark on the user's rest, health or the time of day unless the user asks, no

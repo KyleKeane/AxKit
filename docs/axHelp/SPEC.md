@@ -132,7 +132,11 @@ agreement (AX-11.4) asked the first time.
   app under its name (`axFile.md`); beside them the workflow pages (`docs/axKit/user-workflows.md` WF-8):
   `workflows.md`, what a user can do in each app as workflows and their goals, one `workflows-<page>.md` per group
   with the steps of its goals and their keys (`workflows-axFile.md`, `workflows-ai-tools.md`,
-  `workflows-nvda-only.md`), and `window-commands.md`, every command of every window with its menu and its key; and
+  `workflows-nvda-only.md`), and `window-commands.md`, every command of every window with its menu and its key; the
+  two key pages; and, since 2026-11-17, `families.md` (what each sound and event means), `cases.md` (what axKit
+  does when something goes wrong), `outside-calls.md` and `privacy.md` (what axKit contacts and runs) and
+  `changelog.md` (what changed in each version), which the rule names by the question each answers (`ai-help.md`
+  AH-7.1, AH-7.3); and
   `.claude\rules\axkit-documentation.md`, which Claude Code loads at every start beside CLAUDE.md and which tells
   Claude: for a question about axKit or one of its apps, read the index and the fitting guide first, answer from it,
   and say when the guides do not cover it; what an app can do, from `workflows.md`, naming the workflows and goals
