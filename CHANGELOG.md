@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- For developers: axClaude's window no longer knows which source feeds it. It reads one base class, `ClaudeModel`, where it read the screen's own model; the screen's model fills that class in with the code it had, and the machinery beside the screen (the turn marks, the session file, the hooks, the event core) keeps asking the screen's model in its own three files, held by `SourceSeamTests`. This is the first stage of Claude Code's stream as a second source behind a switch (`docs/axClaude/stream-mode.md`); nothing of the stream is built, and nothing a user hears or presses changed. The notes of axClaude's window have two files of their own in `src/AxClaude/notes`.
 - axKit: every sound is now played from one place, by the kind of event that happened, so that the same thing sounds the same in every window. Nothing you hear has changed with it.
 - axHelp and Shift+F1: Claude's working folder now also holds what each sound and event means, what axKit does when something goes wrong, the privacy statement with the exact list of what axKit contacts and runs, and the changelog, and Claude is told which of them answers which question.
 - axClaude: when Claude Code starts a turn by itself, because work in the background has finished, axClaude says "Claude goes on by itself", once and without cutting off other speech, so that the music and the reply that follow have a reason. Options, Announcements has its switch, on at first.

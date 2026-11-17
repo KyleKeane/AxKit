@@ -2,13 +2,14 @@
 
 A specification, written 2026-11-17 for the maintainer's decision of that day (`stream.md`, section 7 (a); `docs/axKit/events.md`,
 section 7, step 3): Claude Code's non-interactive stream becomes a second way for axClaude's window to learn what
-Claude does, off at first, with the screen as the default and the way back. Requirements are numbered SM-n.m. Nothing
-here is built. Stage 1 of section 11 changes no behaviour and needs no decision; the stages after it wait for the
-decisions of section 12.
+Claude does, off at first, with the screen as the default and the way back. Requirements are numbered SM-n.m. Stage 1
+of section 11, the seam, is built and changes no behaviour (section 13); nothing of the stream is built. The stages
+after it wait for the decisions of section 12, where each says so.
 
 It rests on three things made the same day: the measurements (`stream.md`, twenty cases, all passing), the door
-(`events.md`, section 10), and an inventory of the window, member by member, kept beside the lists until this page
-is agreed (5,900 lines in 19 files; every member sorted into window logic, bound to the screen, or mixed).
+(`events.md`, section 10), and an inventory of the window, member by member, kept beside the lists until the
+window's second ways to send are built (5,900 lines in 19 files; every member sorted into window logic, bound to the
+screen, or mixed).
 
 ## 1. Summary
 
@@ -42,34 +43,37 @@ is agreed (5,900 lines in 19 files; every member sorted into window logic, bound
 
 - SM-3.1 **`ClaudeModel`**, an abstract class on the bundle's `LineStore`, in `AxClaude.Core`: the facts and events
   the window reads of its source, by the names it reads them by today. The window's field `_model` is of this
-  type. Nothing else about the window's reads changes: not a name, not a line.
-- SM-3.2 **`SessionModel` derives from it** and is otherwise as it is. What only a screen has stays on
-  `SessionModel` and is reached through the base's members, which a model without a screen answers with nothing
-  (SM-3.4).
-- SM-3.3 **The facts, in the window's own groups** (the count is the window's uses):
-  - whether Claude waits for an answer and on what: `PromptPending` (13), `PendingQuestion` (7), `PendingScreen` (9),
-    `TextPrompt`, `AwaitsText`, `PromptHolds`;
-  - the turn: `Working`, `TurnOpen`, `QueuedMessages` (8), `Mode`, `Spinner`, `SessionName`;
-  - work in the background: `Background`, `BackgroundAgents`, `BackgroundAgentsAwaited`, `BackgroundWorkflows`,
-    `BackgroundWorkflowsAwaited`, `BackgroundUnknown`;
-  - the conversation itself: `Lines`, `AddSystemLine`, `Send` (the block of a sent message), `MarkQuestion`,
-    `MarkReplayedExchanges`, `Clear`, `ResetScreen`;
-  - the events: `Changed`, `Bell`, `ResponseStarted`, `Announcement`, `Marked`;
-  - what only the screen has: `TranscriptViewOpen`, `HideReplay`, `ShowHiddenLines`, `DetectScreens`,
-    `ShowProgressRows`, `Columns`, `Rows`, `StartName`, `FeedbackDrafts`, `DraftTitle`,
-    `SaidNoConversationToContinue`, `EndFrame`.
-- SM-3.4 **A model without a screen answers the screen's own facts with nothing**: no pending screen, no text
-  row, no drafts, no detailed view, no replay to hide, no console size. So the window's code for those things is
-  never entered while the stream feeds it, and is not copied, branched or removed.
+  type. Nothing else about the window's reads changes: not a name, not a line. The class keeps nothing itself: it
+  only names.
+- SM-3.2 **`SessionModel` derives from it** and is otherwise as it is: each of its members that the base names is
+  the base's member filled in, with the code it had.
+- SM-3.3 **The facts every source has**, which a model must fill in:
+  - whether Claude waits for an answer and on what: `PromptPending`, `PendingQuestion`;
+  - the turn: `Working`, `QueuedMessages`, `Mode`;
+  - work in the background: `Background`, `BackgroundAgents`, `BackgroundWorkflows`;
+  - the conversation itself: `Send` (the block of a sent message), `MarkQuestion`, `Clear`, `ResetScreen` (a new
+    run in the same window), and from the bundle's `LineStore` the lines, `AddSystemLine` and the end of a frame;
+  - what happens: `ResponseStarted`, `Announcement`, and from `LineStore` the change of the lines and the bell.
+- SM-3.4 **What only a drawn screen has**, which a model without a screen answers with nothing (null, false, zero,
+  no effect), and what the window sets of it is not kept: `PendingScreen`, `TextPrompt` and `AwaitsText`,
+  `PromptHolds`, `FeedbackDrafts`, `DraftTitle`, `DetectScreens`, `Spinner`, `SessionName`, `StartName`,
+  `TranscriptViewOpen`, `BackgroundAgentsAwaited`, `BackgroundWorkflowsAwaited`, `BackgroundUnknown`,
+  `ShowProgressRows`, `HideReplay` with `ShowHiddenLines` and `MarkReplayedExchanges`, and
+  `SaidNoConversationToContinue`. So the window's code for those things is never entered while the stream feeds
+  it, and is not copied, branched or removed.
 - SM-3.5 **The console window base** (`ConsoleForm`, shared with axTerminal) keeps its pseudo console as it is. Two
-  members stop assuming it: `ProcessRunning` becomes virtual, and the music asks `ProcessRunning` instead of the
-  pseudo console's host. axTerminal is not touched.
+  members stop assuming it: `ProcessRunning` is virtual, and the music asks `ProcessRunning` instead of the
+  pseudo console's host. axTerminal fills in nothing new and behaves as it did.
 - SM-3.6 **The machinery beside the screen is the screen source's**: `MainForm.Flow.cs`, `MainForm.Record.cs`,
-  `MainForm.Hooks.cs`. It is wired only for the screen source. With the stream, whether Claude works is the
-  model's `Working`, and a turn's end is the model's own (SM-4.6); the window's existing rule for a source without
-  the core (the setting `eventCore` set to `shadow` runs it today) is the one in force.
-- SM-3.7 **A test holds the seam**: the window names `SessionModel` and the stream's model in one place each, where
-  it makes them by the setting; everywhere else it knows `ClaudeModel` alone.
+  `MainForm.Hooks.cs`. They alone ask the screen's own model, through a field of its own (`_screenModel`), for the
+  four things that are not on the base class: the turn marks (`Marked`), the screen's work and the run's number
+  handed to the core with a frame (`Work`, `Epoch`), and the turn the core hands back (`TurnOpen`). The machinery
+  is wired only for the screen source. With the stream, whether Claude works is the model's `Working`, and a
+  turn's end is the model's own (SM-4.6); the window's existing rule for a source without the core (the setting
+  `eventCore` set to `shadow` runs it today) is the one in force.
+- SM-3.7 **A test holds the seam** (`SourceSeamTests`), read off the window's sources: the window names
+  `SessionModel` only where it makes the model, in `MainForm.cs`; `_screenModel` is asked only in the machinery's
+  three files; `_model` is held as `ClaudeModel`; and the machinery's four members are not on the base class.
 
 ## 4. The stream source
 
@@ -190,20 +194,32 @@ mode each is simply absent, and the window says so where the user would look for
 
 ## 9. The switch and the way back
 
-- SM-9.1 **One setting**, `claudeSource`: `screen` (the default) or `stream`. At first in Options, Developer, beside
-  the event sources; it moves to Options when the maintainer has used the stream for a while.
-- SM-9.2 **A change applies at the next start of Claude**, and the window says so; Force Claude to restart is that
-  start. The conversation stays in the window.
+- SM-9.1 **One setting**, `claudeSource`: `screen` (the default) or `stream`, and one option of the command line
+  that names the source for one start, for the window scripts and for the way back. At first in Options, Developer,
+  beside the event sources; it moves to Options when the maintainer has used the stream for a while.
+- SM-9.2 **One window, one source.** A window is made for its source and keeps it for as long as it is open: the
+  model is made once, with the window, and nothing of an open window is rebuilt under the user (found while the
+  seam was built: the window base is handed its model as it is made). A change of the setting applies to the next
+  window of axClaude, and the window says so. The conversation is found again there by the session's id (SM-8.2,
+  SM-8.3).
 - SM-9.3 **The way back is the switch.** A stream source that fails to start, or whose process ends in the first
-  seconds, says so in a notice that offers to start the screen source instead.
+  seconds, says so in a notice that offers to open the folder again with the screen source: axClaude started again
+  on the same folder for the screen, and this window closed.
 - SM-9.4 **Say the event sources** names the source in force first: "Source: the screen" or "Source: the stream".
 - SM-9.5 **axHelp's conversation** stays on the screen source until the stream has been used for a while.
 
 ## 10. Checks
 
-- SM-10.1 **The stream's model from lines**: unit tests that hand `StreamModel` lines of the measured shapes and
-  hold the conversation's lines and every fact: a turn, a tool call, a question, an interrupt, a message sent
-  mid-turn, compaction, `/clear`, a subagent, a failure.
+- SM-10.1 **The stream's model from recordings** (root `CLAUDE.md`, rule 12): the probe records each of its cases
+  as a stream fixture: every line Claude Code wrote, reduced to the fields the reader takes, and what the host
+  wrote between them, on one clock. The recorder is the whitelist that makes a fixture safe to commit, as the
+  timeline fixtures' maker is: a field not named is not kept, every kept string is masked, the session's id and
+  the other ids become numbers, and a file that still holds a name, an account path or an address is refused and
+  deleted. The model is replayed over each fixture in the tests, and what it shows, its facts after each line and
+  what it raised stand in a file beside the fixture, read through when it changes. The cases: a turn, a tool
+  call, a question, a permission each way, an interrupt, a message sent mid-turn, a message that waits behind a
+  turn, compaction, `/clear`, a slash command's print, a subagent with its hand-back, a failure. What the model
+  does with a kind of line is settled from these, never from the documentation alone.
 - SM-10.2 **A stand-in of the stream** for the window scripts, as the screen has one (`AxAutomate standin`): it plays
   a scenario of lines and answers what the window writes. The window scripts of stream mode run with it, without
   Claude Code.
@@ -221,7 +237,7 @@ Each stage is small, leaves every app working, and is committed by itself. The s
 through all of them.
 
 1. **The seam, nothing else.** `ClaudeModel`; `SessionModel` derives from it; `_model` takes the type;
-   `ProcessRunning` virtual. No behaviour changes. Proven by SM-10.3 and an NVDA pass. Needs no decision.
+   `ProcessRunning` virtual. No behaviour changes. Proven by SM-10.3 and an NVDA pass. Built 2026-11-17 (section 13).
 2. **The stream's model and host**, in `AxClaude.Core`, with their tests. No window uses them.
 3. **The relay**: the verb, the pipe, the configuration file; tested with a stand-in of Claude Code's side.
 4. **The window's second ways to send** (section 5) and the start of the stream source, behind the switch, with the
@@ -233,7 +249,8 @@ through all of them.
 
 ## 12. For the maintainer to decide
 
-1. Whether this is the seam: one model with two sources, the screen's machinery left where it is.
+1. Whether this is the seam: one model with two sources, the screen's machinery left where it is. Decided
+   2026-11-17: yes, and the first stage built at once.
 2. The trust question's words, and whether a yes is remembered for a folder or asked at every first start.
 3. The permission question's three answers and their words; whether "do not ask again in this session" is offered
    at all.
@@ -241,3 +258,29 @@ through all of them.
 5. The words for Claude Code's own notes: compacting, the conversation emptied, the mode after a change.
 6. A reply's text: made plain as the screen shows it today (proposed), or shown as the Markdown it was written in.
 7. A command Claude offers, in stream mode: said to be unavailable until measured (proposed), or measured first.
+
+## 13. As built
+
+**Stage 1, the seam (2026-11-17).** No behaviour changed.
+
+- `AxClaude.Core/Transcript/ClaudeModel`: 33 members, 14 that every source fills in and 19 that only a drawn
+  screen has. It keeps nothing itself.
+- `SessionModel`: 34 declarations changed by a word or two each (the class's own line, and 33 members that gained
+  `override`, a private setter becoming a protected one); no other line of its 1,638.
+- The window: `_model` is a `ClaudeModel`. The compiler then named five places that ask for the screen's own
+  model, every one of them in the machinery beside the screen, as section 3 had said; they ask `_screenModel`. One
+  line moved: the core's listening to the turn marks, from the constructor into `WireFlow`, still ahead of the
+  hooks'.
+- `ConsoleForm.ProcessRunning` is virtual, and the music asks it. No window fills it in yet.
+- `SourceSeamTests`, 24 tests (SM-3.7).
+- The proof (SM-10.3): the 17 test projects, with every golden transcript of the fixtures and every timeline
+  replay unchanged; the frame pass of the screen model at 18,000 lines, timed with the pure code as built before
+  and after: the same within the computer's noise, and the same bytes allocated; and the whole live set. The
+  NVDA pass is owed with the next release's.
+- Found on the way: a window is made for its source and keeps it (SM-9.2), since the window base is handed its
+  model as it is made. And the notes of axClaude's window, which stood at their size limit, have two files of
+  their own in `src/AxClaude/notes`.
+- The live set found, the same day, that Claude Code had updated itself to 2.1.327 two minutes into the run and
+  no longer showed its permissions screen in the window: a new key on that screen's row of keys, repaired in
+  Claude Code's own table (`claude-screens.md`, Panels). The pure code as built before the seam read the recording
+  the same way, which is how the two were told apart.

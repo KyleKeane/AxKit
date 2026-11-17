@@ -470,7 +470,8 @@ While a notice shows: Tab / Shift+Tab between text, field and buttons; Enter the
 src/AxClaude.Core/        class library (net10.0), no WinForms
   Pty/        ClaudeLauncher (command line, environment, claude --version; claude is found by AxKit.Core/ClaudeCodeProgram)
   Transcript/ ClaudeCodeTexts (the one table of Claude Code's own texts and patterns, which the classes here and the window read),
-              SessionModel (on the bundle's LineStore), LineClassifier, Arrivals (the tick and the spoken replies),
+              ClaudeModel (what the window reads of its source, on the bundle's LineStore; stream-mode.md SM-3),
+              SessionModel (the screen's model, on ClaudeModel), LineClassifier, Arrivals (the tick and the spoken replies),
               Question (the Question and QuestionOption records), QuestionReader, ScreenReader (ClaudeScreen, ScreenKey),
               QuestionRouter, SlashCommands (what Claude waits on, D33), ScreenActions (what a screen's keys do in the area), FeedbackDraftWatch
   Hooks/      ClaudeCodeHooks (FR-15: the events registered, the settings file passed with --settings, an event's body read down
@@ -480,6 +481,8 @@ src/AxClaude.Core/        class library (net10.0), no WinForms
   Flow/       SessionFlow, the core (FR-15: plain inputs in, plain decisions out; FlowInput, FlowDecision), SourceHealth (the
               numbers of the sources), FlowFeed (a frame, a mark, an event and an entry as inputs), FlowShadow (the core
               against the window's own code, one line of numbers for each turn)
+  Streaming/  ClaudeCodeStream (Claude Code's non-interactive stream read down to neutral lines, and the lines a host
+              writes; used by no window yet, stream.md and stream-mode.md)
   Privacy/    GitExclude (D34; `Redaction` is the bundle's, `AxKit.Core/Redaction.cs`, since 2026-10-24)
   AppSettings.cs, StartupOptions.cs (the command line, FR-9), ClaudeCodeSettings.cs (Claude Code's own settings the menus offer, FR-14)
 src/AxClaude/             class library (net10.0-windows), axClaude's window inside AxKit.exe: AxClaudeApp (the entry point
@@ -505,7 +508,8 @@ src/AxKit.Forms/           shared window pieces, moved from here unchanged (bund
 tests/AxClaude.Tests/     xunit: FixtureTests, ReplayTests, SessionModelTests, ArrivalsTests, TranscriptMirrorTests, ReadingBreakTests,
                           ScreenTests, QuestionTests, SettingsTests, GitExcludeTests, ClaudeLauncherTests, UtteranceTests,
                           StartupOptionsTests; for FR-15 TurnMarkTests, ClaudeCodeHooksTests, HookFrameTests, HookRelayTests,
-                          ClaudeCodeTranscriptTests, RecordTextTests, SessionFlowTests, FlowFeedTests, FlowShadowTests; TestHelpers
+                          ClaudeCodeTranscriptTests, RecordTextTests, SessionFlowTests, FlowFeedTests, FlowShadowTests;
+                          ClaudeCodeStreamTests; SourceSeamTests (the window reads ClaudeModel alone); TestHelpers
 tests/AxKit.Tests/         the bundle's tests: DispatchTests, KeyTests, LayoutTests, ParagraphsTests, SettingsFileTests, UpdateCheckTests, WaveToneTests
 tests/fixtures/           *.vt recordings, *.vt.chunks.txt timing, *.expected.txt transcripts; records/ (session file lines written
                           by hand) and timelines/ (a session's stream, events and entries on one clock, FR-15)

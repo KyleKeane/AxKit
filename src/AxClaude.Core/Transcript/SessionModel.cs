@@ -17,7 +17,7 @@ public enum ScreenWork { Unknown, Idle, Working }
 /// the cap. Feed it the raw console bytes; it raises <see cref="LineStore.Changed"/> at the end of every frame.
 /// Single threaded: call everything from one thread.
 /// </summary>
-public sealed partial class SessionModel : LineStore
+public sealed partial class SessionModel : ClaudeModel
 {
     /// <summary>A sent message and the block the app prints for it (FR-4.1); <see cref="Placed"/> once the block is in the transcript, which happens once.</summary>
     private sealed record PendingSend(string Text, IReadOnlyList<Line> Block, DateTime Created)
@@ -56,41 +56,41 @@ public sealed partial class SessionModel : LineStore
     }
 
     /// <summary>Claude's cursor sits on a prompt row, so it is waiting for an answer (FR-7.2).</summary>
-    public bool PromptPending { get; private set; }
+    public override bool PromptPending { get; protected set; }
 
     /// <summary>The question Claude waits on, read off the screen (<see cref="QuestionReader"/>); null while none is pending.</summary>
-    public Question? PendingQuestion { get; private set; }
+    public override Question? PendingQuestion { get; protected set; }
 
     /// <summary>Claude waits for the user's own words for an answer (after "Other"), on its "Enter text for …" row.</summary>
-    public bool AwaitsText => TextPrompt is not null;
+    public override bool AwaitsText => TextPrompt is not null;
 
     /// <summary>The "Enter text for option 4 (Other), or Escape for the list:" row Claude waits on; null when it waits on none.</summary>
-    public string? TextPrompt { get; private set; }
+    public override string? TextPrompt { get; protected set; }
 
     /// <summary>
     /// The screen of Claude's that waits for keys named on its hint row (<see cref="ScreenReader"/>: <c>/status</c>,
     /// <c>/tasks</c>, <c>/help</c> …); null when none waits. <see cref="PromptPending"/> is set while one does.
     /// </summary>
-    public ClaudeScreen? PendingScreen { get; private set; }
+    public override ClaudeScreen? PendingScreen { get; protected set; }
 
     /// <summary>
     /// The feedback drafts Claude's mode line counts ("1 feedback draft"): queued by Claude Code's SendFeedback tool
     /// and waiting in /feedback, which the app opens when the count rises (D33). Zero until a mode line counts one.
     /// </summary>
-    public int FeedbackDrafts { get; private set; }
+    public override int FeedbackDrafts { get; protected set; }
 
     /// <summary>
     /// The title of the draft Claude printed its card for last ("Product feedback drafted: &lt;title&gt;"), the one
     /// /feedback opens on (<see cref="FeedbackDraftWatch"/>); null until a card is drawn. Read only with
     /// <see cref="DetectScreens"/>, as the card's rows are.
     /// </summary>
-    public string? DraftTitle { get; private set; }
+    public override string? DraftTitle { get; protected set; }
 
     /// <summary>Look for screens that wait on a hint row (<see cref="PendingScreen"/>) and hide the feedback card; off with the Answer from a list option (<c>QuestionNotices</c>).</summary>
-    public bool DetectScreens { get; set; } = true;
+    public override bool DetectScreens { get; set; } = true;
 
     /// <summary>A spinner row or an "esc to interrupt" hint was on screen at the end of the last frame.</summary>
-    public bool Working { get; private set; }
+    public override bool Working { get; protected set; }
 
     /// <summary>
     /// What the last frame showed of Claude's work, telling a frame that showed Claude idle from one that showed no
@@ -126,23 +126,23 @@ public sealed partial class SessionModel : LineStore
     /// conversation the window already shows (FR-4.8). The window clears it once Claude is ready; a question or an
     /// exit before that shows the hidden lines after all (<see cref="ShowHiddenLines"/>).
     /// </summary>
-    public bool HideReplay { get; set; }
+    public override bool HideReplay { get; set; }
 
-    public string? Spinner { get; private set; }
+    public override string? Spinner { get; protected set; }
 
     /// <summary>Messages Claude shows as queued inside its working block (sent while it was busy, not yet taken up).</summary>
-    public int QueuedMessages { get; private set; }
+    public override int QueuedMessages { get; protected set; }
 
     /// <summary>Ctrl+O opened Claude's detailed transcript view: the prompt is gone until Ctrl+O is pressed again.</summary>
-    public bool TranscriptViewOpen { get; private set; }
+    public override bool TranscriptViewOpen { get; protected set; }
 
-    public string? Mode { get; private set; }
+    public override string? Mode { get; protected set; }
 
     /// <summary>
     /// The background work Claude's mode line counts, "1 shell" or "1 shell, 2 agents"; null when none runs. Kept while
     /// a screen of Claude's hides the mode line, like <see cref="Mode"/>.
     /// </summary>
-    public string? Background { get; private set; }
+    public override string? Background { get; protected set; }
 
     /// <summary>
     /// The agents Claude Code's panel of running agents shows, top to bottom, read off its rows in either form
@@ -151,30 +151,30 @@ public sealed partial class SessionModel : LineStore
     /// opened over the panel does not read as every agent finished. The same list object for as long as the rows
     /// stay as they are, so a redraw costs nothing; <see cref="AgentPanel.Changes"/> says what changed between two.
     /// </summary>
-    public IReadOnlyList<BackgroundAgent> BackgroundAgents { get; private set; } = [];
+    public override IReadOnlyList<BackgroundAgent> BackgroundAgents { get; protected set; } = [];
 
     /// <summary>
     /// The number in Claude Code's row "Waiting for 2 background agents to finish", shown when a turn has ended
     /// and background agents still run; zero while the row is not shown. Kept like <see cref="BackgroundAgents"/>.
     /// </summary>
-    public int BackgroundAgentsAwaited { get; private set; }
+    public override int BackgroundAgentsAwaited { get; protected set; }
 
     /// <summary>
     /// The dynamic workflows Claude Code's live rows show, top to bottom (<see cref="LineClassifier.WorkflowOf"/>: the
     /// name, the percent, the steps done of all, the time); empty when no such row is shown. Kept like
     /// <see cref="BackgroundAgents"/>, and the same list object for as long as the rows read the same.
     /// </summary>
-    public IReadOnlyList<BackgroundWorkflow> BackgroundWorkflows { get; private set; } = [];
+    public override IReadOnlyList<BackgroundWorkflow> BackgroundWorkflows { get; protected set; } = [];
 
     /// <summary>The number in Claude Code's row "Waiting for 1 dynamic workflow to finish"; zero while the row is not shown. Kept like <see cref="BackgroundAgents"/>.</summary>
-    public int BackgroundWorkflowsAwaited { get; private set; }
+    public override int BackgroundWorkflowsAwaited { get; protected set; }
 
     /// <summary>
     /// Work in the background of a kind axClaude does not know: the progress rows with the mark whose details match
     /// no known form (<see cref="ClaudeCodeTexts.ProgressRow"/>), one thing each, or the number of a waiting row of
     /// another kind, the larger of the two, since both may show the same things. Kept like <see cref="BackgroundAgents"/>.
     /// </summary>
-    public int BackgroundUnknown { get; private set; }
+    public override int BackgroundUnknown { get; protected set; }
 
     /// <summary>
     /// Show Claude Code's live progress rows in the conversation (FR-7.10; the user's option, off at first): the agents'
@@ -182,7 +182,7 @@ public sealed partial class SessionModel : LineStore
     /// Off, they are hidden with the mode line. Either way they count as interface rows for the chrome block, so the
     /// spinner and the mode line above them stay hidden. Applies from the next frame end.
     /// </summary>
-    public bool ShowProgressRows { get; set; }
+    public override bool ShowProgressRows { get; set; }
 
     /// <summary>The agent rows of the frame being read, bottom to top, and those <see cref="BackgroundAgents"/> was made from.</summary>
     private readonly List<string> _agentRows = [];
@@ -204,7 +204,7 @@ public sealed partial class SessionModel : LineStore
     /// <summary>The lines of the progress rows of the frame being read, which <see cref="Classify"/> gives <see cref="LineKind.Progress"/>.</summary>
     private readonly List<Line> _progressLines = [];
 
-    public string? SessionName { get; private set; }
+    public override string? SessionName { get; protected set; }
 
     /// <summary>
     /// The name Claude was started with (<c>--name demo</c>, FR-8.6), which the window sets: Claude draws it on a row
@@ -212,13 +212,13 @@ public sealed partial class SessionModel : LineStore
     /// chrome block there, the mode line was never read and "Ready" never came (found by tools/AxAutomate, 2026-10-23).
     /// The title is no help: Claude replaces it with a summary of the conversation.
     /// </summary>
-    public string? StartName { get; set; }
+    public override string? StartName { get; set; }
 
     /// <summary>Raised once per response marker when the first reply, thinking or tool line appears after it.</summary>
-    public event Action? ResponseStarted;
+    public override event Action? ResponseStarted;
 
     /// <summary>Raised with the text of one of Claude's own bracketed announcement rows, such as "accept edits on".</summary>
-    public event Action<string>? Announcement;
+    public override event Action<string>? Announcement;
 
     /// <summary>
     /// Raised with the letter of each of Claude Code's turn marks in the console stream (OSC 133; EG-1.1): <c>A</c> a
@@ -394,7 +394,7 @@ public sealed partial class SessionModel : LineStore
     /// Returns false when no block applies (empty text, a slash command, or an answer to a waiting prompt; a message
     /// the user sends into a question on purpose, FR-2.10, gets its block with <paramref name="evenWhilePrompting"/>).
     /// </summary>
-    public bool Send(string text, bool evenWhilePrompting = false)
+    public override bool Send(string text, bool evenWhilePrompting = false)
     {
         var trimmed = text.Trim();
         if (trimmed.Length == 0 || trimmed.StartsWith(ClaudeCodeTexts.CommandStart) || (PromptPending && !evenWhilePrompting))
@@ -433,7 +433,7 @@ public sealed partial class SessionModel : LineStore
     /// line, up to forty characters. Claude drops an Enter in its first seconds after the prompt shows, leaving the
     /// message typed and unsent (found by tools/QaRun, 2026-10-23); the window sends Enter again while this holds (FR-2.1).
     /// </summary>
-    public bool PromptHolds(string text)
+    public override bool PromptHolds(string text)
     {
         var first = text.Trim().Replace("\r\n", "\n").Split('\n')[0].Trim();
         if (first.Length == 0)
@@ -467,7 +467,7 @@ public sealed partial class SessionModel : LineStore
     /// 2026-11-14), named by the newest question, which stays the first of the screen's lines while its history is
     /// browsed (the 14-side-answer script), so a browse adds no second record.
     /// </summary>
-    public void MarkQuestion()
+    public override void MarkQuestion()
     {
         var (title, row) = PendingQuestion is { } question ? (question.Title, question.FirstRow)
             : PendingScreen is { } screen ? (screen.Title, screen.FirstRow)
@@ -511,7 +511,7 @@ public sealed partial class SessionModel : LineStore
     /// past output marker counts as a response already started, so the replay never announces "Claude is
     /// responding". Called once Claude is ready.
     /// </summary>
-    public void MarkReplayedExchanges()
+    public override void MarkReplayedExchanges()
     {
         var start = _runBoundary is null ? 0 : _lines.LastIndexOf(_runBoundary) + 1;
         var n = 0;
@@ -591,7 +591,7 @@ public sealed partial class SessionModel : LineStore
     }
 
     /// <summary>Stops hiding and shows every line hidden as a replay: Claude asked something or exited before it was ready (FR-4.8).</summary>
-    public void ShowHiddenLines()
+    public override void ShowHiddenLines()
     {
         HideReplay = false;
         var changed = false;
@@ -608,7 +608,7 @@ public sealed partial class SessionModel : LineStore
     }
 
     /// <summary>True when Claude's last lines say it found no conversation to continue (FR-9.1).</summary>
-    public bool SaidNoConversationToContinue()
+    public override bool SaidNoConversationToContinue()
     {
         for (var i = _lines.Count - 1; i >= 0 && i >= _lines.Count - 20; i--)
         {
@@ -627,7 +627,7 @@ public sealed partial class SessionModel : LineStore
     /// the last of them (FR-4.8). The mode and the session name were the old run's and are forgotten, so the status
     /// says "starting" until the new Claude prints its mode line, which is also what tells the window it is ready.
     /// </summary>
-    public void ResetScreen()
+    public override void ResetScreen()
     {
         _screen.PullRowText();
         // A message queued for the Claude that is being stopped never reaches it: its block goes in here, at the end
@@ -647,7 +647,7 @@ public sealed partial class SessionModel : LineStore
     /// them, and the exchange blocks and bookmarks count from 1 again, as at the first start of the app. The next
     /// run's replay is then marked from its first row, since nothing of an earlier run is left in the window.
     /// </summary>
-    public void Clear()
+    public override void Clear()
     {
         _lines.Clear();
         _pending.Clear();

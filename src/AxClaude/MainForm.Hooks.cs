@@ -68,7 +68,7 @@ internal sealed partial class MainForm
     /// </summary>
     private void WireHooks()
     {
-        _model.Marked += letter =>
+        _screenModel.Marked += letter =>
         {
             if (letter != 'D')
             {

@@ -24,7 +24,16 @@ internal sealed partial class MainForm : ConsoleForm
     /// <summary>The command line's options; its Claude path is cleared when it no longer exists and an install put Claude in its own place.</summary>
     private StartupOptions _options;
     private readonly AppSettings _settings;
-    private readonly SessionModel _model;
+
+    /// <summary>What the window reads of its source, whichever source feeds it (docs/axClaude/stream-mode.md SM-3.1): the conversation's lines and the facts, by one class.</summary>
+    private readonly ClaudeModel _model;
+
+    /// <summary>
+    /// The same object as the screen's own model, for the machinery beside the screen alone (SM-3.6): the turn marks,
+    /// the frame and the turn the event core is handed and hands back. Never asked by the window's own logic, which
+    /// reads <see cref="_model"/>, so that it does not know which source feeds it.
+    /// </summary>
+    private readonly SessionModel _screenModel;
 
     /// <summary>The settle after which what Claude waits on is acted on (FR-7.2, D33): started by the bell and by a change of what waits; <see cref="OnFrameSettled"/> on its tick.</summary>
     private readonly System.Windows.Forms.Timer _attention = new() { Interval = SettleMs };
@@ -86,7 +95,7 @@ internal sealed partial class MainForm : ConsoleForm
     {
     }
 
-    /// <summary>The model is made first so that the base and this class both hold it: the base as a LineStore, this class as Claude's.</summary>
+    /// <summary>The model is made first so that the base and this class both hold it: the base as a LineStore, this class as Claude's, and the screen's machinery as the screen's own.</summary>
     private MainForm(StartupOptions options, AppSettings settings, string? settingsError, SessionModel model)
         : base("axClaude", settings, AppSettings.DefaultPath, settingsError, model, AxClaudeKeys.Transcript, "Conversation", "Message to Claude")
     {
@@ -94,6 +103,7 @@ internal sealed partial class MainForm : ConsoleForm
         _claudeArgs = options.ClaudeArgs is { } given ? [.. given] : null;
         _settings = settings;
         _model = model;
+        _screenModel = model;
         _model.DetectScreens = settings.QuestionNotices;
         _model.ShowProgressRows = settings.ShowProgressRows;
         // The core (docs/axClaude/events-and-grounding.md EG-4): everything that happens reaches it from here on (MainForm.Flow.cs).
@@ -137,9 +147,9 @@ internal sealed partial class MainForm : ConsoleForm
             // While the core decides Done the bell is only queued for it (EG-6.5): the core tells a turn's end, whose
             // Done it says itself, from a bell that is none, which it hands back to the settle (MainForm.Flow.cs).
             // The bell and the marks are raised inside the model's Feed, as a frame's end is: in the stream's order (EG-1.5).
+            // The marks are the screen's own and are wired with the core (WireFlow).
             EnqueueFlow(new BellSeen());
         };
-        _model.Marked += letter => EnqueueFlow(FlowFeed.FromMark(letter));
         _attention.Tick += (_, _) =>
         {
             _attention.Stop();

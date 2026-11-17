@@ -89,9 +89,13 @@ internal sealed partial class MainForm
     /// <summary>The core has a turn open or ending, or no longer: the reader polls the file faster while it has (EG-3.3).</summary>
     partial void RecordTurn(bool open);
 
-    /// <summary>Called once from the constructor.</summary>
+    /// <summary>
+    /// Called once from the constructor, before <see cref="WireHooks"/>: of the two that listen to the screen's turn
+    /// marks, the core is told first, as it always was.
+    /// </summary>
     private void WireFlow()
     {
+        _screenModel.Marked += letter => EnqueueFlow(FlowFeed.FromMark(letter));
         _health.TableVersion = ClaudeCodeHooks.TableVersion;
         _health.Hooks = _settings.ClaudeHooks ? HookUse.NotPassed : HookUse.Off;
         _health.Record = _settings.GroundInSessionFile ? RecordUse.NotFound : RecordUse.Off;
@@ -132,8 +136,8 @@ internal sealed partial class MainForm
     private void FlowTurnToModel()
     {
         bool? open = FlowDecides(FlowCharge.State) ? _flow.Working || _flow.Ending : null;
-        var over = _model.TurnOpen == true && open != true;
-        _model.TurnOpen = open;
+        var over = _screenModel.TurnOpen == true && open != true;
+        _screenModel.TurnOpen = open;
         if (over)
         {
             // The model reads the value only as a frame ends, and a turn is over with no frame behind it (at Done, by
@@ -142,9 +146,9 @@ internal sealed partial class MainForm
             // it stands, as the quiet timer gives one; after the pass that runs now, never inside it.
             After(1, () =>
             {
-                if (ProcessRunning && _model.TurnOpen != true)
+                if (ProcessRunning && _screenModel.TurnOpen != true)
                 {
-                    _model.EndFrame();
+                    _screenModel.EndFrame();
                 }
             });
         }
@@ -391,7 +395,7 @@ internal sealed partial class MainForm
             _shadow.QuestionOpen();
         }
 
-        EnqueueFlow(FlowFeed.FromFrame(_model, arrival, _model.PromptPending, _readyAnnounced && _settings.ReplySpeech != ReplySpeechMode.None));
+        EnqueueFlow(FlowFeed.FromFrame(_screenModel, arrival, _model.PromptPending, _readyAnnounced && _settings.ReplySpeech != ReplySpeechMode.None));
     }
 
     /// <summary>

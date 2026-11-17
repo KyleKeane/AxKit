@@ -2,6 +2,8 @@
 
 Notes of `MainForm.Flow.cs`, `MainForm.Record.cs` and `MainForm.Hooks.cs`: how the window learns what happens in a session beside reading the screen. The index and the rest of the window's notes are `src/AxClaude/CLAUDE.md`.
 
+This machinery is the screen source's own (docs/axClaude/stream-mode.md SM-3.6, 2026-11-17). Its three files are the only ones that ask `_screenModel`, the screen's `SessionModel`, and only for what is not on `ClaudeModel`: `Marked`, `Work` and `Epoch` (inside `FlowFeed.FromFrame`) and `TurnOpen`. `WireFlow` subscribes the core to the turn marks and is called before `WireHooks`, which notes the first end mark of a run for itself, so the core hears a mark first, as it always did. Everything else these files ask about Claude they ask `_model`, as the rest of the window does.
+
 ## The core beside the window (2026-11-15)
 
 `MainForm.Flow.cs`. The specification is `docs/axClaude/events-and-grounding.md` (EG-4.8, EG-4.10, EG-4.11, EG-9) and is not restated here.

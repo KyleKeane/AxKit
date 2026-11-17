@@ -37,6 +37,7 @@ Two parts of the window have notes of their own in `src/AxClaude/notes` (moved t
 2. Never block the UI thread on the pseudo console. Reads happen on a background thread; transcript updates are marshalled to the UI thread and batched.
 3. No second window (SPEC.md D23): questions, errors and help texts go through `AxKitForm.ShowNotice` (the window base's, AX-6.5); what Claude waits on goes to `ControlArea`; never a `Form` or a `MessageBox`.
 4. Run the `accessibility-review` skill on a change here before committing, and check it with NVDA following the test plan.
+5. The window does not know which source feeds it (docs/axClaude/stream-mode.md SM-3, 2026-11-17): it reads `_model`, a `ClaudeModel`, and that is the one thing to ask about Claude in the window's own logic. `_screenModel` is the same object as the screen's own `SessionModel`, for the machinery beside the screen alone (`MainForm.Flow.cs`, `MainForm.Record.cs`, `MainForm.Hooks.cs`): the turn marks, the frame handed to the core and the turn it hands back. A fact the window needs that the base class does not name is added to `ClaudeModel` with what a model without a screen answers, never read off `_screenModel`; `SourceSeamTests` fails on that and on `SessionModel` named anywhere but where `MainForm.cs` makes the model.
 
 ## Windows and NVDA gotchas already learned (do not rediscover)
 

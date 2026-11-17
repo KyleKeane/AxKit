@@ -12,6 +12,7 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
     - the menu item helpers both windows place (`AddFindItems`, `AddBookmarkItems` with Next and Previous bookmark for Navigation, `CreateTranscriptContext` for the bar's Context: the line handed to the window, Bookmark this line with its key, Copy the selection, and `ContextFromControl` on the transcript and the field, AX-9.11, `TranscriptTextItems`, `CreateMusicItem`, which adds the music key).
   - `ConsoleForm.Process.cs`:
     - `StartProcess` (the pseudo console with the inbox posted once per burst, the recorder fed on the reader thread, the quiet timer, `LastOutputTick`; false after the error notice when it could not start);
+    - `ProcessRunning` (virtual since 2026-11-17, for a window that can also run its program another way than in this pseudo console, axClaude's stream source, docs/axClaude/stream-mode.md SM-3.5; what the base asks about the program it asks there, the music's `UpdateMusic` included, never the host's field; no window fills it in yet);
     - the exit settle and `OnProcessExited`;
     - `StopProcess` (virtual: a window stops its own timers first);
     - `Post`, `Write`, `Enqueue` and `StartWrites` over the one paced queue with one pump timer (`_pump`; a restart stops it, so no second pump runs on, which happened until 2026-10-23), `ClearWrites`, `WritesPending`.

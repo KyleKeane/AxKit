@@ -59,7 +59,7 @@ public abstract partial class ConsoleForm
     /// </summary>
     protected void UpdateMusic()
     {
-        var play = ConsoleSettings.WorkingMusic && _host is not null && Working;
+        var play = ConsoleSettings.WorkingMusic && ProcessRunning && Working;
         if (play == _musicOn)
         {
             return;

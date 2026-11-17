@@ -22,8 +22,12 @@ public abstract partial class ConsoleForm
     private int _exitCode;
     private bool _writing;
 
-    /// <summary>The program runs: its process was started and has not ended or been stopped.</summary>
-    protected bool ProcessRunning => _host is not null;
+    /// <summary>
+    /// The program runs: its process was started and has not ended or been stopped. Virtual for a window that can
+    /// also run its program another way than in this pseudo console (axClaude's stream source,
+    /// docs/axClaude/stream-mode.md SM-3.5): whatever the window base asks about the program, it asks here.
+    /// </summary>
+    protected virtual bool ProcessRunning => _host is not null;
 
     /// <summary>When output last arrived from the program (Environment.TickCount64), for a window's quiet heuristics (axTerminal AT-5.4).</summary>
     protected long LastOutputTick { get; private set; }
