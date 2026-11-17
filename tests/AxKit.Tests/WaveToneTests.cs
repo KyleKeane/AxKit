@@ -196,69 +196,128 @@ public class WaveToneTests
         Assert.InRange(last, 60, 80);
     }
 
-    /// <summary>
-    /// The navigation key's click (docs/axKit/SPEC.md AX-8.13), as the maintainer chose it by ear on 2026-11-16: 8 ms,
-    /// 176 samples, rising over 20 samples from nothing, its loudest sample 0.35 of full scale and early, all but
-    /// silent at the end (exp(-600 t) is under a hundredth by then), and the same samples every time.
-    /// </summary>
-    [Fact]
-    public void A_click_is_eight_milliseconds_starts_at_nothing_and_dies_away()
+    private static int SampleAt(byte[] wav, int i) => BitConverter.ToInt16(wav, WaveTone.HeaderLength + i * 2);
+
+    private static int SampleCount(byte[] wav) => (wav.Length - WaveTone.HeaderLength) / 2;
+
+    private static (int Peak, int At) Loudest(byte[] wav)
     {
-        var wav = WaveTone.Click(0.35, 2200, 0.008, 20, 600);
-        var samples = (wav.Length - WaveTone.HeaderLength) / 2;
-        Assert.Equal(176, samples);
-
-        int At(int i) => BitConverter.ToInt16(wav, WaveTone.HeaderLength + i * 2);
-
         var peak = 0;
-        var peakAt = 0;
-        for (var i = 0; i < samples; i++)
+        var at = 0;
+        for (var i = 0; i < SampleCount(wav); i++)
         {
-            if (Math.Abs(At(i)) > peak)
+            if (Math.Abs(SampleAt(wav, i)) > peak)
             {
-                (peak, peakAt) = (Math.Abs(At(i)), i);
+                (peak, at) = (Math.Abs(SampleAt(wav, i)), i);
             }
         }
 
-        Assert.Equal(0, At(0));
-        Assert.Equal(0.35 * short.MaxValue, peak, 1.5);
-        Assert.InRange(peakAt, 1, samples / 2);
-        for (var i = samples - 10; i < samples; i++)
-        {
-            Assert.True(Math.Abs(At(i)) < peak / 20, "the click should end at nothing");
-        }
-
-        Assert.Equal(wav, WaveTone.Click(0.35, 2200, 0.008, 20, 600));
+        return (peak, at);
     }
 
-    /// <summary>The flat tone of a navigation key that found nothing (AX-8.13): its length, its peak, silent ends, and one pitch from start to end.</summary>
+    /// <summary>
+    /// The navigation key's tick (docs/axKit/SPEC.md AX-8.13), "the high glassy tick" the maintainer chose by ear on
+    /// 2026-11-16: 6 ms, 132 samples, rising from nothing, its loudest sample 0.3 of full scale and early, nothing at
+    /// the end, and the same samples every time.
+    /// </summary>
     [Fact]
-    public void A_flat_tone_keeps_its_pitch_and_fades_at_both_ends()
+    public void A_tick_is_six_milliseconds_starts_at_nothing_and_ends_at_nothing()
     {
-        var wav = WaveTone.Flat(0.3, 180, 90, 5);
-        var samples = (wav.Length - WaveTone.HeaderLength) / 2;
-        Assert.Equal(90 * WaveTone.SampleRate / 1000, samples);
+        var wav = WaveTone.Tick(0.3, 3800, 3800, 0.006, 10, 700, 0.0);
+        Assert.Equal(132, SampleCount(wav));
+        var (peak, peakAt) = Loudest(wav);
+        Assert.Equal(0, SampleAt(wav, 0));
+        Assert.Equal(0.3 * short.MaxValue, peak, 1.5);
+        Assert.InRange(peakAt, 1, SampleCount(wav) / 2);
+        Assert.Equal(0, SampleAt(wav, SampleCount(wav) - 1));
+        Assert.Equal(wav, WaveTone.Tick(0.3, 3800, 3800, 0.006, 10, 700, 0.0));
+    }
 
-        int At(int i) => BitConverter.ToInt16(wav, WaveTone.HeaderLength + i * 2);
+    /// <summary>A tick with noise in it is still the same samples every time, and a share of 1 is noise alone, still at its peak.</summary>
+    [Fact]
+    public void A_tick_with_noise_is_the_same_every_time()
+    {
+        var wav = WaveTone.Tick(0.35, 5000, 5000, 0.005, 4, 900, 0.9);
+        Assert.Equal(wav, WaveTone.Tick(0.35, 5000, 5000, 0.005, 4, 900, 0.9));
+        Assert.Equal(0.35 * short.MaxValue, Loudest(WaveTone.Tick(0.35, 5000, 5000, 0.005, 4, 900, 1.0)).Peak, 1.5);
+    }
 
-        var peak = 0;
+    /// <summary>
+    /// The buzz of a navigation key that found nothing (AX-8.13): 110 ms, silent ends, one pitch from start to end
+    /// (150 Hz, 147 samples a cycle), and louder overall than the plain sine of the same peak, which is what makes it
+    /// a buzz: the harmonics square its shoulders.
+    /// </summary>
+    [Fact]
+    public void A_buzzy_flat_tone_keeps_its_pitch_fades_at_both_ends_and_is_squarer_than_a_sine()
+    {
+        var wav = WaveTone.Flat(0.3, 150, 110, 6, buzzy: true);
+        var count = SampleCount(wav);
+        Assert.Equal(110 * WaveTone.SampleRate / 1000, count);
+        Assert.Equal(0, SampleAt(wav, 0));
+        Assert.Equal(0, SampleAt(wav, count - 1));
+
         var rising = new List<int>();
-        for (var i = 0; i < samples; i++)
+        for (var i = 1; i < count; i++)
         {
-            peak = Math.Max(peak, Math.Abs(At(i)));
-            if (i > 0 && At(i - 1) < 0 && At(i) >= 0)
+            if (SampleAt(wav, i - 1) < 0 && SampleAt(wav, i) >= 0)
             {
                 rising.Add(i);
             }
         }
 
-        Assert.InRange(peak, (int)(0.29 * short.MaxValue), (int)(0.3 * short.MaxValue) + 1);
-        Assert.Equal(0, At(0));
-        Assert.Equal(0, At(samples - 1));
-
-        // 180 Hz is 122.5 samples a cycle, the same at the start and at the end.
         Assert.True(rising.Count >= 10);
-        Assert.InRange(rising[1] - rising[0], 121, 124);
-        Assert.InRange(rising[^1] - rising[^2], 121, 124);
+        Assert.InRange(rising[1] - rising[0], 146, 148);
+        Assert.InRange(rising[^1] - rising[^2], 146, 148);
+
+        // Root mean square over peak: a sine's is 0.707; the buzz's is higher.
+        double Squareness(byte[] w)
+        {
+            double sum = 0;
+            for (var i = 0; i < SampleCount(w); i++)
+            {
+                sum += (double)SampleAt(w, i) * SampleAt(w, i);
+            }
+
+            return Math.Sqrt(sum / SampleCount(w)) / Loudest(w).Peak;
+        }
+
+        Assert.True(Squareness(wav) > Squareness(WaveTone.Flat(0.3, 150, 110, 6, buzzy: false)) + 0.03);
+        Assert.InRange(Loudest(WaveTone.Flat(0.3, 180, 90, 5, buzzy: false)).Peak, (int)(0.29 * short.MaxValue), (int)(0.3 * short.MaxValue) + 1);
+    }
+
+    /// <summary>
+    /// The wooden bonk of a key with no command (AX-8.13): 70 ms, its loudest sample 0.4 of full scale and in its
+    /// first quarter, nothing at either end, dying away (the last tenth far below the peak), and its pitch falling:
+    /// the first cycles are shorter than the last.
+    /// </summary>
+    [Fact]
+    public void A_knock_falls_in_pitch_and_dies_away()
+    {
+        var wav = WaveTone.Knock(0.4, 420, 260, 0.008, 0.022, 2.76, 0.5, 70);
+        var count = SampleCount(wav);
+        Assert.Equal(70 * WaveTone.SampleRate / 1000, count);
+        var (peak, peakAt) = Loudest(wav);
+        Assert.Equal(0.4 * short.MaxValue, peak, 1.5);
+        Assert.InRange(peakAt, 1, count / 4);
+        Assert.Equal(0, SampleAt(wav, 0));
+        Assert.Equal(0, SampleAt(wav, count - 1));
+        for (var i = count - count / 10; i < count; i++)
+        {
+            Assert.True(Math.Abs(SampleAt(wav, i)) < peak / 5, "the knock should have died away");
+        }
+
+        // The pure knock (no overtone) shows the fall plainly: 420 Hz is 52 samples a cycle, 260 Hz is 85.
+        var plain = WaveTone.Knock(0.4, 420, 260, 0.008, 0.022, 2.76, 0.0, 70);
+        var rising = new List<int>();
+        for (var i = 1; i < SampleCount(plain); i++)
+        {
+            if (SampleAt(plain, i - 1) < 0 && SampleAt(plain, i) >= 0)
+            {
+                rising.Add(i);
+            }
+        }
+
+        Assert.True(rising[1] - rising[0] < rising[^1] - rising[^2]);
+        Assert.InRange(rising[^1] - rising[^2], 80, 88);
     }
 }

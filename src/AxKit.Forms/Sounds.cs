@@ -222,14 +222,15 @@ public static class Sounds
     // carries on small speakers where A3 hardly does.
     private static readonly Sound EdgeTick = new(WaveTone.Notes(0.6, (440, 45), (220, 90)));
 
-    // The three sounds of a plain key in a text's navigation mode (AX-8.13, 2026-11-16). A click of 8 ms, 2200 Hz mixed
-    // half and half with noise: the key was taken as a command; chosen by the maintainer by ear, and over before NVDA
-    // speaks. A flat 180 Hz tone of 90 ms, "a flat meh": the command ran and there was nothing of its kind to go to.
-    // Two quick flat blips at 300 Hz: the key has no command at all. The last two are candidates, not yet chosen by
-    // ear: change them here, with his ear.
-    private static readonly Sound NavKeyClick = new(WaveTone.Click(0.35, 2200, 0.008, 20, 600));
-    private static readonly Sound NothingTone = new(WaveTone.Flat(0.3, 180, 90, 5));
-    private static readonly Sound UnassignedBlips = new(WaveTone.Notes(0.3, (300, 25), (0, 30), (300, 25)));
+    // The three sounds of a plain key in a text's navigation mode (AX-8.13), all chosen by the maintainer by ear on
+    // 2026-11-16 from a script that played candidates. A high glassy tick, a pure 3800 Hz of 6 ms: the key was taken
+    // as a command; over before NVDA speaks, and unlike axClaude's line tick, which the first click (2200 Hz with
+    // noise) resembled. A buzzy 150 Hz tone of 110 ms: the command ran and there was nothing of its kind to go to. A
+    // wooden bonk of 70 ms, falling from 420 Hz: the key has no command at all ("more deadpan and bonk like" than the
+    // blips heard first). The candidates heard and kept for later are in docs/axKit/earcons.md, "Candidates kept".
+    private static readonly Sound NavKeyClick = new(WaveTone.Tick(0.3, 3800, 3800, 0.006, 10, 700, 0.0));
+    private static readonly Sound NothingTone = new(WaveTone.Flat(0.3, 150, 110, 6, buzzy: true));
+    private static readonly Sound UnassignedKnock = new(WaveTone.Knock(0.4, 420, 260, 0.008, 0.022, 2.76, 0.5, 70));
 
     // E5 up to A5, short: a command recalled into a field (axTerminal AT-3.9, asked 2026-10-23), rising where the edge falls.
     private static readonly Sound RecallTick = new(WaveTone.Notes(0.45, (659.25, 35), (880, 50)));
@@ -262,7 +263,7 @@ public static class Sounds
     private static readonly Sound?[,] BackgroundChords = new Sound?[AmbientSounds.ChordNames.Count, AmbientSounds.MostThings];
     private static readonly bool[,] BackgroundChordsBeingMade = new bool[AmbientSounds.ChordNames.Count, AmbientSounds.MostThings];
 
-    private static readonly Device Chimes = new("sounds", [LineTick, ToolPop, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone, NavKeyClick, NothingTone, UnassignedBlips]);
+    private static readonly Device Chimes = new("sounds", [LineTick, ToolPop, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone, NavKeyClick, NothingTone, UnassignedKnock]);
     private static readonly Device Music = new("working music", WorkingMusic);
 
     // The recurring chords of background work, 4.6 s each, on a third device of their own: on the chimes' device
@@ -369,14 +370,14 @@ public static class Sounds
     /// <summary>One short low note: the edge, nothing there (a key that moves nothing, a typed name no entry starts with).</summary>
     public static void Edge() => Play("Edge", () => Chimes.Play(EdgeTick, replace: true));
 
-    /// <summary>A tiny click: a plain letter or digit was taken as a command in a text's navigation mode (AX-8.13), played before the command runs. It replaces what plays, as the edge does.</summary>
+    /// <summary>A high glassy tick: a plain letter or digit was taken as a command in a text's navigation mode (AX-8.13), played before the command runs. It replaces what plays, as the edge does.</summary>
     public static void NavKey() => Play("NavKey", () => Chimes.Play(NavKeyClick, replace: true));
 
-    /// <summary>One flat low tone: a navigation key ran its command and there was nothing of that kind to go to (AX-8.13).</summary>
+    /// <summary>One low buzz: a navigation key ran its command and there was nothing of that kind to go to (AX-8.13).</summary>
     public static void Nothing() => Play("Nothing", () => Chimes.Play(NothingTone, replace: true));
 
-    /// <summary>Two quick flat blips: a plain key in navigation mode that has no command at all (AX-8.13); the edge stays for the ends of lists and texts and for a refused change.</summary>
-    public static void Unassigned() => Play("Unassigned", () => Chimes.Play(UnassignedBlips, replace: true));
+    /// <summary>A wooden bonk: a plain key in navigation mode that has no command at all (AX-8.13); the edge stays for the ends of lists and texts and for a refused change.</summary>
+    public static void Unassigned() => Play("Unassigned", () => Chimes.Play(UnassignedKnock, replace: true));
 
     /// <summary>Two quick rising notes: another command came into the field from the history (axTerminal AT-3.9).</summary>
     public static void Recall() => Play("Recall", () => Chimes.Play(RecallTick, replace: true));

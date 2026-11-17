@@ -55,9 +55,9 @@ public abstract partial class AxKitForm
         }
 
         var modifiers = keyData & Keys.Modifiers;
-        // One sound for each plain key (AX-8.13, 2026-11-16), before anything moves or is said: the click when the
-        // letter's command has somewhere to go, the flat tone alone when there is nothing of its kind (the words
-        // "No next heading" follow as ever), and further down the two blips for a key with no command at all.
+        // One sound for each plain key (AX-8.13, 2026-11-16), before anything moves or is said: the tick when the
+        // letter's command has somewhere to go, the buzz alone when there is nothing of its kind (the words
+        // "No next heading" follow as ever), and further down the bonk for a key with no command at all.
         if (modifiers is Keys.None or Keys.Shift && TextJump.Handle(text, text.NavigationJumps, keyData, Announce, NavigationSound))
         {
             return true;
@@ -87,7 +87,7 @@ public abstract partial class AxKitForm
         return false;
     }
 
-    /// <summary>The sound of a navigation letter's command: the click when it has somewhere to go, the flat tone when it has not.</summary>
+    /// <summary>The sound of a navigation letter's command: the tick when it has somewhere to go, the buzz when it has not.</summary>
     private static void NavigationSound(bool found)
     {
         if (found)

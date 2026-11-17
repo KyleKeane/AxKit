@@ -355,44 +355,45 @@ public static class WaveTone
     }
 
     /// <summary>
-    /// A click, a key's tick: a sine of <paramref name="hertz"/> mixed half and half with white noise, rising in a
-    /// straight line over <paramref name="attackSamples"/> samples and dying away as exp(-<paramref name="decay"/> t),
-    /// over in <paramref name="seconds"/>. The whole is scaled so that its loudest sample is <paramref name="peak"/>.
-    /// The noise is the same every time. The sound of a letter taken as a command in a text's navigation mode
-    /// (docs/axKit/SPEC.md AX-8.13): 8 ms at 2200 Hz, a peak of 0.35, 20 samples of attack, a decay of 600, chosen by
-    /// the maintainer by ear on 2026-11-16, so that it is over before the screen reader speaks.
+    /// A tick: a sine whose pitch glides in a straight line from <paramref name="fromHertz"/> to
+    /// <paramref name="toHertz"/>, mixed with white noise at a share of <paramref name="noise"/> (0, a pure tone; 1,
+    /// noise alone), rising in a straight line over <paramref name="attackSamples"/> samples, dying away as
+    /// exp(-<paramref name="decay"/> t) and brought to nothing over its last 20 samples, over in
+    /// <paramref name="seconds"/>. The whole is scaled so that its loudest sample is <paramref name="peak"/>. The noise
+    /// is the same every time. The sound of a letter taken as a command in a text's navigation mode (docs/axKit/SPEC.md
+    /// AX-8.13), "the high glassy tick": 3800 Hz without a glide, no noise, 6 ms, a peak of 0.3, 10 samples of attack,
+    /// a decay of 700, chosen by the maintainer by ear on 2026-11-16 because the first click, 2200 Hz mixed half and
+    /// half with noise, sounded too much like axClaude's line tick. Three more ticks heard that day were liked and kept
+    /// for later (docs/axKit/earcons.md, "Candidates kept").
     /// </summary>
-    public static byte[] Click(double peak, double hertz, double seconds, int attackSamples, double decay)
+    public static byte[] Tick(double peak, double fromHertz, double toHertz, double seconds, int attackSamples, double decay, double noise)
     {
         var count = (int)(SampleRate * seconds);
         var mix = new double[count];
         var random = new Random(7);
+        var phase = 0.0;
         var loudest = 1e-9;
         for (var i = 0; i < count; i++)
         {
             var t = i / (double)SampleRate;
-            var attack = Math.Min(1.0, (double)i / attackSamples);
-            var noise = random.NextDouble() * 2 - 1;
-            mix[i] = attack * Math.Exp(-decay * t) * (0.5 * Math.Sin(2 * Math.PI * hertz * t) + 0.5 * noise);
+            phase += 2 * Math.PI * (fromHertz + (toHertz - fromHertz) * i / count) / SampleRate;
+            var envelope = Math.Min(1.0, (double)i / attackSamples) * Math.Exp(-decay * t) * Math.Min(1.0, (count - 1 - i) / 20.0);
+            mix[i] = envelope * ((1 - noise) * Math.Sin(phase) + noise * (random.NextDouble() * 2 - 1));
             loudest = Math.Max(loudest, Math.Abs(mix[i]));
         }
 
-        var scale = peak / loudest;
-        var samples = new short[count];
-        for (var i = 0; i < count; i++)
-        {
-            samples[i] = (short)Math.Round(mix[i] * scale * short.MaxValue);
-        }
-
-        return Wav(samples);
+        return Scaled(mix, peak / loudest);
     }
 
     /// <summary>
-    /// One flat tone: a sine of <paramref name="hertz"/> that never moves in pitch, <paramref name="milliseconds"/>
-    /// long, at <paramref name="peak"/>, faded in and out in a straight line over <paramref name="fadeMilliseconds"/>.
-    /// The sound of a navigation key that found nothing of its kind (AX-8.13).
+    /// One flat tone that never moves in pitch, <paramref name="milliseconds"/> long, faded in and out in a straight
+    /// line over <paramref name="fadeMilliseconds"/>: a sine, or with <paramref name="buzzy"/> a buzzer's tone, the
+    /// sine with its third harmonic at a third and its fifth at a fifth, the sum divided by 1.2. Each sample is
+    /// <paramref name="peak"/> times that. The sound of a navigation key that found nothing of its kind (AX-8.13),
+    /// "buzzy": 150 Hz, 110 ms, 0.3, faded over 6 ms, chosen by the maintainer by ear on 2026-11-16 over the plain
+    /// 180 Hz sine heard before it and two others.
     /// </summary>
-    public static byte[] Flat(double peak, double hertz, int milliseconds, int fadeMilliseconds)
+    public static byte[] Flat(double peak, double hertz, int milliseconds, int fadeMilliseconds, bool buzzy)
     {
         var count = Samples(milliseconds);
         var fade = Math.Min(count / 2, Samples(fadeMilliseconds));
@@ -400,7 +401,51 @@ public static class WaveTone
         for (var i = 0; i < count; i++)
         {
             var envelope = Math.Min(1.0, Math.Min((double)i / fade, (double)(count - 1 - i) / fade));
-            samples[i] = Sample(hertz, i, peak * envelope);
+            var phase = 2 * Math.PI * hertz * i / SampleRate;
+            var tone = buzzy ? (Math.Sin(phase) + Math.Sin(3 * phase) / 3 + Math.Sin(5 * phase) / 5) / 1.2 : Math.Sin(phase);
+            samples[i] = (short)(tone * peak * envelope * short.MaxValue);
+        }
+
+        return Wav(samples);
+    }
+
+    /// <summary>
+    /// A knock, a deadpan bonk: a sine whose pitch falls fast from <paramref name="fromHertz"/> towards
+    /// <paramref name="toHertz"/> as to + (from - to) * exp(-t / drop), with an overtone at <paramref name="ratio"/>
+    /// times the pitch and <paramref name="overtone"/> of its level that dies three times faster, so it sounds struck
+    /// (2.76 is a wood block's); it rises over 1 ms, dies away as exp(-t / ring) and is brought to nothing over its last
+    /// 4 ms, over in <paramref name="milliseconds"/>. The whole is scaled so that its loudest sample is
+    /// <paramref name="peak"/>. The sound of a plain key with no command in navigation mode (AX-8.13), "the wooden
+    /// bonk": 420 Hz falling to 260 Hz, a drop of 8 ms, a ring of 22 ms, the overtone at 2.76 and 0.5, 70 ms, 0.4,
+    /// chosen by the maintainer by ear on 2026-11-16 ("more deadpan and bonk like" than the blips heard first).
+    /// </summary>
+    public static byte[] Knock(double peak, double fromHertz, double toHertz, double drop, double ring, double ratio, double overtone, int milliseconds)
+    {
+        var count = Samples(milliseconds);
+        var mix = new double[count];
+        var phase = 0.0;
+        var phaseOver = 0.0;
+        var loudest = 1e-9;
+        for (var i = 0; i < count; i++)
+        {
+            var t = i / (double)SampleRate;
+            var pitch = toHertz + (fromHertz - toHertz) * Math.Exp(-t / drop);
+            phase += 2 * Math.PI * pitch / SampleRate;
+            phaseOver += 2 * Math.PI * pitch * ratio / SampleRate;
+            var envelope = Math.Min(1.0, i / (SampleRate * 0.001)) * Math.Exp(-t / ring) * Math.Min(1.0, (count - 1 - i) / (SampleRate * 0.004));
+            mix[i] = envelope * (Math.Sin(phase) + overtone * Math.Sin(phaseOver) * Math.Exp(-t / (ring / 3)));
+            loudest = Math.Max(loudest, Math.Abs(mix[i]));
+        }
+
+        return Scaled(mix, peak / loudest);
+    }
+
+    private static byte[] Scaled(double[] mix, double scale)
+    {
+        var samples = new short[mix.Length];
+        for (var i = 0; i < mix.Length; i++)
+        {
+            samples[i] = (short)Math.Round(mix[i] * scale * short.MaxValue);
         }
 
         return Wav(samples);

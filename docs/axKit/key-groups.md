@@ -550,7 +550,7 @@ Exceptions today, which do another kind of thing:
 
 ### A letter alone: in a view you read, a quick command: go to the next thing of a kind, or say something
 
-Where you read and do not type (a text in navigation mode, a preview), a letter alone is a command: H goes to the next heading and Shift+H to the one before, L says the line. In a text's navigation mode, a letter that moves plays a small click first, and a letter with no command plays two quick blips.
+Where you read and do not type (a text in navigation mode, a preview), a letter alone is a command: H goes to the next heading and Shift+H to the one before, L says the line. In a text's navigation mode, a letter that moves plays a high tick first, and a letter with no command plays a wooden bonk.
 
 The keys:
 

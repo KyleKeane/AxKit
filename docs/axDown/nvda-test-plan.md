@@ -168,9 +168,9 @@ letter), and a `long.md` with headings and lines longer than the window.
    and Table with their keys.
 8. Navigation mode (bundle AX-8.13, AD-5.3): Ctrl+Space: "Navigation mode", and NVDA+End (or F8) reads ", navigation mode"
    after the file's name. h, Shift+H, 2, k, l, i: the same jumps and words as Ctrl with the letter, each after a
-   small click that is over before NVDA speaks (on a heading the heading sound follows it). h past the last heading:
-   one flat low tone and no click, then "No next heading". A letter or a digit that is no jump, Space or a sign: two
-   quick blips, the text and the title unchanged. Enter, Backspace, Delete, Ctrl+V and Ctrl+Z: the edge sound, the
+   high glassy tick that is over before NVDA speaks (on a heading the heading sound follows it). h past the last heading:
+   a low buzz and no tick, then "No next heading". A letter or a digit that is no jump, Space or a sign: a
+   wooden bonk, the text and the title unchanged. Enter, Backspace, Delete, Ctrl+V and Ctrl+Z: the edge sound, the
    text and the title unchanged. By ear: the three sounds are told apart from each other and from the edge sound,
    and none of them is heard in edit mode.
    Actions, Undo: the edge sound and "Navigation mode: press Ctrl+Space to edit". Arrows and Shift+arrows move and select as ever.

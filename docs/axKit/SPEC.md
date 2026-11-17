@@ -852,14 +852,15 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
        lines (input, output, tool lines), which a text being written has not; the editors' jump pairs over
        `MarkdownOutline` are the shared machinery for a text, and every notice's text already used their letters.
        **Each letter has one sound, before anything moves or is said** (2026-11-16): a letter whose command has
-       somewhere to go gives a click (`Sounds.NavKey`: 8 ms, a 2200 Hz sine mixed half and half with noise, its
-       loudest sample 0.35 of full scale, a rise over 20 samples, dying away as exp(-600 t); chosen by the maintainer
-       by ear, and over before the screen reader speaks); a letter whose command finds nothing of its kind gives one
-       flat low tone instead of the click (`Sounds.Nothing`: 180 Hz, 90 ms, 0.3, faded over 5 ms at each end, no
-       movement of pitch; "a flat meh"), and "No next heading" is said as before. The flat tone is a candidate, not
-       yet chosen by ear. The window finds out whether there is somewhere to go before it plays either
+       somewhere to go gives a high glassy tick (`Sounds.NavKey`: 6 ms, a pure 3800 Hz sine, its loudest sample 0.3
+       of full scale, a rise over 10 samples, dying away as exp(-700 t), over before the screen reader speaks); a
+       letter whose command finds nothing of its kind gives a low buzz instead of the tick (`Sounds.Nothing`: 150 Hz
+       with its third and fifth harmonics, 110 ms, 0.3, faded over 6 ms at each end), and "No next heading" is said
+       as before. All three sounds of this rule were chosen by the maintainer by ear on 2026-11-16 (the first click,
+       2200 Hz with noise, was too like axClaude's line tick; docs/axKit/earcons.md keeps the candidates heard). The
+       window finds out whether there is somewhere to go before it plays either
        (`TextJump.Jump`'s `before`), so a key never gives both. Where the letter lands on a heading, the heading
-       sound (AX-7.9) follows and takes the click's place on the device. Never in edit mode, never for a key with
+       sound (AX-7.9) follows and takes the tick's place on the device. Never in edit mode, never for a key with
        Ctrl or Alt, never for the moves of rule 2.
     2. **The moves**: the arrows, Home, End, Page Up and Page Down, Ctrl with them, and the paragraph keys move, and
        with Shift select, as in edit mode; Ctrl+Up and Ctrl+Down go by paragraph in every text, axTerminal's command
@@ -875,8 +876,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
        editor, a character a program sends, one that Ctrl+Alt makes on some keyboards) and a paste, cut, clear or
        undo message are stopped by the control itself, with the edge sound. The edge sound, not a sentence: it comes
        on every stray key, where words would be noise (`Sounds.Edge`, AX-8.6). **A plain key with no command at
-       all** has a sound of its own since 2026-11-16 (`Sounds.Unassigned`: two flat blips at 300 Hz, 25 ms each
-       with 30 ms between, 0.3; a candidate, not yet chosen by ear): a key that would type a character with no Ctrl
+       all** has a sound of its own since 2026-11-16 (`Sounds.Unassigned`: a wooden bonk, 70 ms, falling from 420
+       towards 260 Hz with a wood block's overtone, 0.4; "more deadpan and bonk like" than the blips first heard):
+       a key that would type a character with no Ctrl
        or Alt held, that is a letter or a digit that is no jump, Space, a sign, the number pad
        (`TextModes.Unassigned`). In navigation mode the plain keys are commands, and this one is not assigned. The
        edge sound stays for an edit refused (Enter, Backspace, Delete, the keys with Ctrl or Alt, Shift+Insert,

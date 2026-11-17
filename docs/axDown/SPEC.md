@@ -226,9 +226,9 @@ Ctrl+Backspace, Tab (types a tab), Enter (a new line).
   item, q block quote, t table, spoken as the Ctrl keys' jumps are; the Ctrl keys still work; the arrows, Home, End,
   the page and paragraph keys move and with Shift select; Ctrl+C and Ctrl+A act; a key that would change the text
   changes nothing and the file stays unchanged (no star in the title): a plain key that would type (a letter that is
-  no jump, a digit, Space, a sign) plays the two blips of a key with no command, and Enter, Tab, Backspace, Delete,
-  Ctrl+V, Ctrl+X, Ctrl+Z and Ctrl+Y play the edge sound. A letter that jumps gives a click first, and one flat low
-  tone in its place when there is nothing of its kind to go to (the three sounds are the bundle's, AX-8.13,
+  no jump, a digit, Space, a sign) plays the wooden bonk of a key with no command, and Enter, Tab, Backspace, Delete,
+  Ctrl+V, Ctrl+X, Ctrl+Z and Ctrl+Y play the edge sound. A letter that jumps gives a high tick first, and a low buzz
+  in its place when there is nothing of its kind to go to (the three sounds are the bundle's, AX-8.13,
   2026-11-16). Undo, Redo, Cut, Paste and an app's command
   (axJSON's Format) from the menus play the edge sound and say "Navigation mode: press Ctrl+Space to edit" (bundle
   AX-8.13, the same when an AI tool runs one). The status bar's left part ends in

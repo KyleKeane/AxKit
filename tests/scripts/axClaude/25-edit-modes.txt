@@ -39,7 +39,7 @@ expect said ! two
 keys shift+h
 expect said ! Plan, heading level 1
 # Check: Enter and letters that are no jump change nothing in navigation mode
-# Enter does not send, the edge sound; a letter that is no jump types nothing, the two blips; the message as it was.
+# Enter does not send, the edge sound; a letter that is no jump types nothing, the bonk; the message as it was.
 keys enter
 expect said ♪ Edge
 keys z

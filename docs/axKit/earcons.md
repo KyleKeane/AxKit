@@ -52,9 +52,9 @@ is the variant.
 | The edge: nothing further that way, or the key did nothing | A4 falling to A3, loud | exists (`Sounds.Edge`) |
 | A command recalled into the field | E5 rising a fourth to A5 | exists (`Sounds.Recall`) |
 | Moved onto a heading | G4 leaping an octave to G5 | exists (`Sounds.Heading`) |
-| A letter taken as a command in navigation mode (SPEC AX-8.13) | a click of 8 ms, 2200 Hz with noise, before the command runs | exists (`Sounds.NavKey`), chosen by ear 2026-11-16 |
-| A navigation letter that found nothing of its kind | one flat tone, 180 Hz, 90 ms, in place of the click | exists (`Sounds.Nothing`), a candidate, not yet chosen by ear |
-| A plain key in navigation mode with no command | two flat blips at 300 Hz, 25 ms each | exists (`Sounds.Unassigned`), a candidate, not yet chosen by ear |
+| A letter taken as a command in navigation mode (SPEC AX-8.13) | a high glassy tick, a pure 3800 Hz of 6 ms, before the command runs (a click of 2200 Hz with noise until it was heard as too like the line tick) | exists (`Sounds.NavKey`), chosen by ear 2026-11-16 |
+| A navigation letter that found nothing of its kind | a low buzz, 150 Hz with its third and fifth harmonics, 110 ms, in place of the tick | exists (`Sounds.Nothing`), chosen by ear 2026-11-16 |
+| A plain key in navigation mode with no command | a wooden bonk, 70 ms, falling from 420 towards 260 Hz with a wood block's overtone | exists (`Sounds.Unassigned`), chosen by ear 2026-11-16 |
 | A value changed by Right or Left in a list of fields | proposed: a rise of one step for the next value, a fall of one step for the previous | proposed, with the forms paradigm |
 
 ### 3. Turns: where the conversation stands
@@ -228,6 +228,27 @@ headings) become entries of this one file, read by every app, and keep their men
   FR-7.3 and FR-2.12, `docs/axKit/mcp.md` MC-7.3 and MC-9, and every user guide's list of sounds.
 - An NVDA pass cannot hear sound; the automated scripts check that the right sound was asked for by its name, and the
   user's ear checks how it sounds.
+
+## Candidates kept
+
+Sounds played to the user while choosing, liked, and kept for a later use (his word, 2026-11-16: "those were all
+lovely, please keep them for other purposes later"). Each is one call of `AxKit.Core.Audio.WaveTone`, so it can be
+played again as it was heard.
+
+- Ticks, heard for the navigation click; the high glassy tick was chosen and these three kept:
+  - Wooden tock: `Tick(0.4, 900, 900, 0.012, 15, 400, 0.1)`, a lower tock of 12 ms.
+  - Rising chirp: `Tick(0.3, 1400, 2600, 0.014, 15, 200, 0.0)`, a quick glide up, 14 ms.
+  - Dry snap: `Tick(0.35, 5000, 5000, 0.005, 4, 900, 0.9)`, mostly noise, like a finger snap.
+- Knocks, heard for a key with no command; the wooden bonk was chosen:
+  - Plain bonk: `Knock(0.4, 320, 170, 0.012, 0.030, 2.0, 0.0, 90)`.
+  - Low thud: `Knock(0.45, 200, 95, 0.015, 0.040, 2.0, 0.2, 110)`.
+  - Double bonk: the plain bonk twice, 60 ms each with 40 ms between.
+- Flat tones, heard for nothing found; buzzy was chosen:
+  - Middle: `Flat(0.3, 180, 90, 5, buzzy: false)`, the first candidate.
+  - Low and long: `Flat(0.35, 130, 150, 8, buzzy: false)`.
+  - High and short: `Flat(0.3, 240, 60, 4, buzzy: false)`.
+- Not liked for a key with no command: two blips at 300 Hz, three blips, two high blips at 550 Hz, two buzzy blips
+  at 250 Hz ("it should be more deadpan and bonk like").
 
 ## Open questions for the user
 
