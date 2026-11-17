@@ -1,0 +1,20 @@
+# Workflow: Take back a new text file
+# axFile, docs/axFile/user-guide.md "File operations", Ctrl+Z (SPEC AF-4.14): a new text file is removed by Ctrl+Z,
+# as a new folder is (03-operations.txt), and the list is as it was.
+file home\AxKit\axFile.json {"checkForUpdates": false}
+mkdir u
+file u\keep.txt keep
+start file {temp}\u
+expect focus keep.txt
+
+# Goal: Undo a new text file
+# Ctrl+Shift+T makes "New file.txt" with its rename box; Escape keeps the name; Ctrl+Z removes the file.
+do New text file
+expect focus "value":"New file.txt"
+keys escape
+expect focus "value":"New file.txt"
+expect list "count":2
+keys ctrl+z
+expect said ! Undone: New file.txt removed
+expect list "count":1
+run cmd /c if exist "u\New file.txt" (exit 1) else (exit 0)

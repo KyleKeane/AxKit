@@ -1,0 +1,42 @@
+# Workflow: Use powers, factorials, remainders and other number forms
+# axCalc, docs/axCalc/user-guide.md "What you can type" (SPEC AC-3): a power, a factorial, a remainder by % and by the
+# word mod, round with its places, a number with underscores, and hexadecimal and binary numbers; each answer said
+# alone, as the guide gives it.
+file home\AxKit\axCalc.json {"checkForUpdates": false, "keepHistory": false}
+
+start calc
+expect focus Expression
+
+# Goal: Raise a number to a power
+type 2^10
+keys enter
+expect said ! 1024
+type 2**3
+keys enter
+expect said ! 8
+
+# Goal: Take a factorial
+type 5!
+keys enter
+expect said ! 120
+
+# Goal: Take a remainder
+type 17 mod 5
+keys enter
+expect said ! 2
+type 17%5
+keys enter
+expect said ! 2
+
+# Goal: Round to a number of places
+type round(3.14159, 2)
+keys enter
+expect said ! 3.14
+
+# Goal: Type numbers with separators, in hexadecimal and in binary
+type 1_000_000+1
+keys enter
+expect said ! 1000001
+type 0xFF+0b1010
+keys enter
+expect said ! 265

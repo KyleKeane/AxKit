@@ -56,6 +56,12 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
     - Go back to the field from the history
     - Change the text size
     - Hear the bases from the command palette
+4. **Use powers, factorials, remainders and other number forms**
+    - Raise a number to a power
+    - Take a factorial
+    - Take a remainder
+    - Round to a number of places
+    - Type numbers with separators, in hexadecimal and in binary
 
 ## axClaude
 
@@ -412,6 +418,8 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
 10. **Start axFile with settings another program changed**
 11. **Change settings in two windows of one app**
     - Change one setting in each of two windows
+12. **Take back a new text file**
+    - Undo a new text file
 
 ## axGIT
 

@@ -205,3 +205,45 @@ Starts with: Open axCalc.
 2. Type: bases
 3. Press Enter.
     You hear: 30, hex 1E, binary 1 1110, octal 36.
+
+## Use powers, factorials, remainders and other number forms
+
+Starts with: Open axCalc.
+
+### Raise a number to a power
+
+1. Type: 2^10
+2. Press Enter.
+    You hear: 1024.
+3. Type: 2**3
+4. Press Enter.
+    You hear: 8.
+
+### Take a factorial
+
+1. Type: 5!
+2. Press Enter.
+    You hear: 120.
+
+### Take a remainder
+
+1. Type: 17 mod 5
+2. Press Enter.
+3. Type: 17%5
+4. Press Enter.
+    You hear: 2.
+
+### Round to a number of places
+
+1. Type: round(3.14159, 2)
+2. Press Enter.
+    You hear: 3.14.
+
+### Type numbers with separators, in hexadecimal and in binary
+
+1. Type: 1_000_000+1
+2. Press Enter.
+    You hear: 1000001.
+3. Type: 0xFF+0b1010
+4. Press Enter.
+    You hear: 265.

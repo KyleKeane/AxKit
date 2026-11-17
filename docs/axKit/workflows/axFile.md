@@ -740,3 +740,14 @@ Starts with: Open axFile with the folder one. Open axFile with the folder two.
 5. Close the window.
 6. Go to the other axFile window.
 7. Close the window.
+
+## Take back a new text file
+
+Starts with: Open axFile with the folder u.
+
+### Undo a new text file
+
+1. Press Ctrl+Shift+T (New text file; Actions menu).
+2. Press Escape.
+3. Press Ctrl+Z.
+    You hear: Undone: New file.txt removed.
