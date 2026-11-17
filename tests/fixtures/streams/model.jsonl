@@ -1,13 +1,13 @@
 {"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
-{"t":8,"k":"in","what":"message","text":"/model haiku"}
-{"t":738,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":739,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"Set model to `Haiku 5.5` for this session only"}]}}}
-{"t":741,"k":"out","line":{"is_error":false,"num_turns":0,"subtype":"success","result":"Set model to `Haiku 5.5` for this session only","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":947,"k":"in","what":"message","text":"Reply with exactly: ok"}
-{"t":978,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":1718,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: ok"}}}
-{"t":1719,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"ok"}]}}}
-{"t":1729,"k":"out","line":{"type":"rate_limit_event"}}
-{"t":1738,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"ok","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":1738,"k":"in","what":"closed"}
-{"t":1738,"k":"exit","code":0}
+{"t":4,"k":"in","what":"message","text":"/model haiku"}
+{"t":812,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":813,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"Set model to `Haiku 5.5` for this session only"}]}}}
+{"t":815,"k":"out","line":{"is_error":false,"num_turns":0,"subtype":"success","result":"Set model to `Haiku 5.5` for this session only","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":1016,"k":"in","what":"message","text":"Reply with exactly: ok"}
+{"t":1045,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1817,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: ok"}}}
+{"t":1818,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"ok"}]}}}
+{"t":1868,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1881,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"ok","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":1881,"k":"in","what":"closed"}
+{"t":1881,"k":"exit","code":0}

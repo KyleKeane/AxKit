@@ -1,0 +1,38 @@
+> message: Write about 200 words on lighthouses, in plain sentences, with no list…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+> message: Reply with exactly: second
+    a block for it
+    now: working, mode manual mode on, 1 waiting
+< Message: Write about 200 words on lighthouses, in plain sentences, with no list…
+< Text: Lighthouses have guided sailors for thousands of years, long before mo…
+    the response started
+< Note rate_limit_event
+< Ended, well, turns 1, completed
+    the bell
+< Started, mode default
+< Message: Reply with exactly: second
+    now: working, mode manual mode on, 0 waiting
+< Text: second
+    the response started
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Write about 200 words on lighthouses, in plain sentences, with no list and no heading. Use no tool.
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: Lighthouses have guided sailors for thousands of years, long before modern navigation made them a matter of choice rather than necessity. The earliest famous example was the Pharos of Alexandria, completed around the third century BCE, whose fire could be seen far out at sea. Later towers, built of stone, brick, and iron, dotted coastlines wherever rocks, shoals, or treacherous currents threatened ships. Each one carried a distinct character, produced by the shape of its tower, the color of its paint, and the pattern of its light, so that a mariner could recognize his position even on a moonless night. Keepers once tended the lamps by hand, trimming wicks, polishing lenses, and winding the clockwork that turned the beam, and their logs recorded storms, wrecks, and rescues with quiet precision. Automation has now replaced most of those keepers, and many towers stand empty, admired more for their beauty than for their function. Yet they still hold a particular meaning, a promise that someone, somewhere, is keeping watch over the dark water so that others can find their way home.
+[InputMarker h1] # Input 2
+[UserMessage] Reply with exactly: second
+[UserMessage] 
+[OutputMarker h1] # Output 2 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: second

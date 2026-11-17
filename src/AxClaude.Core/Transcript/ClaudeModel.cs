@@ -121,6 +121,28 @@ public abstract class ClaudeModel : LineStore
     /// </summary>
     public abstract bool Send(string text, bool evenWhilePrompting = false);
 
+    /// <summary>
+    /// The exchange block of a sent message (SPEC.md FR-4.1), the same whatever the source: the input marker, the
+    /// message's lines, a blank line, the output marker and a blank line, with the next number and, when asked for,
+    /// the time. Both markers are level 1 headings, so that the heading keys stop at every exchange; Claude's own
+    /// headings are level 2 and deeper. The model places the lines: at once, or when Claude takes the message up.
+    /// </summary>
+    protected List<Line> ExchangeBlock(string message)
+    {
+        ExchangeCount++;
+        var stamp = TimeStamps ? $" ({Clock():HH:mm})" : string.Empty;
+        var block = new List<Line> { NewLine(LineKind.InputMarker, $"# Input {ExchangeCount}{stamp}", 1) };
+        foreach (var messageLine in message.Replace("\r\n", "\n").Split('\n'))
+        {
+            block.Add(NewLine(LineKind.UserMessage, messageLine.TrimEnd()));
+        }
+
+        block.Add(NewLine(LineKind.UserMessage, string.Empty));
+        block.Add(NewLine(LineKind.OutputMarker, $"# Output {ExchangeCount} Reply from Claude{stamp}", 1));
+        block.Add(NewLine(LineKind.UserMessage, string.Empty));
+        return block;
+    }
+
     /// <summary>Marks the question Claude waits on in the conversation, so that it can be found again.</summary>
     public abstract void MarkQuestion();
 

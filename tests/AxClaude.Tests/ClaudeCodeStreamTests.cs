@@ -23,19 +23,110 @@ public class ClaudeCodeStreamTests
     public void A_message_gives_its_blocks_in_order()
     {
         var line = ClaudeCodeStream.Read("""{"type":"assistant","message":{"role":"assistant","content":[{"type":"thinking","thinking":"hm"},{"type":"text","text":"I will look."},{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"dir"}}]},"parent_tool_use_id":null}""");
+        // A call carries its id, which pairs it with its result, and what it is about: here the command.
         Assert.Equal(
-            [new StreamPart(StreamKind.Thinking, "", "", false), new StreamPart(StreamKind.Text, "I will look.", "", false), new StreamPart(StreamKind.ToolCall, "", "Bash", false)],
+            [new StreamPart(StreamKind.Thinking, "", "", false), new StreamPart(StreamKind.Text, "I will look.", "", false), new StreamPart(StreamKind.ToolCall, "", "Bash", false) { Call = "t1", About = "dir" }],
             line.Parts);
         Assert.False(line.FromWorker);
         Assert.True(line.Has(StreamKind.ToolCall));
         Assert.False(line.Has(StreamKind.Ended));
     }
 
+    [Theory]
+    [InlineData("""{"command":"git status","description":"Show the state"}""", "git status")]
+    [InlineData("""{"file_path":"C:\\work\\a.txt","content":"hi"}""", "C:\\work\\a.txt")]
+    [InlineData("""{"pattern":"TODO","path":"src"}""", "TODO")]
+    [InlineData("""{"description":"Find the tests","prompt":"Look for them","subagent_type":"Explore"}""", "Find the tests")]
+    [InlineData("""{"command":"first line\nsecond line"}""", "first line")]
+    [InlineData("""{"questions":[]}""", "")]
+    public void A_call_says_what_it_is_about(string input, string about)
+    {
+        var line = ClaudeCodeStream.Read("{\"type\":\"assistant\",\"message\":{\"content\":[{\"type\":\"tool_use\",\"id\":\"c\",\"name\":\"X\",\"input\":" + input + "}]}}");
+        Assert.Equal(about, Assert.Single(line.Parts).About);
+    }
+
+    [Fact]
+    public void A_message_come_back_a_commands_print_and_a_line_in_the_users_place_are_told_apart()
+    {
+        // With the option that sends each message back: the host's own message, with its text.
+        var back = ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"Reply with exactly: ok"}}""");
+        Assert.Equal([new StreamPart(StreamKind.Message, "Reply with exactly: ok", "", false)], back.Parts);
+
+        // What a slash command printed comes back the same way, inside Claude Code's tag.
+        var printed = ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"<local-command-stdout>Compacted </local-command-stdout>"}}""");
+        Assert.Equal([new StreamPart(StreamKind.CommandOutput, "Compacted", "", false)], printed.Parts);
+
+        // The summary a compaction leaves is written in the user's place and is no message of theirs.
+        var summary = ClaudeCodeStream.Read("""{"type":"user","isReplay":false,"isSynthetic":true,"message":{"content":"This session is being continued"}}""");
+        Assert.Equal([new StreamPart(StreamKind.Note, ClaudeCodeStream.UserText, "", false)], summary.Parts);
+    }
+
+    [Fact]
+    public void A_failed_result_gives_its_first_line_but_not_the_words_meant_for_the_model()
+    {
+        var failed = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c1","is_error":true,"content":"Exit code 1\nfatal: not a git repository"}]}}""");
+        Assert.Equal([new StreamPart(StreamKind.ToolResult, "Exit code 1", "", true) { Call = "c1" }], failed.Parts);
+
+        var blocks = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c2","is_error":true,"content":[{"type":"text","text":"No such file"}]}]}}""");
+        Assert.Equal("No such file", Assert.Single(blocks.Parts).Text);
+
+        // The user refused or interrupted: Claude Code's own words to the model, and the relay's, are not shown again.
+        var interrupted = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c3","is_error":true,"content":"The user doesn't want to proceed with this tool use. The tool use was rejected. STOP what you are doing."}]}}""");
+        Assert.Equal(string.Empty, Assert.Single(interrupted.Parts).Text);
+        var refused = ClaudeCodeStream.Read("{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\",\"tool_use_id\":\"c4\",\"is_error\":true,\"content\":\"" + ClaudeCodeStream.RefusedWords + "\"}]}}");
+        Assert.Equal(string.Empty, Assert.Single(refused.Parts).Text);
+        Assert.True(Assert.Single(refused.Parts).Error);
+
+        // A result that did not fail gives nothing of what came back.
+        var fine = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c5","content":"a whole file"}]}}""");
+        Assert.Equal([new StreamPart(StreamKind.ToolResult, "", "", false) { Call = "c5" }], fine.Parts);
+    }
+
+    [Fact]
+    public void The_work_in_the_background_is_listed_whole_and_only_by_its_own_note()
+    {
+        var two = ClaudeCodeStream.Read("""{"type":"system","subtype":"background_tasks_changed","tasks":[{"id":"t1","task_type":"local_bash","description":"Run the build"},{"id":"t2","task_type":"local_agent","description":"Find the tests","subagent_type":"Explore"},{"id":"t3"}]}""");
+        Assert.Equal(
+            [new StreamTask("t1", StreamTask.Shell, "Run the build", ""), new StreamTask("t2", StreamTask.AgentKind, "Find the tests", "Explore")],
+            two.Tasks);
+
+        var none = ClaudeCodeStream.Read("""{"type":"system","subtype":"background_tasks_changed","tasks":[]}""");
+        Assert.NotNull(none.Tasks);
+        Assert.Empty(none.Tasks);
+
+        // Any other line says nothing of it, which is not the same as saying that nothing runs.
+        Assert.Null(ClaudeCodeStream.Read("""{"type":"system","subtype":"task_started","task_id":"t1"}""").Tasks);
+    }
+
+    [Fact]
+    public void An_end_line_counts_its_turns_and_the_services_error_is_no_reply()
+    {
+        Assert.Equal(2, ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":2}""").Turns);
+        // A slash command Claude Code ran by itself: an end line that counts no turn.
+        Assert.Equal(0, ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":0,"result":""}""").Turns);
+
+        var error = ClaudeCodeStream.Read("""{"type":"assistant","is_api_error_message":true,"error":"model_not_found","message":{"content":[{"type":"text","text":"There's an issue with the selected model."}]}}""");
+        Assert.True(Assert.Single(error.Parts).Error);
+    }
+
+    [Theory]
+    [InlineData("default", "manual mode on")]
+    [InlineData("acceptEdits", "accept edits on")]
+    [InlineData("plan", "plan mode on")]
+    [InlineData("auto", "auto mode on")]
+    [InlineData("bypassPermissions", "bypass permissions on")]
+    [InlineData("somethingNew", "somethingNew mode on")]
+    [InlineData("", null)]
+    public void The_permission_mode_is_said_in_the_screens_words(string mode, string? words)
+    {
+        Assert.Equal(words, ClaudeCodeStream.ModeWords(mode));
+    }
+
     [Fact]
     public void A_tool_result_says_whether_it_failed_and_a_worker_line_says_so()
     {
         var refused = ClaudeCodeStream.Read("""{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","is_error":true,"content":"no"}]},"parent_tool_use_id":null}""");
-        Assert.Equal([new StreamPart(StreamKind.ToolResult, "", "", true)], refused.Parts);
+        Assert.Equal([new StreamPart(StreamKind.ToolResult, "no", "", true) { Call = "t1" }], refused.Parts);
 
         var worker = ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"from the agent"}]},"parent_tool_use_id":"t9"}""");
         Assert.True(worker.FromWorker);

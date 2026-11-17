@@ -1,8 +1,8 @@
 {"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
 {"t":7,"k":"in","what":"message","text":"Reply with exactly: ok"}
-{"t":775,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":1350,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: ok"}}}
-{"t":1351,"k":"out","line":{"type":"assistant","is_api_error_message":true,"error":"model_not_found","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"There's an issue with the selected model (no-such-model-of-the-probe). It may not exist or you may not have access to it. Run --model to pick a different model."}]}}}
-{"t":1356,"k":"out","line":{"stop_reason":"stop_sequence","terminal_reason":"api_error","is_error":true,"num_turns":1,"subtype":"success","result":"There's an issue with the selected model (no-such-model-of-the-probe). It may not exist or you may not have access to it. Run --model to pick a different model.","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":1356,"k":"in","what":"closed"}
-{"t":1356,"k":"exit","code":1}
+{"t":762,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1339,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: ok"}}}
+{"t":1339,"k":"out","line":{"type":"assistant","is_api_error_message":true,"error":"model_not_found","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"There's an issue with the selected model (no-such-model-of-the-probe). It may not exist or you may not have access to it. Run --model to pick a different model."}]}}}
+{"t":1344,"k":"out","line":{"stop_reason":"stop_sequence","terminal_reason":"api_error","is_error":true,"num_turns":1,"subtype":"success","result":"There's an issue with the selected model (no-such-model-of-the-probe). It may not exist or you may not have access to it. Run --model to pick a different model.","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":1344,"k":"in","what":"closed"}
+{"t":1344,"k":"exit","code":1}

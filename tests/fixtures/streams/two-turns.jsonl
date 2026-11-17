@@ -1,14 +1,14 @@
 {"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
-{"t":5,"k":"in","what":"message","text":"Reply with exactly: one"}
-{"t":724,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":1581,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: one"}}}
-{"t":1583,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"one"}]}}}
-{"t":1595,"k":"out","line":{"type":"rate_limit_event"}}
-{"t":1606,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"one","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":1607,"k":"in","what":"message","text":"Reply with exactly: two"}
-{"t":1632,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":2389,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: two"}}}
-{"t":2391,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"two"}]}}}
-{"t":2401,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"two","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":2401,"k":"in","what":"closed"}
-{"t":2401,"k":"exit","code":0}
+{"t":8,"k":"in","what":"message","text":"Reply with exactly: one"}
+{"t":851,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1690,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: one"}}}
+{"t":1692,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"one"}]}}}
+{"t":1706,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1717,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"one","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":1717,"k":"in","what":"message","text":"Reply with exactly: two"}
+{"t":1735,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":2387,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: two"}}}
+{"t":2388,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"two"}]}}}
+{"t":2406,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"two","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":2406,"k":"in","what":"closed"}
+{"t":2406,"k":"exit","code":0}

@@ -1,0 +1,28 @@
+> mode
+< Control, done
+< Note status
+    now: idle, mode accept edits on, 0 waiting
+> message: Use the Write tool to create a file named probe-mode.txt in the curren…
+    a block for it
+    now: working, mode accept edits on, 0 waiting
+< Started, mode acceptEdits
+< Message: Use the Write tool to create a file named probe-mode.txt in the curren…
+< ToolCall Write (C:\work\probe-mode.txt)
+    the response started
+< Note rate_limit_event
+< ToolResult
+< Text: written
+< Ended, well, turns 2, completed
+    the bell
+    now: idle, mode accept edits on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Use the Write tool to create a file named probe-mode.txt in the current folder with the content hi. Then reply with exactly: written
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Tool] tool: Write (probe-mode.txt)
+[ClaudeReply] claude: written

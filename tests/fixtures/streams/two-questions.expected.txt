@@ -1,0 +1,29 @@
+> message: Use the AskUserQuestion tool once with two questions: my favourite col…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Use the AskUserQuestion tool once with two questions: my favourite col…
+< ToolCall AskUserQuestion ()
+< Note rate_limit_event
+? the permission tool is asked about AskUserQuestion
+    now: working, mode manual mode on, 0 waiting, asks "What is your favourite colour?"
+! answered: answered
+    now: working, mode manual mode on, 0 waiting
+< ToolResult
+< Text: thanks
+    the response started
+< Ended, well, turns 2, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry). Then reply with exactly: thanks
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Question] Question: What is your favourite colour?
+[ClaudeReply] claude: thanks

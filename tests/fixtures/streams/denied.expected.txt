@@ -1,0 +1,30 @@
+> message: Use the Write tool to create a file named probe-denied.txt in the curr…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Use the Write tool to create a file named probe-denied.txt in the curr…
+< ToolCall Write (C:\work\probe-denied.txt)
+    the response started
+< Note rate_limit_event
+? the permission tool is asked about Write
+    now: working, mode manual mode on, 0 waiting, asks "Permission: Write"
+! answered: deny
+    now: working, mode manual mode on, 0 waiting
+< ToolResult, failed: ""
+< Text: No, it was not created: you declined the Write call, so `probe-denied.…
+< Ended, well, turns 2, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Use the Write tool to create a file named probe-denied.txt in the current folder with the content hi. Then say in one short sentence whether it was created.
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[ToolError] tool error: Write (probe-denied.txt)
+[Question] Question: Permission: Write
+[ClaudeReply] claude: No, it was not created: you declined the Write call, so `probe-denied.txt` does not exist in the working folder.

@@ -1,0 +1,29 @@
+> message: Use the AskUserQuestion tool to ask me one question: which colour I pr…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Use the AskUserQuestion tool to ask me one question: which colour I pr…
+< ToolCall AskUserQuestion ()
+< Note rate_limit_event
+? the permission tool is asked about AskUserQuestion
+    now: working, mode manual mode on, 0 waiting, asks "Which colour do you prefer?"
+! answered: answered
+    now: working, mode manual mode on, 0 waiting
+< ToolResult
+< Text: Red
+    the response started
+< Ended, well, turns 2, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Use the AskUserQuestion tool to ask me one question: which colour I prefer, with the options Red and Blue. Then reply with the colour I chose and nothing else.
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Question] Question: Which colour do you prefer?
+[ClaudeReply] claude: Red

@@ -1,16 +1,13 @@
 {"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"deny"}
 {"t":6,"k":"in","what":"message","text":"Use the Write tool to create a file named probe-denied.txt in the current folder with the content hi. Then say in one short sentence whether it was created."}
-{"t":813,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":1641,"k":"out","line":{"type":"system","subtype":"thinking_tokens"}}
-{"t":1805,"k":"out","line":{"type":"system","subtype":"thinking_tokens"}}
-{"t":1807,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Use the Write tool to create a file named probe-denied.txt in the current folder with the content hi. Then say in one short sentence whether it was created."}}}
-{"t":1808,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"thinking"}]}}}
-{"t":2060,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"Write","input":{"file_path":"C:\\work\\probe-denied.txt","content":"hi"}}]}}}
-{"t":2088,"k":"out","line":{"type":"rate_limit_event"}}
-{"t":2092,"k":"ask","tool":"Write","call":"call-1","input":{"file_path":"C:\\work\\probe-denied.txt","content":"hi"}}
-{"t":2092,"k":"answer","behavior":"deny"}
-{"t":2117,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1","is_error":true,"content":"The user said no."}]}}}
-{"t":2875,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"The file was not created: you declined the Write call for `probe-denied.txt`, so I didn't retry it."}]}}}
-{"t":2894,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":2,"subtype":"success","result":"The file was not created: you declined the Write call for `probe-denied.txt`, so I didn't retry it.","type":"result","queued_turn_count":0,"permission_denials":[{"tool_name":"Write"}]}}
-{"t":2894,"k":"in","what":"closed"}
-{"t":2894,"k":"exit","code":0}
+{"t":1192,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":2254,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Use the Write tool to create a file named probe-denied.txt in the current folder with the content hi. Then say in one short sentence whether it was created."}}}
+{"t":2258,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"Write","input":{"file_path":"C:\\work\\probe-denied.txt","content":"hi"}}]}}}
+{"t":2270,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":2321,"k":"ask","tool":"Write","call":"call-1","input":{"file_path":"C:\\work\\probe-denied.txt","content":"hi"}}
+{"t":2321,"k":"answer","behavior":"deny"}
+{"t":2360,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1","is_error":true,"content":"The user refused this tool call."}]}}}
+{"t":3286,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"No, it was not created: you declined the Write call, so `probe-denied.txt` does not exist in the working folder."}]}}}
+{"t":3308,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":2,"subtype":"success","result":"No, it was not created: you declined the Write call, so `probe-denied.txt` does not exist in the working folder.","type":"result","queued_turn_count":0,"permission_denials":[{"tool_name":"Write"}]}}
+{"t":3309,"k":"in","what":"closed"}
+{"t":3309,"k":"exit","code":0}

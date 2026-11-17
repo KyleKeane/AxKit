@@ -1,0 +1,42 @@
+> message: Reply with exactly: before
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Reply with exactly: before
+< Text: before
+    the response started
+< Note rate_limit_event
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> message: /clear
+    no block for it
+    now: working, mode manual mode on, 0 waiting
+< Note conversation_reset
+    announced: Conversation cleared
+< Note background_tasks_changed []
+< Started, mode default
+< Ended, well, turns 0, 
+    now: idle, mode manual mode on, 0 waiting
+> message: Reply with exactly: after
+    a block for it
+    now: working, mode manual mode on, 0 waiting
+< Started, mode default
+< Message: Reply with exactly: after
+< Text: after
+    the response started
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[System] System: Conversation cleared by /clear; the previous one stays on disk, and /resume brings it back
+[InputMarker h1] # Input 1
+[UserMessage] Reply with exactly: after
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: after

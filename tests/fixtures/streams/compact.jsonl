@@ -1,22 +1,22 @@
 {"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
 {"t":4,"k":"in","what":"message","text":"Remember this word for later: mango. Reply with exactly: noted"}
-{"t":754,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":1576,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Remember this word for later: mango. Reply with exactly: noted"}}}
-{"t":1580,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"noted"}]}}}
-{"t":1596,"k":"out","line":{"type":"rate_limit_event"}}
-{"t":1609,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"noted","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":1815,"k":"in","what":"message","text":"/compact"}
-{"t":1825,"k":"out","line":{"type":"system","subtype":"status","status":"compacting"}}
-{"t":5105,"k":"out","line":{"type":"system","subtype":"status"}}
-{"t":5110,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":5111,"k":"out","line":{"type":"system","subtype":"compact_boundary"}}
-{"t":5111,"k":"out","line":{"type":"user","isReplay":false,"isSynthetic":true,"parent_tool_use_id":null,"message":{"content":"This session is being continued from a previous conversation that ran out of con…"}}}
-{"t":5111,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"<local-command-stdout>Compacted </local-command-stdout>"}}}
-{"t":5112,"k":"out","line":{"is_error":false,"num_turns":0,"subtype":"success","result":"","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":5425,"k":"in","what":"message","text":"Which word did I ask you to remember? Reply with that word alone."}
-{"t":5466,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":6245,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Which word did I ask you to remember? Reply with that word alone."}}}
-{"t":6246,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"mango"}]}}}
-{"t":6259,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"mango","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":6260,"k":"in","what":"closed"}
-{"t":6260,"k":"exit","code":0}
+{"t":746,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1681,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Remember this word for later: mango. Reply with exactly: noted"}}}
+{"t":1683,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"noted"}]}}}
+{"t":1688,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1698,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"noted","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":1899,"k":"in","what":"message","text":"/compact"}
+{"t":1908,"k":"out","line":{"type":"system","subtype":"status","status":"compacting"}}
+{"t":5445,"k":"out","line":{"type":"system","subtype":"status"}}
+{"t":5450,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":5452,"k":"out","line":{"type":"system","subtype":"compact_boundary"}}
+{"t":5452,"k":"out","line":{"type":"user","isReplay":false,"isSynthetic":true,"parent_tool_use_id":null,"message":{"content":"This session is being continued from a previous conversation that ran out of con…"}}}
+{"t":5453,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"<local-command-stdout>Compacted </local-command-stdout>"}}}
+{"t":5453,"k":"out","line":{"is_error":false,"num_turns":0,"subtype":"success","result":"","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":5754,"k":"in","what":"message","text":"Which word did I ask you to remember? Reply with that word alone."}
+{"t":5784,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":6467,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Which word did I ask you to remember? Reply with that word alone."}}}
+{"t":6469,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"mango"}]}}}
+{"t":6481,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"mango","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":6481,"k":"in","what":"closed"}
+{"t":6481,"k":"exit","code":0}

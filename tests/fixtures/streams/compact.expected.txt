@@ -1,0 +1,53 @@
+> message: Remember this word for later: mango. Reply with exactly: noted
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Remember this word for later: mango. Reply with exactly: noted
+< Text: noted
+    the response started
+< Note rate_limit_event
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> message: /compact
+    no block for it
+    now: working, mode manual mode on, 0 waiting
+< Note status compacting
+    announced: Compacting the conversation
+< Note status
+< Started, mode default
+< Note compact_boundary
+    announced: Conversation compacted
+< Note user text
+< CommandOutput: Compacted
+< Ended, well, turns 0, 
+    now: idle, mode manual mode on, 0 waiting
+> message: Which word did I ask you to remember? Reply with that word alone.
+    a block for it
+    now: working, mode manual mode on, 0 waiting
+< Started, mode default
+< Message: Which word did I ask you to remember? Reply with that word alone.
+< Text: mango
+    the response started
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Remember this word for later: mango. Reply with exactly: noted
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: noted
+[UserEcho] you: /compact
+[System] System: Conversation compacted
+[InputMarker h1] # Input 2
+[UserMessage] Which word did I ask you to remember? Reply with that word alone.
+[UserMessage] 
+[OutputMarker h1] # Output 2 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: mango

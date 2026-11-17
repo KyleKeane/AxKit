@@ -18,6 +18,10 @@ The first line is the recording's own: Claude Code's version, the day, and how t
 - `ask` and `answer`: the permission tool was asked about a `tool` with this `input`, and the stand-in answered `allow`, `deny`, `always`, or `answered` for a question of Claude's (the first option of each question).
 - `exit`: the process ended, with its `code`.
 
+## The expected files
+
+`<case>.expected.txt` beside a recording is what the stream's model makes of it (`StreamModelTests`, through `StreamReplay`): each thing the host wrote and Claude Code wrote, in order and in kinds, with what the model raised under it (the bell, the response started, an announcement, a turn Claude Code started by itself) and its facts after every change; then the conversation as it stands, every line with its kind and, for a heading, its level. The tests fail when the two disagree. After a deliberate change of the model, or a new recording, `AXCLAUDE_UPDATE_EXPECTED=1` writes them again: read the difference through. What a recording's model says is its own each time it is recorded, so a new recording changes the texts in these files, never what the model does with them.
+
 ## What a file does not hold
 
 The maker is the whitelist that makes a fixture safe to commit. A field it does not name is not kept. Ids are numbers in the order they were met (`session-1`, `call-1`, `task-1`). The folder a case ran in is `C:\work`. Of a tool's result only whether it failed is kept, and its text when it did. Thinking is kept as a kind without its text. The start line keeps the version, the permission mode and the session's number: nothing of the user's commands, servers, skills or paths. A file that still held an e-mail address, an account path, the account's or the computer's name would have been refused and deleted.

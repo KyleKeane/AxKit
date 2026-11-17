@@ -1,13 +1,13 @@
 {"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
-{"t":4,"k":"in","what":"message","text":"Use the AskUserQuestion tool to ask me one question: which colour I prefer, with the options Red and Blue. Then reply with the colour I chose and nothing else."}
-{"t":758,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
-{"t":1832,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Use the AskUserQuestion tool to ask me one question: which colour I prefer, with the options Red and Blue. Then reply with the colour I chose and nothing else."}}}
-{"t":1834,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"AskUserQuestion","input":{"questions":[{"question":"Which colour do you prefer?","header":"Colour","multiSelect":false,"options":[{"label":"Red","description":"Choose red"},{"label":"Blue","description":"Choose blue"}]}]}}]}}}
-{"t":1855,"k":"ask","tool":"AskUserQuestion","call":"call-1","input":{"questions":[{"question":"Which colour do you prefer?","header":"Colour","multiSelect":false,"options":[{"label":"Red","description":"Choose red"},{"label":"Blue","description":"Choose blue"}]}]}}
-{"t":1855,"k":"answer","behavior":"answered"}
-{"t":1856,"k":"out","line":{"type":"rate_limit_event"}}
-{"t":1889,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1"}]}}}
-{"t":2426,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"Red"}]}}}
-{"t":2440,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":2,"subtype":"success","result":"Red","type":"result","queued_turn_count":0,"permission_denials":[]}}
-{"t":2441,"k":"in","what":"closed"}
-{"t":2441,"k":"exit","code":0}
+{"t":5,"k":"in","what":"message","text":"Use the AskUserQuestion tool to ask me one question: which colour I prefer, with the options Red and Blue. Then reply with the colour I chose and nothing else."}
+{"t":739,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":1712,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Use the AskUserQuestion tool to ask me one question: which colour I prefer, with the options Red and Blue. Then reply with the colour I chose and nothing else."}}}
+{"t":1716,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"AskUserQuestion","input":{"questions":[{"question":"Which colour do you prefer?","header":"Colour","multiSelect":false,"options":[{"label":"Red","description":"Choose red"},{"label":"Blue","description":"Choose blue"}]}]}}]}}}
+{"t":1730,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":1734,"k":"ask","tool":"AskUserQuestion","call":"call-1","input":{"questions":[{"question":"Which colour do you prefer?","header":"Colour","multiSelect":false,"options":[{"label":"Red","description":"Choose red"},{"label":"Blue","description":"Choose blue"}]}]}}
+{"t":1734,"k":"answer","behavior":"answered"}
+{"t":1763,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1"}]}}}
+{"t":2456,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"Red"}]}}}
+{"t":2472,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":2,"subtype":"success","result":"Red","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":2472,"k":"in","what":"closed"}
+{"t":2472,"k":"exit","code":0}

@@ -14,7 +14,8 @@ From AxClaude.Core on their second use, axTerminal (2026-10-18; docs/axTerminal/
 - `Transcript/LineStore`: the transcript of a console: the lines and what a screen does to them, create, commit,
   remove, the text of a rewritten row; since 2026-10-23 also the UTF-8 decoder with `Feed`, the parser and the screen
   made by `NewScreen`, to which each model attaches its own handlers, `EndFrame` over the abstract `CompleteFrame`,
-  `ToggleBookmark`, `VisibleBefore`, `Trim`, `ExchangeCount`, the `Changed` and `Bell` events with `RaiseChanged`;
+  `ToggleBookmark`, `VisibleBefore`, `Trim`, `ExchangeCount`, the `Changed` and `Bell` events with `RaiseChanged`
+  and, for a model with no screen to ring it, `RaiseBell` (2026-11-17; axClaude's model of Claude Code's stream);
   each app's model derives from it: axClaude's `SessionModel`, axTerminal's `TerminalModel`.
 - `Transcript/TranscriptMirror`: visible lines to edit-control edits, the caret's place afterwards, display line
   numbers, the find search, the reading breaks; `ShowMarkers` off shows heading lines as `Line.BareText`, without the

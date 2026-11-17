@@ -137,6 +137,12 @@ public abstract class LineStore
 
     protected void RaiseChanged() => Changed?.Invoke();
 
+    /// <summary>
+    /// Raises <see cref="Bell"/> for a model that has no screen to ring it: axClaude's model of Claude Code's stream
+    /// (docs/axClaude/stream-mode.md SM-4.6), where a turn's end is a line and the window's rule for a bell says Done.
+    /// </summary>
+    protected void RaiseBell() => Bell?.Invoke();
+
     /// <summary>The bookmarks count from 1 again (a cleared transcript).</summary>
     protected void ResetBookmarks() => _bookmarkCount = 0;
 

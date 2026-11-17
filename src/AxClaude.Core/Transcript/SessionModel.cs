@@ -402,20 +402,9 @@ public sealed partial class SessionModel : ClaudeModel
             return false;
         }
 
-        ExchangeCount++;
-        // The exchange block (FR-4.1): both markers are level 1 headings, so the heading keys stop at every exchange;
-        // Claude's own headings are level 2 and deeper (LineClassifier.HeadingLevel). Classify skips app lines, so
-        // the levels stick and a message line is never mistaken for a label.
-        var stamp = TimeStamps ? $" ({Clock():HH:mm})" : string.Empty;
-        var block = new List<Line> { NewLine(LineKind.InputMarker, $"# Input {ExchangeCount}{stamp}", 1) };
-        foreach (var messageLine in trimmed.Replace("\r\n", "\n").Split('\n'))
-        {
-            block.Add(NewLine(LineKind.UserMessage, messageLine.TrimEnd()));
-        }
-
-        block.Add(NewLine(LineKind.UserMessage, string.Empty));
-        block.Add(NewLine(LineKind.OutputMarker, $"# Output {ExchangeCount} Reply from Claude{stamp}", 1));
-        block.Add(NewLine(LineKind.UserMessage, string.Empty));
+        // The exchange block (FR-4.1), made as every source's is (ClaudeModel.ExchangeBlock). Classify skips app
+        // lines, so the markers' levels stick and a message line is never mistaken for a label.
+        var block = ExchangeBlock(trimmed);
         var send = new PendingSend(trimmed, block, Clock());
         _pending.Add(send);
         if (!Busy)

@@ -1,0 +1,33 @@
+> message: Use the Write tool to create a file named always-1.txt in the current …
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Use the Write tool to create a file named always-1.txt in the current …
+< ToolCall Write (C:\work\always-1.txt)
+    the response started
+< Note rate_limit_event
+? the permission tool is asked about Write
+    now: working, mode manual mode on, 0 waiting, asks "Permission: Write"
+! answered: always
+    now: working, mode manual mode on, 0 waiting
+< ToolResult
+< ToolCall Write (C:\work\always-2.txt)
+< ToolResult
+< Text: both written
+< Ended, well, turns 3, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Use the Write tool to create a file named always-1.txt in the current folder with the content hi. After that, use the Write tool again to create a file named always-2.txt with the content hi. Then reply with exactly: both written
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Tool] tool: Write (always-1.txt)
+[Question] Question: Permission: Write
+[Tool] tool: Write (always-2.txt)
+[ClaudeReply] claude: both written

@@ -1,0 +1,50 @@
+> message: Run this command with the Bash tool: ping -n 20 127.0.0.1 After it fin…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Run this command with the Bash tool: ping -n 20 127.0.0.1 After it fin…
+< ToolCall Bash (ping -n 20 127.0.0.1)
+    the response started
+< Note rate_limit_event
+? the permission tool is asked about Bash
+    now: working, mode manual mode on, 0 waiting, asks "Permission: Bash"
+! answered: allow
+    now: working, mode manual mode on, 0 waiting
+> interrupt
+< Control, done
+< ToolResult, failed: ""
+< Note user text
+< Ended, failed, turns 3, aborted_tools
+    now: idle, mode manual mode on, 0 waiting
+> message: Reply with exactly: still here
+    a block for it
+    now: working, mode manual mode on, 0 waiting
+< Started, mode default
+< Note thinking_tokens
+< Note thinking_tokens
+< Message: Reply with exactly: still here
+< Thinking
+    the response started
+< Text: still here
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Run this command with the Bash tool: ping -n 20 127.0.0.1
+[UserMessage] After it finishes, reply with exactly: finished
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[ToolError] tool error: Bash (ping -n 20 127.0.0.1)
+[Question] Question: Permission: Bash
+[InputMarker h1] # Input 2
+[UserMessage] Reply with exactly: still here
+[UserMessage] 
+[OutputMarker h1] # Output 2 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: still here

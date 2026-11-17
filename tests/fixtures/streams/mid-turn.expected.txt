@@ -1,0 +1,46 @@
+> message: Run this command with the Bash tool: ping -n 5 127.0.0.1 After it fini…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Run this command with the Bash tool: ping -n 5 127.0.0.1 After it fini…
+< ToolCall Bash (ping -n 5 127.0.0.1)
+    the response started
+< Note rate_limit_event
+? the permission tool is asked about Bash
+    now: working, mode manual mode on, 0 waiting, asks "Permission: Bash"
+! answered: allow
+    now: working, mode manual mode on, 0 waiting
+> message: Reply with exactly: second answer
+    a block for it
+    now: working, mode manual mode on, 1 waiting
+< Note task_started
+< Note task_notification
+< ToolResult
+< Message: Reply with exactly: second answer
+    now: working, mode manual mode on, 0 waiting
+< Note thinking_tokens
+< Note thinking_tokens
+< Thinking
+< Text: second answer
+< Ended, well, turns 2, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Run this command with the Bash tool: ping -n 5 127.0.0.1
+[UserMessage] After it finishes, reply with exactly: first done
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Tool] tool: Bash (ping -n 5 127.0.0.1)
+[Question] Question: Permission: Bash
+[InputMarker h1] # Input 2
+[UserMessage] Reply with exactly: second answer
+[UserMessage] 
+[OutputMarker h1] # Output 2 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: second answer

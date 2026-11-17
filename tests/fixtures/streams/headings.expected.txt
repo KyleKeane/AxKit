@@ -1,0 +1,34 @@
+> message: Write a short answer about the colour blue in Markdown: a level-two he…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Write a short answer about the colour blue in Markdown: a level-two he…
+< Text: ## Why Blue Feels Calm  Blue is the color most people name as their fa…
+    the response started
+< Note rate_limit_event
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Write a short answer about the colour blue in Markdown: a level-two heading, two sentences with one word in bold, a list of three items, a second level-two heading, and one line of code in a fenced block. Use no tool.
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[ClaudeReply h3] claude: Why Blue Feels Calm
+[Plain] 
+[Plain] Blue is the color most people name as their favorite, and it often signals **trust** and stability. It sits at the cool end of the spectrum, which is why it is linked to calm and focus.
+[Plain] 
+[Plain h3] ## Common Associations
+[Plain] 
+[Plain] - Sky and sea
+[Plain] - Trust and reliability
+[Plain] - Calm and focus
+[Plain] 
+[Plain] ```
+[Plain] color: blue;
+[Plain] ```

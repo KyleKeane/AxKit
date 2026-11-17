@@ -205,7 +205,7 @@ internal static class StreamProbe
         new("replay", "each message written back as an acknowledgement", [ClaudeCodeStream.ReplayOption], string.Empty,
             [Say("Reply with exactly: ok"), Close(Ended)],
             o => Unless(o.Says("ok"), "the reply should arrive"),
-            o => [$"a line of the user's came back before the reply: {(InOrder(o, StreamKind.Note, StreamKind.Text) && o.Noted("user text") ? "yes" : "no")}, {UserTextMs(o)} ms after the start"]),
+            o => [$"the message came back before the reply: {(InOrder(o, StreamKind.Message, StreamKind.Text) ? "yes" : "no")}, {UserTextMs(o)} ms after the start"]),
 
         new("continue-nothing", "taking up the last session in a folder that has none (reported)", [ClaudeCodeStream.ContinueOption], string.Empty,
             [Say("Reply with exactly: ok"), Close(Ended)],
@@ -396,7 +396,7 @@ internal static class StreamProbe
     private static long StartedMs(Outcome outcome) => outcome.Lines.FirstOrDefault(entry => entry.Line.Has(StreamKind.Started)).Ms;
 
     private static long UserTextMs(Outcome outcome) =>
-        outcome.Lines.FirstOrDefault(entry => entry.Line.Parts.Any(part => part.Kind == StreamKind.Note && part.Text == "user text")).Ms;
+        outcome.Lines.FirstOrDefault(entry => entry.Line.Has(StreamKind.Message)).Ms;
 
     /// <summary>A reply's pieces in numbers: how many, how much text, when the first and the last came, the longest wait between two, and the pace.</summary>
     private static string Pieces(Outcome outcome)
@@ -988,7 +988,7 @@ internal static class StreamProbe
 
         return mode switch
         {
-            "deny" => ClaudeCodeStream.DenyAnswer("The user said no."),
+            "deny" => ClaudeCodeStream.DenyAnswer(ClaudeCodeStream.RefusedWords),
             // A yes for the rest of the session: a rule of the session's alone, written to no settings file.
             "always" => ClaudeCodeStream.AlwaysAnswer(input, tool),
             _ => ClaudeCodeStream.AllowAnswer(input),

@@ -3,8 +3,9 @@
 A specification, written 2026-11-17 for the maintainer's decision of that day (`stream.md`, section 7 (a); `docs/axKit/events.md`,
 section 7, step 3): Claude Code's non-interactive stream becomes a second way for axClaude's window to learn what
 Claude does, off at first, with the screen as the default and the way back. Requirements are numbered SM-n.m. Stage 1
-of section 11, the seam, is built and changes no behaviour (section 13); nothing of the stream is built. The stages
-after it wait for the decisions of section 12, where each says so.
+of section 11, the seam, is built and changes no behaviour, and of stage 2 the stream's reader and model are built
+from recordings of the real stream, used by no window yet (section 13). The stages after it wait for the decisions
+of section 12, where each says so.
 
 It rests on three things made the same day: the measurements (`stream.md`, twenty cases, all passing), the door
 (`events.md`, section 10), and an inventory of the window, member by member, kept beside the lists until the
@@ -303,6 +304,23 @@ file holds and what the recordings showed). What they showed that the model must
   counted on the turn's end line. A question of Claude's is a call of its own tool, so its line is no tool line.
 - A failure of the service ends the process.
 
-Still to build of stage 2: what the reader gives a model (a message come back with its text, a call's id and what
-it is about, a result's failure, the list of work in the background), the model itself replayed over the fixtures,
-and the host.
+**Stage 2, the reader and the model (2026-11-17).** `ClaudeCodeStream.Read` gives what a model needs: a message
+come back with its text, a slash command's print come back, a call's id and what it is about, a failed result's
+first line, the list of work in the background, an end line's count of turns, a mode in the screen's words.
+`StreamModel` is the second model on `ClaudeModel`: it takes each line, each message the window sends and each
+question the relay passes on, and keeps the conversation with the screen's labels and markers. `StreamModelTests`
+replays all eighteen recordings through both against a file beside each fixture, which holds what was read, what
+the model raised, how its facts changed and the conversation as it stands; and it says each rule in a test of its
+own. No window uses the model. Decided here, each open to the maintainer's ear when the window shows them:
+
+- Of a tool's result nothing is shown when the call went well. A call that failed, or that the user refused or
+  interrupted, has its line turned into `tool error:`, as the screen redraws it, with the first line of what came
+  back under it; the words Claude Code and the relay write for the model alone are left out.
+- A reply is kept as it was written, line by line; a line written as a heading is a heading, one level under the
+  exchange markers'. Making the rest read as the screen's rows do (SM-4.5, point 6 of section 12) is stage 7.
+- A turn Claude Code began by itself gets no line of its own in the conversation: it is told (`TurnSelfStarted`),
+  for the window's "Claude goes on by itself".
+- The words said for a compaction are "Compacting the conversation" and "Conversation compacted", with a line of
+  the app's at the boundary; for `/clear`, the screen model's own line and words (point 5 of section 12).
+
+Still to build of stage 2: the host, the process over its pipes.

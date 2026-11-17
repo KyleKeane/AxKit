@@ -1,0 +1,46 @@
+> message: Use the Bash tool with run_in_background set to true to run the comman…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Use the Bash tool with run_in_background set to true to run the comman…
+< ToolCall Bash (ping -n 6 127.0.0.1)
+    the response started
+? the permission tool is asked about Bash
+    now: working, mode manual mode on, 0 waiting, asks "Permission: Bash"
+! answered: allow
+    now: working, mode manual mode on, 0 waiting
+< Note rate_limit_event
+< Note background_tasks_changed [local_bash: Run ping in background without waiting]
+    now: working, mode manual mode on, 0 waiting, in the background 1 shell
+< Note task_started
+< ToolResult
+< Text: started
+< Ended, well, turns 2, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting, in the background 1 shell
+< Note task_updated
+< Note task_notification
+< Note background_tasks_changed []
+    now: idle, mode manual mode on, 0 waiting
+< Started, mode default
+    a turn Claude Code started by itself
+    now: working, mode manual mode on, 0 waiting
+< Text: The background ping finished with exit code 0.
+    the response started
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Use the Bash tool with run_in_background set to true to run the command: ping -n 6 127.0.0.1. Do not wait for it. Then reply with exactly: started
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Tool] tool: Bash (ping -n 6 127.0.0.1)
+[Question] Question: Permission: Bash
+[ClaudeReply] claude: started
+[ClaudeReply] claude: The background ping finished with exit code 0.

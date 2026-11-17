@@ -1,0 +1,46 @@
+> message: Use the Agent tool to start a general-purpose subagent whose whole tas…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default
+    now: working, mode manual mode on, 0 waiting
+< Message: Use the Agent tool to start a general-purpose subagent whose whole tas…
+< ToolCall Agent (Reply with exact phrase)
+    the response started
+< Note background_tasks_changed [local_agent: Reply with exact phrase]
+    now: working, mode manual mode on, 0 waiting, in the background 1 agent (general-purpose: Reply with exact phrase)
+< Note task_started
+< ToolResult
+< Note rate_limit_event
+< Text: handed over
+< Ended, well, turns 2, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting, in the background 1 agent (general-purpose: Reply with exact phrase)
+< Thinking (a subagent's)
+< Text: from the worker (a subagent's)
+< Note task_updated
+< Note task_notification
+< Note background_tasks_changed []
+    now: idle, mode manual mode on, 0 waiting
+< Started, mode default
+    a turn Claude Code started by itself
+    now: working, mode manual mode on, 0 waiting
+< Note thinking_tokens
+< Note thinking_tokens
+< Thinking
+    the response started
+< Text: handed over
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Use the Agent tool to start a general-purpose subagent whose whole task is to reply with exactly: from the worker. Then reply with exactly: handed over
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Tool] tool: Agent (Reply with exact phrase)
+[ClaudeReply] claude: handed over
+[ClaudeReply] claude: handed over
