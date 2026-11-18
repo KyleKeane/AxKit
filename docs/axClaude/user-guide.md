@@ -171,6 +171,20 @@ axClaude learns what Claude Code is doing from what Claude Code draws on its scr
 
 With both switches off axClaude works from the screen and the marks alone. Help, Diagnostics, Copy diagnostics holds the same numbers in more detail, and never a word of the conversation.
 
+### Claude Code without its screen: the stream (being built)
+
+axClaude can run Claude Code a second way. The first way, which is the default and stays, is Claude Code in a hidden console in screen reader mode, read off its screen. The second is Claude Code as one process that writes what happens line by line, with no screen at all. It is being built, it is off, and you do not need it. It is here so that it can be tried.
+
+- **Turn it on:** Options, Developer, "Feed the next window from Claude Code's stream". You hear "Claude Code's stream on, from the next axClaude window. This window keeps the screen". A window keeps the way it was started with; the next axClaude window you open uses the stream. The same item turns it off again.
+- **The folder's question.** Claude Code's own window asks before it works in a folder it has not seen. Without its screen it does not ask, so axClaude asks for it before it starts Claude Code: "Start Claude Code in this folder?" Enter and Escape are no. To say yes, press Tab to "Start Claude Code" and then Enter. The yes holds for that folder while the window is open.
+- **The conversation** reads as always: your message, the reply, the tool calls, the same keys. "Ready", "Sent", "Queued" and "Done" are said as always. A reply is shown as Claude wrote it, so you may hear Markdown marks such as stars; making that plain is still to come.
+- **When Claude asks to use a tool** (a command, a file to write), the question comes up in the message field's place, as Claude's questions do: "Claude asks to use Bash: " and the command, then "Asked by Claude, an AI: read the explanation before you allow it". The list starts on "No". The other answers are "Yes, once", "Yes, and do not ask again for" that tool "in this session", and "Explain what Claude asks to do", which opens everything Claude asks for as a text, answers nothing and comes back to the list. Escape is no. Allowing a tool call is your own act: read the explanation first.
+- **Claude's own questions** come one after another, each with its answers and "Other" for your own words. Escape is no to all of them; in the field for your own words, Escape goes back to the answers.
+- **Shift+Escape** interrupts the turn, and you hear "Interrupted". While a question waits, it answers no to the question, and you hear "Cancelled".
+- **Ctrl+Shift+M** goes to Claude Code's next permission mode, and you hear the mode.
+- **What is not there.** Claude Code's own screens (`/config`, `/status`, `/permissions`, the pickers of `/model` and `/effort`, `/login`) need its screen. Send queued messages now, the Send key items and Ctrl+O say "Not with the stream source". The conversation from before is not shown when Claude Code takes a conversation up again, though Claude remembers it. The copy from the Microsoft Store cannot start Claude Code this way yet.
+- **The way back.** If Claude Code does not start this way, or ends at once, a notice says why and offers "Open with the screen": axClaude starts again on the same folder the usual way, and this window closes. Options, Developer, "Say the event sources" says "Source: the stream" in such a window.
+
 ## Updates
 
 New versions are published on GitHub. When axClaude starts, it asks GitHub once whether there is a newer one; Options, General, "Check for updates at start" turns that off. If there is one, the update notice opens by itself: Enter updates, Escape keeps the version you have, and a "System:" line in the conversation records it.

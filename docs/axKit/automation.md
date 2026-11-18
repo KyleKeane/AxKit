@@ -420,6 +420,27 @@ when the hook says `async`. It needs no Claude Code, no network and no model, an
   `stand-in: ...`, drawn on the window's screen.
 - The batch stand-ins of the earlier scripts (22, 27 and the others) stay as they are: they draw no marks and send no
   events, so they are the test of the window that has only the screen.
+- **The stand-in of the stream** (2026-11-17, `docs/axClaude/stream-mode.md` SM-10.2; `tools/AxAutomate/StreamStandIn.cs`,
+  whose header is its manual): for a window the stream feeds, the stand-in is a process of lines, as Claude Code is
+  with its stream options. A script's `claude.cmd` is `@"%AXKIT_STANDIN%" standin --stream <case> %*`, and the window
+  is started with `--source stream`. It writes no scenario: `<case>` names a recording of the real stream under
+  `tests/fixtures/streams` of the repository above the runner (a path to a `.jsonl` file is taken as it is), so a
+  script follows what Claude Code 2.1.327 really wrote. The lines Claude Code wrote go to standard output in their
+  order, 150 ms apart at most. Where the recording has something the host wrote (a message, a request, the end of
+  the input), the stand-in waits until the window has written that kind of thing, so the window's own writing
+  moves the play on: the script types a message, and the turn follows. The window's own text is put where Claude
+  Code's line sends the message back, and the name the window gave a request where the recording answers it. A
+  request the recording does not have, the first request of every start among them, is answered as Claude Code
+  answers it. Where the recording's Claude Code asked its permission tool, the stand-in starts the one server of
+  the `--mcp-config` file the window named, which is `AxKit.exe ask` of the run's own build, and asks it, as Claude
+  Code does; so the question reaches the window's own pipe, and the script answers it in the control area. The
+  lines that follow in the recording are those of the recorded answer, so a script answers as the recording did
+  (`tool` was allowed, `denied` refused). A recording that ends with a code that is not 0 ends the stand-in there,
+  as Claude Code ended. `stream-standin.log` in the working folder says what it did, kinds and numbers only, and
+  what the window answered (`run findstr /c:"the window's answer was allow" <folder>\stream-standin.log`). Every
+  such script first answers the folder's question (`expect said Start Claude Code in this folder?`, `wait 1500`,
+  `keys tab`, `keys enter`), and waits 1500 ms before it answers a question the user did not cause, as a notice's
+  keys are held that long. `tests/scripts/axClaude/37` to `43` are the scripts.
 
 ## 3. NVDA in the loop
 

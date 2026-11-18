@@ -399,3 +399,42 @@ the bell, no network).
    wait without sending anything; when the command ends, the working music starts, "Claude goes on by itself" is
    said, and Claude's reply and "Done" follow. Whether the words are right and come at the right moment, and
    whether a turn you sent yourself ever says them.
+
+## 26. Claude Code without its screen: the stream (docs/axClaude/stream-mode.md, 2026-11-17)
+
+Being built and off: Options, Developer, "Feed the next window from Claude Code's stream" turns it on for the next
+window. The seven scripts `37-stream-turn.txt` to `43-stream-interrupt.txt` play recordings of Claude Code's real
+stream through the stand-in of `tools/AxAutomate` and need no Claude Code; with `--nvda` every expected line must be
+spoken by NVDA too. What they cover, to be heard once by ear in a real conversation as well (SM-10.5), with the
+switch on and a new window on a folder of your own:
+
+1. The folder's question (script 40, 41): "Start Claude Code in this folder?" with its text. Enter: nothing starts,
+   F8 says "Claude: stopped", and the conversation says that Claude Code was not started. Ctrl+Shift+R asks again;
+   Tab to "Start Claude Code", Enter: "Ready", and F8 says "Claude: ready" with the mode.
+2. A turn (script 37): a message, "Sent", the reply's words when Speak replies is on, "Done". The conversation has
+   "# Input 1", the message, "# Output 1 Reply from Claude" and "claude:" with the reply; h, i, o, c and t land as
+   with the screen. Whether a reply with Markdown reads well as it is.
+3. A tool call (script 40, 41): "Claude asks to use" with the tool and what it is about, then "Asked by Claude, an
+   AI: read the explanation before you allow it", then "1. No". F8: "Claude: waiting for your answer". Down to
+   "Explain what Claude asks to do", Enter: a text that starts with who asks, that it can be wrong and that axKit
+   checked none of it, then the tool and each part of the call; Enter closes it and the list is still there. "Yes,
+   once": "Sent: 2, Yes, once", and the turn goes on to "Done". "No": "Sent: 1, No", and the call's line reads "tool
+   error:". Whether the question is too long to hear every time, and whether the three answers are the right ones
+   (section 12, point 3).
+4. Claude's own questions (script 42): "Question 1 of 2:" and the question, the answers by number, "Other" last.
+   Other: "Sent: 4, Other. Your words next", a field "You chose Other. Your answer"; Escape goes back to the list;
+   words and Enter: "Sent:" with the words, "Next question". A question with several answers has check boxes:
+   Space ticks, Enter sends.
+5. The interrupt (script 43): Shift+Escape on a waiting question says "Cancelled" and the turn goes on; Shift+Escape
+   while Claude works says "Interrupted", F8 says "Claude: ready", and no "Done" is said. With nothing running:
+   "Nothing to interrupt".
+6. The mode key and what only a screen takes (script 38): Ctrl+Shift+M says the next mode, "accept edits on", and
+   F8 has it. Send queued messages now, the Send key items, Ctrl+O and Choose the model say "Not with the stream
+   source". Enter in the empty message field says "Nothing to send". Whether that one sentence is the right one
+   (section 12, point 4).
+7. The end and the way back (script 39): when Claude Code ends by itself, "Claude stopped"; when that is within
+   seconds of its start, a notice "Claude Code ended right after its start" offers "Open with the screen"; Escape
+   stays. Options, Developer, Say the event sources: "Source: the stream. Claude Code runs." and the numbers.
+8. By ear alone, in a real conversation: that Claude Code's questions come as fast as with the screen; that a long
+   command or a file's whole content can be read in the explanation with the arrow keys; that the status bar and
+   the music follow a turn; and two hours of your own use before the switch leaves the Developer menu.

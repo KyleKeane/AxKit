@@ -195,6 +195,7 @@ every window" or under a heading that names the windows without it; under an app
 - Hide tips while Claude works. Menu: Options, Claude Code settings. Key: none. Mark: act.
 - No reply from Claude after my ! commands. Menu: Options, Claude Code settings. Key: none. Mark: act.
 - Events from Claude Code's hooks. Menu: Options, Developer. Key: none. Mark: act.
+- Feed the next window from Claude Code's stream. Menu: Options, Developer. Key: none. Mark: act.
 - Ground the conversation in Claude Code's session file. Menu: Options, Developer. Key: none. Mark: act.
 - Record raw stream for a bug report. Menu: Options, Developer. Key: none. Mark: act.
 - Say the event sources. Menu: Options, Developer. Key: none. Mark: read.

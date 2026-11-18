@@ -28,6 +28,8 @@ The maker is the whitelist that makes a fixture safe to commit. A field it does 
 
 ## The cases
 
+The window scripts use the same files: the stand-in of the stream (`tools/AxAutomate/StreamStandIn.cs`, `AxAutomate standin --stream <case>`) plays a recording to a window made for the stream, so a change to a file here changes what `tests/scripts/axClaude/37` to `43` meet.
+
 | File | Shows |
 | :-- | :-- |
 | `start` | The request a window sends first, answered before any message with the permission mode and the version; then a turn. |

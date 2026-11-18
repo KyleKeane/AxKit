@@ -1,3 +1,4 @@
+using AxClaude.Core;
 using AxClaude.Core.Pty;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
@@ -169,6 +170,7 @@ internal sealed partial class MainForm
             new ToolStripSeparator(),
             Toggle("Events from Claude Code's &hooks", _settings.ClaudeHooks, SetClaudeHooks, CommandMark.Act), // Changes what Claude Code is started with: on, it starts "AxKit.exe hook" for the session's events.
             Toggle("&Ground the conversation in Claude Code's session file", _settings.GroundInSessionFile, SetGroundInSessionFile, CommandMark.Act), // Decides whether a file of Claude Code's, the user's conversation, is read.
+            Toggle("Feed the next window from Claude Code's &stream", AppSettings.IsStream(_settings.ClaudeSource), SetClaudeSource, CommandMark.Act), // Changes how Claude Code is started in the next axClaude window: as one process over pipes, which starts "AxKit.exe ask" for its questions.
             CommandPalette.Marked(new ToolStripMenuItem("Say the &event sources", null, (_, _) => SayEventSources()), CommandMark.Read)));
 
         var help = CreateHelpMenu(HelpText.UserGuide, "Claude Code &resources",

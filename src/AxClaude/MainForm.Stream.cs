@@ -545,6 +545,17 @@ internal sealed partial class MainForm
         Close();
     }
 
+    /// <summary>
+    /// Options, Developer, Feed the next window from Claude Code's stream (SM-9.1): the setting, for the next
+    /// axClaude window. This window keeps the source it was made for (SM-9.2), and the sentence says both, since the
+    /// menu closes on the choice and nothing else shows it.
+    /// </summary>
+    private void SetClaudeSource(bool stream)
+    {
+        _settings.ClaudeSource = stream ? AppSettings.SourceStream : AppSettings.SourceScreen;
+        Announce($"Claude Code's stream {(stream ? "on" : "off")}, from the next axClaude window. This window keeps {(Streams ? "the stream" : "the screen")}", true);
+    }
+
     /// <summary>Say the event sources in a window the stream feeds (SM-9.4): the source first, then its numbers.</summary>
     private string StreamSourceSaid() =>
         $"Source: the stream. Claude Code {(ProcessRunning ? "runs" : "is stopped")}. Lines read: {_streamLines}. Of a kind not known: {_streamUnknown}. Questions asked: {_streamAsked}.";

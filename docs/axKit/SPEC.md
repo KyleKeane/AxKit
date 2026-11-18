@@ -396,10 +396,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   the spelling is what a screen reader says in a folder listing. A settings or log file an earlier version left in
   lower case is renamed to the app's case the first time it is read (`FileCase`). The bundle's own folders and the
   program file keep `AxKit`, the repository's spelling.
-  Two files name this program file for Claude Code and so never roam, both in `%LOCALAPPDATA%\AxKit`:
-  `claude-mcp.json`, the AI tools for axHelp's conversation (docs/axKit/mcp.md MC-6.9), and `claude-hooks.json`
+  Three files name this program file for Claude Code and so never roam, all in `%LOCALAPPDATA%\AxKit`:
+  `claude-mcp.json`, the AI tools for axHelp's conversation (docs/axKit/mcp.md MC-6.9), `claude-hooks.json`
   (2026-11-15), the hooks axClaude registers for each start of Claude Code (docs/axClaude/events-and-grounding.md
-  EG-2.2); each is written before a start when it is missing or names another program file.
+  EG-2.2), and `claude-ask.json` (2026-11-17), which names `AxKit.exe ask` as the program Claude Code asks its
+  questions of when axClaude runs it over its stream (docs/axClaude/stream-mode.md SM-7.3; it holds nothing of a
+  window's pipe); each is written before a start when it is missing or names another program file.
 - AX-5.2 On its first start under axKit, axClaude copies `%APPDATA%\AxClaude\settings.json` to `axClaude.json` when the
   new file does not exist; the old file is left alone.
 - AX-5.3 The load-and-save pattern of a settings file (JSON, a missing or unreadable file falls back to the defaults
@@ -1288,12 +1290,16 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   start, and ends. A hook returns nothing and so decides nothing Claude Code does. axKit still listens on no port,
   also not on this computer (docs/axKit/mcp.md section 1).
   axClaude also reads the session file Claude Code keeps for the conversation, in memory only (EG-3, EG-10.3).
-  Being built since 2026-11-17 and started by no window yet (docs/axClaude/stream-mode.md): Claude Code as one
-  process over pipes in place of the pseudo console, with one more verb, `AxKit.exe ask`, which that Claude Code
-  starts as its permission tool; it passes each question to the window over a named pipe of the same kind as the
-  hooks' and the user's answer back, and answers no where the window cannot be asked. Again a program start and a
-  pipe on the computer, no network contact of axKit's own. The four documents named above say it in the commit
-  that lets a window use it.
+  Since 2026-11-17 axClaude can also run Claude Code a second way, while the user has the setting `claudeSource` set
+  to `stream` (the screen at first; docs/axClaude/stream-mode.md): as one process over pipes in place of the pseudo
+  console, with no window of its own, in which Claude Code talks to Anthropic exactly as it does in the pseudo
+  console. One more verb goes with it, `AxKit.exe ask`, which that Claude Code starts as its permission tool, named
+  for that one start with `--mcp-config` and axKit's own file and never in a settings file of the user's or a
+  project's: it passes each question of Claude Code's (a tool call that needs the user's word, a question of
+  Claude's own) to the window over a named pipe of the window's own, for this Windows account alone, with a secret
+  new for each start, and passes the user's answer back; where the window cannot be asked its answer is no. Again
+  a program start and a pipe on the computer, no network contact of axKit's own. The four documents named above
+  say it.
 
 - AX-11.12 **What an AI wrote or asks for says so (2026-11-13, the user's decision).** Wherever a window shows text an
   AI wrote for the user to act on, or lets something an AI asked for happen, it says in plain words who wrote it, that
@@ -1306,7 +1312,13 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   a command Claude offers (`docs/axKit/mcp.md` MC-9: the question's name and "Read this first" in the explanation);
   an AI tool's run of a window's command (MC-7.3: asked through the same list as an offered command, named "Asked by
   Claude, an AI: read the explanation before you allow it", its explanation starting with "Read this first"); AI help's answers ("Claude says" ends with who wrote it and that it can be wrong; `docs/axKit/ai-help.md`
-  AH-3.1); the pairing of an AI tool (AX-11.4's reminder and check box). axClaude's conversation itself is Claude
+  AH-3.1); the pairing of an AI tool (AX-11.4's reminder and check box); a tool call Claude asks leave for in an
+  axClaude window fed by Claude Code's stream (`docs/axClaude/stream-mode.md` SM-7.4, SM-7.6, 2026-11-17: the question
+  names who asks and for what, "Asked by Claude, an AI: read the explanation before you allow it" is its text, heard
+  every time; the list starts on No; and its explanation, everything Claude asks to do, begins with
+  `AiCaution.ToolCall`: who asks, that it can be wrong, that axKit checked none of it, to read all of it and not to
+  allow what is not understood, and that allowing it is the user's own act). With the screen, Claude Code draws
+  that question itself, and the window shows it as Claude Code wrote it. axClaude's conversation itself is Claude
   Code's own output, shown as it comes, under the access layer's consent (AX-11.4). These are reminders in plain
   words, as the consent notices are (AX-11.10), not legal advice. A new feature of this kind brings its caution in
   the same commit, in these terms, and a line here.
@@ -1440,7 +1452,10 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   (axClaude's hooks, AX-5.1), are new files under AppData and so private to the package, while Claude Code runs
   outside it and may not find them at the path it is given. Until that is settled, the Store's copy passes no hooks
   to Claude Code (docs/axClaude/events-and-grounding.md EG-2.11), and axClaude works there from the screen, the
-  marks and the session file.
+  marks and the session file. For the same reason the Store's copy does not start Claude Code over its stream
+  (docs/axClaude/stream-mode.md, 2026-11-17): the file that names `AxKit.exe ask` is a third such file,
+  `claude-ask.json`, and without the relay nothing could be asked. A window made for the stream says so there and
+  offers the same folder with the screen.
 - AX-13.6 **The listing and the release.** The listing (name axKit, category Developer tools, free, every market,
   discoverable; its texts in `docs/axKit/store-listing.md`) begins with the programs the access layers need (Store
   policy 10.2.4), discloses that axClaude shows the output of a live generative AI (11.16; the F4 report is the means

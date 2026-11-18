@@ -94,6 +94,8 @@ public sealed partial class CommandMarkTests
         // The two sources of the events (docs/axClaude/events-and-grounding.md EG-9, pinned 2026-11-17).
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "_settings.ClaudeHooks, SetClaudeHooks, CommandMark.Act)", "changes what Claude Code is started with"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "_settings.GroundInSessionFile, SetGroundInSessionFile, CommandMark.Act)", "decides whether the user's conversation file is read"),
+        // The source of the next window (docs/axClaude/stream-mode.md SM-9.1, pinned 2026-11-17).
+        (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "AppSettings.IsStream(_settings.ClaudeSource), SetClaudeSource, CommandMark.Act)", "changes how Claude Code is started, and what it starts for its questions"),
         // The items given their marks on 2026-11-13 (R-11) whose act must never be lost.
         // axClaude FR-14: Claude Code's own settings, written into its file or sent as a command.
         (Path.Combine("src", "AxClaude", "MainForm.ClaudeCodeSettings.cs"), "CommandMark.Act); // Writes Claude Code's user settings file", "writes Claude Code's user settings file"),

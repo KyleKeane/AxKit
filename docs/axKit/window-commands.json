@@ -264,6 +264,7 @@
         {"label": "Hide tips while Claude works", "menu": "Options, Claude Code settings", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "No reply from Claude after my ! commands", "menu": "Options, Claude Code settings", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Events from Claude Code's hooks", "menu": "Options, Developer", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
+        {"label": "Feed the next window from Claude Code's stream", "menu": "Options, Developer", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Ground the conversation in Claude Code's session file", "menu": "Options, Developer", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Open settings file", "menu": "Options, Developer", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Record raw stream for a bug report", "menu": "Options, Developer", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},

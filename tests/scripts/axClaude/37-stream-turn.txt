@@ -36,3 +36,10 @@ expect text claude: ok
 # Check: The window says which source feeds it
 menu Say the event sources
 expect said Source: the stream. Claude Code runs.
+
+# Check: The source of the next window is a switch of the Developer menu
+# The setting is the screen in this run, and this window was started for the stream: the window keeps its source.
+menu Feed the next window from Claude Code's stream
+expect said Claude Code's stream on, from the next axClaude window. This window keeps the stream
+menu Feed the next window from Claude Code's stream
+expect said Claude Code's stream off, from the next axClaude window. This window keeps the stream

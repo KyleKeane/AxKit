@@ -98,6 +98,17 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   your profile), in memory only, to check and order what it shows. This sends nothing anywhere either, and nothing
   of that file enters a log, a report or the diagnostics. Options, Developer, Ground the conversation in Claude
   Code's session file turns it off.
+  A second way to run Claude Code is being built and is off unless you turn it on (Options, Developer, Feed the next
+  window from Claude Code's stream; `docs/axClaude/stream-mode.md`): Claude Code as one process without
+  a console, which takes your messages and writes what happens, line by line, over pipes on your computer. Claude
+  Code talks to Anthropic exactly as it does the other way; axKit adds no network contact. Run this way, Claude Code
+  does not draw its own questions, so it starts `AxKit.exe ask`, a process without a window, and asks it before a
+  tool call that needs your word and for Claude's own questions: that process passes each question to the axClaude
+  window, over a pipe on your computer that only your Windows account may open, and passes your answer back. Where
+  the window cannot be asked, its answer is no. It is named for that one start of Claude Code with a file of
+  axKit's own, never in a settings file of yours or of a project. Nothing of a question or an answer enters a log,
+  a report or the diagnostics. Before Claude Code is started this way in a folder, axClaude asks whether you trust
+  the folder, since Claude Code itself does not ask then.
 - **axGIT, access layer for Git** runs git, your own installed program, one process per command, with its prompts
   turned off (`GIT_TERMINAL_PROMPT=0`). Three commands reach a remote (GitHub, or wherever your repository's remotes
   point): fetch, pull and push, each only when you choose it and, the first time axKit reaches that server, after your
@@ -188,6 +199,9 @@ turning the access off ends access at the next call and turns Let AI tools run c
 - **The hooks' file**: `%LOCALAPPDATA%\AxKit\claude-hooks.json`, which axClaude writes before it starts Claude Code.
   It names this axKit as the program Claude Code starts for an event of that session (axClaude, above) and holds
   nothing of yours but that program's path.
+- **The questions' file**: `%LOCALAPPDATA%\AxKit\claude-ask.json`, which axClaude writes before it starts Claude Code
+  over its stream (axClaude, above). It names this axKit as the program Claude Code asks its questions of and holds
+  nothing of yours but that program's path; nothing of the window's pipe is in it.
 - **axClip** keeps its history in memory; on disk only when you choose Keep history, and then encrypted for your
   Windows account.
 - **axPass** never stores your passwords: KeePassXC's own tool reads and writes your database, and the master password
@@ -207,6 +221,11 @@ may ask Windows for them, and Windows asks you.
 One start of axKit is made by Claude Code, at axClaude's request: for an event of an axClaude session, Claude Code
 starts `AxKit.exe hook`, a process without a window that passes the event to the axClaude window over the pipe named
 above and ends, after two seconds at the latest. It starts nothing itself and prints nothing.
+
+A second start of axKit is made by Claude Code, at axClaude's request, when you have Claude Code run over its stream
+(axClaude, above): Claude Code starts `AxKit.exe ask`, a process without a window that lives as long as that Claude
+Code does, passes each of its questions to the axClaude window over the pipe named above, and prints your answer
+for Claude Code to read. It starts nothing itself and decides nothing: without an answer of yours, its answer is no.
 
 Windows PowerShell also runs axPreview's own small script when a picture opens there, which asks Windows' text reader
 (`Windows.Media.Ocr`, part of Windows) for the text in the picture: the reading happens on this computer and nothing

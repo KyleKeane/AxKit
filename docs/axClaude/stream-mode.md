@@ -2,11 +2,14 @@
 
 A specification, written 2026-11-17 for the maintainer's decision of that day (`stream.md`, section 7 (a); `docs/axKit/events.md`,
 section 7, step 3): Claude Code's non-interactive stream becomes a second way for axClaude's window to learn what
-Claude does, off at first, with the screen as the default and the way back. Requirements are numbered SM-n.m. Stage 1
-of section 11, the seam, is built and changes no behaviour, and stages 2 and 3 are built: the stream's reader, its
-model and its host, from recordings of the real stream, and the relay of Claude's questions; no window uses them
-yet (section 13). The stages after it wait for the decisions
-of section 12, where each says so.
+Claude does, off at first, with the screen as the default and the way back. Requirements are numbered SM-n.m. Stages
+1 to 5 of section 11 are built (section 13 says what each came to): the seam, which changes no behaviour; the
+stream's reader, model and host, from recordings of the real stream; the relay of Claude's questions; the window
+fed by the stream, with its second ways to send; and the folder's trust and the questions in the control area. A
+window made for the stream can hold a conversation and answer what Claude asks. Not built yet: the older
+conversation shown when a session is taken up, the hand-over between the two sources (stage 6), a reply's text made
+plain (stage 7), and the live scripts (stage 8). The points of section 12 are taken as proposed until the
+maintainer has heard the mode.
 
 It rests on three things made the same day: the measurements (`stream.md`, twenty cases, all passing), the door
 (`events.md`, section 10), and an inventory of the window, member by member, kept beside the lists until the
@@ -202,6 +205,8 @@ mode each is simply absent, and the window says so where the user would look for
 ## 9. The switch and the way back
 
 - SM-9.1 **One setting**, `claudeSource`: `screen` (the default) or `stream`, and one option of the command line
+  (as built: the check item Options, Developer, Feed the next window from Claude Code's stream, which says
+  "Claude Code's stream on, from the next axClaude window. This window keeps the screen"; `--source screen|stream`)
   that names the source for one start, for the window scripts and for the way back. At first in Options, Developer,
   beside the event sources; it moves to Options when the maintainer has used the stream for a while.
 - SM-9.2 **One window, one source.** A window is made for its source and keeps it for as long as it is open: the
@@ -212,7 +217,11 @@ mode each is simply absent, and the window says so where the user would look for
 - SM-9.3 **The way back is the switch.** A stream source that fails to start, or whose process ends in the first
   seconds, says so in a notice that offers to open the folder again with the screen source: axClaude started again
   on the same folder for the screen, and this window closed.
-- SM-9.4 **Say the event sources** names the source in force first: "Source: the screen" or "Source: the stream".
+- SM-9.4 **Say the event sources** names the source in force. As built: in a window the stream feeds it says
+  "Source: the stream. Claude Code runs. Lines read: 12. Of a kind not known: 1. Questions asked: 2." (or "is
+  stopped"); in a window the screen feeds it says what it always said, which names the screen's own sources, so
+  that no sentence of the screen source changed. Copy diagnostics names the source on a line of its own in both:
+  "Source: the screen" or "Source: the stream", the latter with the stream's numbers under it.
 - SM-9.5 **axHelp's conversation** stays on the screen source until the stream has been used for a while.
 
 ## 10. Checks
@@ -290,6 +299,10 @@ a commit on the branch with its tests.
 8. **The documents.** The app's specification and user guide (the option under Developer), the privacy statement,
    both READMEs and the security page (the stream and the questions' pipe, in these terms), the outside-calls
    page, the NVDA plan's section.
+
+Built 2026-11-17: steps 1 to 7, with step 5 gone straight to stage 5's questions in the control area, so that no
+build ever answered every question with no. The documents of step 8 are written with the release that first holds
+the mode. Section 13 says what each came to.
 
 ## 12. For the maintainer to decide
 
@@ -393,3 +406,73 @@ Code: a yes (the file made), a no (not made, one refusal counted), and no window
 seconds the relay waits for the pipe). That showed what the design rested on and no documentation says: the relay
 Claude Code starts inherits Claude Code's environment, so the secret needs no file. The window's end of the pipe is
 stage 4's; no window starts Claude Code this way yet.
+
+**Stage 4, the window (2026-11-17).** A window made for the stream holds a conversation. The screen source is as it
+was: its stand-in scripts pass unchanged, and nothing of its code runs differently.
+
+- One window, one source (SM-9.2): `MainForm` makes the stream's model or the screen's by `--source` and the setting
+  `claudeSource`. Of two fields beside `_model`, one is that object and the other null: `_screenModel` for the
+  machinery beside the screen, `_streamModel` for the stream source. The machinery is not wired in a window the
+  stream feeds (`FlowWired`): no marks, no hooks, no reader of the session file, and a core that is handed nothing,
+  so that Done is said by the bell and the settle, as with `eventCore` set to `shadow`. The window's own code asks
+  `Streams` where the two sources part. `SourceSeamTests` holds both fields to their files.
+- The start (`MainForm.Stream.cs`): the line is `ClaudeCodeStream.StartArguments`: the stream's options, each
+  message sent back, the relay's file and tool, the window's model, the user's own arguments last. No permission
+  mode is named and the session is kept in Claude Code's store. Each line is read down on the reader's thread and
+  handed to the model in order, the end last. The first request is written at once; its answer names the mode, and
+  the window says Ready by its existing rule. In the Store's copy the stream is not started: it is not known that
+  Claude Code can read the relay's file there.
+- The end: stopping Claude closes its input, and the process is ended two seconds later when it has not ended
+  (`StreamHost.End`); a restart or a confirmed close ends it at once. When Claude Code ends by itself, the last
+  lines it wrote as errors are shown as lines of the conversation, and never logged. An end within five seconds of
+  the start, and a start that fails, show a notice that offers the same folder with the screen (SM-9.3): Enter
+  starts axClaude again there with `--source screen` and closes this window, Escape stays.
+- What the window sends (section 5): a message is one line. Interrupt, while a turn runs, is the request that ends
+  it, and the model then adds the line "System: Interrupted" and says "Interrupted", since no Done follows; with no
+  turn running it says "Nothing to interrupt". The mode key asks for the next mode of a round: the three modes
+  every run has, in the interactive program's order, then each other mode this run was itself in, so that the key
+  comes back to a mode the user's own settings put the run in and never reaches one the run was not in (SM-5.4).
+  A bare Enter says "Nothing to send". What only a screen takes says "Not with the stream source": Send queued
+  messages now, the Send key items, Ctrl+O, Choose the model and Choose the effort (their pickers are screens,
+  SM-5.5). A command an AI offers is refused at the door with words for the AI, so that nothing is offered that
+  could not be sent (SM-5.6).
+- The two switches of the screen's event sources stay in the menu and say, in a window the stream feeds, that the
+  setting is for windows the screen feeds (SM-9.4 has what Say the event sources says).
+- axHelp's conversation names `--source screen` (SM-9.5).
+- The stand-in of the stream (SM-10.2): `AxAutomate standin --stream <case>` plays a recorded fixture of
+  `tests/fixtures/streams` line by line and is moved on by what the window writes: it waits where the recording
+  has a message or a request of the host's, puts the window's own text and request names where the recording has
+  the probe's, and answers a request the recording does not have as Claude Code does. Where the recording's Claude
+  Code asked its permission tool, the stand-in starts the relay from the file the window named and asks it, as
+  Claude Code does. Seven window scripts use it (`tests/scripts/axClaude/37` to `43`).
+- Left open by this stage, each on the priorities list: `--ai-tools` gives Claude Code nothing over the stream yet;
+  how long Claude Code waits for its permission tool is not measured; a version of Claude Code that does not answer
+  the first request is ready only after its first turn.
+
+**Stage 5, the folder's trust and the questions (2026-11-17).**
+
+- The folder's trust (SM-7.1): a notice before Claude Code's stream is first started in a folder in a window:
+  "Start Claude Code in this folder?", with why the window asks and the folder. Enter and Escape are no ("Do not
+  start"); the yes is its own button. A no leaves a line that says so, and the next start asks again. As built, a
+  yes holds for the folder while the window is open and is not written anywhere: remembering it under the
+  settings' seal (point 2 of section 12) is left for the maintainer's word, since it trades a key press for a
+  stored trust.
+- The pipe (SM-7.3): `AskChannel`, the window's end, new for each start of Claude Code, open to this Windows account
+  alone, its name and secret given to Claude Code's environment and written nowhere. One connection is one
+  question; its thread waits for the answer as long as the user takes. Stopping Claude stops the pipe, and a
+  question that waited gets the relay's no. Nothing of a question or an answer is logged.
+- A tool call that needs the user's word (SM-7.4, SM-7.6) is asked in the control area by the window's existing code,
+  as a question of Claude's is. Its title says who asks and for what, "Claude asks to use Bash: ping -n 2
+  127.0.0.1", and its text is the caution, heard every time the question is read: "Asked by Claude, an AI: read the
+  explanation before you allow it". Four answers, the list starting on the first: "No"; "Yes, once"; "Yes, and do
+  not ask again for Bash in this session", a rule of the session's alone; and "Explain what Claude asks to do",
+  which answers nothing: it opens a text, the caution first (`AiCaution.ToolCall`), then the tool and every member
+  of the call's input, and the question stays under it. A file in the project folder is named from there.
+- Claude's own questions (SM-7.5) are asked one after another, "Question 1 of 2: …", each with its choices by number
+  and Other last; a choice's description follows its name after a dash when it says more than the name. Other asks
+  for the user's own words in the window's own field ("You chose Other. Your answer"), and Escape there goes back
+  to the question's list. The answers go back together after the last. Escape on a list is no to the whole.
+- The interrupt on a waiting question is no to it and says "Cancelled"; the turn goes on, and an interrupt after
+  that ends the turn (SM-5.3).
+- What was answered is not yet written into the conversation as Claude Code's screen writes its record of an
+  answered question; the question's line ("Question: …", found with q) is.
