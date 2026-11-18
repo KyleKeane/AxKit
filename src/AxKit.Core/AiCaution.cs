@@ -27,6 +27,16 @@ public static class AiCaution
     /// <summary>In the name of the question an AI tool's run of a window command asks, heard every time the question is read.</summary>
     public static string Asked(string who) => $"Asked by {who}, an AI: read the explanation before you allow it";
 
+    /// <summary>
+    /// The first section of the explanation of a tool call an AI asks leave for (axClaude over Claude Code's stream,
+    /// docs/axClaude/stream-mode.md SM-7.6): the request and everything said about it are the AI's own, nothing of
+    /// it is checked, and allowing it is the user's own act.
+    /// </summary>
+    public static string ToolCall(string who) =>
+        $"{who}, an AI model, asks to do this, and everything below is {who}'s own request. It can be wrong, and axKit has checked none of it. "
+        + "Read all of it, and the conversation that led to it, before you allow it. If you do not understand what it does, do not allow it. "
+        + "Allowing it is your own act, as if you had done it yourself: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
+
     /// <summary>In the question an AI tool's run of a window command asks.</summary>
     public const string Request = "The request comes from an AI tool, which can be wrong: allow it only if you know what the command will do here.";
 }

@@ -1,0 +1,44 @@
+# Workflow: Interrupt Claude over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-5.3 (2026-11-17): the interrupt. On a waiting question it is no to the
+# question, and the turn goes on; in a running turn it is the request that ends the turn and leaves Claude Code running,
+# and the window says Interrupted, since no Done follows. The stand-in plays the recording of a Bash call interrupted
+# after it had started, and of a message after it (tests/fixtures/streams/interrupt.jsonl).
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream interrupt %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Refuse a waiting question with the interrupt key
+type Run the long ping
+keys enter
+expect said Sent
+expect said Claude asks to use Bash: ping -n 20 127.0.0.1
+do Interrupt
+expect said Cancelled
+run findstr /c:"the window's answer was deny" st\stream-standin.log
+
+# Goal: Interrupt the turn that runs
+expect state Claude: working
+do Interrupt
+expect said Interrupted
+expect state Claude: ready
+refuse said Done
+
+# Goal: Go on after the interrupt
+do Message field
+type Still there?
+keys enter
+expect said Sent
+expect said claude: still here
+expect said Done
+do Conversation
+expect text System: Interrupted
+expect text # Input 2
+expect text claude: still here

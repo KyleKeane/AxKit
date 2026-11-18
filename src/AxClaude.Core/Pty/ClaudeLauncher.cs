@@ -69,9 +69,11 @@ public static class ClaudeLauncher
     /// a value of <see cref="HookFrame.Variable"/> this process inherited is always taken out, so that a window started
     /// from inside another axClaude's session never reports to that window, and <paramref name="hookPipe"/>, the
     /// variable's value for this start (<see cref="HookFrame.VariableValue"/>), is put in when given; a hook's process
-    /// inherits it from Claude Code.
+    /// inherits it from Claude Code. The same for the pipe of Claude Code's questions when it runs over its stream
+    /// (<see cref="Streaming.AskRelay.Variable"/>, docs/axClaude/stream-mode.md SM-7.3): an inherited value is always
+    /// taken out, and <paramref name="askPipe"/> is put in when given.
     /// </summary>
-    public static Dictionary<string, string> BuildEnvironment(string? hookPipe = null)
+    public static Dictionary<string, string> BuildEnvironment(string? hookPipe = null, string? askPipe = null)
     {
         var env = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
@@ -93,6 +95,12 @@ public static class ClaudeLauncher
         if (!string.IsNullOrEmpty(hookPipe))
         {
             env[HookFrame.Variable] = hookPipe;
+        }
+
+        env.Remove(Streaming.AskRelay.Variable);
+        if (!string.IsNullOrEmpty(askPipe))
+        {
+            env[Streaming.AskRelay.Variable] = askPipe;
         }
 
         return env;

@@ -247,10 +247,27 @@ public sealed class StreamModel : ClaudeModel
         return true;
     }
 
+    /// <summary>Claude waits for the user's own words, after Other was chosen on one of its questions (<see cref="AskWords"/>): the one thing of a screen's this model also has.</summary>
+    public override bool AwaitsText => TextPrompt is not null;
+
     /// <summary>The relay passed on a question: Claude waits on it until <see cref="Answered"/>.</summary>
     public void Ask(Question question)
     {
         PendingQuestion = question;
+        TextPrompt = null;
+        PromptPending = true;
+        RaiseChanged();
+    }
+
+    /// <summary>
+    /// The user chose Other on a question of Claude's: Claude waits for their own words, asked for with the row
+    /// Claude Code's screen shows for them (<paramref name="prompt"/>), until the next <see cref="Ask"/> or
+    /// <see cref="Answered"/>.
+    /// </summary>
+    public void AskWords(string prompt)
+    {
+        PendingQuestion = null;
+        TextPrompt = prompt;
         PromptPending = true;
         RaiseChanged();
     }
@@ -264,6 +281,7 @@ public sealed class StreamModel : ClaudeModel
         }
 
         PendingQuestion = null;
+        TextPrompt = null;
         PromptPending = false;
         RaiseChanged();
     }
@@ -346,6 +364,7 @@ public sealed class StreamModel : ClaudeModel
         ModeName = string.Empty;
         _modesSeen.Clear();
         PendingQuestion = null;
+        TextPrompt = null;
         PromptPending = false;
         Background = null;
         BackgroundAgents = [];

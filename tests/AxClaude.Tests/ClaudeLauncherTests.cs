@@ -66,6 +66,34 @@ public class ClaudeLauncherTests
     }
 
     [Fact]
+    public void The_child_environment_carries_the_questions_pipe_when_given_and_never_an_inherited_one()
+    {
+        // docs/axClaude/stream-mode.md SM-7.3: the relay Claude Code starts finds the window's pipe in the environment
+        // the window gave. A window started from inside another axClaude's session inherits that window's variable,
+        // and its Claude Code's questions must never go there; a window the screen feeds gives none at all.
+        var variable = AxClaude.Core.Streaming.AskRelay.Variable;
+        var before = Environment.GetEnvironmentVariable(variable);
+        try
+        {
+            Environment.SetEnvironmentVariable(variable, "AxKit-ask-outer;" + new string('0', 64));
+            Assert.False(ClaudeLauncher.BuildEnvironment().ContainsKey(variable));
+            Assert.False(ClaudeLauncher.BuildEnvironment(askPipe: string.Empty).ContainsKey(variable));
+            Assert.False(ClaudeLauncher.BuildEnvironment("AxKit-hook-x;" + new string('1', 64)).ContainsKey(variable));
+
+            var mine = AxClaude.Core.Streaming.AskRelay.VariableValue(AxClaude.Core.Streaming.AskRelay.NewPipeName("S-1-5-21-1"), HookFrame.NewSecret());
+            var env = ClaudeLauncher.BuildEnvironment(askPipe: mine);
+            Assert.Equal(mine, env[variable]);
+            Assert.Single(env.Keys, key => key.Equals(variable, StringComparison.OrdinalIgnoreCase));
+            // The hooks' pipe is not given with it: a start over the stream passes no hooks.
+            Assert.False(env.ContainsKey(HookFrame.Variable));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(variable, before);
+        }
+    }
+
+    [Fact]
     public async Task The_version_is_the_first_line_claude_prints_for_version()
     {
         // %~1: the argument without the quotes every argument of a batch program travels in.

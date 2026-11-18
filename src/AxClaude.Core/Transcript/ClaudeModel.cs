@@ -34,10 +34,10 @@ public abstract class ClaudeModel : LineStore
     /// <summary>The question Claude waits on, with its answers; null while it waits on none that can be shown as one.</summary>
     public abstract Question? PendingQuestion { get; protected set; }
 
-    /// <summary>Claude waits for the user's own words on a row of its screen; never without a screen.</summary>
+    /// <summary>Claude waits for the user's own words: on a row of its screen, or, without a screen, where the model itself asks for them after Other (the stream's questions).</summary>
     public virtual bool AwaitsText => false;
 
-    /// <summary>The row of the screen that asks for the user's own words; null without one.</summary>
+    /// <summary>The row of the screen that asks for the user's own words, or that row's text where a model without a screen asks for them; null while none are awaited.</summary>
     public virtual string? TextPrompt { get; protected set; }
 
     /// <summary>A screen of Claude Code's own that waits for keys named on its hint row; null without one.</summary>

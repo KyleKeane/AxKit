@@ -268,6 +268,14 @@ public static partial class ClaudeCodeTexts
     [GeneratedRegex(@"^Enter text for option \d+ \((.+?)\)[,:]")]
     public static partial Regex TextPrompt();
 
+    /// <summary>
+    /// That row as Claude Code's screen writes it, for a source without a screen that asks for the user's own words
+    /// itself (the stream's questions, docs/axClaude/stream-mode.md SM-7.5): the window then names the answer as it
+    /// does with the screen.
+    /// </summary>
+    public static string TextPromptFor(int option, string answer) =>
+        $"{EnterTextFor} option {option.ToString(System.Globalization.CultureInfo.InvariantCulture)} ({answer}), or Escape for the list:";
+
     /// <summary>On a prompt row that takes more than one answer: "Select with numbers [1-4] (comma- or space-separated for several)".</summary>
     public const string ForSeveral = "for several";
 

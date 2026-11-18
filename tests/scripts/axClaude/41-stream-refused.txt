@@ -1,0 +1,49 @@
+# Workflow: Say no to Claude Code in a folder, and to what Claude asks to do
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-7.1, SM-7.2 and SM-7.4 (2026-11-17): no is where everything starts. Enter on
+# the folder's question starts nothing, and the question comes again with the next start. Enter on what Claude asks to
+# do refuses it: Claude Code is told no, the call's line becomes a tool error, and Claude says what it could not do. The
+# stand-in plays the recording of a Write call that was refused (tests/fixtures/streams/denied.jsonl).
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream denied %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+
+# Check: Enter on the folder's question starts nothing
+expect said Start Claude Code in this folder?
+wait 1500
+keys enter
+expect state Claude: stopped
+do Conversation
+expect text System: Claude Code was not started in this folder. Press Ctrl+Shift+R to be asked again.
+# A message has nowhere to go.
+do Message field
+type Hello
+keys enter
+expect said Claude stopped. Ctrl+Shift+R starts it
+
+# Goal: Be asked again and say yes
+do Force Claude to restart
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Refuse what Claude asks to do
+# The message field still holds Hello, which was not sent.
+keys enter
+expect said Sent
+expect said Claude asks to use Write: C:\work\probe-denied.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No
+expect focus 1. No
+# A question the user did not cause holds its answering keys for a moment.
+wait 1500
+keys enter
+expect said Sent: 1, No
+expect said claude: No, it was not created
+expect said Done
+run findstr /c:"the window's answer was deny" st\stream-standin.log
+do Conversation
+expect text tool error: Write (C:\work\probe-denied.txt)
+expect text Question: Claude asks to use Write: C:\work\probe-denied.txt

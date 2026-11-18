@@ -485,7 +485,7 @@ internal sealed class HookChannel
     {
         using var limit = CancellationTokenSource.CreateLinkedTokenSource(_cancel.Token);
         limit.CancelAfter(ReadLimitMs);
-        var body = HookFrame.Read(new TimedRead(pipe, limit.Token), _secret, out var fault);
+        var body = HookFrame.Read(new TimedPipeRead(pipe, limit.Token, InBufferBytes), _secret, out var fault);
         if (body is null)
         {
             // A wrong secret, a body over the limit, or a connection that broke or took too long (EG-2.7).
@@ -577,65 +577,67 @@ internal sealed class HookChannel
         }
     }
 
-    /// <summary>
-    /// The pipe as <see cref="HookFrame.Read"/> reads it, every read under a token: a client that connects and sends
-    /// nothing, or stops half way, holds the pipe only until the token is cancelled, and the read then ends as a
-    /// broken stream does. What the pipe holds is taken in pieces of the buffer's size and handed on from there:
-    /// the frame's reader asks for its header a byte at a time, and each read of this pipe is a round trip through
-    /// the thread pool, some seventy of them for one event without the buffer. Measured on 2026-11-15 with every
-    /// processor busy: 4 to 5 s for one event a byte at a time, 50 to 70 ms through the buffer; a stop event that
-    /// was dropped at the connection's time limit in a window run of that day, while other builds ran, is put down
-    /// to this. Past a wrong secret nothing of the buffer is looked at.
-    /// </summary>
-    private sealed class TimedRead(PipeStream pipe, CancellationToken token) : Stream
+}
+
+/// <summary>
+/// A pipe as <see cref="HookFrame.Read"/> reads it, every read under a token: a client that connects and sends
+/// nothing, or stops half way, holds the pipe only until the token is cancelled, and the read then ends as a
+/// broken stream does. What the pipe holds is taken in pieces of the buffer's size and handed on from there:
+/// the frame's reader asks for its header a byte at a time, and each read of this pipe is a round trip through
+/// the thread pool, some seventy of them for one event without the buffer. Measured on 2026-11-15 with every
+/// processor busy: 4 to 5 s for one event a byte at a time, 50 to 70 ms through the buffer; a stop event that
+/// was dropped at the connection's time limit in a window run of that day, while other builds ran, is put down
+/// to this. Past a wrong secret nothing of the buffer is looked at. For the hooks' pipe (<see cref="HookChannel"/>)
+/// and, since 2026-11-17, for the pipe of Claude Code's questions (<c>AskChannel</c>, MainForm.Stream.cs).
+/// </summary>
+internal sealed class TimedPipeRead(PipeStream pipe, CancellationToken token, int bufferBytes) : Stream
+{
+    private readonly byte[] _taken = new byte[bufferBytes];
+    private int _next;
+    private int _end;
+
+    public override bool CanRead => true;
+
+    public override bool CanSeek => false;
+
+    public override bool CanWrite => false;
+
+    public override long Length => throw new NotSupportedException();
+
+    public override long Position
     {
-        private readonly byte[] _taken = new byte[InBufferBytes];
-        private int _next;
-        private int _end;
-
-        public override bool CanRead => true;
-
-        public override bool CanSeek => false;
-
-        public override bool CanWrite => false;
-
-        public override long Length => throw new NotSupportedException();
-
-        public override long Position
-        {
-            get => throw new NotSupportedException();
-            set => throw new NotSupportedException();
-        }
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            if (_next == _end)
-            {
-                try
-                {
-                    _end = pipe.ReadAsync(_taken.AsMemory(), token).AsTask().GetAwaiter().GetResult();
-                    _next = 0;
-                }
-                catch (OperationCanceledException)
-                {
-                    throw new IOException("The frame was not sent in time.");
-                }
-            }
-
-            var given = Math.Min(count, _end - _next);
-            Array.Copy(_taken, _next, buffer, offset, given);
-            _next += given;
-            return given;
-        }
-
-        public override void Flush()
-        {
-        }
-
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
-
-        public override void SetLength(long value) => throw new NotSupportedException();
-
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        get => throw new NotSupportedException();
+        set => throw new NotSupportedException();
     }
+
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        if (_next == _end)
+        {
+            try
+            {
+                _end = pipe.ReadAsync(_taken.AsMemory(), token).AsTask().GetAwaiter().GetResult();
+                _next = 0;
+            }
+            catch (OperationCanceledException)
+            {
+                throw new IOException("The frame was not sent in time.");
+            }
+        }
+
+        var given = Math.Min(count, _end - _next);
+        Array.Copy(_taken, _next, buffer, offset, given);
+        _next += given;
+        return given;
+    }
+
+    public override void Flush()
+    {
+    }
+
+    public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+
+    public override void SetLength(long value) => throw new NotSupportedException();
+
+    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 }

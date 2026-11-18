@@ -1,0 +1,69 @@
+# Workflow: Answer what Claude asks to do, over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-7 (2026-11-17): the folder's trust and the questions. Over its stream
+# Claude Code does not ask before it works in a folder, so the window asks, and Enter is no. A tool call that needs the
+# user's word comes through axKit's relay (AxKit.exe ask, which the stand-in starts as Claude Code does, from the file
+# the window named) to the window's own pipe, and is asked in the control area as a question of Claude's is: who asks
+# and for what, the caution with it every time, no where the list starts, and an answer that only explains. The
+# stand-in plays the recording of a Bash call that was allowed (tests/fixtures/streams/tool.jsonl).
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream tool %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+
+# Goal: Say yes to Claude Code in this folder
+expect said Start Claude Code in this folder?
+expect state A folder's own settings can name programs that Claude Code then runs by itself.
+# A notice the user did not open holds its keys for a moment.
+wait 1500
+keys tab
+expect focus Start Claude Code
+keys enter
+expect said Ready
+
+# Goal: Hear what Claude asks to do, with no first
+type Run the ping
+keys enter
+expect said Sent
+expect said Claude asks to use Bash: ping -n 2 127.0.0.1. Asked by Claude, an AI: read the explanation before you allow it. 1. No
+expect state Claude: waiting for your answer
+expect list 2. Yes, once
+expect list 3. Yes, and do not ask again for Bash in this session
+expect focus 1. No
+# A question the user did not cause holds its answering keys for a moment.
+wait 1500
+
+# Goal: Read everything Claude asks to do before answering
+keys end
+expect focus 4. Explain what Claude asks to do
+keys enter
+expect state What Claude asks to do
+expect state Claude, an AI model, asks to do this, and everything below is Claude's own request. It can be wrong, and axKit has checked none of it.
+expect state Tool: Bash
+expect state command: ping -n 2 127.0.0.1
+expect state description: Ping localhost twice
+# The text closes and the question is still there, unanswered.
+keys enter
+expect focus 4. Explain what Claude asks to do
+expect state Claude: waiting for your answer
+
+# Goal: Allow it once
+keys up
+keys up
+expect focus 2. Yes, once
+keys enter
+expect said Sent: 2, Yes, once
+expect said claude: pinged
+expect said Done
+expect state Claude: ready
+# Claude Code was told yes: the stand-in's log holds what the window answered, no word of the question.
+run findstr /c:"the window's answer was allow" st\stream-standin.log
+do Conversation
+expect text Question: Claude asks to use Bash: ping -n 2 127.0.0.1
+expect text tool: Bash (ping -n 2 127.0.0.1)
+expect text claude: pinged
+
+# Check: The window counts the question
+menu Say the event sources
+expect said Questions asked: 1.

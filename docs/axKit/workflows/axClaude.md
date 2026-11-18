@@ -1670,6 +1670,124 @@ You hear: Ready.
 3. Press Escape.
 4. Press Alt+2 (Conversation; Navigation menu).
 
+## Answer what Claude asks to do, over Claude Code's stream
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Say yes to Claude Code in this folder
+
+You hear: Start Claude Code in this folder?
+1. Press Tab.
+2. Press Enter.
+    You hear: Ready.
+
+### Hear what Claude asks to do, with no first
+
+1. Type: Run the ping
+2. Press Enter.
+    You hear: Sent.
+    You hear: Claude asks to use Bash: ping -n 2 127.0.0.1. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
+
+### Read everything Claude asks to do before answering
+
+1. Press End.
+2. Press Enter 2 times.
+
+### Allow it once
+
+1. Press Up 2 times.
+2. Press Enter.
+    You hear: Sent: 2, Yes, once.
+    You hear: claude: pinged.
+    You hear: Done.
+3. Press Alt+2 (Conversation; Navigation menu).
+
+## Say no to Claude Code in a folder, and to what Claude asks to do
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Be asked again and say yes
+
+1. Press Ctrl+Shift+R (Force Claude to restart; Actions menu).
+    You hear: Start Claude Code in this folder?
+2. Press Tab.
+3. Press Enter.
+    You hear: Ready.
+
+### Refuse what Claude asks to do
+
+1. Press Enter.
+    You hear: Sent.
+    You hear: Claude asks to use Write: C:\work\probe-denied.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
+2. Press Enter.
+    You hear: Sent: 1, No.
+    You hear: claude: No, it was not created.
+    You hear: Done.
+3. Press Alt+2 (Conversation; Navigation menu).
+
+## Answer Claude's own questions over Claude Code's stream
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Answer the first question in your own words
+
+1. Type: Ask me two things
+2. Press Enter.
+    You hear: Sent.
+    You hear: Question 1 of 2: What is your favourite colour? 1. Red.
+3. Press End.
+4. Press Enter.
+    You hear: Sent: 4, Other. Your words next.
+    You hear: You chose Other. Your answer.
+5. Press Escape.
+    You hear: Question 1 of 2: What is your favourite colour?
+6. Press End.
+7. Press Enter.
+    You hear: You chose Other. Your answer.
+8. Type: teal
+9. Press Enter.
+    You hear: Sent: teal. Next question.
+
+### Tick several answers of the second question
+
+You hear: Question 2 of 2: Which fruits do you like?
+1. Press Space.
+2. Press Down 2 times.
+3. Press Space.
+4. Press Enter.
+    You hear: Sent: 1, Apple, 3, Cherry.
+    You hear: claude: thanks.
+    You hear: Done.
+5. Press Alt+2 (Conversation; Navigation menu).
+
+## Interrupt Claude over Claude Code's stream
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Refuse a waiting question with the interrupt key
+
+1. Type: Run the long ping
+2. Press Enter.
+    You hear: Sent.
+    You hear: Claude asks to use Bash: ping -n 20 127.0.0.1.
+3. Press Shift+Escape (Interrupt; Actions menu).
+    You hear: Cancelled.
+
+### Interrupt the turn that runs
+
+1. Press Shift+Escape (Interrupt; Actions menu).
+    You hear: Interrupted.
+
+### Go on after the interrupt
+
+1. Press Alt+1 (Message field; Navigation menu).
+2. Type: Still there?
+3. Press Enter.
+    You hear: Sent.
+    You hear: claude: still here.
+    You hear: Done.
+4. Press Alt+2 (Conversation; Navigation menu).
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

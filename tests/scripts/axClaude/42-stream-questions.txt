@@ -1,0 +1,60 @@
+# Workflow: Answer Claude's own questions over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-7.5 (2026-11-17): Claude's own questions come through the relay as one call
+# and are asked one after another in the control area, each with its choices and Other for the user's own words; the
+# answers go back together after the last. The stand-in plays the recording of two questions, the second with several
+# answers (tests/fixtures/streams/two-questions.jsonl).
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream two-questions %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Answer the first question in your own words
+type Ask me two things
+keys enter
+expect said Sent
+expect said Question 1 of 2: What is your favourite colour? 1. Red
+expect list 2. Green
+expect list 3. Blue
+expect list 4. Other
+# A question the user did not cause holds its answering keys for a moment.
+wait 1500
+keys end
+expect focus 4. Other
+keys enter
+expect said Sent: 4, Other. Your words next
+expect said You chose Other. Your answer
+# Escape goes back to the question's list, and nothing is refused.
+keys escape
+expect said Question 1 of 2: What is your favourite colour?
+keys end
+keys enter
+expect said You chose Other. Your answer
+type teal
+keys enter
+expect said Sent: teal. Next question
+
+# Goal: Tick several answers of the second question
+expect said Question 2 of 2: Which fruits do you like?
+expect list Apple
+expect list Cherry
+keys space
+keys down
+keys down
+keys space
+keys enter
+expect said Sent: 1, Apple, 3, Cherry
+expect said claude: thanks
+expect said Done
+# Claude Code got the answers as one: the stand-in's log holds that the window allowed the call.
+run findstr /c:"the window's answer was allow" st\stream-standin.log
+do Conversation
+expect text Question: What is your favourite colour?
+expect text Question: Which fruits do you like?
+expect text claude: thanks

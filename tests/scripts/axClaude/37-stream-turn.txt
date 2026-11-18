@@ -11,6 +11,11 @@ file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code",
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream turn %*
 start claude {temp}\st --claude {temp}\claude.cmd --source stream
+# The folder's question comes first (stream-mode.md SM-7.1): Enter is no, so the yes is its own button.
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
 
 # Goal: Send a message and hear the reply and Done
 expect said Ready

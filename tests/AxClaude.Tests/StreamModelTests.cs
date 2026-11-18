@@ -376,6 +376,45 @@ public sealed class StreamModelTests
     }
 
     [Fact]
+    public void The_users_own_words_are_awaited_until_the_next_question_or_the_answer()
+    {
+        // After Other on a question of Claude's (stream-mode.md SM-7.5): no question is pending, Claude still waits,
+        // and the row that asks for the words is the model's, which is what makes the window show its field.
+        var model = new StreamModel();
+        var changes = 0;
+        model.Changed += () => changes++;
+        var question = new Question("Which?", [], [new QuestionOption("1", "This"), new QuestionOption("2", "Other")]);
+
+        model.Ask(question);
+        Assert.False(model.AwaitsText);
+        Assert.Null(model.TextPrompt);
+
+        model.AskWords("Enter text for option 2 (Other), or Escape for the list:");
+        Assert.True(model.AwaitsText);
+        Assert.True(model.PromptPending);
+        Assert.Null(model.PendingQuestion);
+        Assert.Equal("Enter text for option 2 (Other), or Escape for the list:", model.TextPrompt);
+
+        // Back to the list: the question is pending again, and no words are awaited.
+        model.Ask(question);
+        Assert.False(model.AwaitsText);
+        Assert.Same(question, model.PendingQuestion);
+
+        model.AskWords("Enter text for option 2 (Other), or Escape for the list:");
+        model.Answered();
+        Assert.False(model.AwaitsText);
+        Assert.False(model.PromptPending);
+        Assert.Null(model.TextPrompt);
+        Assert.Equal(5, changes);
+
+        // A new run forgets words that were awaited.
+        model.AskWords("Enter text for option 2 (Other), or Escape for the list:");
+        model.ResetScreen();
+        Assert.False(model.AwaitsText);
+        Assert.False(model.PromptPending);
+    }
+
+    [Fact]
     public void An_answer_to_a_waiting_question_gets_no_block_and_a_message_sent_on_purpose_does()
     {
         var model = new StreamModel();

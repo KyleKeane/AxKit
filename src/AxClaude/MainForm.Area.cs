@@ -361,6 +361,13 @@ internal sealed partial class MainForm
     /// <summary>Sends the chosen answer's key, or the ticked keys joined with commas, and says what comes next.</summary>
     private void AnswerQuestion(IReadOnlyList<QuestionOption> chosen)
     {
+        // Over the stream, the answer of a tool call's question that only explains opens its text; the question
+        // stays and nothing is sent (docs/axClaude/stream-mode.md SM-7.4).
+        if (Streams && chosen.Count == 1 && StreamExplained(chosen[0].Key))
+        {
+            return;
+        }
+
         SendAnswer(string.Join(",", chosen.Select(option => option.Key)));
         // Each answer's name without Claude's explanation after the dash.
         Announce("Sent: " + string.Join(", ", chosen.Select(option =>
@@ -377,7 +384,8 @@ internal sealed partial class MainForm
     private string NextStep() => _askedQuestion switch
     {
         { Step: (int number, int count) } when number < count => ". Next question",
-        { ReviewFollows: true } when _settings.ReviewAnswers => ". Review next",
+        // The review is a screen of Claude Code's own: the stream has none.
+        { ReviewFollows: true } when _settings.ReviewAnswers && !Streams => ". Review next",
         _ => string.Empty,
     };
 
@@ -736,6 +744,14 @@ internal sealed partial class MainForm
     {
         UserActedNow();
         Area.Hold(UserActionMs);
+        if (Streams)
+        {
+            // Over the stream Escape is no to what Claude Code asks, or the way back from the user's own words to the
+            // question's list (docs/axClaude/stream-mode.md SM-5.3, SM-7.5).
+            StreamEscape();
+            return;
+        }
+
         Write(ClaudeCodeKeys.Escape);
         FlowActed(UserAction.Escaped);
     }
@@ -753,7 +769,16 @@ internal sealed partial class MainForm
             return;
         }
 
-        TypeAnswer(key, enter: _model.PendingQuestion is not { KeyOnly: true });
+        if (Streams)
+        {
+            // Over the stream an answer goes back through the relay (docs/axClaude/stream-mode.md SM-5.2): nothing is typed.
+            StreamAnswer(key);
+        }
+        else
+        {
+            TypeAnswer(key, enter: _model.PendingQuestion is not { KeyOnly: true });
+        }
+
         UserActedNow();
         FlowActed(UserAction.Answered);
         Area.Hold(UserActionMs);

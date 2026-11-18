@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 6 network requests, 35 program starts and 10 pipes, in 37 files, under the 15 headings below.
+Today: 6 network requests, 35 program starts and 11 pipes, in 38 files, under the 15 headings below.
 
 ## What axKit reaches
 
@@ -272,12 +272,14 @@ Calls (3):
 - **Documentation**: https://code.claude.com/docs/en/cli-reference (the option that names the tool); docs/axClaude/stream-mode.md SM-7.
 - **Apps**: axClaude, access layer for Claude Code.
 
-Calls (2):
+Calls (3):
 
 - **axClaude**, `src/AxClaude.Core/Streaming/AskRelay.cs`, in `AskRelay.Run`, by `Console.OpenStandardInput`: the standard input of "AxKit.exe ask", on which the Claude Code that started it as its permission tool writes each question (MCP's JSON-RPC); the answers go to its standard output.
   Code: `using var input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(false));`
 - **axClaude**, `src/AxClaude.Core/Streaming/AskRelay.cs`, in `AskRelay.Connect`, by `new NamedPipeClientStream`: connects to the pipe of the axClaude window that started this Claude Code, named in the environment it gave, writes the question and reads the user's answer; on this computer, never over the network.
   Code: `var pipe = new NamedPipeClientStream(".", name, PipeDirection.InOut);`
+- **axClaude**, `src/AxClaude/MainForm.Stream.cs`, in `AskChannel.Open`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where "AxKit.exe ask", started by Claude Code as its permission tool, writes a question and reads the user's answer; each connection must send the window's secret.
+  Code: `return NamedPipeServerStreamAcl.Create(_name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, BufferBytes, BufferBytes, UserPipe.Security());`
 
 #### Test automation
 
@@ -452,9 +454,10 @@ Used in 4 places:
 
 Defined in .NET, System.IO.Pipes: opens a named pipe on this computer with an access list.
 
-Used in 3 places:
+Used in 4 places:
 
 - `src/AxClaude/MainForm.Hooks.cs`, in `HookChannel.Open`, for Claude Code events.
+- `src/AxClaude/MainForm.Stream.cs`, in `AskChannel.Open`, for Claude Code questions.
 - `src/AxKit.Forms/AutomationChannel.cs`, in `AutomationChannel.Serve`, for Test automation.
 - `src/AxKit.Forms/McpChannel.cs`, in `McpChannel.Serve`, for AI tools.
 

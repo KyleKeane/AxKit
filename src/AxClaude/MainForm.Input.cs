@@ -108,6 +108,12 @@ internal sealed partial class MainForm
         var answer = _model.PromptPending;
         if (answer && IsAnswer(text))
         {
+            // Over the stream, the typed key of the answer that only explains opens its text (stream-mode.md SM-7.4).
+            if (Streams && StreamExplained(text))
+            {
+                return;
+            }
+
             // Typed like the control area's answers, one keystroke each ("1,3" for several answers, the words of an
             // answer of the user's own on one line).
             SendAnswer(text.Replace('\n', ' '));

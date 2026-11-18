@@ -257,8 +257,23 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Restart Claude Code
 39. **Hear that Claude Code's stream ended, and be offered the screen**
     - Learn that Claude Code ended and stay in the window
-40. **Have a short exchange with Claude**
-41. **Answer a set of two questions from Claude**
+40. **Answer what Claude asks to do, over Claude Code's stream**
+    - Say yes to Claude Code in this folder
+    - Hear what Claude asks to do, with no first
+    - Read everything Claude asks to do before answering
+    - Allow it once
+41. **Say no to Claude Code in a folder, and to what Claude asks to do**
+    - Be asked again and say yes
+    - Refuse what Claude asks to do
+42. **Answer Claude's own questions over Claude Code's stream**
+    - Answer the first question in your own words
+    - Tick several answers of the second question
+43. **Interrupt Claude over Claude Code's stream**
+    - Refuse a waiting question with the interrupt key
+    - Interrupt the turn that runs
+    - Go on after the interrupt
+44. **Have a short exchange with Claude**
+45. **Answer a set of two questions from Claude**
 
 ## axClip
 

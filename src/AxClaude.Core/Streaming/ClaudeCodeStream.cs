@@ -121,6 +121,22 @@ public sealed record StreamLine(IReadOnlyList<StreamPart> Parts, bool FromWorker
 /// <summary>A line's shape with no value in it: its name (the type, with what tells its kind), its keys in order, and for a message the keys of each kind of block.</summary>
 public sealed record StreamShape(string Name, IReadOnlyList<string> Keys, IReadOnlyDictionary<string, IReadOnlyList<string>> Blocks);
 
+/// <summary>One choice of a question of Claude's own: its name and what Claude says about it.</summary>
+public sealed record AskChoice(string Label, string Description);
+
+/// <summary>One of the questions Claude asks the user in one call of its question tool: its text, whether several choices may be taken, and the choices.</summary>
+public sealed record AskQuestion(string Text, bool Several, IReadOnlyList<AskChoice> Choices);
+
+/// <summary>
+/// What Claude Code asked its permission tool (<see cref="ClaudeCodeStream.ReadAsk"/>): the tool, the call's id, what
+/// the call is about, its input as it came, and, for Claude's own question tool, the questions.
+/// </summary>
+public sealed record StreamAsk(string Tool, string Call, string About, JsonElement Input, IReadOnlyList<AskQuestion> Questions)
+{
+    /// <summary>A question of Claude's own to the user, and no tool call that needs the user's word.</summary>
+    public bool IsQuestion => Questions.Count > 0;
+}
+
 /// <summary>
 /// Claude Code's non-interactive stream, the one place that knows its words (root CLAUDE.md rule 12): the options
 /// that start it, the lines a host writes on standard input, and each line of standard output read down to a neutral
@@ -301,6 +317,70 @@ public static class ClaudeCodeStream
         writer.WriteString("behavior", "deny");
         writer.WriteString("message", message);
     });
+
+    /// <summary>The input of a call that came with none, or with one that is no object.</summary>
+    private static readonly JsonElement NoInput = JsonDocument.Parse("{}").RootElement.Clone();
+
+    /// <summary>
+    /// What Claude Code asked its permission tool, read down (docs/axClaude/stream-mode.md SM-7.3; measured: the
+    /// question brings the tool's name, its input and the call's id): for a window to ask the user. Null for what
+    /// is no such question: no JSON object, or no tool named. The input is kept as it came, since an answer that
+    /// allows the call hands it back.
+    /// </summary>
+    public static StreamAsk? ReadAsk(ReadOnlySpan<byte> question)
+    {
+        try
+        {
+            var reader = new Utf8JsonReader(question);
+            using var document = JsonDocument.ParseValue(ref reader);
+            var root = document.RootElement;
+            if (Text(root, "tool_name") is not { Length: > 0 } tool)
+            {
+                return null;
+            }
+
+            var input = root.TryGetProperty("input", out var given) && given.ValueKind == JsonValueKind.Object ? given.Clone() : NoInput;
+            return new StreamAsk(tool, Text(root, "tool_use_id"), Subject(input), input, tool == QuestionTool ? Questions(input) : []);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>The questions of a call of <see cref="QuestionTool"/>: each with its text, whether several choices may be taken, and its choices; one without a text is passed over.</summary>
+    private static IReadOnlyList<AskQuestion> Questions(JsonElement input)
+    {
+        var questions = new List<AskQuestion>();
+        if (!input.TryGetProperty("questions", out var list) || list.ValueKind != JsonValueKind.Array)
+        {
+            return questions;
+        }
+
+        foreach (var asked in list.EnumerateArray())
+        {
+            if (Text(asked, "question") is not { Length: > 0 } text)
+            {
+                continue;
+            }
+
+            var choices = new List<AskChoice>();
+            if (asked.TryGetProperty("options", out var options) && options.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var option in options.EnumerateArray())
+                {
+                    if (Text(option, "label") is { Length: > 0 } label)
+                    {
+                        choices.Add(new AskChoice(label, Text(option, "description")));
+                    }
+                }
+            }
+
+            questions.Add(new AskQuestion(text, Flag(asked, "multiSelect"), choices));
+        }
+
+        return questions;
+    }
 
     /// <summary>One line of the stream, read down; <see cref="StreamLine.Nothing"/> for what is no JSON object.</summary>
     public static StreamLine Read(string line)
