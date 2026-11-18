@@ -148,6 +148,20 @@ as the third text field after the privacy policy URL and the website; the Proper
 like the others. Start update made Submission 3; Save on Packages dropped 5.8.0 by itself; the survey's Cancel is the
 first `Cancel` that `find` lists (the second is "Cancel certification").
 
+What the fourth submission taught (5.10.0, 2026-11-18, about twenty minutes, the Edge window minimized throughout):
+three page scripts now do the parts that went wrong, in `tools/EdgeDrive/store` (each says how it is run). The
+overview's content can take more than a minute to come in a minimized window: wait for "Store presence" before
+anything, and reload once if it stays grey. Start update then takes about three minutes before "In draft" shows. A
+synthetic click on the overview's "Packages" link opens a summary in place and not the page: `submission-pages.js`
+reads the submission's number and its pages' addresses from the overview's links, and `nav` opens each. The element
+that takes a dropped package is narrower than the row around it (a `DIV` with the attribute `libfilesdroped`, 678
+CSS pixels wide in a row of 968): a drop on the row beside it made Edge save the file into Downloads (deleted), so
+`drop-point.js` gives a point inside that element and on no link, checked through the shadow roots, for `dropxy` at
+once. Upload and validation took under a minute; the only warning was `runFullTrust`, as always. "What's new in this
+version" is the text area `#releaseNotes`, set by `release-notes.template.js`, whose text holds "saved", so the
+page's Save is the second that `find` lists; the listing was opened again after its Save and its text compared. The
+survey after Submit is dismissed as before, and `call Browser.close '{}'` closed the window and its port.
+
 ## 7. The support request for the API route (dropped on 2026-11-13)
 
 This section held the words of a request to Partner Center's support to open the submission API to the account. The
@@ -169,6 +183,10 @@ route was removed on 2026-11-13 (section 2), so the request is no longer needed.
   "Congrats! Your product is now updated. Your latest product is now available on Microsoft Store" and "Store
   presence (Submission 2: Last modified on 11/14/2026)", so the Store holds 5.8.0. `winget show` gives no version
   for a Store product, so Partner Center's overview is where a submission's state is read.
+- Submission 4 (`AxKit-5.10.0.msix`, the listing's What's new rewritten for 5.10.0, everything else unchanged) was
+  submitted for certification on 2026-11-18 at about 01:52, Pacific time, at the maintainer's word; the overview showed
+  "Product update: In certification (Submission 4)", at Pre-processing, to publish as soon as it passes. Submission 3
+  (`AxKit-5.9.1.msix`, 2026-11-15) had been live before it.
 - The last published and the pending submission, with the status and the Store's error and warning codes, are in
   Partner Center under the product's overview.
 - A failed certification names the policy; the fix goes into the next release (or, for a listing text, into
