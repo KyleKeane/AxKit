@@ -233,6 +233,20 @@ public static class ClaudeCodeStream
         writer.WriteEndObject();
     });
 
+    /// <summary>
+    /// The line that asks Claude Code what a host of its stream may ask at the start, before any message (the Agent
+    /// SDK's first request; undocumented for the command line, measured by the probe's case initialize). Claude Code
+    /// answers it with a <see cref="StreamKind.Control"/> line that carries the same id.
+    /// </summary>
+    public static string InitializeLine(string id) => Json(writer =>
+    {
+        writer.WriteString("type", "control_request");
+        writer.WriteString("request_id", id);
+        writer.WriteStartObject("request");
+        writer.WriteString("subtype", "initialize");
+        writer.WriteEndObject();
+    });
+
     /// <summary>The permission tool's answer to a question of Claude's: the input as asked, with the answer chosen for each question's text.</summary>
     public static string QuestionAnswer(JsonElement input, IReadOnlyDictionary<string, string> answers) => Json(writer =>
     {
@@ -324,7 +338,16 @@ public static class ClaudeCodeStream
                     };
                 case "control_response":
                     var failed = !(root.TryGetProperty("response", out var response) && Text(response, "subtype") == "success");
-                    return StreamLine.Nothing with { Parts = [new(StreamKind.Control, root.TryGetProperty("response", out var answered) ? Text(answered, "request_id") : string.Empty, string.Empty, failed)], Failed = failed };
+                    // The answer to the request a host sends first (InitializeLine) names the permission mode in
+                    // force and Claude Code's version, before any message. It also names the account: never read.
+                    var told = root.TryGetProperty("response", out var answered) && answered.ValueKind == JsonValueKind.Object && answered.TryGetProperty("response", out var inner) ? inner : default;
+                    return StreamLine.Nothing with
+                    {
+                        Parts = [new(StreamKind.Control, answered.ValueKind == JsonValueKind.Object ? Text(answered, "request_id") : string.Empty, string.Empty, failed)],
+                        Failed = failed,
+                        Mode = Text(told, "current_permission_mode"),
+                        Version = Text(told, "claude_code_version"),
+                    };
                 case "stream_event":
                     var piece = root.TryGetProperty("event", out var happened) && happened.TryGetProperty("delta", out var delta) ? Text(delta, "text") : string.Empty;
                     return StreamLine.Nothing with { Parts = [new(StreamKind.Delta, piece, string.Empty, false)], FromWorker = worker };

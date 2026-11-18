@@ -173,6 +173,13 @@ public sealed class StreamModel : ClaudeModel
                     changed |= TakeNote(part.Text, line);
                     break;
 
+                case StreamKind.Control:
+                    // The answer to the request a host sends first names the mode in force and the version, before
+                    // any message: the first mode known is no change, and is not said.
+                    Version = Version.Length > 0 ? Version : line.Version;
+                    changed |= SetMode(line.Mode, announce: false);
+                    break;
+
                 case StreamKind.Ended:
                     changed = true;
                     TakeEnd(line);

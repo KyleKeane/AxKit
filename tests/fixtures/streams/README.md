@@ -30,6 +30,7 @@ The maker is the whitelist that makes a fixture safe to commit. A field it does 
 
 | File | Shows |
 | :-- | :-- |
+| `start` | The request a window sends first, answered before any message with the permission mode and the version; then a turn. |
 | `turn` | One message, its reply, the turn's end. |
 | `two-turns` | A second message after the first turn's end: a start line for each turn. |
 | `headings` | A reply written in Markdown: two headings, a word in bold, a list, a fenced line of code, as one text. |
@@ -53,6 +54,7 @@ The maker is the whitelist that makes a fixture safe to commit. A field it does 
 
 These are what the model is built on. Each is in the files; none is taken from the documentation alone.
 
+- **Before the first message** the stream writes nothing by itself. A request of the host's, the one the Agent SDK sends first, is answered some 650 ms after the start, and the answer names the permission mode in force and Claude Code's version (`start`). It also names the account and lists the user's commands, agents and models: the fixture keeps the mode and the version alone.
 - **The start line** comes at the beginning of every turn, also of a turn Claude Code starts by itself, and names the session and the permission mode.
 - **A message comes back** as a line of the user's marked as a replay, a few milliseconds before the first line of the reply it starts. It is no early sign that the message was taken.
 - **A message written while a tool runs** is taken up inside the running turn, after the tool's result: its replay line comes there, and one end line ends the turn for both messages (`mid-turn`).

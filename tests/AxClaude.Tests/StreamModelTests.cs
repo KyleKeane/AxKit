@@ -32,10 +32,28 @@ public sealed class StreamModelTests
     }
 
     [Fact]
-    public void Eighteen_cases_are_recorded()
+    public void Nineteen_cases_are_recorded()
     {
         // A fixture taken away by mistake would make the theory above pass with fewer cases.
-        Assert.Equal(18, StreamReplay.Cases().Count());
+        Assert.Equal(19, StreamReplay.Cases().Count());
+    }
+
+    [Fact]
+    public void The_first_requests_answer_names_the_mode_before_any_message()
+    {
+        // What the window's rule for Ready waits for: with the screen it is the mode line, with the stream the answer
+        // to the request the window sends first, some 650 ms after the start. It is the first mode known, and not said.
+        var log = StreamReplay.Run("start", out var model);
+
+        var answered = log.FindIndex(entry => entry.StartsWith("< Control, done", StringComparison.Ordinal));
+        var firstMessage = log.FindIndex(entry => entry.StartsWith("> message", StringComparison.Ordinal));
+        Assert.True(answered >= 0 && answered < firstMessage);
+        Assert.StartsWith("    now: idle, mode ", log[answered + 1]);
+        Assert.DoesNotContain("not known", log[answered + 1]);
+        Assert.DoesNotContain(log, entry => entry.StartsWith("    announced:", StringComparison.Ordinal));
+        Assert.NotNull(model.Mode);
+        Assert.NotEqual(string.Empty, model.Version);
+        Assert.Equal("claude: ok", model.Lines[^1].Text);
     }
 
     [Fact]

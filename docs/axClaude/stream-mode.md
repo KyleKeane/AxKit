@@ -107,9 +107,14 @@ screen, or mixed).
 - SM-4.9 **Claude Code's own notes** become the model's `Announcement`: compacting and its end, the conversation
   emptied, the permission mode after a change. The words are chosen with the maintainer (section 12).
 - SM-4.10 **Ready** is the process being up and answering (the start line comes only with the first turn): the
-  stream source writes one request at its start that changes nothing, and the answer is the sign, some 0.6 s after
-  the start as measured. Which request is settled in stage 2 by measurement. "Ready" is then said by the window's
-  existing rule; the mode's name for the status bar comes with the first start line or status note.
+  stream source writes one request at its start that changes nothing, and the answer is the sign, some 0.65 s
+  after the start. Measured 2026-11-17 (the probe's case initialize, the fixture `start`): the request is the one
+  the Agent SDK sends first, `ClaudeCodeStream.InitializeLine`, and its answer names the permission mode in force
+  and Claude Code's version before any message. So the model knows the mode when the answer is in, and "Ready" is
+  said by the window's existing rule, which waits for a mode, as with the screen. The answer also lists the
+  commands the run takes, with their descriptions, and the models with their effort levels, which the window's
+  own lists for a command, the model and the effort can be made from (SM-5.5); and it names the account, which is
+  never read.
 
 ## 5. What the window sends
 
@@ -334,9 +339,9 @@ drained and kept in part for the user's eyes, never for a log; its end reported 
 no word of Claude Code's. Tested against Windows' own programs (`StreamHostTests`). With it stage 2 is whole: the
 recordings, the reader, the model, the host. No window uses any of them.
 
-Noted for stage 4, from the recordings: before the first message the stream names no mode, and a request that sets
-the mode is answered with it; whether a request that changes nothing can be asked for the mode is to be measured,
-since the window's rule for Ready waits for a mode.
+Measured for stage 4 the same day: before the first message the stream names no mode by itself, and the request a
+host sends first is answered with it (SM-4.10). The reader gives the mode and the version of that answer, the model
+takes them, and the fixture `start` holds the exchange: nineteen recordings now.
 
 **Stage 3, the relay (2026-11-17).** `AxKit.exe ask` (`AskRelay`, decided first in the program's entry point, as the
 hooks' verb is): a server of one tool over its standard input and output, which Claude Code starts from the

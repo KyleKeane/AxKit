@@ -109,6 +109,25 @@ public class ClaudeCodeStreamTests
         Assert.True(Assert.Single(error.Parts).Error);
     }
 
+    [Fact]
+    public void The_answer_to_the_first_request_names_the_mode_and_the_version_and_nothing_else_is_read()
+    {
+        Assert.Equal("""{"type":"control_request","request_id":"h0","request":{"subtype":"initialize"}}""", ClaudeCodeStream.InitializeLine("h0"));
+
+        var answer = ClaudeCodeStream.Read("""{"type":"control_response","response":{"subtype":"success","request_id":"h0","response":{"current_permission_mode":"auto","claude_code_version":"2.1.327","account":{"email":"someone"},"commands":[{"name":"mine"}]}}}""");
+        Assert.Equal([new StreamPart(StreamKind.Control, "h0", "", false)], answer.Parts);
+        Assert.Equal("auto", answer.Mode);
+        Assert.Equal("2.1.327", answer.Version);
+        // The account and the user's commands are in the line and in nothing the reader gives.
+        Assert.Empty(answer.Commands);
+        Assert.Equal(string.Empty, answer.Session);
+
+        // The answer to an interrupt names none of it.
+        var plain = ClaudeCodeStream.Read("""{"type":"control_response","response":{"subtype":"success","request_id":"h1"}}""");
+        Assert.Equal(string.Empty, plain.Mode);
+        Assert.False(plain.Failed);
+    }
+
     [Theory]
     [InlineData("default", "manual mode on")]
     [InlineData("acceptEdits", "accept edits on")]

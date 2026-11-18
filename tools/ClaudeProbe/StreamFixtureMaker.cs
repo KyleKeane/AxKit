@@ -380,7 +380,15 @@ internal static class StreamFixtureMaker
                 var kept = Pick(line!, "type");
                 if (line!["response"] is JsonObject response)
                 {
-                    kept["response"] = Pick(response, "subtype", "request_id");
+                    var answered = Pick(response, "subtype", "request_id");
+                    // Of what the first request's answer tells, the mode in force and the version alone: it also
+                    // names the account, the user's commands, agents and models, and none of that is kept.
+                    if (response["response"] is JsonObject told)
+                    {
+                        answered["response"] = Pick(told, "current_permission_mode", "claude_code_version");
+                    }
+
+                    kept["response"] = answered;
                 }
 
                 return kept;

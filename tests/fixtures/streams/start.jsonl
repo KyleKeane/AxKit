@@ -1,0 +1,11 @@
+{"k":"meta","claudeCode":"2.1.327","recorded":"2026-11-17","by":"tools/ClaudeProbe stream --record","permission":"allow"}
+{"t":21,"k":"in","what":"initialize","id":"host-0"}
+{"t":701,"k":"out","line":{"type":"control_response","response":{"subtype":"success","request_id":"host-0","response":{"current_permission_mode":"default","claude_code_version":"2.1.327"}}}}
+{"t":1128,"k":"in","what":"message","text":"Reply with exactly: ok"}
+{"t":1231,"k":"out","line":{"type":"system","subtype":"init","claude_code_version":"2.1.327","permissionMode":"default","session_id":"session-1"}}
+{"t":2023,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Reply with exactly: ok"}}}
+{"t":2025,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"ok"}]}}}
+{"t":2029,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":2037,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":1,"subtype":"success","result":"ok","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":2038,"k":"in","what":"closed"}
+{"t":2038,"k":"exit","code":0}

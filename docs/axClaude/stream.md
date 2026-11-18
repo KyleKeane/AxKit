@@ -70,8 +70,9 @@ reference, commands, and the Agent SDK's pages on permissions, user input and st
 
 ## 3. What was measured
 
-`tools/ClaudeProbe stream` plays twenty-three cases (twenty when this page was written; the three of axKit's own
-relay came with it, below), each a process of its own in a folder under the temporary folder,
+`tools/ClaudeProbe stream` plays twenty-four cases (twenty when this page was written; one of the first request
+and the three of axKit's own relay came after, below), each a process of its own in a folder under the temporary
+folder,
 with the smallest model, no session saved (but in the one case that takes a session up again, which deletes its
 session's file afterwards), and no MCP server but its own stand-in permission tool. It prints kinds, names and times
 only: never a text Claude wrote, a path or an id. Every case passed on 2026-11-17. The first eleven:
@@ -130,6 +131,14 @@ The nine added the same day, for what section 6 had listed as not yet measured:
   commands on the development computer, the user's own among them.
 - **compact**: `/compact` gave a status note that says compacting, 3.6 s later a status note that says nothing, then
   a note that marks the boundary and a line that ends it; the word given before it was still known after.
+
+One added for what a host can learn before the first message (`docs/axClaude/stream-mode.md` SM-4.10):
+
+- **initialize**: the request the Agent SDK sends first, which the command line's documentation does not name, was
+  taken some 650 ms after the start and answered before any message. The answer names the permission mode in
+  force and Claude Code's version, and lists the commands the run takes with their descriptions, the agents, and
+  the models with their effort levels; it also names the account, which axKit never reads. So the process being up
+  can be told with its mode, where the start line comes only with the first turn.
 
 The three added with axKit's own relay (`AxKit.exe ask`, `docs/axClaude/stream-mode.md` SM-7.3), the probe playing
 the window's end of the relay's pipe:

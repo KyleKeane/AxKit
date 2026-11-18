@@ -278,6 +278,19 @@ internal static class StreamProbe
             o => [$"the compaction took {CompactionMs(o)} ms from its status note to its boundary"],
             LimitSeconds: 150),
 
+        // What a host can learn before the first message (stream-mode.md SM-4.10): the request the Agent SDK sends
+        // first. Reported, not required: the command line documents no such request. What the answer holds is read
+        // from a kept copy by its keys' names alone (it may name the account).
+        new("initialize", "the request a host may send before any message (reported)", [], string.Empty,
+            [
+                new(null, 0, ClaudeCodeStream.InitializeLine("probe-5"), "an initialize request"),
+                Say("Reply with exactly: ok", line => line.Has(StreamKind.Control), 200, "a message after it"),
+                Close(Ended),
+            ],
+            o => Unless(o.Says("ok"), "the message after the request should be answered"),
+            o => [$"the request was {(o.Parts.Any(part => part.Kind == StreamKind.Control && part.Text == "probe-5" && !part.Error) ? "taken" : o.Parts.Any(part => part.Kind == StreamKind.Control && part.Text == "probe-5") ? "refused" : "not answered")}, {o.Lines.FirstOrDefault(entry => entry.Line.Has(StreamKind.Control)).Ms} ms after the start; lines before the first message's start line: {o.Lines.TakeWhile(entry => !entry.Line.Has(StreamKind.Started)).Count()}"],
+            LimitSeconds: 60),
+
         // ---- axKit's own relay (docs/axClaude/stream-mode.md SM-7.3), with the probe as the window's end of its pipe ----
 
         new("relay", "a question through axKit's own relay, answered yes by a stand-in of the window", ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, AskRelay.ToolName], string.Empty,
@@ -315,6 +328,14 @@ internal static class StreamProbe
     /// </summary>
     private static readonly Case[] Recordings =
     [
+        new("start", "the request a window sends first, answered before any message, then a turn", [], "allow",
+            [
+                new(null, 0, ClaudeCodeStream.InitializeLine("host-0"), "the first request"),
+                Say("Reply with exactly: ok", line => line.Has(StreamKind.Control), 400, "a message after it"),
+                Close(Ended),
+            ],
+            o => EndedAtLeast(o, 1)),
+
         new("turn", "one message and its reply", [], "allow",
             [Say("Reply with exactly: ok"), Close(Ended)], o => EndedAtLeast(o, 1)),
 
