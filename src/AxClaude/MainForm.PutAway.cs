@@ -116,7 +116,11 @@ internal sealed partial class MainForm
             return;
         }
 
+        // A Claude Code that runs over its stream is ended at once when the window closes for good, and never left to
+        // the wait that would end it later, which dies with this process (MainForm.Stream.cs, StopStream).
+        _windowCloses = true;
         base.OnFormClosing(e);
+        _windowCloses = !e.Cancel;
         if (e.Cancel)
         {
             // The closing question keeps the window (Keep working): the next Alt+F4 hides again.

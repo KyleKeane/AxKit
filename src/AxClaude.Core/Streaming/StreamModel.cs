@@ -51,6 +51,14 @@ public sealed class StreamModel : ClaudeModel
     private bool _responded;
 
     /// <summary>
+    /// The turn that runs began with a slash command of the window's awaited and no message: its end line is that
+    /// command's, whatever turns it counts. A command Claude Code runs by itself counts none (/model); a skill or a
+    /// custom command runs the model and counts them, and without this its end left the command awaited, and Claude
+    /// working, for good (found by the review of 2026-11-17; not yet recorded).
+    /// </summary>
+    private bool _commandTurn;
+
+    /// <summary>
     /// The folder Claude works in, for shortening the files its calls name; null when not known. Said with every
     /// start of Claude Code and not once with the model: a window keeps its model while its folder changes.
     /// </summary>
@@ -134,6 +142,8 @@ public sealed class StreamModel : ClaudeModel
                         _turn = true;
                         _taken = false;
                         _responded = false;
+                        // A turn that begins with a command awaited and no message is that command's own.
+                        _commandTurn = _commands > 0 && _sent.Count == 0;
                         // No message of the window's waits to be taken and no command runs: Claude Code began this turn.
                         if (_sent.Count == 0 && _commands == 0)
                         {
@@ -357,6 +367,7 @@ public sealed class StreamModel : ClaudeModel
         _turn = false;
         _taken = false;
         _responded = false;
+        _commandTurn = false;
         _commands = 0;
         Working = false;
         QueuedMessages = 0;
@@ -398,6 +409,8 @@ public sealed class StreamModel : ClaudeModel
         var lines = part.Text.Replace("\r\n", "\n").Split('\n');
         if (part.Error)
         {
+            // An error is the turn's answer: the response has started with it, as the screen's error row starts one.
+            Respond();
             Add(LineKind.Error, ClaudeCodeTexts.ErrorLabel, lines);
             return;
         }
@@ -516,7 +529,7 @@ public sealed class StreamModel : ClaudeModel
     /// <summary>The end line of a turn, or of a slash command that Claude Code ran by itself.</summary>
     private void TakeEnd(StreamLine line)
     {
-        var command = line.Turns == 0 && _commands > 0;
+        var command = _commands > 0 && (line.Turns == 0 || _commandTurn);
         if (command)
         {
             _commands--;
@@ -525,23 +538,26 @@ public sealed class StreamModel : ClaudeModel
         _turn = false;
         _taken = false;
         _responded = false;
+        _commandTurn = false;
         _calls.Clear();
         _questions.Clear();
         // Another turn follows while a message of the window's has not come back, or a command's end is still due.
         Working = _sent.Count > 0 || _commands > 0;
         Count();
-        if (!line.Failed && !command)
-        {
-            // A turn of the model's ended well: the window's rule for a bell says Done (SM-4.6). A failed or an
-            // interrupted turn says none, and neither does a command's end.
-            RaiseBell();
-        }
-        else if (ClaudeCodeStream.Interrupted(line))
+        if (ClaudeCodeStream.Interrupted(line))
         {
             // The user's interrupt ended the turn: said in a word, and on record where the turn broke off, since no
             // Done follows and the screen's own row for it does not exist here.
             _lines.Add(Final(LineKind.System, "System: " + InterruptedWords));
             Announcement?.Invoke(InterruptedWords);
+        }
+        else if (!(command && line.Turns == 0))
+        {
+            // A turn of the model's ended: the window's rule for a bell says Done (SM-4.6). Also after a turn that
+            // failed, whose error line stands in the conversation, as with the screen: a turn that said nothing at
+            // its end left the user without a word. A command Claude Code ran by itself, which counts no turn,
+            // rings none.
+            RaiseBell();
         }
     }
 

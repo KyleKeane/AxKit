@@ -27,6 +27,9 @@ public sealed class StreamAsking
     /// <summary>Who asks, as the caution names it.</summary>
     public const string Who = "Claude";
 
+    /// <summary>After what a tool call is about, when the question's title holds only its start.</summary>
+    public const string MoreWords = ", and more, which the explanation shows";
+
     private readonly StreamAsk _ask;
 
     /// <summary>The folder Claude works in, with its separator at the end, by which a file the call names is shortened; empty when not known.</summary>
@@ -202,8 +205,11 @@ public sealed class StreamAsking
     private Question Permission()
     {
         var about = _folder.Length > 0 && _ask.About.StartsWith(_folder, StringComparison.OrdinalIgnoreCase) ? _ask.About[_folder.Length..] : _ask.About;
+        // A command of several lines, or a long one, is named by its start alone: the title says that more follows,
+        // since a yes runs all of it.
+        var more = _ask.AboutCut ? MoreWords : string.Empty;
         return new Question(
-            about.Length > 0 ? $"{Who} asks to use {_ask.Tool}: {about}" : $"{Who} asks to use {_ask.Tool}",
+            about.Length > 0 ? $"{Who} asks to use {_ask.Tool}: {about}{more}" : $"{Who} asks to use {_ask.Tool}",
             [AiCaution.Asked(Who)],
             [
                 new QuestionOption(RefuseKey, "No"),

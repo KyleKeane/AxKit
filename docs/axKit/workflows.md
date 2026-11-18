@@ -272,8 +272,11 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Refuse a waiting question with the interrupt key
     - Interrupt the turn that runs
     - Go on after the interrupt
-44. **Have a short exchange with Claude**
-45. **Answer a set of two questions from Claude**
+44. **Be asked again when Claude asks the same thing twice, over Claude Code's stream**
+    - Allow the first of two calls that read the same
+    - Hear the second call asked anew, with no first
+45. **Have a short exchange with Claude**
+46. **Answer a set of two questions from Claude**
 
 ## axClip
 

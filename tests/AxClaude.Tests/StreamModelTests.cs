@@ -203,14 +203,90 @@ public sealed class StreamModelTests
     }
 
     [Fact]
-    public void A_failure_of_the_service_is_an_error_line_and_says_no_Done()
+    public void A_turn_that_failed_is_an_error_line_and_is_heard_as_any_turn_is()
     {
+        // The error is the turn's answer: the response starts with it and the turn's end rings the bell, as with
+        // the screen, where an error row is a reply row. Until 2026-11-17 a failed turn said nothing at all.
         var log = StreamReplay.Run("failure", out var model);
 
         Assert.Equal(LineKind.Error, model.Lines[^1].Kind);
         Assert.StartsWith("error: There's an issue with the selected model", model.Lines[^1].Text);
-        Assert.DoesNotContain("    the bell", log);
+        Assert.Contains("    the response started", log);
+        Assert.Single(log, entry => entry == "    the bell");
         Assert.False(model.Working);
+    }
+
+    [Fact]
+    public void A_slash_command_that_runs_the_model_ends_with_its_turn_and_leaves_Claude_idle()
+    {
+        // A skill or a custom command is a turn of the model's: its end line counts turns, where a command Claude
+        // Code runs by itself counts none. The command is no longer awaited either way; not recorded yet, so the
+        // lines here are the stream's shapes with a text of the test's own.
+        var model = new StreamModel();
+        var bells = 0;
+        model.Bell += () => bells++;
+
+        Assert.False(model.Send("/review"));
+        Assert.True(model.Working);
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"c1","name":"Read","input":{"file_path":"a.txt"}}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":3}"""));
+
+        Assert.False(model.Working);
+        Assert.Equal(1, bells);
+
+        // And the next message is a turn like any other: placed at once, working until its end, one more bell.
+        Assert.True(model.Send("hello"));
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"hello"}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"hi"}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":1}"""));
+        Assert.False(model.Working);
+        Assert.Equal(2, bells);
+        Assert.Equal("claude: hi", model.Lines[^1].Text);
+    }
+
+    [Fact]
+    public void A_command_sent_while_a_turn_runs_is_awaited_until_its_own_end()
+    {
+        // /model sent while Claude works: the running turn's end is the message's, with its bell, and the command's
+        // own end, which counts no turn, comes after and rings none.
+        var model = new StreamModel();
+        var bells = 0;
+        model.Bell += () => bells++;
+
+        Assert.True(model.Send("hello"));
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"hello"}}"""));
+        Assert.False(model.Send("/model haiku"));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":1}"""));
+        Assert.Equal(1, bells);
+        Assert.True(model.Working);
+
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"Set model to haiku"}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":0}"""));
+        Assert.Equal(1, bells);
+        Assert.False(model.Working);
+    }
+
+    [Fact]
+    public void A_line_with_a_value_of_another_kind_is_passed_over_and_never_thrown_on()
+    {
+        // A window reads the stream on a thread where an exception would end it with the conversation.
+        foreach (var line in new[]
+        {
+            """{"type":"result","is_error":false,"num_turns":"three"}""",
+            """{"type":"result","is_error":false,"queued_turn_count":null,"num_turns":null}""",
+            """{"type":"stream_event","event":"text"}""",
+            """{"type":"assistant","message":{"content":[{"type":"text","text":"cut \ud83d"}]}}""",
+            """{"type":"assistant","message":"no object"}""",
+            """{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":7}]}}""",
+        })
+        {
+            var read = ClaudeCodeStream.Read(line);
+            new StreamModel().Take(read);
+        }
     }
 
     [Fact]

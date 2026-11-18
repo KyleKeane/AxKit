@@ -101,7 +101,7 @@ screen, or mixed).
   taken from the source, where they are certain.
 - SM-4.6 **The turn**: working from the message taken to the turn's end line; the end is raised as the model's
   `Bell`, so that the window says Done by its existing rule, after the reply's lines, which are in the model before
-  the end line arrives. A failed or interrupted turn says no Done.
+  the end line arrives. An interrupted turn says no Done: it says Interrupted. A turn that failed says Done as any turn does, after its error line, as with the screen (amended 2026-11-17: said nothing, it left the user without a word).
 - SM-4.7 **What Claude waits on**: a question from the relay (SM-7) is the model's `PendingQuestion`, a `Question`
   as the control area shows one today: its title, its text, its options, whether several may be chosen. The area
   shows it by its existing code.
@@ -476,3 +476,29 @@ was: its stand-in scripts pass unchanged, and nothing of its code runs different
   that ends the turn (SM-5.3).
 - What was answered is not yet written into the conversation as Claude Code's screen writes its record of an
   answered question; the question's line ("Question: …", found with q) is.
+
+**What the review of stages 4 and 5 found, repaired the same day (2026-11-17).** Four readers went through the
+branch (threads and lifetime, safety, the screen source, what is heard), and the most severe findings were checked
+by a second reader each. Nothing was found that changes a window the screen feeds. Repaired:
+
+- Every request for the user's word is asked anew (SM-7.2, SM-7.4). Two calls of one tool about one file read as
+  one question, and the second came some milliseconds after the first answer: the window took it for the question
+  it had just answered, said nothing, and left the first list on the answer just given, where Enter would have
+  allowed a call that was never said. Now an answer that goes back marks what the control area shows as over, and
+  the next question is shown and said afresh, on No (`44-stream-same-question.txt`).
+- A question is always answered from the control area over the stream, whatever Options, Questions, Answer from a
+  list says and whatever slash command was sent last: over the stream a question has no rows in the conversation,
+  and with the list gone it had no answers and no caution anywhere.
+- A tool call's question says when its title holds only the start of the command: ", and more, which the
+  explanation shows". A yes runs all of it.
+- A turn that failed says Responding and Done as any turn does (SM-4.6): it said nothing.
+- A slash command that runs the model (a skill, a command of the user's) ends with its turn: its end line counts
+  turns, where a command Claude Code runs by itself counts none, and the model waited for an end that never came,
+  with Claude working for good. Not recorded yet: how such a command's own line comes back, and whether its replies
+  are told from a command's print, is on the priorities list.
+- A line of the stream with a value of another kind than the reader takes it for is passed over and never thrown
+  on: the window reads on a thread where an exception would have ended it with the conversation.
+- A Claude Code over its stream is ended at once when the window closes for good, and the tree's failures to end
+  are caught: the wait that would end it later dies with the window's process.
+- Record raw stream is not available in a window the stream feeds, and `--record` says so: it said "Recording
+  started" and wrote nothing (SM-6.5 is still to build).

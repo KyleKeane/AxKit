@@ -79,7 +79,7 @@ internal sealed partial class MainForm
         }
 
         var text = Input.Text.Replace("\r\n", "\n").Trim();
-        if (_settings.QuestionNotices && text.Length > 0 && _model.PromptPending && !IsAnswer(text) && text != _keptMessage)
+        if (AnswersInArea && text.Length > 0 && _model.PromptPending && !IsAnswer(text) && text != _keptMessage)
         {
             // D33: text sent into a question is lost (Claude answers "Please answer y or n." and drops it) or taken
             // as a key of the screen. It stays in the field; the same text sent again goes anyway (a typed answer).

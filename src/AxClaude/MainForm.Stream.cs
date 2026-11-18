@@ -62,6 +62,9 @@ internal sealed partial class MainForm
     /// <summary>How many questions Claude Code asked in this run: for Say the event sources and the diagnostics.</summary>
     private int _streamAsked;
 
+    /// <summary>The window is closing for good (set around the console window's closing, MainForm.PutAway.cs): a stream's Claude Code is then ended at once.</summary>
+    private bool _windowCloses;
+
     /// <summary>Claude Code's stream feeds this window (SM-9.2): the window was made for it and keeps it.</summary>
     private bool Streams => _streamModel is not null;
 
@@ -162,7 +165,7 @@ internal sealed partial class MainForm
         StreamHost? host = null;
         try
         {
-            host = StreamHost.Start(new StreamHostOptions(line, folder, ClaudeLauncher.BuildEnvironment(askPipe: questions.VariableValue)), text => Hand((ClaudeCodeStream.Read(text), 0)), code => Hand((null, code)));
+            host = StreamHost.Start(new StreamHostOptions(line, folder, ClaudeLauncher.BuildEnvironment(askPipe: questions.VariableValue)), text => Hand((ReadStreamLine(text), 0)), code => Hand((null, code)));
         }
         catch (Exception ex) when (ex is Win32Exception or InvalidOperationException or ArgumentException or IOException)
         {
@@ -240,6 +243,23 @@ internal sealed partial class MainForm
 
                 TakeStreamLine(model, read);
             }
+        }
+    }
+
+    /// <summary>
+    /// One line read down, on the reader's thread. The reader passes over what it does not understand; whatever it
+    /// still threw would end the window with the conversation from that thread, so here it is one more line that is
+    /// not understood, counted with the others.
+    /// </summary>
+    private static StreamLine ReadStreamLine(string text)
+    {
+        try
+        {
+            return ClaudeCodeStream.Read(text);
+        }
+        catch (Exception)
+        {
+            return StreamLine.Nothing;
         }
     }
 
@@ -347,7 +367,9 @@ internal sealed partial class MainForm
         _askedRequest = null;
         _askedWaiting.Clear();
         _streamModel?.Answered();
-        if (terminateAtOnce)
+        // At once also when the window closes: the pool thread that would end a Claude Code that runs on dies with
+        // this process, and Claude Code would go on without a window.
+        if (terminateAtOnce || _windowCloses)
         {
             host.Dispose();
         }
@@ -461,6 +483,11 @@ internal sealed partial class MainForm
         request.Answer(answer);
         _asking = null;
         _askedRequest = null;
+        // What Claude Code asks next is a new request, also when it reads as the one just answered (two calls of one
+        // tool about one file, tens of milliseconds apart): what the control area still shows is over, so that the
+        // settle shows and says the next question afresh, with its list on No. Without this the old list stayed, on
+        // the answer just given, and nothing was said (found by the review of 2026-11-17).
+        MarkWaitOver();
         model.Answered();
         if (_askedWaiting.Count > 0)
         {

@@ -5,7 +5,9 @@
     now: working, mode manual mode on, 0 waiting
 < Message: Reply with exactly: ok
 < Text, an error: There's an issue with the selected model (no-such-model-of-the-probe).…
+    the response started
 < Ended, failed, turns 1, api_error
+    the bell
     now: idle, mode manual mode on, 0 waiting
 > closed
 the process ended with code 1

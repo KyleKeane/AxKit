@@ -178,7 +178,7 @@ internal sealed partial class MainForm
                     CloseScreenNotice();
                 }
 
-                if (!(_settings.QuestionNotices && ShowWaiting()))
+                if (!(AnswersInArea && ShowWaiting()))
                 {
                     // Claude moved on from what the control area shows to something it cannot show (D33).
                     if (_wait is { Shown: true })
@@ -261,7 +261,9 @@ internal sealed partial class MainForm
     {
         if (_model.PendingQuestion is { } question)
         {
-            if (QuestionRouter.DialogFor(_lastCommand) != QuestionDialog.AnswerNotice)
+            // A slash command that opens a screen of Claude Code's leaves its lists to the message field. Not over the
+            // stream, which has no such screens: every question there is the relay's and goes to the area.
+            if (!Streams && QuestionRouter.DialogFor(_lastCommand) != QuestionDialog.AnswerNotice)
             {
                 return false;
             }

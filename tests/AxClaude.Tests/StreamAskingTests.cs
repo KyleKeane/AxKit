@@ -108,6 +108,37 @@ public sealed class StreamAskingTests
     }
 
     [Fact]
+    public void A_command_of_several_lines_or_a_long_one_says_that_more_follows()
+    {
+        // The title names the start of what the call is about; a yes runs all of it, so the title says that there is more.
+        var two = ClaudeCodeStream.ReadAsk(Question("Bash", "{\"command\":\"git status\\ngit push --force origin main\"}"))!;
+        Assert.True(two.AboutCut);
+        Assert.Equal("git status", two.About);
+        Assert.Equal("Claude asks to use Bash: git status, and more, which the explanation shows", new StreamAsking(two).Current.Title);
+        Assert.Contains("git push --force origin main", new StreamAsking(two).ExplainText);
+
+        var longOne = ClaudeCodeStream.ReadAsk(Question("Bash", "{\"command\":\"" + new string('a', 250) + "\"}"))!;
+        Assert.True(longOne.AboutCut);
+        Assert.EndsWith(StreamAsking.MoreWords, new StreamAsking(longOne).Current.Title);
+
+        // One line that fits is the whole of it.
+        var whole = ClaudeCodeStream.ReadAsk(Asked("tool"))!;
+        Assert.False(whole.AboutCut);
+        Assert.DoesNotContain("and more", new StreamAsking(whole).Current.Title);
+        Assert.False(ClaudeCodeStream.ReadAsk(Question("Bash", "{\"command\":\"  dir  \"}"))!.AboutCut);
+    }
+
+    [Fact]
+    public void A_question_with_a_value_of_another_kind_is_read_as_none_and_never_thrown_on()
+    {
+        Assert.Null(ClaudeCodeStream.ReadAsk(Encoding.UTF8.GetBytes("{\"tool_name\":\"Bash\",\"input\":{\"command\":\"cut \\ud83d\"}}")));
+        // Questions whose parts are of another kind are passed over, and the call is asked about as a tool call.
+        var odd = ClaudeCodeStream.ReadAsk(Question(ClaudeCodeStream.QuestionTool, "{\"questions\":[{\"question\":7},\"text\",{\"question\":\"Which?\",\"options\":\"none\"}]}"))!;
+        Assert.Single(odd.Questions);
+        Assert.Empty(odd.Questions[0].Choices);
+    }
+
+    [Fact]
     public void Each_answer_to_a_tool_call_is_what_Claude_Code_takes_for_it()
     {
         var no = Json(Asking("tool").Answer(StreamAsking.RefuseKey)!);

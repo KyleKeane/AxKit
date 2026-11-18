@@ -188,6 +188,9 @@ internal sealed partial class MainForm : ConsoleForm
         Input.KeyDown += OnInputKeyDown;
         Transcript.LineChosen += QuoteLineInMessage;
         BuildMenus();
+        // The raw recording is of the pseudo console's bytes (SM-6.5): in a window the stream feeds its item is there,
+        // so that the menus are the same, and not available, since it would say "Recording started" and write nothing.
+        RecordItem.Enabled = !Streams;
         SetStatus("Claude: starting", string.Empty);
         UpdateFolderUi();
         ApplyTextFont();
@@ -222,7 +225,16 @@ internal sealed partial class MainForm : ConsoleForm
         base.OnShown(e);
         if (_options.RecordPath is { } record)
         {
-            StartRecording(record);
+            if (Streams)
+            {
+                // The recording is of the pseudo console's bytes, which a window the stream feeds has none of
+                // (docs/axClaude/stream-mode.md SM-6.5): said, and no empty file made.
+                _model.AddSystemLine("Nothing is recorded: the raw stream is the screen's, and this window is fed by Claude Code's stream.");
+            }
+            else
+            {
+                StartRecording(record);
+            }
         }
 
         // --message (FR-9.2): the text in the message field, for the user to read and send; axHelp's screenshot (axTask's Open in axClaude on an issue until 2026-11-14).

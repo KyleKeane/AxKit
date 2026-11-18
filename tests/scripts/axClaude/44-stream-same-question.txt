@@ -1,0 +1,52 @@
+# Workflow: Be asked again when Claude asks the same thing twice, over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-7.2, SM-7.4 (2026-11-17, found by the review of that day): every request for
+# the user's word is asked anew. Claude sends two Edit calls for one file in one reply, so the second question reads
+# exactly as the first and comes some milliseconds after the first answer. It must be said again, with its caution, and
+# its list must start on No again: before the repair the first list stayed, on Yes, and nothing was said. Answer from a
+# list is off in this run's settings, which the stream does not go by: over the stream a question has no rows in the
+# conversation, and the list is the only place that shows its answers. The recording here is written by hand for this
+# one order of events (two questions with one title); the other stream scripts play recordings of the real stream.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all","questionNotices":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file twice.jsonl {"k":"meta","claudeCode":"2.1.327"}\n{"t":0,"k":"in","what":"message","text":"go"}\n{"t":10,"k":"out","line":{"type":"system","subtype":"init","permissionMode":"default","session_id":"session-1"}}\n{"t":20,"k":"out","line":{"type":"user","isReplay":true,"message":{"content":"go"}}}\n{"t":30,"k":"out","line":{"type":"assistant","message":{"content":[{"type":"tool_use","id":"call-1","name":"Edit","input":{"file_path":"notes.txt"}},{"type":"tool_use","id":"call-2","name":"Edit","input":{"file_path":"notes.txt"}}]}}}\n{"t":40,"k":"ask","tool":"Edit","call":"call-1","input":{"file_path":"notes.txt"}}\n{"t":40,"k":"answer","behavior":"allow"}\n{"t":50,"k":"ask","tool":"Edit","call":"call-2","input":{"file_path":"notes.txt"}}\n{"t":50,"k":"answer","behavior":"deny"}\n{"t":60,"k":"out","line":{"type":"assistant","message":{"content":[{"type":"text","text":"one of two"}]}}}\n{"t":70,"k":"out","line":{"type":"result","subtype":"success","is_error":false,"num_turns":2}}\n{"t":80,"k":"in","what":"closed"}\n{"t":80,"k":"exit","code":0}
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream "%~dp0twice.jsonl" %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+# The folder's question comes first (stream-mode.md SM-7.1): Enter is no, so the yes is its own button.
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Allow the first of two calls that read the same
+type Change the notes
+keys enter
+expect said Sent
+expect said Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No
+expect focus 1. No
+# A question the user did not cause holds its answering keys for a moment.
+wait 1500
+keys down
+expect focus 2. Yes, once
+keys enter
+expect said Sent: 2, Yes, once
+
+# Goal: Hear the second call asked anew, with no first
+expect said Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No
+expect focus 1. No
+expect state Claude: waiting for your answer
+# The area holds its keys for three seconds after an answer, so that a second Enter does not answer what follows.
+wait 3200
+keys enter
+expect said Sent: 1, No
+expect said claude: one of two
+expect said Done
+# Claude Code was told yes to the first call and no to the second.
+run findstr /c:"the window's answer was allow" st\stream-standin.log
+run findstr /c:"the window's answer was deny" st\stream-standin.log
+
+# Check: The window counts both questions
+menu Say the event sources
+expect said Questions asked: 2.

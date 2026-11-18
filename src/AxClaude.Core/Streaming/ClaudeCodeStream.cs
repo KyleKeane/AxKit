@@ -135,6 +135,13 @@ public sealed record StreamAsk(string Tool, string Call, string About, JsonEleme
 {
     /// <summary>A question of Claude's own to the user, and no tool call that needs the user's word.</summary>
     public bool IsQuestion => Questions.Count > 0;
+
+    /// <summary>
+    /// <see cref="About"/> is not the whole of what the call is about: only the first line of a command of several,
+    /// or the first 200 characters of a long one. A window that asks about the call says so, since allowing it runs
+    /// all of it.
+    /// </summary>
+    public bool AboutCut { get; init; }
 }
 
 /// <summary>
@@ -340,10 +347,15 @@ public static class ClaudeCodeStream
             }
 
             var input = root.TryGetProperty("input", out var given) && given.ValueKind == JsonValueKind.Object ? given.Clone() : NoInput;
-            return new StreamAsk(tool, Text(root, "tool_use_id"), Subject(input), input, tool == QuestionTool ? Questions(input) : []);
+            var about = Subject(input);
+            return new StreamAsk(tool, Text(root, "tool_use_id"), about, input, tool == QuestionTool ? Questions(input) : [])
+            {
+                AboutCut = SubjectWhole(input).Trim() != about,
+            };
         }
-        catch (JsonException)
+        catch (Exception ex) when (ex is JsonException or InvalidOperationException)
         {
+            // No JSON, or a value of another kind than the reader takes it for: no question that can be asked.
             return null;
         }
     }
@@ -382,8 +394,25 @@ public static class ClaudeCodeStream
         return questions;
     }
 
-    /// <summary>One line of the stream, read down; <see cref="StreamLine.Nothing"/> for what is no JSON object.</summary>
+    /// <summary>
+    /// One line of the stream, read down; <see cref="StreamLine.Nothing"/> for what is no JSON object, and for a line
+    /// in which a value is of another kind than the reader takes it for (a count that is no number, a text cut in the
+    /// middle of a character): a line that is not understood is passed over, never thrown on, since a window reads
+    /// the stream on a thread where an exception would end it with the conversation.
+    /// </summary>
     public static StreamLine Read(string line)
+    {
+        try
+        {
+            return ReadDown(line);
+        }
+        catch (InvalidOperationException)
+        {
+            return StreamLine.Nothing;
+        }
+    }
+
+    private static StreamLine ReadDown(string line)
     {
         JsonDocument document;
         try
@@ -593,12 +622,18 @@ public static class ClaudeCodeStream
     /// <summary>What a tool call is about: the first of <see cref="SubjectKeys"/> its input holds, its first line, 200 characters at most.</summary>
     private static string Subject(JsonElement input)
     {
+        var first = FirstLine(SubjectWhole(input));
+        return first.Length > 200 ? first[..200] : first;
+    }
+
+    /// <summary>The whole text of the member <see cref="Subject"/> is taken from, all its lines; empty when the input holds none.</summary>
+    private static string SubjectWhole(JsonElement input)
+    {
         foreach (var key in SubjectKeys)
         {
             if (Text(input, key) is { Length: > 0 } value)
             {
-                var first = FirstLine(value);
-                return first.Length > 200 ? first[..200] : first;
+                return value;
             }
         }
 

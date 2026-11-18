@@ -1788,6 +1788,28 @@ Starts with: Open axClaude with the folder st --source stream.
     You hear: Done.
 4. Press Alt+2 (Conversation; Navigation menu).
 
+## Be asked again when Claude asks the same thing twice, over Claude Code's stream
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Allow the first of two calls that read the same
+
+1. Type: Change the notes
+2. Press Enter.
+    You hear: Sent.
+    You hear: Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
+3. Press Down.
+4. Press Enter.
+    You hear: Sent: 2, Yes, once.
+
+### Hear the second call asked anew, with no first
+
+You hear: Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
+1. Press Enter.
+    You hear: Sent: 1, No.
+    You hear: claude: one of two.
+    You hear: Done.
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

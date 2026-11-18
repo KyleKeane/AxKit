@@ -76,13 +76,33 @@ internal sealed partial class MainForm
     /// survey: it comes after a turn, and the end of the reply still held when it arrives is spoken, where a question
     /// of Claude's drops it (docs/axKit/repairs.json R-19).
     /// </summary>
-    private bool QuestionShown => _settings.QuestionNotices && _model.PromptPending && _model.PendingQuestion is not { KeyOnly: true };
+    private bool QuestionShown => AnswersInArea && _model.PromptPending && _model.PendingQuestion is not { KeyOnly: true };
 
     /// <summary>What Claude waits on now, as a signature: the question, the screen, or the row for the user's own words; null when it waits on nothing.</summary>
     private string? WaitSignature => _model.PendingQuestion?.Signature ?? _model.PendingScreen?.Signature ?? _model.TextPrompt;
 
     /// <summary>Whether the control area still shows the wait with this signature.</summary>
     private bool AreaShows(string signature) => _wait is { Shown: true } wait && wait.Signature == signature;
+
+    /// <summary>
+    /// What the control area shows is over, whatever waits next: the next thing waited on is shown and said afresh
+    /// even when it reads the same. For an answer that went back over the stream (docs/axClaude/stream-mode.md
+    /// SM-7.4): with a screen a question ends when Claude Code redraws it, over the stream it ends with the answer.
+    /// </summary>
+    private void MarkWaitOver()
+    {
+        if (_wait is { } wait)
+        {
+            _wait = wait with { Stale = true };
+        }
+    }
+
+    /// <summary>
+    /// What Claude waits on is answered from the control area: by the user's option, and always in a window the
+    /// stream feeds, where a question has no rows in the conversation and the area is the only place that shows its
+    /// answers and its caution (stream-mode.md SM-7.2, SM-7.6).
+    /// </summary>
+    private bool AnswersInArea => _settings.QuestionNotices || Streams;
 
     /// <summary>
     /// Shows what Claude waits on in the control area, in place of the message field (D33). <paramref name="show"/>

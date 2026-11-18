@@ -142,9 +142,11 @@ public sealed class StreamHost : IDisposable
                 _process.Kill(entireProcessTree: true);
             }
         }
-        catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception or NotSupportedException)
+        catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception or NotSupportedException or AggregateException)
         {
-            // It ended in the meantime, or a child of it is already gone: the end is reported by the reader.
+            // It ended in the meantime, or a child of it is already gone, or one of what it started may not be ended
+            // by this account (the tree's failures come as one AggregateException): the end is reported by the
+            // reader. Never thrown on: End calls this on a thread of the pool, where an exception ends the program.
         }
     }
 
