@@ -424,8 +424,12 @@ when the hook says `async`. It needs no Claude Code, no network and no model, an
   whose header is its manual): for a window the stream feeds, the stand-in is a process of lines, as Claude Code is
   with its stream options. A script's `claude.cmd` is `@"%AXKIT_STANDIN%" standin --stream <case> %*`, and the window
   is started with `--source stream`. It writes no scenario: `<case>` names a recording of the real stream under
-  `tests/fixtures/streams` of the repository above the runner (a path to a `.jsonl` file is taken as it is), so a
-  script follows what Claude Code 2.1.327 really wrote. The lines Claude Code wrote go to standard output in their
+  `tests/fixtures/streams` of the run's repository (a path to a `.jsonl` file is taken as it is), so a
+  script follows what Claude Code 2.1.327 really wrote. The repository is the runner's own (`--repository`, or the
+  folder above it that holds `AxKit.sln`), which the runner hands on in `AXKIT_STANDIN_REPOSITORY` as it hands its
+  program on in `AXKIT_STANDIN`: the runner of an NVDA pass is built into `%TEMP%` and has no repository above itself
+  (2026-11-18; the first NVDA pass of the stream scripts ended each of them with "Claude Code ended right after it
+  was started"). The lines Claude Code wrote go to standard output in their
   order, 150 ms apart at most. Where the recording has something the host wrote (a message, a request, the end of
   the input), the stand-in waits until the window has written that kind of thing, so the window's own writing
   moves the play on: the script types a message, and the turn follows. The window's own text is put where Claude
@@ -512,6 +516,14 @@ last lines name the scripts where NVDA did not speak what the window said, apart
 "Spoken" means NVDA started the text: a key press cuts speech, and `[cancel]` in what NVDA said marks where. So the app scripts, written from the plans, are the plans as heard; a step only NVDA can show (a cancellation,
 the order of speech, a state NVDA reads from the control) goes into `tests/nvda-scripts` as `<app>-<what>.txt` with
 `expect spoken` and `refuse spoken`. The report is `%TEMP%\axkit-nvda\report.md`; the console shows the result lines.
+
+A part of the pass again (2026-11-18): `-Only <pattern>, ...` plays only the scripts whose name, or folder and name,
+match (`.\nvda-pass.ps1 -Only '*-stream-*', 'axMedia\03-playing.txt'`), so that what a whole pass failed is heard
+again after its repair in minutes, and each run enters its goals in the workflow record as the whole pass does. And
+`-Inventory write` hands the runner's `--inventory` mode on: the scripts of an app that are all live (axHelp's) list
+its commands on no hidden desktop, so its rows of the command inventory are written by a pass
+(`.\nvda-pass.ps1 axHelp -Only '01-start.txt' -Inventory write`, then `tools\workflows.ps1`) whenever a pass names
+one of them as stale; the pass prints the rows it names.
 
 Two things the first full pass taught (2026-10-31): a key is sent only while a window of the run is in front (the
 runner brings the current one back, and fails the step rather than type into the user's own window, which the

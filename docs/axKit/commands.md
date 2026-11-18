@@ -71,7 +71,12 @@ points here. Each app's own commands are in its `CLAUDE.md`.
 - `nvda-pass.ps1 [<app>]` runs the same scripts with NVDA listening, plus `tests/nvda-scripts`: the NVDA test plans as
   the assistant runs them. It takes the keyboard, so only after the user has stepped away: it does not start while
   the last key or mouse input is under 20 seconds old (it waits a minute for that), when NVDA is not running, or
-  when the installed capture add-on differs from `tools/nvda-capture`.
+  when the installed capture add-on differs from `tools/nvda-capture`. `-Skip <app>, ...` leaves apps out and
+  `-NoBuild` runs the last build again. `-Only <pattern>, ...` plays only the scripts whose name, or folder and
+  name, match (`-Only '*-stream-*', 'axMedia\03-playing.txt'`): what a pass failed is heard again after its repair
+  without the whole pass. `-Inventory write` gives the runner's `--inventory` mode: how the command inventory gets
+  the rows of an app whose scripts are all live (`.\nvda-pass.ps1 axHelp -Only '01-start.txt' -Inventory write`,
+  then `tools\workflows.ps1`).
 - `tools/upstream.ps1` is the upstream watch (`automation.md`, "When an outside program changes"): for each outside
   program (Claude Code, Git, KeePassXC's tool, the shells) the installed version beside the one the checks last passed
   with, from `upstream.json`, and "changed" where they differ; exit code 1 when one did. Quick, no build: run it at

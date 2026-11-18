@@ -229,6 +229,13 @@ internal static class Program
         var (target, exe, build, reportPath, keep) = (options.Target, options.Exe, options.Build, options.Report, options.Keep);
         Run.Nvda = options.Nvda;
 
+        // The run's repository for the stand-in of the stream, which finds a recording a script names by its case
+        // there (StreamStandIn.FixturePath). A runner built outside the repository, as nvda-pass.ps1 builds it into
+        // %TEMP%, has no repository above itself: in the NVDA pass of 2026-11-17 every stream script that names a case
+        // ended with "Claude Code ended right after it was started". Without a repository the variable is taken away,
+        // so that a run inside another run's window never plays the outer run's recordings unasked.
+        Environment.SetEnvironmentVariable(StreamStandIn.RepositoryVariable, options.Repository);
+
         // The process id and the time: a reused process id never meets an old folder (git's read-only objects in it
         // stopped a run once).
         var root = Path.Combine(Path.GetTempPath(), "axkit-automate", $"{Environment.ProcessId}-{DateTime.Now:HHmmss}");

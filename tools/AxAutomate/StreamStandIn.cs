@@ -14,9 +14,13 @@
 //
 // Usage:
 //   AxAutomate standin --stream <case | file.jsonl> <Claude Code's arguments>
-//       <case> is a file's name without its ending under tests/fixtures/streams of the repository above this program
-//       (the nearest folder that holds AxKit.sln); a path that ends in .jsonl is taken as it is. --version as the
-//       first of Claude Code's arguments prints the recording's version and ends.
+//       <case> is a file's name without its ending under tests/fixtures/streams of the run's repository: the one the
+//       runner works in, which it hands to everything it starts in AXKIT_STANDIN_REPOSITORY (--repository, or the
+//       folder above the runner that holds AxKit.sln), else the one above this program. A runner built outside the
+//       repository, as nvda-pass.ps1 builds it into %TEMP%, has none above itself: until 2026-11-18 only that place
+//       was looked in, and every stream script of the first NVDA pass ended at once, with code 2. A path that ends
+//       in .jsonl is taken as it is. --version as the first of Claude Code's arguments prints the recording's
+//       version and ends.
 //   Exit code: the recording's own (0, or what Claude Code ended with), or 2 with one line on standard error
 //   ("stand-in: ...") for a recording it cannot play or a window that wrote something else than the recording has;
 //   the window shows that line when the process ends (SM-9.3), where a script's expectations meet it.
@@ -64,6 +68,12 @@ internal static class StreamStandIn
 {
     /// <summary>The stand-in's first argument for this mode (StandIn.Run).</summary>
     public const string Option = "--stream";
+
+    /// <summary>
+    /// The variable the runner hands the run's repository on in (Program.Main), for the recordings a script names by
+    /// their case: every window, cmd.exe and stand-in of the run inherits it, wherever the runner was built.
+    /// </summary>
+    public const string RepositoryVariable = "AXKIT_STANDIN_REPOSITORY";
 
     private const string VersionOption = "--version";
     private const string McpConfigOption = "--mcp-config";
@@ -117,7 +127,11 @@ internal static class StreamStandIn
         return CannotPlay;
     }
 
-    /// <summary>A case's file under the repository's stream fixtures, or the path given.</summary>
+    /// <summary>
+    /// A case's file under the stream fixtures of the run's repository, or the path given. The repository is the one
+    /// the runner names (<see cref="RepositoryVariable"/>), else the one above this program; the message names no
+    /// folder, since the window shows it.
+    /// </summary>
     private static string FixturePath(string named)
     {
         if (named.EndsWith(".jsonl", StringComparison.OrdinalIgnoreCase))
@@ -125,15 +139,14 @@ internal static class StreamStandIn
             return Path.GetFullPath(named);
         }
 
-        for (var folder = new DirectoryInfo(AppContext.BaseDirectory); folder is not null; folder = folder.Parent)
+        var given = Environment.GetEnvironmentVariable(RepositoryVariable);
+        var repository = !string.IsNullOrEmpty(given) && File.Exists(Path.Combine(given, "AxKit.sln")) ? given : RunOptions.FindRepository();
+        if (repository is null)
         {
-            if (File.Exists(Path.Combine(folder.FullName, "AxKit.sln")))
-            {
-                return Path.Combine(folder.FullName, "tests", "fixtures", "streams", named + ".jsonl");
-            }
+            throw new InvalidDataException($"No repository to find the recording {named} in: the runner named none and none is above this program; give the path of a .jsonl file.");
         }
 
-        throw new InvalidDataException($"No repository above this program to find the recording {named} in; give the path of a .jsonl file.");
+        return Path.Combine(repository, "tests", "fixtures", "streams", named + ".jsonl");
     }
 
     private static List<JsonElement> Records(string path)
