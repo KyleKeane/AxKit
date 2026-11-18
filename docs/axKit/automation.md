@@ -493,7 +493,14 @@ The assistant runs this tier itself to hear a change as NVDA speaks it, in the s
    last key or mouse input was, waits up to a minute for 20 seconds without any, and refuses to start otherwise.
 4. The run records "Running NVDA tests. Please do not touch the keyboard or mouse." in Windows' own voice (SAPI, not
    NVDA, so the capture holds only what the windows made NVDA say, and no window takes the focus) into a wave file and
-   plays it in a loop for the whole run (the user's ask), then takes the foreground and the keys; when it is over the
+   plays it in a loop (the user's ask), then takes the foreground and the keys. From the first script on the warning
+   says where the pass is (the user's ask of 2026-11-18, who woke into a pass and could not tell how long it would
+   keep the keyboard): "Running NVDA test 3 of 172. Please do not touch the keyboard or mouse. 169 tests remaining.
+   About 1 hour 10 minutes left.", recorded anew for every script and looped until the next one's; the last script
+   says "This is the last test." The time is what the scripts still to come took the last time they passed with NVDA
+   listening, kept in `%TEMP%\axkit-nvda-times.json`; a script without a kept time counts as the average of the run
+   so far, and the first script of the first pass on a computer says no time. The words and the estimate are
+   `PassProgress` of `AxAutomate.Core`, with their tests; the run prints each as "NVDA tier: ...". When it is over the
    loop stops and Windows' voice says "NVDA tests finished. The keyboard is yours." Each line waits until NVDA has
    started nothing new for a few seconds (3 before, 4 after, at most 30): NVDA's audio ducking lowered Windows' voice
    when they overlapped, and NVDA read the closing windows after "finished" until the end waited (2026-10-31).

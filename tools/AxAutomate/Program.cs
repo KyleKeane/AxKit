@@ -332,6 +332,14 @@ internal static class Program
         // read before the first script and put back after the last, whatever ends the run. No text there (empty, a
         // picture, files): nothing is put back.
         var clipboardBefore = ClipboardText.Read();
+
+        // The NVDA tier's spoken progress (PassProgress; the user's ask of 2026-11-18): how long each script took the
+        // last time it passed with NVDA listening, what this run's scripts take, and each script's name as the run
+        // prints it, which the times are kept under.
+        var remembered = Run.Nvda ? HandsOff.RememberedTimes() : PassProgress.Read(null);
+        var tookNow = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        var finishedSeconds = 0.0;
+        string NameOf(string script) => Path.GetRelativePath(Directory.Exists(target) ? target : Path.GetDirectoryName(Path.GetFullPath(target))!, script);
         try
         {
             if (Run.Nvda)
@@ -345,15 +353,28 @@ internal static class Program
                 // capture holds only what the windows made NVDA say, and no window takes the focus.
                 Console.WriteLine("NVDA tier: hands off the keyboard and mouse until it says the tests are finished.");
                 Speech.WaitForQuiet(3000);
-                HandsOff.StartLoop("Running NVDA tests. Please do not touch the keyboard or mouse.");
+                HandsOff.StartLoop(PassProgress.Starting);
                 Thread.Sleep(5000);
                 File.Delete(Speech.LogPath);
             }
 
             foreach (var script in scripts)
             {
-                var name = Path.GetRelativePath(Directory.Exists(target) ? target : Path.GetDirectoryName(Path.GetFullPath(target))!, script);
+                var name = NameOf(script);
                 Console.WriteLine($"== {name}");
+                if (Run.Nvda)
+                {
+                    // Which test this is, how many come after it and about how long they take: the warning is recorded
+                    // anew for every script and loops until the next one's. The line is the run's record of what the
+                    // voice said.
+                    var number = scripts.IndexOf(script) + 1;
+                    var left = PassProgress.SecondsLeft(scripts.Skip(number - 1).Select(NameOf).ToList(), remembered, number - 1, finishedSeconds);
+                    var words = PassProgress.Words(number, scripts.Count, left);
+                    Console.WriteLine($"NVDA tier: {words}");
+                    HandsOff.StartLoop(words);
+                }
+
+                var took = Stopwatch.StartNew();
                 var temp = Path.Combine(root, Path.GetFileNameWithoutExtension(script) + "-" + scripts.IndexOf(script));
                 Directory.CreateDirectory(temp);
                 // WF-5.5, WF-5.8: a stable section's trace held against the kept one, or written, before anything
@@ -362,6 +383,14 @@ internal static class Program
                 // WF-10.3, WF-10.4: under --convert the script rewritten and played once more, in a folder of its own.
                 result = ConvertRun.After(script, name, result, () => RunScript(script, exe, Directory.CreateDirectory(temp + "-converted").FullName, false, false), Console.WriteLine);
                 var (ok, log, goals) = (result.Ok, result.Log, result.Goals);
+                finishedSeconds += took.Elapsed.TotalSeconds;
+                if (ok)
+                {
+                    // Only a script that passed leaves its time for the next pass: one that failed took as long as
+                    // the wait that ran out.
+                    tookNow[name] = took.Elapsed.TotalSeconds;
+                }
+
                 InventoryRun.After(result);
                 RecordRun.After(script, result);
                 goalResults.AddRange(goals);
@@ -407,6 +436,9 @@ internal static class Program
                 File.Delete(Speech.FlagPath);
                 File.Delete(Speech.LogPath);
                 HandsOff.Say("NVDA tests finished. The keyboard is yours.");
+                // After the word that the keyboard is free, never before it: the times of the scripts that passed, for
+                // the next pass's "about N minutes left".
+                HandsOff.KeepTimes(remembered, tookNow);
             }
 
             runLock.ReleaseMutex();
@@ -573,21 +605,38 @@ internal static class Program
 /// <summary>
 /// The NVDA tier's word to the user away from the keys, in Windows' own voice (SAPI's SpVoice through COM, no package),
 /// spoken to the end before the run goes on; NVDA never speaks it, so its capture stays the windows' alone. A computer
-/// without the voice gets a sound instead.
+/// without the voice gets a sound instead. What it says while the scripts run is <see cref="PassProgress"/>'s.
 /// </summary>
 internal static class HandsOff
 {
-    private static readonly string WavePath = Path.Combine(Path.GetTempPath(), "axkit-nvda-hands-off.wav");
+    /// <summary>
+    /// The two wave files the warning goes between: the one that plays is never the one being written, so the
+    /// warning plays on with its earlier words until the new ones are ready, and when they cannot be made.
+    /// </summary>
+    private static readonly string[] WavePaths =
+    [
+        Path.Combine(Path.GetTempPath(), "axkit-nvda-hands-off.wav"),
+        Path.Combine(Path.GetTempPath(), "axkit-nvda-hands-off-2.wav"),
+    ];
+
+    /// <summary>How many times the warning was recorded in this run: which of the two files is next.</summary>
+    private static int _recorded;
+
+    /// <summary>A warning plays.</summary>
+    private static bool _playing;
 
     [DllImport("winmm.dll", CharSet = CharSet.Unicode)]
     private static extern bool PlaySoundW(string? sound, nint module, uint flags);
 
     /// <summary>
-    /// The warning recorded once into a wave file in Windows' voice, with a pause after it, and played in a loop for
-    /// the whole run (the user's ask, 2026-10-31), until <see cref="StopLoop"/>.
+    /// The warning recorded into a wave file in Windows' voice, with a pause after it, and played in a loop (the user's
+    /// ask, 2026-10-31) until the next call or <see cref="StopLoop"/>. Called once before the first script and then
+    /// for every script, with its number and what is left (the user's ask, 2026-11-18): the loop that plays is
+    /// replaced when the new words are ready.
     /// </summary>
     public static void StartLoop(string text)
     {
+        var path = WavePaths[_recorded++ % WavePaths.Length];
         try
         {
             var voiceType = Type.GetTypeFromProgID("SAPI.SpVoice") ?? throw new InvalidOperationException("No SAPI voice.");
@@ -595,26 +644,82 @@ internal static class HandsOff
             var voice = Activator.CreateInstance(voiceType)!;
             var stream = Activator.CreateInstance(streamType)!;
             // 3 is SSFMCreateForWrite; 8 is SVSFIsXML, for the pause after the words.
-            streamType.InvokeMember("Open", System.Reflection.BindingFlags.InvokeMethod, null, stream, [WavePath, 3, false]);
+            streamType.InvokeMember("Open", System.Reflection.BindingFlags.InvokeMethod, null, stream, [path, 3, false]);
             voiceType.InvokeMember("AudioOutputStream", System.Reflection.BindingFlags.SetProperty, null, voice, [stream]);
             voiceType.InvokeMember("Speak", System.Reflection.BindingFlags.InvokeMethod, null, voice, [System.Security.SecurityElement.Escape(text) + "<silence msec=\"2500\"/>", 8]);
             streamType.InvokeMember("Close", System.Reflection.BindingFlags.InvokeMethod, null, stream, null);
             Marshal.FinalReleaseComObject(stream);
             Marshal.FinalReleaseComObject(voice);
-            // SND_ASYNC | SND_LOOP | SND_FILENAME | SND_NODEFAULT.
-            PlaySoundW(WavePath, 0, 0x0001 | 0x0008 | 0x00020000 | 0x0002);
+            // SND_ASYNC | SND_LOOP | SND_FILENAME | SND_NODEFAULT. It takes the place of the loop that plays.
+            PlaySoundW(path, 0, 0x0001 | 0x0008 | 0x00020000 | 0x0002);
+            _playing = true;
         }
         catch (Exception error)
         {
+            // A warning that plays goes on with its earlier words: the user is still told to keep off the keys.
             Console.WriteLine($"(Windows' voice is not available: {error.Message})");
-            Console.Beep();
+            if (!_playing)
+            {
+                Console.Beep();
+            }
         }
     }
 
+    /// <summary>The warning stops and its files go. Never thrown on: the run's end, with its word that the keyboard is free, comes after this.</summary>
     public static void StopLoop()
     {
         PlaySoundW(null, 0, 0);
-        File.Delete(WavePath);
+        _playing = false;
+        foreach (var path in WavePaths)
+        {
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // Still held by the player for a moment: the next run writes it anew.
+            }
+        }
+    }
+
+    /// <summary>How long each script took the last time it passed with NVDA listening (<see cref="PassProgress.TimesPath"/>); none when the file is not there or cannot be read.</summary>
+    public static Dictionary<string, double> RememberedTimes()
+    {
+        try
+        {
+            return PassProgress.Read(File.Exists(PassProgress.TimesPath) ? File.ReadAllText(PassProgress.TimesPath) : null);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return PassProgress.Read(null);
+        }
+    }
+
+    /// <summary>
+    /// The times of the scripts that passed in this run put into what was remembered, and the file written. A file
+    /// that cannot be written costs the next pass its estimate and nothing else; the line names no folder.
+    /// </summary>
+    public static void KeepTimes(Dictionary<string, double> remembered, IReadOnlyDictionary<string, double> tookNow)
+    {
+        if (tookNow.Count == 0)
+        {
+            return;
+        }
+
+        try
+        {
+            foreach (var (script, seconds) in tookNow)
+            {
+                remembered[script] = seconds;
+            }
+
+            File.WriteAllText(PassProgress.TimesPath, PassProgress.Write(remembered));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Console.WriteLine("(The scripts' times were not kept for the next pass's estimate.)");
+        }
     }
 
     public static void Say(string text)

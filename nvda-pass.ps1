@@ -12,7 +12,8 @@
   It takes the keyboard and the mouse. Run it only at the user's word, after asking them to step away: it refuses to
   start (exit code 2) when NVDA is not running, when the installed capture add-on is not the repository's, and,
   right before the runner takes the keyboard, while the last key or mouse input is under 20 seconds old (it waits a
-  minute for that quiet first). Windows' voice repeats the warning through the run and says
+  minute for that quiet first). Windows' voice repeats the warning through the run, with the number of the test that
+  runs, how many remain and about how long they take, and says
   when it is over. The report is %TEMP%\axkit-nvda\report.md; the result
   lines are printed without the account's paths. Exit code 0 when every script passed.
 
@@ -164,7 +165,7 @@ Stop-WhenSomeoneIsThere
     # What the run says of the command inventory is shown whole, the rows it names among it ("  axHelp: ... has also
     # ctrl+slash; the inventory has none"): until 2026-11-18 only its first line was, and the row had to be looked for
     # in the report.
-    Where-Object { $_ -match '^(==|FAIL|PASS|FAILED|STOPPED|NVDA tier|The NVDA tier|NVDA did not|Goals:|The command inventory|--inventory|Whole in this run|Recorded)' -or $_ -match '^\s*(FAIL|failed)' -or $_ -match '^\s+\S+: .*the inventory' } |
+    Where-Object { $_ -match '^(==|FAIL|PASS|FAILED|STOPPED|NVDA tier|The NVDA tier|NVDA did not|Goals:|The command inventory|--inventory|Whole in this run|Recorded|\(Windows'' voice|\(The scripts'' times)' -or $_ -match '^\s*(FAIL|failed)' -or $_ -match '^\s+\S+: .*the inventory' } |
     ForEach-Object { $_ -replace '[A-Za-z]:(\\\\|\\)Users(\\\\|\\)[^\\"\s]+', '%USERPROFILE%' }
 $code = $LASTEXITCODE
 Write-Host 'Report: %TEMP%\axkit-nvda\report.md'
