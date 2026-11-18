@@ -5,9 +5,10 @@
   starting with what was checked and ending with "ok" or with what to do.
 
 .DESCRIPTION
-  Four checks, in this order, each by the script that owns it; none of them is changed or copied here:
+  Five checks, in this order, each by the script that owns it; none of them is changed or copied here:
 
-    1. git fetch origin, then how many commits main lacks of origin/main (and the branch in hand, when it is another).
+    1. git fetch origin, then how many commits main lacks of origin/main (and the branch in hand, when it is another);
+       and how GitHub's build of origin/main's newest commit ended (gh), since a push that git took can still fail there.
     2. tools\sync-repos.ps1 -Status: the management lists and the reports clone, fetched and compared, nothing
        committed, pulled or pushed.
     3. tools\reports-check.ps1: the reports on GitHub against the items of the priorities list (CLAUDE.md rule 9).
@@ -97,6 +98,34 @@ if (-not $hasMain -or -not $hasOrigin) {
             Write-Asked "code: the branch $branch lacks $(Get-Plural $lacking 'commit' 'commits') of origin/main: merge or rebase before new work" @()
         } else {
             Write-Host "code: the branch $branch has everything of origin/main: ok"
+        }
+    }
+}
+
+# ---- 1b. the build: what GitHub made of origin/main's newest commit ----
+# A push is not done when git takes it: the build on GitHub runs the page checks under another PowerShell and the
+# tests on another computer. On 2026-11-17 every build of an afternoon failed at one page check while the pushes
+# went on, since nothing looked. So the session looks.
+
+if ($hasOrigin) {
+    if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+        Write-Host 'build: gh is not on this computer: GitHub''s build of origin/main is not asked.'
+    } else {
+        $tip = "$(& git -C $root rev-parse origin/main 2>$null)".Trim()
+        # Outside call, program, gh: asks GitHub how the build of origin/main's newest commit ended.
+        $answered = "$(& gh run list --workflow build.yml --commit $tip --limit 1 --json status,conclusion 2>$null)".Trim()
+        $built = $null
+        if ($LASTEXITCODE -eq 0 -and $answered) {
+            try { $built = @($answered | ConvertFrom-Json)[0] } catch { $built = $null }
+        }
+        if (-not $built -or -not "$($built.status)") {
+            Write-Host 'build: GitHub has no build of origin/main''s newest commit, or could not be asked: not checked.'
+        } elseif ("$($built.status)" -ne 'completed') {
+            Write-Host "build: GitHub's build of origin/main is $($built.status): ok"
+        } elseif ("$($built.conclusion)" -eq 'success') {
+            Write-Host 'build: GitHub''s build of origin/main passed: ok'
+        } else {
+            Write-Asked "build: GitHub's build of origin/main ended with $($built.conclusion): read it with gh run view --log-failed and repair it before anything else is pushed" @()
         }
     }
 }

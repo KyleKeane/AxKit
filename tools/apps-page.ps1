@@ -62,7 +62,12 @@ foreach ($app in $apps) {
     $lines.Add('- Tests: ' + $(if ($tests) { $tests } else { '`tests/AxKit.Tests`' }) + '.')
     $docs = Join-Path $root "docs\$($app.Name)"
     if (Test-Path -LiteralPath $docs) {
-        $names = @(Get-ChildItem -LiteralPath $docs -Filter *.md | Sort-Object { $_.Name.ToLowerInvariant() } | ForEach-Object { '`' + $_.Name + '`' })
+        # Sorted by the characters' own order, case aside, and never by a culture's rules: Windows PowerShell and
+        # PowerShell 7 order a hyphen and a full stop differently (stream-mode.md, stream.md), and the page written
+        # on a developer's computer was then stale in the build on GitHub (2026-11-17, every build of an afternoon).
+        $sorted = [string[]]@(Get-ChildItem -LiteralPath $docs -Filter *.md | ForEach-Object { $_.Name })
+        [Array]::Sort($sorted, [StringComparer]::OrdinalIgnoreCase)
+        $names = @($sorted | ForEach-Object { '`' + $_ + '`' })
         $lines.Add("- Documents: ``docs/$($app.Name)/`` ($($names -join ', ')).")
     }
 
