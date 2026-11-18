@@ -254,6 +254,43 @@ through all of them.
 7. **What the stream does not have, said plainly** (section 6), and the reply's text made plain (SM-4.5).
 8. **Live scripts, the NVDA plan's section, the user guide.** Then the maintainer's two hours.
 
+### Stage 4 in steps (planned 2026-11-17)
+
+Stage 4 is built on a branch, `stream-window`, and comes to `main` when it works as a whole: a setting that does
+nothing, or a window that starts the stream and cannot yet take a message, must not stand on `main`. Each step is
+a commit on the branch with its tests.
+
+1. **The choice.** The setting `claudeSource` (`screen` at first, `stream`; any other word is `screen`) and the
+   option `--source screen|stream` of the command line, which goes before the setting for one start. The window's
+   constructor makes the model the source asks for; from then on the window keeps it (SM-9.2).
+2. **Two fields, one of them set.** `_screenModel` for the screen's model and `_streamModel` for the stream's, each
+   asked only in its own files: the machinery beside the screen for the one, a new `MainForm.Stream.cs` for the
+   other. With the stream, the machinery is not wired: no turn marks, no session file's reader, no hooks, and the
+   event core is handed nothing and decides nothing, so that the window's rules for a source without the core are
+   the ones in force. `SourceSeamTests` holds both fields to their files.
+3. **The start and the end.** `MainForm.Stream.cs`: Claude Code's line for the stream (`ClaudeCodeStream.Options`,
+   each message sent back, the relay as the permission tool with its configuration, the user's own arguments and
+   the window's model), its environment with the relay's pipe, and `StreamHost`. Lines are handed to the window's
+   thread in batches and from there to the model. The first request goes out at once, and its answer makes the
+   mode known, which is what the window's rule for Ready waits for. The base's `ProcessRunning` answers for the
+   stream's process too; stopping Claude ends it with what it started; its end is reported as the screen's is, with
+   the end of what it wrote as errors shown to the user and never logged.
+4. **Sending.** A message is one line (`UserLine`) and its block is the model's; Interrupt and Escape are
+   `InterruptLine` while a turn runs; the mode key is `ModeLine` with the next mode; a slash command is a message.
+   What has no meaning without a screen says so in one sentence (SM-5.7).
+5. **The questions' pipe, answering no.** The window's end of the relay's pipe, open to this Windows account alone:
+   until stage 5 shows a question in the control area, every question is answered no, which is the rule for a
+   question the window cannot show (SM-7.2). So a stream window of this stage can talk, and can run nothing that
+   asks.
+6. **Speech and the tick.** The pass that says which reply lines are final (`Arrivals`) is told that a line of
+   this model is final when it is there.
+7. **A stand-in of the stream** for the window scripts, played from the stream fixtures themselves: it waits for
+   what the window writes where a fixture has a line of the host's, and writes Claude Code's lines in between.
+   The window scripts of stream mode run with it, without Claude Code (SM-10.2).
+8. **The documents.** The app's specification and user guide (the option under Developer), the privacy statement,
+   both READMEs and the security page (the stream and the questions' pipe, in these terms), the outside-calls
+   page, the NVDA plan's section.
+
 ## 12. For the maintainer to decide
 
 Point 1 is decided. Points 2 to 7 are taken as proposed here for the building, on the assistant's own judgement
