@@ -69,7 +69,7 @@ The keys:
 - Ctrl+Period, axFile, axGIT, axMedia and axProcess: Context menu.
 - Ctrl+Period, axAutomate, axMCP, axPass and axTask: The Context menu.
 - Ctrl+Period, axAutomate, axMCP, axPass and axTask: The field's menu.
-- Ctrl+Slash, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask and axTerminal: Ask about this window.
+- Ctrl+Slash, every app: Ask about this window.
 
 ### Space and Ctrl+Space: toggle or play
 

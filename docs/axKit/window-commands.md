@@ -17,6 +17,7 @@ every window" or under a heading that names the windows without it; under an app
 
 ## In every window but axClip and axPass
 
+- Ask about this window. Menu: axKit, Claude. Key: Shift+F1. Also: Ctrl+Slash. Mark: act.
 - Claude's working folder. Menu: axKit, Claude. Key: none. Mark: open.
 - Edit theme file. Menu: axKit, Theme. Key: none. Mark: open.
 - Reload theme. Menu: axKit, Theme. Key: none. Mark: change.
@@ -62,10 +63,6 @@ every window" or under a heading that names the windows without it; under an app
 - axStart. Menu: Window, New window. Key: none. Mark: open.
 - axTask. Menu: Window, New window. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act.
-
-## In every window but axClip, axHelp and axPass
-
-- Ask about this window. Menu: axKit, Claude. Key: Shift+F1. Also: Ctrl+Slash. Mark: act.
 
 ## In every window but axClip, axHelp, axPass and axStart
 
@@ -478,7 +475,6 @@ every window" or under a heading that names the windows without it; under an app
 - Open the conversation. Menu: Actions. Key: Enter. Mark: act.
 - Open the last screenshot in axPreview. Menu: Actions. Key: Ctrl+O. Mark: open.
 - Put a picture file into the conversation. Menu: Actions. Key: Ctrl+D. Mark: act.
-- Ask about this window. Menu: axKit, Claude. Key: Shift+F1. Mark: act.
 - Nothing for the focus here yet. Menu: Context. Key: none. Mark: read.
 - Claude Code. Menu: Help, Claude resources. Key: none. Mark: act.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.

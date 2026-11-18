@@ -40,7 +40,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Minus. Bundle key, in every app: Smaller text.
 - Ctrl+Plus. Bundle key, in every app: Larger text.
 - Ctrl+Right arrow. Window key, in axMedia alone: Forward 15 seconds.
-- Ctrl+Slash. Bundle key, in axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask and axTerminal: Ask about this window.
+- Ctrl+Slash. Bundle key, in every app: Ask about this window.
 - Ctrl+Shift+4. Window key, in axDown and axPreview: Heading level 4.
 - Ctrl+Shift+5. Window key, in axDown and axPreview: Heading level 5.
 - Ctrl+Shift+6. Window key, in axDown and axPreview: Heading level 6.

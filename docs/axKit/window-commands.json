@@ -759,7 +759,7 @@
         {"label": "Let AI tools read and open axKit", "menu": "axKit, AI tools", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},
         {"label": "Let AI tools run commands", "menu": "axKit, AI tools", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},
         {"label": "Read the log", "menu": "axKit, AI tools", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},
-        {"label": "Ask about this window", "menu": "axKit, Claude", "key": "shift+f1", "also": [], "keyText": "Shift+F1", "mark": "act", "keyOnly": false, "ai": true},
+        {"label": "Ask about this window", "menu": "axKit, Claude", "key": "shift+f1", "also": ["ctrl+slash"], "keyText": "Shift+F1", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Claude's working folder", "menu": "axKit, Claude", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Folders Claude may read", "menu": "axKit, Claude", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},
         {"label": "Use Claude in axKit", "menu": "axKit, Claude", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},

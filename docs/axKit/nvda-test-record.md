@@ -6,6 +6,60 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-18: every app, before 5.10.0; by the assistant with NVDA listening (`main` 4830f1f0, then e10f28cf for ten scripts)
+
+`.\nvda-pass.ps1` in the night of 2026-11-17 to 18, the user in bed at his own word ("do the nvda pass"), NVDA
+2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.9.1 of commit 4830f1f0: the 167 scripts of
+`tests/scripts` and the five of `tests/nvda-scripts`, 172 in all, in an hour and a quarter. 164 passed with every
+announcement also spoken by NVDA; 1102 goals and checks passed, 6 failed and 25 were not run after them. Then, with
+the user awake and away from the keys at the question's answer, two short runs at e10f28cf (no window's code lies
+between the two commits): `.\nvda-pass.ps1 -Only '*-stream-*', 'axMedia\03-playing.txt'`, the eight scripts of the
+stream and axMedia's, 38 goals, all passed; and `.\nvda-pass.ps1 axHelp -Only '01-start.txt' -Inventory write`, for
+the command inventory. Every goal and check of the record, 1133, now has a pass with NVDA as its last result. The
+passes wrote each result into `docs/axKit/workflow-record.json` themselves.
+
+| What | Scripts | Result |
+|---|---|---|
+| Every script but eight | 164 | Passed in the whole pass |
+| `axClaude/37` to `43`, the stream scripts that name a recording by its case | 7 | Failed in the whole pass at the stand-in of Claude Code, a fault of the test tool; passed in the second run |
+| `axMedia/03-playing.txt` | 1 | One step failed in the whole pass, by NVDA's own timing; passed in the second run |
+
+What it found:
+
+- The seven stream scripts failed before their first step: "Claude Code ended right after it was started over its
+  stream (exit code 2)". The stand-in of the stream looked for its recordings only under the repository above its
+  own program, and the runner of an NVDA pass is built into `%TEMP%`. `44-stream-same-question.txt`, which gives its
+  recording by a path, passed in the same pass, so the window itself was heard. The runner now hands its repository
+  on (`AXKIT_STANDIN_REPOSITORY`, 5ad84529), and all eight stream scripts passed with NVDA in the second run: the
+  folder's question, Ready, a turn with Done, the keys, the end of Claude Code, a tool's question each way with its
+  caution, Claude's own questions, the interrupt, and the second question that reads as the first.
+- axMedia's step sends Faster twice with nothing between and expects "Speed 1.5". The window said "Speed 1.25" and
+  "Speed 1.5", 58 ms apart; NVDA spoke the first and not the second within 15 s. In the second run the two were 36 ms
+  apart and NVDA spoke both. The script and axMedia are as they were when the step passed on 2026-11-16: of two
+  announcements some tens of milliseconds apart, NVDA sometimes speaks only the first. No user's two key presses
+  come that close; a key held down could, and that is on the priorities list.
+- The pass told nobody how long it would take: the user woke into it and waited without a word of its length.
+  Windows' voice now says the test's number, how many remain and about how long they take (e10f28cf; section 3 of
+  `automation.md`), heard by him in the second run. And the second run was first started without the question, on
+  the belief that he was asleep; it refused by itself when it saw his keys, which is what its guard is for. Every
+  NVDA run is asked for through the question tool again.
+- `nvda-pass.ps1` gained `-Only`, by which the second run took two and a half minutes where the whole pass takes
+  an hour and a quarter.
+- The command inventory was stale in one row, as the Owed section of 2026-11-16 said it would be until a pass
+  wrote it: axHelp's "Ask about this window" lacked its further key Ctrl+Slash, since only live scripts list
+  axHelp's commands and no run on the hidden desktop plays them. `nvda-pass.ps1` gained `-Inventory write` for it;
+  the third run (`axHelp/01-start.txt`, 6 goals, passed) replaced that one row and no other.
+- Heard for the first time, and taken off `docs/axKit/owed.md`: the refusals of a settings file whose seal does not
+  check in axGIT, axMCP, axFile and axClaude (R-53), the settings that cannot be saved in an item window and in a
+  console window (R-63), the remembered path on the network (R-64) and a server's error lines in axMCP (R-74). And
+  of the Owed sections below, their parts for a pass: the state, Done and a turn Claude Code begins by itself, from
+  the event core (`axClaude/34`, `35` and `36`, the plan's section 25, steps 4 to 6); the sentences that name Alt+1
+  to 3, Ctrl+Period and Ctrl+Slash (`axGIT/01`, `axClaude/23`, `axTask/09`); a menu's refusal in navigation mode
+  (`axDown/16`). What those sections still hold is for the user's ear.
+- Still owed a hearing, since no script reaches them: the notice about a changed file in Claude's working folder
+  (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
+  command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
+
 ## 2026-11-16: every app, after the day of consolidation; by the assistant with NVDA listening (`main` f93f1e64)
 
 `.\nvda-pass.ps1`, the user away at his own word, Windows 11 Pro 10.0.26200, the build 5.9.1 of commit f93f1e64:
@@ -210,7 +264,9 @@ whole folder of scripts was not run for it. By the user's ear, in the same use:
     the music starts, before the reply) and never in a turn he sent himself, and whether its switch under Options,
     Announcements is where he would look for it.
 
-With NVDA, in a pass: `nvda-test-plan.md` section 25, steps 4, 5 and 6.
+With NVDA, in a pass: `nvda-test-plan.md` section 25, steps 4, 5 and 6. Heard in the pass of 2026-11-18
+(`axClaude/34`, `35` and `36`, `main` 4830f1f0); what is left above is for the user's ear.
+
 ## Owed: the keys and sounds of 2026-11-16 (Alt+1 to 3, Ctrl+Period, Ctrl+Slash, navigation mode's three sounds; `docs/axKit/SPEC.md` AX-8.13 to AX-8.15)
 
 Built and passing on the runner's desktop, which posts a key's message and plays no sound, so none of this is heard
@@ -241,9 +297,13 @@ With NVDA, in a pass:
 
 7. The sentences that name the new keys: "Changes view first: Alt+1" and its siblings in axGIT and axProcess; the
    key test's "Alt+2: Conversation", "Ctrl+Period: The Context menu, as Shift+F10" and "Ctrl+Slash: Ask Claude about
-   this window, as Shift+F1"; the menus' shortcut read as "Alt+1."; the F1 texts' new lines.
+   this window, as Shift+F1"; the menus' shortcut read as "Alt+1."; the F1 texts' new lines. Heard in the pass of
+   2026-11-18 as far as the scripts expect them: "Changes view first: Alt+1" (`axGIT/01`) and the three sentences
+   of the key test (`axClaude/23`, `axTask/09`). A menu's shortcut as NVDA reads it and the F1 texts' new lines are
+   in no script, and stay for the ear.
 8. axHelp's row "Ask about this window" in the command inventory lacks its further key Ctrl+Slash until a pass
-   writes it: its only scripts start the real Claude Code.
+   writes it: its only scripts start the real Claude Code. Written on 2026-11-18 by
+   `.\nvda-pass.ps1 axHelp -Only '01-start.txt' -Inventory write`, the way for it from now on.
 
 ## Owed: a menu's refusal in navigation mode and the last full stop of joined words (2026-11-16, `docs/axKit/SPEC.md` AX-8.13 and AX-7.3)
 
@@ -251,7 +311,8 @@ Two changes that are heard, made with the repair of what axDown answered an AI t
 scripts of axDown, axJSON, axPreview, axTerminal, axTask and the AI tools pass on the runner's desktop. With NVDA:
 
 1. In axDown, in navigation mode, choose Edit, Undo from the menu: the edge sound, then "Navigation mode: press
-   Ctrl+Space to edit". Before, the words came without the sound.
+   Ctrl+Space to edit". Before, the words came without the sound. The words were heard in the pass of 2026-11-18
+   (`axDown/16`); the script does not ask for the sound, which stays for the ear.
 2. Any announcement that joins several pieces, such as the words after an AI tool ran a command: the last piece keeps
    its full stop, so the sentence ends as it does when said alone. Listen for a changed pause at the end.
 
