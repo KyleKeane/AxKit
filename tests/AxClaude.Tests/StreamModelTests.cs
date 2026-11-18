@@ -1,4 +1,5 @@
 using AxClaude.Core.Streaming;
+using AxClaude.Core.Transcript;
 using AxKit.Core.Transcript;
 
 namespace AxClaude.Tests;
@@ -268,6 +269,39 @@ public sealed class StreamModelTests
     }
 
     [Fact]
+    public void The_model_keeps_Claude_Codes_own_name_of_the_mode_and_every_mode_the_run_was_in()
+    {
+        // What the window's mode key counts on from (ClaudeCodeStream.NextMode): the name in force, and the modes seen.
+        var model = new StreamModel();
+        Assert.Equal(string.Empty, model.ModeName);
+        Assert.Empty(model.ModesSeen);
+
+        model.Take(ClaudeCodeStream.Read("""{"type":"control_response","response":{"subtype":"success","request_id":"r","response":{"current_permission_mode":"auto"}}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"status","permissionMode":"default"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"status","permissionMode":"auto"}"""));
+        Assert.Equal("auto", model.ModeName);
+        Assert.Equal("auto mode on", model.Mode);
+        Assert.Equal(["auto", "default"], model.ModesSeen);
+
+        // A new run knows none of it.
+        model.ResetScreen();
+        Assert.Equal(string.Empty, model.ModeName);
+        Assert.Empty(model.ModesSeen);
+    }
+
+    [Fact]
+    public void A_turn_the_user_interrupted_says_so_in_a_word_and_rings_no_bell()
+    {
+        var log = StreamReplay.Run("interrupt", out var model);
+        Assert.Contains("    announced: " + StreamModel.InterruptedWords, log);
+        Assert.Contains(model.Lines, line => line.Kind == LineKind.System && line.Text == "System: Interrupted");
+        // One bell in the recording: the second turn's, which ended well.
+        Assert.Single(log, entry => entry == "    the bell");
+        // A failure of the service is no interrupt.
+        Assert.DoesNotContain(StreamReplay.Run("failure", out _), entry => entry.Contains(StreamModel.InterruptedWords, StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void A_new_run_puts_a_message_never_taken_on_record_and_forgets_the_old_run()
     {
         var model = new StreamModel();
@@ -288,6 +322,57 @@ public sealed class StreamModelTests
         model.Clear();
         Assert.Empty(model.Lines);
         Assert.Equal(0, model.ExchangeCount);
+    }
+
+    [Fact]
+    public void A_file_a_call_names_is_shortened_by_the_folder_the_model_was_last_told()
+    {
+        // A window keeps its model while its folder changes (SM-9.2): the folder is said with every start.
+        static string Call(string id, string file) =>
+            "{\"type\":\"assistant\",\"message\":{\"content\":[{\"type\":\"tool_use\",\"id\":\"" + id + "\",\"name\":\"Read\",\"input\":{\"file_path\":\"" + file.Replace("\\", "\\\\") + "\"}}]}}";
+
+        var model = new StreamModel();
+        model.Take(ClaudeCodeStream.Read(Call("1", @"C:\one\src\a.txt")));
+        Assert.Equal(@"tool: Read (C:\one\src\a.txt)", model.Lines[^1].Text);
+
+        model.WorksIn(@"C:\one");
+        model.Take(ClaudeCodeStream.Read(Call("2", @"C:\one\src\a.txt")));
+        Assert.Equal(@"tool: Read (src\a.txt)", model.Lines[^1].Text);
+
+        // Another folder, given with its separator: the first is no longer cut off, the new one is.
+        model.WorksIn(@"D:\two\");
+        model.Take(ClaudeCodeStream.Read(Call("3", @"C:\one\src\a.txt")));
+        Assert.Equal(@"tool: Read (C:\one\src\a.txt)", model.Lines[^1].Text);
+        model.Take(ClaudeCodeStream.Read(Call("4", @"D:\two\b.txt")));
+        Assert.Equal(@"tool: Read (b.txt)", model.Lines[^1].Text);
+
+        model.WorksIn(null);
+        model.Take(ClaudeCodeStream.Read(Call("5", @"D:\two\b.txt")));
+        Assert.Equal(@"tool: Read (D:\two\b.txt)", model.Lines[^1].Text);
+    }
+
+    [Fact]
+    public void A_reply_line_of_the_stream_is_final_when_it_is_there_and_is_spoken_while_Claude_works()
+    {
+        // The pass behind the spoken replies (Arrivals) holds the screen's last row back while Claude works, since a
+        // row can still grow. A line of the stream cannot: it is spoken with the frame that brings it.
+        var model = new StreamModel();
+        var arrivals = new Arrivals();
+        Assert.True(model.Send("hello"));
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"hello"}}"""));
+        arrivals.Update(model.Lines, model.Working, ReplySpeechMode.All, toolCalls: false);
+
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"First line.\nSecond line."}]}}"""));
+        Assert.True(model.Working);
+        var arrival = arrivals.Update(model.Lines, model.Working, ReplySpeechMode.All, toolCalls: false);
+
+        Assert.True(arrival.NewLine);
+        Assert.Equal(["claude: First line.", "Second line."], arrival.SpokenLines.Select(line => line.Text));
+
+        // And not again with the turn's end.
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":1}"""));
+        Assert.Null(arrivals.Update(model.Lines, model.Working, ReplySpeechMode.All, toolCalls: false).Speech);
     }
 
     [Fact]

@@ -1,0 +1,55 @@
+# Workflow: Change Claude Code's mode and use the window's commands over the stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-5 (2026-11-17): what the window sends over Claude Code's stream. The
+# stand-in plays the recording of a mode change and a turn in the new mode (tests/fixtures/streams/mode.jsonl): the
+# window's mode key writes the request for the next mode, Claude Code answers with it, and the window says the mode in
+# the screen's words. A command that has no meaning without Claude Code's screen says one sentence, the same everywhere.
+# A restart ends the process by the end of its input and starts a new one.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream mode %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+
+# Goal: Go to Claude Code's next permission mode
+expect said Ready
+expect state Claude: ready | manual mode on
+do Next permission mode
+expect said accept edits on
+expect state Claude: ready | accept edits on
+
+# Goal: Send a message in the new mode
+type Write the file
+keys enter
+expect said Sent
+expect said claude: written
+expect said Done
+do Conversation
+expect text tool: Write (C:\work\probe-mode.txt)
+expect text claude: written
+
+# Check: A command that needs Claude Code's screen says so
+do Send queued messages now
+expect said Not with the stream source
+menu Ctrl+D
+expect said Not with the stream source
+keys ctrl+o
+expect said Not with the stream source
+menu Choose the model
+expect said Not with the stream source
+
+# Check: Nothing is interrupted or sent when there is nothing
+do Interrupt
+expect said Nothing to interrupt
+do Message field
+keys enter
+expect said Nothing to send
+
+# Goal: Restart Claude Code
+do Force Claude to restart
+expect state Force Claude to restart?
+keys enter
+expect said Restarting
+expect said Ready
+do Conversation
+expect text System: Restarting Claude

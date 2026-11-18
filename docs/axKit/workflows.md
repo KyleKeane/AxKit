@@ -249,8 +249,16 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Hear Done after the reply's words
 36. **Hear that Claude goes on by itself after background work**
     - Stop hearing that Claude goes on by itself
-37. **Have a short exchange with Claude**
-38. **Answer a set of two questions from Claude**
+37. **Follow a turn of Claude Code's stream**
+    - Send a message and hear the reply and Done
+38. **Change Claude Code's mode and use the window's commands over the stream**
+    - Go to Claude Code's next permission mode
+    - Send a message in the new mode
+    - Restart Claude Code
+39. **Hear that Claude Code's stream ended, and be offered the screen**
+    - Learn that Claude Code ended and stay in the window
+40. **Have a short exchange with Claude**
+41. **Answer a set of two questions from Claude**
 
 ## axClip
 

@@ -90,12 +90,29 @@ internal sealed partial class MainForm
     partial void RecordTurn(bool open);
 
     /// <summary>
+    /// The machinery beside the screen is this window's: the screen feeds it (docs/axClaude/stream-mode.md SM-3.6).
+    /// A window over Claude Code's stream has no turn marks, no frames, no hooks and no session file's reader: the
+    /// core is handed nothing and decides nothing, the shadow is told nothing, and the window's own rules are the
+    /// ones in force, as they are with the setting <c>eventCore</c> set to <c>shadow</c>. Every way into the
+    /// machinery from the window's own code asks here first, so that none of it runs half.
+    /// </summary>
+    private bool FlowWired => _screenModel is not null;
+
+    /// <summary>
     /// Called once from the constructor, before <see cref="WireHooks"/>: of the two that listen to the screen's turn
-    /// marks, the core is told first, as it always was.
+    /// marks, the core is told first, as it always was. Nothing for a window the stream feeds, whose two event
+    /// sources stand as off.
     /// </summary>
     private void WireFlow()
     {
-        _screenModel.Marked += letter => EnqueueFlow(FlowFeed.FromMark(letter));
+        if (_screenModel is not { } screen)
+        {
+            _health.Hooks = HookUse.Off;
+            _health.Record = RecordUse.Off;
+            return;
+        }
+
+        screen.Marked += letter => EnqueueFlow(FlowFeed.FromMark(letter));
         _health.TableVersion = ClaudeCodeHooks.TableVersion;
         _health.Hooks = _settings.ClaudeHooks ? HookUse.NotPassed : HookUse.Off;
         _health.Record = _settings.GroundInSessionFile ? RecordUse.NotFound : RecordUse.Off;
@@ -109,9 +126,9 @@ internal sealed partial class MainForm
         };
     }
 
-    /// <summary>Whether the core is in charge of a family of decisions (EG-4.11): the build says which, the file-only setting <c>eventCore</c> set to <c>shadow</c> puts all of them back in shadow, and so does a core that failed.</summary>
+    /// <summary>Whether the core is in charge of a family of decisions (EG-4.11): the build says which, the file-only setting <c>eventCore</c> set to <c>shadow</c> puts all of them back in shadow, and so does a core that failed. Of none in a window the stream feeds (<see cref="FlowWired"/>).</summary>
     private bool FlowDecides(FlowCharge family) =>
-        (Built & family) != 0 && !_flowFailed && _settings.EventCore != AppSettings.EventCoreShadow;
+        FlowWired && (Built & family) != 0 && !_flowFailed && _settings.EventCore != AppSettings.EventCoreShadow;
 
     /// <summary>
     /// Claude works: a turn is open. By the core while it decides the state (EG-6.1 to EG-6.3: the turn's marks, with
@@ -135,9 +152,14 @@ internal sealed partial class MainForm
     /// </summary>
     private void FlowTurnToModel()
     {
+        if (_screenModel is not { } screen)
+        {
+            return;
+        }
+
         bool? open = FlowDecides(FlowCharge.State) ? _flow.Working || _flow.Ending : null;
-        var over = _screenModel.TurnOpen == true && open != true;
-        _screenModel.TurnOpen = open;
+        var over = screen.TurnOpen == true && open != true;
+        screen.TurnOpen = open;
         if (over)
         {
             // The model reads the value only as a frame ends, and a turn is over with no frame behind it (at Done, by
@@ -146,9 +168,9 @@ internal sealed partial class MainForm
             // it stands, as the quiet timer gives one; after the pass that runs now, never inside it.
             After(1, () =>
             {
-                if (ProcessRunning && _screenModel.TurnOpen != true)
+                if (ProcessRunning && screen.TurnOpen != true)
                 {
-                    _screenModel.EndFrame();
+                    screen.EndFrame();
                 }
             });
         }
@@ -159,11 +181,12 @@ internal sealed partial class MainForm
     /// the core's decisions for one are carried out in order before the next is taken (EG-4.8). Null is no input, so
     /// that a source's mapping can be handed over as it is. Nothing the core does may take the window down while the
     /// window's own code still acts beside it: an exception is logged, with the input's kind and never its content,
-    /// and the core is left alone until the next start of Claude.
+    /// and the core is left alone until the next start of Claude. Nothing in a window the stream feeds
+    /// (<see cref="FlowWired"/>): the core is the screen's machinery.
     /// </summary>
     private void EnqueueFlow(FlowInput? input)
     {
-        if (input is null || (_flowFailed && input is not ProcessStarted))
+        if (!FlowWired || input is null || (_flowFailed && input is not ProcessStarted))
         {
             return;
         }
@@ -383,7 +406,7 @@ internal sealed partial class MainForm
     /// </summary>
     private void FlowFrame(Arrival arrival)
     {
-        if (!ProcessRunning)
+        if (_screenModel is not { } screen || !ProcessRunning)
         {
             return;
         }
@@ -395,7 +418,7 @@ internal sealed partial class MainForm
             _shadow.QuestionOpen();
         }
 
-        EnqueueFlow(FlowFeed.FromFrame(_screenModel, arrival, _model.PromptPending, _readyAnnounced && _settings.ReplySpeech != ReplySpeechMode.None));
+        EnqueueFlow(FlowFeed.FromFrame(screen, arrival, _model.PromptPending, _readyAnnounced && _settings.ReplySpeech != ReplySpeechMode.None));
     }
 
     /// <summary>
@@ -419,10 +442,22 @@ internal sealed partial class MainForm
     /// core leaves to the settle (EG-6.5): the shadow's line for such a turn names Done as a difference, truly, since
     /// the core said none.
     /// </summary>
-    private void FlowSaidDone() => _shadow.Window(ShadowFact.SaidDone, Environment.TickCount64);
+    private void FlowSaidDone()
+    {
+        if (FlowWired)
+        {
+            _shadow.Window(ShadowFact.SaidDone, Environment.TickCount64);
+        }
+    }
 
     /// <summary>The window's own code spoke these reply lines after its hold (FR-7.4): the shadow counts them and keeps their kinds, never their text.</summary>
-    private void FlowSpoke(IReadOnlyList<AxKit.Core.Transcript.Line> lines) => _shadow.WindowSpoke(lines, Environment.TickCount64);
+    private void FlowSpoke(IReadOnlyList<AxKit.Core.Transcript.Line> lines)
+    {
+        if (FlowWired)
+        {
+            _shadow.WindowSpoke(lines, Environment.TickCount64);
+        }
+    }
 
     /// <summary>The user acted, or the app for him: he has moved on from what was held for him (EG-4.7).</summary>
     private void FlowActed(UserAction action) => EnqueueFlow(new UserActed(action));
@@ -430,6 +465,11 @@ internal sealed partial class MainForm
     /// <summary>A message or a command went to Claude: the user's action with the message's key, which the record's reader looks for in the session files (EG-3.2).</summary>
     private void FlowSent(string text)
     {
+        if (!FlowWired)
+        {
+            return;
+        }
+
         var key = FlowFeed.SentKey(text);
         EnqueueFlow(new UserActed(UserAction.Sent, key));
         RecordSent(key);
@@ -445,6 +485,11 @@ internal sealed partial class MainForm
     /// </summary>
     private void FlowProcessStarted()
     {
+        if (!FlowWired)
+        {
+            return;
+        }
+
         _health.Reset();
         if (!_settings.ClaudeHooks)
         {
@@ -466,6 +511,11 @@ internal sealed partial class MainForm
     /// <summary>Claude ended or was stopped: the core and the reader are told. Called from <see cref="StopProcess"/> alone, which every end passes.</summary>
     private void FlowProcessEnded()
     {
+        if (!FlowWired)
+        {
+            return;
+        }
+
         EnqueueFlow(new ProcessEnded());
         RecordProcessEnded();
     }
@@ -499,11 +549,18 @@ internal sealed partial class MainForm
             : string.Join(", ", families));
     }
 
-    /// <summary>Options, Developer, Say the event sources (EG-9.3): where the events come from, in numbers and fixed words, on demand.</summary>
-    private void SayEventSources() => Announce(_health.Said(FlowCoreWords(spoken: true)), true);
+    /// <summary>
+    /// Options, Developer, Say the event sources (EG-9.3): where the events come from, in numbers and fixed words, on
+    /// demand. In a window the stream feeds, the stream's own sentence, which names it first (SM-9.4).
+    /// </summary>
+    private void SayEventSources() => Announce(FlowWired ? _health.Said(FlowCoreWords(spoken: true)) : StreamSourceSaid(), true);
 
-    /// <summary>The lines Copy diagnostics gains (EG-9.4): numbers and fixed words only.</summary>
-    private IReadOnlyList<string> FlowDiagnostics() => _health.Lines(FlowCoreWords(spoken: false));
+    /// <summary>The lines Copy diagnostics gains (EG-9.4): the source that feeds the window (SM-9.4), then its numbers and fixed words only.</summary>
+    private IReadOnlyList<string> FlowDiagnostics() =>
+        FlowWired ? ["Source: the screen", .. _health.Lines(FlowCoreWords(spoken: false))] : StreamDiagnostics();
+
+    /// <summary>What a switch of the screen's event sources says after its own words in a window the stream feeds: the setting is kept, and this window does not use it (SM-3.6).</summary>
+    private const string ScreenSettingWords = ", for windows the screen feeds; not used with the stream";
 
     /// <summary>
     /// Options, Developer, Events from Claude Code's hooks (EG-9.1): the setting, for the next start of Claude Code;
@@ -512,7 +569,7 @@ internal sealed partial class MainForm
     private void SetClaudeHooks(bool on)
     {
         _settings.ClaudeHooks = on;
-        Announce($"Events from Claude Code's hooks {(on ? "on" : "off")}, from the next start of Claude", true);
+        Announce($"Events from Claude Code's hooks {(on ? "on" : "off")}{(FlowWired ? ", from the next start of Claude" : ScreenSettingWords)}", true);
     }
 
     /// <summary>
@@ -523,6 +580,13 @@ internal sealed partial class MainForm
     private void SetGroundInSessionFile(bool on)
     {
         _settings.GroundInSessionFile = on;
+        if (!FlowWired)
+        {
+            // No reader in a window the stream feeds: the setting alone changes.
+            Announce($"Grounding in Claude Code's session file {(on ? "on" : "off")}{ScreenSettingWords}", true);
+            return;
+        }
+
         _health.Record = on ? RecordUse.NotFound : RecordUse.Off;
         _health.RecordReason = string.Empty;
         RecordSwitch(on);

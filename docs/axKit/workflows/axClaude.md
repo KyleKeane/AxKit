@@ -1615,6 +1615,61 @@ Starts with: Open axClaude with the folder by.
 1. Choose "Claude goes on by itself" when a turn starts that you did not send in the Options menu, Announcements.
     You hear: "Claude goes on by itself" when a turn starts that you did not send, not checked.
 
+## Follow a turn of Claude Code's stream
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Send a message and hear the reply and Done
+
+You hear: Ready.
+1. Type: Say ok
+2. Press Enter.
+    You hear: Sent.
+    You hear: claude: ok.
+    You hear: Done.
+3. Press Alt+2 (Conversation; Navigation menu).
+
+## Change Claude Code's mode and use the window's commands over the stream
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Go to Claude Code's next permission mode
+
+You hear: Ready.
+1. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+    You hear: accept edits on.
+
+### Send a message in the new mode
+
+1. Type: Write the file
+2. Press Enter.
+    You hear: Sent.
+    You hear: claude: written.
+    You hear: Done.
+3. Press Alt+2 (Conversation; Navigation menu).
+
+### Restart Claude Code
+
+1. Press Ctrl+Shift+R (Force Claude to restart; Actions menu).
+2. Press Enter.
+    You hear: Restarting.
+    You hear: Ready.
+3. Press Alt+2 (Conversation; Navigation menu).
+
+## Hear that Claude Code's stream ended, and be offered the screen
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Learn that Claude Code ended and stay in the window
+
+You hear: Ready.
+1. Type: Say ok
+2. Press Enter.
+    You hear: Sent.
+    You hear: Claude stopped.
+3. Press Escape.
+4. Press Alt+2 (Conversation; Navigation menu).
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

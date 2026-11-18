@@ -21,6 +21,9 @@
 //       appends the scenario's history steps to the session file of that working folder and ends: a session that
 //       holds turns before the window starts Claude Code (--continue). A script runs it before its start step:
 //       run "%AXKIT_STANDIN%" standin --prepare scenario.json <folder>
+//   AxAutomate standin --stream <case | file.jsonl> <Claude Code's arguments>
+//       the stand-in of Claude Code's stream, for a window the stream feeds: a recording of the real stream played
+//       line by line and moved on by what the window writes. StreamStandIn.cs has its usage and its records.
 //   Exit code 0, or 2 with one line on standard error ("stand-in: ...") for a scenario it cannot play; in a window
 //   that line is drawn on the screen, where a script's expectations meet it.
 //
@@ -122,6 +125,12 @@ internal static class StandIn
             if (args.Length > 0 && args[0] == PrepareOption)
             {
                 return args.Length == 3 ? Prepare(Path.GetFullPath(args[1]), Path.GetFullPath(args[2])) : Refuse(Usage);
+            }
+
+            // The stand-in of Claude Code's stream, for a window the stream feeds (StreamStandIn.cs).
+            if (args.Length > 0 && args[0] == StreamStandIn.Option)
+            {
+                return StreamStandIn.Run(args[1..]);
             }
 
             if (args.Length == 0 || args[0].StartsWith("--", StringComparison.Ordinal))

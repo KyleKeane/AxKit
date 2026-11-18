@@ -26,7 +26,8 @@ internal static class StreamReplay
     /// <summary>Replays one case; the model is left as the recording left it.</summary>
     public static List<string> Run(string name, out StreamModel model)
     {
-        var replayed = new StreamModel(Folder);
+        var replayed = new StreamModel();
+        replayed.WorksIn(Folder);
         model = replayed;
         var log = new List<string>();
         replayed.Bell += () => log.Add("    the bell");

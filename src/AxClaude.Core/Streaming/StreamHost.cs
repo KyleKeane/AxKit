@@ -19,7 +19,7 @@ public sealed record StreamHostOptions(ProgramLine Line, string WorkingDirectory
 /// <paramref name="lineReceived"/> and <paramref name="exited"/> of <see cref="Start"/> are called on those threads
 /// and only post to the caller's. What the program writes as errors is kept here in part, for the user to be shown
 /// when the program ends by itself, and is never logged: it can hold a path or a text of the user's.
-/// No window uses it yet.
+/// A window made for the stream runs Claude Code in it (src/AxClaude/MainForm.Stream.cs).
 /// </summary>
 public sealed class StreamHost : IDisposable
 {
@@ -35,6 +35,9 @@ public sealed class StreamHost : IDisposable
 
     private readonly object _errorGate = new();
     private readonly StringBuilder _errorTail = new();
+
+    /// <summary>Set when the program itself has ended, before its end is reported: what <see cref="End"/> waits for.</summary>
+    private readonly ManualResetEventSlim _gone = new();
     private int _errorCharacters;
     private int _exitedOnce;
     private int _disposed;
@@ -97,7 +100,8 @@ public sealed class StreamHost : IDisposable
 
         // Outside call, program, Claude Code: starts the user's Claude Code without a window as one process that
         // takes messages on its standard input and writes what happens on its standard output, line by line (its
-        // non-interactive stream); Claude Code talks to Anthropic under the user's account. Used by no window yet.
+        // non-interactive stream); Claude Code talks to Anthropic under the user's account. Only a window made for
+        // the stream starts it (the setting claudeSource, which is the screen at first).
         var process = Process.Start(start) ?? throw new InvalidOperationException("The program was not started.");
         var host = new StreamHost(process, lineReceived, exited) { ProcessId = process.Id };
         host.Run();
@@ -109,6 +113,24 @@ public sealed class StreamHost : IDisposable
 
     /// <summary>Closes the program's input after what was written: Claude Code ends its run when its input ends.</summary>
     public void CloseInput() => Enqueue(null);
+
+    /// <summary>
+    /// Ends the program in its own time: its input is closed after what was written, which is how a Claude Code that
+    /// is idle is told to end, and when it has not ended <paramref name="graceMs"/> later it is ended with what it
+    /// started. The caller does not wait (bundle rule 3): the wait is a thread's of the pool. The end is reported
+    /// as any other.
+    /// </summary>
+    public void End(int graceMs)
+    {
+        CloseInput();
+        ThreadPool.QueueUserWorkItem(_ =>
+        {
+            if (!_gone.Wait(graceMs))
+            {
+                Kill();
+            }
+        });
+    }
 
     /// <summary>Ends the program and what it started, at once. Its end is still reported.</summary>
     public void Kill()
@@ -189,6 +211,7 @@ public sealed class StreamHost : IDisposable
             // The process is gone without a code to ask for.
         }
 
+        _gone.Set();
         _writes.CompleteAdding();
         // What the program wrote as errors on its way out is read to its end first, so that whoever is told of the
         // end finds it whole; a program whose child still holds that pipe does not keep the end waiting for long.

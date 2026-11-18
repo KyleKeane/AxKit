@@ -143,9 +143,9 @@ public sealed class HelpTests : IDisposable
     {
         // HE-1.3: always a window that hides on closing; HE-2.8: always --ai-tools, which axClaude acts on only while
         // the user has the AI tools on; HE-2.7: hidden from the start when axHelp starts it ahead.
-        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null));
-        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "opus", "--hide-on-close", "--ai-tools", "--message", "Screenshot: a.png "], HelpSettings.ConversationArguments(@"C:\w", "opus", "Screenshot: a.png "));
-        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools", "--hidden"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null, hidden: true));
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools", "--source", "screen"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null));
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "opus", "--hide-on-close", "--ai-tools", "--source", "screen", "--message", "Screenshot: a.png "], HelpSettings.ConversationArguments(@"C:\w", "opus", "Screenshot: a.png "));
+        Assert.Equal([@"C:\w", "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools", "--source", "screen", "--hidden"], HelpSettings.ConversationArguments(@"C:\w", "haiku", null, hidden: true));
     }
 
     /// <summary>HE-2.3 (bundle repairs.md R-71): only a model's name is kept and reaches Claude Code's command line; anything else is the default.</summary>

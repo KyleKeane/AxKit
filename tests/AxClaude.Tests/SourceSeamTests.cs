@@ -26,6 +26,11 @@ public sealed class SourceSeamTests
     /// <summary>The files of the machinery beside the screen (SM-3.6).</summary>
     private static readonly string[] Machinery = ["MainForm.Flow.cs", "MainForm.Record.cs", "MainForm.Hooks.cs"];
 
+    /// <summary>The window's field for the stream's own model, and the one file of the stream source (SM-9.2).</summary>
+    private const string StreamField = "_streamModel";
+
+    private const string StreamSource = "MainForm.Stream.cs";
+
     [Fact]
     public void The_window_names_the_screens_model_only_where_it_makes_it()
     {
@@ -33,7 +38,7 @@ public sealed class SourceSeamTests
         var elsewhere = uses.Where(use => use.File != Maker).Select(use => use.ToString()).ToList();
         Assert.True(elsewhere.Count == 0, "The window knows ClaudeModel alone; the screen's SessionModel is named where the window makes it, in MainForm.cs (stream-mode.md SM-3.7): " + string.Join("; ", elsewhere));
 
-        // Three lines of MainForm.cs: the field of the machinery, the model made, and the constructor that takes it.
+        // Three lines of MainForm.cs: the field of the machinery, the model made, and the field set.
         Assert.Equal(3, uses.Count);
     }
 
@@ -44,12 +49,48 @@ public sealed class SourceSeamTests
         var elsewhere = uses.Where(use => use.File != Maker && !Machinery.Contains(use.File)).Select(use => use.ToString()).ToList();
         Assert.True(elsewhere.Count == 0, "The window's own logic reads _model, whichever source feeds it; _screenModel is for the turn marks, the session file, the hooks and the event core, in their files (stream-mode.md SM-3.6): " + string.Join("; ", elsewhere));
 
-        // In the file that makes it: declared and assigned, and never asked.
+        // In the file that makes it: declared and set, and never asked. It is the model only when the model is the
+        // screen's, and nothing in a window the stream feeds.
         var made = uses.Where(use => use.File == Maker).Select(use => use.Code.Trim()).ToList();
-        Assert.Equal(new[] { "private readonly SessionModel _screenModel;", "_screenModel = model;" }, made);
+        Assert.Equal(new[] { "private readonly SessionModel? _screenModel;", "_screenModel = model as SessionModel;" }, made);
 
         // No stale rule: the machinery does ask it.
         Assert.Contains(uses, use => Machinery.Contains(use.File));
+    }
+
+    [Fact]
+    public void The_window_names_the_streams_model_only_where_it_makes_it_and_in_the_stream_sources_file()
+    {
+        var uses = UsesOf(nameof(AxClaude.Core.Streaming.StreamModel));
+        var elsewhere = uses.Where(use => use.File != Maker && use.File != StreamSource).Select(use => use.ToString()).ToList();
+        Assert.True(elsewhere.Count == 0, "The window knows ClaudeModel alone; the stream's StreamModel is named where the window makes it and in the stream source's own file (stream-mode.md SM-9.2): " + string.Join("; ", elsewhere));
+
+        // Three lines of MainForm.cs, as for the screen's: the field, the model made, and the field set.
+        Assert.Equal(3, uses.Count(use => use.File == Maker));
+    }
+
+    [Fact]
+    public void The_streams_model_is_asked_by_the_stream_source_alone()
+    {
+        var uses = UsesOf(StreamField);
+        var elsewhere = uses.Where(use => use.File != Maker && use.File != StreamSource).Select(use => use.ToString()).ToList();
+        Assert.True(elsewhere.Count == 0, "The window's own logic reads _model, whichever source feeds it, and asks Streams where the two sources part; _streamModel is the stream source's, in MainForm.Stream.cs (stream-mode.md SM-9.2): " + string.Join("; ", elsewhere));
+
+        var made = uses.Where(use => use.File == Maker).Select(use => use.Code.Trim()).ToList();
+        Assert.Equal(new[] { "private readonly StreamModel? _streamModel;", "_streamModel = model as StreamModel;" }, made);
+
+        Assert.Contains(uses, use => use.File == StreamSource);
+    }
+
+    [Fact]
+    public void One_model_is_made_by_the_source_the_start_names()
+    {
+        // One window, one source (SM-9.2): the one line that makes a model makes the stream's or the screen's, by
+        // what the command line and the setting say, and nothing else in the window makes one.
+        var makes = CodeLines().Where(line => line.Code.Contains("new SessionModel(", StringComparison.Ordinal) || line.Code.Contains("new StreamModel(", StringComparison.Ordinal)).ToList();
+        var made = Assert.Single(makes);
+        Assert.Equal(Maker, made.File);
+        Assert.Contains("options.Streams(settings) ? new StreamModel() : new SessionModel(", made.Code);
     }
 
     [Fact]

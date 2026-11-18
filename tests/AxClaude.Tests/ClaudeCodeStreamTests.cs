@@ -110,6 +110,89 @@ public class ClaudeCodeStreamTests
     }
 
     [Fact]
+    public void A_window_starts_the_stream_with_its_options_the_relay_and_then_the_users_own_arguments()
+    {
+        // docs/axClaude/stream-mode.md SM-4.2: the stream's options, each message sent back, the relay's file and
+        // its tool; the user's own arguments last, as they were given.
+        var arguments = ClaudeCodeStream.StartArguments(@"C:\data\claude-ask.json", "mcp__axask__approve", null, ["--continue"]);
+        Assert.Equal(
+            ["-p", "--input-format", "stream-json", "--output-format", "stream-json", "--verbose", "--replay-user-messages",
+                "--mcp-config", @"C:\data\claude-ask.json", "--permission-prompt-tool", "mcp__axask__approve", "--continue"],
+            arguments);
+
+        // The file's option takes every word up to the next option: an option follows it, whatever the user gave.
+        Assert.StartsWith("--", ClaudeCodeStream.StartArguments("f.json", "tool", null, [])[^2]);
+        Assert.Equal("--mcp-config", ClaudeCodeStream.StartArguments("f.json", "tool", null, ["words"])[7]);
+        Assert.Equal("--permission-prompt-tool", ClaudeCodeStream.StartArguments("f.json", "tool", null, ["words"])[9]);
+
+        // The window's own model, in front of the user's arguments, and only when they name none.
+        Assert.Equal(["--model", "haiku", "--resume", "id"], ClaudeCodeStream.StartArguments("f.json", "tool", "haiku", ["--resume", "id"]).Skip(11));
+        Assert.Equal(["--model", "opus"], ClaudeCodeStream.StartArguments("f.json", "tool", "haiku", ["--model", "opus"]).Skip(11));
+        Assert.Equal(["--continue"], ClaudeCodeStream.StartArguments("f.json", "tool", string.Empty, ["--continue"]).Skip(11));
+    }
+
+    [Theory]
+    [InlineData("default", "acceptEdits")]
+    [InlineData("acceptEdits", "plan")]
+    [InlineData("plan", "default")]
+    [InlineData("", "default")]
+    [InlineData("a mode not known", "default")]
+    public void The_mode_key_goes_round_the_three_modes_every_run_has(string current, string next)
+    {
+        Assert.Equal(next, ClaudeCodeStream.NextMode(current, []));
+        // Seeing only those three changes nothing.
+        Assert.Equal(next, ClaudeCodeStream.NextMode(current, ["default", "plan", "acceptEdits", ""]));
+    }
+
+    [Fact]
+    public void The_mode_key_comes_back_to_a_mode_the_run_was_itself_in_and_to_no_other()
+    {
+        // stream-mode.md SM-5.4: the user's own settings put the run in auto mode, so the round holds it, after the
+        // three every run has; the mode that asks nothing is in no round the run was never in.
+        string[] seen = ["auto", "default"];
+        Assert.Equal("acceptEdits", ClaudeCodeStream.NextMode("default", seen));
+        Assert.Equal("auto", ClaudeCodeStream.NextMode("plan", seen));
+        Assert.Equal("default", ClaudeCodeStream.NextMode("auto", seen));
+
+        foreach (var current in new[] { "default", "acceptEdits", "plan", "auto" })
+        {
+            Assert.NotEqual("bypassPermissions", ClaudeCodeStream.NextMode(current, seen));
+        }
+
+        // A run the user started in the mode that asks nothing may come back to it.
+        Assert.Equal("bypassPermissions", ClaudeCodeStream.NextMode("plan", ["bypassPermissions"]));
+        Assert.Equal("default", ClaudeCodeStream.NextMode("bypassPermissions", ["bypassPermissions"]));
+    }
+
+    [Fact]
+    public void An_end_line_of_a_turn_the_user_interrupted_is_told_from_a_failure()
+    {
+        var interrupted = ClaudeCodeStream.Read("""{"type":"result","subtype":"error_during_execution","is_error":true,"terminal_reason":"aborted_tools","num_turns":3}""");
+        Assert.True(ClaudeCodeStream.Interrupted(interrupted));
+
+        var failed = ClaudeCodeStream.Read("""{"type":"result","subtype":"error_during_execution","is_error":true,"terminal_reason":"api_error","num_turns":1}""");
+        Assert.False(ClaudeCodeStream.Interrupted(failed));
+
+        var well = ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"terminal_reason":"completed","num_turns":1}""");
+        Assert.False(ClaudeCodeStream.Interrupted(well));
+    }
+
+    [Fact]
+    public void A_windows_start_asks_no_less_than_the_users_own_Claude_Code()
+    {
+        // SM-7.2: axClaude names no permission mode and nothing that lets a tool run unasked; and the session is the
+        // user's conversation, kept in Claude Code's store.
+        var arguments = ClaudeCodeStream.StartArguments("f.json", "tool", "haiku", []);
+        Assert.DoesNotContain("--permission-mode", arguments);
+        Assert.DoesNotContain("--dangerously-skip-permissions", arguments);
+        Assert.DoesNotContain("--allowedTools", arguments);
+        Assert.DoesNotContain("--allowed-tools", arguments);
+        Assert.DoesNotContain(ClaudeCodeStream.NoSessionOption, arguments);
+        // Nor the option that keeps the user's own MCP servers out: this is the user's Claude Code.
+        Assert.DoesNotContain(AxKit.Core.ClaudeCodeProgram.StrictMcpConfigOption, arguments);
+    }
+
+    [Fact]
     public void The_answer_to_the_first_request_names_the_mode_and_the_version_and_nothing_else_is_read()
     {
         Assert.Equal("""{"type":"control_request","request_id":"h0","request":{"subtype":"initialize"}}""", ClaudeCodeStream.InitializeLine("h0"));

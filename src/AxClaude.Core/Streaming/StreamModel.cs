@@ -11,7 +11,7 @@ namespace AxClaude.Core.Streaming;
 /// window shows, by the same labels and markers the screen's model gives them, so that every key of the conversation
 /// lands where it lands today. No screen, no frames, no rows to tell apart: a line is final when it is added.
 /// What it does with each kind of line is settled by the recordings in tests/fixtures/streams, which
-/// <c>StreamModelTests</c> replay; their page says what the recordings showed. No window uses it yet.
+/// <c>StreamModelTests</c> replay; their page says what the recordings showed. A window made for the stream feeds it
 /// Single threaded: call everything from one thread.
 /// </summary>
 public sealed class StreamModel : ClaudeModel
@@ -36,7 +36,7 @@ public sealed class StreamModel : ClaudeModel
     private readonly HashSet<string> _questions = new(StringComparer.Ordinal);
 
     /// <summary>The folder Claude works in, with its separator at the end, by which a file a call names is shortened; empty when not known.</summary>
-    private readonly string _folder;
+    private string _folder = string.Empty;
 
     /// <summary>Between a turn's start (a message written while idle, a start line) and its end line.</summary>
     private bool _turn;
@@ -50,11 +50,11 @@ public sealed class StreamModel : ClaudeModel
     /// <summary><see cref="ResponseStarted"/> was raised for the turn that runs.</summary>
     private bool _responded;
 
-    /// <param name="folder">The folder Claude works in, for shortening the files its calls name; null when not known.</param>
-    public StreamModel(string? folder = null)
-    {
-        _folder = string.IsNullOrEmpty(folder) ? string.Empty : folder.TrimEnd('\\', '/') + "\\";
-    }
+    /// <summary>
+    /// The folder Claude works in, for shortening the files its calls name; null when not known. Said with every
+    /// start of Claude Code and not once with the model: a window keeps its model while its folder changes.
+    /// </summary>
+    public void WorksIn(string? folder) => _folder = string.IsNullOrEmpty(folder) ? string.Empty : folder.TrimEnd('\\', '/') + "\\";
 
     public override bool PromptPending { get; protected set; }
 
@@ -80,6 +80,14 @@ public sealed class StreamModel : ClaudeModel
     /// <summary>Dynamic workflows are not told apart in the stream's list of background work yet: none.</summary>
     public override IReadOnlyList<BackgroundWorkflow> BackgroundWorkflows { get; protected set; } = [];
 
+    /// <summary>The permission mode in force by Claude Code's own name (<see cref="Mode"/> has the screen's words for it); empty while not known. What the window's mode key counts on from (<see cref="ClaudeCodeStream.NextMode"/>).</summary>
+    public string ModeName { get; private set; } = string.Empty;
+
+    /// <summary>Every permission mode this run has been in, by Claude Code's own names, in the order it was.</summary>
+    public IReadOnlyList<string> ModesSeen => _modesSeen;
+
+    private readonly List<string> _modesSeen = [];
+
     /// <summary>The session's id as the last start line gave it: what a later run is given to take the conversation up. An id: never shown, said or logged.</summary>
     public string Session { get; private set; } = string.Empty;
 
@@ -96,6 +104,9 @@ public sealed class StreamModel : ClaudeModel
     /// <summary>Said while Claude Code shortens the conversation, and where it cut it.</summary>
     public const string CompactingWords = "Compacting the conversation";
     public const string CompactedWords = "Conversation compacted";
+
+    /// <summary>Said, and written as a line of the app's, when a turn ends by the user's interrupt.</summary>
+    public const string InterruptedWords = "Interrupted";
 
     /// <summary>The words of the screen's model for a conversation emptied by /clear, so that both sources say the same.</summary>
     public const string ClearedWords = "Conversation cleared";
@@ -332,6 +343,8 @@ public sealed class StreamModel : ClaudeModel
         Working = false;
         QueuedMessages = 0;
         Mode = null;
+        ModeName = string.Empty;
+        _modesSeen.Clear();
         PendingQuestion = null;
         PromptPending = false;
         Background = null;
@@ -504,6 +517,13 @@ public sealed class StreamModel : ClaudeModel
             // interrupted turn says none, and neither does a command's end.
             RaiseBell();
         }
+        else if (ClaudeCodeStream.Interrupted(line))
+        {
+            // The user's interrupt ended the turn: said in a word, and on record where the turn broke off, since no
+            // Done follows and the screen's own row for it does not exist here.
+            _lines.Add(Final(LineKind.System, "System: " + InterruptedWords));
+            Announcement?.Invoke(InterruptedWords);
+        }
     }
 
     /// <summary>Everything that runs in the background, whole: the words the screen's mode line has for it, and the agents with their types.</summary>
@@ -545,6 +565,12 @@ public sealed class StreamModel : ClaudeModel
 
         var first = Mode is null;
         Mode = words;
+        ModeName = mode;
+        if (!_modesSeen.Contains(mode))
+        {
+            _modesSeen.Add(mode);
+        }
+
         if (announce && !first)
         {
             Announcement?.Invoke(words);

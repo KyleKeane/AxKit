@@ -1,6 +1,7 @@
 using AxClaude.Core;
 using AxClaude.Core.Flow;
 using AxClaude.Core.Pty;
+using AxClaude.Core.Streaming;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
 using AxKit.Core.Events;
@@ -29,11 +30,20 @@ internal sealed partial class MainForm : ConsoleForm
     private readonly ClaudeModel _model;
 
     /// <summary>
-    /// The same object as the screen's own model, for the machinery beside the screen alone (SM-3.6): the turn marks,
-    /// the frame and the turn the event core is handed and hands back. Never asked by the window's own logic, which
-    /// reads <see cref="_model"/>, so that it does not know which source feeds it.
+    /// The same object as the screen's own model while the screen feeds the window, null while the stream does. For
+    /// the machinery beside the screen alone (SM-3.6): the turn marks, the frame and the turn the event core is handed
+    /// and hands back. Never asked by the window's own logic, which reads <see cref="_model"/>, so that it does not
+    /// know which source feeds it.
     /// </summary>
-    private readonly SessionModel _screenModel;
+    private readonly SessionModel? _screenModel;
+
+    /// <summary>
+    /// The same object as the stream's own model while Claude Code's stream feeds the window, null while the screen
+    /// does (SM-9.2: a window is made for its source and keeps it). For the stream source alone
+    /// (<c>MainForm.Stream.cs</c>): the lines it hands the model and what it asks of it beyond the base class. Never
+    /// asked by the window's own logic.
+    /// </summary>
+    private readonly StreamModel? _streamModel;
 
     /// <summary>The settle after which what Claude waits on is acted on (FR-7.2, D33): started by the bell and by a change of what waits; <see cref="OnFrameSettled"/> on its tick.</summary>
     private readonly System.Windows.Forms.Timer _attention = new() { Interval = SettleMs };
@@ -91,19 +101,24 @@ internal sealed partial class MainForm : ConsoleForm
     private string? _launchedFolder;
 
     public MainForm(StartupOptions options, AppSettings settings, string? settingsError)
-        : this(options, settings, settingsError, new SessionModel(options.Columns ?? settings.PtyColumns, options.Rows ?? settings.PtyRows))
+        : this(options, settings, settingsError, NewModel(options, settings))
     {
     }
 
-    /// <summary>The model is made first so that the base and this class both hold it: the base as a LineStore, this class as Claude's, and the screen's machinery as the screen's own.</summary>
-    private MainForm(StartupOptions options, AppSettings settings, string? settingsError, SessionModel model)
+    /// <summary>The model of the source this start names (SM-9.1): the stream's when the command line or the setting says so, else the screen's, sized as the hidden console.</summary>
+    private static ClaudeModel NewModel(StartupOptions options, AppSettings settings) =>
+        options.Streams(settings) ? new StreamModel() : new SessionModel(options.Columns ?? settings.PtyColumns, options.Rows ?? settings.PtyRows);
+
+    /// <summary>The model is made first so that the base and this class both hold it: the base as a LineStore, this class as Claude's, and the source's own code as that source's own.</summary>
+    private MainForm(StartupOptions options, AppSettings settings, string? settingsError, ClaudeModel model)
         : base("axClaude", settings, AppSettings.DefaultPath, settingsError, model, AxClaudeKeys.Transcript, "Conversation", "Message to Claude")
     {
         _options = options;
         _claudeArgs = options.ClaudeArgs is { } given ? [.. given] : null;
         _settings = settings;
         _model = model;
-        _screenModel = model;
+        _screenModel = model as SessionModel;
+        _streamModel = model as StreamModel;
         _model.DetectScreens = settings.QuestionNotices;
         _model.ShowProgressRows = settings.ShowProgressRows;
         // The core (docs/axClaude/events-and-grounding.md EG-4): everything that happens reaches it from here on (MainForm.Flow.cs).
@@ -164,9 +179,12 @@ internal sealed partial class MainForm : ConsoleForm
         };
         _speechHold.Tick += (_, _) => SpeakHeld();
         WireBackground();
+        // The source's own code, of which one part wires itself and the other does nothing (SM-3.6, SM-9.2): the
+        // machinery beside the screen, or the stream source.
         WireFlow();
         // Claude Code's hooks (MainForm.Hooks.cs): its version is asked here already, so that the start does not wait for it.
         WireHooks();
+        WireStream();
         Input.KeyDown += OnInputKeyDown;
         Transcript.LineChosen += QuoteLineInMessage;
         BuildMenus();
@@ -333,6 +351,11 @@ internal sealed partial class MainForm : ConsoleForm
         {
             Write(ClaudeCodeKeys.CtrlO);
         }
+        else if (Streams)
+        {
+            // The stream has no detailed view (stream-mode.md SM-5.7).
+            SayNotWithStream();
+        }
         else
         {
             Announce(CtrlOGuardText, true);
@@ -374,6 +397,13 @@ internal sealed partial class MainForm : ConsoleForm
             if (_options.HideOnClose)
             {
                 arguments.Add("--hide-on-close");
+            }
+
+            // A source the command line named (SM-9.1) is this window's, whatever the setting says by then.
+            if (_options.Source is { } source)
+            {
+                arguments.Add("--source");
+                arguments.Add(source);
             }
 
             if (_messageSent)

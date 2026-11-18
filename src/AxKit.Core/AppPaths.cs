@@ -63,6 +63,15 @@ public static class AppPaths
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "claude-hooks.json");
 
     /// <summary>
+    /// This program file as the one MCP server Claude Code asks its questions of when axClaude runs it over its
+    /// stream (docs/axClaude/stream-mode.md SM-7.3): the program file with the verb <c>ask</c>, for Claude Code's
+    /// <c>--mcp-config</c>. Beside <see cref="ClaudeHooksFile"/> and for the same reason; it holds nothing of a
+    /// window's pipe or its secret, which travel in the environment alone.
+    /// </summary>
+    public static string ClaudeAskFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "claude-ask.json");
+
+    /// <summary>
     /// The settings file a question of AI help hands Claude Code with <c>--settings</c> (docs/axKit/ai-help.md
     /// AH-2.6): it turns the hooks off for that run. Written again before each question when it does not hold
     /// axKit's text; beside <see cref="McpClaudeConfigFile"/>.

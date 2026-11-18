@@ -212,6 +212,37 @@ public sealed class AskRelayTests
     }
 
     [Fact]
+    public void The_configuration_is_written_when_it_is_missing_or_names_another_program_and_left_when_it_is_right()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "axclaude-tests", Guid.NewGuid().ToString("N"));
+        var file = Path.Combine(folder, "AxKit", "claude-ask.json");
+        try
+        {
+            // Missing, with its folder: written.
+            Assert.True(AskRelay.WriteConfig(file, @"C:\one\AxKit.exe"));
+            Assert.Equal(AskRelay.ConfigText(@"C:\one\AxKit.exe"), File.ReadAllText(file));
+            // UTF-8 without a mark: Claude Code reads the file as JSON from its first byte.
+            Assert.Equal((byte)'{', File.ReadAllBytes(file)[0]);
+
+            // Right as it is: not written again.
+            var written = File.GetLastWriteTimeUtc(file);
+            Assert.False(AskRelay.WriteConfig(file, @"C:\one\AxKit.exe"));
+            Assert.Equal(written, File.GetLastWriteTimeUtc(file));
+
+            // Another program file (another build, a copy that moved): written for this one.
+            Assert.True(AskRelay.WriteConfig(file, @"D:\two\AxKit.exe"));
+            Assert.Equal(AskRelay.ConfigText(@"D:\two\AxKit.exe"), File.ReadAllText(file));
+
+            // Nothing is left beside it.
+            Assert.Equal([file], Directory.GetFiles(Path.GetDirectoryName(file)!));
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
     public void A_name_of_the_questions_pipe_is_no_name_of_the_hooks_pipe()
     {
         var name = AskRelay.NewPipeName("S-1-5-21-0f");

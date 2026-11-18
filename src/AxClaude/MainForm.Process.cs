@@ -104,6 +104,14 @@ internal sealed partial class MainForm
             return;
         }
 
+        // A window made for Claude Code's stream (stream-mode.md SM-9.2) starts it as one process over pipes
+        // (MainForm.Stream.cs): no hooks are passed, so nothing waits for Claude Code's version.
+        if (Streams)
+        {
+            StartStream(claude);
+            return;
+        }
+
         // Asked once for each program file, here at the latest and never before the consent above (FR-13.2).
         var version = HookVersionOf(claude);
         if (HookWaitLeft(version) is var left and > 0)
@@ -190,8 +198,14 @@ internal sealed partial class MainForm
             return;
         }
 
+        ClaudeStarted();
+    }
+
+    /// <summary>A run of Claude Code has started, by whichever source feeds the window: the window's state for a new run.</summary>
+    private void ClaudeStarted()
+    {
         _readyAnnounced = false;
-        // The core and the record's reader learn of the new run (MainForm.Flow.cs).
+        // The core and the record's reader learn of the new run (MainForm.Flow.cs); nothing in a window the stream feeds.
         FlowProcessStarted();
         // The old Claude's background work is gone with it, unsignalled (FR-7.10).
         ForgetBackground();
@@ -353,6 +367,9 @@ internal sealed partial class MainForm
         var ran = ProcessRunning;
         var hooks = _hookChannel is not null;
         var since = Environment.TickCount64;
+        // A Claude Code over its stream (MainForm.Stream.cs) is let go of first: the base's status bar and music ask
+        // whether Claude runs. Nothing in a window the screen feeds.
+        StopStream(terminateAtOnce);
         base.StopProcess(terminateAtOnce);
         HookStopChannel();
         if (ran)

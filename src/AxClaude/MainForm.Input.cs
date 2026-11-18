@@ -94,6 +94,13 @@ internal sealed partial class MainForm
         Input.Clear();
         if (text.Length == 0)
         {
+            if (Streams)
+            {
+                // No prompt row takes a bare Enter over the stream (stream-mode.md SM-5.7).
+                Announce("Nothing to send", true);
+                return;
+            }
+
             Write(ClaudeCodeKeys.Enter);
             return;
         }
@@ -155,9 +162,16 @@ internal sealed partial class MainForm
     /// chunk is treated as a paste (SPEC.md 4.4); the lines of a multi-line message are joined with a lone newline
     /// write, Claude's Ctrl+J. Every message and command passes here (the field's, an offered command's line, a
     /// command of the menus, the app's own /feedback), so here the core learns that one was sent (MainForm.Flow.cs).
+    /// Over the stream a message is one line, written whole (stream-mode.md SM-5.1): nothing is typed or paced.
     /// </summary>
     private void QueueWrites(string text)
     {
+        if (Streams)
+        {
+            StreamMessage(text);
+            return;
+        }
+
         var lines = text.Split('\n');
         for (var i = 0; i < lines.Length; i++)
         {
@@ -209,6 +223,13 @@ internal sealed partial class MainForm
     /// </summary>
     private void SendNow()
     {
+        if (Streams)
+        {
+            // stream-mode.md SM-5.7: the stream has no key for it; Claude Code takes a waiting message up by itself.
+            SayNotWithStream();
+            return;
+        }
+
         if (_model.QueuedMessages == 0)
         {
             Announce("Nothing queued", false);
@@ -224,11 +245,47 @@ internal sealed partial class MainForm
     }
 
 
-    /// <summary>Escape to Claude (FR-2.3), and what is still queued to type goes: an answer typed out a key at a time must not land after it.</summary>
+    /// <summary>
+    /// Escape to Claude (FR-2.3), and what is still queued to type goes: an answer typed out a key at a time must not
+    /// land after it. Over the stream, the request that ends the running turn (stream-mode.md SM-5.3).
+    /// </summary>
     private void Interrupt()
     {
+        if (Streams)
+        {
+            StreamInterrupt();
+            return;
+        }
+
         ClearWrites();
         Write(ClaudeCodeKeys.Escape);
         FlowActed(UserAction.Escaped);
+    }
+
+    /// <summary>Claude Code's next permission mode (FR-11): its own Shift+Tab, or over the stream the request that sets the next mode (stream-mode.md SM-5.4).</summary>
+    private void NextPermissionMode()
+    {
+        if (Streams)
+        {
+            StreamNextMode();
+            return;
+        }
+
+        Write(ClaudeCodeKeys.ShiftTab);
+    }
+
+    /// <summary>
+    /// A key of Claude Code's own prompt and menus, as the terminal's bytes (FR-2.4). The stream has no prompt and no
+    /// menu to take it: the one sentence (stream-mode.md SM-5.7).
+    /// </summary>
+    private void SendKey(string key)
+    {
+        if (Streams)
+        {
+            SayNotWithStream();
+            return;
+        }
+
+        Write(key);
     }
 }

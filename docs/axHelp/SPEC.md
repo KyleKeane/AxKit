@@ -88,7 +88,9 @@ agreement (AX-11.4) asked the first time.
   should not be involved"). Coming back to the window another way, Alt+Tab or the taskbar, changes nothing: the focus
   and the caret are where they were ("alt+tab back to it holds his position"). When no such window exists, a new
   axClaude window is started, `AxKit.exe claude <working folder> --title axHelp --model <model> --hide-on-close
-  --ai-tools` (`HelpSettings.ConversationArguments`; `--ai-tools` is HE-2.8), which continues the folder's last conversation (axClaude FR-9.1); axHelp
+  --ai-tools --source screen` (`HelpSettings.ConversationArguments`; `--ai-tools` is HE-2.8; `--source screen` keeps
+  the conversation on Claude Code's screen whatever axClaude's own setting says, docs/axClaude/stream-mode.md
+  SM-9.5), which continues the folder's last conversation (axClaude FR-9.1); axHelp
   keeps the process it started, and a press while that process runs and its window is not there yet waits for the
   window, however long the start takes, and never starts a second (`Conversation.Next`: hand over to the window,
   wait for a started process, start only when there is neither; one conversation at a time in every order of start,

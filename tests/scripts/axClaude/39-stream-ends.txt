@@ -1,0 +1,30 @@
+# Workflow: Hear that Claude Code's stream ended, and be offered the screen
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-9.3 (2026-11-17): the way back is the switch. The stand-in plays the
+# recording of a failure of the service, which ends Claude Code with the code 1 right after the message
+# (tests/fixtures/streams/failure.jsonl). The window says that Claude stopped, as it does for the screen, and since the
+# end came within seconds of the start, a notice offers to open the folder with the screen instead; Escape stays.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream failure %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+
+# Goal: Learn that Claude Code ended and stay in the window
+expect said Ready
+type Say ok
+keys enter
+expect said Sent
+expect said Claude stopped
+expect state Claude Code ended right after its start
+expect state You can open this folder with the screen instead
+keys escape
+expect state Claude: stopped
+do Conversation
+expect text System: Claude stopped (exit code 1). Press Ctrl+Shift+R to start it again.
+
+# Check: A message is not sent while Claude Code is stopped
+do Message field
+type Still there?
+keys enter
+expect said Claude stopped. Ctrl+Shift+R starts it

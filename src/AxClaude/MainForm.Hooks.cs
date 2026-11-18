@@ -64,11 +64,16 @@ internal sealed partial class MainForm
     /// at all (EG-2.4). Only when that start is sure to follow and could pass the hooks: the project folder is
     /// known, and the user has agreed to Claude Code before (bundle AX-11.4: no program of Claude Code's is started
     /// ahead of that, nor for a window that may never start Claude). Otherwise it is asked with the start, as it
-    /// always was.
+    /// always was. Nothing for a window the stream feeds (stream-mode.md SM-3.6): no start of it passes hooks.
     /// </summary>
     private void WireHooks()
     {
-        _screenModel.Marked += letter =>
+        if (_screenModel is not { } screen)
+        {
+            return;
+        }
+
+        screen.Marked += letter =>
         {
             if (letter != 'D')
             {

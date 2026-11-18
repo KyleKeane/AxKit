@@ -181,6 +181,13 @@ internal sealed partial class MainForm
             return;
         }
 
+        if (Streams)
+        {
+            // stream-mode.md SM-5.5: these commands open Claude Code's own pickers, which the stream does not have.
+            SayNotWithStream();
+            return;
+        }
+
         if (!ClaudeIdle)
         {
             Announce("Not sent: Claude is busy. Choose it again when Claude is done", true);

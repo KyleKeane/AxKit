@@ -71,6 +71,13 @@ internal sealed partial class MainForm
             return new { error = "Claude Code is not running in this axClaude window: nothing to send the command to." };
         }
 
+        if (Streams)
+        {
+            // stream-mode.md SM-5.6: whether Claude Code's stream runs a ! line is not measured, so nothing is offered
+            // that could not be sent; the tool is told, and can tell the user what to run and where.
+            return new { error = "This axClaude window runs Claude Code over its stream, where a command cannot be sent for the user to run. Tell the user the command and that they can run it themselves, for example in axTerminal." };
+        }
+
         if (_offers.Count + (_offerShown is null ? 0 : 1) >= McpOffer.MaxWaiting)
         {
             return new { error = $"{McpOffer.MaxWaiting} offered commands already wait for the user: end your turn so that they can be answered." };

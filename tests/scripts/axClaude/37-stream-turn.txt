@@ -1,0 +1,33 @@
+# Workflow: Follow a turn of Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-4, SM-9 and SM-10.2 (2026-11-17): a window started with --source stream runs
+# Claude Code as one process of lines, with no screen. The stand-in's stream mode (tools/AxAutomate/StreamStandIn.cs)
+# plays the recording of a real turn of Claude Code 2.1.327 (tests/fixtures/streams/turn.jsonl) and is moved on by what
+# the window writes. The window's first request is answered with the permission mode, which is what Ready waits for;
+# the message comes back, the reply follows, and the turn's end is Done, said by the window's own rule for a bell.
+# Speak replies is all lines, so the reply is said, before Done.
+file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream turn %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+
+# Goal: Send a message and hear the reply and Done
+expect said Ready
+expect state Claude: ready | manual mode on
+type Say ok
+keys enter
+expect said Sent
+expect said claude: ok
+expect said Done
+expect state Claude: ready | manual mode on
+# The conversation holds the exchange as it does with the screen: the markers, the message, the reply.
+do Conversation
+expect text # Input 1
+expect text Say ok
+expect text # Output 1 Reply from Claude
+expect text claude: ok
+
+# Check: The window says which source feeds it
+menu Say the event sources
+expect said Source: the stream. Claude Code runs.

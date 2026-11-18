@@ -130,7 +130,7 @@ public sealed record StreamShape(string Name, IReadOnlyList<string> Keys, IReadO
 /// <c>tools/ClaudeProbe stream</c>, which plays a set of cases and is the check to run when Claude Code changes;
 /// what the documentation says and what was measured are in <c>docs/axClaude/stream.md</c>. The reader is tolerant:
 /// a line that is no JSON object, a type or a block not known, a field missing all give <see cref="StreamLine.Nothing"/>
-/// or an <see cref="StreamKind.Unknown"/> part, never an exception. Nothing here is used by the window yet.
+/// or an <see cref="StreamKind.Unknown"/> part, never an exception. A window made for the stream starts and reads Claude Code through it (src/AxClaude/MainForm.Stream.cs).
 /// </summary>
 public static class ClaudeCodeStream
 {
@@ -160,6 +160,31 @@ public static class ClaudeCodeStream
 
     /// <summary>The option that takes up the folder's last session.</summary>
     public const string ContinueOption = "--continue";
+
+    /// <summary>The option that names the model of a run, followed by the model's name.</summary>
+    public const string ModelOption = "--model";
+
+    /// <summary>
+    /// The arguments a window starts Claude Code's stream with (docs/axClaude/stream-mode.md SM-4.2): the stream's
+    /// options, each message sent back when it is taken, the file that names the relay as an MCP server and the
+    /// relay's tool as the one Claude Code asks before a call that needs the user's word and for its own questions
+    /// (SM-7.3); then the window's own model, unless the user's arguments name one, and the user's arguments last, as
+    /// they were given. The file's option takes every word up to the next option, so an option always follows it.
+    /// Nothing here asks less than the user's own Claude Code would (SM-7.2): no permission mode is named. And the
+    /// session is kept in Claude Code's store, since it is the user's conversation: never <see cref="NoSessionOption"/>.
+    /// </summary>
+    public static IReadOnlyList<string> StartArguments(string relayConfigFile, string relayTool, string? model, IReadOnlyList<string> userArguments)
+    {
+        List<string> arguments = [.. Options, ReplayOption, .. AxKit.Core.Mcp.McpClaudeCode.ConfigArguments(relayConfigFile), PermissionToolOption, relayTool];
+        if (!string.IsNullOrEmpty(model) && !userArguments.Contains(ModelOption))
+        {
+            arguments.Add(ModelOption);
+            arguments.Add(model);
+        }
+
+        arguments.AddRange(userArguments);
+        return arguments;
+    }
 
     /// <summary>The tool whose call is Claude's own question to the user: its input holds the questions, and the answer goes back with the same input and <c>answers</c>.</summary>
     public const string QuestionTool = "AskUserQuestion";
@@ -571,6 +596,29 @@ public static class ClaudeCodeStream
         "bypassPermissions" => "bypass permissions on",
         _ => mode + " mode on",
     };
+
+    /// <summary>The permission modes every Claude Code has, in the order the interactive program's Shift+Tab goes through them.</summary>
+    private static readonly string[] ModesOfEveryRun = ["default", "acceptEdits", "plan"];
+
+    /// <summary>
+    /// The mode after <paramref name="current"/> for a window's mode key (docs/axClaude/stream-mode.md SM-5.4), each
+    /// by Claude Code's own name: the three modes every run has, in the interactive program's order, then each other
+    /// mode this run has itself been in (<paramref name="seen"/>, in the order it was): the user's own settings or
+    /// arguments put the run there, so the key may come back to it. A mode the run was never in is never asked for,
+    /// so the key does not reach the mode that asks nothing unless the user started Claude Code with it. From a mode
+    /// that is not in the round, the first.
+    /// </summary>
+    public static string NextMode(string current, IEnumerable<string> seen)
+    {
+        List<string> round = [.. ModesOfEveryRun, .. seen.Where(mode => mode.Length > 0 && !ModesOfEveryRun.Contains(mode)).Distinct()];
+        return round[(round.IndexOf(current) + 1) % round.Count];
+    }
+
+    /// <summary>How the <see cref="StreamLine.Terminal"/> of an end line begins when the user's interrupt ended the turn (measured: <c>aborted_tools</c>, the fixture interrupt).</summary>
+    private const string AbortedTerminal = "aborted";
+
+    /// <summary>Whether an end line is the end of a turn the user interrupted (<see cref="InterruptLine"/>).</summary>
+    public static bool Interrupted(StreamLine end) => end.Failed && end.Terminal.StartsWith(AbortedTerminal, StringComparison.Ordinal);
 
     private static string Text(JsonElement element, string name) =>
         element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() ?? string.Empty : string.Empty;

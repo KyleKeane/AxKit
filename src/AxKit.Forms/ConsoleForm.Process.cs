@@ -177,8 +177,12 @@ public abstract partial class ConsoleForm
         UpdateMusic();
     }
 
-    /// <summary>Runs the action on the UI thread; false when the window is gone.</summary>
-    private bool Post(Action action)
+    /// <summary>
+    /// Runs the action on the UI thread; false when the window is gone. For what a background thread hands the
+    /// window: the pseudo console's chunks here, and a window's own second way to run its program (axClaude's stream
+    /// source, docs/axClaude/stream-mode.md SM-4.1).
+    /// </summary>
+    protected bool Post(Action action)
     {
         if (IsDisposed || !IsHandleCreated)
         {

@@ -16,6 +16,7 @@
 < ToolResult, failed: ""
 < Note user text
 < Ended, failed, turns 3, aborted_tools
+    announced: Interrupted
     now: idle, mode manual mode on, 0 waiting
 > message: Reply with exactly: still here
     a block for it
@@ -42,6 +43,7 @@ the process ended with code 0
 [UserMessage] 
 [ToolError] tool error: Bash (ping -n 20 127.0.0.1)
 [Question] Question: Permission: Bash
+[System] System: Interrupted
 [InputMarker h1] # Input 2
 [UserMessage] Reply with exactly: still here
 [UserMessage] 

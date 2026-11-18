@@ -16,7 +16,7 @@ namespace AxClaude.Core.Streaming;
 /// It waits for the user as long as the user takes; Claude Code ends it with the session.
 /// <c>Program.Main</c> decides this verb before anything else runs, so that the process loads nothing of the windows.
 /// Neutral towards the question: what a question and an answer hold is <see cref="ClaudeCodeStream"/>'s and the
-/// window's. No window starts it yet.
+/// window's. A window made for the stream names it at every start of Claude Code.
 /// </summary>
 public static class AskRelay
 {
@@ -229,6 +229,7 @@ public static class AskRelay
     /// </summary>
     public static string ConfigText(string program)
     {
+        // The text is compared whole with the file's (WriteConfig): keep it one form for one program.
         using var buffer = new MemoryStream();
         using (var writer = new Utf8JsonWriter(buffer))
         {
@@ -245,5 +246,25 @@ public static class AskRelay
         }
 
         return Encoding.UTF8.GetString(buffer.ToArray());
+    }
+
+    /// <summary>
+    /// Writes the configuration for <paramref name="program"/> when the file is missing or holds another text
+    /// (another build, a copy that moved), as the hooks' file is written; true when it was written. Written whole or
+    /// not at all, so that a Claude Code starting in another window never reads half a file. Throws as
+    /// <see cref="File.WriteAllText(string, string)"/> does: the caller then does not start Claude Code over its
+    /// stream, since without the relay nothing could be asked (SM-7.2).
+    /// </summary>
+    public static bool WriteConfig(string file, string program)
+    {
+        var text = ConfigText(program);
+        if (File.Exists(file) && File.ReadAllText(file) == text)
+        {
+            return false;
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(file))!);
+        AxKit.Core.SafeFile.WriteAllText(file, text);
+        return true;
     }
 }

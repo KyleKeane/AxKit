@@ -104,6 +104,41 @@ public sealed class StreamHostTests
     }
 
     [Fact]
+    public void A_program_told_to_end_ends_by_itself_when_its_input_ends()
+    {
+        // findstr ends when its input ends, as a Claude Code that is idle does: the grace is never used up.
+        var host = Start(Cmd("findstr \"^\""), out var lines, out var ended);
+        host.Write("last line");
+        var since = Environment.TickCount64;
+
+        host.End(graceMs: 15000);
+
+        Assert.True(ended.Wait(Limit), "the program did not end when it was told to");
+        Assert.True(Environment.TickCount64 - since < 10000, "the program was ended by the grace's end, not by its input's");
+        Assert.Equal(0, ended.Code);
+        // What was written before is still read by the program.
+        Assert.Equal(["last line"], lines.ToArray());
+        Assert.Equal(1, ended.Reports);
+    }
+
+    [Fact]
+    public void A_program_told_to_end_that_runs_on_is_ended_after_the_grace_and_the_caller_never_waits()
+    {
+        // ping reads no input: the end of its input tells it nothing. Thirty seconds of it are ended after half of one.
+        var host = Start(Cmd("ping -n 30 127.0.0.1 >nul"), out _, out var ended);
+        var since = Environment.TickCount64;
+
+        host.End(graceMs: 500);
+        var returned = Environment.TickCount64 - since;
+
+        Assert.True(returned < 400, $"End waited {returned} ms");
+        Assert.True(ended.Wait(Limit), "the program was not ended after the grace");
+        Assert.True(Environment.TickCount64 - since < 15000);
+        Assert.True(host.HasExited);
+        Assert.Equal(1, ended.Reports);
+    }
+
+    [Fact]
     public void Disposing_ends_a_program_that_still_runs()
     {
         var host = Start(Cmd("findstr \"^\""), out _, out var ended);
