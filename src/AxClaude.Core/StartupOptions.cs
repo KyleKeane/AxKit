@@ -20,13 +20,20 @@ public sealed record StartupOptions(
     string? Model = null,
     bool HideOnClose = false,
     bool Hidden = false,
-    bool AiTools = false)
+    bool AiTools = false,
+    string? Source = null)
 {
+    /// <summary>
+    /// Whether this start's window is fed by Claude Code's stream (docs/axClaude/stream-mode.md SM-9.1): by
+    /// <c>--source</c> when it was given, else by the setting. The screen whenever neither names the stream.
+    /// </summary>
+    public bool Streams(AppSettings settings) => AppSettings.IsStream(Source ?? settings.ClaudeSource);
+
     /// <summary>The window starts hidden (FR-9.6): only together with <see cref="HideOnClose"/> and a folder, since a hidden window that asks for a folder, or that nothing can bring back, serves nobody.</summary>
     public bool StartsHidden => Hidden && HideOnClose && Folder is not null;
 
     public const string Usage = """
-        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [--message <text>] [--title <text>] [--model <name>] [--hide-on-close [--hidden]] [--ai-tools] [-- claude arguments]
+        Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [--message <text>] [--title <text>] [--model <name>] [--hide-on-close [--hidden]] [--ai-tools] [--source screen|stream] [-- claude arguments]
                axclaude ...  the same, as the installed console command
 
           <folder>            the project folder (default: the current folder, or the last one used)
@@ -42,6 +49,8 @@ public sealed record StartupOptions(
           --ai-tools          while the user has axKit's AI tools on, Claude in this window gets them by itself
                               (axHelp's conversation; off, nothing is added)
           --no-ax             start Claude without --ax-screen-reader (testing only)
+          --source <name>     what feeds this window, screen or stream, in place of the setting (being built: the
+                              stream is Claude Code as one process read line by line; screen is the default)
           -- ...              everything after -- goes to claude, for example -- --resume <id> or -- --permission-mode plan
                               (default: --continue, the last conversation in the folder; a bare -- starts a new one)
           --help, --version   this text, or the version
@@ -59,6 +68,7 @@ public sealed record StartupOptions(
         var hideOnClose = false;
         var hidden = false;
         var aiTools = false;
+        string? source = null;
         int? columns = null;
         int? rows = null;
         List<string>? claudeArgs = null;
@@ -108,6 +118,14 @@ public sealed record StartupOptions(
                 case "--ai-tools":
                     aiTools = true;
                     break;
+                case "--source":
+                    source = Next(args, ref i);
+                    if (source is not (AppSettings.SourceScreen or AppSettings.SourceStream))
+                    {
+                        throw new ArgumentException($"--source must be {AppSettings.SourceScreen} or {AppSettings.SourceStream}.");
+                    }
+
+                    break;
                 default:
                     if (arg.StartsWith("--", StringComparison.Ordinal))
                     {
@@ -144,7 +162,7 @@ public sealed record StartupOptions(
             }
         }
 
-        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message, title, model, hideOnClose, hidden, aiTools);
+        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message, title, model, hideOnClose, hidden, aiTools, source);
     }
 
     private static string Next(string[] args, ref int i)

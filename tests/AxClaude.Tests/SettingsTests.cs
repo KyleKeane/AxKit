@@ -127,4 +127,39 @@ public class SettingsTests
             Directory.Delete(Path.GetDirectoryName(path)!, true);
         }
     }
+
+    [Fact]
+    public void The_source_is_the_screen_at_first_and_the_stream_only_by_its_own_word()
+    {
+        // docs/axClaude/stream-mode.md SM-9.1: the screen is the source unless the file names the stream.
+        var path = Path.Combine(Path.GetTempPath(), "axclaude-tests", Guid.NewGuid().ToString("N"), "settings.json");
+        try
+        {
+            var missing = AppSettings.Load(path, out var error);
+            Assert.Null(error);
+            Assert.Equal(AppSettings.SourceScreen, missing.ClaudeSource);
+            missing.Save(path);
+            Assert.Contains("\"claudeSource\": \"screen\"", File.ReadAllText(path));
+
+            File.WriteAllText(path, """{ "claudeSource": " Stream " }""");
+            Assert.Equal(AppSettings.SourceStream, AppSettings.Load(path, out error).ClaudeSource);
+            Assert.Null(error);
+
+            // Any other word, or none, is the screen: a mistyped word never starts the stream.
+            foreach (var word in new[] { "\"streams\"", "\"pipe\"", "\"\"", "null" })
+            {
+                File.WriteAllText(path, "{ \"claudeSource\": " + word + " }");
+                Assert.Equal(AppSettings.SourceScreen, AppSettings.Load(path, out error).ClaudeSource);
+            }
+
+            Assert.True(AppSettings.IsStream("stream"));
+            Assert.True(AppSettings.IsStream(" STREAM "));
+            Assert.False(AppSettings.IsStream("screen"));
+            Assert.False(AppSettings.IsStream(null));
+        }
+        finally
+        {
+            Directory.Delete(Path.GetDirectoryName(path)!, true);
+        }
+    }
 }

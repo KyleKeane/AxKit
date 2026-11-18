@@ -60,6 +60,26 @@ public class StartupOptionsTests
         Assert.Contains("--ai-tools", StartupOptions.Usage);
     }
 
+    /// <summary>docs/axClaude/stream-mode.md SM-9.1: the source of one start's window, by its option before the setting; the screen whenever neither names the stream.</summary>
+    [Fact]
+    public void The_source_is_the_options_word_and_else_the_settings()
+    {
+        var screen = new AppSettings();
+        var stream = new AppSettings { ClaudeSource = AppSettings.SourceStream };
+
+        Assert.Null(StartupOptions.Parse([Folder]).Source);
+        Assert.False(StartupOptions.Parse([Folder]).Streams(screen));
+        Assert.True(StartupOptions.Parse([Folder]).Streams(stream));
+        Assert.True(StartupOptions.Parse([Folder, "--source", "stream"]).Streams(screen));
+        Assert.False(StartupOptions.Parse([Folder, "--source", "screen"]).Streams(stream));
+
+        // A word that is neither is refused, and so is the option without its word: a mistyped word starts nothing else.
+        Assert.Throws<ArgumentException>(() => StartupOptions.Parse([Folder, "--source", "Stream"]));
+        Assert.Throws<ArgumentException>(() => StartupOptions.Parse([Folder, "--source", "pipes"]));
+        Assert.Throws<ArgumentException>(() => StartupOptions.Parse([Folder, "--source"]));
+        Assert.Contains("--source", StartupOptions.Usage);
+    }
+
     [Fact]
     public void Windows_own_folders_and_the_apps_own_are_never_a_project()
     {

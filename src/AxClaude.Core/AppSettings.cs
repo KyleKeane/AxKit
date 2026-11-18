@@ -132,6 +132,21 @@ public sealed class AppSettings : ConsoleSettings
     /// </summary>
     public string EventCore { get; set; } = EventCoreOn;
 
+    /// <summary>The words of <see cref="ClaudeSource"/>: the screen, which is the source at first, and the stream.</summary>
+    public const string SourceScreen = "screen";
+    public const string SourceStream = "stream";
+
+    /// <summary>
+    /// What feeds the window (docs/axClaude/stream-mode.md SM-9.1): <c>screen</c>, Claude Code in a pseudo console in
+    /// screen reader mode, read row by row, as always; <c>stream</c>, Claude Code as one process over pipes, read line
+    /// by line. Any other word is read as <c>screen</c>. A window is made for its source and keeps it (SM-9.2), so a
+    /// change applies to the next window of axClaude. The command line's <c>--source</c> goes before it for one start.
+    /// </summary>
+    public string ClaudeSource { get; set; } = SourceScreen;
+
+    /// <summary>Whether a word names the stream as the source: that word alone, in any case; everything else is the screen.</summary>
+    public static bool IsStream(string? source) => string.Equals(source?.Trim(), SourceStream, StringComparison.OrdinalIgnoreCase);
+
     public static string DefaultPath => AppPaths.SettingsFile("axClaude");
 
     /// <summary>Where axClaude 1.x kept the file, before the axKit bundle.</summary>
@@ -199,5 +214,6 @@ public sealed class AppSettings : ConsoleSettings
         BackgroundChordPauseSeconds = BackgroundChords.SanitizePauseSeconds(BackgroundChordPauseSeconds);
         SilentWords = SpeechFilter.Words(SpeechFilter.Text(SilentWords ?? []));
         EventCore = string.Equals(EventCore?.Trim(), EventCoreShadow, StringComparison.OrdinalIgnoreCase) ? EventCoreShadow : EventCoreOn;
+        ClaudeSource = IsStream(ClaudeSource) ? SourceStream : SourceScreen;
     }
 }
