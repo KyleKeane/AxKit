@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: answering one of Claude's questions in your own words plays the sound of sending once, when your words go. Before, it also played when you chose Other, so that one answer sounded like two.
 - axClaude: a new install now speaks Claude's replies as they arrive, every line ("Speak replies: all lines" in Options, Speech). It also starts with the background music while Claude works and the louder alert for a window in the background turned on, and with questions waiting until NVDA has finished what it was reading ("Go to them at once, interrupting speech" off). These are the options the maintainer uses himself. If you installed axKit before, your settings stay as they are: turn Speak replies on in Options, Speech.
 
 - axKit, axPass: when a question follows another in the same field (a password asked a second time to confirm it), the new question's title and what the field is for are now said. Before, the focus stayed in the field, and nothing was heard.

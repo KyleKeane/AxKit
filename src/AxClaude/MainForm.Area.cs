@@ -388,16 +388,19 @@ internal sealed partial class MainForm
             return;
         }
 
-        SendAnswer(string.Join(",", chosen.Select(option => option.Key)));
+        // Other is no answer yet: Claude asks for the words next (ShowOwnAnswer), and the sound of sending comes once,
+        // with them. Until 2026-11-21 it played here too, and one answer in the user's own words sounded like two
+        // (the maintainer: "submitting my answers ... caused multiple submission noises to play").
+        var wordsFollow = chosen.Any(option => option.Text.Equals(ClaudeCodeTexts.OtherAnswer, StringComparison.OrdinalIgnoreCase));
+        SendAnswer(string.Join(",", chosen.Select(option => option.Key)), sound: !wordsFollow);
         // Each answer's name without Claude's explanation after the dash.
-        Announce("Sent: " + string.Join(", ", chosen.Select(option =>
+        var names = string.Join(", ", chosen.Select(option =>
         {
             var dash = option.Text.IndexOf(ClaudeCodeTexts.AnswerDash, StringComparison.Ordinal);
             return $"{option.Key}, {(dash > 0 ? option.Text[..dash] : option.Text)}";
-        })) + (chosen.Any(option => option.Text.Equals(ClaudeCodeTexts.OtherAnswer, StringComparison.OrdinalIgnoreCase))
-            // Claude asks for the words of Other next (ShowOwnAnswer).
-            ? ". Your words next"
-            : NextStep()), false);
+        }));
+        // The words are as they were ("Sent: 4, Other. Your words next"); only the sound waits for the words.
+        Announce("Sent: " + names + (wordsFollow ? ". Your words next" : NextStep()), false);
     }
 
     /// <summary>After an answer to one of several questions, or to a question whose review follows, what comes next, so that the gap before it does not sound like the end.</summary>
@@ -780,9 +783,10 @@ internal sealed partial class MainForm
     /// An answer through the send queue: each character as a keystroke of its own, then Enter, except for a question
     /// answered by its key alone (a feedback survey, <see cref="Question.KeyOnly"/>), where Claude takes the key after
     /// a pause and an Enter would go to its prompt. The control area holds its keys meanwhile, so that a second Enter
-    /// does not send it again.
+    /// does not send it again. <paramref name="sound"/> false for a choice that is not the answer yet (Other, whose
+    /// words follow): the sound of sending plays once for one answer.
     /// </summary>
-    private void SendAnswer(string key)
+    private void SendAnswer(string key, bool sound = true)
     {
         if (!ProcessRunning)
         {
@@ -802,7 +806,7 @@ internal sealed partial class MainForm
         UserActedNow();
         FlowActed(UserAction.Answered);
         Area.Hold(UserActionMs);
-        if (_settings.SoundOnBell)
+        if (sound && _settings.SoundOnBell)
         {
             EventDoor.Raise(EventKind.Sent);
         }
