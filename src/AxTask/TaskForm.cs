@@ -82,6 +82,9 @@ public sealed partial class TaskForm : ItemForm
         _itemMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
         _itemMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Use these fields for &new items", null, (_, _) => UseAsTemplate()), CommandMark.Change));
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
+        // The maintainer's approval of an outside report (docs/axKit/outside-reports.md OR-5; TaskForm.Approvals.cs).
+        _itemMenu.DropDownItems.AddRange(CreateApprovalItems());
+        _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         // TK-3a.2, TK-D14: Ctrl+1 and Ctrl+2 go by heading at a top level, where no list's action keys act; registered
         // before the action keys, so that the first command whose key and place match runs.
         AddKey(new Command("Next heading level 1", AxTaskKeys.NextHeading1, () => JumpHeading(1, 1)) { When = AtHeadings, Mark = CommandMark.Read });
@@ -112,6 +115,7 @@ public sealed partial class TaskForm : ItemForm
         _hideDoneItem.Checked = settings.HideDone;
         options.DropDownItems.Add(new ToolStripSeparator());
         options.DropDownItems.AddRange(CreateProjectFolderItems());
+        options.DropDownItems.Add(CreateApprovalKeyItem());
         options.DropDownItems.Add(new ToolStripSeparator());
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());

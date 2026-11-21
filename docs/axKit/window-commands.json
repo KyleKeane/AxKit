@@ -1519,6 +1519,7 @@
         {"label": "Next section", "menu": "Navigation", "key": "ctrl+down", "also": [], "keyText": "Ctrl+Down", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Previous section", "menu": "Navigation", "key": "ctrl+up", "also": [], "keyText": "Ctrl+Up", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Add a project folder", "menu": "Options", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
+        {"label": "Approval passphrase", "menu": "Options", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},
         {"label": "Hide done tasks", "menu": "Options", "key": "ctrl+shift+d", "also": [], "keyText": "Ctrl+Shift+D", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Open settings file", "menu": "Options, Developer", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Check for updates at start", "menu": "Options, General", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},

@@ -360,6 +360,9 @@ levers are built now.
 
 ## 7. The maintainer's side: the GitHub lists of axTask, removed
 
+What happens to a report once it is in, its harm review and the maintainer's signed approval before any work, is
+`docs/axKit/outside-reports.md` (2026-11-21).
+
 - **RP-7.1 What they were.** From 2026-11-07 to 2026-11-14 (5.1.0 to 5.8.0) axTask had GitHub lists: a list whose
   `list.json` had `"github": {"repository": "owner/name", "state": "open"}` filled itself from that repository's
   issues when it opened and on F5, one item per issue with the user's Notes kept, and Context → GitHub on an item

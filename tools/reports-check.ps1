@@ -68,14 +68,33 @@ foreach ($file in Get-ChildItem $Lists -Filter *.json) {
     }
 }
 
+# Since 2026-11-21 a report gets an entry of the outside reports list, not an item (docs/axKit/outside-reports.md):
+# each report's entry, by number. A report with an entry is judged by it; an older one by its items, as before.
+. (Join-Path $here 'approvals.ps1')
+$outsideList = Join-Path (Split-Path -Parent $Lists) 'outside-reports'
+$entryOf = @{}
+foreach ($entry in @(Get-OutsideEntries $outsideList (Get-PinnedApprovalKey (Split-Path -Parent $here)))) {
+    foreach ($number in $entry.Reports) { $entryOf[[int]$number] = $entry }
+}
+
 $lines = @()
 foreach ($issue in ($issues | Sort-Object number)) {
     $open = "$($issue.state)" -ieq 'OPEN'
+    if ($entryOf.ContainsKey([int]$issue.number)) {
+        $state = $entryOf[[int]$issue.number].State
+        $finished = $state -in @('Done', 'Declined')
+        if ($open -and $finished) {
+            $lines += "Reports: close it: report $($issue.number) is open and its entry is $($state.ToLowerInvariant()): answer it and close it."
+        } elseif (-not $open -and -not $finished) {
+            $lines += "Reports: entry open: report $($issue.number) is closed and its entry is '$state'."
+        }
+        continue
+    }
     $items = @()
     if ($pointing.ContainsKey([int]$issue.number)) { $items = @($pointing[[int]$issue.number]) }
     $notDone = @($items | Where-Object { -not $_.Done })
     if ($open -and $items.Count -eq 0) {
-        $lines += "Reports: new: report $($issue.number), '$($issue.title)', has no item."
+        $lines += "Reports: new: report $($issue.number), '$($issue.title)', has no entry in the outside reports list: read it and write its entry (tools\outside-report.ps1)."
     } elseif ($open -and $notDone.Count -eq 0) {
         $lines += "Reports: close it: report $($issue.number) is open and its item is done: '$($items[0].Title)'."
     } elseif (-not $open -and $notDone.Count -gt 0) {

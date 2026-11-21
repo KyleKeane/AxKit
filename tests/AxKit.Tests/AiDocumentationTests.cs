@@ -137,7 +137,7 @@ public sealed class AiDocumentationTests
             ["docs/axKit/ai-help.md"] = "the specification of AI help",
             ["docs/axKit/mcp.md"] = "the specification of the AI tools; what a user needs is in the guides",
             ["docs/axKit/reports.md"] = "the specification of the reports",
-            ["docs/axKit/automation.md"] = "the specification of the automated checks",
+            ["docs/axKit/outside-reports.md"] = "the maintainer's process for reports from outside, with its approval",            ["docs/axKit/automation.md"] = "the specification of the automated checks",
             ["docs/axKit/user-workflows.md"] = "the specification of the workflow pages",
             ["docs/axKit/app-kit.md"] = "the design of the window base",
             ["docs/axKit/item-apps.md"] = "the design of the item apps",

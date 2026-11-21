@@ -53,6 +53,16 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   lists that came with them (RP-7) were removed on 2026-11-14, when axTask became local only: a `"github"` member in a
   `list.json` is kept as any member axTask does not know and means nothing (TK-7a.2).
 
+- `Approvals` with `ApprovalEntry`, `ApprovalPublicKey` and `ApprovalException`, and `OutsideReports`
+  (docs/axKit/outside-reports.md sections 5 and 6, 2026-11-21): the maintainer's signed approval of an outside report.
+  `Approvals.Text` is the approval text of OR-5.3 (each field a line, the review as its SHA-256), `MakeKey` the key
+  file (RSA 3072, the private half under AES-GCM with a key from the passphrase by PBKDF2, the public half as
+  associated data), `Sign`, `Verify` (never throws), `ChangeText` for a change of key, `PinnedText` and `ReadPinned`
+  for `docs/axKit/approval-key.pub`. `OutsideReports` is the list's side: `IsList`, `KeyFileOf`, `Field`, `EntryOf`,
+  `Refusal`, `NoticeText`, `Signed`. `tools/approvals.ps1` makes the same text and verifies in Windows PowerShell:
+  a change to `Text` is a change to that script too, and `ApprovalScriptTests` fails when the two part. Tested in
+  `ApprovalsTests` and `ApprovalScriptTests`.
+
 ## Gotchas
 
 - `TextDocument.Read` gives CRLF text whatever the file holds, and `ToText` writes CRLF, so the text kept for the

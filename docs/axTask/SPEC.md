@@ -350,6 +350,20 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
   shows a notice or a Windows dialog, while a rename is open in it, and in the window in front within 3 s of the
   user's key (MC-7.8), each with its reason. It never changes or deletes an item (MC-D11).
 
+## 7d. The maintainer's approval of outside reports (2026-11-21)
+
+The process is `docs/axKit/outside-reports.md` (OR-n.m); axTask's part of it:
+
+- **TK-9.1 Approve and Decline.** The Item menu (and so Context) has "Approve this report..." and "Decline this
+  report...", for an entry of the list `outside-reports` that is `Awaiting approval` (OR-5.1, OR-5.2; `TaskForm.Approvals.cs`,
+  `AxTask.Core/OutsideReports`). Anywhere else, or on another state, the refusal sound and why.
+- **TK-9.2 Approval passphrase.** Options, "Approval passphrase...", with the outside reports list open, sets up the
+  key the first time and changes its passphrase after (OR-6.1, OR-6.3).
+- **TK-9.3 Never for the AI tools.** The three items are withheld from them (`CommandPalette.NeverForAiTools`) and
+  marked act; the passphrase field is hidden, and nothing of it is kept (OR-5.4, OR-5.5). They are the first instance
+  of the buttons and forms in items the maintainer asked for the same day (the priorities list, "a general framework
+  of buttons and forms").
+
 ## 8. Decisions
 
 - **TK-D1 The All tasks entry is not a file.** It is the one smart list nobody can delete or break; every other one is

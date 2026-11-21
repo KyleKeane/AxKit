@@ -152,3 +152,21 @@ checks the same steps with the runner as the client.
 5. Switch to another program and ask again: a chime and axTask flashing on the taskbar, no words; back in axTask, the
    item is there.
 6. Close axTask and ask Claude to list the lists: Claude says no axTask window is open and offers to open one.
+
+## 8. Approving outside reports (TK-9, docs/axKit/outside-reports.md)
+
+In a copy of the management folder (never the real one): its `outside-reports` list with one entry awaiting
+approval, as `tools\outside-report.ps1` writes it.
+
+1. Open the outside reports list, then Options, Approval passphrase: "New approval passphrase", the field read as
+   protected. Type eleven characters, Enter: the refusal sound and "The passphrase needs 12 characters at least:
+   nothing changed". Again with a long one, then the same once more: "Approval passphrase set. The key's fingerprint
+   is" and four groups of four.
+2. On the entry, Context, Approve this report: the notice reads the report, the category, the item, the proposed
+   priority, the scope, the harm review and the last sentence; the field "Type your approval passphrase to approve",
+   read as protected. A wrong passphrase, Enter: the refusal sound and "That is not the approval passphrase"; the
+   entry's State is still Awaiting approval.
+3. Again with the right passphrase: "Approved:" and the entry's title; Tab reads State Approved, Approved on today,
+   Approval a long string. Approve on it once more: "This entry is Approved, not awaiting your approval".
+4. On a priorities item, Approve this report: "Approve and Decline act on an entry of the outside reports list".
+5. With an AI tool paired and allowed to run commands, ask it to approve the entry: it does not see the command.

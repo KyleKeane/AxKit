@@ -41,7 +41,9 @@ param(
     [string]$Name,
     [string]$Text,
     # Another list than the one beside the repository (the tests').
-    [string]$Lists
+    [string]$Lists,
+    # The code repository whose docs\axKit\approval-key.pub verifies an approval; this script's own by default (the tests' own).
+    [string]$PinnedFrom
 )
 
 $ErrorActionPreference = 'Stop'
@@ -92,6 +94,24 @@ function Get-Field($document, [string]$named) {
 
 $today = (Get-Date).ToString('yyyy-MM-dd')
 
+# Outside reports (docs/axKit/outside-reports.md OR-7.2): an item or a note that names a report is written only when the
+# maintainer approved an entry of that report, with his passphrase, that names the item by its title; the approval is
+# verified with the key pinned in this repository. Everything else of a report stays in the outside reports list.
+. (Join-Path $PSScriptRoot 'approvals.ps1')
+function Assert-ApprovedFromOutside([string]$itemTitle, [string[]]$texts) {
+    $reports = @()
+    foreach ($one in $texts) { $reports += @(Get-ReportNumbers $one) }
+    if ($reports.Count -eq 0) { return }
+    $repositoryRoot = if ($PinnedFrom) { $PinnedFrom } else { Split-Path $PSScriptRoot -Parent }
+    $outsideList = Join-Path (Split-Path $Lists -Parent) 'outside-reports'
+    $entries = @(Get-OutsideEntries $outsideList (Get-PinnedApprovalKey $repositoryRoot))
+    foreach ($report in ($reports | Select-Object -Unique)) {
+        if (-not (Test-ApprovedForItem $entries $report $itemTitle)) {
+            Refuse "report $report is outside work: write its entry with tools\outside-report.ps1, and this item follows only once the maintainer has approved an entry that names '$itemTitle' (docs/axKit/outside-reports.md)."
+        }
+    }
+}
+
 if ($Form -eq 'new') {
     foreach ($needed in @(@('Title', $Title), @('App', $App), @('Priority', $Priority), @('Where', $Where), @('Notes', $Notes))) {
         if (-not "$($needed[1])".Trim()) { Refuse "a new item needs -$($needed[0])." }
@@ -117,6 +137,7 @@ if ($Form -eq 'new') {
         )
     }
 
+    Assert-ApprovedFromOutside $Title.Trim() @($Title, $Where, $Notes)
     $fields = @([pscustomobject]@{ title = 'Title'; type = 'text'; value = $Title.Trim() }) + @($template | Where-Object { $_.title -ne 'Title' })
     $document = [pscustomobject]@{ format = 'axkit-item 1'; fields = $fields }
 
@@ -142,6 +163,7 @@ $item = Get-NamedItem $Name
 
 if ($Form -eq 'note') {
     if (-not "$Text".Trim()) { Refuse 'a note needs -Text.' }
+    Assert-ApprovedFromOutside $item.Title @($Text)
     $field = Get-Field $item.Document 'Notes'
     if (-not $field) { Refuse "the item has no Notes field: $($item.Title)" }
     $sentence = $Text.Trim()

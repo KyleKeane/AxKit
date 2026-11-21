@@ -815,6 +815,7 @@ every window" or under a heading that names the windows without it; under an app
 - Next section. Menu: Navigation. Key: Ctrl+Down. Mark: open.
 - Previous section. Menu: Navigation. Key: Ctrl+Up. Mark: open.
 - Add a project folder. Menu: Options. Key: none. Mark: change.
+- Approval passphrase. Menu: Options. Key: none. Mark: act. Never run by AI tools.
 - Hide done tasks. Menu: Options. Key: Ctrl+Shift+D. Mark: change.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - Top folder. Menu: Session. Key: none. Mark: act.

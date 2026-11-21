@@ -4,11 +4,17 @@
 # the code and nobody has to remember to back them up. Installed once per clone with
 #     git config core.hooksPath tools/hooks
 # (docs/axKit/development-environment.md section 4; release.ps1 refuses to run without it). A sibling's trouble is
-# printed and never stops the push: this hook always exits 0. Kept with LF line endings (.gitattributes): sh does not
+# printed and never stops the push; only the outside check below does. Kept with LF line endings (.gitattributes): sh does not
 # read CRLF.
 root=$(git rev-parse --show-toplevel)
 # git hands a hook GIT_DIR and its kin; the sync must not inherit them, or every git call of its own would act on this
 # repository whatever folder it names (the script drops them too).
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_PREFIX
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/sync-repos.ps1" </dev/null
+# The one thing that stops a push (docs/axKit/outside-reports.md OR-7.1, 2026-11-21): an item from an outside report
+# worked on without the maintainer's signed approval, or an approval that no longer verifies. Local, no network.
+if ! powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/outside-check.ps1" </dev/null; then
+  echo "Push refused: see the lines above (docs/axKit/outside-reports.md)."
+  exit 1
+fi
 exit 0

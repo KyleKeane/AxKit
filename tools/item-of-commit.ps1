@@ -31,7 +31,9 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)][string]$MessageFile,
     [string]$Lists,
-    [switch]$Check
+    [switch]$Check,
+    # The code repository whose docs\axKit\approval-key.pub verifies an approval; this script's own by default (the tests' own).
+    [string]$PinnedFrom
 )
 
 $ErrorActionPreference = 'Stop'
@@ -84,6 +86,32 @@ if ($named.Count -eq 0) {
 . (Join-Path $PSScriptRoot 'items.ps1')
 $items = @(Get-ListItems $Lists)
 
+# Outside reports (docs/axKit/outside-reports.md OR-7.3, OR-6.3): a commit on an item whose Where it is written names a
+# report needs the maintainer's approval of an entry of that report naming the item, verified with the key pinned in
+# this repository; and a change of that key needs the old key's signature over the new one's fingerprint.
+. (Join-Path $PSScriptRoot 'approvals.ps1')
+$repositoryRoot = Split-Path $PSScriptRoot -Parent
+$pinnedKey = Get-PinnedApprovalKey $(if ($PinnedFrom) { $PinnedFrom } else { $repositoryRoot })
+$outsideEntries = @(Get-OutsideEntries (Join-Path (Split-Path $Lists -Parent) 'outside-reports') $pinnedKey)
+
+$pinnedPath = 'docs/axKit/approval-key.pub'
+$keyStaged = "$(& git -C $repositoryRoot diff --cached --name-only -- $pinnedPath 2>$null)".Trim()
+if ($keyStaged) {
+    $before = (& git -C $repositoryRoot show "HEAD:$pinnedPath" 2>$null) -join "`n"
+    $oldKey = if ($LASTEXITCODE -eq 0) { Read-PinnedApprovalKeyText $before } else { $null }
+    if ($null -ne $oldKey) {
+        $after = (& git -C $repositoryRoot show ":$pinnedPath" 2>$null) -join "`n"
+        $newKey = if ($LASTEXITCODE -eq 0) { Read-PinnedApprovalKeyText $after } else { $null }
+        $signed = @($lines | Where-Object { $_ -match '^\s*Approval key changed:\s*(\S+)\s*$' } | ForEach-Object { $Matches[1] })
+        $ok = $null -ne $newKey -and $signed.Count -eq 1 -and (Test-ApprovalSignature (Get-ApprovalChangeText $newKey.Fingerprint) $signed[0] $oldKey)
+        if (-not $ok) {
+            Write-Host ''
+            Write-Host "Commit refused: it changes or removes the pinned approval key ($pinnedPath), and its message has no line 'Approval key changed: <signature>' that the old key signed (axTask, Change the approval passphrase). docs/axKit/outside-reports.md OR-6.3."
+            exit 1
+        }
+    }
+}
+
 $today = (Get-Date).ToString('yyyy-MM-dd')
 foreach ($one in $named) {
     if ($one.Words -match '^none\b[\s,:.-]*(.*)$') {
@@ -103,6 +131,14 @@ foreach ($one in $named) {
     }
 
     $item = $found[0]
+    $where = [string]($item.Document.fields | Where-Object { $_.title -eq 'Where it is written' } | Select-Object -First 1).value
+    foreach ($report in @(Get-ReportNumbers $where)) {
+        if (-not (Test-ApprovedForItem $outsideEntries $report $item.Title)) {
+            Write-Host ''
+            Write-Host "Commit refused: the item '$($item.Title)' comes from outside (report $report), and no entry of that report approved by the maintainer names it, or its approval no longer verifies. docs/axKit/outside-reports.md OR-7.3."
+            exit 1
+        }
+    }
     $fields = [System.Collections.ArrayList]@($item.Document.fields)
     $started = $fields | Where-Object { $_.title -eq 'Started' } | Select-Object -First 1
     $done = $fields | Where-Object { $_.title -eq 'Done' } | Select-Object -First 1

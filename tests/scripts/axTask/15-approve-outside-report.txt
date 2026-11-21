@@ -1,0 +1,51 @@
+# Workflow: Approve or decline a report from outside with the approval passphrase
+# axTask: the maintainer's approval of outside reports (docs/axTask/SPEC.md TK-9; docs/axKit/outside-reports.md OR-5,
+# OR-6; docs/axTask/nvda-test-plan.md section 8). A management folder of the run's own with the outside reports list,
+# one entry awaiting approval, and an approval key made for this script by AxTask.Core's Approvals with the passphrase
+# "a long test passphrase" and 1000 rounds; it is pinned nowhere and approves nothing outside this run.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file lists\approval-key.json {"format":"axkit-approval-key 1","note":"The maintainer\u0027s approval key for outside reports (docs/axKit/outside-reports.md section 6). The private half opens only with his passphrase.","rounds":1000,"salt":"fwp0PD21meBP7GErhnpoAQ==","nonce":"IfJMZ\u002Bfgimzm67vZ","tag":"HTiAuW6o7Io\u002Bli0u2vNHRg==","private":"17UYpzshX1nL6zISM\u002BjvkFtfnMFTNRWdE0xOzp1EiV5z1YZO2vgnYCGgi\u002BeNcbnJrL7J6cTVUxM30esFkI59CEOGPAPpxt1YmO/3cpoTF2J5Qdl7R4v2ZEL4FTOvNCfyUQkPqtzdrikmAPx635ej2ssECcvZ3\u002BM3kjaqpTgcl/4n0j3MDAc4CtApGiacCRBSK\u002BX/Ys/u5GR7OzelLJPvry1qk9DMpbopUq13sT1YAbseEtBK\u002BO4nlbu1ZHpKn0Wj8yMtGygUGdaGHkPAw9UxuH4DK6u5ZQdmYNEer7vvLzol7EVR85VPvaW1JESjlRAI4dix709ayJhu4uaN56HEhugenRs1tXTtZBtf0CIiqBW4fY/CnJ3d9UAbdxebF2f5EsIfktzLdQvL9\u002B8fU87VA1dK53yKjmTOJSsx960xiJ8BExikfW/XivBTAz1XF9yMmYwSLCkuhlcScRJRnag1qOvVxkpTQoGhArdk0fJZfWD5JaPwMa8lcpDuxJOGyJU2w\u002BeWZpBNV3p31hD53bjs7NaN978iLIovqh\u002B\u002BHnhAPqnMdVTQeu9UGvCrZjSev9bW/gAvPO5ibswE3YORRaqfKplWsSfGbhnWsVF3YxiVEt13DgbLUvC1rl63gAtAWupOjIGlRHAoQE\u002BIw1F/bVm80dHgy14sYIqNJGJqG8DxQ92OMgp\u002BOcwUlofovkIZCcOpewrZ86y8VtWZ6/cB3XHX4uwyVIyPD3TZ8lcLQZ09mF4sqquVQySnvYvO2X773q0iveA7aSdD2J9O\u002B/y2oyjVMnfOk46xD5zfdME4YITd3cLohr/Olo43bFARUXmvw5gH3gD3ZHOhBWyYIOZ/hcye8PP3kJFrYZGngZq1G9jzn6dsHCwHKkXYusHXLVMD7YCPFGdJ0mYi2CYgBKVnQY190eSAGK7iR0bGRE0\u002BuWQJyajOLY/llhogR3C2viu6PVj9o/lE8Rdw1A2LsmIQpX\u002BrRZLAh\u002BPzYL6oKLwhjPzspHIA9KBn8zOcN3cC4n25hFJFmC0ar5pzP/TcPOJf6rX\u002BEUEADP9Tw7wbNE8GYAMaz8S8HW1YzqWmCbRav3k1Ry5dVkTKK1myM6FN2nMhyfxqzO4WMG/WRU0xizNLx9jyQU/Xl26xPpv7uRdurz4W2v4\u002B75Modkarjp5g19cNB3Xlqe5sYhSoQTno1OLVhsyJWPkWOqACIYhEZeDTmSz4uEFacAL8dEumuXCeyHPEAMUb/VX9zdYQ04amRzlVFg0sWhpDeY1fz6SeH27wDi2WsfAE4DdIZ0eIJ32Ob4oGdAbj3HA5n4KtNuEoLVGx04qkLNybzONJz8CKOeLUdiciobc4EDpiIREFnqZ2dSTlmub/kolvQBy0VLMzyqecvQgjBT/az0WlACic8FFKq4oLkLvZplual1IN7bgBg5gRGsJervbtz7vcYqwLwN6PmM\u002BcloxpNozBs4aOEXENv6VTS60DIlTfh43g27I/2D2lMXRR5lPqsCU\u002BoJBfJETjADAo41468NkxmxpgDCG6DBxAM9NMsCtM1mMrNcL\u002BKe2xUr\u002B1l0Aa3aXJT8wMT/1zbU0U2hQmvhMj6kV9rgkii2gHz5B0QE98PLs06N2OGHNdu42leZd/TDOTvLgqLrlQ/nPMBk6gnym8dpEdhIwVtbUxZKfszZJkz0BsuvBz8xBKXF\u002B2RXCUpYtBnglNZ\u002BTBJxG3UtidzhTjHVSh0fP9sOXj8EIRBac\u002Bj5TnKg1dRjjjmCsL16TduEhWb2jjytdnXTGIWpvHC3zALR6q1gZT4lWwv2usdxbIx4KgT9GCBQjvVUK6f0EElCCcVR2lNE1Tg7uNksGeN9Ae8GFnEAMaYXp7EPtmn\u002BQ9DTlN/s0vp/KWdHMI6BkEnBFcq285hQJTMbfRjaH59Xj\u002BcuzFCBLZH07TEzmPQziTSb6hDpqcxyF31Ch6XZgh\u002BFsHUGkbEM9d6iry0b9Mm7iscUaKe0rtW0MD81tEsxzedgOa981L9A/XILt\u002B20POzcLl6sEtsm/klIszegtkoiAD9g\u002Bcf08QM3fWezaP7VP3ttH8tiacdL5k/XeKpq82mJKiunp1ShlpfTU9mZKB07sadvtOpKONDQ0UGTxhM4HApsyaksUsK9yqmYLsRW5xhbb1ghEaYZs1ntKdyM3PNZTzVGI/gbM/7kok\u002BeGZdSUu6li0bWAUbALR3FvEZVcfNg181RT\u002B/IWdUWlyJxq9gs7ygW5MsrW3hGKThOzK/XFWO08vjupIP8xNOz6k/FD\u002B0rYa\u002B9cNKz7Z73JJ66AzsOdpczF7f0vZmnXQsQclF1r1WIvJ0dN\u002BeAK329GPFbs7YLvKPSclEedlkjX8n6GM\u002BpDvGBiQM0nM89uO1XRb9/rFZLu54pDOpv3WpxhhHTwE","modulus":"rj3slz\u002BSR/6kmYkCVvtoZhxY2GYAA28zQ6tTAn2H6EnfsVh3FlbvM0pTFbQoj7eoatAw1KtyIesb0Yfq94Lv5YMILbZx3NAR0S25MyjIg4SsmTUfDbTC\u002B2MGj11Q2mIYENZ3c/wLQQ2gWC2ArU2DFfJpXPrNWaJwZTdV/SXyoYydU1cmuHL0DcnWFLeU44cLhBUw3/RECy2038faWSPGV40bSfdDPyBg99uQBJCxcdr4fnHVHz0B\u002Bo3h34flAIeBvsZlE3kpBtI\u002BqNFZrnOKNCtUhKk2BRTb61MTDzSfsPmNjJt6w7z8KbfhynbRV4Gy1oogKv72MvDYzkzDw7M3ru/FIB5BfyErSkgJelrtWNf/bxz1u4XSM4Q4BkEA\u002Bw7bb\u002BR3Y1zbE5O2ybi19JcDydyrFd8mGH7/k9GdifP/xdytSiGiZcnwQ9deqq4rB0B7WLi7EftXiB8BQSLD3\u002BCYFapgfX0b5FE0n3KIdFTCRHIHGm3cnKb7SVDUuPr/kHqd","exponent":"AQAB"}
+file lists\outside-reports\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
+file "lists\outside-reports\axStart said nothing.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "axStart: said nothing on its first launch"}, {"title": "Report", "type": "text", "value": "KyleKeane/AxKit-reports issue 15"}, {"title": "Received", "type": "date", "value": "2026-11-21"}, {"title": "State", "type": "choice", "value": "Awaiting approval", "options": ["To review", "Awaiting approval", "Approved", "Declined", "Done"]}, {"title": "Harm review", "type": "longtext", "value": "Nothing found."}, {"title": "Category", "type": "choice", "value": "New item", "options": ["Same as an item", "Addition to an item", "New item", "Not actionable", "Declined for harm"]}, {"title": "Item", "type": "text", "value": "axStart: the first showing takes the foreground"}, {"title": "Proposed", "type": "longtext", "value": "Make the first showing take the foreground."}, {"title": "Proposed priority", "type": "choice", "value": "High", "options": ["High", "Normal", "Low"]}, {"title": "Approval", "type": "text", "value": ""}, {"title": "Approved on", "type": "date", "value": ""}]}
+file lists\priorities\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
+file repo\docs\axKit\approval-key.pub axkit-approval-key 1\nfingerprint: 4b027f6b5a70a3ef\nmodulus: rj3slz+SR/6kmYkCVvtoZhxY2GYAA28zQ6tTAn2H6EnfsVh3FlbvM0pTFbQoj7eoatAw1KtyIesb0Yfq94Lv5YMILbZx3NAR0S25MyjIg4SsmTUfDbTC+2MGj11Q2mIYENZ3c/wLQQ2gWC2ArU2DFfJpXPrNWaJwZTdV/SXyoYydU1cmuHL0DcnWFLeU44cLhBUw3/RECy2038faWSPGV40bSfdDPyBg99uQBJCxcdr4fnHVHz0B+o3h34flAIeBvsZlE3kpBtI+qNFZrnOKNCtUhKk2BRTb61MTDzSfsPmNjJt6w7z8KbfhynbRV4Gy1oogKv72MvDYzkzDw7M3ru/FIB5BfyErSkgJelrtWNf/bxz1u4XSM4Q4BkEA+w7bb+R3Y1zbE5O2ybi19JcDydyrFd8mGH7/k9GdifP/xdytSiGiZcnwQ9deqq4rB0B7WLi7EftXiB8BQSLD3+CYFapgfX0b5FE0n3KIdFTCRHIHGm3cnKb7SVDUuPr/kHqd\nexponent: AQAB\n
+start task {temp}\lists
+check commands
+keys home
+keys down
+expect focus outside-reports, list, 1 item
+keys right
+expect focus axStart: said nothing on its first launch
+# Goal: A wrong passphrase approves nothing
+menu Approve this report
+expect state "notice":"Approve: axStart: said nothing on its first launch"
+type not the passphrase at all
+keys enter
+expect said ♪ Edge
+expect said That is not the approval passphrase
+# Goal: Approve an entry with the passphrase
+menu Approve this report
+expect state "notice":"Approve: axStart: said nothing on its first launch"
+type a long test passphrase
+keys enter
+expect said Approved: axStart: said nothing on its first launch
+# The scripts that hold the work to approvals verify what the window signed, with the key pinned in the run's own
+# repository folder (tools/outside-check.ps1, OR-7.1).
+run powershell -NoProfile -ExecutionPolicy Bypass -File "%AXKIT_STANDIN_REPOSITORY%\tools\outside-check.ps1" -Management "{temp}\lists" -Repository "{temp}\repo"
+# Check: An approved entry is not approved again
+menu Approve this report
+expect said ♪ Edge
+expect said This entry is Approved, not awaiting your approval
+# Check: Changing the passphrase needs the current one
+menu Approval passphrase
+expect state "notice":"Change the approval passphrase"
+type not the current one
+keys enter
+expect state "notice":"New approval passphrase"
+type another long passphrase
+keys enter
+expect state "notice":"Type it again"
+type another long passphrase
+keys enter
+expect said ♪ Edge
+expect said That is not the current approval passphrase: nothing changed

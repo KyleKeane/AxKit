@@ -217,6 +217,19 @@ window is open, once you have turned the AI tools on and allowed it (axKit menu,
 - It never changes or deletes an item, never reaches a folder of lists that is not your top folder or one of your
   projects, and never adds while a notice or a rename is open, or while you are typing in the window.
 
+## Approving outside reports
+
+Reports that people send with F4 are never worked on until you approve them. Each one has an entry in the list
+"outside-reports": the assistant's review of it for harm, what kind of matter it is, and exactly what it proposes to
+do. Open an entry, read it, then choose Approve this report or Decline this report from the Context menu (Shift+F10).
+The notice reads everything your approval covers, then asks your approval passphrase. Your passphrase signs exactly
+what you read; if anything of it changes afterwards, the approval no longer counts, and the work stops.
+
+The first time, set up your passphrase: open the outside reports list, then Options, Approval passphrase. Type a
+passphrase of at least 12 characters, twice. axKit then says the key's fingerprint, sixteen letters and digits in
+groups of four. axKit never keeps your passphrase and cannot show it again, so keep it in your password manager. The
+same item later changes it: the current passphrase first, then the new one twice.
+
 ## Keys
 
 F1 lists every key. Shift+F10 or the Applications key opens Context, what acts on the selection.

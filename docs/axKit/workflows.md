@@ -824,6 +824,9 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Give a list's new items the fields of a task
 14. **Make a smart list of your own**
     - Make a smart list and see its file open in axJSON
+15. **Approve or decline a report from outside with the approval passphrase**
+    - A wrong passphrase approves nothing
+    - Approve an entry with the passphrase
 
 ## axTerminal
 

@@ -157,7 +157,7 @@
           "sounds": ["Edge"],
           "words": "None for a key in navigation mode. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.",
           "apps": "Every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitTextBox.cs", "src/AxKit.Forms/AxKitForm.Notices.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.ActionKeys.cs"],
+          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitTextBox.cs", "src/AxKit.Forms/AxKitForm.Notices.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.ActionKeys.cs", "src/AxTask/TaskForm.Approvals.cs"],
           "note": "Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'."
         },
         {

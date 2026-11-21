@@ -165,11 +165,11 @@ if ($reports.Code -eq 0) {
 } elseif ($reports.Code -eq 1) {
     $new = @($reports.Lines | Where-Object { $_ -match '^Reports: new:' }).Count
     $close = @($reports.Lines | Where-Object { $_ -match '^Reports: close it:' }).Count
-    $open = @($reports.Lines | Where-Object { $_ -match '^Reports: item open:' }).Count
+    $open = @($reports.Lines | Where-Object { $_ -match '^Reports: (item|entry) open:' }).Count
     $parts = @()
-    if ($new -gt 0) { $parts += "$(Get-Plural $new 'open report' 'open reports') without an item: read it and write its item" }
-    if ($close -gt 0) { $parts += "$(Get-Plural $close 'open report' 'open reports') whose item is done: answer it and close it" }
-    if ($open -gt 0) { $parts += "$(Get-Plural $open 'closed report' 'closed reports') whose item is not done: finish the item or mark it done" }
+    if ($new -gt 0) { $parts += "$(Get-Plural $new 'open report' 'open reports') without an entry: read it and write its entry in the outside reports list (tools\outside-report.ps1)" }
+    if ($close -gt 0) { $parts += "$(Get-Plural $close 'open report' 'open reports') whose item or entry is finished: answer it and close it" }
+    if ($open -gt 0) { $parts += "$(Get-Plural $open 'closed report' 'closed reports') whose item or entry is not finished: finish it" }
     if ($parts.Count -eq 0) { $parts += 'tools\reports-check.ps1 names a disagreement: act on each line' }
     Write-Asked "reports: $($parts -join '; ')" $reports.Lines
 } elseif ($text -match 'priorities list is not at') {
@@ -178,6 +178,17 @@ if ($reports.Code -eq 0) {
     Write-Host 'reports: GitHub could not be asked (gh missing, signed out, or no network): not checked.'
 } else {
     Write-Asked 'reports: tools\reports-check.ps1 did not run to its end: run it by itself' @()
+}
+
+# ---- 3b. the outside reports: nothing from outside worked on without the maintainer's signed approval ----
+
+$outside = Invoke-Check 'outside-check.ps1' @()
+if ($outside.Code -eq 0) {
+    $said = @($outside.Lines | Where-Object { $_ -match '^Outside reports: ' } | Select-Object -Last 1)
+    $detail = if ($said.Count -eq 1) { $said[0] -replace '^Outside reports: ', '' -replace '\.$', '' } else { 'checked' }
+    Write-Host "outside reports: ${detail}: ok"
+} else {
+    Write-Asked 'outside reports: an item from outside has no valid approval of yours: nothing is done on it; move it to the outside reports list or ask for the approval' $outside.Lines
 }
 
 # ---- 4. the outside programs ----

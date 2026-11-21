@@ -617,3 +617,22 @@ Starts with: Open axTask with the folder tasks.
 4. A new window opens: go to it.
 5. Close the window.
 6. Go to the axTask window.
+
+## Approve or decline a report from outside with the approval passphrase
+
+Starts with: Open axTask with the folder lists.
+
+### A wrong passphrase approves nothing
+
+1. Choose the menu item Approve this report.
+2. Type: not the passphrase at all
+3. Press Enter.
+    You hear the sound Edge.
+    You hear: That is not the approval passphrase.
+
+### Approve an entry with the passphrase
+
+1. Choose the menu item Approve this report.
+2. Type: a long test passphrase
+3. Press Enter.
+    You hear: Approved: axStart: said nothing on its first launch.
