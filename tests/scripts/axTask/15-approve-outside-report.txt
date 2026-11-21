@@ -44,7 +44,8 @@ keys enter
 expect state "notice":"New approval passphrase"
 type another long passphrase
 keys enter
-expect state "notice":"Type it again"
+expect state "notice":"Confirm the approval passphrase"
+expect said Confirm the approval passphrase. Re-enter the new approval passphrase to confirm it
 type another long passphrase
 keys enter
 expect said ♪ Edge

@@ -160,7 +160,8 @@ approval, as `tools\outside-report.ps1` writes it.
 
 1. Open the outside reports list, then Options, Approval passphrase: "New approval passphrase", the field read as
    protected. Type eleven characters, Enter: the refusal sound and "The passphrase needs 12 characters at least:
-   nothing changed". Again with a long one, then the same once more: "Approval passphrase set. The key's fingerprint
+   nothing changed". Again with a long one, Enter: "Confirm the approval passphrase. Re-enter the new approval
+   passphrase to confirm it" is said at once, the focus still in the field. The same once more: "Approval passphrase set. The key's fingerprint
    is" and four groups of four.
 2. On the entry, Context, Approve this report: the notice reads the report, the category, the item, the proposed
    priority, the scope, the harm review and the last sentence; the field "Type your approval passphrase to approve",

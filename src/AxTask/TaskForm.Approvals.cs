@@ -163,7 +163,7 @@ public sealed partial class TaskForm
                     return;
                 }
 
-                ShowNotice(new Notice("Type it again", "The same passphrase once more.",
+                ShowNotice(new Notice("Confirm the approval passphrase", "Type the same passphrase once more, to confirm it.",
                 [
                     new OverlayChoice("&Set", () =>
                     {
@@ -181,7 +181,7 @@ public sealed partial class TaskForm
                     new OverlayChoice("&Cancel", IsCancel: true),
                 ])
                 {
-                    Input = new OverlayInput("Passphrase again:", "Re-enter the new approval passphrase", string.Empty, "Type the passphrase again", Hidden: true),
+                    Input = new OverlayInput("Confirm passphrase:", "Re-enter the new approval passphrase to confirm it", string.Empty, "Type the passphrase again to confirm it", Hidden: true),
                 });
             }, IsDefault: true),
             new OverlayChoice("&Cancel", IsCancel: true),

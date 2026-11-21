@@ -519,12 +519,23 @@ public sealed class OverlayPanel : Panel
         _progress.Value = Math.Clamp(percent, 0, 100);
     }
 
-    /// <summary>Puts the focus where reading starts: in the text field when there is one (unless the notice says the text first, <see cref="Notice.FocusText"/>), otherwise at the top of the text.</summary>
+    /// <summary>
+    /// Puts the focus where reading starts: in the text field when there is one (unless the notice says the text first,
+    /// <see cref="Notice.FocusText"/>), otherwise at the top of the text. A notice with a field that follows another
+    /// with one (a passphrase typed again) finds the focus already in the field: nothing moves, so NVDA would say
+    /// nothing, and the notice says its title and the field's name itself (2026-11-21, the confirmation went unheard).
+    /// </summary>
     public void FocusStart()
     {
         if (_inputSpec is not null && !(Shown is { FocusText: true } && _text.Visible))
         {
+            var stays = _input.Focused;
             _input.Select();
+            if (stays)
+            {
+                Announce($"{_title.Text}. {_inputSpec.AccessibleName}", true);
+            }
+
             return;
         }
 
