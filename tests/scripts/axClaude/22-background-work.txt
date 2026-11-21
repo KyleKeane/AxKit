@@ -6,7 +6,7 @@
 # 2026-11-15, docs/axClaude/claude-screens.md), one frame for each file the script makes in the project folder. The
 # sounds are checked by name on the timeline; how they sound is for the ear (the plan's section 22).
 # The recurring chords with the first pause, 2 seconds, so that the run hears them soon.
-file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir bg
 # The stand-in: the escape character from cmd's own prompt, then a frame, then it waits for the next file.

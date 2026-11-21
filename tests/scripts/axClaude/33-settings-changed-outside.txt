@@ -5,7 +5,7 @@
 # as a system line in the conversation. The stand-in of 29-stand-in-turn.txt only shows the prompt here.
 # The refusal is logged as an error.
 allow error was changed outside axKit and is not used
-file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*

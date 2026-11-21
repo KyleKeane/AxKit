@@ -54,8 +54,11 @@ public class SettingsTests
         Assert.True(missing.AnnounceBell);
         Assert.True(missing.JoinWrappedLines);
         Assert.False(missing.MarkerTimeStamps);
-        Assert.False(missing.WorkingMusic);
-        Assert.False(missing.BackgroundAlert);
+        // The defaults of a new install are the maintainer's own options since 2026-11-21 (SPEC.md D10).
+        Assert.True(missing.WorkingMusic);
+        Assert.True(missing.BackgroundAlert);
+        Assert.Equal(ReplySpeechMode.All, missing.ReplySpeech);
+        Assert.False(missing.InterruptForQuestions);
 
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         try
@@ -72,7 +75,8 @@ public class SettingsTests
             Assert.Equal(0, sanitized.FontSize);
             Assert.Equal([@"C:\x"], sanitized.RecentFolders);
             Assert.Null(sanitized.Window);
-            Assert.Equal(ReplySpeechMode.None, sanitized.ReplySpeech);
+            // A file that says nothing of the replies gets the default, every line since 2026-11-21.
+            Assert.Equal(ReplySpeechMode.All, sanitized.ReplySpeech);
 
             // The 1.1 key: speaking replies meant every line.
             File.WriteAllText(path, """{ "speakReplies": true }""");

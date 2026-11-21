@@ -5,7 +5,7 @@
 # window's mode key writes the request for the next mode, Claude Code answers with it, and the window says the mode in
 # the screen's words. A command that has no meaning without Claude Code's screen says one sentence, the same everywhere.
 # A restart ends the process by the end of its input and starts a new one.
-file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream mode %*

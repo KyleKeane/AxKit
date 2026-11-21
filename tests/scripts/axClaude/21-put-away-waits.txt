@@ -5,7 +5,7 @@
 # it was hidden is not asked while it is hidden; brought up, the window says "Done" for the turn that ended and then
 # asks the offer, with its chime and its caution; and a Claude that stopped while hidden is said on the bringing up.
 # axHelp's window, the second one here, is what brings the window titled axHelp up.
-file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
 file home\AxKit\axHelp.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir away

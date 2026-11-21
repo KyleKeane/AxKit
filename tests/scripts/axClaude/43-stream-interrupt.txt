@@ -4,7 +4,7 @@
 # question, and the turn goes on; in a running turn it is the request that ends the turn and leaves Claude Code running,
 # and the window says Interrupted, since no Done follows. The stand-in plays the recording of a Bash call interrupted
 # after it had started, and of a message after it (tests/fixtures/streams/interrupt.jsonl).
-file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream interrupt %*

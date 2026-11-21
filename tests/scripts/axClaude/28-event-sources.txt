@@ -7,7 +7,7 @@
 # and computes the rest beside the window. Needs no Claude Code, no network and no model: a stand-in
 # batch file draws a turn as Claude Code does, one frame for each file the script makes in the project folder, with
 # the marks a turn has in the stream (OSC 133 A at its start; C, D and the bell at its end).
-file home\AxKit\axClaude.json {"checkForUpdates":false,"claudeHooks":true}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"claudeHooks":true}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir es
 # The stand-in: the escape character from cmd's own prompt; a mark is the escape character, ]133; and its letter,

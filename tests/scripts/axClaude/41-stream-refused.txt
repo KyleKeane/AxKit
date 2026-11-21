@@ -4,7 +4,7 @@
 # the folder's question starts nothing, and the question comes again with the next start. Enter on what Claude asks to
 # do refuses it: Claude Code is told no, the call's line becomes a tool error, and Claude says what it could not do. The
 # stand-in plays the recording of a Write call that was refused (tests/fixtures/streams/denied.jsonl).
-file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream denied %*

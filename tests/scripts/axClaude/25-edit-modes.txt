@@ -4,7 +4,7 @@
 # and lists and nothing changes the message, Enter included; in the conversation, which cannot be edited, it says so.
 # The music key is Ctrl+M since 2026-11-15 (FR-7.9). Needs no Claude Code, no network and no model: a stand-in batch
 # file draws one screen and waits, as in 23-key-test.
-file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir em
 file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\necho 0.0.0 (stand-in)

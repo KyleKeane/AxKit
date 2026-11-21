@@ -9,7 +9,7 @@
 # version 2.1.325, so the window passes it the hooks' file and the two events arrive (30-hooks-stand-in.txt checks
 # them); what is heard is the same with them and without. Speak replies is all lines, so the reply is said. The
 # working frame stays 1.5 s, so that the state can be read while it shows.
-file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 # The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.

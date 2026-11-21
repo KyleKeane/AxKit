@@ -4,7 +4,7 @@
 # which is Claude Code's own default. In a run the file is the run's own, home\.claude\settings.json, never the
 # user's. Needs no Claude Code, no network and no model: a stand-in batch file draws one screen and waits, as in
 # 25-edit-modes.
-file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 # A settings file with keys of the user's own, which must come through every change as they were.
 file home\.claude\settings.json {\n  "theme": "dark",\n  "permissions": { "allow": ["Bash(git status)"] }\n}

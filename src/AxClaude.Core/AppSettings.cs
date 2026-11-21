@@ -14,13 +14,26 @@ namespace AxClaude.Core;
 /// </summary>
 public sealed class AppSettings : ConsoleSettings
 {
+    /// <summary>
+    /// The defaults of a new install follow the maintainer's own options (his word of 2026-11-21: "we must speak
+    /// claude results on by default ... use my current options as defaults"): every line of a reply spoken
+    /// (<see cref="ReplySpeech"/>), a question waiting after what is read (<see cref="InterruptForQuestions"/> off),
+    /// and, of the console's shared settings, the working music and the louder alert in the background on, which
+    /// axTerminal leaves off. A file that exists keeps what it holds.
+    /// </summary>
+    public AppSettings()
+    {
+        WorkingMusic = true;
+        BackgroundAlert = true;
+    }
+
     public string? LastProjectFolder { get; set; }
     public string? ClaudePath { get; set; }
 
     public bool AnnounceBell { get; set; } = true;
 
     /// <summary>How much of a reply is spoken as it arrives (FR-7.4): none, the first line of each message, or all.</summary>
-    public ReplySpeechMode ReplySpeech { get; set; }
+    public ReplySpeechMode ReplySpeech { get; set; } = ReplySpeechMode.All;
 
     /// <summary>The 1.1 key, true meaning every line: read from an old file, turned into <see cref="ReplySpeech"/> and no longer written.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -92,7 +105,7 @@ public sealed class AppSettings : ConsoleSettings
     /// A question Claude asks takes the focus wherever it is and cuts off what NVDA was reading, a reply included
     /// (D33). Off: the focus moves only from the bottom of the window, and the question waits after what is read.
     /// </summary>
-    public bool InterruptForQuestions { get; set; } = true;
+    public bool InterruptForQuestions { get; set; }
 
     /// <summary>
     /// Show Claude's "Review your answers" after the last of its questions (D33). Off: the app submits the review for

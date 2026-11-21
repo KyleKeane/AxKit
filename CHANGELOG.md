@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axClaude: a new install now speaks Claude's replies as they arrive, every line ("Speak replies: all lines" in Options, Speech). It also starts with the background music while Claude works and the louder alert for a window in the background turned on, and with questions waiting until NVDA has finished what it was reading ("Go to them at once, interrupting speech" off). These are the options the maintainer uses himself. If you installed axKit before, your settings stay as they are: turn Speak replies on in Options, Speech.
+
 - axKit, axPass: when a question follows another in the same field (a password asked a second time to confirm it), the new question's title and what the field is for are now said. Before, the focus stayed in the field, and nothing was heard.
 - axHelp, axKit: Claude's working folder: a file of your own with a name axKit also uses (a `changelog.md` or `privacy.md` in `documentation`, in a working folder you chose) is no longer written over. axKit leaves it as it is and writes its own files around it.
 - axTask: for the maintainer of a project that takes reports from outside, a list named `outside-reports` has two commands in the Context menu, Approve this report and Decline this report, which sign an entry with a passphrase only you know (Options, Approval passphrase, sets it up). The notice opens on the entry's text, to be read first; Tab goes to the passphrase field. An entry that holds a character a screen reader does not speak is not signed. The AI tools never see these commands. The user guide has a section on it.

@@ -1,0 +1,28 @@
+# Workflow: Hear a reply spoken in a new install
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md FR-7.4 and D10 (2026-11-21, the maintainer's word: "we must speak claude results on
+# by default"): a settings file that says nothing of the replies, as a new install has it, speaks every line of a
+# reply. The stand-in plays the turn of 29-stand-in-turn.txt; the other scripts name the options they test.
+file home\AxKit\axClaude.json {"checkForUpdates":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+# The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-555555555555","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"wait":1500},{"hook":"Stop","last":["ok"],"tasks":[]},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["ok"]},{"turnEnd":2345},{"idle":true}],"history":[{"user":["An earlier question"]},{"assistant":["An earlier answer"]},{"turnEnd":1200}]}
+
+start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku
+expect said Ready
+type Say ok
+keys enter
+expect said Sent
+# Claude takes the message up: the mark A and the working frame.
+file st\go1 x
+expect state Claude: working
+# The turn ends with Done, and the reply stands in the conversation. The reply is spoken before Done: the core
+# says Done once the turn has ended and its last reply is in the conversation, and what is still held of the reply
+# is spoken first (docs/axClaude/events-and-grounding.md EG-5.6, since 2026-11-17; before, the window's own timers
+# decided the order, and under load Done came first, seen 2026-11-15).
+expect said claude: ok
+expect said Done
+do Conversation
+expect text claude: ok

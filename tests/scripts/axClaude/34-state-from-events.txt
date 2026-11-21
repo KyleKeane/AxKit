@@ -11,7 +11,7 @@
 # message is typed beforehand, and Enter goes as soon as the status bar says ready. When "Done" comes is the matter of
 # 35-done-after-the-reply.txt, and this script does not ask. A second window, with the file-only setting
 # eventCore set to shadow, is given the same turn and shows it as the window did before: the state is the screen's.
-file home\AxKit\axClaude.json {"checkForUpdates":false,"claudeHooks":true}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"claudeHooks":true}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir sw
 mkdir sh
